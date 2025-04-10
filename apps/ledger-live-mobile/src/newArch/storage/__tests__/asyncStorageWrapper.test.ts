@@ -86,6 +86,32 @@ describe("AsyncStorageWrapper", () => {
     });
   });
 
+  describe("getString", () => {
+    describe("with a single key", () => {
+      const returnedValue = `{"value": 1}`;
+      let getItemMethod: jest.SpyInstance;
+      let result: Awaited<ReturnType<typeof storage.get>>;
+
+      beforeEach(async () => {
+        // Arrange
+        getItemMethod = jest
+          .spyOn(AsyncStorage, "getItem")
+          .mockImplementation(() => Promise.resolve(returnedValue));
+
+        // Act
+        result = await storage.getString("key");
+      });
+
+      it("should call AsyncStorage#getItem once", async () => {
+        expect(getItemMethod).toHaveBeenCalledTimes(1);
+      });
+
+      it("should returns value return by AsyncStorage#getItem", async () => {
+        expect(result).toEqual(returnedValue);
+      });
+    });
+  });
+
   describe("save", () => {
     let multiSetMethod: jest.SpyInstance;
 
@@ -133,6 +159,28 @@ describe("AsyncStorageWrapper", () => {
         expect(multiSetMethod).toHaveBeenCalledWith(
           keyValuePairs.map(([k, v]) => [k, JSON.stringify(v)]),
         );
+      });
+    });
+  });
+
+  describe("saveString", () => {
+    let setMethod: jest.SpyInstance;
+
+    describe("with a single key", () => {
+      beforeEach(() => {
+        // Arrange
+        setMethod = jest.spyOn(AsyncStorage, "setItem").mockImplementation(() => Promise.resolve());
+
+        // Act
+        storage.saveString("key", "stringToSave");
+      });
+
+      it("should call AsyncStorageWrapper#setItem", () => {
+        expect(setMethod).toHaveBeenCalledTimes(1);
+      });
+
+      it("should call AsyncStorageWrapper#setItem with the correct value", () => {
+        expect(setMethod).toHaveBeenCalledWith("key", "stringToSave");
       });
     });
   });

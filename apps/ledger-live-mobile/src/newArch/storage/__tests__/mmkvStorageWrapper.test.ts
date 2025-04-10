@@ -86,6 +86,32 @@ describe("MMKVStorageWrapper", () => {
     });
   });
 
+  describe("getString", () => {
+    describe("with a single key", () => {
+      const returnedValue = `stringToGet`;
+      let getStringMethod: jest.SpyInstance;
+      let result: Awaited<ReturnType<typeof storage.get>>;
+
+      beforeEach(() => {
+        // Arrange
+        getStringMethod = jest
+          .spyOn(MMKV.prototype, "getString")
+          .mockImplementation(() => returnedValue);
+
+        // Act
+        result = storage.getString("key");
+      });
+
+      it("should call MMKV#getString once", () => {
+        expect(getStringMethod).toHaveBeenCalledTimes(1);
+      });
+
+      it("should returns the value returned by MMKV#getString", () => {
+        expect(result).toEqual(returnedValue);
+      });
+    });
+  });
+
   describe("save", () => {
     let setMethod: jest.SpyInstance;
 
@@ -132,6 +158,28 @@ describe("MMKVStorageWrapper", () => {
           expect(setMethod).toHaveBeenNthCalledWith(nth, k, JSON.stringify(v));
         });
       }
+    });
+  });
+
+  describe("saveString", () => {
+    let setMethod: jest.SpyInstance;
+
+    describe("with a single key", () => {
+      beforeEach(() => {
+        // Arrange
+        setMethod = jest.spyOn(MMKV.prototype, "set").mockImplementation(noop);
+
+        // Act
+        storage.saveString("key", "stringToSave");
+      });
+
+      it("should call MMKV#set", () => {
+        expect(setMethod).toHaveBeenCalledTimes(1);
+      });
+
+      it("should call MMKV#set with the correct value", () => {
+        expect(setMethod).toHaveBeenCalledWith("key", "stringToSave");
+      });
     });
   });
 
@@ -216,6 +264,94 @@ describe("MMKVStorageWrapper", () => {
           expect(deleteMethod).toHaveBeenNthCalledWith(nth, k);
         });
       }
+    });
+  });
+
+  describe("push", () => {
+    let getMethod: jest.SpyInstance;
+    let saveMethod: jest.SpyInstance;
+
+    describe("when the key does not exist", () => {
+      const key = "key";
+      const valueToPush = { a: 1 };
+
+      beforeEach(() => {
+        // Arrange
+        getMethod = jest.spyOn(storage, "get").mockImplementation(() => null);
+        saveMethod = jest.spyOn(storage, "save").mockImplementation(noop);
+
+        // Act
+        storage.push(key, valueToPush);
+      });
+
+      it("should call MMKVStorageWrapper#get", () => {
+        expect(getMethod).toHaveBeenCalledTimes(1);
+      });
+
+      it("should call MMKVStorageWrapper#get with the correct key", () => {
+        expect(getMethod).toHaveBeenCalledWith(key);
+      });
+
+      it("should call MMKVStorageWrapper#save", () => {
+        expect(saveMethod).toHaveBeenCalledTimes(1);
+      });
+
+      it("should call MMKVStorageWrapper#save with a new array containing the value", () => {
+        expect(saveMethod).toHaveBeenCalledWith(key, [valueToPush]);
+      });
+    });
+
+    describe("when the key exists and is an array", () => {
+      const key = "key";
+      const existingArray = [{ a: 1 }];
+      const valueToPush = { b: 2 };
+
+      beforeEach(() => {
+        // Arrange
+        getMethod = jest.spyOn(storage, "get").mockImplementation(() => existingArray);
+        saveMethod = jest.spyOn(storage, "save").mockImplementation(noop);
+
+        // Act
+        storage.push(key, valueToPush);
+      });
+
+      it("should call MMKVStorageWrapper#get", () => {
+        expect(getMethod).toHaveBeenCalledTimes(1);
+      });
+
+      it("should call MMKVStorageWrapper#get with the correct key", () => {
+        expect(getMethod).toHaveBeenCalledWith(key);
+      });
+
+      it("should call MMKVStorageWrapper#save", () => {
+        expect(saveMethod).toHaveBeenCalledTimes(1);
+      });
+
+      it("should call MMKVStorageWrapper#save with the updated array", () => {
+        expect(saveMethod).toHaveBeenCalledWith(key, [...existingArray, valueToPush]);
+      });
+    });
+
+    describe("when the key exists but is not an array", () => {
+      const key = "key";
+      const existingValue = { a: 1 };
+      const valueToPush = { b: 2 };
+
+      beforeEach(() => {
+        // Arrange
+        getMethod = jest.spyOn(storage, "get").mockImplementation(() => existingValue);
+        saveMethod = jest.spyOn(storage, "save").mockImplementation(noop);
+      });
+
+      it("should throw an error", () => {
+        expect(() => storage.push(key, valueToPush)).toThrow(
+          `Existing value for key "${key}" must be of type null or Array, received object.`,
+        );
+      });
+
+      it("should not call MMKVStorageWrapper#save", () => {
+        expect(saveMethod).not.toHaveBeenCalled();
+      });
     });
   });
 });

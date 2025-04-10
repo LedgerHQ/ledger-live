@@ -192,7 +192,12 @@ const useNotifications = () => {
       pushNotificationsDataOfUser.appFirstStartDate &&
       isBefore(
         Date.now(),
-        add(pushNotificationsDataOfUser.appFirstStartDate, minimumDurationSinceAppFirstStart),
+        add(
+          pushNotificationsDataOfUser.appFirstStartDate
+            ? new Date(pushNotificationsDataOfUser.appFirstStartDate)
+            : new Date(),
+          minimumDurationSinceAppFirstStart,
+        ),
       )
     ) {
       return false;
@@ -278,7 +283,7 @@ const useNotifications = () => {
     getPushNotificationsDataOfUserFromStorage().then(dataOfUser => {
       updatePushNotificationsDataOfUserInStateAndStore({
         ...dataOfUser,
-        appFirstStartDate: dataOfUser?.appFirstStartDate || new Date(Date.now()),
+        appFirstStartDate: dataOfUser?.appFirstStartDate ?? new Date(Date.now()),
         numberOfAppStarts: (dataOfUser?.numberOfAppStarts ?? 0) + 1,
       });
     });

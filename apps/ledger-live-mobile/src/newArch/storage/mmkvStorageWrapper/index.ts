@@ -5,7 +5,6 @@ import { CONFIG_PARAMS } from "./constants";
 /** Singleton instance of MMKV storage */
 const mmkv = new MMKV({
   id: CONFIG_PARAMS.ID,
-  mode: CONFIG_PARAMS.MODE,
 });
 
 /** MMKV storage wrapper */
@@ -39,6 +38,17 @@ const storageWrapper = {
   },
 
   /**
+   * Get one value from MMKV
+   *
+   * @param key A
+   * the key
+   */
+  getString(key: string): string | null {
+    const value = mmkv.getString(key);
+    return value ?? null;
+  },
+
+  /**
    * Save a key value pair or a series of key value pairs to MMKV.
    *
    * @param key
@@ -59,6 +69,19 @@ const storageWrapper = {
         }
       }
     }
+  },
+
+  /**
+   * Save a key value pair to MMKV.
+   *
+   * @param key
+   * The key
+   *
+   * @param value
+   * The value to save
+   */
+  saveString(key: string, value: string) {
+    mmkv.set(key, value);
   },
 
   /**

@@ -226,7 +226,7 @@ const useNpsRatings = () => {
     getRatingsDataOfUserFromStorage().then(ratingsDataOfUser => {
       updateRatingsDataOfUserInStateAndStore({
         ...ratingsDataOfUser,
-        appFirstStartDate: ratingsDataOfUser?.appFirstStartDate || new Date(Date.now()),
+        appFirstStartDate: ratingsDataOfUser?.appFirstStartDate ?? new Date(Date.now()),
         numberOfAppStarts: (ratingsDataOfUser?.numberOfAppStarts ?? 0) + 1,
         numberOfAppStartsSinceLastCrash:
           (ratingsDataOfUser?.numberOfAppStartsSinceLastCrash ?? 0) + 1,

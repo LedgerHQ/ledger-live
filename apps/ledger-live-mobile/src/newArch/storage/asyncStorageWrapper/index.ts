@@ -169,7 +169,7 @@ function getChunks(str: string, size: number): string[] {
   let o = 0;
 
   for (; i < numChunks; ++i, o += size) {
-    chunks[i] = str.substr(o, size);
+    chunks[i] = str.substring(o, o + size);
   }
 
   return chunks;
@@ -180,24 +180,26 @@ async function getCompressedValue<T = unknown>(
   value?: string | null,
 ): Promise<T | undefined> {
   try {
-    if (value && value.includes(CHUNKED_KEY)) {
-      const numberOfChunk = Number(value.replace(CHUNKED_KEY, ""));
-      const keys = [];
+    if (value) {
+      if (value.includes(CHUNKED_KEY)) {
+        const numberOfChunk = Number(value.replace(CHUNKED_KEY, ""));
+        const keys = [];
 
-      for (let i = 0; i < numberOfChunk; i++) {
-        keys.push(key + CHUNKED_KEY + i);
+        for (let i = 0; i < numberOfChunk; i++) {
+          keys.push(key + CHUNKED_KEY + i);
+        }
+
+        let values: KeyValuePair[] = [];
+
+        // multiget will failed when you got keys with a tons of data
+        // it crash with 13 CHUNKS of 1MB string so we had splice it.
+        while (keys.length) {
+          values = [...values, ...(await AsyncStorage.multiGet(keys.splice(0, 5)))];
+        }
+
+        const concatString = values.reduce((acc, current) => acc + current[1], "");
+        return JSON.parse(concatString);
       }
-
-      let values: KeyValuePair[] = [];
-
-      // multiget will failed when you got keys with a tons of data
-      // it crash with 13 CHUNKS of 1MB string so we had splice it.
-      while (keys.length) {
-        values = [...values, ...(await AsyncStorage.multiGet(keys.splice(0, 5)))];
-      }
-
-      const concatString = values.reduce((acc, current) => acc + current[1], "");
-      return JSON.parse(concatString);
     }
 
     return value && JSON.parse(value);

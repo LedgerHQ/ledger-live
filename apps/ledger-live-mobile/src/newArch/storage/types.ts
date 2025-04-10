@@ -77,13 +77,13 @@ export interface Storage {
   push<T = unknown>(key: string, value: T): Promise<void>;
 
   /** Migrate the current application storage engine from AsyncStorage to MMKV. */
-  migrate(): Promise<void>;
+  migrate(): Promise<void> | void;
 
   /** Fully reset the migration state to be able migrate again. */
-  resetMigration(): Promise<void>;
+  resetMigration(): Promise<void> | void;
 
   /** Rollback the migration to AsyncStorage. */
-  rollbackMigration(): Promise<void>;
+  rollbackMigration(): Promise<void> | void;
 }
 
 /** Internal state of the {@link Storage}. */
