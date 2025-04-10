@@ -4423,6 +4423,8 @@
       "catalogUrlDesc": "Enter your custom catalog provider URL",
       "enablePlatformDevTools": "Enable platform dev tools",
       "enablePlatformDevToolsDesc": "Enable opening platform apps dev tools window",
+      "enablePlatformDeviceSwitch": "Enable platform device switch",
+      "enablePlatformDeviceSwitchDesc": "Enable toggle allowing to switch between mobile and desktop view",
       "customLockScreen": "Custom lock-screen assets",
       "customLockScreenDesc": "Debug custom lock-screen graphical assets",
       "customLockScreenCTA": "Launch",
