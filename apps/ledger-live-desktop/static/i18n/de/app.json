@@ -1779,7 +1779,7 @@
     },
     "fullNodeReadyInfo" : "Die Konten werden über Ihren Bitcoin-Knoten (Full Node) hinzugefügt.",
     "fullNodeConfigure" : "Knoten konfigurieren",
-    "tokensTip" : "{{token}} ({{ticker}}) ist ein {{tokenType}}-Token. Du kannst Token direkt auf einem {{currency}}-Konto empfangen.",
+    "tokensTip" : "{{token}} ({{ticker}}) ist ein {{tokenType}}-Token.\n Du kannst Token auf einem {{currency}}-Konto direkt empfangen.",
     "accountToImportSubtitle_plural" : "Bestehende Konten hinzufügen",
     "selectAll" : "Alle auswählen ({{count}})",
     "unselectAll" : "Alle abwählen ({{count}})",
@@ -2423,8 +2423,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "Du verwendest Tag/Memo nicht?",
-        "description" : "Deine Vermögenswerte gehen verloren, wenn du beim Senden an eine zentralisierte Börse oder eine verwahrende Geldbörse kein Tag/Memo hinzufügst.",
+        "title" : "Brauchst du ein Tag/Memo?",
+        "description" : "Wenn du beim Senden von Assets an eine zentralisierte Börse kein Tag/Memo hinzufügst, erhöht sich die Wahrscheinlichkeit, dass deine Assets verloren gehen.",
         "cta.addTag" : "Tag hinzufügen",
         "cta.not.addTag" : "Kein Tag hinzufügen",
         "checkbox.label" : "Nicht erneut anzeigen."
