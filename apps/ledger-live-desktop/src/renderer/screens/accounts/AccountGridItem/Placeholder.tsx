@@ -7,7 +7,7 @@ import Image from "~/renderer/components/Image";
 import lightEmptyAccountTile from "~/renderer/images/light-empty-account-tile.svg";
 import darkEmptyAccountTile from "~/renderer/images/dark-empty-account-tile.svg";
 import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
-import { ModularLocation } from "LLD/features/ModularDrawer/enums";
+import { ModularDrawerLocation } from "LLD/features/ModularDrawer/enums";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 4,
@@ -20,7 +20,7 @@ const Wrapper = styled(Box).attrs(() => ({
 `;
 const Placeholder = () => {
   const { t } = useTranslation();
-  const { openAssetFlow } = useOpenAssetFlow(ModularLocation.ADD_ACCOUNT);
+  const { openAssetFlow } = useOpenAssetFlow(ModularDrawerLocation.ADD_ACCOUNT);
   return (
     <Box mb={5}>
       <Wrapper data-e2e="dashboard_AccountPlaceOrder">

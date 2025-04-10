@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { ModularLocation } from "LLD/features/ModularDrawer/enums";
+import { ModularDrawerLocation } from "LLD/features/ModularDrawer/enums";
 import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
 import Box from "~/renderer/components/Box";
 import IconPlus from "~/renderer/icons/Plus";
@@ -27,7 +27,7 @@ const AddAccountButton = styled(Box)`
 `;
 const Placeholder = () => {
   const { t } = useTranslation();
-  const { openAssetFlow } = useOpenAssetFlow(ModularLocation.ADD_ACCOUNT);
+  const { openAssetFlow } = useOpenAssetFlow(ModularDrawerLocation.ADD_ACCOUNT);
   return (
     <Box mb={5}>
       <AddAccountButton onClick={openAssetFlow} pb={6}>

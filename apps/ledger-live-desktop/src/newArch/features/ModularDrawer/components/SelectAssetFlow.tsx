@@ -7,9 +7,8 @@ import Fuse from "fuse.js";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import Text from "~/renderer/components/Text";
 import { CurrencyList } from "~/renderer/drawers/DataSelector/CurrencyList";
+import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 import { getEnv } from "@ledgerhq/live-env";
-import { openModal } from "~/renderer/actions/modals";
-import { useDispatch } from "react-redux";
 
 const options = {
   includeScore: false,
@@ -22,44 +21,23 @@ function fuzzySearch(currencies: Currency[], searchValue: string): Currency[] {
   const fuse = new Fuse(currencies, options);
   return fuse.search(searchValue).map(res => res.item);
 }
-const SelectAccountAndCurrencyDrawerContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  overflow-y: hidden;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-`;
-const SelectorContent = styled.div`
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-`;
-const HeaderContainer = styled.div`
-  padding: 40px 0px 32px 0px;
-  flex: 0 1 auto;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
+
 export type SelectAccountAndCurrencyDrawerProps = {
-  currencies: CryptoOrTokenCurrency[];
   assetIds?: string[];
+  includeTokens?: boolean;
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
 };
-const SearchInputContainer = styled.div`
-  padding: 0px 40px 16px 40px;
-  flex: 0 1 auto;
-`;
 
-function SelectCurrencyDrawer(props: SelectAccountAndCurrencyDrawerProps) {
-  const { currencies, onAssetSelected, assetIds } = props;
-  const dispatch = useDispatch();
+function SelectAssetFlow(props: SelectAccountAndCurrencyDrawerProps) {
+  const { onAssetSelected, assetIds, includeTokens } = props;
+
   const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState<string>("");
+
+  const currencies = listAndFilterCurrencies({
+    currencies: assetIds,
+    includeTokens,
+  });
 
   // sorting them by marketcap
   const sortedCurrencies = useCurrenciesByMarketcap(currencies);
@@ -69,22 +47,15 @@ function SelectCurrencyDrawer(props: SelectAccountAndCurrencyDrawerProps) {
     if (searchValue.length < 2) {
       return sortedCurrencies;
     }
-    if (assetIds) {
-      return sortedCurrencies.filter(c => assetIds.includes(c.id));
-    }
+
     return fuzzySearch(sortedCurrencies, searchValue);
-  }, [assetIds, searchValue, sortedCurrencies]);
+  }, [searchValue, sortedCurrencies]);
 
   const handleCurrencySelected = useCallback(
     (currency: CryptoOrTokenCurrency) => {
       onAssetSelected(currency);
-      dispatch(
-        openModal("MODAL_ADD_ACCOUNTS", {
-          currency,
-        }),
-      );
     },
-    [onAssetSelected, dispatch],
+    [onAssetSelected],
   );
 
   return (
@@ -116,6 +87,35 @@ function SelectCurrencyDrawer(props: SelectAccountAndCurrencyDrawerProps) {
     </SelectAccountAndCurrencyDrawerContainer>
   );
 }
-const MemoizedSelectCurrencyDrawer = memo(SelectCurrencyDrawer);
+const MemoizedSelectAssetFlow = memo(SelectAssetFlow);
 
-export default MemoizedSelectCurrencyDrawer;
+export default MemoizedSelectAssetFlow;
+
+const SelectAccountAndCurrencyDrawerContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+`;
+const SelectorContent = styled.div`
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+`;
+const HeaderContainer = styled.div`
+  padding: 40px 0px 32px 0px;
+  flex: 0 1 auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const SearchInputContainer = styled.div`
+  padding: 0px 40px 16px 40px;
+  flex: 0 1 auto;
+`;

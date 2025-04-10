@@ -1,67 +1,72 @@
 import { useOpenAssetFlow } from "../useOpenAssetFlow";
-import { ModularLocation } from "../../enums";
-import { useModularDrawerVisibility } from "../useModularDrawerVisibility";
+import { ModularDrawerLocation } from "../../enums";
+import { renderHook } from "tests/testSetup";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import SelectAssetFlow from "../../components/SelectAssetFlow";
 
-import { selectCurrency } from "../../utils/selectCurrency";
-import { Wrapper } from "./shared";
-import { useDispatch } from "react-redux";
-import { renderHook } from "@testing-library/react";
-
-jest.mock("react-redux", () => ({
-  useDispatch: jest.fn(),
+jest.mock("~/renderer/drawers/Provider", () => ({
+  setDrawer: jest.fn(),
 }));
-jest.mock("../useModularDrawerVisibility", () => ({
-  useModularDrawerVisibility: jest.fn(),
-}));
-jest.mock("../../utils/selectCurrency", () => ({
-  selectCurrency: jest.fn(),
-}));
-
-const mockDispatch = jest.fn();
-(useDispatch as jest.Mock).mockReturnValue(mockDispatch);
-
-const mockIsModularDrawerVisible = jest.fn();
-(useModularDrawerVisibility as jest.Mock).mockReturnValue({
-  isModularDrawerVisible: mockIsModularDrawerVisible,
-});
-
-const mockSelectCurrency = jest.fn();
-(selectCurrency as jest.Mock).mockImplementation(mockSelectCurrency);
 
 describe("useOpenAssetFlow", () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  const modularLocation = ModularLocation.ADD_ACCOUNT;
-  it("should call selectCurrency if the modular drawer is visible", async () => {
-    mockIsModularDrawerVisible.mockReturnValue(true);
 
-    const { result } = renderHook(() => useOpenAssetFlow(modularLocation), {
-      wrapper: Wrapper,
-    });
-
-    await result.current.openAssetFlow();
-
-    expect(mockIsModularDrawerVisible).toHaveBeenCalledWith(modularLocation);
-    expect(mockSelectCurrency).toHaveBeenCalled();
-  });
+  const modularDrawerLocation = ModularDrawerLocation.ADD_ACCOUNT;
 
   it("should dispatch openModal if the modular drawer is not visible", async () => {
-    mockIsModularDrawerVisible.mockReturnValue(false);
-
-    const { result } = renderHook(() => useOpenAssetFlow(modularLocation), {
-      wrapper: Wrapper,
-    });
-
-    await result.current.openAssetFlow();
-
-    expect(mockIsModularDrawerVisible).toHaveBeenCalledWith(modularLocation);
-    expect(mockDispatch).toHaveBeenCalledWith({
-      type: "MODAL_OPEN",
-      payload: {
-        name: "MODAL_ADD_ACCOUNTS",
-        data: undefined,
+    const { result, store } = renderHook(() => useOpenAssetFlow(modularDrawerLocation), {
+      initialState: {
+        settings: {
+          overriddenFeatureFlags: {
+            lldModularDrawer: {
+              enabled: false,
+            },
+          },
+        },
       },
     });
+
+    result.current.openAssetFlow();
+
+    expect(store.getState().modals.MODAL_ADD_ACCOUNTS).toEqual({
+      isOpened: true,
+      data: undefined,
+    });
+    expect(setDrawer).not.toHaveBeenCalled();
+  });
+
+  it("should dispatch setDrawer if the modular drawer is visible", () => {
+    const { result } = renderHook(() => useOpenAssetFlow(modularDrawerLocation), {
+      initialState: {
+        settings: {
+          overriddenFeatureFlags: {
+            lldModularDrawer: {
+              enabled: true,
+              params: {
+                [ModularDrawerLocation.ADD_ACCOUNT]: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const onAssetSelected = jest.fn();
+    (setDrawer as jest.Mock).mockImplementation(_ => {
+      onAssetSelected;
+    });
+    result.current.openAssetFlow();
+    expect(setDrawer).toHaveBeenCalledTimes(1);
+    expect(setDrawer).toHaveBeenLastCalledWith(
+      SelectAssetFlow,
+      {
+        onAssetSelected: expect.any(Function),
+      },
+      {
+        onRequestClose: expect.any(Function),
+      },
+    );
   });
 });

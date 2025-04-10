@@ -7,11 +7,11 @@ import OptionsButton from "./OptionsButton";
 import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
-import { ModularLocation } from "LLD/features/ModularDrawer/enums";
+import { ModularDrawerLocation } from "LLD/features/ModularDrawer/enums";
 
 const AccountsHeader = () => {
   const { t } = useTranslation();
-  const { openAssetFlow } = useOpenAssetFlow(ModularLocation.ADD_ACCOUNT);
+  const { openAssetFlow } = useOpenAssetFlow(ModularDrawerLocation.ADD_ACCOUNT);
   return (
     <Box
       horizontal

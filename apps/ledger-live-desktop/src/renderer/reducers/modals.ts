@@ -3,8 +3,6 @@ import { State } from "~/renderer/reducers";
 import { ModalData } from "~/renderer/modals/types";
 import { Handlers } from "./types";
 
-export const INITIAL_STATE: ModalsState = {};
-
 export type ModalsState = {
   [Name in keyof ModalData]?:
     | {

@@ -1,6 +1,6 @@
 import { renderHook } from "tests/testSetup";
 import { useModularDrawerVisibility } from "../useModularDrawerVisibility";
-import { ModularLocation } from "../../enums";
+import { ModularDrawerLocation } from "../../enums";
 
 describe("useModularDrawerVisibility", () => {
   it("should return false if the feature flag is disabled", () => {
@@ -11,14 +11,14 @@ describe("useModularDrawerVisibility", () => {
             lldModularDrawer: {
               enabled: false,
               params: {
-                [ModularLocation.ADD_ACCOUNT]: true,
+                [ModularDrawerLocation.ADD_ACCOUNT]: true,
               },
             },
           },
         },
       },
     });
-    expect(result.current.isModularDrawerVisible(ModularLocation.ADD_ACCOUNT)).toBe(false);
+    expect(result.current.isModularDrawerVisible(ModularDrawerLocation.ADD_ACCOUNT)).toBe(false);
   });
 
   it("should return the correct visibility only if the feature flag is enabled", () => {
@@ -29,17 +29,17 @@ describe("useModularDrawerVisibility", () => {
             lldModularDrawer: {
               enabled: true,
               params: {
-                [ModularLocation.ADD_ACCOUNT]: true,
-                [ModularLocation.SEND_FLOW]: false,
+                [ModularDrawerLocation.ADD_ACCOUNT]: true,
+                [ModularDrawerLocation.SEND_FLOW]: false,
               },
             },
           },
         },
       },
     });
-    expect(result.current.isModularDrawerVisible(ModularLocation.ADD_ACCOUNT)).toBe(true);
-    expect(result.current.isModularDrawerVisible(ModularLocation.SEND_FLOW)).toBe(false);
-    expect(result.current.isModularDrawerVisible(ModularLocation.RECEIVE_FLOW)).toBe(false);
+    expect(result.current.isModularDrawerVisible(ModularDrawerLocation.ADD_ACCOUNT)).toBe(true);
+    expect(result.current.isModularDrawerVisible(ModularDrawerLocation.SEND_FLOW)).toBe(false);
+    expect(result.current.isModularDrawerVisible(ModularDrawerLocation.RECEIVE_FLOW)).toBe(false);
   });
 
   it("should handle missing params gracefully", () => {
@@ -55,11 +55,11 @@ describe("useModularDrawerVisibility", () => {
         },
       },
     });
-    expect(result.current.isModularDrawerVisible(ModularLocation.ADD_ACCOUNT)).toBe(false);
-    expect(result.current.isModularDrawerVisible(ModularLocation.EARN_FLOW)).toBe(false);
+    expect(result.current.isModularDrawerVisible(ModularDrawerLocation.ADD_ACCOUNT)).toBe(false);
+    expect(result.current.isModularDrawerVisible(ModularDrawerLocation.EARN_FLOW)).toBe(false);
   });
 
-  it("should return false for all ModularLocations if the feature flag is disabled", () => {
+  it("should return false for all ModularDrawerLocations if the feature flag is disabled", () => {
     const { result } = renderHook(() => useModularDrawerVisibility(), {
       initialState: {
         settings: {
@@ -67,23 +67,23 @@ describe("useModularDrawerVisibility", () => {
             lldModularDrawer: {
               enabled: false,
               params: {
-                [ModularLocation.ADD_ACCOUNT]: true,
-                [ModularLocation.EARN_FLOW]: true,
-                [ModularLocation.LIVE_APP]: true,
-                [ModularLocation.RECEIVE_FLOW]: true,
-                [ModularLocation.SEND_FLOW]: true,
+                [ModularDrawerLocation.ADD_ACCOUNT]: true,
+                [ModularDrawerLocation.EARN_FLOW]: true,
+                [ModularDrawerLocation.LIVE_APP]: true,
+                [ModularDrawerLocation.RECEIVE_FLOW]: true,
+                [ModularDrawerLocation.SEND_FLOW]: true,
               },
             },
           },
         },
       },
     });
-    Object.values(ModularLocation).forEach(ModularLocation => {
-      expect(result.current.isModularDrawerVisible(ModularLocation)).toBe(false);
+    Object.values(ModularDrawerLocation).forEach(ModularDrawerLocation => {
+      expect(result.current.isModularDrawerVisible(ModularDrawerLocation)).toBe(false);
     });
   });
 
-  it("should return false if all ModularLocations are enabled & main feature isn't", () => {
+  it("should return false if all ModularDrawerLocations are enabled & main feature isn't", () => {
     const { result } = renderHook(() => useModularDrawerVisibility(), {
       initialState: {
         settings: {
@@ -91,23 +91,23 @@ describe("useModularDrawerVisibility", () => {
             lldModularDrawer: {
               enabled: false,
               params: {
-                [ModularLocation.ADD_ACCOUNT]: true,
-                [ModularLocation.EARN_FLOW]: true,
-                [ModularLocation.LIVE_APP]: true,
-                [ModularLocation.RECEIVE_FLOW]: true,
-                [ModularLocation.SEND_FLOW]: true,
+                [ModularDrawerLocation.ADD_ACCOUNT]: true,
+                [ModularDrawerLocation.EARN_FLOW]: true,
+                [ModularDrawerLocation.LIVE_APP]: true,
+                [ModularDrawerLocation.RECEIVE_FLOW]: true,
+                [ModularDrawerLocation.SEND_FLOW]: true,
               },
             },
           },
         },
       },
     });
-    Object.values(ModularLocation).forEach(ModularLocation => {
-      expect(result.current.isModularDrawerVisible(ModularLocation)).toBe(false);
+    Object.values(ModularDrawerLocation).forEach(ModularDrawerLocation => {
+      expect(result.current.isModularDrawerVisible(ModularDrawerLocation)).toBe(false);
     });
   });
 
-  it("should return true if all ModularLocations are enabled & main feature also", () => {
+  it("should return true if all ModularDrawerLocations are enabled & main feature also", () => {
     const { result } = renderHook(() => useModularDrawerVisibility(), {
       initialState: {
         settings: {
@@ -115,19 +115,19 @@ describe("useModularDrawerVisibility", () => {
             lldModularDrawer: {
               enabled: true,
               params: {
-                [ModularLocation.ADD_ACCOUNT]: true,
-                [ModularLocation.EARN_FLOW]: true,
-                [ModularLocation.LIVE_APP]: true,
-                [ModularLocation.RECEIVE_FLOW]: true,
-                [ModularLocation.SEND_FLOW]: true,
+                [ModularDrawerLocation.ADD_ACCOUNT]: true,
+                [ModularDrawerLocation.EARN_FLOW]: true,
+                [ModularDrawerLocation.LIVE_APP]: true,
+                [ModularDrawerLocation.RECEIVE_FLOW]: true,
+                [ModularDrawerLocation.SEND_FLOW]: true,
               },
             },
           },
         },
       },
     });
-    Object.values(ModularLocation).forEach(ModularLocation => {
-      expect(result.current.isModularDrawerVisible(ModularLocation)).toBe(true);
+    Object.values(ModularDrawerLocation).forEach(ModularDrawerLocation => {
+      expect(result.current.isModularDrawerVisible(ModularDrawerLocation)).toBe(true);
     });
   });
 });

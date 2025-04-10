@@ -12,7 +12,7 @@ import FakeLink from "~/renderer/components/FakeLink";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
 import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
-import { ModularLocation } from "LLD/features/ModularDrawer/enums";
+import { ModularDrawerLocation } from "LLD/features/ModularDrawer/enums";
 const EmptyStateAccounts = ({ theme }: { theme: DefaultTheme }) => {
   const { push } = useHistory();
   const { t } = useTranslation();
@@ -22,7 +22,7 @@ const EmptyStateAccounts = ({ theme }: { theme: DefaultTheme }) => {
   const handleInstallApp = useCallback(() => {
     push("/manager");
   }, [push]);
-  const { openAssetFlow } = useOpenAssetFlow(ModularLocation.ADD_ACCOUNT);
+  const { openAssetFlow } = useOpenAssetFlow(ModularDrawerLocation.ADD_ACCOUNT);
   return (
     <Box
       alignItems="center"
