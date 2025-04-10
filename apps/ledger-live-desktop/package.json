@@ -152,7 +152,7 @@
     "tippy.js": "6.3.7",
     "tree-kill": "1.2.2",
     "uncontrollable": "7.2.1",
-    "undici": "6.19.2",
+    "undici": "6.21.1",
     "uuid": "9.0.1",
     "winston": "3.13.0",
     "winston-transport": "4.7.0",
