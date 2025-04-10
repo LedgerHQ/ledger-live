@@ -3,6 +3,8 @@ on:
   merge_group:
     types: [checks_requested]
   pull_request:
+    branches-ignore:
+        - 'smartling-content-updated*'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
