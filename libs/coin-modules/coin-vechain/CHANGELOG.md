@@ -1,5 +1,12 @@
 # @ledgerhq/coin-evm
 
+## 2.6.1-nightly.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@2.6.0-nightly.4
+
 ## 2.6.1-nightly.3
 
 ### Patch Changes

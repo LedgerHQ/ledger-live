@@ -1,5 +1,46 @@
 ## 34.25.0
 
+## 34.29.0-nightly.5
+
+### Minor Changes
+
+- [#9853](https://github.com/LedgerHQ/ledger-live/pull/9853) [`4c6b682`](https://github.com/LedgerHQ/ledger-live/commit/4c6b682b9929334a7be13212a69f2c6a614f372c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add ModularDrawer Feature Flag & Hook
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@2.6.0-nightly.4
+  - @ledgerhq/coin-algorand@0.9.0-nightly.4
+  - @ledgerhq/coin-aptos@2.0.0-nightly.4
+  - @ledgerhq/coin-bitcoin@0.15.0-nightly.4
+  - @ledgerhq/coin-cardano@0.7.1-nightly.4
+  - @ledgerhq/coin-casper@1.5.3-nightly.4
+  - @ledgerhq/coin-cosmos@0.12.0-nightly.5
+  - @ledgerhq/coin-evm@2.16.0-nightly.4
+  - @ledgerhq/coin-filecoin@1.8.1-nightly.4
+  - @ledgerhq/coin-hedera@1.5.1-nightly.4
+  - @ledgerhq/coin-icon@0.9.1-nightly.4
+  - @ledgerhq/coin-internet_computer@1.6.1-nightly.4
+  - @ledgerhq/coin-multiversx@0.4.0-nightly.4
+  - @ledgerhq/coin-near@0.10.1-nightly.4
+  - @ledgerhq/coin-polkadot@3.2.0-nightly.4
+  - @ledgerhq/coin-solana@0.18.0-nightly.4
+  - @ledgerhq/coin-stacks@0.7.1-nightly.4
+  - @ledgerhq/coin-stellar@2.2.0-nightly.4
+  - @ledgerhq/coin-sui@0.2.1-nightly.4
+  - @ledgerhq/coin-tezos@2.2.0-nightly.4
+  - @ledgerhq/coin-ton@0.7.1-nightly.4
+  - @ledgerhq/coin-tron@0.8.0-nightly.4
+  - @ledgerhq/coin-vechain@2.6.1-nightly.4
+  - @ledgerhq/coin-xrp@3.2.0-nightly.4
+  - @ledgerhq/device-core@0.4.20-nightly.3
+  - @ledgerhq/hw-app-eth@6.44.1-nightly.3
+  - @ledgerhq/live-countervalues@0.4.7-nightly.4
+  - @ledgerhq/live-countervalues-react@0.2.29-nightly.4
+  - @ledgerhq/live-nft@0.7.1-nightly.4
+  - @ledgerhq/live-signer-evm@0.2.3-nightly.4
+  - @ledgerhq/live-wallet@0.10.3-nightly.4
+
 ## 34.29.0-nightly.4
 
 ### Minor Changes

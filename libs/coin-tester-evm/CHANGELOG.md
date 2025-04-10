@@ -1,5 +1,16 @@
 # @ledgerhq/coin-tester-evm
 
+## 1.1.0-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`4c6b682`](https://github.com/LedgerHQ/ledger-live/commit/4c6b682b9929334a7be13212a69f2c6a614f372c)]:
+  - @ledgerhq/types-live@6.66.0-nightly.3
+  - @ledgerhq/coin-framework@2.6.0-nightly.4
+  - @ledgerhq/coin-evm@2.16.0-nightly.4
+  - @ledgerhq/coin-tester@0.5.0-nightly.1
+  - @ledgerhq/live-signer-evm@0.2.3-nightly.4
+
 ## 1.1.0-nightly.2
 
 ### Patch Changes

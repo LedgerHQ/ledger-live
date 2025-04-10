@@ -1,5 +1,33 @@
 # live-mobile
 
+## 3.73.0-nightly.5
+
+### Minor Changes
+
+- [#9868](https://github.com/LedgerHQ/ledger-live/pull/9868) [`f6233a4`](https://github.com/LedgerHQ/ledger-live/commit/f6233a48bc8a2d5633b131479aa977f7bef6d38d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - IOS Splashscreen fix
+
+- [#9857](https://github.com/LedgerHQ/ledger-live/pull/9857) [`e28e69e`](https://github.com/LedgerHQ/ledger-live/commit/e28e69e0afd870067924eee6ae723e36f0b39b64) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fix Account and Asset Header height
+
+### Patch Changes
+
+- [#9860](https://github.com/LedgerHQ/ledger-live/pull/9860) [`df7deb7`](https://github.com/LedgerHQ/ledger-live/commit/df7deb704e9884a8023c59632991e4ee3eb600e9) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add missing device interaction tracking
+
+- Updated dependencies [[`4c6b682`](https://github.com/LedgerHQ/ledger-live/commit/4c6b682b9929334a7be13212a69f2c6a614f372c)]:
+  - @ledgerhq/types-live@6.66.0-nightly.3
+  - @ledgerhq/coin-framework@2.6.0-nightly.4
+  - @ledgerhq/coin-cosmos@0.12.0-nightly.5
+  - @ledgerhq/coin-evm@2.16.0-nightly.4
+  - @ledgerhq/coin-filecoin@1.8.1-nightly.4
+  - @ledgerhq/coin-multiversx@0.4.0-nightly.4
+  - @ledgerhq/coin-stacks@0.7.1-nightly.4
+  - @ledgerhq/domain-service@1.2.25-nightly.3
+  - @ledgerhq/live-countervalues@0.4.7-nightly.4
+  - @ledgerhq/live-countervalues-react@0.2.29-nightly.4
+  - @ledgerhq/live-nft@0.7.1-nightly.4
+  - @ledgerhq/live-nft-react@0.8.1-nightly.4
+  - @ledgerhq/live-wallet@0.10.3-nightly.4
+  - @ledgerhq/live-dmk-mobile@0.2.0-nightly.5
+
 ## 3.73.0-nightly.4
 
 ### Minor Changes

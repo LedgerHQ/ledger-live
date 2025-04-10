@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.66.0-nightly.3
+
+### Minor Changes
+
+- [#9853](https://github.com/LedgerHQ/ledger-live/pull/9853) [`4c6b682`](https://github.com/LedgerHQ/ledger-live/commit/4c6b682b9929334a7be13212a69f2c6a614f372c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add ModularDrawer Feature Flag & Hook
+
 ## 6.66.0-nightly.2
 
 ### Minor Changes

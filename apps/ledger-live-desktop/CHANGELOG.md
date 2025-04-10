@@ -1,5 +1,32 @@
 # ledger-live-desktop
 
+## 2.107.0-nightly.5
+
+### Minor Changes
+
+- [#9853](https://github.com/LedgerHQ/ledger-live/pull/9853) [`4c6b682`](https://github.com/LedgerHQ/ledger-live/commit/4c6b682b9929334a7be13212a69f2c6a614f372c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add ModularDrawer Feature Flag & Hook
+
+### Patch Changes
+
+- [#9860](https://github.com/LedgerHQ/ledger-live/pull/9860) [`df7deb7`](https://github.com/LedgerHQ/ledger-live/commit/df7deb704e9884a8023c59632991e4ee3eb600e9) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add missing device interaction tracking
+
+- Updated dependencies [[`4c6b682`](https://github.com/LedgerHQ/ledger-live/commit/4c6b682b9929334a7be13212a69f2c6a614f372c)]:
+  - @ledgerhq/types-live@6.66.0-nightly.3
+  - @ledgerhq/live-common@34.29.0-nightly.5
+  - @ledgerhq/coin-framework@2.6.0-nightly.4
+  - @ledgerhq/coin-aptos@2.0.0-nightly.4
+  - @ledgerhq/coin-bitcoin@0.15.0-nightly.4
+  - @ledgerhq/coin-cosmos@0.12.0-nightly.5
+  - @ledgerhq/coin-evm@2.16.0-nightly.4
+  - @ledgerhq/coin-filecoin@1.8.1-nightly.4
+  - @ledgerhq/domain-service@1.2.25-nightly.3
+  - @ledgerhq/live-countervalues@0.4.7-nightly.4
+  - @ledgerhq/live-countervalues-react@0.2.29-nightly.4
+  - @ledgerhq/live-nft@0.7.1-nightly.4
+  - @ledgerhq/live-nft-react@0.8.1-nightly.4
+  - @ledgerhq/live-wallet@0.10.3-nightly.4
+  - @ledgerhq/live-dmk-desktop@0.2.0-nightly.5
+
 ## 2.107.0-nightly.4
 
 ### Minor Changes
