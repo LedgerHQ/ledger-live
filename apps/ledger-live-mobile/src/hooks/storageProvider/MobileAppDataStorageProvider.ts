@@ -20,11 +20,11 @@ export class MobileAppDataStorageProvider implements AppDataStorageProvider<AppS
    * @throws {BackupAppDataError} If the data cannot be parsed or has an invalid data type.
    */
   async getItem(key: AppStorageKey): Promise<AppStorageType | null> {
-    const data = await storage.get(key);
-    if (data == null || Array.isArray(data)) {
-      return null;
-    }
     try {
+      const data = await storage.get(key);
+      if (data == null || Array.isArray(data)) {
+        return null;
+      }
       if (isAppStorageType(data)) {
         return data;
       }
