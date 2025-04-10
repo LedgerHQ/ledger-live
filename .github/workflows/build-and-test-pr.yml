@@ -16,6 +16,7 @@ permissions:
 
 jobs:
   pre_job:
+    if: github.event.pull_request.draft == false
     # continue-on-error: true # Uncomment once integration is finished
     runs-on: ubuntu-latest
     outputs:
