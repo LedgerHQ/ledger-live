@@ -100,7 +100,8 @@
       "times" : "x{{ value }}"
     },
     "quote" : "Preis",
-    "tryAgain" : "Wiederholen"
+    "tryAgain" : "Wiederholen",
+    "ldmkEnabled" : "LDMK-Transport aktiviert"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -4050,7 +4051,9 @@
       "desc" : "Sind Sie sicher, dass Sie das Hinzufügen von Konten abbrechen möchten?",
       "v2" : {
         "title" : "Hinzufügen des Kontos abbrechen?",
-        "desc" : "Es wird dann kein Konto in Ledger Live hinzugefügt."
+        "desc" : "Es wird dann kein Konto in Ledger Live hinzugefügt.",
+        "continue" : "Hinzufügen fortsetzen",
+        "cancel" : "Abbrechen"
       }
     },
     "imported" : "Vermögenswert erfolgreich hinzugefügt",
@@ -4088,7 +4091,7 @@
       "title" : "Token hinzufügen",
       "createParentCurrencyAccount" : "Konto {{parrentCurrencyName}} hinzufügen",
       "generic" : {
-        "disclaimer" : "{{token}} ({{ticker}}) ist ein {{tokenType}}-Token. Du kannst Token direkt auf einem {{currency}}-Konto empfangen.",
+        "disclaimer" : "{{token}} ({{ticker}}) ist ein {{tokenType}}-Token.\nDu kannst Token auf einem {{currency}}-Konto direkt empfangen.",
         "learnMore" : "Erfahre mehr über {{tokenType}}"
       }
     },
