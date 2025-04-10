@@ -6617,14 +6617,12 @@
     "range": {
       "1h": "1H",
       "24h": "24H",
+      "1d": "1D",
       "7d": "7D",
+      "1w": "1W",
       "30d": "30D",
-      "1y": "1Y",
-      "1H_label" : "1H",
-      "1D_label" : "1D",
-      "1W_label" : "1W",
-      "1M_label" : "1M",
-      "1Y_label" : "1Y"
+      "1m": "1M",
+      "1y": "1Y"
     },
     "warnings": {
       "connectionError": "Connection Error",
@@ -7357,5 +7355,10 @@
       "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements. For long-term use, upgrade to a newer Ledger device.",
       "cta": "Learn more"
     }
+  },
+  "largeMover": {
+    "performance": "Performance",
+    "low": "Low",
+    "high": "High"
   }
 }
