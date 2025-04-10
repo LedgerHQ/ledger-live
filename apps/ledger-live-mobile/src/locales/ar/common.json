@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "إلغاء",
+    "copy" : "نسخ",
+    "copied" : "تم النسخ",
     "apply" : "تقديم",
     "seeAll" : "رؤية الكل",
     "seeAllWithNumber" : "رؤية الكل ({{number}})",
@@ -100,7 +102,8 @@
       "times" : "x{{ value }}"
     },
     "quote" : "عرض أسعار",
-    "tryAgain" : "إعادة المحاولة"
+    "tryAgain" : "إعادة المحاولة",
+    "ldmkEnabled" : "تم تمكين نقل LDMK"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -1060,6 +1063,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "فشل تحميل تطبيق Swap Live"
+    },
+    "InvalidMemoMina" : {
+      "title" : "نص علامة الملاحظة (تسمية الوجهة) لا يمكن أن يكون أطول من 32 حرفاً"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "هذه المعاملة ستُكلّف رسوم إنشاء حساب بقيمة {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "الحد الأدنى للمبلغ المطلوب لهذه المعاملة هو {{amount}}"
     }
   },
   "crash" : {
@@ -2590,7 +2602,8 @@
       "gasLimit" : "حد الغاز",
       "id" : "المُعرّف",
       "autoClaimedRewards" : "المكافآت المطالب بها تلقائياً",
-      "stakedAmount" : "المبلغ المُكدَّس"
+      "stakedAmount" : "المبلغ المُكدَّس",
+      "accountCreationFee" : "رسوم إنشاء الحساب"
     },
     "multipleAddresses" : "لماذا عناوين متعددة؟",
     "tokenName" : "اسم رمز التوكن",
@@ -4047,7 +4060,9 @@
       "desc" : "هل أنت متأكد أنك تريد إلغاء إضافة حسابات؟",
       "v2" : {
         "title" : "إلغاء إضافة حساب؟",
-        "desc" : "لن يتم إضافة أي حساب إلى Ledger Live."
+        "desc" : "لن يتم إضافة أي حساب إلى Ledger Live.",
+        "continue" : "متابعة الإضافة",
+        "cancel" : "إلغاء"
       }
     },
     "imported" : "تمت إضافة الأصل بنجاح",
@@ -4085,7 +4100,7 @@
       "title" : "إضافة رمز توكن",
       "createParentCurrencyAccount" : "أضف حساب {{parrentCurrencyName}}",
       "generic" : {
-        "disclaimer" : "{{token}} ({{ticker}}) هو رمز {{tokenType}}.\nيمكنك تلقي رموز التوكن مباشرةً على حساب {{currency}}.",
+        "disclaimer" : "{{token}} ({{ticker}}) هو رمز {{tokenType}}.\nيمكنك تلقي رموز التوكن مباشرةً في حساب {{currency}}.",
         "learnMore" : "تعرف على المزيد عن {{tokenType}}"
       }
     },
@@ -6099,6 +6114,9 @@
         }
       }
     }
+  },
+  "mina" : {
+    "memoPlaceholder" : "ملاحظة اختيارية"
   },
   "near" : {
     "info" : {

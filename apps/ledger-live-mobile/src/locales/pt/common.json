@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "Cancelar",
+    "copy" : "Copiar",
+    "copied" : "Copiado",
     "apply" : "Aplicar",
     "seeAll" : "Ver tudo",
     "seeAllWithNumber" : "Ver todos ({{number}})",
@@ -100,7 +102,8 @@
       "times" : "x{{ value }}"
     },
     "quote" : "Cotação",
-    "tryAgain" : "Tente novamente"
+    "tryAgain" : "Tente novamente",
+    "ldmkEnabled" : "LDMK transport enabled"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -1060,6 +1063,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Falha ao carregar o aplicativo Swap Live"
+    },
+    "InvalidMemoMina" : {
+      "title" : "O texto do memo não pode ter mais de 32 caracteres"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Esta transação incorrerá em uma taxa de criação de conta de {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "A quantia mínima exigida para esta transação é {{amount}}"
     }
   },
   "crash" : {
@@ -2590,7 +2602,8 @@
       "gasLimit" : "Limite de gas",
       "id" : "Id",
       "autoClaimedRewards" : "Recompensas automaticamente resgatadas",
-      "stakedAmount" : "Quantia aplicada"
+      "stakedAmount" : "Quantia aplicada",
+      "accountCreationFee" : "Taxa de Criação de Conta"
     },
     "multipleAddresses" : "Por que múltiplos endereços?",
     "tokenName" : "Nome do token",
@@ -4047,7 +4060,9 @@
       "desc" : "Você tem certeza de que quer cancelar a adição de contas?",
       "v2" : {
         "title" : "Cancelar adição de conta?",
-        "desc" : "Nenhuma conta será adicionada ao Ledger Live."
+        "desc" : "Nenhuma conta será adicionada ao Ledger Live.",
+        "continue" : "Continuar adicionando",
+        "cancel" : "Cancelar"
       }
     },
     "imported" : "Ativos adicionados com sucesso",
@@ -6099,6 +6114,9 @@
         }
       }
     }
+  },
+  "mina" : {
+    "memoPlaceholder" : "Memo opcional"
   },
   "near" : {
     "info" : {
