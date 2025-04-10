@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import invariant from "invariant";
 import { useTranslation } from "react-i18next";
-import MemoTagField from "~/newArch/features/MemoTag/components/MemoTagField";
+import MemoTagField from "LLD/features/MemoTag/components/MemoTagField";
 import { MemoTagFieldProps } from "./types";
 
 const MemoField = ({ onChange, account, transaction, status, autoFocus }: MemoTagFieldProps) => {

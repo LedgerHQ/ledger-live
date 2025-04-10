@@ -41,8 +41,8 @@ import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { UTXOAddressAlert } from "~/renderer/components/UTXOAddressAlert";
 import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
-import MemoTagInfo from "~/newArch/features/MemoTag/components/MemoTagInfo";
-import { MEMO_TAG_COINS } from "~/newArch/features/MemoTag/constants";
+import MemoTagInfo from "LLD/features/MemoTag/components/MemoTagInfo";
+import { MEMO_TAG_COINS } from "LLD/features/MemoTag/constants";
 
 const Separator = styled.div`
   border-top: 1px solid #99999933;
