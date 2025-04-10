@@ -109,7 +109,7 @@ jobs:
           git checkout ${{ github.event.inputs.ref }}
           git checkout -b support/hotfix-merge-conflicts
           git push origin support/hotfix-merge-conflicts
-          gh pr create --title ":rotating_light: Hotfix merge conflicts" -F .github/templates/hotfix-conflicts.md --base develop --head support/hotfix-merge-conflicts
+          gh pr create --title ":rotating_light: Hotfix merge conflicts" -F .github/templates/hotfix-conflicts.md --base develop --head support/hotfix-merge-conflicts --draft
 
       - name: merge into release if present
         if: ${{ github.event.inputs.tag_version == 'latest' }}
@@ -126,7 +126,7 @@ jobs:
               git checkout ${{ github.event.inputs.ref }}
               git checkout -b support/hotfix-release-merge-conflicts
               git push origin support/hotfix-release-merge-conflicts
-              gh pr create --title ":rotating_light: Hotfix Release merge conflicts" -F .github/templates/hotfix-release-conflicts.md --base release --head support/hotfix-release-merge-conflicts
+              gh pr create --title ":rotating_light: Hotfix Release merge conflicts" -F .github/templates/hotfix-release-conflicts.md --base release --head support/hotfix-release-merge-conflicts --draft
             fi
           fi
 
