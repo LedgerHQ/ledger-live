@@ -3,5 +3,4 @@ import { LandingPageUseCase } from "~/dynamicContent/types";
 
 export type LandingPagesNavigatorParamList = {
   [ScreenName.GenericLandingPage]: { useCase: LandingPageUseCase };
-  [ScreenName.LargeMoverLandingPage]: undefined;
 };

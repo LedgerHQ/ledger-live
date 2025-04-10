@@ -2423,8 +2423,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "Não usa tag/memo?",
-        "description" : "Seus fundos serão perdidos se você não adicionar uma tag ou memo ao enviá-los para qualquer corretora centralizada ou carteira de custódia.",
+        "title" : "Need Tag/Memo?",
+        "description" : "Not adding a Tag/Memo when sending funds to a centralized exchange increases the chances of your funds getting lost.",
         "cta.addTag" : "Adicionar tag",
         "cta.not.addTag" : "Não adicione a tag",
         "checkbox.label" : "Não mostrar isso novamente."
@@ -5863,6 +5863,10 @@
     "NotEnoughBalance" : {
       "title" : "Fundos Insuficientes",
       "description" : "Certifique-se de que a conta tem fundos suficientes."
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "Fundos insuficientes para cobrir as taxas",
+      "description" : "Certifique-se de que a conta tenha fundos suficientes."
     },
     "NotEnoughBalanceSwap" : {
       "title" : "Saldo insuficiente incluindo taxas de rede. Ajuste a quantia ou verifique o saldo.",

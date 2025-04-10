@@ -1,14 +1,7 @@
 import { renderHook } from "@testing-library/react-native";
 import { useTrackReceiveFlow, UseTrackReceiveFlow } from "./useTrackReceiveFlow";
 import { track } from "../segment";
-import {
-  UserRefusedAddress,
-  UserRefusedOnDevice,
-  TransportRaceCondition,
-  LockedDeviceError,
-  CantOpenDevice,
-  TransportError,
-} from "@ledgerhq/errors";
+import { UserRefusedAddress, UserRefusedOnDevice } from "@ledgerhq/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
 jest.mock("../segment", () => ({
@@ -118,96 +111,6 @@ describe("useTrackReceiveFlow", () => {
       expect.objectContaining({
         deviceType: "nanoX",
         connectionType: CONNECTION_TYPES.USB,
-        platform: "LLM",
-        page: "Receive",
-      }),
-    );
-  });
-
-  it("should track 'Transport race condition' when error is TransportRaceCondition", () => {
-    const { rerender } = renderHook((props: UseTrackReceiveFlow) => useTrackReceiveFlow(props), {
-      initialProps: defaultArgs,
-    });
-
-    rerender({ ...defaultArgs, error: new TransportRaceCondition() });
-
-    expect(track).toHaveBeenCalledWith(
-      "Transport race condition",
-      expect.objectContaining({
-        deviceType: "nanoX",
-        connectionType: CONNECTION_TYPES.BLE,
-        platform: "LLM",
-        page: "Receive",
-      }),
-    );
-  });
-
-  it("should track 'Connection failed' when error is CantOpenDevice", () => {
-    const { rerender } = renderHook((props: UseTrackReceiveFlow) => useTrackReceiveFlow(props), {
-      initialProps: defaultArgs,
-    });
-
-    rerender({ ...defaultArgs, error: new CantOpenDevice() });
-
-    expect(track).toHaveBeenCalledWith(
-      "Connection failed",
-      expect.objectContaining({
-        deviceType: "nanoX",
-        connectionType: CONNECTION_TYPES.BLE,
-        platform: "LLM",
-        page: "Receive",
-      }),
-    );
-  });
-
-  it("should track 'Transport error' when error is TransportError", () => {
-    const { rerender } = renderHook((props: UseTrackReceiveFlow) => useTrackReceiveFlow(props), {
-      initialProps: defaultArgs,
-    });
-
-    rerender({ ...defaultArgs, error: new TransportError("test", "test") });
-
-    expect(track).toHaveBeenCalledWith(
-      "Transport error",
-      expect.objectContaining({
-        deviceType: "nanoX",
-        connectionType: CONNECTION_TYPES.BLE,
-        platform: "LLM",
-        page: "Receive",
-      }),
-    );
-  });
-
-  it("should track 'Device locked' when error is LockedDeviceError", () => {
-    const { rerender } = renderHook((props: UseTrackReceiveFlow) => useTrackReceiveFlow(props), {
-      initialProps: defaultArgs,
-    });
-
-    rerender({ ...defaultArgs, error: new LockedDeviceError() });
-
-    expect(track).toHaveBeenCalledWith(
-      "Device locked",
-      expect.objectContaining({
-        deviceType: "nanoX",
-        connectionType: CONNECTION_TYPES.BLE,
-        platform: "LLM",
-        page: "Receive",
-      }),
-    );
-  });
-
-  it("should track 'Device locked' when isLocked is true", () => {
-    const { rerender } = renderHook((props: UseTrackReceiveFlow) => useTrackReceiveFlow(props), {
-      initialProps: defaultArgs,
-    });
-
-    rerender({ ...defaultArgs, isLocked: true });
-
-    expect(track).toHaveBeenCalledWith(
-      "Device locked",
-      expect.objectContaining({
-        deviceType: "nanoX",
-        connectionType: CONNECTION_TYPES.BLE,
         platform: "LLM",
         page: "Receive",
       }),

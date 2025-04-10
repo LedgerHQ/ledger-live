@@ -2,13 +2,7 @@ import { useEffect, useRef } from "react";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 import { track } from "../segment";
 import { Device } from "@ledgerhq/types-devices";
-import {
-  UserRefusedOnDevice,
-  TransportRaceCondition,
-  LockedDeviceError,
-  CantOpenDevice,
-  TransportError,
-} from "@ledgerhq/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { LedgerError } from "~/types/error";
 
 export type UseTrackSendFlow = {
@@ -16,7 +10,6 @@ export type UseTrackSendFlow = {
   device: Device;
   requestOpenApp?: string | null;
   error: LedgerError | undefined | null;
-  isLocked: boolean | null | undefined;
 };
 
 /**
@@ -27,16 +20,9 @@ export type UseTrackSendFlow = {
  * @param device - the connected device information.
  * @param requestOpenApp - optional - which app if any has been requested to be opened.
  * @param inWrongDeviceForAccount - optional - indicating if the user is in the wrong device for the account.
- * @param isLocked - flag indicating if the device is locked.
  * @param error - current error state.
  */
-export const useTrackSendFlow = ({
-  location,
-  device,
-  requestOpenApp,
-  error,
-  isLocked,
-}: UseTrackSendFlow) => {
+export const useTrackSendFlow = ({ location, device, requestOpenApp, error }: UseTrackSendFlow) => {
   const previousRequestOpenApp = useRef<string | null | undefined>(undefined);
 
   useEffect(() => {
@@ -56,27 +42,6 @@ export const useTrackSendFlow = ({
       // user opened app
       track("Open app accepted", defaultPayload);
     }
-
-    if (error instanceof TransportRaceCondition) {
-      // transport race condition
-      track("Transport race condition", defaultPayload);
-    }
-
-    if (error instanceof CantOpenDevice) {
-      // device disconnected during send flow
-      track("Connection failed", defaultPayload);
-    }
-
-    if (error instanceof TransportError) {
-      // transport error during send flow
-      track("Transport error", defaultPayload);
-    }
-
-    if (isLocked || error instanceof LockedDeviceError) {
-      // device locked during send flow
-      track("Device locked", defaultPayload);
-    }
-
     previousRequestOpenApp.current = requestOpenApp;
-  }, [error, location, device, requestOpenApp, isLocked]);
+  }, [error, location, device, requestOpenApp]);
 };

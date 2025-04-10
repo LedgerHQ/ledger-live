@@ -2,13 +2,7 @@ import { renderHook } from "tests/testSetup";
 import { useTrackReceiveFlow, UseTrackReceiveFlow } from "./useTrackReceiveFlow";
 import { track } from "../segment";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
-import {
-  UserRefusedOnDevice,
-  UserRefusedAddress,
-  LockedDeviceError,
-  CantOpenDevice,
-  TransportRaceCondition,
-} from "@ledgerhq/errors";
+import { UserRefusedOnDevice, UserRefusedAddress } from "@ledgerhq/errors";
 
 jest.mock("../segment", () => ({
   track: jest.fn(),
@@ -18,7 +12,7 @@ jest.mock("../segment", () => ({
 describe("useTrackReceiveFlow", () => {
   const deviceMock = {
     modelId: "europa",
-    wired: true,
+    wired: false,
   };
 
   const defaultArgs: UseTrackReceiveFlow = {
@@ -28,7 +22,6 @@ describe("useTrackReceiveFlow", () => {
     error: null,
     inWrongDeviceForAccount: null,
     isTrackingEnabled: true,
-    isLocked: null,
   };
 
   afterEach(() => {
@@ -46,7 +39,7 @@ describe("useTrackReceiveFlow", () => {
       "Open app denied",
       expect.objectContaining({
         deviceType: "europa",
-        connectionType: CONNECTION_TYPES.USB,
+        connectionType: CONNECTION_TYPES.BLE,
         platform: "LLD",
         page: "Receive",
       }),
@@ -65,7 +58,7 @@ describe("useTrackReceiveFlow", () => {
       "Address confirmation rejected",
       expect.objectContaining({
         deviceType: "europa",
-        connectionType: CONNECTION_TYPES.USB,
+        connectionType: CONNECTION_TYPES.BLE,
         platform: "LLD",
         page: "Receive",
       }),
@@ -82,7 +75,7 @@ describe("useTrackReceiveFlow", () => {
       "Wrong device association",
       expect.objectContaining({
         deviceType: "europa",
-        connectionType: CONNECTION_TYPES.USB,
+        connectionType: CONNECTION_TYPES.BLE,
         platform: "LLD",
         page: "Receive",
       }),
@@ -100,7 +93,7 @@ describe("useTrackReceiveFlow", () => {
   });
 
   it("should include correct connection type based on device.wired", () => {
-    const wiredDeviceMock = { ...deviceMock, wired: false };
+    const wiredDeviceMock = { ...deviceMock, wired: true };
     const verifyAddressError = new UserRefusedAddress();
 
     renderHook((props: UseTrackReceiveFlow) => useTrackReceiveFlow(props), {
@@ -113,74 +106,6 @@ describe("useTrackReceiveFlow", () => {
 
     expect(track).toHaveBeenCalledWith(
       "Address confirmation rejected",
-      expect.objectContaining({
-        deviceType: "europa",
-        connectionType: CONNECTION_TYPES.BLE,
-        platform: "LLD",
-        page: "Receive",
-      }),
-      true,
-    );
-  });
-
-  it('should track "Device locked" if isLocked is true', () => {
-    renderHook((props: UseTrackReceiveFlow) => useTrackReceiveFlow(props), {
-      initialProps: { ...defaultArgs, isLocked: true },
-    });
-
-    expect(track).toHaveBeenCalledWith(
-      "Device locked",
-      expect.objectContaining({
-        deviceType: "europa",
-        connectionType: CONNECTION_TYPES.USB,
-        platform: "LLD",
-        page: "Receive",
-      }),
-      true,
-    );
-  });
-
-  it('should track "Device locked" if error is LockedDeviceError', () => {
-    renderHook((props: UseTrackReceiveFlow) => useTrackReceiveFlow(props), {
-      initialProps: { ...defaultArgs, error: new LockedDeviceError() },
-    });
-
-    expect(track).toHaveBeenCalledWith(
-      "Device locked",
-      expect.objectContaining({
-        deviceType: "europa",
-        connectionType: CONNECTION_TYPES.USB,
-        platform: "LLD",
-        page: "Receive",
-      }),
-      true,
-    );
-  });
-
-  it('should track "Connection failed" if error is CantOpenDevice', () => {
-    renderHook((props: UseTrackReceiveFlow) => useTrackReceiveFlow(props), {
-      initialProps: { ...defaultArgs, error: new CantOpenDevice() },
-    });
-
-    expect(track).toHaveBeenCalledWith(
-      "Connection failed",
-      expect.objectContaining({
-        deviceType: "europa",
-        connectionType: CONNECTION_TYPES.USB,
-        platform: "LLD",
-        page: "Receive",
-      }),
-      true,
-    );
-  });
-
-  it('should track "Transport race condition" if error is TransportRaceCondition', () => {
-    renderHook((props: UseTrackReceiveFlow) => useTrackReceiveFlow(props), {
-      initialProps: { ...defaultArgs, error: new TransportRaceCondition() },
-    });
-
-    expect(track).toHaveBeenCalledWith(
-      "Transport race condition",
       expect.objectContaining({
         deviceType: "europa",
         connectionType: CONNECTION_TYPES.USB,

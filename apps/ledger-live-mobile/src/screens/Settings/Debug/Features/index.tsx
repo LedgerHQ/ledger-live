@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Icons, IconsLegacy } from "@ledgerhq/native-ui";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import SettingsRow from "~/components/SettingsRow";
 import { ScreenName } from "~/const";
 import BLEPairingFlow from "./BLEPairingFlow";
@@ -8,7 +8,6 @@ import CustomImage from "./CustomImage";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 
 export default function Features() {
   const navigation = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
@@ -105,15 +104,6 @@ export default function Features() {
         iconLeft={<IconsLegacy.NotificationsMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugTransactionsAlerts)}
       />
-
-      <FeatureToggle featureId="largemoverLandingpage">
-        <SettingsRow
-          title="Large Mover"
-          desc="See the large mover landing page"
-          iconLeft={<Icons.Dollar />}
-          onPress={() => navigation.navigate(ScreenName.LargeMoverLandingPage)}
-        />
-      </FeatureToggle>
     </SettingsNavigationScrollView>
   );
 }
