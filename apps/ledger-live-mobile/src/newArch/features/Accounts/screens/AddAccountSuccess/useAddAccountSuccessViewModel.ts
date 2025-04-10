@@ -6,7 +6,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { NetworkBasedAddAccountNavigator } from "../AddAccount/types";
 import { AddAccountContexts } from "../AddAccount/enums";
 import { AccountLikeEnhanced } from "../ScanDeviceAccounts/types";
-import useAnalytics from "~/newArch/hooks/useAnalytics";
+import useAnalytics from "LLM/hooks/useAnalytics";
 import { track } from "~/analytics";
 
 export type Props = BaseComposite<

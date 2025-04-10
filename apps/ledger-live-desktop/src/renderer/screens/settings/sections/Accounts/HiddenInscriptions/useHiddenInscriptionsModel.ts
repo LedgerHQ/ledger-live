@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { useHideInscriptions } from "~/newArch/features/Collectibles/hooks/useHideInscriptions";
+import { useHideInscriptions } from "LLD/features/Collectibles/hooks/useHideInscriptions";
 
 const useHiddenInscriptionsModel = () => {
   const { hiddenOrdinalAssets, unHideInscription } = useHideInscriptions();

@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/core";
 import { useCallback } from "react";
 import { AddAccountContexts } from "../AddAccount/enums";
 import { track } from "~/analytics";
-import useAnalytics from "~/newArch/hooks/useAnalytics";
+import useAnalytics from "LLM/hooks/useAnalytics";
 
 export type Props = BaseComposite<
   StackNavigatorProps<NetworkBasedAddAccountNavigator, ScreenName.AddAccountsWarning>
