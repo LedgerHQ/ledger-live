@@ -3,7 +3,6 @@ import type Transport from "@ledgerhq/hw-transport";
 import type { Transaction } from "./types";
 import { MAX_SCRIPT_BLOCK } from "./constants";
 import { createVarint } from "./varint";
-import { getAppAndVersion } from "./getAppAndVersion";
 import { shouldUseOlderZcash } from "./utils";
 
 export async function getTrustedInputRaw(
