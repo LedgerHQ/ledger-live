@@ -1,30 +1,25 @@
 import { setEnv } from "@ledgerhq/live-env";
-import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
+import { DelegateType } from "@ledgerhq/live-common/e2e/models/Delegate";
 import {
   verifyAppValidationStakeInfo,
   verifyStakeOperationDetailsInfo,
 } from "../../../models/stake";
-import { Application } from "../../../page";
-import { CLI } from "../../../utils/cliUtils";
 import { device } from "detox";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { getCurrencyManagerApp } from "../../../models/currencies";
 
-export async function runDelegateTest(delegation: Delegate, tmsLinks: string[]) {
-  const app = new Application();
-
+export async function runDelegateTest(delegation: DelegateType, tmsLinks: string[]) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe("Delegate", () => {
     beforeAll(async () => {
       await app.init({
         speculosApp: delegation.account.currency.speculosApp,
         cliCommands: [
-          () => {
+          (userdataPath?: string) => {
             return CLI.liveData({
-              currency: delegation.account.currency.currencyId,
+              currency: delegation.account.currency.id,
               index: delegation.account.index,
               add: true,
-              appjson: app.userdataPath,
+              appjson: userdataPath,
             });
           },
         ],
@@ -37,8 +32,7 @@ export async function runDelegateTest(delegation: Delegate, tmsLinks: string[]) 
       let fees;
       const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
       const currencyId =
-        getCurrencyManagerApp(delegation.account.currency.currencyId) ??
-        delegation.account.currency.currencyId;
+        getCurrencyManagerApp(delegation.account.currency.id) ?? delegation.account.currency.id;
 
       if (delegation.account.currency.name == Currency.INJ.name) {
         await app.speculos.activateExpertMode();
@@ -60,31 +54,29 @@ export async function runDelegateTest(delegation: Delegate, tmsLinks: string[]) 
       await app.stake.expectProvider(currencyId, delegation.provider);
       await app.stake.summaryContinue(currencyId);
 
-      await verifyAppValidationStakeInfo(app, delegation, amountWithCode, fees);
+      await verifyAppValidationStakeInfo(delegation, amountWithCode, fees);
       await app.speculos.signDelegationTransaction(delegation);
       await device.disableSynchronization();
       await app.common.successViewDetails();
 
-      await verifyStakeOperationDetailsInfo(app, delegation, amountWithCode, fees);
+      await verifyStakeOperationDetailsInfo(delegation, amountWithCode, fees);
     });
   });
 }
 
-export async function runDelegateCelo(delegation: Delegate, tmsLinks: string[]) {
-  const app = new Application();
-
+export async function runDelegateCelo(delegation: DelegateType, tmsLinks: string[]) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe(`Delegate flow on CELO`, () => {
     beforeAll(async () => {
       await app.init({
         speculosApp: delegation.account.currency.speculosApp,
         cliCommands: [
-          () => {
+          (userdataPath?: string) => {
             return CLI.liveData({
-              currency: delegation.account.currency.currencyId,
+              currency: delegation.account.currency.id,
               index: delegation.account.index,
               add: true,
-              appjson: app.userdataPath,
+              appjson: userdataPath,
             });
           },
         ],
@@ -95,7 +87,7 @@ export async function runDelegateCelo(delegation: Delegate, tmsLinks: string[]) 
 
     it(`Delegate on CELO`, async () => {
       const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
-      const currencyId = delegation.account.currency.currencyId;
+      const currencyId = delegation.account.currency.id;
 
       await app.speculos.activateContractData();
 
@@ -108,19 +100,18 @@ export async function runDelegateCelo(delegation: Delegate, tmsLinks: string[]) 
       await app.stake.setCeloLockAmount(delegation.amount);
       await app.stake.validateAmount(currencyId);
 
-      await verifyAppValidationStakeInfo(app, delegation, amountWithCode);
+      await verifyAppValidationStakeInfo(delegation, amountWithCode);
       await app.speculos.signDelegationTransaction(delegation);
       await device.disableSynchronization();
 
       await app.common.successViewDetails();
-      await verifyStakeOperationDetailsInfo(app, delegation, amountWithCode);
+      await verifyStakeOperationDetailsInfo(delegation, amountWithCode);
     });
   });
 }
 
-export async function runDelegateTezos(delegation: Delegate, tmsLinks: string[]) {
+export async function runDelegateTezos(delegation: DelegateType, tmsLinks: string[]) {
   setEnv("DISABLE_TRANSACTION_BROADCAST", true);
-  const app = new Application();
 
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe(`Delegate flow on TEZOS`, () => {
@@ -128,12 +119,12 @@ export async function runDelegateTezos(delegation: Delegate, tmsLinks: string[])
       await app.init({
         speculosApp: delegation.account.currency.speculosApp,
         cliCommands: [
-          () => {
+          (userdataPath?: string) => {
             return CLI.liveData({
-              currency: delegation.account.currency.currencyId,
+              currency: delegation.account.currency.id,
               index: delegation.account.index,
               add: true,
-              appjson: app.userdataPath,
+              appjson: userdataPath,
             });
           },
         ],
@@ -144,7 +135,7 @@ export async function runDelegateTezos(delegation: Delegate, tmsLinks: string[])
 
     it(`Delegate on TEZOS`, async () => {
       const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
-      const currencyId = delegation.account.currency.currencyId;
+      const currencyId = delegation.account.currency.id;
 
       await app.speculos.activateContractData();
 
@@ -155,12 +146,12 @@ export async function runDelegateTezos(delegation: Delegate, tmsLinks: string[])
       await app.stake.dismissDelegationStart(currencyId);
       await app.stake.summaryContinue(currencyId);
 
-      await verifyAppValidationStakeInfo(app, delegation, amountWithCode);
+      await verifyAppValidationStakeInfo(delegation, amountWithCode);
       await app.speculos.signDelegationTransaction(delegation);
       await device.disableSynchronization();
 
       await app.common.successViewDetails();
-      await verifyStakeOperationDetailsInfo(app, delegation, amountWithCode);
+      await verifyStakeOperationDetailsInfo(delegation, amountWithCode);
     });
   });
 }

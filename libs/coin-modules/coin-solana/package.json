@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-solana",
-  "version": "0.17.0",
+  "version": "0.18.0",
   "description": "Ledger Solana Coin integration",
   "keywords": [
     "Ledger",
@@ -74,10 +74,11 @@
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
     "@types/object-hash": "^2.1.0",
+    "axios": "1.7.7",
     "jest": "^29.7.0",
-    "ts-jest": "^29.1.1",
     "jest-sonar": "0.2.16",
     "msw": "2.7.3",
+    "ts-jest": "^29.1.1",
     "uuid": "11.1.0"
   },
   "scripts": {

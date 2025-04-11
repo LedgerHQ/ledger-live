@@ -19,13 +19,13 @@ import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
-import { Account, Operation, SubAccount } from "@ledgerhq/types-live";
+import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { StepId, StepProps, St } from "./types";
 import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
 
 export type Data = {
-  account: CeloAccount | SubAccount;
+  account: CeloAccount | TokenAccount;
   parentAccount: CeloAccount | undefined | null;
 };
 type OwnProps = {

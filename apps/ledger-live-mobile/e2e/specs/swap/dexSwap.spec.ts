@@ -1,7 +1,3 @@
-import { Application } from "../../page";
-
-const app = new Application();
-
 describe("DEX Swap", () => {
   beforeAll(async () => {
     await app.init({ userdata: "1AccountBTC1AccountETHReadOnlyFalse" });

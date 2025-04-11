@@ -21,7 +21,7 @@ import {
 } from "./speculos-deviceActions";
 import BigNumber from "bignumber.js";
 import { MIN_DELEGATION_AMOUNT } from "./constants";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import sample from "lodash/sample";
 
 const currency = getCryptoCurrencyById("elrond");
@@ -247,7 +247,7 @@ const multiversx: AppSpec<Transaction> = {
       maxRun: 1,
       deviceAction: acceptEsdtTransferTransaction,
       transaction: ({ account, siblings, bridge }) => {
-        const esdtAccount: SubAccount | undefined = sample(
+        const esdtAccount: TokenAccount | undefined = sample(
           (account.subAccounts || []).filter(a => a.balance.gt(0)),
         );
         invariant(esdtAccount, "no esdt account");

@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useFocusEffect, useNavigation } from "@react-navigation/core";
 import { useRefreshAccountsOrdering } from "~/actions/general";
-import { accountsSelector } from "~/reducers/accounts";
+import { flattenAccountsSelector } from "~/reducers/accounts";
 import { GestureResponderEvent, useStartProfiler } from "@shopify/react-native-performance";
 import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
@@ -48,7 +48,7 @@ const useAccountsListViewModel = ({
   const navigation = useNavigation<NavigationProp>();
   const countervalueState = useCountervaluesState();
   const toCurrency = useSelector(counterValueCurrencySelector);
-  const allAccounts = useSelector(accountsSelector, isEqual);
+  const allAccounts = useSelector(flattenAccountsSelector, isEqual);
   const walletState = useSelector(walletSelector, isEqual);
   const accounts = specificAccounts || allAccounts;
   const orderedAccountsByValue = orderAccountsByFiatValue(accounts, countervalueState, toCurrency);

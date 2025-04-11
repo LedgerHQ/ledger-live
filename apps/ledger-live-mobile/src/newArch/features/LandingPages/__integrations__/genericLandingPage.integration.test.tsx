@@ -1,11 +1,27 @@
 import { render, screen } from "@tests/test-renderer";
 import React from "react";
 import { fakeCategoryContentCards, landingPageStickyCtaCard, classicCards } from "./shared";
-import { LandingPageUseCase } from "~/dynamicContent/types";
+import { LandingPageStickyCtaContentCard, LandingPageUseCase } from "~/dynamicContent/types";
 import { GenericView } from "../screens/GenericLandingPage";
 import { State } from "~/reducers/types";
 
-const openLinkMock = jest.fn();
+const logClickCard = jest.fn();
+const trackContentCardEvent = jest.fn();
+const useCase = LandingPageUseCase.LP_Generic;
+const Linking = {
+  openURL: jest.fn(),
+};
+
+const openLinkMock = jest.fn((card: LandingPageStickyCtaContentCard) => {
+  trackContentCardEvent("contentcard_clicked", {
+    campaign: card.id,
+    link: card.link,
+    contentcard: card.cta,
+    landingPage: useCase,
+  });
+  logClickCard(card.id);
+  Linking.openURL(card.link);
+});
 
 jest.mock("~/dynamicContent/useDynamicContent", () => ({
   __esModule: true,
@@ -66,5 +82,13 @@ describe("GenericLandingPage", () => {
     await user.press(screen.getByText(String(landingPageStickyCtaCard.cta)));
 
     expect(openLinkMock).toHaveBeenCalled();
+    expect(trackContentCardEvent).toHaveBeenCalledWith("contentcard_clicked", {
+      campaign: "stickyCta001",
+      link: "https://example.com/signup",
+      contentcard: "Sign Up Now",
+      landingPage: "LP_Generic",
+    });
+    expect(Linking.openURL).toHaveBeenCalledWith("https://example.com/signup");
+    expect(logClickCard).toHaveBeenCalledWith("stickyCta001");
   });
 });

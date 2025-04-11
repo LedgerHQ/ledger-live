@@ -1,0 +1,60 @@
+{
+  "name": "@ledgerhq/live-dmk-shared",
+  "version": "0.8.0",
+  "description": "Ledger Device Management Kit shared module",
+  "private": true,
+  "license": "Apache-2.0",
+  "keywords": [
+    "Ledger"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/live-dmk-shared",
+  "main": "./lib-es/index.js",
+  "types": "./lib-es/index.d.ts",
+  "scripts": {
+    "clean": "rimraf lib-es",
+    "build": "tsc --project tsconfig.prod.json",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch --project tsconfig.prod.json",
+    "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es --project tsconfig.test.json",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint:fix": "pnpm lint --fix",
+    "typecheck": "tsc --noEmit",
+    "unimported": "unimported",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/logs": "^6.12.0",
+    "@ledgerhq/types-devices": "workspace:^"
+  },
+  "devDependencies": {
+    "@ledgerhq/device-management-kit": "0.0.0-rnble-transport-20250401145214",
+    "@testing-library/dom": "^9.3.4",
+    "@testing-library/jest-dom": "6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@types/node": "22.10.10",
+    "@vitejs/plugin-react": "4.3.4",
+    "@vitest/coverage-istanbul": "3.0.7",
+    "jsdom": "25.0.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "rxjs": "^7.8.1",
+    "vite": "6.0.7",
+    "vitest": "2.1.9",
+    "ws": "8.18.0"
+  },
+  "peerDependencies": {
+    "@ledgerhq/device-management-kit": "0.0.0-rnble-transport-20250401145214",
+    "react": "^18.3.1",
+    "rxjs": "^7.8.1"
+  }
+}

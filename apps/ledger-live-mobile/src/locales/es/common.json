@@ -100,7 +100,8 @@
       "times" : "x{{ value }}"
     },
     "quote" : "Cotización",
-    "tryAgain" : "Inténtalo de nuevo"
+    "tryAgain" : "Inténtalo de nuevo",
+    "ldmkEnabled" : "Transporte LDMK activado"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -4050,7 +4051,9 @@
       "desc" : "¿Deseas cancelar la agregación de cuentas?",
       "v2" : {
         "title" : "¿Cancelar la acción de agregar cuenta?",
-        "desc" : "No se agregará ninguna cuenta a Ledger Live."
+        "desc" : "No se agregará ninguna cuenta a Ledger Live.",
+        "continue" : "Seguir agregándola",
+        "cancel" : "Cancelar"
       }
     },
     "imported" : "Activo añadido con éxito",
@@ -4088,7 +4091,7 @@
       "title" : "Agregar token",
       "createParentCurrencyAccount" : "Agregar cuenta {{parrentCurrencyName}}",
       "generic" : {
-        "disclaimer" : "{{token}} ({{ticker}}) es un token {{tokenType}}. Puedes recibir tokens directamente en una cuenta de {{currency}}.",
+        "disclaimer" : "{{token}} ({{ticker}}) es un token {{tokenType}}.\nPuedes recibir tokens directamente en una cuenta de {{currency}}.",
         "learnMore" : "Más informaciónacerca de {{tokenType}}"
       }
     },

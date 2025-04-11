@@ -133,7 +133,7 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
   setup: async () => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
       spawnSpeculos(`/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`),
-      spawnAnvil("https://rpc.ankr.com/eth"),
+      spawnAnvil("https://ethereum-rpc.publicnode.com"),
     ]);
 
     // @ts-expect-error - TODO: fix this

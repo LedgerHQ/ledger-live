@@ -1,5 +1,6 @@
 export enum ItemType {
   EXTERNAL = "external",
+  SEPARATOR = "separator",
 }
 
 export enum ExternalIdEnum {

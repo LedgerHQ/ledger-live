@@ -1,13 +1,10 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Application } from "../../../page";
-
-const app = new Application("EthAccountXrpAccountReadOnlyFalse");
-const account = Account.ETH_1;
-
 describe("Receive Flow", () => {
+  const account = Account.ETH_1;
+
   beforeAll(async () => {
     await app.init({
       speculosApp: account.currency.speculosApp,
+      userdata: "EthAccountXrpAccountReadOnlyFalse",
     });
 
     await app.portfolio.waitForPortfolioPageToLoad();
@@ -45,7 +42,9 @@ describe("Receive Flow", () => {
     await app.common.performSearch("Polygon");
     await app.receive.selectCurrency("Polygon");
     await app.receive.selectNetwork("bsc");
-    await app.receive.selectAccount("Binance Smart Chain 1");
+    await app.addAccount.addAccountAtIndex(Currency.BSC.name, Currency.BSC.id, 0);
+    await app.addAccount.tapAddFunds();
+    await app.addAccount.tapReceiveinActionDrawer();
     await app.receive.doNotVerifyAddress();
     await app.receive.expectReceivePageIsDisplayed("BNB", "Binance Smart Chain 1");
   });

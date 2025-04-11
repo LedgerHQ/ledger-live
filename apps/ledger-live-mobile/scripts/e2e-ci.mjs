@@ -6,6 +6,11 @@ let speculos = "";
 let cache = true;
 let shard = "";
 let target = "release";
+let filter = "";
+
+if (os.platform() === "win32") {
+  usePowerShell();
+}
 
 const usage = (exitCode = 1) => {
   console.log(
@@ -48,7 +53,8 @@ const test_ios = async () => {
     --headless \
     --retries 1 \
     --runInBand \
-    --cleanup`;
+    --cleanup \
+    ${filter.split(" ")}`;
 };
 
 const build_android = async () => {
@@ -66,7 +72,8 @@ const test_android = async () => {
     --retries 1 \\
     --runInBand \\
     --cleanup \\
-    --shard ${shard}`;
+    --shard ${shard} \\
+    ${filter.split(" ")}`;
 };
 
 const getTasksFrom = {
@@ -120,6 +127,9 @@ for (const argName in argv) {
       break;
     case "production":
       target = "prerelease";
+      break;
+    case "filter":
+      filter = argv[argName];
       break;
     default:
       usage(42);

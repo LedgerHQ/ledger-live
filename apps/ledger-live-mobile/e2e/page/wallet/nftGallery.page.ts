@@ -1,15 +1,8 @@
-import {
-  getElementById,
-  getIdOfElement,
-  openDeeplink,
-  tapByElement,
-  waitForElementById,
-} from "../../helpers";
 import { expect } from "detox";
-
-const baseLink = "nftgallery";
+import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class NftGalleryPage {
+  baseLink = "nftgallery";
   root = () => getElementById("wallet-nft-gallery-screen");
   emptyScreen = () => getElementById("wallet-nft-gallery-empty");
   emptyScreenResetButton = () => getElementById("wallet-nft-gallery-empty-reset-button");
@@ -29,7 +22,7 @@ export default class NftGalleryPage {
 
   @Step("Open NFT Gallery via deeplink")
   async openViaDeeplink() {
-    await openDeeplink(baseLink);
+    await openDeeplink(this.baseLink);
   }
 
   @Step("Select NFT")
@@ -49,7 +42,7 @@ export default class NftGalleryPage {
   async hideAllNft() {
     // Get total number of NFTs given by the list identifier
     const nftNumber = Number.parseInt(
-      (await getIdOfElement(this.nftListRegexp)).replace(this.nftListPrefix, ""),
+      (await getIdByRegexp(this.nftListRegexp)).replace(this.nftListPrefix, ""),
     );
 
     // Select all NFTs and confirm hidding

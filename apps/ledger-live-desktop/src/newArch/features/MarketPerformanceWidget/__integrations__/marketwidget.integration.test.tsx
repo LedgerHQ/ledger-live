@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "tests/testUtils";
+import { render, screen, waitFor } from "tests/testSetup";
 
 import { useMarketPerformanceWidget } from "../useMarketPerformanceWidget";
 import { Order } from "../types";

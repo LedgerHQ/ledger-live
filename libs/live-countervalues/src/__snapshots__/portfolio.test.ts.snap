@@ -6554,8 +6554,8 @@ exports[`Portfolio getPortfolio snapshot 1`] = `
     },
   ],
   "countervalueChange": {
-    "percentage": undefined,
-    "value": 16232,
+    "percentage": 323.64,
+    "value": 16182,
   },
   "countervalueReceiveSum": 0,
   "countervalueSendSum": 0,

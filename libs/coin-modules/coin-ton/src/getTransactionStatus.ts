@@ -1,4 +1,4 @@
-import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/index";
+import { isTokenAccount } from "@ledgerhq/coin-framework/account/index";
 import {
   AmountRequired,
   InvalidAddress,
@@ -6,7 +6,7 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { Account, AccountBridge } from "@ledgerhq/types-live";
+import { AccountBridge } from "@ledgerhq/types-live";
 import { toNano } from "@ton/core";
 import BigNumber from "bignumber.js";
 import { MINIMUM_REQUIRED_BALANCE, TOKEN_TRANSFER_MAX_FEE } from "./constants";
@@ -16,8 +16,8 @@ import {
   TonMinimumRequired,
   TonNotEnoughBalanceInParentAccount,
 } from "./errors";
-import { Transaction, TransactionStatus } from "./types";
-import { addressesAreEqual, commentIsValid, isAddressValid } from "./utils";
+import { TonAccount, Transaction, TransactionStatus } from "./types";
+import { addressesAreEqual, commentIsValid, findSubAccountById, isAddressValid } from "./utils";
 
 type ValidatedTransactionFields = "recipient" | "sender" | "amount" | "transaction";
 type ValidationIssues = Partial<Record<ValidatedTransactionFields, Error>>;
@@ -25,7 +25,7 @@ type ValidationIssues = Partial<Record<ValidatedTransactionFields, Error>>;
 /**
  * Validate an address for account transaction
  */
-const validateRecipient = (account: Account, tx: Transaction): Array<ValidationIssues> => {
+const validateRecipient = (account: TonAccount, tx: Transaction): Array<ValidationIssues> => {
   const errors: ValidationIssues = {};
 
   if (tx.recipient) {
@@ -52,7 +52,7 @@ const validateRecipient = (account: Account, tx: Transaction): Array<ValidationI
 /**
  * Validate the sender address for account transaction
  */
-const validateSender = (account: Account): Array<ValidationIssues> => {
+const validateSender = (account: TonAccount): Array<ValidationIssues> => {
   const errors: ValidationIssues = {};
 
   // Check if sender is matching the format of account valid ton address or not
@@ -68,7 +68,7 @@ const validateSender = (account: Account): Array<ValidationIssues> => {
 };
 
 const validateAmount = (
-  account: Account,
+  account: TonAccount,
   transaction: Transaction,
   totalSpent: BigNumber,
 ): Array<ValidationIssues> => {
@@ -120,10 +120,10 @@ const validateComment = (transaction: Transaction): Array<ValidationIssues> => {
 
 export const getTransactionStatus: AccountBridge<
   Transaction,
-  Account,
+  TonAccount,
   TransactionStatus
 >["getTransactionStatus"] = async (
-  account: Account,
+  account: TonAccount,
   transaction: Transaction,
 ): Promise<TransactionStatus> => {
   const subAccount = findSubAccountById(account, transaction.subAccountId ?? "");

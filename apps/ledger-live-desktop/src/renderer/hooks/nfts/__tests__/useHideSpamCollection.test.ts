@@ -1,6 +1,6 @@
 import { updateNftStatus } from "~/renderer/actions/settings";
 import { useHideSpamCollection } from "../useHideSpamCollection";
-import { renderHook } from "tests/testUtils";
+import { renderHook } from "tests/testSetup";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { useDispatch } from "react-redux";
 import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";

@@ -9,6 +9,7 @@ import { StackNavigatorNavigation } from "./RootNavigator/types/helpers";
 import Touchable from "./Touchable";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { useNavigateToPostOnboardingHubCallback } from "~/logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
+import { StyleProp, ViewStyle } from "react-native";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const emptyFunction = () => {};
@@ -69,6 +70,12 @@ export const NavigationHeaderCloseButtonRounded: React.FC<Props> = React.memo(({
   );
 });
 
+export type CtaConfig = {
+  type: string;
+  styles: StyleProp<ViewStyle>;
+  outline: boolean;
+};
+
 type AdvancedProps = {
   preferDismiss?: boolean;
   skipNavigation?: boolean;
@@ -81,6 +88,10 @@ type AdvancedProps = {
   showButton?: boolean;
   buttonText?: string;
   customDrawerStyle?: Record<string, unknown>;
+  cancelCTAConfig?: Partial<CtaConfig>;
+  confirmCTAConfig?: Partial<CtaConfig>;
+  confirmButtonText?: React.ReactNode;
+  rejectButtonText?: React.ReactNode;
 };
 
 /**
@@ -102,6 +113,10 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
     showButton = false,
     buttonText,
     customDrawerStyle,
+    cancelCTAConfig,
+    confirmCTAConfig,
+    confirmButtonText,
+    rejectButtonText,
   }) => {
     const navigation = useNavigation();
     const [isConfirmationModalOpened, setIsConfirmationModalOpened] = useState(false);
@@ -189,6 +204,10 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
             onModalHide={onModalHide}
             customTitleStyle={customDrawerStyle?.title ?? {}}
             customDescriptionStyle={customDrawerStyle?.description ?? {}}
+            confirmCTAConfig={confirmCTAConfig ?? {}}
+            cancelCTAConfig={cancelCTAConfig ?? {}}
+            confirmButtonText={confirmButtonText}
+            rejectButtonText={rejectButtonText}
           />
         )}
       </>

@@ -27,6 +27,7 @@ describe("getAccount", () => {
       },
       infra: {
         API_TON_ENDPOINT: API_TON_ENDPOINT,
+        KNOWN_JETTONS: [],
       },
     }));
     mockServer.listen();

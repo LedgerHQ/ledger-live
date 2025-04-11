@@ -1,17 +1,16 @@
-import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network";
+import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
-import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import compact from "lodash/compact";
 import drop from "lodash/drop";
 import sumBy from "lodash/sumBy";
 import take from "lodash/take";
+import { stringify } from "querystring";
 import TronWeb from "tronweb";
-import { TronTransactionExpired } from "../types/errors";
 import coinConfig from "../config";
-import { abiEncodeTrc20Transfer, hexToAscii } from "./utils";
 import type {
   FreezeTransactionData,
   LegacyUnfreezeTransactionData,
@@ -22,13 +21,14 @@ import type {
   SuperRepresentative,
   SuperRepresentativeData,
   Transaction,
+  TrongridTxInfo,
   TronResource,
   TronTransactionInfo,
-  TrongridTxInfo,
   UnDelegateResourceTransactionData,
   UnFreezeTransactionData,
   WithdrawExpireUnfreezeTransactionData,
 } from "../types";
+import { TronTransactionExpired } from "../types/errors";
 import {
   decode58Check,
   encode58Check,
@@ -44,7 +44,7 @@ import {
   TransactionTronAPI,
   Trc20API,
 } from "./types";
-import { stringify } from "querystring";
+import { abiEncodeTrc20Transfer, hexToAscii } from "./utils";
 
 const getBaseApiUrl = () => coinConfig.getCoinConfig().explorer.url;
 
@@ -197,15 +197,18 @@ export async function getDelegatedResource(
   return new BigNumber(amount);
 }
 
+export const DEFAULT_TRC20_FEES_LIMIT = 50000000;
+
 export async function craftTrc20Transaction(
   tokenAddress: string,
   recipientAddress: string,
   senderAddress: string,
   amount: BigNumber,
+  customFees?: number,
 ): Promise<SendTransactionDataSuccess> {
   const txData: SmartContractTransactionData = {
     function_selector: "transfer(address,uint256)",
-    fee_limit: 50000000,
+    fee_limit: customFees ? customFees : DEFAULT_TRC20_FEES_LIMIT,
     call_value: 0,
     contract_address: decode58Check(tokenAddress),
     parameter: abiEncodeTrc20Transfer(recipientAddress, new BigNumber(amount.toString())),
@@ -234,7 +237,7 @@ export async function craftStandardTransaction(
   return await extendTronTxExpirationTimeBy10mn(preparedTransaction);
 }
 
-const getTokenInfo = (subAccount: SubAccount | null | undefined): string[] | undefined[] => {
+const getTokenInfo = (subAccount: TokenAccount | null | undefined): string[] | undefined[] => {
   const tokenInfo =
     subAccount && subAccount.type === "TokenAccount"
       ? drop(subAccount.token.id.split("/"), 1)
@@ -246,7 +249,7 @@ const getTokenInfo = (subAccount: SubAccount | null | undefined): string[] | und
 export const createTronTransaction = async (
   account: Account,
   transaction: Transaction,
-  subAccount: SubAccount | null | undefined,
+  subAccount: TokenAccount | null | undefined,
 ): Promise<SendTransactionDataSuccess> => {
   const [tokenType, tokenId] = getTokenInfo(subAccount);
 

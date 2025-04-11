@@ -1,7 +1,11 @@
 import { DEFAULT_THRESHOLD } from "./const";
 
-export function hashProtoNFT(contract: string, tokenId: string, currencyId: string): string {
-  return `${contract}|${tokenId}|${currencyId}`;
+export function hashProtoNFT(
+  contract: string,
+  currencyId: string,
+  tokenId?: string | null,
+): string {
+  return `${contract}|${tokenId ?? 0}|${currencyId}`;
 }
 
 export function isThresholdValid(threshold?: string | number): boolean {

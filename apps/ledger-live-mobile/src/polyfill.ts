@@ -29,6 +29,9 @@ import "@formatjs/intl-relativetimeformat/locale-data/ko";
 // Fix error when adding Solana account
 import "@azure/core-asynciterator-polyfill";
 
+// Fix error when sending a token transaction in Stellar
+import "@exodus/patch-broken-hermes-typed-arrays";
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 global.Buffer = require("buffer").Buffer;
 

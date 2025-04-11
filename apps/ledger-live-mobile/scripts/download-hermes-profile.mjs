@@ -4,6 +4,10 @@
 import fs from "fs";
 import path from "path";
 
+if (os.platform() === "win32") {
+  usePowerShell();
+}
+
 // replace the package name com.ledger.live by com.ledger.live.debug in
 // AndroidManifest.xml as `react-native profile-hermes` is a bit too dumb to
 // get the right package name derived from the appIdSuffix

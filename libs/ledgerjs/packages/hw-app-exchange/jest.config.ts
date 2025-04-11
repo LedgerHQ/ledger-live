@@ -13,6 +13,7 @@ export default {
   ],
   coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "json-summary", "text"],
   reporters: [
+    "default",
     [
       "jest-sonar",
       {

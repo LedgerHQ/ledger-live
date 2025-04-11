@@ -2,7 +2,7 @@ import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { currentAccountAtom } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { Flex } from "@ledgerhq/native-ui";
-import React from "react";
+import React, { useRef } from "react";
 import { Platform } from "react-native";
 import { useSelector } from "react-redux";
 import { useTheme } from "styled-components/native";
@@ -20,6 +20,7 @@ import {
 import { useSwapLiveAppCustomHandlers } from "./hooks/useSwapLiveAppCustomHandlers";
 import { DefaultAccountSwapParamList } from "../types";
 import { useTranslateToSwapAccount } from "./hooks/useTranslateToSwapAccount";
+import { flattenAccountsSelector } from "~/reducers/accounts";
 
 type Props = {
   manifest: LiveAppManifest;
@@ -39,7 +40,10 @@ export function WebView({ manifest, params, setWebviewState }: Props) {
   const exportSettings = useSelector(exportSettingsSelector);
   const devMode = exportSettings.developerModeEnabled.toString();
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
-  const swapParams = useTranslateToSwapAccount(params);
+
+  const currentAccounts = useSelector(flattenAccountsSelector);
+  const stableCurrentAccounts = useRef(currentAccounts).current; // only consider accounts available upon initial WebView load
+  const swapParams = useTranslateToSwapAccount(params, stableCurrentAccounts);
 
   // ScopeProvider required to prevent conflicts between Swap's Webview instance and deeplink instances
   return (

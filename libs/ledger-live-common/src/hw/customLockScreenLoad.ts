@@ -213,6 +213,7 @@ export default function loadImage({ deviceId, request }: Input): Observable<Load
         };
       }),
   ).pipe(
+    // timeout(5000),
     catchError(err => {
       if (err.name === "TimeoutError") {
         return throwError(() => new DisconnectedDevice());

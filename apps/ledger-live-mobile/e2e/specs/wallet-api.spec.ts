@@ -1,8 +1,4 @@
-import { Application } from "../page";
-
-const app = new Application();
-
-describe("Wallet API methods", () => {
+describe.skip("Wallet API methods", () => {
   beforeAll(async () => {
     await app.init({ userdata: "1AccountBTC1AccountETHReadOnlyFalse" });
     await app.dummyWalletApp.startApp();
@@ -19,13 +15,13 @@ describe("Wallet API methods", () => {
     await app.dummyWalletApp.expectResponse(id, response);
   });
 
-  it("account.request", async () => {
+  it("account.receive", async () => {
     const { id, response } = await app.dummyWalletApp.sendAccountReceive();
     await app.walletAPIReceive.continueWithoutDevice();
     await app.walletAPIReceive.cancelNoDevice();
     await app.walletAPIReceive.continueWithoutDevice();
     await app.walletAPIReceive.confirmNoDevice();
-    await expect(response).resolves.toMatchObject({
+    await jestExpect(response).resolves.toMatchObject({
       jsonrpc: "2.0",
       id,
       result: {

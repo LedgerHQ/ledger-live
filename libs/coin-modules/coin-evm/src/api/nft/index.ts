@@ -2,6 +2,9 @@ import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { NFTCollectionMetadataResponse, NFTMetadataResponse } from "@ledgerhq/types-live";
 import { CollectionMetadataInput, NftMetadataInput } from "@ledgerhq/coin-framework/nft/types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+
+export type NftMetdataParams = { chainId: number };
 
 /**
  * Batched request of nft metadata on the "ethereum" protocol
@@ -12,7 +15,7 @@ import { CollectionMetadataInput, NftMetadataInput } from "@ledgerhq/coin-framew
  */
 export const getNftMetadata = async (
   input: NftMetadataInput[],
-  params: { chainId: number },
+  params: NftMetdataParams,
 ): Promise<NFTMetadataResponse[]> => {
   const { data }: { data: NFTMetadataResponse[] } = await network({
     method: "POST",
@@ -32,7 +35,7 @@ export const getNftMetadata = async (
  */
 export const getNftCollectionMetadata = async (
   input: CollectionMetadataInput[],
-  params: { chainId: number },
+  params: NftMetdataParams,
 ): Promise<NFTCollectionMetadataResponse[]> => {
   const { data }: { data: NFTCollectionMetadataResponse[] } = await network({
     method: "POST",
@@ -43,7 +46,21 @@ export const getNftCollectionMetadata = async (
   return data;
 };
 
+/**
+ * Get the correct chain from a given currency
+ */
+export const getParams = (currency: CryptoCurrency): NftMetdataParams => {
+  const chainId = currency?.ethereumLikeInfo?.chainId;
+
+  if (!chainId) {
+    throw new Error("Ethereum: No chainId for this Currency");
+  }
+
+  return { chainId };
+};
+
 export default {
   getNftMetadata,
   getNftCollectionMetadata,
+  getParams,
 };
