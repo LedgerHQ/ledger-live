@@ -90,30 +90,20 @@ const getFeatureFlagProperties = () => {
 
     const stakingCurrenciesEnabled =
       stakePrograms?.enabled && stakePrograms?.params?.list?.length
-        ? Object.fromEntries(
-            stakePrograms.params.list.map((currencyId: string) => [
-              `feature_earn_${currencyId}_enabled`,
-              true,
-            ]),
-          )
-        : {};
+        ? stakePrograms.params.list
+        : [];
     const partnerStakingCurrenciesEnabled =
       stakePrograms?.enabled && stakePrograms?.params?.redirects
-        ? Object.keys(stakePrograms.params.redirects).map(assetId => [
-            `feature_earn_${assetId}_enabled`,
-            true,
-            `feature_earn_${assetId}_partner`,
-            stakePrograms?.params?.redirects?.[assetId]?.platform,
-          ])
-        : {};
+        ? Object.keys(stakePrograms.params.redirects)
+        : [];
 
     updateIdentify({
       isBatch1Enabled,
       isBatch2Enabled,
       isBatch3Enabled,
       stakingProvidersEnabled,
-      ...stakingCurrenciesEnabled,
-      ...partnerStakingCurrenciesEnabled,
+      stakingCurrenciesEnabled,
+      partnerStakingCurrenciesEnabled,
     });
   })();
 };
@@ -246,6 +236,14 @@ const extraProperties = async (store: AppStore) => {
   const stakingProvidersCount =
     stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
 
+  const stakePrograms = analyticsFeatureFlagMethod && analyticsFeatureFlagMethod("stakePrograms");
+  const stakingCurrenciesEnabled =
+    stakePrograms?.enabled && stakePrograms?.params?.list?.length ? stakePrograms.params.list : [];
+  const partnerStakingCurrenciesEnabled =
+    stakePrograms?.enabled && stakePrograms?.params?.redirects
+      ? Object.keys(stakePrograms.params.redirects)
+      : [];
+
   const ledgerSyncAtributes = getLedgerSyncAttributes(state);
   const rebornAttributes = getRebornAttributes();
   const mevProtectionAttributes = getMEVAttributes(state);
@@ -300,6 +298,8 @@ const extraProperties = async (store: AppStore) => {
     ...mevProtectionAttributes,
     ...addAccountsAttributes,
     tokenWithFunds,
+    stakingCurrenciesEnabled,
+    partnerStakingCurrenciesEnabled,
   };
 };
 
