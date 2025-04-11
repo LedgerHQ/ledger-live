@@ -9,6 +9,7 @@ import { getDescription } from "tests/utils/customJsonReporter";
 import { Application } from "tests/page";
 import { ElectronApplication } from "@playwright/test";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Swap";
+import { CLI } from "tests/utils/cliUtils";
 
 function setupEnv(disableBroadcast?: boolean) {
   const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
@@ -31,91 +32,112 @@ const app: AppInfos = AppInfos.EXCHANGE;
 const swaps = [
   {
     swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.02", Fee.MEDIUM),
+    url: "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees",
     xrayTicket: "B2CQA-2750, B2CQA-3135",
   },
   {
     swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1, "0.00067", Fee.MEDIUM),
+    url: "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees",
     xrayTicket: "B2CQA-2744, B2CQA-2432",
   },
   {
     swap: new Swap(Account.ETH_USDT_1, Account.ETH_1, "40", Fee.MEDIUM),
+    url: "https://explorers.api.live.ledger.com/blockchain/v4/eth/gastracker/",
     xrayTicket: "B2CQA-2752, B2CQA-2048",
   },
   {
-    swap: new Swap(Account.ETH_1, Account.SOL_1, "0.018", Fee.MEDIUM),
+    swap: new Swap(Account.ETH_1, Account.SOL_1, "0.03", Fee.MEDIUM),
+    url: "https://explorers.api.live.ledger.com/blockchain/v4/eth/gastracker/",
     xrayTicket: "B2CQA-2748",
   },
   {
     swap: new Swap(Account.ETH_1, Account.ETH_USDT_1, "0.02", Fee.MEDIUM),
+    url: "https://explorers.api.live.ledger.com/blockchain/v4/eth/gastracker/",
     xrayTicket: "B2CQA-2749",
   },
   {
     swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.SOL_1, "0.0006", Fee.MEDIUM),
+    url: "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees",
     xrayTicket: "B2CQA-2747",
   },
   {
     swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_USDT_1, "0.0006", Fee.MEDIUM),
+    url: "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees",
     xrayTicket: "B2CQA-2746",
   },
   {
     swap: new Swap(Account.ETH_USDT_1, Account.BTC_NATIVE_SEGWIT_1, "40", Fee.MEDIUM),
+    url: "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees",
     xrayTicket: "B2CQA-2753",
   },
   {
     swap: new Swap(Account.ETH_USDT_1, Account.SOL_1, "60", Fee.MEDIUM),
+    url: "https://explorers.api.live.ledger.com/blockchain/v4/eth/gastracker/",
     xrayTicket: "B2CQA-2751",
   },
   {
-    swap: new Swap(Account.SOL_1, Account.ETH_1, "0.25", Fee.MEDIUM),
+    swap: new Swap(Account.SOL_1, Account.ETH_1, "0.3", Fee.MEDIUM),
+    url: "https://explorers.api.live.ledger.com/blockchain/v4/eth/gastracker/",
     xrayTicket: "B2CQA-2775",
   },
   {
-    swap: new Swap(Account.SOL_1, Account.BTC_NATIVE_SEGWIT_1, "0.25", Fee.MEDIUM),
+    swap: new Swap(Account.SOL_1, Account.BTC_NATIVE_SEGWIT_1, "0.3", Fee.MEDIUM),
+    url: "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees",
     xrayTicket: "B2CQA-2776",
   },
   {
-    swap: new Swap(Account.SOL_1, Account.ETH_USDT_1, "0.25", Fee.MEDIUM),
+    swap: new Swap(Account.SOL_1, Account.ETH_USDT_1, "0.3", Fee.MEDIUM),
+    url: "https://explorers.api.live.ledger.com/blockchain/v4/eth/gastracker/",
     xrayTicket: "B2CQA-2777",
   },
   {
     swap: new Swap(Account.ETH_USDC_1, Account.ETH_1, "65", Fee.MEDIUM),
+    url: "https://explorers.api.live.ledger.com/blockchain/v4/eth/gastracker/",
     xrayTicket: "B2CQA-2830",
   },
   {
     swap: new Swap(Account.ETH_USDC_1, Account.SOL_1, "45", Fee.MEDIUM),
+    url: "https://explorers.api.live.ledger.com/blockchain/v4/eth/gastracker/",
     xrayTicket: "B2CQA-2831",
   },
   {
     swap: new Swap(Account.ETH_USDC_1, Account.BTC_NATIVE_SEGWIT_1, "65", Fee.MEDIUM),
+    url: "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees",
     xrayTicket: "B2CQA-2832",
   },
   {
-    swap: new Swap(Account.ETH_1, Account.DOT_1, "0.02", Fee.MEDIUM),
+    swap: new Swap(Account.ETH_1, Account.DOT_1, "0.03", Fee.MEDIUM),
+    url: "https://explorers.api.live.ledger.com/blockchain/v4/eth/gastracker/",
     xrayTicket: "B2CQA-3017",
   },
   {
-    swap: new Swap(Account.XRP_1, Account.ETH_USDC_1, "15", Fee.MEDIUM),
+    swap: new Swap(Account.XRP_1, Account.ETH_USDC_1, "20", Fee.MEDIUM),
+    url: "https://explorers.api.live.ledger.com/blockchain/v4/eth/gastracker/",
     xrayTicket: "B2CQA-3075",
   },
   {
     swap: new Swap(Account.ETH_1, Account.XRP_1, "0.03", Fee.MEDIUM),
+    url: "https://explorers.api.live.ledger.com/blockchain/v4/eth/gastracker/",
     xrayTicket: "B2CQA-3076",
   },
   {
-    swap: new Swap(Account.XRP_1, Account.BTC_NATIVE_SEGWIT_1, "15", Fee.MEDIUM),
+    swap: new Swap(Account.XRP_1, Account.BTC_NATIVE_SEGWIT_1, "20", Fee.MEDIUM),
+    url: "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees",
     xrayTicket: "B2CQA-3077",
   },
   {
     swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.LTC_1, "0.0006", Fee.MEDIUM),
+    url: "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees",
     xrayTicket: "B2CQA-3078",
   },
   {
-    swap: new Swap(Account.APTOS_1, Account.SOL_1, "6", Fee.MEDIUM),
+    swap: new Swap(Account.APTOS_1, Account.BTC_NATIVE_SEGWIT_1, "15", Fee.MEDIUM),
+    url: "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees",
     xrayTicket: "B2CQA-3081",
   },
 ];
 
-for (const { swap, xrayTicket } of swaps) {
+for (const { swap, xrayTicket, url } of swaps) {
   test.describe("Swap - Accepted (without tx broadcast)", () => {
     setupEnv(true);
 
@@ -132,8 +154,32 @@ for (const { swap, xrayTicket } of swaps) {
     });
 
     test.use({
-      userdata: "speculos-tests-app",
+      userdata: "skip-onboarding",
       speculosApp: app,
+      cliCommandsOnApp: [
+        {
+          app: swap.accountToDebit.currency.speculosApp,
+          cmd: (userdataPath?: string) => {
+            return CLI.liveData({
+              currency: swap.accountToDebit.currency.speculosApp.name,
+              index: swap.accountToDebit.index,
+              add: true,
+              appjson: userdataPath,
+            });
+          },
+        },
+        {
+          app: swap.accountToCredit.currency.speculosApp,
+          cmd: (userdataPath?: string) => {
+            return CLI.liveData({
+              currency: swap.accountToCredit.currency.speculosApp.name,
+              index: swap.accountToCredit.index,
+              add: true,
+              appjson: userdataPath,
+            });
+          },
+        },
+      ],
     });
 
     test(
@@ -147,7 +193,7 @@ for (const { swap, xrayTicket } of swaps) {
       async ({ app, electronApp }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
+        await performSwapUntilQuoteSelectionStep(app, electronApp, swap, url);
         const selectedProvider = await app.swap.selectExchange(electronApp);
 
         await performSwapUntilDeviceVerificationStep(app, electronApp, swap, selectedProvider);
@@ -188,8 +234,32 @@ for (const { swap, xrayTicket, provider } of checkProviders) {
     });
 
     test.use({
-      userdata: "speculos-tests-app",
+      userdata: "skip-onboarding",
       speculosApp: app,
+      cliCommandsOnApp: [
+        {
+          app: swap.accountToDebit.currency.speculosApp,
+          cmd: (userdataPath?: string) => {
+            return CLI.liveData({
+              currency: swap.accountToDebit.currency.speculosApp.name,
+              index: swap.accountToDebit.index,
+              add: true,
+              appjson: userdataPath,
+            });
+          },
+        },
+        {
+          app: swap.accountToCredit.currency.speculosApp,
+          cmd: (userdataPath?: string) => {
+            return CLI.liveData({
+              currency: swap.accountToCredit.currency.speculosApp.name,
+              index: swap.accountToCredit.index,
+              add: true,
+              appjson: userdataPath,
+            });
+          },
+        },
+      ],
     });
 
     test(
@@ -203,7 +273,8 @@ for (const { swap, xrayTicket, provider } of checkProviders) {
       async ({ app, electronApp }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
+        const url = "https://explorers.api.live.ledger.com/blockchain/v4/eth/gastracker/";
+        await performSwapUntilQuoteSelectionStep(app, electronApp, swap, url);
         await app.swap.selectSpecificprovider(provider.uiName, electronApp);
         await app.swap.goToProviderLiveApp(electronApp, provider.uiName);
         await app.swap.verifyProviderURL(electronApp, provider.uiName, swap);
@@ -225,8 +296,32 @@ test.describe("Swap - Check Best Offer", () => {
   });
 
   test.use({
-    userdata: "speculos-tests-app",
+    userdata: "skip-onboarding",
     speculosApp: app,
+    cliCommandsOnApp: [
+      {
+        app: swap.accountToDebit.currency.speculosApp,
+        cmd: (userdataPath?: string) => {
+          return CLI.liveData({
+            currency: swap.accountToDebit.currency.speculosApp.name,
+            index: swap.accountToDebit.index,
+            add: true,
+            appjson: userdataPath,
+          });
+        },
+      },
+      {
+        app: swap.accountToCredit.currency.speculosApp,
+        cmd: (userdataPath?: string) => {
+          return CLI.liveData({
+            currency: swap.accountToCredit.currency.speculosApp.name,
+            index: swap.accountToCredit.index,
+            add: true,
+            appjson: userdataPath,
+          });
+        },
+      },
+    ],
   });
 
   test(
@@ -237,7 +332,8 @@ test.describe("Swap - Check Best Offer", () => {
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
+      const url = "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees";
+      await performSwapUntilQuoteSelectionStep(app, electronApp, swap, url);
       await app.swap.selectExchange(electronApp);
       await app.swap.checkBestOffer(electronApp);
     },
@@ -256,8 +352,32 @@ test.describe("Swap - Default currency when landing on swap", () => {
   });
 
   test.use({
-    userdata: "speculos-tests-app",
+    userdata: "skip-onboarding",
     speculosApp: app,
+    cliCommandsOnApp: [
+      {
+        app: swap.accountToDebit.currency.speculosApp,
+        cmd: (userdataPath?: string) => {
+          return CLI.liveData({
+            currency: swap.accountToDebit.currency.speculosApp.name,
+            index: swap.accountToDebit.index,
+            add: true,
+            appjson: userdataPath,
+          });
+        },
+      },
+      {
+        app: swap.accountToCredit.currency.speculosApp,
+        cmd: (userdataPath?: string) => {
+          return CLI.liveData({
+            currency: swap.accountToCredit.currency.speculosApp.name,
+            index: swap.accountToCredit.index,
+            add: true,
+            appjson: userdataPath,
+          });
+        },
+      },
+    ],
   });
 
   test(
@@ -268,7 +388,8 @@ test.describe("Swap - Default currency when landing on swap", () => {
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
+      const url = "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees";
+      await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap(), url);
       await app.swap.checkAssetFrom(electronApp, "BTC");
       await app.swap.checkAssetTo(electronApp, "");
     },
@@ -281,7 +402,9 @@ test.describe("Swap - Default currency when landing on swap", () => {
     },
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
+
+      const url = "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees";
+      await performSwapUntilQuoteSelectionStep(app, electronApp, swap, url);
       await app.layout.goToAccounts();
       await app.swap.goAndWaitForSwapToBeReady(
         () => app.layout.goToSwap(),
@@ -305,8 +428,32 @@ test.describe("Swap - Rejected on device", () => {
   });
 
   test.use({
-    userdata: "speculos-tests-app",
+    userdata: "skip-onboarding",
     speculosApp: app,
+    cliCommandsOnApp: [
+      {
+        app: rejectedSwap.accountToDebit.currency.speculosApp,
+        cmd: (userdataPath?: string) => {
+          return CLI.liveData({
+            currency: rejectedSwap.accountToDebit.currency.speculosApp.name,
+            index: rejectedSwap.accountToDebit.index,
+            add: true,
+            appjson: userdataPath,
+          });
+        },
+      },
+      {
+        app: rejectedSwap.accountToCredit.currency.speculosApp,
+        cmd: (userdataPath?: string) => {
+          return CLI.liveData({
+            currency: rejectedSwap.accountToCredit.currency.speculosApp.name,
+            index: rejectedSwap.accountToCredit.index,
+            add: true,
+            appjson: userdataPath,
+          });
+        },
+      },
+    ],
   });
 
   test(
@@ -317,7 +464,8 @@ test.describe("Swap - Rejected on device", () => {
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await performSwapUntilQuoteSelectionStep(app, electronApp, rejectedSwap);
+      const url = "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees";
+      await performSwapUntilQuoteSelectionStep(app, electronApp, rejectedSwap, url);
       const selectedProvider = await app.swap.selectExchange(electronApp);
 
       await performSwapUntilDeviceVerificationStep(
@@ -344,8 +492,32 @@ test.describe("Swap - Landing page", () => {
   });
 
   test.use({
-    userdata: "speculos-tests-app",
+    userdata: "skip-onboarding",
     speculosApp: app,
+    cliCommandsOnApp: [
+      {
+        app: rejectedSwap.accountToDebit.currency.speculosApp,
+        cmd: (userdataPath?: string) => {
+          return CLI.liveData({
+            currency: rejectedSwap.accountToDebit.currency.speculosApp.name,
+            index: rejectedSwap.accountToDebit.index,
+            add: true,
+            appjson: userdataPath,
+          });
+        },
+      },
+      {
+        app: rejectedSwap.accountToCredit.currency.speculosApp,
+        cmd: (userdataPath?: string) => {
+          return CLI.liveData({
+            currency: rejectedSwap.accountToCredit.currency.speculosApp.name,
+            index: rejectedSwap.accountToCredit.index,
+            add: true,
+            appjson: userdataPath,
+          });
+        },
+      },
+    ],
   });
 
   test(
@@ -356,7 +528,8 @@ test.describe("Swap - Landing page", () => {
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await performSwapUntilQuoteSelectionStep(app, electronApp, rejectedSwap);
+      const url = "https://explorers.api.live.ledger.com/blockchain/v4/eth/gastracker/";
+      await performSwapUntilQuoteSelectionStep(app, electronApp, rejectedSwap, url);
       const providerList = await app.swap.getProviderList(electronApp);
       await app.swap.checkQuotesContainerInfos(electronApp, providerList);
       await app.swap.checkBestOffer(electronApp);
@@ -366,7 +539,7 @@ test.describe("Swap - Landing page", () => {
 
 const swapWithDifferentSeed = [
   {
-    swap: new Swap(Account.ETH_1, Account.SOL_1, "0.02", Fee.MEDIUM),
+    swap: new Swap(Account.ETH_1, Account.SOL_1, "0.03", Fee.MEDIUM),
     xrayTicket: "B2CQA-3089",
     userData: "speculos-x-other-account",
     errorMessage:
@@ -478,8 +651,32 @@ for (const swap of tooLowAmountForQuoteSwaps) {
     });
 
     test.use({
-      userdata: "speculos-tests-app",
+      userdata: "skip-onboarding",
       speculosApp: app,
+      cliCommandsOnApp: [
+        {
+          app: swap.swap.accountToDebit.currency.speculosApp,
+          cmd: (userdataPath?: string) => {
+            return CLI.liveData({
+              currency: swap.swap.accountToDebit.currency.speculosApp.name,
+              index: swap.swap.accountToDebit.index,
+              add: true,
+              appjson: userdataPath,
+            });
+          },
+        },
+        {
+          app: swap.swap.accountToCredit.currency.speculosApp,
+          cmd: (userdataPath?: string) => {
+            return CLI.liveData({
+              currency: swap.swap.accountToCredit.currency.speculosApp.name,
+              index: swap.swap.accountToCredit.index,
+              add: true,
+              appjson: userdataPath,
+            });
+          },
+        },
+      ],
     });
 
     test(
@@ -492,7 +689,9 @@ for (const swap of tooLowAmountForQuoteSwaps) {
       },
       async ({ app, electronApp }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-        await performSwapUntilQuoteSelectionStep(app, electronApp, swap.swap);
+
+        const url = "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees";
+        await performSwapUntilQuoteSelectionStep(app, electronApp, swap.swap, url);
         if (swap.quotesVisible) {
           await app.swap.checkQuotes(electronApp);
           await app.swap.selectExchange(electronApp);
@@ -514,8 +713,32 @@ test.describe("Swap flow from different entry point", () => {
   setupEnv(true);
 
   test.use({
-    userdata: "speculos-tests-app",
+    userdata: "skip-onboarding",
     speculosApp: app,
+    cliCommandsOnApp: [
+      {
+        app: swapEntryPoint.swap.accountToDebit.currency.speculosApp,
+        cmd: (userdataPath?: string) => {
+          return CLI.liveData({
+            currency: swapEntryPoint.swap.accountToDebit.currency.speculosApp.name,
+            index: swapEntryPoint.swap.accountToDebit.index,
+            add: true,
+            appjson: userdataPath,
+          });
+        },
+      },
+      {
+        app: swapEntryPoint.swap.accountToCredit.currency.speculosApp,
+        cmd: (userdataPath?: string) => {
+          return CLI.liveData({
+            currency: swapEntryPoint.swap.accountToCredit.currency.speculosApp.name,
+            index: swapEntryPoint.swap.accountToCredit.index,
+            add: true,
+            appjson: userdataPath,
+          });
+        },
+      },
+    ],
   });
 
   test(
@@ -529,7 +752,8 @@ test.describe("Swap flow from different entry point", () => {
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToPortfolio();
-      await app.swap.goAndWaitForSwapToBeReady(() => app.portfolio.clickSwapButton());
+      const url = "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees";
+      await app.swap.goAndWaitForSwapToBeReady(() => app.portfolio.clickSwapButton(), url);
       await app.swap.expectSelectedAssetDisplayed("BTC", electronApp);
     },
   );
@@ -546,7 +770,8 @@ test.describe("Swap flow from different entry point", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToPortfolio();
       await app.portfolio.clickOnSelectedAssetRow(swapEntryPoint.swap.accountToDebit.currency.name);
-      await app.swap.goAndWaitForSwapToBeReady(() => app.assetPage.startSwapFlow());
+      const url = "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees";
+      await app.swap.goAndWaitForSwapToBeReady(() => app.assetPage.startSwapFlow(), url);
       await app.swap.expectSelectedAssetDisplayed(
         swapEntryPoint.swap.accountToDebit.currency.name,
         electronApp,
@@ -565,8 +790,11 @@ test.describe("Swap flow from different entry point", () => {
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToMarket();
-      await app.swap.goAndWaitForSwapToBeReady(() =>
-        app.market.startSwapForSelectedTicker(swapEntryPoint.swap.accountToDebit.currency.ticker),
+      const url = "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees";
+      await app.swap.goAndWaitForSwapToBeReady(
+        () =>
+          app.market.startSwapForSelectedTicker(swapEntryPoint.swap.accountToDebit.currency.ticker),
+        url,
       );
       await app.swap.expectSelectedAssetDisplayed(
         swapEntryPoint.swap.accountToDebit.currency.name,
@@ -591,7 +819,8 @@ test.describe("Swap flow from different entry point", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToMarket();
       await app.market.openCoinPage(swapEntryPoint.swap.accountToDebit.currency.ticker);
-      await app.swap.goAndWaitForSwapToBeReady(() => app.market.clickOnSwapButtonOnAsset());
+      const url = "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees";
+      await app.swap.goAndWaitForSwapToBeReady(() => app.market.clickOnSwapButtonOnAsset(), url);
       await app.swap.expectSelectedAssetDisplayed(
         swapEntryPoint.swap.accountToDebit.currency.name,
         electronApp,
@@ -611,7 +840,8 @@ test.describe("Swap flow from different entry point", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(swapEntryPoint.swap.accountToDebit.accountName);
-      await app.swap.goAndWaitForSwapToBeReady(() => app.account.navigateToSwap());
+      const url = "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees";
+      await app.swap.goAndWaitForSwapToBeReady(() => app.account.navigateToSwap(), url);
       await app.swap.expectSelectedAssetDisplayed(
         swapEntryPoint.swap.accountToDebit.currency.name,
         electronApp,
@@ -633,7 +863,8 @@ test.describe("Swap flow from different entry point", () => {
     },
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
+      const url = "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees";
+      await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap(), url);
       await app.swap.expectSelectedAssetDisplayed("BTC", electronApp);
     },
   );
@@ -643,8 +874,9 @@ async function performSwapUntilQuoteSelectionStep(
   app: Application,
   electronApp: ElectronApplication,
   swap: Swap,
+  url?: string,
 ) {
-  await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
+  await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap(), url);
 
   await app.swap.selectAssetFrom(electronApp, swap.accountToDebit);
   await app.swapDrawer.selectAccountByName(swap.accountToDebit);

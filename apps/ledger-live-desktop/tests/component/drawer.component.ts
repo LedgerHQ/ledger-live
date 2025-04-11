@@ -53,7 +53,7 @@ export class Drawer extends Component {
 
   @step("Select account by name")
   async selectAccountByName(account: Account) {
-    await this.getAccountButton(account.currency.name, account.index)
+    await this.getAccountButton(account.currency.name, 0)
       .locator(`text=${account.accountName}`)
       .click();
   }
