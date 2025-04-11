@@ -2390,7 +2390,7 @@
         "ethereumPriorityFee" : "Макс. комиссия за приоритет ({{unitName}})",
         "nextBlock" : "Следующий блок",
         "suggested" : "Рекомендовано",
-        "unitPerByte" : "{{unit}} за байт",
+        "unitVByte" : "{{unit}}/вБайт",
         "nft" : "NFT",
         "nftQuantity" : "Количество"
       },
