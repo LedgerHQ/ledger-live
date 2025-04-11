@@ -1,8 +1,10 @@
+import { rejectWithError } from "LLM/utils/rejectWithError";
 import type { Storage, StorageInitializer, StorageState } from "./types";
 import asyncStorageWrapper from "./asyncStorageWrapper";
 import mmkvStorageWrapper from "./mmkvStorageWrapper";
 import { STORAGE_TYPE } from "./constants";
-import { rejectWithError } from "LLM/utils/rejectWithError";
+import { migrator } from "./utils/migrations/asyncStorageToMMKV";
+import { MIGRATION_STATUS } from "./utils/migrations/constants";
 
 /** Singleton reference to the global application storage object. */
 export default createStorage();
@@ -11,6 +13,7 @@ export default createStorage();
 export function createStorage(init: StorageInitializer = initStorageState): Storage {
   const state: StorageState = {
     storageType: STORAGE_TYPE.ASYNC_STORAGE,
+    migrationStatus: MIGRATION_STATUS.NOT_STARTED,
   };
 
   init(state);
@@ -81,11 +84,11 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
       }
     },
 
-    async delete(key) {
+    delete(key) {
       try {
         return state.storageType === STORAGE_TYPE.MMKV
-          ? await mmkvStorageWrapper.delete(key)
-          : await asyncStorageWrapper.delete(key);
+          ? Promise.resolve(mmkvStorageWrapper.delete(key))
+          : asyncStorageWrapper.delete(key);
       } catch (e) {
         console.error("Error deleting key from storage", e);
         return rejectWithError(e);
@@ -103,8 +106,13 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
       }
     },
 
-    migrate() {
-      console.warn("Not implemented yet");
+    async migrate() {
+      try {
+        await migrator.migrate(state);
+      } catch (e) {
+        console.error("Error while migrating storage", e);
+        return rejectWithError(e);
+      }
     },
 
     resetMigration() {
@@ -113,6 +121,15 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     rollbackMigration() {
       console.warn("Not implemented yet");
+    },
+
+    async handleMigration() {
+      try {
+        await migrator.handleMigration(state);
+      } catch (e) {
+        console.error("Error handling migration", e);
+        return rejectWithError(e);
+      }
     },
   } satisfies Storage;
 }
