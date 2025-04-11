@@ -4,8 +4,6 @@ import { StatusCodes } from "@ledgerhq/errors";
 
 import BIPPath from "bip32-path";
 
-import { log } from "console";
-
 const P1_NON_CONFIRM = 0x00;
 const P1_CONFIRM = 0x01;
 
@@ -97,39 +95,6 @@ export default class Solana {
     };
   }
 
-  _harden(n) {
-    const BIP32_HARDENED_BIT = (1 << 31) >>> 0;
-    return (n | BIP32_HARDENED_BIT) >>> 0;
-  }
-
-  solanaDerivationPath(account?, change?) {
-    let length;
-    if (typeof account === "number") {
-      if (typeof change === "number") {
-        length = 4;
-      } else {
-        length = 3;
-      }
-    } else {
-      length = 2;
-    }
-
-    const derivation_path = Buffer.alloc(1 + length * 4);
-    let offset = 0;
-    offset = derivation_path.writeUInt8(length, offset);
-    offset = derivation_path.writeUInt32BE(this._harden(44), offset); // Using BIP44
-    offset = derivation_path.writeUInt32BE(this._harden(501), offset); // Solana's BIP44 path
-
-    if (length > 2) {
-      offset = derivation_path.writeUInt32BE(this._harden(account), offset);
-      if (length == 4) {
-        derivation_path.writeUInt32BE(this._harden(change), offset);
-      }
-    }
-
-    return derivation_path;
-  }
-
   /**
    * Sign a Solana transaction.
    *
@@ -152,7 +117,7 @@ export default class Solana {
     const pathsCountBuffer = Buffer.alloc(1);
     pathsCountBuffer.writeUInt8(1, 0);
 
-    const payload = Buffer.concat([Buffer.from([1]), this.solanaDerivationPath(), Buffer.from("")]);
+    const payload = Buffer.concat([pathsCountBuffer, pathBuffer, txBuffer]);
 
     const signatureBuffer = await this.sendToDevice(INS.SIGN, P1_CONFIRM, payload);
 
@@ -180,12 +145,11 @@ export default class Solana {
   }> {
     const pathBuffer = this.pathToBuffer(path);
     // Ledger app supports only a single derivation path per call ATM
-    const pathsCountBuffer = Buffer.alloc(10);
+    const pathsCountBuffer = Buffer.alloc(1);
     pathsCountBuffer.writeUInt8(1, 0);
 
-    log("serialized message:[" + msgBuffer.toString("hex") + "]");
-    log("serialized message:[" + msgBuffer.toString("ascii") + "]");
-    const payload = Buffer.concat([Buffer.from([1]), this.solanaDerivationPath(), msgBuffer]);
+    const payload = Buffer.concat([pathsCountBuffer, pathBuffer, msgBuffer]);
+
     const signatureBuffer = await this.sendToDevice(INS.SIGN_OFFCHAIN, P1_CONFIRM, payload);
 
     return {

@@ -11,11 +11,11 @@ export const signMessage =
   ): Promise<{
     signature: string;
   }> => {
-    /*if (!messageOptions.message || typeof messageOptions.message !== "string") {
+    if (!messageOptions.message || typeof messageOptions.message !== "string") {
       throw new Error(
         "Sign off-chain message on Solana must be only used with DefaultMessage type",
       );
-    }*/
+    }
 
     const solanaSignature = await signerContext(deviceId, signer => {
       return signer.signMessage(
