@@ -24,6 +24,11 @@ export const parameters = {
       date: /Date$/,
     },
   },
+  options: {
+    storySort: {
+      order: ["PreLdls"],
+    },
+  },
   backgrounds: {
     default: "light",
     values: [

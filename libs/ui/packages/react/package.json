@@ -46,6 +46,10 @@
       "require": "./lib/cjs/index.js",
       "default": "./lib/index.js"
     },
+    "./pre-ldls": {
+      "require": "./lib/cjs/pre-ldls/index.js",
+      "default": "./lib/pre-ldls/index.js"
+    },
     "./package.json": "./package.json"
   },
   "sideEffects": [
@@ -109,6 +113,8 @@
     "@storybook/theming": "^8.6.12",
     "@svgr/core": "^5.5.0",
     "@svgr/plugin-svgo": "*",
+    "@testing-library/jest-dom": "6.6.3",
+    "@testing-library/user-event": "14.5.2",
     "@types/color": "^3.0.2",
     "@types/hoist-non-react-statics": "^3.3.1",
     "@types/lodash": "4",
@@ -119,6 +125,7 @@
     "@types/react-window": "^1.8.5",
     "@types/styled-components": "^5.1.14",
     "@types/styled-system": "^5.1.12",
+    "@vitest/expect": "3.1.1",
     "babel-loader": "^8.0.0",
     "csstype": "^3.0.11",
     "embla-carousel": "8.0.0-rc17",
