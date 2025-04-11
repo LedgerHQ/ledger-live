@@ -1,11 +1,13 @@
 import { ZCASH_ACTIVATION_HEIGHTS } from "../src/constants";
 import { getDefaultVersions } from "../src/createTransaction";
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
+import * as hwUtils from "../src/utils";
 import Btc from "../src/Btc";
 
 describe("createTransaction", () => {
   describe("createTransaction", () => {
     test("zcash", async () => {
+      jest.spyOn(hwUtils, "shouldUseOlderZcash").mockResolvedValue(false);
       const transport = await openTransportReplayer(
         RecordStore.fromString(`
         => b001000000
