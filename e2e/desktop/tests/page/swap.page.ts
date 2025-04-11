@@ -224,11 +224,6 @@ export class SwapPage extends AppPage {
     await continueButton.click();
   }
 
-  getAccountName(account: Account) {
-    //erc20 accounts names are stored in account currency property
-    return account.tokenType ? account.currency.name : account.accountName;
-  }
-
   @step("Select currency to swap to: $0")
   async selectCurrencyToSwapTo(currencyToSwapTo: string) {
     await this.waitForPageDomContentLoadedState();
@@ -326,7 +321,7 @@ export class SwapPage extends AppPage {
         if (
           response
             .url()
-            .startsWith(url || "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees") &&
+            .startsWith(url ?? "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees") &&
           response.status() === 200
         ) {
           resolve(response);

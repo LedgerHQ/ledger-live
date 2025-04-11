@@ -62,6 +62,7 @@ export class AccountPage extends AppPage {
     await this.sendButton.click();
   }
 
+  @step("Open Swap")
   async navigateToSwap() {
     await this.swapButton.click();
   }

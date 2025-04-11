@@ -13,6 +13,7 @@ export class PasswordlockModal extends Modal {
     await this.switchButton.click();
   }
 
+  @step("Enter password")
   async enablePassword(newPassword: string, confirmPassword: string) {
     await this.newPasswordInput.fill(newPassword);
     await this.confirmPasswordInput.fill(confirmPassword);

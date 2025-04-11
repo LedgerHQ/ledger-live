@@ -41,7 +41,7 @@ export class OperationDrawer extends Drawer {
       expect(await this.amountValue.textContent()).toMatch(/^[+-]?\$\d+\.\d{2}$/);
     } else {
       await expect(this.amountLabel).not.toBeVisible();
-      expect(this.amountValue).not.toBeVisible();
+      await expect(this.amountValue).not.toBeVisible();
     }
   }
 

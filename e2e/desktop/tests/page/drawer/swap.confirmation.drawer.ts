@@ -41,12 +41,12 @@ export class SwapConfirmationDrawer extends Drawer {
 
   @step("Get fees")
   async getFees() {
-    return (await this.fees.textContent()) || "";
+    return (await this.fees.textContent()) ?? "";
   }
 
   @step("Get amount to receive")
   async getAmountToReceive() {
-    return (await this.amountReceived.textContent()) || "";
+    return (await this.amountReceived.textContent()) ?? "";
   }
 
   @step("Verify exchange error text content: $0")

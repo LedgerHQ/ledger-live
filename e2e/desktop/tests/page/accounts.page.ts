@@ -70,6 +70,7 @@ export class AccountsPage extends AppPage {
     expect(await this.getAccountsName()).not.toContain(accountName);
   }
 
+  @step("Get number of accounts in the list")
   async countAccounts(): Promise<number> {
     return await this.page.locator(".accounts-account-row-item-content").count();
   }

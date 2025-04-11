@@ -1,4 +1,5 @@
 import { Page } from "@playwright/test";
+import { step } from "../misc/reporters/step";
 export abstract class PageHolder {
   constructor(protected page: Page) {}
 }
@@ -17,6 +18,7 @@ export abstract class Component extends PageHolder {
       .first();
   protected loadingSpinner = this.page.getByTestId("loading-spinner");
 
+  @step("Waiting for app to fully load")
   async waitForPageDomContentLoadedState() {
     return await this.page.waitForLoadState("domcontentloaded");
   }

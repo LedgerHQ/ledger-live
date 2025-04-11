@@ -8,6 +8,7 @@ export class LockscreenPage extends AppPage {
   readonly inputError = this.page.locator("id=input-error"); // no data-testid because css style is applied
   readonly logo = this.page.getByTestId("logo");
 
+  @step("Submit password")
   async login(password: string) {
     await this.container.waitFor({ state: "visible" });
     await this.passwordInput.fill(password);
