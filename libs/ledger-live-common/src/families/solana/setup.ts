@@ -26,6 +26,8 @@ import { getCurrencyConfiguration } from "../../config";
 import { SolanaCoinConfig } from "@ledgerhq/coin-solana/lib/config";
 import { getCryptoCurrencyById } from "../../currencies";
 import { signMessage } from "@ledgerhq/coin-solana/hw-signMessage";
+import { isValidUTF8 } from "utf-8-validate";
+import { log } from "console";
 
 const TRUSTED_NAME_MIN_VERSION = "1.7.1";
 const MANAGER_APP_NAME = "Solana";
@@ -43,13 +45,62 @@ function isPKIUnsupportedError(err: unknown): err is TransportStatusError {
   return err instanceof TransportStatusError && err.message.includes("0x6a81");
 }
 
-function addHeaderToSignOffChainMessage(message: Buffer): Buffer {
-  return Buffer.concat([
+function isPrintableASCII(buffer) {
+  return (
+    buffer &&
+    buffer.every(element => {
+      return element >= 0x20 && element <= 0x7e;
+    })
+  );
+}
+
+function isUTF8(buffer) {
+  return buffer && isValidUTF8(buffer);
+}
+
+// Max off-chain message length supported by Ledger
+const OFFCM_MAX_LEDGER_LEN = 1212;
+// Max length of version 0 off-chain message
+const OFFCM_MAX_V0_LEN = 65515;
+
+function guessMessageFormat(message: string) {
+  if (Object.prototype.toString.call(message) !== "[object Uint8Array]") {
+    return undefined;
+  }
+  if (message.length <= OFFCM_MAX_LEDGER_LEN) {
+    if (isPrintableASCII(message)) {
+      return 0;
+    } else if (isUTF8(message)) {
+      return 1;
+    }
+  } else if (message.length <= OFFCM_MAX_V0_LEN) {
+    if (isUTF8(message)) {
+      return 2;
+    }
+  }
+  return undefined;
+}
+
+function addHeaderToSignOffChainMessage(message: string): Buffer {
+  const buffer = Buffer.alloc(4);
+  let offset = buffer.writeUInt8(0);
+  const messageFormat = 0; //guessMessageFormat(message) ?? 2;
+  offset = buffer.writeUInt8(messageFormat, offset);
+  buffer.writeUInt16LE(message.length, offset);
+  const result = Buffer.concat([
+    Buffer.from([255]),
+    Buffer.from("solana offchain"),
+    buffer,
+    Buffer.from(message),
+  ]);
+
+  return result;
+  /*return Buffer.concat([
     Buffer.from([0xff]),
     Buffer.from("solana offchain"),
     Buffer.from([0x00, 0x00]),
     message,
-  ]);
+  ]);*/
 }
 
 const createSigner: CreateSigner<SolanaSigner> = (transport: Transport) => {
@@ -108,7 +159,7 @@ const createSigner: CreateSigner<SolanaSigner> = (transport: Transport) => {
       return app.signTransaction(path, tx);
     },
     signMessage: (path: string, message: string) => {
-      const messageBuffer = addHeaderToSignOffChainMessage(Buffer.from(message));
+      const messageBuffer = addHeaderToSignOffChainMessage(message);
       return app
         .signOffchainMessage(path, messageBuffer)
         .then(response => ({ signature: Buffer.from(response.signature.toString("hex")) }));
