@@ -37,8 +37,8 @@ describe("useOpenAssetFlow", () => {
     expect(setDrawer).not.toHaveBeenCalled();
   });
 
-  it("should dispatch setDrawer if the modular drawer is visible", () => {
-    const { result } = renderHook(() => useOpenAssetFlow(modularDrawerLocation), {
+  it("should open the modular drawer if it is visible and open the modal once a currency is chosen", () => {
+    const { result, store } = renderHook(() => useOpenAssetFlow(modularDrawerLocation), {
       initialState: {
         settings: {
           overriddenFeatureFlags: {
@@ -53,11 +53,14 @@ describe("useOpenAssetFlow", () => {
       },
     });
 
-    const onAssetSelected = jest.fn();
-    (setDrawer as jest.Mock).mockImplementation(_ => {
-      onAssetSelected;
-    });
+    const selectAsset = jest.fn();
+    (setDrawer as jest.Mock).mockImplementation((_, props) =>
+      selectAsset.mockImplementation(props?.onAssetSelected),
+    );
+
+    // Should open the drawer
     result.current.openAssetFlow();
+
     expect(setDrawer).toHaveBeenCalledTimes(1);
     expect(setDrawer).toHaveBeenLastCalledWith(
       SelectAssetFlow,
@@ -68,5 +71,19 @@ describe("useOpenAssetFlow", () => {
         onRequestClose: expect.any(Function),
       },
     );
+
+    expect(store.getState().modals.MODAL_ADD_ACCOUNTS?.isOpened).toBeFalsy();
+
+    // Select currency in the drawer
+    const mockCurrency = { id: "btc" };
+    selectAsset(mockCurrency);
+
+    expect(setDrawer).toHaveBeenCalledTimes(2);
+    expect(setDrawer).toHaveBeenCalledWith();
+
+    expect(store.getState().modals.MODAL_ADD_ACCOUNTS).toEqual({
+      isOpened: true,
+      data: expect.objectContaining({ currency: mockCurrency }),
+    });
   });
 });
