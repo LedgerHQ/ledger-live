@@ -1,4 +1,4 @@
-import { ZCASH_NU6_ACTIVATION_HEIGHT } from "../src/constants";
+import { ZCASH_ACTIVATION_HEIGHTS } from "../src/constants";
 import { getDefaultVersions } from "../src/createTransaction";
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import Btc from "../src/Btc";
@@ -10,7 +10,7 @@ describe("createTransaction", () => {
         RecordStore.fromString(`
         => b001000000
         <= 01055a6361736805322e332e3101029000
-        => e04200000d00000000050000800a27a72601
+        => e04200001100000000050000800a27a726b4d0d6c201
         <= 9000
         => e0428000251d73f1a467297aab205ee7a4ed506f28ea558056401b4f6d308016c1b58d27f4010000006a
         <= 9000
@@ -28,7 +28,7 @@ describe("createTransaction", () => {
         <= 9000
         => e042800009000000000400000000
         <= 3200ed40989caa0731d6526fe4e03d49c54720be148f911924129e15d7ecf6e190829edb0000000050c3000000000000d53c396d2f5c98619000
-        => e04200000d00000000060000800a27a72601
+        => e04200001100000000050000800a27a7265510e7c801
         <= 9000
         => e0428000258c63f70704d9987dafffc5481b171dee900e9b6d71261fee880543bc96c41d11000000006b
         <= 9000
@@ -51,7 +51,7 @@ describe("createTransaction", () => {
         <= 9000
         => e04000000100
         <= 9000
-        => e0440000050100000002
+        => e044000009010000005510e7c802
         <= 9000
 
         => e04480003b01383200ed40989caa0731d6526fe4e03d49c54720be148f911924129e15d7ecf6e190829edb0000000050c3000000000000d53c396d2f5c986119
@@ -74,7 +74,7 @@ describe("createTransaction", () => {
         <= 00009000
 
 
-        => e0440080050100000002
+        => e044008009010000005510e7c802
         <= 9000
 
         => e04480803b01383200ed40989caa0731d6526fe4e03d49c54720be148f911924129e15d7ecf6e190829edb0000000050c3000000000000d53c396d2f5c986100
@@ -154,10 +154,8 @@ output 1: amount 0e532a0000000000 script 76a9144cd6509f71020b6a9e890bef43c4d5e61
         sapling: false,
         isDecred: false,
         expiryHeight: undefined,
-        blockHeight: undefined,
       });
       expect(result.defaultVersion.readUInt32LE(0)).toBe(1);
-      expect(result.defaultVersionNu5Only.readUInt32LE(0)).toBe(1);
     });
 
     it("should return Zcash versions with expiryHeight and blockHeight below activation height", () => {
@@ -166,24 +164,20 @@ output 1: amount 0e532a0000000000 script 76a9144cd6509f71020b6a9e890bef43c4d5e61
         sapling: false,
         isDecred: false,
         expiryHeight: Buffer.alloc(4),
-        blockHeight: 1000,
       });
       expect(result.defaultVersion.readUInt32LE(0)).toBe(0x80000005);
-      expect(result.defaultVersionNu5Only.readUInt32LE(0)).toBe(0x80000005);
     });
 
     it("should return Zcash versions with expiryHeight and blockHeight above activation height", () => {
       const blockHeight = 3_000_000;
-      expect(blockHeight > ZCASH_NU6_ACTIVATION_HEIGHT).toBe(true);
+      expect(blockHeight > ZCASH_ACTIVATION_HEIGHTS.NU6).toBe(true);
       const result = getDefaultVersions({
         isZcash: true,
         sapling: false,
         isDecred: false,
         expiryHeight: Buffer.alloc(4),
-        blockHeight: blockHeight,
       });
-      expect(result.defaultVersion.readUInt32LE(0)).toBe(0x80000006);
-      expect(result.defaultVersionNu5Only.readUInt32LE(0)).toBe(0x80000005);
+      expect(result.defaultVersion.readUInt32LE(0)).toBe(0x80000005);
     });
 
     it("should return Sapling versions with expiryHeight", () => {
@@ -192,10 +186,8 @@ output 1: amount 0e532a0000000000 script 76a9144cd6509f71020b6a9e890bef43c4d5e61
         sapling: true,
         isDecred: false,
         expiryHeight: Buffer.alloc(4),
-        blockHeight: undefined,
       });
       expect(result.defaultVersion.readUInt32LE(0)).toBe(0x80000004);
-      expect(result.defaultVersionNu5Only.readUInt32LE(0)).toBe(0x80000004);
     });
 
     it("should return non-Sapling versions with expiryHeight", () => {
@@ -204,10 +196,8 @@ output 1: amount 0e532a0000000000 script 76a9144cd6509f71020b6a9e890bef43c4d5e61
         sapling: false,
         isDecred: false,
         expiryHeight: Buffer.alloc(4),
-        blockHeight: undefined,
       });
       expect(result.defaultVersion.readUInt32LE(0)).toBe(0x80000003);
-      expect(result.defaultVersionNu5Only.readUInt32LE(0)).toBe(0x80000003);
     });
 
     it("should return default versions for Decred with expiryHeight", () => {
@@ -216,10 +206,8 @@ output 1: amount 0e532a0000000000 script 76a9144cd6509f71020b6a9e890bef43c4d5e61
         sapling: false,
         isDecred: true,
         expiryHeight: Buffer.alloc(4),
-        blockHeight: undefined,
       });
       expect(result.defaultVersion.readUInt32LE(0)).toBe(1);
-      expect(result.defaultVersionNu5Only.readUInt32LE(0)).toBe(1);
     });
   });
 });
