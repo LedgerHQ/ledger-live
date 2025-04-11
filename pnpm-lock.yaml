@@ -2462,9 +2462,6 @@ importers:
         specifier: ^7.8.1
         version: 7.8.1
     devDependencies:
-      '@ledgerhq/coin-tester':
-        specifier: workspace:^
-        version: link:../../coin-tester
       '@ledgerhq/hw-app-eth':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-app-eth
