@@ -3,6 +3,7 @@ import type { Transaction } from "./types";
 import { createVarint } from "./varint";
 import { MAX_SCRIPT_BLOCK } from "./constants";
 import { shouldUseOlderZcash } from "./utils";
+
 export function startUntrustedHashTransactionInputRaw(
   transport: Transport,
   newTransaction: boolean,
