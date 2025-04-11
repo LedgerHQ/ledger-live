@@ -1779,7 +1779,7 @@
     },
     "fullNodeReadyInfo" : "アカウントは、Bitcoinフルノードを使用して追加されます。",
     "fullNodeConfigure" : "ノードの構成",
-    "tokensTip" : "{{token}} ({{ticker}})は{{tokenType}}トークンです。 {{currency}} アカウントで直接トークンを受け取ることができます。",
+    "tokensTip" : "{{token}} ({{ticker}}) は、{{tokenType}}トークンです。{{currency}}アカウントで直接トークンを受け取ることができます。",
     "accountToImportSubtitle_plural" : "既存アカウントを追加",
     "selectAll" : "すべてを選択 ({{count}})",
     "unselectAll" : "全ての選択解除 ({{count}})",
@@ -2423,8 +2423,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "タグ/メモを使用しませんか？",
-        "description" : "資金を中央集権型取引所やカストディアルウォレットに送付するときにタグ/メモを追加しないと、資金が失われます。",
+        "title" : "タグ/メモがご必要ですか？",
+        "description" : "中央集権型取引所に資金を送る際にタグ/メモを追加しない場合、資金が失われる可能性が高くなります。",
         "cta.addTag" : "タグを追加",
         "cta.not.addTag" : "タグを追加しない",
         "checkbox.label" : "今後は表示しない。"
