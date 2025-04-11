@@ -11,6 +11,7 @@ jest.mock("~/components/Graph", () => {
   });
 });
 
+
 const mockChartData: MarketCoinDataChart = {
   "24h": [
     [1681017600000, 60000],
@@ -31,6 +32,7 @@ const mockChartData: MarketCoinDataChart = {
 };
 
 describe("LargeMoverGraph", () => {
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
