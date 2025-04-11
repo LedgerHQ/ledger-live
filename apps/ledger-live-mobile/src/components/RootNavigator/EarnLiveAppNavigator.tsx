@@ -16,6 +16,7 @@ import { EarnInfoDrawer } from "~/screens/PTX/Earn/EarnInfoDrawer";
 import { useStakingDrawer } from "../Stake/useStakingDrawer";
 import { EarnMenuDrawer } from "~/screens/PTX/Earn/EarnMenuDrawer";
 import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/lib/account/helpers";
+import { useStake } from "LLM/hooks/useStake/useStake";
 
 const Stack = createStackNavigator<EarnLiveAppNavigatorParamList>();
 
@@ -29,6 +30,7 @@ const Earn = (props: NavigationProps) => {
   const navigation = props.navigation;
   const accounts = useSelector(flattenAccountsSelector);
   const route = useRoute();
+  const { partnerSupportedAssets } = useStake();
 
   const openStakingDrawer = useStakingDrawer({
     navigation,
@@ -121,6 +123,7 @@ const Earn = (props: NavigationProps) => {
           ...props.route,
           params: {
             platform: "earn",
+            partnerCoins: partnerSupportedAssets.length,
           },
         }}
       />

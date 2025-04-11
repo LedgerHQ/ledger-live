@@ -13,6 +13,7 @@ import { useDeepLinkListener } from "~/renderer/screens/earn/useDeepLinkListener
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { getParsedSystemDeviceLocale } from "~/helpers/systemLocale";
+import { useStake } from "LLD/hooks/useStake";
 
 const DEFAULT_EARN_APP_ID = "earn";
 
@@ -27,6 +28,7 @@ const Earn = () => {
   const discreetMode = useDiscreetMode();
   const countryLocale = getParsedSystemDeviceLocale().region;
   useDeepLinkListener();
+  const { partnerSupportedAssets } = useStake();
 
   return (
     <Card grow style={{ overflow: "hidden" }} data-testid="earn-app-container">
@@ -49,6 +51,7 @@ const Earn = () => {
             currencyTicker: fiatCurrency.ticker,
             discreetMode: discreetMode ? "true" : "false",
             OS: "web",
+            partnerCoins: partnerSupportedAssets.length.toString(),
           }}
         />
       ) : null}

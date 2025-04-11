@@ -64,6 +64,7 @@ function Earn({ route }: Props) {
           discreetMode: discreet ? "true" : "false",
           OS: Platform.OS,
           ...params,
+          partnerCoins: params.partnerCoins.toString(),
           ...Object.fromEntries(searchParams.entries()),
         }}
       />
