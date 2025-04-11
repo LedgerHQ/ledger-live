@@ -30,7 +30,8 @@
     "**/e2e/**",
     "**/*.config.*",
     "**/scripts/**",
-    "**/tools/**"
+    "**/tools/**",
+    "src/newArch/features/LandingPages/screens/LargeMoverLandingPage"
   ],
 
   "workspaces": {
