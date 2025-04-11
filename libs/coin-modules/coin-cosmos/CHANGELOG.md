@@ -1,5 +1,11 @@
 # @ledgerhq/coin-cosmos
 
+## 0.12.0-nightly.6
+
+### Minor Changes
+
+- [#9836](https://github.com/LedgerHQ/ledger-live/pull/9836) [`6473dff`](https://github.com/LedgerHQ/ledger-live/commit/6473dffb31bd6926ba27d1739ffba27b38561fba) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - conf(coin-cosmos): drop Polkachu for Cosmos
+
 ## 0.12.0-nightly.5
 
 ### Patch Changes

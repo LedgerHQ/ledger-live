@@ -1,5 +1,20 @@
 # ledger-live-desktop
 
+## 2.107.0-nightly.6
+
+### Minor Changes
+
+- [#9861](https://github.com/LedgerHQ/ledger-live/pull/9861) [`03d9cbb`](https://github.com/LedgerHQ/ledger-live/commit/03d9cbbe02adc4bc33ce97738feab5184b400759) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): account.receive doesn't resolve when dismissing the modal
+
+- [#9893](https://github.com/LedgerHQ/ledger-live/pull/9893) [`e6d799d`](https://github.com/LedgerHQ/ledger-live/commit/e6d799ddb6fccdf14627c5c9aa5ec0bdf00e2605) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update imports from newArch
+
+### Patch Changes
+
+- Updated dependencies [[`6473dff`](https://github.com/LedgerHQ/ledger-live/commit/6473dffb31bd6926ba27d1739ffba27b38561fba)]:
+  - @ledgerhq/coin-cosmos@0.12.0-nightly.6
+  - @ledgerhq/live-common@34.29.0-nightly.6
+  - @ledgerhq/live-dmk-desktop@0.2.0-nightly.6
+
 ## 2.107.0-nightly.5
 
 ### Minor Changes

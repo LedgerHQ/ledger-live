@@ -1,5 +1,16 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.2.0-nightly.6
+
+### Minor Changes
+
+- [#9880](https://github.com/LedgerHQ/ledger-live/pull/9880) [`da26f2d`](https://github.com/LedgerHQ/ledger-live/commit/da26f2d0ba55f6ef7e00b706886374e4d3e0a2ec) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - useLdmFeatureEnabled hook to use first known value of ldmkTransport ff
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.29.0-nightly.6
+
 ## 0.2.0-nightly.5
 
 ### Patch Changes
