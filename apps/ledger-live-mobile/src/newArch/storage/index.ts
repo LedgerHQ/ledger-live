@@ -84,11 +84,11 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
       }
     },
 
-    delete(key) {
+    async delete(key) {
       try {
         return state.storageType === STORAGE_TYPE.MMKV
-          ? Promise.resolve(mmkvStorageWrapper.delete(key))
-          : asyncStorageWrapper.delete(key);
+          ? await mmkvStorageWrapper.delete(key)
+          : await asyncStorageWrapper.delete(key);
       } catch (e) {
         console.error("Error deleting key from storage", e);
         return rejectWithError(e);
