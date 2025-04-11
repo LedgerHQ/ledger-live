@@ -84,7 +84,7 @@ function guessMessageFormat(message: string) {
 function addHeaderToSignOffChainMessage(message: string): Buffer {
   const buffer = Buffer.alloc(4);
   let offset = buffer.writeUInt8(0);
-  const messageFormat = 0; //guessMessageFormat(message) ?? 2;
+  const messageFormat = guessMessageFormat(message) ?? 0;
   offset = buffer.writeUInt8(messageFormat, offset);
   buffer.writeUInt16LE(message.length, offset);
   const result = Buffer.concat([
