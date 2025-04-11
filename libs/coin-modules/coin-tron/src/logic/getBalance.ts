@@ -1,60 +1,54 @@
 import BigNumber from "bignumber.js";
 import type { AccountTronAPI } from "../network/types";
 import { getTronResources } from "./utils";
-import { Asset as CoreAsset } from "@ledgerhq/coin-framework/api/index";
-import { getAccount } from "./getAccount";
+import { Asset, Balance } from "@ledgerhq/coin-framework/api/index";
+import { fetchTronAccount } from "../network";
+import { Trc10Token, Trc20Token, TronAsset } from "../types";
 
 const bigIntOrZero = (val: number | BigNumber | undefined | null): bigint =>
   BigInt(val?.toString() ?? 0);
 
-// type AssetTree = {
-//   native: bigint;
-//   tokens: Asset[];
-// };
-export type AssetTree = CoreAsset & {
-  tokens: Asset[];
-};
-
-export async function getBalance(address: string): Promise<AssetTree> {
-  const accounts = await getAccount(address);
+export async function getBalance(address: string): Promise<Balance<TronAsset>[]> {
+  const accounts = await fetchTronAccount(address);
   const account = accounts[0];
 
-  return {
-    native: computeBalance(account),
-    tokens: extractTrc10Balance(account).concat(extractTrc20Balance(account)),
-  } satisfies AssetTree;
+  const nativeBalance: Balance<TronAsset> = computeBalance(account);
+  const trc10Balance: Balance<TronAsset>[] = extractTrc10Balance(account);
+  const trc20Balance: Balance<TronAsset>[] = extractTrc20Balance(account);
+
+  return [nativeBalance].concat(trc10Balance).concat(trc20Balance);
 }
 
-type Asset = {
-  standard: "trc10" | "trc20";
-  contractAddress: string;
-  balance: bigint;
-};
-
-function extractTrc10Balance(account: AccountTronAPI): Asset[] {
+function extractTrc10Balance(account: AccountTronAPI): Balance<Asset<Trc10Token>>[] {
   return (
     account.assetV2?.map(trc => {
       return {
-        standard: "trc10",
-        contractAddress: trc.key,
-        balance: BigInt(trc.value),
-      } satisfies Asset;
+        value: BigInt(trc.value),
+        asset: {
+          type: "token",
+          standard: "trc10",
+          tokenId: trc.key,
+        },
+      };
     }) ?? []
   );
 }
 
-function extractTrc20Balance(account: AccountTronAPI): Asset[] {
+function extractTrc20Balance(account: AccountTronAPI): Balance<Asset<Trc20Token>>[] {
   return account.trc20.map(trc => {
     const [[contractAddress, balance]] = Object.entries(trc);
     return {
-      standard: "trc20",
-      contractAddress,
-      balance: BigInt(balance),
-    } satisfies Asset;
+      value: BigInt(balance),
+      asset: {
+        type: "token",
+        standard: "trc20",
+        contractAddress,
+      },
+    };
   });
 }
 
-export function computeBalance(account: AccountTronAPI): bigint {
+export function computeBalance(account: AccountTronAPI): Balance<Asset> {
   const tronResources = getTronResources(account);
 
   let balance = bigIntOrZero(account.balance ?? 0);
@@ -75,7 +69,7 @@ export function computeBalance(account: AccountTronAPI): bigint {
   balance += bigIntOrZero(tronResources.legacyFrozen.bandwidth?.amount);
   balance += bigIntOrZero(tronResources.legacyFrozen.energy?.amount);
 
-  return balance;
+  return { asset: { type: "native" }, value: balance };
 }
 
 export function computeBalanceBridge(account: AccountTronAPI): BigNumber {

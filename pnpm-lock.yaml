@@ -3634,6 +3634,9 @@ importers:
       jest-sonar:
         specifier: 0.2.16
         version: 0.2.16
+      msw:
+        specifier: ^2.7.3
+        version: 2.7.3(typescript@5.6.3)
       ts-jest:
         specifier: ^29.1.4
         version: 29.1.5(jest@29.7.0)(typescript@5.6.3)
