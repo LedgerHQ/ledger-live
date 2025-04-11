@@ -2390,7 +2390,7 @@
         "ethereumPriorityFee" : "最高优先费用 ({{unitName}})",
         "nextBlock" : "下一个区块",
         "suggested" : "建议",
-        "unitPerByte" : "{{unit}} 每字节",
+        "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
         "nftQuantity" : "数量"
       },
