@@ -100,7 +100,7 @@
     "save" : "บันทึก",
     "lock" : "ล็อก",
     "showMore" : "แสดงเพิ่มเติม",
-    "backToMatchingURL" : "กลับไปยัง {{appName}}",
+    "backToMatchingURL" : "กลับไปยัง{{appName}}",
     "back" : "ย้อนกลับ",
     "adjustFees" : "ปรับค่าธรรมเนียม",
     "reset" : "รีเซ็ต",
@@ -2390,7 +2390,7 @@
         "ethereumPriorityFee" : "Priority Fee สูงสุด ({{unitName}})",
         "nextBlock" : "บล็อกถัดไป",
         "suggested" : "แนะนำ",
-        "unitPerByte" : "{{unit}} ต่อไบต์",
+        "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
         "nftQuantity" : "ปริมาณ"
       },
