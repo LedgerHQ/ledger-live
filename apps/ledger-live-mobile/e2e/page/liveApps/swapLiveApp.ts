@@ -1,6 +1,8 @@
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Swap";
 import { allure } from "jest-allure2-reporter/api";
 import invariant from "invariant";
+import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
+import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 
 export default class SwapLiveAppPage {
   fromSelector = "from-account-coin-selector";
@@ -59,5 +61,10 @@ export default class SwapLiveAppPage {
 
   async tapExecuteSwap() {
     await tapWebElementByTestId(this.executeSwapButton, 1);
+  }
+
+  async getMinimumAmount(swap: SwapType) {
+    const minAmount = await getMinimumSwapAmount(swap);
+    return minAmount;
   }
 }
