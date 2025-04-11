@@ -1,3 +1,9 @@
+/**
+ * Major functions of this file have been taken from https://github.com/LedgerHQ/app-solana/blob/develop/examples/example-sign.js
+ * Thus, have not been fully tested (unit tests + manual tests)
+ * We should add more tests in the future
+ */
+
 // Max off-chain message length supported by Ledger
 const OFFCM_MAX_LEDGER_LEN = 1212;
 // Max length of version 0 off-chain message
