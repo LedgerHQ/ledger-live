@@ -30,7 +30,7 @@ const deviceStorage = {
     const data: Promise<T | undefined>[] = values.map(value =>
       getCompressedValue(value[0], value[1]),
     );
-    return Promise.all(data).then(array => array.filter(item => item != null));
+    return Promise.all(data).then(array => array.filter(item => item != null) as T[]);
   },
 
   async getString(key: string): Promise<string | null> {
