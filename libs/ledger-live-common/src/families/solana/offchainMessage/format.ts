@@ -1,5 +1,3 @@
-import { isValidUTF8 } from "utf-8-validate";
-
 // Max off-chain message length supported by Ledger
 const OFFCM_MAX_LEDGER_LEN = 1212;
 // Max length of version 0 off-chain message
@@ -16,13 +14,21 @@ function isPrintableASCII(buffer) {
   );
 }
 
-function isUTF8(buffer) {
-  return buffer && isValidUTF8(buffer);
+function isUTF8(buffer: string) {
+  try {
+    new TextDecoder("utf8", { fatal: true }).decode(Buffer.from(buffer));
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function findMessageFormat(message: string): number | undefined {
   if (Object.prototype.toString.call(message) !== "[object Uint8Array]") {
-    return 1;
+    if (isUTF8(message)) {
+      return 1;
+    }
+    return undefined;
   }
   if (message.length <= OFFCM_MAX_LEDGER_LEN) {
     if (isPrintableASCII(message)) {
@@ -60,9 +66,5 @@ function toMessageInformation(message: string): Buffer {
 }
 
 export function toOffChainMessage(message: string): Buffer {
-  return Buffer.concat([
-    SOLANA_HEADER_BUFFER,
-    toMessageInformation(message),
-    Buffer.from(message, "utf-8"),
-  ]);
+  return Buffer.concat([SOLANA_HEADER_BUFFER, toMessageInformation(message), Buffer.from(message)]);
 }
