@@ -1,7 +1,13 @@
 import { renderHook } from "tests/testSetup";
 import { useTrackSyncFlow, UseTrackSyncFlow } from "./useTrackSyncFlow";
 import { track } from "../segment";
-import { UserRefusedAllowManager, UserRefusedOnDevice } from "@ledgerhq/errors";
+import {
+  UserRefusedAllowManager,
+  UserRefusedOnDevice,
+  CantOpenDevice,
+  LockedDeviceError,
+  TransportError,
+} from "@ledgerhq/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
 jest.mock("../segment", () => ({
@@ -23,6 +29,8 @@ describe("useTrackSyncFlow", () => {
     isLedgerSyncAppOpen: false,
     isTrackingEnabled: true,
     requestOpenApp: null,
+    isLocked: false,
+    inWrongDeviceForAccount: null,
   };
 
   afterEach(() => {
@@ -128,6 +136,91 @@ describe("useTrackSyncFlow", () => {
       expect.objectContaining({
         deviceType: "Europa",
         connectionType: CONNECTION_TYPES.BLE,
+        platform: "LLD",
+        page: "Receive",
+      }),
+      true,
+    );
+  });
+
+  it("should track 'Wrong device association' when inWrongDeviceForAccount is provided", () => {
+    renderHook((props: UseTrackSyncFlow) => useTrackSyncFlow(props), {
+      initialProps: { ...defaultArgs, inWrongDeviceForAccount: { accountName: "Test Account" } },
+    });
+
+    expect(track).toHaveBeenCalledWith(
+      "Wrong device association",
+      expect.objectContaining({
+        deviceType: "Europa",
+        connectionType: CONNECTION_TYPES.USB,
+        platform: "LLD",
+        page: "Receive",
+      }),
+      true,
+    );
+  });
+
+  it('should track "Device locked" if isLocked is true', () => {
+    renderHook((props: UseTrackSyncFlow) => useTrackSyncFlow(props), {
+      initialProps: { ...defaultArgs, isLocked: true },
+    });
+
+    expect(track).toHaveBeenCalledWith(
+      "Device locked",
+      expect.objectContaining({
+        deviceType: "Europa",
+        connectionType: CONNECTION_TYPES.USB,
+        platform: "LLD",
+        page: "Receive",
+      }),
+      true,
+    );
+  });
+
+  it('should track "Device locked" if error is LockedDeviceError', () => {
+    renderHook((props: UseTrackSyncFlow) => useTrackSyncFlow(props), {
+      initialProps: { ...defaultArgs, error: new LockedDeviceError() },
+    });
+
+    expect(track).toHaveBeenCalledWith(
+      "Device locked",
+      expect.objectContaining({
+        deviceType: "Europa",
+        connectionType: CONNECTION_TYPES.USB,
+        platform: "LLD",
+        page: "Receive",
+      }),
+      true,
+    );
+  });
+
+  it('should track "Connection failed" if error is CantOpenDevice', () => {
+    renderHook((props: UseTrackSyncFlow) => useTrackSyncFlow(props), {
+      initialProps: { ...defaultArgs, error: new CantOpenDevice() },
+    });
+
+    expect(track).toHaveBeenCalledWith(
+      "Connection failed",
+      expect.objectContaining({
+        deviceType: "Europa",
+        connectionType: CONNECTION_TYPES.USB,
+        platform: "LLD",
+        page: "Receive",
+      }),
+      true,
+    );
+  });
+
+  it('should track "Transport error" if error is TransportError', () => {
+    renderHook((props: UseTrackSyncFlow) => useTrackSyncFlow(props), {
+      initialProps: { ...defaultArgs, error: new TransportError("test", "test") },
+    });
+
+    expect(track).toHaveBeenCalledWith(
+      "Transport error",
+      expect.objectContaining({
+        deviceType: "Europa",
+        connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
         page: "Receive",
       }),

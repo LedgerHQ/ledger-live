@@ -132,6 +132,7 @@ export type CurrencyFeatures = {
   currencySonic: DefaultFeature;
   currencySonicBlaze: DefaultFeature;
   currencySui: DefaultFeature;
+  currencyMina: DefaultFeature;
 };
 
 /**
@@ -219,6 +220,9 @@ export type Features = CurrencyFeatures & {
   lldThai: DefaultFeature;
   lldSolanaNfts: DefaultFeature;
   llmSolanaNfts: DefaultFeature;
+  largemoverLandingpage: DefaultFeature;
+  llmMmkvMigration: DefaultFeature;
+  lldModularDrawer: Feature_LldModularDrawer;
 };
 
 /**
@@ -585,6 +589,14 @@ export type Feature_LlMevProtection = Feature<{
   link: string | null;
 }>;
 
+export type Feature_LldModularDrawer = Feature<{
+  add_account: boolean;
+  earn_flow: boolean;
+  live_app: boolean;
+  receive_flow: boolean;
+  send_flow: boolean;
+}>;
+
 export type Feature_CounterValue = DefaultFeature;
 export type Feature_MockFeature = DefaultFeature;
 export type Feature_DisableNftSend = DefaultFeature;
@@ -609,7 +621,6 @@ export type Feature_SpamFilteringTx = DefaultFeature;
 export type Feature_MemoTag = DefaultFeature;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 export type Feature_PtxSwapExodusProvider = DefaultFeature;
-
 export type Feature_LlmRebornLP = Feature<{
   variant: ABTestingVariants;
 }>;

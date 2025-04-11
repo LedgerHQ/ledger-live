@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { RNBleTransportFactory } from "@ledgerhq/device-transport-kit-react-native-ble";
 import { LedgerLiveLogger } from "@ledgerhq/live-dmk-shared";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useLdmkFeatureEnabled } from "../hooks/useLdmkFeatureEnabled";
 
 let instance: DeviceManagementKit | null = null;
 
@@ -28,7 +28,7 @@ type Props = {
 };
 
 export const DeviceManagementKitProvider: React.FC<Props> = ({ children }) => {
-  const ldmkTransportFlag = !!useFeature("ldmkTransport")?.enabled;
+  const ldmkTransportFlag = useLdmkFeatureEnabled();
 
   const deviceManagementKit = useMemo(() => {
     if (!ldmkTransportFlag) return null;

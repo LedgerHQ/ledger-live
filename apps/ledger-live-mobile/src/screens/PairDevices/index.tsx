@@ -30,7 +30,7 @@ import { ScreenName } from "~/const";
 import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/types/BaseOnboardingNavigator";
 import { lastValueFrom } from "rxjs";
 import { LocalTracer } from "@ledgerhq/logs";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useLdmkFeatureEnabled } from "@ledgerhq/live-dmk-mobile";
 
 type NavigationProps = RootComposite<
   | StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.PairDevices>
@@ -79,7 +79,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
   const dispatchRedux = useDispatch();
   const [{ error, status, device, skipCheck, name }, dispatch] = useReducer(reducer, initialState);
 
-  const isLDMKEnabled = !!useFeature("ldmkTransport")?.enabled;
+  const isLDMKEnabled = useLdmkFeatureEnabled();
 
   const unmounted = useRef(false);
   useEffect(

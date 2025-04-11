@@ -119,7 +119,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
           <ContentCardsLocation
             key="contentCardsLocationPortfolio"
             locationId={ContentCardLocation.TopWallet}
-            mt={7}
+            mt="20px"
           />
         ) : null}
       </WalletTabSafeAreaView>,

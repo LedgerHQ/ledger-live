@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
-import { ChainAPI } from "../api";
-import * as stakeActivationModule from "../api/chain/stake-activation/rpc";
+import { ChainAPI } from "../network";
+import * as stakeActivationModule from "../network/chain/stake-activation/rpc";
 import {
   publicKeyOf,
   parsedAccountInfo,

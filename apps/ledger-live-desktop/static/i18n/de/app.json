@@ -1541,14 +1541,14 @@
         "secondaryCta" : "Vielleicht später"
       },
       "verifyIdentity" : {
-        "title" : "Erinnerung: Schließe die Anmeldung für Ledger Recover ab",
-        "description" : "Du musst noch einen Schritt bis zum optimalen Schutz zurücklegen.",
+        "title" : "Der Zugang zu deiner Wallet ist noch nicht per Backup abgesichert.",
+        "description" : "Verifiziere deine Identität, um den Zugriff auf deine Wallet zu schützen.",
         "primaryCta" : "Identität verifizieren",
         "secondaryCta" : "Vielleicht später"
       },
       "connectDevice" : {
-        "title" : "Erinnerung: Schließe die Anmeldung für Ledger Recover ab",
-        "description" : "Das ist der letzte Schritt, um die Wiederherstellung des Zugriffs auf deine Wallet zu gewährleisten.",
+        "title" : "Der Zugang zu deiner Wallet ist noch nicht per Backup abgesichert.",
+        "description" : "Verbinde dein Gerät, um den Zugriff auf deine Wallet zu schützen.",
         "primaryCta" : "Gerät verbinden",
         "secondaryCta" : "Vielleicht später"
       }

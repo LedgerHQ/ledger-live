@@ -2412,16 +2412,13 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "提醒：完成订阅 Ledger Recover 服务",
-        "description" : "完成最后两步，让您的设备及资金得到安全保障。"
+        "title" : "提醒：完成订阅 Ledger Recover 服务"
       },
       "verifyIdentity" : {
-        "title" : "提醒：完成订阅 Ledger Recover 服务",
-        "description" : "完成最后一步，让您的设备及资金得到安全保障。"
+        "title" : "您尚未备份钱包访问权限"
       },
       "connectDevice" : {
-        "title" : "提醒：完成订阅 Ledger Recover 服务",
-        "description" : "这是您确保能恢复钱包访问权限的最后一步。"
+        "title" : "您尚未备份钱包访问权限"
       }
     }
   },

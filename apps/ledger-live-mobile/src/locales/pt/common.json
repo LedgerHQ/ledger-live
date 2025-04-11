@@ -2412,16 +2412,13 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "Lembrete: Termine de assinar o Ledger Recover",
-        "description" : "Você está a apenas dois passos de aumentar sua segurança."
+        "title" : "Lembrete: Termine de assinar o Ledger Recover"
       },
       "verifyIdentity" : {
-        "title" : "Lembrete: Termine de assinar o Ledger Recover",
-        "description" : "Você está a apenas dois passos de aumentar sua segurança."
+        "title" : "O acesso à sua carteira ainda não tem backup"
       },
       "connectDevice" : {
-        "title" : "Lembrete: Termine de assinar o Ledger Recover",
-        "description" : "Essa é a última etapa para garantir a recuperação do acesso à carteira."
+        "title" : "O acesso à sua carteira ainda não tem backup"
       }
     }
   },

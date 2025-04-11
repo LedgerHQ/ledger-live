@@ -5,3 +5,4 @@ export {
   DeviceManagementKitProvider,
   useDeviceManagementKit,
 } from "./useDeviceManagementKit";
+export * from "./useLdmkFeatureEnabled";

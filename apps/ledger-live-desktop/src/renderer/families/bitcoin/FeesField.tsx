@@ -70,7 +70,7 @@ export const FeesField = ({ transaction, account, onChange, status }: Props) => 
         renderRight={
           <InputRight>
             <Trans
-              i18nKey="send.steps.details.unitPerByte"
+              i18nKey="send.steps.details.unitVByte"
               values={{
                 unit: satoshi.code,
               }}

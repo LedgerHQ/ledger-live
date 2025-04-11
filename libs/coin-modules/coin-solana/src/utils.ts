@@ -8,7 +8,7 @@ import {
 } from "@solana/web3.js";
 import { partition } from "lodash/fp";
 import { getEnv } from "@ledgerhq/live-env";
-import { ValidatorsAppValidator } from "./validator-app";
+import { ValidatorsAppValidator } from "./network/validator-app";
 import BigNumber from "bignumber.js";
 
 // Hardcoding the Ledger validators info as backup,

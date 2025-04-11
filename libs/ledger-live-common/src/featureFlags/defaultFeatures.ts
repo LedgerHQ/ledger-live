@@ -90,6 +90,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencySonicBlaze: DEFAULT_FEATURE,
   currencySonic: DEFAULT_FEATURE,
   currencySui: DEFAULT_FEATURE,
+  currencyMina: DEFAULT_FEATURE,
 };
 
 /**
@@ -581,6 +582,18 @@ export const DEFAULT_FEATURES: Features = {
   lldThai: DEFAULT_FEATURE,
   lldSolanaNfts: DEFAULT_FEATURE,
   llmSolanaNfts: DEFAULT_FEATURE,
+  largemoverLandingpage: DEFAULT_FEATURE,
+  llmMmkvMigration: DEFAULT_FEATURE,
+  lldModularDrawer: {
+    ...DEFAULT_FEATURE,
+    params: {
+      add_account: true,
+      earn_flow: true,
+      live_app: true,
+      receive_flow: true,
+      send_flow: true,
+    },
+  },
 };
 
 // Firebase SDK treat JSON values as strings
