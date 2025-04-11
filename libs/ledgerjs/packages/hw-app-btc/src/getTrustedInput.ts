@@ -35,7 +35,6 @@ export async function getTrustedInput(
 ): Promise<string> {
   const { inputs, outputs, locktime, nExpiryHeight, extraData } = transaction;
 
-
   if (!outputs || !locktime) {
     throw new Error("getTrustedInput: locktime & outputs is expected");
   }
@@ -92,7 +91,7 @@ export async function getTrustedInput(
       transaction.version,
       transaction.timestamp || Buffer.alloc(0),
       transaction.nVersionGroupId || Buffer.alloc(0),
-      (isZcash && !useOlderZcash) ? zCashConsensusBranchId : Buffer.alloc(0),
+      isZcash && !useOlderZcash ? zCashConsensusBranchId : Buffer.alloc(0),
       createVarint(inputs.length),
     ]),
     indexLookup,
