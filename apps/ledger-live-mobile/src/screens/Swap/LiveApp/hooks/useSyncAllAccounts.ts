@@ -1,6 +1,6 @@
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
-import { useWalletSyncUserState } from "~/newArch/features/WalletSync/components/WalletSyncContext";
+import { useWalletSyncUserState } from "LLM/features/WalletSync/components/WalletSyncContext";
 import { useCallback } from "react";
 
 export function useSyncAllAccounts() {

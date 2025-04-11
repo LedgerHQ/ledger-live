@@ -68,12 +68,6 @@ const appConfig: Record<string, ConfigInfo> = {
       minVersion: "2.4.5",
     },
   },
-  config_nanoapp_aptos: {
-    type: "object",
-    default: {
-      minVersion: "0.8.12",
-    },
-  },
 };
 
 export { appConfig };

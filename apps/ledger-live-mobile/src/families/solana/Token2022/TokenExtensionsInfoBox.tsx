@@ -11,7 +11,7 @@ import { bpsToPercent } from "@ledgerhq/live-common/families/solana/token";
 import { InfoMedium } from "@ledgerhq/native-ui/assets/icons";
 import TooltipLabel from "~/components/TooltipLabel";
 import Button from "~/components/Button";
-import CopyButton from "~/newArch/components/CopyButton";
+import CopyButton from "LLM/components/CopyButton";
 import TokenExtensionsInfoDrawer from "./TokenExtensionsInfoDrawer";
 
 export default function TokenExtensionsInfoBox({

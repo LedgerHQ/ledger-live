@@ -22,9 +22,9 @@ export type GetAccountTransactionsDataQueryVariables = Exact<{
 
 export type GetAccountTransactionsDataQuery = {
   __typename?: "query_root";
-  account_transactions: Array<{
-    __typename?: "account_transactions";
-    transaction_version: number;
+  address_version_from_move_resources: Array<{
+    __typename: "address_version_from_move_resources";
+    transaction_version?: any | null;
   }>;
 };
 
@@ -36,9 +36,9 @@ export type GetAccountTransactionsDataGtQueryVariables = Exact<{
 
 export type GetAccountTransactionsDataGtQuery = {
   __typename?: "query_root";
-  account_transactions: Array<{
-    __typename?: "account_transactions";
-    transaction_version: number;
+  address_version_from_move_resources: Array<{
+    __typename: "address_version_from_move_resources";
+    transaction_version?: any | null;
   }>;
 };
 
@@ -50,9 +50,9 @@ export type GetAccountTransactionsDataLtQueryVariables = Exact<{
 
 export type GetAccountTransactionsDataLtQuery = {
   __typename?: "query_root";
-  account_transactions: Array<{
-    __typename?: "account_transactions";
-    transaction_version: number;
+  address_version_from_move_resources: Array<{
+    __typename: "address_version_from_move_resources";
+    transaction_version?: any | null;
   }>;
 };
 

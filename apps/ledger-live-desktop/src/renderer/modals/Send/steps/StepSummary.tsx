@@ -30,7 +30,7 @@ import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import MemoIcon from "~/renderer/icons/MemoIcon";
 import { Flex } from "@ledgerhq/react-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { getMemoTagValueByTransactionFamily } from "~/newArch/features/MemoTag/utils";
+import { getMemoTagValueByTransactionFamily } from "LLD/features/MemoTag/utils";
 
 const FromToWrapper = styled.div``;
 const Circle = styled.div`

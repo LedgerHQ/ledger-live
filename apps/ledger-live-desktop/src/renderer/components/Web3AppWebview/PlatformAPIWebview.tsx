@@ -117,6 +117,10 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                     tracking.platformReceiveFail(manifest);
                     reject(error);
                   },
+                  onClose: () => {
+                    tracking.platformReceiveFail(manifest);
+                    reject(new UserRefusedOnDevice());
+                  },
                   verifyAddress: true,
                 }),
               ),

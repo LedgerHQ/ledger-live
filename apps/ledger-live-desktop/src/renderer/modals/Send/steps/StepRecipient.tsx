@@ -28,7 +28,7 @@ import CheckBox from "~/renderer/components/CheckBox";
 import { alwaysShowMemoTagInfoSelector } from "~/renderer/reducers/settings";
 import { toggleShouldDisplayMemoTagInfo } from "~/renderer/actions/settings";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { getMemoTagValueByTransactionFamily } from "~/newArch/features/MemoTag/utils";
+import { getMemoTagValueByTransactionFamily } from "LLD/features/MemoTag/utils";
 
 const StepRecipient = ({
   t,

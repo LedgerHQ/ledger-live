@@ -5,7 +5,7 @@ import BigNumber from "bignumber.js";
 import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
 import { AptosAPI } from "../api";
 import buildTransaction from "./buildTransaction";
-import { DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL, getTokenAccount } from "./logic";
+import { DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "./logic";
 import type { Transaction, TransactionErrors } from "../types";
 
 type IGetEstimatedGasReturnType = {
@@ -49,18 +49,16 @@ export const getFee = async (
 
       const expectedGas = gasPrice.multipliedBy(gasLimit);
 
-      if (!completedTx.success) {
-        if (completedTx.vm_status.includes("MAX_GAS_UNITS_BELOW_MIN_TRANSACTION_GAS_UNITS")) {
-          res.errors.maxGasAmount = "GasInsufficientBalance";
-        } else if (
-          !completedTx.vm_status.includes("INSUFFICIENT_BALANCE") &&
-          !completedTx.vm_status.includes("0x203ed") // 0x203ed -> PROLOGUE_ECANT_PAY_GAS_DEPOSIT equivalent to INSUFFICIENT_BALANCE_FOR_TRANSACTION_FEE
-        ) {
-          // INSUFFICIENT_BALANCE will be processed by getTransactionStatus
+      const isUnderMaxSpendable = transaction.amount
+        .plus(expectedGas)
+        .isLessThan(account.spendableBalance);
+
+      if (isUnderMaxSpendable && !completedTx.success) {
+        // we want to skip INSUFFICIENT_BALANCE error because it will be processed by getTransactionStatus
+        if (!completedTx.vm_status.includes("INSUFFICIENT_BALANCE")) {
           throw Error(`Simulation failed with following error: ${completedTx.vm_status}`);
         }
       }
-
       res.fees = expectedGas;
       res.estimate.maxGasAmount = gasLimit.toString();
       res.estimate.gasUnitPrice = completedTx.gas_unit_price;
@@ -74,10 +72,7 @@ export const getFee = async (
 
 const CACHE = makeLRUCache(
   getFee,
-  (account: Account, transaction: Transaction) => {
-    const tokenAccount = getTokenAccount(account, transaction);
-    return `${tokenAccount ? tokenAccount.id : account.id}-${transaction.amount.toString()}}`;
-  },
+  (account: Account, transaction: Transaction) => `${account.id}-${transaction.amount.toString()}}`,
   seconds(30),
 );
 

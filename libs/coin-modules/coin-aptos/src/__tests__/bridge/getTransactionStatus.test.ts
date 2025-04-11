@@ -1,10 +1,5 @@
 import BigNumber from "bignumber.js";
-import {
-  createFixtureAccount,
-  createFixtureAccountWithSubAccount,
-  createFixtureTransaction,
-  createFixtureTransactionWithSubAccount,
-} from "../../bridge/bridge.fixture";
+import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
 import getTransactionStatus from "../../bridge/getTransactionStatus";
 import {
   AmountRequired,
@@ -12,16 +7,15 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
-  NotEnoughBalanceFees,
   RecipientRequired,
 } from "@ledgerhq/errors";
 
 describe("getTransactionStatus Test", () => {
-  it("should return error for AmountRequired", async () => {
+  it("should return errors for AmountRequired", async () => {
     const account = createFixtureAccount();
     const transaction = createFixtureTransaction();
 
-    transaction.fees = BigNumber(2);
+    transaction.fees = new BigNumber(2);
     transaction.recipient = "0x" + "0".repeat(64);
 
     const result = await getTransactionStatus(account, transaction);
@@ -31,21 +25,21 @@ describe("getTransactionStatus Test", () => {
         amount: new AmountRequired(),
       },
       warnings: {},
-      estimatedFees: BigNumber(2),
-      amount: BigNumber(0),
-      totalSpent: BigNumber(2),
+      estimatedFees: new BigNumber(2),
+      amount: new BigNumber(0),
+      totalSpent: new BigNumber(2),
     };
 
     expect(result).toEqual(expected);
   });
 
-  it("should return error for FeeNotLoaded", async () => {
+  it("should return errors for FeeNotLoaded", async () => {
     const account = createFixtureAccount();
-    account.spendableBalance = BigNumber(10);
+    account.balance = new BigNumber(10);
 
     const transaction = createFixtureTransaction();
     transaction.fees = null;
-    transaction.amount = BigNumber(2);
+    transaction.amount = new BigNumber(2);
     transaction.recipient = "0x" + "0".repeat(64);
 
     const result = await getTransactionStatus(account, transaction);
@@ -55,22 +49,22 @@ describe("getTransactionStatus Test", () => {
         fees: new FeeNotLoaded(),
       },
       warnings: {},
-      estimatedFees: BigNumber(0),
-      amount: BigNumber(2),
-      totalSpent: BigNumber(2),
+      estimatedFees: new BigNumber(0),
+      amount: new BigNumber(2),
+      totalSpent: new BigNumber(2),
     };
 
     expect(result).toEqual(expected);
   });
 
-  it("should return error for NotEnoughBalance", async () => {
+  it("should return errors for NotEnoughBalance", async () => {
     const account = createFixtureAccount();
-    account.spendableBalance = BigNumber(1);
+    account.balance = new BigNumber(1);
 
     const transaction = createFixtureTransaction();
     transaction.recipient = "0x" + "0".repeat(64);
-    transaction.amount = BigNumber(2);
-    transaction.fees = BigNumber(2);
+    transaction.amount = new BigNumber(2);
+    transaction.fees = new BigNumber(2);
 
     const result = await getTransactionStatus(account, transaction);
 
@@ -79,146 +73,21 @@ describe("getTransactionStatus Test", () => {
         amount: new NotEnoughBalance(),
       },
       warnings: {},
-      estimatedFees: BigNumber(2),
-      amount: BigNumber(2),
-      totalSpent: BigNumber(4),
+      estimatedFees: new BigNumber(2),
+      amount: new BigNumber(2),
+      totalSpent: new BigNumber(4),
     };
 
     expect(result).toEqual(expected);
   });
 
-  it("should return error for NotEnoughBalance and amount equal to zero with use all amount option", async () => {
+  it("should return errors for RecipientRequired", async () => {
     const account = createFixtureAccount();
-    account.spendableBalance = BigNumber(1);
+    account.balance = new BigNumber(10);
 
     const transaction = createFixtureTransaction();
-    transaction.recipient = "0x" + "0".repeat(64);
-    transaction.amount = BigNumber(2);
-    transaction.fees = BigNumber(2);
-    transaction.useAllAmount = true;
-
-    const result = await getTransactionStatus(account, transaction);
-
-    const expected = {
-      errors: {
-        amount: new NotEnoughBalance(),
-      },
-      warnings: {},
-      estimatedFees: BigNumber(2),
-      amount: BigNumber(0),
-      totalSpent: BigNumber(2),
-    };
-
-    expect(result).toEqual(expected);
-  });
-
-  it("should return error for NotEnoughBalance for token account when not enough tokens", async () => {
-    const account = createFixtureAccountWithSubAccount("coin");
-    account.spendableBalance = BigNumber(300);
-
-    const transaction = createFixtureTransactionWithSubAccount();
-    transaction.recipient = "0x" + "0".repeat(64);
-    transaction.amount = BigNumber(2000);
-    transaction.fees = BigNumber(200);
-
-    const result = await getTransactionStatus(account, transaction);
-
-    const expected = {
-      errors: {
-        amount: new NotEnoughBalance(),
-      },
-      warnings: {},
-      estimatedFees: BigNumber(200),
-      amount: BigNumber(2000),
-      totalSpent: BigNumber(2000),
-    };
-
-    expect(result).toEqual(expected);
-  });
-
-  it("should return error for NotEnoughBalance with use all amount option", async () => {
-    const account = createFixtureAccount();
-    account.spendableBalance = BigNumber(1);
-
-    const transaction = createFixtureTransaction();
-    transaction.recipient = "0x" + "0".repeat(64);
-    transaction.amount = BigNumber(2);
-    transaction.fees = BigNumber(2);
-    transaction.useAllAmount = true;
-
-    const result = await getTransactionStatus(account, transaction);
-
-    const expected = {
-      errors: {
-        amount: new NotEnoughBalance(),
-      },
-      warnings: {},
-      estimatedFees: BigNumber(2),
-      amount: BigNumber(0),
-      totalSpent: BigNumber(2),
-    };
-
-    expect(result).toEqual(expected);
-  });
-
-  it("should return error for NotEnoughBalance for token account with use all amount option when not enough fees", async () => {
-    const account = createFixtureAccountWithSubAccount("coin");
-    account.spendableBalance = BigNumber(10);
-
-    const transaction = createFixtureTransactionWithSubAccount();
-    transaction.recipient = "0x" + "0".repeat(64);
-    transaction.amount = BigNumber(2000);
-    transaction.fees = BigNumber(200);
-    transaction.useAllAmount = true;
-
-    const result = await getTransactionStatus(account, transaction);
-
-    const expected = {
-      errors: {
-        amount: new NotEnoughBalance(),
-      },
-      warnings: {},
-      estimatedFees: BigNumber(200),
-      amount: BigNumber(1000),
-      totalSpent: BigNumber(1000),
-    };
-
-    expect(result).toEqual(expected);
-  });
-
-  it("should return error for NotEnoughBalanceFees", async () => {
-    const account = createFixtureAccountWithSubAccount("coin");
-    account.spendableBalance = BigNumber(1);
-
-    const transaction = createFixtureTransactionWithSubAccount();
-    transaction.recipient = "0x" + "0".repeat(64);
-    transaction.amount = BigNumber(2);
-    transaction.fees = BigNumber(0);
-    transaction.errors = { maxGasAmount: "GasInsufficientBalance" };
-
-    const result = await getTransactionStatus(account, transaction);
-
-    const expected = {
-      errors: {
-        amount: new NotEnoughBalanceFees(),
-      },
-      warnings: {},
-      estimatedFees: BigNumber(0),
-      amount: BigNumber(2),
-      totalSpent: BigNumber(2),
-    };
-
-    expect(result).toEqual(expected);
-  });
-
-  it("should return error for RecipientRequired", async () => {
-    const account = createFixtureAccount();
-    account.spendableBalance = BigNumber(10);
-
-    const transaction = createFixtureTransaction();
-    transaction.amount = BigNumber(2);
-    transaction.fees = BigNumber(2);
-    transaction.recipient = "";
+    transaction.amount = new BigNumber(2);
+    transaction.fees = new BigNumber(2);
 
     const result = await getTransactionStatus(account, transaction);
 
@@ -227,20 +96,20 @@ describe("getTransactionStatus Test", () => {
         recipient: new RecipientRequired(),
       },
       warnings: {},
-      estimatedFees: BigNumber(2),
-      amount: BigNumber(2),
-      totalSpent: BigNumber(4),
+      estimatedFees: new BigNumber(2),
+      amount: new BigNumber(2),
+      totalSpent: new BigNumber(4),
     };
 
     expect(result).toEqual(expected);
   });
 
-  it("should return error for InvalidAddress", async () => {
+  it("should return errors for InvalidAddress", async () => {
     const account = createFixtureAccount();
     const transaction = createFixtureTransaction();
 
-    transaction.amount = BigNumber(2);
-    transaction.fees = BigNumber(2);
+    transaction.amount = new BigNumber(2);
+    transaction.fees = new BigNumber(2);
     transaction.recipient = "0x";
 
     const result = await getTransactionStatus(account, transaction);
@@ -251,20 +120,20 @@ describe("getTransactionStatus Test", () => {
         amount: new NotEnoughBalance(),
       },
       warnings: {},
-      estimatedFees: BigNumber(2),
-      amount: BigNumber(2),
-      totalSpent: BigNumber(4),
+      estimatedFees: new BigNumber(2),
+      amount: new BigNumber(2),
+      totalSpent: new BigNumber(4),
     };
 
     expect(result).toEqual(expected);
   });
 
-  it("should return error for InvalidAddressBecauseDestinationIsAlsoSource", async () => {
+  it("should return errors for InvalidAddressBecauseDestinationIsAlsoSource", async () => {
     const account = createFixtureAccount();
     const transaction = createFixtureTransaction();
 
-    transaction.amount = BigNumber(2);
-    transaction.fees = BigNumber(2);
+    transaction.amount = new BigNumber(2);
+    transaction.fees = new BigNumber(2);
     transaction.recipient = "0x" + "0".repeat(64);
     account.freshAddress = transaction.recipient;
 
@@ -276,57 +145,9 @@ describe("getTransactionStatus Test", () => {
         amount: new NotEnoughBalance(),
       },
       warnings: {},
-      estimatedFees: BigNumber(2),
-      amount: BigNumber(2),
-      totalSpent: BigNumber(4),
-    };
-
-    expect(result).toEqual(expected);
-  });
-
-  it("should return error for RecipientRequired", async () => {
-    const account = createFixtureAccount();
-    const transaction = createFixtureTransaction();
-
-    transaction.amount = BigNumber(2);
-    transaction.fees = BigNumber(2);
-    transaction.recipient = "";
-    account.freshAddress = transaction.recipient;
-
-    const result = await getTransactionStatus(account, transaction);
-
-    const expected = {
-      errors: {
-        recipient: new RecipientRequired(),
-        amount: new NotEnoughBalance(),
-      },
-      warnings: {},
-      estimatedFees: BigNumber(2),
-      amount: BigNumber(2),
-      totalSpent: BigNumber(4),
-    };
-
-    expect(result).toEqual(expected);
-  });
-
-  it("should return right amount and total spent with use all amount option", async () => {
-    const account = createFixtureAccount();
-    account.spendableBalance = BigNumber(10);
-
-    const transaction = createFixtureTransaction();
-    transaction.recipient = "0x" + "0".repeat(64);
-    transaction.amount = BigNumber(2);
-    transaction.fees = BigNumber(2);
-    transaction.useAllAmount = true;
-
-    const result = await getTransactionStatus(account, transaction);
-
-    const expected = {
-      errors: {},
-      warnings: {},
-      estimatedFees: BigNumber(2),
-      amount: BigNumber(8),
-      totalSpent: BigNumber(10),
+      estimatedFees: new BigNumber(2),
+      amount: new BigNumber(2),
+      totalSpent: new BigNumber(4),
     };
 
     expect(result).toEqual(expected);

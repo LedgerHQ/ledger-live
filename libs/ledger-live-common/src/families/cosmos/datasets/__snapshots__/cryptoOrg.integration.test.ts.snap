@@ -3,7 +3,7 @@
 exports[`crypto_org currency bridge scanAccounts crypto_org seed 1 1`] = `
 [
   {
-    "balance": "10000005",
+    "balance": "10000004",
     "cosmosResources": {
       "delegatedBalance": "0",
       "delegations": [],
@@ -23,7 +23,7 @@ exports[`crypto_org currency bridge scanAccounts crypto_org seed 1 1`] = `
     "operationsCount": 0,
     "pendingOperations": [],
     "seedIdentifier": "0346289788c2f518a158232e7028e8e86b30cff0670326d3a2507183cb0d81cecb",
-    "spendableBalance": "10000005",
+    "spendableBalance": "10000004",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,

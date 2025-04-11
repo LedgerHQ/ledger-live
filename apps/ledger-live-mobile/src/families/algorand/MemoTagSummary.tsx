@@ -11,7 +11,7 @@ import type { BaseComposite, StackNavigatorProps } from "~/components/RootNaviga
 import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
-import { GenericMemoTagSummary } from "~/newArch/features/MemoTag/components/GenericMemoTagSummary";
+import { GenericMemoTagSummary } from "LLM/features/MemoTag/components/GenericMemoTagSummary";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>

@@ -12,13 +12,13 @@ import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { NavigationHeaderCloseButton } from "../NavigationHeaderCloseButton";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DmkBleDevicesScanning } from "./DmkBleDevicesScanning";
 import { DmkBleDevicePairing } from "./DmkBleDevicePairing";
 import { urls } from "~/utils/urls";
 import { Linking } from "react-native";
 import { LegacyBleDevicesScanning } from "~/components/BleDevicePairingFlow/LegacyBleDevicesScanning";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
+import { useLdmkFeatureEnabled } from "@ledgerhq/live-dmk-mobile";
 
 const TIMEOUT_AFTER_PAIRED_MS = 2000;
 
@@ -173,7 +173,7 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
       setPairingFlowStep("scanning");
     }
   }, [isPaired]);
-  const isDmkTransportEnabled = useFeature("ldmkTransport")?.enabled;
+  const isDmkTransportEnabled = useLdmkFeatureEnabled();
 
   const onOpenHelp = useCallback(() => {
     Linking.openURL(pairingUrl);

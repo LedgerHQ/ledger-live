@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Box, Flex, Text, Icons } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { useCopyToClipboard } from "~/newArch/hooks/useCopyToClipboard";
+import { useCopyToClipboard } from "LLD/hooks/useCopyToClipboard";
 
 type Props = {
   error: Error;

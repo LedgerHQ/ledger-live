@@ -24,8 +24,6 @@ if (process.env.USE_BACKEND_MOCKS) {
   testRegex = [
     "algorand/bridge.integration.test.ts",
     // $ to not match with test.snap files
-    "osmosis.integration.test.ts$",
-    "stargaze.integration.test.ts$",
   ];
 }
 

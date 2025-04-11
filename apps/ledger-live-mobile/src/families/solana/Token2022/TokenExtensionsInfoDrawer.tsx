@@ -10,7 +10,7 @@ import {
 } from "@ledgerhq/live-common/families/solana/types";
 import { Box, Text } from "@ledgerhq/native-ui";
 import QueuedDrawer from "~/components/QueuedDrawer";
-import CopyButton from "~/newArch/components/CopyButton";
+import CopyButton from "LLM/components/CopyButton";
 
 type Props = {
   tokenAccount: SolanaTokenAccount;

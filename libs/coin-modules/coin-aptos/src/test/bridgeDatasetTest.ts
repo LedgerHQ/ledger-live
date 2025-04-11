@@ -1,4 +1,6 @@
 import { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { fromTransactionRaw } from "../bridge/transaction";
 import { Transaction } from "../types";
 
 const aptos: CurrenciesData<Transaction> = {
@@ -20,73 +22,85 @@ const aptos: CurrenciesData<Transaction> = {
   accounts: [
     {
       raw: {
-        id: "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos",
+        id: "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:",
         seedIdentifier: "d6816f4f22f867b56cf9304b776f452a16d107835d73ee8a33c4ced210300583",
         used: true,
-        derivationMode: "aptos",
+        derivationMode: "",
         index: 0,
         freshAddress: "0x445fa0013887abd1a0c14acdec6e48090e0ad3fed3e08202aac15ca14f3be26b",
         freshAddressPath: "44'/637'/0'/0'/0'",
-        blockHeight: 302459501,
+        blockHeight: 286066372,
         creationDate: "2024-12-18T12:26:31.070Z",
-        operationsCount: 6,
+        operationsCount: 5,
         operations: [],
         pendingOperations: [],
         currencyId: "aptos",
-        lastSyncDate: "2025-03-12T10:42:53.570Z",
-        balance: "19949100",
-        spendableBalance: "19949100",
+        lastSyncDate: "2025-02-04T14:00:46.693Z",
+        balance: "30100",
+        spendableBalance: "30100",
         balanceHistoryCache: {
           HOUR: {
             balances: [
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-              0, 19949100, 19949100, 19949100, 19949100, 19949100, 19949100, 19949100, 19949100,
-              19949100, 19949100, 19949100, 19949100, 19949100, 19949100, 19949100, 19949100,
-              19949100, 19949100,
+              30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100,
+              30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100,
+              30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100,
+              30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100,
+              30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100,
+              30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100,
+              30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100,
+              30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100,
+              30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100,
+              30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100,
+              30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100,
+              30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100,
+              30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100,
+              30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100,
+              30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100,
+              30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100,
+              30100,
             ],
-            latestDate: 1741773600000,
+            latestDate: 1738677600000,
           },
           DAY: {
             balances: [
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-              19949100,
+              0, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100,
+              30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100,
+              30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100,
+              30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100, 30100,
             ],
-            latestDate: 1741737600000,
+            latestDate: 1738627200000,
           },
-          WEEK: { balances: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], latestDate: 1741478400000 },
+          WEEK: {
+            balances: [0, 30100, 30100, 30100, 30100, 30100, 30100, 30100],
+            latestDate: 1738454400000,
+          },
         },
         xpub: "d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956",
-        subAccounts: [
-          {
-            type: "TokenAccountRaw",
-            id: "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos+aptos%2Fcoin%2Fdstapt~!underscore!~0xd11107bdf0d6d7040c6c0bfbdecb6545191fdf13e8d8d259952f53e1713f61b5%3A%3Astaked~!underscore!~coin%3A%3Astakedaptos",
-            parentId:
-              "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos",
-            tokenId:
-              "aptos/coin/dstapt_0xd11107bdf0d6d7040c6c0bfbdecb6545191fdf13e8d8d259952f53e1713f61b5::staked_coin::stakedaptos",
-            balance: "30000000",
-            spendableBalance: "30000000",
-            balanceHistoryCache: {
-              HOUR: { latestDate: null, balances: [] },
-              DAY: { latestDate: null, balances: [] },
-              WEEK: { latestDate: null, balances: [] },
-            },
-            creationDate: "2025-03-12T10:42:53.570Z",
-            operationsCount: 2,
-            operations: [],
-            pendingOperations: [],
-            swapHistory: [],
-          },
-        ],
         swapHistory: [],
       },
+      transactions: [
+        {
+          name: "NO_NAME",
+          transaction: fromTransactionRaw({
+            amount: "1000",
+            recipient: "0xd20fa44192f94ba086ab16bfdf57e43ff118ada69b4c66fa9b9a9223cbc068c1",
+            useAllAmount: false,
+            subAccountId: null,
+            family: "aptos",
+            mode: "send",
+            fees: "900",
+            options: '{"maxGasAmount":"9","gasUnitPrice":"100"}',
+            errors: "{}",
+          }),
+          expectedStatus: () =>
+            // you can use account and transaction for smart logic. drop the =>fn otherwise
+            ({
+              errors: {},
+              warnings: {},
+              amount: BigNumber("1000"),
+            }),
+        },
+      ],
     },
   ],
 };
