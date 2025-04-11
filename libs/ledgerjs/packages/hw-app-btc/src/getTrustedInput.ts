@@ -3,6 +3,9 @@ import type Transport from "@ledgerhq/hw-transport";
 import type { Transaction } from "./types";
 import { MAX_SCRIPT_BLOCK } from "./constants";
 import { createVarint } from "./varint";
+import { getAppAndVersion } from "./getAppAndVersion";
+import { shouldUseOlderZcash } from "./utils";
+
 export async function getTrustedInputRaw(
   transport: Transport,
   transactionData: Buffer,
@@ -31,6 +34,7 @@ export async function getTrustedInput(
   additionals: Array<string> = [],
 ): Promise<string> {
   const { inputs, outputs, locktime, nExpiryHeight, extraData } = transaction;
+
 
   if (!outputs || !locktime) {
     throw new Error("getTrustedInput: locktime & outputs is expected");
@@ -77,13 +81,18 @@ export async function getTrustedInput(
   // NOTE: this isn't necessary as consensusBranchId is only set when the transaction is a zcash tx
   // but better safe than sorry
   const zCashConsensusBranchId = transaction.consensusBranchId || Buffer.alloc(0);
+  let useOlderZcash = false;
+  if (isZcash) {
+    useOlderZcash = await shouldUseOlderZcash(transport);
+  }
+
   await getTrustedInputRaw(
     transport,
     Buffer.concat([
       transaction.version,
       transaction.timestamp || Buffer.alloc(0),
       transaction.nVersionGroupId || Buffer.alloc(0),
-      isZcash ? zCashConsensusBranchId : Buffer.alloc(0),
+      (isZcash && !useOlderZcash) ? zCashConsensusBranchId : Buffer.alloc(0),
       createVarint(inputs.length),
     ]),
     indexLookup,

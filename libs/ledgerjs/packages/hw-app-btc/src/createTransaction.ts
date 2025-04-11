@@ -24,6 +24,7 @@ import {
   ZCASH_ACTIVATION_HEIGHTS,
 } from "./constants";
 import { shouldUseTrustedInputForSegwit } from "./shouldUseTrustedInputForSegwit";
+import { shouldUseOlderZcash } from "./utils";
 export type { AddressFormat };
 
 const defaultsSignTransaction = {
@@ -55,6 +56,16 @@ export const getZcashBranchId = (blockHeight: number | null | undefined): Buffer
     branchId.writeUInt32LE(0x5ba81b19, 0);
   }
   return branchId;
+};
+
+const getZcashTransactionVersion = (blockHeight: number | null | undefined): Buffer => {
+  const version = Buffer.alloc(4);
+  if (blockHeight && blockHeight < ZCASH_ACTIVATION_HEIGHTS.NU6) {
+    version.writeUInt32LE(0x80000005, 0);
+  } else {
+    version.writeUInt32LE(0x80000006, 0);
+  }
+  return version;
 };
 
 export const getDefaultVersions = ({
@@ -166,6 +177,11 @@ export async function createTransaction(
 
   const isDecred = additionals.includes("decred");
   const isZcash = additionals.includes("zcash");
+  let useOlderZcash = false;
+  if (isZcash) {
+    useOlderZcash = await shouldUseOlderZcash(transport);
+  }
+
   const sapling = additionals.includes("sapling");
   const bech32 = segwit && additionals.includes("bech32");
   const useBip143 =
@@ -197,7 +213,7 @@ export async function createTransaction(
   const resuming = false;
   const targetTransaction: Transaction = {
     inputs: [],
-    version: defaultVersion,
+    version: useOlderZcash ? Buffer.from([0x06, 0x00, 0x00, 0x80]) : defaultVersion,
     timestamp: Buffer.alloc(0),
   };
   const getTrustedInputCall =
@@ -208,7 +224,11 @@ export async function createTransaction(
   for (const input of inputs) {
     if (!resuming) {
       if (isZcash) {
-        input[0].consensusBranchId = getZcashBranchId(input[4]);
+        if (useOlderZcash) {
+          input[0].version = getZcashTransactionVersion(input[4]);
+        } else {
+          input[0].consensusBranchId = getZcashBranchId(input[4]);
+        }
       }
       const trustedInput = await getTrustedInputCall(transport, input[1], input[0], additionals);
       log("hw", "got trustedInput=" + trustedInput);

@@ -2,6 +2,7 @@ import type Transport from "@ledgerhq/hw-transport";
 import type { Transaction } from "./types";
 import { createVarint } from "./varint";
 import { MAX_SCRIPT_BLOCK } from "./constants";
+import { shouldUseOlderZcash } from "./utils";
 export function startUntrustedHashTransactionInputRaw(
   transport: Transport,
   newTransaction: boolean,
@@ -42,12 +43,16 @@ export async function startUntrustedHashTransactionInput(
   useTrustedInputForSegwit = false,
 ): Promise<any> {
   const isZcash = additionals.includes("zcash");
+  let useOlderZcash = false;
+  if (isZcash) {
+    useOlderZcash = await shouldUseOlderZcash(transport);
+  }
   const zCashConsensusBranchId = transaction.consensusBranchId || Buffer.alloc(0);
   let data = Buffer.concat([
     transaction.version,
     transaction.timestamp || Buffer.alloc(0),
     transaction.nVersionGroupId || Buffer.alloc(0),
-    isZcash ? zCashConsensusBranchId : Buffer.alloc(0),
+    isZcash && !useOlderZcash ? zCashConsensusBranchId : Buffer.alloc(0),
     createVarint(transaction.inputs.length),
   ]);
   await startUntrustedHashTransactionInputRaw(
