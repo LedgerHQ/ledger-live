@@ -8,8 +8,11 @@ import type {
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import type { BigNumber } from "bignumber.js";
+import type { Validators } from "../network/validators";
+
 export * from "./signer";
 export * from "./bridge";
+export type { Validators, ValidatorsRaw } from "../network/validators";
 
 export type AptosTransaction = UserTransactionResponse & {
   block: {
@@ -198,4 +201,23 @@ export type AptosResources = {
 export type AptosResourcesRaw = {
   stakes: string;
   unstakeReserve: string;
+};
+
+export type AptosValidator = {
+  voteAccAddr: string;
+  commission: number;
+  activatedStake: number;
+};
+
+export type AptosValidatorWithMeta = {
+  validator: AptosValidator;
+  meta: {
+    name?: string;
+    img?: string;
+  };
+};
+
+export type AptosPreloadData = {
+  validatorsWithMeta: AptosValidatorWithMeta[];
+  validators: Validators[];
 };

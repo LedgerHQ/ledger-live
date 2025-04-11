@@ -25,7 +25,6 @@ import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmati
 import StepValidator, { StepValidatorFooter } from "./steps/StepValidator";
 import { St, StepProps, StepId } from "./types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-// import { defaultVoteAccAddrByCurrencyId } from "@ledgerhq/live-common/families/solana/staking";
 
 export type Data = {
   account: AptosAccount;
@@ -101,7 +100,6 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
         kind: "stake.createAccount",
         uiState: {
           delegate: {
-            // voteAccAddress: defaultVoteAccAddrByCurrencyId(account.currency.id) ?? "",
             voteAccAddress: "",
           },
         },
@@ -115,16 +113,19 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   });
 
   const handleStepChange = useCallback((e: St) => onChangeStepId(e.id), [onChangeStepId]);
+
   const handleRetry = useCallback(() => {
     setTransactionError(null);
     onChangeStepId("connectDevice");
   }, [onChangeStepId]);
+
   const handleTransactionError = useCallback((error: Error) => {
     if (!(error instanceof UserRefusedOnDevice)) {
       logger.critical(error);
     }
     setTransactionError(error);
   }, []);
+
   const handleOperationBroadcasted = useCallback(
     (optimisticOperation: Operation) => {
       if (!account) return;
@@ -138,13 +139,16 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     },
     [account, dispatch],
   );
+
   const error = transactionError || bridgeError;
   const errorSteps = [];
+
   if (transactionError) {
     errorSteps.push(2);
   } else if (bridgeError) {
     errorSteps.push(0);
   }
+
   const stepperProps = {
     title: t("aptos.delegation.flow.title"),
     device,
@@ -173,6 +177,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     bridgePending,
     source,
   };
+
   return (
     <Stepper {...stepperProps}>
       <SyncSkipUnderPriority priority={100} />
@@ -180,8 +185,10 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     </Stepper>
   );
 };
+
 const C = compose<React.ComponentType<OwnProps>>(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
 )(Body);
+
 export default C;

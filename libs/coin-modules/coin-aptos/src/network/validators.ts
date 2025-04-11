@@ -1,0 +1,93 @@
+// import network from "@ledgerhq/live-network/network";
+// import { Cluster } from "@solana/web3.js";
+// import { compact } from "lodash/fp";
+// import { getEnv } from "@ledgerhq/live-env";
+
+// const MAX_VALIDATORS_NB = 1000; // Max number of validators to fetch
+
+export type ValidatorsRaw = {
+  active_stake?: number | null;
+  commission?: number | null;
+  total_score?: number | null;
+  vote_account?: string | null;
+  name?: string | null;
+  avatar_url?: string | null;
+  delinquent?: boolean | null;
+  www_url?: string | null;
+};
+
+export type Validators = {
+  activeStake: number;
+  commission: number;
+  totalScore: number;
+  voteAccount: string;
+  name?: string | undefined;
+  avatarUrl?: string | undefined;
+  wwwUrl?: string | undefined;
+};
+
+// const URLS = {
+//   validatorList: (cluster: Extract<Cluster, "mainnet-beta" | "testnet">) => {
+//     if (cluster === "testnet") {
+//       const baseUrl = getEnv("SOLANA_TESTNET_VALIDATORS_APP_BASE_URL");
+//       return `${baseUrl}/${cluster}.json?order=score&limit=${MAX_VALIDATORS_NB}`;
+//     }
+
+//     const baseUrl = getEnv("SOLANA_VALIDATORS_APP_BASE_URL");
+//     return baseUrl;
+//   },
+// };
+
+// export async function getValidators(
+//   cluster: Extract<Cluster, "mainnet-beta" | "testnet">,
+// ): Promise<Validators[]> {
+//   const response = await network({
+//     method: "GET",
+//     url: URLS.validatorList(cluster),
+//   });
+
+//   const allRawValidators =
+//     response.status === 200 ? (response.data as ValidatorsRaw[]) : [];
+
+//   // validators app data is not clean: random properties can randomly contain
+//   // data, null, undefined
+//   const tryFromRawValidator = (
+//     validator: ValidatorsRaw,
+//   ): Validators | undefined => {
+//     if (
+//       typeof validator.active_stake === "number" &&
+//       typeof validator.commission === "number" &&
+//       typeof validator.total_score === "number" &&
+//       typeof validator.vote_account === "string" &&
+//       validator.delinquent !== true
+//     ) {
+//       return {
+//         activeStake: validator.active_stake,
+//         commission: validator.commission,
+//         totalScore: validator.total_score,
+//         voteAccount: validator.vote_account,
+//         name: validator.name ?? undefined,
+//         avatarUrl: validator.avatar_url ?? undefined,
+//         wwwUrl: validator.www_url ?? undefined,
+//       };
+//     }
+
+//     return undefined;
+//   };
+
+//   return compact(allRawValidators.map(tryFromRawValidator));
+// }
+
+export async function getValidators(): Promise<Validators[]> {
+  return [
+    {
+      activeStake: 12334345,
+      commission: 100,
+      totalScore: 982374,
+      voteAccount: "9834",
+      name: "Aptos Bazinga",
+      avatarUrl: undefined,
+      wwwUrl: undefined,
+    },
+  ];
+}

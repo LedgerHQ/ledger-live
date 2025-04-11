@@ -1,8 +1,6 @@
-// import { useValidators } from "@ledgerhq/live-common/families/solana/react";
-// import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/staking";
-// import { AptosAccount } from "@ledgerhq/live-common/families/aptos/types";
-
-import React, { useState, useCallback } from "react";
+import { useValidators } from "@ledgerhq/live-common/families/aptos/react";
+import { AptosAccount, Validators } from "@ledgerhq/live-common/families/aptos/types";
+import React, { useState, useEffect, useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
@@ -12,59 +10,54 @@ import ValidatorSearchInput, {
 import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import Text from "~/renderer/components/Text";
 import IconAngleDown from "~/renderer/icons/AngleDown";
-// import ValidatorRow from "../components/ValidatorRow";
-// import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import ValidatorRow from "../components/ValidatorRow";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
-// type Props = {
-//   account: AptosAccount;
-//   chosenVoteAccAddr: string | undefined | null;
-//   onChangeValidator: (v: { address: string }) => void;
-// };
-// const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props) => {
-const ValidatorField = () => {
+type Props = {
+  account: AptosAccount;
+  chosenVoteAccAddr: string | undefined | null;
+  onChangeValidator: (v: { address: string }) => void;
+};
+
+const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props) => {
   const [search, setSearch] = useState("");
   const [showAll, setShowAll] = useState(false);
-  // const [currentValidator, setCurrentValidator] = useState<ValidatorsAppValidator[]>([]);
-  // const [currentValidator] = useState([]);
+  const [currentValidator, setCurrentValidator] = useState<Validators[]>([]);
 
-  // const unit = useAccountUnit(account);
-  // const validators = useValidators(account.currency, search);
+  const unit = useAccountUnit(account);
+  const validators = useValidators(account.currency, search);
 
   const onSearch = useCallback(
     (evt: React.ChangeEvent<HTMLInputElement>) => setSearch(evt.target.value),
     [setSearch],
   );
 
-  // useEffect(() => {
-  //   const selectedVoteAccAddr = validators.find(p => p.voteAccount === chosenVoteAccAddr);
-  //   if (selectedVoteAccAddr) {
-  //     const isDefault = validators.slice(0, 2).includes(selectedVoteAccAddr);
-  //     if (isDefault) {
-  //       setCurrentValidator([selectedVoteAccAddr]);
-  //     }
-  //     setCurrentValidator([
-  //       selectedVoteAccAddr,
-  //       ...validators.slice(0, 2).filter(v => v !== selectedVoteAccAddr),
-  //     ]);
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [chosenVoteAccAddr]);
+  useEffect(() => {
+    const selectedVoteAccAddr = validators.find(p => p.voteAccount === chosenVoteAccAddr);
+    if (selectedVoteAccAddr) {
+      const isDefault = validators.slice(0, 2).includes(selectedVoteAccAddr);
+      if (isDefault) {
+        setCurrentValidator([selectedVoteAccAddr]);
+      }
+      setCurrentValidator([
+        selectedVoteAccAddr,
+        ...validators.slice(0, 2).filter(v => v !== selectedVoteAccAddr),
+      ]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chosenVoteAccAddr]);
 
-  // const renderItem = (validator: ValidatorsAppValidator) => {
-  //   return (
-  //     <ValidatorRow
-  //       currency={account.currency}
-  //       active={chosenVoteAccAddr === validator.voteAccount}
-  //       onClick={onChangeValidator}
-  //       key={validator.voteAccount}
-  //       validator={validator}
-  //       unit={unit}
-  //     ></ValidatorRow>
-  //   );
-  // };
-
-  const renderItem = () => {
-    return <li>validator</li>;
+  const renderItem = (validator: Validators) => {
+    return (
+      <ValidatorRow
+        currency={account.currency}
+        active={chosenVoteAccAddr === validator.voteAccount}
+        onClick={onChangeValidator}
+        key={validator.voteAccount}
+        validator={validator}
+        unit={unit}
+      ></ValidatorRow>
+    );
   };
 
   return (
@@ -73,14 +66,13 @@ const ValidatorField = () => {
       <ValidatorsFieldContainer>
         <Box p={1} data-testid="validator-list">
           <ScrollLoadingList
-            // data={
-            //   showAll
-            //     ? validators
-            //     : currentValidator.length > 0
-            //       ? currentValidator
-            //       : validators.slice(0, 2)
-            // }
-            data={[]}
+            data={
+              showAll
+                ? validators
+                : currentValidator.length > 0
+                  ? currentValidator
+                  : validators.slice(0, 2)
+            }
             style={{
               flex: showAll ? "1 0 240px" : "1 0 126px",
               marginBottom: 0,
@@ -88,8 +80,7 @@ const ValidatorField = () => {
             }}
             renderItem={renderItem}
             noResultPlaceholder={
-              // validators.length <= 0 && search.length > 0 && <NoResultPlaceholder search={search} />
-              <NoResultPlaceholder search={search} />
+              validators.length <= 0 && search.length > 0 && <NoResultPlaceholder search={search} />
             }
           />
         </Box>
