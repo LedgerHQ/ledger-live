@@ -22,6 +22,7 @@ import { cliTools as tron } from "../families/tron/setup";
 import { cliTools as vechain } from "../families/vechain/setup";
 import { cliTools as xrp } from "../families/xrp/setup";
 import { cliTools as sui } from "../families/sui/setup";
+import { cliTools as mina } from "../families/mina/setup";
 
 export default {
   celo,
@@ -48,4 +49,5 @@ export default {
   vechain,
   xrp,
   sui,
+  mina,
 };
