@@ -42,7 +42,7 @@ export const LargeMoverGraph: React.FC<GraphProps> = ({ chartData, range, curren
   );
   return (
     <Graph
-      testID="LargeMoverGraph"
+      testID="large-mover-graph"
       width={width}
       height={150}
       color={graphColor}
