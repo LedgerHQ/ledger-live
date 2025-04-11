@@ -82,6 +82,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Indexer endpoint for Aptos",
   },
+  API_APTOS_PROXY: {
+    parser: stringParser,
+    def: "https://aptos.coin.ledger.com",
+    desc: "proxy url for aptos API",
+  },
   API_CASPER_INDEXER_ENDPOINT: {
     parser: stringParser,
     def: "https://casper.coin.ledger.com/indexer",

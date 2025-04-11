@@ -8,8 +8,11 @@ import type {
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import type { BigNumber } from "bignumber.js";
+import type { Validators } from "../network/validators";
+
 export * from "./signer";
 export * from "./bridge";
+export type { Validators, ValidatorsRaw } from "../network/validators";
 
 export type AptosTransaction = UserTransactionResponse & {
   block: {
@@ -55,12 +58,58 @@ export type TransactionErrors = {
   gasUnitPrice?: string;
 };
 
+export type StakeCreateAccountTransaction = {
+  kind: "stake.createAccount";
+  uiState: {
+    delegate: {
+      voteAccAddress: string;
+    };
+  };
+};
+
+export type StakeDelegateTransaction = {
+  kind: "stake.delegate";
+  uiState: {
+    stakeAccAddr: string;
+    voteAccAddr: string;
+  };
+};
+
+export type StakeUndelegateTransaction = {
+  kind: "stake.undelegate";
+  uiState: {
+    stakeAccAddr: string;
+  };
+};
+
+export type StakeWithdrawTransaction = {
+  kind: "stake.withdraw";
+  uiState: {
+    stakeAccAddr: string;
+  };
+};
+
+export type StakeSplitTransaction = {
+  kind: "stake.split";
+  uiState: {
+    stakeAccAddr: string;
+  };
+};
+
+export type TransactionModel =
+  | StakeCreateAccountTransaction
+  | StakeDelegateTransaction
+  | StakeUndelegateTransaction
+  | StakeWithdrawTransaction
+  | StakeSplitTransaction;
+
 export type Transaction = TransactionCommon & {
-  mode: string;
   family: "aptos";
+  mode: string;
   fees?: BigNumber | null;
   options: TransactionOptions;
   errors?: TransactionErrors;
+  stakeModel?: TransactionModel;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -69,6 +118,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   fees?: string | null;
   options: string;
   errors?: string;
+  stakeModel?: string;
 };
 
 export type AptosFungibleStoreResourceData = {
@@ -111,12 +161,12 @@ export type AptosStake = {
   stakeAccAddr: string;
   hasStakeAuth: boolean;
   hasWithdrawAuth: boolean;
-  // delegation:
-  //   | {
-  //       stake: number;
-  //       voteAccAddr: string;
-  //     }
-  //   | undefined;
+  delegation:
+    | {
+        stake: number;
+        voteAccAddr: string;
+      }
+    | undefined;
   stakeAccBalance: number;
   // rentExemptReserve: number;
   withdrawable: number;
@@ -132,6 +182,17 @@ export type AptosStake = {
     | undefined;
 };
 
+export type AptosStakeWithMeta = {
+  stake: AptosStake;
+  meta: {
+    validator?: {
+      name?: string;
+      img?: string;
+      url?: string;
+    };
+  };
+};
+
 export type AptosResources = {
   stakes: AptosStake[];
   unstakeReserve: BigNumber;
@@ -140,4 +201,23 @@ export type AptosResources = {
 export type AptosResourcesRaw = {
   stakes: string;
   unstakeReserve: string;
+};
+
+export type AptosValidator = {
+  voteAccAddr: string;
+  commission: number;
+  activatedStake: number;
+};
+
+export type AptosValidatorWithMeta = {
+  validator: AptosValidator;
+  meta: {
+    name?: string;
+    img?: string;
+  };
+};
+
+export type AptosPreloadData = {
+  validatorsWithMeta: AptosValidatorWithMeta[];
+  validators: Validators[];
 };

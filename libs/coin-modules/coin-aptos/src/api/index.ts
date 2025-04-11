@@ -81,6 +81,18 @@ export class AptosAPI {
     };
   }
 
+  // async getValidators() {
+  //   const payload = {
+  //     function: "0x1::delegation_pool::operator_commission_percentage",
+  //     functionArguments: [
+  //       "0x9bfd93ebaa1efd65515642942a607eeca53a0188c04c21ced646d2f0b9f551e8",
+  //       // "0xb909f0e057974fde136548160898ec1fe629351c9aabdf2d189c5691f0b5093a",
+  //     ],
+  //   } as InputViewFunctionData;
+
+  //   return await this.aptosClient.view<[string]>({ payload });
+  // }
+
   async estimateGasPrice(): Promise<GasEstimation> {
     return this.aptosClient.getGasPriceEstimation();
   }

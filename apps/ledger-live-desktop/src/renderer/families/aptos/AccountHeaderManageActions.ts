@@ -1,4 +1,4 @@
-import { /* getMainAccount, */ isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
@@ -8,15 +8,13 @@ import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLo
 
 const AccountHeaderActions: AptosFamily["accountHeaderManageActions"] = ({
   account,
-  // parentAccount,
-  // source,
-  parentAccount: _parentAccount,
-  source: _source,
+  parentAccount,
+  source,
 }) => {
   const dispatch = useDispatch();
   const label = useGetStakeLabelLocaleBased();
-  // const mainAccount = getMainAccount(account, parentAccount);
-  // const { aptosResources } = mainAccount;
+  const mainAccount = getMainAccount(account, parentAccount);
+  const { aptosResources } = mainAccount;
 
   const onClick = useCallback(() => {
     if (isAccountEmpty(account)) {
@@ -25,21 +23,20 @@ const AccountHeaderActions: AptosFamily["accountHeaderManageActions"] = ({
           account,
         }),
       );
+    } else {
+      dispatch(
+        openModal(
+          aptosResources && aptosResources.stakes.length > 0
+            ? "MODAL_APTOS_DELEGATE"
+            : "MODAL_APTOS_REWARDS_INFO",
+          {
+            account: mainAccount,
+            source,
+          },
+        ),
+      );
     }
-    // else {
-    // dispatch(
-    //   openModal(
-    //     aptosResources && aptosResources.stakes.length > 0
-    //       ? "MODAL_APTOS_DELEGATE"
-    //       : "MODAL_APTOS_REWARDS_INFO",
-    //     {
-    //       account: mainAccount,
-    //       source,
-    //     },
-    //   ),
-    // );
-    // }, [account, dispatch, source, aptosResources, mainAccount]);
-  }, [account, dispatch]);
+  }, [account, dispatch, source, aptosResources, mainAccount]);
 
   if (account.type === "TokenAccount") {
     return null;

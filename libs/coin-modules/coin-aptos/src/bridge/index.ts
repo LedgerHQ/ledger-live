@@ -17,6 +17,23 @@ import createTransaction from "./createTransaction";
 import { getAccountShape } from "./synchronisation";
 import buildSignOperation from "./signOperation";
 import broadcast from "./broadcast";
+import { hydrate, preloadWithAPI } from "../preload";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+
+// function makePreload(
+//   getChainAPI: (config: Config) => Promise<ChainAPI>,
+// ): CurrencyBridge["preload"] {
+function makePreload() {
+  // const preload: CurrencyBridge["preload"] = (currency): Promise<AptosPreloadData> => {
+  //   const config: Config = {
+  //     endpoint: endpointByCurrencyId(currency.id),
+  //   };
+  //   const api = () => getChainAPI(config);
+  //   return preloadWithAPI(currency, api);
+  // };
+  // return preload;
+  return (currency: CryptoCurrency) => preloadWithAPI(currency);
+}
 
 function buildCurrencyBridge(signerContext: SignerContext<AptosSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -27,8 +44,9 @@ function buildCurrencyBridge(signerContext: SignerContext<AptosSigner>): Currenc
   });
 
   return {
-    preload: () => Promise.resolve({}),
-    hydrate: () => {},
+    // preload: makePreload(getQueuedAndCachedAPI),
+    preload: makePreload(),
+    hydrate,
     scanAccounts,
   };
 }
@@ -54,8 +72,6 @@ function buildAccountBridge(
     receive,
     signOperation,
     broadcast,
-    // fromOperationExtraRaw,
-    // toOperationExtraRaw,
   };
 }
 
