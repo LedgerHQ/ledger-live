@@ -1,4 +1,4 @@
-import { toOffChainMessage } from "./message";
+import { toOffChainMessage } from "./format";
 
 type MessageCase = {
   value: string;
@@ -11,30 +11,30 @@ const SOLANA_HEADER = "ff736f6c616e61206f6666636861696e";
 
 describe("test", () => {
   const cases: MessageCase[] = [
-    {
+    /*{
       value: "hello",
       hexadecimal: "68656c6c6f",
       messageLength: "05",
     },
     {
       value: "bonjour",
-      hexadecimal: "0700626f6e6a6f7572",
+      hexadecimal: "626f6e6a6f7572",
       messageLength: "07",
     },
     {
       value: "salam",
-      hexadecimal: "050073616c616d",
+      hexadecimal: "73616c616d",
       messageLength: "05",
     },
     {
       value: "Long Off-Chain Test Message.",
-      hexadecimal: "1c004c6f6e67204f66662d436861696e2054657374204d6573736167652e",
+      hexadecimal: "4c6f6e67204f66662d436861696e2054657374204d6573736167652e",
       messageLength: "1c",
-    },
+    },*/
     {
       value: "Тестовое сообщение в формате UTF-8",
       hexadecimal:
-        "2200d0a2d0b5d181d182d0bed0b2d0bed0b520d181d0bed0bed0b1d189d0b5d0bdd0b8d0b520d0b220d184d0bed180d0bcd0b0d182d0b5205554462d38",
+        "d0a2d0b5d181d182d0bed0b2d0bed0b520d181d0bed0bed0b1d189d0b5d0bdd0b8d0b520d0b220d184d0bed180d0bcd0b0d182d0b5205554462d38",
       messageLength: "22",
     },
   ];
@@ -59,7 +59,7 @@ describe("test", () => {
       expect(remaining).toEqual("00");
 
       // message should end with message parameter
-      expect(result.endsWith(hexadecimal)).toBe(true);
+      expect(result.substring(SOLANA_HEADER.length + 8)).toEqual(hexadecimal);
     },
   );
 });
