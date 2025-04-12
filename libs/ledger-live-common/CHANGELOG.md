@@ -1,5 +1,53 @@
 ## 34.25.0
 
+## 34.29.0-nightly.7
+
+### Minor Changes
+
+- [#9230](https://github.com/LedgerHQ/ledger-live/pull/9230) [`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81) Thanks [@lawRathod](https://github.com/lawRathod)! - Add support for mina blockchain
+
+### Patch Changes
+
+- [#9554](https://github.com/LedgerHQ/ledger-live/pull/9554) [`ab287c0`](https://github.com/LedgerHQ/ledger-live/commit/ab287c09028b00e4f01da22982644366b4325c15) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: zcash, fix consensus branch id computation
+
+- Updated dependencies [[`73722cc`](https://github.com/LedgerHQ/ledger-live/commit/73722ccbc93712103ff4ea33ab5c0c294400eef8), [`ab287c0`](https://github.com/LedgerHQ/ledger-live/commit/ab287c09028b00e4f01da22982644366b4325c15), [`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81)]:
+  - @ledgerhq/coin-evm@2.16.0-nightly.5
+  - @ledgerhq/hw-app-btc@10.7.1-nightly.1
+  - @ledgerhq/cryptoassets@13.15.0-nightly.3
+  - @ledgerhq/crypto-icons-ui@1.12.0-nightly.0
+  - @ledgerhq/coin-mina@1.1.0-nightly.0
+  - @ledgerhq/coin-framework@2.6.0-nightly.5
+  - @ledgerhq/live-signer-evm@0.2.3-nightly.5
+  - @ledgerhq/coin-algorand@0.9.0-nightly.5
+  - @ledgerhq/coin-bitcoin@0.15.0-nightly.5
+  - @ledgerhq/coin-cardano@0.7.1-nightly.5
+  - @ledgerhq/coin-casper@1.5.3-nightly.5
+  - @ledgerhq/coin-cosmos@0.12.0-nightly.7
+  - @ledgerhq/coin-filecoin@1.8.1-nightly.5
+  - @ledgerhq/coin-icon@0.9.1-nightly.5
+  - @ledgerhq/coin-multiversx@0.4.0-nightly.5
+  - @ledgerhq/coin-near@0.10.1-nightly.5
+  - @ledgerhq/coin-polkadot@3.2.0-nightly.5
+  - @ledgerhq/coin-solana@0.18.0-nightly.5
+  - @ledgerhq/coin-stacks@0.7.1-nightly.5
+  - @ledgerhq/coin-stellar@2.2.0-nightly.5
+  - @ledgerhq/coin-sui@0.2.1-nightly.5
+  - @ledgerhq/coin-tezos@2.2.0-nightly.5
+  - @ledgerhq/coin-ton@0.7.1-nightly.5
+  - @ledgerhq/coin-tron@0.8.0-nightly.5
+  - @ledgerhq/coin-vechain@2.6.1-nightly.5
+  - @ledgerhq/coin-xrp@3.2.0-nightly.5
+  - @ledgerhq/live-countervalues@0.4.7-nightly.5
+  - @ledgerhq/live-countervalues-react@0.2.29-nightly.5
+  - @ledgerhq/live-nft@0.7.1-nightly.5
+  - @ledgerhq/live-wallet@0.10.3-nightly.5
+  - @ledgerhq/coin-aptos@2.0.0-nightly.5
+  - @ledgerhq/coin-hedera@1.5.1-nightly.5
+  - @ledgerhq/coin-internet_computer@1.6.1-nightly.5
+  - @ledgerhq/hw-app-vet@0.4.1-nightly.3
+  - @ledgerhq/device-core@0.4.20-nightly.4
+  - @ledgerhq/hw-app-eth@6.44.1-nightly.4
+
 ## 34.29.0-nightly.6
 
 ### Patch Changes

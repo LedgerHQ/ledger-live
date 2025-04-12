@@ -1,5 +1,35 @@
 # ledger-live-desktop
 
+## 2.107.0-nightly.7
+
+### Minor Changes
+
+- [#9892](https://github.com/LedgerHQ/ledger-live/pull/9892) [`6f2ff97`](https://github.com/LedgerHQ/ledger-live/commit/6f2ff97d0036ef281f9c6a2df17f3bd9be98a22f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Integrate into the Add Account flow Modular Asset Drawer redirection
+
+- [#9230](https://github.com/LedgerHQ/ledger-live/pull/9230) [`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81) Thanks [@lawRathod](https://github.com/lawRathod)! - Add support for mina blockchain
+
+### Patch Changes
+
+- Updated dependencies [[`73722cc`](https://github.com/LedgerHQ/ledger-live/commit/73722ccbc93712103ff4ea33ab5c0c294400eef8), [`ab287c0`](https://github.com/LedgerHQ/ledger-live/commit/ab287c09028b00e4f01da22982644366b4325c15), [`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81)]:
+  - @ledgerhq/coin-evm@2.16.0-nightly.5
+  - @ledgerhq/live-common@34.29.0-nightly.7
+  - @ledgerhq/types-cryptoassets@7.22.0-nightly.0
+  - @ledgerhq/cryptoassets@13.15.0-nightly.3
+  - @ledgerhq/types-live@6.66.0-nightly.4
+  - @ledgerhq/coin-framework@2.6.0-nightly.5
+  - @ledgerhq/live-dmk-desktop@0.2.0-nightly.7
+  - @ledgerhq/coin-bitcoin@0.15.0-nightly.5
+  - @ledgerhq/coin-cosmos@0.12.0-nightly.7
+  - @ledgerhq/coin-filecoin@1.8.1-nightly.5
+  - @ledgerhq/domain-service@1.2.25-nightly.4
+  - @ledgerhq/live-countervalues@0.4.7-nightly.5
+  - @ledgerhq/live-countervalues-react@0.2.29-nightly.5
+  - @ledgerhq/live-nft@0.7.1-nightly.5
+  - @ledgerhq/live-nft-react@0.8.1-nightly.5
+  - @ledgerhq/live-wallet@0.10.3-nightly.5
+  - @ledgerhq/coin-aptos@2.0.0-nightly.5
+  - @ledgerhq/react-ui@0.21.2-nightly.0
+
 ## 2.107.0-nightly.6
 
 ### Minor Changes

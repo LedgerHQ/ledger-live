@@ -1,5 +1,23 @@
 # @ledgerhq/live-cli
 
+## 24.16.0-nightly.7
+
+### Minor Changes
+
+- [#9230](https://github.com/LedgerHQ/ledger-live/pull/9230) [`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81) Thanks [@lawRathod](https://github.com/lawRathod)! - Add support for mina blockchain
+
+### Patch Changes
+
+- Updated dependencies [[`ab287c0`](https://github.com/LedgerHQ/ledger-live/commit/ab287c09028b00e4f01da22982644366b4325c15), [`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81)]:
+  - @ledgerhq/hw-app-btc@10.7.1-nightly.1
+  - @ledgerhq/live-common@34.29.0-nightly.7
+  - @ledgerhq/cryptoassets@13.15.0-nightly.3
+  - @ledgerhq/coin-framework@2.6.0-nightly.5
+  - @ledgerhq/coin-bitcoin@0.15.0-nightly.5
+  - @ledgerhq/live-countervalues@0.4.7-nightly.5
+  - @ledgerhq/live-wallet@0.10.3-nightly.5
+  - @ledgerhq/device-core@0.4.20-nightly.4
+
 ## 24.15.1-nightly.6
 
 ### Patch Changes

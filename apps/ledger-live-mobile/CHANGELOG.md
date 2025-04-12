@@ -1,5 +1,37 @@
 # live-mobile
 
+## 3.73.0-nightly.7
+
+### Minor Changes
+
+- [#9879](https://github.com/LedgerHQ/ledger-live/pull/9879) [`2141a89`](https://github.com/LedgerHQ/ledger-live/commit/2141a890f24c62890a1b2a1fee30ed45fa60223c) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - add hasEnabledOsNotifications flag to analytics
+
+- [#9832](https://github.com/LedgerHQ/ledger-live/pull/9832) [`10f0d88`](https://github.com/LedgerHQ/ledger-live/commit/10f0d88c694c4c9d98ec08910bf11c124d7f240e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Swiper Demo/debug
+
+- [#9831](https://github.com/LedgerHQ/ledger-live/pull/9831) [`449f3ae`](https://github.com/LedgerHQ/ledger-live/commit/449f3aede2784d6fcf4f420a22e03795f8c6ce12) Thanks [@ysitbon](https://github.com/ysitbon)! - Update async storage import to a single source of truth. Create MMKV interface. Add getString and saveString methods for type safety
+
+- [#9230](https://github.com/LedgerHQ/ledger-live/pull/9230) [`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81) Thanks [@lawRathod](https://github.com/lawRathod)! - Add support for mina blockchain
+
+### Patch Changes
+
+- Updated dependencies [[`73722cc`](https://github.com/LedgerHQ/ledger-live/commit/73722ccbc93712103ff4ea33ab5c0c294400eef8), [`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81)]:
+  - @ledgerhq/coin-evm@2.16.0-nightly.5
+  - @ledgerhq/types-cryptoassets@7.22.0-nightly.0
+  - @ledgerhq/types-live@6.66.0-nightly.4
+  - @ledgerhq/coin-framework@2.6.0-nightly.5
+  - @ledgerhq/live-dmk-mobile@0.2.0-nightly.7
+  - @ledgerhq/coin-cosmos@0.12.0-nightly.7
+  - @ledgerhq/coin-filecoin@1.8.1-nightly.5
+  - @ledgerhq/coin-multiversx@0.4.0-nightly.5
+  - @ledgerhq/coin-stacks@0.7.1-nightly.5
+  - @ledgerhq/domain-service@1.2.25-nightly.4
+  - @ledgerhq/live-countervalues@0.4.7-nightly.5
+  - @ledgerhq/live-countervalues-react@0.2.29-nightly.5
+  - @ledgerhq/live-nft@0.7.1-nightly.5
+  - @ledgerhq/live-nft-react@0.8.1-nightly.5
+  - @ledgerhq/live-wallet@0.10.3-nightly.5
+  - @ledgerhq/native-ui@0.31.2-nightly.0
+
 ## 3.73.0-nightly.6
 
 ### Minor Changes

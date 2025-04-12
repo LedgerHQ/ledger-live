@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.66.0-nightly.4
+
+### Minor Changes
+
+- [#9230](https://github.com/LedgerHQ/ledger-live/pull/9230) [`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81) Thanks [@lawRathod](https://github.com/lawRathod)! - Add support for mina blockchain
+
 ## 6.66.0-nightly.3
 
 ### Minor Changes

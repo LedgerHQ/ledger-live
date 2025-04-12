@@ -1,5 +1,23 @@
 # web-tools
 
+## 0.17.0-nightly.7
+
+### Minor Changes
+
+- [#9230](https://github.com/LedgerHQ/ledger-live/pull/9230) [`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81) Thanks [@lawRathod](https://github.com/lawRathod)! - Add support for mina blockchain
+
+### Patch Changes
+
+- Updated dependencies [[`ab287c0`](https://github.com/LedgerHQ/ledger-live/commit/ab287c09028b00e4f01da22982644366b4325c15), [`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81)]:
+  - @ledgerhq/live-common@34.29.0-nightly.7
+  - @ledgerhq/types-cryptoassets@7.22.0-nightly.0
+  - @ledgerhq/cryptoassets@13.15.0-nightly.3
+  - @ledgerhq/types-live@6.66.0-nightly.4
+  - @ledgerhq/coin-framework@2.6.0-nightly.5
+  - @ledgerhq/domain-service@1.2.25-nightly.4
+  - @ledgerhq/live-wallet@0.10.3-nightly.5
+  - @ledgerhq/hw-app-eth@6.44.1-nightly.4
+
 ## 0.16.3-nightly.6
 
 ### Patch Changes
