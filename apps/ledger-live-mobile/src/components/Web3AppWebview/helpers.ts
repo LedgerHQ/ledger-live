@@ -28,7 +28,7 @@ import prepareSignTransaction from "./liveSDKLogic";
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { mevProtectionSelector, trackingEnabledSelector } from "../../reducers/settings";
-import deviceStorage from "../../logic/storeWrapper";
+import storage from "LLM/storage";
 import { track } from "../../analytics";
 import getOrCreateUser from "../../user";
 import * as bridge from "../../../e2e/bridge/client";
@@ -423,11 +423,12 @@ function useUiHook(): UiHook {
           onClose: onCancel,
         });
       },
-      "storage.get": async ({ key, storeId }) => {
-        return (await deviceStorage.get(`${storeId}-${key}`)) as string;
+      "storage.get": async ({ key, storeId }): Promise<string> => {
+        const value = await storage.get(`${storeId}-${key}`);
+        return typeof value === "string" ? value : "";
       },
       "storage.set": ({ key, value, storeId }) => {
-        deviceStorage.save(`${storeId}-${key}`, value);
+        storage.save(`${storeId}-${key}`, value);
       },
       "transaction.sign": ({
         account,

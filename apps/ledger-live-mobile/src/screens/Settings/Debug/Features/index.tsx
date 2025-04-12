@@ -114,6 +114,12 @@ export default function Features() {
           onPress={() => navigation.navigate(ScreenName.LargeMoverLandingPage)}
         />
       </FeatureToggle>
+      <SettingsRow
+        title="Swiper"
+        desc="Swipe cards"
+        iconLeft={<Icons.CreditCard />}
+        onPress={() => navigation.navigate(ScreenName.DebugSwipe)}
+      />
     </SettingsNavigationScrollView>
   );
 }

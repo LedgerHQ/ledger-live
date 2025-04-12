@@ -2,6 +2,7 @@ import { log } from "@ledgerhq/logs";
 import type { Transaction, TransactionInput, TransactionOutput } from "./types";
 import { getVarint } from "./varint";
 import { formatTransactionDebug } from "./debug";
+
 export function splitTransaction(
   transactionHex: string,
   isSegwitSupported: boolean | null | undefined = false,

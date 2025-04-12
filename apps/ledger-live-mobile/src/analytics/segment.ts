@@ -24,6 +24,7 @@ import {
 } from "@ledgerhq/live-nft";
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
+import { getIsNotifEnabled } from "../logic/getNotifPermissions";
 import getOrCreateUser from "../user";
 import {
   analyticsEnabledSelector,
@@ -211,11 +212,14 @@ const extraProperties = async (store: AppStore) => {
   const isReborn = isRebornSelector(state);
 
   const notifications = notificationsSelector(state);
+  const hasEnabledOsNotifications = await getIsNotifEnabled();
+
   const notificationsOptedIn = {
     notificationsAllowed: notifications.areNotificationsAllowed,
     optInAnnouncements: notifications.announcementsCategory,
     optInLargeMovers: notifications.largeMoverCategory,
     optInTxAlerts: notifications.transactionsAlertsCategory,
+    hasEnabledOsNotifications,
   };
   const notificationsBlacklisted = Object.entries(notifications)
     .filter(([key, value]) => key !== "areNotificationsAllowed" && value === false)

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import storage from "LLM/storage";
 import semver from "semver";
 import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
@@ -97,9 +97,7 @@ export function PtxScreen({ route, config }: Props) {
     () => {
       (async () => {
         if (manifest?.id && internalAppIds.includes(manifest.id)) {
-          await AsyncStorage.removeItem("last-screen");
-          await AsyncStorage.removeItem("manifest-id");
-          await AsyncStorage.removeItem("flow-name");
+          await storage.delete(["last-screen", "manifest-id", "flow-name"]);
         }
       })();
     },

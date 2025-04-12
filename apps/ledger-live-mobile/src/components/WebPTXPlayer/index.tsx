@@ -18,7 +18,7 @@ import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { safeUrl } from "@ledgerhq/live-common/wallet-api/helpers";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import storage from "LLM/storage";
 import { useNavigation } from "@react-navigation/native";
 
 import { useTheme } from "styled-components/native";
@@ -60,11 +60,13 @@ function BackToInternalDomain({
   const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
 
   const handleBackClick = async () => {
-    const manifestId = (await AsyncStorage.getItem("manifest-id")) || "";
+    const manifestId = (await storage.getString("manifest-id")) ?? "";
 
     if (manifestId) {
-      const lastScreen = (await AsyncStorage.getItem("last-screen")) || "";
-      const flowName = (await AsyncStorage.getItem("flow-name")) || "";
+      const [lastScreen = "", flowName = ""] = await Promise.all([
+        storage.getString("last-screen"),
+        storage.getString("flow-name"),
+      ]);
 
       track("button_clicked", {
         button: lastScreen === "compare_providers" ? "back to quote" : "back to liveapp",
@@ -196,10 +198,10 @@ export const WebPTXPlayer = ({
             const flowName = searchParams.get("flowName") || "";
             const lastScreen = searchParams.get("lastScreen") || flowName;
 
-            await AsyncStorage.multiSet([
-              ["manifest-id", manifestId],
-              ["flow-name", flowName],
-              ["last-screen", lastScreen],
+            await Promise.all([
+              storage.saveString("manifest-id", manifestId),
+              storage.saveString("flow-name", flowName),
+              storage.saveString("last-screen", lastScreen),
             ]);
 
             navigation.navigate(config.navigator, {

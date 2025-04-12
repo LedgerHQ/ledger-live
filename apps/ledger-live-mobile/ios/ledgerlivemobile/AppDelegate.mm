@@ -8,6 +8,7 @@
 #import "BrazeReactBridge.h"
 #import <Firebase.h>
 #import "RNSplashScreen.h"
+#import <MMKV/MMKV.h>
 
 
 @implementation AppDelegate
@@ -20,7 +21,9 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
-
+  
+  [MMKV initializeMMKV:nil];
+  
   // Retrieve the correct GoogleService-Info.plist file name for a given environment
   NSString *googleServiceInfoEnvName = [RNCConfig envFor:@"GOOGLE_SERVICE_INFO_NAME"];
   NSString *googleServiceInfoName = googleServiceInfoEnvName;
