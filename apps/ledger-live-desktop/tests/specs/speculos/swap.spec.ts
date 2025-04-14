@@ -439,7 +439,7 @@ const tooLowAmountForQuoteSwaps = [
     quotesVisible: true,
   },
   {
-    swap: new Swap(Account.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, "10", Fee.MEDIUM),
+    swap: new Swap(Account.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, "20", Fee.MEDIUM),
     xrayTicket: "B2CQA-3241",
     errorMessage: new RegExp(`\\d+(\\.\\d{1,10})? ETH needed for network fees\\.\\s*$`),
     ctaBanner: true,

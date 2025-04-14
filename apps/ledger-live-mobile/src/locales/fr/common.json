@@ -2412,16 +2412,13 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "Rappel : finalisez votre abonnement à Ledger Recover",
-        "description" : "Plus que deux étapes avant d’être en sécurité."
+        "title" : "Rappel : finalisez votre abonnement à Ledger Recover"
       },
       "verifyIdentity" : {
-        "title" : "Rappel : finalisez votre abonnement à Ledger Recover",
-        "description" : "Plus qu’une étape avant d’être en sécurité."
+        "title" : "Vous n’avez pas encore sauvegardé l’accès à votre wallet"
       },
       "connectDevice" : {
-        "title" : "Rappel : finalisez votre abonnement à Ledger Recover",
-        "description" : "Dernière étape pour sécuriser l’accès à votre wallet."
+        "title" : "Vous n’avez pas encore sauvegardé l’accès à votre wallet"
       }
     }
   },

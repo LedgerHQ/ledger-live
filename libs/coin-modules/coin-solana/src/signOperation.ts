@@ -19,7 +19,7 @@ import type { Resolution, SolanaSigner } from "./signer";
 import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { assertUnreachable } from "./utils";
-import { ChainAPI } from "./api";
+import { ChainAPI } from "./network";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { DeviceModelId } from "@ledgerhq/devices";
 

@@ -67,7 +67,7 @@ export async function spawnSpeculos(nanoAppEndpoint: `/${string}`): Promise<{
   async function checkSpeculosLogs(): Promise<SpeculosTransportHttp> {
     const { out } = await compose.logs("speculos", { cwd, env: process.env });
 
-    if (out.includes("Running on all addresses (0.0.0.0)")) {
+    if (out.includes("Serving Flask app")) {
       console.log(chalk.bgYellowBright.black(" -  SPECULOS READY ✅  - "));
       return SpeculosTransportHttp.open({
         apiPort: SPECULOS_API_PORT,

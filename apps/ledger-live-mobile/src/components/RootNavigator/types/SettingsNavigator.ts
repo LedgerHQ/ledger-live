@@ -85,4 +85,6 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugQueuedDrawerScreen0]: undefined;
   [ScreenName.DebugQueuedDrawerScreen1]: undefined;
   [ScreenName.DebugQueuedDrawerScreen2]: undefined;
+  [ScreenName.LargeMoverLandingPage]: undefined;
+  [ScreenName.DebugSwipe]: undefined;
 };

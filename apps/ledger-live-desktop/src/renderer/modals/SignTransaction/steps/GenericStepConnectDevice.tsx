@@ -11,6 +11,7 @@ import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import { getEnv } from "@ledgerhq/live-env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 const Result = (
   result:
@@ -44,6 +45,7 @@ export default function StepConnectDevice({
   manifestId,
   manifestName,
   isACRE,
+  location,
 }: {
   transitionTo: (a: string) => void;
   account: AccountLike | undefined | null;
@@ -58,6 +60,7 @@ export default function StepConnectDevice({
   manifestId?: string;
   manifestName?: string;
   isACRE?: boolean;
+  location?: HOOKS_TRACKING_LOCATIONS;
 }) {
   const tokenCurrency = account && account.type === "TokenAccount" ? account.token : undefined;
   const request = useMemo(
@@ -103,6 +106,7 @@ export default function StepConnectDevice({
           transitionTo("confirmation");
         }
       }}
+      location={location}
     />
   );
 }

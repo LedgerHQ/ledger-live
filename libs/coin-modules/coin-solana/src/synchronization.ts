@@ -9,7 +9,7 @@ import {
   ParsedOnChainStakeAccountWithInfo,
   toTokenAccountWithInfo,
   TransactionDescriptor,
-} from "./api/chain/web3";
+} from "./network/chain/web3";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
@@ -22,15 +22,15 @@ import { keyBy, toPairs, pipe, flow, sortBy, sum } from "lodash/fp";
 import groupBy from "lodash/groupBy";
 import head from "lodash/head";
 import compact from "lodash/compact";
-import { parseQuiet } from "./api/chain/program";
+import { parseQuiet } from "./network/chain/program";
 import {
   InflationReward,
   ParsedTransaction,
   PublicKey,
   StakeActivationData,
 } from "@solana/web3.js";
-import { ChainAPI } from "./api";
-import { ParsedOnChainTokenAccountWithInfo } from "./api/chain/web3";
+import { ChainAPI } from "./network";
+import { ParsedOnChainTokenAccountWithInfo } from "./network/chain/web3";
 import { estimateTxFee } from "./tx-fees";
 import {
   SolanaAccount,
@@ -41,14 +41,14 @@ import {
   SolanaTokenProgram,
 } from "./types";
 import { Operation, OperationType, ProtoNFT, TokenAccount } from "@ledgerhq/types-live";
-import { DelegateInfo, WithdrawInfo } from "./api/chain/instruction/stake/types";
-import { PARSED_PROGRAMS } from "./api/chain/program/constants";
+import { DelegateInfo, WithdrawInfo } from "./network/chain/instruction/stake/types";
+import { PARSED_PROGRAMS } from "./network/chain/program/constants";
 import { getTokenAccountProgramId, tokenIsListedOnLedger } from "./helpers/token";
-import { MintExtensions } from "./api/chain/account/tokenExtensions";
+import { MintExtensions } from "./network/chain/account/tokenExtensions";
 import coinConfig from "./config";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
-import { getStakeAccounts } from "./api/chain/stake-activation/rpc";
-import { tryParseAsMintAccount } from "./api/chain/account";
+import { getStakeAccounts } from "./network/chain/stake-activation/rpc";
+import { tryParseAsMintAccount } from "./network/chain/account";
 import ky from "ky";
 import { isSignaturesForAddressResponse } from "./utils";
 

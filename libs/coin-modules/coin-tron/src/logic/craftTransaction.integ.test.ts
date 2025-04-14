@@ -25,6 +25,7 @@ describe("Testing craftTransaction function", () => {
     const result = await craftTransaction({
       type: "send",
       asset: {
+        type: "token",
         standard: "trc10",
         tokenId: "1002000",
       },
@@ -66,6 +67,7 @@ describe("Testing craftTransaction function", () => {
     const result = await craftTransaction({
       type: "send",
       asset: {
+        type: "token",
         standard: "trc20",
         contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
       },
@@ -105,6 +107,7 @@ describe("Testing craftTransaction function", () => {
     const result = await craftTransaction({
       type: "send",
       asset: {
+        type: "token",
         standard: "trc20",
         contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
       },
@@ -133,6 +136,7 @@ describe("Testing craftTransaction function", () => {
       {
         type: "send",
         asset: {
+          type: "token",
           standard: "trc20",
           contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
         },
@@ -160,6 +164,7 @@ describe("Testing craftTransaction function", () => {
 
     // WHEN
     const result = await craftTransaction({
+      asset: { type: "native" },
       type: "send",
       sender,
       recipient,
@@ -187,5 +192,116 @@ describe("Testing craftTransaction function", () => {
         }),
       }),
     );
+  });
+
+  it("should create a valid transaction when setting a memo", async () => {
+    const amount = BigInt(20);
+    const sender = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
+    const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
+
+    // WHEN
+    const result = await craftTransaction({
+      asset: { type: "native" },
+      type: "send",
+      sender,
+      recipient,
+      amount,
+      memo: "this is a test",
+    });
+
+    const decodeResult = await decodeTransaction(result);
+
+    expect(decodeResult).toEqual(
+      expect.objectContaining({
+        raw_data: expect.objectContaining({
+          data: Buffer.from("this is a test"),
+        }),
+      }),
+    );
+  });
+
+  it("throw expected error when setting a memo on a smart contract transaction", async () => {
+    const amount = BigInt(20);
+    const sender = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
+    const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
+
+    await expect(
+      craftTransaction({
+        type: "send",
+        asset: {
+          type: "token",
+          standard: "trc20",
+          contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+        },
+        sender,
+        recipient,
+        amount,
+        memo: "test",
+      }),
+    ).rejects.toThrow("Memo cannot be used with smart contract transactions");
+  });
+
+  it("should set an expiration of 10 minutes by default when setting is not provided", async () => {
+    const amount = BigInt(20);
+    const sender = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
+    const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
+
+    const before = Date.now();
+
+    // WHEN
+    const result = await craftTransaction({
+      asset: { type: "native" },
+      type: "send",
+      sender,
+      recipient,
+      amount,
+    });
+
+    const after = Date.now();
+
+    const decodeResult = await decodeTransaction(result);
+
+    expect(decodeResult).toEqual(
+      expect.objectContaining({
+        raw_data: expect.objectContaining({
+          expiration: expect.any(Number),
+        }),
+      }),
+    );
+    expect(decodeResult.raw_data.expiration).toBeGreaterThanOrEqual(before + 10 * 60 * 1000);
+    expect(decodeResult.raw_data.expiration).toBeLessThanOrEqual(after + 11 * 60 * 1000);
+  });
+
+  it("should create a valid transaction when setting a custom expiration", async () => {
+    const amount = BigInt(20);
+    const sender = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
+    const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
+    const expiration = 24 * 3600;
+
+    const before = Date.now();
+
+    // WHEN
+    const result = await craftTransaction({
+      asset: { type: "native" },
+      type: "send",
+      sender,
+      recipient,
+      amount,
+      expiration,
+    });
+
+    const after = Date.now();
+
+    const decodeResult = await decodeTransaction(result);
+
+    expect(decodeResult).toEqual(
+      expect.objectContaining({
+        raw_data: expect.objectContaining({
+          expiration: expect.any(Number),
+        }),
+      }),
+    );
+    expect(decodeResult.raw_data.expiration).toBeGreaterThanOrEqual(before + expiration * 1000);
+    expect(decodeResult.raw_data.expiration).toBeLessThanOrEqual(after + (expiration + 60) * 1000);
   });
 });

@@ -8,7 +8,7 @@ import { Account, DerivationMode, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { useSelector } from "react-redux";
 import { useMaybeAccountUnit } from "~/hooks";
-import { formatAddress } from "~/newArch/features/Accounts/utils/formatAddress";
+import { formatAddress } from "LLM/features/Accounts/utils/formatAddress";
 import { accountsSelector } from "~/reducers/accounts";
 import { useMaybeAccountName } from "~/reducers/wallet";
 

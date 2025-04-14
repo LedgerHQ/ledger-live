@@ -15,10 +15,10 @@ import {
   listOperations,
 } from "../logic";
 import { ListOperationsOptions } from "../logic/listOperations";
-import { StellarToken } from "../types";
+import { StellarAsset } from "../types";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-export function createApi(config: StellarConfig): Api<StellarToken> {
+export function createApi(config: StellarConfig): Api<StellarAsset> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -32,17 +32,17 @@ export function createApi(config: StellarConfig): Api<StellarToken> {
   };
 }
 
+type TransactionIntentExtra = {
+  memoType?: string | null | undefined;
+  memoValue?: string | null | undefined;
+};
+
 async function craft(
-  transactionIntent: TransactionIntent<StellarToken>,
+  transactionIntent: TransactionIntent<StellarAsset>,
   customFees?: bigint,
 ): Promise<string> {
   const fees = customFees !== undefined ? customFees : await estimateFees();
-  const supplement = transactionIntent.asset
-    ? {
-        assetCode: transactionIntent.asset.assetCode,
-        assetIssuer: transactionIntent.asset.assetIssuer,
-      }
-    : {};
+  const extra = transactionIntent as TransactionIntentExtra;
   const tx = await craftTransaction(
     { address: transactionIntent.sender },
     {
@@ -50,8 +50,14 @@ async function craft(
       recipient: transactionIntent.recipient,
       amount: transactionIntent.amount,
       fee: fees,
-      assetCode: supplement?.assetCode,
-      assetIssuer: supplement?.assetIssuer,
+      ...(transactionIntent.asset.type === "token"
+        ? {
+            assetCode: transactionIntent.asset.assetCode,
+            assetIssuer: transactionIntent.asset.assetIssuer,
+          }
+        : {}),
+      memoType: extra.memoType,
+      memoValue: extra.memoValue,
     },
   );
   return tx.xdr;
@@ -67,7 +73,7 @@ function compose(tx: string, signature: string, pubkey?: string): string {
 async function operations(
   address: string,
   { minHeight }: Pagination,
-): Promise<[Operation<StellarToken>[], string]> {
+): Promise<[Operation<StellarAsset>[], string]> {
   return operationsFromHeight(address, minHeight);
 }
 
@@ -76,13 +82,13 @@ type PaginationState = {
   readonly heightLimit: number;
   continueIterations: boolean;
   apiNextCursor?: string;
-  accumulator: Operation<StellarToken>[];
+  accumulator: Operation<StellarAsset>[];
 };
 
 async function operationsFromHeight(
   address: string,
   minHeight: number,
-): Promise<[Operation<StellarToken>[], string]> {
+): Promise<[Operation<StellarAsset>[], string]> {
   const state: PaginationState = {
     pageSize: 200,
     heightLimit: minHeight,

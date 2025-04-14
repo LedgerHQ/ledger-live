@@ -1541,14 +1541,14 @@
         "secondaryCta": "Maybe later"
       },
       "verifyIdentity": {
-        "title": "Reminder: Finish subscribing to Ledger Recover",
-        "description": "You're just one step away from being secured.",
+        "title": "Access to your wallet is not backed up yet",
+        "description": "Verify your identity to secure access to your wallet",
         "primaryCta": "Verify identity",
         "secondaryCta": "Maybe later"
       },
       "connectDevice": {
-        "title": "Reminder: Finish subscribing to Ledger Recover",
-        "description": "It's your final step to ensure wallet access recovery.",
+        "title": "Access to your wallet is not backed up yet",
+        "description": "Connect your device to secure access to your wallet",
         "primaryCta": "Connect device",
         "secondaryCta": "Maybe later"
       }
@@ -1879,7 +1879,8 @@
       "palletMethod": "Method",
       "transferAmount": "Transfer Amount",
       "validatorsCount": "Validators ({{number}})",
-      "version": "Version"
+      "version": "Version",
+      "accountCreationFee": "Account Creation Fee"
     }
   },
   "operationList": {
@@ -2390,7 +2391,7 @@
         "ethereumPriorityFee": "Max Priority Fee ({{unitName}})",
         "nextBlock": "Next block",
         "suggested": "Suggested",
-        "unitPerByte": "{{unit}} per byte",
+        "unitVByte": "{{unit}}/vbyte",
         "nft": "NFT",
         "nftQuantity": "Quantity"
       },
@@ -2423,8 +2424,8 @@
     },
     "info": {
       "needMemoTag": {
-        "title": "Don’t use Tag/Memo?",
-        "description": "Your funds will get lost if you don’t add a Tag/Memo when sending them to any centralized exchange or custodial wallet.",
+        "title": "Need Tag/Memo?",
+        "description": "Not adding a Tag/Memo when sending funds to a centralized exchange increases the chances of your funds getting lost.",
         "cta.addTag": "Add Tag",
         "cta.not.addTag": "Don’t add Tag",
         "checkbox.label": "Do not show this again."
@@ -4855,7 +4856,7 @@
         "description": "Securely manage, buy and grow your crypto and NFTs on Ledger Live.",
         "nextButton": "Get started",
         "noDevice": "No device?",
-        "buyLink": "No device? Buy a Ledger Nano X",
+        "buyLink": "No device? Buy a Ledger",
         "byTapping": "By tapping \"Get Started\" you consent and agree to our",
         "termsAndConditions": "Terms and conditions",
         "and": "and",
@@ -5565,6 +5566,9 @@
       "memo": "Tag / Memo",
       "memoPlaceholder": "Optional",
       "requiredMemoPlaceholder": "Required"
+    },
+    "mina": {
+      "memoPlaceholder": "Optional Memo"
     }
   },
   "errors": {
@@ -6595,6 +6599,15 @@
         "swap": "Swap",
         "deposit": "Deposit"
       }
+    }, 
+    "InvalidMemoMina": {
+      "title": "Memo text cannot be longer than 32 characters"
+    },
+    "AccountCreationFeeWarning": {
+      "title": "This transaction will incur an account creation fee of {{fee}}"
+    },
+    "AmountTooSmall": {
+      "title": "Minimum required amount for this transaction is {{amount}}"
     }
   },
   "cryptoOrg": {

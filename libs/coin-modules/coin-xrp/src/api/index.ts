@@ -16,9 +16,9 @@ import {
   lastBlock,
   listOperations,
 } from "../logic";
-import { ListOperationsOptions } from "../types";
+import { ListOperationsOptions, XrpAsset } from "../types";
 
-export function createApi(config: XrpConfig): Api<void> {
+export function createApi(config: XrpConfig): Api<XrpAsset> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -33,7 +33,7 @@ export function createApi(config: XrpConfig): Api<void> {
 }
 
 async function craft(
-  transactionIntent: TransactionIntent<void>,
+  transactionIntent: TransactionIntent<XrpAsset>,
   customFees?: bigint,
 ): Promise<string> {
   const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
@@ -56,13 +56,13 @@ type PaginationState = {
   readonly minHeight: number;
   continueIterations: boolean;
   apiNextCursor?: string;
-  accumulator: Operation<void>[];
+  accumulator: Operation<XrpAsset>[];
 };
 
 async function operationsFromHeight(
   address: string,
   minHeight: number,
-): Promise<[Operation<void>[], string]> {
+): Promise<[Operation<XrpAsset>[], string]> {
   async function fetchNextPage(state: PaginationState): Promise<PaginationState> {
     const options: ListOperationsOptions = {
       limit: state.pageSize,
@@ -110,7 +110,7 @@ async function operationsFromHeight(
 async function operations(
   address: string,
   { minHeight }: Pagination,
-): Promise<[Operation<void>[], string]> {
+): Promise<[Operation<XrpAsset>[], string]> {
   // TODO token must be implemented properly (waiting ack from the design document)
   return await operationsFromHeight(address, minHeight);
 }

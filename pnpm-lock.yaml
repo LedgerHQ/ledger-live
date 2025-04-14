@@ -1225,6 +1225,9 @@ importers:
       react-native-localize:
         specifier: 2.2.6
         version: 2.2.6(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
+      react-native-mmkv:
+        specifier: 2.12.2
+        version: 2.12.2(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       react-native-modal:
         specifier: 13.0.1
         version: 13.0.1(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
@@ -2462,9 +2465,6 @@ importers:
         specifier: ^7.8.1
         version: 7.8.1
     devDependencies:
-      '@ledgerhq/coin-tester':
-        specifier: workspace:^
-        version: link:../../coin-tester
       '@ledgerhq/hw-app-eth':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-app-eth
@@ -2823,6 +2823,70 @@ importers:
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
+
+  libs/coin-modules/coin-mina:
+    dependencies:
+      '@ledgerhq/coin-framework':
+        specifier: workspace:^
+        version: link:../../coin-framework
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/cryptoassets
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../../ledgerjs/packages/devices
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../../live-network
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/logs
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-live
+      bignumber.js:
+        specifier: ^9.1.2
+        version: 9.1.2
+      bs58check:
+        specifier: ^2.1.2
+        version: 2.1.2
+      expect:
+        specifier: ^27.4.6
+        version: 27.5.1
+      invariant:
+        specifier: ^2.2.2
+        version: 2.2.4
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+    devDependencies:
+      '@types/bs58check':
+        specifier: ^2.1.2
+        version: 2.1.2
+      '@types/invariant':
+        specifier: ^2.2.2
+        version: 2.2.37
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.14
+      '@types/lodash':
+        specifier: ^4.14.191
+        version: 4.17.14
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.2.5(jest@29.7.0)(typescript@5.4.3)
 
   libs/coin-modules/coin-module-boilerplate:
     dependencies:
@@ -3570,6 +3634,9 @@ importers:
       jest-sonar:
         specifier: 0.2.16
         version: 0.2.16
+      msw:
+        specifier: ^2.7.3
+        version: 2.7.3(typescript@5.6.3)
       ts-jest:
         specifier: ^29.1.4
         version: 29.1.5(jest@29.7.0)(typescript@5.6.3)
@@ -3934,6 +4001,70 @@ importers:
         version: 28.0.8(jest@28.1.3(@types/node@22.10.10))(typescript@5.6.3)
       typescript:
         specifier: ^5.1.3
+        version: 5.6.3
+
+  libs/coin-tester-evm:
+    dependencies:
+      '@ledgerhq/coin-evm':
+        specifier: workspace:^
+        version: link:../coin-modules/coin-evm
+      '@ledgerhq/coin-framework':
+        specifier: workspace:^
+        version: link:../coin-framework
+      '@ledgerhq/coin-tester':
+        specifier: workspace:^
+        version: link:../coin-tester
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/cryptoassets
+      '@ledgerhq/live-signer-evm':
+        specifier: workspace:^
+        version: link:../live-signer-evm
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/types-live
+      bignumber.js:
+        specifier: ^9.1.2
+        version: 9.1.2
+      bluebird:
+        specifier: ^3.7.2
+        version: 3.7.2
+      docker-compose:
+        specifier: ^1.1.0
+        version: 1.1.0
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
+      ethers:
+        specifier: 5.7.2
+        version: 5.7.2
+      msw:
+        specifier: ^2.2.1
+        version: 2.7.3(typescript@5.6.3)
+    devDependencies:
+      '@types/bluebird':
+        specifier: ^3.5.42
+        version: 3.5.42
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.14
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(ts-node@10.9.2(typescript@5.6.3))
+      rimraf:
+        specifier: ^5.0.5
+        version: 5.0.10
+      ts-jest:
+        specifier: ^29.1.2
+        version: 29.2.5(jest@29.7.0(ts-node@10.9.2(typescript@5.6.3)))(typescript@5.6.3)
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(typescript@5.6.3)
+      typescript:
+        specifier: ^5.3.3
         version: 5.6.3
 
   libs/device-core:
@@ -4355,6 +4486,9 @@ importers:
       '@ledgerhq/coin-internet_computer':
         specifier: workspace:^
         version: link:../coin-modules/coin-internet_computer
+      '@ledgerhq/coin-mina':
+        specifier: workspace:^
+        version: link:../coin-modules/coin-mina
       '@ledgerhq/coin-multiversx':
         specifier: workspace:^
         version: link:../coin-modules/coin-multiversx
@@ -4574,6 +4708,9 @@ importers:
       '@zondax/ledger-icp':
         specifier: ^0.7.0
         version: 0.7.0
+      '@zondax/ledger-mina-js':
+        specifier: 0.0.2
+        version: 0.0.2
       '@zondax/ledger-stacks':
         specifier: ^1.0.2
         version: 1.0.4
@@ -7193,7 +7330,7 @@ importers:
         version: 6.6.3
       '@testing-library/react':
         specifier: ^16.1.0
-        version: 16.2.0(@testing-library/dom@9.3.4)(react@18.3.1)
+        version: 16.2.0(@testing-library/dom@9.3.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/node':
         specifier: 22.10.10
         version: 22.10.10
@@ -7209,6 +7346,9 @@ importers:
       react:
         specifier: ^18.3.1
         version: 18.3.1
+      react-dom:
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
       react-native:
         specifier: 0.76.3
         version: 0.76.3(react@18.3.1)
@@ -18210,6 +18350,12 @@ packages:
   '@zondax/ledger-js@0.8.2':
     resolution: {integrity: sha512-U/lzNzcJwfYGhhpwUviazihXzIv8w3rM31HbgKWOwF/xVS4/hHSLCGpONEGVwtgYUNDF7L0YfSy95/0H+tGtFA==}
 
+  '@zondax/ledger-js@1.2.0':
+    resolution: {integrity: sha512-HGvDU0s4zg0scu8ebGenFHFB6g5SLDqmrctncZUY9ie5pGibOU8C0VdjZSHbttSOCyh+IloLi/a4jyMPOEQGuQ==}
+
+  '@zondax/ledger-mina-js@0.0.2':
+    resolution: {integrity: sha512-6tB4voId5NOfn1XzYivyQnjq8A7eoz/2D+Ay0IDCimkF4wX2dWC0KKzatRnJmC80z8b37Hsi5/roSvkZUQ/bgw==}
+
   '@zondax/ledger-stacks@1.0.4':
     resolution: {integrity: sha512-R8CB0CZ2poTzpcG0jhzzXZvXF7axIsmZFhp06aHCUjgz+1df63YbC4tUzyzmseekwqNWnaebWFejQKJ99WiHZA==}
 
@@ -28397,6 +28543,12 @@ packages:
       react-native-windows:
         optional: true
 
+  react-native-mmkv@2.12.2:
+    resolution: {integrity: sha512-6058Aq0p57chPrUutLGe9fYoiDVDNMU2PKV+lLFUJ3GhoHvUrLdsS1PDSCLr00yqzL4WJQ7TTzH+V8cpyrNcfg==}
+    peerDependencies:
+      react: '*'
+      react-native: '>=0.71.0'
+
   react-native-modal-datetime-picker@14.0.1:
     resolution: {integrity: sha512-wQt4Pjxt2jiTsVhLMG0E7WrRTYBEQx2d/nUrFVCbRqJ7lrXocXaT5UZsyMpV93TnKcyut62OprbO88wYq/vh0g==}
     peerDependencies:
@@ -29172,6 +29324,10 @@ packages:
   rimraf@4.4.1:
     resolution: {integrity: sha512-Gk8NlF062+T9CqNGn6h4tls3k6T1+/nXdOcSZVikNVtlRdYpA7wRJJMoXmuvOnLW844rPjdQ7JgXCYM6PPC/og==}
     engines: {node: '>=14'}
+    hasBin: true
+
+  rimraf@5.0.10:
+    resolution: {integrity: sha512-l0OE8wL34P4nJH/H2ffoaniAokM2qSmrtXHmlpvYr5AVVX8msAyW0l8NVJFDxlSK4u3Uh/f41cQheDVdnYijwQ==}
     hasBin: true
 
   ripemd160-min@0.0.6:
@@ -33943,16 +34099,16 @@ snapshots:
 
   '@babel/generator@7.26.2':
     dependencies:
-      '@babel/parser': 7.26.7
-      '@babel/types': 7.26.7
+      '@babel/parser': 7.27.0
+      '@babel/types': 7.27.0
       '@jridgewell/gen-mapping': 0.3.5
       '@jridgewell/trace-mapping': 0.3.25
       jsesc: 3.0.2
 
   '@babel/generator@7.26.5':
     dependencies:
-      '@babel/parser': 7.26.7
-      '@babel/types': 7.26.7
+      '@babel/parser': 7.27.0
+      '@babel/types': 7.27.0
       '@jridgewell/gen-mapping': 0.3.5
       '@jridgewell/trace-mapping': 0.3.25
       jsesc: 3.0.2
@@ -33967,7 +34123,7 @@ snapshots:
 
   '@babel/helper-annotate-as-pure@7.22.5':
     dependencies:
-      '@babel/types': 7.26.7
+      '@babel/types': 7.27.0
 
   '@babel/helper-annotate-as-pure@7.25.9':
     dependencies:
@@ -33975,7 +34131,7 @@ snapshots:
 
   '@babel/helper-builder-binary-assignment-operator-visitor@7.22.15':
     dependencies:
-      '@babel/types': 7.26.7
+      '@babel/types': 7.27.0
 
   '@babel/helper-compilation-targets@7.23.6':
     dependencies:
@@ -34111,16 +34267,16 @@ snapshots:
 
   '@babel/helper-function-name@7.23.0':
     dependencies:
-      '@babel/template': 7.25.9
-      '@babel/types': 7.26.7
+      '@babel/template': 7.27.0
+      '@babel/types': 7.27.0
 
   '@babel/helper-hoist-variables@7.22.5':
     dependencies:
-      '@babel/types': 7.26.7
+      '@babel/types': 7.27.0
 
   '@babel/helper-member-expression-to-functions@7.23.0':
     dependencies:
-      '@babel/types': 7.26.7
+      '@babel/types': 7.27.0
 
   '@babel/helper-member-expression-to-functions@7.25.9':
     dependencies:
@@ -34131,7 +34287,7 @@ snapshots:
 
   '@babel/helper-module-imports@7.24.3':
     dependencies:
-      '@babel/types': 7.26.7
+      '@babel/types': 7.27.0
 
   '@babel/helper-module-imports@7.25.9':
     dependencies:
@@ -34169,7 +34325,7 @@ snapshots:
 
   '@babel/helper-optimise-call-expression@7.22.5':
     dependencies:
-      '@babel/types': 7.26.7
+      '@babel/types': 7.27.0
 
   '@babel/helper-optimise-call-expression@7.25.9':
     dependencies:
@@ -34235,7 +34391,7 @@ snapshots:
 
   '@babel/helper-simple-access@7.22.5':
     dependencies:
-      '@babel/types': 7.26.7
+      '@babel/types': 7.27.0
 
   '@babel/helper-simple-access@7.25.9':
     dependencies:
@@ -34257,7 +34413,7 @@ snapshots:
 
   '@babel/helper-split-export-declaration@7.22.6':
     dependencies:
-      '@babel/types': 7.26.7
+      '@babel/types': 7.27.0
 
   '@babel/helper-string-parser@7.24.1': {}
 
@@ -34287,9 +34443,9 @@ snapshots:
 
   '@babel/helpers@7.24.1':
     dependencies:
-      '@babel/template': 7.25.9
+      '@babel/template': 7.27.0
       '@babel/traverse': 7.25.9
-      '@babel/types': 7.26.7
+      '@babel/types': 7.27.0
     transitivePeerDependencies:
       - supports-color
 
@@ -34307,15 +34463,15 @@ snapshots:
 
   '@babel/parser@7.24.1':
     dependencies:
-      '@babel/types': 7.26.7
+      '@babel/types': 7.27.0
 
   '@babel/parser@7.26.2':
     dependencies:
-      '@babel/types': 7.26.7
+      '@babel/types': 7.27.0
 
   '@babel/parser@7.26.7':
     dependencies:
-      '@babel/types': 7.26.7
+      '@babel/types': 7.27.0
 
   '@babel/parser@7.27.0':
     dependencies:
@@ -34822,7 +34978,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.24.3
       '@babel/helper-plugin-utils': 7.25.9
-      '@babel/template': 7.25.9
+      '@babel/template': 7.27.0
 
   '@babel/plugin-transform-computed-properties@7.25.9(@babel/core@7.24.3)':
     dependencies:
@@ -35570,7 +35726,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.24.3
       '@babel/helper-plugin-utils': 7.25.9
-      '@babel/types': 7.26.7
+      '@babel/types': 7.27.0
       esutils: 2.0.3
 
   '@babel/preset-react@7.24.1(@babel/core@7.24.3)':
@@ -35621,14 +35777,14 @@ snapshots:
   '@babel/template@7.24.0':
     dependencies:
       '@babel/code-frame': 7.26.2
-      '@babel/parser': 7.26.7
-      '@babel/types': 7.26.7
+      '@babel/parser': 7.27.0
+      '@babel/types': 7.27.0
 
   '@babel/template@7.25.9':
     dependencies:
       '@babel/code-frame': 7.26.2
-      '@babel/parser': 7.26.2
-      '@babel/types': 7.26.0
+      '@babel/parser': 7.27.0
+      '@babel/types': 7.27.0
 
   '@babel/template@7.27.0':
     dependencies:
@@ -35639,13 +35795,13 @@ snapshots:
   '@babel/traverse@7.24.1':
     dependencies:
       '@babel/code-frame': 7.26.2
-      '@babel/generator': 7.26.2
+      '@babel/generator': 7.27.0
       '@babel/helper-environment-visitor': 7.22.20
       '@babel/helper-function-name': 7.23.0
       '@babel/helper-hoist-variables': 7.22.5
       '@babel/helper-split-export-declaration': 7.22.6
-      '@babel/parser': 7.26.2
-      '@babel/types': 7.26.0
+      '@babel/parser': 7.27.0
+      '@babel/types': 7.27.0
       debug: 4.3.4
       globals: 11.12.0
     transitivePeerDependencies:
@@ -35654,13 +35810,13 @@ snapshots:
   '@babel/traverse@7.24.1(supports-color@5.5.0)':
     dependencies:
       '@babel/code-frame': 7.26.2
-      '@babel/generator': 7.26.2
+      '@babel/generator': 7.27.0
       '@babel/helper-environment-visitor': 7.22.20
       '@babel/helper-function-name': 7.23.0
       '@babel/helper-hoist-variables': 7.22.5
       '@babel/helper-split-export-declaration': 7.22.6
-      '@babel/parser': 7.26.2
-      '@babel/types': 7.26.0
+      '@babel/parser': 7.27.0
+      '@babel/types': 7.27.0
       debug: 4.3.4(supports-color@5.5.0)
       globals: 11.12.0
     transitivePeerDependencies:
@@ -35669,10 +35825,10 @@ snapshots:
   '@babel/traverse@7.25.9':
     dependencies:
       '@babel/code-frame': 7.26.2
-      '@babel/generator': 7.26.5
-      '@babel/parser': 7.26.7
-      '@babel/template': 7.25.9
-      '@babel/types': 7.26.7
+      '@babel/generator': 7.27.0
+      '@babel/parser': 7.27.0
+      '@babel/template': 7.27.0
+      '@babel/types': 7.27.0
       debug: 4.3.4
       globals: 11.12.0
     transitivePeerDependencies:
@@ -35681,10 +35837,10 @@ snapshots:
   '@babel/traverse@7.26.7':
     dependencies:
       '@babel/code-frame': 7.26.2
-      '@babel/generator': 7.26.5
-      '@babel/parser': 7.26.7
-      '@babel/template': 7.25.9
-      '@babel/types': 7.26.7
+      '@babel/generator': 7.27.0
+      '@babel/parser': 7.27.0
+      '@babel/template': 7.27.0
+      '@babel/types': 7.27.0
       debug: 4.3.4
       globals: 11.12.0
     transitivePeerDependencies:
@@ -38086,9 +38242,9 @@ snapshots:
   '@expo/metro-config@0.18.11':
     dependencies:
       '@babel/core': 7.24.3
-      '@babel/generator': 7.26.2
-      '@babel/parser': 7.26.2
-      '@babel/types': 7.26.0
+      '@babel/generator': 7.27.0
+      '@babel/parser': 7.27.0
+      '@babel/types': 7.27.0
       '@expo/config': 9.0.4
       '@expo/env': 0.3.0
       '@expo/json-file': 8.3.0
@@ -42429,7 +42585,7 @@ snapshots:
       '@babel/plugin-transform-sticky-regex': 7.25.9(@babel/core@7.24.3)
       '@babel/plugin-transform-typescript': 7.25.9(@babel/core@7.24.3)
       '@babel/plugin-transform-unicode-regex': 7.25.9(@babel/core@7.24.3)
-      '@babel/template': 7.25.9
+      '@babel/template': 7.27.0
       '@react-native/babel-plugin-codegen': 0.74.87
       babel-plugin-transform-flow-enums: 0.0.2(@babel/core@7.24.3)
       react-refresh: 0.14.0
@@ -42478,7 +42634,7 @@ snapshots:
       '@babel/plugin-transform-sticky-regex': 7.25.9(@babel/core@7.24.3)
       '@babel/plugin-transform-typescript': 7.25.9(@babel/core@7.24.3)
       '@babel/plugin-transform-unicode-regex': 7.25.9(@babel/core@7.24.3)
-      '@babel/template': 7.25.9
+      '@babel/template': 7.27.0
       '@react-native/babel-plugin-codegen': 0.74.87(@babel/preset-env@7.24.3(@babel/core@7.24.3))
       babel-plugin-transform-flow-enums: 0.0.2(@babel/core@7.24.3)
       react-refresh: 0.14.0
@@ -42641,7 +42797,7 @@ snapshots:
 
   '@react-native/codegen@0.74.87':
     dependencies:
-      '@babel/parser': 7.26.7
+      '@babel/parser': 7.27.0
       glob: 7.2.3
       hermes-parser: 0.19.1
       invariant: 2.2.4
@@ -42653,7 +42809,7 @@ snapshots:
 
   '@react-native/codegen@0.74.87(@babel/preset-env@7.24.3(@babel/core@7.24.3))':
     dependencies:
-      '@babel/parser': 7.26.7
+      '@babel/parser': 7.27.0
       '@babel/preset-env': 7.24.3(@babel/core@7.24.3)
       glob: 7.2.3
       hermes-parser: 0.19.1
@@ -42666,7 +42822,7 @@ snapshots:
 
   '@react-native/codegen@0.75.4':
     dependencies:
-      '@babel/parser': 7.26.2
+      '@babel/parser': 7.27.0
       glob: 7.2.3
       hermes-parser: 0.22.0
       invariant: 2.2.4
@@ -42679,7 +42835,7 @@ snapshots:
 
   '@react-native/codegen@0.75.4(@babel/preset-env@7.24.3(@babel/core@7.24.3))':
     dependencies:
-      '@babel/parser': 7.26.2
+      '@babel/parser': 7.27.0
       '@babel/preset-env': 7.24.3(@babel/core@7.24.3)
       glob: 7.2.3
       hermes-parser: 0.22.0
@@ -47106,12 +47262,6 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  '@testing-library/react@16.2.0(@testing-library/dom@9.3.4)(react@18.3.1)':
-    dependencies:
-      '@babel/runtime': 7.24.1
-      '@testing-library/dom': 9.3.4
-      react: 18.3.1
-
   '@testing-library/user-event@14.5.2(@testing-library/dom@9.3.4)':
     dependencies:
       '@testing-library/dom': 9.3.4
@@ -48627,7 +48777,7 @@ snapshots:
 
   '@vue/compiler-core@3.4.21':
     dependencies:
-      '@babel/parser': 7.26.7
+      '@babel/parser': 7.27.0
       '@vue/shared': 3.4.21
       entities: 4.5.0
       estree-walker: 2.0.2
@@ -48650,7 +48800,7 @@ snapshots:
 
   '@vue/compiler-sfc@3.4.21':
     dependencies:
-      '@babel/parser': 7.26.7
+      '@babel/parser': 7.27.0
       '@vue/compiler-core': 3.4.21
       '@vue/compiler-dom': 3.4.21
       '@vue/compiler-ssr': 3.4.21
@@ -49013,6 +49163,14 @@ snapshots:
   '@zondax/ledger-js@0.8.2':
     dependencies:
       '@ledgerhq/hw-transport': 6.30.6
+
+  '@zondax/ledger-js@1.2.0':
+    dependencies:
+      '@ledgerhq/hw-transport': 6.31.4
+
+  '@zondax/ledger-mina-js@0.0.2':
+    dependencies:
+      '@zondax/ledger-js': 1.2.0
 
   '@zondax/ledger-stacks@1.0.4':
     dependencies:
@@ -49895,7 +50053,7 @@ snapshots:
   babel-plugin-react-compiler@0.0.0-experimental-592953e-20240517:
     dependencies:
       '@babel/generator': 7.2.0
-      '@babel/types': 7.26.7
+      '@babel/types': 7.27.0
       chalk: 4.1.2
       invariant: 2.2.4
       pretty-format: 24.9.0
@@ -55889,7 +56047,7 @@ snapshots:
   http-proxy-agent@7.0.2:
     dependencies:
       agent-base: 7.1.3
-      debug: 4.4.0
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -55962,7 +56120,7 @@ snapshots:
   https-proxy-agent@7.0.6:
     dependencies:
       agent-base: 7.1.3
-      debug: 4.4.0
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -56569,7 +56727,7 @@ snapshots:
   istanbul-lib-instrument@5.2.1:
     dependencies:
       '@babel/core': 7.24.3
-      '@babel/parser': 7.26.7
+      '@babel/parser': 7.27.0
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.2
       semver: 6.3.1
@@ -56579,7 +56737,7 @@ snapshots:
   istanbul-lib-instrument@6.0.2:
     dependencies:
       '@babel/core': 7.24.3
-      '@babel/parser': 7.26.2
+      '@babel/parser': 7.27.0
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.2
       semver: 7.5.4
@@ -58283,10 +58441,10 @@ snapshots:
   jest-snapshot@28.1.3:
     dependencies:
       '@babel/core': 7.24.3
-      '@babel/generator': 7.26.5
+      '@babel/generator': 7.27.0
       '@babel/plugin-syntax-typescript': 7.24.1(@babel/core@7.24.3)
       '@babel/traverse': 7.26.7
-      '@babel/types': 7.26.7
+      '@babel/types': 7.27.0
       '@jest/expect-utils': 28.1.3
       '@jest/transform': 28.1.3
       '@jest/types': 28.1.3
@@ -58312,10 +58470,10 @@ snapshots:
   jest-snapshot@29.7.0:
     dependencies:
       '@babel/core': 7.24.3
-      '@babel/generator': 7.26.2
+      '@babel/generator': 7.27.0
       '@babel/plugin-syntax-jsx': 7.24.1(@babel/core@7.24.3)
       '@babel/plugin-syntax-typescript': 7.24.1(@babel/core@7.24.3)
-      '@babel/types': 7.26.0
+      '@babel/types': 7.27.0
       '@jest/expect-utils': 29.7.0
       '@jest/transform': 29.7.0
       '@jest/types': 29.6.3
@@ -59305,7 +59463,7 @@ snapshots:
 
   konan@2.1.1:
     dependencies:
-      '@babel/parser': 7.26.7
+      '@babel/parser': 7.27.0
       '@babel/traverse': 7.26.7
     transitivePeerDependencies:
       - supports-color
@@ -60402,7 +60560,7 @@ snapshots:
       '@babel/plugin-transform-sticky-regex': 7.24.1(@babel/core@7.24.3)
       '@babel/plugin-transform-typescript': 7.24.1(@babel/core@7.24.3)
       '@babel/plugin-transform-unicode-regex': 7.24.1(@babel/core@7.24.3)
-      '@babel/template': 7.25.9
+      '@babel/template': 7.27.0
       babel-plugin-transform-flow-enums: 0.0.2(@babel/core@7.24.3)
       react-refresh: 0.4.3
     transitivePeerDependencies:
@@ -60536,8 +60694,8 @@ snapshots:
   metro-transform-plugins@0.80.12:
     dependencies:
       '@babel/core': 7.24.3
-      '@babel/generator': 7.26.5
-      '@babel/template': 7.25.9
+      '@babel/generator': 7.27.0
+      '@babel/template': 7.27.0
       '@babel/traverse': 7.26.7
       flow-enums-runtime: 0.0.6
       nullthrows: 1.1.1
@@ -60547,8 +60705,8 @@ snapshots:
   metro-transform-plugins@0.81.0:
     dependencies:
       '@babel/core': 7.26.7
-      '@babel/generator': 7.26.5
-      '@babel/template': 7.25.9
+      '@babel/generator': 7.27.0
+      '@babel/template': 7.27.0
       '@babel/traverse': 7.26.7
       flow-enums-runtime: 0.0.6
       nullthrows: 1.1.1
@@ -60578,9 +60736,9 @@ snapshots:
   metro-transform-worker@0.81.0:
     dependencies:
       '@babel/core': 7.26.7
-      '@babel/generator': 7.26.5
-      '@babel/parser': 7.26.7
-      '@babel/types': 7.26.7
+      '@babel/generator': 7.27.0
+      '@babel/parser': 7.27.0
+      '@babel/types': 7.27.0
       flow-enums-runtime: 0.0.6
       metro: 0.81.0
       metro-babel-transformer: 0.81.0
@@ -61321,6 +61479,31 @@ snapshots:
       yargs: 17.7.2
     optionalDependencies:
       typescript: 5.4.3
+    transitivePeerDependencies:
+      - '@types/node'
+
+  msw@2.7.3(typescript@5.6.3):
+    dependencies:
+      '@bundled-es-modules/cookie': 2.0.1
+      '@bundled-es-modules/statuses': 1.0.1
+      '@bundled-es-modules/tough-cookie': 0.1.6
+      '@inquirer/confirm': 5.1.7
+      '@mswjs/interceptors': 0.37.6
+      '@open-draft/deferred-promise': 2.2.0
+      '@open-draft/until': 2.1.0
+      '@types/cookie': 0.6.0
+      '@types/statuses': 2.0.5
+      graphql: 16.10.0
+      headers-polyfill: 4.0.3
+      is-node-process: 1.2.0
+      outvariant: 1.4.3
+      path-to-regexp: 6.3.0
+      picocolors: 1.1.1
+      strict-event-emitter: 0.5.1
+      type-fest: 4.37.0
+      yargs: 17.7.2
+    optionalDependencies:
+      typescript: 5.6.3
     transitivePeerDependencies:
       - '@types/node'
 
@@ -63903,6 +64086,11 @@ snapshots:
       react: 18.3.1
       react-native: 0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3)
 
+  react-native-mmkv@2.12.2(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      react-native: 0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3)
+
   react-native-modal-datetime-picker@14.0.1(@react-native-community/datetimepicker@6.7.5)(react-native@0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3)):
     dependencies:
       '@react-native-community/datetimepicker': 6.7.5
@@ -65165,6 +65353,10 @@ snapshots:
   rimraf@4.4.1:
     dependencies:
       glob: 9.3.5
+
+  rimraf@5.0.10:
+    dependencies:
+      glob: 10.4.5
 
   ripemd160-min@0.0.6: {}
 
@@ -67460,6 +67652,20 @@ snapshots:
       make-error: 1.3.6
       semver: 7.6.3
       typescript: 5.4.3
+      yargs-parser: 21.1.1
+
+  ts-jest@29.2.5(jest@29.7.0(ts-node@10.9.2(typescript@5.6.3)))(typescript@5.6.3):
+    dependencies:
+      bs-logger: 0.2.6
+      ejs: 3.1.10
+      fast-json-stable-stringify: 2.1.0
+      jest: 29.7.0(ts-node@10.9.2(typescript@5.6.3))
+      jest-util: 29.7.0
+      json5: 2.2.3
+      lodash.memoize: 4.1.2
+      make-error: 1.3.6
+      semver: 7.6.3
+      typescript: 5.6.3
       yargs-parser: 21.1.1
 
   ts-jest@29.2.5(jest@29.7.0)(typescript@5.4.3):

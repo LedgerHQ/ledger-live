@@ -18,9 +18,9 @@ import {
   rawEncode,
 } from "../logic";
 import api from "../network/tzkt";
-import { TezosOperationMode } from "../types";
+import { TezosAsset, TezosOperationMode } from "../types";
 
-export function createApi(config: TezosConfig): Api<void> {
+export function createApi(config: TezosConfig): Api<TezosAsset> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -39,7 +39,7 @@ function isTezosTransactionType(type: string): type is "send" | "delegate" | "un
 }
 
 async function craft(
-  transactionIntent: TransactionIntent<void>,
+  transactionIntent: TransactionIntent<TezosAsset>,
   customFees?: bigint,
 ): Promise<string> {
   if (!isTezosTransactionType(transactionIntent.type)) {
@@ -58,7 +58,7 @@ async function craft(
   return rawEncode(contents);
 }
 
-async function estimate(transactionIntent: TransactionIntent<void>): Promise<bigint> {
+async function estimate(transactionIntent: TransactionIntent<TezosAsset>): Promise<bigint> {
   const senderAccountInfo = await api.getAccountByAddress(transactionIntent.sender);
   if (senderAccountInfo.type !== "user") throw new Error("unexpected account type");
 
@@ -75,6 +75,11 @@ async function estimate(transactionIntent: TransactionIntent<void>): Promise<big
       amount: transactionIntent.amount,
     },
   });
+
+  if (estimatedFees.taquitoError !== undefined) {
+    throw new Error(`Fees estimation failed: ${estimatedFees.taquitoError}`);
+  }
+
   return estimatedFees.estimatedFees;
 }
 
@@ -85,7 +90,7 @@ type PaginationState = {
   readonly minHeight: number;
   continueIterations: boolean;
   nextCursor?: string;
-  accumulator: Operation<void>[];
+  accumulator: Operation<TezosAsset>[];
 };
 
 async function fetchNextPage(address: string, state: PaginationState): Promise<PaginationState> {
@@ -114,7 +119,7 @@ async function fetchNextPage(address: string, state: PaginationState): Promise<P
 async function operationsFromHeight(
   address: string,
   start: number,
-): Promise<[Operation<void>[], string]> {
+): Promise<[Operation<TezosAsset>[], string]> {
   const firstState: PaginationState = {
     pageSize: 200,
     maxIterations: 10,
@@ -134,6 +139,6 @@ async function operationsFromHeight(
 async function operations(
   address: string,
   { minHeight }: Pagination,
-): Promise<[Operation<void>[], string]> {
+): Promise<[Operation<TezosAsset>[], string]> {
   return operationsFromHeight(address, minHeight);
 }

@@ -292,6 +292,7 @@ export const ContainerStyles = (
   size: Size,
   widthFactor: WidthFactor,
   isMediaOnly?: boolean,
+  isFilledMedia?: boolean,
 ): object => {
   const styles = {
     L: {
@@ -301,11 +302,13 @@ export const ContainerStyles = (
     },
     M: {
       height: widthFactor === WidthFactor.ThreeQuarters ? 300 : 220,
+      justifyContent: isFilledMedia ? "flex-start" : "space-around",
       paddingBottom: 24,
       borderRadius: 16,
     },
     S: {
       height: 156,
+      justifyContent: "center",
       paddingBottom: 8,
       borderRadius: 16,
     },
@@ -319,9 +322,12 @@ export const Container = ({
   children,
   widthFactor,
   isMediaOnly,
-}: { size: Size; isMediaOnly?: boolean } & PropsWithChildren & { widthFactor: WidthFactor }) => {
+  isFilledMedia,
+}: { size: Size; isMediaOnly?: boolean; isFilledMedia?: boolean } & PropsWithChildren & {
+    widthFactor: WidthFactor;
+  }) => {
   const { colors } = useTheme();
-  const styles = ContainerStyles(size, widthFactor, isMediaOnly);
+  const styles = ContainerStyles(size, widthFactor, isMediaOnly, isFilledMedia);
   return (
     <Flex
       width={"100%"}

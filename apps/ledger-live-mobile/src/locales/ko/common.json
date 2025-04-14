@@ -2412,16 +2412,13 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "알림: Ledger Recover 구독을 완료하세요",
-        "description" : "이제 두 단계만 거치면 완료됩니다."
+        "title" : "알림: Ledger Recover 구독을 완료하세요"
       },
       "verifyIdentity" : {
-        "title" : "알림: Ledger Recover 구독을 완료하세요",
-        "description" : "이제 한 단계만 거치면 완료됩니다."
+        "title" : "지갑에 대한 액세스가 아직 백업되지 않았습니다"
       },
       "connectDevice" : {
-        "title" : "알림: Ledger Recover 구독을 완료하세요",
-        "description" : "지갑 액세스 복구를 보장하는 마지막 단계입니다."
+        "title" : "지갑에 대한 액세스가 아직 백업되지 않았습니다"
       }
     }
   },

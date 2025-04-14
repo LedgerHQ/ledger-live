@@ -12,6 +12,7 @@ import { useTransactionDeviceAction, useCompleteExchangeDeviceAction } from "~/h
 import { mevProtectionSelector } from "~/reducers/settings";
 import { SignedOperation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
 type Props = StackNavigatorProps<
   PlatformExchangeNavigatorParamList,
@@ -106,6 +107,7 @@ const PlatformCompleteExchange: React.FC<Props> = ({
           onClose={onClose}
           onResult={onCompleteExchange}
           request={request}
+          location={HOOKS_TRACKING_LOCATIONS.swapFlow}
         />
       ) : (
         <DeviceActionModal
@@ -115,6 +117,7 @@ const PlatformCompleteExchange: React.FC<Props> = ({
           onClose={onClose}
           onResult={onSign}
           request={signRequest}
+          location={HOOKS_TRACKING_LOCATIONS.swapFlow}
         />
       )}
     </SafeAreaView>

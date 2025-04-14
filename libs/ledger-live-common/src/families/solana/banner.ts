@@ -2,7 +2,7 @@ import { getCurrentSolanaPreloadData } from "@ledgerhq/coin-solana/preload-data"
 import { stakeActions } from "@ledgerhq/coin-solana/logic";
 import { LEDGER_VALIDATORS_VOTE_ACCOUNTS } from "@ledgerhq/coin-solana/utils";
 import type { SolanaAccount } from "@ledgerhq/coin-solana/types";
-import { ValidatorsAppValidator } from "@ledgerhq/coin-solana/validator-app/index";
+import type { ValidatorsAppValidator } from "@ledgerhq/coin-solana/network/validator-app/index";
 import { isAccountEmpty } from "../../account";
 
 export interface AccountBannerState {
