@@ -33,7 +33,7 @@ export const migrator = {
 
       if (state.migrationStatus === MIGRATION_STATUS.ROLLED_BACK) {
         log("Storage", "Migration status is rolled-back, restoring AsyncStorage...");
-        state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
+        migrator.selectAsyncStorage(state);
         return false;
       }
 
@@ -91,7 +91,17 @@ export const migrator = {
   },
 
   /**
-   * Sets the migration status to {@link MigrationStatus}.
+   * Sets the {@link StorageState.storageType} to {@link STORAGE_TYPE.ASYNC_STORAGE}.
+   *
+   * @param state
+   * The current state of the application storage.
+   */
+  selectAsyncStorage(state: StorageState) {
+    state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
+  },
+
+  /**
+   * Sets the {@link StorageState} to {@link STORAGE_TYPE.MMKV}.
    *
    * @param state
    * The current state of the application storage.

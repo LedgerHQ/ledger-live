@@ -4,8 +4,37 @@ import { STORAGE_TYPE } from "LLM/storage/constants";
 import type { StorageState } from "LLM/storage/types";
 import { migrator } from "../asyncStorageToMMKV";
 import { MIGRATION_STATUS, MIGRATION_STATUS_KEY } from "../constants";
+import { MigrationStatus } from "../types";
 
 afterEach(() => jest.restoreAllMocks());
+jest.mock("@ledgerhq/live-common/featureFlags/firebaseFeatureFlags", () => {
+  const originalModule = jest.requireActual(
+    "@ledgerhq/live-common/featureFlags/firebaseFeatureFlags",
+  );
+
+  // Mock the default export and named export 'foo'
+  return {
+    __esModule: true,
+    ...originalModule,
+    getFeature: jest.fn(() => ({ enabled: true })),
+  };
+});
+
+describe("selectAsyncStorage", () => {
+  it("should set the storage type to AsyncStorage", () => {
+    // Arrange
+    const state = {
+      storageType: STORAGE_TYPE.MMKV,
+      migrationStatus: MIGRATION_STATUS.NOT_STARTED,
+    };
+
+    // Act
+    migrator.selectAsyncStorage(state);
+
+    // Assert
+    expect(state.storageType).toBe(STORAGE_TYPE.ASYNC_STORAGE);
+  });
+});
 
 describe("selectMMKVStorage", () => {
   it("should set the storage type to MMKV", () => {
@@ -139,4 +168,113 @@ describe("migrateData", () => {
         );
       });
     });
+});
+
+describe("migrate", () => {
+  let markMigrationStatusInProgressMethod: jest.SpyInstance;
+  let markMigrationStatusCompletedMethod: jest.SpyInstance;
+  let selectMMKVStorageMethod: jest.SpyInstance;
+
+  beforeEach(async () => {
+    // Arrange
+    const state = {
+      storageType: STORAGE_TYPE.ASYNC_STORAGE,
+      migrationStatus: MIGRATION_STATUS.NOT_STARTED,
+    };
+    markMigrationStatusInProgressMethod = jest
+      .spyOn(migrator, "markMigrationStatusInProgress")
+      .mockImplementation(() => undefined);
+    markMigrationStatusCompletedMethod = jest
+      .spyOn(migrator, "markMigrationStatusCompleted")
+      .mockImplementation(() => undefined);
+    selectMMKVStorageMethod = jest
+      .spyOn(migrator, "selectMMKVStorage")
+      .mockImplementation(() => undefined);
+
+    // Act
+    await migrator.migrate(state);
+  });
+
+  it("should call migrator.markMigrationStatusInProgressMethod", () => {
+    expect(markMigrationStatusInProgressMethod).toHaveBeenCalled();
+  });
+
+  it("should call migrator.markMigrationStatusCompleted", () => {
+    expect(markMigrationStatusCompletedMethod).toHaveBeenCalled();
+  });
+
+  it("should call migrator.selectMMKVStorage", () => {
+    expect(selectMMKVStorageMethod).toHaveBeenCalled();
+  });
+});
+
+describe("handleMigration", () => {
+  let selectAsyncStorageMethod: jest.SpyInstance;
+  let migrateMethod: jest.SpyInstance;
+
+  function setupTests(migrationStatus: MigrationStatus) {
+    beforeEach(() => {
+      // Arrange
+      migrateMethod = jest
+        .spyOn(migrator, "migrate")
+        .mockImplementation(() => Promise.resolve(true));
+      selectAsyncStorageMethod = jest
+        .spyOn(migrator, "selectAsyncStorage")
+        .mockImplementation(() => undefined);
+
+      // Act
+      migrator.handleMigration({
+        storageType: STORAGE_TYPE.ASYNC_STORAGE,
+        migrationStatus,
+      });
+    });
+  }
+
+  describe("when migration status is not-started", () => {
+    setupTests(MIGRATION_STATUS.NOT_STARTED);
+
+    it("should not call selectAsyncStorage", () => {
+      expect(selectAsyncStorageMethod).not.toHaveBeenCalled();
+    });
+
+    it("should call migrate", () => {
+      expect(migrateMethod).toHaveBeenCalled();
+    });
+  });
+
+  describe("when migration status is in-progress", () => {
+    setupTests(MIGRATION_STATUS.IN_PROGRESS);
+
+    it("should not call selectAsyncStorage", () => {
+      expect(selectAsyncStorageMethod).not.toHaveBeenCalled();
+    });
+
+    it("should call migrate", () => {
+      expect(migrateMethod).toHaveBeenCalled();
+    });
+  });
+
+  describe("when migration status is completed", () => {
+    setupTests(MIGRATION_STATUS.COMPLETED);
+
+    it("should not call selectAsyncStorage", () => {
+      expect(selectAsyncStorageMethod).not.toHaveBeenCalled();
+    });
+
+    it("should not call migrate", () => {
+      expect(migrateMethod).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("when migration status is rolled-back", () => {
+    setupTests(MIGRATION_STATUS.ROLLED_BACK);
+
+    it("should call selectAsyncStorage", () => {
+      expect(selectAsyncStorageMethod).toHaveBeenCalled();
+    });
+
+    it("should not call migrate", () => {
+      expect(migrateMethod).not.toHaveBeenCalled();
+    });
+  });
 });
