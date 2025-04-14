@@ -1,4 +1,3 @@
-import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import { AccountBridge } from "@ledgerhq/types-live";
 import {
@@ -6,21 +5,38 @@ import {
   estimateTransaction,
   estimateTransactionByteLength,
   makeUnsignedSTXTokenTransfer,
+  makeUnsignedContractCall,
+  uintCV,
+  standardPrincipalCV,
+  someCV,
+  stringAsciiCV,
+  noneCV,
 } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { StacksNetwork } from "../network/api.types";
 import { Transaction } from "../types";
 import { createTransaction } from "./createTransaction";
+import { getAccountInfo } from "./utils/account";
 
 export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = async ({
   account,
   parentAccount,
   transaction,
 }) => {
-  const mainAccount = getMainAccount(account, parentAccount);
+  const { mainAccount, subAccount, tokenAccountTxn } = getAccountInfo({
+    account,
+    parentAccount,
+    transaction,
+  });
+
   const { spendableBalance, xpub } = mainAccount;
   invariant(xpub, "xpub is required");
+
+  // If it's a token transaction, return the token's spendable balance
+  if (tokenAccountTxn && subAccount) {
+    return subAccount.spendableBalance;
+  }
 
   const dummyTx = {
     ...createTransaction(account),
@@ -28,21 +44,48 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
     recipient: getAbandonSeedAddress(mainAccount.currency.id),
     useAllAmount: true,
   };
+
   // Compute fees
   const { recipient, anchorMode, memo, amount } = dummyTx;
-
   const network = StacksNetwork[dummyTx.network] || StacksNetwork["mainnet"];
 
-  const options: UnsignedTokenTransferOptions = {
-    recipient,
-    anchorMode,
-    memo,
-    network,
-    publicKey: xpub,
-    amount: amount.toFixed(),
-  };
+  let tx;
+  if (tokenAccountTxn && subAccount) {
+    // Token transfer transaction
+    const contractAddress = subAccount?.token.contractAddress;
+    const contractName = subAccount?.token.id.split("/").pop() ?? "";
 
-  const tx = await makeUnsignedSTXTokenTransfer(options);
+    // Create the function arguments for the SIP-010 transfer function
+    const functionArgs = [
+      uintCV(amount.toString()), // Amount
+      standardPrincipalCV(recipient), // Recipient
+      memo ? someCV(stringAsciiCV(memo)) : noneCV(), // Memo (optional)
+    ];
+
+    tx = await makeUnsignedContractCall({
+      contractAddress,
+      contractName,
+      functionName: "transfer",
+      functionArgs,
+      anchorMode,
+      network,
+      publicKey: xpub,
+      fee: "0", // We're estimating the fee
+      nonce: 0,
+    });
+  } else {
+    // Regular STX transfer
+    const options: UnsignedTokenTransferOptions = {
+      recipient,
+      anchorMode,
+      memo,
+      network,
+      publicKey: xpub,
+      amount: amount.toFixed(),
+    };
+
+    tx = await makeUnsignedSTXTokenTransfer(options);
+  }
 
   const [feeEst] = await estimateTransaction(
     tx.payload,
