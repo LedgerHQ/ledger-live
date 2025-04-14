@@ -1,9 +1,9 @@
 import type { Api } from "@ledgerhq/coin-framework/api/index";
 import { createApi } from ".";
-import { StellarToken } from "../types";
+import { StellarAsset } from "../types";
 import nock from "nock";
 describe("Stellar Api", () => {
-  let module: Api<StellarToken>;
+  let module: Api<StellarAsset>;
   const ADDRESS = "GBAUZBDXMVV7HII4JWBGFMLVKVJ6OLQAKOCGXM5E2FM4TAZB6C7JO2L7";
 
   beforeAll(() => {
