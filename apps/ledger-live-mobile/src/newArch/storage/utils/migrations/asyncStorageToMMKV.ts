@@ -59,7 +59,7 @@ export const migrator = {
       log("Storage", "Starting migration from AsyncStorage to MMKV...");
 
       migrator.markMigrationStatusInProgress(state);
-      migrator.migrateData();
+      await migrator.migrateData();
       migrator.markMigrationStatusCompleted(state);
       migrator.selectMMKVStorage(state);
 
