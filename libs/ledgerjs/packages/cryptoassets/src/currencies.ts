@@ -3495,6 +3495,30 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  mina: {
+    type: "CryptoCurrency",
+    id: "mina",
+    coinType: CoinType.MINA,
+    name: "Mina",
+    managerAppName: "Mina",
+    ticker: "MINA",
+    scheme: "mina",
+    color: "#e1effa",
+    family: "mina",
+    units: [
+      {
+        name: "MINA",
+        code: "MINA",
+        magnitude: 9,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://minascan.io/mainnet/tx/$hash/txInfo",
+        address: "https://minascan.io/mainnet/account/$address",
+      },
+    ],
+  },
   injective: {
     type: "CryptoCurrency",
     id: "injective",

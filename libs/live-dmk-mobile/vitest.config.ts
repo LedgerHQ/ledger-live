@@ -15,7 +15,7 @@ export default defineConfig({
     coverage: {
       enabled: true,
       provider: "istanbul",
-      reporter: ["text", "html"],
+      reporter: ["text", "lcov"],
       include: ["src/**/*.ts", "src/**/*.tsx"],
       exclude: ["node_modules", "lib-es", "src/hooks/index.ts", "src/index.ts", "src/**/*.test.*"],
     },

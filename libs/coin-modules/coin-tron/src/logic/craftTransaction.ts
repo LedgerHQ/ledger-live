@@ -2,7 +2,7 @@ import { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 import BigNumber from "bignumber.js";
 import { craftStandardTransaction, craftTrc20Transaction } from "../network";
 import { decode58Check } from "../network/format";
-import { TronToken } from "../types";
+import { TronAsset } from "../types";
 import { feesToNumber } from "./utils";
 
 type TransactionIntentExtra = {
@@ -14,14 +14,14 @@ type TransactionIntentExtra = {
 };
 
 export async function craftTransaction(
-  transactionIntent: TransactionIntent<TronToken, TransactionIntentExtra>,
+  transactionIntent: TransactionIntent<TronAsset, TransactionIntentExtra>,
   customFees?: bigint,
 ): Promise<string> {
   const { asset, recipient, sender, amount, memo, expiration } = transactionIntent;
   const recipientAddress = decode58Check(recipient);
   const senderAddress = decode58Check(sender);
 
-  if (asset?.standard === "trc20" && asset.contractAddress) {
+  if (asset.type === "token" && asset.standard === "trc20" && asset.contractAddress) {
     if (customFees !== undefined && (customFees <= 0 || customFees > Number.MAX_SAFE_INTEGER)) {
       throw new Error(
         `fees must be between 0 and ${Number.MAX_SAFE_INTEGER} (Typescript Number type value limit)`,
@@ -42,8 +42,9 @@ export async function craftTransaction(
     );
     return rawDataHex as string;
   } else {
-    const isTransferAsset = asset?.standard === "trc10";
-    const tokenId = asset?.standard === "trc10" ? asset.tokenId : undefined;
+    const isTransferAsset = asset.type === "token" && asset.standard === "trc10";
+    const tokenId =
+      asset.type === "token" && asset.standard === "trc10" ? asset.tokenId : undefined;
     const { raw_data_hex: rawDataHex } = await craftStandardTransaction(
       tokenId,
       recipientAddress,

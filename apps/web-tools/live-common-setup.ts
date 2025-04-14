@@ -73,4 +73,5 @@ setSupportedCurrencies([
   "xion",
   "zenrock",
   "sui",
+  "mina",
 ]);

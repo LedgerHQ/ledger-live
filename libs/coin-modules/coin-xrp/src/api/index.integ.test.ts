@@ -14,6 +14,7 @@ describe("Xrp Api", () => {
 
       // When
       const result = await api.estimateFees({
+        asset: { type: "native" },
         type: "send",
         sender: SENDER,
         amount,
@@ -82,7 +83,8 @@ describe("Xrp Api", () => {
       const result = await api.getBalance(SENDER);
 
       // Then
-      expect(result).toBeGreaterThan(BigInt(0));
+      expect(result[0].asset).toEqual({ type: "native" });
+      expect(result[0].value).toBeGreaterThan(BigInt(0));
     });
 
     it("returns 0 when address has no transaction", async () => {
@@ -90,7 +92,7 @@ describe("Xrp Api", () => {
       const result = await api.getBalance(SENDER_WITH_NO_TRANSACTION);
 
       // Then
-      expect(result).toBe(BigInt(0));
+      expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" } }]);
     });
   });
 
@@ -100,6 +102,7 @@ describe("Xrp Api", () => {
     it("returns a raw transaction", async () => {
       // When
       const result = await api.craftTransaction({
+        asset: { type: "native" },
         type: "send",
         sender: SENDER,
         recipient: RECIPIENT,
@@ -112,6 +115,7 @@ describe("Xrp Api", () => {
 
     it("should use default fees when user does not provide them for crafting a transaction", async () => {
       const result = await api.craftTransaction({
+        asset: { type: "native" },
         type: "send",
         sender: SENDER,
         recipient: RECIPIENT,
@@ -126,6 +130,7 @@ describe("Xrp Api", () => {
       const customFees = 99n;
       const result = await api.craftTransaction(
         {
+          asset: { type: "native" },
           type: "send",
           sender: SENDER,
           recipient: RECIPIENT,
