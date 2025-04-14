@@ -2390,7 +2390,7 @@
         "ethereumPriorityFee" : "Taxa de Prioridade Máxima ({{unitName}})",
         "nextBlock" : "Próximo bloco",
         "suggested" : "Sugerido",
-        "unitPerByte" : "{{unit}} por byte",
+        "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
         "nftQuantity" : "Quantidade"
       },
@@ -2423,8 +2423,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "Não usa tag/memo?",
-        "description" : "Seus fundos serão perdidos se você não adicionar uma tag ou memo ao enviá-los para qualquer corretora centralizada ou carteira de custódia.",
+        "title" : "Precisa de Tag/Memo?",
+        "description" : "Ao não adicionar Tag/Memo ao enviar fundos para uma corretora centralizada, você corre o risco de perder seus fundos.",
         "cta.addTag" : "Adicionar tag",
         "cta.not.addTag" : "Não adicione a tag",
         "checkbox.label" : "Não mostrar isso novamente."
