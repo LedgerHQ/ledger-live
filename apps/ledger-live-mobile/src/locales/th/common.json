@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "ยกเลิก",
+    "copy" : "คัดลอก",
+    "copied" : "คัดลอกแล้ว",
     "apply" : "ใช้",
     "seeAll" : "ดูทั้งหมด",
     "seeAllWithNumber" : "ดูทั้งหมด ({{number}})",
@@ -15,7 +17,7 @@
     "gotit" : "เข้าใจแล้ว",
     "continue" : "ดำเนินการต่อ",
     "retry" : "ลองอีกครั้ง",
-    "backTo" : "กลับไปยัง {{to}}",
+    "backTo" : "กลับไปยัง{{to}}",
     "done" : "เสร็จสิ้น",
     "sortBy" : "เรียงโดย",
     "signOut" : "ออกจากระบบ",
@@ -100,7 +102,8 @@
       "times" : "x{{ value }}"
     },
     "quote" : "โควตราคา",
-    "tryAgain" : "ลองอีกครั้ง"
+    "tryAgain" : "ลองอีกครั้ง",
+    "ldmkEnabled" : "เปิดใช้งาน LDMK Transport แล้ว"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -1060,6 +1063,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "โหลดแอป Swap Live ไม่สำเร็จ"
+    },
+    "InvalidMemoMina" : {
+      "title" : "Memo ไม่สามารถยาวเกิน 32 ตัวอักษร"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "ธุรกรรมนี้จะมีค่าธรรมเนียมการสร้างบัญชี {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "จำนวนขั้นต่ำที่กำหนดสำหรับธุรกรรมนี้คือ {{amount}}"
     }
   },
   "crash" : {
@@ -2590,7 +2602,8 @@
       "gasLimit" : "จำนวน Gas สูงสุดที่ยอมจ่าย",
       "id" : "Id",
       "autoClaimedRewards" : "Reward ที่เคลมโดยอัตโนมัติ",
-      "stakedAmount" : "จำนวนที่ Stake แล้ว"
+      "stakedAmount" : "จำนวนที่ Stake แล้ว",
+      "accountCreationFee" : "ค่าธรรมเนียมการสร้างบัญชี"
     },
     "multipleAddresses" : "ทำไมต้องหลาย Address?",
     "tokenName" : "ชื่อโทเคน",
@@ -4047,7 +4060,9 @@
       "desc" : "คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการเพิ่มบัญชี?",
       "v2" : {
         "title" : "ยกเลิกการเพิ่มบัญชีหรือไม่?",
-        "desc" : "จะไม่มีการเพิ่มบัญชีลงใน Ledger Live"
+        "desc" : "จะไม่มีการเพิ่มบัญชีลงใน Ledger Live",
+        "continue" : "เพิ่มอีก",
+        "cancel" : "ยกเลิก"
       }
     },
     "imported" : "เพิ่มสินทรัพย์เรียบร้อยแล้ว",
@@ -6100,6 +6115,9 @@
       }
     }
   },
+  "mina" : {
+    "memoPlaceholder" : "Memo (ไม่บังคับ)"
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -6606,14 +6624,12 @@
     "range" : {
       "1h" : "1H",
       "24h" : "24H",
+      "1d" : "1D",
       "7d" : "7D",
+      "1w" : "1W",
       "30d" : "30D",
-      "1y" : "1Y",
-      "1H_label" : "1H",
-      "1D_label" : "1D",
-      "1W_label" : "1W",
-      "1M_label" : "1M",
-      "1Y_label" : "1Y"
+      "1m" : "1M",
+      "1y" : "1Y"
     },
     "warnings" : {
       "connectionError" : "ข้อผิดพลาดในการเชื่อมต่อ",
@@ -7346,5 +7362,10 @@
       "description" : "หน่วยความจำที่จำกัดของ Ledger Nano S ของคุณจะยับยั้งการเข้าถึงฟีเจอร์ล่าสุด การเปลี่ยนแปลงบล็อกเชน และการเพิ่มความปลอดภัยให้กับคุณ เพื่อการใช้งานระยะยาว ควรอัปเกรดเป็นอุปกรณ์ Ledger รุ่นใหม่กว่า",
       "cta" : "เรียนรู้เพิ่มเติม"
     }
+  },
+  "largeMover" : {
+    "performance" : "Performance",
+    "low" : "ต่ำ",
+    "high" : "สูง"
   }
 }
