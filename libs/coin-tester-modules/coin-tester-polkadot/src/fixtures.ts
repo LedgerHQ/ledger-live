@@ -1,5 +1,5 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { PolkadotAccount } from "../types";
+import { PolkadotAccount } from "@ledgerhq/coin-polkadot/types/bridge";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account";
 import { getDerivationScheme, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
 import { TokenAccount } from "@ledgerhq/types-live";

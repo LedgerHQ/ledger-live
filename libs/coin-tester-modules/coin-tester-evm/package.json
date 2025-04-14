@@ -17,7 +17,7 @@
   "bugs": {
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-tester-evm",
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-tester-modules/coin-tester-evm",
   "publishConfig": {
     "access": "public"
   },

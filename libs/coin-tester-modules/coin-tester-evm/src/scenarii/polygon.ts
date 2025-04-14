@@ -124,7 +124,7 @@ export const scenarioPolygon: Scenario<EvmTransaction, Account> = {
   setup: async () => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
       spawnSpeculos(`/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`),
-      spawnAnvil("https://rpc.ankr.com/polygon"),
+      spawnAnvil("https://polygon-bor-rpc.publicnode.com"),
     ]);
 
     const provider = new providers.StaticJsonRpcProvider("http://127.0.0.1:8545");
