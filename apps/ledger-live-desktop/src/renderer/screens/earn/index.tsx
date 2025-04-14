@@ -1,18 +1,19 @@
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import React from "react";
 import { useSelector } from "react-redux";
+import { getParsedSystemDeviceLocale } from "~/helpers/systemLocale";
 import Card from "~/renderer/components/Box/Card";
+import { useDiscreetMode } from "~/renderer/components/Discreet";
+import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
+import useTheme from "~/renderer/hooks/useTheme";
 import {
   counterValueCurrencySelector,
   languageSelector,
   localeSelector,
 } from "~/renderer/reducers/settings";
-import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
-import useTheme from "~/renderer/hooks/useTheme";
 import { useDeepLinkListener } from "~/renderer/screens/earn/useDeepLinkListener";
-import { useDiscreetMode } from "~/renderer/components/Discreet";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
-import { getParsedSystemDeviceLocale } from "~/helpers/systemLocale";
 
 const DEFAULT_EARN_APP_ID = "earn";
 
@@ -27,6 +28,8 @@ const Earn = () => {
   const discreetMode = useDiscreetMode();
   const countryLocale = getParsedSystemDeviceLocale().region;
   useDeepLinkListener();
+
+  const ff_ptxEarnStablecoinYield = useFeature("ptxEarnStablecoinYield");
 
   return (
     <Card grow style={{ overflow: "hidden" }} data-testid="earn-app-container">
@@ -49,6 +52,10 @@ const Earn = () => {
             currencyTicker: fiatCurrency.ticker,
             discreetMode: discreetMode ? "true" : "false",
             OS: "web",
+            stablecoinYield:
+              ff_ptxEarnStablecoinYield && ff_ptxEarnStablecoinYield.enabled
+                ? ff_ptxEarnStablecoinYield.params?.feature
+                : undefined,
           }}
         />
       ) : null}
