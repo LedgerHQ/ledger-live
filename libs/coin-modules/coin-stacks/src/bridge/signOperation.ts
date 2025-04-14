@@ -1,7 +1,16 @@
 import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
 import { FeeNotLoaded, InvalidAddress, InvalidNonce } from "@ledgerhq/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { UnsignedTokenTransferOptions, makeUnsignedSTXTokenTransfer } from "@stacks/transactions";
+import {
+  UnsignedTokenTransferOptions,
+  makeUnsignedSTXTokenTransfer,
+  makeUnsignedContractCall,
+  uintCV,
+  standardPrincipalCV,
+  someCV,
+  stringAsciiCV,
+  noneCV,
+} from "@stacks/transactions";
 import invariant from "invariant";
 import { Observable } from "rxjs";
 import { StacksNetwork } from "../network/api.types";
@@ -9,6 +18,7 @@ import { StacksSigner, Transaction } from "../types";
 import { getPath, throwIfError } from "../utils";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { getAddress } from "./utils/misc";
+import { getSubAccount, getTokenContractInfo } from "./utils/token";
 
 export const buildSignOperation =
   (signerContext: SignerContext<StacksSigner>): AccountBridge<Transaction>["signOperation"] =>
@@ -35,20 +45,52 @@ export const buildSignOperation =
           throw new InvalidNonce();
         }
 
-        const options: UnsignedTokenTransferOptions = {
-          amount: amount.toFixed(),
-          recipient,
-          anchorMode,
-          network: StacksNetwork[network],
-          memo,
-          publicKey: xpub,
-          fee: fee.toFixed(),
-          nonce: nonce.toFixed(),
-        };
+        // Check if this is a token transaction
+        const subAccount = getSubAccount(account, transaction);
+        const tokenAccountTxn = !!subAccount;
 
-        const tx = await makeUnsignedSTXTokenTransfer(options);
+        let serializedTx: Buffer;
+        if (tokenAccountTxn) {
+          // Token transfer transaction
+          const contractAddress = subAccount?.token.contractAddress;
+          const contractName = subAccount?.token.id.split("/").pop() ?? "";
 
-        const serializedTx = tx.serialize();
+          // Create the function arguments for the SIP-010 transfer function
+          const functionArgs = [
+            uintCV(amount.toString()), // Amount
+            standardPrincipalCV(recipient), // Recipient
+            memo ? someCV(stringAsciiCV(memo)) : noneCV(), // Memo (optional)
+          ];
+
+          const tx = await makeUnsignedContractCall({
+            contractAddress,
+            contractName,
+            functionName: "transfer",
+            functionArgs,
+            anchorMode,
+            network: StacksNetwork[network],
+            publicKey: xpub,
+            fee: fee.toFixed(),
+            nonce: nonce.toFixed(),
+          });
+
+          serializedTx = Buffer.from(tx.serialize());
+        } else {
+          // Regular STX transfer
+          const options: UnsignedTokenTransferOptions = {
+            amount: amount.toFixed(),
+            recipient,
+            anchorMode,
+            network: StacksNetwork[network],
+            memo,
+            publicKey: xpub,
+            fee: fee.toFixed(),
+            nonce: nonce.toFixed(),
+          };
+
+          const tx = await makeUnsignedSTXTokenTransfer(options);
+          serializedTx = Buffer.from(tx.serialize());
+        }
 
         o.next({
           type: "device-signature-requested",
@@ -56,7 +98,7 @@ export const buildSignOperation =
 
         // Sign by device
         const result = await signerContext(deviceId, async signer => {
-          return signer.sign(getPath(derivationPath), Buffer.from(serializedTx));
+          return signer.sign(getPath(derivationPath), serializedTx);
         });
 
         throwIfError(result);
@@ -79,6 +121,12 @@ export const buildSignOperation =
               xpub,
               network,
               anchorMode,
+              tokenTransfer: tokenAccountTxn,
+              // Add token contract details if needed
+              ...(tokenAccountTxn && {
+                contractAddress: subAccount.token.contractAddress,
+                contractName: (subAccount.token as any).contractName || "",
+              }),
             },
           },
         });
