@@ -400,10 +400,7 @@ export const DEFAULT_FEATURES: Features = {
   },
 
   ptxCard: DEFAULT_FEATURE,
-
-  ptxEarnStablecoinYield: {
-    enabled: false,
-  },
+  ptxEarnStablecoinYield: DEFAULT_FEATURE,
 
   ptxSwapLiveApp: {
     enabled: true,

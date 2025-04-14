@@ -29,7 +29,7 @@ const Earn = () => {
   const countryLocale = getParsedSystemDeviceLocale().region;
   useDeepLinkListener();
 
-  const ff_ptxEarnStablecoinYield = useFeature("ptxEarnStablecoinYield");
+  const ptxEarnStablecoinYield = useFeature("ptxEarnStablecoinYield");
 
   return (
     <Card grow style={{ overflow: "hidden" }} data-testid="earn-app-container">
@@ -53,8 +53,8 @@ const Earn = () => {
             discreetMode: discreetMode ? "true" : "false",
             OS: "web",
             stablecoinYield:
-              ff_ptxEarnStablecoinYield && ff_ptxEarnStablecoinYield.enabled
-                ? ff_ptxEarnStablecoinYield.params?.feature
+              ptxEarnStablecoinYield && ptxEarnStablecoinYield.enabled
+                ? ptxEarnStablecoinYield.params?.feature
                 : undefined,
           }}
         />
