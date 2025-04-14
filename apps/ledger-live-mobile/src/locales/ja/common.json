@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "キャンセル",
+    "copy" : "コピー",
+    "copied" : "コピー済み",
     "apply" : "適用",
     "seeAll" : "すべて表示",
     "seeAllWithNumber" : "すべて表示（{{number}}）",
@@ -100,7 +102,8 @@
       "times" : "x{{ value }}"
     },
     "quote" : "見積もり",
-    "tryAgain" : "再試行"
+    "tryAgain" : "再試行",
+    "ldmkEnabled" : "LDMKトランスポート有効"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -1060,6 +1063,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "スワップLiveアプリの読み込みに失敗しました"
+    },
+    "InvalidMemoMina" : {
+      "title" : "メモに入力できる文字数は32文字以内です"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "このトランザクションには、{{fee}}のアカウント作成手数料が発生します"
+    },
+    "AmountTooSmall" : {
+      "title" : "このトランザクションに最低限必要な金額は、{{amount}}です"
     }
   },
   "crash" : {
@@ -2590,7 +2602,8 @@
       "gasLimit" : "ガスリミット",
       "id" : "ID",
       "autoClaimedRewards" : "自動獲得報酬",
-      "stakedAmount" : "ステーキング済み量"
+      "stakedAmount" : "ステーキング済み量",
+      "accountCreationFee" : "アカウント作成手数料"
     },
     "multipleAddresses" : "なぜ複数のアドレスがあるのですか？",
     "tokenName" : "トークン名",
@@ -4047,7 +4060,9 @@
       "desc" : "アカウントの追加をキャンセルしますか？",
       "v2" : {
         "title" : "アカウントの追加を取り消しますか？",
-        "desc" : "Ledger Liveにアカウントは追加されません。"
+        "desc" : "Ledger Liveにアカウントは追加されません。",
+        "continue" : "さらに追加する",
+        "cancel" : "キャンセル"
       }
     },
     "imported" : "資産が正常に追加されました",
@@ -4085,7 +4100,7 @@
       "title" : "トークンの追加",
       "createParentCurrencyAccount" : "{{parrentCurrencyName}} アカウントを追加",
       "generic" : {
-        "disclaimer" : "{{token}} ({{ticker}})は{{tokenType}}トークンです。\n {{currency}}アカウントで直接トークンを受け取ることができます。",
+        "disclaimer" : "{{token}} ({{ticker}}) は、{{tokenType}}トークンです。\n{{currency}}アカウントで直接トークンを受け取ることができます。",
         "learnMore" : "{{tokenType}}の詳細"
       }
     },
@@ -6100,6 +6115,9 @@
       }
     }
   },
+  "mina" : {
+    "memoPlaceholder" : "任意のメモ"
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -6606,14 +6624,12 @@
     "range" : {
       "1h" : "1時間",
       "24h" : "24時間",
+      "1d" : "1D",
       "7d" : "7日間",
+      "1w" : "1W",
       "30d" : "30日間",
-      "1y" : "1年",
-      "1H_label" : "1時間",
-      "1D_label" : "1日",
-      "1W_label" : "1週",
-      "1M_label" : "1月",
-      "1Y_label" : "1年"
+      "1m" : "1M",
+      "1y" : "1年"
     },
     "warnings" : {
       "connectionError" : "接続エラー",
@@ -7346,5 +7362,10 @@
       "description" : "Ledger Nano Sの限られたメモリでは、複数の最新機能、ブロックチェーンの変更、セキュリティ強化も制限されます。ぜひ、新しいLedgerデバイスへのアップグレードをご検討ください。",
       "cta" : "詳細はこちら"
     }
+  },
+  "largeMover" : {
+    "performance" : "Performance",
+    "low" : "Low",
+    "high" : "High"
   }
 }
