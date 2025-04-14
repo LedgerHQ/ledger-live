@@ -51,11 +51,33 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
       }
     },
 
+    getString(key) {
+      try {
+        return state.storageType === STORAGE_TYPE.MMKV
+          ? Promise.resolve(mmkvStorageWrapper.getString(key))
+          : asyncStorageWrapper.getString(key);
+      } catch (e) {
+        console.error("Error getting key from storage", e);
+        return rejectWithError(e);
+      }
+    },
+
     save(key, value) {
       try {
         return state.storageType === STORAGE_TYPE.MMKV
           ? Promise.resolve(mmkvStorageWrapper.save(key, value))
           : asyncStorageWrapper.save(key, value);
+      } catch (e) {
+        console.error("Error saving key to storage", e);
+        return rejectWithError(e);
+      }
+    },
+
+    saveString(key, value) {
+      try {
+        return state.storageType === STORAGE_TYPE.MMKV
+          ? Promise.resolve(mmkvStorageWrapper.saveString(key, value))
+          : asyncStorageWrapper.saveString(key, value);
       } catch (e) {
         console.error("Error saving key to storage", e);
         return rejectWithError(e);

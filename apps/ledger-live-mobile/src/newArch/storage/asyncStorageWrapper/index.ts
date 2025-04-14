@@ -11,7 +11,9 @@ import merge from "lodash/merge";
 const deviceStorage = {
   /** Get all keys in AsyncStorage. */
   keys() {
-    return AsyncStorage.getAllKeys().then(keys => keys.filter(key => !key.includes(CHUNKED_KEY)));
+    return AsyncStorage.getAllKeys().then((keys) =>
+      keys.filter((key) => !key.includes(CHUNKED_KEY)),
+    );
   },
 
   /**
@@ -27,10 +29,12 @@ const deviceStorage = {
     }
 
     const values = await AsyncStorage.multiGet(key);
-    const data: Promise<T | undefined>[] = values.map(value =>
+    const data: Promise<T | undefined>[] = values.map((value) =>
       getCompressedValue(value[0], value[1]),
     );
-    return Promise.all(data).then(array => array.filter(item => item != null) as T[]);
+    return Promise.all(data).then(
+      (array) => array.filter((item) => item != null) as T[],
+    );
   },
 
   async getString(key: string): Promise<string | null> {
@@ -53,7 +57,7 @@ const deviceStorage = {
     if (!Array.isArray(key)) {
       pairs.push([key, value]);
     } else {
-      pairs = key.map(pair => [pair[0], pair[1]]);
+      pairs = key.map((pair) => [pair[0], pair[1]]);
     }
 
     return AsyncStorage.multiSet(stringifyPairs(pairs));
@@ -79,8 +83,11 @@ const deviceStorage = {
   update<T>(key: string, value: T) {
     return deviceStorage
       .get(key)
-      .then(item =>
-        deviceStorage.save(key, typeof value === "string" ? value : merge({}, item, value)),
+      .then((item) =>
+        deviceStorage.save(
+          key,
+          typeof value === "string" ? value : merge({}, item, value),
+        ),
       );
   },
 
@@ -95,10 +102,10 @@ const deviceStorage = {
     const existingKeys = await AsyncStorage.getAllKeys();
 
     if (!Array.isArray(key)) {
-      keys = existingKeys.filter(existingKey => existingKey.includes(key));
+      keys = existingKeys.filter((existingKey) => existingKey.includes(key));
     } else {
-      keys = existingKeys.filter(existingKey =>
-        key.some(keyToDelete => existingKey.includes(keyToDelete)),
+      keys = existingKeys.filter((existingKey) =>
+        key.some((keyToDelete) => existingKey.includes(keyToDelete)),
       );
     }
 
@@ -116,7 +123,7 @@ const deviceStorage = {
    * The value to push onto the array
    */
   push<T = unknown>(key: string, value: T) {
-    return deviceStorage.get(key).then(currentValue => {
+    return deviceStorage.get(key).then((currentValue) => {
       if (currentValue === null) {
         // if there is no current value populate it with the new value
         return deviceStorage.save(key, [value]);
@@ -146,7 +153,10 @@ function stringifyPairs<T>(pairs: [string, T][]): [string, string][] {
       return [
         ...acc,
         [current[0], CHUNKED_KEY + numberOfChunks],
-        ...chunks.map<[string, string]>((chunk, index) => [key + CHUNKED_KEY + index, chunk]),
+        ...chunks.map<[string, string]>((chunk, index) => [
+          key + CHUNKED_KEY + index,
+          chunk,
+        ]),
       ];
     }
 
@@ -177,7 +187,7 @@ function getChunks(str: string, size: number): string[] {
   let o = 0;
 
   for (; i < numChunks; ++i, o += size) {
-    chunks[i] = str.substring(o, o + size);
+    chunks[i] = str.substr(o, size);
   }
 
   return chunks;
@@ -202,10 +212,16 @@ async function getCompressedValue<T = unknown>(
         // multiget will failed when you got keys with a tons of data
         // it crash with 13 CHUNKS of 1MB string so we had splice it.
         while (keys.length) {
-          values = [...values, ...(await AsyncStorage.multiGet(keys.splice(0, 5)))];
+          values = [
+            ...values,
+            ...(await AsyncStorage.multiGet(keys.splice(0, 5))),
+          ];
         }
 
-        const concatString = values.reduce((acc, current) => acc + current[1], "");
+        const concatString = values.reduce(
+          (acc, current) => acc + current[1],
+          "",
+        );
         return JSON.parse(concatString);
       }
     }
