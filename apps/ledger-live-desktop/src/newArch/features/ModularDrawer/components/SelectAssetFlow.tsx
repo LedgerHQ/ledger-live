@@ -26,18 +26,20 @@ export type SelectAccountAndCurrencyDrawerProps = {
   assetIds?: string[];
   includeTokens?: boolean;
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
+  currenciesArray?: CryptoOrTokenCurrency[];
 };
 
 function SelectAssetFlow(props: SelectAccountAndCurrencyDrawerProps) {
-  const { onAssetSelected, assetIds, includeTokens } = props;
-
+  const { onAssetSelected, assetIds, includeTokens, currenciesArray } = props;
   const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState<string>("");
 
-  const currencies = listAndFilterCurrencies({
-    currencies: assetIds,
-    includeTokens,
-  });
+  const currencies =
+    currenciesArray ??
+    listAndFilterCurrencies({
+      currencies: assetIds,
+      includeTokens,
+    });
 
   // sorting them by marketcap
   const sortedCurrencies = useCurrenciesByMarketcap(currencies);
@@ -57,6 +59,13 @@ function SelectAssetFlow(props: SelectAccountAndCurrencyDrawerProps) {
     },
     [onAssetSelected],
   );
+
+  // TODO : this is a temporary to handle the case where we have only one asset and one currency
+  if (assetIds?.length === 1 && currencies.length === 1) {
+    const currency = currencies[0];
+    onAssetSelected(currency);
+    return null;
+  }
 
   return (
     <SelectAccountAndCurrencyDrawerContainer>
