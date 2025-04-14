@@ -14,6 +14,7 @@ import trc20tokens, { TRC20Token } from "./data/trc20";
 import { tokens as mainnetTokens } from "./data/evm/1";
 import { tokens as bnbTokens } from "./data/evm/56";
 import filecoinTokens from "./data/filecoin-erc20";
+import stacksSip010Tokens, { StacksSip010Token } from "./data/stacks-sip010";
 import spltokens, { SPLToken } from "./data/spl";
 import { ERC20Token } from "./types";
 
@@ -57,6 +58,8 @@ addTokens(filecoinTokens.map(convertERC20));
 addTokens(spltokens.map(convertSplTokens));
 // Sonic
 addTokens(sonicTokens.map(convertERC20));
+// Stacks tokens
+addTokens(stacksSip010Tokens.map(convertStacksSip010Token));
 
 type TokensListOptions = {
   withDelisted: boolean;
@@ -519,6 +522,36 @@ export function convertJettonToken([address, name, ticker, magnitude, delisted]:
         name,
         code: ticker,
         magnitude,
+      },
+    ],
+  };
+}
+
+
+export function convertStacksSip010Token([address, name, ticker, decimals, delisted]: StacksSip010Token):
+  | TokenCurrency
+  | undefined {
+  const parentCurrency = findCryptoCurrencyById("stacks");
+
+  if (!parentCurrency) {
+    return;
+  }
+
+  return {
+    type: "TokenCurrency",
+    id: "stacks/sip010/" + address.toLocaleLowerCase(),
+    contractAddress: address,
+    parentCurrency,
+    tokenType: "sip010",
+    name,
+    ticker,
+    delisted,
+    disableCountervalue: false,
+    units: [
+      {
+        name,
+        code: ticker,
+        magnitude: decimals,
       },
     ],
   };
