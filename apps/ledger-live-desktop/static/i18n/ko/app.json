@@ -1779,7 +1779,7 @@
     },
     "fullNodeReadyInfo" : "비트코인 풀 노드를 이용하여 계정을 추가할 것입니다.",
     "fullNodeConfigure" : "노드 구성",
-    "tokensTip" : "{{token}} ({{ticker}})(은)는 {{tokenType}} 토큰입니다. {{currency}} 계정으로 직접 토큰을 받을 수 있습니다.",
+    "tokensTip" : "{{token}} ({{ticker}})(은)는 {{tokenType}} 토큰입니다.\n {{currency}} 계정에서 직접 토큰을 수령할 수 있습니다.",
     "accountToImportSubtitle_plural" : "기존 계정 추가",
     "selectAll" : "모든 ({{count}}) 선택",
     "unselectAll" : "모든 ({{count}}) 선택 해제",
@@ -1879,7 +1879,8 @@
       "palletMethod" : "방법",
       "transferAmount" : "이전 금액",
       "validatorsCount" : "검증인 ({{number}})",
-      "version" : "버전"
+      "version" : "버전",
+      "accountCreationFee" : "계정 생성 수수료"
     }
   },
   "operationList" : {
@@ -2390,7 +2391,7 @@
         "ethereumPriorityFee" : "최대 우선 수수료({{unitName}})",
         "nextBlock" : "다음 블록",
         "suggested" : "추천",
-        "unitPerByte" : "바이트당 {{unit}}",
+        "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
         "nftQuantity" : "수량"
       },
@@ -2423,8 +2424,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "태그/메모를 사용하지 않으시나요?",
-        "description" : "중앙화된 거래소나 수탁 지갑으로 자산을 보낼 때 태그/메모를 추가하지 않으면 자금이 손실됩니다.",
+        "title" : "태그/메모가 필요하세요?",
+        "description" : "중앙화된 거래소로 자금을 보낼 때 태그/메모를 추가하지 않으면 자금 분실 가능성이 높아집니다.",
         "cta.addTag" : "태그 추가",
         "cta.not.addTag" : "태그 사용 안 함",
         "checkbox.label" : "다시 보지 않기"
@@ -4834,7 +4835,7 @@
         "description" : "Ledger Live에서 암호화폐 및 NFT를 안전하게 관리, 구매 및 성장시키세요.",
         "nextButton" : "시작하기",
         "noDevice" : "장치가 없나요?",
-        "buyLink" : "장치가 없나요? Ledger Nano X 구매하기",
+        "buyLink" : "장치가 없나요? Ledger 구매",
         "byTapping" : "\"시작하기\"를 탭하면 귀하는 당사의",
         "termsAndConditions" : "이용약관",
         "and" : "및",
@@ -5541,6 +5542,9 @@
       "memo" : "태그 / 메모",
       "memoPlaceholder" : "선택 사항",
       "requiredMemoPlaceholder" : "필수 항목"
+    },
+    "mina" : {
+      "memoPlaceholder" : "메모(선택)"
     }
   },
   "errors" : {
@@ -6571,6 +6575,15 @@
         "swap" : "스왑",
         "deposit" : "입금"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "메모 텍스트는 32자를 초과할 수 없습니다."
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "이 트랜잭션에는 {{fee}}의 계정 생성 수수료가 부과됩니다."
+    },
+    "AmountTooSmall" : {
+      "title" : "이 트랜잭션에 필요한 최소 금액은 {{amount}}입니다"
     }
   },
   "cryptoOrg" : {
