@@ -81,11 +81,11 @@ export type Validators = {
 export async function getValidators(): Promise<Validators[]> {
   return [
     {
-      activeStake: 12334345,
+      activeStake: 31076550,
       commission: 100,
-      totalScore: 982374,
-      voteAccount: "9834",
-      name: "Aptos Bazinga",
+      totalScore: 1992799,
+      voteAccount: "0xa651c7c52d64a2014379902bbc92439d196499bcc36d94ff0395aa45837c66db",
+      name: "0xa651c7c52d64a2014379902bbc92439d196499bcc36d94ff0395aa45837c66db",
       avatarUrl: undefined,
       wwwUrl: undefined,
     },

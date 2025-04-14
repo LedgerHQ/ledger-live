@@ -1,7 +1,4 @@
-import {
-  useValidators,
-  useSolanaStakesWithMeta,
-} from "@ledgerhq/live-common/families/solana/react";
+import { useValidators, useAptosStakesWithMeta } from "@ledgerhq/live-common/families/aptos/react";
 import invariant from "invariant";
 import React from "react";
 import { Trans } from "react-i18next";
@@ -26,15 +23,15 @@ export default function StepValidator({
   onClose,
 }: StepProps) {
   const unit = useMaybeAccountUnit(account);
-  if (account === null || transaction === null || account?.solanaResources === undefined || !unit) {
-    throw new Error("account, transaction and solana resouces required");
+  if (account === null || transaction === null || account?.aptosResources === undefined || !unit) {
+    throw new Error("account, transaction and aptos resouces required");
   }
-  const { solanaResources } = account;
-  if (transaction?.model.kind !== "stake.undelegate") {
+  const { aptosResources } = account;
+  if (transaction?.stake?.op !== "unlock") {
     throw new Error("unsupported transaction");
   }
-  const { stakeAccAddr } = transaction.model.uiState;
-  const stakesWithMeta = useSolanaStakesWithMeta(account.currency, solanaResources.stakes);
+  const stakeAccAddr = transaction.stake?.poolAddr;
+  const stakesWithMeta = useAptosStakesWithMeta(account.currency, aptosResources.stakes);
   const stakeWithMeta = stakesWithMeta.find(s => s.stake.stakeAccAddr === stakeAccAddr);
   if (stakeWithMeta === undefined) {
     throw new Error(`stake with account address <${stakeAccAddr}> not found`);
@@ -50,11 +47,11 @@ export default function StepValidator({
   return (
     <Box flow={1}>
       <TrackPage
-        category="Solana Delegation Deactivate"
+        category="Aptos Delegation Deactivate"
         name="Step Validator"
         flow="stake"
         action="deactivate"
-        currency="sol"
+        currency="apt"
       />
       {error && <ErrorBanner error={error} />}
       <ValidatorRow

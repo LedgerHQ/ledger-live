@@ -90,11 +90,9 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     invariant(account && account.aptosResources, "aptos: account and aptos resources required");
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, undefined);
     const transaction = bridge.updateTransaction(bridge.createTransaction(account), {
-      stakeModel: {
-        kind: "stake.undelegate",
-        uiState: {
-          stakeAccAddr: stakeWithMeta.stake.stakeAccAddr,
-        },
+      stake: {
+        op: "unlock",
+        poolAddr: stakeWithMeta.stake.stakeAccAddr,
       },
     });
     return {

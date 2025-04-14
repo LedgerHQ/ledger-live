@@ -58,50 +58,12 @@ export type TransactionErrors = {
   gasUnitPrice?: string;
 };
 
-export type StakeCreateAccountTransaction = {
-  kind: "stake.createAccount";
-  uiState: {
-    delegate: {
-      voteAccAddress: string;
-    };
-  };
-};
+export type StakeOperationType = "add" | "unlock" | "reactivate" | "withdraw";
 
-export type StakeDelegateTransaction = {
-  kind: "stake.delegate";
-  uiState: {
-    stakeAccAddr: string;
-    voteAccAddr: string;
-  };
+export type StakeTransaction = {
+  op: StakeOperationType;
+  poolAddr: string;
 };
-
-export type StakeUndelegateTransaction = {
-  kind: "stake.undelegate";
-  uiState: {
-    stakeAccAddr: string;
-  };
-};
-
-export type StakeWithdrawTransaction = {
-  kind: "stake.withdraw";
-  uiState: {
-    stakeAccAddr: string;
-  };
-};
-
-export type StakeSplitTransaction = {
-  kind: "stake.split";
-  uiState: {
-    stakeAccAddr: string;
-  };
-};
-
-export type TransactionModel =
-  | StakeCreateAccountTransaction
-  | StakeDelegateTransaction
-  | StakeUndelegateTransaction
-  | StakeWithdrawTransaction
-  | StakeSplitTransaction;
 
 export type Transaction = TransactionCommon & {
   family: "aptos";
@@ -109,7 +71,7 @@ export type Transaction = TransactionCommon & {
   fees?: BigNumber | null;
   options: TransactionOptions;
   errors?: TransactionErrors;
-  stakeModel?: TransactionModel;
+  stake?: StakeTransaction;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -118,7 +80,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   fees?: string | null;
   options: string;
   errors?: string;
-  stakeModel?: string;
+  stake?: string;
 };
 
 export type AptosFungibleStoreResourceData = {

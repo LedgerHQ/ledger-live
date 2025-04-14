@@ -36,7 +36,7 @@ export const fromTransactionRaw = (t: TransactionRaw): Transaction => {
     options: JSON.parse(t.options),
     ...(t.fees && { fees: new BigNumber(t.fees) }),
     ...(t.errors && { errors: JSON.parse(t.errors) }),
-    ...(t.stakeModel && { stakeModel: JSON.parse(t.stakeModel) }),
+    ...(t.stake && { stake: JSON.parse(t.stake) }),
   };
 };
 
@@ -49,7 +49,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     options: JSON.stringify(t.options),
     ...(t.fees && { fees: t.fees.toString() }),
     ...(t.errors && { errors: JSON.stringify(t.errors) }),
-    ...(t.stakeModel && { stakeModel: JSON.stringify(t.stakeModel) }),
+    ...(t.stake && { stake: JSON.stringify(t.stake) }),
   };
 };
 

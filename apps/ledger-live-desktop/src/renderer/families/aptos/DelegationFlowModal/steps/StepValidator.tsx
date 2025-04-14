@@ -1,8 +1,5 @@
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import {
-  StakeCreateAccountTransaction,
-  Transaction,
-} from "@ledgerhq/live-common/families/aptos/types";
+import { Transaction } from "@ledgerhq/live-common/families/aptos/types";
 import { AccountBridge } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import React from "react";
@@ -32,21 +29,15 @@ export default function StepValidator({
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
     onUpdateTransaction(_tx => {
       return bridge.updateTransaction(transaction, {
-        stakeModel: {
-          kind: "stake.createAccount",
-          uiState: {
-            delegate: {
-              voteAccAddress: address,
-            },
-          },
+        stake: {
+          op: "add",
+          poolAddr: address,
         },
       });
     });
   };
 
-  const chosenVoteAccAddr = (
-    transaction.stakeModel?.uiState as StakeCreateAccountTransaction["uiState"]
-  ).delegate?.voteAccAddress;
+  const chosenVoteAccAddr = transaction.stake?.poolAddr;
 
   return (
     <Box flow={1}>

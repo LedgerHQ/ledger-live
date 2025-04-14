@@ -1,5 +1,5 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { SOLANA_DELEGATION_RESERVE } from "@ledgerhq/live-common/families/solana/staking";
+import { APTOS_DELEGATION_RESERVE } from "@ledgerhq/coin-aptos/constants";
 import React, { Fragment, PureComponent } from "react";
 import { Trans } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -28,11 +28,11 @@ const StepAmount = ({
   return (
     <Box flow={4}>
       <TrackPage
-        category="Solana Delegation"
+        category="Aptos Delegation"
         name="Step Amount"
         flow="stake"
         action="delegation"
-        currency="sol"
+        currency="apt"
       />
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
       {error ? <ErrorBanner error={error} /> : null}
@@ -57,9 +57,9 @@ const StepAmount = ({
           />
           <Alert type="warning" small>
             <Trans
-              i18nKey="solana.delegation.flow.steps.amount.reserveWarning"
+              i18nKey="aptos.delegation.flow.steps.amount.reserveWarning"
               values={{
-                amount: SOLANA_DELEGATION_RESERVE,
+                amount: APTOS_DELEGATION_RESERVE,
               }}
             />
           </Alert>

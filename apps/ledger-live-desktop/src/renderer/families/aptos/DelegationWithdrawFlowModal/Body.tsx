@@ -5,9 +5,9 @@ import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index"
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import {
   Transaction,
-  SolanaStakeWithMeta,
-  SolanaAccount,
-} from "@ledgerhq/live-common/families/solana/types";
+  AptosStakeWithMeta,
+  AptosAccount,
+} from "@ledgerhq/live-common/families/aptos/types";
 import { AccountBridge, Operation, Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
@@ -30,8 +30,8 @@ import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmati
 import { St, StepProps, StepId } from "./types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 export type Data = {
-  account: SolanaAccount;
-  stakeWithMeta: SolanaStakeWithMeta;
+  account: AptosAccount;
+  stakeWithMeta: AptosStakeWithMeta;
 };
 type OwnProps = {
   stepId: StepId;
@@ -49,20 +49,20 @@ type Props = OwnProps & StateProps;
 const steps: Array<St> = [
   {
     id: "amount",
-    label: <Trans i18nKey="solana.delegation.withdraw.flow.steps.amount.title" />,
+    label: <Trans i18nKey="aptos.delegation.withdraw.flow.steps.amount.title" />,
     component: StepAmount,
     noScroll: true,
     footer: StepAmountFooter,
   },
   {
     id: "connectDevice",
-    label: <Trans i18nKey="solana.common.connectDevice.title" />,
+    label: <Trans i18nKey="aptos.common.connectDevice.title" />,
     component: GenericStepConnectDevice,
     onBack: ({ transitionTo }: StepProps) => transitionTo("amount"),
   },
   {
     id: "confirmation",
-    label: <Trans i18nKey="solana.common.confirmation.title" />,
+    label: <Trans i18nKey="aptos.common.confirmation.title" />,
     component: StepConfirmation,
     footer: StepConfirmationFooter,
   },
@@ -90,19 +90,14 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   } = useBridgeTransaction(() => {
     const { account, stakeWithMeta } = params;
     const { stake } = stakeWithMeta;
-    invariant(account && account.solanaResources, "solana: account and solana resources required");
-    invariant(
-      stake.withdrawable > 0,
-      "solana: can withdraw only if there is something to withdraw",
-    );
+    invariant(account && account.aptosResources, "aptos: account and aptos resources required");
+    invariant(stake.withdrawable > 0, "aptos: can withdraw only if there is something to withdraw");
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, undefined);
     const transaction = bridge.updateTransaction(bridge.createTransaction(account), {
       amount: new BigNumber(stake.withdrawable),
-      model: {
-        kind: "stake.withdraw",
-        uiState: {
-          stakeAccAddr: stake.stakeAccAddr,
-        },
+      stake: {
+        op: "withdraw",
+        poolAddr: stake.stakeAccAddr,
       },
     });
     return {
@@ -144,7 +139,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     errorSteps.push(0);
   }
   const stepperProps = {
-    title: t("solana.delegation.withdraw.flow.title"),
+    title: t("aptos.delegation.withdraw.flow.title"),
     device,
     account,
     parentAccount,

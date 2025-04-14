@@ -43,3 +43,5 @@ export enum DIRECTION {
 }
 
 export const SUPPORTED_TOKEN_TYPES = ["coin", "fungible_asset"];
+
+export const APTOS_DELEGATION_RESERVE = 0.01;

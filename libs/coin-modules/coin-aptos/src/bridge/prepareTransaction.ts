@@ -9,6 +9,10 @@ const prepareTransaction = async (
   account: Account,
   transaction: Transaction,
 ): Promise<Transaction> => {
+  if (transaction.stake) {
+    transaction.recipient = transaction.stake.poolAddr;
+  }
+
   if (!transaction.recipient) {
     return transaction;
   }

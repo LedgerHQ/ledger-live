@@ -13,7 +13,6 @@ import { Validators } from "./network/validators";
 
 type Cluster = "devnet" | "testnet" | "mainnet";
 
-// export const SOLANA_DELEGATION_RESERVE = 0.01;
 // export const SYSTEM_ACCOUNT_RENT_EXEMPT = 890880;
 
 // export const assertUnreachable = (_: never): never => {
@@ -223,23 +222,23 @@ export const LEDGER_VALIDATOR_BY_FIGMENT: Validators = {
   totalScore: 6,
 };
 
-export const LEDGER_VALIDATOR_BY_CHORUS_ONE: Validators = {
-  voteAccount: "CpfvLiiPALdzZTP3fUrALg2TXwEDSAknRh1sn5JCt9Sr",
-  name: "Ledger by Chorus One",
-  avatarUrl:
-    "https://s3.amazonaws.com/keybase_processed_uploads/3c47b62f3d28ecfd821536f69be82905_360_360.jpg",
-  wwwUrl: "https://www.ledger.com/staking",
-  activeStake: 10001001000098,
-  commission: 7,
-  totalScore: 7,
-};
+// export const LEDGER_VALIDATOR_BY_CHORUS_ONE: Validators = {
+//   voteAccount: "CpfvLiiPALdzZTP3fUrALg2TXwEDSAknRh1sn5JCt9Sr",
+//   name: "Ledger by Chorus One",
+//   avatarUrl:
+//     "https://s3.amazonaws.com/keybase_processed_uploads/3c47b62f3d28ecfd821536f69be82905_360_360.jpg",
+//   wwwUrl: "https://www.ledger.com/staking",
+//   activeStake: 10001001000098,
+//   commission: 7,
+//   totalScore: 7,
+// };
 
 export const LEDGER_VALIDATOR_DEFAULT = LEDGER_VALIDATOR_BY_FIGMENT;
 
 // default validator first
 export const LEDGER_VALIDATOR_LIST: Validators[] = [
   LEDGER_VALIDATOR_BY_FIGMENT,
-  LEDGER_VALIDATOR_BY_CHORUS_ONE,
+  // LEDGER_VALIDATOR_BY_CHORUS_ONE,
 ];
 
 export const LEDGER_VALIDATORS_VOTE_ACCOUNTS = LEDGER_VALIDATOR_LIST.map(v => v.voteAccount);
@@ -260,7 +259,7 @@ export function clusterByCurrencyId(currencyId: string): Cluster {
 }
 
 export function profitableValidators(validators: Validators[]) {
-  return validators.filter(v => v.commission < 100);
+  return validators.filter(v => v.commission <= 100);
 }
 
 export function ledgerFirstValidators(validators: Validators[]): Validators[] {

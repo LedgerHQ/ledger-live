@@ -5,9 +5,9 @@ import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index"
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import {
   Transaction,
-  SolanaStakeWithMeta,
-  SolanaAccount,
-} from "@ledgerhq/live-common/families/solana/types";
+  AptosStakeWithMeta,
+  AptosAccount,
+} from "@ledgerhq/live-common/families/aptos/types";
 import { AccountBridge, Operation, Account } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
@@ -30,8 +30,8 @@ import { St, StepId } from "./types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 export type Data = {
-  account: SolanaAccount;
-  stakeWithMeta: SolanaStakeWithMeta;
+  account: AptosAccount;
+  stakeWithMeta: AptosStakeWithMeta;
 };
 
 type OwnProps = {
@@ -50,18 +50,18 @@ type Props = OwnProps & StateProps;
 const steps: Array<St> = [
   {
     id: "validator",
-    label: <Trans i18nKey="solana.delegation.flow.steps.validator.title" />,
+    label: <Trans i18nKey="aptos.delegation.flow.steps.validator.title" />,
     component: StepValidator,
     footer: StepValidatorFooter,
   },
   {
     id: "connectDevice",
-    label: <Trans i18nKey="solana.common.connectDevice.title" />,
+    label: <Trans i18nKey="aptos.common.connectDevice.title" />,
     component: GenericStepConnectDevice,
   },
   {
     id: "confirmation",
-    label: <Trans i18nKey="solana.common.confirmation.title" />,
+    label: <Trans i18nKey="aptos.common.confirmation.title" />,
     component: StepConfirmation,
     footer: StepConfirmationFooter,
   },
@@ -89,19 +89,16 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   } = useBridgeTransaction(() => {
     const { account, stakeWithMeta } = params;
     const { stake } = stakeWithMeta;
-    invariant(account && account.solanaResources, "solana: account and solana resources required");
+    invariant(account && account.aptosResources, "aptos: account and aptos resources required");
     invariant(
       stake.delegation && stake.activation.state === "deactivating",
-      "solana: can reactivate only delegated stake in <deactivating> state",
+      "aptos: can reactivate only delegated stake in <deactivating> state",
     );
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, undefined);
     const transaction = bridge.updateTransaction(bridge.createTransaction(account), {
-      model: {
-        kind: "stake.delegate",
-        uiState: {
-          stakeAccAddr: stake.stakeAccAddr,
-          voteAccAddr: stake.delegation.voteAccAddr,
-        },
+      stake: {
+        op: "add",
+        poolAddr: stake.delegation.voteAccAddr,
       },
     });
     return {
@@ -143,7 +140,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     errorSteps.push(0);
   }
   const stepperProps = {
-    title: t("solana.delegation.reactivate.flow.title"),
+    title: t("aptos.delegation.reactivate.flow.title"),
     device,
     account,
     parentAccount,

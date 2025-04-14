@@ -23,7 +23,7 @@ class DelegationReactivateModal extends PureComponent<Data, State> {
     const isModalLocked = ["connectDevice", "confirmation"].includes(stepId);
     return (
       <Modal
-        name="MODAL_SOLANA_DELEGATION_REACTIVATE"
+        name="MODAL_APTOS_DELEGATION_REACTIVATE"
         centered
         onHide={this.handleReset}
         preventBackdropClick={isModalLocked}

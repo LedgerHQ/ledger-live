@@ -1,8 +1,8 @@
 import {
-  SolanaAccount,
+  AptosAccount,
   Transaction,
   TransactionStatus,
-} from "@ledgerhq/live-common/families/solana/types";
+} from "@ledgerhq/live-common/families/aptos/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Operation } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
@@ -13,7 +13,7 @@ export type StepProps = {
   t: TFunction;
   transitionTo: (a: string) => void;
   device: Device | undefined | null;
-  account: SolanaAccount;
+  account: AptosAccount;
   parentAccount: never;
   onRetry: (a: void) => void;
   onClose: () => void;

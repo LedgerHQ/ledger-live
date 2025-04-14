@@ -21,23 +21,17 @@ export default function StepValidator({
   const updateValidator = ({ address }: { address: string }) => {
     const bridge = getAccountBridge(account);
     onUpdateTransaction(tx => {
-      if (!tx.stakeModel) return;
+      if (!tx.stake) return;
       return bridge.updateTransaction(tx, {
-        stakeModel: {
-          ...tx.stakeModel,
-          uiState: {
-            ...tx.stakeModel.uiState,
-            voteAccAddr: address,
-          },
+        stake: {
+          ...tx.stake,
+          poolAddr: address,
         },
       });
     });
   };
 
-  const chosenVoteAccAddr =
-    transaction.stakeModel?.kind === "stake.delegate"
-      ? transaction.stakeModel?.uiState.voteAccAddr
-      : "";
+  const chosenVoteAccAddr = transaction.stake?.op === "add" ? transaction.stake?.poolAddr : "";
 
   return (
     <Box flow={1}>
