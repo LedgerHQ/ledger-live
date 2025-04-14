@@ -2,7 +2,7 @@ import { Operation, TransactionIntent } from "@ledgerhq/coin-framework/api/types
 import * as LogicFunctions from "../logic";
 import { GetTransactionsOptions } from "../network";
 import { NetworkInfo, XrpAsset } from "../types";
-import { createApi } from "./index";
+import { createApi, TransactionIntentExtra } from "./index";
 
 const mockGetServerInfos = jest.fn().mockResolvedValue({
   info: {
@@ -301,6 +301,32 @@ describe("Testing craftTransaction function", () => {
       expect.any(Object),
       expect.objectContaining({
         fee: DEFAULT_ESTIMATED_FEES,
+      }),
+    );
+  });
+
+  it("should pass memos when user provides it for crafting a transaction", async () => {
+    await api.craftTransaction({
+      memos: [{ data: "testdata", format: "testformat", type: "testtype" }],
+    } as TransactionIntent<XrpAsset, TransactionIntentExtra>);
+
+    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.objectContaining({
+        memos: [{ data: "testdata", format: "testformat", type: "testtype" }],
+      }),
+    );
+  });
+
+  it("should pass destination tag when user provides it for crafting a transaction", async () => {
+    await api.craftTransaction({
+      destinationTag: 1337,
+    } as TransactionIntent<XrpAsset, TransactionIntentExtra>);
+
+    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.objectContaining({
+        destinationTag: 1337,
       }),
     );
   });
