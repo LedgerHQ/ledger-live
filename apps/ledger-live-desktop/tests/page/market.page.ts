@@ -13,7 +13,6 @@ export class MarketPage extends AppPage {
   private buyButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-buy-button`);
   readonly swapButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-swap-button`);
   private stakeButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-stake-button`);
-  private swapButtonOnAsset = this.page.getByTestId("market-coin-swap-button");
 
   @step("Search for $0")
   async search(query: string) {
@@ -70,32 +69,10 @@ export class MarketPage extends AppPage {
     await this.swapButton("btc").waitFor({ state: "attached" }); // swap buttons are displayed few seconds after
   }
 
-  @step("Click on swap button for $0")
-  async startSwapForSelectedTicker(ticker: string) {
-    await this.swapButton(ticker.toLowerCase()).click();
-  }
-
-  @step("Click on swap button on asset")
-  async clickOnSwapButtonOnAsset() {
-    await this.swapButtonOnAsset.click();
-  }
-
-  @step("Wait for search bar to be empty")
-  async waitForSearchBarToBeEmpty() {
-    await this.page.waitForFunction(async () => {
-      return (await this.searchInput?.inputValue()) === "";
-    });
-  }
-
   @step("Start stake flow for $0")
   async startStakeFlowByTicker(ticker: string) {
     await this.stakeButton(ticker).click();
     await this.page.getByText("choose account").waitFor({ state: "visible" });
     await this.page.getByText("Add account").waitFor({ state: "visible" });
-  }
-
-  @step("Click on stake button for $0")
-  async stakeButtonClick(ticker: string) {
-    await this.stakeButton(ticker.toLowerCase()).click();
   }
 }
