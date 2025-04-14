@@ -41,3 +41,14 @@ export function mustUpgrade(appName: string, appVersion: string): boolean {
   }
   return false;
 }
+
+export function getMinVersion(appName: string): string | undefined {
+  if (getEnv("DISABLE_APP_VERSION_REQUIREMENTS")) {
+    return undefined;
+  }
+  // we should convert the app name to camel case and replace spaces with underscores to match the config convention in firebase
+  const minVersion = LiveConfig.getValueByKey(
+    `config_nanoapp_${appName.toLowerCase().replace(/ /g, "_")}`,
+  )?.minVersion;
+  return minVersion ? semver.coerce(minVersion)?.version : undefined;
+}
