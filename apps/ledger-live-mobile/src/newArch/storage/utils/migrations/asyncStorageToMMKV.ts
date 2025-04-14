@@ -1,5 +1,5 @@
 import { log } from "@ledgerhq/logs";
-import type { StorageState } from "~/newArch/storage/types";
+import type { StorageState } from "LLM/storage/types";
 import { STORAGE_TYPE } from "~/newArch/storage/constants";
 import { MIGRATION_STATUS_KEY, MIGRATION_STATUS } from "./constants";
 import mmkvStorage from "~/newArch/storage/mmkvStorageWrapper";
