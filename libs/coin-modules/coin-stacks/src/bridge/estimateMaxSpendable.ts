@@ -70,8 +70,6 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
       anchorMode,
       network,
       publicKey: xpub,
-      fee: "0", // We're estimating the fee
-      nonce: 0,
     });
   } else {
     // Regular STX transfer
