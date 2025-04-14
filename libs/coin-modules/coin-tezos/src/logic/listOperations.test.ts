@@ -50,6 +50,8 @@ describe("listOperations", () => {
     storageFee: 1,
     bakerFee: 2,
     allocationFee: 3,
+    gasLimit: 4,
+    storageLimit: 5,
   };
 
   const undelegate: APIDelegationType = {
@@ -78,6 +80,23 @@ describe("listOperations", () => {
       expect(results.length).toEqual(1);
       expect(results[0].recipients).toEqual([someDestinationAddress]);
       expect(token).toEqual(JSON.stringify(operation.id));
+    },
+  );
+
+  it.each([undelegate, delegate, transfer])(
+    "should return operation with expected details",
+    async operation => {
+      // Given
+      mockNetworkGetTransactions.mockResolvedValue([operation]);
+      // When
+      const [results, _] = await listOperations("any address", options);
+      // Then
+      expect(results.length).toEqual(1);
+      expect(results[0].details).toEqual({
+        counter: 65214462,
+        gasLimit: 4,
+        storageLimit: 5,
+      });
     },
   );
 
