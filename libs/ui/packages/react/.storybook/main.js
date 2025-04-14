@@ -8,10 +8,10 @@ module.exports = {
   staticDirs: ["../src"],
 
   addons: [
-    "@storybook/addon-links",
-    "@storybook/addon-essentials",
-    "@storybook/blocks",
-    "@storybook/addon-interactions",
+    getAbsolutePath("@storybook/addon-links"),
+    getAbsolutePath("@storybook/addon-essentials"),
+    getAbsolutePath("@storybook/addon-webpack5-compiler-babel"),
+    getAbsolutePath("@storybook/addon-interactions"),
   ],
 
   framework: {
