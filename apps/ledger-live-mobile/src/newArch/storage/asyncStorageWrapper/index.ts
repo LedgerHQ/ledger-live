@@ -187,7 +187,7 @@ function getChunks(str: string, size: number): string[] {
   let o = 0;
 
   for (; i < numChunks; ++i, o += size) {
-    chunks[i] = str.substr(o, size);
+    chunks[i] = str.substring(o, o + size);
   }
 
   return chunks;
