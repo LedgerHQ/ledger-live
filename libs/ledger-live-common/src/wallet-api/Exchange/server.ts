@@ -6,6 +6,7 @@ import {
   CryptoCurrency,
   deserializeTransaction,
   ServerError,
+  Transaction,
 } from "@ledgerhq/wallet-api-core";
 import {
   getParentAccount,
@@ -35,7 +36,7 @@ import {
 } from "../converters";
 import { getAccountBridge } from "../../bridge";
 import { Exchange } from "../../exchange/types";
-import { Transaction } from "../../generated/types";
+// import { Transaction } from "../../generated/types";
 import {
   ExchangeError,
   createAccounIdNotFound,
@@ -46,9 +47,8 @@ import {
 export { ExchangeType };
 import { BigNumber } from "bignumber.js";
 import { transactionStrategy } from "../../exchange/swap/types";
-import { filterCurrencies, listAndFilterCurrencies } from "../../platform/helpers";
+import { listAndFilterCurrencies } from "../../platform/helpers";
 import { retrieveSwapPayload } from "../../exchange/swap/api/v5/actions";
-import { CurrencyFilters, listCurrencies } from "../../currencies";
 
 type Handlers = {
   "custom.exchange.start": RPCHandler<
@@ -88,6 +88,13 @@ type ExchangeStartParamsUiRequest =
       exchange: Partial<Exchange>;
     };
 
+type SwapUiRequest = CompleteExchangeUiRequest & {
+  provider?: string;
+  fromAccountId?: string;
+  toAccountId?: string;
+  tokenCurrency?: string;
+};
+
 type ExchangeUiHooks = {
   "custom.exchange.start": (params: {
     exchangeParams: ExchangeStartParamsUiRequest;
@@ -105,7 +112,7 @@ type ExchangeUiHooks = {
     onCancel: () => void;
   }) => void;
   "custom.exchange.swap": (params: {
-    exchangeParams: CompleteExchangeUiRequest;
+    exchangeParams: SwapUiRequest;
     onSuccess: (hash: string) => void;
     onCancel: (error: Error) => void;
   }) => void;
@@ -348,19 +355,37 @@ export const handlers = ({
     "custom.exchange.swap": customWrapper<ExchangeSwapParams, ExchangeCompleteResult>(
       async params => {
         if (!params) {
+          console.log("[LLC Server] No params provided");
           tracking.startExchangeNoParams(manifest);
           return { transactionHash: "" };
         }
+
+        console.log("[LLC Server] Starting with params:", {
+          provider: params.provider,
+          fromAccountId: params.fromAccountId,
+          toAccountId: params.toAccountId,
+          quoteId: params.quoteId,
+        });
 
         const {
           provider,
           fromAccountAddress,
           toAccountAddress,
+          fromAccountCurrency,
+          toAccountCurrency,
           fromAmount,
           fromAmountAtomic,
           quoteId,
           toNewTokenId,
         } = params;
+
+        // const { account: fromAccount, currency: fromCurrency } =
+        //   await this.walletAPIDecorator.retrieveUserAccount(fromAccountId, CustomErrorType.SWAP);
+
+        // const { account: toAccount } = await this.walletAPIDecorator.retrieveUserAccount(
+        //   toAccountId,
+        //   CustomErrorType.SWAP,
+        // );
 
         const trackingParams = {
           // TODO: expect-error to be deleted after
@@ -368,30 +393,48 @@ export const handlers = ({
           exchangeType: params.exchangeType,
         };
 
-        tracking.startExchangeRequested(trackingParams);
+        // tracking.startExchangeRequested(trackingParams);
 
         const exchangeParams: ExchangeStartParamsUiRequest = extractSwapStartParam(
           params,
           accounts,
         );
 
+        console.log("[LLC Server] exchangeParams", exchangeParams);
+
         const startSwapResponse: ExchangeStartResult = await new Promise((resolve, reject) =>
           uiExchangeStart({
             exchangeParams,
             onSuccess: (nonce: string, device) => {
+              console.log("[Swap] Start swap success, got nonce:", nonce);
               tracking.startExchangeSuccess(trackingParams);
               resolve({ transactionId: nonce, device });
             },
             onCancel: error => {
+              console.log("[Swap] Start swap failed:", error);
               tracking.startExchangeFail(trackingParams);
               reject(error);
             },
           }),
         );
 
-        // prepare transaction
+        console.log("[LLC Server] Retrieving swap payload...");
 
-        // Step 2: Ask for payload creation
+        const payloadResponse = await retrieveSwapPayload({
+          provider,
+          deviceTransactionId: startSwapResponse.transactionId,
+          fromAccountAddress,
+          toAccountAddress,
+          fromAccountCurrency,
+          toAccountCurrency,
+          amount: fromAmount,
+          amountInAtomicUnit: fromAmountAtomic,
+          quoteId,
+          toNewTokenId,
+        }).catch((error: Error) => {
+          console.log("[LLC Server] Failed to retrieve payload:", error);
+          throw error;
+        });
 
         const {
           binaryPayload,
@@ -400,22 +443,12 @@ export const handlers = ({
           swapId,
           payinExtraId,
           extraTransactionParameters,
-        } = await retrieveSwapPayload({
-          provider,
-          deviceTransactionId: startSwapResponse.transactionId,
-          fromAccountAddress,
-          toAccountAddress,
-          amount: fromAmount,
-          amountInAtomicUnit: fromAmountAtomic,
-          quoteId,
-          toNewTokenId,
-        }).catch((error: Error) => {
-          // this.handleError({
-          //   error,
-          //   step: StepError.PAYLOAD,
-          //   customErrorType: CustomErrorType.SWAP,
-          // });
-          throw error;
+        } = payloadResponse;
+
+        console.log("[LLC Server] Got payload response:", {
+          hasPayload: !!payloadResponse.binaryPayload,
+          hasSignature: !!payloadResponse.signature,
+          swapId: payloadResponse.swapId,
         });
 
         // Complete Swap
@@ -440,17 +473,17 @@ export const handlers = ({
 
         const fromCurrency = getCurrencyForAccount(fromAccount);
 
-        const transaction = await getStrategy(
-          {
-            recipient: payinAddress,
-            amount: fromAmountAtomic,
-            currency: fromCurrency,
-            customFeeConfig: null,
-            payinExtraId,
-            extraTransactionParameters,
-          },
-          "swap",
-        ).catch(async error => {
+        const strategyData = {
+          recipient: payinAddress,
+          amount: fromAmountAtomic,
+          currency: fromCurrency,
+          customFeeConfig: {},
+          payinExtraId,
+          extraTransactionParameters,
+        };
+        console.log("[LLC Server] strategyData ", strategyData);
+
+        const transaction = await getStrategy(strategyData, "swap").catch(async error => {
           // await this.cancelSwapOnError(
           //   error,
           //   swapId,
@@ -465,53 +498,47 @@ export const handlers = ({
           throw error;
         });
 
+        console.log("[LLC Server] transaction ", transaction);
+
         let exchange: Exchange;
 
-        if (params.exchangeType === "SWAP") {
-          const realToAccountId = getAccountIdFromWalletAccountId(params.toAccountId);
-          if (!realToAccountId) {
-            return Promise.reject(new Error(`accountId ${params.toAccountId} unknown`));
-          }
-
-          const toAccount = accounts.find(a => a.id === realToAccountId);
-
-          if (!toAccount) {
-            throw new ServerError(createAccountNotFound(params.toAccountId));
-          }
-
-          // TODO: check logic for EmptyTokenAccount
-          let toParentAccount = getParentAccount(toAccount, accounts);
-          let newTokenAccount: TokenAccount | undefined;
-          if (params.tokenCurrency) {
-            const currency = findTokenById(params.tokenCurrency);
-            if (!currency) {
-              throw new ServerError(createCurrencyNotFound(params.tokenCurrency));
-            }
-            if (toAccount.type === "Account") {
-              newTokenAccount = makeEmptyTokenAccount(toAccount, currency);
-              toParentAccount = toAccount;
-            } else {
-              newTokenAccount = makeEmptyTokenAccount(toParentAccount, currency);
-            }
-          }
-
-          const toCurrency = await getToCurrency(binaryPayload, toAccount, newTokenAccount);
-
-          exchange = {
-            fromAccount,
-            fromParentAccount,
-            fromCurrency: getCurrencyForAccount(fromAccount),
-            toAccount: newTokenAccount ? newTokenAccount : toAccount,
-            toParentAccount,
-            toCurrency,
-          };
-        } else {
-          exchange = {
-            fromAccount,
-            fromParentAccount,
-            fromCurrency: getCurrencyForAccount(fromAccount),
-          };
+        const realToAccountId = getAccountIdFromWalletAccountId(params.toAccountId);
+        if (!realToAccountId) {
+          return Promise.reject(new Error(`accountId ${params.toAccountId} unknown`));
         }
+
+        const toAccount = accounts.find(a => a.id === realToAccountId);
+
+        if (!toAccount) {
+          throw new ServerError(createAccountNotFound(params.toAccountId));
+        }
+
+        // TODO: check logic for EmptyTokenAccount
+        let toParentAccount = getParentAccount(toAccount, accounts);
+        let newTokenAccount: TokenAccount | undefined;
+        if (params.tokenCurrency) {
+          const currency = findTokenById(params.tokenCurrency);
+          if (!currency) {
+            throw new ServerError(createCurrencyNotFound(params.tokenCurrency));
+          }
+          if (toAccount.type === "Account") {
+            newTokenAccount = makeEmptyTokenAccount(toAccount, currency);
+            toParentAccount = toAccount;
+          } else {
+            newTokenAccount = makeEmptyTokenAccount(toParentAccount, currency);
+          }
+        }
+
+        const toCurrency = await getToCurrency(binaryPayload, toAccount, newTokenAccount);
+
+        exchange = {
+          fromAccount,
+          fromParentAccount,
+          fromCurrency: getCurrencyForAccount(fromAccount),
+          toAccount: newTokenAccount ? newTokenAccount : toAccount,
+          toParentAccount,
+          toCurrency,
+        };
 
         const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
         const mainFromAccountFamily = mainFromAccount.currency.family;
@@ -570,7 +597,10 @@ export const handlers = ({
         return new Promise((resolve, reject) =>
           uiSwap({
             exchangeParams: {
-              exchangeType: ExchangeType[params.exchangeType],
+              fromAccountId: fromAccount.id,
+              toAccountId: toAccount.id,
+              tokenCurrency: params.tokenCurrency,
+              exchangeType: ExchangeType.SWAP,
               provider: params.provider,
               transaction: tx,
               signature: signature,
@@ -727,9 +757,12 @@ async function getStrategy(
   }
 
   // TODO: remove next line when wallet-api support btc utxoStrategy
-  delete customFeeConfig.utxoStrategy;
+  if (customFeeConfig) {
+    delete customFeeConfig.utxoStrategy;
+  }
 
-  const strategy = transactionStrategy[family];
+  const familyKey = (family as any) === "evm" ? "ethereum" : family;
+  const strategy = transactionStrategy[familyKey];
 
   if (!strategy) {
     throw new Error(`No strategy found for family: ${family}`);

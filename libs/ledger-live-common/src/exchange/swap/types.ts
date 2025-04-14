@@ -344,6 +344,8 @@ export type SwapPayloadRequestData = {
   deviceTransactionId: string;
   fromAccountAddress: string;
   toAccountAddress: string;
+  fromAccountCurrency: string;
+  toAccountCurrency: string;
   amount: string;
   amountInAtomicUnit: number;
   quoteId?: string;

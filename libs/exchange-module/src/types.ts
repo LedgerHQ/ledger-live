@@ -31,8 +31,9 @@ export type ExchangeStartSwapParams = {
 
 export type ExchangeSwapParams = ExchangeStartSwapParams & {
   fromAccountAddress: string;
-  fromCurrency: string;
   toAccountAddress: string;
+  fromAccountCurrency: string;
+  toAccountCurrency: string;
   fromAmount: string;
   fromAmountAtomic: number;
   quoteId?: string;

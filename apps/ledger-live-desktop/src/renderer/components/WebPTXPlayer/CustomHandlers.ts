@@ -84,13 +84,33 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
             return Promise.resolve();
           },
           "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
+            console.log("[LLC] custom handlars exchangeParams", exchangeParams);
             dispatch(
               openExchangeDrawer({
                 type: "EXCHANGE_START",
-                ...exchangeParams,
-                exchangeType: ExchangeType[exchangeParams.exchangeType],
+                exchangeType: ExchangeType.SWAP,
+
+                // fromAccountId?: string;
+                // toAccountId?: string;
+                // tokenCurrency?: string;
+                provider: exchangeParams.provider,
+                fromAccountId: exchangeParams.fromAccountId,
                 onResult: result => {
-                  onSuccess(result.nonce, result.device);
+                  // onSuccess(result.nonce, result.device);
+
+                  dispatch(
+                    openExchangeDrawer({
+                      type: "EXCHANGE_COMPLETE",
+                      ...exchangeParams,
+                      onResult: (operation: Operation) => {
+                        onSuccess(operation.hash);
+                      },
+                      onCancel: (error: Error) => {
+                        console.error(error);
+                        onCancel(error);
+                      },
+                    }),
+                  );
                 },
                 onCancel: cancelResult => {
                   onCancel(cancelResult.error, cancelResult.device);

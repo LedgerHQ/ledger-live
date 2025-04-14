@@ -12,18 +12,25 @@ export async function retrieveSwapPayload(
   data: SwapPayloadRequestData,
 ): Promise<SwapPayloadResponse> {
   const SWAP_API_BASE = getSwapAPIBaseURL();
+
+  const swapAxiosClient = axios.create({
+    baseURL: SWAP_API_BASE,
+  });
+
   const request = {
     provider: data.provider,
     deviceTransactionId: data.deviceTransactionId,
-    from: data.fromAccountAddress,
-    to: data.toNewTokenId || data.toAccountAddress,
+    from: data.fromAccountCurrency,
+    to: data.toNewTokenId || data.toAccountCurrency,
     address: data.toAccountAddress,
     refundAddress: data.fromAccountAddress,
     amountFrom: data.amount,
     amountFromInSmallestDenomination: Number(data.amountInAtomicUnit),
     rateId: data.quoteId,
   };
-  const res = await axios.post(`${SWAP_API_BASE}/`, request);
+
+  console.log("SWAP PAYLOAD REQUEST", request);
+  const res = await swapAxiosClient.post(`${SWAP_API_BASE}/swap`, request);
 
   return parseSwapBackendInfo(res.data);
 }
