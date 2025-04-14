@@ -31,7 +31,7 @@ type XrplTransaction = {
   Memos?: MemoWrapper[];
 };
 
-type MemoInput = {
+export type MemoInput = {
   data?: string;
   format?: string;
   type?: string;

@@ -1,20 +1,14 @@
 import { AppPage } from "tests/page/abstractClasses";
 import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
-import axios from "axios";
 
 export class SettingsPage extends AppPage {
-  private manageLedgerSyncButton = this.page.getByRole("button", { name: "Manage" });
-  private clearCacheButton = this.page.getByRole("button", { name: "Clear" });
-  private confirmButton = this.page.getByRole("button", { name: "Confirm" });
   private accountsTab = this.page.getByTestId("settings-accounts-tab");
   private aboutTab = this.page.getByTestId("settings-about-tab");
   private helpTab = this.page.getByTestId("settings-help-tab");
   readonly experimentalTab = this.page.getByTestId("settings-experimental-tab");
   private developerTab = this.page.getByTestId("settings-developer-tab");
   private experimentalDevModeToggle = this.page.getByTestId("MANAGER_DEV_MODE-button");
-  private ledgerSupport = this.page.getByTestId("ledgerSupport-link");
-  private resetAppButton = this.page.getByTestId("reset-button");
 
   readonly counterValueSelector = this.page.locator(
     "[data-testid='setting-countervalue-dropDown'] .select__value-container",
@@ -30,7 +24,6 @@ export class SettingsPage extends AppPage {
   private themeChoiceLight = this.page.locator("text='Clair'");
   private versionRow = this.page.getByTestId("version-row");
   private deviceLanguagesDrawer = this.page.getByTestId("device-language-installation-container");
-  private hideEmptyTokenAccountsToggle = this.page.getByTestId("hideEmptyTokenAccounts");
   readonly openLocalManifestFormButton = this.page.getByTestId("settings-open-local-manifest-form");
   readonly exportLocalManifestButton = this.page.getByTestId("settings-export-local-manifest");
   readonly createLocalManifestButton = this.page.getByTestId("create-local-manifest");
@@ -95,42 +88,5 @@ export class SettingsPage extends AppPage {
       await this.versionRow.click();
     }
     await this.developerTab.click();
-  }
-
-  @step("Click 'Hide Empty Token Accounts' toggle")
-  async clickHideEmptyTokenAccountsToggle() {
-    await this.hideEmptyTokenAccountsToggle.click();
-  }
-
-  @step("Open Ledger Sync Manager")
-  async openManageLedgerSync() {
-    await this.manageLedgerSyncButton.click();
-  }
-
-  @step("Clear cache")
-  async clearCache() {
-    await this.clearCacheButton.click();
-    await this.confirmButton.click();
-  }
-
-  @step("expect Ledger Support URL to be correct")
-  async expectLedgerSupportUrlToBeCorrect() {
-    expect(this.ledgerSupport).toBeVisible();
-    const url = await this.ledgerSupport.getAttribute("href");
-    if (!url) {
-      throw new Error("The href attribute is missing or null");
-    }
-    try {
-      const response = await axios.get(url);
-      expect(response.status).toBe(200);
-    } catch (error) {
-      throw new Error(`Failed to fetch URL ${url}`);
-    }
-    expect(url).toBe("https://support.ledger.com");
-  }
-
-  @step("Reset App")
-  async resetApp() {
-    await this.resetAppButton.click();
   }
 }

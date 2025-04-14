@@ -98,5 +98,10 @@ function convertOperation(
     value: BigInt(amount),
     senders: senders,
     recipients: recipients,
+    details: {
+      counter: operation.counter,
+      gasLimit: operation.gasLimit,
+      storageLimit: operation.storageLimit,
+    },
   };
 }

@@ -11,11 +11,6 @@ test.use({ userdata: "skip-onboarding" });
 
 const currencies = ["BTC", "LTC", "ETH", "ATOM", "XTZ", "XRP", "Tron", "ADA", "DOT"];
 
-//@TmsLink("B2CQA-101")
-//@TmsLink("B2CQA-102")
-//@TmsLink("B2CQA-314")
-//@TmsLink("B2CQA-330")
-//@TmsLink("B2CQA-929")
 test.describe.parallel("Accounts @smoke", () => {
   for (const currency of currencies) {
     let firstAccountName = "NO ACCOUNT NAME YET";
