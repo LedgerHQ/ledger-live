@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect, useMemo, forwardRef } from "react";
 import { useSelector } from "react-redux";
-import { ActivityIndicator, Linking, StyleSheet, View } from "react-native";
+import VersionNumber from "react-native-version-number";
+import { ActivityIndicator, Linking, Platform, StyleSheet, View } from "react-native";
 import { WebView as RNWebView, WebViewMessageEvent } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
 import { JSONRPCRequest } from "json-rpc-2.0";
@@ -49,6 +50,8 @@ import { useWebviewState } from "./helpers";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
 import { walletSelector } from "~/reducers/wallet";
 import { WebViewOpenWindowEvent } from "react-native-webview/lib/WebViewTypes";
+
+const APPLICATION_NAME = `ledgerlivemobile/${VersionNumber.appVersion} llm-${Platform.OS}/${VersionNumber.appVersion}`;
 
 function renderLoading() {
   return (
@@ -536,6 +539,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         style={styles.webview}
         javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}
         webviewDebuggingEnabled={__DEV__}
+        applicationNameForUserAgent={APPLICATION_NAME}
         {...webviewProps}
       />
     );

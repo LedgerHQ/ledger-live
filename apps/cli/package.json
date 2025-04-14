@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "24.15.0",
+  "version": "24.16.0",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -67,9 +67,9 @@
     "rxjs": "7.8.1",
     "winston": "3.13.0",
     "ws": "8.17.1",
-    "bigint-buffer":  "*",
-    "buffer-to-arraybuffer":  "*",
-    "usb" : "*",
+    "bigint-buffer": "*",
+    "buffer-to-arraybuffer": "*",
+    "usb": "*",
     "node-hid": "2.1.2"
   },
   "devDependencies": {

@@ -1,4 +1,164 @@
-## 34.25.0
+# @ledgerhq/live-common
+
+## 34.29.0
+
+### Minor Changes
+
+- [#9460](https://github.com/LedgerHQ/ledger-live/pull/9460) [`4437621`](https://github.com/LedgerHQ/ledger-live/commit/4437621cc36eb41c4e31eb68fcc5b474e1c2c24f) Thanks [@lewisd5](https://github.com/lewisd5)! - Bundling of Ledger Live CLI
+
+- [#9704](https://github.com/LedgerHQ/ledger-live/pull/9704) [`df3d9f2`](https://github.com/LedgerHQ/ledger-live/commit/df3d9f2b219de69cd258be4eb5e297ab66bae204) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Feature flag: default value of deviceInitialApps aligned with prod
+
+- [#9720](https://github.com/LedgerHQ/ledger-live/pull/9720) [`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove generated formatters file
+
+- [#9597](https://github.com/LedgerHQ/ledger-live/pull/9597) [`1e7d454`](https://github.com/LedgerHQ/ledger-live/commit/1e7d454d99f1f39880f39a120c59020725d26475) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - isAccountEmpty is now defined in each coin needed a dedicated logic.
+
+- [#9676](https://github.com/LedgerHQ/ledger-live/pull/9676) [`91aedae`](https://github.com/LedgerHQ/ledger-live/commit/91aedae036802adac794ae1969511fa2ab440d59) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Auto-generate staking entry points and flows from redirects configuration on stakePrograms firebase feature flag. Add utils in common library to append params to any manifest url - use these in mobile to fix missing query params in custom dapp URL.
+
+- [#9648](https://github.com/LedgerHQ/ledger-live/pull/9648) [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove SubAccount as it is an alias to TokenAccount
+
+- [#9698](https://github.com/LedgerHQ/ledger-live/pull/9698) [`3e478f1`](https://github.com/LedgerHQ/ledger-live/commit/3e478f1e6c8e8a7b72673527f4036d751315fdee) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove generated/operation.ts file
+
+### Patch Changes
+
+- Updated dependencies [[`44ae74c`](https://github.com/LedgerHQ/ledger-live/commit/44ae74c272ba803bed7c9f4fc3351e3ce8a15531), [`8880165`](https://github.com/LedgerHQ/ledger-live/commit/8880165779966b23fdfb117c2ffe912ec15d0dc2), [`71bb6a9`](https://github.com/LedgerHQ/ledger-live/commit/71bb6a9adb4ac83172be5def5b25d2836380df1d), [`f96109e`](https://github.com/LedgerHQ/ledger-live/commit/f96109e820cbd817839a5449577211e3732d1ccf), [`6c7fd10`](https://github.com/LedgerHQ/ledger-live/commit/6c7fd10264bd50de88c75827d28a7a4692e1e880), [`8ce7b0a`](https://github.com/LedgerHQ/ledger-live/commit/8ce7b0ab2d1d73ef071102f795e7c868c676b1f4), [`f1f4706`](https://github.com/LedgerHQ/ledger-live/commit/f1f47060490f483a69e32b18ee4edd0c8cb8eabb), [`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8), [`e40f87b`](https://github.com/LedgerHQ/ledger-live/commit/e40f87b233c43d3ce297a6a8ee47b680174f5148), [`1e7d454`](https://github.com/LedgerHQ/ledger-live/commit/1e7d454d99f1f39880f39a120c59020725d26475), [`6116909`](https://github.com/LedgerHQ/ledger-live/commit/61169099ce63dfa73e52065327ca3c889c315cb8), [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca), [`a7b1969`](https://github.com/LedgerHQ/ledger-live/commit/a7b19697ff6d4db1e5da365a02db91498a17332c), [`3ef0a3e`](https://github.com/LedgerHQ/ledger-live/commit/3ef0a3e29eb2a1cb0b2c9b01cc5dd97af6d0a894), [`32d46cc`](https://github.com/LedgerHQ/ledger-live/commit/32d46cc77debe059ae0bcd848a21065dec7ee091), [`b9defcd`](https://github.com/LedgerHQ/ledger-live/commit/b9defcdcb44c6be2c141801a4e0dd27e72f83024), [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f)]:
+  - @ledgerhq/coin-framework@2.6.0
+  - @ledgerhq/live-nft@0.8.0
+  - @ledgerhq/coin-cosmos@0.12.0
+  - @ledgerhq/coin-stellar@2.2.0
+  - @ledgerhq/coin-tezos@2.2.0
+  - @ledgerhq/coin-tron@0.8.0
+  - @ledgerhq/coin-xrp@3.2.0
+  - @ledgerhq/coin-solana@0.18.0
+  - @ledgerhq/coin-multiversx@0.4.0
+  - @ledgerhq/coin-algorand@0.9.0
+  - @ledgerhq/coin-polkadot@3.2.0
+  - @ledgerhq/coin-bitcoin@0.15.0
+  - @ledgerhq/coin-vechain@2.7.0
+  - @ledgerhq/coin-aptos@1.9.0
+  - @ledgerhq/coin-evm@2.17.0
+  - @ledgerhq/coin-internet_computer@1.7.0
+  - @ledgerhq/hw-app-multiversx@6.24.0
+  - @ledgerhq/hw-app-algorand@6.31.0
+  - @ledgerhq/hw-app-exchange@0.10.0
+  - @ledgerhq/hw-app-polkadot@6.34.0
+  - @ledgerhq/hw-app-cosmos@6.32.0
+  - @ledgerhq/hw-app-hedera@1.2.0
+  - @ledgerhq/hw-app-solana@7.4.0
+  - @ledgerhq/hw-app-aptos@6.34.0
+  - @ledgerhq/hw-app-tezos@6.31.0
+  - @ledgerhq/hw-app-icon@1.3.0
+  - @ledgerhq/hw-app-near@6.31.0
+  - @ledgerhq/hw-app-btc@10.8.0
+  - @ledgerhq/hw-app-eth@6.45.0
+  - @ledgerhq/hw-app-str@7.2.0
+  - @ledgerhq/hw-app-trx@6.31.0
+  - @ledgerhq/hw-app-vet@0.5.0
+  - @ledgerhq/hw-app-xrp@6.31.0
+  - @ledgerhq/coin-filecoin@1.9.0
+  - @ledgerhq/coin-cardano@0.8.0
+  - @ledgerhq/coin-casper@1.6.0
+  - @ledgerhq/coin-hedera@1.6.0
+  - @ledgerhq/coin-stacks@0.8.0
+  - @ledgerhq/coin-icon@0.10.0
+  - @ledgerhq/coin-near@0.11.0
+  - @ledgerhq/coin-ton@0.8.0
+  - @ledgerhq/speculos-transport@0.2.0
+  - @ledgerhq/live-countervalues@0.5.0
+  - @ledgerhq/live-env@2.8.0
+  - @ledgerhq/coin-sui@0.2.1
+  - @ledgerhq/live-countervalues-react@0.2.29
+  - @ledgerhq/live-wallet@0.10.3
+  - @ledgerhq/device-core@0.4.20
+  - @ledgerhq/live-signer-evm@0.2.4
+  - @ledgerhq/ledger-cal-service@0.4.2
+  - @ledgerhq/ledger-trust-service@0.3.2
+  - @ledgerhq/cryptoassets@13.14.1
+  - @ledgerhq/live-network@2.0.7
+
+## 34.29.0-next.0
+
+### Minor Changes
+
+- [#9460](https://github.com/LedgerHQ/ledger-live/pull/9460) [`4437621`](https://github.com/LedgerHQ/ledger-live/commit/4437621cc36eb41c4e31eb68fcc5b474e1c2c24f) Thanks [@lewisd5](https://github.com/lewisd5)! - Bundling of Ledger Live CLI
+
+- [#9704](https://github.com/LedgerHQ/ledger-live/pull/9704) [`df3d9f2`](https://github.com/LedgerHQ/ledger-live/commit/df3d9f2b219de69cd258be4eb5e297ab66bae204) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Feature flag: default value of deviceInitialApps aligned with prod
+
+- [#9720](https://github.com/LedgerHQ/ledger-live/pull/9720) [`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove generated formatters file
+
+- [#9597](https://github.com/LedgerHQ/ledger-live/pull/9597) [`1e7d454`](https://github.com/LedgerHQ/ledger-live/commit/1e7d454d99f1f39880f39a120c59020725d26475) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - isAccountEmpty is now defined in each coin needed a dedicated logic.
+
+- [#9676](https://github.com/LedgerHQ/ledger-live/pull/9676) [`91aedae`](https://github.com/LedgerHQ/ledger-live/commit/91aedae036802adac794ae1969511fa2ab440d59) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Auto-generate staking entry points and flows from redirects configuration on stakePrograms firebase feature flag. Add utils in common library to append params to any manifest url - use these in mobile to fix missing query params in custom dapp URL.
+
+- [#9648](https://github.com/LedgerHQ/ledger-live/pull/9648) [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove SubAccount as it is an alias to TokenAccount
+
+- [#9698](https://github.com/LedgerHQ/ledger-live/pull/9698) [`3e478f1`](https://github.com/LedgerHQ/ledger-live/commit/3e478f1e6c8e8a7b72673527f4036d751315fdee) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove generated/operation.ts file
+
+### Patch Changes
+
+- Updated dependencies [[`44ae74c`](https://github.com/LedgerHQ/ledger-live/commit/44ae74c272ba803bed7c9f4fc3351e3ce8a15531), [`8880165`](https://github.com/LedgerHQ/ledger-live/commit/8880165779966b23fdfb117c2ffe912ec15d0dc2), [`71bb6a9`](https://github.com/LedgerHQ/ledger-live/commit/71bb6a9adb4ac83172be5def5b25d2836380df1d), [`f96109e`](https://github.com/LedgerHQ/ledger-live/commit/f96109e820cbd817839a5449577211e3732d1ccf), [`6c7fd10`](https://github.com/LedgerHQ/ledger-live/commit/6c7fd10264bd50de88c75827d28a7a4692e1e880), [`8ce7b0a`](https://github.com/LedgerHQ/ledger-live/commit/8ce7b0ab2d1d73ef071102f795e7c868c676b1f4), [`f1f4706`](https://github.com/LedgerHQ/ledger-live/commit/f1f47060490f483a69e32b18ee4edd0c8cb8eabb), [`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8), [`e40f87b`](https://github.com/LedgerHQ/ledger-live/commit/e40f87b233c43d3ce297a6a8ee47b680174f5148), [`1e7d454`](https://github.com/LedgerHQ/ledger-live/commit/1e7d454d99f1f39880f39a120c59020725d26475), [`6116909`](https://github.com/LedgerHQ/ledger-live/commit/61169099ce63dfa73e52065327ca3c889c315cb8), [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca), [`a7b1969`](https://github.com/LedgerHQ/ledger-live/commit/a7b19697ff6d4db1e5da365a02db91498a17332c), [`3ef0a3e`](https://github.com/LedgerHQ/ledger-live/commit/3ef0a3e29eb2a1cb0b2c9b01cc5dd97af6d0a894), [`32d46cc`](https://github.com/LedgerHQ/ledger-live/commit/32d46cc77debe059ae0bcd848a21065dec7ee091), [`b9defcd`](https://github.com/LedgerHQ/ledger-live/commit/b9defcdcb44c6be2c141801a4e0dd27e72f83024), [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f)]:
+  - @ledgerhq/coin-framework@2.6.0-next.0
+  - @ledgerhq/live-nft@0.8.0-next.0
+  - @ledgerhq/coin-cosmos@0.12.0-next.0
+  - @ledgerhq/coin-stellar@2.2.0-next.0
+  - @ledgerhq/coin-tezos@2.2.0-next.0
+  - @ledgerhq/coin-tron@0.8.0-next.0
+  - @ledgerhq/coin-xrp@3.2.0-next.0
+  - @ledgerhq/coin-solana@0.18.0-next.0
+  - @ledgerhq/coin-multiversx@0.4.0-next.0
+  - @ledgerhq/coin-algorand@0.9.0-next.0
+  - @ledgerhq/coin-polkadot@3.2.0-next.0
+  - @ledgerhq/coin-bitcoin@0.15.0-next.0
+  - @ledgerhq/coin-vechain@2.7.0-next.0
+  - @ledgerhq/coin-aptos@1.9.0-next.0
+  - @ledgerhq/coin-evm@2.16.0-next.0
+  - @ledgerhq/coin-internet_computer@1.7.0-next.0
+  - @ledgerhq/hw-app-multiversx@6.24.0-next.0
+  - @ledgerhq/hw-app-algorand@6.31.0-next.0
+  - @ledgerhq/hw-app-exchange@0.10.0-next.0
+  - @ledgerhq/hw-app-polkadot@6.34.0-next.0
+  - @ledgerhq/hw-app-cosmos@6.32.0-next.0
+  - @ledgerhq/hw-app-hedera@1.2.0-next.0
+  - @ledgerhq/hw-app-solana@7.4.0-next.0
+  - @ledgerhq/hw-app-aptos@6.34.0-next.0
+  - @ledgerhq/hw-app-tezos@6.31.0-next.0
+  - @ledgerhq/hw-app-icon@1.3.0-next.0
+  - @ledgerhq/hw-app-near@6.31.0-next.0
+  - @ledgerhq/hw-app-btc@10.8.0-next.0
+  - @ledgerhq/hw-app-eth@6.45.0-next.0
+  - @ledgerhq/hw-app-str@7.2.0-next.0
+  - @ledgerhq/hw-app-trx@6.31.0-next.0
+  - @ledgerhq/hw-app-vet@0.5.0-next.0
+  - @ledgerhq/hw-app-xrp@6.31.0-next.0
+  - @ledgerhq/coin-filecoin@1.9.0-next.0
+  - @ledgerhq/coin-cardano@0.8.0-next.0
+  - @ledgerhq/coin-casper@1.6.0-next.0
+  - @ledgerhq/coin-hedera@1.6.0-next.0
+  - @ledgerhq/coin-stacks@0.8.0-next.0
+  - @ledgerhq/coin-icon@0.10.0-next.0
+  - @ledgerhq/coin-near@0.11.0-next.0
+  - @ledgerhq/coin-ton@0.8.0-next.0
+  - @ledgerhq/speculos-transport@0.2.0-next.0
+  - @ledgerhq/live-countervalues@0.5.0-next.0
+  - @ledgerhq/live-env@2.8.0-next.0
+  - @ledgerhq/coin-sui@0.2.1-next.0
+  - @ledgerhq/live-countervalues-react@0.2.29-next.0
+  - @ledgerhq/live-wallet@0.10.3-next.0
+  - @ledgerhq/device-core@0.4.20-next.0
+  - @ledgerhq/live-signer-evm@0.2.3-next.0
+  - @ledgerhq/ledger-cal-service@0.4.2-next.0
+  - @ledgerhq/ledger-trust-service@0.3.2-next.0
+  - @ledgerhq/cryptoassets@13.14.1-next.0
+  - @ledgerhq/live-network@2.0.7-next.0
+
+## 34.28.1
+
+### Patch Changes
+
+- [#9750](https://github.com/LedgerHQ/ledger-live/pull/9750) [`dbb38d2`](https://github.com/LedgerHQ/ledger-live/commit/dbb38d250d2a4df34c2caa65e9d1174f0f018c63) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Auto-generate staking entry points and flows from redirects configuration on stakePrograms firebase feature flag. Add utils in common library to append params to any manifest url - use these in mobile to fix missing query params in custom dapp URL.
+
+- Updated dependencies [[`3cf359d`](https://github.com/LedgerHQ/ledger-live/commit/3cf359d6f62d6993975f4ab7e643fabdeed0100e)]:
+  - @ledgerhq/coin-evm@2.16.0
+  - @ledgerhq/live-signer-evm@0.3.0
 
 ## 34.28.0
 
