@@ -34,7 +34,7 @@ const deviceStorage = {
   },
 
   async getString(key: string): Promise<string | null> {
-    const value = await AsyncStorage.getItem(key);
+    const value = await getCompressedString(key);
     return value;
   },
 
@@ -60,7 +60,8 @@ const deviceStorage = {
   },
 
   saveString(key: string, value: string) {
-    return AsyncStorage.setItem(key, value);
+    const chunks = chunkStringPair(key, value);
+    return AsyncStorage.multiSet(chunks);
   },
 
   /**
@@ -153,6 +154,21 @@ function stringifyPairs<T>(pairs: [string, T][]): [string, string][] {
   }, []);
 }
 
+function chunkStringPair(key: string, value: string): [string, string][] {
+  const data = value;
+
+  if (data.length > CHUNK_SIZE) {
+    const chunks = getChunks(data, CHUNK_SIZE);
+    const numberOfChunks = chunks.length;
+    return [
+      [key, CHUNKED_KEY + numberOfChunks],
+      ...chunks.map<[string, string]>((chunk, index) => [key + CHUNKED_KEY + index, chunk]),
+    ];
+  }
+
+  return [[key, data]];
+}
+
 function getChunks(str: string, size: number): string[] {
   const strLength = str.length;
   const numChunks = Math.ceil(strLength / size);
@@ -200,8 +216,33 @@ async function getCompressedValue<T = unknown>(
   }
 }
 
+async function getCompressedString(key: string): Promise<string | null> {
+  try {
+    const value = await AsyncStorage.getItem(key);
+
+    if (value !== null && value.includes(CHUNKED_KEY)) {
+      const numberOfChunk = Number(value.replace(CHUNKED_KEY, ""));
+      const keys = Array.from({ length: numberOfChunk }, (_, i) => key + CHUNKED_KEY + i);
+      const values: KeyValuePair[] = [];
+
+      // multiget will failed when you got keys with a tons of data
+      // it crash with 13 CHUNKS of 1MB string so we had splice it.
+      while (keys.length) {
+        const chunks = await AsyncStorage.multiGet(keys.splice(0, 5));
+        values.push(...chunks);
+      }
+
+      return values.reduce((acc, current) => acc + current[1], "");
+    }
+
+    return value;
+  } catch (e) {
+    return null;
+  }
+}
+
 /** CHUNKED_KEY is used to identify chunked data in AsyncStorage. */
-const CHUNKED_KEY = "_-_CHUNKED";
+export const CHUNKED_KEY = "_-_CHUNKED";
 
 /** CHUNK_SIZE is the maximum size of a chunk in chars. */
-const CHUNK_SIZE = 1000000;
+export const CHUNK_SIZE = 1000000;
