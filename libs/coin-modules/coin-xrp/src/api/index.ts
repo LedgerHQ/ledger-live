@@ -15,6 +15,7 @@ import {
   getNextValidSequence,
   lastBlock,
   listOperations,
+  MemoInput,
 } from "../logic";
 import { ListOperationsOptions, XrpAsset } from "../types";
 
@@ -32,8 +33,13 @@ export function createApi(config: XrpConfig): Api<XrpAsset> {
   };
 }
 
+export type TransactionIntentExtra = {
+  destinationTag?: number | null | undefined;
+  memos?: MemoInput[];
+};
+
 async function craft(
-  transactionIntent: TransactionIntent<XrpAsset>,
+  transactionIntent: TransactionIntent<XrpAsset, TransactionIntentExtra>,
   customFees?: bigint,
 ): Promise<string> {
   const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
@@ -44,6 +50,8 @@ async function craft(
       recipient: transactionIntent.recipient,
       amount: transactionIntent.amount,
       fee: estimatedFees,
+      destinationTag: transactionIntent.destinationTag,
+      memos: transactionIntent.memos ?? [],
     },
   );
   return tx.serializedTransaction;
