@@ -69,36 +69,38 @@ describe("listOperations", () => {
     target: { address: someDestinationAddress },
   };
 
-  it.each([undelegate, delegate, transfer])(
-    "should return operation with proper recipient list ($type)",
-    async operation => {
-      // Given
-      mockNetworkGetTransactions.mockResolvedValue([operation]);
-      // When
-      const [results, token] = await listOperations("any address", options);
-      // Then
-      expect(results.length).toEqual(1);
-      expect(results[0].recipients).toEqual([someDestinationAddress]);
-      expect(token).toEqual(JSON.stringify(operation.id));
-    },
-  );
+  it.each([
+    ["undelegate", undelegate],
+    ["delegate", delegate],
+    ["transfer", transfer],
+  ])("should return %s operation with proper recipient list", async (_label, operation) => {
+    // Given
+    mockNetworkGetTransactions.mockResolvedValue([operation]);
+    // When
+    const [results, token] = await listOperations("any address", options);
+    // Then
+    expect(results.length).toEqual(1);
+    expect(results[0].recipients).toEqual([someDestinationAddress]);
+    expect(token).toEqual(JSON.stringify(operation.id));
+  });
 
-  it.each([undelegate, delegate, transfer])(
-    "should return operation with expected details ($type)",
-    async operation => {
-      // Given
-      mockNetworkGetTransactions.mockResolvedValue([operation]);
-      // When
-      const [results, _] = await listOperations("any address", options);
-      // Then
-      expect(results.length).toEqual(1);
-      expect(results[0].details).toEqual({
-        counter: 65214462,
-        gasLimit: 4,
-        storageLimit: 5,
-      });
-    },
-  );
+  it.each([
+    ["undelegate", undelegate],
+    ["delegate", delegate],
+    ["transfer", transfer],
+  ])("should return %s operation with expected details", async (_label, operation) => {
+    // Given
+    mockNetworkGetTransactions.mockResolvedValue([operation]);
+    // When
+    const [results, _] = await listOperations("any address", options);
+    // Then
+    expect(results.length).toEqual(1);
+    expect(results[0].details).toEqual({
+      counter: 65214462,
+      gasLimit: 4,
+      storageLimit: 5,
+    });
+  });
 
   it.each([
     { ...undelegate, newDelegate: null, prevDelegate: null },
