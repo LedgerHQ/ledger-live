@@ -68,6 +68,7 @@ const fromTransactionPayloadRaw = (payload: TonPayloadFormatRaw): TonPayloadForm
         customPayload: payload.customPayload ? Cell.fromBase64(payload.customPayload) : null,
       };
     case "add-whitelist":
+    case "single-nominator-change-validator":
       return {
         type: payload.type,
         queryId: payload.queryId ? BigInt(payload.queryId) : null,
@@ -78,12 +79,6 @@ const fromTransactionPayloadRaw = (payload: TonPayloadFormatRaw): TonPayloadForm
         type: payload.type,
         queryId: payload.queryId ? BigInt(payload.queryId) : null,
         amount: BigInt(payload.amount),
-      };
-    case "single-nominator-change-validator":
-      return {
-        type: payload.type,
-        queryId: payload.queryId ? BigInt(payload.queryId) : null,
-        address: Address.parse(payload.address),
       };
     case "tonstakers-deposit":
       return {
@@ -195,6 +190,7 @@ const toTransactionPayloadRaw = (payload: TonPayloadFormat): TonPayloadFormatRaw
               : null,
       };
     case "add-whitelist":
+    case "single-nominator-change-validator":
       return {
         type: payload.type,
         queryId: payload.queryId ? payload.queryId.toString() : null,
@@ -205,12 +201,6 @@ const toTransactionPayloadRaw = (payload: TonPayloadFormat): TonPayloadFormatRaw
         type: payload.type,
         queryId: payload.queryId ? payload.queryId.toString() : null,
         amount: payload.amount.toString(),
-      };
-    case "single-nominator-change-validator":
-      return {
-        type: payload.type,
-        queryId: payload.queryId ? payload.queryId.toString() : null,
-        address: payload.address.toRawString(),
       };
     case "tonstakers-deposit":
       return {
