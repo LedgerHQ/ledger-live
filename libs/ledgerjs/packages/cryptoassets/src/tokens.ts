@@ -527,10 +527,14 @@ export function convertJettonToken([address, name, ticker, magnitude, delisted]:
   };
 }
 
-
-export function convertStacksSip010Token([address, name, ticker, decimals, delisted]: StacksSip010Token):
-  | TokenCurrency
-  | undefined {
+export function convertStacksSip010Token([
+  address,
+  name,
+  displayName,
+  ticker,
+  decimals,
+  delisted,
+]: StacksSip010Token): TokenCurrency | undefined {
   const parentCurrency = findCryptoCurrencyById("stacks");
 
   if (!parentCurrency) {
@@ -539,11 +543,11 @@ export function convertStacksSip010Token([address, name, ticker, decimals, delis
 
   return {
     type: "TokenCurrency",
-    id: "stacks/sip010/" + address.toLocaleLowerCase(),
+    id: "stacks/sip010/" + address.toLocaleLowerCase() + "/" + name,
     contractAddress: address,
     parentCurrency,
     tokenType: "sip010",
-    name,
+    name: displayName,
     ticker,
     delisted,
     disableCountervalue: false,
