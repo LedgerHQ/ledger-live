@@ -70,7 +70,7 @@ describe("listOperations", () => {
   };
 
   it.each([undelegate, delegate, transfer])(
-    "should return operation with proper recipient list",
+    "should return operation with proper recipient list ($type)",
     async operation => {
       // Given
       mockNetworkGetTransactions.mockResolvedValue([operation]);
@@ -84,7 +84,7 @@ describe("listOperations", () => {
   );
 
   it.each([undelegate, delegate, transfer])(
-    "should return operation with expected details",
+    "should return operation with expected details ($type)",
     async operation => {
       // Given
       mockNetworkGetTransactions.mockResolvedValue([operation]);
