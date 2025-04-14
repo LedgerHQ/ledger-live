@@ -9,31 +9,31 @@ export const rangeDataTable: { [key: string]: RangeData } = {
   "1y": {
     days: 365,
     interval: "daily",
-    label: "1Y_label",
+    label: "1y",
     scale: "year",
   },
   "30d": {
     days: 30,
     interval: "daily",
-    label: "1M_label",
+    label: "1m",
     scale: "month",
   },
   "7d": {
     days: 7,
     interval: "hourly",
-    label: "1W_label",
+    label: "1w",
     scale: "week",
   },
   "24h": {
     days: 1,
     interval: "hourly",
-    label: "1D_label",
+    label: "1d",
     scale: "day",
   },
   "1h": {
     days: 0.04,
     interval: "5m",
-    label: "1H_label",
+    label: "1h",
     scale: "minute",
   },
 };
