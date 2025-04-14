@@ -106,6 +106,14 @@ const deviceStorage = {
   },
 
   /**
+   * Delete all the `AsyncStorage` instance.
+   */
+  async deleteAll() {
+    const keys = await AsyncStorage.getAllKeys();
+    return AsyncStorage.multiRemove(keys);
+  },
+
+  /**
    * Push a value onto an array stored in AsyncStorage by key or create
    * a new array in AsyncStorage for a key if it's not yet defined.
    *

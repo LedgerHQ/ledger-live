@@ -2,9 +2,9 @@ import { rejectWithError } from "LLM/utils/rejectWithError";
 import type { Storage, StorageInitializer, StorageState } from "./types";
 import asyncStorageWrapper from "./asyncStorageWrapper";
 import mmkvStorageWrapper from "./mmkvStorageWrapper";
-import { STORAGE_TYPE } from "./constants";
+import { MAX_NUMBER_OF_ERRORS, STORAGE_TYPE } from "./constants";
 import { migrator } from "./utils/migrations/asyncStorageToMMKV";
-import { MIGRATION_STATUS } from "./utils/migrations/constants";
+import { MIGRATION_STATUS, ROLLBACK_STATUS } from "./utils/migrations/constants";
 
 /** Singleton reference to the global application storage object. */
 export default createStorage();
@@ -14,6 +14,8 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
   const state: StorageState = {
     storageType: STORAGE_TYPE.ASYNC_STORAGE,
     migrationStatus: MIGRATION_STATUS.NOT_STARTED,
+    rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
+    numberOfReadErrors: 0,
   };
 
   init(state);
@@ -24,7 +26,10 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
           ? Promise.resolve(mmkvStorageWrapper.keys())
           : asyncStorageWrapper.keys();
       } catch (e) {
-        console.error("Error getting keys from storage", e);
+        console.error("Error getting keys from storage", {
+          error: e,
+          state: state,
+        });
         return rejectWithError(e);
       }
     },
@@ -35,7 +40,11 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
           ? Promise.resolve(mmkvStorageWrapper.get(key))
           : asyncStorageWrapper.get(key);
       } catch (e) {
-        console.error("Error getting key from storage", e);
+        console.error("Error getting key from storage", {
+          error: e,
+          state: state,
+        });
+        incrementNumberOfErrors(state, e);
         return rejectWithError(e);
       }
     },
@@ -46,7 +55,11 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
           ? Promise.resolve(mmkvStorageWrapper.getString(key))
           : asyncStorageWrapper.getString(key);
       } catch (e) {
-        console.error("Error getting key from storage", e);
+        console.error("Error getting key from storage", {
+          error: e,
+          state: state,
+        });
+        incrementNumberOfErrors(state, e);
         return rejectWithError(e);
       }
     },
@@ -57,7 +70,10 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
           ? Promise.resolve(mmkvStorageWrapper.save(key, value))
           : asyncStorageWrapper.save(key, value);
       } catch (e) {
-        console.error("Error saving key to storage", e);
+        console.error("Error saving key to storage", {
+          error: e,
+          state: state,
+        });
         return rejectWithError(e);
       }
     },
@@ -68,7 +84,10 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
           ? Promise.resolve(mmkvStorageWrapper.saveString(key, value))
           : asyncStorageWrapper.saveString(key, value);
       } catch (e) {
-        console.error("Error saving key to storage", e);
+        console.error("Error saving key to storage", {
+          error: e,
+          state: state,
+        });
         return rejectWithError(e);
       }
     },
@@ -79,7 +98,10 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
           ? Promise.resolve(mmkvStorageWrapper.update(key, value))
           : asyncStorageWrapper.update(key, value);
       } catch (e) {
-        console.error("Error updating key in storage", e);
+        console.error("Error updating key in storage", {
+          error: e,
+          state: state,
+        });
         return rejectWithError(e);
       }
     },
@@ -90,7 +112,24 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
           ? await mmkvStorageWrapper.delete(key)
           : await asyncStorageWrapper.delete(key);
       } catch (e) {
-        console.error("Error deleting key from storage", e);
+        console.error("Error deleting key from storage", {
+          error: e,
+          state: state,
+        });
+        return rejectWithError(e);
+      }
+    },
+
+    async deleteAll() {
+      try {
+        return state.storageType === STORAGE_TYPE.MMKV
+          ? await mmkvStorageWrapper.deleteAll()
+          : await asyncStorageWrapper.deleteAll();
+      } catch (e) {
+        console.error("Error deleting all keys from storage", {
+          error: e,
+          state: state,
+        });
         return rejectWithError(e);
       }
     },
@@ -101,7 +140,10 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
           ? Promise.resolve(mmkvStorageWrapper.push(key, value))
           : asyncStorageWrapper.push(key, value);
       } catch (e) {
-        console.error("Error pushing value to storage", e);
+        console.error("Error pushing value to storage", {
+          error: e,
+          state: state,
+        });
         return rejectWithError(e);
       }
     },
@@ -110,24 +152,46 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
       try {
         await migrator.migrate(state);
       } catch (e) {
-        console.error("Error while migrating storage", e);
+        console.error("Error while migrating storage", {
+          error: e,
+          state: state,
+        });
         return rejectWithError(e);
       }
     },
 
-    resetMigration() {
-      console.warn("Not implemented yet");
+    async resetMigration() {
+      try {
+        await migrator.resetMigration(state);
+      } catch (e) {
+        console.error("Error while resetting migration", {
+          error: e,
+          state: state,
+        });
+        return rejectWithError(e);
+      }
     },
 
-    rollbackMigration() {
-      console.warn("Not implemented yet");
+    async rollbackMigration() {
+      try {
+        await migrator.rollbackToAsyncStorage(state);
+      } catch (e) {
+        console.error("Error while rolling back migration", {
+          error: e,
+          state: state,
+        });
+        return rejectWithError(e);
+      }
     },
 
     async handleMigration() {
       try {
         await migrator.handleMigration(state);
       } catch (e) {
-        console.error("Error handling migration", e);
+        console.error("Error handling migration", {
+          error: e,
+          state: state,
+        });
         return rejectWithError(e);
       }
     },
@@ -142,4 +206,16 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
  */
 export function initStorageState(state: StorageState): void {
   state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
+}
+
+function incrementNumberOfErrors(state: StorageState, error: unknown): void {
+  if (!(error instanceof SyntaxError)) return;
+
+  if (state.storageType === STORAGE_TYPE.MMKV) {
+    if (state.numberOfReadErrors && state.numberOfReadErrors >= MAX_NUMBER_OF_ERRORS) {
+      migrator.rollbackToAsyncStorage(state);
+    } else {
+      state.numberOfReadErrors = state.numberOfReadErrors + 1;
+    }
+  }
 }
