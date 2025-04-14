@@ -176,6 +176,7 @@ export type Features = CurrencyFeatures & {
   transactionsAlerts: Feature_TransactionsAlerts;
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
   ptxCard: DefaultFeature;
+  ptxEarnStablecoinYield: Feature_PtxEarnStablecoinYield;
   ptxSwapLiveAppMobile: Feature_PtxSwapLiveApp;
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
   ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
@@ -506,6 +507,10 @@ export type Feature_RatingsPrompt = Feature<{
   }[];
   support_email: string;
   typeform_url: string;
+}>;
+
+export type Feature_PtxEarnStablecoinYield = Feature<{
+  feature: "dapp" | "api";
 }>;
 
 export type Feature_PtxSwapLiveApp = Feature<{
