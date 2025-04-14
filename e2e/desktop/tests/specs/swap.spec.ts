@@ -147,7 +147,7 @@ for (const { swap, xrayTicket } of swaps) {
       async ({ app, electronApp }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        const minAmount = ((await app.swap.getMinimumAmount(swap)) ?? 0).toString();
+        const minAmount = (await app.swap.getMinimumAmount(swap)) ?? 0;
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
         const selectedProvider = await app.swap.selectExchange(electronApp);
@@ -211,7 +211,7 @@ for (const { swap, xrayTicket, provider } of checkProviders) {
       async ({ app, electronApp }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        const minAmount = ((await app.swap.getMinimumAmount(swap)) ?? 0).toString();
+        const minAmount = (await app.swap.getMinimumAmount(swap)) ?? 0;
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
 
@@ -248,7 +248,7 @@ test.describe("Swap - Check Best Offer", () => {
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      const minAmount = ((await app.swap.getMinimumAmount(swap)) ?? 0).toString();
+      const minAmount = (await app.swap.getMinimumAmount(swap)) ?? 0;
 
       await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
       await app.swap.selectExchange(electronApp);
@@ -294,7 +294,7 @@ test.describe("Swap - Default currency when landing on swap", () => {
     },
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      const minAmount = ((await app.swap.getMinimumAmount(swap)) ?? 0).toString();
+      const minAmount = (await app.swap.getMinimumAmount(swap)) ?? 0;
       await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
       await app.layout.goToAccounts();
       await app.swap.goAndWaitForSwapToBeReady(
@@ -431,7 +431,7 @@ for (const { swap, xrayTicket, userData, errorMessage } of swapWithDifferentSeed
       async ({ app, electronApp }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        const minAmount = ((await app.swap.getMinimumAmount(swap)) ?? 0).toString();
+        const minAmount = (await app.swap.getMinimumAmount(swap)) ?? 0;
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
         const selectedProvider = await app.swap.selectExchange(electronApp);

@@ -64,7 +64,6 @@ export default class SwapLiveAppPage {
   }
 
   async getMinimumAmount(swap: SwapType) {
-    const minAmount = await getMinimumSwapAmount(swap);
-    return minAmount;
+    return getMinimumSwapAmount(swap).toString();
   }
 }
