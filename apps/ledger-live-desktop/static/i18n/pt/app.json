@@ -1879,7 +1879,8 @@
       "palletMethod" : "Método",
       "transferAmount" : "Transferir Quantia",
       "validatorsCount" : "Validadores ({{number}})",
-      "version" : "Versão"
+      "version" : "Versão",
+      "accountCreationFee" : "Taxa de Criação de Conta"
     }
   },
   "operationList" : {
@@ -2390,7 +2391,7 @@
         "ethereumPriorityFee" : "Taxa de Prioridade Máxima ({{unitName}})",
         "nextBlock" : "Próximo bloco",
         "suggested" : "Sugerido",
-        "unitPerByte" : "{{unit}} por byte",
+        "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
         "nftQuantity" : "Quantidade"
       },
@@ -2423,8 +2424,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "Não usa tag/memo?",
-        "description" : "Seus fundos serão perdidos se você não adicionar uma tag ou memo ao enviá-los para qualquer corretora centralizada ou carteira de custódia.",
+        "title" : "Precisa de Tag/Memo?",
+        "description" : "Ao não adicionar Tag/Memo ao enviar fundos para uma corretora centralizada, você corre o risco de perder seus fundos.",
         "cta.addTag" : "Adicionar tag",
         "cta.not.addTag" : "Não adicione a tag",
         "checkbox.label" : "Não mostrar isso novamente."
@@ -5541,6 +5542,9 @@
       "memo" : "Tag / Memo",
       "memoPlaceholder" : "Opcional",
       "requiredMemoPlaceholder" : "Obrigatório"
+    },
+    "mina" : {
+      "memoPlaceholder" : "Memo opcional"
     }
   },
   "errors" : {
@@ -5863,6 +5867,10 @@
     "NotEnoughBalance" : {
       "title" : "Fundos Insuficientes",
       "description" : "Certifique-se de que a conta tem fundos suficientes."
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "Fundos insuficientes para cobrir as taxas",
+      "description" : "Certifique-se de que a conta tenha fundos suficientes."
     },
     "NotEnoughBalanceSwap" : {
       "title" : "Saldo insuficiente incluindo taxas de rede. Ajuste a quantia ou verifique o saldo.",
@@ -6571,6 +6579,15 @@
         "swap" : "Trocar",
         "deposit" : "Depositar"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "O texto do memo não pode ter mais de 32 caracteres"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Esta transação incorrerá em uma taxa de criação de conta de {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "A quantia mínima exigida para esta transação é {{amount}}"
     }
   },
   "cryptoOrg" : {
