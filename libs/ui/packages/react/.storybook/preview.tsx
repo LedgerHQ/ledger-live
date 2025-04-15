@@ -24,6 +24,11 @@ export const parameters = {
       date: /Date$/,
     },
   },
+  options: {
+    storySort: {
+      order: ["PreLdls"],
+    },
+  },
   backgrounds: {
     default: "light",
     values: [
@@ -38,3 +43,4 @@ export const parameters = {
     ],
   },
 };
+export const tags = ["autodocs"];

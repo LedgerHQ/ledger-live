@@ -1,6 +1,7 @@
 {
   "entry": [
     "src/index.ts",
+    "src/pre-ldls/index.ts",
     "src/styles/index.ts",
     "src/assets/fonts.ts",
     "src/assets/icons.ts",
@@ -14,7 +15,8 @@
     "src/assets/images/images.d.ts",
     "src/components/Table/stories.helper.tsx",
     "src/components/helpers.ts",
-    "src/components/navigation/Aside/stories.helper.tsx"
+    "src/components/navigation/Aside/stories.helper.tsx",
+    "src/pre-ldls/types.ts"
   ],
   "ignoreUnresolved": [
     "@emotion/is-prop-valid",
