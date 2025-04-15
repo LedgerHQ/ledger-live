@@ -294,6 +294,7 @@ export type Redirect<ManifestId> = {
 
 export type Feature_StakePrograms<ManifestId = "stakekit" | "kiln-widget" | "earn"> = Feature<{
   list: string[];
+  /** redirects is a dictionary of crypto asset ids to partner app params for overriding flows for specific tokens. */
   redirects: Record<string, Redirect<ManifestId>>;
 }>;
 
