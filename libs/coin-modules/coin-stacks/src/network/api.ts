@@ -139,36 +139,43 @@ export const fetchTxs = async (addr: string, offset = 0): Promise<TransactionsRe
     return { limit, offset, total: 0, results: [] };
   }
 };
-
-export const fetchFullTxs = async (addr: string): Promise<TransactionResponse[]> => {
+export const fetchFullTxs = async (
+  addr: string,
+): Promise<[TransactionResponse[], Record<string, TransactionResponse[]>]> => {
   let qty,
     offset = 0;
-  let txs: TransactionResponse[] = [];
+  const txs: TransactionResponse[] = [];
+  // Map to group contract transactions by contract_id
+  const contractTxsMap: Record<string, TransactionResponse[]> = {};
 
   do {
     const { results, total, limit } = await fetchTxs(addr, offset);
-    txs = txs.concat(
-      results.filter(t => {
-        if (t.tx?.tx_type === "token_transfer") {
-          return true;
+    results.forEach(t => {
+      if (t.tx?.tx_type === "token_transfer") {
+        txs.push(t);
+      } else if (t.tx?.tx_type === "contract_call") {
+        const contractId = t.tx.contract_call?.contract_id;
+
+        if (t.tx.contract_call?.function_name === "send-many") {
+          txs.push(t);
+        } else if (t.tx.contract_call?.function_name === "transfer" && contractId) {
+          // Group other contract calls by contract_id
+          if (!contractTxsMap[contractId]) {
+            contractTxsMap[contractId] = [];
+          }
+          contractTxsMap[contractId].push(t);
         }
-
-        if (
-          t.tx?.tx_type === "contract_call" &&
-          t.tx?.contract_call?.function_name === "send-many"
-        ) {
-          return true;
-        }
-
-        return false;
-      }),
-    );
-
+      }
+    });
     offset += limit;
     qty = total;
   } while (offset < qty);
 
-  return txs; // TODO Validate if the response fits this interface
+  // Process contract transactions by group if needed
+  // For now, we're just returning the original arrays
+  // but the contractTxsMap is available for further processing
+
+  return [txs, contractTxsMap]; // TODO Validate if the response fits this interface
 };
 
 export const broadcastTx = async (
