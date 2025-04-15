@@ -1879,7 +1879,8 @@
       "palletMethod" : "Methode",
       "transferAmount" : "Betrag transferieren",
       "validatorsCount" : "Validatoren ({{number}})",
-      "version" : "Version"
+      "version" : "Version",
+      "accountCreationFee" : "Kontoerstellungsgebühr"
     }
   },
   "operationList" : {
@@ -2390,7 +2391,7 @@
         "ethereumPriorityFee" : "Max. Prioritätsgebühr ({{unitName}})",
         "nextBlock" : "Nächster Block",
         "suggested" : "Empfohlen",
-        "unitPerByte" : "{{unit}} pro Byte",
+        "unitVByte" : "{{unit}}/vByte",
         "nft" : "NFT",
         "nftQuantity" : "Menge"
       },
@@ -2423,8 +2424,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "Du verwendest Tag/Memo nicht?",
-        "description" : "Deine Vermögenswerte gehen verloren, wenn du beim Senden an eine zentralisierte Börse oder eine verwahrende Geldbörse kein Tag/Memo hinzufügst.",
+        "title" : "Brauchst du ein Tag/Memo?",
+        "description" : "Wenn du beim Senden von Assets an eine zentralisierte Börse kein Tag/Memo hinzufügst, erhöht sich die Wahrscheinlichkeit, dass deine Assets verloren gehen.",
         "cta.addTag" : "Tag hinzufügen",
         "cta.not.addTag" : "Kein Tag hinzufügen",
         "checkbox.label" : "Nicht erneut anzeigen."
@@ -4834,7 +4835,7 @@
         "description" : "Verwalten, kaufen und vermehren Sie Ihre Krypto und NFTs auf Ledger Live.",
         "nextButton" : "Erste Schritte",
         "noDevice" : "Kein Gerät?",
-        "buyLink" : "Kein Gerät? Kaufen Sie eine Ledger Nano X",
+        "buyLink" : "Kein Gerät? Ledger-Gerät kaufen",
         "byTapping" : "Indem Sie auf \"Erste Schritte\" tippen, erklären Sie sich einverstanden mit unseren ",
         "termsAndConditions" : "Allgemeine Geschäftsbedingungen",
         "and" : "Hinzu kommt:",
@@ -5541,6 +5542,9 @@
       "memo" : "Tag/Memo",
       "memoPlaceholder" : "Optional",
       "requiredMemoPlaceholder" : "Erforderlich"
+    },
+    "mina" : {
+      "memoPlaceholder" : "Optionales Memo"
     }
   },
   "errors" : {
@@ -5863,6 +5867,10 @@
     "NotEnoughBalance" : {
       "title" : "Entschuldigung, Guthaben reicht nicht aus",
       "description" : "Bitte stellen Sie sicher, dass das Konto ausreichend gedeckt ist."
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "Leider reicht das Guthaben zur Deckung der Gebühren nicht aus",
+      "description" : "Bitte vergewissere dich, dass das Konto über ausreichende Deckung verfügt."
     },
     "NotEnoughBalanceSwap" : {
       "title" : "Leider ist für den Betrag einschließlich der Netzwerkgebühren nicht genügend Guthaben vorhanden. Bitte Betrag ändern oder Guthaben verifizieren.",
@@ -6571,6 +6579,15 @@
         "swap" : "Swappen",
         "deposit" : "Einzahlen"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "Der Memotext darf nicht länger als 32 Zeichen sein."
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Für diese Transaktion fällt eine Kontoerstellungsgebühr in Höhe von {{fee}} an"
+    },
+    "AmountTooSmall" : {
+      "title" : "Der Mindestbetrag für diese Transaktion beläuft sich auf {{amount}}"
     }
   },
   "cryptoOrg" : {
