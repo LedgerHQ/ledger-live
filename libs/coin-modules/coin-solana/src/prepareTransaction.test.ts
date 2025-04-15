@@ -40,8 +40,6 @@ describe("testing prepareTransaction", () => {
 
     expect(preparedTransaction).not.toBe(nonRawTransaction);
   });
-
-  //TODO add more tests
 });
 
 function api() {

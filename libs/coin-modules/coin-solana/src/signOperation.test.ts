@@ -73,7 +73,6 @@ describe("Testing signOperation", () => {
   });
 });
 
-//TODO add more test on operation
 function isValidSignedEvent(event: SignOperationEvent, kind?: string): boolean {
   if (event.type === "signed" && kind) {
     const signedOperation = event.signedOperation;
