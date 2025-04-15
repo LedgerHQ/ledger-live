@@ -1,4 +1,3 @@
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import React from "react";
@@ -14,6 +13,7 @@ import {
   localeSelector,
 } from "~/renderer/reducers/settings";
 import { useDeepLinkListener } from "~/renderer/screens/earn/useDeepLinkListener";
+import { useEarnStakeProgramsParam } from "./useEarnStakeProgramsParam";
 
 const DEFAULT_EARN_APP_ID = "earn";
 
@@ -29,7 +29,7 @@ const Earn = () => {
   const countryLocale = getParsedSystemDeviceLocale().region;
   useDeepLinkListener();
 
-  const ptxEarnStablecoinYield = useFeature("ptxEarnStablecoinYield");
+  const stakeProgramsParam = useEarnStakeProgramsParam();
 
   return (
     <Card grow style={{ overflow: "hidden" }} data-testid="earn-app-container">
@@ -52,10 +52,7 @@ const Earn = () => {
             currencyTicker: fiatCurrency.ticker,
             discreetMode: discreetMode ? "true" : "false",
             OS: "web",
-            stablecoinYield:
-              ptxEarnStablecoinYield && ptxEarnStablecoinYield.enabled
-                ? ptxEarnStablecoinYield.params?.feature
-                : undefined,
+            stakeProgramsParam: stakeProgramsParam ? JSON.stringify(stakeProgramsParam) : undefined,
           }}
         />
       ) : null}

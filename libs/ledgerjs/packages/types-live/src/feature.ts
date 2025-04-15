@@ -176,7 +176,6 @@ export type Features = CurrencyFeatures & {
   transactionsAlerts: Feature_TransactionsAlerts;
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
   ptxCard: DefaultFeature;
-  ptxEarnStablecoinYield: Feature_PtxEarnStablecoinYield;
   ptxSwapLiveAppMobile: Feature_PtxSwapLiveApp;
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
   ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
@@ -285,21 +284,15 @@ export type RedirectQueryParam<ManifestId> = "stakekit" extends ManifestId
   ? {
       yieldId: string;
     }
-  : "kiln-widget" extends ManifestId
-    ? {
-        chaidId: number;
-      }
-    : unknown;
+  : unknown;
 
 export type Redirect<ManifestId> = {
   platform: ManifestId;
-  /** @developer asssetId resolves to string but is either CryptoCurrency["id"] | TokenCurrency["id"]; */
-  assetId: string;
   name: string;
   queryParams?: Record<string, string> & RedirectQueryParam<ManifestId>;
 };
 
-export type Feature_StakePrograms<ManifestId = "stakekit" | "kiln-widget"> = Feature<{
+export type Feature_StakePrograms<ManifestId = "stakekit" | "kiln-widget" | "earn"> = Feature<{
   list: string[];
   redirects: Record<string, Redirect<ManifestId>>;
 }>;
@@ -507,10 +500,6 @@ export type Feature_RatingsPrompt = Feature<{
   }[];
   support_email: string;
   typeform_url: string;
-}>;
-
-export type Feature_PtxEarnStablecoinYield = Feature<{
-  feature: "dapp" | "api";
 }>;
 
 export type Feature_PtxSwapLiveApp = Feature<{

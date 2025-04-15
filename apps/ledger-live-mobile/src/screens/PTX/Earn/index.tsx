@@ -1,4 +1,3 @@
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
@@ -20,6 +19,7 @@ import { ScreenName } from "~/const";
 import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 import { useSettings } from "~/hooks";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
+import { useEarnStakeProgramsParam } from "./useEarnStakeProgramsParam";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
 
@@ -45,7 +45,7 @@ function Earn({ route }: Props) {
   const manifest: LiveAppManifest | undefined = !localManifest ? remoteManifest : localManifest;
   const countryLocale = getCountryLocale();
 
-  const ptxEarnStablecoinYield = useFeature("ptxEarnStablecoinYield");
+  const stakeProgramsParam = useEarnStakeProgramsParam();
 
   if (!remoteLiveAppState.isLoading && !manifest) {
     // We want to track occurrences of this error in Sentry
@@ -65,10 +65,7 @@ function Earn({ route }: Props) {
           countryLocale,
           currencyTicker,
           discreetMode: discreet ? "true" : "false",
-          stablecoinYield:
-            ptxEarnStablecoinYield && ptxEarnStablecoinYield.enabled
-              ? ptxEarnStablecoinYield.params?.feature
-              : undefined,
+          stakeProgramsParam: stakeProgramsParam ? JSON.stringify(stakeProgramsParam) : undefined,
           OS: Platform.OS,
           ...params,
           ...Object.fromEntries(searchParams.entries()),
