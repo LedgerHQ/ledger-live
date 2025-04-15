@@ -398,7 +398,6 @@ export const DEFAULT_FEATURES: Features = {
   buySellShortcut: {
     enabled: false,
   },
-
   ptxCard: DEFAULT_FEATURE,
 
   ptxSwapLiveApp: {
