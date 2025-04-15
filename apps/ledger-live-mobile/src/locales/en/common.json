@@ -509,6 +509,10 @@
       "title": "Not enough EGLD to pay the transaction fees",
       "description": "Please send some EGLD to your account to pay for transactions."
     },
+    "NotEnoughToStake": {
+      "title": "Minimum amount to stake: {{minStake}} {{currency}}",
+      "description": "A minimum amount of {{minStake}} {{currency}} is necessary to stake."
+    },
     "NotEnoughBalance": {
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."
@@ -6624,11 +6628,11 @@
       "7d": "7D",
       "30d": "30D",
       "1y": "1Y",
-      "1H_label" : "1H",
-      "1D_label" : "1D",
-      "1W_label" : "1W",
-      "1M_label" : "1M",
-      "1Y_label" : "1Y"
+      "1H_label": "1H",
+      "1D_label": "1D",
+      "1W_label": "1W",
+      "1M_label": "1M",
+      "1Y_label": "1Y"
     },
     "warnings": {
       "connectionError": "Connection Error",

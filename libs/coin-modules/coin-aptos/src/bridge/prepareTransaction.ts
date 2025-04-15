@@ -4,6 +4,7 @@ import { AptosAPI } from "../api";
 import { getEstimatedGas } from "./getFeesForTransaction";
 import type { Transaction } from "../types";
 import { DEFAULT_GAS, DEFAULT_GAS_PRICE, getMaxSendBalance } from "./logic";
+import { MIN_COINS_ON_SHARES_POOL } from "../constants";
 
 const prepareTransaction = async (
   account: Account,
@@ -11,6 +12,8 @@ const prepareTransaction = async (
 ): Promise<Transaction> => {
   if (transaction.stake) {
     transaction.recipient = transaction.stake.poolAddr;
+
+    if (transaction.amount.lt(MIN_COINS_ON_SHARES_POOL.shiftedBy(8))) return transaction;
   }
 
   if (!transaction.recipient) {

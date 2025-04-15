@@ -6001,6 +6001,10 @@
       "title": "Sorry, fee estimation failed",
       "description": "Fee estimation failed on the network. Check inputs, transaction most likely to fail"
     },
+    "NotEnoughToStake": {
+      "title": "Minimum amount to stake: {{minStake}} {{currency}}",
+      "description": "A minimum amount of {{minStake}} {{currency}} is necessary to stake."
+    },
     "NotEnoughBalance": {
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."

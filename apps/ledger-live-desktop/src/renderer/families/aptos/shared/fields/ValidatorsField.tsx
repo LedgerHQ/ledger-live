@@ -15,11 +15,11 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 type Props = {
   account: AptosAccount;
-  chosenVoteAccAddr: string | undefined | null;
+  chosenValidatorAddr: string | undefined | null;
   onChangeValidator: (v: { address: string }) => void;
 };
 
-const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props) => {
+const ValidatorField = ({ account, onChangeValidator, chosenValidatorAddr }: Props) => {
   const [search, setSearch] = useState("");
   const [showAll, setShowAll] = useState(false);
   const [currentValidator, setCurrentValidator] = useState<Validators[]>([]);
@@ -33,25 +33,25 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
   );
 
   useEffect(() => {
-    const selectedVoteAccAddr = validators.find(p => p.voteAccount === chosenVoteAccAddr);
-    if (selectedVoteAccAddr) {
-      const isDefault = validators.slice(0, 2).includes(selectedVoteAccAddr);
+    const selectedValidatorAddr = validators.find(p => p.voteAccount === chosenValidatorAddr);
+    if (selectedValidatorAddr) {
+      const isDefault = validators.slice(0, 2).includes(selectedValidatorAddr);
       if (isDefault) {
-        setCurrentValidator([selectedVoteAccAddr]);
+        setCurrentValidator([selectedValidatorAddr]);
       }
       setCurrentValidator([
-        selectedVoteAccAddr,
-        ...validators.slice(0, 2).filter(v => v !== selectedVoteAccAddr),
+        selectedValidatorAddr,
+        ...validators.slice(0, 2).filter(v => v !== selectedValidatorAddr),
       ]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chosenVoteAccAddr]);
+  }, [chosenValidatorAddr]);
 
   const renderItem = (validator: Validators) => {
     return (
       <ValidatorRow
         currency={account.currency}
-        active={chosenVoteAccAddr === validator.voteAccount}
+        active={chosenValidatorAddr === validator.voteAccount}
         onClick={onChangeValidator}
         key={validator.voteAccount}
         validator={validator}

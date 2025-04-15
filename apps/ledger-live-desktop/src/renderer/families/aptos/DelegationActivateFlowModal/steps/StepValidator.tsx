@@ -31,7 +31,7 @@ export default function StepValidator({
     });
   };
 
-  const chosenVoteAccAddr = transaction.stake?.op === "add" ? transaction.stake?.poolAddr : "";
+  const chosenValidatorAddr = transaction.stake?.op === "add" ? transaction.stake?.poolAddr : "";
 
   return (
     <Box flow={1}>
@@ -47,7 +47,7 @@ export default function StepValidator({
       {status ? (
         <ValidatorsField
           account={account}
-          chosenVoteAccAddr={chosenVoteAccAddr}
+          chosenValidatorAddr={chosenValidatorAddr}
           onChangeValidator={updateValidator}
         />
       ) : null}

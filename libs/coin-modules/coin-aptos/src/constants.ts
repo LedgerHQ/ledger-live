@@ -1,4 +1,5 @@
 import { MoveStructId } from "@aptos-labs/ts-sdk";
+import BigNumber from "bignumber.js";
 
 export const LOAD_LIMIT = 10;
 
@@ -45,3 +46,5 @@ export enum DIRECTION {
 export const SUPPORTED_TOKEN_TYPES = ["coin", "fungible_asset"];
 
 export const APTOS_DELEGATION_RESERVE = 0.01;
+
+export const MIN_COINS_ON_SHARES_POOL = BigNumber(11); // In octas
