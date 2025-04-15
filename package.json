@@ -179,6 +179,7 @@
     "dummy-live-app": "pnpm --filter dummy-live-app",
     "dummy-wallet-app": "pnpm --filter dummy-wallet-app",
     "dummy-ptx-app": "pnpm --filter dummy-ptx-app",
+    "disable-network-setup": "pnpm --filter disable-network-setup",
     "ethereum-provider": "pnpm --filter ethereum-provider",
     "ui": "pnpm --filter ui",
     "ui:react": "pnpm --filter react-ui",
