@@ -165,6 +165,18 @@ export interface BalanceResponse {
   balance: string;
 }
 
+export interface TokenBalance {
+  token: string;
+  balance: string;
+}
+
+export interface TokenBalanceResponse {
+  limit: number;
+  offset: number;
+  total: number;
+  results: TokenBalance[];
+}
+
 export interface NetworkStatusResponse {
   server_version: string;
   status: string;
