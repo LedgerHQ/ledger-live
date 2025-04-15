@@ -1,4 +1,4 @@
-describe("Wallet API methods", () => {
+describe.skip("Wallet API methods", () => {
   beforeAll(async () => {
     await app.init({ userdata: "1AccountBTC1AccountETHReadOnlyFalse" });
     await app.dummyWalletApp.startApp();
@@ -15,7 +15,7 @@ describe("Wallet API methods", () => {
     await app.dummyWalletApp.expectResponse(id, response);
   });
 
-  it("account.request", async () => {
+  it("account.receive", async () => {
     const { id, response } = await app.dummyWalletApp.sendAccountReceive();
     await app.walletAPIReceive.continueWithoutDevice();
     await app.walletAPIReceive.cancelNoDevice();

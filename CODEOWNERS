@@ -166,6 +166,7 @@ apps/web-tools/trustchain/                               @ledgerhq/live-hub
 # UI tests
 apps/ledger-live-desktop/tests/                          @ledgerhq/live-hub @ledgerhq/qaa
 apps/ledger-live-mobile/e2e/                             @ledgerhq/live-hub @ledgerhq/qaa
+e2e/                                                                        @ledgerhq/qaa
 
 # Cross-team generic files can be opted out (no strict ownership when it concerns everyone)
 apps/ledger-live-desktop/static/i18n/

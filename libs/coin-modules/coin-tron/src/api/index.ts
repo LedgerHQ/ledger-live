@@ -9,9 +9,9 @@ import {
   listOperations,
   lastBlock,
 } from "../logic";
-import { type TronToken } from "../types";
+import type { TronAsset } from "../types";
 
-export function createApi(config: TronConfig): Api<TronToken> {
+export function createApi(config: TronConfig): Api<TronAsset> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {

@@ -4,7 +4,6 @@ import { AppPage } from "tests/page/abstractClasses";
 export class AssetPage extends AppPage {
   private stakeButton = this.page.getByTestId("asset-page-stake-button");
   private buyButton = this.page.getByTestId("asset-page-buy-button");
-  private swapButton = this.page.getByTestId("asset-page-swap-button");
 
   @step("Start stake flow")
   async startStakeFlow() {
@@ -15,10 +14,5 @@ export class AssetPage extends AppPage {
   @step("Start buy flow")
   async startBuyFlow() {
     await this.buyButton.click();
-  }
-
-  @step("Start swap flow")
-  async startSwapFlow() {
-    await this.swapButton.click();
   }
 }

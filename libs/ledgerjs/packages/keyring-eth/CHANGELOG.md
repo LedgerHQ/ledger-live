@@ -1,57 +1,29 @@
 # @ledgerhq/keyring-eth
 
-## 0.2.27-nightly.5
+## 0.2.28
 
 ### Patch Changes
 
-- Updated dependencies [[`73722cc`](https://github.com/LedgerHQ/ledger-live/commit/73722ccbc93712103ff4ea33ab5c0c294400eef8), [`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81)]:
-  - @ledgerhq/coin-evm@2.16.0-nightly.5
-  - @ledgerhq/types-live@6.66.0-nightly.4
-  - @ledgerhq/hw-app-eth@6.44.1-nightly.4
+- Updated dependencies [[`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8), [`6116909`](https://github.com/LedgerHQ/ledger-live/commit/61169099ce63dfa73e52065327ca3c889c315cb8), [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca), [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f)]:
+  - @ledgerhq/types-live@6.66.0
+  - @ledgerhq/coin-evm@2.17.0
+  - @ledgerhq/hw-app-eth@6.45.0
 
-## 0.2.27-nightly.4
-
-### Patch Changes
-
-- Updated dependencies [[`4c6b682`](https://github.com/LedgerHQ/ledger-live/commit/4c6b682b9929334a7be13212a69f2c6a614f372c)]:
-  - @ledgerhq/types-live@6.66.0-nightly.3
-  - @ledgerhq/coin-evm@2.16.0-nightly.4
-  - @ledgerhq/hw-app-eth@6.44.1-nightly.3
-
-## 0.2.27-nightly.3
+## 0.2.28-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`6f61972`](https://github.com/LedgerHQ/ledger-live/commit/6f619728e200270a674ffb13b10375765b55ae4b)]:
-  - @ledgerhq/types-live@6.66.0-nightly.2
-  - @ledgerhq/coin-evm@2.16.0-nightly.3
-  - @ledgerhq/hw-app-eth@6.44.1-nightly.2
+- Updated dependencies [[`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8), [`6116909`](https://github.com/LedgerHQ/ledger-live/commit/61169099ce63dfa73e52065327ca3c889c315cb8), [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca), [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f)]:
+  - @ledgerhq/types-live@6.66.0-next.0
+  - @ledgerhq/coin-evm@2.16.0-next.0
+  - @ledgerhq/hw-app-eth@6.45.0-next.0
 
-## 0.2.27-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`3f8a531`](https://github.com/LedgerHQ/ledger-live/commit/3f8a53196dfb80d084056e0d896e09869c8ff949), [`b580b04`](https://github.com/LedgerHQ/ledger-live/commit/b580b04e02392a706534c2fceba192ae3b6242ef)]:
-  - @ledgerhq/types-live@6.66.0-nightly.1
-  - @ledgerhq/coin-evm@2.16.0-nightly.2
-  - @ledgerhq/hw-app-eth@6.44.1-nightly.1
-  - @ledgerhq/hw-transport@6.31.5-nightly.0
-
-## 0.2.27-nightly.1
+## 0.2.27
 
 ### Patch Changes
 
-- Updated dependencies [[`fe89dd5`](https://github.com/LedgerHQ/ledger-live/commit/fe89dd51cd35000c7b661d6364fe78f88bbf6c62)]:
-  - @ledgerhq/coin-evm@2.16.0-nightly.1
-
-## 0.2.27-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8)]:
-  - @ledgerhq/types-live@6.66.0-nightly.0
-  - @ledgerhq/coin-evm@2.15.1-nightly.0
-  - @ledgerhq/hw-app-eth@6.44.1-nightly.0
+- Updated dependencies [[`3cf359d`](https://github.com/LedgerHQ/ledger-live/commit/3cf359d6f62d6993975f4ab7e643fabdeed0100e)]:
+  - @ledgerhq/coin-evm@2.16.0
 
 ## 0.2.26
 

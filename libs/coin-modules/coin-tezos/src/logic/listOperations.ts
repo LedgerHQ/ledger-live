@@ -8,6 +8,7 @@ import {
   isAPITransactionType,
 } from "../network/types";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { TezosAsset } from "../types";
 
 /**
  * Returns list of "Transfer", "Delegate" and "Undelegate" Operations associated to an account.
@@ -29,7 +30,7 @@ export async function listOperations(
     sort,
     minHeight,
   }: { limit?: number; token?: string; sort: "Ascending" | "Descending"; minHeight: number },
-): Promise<[Operation<void>[], string]> {
+): Promise<[Operation<TezosAsset>[], string]> {
   let options: AccountsGetOperationsOptions = { limit, sort, "level.ge": minHeight };
   if (token) {
     options = { ...options, lastId: JSON.parse(token) };
@@ -41,7 +42,7 @@ export async function listOperations(
   const nextToken = lastOperation ? JSON.stringify(lastOperation?.id) : "";
   const filteredOperations = operations
     .filter(op => isAPITransactionType(op) || isAPIDelegationType(op))
-    .reduce((acc, op) => acc.concat(convertOperation(address, op)), [] as Operation<void>[]);
+    .reduce((acc, op) => acc.concat(convertOperation(address, op)), [] as Operation<TezosAsset>[]);
   if (sort === "Ascending") {
     //results are always sorted in descending order
     filteredOperations.reverse();
@@ -53,7 +54,7 @@ export async function listOperations(
 function convertOperation(
   address: string,
   operation: APITransactionType | APIDelegationType,
-): Operation<void> {
+): Operation<TezosAsset> {
   const { amount, hash, sender, type } = operation;
 
   let targetAddress = undefined;
@@ -79,6 +80,7 @@ function convertOperation(
     BigInt(operation.allocationFee ?? 0);
 
   return {
+    asset: { type: "native" },
     operationIndex: 0,
     tx: {
       // hash id defined nullable in the tzkt API, but I wonder when it would be null ?
@@ -96,5 +98,10 @@ function convertOperation(
     value: BigInt(amount),
     senders: senders,
     recipients: recipients,
+    details: {
+      counter: operation.counter,
+      gasLimit: operation.gasLimit,
+      storageLimit: operation.storageLimit,
+    },
   };
 }

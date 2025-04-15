@@ -1,5 +1,5 @@
-import { TransactionIntent } from "@ledgerhq/coin-framework/lib/api/types";
-import { StellarToken } from "../types";
+import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { StellarAsset } from "../types";
 import { createApi } from "./index";
 
 const mockGetOperations = jest.fn();
@@ -39,6 +39,7 @@ describe("operations", () => {
   });
 
   const mockOperation = {
+    asset: { type: "native" },
     tx: {
       hash: "e035a56c32003e3b0e4c9c5499b0750d71d98233ae6ae94323ff0a458b05a30b",
       fees: 0.0291,
@@ -108,7 +109,7 @@ describe("Testing craftTransaction function", () => {
   });
 
   it("should use estimated fees when user does not provide them for crafting a transaction", async () => {
-    await api.craftTransaction({} as TransactionIntent<StellarToken>);
+    await api.craftTransaction({ asset: {} } as TransactionIntent<StellarAsset>);
     expect(estimateFeesMock).toHaveBeenCalledTimes(1);
     expect(logicCraftTransactionMock).toHaveBeenCalledWith(
       expect.any(Object),
@@ -119,7 +120,7 @@ describe("Testing craftTransaction function", () => {
   it.each([[1n], [50n], [99n]])(
     "should use custom user fees when user provide them for crafting a transaction",
     async (fees: bigint) => {
-      await api.craftTransaction({} as TransactionIntent<StellarToken>, fees);
+      await api.craftTransaction({ asset: {} } as TransactionIntent<StellarAsset>, fees);
       expect(estimateFeesMock).toHaveBeenCalledTimes(0);
       expect(logicCraftTransactionMock).toHaveBeenCalledWith(
         expect.any(Object),

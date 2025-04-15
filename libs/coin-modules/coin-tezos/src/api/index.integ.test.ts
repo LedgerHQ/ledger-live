@@ -1,13 +1,14 @@
 import { type Api } from "@ledgerhq/coin-framework/api/index";
 import { localForger } from "@taquito/local-forging";
 import { createApi } from ".";
+import { TezosAsset } from "../types";
 
 /**
  * https://teztnets.com/ghostnet-about
  * https://api.tzkt.io/#section/Get-Started/Free-TzKT-API
  */
 describe("Tezos Api", () => {
-  let module: Api<void>;
+  let module: Api<TezosAsset>;
   const address = "tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ";
 
   beforeAll(() => {
@@ -39,6 +40,7 @@ describe("Tezos Api", () => {
 
       // When
       const result = await module.estimateFees({
+        asset: { type: "native" },
         type: "send",
         sender: address,
         recipient: "tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ",
@@ -94,7 +96,8 @@ describe("Tezos Api", () => {
       const result = await module.getBalance(address);
 
       // Then
-      expect(result).toBeGreaterThan(0);
+      expect(result[0].asset).toEqual({ type: "native" });
+      expect(result[0].value).toBeGreaterThan(0);
     });
   });
 
@@ -108,6 +111,7 @@ describe("Tezos Api", () => {
       const amount = BigInt(10);
       // When
       const encodedTransaction = await module.craftTransaction({
+        asset: { type: "native" },
         type,
         sender: address,
         recipient: recipient,
@@ -131,6 +135,7 @@ describe("Tezos Api", () => {
 
     it("should use estimated fees when user does not provide them for crafting a transaction", async () => {
       const encodedTransaction = await module.craftTransaction({
+        asset: { type: "native" },
         type: "send",
         sender: address,
         recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
@@ -147,6 +152,7 @@ describe("Tezos Api", () => {
       async (customFees: bigint) => {
         const encodedTransaction = await module.craftTransaction(
           {
+            asset: { type: "native" },
             type: "send",
             sender: address,
             recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",

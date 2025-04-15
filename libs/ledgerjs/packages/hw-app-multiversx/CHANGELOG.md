@@ -1,11 +1,16 @@
 # @ledgerhq/hw-app-elrond
 
-## 6.23.1-nightly.0
+## 6.24.0
 
-### Patch Changes
+### Minor Changes
 
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.31.5-nightly.0
+- [#9648](https://github.com/LedgerHQ/ledger-live/pull/9648) [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove SubAccount as it is an alias to TokenAccount
+
+## 6.24.0-next.0
+
+### Minor Changes
+
+- [#9648](https://github.com/LedgerHQ/ledger-live/pull/9648) [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove SubAccount as it is an alias to TokenAccount
 
 ## 6.23.0
 

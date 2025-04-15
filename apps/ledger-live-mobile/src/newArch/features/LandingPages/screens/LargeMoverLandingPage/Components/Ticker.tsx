@@ -7,7 +7,7 @@ type TickerProps = {
   currencyId: string;
 };
 
-export const Ticker: React.FC<TickerProps> = ({ currencyId = "bitcoin" }) => {
+export const Ticker: React.FC<TickerProps> = ({ currencyId }) => {
   const currency = getCryptoCurrencyById(currencyId);
 
   return (

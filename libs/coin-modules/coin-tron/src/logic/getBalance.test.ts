@@ -1,5 +1,8 @@
 import BigNumber from "bignumber.js";
-import { computeBalance, computeBalanceBridge } from "./getBalance";
+import { computeBalance, computeBalanceBridge, getBalance } from "./getBalance";
+import { setupServer } from "msw/node";
+import coinConfig from "../config";
+import { HttpResponse, http } from "msw";
 
 const account = JSON.parse(`
   {
@@ -199,8 +202,61 @@ const account = JSON.parse(`
 describe("computeBalance", () => {
   it("returns expected value", () => {
     const balance = computeBalance(account);
-    expect(balance).toEqual(BigInt("27781772"));
+    expect(balance).toEqual({ value: BigInt("27781772"), asset: { type: "native" } });
   });
+});
+
+describe("getBalance", () => {
+  const mockServer = setupServer();
+  coinConfig.setCoinConfig(() => ({
+    status: { type: "active" },
+    explorer: { url: "http://tron.explorer.com" },
+  }));
+
+  it("returns expected value", async () => {
+    mockServer.listen({ onUnhandledRequest: "error" });
+    mockServer.use(
+      http.get(
+        "http://tron.explorer.com/v1/accounts/41ae18eb0a9e067f8884058470ed187f44135d816d",
+        () => HttpResponse.json({ data: [account] }),
+      ),
+    );
+    const balance = await getBalance("41ae18eb0a9e067f8884058470ed187f44135d816d");
+    expect(balance).toEqual([
+      { asset: { type: "native" }, value: 27781772n },
+      { asset: { standard: "trc10", tokenId: "1002897", type: "token" }, value: 10000000n },
+      { asset: { standard: "trc10", tokenId: "1002775", type: "token" }, value: 5000000n },
+      { asset: { standard: "trc10", tokenId: "1002830", type: "token" }, value: 10000000n },
+      { asset: { standard: "trc10", tokenId: "1002962", type: "token" }, value: 10000000n },
+      { asset: { standard: "trc10", tokenId: "1002876", type: "token" }, value: 10000000n },
+      { asset: { standard: "trc10", tokenId: "1002398", type: "token" }, value: 5000000n },
+      { asset: { standard: "trc10", tokenId: "1002573", type: "token" }, value: 5000000n },
+      { asset: { standard: "trc10", tokenId: "1002881", type: "token" }, value: 10000000n },
+      { asset: { standard: "trc10", tokenId: "1002927", type: "token" }, value: 10000000n },
+      { asset: { standard: "trc10", tokenId: "1002736", type: "token" }, value: 5000000n },
+      { asset: { standard: "trc10", tokenId: "1002814", type: "token" }, value: 10000000n },
+      { asset: { standard: "trc10", tokenId: "1002858", type: "token" }, value: 10000000n },
+      { asset: { standard: "trc10", tokenId: "1002000", type: "token" }, value: 26888000n },
+      { asset: { standard: "trc10", tokenId: "1004031", type: "token" }, value: 9856699n },
+      {
+        asset: {
+          contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+          standard: "trc20",
+          type: "token",
+        },
+        value: 46825830n,
+      },
+      {
+        asset: {
+          contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+          standard: "trc20",
+          type: "token",
+        },
+        value: 376n,
+      },
+    ]);
+  });
+  mockServer.close();
 });
 
 describe("computeBalanceBridge", () => {

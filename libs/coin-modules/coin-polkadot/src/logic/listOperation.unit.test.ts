@@ -55,6 +55,7 @@ describe("listOperations", () => {
     expect(result).toEqual([
       [
         {
+          asset: { type: "native" },
           operationIndex: 0,
           tx: {
             hash: "hash1",
@@ -71,6 +72,7 @@ describe("listOperations", () => {
           recipients: ["recipient1"],
         },
         {
+          asset: { type: "native" },
           operationIndex: 0,
           tx: {
             hash: "hash2",
@@ -130,6 +132,7 @@ describe("listOperations", () => {
     expect(result).toEqual([
       [
         {
+          asset: { type: "native" },
           operationIndex: 0,
           tx: {
             hash: "hash1",
@@ -177,6 +180,7 @@ describe("listOperations", () => {
     expect(result).toEqual([
       [
         {
+          asset: { type: "native" },
           operationIndex: 0,
           tx: {
             hash: "hash1",

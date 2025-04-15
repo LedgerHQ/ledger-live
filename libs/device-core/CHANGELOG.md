@@ -1,44 +1,20 @@
 # @ledgerhq/device-core
 
-## 0.4.20-nightly.4
+## 0.4.20
 
 ### Patch Changes
 
-- Updated dependencies [[`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81)]:
-  - @ledgerhq/types-live@6.66.0-nightly.4
+- Updated dependencies [[`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8), [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca), [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f)]:
+  - @ledgerhq/types-live@6.66.0
+  - @ledgerhq/live-network@2.0.7
 
-## 0.4.20-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`4c6b682`](https://github.com/LedgerHQ/ledger-live/commit/4c6b682b9929334a7be13212a69f2c6a614f372c)]:
-  - @ledgerhq/types-live@6.66.0-nightly.3
-
-## 0.4.20-nightly.2
+## 0.4.20-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`6f61972`](https://github.com/LedgerHQ/ledger-live/commit/6f619728e200270a674ffb13b10375765b55ae4b)]:
-  - @ledgerhq/types-live@6.66.0-nightly.2
-
-## 0.4.20-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`3f8a531`](https://github.com/LedgerHQ/ledger-live/commit/3f8a53196dfb80d084056e0d896e09869c8ff949), [`b580b04`](https://github.com/LedgerHQ/ledger-live/commit/b580b04e02392a706534c2fceba192ae3b6242ef), [`c6cb1bd`](https://github.com/LedgerHQ/ledger-live/commit/c6cb1bd2a0768ccbeeee96342dc8b872a620f3ac)]:
-  - @ledgerhq/types-live@6.66.0-nightly.1
-  - @ledgerhq/errors@6.20.0-nightly.0
-  - @ledgerhq/devices@8.4.5-nightly.0
-  - @ledgerhq/hw-transport@6.31.5-nightly.0
-  - @ledgerhq/live-network@2.0.7-nightly.1
-
-## 0.4.20-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8)]:
-  - @ledgerhq/types-live@6.66.0-nightly.0
-  - @ledgerhq/live-network@2.0.7-nightly.0
+- Updated dependencies [[`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8), [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca), [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f)]:
+  - @ledgerhq/types-live@6.66.0-next.0
+  - @ledgerhq/live-network@2.0.7-next.0
 
 ## 0.4.19
 

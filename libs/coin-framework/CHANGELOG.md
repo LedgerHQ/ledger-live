@@ -1,67 +1,56 @@
 # @ledgerhq/coin-framework
 
-## 2.6.0-nightly.5
+## 2.6.0
 
 ### Minor Changes
 
-- [#9230](https://github.com/LedgerHQ/ledger-live/pull/9230) [`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81) Thanks [@lawRathod](https://github.com/lawRathod)! - Add support for mina blockchain
+- [#9736](https://github.com/LedgerHQ/ledger-live/pull/9736) [`44ae74c`](https://github.com/LedgerHQ/ledger-live/commit/44ae74c272ba803bed7c9f4fc3351e3ce8a15531) Thanks [@jprudent](https://github.com/jprudent)! - fix conversion of bignumber to bigint
 
-### Patch Changes
+- [#9681](https://github.com/LedgerHQ/ledger-live/pull/9681) [`71bb6a9`](https://github.com/LedgerHQ/ledger-live/commit/71bb6a9adb4ac83172be5def5b25d2836380df1d) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - add & Record<string, unknown> to TransactionIntent on coin-framework to support coin specific logic like memo, tag etc.
 
-- Updated dependencies [[`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81)]:
-  - @ledgerhq/types-cryptoassets@7.22.0-nightly.0
-  - @ledgerhq/cryptoassets@13.15.0-nightly.3
-  - @ledgerhq/types-live@6.66.0-nightly.4
-
-## 2.6.0-nightly.4
-
-### Patch Changes
-
-- Updated dependencies [[`4c6b682`](https://github.com/LedgerHQ/ledger-live/commit/4c6b682b9929334a7be13212a69f2c6a614f372c)]:
-  - @ledgerhq/types-live@6.66.0-nightly.3
-
-## 2.6.0-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`6f61972`](https://github.com/LedgerHQ/ledger-live/commit/6f619728e200270a674ffb13b10375765b55ae4b)]:
-  - @ledgerhq/types-live@6.66.0-nightly.2
-
-## 2.6.0-nightly.2
-
-### Minor Changes
-
-- [#9451](https://github.com/LedgerHQ/ledger-live/pull/9451) [`c6cb1bd`](https://github.com/LedgerHQ/ledger-live/commit/c6cb1bd2a0768ccbeeee96342dc8b872a620f3ac) Thanks [@may01](https://github.com/may01)! - Add aptos tokens to cryptoassets
-
-### Patch Changes
-
-- Updated dependencies [[`3f8a531`](https://github.com/LedgerHQ/ledger-live/commit/3f8a53196dfb80d084056e0d896e09869c8ff949), [`b580b04`](https://github.com/LedgerHQ/ledger-live/commit/b580b04e02392a706534c2fceba192ae3b6242ef), [`c6cb1bd`](https://github.com/LedgerHQ/ledger-live/commit/c6cb1bd2a0768ccbeeee96342dc8b872a620f3ac)]:
-  - @ledgerhq/types-live@6.66.0-nightly.1
-  - @ledgerhq/cryptoassets@13.15.0-nightly.2
-  - @ledgerhq/errors@6.20.0-nightly.0
-  - @ledgerhq/devices@8.4.5-nightly.0
-  - @ledgerhq/live-network@2.0.7-nightly.1
-
-## 2.6.0-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`1e56618`](https://github.com/LedgerHQ/ledger-live/commit/1e56618a3c31e7980074072e0aae9422c145f4b3)]:
-  - @ledgerhq/cryptoassets@13.15.0-nightly.1
-
-## 2.6.0-nightly.0
-
-### Minor Changes
+- [#9666](https://github.com/LedgerHQ/ledger-live/pull/9666) [`8ce7b0a`](https://github.com/LedgerHQ/ledger-live/commit/8ce7b0ab2d1d73ef071102f795e7c868c676b1f4) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - update the following modules for an optional fees parameter on craft transaction functions: coin-stellar, coin-tezos, coin-tron, coin-xrp, coin-framework
 
 - [#9720](https://github.com/LedgerHQ/ledger-live/pull/9720) [`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove generated formatters file
 
+- [#9597](https://github.com/LedgerHQ/ledger-live/pull/9597) [`1e7d454`](https://github.com/LedgerHQ/ledger-live/commit/1e7d454d99f1f39880f39a120c59020725d26475) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - isAccountEmpty is now defined in each coin needed a dedicated logic.
+
+- [#9648](https://github.com/LedgerHQ/ledger-live/pull/9648) [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove SubAccount as it is an alias to TokenAccount
+
+- [#9690](https://github.com/LedgerHQ/ledger-live/pull/9690) [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f) Thanks [@Justkant](https://github.com/Justkant)! - feat: support Solana NFTs
+
 ### Patch Changes
 
-- Updated dependencies [[`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8), [`32d46cc`](https://github.com/LedgerHQ/ledger-live/commit/32d46cc77debe059ae0bcd848a21065dec7ee091)]:
-  - @ledgerhq/types-live@6.66.0-nightly.0
-  - @ledgerhq/live-env@2.8.0-nightly.0
-  - @ledgerhq/cryptoassets@13.14.1-nightly.0
-  - @ledgerhq/live-network@2.0.7-nightly.0
+- Updated dependencies [[`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8), [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca), [`32d46cc`](https://github.com/LedgerHQ/ledger-live/commit/32d46cc77debe059ae0bcd848a21065dec7ee091), [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f)]:
+  - @ledgerhq/types-live@6.66.0
+  - @ledgerhq/live-env@2.8.0
+  - @ledgerhq/cryptoassets@13.14.1
+  - @ledgerhq/live-network@2.0.7
+
+## 2.6.0-next.0
+
+### Minor Changes
+
+- [#9736](https://github.com/LedgerHQ/ledger-live/pull/9736) [`44ae74c`](https://github.com/LedgerHQ/ledger-live/commit/44ae74c272ba803bed7c9f4fc3351e3ce8a15531) Thanks [@jprudent](https://github.com/jprudent)! - fix conversion of bignumber to bigint
+
+- [#9681](https://github.com/LedgerHQ/ledger-live/pull/9681) [`71bb6a9`](https://github.com/LedgerHQ/ledger-live/commit/71bb6a9adb4ac83172be5def5b25d2836380df1d) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - add & Record<string, unknown> to TransactionIntent on coin-framework to support coin specific logic like memo, tag etc.
+
+- [#9666](https://github.com/LedgerHQ/ledger-live/pull/9666) [`8ce7b0a`](https://github.com/LedgerHQ/ledger-live/commit/8ce7b0ab2d1d73ef071102f795e7c868c676b1f4) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - update the following modules for an optional fees parameter on craft transaction functions: coin-stellar, coin-tezos, coin-tron, coin-xrp, coin-framework
+
+- [#9720](https://github.com/LedgerHQ/ledger-live/pull/9720) [`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove generated formatters file
+
+- [#9597](https://github.com/LedgerHQ/ledger-live/pull/9597) [`1e7d454`](https://github.com/LedgerHQ/ledger-live/commit/1e7d454d99f1f39880f39a120c59020725d26475) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - isAccountEmpty is now defined in each coin needed a dedicated logic.
+
+- [#9648](https://github.com/LedgerHQ/ledger-live/pull/9648) [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove SubAccount as it is an alias to TokenAccount
+
+- [#9690](https://github.com/LedgerHQ/ledger-live/pull/9690) [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f) Thanks [@Justkant](https://github.com/Justkant)! - feat: support Solana NFTs
+
+### Patch Changes
+
+- Updated dependencies [[`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8), [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca), [`32d46cc`](https://github.com/LedgerHQ/ledger-live/commit/32d46cc77debe059ae0bcd848a21065dec7ee091), [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f)]:
+  - @ledgerhq/types-live@6.66.0-next.0
+  - @ledgerhq/live-env@2.8.0-next.0
+  - @ledgerhq/cryptoassets@13.14.1-next.0
+  - @ledgerhq/live-network@2.0.7-next.0
 
 ## 2.5.0
 

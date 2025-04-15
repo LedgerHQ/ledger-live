@@ -105,9 +105,9 @@ export function useStake() {
           manifestNetwork.currency ===
           (isTokenAccount(account) ? account.token.parentCurrency.id : account.currency.id),
       )?.chainID;
-      const assetId = tokenContractAddress
-        ? `${earningsAccountChainId}_${tokenContractAddress}`
-        : null;
+      const assetId = !(earningsAccountChainId && tokenContractAddress)
+        ? null
+        : `${earningsAccountChainId}_${tokenContractAddress}`;
 
       const earningsAccountId = isTokenAccount(account) ? account.parentId : account.id;
       const accountIdForManifestVersion = deriveAccountIdForManifest(
@@ -131,6 +131,7 @@ export function useStake() {
       return {
         pathname: `/platform/${manifest.id}`,
         state: {
+          ...customPartnerParams,
           appId: manifest.id,
           name: manifest.name,
           accountId: accountIdForManifestVersion,

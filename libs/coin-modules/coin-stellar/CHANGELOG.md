@@ -1,73 +1,42 @@
 # @ledgerhq/coin-stellar
 
-## 2.2.0-nightly.5
-
-### Patch Changes
-
-- Updated dependencies [[`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81)]:
-  - @ledgerhq/types-cryptoassets@7.22.0-nightly.0
-  - @ledgerhq/cryptoassets@13.15.0-nightly.3
-  - @ledgerhq/types-live@6.66.0-nightly.4
-  - @ledgerhq/coin-framework@2.6.0-nightly.5
-
-## 2.2.0-nightly.4
-
-### Patch Changes
-
-- Updated dependencies [[`4c6b682`](https://github.com/LedgerHQ/ledger-live/commit/4c6b682b9929334a7be13212a69f2c6a614f372c)]:
-  - @ledgerhq/types-live@6.66.0-nightly.3
-  - @ledgerhq/coin-framework@2.6.0-nightly.4
-
-## 2.2.0-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`6f61972`](https://github.com/LedgerHQ/ledger-live/commit/6f619728e200270a674ffb13b10375765b55ae4b)]:
-  - @ledgerhq/types-live@6.66.0-nightly.2
-  - @ledgerhq/coin-framework@2.6.0-nightly.3
-
-## 2.2.0-nightly.2
+## 2.2.0
 
 ### Minor Changes
 
-- [#9451](https://github.com/LedgerHQ/ledger-live/pull/9451) [`c6cb1bd`](https://github.com/LedgerHQ/ledger-live/commit/c6cb1bd2a0768ccbeeee96342dc8b872a620f3ac) Thanks [@may01](https://github.com/may01)! - Add aptos tokens to cryptoassets
+- [#9666](https://github.com/LedgerHQ/ledger-live/pull/9666) [`8ce7b0a`](https://github.com/LedgerHQ/ledger-live/commit/8ce7b0ab2d1d73ef071102f795e7c868c676b1f4) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - update the following modules for an optional fees parameter on craft transaction functions: coin-stellar, coin-tezos, coin-tron, coin-xrp, coin-framework
 
-### Patch Changes
-
-- Updated dependencies [[`3f8a531`](https://github.com/LedgerHQ/ledger-live/commit/3f8a53196dfb80d084056e0d896e09869c8ff949), [`b580b04`](https://github.com/LedgerHQ/ledger-live/commit/b580b04e02392a706534c2fceba192ae3b6242ef), [`c6cb1bd`](https://github.com/LedgerHQ/ledger-live/commit/c6cb1bd2a0768ccbeeee96342dc8b872a620f3ac)]:
-  - @ledgerhq/types-live@6.66.0-nightly.1
-  - @ledgerhq/cryptoassets@13.15.0-nightly.2
-  - @ledgerhq/errors@6.20.0-nightly.0
-  - @ledgerhq/coin-framework@2.6.0-nightly.2
-  - @ledgerhq/devices@8.4.5-nightly.0
-  - @ledgerhq/live-network@2.0.7-nightly.1
-
-## 2.2.0-nightly.1
-
-### Minor Changes
-
-- [#9755](https://github.com/LedgerHQ/ledger-live/pull/9755) [`c3c847b`](https://github.com/LedgerHQ/ledger-live/commit/c3c847bab4d01ec7cc1078344b519218806340ed) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - Fix stellar and tezos using static global variables, preventing multiple instances with different settings
-
-- [#9760](https://github.com/LedgerHQ/ledger-live/pull/9760) [`8bad17b`](https://github.com/LedgerHQ/ledger-live/commit/8bad17b3718dfb151e2dfd3287516f38326435af) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fix stellar coin-module ignoring `memo` craft parameter
-
-### Patch Changes
-
-- Updated dependencies [[`1e56618`](https://github.com/LedgerHQ/ledger-live/commit/1e56618a3c31e7980074072e0aae9422c145f4b3)]:
-  - @ledgerhq/cryptoassets@13.15.0-nightly.1
-  - @ledgerhq/coin-framework@2.6.0-nightly.1
-
-## 2.1.1-nightly.0
-
-### Patch Changes
+- [#9648](https://github.com/LedgerHQ/ledger-live/pull/9648) [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove SubAccount as it is an alias to TokenAccount
 
 - [#9758](https://github.com/LedgerHQ/ledger-live/pull/9758) [`3ef0a3e`](https://github.com/LedgerHQ/ledger-live/commit/3ef0a3e29eb2a1cb0b2c9b01cc5dd97af6d0a894) Thanks [@jprudent](https://github.com/jprudent)! - make stellar sync more reliable against 429
 
-- Updated dependencies [[`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8), [`32d46cc`](https://github.com/LedgerHQ/ledger-live/commit/32d46cc77debe059ae0bcd848a21065dec7ee091)]:
-  - @ledgerhq/types-live@6.66.0-nightly.0
-  - @ledgerhq/coin-framework@2.6.0-nightly.0
-  - @ledgerhq/live-env@2.8.0-nightly.0
-  - @ledgerhq/cryptoassets@13.14.1-nightly.0
-  - @ledgerhq/live-network@2.0.7-nightly.0
+### Patch Changes
+
+- Updated dependencies [[`44ae74c`](https://github.com/LedgerHQ/ledger-live/commit/44ae74c272ba803bed7c9f4fc3351e3ce8a15531), [`71bb6a9`](https://github.com/LedgerHQ/ledger-live/commit/71bb6a9adb4ac83172be5def5b25d2836380df1d), [`8ce7b0a`](https://github.com/LedgerHQ/ledger-live/commit/8ce7b0ab2d1d73ef071102f795e7c868c676b1f4), [`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8), [`1e7d454`](https://github.com/LedgerHQ/ledger-live/commit/1e7d454d99f1f39880f39a120c59020725d26475), [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca), [`32d46cc`](https://github.com/LedgerHQ/ledger-live/commit/32d46cc77debe059ae0bcd848a21065dec7ee091), [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f)]:
+  - @ledgerhq/coin-framework@2.6.0
+  - @ledgerhq/types-live@6.66.0
+  - @ledgerhq/live-env@2.8.0
+  - @ledgerhq/cryptoassets@13.14.1
+  - @ledgerhq/live-network@2.0.7
+
+## 2.2.0-next.0
+
+### Minor Changes
+
+- [#9666](https://github.com/LedgerHQ/ledger-live/pull/9666) [`8ce7b0a`](https://github.com/LedgerHQ/ledger-live/commit/8ce7b0ab2d1d73ef071102f795e7c868c676b1f4) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - update the following modules for an optional fees parameter on craft transaction functions: coin-stellar, coin-tezos, coin-tron, coin-xrp, coin-framework
+
+- [#9648](https://github.com/LedgerHQ/ledger-live/pull/9648) [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove SubAccount as it is an alias to TokenAccount
+
+- [#9758](https://github.com/LedgerHQ/ledger-live/pull/9758) [`3ef0a3e`](https://github.com/LedgerHQ/ledger-live/commit/3ef0a3e29eb2a1cb0b2c9b01cc5dd97af6d0a894) Thanks [@jprudent](https://github.com/jprudent)! - make stellar sync more reliable against 429
+
+### Patch Changes
+
+- Updated dependencies [[`44ae74c`](https://github.com/LedgerHQ/ledger-live/commit/44ae74c272ba803bed7c9f4fc3351e3ce8a15531), [`71bb6a9`](https://github.com/LedgerHQ/ledger-live/commit/71bb6a9adb4ac83172be5def5b25d2836380df1d), [`8ce7b0a`](https://github.com/LedgerHQ/ledger-live/commit/8ce7b0ab2d1d73ef071102f795e7c868c676b1f4), [`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8), [`1e7d454`](https://github.com/LedgerHQ/ledger-live/commit/1e7d454d99f1f39880f39a120c59020725d26475), [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca), [`32d46cc`](https://github.com/LedgerHQ/ledger-live/commit/32d46cc77debe059ae0bcd848a21065dec7ee091), [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f)]:
+  - @ledgerhq/coin-framework@2.6.0-next.0
+  - @ledgerhq/types-live@6.66.0-next.0
+  - @ledgerhq/live-env@2.8.0-next.0
+  - @ledgerhq/cryptoassets@13.14.1-next.0
+  - @ledgerhq/live-network@2.0.7-next.0
 
 ## 2.1.0
 

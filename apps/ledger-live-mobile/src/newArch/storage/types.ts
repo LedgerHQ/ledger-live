@@ -1,3 +1,5 @@
+import { MigrationStatus } from "./utils/migrations/types";
+
 /** Application storage interface used to store data in the application. */
 export interface Storage {
   /** Get all keys in application storage. */
@@ -84,11 +86,17 @@ export interface Storage {
 
   /** Rollback the migration to AsyncStorage. */
   rollbackMigration(): Promise<void> | void;
+
+  /** Automatically handle the migration process. */
+  handleMigration(): Promise<void> | void;
 }
 
 /** Internal state of the {@link Storage}. */
 export interface StorageState {
+  /** Indicates the current storage type. */
   storageType: StorageType;
+  /** Indicates the current migration status, if any */
+  migrationStatus: MigrationStatus;
 }
 
 /** Initializer callback function to initialize {@link StorageState} state. */
