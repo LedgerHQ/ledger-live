@@ -1,5 +1,12 @@
 # @ledgerhq/live-countervalues
 
+## 0.5.1-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`8d36e9b`](https://github.com/LedgerHQ/ledger-live/commit/8d36e9b2474a4c600427f357adad04f99a89e13d)]:
+  - @ledgerhq/coin-framework@3.0.0-nightly.0
+
 ## 0.5.0
 
 ### Minor Changes

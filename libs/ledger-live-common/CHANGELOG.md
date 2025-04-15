@@ -1,5 +1,43 @@
 # @ledgerhq/live-common
 
+## 34.29.1-nightly.0
+
+### Patch Changes
+
+- [#9912](https://github.com/LedgerHQ/ledger-live/pull/9912) [`e5224f5`](https://github.com/LedgerHQ/ledger-live/commit/e5224f546123d11ec7e6999c0dc065d4f28feed7) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: minapp version mustupgrade check should coerce the app version
+
+- Updated dependencies [[`beb3627`](https://github.com/LedgerHQ/ledger-live/commit/beb3627630bb4d6faa22318f4fefd271a151a49a), [`5d6d223`](https://github.com/LedgerHQ/ledger-live/commit/5d6d223fe1691200911e81c8d83eec7b4ae0cd65), [`8d36e9b`](https://github.com/LedgerHQ/ledger-live/commit/8d36e9b2474a4c600427f357adad04f99a89e13d), [`6acd58f`](https://github.com/LedgerHQ/ledger-live/commit/6acd58f86f32a54cdd7a019ea4678d5a16a6a955)]:
+  - @ledgerhq/coin-xrp@4.0.0-nightly.0
+  - @ledgerhq/coin-polkadot@4.0.0-nightly.0
+  - @ledgerhq/coin-stellar@3.0.0-nightly.0
+  - @ledgerhq/coin-tezos@3.0.0-nightly.0
+  - @ledgerhq/coin-tron@1.0.0-nightly.0
+  - @ledgerhq/coin-framework@3.0.0-nightly.0
+  - @ledgerhq/coin-vechain@2.7.1-nightly.0
+  - @ledgerhq/coin-algorand@0.9.1-nightly.0
+  - @ledgerhq/coin-aptos@1.9.1-nightly.0
+  - @ledgerhq/coin-bitcoin@0.15.1-nightly.0
+  - @ledgerhq/coin-cardano@0.8.1-nightly.0
+  - @ledgerhq/coin-casper@1.6.1-nightly.0
+  - @ledgerhq/coin-cosmos@0.12.1-nightly.0
+  - @ledgerhq/coin-evm@2.17.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.1-nightly.0
+  - @ledgerhq/coin-hedera@1.6.1-nightly.0
+  - @ledgerhq/coin-icon@0.10.1-nightly.0
+  - @ledgerhq/coin-internet_computer@1.7.1-nightly.0
+  - @ledgerhq/coin-mina@1.1.0-nightly.1
+  - @ledgerhq/coin-multiversx@0.4.1-nightly.0
+  - @ledgerhq/coin-near@0.11.1-nightly.0
+  - @ledgerhq/coin-solana@0.18.1-nightly.0
+  - @ledgerhq/coin-stacks@0.8.1-nightly.0
+  - @ledgerhq/coin-sui@0.2.2-nightly.0
+  - @ledgerhq/coin-ton@0.8.1-nightly.0
+  - @ledgerhq/live-countervalues@0.5.1-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.30-nightly.0
+  - @ledgerhq/live-nft@0.8.1-nightly.0
+  - @ledgerhq/live-wallet@0.10.4-nightly.0
+  - @ledgerhq/live-signer-evm@0.2.5-nightly.0
+
 ## 34.29.0
 
 ### Minor Changes

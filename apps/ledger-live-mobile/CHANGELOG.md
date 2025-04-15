@@ -1,5 +1,32 @@
 # live-mobile
 
+## 3.74.0-nightly.0
+
+### Minor Changes
+
+- [#9906](https://github.com/LedgerHQ/ledger-live/pull/9906) [`818ad2d`](https://github.com/LedgerHQ/ledger-live/commit/818ad2d378ae9ae833bcb5cf976ab5ba6457e3ad) Thanks [@ysitbon](https://github.com/ysitbon)! - Add storage migration scripts
+
+- [#9862](https://github.com/LedgerHQ/ledger-live/pull/9862) [`a960949`](https://github.com/LedgerHQ/ledger-live/commit/a960949fff01ff26b9c2031a92bf754b9d2afd49) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Feat: Large Mover Graph component
+
+- [#9889](https://github.com/LedgerHQ/ledger-live/pull/9889) [`8b417e4`](https://github.com/LedgerHQ/ledger-live/commit/8b417e453bc28395b88864faee37c8839ee49bc8) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Feat: Large Mover Performance Component
+
+### Patch Changes
+
+- Updated dependencies [[`8d36e9b`](https://github.com/LedgerHQ/ledger-live/commit/8d36e9b2474a4c600427f357adad04f99a89e13d), [`8b417e4`](https://github.com/LedgerHQ/ledger-live/commit/8b417e453bc28395b88864faee37c8839ee49bc8)]:
+  - @ledgerhq/coin-framework@3.0.0-nightly.0
+  - @ledgerhq/native-ui@0.32.0-nightly.1
+  - @ledgerhq/live-dmk-mobile@0.2.1-nightly.0
+  - @ledgerhq/coin-cosmos@0.12.1-nightly.0
+  - @ledgerhq/coin-evm@2.17.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.1-nightly.0
+  - @ledgerhq/coin-multiversx@0.4.1-nightly.0
+  - @ledgerhq/coin-stacks@0.8.1-nightly.0
+  - @ledgerhq/live-countervalues@0.5.1-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.30-nightly.0
+  - @ledgerhq/live-nft@0.8.1-nightly.0
+  - @ledgerhq/live-nft-react@0.9.1-nightly.0
+  - @ledgerhq/live-wallet@0.10.4-nightly.0
+
 ## 3.73.1
 
 ### Patch Changes

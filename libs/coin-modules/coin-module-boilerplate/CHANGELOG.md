@@ -1,5 +1,20 @@
 # @ledgerhq/coin-module-boilerplate
 
+## 3.0.0-nightly.0
+
+### Major Changes
+
+- [#9835](https://github.com/LedgerHQ/ledger-live/pull/9835) [`8d36e9b`](https://github.com/LedgerHQ/ledger-live/commit/8d36e9b2474a4c600427f357adad04f99a89e13d) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-framework): return token balances in `getBalance`
+
+### Minor Changes
+
+- [#9877](https://github.com/LedgerHQ/ledger-live/pull/9877) [`bcf621c`](https://github.com/LedgerHQ/ledger-live/commit/bcf621c2ac602b7fdd58a826640615174d917b35) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-module-boilerplate): fix typos in coin boilerplate
+
+### Patch Changes
+
+- Updated dependencies [[`8d36e9b`](https://github.com/LedgerHQ/ledger-live/commit/8d36e9b2474a4c600427f357adad04f99a89e13d)]:
+  - @ledgerhq/coin-framework@3.0.0-nightly.0
+
 ## 2.2.0
 
 ### Minor Changes
