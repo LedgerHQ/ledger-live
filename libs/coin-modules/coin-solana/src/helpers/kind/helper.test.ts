@@ -15,4 +15,8 @@ describe("Testing kind helper", () => {
       expect(operationType).toEqual(operationTypeByKind.get(kind));
     },
   );
+
+  it.each(["", "unknown", "transfer.psbt"])("should throw an error on unknown kind [%s]", kind => {
+    expect(() => toOperationType(kind)).toThrow(`${kind} is not supported by OperationType`);
+  });
 });

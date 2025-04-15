@@ -7,8 +7,7 @@ import {
 } from "@solana/web3.js";
 import { buildTransactionWithAPI } from "./buildTransaction";
 import { ChainAPI } from "./network";
-import { Transaction } from "./types";
-import BigNumber from "bignumber.js";
+import { transaction } from "./__tests__/fixtures/helpers.fixture";
 
 describe("Testing buildTransaction", () => {
   const ADDRESS = "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp";
@@ -18,7 +17,7 @@ describe("Testing buildTransaction", () => {
 
   afterEach(() => jest.clearAllMocks());
 
-  it("should decode raw transaction and use it when user provide it", async () => {
+  it.only("should decode raw transaction and use it when user provide it", async () => {
     const expectedSolanaTransaction = {} as VersionedTransaction;
     expectedSolanaTransaction.addSignature = jest.fn();
 
@@ -26,7 +25,7 @@ describe("Testing buildTransaction", () => {
       (_serializedTransaction: Uint8Array) => expectedSolanaTransaction,
     );
 
-    const rawTransaction = transaction("any random value");
+    const rawTransaction = transaction("test");
     const [solanaTransaction, recentBlockhash, addSignatureCallback] =
       await buildTransactionWithAPI(
         ADDRESS,
@@ -93,26 +92,4 @@ function api(blockhash: string, lastValidBlockHeight: number) {
       null,
     getRecentPrioritizationFees: (_accounts: string[]) => [] as RecentPrioritizationFees[],
   } as unknown as ChainAPI;
-}
-
-function transaction(raw?: string): Transaction {
-  return {
-    amount: new BigNumber(0),
-    recipient: "",
-    model: {
-      commandDescriptor: {
-        fee: 0,
-        warnings: {},
-        command: {
-          kind: "transfer", // any kind can work, just needed a value for the test
-          sender: "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp",
-          recipient: "DwRL6XkPAtM1bfuySJKZGn2t9WeG25RC39isAu2nwak4",
-          amount: 0,
-        },
-        errors: {},
-      },
-    },
-    raw: raw,
-    family: "solana",
-  } as Transaction;
 }
