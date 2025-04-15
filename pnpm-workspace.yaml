@@ -4,6 +4,7 @@ packages:
   - "libs/*"
   - "tests/*"
   - "libs/coin-modules/*"
+  - "libs/coin-tester-modules/*"
   - "libs/ledgerjs/**"
   - "libs/ledger-services/**"
   - "libs/ui/packages/*"

@@ -1,6 +1,6 @@
 import { setupServer } from "msw/node";
 import { http, HttpResponse, bypass } from "msw";
-import { ExplorerExtrinsic } from "../../types";
+import { ExplorerExtrinsic } from "@ledgerhq/coin-polkadot";
 
 const explorerAppendixByAddress = new Map<string, ExplorerExtrinsic[]>();
 

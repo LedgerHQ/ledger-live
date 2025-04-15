@@ -6,19 +6,19 @@ import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { killChopsticksAndSidecar, spawnChopsticksAndSidecar } from "../chopsticks-sidecar";
-import { PolkadotCoinConfig } from "../../../config";
-import { ExplorerExtrinsic } from "../../../types";
+import { PolkadotCoinConfig } from "@ledgerhq/coin-polkadot/config";
+import { ExplorerExtrinsic } from "@ledgerhq/coin-polkadot";
 import { defaultNanoApp } from "../scenarii.test";
-import { createBridges } from "../../../bridge";
-import { makeAccount } from "../../fixtures";
+import { createBridges } from "@ledgerhq/coin-polkadot/bridge/index";
+import { makeAccount } from "../fixtures";
 import { indexOperation } from "../indexer";
 import { polkadot } from "../helpers";
-import resolver from "../../../signer";
+import resolver from "@ledgerhq/coin-polkadot/signer/index";
 import {
   PolkadotAccount,
   PolkadotOperationExtra,
   Transaction as PolkadotTransaction,
-} from "../../../types/bridge";
+} from "@ledgerhq/coin-polkadot/types/bridge";
 
 type PolkadotScenarioTransaction = ScenarioTransaction<PolkadotTransaction, PolkadotAccount>;
 
