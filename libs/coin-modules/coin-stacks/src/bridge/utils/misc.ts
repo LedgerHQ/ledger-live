@@ -21,6 +21,15 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { encodeOperationId, encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
 import { StacksOperation } from "../../types";
 import { log } from "@ledgerhq/logs";
+import { Unit } from "@ledgerhq/types-cryptoassets";
+
+type ContractCallArg = {
+  hex: string;
+  repr: string;
+  name: string;
+  type: string;
+};
+type Sip010ContractCallArgs = [ContractCallArg, ContractCallArg, ContractCallArg, ContractCallArg];
 
 export const getTxToBroadcast = async (
   operation: StacksOperation,
@@ -223,6 +232,68 @@ export const mapTxToOps =
       return [];
     }
   };
+
+export const sip010TxnToOperation = (
+  tx: TransactionResponse,
+  address: string,
+  accountId: string,
+): StacksOperation[] => {
+  try {
+    const { tx_id, fee_rate, nonce, block_height, burn_block_time, block_hash: blockHash } = tx.tx;
+    if (!tx.tx.contract_call) {
+      return [];
+    }
+    const contractCallData = tx.tx.contract_call;
+    const contractCallArgs = contractCallData.function_args;
+
+    if (contractCallArgs.length !== 4) {
+      return [];
+    }
+
+    const [valueArg, senderArg, receiverArg, memoArg] = contractCallArgs as Sip010ContractCallArgs;
+
+    const value = new BigNumber(valueArg.hex);
+    const recipients: string[] = [receiverArg.repr];
+    const senders: string[] = [senderArg.repr];
+
+    const ops: StacksOperation[] = [];
+
+    const date = new Date(burn_block_time * 1000);
+    const fee = new BigNumber(fee_rate || "0");
+
+    const hasFailed = tx.tx.tx_status !== "success";
+    const type = address === senderArg.repr ? "OUT" : address === receiverArg.repr ? "IN" : "";
+    if (type === "") {
+      return [];
+    }
+
+    ops.push({
+      hash: tx_id,
+      blockHeight: block_height,
+      blockHash,
+      fee,
+      accountId,
+      senders,
+      recipients,
+      transactionSequenceNumber: nonce,
+      date,
+      value,
+      hasFailed,
+      extra: {
+        memo: memoArg.hex,
+      },
+      type,
+      id: encodeOperationId(accountId, tx_id, type),
+    });
+
+    invariant(ops, "stacks operation is not defined");
+
+    return ops;
+  } catch (e) {
+    log("error", "stacks error converting sip010 transaction to operation", e);
+    return [];
+  }
+};
 
 export function reconciliatePublicKey(
   publicKey: string | undefined,
