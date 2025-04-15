@@ -86,7 +86,7 @@
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@sentry/electron": "5.2.0",
-    "@sentry/node": "8.16.0",
+    "@sentry/node": "8.49.0",
     "@tanstack/react-query": "5.28.9",
     "@tanstack/react-query-devtools": "5.28.14",
     "@tippyjs/react": "4.2.6",
