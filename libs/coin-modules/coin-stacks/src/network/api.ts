@@ -12,6 +12,8 @@ import {
   MempoolResponse,
   MempoolTransaction,
   NetworkStatusResponse,
+  TokenBalance,
+  TokenBalanceResponse,
   TransactionResponse,
   TransactionsResponse,
 } from "./api.types";
@@ -78,6 +80,40 @@ const sendRaw = async <T>(path: string, data: Buffer) => {
 export const fetchBalances = async (addr: string): Promise<BalanceResponse> => {
   const data = await fetch<BalanceResponse>(`/extended/v1/address/${addr}/stx`);
   return data; // TODO Validate if the response fits this interface
+};
+
+export const fetchTokenBalances = async (
+  addr: string,
+  offset = 0,
+): Promise<TokenBalanceResponse> => {
+  const limit = 50;
+  try {
+    const response = await fetch<TokenBalanceResponse>(
+      `/extended/v2/address/${addr}/ft?offset=${offset}&limit=${limit}`,
+    );
+    return response; // TODO Validate if the response fits this interface
+  } catch (e) {
+    return { limit, offset, total: 0, results: [] };
+  }
+};
+
+export const fetchAllTokenBalances = async (addr: string): Promise<Record<string, string>> => {
+  const limit = 50;
+  let offset = 0;
+  let total = 0;
+  const tokenBalanceMap: Record<string, string> = {};
+
+  do {
+    const response = await fetchTokenBalances(addr, offset);
+    response.results.forEach(item => {
+      tokenBalanceMap[item.token] = item.balance;
+    });
+
+    offset += limit;
+    total = response.total;
+  } while (offset < total);
+
+  return tokenBalanceMap;
 };
 
 export const fetchEstimatedFees = async (
