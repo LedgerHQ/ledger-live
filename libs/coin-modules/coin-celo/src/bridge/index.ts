@@ -28,7 +28,7 @@ import { buildSignOperation } from "./signOperation";
 import { sync } from "./synchronisation";
 import { CeloSigner } from "../signer/signer";
 
-export function buildCurrencyBridge(signerContext: SignerContext<EvmSigner>): CurrencyBridge {
+export function buildCurrencyBridge(signerContext: SignerContext<CeloSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
   const scanAccounts = makeScanAccounts({
     getAccountShape,
