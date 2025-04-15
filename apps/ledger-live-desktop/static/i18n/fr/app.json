@@ -1879,7 +1879,8 @@
       "palletMethod" : "Méthode",
       "transferAmount" : "Montant transféré",
       "validatorsCount" : "Validateurs ({{number}})",
-      "version" : "Version"
+      "version" : "Version",
+      "accountCreationFee" : "Frais de création de compte"
     }
   },
   "operationList" : {
@@ -2390,7 +2391,7 @@
         "ethereumPriorityFee" : "Frais de priorité maximaux ({{unitName}})",
         "nextBlock" : "Bloc suivant",
         "suggested" : "Suggéré",
-        "unitPerByte" : "{{unit}} par byte",
+        "unitVByte" : "{{unit}}/vByte",
         "nft" : "NFT",
         "nftQuantity" : "Nombre"
       },
@@ -2423,8 +2424,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "Vous n’utilisez pas de tag/mémo ?",
-        "description" : "Vos actifs seront perdus si vous n’ajoutez pas un tag/mémo lorsque vous les envoyez vers une plateforme d’échange centralisée ou un wallet dépositaire.",
+        "title" : "Besoin d’un tag/mémo ?",
+        "description" : "Ne pas ajouter de tag/mémo lors d’un envoi vers une plateforme centralisée augmente le risque de perte d’actifs.",
         "cta.addTag" : "Ajouter un tag",
         "cta.not.addTag" : "Ne pas ajouter de tag",
         "checkbox.label" : "Ne plus afficher"
@@ -4834,7 +4835,7 @@
         "description" : "Gérez, achetez et faites fructifier vos cryptos et NFT en toute sécurité via Ledger Live.",
         "nextButton" : "Commencer",
         "noDevice" : "Pas encore d’appareil ?",
-        "buyLink" : "Pas encore d’appareil ? Achetez un Ledger Nano X.",
+        "buyLink" : "Pas encore d’appareil ? Acheter un wallet",
         "byTapping" : "En appuyant sur Commencer, vous acceptez nos",
         "termsAndConditions" : "Conditions générales",
         "and" : "et",
@@ -5541,6 +5542,9 @@
       "memo" : "Tag/mémo",
       "memoPlaceholder" : "Facultatif",
       "requiredMemoPlaceholder" : "Requis"
+    },
+    "mina" : {
+      "memoPlaceholder" : "Mémo facultatif"
     }
   },
   "errors" : {
@@ -5862,6 +5866,10 @@
     },
     "NotEnoughBalance" : {
       "title" : "Solde insuffisant",
+      "description" : "Vérifiez que ce compte a un solde suffisant."
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "Solde insuffisant pour couvrir les frais",
       "description" : "Vérifiez que ce compte a un solde suffisant."
     },
     "NotEnoughBalanceSwap" : {
@@ -6571,6 +6579,15 @@
         "swap" : "Échangez",
         "deposit" : "Déposez"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "Le mémo ne peut pas dépasser 32 caractères"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Les frais de création de compte pour cette transaction s’élèveront à {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "Le montant minimal requis pour cette transaction est {{amount}}"
     }
   },
   "cryptoOrg" : {
