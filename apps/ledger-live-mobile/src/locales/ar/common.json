@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "إلغاء",
+    "copy" : "نسخ",
+    "copied" : "تم النسخ",
     "apply" : "تقديم",
     "seeAll" : "رؤية الكل",
     "seeAllWithNumber" : "رؤية الكل ({{number}})",
@@ -509,6 +511,10 @@
     },
     "NotEnoughBalance" : {
       "title" : "عفواً، الأموال المتوفرة غير كافية",
+      "description" : "يرجى التأكد من أن الحساب به أموال كافية."
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "عذراً، الأموال غير كافية لتغطية الرسوم",
       "description" : "يرجى التأكد من أن الحساب به أموال كافية."
     },
     "NotEnoughBalanceForUnstaking" : {
@@ -1061,6 +1067,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "فشل تحميل تطبيق Swap Live"
+    },
+    "InvalidMemoMina" : {
+      "title" : "نص علامة الملاحظة (تسمية الوجهة) لا يمكن أن يكون أطول من 32 حرفاً"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "هذه المعاملة ستُكلّف رسوم إنشاء حساب بقيمة {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "الحد الأدنى للمبلغ المطلوب لهذه المعاملة هو {{amount}}"
     }
   },
   "crash" : {
@@ -2591,7 +2606,8 @@
       "gasLimit" : "حد الغاز",
       "id" : "المُعرّف",
       "autoClaimedRewards" : "المكافآت المطالب بها تلقائياً",
-      "stakedAmount" : "المبلغ المُكدَّس"
+      "stakedAmount" : "المبلغ المُكدَّس",
+      "accountCreationFee" : "رسوم إنشاء الحساب"
     },
     "multipleAddresses" : "لماذا عناوين متعددة؟",
     "tokenName" : "اسم رمز التوكن",
@@ -6103,6 +6119,9 @@
       }
     }
   },
+  "mina" : {
+    "memoPlaceholder" : "ملاحظة اختيارية"
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -6609,14 +6628,12 @@
     "range" : {
       "1h" : "1 ساعة",
       "24h" : "24 ساعة",
+      "1d" : "1D",
       "7d" : "7 أيام",
+      "1w" : "1W",
       "30d" : "30 يوم",
-      "1y" : "1 سنة",
-      "1H_label" : "1 ساعة",
-      "1D_label" : "1 يوم",
-      "1W_label" : "1 أسبوع",
-      "1M_label" : "1 شهر",
-      "1Y_label" : "1 سنة"
+      "1m" : "1M",
+      "1y" : "1 سنة"
     },
     "warnings" : {
       "connectionError" : "خطأ في الاتصال",
@@ -7349,5 +7366,10 @@
       "description" : "الذاكرة المحدودة في ledger Nano S الخاصة بك تُقيد وصولك إلى أحدث الميزات، ومتغيّرات سلاسل الكتل، وتحسينات الأمان. من أجل الاستخدام على المدى الطويل، قم بالترقية إلى جهاز Ledger أحدث.",
       "cta" : "تعرّف على المزيد"
     }
+  },
+  "largeMover" : {
+    "performance" : "Performance",
+    "low" : "Low",
+    "high" : "High"
   }
 }
