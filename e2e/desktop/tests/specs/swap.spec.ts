@@ -34,109 +34,90 @@ const swaps = [
     swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.02", Fee.MEDIUM),
     xrayTicket: "B2CQA-2750, B2CQA-3135",
   },
-  // {
-  //   swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1, "0.00067", Fee.MEDIUM),
-
-  //   xrayTicket: "B2CQA-2744, B2CQA-2432",
-  // },
-  // {
-  //   swap: new Swap(Account.ETH_USDT_1, Account.ETH_1, "40", Fee.MEDIUM),
-
-  //   xrayTicket: "B2CQA-2752, B2CQA-2048",
-  // },
-  // {
-  //   swap: new Swap(Account.ETH_1, Account.SOL_1, "0.03", Fee.MEDIUM),
-
-  //   xrayTicket: "B2CQA-2748",
-  // },
-  // {
-  //   swap: new Swap(Account.ETH_1, Account.ETH_USDT_1, "0.02", Fee.MEDIUM),
-
-  //   xrayTicket: "B2CQA-2749",
-  // },
-  // {
-  //   swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.SOL_1, "0.0006", Fee.MEDIUM),
-
-  //   xrayTicket: "B2CQA-2747",
-  // },
-  // {
-  //   swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_USDT_1, "0.0006", Fee.MEDIUM),
-  //   xrayTicket: "B2CQA-2746",
-  // },
-  // {
-  //   swap: new Swap(Account.ETH_USDT_1, Account.BTC_NATIVE_SEGWIT_1, "40", Fee.MEDIUM),
-
-  //   xrayTicket: "B2CQA-2753",
-  // },
-  // {
-  //   swap: new Swap(Account.ETH_USDT_1, Account.SOL_1, "60", Fee.MEDIUM),
-
-  //   xrayTicket: "B2CQA-2751",
-  // },
-  // {
-  //   swap: new Swap(Account.SOL_1, Account.ETH_1, "0.3", Fee.MEDIUM),
-
-  //   xrayTicket: "B2CQA-2775",
-  // },
-  // {
-  //   swap: new Swap(Account.SOL_1, Account.BTC_NATIVE_SEGWIT_1, "0.3", Fee.MEDIUM),
-
-  //   xrayTicket: "B2CQA-2776",
-  // },
-  // {
-  //   swap: new Swap(Account.SOL_1, Account.ETH_USDT_1, "0.3", Fee.MEDIUM),
-
-  //   xrayTicket: "B2CQA-2777",
-  // },
-  // {
-  //   swap: new Swap(Account.ETH_USDC_1, Account.ETH_1, "65", Fee.MEDIUM),
-
-  //   xrayTicket: "B2CQA-2830",
-  // },
-  // {
-  //   swap: new Swap(Account.ETH_USDC_1, Account.SOL_1, "45", Fee.MEDIUM),
-
-  //   xrayTicket: "B2CQA-2831",
-  // },
-  // {
-  //   swap: new Swap(Account.ETH_USDC_1, Account.BTC_NATIVE_SEGWIT_1, "65", Fee.MEDIUM),
-  //   url: "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees",
-  //   xrayTicket: "B2CQA-2832",
-  // },
-  // {
-  //   swap: new Swap(Account.ETH_1, Account.DOT_1, "0.03", Fee.MEDIUM),
-
-  //   xrayTicket: "B2CQA-3017",
-  // },
-  // {
-  //   swap: new Swap(Account.XRP_1, Account.ETH_USDC_1, "20", Fee.MEDIUM),
-
-  //   xrayTicket: "B2CQA-3075",
-  // },
-  // {
-  //   swap: new Swap(Account.ETH_1, Account.XRP_1, "0.03", Fee.MEDIUM),
-
-  //   xrayTicket: "B2CQA-3076",
-  // },
-  // {
-  //   swap: new Swap(Account.XRP_1, Account.BTC_NATIVE_SEGWIT_1, "20", Fee.MEDIUM),
-
-  //   xrayTicket: "B2CQA-3077",
-  // },
-  // {
-  //   swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.LTC_1, "0.0006", Fee.MEDIUM),
-
-  //   xrayTicket: "B2CQA-3078",
-  // },
-  // {
-  //   swap: new Swap(Account.APTOS_1, Account.BTC_NATIVE_SEGWIT_1, "15", Fee.MEDIUM),
-
-  //   xrayTicket: "B2CQA-3081",
-  // },
+  {
+    swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1, "0.00067", Fee.MEDIUM),
+    xrayTicket: "B2CQA-2744, B2CQA-2432",
+  },
+  {
+    swap: new Swap(Account.ETH_USDT_1, Account.ETH_1, "40", Fee.MEDIUM),
+    xrayTicket: "B2CQA-2752, B2CQA-2048",
+  },
+  {
+    swap: new Swap(Account.ETH_1, Account.SOL_1, "0.03", Fee.MEDIUM),
+    xrayTicket: "B2CQA-2748",
+  },
+  {
+    swap: new Swap(Account.ETH_1, Account.ETH_USDT_1, "0.02", Fee.MEDIUM),
+    xrayTicket: "B2CQA-2749",
+  },
+  {
+    swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.SOL_1, "0.0006", Fee.MEDIUM),
+    xrayTicket: "B2CQA-2747",
+  },
+  {
+    swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_USDT_1, "0.0006", Fee.MEDIUM),
+    xrayTicket: "B2CQA-2746",
+  },
+  {
+    swap: new Swap(Account.ETH_USDT_1, Account.BTC_NATIVE_SEGWIT_1, "40", Fee.MEDIUM),
+    xrayTicket: "B2CQA-2753",
+  },
+  {
+    swap: new Swap(Account.ETH_USDT_1, Account.SOL_1, "60", Fee.MEDIUM),
+    xrayTicket: "B2CQA-2751",
+  },
+  {
+    swap: new Swap(Account.SOL_1, Account.ETH_1, "0.3", Fee.MEDIUM),
+    xrayTicket: "B2CQA-2775",
+  },
+  {
+    swap: new Swap(Account.SOL_1, Account.BTC_NATIVE_SEGWIT_1, "0.3", Fee.MEDIUM),
+    xrayTicket: "B2CQA-2776",
+  },
+  {
+    swap: new Swap(Account.SOL_1, Account.ETH_USDT_1, "0.3", Fee.MEDIUM),
+    xrayTicket: "B2CQA-2777",
+  },
+  {
+    swap: new Swap(Account.ETH_USDC_1, Account.ETH_1, "65", Fee.MEDIUM),
+    xrayTicket: "B2CQA-2830",
+  },
+  {
+    swap: new Swap(Account.ETH_USDC_1, Account.SOL_1, "45", Fee.MEDIUM),
+    xrayTicket: "B2CQA-2831",
+  },
+  {
+    swap: new Swap(Account.ETH_USDC_1, Account.BTC_NATIVE_SEGWIT_1, "65", Fee.MEDIUM),
+    xrayTicket: "B2CQA-2832",
+  },
+  {
+    swap: new Swap(Account.ETH_1, Account.DOT_1, "0.03", Fee.MEDIUM),
+    xrayTicket: "B2CQA-3017",
+  },
+  {
+    swap: new Swap(Account.XRP_1, Account.ETH_USDC_1, "20", Fee.MEDIUM),
+    xrayTicket: "B2CQA-3075",
+  },
+  {
+    swap: new Swap(Account.ETH_1, Account.XRP_1, "0.03", Fee.MEDIUM),
+    xrayTicket: "B2CQA-3076",
+  },
+  {
+    swap: new Swap(Account.XRP_1, Account.BTC_NATIVE_SEGWIT_1, "20", Fee.MEDIUM),
+    xrayTicket: "B2CQA-3077",
+  },
+  {
+    swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.LTC_1, "0.0006", Fee.MEDIUM),
+    xrayTicket: "B2CQA-3078",
+  },
+  {
+    swap: new Swap(Account.APTOS_1, Account.BTC_NATIVE_SEGWIT_1, "15", Fee.MEDIUM),
+    xrayTicket: "B2CQA-3081",
+  },
 ];
 
 for (const { swap, xrayTicket } of swaps) {
-  test.describe.only("Swap - Accepted (without tx broadcast)", () => {
+  test.describe("Swap - Accepted (without tx broadcast)", () => {
     setupEnv(true);
 
     const accPair: string[] = [swap.accountToDebit, swap.accountToCredit].map(acc =>
