@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "Cancelar",
+    "copy" : "Copiar",
+    "copied" : "Copiado",
     "apply" : "Aplicar",
     "seeAll" : "Ver tudo",
     "seeAllWithNumber" : "Ver todos ({{number}})",
@@ -101,7 +103,7 @@
     },
     "quote" : "Cotação",
     "tryAgain" : "Tente novamente",
-    "ldmkEnabled" : "LDMK transport enabled"
+    "ldmkEnabled" : "Transporte LDMK habilitado"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -510,6 +512,10 @@
     "NotEnoughBalance" : {
       "title" : "Fundos Insuficientes",
       "description" : "Certifique-se de que a conta tem fundos suficientes."
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "Fundos insuficientes para cobrir as taxas",
+      "description" : "Certifique-se de que a conta tenha fundos suficientes."
     },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Atualmente, seu saldo (fora de staking) disponível é de {{currentBalance}}, que é insuficiente para pagar as taxas de rede necessárias para desaplicar {{assetName}}. ",
@@ -1061,6 +1067,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Falha ao carregar o aplicativo Swap Live"
+    },
+    "InvalidMemoMina" : {
+      "title" : "O texto do memo não pode ter mais de 32 caracteres"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Esta transação incorrerá em uma taxa de criação de conta de {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "A quantia mínima exigida para esta transação é {{amount}}"
     }
   },
   "crash" : {
@@ -2591,7 +2606,8 @@
       "gasLimit" : "Limite de gas",
       "id" : "Id",
       "autoClaimedRewards" : "Recompensas automaticamente resgatadas",
-      "stakedAmount" : "Quantia aplicada"
+      "stakedAmount" : "Quantia aplicada",
+      "accountCreationFee" : "Taxa de Criação de Conta"
     },
     "multipleAddresses" : "Por que múltiplos endereços?",
     "tokenName" : "Nome do token",
@@ -6103,6 +6119,9 @@
       }
     }
   },
+  "mina" : {
+    "memoPlaceholder" : "Memo opcional"
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -6609,14 +6628,12 @@
     "range" : {
       "1h" : "1H",
       "24h" : "24H",
+      "1d" : "1D",
       "7d" : "7D",
+      "1w" : "1S",
       "30d" : "30D",
-      "1y" : "1A",
-      "1H_label" : "1H",
-      "1D_label" : "1D",
-      "1W_label" : "1S",
-      "1M_label" : "1M",
-      "1Y_label" : "1A"
+      "1m" : "1M",
+      "1y" : "1A"
     },
     "warnings" : {
       "connectionError" : "Erro de conexão",
@@ -7349,5 +7366,10 @@
       "description" : "A memória limitada da Ledger Nano S restringe seu acesso aos últimos recursos, mudanças em blockchains e aprimoramentos de segurança. Para uso prolongado, atualize para um dispositivo Ledger mais recente.",
       "cta" : "Saiba mais"
     }
+  },
+  "largeMover" : {
+    "performance" : "Performance",
+    "low" : "Baixo",
+    "high" : "Alto"
   }
 }
