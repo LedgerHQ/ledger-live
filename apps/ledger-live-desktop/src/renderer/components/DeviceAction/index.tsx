@@ -248,6 +248,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const stateSettings = useSelector(settingsSelector);
   const walletState = useSelector(walletSelector);
+  const isTrackingEnabled = useSelector(trackingEnabledSelector);
 
   useTrackManagerSectionEvents({
     location: location === HOOKS_TRACKING_LOCATIONS.managerDashboard ? location : undefined,
@@ -255,7 +256,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     allowManagerRequested: hookState.allowManagerRequested,
     clsImageRemoved: hookState.imageRemoved,
     error,
-    isTrackingEnabled: useSelector(trackingEnabledSelector),
+    isTrackingEnabled,
   });
 
   useTrackReceiveFlow({
@@ -264,14 +265,14 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     error,
     inWrongDeviceForAccount,
     isLocked,
-    isTrackingEnabled: useSelector(trackingEnabledSelector),
+    isTrackingEnabled,
   });
 
   useTrackAddAccountModal({
     location: location === HOOKS_TRACKING_LOCATIONS.addAccountModal ? location : undefined,
     device,
     error,
-    isTrackingEnabled: useSelector(trackingEnabledSelector),
+    isTrackingEnabled,
     requestOpenApp,
     userMustConnectDevice: !isLoading && !device,
     isLocked,
@@ -281,7 +282,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     location: location === HOOKS_TRACKING_LOCATIONS.exchange ? location : undefined,
     device,
     error,
-    isTrackingEnabled: useSelector(trackingEnabledSelector),
+    isTrackingEnabled,
     isLocked,
     inWrongDeviceForAccount,
     isRequestOpenAppExchange: requestOpenApp === "Exchange",
@@ -295,7 +296,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     requestOpenApp,
     isLedgerSyncAppOpen: appAndVersion?.name === "Ledger Sync",
     isLocked,
-    isTrackingEnabled: useSelector(trackingEnabledSelector),
+    isTrackingEnabled,
     inWrongDeviceForAccount,
   });
 
@@ -305,7 +306,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     error,
     inWrongDeviceForAccount,
     isLocked,
-    isTrackingEnabled: useSelector(trackingEnabledSelector),
+    isTrackingEnabled,
   });
 
   useTrackGenericDAppTransactionSend({
@@ -318,7 +319,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     openedAppName: appAndVersion?.name,
     isLocked,
     inWrongDeviceForAccount,
-    isTrackingEnabled: useSelector(trackingEnabledSelector),
+    isTrackingEnabled,
   });
 
   useTrackTransactionChecksFlow({
@@ -327,7 +328,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     deviceInfo,
     appAndVersion,
     transactionChecksOptInTriggered,
-    isTrackingEnabled: useSelector(trackingEnabledSelector),
+    isTrackingEnabled,
   });
 
   const type = useTheme().colors.palette.type;
