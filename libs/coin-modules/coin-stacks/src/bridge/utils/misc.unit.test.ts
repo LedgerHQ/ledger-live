@@ -206,7 +206,7 @@ describe("operation building from raw", () => {
 });
 
 test("convert raw transactions to live operations", async () => {
-  const rawTxs: TransactionResponse[] = await fetchFullTxs(Address);
+  const [rawTxs] = await fetchFullTxs(Address);
   const operations: Operation[] = rawTxs.flatMap(mapTxToOps("dummyAccountID", Address));
 
   expect(operations).toBeDefined();

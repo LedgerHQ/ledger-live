@@ -26,7 +26,7 @@ export const getAccountShape: GetAccountShape = async info => {
 
   const blockHeight = await fetchBlockHeight();
   const balanceResp = await fetchBalances(address);
-  const rawTxs = await fetchFullTxs(address);
+  const [rawTxs, tokenTxs] = await fetchFullTxs(address);
   const mempoolTxs = await fetchFullMempoolTxs(address);
 
   const balance = new BigNumber(balanceResp.balance);
