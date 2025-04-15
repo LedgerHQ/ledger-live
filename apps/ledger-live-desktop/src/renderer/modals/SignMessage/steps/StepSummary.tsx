@@ -1,6 +1,6 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { MessageProperties } from "@ledgerhq/types-live";
-import React, { memo, useEffect, useMemo, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
@@ -154,10 +154,6 @@ export default function StepSummary({ account, message: messageData }: StepProps
 
   const isACREWithdraw = "type" in messageData && messageData.type === "Withdraw";
 
-  const contractAddress = useMemo(() => {
-    return messageFields?.find(p => p.label === "Token")?.value;
-  }, [messageFields]);
-
   useEffect(() => {
     if (messageData.standard === "EIP712") {
       const specific = getLLDCoinFamily(mainAccount.currency.family);
@@ -187,17 +183,7 @@ export default function StepSummary({ account, message: messageData }: StepProps
       </Box>
       <Separator />
 
-      {!isACREWithdraw ? (
-        messageData.standard === "EIP712" ? (
-          <MessagePropertiesComp
-            properties={messageFields}
-            account={account}
-            contractAddress={contractAddress}
-          />
-        ) : (
-          <MessageProperty label={"message"} value={messageData.message} />
-        )
-      ) : null}
+      {!isACREWithdraw ? <MessageProperty label={"message"} value={messageData.message} /> : null}
 
       <MessageContainer flex="1">
         {messageFields ? (

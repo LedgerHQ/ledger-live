@@ -24,56 +24,68 @@ export default function SignMessageNavigator({
     () => getStackNavigatorConfig(colors, true, route.params.onClose),
     [colors, route.params.onClose],
   );
+
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
-      <Stack.Screen
-        name={ScreenName.SignSummary}
-        initialParams={{
-          currentNavigation: ScreenName.SignSummary,
-          nextNavigation: ScreenName.SignSelectDevice,
-        }}
-        component={SignSummary}
-        options={{
-          headerTitle: () => (
-            <StepHeader
-              title={t("walletconnect.stepperHeader.summary")}
-              subtitle={t("walletconnect.stepperHeader.stepRange", {
-                currentStep: "1",
-                totalSteps,
-              })}
-            />
-          ),
-        }}
-      />
+      {route.params.params?.message?.standard === "EIP712" ? null : (
+        <Stack.Screen
+          name={ScreenName.SignSummary}
+          initialParams={{
+            currentNavigation: ScreenName.SignSummary,
+            nextNavigation: ScreenName.SignSelectDevice,
+          }}
+          component={SignSummary}
+          options={{
+            headerTitle: () => (
+              <StepHeader
+                title={t("walletconnect.stepperHeader.summary")}
+                subtitle={t("walletconnect.stepperHeader.stepRange", {
+                  currentStep: "1",
+                  totalSteps,
+                })}
+              />
+            ),
+          }}
+        />
+      )}
+
       <Stack.Screen
         name={ScreenName.SignSelectDevice}
         component={SelectDevice}
-        options={{
-          headerTitle: () => (
-            <StepHeader
-              title={t("walletconnect.stepperHeader.selectDevice")}
-              subtitle={t("walletconnect.stepperHeader.stepRange", {
-                currentStep: "2",
-                totalSteps,
-              })}
-            />
-          ),
-        }}
+        options={
+          route.params.params?.message?.standard === "EIP712"
+            ? undefined
+            : {
+                headerTitle: () => (
+                  <StepHeader
+                    title={t("walletconnect.stepperHeader.selectDevice")}
+                    subtitle={t("walletconnect.stepperHeader.stepRange", {
+                      currentStep: "2",
+                      totalSteps,
+                    })}
+                  />
+                ),
+              }
+        }
       />
       <Stack.Screen
         name={ScreenName.SignConnectDevice}
         component={SignConnectDevice}
-        options={{
-          headerTitle: () => (
-            <StepHeader
-              title={t("walletconnect.stepperHeader.connectDevice")}
-              subtitle={t("walletconnect.stepperHeader.stepRange", {
-                currentStep: "3",
-                totalSteps,
-              })}
-            />
-          ),
-        }}
+        options={
+          route.params.params?.message?.standard === "EIP712"
+            ? undefined
+            : {
+                headerTitle: () => (
+                  <StepHeader
+                    title={t("walletconnect.stepperHeader.connectDevice")}
+                    subtitle={t("walletconnect.stepperHeader.stepRange", {
+                      currentStep: "3",
+                      totalSteps,
+                    })}
+                  />
+                ),
+              }
+        }
       />
       <Stack.Screen
         name={ScreenName.SignValidationSuccess}
