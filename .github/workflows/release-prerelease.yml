@@ -94,7 +94,7 @@ jobs:
         if: ${{ startsWith(github.ref_name, 'release') }}
         uses: planetscale/ghcommit-action@v0.2.9
         with:
-          commit_message: "chore(prerelease): :rocket: release prerelease [${{ env.LLD }}, ${{ env.LLM }}]"
+          commit_message: "chore(prerelease): :rocket: release prerelease [${{ env.LLD }}, ${{ env.LLM }}] [skip ci]"
           repo: ${{ github.repository }}
           branch: ${{ github.ref_name }}
         env:
