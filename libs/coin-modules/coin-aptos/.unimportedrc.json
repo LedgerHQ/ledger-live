@@ -1,16 +1,27 @@
 {
-  "ignoreUnresolved": ["follow-redirects", "form-data", "proxy-from-env"],
-  "ignoreUnused": ["@ledgerhq/devices", "invariant", "expect"],
+  "ignoreUnresolved": [
+    "follow-redirects",
+    "form-data",
+    "proxy-from-env"
+  ],
+  "ignoreUnused": [
+    "@ledgerhq/devices",
+    "@ledgerhq/types-cryptoassets",
+    "expect",
+    "invariant"
+  ],
   "ignoreUnimported": [
+    "src/api/api.ts",
+    "src/bridge/bridge.fixture.ts",
     "src/bridge/deviceTransactionConfig.ts",
     "src/bridge/transaction.ts",
-    "src/bridge/bridge.fixture.ts",
+    "src/config.ts",
     "src/errors.ts",
-    "src/hw-signMessage.ts",
     "src/test/bot-specs.ts",
     "src/test/bridgeDatasetTest.ts",
     "src/test/cli.ts",
     "src/test/index.ts",
-    "src/test/speculos-deviceActions.ts"
+    "src/test/speculos-deviceActions.ts",
+    "src/types/assets.ts"
   ]
 }
