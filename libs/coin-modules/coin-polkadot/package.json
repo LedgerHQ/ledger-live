@@ -119,9 +119,7 @@
     "test": "jest",
     "test-integ": "jest --config=jest.integ.config.js",
     "typecheck": "tsc --noEmit",
-    "unimported": "unimported",
-    "coin-tester:build": "make build -f src/test/coin-tester/Makefile",
-    "coin-tester": "DOTENV_CONFIG_PATH=src/test/coin-tester/.env pnpm jest --runTestsByPath src/test/coin-tester/*.test.ts --forceExit --runInBand"
+    "unimported": "unimported"
   },
   "dependencies": {
     "@ledgerhq/coin-framework": "workspace:^",
@@ -148,7 +146,6 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
-    "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/hw-app-polkadot": "workspace:^",
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",
