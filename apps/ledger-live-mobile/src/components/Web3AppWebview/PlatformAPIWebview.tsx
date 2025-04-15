@@ -429,7 +429,10 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           ({ id: accountId }, message) =>
             new Promise((resolve, reject) => {
               navigation.navigate(NavigatorName.SignMessage, {
-                screen: ScreenName.SignSummary,
+                screen:
+                  message.standard === "EIP712"
+                    ? ScreenName.SignSelectDevice
+                    : ScreenName.SignSummary,
                 params: {
                   message,
                   accountId,

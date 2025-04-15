@@ -23,25 +23,37 @@ type OwnProps = {
   data: Data;
 };
 type Props = OwnProps;
-const steps: Array<St> = [
-  {
-    id: "summary",
-    label: <Trans i18nKey="signmessage.steps.summary.title" />,
-    component: StepSummary,
-    footer: StepSummaryFooter,
-  },
-  {
-    id: "sign",
-    label: <Trans i18nKey="signmessage.steps.sign.title" />,
-    component: StepSign,
-    onBack: ({ transitionTo }: StepProps) => {
-      transitionTo("summary");
-    },
-  },
-];
+let steps: Array<St> = [];
+
 const Body = ({ onClose, data }: Props) => {
+  if (data.message.standard === "EIP712") {
+    steps = [
+      {
+        id: "sign",
+        label: "",
+        component: StepSign,
+      },
+    ];
+  } else {
+    steps = [
+      {
+        id: "summary",
+        label: <Trans i18nKey="signmessage.steps.summary.title" />,
+        component: StepSummary,
+        footer: StepSummaryFooter,
+      },
+      {
+        id: "sign",
+        label: <Trans i18nKey="signmessage.steps.sign.title" />,
+        component: StepSign,
+        onBack: ({ transitionTo }: StepProps) => {
+          transitionTo("summary");
+        },
+      },
+    ];
+  }
   const { t } = useTranslation();
-  const [stepId, setStepId] = useState("summary");
+  const [stepId, setStepId] = useState(data.message.standard === "EIP712" ? "sign" : "summary");
   const handleStepChange = useCallback((e: { id: string }) => setStepId(e.id), [setStepId]);
   const stepperOnClose = useCallback(() => {
     if (onClose) {
@@ -61,10 +73,13 @@ const Body = ({ onClose, data }: Props) => {
     useApp: data.useApp,
     dependencies: data.dependencies,
     message: data.message,
+    hideBreadcrumb: data.message.standard === "EIP712",
     onConfirmationHandler: data.onConfirmationHandler,
     onFailHandler: data.onFailHandler,
     onClose: stepperOnClose,
   };
+  console.log(data);
+
   return (
     <Stepper {...stepperProps}>
       <Track onUnmount event="CloseModalWalletConnectPasteLink" />
