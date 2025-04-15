@@ -5,7 +5,7 @@ import { Feature_StakePrograms } from "@ledgerhq/types-live";
 const feature_stake_programs_empty_json: Feature_StakePrograms = {
   enabled: true,
   params: {
-    list: ["injective"],
+    list: ["injective", "ethereum"],
     redirects: {},
   },
 };
@@ -17,14 +17,15 @@ const feature_stake_programs_json: Feature_StakePrograms = {
     redirects: {
       "ethereum/erc20/usd__coin": {
         platform: "kiln-widget",
-        name: "Dapp",
-        queryParams: {
-          yieldId: "kiln",
-        },
+        name: "",
+      },
+      "ethereum/erc20/usd_tether__erc20_": {
+        platform: "earn",
+        name: "",
       },
       tron: {
         platform: "stakekit",
-        name: "Live App",
+        name: "",
         queryParams: {
           yieldId: "tron-native-staking",
         },
@@ -60,9 +61,9 @@ describe("useEarnStakeProgramsParam", () => {
     });
 
     expect(result.current).toEqual({
-      tron: "mock-dapp-v1", // "earn"
-      "ethereum/erc20/usd_tether__erc20_": "mock-dapp-v3",
-      "ethereum/erc20/usd__coin": "mock-dapp-v1",
+      "ethereum/erc20/usd__coin": "kiln-widget",
+      "ethereum/erc20/usd_tether__erc20_": "earn",
+      tron: "stakekit",
     });
   });
 });
