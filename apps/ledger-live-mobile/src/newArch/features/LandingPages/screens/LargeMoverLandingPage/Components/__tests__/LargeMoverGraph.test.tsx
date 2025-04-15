@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "@tests/test-renderer";
-import { LargeMoverGraph } from "./LargeMoverGraph";
+import { LargeMoverGraph } from "../LargeMoverGraph";
 import { MarketCoinDataChart } from "@ledgerhq/live-common/market/utils/types";
 import Graph from "~/components/Graph";
 import { Flex } from "@ledgerhq/native-ui";
