@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "Cancelar",
+    "copy" : "Copiar",
+    "copied" : "Copiado",
     "apply" : "Aplicar",
     "seeAll" : "Ver tudo",
     "seeAllWithNumber" : "Ver todos ({{number}})",
@@ -100,7 +102,8 @@
       "times" : "x{{ value }}"
     },
     "quote" : "Cotação",
-    "tryAgain" : "Tente novamente"
+    "tryAgain" : "Tente novamente",
+    "ldmkEnabled" : "Transporte LDMK habilitado"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -1060,6 +1063,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Falha ao carregar o aplicativo Swap Live"
+    },
+    "InvalidMemoMina" : {
+      "title" : "O texto do memo não pode ter mais de 32 caracteres"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Esta transação incorrerá em uma taxa de criação de conta de {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "A quantia mínima exigida para esta transação é {{amount}}"
     }
   },
   "crash" : {
@@ -2590,7 +2602,8 @@
       "gasLimit" : "Limite de gas",
       "id" : "Id",
       "autoClaimedRewards" : "Recompensas automaticamente resgatadas",
-      "stakedAmount" : "Quantia aplicada"
+      "stakedAmount" : "Quantia aplicada",
+      "accountCreationFee" : "Taxa de Criação de Conta"
     },
     "multipleAddresses" : "Por que múltiplos endereços?",
     "tokenName" : "Nome do token",
@@ -4047,7 +4060,9 @@
       "desc" : "Você tem certeza de que quer cancelar a adição de contas?",
       "v2" : {
         "title" : "Cancelar adição de conta?",
-        "desc" : "Nenhuma conta será adicionada ao Ledger Live."
+        "desc" : "Nenhuma conta será adicionada ao Ledger Live.",
+        "continue" : "Continuar adicionando",
+        "cancel" : "Cancelar"
       }
     },
     "imported" : "Ativos adicionados com sucesso",
@@ -6100,6 +6115,9 @@
       }
     }
   },
+  "mina" : {
+    "memoPlaceholder" : "Memo opcional"
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -6605,13 +6623,12 @@
     },
     "range" : {
       "1h" : "1H",
-      "24h" : "24H",
-      "7d" : "7D",
-      "30d" : "30D",
-      "1y" : "1A",
       "1H_label" : "1H",
+      "24h" : "24H",
       "1D_label" : "1D",
+      "7d" : "7D",
       "1W_label" : "1S",
+      "30d" : "30D",
       "1M_label" : "1M",
       "1Y_label" : "1A"
     },
@@ -7346,5 +7363,10 @@
       "description" : "A memória limitada da Ledger Nano S restringe seu acesso aos últimos recursos, mudanças em blockchains e aprimoramentos de segurança. Para uso prolongado, atualize para um dispositivo Ledger mais recente.",
       "cta" : "Saiba mais"
     }
+  },
+  "largeMover" : {
+    "performance" : "Performance",
+    "low" : "Baixo",
+    "high" : "Alto"
   }
 }
