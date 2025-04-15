@@ -122,12 +122,22 @@ const getPtxAttributes = () => {
       ? Object.keys(stakePrograms.params.redirects)
       : [];
 
+  /** Tether USDT provider is proxy for stablecoin flow rollout.  */
+  const usdtProvider =
+    stakePrograms?.params?.redirects["ethereum/erc20/usd_tether__erc20_"]?.platform;
+  const stablecoinYield: "dapp" | "api" | "inactive" = !usdtProvider
+    ? "inactive"
+    : usdtProvider === "earn"
+      ? "api"
+      : "dapp";
+
   return {
     isBatch1Enabled,
     isBatch2Enabled,
     isBatch3Enabled,
     stakingProvidersEnabled,
     ptxCard,
+    stablecoinYield,
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
   };

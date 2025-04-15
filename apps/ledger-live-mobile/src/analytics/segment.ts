@@ -102,11 +102,21 @@ const getFeatureFlagProperties = () => {
         ? Object.keys(stakePrograms.params.redirects)
         : [];
 
+    /** Tether USDT provider is proxy for stablecoin flow rollout.  */
+    const usdtProvider =
+      stakePrograms?.params?.redirects["ethereum/erc20/usd_tether__erc20_"]?.platform;
+    const stablecoinYield: "dapp" | "api" | "inactive" = !usdtProvider
+      ? "inactive"
+      : usdtProvider === "earn"
+        ? "api"
+        : "dapp";
+
     updateIdentify({
       isBatch1Enabled,
       isBatch2Enabled,
       isBatch3Enabled,
       stakingProvidersEnabled,
+      stablecoinYield
       stakingCurrenciesEnabled,
       partnerStakingCurrenciesEnabled,
       ptxSwapLiveAppMobileEnabled,
@@ -252,6 +262,14 @@ const extraProperties = async (store: AppStore) => {
     stakePrograms?.enabled && stakePrograms?.params?.redirects
       ? Object.keys(stakePrograms.params.redirects)
       : [];
+        /** Tether USDT provider is proxy for stablecoin flow rollout.  */
+  const usdtProvider =
+  stakePrograms?.params?.redirects["ethereum/erc20/usd_tether__erc20_"]?.platform;
+const stablecoinYield: "dapp" | "api" | "inactive" = !usdtProvider
+  ? "inactive"
+  : usdtProvider === "earn"
+    ? "api"
+    : "dapp";
 
   const ledgerSyncAtributes = getLedgerSyncAttributes(state);
   const rebornAttributes = getRebornAttributes();
@@ -302,6 +320,7 @@ const extraProperties = async (store: AppStore) => {
     staxLockscreen: customImageType || "none",
     nps,
     stakingProvidersEnabled: stakingProvidersCount || "flag not loaded",
+    stablecoinYield,
     ...ledgerSyncAtributes,
     ...rebornAttributes,
     ...mevProtectionAttributes,
