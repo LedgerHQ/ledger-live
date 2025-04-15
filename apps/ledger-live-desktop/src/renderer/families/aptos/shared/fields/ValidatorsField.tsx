@@ -1,8 +1,8 @@
 // import { useValidators } from "@ledgerhq/live-common/families/solana/react";
 // import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/staking";
-// import { AptosAccount } from "@ledgerhq/live-common/families/aptos/types";
+import { AptosAccount } from "@ledgerhq/live-common/families/aptos/types";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
@@ -13,22 +13,43 @@ import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import Text from "~/renderer/components/Text";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 // import ValidatorRow from "../components/ValidatorRow";
-// import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { AptosAPI } from "@ledgerhq/coin-aptos/api";
+import ValidatorRow from "../components/ValidatorRow";
 
-// type Props = {
-//   account: AptosAccount;
-//   chosenVoteAccAddr: string | undefined | null;
-//   onChangeValidator: (v: { address: string }) => void;
-// };
+type Props = {
+  account: AptosAccount;
+  chosenVoteAccAddr: string | undefined | null;
+  onChangeValidator: (v: { address: string }) => void;
+};
 // const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props) => {
-const ValidatorField = () => {
+const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props) => {
   const [search, setSearch] = useState("");
   const [showAll, setShowAll] = useState(false);
+
   // const [currentValidator, setCurrentValidator] = useState<ValidatorsAppValidator[]>([]);
   // const [currentValidator] = useState([]);
 
-  // const unit = useAccountUnit(account);
-  // const validators = useValidators(account.currency, search);
+  const unit = useAccountUnit(account);
+
+  const [list, setList] = useState<ValidatorsAppValidator[]>([]);
+
+  useEffect(() => {
+    const fetchList = async (): Promise<ValidatorsAppValidator[] | undefined> => {
+      try {
+        const api = new AptosAPI(account.currency.id);
+        const delegators = await api.getStakingPool();
+
+        setList(delegators);
+      } catch (e) {
+        console.error(e);
+
+        return [];
+      }
+    };
+
+    fetchList();
+  }, [account.currency.id]);
 
   const onSearch = useCallback(
     (evt: React.ChangeEvent<HTMLInputElement>) => setSearch(evt.target.value),
@@ -63,8 +84,27 @@ const ValidatorField = () => {
   //   );
   // };
 
-  const renderItem = () => {
-    return <li>validator</li>;
+  type ValidatorsAppValidator = {
+    activeStake: number;
+    commission: number;
+    totalScore: number;
+    voteAccount: string;
+    name?: string | undefined;
+    avatarUrl?: string | undefined;
+    wwwUrl?: string | undefined;
+  };
+
+  const renderItem = (validator: ValidatorsAppValidator) => {
+    return (
+      <ValidatorRow
+        currency={account.currency}
+        active={chosenVoteAccAddr === validator.voteAccount}
+        onClick={onChangeValidator}
+        key={validator.voteAccount}
+        validator={validator}
+        unit={unit}
+      ></ValidatorRow>
+    );
   };
 
   return (
@@ -80,7 +120,7 @@ const ValidatorField = () => {
             //       ? currentValidator
             //       : validators.slice(0, 2)
             // }
-            data={[]}
+            data={list}
             style={{
               flex: showAll ? "1 0 240px" : "1 0 126px",
               marginBottom: 0,
@@ -88,8 +128,7 @@ const ValidatorField = () => {
             }}
             renderItem={renderItem}
             noResultPlaceholder={
-              // validators.length <= 0 && search.length > 0 && <NoResultPlaceholder search={search} />
-              <NoResultPlaceholder search={search} />
+              list.length <= 0 && search.length > 0 && <NoResultPlaceholder search={search} />
             }
           />
         </Box>

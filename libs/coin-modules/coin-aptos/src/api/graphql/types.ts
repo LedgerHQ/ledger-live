@@ -83,3 +83,25 @@ export type StakeDetails = {
   canWithdrawPendingInactive: boolean;
   poolAddress: string;
 };
+
+export type GetNumActiveDelegatorPerPoolQuery = {
+  __typename?: "query_root";
+  num_active_delegator_per_pool: Array<{
+    __typename?: "num_active_delegator_per_pool";
+    pool_address: string;
+    num_active_delegator: number;
+  }>;
+  delegated_staking_pools: Array<{
+    __typename?: "delegated_staking_pools";
+    staking_pool_address: string;
+    current_staking_pool: {
+      __typename?: "current_staking_pool";
+      operator_address: string;
+      operator_aptos_name: Array<{
+        __typename?: "operator_aptos_name";
+        domain: string;
+        is_primary: boolean;
+      }>;
+    };
+  }>;
+};

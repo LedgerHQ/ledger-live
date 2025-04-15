@@ -52,3 +52,21 @@ export const GetAccountTransactionsDataLt = gql`
     }
   }
 `;
+export const GetNumActiveDelegatorPerPoolData = gql`
+  query GetNumActiveDelegatorPerPoolData {
+    num_active_delegator_per_pool {
+      num_active_delegator
+      pool_address
+    }
+    delegated_staking_pools {
+      staking_pool_address
+      current_staking_pool {
+        operator_address
+        operator_aptos_name(where: { is_active: { _eq: true } }) {
+          domain
+          is_primary
+        }
+      }
+    }
+  }
+`;
