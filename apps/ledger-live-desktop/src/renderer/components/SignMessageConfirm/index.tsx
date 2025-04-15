@@ -1,30 +1,18 @@
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-import React, { useEffect, useState } from "react";
-import { Account, AccountLike, AnyMessage, MessageProperties } from "@ledgerhq/types-live";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import React from "react";
+import { Account, AccountLike, AnyMessage } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
-import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
-import SignMessageConfirmField from "./SignMessageConfirmField";
+import { SubTitle, Title } from "~/renderer/components/DeviceAction/rendering";
 import Spinner from "~/renderer/components/BigSpinner";
 import useTheme from "~/renderer/hooks/useTheme";
-import Text from "~/renderer/components/Text";
+import { Flex } from "@ledgerhq/react-ui";
 import Box from "~/renderer/components/Box";
-import { getLLDCoinFamily } from "~/renderer/families";
-import FormattedVal from "~/renderer/components/FormattedVal";
-import { getTokenUnit } from "~/renderer/utils";
 import { Unit } from "@ledgerhq/types-cryptoassets";
-
-const FieldText = styled(Text).attrs(() => ({
-  ml: 1,
-  ff: "Inter|Medium",
-  color: "palette.text.shade80",
-  fontSize: 3,
-}))`
-  word-break: break-all;
-  text-align: right;
-`;
+import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
+import Animation from "~/renderer/animations";
+import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 
 export type FieldComponentProps = {
   field: DeviceTransactionField;
@@ -32,27 +20,6 @@ export type FieldComponentProps = {
 };
 
 export type FieldComponent = React.ComponentType<FieldComponentProps>;
-
-const TextField = ({ field, tokenUnit }: FieldComponentProps) => {
-  return field.type === "text" ? (
-    <SignMessageConfirmField label={field.label}>
-      {tokenUnit ? (
-        <FormattedVal
-          color={"palette.text.shade80"}
-          val={Number(field.value)}
-          unit={tokenUnit}
-          fontSize={3}
-          disableRounding
-          alwaysShowValue
-          showCode
-          inline
-        />
-      ) : (
-        <FieldText>{field.value}</FieldText>
-      )}
-    </SignMessageConfirmField>
-  ) : null;
-};
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -67,47 +34,16 @@ type Props = {
   signMessageRequested: AnyMessage;
 };
 
-const SignMessageConfirm = ({ device, account, parentAccount, signMessageRequested }: Props) => {
-  const type = useTheme().colors.palette.type;
-  const { t } = useTranslation();
-  const mainAccount = getMainAccount(account, parentAccount);
-  const { currency } = mainAccount;
-  const [messageFields, setMessageFields] = useState<MessageProperties | null>(null);
+const getProductName = (modelId: DeviceModelId) =>
+  getDeviceModel(modelId)?.productName.replace("Ledger", "").trimStart() || modelId;
 
-  useEffect(() => {
-    if (signMessageRequested.standard === "EIP712") {
-      const specific = getLLDCoinFamily(currency.family);
-      specific?.message?.getMessageProperties(signMessageRequested).then(setMessageFields);
-    }
-  }, [currency, mainAccount, signMessageRequested]);
+const SignMessageConfirm = ({ device, signMessageRequested }: Props) => {
+  const { t } = useTranslation();
+  const { colors } = useTheme();
+  const theme = colors.palette.type;
+  const wording = getProductName(device.modelId);
 
   if (!device) return null;
-
-  let fields: DeviceTransactionField[] = [];
-  if (messageFields) {
-    fields = messageFields.map(field => ({
-      ...field,
-      type: "text",
-      value: Array.isArray(field.value) ? field.value.join(",\n") : field.value,
-    }));
-  } else {
-    if (signMessageRequested.standard === "EIP712") {
-      fields.push({
-        type: "text",
-        label: t("SignMessageConfirm.domainHash"),
-        value: signMessageRequested.domainHash,
-      });
-
-      fields.push({
-        type: "text",
-        label: t("SignMessageConfirm.messageHash"),
-        value: signMessageRequested.hashStruct,
-      });
-    }
-  }
-
-  const f = fields?.find(f => f.label === "Token");
-  const contractAddress = f && "value" in f && typeof f.value === "string" ? f.value : undefined;
 
   return (
     <Container>
@@ -115,21 +51,49 @@ const SignMessageConfirm = ({ device, account, parentAccount, signMessageRequest
         <Spinner size={30} />
       ) : (
         <>
-          <Box style={{ width: "100%", rowGap: 10 }} mb={20}>
-            {fields.map((field, i) => (
-              <TextField
-                key={i}
-                field={field}
-                tokenUnit={getTokenUnit(field.label, mainAccount, contractAddress)}
-              />
-            ))}
-          </Box>
-
-          {renderVerifyUnwrapped({ modelId: device.modelId, type })}
+          <AnimationWrapper>
+            <Animation animation={getDeviceAnimation(device.modelId, theme, "openApp")} />
+          </AnimationWrapper>
+          <Footer>
+            <Title
+              fontWeight="semiBold"
+              style={{ color: colors.neutral.c100 }}
+              textAlign="center"
+              fontSize={20}
+            >
+              {t("SignMessageConfirm.title", { wording })}
+            </Title>
+            <SubTitle
+              variant="bodyLineHeight"
+              color="palette.text.shade100"
+              textAlign="center"
+              fontSize={14}
+            >
+              {t("SignMessageConfirm.description")}
+            </SubTitle>
+          </Footer>
         </>
       )}
     </Container>
   );
 };
+
+export const AnimationWrapper = styled.div`
+  width: 600px;
+  max-width: 100%;
+  padding-bottom: 20px;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const Footer = styled(Flex)`
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  row-gap: 16px;
+`;
 
 export default SignMessageConfirm;

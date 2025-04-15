@@ -1,15 +1,13 @@
-import { getMessageProperties } from "@ledgerhq/coin-evm/logic";
-import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { AccountLike, AnyMessage, MessageProperties } from "@ledgerhq/types-live";
-import { useTheme } from "@react-navigation/native";
-import React, { useEffect, useMemo, useState } from "react";
+import type { AccountLike, AnyMessage } from "@ledgerhq/types-live";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
 import Animation from "./Animation";
-import LText from "./LText";
-import { useAccountName } from "~/reducers/wallet";
+import { Flex, Text } from "@ledgerhq/native-ui";
+import { getDeviceModel } from "@ledgerhq/devices";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 type Props = {
   device: Device;
@@ -17,41 +15,11 @@ type Props = {
   account: AccountLike;
 };
 
-export default function ValidateOnDevice({ device, message: messageData, account }: Props) {
+const getProductName = (modelId: DeviceModelId) =>
+  getDeviceModel(modelId)?.productName.replace("Ledger", "").trimStart() || modelId;
+
+export default function ValidateOnDevice({ device }: Props) {
   const { t } = useTranslation();
-  const { colors } = useTheme();
-
-  const messageContainerStyle = useMemo(
-    () => [
-      styles.messageContainer,
-      {
-        backgroundColor: colors.background,
-      },
-    ],
-    [colors.background],
-  );
-  const messageTextStyle = useMemo(
-    () => [
-      styles.property,
-      {
-        color: colors.text,
-      },
-    ],
-    [colors.text],
-  );
-  const mainAccount = getMainAccount(account, null);
-
-  const mainAccountName = useAccountName(mainAccount);
-
-  const [messageFields, setMessageFields] = useState<MessageProperties | null>(null);
-
-  const isACREWithdraw = "type" in messageData && messageData.type === "Withdraw";
-
-  useEffect(() => {
-    if (messageData.standard === "EIP712") {
-      getMessageProperties(messageData).then(setMessageFields);
-    }
-  }, [mainAccount, mainAccount.currency, messageData, setMessageFields]);
 
   return (
     <View style={styles.root}>
@@ -69,40 +37,14 @@ export default function ValidateOnDevice({ device, message: messageData, account
             />
           </View>
         </View>
-        <LText style={styles.action}>{t("walletconnect.stepVerification.action")}</LText>
-        <View style={messageContainerStyle}>
-          <LText style={messageTextStyle}>{t("walletconnect.stepVerification.accountName")}</LText>
-          <LText semiBold>{mainAccountName}</LText>
-        </View>
-        {!isACREWithdraw ? (
-          messageData.standard === "EIP712" ? (
-            <>
-              {messageFields
-                ? messageFields.map(({ label, value }) => (
-                    <View key={label} style={messageContainerStyle}>
-                      <LText style={messageTextStyle}>{label}</LText>
-                      {Array.isArray(value) ? (
-                        value.map((v, i) => (
-                          <LText key={i} style={[styles.value, styles.subValue]} semiBold>
-                            {v}
-                          </LText>
-                        ))
-                      ) : (
-                        <LText style={styles.value} semiBold>
-                          {value}
-                        </LText>
-                      )}
-                    </View>
-                  ))
-                : null}
-            </>
-          ) : (
-            <View style={messageContainerStyle}>
-              <LText style={messageTextStyle}>{t("walletconnect.message")}</LText>
-              <LText semiBold>{messageData.message}</LText>
-            </View>
-          )
-        ) : null}
+        <Flex justifyContent="center" alignItems="center" flexDirection="column" rowGap={16}>
+          <Text fontWeight="semiBold" color="neutral.c100" textAlign="center" fontSize="20px">
+            {t("walletconnect.stepVerification.title", { wording: getProductName(device.modelId) })}
+          </Text>
+          <Text variant="bodyLineHeight" color="neutral.c70" textAlign="center" fontSize="14px">
+            {t("walletconnect.stepVerification.description")}
+          </Text>
+        </Flex>
       </ScrollView>
     </View>
   );

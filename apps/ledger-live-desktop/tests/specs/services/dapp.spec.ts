@@ -48,11 +48,6 @@ test.describe("Metamask Test Dapp", () => {
       webview.getByText("eth_accounts result: 0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707"),
     ).toBeVisible();
 
-    // Checks that personalSign works
-    await webview.click("#personalSign");
-    await expect(page.getByText("Sign message")).toBeVisible();
-    await modal.continueToSignTransaction();
-
     // Step Device
     await deviceAction.silentSign();
     // Needs a second sign to close the sign message modal (to fix later)

@@ -1,11 +1,19 @@
-import React, { useCallback, useState } from "react";
-import { AccountLike, AnyMessage } from "@ledgerhq/types-live";
-import Track from "~/renderer/analytics/Track";
-import { Trans, useTranslation } from "react-i18next";
-import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
-import StepSign from "./steps/StepSign";
-import { St, StepProps } from "./types";
-import Stepper from "~/renderer/components/Stepper";
+import React, { useMemo } from "react";
+import { Account, AccountLike, AnyMessage } from "@ledgerhq/types-live";
+import DeviceAction from "~/renderer/components/DeviceAction";
+import { useDispatch } from "react-redux";
+import { getEnv } from "@ledgerhq/live-env";
+import { signMessageExec, createAction } from "@ledgerhq/live-common/hw/signMessage/index";
+import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
+import { closeModal } from "~/renderer/actions/modals";
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import { dependenciesToAppRequests } from "@ledgerhq/live-common/hw/actions/app";
+import { ModalBody } from "~/renderer/components/Modal";
+
+const action = createAction(
+  getEnv("MOCK") ? mockedEventEmitter : connectApp,
+  getEnv("MOCK") ? mockedEventEmitter : signMessageExec,
+);
 
 export type Data = {
   account: AccountLike;
@@ -23,52 +31,42 @@ type OwnProps = {
   data: Data;
 };
 type Props = OwnProps;
-const steps: Array<St> = [
-  {
-    id: "summary",
-    label: <Trans i18nKey="signmessage.steps.summary.title" />,
-    component: StepSummary,
-    footer: StepSummaryFooter,
-  },
-  {
-    id: "sign",
-    label: <Trans i18nKey="signmessage.steps.sign.title" />,
-    component: StepSign,
-    onBack: ({ transitionTo }: StepProps) => {
-      transitionTo("summary");
-    },
-  },
-];
+
 const Body = ({ onClose, data }: Props) => {
-  const { t } = useTranslation();
-  const [stepId, setStepId] = useState("summary");
-  const handleStepChange = useCallback((e: { id: string }) => setStepId(e.id), [setStepId]);
-  const stepperOnClose = useCallback(() => {
-    if (onClose) {
-      onClose();
-    }
-    if (data.onClose) {
-      data.onClose();
-    }
-  }, [data, onClose]);
-  const stepperProps = {
-    title: t("signmessage.title"),
-    account: data.account,
-    onStepChange: handleStepChange,
-    stepId,
-    steps,
-    isACRE: data.isACRE,
-    useApp: data.useApp,
-    dependencies: data.dependencies,
-    message: data.message,
-    onConfirmationHandler: data.onConfirmationHandler,
-    onFailHandler: data.onFailHandler,
-    onClose: stepperOnClose,
-  };
+  const dispatch = useDispatch();
+  const request = useMemo(() => {
+    const appRequests = dependenciesToAppRequests(data.dependencies);
+    return {
+      account: data.account as Account,
+      message: data.message,
+      appName: data.useApp,
+      dependencies: appRequests,
+      isACRE: data.isACRE,
+    };
+  }, [data]);
   return (
-    <Stepper {...stepperProps}>
-      <Track onUnmount event="CloseModalWalletConnectPasteLink" />
-    </Stepper>
+    <ModalBody
+      onClose={onClose}
+      noScroll={true}
+      render={() => (
+        <DeviceAction
+          action={action}
+          request={request}
+          onResult={r => {
+            const result = r as {
+              error: Error | null | undefined;
+              signature: string | null | undefined;
+            };
+            dispatch(closeModal("MODAL_SIGN_MESSAGE"));
+            if (result.error) {
+              data.onFailHandler(result.error);
+            } else if (result.signature) {
+              data.onConfirmationHandler(result.signature);
+            }
+          }}
+        />
+      )}
+    />
   );
 };
 export default Body;

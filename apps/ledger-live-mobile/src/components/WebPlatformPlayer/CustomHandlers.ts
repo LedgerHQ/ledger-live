@@ -45,7 +45,7 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
             onCancel,
           }) => {
             navigation.navigate(NavigatorName.SignMessage, {
-              screen: ScreenName.SignSummary,
+              screen: ScreenName.SignSelectDevice,
               params: {
                 message,
                 accountId: account.id,
