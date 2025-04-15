@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "取消",
+    "copy" : "复制",
+    "copied" : "已复制",
     "apply" : "应用",
     "seeAll" : "显示全部",
     "seeAllWithNumber" : "查看全部 ({{number}})",
@@ -509,6 +511,10 @@
     },
     "NotEnoughBalance" : {
       "title" : "抱歉，资金不足",
+      "description" : "请确保该账户资金充足。"
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "抱歉，资金不够支付费用",
       "description" : "请确保该账户资金充足。"
     },
     "NotEnoughBalanceForUnstaking" : {
@@ -1061,6 +1067,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "无法加载 Swap Live 应用程序"
+    },
+    "InvalidMemoMina" : {
+      "title" : "备忘标签文本不可超过 32 个字符"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "此交易将产生 {{fee}} 的账户创建费"
+    },
+    "AmountTooSmall" : {
+      "title" : "此交易的最低数额要求为 {{amount}}"
     }
   },
   "crash" : {
@@ -2591,7 +2606,8 @@
       "gasLimit" : "矿工费限值",
       "id" : "Id",
       "autoClaimedRewards" : "自动领取的奖励",
-      "stakedAmount" : "权益质押数额"
+      "stakedAmount" : "权益质押数额",
+      "accountCreationFee" : "账户创建费"
     },
     "multipleAddresses" : "为什么有多个地址？",
     "tokenName" : "代币名称",
@@ -6103,6 +6119,9 @@
       }
     }
   },
+  "mina" : {
+    "memoPlaceholder" : "可选 Memo"
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -6609,14 +6628,12 @@
     "range" : {
       "1h" : "1 小时",
       "24h" : "24 小时",
+      "1d" : "1 天",
       "7d" : "7 天",
+      "1w" : "1 周",
       "30d" : "30 天",
-      "1y" : "1 年",
-      "1H_label" : "1 小时",
-      "1D_label" : "1 天",
-      "1W_label" : "1 周",
-      "1M_label" : "1 月",
-      "1Y_label" : "1 年"
+      "1m" : "1 月",
+      "1y" : "1 年"
     },
     "warnings" : {
       "connectionError" : "连接错误",
@@ -7349,5 +7366,10 @@
       "description" : "Ledger Nano S 内存有限，影响您访问最新功能、区块链变更和增强安全保护。为保证长期使用体验，请升级到新款 Ledger 设备。",
       "cta" : "了解更多"
     }
+  },
+  "largeMover" : {
+    "performance" : "Performance",
+    "low" : "低",
+    "high" : "高"
   }
 }
