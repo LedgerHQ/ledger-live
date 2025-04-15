@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "Cancelar",
+    "copy" : "Copiar",
+    "copied" : "Copiado",
     "apply" : "Aplicar",
     "seeAll" : "Ver todo",
     "seeAllWithNumber" : "Ver todos ({{number}})",
@@ -509,6 +511,10 @@
     },
     "NotEnoughBalance" : {
       "title" : "Fondos insuficientes",
+      "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "Fondos insuficientes para cubrir las tarifas",
       "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
     },
     "NotEnoughBalanceForUnstaking" : {
@@ -1061,6 +1067,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Error al cargar Aplicación Permuta de Live"
+    },
+    "InvalidMemoMina" : {
+      "title" : "El texto de un memo no debe superar los 32 caracteres"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Esta transacción conlleva asociada una tarifa de creación de cuenta de {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "La cantidad mínima necesaria para esta transacción es de {{amount}}"
     }
   },
   "crash" : {
@@ -2591,7 +2606,8 @@
       "gasLimit" : "Límite de gas",
       "id" : "Id",
       "autoClaimedRewards" : "Recompensas Autoreclamadas",
-      "stakedAmount" : "Cantidad en participación"
+      "stakedAmount" : "Cantidad en participación",
+      "accountCreationFee" : "Tarifa de creación de cuenta"
     },
     "multipleAddresses" : "¿Por qué hay múltiples direcciones?",
     "tokenName" : "Nombre del token",
@@ -6103,6 +6119,9 @@
       }
     }
   },
+  "mina" : {
+    "memoPlaceholder" : "Memo opcional"
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -6609,14 +6628,12 @@
     "range" : {
       "1h" : "1H",
       "24h" : "24H",
+      "1d" : "1D",
       "7d" : "7D",
+      "1w" : "1S",
       "30d" : "30D",
-      "1y" : "1 A",
-      "1H_label" : "1H",
-      "1D_label" : "1D",
-      "1W_label" : "1S",
-      "1M_label" : "1M",
-      "1Y_label" : "1A"
+      "1m" : "1M",
+      "1y" : "1 A"
     },
     "warnings" : {
       "connectionError" : "Error de conexión",
@@ -7349,5 +7366,10 @@
       "description" : "La memoria limitada de tu Ledger Nano S restringe tu acceso a las opciones más recientes, a cambios en la blockchain y a mejoras de seguridad. Cambia a un dispositivo Ledger más moderno para garantizar un uso prolongado.",
       "cta" : "Más información"
     }
+  },
+  "largeMover" : {
+    "performance" : "Performance",
+    "low" : "Baja",
+    "high" : "Alta"
   }
 }
