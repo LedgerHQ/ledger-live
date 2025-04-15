@@ -1,6 +1,6 @@
 {
     "name": "ledger-live-desktop-e2e-tests",
-    "version": "0.0.1",
+    "version": "0.0.2-next.0",
     "private": true,
     "scripts": {
         "test:playwright": "playwright test --config=playwright.config.ts",
