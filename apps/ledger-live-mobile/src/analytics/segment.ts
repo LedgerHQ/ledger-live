@@ -116,7 +116,7 @@ const getFeatureFlagProperties = () => {
       isBatch2Enabled,
       isBatch3Enabled,
       stakingProvidersEnabled,
-      stablecoinYield
+      stablecoinYield,
       stakingCurrenciesEnabled,
       partnerStakingCurrenciesEnabled,
       ptxSwapLiveAppMobileEnabled,
@@ -262,14 +262,14 @@ const extraProperties = async (store: AppStore) => {
     stakePrograms?.enabled && stakePrograms?.params?.redirects
       ? Object.keys(stakePrograms.params.redirects)
       : [];
-        /** Tether USDT provider is proxy for stablecoin flow rollout.  */
+  /** Tether USDT provider is proxy for stablecoin flow rollout.  */
   const usdtProvider =
-  stakePrograms?.params?.redirects["ethereum/erc20/usd_tether__erc20_"]?.platform;
-const stablecoinYield: "dapp" | "api" | "inactive" = !usdtProvider
-  ? "inactive"
-  : usdtProvider === "earn"
-    ? "api"
-    : "dapp";
+    stakePrograms?.params?.redirects["ethereum/erc20/usd_tether__erc20_"]?.platform;
+  const stablecoinYield: "dapp" | "api" | "inactive" = !usdtProvider
+    ? "inactive"
+    : usdtProvider === "earn"
+      ? "api"
+      : "dapp";
 
   const ledgerSyncAtributes = getLedgerSyncAttributes(state);
   const rebornAttributes = getRebornAttributes();
