@@ -3,16 +3,15 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 export function useEarnStakeProgramsParam(): Record<string, string> | undefined {
   const stakePrograms = useFeature("stakePrograms");
 
-  console.log("stakePrograms", stakePrograms);
   const redirects = stakePrograms?.params?.redirects ?? {};
-  const returns: Record<string, string> = {};
+  const result: Record<string, string> = {};
   const keys = Object.keys(redirects);
   if (keys.length === 0) {
     return undefined;
   }
   keys.forEach(key => {
-    return (returns[key] = redirects[key].platform);
+    result[key] = redirects[key].platform;
   });
 
-  return returns;
+  return result;
 }
