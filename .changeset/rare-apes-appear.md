@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/hw-app-btc": patch
-"@ledgerhq/live-common": patch
+"@ledgerhq/hw-app-btc": minor
+"@ledgerhq/live-common": minor
 ---
 
 fix: zcash, fix consensus branch id computation
