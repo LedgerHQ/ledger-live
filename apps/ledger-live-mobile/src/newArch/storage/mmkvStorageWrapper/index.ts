@@ -156,6 +156,21 @@ const storageWrapper = {
       `Existing value for key "${key}" must be of type null or Array, received ${typeof currentValue}.`,
     );
   },
+
+  /** Stringify the storage data to JSON. */
+  stringify() {
+    const keys = storageWrapper.keys();
+    const data = keys.reduce(
+      (result, key) => {
+        const value = storageWrapper.getString(key);
+        result[key] = value;
+        return result;
+      },
+      {} as Record<string, unknown>,
+    );
+
+    return JSON.stringify(data);
+  },
 };
 
 export default storageWrapper;

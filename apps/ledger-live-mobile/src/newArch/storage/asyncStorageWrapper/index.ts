@@ -139,6 +139,15 @@ const deviceStorage = {
       );
     });
   },
+
+  /** Stringify the storage data to JSON. */
+  async stringify() {
+    const keys = await deviceStorage.keys();
+    const pairs = await AsyncStorage.multiGet(keys);
+    const data = Object.fromEntries(pairs);
+
+    return JSON.stringify(data);
+  },
 };
 
 export default deviceStorage;

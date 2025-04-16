@@ -48,6 +48,12 @@ export default function Debugging() {
         iconLeft={<IconsLegacy.ClipboardListCheckMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugBluetoothAndLocationServices)}
       />
+      <SettingsRow
+        title="Storage Migration"
+        desc="Debug Storage Migration"
+        iconLeft={<IconsLegacy.FullnodeMedium size={32} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugStorageMigration)}
+      />
     </SettingsNavigationScrollView>
   );
 }
