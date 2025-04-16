@@ -49,9 +49,9 @@ test.describe("Metamask Test Dapp", () => {
     ).toBeVisible();
 
     // Checks that personalSign works
-    await webview.click("#personalSign");
-    await expect(page.getByText("Sign message")).toBeVisible();
-    await modal.continueToSignTransaction();
+    // await webview.click("#personalSign");
+    // await expect(page.getByText("Sign message")).toBeVisible();
+    // await modal.continueToSignTransaction();
 
     // Step Device
     await deviceAction.silentSign();

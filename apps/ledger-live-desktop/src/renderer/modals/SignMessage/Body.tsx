@@ -1,12 +1,6 @@
-import React, { useCallback, useState, useMemo } from "react";
-import { AccountLike, AnyMessage } from "@ledgerhq/types-live";
-// import Track from "~/renderer/analytics/Track";
-// import { Trans, useTranslation } from "react-i18next";
-// import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
-// import StepSign from "./steps/StepSign";
-// import { St, StepProps } from "./types";
+import React, { useMemo } from "react";
+import { Account, AccountLike, AnyMessage } from "@ledgerhq/types-live";
 import DeviceAction from "~/renderer/components/DeviceAction";
-// import Stepper from "~/renderer/components/Stepper";
 import { useDispatch } from "react-redux";
 import { getEnv } from "@ledgerhq/live-env";
 import { signMessageExec, createAction } from "@ledgerhq/live-common/hw/signMessage/index";
@@ -38,32 +32,14 @@ type OwnProps = {
   data: Data;
 };
 type Props = OwnProps;
-// const steps: St = {
-//   id: "sign",
-//   label: <Trans i18nKey="signmessage.steps.sign.title" />,
-//   component: StepSign,
-//   onBack: ({ transitionTo }: StepProps) => {
-//     transitionTo("summary");
-//   },
-// };
+
 const Body = ({ onClose, data }: Props) => {
-  // const { t } = useTranslation();
-  // const [stepId, setStepId] = useState("sign");
-  // const handleStepChange = useCallback((e: { id: string }) => setStepId(e.id), [setStepId]);
-  // const stepperOnClose = useCallback(() => {
-  //   if (onClose) {
-  //     onClose();
-  //   }
-  //   if (data.onClose) {
-  //     data.onClose();
-  //   }
-  // }, [data, onClose]);
   const dispatch = useDispatch();
   const deviceBlocked = useDeviceBlocked();
   const request = useMemo(() => {
     const appRequests = dependenciesToAppRequests(data.dependencies);
     return {
-      account: data.account,
+      account: data.account as Account,
       message: data.message,
       appName: data.useApp,
       dependencies: appRequests,
