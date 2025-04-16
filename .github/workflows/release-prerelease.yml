@@ -39,6 +39,8 @@ jobs:
         id: setup-caches
         with:
           install-proto: true
+      - name: install dependencies
+        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
       - name: enter prerelease mode
         run: pnpm changeset pre enter prereleasetest
       - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
@@ -49,8 +51,6 @@ jobs:
         id: mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
-      - name: install dependencies
-        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
       - name: build libs
         run: pnpm run build:libs
       - name: versioning
