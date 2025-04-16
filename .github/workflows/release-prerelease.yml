@@ -43,30 +43,8 @@ jobs:
         id: setup-caches
         with:
           install-proto: true
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
-        id: desktop-version
-        with:
-          path: ${{ github.workspace }}/apps/ledger-live-desktop
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
-        id: mobile-version
-        with:
-          path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: install dependencies
         run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
-      - name: build libs
-        run: pnpm run build:libs
-      - name: versioning
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm changeset version
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
-        id: post-desktop-version
-        with:
-          path: ${{ github.workspace }}/apps/ledger-live-desktop
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
-        id: post-mobile-version
-        with:
-          path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: Move patch updates to minor for release branch
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
@@ -91,6 +69,28 @@ jobs:
         with:
           from_level: major
           to_level: patch
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+        id: desktop-version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-desktop
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+        id: mobile-version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile
+      - name: build libs
+        run: pnpm run build:libs
+      - name: versioning
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm changeset version
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+        id: post-desktop-version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-desktop
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+        id: post-mobile-version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: Add changed files
         run: |
           git add .
