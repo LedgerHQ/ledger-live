@@ -87,14 +87,8 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
             console.log("[LLC] custom handlars exchangeParams", exchangeParams);
             dispatch(
               openExchangeDrawer({
-                type: "EXCHANGE_START",
-                exchangeType: ExchangeType.SWAP,
-
-                // fromAccountId?: string;
-                // toAccountId?: string;
-                // tokenCurrency?: string;
-                provider: exchangeParams.provider,
-                fromAccountId: exchangeParams.fromAccountId,
+                type: "EXCHANGE_COMPLETE",
+                ...exchangeParams,
                 onResult: result => {
                   // onSuccess(result.nonce, result.device);
 

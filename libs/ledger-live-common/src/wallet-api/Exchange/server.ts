@@ -6,7 +6,6 @@ import {
   CryptoCurrency,
   deserializeTransaction,
   ServerError,
-  Transaction,
 } from "@ledgerhq/wallet-api-core";
 import {
   getParentAccount,
@@ -14,7 +13,7 @@ import {
   makeEmptyTokenAccount,
 } from "@ledgerhq/coin-framework/account/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { AccountLike, getCurrencyForAccount, TokenAccount } from "@ledgerhq/types-live";
+import { Account, AccountLike, getCurrencyForAccount, TokenAccount } from "@ledgerhq/types-live";
 import { findTokenById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
 import {
   ExchangeCompleteParams,
@@ -46,9 +45,11 @@ import {
 
 export { ExchangeType };
 import { BigNumber } from "bignumber.js";
-import { transactionStrategy } from "../../exchange/swap/types";
+import { ExchangeSwap, transactionStrategy } from "../../exchange/swap/types";
 import { listAndFilterCurrencies } from "../../platform/helpers";
 import { retrieveSwapPayload } from "../../exchange/swap/api/v5/actions";
+import { Transaction } from "../../generated/types";
+import { fr } from "date-fns/locale";
 
 type Handlers = {
   "custom.exchange.start": RPCHandler<
@@ -72,21 +73,26 @@ export type CompleteExchangeUiRequest = {
   amountExpectedTo?: number;
   magnitudeAwareRate?: BigNumber;
 };
+type FundStartParamsUiRequest = {
+  exchangeType: "FUND";
+};
+
+type SellStartParamsUiRequest = {
+  exchangeType: "SELL";
+  provider: string;
+  exchange: Partial<Exchange> | undefined;
+};
+
+type SwapStartParamsUiRequest = {
+  exchangeType: "SWAP";
+  provider: string;
+  exchange: Partial<ExchangeSwap>;
+};
 
 type ExchangeStartParamsUiRequest =
-  | {
-      exchangeType: "FUND";
-    }
-  | {
-      exchangeType: "SELL";
-      provider: string;
-      exchange: Partial<Exchange> | undefined;
-    }
-  | {
-      exchangeType: "SWAP";
-      provider: string;
-      exchange: Partial<Exchange>;
-    };
+  | FundStartParamsUiRequest
+  | SellStartParamsUiRequest
+  | SwapStartParamsUiRequest;
 
 type SwapUiRequest = CompleteExchangeUiRequest & {
   provider?: string;
@@ -369,23 +375,12 @@ export const handlers = ({
 
         const {
           provider,
-          fromAccountAddress,
-          toAccountAddress,
-          fromAccountCurrency,
-          toAccountCurrency,
+
           fromAmount,
           fromAmountAtomic,
           quoteId,
           toNewTokenId,
         } = params;
-
-        // const { account: fromAccount, currency: fromCurrency } =
-        //   await this.walletAPIDecorator.retrieveUserAccount(fromAccountId, CustomErrorType.SWAP);
-
-        // const { account: toAccount } = await this.walletAPIDecorator.retrieveUserAccount(
-        //   toAccountId,
-        //   CustomErrorType.SWAP,
-        // );
 
         const trackingParams = {
           // TODO: expect-error to be deleted after
@@ -395,16 +390,38 @@ export const handlers = ({
 
         // tracking.startExchangeRequested(trackingParams);
 
-        const exchangeParams: ExchangeStartParamsUiRequest = extractSwapStartParam(
+        const exchangeStartParams: ExchangeStartParamsUiRequest = extractSwapStartParam(
           params,
           accounts,
-        );
+        ) as SwapStartParamsUiRequest;
 
-        console.log("[LLC Server] exchangeParams", exchangeParams);
+        const {
+          fromCurrency,
+          fromAccount,
+          fromParentAccount,
+          toCurrency,
+          toAccount,
+          toParentAccount,
+        } = exchangeStartParams.exchange;
 
+        if (!fromAccount) {
+          throw new ServerError(createAccountNotFound(params.fromAccountId));
+        }
+
+        const fromAccountAddress = fromParentAccount
+          ? fromParentAccount.freshAddress
+          : (fromAccount as Account).freshAddress;
+
+        const toAccountAddress = toParentAccount
+          ? toParentAccount.freshAddress
+          : (toAccount as Account).freshAddress;
+
+        console.log("[LLC Server] exchangeStartParams", exchangeStartParams);
+
+        // Step 1: Open the drawer and open excahge app on mobile
         const startSwapResponse: ExchangeStartResult = await new Promise((resolve, reject) =>
           uiExchangeStart({
-            exchangeParams,
+            exchangeParams: exchangeStartParams,
             onSuccess: (nonce: string, device) => {
               console.log("[Swap] Start swap success, got nonce:", nonce);
               tracking.startExchangeSuccess(trackingParams);
@@ -418,15 +435,13 @@ export const handlers = ({
           }),
         );
 
-        console.log("[LLC Server] Retrieving swap payload...");
-
         const payloadResponse = await retrieveSwapPayload({
           provider,
           deviceTransactionId: startSwapResponse.transactionId,
           fromAccountAddress,
           toAccountAddress,
-          fromAccountCurrency,
-          toAccountCurrency,
+          fromAccountCurrency: fromCurrency!.id,
+          toAccountCurrency: toCurrency!.id,
           amount: fromAmount,
           amountInAtomicUnit: fromAmountAtomic,
           quoteId,
@@ -458,21 +473,6 @@ export const handlers = ({
         };
         tracking.completeExchangeRequested(trackingCompleteParams);
 
-        const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
-        if (!realFromAccountId) {
-          return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
-        }
-
-        const fromAccount = accounts.find(acc => acc.id === realFromAccountId);
-
-        if (!fromAccount) {
-          throw new ServerError(createAccountNotFound(params.fromAccountId));
-        }
-
-        const fromParentAccount = getParentAccount(fromAccount, accounts);
-
-        const fromCurrency = getCurrencyForAccount(fromAccount);
-
         const strategyData = {
           recipient: payinAddress,
           amount: fromAmountAtomic,
@@ -500,55 +500,8 @@ export const handlers = ({
 
         console.log("[LLC Server] transaction ", transaction);
 
-        let exchange: Exchange;
-
-        const realToAccountId = getAccountIdFromWalletAccountId(params.toAccountId);
-        if (!realToAccountId) {
-          return Promise.reject(new Error(`accountId ${params.toAccountId} unknown`));
-        }
-
-        const toAccount = accounts.find(a => a.id === realToAccountId);
-
-        if (!toAccount) {
-          throw new ServerError(createAccountNotFound(params.toAccountId));
-        }
-
-        // TODO: check logic for EmptyTokenAccount
-        let toParentAccount = getParentAccount(toAccount, accounts);
-        let newTokenAccount: TokenAccount | undefined;
-        if (params.tokenCurrency) {
-          const currency = findTokenById(params.tokenCurrency);
-          if (!currency) {
-            throw new ServerError(createCurrencyNotFound(params.tokenCurrency));
-          }
-          if (toAccount.type === "Account") {
-            newTokenAccount = makeEmptyTokenAccount(toAccount, currency);
-            toParentAccount = toAccount;
-          } else {
-            newTokenAccount = makeEmptyTokenAccount(toParentAccount, currency);
-          }
-        }
-
-        const toCurrency = await getToCurrency(binaryPayload, toAccount, newTokenAccount);
-
-        exchange = {
-          fromAccount,
-          fromParentAccount,
-          fromCurrency: getCurrencyForAccount(fromAccount),
-          toAccount: newTokenAccount ? newTokenAccount : toAccount,
-          toParentAccount,
-          toCurrency,
-        };
-
         const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
         const mainFromAccountFamily = mainFromAccount.currency.family;
-
-        // const transaction = deserializeTransaction(params.rawTransaction);
-
-        // const { liveTx } = getWalletAPITransactionSignFlowInfos({
-        //   walletApiTransaction: transaction,
-        //   account: fromAccount,
-        // });
 
         if (transaction.family !== mainFromAccountFamily) {
           return Promise.reject(
@@ -585,30 +538,33 @@ export const handlers = ({
           },
         );
 
-        let amountExpectedTo;
-        let magnitudeAwareRate;
-        if (params.exchangeType === "SWAP") {
-          // Get amountExpectedTo and magnitudeAwareRate from binary payload
-          const decodePayload = await decodeSwapPayload(binaryPayload);
-          amountExpectedTo = new BigNumber(decodePayload.amountToWallet.toString());
-          magnitudeAwareRate = tx.amount && amountExpectedTo.dividedBy(tx.amount);
-        }
+        // Get amountExpectedTo and magnitudeAwareRate from binary payload
+        const decodePayload = await decodeSwapPayload(binaryPayload);
+        const amountExpectedTo = new BigNumber(decodePayload.amountToWallet.toString());
+        const magnitudeAwareRate = tx.amount && amountExpectedTo.dividedBy(tx.amount);
+
+        // fix to convert to big number
+        tx.amount = new BigNumber(tx.amount);
 
         return new Promise((resolve, reject) =>
-          uiSwap({
+          uiExchangeComplete({
             exchangeParams: {
-              fromAccountId: fromAccount.id,
-              toAccountId: toAccount.id,
-              tokenCurrency: params.tokenCurrency,
               exchangeType: ExchangeType.SWAP,
               provider: params.provider,
               transaction: tx,
               signature: signature,
               binaryPayload: binaryPayload,
-              exchange,
+              exchange: {
+                fromAccount,
+                fromParentAccount,
+                toAccount,
+                toParentAccount,
+                fromCurrency: fromCurrency!,
+                toCurrency: toCurrency!,
+              },
               feesStrategy: params.feeStrategy,
               swapId: swapId,
-              amountExpectedTo,
+              amountExpectedTo: amountExpectedTo.toNumber(),
               magnitudeAwareRate,
             },
             onSuccess: (transactionHash: string) => {
@@ -673,8 +629,10 @@ function extractSwapStartParam(
     exchange: {
       fromAccount,
       fromParentAccount,
+      fromCurrency: getCurrencyForAccount(fromAccount),
       toAccount: newTokenAccount ? newTokenAccount : toAccount,
       toParentAccount: newTokenAccount ? toAccount : toParentAccount,
+      toCurrency: getCurrencyForAccount(toAccount),
     },
   };
 }
@@ -740,41 +698,61 @@ async function getToCurrency(
   return newTokenAccount?.token ?? getCurrencyForAccount(toAccount);
 }
 
+interface StrategyParams {
+  recipient: string;
+  amount: BigNumber | number | string;
+  currency: CryptoOrTokenCurrency;
+  customFeeConfig?: Record<string, unknown>;
+  payinExtraId?: string;
+  extraTransactionParameters?: Record<string, unknown>;
+}
+
 async function getStrategy(
-  { recipient, amount, currency, customFeeConfig, payinExtraId, extraTransactionParameters }: any,
-  customErrorType?: any,
-): Promise<Transaction> {
-  let family: Transaction["family"];
-  if (currency.type === "TokenCurrency") {
-    const currencies = listAndFilterCurrencies({
-      includeTokens: true,
-      currencies: [currency.parent],
-    }) as unknown[] as CryptoCurrency[];
-
-    family = (currencies[0] as CryptoCurrency).family as Transaction["family"];
-  } else {
-    family = currency.family as Transaction["family"];
-  }
-
-  // TODO: remove next line when wallet-api support btc utxoStrategy
-  if (customFeeConfig) {
-    delete customFeeConfig.utxoStrategy;
-  }
-
-  const familyKey = (family as any) === "evm" ? "ethereum" : family;
-  const strategy = transactionStrategy[familyKey];
-
-  if (!strategy) {
-    throw new Error(`No strategy found for family: ${family}`);
-  }
-
-  return strategy({
-    family,
-    amount,
+  {
     recipient,
+    amount,
+    currency,
     customFeeConfig,
     payinExtraId,
     extraTransactionParameters,
-    customErrorType,
-  });
+  }: StrategyParams,
+  customErrorType?: any,
+): Promise<Transaction> {
+  const family =
+    currency.type === "TokenCurrency"
+      ? (currency.parentCurrency?.family as Transaction["family"])
+      : (currency.family as Transaction["family"]);
+
+  if (!family) {
+    throw new Error(`TokenCurrency missing parentCurrency family: ${currency.id}`);
+  }
+
+  // Remove unsupported utxoStrategy for now
+  if (customFeeConfig?.utxoStrategy) {
+    delete customFeeConfig.utxoStrategy;
+  }
+
+  // Normalize family key for strategy lookup
+  const familyKey = family === "evm" ? "ethereum" : family;
+  const strategy = transactionStrategy?.[familyKey];
+
+  if (!strategy) {
+    throw new Error(`No transaction strategy found for family: ${familyKey}`);
+  }
+
+  try {
+    return await strategy({
+      family,
+      amount,
+      recipient,
+      customFeeConfig,
+      payinExtraId,
+      extraTransactionParameters,
+      customErrorType,
+    });
+  } catch (error) {
+    throw new Error(
+      `Failed to execute transaction strategy for family: ${familyKey}. Reason: ${(error as Error).message}`,
+    );
+  }
 }

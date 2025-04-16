@@ -141,10 +141,7 @@ export class ExchangeModule extends CustomModule {
     fromAccountId,
     toAccountId,
     tokenCurrency,
-    fromAccountAddress,
-    toAccountAddress,
-    fromAccountCurrency,
-    toAccountCurrency,
+
     fromAmount,
     fromAmountAtomic,
     quoteId,
@@ -159,10 +156,7 @@ export class ExchangeModule extends CustomModule {
         fromAccountId,
         toAccountId,
         tokenCurrency,
-        fromAccountAddress,
-        toAccountAddress,
-        fromAccountCurrency,
-        toAccountCurrency,
+
         fromAmount,
         fromAmountAtomic,
         quoteId,
