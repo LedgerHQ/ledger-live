@@ -14,7 +14,8 @@
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
     "unimported": "unimported",
-    "test": "jest --passWithNoTests"
+    "test": "jest --passWithNoTests",
+    "coverage": "jest --coverage"
   },
   "devDependencies": {
     "@types/jest": "29.5.14",
