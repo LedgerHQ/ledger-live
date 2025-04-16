@@ -22,9 +22,19 @@ export const Wrapper = styled(Box).attrs(() => ({
   position: relative;
 `;
 
+interface WebViewWrapperProps {
+  mobileView: boolean;
+}
+
+export const WebViewWrapper = styled.div<WebViewWrapperProps>`
+  flex: 1;
+  ${({ mobileView }) => (mobileView ? "width: 355px;" : "width: 100%;")}
+`;
+
 export default function WebPTXPlayer({ manifest, inputs }: WebviewProps) {
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
+  const [mobileView, setMobileView] = useState(false);
 
   const accounts = useSelector(flattenAccountsSelector);
   const customHandlers = usePTXCustomHandlers(manifest, accounts);
@@ -32,14 +42,22 @@ export default function WebPTXPlayer({ manifest, inputs }: WebviewProps) {
   return (
     <Container>
       <Wrapper>
-        <TopBar manifest={manifest} webviewAPIRef={webviewAPIRef} webviewState={webviewState} />
-        <Web3AppWebview
+        <TopBar
           manifest={manifest}
-          inputs={inputs}
-          onStateChange={setWebviewState}
-          ref={webviewAPIRef}
-          customHandlers={customHandlers}
+          webviewAPIRef={webviewAPIRef}
+          webviewState={webviewState}
+          mobileView={mobileView}
+          SetMobileView={setMobileView}
         />
+        <WebViewWrapper mobileView={mobileView}>
+          <Web3AppWebview
+            manifest={manifest}
+            inputs={inputs}
+            onStateChange={setWebviewState}
+            ref={webviewAPIRef}
+            customHandlers={customHandlers}
+          />
+        </WebViewWrapper>
       </Wrapper>
     </Container>
   );
