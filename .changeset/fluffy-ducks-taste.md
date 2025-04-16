@@ -1,7 +1,7 @@
 ---
-"@ledgerhq/coin-tester-polkadot": minor
-"@ledgerhq/coin-tester-evm": minor
-"@ledgerhq/coin-polkadot": minor
+"@ledgerhq/coin-tester-polkadot": patch
+"@ledgerhq/coin-tester-evm": patch
+"@ledgerhq/coin-polkadot": patch
 "@ledgerhq/coin-tester": patch
 ---
 

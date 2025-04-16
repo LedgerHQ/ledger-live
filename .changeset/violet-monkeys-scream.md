@@ -1,6 +1,6 @@
 ---
-"ledger-live-desktop": minor
-"live-mobile": minor
+"ledger-live-desktop": patch
+"live-mobile": patch
 ---
 
 Update imports from newArch

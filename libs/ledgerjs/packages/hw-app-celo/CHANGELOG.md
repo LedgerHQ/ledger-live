@@ -1,5 +1,14 @@
 # @ledgerhq/hw-app-polkadot
 
+## 6.32.1-prereleasetest.0
+
+### Patch Changes
+
+- [#9652](https://github.com/LedgerHQ/ledger-live/pull/9652) [`becd128`](https://github.com/LedgerHQ/ledger-live/commit/becd128bc5b58813ecf3937c8a82b95ed9a347b1) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - Feat: celo coin modularization
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.45.1-prereleasetest.0
+
 ## 6.32.0
 
 ### Minor Changes

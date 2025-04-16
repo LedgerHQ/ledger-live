@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-celo": minor
+"@ledgerhq/coin-celo": patch
 "@ledgerhq/hw-app-celo": patch
 "@ledgerhq/live-common": patch
 ---

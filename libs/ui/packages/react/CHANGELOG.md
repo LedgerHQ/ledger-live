@@ -1,5 +1,14 @@
 # @ledgerhq/react-ui
 
+## 0.21.2-prereleasetest.0
+
+### Patch Changes
+
+- [#9920](https://github.com/LedgerHQ/ledger-live/pull/9920) [`babf5ca`](https://github.com/LedgerHQ/ledger-live/commit/babf5ca9fabb65654861cc896e1caac3de1e1e4c) Thanks [@thesan](https://github.com/thesan)! - Setup a section of react-ui to migrate to the new DS
+
+- Updated dependencies [[`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81)]:
+  - @ledgerhq/crypto-icons-ui@1.11.1-prereleasetest.0
+
 ## 0.21.1
 
 ### Patch Changes

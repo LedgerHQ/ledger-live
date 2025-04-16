@@ -1,10 +1,10 @@
 ---
-"@ledgerhq/coin-solana": minor
-"@ledgerhq/wallet-api-acre-module": minor
-"ledger-live-desktop": minor
-"@ledgerhq/live-common": minor
-"@ledgerhq/dummy-wallet-app": minor
-"@ledgerhq/wallet-api-exchange-module": minor
+"@ledgerhq/coin-solana": patch
+"@ledgerhq/wallet-api-acre-module": patch
+"ledger-live-desktop": patch
+"@ledgerhq/live-common": patch
+"@ledgerhq/dummy-wallet-app": patch
+"@ledgerhq/wallet-api-exchange-module": patch
 ---
 
 Add approve and revoke commande and upgarde wallet api versions

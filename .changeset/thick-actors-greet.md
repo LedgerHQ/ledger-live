@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-xrp": minor
+"@ledgerhq/coin-xrp": patch
 ---
 
 expose `SigningPubKey` in XRP operation details
