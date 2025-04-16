@@ -93,18 +93,21 @@ const getFeatureFlagProperties = () => {
 
     const ptxSwapLiveAppMobileEnabled = Boolean(ptxSwapLiveAppMobileFlag?.enabled);
 
-    const stakingCurrenciesEnabled =
+    const stakingCurrenciesEnabled: string[] | string =
       stakePrograms?.enabled && stakePrograms?.params?.list?.length
         ? stakePrograms.params.list
-        : [];
-    const partnerStakingCurrenciesEnabled =
+        : "flag not loaded";
+    const partnerStakingCurrenciesEnabled: string[] | string =
       stakePrograms?.enabled && stakePrograms?.params?.redirects
         ? Object.keys(stakePrograms.params.redirects)
-        : [];
+        : "flag not loaded";
 
     /** Tether USDT provider is proxy for stablecoin flow rollout.  */
     const usdtProvider =
-      stakePrograms?.params?.redirects["ethereum/erc20/usd_tether__erc20_"]?.platform;
+      !stakePrograms?.enabled || !stakePrograms?.params?.redirects
+        ? undefined
+        : stakePrograms?.params?.redirects["ethereum/erc20/usd_tether__erc20_"]?.platform;
+
     const stablecoinYield: "dapp" | "api" | "inactive" = !usdtProvider
       ? "inactive"
       : usdtProvider === "earn"
