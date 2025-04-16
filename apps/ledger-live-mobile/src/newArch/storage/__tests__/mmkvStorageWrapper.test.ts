@@ -267,6 +267,22 @@ describe("MMKVStorageWrapper", () => {
     });
   });
 
+  describe("deleteAll", () => {
+    let clearMethod: jest.SpyInstance;
+
+    beforeEach(() => {
+      // Arrange
+      clearMethod = jest.spyOn(MMKV.prototype, "clearAll").mockImplementation(() => {});
+
+      // Act
+      storage.deleteAll();
+    });
+
+    it("should call MMKV#clearAll once", () => {
+      expect(clearMethod).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe("push", () => {
     let getMethod: jest.SpyInstance;
     let saveMethod: jest.SpyInstance;

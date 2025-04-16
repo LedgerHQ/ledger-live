@@ -124,6 +124,13 @@ const storageWrapper = {
   },
 
   /**
+   * Delete all the `MMKV` instance.
+   */
+  async deleteAll() {
+    mmkv.clearAll();
+  },
+
+  /**
    * Push a value onto an array stored in `MMKV` by key or create
    * a new array in `MMKV` for a key if it's not yet defined.
    *

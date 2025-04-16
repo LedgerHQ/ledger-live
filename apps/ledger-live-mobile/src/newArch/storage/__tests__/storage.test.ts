@@ -317,4 +317,48 @@ describe("storage", () => {
       });
     });
   });
+
+  describe("deleteAll", () => {
+    let deleteAllMethod: jest.SpyInstance;
+
+    describe("with storage type MMKV", () => {
+      beforeEach(async () => {
+        // Arrange
+        mockInitStorageState = jest.fn().mockImplementation(state => {
+          state.storageType = STORAGE_TYPE.MMKV;
+        });
+        deleteAllMethod = jest
+          .spyOn(mmkvStorageWrapper, "deleteAll")
+          .mockImplementation(() => Promise.resolve());
+        const storage = createTestStorage();
+
+        // Act
+        await storage.deleteAll();
+      });
+
+      it("should call mmkvStorageWrapper#deleteAll once", () => {
+        expect(deleteAllMethod).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe("with storage type AsyncStorage", () => {
+      beforeEach(async () => {
+        // Arrange
+        mockInitStorageState = jest.fn().mockImplementation(state => {
+          state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
+        });
+        deleteAllMethod = jest
+          .spyOn(asyncStorageWrapper, "deleteAll")
+          .mockImplementation(() => Promise.resolve());
+        const storage = createTestStorage();
+
+        // Act
+        await storage.deleteAll();
+      });
+
+      it("should call asyncStorageWrapper#deleteAll once", () => {
+        expect(deleteAllMethod).toHaveBeenCalledTimes(1);
+      });
+    });
+  });
 });

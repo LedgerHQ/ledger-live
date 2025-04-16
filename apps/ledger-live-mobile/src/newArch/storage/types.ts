@@ -1,4 +1,4 @@
-import { MigrationStatus } from "./utils/migrations/types";
+import { MigrationStatus, RollbackStatus } from "./utils/migrations/types";
 
 /** Application storage interface used to store data in the application. */
 export interface Storage {
@@ -67,6 +67,11 @@ export interface Storage {
   delete(key: string | string[]): Promise<void>;
 
   /**
+   * Delete all the storage keys
+   */
+  deleteAll(): Promise<void>;
+
+  /**
    * Push a value onto an array stored in application storage by key or create
    * a new array in Storage for a key if it's not yet defined.
    *
@@ -97,6 +102,10 @@ export interface StorageState {
   storageType: StorageType;
   /** Indicates the current migration status, if any */
   migrationStatus: MigrationStatus;
+  /** Indicates the current rollback status, if any */
+  rollbackStatus: RollbackStatus;
+  /** Number of reading errors triggered during the use */
+  numberOfReadErrors: number;
 }
 
 /** Initializer callback function to initialize {@link StorageState} state. */
