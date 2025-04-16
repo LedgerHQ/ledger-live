@@ -4,6 +4,7 @@ module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
   passWithNoTests: true,
+  setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
   collectCoverageFrom: [
     "src/**/*.ts",
     "!src/**/*.test.ts",
