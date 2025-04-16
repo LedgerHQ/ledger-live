@@ -45,6 +45,6 @@ export enum DIRECTION {
 
 export const SUPPORTED_TOKEN_TYPES = ["coin", "fungible_asset"];
 
-export const APTOS_DELEGATION_RESERVE = 0.01;
-
-export const MIN_COINS_ON_SHARES_POOL = BigNumber(11); // In octas
+export const APTOS_PRECISION = 8;
+export const APTOS_DELEGATION_RESERVE = BigNumber(0.01).shiftedBy(APTOS_PRECISION);
+export const MIN_COINS_ON_SHARES_POOL = BigNumber(11).shiftedBy(APTOS_PRECISION);
