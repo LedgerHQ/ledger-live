@@ -1,5 +1,5 @@
 import { Feature_StakePrograms } from "@ledgerhq/types-live";
-import { stakeProgramToEarnParam } from ".";
+import { stakeProgramsToEarnParam } from "./index";
 
 const feature_stake_programs_empty_json: Feature_StakePrograms = {
   enabled: true,
@@ -35,12 +35,12 @@ const feature_stake_programs_json: Feature_StakePrograms = {
 
 describe("stakeProgramToEarnParam", () => {
   it("should return `undefined` when there are no redirects", () => {
-    const result = stakeProgramToEarnParam(feature_stake_programs_empty_json);
+    const result = stakeProgramsToEarnParam(feature_stake_programs_empty_json);
     expect(result).toEqual(undefined);
   });
 
   it("should return a record of stake earn params", () => {
-    const result = stakeProgramToEarnParam(feature_stake_programs_json);
+    const result = stakeProgramsToEarnParam(feature_stake_programs_json);
     expect(result).toEqual({
       "ethereum/erc20/usd__coin": "kiln-widget",
       "ethereum/erc20/usd_tether__erc20_": "earn",

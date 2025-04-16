@@ -1,7 +1,7 @@
 import type { Feature_StakePrograms, PlatformManifestId } from "@ledgerhq/types-live";
 
 export const stakeProgramsToEarnParam = (
-  stakePrograms: Feature_StakePrograms,
+  stakePrograms: Feature_StakePrograms | null,
 ): Record<PlatformManifestId, string> | undefined => {
   const redirects = stakePrograms?.params?.redirects ?? {};
   const result: Record<string, string> = {};
@@ -19,7 +19,7 @@ export const stakeProgramsToEarnParam = (
 type StablecoinYield = "dapp" | "api" | "inactive";
 
 export const getStablecoinYieldSetting = (
-  stakePrograms: Feature_StakePrograms,
+  stakePrograms: Feature_StakePrograms | null,
 ): StablecoinYield => {
   /** Tether USDT provider is proxy for stablecoin flow rollout.  */
   const usdtProvider =
