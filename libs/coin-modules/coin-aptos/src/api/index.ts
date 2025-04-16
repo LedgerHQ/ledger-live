@@ -17,7 +17,6 @@ import {
   UserTransactionResponse,
   PostRequestOptions,
   Block,
-  ClientResponse,
 } from "@aptos-labs/ts-sdk";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
@@ -29,12 +28,14 @@ import type { AptosTransaction, TransactionOptions } from "../types";
 import {
   GetAccountTransactionsData,
   GetAccountTransactionsDataGt,
+  GetCurrentDelegatorBalancesData,
   GetNumActiveDelegatorPerPoolData,
 } from "./graphql/queries";
 import {
   GetAccountTransactionsDataQuery,
   GetAccountTransactionsDataGtQueryVariables,
   GetNumActiveDelegatorPerPoolQuery,
+  GetCurrentDelegatorBalancesQuery,
 } from "./graphql/types";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import * as blockies from "blockies-ts";
@@ -196,6 +197,71 @@ export class AptosAPI {
     }
   }
 
+  async getStakingPool(): Promise<ValidatorsAppValidator[]> {
+    // TODO : remove console.log
+    // REFACTOR: Move it to a function ??
+    // Get the list of Active Delegation Pool
+    const query = GetNumActiveDelegatorPerPoolData;
+
+    const queryResponse = await this.apolloClient.query<GetNumActiveDelegatorPerPoolQuery, object>({
+      query,
+      fetchPolicy: "network-only",
+    });
+
+    const delegatedStakingPools: DelegationPoolAddress[] =
+      queryResponse.data.delegated_staking_pools;
+
+    // REFACTOR: Move it to a function ??
+    // Get datailed information from Validator Nodes
+    const querySecond = GetCurrentDelegatorBalancesData;
+    const queryResponseSecond = await this.apolloClient.query<
+      GetCurrentDelegatorBalancesQuery,
+      object
+    >({
+      query: querySecond,
+      fetchPolicy: "network-only",
+    });
+
+    const stakingData: CurrentDelegatorBalance[] =
+      queryResponseSecond.data.current_delegator_balances;
+    console.log("stakingData", stakingData);
+
+    // Filter the list of Validator Nodes based on ActiveDelegators
+    const list: ValidatorsAppValidator[] = stakingData
+      .filter((pool): boolean =>
+        delegatedStakingPools.some(delegator => {
+          return delegator.staking_pool_address === pool.current_pool_balance?.staking_pool_address;
+        }),
+      )
+      .map(pool => {
+        const imgSrc = blockies.create({ seed: pool.delegator_address }).toDataURL();
+        const aptosName = pool.staking_pool_metadata.operator_aptos_name;
+        const naming =
+          Array.isArray(aptosName) && aptosName.length > 0 && aptosName[0].domain_with_suffix
+            ? aptosName[0].domain_with_suffix
+            : pool.current_pool_balance.staking_pool_address;
+
+        // REFACTOR: use a better way to get the URL
+        // Should do something like:
+        // const getApiEndpoint = (currencyId: string) => isTestnet(currencyId) ? getEnv("APTOS_TESTNET_API_ENDPOINT") : getEnv("APTOS_API_ENDPOINT");
+        const url = pool.current_pool_balance?.staking_pool_address
+          ? `https://explorer.aptoslabs.com/account/${pool.current_pool_balance.staking_pool_address}?network=mainnet`
+          : "";
+
+        return {
+          commission: parseFloat(pool.current_pool_balance.operator_commission_percentage) / 100,
+          activeStake: parseInt(pool.current_pool_balance.total_coins, 10),
+          voteAccount: pool.shares,
+          totalScore: 1, // Do I need it?
+          name: naming,
+          avatarUrl: imgSrc,
+          wwwUrl: url,
+        };
+      });
+
+    return list;
+  }
+
   private async fetchTransactions(address: string, gt?: string) {
     if (!address) {
       return [];
@@ -256,84 +322,44 @@ export class AptosAPI {
       hash: block.block_hash,
     };
   }
-
-  async getStakingPool(): Promise<ValidatorsAppValidator[]> {
-    const { data } = await network<ClientResponse<ValidatorSetData>>({
-      method: "GET",
-      url: `${this.apiUrl}/accounts/0x1/resource/0x1::stake::ValidatorSet`,
-    });
-
-    const validators = data.data.active_validators;
-
-    // const delegators = data.data.active_validators.map(validator => {
-    //   const delegator: Delegator = {
-    //     address: validator.addr,
-    //     delegatedStakeAmount: parseInt(validator.voting_power, 10),
-    //     numActiveDelegator: 0,
-    //     operatorComission: 0,
-    //   };
-
-    //   return delegator;
-    // });
-
-    // console.log("delegators", delegators);
-    console.log("validators", validators);
-
-    const query = GetNumActiveDelegatorPerPoolData;
-
-    const queryResponse = await this.apolloClient.query<GetNumActiveDelegatorPerPoolQuery, object>({
-      query,
-      fetchPolicy: "network-only",
-    });
-
-    interface A {
-      staking_pool_address: string;
-    }
-
-    const delegatedStakingPools: A[] = queryResponse.data.delegated_staking_pools;
-
-    console.log("delegatedStakingPools", delegatedStakingPools);
-
-    // const validatorsInDelegatedStakingPools = validators.filter(validator => {
-    //   return delegatedStakingPools.some(
-    //     pool => pool.staking_pool_address === validator.owner_address,
-    //   );
-    // });
-
-    const list: ValidatorsAppValidator[] = delegatedStakingPools.map(pool => {
-      const imgSrc = blockies.create({ seed: pool.staking_pool_address }).toDataURL();
-      return {
-        activeStake: 1,
-        commission: 1,
-        totalScore: 1,
-        voteAccount: pool.staking_pool_address,
-        name: pool.staking_pool_address,
-        avatarUrl: imgSrc,
-        wwwUrl: "",
-      };
-    });
-
-    return list;
-
-    // console.log(validatorsInDelegatedStakingPools);
-  }
 }
 
-interface Validator {
-  addr: string;
-  voting_power: string;
+interface DelegationPoolAddress {
+  staking_pool_address: string;
 }
 
-interface ValidatorSetData {
-  active_validators: Validator[];
+interface CurrentDelegatorBalance {
+  __typename?: "CurrentDelegatorBalance";
+  shares: string;
+  delegator_address: string;
+  current_pool_balance: CurrentPoolBalance;
+  staking_pool_metadata: StakingPoolMetadata;
+}
+interface CurrentPoolBalance {
+  __typename?: "CurrentPoolBalance";
+  total_coins: string;
+  operator_commission_percentage: string;
+  staking_pool_address: string;
+  total_shares: string;
+  inactive_table_handle: string;
+  last_transaction_version: string;
+  active_table_handle: string;
 }
 
-// interface Delegator {
-//   address: string;
-//   delegatedStakeAmount: number;
-//   numActiveDelegator: number;
-//   operatorComission: number;
-// }
+interface StakingPoolMetadata {
+  __typename?: "StakingPoolMetadata";
+  operator_aptos_name: OperatorAptosName;
+}
+
+interface OperatorAptosName {
+  __typename?: "OperatorAptosName";
+  subdomain: string;
+  token_name: string;
+  registered_address: string;
+  domain_with_suffix: string;
+  domain_expiration_timestamp: string;
+  domain: string | null;
+}
 
 type ValidatorsAppValidator = {
   activeStake: number;

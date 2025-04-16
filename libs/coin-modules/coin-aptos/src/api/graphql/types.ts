@@ -105,3 +105,34 @@ export type GetNumActiveDelegatorPerPoolQuery = {
     };
   }>;
 };
+
+export type GetCurrentDelegatorBalancesQuery = {
+  __typename?: "query_root";
+  current_delegator_balances: Array<{
+    __typename?: "CurrentDelegatorBalance";
+    current_pool_balance: {
+      __typename?: "CurrentPoolBalance";
+      total_coins: string; // Total coins in the pool
+      operator_commission_percentage: string; // Percentage, potentially divided by 100
+      staking_pool_address: string;
+      total_shares: string;
+      inactive_table_handle: string;
+      last_transaction_version: string;
+      active_table_handle: string;
+    };
+    shares: string; // The number of shares
+    delegator_address: string; 
+    staking_pool_metadata: {
+      __typename?: "StakingPoolMetadata";
+      operator_aptos_name: {
+        __typename?: "OperatorAptosName";
+        subdomain: string;
+        token_name: string;
+        registered_address: string;
+        domain_with_suffix: string;
+        domain_expiration_timestamp: string;
+        domain: string;
+      };
+    };
+  }>;
+};
