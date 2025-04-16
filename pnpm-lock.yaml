@@ -8673,6 +8673,9 @@ importers:
       '@storybook/addon-webpack5-compiler-babel':
         specifier: ^3.0.6
         version: 3.0.6(webpack@5.94.0(esbuild@0.19.12))
+      '@storybook/core':
+        specifier: 8.6.12
+        version: 8.6.12(prettier@3.2.5)(storybook@8.6.12(prettier@3.2.5))
       '@storybook/manager-api':
         specifier: ^8.6.12
         version: 8.6.12(storybook@8.6.12(prettier@3.2.5))
