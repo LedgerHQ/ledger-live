@@ -33,6 +33,7 @@ import createStore from "../createStore";
 import { analyticsDrawerContext } from "../drawers/Provider";
 import { accountsSelector } from "../reducers/accounts";
 import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
+import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -123,18 +124,7 @@ const getPtxAttributes = () => {
     stakePrograms?.enabled && stakePrograms?.params?.redirects
       ? Object.keys(stakePrograms.params.redirects)
       : "flag not loaded";
-
-  /** Tether USDT provider is proxy for stablecoin flow rollout.  */
-  const usdtProvider =
-    !stakePrograms?.enabled || !stakePrograms?.params?.redirects
-      ? undefined
-      : stakePrograms?.params?.redirects["ethereum/erc20/usd_tether__erc20_"]?.platform;
-
-  const stablecoinYield: "dapp" | "api" | "inactive" = !usdtProvider
-    ? "inactive"
-    : usdtProvider === "earn"
-      ? "api"
-      : "dapp";
+  const stablecoinYield = getStablecoinYieldSetting(stakePrograms);
 
   return {
     isBatch1Enabled,

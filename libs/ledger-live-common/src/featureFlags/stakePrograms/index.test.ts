@@ -1,6 +1,5 @@
-import { renderHookWithLiveAppProvider } from "tests/testSetup";
-import { useEarnStakeProgramsParam } from "./useEarnStakeProgramsParam";
 import { Feature_StakePrograms } from "@ledgerhq/types-live";
+import { stakeProgramsToEarnParam } from "./index";
 
 const feature_stake_programs_empty_json: Feature_StakePrograms = {
   enabled: true,
@@ -34,33 +33,15 @@ const feature_stake_programs_json: Feature_StakePrograms = {
   },
 };
 
-describe("useEarnStakeProgramsParam", () => {
+describe("stakeProgramToEarnParam", () => {
   it("should return `undefined` when there are no redirects", () => {
-    const { result } = renderHookWithLiveAppProvider(() => useEarnStakeProgramsParam(), {
-      initialState: {
-        settings: {
-          overriddenFeatureFlags: {
-            stakePrograms: feature_stake_programs_empty_json,
-          },
-        },
-      },
-    });
-
-    expect(result.current).toEqual(undefined);
+    const result = stakeProgramsToEarnParam(feature_stake_programs_empty_json);
+    expect(result).toEqual(undefined);
   });
 
   it("should return a record of stake earn params", () => {
-    const { result } = renderHookWithLiveAppProvider(() => useEarnStakeProgramsParam(), {
-      initialState: {
-        settings: {
-          overriddenFeatureFlags: {
-            stakePrograms: feature_stake_programs_json,
-          },
-        },
-      },
-    });
-
-    expect(result.current).toEqual({
+    const result = stakeProgramsToEarnParam(feature_stake_programs_json);
+    expect(result).toEqual({
       "ethereum/erc20/usd__coin": "kiln-widget",
       "ethereum/erc20/usd_tether__erc20_": "earn",
       tron: "stakekit",

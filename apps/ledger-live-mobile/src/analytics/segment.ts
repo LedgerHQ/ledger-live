@@ -57,6 +57,7 @@ import { Maybe } from "../types/helpers";
 import { appStartupTime } from "../StartupTimeMarker";
 import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
 import { getEnv } from "@ledgerhq/live-env";
+import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import { getTokensWithFunds } from "LLM/utils/getTokensWithFunds";
 
 let sessionId = uuid();
@@ -102,17 +103,7 @@ const getFeatureFlagProperties = () => {
         ? Object.keys(stakePrograms.params.redirects)
         : "flag not loaded";
 
-    /** Tether USDT provider is proxy for stablecoin flow rollout.  */
-    const usdtProvider =
-      !stakePrograms?.enabled || !stakePrograms?.params?.redirects
-        ? undefined
-        : stakePrograms?.params?.redirects["ethereum/erc20/usd_tether__erc20_"]?.platform;
-
-    const stablecoinYield: "dapp" | "api" | "inactive" = !usdtProvider
-      ? "inactive"
-      : usdtProvider === "earn"
-        ? "api"
-        : "dapp";
+    const stablecoinYield = getStablecoinYieldSetting(stakePrograms);
 
     updateIdentify({
       isBatch1Enabled,
@@ -265,15 +256,8 @@ const extraProperties = async (store: AppStore) => {
     stakePrograms?.enabled && stakePrograms?.params?.redirects
       ? Object.keys(stakePrograms.params.redirects)
       : [];
-  /** Tether USDT provider is proxy for stablecoin flow rollout.  */
-  const usdtProvider =
-    stakePrograms?.params?.redirects["ethereum/erc20/usd_tether__erc20_"]?.platform;
-  const stablecoinYield: "dapp" | "api" | "inactive" = !usdtProvider
-    ? "inactive"
-    : usdtProvider === "earn"
-      ? "api"
-      : "dapp";
 
+  const stablecoinYield = getStablecoinYieldSetting(stakePrograms);
   const ledgerSyncAtributes = getLedgerSyncAttributes(state);
   const rebornAttributes = getRebornAttributes();
   const mevProtectionAttributes = getMEVAttributes(state);

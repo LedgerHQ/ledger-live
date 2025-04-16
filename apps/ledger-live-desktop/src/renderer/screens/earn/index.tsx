@@ -1,6 +1,8 @@
+import { stakeProgramsToEarnParam } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
-import React from "react";
+import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { getParsedSystemDeviceLocale } from "~/helpers/systemLocale";
 import Card from "~/renderer/components/Box/Card";
@@ -13,7 +15,6 @@ import {
   localeSelector,
 } from "~/renderer/reducers/settings";
 import { useDeepLinkListener } from "~/renderer/screens/earn/useDeepLinkListener";
-import { useEarnStakeProgramsParam } from "./useEarnStakeProgramsParam";
 
 const DEFAULT_EARN_APP_ID = "earn";
 
@@ -29,7 +30,11 @@ const Earn = () => {
   const countryLocale = getParsedSystemDeviceLocale().region;
   useDeepLinkListener();
 
-  const stakeProgramsParam = useEarnStakeProgramsParam();
+  const stakePrograms = useFeature("stakePrograms");
+  const stakeProgramsParam = useMemo(
+    () => stakeProgramsToEarnParam(stakePrograms),
+    [stakePrograms],
+  );
 
   return (
     <Card grow style={{ overflow: "hidden" }} data-testid="earn-app-container">

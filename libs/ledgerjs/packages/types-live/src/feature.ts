@@ -280,22 +280,24 @@ export type Feature_SwapWalletApiPartnerList = Feature<{
   list: string[];
 }>;
 
-export type RedirectQueryParam<ManifestId> = "stakekit" extends ManifestId
+export type PlatformManifestId = "stakekit" | "kiln-widget" | "earn";
+
+export type RedirectQueryParam<M extends PlatformManifestId> = "stakekit" extends M
   ? {
       yieldId: string;
     }
   : unknown;
 
-export type Redirect<ManifestId> = {
-  platform: ManifestId;
+export type Redirect<M extends PlatformManifestId> = {
+  platform: PlatformManifestId;
   name: string;
-  queryParams?: Record<string, string> & RedirectQueryParam<ManifestId>;
+  queryParams?: Record<string, string> & RedirectQueryParam<M>;
 };
 
-export type Feature_StakePrograms<ManifestId = "stakekit" | "kiln-widget" | "earn"> = Feature<{
+export type Feature_StakePrograms = Feature<{
   list: string[];
   /** redirects is a dictionary of crypto asset ids to partner app params for overriding flows for specific tokens. */
-  redirects: Record<string, Redirect<ManifestId>>;
+  redirects: Record<string, Redirect<PlatformManifestId>>;
 }>;
 
 export type Feature_StakeAccountBanner = Feature<{ [blockchainName: string]: any }>;

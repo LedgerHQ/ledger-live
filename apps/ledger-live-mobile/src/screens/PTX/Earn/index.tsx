@@ -1,3 +1,5 @@
+import { stakeProgramsToEarnParam } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
@@ -5,7 +7,7 @@ import {
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import { Platform } from "react-native";
 import { useSelector } from "react-redux";
 import { useTheme } from "styled-components/native";
@@ -19,7 +21,6 @@ import { ScreenName } from "~/const";
 import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 import { useSettings } from "~/hooks";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
-import { useEarnStakeProgramsParam } from "./useEarnStakeProgramsParam";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
 
@@ -45,7 +46,11 @@ function Earn({ route }: Props) {
   const manifest: LiveAppManifest | undefined = !localManifest ? remoteManifest : localManifest;
   const countryLocale = getCountryLocale();
 
-  const stakeProgramsParam = useEarnStakeProgramsParam();
+  const stakePrograms = useFeature("stakePrograms");
+  const stakeProgramsParam = useMemo(
+    () => stakeProgramsToEarnParam(stakePrograms),
+    [stakePrograms],
+  );
 
   if (!remoteLiveAppState.isLoading && !manifest) {
     // We want to track occurrences of this error in Sentry
