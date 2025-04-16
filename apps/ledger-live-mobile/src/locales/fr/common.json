@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "Annuler",
+    "copy" : "Copier",
+    "copied" : "Copié",
     "apply" : "Appliquer",
     "seeAll" : "Afficher tout",
     "seeAllWithNumber" : "Afficher tout ({{number}})",
@@ -1061,6 +1063,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Échec du chargement de l’app Live Swap"
+    },
+    "InvalidMemoMina" : {
+      "title" : "Le mémo ne peut pas dépasser 32 caractères"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Les frais de création de compte pour cette transaction s’élèveront à {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "Le montant minimal requis pour cette transaction est {{amount}}"
     }
   },
   "crash" : {
@@ -2591,7 +2602,8 @@
       "gasLimit" : "Limite de gaz",
       "id" : "Identifiant (ID)",
       "autoClaimedRewards" : "Récompenses automatiques",
-      "stakedAmount" : "Montant en staking"
+      "stakedAmount" : "Montant en staking",
+      "accountCreationFee" : "Frais de création de compte"
     },
     "multipleAddresses" : "Pourquoi plusieurs adresses ?",
     "tokenName" : "Nom du token",
@@ -6103,6 +6115,9 @@
       }
     }
   },
+  "mina" : {
+    "memoPlaceholder" : "Mémo facultatif"
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -6609,14 +6624,12 @@
     "range" : {
       "1h" : "1H",
       "24h" : "24H",
+      "1d" : "1J",
       "7d" : "7J",
+      "1w" : "1S",
       "30d" : "30J",
-      "1y" : "1A",
-      "1H_label" : "1H",
-      "1D_label" : "1J",
-      "1W_label" : "1S",
-      "1M_label" : "1M",
-      "1Y_label" : "1A"
+      "1m" : "1M",
+      "1y" : "1A"
     },
     "warnings" : {
       "connectionError" : "Erreur de connexion",
@@ -7349,5 +7362,10 @@
       "description" : "Avec sa mémoire limitée, votre Ledger Nano S vous prive des dernières fonctionnalités, innovations blockchain et améliorations de sécurité. Pour en bénéficier, choisissez un wallet Ledger plus récent.",
       "cta" : "En savoir plus"
     }
+  },
+  "largeMover" : {
+    "performance" : "Performance",
+    "low" : "Faible",
+    "high" : "Élevée"
   }
 }
