@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { withTokens } from "../../libs";
+import { Text } from "../../../components";
 
 export type AssetType = {
   name: string;
@@ -24,23 +25,19 @@ const TempAssetBadge = () => (
   />
 );
 
-const Name = styled.span`
+const Name = styled(Text)`
   ${withTokens("colors-content-default-default")}
 
-  font-weight: 600;
-  font-size: 16px;
   color: var(--colors-content-default-default);
 `;
 
-const Ticker = styled.span`
+const Ticker = styled(Text)`
   ${withTokens("colors-content-subdued-default-default")}
 
-  font-weight: 600;
-  font-size: 14px;
   color: var(--colors-content-subdued-default-default);
 `;
 
-const OuterWrapper = styled.div`
+const Wrapper = styled.div`
   ${withTokens("spacing-xs")}
 
   display: flex;
@@ -59,12 +56,16 @@ const InfoWrapper = styled.div`
 
 export const AssetItem = ({ name, ticker, onClick }: AssetItemProps) => {
   return (
-    <OuterWrapper onClick={() => onClick({ name, ticker })}>
+    <Wrapper onClick={() => onClick({ name, ticker })}>
       <TempAssetBadge />
       <InfoWrapper>
-        <Name>{name}</Name>
-        <Ticker>{ticker}</Ticker>
+        <Name variant="largeLineHeight" fontWeight="semiBold">
+          {name}
+        </Name>
+        <Ticker variant="bodyLineHeight" fontWeight="semiBold">
+          {ticker}
+        </Ticker>
       </InfoWrapper>
-    </OuterWrapper>
+    </Wrapper>
   );
 };
