@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import styled from "styled-components/native";
 import { useTheme } from "@react-navigation/native";
 import Clipboard from "@react-native-clipboard/clipboard";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex, Alert, Text, Tag } from "@ledgerhq/native-ui";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import Button from "~/components/Button";
@@ -14,7 +13,6 @@ import type { MigrationStatus, RollbackStatus } from "LLM/storage/utils/migratio
 
 export function DebugStorageMigration() {
   const { colors } = useTheme();
-  const protectFeature = useFeature("llmMmkvMigration");
   const [storageState, setStorageState] = useState({ ...storage.getState() });
 
   async function handleMigrateBtnPress() {
@@ -35,10 +33,6 @@ export function DebugStorageMigration() {
   async function handleCopyBtnPress() {
     const json = await storage.stringify();
     Clipboard.setString(json);
-  }
-
-  if (protectFeature == null || !protectFeature.enabled) {
-    return null;
   }
 
   return (
