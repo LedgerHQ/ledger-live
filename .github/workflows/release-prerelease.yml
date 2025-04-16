@@ -32,6 +32,8 @@ jobs:
         with:
           ref: ${{ inputs.ref }}
           token: ${{ steps.generate-token.outputs.token }}
+      - name: enter prerelease mode
+        run: pnpm changeset pre enter prereleasetest
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
       - name: Setup the caches
