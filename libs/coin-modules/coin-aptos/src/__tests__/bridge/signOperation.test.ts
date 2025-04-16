@@ -6,11 +6,13 @@ import buildSignOperation, { getAddress } from "../../bridge/signOperation";
 import { AptosSigner } from "../../types";
 import { signTransaction } from "../../network";
 
-jest.mock("../../api", () => {
+const generateTransaction = jest.fn(() => "tx");
+
+jest.mock("../../network", () => {
   return {
     AptosAPI: function () {
       return {
-        generateTransaction: jest.fn(() => "tx"),
+        generateTransaction,
       };
     },
   };
@@ -24,7 +26,6 @@ jest.mock("../../bridge/buildTransaction", () => {
   };
 });
 
-jest.mock("../../network");
 let mockedSignTransaction: jest.Mocked<any>;
 
 describe("getAddress", () => {
@@ -37,10 +38,15 @@ describe("getAddress", () => {
 describe("buildSignOperation", () => {
   beforeEach(() => {
     mockedSignTransaction = jest.mocked(signTransaction);
+    console.log(signTransaction);
+    console.log(mockedSignTransaction);
   });
+
   afterEach(() => jest.clearAllMocks());
 
   it("should thrown an error", async () => {
+    const mockedSignTransaction = jest.mocked(signTransaction);
+
     mockedSignTransaction.mockImplementation(() => {
       throw new Error("observable-catch-error");
     });
