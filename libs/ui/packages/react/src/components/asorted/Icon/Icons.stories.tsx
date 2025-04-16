@@ -1,5 +1,5 @@
 import React from "react";
-import { Story, Meta } from "@storybook/react";
+import { StoryFn, Meta } from "@storybook/react";
 import * as Icons from "@ledgerhq/icons-ui/react";
 import styled from "styled-components";
 import { Flex, Text } from "../../..";
@@ -62,7 +62,7 @@ const IconGridTemplate: React.FC<IconProps> = ({ size, color, style }) => {
   );
 };
 
-export const IconGrid: Story<IconProps> = (args: IconProps) => <IconGridTemplate {...args} />;
+export const IconGrid: StoryFn<IconProps> = (args: IconProps) => <IconGridTemplate {...args} />;
 
 IconGrid.args = {
   size: "M",

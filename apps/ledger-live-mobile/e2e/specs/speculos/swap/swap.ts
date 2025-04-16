@@ -70,7 +70,7 @@ export async function runSwapTest(swap: SwapType, tmsLinks: string[]) {
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     it(`Swap ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`, async () => {
       await app.swap.openViaDeeplink();
-      const minAmount = (await app.swapLiveApp.getMinimumAmount(swap)) ?? 0;
+      const minAmount = await app.swapLiveApp.getMinimumAmount(swap);
       await performSwapUntilQuoteSelectionStep(swap, minAmount);
       await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.tapExecuteSwap();

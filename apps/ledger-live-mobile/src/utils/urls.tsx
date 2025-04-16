@@ -1,7 +1,6 @@
 export const urls = {
   faq: "https://support.ledger.com/",
-  chatbot:
-    "https://live-chat-static.sprinklr.com/test-html/index.html?appId=633307d2cd91267be7d0eea7_app_300078095&env=prod3&skin=MODERN&variant=PAGE&scope=CONVERSATION",
+  chatbot: "https://ledgercustomersuccess.my.salesforce-sites.com/fullscreenbot",
   contact: "https://support.ledger.com/",
   terms: {
     en: "https://shop.ledger.com/pages/ledger-live-terms-of-use",

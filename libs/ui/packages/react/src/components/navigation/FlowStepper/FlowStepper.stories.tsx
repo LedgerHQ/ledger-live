@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 import styled from "styled-components";
 // @ts-expect-error Typings…
-import { useArgs } from "@storybook/client-api";
+import { useArgs } from "@storybook/manager-api";
 import { Props as FlowStepperProps } from "./index";
 import { Divider, Flex, FlowStepper, Text, Button, Box, Link, IconsLegacy, Tag } from "../../..";
 import type { Size as TagSize } from "../../Tag";

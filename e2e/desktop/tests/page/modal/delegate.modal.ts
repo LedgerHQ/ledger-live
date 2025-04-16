@@ -171,7 +171,7 @@ export class DelegateModal extends Modal {
     await this.delegateToEarnRewardsButton.click();
   }
 
-  @step("Verify delegate infos for $0 and $1")
+  @step("Verify delegate infos for $0")
   async verifyTezosDelegateInfos(validator: string) {
     await expect(this.delegateTezosProvider).toBeVisible();
     expect(await this.delegateTezosProvider.innerText()).toContain(validator);

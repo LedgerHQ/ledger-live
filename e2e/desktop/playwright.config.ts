@@ -5,6 +5,9 @@ const config: PlaywrightTestConfig = {
   retries: process.env.CI ? 2 : 0,
   timeout: process.env.CI ? 400000 : 1200000,
   outputDir: "./tests/artifacts/test-results",
+  expect: {
+    timeout: 41000,
+  },
   globalTimeout: 0,
   globalSetup: require.resolve("./tests/utils/global.setup"),
   globalTeardown: require.resolve("./tests/utils/global.teardown"),

@@ -424,6 +424,6 @@ export class SwapPage extends AppPage {
 
   @step("Check minimum amount for swap")
   async getMinimumAmount(swap: Swap) {
-    return getMinimumSwapAmount(swap).toString();
+    return (await getMinimumSwapAmount(swap))?.toString() ?? "";
   }
 }
