@@ -100,9 +100,7 @@ const createSigner: CreateSigner<SolanaSigner> = (transport: Transport) => {
       return app.signTransaction(path, tx);
     },
     signMessage: (path: string, message: string) => {
-      return app
-        .signOffchainMessage(path, toOffChainMessage(message))
-        .then(response => ({ signature: Buffer.from(response.signature.toString("hex")) }));
+      return app.signOffchainMessage(path, toOffChainMessage(message));
     },
   };
 };
