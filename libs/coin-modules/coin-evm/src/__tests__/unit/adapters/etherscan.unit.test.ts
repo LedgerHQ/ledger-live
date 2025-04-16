@@ -55,7 +55,7 @@ describe("EVM Family", () => {
           });
 
           const expectedOperation: Operation = {
-            id: "js:2:ethereum:0x9aa99c23f67c81701c772b106b4f83f6e858dd2e:-0xaa45b4858ba44230a5fce5a29570a5dec2bf1f0ba95bacdec4fe8f2c4fa99338-FEES",
+            id: "js:2:ethereum:0x9aa99c23f67c81701c772b106b4f83f6e858dd2e:-0xaa45b4858ba44230a5fce5a29570a5dec2bf1f0ba95bacdec4fe8f2c4fa99338-FEES-0",
             hash: "0xaa45b4858ba44230a5fce5a29570a5dec2bf1f0ba95bacdec4fe8f2c4fa99338",
             accountId,
             blockHash: "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",
@@ -113,7 +113,7 @@ describe("EVM Family", () => {
           });
 
           const expectedOperation: Operation = {
-            id: "js:2:ethereum:0x9aa99c23f67c81701c772b106b4f83f6e858dd2e:-0xaa45b4858ba44230a5fce5a29570a5dec2bf1f0ba95bacdec4fe8f2c4fa99338-FEES",
+            id: "js:2:ethereum:0x9aa99c23f67c81701c772b106b4f83f6e858dd2e:-0xaa45b4858ba44230a5fce5a29570a5dec2bf1f0ba95bacdec4fe8f2c4fa99338-FEES-0",
             hash: "0xaa45b4858ba44230a5fce5a29570a5dec2bf1f0ba95bacdec4fe8f2c4fa99338",
             accountId,
             blockHash: "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",
@@ -170,7 +170,7 @@ describe("EVM Family", () => {
           });
 
           const expectedOperation: Operation = {
-            id: "js:2:ethereum:0x829BD824B016326A401d083B33D092293333A830:-0x8d3e871469ce549c5a80b8c8beaae0d502ecea85bb43eb84703cebeea7d25944-OUT",
+            id: "js:2:ethereum:0x829BD824B016326A401d083B33D092293333A830:-0x8d3e871469ce549c5a80b8c8beaae0d502ecea85bb43eb84703cebeea7d25944-OUT-0",
             hash: "0x8d3e871469ce549c5a80b8c8beaae0d502ecea85bb43eb84703cebeea7d25944",
             accountId,
             blockHash: "0xad04a8ed598c9c270f7ffd9a113224bc16fc285af814a2dc735c261620bad669",
@@ -227,7 +227,7 @@ describe("EVM Family", () => {
           });
 
           const expectedOperation: Operation = {
-            id: "js:2:ethereum:0x829BD824B016326A401d083B33D092293333A830:-0x8d3e871469ce549c5a80b8c8beaae0d502ecea85bb43eb84703cebeea7d25944-IN",
+            id: "js:2:ethereum:0x829BD824B016326A401d083B33D092293333A830:-0x8d3e871469ce549c5a80b8c8beaae0d502ecea85bb43eb84703cebeea7d25944-IN-0",
             hash: "0x8d3e871469ce549c5a80b8c8beaae0d502ecea85bb43eb84703cebeea7d25944",
             accountId,
             blockHash: "0xad04a8ed598c9c270f7ffd9a113224bc16fc285af814a2dc735c261620bad669",
@@ -284,7 +284,7 @@ describe("EVM Family", () => {
           });
 
           const expectedOperation: Operation = {
-            id: "js:2:ethereum:0x829BD824B016326A401d083B33D092293333A830:-0x8d3e871469ce549c5a80b8c8beaae0d502ecea85bb43eb84703cebeea7d25944-NONE",
+            id: "js:2:ethereum:0x829BD824B016326A401d083B33D092293333A830:-0x8d3e871469ce549c5a80b8c8beaae0d502ecea85bb43eb84703cebeea7d25944-NONE-0",
             hash: "0x8d3e871469ce549c5a80b8c8beaae0d502ecea85bb43eb84703cebeea7d25944",
             accountId,
             blockHash: "0xad04a8ed598c9c270f7ffd9a113224bc16fc285af814a2dc735c261620bad669",
@@ -342,7 +342,7 @@ describe("EVM Family", () => {
 
           const expectedOperations: Operation[] = [
             {
-              id: "js:2:ethereum:0x9aa99c23f67c81701c772b106b4f83f6e858dd2e:-0xaa45b4858ba44230a5fce5a29570a5dec2bf1f0ba95bacdec4fe8f2c4fa99338-IN",
+              id: "js:2:ethereum:0x9aa99c23f67c81701c772b106b4f83f6e858dd2e:-0xaa45b4858ba44230a5fce5a29570a5dec2bf1f0ba95bacdec4fe8f2c4fa99338-IN-0",
               hash: "0xaa45b4858ba44230a5fce5a29570a5dec2bf1f0ba95bacdec4fe8f2c4fa99338",
               accountId,
               blockHash: "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",
@@ -361,7 +361,7 @@ describe("EVM Family", () => {
               extra: {},
             },
             {
-              id: "js:2:ethereum:0x9aa99c23f67c81701c772b106b4f83f6e858dd2e:-0xaa45b4858ba44230a5fce5a29570a5dec2bf1f0ba95bacdec4fe8f2c4fa99338-OUT",
+              id: "js:2:ethereum:0x9aa99c23f67c81701c772b106b4f83f6e858dd2e:-0xaa45b4858ba44230a5fce5a29570a5dec2bf1f0ba95bacdec4fe8f2c4fa99338-OUT-0",
               hash: "0xaa45b4858ba44230a5fce5a29570a5dec2bf1f0ba95bacdec4fe8f2c4fa99338",
               accountId,
               blockHash: "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",

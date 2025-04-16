@@ -206,7 +206,7 @@ describe("EVM Family", () => {
         expect(response).toEqual({
           lastCoinOperations: [
             {
-              id: "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-FEES",
+              id: "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-FEES-0",
               accountId,
               blockHash: coinOperation1.block.hash,
               blockHeight: coinOperation1.block.height,
@@ -227,7 +227,7 @@ describe("EVM Family", () => {
               ),
             },
             {
-              id: "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-OUT",
+              id: "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-OUT-0",
               accountId,
               blockHash: coinOperation2.block.hash,
               blockHeight: coinOperation2.block.height,
@@ -248,7 +248,7 @@ describe("EVM Family", () => {
               ),
             },
             {
-              id: "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-IN",
+              id: "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-IN-0",
               accountId,
               blockHash: coinOperation3.block.hash,
               blockHeight: coinOperation3.block.height,
@@ -267,7 +267,7 @@ describe("EVM Family", () => {
               value: new BigNumber(coinOperation3.value),
             },
             {
-              id: "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-IN",
+              id: "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-IN-0",
               accountId,
               blockHash: coinOperation4.block.hash,
               blockHeight: coinOperation4.block.height,

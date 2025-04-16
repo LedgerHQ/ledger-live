@@ -138,7 +138,7 @@ describe("getAccountShape", () => {
           blockHeight: 1,
           date: new Date("2000-01-01T00:16:40.000Z"),
           hash: "HASH_VALUE",
-          id: "js:2:ripple:address:-HASH_VALUE-IN",
+          id: "js:2:ripple:address:-HASH_VALUE-IN-0",
           recipients: ["destination_addr"],
           senders: ["account_addr"],
           transactionSequenceNumber: 1,

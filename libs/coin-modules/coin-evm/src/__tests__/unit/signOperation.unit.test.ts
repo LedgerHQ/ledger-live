@@ -104,7 +104,7 @@ describe("EVM Family", () => {
             } = obs;
 
             expect(operation).toEqual({
-              id: "js:2:ethereum:0x7265a60acAeaf3A5E18E10BC1128e72F27B2e176:--OUT",
+              id: "js:2:ethereum:0x7265a60acAeaf3A5E18E10BC1128e72F27B2e176:--OUT-0",
               hash: "",
               type: "OUT",
               value: new BigNumber(100).plus(estimatedFees),

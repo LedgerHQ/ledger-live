@@ -60,20 +60,27 @@ export function findOperationInAccount(
   return null;
 }
 
-export function encodeOperationId(accountId: string, hash: string, type: string): string {
-  return `${accountId}-${hash}-${type}`;
+export function encodeOperationId(
+  accountId: string,
+  hash: string,
+  type: string,
+  index: number = 0,
+): string {
+  return `${accountId}-${hash}-${type}-${index}`;
 }
 
 export function decodeOperationId(id: string): {
   accountId: string;
   hash: string;
   type: string;
+  index: number;
 } {
-  const [accountId, hash, type] = id.split("-");
+  const [accountId, hash, type, index] = id.split("-");
   return {
     accountId,
     hash,
     type,
+    index: parseInt(index),
   };
 }
 
@@ -101,11 +108,15 @@ export function decodeSubOperationId(id: string): {
   };
 }
 
-export function patchOperationWithHash(operation: Operation, hash: string): Operation {
+export function patchOperationWithHash(
+  operation: Operation,
+  hash: string,
+  index: number = 0,
+): Operation {
   return {
     ...operation,
     hash,
-    id: encodeOperationId(operation.accountId, hash, operation.type),
+    id: encodeOperationId(operation.accountId, hash, operation.type, index),
     subOperations: operation.subOperations
       ? operation.subOperations.map(op => ({
           ...op,

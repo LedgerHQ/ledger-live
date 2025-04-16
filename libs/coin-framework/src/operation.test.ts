@@ -3,7 +3,12 @@ import Prando from "prando";
 import { Operation } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets/index";
 import { genAccount, genOperation, genTokenAccount } from "./mocks/account";
-import { isAddressPoisoningOperation, isOldestPendingOperation } from "./operation";
+import {
+  decodeOperationId,
+  encodeOperationId,
+  isAddressPoisoningOperation,
+  isOldestPendingOperation,
+} from "./operation";
 
 const ethereum = getCryptoCurrencyById("ethereum");
 const usdc = getTokenById("ethereum/erc20/usd__coin");
@@ -13,6 +18,34 @@ const lobster = getTokenById(
 );
 
 describe("Operation.ts", () => {
+  describe("encodeOperationId", () => {
+    it("encodes an operation id, with an implicit 0 index", () => {
+      expect(encodeOperationId("account", "hash", "type")).toEqual("account-hash-type-0");
+    });
+
+    it("encodes an operation id, with an explicit index", () => {
+      expect(encodeOperationId("account", "hash", "type", 0)).toEqual("account-hash-type-0");
+      expect(encodeOperationId("account", "hash", "type", 1)).toEqual("account-hash-type-1");
+    });
+  });
+
+  describe("decodeOperationId", () => {
+    it("decodes an operation id", () => {
+      expect(decodeOperationId("account-hash-type-0")).toEqual({
+        accountId: "account",
+        hash: "hash",
+        type: "type",
+        index: 0,
+      });
+      expect(decodeOperationId("account-hash-type-1")).toEqual({
+        accountId: "account",
+        hash: "hash",
+        type: "type",
+        index: 1,
+      });
+    });
+  });
+
   describe("isPoisoningAddressOperation", () => {
     it("should detect a token operation with 0 amount with the correct currency", () => {
       const account = genAccount("myAccount", { currency: ethereum });

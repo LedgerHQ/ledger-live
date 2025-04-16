@@ -375,7 +375,7 @@ describe("EVM Family", () => {
             },
             {
               ...tokenOperations[1],
-              id: `js:2:ethereum:0xkvn:-${tokenOperations[1].hash}-NONE`,
+              id: `js:2:ethereum:0xkvn:-${tokenOperations[1].hash}-NONE-0`,
               type: "NONE",
               value: new BigNumber(0),
               fee: new BigNumber(0),
@@ -392,7 +392,7 @@ describe("EVM Family", () => {
               internalOperations: [internalOperations[0]],
             },
             {
-              id: `js:2:ethereum:0xkvn:-${internalOperations[2].hash}-NONE`,
+              id: `js:2:ethereum:0xkvn:-${internalOperations[2].hash}-NONE-0`,
               type: "NONE",
               hash: internalOperations[2].hash,
               value: new BigNumber(0),
@@ -504,7 +504,7 @@ describe("EVM Family", () => {
                 internalOperations: [internalOperations[1]],
               },
               {
-                id: `js:2:ethereum:0xkvn:-${internalOperations[2].hash}-NONE`,
+                id: `js:2:ethereum:0xkvn:-${internalOperations[2].hash}-NONE-0`,
                 type: "NONE",
                 hash: internalOperations[2].hash,
                 value: new BigNumber(0),

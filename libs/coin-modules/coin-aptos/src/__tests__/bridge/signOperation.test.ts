@@ -91,7 +91,7 @@ describe("buildSignOperation", () => {
         type: "signed",
         signedOperation: {
           operation: {
-            id: "js:2:aptos:0x000:--OUT",
+            id: "js:2:aptos:0x000:--OUT-0",
             hash: "",
             type: "OUT",
             value: new BigNumber(0),
@@ -134,7 +134,7 @@ describe("buildSignOperation", () => {
     account.id = "js:2:aptos:0x000:";
     transaction.mode = "send";
 
-    const observable = await buildSignOperation({} as unknown as SignerContext<AptosSigner>)({
+    const observable = buildSignOperation({} as unknown as SignerContext<AptosSigner>)({
       account,
       deviceId: "1",
       transaction,
@@ -149,7 +149,7 @@ describe("buildSignOperation", () => {
         type: "signed",
         signedOperation: {
           operation: {
-            id: "js:2:aptos:0x000:--OUT",
+            id: "js:2:aptos:0x000:--OUT-0",
             hash: "",
             type: "OUT",
             value: new BigNumber(10),

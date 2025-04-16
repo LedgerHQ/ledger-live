@@ -705,7 +705,7 @@ describe("EVM Family", () => {
           },
           {
             ...tokenOperations[2],
-            id: `js:2:ethereum:0xkvn:-${tokenOperations[2].hash}-NONE`,
+            id: `js:2:ethereum:0xkvn:-${tokenOperations[2].hash}-NONE-0`,
             type: "NONE",
             value: new BigNumber(0),
             fee: new BigNumber(0),
@@ -719,7 +719,7 @@ describe("EVM Family", () => {
           },
           {
             ...nftOperations[2],
-            id: `js:2:ethereum:0xkvn:-${nftOperations[2].hash}-NONE`,
+            id: `js:2:ethereum:0xkvn:-${nftOperations[2].hash}-NONE-0`,
             type: "NONE",
             value: new BigNumber(0),
             fee: new BigNumber(0),
@@ -839,7 +839,7 @@ describe("EVM Family", () => {
           },
           {
             ...nftOperations[2],
-            id: `js:2:ethereum:0xkvn:-${nftOperations[2].hash}-NONE`,
+            id: `js:2:ethereum:0xkvn:-${nftOperations[2].hash}-NONE-0`,
             type: "NONE",
             value: new BigNumber(0),
             fee: new BigNumber(0),
