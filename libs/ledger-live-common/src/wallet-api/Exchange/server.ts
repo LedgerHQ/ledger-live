@@ -361,7 +361,6 @@ export const handlers = ({
     "custom.exchange.swap": customWrapper<ExchangeSwapParams, ExchangeCompleteResult>(
       async params => {
         if (!params) {
-          console.log("[LLC Server] No params provided");
           tracking.startExchangeNoParams(manifest);
           return { transactionHash: "" };
         }
@@ -373,14 +372,7 @@ export const handlers = ({
           quoteId: params.quoteId,
         });
 
-        const {
-          provider,
-
-          fromAmount,
-          fromAmountAtomic,
-          quoteId,
-          toNewTokenId,
-        } = params;
+        const { provider, fromAmount, fromAmountAtomic, quoteId, toNewTokenId } = params;
 
         const trackingParams = {
           // TODO: expect-error to be deleted after
@@ -388,7 +380,7 @@ export const handlers = ({
           exchangeType: params.exchangeType,
         };
 
-        // tracking.startExchangeRequested(trackingParams);
+        tracking.startExchangeRequested(trackingParams);
 
         const exchangeStartParams: ExchangeStartParamsUiRequest = extractSwapStartParam(
           params,
@@ -404,7 +396,7 @@ export const handlers = ({
           toParentAccount,
         } = exchangeStartParams.exchange;
 
-        if (!fromAccount) {
+        if (!fromAccount || !fromCurrency) {
           throw new ServerError(createAccountNotFound(params.fromAccountId));
         }
 
@@ -435,7 +427,14 @@ export const handlers = ({
           }),
         );
 
-        const payloadResponse = await retrieveSwapPayload({
+        const {
+          binaryPayload,
+          signature,
+          payinAddress,
+          swapId,
+          payinExtraId,
+          extraTransactionParameters,
+        } = await retrieveSwapPayload({
           provider,
           deviceTransactionId: startSwapResponse.transactionId,
           fromAccountAddress,
@@ -451,19 +450,10 @@ export const handlers = ({
           throw error;
         });
 
-        const {
-          binaryPayload,
-          signature,
-          payinAddress,
-          swapId,
-          payinExtraId,
-          extraTransactionParameters,
-        } = payloadResponse;
-
         console.log("[LLC Server] Got payload response:", {
-          hasPayload: !!payloadResponse.binaryPayload,
-          hasSignature: !!payloadResponse.signature,
-          swapId: payloadResponse.swapId,
+          hasPayload: !!binaryPayload,
+          hasSignature: !!signature,
+          swapId: swapId,
         });
 
         // Complete Swap
@@ -476,7 +466,7 @@ export const handlers = ({
         const strategyData = {
           recipient: payinAddress,
           amount: fromAmountAtomic,
-          currency: fromCurrency,
+          currency: fromCurrency as CryptoOrTokenCurrency,
           customFeeConfig: {},
           payinExtraId,
           extraTransactionParameters,
@@ -704,7 +694,7 @@ interface StrategyParams {
   currency: CryptoOrTokenCurrency;
   customFeeConfig?: Record<string, unknown>;
   payinExtraId?: string;
-  extraTransactionParameters?: Record<string, unknown>;
+  extraTransactionParameters?: string;
 }
 
 async function getStrategy(

@@ -104,6 +104,41 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
               },
             });
           },
+          "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
+            navigation.navigate(NavigatorName.PlatformExchange, {
+              screen: ScreenName.PlatformCompleteExchange,
+              params: {
+                request: {
+                  exchangeType: exchangeParams.exchangeType,
+                  provider: exchangeParams.provider,
+                  exchange: exchangeParams.exchange,
+                  transaction: exchangeParams.transaction,
+                  binaryPayload: exchangeParams.binaryPayload,
+                  signature: exchangeParams.signature,
+                  feesStrategy: exchangeParams.feesStrategy,
+                  amountExpectedTo: exchangeParams.amountExpectedTo,
+                },
+                device,
+                onResult: result => {
+                  if (result.error) {
+                    onCancel(result.error);
+                    navigation.pop();
+                    navigation.navigate(NavigatorName.CustomError, {
+                      screen: ScreenName.CustomErrorScreen,
+                      params: {
+                        error: result.error,
+                      },
+                    });
+                  }
+                  if (result.operation) {
+                    onSuccess(result.operation.id);
+                  }
+                  setDevice(undefined);
+                  !result.error && navigation.pop();
+                },
+              },
+            });
+          },
           "custom.exchange.error": ({ error }) => {
             navigation.navigate(NavigatorName.CustomError, {
               screen: ScreenName.CustomErrorScreen,

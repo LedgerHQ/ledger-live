@@ -29,7 +29,6 @@ export async function retrieveSwapPayload(
     rateId: data.quoteId,
   };
 
-  console.log("SWAP PAYLOAD REQUEST", request);
   const res = await swapAxiosClient.post(`${SWAP_API_BASE}/swap`, request);
 
   return parseSwapBackendInfo(res.data);
