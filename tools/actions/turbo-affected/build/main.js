@@ -19040,6 +19040,7 @@ var package_default = {
     "service:trust": "pnpm --filter ledger-trust-service",
     "speculos-transport": "pnpm --filter speculos-transport",
     "test-utils": "pnpm --filter test-utils",
+    "disable-network-setup": "pnpm --filter disable-network-setup",
     "dummy-live-app": "pnpm --filter dummy-live-app",
     "dummy-wallet-app": "pnpm --filter dummy-wallet-app",
     "dummy-ptx-app": "pnpm --filter dummy-ptx-app",
