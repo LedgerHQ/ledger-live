@@ -4,8 +4,7 @@ import merge from "lodash/merge";
 import * as path from "path";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { startSpeculos, stopSpeculos, specs } from "@ledgerhq/live-common/e2e/speculos";
-import invariant from "invariant";
+import { stopSpeculos } from "@ledgerhq/live-common/e2e/speculos";
 
 import { Application } from "tests/page";
 import { safeAppendFile } from "tests/utils/fileUtils";
@@ -15,6 +14,7 @@ import { randomUUID } from "crypto";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { lastValueFrom, Observable } from "rxjs";
 import { CLI } from "../utils/cliUtils";
+import { launchSpeculos } from "tests/utils/speculosUtils";
 
 type CliCommand = (appjsonPath: string) => Observable<unknown> | Promise<unknown> | string;
 
@@ -44,9 +44,6 @@ const IS_NOT_MOCK = process.env.MOCK == "0";
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
 if (IS_NOT_MOCK) setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
 setEnv("SWAP_API_BASE", process.env.SWAP_API_BASE || "https://swap-stg.ledger-test.com/v5");
-const BASE_PORT = 30000;
-const MAX_PORT = 65535;
-let portCounter = BASE_PORT; // Counter for generating unique ports
 
 async function executeCliCommand(cmd: CliCommand, userdataDestinationPath?: string) {
   const promise = await cmd(`${userdataDestinationPath}/app.json`);
@@ -109,7 +106,7 @@ export const test = base.extend<TestFixtures>({
     const userData = merge({ data: { settings } }, fileUserData);
     await fsPromises.writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
 
-    let device: any | undefined;
+    let speculos: any | undefined;
 
     try {
       if (IS_NOT_MOCK && speculosApp) {
@@ -117,60 +114,19 @@ export const test = base.extend<TestFixtures>({
         setEnv("MOCK", "");
         process.env.MOCK = "";
 
-        // Ensure the portCounter stays within the valid port range
-        if (portCounter > MAX_PORT) {
-          portCounter = BASE_PORT;
-        }
-        let speculosPort = portCounter++;
-
         if (cliCommandsOnApp?.length) {
           for (const { app, cmd } of cliCommandsOnApp) {
-            speculosPort = portCounter++;
-
-            setEnv(
-              "SPECULOS_PID_OFFSET",
-              (speculosPort - BASE_PORT) * 1000 +
-                parseInt(process.env.TEST_WORKER_INDEX || "0") * 100,
-            );
-
-            device = await startSpeculos("unknown", specs[app.name.replace(/ /g, "_")]);
-
-            invariant(device, "[E2E Setup] Speculos not started");
-
-            const speculosApiPort = device.ports.apiPort.toString();
-            invariant(device.ports.apiPort, "[E2E Setup] speculosApiPort not defined");
-            setEnv("SPECULOS_API_PORT", speculosApiPort);
-            process.env.SPECULOS_API_PORT = speculosApiPort;
-
-            console.warn(`CLI Speculos ${device.id} started on ${speculosApiPort}`);
-
-            CLI.registerSpeculosTransport(device.speculosApiPort);
-
+            speculos = await launchSpeculos(app.name);
+            CLI.registerSpeculosTransport(speculos.speculosApiPort.toString());
             await executeCliCommand(cmd, userdataDestinationPath);
-            await stopSpeculos(device.id);
+            await stopSpeculos(speculos.device.id);
           }
         }
 
-        setEnv(
-          "SPECULOS_PID_OFFSET",
-          (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100,
-        );
-
-        device = await startSpeculos(
-          testInfo.title.replace(/ /g, "_"),
-          specs[speculosApp.name.replace(/ /g, "_")],
-        );
-        invariant(device, "[E2E Setup] Speculos not started");
-        invariant(device.ports.apiPort, "[E2E Setup] speculosApiPort not defined");
-        const speculosApiPort = device.ports.apiPort.toString();
-
-        setEnv("SPECULOS_API_PORT", speculosApiPort);
-        process.env.SPECULOS_API_PORT = speculosApiPort;
-
-        console.warn(`Speculos ${device.id} started on ${speculosApiPort}`);
+        speculos = await launchSpeculos(speculosApp.name, testInfo.title.replace(/ /g, "_"));
 
         if (cliCommands?.length) {
-          CLI.registerSpeculosTransport(speculosApiPort);
+          CLI.registerSpeculosTransport(speculos.speculosApiPort.toString());
           for (const cmd of cliCommands) {
             const promise = await cmd(`${userdataDestinationPath}/app.json`);
             const result =
@@ -216,8 +172,8 @@ export const test = base.extend<TestFixtures>({
       // close app
       await electronApp.close();
     } finally {
-      if (device) {
-        await stopSpeculos(device.id);
+      if (speculos.device) {
+        await stopSpeculos(speculos.device.id);
       }
     }
   },
