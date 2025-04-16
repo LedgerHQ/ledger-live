@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "İptal et",
+    "copy" : "Kopyala",
+    "copied" : "Kopyalandı",
     "apply" : "Uygula",
     "seeAll" : "Tümünü gör",
     "seeAllWithNumber" : "Tümünü gör ({{number}})",
@@ -1061,6 +1063,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Takas Live Uygulaması yüklenemedi"
+    },
+    "InvalidMemoMina" : {
+      "title" : "Memo metni 32 karakterden uzun olamaz"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Bu işlem için {{fee}} tutarında bir hesap oluşturma ücreti alınacaktır"
+    },
+    "AmountTooSmall" : {
+      "title" : "Bu işlem için gerekli minimum tutar: {{amount}}"
     }
   },
   "crash" : {
@@ -2591,7 +2602,8 @@
       "gasLimit" : "Gas limiti",
       "id" : "Kimlik (ID)",
       "autoClaimedRewards" : "Otomatik Alınan Ödüller",
-      "stakedAmount" : "Stake edilen miktar"
+      "stakedAmount" : "Stake edilen miktar",
+      "accountCreationFee" : "Hesap Oluşturma Ücreti"
     },
     "multipleAddresses" : "Neden birden fazla adres var?",
     "tokenName" : "Token Adı",
@@ -6103,6 +6115,9 @@
       }
     }
   },
+  "mina" : {
+    "memoPlaceholder" : "İsteğe Bağlı Memo"
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -6609,14 +6624,12 @@
     "range" : {
       "1h" : "1SA",
       "24h" : "24SA",
+      "1d" : "1G",
       "7d" : "7G",
+      "1w" : "1H",
       "30d" : "30G",
-      "1y" : "1Y",
-      "1H_label" : "1SA",
-      "1D_label" : "1G",
-      "1W_label" : "1H",
-      "1M_label" : "1A",
-      "1Y_label" : "1Y"
+      "1m" : "1A",
+      "1y" : "1Y"
     },
     "warnings" : {
       "connectionError" : "Bağlantı Hatası",
@@ -7349,5 +7362,10 @@
       "description" : "Ledger Nano S cihazınızdaki sınırlı bellek en yeni özelliklere, blok zinciri değişikliklerine ve güvenlik güncellemelerine erişiminizi kısıtlar. Uzun vadeli kullanım için daha yeni bir Ledger cihazına model yükseltin.",
       "cta" : "Daha fazla bilgi"
     }
+  },
+  "largeMover" : {
+    "performance" : "Performans",
+    "low" : "Düşük",
+    "high" : "Yüksek"
   }
 }
