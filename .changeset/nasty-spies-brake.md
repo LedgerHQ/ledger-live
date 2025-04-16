@@ -1,5 +1,5 @@
 ---
-"live-mobile": minor
+"live-mobile": patch
 ---
 
 IOS Splashscreen fix

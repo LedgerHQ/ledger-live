@@ -1,5 +1,5 @@
 ---
-"live-mobile": minor
+"live-mobile": patch
 ---
 
 LLM - Fix Account and Asset Header height

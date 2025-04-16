@@ -1,5 +1,5 @@
 ---
-"ledger-live-desktop": minor
+"ledger-live-desktop": patch
 ---
 
 Use braze to exclude users from the hardcoded LNS upsell rather than their swap history

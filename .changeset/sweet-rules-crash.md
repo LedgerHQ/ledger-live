@@ -1,6 +1,6 @@
 ---
-"live-mobile": minor
-"@ledgerhq/native-ui": minor
+"live-mobile": patch
+"@ledgerhq/native-ui": patch
 ---
 
 Feat: Large Mover Performance Component

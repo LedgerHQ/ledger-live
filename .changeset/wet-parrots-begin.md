@@ -1,5 +1,5 @@
 ---
-"ledger-live-desktop": minor
+"ledger-live-desktop": patch
 ---
 
 LLD Memo tag copy update

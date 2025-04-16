@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/types-live": minor
-"@ledgerhq/live-common": minor
+"@ledgerhq/types-live": patch
+"@ledgerhq/live-common": patch
 ---
 
 Add mmkv migration feature flag

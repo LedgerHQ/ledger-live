@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/live-common": minor
+"@ledgerhq/live-common": patch
 ---
 
 bugfix: timeframe labels in market

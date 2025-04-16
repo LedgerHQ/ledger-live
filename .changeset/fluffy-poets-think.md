@@ -1,7 +1,7 @@
 ---
-"@ledgerhq/types-live": minor
-"live-mobile": minor
-"@ledgerhq/live-common": minor
+"@ledgerhq/types-live": patch
+"live-mobile": patch
+"@ledgerhq/live-common": patch
 ---
 
 feat: Large mover navigator

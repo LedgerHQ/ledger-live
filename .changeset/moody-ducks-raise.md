@@ -1,11 +1,11 @@
 ---
-"@ledgerhq/coin-module-boilerplate": major
-"@ledgerhq/coin-polkadot": major
-"@ledgerhq/coin-stellar": major
-"@ledgerhq/coin-tezos": major
-"@ledgerhq/coin-tron": major
-"@ledgerhq/coin-xrp": major
-"@ledgerhq/coin-framework": major
+"@ledgerhq/coin-module-boilerplate": patch
+"@ledgerhq/coin-polkadot": patch
+"@ledgerhq/coin-stellar": patch
+"@ledgerhq/coin-tezos": patch
+"@ledgerhq/coin-tron": patch
+"@ledgerhq/coin-xrp": patch
+"@ledgerhq/coin-framework": patch
 ---
 
 feat(coin-framework): return token balances in `getBalance`
