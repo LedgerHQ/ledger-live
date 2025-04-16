@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "취소",
+    "copy" : "복사",
+    "copied" : "복사됨",
     "apply" : "적용",
     "seeAll" : "모두 보기",
     "seeAllWithNumber" : "모두 보기 ({{number}})",
@@ -1061,6 +1063,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Swap Live 앱을 로드하지 못했습니다"
+    },
+    "InvalidMemoMina" : {
+      "title" : "메모 텍스트는 32자를 초과할 수 없습니다."
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "이 트랜잭션에는 {{fee}}의 계정 생성 수수료가 부과됩니다."
+    },
+    "AmountTooSmall" : {
+      "title" : "이 트랜잭션에 필요한 최소 금액은 {{amount}}입니다"
     }
   },
   "crash" : {
@@ -2591,7 +2602,8 @@
       "gasLimit" : "가스 한도",
       "id" : "Id",
       "autoClaimedRewards" : "자동으로 청구된 보상",
-      "stakedAmount" : "스테이킹 금액"
+      "stakedAmount" : "스테이킹 금액",
+      "accountCreationFee" : "계정 생성 수수료"
     },
     "multipleAddresses" : "왜 주소가 여러 개인가요?",
     "tokenName" : "토큰명",
@@ -6103,6 +6115,9 @@
       }
     }
   },
+  "mina" : {
+    "memoPlaceholder" : "메모(선택)"
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -6608,13 +6623,12 @@
     },
     "range" : {
       "1h" : "1시간",
-      "24h" : "24시간",
-      "7d" : "7일",
-      "30d" : "30일",
-      "1y" : "1년",
       "1H_label" : "1시간",
+      "24h" : "24시간",
       "1D_label" : "1일",
+      "7d" : "7일",
       "1W_label" : "1주",
+      "30d" : "30일",
       "1M_label" : "1달",
       "1Y_label" : "1년"
     },
@@ -7349,5 +7363,10 @@
       "description" : "Ledger Nano S의 제한된 메모리로 인해 최신 기능, 블록체인 변경 사항 및 보안 업데이트에 대한 액세스가 제한됩니다. 장기적으로 사용하려면 최신 Ledger 장치로 업그레이드하세요.",
       "cta" : "자세히 알아보기"
     }
+  },
+  "largeMover" : {
+    "performance" : "가격 추이",
+    "low" : "낮음",
+    "high" : "높음"
   }
 }
