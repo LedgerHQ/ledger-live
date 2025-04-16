@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.108.1-prereleasetest.1
+
+### Patch Changes
+
+- [`35af1dd`](https://github.com/LedgerHQ/ledger-live/commit/35af1ddde10911d5465cf31cba5947340a9b0c30) Thanks [@lewisd5](https://github.com/lewisd5)! - Testing prerelease bump
+
 ## 2.108.1-prereleasetest.0
 
 ### Patch Changes

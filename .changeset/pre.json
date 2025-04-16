@@ -148,6 +148,7 @@
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
   "changesets": [
+    "beige-trainers-bake",
     "big-mangos-argue",
     "big-pandas-arrive",
     "brave-jobs-marry",
