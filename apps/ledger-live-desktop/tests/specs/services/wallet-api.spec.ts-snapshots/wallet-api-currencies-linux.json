@@ -889,5 +889,14 @@
     "family": "ethereum",
     "color": "#FFFFFF",
     "decimals": 18
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "babylon",
+    "ticker": "BABY",
+    "name": "Babylon",
+    "family": "cosmos",
+    "color": "#CE6533",
+    "decimals": 6
   }
 ]
