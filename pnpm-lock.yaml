@@ -2366,6 +2366,100 @@ importers:
         specifier: ^29.1.1
         version: 29.2.5(jest@29.7.0)(typescript@5.4.3)
 
+  libs/coin-modules/coin-celo:
+    dependencies:
+      '@celo/connect':
+        specifier: ^6.0.2
+        version: 6.0.2
+      '@celo/contractkit':
+        specifier: ^8.3.1
+        version: 8.3.1
+      '@celo/utils':
+        specifier: ^7.0.0
+        version: 7.0.0
+      '@celo/wallet-base':
+        specifier: ^6.0.3
+        version: 6.0.3
+      '@celo/wallet-ledger':
+        specifier: ^6.0.3
+        version: 6.0.3
+      '@ledgerhq/coin-evm':
+        specifier: workspace:^
+        version: link:../coin-evm
+      '@ledgerhq/coin-framework':
+        specifier: workspace:^
+        version: link:../../coin-framework
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/cryptoassets
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../../ledgerjs/packages/devices
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/hw-app-eth':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/hw-app-eth
+      '@ledgerhq/live-config':
+        specifier: workspace:^
+        version: link:../../live-config
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../../env
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../../live-network
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/logs
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-live
+      bignumber.js:
+        specifier: ^9.1.2
+        version: 9.1.2
+      eip55:
+        specifier: ^2.1.1
+        version: 2.1.1
+      invariant:
+        specifier: ^2.2.4
+        version: 2.2.4
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+    devDependencies:
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-cryptoassets
+      '@types/invariant':
+        specifier: ^2.2.37
+        version: 2.2.37
+      '@types/jest':
+        specifier: ^29.5.12
+        version: 29.5.14
+      '@types/lodash':
+        specifier: ^4.14.179
+        version: 4.17.14
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
+      expect:
+        specifier: ^27.4.6
+        version: 27.5.1
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.2.5(jest@29.7.0)(typescript@5.6.3)
+      typescript:
+        specifier: ^5.4.5
+        version: 5.6.3
+
   libs/coin-modules/coin-cosmos:
     dependencies:
       '@cosmjs/amino':
@@ -4572,21 +4666,6 @@ importers:
       '@cardano-foundation/ledgerjs-hw-app-cardano':
         specifier: ^7.1.2
         version: 7.1.2
-      '@celo/connect':
-        specifier: ^6.0.2
-        version: 6.0.2
-      '@celo/contractkit':
-        specifier: ^8.3.1
-        version: 8.3.1
-      '@celo/utils':
-        specifier: ^7.0.0
-        version: 7.0.0
-      '@celo/wallet-base':
-        specifier: ^6.0.3
-        version: 6.0.3
-      '@celo/wallet-ledger':
-        specifier: ^6.0.3
-        version: 6.0.3
       '@dfinity/agent':
         specifier: ^0.21.0
         version: 0.21.4(@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3)))(@dfinity/principal@0.15.7(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3))
@@ -4611,6 +4690,9 @@ importers:
       '@ledgerhq/coin-casper':
         specifier: workspace:^
         version: link:../coin-modules/coin-casper
+      '@ledgerhq/coin-celo':
+        specifier: workspace:^
+        version: link:../coin-modules/coin-celo
       '@ledgerhq/coin-cosmos':
         specifier: workspace:^
         version: link:../coin-modules/coin-cosmos
@@ -4698,6 +4780,9 @@ importers:
       '@ledgerhq/hw-app-btc':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-btc
+      '@ledgerhq/hw-app-celo':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-app-celo
       '@ledgerhq/hw-app-cosmos':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-cosmos
@@ -5567,6 +5652,70 @@ importers:
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+      ts-node:
+        specifier: ^10.4.0
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
+
+  libs/ledgerjs/packages/hw-app-celo:
+    dependencies:
+      '@celo/connect':
+        specifier: ^6.0.2
+        version: 6.0.2
+      '@celo/contractkit':
+        specifier: ^8.3.1
+        version: 8.3.1
+      '@celo/utils':
+        specifier: ^7.0.0
+        version: 7.0.0
+      '@celo/wallet-base':
+        specifier: ^6.0.3
+        version: 6.0.3
+      '@celo/wallet-ledger':
+        specifier: ^6.0.3
+        version: 6.0.3
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../errors
+      '@ledgerhq/hw-app-eth':
+        specifier: workspace:^
+        version: link:../hw-app-eth
+      '@ledgerhq/hw-transport':
+        specifier: workspace:^
+        version: link:../hw-transport
+      bip32-path:
+        specifier: ^0.4.2
+        version: 0.4.2
+      rlp:
+        specifier: ^3.0.0
+        version: 3.0.0
+      semver:
+        specifier: ^7.3.5
+        version: 7.5.4
+    devDependencies:
+      '@ledgerhq/hw-transport-mocker':
+        specifier: workspace:^
+        version: link:../hw-transport-mocker
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.14
+      '@types/node':
+        specifier: ^22.10.10
+        version: 22.10.10
+      documentation:
+        specifier: 14.0.2
+        version: 14.0.2
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
+      rimraf:
+        specifier: ^4.4.1
+        version: 4.4.1
+      source-map-support:
+        specifier: ^0.5.21
+        version: 0.5.21
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.2.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
         version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
@@ -36734,7 +36883,7 @@ snapshots:
       p-limit: 2.3.0
       preferred-pm: 3.1.4
       resolve-from: 5.0.0
-      semver: 7.6.3
+      semver: 7.5.4
       spawndamnit: 2.0.0
       term-size: 2.2.1
 
@@ -68221,6 +68370,20 @@ snapshots:
       make-error: 1.3.6
       semver: 7.6.3
       typescript: 5.4.3
+      yargs-parser: 21.1.1
+
+  ts-jest@29.2.5(jest@29.7.0)(typescript@5.6.3):
+    dependencies:
+      bs-logger: 0.2.6
+      ejs: 3.1.10
+      fast-json-stable-stringify: 2.1.0
+      jest: 29.7.0
+      jest-util: 29.7.0
+      json5: 2.2.3
+      lodash.memoize: 4.1.2
+      make-error: 1.3.6
+      semver: 7.6.3
+      typescript: 5.6.3
       yargs-parser: 21.1.1
 
   ts-loader@9.5.1(typescript@5.1.3)(webpack@5.94.0(@swc/core@1.4.11)):
