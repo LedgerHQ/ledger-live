@@ -8,6 +8,9 @@ describe("Testing call to hardware off-chain sign message on Solana", () => {
     const SIGNATURE =
       "4gVuB1KsM58fb3vRpnDucwW4Vi6fVGA51QDQd9ARvx4GH5yYVDPzDnvzUbSJf3YLWWdsX7zCMSN9N1GMnTYwWiJf";
 
+    const HEXADECIMAL_SIGNATURE =
+      "3467567542314b734d35386662337652706e4475637757345669366656474135315144516439415276783447483579595644507a446e767a5562534a6633594c5757647358377a434d534e394e31474d6e54597757694a66";
+
     const signMessageMock = jest.fn((_deviceId, _messageHex) => {
       return Promise.resolve({ signature: Buffer.from(SIGNATURE) });
     });
@@ -27,7 +30,7 @@ describe("Testing call to hardware off-chain sign message on Solana", () => {
       { message: messageHex },
     );
 
-    expect(result.signature).toEqual(SIGNATURE);
+    expect(result.signature).toEqual("0x" + HEXADECIMAL_SIGNATURE);
     expect(signMessageMock).toHaveBeenCalledTimes(1);
     expect(signMessageMock).toHaveBeenCalledWith(accountFreshAddressPath, messageHex);
   });
