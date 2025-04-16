@@ -1,8 +1,9 @@
-import { createStorage } from "~/newArch/storage";
+import { createStorage } from "LLM/storage";
 import { STORAGE_TYPE } from "../constants";
 import type { StorageInitializer } from "../types";
 import asyncStorageWrapper from "../asyncStorageWrapper";
 import mmkvStorageWrapper from "../mmkvStorageWrapper";
+import { MIGRATION_STATUS, ROLLBACK_STATUS } from "../utils/migrations/constants";
 
 afterEach(() => jest.restoreAllMocks());
 
@@ -16,6 +17,17 @@ describe("storage", () => {
   function createTestStorage() {
     return createStorage(mockInitStorageState as unknown as StorageInitializer);
   }
+
+  describe("getState", () => {
+    it("should return the state of the storage", () => {
+      expect(createTestStorage().getState()).toEqual({
+        storageType: STORAGE_TYPE.ASYNC_STORAGE,
+        migrationStatus: MIGRATION_STATUS.NOT_STARTED,
+        rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
+        numberOfReadErrors: 0,
+      });
+    });
+  });
 
   describe("keys", () => {
     let keysMethod: jest.SpyInstance;
@@ -358,6 +370,60 @@ describe("storage", () => {
 
       it("should call asyncStorageWrapper#deleteAll once", () => {
         expect(deleteAllMethod).toHaveBeenCalledTimes(1);
+      });
+    });
+  });
+
+  describe("stringify", () => {
+    let stringifyMethod: jest.SpyInstance;
+    let result: Awaited<ReturnType<Storage["stringify"]>>;
+    const expectedValue = JSON.stringify({ key1: { a: 1 }, key2: { b: 2 } });
+
+    describe("with storage type MMKV", () => {
+      beforeEach(async () => {
+        // Arrange
+        mockInitStorageState = jest.fn().mockImplementation(state => {
+          state.storageType = STORAGE_TYPE.MMKV;
+        });
+        stringifyMethod = jest
+          .spyOn(mmkvStorageWrapper, "stringify")
+          .mockImplementation(() => expectedValue);
+        const storage = createTestStorage();
+
+        // Act
+        result = await storage.stringify();
+      });
+
+      it("should call mmkvStorageWrapper#keys once", () => {
+        expect(stringifyMethod).toHaveBeenCalledTimes(1);
+      });
+
+      it("should return the value returned by mmkvStorageWrapper#keys", () => {
+        expect(result).toEqual(expectedValue);
+      });
+    });
+
+    describe("with storage type AsyncStorage", () => {
+      beforeEach(async () => {
+        // Arrange
+        mockInitStorageState = jest.fn().mockImplementation(state => {
+          state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
+        });
+        stringifyMethod = jest
+          .spyOn(asyncStorageWrapper, "stringify")
+          .mockImplementation(() => Promise.resolve(expectedValue));
+        const storage = createTestStorage();
+
+        // Act
+        result = await storage.stringify();
+      });
+
+      it("should call asyncStorageWrapper#keys once", () => {
+        expect(stringifyMethod).toHaveBeenCalledTimes(1);
+      });
+
+      it("should return the value returned by asyncStorageWrapper#keys", () => {
+        expect(result).toEqual(expectedValue);
       });
     });
   });

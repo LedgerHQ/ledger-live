@@ -20,6 +20,10 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
   init(state);
   return {
+    getState() {
+      return { ...state };
+    },
+
     keys() {
       try {
         return state.storageType === STORAGE_TYPE.MMKV
@@ -139,6 +143,20 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
         return state.storageType === STORAGE_TYPE.MMKV
           ? Promise.resolve(mmkvStorageWrapper.push(key, value))
           : asyncStorageWrapper.push(key, value);
+      } catch (e) {
+        console.error("Error pushing value to storage", {
+          error: e,
+          state: state,
+        });
+        return rejectWithError(e);
+      }
+    },
+
+    stringify() {
+      try {
+        return state.storageType === STORAGE_TYPE.MMKV
+          ? Promise.resolve(mmkvStorageWrapper.stringify())
+          : asyncStorageWrapper.stringify();
       } catch (e) {
         console.error("Error pushing value to storage", {
           error: e,
