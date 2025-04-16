@@ -80,6 +80,8 @@ const getFeatureFlagProperties = () => {
     const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
     const stakePrograms = analyticsFeatureFlagMethod("stakePrograms");
 
+    const ptxSwapLiveAppMobileFlag = analyticsFeatureFlagMethod("ptxSwapLiveAppMobile");
+
     const isBatch1Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
     const isBatch2Enabled =
@@ -88,6 +90,8 @@ const getFeatureFlagProperties = () => {
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 3;
     const stakingProvidersEnabled =
       stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
+
+    const ptxSwapLiveAppMobileEnabled = Boolean(ptxSwapLiveAppMobileFlag?.enabled);
 
     const stakingCurrenciesEnabled =
       stakePrograms?.enabled && stakePrograms?.params?.list?.length
@@ -105,6 +109,7 @@ const getFeatureFlagProperties = () => {
       stakingProvidersEnabled,
       stakingCurrenciesEnabled,
       partnerStakingCurrenciesEnabled,
+      ptxSwapLiveAppMobileEnabled,
     });
   })();
 };
