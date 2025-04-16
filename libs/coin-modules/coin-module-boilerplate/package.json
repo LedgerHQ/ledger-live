@@ -111,6 +111,7 @@
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/invariant": "^2.2.37",
     "@types/jest": "^29.5.12",
     "dotenv": "^16.4.5",

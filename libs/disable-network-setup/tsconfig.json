@@ -2,7 +2,10 @@
   "extends": "../../tsconfig.base",
   "compilerOptions": {
     "declaration": true,
-    "outDir": "lib"
+    "outDir": "lib",
+    "strict": true,
+    "module": "CommonJS",
+    "moduleResolution": "Node",
   },
   "include": ["src/**/*"]
 }
