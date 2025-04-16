@@ -1,0 +1,16 @@
+name: "Setup Env for Coin Tester"
+description: "Installs deps, pulls docker, builds modules"
+runs:
+  using: "composite"
+  steps:
+    - run: docker pull ghcr.io/ledgerhq/speculos:latest
+      shell: bash
+
+    - run: docker tag ghcr.io/ledgerhq/speculos:latest speculos
+      shell: bash
+
+    - run: pnpm i --filter="!./apps/**"
+      shell: bash
+
+    - run: pnpm build:coin-tester-modules:deps
+      shell: bash
