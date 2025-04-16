@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.74.0-nightly.1
+
+### Minor Changes
+
+- [#9941](https://github.com/LedgerHQ/ledger-live/pull/9941) [`afa106c`](https://github.com/LedgerHQ/ledger-live/commit/afa106c8170c7246d559befd2f4b583cd2602307) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LL - Change Chatbot link
+
+### Patch Changes
+
+- [#9902](https://github.com/LedgerHQ/ledger-live/pull/9902) [`0474149`](https://github.com/LedgerHQ/ledger-live/commit/04741497994019d3826c71a5818ef48f2ff0025a) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Amend analytics for staking tokens log a list instead of booleans.
+
+- Updated dependencies []:
+  - @ledgerhq/live-dmk-mobile@0.2.1-nightly.1
+
 ## 3.74.0-nightly.0
 
 ### Minor Changes

@@ -1,5 +1,13 @@
 # @ledgerhq/live-common
 
+## 34.30.0-nightly.1
+
+### Minor Changes
+
+- [#9921](https://github.com/LedgerHQ/ledger-live/pull/9921) [`e7983eb`](https://github.com/LedgerHQ/ledger-live/commit/e7983ebcb57fe44611137725db43dacbf4bb6f68) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - bugfix: timeframe labels in market
+
+- [#9867](https://github.com/LedgerHQ/ledger-live/pull/9867) [`1ce8d88`](https://github.com/LedgerHQ/ledger-live/commit/1ce8d88e40a674c66963dd162811889aa1e91176) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix unexpected warning when return to manager page
+
 ## 34.29.1-nightly.0
 
 ### Patch Changes

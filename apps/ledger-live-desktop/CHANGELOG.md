@@ -1,5 +1,22 @@
 # ledger-live-desktop
 
+## 2.109.0-nightly.1
+
+### Minor Changes
+
+- [#9941](https://github.com/LedgerHQ/ledger-live/pull/9941) [`afa106c`](https://github.com/LedgerHQ/ledger-live/commit/afa106c8170c7246d559befd2f4b583cd2602307) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LL - Change Chatbot link
+
+- [#9867](https://github.com/LedgerHQ/ledger-live/pull/9867) [`1ce8d88`](https://github.com/LedgerHQ/ledger-live/commit/1ce8d88e40a674c66963dd162811889aa1e91176) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix unexpected warning when return to manager page
+
+### Patch Changes
+
+- [#9902](https://github.com/LedgerHQ/ledger-live/pull/9902) [`0474149`](https://github.com/LedgerHQ/ledger-live/commit/04741497994019d3826c71a5818ef48f2ff0025a) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Amend analytics for staking tokens log a list instead of booleans.
+
+- Updated dependencies [[`e7983eb`](https://github.com/LedgerHQ/ledger-live/commit/e7983ebcb57fe44611137725db43dacbf4bb6f68), [`babf5ca`](https://github.com/LedgerHQ/ledger-live/commit/babf5ca9fabb65654861cc896e1caac3de1e1e4c), [`1ce8d88`](https://github.com/LedgerHQ/ledger-live/commit/1ce8d88e40a674c66963dd162811889aa1e91176)]:
+  - @ledgerhq/live-common@34.30.0-nightly.1
+  - @ledgerhq/react-ui@0.22.0-nightly.1
+  - @ledgerhq/live-dmk-desktop@0.2.1-nightly.1
+
 ## 2.108.1-nightly.0
 
 ### Patch Changes
