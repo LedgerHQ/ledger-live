@@ -7,7 +7,6 @@ import {
   DiscoveredDevice,
   OpeningConnectionError,
 } from "@ledgerhq/device-management-kit";
-import { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-ble";
 import { activeDeviceSessionSubject, dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { LocalTracer, TraceContext } from "@ledgerhq/logs";
 import {
@@ -21,7 +20,7 @@ import {
   Subscription,
 } from "rxjs";
 import { first, filter, tap, timeout, retry } from "rxjs/operators";
-import { DescriptorEvent } from "@ledgerhq/types-devices";
+import { DescriptorEvent, DeviceModel } from "@ledgerhq/types-devices";
 import type {
   Observer as TransportObserver,
   Subscription as TransportSubscription,
@@ -29,10 +28,11 @@ import type {
 import { HwTransportError } from "@ledgerhq/errors";
 import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
 import { BlePlxManager } from "./BlePlxManager";
+import { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-ble";
 
-export const tracer = new LocalTracer("live-dmk", { function: "DeviceManagementKitTransport" });
+export const tracer = new LocalTracer("live-dmk", { function: "DeviceManagementKitBLETransport" });
 
-export class DeviceManagementKitTransport extends Transport {
+export class DeviceManagementKitBLETransport extends Transport {
   sessionId: string;
   dmk: DeviceManagementKit;
 
@@ -112,7 +112,7 @@ export class DeviceManagementKitTransport extends Transport {
     deviceOrId: DiscoveredDevice | string,
     _timeoutMs?: number,
     _context?: TraceContext,
-  ): Promise<DeviceManagementKitTransport> {
+  ): Promise<DeviceManagementKitBLETransport> {
     const activeSessionId = activeDeviceSessionSubject.value?.sessionId;
 
     tracer.trace(
@@ -135,6 +135,7 @@ export class DeviceManagementKitTransport extends Transport {
 
       if (
         deviceSessionState?.deviceStatus !== DeviceStatus.NOT_CONNECTED &&
+        connectedDevice.type === "BLE" &&
         activeDeviceSessionSubject.value?.transport &&
         connectedDevice.id === deviceOrId
       ) {
@@ -163,7 +164,10 @@ export class DeviceManagementKitTransport extends Transport {
             device: found,
             sessionRefresherOptions: { isRefresherDisabled: true },
           });
-          const transport = new DeviceManagementKitTransport(getDeviceManagementKit(), sessionId);
+          const transport = new DeviceManagementKitBLETransport(
+            getDeviceManagementKit(),
+            sessionId,
+          );
 
           activeDeviceSessionSubject.next({ sessionId, transport });
           getDeviceManagementKit().stopDiscovering();
@@ -203,7 +207,7 @@ export class DeviceManagementKitTransport extends Transport {
         device: deviceOrId,
         sessionRefresherOptions: { isRefresherDisabled: true },
       });
-      const transport = new DeviceManagementKitTransport(getDeviceManagementKit(), sessionId);
+      const transport = new DeviceManagementKitBLETransport(getDeviceManagementKit(), sessionId);
       activeDeviceSessionSubject.next({ sessionId, transport });
 
       return transport;
@@ -215,7 +219,6 @@ export class DeviceManagementKitTransport extends Transport {
     _context?: TraceContext,
   ): TransportSubscription {
     const observable = getDeviceManagementKit().listenToAvailableDevices({
-      // TODO: anticipating the need to filter by transport
       transport: rnBleTransportIdentifier,
     });
     let subscription: Subscription | undefined = undefined;
@@ -228,10 +231,9 @@ export class DeviceManagementKitTransport extends Transport {
             type: "add",
             descriptor: "",
             device: device,
-            // @ts-expect-error types don't match with current implementation
             deviceModel: {
               id,
-            },
+            } as DeviceModel,
           });
         }
       },
@@ -260,7 +262,7 @@ export class DeviceManagementKitTransport extends Transport {
     subscription = this.dmk.getDeviceSessionState({ sessionId: this.sessionId }).subscribe({
       next: (state: { deviceStatus: DeviceStatus }) => {
         if (state.deviceStatus === DeviceStatus.NOT_CONNECTED) {
-          this.tracer.trace(
+          tracer.trace(
             "[DMKTransport] [listenToDisconnect] Device disconnected, closing transport",
           );
           activeDeviceSessionSubject.next(null);
@@ -268,14 +270,14 @@ export class DeviceManagementKitTransport extends Transport {
         }
       },
       error: (error: unknown) => {
-        this.tracer.trace("[DMKTransport] [listenToDisconnect] error", { error });
+        tracer.trace("[DMKTransport] [listenToDisconnect] error", { error });
         this.emit("disconnect");
         if (subscription) {
           subscription.unsubscribe();
         }
       },
       complete: () => {
-        this.tracer.trace("[DMKTransport] [listenToDisconnect] Complete");
+        tracer.trace("[DMKTransport] [listenToDisconnect] Complete");
         this.emit("disconnect");
         if (subscription) {
           subscription.unsubscribe();
@@ -292,11 +294,9 @@ export class DeviceManagementKitTransport extends Transport {
   }
 
   disconnect(_id?: string) {
-    try {
-      this.dmk.disconnect({ sessionId: this.sessionId });
-    } catch (error) {
+    this.dmk.disconnect({ sessionId: this.sessionId }).catch(error => {
       tracer.trace("[DMKTransport] [disconnect] error", { error });
-    }
+    });
   }
 
   async exchange(
@@ -308,7 +308,7 @@ export class DeviceManagementKitTransport extends Transport {
       throw new Error("No active session found");
     }
 
-    tracer.trace(`[exchange] => ${apdu.toString("hex")}`);
+    console.log(`[exchange] => ${apdu.toString("hex")}`);
 
     return await this.dmk
       .sendApdu({

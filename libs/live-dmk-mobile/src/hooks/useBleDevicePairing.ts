@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/device-transport-kit-react-native-ble";
 import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import { Device } from "@ledgerhq/types-devices";
-import { DeviceManagementKitTransport } from "../transport/DeviceManagementKitTransport";
+import { DeviceManagementKitBLETransport } from "../transport/DeviceManagementKitBLETransport";
 import { useDeviceManagementKit } from "./useDeviceManagementKit";
 import { getDeviceModel } from "@ledgerhq/devices";
 
@@ -41,7 +41,7 @@ export const useBleDevicePairing = ({
         },
         sessionRefresherOptions: { isRefresherDisabled: true },
       });
-      const transport = new DeviceManagementKitTransport(dmk, sessionId);
+      const transport = new DeviceManagementKitBLETransport(dmk, sessionId);
       activeDeviceSessionSubject.next({ sessionId, transport });
       setIsPaired(true);
     } catch (error) {
