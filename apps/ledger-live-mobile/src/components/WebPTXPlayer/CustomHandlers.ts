@@ -14,11 +14,18 @@ import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { WebviewProps } from "../Web3AppWebview/types";
+import {
+  saveSwapToHistoryFn,
+  SwapProps,
+} from "~/screens/Swap/LiveApp/customHandlers/saveSwapToHistory";
+
+import { useDispatch } from "react-redux";
 
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const [device, setDevice] = useState<Device>();
 
+  const dispatch = useDispatch();
   const tracking = useMemo(
     () =>
       trackingWrapper((eventName: string, properties?: Record<string, unknown> | null) =>
@@ -70,6 +77,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
             });
           },
           "custom.exchange.complete": ({ exchangeParams, onSuccess, onCancel }) => {
+            console.log("[LLM] custom ehange.complete", exchangeParams);
             navigation.navigate(NavigatorName.PlatformExchange, {
               screen: ScreenName.PlatformCompleteExchange,
               params: {
@@ -85,6 +93,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
                 },
                 device,
                 onResult: result => {
+                  console.log("[LLM] on result", result);
                   if (result.error) {
                     onCancel(result.error);
                     navigation.pop();
@@ -131,10 +140,30 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
                     });
                   }
                   if (result.operation) {
+                    const transactionHash = result.operation.id;
+                    const saveToHistory = saveSwapToHistoryFn(accounts, dispatch, navigation);
+
+                    const historyData: { swap: SwapProps; transaction_id: string } = {
+                      swap: {
+                        provider: exchangeParams.provider,
+                        fromAmount: exchangeParams.transaction.amount.toString(),
+                        toAmount: exchangeParams.amountExpectedTo!.toString(),
+                        fromAccountId: exchangeParams.fromAccountId!,
+                        toAccountId: exchangeParams.toAccountId!,
+                        swapId: exchangeParams.swapId!,
+                      },
+                      transaction_id: result.operation.id,
+                    };
+
+                    console.log("[LLM] history data", historyData);
+
+                    saveToHistory({ params: historyData });
+
                     onSuccess(result.operation.id);
                   }
                   setDevice(undefined);
-                  !result.error && navigation.pop();
+
+                  // !result.error && saveToHistory({});
                 },
               },
             });

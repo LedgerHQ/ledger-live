@@ -537,7 +537,7 @@ export const handlers = ({
         tx.amount = new BigNumber(tx.amount);
 
         return new Promise((resolve, reject) =>
-          uiExchangeComplete({
+          uiSwap({
             exchangeParams: {
               exchangeType: ExchangeType.SWAP,
               provider: params.provider,

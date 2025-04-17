@@ -4,7 +4,7 @@ import { Dispatch } from "redux";
 import { NavigationProp, NavigationState } from "@react-navigation/core";
 import { getFee } from "./getFee";
 import { getTransactionByHash } from "./getTransactionByHash";
-import { saveSwapToHistory } from "./saveSwapToHistory";
+import { saveSwapToHistoryFn } from "./saveSwapToHistory";
 
 export type NavigationType = Omit<NavigationProp<ReactNavigation.RootParamList>, "getState"> & {
   getState(): NavigationState | undefined;
@@ -21,6 +21,6 @@ export const swapCustomHandlers = ({
 }) => ({
   "custom.getFee": getFee(accounts, navigation),
   "custom.getTransactionByHash": getTransactionByHash(accounts),
-  "custom.saveSwapToHistory": saveSwapToHistory(accounts, dispatch, navigation),
+  "custom.saveSwapToHistory": saveSwapToHistoryFn(accounts, dispatch, navigation),
   "custom.swapRedirectToHistory": () => null,
 });

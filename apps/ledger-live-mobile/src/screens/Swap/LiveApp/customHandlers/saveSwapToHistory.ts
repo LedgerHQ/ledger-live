@@ -10,32 +10,31 @@ import { convertToAtomicUnit } from "../utils";
 
 export type SwapProps = {
   provider: string;
+  fromAmount: string;
+  toAmount: string;
+  swapId: string;
   fromAccountId: string;
   fromParentAccountId?: string;
   toAccountId: string;
-  fromAmount: string;
-  toAmount?: string;
-  quoteId: string;
-  rate: string;
-  feeStrategy: string;
-  customFeeConfig: string;
-  cacheKey: string;
-  loading: boolean;
-  error: boolean;
-  providerRedirectURL: string;
-  toNewTokenId: string;
-  swapApiBase: string;
-  estimatedFees: string;
-  estimatedFeesUnit: string;
-  swapId?: string;
+  quoteId?: string;
+  rate?: string;
+  feeStrategy?: string;
+  customFeeConfig?: string;
+  cacheKey?: string;
+  loading?: boolean;
+  error?: boolean;
+  providerRedirectURL?: string;
+  toNewTokenId?: string;
+  swapApiBase?: string;
+  estimatedFees?: string;
+  estimatedFeesUnit?: string;
 };
-
-export function saveSwapToHistory(
+export function saveSwapToHistoryFn(
   accounts: AccountLike[],
   dispatch: Dispatch,
   navigation: NavigationType,
 ) {
-  return async ({ params }: { params: { swap: SwapProps; transaction_id: string } }) => {
+  return ({ params }: { params: { swap: SwapProps; transaction_id: string } }) => {
     const { swap, transaction_id } = params;
 
     if (
@@ -48,6 +47,7 @@ export function saveSwapToHistory(
     ) {
       return Promise.reject("Cannot save swap missing params");
     }
+
     const fromId = getAccountIdFromWalletAccountId(swap.fromAccountId);
     const toId = getAccountIdFromWalletAccountId(swap.toAccountId);
     if (!fromId || !toId) return Promise.reject("Accounts not found");
