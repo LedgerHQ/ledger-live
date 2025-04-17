@@ -1,6 +1,6 @@
 import { device } from "detox";
 import { closeProxy } from "./bridge/proxy";
-import { getLogs, close as closeBridge } from "./bridge/server";
+import { close as closeBridge, getLogs, killDockerSpeculos } from "./bridge/server";
 import { launchApp, setupEnvironment } from "./helpers/commonHelpers";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { allure } from "jest-allure2-reporter/api";
@@ -10,6 +10,8 @@ setupEnvironment();
 
 beforeAll(
   async () => {
+    killDockerSpeculos();
+
     const port = await launchApp();
     await device.reverseTcpPort(8081);
     await device.reverseTcpPort(port);
@@ -27,5 +29,5 @@ afterAll(async () => {
   setEnv("DISABLE_TRANSACTION_BROADCAST", broadcastOriginalValue);
   closeBridge();
   closeProxy();
-  // await app.common.removeSpeculos();
+  await app.common.removeSpeculos();
 });

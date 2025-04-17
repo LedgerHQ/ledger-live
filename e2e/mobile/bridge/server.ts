@@ -7,10 +7,12 @@ import merge from "lodash/merge";
 import { NavigatorName } from "~/const";
 import { BleState, DeviceLike } from "~/reducers/types";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
+import { DeviceUSB, nanoS_USB, nanoSP_USB, nanoX_USB } from "../models/devices";
 import { MessageData, MockDeviceEvent, ServerData } from "./types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
 import { log as detoxLog } from "detox";
+import { execSync } from "child_process";
 
 let clientResponse: (data: string) => void;
 const RESPONSE_TIMEOUT = 10000;
@@ -95,7 +97,7 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
     await acceptTerms();
   }
 
-  const f = fs.readFileSync(path.resolve("e2e", "userdata", `${fileName}.json`), "utf8");
+  const f = fs.readFileSync(path.resolve("userdata", `${fileName}.json`), "utf8");
 
   const { data } = JSON.parse(f.toString());
 
@@ -103,7 +105,7 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
   const settings = merge(defaultSettings, data.settings || {});
   await postMessage({ type: "importSettings", id: uniqueId(), payload: settings });
 
-  navigate(NavigatorName.Base);
+  await navigate(NavigatorName.Base);
 
   if (data.accounts?.length) {
     await postMessage({ type: "importAccounts", id: uniqueId(), payload: data.accounts });
@@ -132,8 +134,11 @@ export async function loadAccountsRaw(
 }
 
 export async function loadAccounts(accounts: Account[]) {
-  delete require.cache[require.resolve("@ledgerhq/live-common/account/index")]; // Clear cache
-  const toAccountRaw = require("@ledgerhq/live-common/account/index").toAccountRaw;
+  const modulePath = "@ledgerhq/live-common/account/index";
+  delete require.cache[require.resolve(modulePath)];
+
+  // Dynamically import fresh version of the module
+  const { toAccountRaw } = await import(modulePath);
   await postMessage({
     type: "importAccounts",
     id: uniqueId(),
@@ -175,6 +180,16 @@ export async function addDevicesBT(devices: DeviceLike | DeviceLike[]) {
   });
 }
 
+export async function addDevicesUSB(
+  devices: DeviceUSB | DeviceUSB[] = [nanoX_USB, nanoSP_USB, nanoS_USB],
+): Promise<DeviceUSB[]> {
+  const devicesArray = Array.isArray(devices) ? devices : [devices];
+  for (const device of devicesArray) {
+    await postMessage({ type: "addUSB", id: uniqueId(), payload: device });
+  }
+  return devicesArray;
+}
+
 export async function setInstalledApps(apps: string[] = []) {
   await postMessage({
     type: "setGlobals",
@@ -191,6 +206,10 @@ export async function swapSetup() {
   await postMessage({ type: "swapSetup", id: uniqueId() });
 }
 
+export async function waitSwapReady() {
+  return fetchData({ type: "waitSwapReady", id: uniqueId() }, RESPONSE_TIMEOUT);
+}
+
 export async function getLogs() {
   return fetchData({ type: "getLogs", id: uniqueId() });
 }
@@ -203,13 +222,13 @@ export async function getEnvs() {
   return fetchData({ type: "getEnvs", id: uniqueId() });
 }
 
-function fetchData(message: MessageData): Promise<string> {
+async function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Promise<string> {
   return new Promise<string>(resolve => {
     postMessage(message);
     const timeoutId = setTimeout(() => {
       console.warn(`Timeout while waiting for ${message.type}`);
       resolve("");
-    }, RESPONSE_TIMEOUT);
+    }, timeout);
 
     clientResponse = (data: string) => {
       clearTimeout(timeoutId);
@@ -224,6 +243,33 @@ export async function addKnownSpeculos(proxyAddress: string) {
 
 export async function removeKnownSpeculos(id: string) {
   await postMessage({ type: "removeKnownSpeculos", id: uniqueId(), payload: id });
+}
+
+export function killDockerSpeculos() {
+  try {
+    const output = execSync(
+      `docker ps -a --format '{{.ID}} {{.Image}}' | grep ledgerhq/speculos || true`,
+    )
+      .toString()
+      .trim();
+
+    if (!output) {
+      detoxLog.info("No Speculos containers found to remove.");
+      return;
+    }
+
+    const containerIds = output
+      .split("\n")
+      .map(line => line.split(" ")[0])
+      .filter(Boolean);
+
+    if (containerIds.length > 0) {
+      execSync(`docker rm -f ${containerIds.join(" ")}`);
+      detoxLog.info(`Removed Speculos Docker containers: ${containerIds.join(", ")}`);
+    }
+  } catch (error) {
+    detoxLog.error(`Failed to remove Speculos Docker container: ${error}`);
+  }
 }
 
 function onMessage(messageStr: string) {

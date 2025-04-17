@@ -55,7 +55,7 @@ type LedgerSyncOpts = {
 };
 
 export const CLI = {
-  ledgerKeyRingProtocol: function (opts: LedgerKeyRingProtocolOpts) {
+  ledgerKeyRingProtocol: async function (opts: LedgerKeyRingProtocolOpts) {
     const {
       apiBaseUrl = getEnv("TRUSTCHAIN_API_STAGING"),
       applicationId = 16,
@@ -89,9 +89,12 @@ export const CLI = {
       if (!pubKey || !privateKey) {
         return Promise.reject("pubKey and privateKey are required");
       }
-      return sdk
-        .getOrCreateTrustchain(device || "", { pubkey: pubKey, privatekey: privateKey })
-        .then(result => result.trustchain);
+
+      const result_1 = await sdk.getOrCreateTrustchain(device || "", {
+        pubkey: pubKey,
+        privatekey: privateKey,
+      });
+      return result_1.trustchain;
     }
 
     if (destroyKeyRingTree) {

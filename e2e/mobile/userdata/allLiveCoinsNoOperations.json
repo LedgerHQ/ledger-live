@@ -1,0 +1,143 @@
+{
+  "data": {
+    "settings": {
+      "hasCompletedOnboarding": true,
+      "counterValue": "EUR",
+      "preferredDeviceModel": "nanoX",
+      "language": null,
+      "theme": "dark",
+      "region": null,
+      "locale": "en-US",
+      "orderAccounts": "name|asc",
+      "countervalueFirst": true,
+      "autoLockTimeout": 10,
+      "selectedTimeRange": "year",
+      "marketIndicator": "western",
+      "currenciesSettings": {},
+      "pairExchanges": {},
+      "developerMode": false,
+      "loaded": true,
+      "shareAnalytics": true,
+      "sentryLogs": true,
+      "lastUsedVersion": "2.3.2",
+      "dismissedBanners": [],
+      "accountsViewMode": "list",
+      "showAccountsHelperBanner": true,
+      "hideEmptyTokenAccounts": false,
+      "sidebarCollapsed": false,
+      "discreetMode": false,
+      "hasInstalledApps": true,
+      "blacklistedTokenIds": []
+    },
+    "user": {
+      "id": "9434c303-1d22-43a6-8fce-44c92d815ca8"
+    },
+    "accounts": [
+      {
+        "data": {
+          "id": "libcore:1:bitcoin:xpub6Bm5P7Xyx2UYrVBAgb54gEswXhbZaryZSWsPjeJ1jpb9K9S5UTD5z5cXW4EREkTqkNjSHQHxwHKZJVE7TFvftySnKabMAXAQCMSVJBdJxMC:",
+          "seedIdentifier": "04b9b3078fbdef02b5f5aa8bb400423d5170015da06c31ad7745160cbab1fa4cdc965f271b924c2999639211310f6d35029698749b38ea7e64608de3ebcdbaa46a",
+          "name": "Bitcoin 1 (legacy)",
+          "starred": false,
+          "derivationMode": "",
+          "index": 0,
+          "freshAddress": "1GaciDQKuhYMz5pcycBcBTwhRao8e4sfoK",
+          "freshAddressPath": "44'/0'/0'/0/112",
+          "blockHeight": 628010,
+          "operationsCount": 219,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "bitcoin",
+          "unitMagnitude": 8,
+          "lastSyncDate": "",
+          "balance": "0",
+          "spendableBalance": "2578",
+          "xpub": "xpub6Bm5P7Xyx2UYrVBAgb54gEswXhbZaryZSWsPjeJ1jpb9K9S5UTD5z5cXW4EREkTqkNjSHQHxwHKZJVE7TFvftySnKabMAXAQCMSVJBdJxMC",
+          "balanceHistory": {},
+          "subAccounts": []
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "id": "libcore:1:bitcoin:xpub6DVfEXXjv6nspJK6h7A57pRKgAStQDhEST2NNUUwmtGpatc2cEhvP4FbCYSmtF4DJoLHBPG5imcTNVxq8V2SDdENaf63HXPKgMkeZ7SEbsK:native_segwit",
+          "seedIdentifier": "04c2f0fe9c27396ba3e37558d71d8308572c5bba380cfe0a68450bc38039b781ce02f1ce14db54eed0ba56ed4aebba93338d3d0af82a6078ace90458f09069b125",
+          "name": "Bitcoin 1 (native segwit)",
+          "starred": false,
+          "derivationMode": "native_segwit",
+          "index": 0,
+          "freshAddress": "bc1qehatadheaph4jjxfph0fn5sc5vsk0fskch0x5t",
+          "freshAddressPath": "84'/0'/0'/0/52",
+          "blockHeight": 628010,
+          "operationsCount": 117,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "bitcoin",
+          "unitMagnitude": 8,
+          "lastSyncDate": "",
+          "balance": "0",
+          "spendableBalance": "1700",
+          "xpub": "xpub6DVfEXXjv6nspJK6h7A57pRKgAStQDhEST2NNUUwmtGpatc2cEhvP4FbCYSmtF4DJoLHBPG5imcTNVxq8V2SDdENaf63HXPKgMkeZ7SEbsK",
+          "balanceHistory": {},
+          "subAccounts": []
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "id": "libcore:1:komodo:v4PKUB9vPNEx9QFvX7SJkYhpX2QbsXdikCPFbeJLZK4hrFSD2XBJ2Ze7zC68e3Kfaia5Xzgey12HeqwSzF5itsprdyJghVxvrrMod6oMzS14oBVf:",
+          "seedIdentifier": "04fb0f483df5f252ff2ef489859d4f630bcd15ff6706fb3c8515f65f9faeedef1ab8ca4a561dc9366d5c3e456b2c4765e4c7b5098dcf3abd468cecba3ef0bdf270",
+          "name": "Komodo 1",
+          "starred": false,
+          "derivationMode": "",
+          "index": 0,
+          "freshAddress": "RJ8BdEPiYShsysUdYgDdVMRutkkTDgnu8w",
+          "freshAddressPath": "44'/141'/0'/0/48",
+          "blockHeight": 1854558,
+          "operationsCount": 111,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "komodo",
+          "unitMagnitude": 8,
+          "lastSyncDate": "",
+          "balance": "0",
+          "spendableBalance": "233798275",
+          "balanceHistory": {},
+          "xpub": "v4PKUB9vPNEx9QFvX7SJkYhpX2QbsXdikCPFbeJLZK4hrFSD2XBJ2Ze7zC68e3Kfaia5Xzgey12HeqwSzF5itsprdyJghVxvrrMod6oMzS14oBVf",
+          "subAccounts": []
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "id": "libcore:1:zcash:xpub6CEGMFW91HKTGhzxJjnTZ4mSrRkNqCAiArP14Dy8GhkpwHGzyMrxWgh3aT69bpi3t4RQSg5TtwKjzVcFdfyf86jMMxTABBF6e66UC1vMGze:",
+          "seedIdentifier": "04ddd8dc9459f1991eb8f4ae03f2095eb66511917de8076e5aa6974fe2cb527a03f2467654f038ecdd123d447de7bd4019870f6f24a6666dee47f456f82aa9b904",
+          "name": "Zcash 2",
+          "starred": false,
+          "derivationMode": "",
+          "index": 1,
+          "freshAddress": "t1fEuxn1xqTsxRev942RtWY5gn6AWrC9GpY",
+          "freshAddressPath": "44'/133'/1'/0/83",
+          "blockHeight": 812636,
+          "operationsCount": 179,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "zcash",
+          "unitMagnitude": 8,
+          "lastSyncDate": "",
+          "balance": "0",
+          "spendableBalance": "0",
+          "balanceHistory": {},
+          "xpub": "xpub6CEGMFW91HKTGhzxJjnTZ4mSrRkNqCAiArP14Dy8GhkpwHGzyMrxWgh3aT69bpi3t4RQSg5TtwKjzVcFdfyf86jMMxTABBF6e66UC1vMGze",
+          "subAccounts": []
+        },
+        "version": 1
+      }
+    ],
+    "countervalues": {
+      "version": 2,
+      "daily": {},
+      "hourly": {}
+    }
+  }
+}

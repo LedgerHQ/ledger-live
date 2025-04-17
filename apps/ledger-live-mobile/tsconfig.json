@@ -19,7 +19,8 @@
       "~/*": ["src/*"],
       "LLM/*": ["src/newArch/*"],
       "@tests/*": ["__tests__/*"],
-      "@mocks/*": ["__mocks__/*"]
+      "@mocks/*": ["__mocks__/*"],
+      "@e2e/bridge/*": ["../../e2e/mobile/bridge/*"]
     }
   },
   "include": ["src/**/*", "e2e/**/*", "**/*.d.ts", "services/**/*"],

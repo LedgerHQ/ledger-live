@@ -66,6 +66,8 @@ export default class SwapLiveAppPage {
   }
 
   async getMinimumAmount(swap: SwapType) {
-    return (await getMinimumSwapAmount(swap))?.toString() ?? "";
+    return (
+      (await getMinimumSwapAmount(swap.accountToDebit, swap.accountToCredit))?.toString() ?? ""
+    );
   }
 }

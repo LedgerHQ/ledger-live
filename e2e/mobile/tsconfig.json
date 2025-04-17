@@ -1,18 +1,24 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "strict": true,
     "experimentalDecorators": true,
+    "esModuleInterop": true,
     "checkJs": false,
     "jsx": "react-native",
+    "module": "NodeNext",
     "lib": [
       "es2017",
       "DOM"
     ],
+    "allowJs": false,
+    "target": "esnext",
+    "skipLibCheck": true,
     "noEmit": true,
     "incremental": true,
     "baseUrl": ".",
-    "rootDir": "../..",
     "typeRoots": [
+      "./types",
       "./node_modules/@types"
     ],
     "paths": {
@@ -25,9 +31,15 @@
     }
   },
   "include": [
-    "**/*.ts"
+    "types",
+    "**/*.ts",
+    "**/*.tsx"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "babel.config.js",
+    "jest.config.js",
+    "**/*.js",
+    "../../apps/ledger-live-mobile/src/**/*"
   ]
 }

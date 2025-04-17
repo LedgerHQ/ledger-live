@@ -1,6 +1,7 @@
 import { spawn } from "child_process";
+import path from "path";
 
-const scriptPath = __dirname + "/../../../cli/bin/index.js";
+const scriptPath = path.resolve(__dirname, "../../../apps/cli/bin/index.js");
 
 /**
  * Executes a command in the CLI with given arguments.
