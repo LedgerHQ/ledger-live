@@ -457,8 +457,8 @@ importers:
         specifier: 7.5.8
         version: 7.5.8
       '@xstate/react':
-        specifier: 1.6.3
-        version: 1.6.3(@types/react@18.2.73)(react@18.3.1)(xstate@4.38.3)
+        specifier: ^5.0.2
+        version: 5.0.3(@types/react@18.2.73)(react@18.3.1)(xstate@5.19.2)
       allure-commandline:
         specifier: 2.28.0
         version: 2.28.0
@@ -643,8 +643,8 @@ importers:
         specifier: 5.0.1
         version: 5.0.1
       xstate:
-        specifier: 4.38.3
-        version: 4.38.3
+        specifier: ^5.19.2
+        version: 5.19.2
     devDependencies:
       '@electron/notarize':
         specifier: 2.3.2
@@ -5169,8 +5169,8 @@ importers:
         specifier: ^2.6.2
         version: 2.6.5
       '@xstate/react':
-        specifier: ^1.6.3
-        version: 1.6.3(@types/react@18.2.73)(react@18.3.1)(xstate@4.38.3)
+        specifier: ^5.0.2
+        version: 5.0.3(@types/react@18.2.73)(react@18.3.1)(xstate@5.19.2)
       '@zondax/ledger-casper':
         specifier: ^2.6.1
         version: 2.6.1
@@ -5286,8 +5286,8 @@ importers:
         specifier: ^3.4.0
         version: 3.13.0
       xstate:
-        specifier: 4.38.3
-        version: 4.38.3
+        specifier: ^5.19.2
+        version: 5.19.2
       yargs:
         specifier: ^17.0.0
         version: 17.7.2
@@ -19119,15 +19119,12 @@ packages:
     resolution: {integrity: sha512-IyMsxyjkJK8YWq566KyuFuh/PUiLzQ02RbUO5qa+vEQb6zIAR9MzFwN7wBmBy7wmKkjligcdNDMG5EaBRH8FxQ==}
     engines: {node: '>=16.0.0'}
 
-  '@xstate/react@1.6.3':
-    resolution: {integrity: sha512-NCUReRHPGvvCvj2yLZUTfR0qVp6+apc8G83oXSjN4rl89ZjyujiKrTff55bze/HrsvCsP/sUJASf2n0nzMF1KQ==}
+  '@xstate/react@5.0.3':
+    resolution: {integrity: sha512-Zdnn0VTPcVdoaAiW0OX6Nkvdoe7SNGjfaZqM61NKhjt2aNULqiicmDu2tOd1ChzlRWYDxGTdbzVqqVyMLpoHJw==}
     peerDependencies:
-      '@xstate/fsm': ^1.0.0
-      react: ^16.8.0 || ^17.0.0
-      xstate: ^4.11.0
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      xstate: ^5.19.2
     peerDependenciesMeta:
-      '@xstate/fsm':
-        optional: true
       xstate:
         optional: true
 
@@ -32539,11 +32536,6 @@ packages:
       '@types/react':
         optional: true
 
-  use-subscription@1.8.0:
-    resolution: {integrity: sha512-LISuG0/TmmoDoCRmV5XAqYkd3UCBNM0ML3gGBndze65WITcsExCD3DTvXXTLyNcOC0heFQZzluW88bN/oC1DQQ==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-
   use-sync-external-store@1.2.0:
     resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
     peerDependencies:
@@ -33588,9 +33580,6 @@ packages:
   xmlhttprequest@1.8.0:
     resolution: {integrity: sha512-58Im/U0mlVBLM38NdZjHyhuMtCqa61469k2YP/AaPbvCoV9aQGUpbJBj1QRm2ytRiVQBD/fsw7L2bJGDVQswBA==}
     engines: {node: '>=0.4.0'}
-
-  xstate@4.38.3:
-    resolution: {integrity: sha512-SH7nAaaPQx57dx6qvfcIgqKRXIh4L0A1iYEqim4s1u7c9VoCgzZc+63FY90AKU4ZzOC2cfJzTnpO4zK7fCUzzw==}
 
   xstate@5.19.2:
     resolution: {integrity: sha512-B8fL2aP0ogn5aviAXFzI5oZseAMqN00fg/TeDa3ZtatyDcViYLIfuQl4y8qmHCiKZgGEzmnTyNtNQL9oeJE2gw==}
@@ -50012,13 +50001,13 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@xstate/react@1.6.3(@types/react@18.2.73)(react@18.3.1)(xstate@4.38.3)':
+  '@xstate/react@5.0.3(@types/react@18.2.73)(react@18.3.1)(xstate@5.19.2)':
     dependencies:
       react: 18.3.1
       use-isomorphic-layout-effect: 1.1.2(@types/react@18.2.73)(react@18.3.1)
-      use-subscription: 1.8.0(react@18.3.1)
+      use-sync-external-store: 1.2.0(react@18.3.1)
     optionalDependencies:
-      xstate: 4.38.3
+      xstate: 5.19.2
     transitivePeerDependencies:
       - '@types/react'
 
@@ -69780,11 +69769,6 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.2.73
 
-  use-subscription@1.8.0(react@18.3.1):
-    dependencies:
-      react: 18.3.1
-      use-sync-external-store: 1.2.0(react@18.3.1)
-
   use-sync-external-store@1.2.0(react@18.3.1):
     dependencies:
       react: 18.3.1
@@ -71361,8 +71345,6 @@ snapshots:
   xmlcreate@2.0.4: {}
 
   xmlhttprequest@1.8.0: {}
-
-  xstate@4.38.3: {}
 
   xstate@5.19.2: {}
 
