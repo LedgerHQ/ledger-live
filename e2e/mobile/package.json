@@ -1,0 +1,50 @@
+{
+  "name": "ledger-live-mobile-e2e-tests",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "lint:fix": "pnpm lint --fix",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "e2e:test:speculos": "export MOCK=0 && pnpm detox test"
+  },
+  "dependencies": {
+    "@ledgerhq/logs": "workspace:^",
+    "invariant": "2.2.4",
+    "rxjs": "7.8.1"
+  },
+  "devDependencies": {
+    "@jest/reporters": "29.7.0",
+    "@ledgerhq/devices": "workspace:*",
+    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
+    "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
+    "@ledgerhq/live-common": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-wallet": "workspace:^",
+    "@ledgerhq/types-live": "workspace:^",
+    "@types/body-parser": "1.19.5",
+    "@types/cors": "2.8.17",
+    "@types/express": "5.0.1",
+    "@types/invariant": "2.2.37",
+    "@types/jest": "29.5.12",
+    "@types/lodash": "4.17.0",
+    "@types/node": "22.10.10",
+    "@types/ws": "8.5.10",
+    "body-parser": "1.20.3",
+    "cors": "2.8.5",
+    "detox": "20.34.4",
+    "detox-allure2-adapter": "1.0.0-alpha.12",
+    "expect": "27.5.1",
+    "express": "5.0.0",
+    "jest": "29.7.0",
+    "jest-allure2-reporter": "2.0.0",
+    "jest-environment-node": "29.7.0",
+    "jest-metadata": "1.5.3",
+    "lodash": "4.17.21",
+    "react-native-config": "1.5.3",
+    "react-native-launch-arguments": "4.0.2",
+    "ts-node": "10.9.2",
+    "tslib": "2.6.2",
+    "ws": "7.5.10"
+  }
+}
