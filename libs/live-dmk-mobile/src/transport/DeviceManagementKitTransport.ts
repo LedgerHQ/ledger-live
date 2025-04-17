@@ -146,7 +146,11 @@ export class DeviceManagementKitTransport extends Transport {
       }
     }
 
+    getDeviceManagementKit().close();
+
     if (typeof deviceOrId === "string") {
+      getDeviceManagementKit().stopDiscovering();
+
       const devicesObs = getDeviceManagementKit().listenToAvailableDevices({
         transport: rnBleTransportIdentifier,
       });
@@ -214,6 +218,9 @@ export class DeviceManagementKitTransport extends Transport {
     observer: TransportObserver<DescriptorEvent<string>, HwTransportError>,
     _context?: TraceContext,
   ): TransportSubscription {
+    // Make sure we stop discovering before subscribing to the observable
+    getDeviceManagementKit().stopDiscovering();
+
     const observable = getDeviceManagementKit().listenToAvailableDevices({
       // TODO: anticipating the need to filter by transport
       transport: rnBleTransportIdentifier,
