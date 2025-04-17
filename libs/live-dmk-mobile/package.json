@@ -43,6 +43,7 @@
     "react-native-ble-plx": "3.4.0"
   },
   "devDependencies": {
+    "@ledgerhq/device-transport-kit-react-native-hid": "0.0.0-develop-20250415155309",
     "@testing-library/dom": "^9.3.4",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
@@ -52,15 +53,16 @@
     "jsdom": "25.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-native": "0.76.3",
+    "react-native": "0.75.4",
     "rxjs": "^7.8.1",
     "vite": "6.0.9",
     "vitest": "2.1.9",
     "ws": "8.18.0"
   },
   "peerDependencies": {
-    "react": "^18.3.1",
-    "react-native": ">0.70",
+    "react": "18.3.1",
+    "react-native": "0.75.4",
+    "@ledgerhq/device-transport-kit-react-native-hid": "0.0.0-develop-20250415155309",
     "rxjs": "^7.8.1"
   }
 }
