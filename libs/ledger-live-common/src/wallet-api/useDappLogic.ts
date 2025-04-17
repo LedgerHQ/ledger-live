@@ -8,7 +8,7 @@ import { getAccountBridge } from "../bridge";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { getWalletAPITransactionSignFlowInfos } from "./converters";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { findTokenByAddress, getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { CurrentAccountHistDB, UiHook, usePermission } from "./react";
 import BigNumber from "bignumber.js";
@@ -505,16 +505,22 @@ export function useDappLogic({
 
               const transactionType = getTransactionType(fields);
 
+              const token = findTokenByAddress(tx.recipient);
+
+              const accountCurrencyName =
+                currentAccount.type === "TokenAccount"
+                  ? currentAccount.token.name
+                  : currentAccount.currency.name;
+
+              const accountNetwork =
+                currentAccount.type === "TokenAccount"
+                  ? currentAccount.token.parentCurrency.id
+                  : currentAccount.currency.id;
+
               trackingData = {
                 type: transactionType === "Approve" ? "approve" : "transfer",
-                currency:
-                  currentAccount.type === "TokenAccount"
-                    ? currentAccount.token.name
-                    : currentAccount.currency.name,
-                network:
-                  currentAccount.type === "TokenAccount"
-                    ? currentAccount.token.parentCurrency.id
-                    : currentAccount.currency.id,
+                currency: token ? token.name : accountCurrencyName,
+                network: token ? token.parentCurrency.id : accountNetwork,
               };
 
               const options = nanoApp
