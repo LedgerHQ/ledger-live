@@ -10,7 +10,12 @@ export async function launchSpeculos(appName: string, testTitle?: string) {
   if (portCounter > MAX_PORT) {
     portCounter = BASE_PORT;
   }
+
   const speculosPort = portCounter++;
+
+  if (testTitle) {
+    testTitle = testTitle.replace(/ /g, "_");
+  }
 
   setEnv(
     "SPECULOS_PID_OFFSET",
@@ -29,5 +34,5 @@ export async function launchSpeculos(appName: string, testTitle?: string) {
   process.env.SPECULOS_API_PORT = speculosApiPort.toString();
 
   console.warn(`Speculos ${device.id} started on ${speculosApiPort}`);
-  return { device, speculosApiPort };
+  return device;
 }

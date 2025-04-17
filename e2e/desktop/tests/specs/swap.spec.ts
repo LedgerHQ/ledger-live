@@ -29,6 +29,14 @@ function setupEnv(disableBroadcast?: boolean) {
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
+const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
+  CLI.liveData({
+    currency: currencyApp.name,
+    index,
+    add: true,
+    appjson: userdataPath,
+  });
+
 const swaps = [
   {
     swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.02", Fee.MEDIUM),
@@ -124,6 +132,8 @@ for (const { swap, xrayTicket } of swaps) {
       acc.currency.speculosApp.name.replace(/ /g, "_"),
     );
 
+    const { accountToDebit, accountToCredit } = swap;
+
     test.beforeEach(async () => {
       setExchangeDependencies(
         accPair.map(appName => ({
@@ -135,29 +145,16 @@ for (const { swap, xrayTicket } of swaps) {
     test.use({
       userdata: "skip-onboarding",
       speculosApp: app,
+
       cliCommandsOnApp: [
         [
           {
-            app: swap.accountToDebit.currency.speculosApp,
-            cmd: (userdataPath?: string) => {
-              return CLI.liveData({
-                currency: swap.accountToDebit.currency.speculosApp.name,
-                index: swap.accountToDebit.index,
-                add: true,
-                appjson: userdataPath,
-              });
-            },
+            app: accountToDebit.currency.speculosApp,
+            cmd: liveDataCommand(accountToDebit.currency.speculosApp, accountToDebit.index),
           },
           {
-            app: swap.accountToCredit.currency.speculosApp,
-            cmd: (userdataPath?: string) => {
-              return CLI.liveData({
-                currency: swap.accountToCredit.currency.speculosApp.name,
-                index: swap.accountToCredit.index,
-                add: true,
-                appjson: userdataPath,
-              });
-            },
+            app: accountToCredit.currency.speculosApp,
+            cmd: liveDataCommand(accountToCredit.currency.speculosApp, accountToCredit.index),
           },
         ],
         { scope: "test" },
@@ -215,6 +212,8 @@ for (const { swap, xrayTicket, provider } of checkProviders) {
       acc.currency.speculosApp.name.replace(/ /g, "_"),
     );
 
+    const { accountToDebit, accountToCredit } = swap;
+
     test.beforeEach(async () => {
       setExchangeDependencies(
         accPair.map(appName => ({
@@ -226,29 +225,16 @@ for (const { swap, xrayTicket, provider } of checkProviders) {
     test.use({
       userdata: "skip-onboarding",
       speculosApp: app,
+
       cliCommandsOnApp: [
         [
           {
-            app: swap.accountToDebit.currency.speculosApp,
-            cmd: (userdataPath?: string) => {
-              return CLI.liveData({
-                currency: swap.accountToDebit.currency.speculosApp.name,
-                index: swap.accountToDebit.index,
-                add: true,
-                appjson: userdataPath,
-              });
-            },
+            app: accountToDebit.currency.speculosApp,
+            cmd: liveDataCommand(accountToDebit.currency.speculosApp, accountToDebit.index),
           },
           {
-            app: swap.accountToCredit.currency.speculosApp,
-            cmd: (userdataPath?: string) => {
-              return CLI.liveData({
-                currency: swap.accountToCredit.currency.speculosApp.name,
-                index: swap.accountToCredit.index,
-                add: true,
-                appjson: userdataPath,
-              });
-            },
+            app: accountToCredit.currency.speculosApp,
+            cmd: liveDataCommand(accountToCredit.currency.speculosApp, accountToCredit.index),
           },
         ],
         { scope: "test" },
@@ -283,6 +269,8 @@ test.describe("Swap - Check Best Offer", () => {
   const swap = new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.02", Fee.MEDIUM);
   setupEnv(true);
 
+  const { accountToDebit, accountToCredit } = swap;
+
   test.beforeEach(async () => {
     const accountPair: string[] = [swap.accountToDebit, swap.accountToCredit].map(acc =>
       acc.currency.speculosApp.name.replace(/ /g, "_"),
@@ -293,29 +281,16 @@ test.describe("Swap - Check Best Offer", () => {
   test.use({
     userdata: "skip-onboarding",
     speculosApp: app,
+
     cliCommandsOnApp: [
       [
         {
-          app: swap.accountToDebit.currency.speculosApp,
-          cmd: (userdataPath?: string) => {
-            return CLI.liveData({
-              currency: swap.accountToDebit.currency.speculosApp.name,
-              index: swap.accountToDebit.index,
-              add: true,
-              appjson: userdataPath,
-            });
-          },
+          app: accountToDebit.currency.speculosApp,
+          cmd: liveDataCommand(accountToDebit.currency.speculosApp, accountToDebit.index),
         },
         {
-          app: swap.accountToCredit.currency.speculosApp,
-          cmd: (userdataPath?: string) => {
-            return CLI.liveData({
-              currency: swap.accountToCredit.currency.speculosApp.name,
-              index: swap.accountToCredit.index,
-              add: true,
-              appjson: userdataPath,
-            });
-          },
+          app: accountToCredit.currency.speculosApp,
+          cmd: liveDataCommand(accountToCredit.currency.speculosApp, accountToCredit.index),
         },
       ],
       { scope: "test" },
@@ -343,6 +318,8 @@ test.describe("Swap - Default currency when landing on swap", () => {
   const swap = new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.02", Fee.MEDIUM);
   setupEnv(true);
 
+  const { accountToDebit, accountToCredit } = swap;
+
   test.beforeEach(async () => {
     const accountPair: string[] = [swap.accountToDebit, swap.accountToCredit].map(acc =>
       acc.currency.speculosApp.name.replace(/ /g, "_"),
@@ -353,29 +330,16 @@ test.describe("Swap - Default currency when landing on swap", () => {
   test.use({
     userdata: "skip-onboarding",
     speculosApp: app,
+
     cliCommandsOnApp: [
       [
         {
-          app: swap.accountToDebit.currency.speculosApp,
-          cmd: (userdataPath?: string) => {
-            return CLI.liveData({
-              currency: swap.accountToDebit.currency.speculosApp.name,
-              index: swap.accountToDebit.index,
-              add: true,
-              appjson: userdataPath,
-            });
-          },
+          app: accountToDebit.currency.speculosApp,
+          cmd: liveDataCommand(accountToDebit.currency.speculosApp, accountToDebit.index),
         },
         {
-          app: swap.accountToCredit.currency.speculosApp,
-          cmd: (userdataPath?: string) => {
-            return CLI.liveData({
-              currency: swap.accountToCredit.currency.speculosApp.name,
-              index: swap.accountToCredit.index,
-              add: true,
-              appjson: userdataPath,
-            });
-          },
+          app: accountToCredit.currency.speculosApp,
+          cmd: liveDataCommand(accountToCredit.currency.speculosApp, accountToCredit.index),
         },
       ],
       { scope: "test" },
@@ -419,6 +383,8 @@ test.describe("Swap - Rejected on device", () => {
   const rejectedSwap = new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.02", Fee.MEDIUM);
   setupEnv(true);
 
+  const { accountToDebit, accountToCredit } = rejectedSwap;
+
   test.beforeEach(async () => {
     const accountPair: string[] = [rejectedSwap.accountToDebit, rejectedSwap.accountToCredit].map(
       acc => acc.currency.speculosApp.name.replace(/ /g, "_"),
@@ -429,29 +395,16 @@ test.describe("Swap - Rejected on device", () => {
   test.use({
     userdata: "skip-onboarding",
     speculosApp: app,
+
     cliCommandsOnApp: [
       [
         {
-          app: rejectedSwap.accountToDebit.currency.speculosApp,
-          cmd: (userdataPath?: string) => {
-            return CLI.liveData({
-              currency: rejectedSwap.accountToDebit.currency.speculosApp.name,
-              index: rejectedSwap.accountToDebit.index,
-              add: true,
-              appjson: userdataPath,
-            });
-          },
+          app: accountToDebit.currency.speculosApp,
+          cmd: liveDataCommand(accountToDebit.currency.speculosApp, accountToDebit.index),
         },
         {
-          app: rejectedSwap.accountToCredit.currency.speculosApp,
-          cmd: (userdataPath?: string) => {
-            return CLI.liveData({
-              currency: rejectedSwap.accountToCredit.currency.speculosApp.name,
-              index: rejectedSwap.accountToCredit.index,
-              add: true,
-              appjson: userdataPath,
-            });
-          },
+          app: accountToCredit.currency.speculosApp,
+          cmd: liveDataCommand(accountToCredit.currency.speculosApp, accountToCredit.index),
         },
       ],
       { scope: "test" },
@@ -488,6 +441,8 @@ test.describe("Swap - Landing page", () => {
   const rejectedSwap = new Swap(Account.ETH_1, Account.ETH_USDC_1, "0.03", Fee.MEDIUM);
   setupEnv(true);
 
+  const { accountToDebit, accountToCredit } = rejectedSwap;
+
   test.beforeEach(async () => {
     const accountPair: string[] = [rejectedSwap.accountToDebit, rejectedSwap.accountToCredit].map(
       acc => acc.currency.speculosApp.name.replace(/ /g, "_"),
@@ -498,29 +453,16 @@ test.describe("Swap - Landing page", () => {
   test.use({
     userdata: "skip-onboarding",
     speculosApp: app,
+
     cliCommandsOnApp: [
       [
         {
-          app: rejectedSwap.accountToDebit.currency.speculosApp,
-          cmd: (userdataPath?: string) => {
-            return CLI.liveData({
-              currency: rejectedSwap.accountToDebit.currency.speculosApp.name,
-              index: rejectedSwap.accountToDebit.index,
-              add: true,
-              appjson: userdataPath,
-            });
-          },
+          app: accountToDebit.currency.speculosApp,
+          cmd: liveDataCommand(accountToDebit.currency.speculosApp, accountToDebit.index),
         },
         {
-          app: rejectedSwap.accountToCredit.currency.speculosApp,
-          cmd: (userdataPath?: string) => {
-            return CLI.liveData({
-              currency: rejectedSwap.accountToCredit.currency.speculosApp.name,
-              index: rejectedSwap.accountToCredit.index,
-              add: true,
-              appjson: userdataPath,
-            });
-          },
+          app: accountToCredit.currency.speculosApp,
+          cmd: liveDataCommand(accountToCredit.currency.speculosApp, accountToCredit.index),
         },
       ],
       { scope: "test" },
@@ -652,6 +594,8 @@ for (const swap of tooLowAmountForQuoteSwaps) {
       acc.currency.speculosApp.name.replace(/ /g, "_"),
     );
 
+    const { accountToDebit, accountToCredit } = swap.swap;
+
     test.beforeEach(async () => {
       setExchangeDependencies(
         accPair.map(appName => ({
@@ -663,29 +607,16 @@ for (const swap of tooLowAmountForQuoteSwaps) {
     test.use({
       userdata: "skip-onboarding",
       speculosApp: app,
+
       cliCommandsOnApp: [
         [
           {
-            app: swap.swap.accountToDebit.currency.speculosApp,
-            cmd: (userdataPath?: string) => {
-              return CLI.liveData({
-                currency: swap.swap.accountToDebit.currency.speculosApp.name,
-                index: swap.swap.accountToDebit.index,
-                add: true,
-                appjson: userdataPath,
-              });
-            },
+            app: accountToDebit.currency.speculosApp,
+            cmd: liveDataCommand(accountToDebit.currency.speculosApp, accountToDebit.index),
           },
           {
-            app: swap.swap.accountToCredit.currency.speculosApp,
-            cmd: (userdataPath?: string) => {
-              return CLI.liveData({
-                currency: swap.swap.accountToCredit.currency.speculosApp.name,
-                index: swap.swap.accountToCredit.index,
-                add: true,
-                appjson: userdataPath,
-              });
-            },
+            app: accountToCredit.currency.speculosApp,
+            cmd: liveDataCommand(accountToCredit.currency.speculosApp, accountToCredit.index),
           },
         ],
         { scope: "test" },
@@ -724,32 +655,21 @@ const swapEntryPoint = {
 test.describe("Swap flow from different entry point", () => {
   setupEnv(true);
 
+  const { accountToDebit, accountToCredit } = swapEntryPoint.swap;
+
   test.use({
     userdata: "skip-onboarding",
     speculosApp: app,
+
     cliCommandsOnApp: [
       [
         {
-          app: swapEntryPoint.swap.accountToDebit.currency.speculosApp,
-          cmd: (userdataPath?: string) => {
-            return CLI.liveData({
-              currency: swapEntryPoint.swap.accountToDebit.currency.speculosApp.name,
-              index: swapEntryPoint.swap.accountToDebit.index,
-              add: true,
-              appjson: userdataPath,
-            });
-          },
+          app: accountToDebit.currency.speculosApp,
+          cmd: liveDataCommand(accountToDebit.currency.speculosApp, accountToDebit.index),
         },
         {
-          app: swapEntryPoint.swap.accountToCredit.currency.speculosApp,
-          cmd: (userdataPath?: string) => {
-            return CLI.liveData({
-              currency: swapEntryPoint.swap.accountToCredit.currency.speculosApp.name,
-              index: swapEntryPoint.swap.accountToCredit.index,
-              add: true,
-              appjson: userdataPath,
-            });
-          },
+          app: accountToCredit.currency.speculosApp,
+          cmd: liveDataCommand(accountToCredit.currency.speculosApp, accountToCredit.index),
         },
       ],
       { scope: "test" },
