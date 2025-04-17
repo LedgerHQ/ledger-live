@@ -80,6 +80,7 @@ const getFeatureFlagProperties = () => {
     const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
     const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
     const stakePrograms = analyticsFeatureFlagMethod("stakePrograms");
+    const ptxCard = analyticsFeatureFlagMethod("ptxCard");
 
     const ptxSwapLiveAppMobileFlag = analyticsFeatureFlagMethod("ptxSwapLiveAppMobile");
 
@@ -110,6 +111,7 @@ const getFeatureFlagProperties = () => {
       isBatch2Enabled,
       isBatch3Enabled,
       stakingProvidersEnabled,
+      ptxCard: ptxCard?.enabled,
       stablecoinYield,
       stakingCurrenciesEnabled,
       partnerStakingCurrenciesEnabled,
