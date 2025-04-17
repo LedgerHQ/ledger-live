@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useMemo, useCallback, ReactElement } from "react";
 import type { State, ServiceStatusUserSettings, Incident, ServiceStatusApi } from "./types";
 import defaultNetworkApi from "./api";
+import { fromPromise } from "xstate";
 import { useMachine } from "@xstate/react";
 import { serviceStatusMachine } from "./machine";
 type Props = {
@@ -74,14 +75,16 @@ export const ServiceStatusProvider = ({
     };
   }, [networkApi]);
 
-  const [state, send] = useMachine(serviceStatusMachine, {
-    services: {
-      fetchData,
-    },
-    delays: {
-      AUTO_UPDATE_DELAY: autoUpdateDelay,
-    },
-  });
+  const [state, send] = useMachine(
+    serviceStatusMachine.provide({
+      actors: {
+        fetchData: fromPromise(fetchData),
+      },
+      delays: {
+        AUTO_UPDATE_DELAY: autoUpdateDelay,
+      },
+    }),
+  );
   const api = useMemo(
     () => ({
       updateData: async () => {
