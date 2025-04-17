@@ -528,6 +528,47 @@ for (const swap of tooLowAmountForQuoteSwaps) {
   });
 }
 
+test.describe.only("Swap - Switch You send and You receive currency", () => {
+  const swap = new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.03", Fee.MEDIUM);
+  setupEnv(true);
+
+  const accPair: string[] = [swap.accountToDebit, swap.accountToCredit].map(acc =>
+    acc.currency.speculosApp.name.replace(/ /g, "_"),
+  );
+
+  test.beforeEach(async () => {
+    setExchangeDependencies(
+      accPair.map(appName => ({
+        name: appName,
+      })),
+    );
+  });
+
+  test.use({
+    userdata: "speculos-tests-app",
+    speculosApp: app,
+  });
+
+  test(
+    "Switch You send and You receive currency",
+    {
+      annotation: {
+        type: "TMS",
+        description: "TODO",
+      },
+    },
+    async ({ app, electronApp }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await performSwapUntilQuoteSelectionStep(app, electronApp, swap, swap.amount);
+      await app.swap.swithcYouSendAndYouReceive(electronApp);
+      //todo faire les expects
+      //Then Accountfrom becomes accountTo
+      //and accountTo becomes Accountfrom
+    },
+  );
+});
+
 const swapEntryPoint = {
   swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1, "0.0006", Fee.MEDIUM),
 };
