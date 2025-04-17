@@ -14,15 +14,17 @@ type AssetItemProps = AssetType & {
 
 const TempAssetBadge = () => (
   // TODO: To be replaced with LIVE-18221
-  <span
-    style={{
-      height: 48,
-      width: 48,
-      borderRadius: 48,
-      backgroundColor: "grey",
-      display: "inline-block",
-    }}
-  />
+  <div style={{ display: "flex", alignItems: "center" }}>
+    <span
+      style={{
+        height: 48,
+        width: 48,
+        borderRadius: 48,
+        backgroundColor: "grey",
+        display: "inline-block",
+      }}
+    />
+  </div>
 );
 
 const Wrapper = styled.div`
@@ -31,11 +33,21 @@ const Wrapper = styled.div`
     "marging-s",
     "colors-content-subdued-default-default",
     "colors-content-default-default",
+    "colors-surface-transparent-hover",
+    "colors-surface-transparent-pressed",
   )}
 
   display: flex;
   padding: var(--spacing-xs);
   cursor: pointer;
+
+  :hover {
+    background-color: var(--colors-surface-transparent-hover);
+  }
+
+  :active {
+    background-color: var(--colors-surface-transparent-pressed);
+  }
 `;
 
 const InfoWrapper = styled.div`
