@@ -1,7 +1,7 @@
 import { useMemo, useEffect, useRef, useCallback, useState } from "react";
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { atom, useAtom } from "jotai";
-import { AppManifest, WalletAPITransaction } from "./types";
+import { AppManifest, DAppTrackingData, WalletAPITransaction } from "./types";
 import { getMainAccount, getParentAccount } from "../account";
 import { TrackingAPI } from "./tracking";
 import { getAccountBridge } from "../bridge";
@@ -15,6 +15,8 @@ import BigNumber from "bignumber.js";
 import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/logic";
 import { SmartWebsocket } from "./SmartWebsocket";
 import { stripHexPrefix } from "./helpers";
+import { DeviceTransactionField, getDeviceTransactionConfig } from "../transaction";
+import type { Transaction } from "../generated/types";
 
 type MessageId = number | string | null;
 
@@ -201,6 +203,16 @@ function isParentAccountPresent(
   }
 
   return true;
+}
+
+function getTransactionType(fields: Array<DeviceTransactionField>): string {
+  for (let i = 0; i < fields.length; i++) {
+    const field = fields[i];
+    if (field.type === "text" && field.label === "Type") {
+      return field.value;
+    }
+  }
+  return "";
 }
 
 export function useDappLogic({
@@ -471,16 +483,44 @@ export function useDappLogic({
               : currentParentAccount.freshAddress;
 
           if (address.toLowerCase() === ethTX.from.toLowerCase()) {
+            let trackingData: DAppTrackingData | undefined;
             try {
-              const options = nanoApp
-                ? { hwAppId: nanoApp, dependencies: dependencies }
-                : undefined;
-              tracking.dappSendTransactionRequested(manifest);
-
               const signFlowInfos = getWalletAPITransactionSignFlowInfos({
                 walletApiTransaction: tx,
                 account: currentAccount,
               });
+
+              const fields = getDeviceTransactionConfig({
+                account: currentAccount,
+                parentAccount: currentParentAccount,
+                transaction: signFlowInfos.liveTx as Transaction,
+                status: {
+                  errors: {},
+                  warnings: {},
+                  estimatedFees: new BigNumber(0),
+                  amount: new BigNumber(0),
+                  totalSpent: new BigNumber(0),
+                },
+              });
+
+              const transactionType = getTransactionType(fields);
+
+              trackingData = {
+                type: transactionType === "Approve" ? "approve" : "transfer",
+                currency:
+                  currentAccount.type === "TokenAccount"
+                    ? currentAccount.token.name
+                    : currentAccount.currency.name,
+                network:
+                  currentAccount.type === "TokenAccount"
+                    ? currentAccount.token.parentCurrency.id
+                    : currentAccount.currency.id,
+              };
+
+              const options = nanoApp
+                ? { hwAppId: nanoApp, dependencies: dependencies }
+                : undefined;
+              tracking.dappSendTransactionRequested(manifest, trackingData);
 
               const signedTransaction = await new Promise<SignedOperation>((resolve, reject) =>
                 uiHook["transaction.sign"]({
@@ -517,7 +557,7 @@ export function useDappLogic({
                 optimisticOperation,
               );
 
-              tracking.dappSendTransactionSuccess(manifest);
+              tracking.dappSendTransactionSuccess(manifest, trackingData);
 
               postMessage(
                 JSON.stringify({
@@ -527,7 +567,7 @@ export function useDappLogic({
                 }),
               );
             } catch (error) {
-              tracking.dappSendTransactionFail(manifest);
+              tracking.dappSendTransactionFail(manifest, trackingData);
               postMessage(
                 JSON.stringify({
                   id: data.id,
