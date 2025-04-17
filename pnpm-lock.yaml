@@ -7832,6 +7832,12 @@ importers:
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-devices
+      purify-ts:
+        specifier: ^2.1.0
+        version: 2.1.0
+      xstate:
+        specifier: ^5.19.2
+        version: 5.19.2
     devDependencies:
       '@ledgerhq/device-management-kit':
         specifier: 0.7.0

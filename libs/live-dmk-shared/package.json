@@ -34,7 +34,9 @@
   "dependencies": {
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/types-devices": "workspace:^"
+    "@ledgerhq/types-devices": "workspace:^",
+    "purify-ts": "^2.1.0",
+    "xstate": "^5.19.2"
   },
   "devDependencies": {
     "@ledgerhq/device-management-kit": "0.7.0",
