@@ -1,5 +1,5 @@
 import { BlePlxManager } from "./BlePlxManager";
-import { DeviceManagementKitTransport, tracer } from "./DeviceManagementKitTransport";
+import { DeviceManagementKitBLETransport, tracer } from "./DeviceManagementKitBLETransport";
 import { Observable, Subject, Subscription } from "rxjs";
 import { State } from "react-native-ble-plx";
 import { afterEach, beforeEach, expect } from "vitest";
@@ -13,7 +13,7 @@ import {
 import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import type { Subscription as TransportSubscription } from "@ledgerhq/hw-transport";
 
-describe("DeviceManagementKitTransport", () => {
+describe("DeviceManagementKitBLETransport", () => {
   afterEach(() => {
     vi.clearAllMocks();
   });
@@ -21,7 +21,7 @@ describe("DeviceManagementKitTransport", () => {
   describe("setLogLevel", () => {
     it("should trace not implemented", () => {
       // given
-      const transport = DeviceManagementKitTransport;
+      const transport = DeviceManagementKitBLETransport;
       // when
       vi.spyOn(tracer, "trace");
       transport.setLogLevel("TEST");
@@ -45,7 +45,7 @@ describe("DeviceManagementKitTransport", () => {
           remove: () => null,
         };
       });
-      const transport = DeviceManagementKitTransport;
+      const transport = DeviceManagementKitBLETransport;
       // when
       transport.observeState(observer);
       // then
@@ -62,7 +62,7 @@ describe("DeviceManagementKitTransport", () => {
           remove: () => null,
         };
       });
-      const transport = DeviceManagementKitTransport;
+      const transport = DeviceManagementKitBLETransport;
       // when
       transport.observeState(observer);
       // then
@@ -79,7 +79,7 @@ describe("DeviceManagementKitTransport", () => {
           remove: rmBleObs,
         };
       });
-      const transport = DeviceManagementKitTransport;
+      const transport = DeviceManagementKitBLETransport;
 
       // when
       const sub = transport.observeState(observer);
@@ -96,7 +96,7 @@ describe("DeviceManagementKitTransport", () => {
     });
     it("should throw error if device is not connected", async () => {
       // given
-      const transport = DeviceManagementKitTransport;
+      const transport = DeviceManagementKitBLETransport;
       const dmk = getDeviceManagementKit();
       // when
       vi.spyOn(dmk, "listConnectedDevices").mockReturnValue([]);
@@ -110,7 +110,7 @@ describe("DeviceManagementKitTransport", () => {
 
     it("should disconnect a device", async () => {
       // given
-      const transport = DeviceManagementKitTransport;
+      const transport = DeviceManagementKitBLETransport;
       const dmk = getDeviceManagementKit();
       vi.spyOn(dmk, "listConnectedDevices").mockReturnValue([
         {
@@ -140,7 +140,7 @@ describe("DeviceManagementKitTransport", () => {
 
     it("should throw error if dmk disconnect throws", async () => {
       // given
-      const transport = DeviceManagementKitTransport;
+      const transport = DeviceManagementKitBLETransport;
       const dmk = getDeviceManagementKit();
       vi.spyOn(dmk, "listConnectedDevices").mockReturnValue([
         {
@@ -171,20 +171,21 @@ describe("DeviceManagementKitTransport", () => {
     });
     it("should return the active transport", async () => {
       // given
-      const staticTransport = DeviceManagementKitTransport;
+      const staticTransport = DeviceManagementKitBLETransport;
       const dmk = getDeviceManagementKit();
       vi.spyOn(dmk, "getDeviceSessionState").mockReturnValue(
         new Observable(subscriber => {
           subscriber.next({ deviceStatus: DeviceStatus.CONNECTED } as DeviceSessionState);
         }),
       );
-      const activeTransport = new DeviceManagementKitTransport(dmk, "sessionId");
+      const activeTransport = new DeviceManagementKitBLETransport(dmk, "sessionId");
       vi.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
         sessionId: "sessionId",
         transport: activeTransport,
       });
       vi.spyOn(dmk, "getConnectedDevice").mockReturnValue({
         id: "deviceId",
+        type: "BLE",
       } as ConnectedDevice);
 
       // when
@@ -195,14 +196,14 @@ describe("DeviceManagementKitTransport", () => {
     });
     it("should scan and connect if get dmk device session state throws", async () => {
       // given
-      const staticTransport = DeviceManagementKitTransport;
+      const staticTransport = DeviceManagementKitBLETransport;
       const dmk = getDeviceManagementKit();
       vi.spyOn(dmk, "getDeviceSessionState").mockReturnValue(
         new Observable(subscriber => {
           subscriber.next({ deviceStatus: DeviceStatus.CONNECTED } as DeviceSessionState);
         }),
       );
-      const activeTransport = new DeviceManagementKitTransport(dmk, "sessionId");
+      const activeTransport = new DeviceManagementKitBLETransport(dmk, "sessionId");
       vi.spyOn(dmk, "getDeviceSessionState").mockReturnValue(
         new Observable(subscriber => {
           subscriber.error(new Error("get device session state error"));
@@ -230,7 +231,7 @@ describe("DeviceManagementKitTransport", () => {
     });
     it("should return a new transport after dmk scanning and connect", async () => {
       // given
-      const staticTransport = DeviceManagementKitTransport;
+      const staticTransport = DeviceManagementKitBLETransport;
       const dmk = getDeviceManagementKit();
       vi.spyOn(dmk, "getDeviceSessionState").mockReturnValue(
         new Observable(subscriber => {
@@ -253,7 +254,7 @@ describe("DeviceManagementKitTransport", () => {
     });
     it("should connect to an already discovered device", async () => {
       // given
-      const staticTransport = DeviceManagementKitTransport;
+      const staticTransport = DeviceManagementKitBLETransport;
       const device = { id: "deviceId" } as DiscoveredDevice;
       const dmk = getDeviceManagementKit();
       vi.spyOn(dmk, "connect").mockResolvedValue("sessionId");
@@ -275,7 +276,7 @@ describe("DeviceManagementKitTransport", () => {
     });
     it("should listen to available devices", async () => {
       // given
-      const staticTransport = DeviceManagementKitTransport;
+      const staticTransport = DeviceManagementKitBLETransport;
       const observer = new Subject();
       const dmk = getDeviceManagementKit();
       vi.spyOn(dmk, "listenToAvailableDevices").mockReturnValue(
@@ -310,7 +311,7 @@ describe("DeviceManagementKitTransport", () => {
     });
     it("should call stopDiscovering if unsubscribed", async () => {
       // given
-      const staticTransport = DeviceManagementKitTransport;
+      const staticTransport = DeviceManagementKitBLETransport;
       const dmk = getDeviceManagementKit();
       vi.spyOn(dmk, "stopDiscovering");
       vi.spyOn(dmk, "listenToAvailableDevices").mockReturnValue(
@@ -328,7 +329,7 @@ describe("DeviceManagementKitTransport", () => {
     });
     it("should emit error if dmk listenToAvailableDevices throws", async () => {
       // given
-      const staticTransport = DeviceManagementKitTransport;
+      const staticTransport = DeviceManagementKitBLETransport;
       const observer = new Subject();
       const dmk = getDeviceManagementKit();
       vi.spyOn(dmk, "listenToAvailableDevices").mockReturnValue(
@@ -367,7 +368,7 @@ describe("DeviceManagementKitTransport", () => {
           } as DeviceSessionState),
         ),
       );
-      const transport = new DeviceManagementKitTransport(dmk, "session");
+      const transport = new DeviceManagementKitBLETransport(dmk, "session");
       vi.spyOn(activeDeviceSessionSubject, "next");
       vi.spyOn(transport, "emit");
 
@@ -388,7 +389,7 @@ describe("DeviceManagementKitTransport", () => {
           } as DeviceSessionState),
         ),
       );
-      const transport = new DeviceManagementKitTransport(dmk, "session");
+      const transport = new DeviceManagementKitBLETransport(dmk, "session");
       vi.spyOn(activeDeviceSessionSubject, "next");
       vi.spyOn(transport, "emit");
 
@@ -407,7 +408,7 @@ describe("DeviceManagementKitTransport", () => {
           subscriber.error(new Error("error"));
         }),
       );
-      const transport = new DeviceManagementKitTransport(dmk, "session");
+      const transport = new DeviceManagementKitBLETransport(dmk, "session");
       vi.spyOn(transport, "emit");
 
       // when
@@ -424,7 +425,7 @@ describe("DeviceManagementKitTransport", () => {
           subscriber.complete();
         }),
       );
-      const transport = new DeviceManagementKitTransport(dmk, "session");
+      const transport = new DeviceManagementKitBLETransport(dmk, "session");
       vi.spyOn(transport, "emit");
 
       // when
@@ -440,7 +441,7 @@ describe("DeviceManagementKitTransport", () => {
       // given
       const dmk = getDeviceManagementKit();
       vi.spyOn(dmk, "getDeviceSessionState").mockReturnValue(new Observable());
-      const transport = new DeviceManagementKitTransport(dmk, "session");
+      const transport = new DeviceManagementKitBLETransport(dmk, "session");
       vi.spyOn(dmk, "stopDiscovering");
       // when
       transport.close();
@@ -454,7 +455,7 @@ describe("DeviceManagementKitTransport", () => {
       // given
       const dmk = getDeviceManagementKit();
       vi.spyOn(dmk, "getDeviceSessionState").mockReturnValue(new Observable());
-      const transport = new DeviceManagementKitTransport(getDeviceManagementKit(), "session");
+      const transport = new DeviceManagementKitBLETransport(getDeviceManagementKit(), "session");
       vi.spyOn(dmk, "disconnect").mockResolvedValue(undefined);
       // when
       transport.disconnect();
@@ -472,7 +473,7 @@ describe("DeviceManagementKitTransport", () => {
       const dmk = getDeviceManagementKit();
       vi.spyOn(dmk, "getDeviceSessionState").mockReturnValue(new Observable());
       vi.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue(null);
-      const transport = new DeviceManagementKitTransport(dmk, "session");
+      const transport = new DeviceManagementKitBLETransport(dmk, "session");
       try {
         // when
         await transport.exchange(Buffer.from([]));
@@ -486,7 +487,7 @@ describe("DeviceManagementKitTransport", () => {
       // given
       const dmk = getDeviceManagementKit();
       vi.spyOn(dmk, "getDeviceSessionState").mockReturnValue(new Observable());
-      const transport = new DeviceManagementKitTransport(dmk, "session");
+      const transport = new DeviceManagementKitBLETransport(dmk, "session");
       vi.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
         sessionId: "session",
         transport: transport,
@@ -515,7 +516,7 @@ describe("DeviceManagementKitTransport", () => {
       // given
       const dmk = getDeviceManagementKit();
       vi.spyOn(dmk, "getDeviceSessionState").mockReturnValue(new Observable());
-      const transport = new DeviceManagementKitTransport(dmk, "session");
+      const transport = new DeviceManagementKitBLETransport(dmk, "session");
       vi.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
         sessionId: "session",
         transport: transport,
