@@ -52,6 +52,10 @@ const createDummyTx = (address: string, kind: TransactionModel["kind"]) => {
       return createDummyStakeWithdrawTx(address);
     case "token.transfer":
       return createDummyTokenTransferTx(address);
+    case "token.approve":
+      return createDummyTokenApproveTx(address);
+    case "token.revoke":
+      return createDummyTokenRevokeTx(address);
     case "stake.split":
     case "token.createATA":
       throw new Error(`not implemented for <${kind}>`);
@@ -179,6 +183,52 @@ const createDummyTokenTransferTx = (address: string): Transaction => {
             tokenAccAddress: randomAddresses[2],
             shouldCreateAsAssociatedTokenAccount: true,
           },
+          tokenProgram: PARSED_PROGRAMS.SPL_TOKEN,
+        },
+        ...commandDescriptorCommons,
+      },
+    },
+  };
+};
+
+const createDummyTokenApproveTx = (address: string): Transaction => {
+  return {
+    ...createTransaction({} as any),
+    model: {
+      kind: "token.approve",
+      uiState: {} as any,
+      commandDescriptor: {
+        command: {
+          kind: "token.approve",
+          account: randomAddresses[0],
+          mintAddress: randomAddresses[1],
+          recipientDescriptor: {
+            walletAddress: randomAddresses[1],
+            tokenAccAddress: randomAddresses[2],
+            shouldCreateAsAssociatedTokenAccount: true,
+          },
+          owner: address,
+          amount: 0,
+          decimals: 0,
+          tokenProgram: PARSED_PROGRAMS.SPL_TOKEN,
+        },
+        ...commandDescriptorCommons,
+      },
+    },
+  };
+};
+
+const createDummyTokenRevokeTx = (address: string): Transaction => {
+  return {
+    ...createTransaction({} as any),
+    model: {
+      kind: "token.revoke",
+      uiState: {} as any,
+      commandDescriptor: {
+        command: {
+          kind: "token.revoke",
+          account: randomAddresses[0],
+          owner: address,
           tokenProgram: PARSED_PROGRAMS.SPL_TOKEN,
         },
         ...commandDescriptorCommons,
