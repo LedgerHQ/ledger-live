@@ -131,7 +131,7 @@ const getPtxAttributes = () => {
     isBatch2Enabled,
     isBatch3Enabled,
     stakingProvidersEnabled,
-    ptxCard,
+    ptxCard: ptxCard?.enabled,
     stablecoinYield,
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
