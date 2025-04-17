@@ -6,7 +6,7 @@ buildscript {
         minSdkVersion = 24
         compileSdkVersion = 34
         targetSdkVersion = 34
-        androidXCore = "1.8.0"
+        androidXCore = "1.12.0"
         androidXAnnotation = "1.2.0"
         androidXBrowser = "1.3.0"
         ndkVersion = "26.1.10909125"
@@ -62,8 +62,6 @@ allprojects {
     }
     configurations.all {
         resolutionStrategy {
-            force 'androidx.core:core:1.7.0'
-
             dependencySubstitution {
                 substitute module("com.redmadrobot:input-mask-android:6.0.0") using module('com.github.RedMadRobot:input-mask-android:6.0.0')
             }

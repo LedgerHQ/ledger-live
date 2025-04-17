@@ -85,6 +85,7 @@
     "@ledgerhq/coin-multiversx": "workspace:^",
     "@ledgerhq/coin-stacks": "workspace:^",
     "@ledgerhq/device-management-kit": "0.0.0-fix-rn-ble-scanning-20250424114719",
+    "@ledgerhq/device-transport-kit-react-native-hid": "0.0.0-fix-rn-ble-scanning-20250424114719",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",

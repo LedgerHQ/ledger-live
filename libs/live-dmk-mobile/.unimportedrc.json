@@ -9,5 +9,8 @@
   "ignoreUnused": [
     "react-dom"
   ],
-  "ignoreUnimported": []
+  "ignoreUnimported": [],
+  "ignoreUnresolved": [
+    "@ledgerhq/device-transport-kit-react-native-hid"
+  ]
 }
