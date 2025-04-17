@@ -117,21 +117,18 @@ export const test = base.extend<TestFixtures>({
         if (cliCommandsOnApp?.length) {
           for (const { app, cmd } of cliCommandsOnApp) {
             speculos = await launchSpeculos(app.name);
-            CLI.registerSpeculosTransport(speculos.speculosApiPort.toString());
+            CLI.registerSpeculosTransport(speculos.ports.apiPort.toString());
             await executeCliCommand(cmd, userdataDestinationPath);
-            await stopSpeculos(speculos.device.id);
+            await stopSpeculos(speculos.id);
           }
         }
 
-        speculos = await launchSpeculos(speculosApp.name, testInfo.title.replace(/ /g, "_"));
+        speculos = await launchSpeculos(speculosApp.name, testInfo.title);
 
         if (cliCommands?.length) {
-          CLI.registerSpeculosTransport(speculos.speculosApiPort.toString());
+          CLI.registerSpeculosTransport(speculos.ports.apiPort.toString());
           for (const cmd of cliCommands) {
-            const promise = await cmd(`${userdataDestinationPath}/app.json`);
-            const result =
-              promise instanceof Observable ? await lastValueFrom(promise) : await promise;
-            console.log("CLI result: ", result);
+            await executeCliCommand(cmd, userdataDestinationPath);
           }
         }
       }
@@ -172,8 +169,8 @@ export const test = base.extend<TestFixtures>({
       // close app
       await electronApp.close();
     } finally {
-      if (speculos.device) {
-        await stopSpeculos(speculos.device.id);
+      if (speculos) {
+        await stopSpeculos(speculos.id);
       }
     }
   },
