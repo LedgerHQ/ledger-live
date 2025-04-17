@@ -7,11 +7,6 @@ import { UserRefusedAllowManager, UserRefusedDeviceNameChange } from "@ledgerhq/
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 import { renderHook } from "@testing-library/react-native";
 
-jest.mock("../segment", () => ({
-  track: jest.fn(),
-  setAnalyticsFeatureFlagMethod: jest.fn(),
-}));
-
 describe("useTrackMyLedgerSectionEvents", () => {
   const deviceMock = {
     modelId: "nanoX",
