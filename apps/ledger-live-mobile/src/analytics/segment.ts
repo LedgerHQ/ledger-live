@@ -57,6 +57,7 @@ import { Maybe } from "../types/helpers";
 import { appStartupTime } from "../StartupTimeMarker";
 import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
 import { getEnv } from "@ledgerhq/live-env";
+import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import { getTokensWithFunds } from "LLM/utils/getTokensWithFunds";
 
 let sessionId = uuid();
@@ -93,20 +94,23 @@ const getFeatureFlagProperties = () => {
 
     const ptxSwapLiveAppMobileEnabled = Boolean(ptxSwapLiveAppMobileFlag?.enabled);
 
-    const stakingCurrenciesEnabled =
+    const stakingCurrenciesEnabled: string[] | string =
       stakePrograms?.enabled && stakePrograms?.params?.list?.length
         ? stakePrograms.params.list
-        : [];
-    const partnerStakingCurrenciesEnabled =
+        : "flag not loaded";
+    const partnerStakingCurrenciesEnabled: string[] | string =
       stakePrograms?.enabled && stakePrograms?.params?.redirects
         ? Object.keys(stakePrograms.params.redirects)
-        : [];
+        : "flag not loaded";
+
+    const stablecoinYield = getStablecoinYieldSetting(stakePrograms);
 
     updateIdentify({
       isBatch1Enabled,
       isBatch2Enabled,
       isBatch3Enabled,
       stakingProvidersEnabled,
+      stablecoinYield,
       stakingCurrenciesEnabled,
       partnerStakingCurrenciesEnabled,
       ptxSwapLiveAppMobileEnabled,
@@ -253,6 +257,7 @@ const extraProperties = async (store: AppStore) => {
       ? Object.keys(stakePrograms.params.redirects)
       : [];
 
+  const stablecoinYield = getStablecoinYieldSetting(stakePrograms);
   const ledgerSyncAtributes = getLedgerSyncAttributes(state);
   const rebornAttributes = getRebornAttributes();
   const mevProtectionAttributes = getMEVAttributes(state);
@@ -302,6 +307,7 @@ const extraProperties = async (store: AppStore) => {
     staxLockscreen: customImageType || "none",
     nps,
     stakingProvidersEnabled: stakingProvidersCount || "flag not loaded",
+    stablecoinYield,
     ...ledgerSyncAtributes,
     ...rebornAttributes,
     ...mevProtectionAttributes,

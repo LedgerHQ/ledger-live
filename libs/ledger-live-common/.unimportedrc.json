@@ -143,6 +143,7 @@
     "src/featureFlags/FeatureFlagsContext.ts",
     "src/featureFlags/groupedFeatures.ts",
     "src/featureFlags/index.ts",
+    "src/featureFlags/stakePrograms/index.ts",
     "src/featureFlags/useFeature.ts",
     "src/featureFlags/useHasOverriddenFeatureFlags.ts",
     "src/generated/cli-transaction.ts",
@@ -292,12 +293,7 @@
     "src/wallet-api/utils/deriveAccountIdForManifest.ts",
     "src/errors/transactionBroadcastErrors.ts"
   ],
-  "extensions": [
-    ".ts",
-    ".js",
-    ".jsx",
-    ".tsx"
-  ],
+  "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [
     "**/node_modules/**",
     "**/__tests__/**",
