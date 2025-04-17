@@ -1,5 +1,17 @@
 # @ledgerhq/coin-tezos
 
+## 3.1.0-nightly.0
+
+### Minor Changes
+
+- [#9981](https://github.com/LedgerHQ/ledger-live/pull/9981) [`001624d`](https://github.com/LedgerHQ/ledger-live/commit/001624d108b8212bff27fda572689a86b9788708) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Tezos listOperations return also 'reveal' one
+
+### Patch Changes
+
+- Updated dependencies [[`9a208c3`](https://github.com/LedgerHQ/ledger-live/commit/9a208c39aec129b3aff2105991ffc18be05fd3f5)]:
+  - @ledgerhq/types-live@6.68.0-nightly.0
+  - @ledgerhq/coin-framework@3.0.1-nightly.0
+
 ## 3.0.0
 
 ### Major Changes

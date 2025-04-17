@@ -1,5 +1,31 @@
 # live-mobile
 
+## 3.75.0-nightly.0
+
+### Minor Changes
+
+- [#9924](https://github.com/LedgerHQ/ledger-live/pull/9924) [`9a208c3`](https://github.com/LedgerHQ/ledger-live/commit/9a208c39aec129b3aff2105991ffc18be05fd3f5) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Pass redirects from stakePrograms feature flag for enabling and disabling the related features on earn live app.
+
+### Patch Changes
+
+- [#9983](https://github.com/LedgerHQ/ledger-live/pull/9983) [`d5e8d23`](https://github.com/LedgerHQ/ledger-live/commit/d5e8d23c745e6e30097cb360ac3050af02771b86) Thanks [@sarneijim](https://github.com/sarneijim)! - Add ptxCard tracks
+
+- Updated dependencies [[`9a208c3`](https://github.com/LedgerHQ/ledger-live/commit/9a208c39aec129b3aff2105991ffc18be05fd3f5)]:
+  - @ledgerhq/types-live@6.68.0-nightly.0
+  - @ledgerhq/live-dmk-mobile@0.3.1-nightly.0
+  - @ledgerhq/coin-framework@3.0.1-nightly.0
+  - @ledgerhq/coin-cosmos@0.13.1-nightly.0
+  - @ledgerhq/coin-evm@2.18.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.2-nightly.0
+  - @ledgerhq/coin-multiversx@0.4.2-nightly.0
+  - @ledgerhq/coin-stacks@0.8.2-nightly.0
+  - @ledgerhq/domain-service@1.2.27-nightly.0
+  - @ledgerhq/live-countervalues@0.5.2-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.31-nightly.0
+  - @ledgerhq/live-nft@0.8.2-nightly.0
+  - @ledgerhq/live-nft-react@0.9.2-nightly.0
+  - @ledgerhq/live-wallet@0.10.5-nightly.0
+
 ## 3.74.0
 
 ### Minor Changes

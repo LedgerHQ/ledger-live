@@ -1,5 +1,17 @@
 # @ledgerhq/coin-stellar
 
+## 3.1.0-nightly.0
+
+### Minor Changes
+
+- [#9974](https://github.com/LedgerHQ/ledger-live/pull/9974) [`ec758f8`](https://github.com/LedgerHQ/ledger-live/commit/ec758f83186efa79972389971dd365dfca51b886) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - stellar coin module API: make craft return signature payload instead of transaction envelope
+
+### Patch Changes
+
+- Updated dependencies [[`9a208c3`](https://github.com/LedgerHQ/ledger-live/commit/9a208c39aec129b3aff2105991ffc18be05fd3f5)]:
+  - @ledgerhq/types-live@6.68.0-nightly.0
+  - @ledgerhq/coin-framework@3.0.1-nightly.0
+
 ## 3.0.0
 
 ### Major Changes
