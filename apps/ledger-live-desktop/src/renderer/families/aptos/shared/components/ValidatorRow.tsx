@@ -1,6 +1,6 @@
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
-import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/staking";
+import { Validator } from "@ledgerhq/live-common/families/aptos/types";
 import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
@@ -19,7 +19,7 @@ import { openURL } from "~/renderer/linking";
 
 type Props = {
   currency: CryptoCurrency;
-  validator: ValidatorsAppValidator;
+  validator: Validator;
   active?: boolean;
   onClick?: (v: { address: string }) => void;
   disableHover?: boolean;
@@ -28,7 +28,7 @@ type Props = {
 function AptosValidatorRow({ validator, active, onClick, unit, currency, disableHover }: Props) {
   const explorerView = getDefaultExplorerView(currency);
   const onExternalLink = useCallback(() => {
-    const url = validator.wwwUrl || getAddressExplorer(explorerView, validator.voteAccount);
+    const url = validator.wwwUrl || getAddressExplorer(explorerView, validator.accountAddr);
     if (url) {
       openURL(url);
     }
@@ -37,19 +37,19 @@ function AptosValidatorRow({ validator, active, onClick, unit, currency, disable
     <StyledValidatorRow
       disableHover={disableHover ?? false}
       onClick={onClick}
-      key={validator.voteAccount}
+      key={validator.accountAddr}
       validator={{
-        address: validator.voteAccount,
+        address: validator.accountAddr,
       }}
       icon={
         <IconContainer isSR>
-          {validator.avatarUrl === undefined && <FirstLetterIcon label={validator.voteAccount} />}
+          {validator.avatarUrl === undefined && <FirstLetterIcon label={validator.accountAddr} />}
           {validator.avatarUrl !== undefined && (
             <Image resource={validator.avatarUrl} alt="" width={32} height={32} />
           )}
         </IconContainer>
       }
-      title={validator.name || validator.voteAccount}
+      title={validator.name || validator.accountAddr}
       onExternalLink={onExternalLink}
       unit={unit}
       subtitle={

@@ -5,7 +5,7 @@ import type {
   AptosPreloadData,
   AptosStake,
   AptosStakeWithMeta,
-  Validators,
+  Validator,
 } from "@ledgerhq/coin-aptos/types";
 import { useObservable } from "../../observable";
 
@@ -13,7 +13,7 @@ export function useAptosPreloadData(currency: CryptoCurrency): AptosPreloadData 
   return useObservable(getAptosPreloadData(currency), getCurrentAptosPreloadData(currency));
 }
 
-export function useValidators(currency: CryptoCurrency, search?: string): Validators[] {
+export function useValidators(currency: CryptoCurrency, search?: string): Validator[] {
   const data = useAptosPreloadData(currency);
 
   return useMemo(() => {
@@ -28,14 +28,14 @@ export function useValidators(currency: CryptoCurrency, search?: string): Valida
     const filtered = validators.filter(
       validator =>
         validator.name?.toLowerCase().includes(lowercaseSearch) ||
-        validator.voteAccount.toLowerCase().includes(lowercaseSearch),
+        validator.accountAddr.toLowerCase().includes(lowercaseSearch),
     );
 
     const flags = [];
-    const output: Validators[] = [];
+    const output: Validator[] = [];
     for (let i = 0; i < filtered.length; i++) {
-      if (flags[filtered[i].voteAccount]) continue;
-      flags[filtered[i].voteAccount] = true;
+      if (flags[filtered[i].accountAddr]) continue;
+      flags[filtered[i].accountAddr] = true;
       output.push(filtered[i]);
     }
     return output;
@@ -54,7 +54,7 @@ export function useAptosStakesWithMeta(
 
   const { validators } = data;
 
-  const validatorByVoteAccAddr = new Map(validators.map(v => [v.voteAccount, v]));
+  const validatorByVoteAccAddr = new Map(validators.map(v => [v.accountAddr, v]));
 
   return stakes.map(stake => {
     const voteAccAddr = stake.delegation?.voteAccAddr;

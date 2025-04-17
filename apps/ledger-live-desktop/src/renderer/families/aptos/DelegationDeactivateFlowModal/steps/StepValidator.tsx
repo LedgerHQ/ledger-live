@@ -38,7 +38,7 @@ export default function StepValidator({
   }
   const { stake } = stakeWithMeta;
   const validators = useValidators(account.currency);
-  const validator = validators.find(v => v.voteAccount === stake.delegation?.voteAccAddr);
+  const validator = validators.find(v => v.accountAddr === stake.delegation?.voteAccAddr);
   if (validator === undefined) {
     return null;
   }

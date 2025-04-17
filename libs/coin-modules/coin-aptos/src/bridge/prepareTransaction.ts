@@ -4,7 +4,7 @@ import { AptosAPI } from "../api";
 import { getEstimatedGas } from "./getFeesForTransaction";
 import type { Transaction } from "../types";
 import { DEFAULT_GAS, DEFAULT_GAS_PRICE, getMaxSendBalance } from "./logic";
-import { APTOS_DELEGATION_RESERVE, MIN_COINS_ON_SHARES_POOL } from "../constants";
+import { APTOS_DELEGATION_RESERVE_IN_OCTAS, MIN_COINS_ON_SHARES_POOL_IN_OCTAS } from "../constants";
 
 const prepareTransaction = async (
   account: Account,
@@ -13,7 +13,7 @@ const prepareTransaction = async (
   if (transaction.stake) {
     transaction.recipient = transaction.stake.poolAddr;
 
-    if (!transaction.useAllAmount && transaction.amount.lt(MIN_COINS_ON_SHARES_POOL))
+    if (!transaction.useAllAmount && transaction.amount.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS))
       return transaction;
   }
 
@@ -57,7 +57,7 @@ const prepareTransaction = async (
 
     // Reserve a certain amount to cover future network fees to deactivate and withdraw
     if (transaction.stake) {
-      transaction.amount = transaction.amount.minus(APTOS_DELEGATION_RESERVE);
+      transaction.amount = transaction.amount.minus(APTOS_DELEGATION_RESERVE_IN_OCTAS);
     }
   }
 

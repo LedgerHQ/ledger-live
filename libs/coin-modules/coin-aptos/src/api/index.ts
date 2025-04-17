@@ -44,7 +44,7 @@ export class AptosAPI {
   private indexerUrl: string;
   private aptosConfig: AptosConfig;
   private aptosClient: Aptos;
-  private apolloClient: ApolloClient<object>;
+  public apolloClient: ApolloClient<object>;
 
   constructor(currencyId: string) {
     this.apiUrl = getApiEndpoint(currencyId);

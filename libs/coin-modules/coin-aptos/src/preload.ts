@@ -3,8 +3,8 @@ import { flow } from "lodash/fp";
 // import { ChainAPI } from "./network";
 import { setAptosPreloadData as setPreloadData } from "./preload-data";
 import { AptosPreloadData } from "./types";
-import { clusterByCurrencyId, profitableValidators, ledgerFirstValidators } from "./utils";
-import { getValidators, Validators } from "./network/validators";
+import { clusterByCurrencyId, profitableValidators /* , ledgerFirstValidators */ } from "./utils";
+import { getValidators, Validator } from "./network/validators";
 
 export const PRELOAD_MAX_AGE = 15 * 60 * 1000; // 15min
 
@@ -16,9 +16,9 @@ export async function preloadWithAPI(
 
   const cluster = clusterByCurrencyId(currency.id);
 
-  const validators: Validators[] =
+  const validators: Validator[] =
     // cluster === "devnet" ? await loadDevnetValidators(api) : await getValidators(cluster);
-    await getValidators();
+    await getValidators(currency.id);
 
   const data: AptosPreloadData = {
     validatorsWithMeta: [],
@@ -30,13 +30,14 @@ export async function preloadWithAPI(
   return data;
 }
 
-function preprocessMainnetValidators(validators: Validators[]): Validators[] {
-  return flow(() => validators, profitableValidators, ledgerFirstValidators)();
+function preprocessMainnetValidators(validators: Validator[]): Validator[] {
+  // return flow(() => validators, profitableValidators, ledgerFirstValidators)();
+  return flow(() => validators, profitableValidators)();
 }
 
 // async function loadDevnetValidators(api: ChainAPI) {
 //   const voteAccs = await api.getVoteAccounts();
-//   const validators: Validators[] = voteAccs.current.map(acc => ({
+//   const validators: Validator[] = voteAccs.current.map(acc => ({
 //     activeStake: acc.activatedStake,
 //     commission: acc.commission,
 //     totalScore: 0,

@@ -8,7 +8,7 @@
 // } from "@solana/web3.js";
 import { partition } from "lodash/fp";
 import { getEnv } from "@ledgerhq/live-env";
-import { Validators } from "./network/validators";
+import { Validator } from "./network/validators";
 // import BigNumber from "bignumber.js";
 
 type Cluster = "devnet" | "testnet" | "mainnet";
@@ -211,8 +211,8 @@ export function endpointByCurrencyId(currencyId: string): string {
 //   );
 // }
 
-export const LEDGER_VALIDATOR_BY_FIGMENT: Validators = {
-  voteAccount: "26pV97Ce83ZQ6Kz9XT4td8tdoUFPTng8Fb8gPyc53dJx",
+export const LEDGER_VALIDATOR_BY_FIGMENT: Validator = {
+  accountAddr: "26pV97Ce83ZQ6Kz9XT4td8tdoUFPTng8Fb8gPyc53dJx",
   name: "Ledger by Figment",
   avatarUrl:
     "https://s3.amazonaws.com/keybase_processed_uploads/3c47b62f3d28ecfd821536f69be82905_360_360.jpg",
@@ -222,26 +222,26 @@ export const LEDGER_VALIDATOR_BY_FIGMENT: Validators = {
   totalScore: 6,
 };
 
-// export const LEDGER_VALIDATOR_BY_CHORUS_ONE: Validators = {
-//   voteAccount: "CpfvLiiPALdzZTP3fUrALg2TXwEDSAknRh1sn5JCt9Sr",
-//   name: "Ledger by Chorus One",
-//   avatarUrl:
-//     "https://s3.amazonaws.com/keybase_processed_uploads/3c47b62f3d28ecfd821536f69be82905_360_360.jpg",
-//   wwwUrl: "https://www.ledger.com/staking",
-//   activeStake: 10001001000098,
-//   commission: 7,
-//   totalScore: 7,
-// };
+export const LEDGER_VALIDATOR_BY_CHORUS_ONE: Validator = {
+  accountAddr: "CpfvLiiPALdzZTP3fUrALg2TXwEDSAknRh1sn5JCt9Sr",
+  name: "Ledger by Chorus One",
+  avatarUrl:
+    "https://s3.amazonaws.com/keybase_processed_uploads/3c47b62f3d28ecfd821536f69be82905_360_360.jpg",
+  wwwUrl: "https://www.ledger.com/staking",
+  activeStake: 10001001000098,
+  commission: 7,
+  totalScore: 7,
+};
 
 export const LEDGER_VALIDATOR_DEFAULT = LEDGER_VALIDATOR_BY_FIGMENT;
 
 // default validator first
-export const LEDGER_VALIDATOR_LIST: Validators[] = [
+export const LEDGER_VALIDATOR_LIST: Validator[] = [
   LEDGER_VALIDATOR_BY_FIGMENT,
-  // LEDGER_VALIDATOR_BY_CHORUS_ONE,
+  LEDGER_VALIDATOR_BY_CHORUS_ONE,
 ];
 
-export const LEDGER_VALIDATORS_VOTE_ACCOUNTS = LEDGER_VALIDATOR_LIST.map(v => v.voteAccount);
+export const LEDGER_VALIDATORS_VOTE_ACCOUNTS = LEDGER_VALIDATOR_LIST.map(v => v.accountAddr);
 
 export function clusterByCurrencyId(currencyId: string): Cluster {
   const clusters: Record<string, Cluster> = {
@@ -258,22 +258,22 @@ export function clusterByCurrencyId(currencyId: string): Cluster {
   );
 }
 
-export function profitableValidators(validators: Validators[]) {
+export function profitableValidators(validators: Validator[]) {
   return validators.filter(v => v.commission <= 100);
 }
 
-export function ledgerFirstValidators(validators: Validators[]): Validators[] {
+export function ledgerFirstValidators(validators: Validator[]): Validator[] {
   const [ledgerValidators, restValidators] = partition(
-    v => LEDGER_VALIDATORS_VOTE_ACCOUNTS.includes(v.voteAccount),
+    v => LEDGER_VALIDATORS_VOTE_ACCOUNTS.includes(v.accountAddr),
     validators,
   );
 
   const LEDGER_FIRST_VALIDATOR =
-    ledgerValidators.find(v => v.voteAccount === LEDGER_VALIDATOR_DEFAULT.voteAccount) ||
+    ledgerValidators.find(v => v.accountAddr === LEDGER_VALIDATOR_DEFAULT.accountAddr) ||
     LEDGER_VALIDATOR_DEFAULT;
 
   const ledgerValidatorsFiltered = ledgerValidators.filter(
-    v => v.voteAccount !== LEDGER_FIRST_VALIDATOR.voteAccount,
+    v => v.accountAddr !== LEDGER_FIRST_VALIDATOR.accountAddr,
   );
 
   return ledgerValidators.length === 2

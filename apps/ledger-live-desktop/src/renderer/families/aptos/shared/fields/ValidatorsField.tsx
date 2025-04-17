@@ -1,5 +1,5 @@
 import { useValidators } from "@ledgerhq/live-common/families/aptos/react";
-import { AptosAccount, Validators } from "@ledgerhq/live-common/families/aptos/types";
+import { AptosAccount, Validator } from "@ledgerhq/live-common/families/aptos/types";
 import React, { useState, useEffect, useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
@@ -21,8 +21,8 @@ type Props = {
 
 const ValidatorField = ({ account, onChangeValidator, chosenValidatorAddr }: Props) => {
   const [search, setSearch] = useState("");
-  const [showAll, setShowAll] = useState(false);
-  const [currentValidator, setCurrentValidator] = useState<Validators[]>([]);
+  const [showAll, setShowAll] = useState(true);
+  const [currentValidator, setCurrentValidator] = useState<Validator[]>([]);
 
   const unit = useAccountUnit(account);
   const validators = useValidators(account.currency, search);
@@ -33,7 +33,7 @@ const ValidatorField = ({ account, onChangeValidator, chosenValidatorAddr }: Pro
   );
 
   useEffect(() => {
-    const selectedValidatorAddr = validators.find(p => p.voteAccount === chosenValidatorAddr);
+    const selectedValidatorAddr = validators.find(p => p.accountAddr === chosenValidatorAddr);
     if (selectedValidatorAddr) {
       const isDefault = validators.slice(0, 2).includes(selectedValidatorAddr);
       if (isDefault) {
@@ -47,16 +47,16 @@ const ValidatorField = ({ account, onChangeValidator, chosenValidatorAddr }: Pro
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chosenValidatorAddr]);
 
-  const renderItem = (validator: Validators) => {
+  const renderItem = (validator: Validator) => {
     return (
       <ValidatorRow
         currency={account.currency}
-        active={chosenValidatorAddr === validator.voteAccount}
+        active={chosenValidatorAddr === validator.accountAddr}
         onClick={onChangeValidator}
-        key={validator.voteAccount}
+        key={validator.accountAddr}
         validator={validator}
         unit={unit}
-      ></ValidatorRow>
+      />
     );
   };
 

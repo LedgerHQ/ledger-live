@@ -11,6 +11,10 @@ export enum TX_STATUS {
 
 export const WRITE_RESOURCE = "write_resource";
 
+export const APTOS_NON_HARDENED_DERIVATION_PATH_REGEX = /^44'\/637'\/[0-9]+'\/[0-9]+\/[0-9]+$/;
+export const APTOS_NON_HARDENED_DERIVATION_PATH = "44'/637'/0'/0/0";
+export const APTOS_HARDENED_DERIVATION_PATH = "44'/637'/0'/0'/0'";
+
 export const COIN_TRANSFER_TYPES: MoveStructId[] = [
   "0x1::aptos_account::transfer",
   "0x1::aptos_account::transfer_coins",
@@ -46,5 +50,9 @@ export enum DIRECTION {
 export const SUPPORTED_TOKEN_TYPES = ["coin", "fungible_asset"];
 
 export const APTOS_PRECISION = 8;
-export const APTOS_DELEGATION_RESERVE = BigNumber(0.01).shiftedBy(APTOS_PRECISION);
-export const MIN_COINS_ON_SHARES_POOL = BigNumber(11).shiftedBy(APTOS_PRECISION);
+export const APTOS_DELEGATION_RESERVE = BigNumber(0.01);
+export const MIN_COINS_ON_SHARES_POOL = BigNumber(11);
+export const APTOS_DELEGATION_RESERVE_IN_OCTAS =
+  APTOS_DELEGATION_RESERVE.shiftedBy(APTOS_PRECISION);
+export const MIN_COINS_ON_SHARES_POOL_IN_OCTAS =
+  MIN_COINS_ON_SHARES_POOL.shiftedBy(APTOS_PRECISION);

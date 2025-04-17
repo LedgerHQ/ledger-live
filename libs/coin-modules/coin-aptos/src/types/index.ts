@@ -8,11 +8,11 @@ import type {
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import type { BigNumber } from "bignumber.js";
-import type { Validators } from "../network/validators";
+import type { Validator } from "../network/validators";
 
 export * from "./signer";
 export * from "./bridge";
-export type { Validators, ValidatorsRaw } from "../network/validators";
+export type { Validator, ValidatorRaw } from "../network/validators";
 
 export type AptosTransaction = UserTransactionResponse & {
   block: {
@@ -181,5 +181,5 @@ export type AptosValidatorWithMeta = {
 
 export type AptosPreloadData = {
   validatorsWithMeta: AptosValidatorWithMeta[];
-  validators: Validators[];
+  validators: Validator[];
 };

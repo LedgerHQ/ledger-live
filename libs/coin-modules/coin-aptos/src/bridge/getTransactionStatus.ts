@@ -13,7 +13,11 @@ import { AccountAddress } from "@aptos-labs/ts-sdk";
 import { BigNumber } from "bignumber.js";
 import type { Transaction, TransactionStatus } from "../types";
 import { getTokenAccount } from "./logic";
-import { APTOS_DELEGATION_RESERVE, APTOS_PRECISION, MIN_COINS_ON_SHARES_POOL } from "../constants";
+import {
+  APTOS_DELEGATION_RESERVE_IN_OCTAS,
+  MIN_COINS_ON_SHARES_POOL,
+  MIN_COINS_ON_SHARES_POOL_IN_OCTAS,
+} from "../constants";
 
 const getTransactionStatus = async (a: Account, t: Transaction): Promise<TransactionStatus> => {
   const errors: Record<string, Error> = {};
@@ -51,9 +55,14 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
     errors.amount = new NotEnoughBalance();
   }
 
-  if (!t.useAllAmount && t.stake && t.stake.op === "add" && t.amount.lt(MIN_COINS_ON_SHARES_POOL)) {
+  if (
+    !t.useAllAmount &&
+    t.stake &&
+    t.stake.op === "add" &&
+    t.amount.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS)
+  ) {
     errors.amount = new NotEnoughToStake("", {
-      minStake: MIN_COINS_ON_SHARES_POOL.shiftedBy(-APTOS_PRECISION),
+      minStake: MIN_COINS_ON_SHARES_POOL,
       currency: a.currency.ticker,
     });
   }
@@ -64,7 +73,7 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
       : a.spendableBalance.minus(estimatedFees).isLessThan(0)
         ? BigNumber(0)
         : t.stake
-          ? a.spendableBalance.minus(estimatedFees).minus(APTOS_DELEGATION_RESERVE)
+          ? a.spendableBalance.minus(estimatedFees).minus(APTOS_DELEGATION_RESERVE_IN_OCTAS)
           : a.spendableBalance.minus(estimatedFees)
     : t.amount;
 
