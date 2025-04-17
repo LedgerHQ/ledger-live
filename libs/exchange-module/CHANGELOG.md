@@ -1,5 +1,11 @@
 # @ledgerhq/wallet-api-exchange-module
 
+## 0.12.0-next.0
+
+### Minor Changes
+
+- [#9811](https://github.com/LedgerHQ/ledger-live/pull/9811) [`7456a97`](https://github.com/LedgerHQ/ledger-live/commit/7456a97e358afa5d59e0d394dfa29cb80dee65d1) Thanks [@qperrot](https://github.com/qperrot)! - Add approve and revoke commande and upgarde wallet api versions
+
 ## 0.11.0
 
 ### Minor Changes

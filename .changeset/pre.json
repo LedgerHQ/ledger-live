@@ -145,5 +145,24 @@
     "@ledgerhq/native-modules-tools": "1.0.3",
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "chilly-lizards-obey",
+    "curly-waves-breathe",
+    "lemon-boxes-try",
+    "nasty-bats-clap",
+    "nervous-bottles-cross",
+    "nine-weeks-do",
+    "poor-rice-attend",
+    "quiet-deers-decide",
+    "quiet-snails-applaud",
+    "selfish-roses-lay",
+    "serious-snakes-bake",
+    "shaggy-drinks-cry",
+    "short-rats-suffer",
+    "slow-parents-cough",
+    "tame-dolphins-watch",
+    "thick-comics-speak",
+    "twelve-hats-accept",
+    "weak-pumpkins-retire"
+  ]
 }
