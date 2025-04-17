@@ -1,5 +1,35 @@
 # live-mobile
 
+## 3.74.0-nightly.2
+
+### Minor Changes
+
+- [#9959](https://github.com/LedgerHQ/ledger-live/pull/9959) [`5c09b53`](https://github.com/LedgerHQ/ledger-live/commit/5c09b536c9750f7f82aa2a2ebf69d492e14149f3) Thanks [@ysitbon](https://github.com/ysitbon)! - add debug tools for the storage migration
+
+- [#9963](https://github.com/LedgerHQ/ledger-live/pull/9963) [`ca9ab25`](https://github.com/LedgerHQ/ledger-live/commit/ca9ab2590ac51e89a31ee8534a6b5339bf5a73a2) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add tracking for TC opt-in
+
+- [#9923](https://github.com/LedgerHQ/ledger-live/pull/9923) [`9009235`](https://github.com/LedgerHQ/ledger-live/commit/9009235cf52e83c0626acaec0959bfb3837404aa) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add rollback and reset script
+
+### Patch Changes
+
+- [#9968](https://github.com/LedgerHQ/ledger-live/pull/9968) [`7b9a7eb`](https://github.com/LedgerHQ/ledger-live/commit/7b9a7eb0abcdc790dbcec0b3a898d7445ec85130) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add ptx swap live app feature flag to LLM analytics
+
+- Updated dependencies [[`9009235`](https://github.com/LedgerHQ/ledger-live/commit/9009235cf52e83c0626acaec0959bfb3837404aa), [`95dbd60`](https://github.com/LedgerHQ/ledger-live/commit/95dbd60c06b02fe6fd50bc2ec0883096858d1f23)]:
+  - @ledgerhq/types-live@6.67.0-nightly.0
+  - @ledgerhq/coin-evm@2.18.0-nightly.1
+  - @ledgerhq/live-dmk-mobile@0.2.1-nightly.2
+  - @ledgerhq/coin-framework@3.0.0-nightly.1
+  - @ledgerhq/coin-cosmos@0.12.1-nightly.1
+  - @ledgerhq/coin-filecoin@1.9.1-nightly.1
+  - @ledgerhq/coin-multiversx@0.4.1-nightly.1
+  - @ledgerhq/coin-stacks@0.8.1-nightly.1
+  - @ledgerhq/domain-service@1.2.26-nightly.0
+  - @ledgerhq/live-countervalues@0.5.1-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.30-nightly.1
+  - @ledgerhq/live-nft@0.8.1-nightly.1
+  - @ledgerhq/live-nft-react@0.9.1-nightly.1
+  - @ledgerhq/live-wallet@0.10.4-nightly.1
+
 ## 3.74.0-nightly.1
 
 ### Minor Changes

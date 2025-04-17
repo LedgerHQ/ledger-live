@@ -1,5 +1,36 @@
 # ledger-live-desktop
 
+## 2.109.0-nightly.2
+
+### Minor Changes
+
+- [#9964](https://github.com/LedgerHQ/ledger-live/pull/9964) [`f5c13ae`](https://github.com/LedgerHQ/ledger-live/commit/f5c13ae47ccb8e5e2a9299799b330ebffa358ebe) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix wrong warning message when updating firmware
+
+- [#9811](https://github.com/LedgerHQ/ledger-live/pull/9811) [`7456a97`](https://github.com/LedgerHQ/ledger-live/commit/7456a97e358afa5d59e0d394dfa29cb80dee65d1) Thanks [@qperrot](https://github.com/qperrot)! - Add approve and revoke commande and upgarde wallet api versions
+
+- [#9931](https://github.com/LedgerHQ/ledger-live/pull/9931) [`95dbd60`](https://github.com/LedgerHQ/ledger-live/commit/95dbd60c06b02fe6fd50bc2ec0883096858d1f23) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add tracking during opt-in transaction checks
+
+### Patch Changes
+
+- [#9949](https://github.com/LedgerHQ/ledger-live/pull/9949) [`5df91a4`](https://github.com/LedgerHQ/ledger-live/commit/5df91a4a0c2b9cecb8a520b93acfda9b0e6be950) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Patch WebHidSendReportError with LDMK transport
+
+- Updated dependencies [[`5df91a4`](https://github.com/LedgerHQ/ledger-live/commit/5df91a4a0c2b9cecb8a520b93acfda9b0e6be950), [`9009235`](https://github.com/LedgerHQ/ledger-live/commit/9009235cf52e83c0626acaec0959bfb3837404aa), [`becd128`](https://github.com/LedgerHQ/ledger-live/commit/becd128bc5b58813ecf3937c8a82b95ed9a347b1), [`7456a97`](https://github.com/LedgerHQ/ledger-live/commit/7456a97e358afa5d59e0d394dfa29cb80dee65d1), [`95dbd60`](https://github.com/LedgerHQ/ledger-live/commit/95dbd60c06b02fe6fd50bc2ec0883096858d1f23)]:
+  - @ledgerhq/live-dmk-desktop@0.2.1-nightly.2
+  - @ledgerhq/live-common@34.30.0-nightly.2
+  - @ledgerhq/types-live@6.67.0-nightly.0
+  - @ledgerhq/coin-evm@2.18.0-nightly.1
+  - @ledgerhq/coin-framework@3.0.0-nightly.1
+  - @ledgerhq/coin-aptos@1.9.1-nightly.1
+  - @ledgerhq/coin-bitcoin@0.15.1-nightly.1
+  - @ledgerhq/coin-cosmos@0.12.1-nightly.1
+  - @ledgerhq/coin-filecoin@1.9.1-nightly.1
+  - @ledgerhq/domain-service@1.2.26-nightly.0
+  - @ledgerhq/live-countervalues@0.5.1-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.30-nightly.1
+  - @ledgerhq/live-nft@0.8.1-nightly.1
+  - @ledgerhq/live-nft-react@0.9.1-nightly.1
+  - @ledgerhq/live-wallet@0.10.4-nightly.1
+
 ## 2.109.0-nightly.1
 
 ### Minor Changes
