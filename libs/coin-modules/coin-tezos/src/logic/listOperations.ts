@@ -2,7 +2,7 @@ import { tzkt } from "../network";
 import { log } from "@ledgerhq/logs";
 import {
   type APIDelegationType,
-  APIRevealType,
+  type APIRevealType,
   type APITransactionType,
   AccountsGetOperationsOptions,
   isAPIDelegationType,

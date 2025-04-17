@@ -1,5 +1,5 @@
 import { listOperations } from "./listOperations";
-import { APIDelegationType, APIRevealType, APITransactionType } from "../network/types";
+import type { APIDelegationType, APIRevealType, APITransactionType } from "../network/types";
 
 const mockNetworkGetTransactions = jest.fn();
 jest.mock("../network", () => ({
