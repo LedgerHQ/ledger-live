@@ -10,10 +10,13 @@ export const AssetList = ({
   onClick: (asset: AssetType) => void;
 }) => {
   return (
-    <VirtualList itemHeight={64} maxHeight={250}>
-      {assets.map(({ name, ticker }) => (
-        <AssetItem name={name} ticker={ticker} onClick={onClick} />
-      ))}
-    </VirtualList>
+    <VirtualList
+      itemHeight={64}
+      maxHeight={250}
+      count={assets.length}
+      renderRow={(i: number) => (
+        <AssetItem name={assets[i].name} ticker={assets[i].ticker} onClick={onClick} />
+      )}
+    />
   );
 };

@@ -1,27 +1,28 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { FixedSizeList as List } from "react-window";
 
 export const VirtualList = ({
-  children,
+  count,
   itemHeight,
   maxHeight,
+  renderRow,
 }: {
-  children: React.ReactNode[];
+  count: number;
   itemHeight: number;
   maxHeight: number;
+  renderRow: (index: number) => ReactNode;
 }) => {
-  const childrenLength = Array.isArray(children) ? children.length : 0;
-  const minHeight = Math.min(childrenLength * itemHeight, maxHeight);
+  const minHeight = Math.min(count * itemHeight, maxHeight);
 
   return (
     <List
       height={minHeight}
-      itemCount={childrenLength}
+      itemCount={count}
       itemSize={itemHeight}
       layout="vertical"
       width={"100%"}
     >
-      {({ index, style }) => <div style={style}>{children[index]}</div>}
+      {({ index, style }) => <div style={style}>{renderRow(index)}</div>}
     </List>
   );
 };
