@@ -1,5 +1,27 @@
 # @ledgerhq/coin-tezos
 
+## 3.0.0
+
+### Major Changes
+
+- [#9835](https://github.com/LedgerHQ/ledger-live/pull/9835) [`8d36e9b`](https://github.com/LedgerHQ/ledger-live/commit/8d36e9b2474a4c600427f357adad04f99a89e13d) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-framework): return token balances in `getBalance`
+
+### Minor Changes
+
+- [#9755](https://github.com/LedgerHQ/ledger-live/pull/9755) [`c3c847b`](https://github.com/LedgerHQ/ledger-live/commit/c3c847bab4d01ec7cc1078344b519218806340ed) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - Fix stellar and tezos using static global variables, preventing multiple instances with different settings
+
+- [#9777](https://github.com/LedgerHQ/ledger-live/pull/9777) [`f3cae52`](https://github.com/LedgerHQ/ledger-live/commit/f3cae527ea376bee52a273a9566c69272701b7bb) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fix tezos fee estimation silently catching errors
+
+- [#9905](https://github.com/LedgerHQ/ledger-live/pull/9905) [`6acd58f`](https://github.com/LedgerHQ/ledger-live/commit/6acd58f86f32a54cdd7a019ea4678d5a16a6a955) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - tezos coin module API: add `counter`, `gasLimit` and `storageLimit` to operation details
+
+### Patch Changes
+
+- Updated dependencies [[`6f61972`](https://github.com/LedgerHQ/ledger-live/commit/6f619728e200270a674ffb13b10375765b55ae4b), [`3f8a531`](https://github.com/LedgerHQ/ledger-live/commit/3f8a53196dfb80d084056e0d896e09869c8ff949), [`8d36e9b`](https://github.com/LedgerHQ/ledger-live/commit/8d36e9b2474a4c600427f357adad04f99a89e13d), [`b580b04`](https://github.com/LedgerHQ/ledger-live/commit/b580b04e02392a706534c2fceba192ae3b6242ef), [`1e56618`](https://github.com/LedgerHQ/ledger-live/commit/1e56618a3c31e7980074072e0aae9422c145f4b3), [`4c6b682`](https://github.com/LedgerHQ/ledger-live/commit/4c6b682b9929334a7be13212a69f2c6a614f372c), [`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81)]:
+  - @ledgerhq/types-live@6.67.0
+  - @ledgerhq/coin-framework@3.0.0
+  - @ledgerhq/cryptoassets@13.15.0
+  - @ledgerhq/types-cryptoassets@7.22.0
+
 ## 3.0.0-next.0
 
 ### Major Changes

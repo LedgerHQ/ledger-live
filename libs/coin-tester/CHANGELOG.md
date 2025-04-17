@@ -1,5 +1,13 @@
 # @ledgerhq/coin-tester
 
+## 0.5.0
+
+### Minor Changes
+
+- [#9919](https://github.com/LedgerHQ/ledger-live/pull/9919) [`5d6d223`](https://github.com/LedgerHQ/ledger-live/commit/5d6d223fe1691200911e81c8d83eec7b4ae0cd65) Thanks [@qperrot](https://github.com/qperrot)! - Move all coin tester into its own coin tester modules
+
+- [#9775](https://github.com/LedgerHQ/ledger-live/pull/9775) [`fe89dd5`](https://github.com/LedgerHQ/ledger-live/commit/fe89dd51cd35000c7b661d6364fe78f88bbf6c62) Thanks [@Canestin](https://github.com/Canestin)! - extract coin-tester-evm module
+
 ## 0.5.0-next.0
 
 ### Minor Changes

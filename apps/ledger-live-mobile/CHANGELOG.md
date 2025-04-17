@@ -1,5 +1,67 @@
 # live-mobile
 
+## 3.74.0
+
+### Minor Changes
+
+- [#9879](https://github.com/LedgerHQ/ledger-live/pull/9879) [`2141a89`](https://github.com/LedgerHQ/ledger-live/commit/2141a890f24c62890a1b2a1fee30ed45fa60223c) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - add hasEnabledOsNotifications flag to analytics
+
+- [#9906](https://github.com/LedgerHQ/ledger-live/pull/9906) [`818ad2d`](https://github.com/LedgerHQ/ledger-live/commit/818ad2d378ae9ae833bcb5cf976ab5ba6457e3ad) Thanks [@ysitbon](https://github.com/ysitbon)! - Add storage migration scripts
+
+- [#9880](https://github.com/LedgerHQ/ledger-live/pull/9880) [`da26f2d`](https://github.com/LedgerHQ/ledger-live/commit/da26f2d0ba55f6ef7e00b706886374e4d3e0a2ec) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Use only first value of ldmkTransport feature flag
+
+- [#9582](https://github.com/LedgerHQ/ledger-live/pull/9582) [`46f0b58`](https://github.com/LedgerHQ/ledger-live/commit/46f0b583913db7469b789dd0b2b98cc3a12f9c69) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Change step numbers in local banner to be warning icon and warning color when user paid for recover but finished setup.
+
+- [#9819](https://github.com/LedgerHQ/ledger-live/pull/9819) [`6f61972`](https://github.com/LedgerHQ/ledger-live/commit/6f619728e200270a674ffb13b10375765b55ae4b) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Large mover navigator
+
+- [#9832](https://github.com/LedgerHQ/ledger-live/pull/9832) [`10f0d88`](https://github.com/LedgerHQ/ledger-live/commit/10f0d88c694c4c9d98ec08910bf11c124d7f240e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Swiper Demo/debug
+
+- [#9862](https://github.com/LedgerHQ/ledger-live/pull/9862) [`a960949`](https://github.com/LedgerHQ/ledger-live/commit/a960949fff01ff26b9c2031a92bf754b9d2afd49) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Feat: Large Mover Graph component
+
+- [#9812](https://github.com/LedgerHQ/ledger-live/pull/9812) [`eedbdb0`](https://github.com/LedgerHQ/ledger-live/commit/eedbdb0f136d382d67820dea413e07600aa6815d) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Remove "Enable Analytics" and "Disable Analytics" event - LLM
+
+- [#9868](https://github.com/LedgerHQ/ledger-live/pull/9868) [`f6233a4`](https://github.com/LedgerHQ/ledger-live/commit/f6233a48bc8a2d5633b131479aa977f7bef6d38d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - IOS Splashscreen fix
+
+- [#9790](https://github.com/LedgerHQ/ledger-live/pull/9790) [`14e0b40`](https://github.com/LedgerHQ/ledger-live/commit/14e0b40c1b2874984a98a2a805228500d001a219) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Copy button for signed message
+
+- [#9829](https://github.com/LedgerHQ/ledger-live/pull/9829) [`bb47714`](https://github.com/LedgerHQ/ledger-live/commit/bb477146160086c32c1daebf49a9f24886854ed3) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Large mover header component
+
+- [#9831](https://github.com/LedgerHQ/ledger-live/pull/9831) [`449f3ae`](https://github.com/LedgerHQ/ledger-live/commit/449f3aede2784d6fcf4f420a22e03795f8c6ce12) Thanks [@ysitbon](https://github.com/ysitbon)! - Update async storage import to a single source of truth. Create MMKV interface. Add getString and saveString methods for type safety
+
+- [#9889](https://github.com/LedgerHQ/ledger-live/pull/9889) [`8b417e4`](https://github.com/LedgerHQ/ledger-live/commit/8b417e453bc28395b88864faee37c8839ee49bc8) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Feat: Large Mover Performance Component
+
+- [#9852](https://github.com/LedgerHQ/ledger-live/pull/9852) [`843196c`](https://github.com/LedgerHQ/ledger-live/commit/843196cdab5b277ef8c330a7c101ae1a3b6c7d9b) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Square Cards Small UI issues
+
+- [#9857](https://github.com/LedgerHQ/ledger-live/pull/9857) [`e28e69e`](https://github.com/LedgerHQ/ledger-live/commit/e28e69e0afd870067924eee6ae723e36f0b39b64) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fix Account and Asset Header height
+
+- [#9829](https://github.com/LedgerHQ/ledger-live/pull/9829) [`bb47714`](https://github.com/LedgerHQ/ledger-live/commit/bb477146160086c32c1daebf49a9f24886854ed3) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Price and Variation component Large Mover
+
+- [#9860](https://github.com/LedgerHQ/ledger-live/pull/9860) [`df7deb7`](https://github.com/LedgerHQ/ledger-live/commit/df7deb704e9884a8023c59632991e4ee3eb600e9) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add missing device interaction tracking
+
+- [#9893](https://github.com/LedgerHQ/ledger-live/pull/9893) [`e6d799d`](https://github.com/LedgerHQ/ledger-live/commit/e6d799ddb6fccdf14627c5c9aa5ec0bdf00e2605) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update imports from newArch
+
+- [#9230](https://github.com/LedgerHQ/ledger-live/pull/9230) [`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81) Thanks [@lawRathod](https://github.com/lawRathod)! - Add support for mina blockchain
+
+### Patch Changes
+
+- Updated dependencies [[`da26f2d`](https://github.com/LedgerHQ/ledger-live/commit/da26f2d0ba55f6ef7e00b706886374e4d3e0a2ec), [`6f61972`](https://github.com/LedgerHQ/ledger-live/commit/6f619728e200270a674ffb13b10375765b55ae4b), [`73722cc`](https://github.com/LedgerHQ/ledger-live/commit/73722ccbc93712103ff4ea33ab5c0c294400eef8), [`3f8a531`](https://github.com/LedgerHQ/ledger-live/commit/3f8a53196dfb80d084056e0d896e09869c8ff949), [`8d36e9b`](https://github.com/LedgerHQ/ledger-live/commit/8d36e9b2474a4c600427f357adad04f99a89e13d), [`fe89dd5`](https://github.com/LedgerHQ/ledger-live/commit/fe89dd51cd35000c7b661d6364fe78f88bbf6c62), [`b580b04`](https://github.com/LedgerHQ/ledger-live/commit/b580b04e02392a706534c2fceba192ae3b6242ef), [`6473dff`](https://github.com/LedgerHQ/ledger-live/commit/6473dffb31bd6926ba27d1739ffba27b38561fba), [`4a7df12`](https://github.com/LedgerHQ/ledger-live/commit/4a7df1299bc0e9e8310f979818ad07a589cd92ca), [`4c6b682`](https://github.com/LedgerHQ/ledger-live/commit/4c6b682b9929334a7be13212a69f2c6a614f372c), [`8b417e4`](https://github.com/LedgerHQ/ledger-live/commit/8b417e453bc28395b88864faee37c8839ee49bc8), [`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81)]:
+  - @ledgerhq/live-dmk-mobile@0.3.0
+  - @ledgerhq/types-live@6.67.0
+  - @ledgerhq/coin-evm@2.18.0
+  - @ledgerhq/coin-framework@3.0.0
+  - @ledgerhq/coin-cosmos@0.13.0
+  - @ledgerhq/native-ui@0.32.0
+  - @ledgerhq/types-cryptoassets@7.22.0
+  - @ledgerhq/coin-filecoin@1.9.1
+  - @ledgerhq/coin-multiversx@0.4.1
+  - @ledgerhq/coin-stacks@0.8.1
+  - @ledgerhq/domain-service@1.2.26
+  - @ledgerhq/live-countervalues@0.5.1
+  - @ledgerhq/live-countervalues-react@0.2.30
+  - @ledgerhq/live-nft@0.8.1
+  - @ledgerhq/live-nft-react@0.9.1
+  - @ledgerhq/live-wallet@0.10.4
+
 ## 3.74.0-next.0
 
 ### Minor Changes
