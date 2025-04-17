@@ -62,7 +62,9 @@ import type {
   StakeSplitTransaction,
   StakeUndelegateTransaction,
   StakeWithdrawTransaction,
+  TokenCreateApproveTransaction,
   TokenCreateATATransaction,
+  TokenCreateRevokeTransaction,
   TokenRecipientDescriptor,
   TokenTransferTransaction,
   Transaction,
@@ -83,7 +85,6 @@ async function deriveCommandDescriptor(
   api: ChainAPI,
 ): Promise<CommandDescriptor> {
   const { model } = tx;
-
   switch (model.kind) {
     case "transfer":
       return deriveTransferCommandDescriptor(mainAccount, tx, model, api);
@@ -91,6 +92,10 @@ async function deriveCommandDescriptor(
       return deriveTokenTransferCommandDescriptor(mainAccount, tx, model, api);
     case "token.createATA":
       return deriveCreateAssociatedTokenAccountCommandDescriptor(mainAccount, tx, model, api);
+    case "token.approve":
+      return deriveCreateApproveCommandDescriptor(mainAccount, tx, model, api);
+    case "token.revoke":
+      return deriveCreateRevokeCommandDescriptor(mainAccount, tx, model, api);
     case "stake.createAccount":
       return deriveStakeCreateAccountCommandDescriptor(mainAccount, tx, model, api);
     case "stake.delegate":
@@ -431,6 +436,151 @@ async function deriveTransferCommandDescriptor(
   };
 }
 
+async function deriveCreateApproveCommandDescriptor(
+  mainAccount: Account,
+  tx: Transaction,
+  model: TransactionModel & { kind: TokenCreateApproveTransaction["kind"] },
+  api: ChainAPI,
+): Promise<CommandDescriptor> {
+  const errors: Record<string, Error> = {};
+  const warnings: Record<string, Error> = {};
+
+  const subAccount = findSubAccountById(mainAccount, model.uiState.subAccountId);
+  if (!subAccount || subAccount.type !== "TokenAccount") {
+    throw new Error("subaccount not found");
+  }
+
+  const tokenAccount: SolanaTokenAccount = subAccount;
+
+  const stateErrorOrUndefined = validateAssociatedTokenAccountState(tokenAccount);
+  if (stateErrorOrUndefined) {
+    errors.amount = stateErrorOrUndefined;
+  }
+
+  await validateRecipientCommon(mainAccount, tx, errors, warnings, api, true);
+
+  const mintAddress = tokenAccount.token.contractAddress;
+  const mintDecimals = tokenAccount.token.units[0].magnitude;
+
+  const mintOrError = await getMaybeTokenMint(mintAddress, api);
+  if (!mintOrError) throw new Error(`Mint ${mintAddress} not found`);
+  if (mintOrError instanceof Error) throw mintOrError;
+
+  const tokenProgram = await getMaybeTokenMintProgram(mintAddress, api);
+  if (!tokenProgram || tokenProgram instanceof Error) {
+    throw new Error("Mint not found");
+  }
+
+  const senderAssociatedTokenAccountAddress = decodeAccountIdWithTokenAccountAddress(
+    tokenAccount.id,
+  ).address;
+
+  if (!errors.recipient && tx.recipient === senderAssociatedTokenAccountAddress) {
+    errors.recipient = new SolanaTokenRecipientIsSenderATA();
+  }
+
+  const defaultRecipientDescriptor: TokenRecipientDescriptor = {
+    shouldCreateAsAssociatedTokenAccount: false,
+    tokenAccAddress: "",
+    walletAddress: "",
+  };
+
+  const tokenRecipientOrError = errors.recipient
+    ? errors.recipient
+    : await getTokenRecipient(tx.recipient, mintAddress, tokenProgram, api);
+
+  if (!errors.recipient && tokenRecipientOrError instanceof Error) {
+    errors.recipient = tokenRecipientOrError;
+  }
+
+  const recipientDescriptor: TokenRecipientDescriptor =
+    tokenRecipientOrError instanceof Error
+      ? defaultRecipientDescriptor
+      : tokenRecipientOrError.descriptor;
+
+  const { fee, spendable } = await estimateFeeAndSpendable(api, mainAccount, tx);
+  const txAmount = tx.useAllAmount ? spendable : tx.amount;
+
+  if (tx.useAllAmount) {
+    if (txAmount.eq(0)) {
+      errors.amount = new NotEnoughBalance();
+    }
+  } else {
+    if (txAmount.lte(0)) {
+      errors.amount = new AmountRequired();
+    } else if (txAmount.gt(spendable)) {
+      errors.amount = new NotEnoughBalance();
+    }
+  }
+
+  return {
+    fee,
+    command: {
+      kind: "token.approve",
+      account: senderAssociatedTokenAccountAddress,
+      mintAddress: mintAddress,
+      recipientDescriptor: recipientDescriptor,
+      owner: mainAccount.freshAddress,
+      amount: txAmount.toNumber(),
+      decimals: mintDecimals,
+      tokenProgram: tokenProgram,
+    },
+    warnings: {},
+    errors,
+  };
+}
+
+async function deriveCreateRevokeCommandDescriptor(
+  mainAccount: Account,
+  tx: Transaction,
+  model: TransactionModel & { kind: TokenCreateRevokeTransaction["kind"] },
+  api: ChainAPI,
+): Promise<CommandDescriptor> {
+  const errors: Record<string, Error> = {};
+  const warnings: Record<string, Error> = {};
+
+  const subAccount = findSubAccountById(mainAccount, model.uiState.subAccountId);
+  if (!subAccount || subAccount.type !== "TokenAccount") {
+    throw new Error("subaccount not found");
+  }
+
+  const tokenAccount: SolanaTokenAccount = subAccount;
+  const stateErrorOrUndefined = validateAssociatedTokenAccountState(tokenAccount);
+  if (stateErrorOrUndefined) {
+    errors.amount = stateErrorOrUndefined;
+  }
+
+  await validateRecipientCommon(mainAccount, tx, errors, warnings, api, true);
+
+  const mintAddress = tokenAccount.token.contractAddress;
+  const tokenProgram = await getMaybeTokenMintProgram(mintAddress, api);
+  if (!tokenProgram || tokenProgram instanceof Error) {
+    throw new Error("Mint not found");
+  }
+
+  const senderAssociatedTokenAccountAddress = decodeAccountIdWithTokenAccountAddress(
+    tokenAccount.id,
+  ).address;
+
+  if (!errors.recipient && tx.recipient === senderAssociatedTokenAccountAddress) {
+    errors.recipient = new SolanaTokenRecipientIsSenderATA();
+  }
+
+  const { fee } = await estimateFeeAndSpendable(api, mainAccount, tx);
+
+  return {
+    fee,
+    command: {
+      kind: "token.revoke",
+      account: senderAssociatedTokenAccountAddress,
+      owner: mainAccount.freshAddress,
+      tokenProgram: tokenProgram,
+    },
+    warnings: {},
+    errors,
+  };
+}
+
 async function deriveStakeCreateAccountCommandDescriptor(
   mainAccount: Account,
   tx: Transaction,
@@ -677,11 +827,17 @@ async function deriveStakeSplitCommandDescriptor(
 
 // if subaccountid present - it's a token transfer
 function updateModelIfSubAccountIdPresent(tx: Transaction): Transaction {
-  if (tx.subAccountId) {
+  if (
+    tx.subAccountId &&
+    // Using this instead of includes to get proper type narrowing
+    (tx.model.kind === "token.transfer" ||
+      tx.model.kind === "token.approve" ||
+      tx.model.kind === "token.revoke")
+  ) {
     return {
       ...tx,
       model: {
-        kind: "token.transfer",
+        ...tx.model,
         uiState: {
           ...tx.model.uiState,
           subAccountId: tx.subAccountId,

@@ -1,0 +1,21 @@
+{
+  "name": "@ledgerhq/disable-network-setup",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Disable network hook, util for tests",
+  "keywords": [
+    "Ledger"
+  ],
+  "main": "lib/index.js",
+  "module": "lib-es/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
+    "unimported": "unimported"
+  },
+  "devDependencies": {
+    "@types/jest": "29.5.14",
+    "nock": "14.0.3"
+  }
+}

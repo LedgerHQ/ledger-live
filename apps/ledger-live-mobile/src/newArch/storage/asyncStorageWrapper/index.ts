@@ -106,6 +106,14 @@ const deviceStorage = {
   },
 
   /**
+   * Delete all the `AsyncStorage` instance.
+   */
+  async deleteAll() {
+    const keys = await AsyncStorage.getAllKeys();
+    return AsyncStorage.multiRemove(keys);
+  },
+
+  /**
    * Push a value onto an array stored in AsyncStorage by key or create
    * a new array in AsyncStorage for a key if it's not yet defined.
    *
@@ -130,6 +138,15 @@ const deviceStorage = {
         `Existing value for key "${key}" must be of type null or Array, received ${typeof currentValue}.`,
       );
     });
+  },
+
+  /** Stringify the storage data to JSON. */
+  async stringify() {
+    const keys = await deviceStorage.keys();
+    const pairs = await AsyncStorage.multiGet(keys);
+    const data = Object.fromEntries(pairs);
+
+    return JSON.stringify(data);
   },
 };
 

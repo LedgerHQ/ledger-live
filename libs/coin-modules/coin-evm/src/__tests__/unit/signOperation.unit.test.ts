@@ -45,24 +45,6 @@ const transactionEIP1559: EvmTransaction = {
 
 const estimatedFees = getEstimatedFees(transactionEIP1559);
 
-const mockSignerContext: SignerContext<EvmSigner> = <T>(
-  _: string,
-  fn: (signer: EvmSigner) => Promise<T>,
-) => {
-  return fn({
-    setLoadConfig: jest.fn(),
-    getAddress: jest.fn(),
-    clearSignTransaction: () =>
-      concat(
-        of({ type: "signer.evm.signing" }),
-        of({ type: "signer.evm.signed", value: { r: "123", s: "abc", v: "27" } }),
-      ),
-    signEIP712HashedMessage: jest.fn(),
-    signEIP712Message: jest.fn(),
-    signPersonalMessage: jest.fn(),
-  } as any);
-};
-
 describe("EVM Family", () => {
   mockGetConfig.mockImplementation((): any => {
     return {
@@ -74,6 +56,21 @@ describe("EVM Family", () => {
       },
     };
   });
+
+  const clearSignTransactionMock = jest.fn();
+  const mockSignerContext: SignerContext<EvmSigner> = <T>(
+    _: string,
+    fn: (signer: EvmSigner) => Promise<T>,
+  ) => {
+    return fn({
+      setLoadConfig: jest.fn(),
+      getAddress: jest.fn(),
+      clearSignTransaction: clearSignTransactionMock,
+      signEIP712HashedMessage: jest.fn(),
+      signEIP712Message: jest.fn(),
+      signPersonalMessage: jest.fn(),
+    } as any);
+  };
 
   describe("signOperation.ts", () => {
     describe("signOperation", () => {
@@ -87,6 +84,12 @@ describe("EVM Family", () => {
 
       it("should return an optimistic operation and a signed hash based on hardware ECDSA signatures returned by the app bindings", done => {
         const signOperation = buildSignOperation(mockSignerContext);
+        clearSignTransactionMock.mockImplementation(() =>
+          concat(
+            of({ type: "signer.evm.signing" }),
+            of({ type: "signer.evm.signed", value: { r: "123", s: "abc", v: "27" } }),
+          ),
+        );
 
         const signOpObservable = signOperation({
           account,
@@ -137,6 +140,65 @@ describe("EVM Family", () => {
             );
             done();
           }
+        });
+      });
+
+      it("should emit transaction-checks-opt-in-triggered event", done => {
+        // GIVEN
+        const signOpObservable = buildSignOperation(mockSignerContext)({
+          account,
+          transaction: transactionEIP1559,
+          deviceId: "",
+        });
+        clearSignTransactionMock.mockImplementation(() =>
+          concat(
+            of({ type: "signer.evm.transaction-checks-opt-in-triggered" }),
+            of({ type: "signer.evm.signing" }),
+            of({ type: "signer.evm.signed", value: { r: "123", s: "abc", v: "27" } }),
+          ),
+        );
+
+        // WHEN
+        const subscription = signOpObservable.subscribe({
+          next: event => {
+            if (event.type === "transaction-checks-opt-in-triggered") {
+              subscription.unsubscribe();
+              done();
+            }
+          },
+          error: err => {
+            throw err;
+          },
+          complete: () => {
+            throw new Error("no transaction-checks-opt-in-triggered event");
+          },
+        });
+      });
+
+      it("should not emit transaction-checks-opt-in-triggered event", done => {
+        // GIVEN
+        const signOpObservable = buildSignOperation(mockSignerContext)({
+          account,
+          transaction: transactionEIP1559,
+          deviceId: "",
+        });
+        clearSignTransactionMock.mockImplementation(() =>
+          concat(
+            of({ type: "signer.evm.signing" }),
+            of({ type: "signer.evm.signed", value: { r: "123", s: "abc", v: "27" } }),
+          ),
+        );
+
+        // WHEN
+        signOpObservable.subscribe({
+          next: event => {
+            if (event.type === "transaction-checks-opt-in-triggered") {
+              throw new Error("should not emit transaction-checks-opt-in-triggered event");
+            }
+          },
+          complete: () => {
+            done();
+          },
         });
       });
     });

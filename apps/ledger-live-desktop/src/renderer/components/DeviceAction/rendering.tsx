@@ -15,6 +15,7 @@ import {
   LockedDeviceError,
   UpdateYourApp,
   WrongDeviceForAccount,
+  DisconnectedDevice,
 } from "@ledgerhq/errors";
 import {
   DeviceNotOnboarded,
@@ -72,6 +73,7 @@ import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-case
 import NoSuchAppOnProviderErrorComponent from "./NoSuchAppOnProviderErrorComponent";
 import Image from "~/renderer/components/Image";
 import Nano from "~/renderer/images/nanoS.v4.svg";
+import { isWebHidSendReportError } from "@ledgerhq/live-dmk-desktop";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -825,8 +827,9 @@ export const renderError = ({
         learnMoreTextKey={learnMoreTextKey}
       />
     );
+  } else if (isWebHidSendReportError(tmpError)) {
+    tmpError = new DisconnectedDevice();
   }
-
   // if no supportLink is provided, we fallback on the related url linked to
   // tmpError name, if any
   const supportLinkUrl = supportLink ?? urls.errors[error?.name];
