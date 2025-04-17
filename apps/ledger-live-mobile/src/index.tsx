@@ -92,6 +92,9 @@ import { exportWalletState, walletStateExportShouldDiffer } from "@ledgerhq/live
 import { registerTransports } from "~/services/registerTransports";
 import { useLdmkFeatureEnabled } from "@ledgerhq/live-dmk-mobile";
 
+import { firebase } from '@react-native-firebase/perf';
+
+
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
 }

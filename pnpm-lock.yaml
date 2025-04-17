@@ -1003,6 +1003,9 @@ importers:
       '@react-native-firebase/messaging':
         specifier: 14.12.0
         version: 14.12.0(@react-native-firebase/app@14.12.0(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))
+      '@react-native-firebase/perf':
+        specifier: 14.12.0
+        version: 14.12.0(@react-native-firebase/app@14.12.0(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))
       '@react-native-firebase/remote-config':
         specifier: 14.12.0
         version: 14.12.0(@react-native-firebase/app@14.12.0(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))
@@ -14668,6 +14671,11 @@ packages:
 
   '@react-native-firebase/messaging@14.12.0':
     resolution: {integrity: sha512-4JF93pYLyFiLjwU2RYlHMKSjI7DKLuqQrqCnC3M2yhgTDeYaJsqnYnTSDMfmmh9vZHfHjTztc6E2scwr/Mw8tg==}
+    peerDependencies:
+      '@react-native-firebase/app': 14.12.0
+
+  '@react-native-firebase/perf@14.12.0':
+    resolution: {integrity: sha512-MSdAIXDdQfULXSkRvxi5Cia5oblMlqYvAsy5s3guaTjWphNt+s+PzI5UrH9vv4MvhuuD2zy0KXUzjnjiBoTujA==}
     peerDependencies:
       '@react-native-firebase/app': 14.12.0
 
@@ -42896,6 +42904,13 @@ snapshots:
   '@react-native-firebase/messaging@14.12.0(@react-native-firebase/app@14.12.0(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))':
     dependencies:
       '@react-native-firebase/app': 14.12.0(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
+
+  '@react-native-firebase/perf@14.12.0(@react-native-firebase/app@14.12.0(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))':
+    dependencies:
+      '@expo/config-plugins': 4.1.5
+      '@react-native-firebase/app': 14.12.0(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
+    transitivePeerDependencies:
+      - supports-color
 
   '@react-native-firebase/remote-config@14.12.0(@react-native-firebase/app@14.12.0(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))':
     dependencies:
