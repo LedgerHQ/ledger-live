@@ -50,6 +50,7 @@ export type APITransactionType = CommonOperationType & {
 export function isAPITransactionType(op: APIOperation): op is APITransactionType {
   return op.type === "transaction";
 }
+
 export type APIDelegationType = CommonOperationType & {
   type: "delegation";
   amount: number;
@@ -60,6 +61,15 @@ export type APIDelegationType = CommonOperationType & {
 };
 export function isAPIDelegationType(op: APIOperation): op is APIDelegationType {
   return op.type === "delegation";
+}
+
+export type APIRevealType = CommonOperationType & {
+  type: "reveal";
+  sender: { address: string } | undefined | null;
+  counter: number;
+};
+export function isAPIRevealType(op: APIOperation): op is APIRevealType {
+  return op.type === "reveal";
 }
 
 // https://api.tzkt.io/#operation/Accounts_GetOperations
