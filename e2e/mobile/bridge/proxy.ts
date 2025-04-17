@@ -174,7 +174,7 @@ const job = ({ device, port, silent, verbose, speculosUrl, speculosApiPort }: Pr
       }
 
       if (error?.name === "RecordStoreWrongAPDU") {
-        console.error(error.message);
+        console.error(error?.message);
         process.exit(1);
       }
     });

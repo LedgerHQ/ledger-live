@@ -6,6 +6,7 @@ import { takeSpeculosScreenshot } from "./utils/speculosUtils";
 const DetoxEnvironment = require("detox/runners/jest/testEnvironment");
 
 class TestEnvironment extends DetoxEnvironment {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async handleTestEvent(event: any, state: any) {
     // first let Detox do its thing
     await super.handleTestEvent(event, state);
