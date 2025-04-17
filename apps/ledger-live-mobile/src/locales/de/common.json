@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "Abbrechen",
+    "copy" : "Kopieren",
+    "copied" : "Kopiert",
     "apply" : "Anwenden",
     "seeAll" : "Alles anzeigen",
     "seeAllWithNumber" : "Alle anzeigen ({{number}})",
@@ -1061,6 +1063,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Fehler beim Laden der Swap Live-App"
+    },
+    "InvalidMemoMina" : {
+      "title" : "Der Memotext darf nicht länger als 32 Zeichen sein."
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Für diese Transaktion fällt eine Kontoerstellungsgebühr in Höhe von {{fee}} an"
+    },
+    "AmountTooSmall" : {
+      "title" : "Der Mindestbetrag für diese Transaktion beläuft sich auf {{amount}}"
     }
   },
   "crash" : {
@@ -2412,16 +2423,13 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "Erinnerung: Schließe die Anmeldung für Ledger Recover ab",
-        "description" : "Du musst noch zwei Schritte bis zum optimalen Schutz zurücklegen."
+        "title" : "Erinnerung: Schließe die Anmeldung für Ledger Recover ab"
       },
       "verifyIdentity" : {
-        "title" : "Erinnerung: Schließe die Anmeldung für Ledger Recover ab",
-        "description" : "Du musst noch einen Schritt bis zum optimalen Schutz zurücklegen."
+        "title" : "Der Zugang zu deiner Wallet ist noch nicht per Backup abgesichert."
       },
       "connectDevice" : {
-        "title" : "Erinnerung: Schließe die Anmeldung für Ledger Recover ab",
-        "description" : "Das ist der letzte Schritt, um die Wiederherstellung des Zugriffs auf deine Wallet zu gewährleisten."
+        "title" : "Der Zugang zu deiner Wallet ist noch nicht per Backup abgesichert."
       }
     }
   },
@@ -2594,7 +2602,8 @@
       "gasLimit" : "Gaslimit",
       "id" : "ID",
       "autoClaimedRewards" : "Automatisch beanspruchte Prämien",
-      "stakedAmount" : "Betrag gestaked"
+      "stakedAmount" : "Betrag gestaked",
+      "accountCreationFee" : "Kontoerstellungsgebühr"
     },
     "multipleAddresses" : "Warum mehrere Adressen?",
     "tokenName" : "Token-Name",
@@ -6106,6 +6115,9 @@
       }
     }
   },
+  "mina" : {
+    "memoPlaceholder" : "Optionales Memo"
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -6612,14 +6624,12 @@
     "range" : {
       "1h" : "1Std",
       "24h" : "24h",
+      "1d" : "1T",
       "7d" : "7T",
+      "1w" : "1W",
       "30d" : "30T",
-      "1y" : "1J",
-      "1H_label" : "1Std",
-      "1D_label" : "1T",
-      "1W_label" : "1W",
-      "1M_label" : "1M",
-      "1Y_label" : "1J"
+      "1m" : "1M",
+      "1y" : "1J"
     },
     "warnings" : {
       "connectionError" : "Verbindungsfehler",
@@ -7352,5 +7362,10 @@
       "description" : "Der begrenzte Speicher deiner Ledger Nano S schränkt deinen Zugang zu aktuellen Funktionen, Blockchain-Änderungen und Sicherheitsverbesserungen ein. Für die längerfristige Nutzung solltest du auf ein neueres Ledger-Gerät aufrüsten.",
       "cta" : "Weitere Informationen"
     }
+  },
+  "largeMover" : {
+    "performance" : "Performance",
+    "low" : "Niedrig",
+    "high" : "Hoch"
   }
 }

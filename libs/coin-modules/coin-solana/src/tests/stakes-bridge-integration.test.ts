@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { SolanaAccount, SolanaStake, Transaction, TransactionStatus } from "../types";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import type { Account } from "@ledgerhq/types-live";
-import { ChainAPI, LAST_VALID_BLOCK_HEIGHT_MOCK, LATEST_BLOCKHASH_MOCK } from "../api";
+import { ChainAPI, LAST_VALID_BLOCK_HEIGHT_MOCK, LATEST_BLOCKHASH_MOCK } from "../network";
 import {
   SolanaStakeAccountIsNotDelegatable,
   SolanaStakeAccountValidatorIsUnchangeable,
@@ -10,7 +10,7 @@ import {
 import { testOnChainData } from "./test-onchain-data.fixture";
 import getTransactionStatus from "../getTransactionStatus";
 import { prepareTransaction } from "../prepareTransaction";
-import { PARSED_PROGRAMS } from "../api/chain/program/constants";
+import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 
 const baseAccount = {
   balance: new BigNumber(0),

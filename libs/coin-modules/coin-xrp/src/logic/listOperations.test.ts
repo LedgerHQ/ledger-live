@@ -3,6 +3,7 @@ import { listOperations } from "./listOperations";
 import { RIPPLE_EPOCH } from "./utils";
 import { Marker } from "../network/types";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { XrpAsset } from "../types";
 
 const maxHeight = 2;
 const minHeight = 1;
@@ -75,6 +76,7 @@ describe("listOperations", () => {
       Account: "sender",
       Destination: "dest",
       Sequence: 1,
+      SigningPubKey: "DEADBEEF",
     },
   };
   const otherTx = { ...paymentTx, tx_json: { ...paymentTx.tx_json, TransactionType: "Other" } };
@@ -97,7 +99,7 @@ describe("listOperations", () => {
     expect(JSON.parse(token)).toEqual(someMarker);
   });
 
-  it("should make enough calls so that the limit requested is satified", async () => {
+  it("should make enough calls so that the limit requested is satisfied", async () => {
     const txs = [paymentTx, paymentTx, otherTx, otherTx, otherTx, otherTx, otherTx, otherTx];
     assert(txs.length === 8);
     mockNetworkGetTransactions.mockResolvedValue(mockNetworkTxs(txs));
@@ -161,6 +163,7 @@ describe("listOperations", () => {
               Account: opSender,
               Destination: opDestination,
               Sequence: 1,
+              SigningPubKey: "DEADBEEF",
             },
           },
           {
@@ -177,6 +180,7 @@ describe("listOperations", () => {
               Destination: opDestination,
               DestinationTag: 509555,
               Sequence: 1,
+              SigningPubKey: "DEADBEEF",
             },
           },
           {
@@ -200,6 +204,7 @@ describe("listOperations", () => {
                 },
               ],
               Sequence: 1,
+              SigningPubKey: "DEADBEEF",
             },
           },
         ]),
@@ -216,6 +221,7 @@ describe("listOperations", () => {
         expectedType === "IN" ? BigInt(deliveredAmount) : BigInt(deliveredAmount + fee);
       expect(results).toEqual([
         {
+          asset: { type: "native" },
           operationIndex: 0,
           tx: {
             fees: BigInt(10),
@@ -240,9 +246,11 @@ describe("listOperations", () => {
                 data: "72656e74",
               },
             ],
+            signingPubKey: "DEADBEEF",
           },
         },
         {
+          asset: { type: "native" },
           operationIndex: 0,
           tx: {
             hash: "HASH_VALUE",
@@ -262,9 +270,11 @@ describe("listOperations", () => {
             sequence: 1,
             destinationTag: 509555,
             xrpTxType: "Payment",
+            signingPubKey: "DEADBEEF",
           },
         },
         {
+          asset: { type: "native" },
           tx: {
             hash: "HASH_VALUE",
             fees: BigInt(10),
@@ -278,6 +288,7 @@ describe("listOperations", () => {
           details: {
             sequence: 1,
             xrpTxType: "Payment",
+            signingPubKey: "DEADBEEF",
           },
           type: expectedType,
           value: expectedValue,
@@ -285,7 +296,7 @@ describe("listOperations", () => {
           recipients: [opDestination],
           operationIndex: 0,
         },
-      ] satisfies Operation<void>[]);
+      ] satisfies Operation<XrpAsset>[]);
     },
   );
 });

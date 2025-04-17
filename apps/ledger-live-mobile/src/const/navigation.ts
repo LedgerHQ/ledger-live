@@ -62,6 +62,7 @@ export enum ScreenName {
   DebugSettings = "DebugSettings",
   DebugSnackbars = "DebugSnackbars",
   DebugTransactionsAlerts = "DebugTransactionsAlerts",
+  DebugSwipe = "DebugSwipe",
   DebugStore = "DebugStore",
   DebugStoryly = "DebugStoryly",
   DebugSwap = "DebugSwap",
@@ -321,6 +322,8 @@ export enum ScreenName {
 
   // ton
   TonEditComment = "TonEditComment",
+  // mina
+  MinaEditMemo = "MinaEditMemo",
 
   // Algorand
   AlgorandEditMemo = "AlgorandEditMemo",
@@ -545,6 +548,7 @@ export enum ScreenName {
   ScanDeviceAccounts = "ScanDeviceAccounts",
   AddAccountsWarning = "AddAccountsWarning",
   NoAssociatedAccounts = "NoAssociatedAccounts",
+  LargeMoverLandingPage = "LargeMoverLandingPage",
 }
 
 export enum NavigatorName {
@@ -658,6 +662,7 @@ export enum NavigatorName {
   AnalyticsOptInPrompt = "AnalyticsOptInPrompt",
   WalletSyncActivationInit = "WalletSyncActivationInit",
   LandingPages = "LandingPages",
+  largemoverLandingpage = "largemoverLandingpage",
 
   // Web3Hub
   Web3Hub = "Web3Hub",

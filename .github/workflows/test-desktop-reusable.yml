@@ -428,10 +428,12 @@ jobs:
     runs-on: [ledger-live-medium]
     if: ${{ !cancelled() && github.ref_name == 'develop' }}
     steps:
-      - name: checkout
-        uses: actions/checkout@v4
+      - name: Download Allure Report
+        uses: actions/download-artifact@v4
         with:
-          ref: ${{ ((github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request') && (inputs.ref || github.ref_name)) || github.sha }}
+          path: allure-results-linux
+          pattern: allure-results-linux*
+          merge-multiple: true
       - name: Send Results and Generate Allure Report - Linux
         uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         if: ${{ !cancelled() }}

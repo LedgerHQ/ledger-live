@@ -1541,14 +1541,14 @@
         "secondaryCta" : "อาจดำเนินการในภายหลัง"
       },
       "verifyIdentity" : {
-        "title" : "การแจ้งเตือน: สมัครใช้งาน Ledger Recover ให้แล้วเสร็จ",
-        "description" : "สินทรัพย์จะปลอดภัยในอีกแค่ขั้นตอนเดียว",
+        "title" : "การเข้าถึงวอลเล็ตของคุณยังไม่มีการสำรองข้อมูล",
+        "description" : "ยืนยันตัวตนเพื่อให้การเข้าถึงวอลเล็ตของคุณปลอดภัย",
         "primaryCta" : "ยืนยันตัวตน",
         "secondaryCta" : "อาจดำเนินการในภายหลัง"
       },
       "connectDevice" : {
-        "title" : "การแจ้งเตือน: สมัครใช้งาน Ledger Recover ให้แล้วเสร็จ",
-        "description" : "เป็นขั้นตอนสุดท้ายเพื่อให้แน่ใจว่าการกู้คืนการเข้าถึงวอลเล็ตสำเร็จ",
+        "title" : "การเข้าถึงวอลเล็ตของคุณยังไม่มีการสำรองข้อมูล",
+        "description" : "เชื่อมต่ออุปกรณ์เพื่อให้การเข้าถึงวอลเล็ตของคุณปลอดภัย",
         "primaryCta" : "เชื่อมต่ออุปกรณ์",
         "secondaryCta" : "อาจดำเนินการในภายหลัง"
       }
@@ -1879,7 +1879,8 @@
       "palletMethod" : "วิธีการ",
       "transferAmount" : "จำนวนที่โอน",
       "validatorsCount" : "({{number}}) ผู้ตรวจสอบ ",
-      "version" : "เวอร์ชัน"
+      "version" : "เวอร์ชัน",
+      "accountCreationFee" : "Account Creation Fee"
     }
   },
   "operationList" : {
@@ -2390,7 +2391,7 @@
         "ethereumPriorityFee" : "Priority Fee สูงสุด ({{unitName}})",
         "nextBlock" : "บล็อกถัดไป",
         "suggested" : "แนะนำ",
-        "unitPerByte" : "{{unit}} ต่อไบต์",
+        "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
         "nftQuantity" : "ปริมาณ"
       },
@@ -2423,8 +2424,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "ไม่ใช้ Tag/Memo?",
-        "description" : "เงินทุนของคุณจะสูญหายไปหากคุณไม่เพิ่ม Tag/Memo เมื่อส่งไปยัง Exchange ที่มีตัวกลางหรือวอลเล็ตที่มีผู้รับฝากทรัพย์สิน",
+        "title" : "ต้องการ Tag/Memo?",
+        "description" : "การไม่ระบุ Tag/Memo เมื่อส่งเงินทุนไปที่ Centralized Exchange อาจเพิ่มโอกาสที่เงินทุนของคุณจะสูญหายได้",
         "cta.addTag" : "เพิ่ม Tag",
         "cta.not.addTag" : "ไม่เพิ่ม Tag",
         "checkbox.label" : "ไม่ต้องแสดงรายการนี้อีก"
@@ -4834,7 +4835,7 @@
         "description" : "จัดการ ซื้อ และเพิ่มมูลค่าคริปโต ตลอดจน NFT ของคุณบน Ledger Live ได้อย่างปลอดภัย",
         "nextButton" : "เริ่มต้นกันเลย",
         "noDevice" : "ไม่มีอุปกรณ์?",
-        "buyLink" : "ไม่มีอุปกรณ์? ซื้อ Ledger Nano X",
+        "buyLink" : "ไม่มีอุปกรณ์? ซื้อ Ledger",
         "byTapping" : "การแตะ \"เริ่มต้น\" จะถือว่าคุณยินยอมและตกลงกับ",
         "termsAndConditions" : "ข้อกำหนดและเงื่อนไข",
         "and" : "และ",
@@ -5541,6 +5542,9 @@
       "memo" : "Tag / Memo",
       "memoPlaceholder" : "ไม่บังคับ",
       "requiredMemoPlaceholder" : "จำเป็น"
+    },
+    "mina" : {
+      "memoPlaceholder" : "Memo (ไม่บังคับ)"
     }
   },
   "errors" : {
@@ -6571,6 +6575,15 @@
         "swap" : "Swap",
         "deposit" : "ฝาก"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "Memo ไม่สามารถยาวเกิน 32 ตัวอักษร"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "This transaction will incur an account creation fee of {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "Minimum required amount for this transaction is {{amount}}"
     }
   },
   "cryptoOrg" : {

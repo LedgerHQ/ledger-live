@@ -3,6 +3,7 @@ import { createStackNavigator, TransitionPresets } from "@react-navigation/stack
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 import DebugBenchmarkQRStream from "~/screens/Settings/Debug/Broken/BenchmarkQRStream";
 import DebugBLE from "~/screens/Settings/Debug/Connectivity/BLE";
@@ -75,6 +76,8 @@ import {
   TestScreenWithDrawerForcingToBeOpened,
   TestScreenWithDrawerRequestingToBeOpened,
 } from "LLM/components/QueuedDrawer/TestScreens";
+import { LargeMoverLandingPage } from "LLM/features/LandingPages/screens/LargeMoverLandingPage";
+import SwiperScreenDebug from "~/screens/Settings/Debug/Features/SwiperScreenDebug";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
@@ -84,7 +87,7 @@ export default function SettingsNavigator() {
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
 
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
-
+  const isLargeMoverFeatureEnabled = useFeature("largemoverLandingpage")?.enabled;
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen
@@ -500,6 +503,22 @@ export default function SettingsNavigator() {
         component={TestScreenWithDrawerForcingToBeOpened}
         options={{
           title: "QueuedDrawers (Auto force open)",
+        }}
+      />
+      {isLargeMoverFeatureEnabled && (
+        <Stack.Screen
+          name={ScreenName.LargeMoverLandingPage}
+          component={LargeMoverLandingPage}
+          options={{
+            title: "Large Mover",
+          }}
+        />
+      )}
+      <Stack.Screen
+        name={ScreenName.DebugSwipe}
+        component={SwiperScreenDebug}
+        options={{
+          title: "Swiper Screen Debug",
         }}
       />
     </Stack.Navigator>

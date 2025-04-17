@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-dmk-mobile",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Ledger Device Management Kit transport module for LLD",
   "private": true,
   "license": "Apache-2.0",
@@ -50,6 +50,7 @@
     "@vitest/coverage-istanbul": "3.0.7",
     "jsdom": "25.0.1",
     "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "react-native": "0.76.3",
     "rxjs": "^7.8.1",
     "vite": "6.0.9",

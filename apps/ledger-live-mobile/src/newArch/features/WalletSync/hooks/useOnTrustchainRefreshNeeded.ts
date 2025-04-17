@@ -8,7 +8,7 @@ import {
 import { setTrustchain, resetTrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { TrustchainEjected, TrustchainNotAllowed } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { log } from "@ledgerhq/logs";
-import { AnalyticsEvents } from "~/newArch/features/Analytics/enums";
+import { AnalyticsEvents } from "LLM/features/Analytics/enums";
 import { track } from "~/analytics";
 
 export function useOnTrustchainRefreshNeeded(

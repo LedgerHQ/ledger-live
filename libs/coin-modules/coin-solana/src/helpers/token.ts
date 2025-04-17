@@ -4,8 +4,8 @@ import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { AccountLike } from "@ledgerhq/types-live";
 import { SolanaTokenAccount, SolanaTokenProgram, TransferFeeCalculated } from "../types";
-import { TransferFeeConfigExt } from "../api/chain/account/tokenExtensions";
-import { PARSED_PROGRAMS } from "../api/chain/program/constants";
+import { TransferFeeConfigExt } from "../network/chain/account/tokenExtensions";
+import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 
 export function tokenIsListedOnLedger(currencyId: string, mint: string): boolean {
   return findTokenByAddressInCurrency(mint, currencyId)?.type === "TokenCurrency";

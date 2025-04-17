@@ -16,13 +16,9 @@ export class Layout extends Component {
   readonly drawerReceiveButton = this.page.getByTestId("drawer-receive-button");
   readonly drawerEarnButton = this.page.getByTestId("drawer-earn-button");
   readonly drawerBuycryptoButton = this.page.getByTestId("drawer-exchange-button");
-  readonly drawerSwapButton = this.page.getByTestId("drawer-swap-button");
   readonly drawerExperimentalButton = this.page.getByTestId("drawer-experimental-button");
   readonly drawerManagerButton = this.page.getByTestId("drawer-manager-button");
   readonly drawerRecoverButton = this.page.getByTestId("drawer-recover-button");
-  readonly bookmarkedAccounts = this.page
-    .getByTestId("drawer-bookmarked-accounts")
-    .locator(".bookmarked-account-item");
   readonly recoverStatusIcon = this.page
     .getByTestId("drawer-recover-button")
     .locator("path")
@@ -92,11 +88,6 @@ export class Layout extends Component {
     await this.drawerBuycryptoButton.click();
   }
 
-  @step("Go to swap")
-  async goToSwap() {
-    await this.drawerSwapButton.click();
-  }
-
   @step("Go to manager")
   async goToManager() {
     await this.drawerManagerButton.click();
@@ -110,11 +101,6 @@ export class Layout extends Component {
   @step("synchronize accounts")
   async syncAccounts() {
     await this.topbarSynchronizeButton.click();
-  }
-
-  @step("Wait for accounts sync to be finished")
-  async waitForAccountsSyncToBeDone() {
-    await expect(this.topbarSynchronizeButton).not.toHaveText("Synchronizing");
   }
 
   @step("Toggle discreet mode")
@@ -141,11 +127,6 @@ export class Layout extends Component {
   @step("open Help")
   async openHelp() {
     await this.topbarHelpButton.click();
-  }
-
-  @step("wait for loading spinner to have disappeared")
-  async waitForLoadingSpinnerToHaveDisappeared() {
-    await this.loadingSpinner.waitFor({ state: "detached" });
   }
 
   @step("Expect recover status icon to be visible")

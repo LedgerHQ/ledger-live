@@ -1,0 +1,33 @@
+{
+    "name": "ledger-live-desktop-e2e-tests",
+    "version": "0.0.2",
+    "private": true,
+    "scripts": {
+        "test:playwright": "playwright test --config=playwright.config.ts",
+        "test:playwright:setup": "playwright install chromium"
+    },
+    "dependencies": {
+        "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
+        "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
+        "@ledgerhq/live-cli": "workspace:^",
+        "@ledgerhq/live-common": "workspace:^",
+        "@ledgerhq/live-env": "workspace:^",
+        "@ledgerhq/live-wallet": "workspace:^",
+        "@ledgerhq/types-live": "workspace:^",
+        "@playwright/test": "^1.51.0",
+        "@types/node": "22.10.10",
+        "allure-js-commons": "^3.2.1",
+        "allure-playwright": "^3.2.1",
+        "axios": "^1.8.3",
+        "dotenv": "^16.4.7",
+        "invariant": "^2.2.4",
+        "lodash": "^4.17.21",
+        "rxjs": "^7.8.1"
+    },
+    "devDependencies": {
+        "@types/invariant": "2.2.37",
+        "@types/lodash": "4.17.16",
+        "playwright": "1.51.1",
+        "electron": "32.0.2"
+    }
+}

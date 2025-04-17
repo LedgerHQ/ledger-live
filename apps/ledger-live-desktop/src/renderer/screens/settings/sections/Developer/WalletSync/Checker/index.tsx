@@ -2,7 +2,7 @@ import { Alert, Flex, Icons, Text } from "@ledgerhq/react-ui";
 
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useLedgerSyncInfo } from "~/newArch/features/WalletSync/hooks/useLedgerSyncInfo";
+import { useLedgerSyncInfo } from "LLD/features/WalletSync/hooks/useLedgerSyncInfo";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import FakeLink from "~/renderer/components/FakeLink";

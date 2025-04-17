@@ -1,15 +1,11 @@
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import {
-  ACTIVATION_FEES,
-  ACTIVATION_FEES_TRC_20,
-  STANDARD_FEES_NATIVE,
-  STANDARD_FEES_TRC_20,
-} from "../logic/constants";
-import { fetchTronAccount } from "../network";
+import { ACTIVATION_FEES, STANDARD_FEES_NATIVE, STANDARD_FEES_TRC_20 } from "../logic/constants";
 import type { AccountTronAPI } from "../network/types";
-import { Transaction } from "../types";
+import type { Transaction, TronAsset } from "../types";
 import { extractBandwidthInfo, getEstimatedBlockSize } from "./utils";
+import { estimateFees, getAccount } from "../logic";
+import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 
 // see : https://developers.tron.network/docs/bandwith#section-bandwidth-points-consumption
 // 1. cost around 200 Bandwidth, if not enough check Free Bandwidth
@@ -35,7 +31,7 @@ const getFeesFromAccountActivation = async (
   transaction: Transaction,
   tokenAccount?: TokenAccount | null,
 ): Promise<BigNumber> => {
-  const recipientAccounts = await fetchTronAccount(transaction.recipient);
+  const recipientAccounts = await getAccount(transaction.recipient);
   const recipientAccount: AccountTronAPI | undefined = recipientAccounts[0];
   const { gainedUsed, gainedLimit } = extractBandwidthInfo(transaction.networkInfo);
   const available = gainedLimit.minus(gainedUsed);
@@ -47,13 +43,30 @@ const getFeesFromAccountActivation = async (
   );
 
   if (!recipientAccount && !hasTRC20 && available.lt(estimatedBandwidthCost)) {
-    // if we have a token account but the recipient is either not active or the account does not have a trc20 balance for the given token.
-    if (tokenAccount && tokenAccount.token.tokenType === "trc20") {
-      return ACTIVATION_FEES_TRC_20; // cost is 27.6009 TRX
-    }
     // if no token account then we are sending tron use the default activation fees.
     if (!tokenAccount) {
       return ACTIVATION_FEES; // cost is around 1 TRX
+    }
+
+    const transactionIntent: TransactionIntent<TronAsset> = {
+      type: transaction.mode,
+      sender: account.freshAddress,
+      recipient: transaction.recipient,
+      amount: BigInt(transaction.amount.toString()),
+      asset:
+        tokenAccount?.token.tokenType === "trc20"
+          ? {
+              type: "token",
+              standard: "trc20",
+              contractAddress: tokenAccount.token.contractAddress,
+            }
+          : { type: "token", standard: "trc10", tokenId: tokenAccount?.token.id },
+    };
+
+    // if we have a token account but the recipient is either not active or the account does not have a trc20 balance for the given token.
+    if (tokenAccount && tokenAccount.token.tokenType === "trc20") {
+      const estimatedFees = await estimateFees(transactionIntent);
+      return new BigNumber(estimatedFees.toString());
     }
   }
 

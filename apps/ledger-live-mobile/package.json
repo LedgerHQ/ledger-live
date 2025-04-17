@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "3.73.1",
+  "version": "3.74.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -191,6 +191,7 @@
     "react-native-keychain": "7.0.0",
     "react-native-level-fs": "3.0.1",
     "react-native-localize": "2.2.6",
+    "react-native-mmkv": "2.12.2",
     "react-native-modal": "13.0.1",
     "react-native-navigation-bar-color": "2.0.2",
     "react-native-pager-view": "6.5.1",

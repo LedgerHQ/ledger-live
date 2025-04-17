@@ -1,7 +1,14 @@
 import { renderHook } from "@testing-library/react-native";
 import { useTrackSwapFlow, UseTrackSwapFlow } from "./useTrackSwapFlow";
 import { track } from "../segment";
-import { UserRefusedAllowManager, UserRefusedOnDevice } from "@ledgerhq/errors";
+import {
+  CantOpenDevice,
+  LockedDeviceError,
+  TransportError,
+  UserRefusedAllowManager,
+  UserRefusedOnDevice,
+  TransportRaceCondition,
+} from "@ledgerhq/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
 jest.mock("../segment", () => ({
@@ -19,7 +26,9 @@ describe("useTrackSwapFlow", () => {
     location: HOOKS_TRACKING_LOCATIONS.swapFlow,
     device: deviceMock,
     requestOpenApp: null,
+    isLocked: false,
     error: null,
+    inWrongDeviceForAccount: null,
   };
 
   afterEach(() => {
@@ -47,7 +56,7 @@ describe("useTrackSwapFlow", () => {
         deviceType: "Europa",
         connectionType: CONNECTION_TYPES.BLE,
         platform: "LLM",
-        page: "Ledger Sync",
+        page: "Exchange",
       }),
     );
   });
@@ -66,7 +75,7 @@ describe("useTrackSwapFlow", () => {
         deviceType: "Europa",
         connectionType: CONNECTION_TYPES.BLE,
         platform: "LLM",
-        page: "Ledger Sync",
+        page: "Exchange",
       }),
     );
   });
@@ -85,7 +94,7 @@ describe("useTrackSwapFlow", () => {
         deviceType: "Europa",
         connectionType: CONNECTION_TYPES.BLE,
         platform: "LLM",
-        page: "Ledger Sync",
+        page: "Exchange",
       }),
     );
   });
@@ -111,7 +120,127 @@ describe("useTrackSwapFlow", () => {
         deviceType: "Europa",
         connectionType: CONNECTION_TYPES.USB,
         platform: "LLM",
-        page: "Ledger Sync",
+        page: "Exchange",
+      }),
+    );
+  });
+
+  it('should track "Device locked" if isLocked is true', () => {
+    const { rerender } = renderHook((props: UseTrackSwapFlow) => useTrackSwapFlow(props), {
+      initialProps: { ...defaultArgs, requestOpenApp: "Ethereum" },
+    });
+
+    rerender({ ...defaultArgs, requestOpenApp: "Ethereum", isLocked: true });
+
+    expect(track).toHaveBeenCalledWith(
+      "Device locked",
+      expect.objectContaining({
+        deviceType: "Europa",
+        connectionType: CONNECTION_TYPES.BLE,
+        platform: "LLM",
+        page: "Exchange",
+      }),
+    );
+  });
+
+  it('should track "Device locked" if error is LockedDeviceError', () => {
+    const { rerender } = renderHook((props: UseTrackSwapFlow) => useTrackSwapFlow(props), {
+      initialProps: { ...defaultArgs, requestOpenApp: "Ethereum" },
+    });
+
+    rerender({ ...defaultArgs, requestOpenApp: "Ethereum", error: new LockedDeviceError() });
+
+    expect(track).toHaveBeenCalledWith(
+      "Device locked",
+      expect.objectContaining({
+        deviceType: "Europa",
+        connectionType: CONNECTION_TYPES.BLE,
+        platform: "LLM",
+        page: "Exchange",
+      }),
+    );
+  });
+
+  it('should track "Connection failed" if error is CantOpenDevice', () => {
+    const { rerender } = renderHook((props: UseTrackSwapFlow) => useTrackSwapFlow(props), {
+      initialProps: { ...defaultArgs, requestOpenApp: "Ethereum" },
+    });
+
+    rerender({ ...defaultArgs, requestOpenApp: "Ethereum", error: new CantOpenDevice() });
+
+    expect(track).toHaveBeenCalledWith(
+      "Connection failed",
+      expect.objectContaining({
+        deviceType: "Europa",
+        connectionType: CONNECTION_TYPES.BLE,
+        platform: "LLM",
+        page: "Exchange",
+      }),
+    );
+  });
+
+  it('should track "Transport error" if error is TransportError', () => {
+    const { rerender } = renderHook((props: UseTrackSwapFlow) => useTrackSwapFlow(props), {
+      initialProps: { ...defaultArgs, requestOpenApp: "Ethereum" },
+    });
+
+    rerender({
+      ...defaultArgs,
+      requestOpenApp: "Ethereum",
+      error: new TransportError("test", "test"),
+    });
+
+    expect(track).toHaveBeenCalledWith(
+      "Transport error",
+      expect.objectContaining({
+        deviceType: "Europa",
+        connectionType: CONNECTION_TYPES.BLE,
+        platform: "LLM",
+        page: "Exchange",
+      }),
+    );
+  });
+
+  it('should track "Transport race condition" if error is CantOpenDevice', () => {
+    const { rerender } = renderHook((props: UseTrackSwapFlow) => useTrackSwapFlow(props), {
+      initialProps: { ...defaultArgs, requestOpenApp: "Ethereum" },
+    });
+
+    rerender({
+      ...defaultArgs,
+      requestOpenApp: "Ethereum",
+      error: new TransportRaceCondition(),
+    });
+
+    expect(track).toHaveBeenCalledWith(
+      "Transport race condition",
+      expect.objectContaining({
+        deviceType: "Europa",
+        connectionType: CONNECTION_TYPES.BLE,
+        platform: "LLM",
+        page: "Exchange",
+      }),
+    );
+  });
+
+  it('should track "Wrong device association" when inWrongDeviceForAccount is provided', () => {
+    const { rerender } = renderHook((props: UseTrackSwapFlow) => useTrackSwapFlow(props), {
+      initialProps: { ...defaultArgs, requestOpenApp: "Ethereum" },
+    });
+
+    rerender({
+      ...defaultArgs,
+      requestOpenApp: "Ethereum",
+      inWrongDeviceForAccount: { accountName: "Test Account" },
+    });
+
+    expect(track).toHaveBeenCalledWith(
+      "Wrong device association",
+      expect.objectContaining({
+        deviceType: "Europa",
+        connectionType: CONNECTION_TYPES.BLE,
+        platform: "LLM",
+        page: "Exchange",
       }),
     );
   });

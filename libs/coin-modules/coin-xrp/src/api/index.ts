@@ -15,10 +15,11 @@ import {
   getNextValidSequence,
   lastBlock,
   listOperations,
+  MemoInput,
 } from "../logic";
-import { ListOperationsOptions } from "../types";
+import { ListOperationsOptions, XrpAsset } from "../types";
 
-export function createApi(config: XrpConfig): Api<void> {
+export function createApi(config: XrpConfig): Api<XrpAsset> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -32,8 +33,13 @@ export function createApi(config: XrpConfig): Api<void> {
   };
 }
 
+export type TransactionIntentExtra = {
+  destinationTag?: number | null | undefined;
+  memos?: MemoInput[];
+};
+
 async function craft(
-  transactionIntent: TransactionIntent<void>,
+  transactionIntent: TransactionIntent<XrpAsset, TransactionIntentExtra>,
   customFees?: bigint,
 ): Promise<string> {
   const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
@@ -44,6 +50,8 @@ async function craft(
       recipient: transactionIntent.recipient,
       amount: transactionIntent.amount,
       fee: estimatedFees,
+      destinationTag: transactionIntent.destinationTag,
+      memos: transactionIntent.memos ?? [],
     },
   );
   return tx.serializedTransaction;
@@ -56,13 +64,13 @@ type PaginationState = {
   readonly minHeight: number;
   continueIterations: boolean;
   apiNextCursor?: string;
-  accumulator: Operation<void>[];
+  accumulator: Operation<XrpAsset>[];
 };
 
 async function operationsFromHeight(
   address: string,
   minHeight: number,
-): Promise<[Operation<void>[], string]> {
+): Promise<[Operation<XrpAsset>[], string]> {
   async function fetchNextPage(state: PaginationState): Promise<PaginationState> {
     const options: ListOperationsOptions = {
       limit: state.pageSize,
@@ -110,7 +118,7 @@ async function operationsFromHeight(
 async function operations(
   address: string,
   { minHeight }: Pagination,
-): Promise<[Operation<void>[], string]> {
+): Promise<[Operation<XrpAsset>[], string]> {
   // TODO token must be implemented properly (waiting ack from the design document)
   return await operationsFromHeight(address, minHeight);
 }

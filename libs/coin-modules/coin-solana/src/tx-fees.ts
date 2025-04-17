@@ -1,12 +1,12 @@
-import { ChainAPI } from "./api";
+import { ChainAPI } from "./network";
 import { buildTransactionWithAPI } from "./buildTransaction";
 import createTransaction from "./createTransaction";
 import { Transaction, TransactionModel } from "./types";
 import { LEDGER_VALIDATOR_DEFAULT, assertUnreachable } from "./utils";
 import { VersionedTransaction as OnChainTransaction } from "@solana/web3.js";
 import { log } from "@ledgerhq/logs";
-import { getStakeAccountAddressWithSeed } from "./api/chain/web3";
-import { PARSED_PROGRAMS } from "./api/chain/program/constants";
+import { getStakeAccountAddressWithSeed } from "./network/chain/web3";
+import { PARSED_PROGRAMS } from "./network/chain/program/constants";
 
 const DEFAULT_TX_FEE = 5000;
 

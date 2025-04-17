@@ -1541,14 +1541,14 @@
         "secondaryCta" : "以后再说"
       },
       "verifyIdentity" : {
-        "title" : "提醒：完成订阅 Ledger Recover 服务",
-        "description" : "完成最后一步，让您的设备及资金得到安全保障。",
+        "title" : "您尚未备份钱包访问权限",
+        "description" : "验证您的身份，保护钱包访问权限",
         "primaryCta" : "验证身份",
         "secondaryCta" : "以后再说"
       },
       "connectDevice" : {
-        "title" : "提醒：完成订阅 Ledger Recover 服务",
-        "description" : "这是您确保能恢复钱包访问权限的最后一步。",
+        "title" : "您尚未备份钱包访问权限",
+        "description" : "连接您的设备，保护钱包访问权限",
         "primaryCta" : "连接设备",
         "secondaryCta" : "以后再说"
       }
@@ -1879,7 +1879,8 @@
       "palletMethod" : "方法",
       "transferAmount" : "转移数额",
       "validatorsCount" : "验证者 ({{number}})",
-      "version" : "版本"
+      "version" : "版本",
+      "accountCreationFee" : "账户创建费"
     }
   },
   "operationList" : {
@@ -2390,7 +2391,7 @@
         "ethereumPriorityFee" : "最高优先费用 ({{unitName}})",
         "nextBlock" : "下一个区块",
         "suggested" : "建议",
-        "unitPerByte" : "{{unit}} 每字节",
+        "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
         "nftQuantity" : "数量"
       },
@@ -2423,8 +2424,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "不使用标签/备忘标签？",
-        "description" : "将资金发送到任何中心化交易所或托管钱包时，如果不添加标签/备忘标签，您的资金将会丢失。",
+        "title" : "需要标签/备忘标签？",
+        "description" : "向中心化交易所发送资金时不添加标签/备忘标签会提高资金丢失的可能性。",
         "cta.addTag" : "添加标签",
         "cta.not.addTag" : "不添加标签",
         "checkbox.label" : "不再显示。"
@@ -4834,7 +4835,7 @@
         "description" : "在 Ledger Live 上安全地管理、买入和增长您的加密货币和 NFT。",
         "nextButton" : "开始",
         "noDevice" : "没有设备？",
-        "buyLink" : "没有设备？购买 Ledger Nano X",
+        "buyLink" : "没有设备？购买 Ledger 设备",
         "byTapping" : "点按“开始”即表示您应允并同意我们的",
         "termsAndConditions" : "条款与条件",
         "and" : "和",
@@ -5541,6 +5542,9 @@
       "memo" : "标签/备忘标签",
       "memoPlaceholder" : "可选",
       "requiredMemoPlaceholder" : "必填"
+    },
+    "mina" : {
+      "memoPlaceholder" : "可选 Memo"
     }
   },
   "errors" : {
@@ -6571,6 +6575,15 @@
         "swap" : "互换",
         "deposit" : "存款"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "备忘标签文本不可超过 32 个字符"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "此交易将产生 {{fee}} 的账户创建费"
+    },
+    "AmountTooSmall" : {
+      "title" : "此交易的最低数额要求为 {{amount}}"
     }
   },
   "cryptoOrg" : {

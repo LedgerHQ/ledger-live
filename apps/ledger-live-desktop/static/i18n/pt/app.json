@@ -1541,14 +1541,14 @@
         "secondaryCta" : "Talvez mais tarde"
       },
       "verifyIdentity" : {
-        "title" : "Lembrete: Termine de assinar o Ledger Recover",
-        "description" : "Você está a apenas dois passos de aumentar sua segurança.",
+        "title" : "O acesso à sua carteira ainda não tem backup",
+        "description" : "Verifique sua identidade para garantir o acesso à sua carteira",
         "primaryCta" : "Verificar identidade",
         "secondaryCta" : "Talvez mais tarde"
       },
       "connectDevice" : {
-        "title" : "Lembrete: Termine de assinar o Ledger Recover",
-        "description" : "Essa é a última etapa para garantir a recuperação do acesso à carteira.",
+        "title" : "O acesso à sua carteira ainda não tem backup",
+        "description" : "Conecte seu dispositivo para proteger o acesso à sua carteira",
         "primaryCta" : "Conectar dispositivo",
         "secondaryCta" : "Talvez mais tarde"
       }
@@ -1879,7 +1879,8 @@
       "palletMethod" : "Método",
       "transferAmount" : "Transferir Quantia",
       "validatorsCount" : "Validadores ({{number}})",
-      "version" : "Versão"
+      "version" : "Versão",
+      "accountCreationFee" : "Taxa de Criação de Conta"
     }
   },
   "operationList" : {
@@ -2390,7 +2391,7 @@
         "ethereumPriorityFee" : "Taxa de Prioridade Máxima ({{unitName}})",
         "nextBlock" : "Próximo bloco",
         "suggested" : "Sugerido",
-        "unitPerByte" : "{{unit}} por byte",
+        "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
         "nftQuantity" : "Quantidade"
       },
@@ -2423,8 +2424,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "Não usa tag/memo?",
-        "description" : "Seus fundos serão perdidos se você não adicionar uma tag ou memo ao enviá-los para qualquer corretora centralizada ou carteira de custódia.",
+        "title" : "Precisa de Tag/Memo?",
+        "description" : "Ao não adicionar Tag/Memo ao enviar fundos para uma corretora centralizada, você corre o risco de perder seus fundos.",
         "cta.addTag" : "Adicionar tag",
         "cta.not.addTag" : "Não adicione a tag",
         "checkbox.label" : "Não mostrar isso novamente."
@@ -5541,6 +5542,9 @@
       "memo" : "Tag / Memo",
       "memoPlaceholder" : "Opcional",
       "requiredMemoPlaceholder" : "Obrigatório"
+    },
+    "mina" : {
+      "memoPlaceholder" : "Memo opcional"
     }
   },
   "errors" : {
@@ -6571,6 +6575,15 @@
         "swap" : "Trocar",
         "deposit" : "Depositar"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "O texto do memo não pode ter mais de 32 caracteres"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Esta transação incorrerá em uma taxa de criação de conta de {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "A quantia mínima exigida para esta transação é {{amount}}"
     }
   },
   "cryptoOrg" : {

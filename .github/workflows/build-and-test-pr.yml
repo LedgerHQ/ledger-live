@@ -3,6 +3,9 @@ on:
   merge_group:
     types: [checks_requested]
   pull_request:
+    branches-ignore:
+        - 'smartling-content-updated**'
+        - 'smartling-translation-completed**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
@@ -73,6 +76,8 @@ jobs:
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@develop
     secrets: inherit
+    with:
+      use-performance-pool: true
 
   # Tests
   test-libraries:

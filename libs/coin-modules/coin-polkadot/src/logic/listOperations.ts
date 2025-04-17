@@ -1,11 +1,11 @@
 import { Operation } from "@ledgerhq/coin-framework/api/types";
 import network from "../network";
-import { PolkadotOperation } from "../types";
+import { PolkadotOperation, PolkadotAsset } from "../types";
 
 export async function listOperations(
   addr: string,
   { limit, startAt }: { limit: number; startAt?: number | undefined },
-): Promise<[Operation<void>[], number]> {
+): Promise<[Operation<PolkadotAsset>[], number]> {
   //The accountId is used to map Operations to Live types.
   const fakeAccountId = "";
   const operations = await network.getOperations(fakeAccountId, addr, startAt, limit);
@@ -13,9 +13,10 @@ export async function listOperations(
   return [operations.map(convertToCoreOperation), blockHeight];
 }
 
-const convertToCoreOperation = (operation: PolkadotOperation) => {
+const convertToCoreOperation = (operation: PolkadotOperation): Operation<PolkadotAsset> => {
   const { hash, type, value, fee, blockHeight, senders, recipients, date } = operation;
   return {
+    asset: { type: "native" },
     operationIndex: 0,
     tx: {
       hash,
