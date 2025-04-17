@@ -22,6 +22,7 @@ export class SwapPage extends AppPage {
   private destinationCurrencyDropdown = this.page.getByTestId("destination-currency-dropdown");
   private destinationCurrencyAmount = this.page.getByTestId("destination-currency-amount");
   private feesValue = this.page.getByTestId("fees-value");
+  private switchButton = "to-account-switch-accounts";
 
   // Exchange Button Component
   private exchangeButton = this.page.getByTestId("exchange-button");
@@ -254,6 +255,12 @@ export class SwapPage extends AppPage {
     await this.chooseAssetDrawer.chooseFromAsset(accountToSwapFrom.currency.name);
   }
 
+  @step("Check currency to swap from is $0")
+  async swithYouSendAndYouReceive(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+    await webview.getByTestId(this.switchButton).click();
+  }
+
   @step("Check currency to swap from is $1")
   async checkAssetFrom(electronApp: ElectronApplication, currency: string) {
     const [, webview] = electronApp.windows();
@@ -418,7 +425,7 @@ export class SwapPage extends AppPage {
   }
 
   @step("Check minimum amount for swap")
-  async getMinimumAmount(swap: Swap) {
-    return (await getMinimumSwapAmount(swap))?.toString() ?? "";
+  async getMinimumAmount(accountFrom: Account, accountTo: Account) {
+    return (await getMinimumSwapAmount(accountFrom, accountTo))?.toString() ?? "";
   }
 }

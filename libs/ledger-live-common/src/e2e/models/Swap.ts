@@ -9,11 +9,11 @@ export class Swap extends Transaction {
     accountToDebit: Account,
     accountToCredit: Account,
     amount: string,
-    speed: Fee,
+    public speed?: Fee,
     public amountToReceive?: string,
     public feesAmount?: string,
   ) {
-    super(accountToDebit, accountToCredit, amount, speed);
+    super(accountToDebit, accountToCredit, amount);
   }
 
   public setAmountToReceive(value: string) {
