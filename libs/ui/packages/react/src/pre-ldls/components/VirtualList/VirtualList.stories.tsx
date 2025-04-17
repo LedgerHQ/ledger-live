@@ -9,9 +9,10 @@ const meta: Meta<typeof VirtualList> = {
   title: "PreLdls/Components/VirtualList",
   tags: ["autodocs"],
   args: {
-    children: Array.from({ length: 50 }).map((_, i) => <h1>Item #{i}</h1>),
     itemHeight: 64,
     maxHeight: 250,
+    count: 50,
+    renderRow: (i: number) => <h1>Item #{i}</h1>,
   },
 };
 export default meta;
