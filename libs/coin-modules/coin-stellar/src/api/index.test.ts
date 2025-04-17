@@ -1,6 +1,7 @@
 import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { StellarAsset } from "../types";
-import { createApi } from "./index";
+import { createApi, envelopeFromAnyXDR } from "./index";
+import expect from "expect";
 
 const mockGetOperations = jest.fn();
 
@@ -128,4 +129,22 @@ describe("Testing craftTransaction function", () => {
       );
     },
   );
+});
+
+describe("Testing transaction loading functions", () => {
+  it("should deserialize a transactions as expected", async () => {
+    const transactionPayloadXDR =
+      "esM5l1ROMXXSZr0CJDmyLNsWUIwBFj8m5csqPhBFqXkAAAACAAAAAEFMhHdla/OhHE2CYrF1VVPnLgBThGuzpNFZyYMh" +
+      "8L6XAAAAZAAAJ/cAAAkYAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAABAAAABHRlc3QAAAABAAAAAAAAAAAAAAAA/QIumXyU" +
+      "+Nq3dDZfGCXjgxYI7uvPElz8zGb0gN+vWD8AAAAAAA9CQAAAAAA=";
+    const transactionEnvelopeXDR =
+      "AAAAAgAAAABBTIR3ZWvzoRxNgmKxdVVT5y4AU4Rrs6TRWcmDIfC+lwAAAGQAACf3AAAJGAAAAAEAAAAAAAAAAAAAAAAA" +
+      "AAAAAAAAAQAAAAR0ZXN0AAAAAQAAAAAAAAAAAAAAAP0CLpl8lPjat3Q2Xxgl44MWCO7rzxJc/Mxm9IDfr1g/AAAAAAAP" +
+      "QkAAAAAAAAAAAA==";
+    const txFromSignaturePayload = envelopeFromAnyXDR(transactionPayloadXDR, "base64");
+    const txFromEnvelope = envelopeFromAnyXDR(transactionEnvelopeXDR, "base64");
+    expect(txFromEnvelope).toEqual(txFromSignaturePayload);
+    expect(txFromEnvelope.toXDR("base64")).toEqual(transactionEnvelopeXDR);
+    expect(txFromSignaturePayload.toXDR("base64")).toEqual(transactionEnvelopeXDR);
+  });
 });
