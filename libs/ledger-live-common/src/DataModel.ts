@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { APTOS_NON_HARDENED_DERIVATION_PATH_REGEX } from "./families/aptos/consts";
+import { APTOS_NON_HARDENED_DERIVATION_PATH_REGEX } from "@ledgerhq/coin-aptos/constants";
 
 /**
  * Interface for the end user.

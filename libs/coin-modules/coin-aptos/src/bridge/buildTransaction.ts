@@ -52,6 +52,17 @@ const getPayload = (
     }
   }
 
+  if (transaction.stake) {
+    switch (transaction.stake.op) {
+      case "add":
+        return {
+          function: "0x1::delegation_pool::add_stake",
+          typeArguments: [],
+          functionArguments: [transaction.stake.poolAddr, transaction.amount.toString()],
+        };
+    }
+  }
+
   return {
     function: "0x1::aptos_account::transfer_coins",
     typeArguments: [APTOS_ASSET_ID],

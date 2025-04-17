@@ -52,3 +52,50 @@ export const GetAccountTransactionsDataLt = gql`
     }
   }
 `;
+
+export const GetNumActiveDelegatorPerPoolData = gql`
+  query GetNumActiveDelegatorPerPoolData {
+    num_active_delegator_per_pool {
+      num_active_delegator
+      pool_address
+    }
+    delegated_staking_pools {
+      staking_pool_address
+      current_staking_pool {
+        operator_address
+        operator_aptos_name(where: { is_active: { _eq: true } }) {
+          domain
+          is_primary
+        }
+      }
+    }
+  }
+`;
+
+export const GetCurrentDelegatorBalancesData = gql`
+  query GetCurrentDelegatorBalances {
+    current_delegator_balances {
+      current_pool_balance {
+        total_coins
+        operator_commission_percentage
+        staking_pool_address
+        total_shares
+        inactive_table_handle
+        last_transaction_version
+        active_table_handle
+      }
+      shares
+      delegator_address
+      staking_pool_metadata {
+        operator_aptos_name {
+          subdomain
+          token_name
+          registered_address
+          domain_with_suffix
+          domain_expiration_timestamp
+          domain
+        }
+      }
+    }
+  }
+`;
