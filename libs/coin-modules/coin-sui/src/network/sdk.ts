@@ -1,33 +1,33 @@
 import {
   PaginatedTransactionResponse,
-  QueryTransactionBlocksParams,
   SuiClient,
   ExecuteTransactionBlockParams,
   TransactionEffects,
+  getFullnodeUrl,
+  QueryTransactionBlocksParams,
 } from "@mysten/sui/client";
 import { TransactionBlockData, SuiTransactionBlockResponse, SuiCallArg } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { BigNumber } from "bignumber.js";
+import type { Operation as Op } from "@ledgerhq/coin-framework/api/index";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { getEnv } from "@ledgerhq/live-env";
-
-import type { Transaction as TransactionType } from "../types";
 import type { CreateExtrinsicArg } from "../logic/craftTransaction";
 import { ensureAddressFormat } from "../utils";
 
 type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
 
-const rpcUrl = getEnv("API_SUI_NODE_PROXY");
+const rpcUrl = getFullnodeUrl("testnet") || getEnv("API_SUI_NODE_PROXY");
 
 let api: SuiClient | null = null;
 
 const TRANSACTIONS_REQUEST_LIMIT = 100;
 
-const BLOCK_HEIGHT = 5; // sui has no block height metainfo, we use it simulate proper icon statuses in apps
+export const BLOCK_HEIGHT = 5; // sui has no block height metainfo, we use it simulate proper icon statuses in apps
 
 /**
  * Connects to Sui Api
@@ -169,23 +169,56 @@ export function transactionToOperation(
   };
 }
 
+function transactionToOp<T>(address: string, transaction: SuiTransactionBlockResponse): Op<T> {
+  const type = getOperationType(address, transaction.transaction?.data);
+  const hash = transaction.digest;
+  return {
+    tx: {
+      date: getOperationDate(transaction),
+      hash,
+      fees: BigInt(getOperationFee(transaction).toString()),
+      block: {
+        height: BLOCK_HEIGHT,
+      },
+    },
+    operationIndex: 0,
+    recipients: getOperationRecipients(transaction.transaction?.data),
+    senders: getOperationSenders(transaction.transaction?.data),
+    type,
+    value: BigInt(getOperationAmount(address, transaction).toString()),
+  };
+}
+
+export const getLastBlock = () => withApi(async api => api.getLatestCheckpointSequenceNumber());
+
 /**
  * Fetch operation list
  */
 export const getOperations = async (
   accountId: string,
   addr: string,
-  inCursor?: string | null | undefined,
-  outCursor?: string | null | undefined,
+  cursor?: string | null | undefined,
 ): Promise<Operation[]> =>
   withApi(async api => {
-    const sentOps = await loadOperation({ api, type: "OUT", addr, cursor: outCursor });
-    const receivedOps = await loadOperation({ api, type: "IN", addr, cursor: inCursor });
+    const sentOps = await loadOperation({ api, type: "OUT", addr, cursor });
+    const receivedOps = await loadOperation({ api, type: "IN", addr, cursor });
     const rawTransactions = [...sentOps, ...receivedOps].sort(
       (a, b) => Number(b.timestampMs) - Number(a.timestampMs),
     );
 
     return rawTransactions.map(transaction => transactionToOperation(accountId, addr, transaction));
+  });
+
+export const getListOperations = async <T>(addr: string): Promise<Op<T>[]> =>
+  withApi(async api => {
+    const opsOut = await loadOperation({ api, addr, type: "OUT" });
+    const opsIn = await loadOperation({ api, addr, type: "IN" });
+
+    const rawTransactions = [...opsIn, ...opsOut].sort(
+      (a, b) => Number(b.timestampMs) - Number(a.timestampMs),
+    );
+
+    return rawTransactions.map(t => transactionToOp<T>(addr, t));
   });
 
 const getTotalGasUsed = (effects?: TransactionEffects | null): bigint => {
@@ -198,12 +231,15 @@ const getTotalGasUsed = (effects?: TransactionEffects | null): bigint => {
   );
 };
 
-export const paymentInfo = async (sender: string, fakeTransaction: TransactionType) =>
+export const paymentInfo = async (
+  sender: string,
+  { amount, recipient }: { amount: BigNumber; recipient: string },
+) =>
   withApi(async api => {
     const tx = new Transaction();
     tx.setSender(ensureAddressFormat(sender));
-    const [coin] = tx.splitCoins(tx.gas, [fakeTransaction.amount.toNumber()]);
-    tx.transferObjects([coin], fakeTransaction.recipient);
+    const [coin] = tx.splitCoins(tx.gas, [amount.toNumber()]);
+    tx.transferObjects([coin], recipient);
     const txb = await tx.build({ client: api });
     const dryRunTxResponse = await api.dryRunTransactionBlock({ transactionBlock: txb });
     const fees = getTotalGasUsed(dryRunTxResponse.effects);

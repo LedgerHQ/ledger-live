@@ -1,3 +1,4 @@
+import { ExecuteTransactionBlockParams } from "@mysten/sui/client";
 import suiAPI from "../network";
 
 /**
@@ -7,13 +8,30 @@ import suiAPI from "../network";
  * @param {string} serializedSignature - The serialized signature for the transaction.
  * @returns {Promise<string>} A promise that resolves to the transaction digest.
  */
-export async function broadcast(unsigned: string, serializedSignature: string): Promise<string> {
-  const result = await suiAPI.executeTransactionBlock({
-    transactionBlock: unsigned,
-    signature: serializedSignature,
-    options: {
-      showEffects: true,
-    },
-  });
+export async function broadcast(
+  transaction: string | ExecuteTransactionBlockParams,
+): Promise<string> {
+  let params: ExecuteTransactionBlockParams;
+  if (typeof transaction === "string") {
+    const { rawTx, signature } = extractTxAndSignature(transaction);
+
+    params = {
+      transactionBlock: rawTx,
+      signature: signature,
+      options: {
+        showEffects: true,
+      },
+    };
+  } else {
+    params = transaction;
+  }
+  const result = await suiAPI.executeTransactionBlock(params);
   return result?.digest ?? "";
+}
+
+function extractTxAndSignature(transaction: string): { rawTx: string; signature: string } {
+  const txLength = parseInt(transaction.slice(0, 4), 16);
+  const rawTx = transaction.slice(4, txLength + 4);
+  const signature = transaction.slice(4 + txLength);
+  return { rawTx, signature };
 }

@@ -9,6 +9,14 @@ export const extractExtrinsicArg = (transaction: Transaction): CreateExtrinsicAr
  * @param {Account} account
  * @param {Transaction} transaction
  */
-export const buildTransaction = async (account: SuiAccount, transaction: Transaction) => {
-  return craftTransaction(account.freshAddress, extractExtrinsicArg(transaction));
+export const buildTransaction = async (
+  { freshAddress }: SuiAccount,
+  { recipient, mode, amount }: Transaction,
+) => {
+  return craftTransaction({
+    sender: freshAddress,
+    recipient,
+    type: mode,
+    amount: BigInt(amount.toString()),
+  });
 };

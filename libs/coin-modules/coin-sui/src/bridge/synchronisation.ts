@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getAccount, getOperations } from "../network";
 import { SuiAccount } from "../types";
-import { OperationType, type Operation } from "@ledgerhq/types-live";
+import { type Operation } from "@ledgerhq/types-live";
 
 /**
  * Get the shape of the account including its operations and balance.
@@ -36,9 +36,8 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async info => {
   let operations: Operation[] = [];
   try {
     // Needed for incremental synchronisation
-    const startAtIn = latestHash(oldOperations, "IN");
-    const startAtOut = latestHash(oldOperations, "OUT");
-    const newOperations = await getOperations(accountId, address, startAtIn, startAtOut);
+    const startAtIn = latestHash(oldOperations);
+    const newOperations = await getOperations(accountId, address, startAtIn);
     operations = mergeOps(oldOperations, newOperations);
   } catch (e) {
     log(
@@ -70,6 +69,6 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async info => {
  */
 export const sync = makeSync({ getAccountShape });
 
-function latestHash(operations: Operation[], type: OperationType) {
-  return operations.find(el => type === el.type)?.blockHash ?? null;
+function latestHash(operations: Operation[]) {
+  return operations.length ? operations[0].blockHash : null;
 }

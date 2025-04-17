@@ -12,6 +12,6 @@ describe("buildTransaction", () => {
 
     // THEN
     expect(result).not.toBeNull();
-    expect(result.unsigned).toBeInstanceOf(Uint8Array);
+    expect(result).toBeInstanceOf(String);
   });
 });
