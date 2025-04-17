@@ -308,7 +308,7 @@ export class DeviceManagementKitBLETransport extends Transport {
       throw new Error("No active session found");
     }
 
-    console.log(`[exchange] => ${apdu.toString("hex")}`);
+    tracer.trace(`[exchange] => ${apdu.toString("hex")}`);
 
     return await this.dmk
       .sendApdu({
