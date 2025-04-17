@@ -278,6 +278,54 @@ describe("DmkSignerEth", () => {
         expect(error).toEqual(new Error("Invalid transaction"));
       }
     });
+
+    it("should emit transaction-checks-opt-in-triggered event", async () => {
+      // GIVEN
+      const path = "path";
+      const rawTxHex = "0x010203040506";
+      dmkMock.executeDeviceAction.mockReturnValue({
+        observable: of(
+          {
+            status: DeviceActionStatus.Pending,
+            intermediateValue: {
+              step: "WEB3_CHECKS_OPT_IN",
+            },
+          },
+          {
+            status: DeviceActionStatus.Completed,
+            output: {
+              r: "0x01",
+              s: "0x02",
+              v: 0x03,
+            },
+          },
+        ),
+      });
+
+      // WHEN
+      const result = await lastValueFrom(signer.signTransaction(path, rawTxHex));
+
+      // THEN
+      expect(dmkMock.executeDeviceAction).toHaveBeenCalledWith(
+        expect.objectContaining({
+          deviceAction: expect.objectContaining({
+            input: expect.objectContaining({
+              derivationPath: "path",
+              transaction: Uint8Array.from([0x01, 0x02, 0x03, 0x04, 0x05, 0x06]),
+            }),
+          }),
+          sessionId: "sessionId",
+        }),
+      );
+      expect(result).toEqual({
+        type: "signer.evm.signed",
+        value: {
+          r: "01",
+          s: "02",
+          v: 3,
+        },
+      });
+    });
   });
 
   describe("clearSignTransaction", () => {

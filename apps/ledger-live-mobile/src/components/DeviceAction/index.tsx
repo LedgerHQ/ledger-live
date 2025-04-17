@@ -67,6 +67,7 @@ import {
 import { WalletState } from "@ledgerhq/live-wallet/lib/store";
 import { SettingsState } from "~/reducers/types";
 import { Theme } from "~/colors";
+import { useTrackTransactionChecksFlow } from "~/analytics/hooks/useTrackTransactionChecksFlow";
 
 type Status = PartialNullable<{
   appAndVersion: AppAndVersion;
@@ -118,6 +119,7 @@ type Status = PartialNullable<{
   loadingImage: boolean;
   imageLoaded: boolean;
   imageCommitRequested: boolean;
+  transactionChecksOptInTriggered: boolean;
 }>;
 
 type Props<H extends Status, P> = {
@@ -219,6 +221,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     installingApp,
     progress,
     listingApps,
+    transactionChecksOptInTriggered,
   } = status;
 
   useTrackMyLedgerSectionEvents({
@@ -272,6 +275,14 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     isLocked,
     inWrongDeviceForAccount,
     error,
+  });
+
+  useTrackTransactionChecksFlow({
+    location,
+    device: selectedDevice,
+    deviceInfo,
+    appAndVersion,
+    transactionChecksOptInTriggered,
   });
 
   useEffect(() => {

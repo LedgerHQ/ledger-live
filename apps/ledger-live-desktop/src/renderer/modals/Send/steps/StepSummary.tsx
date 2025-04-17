@@ -344,7 +344,7 @@ const StepSummary = (props: StepProps) => {
                 <FormattedVal
                   color={"palette.text.shade80"}
                   disableRounding
-                  unit={unit}
+                  unit={estimatedFees.eq(totalSpent) ? feesUnit : unit}
                   val={totalSpent}
                   fontSize={4}
                   inline

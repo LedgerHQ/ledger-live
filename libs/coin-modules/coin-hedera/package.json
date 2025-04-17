@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-hedera",
-  "version": "1.6.1",
+  "version": "1.6.2-next.0",
   "description": "Ledger Hedera Coin integration",
   "keywords": [
     "Ledger",

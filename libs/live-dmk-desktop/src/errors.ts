@@ -12,3 +12,10 @@ export const isAllowedOnboardingStatePollingErrorDmk = (error: unknown): boolean
 
   return false;
 };
+
+export const isWebHidSendReportError = (error: unknown): boolean => {
+  if (error) {
+    return error instanceof WebHidSendReportError;
+  }
+  return false;
+};

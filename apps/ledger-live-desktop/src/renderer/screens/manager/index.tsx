@@ -21,7 +21,6 @@ const Manager = () => {
   const { setDrawer } = useContext(context);
   const [result, setResult] = useState<Result | null>(null);
   const [hasReset, setHasReset] = useState(false);
-
   const onReset = useCallback(
     (apps?: string[] | null) => {
       setRestoreApps(apps ?? []);
@@ -31,7 +30,6 @@ const Manager = () => {
     },
     [setDrawer],
   );
-
   const dispatch = useDispatch();
   const refreshDeviceInfo = useCallback(() => {
     if (result?.device) {
@@ -53,6 +51,7 @@ const Manager = () => {
   const onResult = useCallback((result: Result) => {
     setResult(result);
   }, []);
+
   return (
     <>
       <SyncSkipUnderPriority priority={999} />
@@ -65,15 +64,15 @@ const Manager = () => {
           appsToRestore={appsToRestore}
           onRefreshDeviceInfo={refreshDeviceInfo}
         />
-      ) : !hasReset ? (
+      ) : hasReset ? (
+        <Disconnected onTryAgain={setHasReset} />
+      ) : (
         <DeviceAction
           onResult={onResult}
           action={action}
           request={null}
           location={HOOKS_TRACKING_LOCATIONS.managerDashboard}
         />
-      ) : (
-        <Disconnected onTryAgain={setHasReset} />
       )}
     </>
   );

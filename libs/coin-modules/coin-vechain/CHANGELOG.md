@@ -1,5 +1,12 @@
 # @ledgerhq/coin-evm
 
+## 2.7.2-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@3.0.1-next.0
+
 ## 2.7.1
 
 ### Patch Changes
