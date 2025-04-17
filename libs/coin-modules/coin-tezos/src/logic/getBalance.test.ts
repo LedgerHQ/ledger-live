@@ -23,11 +23,7 @@ describe("getBalance", () => {
       ),
     );
 
-    expect(await getBalance("tz1WvvbEGpBXGeTVbLiR6DYBe1izmgiYuZbq")).toEqual([
-      { value: BigInt(-1), asset: { type: "native" } },
-    ]);
-    expect(await getBalance("tz1TzrmTBSuiVHV2VfMnGRMYvTEPCP42oSM8")).toEqual([
-      { value: BigInt(25), asset: { type: "native" } },
-    ]);
+    expect(await getBalance("tz1WvvbEGpBXGeTVbLiR6DYBe1izmgiYuZbq")).toEqual(BigInt(-1));
+    expect(await getBalance("tz1TzrmTBSuiVHV2VfMnGRMYvTEPCP42oSM8")).toEqual(BigInt(25));
   });
 });
