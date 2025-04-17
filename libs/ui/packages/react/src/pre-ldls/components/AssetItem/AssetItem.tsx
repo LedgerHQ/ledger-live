@@ -25,20 +25,13 @@ const TempAssetBadge = () => (
   />
 );
 
-const Name = styled(Text)`
-  ${withTokens("colors-content-default-default")}
-
-  color: var(--colors-content-default-default);
-`;
-
-const Ticker = styled(Text)`
-  ${withTokens("colors-content-subdued-default-default")}
-
-  color: var(--colors-content-subdued-default-default);
-`;
-
 const Wrapper = styled.div`
-  ${withTokens("spacing-xs")}
+  ${withTokens(
+    "spacing-xs",
+    "marging-s",
+    "colors-content-subdued-default-default",
+    "colors-content-default-default",
+  )}
 
   display: flex;
   padding: var(--spacing-xs);
@@ -46,8 +39,6 @@ const Wrapper = styled.div`
 `;
 
 const InfoWrapper = styled.div`
-  ${withTokens("marging-s")}
-
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -59,12 +50,20 @@ export const AssetItem = ({ name, ticker, onClick }: AssetItemProps) => {
     <Wrapper onClick={() => onClick({ name, ticker })}>
       <TempAssetBadge />
       <InfoWrapper>
-        <Name variant="largeLineHeight" fontWeight="semiBold">
+        <Text
+          variant="largeLineHeight"
+          fontWeight="semiBold"
+          color="var(--colors-content-default-default)"
+        >
           {name}
-        </Name>
-        <Ticker variant="bodyLineHeight" fontWeight="semiBold">
+        </Text>
+        <Text
+          variant="bodyLineHeight"
+          fontWeight="semiBold"
+          color="var(--colors-content-subdued-default-default)"
+        >
           {ticker}
-        </Ticker>
+        </Text>
       </InfoWrapper>
     </Wrapper>
   );
