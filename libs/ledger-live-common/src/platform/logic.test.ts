@@ -26,6 +26,7 @@ import { RawPlatformTransaction } from "./rawTypes";
 import * as serializers from "./serializers";
 import { LiveAppManifest } from "./types";
 import { initialState } from "@ledgerhq/live-wallet/store";
+import { TrackingAPI } from "./tracking";
 
 describe("receiveOnAccountLogic", () => {
   const walletState = initialState;
@@ -621,13 +622,13 @@ function createAppManifest(id = "1"): LiveAppManifest {
 }
 
 function createContextContainingAccountId(
-  tracking: Record<string, jest.Mock>,
+  tracking: Partial<TrackingAPI>,
   ...accountIds: string[]
 ): WebPlatformContext {
   return {
     manifest: createAppManifest(),
     accounts: [...accountIds.map(val => createFixtureAccount(val)), createFixtureAccount()],
-    tracking,
+    tracking: tracking as TrackingAPI,
   };
 }
 

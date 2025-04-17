@@ -1,3 +1,7 @@
+# 2.109.0
+
+Addressed a bug affecting the reliability of Zcash transaction processing.
+
 # 2.107.0
 
 This release includes small security improvements, UI tweaks, and minor bug fixes.

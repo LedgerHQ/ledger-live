@@ -3,4 +3,4 @@
 "live-mobile": patch
 ---
 
-Add missing device interaction tracking
+Add ptxCard tracks

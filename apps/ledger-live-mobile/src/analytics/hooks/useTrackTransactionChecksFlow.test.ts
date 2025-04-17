@@ -8,11 +8,6 @@ import { CONNECTION_TYPES } from "./variables";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
 
-jest.mock("../segment", () => ({
-  track: jest.fn(),
-  setAnalyticsFeatureFlagMethod: jest.fn(),
-}));
-
 describe("useTrackTransactionChecksFlow", () => {
   const deviceMock = {
     modelId: "Europa",

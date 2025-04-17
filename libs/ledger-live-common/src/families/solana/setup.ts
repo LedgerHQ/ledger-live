@@ -14,12 +14,19 @@ import { loadPKI } from "@ledgerhq/hw-bolos";
 import calService from "@ledgerhq/ledger-cal-service";
 import trustService from "@ledgerhq/ledger-trust-service";
 import { TransportStatusError, UpdateYourApp } from "@ledgerhq/errors";
-import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
+import {
+  CreateSigner,
+  createMessageSigner,
+  createResolver,
+  executeWithSigner,
+} from "../../bridge/setup";
 import { LatestFirmwareVersionRequired } from "../../errors";
 import type { Resolver } from "../../hw/getAddress/types";
 import { getCurrencyConfiguration } from "../../config";
 import { SolanaCoinConfig } from "@ledgerhq/coin-solana/lib/config";
 import { getCryptoCurrencyById } from "../../currencies";
+import { signMessage } from "@ledgerhq/coin-solana/hw-signMessage";
+import { toOffChainMessage } from "./offchainMessage/format";
 
 const TRUSTED_NAME_MIN_VERSION = "1.7.1";
 const MANAGER_APP_NAME = "Solana";
@@ -92,6 +99,9 @@ const createSigner: CreateSigner<SolanaSigner> = (transport: Transport) => {
 
       return app.signTransaction(path, tx);
     },
+    signMessage: (path: string, message: string) => {
+      return app.signOffchainMessage(path, toOffChainMessage(message));
+    },
   };
 };
 
@@ -104,8 +114,12 @@ const bridge: Bridge<Transaction, SolanaAccount, TransactionStatus> = createBrid
   getCurrencyConfig,
 );
 
+const messageSigner = {
+  signMessage: createMessageSigner(createSigner, signMessage),
+};
+
 const resolver: Resolver = createResolver(createSigner, solanaResolver);
 
 const cliTools = makeCliTools();
 
-export { bridge, cliTools, resolver };
+export { bridge, cliTools, messageSigner, resolver };

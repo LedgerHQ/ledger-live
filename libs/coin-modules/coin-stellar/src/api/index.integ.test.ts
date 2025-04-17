@@ -1,6 +1,6 @@
 import type { Api, Operation } from "@ledgerhq/coin-framework/api/index";
 import { xdr } from "@stellar/stellar-sdk";
-import { createApi } from ".";
+import { createApi, envelopeFromAnyXDR } from ".";
 import { StellarAsset } from "../types";
 
 /**
@@ -90,12 +90,12 @@ describe.skip("Stellar Api", () => {
     const AMOUNT = BigInt(1_000_000);
 
     function readFees(transactionXdr: string) {
-      const transactionEnvelope = xdr.TransactionEnvelope.fromXDR(transactionXdr, "base64");
+      const transactionEnvelope = envelopeFromAnyXDR(transactionXdr, "base64");
       return transactionEnvelope.value().tx().fee();
     }
 
     function readMemo(transactionXdr: string) {
-      const transactionEnvelope = xdr.TransactionEnvelope.fromXDR(transactionXdr, "base64");
+      const transactionEnvelope = envelopeFromAnyXDR(transactionXdr, "base64");
       return (transactionEnvelope.value().tx() as xdr.TransactionV0).memo();
     }
 
@@ -108,7 +108,9 @@ describe.skip("Stellar Api", () => {
         amount: AMOUNT,
       });
 
-      expect(result.length).toEqual(188);
+      const envelope = envelopeFromAnyXDR(result, "base64");
+
+      expect(envelope.toXDR("base64").length).toEqual(188);
     });
 
     it("should use estimated fees when user does not provide them for crafting a transaction", async () => {

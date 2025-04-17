@@ -33,6 +33,7 @@ import createStore from "../createStore";
 import { analyticsDrawerContext } from "../drawers/Provider";
 import { accountsSelector } from "../reducers/accounts";
 import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
+import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -115,19 +116,23 @@ const getPtxAttributes = () => {
       ? stakingProviders?.params?.listProvider.length
       : "flag not loaded";
 
-  const stakingCurrenciesEnabled =
-    stakePrograms?.enabled && stakePrograms?.params?.list?.length ? stakePrograms.params.list : [];
-  const partnerStakingCurrenciesEnabled =
+  const stakingCurrenciesEnabled: string[] | string =
+    stakePrograms?.enabled && stakePrograms?.params?.list?.length
+      ? stakePrograms.params.list
+      : "flag not loaded";
+  const partnerStakingCurrenciesEnabled: string[] | string =
     stakePrograms?.enabled && stakePrograms?.params?.redirects
       ? Object.keys(stakePrograms.params.redirects)
-      : [];
+      : "flag not loaded";
+  const stablecoinYield = getStablecoinYieldSetting(stakePrograms);
 
   return {
     isBatch1Enabled,
     isBatch2Enabled,
     isBatch3Enabled,
     stakingProvidersEnabled,
-    ptxCard,
+    ptxCard: ptxCard?.enabled,
+    stablecoinYield,
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
   };
