@@ -1,6 +1,6 @@
 ---
-"ledger-live-desktop": patch
-"@ledgerhq/live-dmk-desktop": patch
+"ledger-live-desktop": minor
+"@ledgerhq/live-dmk-desktop": minor
 ---
 
 Patch WebHidSendReportError with LDMK transport
