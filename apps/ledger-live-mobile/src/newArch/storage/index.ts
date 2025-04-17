@@ -231,6 +231,10 @@ function incrementNumberOfErrors(state: StorageState, error: unknown): void {
 
   if (state.storageType === STORAGE_TYPE.MMKV) {
     if (state.numberOfReadErrors && state.numberOfReadErrors >= MAX_NUMBER_OF_ERRORS) {
+      state.lastError = {
+        stackTrace: error.stack || "",
+        key: error.name,
+      };
       migrator.rollbackToAsyncStorage(state);
     } else {
       state.numberOfReadErrors = state.numberOfReadErrors + 1;

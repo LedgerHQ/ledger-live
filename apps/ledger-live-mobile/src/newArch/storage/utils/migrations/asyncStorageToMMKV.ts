@@ -11,6 +11,7 @@ import mmkvStorage from "LLM/storage/mmkvStorageWrapper";
 import asyncStorage, { CHUNKED_KEY } from "LLM/storage/asyncStorageWrapper";
 import { MigrationStatus, RollbackStatus } from "./types";
 import { getFeature } from "@ledgerhq/live-common/featureFlags/firebaseFeatureFlags";
+import { trackStorageMigration } from "./analytics";
 
 export const migrator = {
   /**
@@ -136,6 +137,9 @@ export const migrator = {
     migrator.markMigrationStatusRollbacked(state);
     migrator.markRollbackStatusCompleted(state);
 
+    state.numberOfReadErrors = 0;
+    state.lastError = undefined;
+
     return true;
   },
 
@@ -148,6 +152,10 @@ export const migrator = {
   async resetMigration(state: StorageState) {
     migrator.markMigrationStatusNotStarted(state);
     migrator.markRollbackStatusNotStarted(state);
+
+    state.numberOfReadErrors = 0;
+    state.lastError = undefined;
+
     try {
       await mmkvStorage.deleteAll();
     } catch (e) {
@@ -183,6 +191,7 @@ export const migrator = {
    */
   markMigrationStatusNotStarted(state: StorageState) {
     migrator.setMigrationStatus(state, MIGRATION_STATUS.NOT_STARTED);
+    trackStorageMigration(STORAGE_TYPE.ASYNC_STORAGE);
   },
 
   /**
@@ -193,6 +202,7 @@ export const migrator = {
    */
   markMigrationStatusInProgress(state: StorageState) {
     migrator.setMigrationStatus(state, MIGRATION_STATUS.IN_PROGRESS);
+    trackStorageMigration(STORAGE_TYPE.ASYNC_STORAGE);
   },
 
   /**
@@ -203,6 +213,7 @@ export const migrator = {
    */
   markMigrationStatusCompleted(state: StorageState) {
     migrator.setMigrationStatus(state, MIGRATION_STATUS.COMPLETED);
+    trackStorageMigration(STORAGE_TYPE.ASYNC_STORAGE);
   },
 
   /**
@@ -213,6 +224,7 @@ export const migrator = {
    */
   markMigrationStatusRollbacked(state: StorageState) {
     migrator.setMigrationStatus(state, MIGRATION_STATUS.ROLLED_BACK);
+    trackStorageMigration(STORAGE_TYPE.MMKV);
   },
 
   /**
@@ -271,5 +283,6 @@ export const migrator = {
   setRollbackStatus(state: StorageState, status: RollbackStatus) {
     mmkvStorage.saveString(ROLLBACK_STATUS_KEY, status);
     state.rollbackStatus = status;
+    trackStorageMigration(STORAGE_TYPE.MMKV);
   },
 };
