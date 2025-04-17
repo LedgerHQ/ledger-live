@@ -132,7 +132,7 @@ describe("Testing craftTransaction function", () => {
 });
 
 describe("Testing transaction loading functions", () => {
-  it("should deserialize a transactions as expected", async () => {
+  it("should deserialize a transaction as expected", async () => {
     const transactionPayloadXDR =
       "esM5l1ROMXXSZr0CJDmyLNsWUIwBFj8m5csqPhBFqXkAAAACAAAAAEFMhHdla/OhHE2CYrF1VVPnLgBThGuzpNFZyYMh" +
       "8L6XAAAAZAAAJ/cAAAkYAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAABAAAABHRlc3QAAAABAAAAAAAAAAAAAAAA/QIumXyU" +
@@ -146,5 +146,13 @@ describe("Testing transaction loading functions", () => {
     expect(txFromEnvelope).toEqual(txFromSignaturePayload);
     expect(txFromEnvelope.toXDR("base64")).toEqual(transactionEnvelopeXDR);
     expect(txFromSignaturePayload.toXDR("base64")).toEqual(transactionEnvelopeXDR);
+  });
+
+  it("throw expected error when deserializing an invalid transaction", async () => {
+    expect(() => envelopeFromAnyXDR("lulz", "base64")).toThrowError(
+      "Failed decoding transaction as an envelope (TypeError: XDR Read Error: attempt to read outside the boundary of" +
+        " the buffer) or as a signature base: (TypeError: XDR Read Error: attempt to read outside the boundary of the" +
+        " buffer)",
+    );
   });
 });

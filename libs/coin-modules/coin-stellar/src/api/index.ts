@@ -144,7 +144,7 @@ export function envelopeFromAnyXDR(
       return signatureBaseToEnvelope(xdr.TransactionSignaturePayload.fromXDR(input, format));
     } catch (signatureBaseError) {
       throw new Error(
-        `Failed decoding transaction as an envelope ${envelopeError} or as a signature base: ${signatureBaseError}`,
+        `Failed decoding transaction as an envelope (${envelopeError}) or as a signature base: (${signatureBaseError})`,
       );
     }
   }
