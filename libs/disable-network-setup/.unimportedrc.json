@@ -1,0 +1,11 @@
+{
+  "entry": ["src/index.ts"],
+  "ignoreUnimported": [],
+  "ignoreUnresolved": [
+    "@mswjs/interceptors",
+    "@mswjs/interceptors/presets/node",
+    "json-stringify-safe",
+    "propagate"
+  ],
+  "ignoreUnused": []
+}

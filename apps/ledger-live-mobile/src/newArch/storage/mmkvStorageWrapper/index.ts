@@ -124,6 +124,13 @@ const storageWrapper = {
   },
 
   /**
+   * Delete all the `MMKV` instance.
+   */
+  async deleteAll() {
+    mmkv.clearAll();
+  },
+
+  /**
    * Push a value onto an array stored in `MMKV` by key or create
    * a new array in `MMKV` for a key if it's not yet defined.
    *
@@ -148,6 +155,21 @@ const storageWrapper = {
     throw new Error(
       `Existing value for key "${key}" must be of type null or Array, received ${typeof currentValue}.`,
     );
+  },
+
+  /** Stringify the storage data to JSON. */
+  stringify() {
+    const keys = storageWrapper.keys();
+    const data = keys.reduce(
+      (result, key) => {
+        const value = storageWrapper.getString(key);
+        result[key] = value;
+        return result;
+      },
+      {} as Record<string, unknown>,
+    );
+
+    return JSON.stringify(data);
   },
 };
 

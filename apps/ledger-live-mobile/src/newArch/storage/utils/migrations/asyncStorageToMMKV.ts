@@ -1,10 +1,15 @@
 import { log } from "@ledgerhq/logs";
 import type { StorageState } from "LLM/storage/types";
-import { STORAGE_TYPE } from "~/newArch/storage/constants";
-import { MIGRATION_STATUS_KEY, MIGRATION_STATUS } from "./constants";
-import mmkvStorage from "~/newArch/storage/mmkvStorageWrapper";
-import asyncStorage, { CHUNKED_KEY } from "~/newArch/storage/asyncStorageWrapper";
-import { MigrationStatus } from "./types";
+import { STORAGE_TYPE } from "LLM/storage/constants";
+import {
+  MIGRATION_STATUS_KEY,
+  MIGRATION_STATUS,
+  ROLLBACK_STATUS,
+  ROLLBACK_STATUS_KEY,
+} from "./constants";
+import mmkvStorage from "LLM/storage/mmkvStorageWrapper";
+import asyncStorage, { CHUNKED_KEY } from "LLM/storage/asyncStorageWrapper";
+import { MigrationStatus, RollbackStatus } from "./types";
 import { getFeature } from "@ledgerhq/live-common/featureFlags/firebaseFeatureFlags";
 
 export const migrator = {
@@ -29,7 +34,17 @@ export const migrator = {
       const feature = getFeature({ key: "llmMmkvMigration" });
       if (!feature?.enabled) return false;
 
-      // TODO: Rollback block
+      const shouldRollback = feature.params?.shouldRollback ?? false;
+
+      if (
+        shouldRollback &&
+        state.migrationStatus !== MIGRATION_STATUS.ROLLED_BACK &&
+        state.storageType === STORAGE_TYPE.MMKV
+      ) {
+        log("Storage", "Running rollback...");
+        await migrator.rollbackToAsyncStorage(state);
+        return true;
+      }
 
       if (state.migrationStatus === MIGRATION_STATUS.ROLLED_BACK) {
         log("Storage", "Migration status is rolled-back, restoring AsyncStorage...");
@@ -44,6 +59,7 @@ export const migrator = {
       }
     } catch (e) {
       console.error("Error during migration rollback", e);
+      await migrator.rollbackToAsyncStorage(state);
     }
     return false;
   },
@@ -91,6 +107,55 @@ export const migrator = {
   },
 
   /**
+   * Rollback the migration from {@link MMKV} to {@link AsyncStorage}.
+   *
+   * @param state
+   * The current state of the application storage.
+   */
+  async rollbackToAsyncStorage(state: StorageState): Promise<boolean> {
+    if (
+      state.migrationStatus === MIGRATION_STATUS.NOT_STARTED ||
+      state.storageType === STORAGE_TYPE.ASYNC_STORAGE
+    ) {
+      console.warn(
+        "Storage",
+        "Rollback skipped: Migration has not started or storage is already AsyncStorage.",
+      );
+      return false;
+    }
+
+    migrator.markRollbackStatusInProgress(state);
+    migrator.selectAsyncStorage(state);
+
+    try {
+      await mmkvStorage.deleteAll();
+    } catch (e) {
+      console.warn("Failed to delete all data from MMKV during rollback", e);
+    }
+
+    migrator.markMigrationStatusRollbacked(state);
+    migrator.markRollbackStatusCompleted(state);
+
+    return true;
+  },
+
+  /**
+   * Reset the migration status
+   *
+   * @param state
+   * The current state of the application storage.
+   */
+  async resetMigration(state: StorageState) {
+    migrator.markMigrationStatusNotStarted(state);
+    migrator.markRollbackStatusNotStarted(state);
+    try {
+      await mmkvStorage.deleteAll();
+    } catch (e) {
+      console.warn("Failed to delete all data from MMKV during reset", e);
+    }
+  },
+
+  /**
    * Sets the {@link StorageState.storageType} to {@link STORAGE_TYPE.ASYNC_STORAGE}.
    *
    * @param state
@@ -108,6 +173,16 @@ export const migrator = {
    */
   selectMMKVStorage(state: StorageState) {
     state.storageType = STORAGE_TYPE.MMKV;
+  },
+
+  /**
+   * Sets the migration status to {@link MigrationStatus}.
+   *
+   * @param state
+   * The current state of the application storage.
+   */
+  markMigrationStatusNotStarted(state: StorageState) {
+    migrator.setMigrationStatus(state, MIGRATION_STATUS.NOT_STARTED);
   },
 
   /**
@@ -135,6 +210,16 @@ export const migrator = {
    *
    * @param state
    * The current state of the application storage.
+   */
+  markMigrationStatusRollbacked(state: StorageState) {
+    migrator.setMigrationStatus(state, MIGRATION_STATUS.ROLLED_BACK);
+  },
+
+  /**
+   * Sets the migration status to {@link MigrationStatus}.
+   *
+   * @param state
+   * The current state of the application storage.
    *
    * @param status
    * The status to set.
@@ -142,5 +227,49 @@ export const migrator = {
   setMigrationStatus(state: StorageState, status: MigrationStatus) {
     mmkvStorage.saveString(MIGRATION_STATUS_KEY, status);
     state.migrationStatus = status;
+  },
+
+  /**
+   * Sets the migration status to {@link MigrationStatus}.
+   *
+   * @param state
+   * The current state of the application storage.
+   */
+  markRollbackStatusNotStarted(state: StorageState) {
+    migrator.setRollbackStatus(state, ROLLBACK_STATUS.NOT_STARTED);
+  },
+
+  /**
+   * Sets the migration status to {@link MigrationStatus}.
+   *
+   * @param state
+   * The current state of the application storage.
+   */
+  markRollbackStatusInProgress(state: StorageState) {
+    migrator.setRollbackStatus(state, ROLLBACK_STATUS.IN_PROGRESS);
+  },
+
+  /**
+   * Sets the migration status to {@link MigrationStatus}.
+   *
+   * @param state
+   * The current state of the application storage.
+   */
+  markRollbackStatusCompleted(state: StorageState) {
+    migrator.setRollbackStatus(state, ROLLBACK_STATUS.COMPLETED);
+  },
+
+  /**
+   * Sets the migration status to {@link RollbackStatus}.
+   *
+   * @param state
+   * The current state of the application storage.
+   *
+   * @param status
+   * The status to set.
+   */
+  setRollbackStatus(state: StorageState, status: RollbackStatus) {
+    mmkvStorage.saveString(ROLLBACK_STATUS_KEY, status);
+    state.rollbackStatus = status;
   },
 };

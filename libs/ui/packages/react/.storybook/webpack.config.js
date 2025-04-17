@@ -11,6 +11,10 @@ module.exports = ({ config }) => {
 
   config.resolve.extensions = [".ts", ".tsx", ".js", ".json", ".mdx"];
   config.resolve.modules = [path.resolve(__dirname, "..", "node_modules"), "node_modules"];
+  config.resolve.fallback = {
+    os: require.resolve("os-browserify/browser"),
+    tty: require.resolve("tty-browserify"),
+  };
 
   return config;
 };

@@ -1,24 +1,26 @@
-import React, { memo } from "react";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
+import { stakeProgramsToEarnParam } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
-import { useTheme } from "styled-components/native";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import React, { memo, useMemo } from "react";
+import { Platform } from "react-native";
+import { useSelector } from "react-redux";
+import { useTheme } from "styled-components/native";
 import TrackScreen from "~/analytics/TrackScreen";
 import GenericErrorView from "~/components/GenericErrorView";
-import { WebPTXPlayer } from "~/components/WebPTXPlayer";
 import { EarnLiveAppNavigatorParamList } from "~/components/RootNavigator/types/EarnLiveAppNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
+import { WebPTXPlayer } from "~/components/WebPTXPlayer";
 import { ScreenName } from "~/const";
-import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
-import { useSelector } from "react-redux";
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { useSettings } from "~/hooks";
-import { Platform } from "react-native";
 import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
+import { useSettings } from "~/hooks";
+import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
 
@@ -44,6 +46,12 @@ function Earn({ route }: Props) {
   const manifest: LiveAppManifest | undefined = !localManifest ? remoteManifest : localManifest;
   const countryLocale = getCountryLocale();
 
+  const stakePrograms = useFeature("stakePrograms");
+  const stakeProgramsParam = useMemo(
+    () => stakeProgramsToEarnParam(stakePrograms),
+    [stakePrograms],
+  );
+
   if (!remoteLiveAppState.isLoading && !manifest) {
     // We want to track occurrences of this error in Sentry
     console.error(appManifestNotFoundError);
@@ -62,6 +70,7 @@ function Earn({ route }: Props) {
           countryLocale,
           currencyTicker,
           discreetMode: discreet ? "true" : "false",
+          stakeProgramsParam: stakeProgramsParam ? JSON.stringify(stakeProgramsParam) : undefined,
           OS: Platform.OS,
           ...params,
           ...Object.fromEntries(searchParams.entries()),

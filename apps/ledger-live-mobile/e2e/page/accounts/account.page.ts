@@ -16,6 +16,8 @@ export default class AccountPage {
   receiveButton = () => getElementById("account-quick-action-button-receive");
   sendButton = () => getElementById("account-quick-action-button-send");
   earnButtonId = "account-quick-action-button-earn";
+  accountRenameRow = () => getElementById("account-settings-rename-row");
+  accountRenameTextInputId = "account-rename-text-input";
   accountList = /accounts-list-.*/;
   baseAccountName = "account-row-name-";
   accountNameRegExp = new RegExp(`${this.baseAccountName}.*`);
@@ -63,6 +65,16 @@ export default class AccountPage {
   @Step("Confirm account deletion")
   async confirmAccountDelete() {
     await tapByElement(this.accountDeleteConfirm());
+  }
+
+  @Step("Select account edit name")
+  async selectAccountRename() {
+    await tapByElement(this.accountRenameRow());
+  }
+
+  @Step("Enter new account name and submit")
+  async enterNewAccountName(name: string) {
+    await typeTextById(this.accountRenameTextInputId, name);
   }
 
   @Step("Expect operation history to be visible")

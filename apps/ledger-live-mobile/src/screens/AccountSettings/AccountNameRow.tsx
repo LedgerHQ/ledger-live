@@ -24,6 +24,7 @@ function AccountNameRow({ navigation, account }: Props) {
       event="AccountNameRow"
       title={<Trans i18nKey="account.settings.accountName.title" />}
       desc={<Trans i18nKey="account.settings.accountName.desc" />}
+      testID="account-settings-rename-row"
       arrowRight
       onPress={onPress}
     >
