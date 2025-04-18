@@ -14,9 +14,8 @@ export type Asset<TokenInfo extends TokenInfoCommon = never> =
   | (TokenInfo extends never ? TokenInfo : { type: "token" } & TokenInfo);
 
 export type Operation<AssetInfo extends Asset<TokenInfoCommon>> = {
+  id: string;
   type: string;
-  // This operation corresponds to the index-th event triggered bu the original transaction
-  operationIndex: number;
   senders: string[];
   recipients: string[];
   value: bigint;
