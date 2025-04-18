@@ -7,7 +7,6 @@ import merge from "lodash/merge";
 import { NavigatorName } from "~/const";
 import { BleState, DeviceLike } from "~/reducers/types";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
-import { DeviceUSB, nanoSP_USB, nanoS_USB, nanoX_USB } from "../models/devices";
 import { MessageData, MockDeviceEvent, ServerData } from "./types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
@@ -174,16 +173,6 @@ export async function addDevicesBT(devices: DeviceLike | DeviceLike[]) {
       },
     });
   });
-}
-
-export async function addDevicesUSB(
-  devices: DeviceUSB | DeviceUSB[] = [nanoX_USB, nanoSP_USB, nanoS_USB],
-): Promise<DeviceUSB[]> {
-  const devicesArray = Array.isArray(devices) ? devices : [devices];
-  devicesArray.forEach(async device => {
-    await postMessage({ type: "addUSB", id: uniqueId(), payload: device });
-  });
-  return devicesArray;
 }
 
 export async function setInstalledApps(apps: string[] = []) {

@@ -2,7 +2,6 @@ import { Event as AppEvent } from "@ledgerhq/live-common/hw/actions/app";
 import { DescriptorEventType } from "@ledgerhq/hw-transport";
 import { AccountRaw } from "@ledgerhq/types-live";
 import { BleState, SettingsState } from "~/reducers/types";
-import { DeviceUSB } from "../models/devices";
 import { Subject, Observable } from "rxjs";
 
 import { ConnectAppEvent } from "@ledgerhq/live-common/hw/connectApp";
@@ -45,7 +44,6 @@ export type MessageData =
   | { type: "open"; id: string }
   | { type: "mockDeviceEvent"; id: string; payload: MockDeviceEvent[] }
   | { type: "acceptTerms"; id: string }
-  | { type: "addUSB"; id: string; payload: DeviceUSB }
   | { type: "addKnownSpeculos"; id: string; payload: string }
   | { type: "removeKnownSpeculos"; id: string; payload: string }
   | { type: "getLogs"; id: string }

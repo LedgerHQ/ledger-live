@@ -20,6 +20,7 @@ type Props = {
   fallbackToPercentPlaceholder?: boolean;
   textProperties?: Partial<BaseTextProps>;
   isPercentSignDisplayed?: boolean;
+  isArrowDisplayed?: boolean;
 };
 
 function Delta({
@@ -32,6 +33,7 @@ function Delta({
   fallbackToPercentPlaceholder,
   textProperties,
   isPercentSignDisplayed = false,
+  isArrowDisplayed = true,
 }: Props) {
   const { t } = useTranslation();
 
@@ -65,7 +67,7 @@ function Delta({
       valueChange.percentage === undefined)
   ) {
     if (fallbackToPercentPlaceholder) return percentPlaceholder;
-    if (percent) return <ArrowIcon size={20} color={color} />;
+    if (percent && isArrowDisplayed) return <ArrowIcon size={20} color={color} />;
     return null;
   }
 
@@ -78,7 +80,7 @@ function Delta({
 
   return (
     <View style={[styles.root, style]}>
-      {percent ? <ArrowIcon size={20} color={color} /> : null}
+      {percent && isArrowDisplayed ? <ArrowIcon size={20} color={color} /> : null}
       <View style={percent ? styles.content : null}>
         <Text
           fontWeight={isPercentSignDisplayed ? undefined : "semiBold"}
