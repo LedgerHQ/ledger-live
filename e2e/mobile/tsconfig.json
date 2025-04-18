@@ -1,0 +1,24 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "checkJs": false,
+    "jsx": "react-native",
+    "lib": ["es2017", "DOM"],
+    "noEmit": true,
+    "incremental": true,
+    "baseUrl": ".",
+    "rootDir": "../..",
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "paths": {
+      "LLM/*": ["../../apps/ledger-live-mobile/src/newArch/*"],
+      "~/*": ["../../apps/ledger-live-mobile/src/*"]
+    },
+  },
+  "include": [
+    "**/*.ts",
+  ],
+  "exclude": ["node_modules"],
+}
