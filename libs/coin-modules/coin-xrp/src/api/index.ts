@@ -63,14 +63,15 @@ type PaginationState = {
   currentIteration: number;
   readonly minHeight: number;
   continueIterations: boolean;
-  apiNextCursor?: string;
+  apiNextCursor: string | undefined;
   accumulator: Operation<XrpAsset>[];
 };
 
-async function operationsFromHeight(
+async function operations(
   address: string,
   minHeight: number,
-): Promise<[Operation<XrpAsset>[], string]> {
+  cursor?: string,
+): Promise<[Operation<XrpAsset>[], string?]> {
   async function fetchNextPage(state: PaginationState): Promise<PaginationState> {
     const options: ListOperationsOptions = {
       limit: state.pageSize,
@@ -104,6 +105,7 @@ async function operationsFromHeight(
     maxIterations: 10,
     currentIteration: 0,
     minHeight: minHeight,
+    apiNextCursor: cursor,
     continueIterations: true,
     accumulator: [],
   };
@@ -113,12 +115,4 @@ async function operationsFromHeight(
     state = await fetchNextPage(state);
   }
   return [state.accumulator, state.apiNextCursor ?? ""];
-}
-
-async function operations(
-  address: string,
-  { minHeight }: Pagination,
-): Promise<[Operation<XrpAsset>[], string]> {
-  // TODO token must be implemented properly (waiting ack from the design document)
-  return await operationsFromHeight(address, minHeight);
 }

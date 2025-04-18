@@ -73,29 +73,24 @@ function compose(tx: string, signature: string, pubkey?: string): string {
   return combine(envelopeFromAnyXDR(tx, "base64"), signature, pubkey);
 }
 
-async function operations(
-  address: string,
-  { minHeight }: Pagination,
-): Promise<[Operation<StellarAsset>[], string]> {
-  return operationsFromHeight(address, minHeight);
-}
-
 type PaginationState = {
   readonly pageSize: number;
   readonly heightLimit: number;
   continueIterations: boolean;
-  apiNextCursor?: string;
+  apiNextCursor: string | undefined;
   accumulator: Operation<StellarAsset>[];
 };
 
-async function operationsFromHeight(
+async function operations(
   address: string,
   minHeight: number,
+  cursor?: string,
 ): Promise<[Operation<StellarAsset>[], string]> {
   const state: PaginationState = {
     pageSize: 200,
     heightLimit: minHeight,
     continueIterations: true,
+    apiNextCursor: cursor,
     accumulator: [],
   };
 

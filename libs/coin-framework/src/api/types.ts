@@ -8,7 +8,6 @@ export type BlockInfo = {
 };
 
 type TokenInfoCommon = Record<string, unknown>;
-// TODO add a `token: string` field to the pagination if we really need to support pagination (which is not the case for now)
 export type Asset<TokenInfo extends TokenInfoCommon = never> =
   | { type: "native" }
   | (TokenInfo extends never ? TokenInfo : { type: "token" } & TokenInfo);
@@ -57,13 +56,9 @@ export type TransactionIntent<
   asset: AssetInfo;
 } & Extra;
 
-// TODO rename start to minHeight
-//       and add a `token: string` field to the pagination if we really need to support pagination
-//       (which is not the case for now)
-//       for now start is used as a minHeight from which we want to fetch ALL operations
-//       limit is unused for now
-//       see design document at https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/5446205788/coin-modules+lama-adapter+APIs+refinements
-export type Pagination = { minHeight: number };
+/** A pagination cursor, represented as an opaque string. */
+export type Cursor = string;
+
 export type Api<AssetInfo extends Asset<TokenInfoCommon>> = {
   broadcast: (tx: string) => Promise<string>;
   combine: (tx: string, signature: string, pubkey?: string) => string;
@@ -74,8 +69,24 @@ export type Api<AssetInfo extends Asset<TokenInfoCommon>> = {
   ) => Promise<string>;
   getBalance: (address: string) => Promise<Balance<AssetInfo>[]>;
   lastBlock: () => Promise<BlockInfo>;
+
+  /**
+   * List operations involving address.
+   *
+   * Operations are returned in descending order (from chain tip).
+   *
+   * Pagination uses a token, client should repeatedly call this API until no continuation token is provided anymore.
+   * Pages can be of variable size and client should not rely on page size. Pagination tokens can be valid only for
+   * a short timeframe and client is expected to fetch all pages as soon as possible to avoid consistency issues.
+   *
+   * @param address address
+   * @param minHeight minimum block height (inclusive). if not specified, fetch all operations until genesis
+   * @param cursor continuation token. if not specified, fetch first page of operations (from chain tip)
+   * @returns a page of operations + next cursor when applicable
+   */
   listOperations: (
     address: string,
-    pagination: Pagination,
-  ) => Promise<[Operation<AssetInfo>[], string]>;
+    minHeight: number,
+    cursor?: Cursor,
+  ) => Promise<[Operation<AssetInfo>[], Cursor?]>;
 };
