@@ -451,8 +451,8 @@ importers:
         specifier: 7.5.8
         version: 7.5.8
       '@xstate/react':
-        specifier: 1.6.3
-        version: 1.6.3(@types/react@18.2.73)(react@18.3.1)(xstate@4.38.3)
+        specifier: ^5.0.2
+        version: 5.0.3(@types/react@18.2.73)(react@18.3.1)(xstate@5.19.2)
       allure-commandline:
         specifier: 2.28.0
         version: 2.28.0
@@ -637,8 +637,8 @@ importers:
         specifier: 5.0.1
         version: 5.0.1
       xstate:
-        specifier: 4.38.3
-        version: 4.38.3
+        specifier: ^5.19.2
+        version: 5.19.2
     devDependencies:
       '@electron/notarize':
         specifier: 2.3.2
@@ -905,8 +905,8 @@ importers:
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-stacks
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-rnble-transport-20250401145214
-        version: 0.0.0-rnble-transport-20250401145214(rxjs@7.8.1)
+        specifier: 0.0.0-connect-app-20250418092159
+        version: 0.0.0-connect-app-20250418092159(rxjs@7.8.1)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
@@ -4760,8 +4760,8 @@ importers:
         specifier: workspace:^
         version: link:../device-core
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-rnble-transport-20250401145214
-        version: 0.0.0-rnble-transport-20250401145214(rxjs@7.8.1)
+        specifier: 0.0.0-connect-app-20250418092159
+        version: 0.0.0-connect-app-20250418092159(rxjs@7.8.1)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -4922,8 +4922,8 @@ importers:
         specifier: ^2.6.2
         version: 2.6.5
       '@xstate/react':
-        specifier: ^1.6.3
-        version: 1.6.3(@types/react@18.2.73)(react@18.3.1)(xstate@4.38.3)
+        specifier: ^5.0.2
+        version: 5.0.3(@types/react@18.2.73)(react@18.3.1)(xstate@5.19.2)
       '@zondax/ledger-casper':
         specifier: ^2.6.1
         version: 2.6.1
@@ -5039,8 +5039,8 @@ importers:
         specifier: ^3.4.0
         version: 3.13.0
       xstate:
-        specifier: 4.38.3
-        version: 4.38.3
+        specifier: ^5.19.2
+        version: 5.19.2
       yargs:
         specifier: ^17.0.0
         version: 17.7.2
@@ -7523,11 +7523,11 @@ importers:
   libs/live-dmk-desktop:
     dependencies:
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-rnble-transport-20250401145214
-        version: 0.0.0-rnble-transport-20250401145214(rxjs@7.8.1)
+        specifier: 0.0.0-connect-app-20250418092159
+        version: 0.0.0-connect-app-20250418092159(rxjs@7.8.1)
       '@ledgerhq/device-transport-kit-web-hid':
         specifier: 0.0.0-rnble-transport-20250401145214
-        version: 0.0.0-rnble-transport-20250401145214(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250401145214(rxjs@7.8.1))(rxjs@7.8.1)
+        version: 0.0.0-rnble-transport-20250401145214(@ledgerhq/device-management-kit@0.0.0-connect-app-20250418092159(rxjs@7.8.1))(rxjs@7.8.1)
       '@ledgerhq/hw-transport':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-transport
@@ -7587,11 +7587,11 @@ importers:
   libs/live-dmk-mobile:
     dependencies:
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-rnble-transport-20250401145214
-        version: 0.0.0-rnble-transport-20250401145214(rxjs@7.8.1)
+        specifier: 0.0.0-connect-app-20250418092159
+        version: 0.0.0-connect-app-20250418092159(rxjs@7.8.1)
       '@ledgerhq/device-transport-kit-react-native-ble':
         specifier: 0.0.0-rnble-transport-20250401145214
-        version: 0.0.0-rnble-transport-20250401145214(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250401145214(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.76.3(react@18.3.1))(react@18.3.1))(react-native@0.76.3(react@18.3.1))(rxjs@7.8.1)
+        version: 0.0.0-rnble-transport-20250401145214(@ledgerhq/device-management-kit@0.0.0-connect-app-20250418092159(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.76.3(react@18.3.1))(react@18.3.1))(react-native@0.76.3(react@18.3.1))(rxjs@7.8.1)
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -7668,10 +7668,16 @@ importers:
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-devices
+      purify-ts:
+        specifier: ^2.1.0
+        version: 2.1.0
+      xstate:
+        specifier: ^5.19.2
+        version: 5.19.2
     devDependencies:
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-rnble-transport-20250401145214
-        version: 0.0.0-rnble-transport-20250401145214(rxjs@7.8.1)
+        specifier: 0.0.0-connect-app-20250418092159
+        version: 0.0.0-connect-app-20250418092159(rxjs@7.8.1)
       '@testing-library/dom':
         specifier: ^9.3.4
         version: 9.3.4
@@ -7860,13 +7866,13 @@ importers:
         version: link:../coin-modules/coin-evm
       '@ledgerhq/context-module':
         specifier: 1.3.1
-        version: 1.3.1(@ledgerhq/device-management-kit@0.6.5(rxjs@7.8.1))
+        version: 1.3.1(@ledgerhq/device-management-kit@0.0.0-connect-app-20250418092159(rxjs@7.8.1))
       '@ledgerhq/device-management-kit':
-        specifier: 0.6.5
-        version: 0.6.5(rxjs@7.8.1)
+        specifier: 0.0.0-connect-app-20250418092159
+        version: 0.0.0-connect-app-20250418092159(rxjs@7.8.1)
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 1.3.3
-        version: 1.3.3(@ledgerhq/context-module@1.3.1(@ledgerhq/device-management-kit@0.6.5(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.6.5(rxjs@7.8.1))
+        version: 1.3.3(@ledgerhq/context-module@1.3.1(@ledgerhq/device-management-kit@0.0.0-connect-app-20250418092159(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.0.0-connect-app-20250418092159(rxjs@7.8.1))
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -13210,13 +13216,8 @@ packages:
   '@ledgerhq/cryptoassets@6.37.0':
     resolution: {integrity: sha512-xwrDKTS9koQBNNzc7CqgV6zfGHvNFWJjlIL0Kc4O4DVWYR2vUdztUHcvwHD1KPjxNYhVnsgIopmtq47fHt3nMg==}
 
-  '@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250401145214':
-    resolution: {integrity: sha512-QIvKdLkotO3BUP0BQhb9gddmf9RmwleLpEx0Ss3UGl8T6usr2u3xXkuhWao1iAO2p9Y5M3uaC4Lqdr1gdbx0hg==}
-    peerDependencies:
-      rxjs: ^7.8.2
-
-  '@ledgerhq/device-management-kit@0.6.5':
-    resolution: {integrity: sha512-kyUKA/UW0Mh2ygm27SD2ZxmDny6RDmvZTTMwERqQzvsm+jpG+/VZ6wWOb81NRxkgFa7RJ3r6oDNGJYxFBwDiuQ==}
+  '@ledgerhq/device-management-kit@0.0.0-connect-app-20250418092159':
+    resolution: {integrity: sha512-WqH3dXF7Wq3nDggn6LcQU/L7cRtFYlCLA+77EHesPSEFCZeANy95cLHJjM/kzFkLgngHZ3H45BjgpKMHfomKOg==}
     peerDependencies:
       rxjs: ^7.8.2
 
@@ -18844,15 +18845,12 @@ packages:
     resolution: {integrity: sha512-IyMsxyjkJK8YWq566KyuFuh/PUiLzQ02RbUO5qa+vEQb6zIAR9MzFwN7wBmBy7wmKkjligcdNDMG5EaBRH8FxQ==}
     engines: {node: '>=16.0.0'}
 
-  '@xstate/react@1.6.3':
-    resolution: {integrity: sha512-NCUReRHPGvvCvj2yLZUTfR0qVp6+apc8G83oXSjN4rl89ZjyujiKrTff55bze/HrsvCsP/sUJASf2n0nzMF1KQ==}
+  '@xstate/react@5.0.3':
+    resolution: {integrity: sha512-Zdnn0VTPcVdoaAiW0OX6Nkvdoe7SNGjfaZqM61NKhjt2aNULqiicmDu2tOd1ChzlRWYDxGTdbzVqqVyMLpoHJw==}
     peerDependencies:
-      '@xstate/fsm': ^1.0.0
-      react: ^16.8.0 || ^17.0.0
-      xstate: ^4.11.0
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      xstate: ^5.19.2
     peerDependenciesMeta:
-      '@xstate/fsm':
-        optional: true
       xstate:
         optional: true
 
@@ -32195,11 +32193,6 @@ packages:
       '@types/react':
         optional: true
 
-  use-subscription@1.8.0:
-    resolution: {integrity: sha512-LISuG0/TmmoDoCRmV5XAqYkd3UCBNM0ML3gGBndze65WITcsExCD3DTvXXTLyNcOC0heFQZzluW88bN/oC1DQQ==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-
   use-sync-external-store@1.2.0:
     resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
     peerDependencies:
@@ -33244,9 +33237,6 @@ packages:
   xmlhttprequest@1.8.0:
     resolution: {integrity: sha512-58Im/U0mlVBLM38NdZjHyhuMtCqa61469k2YP/AaPbvCoV9aQGUpbJBj1QRm2ytRiVQBD/fsw7L2bJGDVQswBA==}
     engines: {node: '>=0.4.0'}
-
-  xstate@4.38.3:
-    resolution: {integrity: sha512-SH7nAaaPQx57dx6qvfcIgqKRXIh4L0A1iYEqim4s1u7c9VoCgzZc+63FY90AKU4ZzOC2cfJzTnpO4zK7fCUzzw==}
 
   xstate@5.19.2:
     resolution: {integrity: sha512-B8fL2aP0ogn5aviAXFzI5oZseAMqN00fg/TeDa3ZtatyDcViYLIfuQl4y8qmHCiKZgGEzmnTyNtNQL9oeJE2gw==}
@@ -40732,9 +40722,9 @@ snapshots:
     dependencies:
       commander: 2.20.3
 
-  '@ledgerhq/context-module@1.3.1(@ledgerhq/device-management-kit@0.6.5(rxjs@7.8.1))':
+  '@ledgerhq/context-module@1.3.1(@ledgerhq/device-management-kit@0.0.0-connect-app-20250418092159(rxjs@7.8.1))':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.6.5(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.0.0-connect-app-20250418092159(rxjs@7.8.1)
       axios: 1.8.3
       crypto-js: 4.2.0
       ethers: 6.13.4
@@ -40762,7 +40752,7 @@ snapshots:
     dependencies:
       invariant: 2.2.4
 
-  '@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250401145214(rxjs@7.8.1)':
+  '@ledgerhq/device-management-kit@0.0.0-connect-app-20250418092159(rxjs@7.8.1)':
     dependencies:
       '@sentry/minimal': 6.19.7
       axios: 1.8.3
@@ -40781,30 +40771,11 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-management-kit@0.6.5(rxjs@7.8.1)':
+  '@ledgerhq/device-signer-kit-ethereum@1.3.3(@ledgerhq/context-module@1.3.1(@ledgerhq/device-management-kit@0.0.0-connect-app-20250418092159(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.0.0-connect-app-20250418092159(rxjs@7.8.1))':
     dependencies:
-      '@sentry/minimal': 6.19.7
-      axios: 1.8.3
-      inversify: 6.2.2(reflect-metadata@0.2.2)
-      inversify-logger-middleware: 3.1.0
-      isomorphic-ws: 5.0.0(ws@8.18.0)
-      purify-ts: 2.1.0
-      reflect-metadata: 0.2.2
-      rxjs: 7.8.1
-      semver: 7.6.3
-      url: 0.11.4
-      uuid: 11.1.0
-      ws: 8.18.0
-      xstate: 5.19.2
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
-  '@ledgerhq/device-signer-kit-ethereum@1.3.3(@ledgerhq/context-module@1.3.1(@ledgerhq/device-management-kit@0.6.5(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.6.5(rxjs@7.8.1))':
-    dependencies:
-      '@ledgerhq/context-module': 1.3.1(@ledgerhq/device-management-kit@0.6.5(rxjs@7.8.1))
-      '@ledgerhq/device-management-kit': 0.6.5(rxjs@7.8.1)
-      '@ledgerhq/signer-utils': 1.0.4(@ledgerhq/device-management-kit@0.6.5(rxjs@7.8.1))
+      '@ledgerhq/context-module': 1.3.1(@ledgerhq/device-management-kit@0.0.0-connect-app-20250418092159(rxjs@7.8.1))
+      '@ledgerhq/device-management-kit': 0.0.0-connect-app-20250418092159(rxjs@7.8.1)
+      '@ledgerhq/signer-utils': 1.0.4(@ledgerhq/device-management-kit@0.0.0-connect-app-20250418092159(rxjs@7.8.1))
       ethers: 6.13.4
       inversify: 6.2.2(reflect-metadata@0.2.2)
       inversify-logger-middleware: 3.1.0
@@ -40816,9 +40787,9 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-rnble-transport-20250401145214(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250401145214(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.76.3(react@18.3.1))(react@18.3.1))(react-native@0.76.3(react@18.3.1))(rxjs@7.8.1)':
+  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-rnble-transport-20250401145214(@ledgerhq/device-management-kit@0.0.0-connect-app-20250418092159(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.76.3(react@18.3.1))(react@18.3.1))(react-native@0.76.3(react@18.3.1))(rxjs@7.8.1)':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-rnble-transport-20250401145214(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.0.0-connect-app-20250418092159(rxjs@7.8.1)
       '@sentry/minimal': 6.19.7
       js-base64: 3.7.7
       purify-ts: 2.1.0
@@ -40827,9 +40798,9 @@ snapshots:
       rxjs: 7.8.1
       uuid: 10.0.0
 
-  '@ledgerhq/device-transport-kit-web-hid@0.0.0-rnble-transport-20250401145214(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250401145214(rxjs@7.8.1))(rxjs@7.8.1)':
+  '@ledgerhq/device-transport-kit-web-hid@0.0.0-rnble-transport-20250401145214(@ledgerhq/device-management-kit@0.0.0-connect-app-20250418092159(rxjs@7.8.1))(rxjs@7.8.1)':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-rnble-transport-20250401145214(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.0.0-connect-app-20250418092159(rxjs@7.8.1)
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       rxjs: 7.8.1
@@ -40944,9 +40915,9 @@ snapshots:
 
   '@ledgerhq/logs@6.12.0': {}
 
-  '@ledgerhq/signer-utils@1.0.4(@ledgerhq/device-management-kit@0.6.5(rxjs@7.8.1))':
+  '@ledgerhq/signer-utils@1.0.4(@ledgerhq/device-management-kit@0.0.0-connect-app-20250418092159(rxjs@7.8.1))':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.6.5(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.0.0-connect-app-20250418092159(rxjs@7.8.1)
 
   '@ledgerhq/types-live@6.53.1':
     dependencies:
@@ -49638,13 +49609,13 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@xstate/react@1.6.3(@types/react@18.2.73)(react@18.3.1)(xstate@4.38.3)':
+  '@xstate/react@5.0.3(@types/react@18.2.73)(react@18.3.1)(xstate@5.19.2)':
     dependencies:
       react: 18.3.1
       use-isomorphic-layout-effect: 1.1.2(@types/react@18.2.73)(react@18.3.1)
-      use-subscription: 1.8.0(react@18.3.1)
+      use-sync-external-store: 1.2.0(react@18.3.1)
     optionalDependencies:
-      xstate: 4.38.3
+      xstate: 5.19.2
     transitivePeerDependencies:
       - '@types/react'
 
@@ -69175,11 +69146,6 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.2.73
 
-  use-subscription@1.8.0(react@18.3.1):
-    dependencies:
-      react: 18.3.1
-      use-sync-external-store: 1.2.0(react@18.3.1)
-
   use-sync-external-store@1.2.0(react@18.3.1):
     dependencies:
       react: 18.3.1
@@ -70756,8 +70722,6 @@ snapshots:
   xmlcreate@2.0.4: {}
 
   xmlhttprequest@1.8.0: {}
-
-  xstate@4.38.3: {}
 
   xstate@5.19.2: {}
 
