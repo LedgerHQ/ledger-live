@@ -10,8 +10,8 @@ import {
 import mmkvStorage from "LLM/storage/mmkvStorageWrapper";
 import asyncStorage, { CHUNKED_KEY } from "LLM/storage/asyncStorageWrapper";
 import { MigrationStatus, RollbackStatus } from "./types";
-import { getFeature } from "@ledgerhq/live-common/featureFlags/firebaseFeatureFlags";
 import { trackStorageMigration } from "./analytics";
+import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
 
 export const migrator = {
   /**
@@ -30,12 +30,13 @@ export const migrator = {
    * @param state
    * The current state of the application storage.
    */
-  async handleMigration(state: StorageState): Promise<boolean> {
+  async handleMigration(
+    state: StorageState,
+    featureFag: Feature_LlmMmkvMigration,
+  ): Promise<boolean> {
     try {
-      const feature = getFeature({ key: "llmMmkvMigration" });
-      if (!feature?.enabled) return false;
-
-      const shouldRollback = feature.params?.shouldRollback ?? false;
+      if (!featureFag?.enabled) return false;
+      const shouldRollback = featureFag.params?.shouldRollback ?? false;
 
       if (
         shouldRollback &&
