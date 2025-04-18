@@ -6,7 +6,8 @@ import DeviceAction from "~/renderer/components/DeviceAction";
 import { firstValueFrom, from } from "rxjs";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import connectManager from "@ledgerhq/live-common/hw/connectManager";
+import connectManagerFactory from "@ledgerhq/live-common/hw/connectManager";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { getEnv } from "@ledgerhq/live-env";
 import Disconnected from "./Disconnected";
@@ -15,8 +16,11 @@ import { useDispatch } from "react-redux";
 import { context } from "~/renderer/drawers/Provider";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectManager);
 const Manager = () => {
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
+  const action = createAction(
+    getEnv("MOCK") ? mockedEventEmitter : connectManagerFactory({ isLdmkConnectAppEnabled }),
+  );
   const [appsToRestore, setRestoreApps] = useState<string[]>([]);
   const { setDrawer } = useContext(context);
   const [result, setResult] = useState<Result | null>(null);
