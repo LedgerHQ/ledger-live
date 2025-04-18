@@ -24,6 +24,7 @@ export const useBleDevicePairing = ({
   const connectDevice = useCallback(async () => {
     try {
       if (!dmk) return;
+      // TODO: Remove this connect call and use transport instead
       const sessionId = await dmk.connect({
         device: {
           id: device.deviceId,
@@ -31,6 +32,7 @@ export const useBleDevicePairing = ({
           name: device.deviceName,
           deviceModel: device.modelId,
         },
+        sessionRefresherOptions: { isRefresherDisabled: true },
       });
       const transport = new DeviceManagementKitTransport(dmk, sessionId);
       activeDeviceSessionSubject.next({ sessionId, transport });
