@@ -11,8 +11,7 @@ import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import AppInstallItem, { ItemState } from "./AppInstallItem";
 import AllowManagerModal from "./AllowManagerModal";
 import { getEnv } from "@ledgerhq/live-env";
-
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   device: Device;
@@ -32,6 +31,7 @@ const InstallSetOfApps = ({
   onError,
 }: Props) => {
   const { t } = useTranslation();
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
   const productName = getDeviceModel(device.modelId).productName;
 
   const commandRequest = useMemo(
@@ -42,6 +42,9 @@ const InstallSetOfApps = ({
       allowPartialDependencies: true,
     }),
     [dependencies],
+  );
+  const action = createAction(
+    getEnv("MOCK") ? mockedEventEmitter : connectApp({ isLdmkConnectAppEnabled }),
   );
 
   const status = action.useHook(device, commandRequest);

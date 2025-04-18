@@ -27,6 +27,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import Receive2NoDevice from "~/renderer/components/Receive2NoDevice";
 import { firstValueFrom } from "rxjs";
 import { useAccountName } from "~/renderer/reducers/wallet";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 export const Separator = styled.div`
   &::after {
@@ -36,7 +37,6 @@ export const Separator = styled.div`
     padding: 0 15px;
   }
 `;
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 const Receive1ShareAddress = ({ name, address }: { name: string; address: string }) => {
   return (
     <>
@@ -174,6 +174,10 @@ const Root = ({ data, onClose, skipDevice, flow }: Props) => {
   const { account, parentAccount, onResult, verifyAddress } = data;
   const mainAccount = getMainAccount(account, parentAccount);
   const tokenCurrency = account.type === "TokenAccount" ? account.token : undefined;
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
+  const action = createAction(
+    getEnv("MOCK") ? mockedEventEmitter : connectApp({ isLdmkConnectAppEnabled }),
+  );
   const handleResult = useCallback(
     (res: AppResult) => {
       if (!verifyAddress) {

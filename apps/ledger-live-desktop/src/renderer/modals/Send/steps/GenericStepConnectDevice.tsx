@@ -15,7 +15,8 @@ import { closeModal } from "~/renderer/actions/modals";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+
 const Result = (
   props:
     | {
@@ -57,6 +58,7 @@ export default function StepConnectDevice({
   onConfirmationHandler?: Function;
   onFailHandler?: Function;
 }) {
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
   const mevProtected = useSelector(mevProtectionSelector);
   const dispatch = useDispatch();
   const broadcastConfig = useMemo(() => ({ mevProtected }), [mevProtected]);
@@ -75,6 +77,9 @@ export default function StepConnectDevice({
       status,
     }),
     [account, parentAccount, status, tokenCurrency, transaction],
+  );
+  const action = createAction(
+    getEnv("MOCK") ? mockedEventEmitter : connectApp({ isLdmkConnectAppEnabled }),
   );
   if (!transaction || !account) return null;
 
