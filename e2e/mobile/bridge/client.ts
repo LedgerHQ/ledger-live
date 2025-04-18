@@ -12,7 +12,6 @@ import { acceptGeneralTerms } from "~/logic/terms";
 import { navigate } from "~/rootnavigation";
 import { addKnownDevice, importBle, removeKnownDevice } from "~/actions/ble";
 import { LaunchArguments } from "react-native-launch-arguments";
-import { DeviceEventEmitter } from "react-native";
 import logReport from "~/log-report";
 import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
 import { getAllEnvs, setEnv } from "@ledgerhq/live-env";
@@ -114,9 +113,6 @@ function onMessage(event: WebSocketMessageEvent) {
       }
       case "navigate":
         navigate(msg.payload, {});
-        break;
-      case "addUSB":
-        DeviceEventEmitter.emit("onDeviceConnect", msg.payload);
         break;
       case "getLogs": {
         const payload = JSON.stringify(logReport.getLogs());
