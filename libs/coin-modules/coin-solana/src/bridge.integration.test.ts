@@ -395,8 +395,7 @@ function transferTests(): TransactionTestSpec[] {
       expectedStatus: {
         errors: {},
         warnings: {
-          recipient: new SolanaAccountNotFunded(),
-          recipientOffCurve: new SolanaAddressOffEd25519(),
+          recipient: new SolanaAddressOffEd25519(),
         },
         estimatedFees: fees(1),
         amount: new BigNumber(1),
@@ -487,10 +486,10 @@ function tokenTests(): TransactionTestSpec[] {
         family: "solana",
       },
       expectedStatus: {
-        errors: {
+        errors: {},
+        warnings: {
           recipient: new SolanaAddressOffEd25519(),
         },
-        warnings: {},
         estimatedFees: fees(1),
         amount: testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
         totalSpent: testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),

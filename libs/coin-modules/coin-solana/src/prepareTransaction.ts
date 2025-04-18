@@ -289,10 +289,6 @@ async function getTokenRecipient(
   }
 
   if (recipientTokenAccount === undefined) {
-    if (!isEd25519Address(recipientAddress)) {
-      return new SolanaAddressOffEd25519();
-    }
-
     const recipientAssociatedTokenAccountAddress = await api.findAssocTokenAccAddress(
       recipientAddress,
       mintAddress,
@@ -906,7 +902,7 @@ async function validateRecipientCommon(
       warnings.recipient = new SolanaAccountNotFunded();
     }
     if (!isEd25519Address(tx.recipient)) {
-      warnings.recipientOffCurve = new SolanaAddressOffEd25519();
+      warnings.recipient = new SolanaAddressOffEd25519();
     }
   }
 }
