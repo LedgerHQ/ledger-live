@@ -11,3 +11,10 @@ export type {
   ConnectAppDAError,
   ConnectAppDAIntermediateValue,
 } from "./device-action/ConnectApp/types";
+export { PrepareConnectManagerDeviceAction } from "./device-action/PrepareConnectManager/PrepareConnectManagerDeviceAction";
+export type {
+  PrepareConnectManagerDAOutput,
+  PrepareConnectManagerDAInput,
+  PrepareConnectManagerDAError,
+  PrepareConnectManagerDAIntermediateValue,
+} from "./device-action/PrepareConnectManager/types";
