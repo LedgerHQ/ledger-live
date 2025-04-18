@@ -116,6 +116,10 @@ const prepareTransaction = async (
   tx: Transaction,
   api: ChainAPI,
 ): Promise<Transaction> => {
+  if (tx.raw) {
+    return tx;
+  }
+
   const txToDeriveFrom = updateModelIfSubAccountIdPresent(tx);
 
   const commandDescriptor = await deriveCommandDescriptor(mainAccount, txToDeriveFrom, api);
