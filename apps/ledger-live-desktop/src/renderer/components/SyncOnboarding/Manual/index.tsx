@@ -15,7 +15,8 @@ import { RecoverState } from "~/renderer/screens/recover/Player";
 import SyncOnboardingCompanion from "./SyncOnboardingCompanion";
 import EarlySecurityChecks from "./EarlySecurityChecks";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import connectManager from "@ledgerhq/live-common/hw/connectManager";
+import connectManagerFactory from "@ledgerhq/live-common/hw/connectManager";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { getEnv } from "@ledgerhq/live-env";
 import ExitChecksDrawer from "./EarlySecurityChecks/ExitChecksDrawer";
@@ -30,8 +31,6 @@ import { FinalFirmware } from "@ledgerhq/types-live";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
-
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectManager);
 
 export type SyncOnboardingScreenProps = {
   /**
@@ -53,6 +52,10 @@ export type SyncOnboardingScreenProps = {
 const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   deviceModelId: strDeviceModelId,
 }) => {
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
+  const action = createAction(
+    getEnv("MOCK") ? mockedEventEmitter : connectManagerFactory({ isLdmkConnectAppEnabled }),
+  );
   const history = useHistory<RecoverState>();
   const { t } = useTranslation();
 

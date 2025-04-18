@@ -2,8 +2,9 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { AsideFooter, Bullet, Column, IllustrationContainer } from "../shared";
 import connectNano from "../assets/connectNano.png";
-import connectManager from "@ledgerhq/live-common/hw/connectManager";
+import connectManagerFactory from "@ledgerhq/live-common/hw/connectManager";
 import { createAction } from "@ledgerhq/live-common/hw/actions/manager";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getEnv } from "@ledgerhq/live-env";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
@@ -11,8 +12,6 @@ import { useSelector } from "react-redux";
 import { OnboardingContext } from "../../../index";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { Device } from "@ledgerhq/types-devices";
-
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectManager);
 
 const Success = ({ device }: { device: Device }) => {
   const { t } = useTranslation();
@@ -37,6 +36,10 @@ type Props = {
 export function GenuineCheck({ connectedDevice, setConnectedDevice }: Props) {
   const { deviceModelId } = useContext(OnboardingContext);
   const device = useSelector(getCurrentDevice);
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
+  const action = createAction(
+    getEnv("MOCK") ? mockedEventEmitter : connectManagerFactory({ isLdmkConnectAppEnabled }),
+  );
 
   useEffect(() => {
     if (!device) return;
