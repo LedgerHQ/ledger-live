@@ -40,7 +40,17 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
   }, []);
 
   const onComplete = useCallback(() => {
-    navigation.navigate(ScreenName.SwapHistory);
+    navigation.reset({
+      index: 1,
+      routes: [
+        {
+          name: ScreenName.SwapTab,
+        },
+        {
+          name: ScreenName.SwapHistory,
+        },
+      ],
+    });
   }, [navigation]);
 
   return (
