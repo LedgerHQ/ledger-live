@@ -15,7 +15,7 @@ import {
 } from "../../adapters/index";
 import { ExplorerApi, isLedgerExplorerConfig } from "./types";
 
-export const BATCH_SIZE = 10_000;
+export const DEFAULT_BATCH_SIZE = 10_000;
 export const LEDGER_TIMEOUT = 200; // 200ms between 2 calls
 export const DEFAULT_RETRIES_API = 2;
 
@@ -23,6 +23,7 @@ type OperationsRequestParams = {
   explorerId: string;
   address: string;
   fromBlock?: number;
+  batchSize: number;
 };
 
 /**
@@ -49,7 +50,7 @@ export async function fetchPaginatedOpsWithRetries(
         filtering: true,
         from_height: params.fromBlock ?? 0,
         order: "ascending", // Needed to make sure we get transactions after the block height and not before. Order is still descending in the end
-        batch_size: BATCH_SIZE,
+        batch_size: params.batchSize,
         token: paginationToken,
       },
     });
@@ -94,6 +95,7 @@ export const getLastOperations: ExplorerApi["getLastOperations"] = async (
     explorerId: explorer.explorerId,
     address,
     fromBlock,
+    batchSize: explorer.batchSize ?? DEFAULT_BATCH_SIZE,
   });
 
   const lastCoinOperations: Operation[] = [];
