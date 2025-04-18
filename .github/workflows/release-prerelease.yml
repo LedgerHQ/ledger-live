@@ -10,6 +10,10 @@ on:
         description: the branch to prerelease from
         required: true
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref_name }}
+  cancel-in-progress: true
+
 jobs:
   prerelease:
     name: Prerelease
