@@ -3,6 +3,7 @@ import { Observable } from "rxjs";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 import { SelectAccountFlow } from "../components/SelectAccountFlow";
 
 type Result = {
@@ -32,12 +33,13 @@ function openAssetAndAccountDrawer(params: DrawerParams): void {
     params.onCancel?.();
   };
 
+  const filteredCurrencies =
+    currencies ?? listAndFilterCurrencies({ currencies: assetIds, includeTokens });
+
   return setDrawer(
     SelectAccountFlow,
     {
-      assetIds,
-      currenciesArray: currencies,
-      includeTokens,
+      currencies: filteredCurrencies,
       accounts$,
       onAccountSelected: (account, parentAccount) => {
         handleSuccess({ account, parentAccount });

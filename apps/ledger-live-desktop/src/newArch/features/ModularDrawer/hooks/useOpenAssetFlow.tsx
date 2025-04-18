@@ -6,17 +6,21 @@ import { ModularDrawerLocation } from "../enums";
 import SelectAssetFlow from "../components/SelectAssetFlow";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 
 function selectCurrency(
   onAssetSelected: (currency: CryptoOrTokenCurrency) => void,
   assetIds?: string[],
   includeTokens?: boolean,
+  currencies?: CryptoOrTokenCurrency[],
 ): void {
+  const filteredCurrencies =
+    currencies ?? listAndFilterCurrencies({ currencies: assetIds, includeTokens });
+
   setDrawer(
     SelectAssetFlow,
     {
-      assetIds,
-      includeTokens,
+      currencies: filteredCurrencies,
       onAssetSelected,
     },
     {
