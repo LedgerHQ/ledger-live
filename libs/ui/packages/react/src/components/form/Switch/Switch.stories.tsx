@@ -1,5 +1,4 @@
 import React from "react";
-// @ts-expect-error Typings…
 import { useArgs } from "@storybook/manager-api";
 
 import Switch from "./index";
