@@ -14,10 +14,13 @@ export async function listOperations(
 }
 
 const convertToCoreOperation = (operation: PolkadotOperation): Operation<PolkadotAsset> => {
-  const { hash, type, value, fee, blockHeight, senders, recipients, date } = operation;
+  const { hash, type, value, fee, blockHeight, senders, recipients, date, extra } = operation;
+  // The recommended identifier is to use the block ID (height or hash) and operation index.
+  // However, `blockHash` is always set to `null` in our codebase.
+  // https://wiki.polkadot.network/build/build-protocol-info/#unique-identifiers-for-extrinsics
   return {
+    id: `${blockHeight ?? 0}-${extra.index}`,
     asset: { type: "native" },
-    operationIndex: 0,
     tx: {
       hash,
       fees: BigInt(fee.toString()),
