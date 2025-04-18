@@ -6448,8 +6448,8 @@
       "stepRange": "Step {{currentStep}} of {{totalSteps}}"
     },
     "stepVerification": {
-      "action": "Please confirm the operation on your device",
-      "accountName": "Account name"
+      "title": "Continue on your Ledger {{wording}}",
+      "description": "Follow the instructions displayed on your Secure Touchscreen."
     }
   },
   "notificationCenter": {
