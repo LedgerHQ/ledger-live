@@ -1,7 +1,6 @@
 import type {
   Api,
   Operation,
-  Pagination,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type PolkadotConfig } from "../config";
@@ -52,8 +51,11 @@ async function estimate(transactionIntent: TransactionIntent<PolkadotAsset>): Pr
 
 async function operations(
   address: string,
-  { minHeight }: Pagination,
+  minHeight: number,
+  cursor?: string,
 ): Promise<[Operation<PolkadotAsset>[], string]> {
-  const [ops, nextHeight] = await listOperations(address, { limit: 0, startAt: minHeight });
-  return [ops, JSON.stringify(nextHeight)];
+  const startAt = cursor !== undefined ? JSON.parse(cursor) : minHeight;
+  const [ops, nextHeight] = await listOperations(address, { limit: 0, startAt });
+  const nextCursor = nextHeight < minHeight ? undefined : JSON.stringify(nextHeight);
+  return [ops.filter(op => op.tx.block.height >= minHeight), nextCursor];
 }
