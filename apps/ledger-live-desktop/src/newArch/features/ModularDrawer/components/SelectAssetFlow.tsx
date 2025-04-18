@@ -7,7 +7,6 @@ import Fuse from "fuse.js";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import Text from "~/renderer/components/Text";
 import { SelectNetwork } from "./SelectNetwork";
-import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 import { getEnv } from "@ledgerhq/live-env";
 
 const options = {
@@ -23,23 +22,14 @@ function fuzzySearch(currencies: Currency[], searchValue: string): Currency[] {
 }
 
 export type SelectAccountAndCurrencyDrawerProps = {
-  assetIds?: string[];
-  includeTokens?: boolean;
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
-  currenciesArray?: CryptoOrTokenCurrency[];
+  currencies: CryptoOrTokenCurrency[];
 };
 
 function SelectAssetFlow(props: SelectAccountAndCurrencyDrawerProps) {
-  const { onAssetSelected, assetIds, includeTokens, currenciesArray } = props;
+  const { onAssetSelected, currencies } = props;
   const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState<string>("");
-
-  const currencies =
-    currenciesArray ??
-    listAndFilterCurrencies({
-      currencies: assetIds,
-      includeTokens,
-    });
 
   // sorting them by marketcap
   const sortedCurrencies = useCurrenciesByMarketcap(currencies);
@@ -61,7 +51,7 @@ function SelectAssetFlow(props: SelectAccountAndCurrencyDrawerProps) {
   );
 
   // TODO : this is a temporary to handle the case where we have only one asset and one currency
-  if (assetIds?.length === 1 && currencies.length === 1) {
+  if (currencies.length === 1) {
     const currency = currencies[0];
     onAssetSelected(currency);
     return null;
