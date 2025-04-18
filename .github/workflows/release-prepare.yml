@@ -82,7 +82,7 @@ jobs:
           git checkout ${{ github.event.inputs.ref }}
           git checkout -b support/release-merge-conflicts
           git push origin support/release-merge-conflicts
-          gh pr create --title ":rotating_light: Release merge conflicts" -F .github/templates/release-conflicts.md --base develop --head support/release-merge-conflicts
+          gh pr create --title ":rotating_light: Release merge conflicts" -F .github/templates/release-conflicts.md --base develop --head support/release-merge-conflicts --draft
 
   release-final:
     name: "[Release] Publish packages and apps"
