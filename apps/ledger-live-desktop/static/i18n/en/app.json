@@ -382,6 +382,7 @@
       "status": {
         "pending": "Pending",
         "onhold": "Onhold",
+        "unknown": "Unknown",
         "expired": "Expired",
         "finished": "Finished",
         "refunded": "Refunded"
