@@ -26,7 +26,7 @@ jobs:
   is-affected:
     runs-on: ubuntu-22.04
     outputs:
-      is-affected: ${{ steps.affected.outputs.is-affected }}
+      is-affected: ${{ steps.detect.outputs.is-affected }}
       matrix: ${{ steps.detect.outputs.matrix }}
     steps:
       - uses: actions/checkout@v4
@@ -72,7 +72,15 @@ jobs:
               fi
           done
 
-          if [ ${#CHAINS[@]} -eq 0 ]; then
+          # If it's a scheduled job and no chain is detected, run all chains by default
+          if [ "${{ github.event_name }}" == "schedule" ] && [ ${#CHAINS[@]} -eq 0 ]; then
+            for coin in $COIN_TESTER_CURRENCIES; do
+              CHAINS+=("\"$coin\"")
+            done
+            echo "Running all chains by default on schedule: ${CHAINS[*]}"
+            echo "matrix={\"chain\":[${CHAINS[*]}]}" >> $GITHUB_OUTPUT
+            echo "is-affected=true" >> $GITHUB_OUTPUT
+          elif [ ${#CHAINS[@]} -eq 0 ]; then
               echo "matrix={\"chain\":[]}" >> $GITHUB_OUTPUT
               echo "is-affected=false" >> $GITHUB_OUTPUT
           else
@@ -84,7 +92,7 @@ jobs:
       - name: Debug affected paths (for troubleshooting)
         run: |
           echo "Affected paths: ${{ steps.affected.outputs.paths }}"
-          echo "Is affected: ${{ steps.affected.outputs.is-affected }}"
+          echo "Is affected: ${{ steps.detect.outputs.is-affected }}"
           echo "Matrix: ${{ steps.detect.outputs.matrix }}"
 
   coin-tester:
