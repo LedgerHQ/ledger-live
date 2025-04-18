@@ -1,5 +1,16 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.4.0-nightly.1
+
+### Minor Changes
+
+- [#9990](https://github.com/LedgerHQ/ledger-live/pull/9990) [`ab865f3`](https://github.com/LedgerHQ/ledger-live/commit/ab865f3095a4f3410fc61bd3127f95ae09789cd5) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Disable refresher in ble hook
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.31.0-nightly.1
+
 ## 0.3.1-nightly.0
 
 ### Patch Changes

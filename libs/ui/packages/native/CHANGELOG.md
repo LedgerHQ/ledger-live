@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.33.0-nightly.0
+
+### Minor Changes
+
+- [#9870](https://github.com/LedgerHQ/ledger-live/pull/9870) [`088b402`](https://github.com/LedgerHQ/ledger-live/commit/088b4025b6244565e581a61129854d294befc6c6) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Feat: Large Mover TimeFrame Component
+
 ## 0.32.0
 
 ### Minor Changes

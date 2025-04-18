@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tron
 
+## 1.1.0-nightly.1
+
+### Minor Changes
+
+- [#9994](https://github.com/LedgerHQ/ledger-live/pull/9994) [`d0480a7`](https://github.com/LedgerHQ/ledger-live/commit/d0480a71b6ecc57cfea7e763e44e8266c89f5c25) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - When account is not yet activated, RPC returns an empty account list => return an empty balance instead of crashing
+
 ## 1.0.1-nightly.0
 
 ### Patch Changes

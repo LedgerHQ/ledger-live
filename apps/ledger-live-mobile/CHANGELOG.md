@@ -1,5 +1,19 @@
 # live-mobile
 
+## 3.75.0-nightly.1
+
+### Minor Changes
+
+- [#9870](https://github.com/LedgerHQ/ledger-live/pull/9870) [`088b402`](https://github.com/LedgerHQ/ledger-live/commit/088b4025b6244565e581a61129854d294befc6c6) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Feat: Large Mover TimeFrame Component
+
+- [#9972](https://github.com/LedgerHQ/ledger-live/pull/9972) [`42b77d6`](https://github.com/LedgerHQ/ledger-live/commit/42b77d636e251676d099941609b4a4444a09c8b5) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add analytics to monitor the storage migration
+
+### Patch Changes
+
+- Updated dependencies [[`088b402`](https://github.com/LedgerHQ/ledger-live/commit/088b4025b6244565e581a61129854d294befc6c6), [`ab865f3`](https://github.com/LedgerHQ/ledger-live/commit/ab865f3095a4f3410fc61bd3127f95ae09789cd5)]:
+  - @ledgerhq/native-ui@0.33.0-nightly.0
+  - @ledgerhq/live-dmk-mobile@0.4.0-nightly.1
+
 ## 3.75.0-nightly.0
 
 ### Minor Changes
