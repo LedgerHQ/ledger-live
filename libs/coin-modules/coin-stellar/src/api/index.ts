@@ -1,5 +1,6 @@
 import type {
   Api,
+  FeeEstimation,
   Operation,
   Pagination,
   TransactionIntent,
@@ -26,7 +27,7 @@ export function createApi(config: StellarConfig): Api<StellarAsset> {
     broadcast,
     combine: compose,
     craftTransaction: craft,
-    estimateFees: () => estimateFees(),
+    estimateFees: estimate,
     getBalance,
     lastBlock,
     listOperations: operations,
@@ -71,6 +72,11 @@ function compose(tx: string, signature: string, pubkey?: string): string {
   }
   // note: accept here `TransactionEnvelope` or `TransactionSignaturePayload`, see BACK-8727 for more context
   return combine(envelopeFromAnyXDR(tx, "base64"), signature, pubkey);
+}
+
+async function estimate(): Promise<FeeEstimation> {
+  const value = await estimateFees();
+  return { value };
 }
 
 async function operations(

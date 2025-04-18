@@ -1,5 +1,6 @@
 import type {
   Api,
+  FeeEstimation,
   Operation,
   Pagination,
   TransactionIntent,
@@ -19,14 +20,14 @@ import {
 } from "../logic";
 import { ListOperationsOptions, XrpAsset } from "../types";
 
-export function createApi(config: XrpConfig): Api<XrpAsset> {
+export function createApi(config: XrpConfig): Api<XrpAsset, TransactionIntentExtra> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
     broadcast,
     combine,
     craftTransaction: craft,
-    estimateFees: () => estimateFees().then(fees => fees.fee),
+    estimateFees: estimate,
     getBalance,
     lastBlock,
     listOperations: operations,
@@ -55,6 +56,11 @@ async function craft(
     },
   );
   return tx.serializedTransaction;
+}
+
+async function estimate(): Promise<FeeEstimation> {
+  const estimation = await estimateFees();
+  return { value: estimation.fee };
 }
 
 type PaginationState = {
