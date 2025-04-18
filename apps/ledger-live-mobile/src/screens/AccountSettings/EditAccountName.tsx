@@ -1,23 +1,26 @@
-import React, { PureComponent } from "react";
+import React, { useCallback, useState } from "react";
 import i18next from "i18next";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { connect } from "react-redux";
-import { Trans } from "react-i18next";
-import { compose } from "redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { Box } from "@ledgerhq/native-ui";
-import { Account } from "@ledgerhq/types-live";
-import { accountScreenSelector } from "~/reducers/accounts";
 import TextInput from "~/components/TextInput";
-import { getFontStyle } from "~/components/LText";
-import { Theme, withTheme } from "../../colors";
 import Button from "~/components/wrappedUi/Button";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import { AddAccountsNavigatorParamList } from "~/components/RootNavigator/types/AddAccountsNavigator";
-import { State } from "~/reducers/types";
 import { AccountSettingsNavigatorParamList } from "~/components/RootNavigator/types/AccountSettingsNavigator";
-import { accountNameWithDefaultSelector, setAccountName } from "@ledgerhq/live-wallet/store";
+import {
+  accountNameWithDefaultSelector,
+  setAccountName as setAccountNameStore,
+} from "@ledgerhq/live-wallet/store";
+import { walletSelector } from "~/reducers/wallet";
+import { accountScreenSelector } from "~/reducers/accounts";
+import invariant from "invariant";
+import { updateAccount } from "~/actions/accounts";
+import { useTheme } from "styled-components/native";
+import { getFontStyle } from "~/components/LText";
 
 export const MAX_ACCOUNT_NAME_LENGHT = 50;
 
@@ -25,93 +28,74 @@ type NavigationProps =
   | StackNavigatorProps<AddAccountsNavigatorParamList, ScreenName.EditAccountName>
   | StackNavigatorProps<AccountSettingsNavigatorParamList, ScreenName.EditAccountName>;
 
-type Props = {
-  setAccountName: typeof setAccountName;
-  colors: Theme["colors"];
-  account: Account;
-  accountName: string;
-} & NavigationProps;
+const EditAccountName = ({ navigation, route }: NavigationProps) => {
+  const { account } = useSelector(accountScreenSelector(route));
 
-const mapStateToProps = (state: State, { route }: NavigationProps) => {
-  const props = accountScreenSelector(route)(state);
-  const accountName = props.account && accountNameWithDefaultSelector(state.wallet, props.account);
-  return { ...props, accountName };
-};
+  const { colors } = useTheme();
+  const { t } = useTranslation();
+  invariant(account && account.type === "Account", "account is required");
 
-const mapDispatchToProps = {
-  setAccountName,
-};
+  const dispatch = useDispatch();
+  const walletState = useSelector(walletSelector);
 
-class EditAccountName extends PureComponent<
-  Props,
-  {
-    accountName: string;
-  }
-> {
-  state = {
-    accountName: "",
-  };
+  const [accountName, setAccountName] = useState(
+    accountNameWithDefaultSelector(walletState, account),
+  );
 
-  onChangeText = (accountName: string) => {
-    this.setState({ accountName });
-  };
+  const onChangeText = useCallback((name: string) => {
+    setAccountName(name);
+  }, []);
 
-  onNameEndEditing = () => {
-    const { setAccountName, account, navigation } = this.props;
-    const { accountName } = this.state;
-    const { onAccountNameChange, account: accountFromAdd } = this.props.route.params || {};
-
-    const isImportingAccounts = !!accountFromAdd;
+  const onNameEndEditing = useCallback(() => {
     const cleanAccountName = accountName.trim();
+    if (!cleanAccountName.length) return;
 
-    if (cleanAccountName.length) {
-      if (isImportingAccounts) {
-        onAccountNameChange && onAccountNameChange(cleanAccountName, accountFromAdd);
-      } else {
-        setAccountName(account.id, cleanAccountName);
-      }
-      navigation.goBack();
+    const { onAccountNameChange, account: accountFromAdd } = route.params ?? {};
+    const isImportingAccounts = !!accountFromAdd;
+
+    if (isImportingAccounts) {
+      onAccountNameChange?.(cleanAccountName, accountFromAdd);
+    } else {
+      dispatch(updateAccount(account));
+      dispatch(setAccountNameStore(account.id, cleanAccountName));
     }
-  };
 
-  render() {
-    const { colors, accountName: storeAccountName } = this.props;
-    const { accountName } = this.state;
+    navigation.goBack();
+  }, [accountName, route.params, navigation, dispatch, account]);
 
-    return (
-      <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
-        <Box px={6} flex={1}>
-          <TextInput
-            autoFocus
-            value={accountName}
-            defaultValue={storeAccountName}
-            returnKeyType="done"
-            maxLength={MAX_ACCOUNT_NAME_LENGHT}
-            onChangeText={accountName => this.setState({ accountName })}
-            onSubmitEditing={this.onNameEndEditing}
-            clearButtonMode="while-editing"
-            placeholder={i18next.t("account.settings.accountName.placeholder")}
-            testID="account-rename-text-input"
-          />
-        </Box>
-        <Button
-          event="EditAccountNameApply"
-          type="main"
-          onPress={this.onNameEndEditing}
-          disabled={!accountName.trim().length}
-          m={6}
-        >
-          <Trans i18nKey="common.apply" />
-        </Button>
-      </SafeAreaView>
-    );
-  }
-}
+  const isApplyDisabled = !accountName.trim();
 
-export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
-  withTheme,
-)(EditAccountName) as React.ComponentType<object>;
+  return (
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background.main }]}>
+      <Box px={6} flex={1}>
+        <TextInput
+          autoFocus
+          value={accountName}
+          defaultValue={accountName}
+          returnKeyType="done"
+          maxLength={MAX_ACCOUNT_NAME_LENGHT}
+          onChangeText={onChangeText}
+          onSubmitEditing={onNameEndEditing}
+          clearButtonMode="while-editing"
+          placeholder={i18next.t("account.settings.accountName.placeholder")}
+          testID="account-rename-text-input"
+        />
+      </Box>
+      <Button
+        event="EditAccountNameApply"
+        type="main"
+        onPress={onNameEndEditing}
+        disabled={isApplyDisabled}
+        m={6}
+        testID="account-rename-apply"
+      >
+        {t("common.apply")}
+      </Button>
+    </SafeAreaView>
+  );
+};
+
+export default EditAccountName;
 
 const styles = StyleSheet.create({
   root: {
