@@ -39,6 +39,14 @@ export const TabSelectorStory = (args: TabSelectorStoryArgs) => {
       <View style={{ padding: 20, height: 80, width: 500 }}>
         <TabSelector labels={args.labels4} onToggle={handleToggle} initialTab="tab3" />
       </View>
+      <View style={{ padding: 20, height: 80, width: 500 }}>
+        <TabSelector
+          labels={args.labels4}
+          onToggle={handleToggle}
+          initialTab="tab3"
+          filledVariant
+        />
+      </View>
     </>
   );
 };

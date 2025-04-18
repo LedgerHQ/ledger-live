@@ -112,6 +112,11 @@ export interface StorageState {
   rollbackStatus: RollbackStatus;
   /** Number of reading errors triggered during the use */
   numberOfReadErrors: number;
+  /** Last Error to have been triggered (for analytics purpose) */
+  lastError?: {
+    stackTrace: string;
+    key: string | null;
+  };
 }
 
 /** Initializer callback function to initialize {@link StorageState} state. */

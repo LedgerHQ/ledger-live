@@ -8,6 +8,7 @@ import {
 } from "../constants";
 import type { StorageState } from "LLM/storage/types";
 import mmkvStorage from "LLM/storage/mmkvStorageWrapper";
+import { track } from "~/analytics";
 
 describe("migrator", () => {
   let state: StorageState;
@@ -140,6 +141,52 @@ describe("migrator", () => {
       migrator.selectMMKVStorage(state);
 
       expect(state.storageType).toBe(STORAGE_TYPE.MMKV);
+    });
+  });
+  describe("analytics", () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+      state.storageType = STORAGE_TYPE.MMKV;
+      state.migrationStatus = MIGRATION_STATUS.COMPLETED;
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("should track rollback status to NOT_STARTED ", () => {
+      migrator.markRollbackStatusNotStarted(state);
+      expect(track).toHaveBeenCalledTimes(1);
+    });
+
+    it("should track rollback status to IN_PROGRESS", () => {
+      migrator.markRollbackStatusInProgress(state);
+      expect(track).toHaveBeenCalledTimes(1);
+    });
+
+    it("should track rollback status to COMPLETED", () => {
+      migrator.markRollbackStatusCompleted(state);
+      expect(track).toHaveBeenCalledTimes(1);
+    });
+
+    it("should track migration status to NOT_STARTED", () => {
+      migrator.markMigrationStatusNotStarted(state);
+      expect(track).toHaveBeenCalledTimes(1);
+    });
+
+    it("should track migration status to IN_PROGRESS", () => {
+      migrator.markMigrationStatusInProgress(state);
+      expect(track).toHaveBeenCalledTimes(1);
+    });
+
+    it("should track migration status to COMPLETED", () => {
+      migrator.markMigrationStatusCompleted(state);
+      expect(track).toHaveBeenCalledTimes(1);
+    });
+
+    it("should track migration status to ROLLED_BACK", () => {
+      migrator.markMigrationStatusRollbacked(state);
+      expect(track).toHaveBeenCalledTimes(1);
     });
   });
 });
