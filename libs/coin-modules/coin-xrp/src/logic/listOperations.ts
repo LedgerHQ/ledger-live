@@ -166,8 +166,8 @@ const convertToCoreOperation =
     };
 
     let op: Operation<XrpAsset> = {
+      id: hash,
       asset: { type: "native" },
-      operationIndex: 0,
       tx: {
         hash: hash,
         fees: fee,

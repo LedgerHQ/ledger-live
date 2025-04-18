@@ -32,8 +32,8 @@ describe("fromTrongridTxInfoToOperation", () => {
   it("should correctly transform a TrongridTxInfo to an Operation", () => {
     const result = fromTrongridTxInfoToOperation(mockTrongridTxInfo, mockUserAddress);
 
-    expect(result).toMatchObject({
-      operationIndex: 0,
+    expect(result).toEqual({
+      id: "tx123",
       tx: {
         hash: "tx123",
         block: { height: 10, time: 1627843345 },
@@ -44,7 +44,7 @@ describe("fromTrongridTxInfoToOperation", () => {
       value: BigInt(5000),
       senders: ["from"],
       recipients: ["to"],
-      asset: { standard: "trc20", contractAddress: "boo" },
+      asset: { standard: "trc20", contractAddress: "boo", type: "token" },
     });
   });
 

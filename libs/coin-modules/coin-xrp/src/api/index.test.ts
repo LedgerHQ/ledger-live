@@ -183,8 +183,8 @@ describe("listOperations", () => {
       // the order is reversed so that the result is always sorted by newest tx first element of the list
       expect(results).toEqual([
         {
+          id: "HASH_VALUE",
           asset: { type: "native" },
-          operationIndex: 0,
           tx: {
             hash: "HASH_VALUE",
             fees: fee,
@@ -211,8 +211,8 @@ describe("listOperations", () => {
           },
         },
         {
+          id: "HASH_VALUE",
           asset: { type: "native" },
-          operationIndex: 0,
           tx: {
             hash: "HASH_VALUE",
             fees: fee,
@@ -234,8 +234,8 @@ describe("listOperations", () => {
           },
         },
         {
+          id: "HASH_VALUE",
           asset: { type: "native" },
-          operationIndex: 0,
           tx: {
             hash: "HASH_VALUE",
             fees: fee,

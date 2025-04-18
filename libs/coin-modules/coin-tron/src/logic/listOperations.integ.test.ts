@@ -204,6 +204,7 @@ describe("listOperations", () => {
           const txHash = "e37f3da07f6ed4c2b6092afb2f9940702b2f675d6111c0886341578fd8b81b11";
           const operation = operations.find(op => op.tx.hash === txHash);
           expect(operation).toBeDefined();
+          expect(operation!.id).toEqual(txHash);
           expect(operation!.type).toEqual("UNKNOWN");
           expect(operation!.value).toEqual(BigInt(0.137718 * magnitudeMultiplier));
           expect(operation?.tx.block.height).toEqual(40803577);
@@ -211,7 +212,6 @@ describe("listOperations", () => {
           // expect(operation!.recipients.includes(testingAccount)).toEqual(true);
           expect(operation!.senders.includes(testingAccount)).toEqual(true);
           expect(operation!.tx.fees).toEqual(BigInt(0));
-          expect(operation!.operationIndex).toEqual(0);
         });
 
         it("should return vote txs correctly", () => {
@@ -220,8 +220,8 @@ describe("listOperations", () => {
           const txHash = "9e21ee1c13ba497ed7341d5ba5b97613998a9635530c58779f8d5190e428a1e5";
           const operation = operations.find(op => op.tx.hash === txHash);
           expect(operation).toBeDefined();
+          expect(operation!.id).toEqual(txHash);
           expect(operation!.type).toEqual("UNKNOWN");
-          expect(operation!.operationIndex).toEqual(0);
         });
       });
     });

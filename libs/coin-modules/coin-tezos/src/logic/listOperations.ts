@@ -57,7 +57,7 @@ function convertOperation(
   address: string,
   operation: APITransactionType | APIDelegationType | APIRevealType,
 ): Operation<TezosAsset> {
-  const { hash, sender, type } = operation;
+  const { hash, sender, type, id } = operation;
 
   let targetAddress = undefined;
   if (isAPITransactionType(operation)) {
@@ -84,8 +84,8 @@ function convertOperation(
     BigInt(operation.allocationFee ?? 0);
 
   return {
+    id: `${hash ?? ""}-${id}`,
     asset: { type: "native" },
-    operationIndex: 0,
     tx: {
       // hash id defined nullable in the tzkt API, but I wonder when it would be null ?
       hash: hash ?? "",

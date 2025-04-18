@@ -7,7 +7,7 @@ export function fromTrongridTxInfoToOperation(
   userAddress: string,
 ): Operation<TronAsset> {
   return {
-    operationIndex: 0,
+    id: trongridTxInfo.txID,
     tx: {
       hash: trongridTxInfo.txID,
       block: { height: trongridTxInfo.blockHeight || 0, time: trongridTxInfo.date },
