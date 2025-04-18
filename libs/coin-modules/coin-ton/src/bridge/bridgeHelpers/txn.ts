@@ -2,7 +2,7 @@ import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/tokens";
 import { Operation } from "@ledgerhq/types-live";
-import { Address, Cell } from "@ton/core";
+import { Address, BitReader, BitString, Cell, Slice } from "@ton/core";
 import BigNumber from "bignumber.js";
 import { TonOperation } from "../../types";
 import { addressesAreEqual, isAddressValid } from "../../utils";
@@ -281,25 +281,61 @@ export function mapJettonTxToOps(
         },
       });
     }
-
     return ops;
   };
 }
 
-function decodeForwardPayload(payload: string | null): string {
-  if (!payload) return "";
+// Export these functions for testing
+export function dataToSlice(data: string): Slice | undefined {
+  let buffer: Buffer;
+  if (typeof data === "string") {
+    buffer = Buffer.from(data, "base64");
 
-  const decodedBuffer = Buffer.from(payload, "base64");
-  const cell = Cell.fromBoc(decodedBuffer)[0];
-  const slice = cell.beginParse();
-
-  // Read the opcode
-  const opcode = slice.loadUint(32);
-  if (opcode !== 0) {
-    return "";
+    try {
+      return Cell.fromBoc(buffer)[0].beginParse();
+    } catch (err) {
+      return new Slice(new BitReader(new BitString(buffer, 0, buffer.length * 8)), []);
+    }
   }
 
-  // Read the comment
-  const comment = slice.loadStringTail();
-  return comment;
+  return undefined;
+}
+
+export function loadSnakeBytes(slice: Slice): Buffer {
+  let buffer = Buffer.alloc(0);
+
+  while (slice.remainingBits >= 8) {
+    buffer = Buffer.concat([buffer, slice.loadBuffer(slice.remainingBits / 8)]);
+    if (slice.remainingRefs) {
+      slice = slice.loadRef().beginParse();
+    } else {
+      break;
+    }
+  }
+
+  return buffer;
+}
+
+export function decodeForwardPayload(payload: string | null): string {
+  if (!payload) return "";
+
+  try {
+    const slice = dataToSlice(payload);
+
+    if (!slice) return "";
+
+    const opcode = slice.loadUint(32);
+
+    // Format with opcode 0 followed by text
+    if (opcode !== 0) {
+      return "";
+    }
+    const buffer = loadSnakeBytes(slice);
+    const comment = buffer.toString("utf-8");
+
+    return comment;
+  } catch (error) {
+    // Silent failure, returning empty string
+    return "";
+  }
 }
