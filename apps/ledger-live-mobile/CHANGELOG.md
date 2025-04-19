@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.75.0-nightly.2
+
+### Minor Changes
+
+- [#9997](https://github.com/LedgerHQ/ledger-live/pull/9997) [`3cfe891`](https://github.com/LedgerHQ/ledger-live/commit/3cfe89138969d3c06bff07c259c844551b02725d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add analytics even when an error is triggered during storage reading operation. Add trigger error button inside debug
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-dmk-mobile@0.4.0-nightly.2
+
 ## 3.75.0-nightly.1
 
 ### Minor Changes

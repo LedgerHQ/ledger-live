@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.110.0-nightly.2
+
+### Minor Changes
+
+- [#9989](https://github.com/LedgerHQ/ledger-live/pull/9989) [`9d995eb`](https://github.com/LedgerHQ/ledger-live/commit/9d995eb0fac251c124e6f6a9116b08d094bbfd8d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Cannot use 'in' operator to search for 'links' in Invalid extension provided error fixed
+
+### Patch Changes
+
+- Updated dependencies [[`6685d6d`](https://github.com/LedgerHQ/ledger-live/commit/6685d6df4cd13b8124264ea8d782cdab6871c8f8)]:
+  - @ledgerhq/react-ui@0.22.0-nightly.0
+  - @ledgerhq/live-common@34.31.0-nightly.2
+  - @ledgerhq/live-dmk-desktop@0.2.2-nightly.2
+
 ## 2.110.0-nightly.1
 
 ### Patch Changes

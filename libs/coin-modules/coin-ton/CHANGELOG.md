@@ -1,5 +1,11 @@
 # @ledgerhq/coin-ton
 
+## 0.8.2-nightly.1
+
+### Patch Changes
+
+- [#9995](https://github.com/LedgerHQ/ledger-live/pull/9995) [`cec9ce9`](https://github.com/LedgerHQ/ledger-live/commit/cec9ce99f8e35d6295f43908118c6c269c1bfe38) Thanks [@Wozacosta](https://github.com/Wozacosta)! - Improve TON payload processing functions
+
 ## 0.8.2-nightly.0
 
 ### Patch Changes
