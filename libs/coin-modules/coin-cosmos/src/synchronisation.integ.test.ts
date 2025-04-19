@@ -239,7 +239,8 @@ describe("Testing Injective opperation", () => {
     expect(Array.isArray(operations)).toBeDefined();
   });
 
-  it("IN", () => {
+  // We do not use a full archive node on Injective, so history is partial
+  it.skip("IN", () => {
     // https://www.mintscan.io/injective/tx/112C82608F1D08D8AF60323BBEDBCD21066B9E1406B57BD2FC11904BD1FA7FF7
     const txHash = "112C82608F1D08D8AF60323BBEDBCD21066B9E1406B57BD2FC11904BD1FA7FF7";
     const operation = operations.find(op => op.hash === txHash);

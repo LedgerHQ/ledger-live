@@ -30,6 +30,11 @@ export function DebugStorageMigration() {
     setStorageState({ ...storage.getState() });
   }
 
+  async function handleTriggerErrorBtnPress() {
+    await storage.incrementNumberOfErrorsDebug(new SyntaxError("Debug error"));
+    setStorageState({ ...storage.getState() });
+  }
+
   async function handleCopyBtnPress() {
     const json = await storage.stringify();
     Clipboard.setString(json);
@@ -38,7 +43,12 @@ export function DebugStorageMigration() {
   return (
     <NavigationScrollView>
       <Flex p={4}>
-        <Alert type="info" title={`Storage type: ${storageState.storageType}`} />
+        <Alert
+          type="info"
+          title={`Storage type: ${storageState.storageType} and ${storageState.numberOfReadErrors} error${
+            storageState.numberOfReadErrors > 1 ? "s" : ""
+          }`}
+        />
       </Flex>
       <Flex flexDirection="row" alignItems="center" mt={4}>
         <Bullet backgroundColor={getMigrationStatusColor(storageState, colors)} />
@@ -73,6 +83,11 @@ export function DebugStorageMigration() {
           helperText="Copy key value pairs from storage to clipboard as JSON"
           buttonText="Copy"
           onPress={handleCopyBtnPress}
+        />
+        <DebugMigrationAction
+          helperText="Trigger an error to test error handling"
+          buttonText="Trigger an error"
+          onPress={handleTriggerErrorBtnPress}
         />
       </Flex>
     </NavigationScrollView>

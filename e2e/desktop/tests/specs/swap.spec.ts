@@ -9,6 +9,7 @@ import { getDescription } from "../utils/customJsonReporter";
 import { Application } from "../page";
 import { ElectronApplication } from "@playwright/test";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Swap";
+import { CLI } from "../utils/cliUtils";
 
 function setupEnv(disableBroadcast?: boolean) {
   const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
@@ -28,6 +29,14 @@ function setupEnv(disableBroadcast?: boolean) {
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
+const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
+  CLI.liveData({
+    currency: currencyApp.name,
+    index,
+    add: true,
+    appjson: userdataPath,
+  });
+
 const swaps = [
   {
     swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.02", Fee.MEDIUM),
@@ -42,7 +51,7 @@ const swaps = [
     xrayTicket: "B2CQA-2752, B2CQA-2048",
   },
   {
-    swap: new Swap(Account.ETH_1, Account.SOL_1, "0.018", Fee.MEDIUM),
+    swap: new Swap(Account.ETH_1, Account.SOL_1, "0.03", Fee.MEDIUM),
     xrayTicket: "B2CQA-2748",
   },
   {
@@ -66,15 +75,15 @@ const swaps = [
     xrayTicket: "B2CQA-2751",
   },
   {
-    swap: new Swap(Account.SOL_1, Account.ETH_1, "0.25", Fee.MEDIUM),
+    swap: new Swap(Account.SOL_1, Account.ETH_1, "0.3", Fee.MEDIUM),
     xrayTicket: "B2CQA-2775",
   },
   {
-    swap: new Swap(Account.SOL_1, Account.BTC_NATIVE_SEGWIT_1, "0.25", Fee.MEDIUM),
+    swap: new Swap(Account.SOL_1, Account.BTC_NATIVE_SEGWIT_1, "0.3", Fee.MEDIUM),
     xrayTicket: "B2CQA-2776",
   },
   {
-    swap: new Swap(Account.SOL_1, Account.ETH_USDT_1, "0.25", Fee.MEDIUM),
+    swap: new Swap(Account.SOL_1, Account.ETH_USDT_1, "0.3", Fee.MEDIUM),
     xrayTicket: "B2CQA-2777",
   },
   {
@@ -90,11 +99,11 @@ const swaps = [
     xrayTicket: "B2CQA-2832",
   },
   {
-    swap: new Swap(Account.ETH_1, Account.DOT_1, "0.02", Fee.MEDIUM),
+    swap: new Swap(Account.ETH_1, Account.DOT_1, "0.03", Fee.MEDIUM),
     xrayTicket: "B2CQA-3017",
   },
   {
-    swap: new Swap(Account.XRP_1, Account.ETH_USDC_1, "15", Fee.MEDIUM),
+    swap: new Swap(Account.XRP_1, Account.ETH_USDC_1, "20", Fee.MEDIUM),
     xrayTicket: "B2CQA-3075",
   },
   {
@@ -102,7 +111,7 @@ const swaps = [
     xrayTicket: "B2CQA-3076",
   },
   {
-    swap: new Swap(Account.XRP_1, Account.BTC_NATIVE_SEGWIT_1, "15", Fee.MEDIUM),
+    swap: new Swap(Account.XRP_1, Account.BTC_NATIVE_SEGWIT_1, "20", Fee.MEDIUM),
     xrayTicket: "B2CQA-3077",
   },
   {
@@ -110,7 +119,7 @@ const swaps = [
     xrayTicket: "B2CQA-3078",
   },
   {
-    swap: new Swap(Account.APTOS_1, Account.SOL_1, "6", Fee.MEDIUM),
+    swap: new Swap(Account.APTOS_1, Account.BTC_NATIVE_SEGWIT_1, "15", Fee.MEDIUM),
     xrayTicket: "B2CQA-3081",
   },
 ];
@@ -123,6 +132,8 @@ for (const { swap, xrayTicket } of swaps) {
       acc.currency.speculosApp.name.replace(/ /g, "_"),
     );
 
+    const { accountToDebit, accountToCredit } = swap;
+
     test.beforeEach(async () => {
       setExchangeDependencies(
         accPair.map(appName => ({
@@ -132,8 +143,22 @@ for (const { swap, xrayTicket } of swaps) {
     });
 
     test.use({
-      userdata: "speculos-tests-app",
+      userdata: "skip-onboarding",
       speculosApp: app,
+
+      cliCommandsOnApp: [
+        [
+          {
+            app: accountToDebit.currency.speculosApp,
+            cmd: liveDataCommand(accountToDebit.currency.speculosApp, accountToDebit.index),
+          },
+          {
+            app: accountToCredit.currency.speculosApp,
+            cmd: liveDataCommand(accountToCredit.currency.speculosApp, accountToCredit.index),
+          },
+        ],
+        { scope: "test" },
+      ],
     });
 
     test(
@@ -187,6 +212,8 @@ for (const { swap, xrayTicket, provider } of checkProviders) {
       acc.currency.speculosApp.name.replace(/ /g, "_"),
     );
 
+    const { accountToDebit, accountToCredit } = swap;
+
     test.beforeEach(async () => {
       setExchangeDependencies(
         accPair.map(appName => ({
@@ -196,8 +223,22 @@ for (const { swap, xrayTicket, provider } of checkProviders) {
     });
 
     test.use({
-      userdata: "speculos-tests-app",
+      userdata: "skip-onboarding",
       speculosApp: app,
+
+      cliCommandsOnApp: [
+        [
+          {
+            app: accountToDebit.currency.speculosApp,
+            cmd: liveDataCommand(accountToDebit.currency.speculosApp, accountToDebit.index),
+          },
+          {
+            app: accountToCredit.currency.speculosApp,
+            cmd: liveDataCommand(accountToCredit.currency.speculosApp, accountToCredit.index),
+          },
+        ],
+        { scope: "test" },
+      ],
     });
 
     test(
@@ -228,6 +269,8 @@ test.describe("Swap - Check Best Offer", () => {
   const swap = new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.02", Fee.MEDIUM);
   setupEnv(true);
 
+  const { accountToDebit, accountToCredit } = swap;
+
   test.beforeEach(async () => {
     const accountPair: string[] = [swap.accountToDebit, swap.accountToCredit].map(acc =>
       acc.currency.speculosApp.name.replace(/ /g, "_"),
@@ -236,8 +279,22 @@ test.describe("Swap - Check Best Offer", () => {
   });
 
   test.use({
-    userdata: "speculos-tests-app",
+    userdata: "skip-onboarding",
     speculosApp: app,
+
+    cliCommandsOnApp: [
+      [
+        {
+          app: accountToDebit.currency.speculosApp,
+          cmd: liveDataCommand(accountToDebit.currency.speculosApp, accountToDebit.index),
+        },
+        {
+          app: accountToCredit.currency.speculosApp,
+          cmd: liveDataCommand(accountToCredit.currency.speculosApp, accountToCredit.index),
+        },
+      ],
+      { scope: "test" },
+    ],
   });
 
   test(
@@ -261,6 +318,8 @@ test.describe("Swap - Default currency when landing on swap", () => {
   const swap = new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.02", Fee.MEDIUM);
   setupEnv(true);
 
+  const { accountToDebit, accountToCredit } = swap;
+
   test.beforeEach(async () => {
     const accountPair: string[] = [swap.accountToDebit, swap.accountToCredit].map(acc =>
       acc.currency.speculosApp.name.replace(/ /g, "_"),
@@ -269,8 +328,22 @@ test.describe("Swap - Default currency when landing on swap", () => {
   });
 
   test.use({
-    userdata: "speculos-tests-app",
+    userdata: "skip-onboarding",
     speculosApp: app,
+
+    cliCommandsOnApp: [
+      [
+        {
+          app: accountToDebit.currency.speculosApp,
+          cmd: liveDataCommand(accountToDebit.currency.speculosApp, accountToDebit.index),
+        },
+        {
+          app: accountToCredit.currency.speculosApp,
+          cmd: liveDataCommand(accountToCredit.currency.speculosApp, accountToCredit.index),
+        },
+      ],
+      { scope: "test" },
+    ],
   });
 
   test(
@@ -294,13 +367,12 @@ test.describe("Swap - Default currency when landing on swap", () => {
     },
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
       const minAmount = await app.swap.getMinimumAmount(swap);
+
       await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
       await app.layout.goToAccounts();
-      await app.swap.goAndWaitForSwapToBeReady(
-        () => app.layout.goToSwap(),
-        "https://explorers.api.live.ledger.com/blockchain/v4/eth/gastracker/",
-      );
+      await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
       await app.swap.checkAssetFrom(electronApp, swap.accountToDebit.currency.ticker);
       await app.swap.checkAssetTo(electronApp, swap.accountToCredit.currency.ticker);
     },
@@ -311,6 +383,8 @@ test.describe("Swap - Rejected on device", () => {
   const rejectedSwap = new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.02", Fee.MEDIUM);
   setupEnv(true);
 
+  const { accountToDebit, accountToCredit } = rejectedSwap;
+
   test.beforeEach(async () => {
     const accountPair: string[] = [rejectedSwap.accountToDebit, rejectedSwap.accountToCredit].map(
       acc => acc.currency.speculosApp.name.replace(/ /g, "_"),
@@ -319,8 +393,22 @@ test.describe("Swap - Rejected on device", () => {
   });
 
   test.use({
-    userdata: "speculos-tests-app",
+    userdata: "skip-onboarding",
     speculosApp: app,
+
+    cliCommandsOnApp: [
+      [
+        {
+          app: accountToDebit.currency.speculosApp,
+          cmd: liveDataCommand(accountToDebit.currency.speculosApp, accountToDebit.index),
+        },
+        {
+          app: accountToCredit.currency.speculosApp,
+          cmd: liveDataCommand(accountToCredit.currency.speculosApp, accountToCredit.index),
+        },
+      ],
+      { scope: "test" },
+    ],
   });
 
   test(
@@ -353,6 +441,8 @@ test.describe("Swap - Landing page", () => {
   const rejectedSwap = new Swap(Account.ETH_1, Account.ETH_USDC_1, "0.03", Fee.MEDIUM);
   setupEnv(true);
 
+  const { accountToDebit, accountToCredit } = rejectedSwap;
+
   test.beforeEach(async () => {
     const accountPair: string[] = [rejectedSwap.accountToDebit, rejectedSwap.accountToCredit].map(
       acc => acc.currency.speculosApp.name.replace(/ /g, "_"),
@@ -361,8 +451,22 @@ test.describe("Swap - Landing page", () => {
   });
 
   test.use({
-    userdata: "speculos-tests-app",
+    userdata: "skip-onboarding",
     speculosApp: app,
+
+    cliCommandsOnApp: [
+      [
+        {
+          app: accountToDebit.currency.speculosApp,
+          cmd: liveDataCommand(accountToDebit.currency.speculosApp, accountToDebit.index),
+        },
+        {
+          app: accountToCredit.currency.speculosApp,
+          cmd: liveDataCommand(accountToCredit.currency.speculosApp, accountToCredit.index),
+        },
+      ],
+      { scope: "test" },
+    ],
   });
 
   test(
@@ -385,7 +489,7 @@ test.describe("Swap - Landing page", () => {
 
 const swapWithDifferentSeed = [
   {
-    swap: new Swap(Account.ETH_1, Account.SOL_1, "0.02", Fee.MEDIUM),
+    swap: new Swap(Account.ETH_1, Account.SOL_1, "0.03", Fee.MEDIUM),
     xrayTicket: "B2CQA-3089",
     userData: "speculos-x-other-account",
     errorMessage:
@@ -490,6 +594,8 @@ for (const swap of tooLowAmountForQuoteSwaps) {
       acc.currency.speculosApp.name.replace(/ /g, "_"),
     );
 
+    const { accountToDebit, accountToCredit } = swap.swap;
+
     test.beforeEach(async () => {
       setExchangeDependencies(
         accPair.map(appName => ({
@@ -499,8 +605,22 @@ for (const swap of tooLowAmountForQuoteSwaps) {
     });
 
     test.use({
-      userdata: "speculos-tests-app",
+      userdata: "skip-onboarding",
       speculosApp: app,
+
+      cliCommandsOnApp: [
+        [
+          {
+            app: accountToDebit.currency.speculosApp,
+            cmd: liveDataCommand(accountToDebit.currency.speculosApp, accountToDebit.index),
+          },
+          {
+            app: accountToCredit.currency.speculosApp,
+            cmd: liveDataCommand(accountToCredit.currency.speculosApp, accountToCredit.index),
+          },
+        ],
+        { scope: "test" },
+      ],
     });
 
     test(
@@ -535,9 +655,25 @@ const swapEntryPoint = {
 test.describe("Swap flow from different entry point", () => {
   setupEnv(true);
 
+  const { accountToDebit, accountToCredit } = swapEntryPoint.swap;
+
   test.use({
-    userdata: "speculos-tests-app",
+    userdata: "skip-onboarding",
     speculosApp: app,
+
+    cliCommandsOnApp: [
+      [
+        {
+          app: accountToDebit.currency.speculosApp,
+          cmd: liveDataCommand(accountToDebit.currency.speculosApp, accountToDebit.index),
+        },
+        {
+          app: accountToCredit.currency.speculosApp,
+          cmd: liveDataCommand(accountToCredit.currency.speculosApp, accountToCredit.index),
+        },
+      ],
+      { scope: "test" },
+    ],
   });
 
   test(
@@ -568,6 +704,7 @@ test.describe("Swap flow from different entry point", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToPortfolio();
       await app.portfolio.clickOnSelectedAssetRow(swapEntryPoint.swap.accountToDebit.currency.name);
+
       await app.swap.goAndWaitForSwapToBeReady(() => app.assetPage.startSwapFlow());
       await app.swap.expectSelectedAssetDisplayed(
         swapEntryPoint.swap.accountToDebit.currency.name,
@@ -587,6 +724,7 @@ test.describe("Swap flow from different entry point", () => {
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToMarket();
+
       await app.swap.goAndWaitForSwapToBeReady(() =>
         app.market.startSwapForSelectedTicker(swapEntryPoint.swap.accountToDebit.currency.ticker),
       );
@@ -655,6 +793,7 @@ test.describe("Swap flow from different entry point", () => {
     },
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
       await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
       await app.swap.expectSelectedAssetDisplayed("BTC", electronApp);
     },

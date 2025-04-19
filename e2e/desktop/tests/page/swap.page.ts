@@ -316,22 +316,17 @@ export class SwapPage extends AppPage {
   }
 
   @step("Go and wait for Swap app to be ready")
-  async goAndWaitForSwapToBeReady(swapFunction: () => Promise<void>, url?: string) {
-    const successfulQuery = new Promise(resolve => {
-      this.page.on("response", response => {
-        if (
-          response
-            .url()
-            .startsWith(url ?? "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees") &&
-          response.status() === 200
-        ) {
-          resolve(response);
+  async goAndWaitForSwapToBeReady(swapFunction: () => Promise<void>) {
+    const appReadyPromise = new Promise<void>(resolve => {
+      this.page.on("console", msg => {
+        if (msg.type() === "info" && msg.text().includes("Swap Live App Loaded")) {
+          resolve();
         }
       });
     });
 
     await swapFunction();
-    expect(await successfulQuery).toBeDefined();
+    await appReadyPromise;
   }
 
   @step("Verify provider URL")

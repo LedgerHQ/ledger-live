@@ -286,6 +286,9 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
           );
         });
       },
+      "custom.isReady": async () => {
+        console.info("Swap Live App Loaded");
+      },
       "custom.getTransactionByHash": async ({
         params,
       }: {

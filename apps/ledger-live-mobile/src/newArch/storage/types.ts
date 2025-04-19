@@ -5,6 +5,9 @@ export interface Storage {
   /** Get the current storage state. */
   getState(): StorageState;
 
+  /** Trigger syntax error for debugging */
+  incrementNumberOfErrorsDebug(error: unknown): Promise<void>;
+
   /** Get all keys in application storage. */
   keys(): Promise<string[]>;
 
