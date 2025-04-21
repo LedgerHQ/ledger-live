@@ -89,7 +89,7 @@ export const fetchTokenBalances = async (
   const limit = 50;
   try {
     const response = await fetch<TokenBalanceResponse>(
-      `/extended/v2/address/${addr}/ft?offset=${offset}&limit=${limit}`,
+      `/extended/v2/addresses/${addr}/balances/ft?offset=${offset}&limit=${limit}`,
     );
     return response; // TODO Validate if the response fits this interface
   } catch (e) {
@@ -106,7 +106,7 @@ export const fetchAllTokenBalances = async (addr: string): Promise<Record<string
   do {
     const response = await fetchTokenBalances(addr, offset);
     response.results.forEach(item => {
-      tokenBalanceMap[item.token] = item.balance;
+      tokenBalanceMap[item.token.split("::")[0]] = item.balance;
     });
 
     offset += limit;
