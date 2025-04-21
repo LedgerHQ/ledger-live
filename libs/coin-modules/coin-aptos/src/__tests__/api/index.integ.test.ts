@@ -89,12 +89,35 @@ describe("createApi", () => {
     });
   });
 
-  // describe("combine and broadcast", () => {
-  //   it("returns the hash", async () => {
-  //     const tx = await api.combine("tx", "signature", "xpub");
-  //     const hash = await api.broadcast(tx);
+  describe("combine and broadcast", () => {
+    it("sign and submit the transaction using combine and broadcast", async () => {
+      // arrange
 
-  //     expect(hash).toEqual(expect.any(String));
-  //   });
-  // });
+      // TODO: should be replaced by the craftTransaction method
+      const aptosApi = new AptosAPI(settings);
+      const transaction = createFixtureTransaction();
+      transaction.recipient = receiverAddress;
+      transaction.amount = BigNumber(10);
+      transaction.options.gasUnitPrice = DEFAULT_GAS_PRICE.toString();
+      transaction.options.maxGasAmount = DEFAULT_MAX_GAS_AMOUNT.toString();
+
+      const senderAccount = createFixtureAccount({
+        freshAddress: senderAddress,
+      });
+      const tx = await buildTransaction(senderAccount, transaction, aptosApi);
+
+      // generating signature
+      const signingMessage = aptos.getSigningMessage({ transaction: new SimpleTransaction(tx) });
+      const signature = senderPK.sign(signingMessage);
+
+      // act
+      const signedTx = api.combine(tx.bcsToHex().toString(), signature.toString(), senderPublicKey);
+
+      const hash = await api.broadcast(signedTx);
+
+      // asset
+      expect(() => Hex.isValid(signedTx).valid).toBeTruthy();
+      expect(hash).toEqual(expect.any(String));
+    });
+  });
 });
