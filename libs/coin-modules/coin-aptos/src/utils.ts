@@ -220,6 +220,7 @@ export const LEDGER_VALIDATOR_BY_FIGMENT: Validator = {
   activeStake: 9079057178046828,
   commission: 7,
   totalScore: 6,
+  shares: "200",
 };
 
 export const LEDGER_VALIDATOR_BY_CHORUS_ONE: Validator = {
@@ -231,6 +232,7 @@ export const LEDGER_VALIDATOR_BY_CHORUS_ONE: Validator = {
   activeStake: 10001001000098,
   commission: 7,
   totalScore: 7,
+  shares: "200",
 };
 
 export const LEDGER_VALIDATOR_DEFAULT = LEDGER_VALIDATOR_BY_FIGMENT;
