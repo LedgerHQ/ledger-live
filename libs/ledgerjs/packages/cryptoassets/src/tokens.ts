@@ -543,7 +543,7 @@ export function convertStacksSip010Token([
 
   return {
     type: "TokenCurrency",
-    id: "stacks/sip010/" + address.toLocaleLowerCase() + "." + name,
+    id: "stacks/sip010/" + address + "." + name,
     contractAddress: address,
     parentCurrency,
     tokenType: "sip010",
