@@ -21,7 +21,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { encodeOperationId, encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
 import { StacksOperation } from "../../types";
 import { log } from "@ledgerhq/logs";
-import { Unit } from "@ledgerhq/types-cryptoassets";
+import invariant from "invariant";
 
 type ContractCallArg = {
   hex: string;

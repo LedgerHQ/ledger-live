@@ -18,7 +18,7 @@ import { StacksSigner, Transaction } from "../types";
 import { getPath, throwIfError } from "../utils";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { getAddress } from "./utils/misc";
-import { getSubAccount, getTokenContractInfo } from "./utils/token";
+import { getSubAccount } from "./utils/token";
 
 export const buildSignOperation =
   (signerContext: SignerContext<StacksSigner>): AccountBridge<Transaction>["signOperation"] =>
