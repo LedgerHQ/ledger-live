@@ -1,10 +1,7 @@
 import * as blockies from "blockies-ts";
 import { AptosAPI } from "../api";
-import {GetCurrentDelegatorBalancesData} from "../api/graphql/queries";
-import {
-CurrentDelegatorBalance,
-  GetCurrentDelegatorBalancesQuery,
-} from "../api/graphql/types";
+import { GetCurrentDelegatorBalancesData } from "../api/graphql/queries";
+import { CurrentDelegatorBalance, GetCurrentDelegatorBalancesQuery } from "../api/graphql/types";
 
 // const MAX_VALIDATORS_NB = 1000; // Max number of validators to fetch
 
@@ -91,7 +88,7 @@ export async function getValidators(currencyId: string): Promise<Validator[]> {
 
   return list.sort((a, b) => {
     if (a.activeStake > b.activeStake) {
-      return -1; 
+      return -1;
     } else if (a.activeStake < b.activeStake) {
       return 1;
     }
