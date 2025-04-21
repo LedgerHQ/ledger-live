@@ -253,10 +253,17 @@ export const sip010TxnToOperation = (
     }
 
     const [valueArg, senderArg, receiverArg, memoArg] = contractCallArgs as Sip010ContractCallArgs;
-    const sender = senderArg.repr.slice(1);
-    const receiver = receiverArg.repr.slice(1);
 
-    const value = new BigNumber(valueArg.hex);
+    const sender = cvToJSON(deserializeCV(senderArg.hex)).value;
+    const receiver = cvToJSON(deserializeCV(receiverArg.hex)).value;
+    const value = cvToJSON(deserializeCV(valueArg.hex)).value;
+    const memo = cvToJSON(deserializeCV(memoArg.hex)).value ?? undefined;
+
+    log("debug", "decoded sender", sender);
+    log("debug", "decoded receiver", receiver);
+    log("debug", "decoded value", value);
+    log("debug", "decoded memo", memo);
+
     const recipients: string[] = [receiver];
     const senders: string[] = [sender];
 
@@ -285,7 +292,7 @@ export const sip010TxnToOperation = (
       value,
       hasFailed,
       extra: {
-        memo: memoArg.hex,
+        memo,
       },
       type,
       id: encodeOperationId(accountId, tx_id, type),
