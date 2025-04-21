@@ -17,6 +17,7 @@ import {
   UserTransactionResponse,
   PostRequestOptions,
   Block,
+  AptosSettings,
 } from "@aptos-labs/ts-sdk";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
@@ -39,22 +40,23 @@ const getIndexerEndpoint = (currencyId: string) =>
     : getEnv("APTOS_INDEXER_ENDPOINT");
 
 export class AptosAPI {
-  private apiUrl: string;
-  private indexerUrl: string;
   private aptosConfig: AptosConfig;
   private aptosClient: Aptos;
   private apolloClient: ApolloClient<object>;
 
-  constructor(currencyId: string) {
-    this.apiUrl = getApiEndpoint(currencyId);
-    this.indexerUrl = getIndexerEndpoint(currencyId);
-    this.aptosConfig = new AptosConfig({
-      fullnode: this.apiUrl,
-      indexer: this.indexerUrl,
-    });
+  constructor(currencyIdOrSettings: AptosSettings | string) {
+    if (typeof currencyIdOrSettings === "string") {
+      this.aptosConfig = new AptosConfig({
+        fullnode: getApiEndpoint(currencyIdOrSettings),
+        indexer: getIndexerEndpoint(currencyIdOrSettings),
+      });
+    } else {
+      this.aptosConfig = new AptosConfig(currencyIdOrSettings);
+    }
+
     this.aptosClient = new Aptos(this.aptosConfig);
     this.apolloClient = new ApolloClient({
-      uri: this.indexerUrl,
+      uri: this.aptosConfig.indexer || "",
       cache: new InMemoryCache(),
       headers: {
         "x-client": "ledger-live",
@@ -210,7 +212,7 @@ export class AptosAPI {
   private async getHeight(): Promise<number> {
     const { data } = await network<Block>({
       method: "GET",
-      url: this.apiUrl,
+      url: this.aptosConfig.fullnode || "",
     });
     return parseInt(data.block_height);
   }
