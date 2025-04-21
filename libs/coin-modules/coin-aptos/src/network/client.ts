@@ -15,8 +15,6 @@ import {
   UserTransactionResponse,
   Block,
   AptosSettings,
-  Deserializer,
-  SignedTransaction,
   Hex,
   postAptosFullNode,
   PendingTransactionResponse,
