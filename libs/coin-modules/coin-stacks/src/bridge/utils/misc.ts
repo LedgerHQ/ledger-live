@@ -241,20 +241,24 @@ export const sip010TxnToOperation = (
   try {
     const { tx_id, fee_rate, nonce, block_height, burn_block_time, block_hash: blockHash } = tx.tx;
     if (!tx.tx.contract_call) {
+      log("error", "contract_call is not defined", tx);
       return [];
     }
     const contractCallData = tx.tx.contract_call;
     const contractCallArgs = contractCallData.function_args;
 
     if (contractCallArgs.length !== 4) {
+      log("error", "contractCallArgs len is not sip010 token transfer", tx);
       return [];
     }
 
     const [valueArg, senderArg, receiverArg, memoArg] = contractCallArgs as Sip010ContractCallArgs;
+    const sender = senderArg.repr.slice(1);
+    const receiver = receiverArg.repr.slice(1);
 
     const value = new BigNumber(valueArg.hex);
-    const recipients: string[] = [receiverArg.repr];
-    const senders: string[] = [senderArg.repr];
+    const recipients: string[] = [receiver];
+    const senders: string[] = [sender];
 
     const ops: StacksOperation[] = [];
 
@@ -262,8 +266,9 @@ export const sip010TxnToOperation = (
     const fee = new BigNumber(fee_rate || "0");
 
     const hasFailed = tx.tx.tx_status !== "success";
-    const type = address === senderArg.repr ? "OUT" : address === receiverArg.repr ? "IN" : "";
+    const type = address === sender ? "OUT" : address === receiver ? "IN" : "";
     if (type === "") {
+      log("error", "op type is not known", tx);
       return [];
     }
 
