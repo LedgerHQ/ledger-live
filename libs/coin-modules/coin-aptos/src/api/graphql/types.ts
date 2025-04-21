@@ -112,26 +112,19 @@ export type GetCurrentDelegatorBalancesQuery = {
     __typename?: "CurrentDelegatorBalance";
     current_pool_balance: {
       __typename?: "CurrentPoolBalance";
-      total_coins: string; // Total coins in the pool
-      operator_commission_percentage: string; // Percentage, potentially divided by 100
+      total_coins: string;
+      operator_commission_percentage: string;
       staking_pool_address: string;
       total_shares: string;
-      inactive_table_handle: string;
-      last_transaction_version: string;
-      active_table_handle: string;
     };
-    shares: string; // The number of shares
+    shares: string;
     delegator_address: string;
     staking_pool_metadata: {
       __typename?: "StakingPoolMetadata";
       operator_aptos_name: {
         __typename?: "OperatorAptosName";
-        subdomain: string;
-        token_name: string;
-        registered_address: string;
         domain_with_suffix: string;
-        domain_expiration_timestamp: string;
-        domain: string;
+        is_active: boolean;
       };
     };
   }>;
@@ -147,9 +140,6 @@ interface CurrentPoolBalance {
   operator_commission_percentage: string;
   staking_pool_address: string;
   total_shares: string;
-  inactive_table_handle: string;
-  last_transaction_version: string;
-  active_table_handle: string;
 }
 
 interface StakingPoolMetadata {
@@ -159,12 +149,8 @@ interface StakingPoolMetadata {
 
 interface OperatorAptosName {
   __typename?: "OperatorAptosName";
-  subdomain: string;
-  token_name: string;
-  registered_address: string;
   domain_with_suffix: string;
-  domain_expiration_timestamp: string;
-  domain: string | null;
+  is_active: boolean;
 }
 
 export interface CurrentDelegatorBalance {

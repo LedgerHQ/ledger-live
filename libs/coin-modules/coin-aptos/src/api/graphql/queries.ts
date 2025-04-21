@@ -74,26 +74,19 @@ export const GetNumActiveDelegatorPerPoolData = gql`
 
 export const GetCurrentDelegatorBalancesData = gql`
   query GetCurrentDelegatorBalances {
-    current_delegator_balances {
+    current_delegator_balances(distinct_on: pool_address) {
       current_pool_balance {
         total_coins
         operator_commission_percentage
         staking_pool_address
         total_shares
-        inactive_table_handle
-        last_transaction_version
-        active_table_handle
       }
       shares
       delegator_address
       staking_pool_metadata {
         operator_aptos_name {
-          subdomain
-          token_name
-          registered_address
           domain_with_suffix
-          domain_expiration_timestamp
-          domain
+          is_active
         }
       }
     }
