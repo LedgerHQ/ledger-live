@@ -1,3 +1,9 @@
+jest.mock("blockies-ts", () => ({
+  create: jest.fn(() => ({
+    toDataURL: () => "data:image/png;base64,fakebase64string",
+  })),
+}));
+
 import BigNumber from "bignumber.js";
 import { createBridges } from "../../bridge";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
