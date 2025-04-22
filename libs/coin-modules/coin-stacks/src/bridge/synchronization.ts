@@ -22,7 +22,7 @@ import {
   sip010TxnToOperation,
 } from "./utils/misc";
 import { log } from "@ledgerhq/logs";
-import { findTokenById } from "@ledgerhq/cryptoassets/lib/tokens";
+import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
 import { TransactionResponse } from "../network";
 
 export const getAccountShape: GetAccountShape = async info => {
