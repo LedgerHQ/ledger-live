@@ -8530,6 +8530,9 @@ importers:
       react-transition-group:
         specifier: ^4.4.2
         version: 4.4.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-virtualized-auto-sizer:
+        specifier: 1.0.24
+        version: 1.0.24(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-window:
         specifier: ^1.8.6
         version: 1.8.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
