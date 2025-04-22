@@ -36,6 +36,11 @@ export interface TransactionResponse {
         type_id: string;
         address: string;
       };
+      asset: {
+        asset_name: string;
+        contract_address: string;
+        contract_name: string;
+      };
     }>;
     anchor_mode: string;
     is_unanchored: boolean;

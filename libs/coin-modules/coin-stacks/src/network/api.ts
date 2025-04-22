@@ -106,7 +106,7 @@ export const fetchAllTokenBalances = async (addr: string): Promise<Record<string
   do {
     const response = await fetchTokenBalances(addr, offset);
     response.results.forEach(item => {
-      tokenBalanceMap[item.token.split("::")[0]] = item.balance;
+      tokenBalanceMap[item.token] = item.balance;
     });
 
     offset += limit;
@@ -155,15 +155,17 @@ export const fetchFullTxs = async (
         txs.push(t);
       } else if (t.tx?.tx_type === "contract_call") {
         const contractId = t.tx.contract_call?.contract_id;
+        const assetName = t.tx.post_conditions.find(p => p.type === "fungible")?.asset.asset_name;
 
         if (t.tx.contract_call?.function_name === "send-many") {
           txs.push(t);
         } else if (t.tx.contract_call?.function_name === "transfer" && contractId) {
+          const tokenId = `${contractId}${assetName ? `::${assetName}` : ""}`;
           // Group other contract calls by contract_id
-          if (!contractTxsMap[contractId]) {
-            contractTxsMap[contractId] = [];
+          if (!contractTxsMap[tokenId]) {
+            contractTxsMap[tokenId] = [];
           }
-          contractTxsMap[contractId].push(t);
+          contractTxsMap[tokenId].push(t);
         }
       }
     });
