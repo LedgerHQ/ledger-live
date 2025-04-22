@@ -19,12 +19,12 @@ export class Drawer extends Component {
     await this.closeButton.click();
   }
 
-  public getAccountButton = (accountName: string, index: number) =>
-    this.page.getByTestId(`account-row-${accountName.toLowerCase()}-${index}`).first();
+  public getAccountButton = (accountName: string) =>
+    this.page.getByTestId(`account-row-${accountName.toLowerCase()}-0`).first();
 
   @step("Select account by name")
   async selectAccountByName(account: Account) {
-    await this.getAccountButton(account.currency.name, account.index)
+    await this.getAccountButton(account.currency.name)
       .locator(`text=${account.accountName}`)
       .click();
   }

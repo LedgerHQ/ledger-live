@@ -193,6 +193,7 @@ describe("signOperation", () => {
         if (e.type === "signed") {
           const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
           expect(extra).toEqual({
+            index: 0,
             palletMethod: "balances.transferKeepAlive",
             transferAmount: amount,
           });
@@ -217,6 +218,7 @@ describe("signOperation", () => {
         if (e.type === "signed") {
           const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
           expect(extra).toEqual({
+            index: 0,
             palletMethod: "staking.bond",
             bondedAmount: amount,
           });
@@ -245,6 +247,7 @@ describe("signOperation", () => {
         if (e.type === "signed") {
           const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
           expect(extra).toEqual({
+            index: 0,
             palletMethod: "staking.unbond",
             unbondedAmount: amount,
           });
@@ -273,6 +276,7 @@ describe("signOperation", () => {
         if (e.type === "signed") {
           const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
           expect(extra).toEqual({
+            index: 0,
             palletMethod: "staking.withdrawUnbonded",
             withdrawUnbondedAmount: account.polkadotResources.unlockedBalance,
           });
@@ -303,6 +307,7 @@ describe("signOperation", () => {
         if (e.type === "signed") {
           const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
           expect(extra).toEqual({
+            index: 0,
             palletMethod: "staking.nominate",
             validators: ["111B8CxcmnWbuDLyGvgUmRezDCK1brRZmvUuQ6SrFdMyc3S"],
           });

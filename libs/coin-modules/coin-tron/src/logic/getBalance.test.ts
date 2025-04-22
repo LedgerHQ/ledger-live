@@ -256,6 +256,19 @@ describe("getBalance", () => {
       },
     ]);
   });
+
+  it("returns empty balance if account is inactive", async () => {
+    mockServer.listen({ onUnhandledRequest: "error" });
+    mockServer.use(
+      http.get(
+        "http://tron.explorer.com/v1/accounts/41ae18eb0a9e067f8884058470ed187f44135d816d",
+        () => HttpResponse.json({ data: [] }),
+      ),
+    );
+    const balance = await getBalance("41ae18eb0a9e067f8884058470ed187f44135d816d");
+    expect(balance).toEqual([]);
+  });
+
   mockServer.close();
 });
 

@@ -59,6 +59,7 @@ import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
 import { getEnv } from "@ledgerhq/live-env";
 import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import { getTokensWithFunds } from "LLM/utils/getTokensWithFunds";
+import { getMigrationUserProps } from "LLM/storage/utils/migrations/analytics";
 
 let sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
@@ -265,6 +266,7 @@ const extraProperties = async (store: AppStore) => {
   const mevProtectionAttributes = getMEVAttributes(state);
   const addAccountsAttributes = getNewAddAccountsAttribues();
   const tokenWithFunds = getTokensWithFunds(accounts);
+  const migrationToMMKV = getMigrationUserProps();
 
   // NOTE: Currently there no reliable way to uniquely identify devices from DeviceModelInfo.
   // So device counts is approximated as follows:
@@ -314,6 +316,7 @@ const extraProperties = async (store: AppStore) => {
     ...rebornAttributes,
     ...mevProtectionAttributes,
     ...addAccountsAttributes,
+    migrationToMMKV,
     tokenWithFunds,
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
