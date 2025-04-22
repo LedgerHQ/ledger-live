@@ -13,6 +13,7 @@ import { StacksMemoTooLong } from "../errors";
 import { Transaction, TransactionStatus } from "../types";
 import { validateAddress } from "./utils/addresses";
 import { getAddress } from "./utils/misc";
+import { getSubAccount } from "./utils/token";
 
 export const getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"] = async (
   account,
@@ -23,6 +24,7 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
 
   const { spendableBalance } = account;
   const { address } = getAddress(account);
+  const subAccount = getSubAccount(account, transaction);
   const { memo, recipient, useAllAmount, fee } = transaction;
   let { amount } = transaction;
 
@@ -39,12 +41,50 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
   }
 
   const estimatedFees = fee || new BigNumber(0);
+  let totalSpent: BigNumber;
 
-  const totalSpent = useAllAmount ? spendableBalance : amount.plus(estimatedFees);
-  amount = useAllAmount ? spendableBalance.minus(estimatedFees) : amount;
+  // Handle token transactions (subAccount exists)
+  if (subAccount) {
+    // For token transactions, fees are paid from the main account
+    totalSpent = estimatedFees;
 
-  if (amount.lte(0)) errors.amount = new AmountRequired();
-  if (totalSpent.gt(spendableBalance)) errors.amount = new NotEnoughBalance();
+    // Check if main account has enough balance to pay fees
+    if (totalSpent.gt(spendableBalance)) {
+      errors.amount = new NotEnoughBalance();
+    }
+
+    // Check if token account has enough balance for the transaction
+    const tokenSpendable = subAccount.spendableBalance;
+    if (amount.gt(tokenSpendable)) {
+      errors.amount = new NotEnoughBalance();
+    }
+
+    // Handle use all amount for tokens
+    if (useAllAmount) {
+      amount = tokenSpendable;
+    }
+
+    // For token transfers, total spent from token perspective is just the amount
+    totalSpent = amount;
+  } else {
+    // Regular STX transfer
+    if (useAllAmount) {
+      totalSpent = spendableBalance;
+      amount = totalSpent.minus(estimatedFees);
+
+      if (amount.lte(0)) {
+        errors.amount = new NotEnoughBalance();
+      }
+    } else {
+      totalSpent = amount.plus(estimatedFees);
+
+      if (amount.lte(0)) {
+        errors.amount = new AmountRequired();
+      } else if (totalSpent.gt(spendableBalance)) {
+        errors.amount = new NotEnoughBalance();
+      }
+    }
+  }
 
   const memoBytesLength = Buffer.from(memo ?? "", "utf-8").byteLength;
   if (memoBytesLength > STACKS_MAX_MEMO_SIZE) errors.transaction = new StacksMemoTooLong();
