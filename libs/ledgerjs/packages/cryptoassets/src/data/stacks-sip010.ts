@@ -1,6 +1,7 @@
 export type StacksSip010Token = [
   string, // contractAddress
   string, // contractName
+  string, // assetName
   string, // displayName
   string, // ticker
   number, // decimals
