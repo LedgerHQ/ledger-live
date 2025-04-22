@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import useQuickActions from "~/hooks/useQuickActions";
-import { QuickActionList, type QuickActionButtonProps } from "@ledgerhq/native-ui";
+import { QuickActionList, type QuickActionButtonProps, Icons } from "@ledgerhq/native-ui";
 import { TextVariants } from "@ledgerhq/native-ui/styles/theme";
 import { track } from "~/analytics";
 import { useRoute } from "@react-navigation/native";
@@ -35,35 +35,35 @@ function PortfolioQuickActionsBar() {
   const quickActionsData: QuickActionButtonProps[] = [
     BUY && {
       ...SHARED_CONFIG,
-      Icon: BUY.icon,
+      Icon: () => <Icons.Plus size="S" />,
       children: t("portfolio.quickActions.buy"),
       onPress: () => onNavigate(BUY.route, "quick_action_buy"),
       disabled: BUY.disabled,
     },
     SWAP && {
       ...SHARED_CONFIG,
-      Icon: SWAP.icon,
+      Icon: () => <Icons.Exchange size="S" />,
       children: t("portfolio.quickActions.swap"),
       onPress: () => onNavigate(SWAP.route, "quick_action_swap"),
       disabled: SWAP.disabled,
     },
     SEND && {
       ...SHARED_CONFIG,
-      Icon: SEND.icon,
+      Icon: () => <Icons.ArrowUp size="S" />,
       children: t("portfolio.quickActions.send"),
       onPress: () => onNavigate(SEND.route, "quick_action_send"),
       disabled: SEND.disabled,
     },
     RECEIVE && {
       ...SHARED_CONFIG,
-      Icon: RECEIVE.icon,
+      Icon: () => <Icons.ArrowDown size="S" />,
       children: t("portfolio.quickActions.deposit"),
       onPress: () => onNavigate(RECEIVE.route, "quick_action_receive"),
       disabled: RECEIVE.disabled,
     },
     STAKE && {
       ...SHARED_CONFIG,
-      Icon: STAKE.icon,
+      Icon: () => <Icons.CoinsCrypto size="S" />,
       children: t(stakeLabel),
       onPress: () => onNavigate(STAKE.route, "quick_action_stake"),
       disabled: STAKE.disabled,

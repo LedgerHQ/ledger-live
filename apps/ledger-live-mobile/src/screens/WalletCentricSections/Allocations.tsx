@@ -13,6 +13,7 @@ import { useDistribution } from "~/actions/general";
 import RingChart, { ColorableDistributionItem } from "../Analytics/RingChart";
 import { track } from "~/analytics";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
+import { GestureResponderEvent, useStartProfiler } from "@shopify/react-native-performance";
 
 const NUMBER_MAX_ALLOCATION_ASSETS_TO_DISPLAY = 4;
 
@@ -43,13 +44,18 @@ const Allocations = () => {
   });
   const { colors } = useTheme();
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
+  const startNavigationTTITimer = useStartProfiler();
 
-  const goToAnalyticsAllocations = useCallback(() => {
-    track("analytics_clicked", {
-      analytics: "Allocations",
-    });
-    navigation.navigate(ScreenName.AnalyticsAllocation);
-  }, [navigation]);
+  const goToAnalyticsAllocations = useCallback(
+    (uiEvent: GestureResponderEvent) => {
+      startNavigationTTITimer({ source: ScreenName.Portfolio, uiEvent });
+      track("analytics_clicked", {
+        analytics: "Allocations",
+      });
+      navigation.navigate(ScreenName.AnalyticsAllocation);
+    },
+    [navigation, startNavigationTTITimer],
+  );
 
   const distributionListFormatted: ColorableDistributionItem[] = useMemo(() => {
     const displayedCurrencies: ColorableDistributionItem[] = distribution.list

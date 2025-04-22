@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { useTheme } from "styled-components/native";
-import { IconsLegacy } from "@ledgerhq/native-ui";
+import { Icons } from "@ledgerhq/native-ui";
 
 import { BottomTabBarProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useSelector } from "react-redux";
@@ -10,7 +10,6 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useManagerNavLockCallback } from "./CustomBlockRouterNavigator";
 import { ScreenName, NavigatorName } from "~/const";
 import { PortfolioTabIcon } from "~/screens/Portfolio";
-import Transfer, { TransferTabIcon } from "../TabBar/Transfer";
 import TabIcon from "../TabIcon";
 import PortfolioNavigator from "./PortfolioNavigator";
 import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
@@ -22,6 +21,7 @@ import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
+import SwapNavigator from "./SwapNavigator";
 
 const Tab = createBottomTabNavigator<MainNavigatorParamList>();
 
@@ -111,7 +111,7 @@ export default function MainNavigator() {
           unmountOnBlur: true,
           tabBarIcon: props => (
             <TabIcon
-              Icon={IconsLegacy.LendMedium}
+              Icon={() => <Icons.CoinsCrypto color={props.color} />}
               i18nKey={earnYiedlLabel}
               testID="tab-bar-earn"
               {...props}
@@ -135,12 +135,26 @@ export default function MainNavigator() {
         })}
       />
 
-      <Tab.Screen
+      {/*    <Tab.Screen
         name={ScreenName.Transfer}
         component={Transfer}
         options={{
           headerShown: false,
           tabBarIcon: () => <TransferTabIcon />,
+        }}
+      />*/}
+      <Tab.Screen
+        name={NavigatorName.Swap}
+        component={SwapNavigator}
+        options={{
+          headerShown: false,
+          tabBarIcon: props => (
+            <TabIcon
+              Icon={() => <Icons.Exchange color={props.color} />}
+              i18nKey="tabs.swap"
+              {...props}
+            />
+          ),
         }}
       />
       {web3hub?.enabled ? (
@@ -150,7 +164,11 @@ export default function MainNavigator() {
           options={{
             headerShown: false,
             tabBarIcon: props => (
-              <TabIcon Icon={IconsLegacy.PlanetMedium} i18nKey="tabs.discover" {...props} />
+              <TabIcon
+                Icon={() => <Icons.Planet color={props.color} />}
+                i18nKey="tabs.discover"
+                {...props}
+              />
             ),
           }}
           listeners={({ navigation }) => ({
@@ -169,7 +187,11 @@ export default function MainNavigator() {
           options={{
             headerShown: false,
             tabBarIcon: props => (
-              <TabIcon Icon={IconsLegacy.PlanetMedium} i18nKey="tabs.discover" {...props} />
+              <TabIcon
+                Icon={() => <Icons.Planet color={props.color} />}
+                i18nKey="tabs.discover"
+                {...props}
+              />
             ),
           }}
           listeners={({ navigation }) => ({

@@ -2354,7 +2354,8 @@
     "discover": "Discover",
     "nanoX": "Nano X",
     "market": "Market",
-    "earn": "Earn"
+    "earn": "Earn",
+    "swap": "Swap"
   },
   "portfolio": {
     "totalBalance": "Total balance",

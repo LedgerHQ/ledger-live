@@ -1,7 +1,13 @@
 import React from "react";
-import { WalletMedium } from "@ledgerhq/native-ui/assets/icons";
 import TabIcon from "~/components/TabIcon";
+import { Icons } from "@ledgerhq/native-ui";
 
 export default function PortfolioTabIcon(props: { color: string }) {
-  return <TabIcon Icon={WalletMedium} i18nKey="tabs.portfolio" {...props} />;
+  return (
+    <TabIcon
+      Icon={() => <Icons.Wallet color={props.color} />}
+      i18nKey="tabs.portfolio"
+      {...props}
+    />
+  );
 }

@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { CardMedium, SettingsMedium, WalletConnectMedium } from "@ledgerhq/native-ui/assets/icons";
+import { SettingsMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -108,32 +108,6 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
         {!hidePortfolio && <DiscreetModeButton size={20} />}
       </Flex>
       <Flex flexDirection="row">
-        <Flex mr={7}>
-          <Touchable
-            onPress={onSideImageCardButtonPress}
-            event="button_clicked"
-            eventProperties={{
-              button: "card",
-              page: ScreenName.Portfolio,
-            }}
-          >
-            <CardMedium size={24} color={"neutral.c100"} />
-          </Touchable>
-        </Flex>
-
-        <Flex mr={7}>
-          <Touchable
-            onPress={onWalletConnectPress}
-            event="button_clicked"
-            eventProperties={{
-              button: "Wallet Connect",
-              page: ScreenName.WalletConnectConnect,
-            }}
-          >
-            <WalletConnectMedium size={24} color={"neutral.c100"} />
-          </Touchable>
-        </Flex>
-
         <Flex mr={7}>
           <NotificationsButton />
         </Flex>

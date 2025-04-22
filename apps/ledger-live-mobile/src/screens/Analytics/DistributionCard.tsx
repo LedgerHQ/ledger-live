@@ -27,7 +27,6 @@ type Props = {
 const Container = styled(TouchableOpacity)`
   align-items: center;
   justify-content: center;
-  margin-bottom: 32px;
   width: 100%;
 `;
 
@@ -68,6 +67,7 @@ function DistributionCard({ item: { currency, amount, distribution } }: Props) {
     () => ensureContrast(getCurrencyColor(currency), colors.background.main),
     [colors, currency],
   );
+
   const percentage = Math.round(distribution * 1e4) / 1e2;
 
   const navigateToAccounts = useCallback(() => {
@@ -83,7 +83,7 @@ function DistributionCard({ item: { currency, amount, distribution } }: Props) {
     <Container onPress={navigateToAccounts}>
       <Flex flexDirection="row">
         <IconContainer>
-          <ParentCurrencyIcon currency={currency} size={35} />
+          <ParentCurrencyIcon forceIconScale={2} currency={currency} size={35} />
         </IconContainer>
         <CoinInfoContainer>
           <CurrencyRow>

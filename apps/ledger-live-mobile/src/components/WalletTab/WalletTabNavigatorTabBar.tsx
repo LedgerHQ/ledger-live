@@ -87,14 +87,14 @@ function Tab({
     <StyledTouchableOpacity onPress={onPress} testID={`wallet-tab-${route.name}`}>
       <StyledAnimatedView
         backgroundColor={rgba(colors.constant.white, 0.08)}
-        borderRadius={2}
+        borderRadius={"16px"}
         style={{
           opacity: opacityInactive,
         }}
       />
       <StyledAnimatedView
         backgroundColor={"primary.c70"}
-        borderRadius={2}
+        borderRadius={"16px"}
         style={{
           opacity,
         }}
@@ -164,7 +164,7 @@ function WalletTabNavigatorTabBar({
             opacity,
           }}
         />
-        <Flex px={6} py={2} justifyContent={"flex-end"}>
+        <Flex px={6} py={4} justifyContent={"flex-end"} alignItems={"center"}>
           <Flex flexDirection={"row"}>
             {state.routes.map((route, index) => {
               const { options } = descriptors[route.key];

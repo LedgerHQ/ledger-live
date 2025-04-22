@@ -16,7 +16,8 @@ export default function Badge({
       <Flex
         bg={selected ? "primary.c80" : "neutral.c30"}
         flexDirection={"row"}
-        mx={"6px"}
+        marginLeft={selected ? 0 : "6px"}
+        marginRight={"6px"}
         px={4}
         py={1}
         justifyContent={"center"}
