@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { AssetList } from "./AssetList";
-import { PlayFnProps } from "src/pre-ldls/types";
 import { expect, fn, userEvent, within } from "@storybook/test";
 import React from "react";
 
@@ -9,7 +8,7 @@ const testFn = fn();
 const meta: Meta<typeof AssetList> = {
   component: AssetList,
   decorators: [
-    (Story: Story) => (
+    Story => (
       <div style={{ height: "400px" }}>
         <Story />
       </div>
@@ -29,7 +28,7 @@ type Story = StoryObj<typeof AssetList>;
 export const Default: Story = {};
 
 export const TestAssetClick: Story = {
-  play: async ({ canvasElement }: PlayFnProps) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const input = canvas.getByText("Bitcoin 1");
     await userEvent.click(input);
