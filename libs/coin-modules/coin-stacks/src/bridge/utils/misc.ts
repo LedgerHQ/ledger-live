@@ -6,6 +6,17 @@ import {
   createMessageSignature,
   deserializeCV,
   cvToJSON,
+  uintCV,
+  standardPrincipalCV,
+  stringAsciiCV,
+  someCV,
+  noneCV,
+  makeUnsignedContractCall,
+  StacksMessageType,
+  PostConditionType,
+  createStandardPrincipal,
+  FungibleConditionCode,
+  createAssetInfo,
 } from "@stacks/transactions";
 
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
@@ -39,30 +50,69 @@ export const getTxToBroadcast = async (
   const {
     value,
     recipients,
+    senders,
     fee,
     extra: { memo },
   } = operation;
 
-  const { anchorMode, network, xpub } = rawData;
+  const { anchorMode, network, xpub, contractAddress, contractName, assetName } = rawData;
 
-  const options: UnsignedTokenTransferOptions = {
-    amount: BigNumber(value).minus(fee).toFixed(),
-    recipient: recipients[0],
-    anchorMode,
-    memo,
-    network: StacksNetwork[network],
-    publicKey: xpub,
-    fee: BigNumber(fee).toFixed(),
-    nonce: operation.transactionSequenceNumber ?? 0,
-  };
+  if (contractAddress && contractName && assetName) {
+    // Create the function arguments for the SIP-010 transfer function
+    const functionArgs = [
+      uintCV(value.toFixed()), // Amount
+      standardPrincipalCV(senders[0]), // Sender
+      standardPrincipalCV(recipients[0]), // Recipient
+      memo ? someCV(stringAsciiCV(memo)) : noneCV(), // Memo (optional)
+    ];
 
-  const tx = await makeUnsignedSTXTokenTransfer(options);
+    const tx = await makeUnsignedContractCall({
+      contractAddress,
+      contractName,
+      functionName: "transfer",
+      functionArgs,
+      anchorMode,
+      network: StacksNetwork[network],
+      publicKey: xpub,
+      fee: fee.toFixed(),
+      nonce: operation.transactionSequenceNumber ?? 0,
+      postConditions: [
+        {
+          type: StacksMessageType.PostCondition,
+          conditionType: PostConditionType.Fungible,
+          principal: createStandardPrincipal(senders[0]),
+          conditionCode: FungibleConditionCode.Equal,
+          amount: BigInt(value.toFixed()),
+          assetInfo: createAssetInfo(contractAddress, contractName, assetName),
+        },
+      ],
+    });
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore need to ignore the TS error here
-  tx.auth.spendingCondition.signature = createMessageSignature(signature);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore need to ignore the TS error here
+    tx.auth.spendingCondition.signature = createMessageSignature(signature);
 
-  return Buffer.from(tx.serialize());
+    return Buffer.from(tx.serialize());
+  } else {
+    const options: UnsignedTokenTransferOptions = {
+      amount: BigNumber(value).minus(fee).toFixed(),
+      recipient: recipients[0],
+      anchorMode,
+      memo,
+      network: StacksNetwork[network],
+      publicKey: xpub,
+      fee: BigNumber(fee).toFixed(),
+      nonce: operation.transactionSequenceNumber ?? 0,
+    };
+
+    const tx = await makeUnsignedSTXTokenTransfer(options);
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore need to ignore the TS error here
+    tx.auth.spendingCondition.signature = createMessageSignature(signature);
+
+    return Buffer.from(tx.serialize());
+  }
 };
 
 export const getUnit = () => getCryptoCurrencyById("stacks").units[0];

@@ -10,6 +10,11 @@ import {
   someCV,
   stringAsciiCV,
   noneCV,
+  createStandardPrincipal,
+  StacksMessageType,
+  PostConditionType,
+  FungibleConditionCode,
+  createAssetInfo,
 } from "@stacks/transactions";
 import invariant from "invariant";
 import { Observable } from "rxjs";
@@ -25,7 +30,7 @@ export const buildSignOperation =
   ({ account, deviceId, transaction }) =>
     new Observable(o => {
       async function main() {
-        const { derivationPath } = getAddress(account);
+        const { derivationPath, address } = getAddress(account);
         const { xpub } = account;
         invariant(xpub, "xpub is required");
 
@@ -52,12 +57,14 @@ export const buildSignOperation =
         let serializedTx: Buffer;
         if (tokenAccountTxn) {
           // Token transfer transaction
-          const contractAddress = subAccount?.token.contractAddress;
-          const contractName = subAccount?.token.id.split(".").pop() ?? "";
+          const contractAddress = subAccount?.token.contractAddress ?? "";
+          const contractName = subAccount?.token.id.split(".").pop()?.split("::")[0] ?? "";
+          const assetName = subAccount?.token.id.split(".").pop()?.split("::")[1] ?? "";
 
           // Create the function arguments for the SIP-010 transfer function
           const functionArgs = [
-            uintCV(amount.toString()), // Amount
+            uintCV(amount.toFixed()), // Amount
+            standardPrincipalCV(address), // Sender
             standardPrincipalCV(recipient), // Recipient
             memo ? someCV(stringAsciiCV(memo)) : noneCV(), // Memo (optional)
           ];
@@ -72,6 +79,16 @@ export const buildSignOperation =
             publicKey: xpub,
             fee: fee.toFixed(),
             nonce: nonce.toFixed(),
+            postConditions: [
+              {
+                type: StacksMessageType.PostCondition,
+                conditionType: PostConditionType.Fungible,
+                principal: createStandardPrincipal(address),
+                conditionCode: FungibleConditionCode.Equal,
+                amount: BigInt(amount.toFixed()),
+                assetInfo: createAssetInfo(contractAddress, contractName, assetName),
+              },
+            ],
           });
 
           serializedTx = Buffer.from(tx.serialize());
@@ -121,11 +138,11 @@ export const buildSignOperation =
               xpub,
               network,
               anchorMode,
-              tokenTransfer: tokenAccountTxn,
               // Add token contract details if needed
               ...(tokenAccountTxn && {
-                contractAddress: subAccount.token.contractAddress,
-                contractName: (subAccount.token as any).contractName || "",
+                 contractAddress: subAccount?.token.contractAddress ?? "",
+                 contractName : subAccount?.token.id.split(".").pop()?.split("::")[0] ?? "",
+                 assetName : subAccount?.token.id.split(".").pop()?.split("::")[1] ?? "",
               }),
             },
           },
