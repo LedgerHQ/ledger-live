@@ -17,7 +17,7 @@ const meta: Meta<typeof VirtualList> = {
   args: {
     itemHeight: 64,
     count: 50,
-    renderRow: (i: number) => <h1>Item #{i}</h1>,
+    renderItem: (i: number) => <h1>Item #{i}</h1>,
   },
 };
 export default meta;
