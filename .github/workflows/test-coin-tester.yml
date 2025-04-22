@@ -59,6 +59,7 @@ jobs:
               if echo "${{ steps.affected.outputs.paths }}" | grep -q "$coin"; then
               CHAINS+=("\"$coin\"")
               fi
+          done
           # If it's a scheduled job and no chain is detected, run all chains by default
           if [ ${#CHAINS[@]} -eq 0 ]; then
             for coin in $COIN_TESTER_CURRENCIES; do
