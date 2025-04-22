@@ -2,11 +2,19 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { AssetList } from "./AssetList";
 import { PlayFnProps } from "src/pre-ldls/types";
 import { expect, fn, userEvent, within } from "@storybook/test";
+import React from "react";
 
 const testFn = fn();
 
 const meta: Meta<typeof AssetList> = {
   component: AssetList,
+  decorators: [
+    (Story: Story) => (
+      <div style={{ height: "400px" }}>
+        <Story />
+      </div>
+    ),
+  ],
   title: "PreLdls/Components/AssetList",
   tags: ["autodocs"],
   args: {
