@@ -66,7 +66,8 @@ jobs:
               CHAINS+=("$coin")
             done
             echo "Running all chains by default on schedule: ${CHAINS[*]}"
-            echo "matrix={\"chain\":[${CHAINS[*]}]}" >> $GITHUB_OUTPUT
+            CHAIN_JSON=$(printf '%s\n' "${CHAINS[@]}" | jq -R . | jq -cs '{chain: .}')
+            echo "matrix=${CHAIN_JSON}" >> "$GITHUB_OUTPUT"
             echo "is-affected=true" >> $GITHUB_OUTPUT
           elif [ ${#CHAINS[@]} -eq 0 ]; then
               echo "matrix={\"chain\":[]}" >> $GITHUB_OUTPUT
