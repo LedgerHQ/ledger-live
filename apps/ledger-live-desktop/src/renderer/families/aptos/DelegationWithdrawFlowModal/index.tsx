@@ -23,7 +23,7 @@ class DelegationModal extends PureComponent<Data, State> {
     const isModalLocked = ["connectDevice", "confirmation"].includes(stepId);
     return (
       <Modal
-        name="MODAL_SOLANA_DELEGATION_WITHDRAW"
+        name="MODAL_APTOS_DELEGATION_WITHDRAW"
         centered
         onHide={this.handleReset}
         preventBackdropClick={isModalLocked}
@@ -33,7 +33,7 @@ class DelegationModal extends PureComponent<Data, State> {
             stepId={stepId}
             onClose={onClose}
             onChangeStepId={this.handleStepChange}
-            params={data || {}}
+            params={data}
           />
         )}
       />
