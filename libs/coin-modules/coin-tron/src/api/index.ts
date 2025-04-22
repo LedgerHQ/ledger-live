@@ -27,7 +27,5 @@ export function createApi(config: TronConfig): Api<TronAsset> {
 
 async function estimate(transactionIntent: TransactionIntent<TronAsset>): Promise<FeeEstimation> {
   const fees = await estimateFees(transactionIntent);
-  return {
-    value: fees,
-  };
+  return { value: fees };
 }

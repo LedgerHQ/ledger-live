@@ -124,7 +124,7 @@ describe("Testing estimateFees function", () => {
   it("should return estimation from logic module", async () => {
     logicEstimateFees.mockResolvedValue({ estimatedFees: DEFAULT_ESTIMATED_FEES });
     const result = await api.estimateFees({ type: "send", sender: {} } as TezosTransactionIntent);
-    expect(result.value).toEqual(DEFAULT_ESTIMATED_FEES);
+    expect(result).toEqual({ value: DEFAULT_ESTIMATED_FEES });
   });
 
   it("should throw taquito errors", async () => {
