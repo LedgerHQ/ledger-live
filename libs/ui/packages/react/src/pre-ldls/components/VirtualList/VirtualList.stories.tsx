@@ -1,13 +1,12 @@
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { VirtualList } from "./VirtualList";
-import { PlayFnProps } from "src/pre-ldls/types";
 import { expect, within } from "@storybook/test";
 
 const meta: Meta<typeof VirtualList> = {
   component: VirtualList,
   decorators: [
-    (Story: Story) => (
+    Story => (
       <div style={{ height: "400px" }}>
         <Story />
       </div>
@@ -28,7 +27,7 @@ type Story = StoryObj<typeof VirtualList>;
 export const Default: Story = {};
 
 export const TestVirtualList: Story = {
-  play: async ({ canvasElement }: PlayFnProps) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     const visible = canvas.getAllByText(/Item #/i);
