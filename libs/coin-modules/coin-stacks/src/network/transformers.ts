@@ -42,7 +42,7 @@ export const extractContractTransactions = (
 
       const assetName = tx.tx.post_conditions.find(p => p.type === "fungible")?.asset.asset_name;
       const tokenId = `${contractId}${assetName ? `::${assetName}` : ""}`;
-      
+
       // Group by token ID
       if (!contractTxsMap[tokenId]) {
         contractTxsMap[tokenId] = [];
@@ -52,4 +52,4 @@ export const extractContractTransactions = (
   }
 
   return contractTxsMap;
-}; 
+};

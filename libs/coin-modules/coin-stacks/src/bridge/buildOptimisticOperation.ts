@@ -8,7 +8,7 @@ import { getSubAccount } from "./utils/token";
 export const buildOptimisticOperation = (
   account: Account,
   transaction: Transaction,
-  operatioinType: OperationType = "OUT",
+  operationType: OperationType = "OUT",
 ): StacksOperation => {
   const hash = "";
 
@@ -29,9 +29,9 @@ export const buildOptimisticOperation = (
     : transaction.amount.plus(transaction.fee || new BigNumber(0));
 
   return {
-    id: encodeOperationId(operationAccountId, hash, operatioinType),
+    id: encodeOperationId(operationAccountId, hash, operationType),
     hash,
-    type: operatioinType,
+    type: operationType,
     senders: [address],
     recipients: [transaction.recipient],
     accountId: operationAccountId,
