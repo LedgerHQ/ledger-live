@@ -53,6 +53,7 @@ describe("getTransactionStatus Test", () => {
     const expected = {
       errors: {
         fees: new FeeNotLoaded(),
+        amount: new NotEnoughBalance(),
       },
       warnings: {},
       estimatedFees: BigNumber(0),
@@ -200,7 +201,7 @@ describe("getTransactionStatus Test", () => {
 
     const expected = {
       errors: {
-        amount: new NotEnoughBalanceFees(),
+        amount: new NotEnoughBalance(),
       },
       warnings: {},
       estimatedFees: BigNumber(0),
@@ -225,6 +226,7 @@ describe("getTransactionStatus Test", () => {
     const expected = {
       errors: {
         recipient: new RecipientRequired(),
+        amount: new NotEnoughBalance(),
       },
       warnings: {},
       estimatedFees: BigNumber(2),
@@ -315,7 +317,7 @@ describe("getTransactionStatus Test", () => {
 
     const transaction = createFixtureTransaction();
     transaction.recipient = "0x" + "0".repeat(64);
-    transaction.amount = BigNumber(2);
+    //transaction.amount = BigNumber(2);
     transaction.fees = BigNumber(2);
     transaction.useAllAmount = true;
 
