@@ -57,13 +57,13 @@ jobs:
           CHAINS=()
           for coin in $COIN_TESTER_CURRENCIES; do
               if echo "${{ steps.affected.outputs.paths }}" | grep -q "$coin"; then
-              CHAINS+=("\"$coin\"")
+                CHAINS+=("$coin")
               fi
           done
           # If it's a scheduled job and no chain is detected, run all chains by default
           if [ ${#CHAINS[@]} -eq 0 ]; then
             for coin in $COIN_TESTER_CURRENCIES; do
-              CHAINS+=("\"$coin\"")
+              CHAINS+=("$coin")
             done
             echo "Running all chains by default on schedule: ${CHAINS[*]}"
             echo "matrix={\"chain\":[${CHAINS[*]}]}" >> $GITHUB_OUTPUT
