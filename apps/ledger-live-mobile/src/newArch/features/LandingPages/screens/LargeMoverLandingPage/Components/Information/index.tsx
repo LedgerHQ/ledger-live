@@ -38,18 +38,18 @@ export const Informations: React.FC<InformationsProps> = props => {
       <Flex style={styles.row}>
         <InfoCard
           label={t("largeMover.marketCap")}
-          value={formatCounterValue(marketCap, counterValueCurrency.ticker, locale, t)}
+          value={formatCounterValue(marketCap ?? 0, counterValueCurrency.ticker, locale, t)}
         />
         <InfoCard
           label={t("largeMover.volume")}
-          value={formatCounterValue(volume, counterValueCurrency.ticker, locale, t)}
+          value={formatCounterValue(volume ?? 0, counterValueCurrency.ticker, locale, t)}
         />
       </Flex>
 
       <Flex style={styles.row}>
         <InfoCard
           label={t("largeMover.fdv")}
-          value={formatCounterValue(fdv, counterValueCurrency.ticker, locale, t)}
+          value={formatCounterValue(fdv ?? 0, counterValueCurrency.ticker, locale, t)}
         />
         <InfoCard
           label={t("largeMover.marketCap24h")}
@@ -66,13 +66,19 @@ export const Informations: React.FC<InformationsProps> = props => {
       <Flex style={styles.row}>
         <InfoCard
           label={t("largeMover.circulatingSupply")}
-          value={formatCounterValue(circulatingSupply, counterValueCurrency.ticker, locale, t, {
-            ticker,
-          })}
+          value={formatCounterValue(
+            circulatingSupply ?? 0,
+            counterValueCurrency.ticker,
+            locale,
+            t,
+            {
+              ticker,
+            },
+          )}
         />
         <InfoCard
           label={t("largeMover.totalSupply")}
-          value={`${formatCounterValue(totalSupply, counterValueCurrency.ticker, locale, t, { ticker })} ${ticker}`}
+          value={`${formatCounterValue(totalSupply ?? 0, counterValueCurrency.ticker, locale, t, { ticker })} ${ticker}`}
         />
       </Flex>
 
