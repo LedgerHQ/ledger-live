@@ -8,6 +8,8 @@ let shard = "";
 let target = "release";
 let filter = "";
 
+$.verbose = true; // everything works like in v7
+
 if (os.platform() === "win32") {
   usePowerShell();
 }
