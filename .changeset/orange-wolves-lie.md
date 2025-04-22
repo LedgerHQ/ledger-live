@@ -1,10 +1,10 @@
 ---
-"@ledgerhq/coin-polkadot": minor
-"@ledgerhq/coin-stellar": minor
-"@ledgerhq/coin-tezos": minor
-"@ledgerhq/coin-tron": minor
-"@ledgerhq/coin-xrp": minor
-"@ledgerhq/coin-framework": minor
+"@ledgerhq/coin-polkadot": major
+"@ledgerhq/coin-stellar": major
+"@ledgerhq/coin-tezos": major
+"@ledgerhq/coin-tron": major
+"@ledgerhq/coin-xrp": major
+"@ledgerhq/coin-framework": major
 ---
 
 Change alpaca estimate signature

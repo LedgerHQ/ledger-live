@@ -60,8 +60,8 @@ async function craft(
       ? { fees: customFees.toString() }
       : await estimate(transactionIntent).then(fees => ({
           fees: fees.value.toString(),
-          gasLimit: fees.parameters?.gasLimit?.toString() ?? undefined,
-          storageLimit: fees.parameters?.storageLimit?.toString() ?? undefined,
+          gasLimit: fees.parameters?.gasLimit?.toString(),
+          storageLimit: fees.parameters?.storageLimit?.toString(),
         }));
   const { contents } = await craftTransaction(
     { address: transactionIntent.sender.address },
