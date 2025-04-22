@@ -53,7 +53,7 @@ export const buildSignOperation =
         if (tokenAccountTxn) {
           // Token transfer transaction
           const contractAddress = subAccount?.token.contractAddress;
-          const contractName = subAccount?.token.id.split("/").pop() ?? "";
+          const contractName = subAccount?.token.id.split(".").pop() ?? "";
 
           // Create the function arguments for the SIP-010 transfer function
           const functionArgs = [
