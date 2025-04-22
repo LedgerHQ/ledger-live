@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { useBleDevicePairing } from "@ledgerhq/live-dmk-mobile";
+import React, { ReactNode, useEffect } from "react";
+import { isDmkError, useBleDevicePairing } from "@ledgerhq/live-dmk-mobile";
 import { Device } from "@ledgerhq/types-devices";
 import { BleDevicePairingProgress } from "./BleDevicePairingContent/BleDevicePairingProgress";
 import { getDeviceModel } from "@ledgerhq/devices";
@@ -21,12 +21,19 @@ export const DmkBleDevicePairing = ({
   onOpenHelp: () => void;
 }) => {
   const { isPaired, pairingError } = useBleDevicePairing({ device });
-  const productName = getDeviceModel(device.modelId).productName || device.modelId;
-  let content = null;
+
+  useEffect(() => {
+    if (isPaired) {
+      onPaired(device);
+    }
+  }, [isPaired, device, onPaired]);
+
+  const productName = getDeviceModel(device.modelId).productName ?? device.modelId;
+  let content: ReactNode | null = null;
 
   if (isPaired) {
     content = <BleDevicePaired device={device} productName={productName} />;
-  } else if (pairingError instanceof PeerRemovedPairing) {
+  } else if (pairingError instanceof PeerRemovedPairing || isDmkError(pairingError)) {
     content = (
       // TODO: fix this
       // @ts-expect-error DmkError is missing name and some other properties
@@ -40,12 +47,6 @@ export const DmkBleDevicePairing = ({
   } else {
     content = <BleDevicePairingProgress device={device} productName={productName} />;
   }
-
-  useEffect(() => {
-    if (isPaired) {
-      onPaired(device);
-    }
-  }, [isPaired, device, onPaired]);
 
   return (
     <Flex flex={1} width="100%">
