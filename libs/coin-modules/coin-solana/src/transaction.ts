@@ -8,6 +8,8 @@ import type {
   StakeWithdrawCommand,
   TokenCreateATACommand,
   TokenTransferCommand,
+  TokenCreateApproveCommand,
+  TokenCreateRevokeCommand,
   Transaction,
   TransactionRaw,
   TransferCommand,
@@ -72,6 +74,10 @@ function formatCommand(mainAccount: Account, tx: Transaction, command: Command) 
       return formatTokenTransfer(mainAccount, tx, command);
     case "token.createATA":
       return formatCreateATA(mainAccount, command);
+    case "token.approve":
+      return formatCreateApprove(mainAccount, tx, command);
+    case "token.revoke":
+      return formatCreateRevoke(mainAccount, tx, command);
     case "stake.createAccount":
       return formatStakeCreateAccount(mainAccount, tx, command);
     case "stake.delegate":
@@ -152,6 +158,56 @@ function formatCreateATA(mainAccount: Account, command: TokenCreateATACommand) {
     throw new Error(`token for mint "${command.mint}" not found`);
   }
   const str = [`  OPT IN TOKEN: ${token.ticker}`].filter(Boolean).join("\n");
+  return "\n" + str;
+}
+
+function formatCreateApprove(
+  mainAccount: Account,
+  tx: Transaction,
+  command: TokenCreateApproveCommand,
+) {
+  if (!tx.subAccountId) {
+    throw new Error("expected subaccountId on transaction");
+  }
+  const subAccount = findSubAccountById(mainAccount, tx.subAccountId);
+  if (!subAccount || subAccount.type !== "TokenAccount") {
+    throw new Error("token subaccount expected");
+  }
+  const amount = formatCurrencyUnit(
+    getAccountCurrency(subAccount).units[0],
+    new BigNumber(command.amount),
+    {
+      showCode: true,
+      disableRounding: true,
+    },
+  );
+  const str = [
+    `  OWNER: ${command.owner}`,
+    `  APPROVE: ${command.account}`,
+    `  DELEGATE: ${command.recipientDescriptor.walletAddress}`,
+    `  AMOUNT: ${amount}${tx.useAllAmount ? " (ALL)" : ""}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+  return "\n" + str;
+}
+
+function formatCreateRevoke(
+  mainAccount: Account,
+  tx: Transaction,
+  command: TokenCreateRevokeCommand,
+) {
+  if (!tx.subAccountId) {
+    throw new Error("expected subaccountId on transaction");
+  }
+  const subAccount = findSubAccountById(mainAccount, tx.subAccountId);
+  if (!subAccount || subAccount.type !== "TokenAccount") {
+    throw new Error("token subaccount expected");
+  }
+
+  const str = [`  OWNER: ${command.owner}`, `  REVOKE: ${command.account}`]
+    .filter(Boolean)
+    .join("\n");
   return "\n" + str;
 }
 

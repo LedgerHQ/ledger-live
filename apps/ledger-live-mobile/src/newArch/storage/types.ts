@@ -1,7 +1,13 @@
-import { MigrationStatus } from "./utils/migrations/types";
+import type { MigrationStatus, RollbackStatus } from "./utils/migrations/types";
 
 /** Application storage interface used to store data in the application. */
 export interface Storage {
+  /** Get the current storage state. */
+  getState(): StorageState;
+
+  /** Trigger syntax error for debugging */
+  incrementNumberOfErrorsDebug(error: unknown): Promise<void>;
+
   /** Get all keys in application storage. */
   keys(): Promise<string[]>;
 
@@ -67,6 +73,11 @@ export interface Storage {
   delete(key: string | string[]): Promise<void>;
 
   /**
+   * Delete all the storage keys
+   */
+  deleteAll(): Promise<void>;
+
+  /**
    * Push a value onto an array stored in application storage by key or create
    * a new array in Storage for a key if it's not yet defined.
    *
@@ -77,6 +88,9 @@ export interface Storage {
    * The value to push onto the array
    */
   push<T = unknown>(key: string, value: T): Promise<void>;
+
+  /** Gets the content of the storage as a JSON string. */
+  stringify(): Promise<string>;
 
   /** Migrate the current application storage engine from AsyncStorage to MMKV. */
   migrate(): Promise<void> | void;
@@ -97,6 +111,15 @@ export interface StorageState {
   storageType: StorageType;
   /** Indicates the current migration status, if any */
   migrationStatus: MigrationStatus;
+  /** Indicates the current rollback status, if any */
+  rollbackStatus: RollbackStatus;
+  /** Number of reading errors triggered during the use */
+  numberOfReadErrors: number;
+  /** Last Error to have been triggered (for analytics purpose) */
+  lastError?: {
+    stackTrace: string;
+    key: string | null;
+  };
 }
 
 /** Initializer callback function to initialize {@link StorageState} state. */

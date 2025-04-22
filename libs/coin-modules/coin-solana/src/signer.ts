@@ -23,4 +23,5 @@ export interface SolanaSigner {
     txBuffer: Buffer,
     resolution?: Resolution,
   ): Promise<SolanaSignature>;
+  signMessage(path: string, messageHex: string): Promise<SolanaSignature>;
 }

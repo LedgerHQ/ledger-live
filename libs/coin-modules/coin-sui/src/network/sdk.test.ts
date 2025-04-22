@@ -7,7 +7,6 @@ import {
   getOperationFee,
   getOperationDate,
   transactionToOperation,
-  paymentInfo,
 } from "./sdk";
 
 import { BigNumber } from "bignumber.js";
@@ -154,20 +153,5 @@ describe("SDK Functions", () => {
     );
     expect(operation).toHaveProperty("id");
     expect(operation).toHaveProperty("accountId", accountId);
-  });
-
-  test("paymentInfo should return gas budget and fees", async () => {
-    const sender = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
-    const fakeTransaction = {
-      mode: "sent",
-      family: "sui" as const,
-      amount: new BigNumber(100),
-      recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
-      errors: {},
-    };
-    const info = await paymentInfo(sender, fakeTransaction);
-    expect(info).toHaveProperty("gasBudget");
-    expect(info).toHaveProperty("totalGasUsed");
-    expect(info).toHaveProperty("fees");
   });
 });

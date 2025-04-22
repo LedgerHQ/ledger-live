@@ -51,7 +51,7 @@ async function craft(
       amount: transactionIntent.amount,
       fee: estimatedFees,
       destinationTag: transactionIntent.destinationTag,
-      memos: transactionIntent.memos ?? [],
+      memos: transactionIntent.memos,
     },
   );
   return tx.serializedTransaction;

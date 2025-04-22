@@ -441,6 +441,36 @@ describe("AsyncStorageWrapper", () => {
     });
   });
 
+  describe("deleteAll", () => {
+    let multiRemoveMethod: jest.SpyInstance;
+
+    beforeEach(async () => {
+      // Arrange
+      multiRemoveMethod = jest
+        .spyOn(AsyncStorage, "multiRemove")
+        .mockImplementation(() => Promise.resolve());
+
+      jest
+        .spyOn(AsyncStorage, "getAllKeys")
+        .mockImplementation(() => Promise.resolve(["key1", "key2", "key3"]));
+
+      // Act
+      await storage.deleteAll();
+    });
+
+    it("should call AsyncStorage#getAllKeys once", () => {
+      expect(AsyncStorage.getAllKeys).toHaveBeenCalledTimes(1);
+    });
+
+    it("should call AsyncStorage#multiRemove once", () => {
+      expect(multiRemoveMethod).toHaveBeenCalledTimes(1);
+    });
+
+    it("should call AsyncStorage#multiRemove with all keys", () => {
+      expect(multiRemoveMethod).toHaveBeenCalledWith(["key1", "key2", "key3"]);
+    });
+  });
+
   describe("push", () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let getMethod: jest.SpyInstance;
@@ -516,5 +546,45 @@ describe("AsyncStorageWrapper", () => {
         expect(err).toBeInstanceOf(Error);
       });
     });
+  });
+});
+
+describe("stringify", () => {
+  const testKeys = ["key1", "key2"];
+  const multiGetResults: KeyValuePair[] = [
+    ["key1", `{"a": 1}`],
+    ["key2", `{"b": 1}`],
+  ];
+
+  let keysMethod: jest.SpyInstance;
+  let multiGetMethod: jest.SpyInstance;
+  let result: Awaited<ReturnType<typeof storage.stringify>>;
+
+  beforeEach(async () => {
+    // Arrange
+
+    keysMethod = jest.spyOn(storage, "keys").mockImplementation(() => Promise.resolve(testKeys));
+    multiGetMethod = jest
+      .spyOn(AsyncStorage, "multiGet")
+      .mockImplementation(() => Promise.resolve(multiGetResults));
+
+    // Act
+    result = await storage.stringify();
+  });
+
+  it("should call AsyncStorage#keys once", () => {
+    expect(keysMethod).toHaveBeenCalledTimes(1);
+  });
+
+  it("should call AsyncStorage#multiGet once", () => {
+    expect(multiGetMethod).toHaveBeenCalledTimes(1);
+  });
+
+  it("should call AsyncStorage#multiGet with correponding keys", () => {
+    expect(multiGetMethod).toHaveBeenCalledWith(testKeys);
+  });
+
+  it("should returns the storage content as a JSON string", () => {
+    expect(result).toBe(JSON.stringify(Object.fromEntries(multiGetResults)));
   });
 });

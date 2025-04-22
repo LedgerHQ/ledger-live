@@ -48,6 +48,9 @@ export const buildSignOperation =
                   )
                   .pipe(
                     tap(event => {
+                      if (event.type === "signer.evm.transaction-checks-opt-in-triggered") {
+                        o.next({ type: "transaction-checks-opt-in-triggered" });
+                      }
                       if (event.type === "signer.evm.signing") {
                         o.next({ type: "device-signature-requested" });
                       }
