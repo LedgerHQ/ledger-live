@@ -6,11 +6,17 @@ import { expect, within } from "@storybook/test";
 
 const meta: Meta<typeof VirtualList> = {
   component: VirtualList,
+  decorators: [
+    (Story: Story) => (
+      <div style={{ height: "400px" }}>
+        <Story />
+      </div>
+    ),
+  ],
   title: "PreLdls/Components/VirtualList",
   tags: ["autodocs"],
   args: {
     itemHeight: 64,
-    maxHeight: 250,
     count: 50,
     renderRow: (i: number) => <h1>Item #{i}</h1>,
   },
