@@ -1,5 +1,5 @@
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
-import { AccountBridge } from "@ledgerhq/types-live";
+import { Account, AccountBridge } from "@ledgerhq/types-live";
 import {
   UnsignedTokenTransferOptions,
   estimateTransaction,
@@ -18,6 +18,7 @@ import { StacksNetwork } from "../network/api.types";
 import { Transaction } from "../types";
 import { createTransaction } from "./createTransaction";
 import { getAccountInfo } from "./utils/account";
+import { getAddress } from "./utils/misc";
 
 export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = async ({
   account,
@@ -30,6 +31,7 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
     transaction,
   });
 
+  const { address } = getAddress(account as Account);
   const { spendableBalance, xpub } = mainAccount;
   invariant(xpub, "xpub is required");
 
@@ -58,6 +60,7 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
     // Create the function arguments for the SIP-010 transfer function
     const functionArgs = [
       uintCV(amount.toString()), // Amount
+      standardPrincipalCV(address), // Sender
       standardPrincipalCV(recipient), // Recipient
       memo ? someCV(stringAsciiCV(memo)) : noneCV(), // Memo (optional)
     ];
