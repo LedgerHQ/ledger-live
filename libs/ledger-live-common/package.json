@@ -155,7 +155,7 @@
     "@ledgerhq/crypto-icons-ui": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/device-core": "workspace:^",
-    "@ledgerhq/device-management-kit": "0.0.0-rnble-transport-20250401145214",
+    "@ledgerhq/device-management-kit": "0.0.0-rnble-transport-20250422084848",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-algorand": "workspace:^",
