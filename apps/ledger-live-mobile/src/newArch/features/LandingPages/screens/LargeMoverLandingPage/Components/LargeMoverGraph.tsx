@@ -6,17 +6,15 @@ import { MarketCoinDataChart } from "@ledgerhq/live-common/market/utils/types";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "styled-components/native";
 import { getCryptoCurrencyById, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import getWindowDimensions from "~/logic/getWindowDimensions";
 
 type GraphProps = {
   chartData: MarketCoinDataChart;
   range: "24h" | "7d" | "1m" | "1y";
   currencyId: string;
+  width: number;
 };
 
-const { width } = getWindowDimensions();
-
-export const LargeMoverGraph: React.FC<GraphProps> = ({ chartData, range, currencyId }) => {
+export const LargeMoverGraph: React.FC<GraphProps> = ({ chartData, range, currencyId, width }) => {
   const theme = useTheme();
   const currency: CryptoOrTokenCurrency | undefined = getCryptoCurrencyById(currencyId);
 

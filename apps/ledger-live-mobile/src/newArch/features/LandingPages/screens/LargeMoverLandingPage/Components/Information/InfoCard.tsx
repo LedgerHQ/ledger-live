@@ -27,11 +27,11 @@ const styles = StyleSheet.create({
     width: "48%",
   },
   name: {
-    fontSize: 15,
+    fontSize: 14,
     paddingBottom: 6,
   },
   value: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: "bold",
     textTransform: "uppercase",
   },

@@ -16,7 +16,7 @@ export const Performance: React.FC<PerformanceProps> = ({ low, high, price }) =>
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
   return (
-    <Flex>
+    <Flex width="100%">
       <Text fontWeight="bold" fontSize={14} paddingBottom={6}>
         {t("largeMover.performance")}
       </Text>

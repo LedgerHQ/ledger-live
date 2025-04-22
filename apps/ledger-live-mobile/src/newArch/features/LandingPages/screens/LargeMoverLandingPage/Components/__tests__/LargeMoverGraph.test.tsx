@@ -37,7 +37,7 @@ describe("LargeMoverGraph", () => {
 
   it("renders the graph with the correct data", () => {
     const { getByTestId } = render(
-      <LargeMoverGraph chartData={mockChartData} range="24h" currencyId="bitcoin" />,
+      <LargeMoverGraph chartData={mockChartData} range="24h" currencyId="bitcoin" width={200} />,
     );
 
     const graph = getByTestId("large-mover-graph");
@@ -46,7 +46,7 @@ describe("LargeMoverGraph", () => {
 
   it("updates the graph when range changes and passes correct data", () => {
     const { rerender } = render(
-      <LargeMoverGraph chartData={mockChartData} range="24h" currencyId="bitcoin" />,
+      <LargeMoverGraph chartData={mockChartData} range="24h" currencyId="bitcoin" width={200} />,
     );
 
     expect(Graph).toHaveBeenCalledWith(
@@ -59,7 +59,9 @@ describe("LargeMoverGraph", () => {
       expect.anything(),
     );
 
-    rerender(<LargeMoverGraph chartData={mockChartData} range="7d" currencyId="bitcoin" />);
+    rerender(
+      <LargeMoverGraph chartData={mockChartData} range="7d" currencyId="bitcoin" width={200} />,
+    );
 
     expect(Graph).toHaveBeenLastCalledWith(
       expect.objectContaining({
