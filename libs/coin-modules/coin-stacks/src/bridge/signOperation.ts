@@ -1,29 +1,14 @@
 import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
 import { FeeNotLoaded, InvalidAddress, InvalidNonce } from "@ledgerhq/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
-import {
-  UnsignedTokenTransferOptions,
-  makeUnsignedSTXTokenTransfer,
-  makeUnsignedContractCall,
-  uintCV,
-  standardPrincipalCV,
-  someCV,
-  stringAsciiCV,
-  noneCV,
-  createStandardPrincipal,
-  StacksMessageType,
-  PostConditionType,
-  FungibleConditionCode,
-  createAssetInfo,
-} from "@stacks/transactions";
 import invariant from "invariant";
 import { Observable } from "rxjs";
-import { StacksNetwork } from "../network/api.types";
 import { StacksSigner, Transaction } from "../types";
 import { getPath, throwIfError } from "../utils";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { getAddress } from "./utils/misc";
 import { getSubAccount } from "./utils/token";
+import { createTransaction, getTokenContractDetails } from "./utils/transactions";
 
 export const buildSignOperation =
   (signerContext: SignerContext<StacksSigner>): AccountBridge<Transaction>["signOperation"] =>
@@ -34,7 +19,7 @@ export const buildSignOperation =
         const { xpub } = account;
         invariant(xpub, "xpub is required");
 
-        const { recipient, fee, anchorMode, network, memo, amount, nonce } = transaction;
+        const { fee, anchorMode, network, nonce } = transaction;
 
         if (!xpub) {
           throw new InvalidAddress("", {
@@ -52,62 +37,10 @@ export const buildSignOperation =
 
         // Check if this is a token transaction
         const subAccount = getSubAccount(account, transaction);
-        const tokenAccountTxn = !!subAccount;
+        const tokenDetails = getTokenContractDetails(subAccount);
 
-        let serializedTx: Buffer;
-        if (tokenAccountTxn) {
-          // Token transfer transaction
-          const contractAddress = subAccount?.token.contractAddress ?? "";
-          const contractName = subAccount?.token.id.split(".").pop()?.split("::")[0] ?? "";
-          const assetName = subAccount?.token.id.split(".").pop()?.split("::")[1] ?? "";
-
-          // Create the function arguments for the SIP-010 transfer function
-          const functionArgs = [
-            uintCV(amount.toFixed()), // Amount
-            standardPrincipalCV(address), // Sender
-            standardPrincipalCV(recipient), // Recipient
-            memo ? someCV(stringAsciiCV(memo)) : noneCV(), // Memo (optional)
-          ];
-
-          const tx = await makeUnsignedContractCall({
-            contractAddress,
-            contractName,
-            functionName: "transfer",
-            functionArgs,
-            anchorMode,
-            network: StacksNetwork[network],
-            publicKey: xpub,
-            fee: fee.toFixed(),
-            nonce: nonce.toFixed(),
-            postConditions: [
-              {
-                type: StacksMessageType.PostCondition,
-                conditionType: PostConditionType.Fungible,
-                principal: createStandardPrincipal(address),
-                conditionCode: FungibleConditionCode.Equal,
-                amount: BigInt(amount.toFixed()),
-                assetInfo: createAssetInfo(contractAddress, contractName, assetName),
-              },
-            ],
-          });
-
-          serializedTx = Buffer.from(tx.serialize());
-        } else {
-          // Regular STX transfer
-          const options: UnsignedTokenTransferOptions = {
-            amount: amount.toFixed(),
-            recipient,
-            anchorMode,
-            network: StacksNetwork[network],
-            memo,
-            publicKey: xpub,
-            fee: fee.toFixed(),
-            nonce: nonce.toFixed(),
-          };
-
-          const tx = await makeUnsignedSTXTokenTransfer(options);
-          serializedTx = Buffer.from(tx.serialize());
-        }
+        // Create transaction
+        const tx = await createTransaction(transaction, address, xpub, subAccount, fee, nonce);
 
         o.next({
           type: "device-signature-requested",
@@ -115,7 +48,7 @@ export const buildSignOperation =
 
         // Sign by device
         const result = await signerContext(deviceId, async signer => {
-          return signer.sign(getPath(derivationPath), serializedTx);
+          return signer.sign(getPath(derivationPath), Buffer.from(tx.serialize()));
         });
 
         throwIfError(result);
@@ -139,10 +72,10 @@ export const buildSignOperation =
               network,
               anchorMode,
               // Add token contract details if needed
-              ...(tokenAccountTxn && {
-                 contractAddress: subAccount?.token.contractAddress ?? "",
-                 contractName : subAccount?.token.id.split(".").pop()?.split("::")[0] ?? "",
-                 assetName : subAccount?.token.id.split(".").pop()?.split("::")[1] ?? "",
+              ...(tokenDetails && {
+                contractAddress: tokenDetails.contractAddress,
+                contractName: tokenDetails.contractName,
+                assetName: tokenDetails.assetName,
               }),
             },
           },
