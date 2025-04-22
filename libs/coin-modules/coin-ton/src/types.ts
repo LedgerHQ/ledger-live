@@ -7,8 +7,7 @@ import {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import { Address, SendMode, StateInit } from "@ton/core";
-import { Cell } from "@ton/ton";
+import { Address, SendMode, StateInit, Cell } from "@ton/core";
 import BigNumber from "bignumber.js";
 
 type FamilyType = "ton";
