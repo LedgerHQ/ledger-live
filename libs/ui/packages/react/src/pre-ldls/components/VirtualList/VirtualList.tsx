@@ -5,11 +5,11 @@ import AutoSizer from "react-virtualized-auto-sizer";
 export const VirtualList = ({
   count,
   itemHeight,
-  renderRow,
+  renderItem,
 }: {
   count: number;
   itemHeight: number;
-  renderRow: (index: number) => ReactNode;
+  renderItem: (index: number) => ReactNode;
 }) => {
   return (
     <AutoSizer style={{ height: "100%", width: "100%" }}>
@@ -21,7 +21,7 @@ export const VirtualList = ({
           layout="vertical"
           width="100%"
         >
-          {({ index, style }) => <div style={style}>{renderRow(index)}</div>}
+          {({ index, style }) => <div style={style}>{renderItem(index)}</div>}
         </List>
       )}
     </AutoSizer>
