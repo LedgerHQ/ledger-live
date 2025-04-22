@@ -71,7 +71,8 @@ jobs:
               echo "matrix={\"chain\":[]}" >> $GITHUB_OUTPUT
               echo "is-affected=false" >> $GITHUB_OUTPUT
           else
-              echo "matrix={\"chain\":[${CHAINS[*]}]}" >> $GITHUB_OUTPUT
+              CHAIN_JSON=$(printf '%s\n' "${CHAINS[@]}" | jq -R . | jq -cs '{chain: .}')
+              echo "matrix=${CHAIN_JSON}" >> "$GITHUB_OUTPUT"
               echo "is-affected=true" >> $GITHUB_OUTPUT
           fi
 
