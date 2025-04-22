@@ -44,7 +44,7 @@ jobs:
       - name: commit new tokens
         uses: planetscale/ghcommit-action@v0.2.9
         with:
-          commit_message: "chore(prerelease) update cryptoassets"
+          commit_message: "chore(prerelease) update cryptoassets [skip ci]"
           repo: ${{ github.repository }}
           branch: ${{ env.RELEASE_BRANCH }}
         env:

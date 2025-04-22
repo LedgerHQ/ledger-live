@@ -59,6 +59,7 @@ export enum ScreenName {
   DebugNetwork = "DebugNetwork",
   DebugPlayground = "DebugPlayground",
   DebugBluetoothAndLocationServices = "DebugBluetoothAndLocationServices",
+  DebugStorageMigration = "DebugStorageMigration",
   DebugSettings = "DebugSettings",
   DebugSnackbars = "DebugSnackbars",
   DebugTransactionsAlerts = "DebugTransactionsAlerts",

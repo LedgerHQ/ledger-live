@@ -1,5 +1,89 @@
 # ledger-live-desktop
 
+## 2.110.0
+
+### Minor Changes
+
+- [#9949](https://github.com/LedgerHQ/ledger-live/pull/9949) [`5df91a4`](https://github.com/LedgerHQ/ledger-live/commit/5df91a4a0c2b9cecb8a520b93acfda9b0e6be950) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Patch WebHidSendReportError with LDMK transport
+
+- [#9924](https://github.com/LedgerHQ/ledger-live/pull/9924) [`9a208c3`](https://github.com/LedgerHQ/ledger-live/commit/9a208c39aec129b3aff2105991ffc18be05fd3f5) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Pass redirects from stakePrograms feature flag for enabling and disabling the related features on earn live app.
+
+- [#9941](https://github.com/LedgerHQ/ledger-live/pull/9941) [`afa106c`](https://github.com/LedgerHQ/ledger-live/commit/afa106c8170c7246d559befd2f4b583cd2602307) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LL - Change Chatbot link
+
+- [#9964](https://github.com/LedgerHQ/ledger-live/pull/9964) [`f5c13ae`](https://github.com/LedgerHQ/ledger-live/commit/f5c13ae47ccb8e5e2a9299799b330ebffa358ebe) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix wrong warning message when updating firmware
+
+- [#9983](https://github.com/LedgerHQ/ledger-live/pull/9983) [`d5e8d23`](https://github.com/LedgerHQ/ledger-live/commit/d5e8d23c745e6e30097cb360ac3050af02771b86) Thanks [@sarneijim](https://github.com/sarneijim)! - Add ptxCard tracks
+
+- [#9902](https://github.com/LedgerHQ/ledger-live/pull/9902) [`0474149`](https://github.com/LedgerHQ/ledger-live/commit/04741497994019d3826c71a5818ef48f2ff0025a) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Amend analytics for staking tokens log a list instead of booleans.
+
+- [#9811](https://github.com/LedgerHQ/ledger-live/pull/9811) [`7456a97`](https://github.com/LedgerHQ/ledger-live/commit/7456a97e358afa5d59e0d394dfa29cb80dee65d1) Thanks [@qperrot](https://github.com/qperrot)! - Add approve and revoke commande and upgarde wallet api versions
+
+- [#9867](https://github.com/LedgerHQ/ledger-live/pull/9867) [`1ce8d88`](https://github.com/LedgerHQ/ledger-live/commit/1ce8d88e40a674c66963dd162811889aa1e91176) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix unexpected warning when return to manager page
+
+- [#9931](https://github.com/LedgerHQ/ledger-live/pull/9931) [`95dbd60`](https://github.com/LedgerHQ/ledger-live/commit/95dbd60c06b02fe6fd50bc2ec0883096858d1f23) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add tracking during opt-in transaction checks
+
+### Patch Changes
+
+- Updated dependencies [[`5df91a4`](https://github.com/LedgerHQ/ledger-live/commit/5df91a4a0c2b9cecb8a520b93acfda9b0e6be950), [`9a208c3`](https://github.com/LedgerHQ/ledger-live/commit/9a208c39aec129b3aff2105991ffc18be05fd3f5), [`36e1d92`](https://github.com/LedgerHQ/ledger-live/commit/36e1d929a0c37e4037bbdb250a2c5aed0e18a290), [`c8feffd`](https://github.com/LedgerHQ/ledger-live/commit/c8feffd178a0ea0b0c9da02bbdb1b65df864a2b0), [`e7983eb`](https://github.com/LedgerHQ/ledger-live/commit/e7983ebcb57fe44611137725db43dacbf4bb6f68), [`babf5ca`](https://github.com/LedgerHQ/ledger-live/commit/babf5ca9fabb65654861cc896e1caac3de1e1e4c), [`9009235`](https://github.com/LedgerHQ/ledger-live/commit/9009235cf52e83c0626acaec0959bfb3837404aa), [`becd128`](https://github.com/LedgerHQ/ledger-live/commit/becd128bc5b58813ecf3937c8a82b95ed9a347b1), [`7456a97`](https://github.com/LedgerHQ/ledger-live/commit/7456a97e358afa5d59e0d394dfa29cb80dee65d1), [`1ce8d88`](https://github.com/LedgerHQ/ledger-live/commit/1ce8d88e40a674c66963dd162811889aa1e91176), [`95dbd60`](https://github.com/LedgerHQ/ledger-live/commit/95dbd60c06b02fe6fd50bc2ec0883096858d1f23)]:
+  - @ledgerhq/live-dmk-desktop@0.3.0
+  - @ledgerhq/live-common@34.31.0
+  - @ledgerhq/types-live@6.68.0
+  - @ledgerhq/react-ui@0.22.0
+  - @ledgerhq/coin-evm@2.19.0
+  - @ledgerhq/coin-framework@3.0.1
+  - @ledgerhq/coin-aptos@1.9.2
+  - @ledgerhq/coin-bitcoin@0.15.2
+  - @ledgerhq/coin-cosmos@0.13.1
+  - @ledgerhq/coin-filecoin@1.9.2
+  - @ledgerhq/domain-service@1.2.27
+  - @ledgerhq/live-countervalues@0.5.2
+  - @ledgerhq/live-countervalues-react@0.2.31
+  - @ledgerhq/live-nft@0.8.2
+  - @ledgerhq/live-nft-react@0.9.2
+  - @ledgerhq/live-wallet@0.10.5
+
+## 2.110.0-next.0
+
+### Minor Changes
+
+- [#9949](https://github.com/LedgerHQ/ledger-live/pull/9949) [`5df91a4`](https://github.com/LedgerHQ/ledger-live/commit/5df91a4a0c2b9cecb8a520b93acfda9b0e6be950) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Patch WebHidSendReportError with LDMK transport
+
+- [#9924](https://github.com/LedgerHQ/ledger-live/pull/9924) [`9a208c3`](https://github.com/LedgerHQ/ledger-live/commit/9a208c39aec129b3aff2105991ffc18be05fd3f5) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Pass redirects from stakePrograms feature flag for enabling and disabling the related features on earn live app.
+
+- [#9941](https://github.com/LedgerHQ/ledger-live/pull/9941) [`afa106c`](https://github.com/LedgerHQ/ledger-live/commit/afa106c8170c7246d559befd2f4b583cd2602307) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LL - Change Chatbot link
+
+- [#9964](https://github.com/LedgerHQ/ledger-live/pull/9964) [`f5c13ae`](https://github.com/LedgerHQ/ledger-live/commit/f5c13ae47ccb8e5e2a9299799b330ebffa358ebe) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix wrong warning message when updating firmware
+
+- [#9983](https://github.com/LedgerHQ/ledger-live/pull/9983) [`d5e8d23`](https://github.com/LedgerHQ/ledger-live/commit/d5e8d23c745e6e30097cb360ac3050af02771b86) Thanks [@sarneijim](https://github.com/sarneijim)! - Add ptxCard tracks
+
+- [#9902](https://github.com/LedgerHQ/ledger-live/pull/9902) [`0474149`](https://github.com/LedgerHQ/ledger-live/commit/04741497994019d3826c71a5818ef48f2ff0025a) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Amend analytics for staking tokens log a list instead of booleans.
+
+- [#9811](https://github.com/LedgerHQ/ledger-live/pull/9811) [`7456a97`](https://github.com/LedgerHQ/ledger-live/commit/7456a97e358afa5d59e0d394dfa29cb80dee65d1) Thanks [@qperrot](https://github.com/qperrot)! - Add approve and revoke commande and upgarde wallet api versions
+
+- [#9867](https://github.com/LedgerHQ/ledger-live/pull/9867) [`1ce8d88`](https://github.com/LedgerHQ/ledger-live/commit/1ce8d88e40a674c66963dd162811889aa1e91176) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix unexpected warning when return to manager page
+
+- [#9931](https://github.com/LedgerHQ/ledger-live/pull/9931) [`95dbd60`](https://github.com/LedgerHQ/ledger-live/commit/95dbd60c06b02fe6fd50bc2ec0883096858d1f23) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add tracking during opt-in transaction checks
+
+### Patch Changes
+
+- Updated dependencies [[`5df91a4`](https://github.com/LedgerHQ/ledger-live/commit/5df91a4a0c2b9cecb8a520b93acfda9b0e6be950), [`9a208c3`](https://github.com/LedgerHQ/ledger-live/commit/9a208c39aec129b3aff2105991ffc18be05fd3f5), [`36e1d92`](https://github.com/LedgerHQ/ledger-live/commit/36e1d929a0c37e4037bbdb250a2c5aed0e18a290), [`c8feffd`](https://github.com/LedgerHQ/ledger-live/commit/c8feffd178a0ea0b0c9da02bbdb1b65df864a2b0), [`e7983eb`](https://github.com/LedgerHQ/ledger-live/commit/e7983ebcb57fe44611137725db43dacbf4bb6f68), [`babf5ca`](https://github.com/LedgerHQ/ledger-live/commit/babf5ca9fabb65654861cc896e1caac3de1e1e4c), [`9009235`](https://github.com/LedgerHQ/ledger-live/commit/9009235cf52e83c0626acaec0959bfb3837404aa), [`becd128`](https://github.com/LedgerHQ/ledger-live/commit/becd128bc5b58813ecf3937c8a82b95ed9a347b1), [`7456a97`](https://github.com/LedgerHQ/ledger-live/commit/7456a97e358afa5d59e0d394dfa29cb80dee65d1), [`1ce8d88`](https://github.com/LedgerHQ/ledger-live/commit/1ce8d88e40a674c66963dd162811889aa1e91176), [`95dbd60`](https://github.com/LedgerHQ/ledger-live/commit/95dbd60c06b02fe6fd50bc2ec0883096858d1f23)]:
+  - @ledgerhq/live-dmk-desktop@0.3.0-next.0
+  - @ledgerhq/live-common@34.31.0-next.0
+  - @ledgerhq/types-live@6.68.0-next.0
+  - @ledgerhq/react-ui@0.22.0-next.0
+  - @ledgerhq/coin-evm@2.19.0-next.0
+  - @ledgerhq/coin-framework@3.0.1-next.0
+  - @ledgerhq/coin-aptos@1.9.2-next.0
+  - @ledgerhq/coin-bitcoin@0.15.2-next.0
+  - @ledgerhq/coin-cosmos@0.13.1-next.0
+  - @ledgerhq/coin-filecoin@1.9.2-next.0
+  - @ledgerhq/domain-service@1.2.27-next.0
+  - @ledgerhq/live-countervalues@0.5.2-next.0
+  - @ledgerhq/live-countervalues-react@0.2.31-next.0
+  - @ledgerhq/live-nft@0.8.2-next.0
+  - @ledgerhq/live-nft-react@0.9.2-next.0
+  - @ledgerhq/live-wallet@0.10.5-next.0
+
 ## 2.109.0
 
 ### Minor Changes

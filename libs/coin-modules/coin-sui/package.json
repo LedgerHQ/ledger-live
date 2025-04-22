@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-sui",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Ledger Sui Coin integration",
   "keywords": [
     "Ledger",
@@ -112,7 +112,7 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc --outDir lib --module commonjs --moduleResolution node10 && tsc -m ES6 --outDir lib-es",
-    "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-sui.json",
+    "coverage": "jest --coverage --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-sui.json",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m ES6 --outDir lib-es",
@@ -147,6 +147,7 @@
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
     "jest": "^29.7.0",
+    "@ledgerhq/disable-network-setup": "workspace:^",
     "ts-jest": "^29.1.1"
   }
 }

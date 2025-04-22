@@ -57,6 +57,7 @@ import { Maybe } from "../types/helpers";
 import { appStartupTime } from "../StartupTimeMarker";
 import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
 import { getEnv } from "@ledgerhq/live-env";
+import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import { getTokensWithFunds } from "LLM/utils/getTokensWithFunds";
 
 let sessionId = uuid();
@@ -79,6 +80,9 @@ const getFeatureFlagProperties = () => {
     const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
     const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
     const stakePrograms = analyticsFeatureFlagMethod("stakePrograms");
+    const ptxCard = analyticsFeatureFlagMethod("ptxCard");
+
+    const ptxSwapLiveAppMobileFlag = analyticsFeatureFlagMethod("ptxSwapLiveAppMobile");
 
     const isBatch1Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -89,32 +93,29 @@ const getFeatureFlagProperties = () => {
     const stakingProvidersEnabled =
       stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
 
-    const stakingCurrenciesEnabled =
+    const ptxSwapLiveAppMobileEnabled = Boolean(ptxSwapLiveAppMobileFlag?.enabled);
+
+    const stakingCurrenciesEnabled: string[] | string =
       stakePrograms?.enabled && stakePrograms?.params?.list?.length
-        ? Object.fromEntries(
-            stakePrograms.params.list.map((currencyId: string) => [
-              `feature_earn_${currencyId}_enabled`,
-              true,
-            ]),
-          )
-        : {};
-    const partnerStakingCurrenciesEnabled =
+        ? stakePrograms.params.list
+        : "flag not loaded";
+    const partnerStakingCurrenciesEnabled: string[] | string =
       stakePrograms?.enabled && stakePrograms?.params?.redirects
-        ? Object.keys(stakePrograms.params.redirects).map(assetId => [
-            `feature_earn_${assetId}_enabled`,
-            true,
-            `feature_earn_${assetId}_partner`,
-            stakePrograms?.params?.redirects?.[assetId]?.platform,
-          ])
-        : {};
+        ? Object.keys(stakePrograms.params.redirects)
+        : "flag not loaded";
+
+    const stablecoinYield = getStablecoinYieldSetting(stakePrograms);
 
     updateIdentify({
       isBatch1Enabled,
       isBatch2Enabled,
       isBatch3Enabled,
       stakingProvidersEnabled,
-      ...stakingCurrenciesEnabled,
-      ...partnerStakingCurrenciesEnabled,
+      ptxCard: ptxCard?.enabled,
+      stablecoinYield,
+      stakingCurrenciesEnabled,
+      partnerStakingCurrenciesEnabled,
+      ptxSwapLiveAppMobileEnabled,
     });
   })();
 };
@@ -250,6 +251,15 @@ const extraProperties = async (store: AppStore) => {
   const stakingProvidersCount =
     stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
 
+  const stakePrograms = analyticsFeatureFlagMethod && analyticsFeatureFlagMethod("stakePrograms");
+  const stakingCurrenciesEnabled =
+    stakePrograms?.enabled && stakePrograms?.params?.list?.length ? stakePrograms.params.list : [];
+  const partnerStakingCurrenciesEnabled =
+    stakePrograms?.enabled && stakePrograms?.params?.redirects
+      ? Object.keys(stakePrograms.params.redirects)
+      : [];
+
+  const stablecoinYield = getStablecoinYieldSetting(stakePrograms);
   const ledgerSyncAtributes = getLedgerSyncAttributes(state);
   const rebornAttributes = getRebornAttributes();
   const mevProtectionAttributes = getMEVAttributes(state);
@@ -299,11 +309,14 @@ const extraProperties = async (store: AppStore) => {
     staxLockscreen: customImageType || "none",
     nps,
     stakingProvidersEnabled: stakingProvidersCount || "flag not loaded",
+    stablecoinYield,
     ...ledgerSyncAtributes,
     ...rebornAttributes,
     ...mevProtectionAttributes,
     ...addAccountsAttributes,
     tokenWithFunds,
+    stakingCurrenciesEnabled,
+    partnerStakingCurrenciesEnabled,
   };
 };
 
