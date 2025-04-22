@@ -199,7 +199,7 @@ export const createStxTransferTransaction = async (
  * Creates a transaction based on type (token or STX)
  * This function determines whether to create a token transfer or STX transfer
  * based on the subAccount parameter
- * 
+ *
  * @param {Transaction} transaction - The transaction object with details
  * @param {string} senderAddress - The sender's address
  * @param {string} publicKey - The sender's public key
@@ -255,7 +255,7 @@ export const createTransaction = async (
 /**
  * Applies a signature to a transaction
  * This function adds the signature to the transaction and serializes it to a buffer
- * 
+ *
  * @param {StacksTransaction} tx - The unsigned transaction object
  * @param {string} signature - The signature as a hex string
  * @returns {Buffer} The serialized signed transaction
@@ -271,7 +271,7 @@ export const applySignatureToTransaction = (tx: StacksTransaction, signature: st
  * Creates a transaction ready for broadcast from an operation and signature
  * This is used in the broadcast function to recreate and sign the transaction
  * with the appropriate signature
- * 
+ *
  * @param {StacksOperation} operation - The operation containing transaction details
  * @param {string} signature - The signature as a hex string
  * @param {Record<string, any>} rawData - Additional data needed for transaction creation
