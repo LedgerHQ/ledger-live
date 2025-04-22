@@ -256,13 +256,15 @@ export const sip010TxnToOperation = (
 
     const sender = cvToJSON(deserializeCV(senderArg.hex)).value;
     const receiver = cvToJSON(deserializeCV(receiverArg.hex)).value;
-    const value = cvToJSON(deserializeCV(valueArg.hex)).value;
+    const valueStr = cvToJSON(deserializeCV(valueArg.hex)).value;
     const memo = cvToJSON(deserializeCV(memoArg.hex)).value ?? undefined;
 
     log("debug", "decoded sender", sender);
     log("debug", "decoded receiver", receiver);
-    log("debug", "decoded value", value);
+    log("debug", "decoded value", valueStr);
     log("debug", "decoded memo", memo);
+
+    const value = new BigNumber(valueStr);
 
     const recipients: string[] = [receiver];
     const senders: string[] = [sender];
