@@ -1,5 +1,67 @@
 # @ledgerhq/live-common
 
+## 34.31.0
+
+### Minor Changes
+
+- [#9924](https://github.com/LedgerHQ/ledger-live/pull/9924) [`9a208c3`](https://github.com/LedgerHQ/ledger-live/commit/9a208c39aec129b3aff2105991ffc18be05fd3f5) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Pass redirects from stakePrograms feature flag for enabling and disabling the related features on earn live app.
+
+- [#9975](https://github.com/LedgerHQ/ledger-live/pull/9975) [`36e1d92`](https://github.com/LedgerHQ/ledger-live/commit/36e1d929a0c37e4037bbdb250a2c5aed0e18a290) Thanks [@Justkant](https://github.com/Justkant)! - feat: add more data on events for the dapp browser v3
+
+- [#9787](https://github.com/LedgerHQ/ledger-live/pull/9787) [`c8feffd`](https://github.com/LedgerHQ/ledger-live/commit/c8feffd178a0ea0b0c9da02bbdb1b65df864a2b0) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Add Solana message signer for off-chain hardware message signing
+
+- [#9921](https://github.com/LedgerHQ/ledger-live/pull/9921) [`e7983eb`](https://github.com/LedgerHQ/ledger-live/commit/e7983ebcb57fe44611137725db43dacbf4bb6f68) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - bugfix: timeframe labels in market
+
+- [#9923](https://github.com/LedgerHQ/ledger-live/pull/9923) [`9009235`](https://github.com/LedgerHQ/ledger-live/commit/9009235cf52e83c0626acaec0959bfb3837404aa) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add rollback and reset script
+
+- [#9652](https://github.com/LedgerHQ/ledger-live/pull/9652) [`becd128`](https://github.com/LedgerHQ/ledger-live/commit/becd128bc5b58813ecf3937c8a82b95ed9a347b1) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - Feat: celo coin modularization
+
+- [#9811](https://github.com/LedgerHQ/ledger-live/pull/9811) [`7456a97`](https://github.com/LedgerHQ/ledger-live/commit/7456a97e358afa5d59e0d394dfa29cb80dee65d1) Thanks [@qperrot](https://github.com/qperrot)! - Add approve and revoke commande and upgarde wallet api versions
+
+- [#9867](https://github.com/LedgerHQ/ledger-live/pull/9867) [`1ce8d88`](https://github.com/LedgerHQ/ledger-live/commit/1ce8d88e40a674c66963dd162811889aa1e91176) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix unexpected warning when return to manager page
+
+- [#9931](https://github.com/LedgerHQ/ledger-live/pull/9931) [`95dbd60`](https://github.com/LedgerHQ/ledger-live/commit/95dbd60c06b02fe6fd50bc2ec0883096858d1f23) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add tracking during opt-in transaction checks
+
+### Patch Changes
+
+- Updated dependencies [[`c8feffd`](https://github.com/LedgerHQ/ledger-live/commit/c8feffd178a0ea0b0c9da02bbdb1b65df864a2b0), [`becd128`](https://github.com/LedgerHQ/ledger-live/commit/becd128bc5b58813ecf3937c8a82b95ed9a347b1), [`7456a97`](https://github.com/LedgerHQ/ledger-live/commit/7456a97e358afa5d59e0d394dfa29cb80dee65d1), [`95dbd60`](https://github.com/LedgerHQ/ledger-live/commit/95dbd60c06b02fe6fd50bc2ec0883096858d1f23)]:
+  - @ledgerhq/coin-solana@0.20.0
+  - @ledgerhq/coin-celo@1.1.0
+  - @ledgerhq/hw-app-celo@6.33.0
+  - @ledgerhq/wallet-api-acre-module@0.4.0
+  - @ledgerhq/wallet-api-exchange-module@0.12.0
+  - @ledgerhq/coin-evm@2.19.0
+  - @ledgerhq/live-signer-evm@0.3.0
+  - @ledgerhq/coin-framework@3.0.1
+  - @ledgerhq/coin-algorand@0.9.2
+  - @ledgerhq/coin-aptos@1.9.2
+  - @ledgerhq/coin-bitcoin@0.15.2
+  - @ledgerhq/coin-cardano@0.8.2
+  - @ledgerhq/coin-casper@1.6.2
+  - @ledgerhq/coin-cosmos@0.13.1
+  - @ledgerhq/coin-filecoin@1.9.2
+  - @ledgerhq/coin-hedera@1.6.2
+  - @ledgerhq/coin-icon@0.10.2
+  - @ledgerhq/coin-internet_computer@1.7.2
+  - @ledgerhq/coin-mina@1.1.1
+  - @ledgerhq/coin-multiversx@0.4.2
+  - @ledgerhq/coin-near@0.11.2
+  - @ledgerhq/coin-polkadot@4.0.1
+  - @ledgerhq/coin-stacks@0.8.2
+  - @ledgerhq/coin-stellar@3.0.1
+  - @ledgerhq/coin-sui@0.2.3
+  - @ledgerhq/coin-tezos@3.0.1
+  - @ledgerhq/coin-ton@0.8.2
+  - @ledgerhq/coin-tron@1.0.1
+  - @ledgerhq/coin-vechain@2.7.2
+  - @ledgerhq/coin-xrp@4.0.1
+  - @ledgerhq/device-core@0.4.22
+  - @ledgerhq/hw-app-eth@6.45.2
+  - @ledgerhq/live-countervalues@0.5.2
+  - @ledgerhq/live-countervalues-react@0.2.31
+  - @ledgerhq/live-nft@0.8.2
+  - @ledgerhq/live-wallet@0.10.5
+
 ## 34.31.0-next.0
 
 ### Minor Changes

@@ -1,5 +1,18 @@
 # @ledgerhq/coin-evm
 
+## 2.19.0
+
+### Minor Changes
+
+- [#9931](https://github.com/LedgerHQ/ledger-live/pull/9931) [`95dbd60`](https://github.com/LedgerHQ/ledger-live/commit/95dbd60c06b02fe6fd50bc2ec0883096858d1f23) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add tracking during opt-in transaction checks
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@3.0.1
+  - @ledgerhq/domain-service@1.2.27
+  - @ledgerhq/evm-tools@1.6.2
+
 ## 2.19.0-next.0
 
 ### Minor Changes

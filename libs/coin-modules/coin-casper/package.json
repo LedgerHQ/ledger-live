@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-casper",
-  "version": "1.6.2-next.0",
+  "version": "1.6.2",
   "description": "Ledger Casper integration",
   "keywords": [
     "Ledger",

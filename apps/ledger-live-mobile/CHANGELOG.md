@@ -1,5 +1,43 @@
 # live-mobile
 
+## 3.75.0
+
+### Minor Changes
+
+- [#9924](https://github.com/LedgerHQ/ledger-live/pull/9924) [`9a208c3`](https://github.com/LedgerHQ/ledger-live/commit/9a208c39aec129b3aff2105991ffc18be05fd3f5) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Pass redirects from stakePrograms feature flag for enabling and disabling the related features on earn live app.
+
+- [#9968](https://github.com/LedgerHQ/ledger-live/pull/9968) [`7b9a7eb`](https://github.com/LedgerHQ/ledger-live/commit/7b9a7eb0abcdc790dbcec0b3a898d7445ec85130) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add ptx swap live app feature flag to LLM analytics
+
+- [#9941](https://github.com/LedgerHQ/ledger-live/pull/9941) [`afa106c`](https://github.com/LedgerHQ/ledger-live/commit/afa106c8170c7246d559befd2f4b583cd2602307) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LL - Change Chatbot link
+
+- [#9959](https://github.com/LedgerHQ/ledger-live/pull/9959) [`5c09b53`](https://github.com/LedgerHQ/ledger-live/commit/5c09b536c9750f7f82aa2a2ebf69d492e14149f3) Thanks [@ysitbon](https://github.com/ysitbon)! - add debug tools for the storage migration
+
+- [#9963](https://github.com/LedgerHQ/ledger-live/pull/9963) [`ca9ab25`](https://github.com/LedgerHQ/ledger-live/commit/ca9ab2590ac51e89a31ee8534a6b5339bf5a73a2) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add tracking for TC opt-in
+
+- [#9983](https://github.com/LedgerHQ/ledger-live/pull/9983) [`d5e8d23`](https://github.com/LedgerHQ/ledger-live/commit/d5e8d23c745e6e30097cb360ac3050af02771b86) Thanks [@sarneijim](https://github.com/sarneijim)! - Add ptxCard tracks
+
+- [#9923](https://github.com/LedgerHQ/ledger-live/pull/9923) [`9009235`](https://github.com/LedgerHQ/ledger-live/commit/9009235cf52e83c0626acaec0959bfb3837404aa) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add rollback and reset script
+
+- [#9902](https://github.com/LedgerHQ/ledger-live/pull/9902) [`0474149`](https://github.com/LedgerHQ/ledger-live/commit/04741497994019d3826c71a5818ef48f2ff0025a) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Amend analytics for staking tokens log a list instead of booleans.
+
+### Patch Changes
+
+- Updated dependencies [[`9a208c3`](https://github.com/LedgerHQ/ledger-live/commit/9a208c39aec129b3aff2105991ffc18be05fd3f5), [`9009235`](https://github.com/LedgerHQ/ledger-live/commit/9009235cf52e83c0626acaec0959bfb3837404aa), [`95dbd60`](https://github.com/LedgerHQ/ledger-live/commit/95dbd60c06b02fe6fd50bc2ec0883096858d1f23)]:
+  - @ledgerhq/types-live@6.68.0
+  - @ledgerhq/coin-evm@2.19.0
+  - @ledgerhq/live-dmk-mobile@0.3.1
+  - @ledgerhq/coin-framework@3.0.1
+  - @ledgerhq/coin-cosmos@0.13.1
+  - @ledgerhq/coin-filecoin@1.9.2
+  - @ledgerhq/coin-multiversx@0.4.2
+  - @ledgerhq/coin-stacks@0.8.2
+  - @ledgerhq/domain-service@1.2.27
+  - @ledgerhq/live-countervalues@0.5.2
+  - @ledgerhq/live-countervalues-react@0.2.31
+  - @ledgerhq/live-nft@0.8.2
+  - @ledgerhq/live-nft-react@0.9.2
+  - @ledgerhq/live-wallet@0.10.5
+
 ## 3.75.0-next.0
 
 ### Minor Changes
