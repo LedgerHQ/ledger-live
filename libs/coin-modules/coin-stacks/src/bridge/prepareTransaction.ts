@@ -14,6 +14,11 @@ import {
   someCV,
   stringAsciiCV,
   noneCV,
+  StacksMessageType,
+  PostConditionType,
+  createStandardPrincipal,
+  FungibleConditionCode,
+  createAssetInfo,
 } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
 import { c32address } from "c32check";
@@ -21,13 +26,14 @@ import invariant from "invariant";
 import { StacksNetwork } from "../network/api.types";
 import { Transaction } from "../types";
 import { validateAddress } from "./utils/addresses";
-import { findNextNonce } from "./utils/misc";
+import { findNextNonce, getAddress } from "./utils/misc";
 import { getSubAccount } from "./utils/token";
 
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
   account,
   transaction,
 ) => {
+  const { address } = getAddress(account); 
   const { spendableBalance, pendingOperations, xpub } = account;
   const { recipient, useAllAmount } = transaction;
   invariant(xpub, "xpub is required");
@@ -50,11 +56,13 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
     if (tokenAccountTxn) {
       // Token transfer transaction
       const contractAddress = subAccount?.token.contractAddress;
-      const contractName = subAccount?.token.id.split(".").pop() ?? "";
+      const contractName = subAccount?.token.id.split(".").pop()?.split("::")[0] ?? "";
+      const assetName = subAccount?.token.id.split(".").pop()?.split("::")[1] ?? "";
 
       // Create contract call for token transfer
       const functionArgs: ClarityValue[] = [
-        uintCV(amount.toString()), // Amount
+        uintCV(amount.toFixed()), // Amount
+        standardPrincipalCV(address), // Sender
         standardPrincipalCV(recipient), // Recipient
         memo ? someCV(stringAsciiCV(memo)) : noneCV(), // Memo (optional)
       ];
@@ -67,6 +75,16 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
         anchorMode,
         network,
         publicKey: xpub,
+        postConditions: [
+          {
+            type: StacksMessageType.PostCondition,
+            conditionType: PostConditionType.Fungible,
+            principal: createStandardPrincipal(address),
+            conditionCode: FungibleConditionCode.Equal,
+            amount: BigInt(amount.toFixed()),
+            assetInfo: createAssetInfo(contractAddress, contractName, assetName),
+          },
+        ],
       });
 
       const senderAddress = c32address(addressVersion, tx.auth.spendingCondition!.signer);
