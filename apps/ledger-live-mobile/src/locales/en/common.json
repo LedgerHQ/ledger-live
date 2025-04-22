@@ -7394,6 +7394,9 @@
       "minutes_plural": "({{count}} minutes ago)",
       "seconds": "({{count}} second ago)",
       "seconds_plural": "({{count}} seconds ago)"
-    }
+    },
+    "performance": "Performance",
+    "low": "Low",
+    "high": "High"
   }
 }

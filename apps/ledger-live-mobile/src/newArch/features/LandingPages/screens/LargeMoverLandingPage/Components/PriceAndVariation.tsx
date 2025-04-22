@@ -5,24 +5,27 @@ import { counterValueCurrencySelector } from "~/reducers/settings";
 import { useSelector } from "react-redux";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import Delta from "~/components/Delta";
-import { ValueChange } from "@ledgerhq/types-live";
-import theme from "@ledgerhq/native-ui/styles/theme";
+import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
+import { useTheme } from "styled-components/native";
 
 type PriceAndVariationProps = {
   price: number;
-  priceChangePercentage: ValueChange;
+  priceChangePercentage: Record<KeysPriceChange, number>;
+  range: KeysPriceChange;
 };
 
 export const PriceAndVariation: React.FC<PriceAndVariationProps> = ({
   price,
   priceChangePercentage,
+  range,
 }) => {
   const counterValueCurrency: Currency = useSelector(counterValueCurrencySelector);
-  const totalPriceChange = price * (priceChangePercentage.value / 10000);
+  const totalPriceChange = price * (priceChangePercentage[range] / 10000);
+  const { colors } = useTheme();
 
   const getColor = () => {
-    if (priceChangePercentage.value > 0) return "success.c70";
-    if (priceChangePercentage.value < 0) return "error.c50";
+    if (priceChangePercentage[range] > 0) return "success.c70";
+    if (priceChangePercentage[range] < 0) return "error.c50";
     return "neutral.c100";
   };
   return (
@@ -40,12 +43,15 @@ export const PriceAndVariation: React.FC<PriceAndVariationProps> = ({
         <Flex justifyContent="center" alignItems="center" marginRight={"8px"}>
           <Delta
             unit={{ ...counterValueCurrency.units[0], code: "" }}
-            valueChange={priceChangePercentage}
+            valueChange={{
+              value: priceChangePercentage[range],
+              percentage: priceChangePercentage[range],
+            }}
             isPercentSignDisplayed={true}
           />
         </Flex>
         <Flex
-          background={theme.colors.success.c100}
+          background={colors.success.c10}
           borderRadius={6}
           padding={2}
           alignItems="center"
