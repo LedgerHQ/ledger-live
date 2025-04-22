@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "Annuler",
+    "copy" : "Copier",
+    "copied" : "Copié",
     "apply" : "Appliquer",
     "seeAll" : "Afficher tout",
     "seeAllWithNumber" : "Afficher tout ({{number}})",
@@ -1061,6 +1063,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Échec du chargement de l’app Live Swap"
+    },
+    "InvalidMemoMina" : {
+      "title" : "Le mémo ne peut pas dépasser 32 caractères"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Les frais de création de compte pour cette transaction s’élèveront à {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "Le montant minimal requis pour cette transaction est {{amount}}"
     }
   },
   "crash" : {
@@ -2591,7 +2602,8 @@
       "gasLimit" : "Limite de gaz",
       "id" : "Identifiant (ID)",
       "autoClaimedRewards" : "Récompenses automatiques",
-      "stakedAmount" : "Montant en staking"
+      "stakedAmount" : "Montant en staking",
+      "accountCreationFee" : "Frais de création de compte"
     },
     "multipleAddresses" : "Pourquoi plusieurs adresses ?",
     "tokenName" : "Nom du token",
@@ -6103,6 +6115,9 @@
       }
     }
   },
+  "mina" : {
+    "memoPlaceholder" : "Mémo facultatif"
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -6612,8 +6627,8 @@
       "7d" : "7J",
       "30d" : "30J",
       "1y" : "1A",
-      "1H_label" : "1H",
       "1D_label" : "1J",
+      "1H_label" : "1H",
       "1W_label" : "1S",
       "1M_label" : "1M",
       "1Y_label" : "1A"
@@ -7348,6 +7363,31 @@
     "opted_out" : {
       "description" : "Avec sa mémoire limitée, votre Ledger Nano S vous prive des dernières fonctionnalités, innovations blockchain et améliorations de sécurité. Pour en bénéficier, choisissez un wallet Ledger plus récent.",
       "cta" : "En savoir plus"
+    }
+  },
+  "largeMover" : {
+    "info" : "Informations",
+    "marketCap" : "Capitalisation",
+    "volume" : "Volume (24h)",
+    "fdv" : "FDV",
+    "marketCap24h" : "Vol./Cap. (24h)",
+    "circulatingSupply" : "Offre en circulation",
+    "totalSupply" : "Offre totale",
+    "ath" : "Haut (historique)",
+    "atl" : "Bas (historique)",
+    "timeAgo" : {
+      "years" : "(il y a {{count}} an)",
+      "years_plural" : "(il y a {{count}} ans)",
+      "months" : "(il y a {{count}} mois)",
+      "months_plural" : "(il y a {{count}} mois)",
+      "days" : "(il y a {{count}} jour)",
+      "days_plural" : "(il y a {{count}} jours)",
+      "hours" : "(il y a {{count}} heure)",
+      "hours_plural" : "(il y a {{count}} heures)",
+      "minutes" : "(il y a {{count}} minute)",
+      "minutes_plural" : "(il y a {{count}} minutes)",
+      "seconds" : "(il y a {{count}} seconde)",
+      "seconds_plural" : "(il y a {{count}} secondes)"
     }
   }
 }
