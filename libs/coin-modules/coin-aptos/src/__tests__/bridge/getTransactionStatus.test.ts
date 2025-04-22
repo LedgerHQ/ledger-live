@@ -12,7 +12,6 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
-  NotEnoughBalanceFees,
   RecipientRequired,
 } from "@ledgerhq/errors";
 
