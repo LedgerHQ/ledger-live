@@ -530,6 +530,7 @@ export function convertJettonToken([address, name, ticker, magnitude, delisted]:
 export function convertStacksSip010Token([
   address,
   name,
+  assetName,
   displayName,
   ticker,
   decimals,
@@ -543,7 +544,7 @@ export function convertStacksSip010Token([
 
   return {
     type: "TokenCurrency",
-    id: "stacks/sip010/" + address + "." + name,
+    id: "stacks/sip010/" + address + "." + name + "::" + assetName,
     contractAddress: address,
     parentCurrency,
     tokenType: "sip010",
