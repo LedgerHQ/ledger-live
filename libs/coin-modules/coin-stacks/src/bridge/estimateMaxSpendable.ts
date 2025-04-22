@@ -1,16 +1,8 @@
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
 import {
-  UnsignedTokenTransferOptions,
   estimateTransaction,
   estimateTransactionByteLength,
-  makeUnsignedSTXTokenTransfer,
-  makeUnsignedContractCall,
-  uintCV,
-  standardPrincipalCV,
-  someCV,
-  stringAsciiCV,
-  noneCV,
 } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
@@ -19,6 +11,7 @@ import { Transaction } from "../types";
 import { createTransaction } from "./createTransaction";
 import { getAccountInfo } from "./utils/account";
 import { getAddress } from "./utils/misc";
+import { createTransaction as createStacksTransaction } from "./utils/transactions";
 
 export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = async ({
   account,
@@ -47,53 +40,27 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
     useAllAmount: true,
   };
 
-  // Compute fees
-  const { recipient, anchorMode, memo, amount } = dummyTx;
-  const network = StacksNetwork[dummyTx.network] || StacksNetwork["mainnet"];
+  // Create transaction using the shared utility function
+  const tx = await createStacksTransaction(
+    dummyTx,
+    address,
+    xpub,
+    subAccount || undefined,
+    undefined, // No fee yet
+    undefined, // No nonce
+  );
 
-  let tx;
-  if (tokenAccountTxn && subAccount) {
-    // Token transfer transaction
-    const contractAddress = subAccount?.token.contractAddress;
-    const contractName = subAccount?.token.id.split("/").pop() ?? "";
+  // Get network configuration
+  const network = StacksNetwork[dummyTx.network] || StacksNetwork.mainnet;
 
-    // Create the function arguments for the SIP-010 transfer function
-    const functionArgs = [
-      uintCV(amount.toString()), // Amount
-      standardPrincipalCV(address), // Sender
-      standardPrincipalCV(recipient), // Recipient
-      memo ? someCV(stringAsciiCV(memo)) : noneCV(), // Memo (optional)
-    ];
-
-    tx = await makeUnsignedContractCall({
-      contractAddress,
-      contractName,
-      functionName: "transfer",
-      functionArgs,
-      anchorMode,
-      network,
-      publicKey: xpub,
-    });
-  } else {
-    // Regular STX transfer
-    const options: UnsignedTokenTransferOptions = {
-      recipient,
-      anchorMode,
-      memo,
-      network,
-      publicKey: xpub,
-      amount: amount.toFixed(),
-    };
-
-    tx = await makeUnsignedSTXTokenTransfer(options);
-  }
-
+  // Estimate fee
   const [feeEst] = await estimateTransaction(
     tx.payload,
     estimateTransactionByteLength(tx),
     network,
   );
 
+  // Calculate maximum spendable balance by subtracting fee
   const diff = spendableBalance.minus(new BigNumber(feeEst.fee));
   return diff.gte(0) ? diff : new BigNumber(0);
 };
