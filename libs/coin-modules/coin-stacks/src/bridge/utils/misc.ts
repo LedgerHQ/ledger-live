@@ -33,6 +33,7 @@ import { encodeOperationId, encodeSubOperationId } from "@ledgerhq/coin-framewor
 import { StacksOperation } from "../../types";
 import { log } from "@ledgerhq/logs";
 import invariant from "invariant";
+import { bufferMemoToString, hexMemoToString } from "./memoUtils";
 
 type ContractCallArg = {
   hex: string;
@@ -124,16 +125,6 @@ export const getAddress = (
   derivationPath: string;
 } => ({ address: account.freshAddress, derivationPath: account.freshAddressPath });
 
-const getMemo = (memoHex?: string): string => {
-  if (memoHex?.substring(0, 2) === "0x") {
-    // eslint-disable-next-line no-control-regex
-    return Buffer.from(memoHex.substring(2), "hex").toString().replace(/\x00/g, "");
-    // NOTE: couldn't use replaceAll because it's not supported in node 14
-  }
-
-  return "";
-};
-
 export const mapPendingTxToOps =
   (accountID: string, address: string) =>
   (tx: MempoolTransaction): StacksOperation[] => {
@@ -142,7 +133,7 @@ export const mapPendingTxToOps =
       return [];
     }
 
-    const memo = getMemo(token_transfer.memo);
+    const memo = hexMemoToString(token_transfer.memo);
     const feeToUse = new BigNumber(fee_rate || "0");
 
     const date = new Date(receipt_time * 1000);
@@ -207,7 +198,7 @@ export const mapTxToOps =
       }
 
       const memoHex = tx.tx.token_transfer?.memo;
-      const memo: string = getMemo(memoHex ?? "");
+      const memo: string = hexMemoToString(memoHex ?? "");
 
       const ops: StacksOperation[] = [];
 
@@ -249,7 +240,7 @@ export const mapTxToOps =
               senders: [sender_address],
               recipients: [t.value.to.value],
               extra: {
-                memo: getMemo(t.value.memo?.value ?? ""),
+                memo: hexMemoToString(t.value.memo?.value ?? ""),
               },
             });
           }
@@ -307,7 +298,9 @@ export const sip010TxnToOperation = (
     const sender = cvToJSON(deserializeCV(senderArg.hex)).value;
     const receiver = cvToJSON(deserializeCV(receiverArg.hex)).value;
     const valueStr = cvToJSON(deserializeCV(valueArg.hex)).value;
-    const memo = cvToJSON(deserializeCV(memoArg.hex)).value ?? undefined;
+    const memoJson = cvToJSON(deserializeCV(memoArg.hex)).value;
+    
+    const memo = bufferMemoToString(memoJson);
 
     log("debug", "decoded sender", sender);
     log("debug", "decoded receiver", receiver);
