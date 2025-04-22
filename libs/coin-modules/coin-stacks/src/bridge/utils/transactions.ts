@@ -4,9 +4,6 @@ import {
   makeUnsignedContractCall,
   uintCV,
   standardPrincipalCV,
-  someCV,
-  stringAsciiCV,
-  noneCV,
   StacksMessageType,
   PostConditionType,
   FungibleConditionCode,
@@ -22,6 +19,7 @@ import BigNumber from "bignumber.js";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { StacksNetwork } from "../../network/api.types";
 import { StacksOperation, Transaction } from "../../types";
+import { memoToBufferCV } from "./memoUtils";
 
 /**
  * Extracts token contract details from a TokenAccount
@@ -56,7 +54,7 @@ export const createTokenTransferFunctionArgs = (
     uintCV(amount.toFixed()), // Amount
     standardPrincipalCV(senderAddress), // Sender
     standardPrincipalCV(recipientAddress), // Recipient
-    memo ? someCV(stringAsciiCV(memo)) : noneCV(), // Memo (optional)
+    memoToBufferCV(memo), // Memo (optional)
   ];
 };
 
@@ -307,7 +305,7 @@ export const getTxToBroadcast = async (
       new BigNumber(value),
       senders[0],
       recipients[0],
-      memo,
+      memo !== undefined && memo !== null ? String(memo) : undefined,
     );
 
     const postConditions = createTokenTransferPostConditions(
@@ -341,7 +339,7 @@ export const getTxToBroadcast = async (
       xpub,
       new BigNumber(fee),
       new BigNumber(operation.transactionSequenceNumber ?? 0),
-      memo,
+      memo !== undefined && memo !== null ? String(memo) : undefined,
     );
 
     return applySignatureToTransaction(tx, signature);
