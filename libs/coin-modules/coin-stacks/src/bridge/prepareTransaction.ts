@@ -50,7 +50,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
     if (tokenAccountTxn) {
       // Token transfer transaction
       const contractAddress = subAccount?.token.contractAddress;
-      const contractName = subAccount?.token.id.split("/").pop() ?? "";
+      const contractName = subAccount?.token.id.split(".").pop() ?? "";
 
       // Create contract call for token transfer
       const functionArgs: ClarityValue[] = [
