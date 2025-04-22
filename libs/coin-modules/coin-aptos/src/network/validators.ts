@@ -41,10 +41,7 @@ export type Validator = {
 
 export async function getValidators(currencyId: string): Promise<Validator[]> {
   // TODO : remove console.log
-  console.log("-----------------  getValidators");
   const api = new AptosAPI(currencyId);
-  // REFACTOR: Move it to a function ??
-  // Get datailed information from Validator Nodes
   const querySecond = GetCurrentDelegatorBalancesData;
   const queryResponseSecond = await api.apolloClient.query<
     GetCurrentDelegatorBalancesQuery,
@@ -58,7 +55,6 @@ export async function getValidators(currencyId: string): Promise<Validator[]> {
     queryResponseSecond.data.current_delegator_balances;
   console.log("stakingData", stakingData);
 
-  // Filter the list of Validator Nodes based on ActiveDelegators
   const list: Validator[] = stakingData.map(pool => {
     const imgSrc = blockies.create({ seed: pool.delegator_address }).toDataURL();
     const aptosName = pool.staking_pool_metadata.operator_aptos_name;
