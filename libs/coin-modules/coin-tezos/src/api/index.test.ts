@@ -5,6 +5,8 @@ import { createApi } from "./index";
 import type { TezosAsset, TezosTransactionIntent } from "./types";
 
 const DEFAULT_ESTIMATED_FEES = 300n;
+const DEFAUTL_GAS_LIMIT = 30n;
+const DEFAUTL_STORAGE_LIMIT = 40n;
 
 const logicGetTransactions = jest.fn();
 const logicEstimateFees = jest.fn();
@@ -122,9 +124,19 @@ describe("Testing estimateFees function", () => {
   beforeEach(() => jest.clearAllMocks());
 
   it("should return estimation from logic module", async () => {
-    logicEstimateFees.mockResolvedValue({ estimatedFees: DEFAULT_ESTIMATED_FEES });
+    logicEstimateFees.mockResolvedValue({
+      estimatedFees: DEFAULT_ESTIMATED_FEES,
+      gasLimit: DEFAUTL_GAS_LIMIT,
+      storageLimit: DEFAUTL_STORAGE_LIMIT,
+    });
     const result = await api.estimateFees({ type: "send", sender: {} } as TezosTransactionIntent);
-    expect(result).toEqual({ value: DEFAULT_ESTIMATED_FEES });
+    expect(result).toEqual({
+      value: DEFAULT_ESTIMATED_FEES,
+      parameters: {
+        gasLimit: DEFAUTL_GAS_LIMIT,
+        storageLimit: DEFAUTL_STORAGE_LIMIT,
+      },
+    });
   });
 
   it("should throw taquito errors", async () => {
