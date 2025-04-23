@@ -3,7 +3,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { Account, SyncConfig } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { AptosAPI } from "../../api";
+import { AptosAPI } from "../../network";
 import { getAccountShape } from "../../bridge/synchronisation";
 
 jest.mock("@ledgerhq/coin-framework/account", () => {
@@ -24,7 +24,7 @@ jest.mock("@ledgerhq/coin-framework/account", () => {
 
 const mockedEncodeAccountId = jest.mocked(encodeAccountId);
 
-jest.mock("../../api");
+jest.mock("../../network");
 let mockedAptosAPI: jest.Mocked<any>;
 
 jest.mock("@ledgerhq/coin-framework/bridge/jsHelpers");

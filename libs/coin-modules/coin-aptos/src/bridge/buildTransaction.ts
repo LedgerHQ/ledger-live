@@ -1,7 +1,7 @@
 import { InputEntryFunctionData, RawTransaction } from "@aptos-labs/ts-sdk";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { AptosAPI } from "../api";
+import { AptosAPI } from "../network";
 import { APTOS_ASSET_ID } from "../constants";
 import { normalizeTransactionOptions } from "./logic";
 import type { Transaction } from "../types";
