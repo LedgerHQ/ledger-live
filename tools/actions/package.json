@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/actions-root",
-  "version": "0.2.0",
+  "version": "0.3.0-next.0",
   "private": true,
   "devDependencies": {
     "@types/node": "22.10.10"

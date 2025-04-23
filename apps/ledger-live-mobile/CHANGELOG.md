@@ -1,5 +1,36 @@
 # live-mobile
 
+## 3.76.0-next.0
+
+### Minor Changes
+
+- [#9870](https://github.com/LedgerHQ/ledger-live/pull/9870) [`088b402`](https://github.com/LedgerHQ/ledger-live/commit/088b4025b6244565e581a61129854d294befc6c6) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Feat: Large Mover TimeFrame Component
+
+- [#9997](https://github.com/LedgerHQ/ledger-live/pull/9997) [`3cfe891`](https://github.com/LedgerHQ/ledger-live/commit/3cfe89138969d3c06bff07c259c844551b02725d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add analytics even when an error is triggered during storage reading operation. Add trigger error button inside debug
+
+- [#9935](https://github.com/LedgerHQ/ledger-live/pull/9935) [`c5c9f9b`](https://github.com/LedgerHQ/ledger-live/commit/c5c9f9bcf401f0683805476704fc0612fc460469) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Feat: Large Mover Information Component
+
+- [#9950](https://github.com/LedgerHQ/ledger-live/pull/9950) [`7d28d6d`](https://github.com/LedgerHQ/ledger-live/commit/7d28d6d7dbf5cbc2aad1ae46c8c4e5f226971384) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Large Mover Footer Component
+
+- [#9972](https://github.com/LedgerHQ/ledger-live/pull/9972) [`42b77d6`](https://github.com/LedgerHQ/ledger-live/commit/42b77d636e251676d099941609b4a4444a09c8b5) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add analytics to monitor the storage migration
+
+### Patch Changes
+
+- Updated dependencies [[`088b402`](https://github.com/LedgerHQ/ledger-live/commit/088b4025b6244565e581a61129854d294befc6c6), [`7d28d6d`](https://github.com/LedgerHQ/ledger-live/commit/7d28d6d7dbf5cbc2aad1ae46c8c4e5f226971384), [`ab865f3`](https://github.com/LedgerHQ/ledger-live/commit/ab865f3095a4f3410fc61bd3127f95ae09789cd5), [`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601)]:
+  - @ledgerhq/native-ui@0.33.0-next.0
+  - @ledgerhq/live-dmk-mobile@0.4.0-next.0
+  - @ledgerhq/coin-framework@4.0.0-next.0
+  - @ledgerhq/coin-cosmos@0.13.2-next.0
+  - @ledgerhq/coin-evm@2.19.1-next.0
+  - @ledgerhq/coin-filecoin@1.9.3-next.0
+  - @ledgerhq/coin-multiversx@0.4.3-next.0
+  - @ledgerhq/coin-stacks@0.8.3-next.0
+  - @ledgerhq/live-countervalues@0.5.3-next.0
+  - @ledgerhq/live-countervalues-react@0.2.32-next.0
+  - @ledgerhq/live-nft@0.8.3-next.0
+  - @ledgerhq/live-nft-react@0.9.3-next.0
+  - @ledgerhq/live-wallet@0.10.6-next.0
+
 ## 3.75.0
 
 ### Minor Changes

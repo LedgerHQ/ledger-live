@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-icon",
-  "version": "0.10.2",
+  "version": "0.10.3-next.0",
   "description": "Ledger Icon Coin integration",
   "keywords": [
     "Ledger",

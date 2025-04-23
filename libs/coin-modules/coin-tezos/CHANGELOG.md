@@ -1,5 +1,20 @@
 # @ledgerhq/coin-tezos
 
+## 4.0.0-next.0
+
+### Major Changes
+
+- [#10009](https://github.com/LedgerHQ/ledger-live/pull/10009) [`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-framework): replace operation index with operation id
+
+### Minor Changes
+
+- [#9981](https://github.com/LedgerHQ/ledger-live/pull/9981) [`001624d`](https://github.com/LedgerHQ/ledger-live/commit/001624d108b8212bff27fda572689a86b9788708) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Tezos listOperations return also 'reveal' one
+
+### Patch Changes
+
+- Updated dependencies [[`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601)]:
+  - @ledgerhq/coin-framework@4.0.0-next.0
+
 ## 3.0.1
 
 ### Patch Changes

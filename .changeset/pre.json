@@ -145,5 +145,22 @@
     "@ledgerhq/native-modules-tools": "1.0.3",
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "chilled-bikes-act",
+    "fast-bugs-run",
+    "green-garlics-enjoy",
+    "hot-crabs-arrive",
+    "large-zebras-learn",
+    "light-houses-visit",
+    "many-jobs-tie",
+    "modern-papayas-impress",
+    "nasty-cows-retire",
+    "old-snails-sell",
+    "rotten-bats-accept",
+    "shaggy-knives-judge",
+    "short-ravens-explode",
+    "soft-taxis-count",
+    "swift-garlics-work",
+    "twenty-cows-talk"
+  ]
 }

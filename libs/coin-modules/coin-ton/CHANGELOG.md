@@ -1,5 +1,16 @@
 # @ledgerhq/coin-ton
 
+## 0.9.0-next.0
+
+### Minor Changes
+
+- [#9995](https://github.com/LedgerHQ/ledger-live/pull/9995) [`cec9ce9`](https://github.com/LedgerHQ/ledger-live/commit/cec9ce99f8e35d6295f43908118c6c269c1bfe38) Thanks [@Wozacosta](https://github.com/Wozacosta)! - Improve TON payload processing functions
+
+### Patch Changes
+
+- Updated dependencies [[`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601)]:
+  - @ledgerhq/coin-framework@4.0.0-next.0
+
 ## 0.8.2
 
 ### Patch Changes

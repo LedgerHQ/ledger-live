@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-sui",
-  "version": "0.2.3",
+  "version": "0.3.0-next.0",
   "description": "Ledger Sui Coin integration",
   "keywords": [
     "Ledger",
