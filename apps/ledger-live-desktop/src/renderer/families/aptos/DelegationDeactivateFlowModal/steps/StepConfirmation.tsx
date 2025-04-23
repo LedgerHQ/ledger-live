@@ -27,11 +27,11 @@ function StepConfirmation({ t, optimisticOperation, error, signed }: StepProps) 
     return (
       <Container>
         <TrackPage
-          category="Solana Delegation Deactivate"
+          category="Aptos Delegation Deactivate"
           name="Step Confirmation"
           flow="stake"
           action="deactivate"
-          currency="sol"
+          currency="apt"
         />
         <SyncOneAccountOnMount
           reason="transaction-flow-confirmation"
@@ -40,9 +40,9 @@ function StepConfirmation({ t, optimisticOperation, error, signed }: StepProps) 
         />
         <SuccessDisplay
           title={
-            <Trans i18nKey="solana.delegation.deactivate.flow.steps.confirmation.success.title" />
+            <Trans i18nKey="aptos.delegation.deactivate.flow.steps.confirmation.success.title" />
           }
-          description={multiline(t("solana.delegation.statusUpdateNotice"))}
+          description={multiline(t("aptos.delegation.statusUpdateNotice"))}
         />
       </Container>
     );
@@ -51,14 +51,14 @@ function StepConfirmation({ t, optimisticOperation, error, signed }: StepProps) 
     return (
       <Container shouldSpace={signed}>
         <TrackPage
-          category="Solana Delegation Deactivate"
+          category="Aptos Delegation Deactivate"
           name="Step Confirmation Error"
           flow="stake"
           action="deactivate"
-          currency="sol"
+          currency="apt"
         />
         {signed ? (
-          <BroadcastErrorDisclaimer title={<Trans i18nKey="solana.common.broadcastError" />} />
+          <BroadcastErrorDisclaimer title={<Trans i18nKey="aptos.common.broadcastError" />} />
         ) : null}
         <ErrorDisplay error={error} withExportLogs />
       </Container>
@@ -82,7 +82,7 @@ export function StepConfirmationFooter({
         <Button
           primary
           ml={2}
-          event="Solana Delegation Deactivate View OpD Clicked"
+          event="Aptos Delegation Deactivate View OpD Clicked"
           onClick={() => {
             onClose();
             if (account && optimisticOperation) {
@@ -93,7 +93,7 @@ export function StepConfirmationFooter({
             }
           }}
         >
-          <Trans i18nKey="solana.common.viewDetails" />
+          <Trans i18nKey="aptos.common.viewDetails" />
         </Button>
       ) : error ? (
         <RetryButton primary ml={2} onClick={onRetry} />

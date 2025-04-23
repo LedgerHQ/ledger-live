@@ -22,7 +22,7 @@ type Props = {
 const ValidatorField = ({ account, onChangeValidator, chosenValidatorAddr }: Props) => {
   const [search, setSearch] = useState("");
   const [showAll, setShowAll] = useState(true);
-  const [currentValidator, setCurrentValidator] = useState<Validator[]>([]);
+  const [currentValidator, setCurrentValidator] = useState<Validator | null>(null);
 
   const unit = useAccountUnit(account);
   const validators = useValidators(account.currency, search);
@@ -32,6 +32,11 @@ const ValidatorField = ({ account, onChangeValidator, chosenValidatorAddr }: Pro
     [setSearch],
   );
 
+  useEffect(() => {
+    const selected = validators.find(v => v.accountAddr === chosenValidatorAddr) || null;
+    setCurrentValidator(selected);
+  }, [chosenValidatorAddr, validators]);
+  /* 
   useEffect(() => {
     const selectedValidatorAddr = validators.find(p => p.accountAddr === chosenValidatorAddr);
     if (selectedValidatorAddr) {
@@ -44,21 +49,29 @@ const ValidatorField = ({ account, onChangeValidator, chosenValidatorAddr }: Pro
         ...validators.slice(0, 2).filter(v => v !== selectedValidatorAddr),
       ]);
     }
+    console.log("-------> current validator ", currentValidator);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chosenValidatorAddr]);
+  */
 
   const renderItem = (validator: Validator) => {
     return (
       <ValidatorRow
+        key={validator.accountAddr}
+        validator={validator}
         currency={account.currency}
         active={chosenValidatorAddr === validator.accountAddr}
         onClick={onChangeValidator}
-        key={validator.accountAddr}
-        validator={validator}
         unit={unit}
       />
     );
   };
+
+  const displayedValidators = showAll
+    ? validators
+    : currentValidator
+      ? [currentValidator]
+      : validators.slice(0, 2);
 
   return (
     <>
@@ -66,13 +79,7 @@ const ValidatorField = ({ account, onChangeValidator, chosenValidatorAddr }: Pro
       <ValidatorsFieldContainer>
         <Box p={1} data-testid="validator-list">
           <ScrollLoadingList
-            data={
-              showAll
-                ? validators
-                : currentValidator.length > 0
-                  ? currentValidator
-                  : validators.slice(0, 2)
-            }
+            data={displayedValidators}
             style={{
               flex: showAll ? "1 0 240px" : "1 0 126px",
               marginBottom: 0,
