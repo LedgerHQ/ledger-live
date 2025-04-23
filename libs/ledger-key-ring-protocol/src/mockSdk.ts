@@ -1,4 +1,5 @@
 import {
+  GetOrCreateTrustchainCallbacks,
   JWT,
   MemberCredentials,
   Trustchain,
@@ -65,6 +66,22 @@ export class MockSDK implements TrustchainSDK {
     this.context = context;
     this.lifecyle = lifecyle;
     this.api = getApi(context.apiBaseUrl);
+  }
+
+  createTrustchain(
+    deviceId: string,
+    memberCredentials: MemberCredentials,
+    callbacks?: GetOrCreateTrustchainCallbacks,
+    topic?: Uint8Array,
+  ): Promise<TrustchainResult> {
+    throw new Error("Method not implemented.");
+  }
+  getTrustchains(
+    deviceId: string,
+    memberCredentials: MemberCredentials,
+    callbacks?: GetOrCreateTrustchainCallbacks,
+  ): Promise<Array<Trustchain>> {
+    throw new Error("Method not implemented.");
   }
 
   private deviceJwtAcquired = false;
