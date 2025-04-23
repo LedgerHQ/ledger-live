@@ -55,38 +55,39 @@ jobs:
         id: detect
         run: |
           if [ -n "${{ github.event.inputs.chain }}" ]; then
-          # If user provided a manual list of chains, use that directly
-          IFS=',' read -ra CHAINS <<< "${{ github.event.inputs.chain }}"
-          MATRIX_CHAINS=()
-          for chain in "${CHAINS[@]}"; do
-              MATRIX_CHAINS+=("\"$(echo $chain | xargs)\"")
-          done
-          echo "matrix={\"chain\":[${MATRIX_CHAINS[*]}]}" >> $GITHUB_OUTPUT
-          echo "is-affected=true" >> $GITHUB_OUTPUT
-          else
-          # Fallback to checking affected paths
-          CHAINS=()
-          for coin in $COIN_TESTER_CURRENCIES; do
-              if echo "${{ steps.affected.outputs.paths }}" | grep -q "$coin"; then
-              CHAINS+=("\"$coin\"")
-              fi
-          done
-
-          # If it's a scheduled job and no chain is detected, run all chains by default
-          if [ "${{ github.event_name }}" == "schedule" ] && [ ${#CHAINS[@]} -eq 0 ]; then
-            for coin in $COIN_TESTER_CURRENCIES; do
-              CHAINS+=("\"$coin\"")
+            # If user provided a manual list of chains, use that directly
+            IFS=',' read -ra CHAINS <<< "${{ github.event.inputs.chain }}"
+            MATRIX_CHAINS=()
+            for chain in "${CHAINS[@]}"; do
+                MATRIX_CHAINS+=("\"$(echo $chain | xargs)\"")
             done
-            echo "Running all chains by default on schedule: ${CHAINS[*]}"
-            echo "matrix={\"chain\":[${CHAINS[*]}]}" >> $GITHUB_OUTPUT
+            echo "matrix={\"chain\":[${MATRIX_CHAINS[*]}]}" >> $GITHUB_OUTPUT
             echo "is-affected=true" >> $GITHUB_OUTPUT
-          elif [ ${#CHAINS[@]} -eq 0 ]; then
-              echo "matrix={\"chain\":[]}" >> $GITHUB_OUTPUT
-              echo "is-affected=false" >> $GITHUB_OUTPUT
-          else
-              echo "matrix={\"chain\":[${CHAINS[*]}]}" >> $GITHUB_OUTPUT
+            else
+            # Fallback to checking affected paths
+            CHAINS=()
+            for coin in $COIN_TESTER_CURRENCIES; do
+                if echo "${{ steps.affected.outputs.paths }}" | grep -q "$coin"; then
+                  CHAINS+=("$coin")
+                fi
+            done
+            # If it's a scheduled job and no chain is detected, run all chains by default
+            if [ "${{ github.event_name }}" == "schedule" ] && [ ${#CHAINS[@]} -eq 0 ]; then
+              for coin in $COIN_TESTER_CURRENCIES; do
+                CHAINS+=("$coin")
+              done
+              echo "Running all chains by default on schedule: ${CHAINS[*]}"
+              CHAIN_JSON=$(printf '%s\n' "${CHAINS[@]}" | jq -R . | jq -cs '{chain: .}')
+              echo "matrix=${CHAIN_JSON}" >> "$GITHUB_OUTPUT"
               echo "is-affected=true" >> $GITHUB_OUTPUT
-          fi
+            elif [ ${#CHAINS[@]} -eq 0 ]; then
+                echo "matrix={\"chain\":[]}" >> $GITHUB_OUTPUT
+                echo "is-affected=false" >> $GITHUB_OUTPUT
+            else
+                CHAIN_JSON=$(printf '%s\n' "${CHAINS[@]}" | jq -R . | jq -cs '{chain: .}')
+                echo "matrix=${CHAIN_JSON}" >> "$GITHUB_OUTPUT"
+                echo "is-affected=true" >> $GITHUB_OUTPUT
+            fi
           fi
 
       - name: Debug affected paths (for troubleshooting)
