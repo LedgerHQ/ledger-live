@@ -1,6 +1,6 @@
 import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
-import { AptosAPI } from "../api";
+import { AptosAPI } from "../network";
 
 const broadcast = async ({
   signedOperation,
