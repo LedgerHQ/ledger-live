@@ -191,6 +191,140 @@ export class SDK implements TrustchainSDK {
     return { type, trustchain };
   }
 
+  async createTrustchain(
+    deviceId: string,
+    memberCredentials: MemberCredentials,
+    callbacks?: GetOrCreateTrustchainCallbacks,
+    topic?: Uint8Array,
+  ): Promise<TrustchainResult> {
+    this.invalidateJwt();
+
+    let type = TrustchainResultType.restored;
+
+    const withJwt: WithJwt = job =>
+      this.hwDeviceProvider.withJwt(deviceId, job, "cache", callbacks);
+    const withHw: WithDevice = job => this.hwDeviceProvider.withHw(deviceId, job, callbacks);
+
+    const trustchains = await withJwt(this.api.getTrustchains);
+
+    callbacks?.onInitialResponse?.(trustchains);
+
+    log("trustchain", "getOrCreateTrustchain: no trustchain yet, let's create one");
+    type = TrustchainResultType.created;
+    const streamTreeCreate = await this.hwDeviceProvider.withHw(deviceId, hw =>
+      StreamTree.createNewTree(hw, { topic }),
+    );
+    await streamTreeCreate.getRoot().resolve(); // double checks the signatures are correct before sending to the backend
+    const commandStream = CommandStreamEncoder.encode(streamTreeCreate.getRoot().blocks);
+    await withJwt(jwt => this.api.postSeed(jwt, crypto.to_hex(commandStream)));
+    // deviceJwt have changed, proactively refresh it
+    await this.hwDeviceProvider.refreshJwt(deviceId, callbacks);
+    const newTrustchains = await withJwt(this.api.getTrustchains);
+
+    let trustchainRootId: string = "toto";
+
+    const trustchainRootPath = "m/";
+    for (const [trustchainId, info] of Object.entries(newTrustchains)) {
+      if (!(trustchainId in trustchains)) {
+        for (const path in info) {
+          if (path === trustchainRootPath) {
+            trustchainRootId = trustchainId;
+            log("trustchain", `createTrustchain: Identified new trustchain ID: ${trustchainId}`);
+          }
+        }
+      }
+    }
+
+    let { streamTree } = await withJwt(jwt => this.fetchTrustchain(jwt, trustchainRootId));
+    const path = streamTree.getApplicationRootPath(this.context.applicationId);
+    const child = streamTree.getChild(path);
+    let shouldShare = true;
+
+    if (child) {
+      const resolved = await child.resolve();
+      const members = resolved.getMembers();
+
+      shouldShare = !members.some(m => crypto.to_hex(m) === memberCredentials.pubkey); // not already a member
+    }
+    if (shouldShare) {
+      streamTree = await this.pushMember(streamTree, path, trustchainRootId, withJwt, withHw, {
+        id: memberCredentials.pubkey,
+        name: this.context.name,
+        permissions: Permissions.OWNER,
+      });
+    }
+
+    const walletSyncEncryptionKey = await extractEncryptionKey(streamTree, path, memberCredentials);
+
+    const trustchain = {
+      rootId: trustchainRootId,
+      walletSyncEncryptionKey,
+      applicationPath: path,
+    };
+
+    return { type, trustchain };
+  }
+
+  async getTrustchains(
+    deviceId: string,
+    memberCredentials: MemberCredentials,
+    callbacks?: GetOrCreateTrustchainCallbacks,
+  ): Promise<Array<Trustchain>> {
+    const withJwt: WithJwt = job =>
+      this.hwDeviceProvider.withJwt(deviceId, job, "cache", callbacks);
+    const withHw: WithDevice = job => this.hwDeviceProvider.withHw(deviceId, job, callbacks);
+
+    const trustchains = await withJwt(this.api.getTrustchains);
+
+    const res = new Array<Trustchain>();
+    // we find our trustchain root id
+    const trustchainRootIds = new Array<string>();
+    const trustchainRootPath = "m/";
+    for (const [trustchainId, info] of Object.entries(trustchains)) {
+      for (const path in info) {
+        if (path === trustchainRootPath) {
+          trustchainRootIds.push(trustchainId);
+        }
+      }
+    }
+
+    for (const trustchainRootId of trustchainRootIds) {
+      let { streamTree } = await withJwt(jwt => this.fetchTrustchain(jwt, trustchainRootId));
+      const path = streamTree.getApplicationRootPath(this.context.applicationId);
+      const child = streamTree.getChild(path);
+      let shouldShare = true;
+
+      if (child) {
+        const resolved = await child.resolve();
+        const members = resolved.getMembers();
+
+        shouldShare = !members.some(m => crypto.to_hex(m) === memberCredentials.pubkey); // not already a member
+      }
+      if (shouldShare) {
+        streamTree = await this.pushMember(streamTree, path, trustchainRootId, withJwt, withHw, {
+          id: memberCredentials.pubkey,
+          name: this.context.name,
+          permissions: Permissions.OWNER,
+        });
+      }
+
+      const walletSyncEncryptionKey = await extractEncryptionKey(
+        streamTree,
+        path,
+        memberCredentials,
+      );
+
+      const trustchain = {
+        rootId: trustchainRootId,
+        walletSyncEncryptionKey,
+        applicationPath: path,
+      };
+      res.push(trustchain);
+    }
+
+    return res;
+  }
+
   async restoreTrustchain(
     trustchain: Trustchain,
     memberCredentials: MemberCredentials,

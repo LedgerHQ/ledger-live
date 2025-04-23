@@ -85,6 +85,9 @@ importers:
       '@ledgerhq/pnpm-utils':
         specifier: workspace:*
         version: link:tools/pnpm-utils
+      '@types/node':
+        specifier: 22.14.1
+        version: 22.14.1
       '@typescript-eslint/eslint-plugin':
         specifier: 6.21.0
         version: 6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3)
@@ -108,7 +111,7 @@ importers:
         version: 5.1.3(eslint-config-prettier@9.1.0(eslint@8.57.0))(eslint@8.57.0)(prettier@3.2.5)
       knip:
         specifier: 5.34.1
-        version: 5.34.1(typescript@5.4.3)
+        version: 5.34.1(@types/node@22.14.1)(typescript@5.4.3)
       nyc:
         specifier: 15.1.0
         version: 15.1.0
@@ -7821,6 +7824,9 @@ importers:
 
   libs/live-wallet:
     dependencies:
+      '@automerge/automerge':
+        specifier: 2.2.8
+        version: 2.2.8
       '@ledgerhq/coin-framework':
         specifier: workspace:*
         version: link:../coin-framework
@@ -9248,6 +9254,9 @@ packages:
 
   '@asamuzakjp/css-color@2.8.3':
     resolution: {integrity: sha512-GIc76d9UI1hCvOATjZPyHFmE5qhRccp3/zGfMPapK3jBi+yocEzp6BBB0UnfRYP9NP4FANqUZYb0hnfs3TM3hw==}
+
+  '@automerge/automerge@2.2.8':
+    resolution: {integrity: sha512-kP6Z9lIkNeIGe/jhF8SUQAgUMwVjtXCBL0eZEgQGCoWvPNTPcg8fnQco28XkYBrfkkuqiEUAbdHhJmSp0y79ug==}
 
   '@aw-web-design/x-default-browser@1.4.126':
     resolution: {integrity: sha512-Xk1sIhyNC/esHGGVjL/niHLowM0csl/kFO5uawBy4IrWwy0o1G8LGt3jP6nmWGz+USxeeqbihAmp/oVZju6wug==}
@@ -17945,6 +17954,9 @@ packages:
 
   '@types/node@22.10.10':
     resolution: {integrity: sha512-X47y/mPNzxviAGY5TcYPtYL8JsY3kAq2n8fMmKoRCxq/c4v4pyGNCzM2R6+M5/umG4ZfHuT+sgqDYqWc9rJ6ww==}
+
+  '@types/node@22.14.1':
+    resolution: {integrity: sha512-u0HuPQwe/dHrItgHHpmw3N2fYCR6x4ivMNbPHRkBVP4CvN+kiRrKHWk3i8tXiO/joPwXLMYvF9TTF0eqgHIuOw==}
 
   '@types/node@22.7.5':
     resolution: {integrity: sha512-jML7s2NAzMWc//QSJ1a3prpk78cOPchGvXJsC3C6R6PSMoooztvRVQEz89gmBTBY1SPMaqo5teB4uNHPdetShQ==}
@@ -31886,6 +31898,9 @@ packages:
   undici-types@6.20.0:
     resolution: {integrity: sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==}
 
+  undici-types@6.21.0:
+    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
+
   undici@5.28.3:
     resolution: {integrity: sha512-3ItfzbrhDlINjaP0duwnNsKpDQk3acHI3gVJ1z4fmwMK31k5G9OVIAMLSIaP6w4FaGkaAkN6zaQO9LUvZ1t7VA==}
     engines: {node: '>=14.0'}
@@ -33480,6 +33495,10 @@ snapshots:
       '@csstools/css-parser-algorithms': 3.0.4(@csstools/css-tokenizer@3.0.3)
       '@csstools/css-tokenizer': 3.0.3
       lru-cache: 10.4.3
+
+  '@automerge/automerge@2.2.8':
+    dependencies:
+      uuid: 9.0.1
 
   '@aw-web-design/x-default-browser@1.4.126':
     dependencies:
@@ -48190,6 +48209,10 @@ snapshots:
     dependencies:
       undici-types: 6.20.0
 
+  '@types/node@22.14.1':
+    dependencies:
+      undici-types: 6.21.0
+
   '@types/node@22.7.5':
     dependencies:
       undici-types: 6.19.8
@@ -59843,10 +59866,11 @@ snapshots:
 
   klona@2.0.6: {}
 
-  knip@5.34.1(typescript@5.4.3):
+  knip@5.34.1(@types/node@22.14.1)(typescript@5.4.3):
     dependencies:
       '@nodelib/fs.walk': 1.2.8
       '@snyk/github-codeowners': 1.1.0
+      '@types/node': 22.14.1
       easy-table: 1.2.0
       enhanced-resolve: 5.17.1
       fast-glob: 3.3.2
@@ -68681,6 +68705,8 @@ snapshots:
   undici-types@6.19.8: {}
 
   undici-types@6.20.0: {}
+
+  undici-types@6.21.0: {}
 
   undici@5.28.3:
     dependencies:

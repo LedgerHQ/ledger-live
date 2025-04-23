@@ -202,6 +202,7 @@
     "@commitlint/prompt-cli": "17.8.1",
     "@ledgerhq/create-release-hash": "workspace:*",
     "@ledgerhq/pnpm-utils": "workspace:*",
+    "@types/node": "22.14.1",
     "@typescript-eslint/eslint-plugin": "6.21.0",
     "@typescript-eslint/parser": "6.21.0",
     "chalk": "4.1.2",

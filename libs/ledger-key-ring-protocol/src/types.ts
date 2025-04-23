@@ -178,6 +178,19 @@ export interface TrustchainSDK {
     currentTrustchain?: Trustchain,
   ): Promise<TrustchainResult>;
 
+  createTrustchain(
+    deviceId: string,
+    memberCredentials: MemberCredentials,
+    callbacks?: GetOrCreateTrustchainCallbacks,
+    topic?: Uint8Array,
+  ): Promise<TrustchainResult>;
+
+  getTrustchains(
+    deviceId: string,
+    memberCredentials: MemberCredentials,
+    callbacks?: GetOrCreateTrustchainCallbacks,
+  ): Promise<Array<Trustchain>>;
+
   /**
    * Restore the current trustchain encryption key, typically due to a key rotation.
    */
