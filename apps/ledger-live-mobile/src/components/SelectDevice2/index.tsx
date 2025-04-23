@@ -94,7 +94,9 @@ export default function SelectDevice({
   const isLDMKEnabled = useLdmkFeatureEnabled();
   const dmk = useDeviceManagementKit();
 
-  const { scannedDevices: DMKscannedDevices } = useBleDevicesScanning();
+  const { scannedDevices: DMKscannedDevices } = useBleDevicesScanning(
+    isFocused && !isPairingDevices,
+  );
   const { scannedDevices: legacyScannedDevices } = useLegacyBleDevicesScanning({
     bleTransportListen: getBLETransport({ isLDMKEnabled }).listen,
     stopBleScanning,

@@ -14,6 +14,7 @@ export const defaultMapper = (device: DiscoveredDevice): Device => ({
 });
 
 export const useBleDevicesScanning = <T = Device>(
+  enabled: boolean,
   {
     mapper = defaultMapper,
     filterByDeviceModelIds = [],
@@ -30,6 +31,7 @@ export const useBleDevicesScanning = <T = Device>(
 
   useEffect(() => {
     if (!dmk) return;
+    if (!enabled) return;
     const subscription = dmk
       .listenToAvailableDevices({
         transport: rnBleTransportIdentifier,
@@ -78,7 +80,7 @@ export const useBleDevicesScanning = <T = Device>(
       }
       dmk.stopDiscovering();
     };
-  }, [dmk]);
+  }, [dmk, enabled]);
 
   return {
     scannedDevices: Object.values(scannedDevicesById),
