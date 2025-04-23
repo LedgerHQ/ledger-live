@@ -32,10 +32,18 @@ function StepConfirmation({
   optimisticOperation,
   error,
   signed,
-  // transaction,
+  transaction,
   // source,
   // account,
 }: StepProps) {
+  if (!transaction?.stake || !transaction.stake.poolAddr) {
+    return <ErrorDisplay error={new Error("Missing validator address")} />;
+  }
+
+  const validatorAddress = transaction?.stake?.poolAddr;
+
+  console.log("validatorAddress !!!!!", validatorAddress);
+
   if (optimisticOperation) {
     return (
       <Container>
@@ -44,7 +52,7 @@ function StepConfirmation({
           name="Step Confirmation"
           flow="stake"
           action="delegation"
-          currency="sol"
+          currency="apt"
         />
         <SyncOneAccountOnMount
           reason="transaction-flow-confirmation"
@@ -66,7 +74,7 @@ function StepConfirmation({
           name="Step Confirmation Error"
           flow="stake"
           action="delegation"
-          currency="sol"
+          currency="apt"
         />
         {signed ? (
           <BroadcastErrorDisclaimer title={<Trans i18nKey="aptos.common.broadcastError" />} />
