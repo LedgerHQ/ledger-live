@@ -10,24 +10,35 @@ import WidgetKit
 import SwiftUI
 
 struct Provider: AppIntentTimelineProvider {
-    let nfts = [
-        SelectNFTIntent.NFTs.nft1: "https://i2.seadn.io/base/0xe26e46742f7a0d53e71dadfb890374e8d28dfb6e/3bf2b3068a80eca621fe542708ce27/733bf2b3068a80eca621fe542708ce27.png?w=1000",
-        SelectNFTIntent.NFTs.nft2: "https://i2.seadn.io/base/0x7e72abdf47bd21bf0ed6ea8…fd51c/f304540688a3db8873b8a4d57e9fd51c.png?w=1000",
-        SelectNFTIntent.NFTs.nft3: "https://i2.seadn.io/base/0x286ce4278213bf7b561763ebcf2342bb94e52858/0c99e94bdbfc95a1a74e4fcbca26520d.png?w=1000"
+    let nfts: [SelectNFTIntent.NFTs: (imageURL: String, name: String)] = [
+        .nft1: (
+            imageURL: "https://i2.seadn.io/base/0xe26e46742f7a0d53e71dadfb890374e8d28dfb6e/3bf2b3068a80eca621fe542708ce27/733bf2b3068a80eca621fe542708ce27.png?w=1000",
+            name: "Pudgy Penguin #2341"
+        ),
+        .nft2: (
+            imageURL: "https://raw2.seadn.io/base/0x7e72abdf47bd21bf0ed6ea8cb8dad60579f3fb50/04540688a3db8873b8a4d57e9fd51c/f304540688a3db8873b8a4d57e9fd51c.png?w=1000",
+            name: "Bored Ape #5137"
+        ),
+        .nft3: (
+            imageURL: "https://i2.seadn.io/base/0x286ce4278213bf7b561763ebcf2342bb94e52858/0c99e94bdbfc95a1a74e4fcbca26520d.png?w=1000",
+            name: "Azuki #5087"
+        )
     ]
 
+
     func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), nftURL: URL(string: nfts[.nft1]!), configuration: SelectNFTIntent())
-    }
+    let nftData = nfts[.nft1]!
+    return SimpleEntry(date: Date(), nftURL: URL(string: nftData.imageURL), nftName: nftData.name, configuration: SelectNFTIntent())
+}
 
     func snapshot(for configuration: SelectNFTIntent, in context: Context) async -> SimpleEntry {
-        let selectedNFTURLString = nfts[configuration.selectedNFT ?? .nft1] ?? nfts[.nft1]!
-        return SimpleEntry(date: Date(), nftURL: URL(string: selectedNFTURLString)!, configuration: configuration)
+        let nftData = nfts[configuration.selectedNFT ?? .nft1] ?? nfts[.nft1]!
+        return SimpleEntry(date: Date(), nftURL: URL(string: nftData.imageURL), nftName: nftData.name, configuration: configuration)
     }
 
     func timeline(for configuration: SelectNFTIntent, in context: Context) async -> Timeline<SimpleEntry> {
-        let selectedNFTURLString = nfts[configuration.selectedNFT ?? .nft1] ?? nfts[.nft1]!
-        let entry = SimpleEntry(date: Date(), nftURL: URL(string: selectedNFTURLString)!, configuration: configuration)
+        let nftData = nfts[configuration.selectedNFT ?? .nft1] ?? nfts[.nft1]!
+        let entry = SimpleEntry(date: Date(), nftURL: URL(string: nftData.imageURL), nftName: nftData.name, configuration: configuration)
         return Timeline(entries: [entry], policy: .atEnd)
     }
 }
@@ -35,11 +46,13 @@ struct Provider: AppIntentTimelineProvider {
 struct SimpleEntry: TimelineEntry {
     let date: Date
     let nftURL: URL?
+    let nftName: String
     let configuration: SelectNFTIntent
 }
 
 struct NFTWidgetEntryView: View {
     var entry: Provider.Entry
+    @Environment(\.widgetFamily) var widgetFamily
 
     var body: some View {
         GeometryReader { geometry in
@@ -62,6 +75,18 @@ struct NFTWidgetEntryView: View {
                     .resizable()
                     .frame(width: 24, height: 24)
                     .padding(14)
+
+                if widgetFamily == .systemLarge {
+                    VStack {
+                        Spacer()
+                        Text(entry.nftName)
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(ContainerRelativeShape().fill(Color.black.opacity(0.7)))
+                    }
+                    .padding(14)
+                }
             }
         }
     }
