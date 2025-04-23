@@ -255,6 +255,68 @@ export class SDK implements TrustchainSDK {
     return { type, trustchain };
   }
 
+  async getTrustchains(
+    deviceId: string,
+    memberCredentials: MemberCredentials,
+    callbacks?: GetOrCreateTrustchainCallbacks,
+  ): Promise<Array<Trustchain>> {
+    const withJwt: WithJwt = job =>
+      this.hwDeviceProvider.withJwt(deviceId, job, "cache", callbacks);
+    const withHw: WithDevice = job => this.hwDeviceProvider.withHw(deviceId, job, callbacks);
+
+    const trustchains = await withJwt(this.api.getTrustchains);
+
+    callbacks?.onInitialResponse?.(trustchains);
+
+    const res = new Array<Trustchain>();
+    // we find our trustchain root id
+    const trustchainRootIds = new Array<string>();
+    const trustchainRootPath = "m/";
+    for (const [trustchainId, info] of Object.entries(trustchains)) {
+      for (const path in info) {
+        if (path === trustchainRootPath) {
+          trustchainRootIds.push(trustchainId);
+        }
+      }
+    }
+
+    for (const trustchainRootId of trustchainRootIds) {
+      let { streamTree } = await withJwt(jwt => this.fetchTrustchain(jwt, trustchainRootId));
+      const path = streamTree.getApplicationRootPath(this.context.applicationId);
+      const child = streamTree.getChild(path);
+      let shouldShare = true;
+
+      if (child) {
+        const resolved = await child.resolve();
+        const members = resolved.getMembers();
+
+        shouldShare = !members.some(m => crypto.to_hex(m) === memberCredentials.pubkey); // not already a member
+      }
+      if (shouldShare) {
+        streamTree = await this.pushMember(streamTree, path, trustchainRootId, withJwt, withHw, {
+          id: memberCredentials.pubkey,
+          name: this.context.name,
+          permissions: Permissions.OWNER,
+        });
+      }
+
+      const walletSyncEncryptionKey = await extractEncryptionKey(
+        streamTree,
+        path,
+        memberCredentials,
+      );
+
+      const trustchain = {
+        rootId: trustchainRootId,
+        walletSyncEncryptionKey,
+        applicationPath: path,
+      };
+      res.push(trustchain);
+    }
+
+    return res;
+  }
+
   async restoreTrustchain(
     trustchain: Trustchain,
     memberCredentials: MemberCredentials,
