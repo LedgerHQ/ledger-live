@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
-import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
 import buildSignOperation, { getAddress } from "../../bridge/signOperation";
 import { AptosSigner } from "../../types";
