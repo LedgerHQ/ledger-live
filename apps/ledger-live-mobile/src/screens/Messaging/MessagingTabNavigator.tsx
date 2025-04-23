@@ -3,15 +3,9 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
 import ConversationList from "./screens/ConversationList";
-import CreateConversation from "./screens/CreateConversation";
-import Conversation from "./screens/Conversation";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 
 export type MessagingNavigatorStackParamList = {
-  [ScreenName.CreateConversation]: undefined;
-  [ScreenName.Conversation]: {
-    conversationId: string;
-  };
   [ScreenName.ConversationList]: undefined;
 };
 
@@ -28,28 +22,6 @@ export default function MessagingTabNavigator() {
       <Stack.Screen
         name={ScreenName.ConversationList}
         component={ConversationList}
-        options={{
-          headerShown: true,
-          title: "",
-          headerRight: undefined,
-          headerLeft: () => null,
-          headerTransparent: true,
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.CreateConversation}
-        component={CreateConversation}
-        options={{
-          headerShown: true,
-          title: "",
-          headerRight: undefined,
-          headerLeft: () => null,
-          headerTransparent: true,
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.Conversation}
-        component={Conversation}
         options={{
           headerShown: true,
           title: "",

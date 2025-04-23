@@ -3,7 +3,7 @@ import { useCallback } from "react";
 const conversations = [
   {
     name: "With Bob",
-    id: 12345,
+    id: "trustchainId1",
     messages: [
       {
         message: "Hello Bob",
@@ -14,7 +14,7 @@ const conversations = [
   },
   {
     name: "With Charlie",
-    id: 6543,
+    id: "trustchainId2",
     messages: [
       {
         message: "Hello Charlie",
@@ -26,6 +26,56 @@ const conversations = [
         author: "Charlie",
         date: new Date().toISOString(),
       },
+      {
+        message: "I'm good thanks",
+        author: "Alice",
+        date: new Date().toISOString(),
+      },
+      {
+        message: "Do you want some Bitcoin?",
+        author: "Alice",
+        date: new Date().toISOString(),
+      },
+      {
+        message: "Hello Charlie",
+        author: "Alice",
+        date: new Date().toISOString(),
+      },
+      {
+        message: "How are you?",
+        author: "Charlie",
+        date: new Date().toISOString(),
+      },
+      {
+        message: "I'm good thanks",
+        author: "Alice",
+        date: new Date().toISOString(),
+      },
+      {
+        message: "Do you want some Bitcoin?",
+        author: "Alice",
+        date: new Date().toISOString(),
+      },
+      {
+        message: "Hello Charlie",
+        author: "Alice",
+        date: new Date().toISOString(),
+      },
+      {
+        message: "How are you?",
+        author: "Charlie",
+        date: new Date().toISOString(),
+      },
+      {
+        message: "I'm good thanks",
+        author: "Alice",
+        date: new Date().toISOString(),
+      },
+      {
+        message: "Do you want some Bitcoin?",
+        author: "Alice",
+        date: new Date().toISOString(),
+      },
     ],
   },
 ];
@@ -35,7 +85,7 @@ function useConversation() {
     return conversations;
   }, []);
 
-  const sendMessage = useCallback((conversationId: number, message: string) => {
+  const sendMessage = useCallback((conversationId: string, message: string) => {
     const conversation = conversations.find(conv => conv.id === conversationId);
     if (!conversation) {
       throw new Error(`Conversation with id ${conversationId} not found`);
@@ -44,16 +94,21 @@ function useConversation() {
     conversation.messages.push({
       message,
       author: "me",
-      timestamp: new Date().toISOString(),
+      date: new Date().toISOString(),
     });
   }, []);
 
-  const getConversation = useCallback((id: number) => {
+  const getConversation = useCallback((id: string) => {
     const conversation = conversations.find(conv => conv.id === id);
     if (!conversation) {
       throw new Error(`Conversation with id ${id} not found`);
     }
-    return conversation;
+    return {
+      ...conversation,
+      messages: conversation.messages.sort((a, b) => {
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
+      }),
+    };
   }, []);
   return {
     getConversations,

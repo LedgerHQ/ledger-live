@@ -25,7 +25,7 @@ const keyExtractor = (item: Conversation, index: number) => index.toString();
 
 type Conversation = {
   name: string;
-  id: number;
+  id: string;
   messages: unknown[];
 };
 

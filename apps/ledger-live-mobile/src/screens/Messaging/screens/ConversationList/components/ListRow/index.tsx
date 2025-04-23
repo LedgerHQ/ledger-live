@@ -4,10 +4,15 @@ import { useNavigation } from "@react-navigation/native";
 import { ScreenName } from "~/const";
 import { Flex, Text } from "@ledgerhq/native-ui";
 
+type Message = {
+  text: string;
+  date: string;
+};
+
 type Conversation = {
   name: string;
-  id: number;
-  messages: unknown[];
+  id: string;
+  messages: Message[];
 };
 
 interface ListRowProps {
@@ -15,40 +20,70 @@ interface ListRowProps {
   index: number;
 }
 
-function ConversationRowItem({ item, index }: ListRowProps) {
-  const { name } = item;
+// Helper function to format the date based on whether it's today or not
+const formatMessageDate = (dateStr: string): string => {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const isToday = date.toDateString() === now.toDateString();
 
+  return isToday
+    ? date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+    : date.toLocaleDateString();
+};
+
+function ConversationRowItem({ item, index }: ListRowProps) {
+  // Get the last message if it exists
+  const lastMessage = item.messages.length ? item.messages[item.messages.length - 1] : undefined;
   return (
     <Flex
-      height={72}
-      flexDirection="row"
-      justifyContent="flex-start"
-      alignItems="center"
-      py="16px"
+      backgroundColor="background.paper"
+      borderRadius="12px"
+      p="16px"
+      mx="16px"
+      my="8px"
+      flexDirection="column"
+      shadowOffset={{ width: 0, height: 2 }}
+      shadowOpacity={0.1}
+      shadowRadius={4}
+      elevation={3}
       key={index}
     >
-      <Flex mx="4" flexDirection="column" justifyContent="center" alignItems="flex-start" flex={1}>
-        <Text variant="large" fontWeight="semiBold" numberOfLines={1} testID="market-row-title">
-          {`${name}`}
+      <Flex flexDirection="row" justifyContent="space-between" alignItems="center">
+        <Text variant="large" fontWeight="semiBold" numberOfLines={1} flexShrink={1}>
+          {item.name}
         </Text>
+        {lastMessage && (
+          <Text variant="small" color="neutral.c80">
+            {formatMessageDate(lastMessage.date)}
+          </Text>
+        )}
       </Flex>
+      {/* Second row: last message */}
+      {lastMessage && (
+        <Text variant="small" color="neutral.c80" mt="4px" numberOfLines={1}>
+          {lastMessage.message}
+        </Text>
+      )}
     </Flex>
   );
 }
 
 function ListRow({ item, index }: ListRowProps) {
   const navigation = useNavigation();
-  console.log(item);
   return (
-    <TouchableOpacity
-      onPress={() => {
-        navigation.navigate(ScreenName.Conversation, {
-          conversationId: item.id,
-        });
-      }}
-    >
-      <ConversationRowItem item={item} index={index} />
-    </TouchableOpacity>
+    <>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate(ScreenName.Conversation, {
+            conversationId: item.id,
+            name: item.name,
+          });
+        }}
+      >
+        <ConversationRowItem item={item} index={index} />
+      </TouchableOpacity>
+      <Flex height="1px" backgroundColor="neutral.c40" mx="16px" />
+    </>
   );
 }
 

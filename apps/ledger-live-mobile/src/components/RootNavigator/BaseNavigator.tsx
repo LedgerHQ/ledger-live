@@ -54,6 +54,7 @@ import VerifyAccount from "~/screens/VerifyAccount";
 import { LiveApp } from "~/screens/Platform";
 import AccountsNavigator from "./AccountsNavigator";
 import MarketNavigator from "LLM/features/Market/Navigator";
+import MessagingNavigator from "../../screens/Messaging/Navigator";
 import {
   BleDevicePairingFlow,
   bleDevicePairingFlowHeaderOptions,
@@ -436,6 +437,7 @@ export default function BaseNavigator() {
           options={{ headerShown: false }}
         />
         {MarketNavigator({ Stack })}
+        {MessagingNavigator({ Stack })}
         <Stack.Screen
           name={ScreenName.PortfolioOperationHistory}
           component={PortfolioHistory}
