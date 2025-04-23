@@ -1,9 +1,12 @@
 import { Button, Text } from "@ledgerhq/react-ui";
 import React from "react";
+import { useSelector } from "react-redux";
 import Box from "~/renderer/components/Box";
+import { hodlShieldActivatedSelector } from "~/renderer/reducers/settings";
 import { SettingsSectionRowContainer } from "~/renderer/screens/settings/SettingsSection";
 
 export default function SettingsEntryPoint({ onPress }: { onPress: () => void }) {
+  const hodlShieldIsActivate = useSelector(hodlShieldActivatedSelector);
   return (
     <SettingsSectionRowContainer tabIndex={-1}>
       <Box grow shrink>
@@ -24,8 +27,10 @@ export default function SettingsEntryPoint({ onPress }: { onPress: () => void })
         </Box>
       </Box>
 
-      <Button variant="main" onClick={onPress}>
-        <Text color="neutral.c00">Turn on Hodl Shield</Text>
+      <Button variant={hodlShieldIsActivate ? "color" : "main"} onClick={onPress}>
+        <Text color="neutral.c00">
+          {hodlShieldIsActivate ? "Activated" : "Turn on Hodl Shield"}
+        </Text>
       </Button>
     </SettingsSectionRowContainer>
   );
