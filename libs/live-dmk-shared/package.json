@@ -37,7 +37,7 @@
     "@ledgerhq/types-devices": "workspace:^"
   },
   "devDependencies": {
-    "@ledgerhq/device-management-kit": "0.0.0-rnble-transport-20250401145214",
+    "@ledgerhq/device-management-kit": "0.0.0-fix-ble-scanning-20250423070301",
     "@testing-library/dom": "^9.3.4",
     "@testing-library/jest-dom": "6.6.3",
     "@testing-library/react": "^16.1.0",
