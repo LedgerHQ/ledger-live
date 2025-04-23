@@ -8,13 +8,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { NavigationContainerEventMap } from "@react-navigation/native";
 import { Box } from "@ledgerhq/native-ui";
 import Portfolio from "~/screens/Portfolio";
-import WalletNftGallery from "~/screens/Nft/WalletNftGallery";
 import {
   readOnlyModeEnabledSelector,
   walletTabNavigatorLastVisitedTabSelector,
 } from "~/reducers/settings";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
 import ReadOnlyPortfolio from "~/screens/Portfolio/ReadOnly";
+import MessagingTabNavigator from "~/screens/Messaging/MessagingTabNavigator";
+import DriveTabNavigator from "~/screens/Drive/DriveTabNavigator";
 import { setWalletTabNavigatorLastVisitedTab } from "~/actions/settings";
 import WalletTabNavigatorTabBar from "../WalletTab/WalletTabNavigatorTabBar";
 import WalletTabNavigatorScrollManager from "../WalletTab/WalletTabNavigatorScrollManager";
@@ -72,18 +73,26 @@ export default function WalletTabNavigator() {
           />
 
           <WalletTab.Screen
-            name={ScreenName.WalletNftGallery}
-            component={WalletNftGallery}
-            options={{
-              title: t("wallet.tabs.nft"),
-            }}
-          />
-
-          <WalletTab.Screen
             name={NavigatorName.Market}
             component={MarketWalletTabNavigator}
             options={{
               title: t("wallet.tabs.market"),
+            }}
+          />
+
+          <WalletTab.Screen
+            name={ScreenName.Messaging}
+            component={MessagingTabNavigator}
+            options={{
+              title: "Messaging",
+            }}
+          />
+
+          <WalletTab.Screen
+            name={ScreenName.Drive}
+            component={DriveTabNavigator}
+            options={{
+              title: "Drive",
             }}
           />
         </WalletTab.Navigator>

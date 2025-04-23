@@ -550,6 +550,11 @@ export enum ScreenName {
   AddAccountsWarning = "AddAccountsWarning",
   NoAssociatedAccounts = "NoAssociatedAccounts",
   LargeMoverLandingPage = "LargeMoverLandingPage",
+  Messaging = "Messaging",
+  Drive = "Drive",
+  CreateConversation = "CreateConversation",
+  Conversation = "Conversation",
+  ConversationList = "ConversationList",
 }
 
 export enum NavigatorName {
