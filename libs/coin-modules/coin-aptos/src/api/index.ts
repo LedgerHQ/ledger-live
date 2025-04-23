@@ -3,7 +3,7 @@ import type { AptosConfig as AptosConfigApi } from "../config";
 import coinConfig from "../config";
 import type { AptosAsset } from "../types/assets";
 import {
-  broadcast,
+  broadcast as broadcastWrapper,
   combine,
   craftTransaction,
   estimateFees,
@@ -16,7 +16,7 @@ export function createApi(config: AptosConfigApi): Api<AptosAsset> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
-    broadcast,
+    broadcast: tx => broadcastWrapper(config.aptosSettings, tx),
     combine,
     craftTransaction,
     estimateFees,
