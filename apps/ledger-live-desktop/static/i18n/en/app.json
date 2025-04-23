@@ -6599,7 +6599,7 @@
         "swap": "Swap",
         "deposit": "Deposit"
       }
-    }, 
+    },
     "InvalidMemoMina": {
       "title": "Memo text cannot be longer than 32 characters"
     },

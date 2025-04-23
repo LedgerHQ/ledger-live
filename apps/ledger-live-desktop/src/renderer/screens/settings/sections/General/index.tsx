@@ -22,9 +22,13 @@ import MevProtectionRow from "./MevProtection";
 import { useEntryPoint } from "LLD/features/LedgerSyncEntryPoints/hooks/useEntryPoint";
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
+import HodlShieldEntryPointView from "LLD/features/HodlShield/EntryPoint";
+import { EntryPoint as HodlShieldEntryPoint } from "LLD/features/HodlShield/types";
 import WalletSyncDrawer from "LLD/features/WalletSync/components/Drawer";
 import { AnalyticsPage } from "LLD/features/WalletSync/hooks/useLedgerSyncAnalytics";
 import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
+import { useActivationDrawer as useHodlShieldActivationDrawer } from "LLD/features/HodlShield/hooks/useActivationDrawer";
+import HodlShieldDrawer from "~/newArch/features/HodlShield/components/Drawer";
 
 const SectionGeneral = () => {
   const hasPassword = useSelector(hasPasswordSelector);
@@ -35,12 +39,14 @@ const SectionGeneral = () => {
   const { shouldDisplayEntryPoint } = useEntryPoint(EntryPoint.settings);
   const mevLearnMoreLink = llMevProtectionFeatureFlag?.params?.link?.trim() || undefined;
   const { closeDrawer } = useActivationDrawer();
+  const { closeDrawer: closeHodlShieldDrawer } = useHodlShieldActivationDrawer();
 
   return (
     <>
       <TrackPage category="Settings" name="Display" />
       <Body>
         <LedgerSyncEntryPoint entryPoint={EntryPoint.settings} />
+        <HodlShieldEntryPointView entryPoint={HodlShieldEntryPoint.settings} />
         <Row
           title={t("settings.display.counterValue")}
           desc={t("settings.display.counterValueDesc")}
@@ -143,6 +149,7 @@ const SectionGeneral = () => {
         )}
       </Body>
       <WalletSyncDrawer currentPage={AnalyticsPage.SettingsGeneral} onClose={closeDrawer} />
+      <HodlShieldDrawer onClose={closeHodlShieldDrawer} />
     </>
   );
 };

@@ -15,6 +15,7 @@ import { WalletState } from "@ledgerhq/live-wallet/store";
 import walletSync, { WalletSyncState } from "./walletSync";
 import trustchain from "./trustchain";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+import hodlShield, { HodlShieldState } from "./hodlShield";
 
 export type State = {
   accounts: AccountsState;
@@ -30,6 +31,7 @@ export type State = {
   wallet: WalletState;
   walletSync: WalletSyncState;
   trustchain: TrustchainStore;
+  hodlShield: HodlShieldState;
 };
 
 export default combineReducers({
@@ -46,4 +48,5 @@ export default combineReducers({
   wallet,
   walletSync,
   trustchain,
+  hodlShield,
 });
