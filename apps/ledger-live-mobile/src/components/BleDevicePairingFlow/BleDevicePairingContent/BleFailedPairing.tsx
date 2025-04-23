@@ -5,7 +5,7 @@ import ExternalLink from "~/components/ExternalLink";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-export const BleDeviceLocked = ({
+export const BleFailedPairing = ({
   onRetry,
   onOpenHelp,
   productName,
