@@ -1,6 +1,7 @@
 import {
   memberCredentialsSelector,
   setTrustchain,
+  setConversation,
   trustchainSelector,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,21 +24,20 @@ import { ScreenName } from "~/const";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { DrawerProps, SceneKind, useFollowInstructionDrawer } from "./useFollowInstructionDrawer";
 
-export function useAddMember({ device }: { device: Device | null }): DrawerProps {
-  const trustchain = useSelector(trustchainSelector);
+export function useAddMember({ device, name }: { device: Device | null }): DrawerProps {
   const dispatch = useDispatch();
   const sdk = useTrustchainSdk();
   const memberCredentials = useSelector(memberCredentialsSelector);
   const memberCredentialsRef = useRef(memberCredentials);
-  const trustchainRef = useRef(trustchain);
   const navigation = useNavigation<StackNavigatorNavigation<WalletSyncNavigatorStackParamList>>();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
   const transitionToNextScreen = useCallback(
     (trustchainResult: TrustchainResult) => {
-      dispatch(setTrustchain(trustchainResult.trustchain));
+      console.log("trustchainResult", trustchainResult);
+      dispatch(setConversation(trustchainResult.trustchain, name));
       track(AnalyticsEvents.LedgerSyncActivated);
-      navigation.navigate(ScreenName.WalletSyncLoading, {
+      navigation.navigate(ScreenName.ConversationActivationLoading, {
         created: trustchainResult.type === TrustchainResultType.created,
       });
     },
@@ -51,7 +51,7 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
         if (!memberCredentialsRef.current) {
           throw new Error("memberCredentials is not set");
         }
-        const trustchainResult = await sdk.getOrCreateTrustchain(
+        const trustchainResult = await sdk.createTrustchain(
           device.deviceId,
           memberCredentialsRef.current,
           {
@@ -63,8 +63,6 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
               setScene({ kind: SceneKind.DeviceInstructions, device }),
             onEndRequestUserInteraction: () => setScene({ kind: SceneKind.Loader }),
           },
-          undefined,
-          trustchainRef.current ?? undefined,
         );
         if (trustchainResult) {
           transitionToNextScreen(trustchainResult);

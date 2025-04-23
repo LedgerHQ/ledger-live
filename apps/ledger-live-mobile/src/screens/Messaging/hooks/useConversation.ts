@@ -1,4 +1,6 @@
 import { useCallback } from "react";
+import { useSelector } from "react-redux";
+import { conversationTrustchainsSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 
 const conversations = [
   {
@@ -81,6 +83,8 @@ const conversations = [
 ];
 
 function useConversation() {
+  const conversationsSelector = useSelector(conversationTrustchainsSelector);
+  console.log("conversationsSelector", conversationsSelector);
   const getConversations = useCallback(() => {
     return conversations;
   }, []);

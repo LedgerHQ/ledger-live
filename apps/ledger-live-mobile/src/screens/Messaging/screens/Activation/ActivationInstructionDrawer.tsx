@@ -8,12 +8,13 @@ type Props = {
   isOpen: boolean;
   handleClose: () => void;
   device: Device | null;
+  name: string;
 };
 
-const FollowInstructionsDrawer = ({ isOpen, handleClose, device }: Props) => {
+const FollowInstructionsDrawer = ({ isOpen, handleClose, device, name }: Props) => {
   return (
     <GenericFollowInstructionsDrawer
-      {...useAddMember({ device })}
+      {...useAddMember({ device, name })}
       isOpen={isOpen}
       handleClose={handleClose}
     />

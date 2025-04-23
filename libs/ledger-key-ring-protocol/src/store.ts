@@ -9,11 +9,13 @@ import { MemberCredentials, Trustchain } from "./types";
 export type TrustchainStore = {
   trustchain: Trustchain | null;
   memberCredentials: MemberCredentials | null;
+  conversationTrustchains: Trustchain[];
 };
 
 export const INITIAL_STATE: TrustchainStore = {
   trustchain: null,
   memberCredentials: null,
+  conversationTrustchains: [],
 };
 
 export const getInitialStore = (): TrustchainStore => {
@@ -27,6 +29,7 @@ export enum TrustchainHandlerType {
   TRUSTCHAIN_STORE_RESET = `${trustchainStoreActionTypePrefix}RESET`,
   TRUSTCHAIN_STORE_SET_TRUSTCHAIN = `${trustchainStoreActionTypePrefix}SET_TRUSTCHAIN`,
   TRUSTCHAIN_STORE_SET_MEMBER_CREDENTIALS = `${trustchainStoreActionTypePrefix}SET_MEMBER_CREDENTIALS`,
+  TRUSTCHAIN_STORE_SET_CONVERSATION_TRUSTCHAIN = `${trustchainStoreActionTypePrefix}SET_CONVERSATION_TRUSTCHAIN`,
 }
 
 export type TrustchainHandlersPayloads = {
@@ -34,6 +37,7 @@ export type TrustchainHandlersPayloads = {
   TRUSTCHAIN_STORE_RESET: never;
   TRUSTCHAIN_STORE_SET_TRUSTCHAIN: { trustchain: Trustchain };
   TRUSTCHAIN_STORE_SET_MEMBER_CREDENTIALS: { memberCredentials: MemberCredentials };
+  TRUSTCHAIN_STORE_SET_CONVERSATION_TRUSTCHAIN: { trustchain: Trustchain; name: string };
 };
 
 type Handlers<State, Types, PreciseKey = true> = {
@@ -62,6 +66,12 @@ export const trustchainHandlers: TrustchainHandlers = {
   TRUSTCHAIN_STORE_SET_MEMBER_CREDENTIALS: (state, { payload: { memberCredentials } }) => {
     return { ...state, memberCredentials };
   },
+  TRUSTCHAIN_STORE_SET_CONVERSATION_TRUSTCHAIN: (state, { payload: { trustchain, name } }) => {
+    return {
+      ...state,
+      conversationTrustchains: [...(state.conversationTrustchains || []), { ...trustchain, name }],
+    };
+  },
 };
 
 // actions
@@ -80,6 +90,10 @@ export const setTrustchain = (trustchain: Trustchain) => ({
   payload: { trustchain },
 });
 
+export const setConversation = (trustchain: Trustchain, name: string) => ({
+  type: `${trustchainStoreActionTypePrefix}SET_CONVERSATION_TRUSTCHAIN`,
+  payload: { trustchain, name },
+});
 export const setMemberCredentials = (memberCredentials: MemberCredentials) => ({
   type: `${trustchainStoreActionTypePrefix}SET_MEMBER_CREDENTIALS`,
   payload: { memberCredentials },
@@ -93,6 +107,10 @@ export const trustchainStoreSelector = (state: { trustchain: TrustchainStore }):
 
 export const trustchainSelector = (state: { trustchain: TrustchainStore }): Trustchain | null =>
   state.trustchain.trustchain;
+
+export const conversationTrustchainsSelector = (state: {
+  trustchain: TrustchainStore;
+}): Trustchain[] => state.trustchain.conversationTrustchains;
 
 export const memberCredentialsSelector = (state: {
   trustchain: TrustchainStore;

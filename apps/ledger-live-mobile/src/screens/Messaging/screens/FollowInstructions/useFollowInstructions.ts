@@ -16,6 +16,7 @@ export const useFollowInstructions = () => {
 
   const closeDrawer = useCallback(() => {
     setIsDrawerInstructionsVisible(false);
+    console.log("CLOSE MY DRAWER");
     logDrawer(messageLog, "close");
   }, []);
 

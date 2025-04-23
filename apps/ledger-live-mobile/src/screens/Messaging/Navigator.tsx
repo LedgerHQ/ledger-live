@@ -3,6 +3,7 @@ import { ScreenName } from "~/const";
 import CreateConversation from "./screens/CreateConversation";
 import Conversation from "./screens/Conversation";
 import CreateConversationProcess from "./screens/Activation/ActivationProcess";
+import CreateConversationLoading from "./screens/Activation/ActivationLoading";
 import JoinConversation from "./screens/Activation";
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -51,6 +52,13 @@ export default function ConversationNavigator({ Stack }: NavigatorProps) {
       <Stack.Screen
         name={ScreenName.CreateConversationProcess}
         component={CreateConversationProcess}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.ConversationActivationLoading}
+        component={CreateConversationLoading}
         options={{
           headerShown: false,
         }}

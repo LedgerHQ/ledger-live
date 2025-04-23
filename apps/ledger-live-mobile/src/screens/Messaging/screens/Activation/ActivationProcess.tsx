@@ -12,6 +12,7 @@ type Props = BaseComposite<
 
 export default function ActivationProcess({ route, navigation }: Props) {
   const { isDrawerInstructionsVisible, closeDrawer, openDrawer, device } = useFollowInstructions();
+  const { params } = route;
 
   return (
     <>
@@ -25,6 +26,7 @@ export default function ActivationProcess({ route, navigation }: Props) {
           isOpen={isDrawerInstructionsVisible}
           handleClose={closeDrawer}
           device={device}
+          name={params?.name ?? ""}
         />
       )}
     </>

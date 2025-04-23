@@ -26,6 +26,7 @@ export enum ScreenName {
   CountervalueSettings = "CountervalueSettings",
   CreateConversationProcess = "CreateConversationProcess",
   CryptoAssetsSettings = "CryptoAssetsSettings",
+  ConversationActivationLoading = "ConversationActivationLoading",
   CurrenciesList = "CurrenciesList",
   CurrencySettings = "CurrencySettings",
   EditCurrencyUnits = "EditCurrencyUnits",
