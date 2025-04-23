@@ -203,6 +203,7 @@ export class SDK implements TrustchainSDK {
 
     const withJwt: WithJwt = job =>
       this.hwDeviceProvider.withJwt(deviceId, job, "cache", callbacks);
+    const withHw: WithDevice = job => this.hwDeviceProvider.withHw(deviceId, job, callbacks);
 
     const trustchains = await withJwt(this.api.getTrustchains);
 
@@ -210,11 +211,11 @@ export class SDK implements TrustchainSDK {
 
     log("trustchain", "getOrCreateTrustchain: no trustchain yet, let's create one");
     type = TrustchainResultType.created;
-    const streamTree = await this.hwDeviceProvider.withHw(deviceId, hw =>
+    const streamTreeCreate = await this.hwDeviceProvider.withHw(deviceId, hw =>
       StreamTree.createNewTree(hw, { topic }),
     );
-    await streamTree.getRoot().resolve(); // double checks the signatures are correct before sending to the backend
-    const commandStream = CommandStreamEncoder.encode(streamTree.getRoot().blocks);
+    await streamTreeCreate.getRoot().resolve(); // double checks the signatures are correct before sending to the backend
+    const commandStream = CommandStreamEncoder.encode(streamTreeCreate.getRoot().blocks);
     await withJwt(jwt => this.api.postSeed(jwt, crypto.to_hex(commandStream)));
     // deviceJwt have changed, proactively refresh it
     await this.hwDeviceProvider.refreshJwt(deviceId, callbacks);
@@ -222,27 +223,36 @@ export class SDK implements TrustchainSDK {
 
     let trustchainRootId: string = "toto";
 
-    for (const newId of Object.keys(newTrustchains)) {
-      // Check if this newId was *not* a key in the previously fetched map
-      if (!(newId in trustchains)) {
-        trustchainRootId = newId; // Found the new trustchain ID
-        log("trustchain", `createTrustchain: Identified new trustchain ID: ${trustchainRootId}`);
-        break; // Exit the loop as we expect only one new ID
-      }
-    }
-
     const trustchainRootPath = "m/";
     for (const [trustchainId, info] of Object.entries(newTrustchains)) {
-      if (trustchainId == trustchainRootId) {
+      if (!(trustchainId in trustchains)) {
         for (const path in info) {
           if (path === trustchainRootPath) {
             trustchainRootId = trustchainId;
+            log("trustchain", `createTrustchain: Identified new trustchain ID: ${trustchainId}`);
           }
         }
       }
     }
 
+    let { streamTree } = await withJwt(jwt => this.fetchTrustchain(jwt, trustchainRootId));
     const path = streamTree.getApplicationRootPath(this.context.applicationId);
+    const child = streamTree.getChild(path);
+    let shouldShare = true;
+
+    if (child) {
+      const resolved = await child.resolve();
+      const members = resolved.getMembers();
+
+      shouldShare = !members.some(m => crypto.to_hex(m) === memberCredentials.pubkey); // not already a member
+    }
+    if (shouldShare) {
+      streamTree = await this.pushMember(streamTree, path, trustchainRootId, withJwt, withHw, {
+        id: memberCredentials.pubkey,
+        name: this.context.name,
+        permissions: Permissions.OWNER,
+      });
+    }
 
     const walletSyncEncryptionKey = await extractEncryptionKey(streamTree, path, memberCredentials);
 
