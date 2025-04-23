@@ -22,6 +22,36 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
   
+
+    // Setup Quick Actions 
+  UIApplicationShortcutIcon *iconLedger = [UIApplicationShortcutIcon iconWithTemplateImageName:@"syncIcon"];
+  UIApplicationShortcutIcon *iconSwap = [UIApplicationShortcutIcon iconWithType:UIApplicationShortcutIconTypeShuffle];
+  UIApplicationShortcutIcon *iconBuy = [UIApplicationShortcutIcon iconWithType:UIApplicationShortcutIconTypeAdd];
+
+  UIMutableApplicationShortcutItem *ledgerSync = [[UIMutableApplicationShortcutItem alloc]
+      initWithType:@"com.ledger.ledgersync"
+      localizedTitle:NSLocalizedString(@"Ledger Sync", nil)
+      localizedSubtitle:nil
+      icon:iconLedger
+      userInfo:@{ @"deeplink": @"ledgerlive://ledgersync?deeplinkSource=quick_action" }];
+
+  UIMutableApplicationShortcutItem *swap = [[UIMutableApplicationShortcutItem alloc]
+      initWithType:@"com.ledger.swap"
+      localizedTitle:NSLocalizedString(@"Swap", nil)
+      localizedSubtitle:nil
+      icon:iconSwap
+      userInfo:@{ @"deeplink": @"ledgerlive://swap?deeplinkSource=quick_action" }];
+
+  UIMutableApplicationShortcutItem *buy = [[UIMutableApplicationShortcutItem alloc]
+      initWithType:@"com.ledger.buy"
+      localizedTitle:NSLocalizedString(@"Buy", nil)
+      localizedSubtitle:nil
+      icon:iconBuy
+      userInfo:@{ @"deeplink": @"ledgerlive://buy?deeplinkSource=quick_action" }];
+
+  application.shortcutItems = @[ledgerSync, swap, buy];
+
+
   [MMKV initializeMMKV:nil];
   
   // Retrieve the correct GoogleService-Info.plist file name for a given environment
@@ -222,6 +252,27 @@ continueUserActivity:(NSUserActivity *)userActivity
   return [RCTLinkingManager application:application
                    continueUserActivity:userActivity
                      restorationHandler:restorationHandler];
+}
+
+- (void)application:(UIApplication *)application
+performActionForShortcutItem:(UIApplicationShortcutItem *)shortcutItem
+ completionHandler:(void (^)(BOOL))completionHandler {
+
+  NSString *deeplink = shortcutItem.userInfo[@"deeplink"];
+  if (deeplink != nil) {
+    NSLog(@"Quick Action triggered: %@", deeplink);
+    NSURL *url = [NSURL URLWithString:deeplink];
+
+    if (@available(iOS 10.0, *)) {
+      [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
+    } else {
+      [[UIApplication sharedApplication] openURL:url];
+    }
+  }
+
+  if (completionHandler) {
+    completionHandler(YES);
+  }
 }
 
 @end

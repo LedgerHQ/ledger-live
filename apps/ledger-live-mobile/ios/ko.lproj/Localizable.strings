@@ -1,0 +1,10 @@
+/* 
+  Localizable.strings
+  ledgerlivemobile
+
+  Copyright © 2025 Ledger SAS. All rights reserved.
+*/
+
+"Ledger Sync" = "Ledger Sync";
+"Swap" = "Swap";
+"Buy" = "Buy";

@@ -38,6 +38,7 @@
 		E466275BA70845F3AFE1D695 /* Inter-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = D91EB0620BDE4709B6F44620 /* Inter-Bold.otf */; };
 		E55EFC09114D43B3AB041882 /* FontAwesome5_Pro_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 991AA9919E4840DBB799E117 /* FontAwesome5_Pro_Solid.ttf */; };
 		E85A22C62B17E835005A8E6D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E85A22C52B17E835005A8E6D /* LaunchScreen.storyboard */; };
+		E92D8D152DB911E100A4D657 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = E92D8D132DB911E100A4D657 /* Localizable.strings */; };
 		E9558EFF2AF93CD200BBEB55 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E9558F012AF93CD200BBEB55 /* InfoPlist.strings */; };
 		F45A09B01925C0C58A9D40CE /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6562F0F2E65142E04A9EDDEB /* ExpoModulesProvider.swift */; };
 		F837348722721A48009D747A /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F837348622721A48009D747A /* JavaScriptCore.framework */; };
@@ -146,6 +147,17 @@
 		DF506596C56E4265A0CA1FA2 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		E00920DA84D64135AB92EBAB /* Fontisto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Fontisto.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf"; sourceTree = "<group>"; };
 		E85A22C52B17E835005A8E6D /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		E92D8D142DB911E100A4D657 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		E92D8D162DB911F100A4D657 /* zh */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh; path = zh.lproj/Localizable.strings; sourceTree = "<group>"; };
+		E92D8D172DB911F400A4D657 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		E92D8D182DB911F500A4D657 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
+		E92D8D192DB911F600A4D657 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
+		E92D8D1A2DB911F700A4D657 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
+		E92D8D1B2DB911F800A4D657 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		E92D8D1C2DB911F900A4D657 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+		E92D8D1D2DB911FA00A4D657 /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = th; path = th.lproj/Localizable.strings; sourceTree = "<group>"; };
+		E92D8D1E2DB911FB00A4D657 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		E92D8D1F2DB911FC00A4D657 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		E9558F002AF93CD200BBEB55 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E9558F022AF93CDA00BBEB55 /* zh */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh; path = zh.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E9558F032AF93CDB00BBEB55 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -240,6 +252,7 @@
 				E9558F012AF93CD200BBEB55 /* InfoPlist.strings */,
 				E85A22C52B17E835005A8E6D /* LaunchScreen.storyboard */,
 				3FF1B576B23156C611F7B818 /* PrivacyInfo.xcprivacy */,
+				E92D8D132DB911E100A4D657 /* Localizable.strings */,
 			);
 			name = ledgerlivemobile;
 			sourceTree = "<group>";
@@ -502,6 +515,7 @@
 				AD7A77B84DF3487C812B091B /* FontAwesome5_Pro_Regular.ttf in Resources */,
 				BA451DE927CE516700AAB209 /* GoogleService-Info-Production.plist in Resources */,
 				E55EFC09114D43B3AB041882 /* FontAwesome5_Pro_Solid.ttf in Resources */,
+				E92D8D152DB911E100A4D657 /* Localizable.strings in Resources */,
 				BC26C23ED1C649E7849FF99A /* HMAlphaMono-Medium.otf in Resources */,
 				515E9C2C8C0049EC992210D9 /* Inter-Medium.otf in Resources */,
 				BAE7949027D7C46A00C465F5 /* GoogleService-Info.plist in Resources */,
@@ -758,6 +772,24 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		E92D8D132DB911E100A4D657 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E92D8D142DB911E100A4D657 /* en */,
+				E92D8D162DB911F100A4D657 /* zh */,
+				E92D8D172DB911F400A4D657 /* fr */,
+				E92D8D182DB911F500A4D657 /* de */,
+				E92D8D192DB911F600A4D657 /* ja */,
+				E92D8D1A2DB911F700A4D657 /* ko */,
+				E92D8D1B2DB911F800A4D657 /* pt-BR */,
+				E92D8D1C2DB911F900A4D657 /* ru */,
+				E92D8D1D2DB911FA00A4D657 /* th */,
+				E92D8D1E2DB911FB00A4D657 /* es */,
+				E92D8D1F2DB911FC00A4D657 /* tr */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 		E9558F012AF93CD200BBEB55 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
