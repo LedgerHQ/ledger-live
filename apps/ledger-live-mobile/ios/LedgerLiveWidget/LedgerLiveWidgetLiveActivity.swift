@@ -73,9 +73,9 @@ extension LedgerLiveWidgetAttributes.ContentState {
      }
 }
 
-#Preview("Notification", as: .content, using: LedgerLiveWidgetAttributes.preview) {
-   LedgerLiveWidgetLiveActivity()
-} contentStates: {
-    LedgerLiveWidgetAttributes.ContentState.smiley
-    LedgerLiveWidgetAttributes.ContentState.starEyes
-}
+//#Preview("Notification", as: .content, using: LedgerLiveWidgetAttributes.preview) {
+//   LedgerLiveWidgetLiveActivity()
+//} contentStates: {
+//    LedgerLiveWidgetAttributes.ContentState.smiley
+//    LedgerLiveWidgetAttributes.ContentState.starEyes
+//}
