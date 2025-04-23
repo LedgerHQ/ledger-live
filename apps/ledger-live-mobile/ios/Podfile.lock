@@ -1469,6 +1469,8 @@ PODS:
     - React-Core
   - react-native-launch-arguments (4.0.2):
     - React
+  - react-native-maps (1.18.4):
+    - React-Core
   - react-native-mmkv (2.12.2):
     - DoubleConversion
     - glog
@@ -2141,6 +2143,7 @@ DEPENDENCIES:
   - react-native-image-crop-tools (from `../node_modules/react-native-image-crop-tools`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-launch-arguments (from `../node_modules/react-native-launch-arguments`)
+  - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-mmkv (from `../node_modules/react-native-mmkv`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
@@ -2355,6 +2358,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-image-picker"
   react-native-launch-arguments:
     :path: "../node_modules/react-native-launch-arguments"
+  react-native-maps:
+    :path: "../node_modules/react-native-maps"
   react-native-mmkv:
     :path: "../node_modules/react-native-mmkv"
   react-native-netinfo:
@@ -2568,6 +2573,7 @@ SPEC CHECKSUMS:
   react-native-image-crop-tools: a751dae773f66ceac0bea7d894dc6bc219a69c03
   react-native-image-picker: 3269f75c251cdcd61ab51b911dd30d6fff8c6169
   react-native-launch-arguments: 5f41e0abf88a15e3c5309b8875d6fd5ac43df49d
+  react-native-maps: b02f6060b4d358d35d5d5130e94e5de4bef5d5c4
   react-native-mmkv: 7d0b6c2a79e73100b933f2947a9c8741d664e18b
   react-native-netinfo: 48c5f79a84fbc3ba1d28a8b0d04adeda72885fa8
   react-native-pager-view: 12284823fff3b85b4dd16456b04def6ba9422677

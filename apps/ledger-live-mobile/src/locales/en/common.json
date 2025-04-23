@@ -7395,5 +7395,9 @@
       "seconds": "({{count}} second ago)",
       "seconds_plural": "({{count}} seconds ago)"
     }
+  },
+  "ledgerFind": {
+    "screenMap": "Map",
+    "screenDevices": "Devices"
   }
 }

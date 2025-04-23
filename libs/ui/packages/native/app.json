@@ -13,9 +13,9 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
+    "plugins": ["react-native-maps"],
+
     "ios": {
       "supportsTablet": true
     },

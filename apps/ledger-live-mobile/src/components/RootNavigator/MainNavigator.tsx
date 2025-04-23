@@ -22,6 +22,8 @@ import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
+import { LedgerFindMap } from "~/screens/LedgerFind/LedgerFindMap";
+import LedgerFindDeviceNavigator from "~/screens/LedgerFind/LedgerFindDeviceNavigator";
 
 const Tab = createBottomTabNavigator<MainNavigatorParamList>();
 
@@ -209,6 +211,72 @@ export default function MainNavigator() {
                   },
                 });
               }
+            });
+          },
+        })}
+      />
+
+      <Tab.Screen
+        name={NavigatorName.LedgerFindDeviceNavigator}
+        component={LedgerFindDeviceNavigator}
+        options={{
+          tabBarIcon: props => (
+            <TabIcon
+              Icon={IconsLegacy.MapMarkerMedium}
+              i18nKey="ledgerFind.screenDevices"
+              {...props}
+            />
+          ),
+        }}
+        listeners={({ navigation }) => ({
+          tabPress: e => {
+            e.preventDefault();
+            managerLockAwareCallback(() => {
+              // if (readOnlyModeEnabled && hasOrderedNano) {
+              //   navigation.navigate(ScreenName.PostBuyDeviceSetupNanoWallScreen);
+              // } else if (readOnlyModeEnabled) {
+              //   navigateToRebornFlow();
+              // } else {
+              navigation.navigate(NavigatorName.LedgerFindDeviceNavigator, {
+                screen: ScreenName.LedgerFindMap,
+                params: {
+                  tab: undefined,
+                  searchQuery: undefined,
+                  updateModalOpened: undefined,
+                },
+              });
+              // }
+            });
+          },
+        })}
+      />
+
+      <Tab.Screen
+        name={NavigatorName.LedgerFindMap}
+        component={LedgerFindMap}
+        options={{
+          tabBarIcon: props => (
+            <TabIcon Icon={IconsLegacy.MapMarkerMedium} i18nKey="ledgerFind.screenMap" {...props} />
+          ),
+        }}
+        listeners={({ navigation }) => ({
+          tabPress: e => {
+            e.preventDefault();
+            managerLockAwareCallback(() => {
+              // if (readOnlyModeEnabled && hasOrderedNano) {
+              //   navigation.navigate(ScreenName.PostBuyDeviceSetupNanoWallScreen);
+              // } else if (readOnlyModeEnabled) {
+              //   navigateToRebornFlow();
+              // } else {
+              navigation.navigate(NavigatorName.LedgerFindMap, {
+                screen: ScreenName.MyLedgerChooseDevice,
+                params: {
+                  tab: undefined,
+                  searchQuery: undefined,
+                  updateModalOpened: undefined,
+                },
+              });
+              // }
             });
           },
         })}
