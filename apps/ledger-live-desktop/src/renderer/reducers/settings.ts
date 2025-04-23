@@ -58,6 +58,7 @@ export type SettingsState = {
   loaded: boolean;
   hodlShieldEmail: string;
   hodlShieldPhone: string;
+  hodlShieldFirstName: string;
   // is the settings loaded from db (if not we don't save them)
   hasCompletedOnboarding: boolean;
   counterValue: string;
@@ -168,6 +169,7 @@ export const getInitialLanguageAndLocale = (): { language: Language; locale: Loc
 export const INITIAL_STATE: SettingsState = {
   hodlShieldEmail: "",
   hodlShieldPhone: "",
+  hodlShieldFirstName: "",
   hasCompletedOnboarding: false,
   counterValue: "USD",
   ...getInitialLanguageAndLocale(),
@@ -253,6 +255,7 @@ export const INITIAL_STATE: SettingsState = {
 type HandlersPayloads = {
   HODLSHIELD_CHANGE_EMAIL: string;
   HODLSHIELD_CHANGE_PHONE: string;
+  HODLSHIELD_CHANGE_FIRSTNAME: string;
   SETTINGS_SET_PAIRS: Array<{
     from: Currency;
     to: Currency;
@@ -336,6 +339,10 @@ const handlers: SettingsHandlers = {
   HODLSHIELD_CHANGE_PHONE: (state, { payload }: { payload: string }) => ({
     ...state,
     hodlShieldPhone: payload,
+  }),
+  HODLSHIELD_CHANGE_FIRSTNAME: (state, { payload }: { payload: string }) => ({
+    ...state,
+    hodlShieldFirstName: payload,
   }),
   SETTINGS_SET_PAIRS: (state, { payload: pairs }) => {
     const copy = {
@@ -773,6 +780,7 @@ export const localeSelector = createSelector(
 
 export const hodlShieldPhoneSelector = (state: State) => state.settings.hodlShieldPhone;
 export const hodlShieldEmailSelector = (state: State) => state.settings.hodlShieldEmail;
+export const hodlShieldFirstNameSelector = (state: State) => state.settings.hodlShieldFirstName;
 export const getOrderAccounts = (state: State) => state.settings.orderAccounts;
 export const areSettingsLoaded = (state: State) => state.settings.loaded;
 export const currencySettingsLocaleSelector = (

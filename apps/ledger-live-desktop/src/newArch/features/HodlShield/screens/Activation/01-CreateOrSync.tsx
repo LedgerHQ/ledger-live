@@ -4,9 +4,17 @@ import { useTheme } from "styled-components";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 import { LogoWrapper } from "../../components/LogoWrapper";
 import Input from "~/renderer/components/Input";
-import { setHodlShieldEmail, setHodlShieldPhone } from "~/renderer/actions/settings";
+import {
+  setHodlShieldEmail,
+  setHodlShieldFirstName,
+  setHodlShieldPhone,
+} from "~/renderer/actions/settings";
 import { useDispatch, useSelector } from "react-redux";
-import { hodlShieldEmailSelector, hodlShieldPhoneSelector } from "~/renderer/reducers/settings";
+import {
+  hodlShieldEmailSelector,
+  hodlShieldPhoneSelector,
+  hodlShieldFirstNameSelector,
+} from "~/renderer/reducers/settings";
 
 type Props = {
   goToCreateBackup: () => void;
@@ -18,12 +26,16 @@ export default function CreateOrSynchronizeStep({ goToCreateBackup }: Props) {
   const { colors } = useTheme();
   const currentEmail = useSelector(hodlShieldEmailSelector);
   const currentPhone = useSelector(hodlShieldPhoneSelector);
+  const currentFirstname = useSelector(hodlShieldFirstNameSelector);
 
   function handleEmailChange(value: string) {
     dispatch(setHodlShieldEmail(value));
   }
   function handlePhoneChange(value: string) {
     dispatch(setHodlShieldPhone(value));
+  }
+  function handleFirstName(value: string) {
+    dispatch(setHodlShieldFirstName(value));
   }
 
   return (
@@ -51,6 +63,14 @@ export default function CreateOrSynchronizeStep({ goToCreateBackup }: Props) {
         used, ensuring you&apos;re alerted promptly in case of any potential danger. Rest assured,
         this information will be securely encrypted.
       </Text>
+      <Flex width="100%" flexDirection="column" rowGap="16px">
+        <Input
+          name="hodlshield_firstname"
+          placeholder="First name or nick name..."
+          value={currentFirstname}
+          onChange={handleFirstName}
+        />
+      </Flex>
       <Flex width="100%" flexDirection="column" rowGap="16px">
         <Input
           name="hodlshield_email"

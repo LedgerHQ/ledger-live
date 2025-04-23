@@ -480,3 +480,8 @@ export const setHodlShieldPhone = (payload: string) => ({
   type: "HODLSHIELD_CHANGE_PHONE",
   payload,
 });
+
+export const setHodlShieldFirstName = (payload: string) => ({
+  type: "HODLSHIELD_CHANGE_FIRSTNAME",
+  payload,
+});
