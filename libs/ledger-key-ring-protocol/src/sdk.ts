@@ -191,6 +191,70 @@ export class SDK implements TrustchainSDK {
     return { type, trustchain };
   }
 
+  async createTrustchain(
+    deviceId: string,
+    memberCredentials: MemberCredentials,
+    callbacks?: GetOrCreateTrustchainCallbacks,
+    topic?: Uint8Array,
+  ): Promise<TrustchainResult> {
+    this.invalidateJwt();
+
+    let type = TrustchainResultType.restored;
+
+    const withJwt: WithJwt = job =>
+      this.hwDeviceProvider.withJwt(deviceId, job, "cache", callbacks);
+
+    const trustchains = await withJwt(this.api.getTrustchains);
+
+    callbacks?.onInitialResponse?.(trustchains);
+
+    log("trustchain", "getOrCreateTrustchain: no trustchain yet, let's create one");
+    type = TrustchainResultType.created;
+    const streamTree = await this.hwDeviceProvider.withHw(deviceId, hw =>
+      StreamTree.createNewTree(hw, { topic }),
+    );
+    await streamTree.getRoot().resolve(); // double checks the signatures are correct before sending to the backend
+    const commandStream = CommandStreamEncoder.encode(streamTree.getRoot().blocks);
+    await withJwt(jwt => this.api.postSeed(jwt, crypto.to_hex(commandStream)));
+    // deviceJwt have changed, proactively refresh it
+    await this.hwDeviceProvider.refreshJwt(deviceId, callbacks);
+    const newTrustchains = await withJwt(this.api.getTrustchains);
+
+    let trustchainRootId: string = "toto";
+
+    for (const newId of Object.keys(newTrustchains)) {
+      // Check if this newId was *not* a key in the previously fetched map
+      if (!(newId in trustchains)) {
+        trustchainRootId = newId; // Found the new trustchain ID
+        log("trustchain", `createTrustchain: Identified new trustchain ID: ${trustchainRootId}`);
+        break; // Exit the loop as we expect only one new ID
+      }
+    }
+
+    const trustchainRootPath = "m/";
+    for (const [trustchainId, info] of Object.entries(newTrustchains)) {
+      if (trustchainId == trustchainRootId) {
+        for (const path in info) {
+          if (path === trustchainRootPath) {
+            trustchainRootId = trustchainId;
+          }
+        }
+      }
+    }
+
+    const path = streamTree.getApplicationRootPath(this.context.applicationId);
+
+    const walletSyncEncryptionKey = await extractEncryptionKey(streamTree, path, memberCredentials);
+
+    const trustchain = {
+      rootId: trustchainRootId,
+      walletSyncEncryptionKey,
+      applicationPath: path,
+    };
+
+    return { type, trustchain };
+  }
+
   async restoreTrustchain(
     trustchain: Trustchain,
     memberCredentials: MemberCredentials,
