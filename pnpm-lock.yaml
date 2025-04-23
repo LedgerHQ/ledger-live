@@ -7504,11 +7504,11 @@ importers:
   libs/live-dmk-mobile:
     dependencies:
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-fix-ble-scanning-20250423070301
-        version: 0.0.0-fix-ble-scanning-20250423070301(rxjs@7.8.1)
+        specifier: 0.0.0-fix-ble-scanning-20250423113003
+        version: 0.0.0-fix-ble-scanning-20250423113003(rxjs@7.8.1)
       '@ledgerhq/device-transport-kit-react-native-ble':
-        specifier: 0.0.0-fix-ble-scanning-20250423070301
-        version: 0.0.0-fix-ble-scanning-20250423070301(@ledgerhq/device-management-kit@0.0.0-fix-ble-scanning-20250423070301(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.76.3(react@18.3.1))(react@18.3.1))(react-native@0.76.3(react@18.3.1))(rxjs@7.8.1)
+        specifier: 0.0.0-fix-ble-scanning-20250423113003
+        version: 0.0.0-fix-ble-scanning-20250423113003(@ledgerhq/device-management-kit@0.0.0-fix-ble-scanning-20250423113003(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.76.3(react@18.3.1))(react@18.3.1))(react-native@0.76.3(react@18.3.1))(rxjs@7.8.1)
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -7587,8 +7587,8 @@ importers:
         version: link:../ledgerjs/packages/types-devices
     devDependencies:
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-fix-ble-scanning-20250423070301
-        version: 0.0.0-fix-ble-scanning-20250423070301(rxjs@7.8.1)
+        specifier: 0.0.0-fix-ble-scanning-20250423113003
+        version: 0.0.0-fix-ble-scanning-20250423113003(rxjs@7.8.1)
       '@testing-library/dom':
         specifier: ^9.3.4
         version: 9.3.4
@@ -13136,8 +13136,8 @@ packages:
   '@ledgerhq/cryptoassets@6.37.0':
     resolution: {integrity: sha512-xwrDKTS9koQBNNzc7CqgV6zfGHvNFWJjlIL0Kc4O4DVWYR2vUdztUHcvwHD1KPjxNYhVnsgIopmtq47fHt3nMg==}
 
-  '@ledgerhq/device-management-kit@0.0.0-fix-ble-scanning-20250423070301':
-    resolution: {integrity: sha512-7u13U+YqESCBjT7wylv2/giU9YU1bbQ/BIUpDyDCSHtwnXoVOrhSke0cNCVTWYVmn2X27Vfm3sjzsvAIcHf7HQ==}
+  '@ledgerhq/device-management-kit@0.0.0-fix-ble-scanning-20250423113003':
+    resolution: {integrity: sha512-qf6NEIukpr6b6ifPMhBzBGGtVnyxUtlF9mbBGw8cGT6s2gOA8xhNSuLPcTLnOePFz64jwOoFH7jr/YxvStWNyg==}
     peerDependencies:
       rxjs: ^7.8.2
 
@@ -13157,10 +13157,10 @@ packages:
       '@ledgerhq/context-module': ^1.3.1
       '@ledgerhq/device-management-kit': ^0.6.5
 
-  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-fix-ble-scanning-20250423070301':
-    resolution: {integrity: sha512-43PMXruwFDlELh7dseQR3yZ0wMpm8Ambdnl5Y19wAhVeESrzei+fXqGIlL2KZUV85DqXTXufjlEX4ysqpMwyXw==}
+  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-fix-ble-scanning-20250423113003':
+    resolution: {integrity: sha512-fly1kHedvBBBgj3jM/7nsVVsh+OueCWVTxQnBgrS7XCmfFcCywwyBH9DG4cMLDpZZAScchpSA0CUqQEcvfY/Dg==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-fix-ble-scanning-20250423070301
+      '@ledgerhq/device-management-kit': 0.0.0-fix-ble-scanning-20250423113003
       react-native: '>0.74.1'
       react-native-ble-plx: 3.4.0
       rxjs: ^7.8.1
@@ -40669,7 +40669,7 @@ snapshots:
     dependencies:
       invariant: 2.2.4
 
-  '@ledgerhq/device-management-kit@0.0.0-fix-ble-scanning-20250423070301(rxjs@7.8.1)':
+  '@ledgerhq/device-management-kit@0.0.0-fix-ble-scanning-20250423113003(rxjs@7.8.1)':
     dependencies:
       '@sentry/minimal': 6.19.7
       axios: 1.8.3
@@ -40742,9 +40742,9 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-fix-ble-scanning-20250423070301(@ledgerhq/device-management-kit@0.0.0-fix-ble-scanning-20250423070301(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.76.3(react@18.3.1))(react@18.3.1))(react-native@0.76.3(react@18.3.1))(rxjs@7.8.1)':
+  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-fix-ble-scanning-20250423113003(@ledgerhq/device-management-kit@0.0.0-fix-ble-scanning-20250423113003(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.76.3(react@18.3.1))(react@18.3.1))(react-native@0.76.3(react@18.3.1))(rxjs@7.8.1)':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-fix-ble-scanning-20250423070301(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.0.0-fix-ble-scanning-20250423113003(rxjs@7.8.1)
       '@sentry/minimal': 6.19.7
       js-base64: 3.7.7
       purify-ts: 2.1.0

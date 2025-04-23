@@ -31,8 +31,8 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@ledgerhq/device-management-kit": "0.0.0-fix-ble-scanning-20250423101447",
-    "@ledgerhq/device-transport-kit-react-native-ble": "0.0.0-fix-ble-scanning-20250423101447",
+    "@ledgerhq/device-management-kit": "0.0.0-fix-ble-scanning-20250423113003",
+    "@ledgerhq/device-transport-kit-react-native-ble": "0.0.0-fix-ble-scanning-20250423113003",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
