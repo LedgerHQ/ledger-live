@@ -149,9 +149,11 @@
     "@ledgerhq/hw-app-celo": "6.32.0"
   },
   "changesets": [
+    "chilled-bikes-act",
     "chilly-lizards-obey",
     "curly-waves-breathe",
     "fast-bugs-run",
+    "green-garlics-enjoy",
     "hot-crabs-arrive",
     "large-zebras-learn",
     "lemon-boxes-try",
@@ -166,9 +168,11 @@
     "poor-rice-attend",
     "quiet-deers-decide",
     "quiet-snails-applaud",
+    "rotten-bats-accept",
     "selfish-roses-lay",
     "serious-snakes-bake",
     "shaggy-drinks-cry",
+    "shaggy-knives-judge",
     "short-rats-suffer",
     "short-ravens-explode",
     "slow-parents-cough",
@@ -177,6 +181,7 @@
     "tame-dolphins-watch",
     "thick-comics-speak",
     "twelve-hats-accept",
+    "twenty-cows-talk",
     "weak-pumpkins-retire"
   ]
 }

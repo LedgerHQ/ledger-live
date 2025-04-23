@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.22.0-nightly.1
+
+### Minor Changes
+
+- [#10003](https://github.com/LedgerHQ/ledger-live/pull/10003) [`8e627c3`](https://github.com/LedgerHQ/ledger-live/commit/8e627c3823b3c798c9807a40f47897c7e36f485b) Thanks [@thesan](https://github.com/thesan)! - Implement the new search component UI
+
 ## 0.22.0-nightly.0
 
 ### Minor Changes

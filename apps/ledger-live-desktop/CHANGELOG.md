@@ -1,5 +1,25 @@
 # ledger-live-desktop
 
+## 2.110.0-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`8e627c3`](https://github.com/LedgerHQ/ledger-live/commit/8e627c3823b3c798c9807a40f47897c7e36f485b), [`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601)]:
+  - @ledgerhq/react-ui@0.22.0-nightly.1
+  - @ledgerhq/coin-framework@4.0.0-nightly.1
+  - @ledgerhq/live-common@34.31.0-nightly.3
+  - @ledgerhq/coin-aptos@1.9.2-nightly.1
+  - @ledgerhq/coin-bitcoin@0.15.2-nightly.1
+  - @ledgerhq/coin-cosmos@0.13.1-nightly.1
+  - @ledgerhq/coin-evm@2.18.1-nightly.1
+  - @ledgerhq/coin-filecoin@1.9.2-nightly.1
+  - @ledgerhq/live-countervalues@0.5.2-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.31-nightly.1
+  - @ledgerhq/live-nft@0.8.2-nightly.1
+  - @ledgerhq/live-nft-react@0.9.2-nightly.1
+  - @ledgerhq/live-wallet@0.10.5-nightly.1
+  - @ledgerhq/live-dmk-desktop@0.2.2-nightly.3
+
 ## 2.110.0-nightly.2
 
 ### Minor Changes

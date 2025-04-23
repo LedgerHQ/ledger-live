@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.33.0-nightly.1
+
+### Minor Changes
+
+- [#9950](https://github.com/LedgerHQ/ledger-live/pull/9950) [`7d28d6d`](https://github.com/LedgerHQ/ledger-live/commit/7d28d6d7dbf5cbc2aad1ae46c8c4e5f226971384) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Large Mover Footer Component
+
 ## 0.33.0-nightly.0
 
 ### Minor Changes
