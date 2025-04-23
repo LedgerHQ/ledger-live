@@ -13,6 +13,7 @@ import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
 import { Account } from "@ledgerhq/types-live";
 import { AptosSigner } from "../types";
 import { sha3_256 as sha3Hash } from "@noble/hashes/sha3";
+export * from "./client";
 
 export async function signTransaction(
   signerContext: SignerContext<AptosSigner>,
