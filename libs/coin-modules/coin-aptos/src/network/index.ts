@@ -9,7 +9,7 @@ import {
   RawTransaction,
   SimpleTransaction,
 } from "@aptos-labs/ts-sdk";
-import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { Account } from "@ledgerhq/types-live";
 import { AptosSigner } from "../types";
 import { sha3_256 as sha3Hash } from "@noble/hashes/sha3";
