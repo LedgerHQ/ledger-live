@@ -1,11 +1,11 @@
 import BigNumber from "bignumber.js";
 import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
 import * as getFeesForTransaction from "../../bridge/getFeesForTransaction";
-import { AptosAPI } from "../../api";
+import { AptosAPI } from "../../network";
 
 let simulateTransaction = jest.fn();
 
-jest.mock("../../api", () => {
+jest.mock("../../network", () => {
   return {
     AptosAPI: function () {
       return {
