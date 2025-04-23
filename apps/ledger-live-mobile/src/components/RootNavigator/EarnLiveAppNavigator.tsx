@@ -1,21 +1,20 @@
-import React, { useEffect, useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
-
-import { useTheme } from "styled-components/native";
-import { useRoute } from "@react-navigation/native";
-import { useDispatch, useSelector } from "react-redux";
+import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/lib/account/helpers";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
-
-import { ScreenName, NavigatorName } from "~/const";
+import { useRoute } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import React, { useEffect, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useTheme } from "styled-components/native";
+import { NavigatorName, ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { flattenAccountsSelector } from "~/reducers/accounts";
+import { EarnScreen } from "~/screens/PTX/Earn";
+import { EarnInfoDrawer } from "~/screens/PTX/Earn/EarnInfoDrawer";
+import { EarnMenuDrawer } from "~/screens/PTX/Earn/EarnMenuDrawer";
+import { EarnProtocolInfoDrawer } from "~/screens/PTX/Earn/EarnProtocolInfoDrawer";
+import { useStakingDrawer } from "../Stake/useStakingDrawer";
 import type { EarnLiveAppNavigatorParamList } from "./types/EarnLiveAppNavigator";
 import type { BaseComposite, StackNavigatorProps } from "./types/helpers";
-import { EarnScreen } from "~/screens/PTX/Earn";
-import { flattenAccountsSelector } from "~/reducers/accounts";
-import { EarnInfoDrawer } from "~/screens/PTX/Earn/EarnInfoDrawer";
-import { useStakingDrawer } from "../Stake/useStakingDrawer";
-import { EarnMenuDrawer } from "~/screens/PTX/Earn/EarnMenuDrawer";
-import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/lib/account/helpers";
 
 const Stack = createStackNavigator<EarnLiveAppNavigatorParamList>();
 
@@ -123,6 +122,7 @@ const Earn = (props: NavigationProps) => {
           },
         }}
       />
+      <EarnProtocolInfoDrawer />
       <EarnInfoDrawer />
       <EarnMenuDrawer />
     </>
