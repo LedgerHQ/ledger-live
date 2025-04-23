@@ -2,7 +2,7 @@ import {
   WalletSyncDataManager,
   WalletSyncDataManagerResolutionContext,
   UpdateDiff,
-} from "../types";
+} from "../types.js";
 import { z } from "zod";
 import * as Automerge from "@automerge/automerge";
 

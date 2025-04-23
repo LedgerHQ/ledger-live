@@ -33,6 +33,7 @@
     "@ledgerhq/logs": "workspace:*",
     "@ledgerhq/types-cryptoassets": "workspace:*",
     "@ledgerhq/types-live": "workspace:*",
+    "@types/node": "22.14.1",
     "base64-js": "1",
     "bignumber.js": "9",
     "isomorphic-ws": "^5.0.0",
