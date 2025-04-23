@@ -11,15 +11,16 @@ import DeviceAction from "~/renderer/components/DeviceAction";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
-import { ApduBuilder, ApduParser, CommandUtils } from "@ledgerhq/device-management-kit";
-import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
-
+import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
+import { useObservable } from "@ledgerhq/live-common/observable";
+import { StatusCodes } from "@ledgerhq/hw-transport";
 const request = { appName: "Boilerplate" };
 
 type Props = {};
 
 const HodlShieldActivation = forwardRef<BackRef, Props>((props, ref) => {
   const dispatch = useDispatch();
+  const activeSession = useObservable(activeDeviceSessionSubject);
   const { currentStep, goToNextScene, goToPreviousScene, goToWelcomeScreenWalletSync } = useFlows();
 
   useImperativeHandle(ref, () => ({
@@ -42,36 +43,47 @@ const HodlShieldActivation = forwardRef<BackRef, Props>((props, ref) => {
     goToNextScene();
   };
 
-  const deviceManagementKit = useDeviceManagementKit();
-
-
-
-  /* useEffect(() => {
+  //  const deviceManagementKit = useDeviceManagementKit();
+  useEffect(() => {
+    console.log(activeSession);
     const testfn = async () => {
+      if (!activeSession) return;
+
+      console.log("Run testFn");
       const openAppApduArgs = {
         cla: 0xe0,
         ins: 0xd8,
         p1: 0x00,
         p2: 0x00,
       };
-      const apdu = new ApduBuilder(openAppApduArgs).addAsciiStringToData("Bitcoin").build();
+      const data = new TextEncoder().encode("Bitcoin");
+      await activeSession.transport
+        .send(
+          openAppApduArgs.cla,
+          openAppApduArgs.ins,
+          openAppApduArgs.p1,
+          openAppApduArgs.p2,
+          Buffer.from(data),
+        )
+        .then(response => {
+          const status = response.readUInt16BE(response.length - 2);
 
-      // ### 2. Sending the APDU
-
-      const apduResponse = await deviceManagementKit?.sendApdu({ sessionId, apdu });
-
-      // ### 3. Parsing the result
-
-      const parser = new ApduParser(apduResponse);
-
-      if (!CommandUtils.isSuccessResponse(apduResponse)) {
-        throw new Error(
-          `Unexpected status word: ${parser.encodeToHexaString(apduResponse.statusCode)}`,
-        );
-      }
+          switch (status) {
+            case StatusCodes.OK:
+              console.log("Status OK");
+              return response.slice(0, response.length - 2).toString("utf-8");
+            case StatusCodes.DEVICE_NOT_ONBOARDED:
+            case StatusCodes.DEVICE_NOT_ONBOARDED_2:
+              return "";
+          }
+        })
+        .then(str => console.log("Buffer out", str))
+        .catch(e => {
+          console.log("Error", e);
+        });
     };
-  }, []);
- */
+    testfn();
+  }, [activeSession]);
   const getStep = () => {
     switch (currentStep) {
       default:

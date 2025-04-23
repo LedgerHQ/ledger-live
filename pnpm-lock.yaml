@@ -345,6 +345,9 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/cryptoassets
+      '@ledgerhq/device-management-kit':
+        specifier: latest
+        version: 0.6.5(rxjs@7.8.1)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
@@ -393,6 +396,9 @@ importers:
       '@ledgerhq/live-dmk-desktop':
         specifier: workspace:^
         version: link:../../libs/live-dmk-desktop
+      '@ledgerhq/live-dmk-shared':
+        specifier: workspace:^
+        version: link:../../libs/live-dmk-shared
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env

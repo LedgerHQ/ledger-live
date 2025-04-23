@@ -70,6 +70,8 @@
     "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@ledgerhq/hw-transport-vault": "workspace:^",
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
+    "@ledgerhq/live-dmk-shared": "workspace:^",
+    "@ledgerhq/device-management-kit": "latest",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",
