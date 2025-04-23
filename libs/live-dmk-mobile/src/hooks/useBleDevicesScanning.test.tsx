@@ -19,7 +19,7 @@ const TestComponent = <T = Device,>(
     filterOutDevicesByDeviceIds?: DeviceId[];
   } = { mapper: deviceMapper },
 ) => {
-  const { scannedDevices, scanningBleError } = useBleDevicesScanning({
+  const { scannedDevices, scanningBleError } = useBleDevicesScanning(true, {
     mapper,
     filterOutDevicesByDeviceIds,
     filterByDeviceModelIds,
