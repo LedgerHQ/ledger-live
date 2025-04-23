@@ -276,8 +276,6 @@ export class SDK implements TrustchainSDK {
 
     const trustchains = await withJwt(this.api.getTrustchains);
 
-    callbacks?.onInitialResponse?.(trustchains);
-
     const res = new Array<Trustchain>();
     // we find our trustchain root id
     const trustchainRootIds = new Array<string>();

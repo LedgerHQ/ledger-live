@@ -36,6 +36,7 @@ import { DistantState, trustchainLifecycle } from "@ledgerhq/live-wallet/wallets
 import { Loading } from "./Loading";
 import { State } from "./types";
 import { AppCreateNewTrustchain } from "./AppCreateNewTrustchain";
+import { TrustchainSelector } from "./TrustchainSelector";
 
 const Container = styled.div`
   padding: 0 10px 50px 0;
@@ -229,6 +230,13 @@ const App = () => {
           />
 
           <AppCreateNewTrustchain
+            deviceId={deviceId}
+            memberCredentials={memberCredentials}
+            setTrustchain={setTrustchain}
+            callbacks={callbacks}
+          />
+
+          <TrustchainSelector
             deviceId={deviceId}
             memberCredentials={memberCredentials}
             setTrustchain={setTrustchain}
