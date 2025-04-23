@@ -6624,12 +6624,14 @@
     "range" : {
       "1h" : "1 ساعة",
       "24h" : "24 ساعة",
-      "1d" : "1D",
       "7d" : "7 أيام",
-      "1w" : "1W",
       "30d" : "30 يوم",
-      "1m" : "1M",
-      "1y" : "1 سنة"
+      "1y" : "1 سنة",
+      "1D_label" : "1 يوم",
+      "1H_label" : "1 ساعة",
+      "1W_label" : "1 أسبوع",
+      "1M_label" : "1 شهر",
+      "1Y_label" : "1 سنة"
     },
     "warnings" : {
       "connectionError" : "خطأ في الاتصال",
@@ -7364,8 +7366,28 @@
     }
   },
   "largeMover" : {
-    "performance" : "Performance",
-    "low" : "Low",
-    "high" : "High"
+    "info" : "معلومات",
+    "marketCap" : "سقف أسعار السوق (Market Cap)",
+    "volume" : "حجم التداول (24 ساعة)",
+    "fdv" : "التقييم المُخفّف بالكامل (FDV)",
+    "marketCap24h" : "حجم التداول/القيمة السوقية (24 ساعة)",
+    "circulatingSupply" : "التوريد المتداول",
+    "totalSupply" : "إجمالي التوريد",
+    "ath" : "الحد الأقصى التاريخي",
+    "atl" : "الحد الأدنى التاريخي",
+    "timeAgo" : {
+      "years" : "(منذ {{count}} سنة)",
+      "years_plural" : "(منذ {{count}} سنة)",
+      "months" : "(منذ {{count}} شهر)",
+      "months_plural" : "(منذ {{count}} شهر)",
+      "days" : "(منذ {{count}} يوم)",
+      "days_plural" : "(منذ {{count}} يوم)",
+      "hours" : "(منذ {{count}} ساعة)",
+      "hours_plural" : "(منذ {{count}} ساعة)",
+      "minutes" : "(منذ {{count}} دقيقة)",
+      "minutes_plural" : "(منذ {{count}} دقيقة)",
+      "seconds" : "(منذ {{count}} ثانية)",
+      "seconds_plural" : "(منذ {{count}} ثانية)"
+    }
   }
 }
