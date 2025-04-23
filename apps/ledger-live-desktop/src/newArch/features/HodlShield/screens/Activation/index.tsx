@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle } from "react";
 import { useDispatch } from "react-redux";
 import { Flex } from "@ledgerhq/react-ui";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
@@ -11,6 +11,8 @@ import DeviceAction from "~/renderer/components/DeviceAction";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
+import { ApduBuilder, ApduParser, CommandUtils } from "@ledgerhq/device-management-kit";
+import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
 
 const request = { appName: "Boilerplate" };
 
@@ -40,6 +42,36 @@ const HodlShieldActivation = forwardRef<BackRef, Props>((props, ref) => {
     goToNextScene();
   };
 
+  const deviceManagementKit = useDeviceManagementKit();
+
+
+
+  /* useEffect(() => {
+    const testfn = async () => {
+      const openAppApduArgs = {
+        cla: 0xe0,
+        ins: 0xd8,
+        p1: 0x00,
+        p2: 0x00,
+      };
+      const apdu = new ApduBuilder(openAppApduArgs).addAsciiStringToData("Bitcoin").build();
+
+      // ### 2. Sending the APDU
+
+      const apduResponse = await deviceManagementKit?.sendApdu({ sessionId, apdu });
+
+      // ### 3. Parsing the result
+
+      const parser = new ApduParser(apduResponse);
+
+      if (!CommandUtils.isSuccessResponse(apduResponse)) {
+        throw new Error(
+          `Unexpected status word: ${parser.encodeToHexaString(apduResponse.statusCode)}`,
+        );
+      }
+    };
+  }, []);
+ */
   const getStep = () => {
     switch (currentStep) {
       default:
@@ -51,7 +83,7 @@ const HodlShieldActivation = forwardRef<BackRef, Props>((props, ref) => {
           <DeviceAction
             action={createAction(connectApp)}
             request={request}
-            onResult={(metadata) => {
+            onResult={metadata => {
               console.log("DeviceAction result", metadata);
             }}
             overridesPreferredDeviceModel={DeviceModelId.stax}
