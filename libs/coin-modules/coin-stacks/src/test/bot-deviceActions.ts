@@ -48,6 +48,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
   ],
 });
 
+// TODO Once app supports clear signing for tokens transfer, we should adapt this device action to match that flow
 export const acceptTokenTransfer: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [
     {
