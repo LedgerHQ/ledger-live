@@ -12,7 +12,7 @@ import SwiftUI
 @main
 struct LedgerLiveWidgetBundle: WidgetBundle {
     var body: some Widget {
-        LedgerLiveWidget()
+        NFTWidget()
         LedgerLiveWidgetControl()
         LedgerLiveWidgetLiveActivity()
     }

@@ -10,80 +10,99 @@ import WidgetKit
 import SwiftUI
 
 struct Provider: AppIntentTimelineProvider {
+    let nfts = [
+        SelectNFTIntent.NFTs.nft1: "https://i2.seadn.io/base/0xe26e46742f7a0d53e71dadfb890374e8d28dfb6e/3bf2b3068a80eca621fe542708ce27/733bf2b3068a80eca621fe542708ce27.png?w=1000",
+        SelectNFTIntent.NFTs.nft2: "https://i2.seadn.io/base/0x7e72abdf47bd21bf0ed6ea8…fd51c/f304540688a3db8873b8a4d57e9fd51c.png?w=1000",
+        SelectNFTIntent.NFTs.nft3: "https://i2.seadn.io/base/0x286ce4278213bf7b561763ebcf2342bb94e52858/0c99e94bdbfc95a1a74e4fcbca26520d.png?w=1000"
+    ]
+
     func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), configuration: ConfigurationAppIntent())
+        SimpleEntry(date: Date(), nftURL: URL(string: nfts[.nft1]!), configuration: SelectNFTIntent())
     }
 
-    func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> SimpleEntry {
-        SimpleEntry(date: Date(), configuration: configuration)
-    }
-    
-    func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<SimpleEntry> {
-        var entries: [SimpleEntry] = []
-
-        // Generate a timeline consisting of five entries an hour apart, starting from the current date.
-        let currentDate = Date()
-        for hourOffset in 0 ..< 5 {
-            let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            let entry = SimpleEntry(date: entryDate, configuration: configuration)
-            entries.append(entry)
-        }
-
-        return Timeline(entries: entries, policy: .atEnd)
+    func snapshot(for configuration: SelectNFTIntent, in context: Context) async -> SimpleEntry {
+        let selectedNFTURLString = nfts[configuration.selectedNFT ?? .nft1] ?? nfts[.nft1]!
+        return SimpleEntry(date: Date(), nftURL: URL(string: selectedNFTURLString)!, configuration: configuration)
     }
 
-//    func relevances() async -> WidgetRelevances<ConfigurationAppIntent> {
-//        // Generate a list containing the contexts this widget is relevant in.
-//    }
+    func timeline(for configuration: SelectNFTIntent, in context: Context) async -> Timeline<SimpleEntry> {
+        let selectedNFTURLString = nfts[configuration.selectedNFT ?? .nft1] ?? nfts[.nft1]!
+        let entry = SimpleEntry(date: Date(), nftURL: URL(string: selectedNFTURLString)!, configuration: configuration)
+        return Timeline(entries: [entry], policy: .atEnd)
+    }
 }
 
 struct SimpleEntry: TimelineEntry {
     let date: Date
-    let configuration: ConfigurationAppIntent
+    let nftURL: URL?
+    let configuration: SelectNFTIntent
 }
 
-struct LedgerLiveWidgetEntryView : View {
+struct NFTWidgetEntryView: View {
     var entry: Provider.Entry
 
     var body: some View {
-        VStack {
-            Text("Time:")
-            Text(entry.date, style: .time)
+        GeometryReader { geometry in
+            ZStack(alignment: .topTrailing) {
+                // Main NFT image
+                if let url = entry.nftURL,
+                   let imageData = try? Data(contentsOf: url),
+                   let uiImage = UIImage(data: imageData) {
 
-            Text("Favorite Emoji:")
-            Text(entry.configuration.favoriteEmoji)
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFill()
+                        .clipped()
+                } else {
+                    ProgressView()
+                }
+
+                // Logo overlay in top right corner
+                Image("Image")
+                    .resizable()
+                    .frame(width: 24, height: 24)
+                    .padding(14)
+            }
         }
     }
 }
 
-struct LedgerLiveWidget: Widget {
+
+struct NFTWidget: Widget {
     let kind: String = "LedgerLiveWidget"
 
     var body: some WidgetConfiguration {
-        AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
-            LedgerLiveWidgetEntryView(entry: entry)
-                .containerBackground(.fill.tertiary, for: .widget)
+        AppIntentConfiguration(kind: kind, intent: SelectNFTIntent.self, provider: Provider()) { entry in
+          NFTWidgetEntryView(entry: entry)
+                .background(Color.clear) // Ensure no background color
+                .widgetURL(URL(string: "ledgerlive://account?currency=ethereum"))
+        }
+        .configurationDisplayName("NFT Widget")
+        .description("Displays your favorite NFT.")
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge]) // Use the correct cases
+        .disableContentMarginsIfNeeded()
+    }
+}
+
+// Add the extension for WidgetConfiguration
+extension WidgetConfiguration {
+    func disableContentMarginsIfNeeded() -> some WidgetConfiguration {
+        if #available(iOSApplicationExtension 17.0, *) {
+            return self.contentMarginsDisabled()
+        } else {
+            return self
         }
     }
 }
 
-extension ConfigurationAppIntent {
-    fileprivate static var smiley: ConfigurationAppIntent {
-        let intent = ConfigurationAppIntent()
-        intent.favoriteEmoji = "😀"
-        return intent
-    }
-    
-    fileprivate static var starEyes: ConfigurationAppIntent {
-        let intent = ConfigurationAppIntent()
-        intent.favoriteEmoji = "🤩"
-        return intent
+extension UIImage {
+    func resized(toWidth width: CGFloat, isOpaque: Bool = true) -> UIImage? {
+        let canvas = CGSize(width: width, height: CGFloat(ceil(width / size.width * size.height)))
+        let format = imageRendererFormat
+        format.opaque = isOpaque
+        return UIGraphicsImageRenderer(size: canvas, format: format).image {
+            _ in draw(in: CGRect(origin: .zero, size: canvas))
+        }
     }
 }
 
-#Preview(as: .systemSmall) {
-    LedgerLiveWidget()
-} timeline: {
-    SimpleEntry(date: .now, configuration: .smiley)
-    SimpleEntry(date: .now, configuration: .starEyes)
-}
