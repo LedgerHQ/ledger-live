@@ -485,3 +485,8 @@ export const setHodlShieldFirstName = (payload: string) => ({
   type: "HODLSHIELD_CHANGE_FIRSTNAME",
   payload,
 });
+
+export const setHodlShieldActivted = (payload: boolean) => ({
+  type: "HODLSHIELD_CHANGE_ACTIVATED",
+  payload,
+});
