@@ -846,7 +846,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.1_patch_hash=ojf5s6wyrycbfmr7f3unfydvni_@babel+core@7.25.2_@types+react@18.2.73_react@18.3.1/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.2_@babel+core@7.25.2_@react-native-community+cli@15.1.0_typescript@5.4.3__@_rejkvvhx4j3dng23hfx4darz2y/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				USE_HERMES = true;
@@ -991,7 +991,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.1_patch_hash=ojf5s6wyrycbfmr7f3unfydvni_@babel+core@7.25.2_@types+react@18.2.73_react@18.3.1/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.2_@babel+core@7.25.2_@react-native-community+cli@15.1.0_typescript@5.4.3__@_rejkvvhx4j3dng23hfx4darz2y/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
 				SWIFT_VERSION = 5.0;
@@ -1080,7 +1080,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.1_patch_hash=ojf5s6wyrycbfmr7f3unfydvni_@babel+core@7.25.2_@types+react@18.2.73_react@18.3.1/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.2_@babel+core@7.25.2_@react-native-community+cli@15.1.0_typescript@5.4.3__@_rejkvvhx4j3dng23hfx4darz2y/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
@@ -1170,7 +1170,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.1_patch_hash=ojf5s6wyrycbfmr7f3unfydvni_@babel+core@7.25.2_@types+react@18.2.73_react@18.3.1/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.2_@babel+core@7.25.2_@react-native-community+cli@15.1.0_typescript@5.4.3__@_rejkvvhx4j3dng23hfx4darz2y/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
@@ -1310,7 +1310,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.1_patch_hash=ojf5s6wyrycbfmr7f3unfydvni_@babel+core@7.25.2_@types+react@18.2.73_react@18.3.1/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.2_@babel+core@7.25.2_@react-native-community+cli@15.1.0_typescript@5.4.3__@_rejkvvhx4j3dng23hfx4darz2y/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
