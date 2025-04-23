@@ -2,6 +2,8 @@
 import rimraf from "rimraf";
 import "zx/globals";
 
+$.verbose = true; // everything works like in v7
+
 if (os.platform() === "win32") {
   usePowerShell();
 }
@@ -18,7 +20,7 @@ const targets = [
   "mock.ts",
   "account.ts",
   "platformAdapter.ts",
-  "walletApiAdapter.ts"
+  "walletApiAdapter.ts",
 ];
 
 // Coins using coin-framework

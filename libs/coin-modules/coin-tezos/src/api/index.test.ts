@@ -59,8 +59,8 @@ describe("get operations", () => {
   });
 
   const op: Operation<TezosAsset> = {
+    id: "blockhash",
     asset: { type: "native" },
-    operationIndex: 0,
     tx: {
       hash: "opHash",
       fees: BigInt(100),

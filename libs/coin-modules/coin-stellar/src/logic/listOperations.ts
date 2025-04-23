@@ -28,6 +28,7 @@ export async function listOperations(
 
 const convertToCoreOperation = (operation: StellarOperation): Operation<StellarAsset> => {
   return {
+    id: `${operation.hash}-${operation.extra.index}`,
     asset: { type: "native" },
     tx: {
       hash: operation.hash,
@@ -39,7 +40,6 @@ const convertToCoreOperation = (operation: StellarOperation): Operation<StellarA
       fees: BigInt(operation.fee.toString()),
       date: operation.date,
     },
-    operationIndex: 0,
     type: operation.type,
     value: BigInt(operation.value.toString()),
     senders: operation.senders,

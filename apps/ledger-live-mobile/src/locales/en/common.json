@@ -6629,12 +6629,13 @@
     },
     "range": {
       "1h": "1H",
-      "1H_label": "1H",
       "24h": "24H",
-      "1D_label": "1D",
       "7d": "7D",
-      "1W_label": "1W",
       "30d": "30D",
+      "1y": "1Y",
+      "1D_label": "1D",
+      "1H_label": "1H",
+      "1W_label": "1W",
       "1M_label": "1M",
       "1Y_label": "1Y"
     },
@@ -7371,8 +7372,28 @@
     }
   },
   "largeMover": {
-    "performance": "Performance",
-    "low": "Low",
-    "high": "High"
+    "info": "Info",
+    "marketCap": "Market cap",
+    "volume": "Volume (24h)",
+    "fdv": "FDV",
+    "marketCap24h": "Vol/Mkt Cap (24h)",
+    "circulatingSupply": "Circulating supply",
+    "totalSupply": "Total supply",
+    "ath": "All-time high",
+    "atl": "All-time low",
+    "timeAgo": {
+      "years": "({{count}} year ago)",
+      "years_plural": "({{count}} years ago)",
+      "months": "({{count}} month ago)",
+      "months_plural": "({{count}} months ago)",
+      "days": "({{count}} day ago)",
+      "days_plural": "({{count}} days ago)",
+      "hours": "({{count}} hour ago)",
+      "hours_plural": "({{count}} hours ago)",
+      "minutes": "({{count}} minute ago)",
+      "minutes_plural": "({{count}} minutes ago)",
+      "seconds": "({{count}} second ago)",
+      "seconds_plural": "({{count}} seconds ago)"
+    }
   }
 }

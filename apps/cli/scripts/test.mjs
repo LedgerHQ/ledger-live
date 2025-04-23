@@ -1,5 +1,7 @@
 #!/usr/bin/env zx
 
+$.verbose = true; // everything works like in v7
+
 if (os.platform() === "win32") {
   usePowerShell();
 }
@@ -18,5 +20,4 @@ if (errors.length > 0) {
     "/!\\ NOGO. Some warnings are logged by the CLI. Please fix them, this is a blocker to not ship more warnings than we already have. It costs time for all devs when we do.",
     errors,
   );
-
 }

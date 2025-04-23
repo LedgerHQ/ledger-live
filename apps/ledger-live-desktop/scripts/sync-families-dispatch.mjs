@@ -3,6 +3,8 @@ import "zx/globals";
 import fs from "fs";
 import path from "path";
 
+$.verbose = true; // everything works like in v7
+
 if (os.platform() === "win32") {
   usePowerShell();
 }
