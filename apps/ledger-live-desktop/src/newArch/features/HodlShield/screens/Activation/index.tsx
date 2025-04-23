@@ -8,13 +8,11 @@ import { FlowOptions, useFlows } from "../../hooks/useFlow";
 import CreateOrSynchronizeStep from "./01-CreateOrSync";
 import { BackRef } from "../router";
 import DeviceAction from "~/renderer/components/DeviceAction";
-import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
-import { TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 
-const request = { appName: TRUSTCHAIN_APP_NAME };
+const request = { appName: "Boilerplate" };
 
 type Props = {};
 
@@ -51,11 +49,10 @@ const HodlShieldActivation = forwardRef<BackRef, Props>((props, ref) => {
       case Step.DeviceAction:
         return (
           <DeviceAction
-            location={HOOKS_TRACKING_LOCATIONS.ledgerSync}
             action={createAction(connectApp)}
             request={request}
-            onResult={({ device }) => {
-              console.log("DeviceAction result", device);
+            onResult={(metadata) => {
+              console.log("DeviceAction result", metadata);
             }}
             overridesPreferredDeviceModel={DeviceModelId.stax}
           />
