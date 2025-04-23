@@ -7509,6 +7509,9 @@ importers:
       '@ledgerhq/device-transport-kit-react-native-ble':
         specifier: 0.0.0-fix-ble-scanning-20250423113003
         version: 0.0.0-fix-ble-scanning-20250423113003(@ledgerhq/device-management-kit@0.0.0-fix-ble-scanning-20250423113003(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.76.3(react@18.3.1))(react@18.3.1))(react-native@0.76.3(react@18.3.1))(rxjs@7.8.1)
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/devices
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
