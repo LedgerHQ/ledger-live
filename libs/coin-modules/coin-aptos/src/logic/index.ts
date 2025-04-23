@@ -4,11 +4,11 @@ import {
   Operation,
   Pagination,
   TransactionIntent,
-} from "@ledgerhq/coin-framework/lib-es/api/types";
+} from "@ledgerhq/coin-framework/api/types";
 import { AptosAsset } from "../types/assets";
 import { FeeEstimation } from "@ledgerhq/coin-framework/lib/api/types";
+export * from "./broadcast";
 
-type broadcastFunc = (tx: string) => Promise<string>;
 type combineFunc = (tx: string, signature: string, pubkey?: string) => string;
 type craftTransactionFunc = (
   transactionIntent: TransactionIntent<AptosAsset>,
@@ -25,10 +25,6 @@ type listOperationsFunc = (
 function NotImplemented(): Error {
   return new Error("Not Implemented");
 }
-
-export const broadcast: broadcastFunc = async _tx => {
-  throw NotImplemented();
-};
 
 export const combine: combineFunc = (_tx, _signature, _pubkey) => {
   throw NotImplemented();
