@@ -470,3 +470,13 @@ export const updateAnonymousUserNotifications = (payload: {
     payload,
   };
 };
+
+export const setHodlShieldEmail = (payload: string) => ({
+  type: "HODLSHIELD_CHANGE_EMAIL",
+  payload,
+});
+
+export const setHodlShieldPhone = (payload: string) => ({
+  type: "HODLSHIELD_CHANGE_PHONE",
+  payload,
+});
