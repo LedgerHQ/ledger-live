@@ -3,7 +3,7 @@ import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
-import { AptosAPI } from "../api";
+import { AptosAPI } from "../network";
 import buildTransaction from "./buildTransaction";
 import { DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "./logic";
 import type { Transaction, TransactionErrors } from "../types";

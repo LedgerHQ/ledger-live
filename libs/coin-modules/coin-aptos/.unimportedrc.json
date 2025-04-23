@@ -1,8 +1,10 @@
 {
-  "ignoreUnresolved": [
-    "follow-redirects",
-    "form-data",
-    "proxy-from-env"
+  "entry": [
+    "src/index.ts",
+    "src/api/index.ts",
+    "src/bridge/index.ts",
+    "src/network/index.ts",
+    "src/signer/index.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/devices",
@@ -11,7 +13,6 @@
     "invariant"
   ],
   "ignoreUnimported": [
-    "src/api/api.ts",
     "src/bridge/bridge.fixture.ts",
     "src/bridge/deviceTransactionConfig.ts",
     "src/bridge/transaction.ts",

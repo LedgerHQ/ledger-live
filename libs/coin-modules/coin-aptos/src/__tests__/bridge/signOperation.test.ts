@@ -6,11 +6,13 @@ import buildSignOperation, { getAddress } from "../../bridge/signOperation";
 import { AptosSigner } from "../../types";
 import { signTransaction } from "../../network";
 
-jest.mock("../../api", () => {
+const generateTransaction = jest.fn(() => "tx");
+
+jest.mock("../../network/client", () => {
   return {
     AptosAPI: function () {
       return {
-        generateTransaction: jest.fn(() => "tx"),
+        generateTransaction,
       };
     },
   };
@@ -38,6 +40,7 @@ describe("buildSignOperation", () => {
   beforeEach(() => {
     mockedSignTransaction = jest.mocked(signTransaction);
   });
+
   afterEach(() => jest.clearAllMocks());
 
   it("should thrown an error", async () => {
