@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-celo",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "celo coin integration",
   "keywords": [
     "Ledger",
@@ -129,6 +129,7 @@
   "devDependencies": {
     "@types/lodash": "^4.14.179",
     "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/invariant": "^2.2.37",
     "@types/jest": "^29.5.12",
     "dotenv": "^16.4.5",
@@ -148,7 +149,7 @@
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
-    "test-integ": "jest --config=jest.integ.config.js",
+    "test-integ": "jest --config=jest.integ.config.js --passWithNoTests",
     "test-integ:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config=jest.integ.config.js",
     "typecheck": "tsc --noEmit",
     "unimported": "unimported"

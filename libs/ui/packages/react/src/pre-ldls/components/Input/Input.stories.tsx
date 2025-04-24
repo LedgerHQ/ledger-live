@@ -2,7 +2,6 @@ import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect, userEvent, within } from "@storybook/test";
 import { Icons } from "../../../assets";
-import type { PlayFnProps } from "../../types";
 import { Input } from "./Input";
 
 const meta: Meta<typeof Input> = {
@@ -29,7 +28,7 @@ export const Search: Story = {
 // Interaction Testing
 export const WithInteraction: Story = {
   args: {},
-  play: async ({ canvasElement }: PlayFnProps) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const input = canvas.getByRole("textbox");
     await userEvent.type(input, "Write something");

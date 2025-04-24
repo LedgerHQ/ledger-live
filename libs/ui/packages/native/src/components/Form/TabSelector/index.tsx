@@ -32,12 +32,14 @@ type TabSelectorProps<T extends string> = {
   labels: { id: T; value: string }[];
   initialTab?: T extends infer K ? K : never;
   onToggle: (value: T) => void;
+  filledVariant?: boolean;
 };
 
 export default function TabSelector<T extends string>({
   labels,
   initialTab,
   onToggle,
+  filledVariant = false,
 }: TabSelectorProps<T>): JSX.Element {
   const [containerWidth, setContainerWidth] = useState(0);
   const initialIndex = initialTab ? labels.findIndex((l) => l.id === initialTab) : 0;
@@ -68,14 +70,25 @@ export default function TabSelector<T extends string>({
     };
   });
 
+  const boxStyles = filledVariant
+    ? {
+        bg: "neutral.c30",
+      }
+    : {
+        p: 2,
+        border: 1,
+        borderColor: "opacityDefault.c10",
+      };
+
   return (
     <Box
       height="100%"
       width="100%"
       borderRadius={12}
-      border={1}
-      borderColor="opacityDefault.c10"
-      p={2}
+      bg={boxStyles.bg}
+      p={boxStyles.p}
+      border={boxStyles.border}
+      borderColor={boxStyles.borderColor}
     >
       <Container onLayout={handleLayout}>
         <AnimatedBackground style={animatedStyle} />

@@ -20,7 +20,7 @@ interface AvailableSizes {
 
 export default {
   title: "asorted/Icons",
-  component: null, // Since we're rendering multiple icons, we don't have a single component to import
+  components: Icons,
 } as Meta;
 
 interface IconProps {

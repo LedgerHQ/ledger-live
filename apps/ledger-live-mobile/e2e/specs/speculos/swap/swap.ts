@@ -1,5 +1,5 @@
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
-import { swapSetup } from "../../../bridge/server";
+import { swapSetup, waitSwapReady } from "../../../bridge/server";
 import { setEnv } from "@ledgerhq/live-env";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
@@ -41,8 +41,11 @@ const beforeAllFunction = async (swap: SwapType) => {
       },
     ],
   });
-  swapSetup();
   await app.portfolio.waitForPortfolioPageToLoad();
+  const readyPromise = waitSwapReady();
+  await app.swap.openViaDeeplink();
+  await swapSetup();
+  await readyPromise;
 };
 
 async function performSwapUntilQuoteSelectionStep(swap: SwapType, minAmount: string) {
@@ -69,7 +72,6 @@ export async function runSwapTest(swap: SwapType, tmsLinks: string[]) {
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     it(`Swap ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`, async () => {
-      await app.swap.openViaDeeplink();
       const minAmount = await app.swapLiveApp.getMinimumAmount(swap);
       await performSwapUntilQuoteSelectionStep(swap, minAmount);
       await app.swapLiveApp.selectExchange();

@@ -5,6 +5,7 @@ import mmkvStorageWrapper from "./mmkvStorageWrapper";
 import { MAX_NUMBER_OF_ERRORS, STORAGE_TYPE } from "./constants";
 import { migrator } from "./utils/migrations/asyncStorageToMMKV";
 import { MIGRATION_STATUS, ROLLBACK_STATUS } from "./utils/migrations/constants";
+import { track } from "~/analytics";
 
 /** Singleton reference to the global application storage object. */
 export default createStorage();
@@ -18,8 +19,16 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
     numberOfReadErrors: 0,
   };
 
+  const incrementNumberOfErrorsDebug = incrementNumberOfErrors.bind(null, state);
+
   init(state);
   return {
+    getState() {
+      return { ...state };
+    },
+
+    incrementNumberOfErrorsDebug,
+
     keys() {
       try {
         return state.storageType === STORAGE_TYPE.MMKV
@@ -34,7 +43,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
       }
     },
 
-    get(key) {
+    async get(key) {
       try {
         return state.storageType === STORAGE_TYPE.MMKV
           ? Promise.resolve(mmkvStorageWrapper.get(key))
@@ -44,12 +53,12 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
           error: e,
           state: state,
         });
-        incrementNumberOfErrors(state, e);
+        await incrementNumberOfErrors(state, e);
         return rejectWithError(e);
       }
     },
 
-    getString(key) {
+    async getString(key) {
       try {
         return state.storageType === STORAGE_TYPE.MMKV
           ? Promise.resolve(mmkvStorageWrapper.getString(key))
@@ -59,7 +68,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
           error: e,
           state: state,
         });
-        incrementNumberOfErrors(state, e);
+        await incrementNumberOfErrors(state, e);
         return rejectWithError(e);
       }
     },
@@ -148,6 +157,20 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
       }
     },
 
+    stringify() {
+      try {
+        return state.storageType === STORAGE_TYPE.MMKV
+          ? Promise.resolve(mmkvStorageWrapper.stringify())
+          : asyncStorageWrapper.stringify();
+      } catch (e) {
+        console.error("Error pushing value to storage", {
+          error: e,
+          state: state,
+        });
+        return rejectWithError(e);
+      }
+    },
+
     async migrate() {
       try {
         await migrator.migrate(state);
@@ -208,12 +231,22 @@ export function initStorageState(state: StorageState): void {
   state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
 }
 
-function incrementNumberOfErrors(state: StorageState, error: unknown): void {
+async function incrementNumberOfErrors(state: StorageState, error: unknown): Promise<void> {
   if (!(error instanceof SyntaxError)) return;
+
+  track("StorageError", {
+    error: error.name,
+    stackTrace: error.stack || "",
+    state,
+  });
 
   if (state.storageType === STORAGE_TYPE.MMKV) {
     if (state.numberOfReadErrors && state.numberOfReadErrors >= MAX_NUMBER_OF_ERRORS) {
-      migrator.rollbackToAsyncStorage(state);
+      state.lastError = {
+        stackTrace: error.stack || "",
+        key: error.name,
+      };
+      await migrator.rollbackToAsyncStorage(state);
     } else {
       state.numberOfReadErrors = state.numberOfReadErrors + 1;
     }

@@ -202,6 +202,10 @@ export async function swapSetup() {
   await postMessage({ type: "swapSetup", id: uniqueId() });
 }
 
+export async function waitSwapReady() {
+  return fetchData({ type: "waitSwapReady", id: uniqueId() }, RESPONSE_TIMEOUT * 6);
+}
+
 export async function getLogs() {
   return fetchData({ type: "getLogs", id: uniqueId() });
 }
@@ -214,13 +218,13 @@ export async function getEnvs() {
   return fetchData({ type: "getEnvs", id: uniqueId() });
 }
 
-function fetchData(message: MessageData): Promise<string> {
+function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Promise<string> {
   return new Promise<string>(resolve => {
     postMessage(message);
     const timeoutId = setTimeout(() => {
       console.warn(`Timeout while waiting for ${message.type}`);
       resolve("");
-    }, RESPONSE_TIMEOUT);
+    }, timeout);
 
     clientResponse = (data: string) => {
       clearTimeout(timeoutId);
@@ -258,6 +262,9 @@ function onMessage(messageStr: string) {
       break;
     case "appEnvs":
       clientResponse(msg.payload);
+      break;
+    case "swapLiveAppReady":
+      clientResponse("Swap Live App is ready");
       break;
     default:
       break;
