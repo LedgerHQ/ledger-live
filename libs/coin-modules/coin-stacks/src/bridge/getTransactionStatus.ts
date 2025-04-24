@@ -57,12 +57,15 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
     const tokenSpendable = subAccount.spendableBalance;
     if (amount.gt(tokenSpendable)) {
       errors.amount = new NotEnoughBalance();
+    } else if (amount.lte(0)) {
+      errors.amount = new AmountRequired();
     }
 
     // Handle use all amount for tokens
     if (useAllAmount) {
       amount = tokenSpendable;
     }
+
 
     // For token transfers, total spent from token perspective is just the amount
     totalSpent = amount;
