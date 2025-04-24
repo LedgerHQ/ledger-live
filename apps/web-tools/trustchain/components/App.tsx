@@ -291,6 +291,7 @@ const App = () => {
             />
           </Expand>
         </Expand>
+        
 
         <Expand
           title={
@@ -312,6 +313,8 @@ const App = () => {
               forceReadOnlyData={state.walletState.walletSyncState.data}
               readOnly={accountsSync}
               takeControl={takeControl}
+              conversationId="1234"
+              conversationName="Myconv"
             />
           ) : (
             "Please create a trustchain first"
