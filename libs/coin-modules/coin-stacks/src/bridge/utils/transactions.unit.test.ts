@@ -4,8 +4,6 @@ import {
   AnchorMode,
   PostConditionType,
   FungibleConditionCode,
-  standardPrincipalCV,
-  uintCV,
   StacksMessageType,
 } from "@stacks/transactions";
 import { TokenAccount } from "@ledgerhq/types-live";
@@ -32,6 +30,8 @@ jest.mock("@stacks/transactions", () => {
     createMessageSignature: jest.fn(),
     createStandardPrincipal: jest.fn(),
     createAssetInfo: jest.fn(),
+    standardPrincipalCV: jest.fn(),
+    uintCV: jest.fn(),
   };
 });
 
@@ -46,6 +46,8 @@ import {
   createMessageSignature,
   createStandardPrincipal,
   createAssetInfo,
+  standardPrincipalCV,
+  uintCV,
 } from "@stacks/transactions";
 import { FamilyType, Transaction } from "../../types";
 

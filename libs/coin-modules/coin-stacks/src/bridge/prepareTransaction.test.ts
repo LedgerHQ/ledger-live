@@ -43,7 +43,7 @@ describe("prepareTransaction", () => {
   const mockTx = {
     auth: {
       spendingCondition: {
-        signer: "0x1234",
+        signer: "1234567890abcdef1234567890abcdef12345678",
       },
     },
     payload: {},
