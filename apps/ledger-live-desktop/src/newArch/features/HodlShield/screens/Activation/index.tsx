@@ -36,7 +36,7 @@ const HodlShieldActivation = forwardRef<BackRef, Props>((props, ref) => {
   const currentEmail = useSelector(hodlShieldEmailSelector, shallowEqual);
   const currentPhone = useSelector(hodlShieldPhoneSelector, shallowEqual);
   const currentFirstname = useSelector(hodlShieldFirstNameSelector);
-  const ledgerId = useSelector(hodlShieldLedgerIdSelector);
+  const ledgerId = useSelector(hodlShieldLedgerIdSelector, shallowEqual);
 
   useImperativeHandle(ref, () => ({
     goBack,
