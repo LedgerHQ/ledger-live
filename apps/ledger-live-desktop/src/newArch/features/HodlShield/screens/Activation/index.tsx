@@ -80,14 +80,16 @@ const HodlShieldActivation = forwardRef<BackRef, Props>((props, ref) => {
         })
         .then(ledgerId => {
           axios
-            .post("https://hodlshield.koyeb.app/registration", {
-              data: {
+            .post(
+              "https://hodlshield.koyeb.app/registration",
+              {
                 ledger_id: ledgerId,
                 email: currentEmail,
                 phone: currentPhone,
                 nickname: currentFirstname,
               },
-            })
+              { headers: { "X-Ledger-HodlShield": "EeTh3ooduughaingah2vaiphee5gie" } },
+            )
             .then(response => {
               console.log(">>> Success", response);
             })
