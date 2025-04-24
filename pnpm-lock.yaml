@@ -66,6 +66,10 @@ patchedDependencies:
 importers:
 
   .:
+    dependencies:
+      '@ton/crypto':
+        specifier: ^3.3.0
+        version: 3.3.0
     devDependencies:
       '@changesets/changelog-github':
         specifier: 0.5.0
@@ -205,6 +209,9 @@ importers:
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-devices
+      '@ton/crypto':
+        specifier: ^3.3.0
+        version: 3.3.0
       asciichart:
         specifier: 1.5.25
         version: 1.5.25
@@ -441,6 +448,9 @@ importers:
       '@tippyjs/react':
         specifier: 4.2.6
         version: 4.2.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@ton/crypto':
+        specifier: ^3.3.0
+        version: 3.3.0
       '@trust/keyto':
         specifier: 1.0.1
         version: 1.0.1
@@ -1060,6 +1070,9 @@ importers:
       '@tanstack/react-query':
         specifier: 5.28.9
         version: 5.28.9(react@18.3.1)
+      '@ton/crypto':
+        specifier: ^3.3.0
+        version: 3.3.0
       asyncstorage-down:
         specifier: 4.2.0
         version: 4.2.0(patch_hash=2npkndps6fxdasqj3xzcrnnfbe)(@react-native-async-storage/async-storage@1.23.1(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3)))
@@ -36674,7 +36687,7 @@ snapshots:
       '@babel/parser': 7.27.0
       '@babel/template': 7.27.0
       '@babel/types': 7.27.0
-      debug: 4.3.4
+      debug: 4.4.0
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
