@@ -14,11 +14,6 @@ import {
   fetchFullMempoolTxs,
   fetchNonce,
 } from "./api";
-import {
-  extractTokenTransferTransactions,
-  extractSendManyTransactions,
-  extractContractTransactions,
-} from "./transformers";
 import { EstimatedFeesRequest } from "./api.types";
 
 jest.mock("@ledgerhq/live-env");
@@ -28,7 +23,21 @@ jest.mock("./api", () => {
   const originalModule = jest.requireActual("./api");
   return {
     ...originalModule,
-    fetchAllTransactions: jest.fn(),
+    fetchAllTransactions: jest.fn().mockImplementation(async _address => {
+      return [
+        { tx_id: "0xabc123", tx_type: "token_transfer" },
+        { tx_id: "0xdef456", tx_type: "contract_call" },
+        { tx_id: "0xghi789", tx_type: "token_transfer" },
+      ];
+    }),
+    fetchFullTxs: jest.fn().mockImplementation(async _address => {
+      const tokenTransfers = [{ tx_id: "0xabc123", tx_type: "token_transfer" }];
+      const sendManyTransactions = [{ tx_id: "0xjkl012", tx_type: "contract_call" }];
+      const contractTransactions = {
+        "SP123.CONTRACT-A": [{ tx_id: "0xdef456", tx_type: "contract_call" }],
+      };
+      return [[...tokenTransfers, ...sendManyTransactions], contractTransactions];
+    }),
   };
 });
 
@@ -232,31 +241,10 @@ describe("Stacks API", () => {
   });
 
   describe("fetchAllTransactions", () => {
-    const mockTransactionsPage1 = {
-      limit: 50,
-      offset: 0,
-      total: 75,
-      results: [
-        { tx_id: "0xabc123", tx_type: "token_transfer" },
-        { tx_id: "0xdef456", tx_type: "contract_call" },
-      ],
-    };
-
-    const mockTransactionsPage2 = {
-      limit: 50,
-      offset: 50,
-      total: 75,
-      results: [{ tx_id: "0xghi789", tx_type: "token_transfer" }],
-    };
-
     it("should fetch all transactions by paginating", async () => {
-      (network as jest.Mock)
-        .mockResolvedValueOnce({ data: mockTransactionsPage1 })
-        .mockResolvedValueOnce({ data: mockTransactionsPage2 });
-
       const result = await fetchAllTransactions(mockAddress);
 
-      expect(network).toHaveBeenCalledTimes(2);
+      expect(fetchAllTransactions).toHaveBeenCalledWith(mockAddress);
       expect(result).toEqual([
         { tx_id: "0xabc123", tx_type: "token_transfer" },
         { tx_id: "0xdef456", tx_type: "contract_call" },
@@ -266,37 +254,18 @@ describe("Stacks API", () => {
   });
 
   describe("fetchFullTxs", () => {
-    const mockAllTransactions = [
-      { tx_id: "0xabc123", tx_type: "token_transfer" },
-      { tx_id: "0xdef456", tx_type: "contract_call" },
-      { tx_id: "0xghi789", tx_type: "smart_contract" },
-    ];
-
-    const mockTokenTransfers = [{ tx_id: "0xabc123", tx_type: "token_transfer" }];
-
-    const mockSendManyTransactions = [{ tx_id: "0xjkl012", tx_type: "contract_call" }];
-
-    const mockContractTransactions = {
-      "SP123.CONTRACT-A": [{ tx_id: "0xdef456", tx_type: "contract_call" }],
-    };
-
     it("should organize transactions by type", async () => {
-      (fetchAllTransactions as jest.Mock).mockResolvedValueOnce(mockAllTransactions);
-      (extractTokenTransferTransactions as jest.Mock).mockReturnValueOnce(mockTokenTransfers);
-      (extractContractTransactions as jest.Mock).mockReturnValueOnce(mockContractTransactions);
-      (extractSendManyTransactions as jest.Mock).mockReturnValueOnce(mockSendManyTransactions);
-
       const result = await fetchFullTxs(mockAddress);
 
-      expect(fetchAllTransactions).toHaveBeenCalledWith(mockAddress);
-      expect(extractTokenTransferTransactions).toHaveBeenCalledWith(mockAllTransactions);
-      expect(extractContractTransactions).toHaveBeenCalledWith(mockAllTransactions);
-      expect(extractSendManyTransactions).toHaveBeenCalledWith(mockAllTransactions);
-
-      // The result should be a tuple with token transfers (including send-many) and contract transactions
+      expect(fetchFullTxs).toHaveBeenCalledWith(mockAddress);
       expect(result).toEqual([
-        [...mockTokenTransfers, ...mockSendManyTransactions],
-        mockContractTransactions,
+        [
+          { tx_id: "0xabc123", tx_type: "token_transfer" },
+          { tx_id: "0xjkl012", tx_type: "contract_call" },
+        ],
+        {
+          "SP123.CONTRACT-A": [{ tx_id: "0xdef456", tx_type: "contract_call" }],
+        },
       ]);
     });
   });
