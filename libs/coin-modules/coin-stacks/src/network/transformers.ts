@@ -46,7 +46,7 @@ export const extractContractTransactions = (
       const assetName = tx.tx.post_conditions.find(p => p.type === "fungible")?.asset.asset_name;
       // Skip if we couldn't find an asset name from post_conditions
       if (!assetName) continue;
-      
+
       const tokenId = `${contractId}::${assetName}`;
 
       // Group by token ID

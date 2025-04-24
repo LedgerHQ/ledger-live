@@ -3,7 +3,7 @@ import { bufferCV, deserializeCV, cvToJSON, someCV, noneCV } from "@stacks/trans
 
 /**
  * Converts a memo string to a buffer Clarity Value for sending in transactions
- * 
+ *
  * @param memo - The memo to convert
  * @returns Clarity Value representing the memo (some(buffer) or none)
  */
@@ -16,7 +16,7 @@ export const memoToBufferCV = (memo?: any) => {
 
 /**
  * Converts a hex string (from memo) to a readable string
- * 
+ *
  * @param memoHex - Hex string representation of memo
  * @returns Readable string or empty string if conversion fails
  */
@@ -36,7 +36,7 @@ export const hexMemoToString = (memoHex?: string): string => {
 /**
  * Converts a Clarity Value memo to readable string
  * Used when processing incoming transactions
- * 
+ *
  * @param memoJson - The memo Clarity Value from a transaction
  * @returns Readable string or undefined if conversion fails
  */
@@ -71,13 +71,13 @@ export const bufferMemoToString = (memoJson: any): string | undefined => {
 
 /**
  * Processes a memo CV hex string from a transaction
- * 
+ *
  * @param memoHex - Hex string of serialized Clarity Value memo
  * @returns Readable string or undefined if conversion fails
  */
 export const processMemoCV = (memoHex?: string): string | undefined => {
   if (!memoHex) return undefined;
-  
+
   try {
     const deserialized = deserializeCV(memoHex);
     const memoJson = cvToJSON(deserialized).value;
@@ -86,4 +86,4 @@ export const processMemoCV = (memoHex?: string): string | undefined => {
     log("error", "Failed to process memo CV", e);
     return undefined;
   }
-}; 
+};

@@ -33,13 +33,13 @@ export function calculateSpendableBalance(
   pendingTxs: Array<{ fee_rate: string; token_transfer: { amount: string } }>,
 ): BigNumber {
   let spendableBalance = totalBalance;
-  
+
   for (const tx of pendingTxs) {
     spendableBalance = spendableBalance
       .minus(new BigNumber(tx.fee_rate))
       .minus(new BigNumber(tx.token_transfer.amount));
   }
-  
+
   return spendableBalance;
 }
 
@@ -50,9 +50,9 @@ export function createTokenAccount(
   address: string,
   parentAccountId: string,
   tokenId: string,
-  tokenBalance: string, 
+  tokenBalance: string,
   transactionsList: TransactionResponse[],
-  initialAccount?: Account
+  initialAccount?: Account,
 ): TokenAccount | null {
   try {
     const token = findTokenById("stacks/sip010/" + tokenId);
@@ -115,41 +115,41 @@ export async function buildTokenAccounts(
 ): Promise<TokenAccount[]> {
   try {
     const tokenAccounts: TokenAccount[] = [];
-    
+
     // Process all tokens that have transactions
     for (const [tokenId, transactions] of Object.entries(tokenTxs)) {
       const balance = tokenBalances[tokenId] || "0";
       const tokenAccount = createTokenAccount(
-        address, 
-        parentAccountId, 
-        tokenId, 
-        balance, 
-        transactions, 
-        initialAccount
+        address,
+        parentAccountId,
+        tokenId,
+        balance,
+        transactions,
+        initialAccount,
       );
-      
+
       if (tokenAccount) {
         tokenAccounts.push(tokenAccount);
       }
     }
-    
+
     // Process any tokens with balances but no transactions
     for (const [tokenId, balance] of Object.entries(tokenBalances)) {
       // Skip tokens we've already processed
       if (tokenTxs[tokenId]) continue;
-      
+
       // Skip zero balances
       if (new BigNumber(balance).isZero()) continue;
-      
+
       const tokenAccount = createTokenAccount(
-        address, 
-        parentAccountId, 
-        tokenId, 
-        balance, 
-        [], // No transactions 
-        initialAccount
+        address,
+        parentAccountId,
+        tokenId,
+        balance,
+        [], // No transactions
+        initialAccount,
       );
-      
+
       if (tokenAccount) {
         tokenAccounts.push(tokenAccount);
       }
@@ -180,23 +180,17 @@ export const getAccountShape: GetAccountShape = async info => {
   const address = getAddressFromPublicKey(pubKey);
 
   // Make API calls in parallel for better performance
-  const [
-    blockHeight,
-    balanceResp,
-    txsResult,
-    tokenBalances,
-    mempoolTxs
-  ] = await Promise.all([
+  const [blockHeight, balanceResp, txsResult, tokenBalances, mempoolTxs] = await Promise.all([
     fetchBlockHeight(),
     fetchBalances(address),
     fetchFullTxs(address),
     fetchAllTokenBalances(address),
-    fetchFullMempoolTxs(address)
+    fetchFullMempoolTxs(address),
   ]);
 
   const [rawTxs, tokenTxs] = txsResult;
   const balance = new BigNumber(balanceResp.balance);
-  
+
   // Calculate spendable balance by considering pending transactions
   const spendableBalance = calculateSpendableBalance(balance, mempoolTxs);
 
