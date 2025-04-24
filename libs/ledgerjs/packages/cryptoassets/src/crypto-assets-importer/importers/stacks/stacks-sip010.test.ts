@@ -8,8 +8,8 @@ const stacksSip010 = [
     name: "sbtc-token",
     ticker: "sBTC",
     decimals: 8,
-    delisted: false
-  }
+    delisted: false,
+  },
 ];
 
 const mockedAxios = jest.spyOn(axios, "get");
