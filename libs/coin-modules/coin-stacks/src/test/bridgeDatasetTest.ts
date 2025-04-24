@@ -151,7 +151,7 @@ const stacks: CurrenciesData<Transaction> = {
             network: "mainnet",
             anchorMode: AnchorMode.Any,
             recipient: ACCOUNT_1,
-            amount: "1000",
+            amount: "1000000000000000",
             subAccountId: TOKEN_ACCOUNT_ID,
           }),
           expectedStatus: {
