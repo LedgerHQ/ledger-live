@@ -93,6 +93,28 @@ type PaginationState = {
   accumulator: Operation<TezosAsset>[];
 };
 
+async function operations(
+  address: string,
+  minHeight: number,
+  cursor?: string,
+): Promise<[Operation<TezosAsset>[], string?]> {
+  const firstState: PaginationState = {
+    pageSize: 200,
+    maxIterations: 10,
+    currentIteration: 0,
+    minHeight: minHeight,
+    nextCursor: cursor,
+    continueIterations: true,
+    accumulator: [],
+  };
+
+  let state = await fetchNextPage(address, firstState);
+  while (state.continueIterations) {
+    state = await fetchNextPage(address, state);
+  }
+  return [state.accumulator, state.nextCursor];
+}
+
 async function fetchNextPage(address: string, state: PaginationState): Promise<PaginationState> {
   const [operations, newNextCursor] = await listOperations(address, {
     limit: state.pageSize,
@@ -114,31 +136,4 @@ async function fetchNextPage(address: string, state: PaginationState): Promise<P
     nextCursor: newNextCursor,
     accumulator: accumulated,
   };
-}
-
-async function operationsFromHeight(
-  address: string,
-  start: number,
-): Promise<[Operation<TezosAsset>[], string]> {
-  const firstState: PaginationState = {
-    pageSize: 200,
-    maxIterations: 10,
-    currentIteration: 0,
-    minHeight: start,
-    continueIterations: true,
-    accumulator: [],
-  };
-
-  let state = await fetchNextPage(address, firstState);
-  while (state.continueIterations) {
-    state = await fetchNextPage(address, state);
-  }
-  return [state.accumulator, state.nextCursor || ""];
-}
-
-async function operations(
-  address: string,
-  { minHeight }: Pagination,
-): Promise<[Operation<TezosAsset>[], string]> {
-  return operationsFromHeight(address, minHeight);
 }
