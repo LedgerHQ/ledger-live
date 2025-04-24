@@ -1,16 +1,16 @@
 # @ledgerhq/react-ui
 
-## 0.22.0-nightly.1
+## 0.22.0
 
 ### Minor Changes
 
-- [#10003](https://github.com/LedgerHQ/ledger-live/pull/10003) [`8e627c3`](https://github.com/LedgerHQ/ledger-live/commit/8e627c3823b3c798c9807a40f47897c7e36f485b) Thanks [@thesan](https://github.com/thesan)! - Implement the new search component UI
+- [#9920](https://github.com/LedgerHQ/ledger-live/pull/9920) [`babf5ca`](https://github.com/LedgerHQ/ledger-live/commit/babf5ca9fabb65654861cc896e1caac3de1e1e4c) Thanks [@thesan](https://github.com/thesan)! - Setup a section of react-ui to migrate to the new DS
 
-## 0.22.0-nightly.0
+## 0.22.0-next.0
 
 ### Minor Changes
 
-- [#9962](https://github.com/LedgerHQ/ledger-live/pull/9962) [`6685d6d`](https://github.com/LedgerHQ/ledger-live/commit/6685d6df4cd13b8124264ea8d782cdab6871c8f8) Thanks [@thesan](https://github.com/thesan)! - Fix Storybook types and hot reload after an error
+- [#9920](https://github.com/LedgerHQ/ledger-live/pull/9920) [`babf5ca`](https://github.com/LedgerHQ/ledger-live/commit/babf5ca9fabb65654861cc896e1caac3de1e1e4c) Thanks [@thesan](https://github.com/thesan)! - Setup a section of react-ui to migrate to the new DS
 
 ## 0.21.2
 

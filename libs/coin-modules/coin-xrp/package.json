@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-xrp",
-  "version": "5.0.0-nightly.1",
+  "version": "4.0.1",
   "description": "Ledger XRP Coin integration",
   "keywords": [
     "Ledger",
