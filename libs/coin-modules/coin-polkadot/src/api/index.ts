@@ -1,5 +1,6 @@
 import type {
   Api,
+  FeeEstimation,
   Operation,
   Pagination,
   TransactionIntent,
@@ -44,10 +45,12 @@ async function craft(transactionIntent: TransactionIntent<PolkadotAsset>): Promi
   return extrinsic.toHex();
 }
 
-async function estimate(transactionIntent: TransactionIntent<PolkadotAsset>): Promise<bigint> {
+async function estimate(
+  transactionIntent: TransactionIntent<PolkadotAsset>,
+): Promise<FeeEstimation> {
   const tx = await craftEstimationTransaction(transactionIntent.sender, transactionIntent.amount);
-  const estimatedFees = await estimateFees(tx);
-  return estimatedFees;
+  const value = await estimateFees(tx);
+  return { value };
 }
 
 async function operations(
