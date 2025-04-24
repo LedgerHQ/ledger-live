@@ -15,7 +15,7 @@ type Props = BaseComposite<
 export function ActivationSuccess({ route }: Props) {
   const { t } = useTranslation();
   const { created } = route.params;
-  const title = created ? "walletSync.success.activation" : "walletSync.success.sync";
+  const title = created ? "Your secured conversation has been created!" : "walletSync.success.sync";
   const desc = created ? "" : "walletSync.success.syncDesc";
   const page = created ? AnalyticsPage.BackupCreationSuccess : AnalyticsPage.SyncSuccess;
 

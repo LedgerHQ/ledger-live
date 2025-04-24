@@ -46,7 +46,7 @@ export function useCloudSyncSDK(): CloudSyncSDK<Schema> {
     [getState],
   );
 
-  console.log(latestWalletStateSelector(getState()));
+  console.log("IN STORE", latestWalletStateSelector(getState()));
 
   // saveNewUpdate already works with LiveData, no changes needed here
   const saveNewUpdate = useCallback(
@@ -56,7 +56,7 @@ export function useCloudSyncSDK(): CloudSyncSDK<Schema> {
         case "new-data":
           console.log("Sync: Received new LiveData version", event.version);
           //setConversation(event.data.conversation);
-          dispatch(setConversation(event.data.conversation));
+          dispatch(setConversation(event.data.conversation.conversation, event.version));
           // JSON editor updates via useEffect [data]
           break;
         case "pushed-data":
@@ -104,12 +104,7 @@ function useConversation() {
     const pullConversationsSequentially = async () => {
       for (const conversation of conversationsSelector) {
         try {
-          const result = await walletSyncSdk.pull(conversation, memberCredentials);
-          if (!result) {
-            dispatch(
-              setConversation({ id: conversation.rootId, messages: [], name: conversation.name }),
-            );
-          }
+          await walletSyncSdk.pull(conversation, memberCredentials);
         } catch (e) {
           console.error("Error pulling conversation:", e);
         }
@@ -117,6 +112,12 @@ function useConversation() {
     };
 
     pullConversationsSequentially();
+    const intervalId = setInterval(() => {
+      pullConversationsSequentially();
+    }, 5000);
+    return () => {
+      clearInterval(intervalId);
+    };
   }, [conversationsSelector, sdk, walletSyncSdk, memberCredentials]);
 
   const getConversations = useCallback(() => {
@@ -129,11 +130,22 @@ function useConversation() {
       if (!conversation) {
         throw new Error(`Conversation with id ${conversationId} not found`);
       }
-      console.log("PUSH MESSAGE", conversation);
-      console.log(
-        "FOUND CONVERSATION",
-        conversationsSelector.find(conv => conv.rootId === conversation.id),
-      );
+      console.log("PUSH MESSAGE", {
+        conversation: {
+          conversation: {
+            ...conversation,
+            messages: [
+              ...conversation.messages,
+              {
+                message: message,
+                author: "me",
+                date: Date.now(),
+              },
+            ],
+          },
+        },
+      });
+      console.log("FOUND CONVERSATION", conversationsSelector);
       await walletSyncSdk.push(
         conversationsSelector.find(conv => conv.rootId === conversation.id),
         memberCredentials,
@@ -145,33 +157,60 @@ function useConversation() {
                 ...conversation.messages,
                 {
                   message: message,
-                  author: "me",
+                  author: memberCredentials?.pubkey,
                   date: Date.now(),
                 },
               ],
             },
           },
         },
+        conversation.version + 1,
       );
       await walletSyncSdk.pull(
         conversationsSelector.find(conv => conv.rootId === conversation.id),
         memberCredentials,
       );
     },
-    [conversations, memberCredentials, walletSyncSdk],
+    [conversations, conversationsSelector, memberCredentials, walletSyncSdk],
+  );
+
+  const initConversation = useCallback(
+    async (newTrustchain, name) => {
+      await walletSyncSdk.push(
+        newTrustchain,
+        memberCredentials,
+        {
+          conversation: {
+            conversation: {
+              name,
+              id: newTrustchain.rootId,
+              messages: [],
+            },
+          },
+        },
+        1,
+      );
+    },
+    [memberCredentials, walletSyncSdk],
   );
 
   const getConversation = useCallback(
     (id: string) => {
+      console.log("CONVERSATION ID", conversations);
       const conversation = conversations[id];
       if (!conversation) {
         throw new Error(`Conversation with id ${id} not found`);
       }
       return {
         ...conversation,
-        messages: conversation.messages.sort((a, b) => {
-          return new Date(b.date).getTime() - new Date(a.date).getTime();
-        }),
+        messages: conversation.messages
+          .sort((a, b) => {
+            return new Date(b.date).getTime() - new Date(a.date).getTime();
+          })
+          .map(message => ({
+            ...message,
+            author: message.author === memberCredentials?.pubkey ? "me" : message.author,
+          })),
       };
     },
     [conversations],
@@ -181,6 +220,7 @@ function useConversation() {
     getConversations,
     getConversation,
     sendMessage,
+    initConversation,
   };
 }
 

@@ -99,20 +99,25 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>>
     trustchain: Trustchain,
     memberCredentials: MemberCredentials,
     data: Data,
+    overrideVersion?: number,
   ): Promise<void> {
     this.schema.parse(data); // validate against the schema, throws if it doesn't parse
     const validated = data; // IMPORTANT: we intentionally don't take validated out of parse() because we need to keep the possible extra field that we don't handle yet and that need to be preserved on the distant data
     const base64 = await this.cipher.encrypt(trustchain, validated);
-    const version = (this.getCurrentVersion() || 0) + 1;
+    const version =
+      overrideVersion !== undefined ? overrideVersion : (this.getCurrentVersion() || 0) + 1;
     const response = await this.trustchainSdk.withAuth(trustchain, memberCredentials, jwt =>
       this.api.uploadData(jwt, this.slug, version, base64, trustchain),
     );
+
+    console.log(response);
     switch (response.status) {
       case "updated": {
         await this.saveNewUpdate({ type: "pushed-data", version, data });
         break;
       }
       case "out-of-sync": {
+        console.log("OUT OF SYNC");
         // nothing to do. we will just eventually retry in the watch loop.
       }
     }

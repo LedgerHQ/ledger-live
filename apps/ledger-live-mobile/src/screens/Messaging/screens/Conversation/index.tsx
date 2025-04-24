@@ -2,7 +2,8 @@ import React, { useState, useRef } from "react";
 import { KeyboardAvoidingView, Platform, FlatList, TextInput } from "react-native";
 import { useTheme } from "styled-components/native";
 import SafeAreaView from "~/components/SafeAreaView";
-import { Flex, ScrollContainerHeader, Button, Text } from "@ledgerhq/native-ui";
+import { Share } from "@ledgerhq/native-ui/assets/icons";
+import { Flex, ScrollContainerHeader, Button, Text, IconButton } from "@ledgerhq/native-ui";
 import BackButton from "./components/BackButton";
 import useConversation from "../../hooks/useConversation";
 
@@ -15,7 +16,6 @@ const Conversation: React.FC<ViewProps> = ({ route }) => {
   const { params } = route;
   const flatListRef = useRef<FlatList>(null);
   const { getConversation, sendMessage } = useConversation();
-  console.log(params);
   const conversation = getConversation(params.conversationId);
   const [messageText, setMessageText] = useState("");
 
@@ -27,6 +27,8 @@ const Conversation: React.FC<ViewProps> = ({ route }) => {
     }
   };
 
+  const handleShare = async () => {};
+
   // Render each message bubble
   const renderItem = ({
     item,
@@ -36,8 +38,8 @@ const Conversation: React.FC<ViewProps> = ({ route }) => {
     <Flex
       p={3}
       mb={4}
-      backgroundColor={item.author === "Alice" ? colors.primary.c20 : colors.background.default}
-      alignSelf={item.author === "Alice" ? "flex-end" : "flex-start"}
+      backgroundColor={item.author === "me" ? colors.primary.c20 : colors.background.default}
+      alignSelf={item.author === "me" ? "flex-end" : "flex-start"}
       borderRadius="16px"
       maxWidth="80%"
       style={{
@@ -48,7 +50,7 @@ const Conversation: React.FC<ViewProps> = ({ route }) => {
         elevation: 2, // Android-specific shadow
       }}
     >
-      <Text color={item.author === "Alice" ? colors.primary.c100 : colors.neutral.c100}>
+      <Text color={item.author === "me" ? colors.primary.c100 : colors.neutral.c100}>
         {item.message}
       </Text>
       <Text variant="small" color="neutral.c80" mt={1} textAlign="right">

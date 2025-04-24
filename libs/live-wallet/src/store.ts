@@ -77,6 +77,7 @@ export type HandlersPayloads = {
   IMPORT_WALLET_SYNC: Partial<ExportedWalletState>;
   SET_CONVERSATION: {
     conversation: any;
+    version: number;
   };
   SET_NON_IMPORTED_ACCOUNTS: NonImportedAccountInfo[];
 };
@@ -162,14 +163,14 @@ export const handlers: WalletHandlers = {
       ...payload,
     };
   },
-  SET_CONVERSATION: (state, { payload: { conversation } }) => {
+  SET_CONVERSATION: (state, { payload: { conversation, version } }) => {
     return {
       ...state,
       conversationsState: {
         ...state.conversationsState,
         data: {
           ...state.conversationsState.data,
-          [conversation.id]: conversation,
+          [conversation.id]: { ...conversation, version },
         },
       },
     };
@@ -195,9 +196,9 @@ export const setAccountStarred = (accountId: string, starred: boolean) => ({
   type: "SET_ACCOUNT_STARRED",
   payload: { accountId, starred },
 });
-export const setConversation = (conversation: any) => ({
+export const setConversation = (conversation: any, version: number) => ({
   type: "SET_CONVERSATION",
-  payload: { conversation },
+  payload: { conversation, version },
 });
 
 export const initAccounts = (accounts: Account[], accountsUserData: AccountUserData[]) => ({

@@ -23,10 +23,12 @@ import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpe
 import { ScreenName } from "~/const";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { DrawerProps, SceneKind, useFollowInstructionDrawer } from "./useFollowInstructionDrawer";
+import useConversation from "./useConversation";
 
 export function useAddMember({ device, name }: { device: Device | null }): DrawerProps {
   const dispatch = useDispatch();
   const sdk = useTrustchainSdk();
+  const { initConversation } = useConversation();
   const memberCredentials = useSelector(memberCredentialsSelector);
   const memberCredentialsRef = useRef(memberCredentials);
   const navigation = useNavigation<StackNavigatorNavigation<WalletSyncNavigatorStackParamList>>();
@@ -37,11 +39,12 @@ export function useAddMember({ device, name }: { device: Device | null }): Drawe
       console.log("trustchainResult", trustchainResult);
       dispatch(setConversation(trustchainResult.trustchain, name));
       track(AnalyticsEvents.LedgerSyncActivated);
+      initConversation(trustchainResult.trustchain, name);
       navigation.navigate(ScreenName.ConversationActivationLoading, {
         created: trustchainResult.type === TrustchainResultType.created,
       });
     },
-    [dispatch, navigation],
+    [dispatch, initConversation, name, navigation],
   );
 
   return useFollowInstructionDrawer(
