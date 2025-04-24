@@ -6,6 +6,11 @@
 # modifies JS files, only @js-owner and not the global
 # owner(s) will be requested for a review.
 
+# fdp-ci team
+.github                                                 @ledgerhq/fdp-ci
+.github/workflows/test-ui-e2e-only-desktop.yml          @ledgerhq/fdp-ci  @ledgerhq/qaa
+.github/workflows/test-design-system-reusable.yml       @ledgerhq/fdp-ci  @ledgerhq/live-hub
+
 # Hub team
 ## by default, hub manage apps and libs related to it & then we overrides many exceptions
 apps/cli/src/commands/live                               @ledgerhq/live-hub
@@ -29,6 +34,9 @@ libs/hw-ledger-key-ring-protocol/                        @ledgerhq/live-hub
 
 # Coin integration team
 .github/**/bot-*.yml                                     @ledgerhq/coin-integration
+.github/workflows/test-coin-tester.yml                   @ledgerhq/coin-integration
+.github/workflows/test-coin-modules-integ.yml            @ledgerhq/coin-integration
+.github/workflows/test-bridge-pr.yml                     @ledgerhq/coin-integration @ledgerhq/fdp-ci
 **/live-common-set*.ts                                   @ledgerhq/coin-integration
 apps/**/families/                                        @ledgerhq/coin-integration
 apps/cli/src/commands/blockchain                         @ledgerhq/coin-integration
