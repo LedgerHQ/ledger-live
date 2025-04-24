@@ -32,6 +32,7 @@ export const useBleDevicePairing = ({
     try {
       if (!dmk) return;
       // TODO: Remove this connect call and use transport instead
+      await dmk.close();
       const sessionId = await dmk.connect({
         device: {
           id: device.deviceId,

@@ -159,6 +159,7 @@ export class DeviceManagementKitTransport extends Transport {
 
           tracer.trace(`[DMKTransport] [open] device found ${found.id}`);
 
+          await getDeviceManagementKit().close();
           const sessionId = await getDeviceManagementKit().connect({
             device: found,
             sessionRefresherOptions: { isRefresherDisabled: true },
@@ -199,6 +200,7 @@ export class DeviceManagementKitTransport extends Transport {
         throw error;
       }
     } else {
+      await getDeviceManagementKit().close();
       const sessionId = await getDeviceManagementKit().connect({
         device: deviceOrId,
         sessionRefresherOptions: { isRefresherDisabled: true },
@@ -263,7 +265,10 @@ export class DeviceManagementKitTransport extends Transport {
           this.tracer.trace(
             "[DMKTransport] [listenToDisconnect] Device disconnected, closing transport",
           );
-          activeDeviceSessionSubject.next(null);
+
+          if (activeDeviceSessionSubject.value?.sessionId === this.sessionId) {
+            activeDeviceSessionSubject.next(null);
+          }
           this.emit("disconnect");
         }
       },
