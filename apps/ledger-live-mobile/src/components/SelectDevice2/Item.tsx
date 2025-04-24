@@ -33,7 +33,7 @@ const Item = ({ device, onPress }: Props) => {
       case DeviceModelId.stax:
         return <IconsLegacy.StaxMedium size={24} />;
       case DeviceModelId.europa:
-        return <Icons.Flex />;
+        return <Icons.Flex size="S" />;
       case DeviceModelId.nanoX:
       default:
         return <IconsLegacy.NanoXFoldedMedium size={24} />;
