@@ -5,6 +5,8 @@ import type { AptosAPI } from "../network";
 import buildTransaction from "./buildTransaction";
 import createTransaction from "./createTransaction";
 import BigNumber from "bignumber.js";
+import { DEFAULT_GAS_PRICE } from "../constants";
+import { DEFAULT_MAX_GAS_AMOUNT } from "@aptos-labs/ts-sdk";
 
 export async function craftTransaction(
   aptosClient: AptosAPI,
@@ -20,6 +22,8 @@ export async function craftTransaction(
   newTx.amount = BigNumber(transactionIntent.amount.toString());
   newTx.recipient = transactionIntent.recipient;
   newTx.mode = transactionIntent.type;
+  newTx.options.gasUnitPrice = DEFAULT_GAS_PRICE.toString();
+  newTx.options.maxGasAmount = DEFAULT_MAX_GAS_AMOUNT.toString();
 
   const aptosTx = await buildTransaction(account, newTx, aptosClient);
 

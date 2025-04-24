@@ -72,3 +72,8 @@ export type TransactionRaw = TransactionCommonRaw & {
 export type AptosMoveResource = {
   [key: string]: { guid: { id: { addr: string; creation_num: string } } };
 };
+
+export type AptosBalance = {
+  asset_type: string;
+  amount: BigNumber;
+};
