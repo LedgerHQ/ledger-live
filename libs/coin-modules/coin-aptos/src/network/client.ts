@@ -1,23 +1,23 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 
 import {
-  AccountData,
+  type AccountData,
   Aptos,
   AptosConfig,
-  Ed25519PublicKey,
-  GasEstimation,
-  InputEntryFunctionData,
-  InputGenerateTransactionOptions,
+  type Ed25519PublicKey,
+  type GasEstimation,
+  type InputEntryFunctionData,
+  type InputGenerateTransactionOptions,
   MimeType,
-  RawTransaction,
-  SimpleTransaction,
-  TransactionResponse,
-  UserTransactionResponse,
-  Block,
-  AptosSettings,
+  type RawTransaction,
+  type SimpleTransaction,
+  type TransactionResponse,
+  type UserTransactionResponse,
+  type Block,
+  type AptosSettings,
   Hex,
   postAptosFullNode,
-  PendingTransactionResponse,
+  type PendingTransactionResponse,
 } from "@aptos-labs/ts-sdk";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
@@ -25,13 +25,13 @@ import BigNumber from "bignumber.js";
 import isUndefined from "lodash/isUndefined";
 import { APTOS_ASSET_ID } from "../constants";
 import { isTestnet } from "../bridge/logic";
-import type { AptosTransaction, TransactionOptions } from "../types";
+import type { AptosBalance, AptosTransaction, TransactionOptions } from "../types";
 import { GetAccountTransactionsData, GetAccountTransactionsDataGt } from "./graphql/queries";
-import {
+import type {
   GetAccountTransactionsDataQuery,
   GetAccountTransactionsDataGtQueryVariables,
 } from "./graphql/types";
-import { BlockInfo } from "@ledgerhq/coin-framework/api/types";
+import type { BlockInfo } from "@ledgerhq/coin-framework/api/types";
 
 const getApiEndpoint = (currencyId: string) =>
   isTestnet(currencyId) ? getEnv("APTOS_TESTNET_API_ENDPOINT") : getEnv("APTOS_API_ENDPOINT");
@@ -235,5 +235,27 @@ export class AptosAPI {
       hash: block.block_hash,
       time: new Date(Number(block.block_timestamp)),
     };
+  }
+
+  async getBalances(address: string): Promise<AptosBalance[]> {
+    if (!address) {
+      return [];
+    }
+
+    const response = await this.aptosClient.getCurrentFungibleAssetBalances({
+      options: {
+        offset: 0,
+        limit: 1000,
+        where: {
+          asset_type: { _eq: APTOS_ASSET_ID },
+          owner_address: { _eq: address },
+        },
+      },
+    });
+
+    return response.map(x => ({
+      asset_type: x.asset_type ?? "",
+      amount: BigNumber(x.amount),
+    }));
   }
 }

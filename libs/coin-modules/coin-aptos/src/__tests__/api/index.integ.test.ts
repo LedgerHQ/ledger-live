@@ -58,38 +58,6 @@ describe("createApi", () => {
   describe("combine and broadcast", () => {
     it("sign and submit the transaction using combine and broadcast", async () => {
       // arrange
-
-      // TODO: should be replaced by the craftTransaction method
-      const aptosApi = new AptosAPI(settings);
-      const transaction = createFixtureTransaction();
-      transaction.recipient = receiverAddress;
-      transaction.amount = BigNumber(10);
-      transaction.options.gasUnitPrice = DEFAULT_GAS_PRICE.toString();
-      transaction.options.maxGasAmount = DEFAULT_MAX_GAS_AMOUNT.toString();
-
-      const senderAccount = createFixtureAccount({
-        freshAddress: senderAddress,
-      });
-      const tx = await buildTransaction(senderAccount, transaction, aptosApi);
-
-      // generating signature
-      const signingMessage = aptos.getSigningMessage({ transaction: new SimpleTransaction(tx) });
-      const signature = senderPK.sign(signingMessage);
-
-      // act
-      const signedTx = api.combine(tx.bcsToHex().toString(), signature.toString(), senderPublicKey);
-
-      const hash = await api.broadcast(signedTx);
-
-      // asset
-      expect(() => Hex.isValid(signedTx).valid).toBeTruthy();
-      expect(hash).toEqual(expect.any(String));
-    });
-  });
-
-  describe("combine and broadcast", () => {
-    it("sign and submit the transaction using combine and broadcast", async () => {
-      // arrange
       const aptosApi = new AptosAPI(settings);
 
       const hexTx = await craftTransaction(aptosApi, {
@@ -117,6 +85,15 @@ describe("createApi", () => {
       // asset
       expect(() => Hex.isValid(signedTx).valid).toBeTruthy();
       expect(hash).toEqual(expect.any(String));
+    });
+  });
+
+  describe("getBalance", () => {
+    it("return balances from account", async () => {
+      const balances = await api.getBalance(receiverAddress);
+
+      expect(balances.length).toBeGreaterThan(0);
+      expect(balances[0].value).toBeGreaterThan(0);
     });
   });
 });
