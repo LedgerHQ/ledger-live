@@ -8,17 +8,17 @@ export default function ActivationFinalStep() {
   const dispatch = useDispatch();
 
   const onClose = () => {
-    dispatch(setHodlShieldActivted);
+    dispatch(setHodlShieldActivted(true));
     dispatch(setDrawerVisibility(false));
   };
 
   return (
     <Success
-      title="Hodl Shield success"
-      description="Your Hodl Shield is now activated."
+      title="Hodl Shield activated"
+      description="You're now safer with your trusted contact"
       withCta
       withClose
-      onClick={onClose}
+      onClose={onClose}
     />
   );
 }

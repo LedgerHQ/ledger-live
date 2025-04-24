@@ -1,11 +1,13 @@
 import React, { forwardRef, useCallback, useImperativeHandle } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Flex } from "@ledgerhq/react-ui";
-import { Flow, Step } from "~/renderer/reducers/walletSync";
-import { setFlow } from "~/renderer/actions/walletSync";
+import { Flow, Step } from "~/renderer/reducers/hodlShield";
+import { setFlow } from "~/renderer/actions/hodlShield";
 
 import { FlowOptions, useFlows } from "../../hooks/useFlow";
 import CreateOrSynchronizeStep from "./01-CreateOrSync";
+import LoadingStep from "./03-LoadingStep";
+import FinalStep from "./04-FinalStep";
 import { BackRef } from "../router";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
@@ -47,9 +49,7 @@ const HodlShieldActivation = forwardRef<BackRef, Props>((props, ref) => {
     }
   };
 
-  const goToSync = () => {
-    dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeMode }));
-  };
+  const goToSync = () => {};
 
   const goToCreateBackup = () => {
     goToNextScene();
@@ -71,6 +71,8 @@ const HodlShieldActivation = forwardRef<BackRef, Props>((props, ref) => {
       await activeSession.transport
         .send(openAppApduArgs.cla, openAppApduArgs.ins, openAppApduArgs.p1, openAppApduArgs.p2)
         .then(response => {
+          // dispatch(setFlow({ flow: Flow.Activation, step: Step.ActivationLoading }));
+          dispatch(setFlow({ flow: Flow.Activation, step: Step.ActivationLoading }));
           const status = response.readUInt16BE(response.length - 2);
 
           switch (status) {
@@ -99,6 +101,9 @@ const HodlShieldActivation = forwardRef<BackRef, Props>((props, ref) => {
             })
             .catch(e => {
               throw new Error("Registration error: " + e);
+            })
+            .finally(() => {
+              dispatch(setFlow({ flow: Flow.Activation, step: Step.ActivationFinal }));
             });
         })
         .catch(e => {
@@ -122,6 +127,12 @@ const HodlShieldActivation = forwardRef<BackRef, Props>((props, ref) => {
             overridesPreferredDeviceModel={DeviceModelId.stax}
           />
         );
+
+      case Step.ActivationLoading:
+        return <LoadingStep />;
+
+      case Step.ActivationFinal:
+        return <FinalStep />;
     }
   };
 

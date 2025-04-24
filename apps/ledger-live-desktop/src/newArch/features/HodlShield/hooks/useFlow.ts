@@ -23,8 +23,6 @@ export const FlowOptions: Record<
       2: Step.DeviceAction,
       3: Step.ActivationLoading,
       4: Step.ActivationFinal,
-      5: Step.SynchronizationFinal,
-      6: Step.SynchronizationError,
     },
   },
 };

@@ -6,19 +6,10 @@ export enum Flow {
 }
 
 export enum Step {
-  //Activation
   CreateOrSynchronize = "CreateOrSynchronize",
   DeviceAction = "DeviceAction",
-  ActivationLoading = "ActivationLoading",
-  ActivationFinal = "ActivationFinal",
-  SynchronizationFinal = "SynchronizationFinal",
-  SynchronizationError = "SynchronizationError",
-
-  //Synchronize
-  PinCode = "PinCode",
-  PinCodeError = "PinCodeError",
-  SynchronizeLoading = "SynchronizeLoading",
-  Synchronized = "Synchronized",
+  ActivationLoading = "Loading",
+  ActivationFinal = "Final",
 }
 
 export type HodlShieldState = {
