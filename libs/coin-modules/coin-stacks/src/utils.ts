@@ -57,9 +57,14 @@ export const throwIfError = (r: ResponseAddress) => {
  * @param message - The string to convert (hex, base64, or plain text)
  * @returns A Buffer representation of the input string
  */
-export const getBufferFromString = (message: string): Buffer =>
-  isValidHex(message)
-    ? Buffer.from(message, "hex")
-    : isValidBase64(message)
-      ? Buffer.from(message, "base64")
-      : Buffer.from(message);
+export const getBufferFromString = (message: string): Buffer => {
+  if (isValidHex(message)) {
+    // Remove 0x prefix if present
+    const hexString = message.startsWith('0x') ? message.slice(2) : message;
+    return Buffer.from(hexString, "hex");
+  } else if (isValidBase64(message)) {
+    return Buffer.from(message, "base64");
+  } else {
+    return Buffer.from(message);
+  }
+};
