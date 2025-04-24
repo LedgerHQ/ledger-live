@@ -26,11 +26,15 @@ export type WalletState = {
 
   // local copy of the wallet sync data last synchronized with the backend of wallet sync, in order to be able to diff what we need to do when we apply an incremental update
   walletSyncState: WSState;
+  conversationsState: WSState;
 };
 
 export type ExportedWalletState = {
   walletSyncState: WSState;
   nonImportedAccountInfos: NonImportedAccountInfo[];
+};
+export type ExportedConversationsState = {
+  conversationsState: WSState;
 };
 
 export const initialState: WalletState = {
@@ -38,6 +42,7 @@ export const initialState: WalletState = {
   starredAccountIds: new Set(),
   nonImportedAccountInfos: [],
   walletSyncState: { data: null, version: 0 },
+  conversationsState: { data: null, version: 0 },
 };
 
 export enum WalletHandlerType {
@@ -49,6 +54,9 @@ export enum WalletHandlerType {
   WALLET_SYNC_UPDATE = "WALLET_SYNC_UPDATE",
   IMPORT_WALLET_SYNC = "IMPORT_WALLET_SYNC",
   SET_NON_IMPORTED_ACCOUNTS = "SET_NON_IMPORTED_ACCOUNTS",
+  CONVERSATIONS_UPDATE = "CONVERSATIONS_UPDATE",
+  IMPORT_CONVERSATIONS = "IMPORT_CONVERSATIONS",
+  SET_CONVERSATION = "SET_CONVERSATION",
 }
 
 export type HandlersPayloads = {
@@ -61,7 +69,15 @@ export type HandlersPayloads = {
     data: DistantState | null;
     version: number;
   };
+  CONVERSATIONS_UPDATE: {
+    data: DistantState | null;
+    version: number;
+  };
+  IMPORT_CONVERSATIONS: Partial<ExportedWalletState>;
   IMPORT_WALLET_SYNC: Partial<ExportedWalletState>;
+  SET_CONVERSATION: {
+    conversation: any;
+  };
   SET_NON_IMPORTED_ACCOUNTS: NonImportedAccountInfo[];
 };
 
@@ -131,10 +147,31 @@ export const handlers: WalletHandlers = {
   WALLET_SYNC_UPDATE: (state, { payload }) => {
     return { ...state, walletSyncState: payload };
   },
+  CONVERSATIONS_UPDATE: (state, { payload }) => {
+    return { ...state, conversationsState: payload };
+  },
   IMPORT_WALLET_SYNC: (state, { payload }) => {
     return {
       ...state,
       ...payload,
+    };
+  },
+  IMPORT_CONVERSATIONS: (state, { payload }) => {
+    return {
+      ...state,
+      ...payload,
+    };
+  },
+  SET_CONVERSATION: (state, { payload: { conversation } }) => {
+    return {
+      ...state,
+      conversationsState: {
+        ...state.conversationsState,
+        data: {
+          ...state.conversationsState.data,
+          [conversation.id]: conversation,
+        },
+      },
     };
   },
   SET_NON_IMPORTED_ACCOUNTS: (state, { payload }) => {
@@ -158,6 +195,10 @@ export const setAccountStarred = (accountId: string, starred: boolean) => ({
   type: "SET_ACCOUNT_STARRED",
   payload: { accountId, starred },
 });
+export const setConversation = (conversation: any) => ({
+  type: "SET_CONVERSATION",
+  payload: { conversation },
+});
 
 export const initAccounts = (accounts: Account[], accountsUserData: AccountUserData[]) => ({
   type: "INIT_ACCOUNTS",
@@ -172,8 +213,18 @@ export const importWalletState = (payload: Partial<ExportedWalletState>) => ({
   payload,
 });
 
+export const importConversationsState = (payload: Partial<ExportedWalletState>) => ({
+  type: "IMPORT_CONVERSATIONS",
+  payload,
+});
+
 export const walletSyncUpdate = (data: DistantState | null, version: number) => ({
   type: "WALLET_SYNC_UPDATE",
+  payload: { data, version },
+});
+
+export const conversationsUpdate = (data: DistantState | null, version: number) => ({
+  type: "CONVERSATIONS_UPDATE",
   payload: { data, version },
 });
 
@@ -248,6 +299,10 @@ export const exportWalletState = (state: WalletState): ExportedWalletState => ({
   nonImportedAccountInfos: state.nonImportedAccountInfos,
 });
 
+export const exportConversationsState = (state: WalletState): ExportedConversationsState => ({
+  conversationsState: state.conversationsState,
+});
+
 export const walletStateExportShouldDiffer = (a: WalletState, b: WalletState): boolean => {
   return (
     a.walletSyncState !== b.walletSyncState ||
@@ -256,3 +311,7 @@ export const walletStateExportShouldDiffer = (a: WalletState, b: WalletState): b
 };
 
 export const walletSyncStateSelector = (state: WalletState): WSState => state.walletSyncState;
+
+export const conversationsStateSelector = (state: WalletState): WSState | null => {
+  return state.conversationsState || null;
+};

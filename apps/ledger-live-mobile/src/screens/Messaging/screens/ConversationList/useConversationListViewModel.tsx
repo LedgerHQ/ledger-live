@@ -1,11 +1,14 @@
 import { useCallback, useRef } from "react";
 import useConversation from "~/screens/Messaging/hooks/useConversation";
+import { useInitMemberCredentials } from "../../hooks/useInitMemberCredentials";
 export const viewabilityConfig = {
   viewAreaCoveragePercentThreshold: 72,
 };
 
 function useConversationListViewModel() {
   const { getConversations } = useConversation();
+
+  useInitMemberCredentials();
   const onEndReached = useCallback(() => {
     return true;
   }, []);

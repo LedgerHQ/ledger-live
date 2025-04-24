@@ -15,6 +15,7 @@ const Conversation: React.FC<ViewProps> = ({ route }) => {
   const { params } = route;
   const flatListRef = useRef<FlatList>(null);
   const { getConversation, sendMessage } = useConversation();
+  console.log(params);
   const conversation = getConversation(params.conversationId);
   const [messageText, setMessageText] = useState("");
 

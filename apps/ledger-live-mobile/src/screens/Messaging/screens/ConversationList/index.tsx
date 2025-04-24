@@ -53,6 +53,7 @@ function View({
   onEndReached,
   viewabilityConfigCallbackPairs,
 }: ViewProps) {
+  console.log(conversations);
   const { colors } = useTheme();
 
   const { setSource, setScreen } = useContext(AnalyticsContext);

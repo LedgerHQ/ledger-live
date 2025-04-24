@@ -17,6 +17,8 @@ import { DistantState } from "@ledgerhq/live-wallet/walletsync/index";
 
 export const walletSelector = (state: State): WalletState => state.wallet;
 
+export const conversationSelector = (state: State): WalletState => state.wallet;
+
 export const accountStarredSelector = createSelector(
   walletSelector,
   (_: State, { accountId }: { accountId: string }) => accountId,

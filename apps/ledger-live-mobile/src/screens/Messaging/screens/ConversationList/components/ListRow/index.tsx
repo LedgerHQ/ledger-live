@@ -32,8 +32,8 @@ const formatMessageDate = (dateStr: string): string => {
 };
 
 function ConversationRowItem({ item, index }: ListRowProps) {
-  // Get the last message if it exists
-  const lastMessage = item.messages.length ? item.messages[item.messages.length - 1] : undefined;
+  // Get the last message if it exist
+  const lastMessage = item?.messages?.length ? item.messages[item.messages.length - 1] : undefined;
   return (
     <Flex
       backgroundColor="background.paper"
