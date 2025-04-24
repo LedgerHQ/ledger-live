@@ -315,6 +315,7 @@ const App = () => {
               takeControl={takeControl}
               conversationId="1234"
               conversationName="Myconv"
+              fileId="myfileId"
             />
           ) : (
             "Please create a trustchain first"

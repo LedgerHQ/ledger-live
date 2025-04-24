@@ -8,11 +8,13 @@ import { createAggregator } from "./aggregator";
 import accounts from "./modules/accounts";
 import accountNames from "./modules/accountNames";
 import conversation from "./modules/conversation";
+import file from "./modules/file";
 
 const modules = {
   accounts,
   accountNames,
   conversation,
+  file,
 };
 
 /**
