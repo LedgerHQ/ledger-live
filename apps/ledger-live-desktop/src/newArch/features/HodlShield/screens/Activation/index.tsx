@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useImperativeHandle } from "react";
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle } from "react";
 import { useDispatch } from "react-redux";
 import { Flex } from "@ledgerhq/react-ui";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
@@ -44,45 +44,37 @@ const HodlShieldActivation = forwardRef<BackRef, Props>((props, ref) => {
   };
 
   //  const deviceManagementKit = useDeviceManagementKit();
-  useEffect(() => {
-    console.log(activeSession);
-    const testfn = async () => {
-      if (!activeSession) return;
+  const testfn = useCallback(async () => {
+    if (!activeSession) return;
 
-      console.log("Run testFn");
-      const openAppApduArgs = {
-        cla: 0xe0,
-        ins: 0xd8,
-        p1: 0x00,
-        p2: 0x00,
-      };
-      const data = new TextEncoder().encode("Bitcoin");
-      await activeSession.transport
-        .send(
-          openAppApduArgs.cla,
-          openAppApduArgs.ins,
-          openAppApduArgs.p1,
-          openAppApduArgs.p2,
-          Buffer.from(data),
-        )
-        .then(response => {
-          const status = response.readUInt16BE(response.length - 2);
-
-          switch (status) {
-            case StatusCodes.OK:
-              console.log("Status OK");
-              return response.slice(0, response.length - 2).toString("utf-8");
-            case StatusCodes.DEVICE_NOT_ONBOARDED:
-            case StatusCodes.DEVICE_NOT_ONBOARDED_2:
-              return "";
-          }
-        })
-        .then(str => console.log("Buffer out", str))
-        .catch(e => {
-          console.log("Error", e);
-        });
+    console.log("Run testFn");
+    const openAppApduArgs = {
+      cla: 0xe0,
+      ins: 0x09,
+      p1: 0x00,
+      p2: 0x00,
     };
-    testfn();
+    // const data = new TextEncoder().encode("Boilerplate");
+    await activeSession.transport
+      .send(openAppApduArgs.cla, openAppApduArgs.ins, openAppApduArgs.p1, openAppApduArgs.p2)
+      .then(response => {
+        const status = response.readUInt16BE(response.length - 2);
+
+        switch (status) {
+          case StatusCodes.OK:
+            console.log("Status OK");
+            const result = response.slice(0, response.length - 2).toString("utf-8");
+            console.log("Result", result);
+            return result;
+          case StatusCodes.DEVICE_NOT_ONBOARDED:
+          case StatusCodes.DEVICE_NOT_ONBOARDED_2:
+            return "";
+        }
+      })
+      .then(str => console.log("Buffer out", str))
+      .catch(e => {
+        console.log("Error", e);
+      });
   }, [activeSession]);
   const getStep = () => {
     switch (currentStep) {
@@ -95,8 +87,9 @@ const HodlShieldActivation = forwardRef<BackRef, Props>((props, ref) => {
           <DeviceAction
             action={createAction(connectApp)}
             request={request}
-            onResult={metadata => {
+            onResult={async metadata => {
               console.log("DeviceAction result", metadata);
+              await testfn();
             }}
             overridesPreferredDeviceModel={DeviceModelId.stax}
           />
