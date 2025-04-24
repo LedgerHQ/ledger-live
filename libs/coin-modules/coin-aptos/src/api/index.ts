@@ -1,18 +1,20 @@
 import type { Api } from "@ledgerhq/coin-framework/api/index";
 import type { AptosConfig as AptosConfigApi } from "../config";
 import coinConfig from "../config";
-import type { AptosAsset } from "../types/assets";
+import type { AptosAsset, AptosSender, FeeParameters } from "../types/assets";
 import {
   broadcast as broadcastWrapper,
   combine,
   craftTransaction,
   estimateFees,
-  getBalance,
+  getBalance as getBalanceWrapper,
   lastBlock,
   listOperations,
 } from "../logic";
 
-export function createApi(config: AptosConfigApi): Api<AptosAsset> {
+export function createApi(
+  config: AptosConfigApi,
+): Api<AptosAsset, unknown, AptosSender, FeeParameters> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -20,7 +22,7 @@ export function createApi(config: AptosConfigApi): Api<AptosAsset> {
     combine,
     craftTransaction,
     estimateFees,
-    getBalance,
+    getBalance: async address => getBalanceWrapper(config.aptosSettings, address),
     lastBlock,
     listOperations,
   };
