@@ -43,7 +43,7 @@
     "react-native-ble-plx": "3.4.0"
   },
   "devDependencies": {
-    "@ledgerhq/device-transport-kit-react-native-hid": "0.0.0-develop-20250415155309",
+    "@ledgerhq/device-transport-kit-react-native-hid": "0.0.0-fix-rn-ble-scanning-20250424114719",
     "@testing-library/dom": "^9.3.4",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
@@ -62,7 +62,7 @@
   "peerDependencies": {
     "react": "18.3.1",
     "react-native": "0.75.4",
-    "@ledgerhq/device-transport-kit-react-native-hid": "0.0.0-develop-20250415155309",
+    "@ledgerhq/device-transport-kit-react-native-hid": "0.0.0-fix-rn-ble-scanning-20250424114719",
     "rxjs": "^7.8.1"
   }
 }
