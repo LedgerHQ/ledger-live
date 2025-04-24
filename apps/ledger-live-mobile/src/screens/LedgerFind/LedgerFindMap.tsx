@@ -10,7 +10,7 @@ export const LedgerFindMap = () => {
   const latitude = 37.78825;
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
 
-  useEffect(() => {
+  /*   useEffect(() => {
     const fetchLocation = async () => {
       try {
         const res = await fetch(`${API_SERVER}/get_reports?last=true`);
@@ -26,7 +26,7 @@ export const LedgerFindMap = () => {
 
     fetchLocation();
   }, []);
-
+ */
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: "black" }]}>
       <Text variant="h4" style={{ color: "white" }}>

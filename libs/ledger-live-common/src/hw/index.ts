@@ -116,8 +116,10 @@ export const open = (
   // The open is not awaited, the check on the device is done synchronously.
   // A TransportModule can check the prefix of the device id to guess if it should use USB or not on LLM for ex.
   for (let i = 0; i < modules.length; i++) {
+    console.log(`Trying to open device ${deviceId} on transport ${modules[i].id}`);
     const m = modules[i];
     const p = m.open(deviceId, timeoutMs, context);
+    console.log("P", p);
     if (p) {
       trace({
         type: LOG_TYPE,

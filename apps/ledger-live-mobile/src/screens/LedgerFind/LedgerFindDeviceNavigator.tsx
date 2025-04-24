@@ -11,6 +11,7 @@ import SelectDevice from "LLM/features/DeviceSelection/screens/SelectDevice";
 import StepHeader from "~/components/StepHeader";
 import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
 import { DeviceSelectionNavigatorParamsList } from "~/newArch/features/DeviceSelection/types";
+import { LedgerFindMap } from "./LedgerFindMap";
 
 export default function LedgerFindDeviceNavigator() {
   const { colors } = useTheme();
@@ -45,6 +46,22 @@ export default function LedgerFindDeviceNavigator() {
       <Stack.Screen
         name={ScreenName.SelectDevice}
         component={SelectDevice}
+        options={{
+          headerTitle: () => (
+            <StepHeader
+              subtitle={t("transfer.receive.stepperHeader.range", {
+                currentStep: "2",
+                totalSteps: 3,
+              })}
+              title={t("transfer.receive.stepperHeader.connectDevice")}
+            />
+          ),
+        }}
+        initialParams={route.params}
+      />
+      <Stack.Screen
+        name={ScreenName.ConnectDevice}
+        component={LedgerFindMap}
         options={{
           headerTitle: () => (
             <StepHeader

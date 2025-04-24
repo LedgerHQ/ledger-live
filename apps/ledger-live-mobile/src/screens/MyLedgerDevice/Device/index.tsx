@@ -32,6 +32,19 @@ import InstalledAppsModal from "../Modals/InstalledAppsModal";
 import DeviceLanguage from "./DeviceLanguage";
 import CustomLockScreen from "./CustomLockScreen";
 import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
+import { TransportBleDevice } from "@ledgerhq/live-common/ble/types";
+import getBLETransport from "~/react-native-hw-transport-ble";
+import { v4 as uuid } from "uuid";
+import { useLdmkFeatureEnabled } from "@ledgerhq/live-dmk-mobile";
+import { LocalTracer } from "@ledgerhq/logs";
+import { delay } from "@ledgerhq/live-common/promise";
+import { getDeviceName } from "@ledgerhq/live-common/device/use-cases/getDeviceNameUseCase";
+import { Observable } from "rxjs";
+import { DescriptorEvent } from "@ledgerhq/hw-transport";
+import logger from "~/logger";
+import { BLE_SCANNING_NOTHING_TIMEOUT } from "~/utils/constants";
+import { discoverDevices, open } from "@ledgerhq/live-common/hw/index";
+import { APDU } from "@ledgerhq/hw-ledger-key-ring-protocol/ApduDevice";
 
 const illustrations = {
   nanoS: NanoS,
@@ -77,6 +90,11 @@ const DeviceCard = ({
   const { colors, theme } = useTheme();
   const lastSeenCustomImage = useSelector(lastSeenCustomImageSelector);
   const isFirstCustomImageUpdate = useRef<boolean>(true);
+  const isLDMKEnabled = useLdmkFeatureEnabled();
+  const [tracer] = useState(() => new LocalTracer("ble-ui", { component: "PairDevicesInner" }));
+  const [devices, setDevices] = useState<TransportBleDevice[]>([]);
+  const [USBDevice, setUSBDevice] = useState<Device | undefined>();
+  const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
 
   const { deviceModel } = state;
   const [appsModalOpen, setAppsModalOpen] = useState(false);
@@ -84,6 +102,67 @@ const DeviceCard = ({
   const [illustration] = useState(
     illustrations[deviceModel.id]({ color: colors.neutral.c100, theme }),
   );
+  const onTimeout = () => {
+    console.log("Timeout ended");
+  };
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      onTimeout();
+    }, BLE_SCANNING_NOTHING_TIMEOUT);
+
+    const sub = Observable.create(getBLETransport({ isLDMKEnabled }).listen).subscribe({
+      next: (e: DescriptorEvent<TransportBleDevice>) => {
+        if (e.type === "add") {
+          const device = e.descriptor;
+          // FIXME seems like we have dup. ideally we'll remove them on the listen side!
+          setDevices(devices =>
+            devices.some(i => i.id === device.id) ? devices : [...devices, device],
+          );
+        }
+      },
+      error: (error: Error) => {
+        logger.critical(error);
+      },
+    });
+
+    return () => {
+      sub.unsubscribe();
+      clearTimeout(timeout);
+    };
+  }, [isLDMKEnabled]);
+
+  useEffect(() => {
+    if (devices) console.log("Devices found:", devices);
+    if (USBDevice) console.log("USB Device found:", USBDevice);
+    if (ProxyDevice) console.log("Proxy Device found:", ProxyDevice);
+  }, [devices, ProxyDevice, USBDevice]);
+
+  useEffect(() => {
+    const filter = ({ id }: { id: string }) => true;
+    const setDeviceFromId = (id: string) => (id.startsWith("usb") ? setUSBDevice : setProxyDevice);
+    const sub = discoverDevices(filter).subscribe(e => {
+      console.log("Device event:", e);
+      const setDevice = setDeviceFromId(e.id);
+      if (e.type === "remove") setDevice(undefined);
+      if (e.type === "add") {
+        const { name, deviceModel, id, wired } = e;
+
+        if (!deviceModel) return;
+
+        setDevice((maybeDevice: Device | undefined) => {
+          return (
+            maybeDevice || {
+              deviceName: name,
+              modelId: deviceModel.id,
+              deviceId: id,
+              wired,
+            }
+          );
+        });
+      }
+    });
+    return () => sub.unsubscribe();
+  }, []);
 
   useEffect(() => {
     if (isFirstCustomImageUpdate.current) {
@@ -119,6 +198,36 @@ const DeviceCard = ({
 
   const disableFlows = pendingInstalls;
 
+  const pingDevice = useCallback(async () => {
+    const bleDeviceId = device.deviceId;
+
+    try {
+      console.log("Ping device....");
+      const transport = await open(bleDeviceId);
+      const ringCommand = "RING CLA: E0 INS: 02 P1: 00 P2: 00 DATA: N/A SW: 90 00";
+      console.log("Transport:", transport);
+      await transport.send(0xe0, 0x02, 0x00, 0x00, Buffer.from([]));
+      try {
+        tracer.trace("Device info", { deviceInfo });
+
+        // listApps has completed, a new APDU can be sent
+        const name = (await getDeviceName(transport)) || device.deviceName || "";
+        tracer.trace("Fetched device name", { name });
+        console.log("Device name!!!!:", name);
+      } finally {
+        await transport.close();
+        // @FixMe We use here the transport BLE from ../../react-native-hw-transport-ble to fix Detox E2E
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        await getBLETransport({ isLDMKEnabled })
+          .disconnectDevice(device.deviceId)
+          .catch(() => {});
+        await delay(500);
+      }
+    } catch (error) {
+      console.log("Error pinging device:", error);
+      console.warn(error);
+    }
+  }, [device, deviceInfo, isLDMKEnabled, tracer]);
   return (
     <BorderCard>
       {children}
@@ -207,6 +316,11 @@ const DeviceCard = ({
           </Button>
         </Flex>
       )}
+      <Flex mx={6} mb={6}>
+        <Button size="small" type="color" onPress={pingDevice}>
+          <Text style={{ color: "#FFFFFF" }}>Find my device</Text>
+        </Button>
+      </Flex>
       <InstalledAppsModal
         isOpen={appsModalOpen}
         onClose={closeAppsModal}

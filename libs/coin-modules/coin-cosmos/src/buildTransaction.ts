@@ -309,7 +309,6 @@ export const buildTransaction = ({
       TxBody.fromPartial({
         messages: protoMsgs,
         memo,
-        timeoutHeight: undefined,
         extensionOptions: [],
         nonCriticalExtensionOptions: [],
       }),

@@ -52,7 +52,6 @@ import DebugTheme from "~/components/DebugTheme";
 import useDBSaveEffect from "~/components/DBSave";
 import SyncNewAccounts from "~/bridge/SyncNewAccounts";
 import SegmentSetup from "~/analytics/SegmentSetup";
-import HookSentry from "~/components/HookSentry";
 import HookNotifications from "~/notifications/HookNotifications";
 import RootNavigator from "~/components/RootNavigator";
 import SetEnvsFromSettings from "~/components/SetEnvsFromSettings";
@@ -335,7 +334,6 @@ export default class Root extends Component {
             ready ? (
               <>
                 <SetEnvsFromSettings />
-                <HookSentry />
                 <SegmentSetup />
                 <HookNotifications />
                 <HookDynamicContentCards />

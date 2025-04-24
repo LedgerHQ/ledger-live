@@ -95,7 +95,12 @@ export const signICPTransaction = async ({
   const result = {
     signatures: {
       readSig: "",
-      txnSig: Buffer.from(r.signatureRS ?? "").toString("hex"),
+      txnSig: (r.signatureRS
+        ? Buffer.isBuffer(r.signatureRS)
+          ? r.signatureRS
+          : Buffer.from(r.signatureRS)
+        : Buffer.from("")
+      ).toString("hex"),
     },
   };
 

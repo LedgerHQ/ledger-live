@@ -25,6 +25,7 @@ import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import MyLedgerNavigator, { ManagerTabIcon } from "./MyLedgerNavigator";
 import PortfolioNavigator from "./PortfolioNavigator";
 import { MainNavigatorParamList } from "./types/MainNavigator";
+import LedgerFindDeviceNavigator from "~/screens/LedgerFind/LedgerFindDeviceNavigator";
 
 const Tab = createBottomTabNavigator<MainNavigatorParamList>();
 
@@ -254,8 +255,8 @@ export default function MainNavigator() {
       />
 
       <Tab.Screen
-        name={NavigatorName.LedgerFindMap}
-        component={LedgerFindMap}
+        name={"ConnectDevice"}
+        component={LedgerFindDeviceNavigator}
         options={{
           tabBarIcon: props => (
             <TabIcon Icon={IconsLegacy.MapMarkerMedium} i18nKey="ledgerFind.screenMap" {...props} />
