@@ -10,23 +10,15 @@ import {
   NotEnoughBalance,
   InvalidAddress,
 } from "@ledgerhq/errors";
+import { getSubAccount } from "../bridge/utils/token";
 
 const SEED_IDENTIFIER = "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9";
 const SEED_IDENTIFIER_PUBKEY = "022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d";
 const ACCOUNT_1 = "SP2DV2RVZP1A69Q6VAG5PHEQ6ZHQHZPCV84TMYNGN";
-// Using the proper format for Stacks SIP-010 tokens
-const TOKEN_ID = "stacks/sip010/SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.usda-token::usda";
-// Encode token ID for account ID - using the safeEncodeTokenId pattern
-// This encoding follows the pattern from: ledger-live/libs/coin-framework/src/account/accountId.ts
-// 1. Use encodeURIComponent for special chars
-// 2. Replace dashes and underscores with special patterns
-const ENCODED_TOKEN_ID = encodeURIComponent(TOKEN_ID)
-  .replace(/-/g, "~!dash!~")
-  .replace(/_/g, "~!underscore!~");
-const TOKEN_ACCOUNT_ID = `js:2:stacks:${SEED_IDENTIFIER_PUBKEY}:+${ENCODED_TOKEN_ID}`;
+
+const TOKEN_ACCOUNT_ID = `js:2:stacks:022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d:+stacks%2Fsip010%2FSP4SZE494VC2YC5JYG7AYFQ44F5Q4PYV7DVMDPBG.ststx~!dash!~token%3A%3Aststx`;
 
 const stacks: CurrenciesData<Transaction> = {
-  FIXME_ignoreAccountFields: [],
   IgnorePrepareTransactionFields: ["fee"],
   scanAccounts: [
     {
@@ -63,20 +55,7 @@ const stacks: CurrenciesData<Transaction> = {
         pendingOperations: [],
         currencyId: "stacks",
         lastSyncDate: "",
-        balance: "1000",
-        subAccounts: [
-          {
-            type: "TokenAccountRaw",
-            id: TOKEN_ACCOUNT_ID,
-            tokenId: TOKEN_ID,
-            parentId: `js:2:stacks:${SEED_IDENTIFIER_PUBKEY}:`,
-            balance: "500",
-            spendableBalance: "500",
-            creationDate: "2023-01-01T00:00:00.000Z",
-            operations: [],
-            pendingOperations: [],
-          },
-        ],
+        balance: "100",
       },
       transactions: [
         {
@@ -213,8 +192,8 @@ const stacks: CurrenciesData<Transaction> = {
             subAccountId: TOKEN_ACCOUNT_ID,
           }),
           expectedStatus: (account, tx) => {
-            // Find the specific token subaccount
-            const subAccount = account.subAccounts?.find(sa => sa.id === tx.subAccountId);
+            // Find the specific token subaccount using the getSubAccount function
+            const subAccount = getSubAccount(account, tx);
             return {
               amount: subAccount?.spendableBalance || new BigNumber(0),
               errors: {},
