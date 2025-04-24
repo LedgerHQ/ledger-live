@@ -102,6 +102,8 @@ export enum ScreenName {
   HelpSettings = "HelpSettings",
   HiddenNftCollections = "HiddenNftCollections",
   LedgerFindMap = "LedgerFindMap",
+  LedgerFindNear = "LedgerFindNear",
+  LedgerFindSelectDevice = "LedgerFindSelectDevice",
   MyLedgerChooseDevice = "MyLedgerChooseDevice",
   MyLedgerDevice = "MyLedgerDevice",
   MigrateAccountsConnectDevice = "MigrateAccountsConnectDevice",

@@ -13,4 +13,6 @@ export type MainNavigatorParamList = {
   [NavigatorName.Discover]: NavigatorScreenParams<DiscoverNavigatorStackParamList> | undefined;
   [NavigatorName.Web3HubTab]: NavigatorScreenParams<Web3HubTabStackParamList> | undefined;
   [NavigatorName.MyLedger]: NavigatorScreenParams<MyLedgerNavigatorStackParamList> | undefined;
+  [ScreenName.SelectDevice]: undefined;
+  [ScreenName.LedgerFindSelectDevice]: undefined;
 };

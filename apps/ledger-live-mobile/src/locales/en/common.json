@@ -7398,6 +7398,6 @@
   },
   "ledgerFind": {
     "screenMap": "Map",
-    "screenDevices": "Devices"
+    "screenDevices": "Find"
   }
 }

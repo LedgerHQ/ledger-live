@@ -1,29 +1,30 @@
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import React, { useCallback, useMemo } from "react";
 import { useTheme } from "styled-components/native";
-import { IconsLegacy } from "@ledgerhq/native-ui";
 
-import { BottomTabBarProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { useSelector } from "react-redux";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Web3HubTabNavigator from "LLM/features/Web3Hub/TabNavigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useManagerNavLockCallback } from "./CustomBlockRouterNavigator";
-import { ScreenName, NavigatorName } from "~/const";
+import { BottomTabBarProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
+import Web3HubTabNavigator from "LLM/features/Web3Hub/TabNavigator";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSelector } from "react-redux";
+import { NavigatorName, ScreenName } from "~/const";
+import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
+import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
+import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
+import { LedgerFindMap } from "~/screens/LedgerFind/LedgerFindMap";
 import { PortfolioTabIcon } from "~/screens/Portfolio";
+import SelectDevice from "~/screens/SelectDevice";
+import StepHeader from "../StepHeader";
+import customTabBar from "../TabBar/CustomTabBar";
 import Transfer, { TransferTabIcon } from "../TabBar/Transfer";
 import TabIcon from "../TabIcon";
-import PortfolioNavigator from "./PortfolioNavigator";
-import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
-import MyLedgerNavigator, { ManagerTabIcon } from "./MyLedgerNavigator";
+import { useManagerNavLockCallback } from "./CustomBlockRouterNavigator";
 import DiscoverNavigator from "./DiscoverNavigator";
-import customTabBar from "../TabBar/CustomTabBar";
-import { MainNavigatorParamList } from "./types/MainNavigator";
-import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
-import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
-import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
-import { LedgerFindMap } from "~/screens/LedgerFind/LedgerFindMap";
-import LedgerFindDeviceNavigator from "~/screens/LedgerFind/LedgerFindDeviceNavigator";
+import MyLedgerNavigator, { ManagerTabIcon } from "./MyLedgerNavigator";
+import PortfolioNavigator from "./PortfolioNavigator";
+import { MainNavigatorParamList } from "./types/MainNavigator";
 
 const Tab = createBottomTabNavigator<MainNavigatorParamList>();
 
@@ -217,9 +218,10 @@ export default function MainNavigator() {
       />
 
       <Tab.Screen
-        name={NavigatorName.LedgerFindDeviceNavigator}
-        component={LedgerFindDeviceNavigator}
+        name={ScreenName.SelectDevice}
+        component={SelectDevice}
         options={{
+          headerTitle: () => <StepHeader title={"Ledger Find"} subtitle={"Some subtitle"} />,
           tabBarIcon: props => (
             <TabIcon
               Icon={IconsLegacy.MapMarkerMedium}
@@ -237,8 +239,8 @@ export default function MainNavigator() {
               // } else if (readOnlyModeEnabled) {
               //   navigateToRebornFlow();
               // } else {
-              navigation.navigate(NavigatorName.LedgerFindDeviceNavigator, {
-                screen: ScreenName.LedgerFindMap,
+              navigation.navigate(ScreenName.SelectDevice, {
+                screen: ScreenName.SelectDevice,
                 params: {
                   tab: undefined,
                   searchQuery: undefined,

@@ -1,25 +1,25 @@
-import React, { useRef, useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useTranslation } from "react-i18next";
-import { View, TouchableWithoutFeedback } from "react-native";
-import { IconsLegacy, Flex } from "@ledgerhq/native-ui";
 import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import Config from "react-native-config";
-import { ScreenName } from "~/const";
-import { hasNoAccountsSelector } from "~/reducers/accounts";
-import SettingsCard from "~/components/SettingsCard";
-import PoweredByLedger from "./PoweredByLedger";
-import { TrackScreen } from "~/analytics";
-import timer from "../../timer";
-import SettingsNavigationScrollView from "./SettingsNavigationScrollView";
-import useRatings from "~/logic/ratings";
-import useNpsRatings from "~/logic/npsRatings";
-import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
-import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { openDebugMenu } from "~/actions/appstate";
-import { isDebugMenuVisible } from "~/reducers/appstate";
+import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import LedgerSyncEntryPoint from "LLM/features/LedgerSyncEntryPoint";
 import { EntryPoint } from "LLM/features/LedgerSyncEntryPoint/types";
+import React, { useCallback, useRef } from "react";
+import { useTranslation } from "react-i18next";
+import { TouchableWithoutFeedback, View } from "react-native";
+import Config from "react-native-config";
+import { useDispatch, useSelector } from "react-redux";
+import { openDebugMenu } from "~/actions/appstate";
+import { TrackScreen } from "~/analytics";
+import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import SettingsCard from "~/components/SettingsCard";
+import { ScreenName } from "~/const";
+import useNpsRatings from "~/logic/npsRatings";
+import useRatings from "~/logic/ratings";
+import { hasNoAccountsSelector } from "~/reducers/accounts";
+import { isDebugMenuVisible } from "~/reducers/appstate";
+import timer from "../../timer";
+import PoweredByLedger from "./PoweredByLedger";
+import SettingsNavigationScrollView from "./SettingsNavigationScrollView";
 
 export default function Settings({
   navigation,
@@ -97,6 +97,13 @@ export default function Settings({
         Icon={IconsLegacy.LifeRingMedium}
         onClick={() => navigation.navigate(ScreenName.HelpSettings)}
         arrowRight
+      />
+      <SettingsCard
+        title="Ledger Find"
+        desc="Locate and play a sound on your lost Ledger Stax"
+        Icon={IconsLegacy.StarMedium}
+        onClick={() => navigation.navigate(ScreenName.LedgerFindSelectDevice)}
+        // onClick={() => navigation.navigate(NavigatorName.LedgerFindDeviceNavigator)}
       />
       <SettingsCard
         title={t("settings.experimental.title")}
