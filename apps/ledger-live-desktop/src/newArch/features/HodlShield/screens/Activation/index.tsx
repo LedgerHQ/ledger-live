@@ -61,10 +61,10 @@ const HodlShieldActivation = forwardRef<BackRef, Props>((props, ref) => {
     transport
       .send(0xe0, 0x07, 0x00, 0x00)
       .then(response => {
-        console.log(">>>>> poooling responseCode", response);
-        const status = response.readUInt16BE(response.length - 2);
-
-        if (status === StatusCodes.OK) {
+        console.log(">>>>> poooling responseCode", response[0]);
+        const status = response[0];
+        console.log(">>>>> poooling status", status);
+        if (status === 1) {
           axios.get("http://ip-api.com/json/").then(response => {
             const { lat, lon } = response.data;
             const lonlat = `${lon},${lat}`;
