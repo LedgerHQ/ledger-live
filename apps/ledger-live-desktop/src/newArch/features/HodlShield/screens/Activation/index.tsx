@@ -1,5 +1,5 @@
 import React, { forwardRef, useCallback, useImperativeHandle } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { Flex } from "@ledgerhq/react-ui";
 import { Flow, Step } from "~/renderer/reducers/hodlShield";
 import { setFlow } from "~/renderer/actions/hodlShield";
@@ -20,6 +20,7 @@ import axios from "axios";
 import {
   hodlShieldEmailSelector,
   hodlShieldFirstNameSelector,
+  hodlShieldLedgerIdSelector,
   //hodlShieldLedgerIdSelector,
   hodlShieldPhoneSelector,
 } from "~/renderer/reducers/settings";
@@ -32,10 +33,10 @@ const HodlShieldActivation = forwardRef<BackRef, Props>((props, ref) => {
   const dispatch = useDispatch();
   const activeSession = useObservable(activeDeviceSessionSubject);
   const { currentStep, goToNextScene, goToPreviousScene, goToWelcomeScreenWalletSync } = useFlows();
-  const currentEmail = useSelector(hodlShieldEmailSelector);
-  const currentPhone = useSelector(hodlShieldPhoneSelector);
+  const currentEmail = useSelector(hodlShieldEmailSelector, shallowEqual);
+  const currentPhone = useSelector(hodlShieldPhoneSelector, shallowEqual);
   const currentFirstname = useSelector(hodlShieldFirstNameSelector);
-  //const ledgerId = useSelector(hodlShieldLedgerIdSelector);
+  const ledgerId = useSelector(hodlShieldLedgerIdSelector);
 
   useImperativeHandle(ref, () => ({
     goBack,
@@ -53,6 +54,38 @@ const HodlShieldActivation = forwardRef<BackRef, Props>((props, ref) => {
 
   const goToCreateBackup = () => {
     goToNextScene();
+  };
+
+  const sendAlert = transport => {
+    if (!transport) return;
+    transport
+      .send(0xe0, 0x07, 0x00, 0x00)
+      .then(response => {
+        console.log(">>>>> poooling responseCode", response);
+        const status = response.readUInt16BE(response.length - 2);
+
+        if (status === StatusCodes.OK) {
+          axios.get("http://ip-api.com/json/").then(response => {
+            const { lat, lon } = response.data;
+            const lonlat = `${lon},${lat}`;
+            if (lonlat) {
+              axios.post(
+                `https://hodlshield.koyeb.app/alert/${ledgerId}`,
+                { lonlat },
+                {
+                  headers: { "X-Ledger-HodlShield": "EeTh3ooduughaingah2vaiphee5gie" },
+                },
+              );
+            }
+          });
+        }
+      })
+      .catch(error => {
+        console.error(">>>> Error setting log level:", error);
+      })
+      .finally(() => {
+        console.log(">>>>>>>>> finally");
+      });
   };
 
   //  const deviceManagementKit = useDeviceManagementKit();
@@ -85,7 +118,7 @@ const HodlShieldActivation = forwardRef<BackRef, Props>((props, ref) => {
         })
         .then(ledgerId => {
           dispatch(setHodlShieldledgerId(ledgerId!));
-          axios
+          return axios
             .post(
               "https://hodlshield.koyeb.app/registration",
               {
@@ -108,6 +141,9 @@ const HodlShieldActivation = forwardRef<BackRef, Props>((props, ref) => {
         })
         .catch(e => {
           console.log("Error", e);
+        })
+        .finally(() => {
+          sendAlert(activeSession.transport);
         });
     },
     [activeSession],

@@ -57,6 +57,9 @@ import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/po
 import { setShareAnalytics, setSharePersonalizedRecommendations } from "./actions/settings";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useEnforceSupportedLanguage } from "./hooks/useEnforceSupportedLanguage";
+import { useObservable } from "@ledgerhq/live-common/lib-es/observable";
+import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
+import { StatusCodes } from "../../../../libs/ledgerjs/packages/errors/lib";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
@@ -235,6 +238,29 @@ export default function Default() {
     }
     updateIdentify();
   }, [history, pathname, hasCompletedOnboarding]);
+
+
+  //const activeSession = useObservable(activeDeviceSessionSubject);
+
+  /* useEffect(() => {
+    if(!activeSession) return;
+    console.log(">>>>>>>>> activeSession", activeSession);
+    activeSession.transport
+      .send(0xe0, 0x07, 0x00, 0x00)
+      .then(response => {
+        console.log(">>>>> poooling responseCode", response);
+        const status = response.readUInt16BE(response.length - 2);
+
+        switch (status) {
+          case StatusCodes.OK:
+            console.log(">>>>>>>>> OK");
+            break;
+        }
+      })
+      .catch(error => {
+        console.error(">>>> Error while fetching the pin status:", error);
+      })
+  }, [activeSession]); */
 
   return (
     <>
