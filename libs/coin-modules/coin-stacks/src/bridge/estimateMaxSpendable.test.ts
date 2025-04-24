@@ -198,11 +198,11 @@ describe("estimateMaxSpendable", () => {
       expect.objectContaining({
         network: "testnet",
       }),
-      expect.any(String),
-      expect.any(String),
-      expect.any(Object),
-      expect.any(Object),
-      expect.any(Object),
+      "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM",
+      "xpub123",
+      undefined,
+      undefined,
+      undefined,
     );
   });
 });
