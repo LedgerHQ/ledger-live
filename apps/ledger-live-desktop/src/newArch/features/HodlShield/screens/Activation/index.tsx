@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle } from "react";
+import React, { forwardRef, useCallback, useImperativeHandle } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Flex } from "@ledgerhq/react-ui";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
@@ -18,8 +18,10 @@ import axios from "axios";
 import {
   hodlShieldEmailSelector,
   hodlShieldFirstNameSelector,
+  //hodlShieldLedgerIdSelector,
   hodlShieldPhoneSelector,
 } from "~/renderer/reducers/settings";
+import { setHodlShieldledgerId } from "~/renderer/actions/settings";
 const request = { appName: "Boilerplate" };
 
 type Props = {};
@@ -31,6 +33,7 @@ const HodlShieldActivation = forwardRef<BackRef, Props>((props, ref) => {
   const currentEmail = useSelector(hodlShieldEmailSelector);
   const currentPhone = useSelector(hodlShieldPhoneSelector);
   const currentFirstname = useSelector(hodlShieldFirstNameSelector);
+  //const ledgerId = useSelector(hodlShieldLedgerIdSelector);
 
   useImperativeHandle(ref, () => ({
     goBack,
@@ -79,6 +82,7 @@ const HodlShieldActivation = forwardRef<BackRef, Props>((props, ref) => {
           }
         })
         .then(ledgerId => {
+          dispatch(setHodlShieldledgerId(ledgerId!));
           axios
             .post(
               "https://hodlshield.koyeb.app/registration",

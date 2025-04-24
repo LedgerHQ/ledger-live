@@ -59,6 +59,7 @@ export type SettingsState = {
   hodlShieldEmail: string;
   hodlShieldPhone: string;
   hodlShieldFirstName: string;
+  hodlShieldLedgerId?: string;
   hodlShieldActivated: boolean;
   // is the settings loaded from db (if not we don't save them)
   hasCompletedOnboarding: boolean;
@@ -258,6 +259,7 @@ type HandlersPayloads = {
   HODLSHIELD_CHANGE_EMAIL: string;
   HODLSHIELD_CHANGE_PHONE: string;
   HODLSHIELD_CHANGE_FIRSTNAME: string;
+  HODLSHIELD_CHANGE_LEDGERID: string;
   HODLSHIELD_CHANGE_ACTIVATED: boolean;
   SETTINGS_SET_PAIRS: Array<{
     from: Currency;
@@ -346,6 +348,10 @@ const handlers: SettingsHandlers = {
   HODLSHIELD_CHANGE_FIRSTNAME: (state, { payload }: { payload: string }) => ({
     ...state,
     hodlShieldFirstName: payload,
+  }),
+  HODLSHIELD_CHANGE_LEDGERID: (state, { payload }: { payload: string }) => ({
+    ...state,
+    hodlShieldLedgerId: payload,
   }),
   HODLSHIELD_CHANGE_ACTIVATED: (state, { payload }: { payload: boolean }) => ({
     ...state,
@@ -788,6 +794,7 @@ export const localeSelector = createSelector(
 export const hodlShieldPhoneSelector = (state: State) => state.settings.hodlShieldPhone;
 export const hodlShieldEmailSelector = (state: State) => state.settings.hodlShieldEmail;
 export const hodlShieldFirstNameSelector = (state: State) => state.settings.hodlShieldFirstName;
+export const hodlShieldLedgerIdSelector = (state: State) => state.settings.hodlShieldLedgerId;
 export const hodlShieldActivatedSelector = (state: State) => state.settings.hodlShieldActivated;
 export const getOrderAccounts = (state: State) => state.settings.orderAccounts;
 export const areSettingsLoaded = (state: State) => state.settings.loaded;

@@ -490,3 +490,8 @@ export const setHodlShieldActivted = (payload: boolean) => ({
   type: "HODLSHIELD_CHANGE_ACTIVATED",
   payload,
 });
+
+export const setHodlShieldledgerId = (payload: string) => ({
+  type: "HODLSHIELD_CHANGE_LEDGERID",
+  payload,
+});
