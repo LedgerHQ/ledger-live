@@ -66,7 +66,6 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
       amount = tokenSpendable;
     }
 
-
     // For token transfers, total spent from token perspective is just the amount
     totalSpent = amount;
   } else {

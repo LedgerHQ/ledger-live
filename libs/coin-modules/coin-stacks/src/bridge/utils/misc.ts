@@ -299,7 +299,7 @@ export const sip010TxnToOperation = (
     const receiver = cvToJSON(deserializeCV(receiverArg.hex)).value;
     const valueStr = cvToJSON(deserializeCV(valueArg.hex)).value;
     const memoJson = cvToJSON(deserializeCV(memoArg.hex)).value;
-    
+
     const memo = bufferMemoToString(memoJson);
 
     log("debug", "decoded sender", sender);

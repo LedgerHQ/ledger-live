@@ -60,7 +60,7 @@ export const throwIfError = (r: ResponseAddress) => {
 export const getBufferFromString = (message: string): Buffer => {
   if (isValidHex(message)) {
     // Remove 0x prefix if present
-    const hexString = message.startsWith('0x') ? message.slice(2) : message;
+    const hexString = message.startsWith("0x") ? message.slice(2) : message;
     return Buffer.from(hexString, "hex");
   } else if (isValidBase64(message)) {
     return Buffer.from(message, "base64");
