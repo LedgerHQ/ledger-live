@@ -1,9 +1,8 @@
 import {
+  type Balance,
   IncorrectTypeError,
-  Operation,
-  Pagination,
-  TransactionIntent,
-  type Api,
+  type Operation,
+  type Pagination,
 } from "@ledgerhq/coin-framework/api/index";
 import { log } from "@ledgerhq/logs";
 import coinConfig, { type TezosConfig } from "../config";
@@ -18,9 +17,10 @@ import {
   rawEncode,
 } from "../logic";
 import api from "../network/tzkt";
-import { TezosAsset, TezosOperationMode } from "../types";
+import type { TezosOperationMode } from "../types";
+import type { TezosApi, TezosAsset, TezosFeeEstimation, TezosTransactionIntent } from "./types";
 
-export function createApi(config: TezosConfig): Api<TezosAsset> {
+export function createApi(config: TezosConfig): TezosApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -28,7 +28,7 @@ export function createApi(config: TezosConfig): Api<TezosAsset> {
     combine,
     craftTransaction: craft,
     estimateFees: estimate,
-    getBalance,
+    getBalance: balance,
     lastBlock,
     listOperations: operations,
   };
@@ -38,36 +38,58 @@ function isTezosTransactionType(type: string): type is "send" | "delegate" | "un
   return ["send", "delegate", "undelegate"].includes(type);
 }
 
+async function balance(address: string): Promise<Balance<TezosAsset>[]> {
+  const value = await getBalance(address);
+  return [
+    {
+      value,
+      asset: { type: "native" },
+    },
+  ];
+}
+
 async function craft(
-  transactionIntent: TransactionIntent<TezosAsset>,
+  transactionIntent: TezosTransactionIntent,
   customFees?: bigint,
 ): Promise<string> {
   if (!isTezosTransactionType(transactionIntent.type)) {
     throw new IncorrectTypeError(transactionIntent.type);
   }
-  const fee = customFees !== undefined ? customFees : await estimate(transactionIntent);
+  const fee =
+    customFees !== undefined
+      ? { fees: customFees.toString() }
+      : await estimate(transactionIntent).then(fees => ({
+          fees: fees.value.toString(),
+          gasLimit: fees.parameters?.gasLimit?.toString(),
+          storageLimit: fees.parameters?.storageLimit?.toString(),
+        }));
   const { contents } = await craftTransaction(
-    { address: transactionIntent.sender },
+    { address: transactionIntent.sender.address },
     {
       type: transactionIntent.type,
       recipient: transactionIntent.recipient,
       amount: transactionIntent.amount,
-      fee: { fees: fee.toString() },
+      fee,
     },
   );
   return rawEncode(contents);
 }
 
-async function estimate(transactionIntent: TransactionIntent<TezosAsset>): Promise<bigint> {
-  const senderAccountInfo = await api.getAccountByAddress(transactionIntent.sender);
+async function estimate(transactionIntent: TezosTransactionIntent): Promise<TezosFeeEstimation> {
+  const senderAccountInfo = await api.getAccountByAddress(transactionIntent.sender.address);
   if (senderAccountInfo.type !== "user") throw new Error("unexpected account type");
 
-  const estimatedFees = await estimateFees({
+  const {
+    estimatedFees: value,
+    gasLimit,
+    storageLimit,
+    taquitoError,
+  } = await estimateFees({
     account: {
-      address: transactionIntent.sender,
+      address: transactionIntent.sender.address,
       revealed: senderAccountInfo.revealed,
       balance: BigInt(senderAccountInfo.balance),
-      xpub: senderAccountInfo.publicKey,
+      xpub: transactionIntent.sender.xpub ?? senderAccountInfo.publicKey,
     },
     transaction: {
       mode: transactionIntent.type as TezosOperationMode,
@@ -76,11 +98,17 @@ async function estimate(transactionIntent: TransactionIntent<TezosAsset>): Promi
     },
   });
 
-  if (estimatedFees.taquitoError !== undefined) {
-    throw new Error(`Fees estimation failed: ${estimatedFees.taquitoError}`);
+  if (taquitoError !== undefined) {
+    throw new Error(`Fees estimation failed: ${taquitoError}`);
   }
 
-  return estimatedFees.estimatedFees;
+  return {
+    value,
+    parameters: {
+      gasLimit,
+      storageLimit,
+    },
+  };
 }
 
 type PaginationState = {
