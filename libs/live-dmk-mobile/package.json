@@ -35,7 +35,6 @@
     "@ledgerhq/device-transport-kit-react-native-ble": "0.0.0-fix-rn-ble-scanning-20250424114719",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
-    "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-dmk-shared": "workspace:^",
     "@ledgerhq/logs": "^6.12.0",
     "@ledgerhq/types-devices": "workspace:^",

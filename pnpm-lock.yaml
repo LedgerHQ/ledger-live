@@ -7518,9 +7518,6 @@ importers:
       '@ledgerhq/hw-transport':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-transport
-      '@ledgerhq/live-common':
-        specifier: workspace:^
-        version: link:../ledger-live-common
       '@ledgerhq/live-dmk-shared':
         specifier: workspace:^
         version: link:../live-dmk-shared
