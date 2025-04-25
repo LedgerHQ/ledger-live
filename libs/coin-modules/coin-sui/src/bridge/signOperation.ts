@@ -39,18 +39,16 @@ export const buildSignOperation =
           }),
         };
 
-        const { unsigned } = await buildTransaction(account, transactionToSign);
-
-        const signData = messageWithIntent("TransactionData", unsigned);
-
-        const { signature } = await signerContext(deviceId, signer =>
-          signer.signTransaction(account.freshAddressPath, signData),
-        );
-
         const publicKeyResult = await signerContext(deviceId, signer =>
           signer.getPublicKey(account.freshAddressPath),
         );
         const publicKey = new Ed25519PublicKey(publicKeyResult.publicKey);
+
+        const { unsigned } = await buildTransaction(account, transactionToSign);
+        const signData = messageWithIntent("TransactionData", unsigned);
+        const { signature } = await signerContext(deviceId, signer =>
+          signer.signTransaction(account.freshAddressPath, signData),
+        );
 
         const serializedSignature = toSerializedSignature({
           signature,

@@ -1,5 +1,86 @@
 # @ledgerhq/live-common
 
+## 34.31.1
+
+### Patch Changes
+
+- Updated dependencies [[`27ccebf`](https://github.com/LedgerHQ/ledger-live/commit/27ccebfe727362d6055698251dad582d195f3dac), [`d0480a7`](https://github.com/LedgerHQ/ledger-live/commit/d0480a71b6ecc57cfea7e763e44e8266c89f5c25), [`56b36fb`](https://github.com/LedgerHQ/ledger-live/commit/56b36fbb104c11431fd3fb33cab6c20c7c483f9d), [`cec9ce9`](https://github.com/LedgerHQ/ledger-live/commit/cec9ce99f8e35d6295f43908118c6c269c1bfe38), [`ec758f8`](https://github.com/LedgerHQ/ledger-live/commit/ec758f83186efa79972389971dd365dfca51b886), [`001624d`](https://github.com/LedgerHQ/ledger-live/commit/001624d108b8212bff27fda572689a86b9788708), [`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601)]:
+  - @ledgerhq/coin-sui@0.3.0
+  - @ledgerhq/coin-tron@2.0.0
+  - @ledgerhq/coin-solana@0.21.0
+  - @ledgerhq/coin-ton@0.9.0
+  - @ledgerhq/coin-stellar@4.0.0
+  - @ledgerhq/coin-tezos@4.0.0
+  - @ledgerhq/coin-polkadot@5.0.0
+  - @ledgerhq/coin-xrp@5.0.0
+  - @ledgerhq/coin-framework@4.0.0
+  - @ledgerhq/coin-algorand@0.9.3
+  - @ledgerhq/coin-aptos@1.9.3
+  - @ledgerhq/coin-bitcoin@0.15.3
+  - @ledgerhq/coin-cardano@0.8.3
+  - @ledgerhq/coin-casper@1.6.3
+  - @ledgerhq/coin-celo@1.1.1
+  - @ledgerhq/coin-cosmos@0.13.2
+  - @ledgerhq/coin-evm@2.19.1
+  - @ledgerhq/coin-filecoin@1.9.3
+  - @ledgerhq/coin-hedera@1.6.3
+  - @ledgerhq/coin-icon@0.10.3
+  - @ledgerhq/coin-internet_computer@1.7.3
+  - @ledgerhq/coin-mina@1.1.2
+  - @ledgerhq/coin-multiversx@0.4.3
+  - @ledgerhq/coin-near@0.11.3
+  - @ledgerhq/coin-stacks@0.8.3
+  - @ledgerhq/coin-vechain@2.7.3
+  - @ledgerhq/live-countervalues@0.5.3
+  - @ledgerhq/live-countervalues-react@0.2.32
+  - @ledgerhq/live-nft@0.8.3
+  - @ledgerhq/live-wallet@0.10.6
+  - @ledgerhq/live-signer-evm@0.3.1
+
+## 34.31.1-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`56b36fb`](https://github.com/LedgerHQ/ledger-live/commit/56b36fbb104c11431fd3fb33cab6c20c7c483f9d)]:
+  - @ledgerhq/coin-solana@0.21.0-next.1
+
+## 34.31.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`27ccebf`](https://github.com/LedgerHQ/ledger-live/commit/27ccebfe727362d6055698251dad582d195f3dac), [`d0480a7`](https://github.com/LedgerHQ/ledger-live/commit/d0480a71b6ecc57cfea7e763e44e8266c89f5c25), [`cec9ce9`](https://github.com/LedgerHQ/ledger-live/commit/cec9ce99f8e35d6295f43908118c6c269c1bfe38), [`ec758f8`](https://github.com/LedgerHQ/ledger-live/commit/ec758f83186efa79972389971dd365dfca51b886), [`001624d`](https://github.com/LedgerHQ/ledger-live/commit/001624d108b8212bff27fda572689a86b9788708), [`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601)]:
+  - @ledgerhq/coin-sui@0.3.0-next.0
+  - @ledgerhq/coin-tron@2.0.0-next.0
+  - @ledgerhq/coin-ton@0.9.0-next.0
+  - @ledgerhq/coin-stellar@4.0.0-next.0
+  - @ledgerhq/coin-tezos@4.0.0-next.0
+  - @ledgerhq/coin-polkadot@5.0.0-next.0
+  - @ledgerhq/coin-xrp@5.0.0-next.0
+  - @ledgerhq/coin-framework@4.0.0-next.0
+  - @ledgerhq/coin-algorand@0.9.3-next.0
+  - @ledgerhq/coin-aptos@1.9.3-next.0
+  - @ledgerhq/coin-bitcoin@0.15.3-next.0
+  - @ledgerhq/coin-cardano@0.8.3-next.0
+  - @ledgerhq/coin-casper@1.6.3-next.0
+  - @ledgerhq/coin-celo@1.1.1-next.0
+  - @ledgerhq/coin-cosmos@0.13.2-next.0
+  - @ledgerhq/coin-evm@2.19.1-next.0
+  - @ledgerhq/coin-filecoin@1.9.3-next.0
+  - @ledgerhq/coin-hedera@1.6.3-next.0
+  - @ledgerhq/coin-icon@0.10.3-next.0
+  - @ledgerhq/coin-internet_computer@1.7.3-next.0
+  - @ledgerhq/coin-mina@1.1.2-next.0
+  - @ledgerhq/coin-multiversx@0.4.3-next.0
+  - @ledgerhq/coin-near@0.11.3-next.0
+  - @ledgerhq/coin-solana@0.20.1-next.0
+  - @ledgerhq/coin-stacks@0.8.3-next.0
+  - @ledgerhq/coin-vechain@2.7.3-next.0
+  - @ledgerhq/live-countervalues@0.5.3-next.0
+  - @ledgerhq/live-countervalues-react@0.2.32-next.0
+  - @ledgerhq/live-nft@0.8.3-next.0
+  - @ledgerhq/live-wallet@0.10.6-next.0
+  - @ledgerhq/live-signer-evm@0.3.1-next.0
+
 ## 34.31.0
 
 ### Minor Changes

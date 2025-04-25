@@ -5,6 +5,9 @@ export interface Storage {
   /** Get the current storage state. */
   getState(): StorageState;
 
+  /** Trigger syntax error for debugging */
+  incrementNumberOfErrorsDebug(error: unknown): Promise<void>;
+
   /** Get all keys in application storage. */
   keys(): Promise<string[]>;
 
@@ -112,6 +115,11 @@ export interface StorageState {
   rollbackStatus: RollbackStatus;
   /** Number of reading errors triggered during the use */
   numberOfReadErrors: number;
+  /** Last Error to have been triggered (for analytics purpose) */
+  lastError?: {
+    stackTrace: string;
+    key: string | null;
+  };
 }
 
 /** Initializer callback function to initialize {@link StorageState} state. */

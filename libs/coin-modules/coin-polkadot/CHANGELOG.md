@@ -1,5 +1,27 @@
 # @ledgerhq/coin-polkadot
 
+## 5.0.0
+
+### Major Changes
+
+- [#10009](https://github.com/LedgerHQ/ledger-live/pull/10009) [`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-framework): replace operation index with operation id
+
+### Patch Changes
+
+- Updated dependencies [[`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601)]:
+  - @ledgerhq/coin-framework@4.0.0
+
+## 5.0.0-next.0
+
+### Major Changes
+
+- [#10009](https://github.com/LedgerHQ/ledger-live/pull/10009) [`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-framework): replace operation index with operation id
+
+### Patch Changes
+
+- Updated dependencies [[`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601)]:
+  - @ledgerhq/coin-framework@4.0.0-next.0
+
 ## 4.0.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-dmk-desktop",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Ledger Device Management Kit transport module for LLD",
   "private": true,
   "license": "Apache-2.0",
@@ -31,8 +31,8 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@ledgerhq/device-management-kit": "0.0.0-rnble-transport-20250401145214",
-    "@ledgerhq/device-transport-kit-web-hid": "0.0.0-rnble-transport-20250401145214",
+    "@ledgerhq/device-management-kit": "0.0.0-fix-rn-ble-scanning-20250424114719",
+    "@ledgerhq/device-transport-kit-web-hid": "0.0.0-fix-rn-ble-scanning-20250424114719",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-dmk-shared": "workspace:^",

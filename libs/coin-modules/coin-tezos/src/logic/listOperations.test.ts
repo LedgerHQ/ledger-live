@@ -1,5 +1,5 @@
 import { listOperations } from "./listOperations";
-import { APIDelegationType, APITransactionType } from "../network/types";
+import type { APIDelegationType, APIRevealType, APITransactionType } from "../network/types";
 
 const mockNetworkGetTransactions = jest.fn();
 jest.mock("../network", () => ({
@@ -32,17 +32,24 @@ describe("listOperations", () => {
 
   const someDestinationAddress = "tz3Vq38qYD3GEbWcXHMLt5PaASZrkDtEiA8D";
   const someSenderAddress = "tz2CVMDVA16dD9A7kpWym2ptGDhs5zUhwWXr";
-  const delegate: APIDelegationType = {
-    type: "delegation",
-    id: 111,
+  const someHash = "ooY7YKLgWE8mrELbsDLEtPsxFNaLdqRbbRR1b1FXDA6DwasAFe4";
+  const commonTx = {
+    counter: 65214462,
+    hash: someHash,
+    gasLimit: 4,
+    storageLimit: 5,
     level: 2702551,
     block: "BMJ1ZQ6",
     timestamp: "2022-09-12T01:36:59Z",
-    amount: 724846,
     sender: {
       address: someSenderAddress,
     },
-    counter: 65214462,
+  };
+  const delegate: APIDelegationType = {
+    ...commonTx,
+    type: "delegation",
+    id: 111,
+    amount: 724846,
     prevDelegate: {
       address: someDestinationAddress,
     },
@@ -50,8 +57,6 @@ describe("listOperations", () => {
     storageFee: 1,
     bakerFee: 2,
     allocationFee: 3,
-    gasLimit: 4,
-    storageLimit: 5,
   };
 
   const undelegate: APIDelegationType = {
@@ -69,6 +74,14 @@ describe("listOperations", () => {
     target: { address: someDestinationAddress },
   };
 
+  const reveal: APIRevealType = {
+    ...commonTx,
+    id: 444,
+    type: "reveal",
+    bakerFee: 4700,
+    status: "applied",
+  };
+
   it.each([
     ["undelegate", undelegate],
     ["delegate", delegate],
@@ -77,17 +90,62 @@ describe("listOperations", () => {
     // Given
     mockNetworkGetTransactions.mockResolvedValue([operation]);
     // When
-    const [results, token] = await listOperations("any address", options);
+    const [results] = await listOperations("any address", options);
     // Then
-    expect(results.length).toEqual(1);
-    expect(results[0].recipients).toEqual([someDestinationAddress]);
-    expect(token).toEqual(JSON.stringify(operation.id));
+    expect(results).toEqual([
+      {
+        id: `${operation.hash}-${operation.id}`,
+        asset: { type: "native" },
+        details: {
+          counter: operation.counter,
+          gasLimit: operation.gasLimit,
+          storageLimit: operation.storageLimit,
+        },
+        senders: [someSenderAddress],
+        recipients: [someDestinationAddress],
+        tx: {
+          block: {
+            hash: operation.block,
+            height: operation.level,
+            time: new Date(operation.timestamp),
+          },
+          date: new Date(operation.timestamp),
+          hash: operation.hash,
+          fees: BigInt(
+            (operation.allocationFee ?? 0) +
+              (operation.bakerFee ?? 0) +
+              (operation.storageFee ?? 0),
+          ),
+        },
+        type: operation.type,
+        value: BigInt(operation.amount),
+      },
+    ]);
   });
 
   it.each([
     ["undelegate", undelegate],
     ["delegate", delegate],
     ["transfer", transfer],
+    ["reveal", reveal],
+  ])(
+    "should return %s operation with pagination equal to operation id",
+    async (_label, operation) => {
+      // Given
+      mockNetworkGetTransactions.mockResolvedValue([operation]);
+      // When
+      const [results, token] = await listOperations("any address", options);
+      // Then
+      expect(results.length).toEqual(1);
+      expect(token).toEqual(JSON.stringify(operation.id));
+    },
+  );
+
+  it.each([
+    ["undelegate", undelegate],
+    ["delegate", delegate],
+    ["transfer", transfer],
+    ["reveal", reveal],
   ])("should return %s operation with expected details", async (_label, operation) => {
     // Given
     mockNetworkGetTransactions.mockResolvedValue([operation]);
