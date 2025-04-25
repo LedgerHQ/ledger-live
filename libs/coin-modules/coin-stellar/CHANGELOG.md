@@ -1,5 +1,20 @@
 # @ledgerhq/coin-stellar
 
+## 4.0.0
+
+### Major Changes
+
+- [#10009](https://github.com/LedgerHQ/ledger-live/pull/10009) [`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-framework): replace operation index with operation id
+
+### Minor Changes
+
+- [#9974](https://github.com/LedgerHQ/ledger-live/pull/9974) [`ec758f8`](https://github.com/LedgerHQ/ledger-live/commit/ec758f83186efa79972389971dd365dfca51b886) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - stellar coin module API: make craft return signature payload instead of transaction envelope
+
+### Patch Changes
+
+- Updated dependencies [[`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601)]:
+  - @ledgerhq/coin-framework@4.0.0
+
 ## 4.0.0-next.0
 
 ### Major Changes

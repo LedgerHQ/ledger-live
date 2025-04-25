@@ -1,5 +1,16 @@
 # @ledgerhq/coin-solana
 
+## 0.21.0
+
+### Minor Changes
+
+- [#10052](https://github.com/LedgerHQ/ledger-live/pull/10052) [`56b36fb`](https://github.com/LedgerHQ/ledger-live/commit/56b36fbb104c11431fd3fb33cab6c20c7c483f9d) Thanks [@Justkant](https://github.com/Justkant)! - fix: wrong transaction kind for solana SPL
+
+### Patch Changes
+
+- Updated dependencies [[`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601)]:
+  - @ledgerhq/coin-framework@4.0.0
+
 ## 0.21.0-next.1
 
 ### Minor Changes

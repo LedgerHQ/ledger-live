@@ -1,5 +1,11 @@
 # actions-root
 
+## 0.3.0
+
+### Minor Changes
+
+- [#9955](https://github.com/LedgerHQ/ledger-live/pull/9955) [`d0aa534`](https://github.com/LedgerHQ/ledger-live/commit/d0aa5343fcaaa14c2336b47109eaecdce2d0b9aa) Thanks [@qperrot](https://github.com/qperrot)! - Coin tester actions
+
 ## 0.3.0-next.0
 
 ### Minor Changes

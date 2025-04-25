@@ -1,5 +1,20 @@
 # @ledgerhq/coin-tron
 
+## 2.0.0
+
+### Major Changes
+
+- [#10009](https://github.com/LedgerHQ/ledger-live/pull/10009) [`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-framework): replace operation index with operation id
+
+### Minor Changes
+
+- [#9994](https://github.com/LedgerHQ/ledger-live/pull/9994) [`d0480a7`](https://github.com/LedgerHQ/ledger-live/commit/d0480a71b6ecc57cfea7e763e44e8266c89f5c25) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - When account is not yet activated, RPC returns an empty account list => return an empty balance instead of crashing
+
+### Patch Changes
+
+- Updated dependencies [[`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601)]:
+  - @ledgerhq/coin-framework@4.0.0
+
 ## 2.0.0-next.0
 
 ### Major Changes
