@@ -1,5 +1,12 @@
 # @ledgerhq/live-common
 
+## 34.31.1-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`56b36fb`](https://github.com/LedgerHQ/ledger-live/commit/56b36fbb104c11431fd3fb33cab6c20c7c483f9d)]:
+  - @ledgerhq/coin-solana@0.21.0-next.1
+
 ## 34.31.1-next.0
 
 ### Patch Changes

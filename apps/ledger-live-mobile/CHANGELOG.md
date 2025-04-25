@@ -1,5 +1,12 @@
 # live-mobile
 
+## 3.76.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-dmk-mobile@0.4.0-next.1
+
 ## 3.76.0-next.0
 
 ### Minor Changes
