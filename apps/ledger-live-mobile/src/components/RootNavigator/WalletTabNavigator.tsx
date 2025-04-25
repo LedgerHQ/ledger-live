@@ -22,6 +22,7 @@ import WalletTabHeader from "../WalletTab/WalletTabHeader";
 import { WalletTabNavigatorStackParamList } from "./types/WalletTabNavigator";
 import { ScreenName, NavigatorName } from "~/const/navigation";
 import MarketWalletTabNavigator from "LLM/features/Market/WalletTabNavigator";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const WalletTab = createMaterialTopTabNavigator<WalletTabNavigatorStackParamList>();
 
@@ -34,6 +35,8 @@ export default function WalletTabNavigator() {
   const lastVisitedTab = useSelector(walletTabNavigatorLastVisitedTabSelector);
   const { t } = useTranslation();
   const [currentRouteName, setCurrentRouteName] = useState<string | undefined>();
+
+  const llmNftSupport = useFeature("llNftSupport");
 
   return (
     <WalletTabNavigatorScrollManager currentRouteName={currentRouteName}>
@@ -71,13 +74,15 @@ export default function WalletTabNavigator() {
             }}
           />
 
-          <WalletTab.Screen
-            name={ScreenName.WalletNftGallery}
-            component={WalletNftGallery}
-            options={{
-              title: t("wallet.tabs.nft"),
-            }}
-          />
+          {llmNftSupport?.enabled && (
+            <WalletTab.Screen
+              name={ScreenName.WalletNftGallery}
+              component={WalletNftGallery}
+              options={{
+                title: t("wallet.tabs.nft"),
+              }}
+            />
+          )}
 
           <WalletTab.Screen
             name={NavigatorName.Market}
