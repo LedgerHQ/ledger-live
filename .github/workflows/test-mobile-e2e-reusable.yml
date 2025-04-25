@@ -190,7 +190,7 @@ jobs:
   allure-report-ios:
     name: "Allure Reports Export on Server"
     runs-on: [ledger-live-medium]
-    if: ${{ !cancelled() && !inputs.speculos_tests }}
+    if: ${{ !cancelled() && !inputs.speculos_tests && needs.detox-tests-ios.result == 'success' }}
     needs: [detox-tests-ios]
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
