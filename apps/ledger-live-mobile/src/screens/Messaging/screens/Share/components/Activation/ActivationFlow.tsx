@@ -10,20 +10,20 @@ import {
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { NavigatorName, ScreenName } from "~/const";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
-import ChooseSyncMethod from "../../screens/Synchronize/ChooseMethod";
-import QrCodeMethod from "../../screens/Synchronize/QrCodeMethod";
-import { Options, Steps } from "../../types/Activation";
-import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
-import PinCodeDisplay from "../../screens/Synchronize/PinCodeDisplay";
-import PinCodeInput from "../../screens/Synchronize/PinCodeInput";
-import SyncError from "../../screens/Synchronize/SyncError";
-import ScannedInvalidQrCode from "../../screens/Synchronize/ScannedInvalidQrCode";
-import ScannedOldImportQrCode from "../../screens/Synchronize/ScannedOldImportQrCode";
-import { useInitMemberCredentials } from "../../hooks/useInitMemberCredentials";
-import { useSyncWithQrCode } from "../../hooks/useSyncWithQrCode";
+import ChooseSyncMethod from "../../../../screens/Synchronize/ChooseMethod";
+import QrCodeMethod from "../../../../screens/Synchronize/QrCodeMethod";
+import { Options, Steps } from "../../../../types/Activation";
+import { AnalyticsPage } from "../../../../hooks/useLedgerSyncAnalytics";
+import PinCodeDisplay from "../../../../screens/Synchronize/PinCodeDisplay";
+import PinCodeInput from "../../../../screens/Synchronize/PinCodeInput";
+import SyncError from "../../../../screens/Synchronize/SyncError";
+import ScannedInvalidQrCode from "../../../../screens/Synchronize/ScannedInvalidQrCode";
+import ScannedOldImportQrCode from "../../../../screens/Synchronize/ScannedOldImportQrCode";
+import { useInitMemberCredentials } from "../../../../hooks/useInitMemberCredentials";
+import { useSyncWithQrCode } from "../../../../hooks/useShare";
 import { SpecificError } from "../Error/SpecificError";
-import { ErrorReason } from "../../hooks/useSpecificError";
-import { useCurrentStep } from "../../hooks/useCurrentStep";
+import { ErrorReason } from "../../../../hooks/useSpecificError";
+import { useCurrentStep } from "../../../../hooks/useCurrentStep";
 
 type Props = {
   navigateToChooseSyncMethod: () => void;
@@ -48,10 +48,12 @@ const ActivationFlow = ({
   setOption,
   onQrCodeScanned,
   onCreateKey,
+  conversationId,
 }: Props) => {
   const { currentStep, setCurrentStep } = useCurrentStep();
   const { memberCredentials } = useInitMemberCredentials();
-  const { handleStart, handleSendDigits, nbDigits } = useSyncWithQrCode();
+
+  const { handleStart, handleSendDigits, nbDigits } = useSyncWithQrCode(conversationId);
 
   const handleQrCodeScanned = (data: string) => {
     onQrCodeScanned();
@@ -70,7 +72,6 @@ const ActivationFlow = ({
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const { navigate } =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
-
   const getScene = () => {
     switch (currentStep) {
       case Steps.Activation:

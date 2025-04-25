@@ -2,16 +2,40 @@ import React, { useState, useRef } from "react";
 import { KeyboardAvoidingView, Platform, FlatList, TextInput } from "react-native";
 import { useTheme } from "styled-components/native";
 import SafeAreaView from "~/components/SafeAreaView";
-import { Share } from "@ledgerhq/native-ui/assets/icons";
-import { Flex, ScrollContainerHeader, Button, Text, IconButton } from "@ledgerhq/native-ui";
+import { TouchableOpacity } from "react-native";
+import { ShareAlt } from "@ledgerhq/native-ui/assets/icons";
+import { Flex, ScrollContainerHeader, Button, Text } from "@ledgerhq/native-ui";
 import BackButton from "./components/BackButton";
+import { useNavigation } from "@react-navigation/native";
+import { ScreenName } from "~/const";
 import useConversation from "../../hooks/useConversation";
 
 interface ViewProps {
   route: { params: { conversationId: string } };
 }
 
+function IconButton({
+  children,
+  onPress,
+  disabled,
+  ...flexProps
+}: React.PropsWithChildren<
+  {
+    children: React.ReactNode;
+    disabled?: boolean;
+    onPress: () => void;
+  } & React.ComponentProps<typeof Flex>
+>) {
+  return (
+    <TouchableOpacity onPress={onPress} disabled={disabled}>
+      <Flex justifyContent="center" alignItems="center" height={40} width={40} {...flexProps}>
+        {children}
+      </Flex>
+    </TouchableOpacity>
+  );
+}
 const Conversation: React.FC<ViewProps> = ({ route }) => {
+  const navigation = useNavigation();
   const { colors } = useTheme();
   const { params } = route;
   const flatListRef = useRef<FlatList>(null);
@@ -27,7 +51,12 @@ const Conversation: React.FC<ViewProps> = ({ route }) => {
     }
   };
 
-  const handleShare = async () => {};
+  const handleShare = async () => {
+    navigation.navigate(ScreenName.ShareConversation, {
+      conversationId: params.conversationId,
+      name: conversation.name,
+    });
+  };
 
   // Render each message bubble
   const renderItem = ({
@@ -71,7 +100,11 @@ const Conversation: React.FC<ViewProps> = ({ route }) => {
           </Flex>
         }
         MiddleSection={<></>}
-        TopRightSection={<></>}
+        TopRightSection={
+          <IconButton onPress={handleShare}>
+            <ShareAlt />
+          </IconButton>
+        }
         BottomSection={<></>}
       >
         <Flex flex={1} backgroundColor={colors.background.main}>

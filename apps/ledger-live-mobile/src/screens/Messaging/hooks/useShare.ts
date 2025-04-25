@@ -2,12 +2,6 @@ import { useCallback, useState, useRef } from "react";
 import { MemberCredentials, TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { createQRCodeCandidateInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
 import {
-  memberCredentialsSelector,
-  setTrustchain,
-  setConversation,
-  trustchainSelector,
-} from "@ledgerhq/ledger-key-ring-protocol/store";
-import {
   ScannedOldImportQrCode,
   ScannedInvalidQrCode,
   InvalidDigitsError,
@@ -15,6 +9,12 @@ import {
   TrustchainAlreadyInitialized,
   TrustchainAlreadyInitializedWithOtherSeed,
 } from "@ledgerhq/ledger-key-ring-protocol/errors";
+
+import {
+  setTrustchain,
+  conversationTrustchainsSelector,
+  trustchainSelector,
+} from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { AnalyticsEvents } from "LLM/features/Analytics/enums";
@@ -25,12 +25,14 @@ import { useInstanceName } from "./useInstanceName";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useCurrentStep } from "./useCurrentStep";
 
-export const useSyncWithQrCode = () => {
+export const useSyncWithQrCode = conversationId => {
   const { setCurrentStep } = useCurrentStep();
+  const conversationsSelector = useSelector(conversationTrustchainsSelector);
   const [nbDigits, setDigits] = useState<number | null>(null);
   const [input, setInput] = useState<string | null>(null);
   const instanceName = useInstanceName();
-  const trustchain = useSelector(trustchainSelector);
+  const trustchain = conversationsSelector.find(c => c.rootId === conversationId);
+  console.log(trustchain);
   const sdk = useTrustchainSdk();
 
   const navigation = useNavigation();
@@ -40,7 +42,6 @@ export const useSyncWithQrCode = () => {
 
   const onRequestQRCodeInput = useCallback(
     (config: { digits: number }, callback: (input: string) => void) => {
-      console.log("REQUEST DIGITS");
       setDigits(config.digits);
       inputCallbackRef.current = callback;
     },
@@ -70,17 +71,14 @@ export const useSyncWithQrCode = () => {
           addMember: async (member: TrustchainMember) => {
             if (trustchain) {
               await sdk.addMember(trustchain, memberCredentials, member);
-              console.log("TRUSTCHAIN DSFDSF", trustchain);
-
               return trustchain;
             }
             throw new NoTrustchainInitialized();
           },
-          initialTrustchainId: undefined,
+          initialTrustchainId: trustchain?.rootId,
         });
         if (newTrustchain) {
-          //dispatch(setTrustchain(newTrustchain));
-          dispatch(setConversation(newTrustchain, "Your new conversation"));
+          dispatch(setTrustchain(newTrustchain));
           if (!trustchain) track(AnalyticsEvents.LedgerSyncActivated);
         }
         onSyncFinished();

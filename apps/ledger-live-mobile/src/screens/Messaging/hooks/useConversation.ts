@@ -46,15 +46,12 @@ export function useCloudSyncSDK(): CloudSyncSDK<Schema> {
     [getState],
   );
 
-  console.log("IN STORE", latestWalletStateSelector(getState()));
-
   // saveNewUpdate already works with LiveData, no changes needed here
   const saveNewUpdate = useCallback(
     async (event: any) => {
       console.log(event);
       switch (event.type) {
         case "new-data":
-          console.log("Sync: Received new LiveData version", event.version);
           //setConversation(event.data.conversation);
           dispatch(setConversation(event.data.conversation.conversation, event.version));
           // JSON editor updates via useEffect [data]
@@ -97,7 +94,7 @@ function useConversation() {
   const walletSyncSdk = useCloudSyncSDK();
   const memberCredentials = useSelector(memberCredentialsSelector);
   useEffect(() => {
-    if (conversationsSelector.length === 0) {
+    if (conversationsSelector?.length === 0) {
       return;
     }
 
@@ -105,9 +102,7 @@ function useConversation() {
       for (const conversation of conversationsSelector) {
         try {
           await walletSyncSdk.pull(conversation, memberCredentials);
-        } catch (e) {
-          console.error("Error pulling conversation:", e);
-        }
+        } catch (e) {}
       }
     };
 
@@ -130,22 +125,6 @@ function useConversation() {
       if (!conversation) {
         throw new Error(`Conversation with id ${conversationId} not found`);
       }
-      console.log("PUSH MESSAGE", {
-        conversation: {
-          conversation: {
-            ...conversation,
-            messages: [
-              ...conversation.messages,
-              {
-                message: message,
-                author: "me",
-                date: Date.now(),
-              },
-            ],
-          },
-        },
-      });
-      console.log("FOUND CONVERSATION", conversationsSelector);
       await walletSyncSdk.push(
         conversationsSelector.find(conv => conv.rootId === conversation.id),
         memberCredentials,
@@ -196,7 +175,6 @@ function useConversation() {
 
   const getConversation = useCallback(
     (id: string) => {
-      console.log("CONVERSATION ID", conversations);
       const conversation = conversations[id];
       if (!conversation) {
         throw new Error(`Conversation with id ${id} not found`);
@@ -213,9 +191,8 @@ function useConversation() {
           })),
       };
     },
-    [conversations],
+    [conversations, memberCredentials?.pubkey],
   );
-  console.log("CONVERSATIONS", getConversations());
   return {
     getConversations,
     getConversation,

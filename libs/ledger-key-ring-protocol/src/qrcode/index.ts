@@ -272,6 +272,7 @@ export async function createQRCodeCandidateInstance({
     if (isFromOldAccountsImport(scannedUrl)) throw new ScannedOldImportQrCode();
     throw new ScannedInvalidQrCode();
   }
+
   const hostPublicKey = crypto.from_hex(m[1]);
   const ephemeralKey = crypto.randomKeypair();
   const publisher = crypto.to_hex(ephemeralKey.publicKey);
@@ -286,14 +287,17 @@ export async function createQRCodeCandidateInstance({
 
   return new Promise((resolve, reject) => {
     ws.addEventListener("close", () => {
+      console.log("CLOSED");
       if (finished) return;
       // this error would reflect a protocol error. because otherwise, we would get the "error" event. it shouldn't be visible to user, but we use it to ensure the promise ends.
       setTimeout(() => reject(new Error("qrcode websocket prematurely closed")), CLOSE_TIMEOUT);
     });
 
     ws.addEventListener("message", async e => {
+      console.log("MESSAGE");
       try {
         const data = parseMessage(e.data);
+        console.log(data);
         switch (data.message) {
           case "HandshakeChallenge": {
             const config = cipher.decryptMessage(data);
@@ -332,12 +336,13 @@ export async function createQRCodeCandidateInstance({
           initialTrustchainId,
         });
       } catch (e) {
-        console.error("socket error", e);
         ws.close();
         reject(e);
       }
     });
-    ws.addEventListener("error", reject);
+    ws.addEventListener("error", error => {
+      reject();
+    });
     ws.addEventListener("open", () => {
       const payload = { ephemeral_public_key: crypto.to_hex(ephemeralKey.publicKey) };
       send({ version, publisher, message: "InitiateHandshake", payload });

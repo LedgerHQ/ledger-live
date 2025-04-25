@@ -5,19 +5,14 @@ import {
   NoTrustchainInitialized,
   QRCodeWSClosed,
 } from "@ledgerhq/ledger-key-ring-protocol/errors";
+import { conversationTrustchainsSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useDispatch, useSelector } from "react-redux";
 import {
   trustchainSelector,
   memberCredentialsSelector,
-  setConversation,
   setTrustchain,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
-
-import {
-  conversationsStateSelector,
-  setConversation as setConv,
-} from "@ledgerhq/live-wallet/store";
 import { AnalyticsEvents } from "LLM/features/Analytics/enums";
 import { track } from "~/analytics";
 import { useTrustchainSdk } from "./useTrustchainSdk";
@@ -37,21 +32,19 @@ interface Props {
   currentOption: Options;
 }
 
-export function useQRCodeHost({ currentOption }: Props) {
+export function useQRShare({ currentOption, conversationId }: Props) {
+  const conversationsSelector = useSelector(conversationTrustchainsSelector);
+  const trustchain = conversationsSelector.find(c => c.rootId === conversationId);
   const { currentStep, setCurrentStep } = useCurrentStep();
   const queryClient = useQueryClient();
-  const trustchain = useSelector(trustchainSelector);
-  const convs = useSelector(conversationsStateSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
   const sdk = useTrustchainSdk();
   const dispatch = useDispatch();
-
   const featureWalletSync = useFeature("llmWalletSync");
   const { trustchainApiBaseUrl } = getWalletSyncEnvironmentParams(
     featureWalletSync?.params?.environment,
   );
   const memberName = useInstanceName();
-
   const [url, setUrl] = useState<string | null>(null);
   const [pinCode, setPinCode] = useState<string | null>(null);
 
@@ -82,7 +75,7 @@ export function useQRCodeHost({ currentOption }: Props) {
 
     onSuccess: newTrustchain => {
       if (newTrustchain) {
-        dispatch(setConversation(newTrustchain, "Your new conversation"));
+        //dispatch(setTrustchain(newTrustchain));
         if (!trustchain) track(AnalyticsEvents.LedgerSyncActivated);
       }
       queryClient.invalidateQueries({ queryKey: [QueryKey.getMembers] });
@@ -121,7 +114,6 @@ export function useQRCodeHost({ currentOption }: Props) {
       startQRCodeProcessing();
     }
   }, [currentOption, currentStep, startQRCodeProcessing]);
-
   return {
     url,
     error,

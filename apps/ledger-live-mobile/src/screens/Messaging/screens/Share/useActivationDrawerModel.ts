@@ -5,7 +5,7 @@ import {
   AnalyticsPage,
   useLedgerSyncAnalytics,
 } from "../../hooks/useLedgerSyncAnalytics";
-import { useQRCodeHost } from "../../hooks/useQRCodeHost";
+import { useQRShare } from "../../hooks/useQRShare";
 import { Options } from "LLM/features/WalletSync/types/Activation";
 import { NavigatorName, ScreenName } from "~/const";
 import { useNavigation } from "@react-navigation/native";
@@ -25,7 +25,7 @@ type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletSyncNavigatorStackParamList, ScreenName.WalletSyncActivationProcess>
 >;
 
-const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) => {
+const useActivationDrawerModel = ({ isOpen, startingStep, handleClose, conversationId }: Props) => {
   const { onClickTrack } = useLedgerSyncAnalytics();
   const { currentStep, setCurrentStep } = useCurrentStep();
 
@@ -69,10 +69,8 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
     setCurrentStep(Steps.QrCodeMethod);
   };
 
-  const onQrCodeScanned = () => {
-    console.log("QR CODE SCANNED");
-    setCurrentStep(Steps.PinInput);
-  };
+  const onQrCodeScanned = () => setCurrentStep(Steps.PinInput);
+
   const resetStep = () => setCurrentStep(startingStep);
   const resetOption = () => setCurrentOption(Options.SCAN);
   const goBackToPreviousStep = () => setCurrentStep(getPreviousStep(currentStep));
@@ -90,8 +88,9 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
     });
   };
 
-  const { url, error, isLoading, pinCode } = useQRCodeHost({
+  const { url, error, isLoading, pinCode } = useQRShare({
     currentOption,
+    conversationId,
   });
 
   return {
@@ -108,6 +107,7 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
     currentOption,
     setCurrentOption,
     onCreateKey,
+    conversationId,
   };
 };
 

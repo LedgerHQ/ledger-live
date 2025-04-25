@@ -5,6 +5,7 @@ import Conversation from "./screens/Conversation";
 import CreateConversationProcess from "./screens/Activation/ActivationProcess";
 import CreateConversationLoading from "./screens/Activation/ActivationLoading";
 import JoinConversation from "./screens/Activation";
+import ShareConversation from "./screens/Share";
 import { createStackNavigator } from "@react-navigation/stack";
 
 export type ConversationNavigatorStackParamList = {
@@ -17,6 +18,9 @@ export type ConversationNavigatorStackParamList = {
   [ScreenName.CreateConversationProcess]: {
     name: string;
   };
+  [ScreenName.ShareConversation]: {
+    conversationId: string;
+  };
 };
 
 interface NavigatorProps {
@@ -24,7 +28,6 @@ interface NavigatorProps {
 }
 
 export default function ConversationNavigator({ Stack }: NavigatorProps) {
-  console.log("HELLO2");
   return (
     <Stack.Group>
       <Stack.Screen
@@ -52,6 +55,13 @@ export default function ConversationNavigator({ Stack }: NavigatorProps) {
       <Stack.Screen
         name={ScreenName.CreateConversationProcess}
         component={CreateConversationProcess}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.ShareConversation}
+        component={ShareConversation}
         options={{
           headerShown: false,
         }}

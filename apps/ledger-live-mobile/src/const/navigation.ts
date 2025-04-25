@@ -24,6 +24,7 @@ export enum ScreenName {
   JoinConversation = "JoinConversation",
   ConfirmPassword = "ConfirmPassword",
   CountervalueSettings = "CountervalueSettings",
+  ShareConversation = "ShareConversation",
   CreateConversationProcess = "CreateConversationProcess",
   CryptoAssetsSettings = "CryptoAssetsSettings",
   ConversationActivationLoading = "ConversationActivationLoading",
