@@ -3,6 +3,7 @@ import cloneDeep from "lodash/cloneDeep";
 import {
   SolanaAccount,
   SolanaTokenAccount,
+  SolanaTokenProgram,
   TokenTransferCommand,
   TokenTransferTransaction,
   Transaction,
@@ -24,7 +25,11 @@ import { prepareTransaction } from "../prepareTransaction";
 import { encodeAccountId } from "@ledgerhq/coin-framework/lib/account/accountId";
 import { NonTransferableExt, TransferFeeConfigExt } from "../network/chain/account/tokenExtensions";
 import { PublicKey } from "@solana/web3.js";
-import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import {
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+  TOKEN_2022_PROGRAM_ID,
+  TOKEN_PROGRAM_ID,
+} from "@solana/spl-token";
 import { calculateToken2022TransferFees } from "../helpers/token";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 
@@ -58,8 +63,8 @@ const wSolSubAccId = encodeAccountIdWithTokenAccountAddress(mainAccId, testData.
 const wSolToken = findTokenByAddressInCurrency(testData.mintAddress, "solana") as TokenCurrency;
 
 const baseAccount = {
-  balance: new BigNumber(0),
-  spendableBalance: new BigNumber(0),
+  balance: new BigNumber(10000),
+  spendableBalance: new BigNumber(10000),
 } as Account;
 
 const baseAPI = {
@@ -83,11 +88,23 @@ const baseAPI = {
   },
   getSimulationComputeUnits: (_ixs: any[], _payer: any) => Promise.resolve(1000),
   getBalance: (_: string) => Promise.resolve(10),
+  findAssocTokenAccAddress: (owner: string, mint: string, program: SolanaTokenProgram) => {
+    return Promise.resolve(
+      PublicKey.findProgramAddressSync(
+        [
+          new PublicKey(owner).toBuffer(),
+          program === "spl-token" ? TOKEN_PROGRAM_ID.toBuffer() : TOKEN_2022_PROGRAM_ID.toBuffer(),
+          new PublicKey(mint).toBuffer(),
+        ],
+        ASSOCIATED_TOKEN_PROGRAM_ID,
+      )[0].toBase58(),
+    );
+  },
 } as ChainAPI;
 
 // Broken tests as the address used is not support anymore
 // Returning other errors we don't expect
-describe.skip("Solana tokens bridge integration tests", () => {
+describe("Solana tokens bridge integration tests", () => {
   const baseSolanaAccount: SolanaAccount = {
     ...baseAccount,
     freshAddress: testData.address1,
@@ -234,12 +251,92 @@ describe.skip("Solana tokens bridge integration tests", () => {
     };
   };
 
+  test("token.transfer :: status is success", async () => {
+    const api = {
+      ...baseAPI,
+      getAccountInfo: (address: string) => {
+        if (address === wSolToken.contractAddress) {
+          return Promise.resolve(baseTokenMintMock as any);
+        }
+        if (address === testData.address2) {
+          return Promise.resolve({ data: {} });
+        }
+        return Promise.resolve({ data: baseAtaMock } as any);
+      },
+    } as ChainAPI;
+
+    const account: SolanaAccount = {
+      ...baseSolanaAccount,
+      subAccounts: [mockedTokenAcc],
+    };
+
+    const preparedTx = await prepareTransaction(account, baseTx, api);
+    const receivedTxStatus = await getTransactionStatus(account, preparedTx);
+    const expectedTxStatus: TransactionStatus = {
+      amount: new BigNumber(10),
+      estimatedFees: new BigNumber(testData.fees),
+      totalSpent: new BigNumber(10),
+      errors: {},
+      warnings: {},
+    };
+
+    expect(receivedTxStatus).toEqual(expectedTxStatus);
+  });
+
+  // Send flow
+  test("token.transfer :: status is success: transfer with subAccountId", async () => {
+    const api = {
+      ...baseAPI,
+      getAccountInfo: (address: string) => {
+        if (address === wSolToken.contractAddress) {
+          return Promise.resolve(baseTokenMintMock as any);
+        }
+        if (address === testData.address2) {
+          return Promise.resolve({ data: {} });
+        }
+        return Promise.resolve({ data: baseAtaMock } as any);
+      },
+    } as ChainAPI;
+
+    const account: SolanaAccount = {
+      ...baseSolanaAccount,
+      subAccounts: [mockedTokenAcc],
+    };
+
+    const transferTxWithSubAccountId: Transaction = {
+      model: {
+        kind: "transfer",
+        uiState: {},
+      },
+      amount: new BigNumber(10),
+      recipient: testData.address2,
+      family: "solana",
+      subAccountId: wSolSubAccId,
+    };
+
+    const preparedTx = await prepareTransaction(account, transferTxWithSubAccountId, api);
+    const receivedTxStatus = await getTransactionStatus(account, preparedTx);
+    const expectedTxStatus: TransactionStatus = {
+      amount: new BigNumber(10),
+      estimatedFees: new BigNumber(testData.fees),
+      totalSpent: new BigNumber(10),
+      errors: {},
+      warnings: {},
+    };
+
+    expect(preparedTx.model.commandDescriptor?.command.kind).toEqual("token.transfer");
+    expect(receivedTxStatus).toEqual(expectedTxStatus);
+  });
+
   test("token.transfer :: status is error: sender ATA is frozen", async () => {
     const api = {
       ...baseAPI,
       getAccountInfo: (address: string) => {
         if (address === wSolToken.contractAddress) {
           return Promise.resolve(baseTokenMintMock as any);
+        }
+        if (address === testData.address2) {
+          return Promise.resolve({ data: {} });
         }
         return Promise.resolve({ data: baseAtaMock } as any);
       },
@@ -276,6 +373,9 @@ describe.skip("Solana tokens bridge integration tests", () => {
         if (address === wSolToken.contractAddress) {
           return Promise.resolve(baseTokenMintMock as any);
         }
+        if (address === testData.address2) {
+          return Promise.resolve({ data: {} });
+        }
         return Promise.resolve({ data: frozenAtaMock } as any);
       },
     } as ChainAPI;
@@ -309,6 +409,9 @@ describe.skip("Solana tokens bridge integration tests", () => {
       getAccountInfo: (address: string) => {
         if (address === wSolToken.contractAddress) {
           return Promise.resolve(baseToken2022MintMock as any);
+        }
+        if (address === testData.address2) {
+          return Promise.resolve({ data: {} });
         }
         return Promise.resolve({ data: baseAta2022Mock } as any);
       },
@@ -346,6 +449,9 @@ describe.skip("Solana tokens bridge integration tests", () => {
         if (address === wSolToken.contractAddress) {
           return Promise.resolve(baseToken2022MintMock as any);
         }
+        if (address === testData.address2) {
+          return Promise.resolve({ data: {} });
+        }
         return Promise.resolve({ data: ataWithRequiredMemoMock } as any);
       },
       getBalance: () => Promise.resolve(10),
@@ -380,6 +486,9 @@ describe.skip("Solana tokens bridge integration tests", () => {
       getAccountInfo: (address: string) => {
         if (address === wSolToken.contractAddress) {
           return Promise.resolve(mintWithTransferFeeMock as any);
+        }
+        if (address === testData.address2) {
+          return Promise.resolve({ data: {} });
         }
         return Promise.resolve({ data: baseAta2022Mock });
       },
@@ -443,6 +552,9 @@ describe.skip("Solana tokens bridge integration tests", () => {
       getAccountInfo: (address: string) => {
         if (address === wSolToken.contractAddress) {
           return Promise.resolve(mintWithTransferFeeMock as any);
+        }
+        if (address === testData.address2) {
+          return Promise.resolve({ data: {} });
         }
         return Promise.resolve({ data: baseAta2022Mock });
       },
@@ -519,6 +631,9 @@ describe.skip("Solana tokens bridge integration tests", () => {
         if (address === wSolToken.contractAddress) {
           return Promise.resolve(mintWithTransferFeeMock as any);
         }
+        if (address === testData.address2) {
+          return Promise.resolve({ data: {} });
+        }
         return Promise.resolve({ data: baseAta2022Mock });
       },
       getBalance: () => Promise.resolve(balance.toNumber()),
@@ -562,6 +677,9 @@ describe.skip("Solana tokens bridge integration tests", () => {
       getAccountInfo: (address: string) => {
         if (address === wSolToken.contractAddress) {
           return Promise.resolve(mintWithNonTransferableExtensionMock as any);
+        }
+        if (address === testData.address2) {
+          return Promise.resolve({ data: {} });
         }
         return Promise.resolve({ data: baseAta2022Mock } as any);
       },
