@@ -1,5 +1,16 @@
 # @ledgerhq/coin-polkadot
 
+## 5.0.0-nightly.0
+
+### Major Changes
+
+- [#9993](https://github.com/LedgerHQ/ledger-live/pull/9993) [`b599ac4`](https://github.com/LedgerHQ/ledger-live/commit/b599ac4697688459aad15371f9efea58f331dc33) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Change alpaca estimate signature
+
+### Patch Changes
+
+- Updated dependencies [[`b599ac4`](https://github.com/LedgerHQ/ledger-live/commit/b599ac4697688459aad15371f9efea58f331dc33)]:
+  - @ledgerhq/coin-framework@4.0.0-nightly.0
+
 ## 4.0.1
 
 ### Patch Changes
