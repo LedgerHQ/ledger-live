@@ -111,8 +111,8 @@ export class SwapPage extends AppPage {
     }
   }
 
-  @step("Select available provider")
-  async selectExchange(electronApp: ElectronApplication) {
+  @step("Select available provider without KYC")
+  async selectExchangeWithoutKyc(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
 
     const providersList = await this.getProviderList(electronApp);
@@ -137,6 +137,31 @@ export class SwapPage extends AppPage {
       }
     }
 
+    throw new Error("No providers without KYC found");
+  }
+
+  @step("Select available provider")
+  async selectExchange(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+
+    const providersList = await this.getProviderList(electronApp);
+
+    const providers = providersList.filter(providerName => {
+      const provider = Object.values(Provider).find(p => p.uiName === providerName);
+      return provider;
+    });
+
+    for (const providerName of providers) {
+      const providerLocator = webview
+        .getByTestId(this.quoteCardProviderName)
+        .getByText(providerName)
+        .first();
+
+      await providerLocator.isVisible();
+      await providerLocator.click();
+
+      return providerName;
+    }
     throw new Error("No valid providers found");
   }
 
