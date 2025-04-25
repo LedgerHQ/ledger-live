@@ -10,7 +10,7 @@ import {
   isAPITransactionType,
 } from "../network/types";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
-import { TezosAsset } from "../types";
+import { TezosAsset } from "../api/types";
 
 /**
  * Returns list of "Transfer", "Delegate" and "Undelegate" Operations associated to an account.

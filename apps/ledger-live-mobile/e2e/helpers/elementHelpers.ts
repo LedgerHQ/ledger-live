@@ -56,19 +56,8 @@ export const ElementHelpers = {
     return web.element(by.web.xpath(`//span[@data-testid="${id}" and text()="${text}"]`));
   },
 
-  async getWebElementsText(id: string) {
-    const texts: string[] = [];
-    let i = 0;
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      try {
-        texts.push(await getWebElementByTestId(id).atIndex(i).getText());
-        i++;
-      } catch {
-        break;
-      }
-    }
-    return texts;
+  async getWebElementText(id: string, index = 0) {
+    return await getWebElementByTestId(id).atIndex(index).getText();
   },
 
   async waitWebElementByTestId(id: string, timeout = DEFAULT_TIMEOUT) {

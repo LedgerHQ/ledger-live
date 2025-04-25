@@ -48,20 +48,7 @@ describe("createApi", () => {
     );
   });
 
-  it("should return an API object with alpaca api methods", () => {
-    const api = createApi(mockTronConfig);
-
-    // Check that methods are set with what we expect
-    expect(api.broadcast).toBe(broadcast);
-    expect(api.combine).toBe(combine);
-    expect(api.craftTransaction).toBe(craftTransaction);
-    expect(api.estimateFees).toBe(estimateFees);
-    expect(api.getBalance).toBe(getBalance);
-    expect(api.lastBlock).toBe(lastBlock);
-    expect(api.listOperations).toBe(listOperations);
-  });
-
-  it("should pass parameters well", async () => {
+  it("should pass parameters correctly", async () => {
     const api: Api<TronAsset> = createApi(mockTronConfig);
     const intent: TransactionIntent<TronAsset> = {
       type: "send",

@@ -1,5 +1,5 @@
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
-import { swapSetup } from "../../../bridge/server";
+import { swapSetup, waitSwapReady } from "../../../bridge/server";
 import { setEnv } from "@ledgerhq/live-env";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
@@ -42,8 +42,10 @@ const beforeAllFunction = async (swap: SwapType) => {
     ],
   });
   await app.portfolio.waitForPortfolioPageToLoad();
+  const readyPromise = waitSwapReady();
   await app.swap.openViaDeeplink();
   await swapSetup();
+  await readyPromise;
 };
 
 async function performSwapUntilQuoteSelectionStep(swap: SwapType, minAmount: string) {

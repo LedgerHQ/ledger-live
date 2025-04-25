@@ -1,4 +1,4 @@
-import { type Api } from "@ledgerhq/coin-framework/api/index";
+import type { Api, FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type TronConfig } from "../config";
 import {
   broadcast,
@@ -18,9 +18,14 @@ export function createApi(config: TronConfig): Api<TronAsset> {
     broadcast,
     combine,
     craftTransaction,
-    estimateFees,
+    estimateFees: estimate,
     getBalance,
     lastBlock,
     listOperations,
   };
+}
+
+async function estimate(transactionIntent: TransactionIntent<TronAsset>): Promise<FeeEstimation> {
+  const fees = await estimateFees(transactionIntent);
+  return { value: fees };
 }
