@@ -194,7 +194,7 @@ for (const { fromAccount, toAccount, xrayTicket } of swaps) {
         const swap = new Swap(fromAccount, toAccount, minAmount);
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
-        const selectedProvider = await app.swap.selectExchange(electronApp);
+        const selectedProvider = await app.swap.selectExchangeWithoutKyc(electronApp);
 
         await performSwapUntilDeviceVerificationStep(
           app,
@@ -328,7 +328,7 @@ test.describe("Swap - Check Best Offer", () => {
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
       await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
-      await app.swap.selectExchange(electronApp);
+      await app.swap.selectExchangeWithoutKyc(electronApp);
       await app.swap.checkBestOffer(electronApp);
     },
   );
@@ -443,7 +443,7 @@ test.describe("Swap - Rejected on device", () => {
       const rejectedSwap = new Swap(fromAccount, toAccount, minAmount);
 
       await performSwapUntilQuoteSelectionStep(app, electronApp, rejectedSwap, minAmount);
-      const selectedProvider = await app.swap.selectExchange(electronApp);
+      const selectedProvider = await app.swap.selectExchangeWithoutKyc(electronApp);
 
       await performSwapUntilDeviceVerificationStep(
         app,
@@ -563,7 +563,7 @@ for (const { swap, xrayTicket, userData, errorMessage } of swapWithDifferentSeed
         );
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
-        const selectedProvider = await app.swap.selectExchange(electronApp);
+        const selectedProvider = await app.swap.selectExchangeWithoutKyc(electronApp);
 
         await app.swap.clickExchangeButton(electronApp, selectedProvider);
 
@@ -589,7 +589,7 @@ const tooLowAmountForQuoteSwaps = [
     quotesVisible: true,
   },
   {
-    swap: new Swap(Account.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, "20"),
+    swap: new Swap(Account.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, "24"),
     xrayTicket: "B2CQA-3241",
     errorMessage: new RegExp(`\\d+(\\.\\d{1,10})? ETH needed for network fees\\.\\s*$`),
     ctaBanner: true,
