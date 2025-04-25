@@ -54,7 +54,10 @@ export const migrator = {
         return false;
       }
 
-      if (state.migrationStatus !== MIGRATION_STATUS.COMPLETED) {
+      if (
+        state.migrationStatus !== MIGRATION_STATUS.COMPLETED &&
+        state.rollbackStatus !== ROLLBACK_STATUS.COMPLETED
+      ) {
         log("Storage", "Running rollback...");
         migrator.migrate(state);
         return true;
@@ -128,12 +131,6 @@ export const migrator = {
 
     migrator.markRollbackStatusInProgress(state);
     migrator.selectAsyncStorage(state);
-
-    try {
-      await mmkvStorage.deleteAll();
-    } catch (e) {
-      console.warn("Failed to delete all data from MMKV during rollback", e);
-    }
 
     migrator.markMigrationStatusRollbacked(state);
     migrator.markRollbackStatusCompleted(state);

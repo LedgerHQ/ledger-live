@@ -8,6 +8,7 @@ import {
   MIGRATION_STATUS,
   MIGRATION_STATUS_KEY,
   ROLLBACK_STATUS,
+  ROLLBACK_STATUS_KEY,
 } from "./utils/migrations/constants";
 import { track } from "~/analytics";
 import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
@@ -235,7 +236,23 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 export function initStorageState(state: StorageState): void {
   const isMMKVReady =
     mmkvStorageWrapper.getString(MIGRATION_STATUS_KEY) === MIGRATION_STATUS.COMPLETED;
-  state.storageType = isMMKVReady ? STORAGE_TYPE.MMKV : STORAGE_TYPE.ASYNC_STORAGE;
+
+  const hasRolledBack =
+    mmkvStorageWrapper.getString(ROLLBACK_STATUS_KEY) === ROLLBACK_STATUS.COMPLETED;
+
+  if (hasRolledBack) {
+    state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
+    state.migrationStatus = MIGRATION_STATUS.ROLLED_BACK;
+    state.rollbackStatus = ROLLBACK_STATUS.COMPLETED;
+    return;
+  }
+
+  if (isMMKVReady) {
+    state.storageType = STORAGE_TYPE.MMKV;
+    state.migrationStatus = MIGRATION_STATUS.COMPLETED;
+    state.rollbackStatus = ROLLBACK_STATUS.NOT_STARTED;
+    return;
+  }
 }
 
 async function incrementNumberOfErrors(state: StorageState, error: unknown): Promise<void> {
