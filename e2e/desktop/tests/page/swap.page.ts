@@ -346,25 +346,38 @@ export class SwapPage extends AppPage {
 
     switch (selectedProvider) {
       case Provider.ONE_INCH.uiName: {
-        expect(url).toContain(swap.accountToDebit.currency.ticker.toLowerCase());
-        expect(url).toContain(swap.accountToCredit.currency.ticker.toLowerCase());
-        expect(url).toContain(
-          `swap%2F${swap.accountToDebit.currency.ticker.toLowerCase()}%2F${swap.accountToCredit.currency.ticker.toLowerCase()}`,
-        );
-        expect(url).toContain(swap.amount);
+        const debit = swap.accountToDebit.currency.ticker;
+        const credit = swap.accountToCredit.currency.ticker;
+
+        if (!debit || !credit) {
+          throw new Error("Missing ticker for one of the currencies");
+        }
+
+        this.expectUrlToContainAll(url, [
+          swap.amount,
+          debit,
+          credit,
+          `swap%2F${debit}%2F${credit}`,
+        ]);
         break;
       }
       case Provider.PARASWAP.uiName: {
-        expect(url).toContain(swap.amount);
-        expect(url).toContain(swap.accountToDebit.currency.contractAddress);
-        expect(url).toContain(swap.accountToCredit.currency.contractAddress);
-        expect(url).toContain(
-          `${swap.accountToDebit.currency.contractAddress}-${swap.accountToCredit.currency.contractAddress}`,
-        );
+        const debit = swap.accountToDebit.currency.contractAddress;
+        const credit = swap.accountToCredit.currency.contractAddress;
+
+        if (!debit || !credit) {
+          throw new Error("Missing contract address on one of the currencies");
+        }
+
+        this.expectUrlToContainAll(url, [swap.amount, debit, credit, `${debit}-${credit}`]);
         break;
       }
       default:
-        throw new Error(`Unknown provider: ${selectedProvider}`);
+        throw new Error(
+          `Unknown provider: ${selectedProvider}. Supported providers: ${Object.values(Provider)
+            .map(p => p.uiName)
+            .join(", ")}`,
+        );
     }
   }
 
@@ -427,5 +440,15 @@ export class SwapPage extends AppPage {
   @step("Check minimum amount for swap")
   async getMinimumAmount(accountFrom: Account, accountTo: Account) {
     return (await getMinimumSwapAmount(accountFrom, accountTo))?.toString() ?? "";
+  }
+
+  expectUrlToContainAll(url: string, values: string[]) {
+    if (!url) {
+      throw new Error("URL is null or undefined");
+    }
+    const normalizedUrl = url.toLowerCase();
+    for (const value of values) {
+      expect(normalizedUrl).toContain(value.toLowerCase());
+    }
   }
 }
