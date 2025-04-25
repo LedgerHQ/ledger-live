@@ -88,6 +88,7 @@
     "react-select": "^5.2.1",
     "react-spring": "8.0.27",
     "react-transition-group": "^4.4.2",
+    "react-virtualized-auto-sizer": "1.0.24",
     "react-window": "^1.8.6",
     "styled-system": "^5.1.5"
   },
