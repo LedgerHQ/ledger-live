@@ -291,7 +291,6 @@ export class DeviceManagementKitTransport extends Transport {
   };
 
   close() {
-    tracer.trace("[DMKTransport] [close] closing transport");
     return Promise.resolve();
   }
 
