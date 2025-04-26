@@ -84,7 +84,7 @@
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/coin-multiversx": "workspace:^",
     "@ledgerhq/coin-stacks": "workspace:^",
-    "@ledgerhq/device-management-kit": "0.0.0-fix-rn-ble-scanning-20250424114719",
+    "@ledgerhq/device-management-kit": "0.0.0-fix-rn-ble-20250425173318",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
