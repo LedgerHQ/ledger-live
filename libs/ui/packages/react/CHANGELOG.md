@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.23.0-nightly.0
+
+### Minor Changes
+
+- [#10018](https://github.com/LedgerHQ/ledger-live/pull/10018) [`1d3be0d`](https://github.com/LedgerHQ/ledger-live/commit/1d3be0d5b13b09ec08908406711400ef5b286d69) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add Asset Type List component
+
 ## 0.22.0
 
 ### Minor Changes

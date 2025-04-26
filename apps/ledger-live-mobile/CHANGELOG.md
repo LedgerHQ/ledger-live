@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.75.1-nightly.1
+
+### Patch Changes
+
+- [#9996](https://github.com/LedgerHQ/ledger-live/pull/9996) [`c530552`](https://github.com/LedgerHQ/ledger-live/commit/c5305528d6705db07db53d570f88cd12da2fa8d5) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Reset Swap Navigation stack after successful swap transaction when navigating to transaction history screen
+
+- Updated dependencies [[`a11fd0b`](https://github.com/LedgerHQ/ledger-live/commit/a11fd0bbb687edc9e279bd4d63352658cae92c63)]:
+  - @ledgerhq/coin-evm@2.20.0-nightly.1
+  - @ledgerhq/live-dmk-mobile@0.3.2-nightly.1
+
 ## 3.75.1-nightly.0
 
 ### Patch Changes

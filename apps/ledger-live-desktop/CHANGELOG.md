@@ -1,5 +1,15 @@
 # ledger-live-desktop
 
+## 2.110.1-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`a11fd0b`](https://github.com/LedgerHQ/ledger-live/commit/a11fd0bbb687edc9e279bd4d63352658cae92c63), [`1d3be0d`](https://github.com/LedgerHQ/ledger-live/commit/1d3be0d5b13b09ec08908406711400ef5b286d69)]:
+  - @ledgerhq/coin-evm@2.20.0-nightly.1
+  - @ledgerhq/react-ui@0.23.0-nightly.0
+  - @ledgerhq/live-common@34.31.1-nightly.1
+  - @ledgerhq/live-dmk-desktop@0.3.1-nightly.1
+
 ## 2.110.1-nightly.0
 
 ### Patch Changes

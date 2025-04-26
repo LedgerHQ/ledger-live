@@ -1,5 +1,11 @@
 # @ledgerhq/coin-evm
 
+## 2.20.0-nightly.1
+
+### Minor Changes
+
+- [#10007](https://github.com/LedgerHQ/ledger-live/pull/10007) [`a11fd0b`](https://github.com/LedgerHQ/ledger-live/commit/a11fd0bbb687edc9e279bd4d63352658cae92c63) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): make batch size configurable for EVM Ledger explorer
+
 ## 2.19.1-nightly.0
 
 ### Patch Changes

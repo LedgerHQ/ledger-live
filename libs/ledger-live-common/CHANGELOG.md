@@ -1,5 +1,14 @@
 # @ledgerhq/live-common
 
+## 34.31.1-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`a11fd0b`](https://github.com/LedgerHQ/ledger-live/commit/a11fd0bbb687edc9e279bd4d63352658cae92c63)]:
+  - @ledgerhq/coin-evm@2.20.0-nightly.1
+  - @ledgerhq/coin-celo@1.1.1-nightly.1
+  - @ledgerhq/live-signer-evm@0.3.1-nightly.1
+
 ## 34.31.1-nightly.0
 
 ### Patch Changes
