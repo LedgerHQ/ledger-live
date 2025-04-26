@@ -14,10 +14,11 @@ export const defaultMapper = (device: DiscoveredDevice): Device => ({
 });
 
 export const useBleDevicesScanning = <T = Device>(
+  enabled: boolean,
   {
     mapper = defaultMapper,
-    filterByDeviceModelIds,
-    filterOutDevicesByDeviceIds,
+    filterByDeviceModelIds = [],
+    filterOutDevicesByDeviceIds = [],
   }: {
     mapper?: (device: DiscoveredDevice) => T;
     filterByDeviceModelIds?: DeviceModelId[];
@@ -30,36 +31,39 @@ export const useBleDevicesScanning = <T = Device>(
 
   useEffect(() => {
     if (!dmk) return;
+    if (!enabled) return;
     const subscription = dmk
-      .startDiscovering({
+      .listenToAvailableDevices({
         transport: rnBleTransportIdentifier,
       })
       .subscribe({
-        next: device => {
-          if (
-            filterByDeviceModelIds &&
-            !filterByDeviceModelIds.includes(dmkToLedgerDeviceIdMap[device.deviceModel.model])
-          ) {
-            return;
-          }
-
-          if (filterOutDevicesByDeviceIds && filterOutDevicesByDeviceIds.includes(device.id)) {
-            return;
-          }
-
-          setScannedDevicesById(scannedDevicesById => {
-            if (scannedDevicesById[device.id] && !device.rssi) {
-              delete scannedDevicesById[device.id];
-              return { ...scannedDevicesById };
-            }
-            if (!scannedDevicesById[device.id] && device.rssi) {
-              return {
-                ...scannedDevicesById,
-                [device.id]: mapper(device),
-              };
-            }
-            return scannedDevicesById;
+        next: devices => {
+          const newDeviceByIds: Record<string, Device> = {};
+          //Map in record by ID
+          devices.forEach(device => {
+            const mappedDevice: Device = mapper(device);
+            newDeviceByIds[mappedDevice.deviceId] = mappedDevice;
           });
+
+          //filter devices by model or by id
+          Object.keys(newDeviceByIds).forEach(deviceId => {
+            //Remove if we need to avoid to list device of model given
+            if (
+              filterByDeviceModelIds.length > 0 &&
+              !filterByDeviceModelIds.includes(newDeviceByIds[deviceId].modelId)
+            ) {
+              delete newDeviceByIds[deviceId];
+            }
+            //Remove if we need to avoid to list device already known by ID
+            else if (filterOutDevicesByDeviceIds.length > 0) {
+              // filter out devices by id
+              if (filterOutDevicesByDeviceIds.includes(newDeviceByIds[deviceId].deviceId)) {
+                delete newDeviceByIds[deviceId];
+              }
+            }
+          });
+
+          setScannedDevicesById(newDeviceByIds);
         },
         error: error => {
           setScanningBleError(error);
@@ -76,7 +80,7 @@ export const useBleDevicesScanning = <T = Device>(
       }
       dmk.stopDiscovering();
     };
-  }, [dmk]);
+  }, [dmk, enabled]);
 
   return {
     scannedDevices: Object.values(scannedDevicesById),

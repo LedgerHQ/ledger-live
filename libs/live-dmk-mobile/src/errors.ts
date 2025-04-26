@@ -1,4 +1,9 @@
-import { DeviceBusyError, DmkError, OpeningConnectionError } from "@ledgerhq/device-management-kit";
+import {
+  DeviceBusyError,
+  DmkError,
+  OpeningConnectionError,
+  SendApduTimeoutError,
+} from "@ledgerhq/device-management-kit";
 
 export const isDmkError = (error: any): error is DmkError => !!error && "_tag" in error;
 
@@ -17,6 +22,7 @@ export const isiOSPeerRemovedPairingError = (error: any): boolean => {
 export const isAllowedOnboardingStatePollingErrorDmk = (error: unknown): boolean => {
   if (error) {
     return (
+      error instanceof SendApduTimeoutError ||
       error instanceof DeviceBusyError ||
       (typeof error === "object" && "_tag" in error && error._tag === "DeviceSessionNotFound")
     );
