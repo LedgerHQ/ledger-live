@@ -19,6 +19,7 @@ type EvmConfig = {
     | {
         type: "ledger";
         explorerId: LedgerExplorerId;
+        batchSize?: number | undefined;
       }
     | {
         type: "none";

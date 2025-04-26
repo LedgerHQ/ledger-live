@@ -75,10 +75,11 @@ describe(`Ledger Sync Accounts`, () => {
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 
-  async function goToLedgerSync() {
+  async function goToLedgerSync(disableSync = false) {
     await app.portfolio.openViaDeeplink();
     await app.portfolio.navigateToSettings();
     await app.settings.navigateToGeneralSettings();
+    disableSync && (await device.disableSynchronization()); // TODO: Remove line when LIVE-15405 is fixed
     await app.settingsGeneral.navigateToLedgerSync();
   }
 
@@ -95,10 +96,8 @@ describe(`Ledger Sync Accounts`, () => {
     await app.ledgerSync.closeActivationSuccessPage();
     await app.accounts.openViaDeeplink();
     await app.accounts.expectAccountsNumber(2);
-    await goToLedgerSync();
+    await goToLedgerSync(true);
     await app.ledgerSync.openDeleteSync();
-    // TODO: Remove the following line when the issue is fixed
-    await device.disableSynchronization();
     await app.ledgerSync.confirmDeleteSync();
     await app.ledgerSync.expectLedgerSyncSuccessPage();
     await app.ledgerSync.closeDeletionSuccessPage();
