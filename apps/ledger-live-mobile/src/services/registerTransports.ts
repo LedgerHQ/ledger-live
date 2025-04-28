@@ -16,8 +16,10 @@ import { getHIDTransport } from "~/services/getHidTransport";
  * @param {boolean} isLDMKEnabled - Flag to enable or disable LDMK support.
  */
 export const registerTransports = (isLDMKEnabled: boolean) => {
-  if (Config.BLE_LOG_LEVEL) getBLETransport({ isLDMKEnabled }).setLogLevel(Config.BLE_LOG_LEVEL);
-  const hidTransport = getHIDTransport(isLDMKEnabled);
+  if (Config.BLE_LOG_LEVEL) {
+    getBLETransport({ isLDMKEnabled }).setLogLevel(Config.BLE_LOG_LEVEL);
+  }
+  const hidTransport = getHIDTransport({ isLDMKEnabled });
 
   // Add support of HID (experimental until we stabilize it)
   registerTransportModule({
