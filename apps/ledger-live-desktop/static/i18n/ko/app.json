@@ -5417,10 +5417,8 @@
     }
   },
   "SignMessageConfirm" : {
-    "stringHash" : "메시지 해시",
-    "domainHash" : "도메인 해시",
-    "messageHash" : "메시지 해시",
-    "message" : "메시지"
+    "title" : "Ledger {{wording}}에서 계속하세요",
+    "description" : "보안 터치스크린에 표시된 안내를 따라주세요."
   },
   "TransactionConfirm" : {
     "title" : "거래를 장치에서 확인하고 완료하세요",
