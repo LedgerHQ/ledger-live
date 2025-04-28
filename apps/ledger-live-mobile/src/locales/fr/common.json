@@ -6442,8 +6442,8 @@
       "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
     },
     "stepVerification" : {
-      "action" : "Confirmez l’opération sur votre appareil.",
-      "accountName" : "Nom du compte"
+      "title" : "Continuez sur votre Ledger {{wording}}",
+      "description" : "Consultez les instructions sur son écran tactile sécurisé."
     }
   },
   "notificationCenter" : {
@@ -6623,13 +6623,14 @@
     },
     "range" : {
       "1h" : "1H",
+      "1H_label" : "1H",
       "24h" : "24H",
-      "1d" : "1J",
+      "1D_label" : "1J",
       "7d" : "7J",
-      "1w" : "1S",
+      "1W_label" : "1S",
       "30d" : "30J",
-      "1m" : "1M",
-      "1y" : "1A"
+      "1M_label" : "1M",
+      "1Y_label" : "1A"
     },
     "warnings" : {
       "connectionError" : "Erreur de connexion",
