@@ -6624,12 +6624,14 @@
     "range" : {
       "1h" : "1 小时",
       "24h" : "24 小时",
-      "1d" : "1 天",
       "7d" : "7 天",
-      "1w" : "1 周",
       "30d" : "30 天",
-      "1m" : "1 月",
-      "1y" : "1 年"
+      "1y" : "1 年",
+      "1D_label" : "1 天",
+      "1H_label" : "1 小时",
+      "1W_label" : "1 周",
+      "1M_label" : "1 月",
+      "1Y_label" : "1 年"
     },
     "warnings" : {
       "connectionError" : "连接错误",
@@ -7364,7 +7366,30 @@
     }
   },
   "largeMover" : {
-    "performance" : "Performance",
+    "info" : "信息",
+    "marketCap" : "市值",
+    "volume" : "交易量（24 小时）",
+    "fdv" : "完全稀释估值",
+    "marketCap24h" : "交易量/市值（24 小时）",
+    "circulatingSupply" : "流通供应量",
+    "totalSupply" : "总供应量",
+    "ath" : "历史最高",
+    "atl" : "历史最低",
+    "timeAgo" : {
+      "years" : "（{{count}} 年前）",
+      "years_plural" : "（{{count}} 年前）",
+      "months" : "（{{count}} 个月前）",
+      "months_plural" : "（{{count}} 个月前）",
+      "days" : "（{{count}} 天前）",
+      "days_plural" : "（{{count}} 天前）",
+      "hours" : "（{{count}} 小时前）",
+      "hours_plural" : "（{{count}} 小时前）",
+      "minutes" : "（{{count}} 分钟前）",
+      "minutes_plural" : "（{{count}} 分钟前）",
+      "seconds" : "（{{count}} 秒前）",
+      "seconds_plural" : "（{{count}} 秒前）"
+    },
+    "performance" : "表现",
     "low" : "低",
     "high" : "高"
   }
