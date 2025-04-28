@@ -382,6 +382,7 @@
       "status" : {
         "pending" : "대기 중",
         "onhold" : "보류 중",
+        "unknown" : "알려지지 않음",
         "expired" : "만료됨",
         "finished" : "완료됨",
         "refunded" : "환불 처리됨"
