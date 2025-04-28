@@ -1134,7 +1134,7 @@
       "standard" : "มาตรฐาน",
       "low" : "ต่ำ",
       "slow" : "ช้า",
-      "medium" : "กลาง",
+      "medium" : "ปานกลาง",
       "fast" : "เร็ว",
       "custom" : "กำหนดเอง",
       "blockCount" : "{{blockCount}} บล็อก"
@@ -3883,7 +3883,7 @@
         "title" : "เลือกหน่วย"
       },
       "networkInfo" : "เลือกจำนวนค่าธรรมเนียมเครือข่ายที่จะรวมไว้ในธุรกรรม จำนวนค่าธรรมเนียมส่งผลต่อความเร็วในการประมวลผลของธุรกรรม",
-      "networkInfoMaxFees" : "นี่คือจำนวนสูงสุดที่คุณสามารถจ่ายได้สำหรับธุรกรรมนี้ ส่วนต่างระหว่างค่าธรรมเนียมเครือข่ายสูงสุดและค่าธรรมเนียมที่เกิดขึ้นจริงจะได้รับคืน"
+      "networkInfoMaxFees" : "คือค่าธรรมเนียมสูงสุดที่คุณต้องจ่ายสำหรับธุรกรรมนี้ ส่วนต่างระหว่างค่าธรรมเนียมเครือข่ายสูงสุดและค่าธรรมเนียมที่เกิดขึ้นจริงจะได้รับคืน"
     },
     "verification" : {
       "streaming" : {
@@ -4403,7 +4403,7 @@
       "genuine" : "อุปกรณ์ของคุณเป็นของแท้",
       "appsInstalled" : "<0>{{number}}</0> แอป",
       "appsInstalled_plural" : "<0>{{number}}</0> แอป",
-      "storageAvailable" : "ที่ใช้ได้",
+      "storageAvailable" : "ใช้ได้",
       "noFreeSpace" : "ไม่มีพื้นที่เก็บข้อมูลเหลืออยู่",
       "appsToUpdate" : "<0>{{number}}</0> การอัปเดต",
       "appsToUpdate_plural" : "<0>{{number}}</0> การอัปเดต"
@@ -4824,7 +4824,7 @@
         "title" : "ยอดคงเหลือทั้งหมดไม่รวม Reward จากการ Staking"
       },
       "delegationUnavailable" : {
-        "title" : "การ Delegation ไม่พร้อมใช้งาน",
+        "title" : "การ Delegate ไม่พร้อมใช้งาน",
         "description" : "ในบัญชีของคุณมียอดคงเหลือที่ใช้ได้ไม่เพียงพอสำหรับการเริ่มต้นการ Delegate ใหม่"
       }
     },
@@ -4841,8 +4841,8 @@
       "delegationEarn" : "คุณสามารถรับ ADA Reward ได้ด้วยการ Delegate สินทรัพย์ของคุณ",
       "delegatingFrom" : "กำลัง Delegate จาก",
       "delegatingTo" : "กำลัง Delegate ไปยัง",
-      "info" : "วิธีใช้งานการ Delegation?",
-      "header" : "การ Delegation",
+      "info" : "วิธีใช้งานการ Delegate?",
+      "header" : "การ Delegate",
       "delegate" : "Delegate",
       "redelegate" : "Redelegate",
       "estYield" : "ผลตอบแทนโดยประมาณ",
@@ -4868,15 +4868,15 @@
           "starter" : {
             "description" : "คุณสามารถรับ Reward ได้ด้วยการมอบหมาย ADA ของคุณไปยัง Pool",
             "steps" : {
-              "0" : "คุณยังคงเป็นเจ้าของสินทรัพย์ที่ Delegate ไว้",
-              "1" : "Delegate โดยใช้อุปกรณ์ Ledger ของคุณ",
+              "0" : "คุณยังคงเป็นเจ้าของสินทรัพย์ที่ทำการ Delegate",
+              "1" : "ทำการ Delegate ได้โดยใช้อุปกรณ์ Ledger ของคุณ",
               "2" : "สามารถ Delegate สินทรัพย์ใหม่ไปยัง Pool อื่นได้ หรือคุณสามารถเลือก Undelegate ได้ทุกเมื่อ"
             },
             "cta" : "ดำเนินการต่อ"
           },
           "validator" : {
             "validators" : "ผู้ตรวจสอบ",
-            "myDelegations" : "การ Delegation ของฉัน",
+            "myDelegations" : "การ Delegate ของฉัน",
             "cta" : "ดำเนินการต่อ",
             "estYield" : "ผลตอบแทนโดยประมาณ: {{amount}}",
             "totalAvailable" : "จำนวนที่ใช้ได้: <0>{{amount}}</0>",
@@ -4975,7 +4975,7 @@
         "steps" : {
           "amount" : {
             "info" : "สามารถถอนสินทรัพย์ที่ปลดล็อกออกได้หลังจากช่วงเวลาปลดล็อก 3 วัน",
-            "available" : "ที่ใช้ได้",
+            "available" : "ใช้ได้",
             "max" : "สูงสุด"
           },
           "verification" : {
@@ -5000,8 +5000,8 @@
           "starter" : {
             "description" : "คุณสามารถรับ Reward ได้ด้วยการ Delegate สินทรัพย์ CELO ของคุณให้กับผู้ตรวจสอบ",
             "bullet" : {
-              "0" : "คุณยังคงเป็นเจ้าของสินทรัพย์ที่ Delegate ไว้",
-              "1" : "Delegate โดยใช้อุปกรณ์ Ledger ของคุณ",
+              "0" : "คุณยังคงเป็นเจ้าของสินทรัพย์ที่ทำการ Delegate",
+              "1" : "ทำการ Delegate ได้โดยใช้อุปกรณ์ Ledger ของคุณ",
               "2" : "สินทรัพย์จะพร้อมใช้งานหลังจากการยกเลิกการมอบหมาย"
             },
             "warning" : {
@@ -5010,7 +5010,7 @@
             "cta" : "ดำเนินการต่อ"
           },
           "amount" : {
-            "available" : "ที่ใช้ได้",
+            "available" : "ใช้ได้",
             "max" : "สูงสุด"
           },
           "verification" : {
@@ -5057,7 +5057,7 @@
             "pending" : "รอดำเนินการ"
           },
           "amount" : {
-            "available" : "ที่ใช้ได้",
+            "available" : "ใช้ได้",
             "max" : "สูงสุด"
           },
           "verification" : {
@@ -5109,7 +5109,7 @@
         "steps" : {
           "amount" : {
             "info" : "สามารถปลดล็อกสินทรัพย์ที่ล็อกไว้ได้ทุกเมื่อ แต่การปลดล็อกใช้เวลา 3 วัน",
-            "available" : "ที่ใช้ได้",
+            "available" : "ใช้ได้",
             "max" : "สูงสุด"
           },
           "verification" : {
@@ -5150,7 +5150,7 @@
       "flow" : {
         "steps" : {
           "amount" : {
-            "available" : "ที่ใช้ได้",
+            "available" : "ใช้ได้",
             "max" : "สูงสุด",
             "waitingTitle" : "จำนวนที่ไม่พร้อมสำหรับการถอน",
             "waitingPeriod" : "คุณต้องรอจนถึงวันที่ {{date}} จึงจะถอนจำนวนนี้ออกได้"
@@ -5166,14 +5166,14 @@
     },
     "emptyState" : {
       "description" : "คุณสามารถรับ CELO Reward ได้โดยการ Delegate สินทรัพย์ของคุณ",
-      "info" : "Delegation ทำงานยังไง",
+      "info" : "การ Delegate ทำงานยังไง",
       "delegation" : "รับ Reward"
     },
     "earnRewards" : {
       "description" : "คุณสามารถรับ Reward ได้ด้วยการ Delegate สินทรัพย์ CELO ของคุณให้กับผู้ตรวจสอบ",
       "bullet" : {
-        "0" : "คุณยังคงเป็นเจ้าของสินทรัพย์ที่ Delegate ไว้",
-        "1" : "Delegate โดยใช้อุปกรณ์ Ledger ของคุณ",
+        "0" : "คุณยังคงเป็นเจ้าของสินทรัพย์ที่ทำการ Delegate",
+        "1" : "ทำการ Delegate ได้โดยใช้อุปกรณ์ Ledger ของคุณ",
         "2" : "สินทรัพย์จะพร้อมใช้งานหลังจากการ Undelegate"
       }
     },
@@ -5207,7 +5207,7 @@
     },
     "delegation" : {
       "delegationEarn" : "คุณสามารถรับ Reward {{ticker}} ได้ด้วยการ Delegate สินทรัพย์ของคุณ",
-      "info" : "Delegation ทำงานยังไง",
+      "info" : "การ Delegate ทำงานยังไง",
       "claimRewards" : "เคลม Reward",
       "claimAvailableRewards" : "เคลม {{amount}}",
       "header" : "การ Delegate",
@@ -5299,7 +5299,7 @@
         "steps" : {
           "validator" : {
             "validators" : "ผู้ตรวจสอบ",
-            "myDelegations" : "การ Delegation ของฉัน",
+            "myDelegations" : "การ Delegate ของฉัน",
             "cta" : "ดำเนินการต่อ",
             "estYield" : "ผลตอบแทนโดยประมาณ: {{amount}}",
             "totalAvailable" : "จำนวนที่ใช้ได้: <0>{{amount}}</0>",
@@ -5406,7 +5406,7 @@
         "description" : "สินทรัพย์ที่ Unstake จะต้องผ่านช่วงเวลาการปลดข้อผูกพัน 10 วัน ก่อนที่จะสามารถถอนออกได้"
       },
       "delegationUnavailable" : {
-        "title" : "การ Delegation ไม่พร้อมใช้งาน",
+        "title" : "การ Delegate ไม่พร้อมใช้งาน",
         "description" : "ในบัญชีของคุณมียอดคงเหลือที่ใช้ได้ไม่เพียงพอสำหรับการเริ่มต้นการ Delegate ใหม่"
       }
     },
@@ -5916,7 +5916,7 @@
           "warning" : "เลือกผู้ตรวจสอบของคุณอย่างชาญฉลาด: สินทรัพย์ที่คุณผูกมัดไว้บางส่วนอาจสูญหายไปอย่างถาวรหากผู้ตรวจสอบทำงานอย่างไม่เหมาะสม"
         },
         "amount" : {
-          "availableLabel" : "ที่ใช้ได้",
+          "availableLabel" : "ใช้ได้",
           "maxLabel" : "สูงสุด"
         },
         "confirm" : {
@@ -6282,7 +6282,7 @@
     },
     "summaryTitle" : "สรุป",
     "goToAccount" : "ไปที่บัญชี",
-    "howDelegationWorks" : "วิธีใช้งานการ Delegation",
+    "howDelegationWorks" : "วิธีใช้งานการ Delegate",
     "actions" : {
       "redelegate" : "Redelegate",
       "collectRewards" : "เก็บ Reward",
@@ -6442,8 +6442,8 @@
       "stepRange" : "ขั้นตอนที่ {{currentStep}} จาก {{totalSteps}}"
     },
     "stepVerification" : {
-      "action" : "โปรดยืนยันการทำงานบนอุปกรณ์ของคุณ",
-      "accountName" : "ชื่อบัญชี"
+      "title" : "ดำเนินการต่อบน Ledger {{wording}} ของคุณ",
+      "description" : "ปฏิบัติตามคำแนะนำที่ปรากฏบน Secure Touchscreen ของคุณ"
     }
   },
   "notificationCenter" : {
@@ -6623,13 +6623,14 @@
     },
     "range" : {
       "1h" : "1H",
+      "1H_label" : "1H",
       "24h" : "24H",
-      "1d" : "1D",
+      "1D_label" : "1D",
       "7d" : "7D",
-      "1w" : "1W",
+      "1W_label" : "1W",
       "30d" : "30D",
-      "1m" : "1M",
-      "1y" : "1Y"
+      "1M_label" : "1M",
+      "1Y_label" : "1Y"
     },
     "warnings" : {
       "connectionError" : "ข้อผิดพลาดในการเชื่อมต่อ",
@@ -6927,7 +6928,7 @@
         },
         "liquid" : {
           "name" : "Liquid",
-          "description" : "คุณสามารถ Stake ETH และรับรางวัลในโทเคน Liquid คุณจะยังคงสามารถเทรดและเข้าร่วมกิจกรรม DeFi ได้"
+          "description" : "คุณสามารถ Stake ETH และรับ Reward เป็นโทเคน Liquid คุณจะยังคงสามารถเทรดและเข้าร่วมกิจกรรม DeFi ได้"
         },
         "protocol" : {
           "name" : "โพรโทคอล",
@@ -6956,7 +6957,7 @@
           "title" : "Kiln Liquid Restaking"
         },
         "kiln" : {
-          "title" : "Staking เฉพาะของ Kiln"
+          "title" : "Kiln Dedicated Staking"
         },
         "kelpdao" : {
           "title" : "Kelp DAO"
@@ -6977,7 +6978,7 @@
       "readAbout" : "กลยุทธ์และยุทธวิธีที่ควรรู้",
       "requiredMinimum" : "ต้องใช้ {{min}} ETH",
       "rewardsStrategy" : {
-        "auto-compounded" : "Reward ที่ทบต้นอัตโนมัติ",
+        "auto-compounded" : "Reward ทบต้นอัตโนมัติ",
         "basic" : "Reward",
         "daily" : "Reward รายวัน",
         "eigenlayer_points" : "EigenLayer Point",
