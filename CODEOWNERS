@@ -9,6 +9,7 @@
 # fdp-ci team
 .github                                                 @ledgerhq/fdp-ci
 .github/workflows/test-ui-e2e-only-desktop.yml          @ledgerhq/fdp-ci  @ledgerhq/qaa
+.github/workflows/test-mobile-e2e-reusable.yml          @ledgerhq/fdp-ci  @ledgerhq/qaa
 .github/workflows/test-design-system-reusable.yml       @ledgerhq/fdp-ci  @ledgerhq/live-hub
 
 # Hub team
