@@ -29,5 +29,9 @@ export const SelectNetwork = ({
     onNetworkSelected(network);
   };
 
-  return <NetworkList networks={networks} onClick={onClick} />;
+  return (
+    <div style={{ flex: "1 1 auto", width: "100%" }}>
+      <NetworkList networks={networks} onClick={onClick} />
+    </div>
+  );
 };
