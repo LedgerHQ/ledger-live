@@ -8694,8 +8694,8 @@ importers:
         specifier: ^0.4.0
         version: 0.4.3(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@ledgerhq/crypto-icons':
-        specifier: 1.0.3
-        version: 1.0.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(@babel/core@7.24.3)(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1))
+        specifier: 1.1.0
+        version: 1.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(@babel/core@7.24.3)(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1))
       '@ledgerhq/crypto-icons-ui':
         specifier: workspace:^
         version: file:libs/ui/packages/crypto-icons(@types/react@18.2.73)(react@18.3.1)(styled-components@5.3.11(@babel/core@7.24.3)(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1))(styled-system@5.1.5)
@@ -13341,10 +13341,9 @@ packages:
       '@types/react':
         optional: true
 
-  '@ledgerhq/crypto-icons@1.0.3':
-    resolution: {integrity: sha512-oZlwaTjAzSzRlJVpPYjkEKneuknKwmgkQINbT0R+Heh79WV3Dzzk6xYmDCZGgqUtn64UDKQ1hlrrY62rv2yzUA==}
+  '@ledgerhq/crypto-icons@1.1.0':
+    resolution: {integrity: sha512-PFeSxLxVy6IinAO7rYiBgau/bBUg6fx/e19TF5B18Jmd0v5CrKCIN0AVNNiHgr5hhfN/BOLYpfLS4Yz+BkNFSw==}
     peerDependencies:
-      axios: '>=1.6.0'
       react: '>=18'
       react-dom: '>=18'
       styled-components: '>=5.3.3'
@@ -40967,7 +40966,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.2.73
 
-  '@ledgerhq/crypto-icons@1.0.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(@babel/core@7.24.3)(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1))':
+  '@ledgerhq/crypto-icons@1.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(@babel/core@7.24.3)(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1))':
     dependencies:
       '@ledgerhq/ui-shared': 0.2.2
       react: 18.3.1
