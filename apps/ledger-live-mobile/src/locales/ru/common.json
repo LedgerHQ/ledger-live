@@ -6442,8 +6442,8 @@
       "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
     },
     "stepVerification" : {
-      "action" : "Подтвердите операцию на устройстве",
-      "accountName" : "Название счёта"
+      "title" : "Продолжите на устройстве Ledger {{wording}}",
+      "description" : "Следуйте руководству на защищённом сенсорном экране."
     }
   },
   "notificationCenter" : {
@@ -6623,13 +6623,14 @@
     },
     "range" : {
       "1h" : "1Ч",
+      "1H_label" : "1Ч",
       "24h" : "24Ч",
-      "1d" : "1Д",
+      "1D_label" : "1Д",
       "7d" : "7Д",
-      "1w" : "1Н",
+      "1W_label" : "1Н",
       "30d" : "30Д",
-      "1m" : "1М",
-      "1y" : "1Г"
+      "1M_label" : "1М",
+      "1Y_label" : "1Г"
     },
     "warnings" : {
       "connectionError" : "Ошибка соединения",
