@@ -1103,6 +1103,32 @@
     "tryEnablingAgain" : "重新尝试启用位置",
     "noInfos" : "Ledger 并不会获取您的位置信息。"
   },
+  "earn" : {
+    "deposit" : {
+      "protocolInfoModal" : {
+        "title" : "选择协议时，请记住以下几点：",
+        "items" : {
+          "protocol" : {
+            "highlighted" : "协议",
+            "description" : " 是一个平台，可让您通过将存入的加密货币用于借贷、提供流动性或权益质押来获得奖励。"
+          },
+          "apy" : {
+            "highlighted" : "APY（年收益率）",
+            "description" : " 是指您一年可以赚取的利息。APY 越高，收益越高。"
+          },
+          "tvl" : {
+            "highlighted" : "TVL（总锁定价值）",
+            "description" : " 是其他用户存入协议的总金额。TVL 越高，说明信任该协议的人越多。"
+          },
+          "strategy" : {
+            "highlighted" : "策略",
+            "description0" : " 是指协议如何产生奖励。",
+            "description1" : "例如，如果协议采用借贷作为策略，就会将你存入的稳定币借给借款人。然后您将获得利息，利息会根据需求而变化。"
+          }
+        }
+      }
+    }
+  },
   "permissions" : {
     "open" : "打开应用程序权限",
     "authorize" : "授权",
@@ -7388,6 +7414,9 @@
       "minutes_plural" : "（{{count}} 分钟前）",
       "seconds" : "（{{count}} 秒前）",
       "seconds_plural" : "（{{count}} 秒前）"
-    }
+    },
+    "performance" : "表现",
+    "low" : "低",
+    "high" : "高"
   }
 }
