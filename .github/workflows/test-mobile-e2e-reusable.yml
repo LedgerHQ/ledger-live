@@ -190,7 +190,7 @@ jobs:
   allure-report-ios:
     name: "Allure Reports Export on Server"
     runs-on: [ledger-live-medium]
-    if: ${{ always() && !inputs.speculos_tests }}
+    if: ${{ !cancelled() && !inputs.speculos_tests }}
     needs: [detox-tests-ios]
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
@@ -204,7 +204,7 @@ jobs:
           pattern: ios-test-artifacts*
           merge-multiple: true
       - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
-        if: ${{ always() && env.SHOULD_UPLOAD == 'true' }}
+        if: ${{ !cancelled() && env.SHOULD_UPLOAD == 'true' }}
         id: upload
         with:
           platform: ios-${{ env.SPECULOS_RUN == 'true' && 'speculos' || 'mocked' }}
@@ -368,13 +368,13 @@ jobs:
           path: apps/ledger-live-mobile/artifacts/
       - name: Set job output based on detox result
         id: set-output
-        if: always()
+        if: ${{ !cancelled() }}
         run: echo "status_${{ matrix.shardIndex }}=${{ steps.detox.outcome }}" >> $GITHUB_OUTPUT
 
   allure-report-android:
     name: "Allure Reports Export on Server"
     runs-on: [ledger-live-medium]
-    if: ${{ always() }}
+    if: ${{ !cancelled() }}
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
       result: ${{ steps.summary.outputs.test_result }}
@@ -389,7 +389,7 @@ jobs:
           merge-multiple: true
       - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         id: upload
-        if: ${{ always() && env.SHOULD_UPLOAD == 'true' }}
+        if: ${{ !cancelled() && env.SHOULD_UPLOAD == 'true' }}
         with:
           platform: android-${{ env.SPECULOS_RUN == 'true' && 'speculos' || 'mocked' }}
           login: ${{ vars.ALLURE_USERNAME }}
@@ -484,7 +484,7 @@ jobs:
   report-on-slack:
     runs-on: ubuntu-22.04
     needs: [allure-report-android, allure-report-ios]
-    if: ${{ always() && (needs.allure-report-ios.outputs.report-url || needs.allure-report-android.outputs.report-url) }}
+    if: ${{ !cancelled() && (needs.allure-report-ios.outputs.report-url || needs.allure-report-android.outputs.report-url) }}
     env:
       IOS_STATUS: ${{ needs.allure-report-ios.outputs.status }}
       IOS_REPORT_URL: ${{ needs.allure-report-ios.outputs.report-url }}

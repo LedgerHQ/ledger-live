@@ -56,7 +56,13 @@ export const ratingsModalOpenSelector = (s: State) => s.ratings.isRatingsModalOp
 export const ratingsModalLockedSelector = (s: State) => s.ratings.isRatingsModalLocked;
 export const ratingsCurrentRouteNameSelector = (s: State) => s.ratings.currentRouteName;
 export const ratingsHappyMomentSelector = (s: State) => s.ratings.happyMoment;
-export const ratingsDataOfUserSelector = (s: State) => s.ratings.dataOfUser;
+export const ratingsDataOfUserSelector = (s: State) => {
+  const dataOfUser = { ...s.ratings.dataOfUser };
+  if (typeof s.ratings.dataOfUser?.appFirstStartDate === "string") {
+    dataOfUser.appFirstStartDate = new Date(s.ratings.dataOfUser.appFirstStartDate);
+  }
+  return dataOfUser;
+};
 export const satisfactionSelector = (s: State) => s.ratings.dataOfUser?.satisfaction;
 
 export default handleActions<RatingsState, RatingsPayload>(handlers, INITIAL_STATE);
