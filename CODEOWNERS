@@ -37,6 +37,7 @@ libs/hw-ledger-key-ring-protocol/                        @ledgerhq/live-hub
 .github/workflows/test-coin-tester.yml                   @ledgerhq/coin-integration
 .github/workflows/test-coin-modules-integ.yml            @ledgerhq/coin-integration
 .github/workflows/test-bridge-pr.yml                     @ledgerhq/coin-integration @ledgerhq/fdp-ci
+.github/workflow-templates/bot-coin**                    @ledgerhq/coin-integration
 **/live-common-set*.ts                                   @ledgerhq/coin-integration
 apps/**/families/                                        @ledgerhq/coin-integration
 apps/cli/src/commands/blockchain                         @ledgerhq/coin-integration
