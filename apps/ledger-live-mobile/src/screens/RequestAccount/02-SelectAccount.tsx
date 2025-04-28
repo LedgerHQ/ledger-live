@@ -25,6 +25,7 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { Flex } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
 
 const SEARCH_KEYS = [
   "name",
@@ -272,4 +273,4 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
 });
-export default SelectAccount;
+export default withDiscreetMode(SelectAccount);
