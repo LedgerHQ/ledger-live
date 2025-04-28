@@ -15,5 +15,9 @@
   ],
   "ignoreUnused": [
     "rxjs"
+  ],
+  "ignoreUnresolved": [],
+  "ignoreUnimported": [
+    "src/globals.d.ts"
   ]
 }
