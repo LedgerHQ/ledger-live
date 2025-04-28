@@ -1103,6 +1103,32 @@
     "tryEnablingAgain" : "Tente habilitar a localização novamente",
     "noInfos" : "A Ledger não acessa suas informações de localização."
   },
+  "earn" : {
+    "deposit" : {
+      "protocolInfoModal" : {
+        "title" : "Para escolher um protocolo, aqui está o que você precisa levar em conta:",
+        "items" : {
+          "protocol" : {
+            "highlighted" : "Um protocolo",
+            "description" : " é uma plataforma que permite que você ganhe recompensas usando suas criptomoedas depositadas para empréstimo, liquidez ou staking."
+          },
+          "apy" : {
+            "highlighted" : "APY (Rendimento Percentual Anual)",
+            "description" : " é o valor dos juros que você pode ganhar em um ano. Um APY mais alto significa ganhos mais altos."
+          },
+          "tvl" : {
+            "highlighted" : "TVL (Valor total bloqueado)",
+            "description" : " é o total de dinheiro depositado no protocolo por outros usuários. Um TVL mais alto significa que o protocolo tem a confiança de mais pessoas."
+          },
+          "strategy" : {
+            "highlighted" : "Estratégia",
+            "description0" : " é o método que um protocolo usa para gerar recompensas para você.",
+            "description1" : "Por exemplo, se um protocolo usa o empréstimo como estratégia, ele empresta sua stablecoin depositada a tomadores de empréstimo. Assim, você ganha juros que variam de acordo com a demanda."
+          }
+        }
+      }
+    }
+  },
   "permissions" : {
     "open" : "Abrir permissões do aplicativo",
     "authorize" : "Autorizar",
@@ -3168,7 +3194,7 @@
     "debug" : {
       "title" : "Debug",
       "desc" : "Use por sua própria conta e risco – Ferramentas de desenvolvedor",
-      "featureFlagsTitle" : "Marcadores definidos usados no Ledger Live",
+      "featureFlagsTitle" : "Marcadores de recursos definidos usados no Ledger Live",
       "featureFlagsDesc" : "Valores sobrepostos serão redefinidos se o aplicativo for reexecutado. Apenas strings JSON válidas serão aceitas.",
       "featureFlagsEdit" : "Editar",
       "featureFlagsRestore" : "Restaurar",
@@ -7388,6 +7414,9 @@
       "minutes_plural" : "({{count}} minutos atrás)",
       "seconds" : "({{count}} segundo atrás)",
       "seconds_plural" : "({{count}} segundos atrás)"
-    }
+    },
+    "performance" : "Desempenho",
+    "low" : "Baixo",
+    "high" : "Alto"
   }
 }
