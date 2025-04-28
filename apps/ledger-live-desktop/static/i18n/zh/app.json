@@ -382,6 +382,7 @@
       "status" : {
         "pending" : "待处理",
         "onhold" : "已暂停",
+        "unknown" : "未知",
         "expired" : "已逾期",
         "finished" : "已完成",
         "refunded" : "已退款"
