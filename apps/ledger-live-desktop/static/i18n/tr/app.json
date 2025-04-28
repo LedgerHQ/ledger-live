@@ -382,6 +382,7 @@
       "status" : {
         "pending" : "Beklemede",
         "onhold" : "Durduruldu",
+        "unknown" : "Bilinmiyor",
         "expired" : "Süresi doldu",
         "finished" : "Tamamlandı",
         "refunded" : "Para iadesi yapıldı"
