@@ -13,10 +13,11 @@ import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/typ
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import SafeAreaView from "~/components/SafeAreaView";
 import { AccountLike } from "@ledgerhq/types-live";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
 
 type Props = StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendCoin>;
 
-export default function ReceiveFunds({ navigation, route }: Props) {
+function ReceiveFunds({ navigation, route }: Props) {
   const {
     selectedCurrency,
     currency: initialCurrencySelected,
@@ -95,3 +96,5 @@ export default function ReceiveFunds({ navigation, route }: Props) {
     </SafeAreaView>
   );
 }
+
+export default withDiscreetMode(ReceiveFunds);
