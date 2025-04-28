@@ -207,7 +207,7 @@ export async function swapSetup() {
 }
 
 export async function waitSwapReady() {
-  return fetchData({ type: "waitSwapReady", id: uniqueId() }, RESPONSE_TIMEOUT);
+  return fetchData({ type: "waitSwapReady", id: uniqueId() }, RESPONSE_TIMEOUT * 3);
 }
 
 export async function getLogs() {
