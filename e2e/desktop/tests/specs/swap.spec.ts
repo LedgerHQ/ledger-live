@@ -40,7 +40,7 @@ const swaps = [
   {
     fromAccount: Account.ETH_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
-    xrayTicket: "B2CQA-2750, B2CQA-3135",
+    xrayTicket: "B2CQA-2750, B2CQA-3135, B2CQA-620",
   },
   {
     fromAccount: Account.BTC_NATIVE_SEGWIT_1,
