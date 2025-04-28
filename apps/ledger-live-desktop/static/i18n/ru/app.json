@@ -5417,10 +5417,8 @@
     }
   },
   "SignMessageConfirm" : {
-    "stringHash" : "Хэш сообщения",
-    "domainHash" : "Хэш домена",
-    "messageHash" : "Хэш сообщения",
-    "message" : "Сообщение"
+    "title" : "Продолжите на устройстве Ledger {{wording}}",
+    "description" : "Следуйте руководству на защищённом сенсорном экране."
   },
   "TransactionConfirm" : {
     "title" : "Подтвердите операцию на устройстве для её завершения",
@@ -6790,7 +6788,7 @@
     },
     "entryPoints" : {
       "accounts" : {
-        "title" : "Активируйте Ledger Sync"
+        "title" : "Активировать Ledger Sync"
       },
       "manager" : {
         "title" : "Ledger Sync",
