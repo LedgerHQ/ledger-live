@@ -6624,12 +6624,14 @@
     "range" : {
       "1h" : "1Ч",
       "24h" : "24Ч",
-      "1d" : "1Д",
       "7d" : "7Д",
-      "1w" : "1Н",
       "30d" : "30Д",
-      "1m" : "1М",
-      "1y" : "1Г"
+      "1y" : "1Г",
+      "1D_label" : "1Д",
+      "1H_label" : "1Ч",
+      "1W_label" : "1Н",
+      "1M_label" : "1М",
+      "1Y_label" : "1Г"
     },
     "warnings" : {
       "connectionError" : "Ошибка соединения",
@@ -7364,6 +7366,29 @@
     }
   },
   "largeMover" : {
+    "info" : "Инфо",
+    "marketCap" : "Капитализация",
+    "volume" : "Объём (24ч)",
+    "fdv" : "FDV",
+    "marketCap24h" : "Объём/Рын.кап. (24ч)",
+    "circulatingSupply" : "В обороте",
+    "totalSupply" : "Общее предложение",
+    "ath" : "Исторический макс.",
+    "atl" : "Исторический мин.",
+    "timeAgo" : {
+      "years" : "({{count}} г. назад)",
+      "years_plural" : "({{count}} лет назад)",
+      "months" : "({{count}} мес. назад)",
+      "months_plural" : "({{count}} мес. назад)",
+      "days" : "({{count}} дн. назад)",
+      "days_plural" : "({{count}} дн. назад)",
+      "hours" : "({{count}} ч. назад)",
+      "hours_plural" : "({{count}} ч. назад)",
+      "minutes" : "({{count}} мин. назад)",
+      "minutes_plural" : "({{count}} мин. назад)",
+      "seconds" : "({{count}} сек. назад)",
+      "seconds_plural" : "({{count}} сек. назад)"
+    },
     "performance" : "Изменение цены",
     "low" : "Мин.",
     "high" : "Макс."
