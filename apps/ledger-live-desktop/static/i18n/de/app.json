@@ -382,6 +382,7 @@
       "status" : {
         "pending" : "Ausstehend",
         "onhold" : "Zurückgestellt",
+        "unknown" : "Unbekannt",
         "expired" : "Abgelaufen",
         "finished" : "Abgeschlossen",
         "refunded" : "Zurückerstattet"
