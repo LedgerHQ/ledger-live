@@ -1103,6 +1103,32 @@
     "tryEnablingAgain" : "Konumu yeniden etkinleştirmeyi deneyin",
     "noInfos" : "Ledger konum bilgilerinize erişmez."
   },
+  "earn" : {
+    "deposit" : {
+      "protocolInfoModal" : {
+        "title" : "Bir protokol seçerken aklınızda bulundurmanız gereken birkaç şey:",
+        "items" : {
+          "protocol" : {
+            "highlighted" : "Bir protokol,",
+            "description" : " yatırdığınız kriptoları borç vermek, likidite sunmak veya staking yapmak için kullanarak ödüller kazanmanızı sağlayan bir platformdur."
+          },
+          "apy" : {
+            "highlighted" : "APY (Yıllık Getiri Yüzdesi),",
+            "description" : " bir yılda ne kadar faiz getirisi elde edebileceğinizi ifade eder. Daha yüksek bir APY, daha yüksek kazançlar anlamına gelir."
+          },
+          "tvl" : {
+            "highlighted" : "TVL (Kilitli toplam değer),",
+            "description" : " diğer kullanıcılar tarafından protokole yatırılan toplam paradır. Daha yüksek bir TVL, protokole daha fazla kişinin güvendiği anlamına gelir."
+          },
+          "strategy" : {
+            "highlighted" : "Strateji,",
+            "description0" : " protokolün sizin için ödüller üretmek amacıyla kullandığı yöntemdir.",
+            "description1" : "Örneğin bir protokol, stratejisi olarak borç vermeyi kullanırsa, yatırdığınız stabil coin’leri borç alanlara borç verir. Siz de talebe göre değişen bir faiz getirisi elde edersiniz."
+          }
+        }
+      }
+    }
+  },
   "permissions" : {
     "open" : "Uygulama izinlerini aç",
     "authorize" : "İzin ver",
@@ -7388,6 +7414,9 @@
       "minutes_plural" : "({{count}} dakika önce)",
       "seconds" : "({{count}} saniye önce)",
       "seconds_plural" : "({{count}} saniye önce)"
-    }
+    },
+    "performance" : "Performans",
+    "low" : "Düşük",
+    "high" : "Yüksek"
   }
 }
