@@ -382,6 +382,7 @@
       "status" : {
         "pending" : "Pendiente",
         "onhold" : "En espera",
+        "unknown" : "Desconocido",
         "expired" : "Caducado",
         "finished" : "Finalizado",
         "refunded" : "Reembolsado"
