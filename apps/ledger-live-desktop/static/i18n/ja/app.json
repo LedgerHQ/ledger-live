@@ -382,6 +382,7 @@
       "status" : {
         "pending" : "保留中",
         "onhold" : "保留中",
+        "unknown" : "不明",
         "expired" : "期限切れ",
         "finished" : "完了",
         "refunded" : "返金済み"
