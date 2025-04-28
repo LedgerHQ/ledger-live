@@ -164,6 +164,7 @@ const customRender = (
   };
 
   return {
+    store,
     user: userEvent.setup(userEventOptions),
     ...rntlRender(ui, { wrapper: ProvidersWrapper, ...renderOptions }),
   };
