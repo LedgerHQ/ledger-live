@@ -5417,10 +5417,8 @@
     }
   },
   "SignMessageConfirm" : {
-    "stringHash" : "دالة تجزئة الرسالة",
-    "domainHash" : "دالة تجزئة المجال",
-    "messageHash" : "دالة تجزئة الرسالة",
-    "message" : "رسالة"
+    "title" : "تابع على جهازك Ledger {{wording}}",
+    "description" : "اتبع التعليمات المعروضة على شاشتك الآمنة التي تعمل باللمس."
   },
   "TransactionConfirm" : {
     "title" : "يرجى تأكيد العملية على جهازك لإنهائها",
