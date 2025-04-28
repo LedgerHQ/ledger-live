@@ -192,7 +192,7 @@
     "react-native-level-fs": "3.0.1",
     "react-native-localize": "2.2.6",
     "react-native-mmkv": "2.12.2",
-    "react-native-modal": "13.0.1",
+    "react-native-modal": "14.0.0-rc.1",
     "react-native-navigation-bar-color": "2.0.2",
     "react-native-pager-view": "6.5.1",
     "react-native-qrcode-svg": "6.1.1",
@@ -228,6 +228,7 @@
   },
   "devDependencies": {
     "@babel/core": "7.25.2",
+    "@babel/preset-env": "^7.25.3",
     "@babel/plugin-proposal-class-properties": "^7.13.0",
     "@babel/plugin-proposal-export-namespace-from": "7.18.9",
     "@babel/plugin-proposal-nullish-coalescing-operator": "7.18.6",

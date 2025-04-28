@@ -14,6 +14,7 @@
 		17F58472269C64670070C475 /* RCTBluetoothHelperModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 17F58471269C64670070C475 /* RCTBluetoothHelperModule.m */; };
 		2EA091AF2C3FBD5900B6181E /* GoogleService-Info-Testing.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2EA091AE2C3FBD5900B6181E /* GoogleService-Info-Testing.plist */; };
 		3407D5D9215D2AB800C9D40B /* NeededForBLE.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3407D5D8215D2AB800C9D40B /* NeededForBLE.swift */; };
+		45B0253AE1D79A453AB53143 /* libPods-ledgerlivemobile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B9515574E8065B5076C60B8 /* libPods-ledgerlivemobile.a */; };
 		515E9C2C8C0049EC992210D9 /* Inter-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3B6982A2E67F482A8069215B /* Inter-Medium.otf */; };
 		9DB523402249BD405124BA05 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 3FF1B576B23156C611F7B818 /* PrivacyInfo.xcprivacy */; };
 		AD6EE26071FA4673B5C89936 /* FontAwesome5_Pro_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4BD106EA37CA467F9525D699 /* FontAwesome5_Pro_Brands.ttf */; };
@@ -29,7 +30,6 @@
 		E55EFC09114D43B3AB041882 /* FontAwesome5_Pro_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 991AA9919E4840DBB799E117 /* FontAwesome5_Pro_Solid.ttf */; };
 		E85A22C62B17E835005A8E6D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E85A22C52B17E835005A8E6D /* LaunchScreen.storyboard */; };
 		E9558EFF2AF93CD200BBEB55 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E9558F012AF93CD200BBEB55 /* InfoPlist.strings */; };
-		F2716E79F6A1FCE2A5810C37 /* Pods_ledgerlivemobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C6F3D29319119C0C0B5AA36 /* Pods_ledgerlivemobile.framework */; };
 		F45A09B01925C0C58A9D40CE /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6562F0F2E65142E04A9EDDEB /* ExpoModulesProvider.swift */; };
 		F837348722721A48009D747A /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F837348622721A48009D747A /* JavaScriptCore.framework */; };
 		F99BEAC629E8441C83104922 /* FontAwesome5_Pro_Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6D891D99F1084D459DBF667F /* FontAwesome5_Pro_Light.ttf */; };
@@ -75,10 +75,10 @@
 		6562F0F2E65142E04A9EDDEB /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-ledgerlivemobile/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		668E26194DD94B6D8F10D450 /* FontAwesome5_Pro_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Pro_Regular.ttf; path = ../assets/fonts/FontAwesome5_Pro_Regular.ttf; sourceTree = "<group>"; };
 		689DEFC120BB8D8C1AC24535 /* Pods-ledgerlivemobile.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ledgerlivemobile.staging.xcconfig"; path = "Target Support Files/Pods-ledgerlivemobile/Pods-ledgerlivemobile.staging.xcconfig"; sourceTree = "<group>"; };
+		6B9515574E8065B5076C60B8 /* libPods-ledgerlivemobile.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ledgerlivemobile.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C1563DFEE064431AF4F8F6B /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		6D891D99F1084D459DBF667F /* FontAwesome5_Pro_Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Pro_Light.ttf; path = ../assets/fonts/FontAwesome5_Pro_Light.ttf; sourceTree = "<group>"; };
 		793F2C3B8DC0475194262928 /* libRCTCamera.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTCamera.a; sourceTree = "<group>"; };
-		8C6F3D29319119C0C0B5AA36 /* Pods_ledgerlivemobile.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ledgerlivemobile.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9390D938BCB148F2A34703E3 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
 		991AA9919E4840DBB799E117 /* FontAwesome5_Pro_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Pro_Solid.ttf; path = ../assets/fonts/FontAwesome5_Pro_Solid.ttf; sourceTree = "<group>"; };
 		99A82013C77445B4B2B54AB5 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
@@ -122,7 +122,7 @@
 				F837348722721A48009D747A /* JavaScriptCore.framework in Frameworks */,
 				BC25CCBE6BEA4D62BE203C17 /* libz.tbd in Frameworks */,
 				0EC70FE5282B9CAA00E9E355 /* AdServices.framework in Frameworks */,
-				F2716E79F6A1FCE2A5810C37 /* Pods_ledgerlivemobile.framework in Frameworks */,
+				45B0253AE1D79A453AB53143 /* libPods-ledgerlivemobile.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -287,7 +287,7 @@
 				0EC70FE4282B9CAA00E9E355 /* AdServices.framework */,
 				F837348622721A48009D747A /* JavaScriptCore.framework */,
 				5F63C9E4AC284203A95B417E /* libz.tbd */,
-				8C6F3D29319119C0C0B5AA36 /* Pods_ledgerlivemobile.framework */,
+				6B9515574E8065B5076C60B8 /* libPods-ledgerlivemobile.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -846,7 +846,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.2_@babel+core@7.25.2_@react-native-community+cli@15.1.0_typescript@5.4.3__@_rejkvvhx4j3dng23hfx4darz2y/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.2_@babel+core@7.25.2_@babel+preset-env@7.26.9_@babel+core@7.25.2__@react-na_mtfgjrpui73grqz353m5mijbjm/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				USE_HERMES = true;
@@ -991,7 +991,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.2_@babel+core@7.25.2_@react-native-community+cli@15.1.0_typescript@5.4.3__@_rejkvvhx4j3dng23hfx4darz2y/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.2_@babel+core@7.25.2_@babel+preset-env@7.26.9_@babel+core@7.25.2__@react-na_mtfgjrpui73grqz353m5mijbjm/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
 				SWIFT_VERSION = 5.0;
@@ -1080,7 +1080,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.2_@babel+core@7.25.2_@react-native-community+cli@15.1.0_typescript@5.4.3__@_rejkvvhx4j3dng23hfx4darz2y/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.2_@babel+core@7.25.2_@babel+preset-env@7.26.9_@babel+core@7.25.2__@react-na_mtfgjrpui73grqz353m5mijbjm/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
@@ -1170,7 +1170,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.2_@babel+core@7.25.2_@react-native-community+cli@15.1.0_typescript@5.4.3__@_rejkvvhx4j3dng23hfx4darz2y/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.2_@babel+core@7.25.2_@babel+preset-env@7.26.9_@babel+core@7.25.2__@react-na_mtfgjrpui73grqz353m5mijbjm/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
@@ -1310,7 +1310,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.2_@babel+core@7.25.2_@react-native-community+cli@15.1.0_typescript@5.4.3__@_rejkvvhx4j3dng23hfx4darz2y/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.2_@babel+core@7.25.2_@babel+preset-env@7.26.9_@babel+core@7.25.2__@react-na_mtfgjrpui73grqz353m5mijbjm/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
