@@ -20,13 +20,12 @@ let hermesTypedArrayPatched = false;
 
 export function patchHermesTypedArraysIfNeeded() {
   if (global.HermesInternal && !hermesTypedArrayPatched) {
-      try {
-        log("coin:stellar", "🔵 Patching TypedArray because of Hermes bug");
-        require("@exodus/patch-broken-hermes-typed-arrays");
-        hermesTypedArrayPatched = true;
-      } catch (e) {
-        log("coin:stellar", "Failed to patch typed arrays");
-      }
+    try {
+      log("coin:stellar", "🔵 Patching TypedArray because of Hermes bug");
+      require("@exodus/patch-broken-hermes-typed-arrays");
+      hermesTypedArrayPatched = true;
+    } catch (e) {
+      log("coin:stellar", "Failed to patch typed arrays");
     }
   }
 }
