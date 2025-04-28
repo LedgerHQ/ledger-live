@@ -5417,10 +5417,8 @@
     }
   },
   "SignMessageConfirm" : {
-    "stringHash" : "Mesaj Hash'i",
-    "domainHash" : "Alan Adı Hash'i",
-    "messageHash" : "Mesaj Hash'i",
-    "message" : "Mesaj"
+    "title" : "Ledger {{wording}} üzerinde devam edin",
+    "description" : "Güvenli Dokunmatik Ekranınızda gösterilen yönergeleri izleyin."
   },
   "TransactionConfirm" : {
     "title" : "Sonlandırmak için lütfen cihazınızdaki işlemi onaylayın",
