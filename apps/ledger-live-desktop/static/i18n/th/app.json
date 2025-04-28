@@ -198,7 +198,7 @@
       "REVOKE" : "ยกเลิกแล้ว",
       "ACTIVATE" : "เปิดใช้งานแล้ว",
       "REGISTER" : "ลงทะเบียนแล้ว",
-      "STAKE" : "Stake เรียบร้อยแล้ว",
+      "STAKE" : "ทำการ Stake แล้ว",
       "UNSTAKE" : "ยังไม่ได้ Stake",
       "WITHDRAW_UNSTAKED" : "ถอนแล้ว",
       "SENDING" : "กำลังส่ง",
@@ -374,7 +374,7 @@
     "history" : {
       "disclaimer" : "ธุรกรรมอาจยังไม่แสดงในประวัติการ Swap แต่กำลังประมวลผลอย่างปลอดภัย ตรวจสอบ 'รายละเอียดการดำเนินการล่าสุด' ในบัญชีของคุณเพื่อเช็คธุรกรรมทั้งหมด",
       "empty" : {
-        "title" : "ธุรกรรม Swap ของคุณก่อนหน้านี้จะแสดงที่นี่",
+        "title" : "ประวัติการ Swap ที่ผ่านมาจะปรากฏที่นี่",
         "description" : "คุณยังไม่ได้ทำการ Swap หรือ Ledger Live กำลังทำการรีเซ็ตอยู่ในขณะนี้"
       },
       "export" : "ส่งออกการดำเนินการ",
@@ -382,6 +382,7 @@
       "status" : {
         "pending" : "รอดำเนินการ",
         "onhold" : "หยุดชั่วคราว",
+        "unknown" : "ไม่รู้จัก",
         "expired" : "หมดอายุแล้ว",
         "finished" : "เสร็จแล้ว",
         "refunded" : "คืนเงินแล้ว"
@@ -419,7 +420,7 @@
     "history" : {
       "disclaimer" : "ธุรกรรม Swap ของคุณบนเดสก์ท็อปไม่ได้มีการซิงโครไนซ์กับแอปพลิเคชัน Ledger Live บนมือถือ",
       "empty" : {
-        "title" : "ประวัติ Swap ก่อนหน้านี้ของคุณจะปรากฏที่นี่",
+        "title" : "ประวัติการ Swap ที่ผ่านมาจะปรากฏที่นี่",
         "description" : "คุณยังไม่ได้ทำการ Swap หรือ Ledger Live กำลังถูกรีเซ็ตอยู่ในขณะนี้"
       }
     },
@@ -2379,7 +2380,7 @@
         "amount" : "จำนวน",
         "fees" : "ค่าธรรมเนียมเครือข่าย",
         "maxFees" : "ค่าธรรมเนียมเครือข่ายสูงสุด",
-        "maxFeesInfo" : "นี่คือจำนวนสูงสุดที่คุณสามารถจ่ายได้สำหรับธุรกรรมนี้ ส่วนต่างระหว่างค่าธรรมเนียมเครือข่ายสูงสุดและค่าธรรมเนียมที่เกิดขึ้นจริงจะได้รับคืน",
+        "maxFeesInfo" : "คือค่าธรรมเนียมสูงสุดที่คุณต้องจ่ายสำหรับธุรกรรมนี้ ส่วนต่างระหว่างค่าธรรมเนียมเครือข่ายสูงสุดและค่าธรรมเนียมที่เกิดขึ้นจริงจะได้รับคืน",
         "useMax" : "ใช้สูงสุด",
         "sendMax" : "ส่งจำนวนสูงสุด",
         "rippleTag" : "แท็ก",
@@ -2550,7 +2551,7 @@
       },
       "commission" : "คอมมิชชัน",
       "claimRewards" : "เคลม Reward",
-      "header" : "Delegation",
+      "header" : "การ Delegate",
       "noRewards" : "ไม่สามารถใช้ Reward ได้",
       "delegate" : "Delegate",
       "undelegate" : "Undelegate",
@@ -2580,7 +2581,7 @@
           },
           "starter" : {
             "description" : "คุณสามารถรับ Reward ได้ด้วยการ Delegate สินทรัพย์ EGLD ของคุณให้กับผู้ให้บริการ Staking",
-            "bullet" : ["คุณยังคงเป็นเจ้าของสินทรัพย์ที่ Delegate ไว้", "Delegate โดยใช้อุปกรณ์ Ledger ของคุณ", "สินทรัพย์จะพร้อมใช้งาน 10 วันหลังจาก Undelegate"],
+            "bullet" : ["คุณยังคงเป็นเจ้าของสินทรัพย์ที่ทำการ Delegate", "ทำการ Delegate ได้โดยใช้อุปกรณ์ Ledger ของคุณ", "สินทรัพย์จะพร้อมใช้งาน 10 วันหลังจาก Undelegate"],
             "warning" : {
               "description" : "เลือกผู้ให้บริการ Staking อย่างชาญฉลาด: ปัจจุบันความเสี่ยงเพียงอย่างเดียวคือการไม่ได้รับ Reward เนื่องจากเหตุผลต่าง ๆ ดังนั้นคุณควรเลือกผู้ให้บริการจากความน่าเชื่อถือ การสื่อสาร และหลักเศรษฐศาสตร์"
             }
@@ -2616,7 +2617,7 @@
             "claimDescription" : "Reward จะถูกเพิ่มเข้าไปในยอดคงเหลือที่ใช้ได้",
             "compoundInfo" : "คุณได้รับ <0>{{amount}}</0> แล้ว การคลิกดำเนินการต่อจะถือว่ากำลังมีการขอรับทันที และจะมีการ Delegate โดยอัตโนมัติให้กับผู้ให้บริการ Staking เดียวกัน",
             "claimInfo" : "คุณได้รับ <0>{{amount}}</0> จากผู้ให้บริการ Staking ด้านล่าง การคลิกดำเนินการต่อจะถือว่ากำลังมีการขอรับทันที และจะมีการเพิ่มเข้าไปในยอดคงเหลือที่ใช้ได้โดยอัตโนมัติ",
-            "selectLabel" : "เลือกการ Delegation"
+            "selectLabel" : "เลือกการ Delegate"
           },
           "connectDevice" : {
             "title" : "อุปกรณ์"
@@ -2712,7 +2713,7 @@
       "totalStake" : "จำนวน Stake ทั้งหมด",
       "cost" : "ค่าใช้จ่าย",
       "pool" : "Pool",
-      "changeDelegation" : "เปลี่ยนการ Delegation",
+      "changeDelegation" : "เปลี่ยนการ Delegate",
       "assetsAlreadyStaked" : "สินทรัพย์ของคุณได้รับการ Stake ไปแล้ว",
       "addFundsToStake" : "เติมเงินทุนเพื่อ Stake",
       "commission" : "คอมมิชชัน",
@@ -2723,7 +2724,7 @@
         "steps" : {
           "starter" : {
             "description" : "คุณสามารถรับ Reward ได้ด้วยการ Delegate ADA ของคุณไปยัง Pool",
-            "bullet" : ["คุณยังคงเป็นเจ้าของสินทรัพย์ที่ Delegate ไว้", "Delegate โดยใช้อุปกรณ์ Ledger ของคุณ", "สามารถ Delegate สินทรัพย์ใหม่ไปยัง Pool อื่นได้ หรือคุณสามารถเลือก Undelegate ได้ทุกเมื่อ"]
+            "bullet" : ["คุณยังคงเป็นเจ้าของสินทรัพย์ที่ทำการ Delegate", "ทำการ Delegate ได้โดยใช้อุปกรณ์ Ledger ของคุณ", "สามารถ Delegate สินทรัพย์ใหม่ไปยัง Pool อื่นได้ หรือคุณสามารถเลือก Undelegate ได้ทุกเมื่อ"]
           },
           "validator" : {
             "title" : "Pools"
@@ -2899,7 +2900,7 @@
       "activeTooltip" : "โหวตใช้งานสร้าง Reward ได้",
       "pendingTooltip" : "การโหวตที่รอดำเนินการจะไม่สร้าง Reward และต้องเปิดใช้งานหลังจาก 24 ชั่วโมง",
       "awaitingActivationTooltip" : "สามารถทำการโหวตที่ค้างอยู่ได้แล้วในตอนนี้",
-      "listHeader" : "Delegation",
+      "listHeader" : "การ Delegate",
       "add" : "เพิ่ม",
       "validatorGroup" : "กลุ่มผู้ตรวจสอบ",
       "manageMultipleVoteWarning" : "คุณต้องเปิดใช้งานหรือเพิกถอนการโหวตอื่น ๆ ในกลุ่มผู้ตรวจสอบเดียวกันก่อนจัดการการโหวตนี้",
@@ -2909,14 +2910,14 @@
       },
       "emptyState" : {
         "description" : "คุณสามารถรับ CELO Reward ได้ด้วยการ Delegate สินทรัพย์ของคุณ",
-        "info" : "Delegation ทำงานยังไง",
+        "info" : "การ Delegate ทำงานยังไง",
         "delegation" : "รับ Reward"
       },
       "earnRewards" : {
         "description" : "คุณสามารถรับ Reward ได้ด้วยการ Delegate สินทรัพย์ CELO ของคุณให้กับผู้ตรวจสอบ",
         "bullet" : {
-          "0" : "คุณยังคงเป็นเจ้าของสินทรัพย์ที่ Delegate ไว้",
-          "1" : "Delegate โดยใช้อุปกรณ์ Ledger ของคุณ",
+          "0" : "คุณยังคงเป็นเจ้าของสินทรัพย์ที่ทำการ Delegate",
+          "1" : "ทำการ Delegate ได้โดยใช้อุปกรณ์ Ledger ของคุณ",
           "2" : "สินทรัพย์จะพร้อมใช้งานหลังจากการ Undelegate"
         },
         "warning" : "เลือกผู้ตรวจสอบของคุณอย่างชาญฉลาด: สินทรัพย์ที่คุณ Delegate บางส่วนอาจสูญหายไปอย่างถาวรหากผู้ตรวจสอบทำงานอย่างไม่เหมาะสม"
@@ -2957,7 +2958,7 @@
         "amount" : {
           "title" : "จำนวน",
           "amountLabel" : "จำนวนที่จะล็อก",
-          "availableLabel" : "ที่ใช้ได้",
+          "availableLabel" : "ใช้ได้",
           "maxLabel" : "สูงสุด",
           "info" : "สามารถปลดล็อกสินทรัพย์ที่ล็อกไว้ได้ทุกเมื่อ แต่การปลดล็อกใช้เวลา 3 วัน"
         },
@@ -3115,7 +3116,7 @@
         "amount" : {
           "title" : "จำนวน",
           "amountLabel" : "จำนวนที่จะยกเลิก",
-          "availableLabel" : "ที่ใช้ได้",
+          "availableLabel" : "ใช้ได้",
           "maxLabel" : "สูงสุด"
         },
         "connectDevice" : {
@@ -3148,13 +3149,13 @@
     "delegation" : {
       "emptyState" : {
         "description" : "คุณสามารถรับ {{currencyTicker}} Reward ได้ด้วยการ Delegate สินทรัพย์ของคุณ",
-        "info" : "วิธีใช้งานการ Delegation?",
+        "info" : "วิธีใช้งานการ Delegate?",
         "delegation" : "รับ Reward"
       },
       "commission" : "คอมมิชชัน",
       "totalStake" : "จำนวน Stake ทั้งหมด",
       "claimRewards" : "เคลม Reward",
-      "header" : "การ Delegation",
+      "header" : "การ Delegate",
       "noRewards" : "ไม่มี Reward",
       "delegate" : "เพิ่ม",
       "undelegate" : "Undelegate",
@@ -3173,7 +3174,7 @@
         "steps" : {
           "starter" : {
             "description" : "คุณสามารถรับ Reward ได้ด้วยการ Delegate สินทรัพย์ {{currencyTicker}} ของคุณให้กับผู้ตรวจสอบ",
-            "bullet" : ["คุณยังคงเป็นเจ้าของสินทรัพย์ที่ Delegate ไว้", "Delegate โดยใช้อุปกรณ์ Ledger ของคุณ", "สินทรัพย์จะพร้อมใช้งานใน {{numberOfDays}} วันหลังจาก Undelegate"],
+            "bullet" : ["คุณยังคงเป็นเจ้าของสินทรัพย์ที่ทำการ Delegate", "ทำการ Delegate ได้โดยใช้อุปกรณ์ Ledger ของคุณ", "สินทรัพย์จะพร้อมใช้งานใน {{numberOfDays}} วันหลังจากการ Undelegate"],
             "warning" : {
               "description" : "เลือกผู้ตรวจสอบของคุณอย่างชาญฉลาด: สินทรัพย์ที่คุณ Delegate บางส่วนอาจสูญหายไปอย่างถาวรหากผู้ตรวจสอบทำงานอย่างไม่เหมาะสม"
             }
@@ -3212,7 +3213,7 @@
             "claimDescription" : "Reward จะได้รับการเพิ่มเข้าไปในยอดคงเหลือที่ใช้ได้",
             "compoundInfo" : "คุณได้รับ <0>{{amount}}</0> แล้ว การคลิกดำเนินการต่อจะถือว่ากำลังมีการขอรับแล้วในตอนนี้ และจะมีการ Delegate ให้กับผู้ตรวจสอบคนเดียวกันโดยอัตโนมัติ",
             "claimInfo" : "คุณได้รับ <0>{{amount}}</0> จากผู้ตรวจสอบด้านล่าง การคลิกดำเนินการต่อจะถือว่ากำลังมีการขอรับแล้วในตอนนี้ และจะมีการเพิ่มเข้าไปในยอดคงเหลือที่ใช้ได้โดยอัตโนมัติ",
-            "selectLabel" : "เลือกการ Delegation"
+            "selectLabel" : "เลือกการ Delegate"
           },
           "connectDevice" : {
             "title" : "อุปกรณ์"
@@ -3242,13 +3243,13 @@
           "starter" : {
             "title" : "การ Redelegate",
             "description" : "ใช้การ Redelegate เพื่อเปลี่ยนแปลงจากผู้ตรวจสอบรายหนึ่งเป็นอีกรายหนึ่งได้อย่างง่ายดาย แต่หากคุณเปลี่ยนใจ คุณต้องรอ {{ numberOfDays }} วันจากล็อกธุรกรรมหลังจากการ Redelegate",
-            "warning" : "เลือกผู้ตรวจสอบของคุณอย่างชาญฉลาด: สินทรัพย์ที่คุณ Delegate บางส่วนอาจสูญหายไปอย่างถาวรหากผู้ตรวจสอบทำงานอย่างไม่เหมาะสม คุณมีได้สูงสุดถึง<0>7 Redelegation ที่รอดำเนินการ</0>",
-            "howDelegationWorks" : "วิธีใช้งานการ Delegation?"
+            "warning" : "เลือกผู้ตรวจสอบของคุณอย่างรอบคอบ: สินทรัพย์ที่คุณ Delegate อาจสูญเสียไปบางส่วนอย่างถาวร หากผู้ตรวจสอบทำงานอย่างไม่เหมาะสม คุณมีได้สูงสุดถึง<0>7 Redelegation ที่รอดำเนินการ</0>",
+            "howDelegationWorks" : "วิธีใช้งานการ Delegate?"
           },
           "validators" : {
             "title" : "ผู้ตรวจสอบ",
-            "currentDelegation" : "การ Delegation ในปัจจุบัน",
-            "newDelegation" : "การ Delegation ใหม่",
+            "currentDelegation" : "การ Delegate ในปัจจุบัน",
+            "newDelegation" : "การ Delegate ใหม่",
             "chooseValidator" : "เลือกผู้ตรวจสอบ",
             "warning" : "หากคุณเปลี่ยนใจ คุณจะต้องรอ <0>{{numberOfDays}} วัน</0>เพื่อทำการ Redelegate กับผู้ตรวจสอบใหม่",
             "amountLabel" : "จำนวนที่จะ Redelegate"
@@ -3496,7 +3497,7 @@
         "amount" : {
           "title" : "จำนวน",
           "amountLabel" : "จำนวนที่จะผูกมัด",
-          "availableLabel" : "ที่ใช้ได้",
+          "availableLabel" : "ใช้ได้",
           "maxLabel" : "สูงสุด",
           "info" : "สินทรัพย์ที่ผูกมัดสามารถยกเลิกการผูกมัดได้ทุกเมื่อ แต่การยกเลิกการผูกมัดจะใช้เวลา 28 วัน",
           "learnMore" : "เรียนรู้เพิ่มเติม"
@@ -3663,7 +3664,7 @@
       "totalStake" : "Stake ทั้งหมด",
       "commission" : "คอมมิชชัน",
       "delegate" : "เพิ่ม",
-      "listHeader" : "การ Delegation",
+      "listHeader" : "การ Delegate",
       "availableBalance" : "สามารถถอนได้",
       "active" : "ใช้งานอยู่",
       "activeTooltip" : "จำนวนที่ใช้งานซึ่งสร้าง Reward",
@@ -3676,14 +3677,14 @@
       "ledgerByChorusOneTC" : "ข้อกำหนดและเงื่อนไขของ Ledger by Chorus One",
       "emptyState" : {
         "description" : "คุณสามารถรับ Reward สำหรับ SOL ได้ด้วยการ Delegate สินทรัพย์ของคุณ",
-        "info" : "วิธีใช้งานการ Delegation?",
+        "info" : "วิธีใช้งานการ Delegate?",
         "delegation" : "รับ Reward"
       },
       "earnRewards" : {
         "description" : "คุณสามารถรับ Reward ได้ด้วยการ Delegate สินทรัพย์ SOL ของคุณให้กับผู้ตรวจสอบ",
         "bullet" : {
           "0" : "คุณยังคงเป็นเจ้าของสินทรัพย์ที่มอบหมาย",
-          "1" : "Delegate โดยใช้อุปกรณ์ Ledger ของคุณ",
+          "1" : "ทำการ Delegate ได้โดยใช้อุปกรณ์ Ledger ของคุณ",
           "2" : "สินทรัพย์จะพร้อมใช้งานหลังจากการยกเลิกการมอบหมาย"
         },
         "warning" : "เลือกผู้ตรวจสอบของคุณอย่างชาญฉลาด: สินทรัพย์ที่คุณมอบหมายบางส่วนอาจสูญหายไปอย่างถาวรหากผู้ตรวจสอบทำงานอย่างไม่เหมาะสม"
@@ -3849,7 +3850,7 @@
         "supportLink" : "เรียนรู้เพิ่มเติมเกี่ยวกับ Stader Pooling"
       },
       "kiln" : {
-        "title" : "Staking เฉพาะของ Kiln",
+        "title" : "Kiln Dedicated Staking",
         "tag" : "ขั้นต่ำ 32 ETH",
         "description" : "Stake มากกว่า 32 ETH ไปยังผู้ตรวจสอบเฉพาะ และรับ Reward ได้อย่างง่ายดาย",
         "supportLink" : "ดูข้อมูลเพิ่มเติมเกี่ยวกับผู้ตรวจสอบ Kiln"
@@ -3870,7 +3871,7 @@
         },
         "liquid" : {
           "name" : "Liquid",
-          "description" : "คุณสามารถ Stake ETH และรับรางวัลในโทเคน Liquid คุณจะยังคงสามารถเทรดและเข้าร่วมกิจกรรม DeFi ได้"
+          "description" : "คุณสามารถ Stake ETH และรับ Reward เป็นโทเคน Liquid คุณจะยังคงสามารถเทรดและเข้าร่วมกิจกรรม DeFi ได้"
         },
         "protocol" : {
           "name" : "โพรโทคอล",
@@ -3899,7 +3900,7 @@
           "title" : "Kiln Liquid Restaking"
         },
         "kiln" : {
-          "title" : "Staking เฉพาะของ Kiln"
+          "title" : "Kiln Dedicated Staking"
         },
         "kelpdao" : {
           "title" : "Kelp DAO"
@@ -3920,7 +3921,7 @@
       "readAbout" : "อ่านเกี่ยวกับ ETH Staking และกลยุทธ์ต่าง ๆ",
       "requiredMinimum" : "ขั้นต่ำ {{min}} ETH",
       "rewardsStrategy" : {
-        "auto-compounded" : "Reward ที่ทบต้นอัตโนมัติ",
+        "auto-compounded" : "Reward ทบต้นอัตโนมัติ",
         "basic" : "Reward",
         "daily" : "Reward รายวัน",
         "eigenlayer_points" : "Eigenlayer Points",
@@ -4068,7 +4069,7 @@
   },
   "delegation" : {
     "title" : "รับ Reward",
-    "header" : "การ Delegation",
+    "header" : "การ Delegate",
     "validator" : "ผู้ตรวจสอบ",
     "yield" : "ผลตอบแทนโดยประมาณ",
     "address" : "Address",
@@ -4082,7 +4083,7 @@
     "durationJustStarted" : "เพิ่งเริ่มต้น",
     "durationDays" : "{{count}} วัน",
     "durationDays_plural" : "{{count}} วัน",
-    "howItWorks" : "วิธีใช้งานการ Delegation",
+    "howItWorks" : "วิธีใช้งานการ Delegate",
     "delegationEarn" : "คุณสามารถรับ Reward จากการ Staking {{name}} ได้แล้วในตอนนี้ด้วยการ Delegate บัญชีของคุณ",
     "earnRewards" : "รับ Reward",
     "overdelegated" : "Overdelegated",
@@ -6111,7 +6112,7 @@
       "title" : "ค่าธรรมเนียมต่ำกว่าค่าที่แนะนำ"
     },
     "PriorityFeeHigherThanMaxFee" : {
-      "title" : "Priority Fee สูงสุดต้องไม่สูงกว่าค่าธรรมเนียมสูงสุด"
+      "title" : "Priority Fee สูงสุดต้องไม่มากกว่าค่าธรรมเนียมสูงสุด"
     },
     "UnknownMCU" : {
       "title" : "เวอร์ชัน MCU ที่ไม่รู้จัก",
