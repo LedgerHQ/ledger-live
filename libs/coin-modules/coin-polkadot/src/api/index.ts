@@ -1,5 +1,6 @@
 import type {
   Api,
+  FeeEstimation,
   Operation,
   Pagination,
   TransactionIntent,
@@ -15,8 +16,9 @@ import {
   lastBlock,
   listOperations,
 } from "../logic";
+import { PolkadotAsset } from "../types";
 
-export function createApi(config: PolkadotConfig): Api<void> {
+export function createApi(config: PolkadotConfig): Api<PolkadotAsset> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -32,7 +34,7 @@ export function createApi(config: PolkadotConfig): Api<void> {
   };
 }
 
-async function craft(transactionIntent: TransactionIntent<void>): Promise<string> {
+async function craft(transactionIntent: TransactionIntent<PolkadotAsset>): Promise<string> {
   const extrinsicArg = defaultExtrinsicArg(transactionIntent.amount, transactionIntent.recipient);
   //TODO: Retrieve correctly the nonce via a call to the node `await api.rpc.system.accountNextIndex(address)`
   const nonce = 0;
@@ -43,16 +45,18 @@ async function craft(transactionIntent: TransactionIntent<void>): Promise<string
   return extrinsic.toHex();
 }
 
-async function estimate(transactionIntent: TransactionIntent<void>): Promise<bigint> {
+async function estimate(
+  transactionIntent: TransactionIntent<PolkadotAsset>,
+): Promise<FeeEstimation> {
   const tx = await craftEstimationTransaction(transactionIntent.sender, transactionIntent.amount);
-  const estimatedFees = await estimateFees(tx);
-  return estimatedFees;
+  const value = await estimateFees(tx);
+  return { value };
 }
 
 async function operations(
   address: string,
   { minHeight }: Pagination,
-): Promise<[Operation<void>[], string]> {
+): Promise<[Operation<PolkadotAsset>[], string]> {
   const [ops, nextHeight] = await listOperations(address, { limit: 0, startAt: minHeight });
   return [ops, JSON.stringify(nextHeight)];
 }

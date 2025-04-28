@@ -1,8 +1,8 @@
 import { Operation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import * as LogicFunctions from "../logic";
 import { GetTransactionsOptions } from "../network";
-import { NetworkInfo } from "../types";
-import { createApi } from "./index";
+import { NetworkInfo, XrpAsset } from "../types";
+import { createApi, TransactionIntentExtra } from "./index";
 
 const mockGetServerInfos = jest.fn().mockResolvedValue({
   info: {
@@ -183,7 +183,8 @@ describe("listOperations", () => {
       // the order is reversed so that the result is always sorted by newest tx first element of the list
       expect(results).toEqual([
         {
-          operationIndex: 0,
+          id: "HASH_VALUE",
+          asset: { type: "native" },
           tx: {
             hash: "HASH_VALUE",
             fees: fee,
@@ -210,7 +211,8 @@ describe("listOperations", () => {
           },
         },
         {
-          operationIndex: 0,
+          id: "HASH_VALUE",
+          asset: { type: "native" },
           tx: {
             hash: "HASH_VALUE",
             fees: fee,
@@ -232,7 +234,8 @@ describe("listOperations", () => {
           },
         },
         {
-          operationIndex: 0,
+          id: "HASH_VALUE",
+          asset: { type: "native" },
           tx: {
             hash: "HASH_VALUE",
             fees: fee,
@@ -252,7 +255,7 @@ describe("listOperations", () => {
             sequence: 1,
           },
         },
-      ] satisfies Operation<void>[]);
+      ] satisfies Operation<XrpAsset>[]);
     },
   );
 });
@@ -281,7 +284,7 @@ describe("Testing craftTransaction function", () => {
 
   it("should use custom user fees when user provides it for crafting a transaction", async () => {
     const customFees = 99n;
-    await api.craftTransaction({} as TransactionIntent<void>, customFees);
+    await api.craftTransaction({} as TransactionIntent<XrpAsset>, customFees);
 
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
@@ -292,12 +295,38 @@ describe("Testing craftTransaction function", () => {
   });
 
   it("should use default fees when user does not provide them for crafting a transaction", async () => {
-    await api.craftTransaction({} as TransactionIntent<void>);
+    await api.craftTransaction({} as TransactionIntent<XrpAsset>);
 
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
         fee: DEFAULT_ESTIMATED_FEES,
+      }),
+    );
+  });
+
+  it("should pass memos when user provides it for crafting a transaction", async () => {
+    await api.craftTransaction({
+      memos: [{ data: "testdata", format: "testformat", type: "testtype" }],
+    } as TransactionIntent<XrpAsset, TransactionIntentExtra>);
+
+    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.objectContaining({
+        memos: [{ data: "testdata", format: "testformat", type: "testtype" }],
+      }),
+    );
+  });
+
+  it("should pass destination tag when user provides it for crafting a transaction", async () => {
+    await api.craftTransaction({
+      destinationTag: 1337,
+    } as TransactionIntent<XrpAsset, TransactionIntentExtra>);
+
+    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.objectContaining({
+        destinationTag: 1337,
       }),
     );
   });

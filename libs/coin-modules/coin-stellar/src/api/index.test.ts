@@ -1,6 +1,7 @@
-import { TransactionIntent } from "@ledgerhq/coin-framework/lib/api/types";
-import { StellarToken } from "../types";
-import { createApi } from "./index";
+import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { StellarAsset } from "../types";
+import { createApi, envelopeFromAnyXDR } from "./index";
+import expect from "expect";
 
 const mockGetOperations = jest.fn();
 
@@ -39,6 +40,7 @@ describe("operations", () => {
   });
 
   const mockOperation = {
+    asset: { type: "native" },
     tx: {
       hash: "e035a56c32003e3b0e4c9c5499b0750d71d98233ae6ae94323ff0a458b05a30b",
       fees: 0.0291,
@@ -108,7 +110,7 @@ describe("Testing craftTransaction function", () => {
   });
 
   it("should use estimated fees when user does not provide them for crafting a transaction", async () => {
-    await api.craftTransaction({} as TransactionIntent<StellarToken>);
+    await api.craftTransaction({ asset: {} } as TransactionIntent<StellarAsset>);
     expect(estimateFeesMock).toHaveBeenCalledTimes(1);
     expect(logicCraftTransactionMock).toHaveBeenCalledWith(
       expect.any(Object),
@@ -119,7 +121,7 @@ describe("Testing craftTransaction function", () => {
   it.each([[1n], [50n], [99n]])(
     "should use custom user fees when user provide them for crafting a transaction",
     async (fees: bigint) => {
-      await api.craftTransaction({} as TransactionIntent<StellarToken>, fees);
+      await api.craftTransaction({ asset: {} } as TransactionIntent<StellarAsset>, fees);
       expect(estimateFeesMock).toHaveBeenCalledTimes(0);
       expect(logicCraftTransactionMock).toHaveBeenCalledWith(
         expect.any(Object),
@@ -127,4 +129,30 @@ describe("Testing craftTransaction function", () => {
       );
     },
   );
+});
+
+describe("Testing transaction loading functions", () => {
+  it("should deserialize a transaction as expected", async () => {
+    const transactionPayloadXDR =
+      "esM5l1ROMXXSZr0CJDmyLNsWUIwBFj8m5csqPhBFqXkAAAACAAAAAEFMhHdla/OhHE2CYrF1VVPnLgBThGuzpNFZyYMh" +
+      "8L6XAAAAZAAAJ/cAAAkYAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAABAAAABHRlc3QAAAABAAAAAAAAAAAAAAAA/QIumXyU" +
+      "+Nq3dDZfGCXjgxYI7uvPElz8zGb0gN+vWD8AAAAAAA9CQAAAAAA=";
+    const transactionEnvelopeXDR =
+      "AAAAAgAAAABBTIR3ZWvzoRxNgmKxdVVT5y4AU4Rrs6TRWcmDIfC+lwAAAGQAACf3AAAJGAAAAAEAAAAAAAAAAAAAAAAA" +
+      "AAAAAAAAAQAAAAR0ZXN0AAAAAQAAAAAAAAAAAAAAAP0CLpl8lPjat3Q2Xxgl44MWCO7rzxJc/Mxm9IDfr1g/AAAAAAAP" +
+      "QkAAAAAAAAAAAA==";
+    const txFromSignaturePayload = envelopeFromAnyXDR(transactionPayloadXDR, "base64");
+    const txFromEnvelope = envelopeFromAnyXDR(transactionEnvelopeXDR, "base64");
+    expect(txFromEnvelope).toEqual(txFromSignaturePayload);
+    expect(txFromEnvelope.toXDR("base64")).toEqual(transactionEnvelopeXDR);
+    expect(txFromSignaturePayload.toXDR("base64")).toEqual(transactionEnvelopeXDR);
+  });
+
+  it("throw expected error when deserializing an invalid transaction", async () => {
+    expect(() => envelopeFromAnyXDR("lulz", "base64")).toThrowError(
+      "Failed decoding transaction as an envelope (TypeError: XDR Read Error: attempt to read outside the boundary of" +
+        " the buffer) or as a signature base: (TypeError: XDR Read Error: attempt to read outside the boundary of the" +
+        " buffer)",
+    );
+  });
 });

@@ -1,13 +1,13 @@
-import { type Api } from "@ledgerhq/coin-framework/api/index";
 import { localForger } from "@taquito/local-forging";
 import { createApi } from ".";
+import type { TezosApi } from "./types";
 
 /**
  * https://teztnets.com/ghostnet-about
  * https://api.tzkt.io/#section/Get-Started/Free-TzKT-API
  */
 describe("Tezos Api", () => {
-  let module: Api<void>;
+  let module: TezosApi;
   const address = "tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ";
 
   beforeAll(() => {
@@ -39,14 +39,18 @@ describe("Tezos Api", () => {
 
       // When
       const result = await module.estimateFees({
+        asset: { type: "native" },
         type: "send",
-        sender: address,
+        sender: { address },
         recipient: "tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ",
         amount,
       });
 
       // Then
-      expect(result).toBeGreaterThanOrEqual(BigInt(0));
+      expect(result.value).toBeGreaterThanOrEqual(BigInt(0));
+      expect(result.parameters).toBeDefined();
+      expect(result.parameters?.gasLimit).toBeGreaterThanOrEqual(BigInt(0));
+      expect(result.parameters?.storageLimit).toBeGreaterThanOrEqual(BigInt(0));
     });
   });
 
@@ -94,7 +98,8 @@ describe("Tezos Api", () => {
       const result = await module.getBalance(address);
 
       // Then
-      expect(result).toBeGreaterThan(0);
+      expect(result[0].asset).toEqual({ type: "native" });
+      expect(result[0].value).toBeGreaterThan(0);
     });
   });
 
@@ -108,8 +113,9 @@ describe("Tezos Api", () => {
       const amount = BigInt(10);
       // When
       const encodedTransaction = await module.craftTransaction({
+        asset: { type: "native" },
         type,
-        sender: address,
+        sender: { address },
         recipient: recipient,
         amount: amount,
       });
@@ -131,8 +137,9 @@ describe("Tezos Api", () => {
 
     it("should use estimated fees when user does not provide them for crafting a transaction", async () => {
       const encodedTransaction = await module.craftTransaction({
+        asset: { type: "native" },
         type: "send",
-        sender: address,
+        sender: { address },
         recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
         amount: BigInt(10),
       });
@@ -147,8 +154,9 @@ describe("Tezos Api", () => {
       async (customFees: bigint) => {
         const encodedTransaction = await module.craftTransaction(
           {
+            asset: { type: "native" },
             type: "send",
-            sender: address,
+            sender: { address },
             recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
             amount: BigInt(10),
           },

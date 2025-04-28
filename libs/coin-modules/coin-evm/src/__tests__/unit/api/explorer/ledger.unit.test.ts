@@ -191,6 +191,33 @@ describe("EVM Family", () => {
         }
       });
 
+      it.each([
+        ["configured", 10, 10],
+        ["default", undefined, 10_000],
+      ])("uses the %s batch size", async (_s, configuredBatchSize, expectedBatchSize) => {
+        mockGetConfig.mockImplementationOnce(() => ({
+          info: {
+            status: { type: "active" },
+            node: { type: "ledger", explorerId: "matic" },
+            explorer: { type: "ledger", explorerId: "matic", batchSize: configuredBatchSize },
+          },
+        }));
+        const request = jest.spyOn(axios, "request").mockResolvedValue({ data: { data: [] } });
+
+        await LEDGER_API.getLastOperations(
+          fakeCurrency,
+          "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+          accountId,
+          0,
+        );
+
+        expect(request).toHaveBeenCalledWith(
+          expect.objectContaining({
+            params: expect.objectContaining({ batch_size: expectedBatchSize }),
+          }),
+        );
+      });
+
       it("should return the different operation types", async () => {
         jest.spyOn(axios, "request").mockImplementation(async () => ({
           data: { data: [coinOperation1, coinOperation2, coinOperation3, coinOperation4] },

@@ -109,3 +109,5 @@ if (!globalThis.Buffer) {
     Object.setPrototypeOf(globalThis.Buffer.prototype, Uint8Array.prototype);
   }
 }
+
+jest.mock("@ledgerhq/device-transport-kit-web-hid");

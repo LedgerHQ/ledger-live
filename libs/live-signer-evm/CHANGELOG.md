@@ -1,5 +1,70 @@
 # @ledgerhq/live-signer-evm
 
+## 0.3.0
+
+### Minor Changes
+
+- [#9931](https://github.com/LedgerHQ/ledger-live/pull/9931) [`95dbd60`](https://github.com/LedgerHQ/ledger-live/commit/95dbd60c06b02fe6fd50bc2ec0883096858d1f23) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add tracking during opt-in transaction checks
+
+### Patch Changes
+
+- Updated dependencies [[`95dbd60`](https://github.com/LedgerHQ/ledger-live/commit/95dbd60c06b02fe6fd50bc2ec0883096858d1f23)]:
+  - @ledgerhq/coin-evm@2.19.0
+  - @ledgerhq/hw-app-eth@6.45.2
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#9931](https://github.com/LedgerHQ/ledger-live/pull/9931) [`95dbd60`](https://github.com/LedgerHQ/ledger-live/commit/95dbd60c06b02fe6fd50bc2ec0883096858d1f23) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add tracking during opt-in transaction checks
+
+### Patch Changes
+
+- Updated dependencies [[`95dbd60`](https://github.com/LedgerHQ/ledger-live/commit/95dbd60c06b02fe6fd50bc2ec0883096858d1f23)]:
+  - @ledgerhq/coin-evm@2.19.0-next.0
+  - @ledgerhq/hw-app-eth@6.45.2-next.0
+
+## 0.2.5
+
+### Patch Changes
+
+- Updated dependencies [[`73722cc`](https://github.com/LedgerHQ/ledger-live/commit/73722ccbc93712103ff4ea33ab5c0c294400eef8), [`fe89dd5`](https://github.com/LedgerHQ/ledger-live/commit/fe89dd51cd35000c7b661d6364fe78f88bbf6c62)]:
+  - @ledgerhq/coin-evm@2.18.0
+  - @ledgerhq/hw-app-eth@6.45.1
+
+## 0.2.5-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`73722cc`](https://github.com/LedgerHQ/ledger-live/commit/73722ccbc93712103ff4ea33ab5c0c294400eef8), [`fe89dd5`](https://github.com/LedgerHQ/ledger-live/commit/fe89dd51cd35000c7b661d6364fe78f88bbf6c62)]:
+  - @ledgerhq/coin-evm@2.18.0-next.0
+  - @ledgerhq/hw-app-eth@6.45.1-next.0
+
+## 0.2.4
+
+### Patch Changes
+
+- Updated dependencies [[`6116909`](https://github.com/LedgerHQ/ledger-live/commit/61169099ce63dfa73e52065327ca3c889c315cb8), [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca), [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f)]:
+  - @ledgerhq/coin-evm@2.17.0
+  - @ledgerhq/hw-app-eth@6.45.0
+
+## 0.2.4-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`6116909`](https://github.com/LedgerHQ/ledger-live/commit/61169099ce63dfa73e52065327ca3c889c315cb8), [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca), [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f)]:
+  - @ledgerhq/coin-evm@2.16.0-next.0
+  - @ledgerhq/hw-app-eth@6.45.0-next.0
+
+## 0.2.3
+
+### Patch Changes
+
+- [#9664](https://github.com/LedgerHQ/ledger-live/pull/9664) [`3cf359d`](https://github.com/LedgerHQ/ledger-live/commit/3cf359d6f62d6993975f4ab7e643fabdeed0100e) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Use observable instead of promise for signing
+
+- Updated dependencies [[`3cf359d`](https://github.com/LedgerHQ/ledger-live/commit/3cf359d6f62d6993975f4ab7e643fabdeed0100e)]:
+  - @ledgerhq/coin-evm@2.16.0
+
 ## 0.2.2
 
 ### Patch Changes

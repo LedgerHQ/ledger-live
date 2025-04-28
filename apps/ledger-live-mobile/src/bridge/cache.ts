@@ -1,11 +1,11 @@
-import deviceStorage from "../logic/storeWrapper";
+import storage from "LLM/storage";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export async function clearBridgeCache() {
-  const keys = await deviceStorage.keys();
-  await deviceStorage.delete(keys.filter(k => k.startsWith("bridgeproxypreload")));
+  const keys = await storage.keys();
+  await storage.delete(keys.filter(k => k.startsWith("bridgeproxypreload")));
 }
 
 function currencyCacheId(currency: CryptoCurrency) {
@@ -13,7 +13,7 @@ function currencyCacheId(currency: CryptoCurrency) {
 }
 
 export async function listCachedCurrencyIds() {
-  const keys = await deviceStorage.keys();
+  const keys = await storage.keys();
   return keys
     .filter(k => k.startsWith("bridgeproxypreload"))
     .map(k => k.replace("bridgeproxypreload_", ""));
@@ -21,13 +21,13 @@ export async function listCachedCurrencyIds() {
 
 export async function setCurrencyCache(currency: CryptoCurrency, data: unknown) {
   if (data) {
-    await deviceStorage.save(currencyCacheId(currency), data);
+    await storage.save(currencyCacheId(currency), data);
   }
 }
 
 export async function getCurrencyCache(currency: CryptoCurrency): Promise<unknown> {
   try {
-    const res = await deviceStorage.get(currencyCacheId(currency));
+    const res = await storage.get(currencyCacheId(currency));
     return res;
   } catch (e) {
     log("bridge/cache", `failure to retrieve cache ${String(e)}`);

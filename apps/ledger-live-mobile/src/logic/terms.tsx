@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import storage from "LLM/storage";
 
 import { useLocale } from "~/context/Locale";
 import { urls } from "~/utils/urls";
@@ -19,10 +19,10 @@ const generalTermsVersionRequired = "2022-05-10";
  * */
 const LEGACY_ACCEPTED_GENERAL_TERMS_VERSION_STORAGE_KEY = "acceptedTermsVersion";
 async function loadLegacyStorageAcceptedTermsVersion() {
-  return AsyncStorage.getItem(LEGACY_ACCEPTED_GENERAL_TERMS_VERSION_STORAGE_KEY);
+  return storage.getString(LEGACY_ACCEPTED_GENERAL_TERMS_VERSION_STORAGE_KEY);
 }
 async function eraseLegacyStorageAcceptedTermsVersion() {
-  AsyncStorage.removeItem(LEGACY_ACCEPTED_GENERAL_TERMS_VERSION_STORAGE_KEY);
+  storage.delete(LEGACY_ACCEPTED_GENERAL_TERMS_VERSION_STORAGE_KEY);
 }
 
 function isAcceptedVersionUpToDate({

@@ -59,10 +59,10 @@ libs/coin-modules/coin-stacks/                                           @ledger
 libs/coin-modules/coin-ton/                                              @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-zondax
 
 ## Hoodies
-# libs/coin-modules/coin-sui/                                              @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-hoodies
+ libs/coin-modules/coin-sui/                                              @ledgerhq/coin-integration @ledgerhq/blockchain-support
 
 ## Blockydevs
-# libs/coin-modules/coin-hedera/                                           @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-blockydevs
+ libs/coin-modules/coin-hedera/                                           @ledgerhq/coin-integration @ledgerhq/blockchain-support
 
 # PTX team
 apps/cli/src/commands/ptx                                            					@ledgerhq/ptx
@@ -166,6 +166,7 @@ apps/web-tools/trustchain/                               @ledgerhq/live-hub
 # UI tests
 apps/ledger-live-desktop/tests/                          @ledgerhq/live-hub @ledgerhq/qaa
 apps/ledger-live-mobile/e2e/                             @ledgerhq/live-hub @ledgerhq/qaa
+e2e/                                                                        @ledgerhq/qaa
 
 # Cross-team generic files can be opted out (no strict ownership when it concerns everyone)
 apps/ledger-live-desktop/static/i18n/

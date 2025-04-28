@@ -1,5 +1,6 @@
 import type {
   Api,
+  FeeEstimation,
   Operation,
   Pagination,
   TransactionIntent,
@@ -15,17 +16,18 @@ import {
   listOperations,
 } from "../logic";
 import { ListOperationsOptions } from "../logic/listOperations";
-import { StellarToken } from "../types";
+import { StellarAsset } from "../types";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-export function createApi(config: StellarConfig): Api<StellarToken> {
+import { xdr } from "@stellar/stellar-sdk";
+export function createApi(config: StellarConfig): Api<StellarAsset> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
     broadcast,
     combine: compose,
     craftTransaction: craft,
-    estimateFees: () => estimateFees(),
+    estimateFees: estimate,
     getBalance,
     lastBlock,
     listOperations: operations,
@@ -38,7 +40,7 @@ type TransactionIntentExtra = {
 };
 
 async function craft(
-  transactionIntent: TransactionIntent<StellarToken>,
+  transactionIntent: TransactionIntent<StellarAsset>,
   customFees?: bigint,
 ): Promise<string> {
   const fees = customFees !== undefined ? customFees : await estimateFees();
@@ -50,26 +52,37 @@ async function craft(
       recipient: transactionIntent.recipient,
       amount: transactionIntent.amount,
       fee: fees,
-      assetCode: transactionIntent.asset?.assetCode,
-      assetIssuer: transactionIntent.asset?.assetIssuer,
+      ...(transactionIntent.asset.type === "token"
+        ? {
+            assetCode: transactionIntent.asset.assetCode,
+            assetIssuer: transactionIntent.asset.assetIssuer,
+          }
+        : {}),
       memoType: extra.memoType,
       memoValue: extra.memoValue,
     },
   );
-  return tx.xdr;
+  // note: API does not return the  transaction envelope but the signature payload instead, see BACK-8727 for more context
+  return tx.signatureBase;
 }
 
 function compose(tx: string, signature: string, pubkey?: string): string {
   if (!pubkey) {
     throw new Error("Missing pubkey");
   }
-  return combine(tx, signature, pubkey);
+  // note: accept here `TransactionEnvelope` or `TransactionSignaturePayload`, see BACK-8727 for more context
+  return combine(envelopeFromAnyXDR(tx, "base64"), signature, pubkey);
+}
+
+async function estimate(): Promise<FeeEstimation> {
+  const value = await estimateFees();
+  return { value };
 }
 
 async function operations(
   address: string,
   { minHeight }: Pagination,
-): Promise<[Operation<StellarToken>[], string]> {
+): Promise<[Operation<StellarAsset>[], string]> {
   return operationsFromHeight(address, minHeight);
 }
 
@@ -78,13 +91,13 @@ type PaginationState = {
   readonly heightLimit: number;
   continueIterations: boolean;
   apiNextCursor?: string;
-  accumulator: Operation<StellarToken>[];
+  accumulator: Operation<StellarAsset>[];
 };
 
 async function operationsFromHeight(
   address: string,
   minHeight: number,
-): Promise<[Operation<StellarToken>[], string]> {
+): Promise<[Operation<StellarAsset>[], string]> {
   const state: PaginationState = {
     pageSize: 200,
     heightLimit: minHeight,
@@ -118,4 +131,47 @@ async function operationsFromHeight(
   }
 
   return [state.accumulator, state.apiNextCursor ? state.apiNextCursor : ""];
+}
+
+/**
+ * Deserialize a transaction envelope, also accepting transaction signature payload form.
+ *
+ * @param input serialized `TransactionEnvelope` or `TransactionSignaturePayload`
+ * @param format serialization encoding
+ */
+export function envelopeFromAnyXDR(
+  input: string,
+  format: "hex" | "base64",
+): xdr.TransactionEnvelope {
+  try {
+    return xdr.TransactionEnvelope.fromXDR(input, format);
+  } catch (envelopeError) {
+    try {
+      return signatureBaseToEnvelope(xdr.TransactionSignaturePayload.fromXDR(input, format));
+    } catch (signatureBaseError) {
+      throw new Error(
+        `Failed decoding transaction as an envelope (${envelopeError}) or as a signature base: (${signatureBaseError})`,
+      );
+    }
+  }
+}
+
+/**
+ * Convert a `TransactionSignaturePayload` into a `TransactionEnvelope`.
+ *
+ * @param signatureBase deserialized `TransactionSignaturePayload`
+ */
+function signatureBaseToEnvelope(
+  signatureBase: xdr.TransactionSignaturePayload,
+): xdr.TransactionEnvelope {
+  const tx = signatureBase.taggedTransaction().value();
+  if (tx instanceof xdr.Transaction) {
+    return xdr.TransactionEnvelope.envelopeTypeTx(
+      new xdr.TransactionV1Envelope({ tx, signatures: [] }),
+    );
+  } else {
+    return xdr.TransactionEnvelope.envelopeTypeTxFeeBump(
+      new xdr.FeeBumpTransactionEnvelope({ tx, signatures: [] }),
+    );
+  }
 }

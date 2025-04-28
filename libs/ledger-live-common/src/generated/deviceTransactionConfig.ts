@@ -1,9 +1,9 @@
-import celo from "../families/celo/deviceTransactionConfig";
 import algorand from "@ledgerhq/coin-algorand/deviceTransactionConfig";
 import aptos from "@ledgerhq/coin-aptos/deviceTransactionConfig";
 import bitcoin from "@ledgerhq/coin-bitcoin/deviceTransactionConfig";
 import cardano from "@ledgerhq/coin-cardano/deviceTransactionConfig";
 import casper from "@ledgerhq/coin-casper/deviceTransactionConfig";
+import celo from "@ledgerhq/coin-celo/deviceTransactionConfig";
 import cosmos from "@ledgerhq/coin-cosmos/deviceTransactionConfig";
 import evm from "@ledgerhq/coin-evm/deviceTransactionConfig";
 import hedera from "@ledgerhq/coin-hedera/deviceTransactionConfig";
@@ -20,14 +20,15 @@ import tezos from "@ledgerhq/coin-tezos/deviceTransactionConfig";
 import ton from "@ledgerhq/coin-ton/deviceTransactionConfig";
 import tron from "@ledgerhq/coin-tron/deviceTransactionConfig";
 import xrp from "@ledgerhq/coin-xrp/deviceTransactionConfig";
+import mina from "@ledgerhq/coin-mina/deviceTransactionConfig";
 
 export default {
-  celo,
   algorand,
   aptos,
   bitcoin,
   cardano,
   casper,
+  celo,
   cosmos,
   evm,
   hedera,
@@ -44,6 +45,7 @@ export default {
   ton,
   tron,
   xrp,
+  mina,
 };
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_aptos } from "@ledgerhq/coin-aptos/bridge/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_casper } from "@ledgerhq/coin-casper/bridge/deviceTransactionConfig";

@@ -33,7 +33,7 @@ import type {
   TransactionRaw as celoTransactionRaw,
   TransactionStatus as celoTransactionStatus,
   TransactionStatusRaw as celoTransactionStatusRaw,
-} from "../families/celo/types";
+} from "@ledgerhq/coin-celo/types/index";
 import type {
   Transaction as cosmosTransaction,
   TransactionRaw as cosmosTransactionRaw,
@@ -70,6 +70,12 @@ import type {
   TransactionStatus as internet_computerTransactionStatus,
   TransactionStatusRaw as internet_computerTransactionStatusRaw,
 } from "@ledgerhq/coin-internet_computer/types/index";
+import type {
+  Transaction as minaTransaction,
+  TransactionRaw as minaTransactionRaw,
+  TransactionStatus as minaTransactionStatus,
+  TransactionStatusRaw as minaTransactionStatusRaw,
+} from "@ledgerhq/coin-mina/types/index";
 import type {
   Transaction as multiversxTransaction,
   TransactionRaw as multiversxTransactionRaw,
@@ -156,6 +162,7 @@ export type Transaction =
   | hederaTransaction
   | iconTransaction
   | internet_computerTransaction
+  | minaTransaction
   | multiversxTransaction
   | nearTransaction
   | polkadotTransaction
@@ -182,6 +189,7 @@ export type TransactionRaw =
   | hederaTransactionRaw
   | iconTransactionRaw
   | internet_computerTransactionRaw
+  | minaTransactionRaw
   | multiversxTransactionRaw
   | nearTransactionRaw
   | polkadotTransactionRaw
@@ -208,6 +216,7 @@ export type TransactionStatus =
   | hederaTransactionStatus
   | iconTransactionStatus
   | internet_computerTransactionStatus
+  | minaTransactionStatus
   | multiversxTransactionStatus
   | nearTransactionStatus
   | polkadotTransactionStatus
@@ -234,6 +243,7 @@ export type TransactionStatusRaw =
   | hederaTransactionStatusRaw
   | iconTransactionStatusRaw
   | internet_computerTransactionStatusRaw
+  | minaTransactionStatusRaw
   | multiversxTransactionStatusRaw
   | nearTransactionStatusRaw
   | polkadotTransactionStatusRaw

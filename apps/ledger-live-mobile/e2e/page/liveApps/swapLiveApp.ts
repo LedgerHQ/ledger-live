@@ -1,6 +1,7 @@
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Swap";
 import { allure } from "jest-allure2-reporter/api";
-import invariant from "invariant";
+import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
+import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 
 export default class SwapLiveAppPage {
   fromSelector = "from-account-coin-selector";
@@ -38,20 +39,23 @@ export default class SwapLiveAppPage {
 
   @Step("Select available provider")
   async selectExchange() {
-    const providersList = await getWebElementsText(this.quoteProviderName);
-    invariant(providersList, "No swap providers found");
+    let index = 0;
 
-    const providersWithoutKYC = providersList.filter((providerName: string) => {
-      const provider = Object.values(Provider).find(p => p.uiName === providerName);
-      return provider && !provider.kyc;
-    });
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      try {
+        const providerName = await getWebElementText(this.quoteProviderName, index);
+        const provider = Object.values(Provider).find(p => p.uiName === providerName);
 
-    for (const providerName of providersWithoutKYC) {
-      const provider = Object.values(Provider).find(p => p.uiName === providerName);
-      if (provider && provider.isNative) {
-        await getWebElementsByIdAndText(this.quoteProviderName, providerName).atIndex(0).tap();
-        await allure.attachment("Selected provider: ", providerName, "text/plain");
-        return providerName;
+        if (provider && !provider.kyc && provider.isNative) {
+          await getWebElementByTestId(this.quoteProviderName).atIndex(index).tap();
+          await allure.attachment("Selected provider: ", providerName, "text/plain");
+          return providerName;
+        }
+
+        index++;
+      } catch (e) {
+        break;
       }
     }
     throw new Error("No valid providers found");
@@ -59,5 +63,11 @@ export default class SwapLiveAppPage {
 
   async tapExecuteSwap() {
     await tapWebElementByTestId(this.executeSwapButton, 1);
+  }
+
+  async getMinimumAmount(swap: SwapType) {
+    return (
+      (await getMinimumSwapAmount(swap.accountToDebit, swap.accountToCredit))?.toString() ?? ""
+    );
   }
 }

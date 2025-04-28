@@ -1,4 +1,4 @@
-import { lastValueFrom } from "rxjs";
+import { lastValueFrom, Observable } from "rxjs";
 import {
   GetAddressDAError,
   SignerEth,
@@ -6,6 +6,9 @@ import {
   SignPersonalMessageDAError,
   SignTransactionDAError,
   SignTypedDataDAError,
+  SignTransactionDAStep,
+  SignTypedDataDAStateStep,
+  Signature,
 } from "@ledgerhq/device-signer-kit-ethereum";
 import {
   DeviceActionState,
@@ -15,8 +18,8 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { EIP712Message } from "@ledgerhq/types-live";
 import { EthAppPleaseEnableContractData, UserRefusedOnDevice } from "@ledgerhq/errors";
-import { EvmAddress, EvmSignature, EvmSigner } from "@ledgerhq/coin-evm/types/signer";
-import { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
+import { EvmAddress, EvmSigner, EvmSignerEvent } from "@ledgerhq/coin-evm/types/signer";
+import type { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 
 export type DAError =
   | GetAddressDAError
@@ -70,22 +73,38 @@ export class DmkSignerEth implements EvmSigner {
     }
   }
 
-  async signPersonalMessage(path: string, messageHex: string): Promise<EvmSignature> {
+  private _formatSignature(signature: Signature) {
+    return {
+      r: signature.r.slice(2),
+      s: signature.s.slice(2),
+      v: signature.v,
+    };
+  }
+
+  signPersonalMessage(path: string, messageHex: string): Observable<EvmSignerEvent> {
     const buffer = hexaStringToBuffer(messageHex);
 
     if (!buffer) {
       throw new Error("Invalid message");
     }
 
-    const result = this._mapResult(
-      await lastValueFrom(this.signer.signMessage(path, buffer).observable),
-    );
-
-    return {
-      r: result.r.slice(2),
-      s: result.s.slice(2),
-      v: result.v,
-    };
+    return new Observable(observer => {
+      observer.next({ type: "signer.evm.signing" });
+      this.signer.signMessage(path, buffer).observable.subscribe({
+        next: result => {
+          if (result.status === DeviceActionStatus.Error) {
+            observer.error(this._mapError<SignPersonalMessageDAError>(result.error));
+          } else if (result.status === DeviceActionStatus.Completed) {
+            observer.next({
+              type: "signer.evm.signed",
+              value: this._formatSignature(result.output),
+            });
+          }
+        },
+        error: error => observer.error(error),
+        complete: () => observer.complete(),
+      });
+    });
   }
 
   async getAddress(
@@ -109,42 +128,78 @@ export class DmkSignerEth implements EvmSigner {
       chainCode: result.chainCode,
     };
   }
-  async signTransaction(path: string, rawTxHex: string, _resolution?: any): Promise<EvmSignature> {
+  signTransaction(path: string, rawTxHex: string, _resolution?: any): Observable<EvmSignerEvent> {
     const buffer = hexaStringToBuffer(rawTxHex);
 
     if (!buffer) {
       throw new Error("Invalid transaction");
     }
 
-    const result = this._mapResult(
-      await lastValueFrom(this.signer.signTransaction(path, buffer).observable),
-    );
-
-    return {
-      r: result.r.slice(2),
-      s: result.s.slice(2),
-      v: result.v,
-    };
+    return new Observable(observer => {
+      this.signer.signTransaction(path, buffer).observable.subscribe({
+        next: result => {
+          if (result.status === DeviceActionStatus.Error) {
+            observer.error(this._mapError<SignTransactionDAError>(result.error));
+          }
+          if (result.status === DeviceActionStatus.Pending) {
+            if (result.intermediateValue.step === SignTransactionDAStep.SIGN_TRANSACTION) {
+              observer.next({ type: "signer.evm.signing" });
+            }
+            if (result.intermediateValue.step === SignTransactionDAStep.BUILD_CONTEXT) {
+              observer.next({ type: "signer.evm.loading-context" });
+            }
+            if (result.intermediateValue.step === SignTransactionDAStep.WEB3_CHECKS_OPT_IN) {
+              observer.next({ type: "signer.evm.transaction-checks-opt-in-triggered" });
+            }
+          } else if (result.status === DeviceActionStatus.Completed) {
+            observer.next({
+              type: "signer.evm.signed",
+              value: this._formatSignature(result.output),
+            });
+          }
+        },
+        error: error => observer.error(error),
+        complete: () => observer.complete(),
+      });
+    });
   }
 
-  async signEIP712Message(
+  signEIP712Message(
     path: string,
     jsonMessage: EIP712Message,
     _fullImplem?: boolean,
-  ): Promise<EvmSignature> {
-    const result = this._mapResult(
-      await lastValueFrom(this.signer.signTypedData(path, jsonMessage).observable),
-    );
-
-    return {
-      r: result.r.slice(2),
-      s: result.s.slice(2),
-      v: result.v,
-    };
+  ): Observable<EvmSignerEvent> {
+    return new Observable(observer => {
+      this.signer.signTypedData(path, jsonMessage).observable.subscribe({
+        next: result => {
+          if (result.status === DeviceActionStatus.Error) {
+            observer.error(this._mapError<SignTypedDataDAError>(result.error));
+          }
+          if (result.status === DeviceActionStatus.Pending) {
+            if (
+              result.intermediateValue.step === SignTypedDataDAStateStep.SIGN_TYPED_DATA ||
+              result.intermediateValue.step === SignTypedDataDAStateStep.SIGN_TYPED_DATA_LEGACY
+            ) {
+              observer.next({ type: "signer.evm.signing" });
+            }
+            if (result.intermediateValue.step === SignTypedDataDAStateStep.BUILD_CONTEXT) {
+              observer.next({ type: "signer.evm.loading-context" });
+            }
+          } else if (result.status === DeviceActionStatus.Completed) {
+            observer.next({
+              type: "signer.evm.signed",
+              value: this._formatSignature(result.output),
+            });
+          }
+        },
+        error: error => observer.error(error),
+        complete: () => observer.complete(),
+      });
+    });
   }
 
   setLoadConfig(_config: LoadConfig) {
-    console.log("not implemented");
+    // not implemented
   }
 
   clearSignTransaction(
@@ -152,7 +207,7 @@ export class DmkSignerEth implements EvmSigner {
     rawTxHex: string,
     _resolutionConfig: ResolutionConfig,
     _throwOnError: boolean,
-  ): Promise<EvmSignature> {
+  ) {
     return this.signTransaction(path, rawTxHex);
   }
 
@@ -160,7 +215,7 @@ export class DmkSignerEth implements EvmSigner {
     _path: string,
     _domainSeparatorHex: string,
     _hashStructMessageHex: string,
-  ): Promise<EvmSignature> {
+  ): Observable<EvmSignerEvent> {
     throw new Error("Method not implemented.");
   }
 }

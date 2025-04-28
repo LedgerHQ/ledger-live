@@ -68,6 +68,7 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugLottie]: undefined;
   [ScreenName.DebugPlayground]: undefined;
   [ScreenName.DebugBluetoothAndLocationServices]: undefined;
+  [ScreenName.DebugStorageMigration]: undefined;
   [ScreenName.DebugTermsOfUse]: undefined;
   [ScreenName.DebugVideos]: undefined;
   [ScreenName.DebugInstallSetOfApps]: undefined;
@@ -86,4 +87,5 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugQueuedDrawerScreen1]: undefined;
   [ScreenName.DebugQueuedDrawerScreen2]: undefined;
   [ScreenName.LargeMoverLandingPage]: undefined;
+  [ScreenName.DebugSwipe]: undefined;
 };

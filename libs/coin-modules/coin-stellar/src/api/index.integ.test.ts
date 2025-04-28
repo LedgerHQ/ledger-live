@@ -1,7 +1,7 @@
 import type { Api, Operation } from "@ledgerhq/coin-framework/api/index";
 import { xdr } from "@stellar/stellar-sdk";
-import { createApi } from ".";
-import { StellarToken } from "../types";
+import { createApi, envelopeFromAnyXDR } from ".";
+import { StellarAsset } from "../types";
 
 /**
  * Testnet scan: https://testnet.lumenscan.io/
@@ -9,7 +9,7 @@ import { StellarToken } from "../types";
  * Tests are skipped for the moment due to TooManyRequest errors
  */
 describe.skip("Stellar Api", () => {
-  let module: Api<StellarToken>;
+  let module: Api<StellarAsset>;
   const ADDRESS = "GBAUZBDXMVV7HII4JWBGFMLVKVJ6OLQAKOCGXM5E2FM4TAZB6C7JO2L7";
 
   beforeAll(() => {
@@ -27,6 +27,7 @@ describe.skip("Stellar Api", () => {
 
       // When
       const result = await module.estimateFees({
+        asset: { type: "native" },
         type: "send",
         sender: ADDRESS,
         recipient: "address",
@@ -39,7 +40,7 @@ describe.skip("Stellar Api", () => {
   });
 
   describe("listOperations", () => {
-    let txs: Operation<StellarToken>[];
+    let txs: Operation<StellarAsset>[];
 
     beforeAll(async () => {
       [txs] = await module.listOperations(ADDRESS, { minHeight: 0 });
@@ -89,28 +90,32 @@ describe.skip("Stellar Api", () => {
     const AMOUNT = BigInt(1_000_000);
 
     function readFees(transactionXdr: string) {
-      const transactionEnvelope = xdr.TransactionEnvelope.fromXDR(transactionXdr, "base64");
+      const transactionEnvelope = envelopeFromAnyXDR(transactionXdr, "base64");
       return transactionEnvelope.value().tx().fee();
     }
 
     function readMemo(transactionXdr: string) {
-      const transactionEnvelope = xdr.TransactionEnvelope.fromXDR(transactionXdr, "base64");
+      const transactionEnvelope = envelopeFromAnyXDR(transactionXdr, "base64");
       return (transactionEnvelope.value().tx() as xdr.TransactionV0).memo();
     }
 
     it("returns a raw transaction", async () => {
       const result = await module.craftTransaction({
+        asset: { type: "native" },
         type: TYPE,
         sender: ADDRESS,
         recipient: RECIPIENT,
         amount: AMOUNT,
       });
 
-      expect(result.length).toEqual(188);
+      const envelope = envelopeFromAnyXDR(result, "base64");
+
+      expect(envelope.toXDR("base64").length).toEqual(188);
     });
 
     it("should use estimated fees when user does not provide them for crafting a transaction", async () => {
       const transactionXdr = await module.craftTransaction({
+        asset: { type: "native" },
         type: TYPE,
         sender: ADDRESS,
         recipient: RECIPIENT,
@@ -125,6 +130,7 @@ describe.skip("Stellar Api", () => {
       const customFees = 99n;
       const transactionXdr = await module.craftTransaction(
         {
+          asset: { type: "native" },
           type: TYPE,
           sender: ADDRESS,
           recipient: RECIPIENT,
@@ -139,6 +145,7 @@ describe.skip("Stellar Api", () => {
 
     it("should have no memo when not provided by user", async () => {
       const transactionXdr = await module.craftTransaction({
+        asset: { type: "native" },
         type: TYPE,
         sender: ADDRESS,
         recipient: RECIPIENT,
@@ -149,6 +156,7 @@ describe.skip("Stellar Api", () => {
 
     it("should have a memo when provided by user", async () => {
       const transactionXdr = await module.craftTransaction({
+        asset: { type: "native" },
         type: TYPE,
         sender: ADDRESS,
         recipient: RECIPIENT,

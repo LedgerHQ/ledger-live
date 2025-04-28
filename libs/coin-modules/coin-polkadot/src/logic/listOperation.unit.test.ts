@@ -30,7 +30,7 @@ describe("listOperations", () => {
         blockHash: "blockHash1",
         date: new Date("2025-03-13T00:00:00Z"),
         accountId: "accountId1",
-        extra: {} as PolkadotOperationExtra,
+        extra: { index: 1 } as PolkadotOperationExtra,
       },
       {
         id: "2",
@@ -44,7 +44,7 @@ describe("listOperations", () => {
         blockHash: "blockHash2",
         date: new Date("2025-03-13T01:00:00Z"),
         accountId: "accountId2",
-        extra: {} as PolkadotOperationExtra,
+        extra: { index: 1 } as PolkadotOperationExtra,
       },
     ];
 
@@ -55,7 +55,8 @@ describe("listOperations", () => {
     expect(result).toEqual([
       [
         {
-          operationIndex: 0,
+          id: "10-1",
+          asset: { type: "native" },
           tx: {
             hash: "hash1",
             fees: BigInt(1),
@@ -71,7 +72,8 @@ describe("listOperations", () => {
           recipients: ["recipient1"],
         },
         {
-          operationIndex: 0,
+          id: "11-1",
+          asset: { type: "native" },
           tx: {
             hash: "hash2",
             fees: BigInt(5),
@@ -119,7 +121,7 @@ describe("listOperations", () => {
         blockHash: "blockHash1",
         date: new Date("2025-03-13T00:00:00Z"),
         accountId: "accountId1",
-        extra: {} as PolkadotOperationExtra,
+        extra: { index: 1 } as PolkadotOperationExtra,
       },
     ];
 
@@ -130,7 +132,8 @@ describe("listOperations", () => {
     expect(result).toEqual([
       [
         {
-          operationIndex: 0,
+          id: "0-1",
+          asset: { type: "native" },
           tx: {
             hash: "hash1",
             fees: BigInt(1),
@@ -166,7 +169,7 @@ describe("listOperations", () => {
         blockHash: "blockHash1",
         date: new Date("2025-03-13T00:00:00Z"),
         accountId: "accountId1",
-        extra: {} as PolkadotOperationExtra,
+        extra: { index: 1 } as PolkadotOperationExtra,
       },
     ];
 
@@ -177,7 +180,8 @@ describe("listOperations", () => {
     expect(result).toEqual([
       [
         {
-          operationIndex: 0,
+          id: "10-1",
+          asset: { type: "native" },
           tx: {
             hash: "hash1",
             fees: BigInt(1),

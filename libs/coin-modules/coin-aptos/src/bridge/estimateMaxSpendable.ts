@@ -29,7 +29,7 @@ const estimateMaxSpendable = async ({
     gasUnitPrice = BigNumber(estimate.gasUnitPrice);
   }
 
-  return getMaxSendBalance(maxGasAmount, gasUnitPrice, mainAccount, transaction);
+  return getMaxSendBalance(mainAccount.spendableBalance, maxGasAmount, gasUnitPrice);
 };
 
 export default estimateMaxSpendable;

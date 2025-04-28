@@ -17,5 +17,19 @@ export const OP_EQUALVERIFY = 0x88;
 export const OP_CHECKSIG = 0xac;
 export const OP_RETURN = 0x6a;
 
-// https://zips.z.cash/zip-0253
-export const ZCASH_NU6_ACTIVATION_HEIGHT = 2726400;
+export const ZCASH_ACTIVATION_HEIGHTS = {
+  // https://zcash.readthedocs.io/en/latest/rtd_pages/nu_dev_guide.html
+  // https://zips.z.cash/zip-0253
+  NU6: 2726400,
+  // https://zips.z.cash/zip-0252
+  NU5: 1687104,
+  // https://zips.z.cash/zip-0251
+  CANOPY: 1046400,
+  // https://zips.z.cash/zip-0250
+  HEARTWOOD: 903000,
+  // https://z.cash/upgrade/blossom/
+  // https://zips.z.cash/zip-0206
+  BLOSSOM: 653600,
+  // https://zips.z.cash/zip-0205
+  SAPLING: 419200,
+};

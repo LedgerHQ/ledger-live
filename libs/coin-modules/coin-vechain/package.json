@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-vechain",
-  "version": "2.6.0",
+  "version": "2.7.2",
   "description": "Ledger VeChain Coin integration",
   "keywords": [
     "Ledger",

@@ -2,7 +2,7 @@ import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { ACTIVATION_FEES, STANDARD_FEES_NATIVE, STANDARD_FEES_TRC_20 } from "../logic/constants";
 import type { AccountTronAPI } from "../network/types";
-import type { Transaction, TronToken } from "../types";
+import type { Transaction, TronAsset } from "../types";
 import { extractBandwidthInfo, getEstimatedBlockSize } from "./utils";
 import { estimateFees, getAccount } from "../logic";
 import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
@@ -48,15 +48,19 @@ const getFeesFromAccountActivation = async (
       return ACTIVATION_FEES; // cost is around 1 TRX
     }
 
-    const transactionIntent: TransactionIntent<TronToken> = {
+    const transactionIntent: TransactionIntent<TronAsset> = {
       type: transaction.mode,
       sender: account.freshAddress,
       recipient: transaction.recipient,
       amount: BigInt(transaction.amount.toString()),
       asset:
         tokenAccount?.token.tokenType === "trc20"
-          ? { standard: "trc20", contractAddress: tokenAccount.token.contractAddress }
-          : { standard: "trc10", tokenId: tokenAccount?.token.id },
+          ? {
+              type: "token",
+              standard: "trc20",
+              contractAddress: tokenAccount.token.contractAddress,
+            }
+          : { type: "token", standard: "trc10", tokenId: tokenAccount?.token.id },
     };
 
     // if we have a token account but the recipient is either not active or the account does not have a trc20 balance for the given token.

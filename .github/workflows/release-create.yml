@@ -44,7 +44,7 @@ jobs:
       - name: commit new tokens
         uses: planetscale/ghcommit-action@v0.2.9
         with:
-          commit_message: "chore(prerelease) update cryptoassets"
+          commit_message: "chore(prerelease) update cryptoassets [skip ci]"
           repo: ${{ github.repository }}
           branch: ${{ env.RELEASE_BRANCH }}
         env:
@@ -82,3 +82,28 @@ jobs:
           gh pr create --title ":rocket: Release ${{ steps.date.outputs.date }}" -F .github/templates/release.md --base main --head $RELEASE_BRANCH
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+
+  create-release-fail:
+    name: Create Release Failure Reporting
+    needs: create-release
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          method: chat.postMessage
+          payload: |
+            channel: "C08JQKWS9KK"
+            text: "[Alert] Create Release failed"
+            blocks: 
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "*Create Release failed*"
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
