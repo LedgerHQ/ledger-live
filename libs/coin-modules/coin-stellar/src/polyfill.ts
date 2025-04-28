@@ -19,8 +19,7 @@ const OriginalTypedArrayMethods = {
 let hermesTypedArrayPatched = false;
 
 export function patchHermesTypedArraysIfNeeded() {
-  if (global.HermesInternal) {
-    if (!hermesTypedArrayPatched) {
+  if (global.HermesInternal && !hermesTypedArrayPatched) {
       try {
         log("coin:stellar", "🔵 Patching TypedArray because of Hermes bug");
         require("@exodus/patch-broken-hermes-typed-arrays");
