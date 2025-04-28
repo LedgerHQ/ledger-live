@@ -1103,6 +1103,32 @@
     "tryEnablingAgain" : "Versuchen Sie, den Standort erneut zu aktivieren",
     "noInfos" : "Ledger greift nicht auf Ihre Standortinformationen zu."
   },
+  "earn" : {
+    "deposit" : {
+      "protocolInfoModal" : {
+        "title" : "Bei der Auswahl eines Protokolls solltest du ein paar Dinge beachten:",
+        "items" : {
+          "protocol" : {
+            "highlighted" : "Ein Protokoll",
+            "description" : " ist eine Plattform, auf der du Prämien erhältst, wenn du deine hinterlegten Krypto für Kredite, Liquidität oder Staking nutzt."
+          },
+          "apy" : {
+            "highlighted" : "APY (Annual Percentage Yield, Jahresertrag)",
+            "description" : " gibt an, wie viel Zinsen du in einem Jahr verdienen kannst. Ein höherer APY bedeutet höhere Erträge."
+          },
+          "tvl" : {
+            "highlighted" : "TVL (Total Value Locked)",
+            "description" : " ist der Gesamtbetrag, der von anderen Nutzern im Protokoll hinterlegt wurde. Ein höherer TVL bedeutet, dass das Protokoll von mehr Leuten als vertrauenswürdig angesehen wird."
+          },
+          "strategy" : {
+            "highlighted" : "Strategie",
+            "description0" : " ist die Methode, mit der ein Protokoll Prämien für dich generiert.",
+            "description1" : "Wenn ein Protokoll zum Beispiel die Kreditvergabe als Strategie nutzt, verleiht es deine hinterlegten Stablecoins an Kreditnehmer. Dafür bekommst du dann Zinsen, die je nach Nachfrage höher oder niedriger ausfallen können."
+          }
+        }
+      }
+    }
+  },
   "permissions" : {
     "open" : "App-Berechtigungen öffnen",
     "authorize" : "Autorisieren",
@@ -7388,6 +7414,9 @@
       "minutes_plural" : "(vor {{count}} Minuten)",
       "seconds" : "(vor {{count}} Sekunde)",
       "seconds_plural" : "(vor {{count}} Sekunden)"
-    }
+    },
+    "performance" : "Performance",
+    "low" : "Niedrig",
+    "high" : "Hoch"
   }
 }
