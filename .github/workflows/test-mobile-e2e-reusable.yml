@@ -368,7 +368,7 @@ jobs:
           path: apps/ledger-live-mobile/artifacts/
       - name: Set job output based on detox result
         id: set-output
-        if: !cancelled()
+        if: ${{ !cancelled() }}
         run: echo "status_${{ matrix.shardIndex }}=${{ steps.detox.outcome }}" >> $GITHUB_OUTPUT
 
   allure-report-android:
