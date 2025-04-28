@@ -6624,12 +6624,14 @@
     "range" : {
       "1h" : "1Std",
       "24h" : "24h",
-      "1d" : "1T",
       "7d" : "7T",
-      "1w" : "1W",
       "30d" : "30T",
-      "1m" : "1M",
-      "1y" : "1J"
+      "1y" : "1J",
+      "1D_label" : "1T",
+      "1H_label" : "1Std",
+      "1W_label" : "1W",
+      "1M_label" : "1M",
+      "1Y_label" : "1J"
     },
     "warnings" : {
       "connectionError" : "Verbindungsfehler",
@@ -7364,6 +7366,29 @@
     }
   },
   "largeMover" : {
+    "info" : "Informationen",
+    "marketCap" : "Marktkapitalisierung",
+    "volume" : "Volumen (24 Std.)",
+    "fdv" : "FDV",
+    "marketCap24h" : "Volumen/Marktkapitalisierung (24 Std.)",
+    "circulatingSupply" : "Angebot im Umlauf",
+    "totalSupply" : "Angebot gesamt",
+    "ath" : "Allzeithoch",
+    "atl" : "Allzeittief",
+    "timeAgo" : {
+      "years" : "(vor {{count}} Jahr)",
+      "years_plural" : "(vor {{count}} Jahren)",
+      "months" : "(vor {{count}} Monat)",
+      "months_plural" : "(vor {{count}} Monaten)",
+      "days" : "(vor {{count}} Tag)",
+      "days_plural" : "(vor {{count}} Tagen)",
+      "hours" : "(vor {{count}} Stunde)",
+      "hours_plural" : "(vor {{count}} Stunden)",
+      "minutes" : "(vor {{count}} Minute)",
+      "minutes_plural" : "(vor {{count}} Minuten)",
+      "seconds" : "(vor {{count}} Sekunde)",
+      "seconds_plural" : "(vor {{count}} Sekunden)"
+    },
     "performance" : "Performance",
     "low" : "Niedrig",
     "high" : "Hoch"
