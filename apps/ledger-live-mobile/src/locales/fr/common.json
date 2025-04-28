@@ -1103,6 +1103,32 @@
     "tryEnablingAgain" : "Réessayez d’autoriser la localisation",
     "noInfos" : "Ledger n’utilise pas vos données de localisation."
   },
+  "earn" : {
+    "deposit" : {
+      "protocolInfoModal" : {
+        "title" : "Pour choisir un protocole, voici quelques éléments à connaître :",
+        "items" : {
+          "protocol" : {
+            "highlighted" : "Un protocole",
+            "description" : " est une plateforme qui vous permet de recevoir des récompenses grâce aux cryptos que vous y déposez (prêt, liquidité ou staking)."
+          },
+          "apy" : {
+            "highlighted" : "L’APY (\"Annual Percentage Yield\" ou rendement annuel en pourcentage)",
+            "description" : " correspond aux récompenses que vous pouvez recevoir sur une année. Plus il est élevé, plus elles sont importantes."
+          },
+          "tvl" : {
+            "highlighted" : "La TVL (\"Total Value Locked\" ou valeur totale immobilisée)",
+            "description" : " correspondant au montant total déposé sur le protocole par les autres utilisateurs. Plus elle est élevée, plus la confiance accordée au protocole est grande."
+          },
+          "strategy" : {
+            "highlighted" : "La stratégie",
+            "description0" : " se réfère à la méthode qu’utilise un protocole pour générer les récompenses que vous recevez.",
+            "description1" : "Par exemple, si un protocole utilise une stratégie de prêt, il prête les stablecoins déposés à des emprunteurs. Vous recevez alors des récompenses, dont le taux varie en fonction de la demande."
+          }
+        }
+      }
+    }
+  },
   "permissions" : {
     "open" : "Ouvrir autorisa. des apps",
     "authorize" : "Autoriser",
@@ -6623,13 +6649,14 @@
     },
     "range" : {
       "1h" : "1H",
+      "1H_label" : "1H",
       "24h" : "24H",
-      "1d" : "1J",
+      "1D_label" : "1J",
       "7d" : "7J",
-      "1w" : "1S",
+      "1W_label" : "1S",
       "30d" : "30J",
-      "1m" : "1M",
-      "1y" : "1A"
+      "1M_label" : "1M",
+      "1Y_label" : "1A"
     },
     "warnings" : {
       "connectionError" : "Erreur de connexion",
