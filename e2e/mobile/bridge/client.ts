@@ -15,7 +15,7 @@ import { LaunchArguments } from "react-native-launch-arguments";
 import logReport from "~/log-report";
 import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
 import { getAllEnvs, setEnv } from "@ledgerhq/live-env";
-import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e";
+import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e/index";
 import { DeviceModelId } from "@ledgerhq/devices";
 import Config from "react-native-config";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
@@ -75,7 +75,7 @@ function onMessage(event: WebSocketMessageEvent) {
     const msg: MessageData = JSON.parse(event.data);
     invariant(msg.type, "[E2E Bridge Client]: type is missing");
 
-    log(`Message recieved\n${JSON.stringify(msg, null, 2)}`);
+    log(`Message received\n${JSON.stringify(msg, null, 2)}`);
 
     e2eBridgeClient.next(msg);
 
@@ -178,6 +178,12 @@ function onMessage(event: WebSocketMessageEvent) {
   }
 }
 
+export function sendSwapLiveAppReady() {
+  postMessage({
+    type: "swapLiveAppReady",
+  });
+}
+
 export function sendWalletAPIResponse(payload: Record<string, unknown>) {
   postMessage({
     type: "walletAPIResponse",
@@ -185,7 +191,7 @@ export function sendWalletAPIResponse(payload: Record<string, unknown>) {
   });
 }
 
-async function postMessage(message: ServerData) {
+function postMessage(message: ServerData) {
   log(`Message sending\n${JSON.stringify(message, null, 2)}`);
   try {
     if (ws) {

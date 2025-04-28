@@ -6,14 +6,7 @@ import { allure } from "jest-allure2-reporter/api";
 
 const BASE_DEEPLINK = "ledgerlive://";
 
-export const itifAndroid = (...args: Parameters<typeof test>) =>
-  isAndroid() ? test(...args) : test.skip("[Android only] " + args[0], args[1], args[2]);
-export const describeifAndroid = (...args: Parameters<typeof describe>) =>
-  isAndroid() ? describe(...args) : describe.skip("[Android only] " + args[0], args[1]);
 export const currencyParam = "?currency=";
-export const recipientParam = "&recipient=";
-export const amountParam = "&amount=";
-export const accountIdParam = "?accountId=";
 
 /**
  * Waits for a specified amount of time
@@ -78,17 +71,19 @@ export function setupEnvironment() {
   }
 }
 
-export const logMemoryUsage = async () => {
+export const logMemoryUsage = async (): Promise<void> => {
   const pid = process.pid;
   const isLinux = process.platform !== "darwin";
+  const topArgs = isLinux ? `-b -n 1 -p ${pid}` : `-l 1 -pid ${pid}`;
   exec(
-    `top ${isLinux ? "-b -n 1 -p" : "-l 1 -pid"} ${pid} | grep "${pid}" | awk '{print ${isLinux ? "$6" : "$8"}}'`,
-    async (error, stdout, stderr) => {
+    `top ${topArgs} | grep "${pid}" | awk '{print ${isLinux ? "$6" : "$8"}}'`,
+    async (error: Error | null, stdout: string, stderr: string): Promise<void> => {
       if (error || stderr) {
-        console.error(`Error getting memory usage:\n Error: ${error}\n Stderr: ${stderr}`);
+        log.error(`Error getting memory usage:\n Error: ${error}\n Stderr: ${stderr}`);
         return;
       }
-      const logMessage = `📦 Detox Memory Usage: ${stdout.trim()}`;
+      const usage = stdout.trim();
+      const logMessage = `📦 Detox Memory Usage: ${usage}`;
       await allure.attachment("Memory Usage Details", logMessage, "text/plain");
       log.warn(logMessage);
     },
