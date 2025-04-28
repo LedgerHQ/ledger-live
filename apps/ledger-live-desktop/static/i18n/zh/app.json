@@ -5417,10 +5417,8 @@
     }
   },
   "SignMessageConfirm" : {
-    "stringHash" : "Message Hash 消息哈希字符串",
-    "domainHash" : "Domain Hash 域名哈希字符串",
-    "messageHash" : "Message Hash 消息哈希字符串",
-    "message" : "消息"
+    "title" : "继续在您的 Ledger {{wording}} 上操作",
+    "description" : "按照安全触摸屏上的指示进行操作。"
   },
   "TransactionConfirm" : {
     "title" : "请在您的设备上确认操作从而完成交易",
