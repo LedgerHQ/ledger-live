@@ -6442,8 +6442,8 @@
       "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}"
     },
     "stepVerification" : {
-      "action" : "デバイス上で処理を確定してください。",
-      "accountName" : "アカウント名"
+      "title" : "Ledger {{wording}}で続ける",
+      "description" : "セキュアタッチスクリーンに表示される指示に従ってください。"
     }
   },
   "notificationCenter" : {
@@ -6623,13 +6623,14 @@
     },
     "range" : {
       "1h" : "1時間",
+      "1H_label" : "1時間",
       "24h" : "24時間",
-      "1d" : "1日",
+      "1D_label" : "1日",
       "7d" : "7日間",
-      "1w" : "1週",
+      "1W_label" : "1週",
       "30d" : "30日間",
-      "1m" : "1月",
-      "1y" : "1年"
+      "1M_label" : "1月",
+      "1Y_label" : "1年"
     },
     "warnings" : {
       "connectionError" : "接続エラー",
