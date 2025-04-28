@@ -382,6 +382,7 @@
       "status" : {
         "pending" : "مُعلقّة",
         "onhold" : "معلّق",
+        "unknown" : "غير معروف",
         "expired" : "منتهي الصلاحية",
         "finished" : "مكتمل",
         "refunded" : "مُسترد"
