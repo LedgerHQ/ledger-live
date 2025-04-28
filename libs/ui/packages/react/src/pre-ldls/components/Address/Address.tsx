@@ -2,27 +2,7 @@ import React from "react";
 import { Text } from "../../../components";
 import styled from "styled-components";
 import { withTokens } from "../../libs";
-
-const TempAssetBadge = ({
-  ledgerId: _ledgerId,
-  ticker: _ticker,
-}: {
-  ledgerId?: string;
-  ticker?: string;
-}) => (
-  // TODO: To be replaced with LIVE-18221
-  <div style={{ display: "flex", alignItems: "center" }} data-testid="address-icon">
-    <span
-      style={{
-        height: 20,
-        width: 20,
-        borderRadius: 20,
-        backgroundColor: "grey",
-        display: "inline-block",
-      }}
-    />
-  </div>
-);
+import { CryptoIcon } from "../CryptoIcon/CryptoIcon";
 
 const Wrapper = styled.div`
   ${withTokens("spacing-xxxs", "colors-content-subdued-default-default")}
@@ -52,7 +32,7 @@ export const Address = ({
       >
         {address}
       </Text>
-      {showIcon && <TempAssetBadge ledgerId={cryptoId} ticker={ticker} />}
+      {showIcon && <CryptoIcon ledgerId={cryptoId} ticker={ticker} />}
     </Wrapper>
   );
 };

@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { withTokens } from "../../libs";
 import { Text } from "../../../components";
+import { CryptoIcon } from "../CryptoIcon/CryptoIcon";
 
 export type AssetType = {
   name: string;
@@ -12,21 +13,6 @@ export type AssetType = {
 type AssetItemProps = AssetType & {
   onClick: (asset: AssetType) => void;
 };
-
-const TempAssetBadge = () => (
-  // TODO: To be replaced with LIVE-18221
-  <div style={{ display: "flex", alignItems: "center" }}>
-    <span
-      style={{
-        height: 48,
-        width: 48,
-        borderRadius: 48,
-        backgroundColor: "grey",
-        display: "inline-block",
-      }}
-    />
-  </div>
-);
 
 const Wrapper = styled.div`
   ${withTokens(
@@ -63,7 +49,7 @@ const InfoWrapper = styled.div`
 export const AssetItem = ({ name, ticker, id, onClick }: AssetItemProps) => {
   return (
     <Wrapper onClick={() => onClick({ name, ticker, id })}>
-      <TempAssetBadge />
+      <CryptoIcon size="48px" ledgerId={id} ticker={ticker} />
       <InfoWrapper>
         <Text
           variant="largeLineHeight"

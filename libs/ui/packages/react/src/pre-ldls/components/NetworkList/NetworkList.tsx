@@ -1,8 +1,6 @@
 import React, { useCallback } from "react";
-import { NetworkItem } from "../NetworkItem/NetworkItem";
+import { Network, NetworkItem } from "../NetworkItem/NetworkItem";
 import { VirtualList } from "../VirtualList/VirtualList";
-
-type Network = { name: string; id: string };
 
 export const NetworkList = ({
   networks,
@@ -12,7 +10,9 @@ export const NetworkList = ({
   onClick: (networkId: string) => void;
 }) => {
   const renderNetworkItem = useCallback(
-    ({ name, id }: Network) => <NetworkItem name={name} onClick={() => onClick(id)} />,
+    ({ name, id, ticker }: Network) => (
+      <NetworkItem name={name} id={id} ticker={ticker} onClick={() => onClick(id)} />
+    ),
     [onClick],
   );
 
