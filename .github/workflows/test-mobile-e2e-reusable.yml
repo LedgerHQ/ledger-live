@@ -86,6 +86,7 @@ jobs:
       LC_ALL: en_US.UTF-8
     outputs:
       status: ${{ steps.detox.outcome }}
+      artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -183,14 +184,16 @@ jobs:
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
+        id: "test-artifacts"
         with:
           name: "ios-test-artifacts"
           path: apps/ledger-live-mobile/artifacts
+      - run: echo "${{ steps.test-artifacts.outputs.artifact-id }}"
 
   allure-report-ios:
     name: "Allure Reports Export on Server"
     runs-on: [ledger-live-medium]
-    if: ${{ !cancelled() && !inputs.speculos_tests && needs.detox-tests-ios.result == 'success' }}
+    if: ${{ !cancelled() && !inputs.speculos_tests && needs.detox-tests-ios.outputs.artifact }}
     needs: [detox-tests-ios]
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
@@ -239,6 +242,7 @@ jobs:
       status_1: ${{ steps.set-output.outputs.status_1 }}
       status_2: ${{ steps.set-output.outputs.status_2 }}
       status_3: ${{ steps.set-output.outputs.status_3 }}
+      artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
     strategy:
       fail-fast: false
       matrix:
@@ -363,6 +367,7 @@ jobs:
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
+        id: "test-artifacts"
         with:
           name: "android-test-artifacts-${{ matrix.shardIndex }}"
           path: apps/ledger-live-mobile/artifacts/
@@ -374,7 +379,7 @@ jobs:
   allure-report-android:
     name: "Allure Reports Export on Server"
     runs-on: [ledger-live-medium]
-    if: ${{ !cancelled() }}
+    if: ${{ !cancelled() && needs.detox-tests-android.outputs.artifact }}
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
       result: ${{ steps.summary.outputs.test_result }}
@@ -418,6 +423,7 @@ jobs:
             fi
           done
           echo "finalStatus=$finalStatus" >> $GITHUB_OUTPUT
+
 
   upload-to-xray:
     name: "Upload to Xray"
