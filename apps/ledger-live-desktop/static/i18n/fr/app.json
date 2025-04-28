@@ -382,6 +382,7 @@
       "status" : {
         "pending" : "En attente",
         "onhold" : "En attente",
+        "unknown" : "Inconnu",
         "expired" : "Expiré",
         "finished" : "Terminé",
         "refunded" : "Remboursé"
@@ -1554,7 +1555,7 @@
       }
     },
     "marketPerformanceWidget" : {
-      "title" : "Tendance {{time}}",
+      "title" : "Tendance - {{time}}",
       "buy" : "Acheter",
       "swap" : "Échanger",
       "gainers" : "Hausses",
@@ -4424,7 +4425,7 @@
       "firebaseProject" : "Projet Firebase ciblé par ce build :",
       "addLocalApp" : "Ajouter une app locale",
       "addLocalAppDesc" : "Parcourez vos fichiers et ajoutez une app locale avec un manifeste local.",
-      "addLocalAppButton" : "Naviguer",
+      "addLocalAppButton" : "Parcourir",
       "createLocalAppModal" : {
         "title" : {
           "create" : "Créer une app locale",
