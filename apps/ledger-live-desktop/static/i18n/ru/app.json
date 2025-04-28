@@ -382,6 +382,7 @@
       "status" : {
         "pending" : "В ожидании",
         "onhold" : "Удерживается",
+        "unknown" : "Неизвестно",
         "expired" : "Просрочено",
         "finished" : "Завершено",
         "refunded" : "Произведён возврат"
@@ -6790,7 +6791,7 @@
     },
     "entryPoints" : {
       "accounts" : {
-        "title" : "Активируйте Ledger Sync"
+        "title" : "Активировать Ledger Sync"
       },
       "manager" : {
         "title" : "Ledger Sync",
