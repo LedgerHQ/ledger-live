@@ -599,6 +599,7 @@ export const DEFAULT_FEATURES: Features = {
       send_flow: true,
     },
   },
+  llNftSupport: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings
