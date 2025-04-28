@@ -5417,10 +5417,8 @@
     }
   },
   "SignMessageConfirm" : {
-    "stringHash" : "Nachrichten-Hash",
-    "domainHash" : "Domain-Hash",
-    "messageHash" : "Nachrichten-Hash",
-    "message" : "Nachricht"
+    "title" : "Vorgang fortsetzen auf deiner Ledger {{wording}}",
+    "description" : "Befolge die Anweisungen, die auf deinem Secure Touchscreen angezeigt werden."
   },
   "TransactionConfirm" : {
     "title" : "Bitte bestätigen Sie den Vorgang auf Ihrem Gerät, um ihn abzuschließen",
