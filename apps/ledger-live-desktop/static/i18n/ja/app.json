@@ -5417,10 +5417,8 @@
     }
   },
   "SignMessageConfirm" : {
-    "stringHash" : "メッセージのハッシュ",
-    "domainHash" : "ドメインのハッシュ",
-    "messageHash" : "メッセージのハッシュ",
-    "message" : "メッセージ"
+    "title" : "Ledger {{wording}}で続ける",
+    "description" : "セキュアタッチスクリーンに表示される指示に従ってください。"
   },
   "TransactionConfirm" : {
     "title" : "デバイス上で処理を確定してください。",
