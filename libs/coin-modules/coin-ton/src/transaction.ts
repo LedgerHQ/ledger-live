@@ -10,7 +10,14 @@ import {
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Address, Cell } from "@ton/core";
-import type { TonPayloadFormat, TonPayloadFormatRaw, Transaction, TransactionRaw } from "./types";
+import type {
+  TonPayloadChangeDnsRecord,
+  TonPayloadChangeDnsRecordRaw,
+  TonPayloadFormat,
+  TonPayloadFormatRaw,
+  Transaction,
+  TransactionRaw,
+} from "./types";
 
 export const formatTransaction = (
   { recipient, useAllAmount, amount }: Transaction,
@@ -29,12 +36,44 @@ SEND ${
 }
 TO ${recipient}`;
 
-const getCellOrBuffer = (customPayload: string): Cell | Buffer => {
+const getCellOrBuffer = (customPayload: string | null): Cell | Buffer | null => {
+  if (!customPayload) return null;
+
   try {
     return Cell.fromBase64(customPayload);
   } catch {
     return Buffer.from(customPayload, "hex");
   }
+};
+
+const safeToBigInt = (value: string | null): bigint | null => {
+  return value ? BigInt(value) : null;
+};
+
+const safeCellFromBase64 = (value: string | null): Cell | null => {
+  return value ? Cell.fromBase64(value) : null;
+};
+
+const fromRecordRaw = (
+  record: TonPayloadChangeDnsRecordRaw["record"],
+): TonPayloadChangeDnsRecord["record"] => {
+  if (record.type === "wallet") {
+    return {
+      type: record.type,
+      value: record.value
+        ? {
+            address: Address.parse(record.value.address),
+            capabilities: record.value.capabilities,
+          }
+        : null,
+    };
+  }
+
+  return {
+    type: record.type,
+    key: Buffer.from(record.key, "hex"),
+    value: safeCellFromBase64(record.value),
+  };
 };
 
 const fromTransactionPayloadRaw = (payload: TonPayloadFormatRaw): TonPayloadFormat => {
@@ -47,56 +86,56 @@ const fromTransactionPayloadRaw = (payload: TonPayloadFormatRaw): TonPayloadForm
     case "jetton-transfer":
       return {
         type: payload.type,
-        queryId: payload.queryId ? BigInt(payload.queryId) : null,
+        queryId: safeToBigInt(payload.queryId),
         amount: BigInt(payload.amount),
         destination: Address.parse(payload.destination),
         responseDestination: Address.parse(payload.responseDestination),
-        customPayload: payload.customPayload ? Cell.fromBase64(payload.customPayload) : null,
+        customPayload: safeCellFromBase64(payload.customPayload),
         forwardAmount: BigInt(payload.forwardAmount),
-        forwardPayload: payload.forwardPayload ? Cell.fromBase64(payload.forwardPayload) : null,
+        forwardPayload: safeCellFromBase64(payload.forwardPayload),
         knownJetton: payload.knownJetton,
       };
     case "nft-transfer":
       return {
         type: payload.type,
-        queryId: payload.queryId ? BigInt(payload.queryId) : null,
+        queryId: safeToBigInt(payload.queryId),
         newOwner: Address.parse(payload.newOwner),
         responseDestination: Address.parse(payload.responseDestination),
-        customPayload: payload.customPayload ? Cell.fromBase64(payload.customPayload) : null,
+        customPayload: safeCellFromBase64(payload.customPayload),
         forwardAmount: BigInt(payload.forwardAmount),
-        forwardPayload: payload.forwardPayload ? Cell.fromBase64(payload.forwardPayload) : null,
+        forwardPayload: safeCellFromBase64(payload.forwardPayload),
       };
     case "jetton-burn":
       return {
         type: payload.type,
-        queryId: payload.queryId ? BigInt(payload.queryId) : null,
+        queryId: safeToBigInt(payload.queryId),
         amount: BigInt(payload.amount),
         responseDestination: Address.parse(payload.responseDestination),
-        customPayload: payload.customPayload ? getCellOrBuffer(payload.customPayload) : null,
+        customPayload: getCellOrBuffer(payload.customPayload),
       };
     case "add-whitelist":
     case "single-nominator-change-validator":
       return {
         type: payload.type,
-        queryId: payload.queryId ? BigInt(payload.queryId) : null,
+        queryId: safeToBigInt(payload.queryId),
         address: Address.parse(payload.address),
       };
     case "single-nominator-withdraw":
       return {
         type: payload.type,
-        queryId: payload.queryId ? BigInt(payload.queryId) : null,
+        queryId: safeToBigInt(payload.queryId),
         amount: BigInt(payload.amount),
       };
     case "tonstakers-deposit":
       return {
         type: payload.type,
-        queryId: payload.queryId ? BigInt(payload.queryId) : null,
-        appId: payload.appId ? BigInt(payload.appId) : null,
+        queryId: safeToBigInt(payload.queryId),
+        appId: safeToBigInt(payload.appId),
       };
     case "vote-for-proposal":
       return {
         type: payload.type,
-        queryId: payload.queryId ? BigInt(payload.queryId) : null,
+        queryId: safeToBigInt(payload.queryId),
         votingAddress: Address.parse(payload.votingAddress),
         expirationDate: payload.expirationDate,
         vote: payload.vote,
@@ -105,28 +144,13 @@ const fromTransactionPayloadRaw = (payload: TonPayloadFormatRaw): TonPayloadForm
     case "change-dns-record":
       return {
         type: payload.type,
-        queryId: payload.queryId ? BigInt(payload.queryId) : null,
-        record:
-          payload.record.type === "wallet"
-            ? {
-                type: payload.record.type,
-                value: payload.record.value
-                  ? {
-                      address: Address.parse(payload.record.value.address),
-                      capabilities: payload.record.value.capabilities,
-                    }
-                  : null,
-              }
-            : {
-                type: payload.record.type,
-                key: Buffer.from(payload.record.key, "hex"),
-                value: payload.record.value ? Cell.fromBase64(payload.record.value) : null,
-              },
+        queryId: safeToBigInt(payload.queryId),
+        record: fromRecordRaw(payload.record),
       };
     case "token-bridge-pay-swap":
       return {
         type: payload.type,
-        queryId: payload.queryId ? BigInt(payload.queryId) : null,
+        queryId: safeToBigInt(payload.queryId),
         swapId: Buffer.from(payload.swapId, "hex"),
       };
     case "comment":
@@ -150,6 +174,44 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   };
 };
 
+const safeFromBigInt = (value: bigint | null): string | null => {
+  return typeof value === "bigint" ? value.toString() : null;
+};
+
+const safeBocToString = (value: Cell | null): string | null => {
+  return value ? value.toBoc().toString("base64") : null;
+};
+
+const safeBocOrBufferToString = (value: Cell | Buffer | null): string | null => {
+  if (value && "toBoc" in value) {
+    return value.toBoc().toString("base64");
+  }
+
+  return value ? value.toString("hex") : null;
+};
+
+const fromRecord = (
+  record: TonPayloadChangeDnsRecord["record"],
+): TonPayloadChangeDnsRecordRaw["record"] => {
+  if (record.type === "wallet") {
+    return {
+      type: record.type,
+      value: record.value
+        ? {
+            address: record.value.address.toRawString(),
+            capabilities: record.value.capabilities,
+          }
+        : null,
+    };
+  }
+
+  return {
+    type: record.type,
+    key: record.key.toString("hex"),
+    value: safeBocToString(record.value),
+  };
+};
+
 const toTransactionPayloadRaw = (payload: TonPayloadFormat): TonPayloadFormatRaw => {
   switch (payload.type) {
     case "unsafe":
@@ -160,69 +222,56 @@ const toTransactionPayloadRaw = (payload: TonPayloadFormat): TonPayloadFormatRaw
     case "jetton-transfer":
       return {
         type: payload.type,
-        queryId: typeof payload.queryId === "bigint" ? payload.queryId.toString() : null,
+        queryId: safeFromBigInt(payload.queryId),
         amount: payload.amount.toString(),
         destination: payload.destination.toRawString(),
         responseDestination: payload.responseDestination.toRawString(),
-        customPayload: payload.customPayload
-          ? payload.customPayload.toBoc().toString("base64")
-          : null,
+        customPayload: safeBocToString(payload.customPayload),
         forwardAmount: payload.forwardAmount.toString(),
-        forwardPayload: payload.forwardPayload
-          ? payload.forwardPayload.toBoc().toString("base64")
-          : null,
+        forwardPayload: safeBocToString(payload.forwardPayload),
         knownJetton: payload.knownJetton,
       };
     case "nft-transfer":
       return {
         type: payload.type,
-        queryId: typeof payload.queryId === "bigint" ? payload.queryId.toString() : null,
+        queryId: safeFromBigInt(payload.queryId),
         newOwner: payload.newOwner.toRawString(),
         responseDestination: payload.responseDestination.toRawString(),
-        customPayload: payload.customPayload
-          ? payload.customPayload.toBoc().toString("base64")
-          : null,
+        customPayload: safeBocToString(payload.customPayload),
         forwardAmount: payload.forwardAmount.toString(),
-        forwardPayload: payload.forwardPayload
-          ? payload.forwardPayload.toBoc().toString("base64")
-          : null,
+        forwardPayload: safeBocToString(payload.forwardPayload),
       };
     case "jetton-burn":
       return {
         type: payload.type,
-        queryId: typeof payload.queryId === "bigint" ? payload.queryId.toString() : null,
+        queryId: safeFromBigInt(payload.queryId),
         amount: payload.amount.toString(),
         responseDestination: payload.responseDestination.toRawString(),
-        customPayload:
-          payload.customPayload && "toBoc" in payload.customPayload
-            ? payload.customPayload.toBoc().toString("base64")
-            : payload.customPayload
-              ? payload.customPayload.toString("hex")
-              : null,
+        customPayload: safeBocOrBufferToString(payload.customPayload),
       };
     case "add-whitelist":
     case "single-nominator-change-validator":
       return {
         type: payload.type,
-        queryId: typeof payload.queryId === "bigint" ? payload.queryId.toString() : null,
+        queryId: safeFromBigInt(payload.queryId),
         address: payload.address.toRawString(),
       };
     case "single-nominator-withdraw":
       return {
         type: payload.type,
-        queryId: typeof payload.queryId === "bigint" ? payload.queryId.toString() : null,
+        queryId: safeFromBigInt(payload.queryId),
         amount: payload.amount.toString(),
       };
     case "tonstakers-deposit":
       return {
         type: payload.type,
-        queryId: typeof payload.queryId === "bigint" ? payload.queryId.toString() : null,
-        appId: typeof payload.appId === "bigint" ? payload.appId.toString() : null,
+        queryId: safeFromBigInt(payload.queryId),
+        appId: safeFromBigInt(payload.appId),
       };
     case "vote-for-proposal":
       return {
         type: payload.type,
-        queryId: typeof payload.queryId === "bigint" ? payload.queryId.toString() : null,
+        queryId: safeFromBigInt(payload.queryId),
         votingAddress: payload.votingAddress.toRawString(),
         expirationDate: payload.expirationDate,
         vote: payload.vote,
@@ -231,30 +280,13 @@ const toTransactionPayloadRaw = (payload: TonPayloadFormat): TonPayloadFormatRaw
     case "change-dns-record":
       return {
         type: payload.type,
-        queryId: typeof payload.queryId === "bigint" ? payload.queryId.toString() : null,
-        record:
-          payload.record.type === "wallet"
-            ? {
-                type: payload.record.type,
-                value: payload.record.value
-                  ? {
-                      address: payload.record.value.address.toRawString(),
-                      capabilities: payload.record.value.capabilities,
-                    }
-                  : null,
-              }
-            : {
-                type: payload.record.type,
-                key: payload.record.key.toString("hex"),
-                value: payload.record.value
-                  ? payload.record.value.toBoc().toString("base64")
-                  : null,
-              },
+        queryId: safeFromBigInt(payload.queryId),
+        record: fromRecord(payload.record),
       };
     case "token-bridge-pay-swap":
       return {
         type: payload.type,
-        queryId: typeof payload.queryId === "bigint" ? payload.queryId.toString() : null,
+        queryId: safeFromBigInt(payload.queryId),
         swapId: payload.swapId.toString("hex"),
       };
     case "comment":
