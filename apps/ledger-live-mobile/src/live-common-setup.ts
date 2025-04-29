@@ -128,6 +128,7 @@ setSupportedCurrencies([
   "sonic",
   "sonic_blaze",
   "mina",
+  "babylon",
 ]);
 
 if (Config.FORCE_PROVIDER && !isNaN(parseInt(Config.FORCE_PROVIDER, 10)))
