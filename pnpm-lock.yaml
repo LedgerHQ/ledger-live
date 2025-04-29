@@ -29,6 +29,9 @@ patchedDependencies:
   '@ton/core@0.60.1':
     hash: lboaji3braahojqczblp7nlo7m
     path: patches/@ton__core@0.60.1.patch
+  '@shopify/react-native-performance':
+    hash: ymhpoubvzk4z4oor6q5piyztqi
+    path: patches/@shopify__react-native-performance.patch
   asyncstorage-down@4.2.0:
     hash: 2npkndps6fxdasqj3xzcrnnfbe
     path: patches/asyncstorage-down@4.2.0.patch
@@ -1065,10 +1068,10 @@ importers:
         version: 1.6.4(@babel/runtime@7.25.0)(react-native@0.77.2(@babel/core@7.25.2)(@babel/preset-env@7.26.9(@babel/core@7.25.2))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       '@shopify/react-native-performance':
         specifier: 4.1.2
-        version: 4.1.2(@babel/runtime@7.25.0)(react-native@0.77.2(@babel/core@7.25.2)(@babel/preset-env@7.26.9(@babel/core@7.25.2))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
+        version: 4.1.2(patch_hash=ymhpoubvzk4z4oor6q5piyztqi)(@babel/runtime@7.25.0)(react-native@0.77.2(@babel/core@7.25.2)(@babel/preset-env@7.26.9(@babel/core@7.25.2))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       '@shopify/react-native-performance-navigation':
         specifier: 3.0.0
-        version: 3.0.0(@babel/runtime@7.25.0)(@react-navigation/core@6.4.16(react@18.3.1))(@react-navigation/native@6.1.17(react-native@0.77.2(@babel/core@7.25.2)(@babel/preset-env@7.26.9(@babel/core@7.25.2))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(@react-navigation/stack@6.3.29(h7hdwcf7o2hwahzts6po67kxey))(@shopify/react-native-performance@4.1.2(@babel/runtime@7.25.0)(react-native@0.77.2(@babel/core@7.25.2)(@babel/preset-env@7.26.9(@babel/core@7.25.2))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@babel/core@7.25.2)(@babel/preset-env@7.26.9(@babel/core@7.25.2))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
+        version: 3.0.0(@babel/runtime@7.25.0)(@react-navigation/core@6.4.16(react@18.3.1))(@react-navigation/native@6.1.17(react-native@0.77.2(@babel/core@7.25.2)(@babel/preset-env@7.26.9(@babel/core@7.25.2))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(@react-navigation/stack@6.3.29(h7hdwcf7o2hwahzts6po67kxey))(@shopify/react-native-performance@4.1.2(patch_hash=ymhpoubvzk4z4oor6q5piyztqi)(@babel/runtime@7.25.0)(react-native@0.77.2(@babel/core@7.25.2)(@babel/preset-env@7.26.9(@babel/core@7.25.2))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@babel/core@7.25.2)(@babel/preset-env@7.26.9(@babel/core@7.25.2))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       '@tanstack/react-query':
         specifier: 5.28.9
         version: 5.28.9(react@18.3.1)
@@ -46345,19 +46348,19 @@ snapshots:
       recyclerlistview: 4.2.0(react-native@0.77.2(@babel/core@7.25.2)(@babel/preset-env@7.26.9(@babel/core@7.25.2))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       tslib: 2.6.2
 
-  '@shopify/react-native-performance-navigation@3.0.0(@babel/runtime@7.25.0)(@react-navigation/core@6.4.16(react@18.3.1))(@react-navigation/native@6.1.17(react-native@0.77.2(@babel/core@7.25.2)(@babel/preset-env@7.26.9(@babel/core@7.25.2))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(@react-navigation/stack@6.3.29(h7hdwcf7o2hwahzts6po67kxey))(@shopify/react-native-performance@4.1.2(@babel/runtime@7.25.0)(react-native@0.77.2(@babel/core@7.25.2)(@babel/preset-env@7.26.9(@babel/core@7.25.2))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@babel/core@7.25.2)(@babel/preset-env@7.26.9(@babel/core@7.25.2))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)':
+  '@shopify/react-native-performance-navigation@3.0.0(@babel/runtime@7.25.0)(@react-navigation/core@6.4.16(react@18.3.1))(@react-navigation/native@6.1.17(react-native@0.77.2(@babel/core@7.25.2)(@babel/preset-env@7.26.9(@babel/core@7.25.2))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(@react-navigation/stack@6.3.29(h7hdwcf7o2hwahzts6po67kxey))(@shopify/react-native-performance@4.1.2(patch_hash=ymhpoubvzk4z4oor6q5piyztqi)(@babel/runtime@7.25.0)(react-native@0.77.2(@babel/core@7.25.2)(@babel/preset-env@7.26.9(@babel/core@7.25.2))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@babel/core@7.25.2)(@babel/preset-env@7.26.9(@babel/core@7.25.2))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@babel/runtime': 7.25.0
       '@react-navigation/core': 6.4.16(react@18.3.1)
       '@react-navigation/native': 6.1.17(react-native@0.77.2(@babel/core@7.25.2)(@babel/preset-env@7.26.9(@babel/core@7.25.2))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       '@react-navigation/stack': 6.3.29(h7hdwcf7o2hwahzts6po67kxey)
-      '@shopify/react-native-performance': 4.1.2(@babel/runtime@7.25.0)(react-native@0.77.2(@babel/core@7.25.2)(@babel/preset-env@7.26.9(@babel/core@7.25.2))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
+      '@shopify/react-native-performance': 4.1.2(patch_hash=ymhpoubvzk4z4oor6q5piyztqi)(@babel/runtime@7.25.0)(react-native@0.77.2(@babel/core@7.25.2)(@babel/preset-env@7.26.9(@babel/core@7.25.2))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       lodash.isequal: 4.5.0
       react: 18.3.1
       react-native: 0.77.2(@babel/core@7.25.2)(@babel/preset-env@7.26.9(@babel/core@7.25.2))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
       tslib: 2.6.2
 
-  '@shopify/react-native-performance@4.1.2(@babel/runtime@7.25.0)(react-native@0.77.2(@babel/core@7.25.2)(@babel/preset-env@7.26.9(@babel/core@7.25.2))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)':
+  '@shopify/react-native-performance@4.1.2(patch_hash=ymhpoubvzk4z4oor6q5piyztqi)(@babel/runtime@7.25.0)(react-native@0.77.2(@babel/core@7.25.2)(@babel/preset-env@7.26.9(@babel/core@7.25.2))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@babel/runtime': 7.25.0
       react: 18.3.1
