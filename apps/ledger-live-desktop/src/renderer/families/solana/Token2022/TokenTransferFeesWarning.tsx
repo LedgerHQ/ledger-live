@@ -19,11 +19,10 @@ export default function TokenTransferFeesWarning({ transaction, tokenAccount }: 
   const values = useMemo(() => {
     return transferFees
       ? {
-          feePercent: transferFees.feePercent,
           feeBps: transferFees.feeBps,
-          maxFee: formatCurrencyUnit(
+          transferFee: formatCurrencyUnit(
             tokenAccount.token.units[0],
-            new BigNumber(transferFees.maxTransferFee),
+            new BigNumber(transferFees.transferFee),
             {
               disableRounding: true,
               alwaysShowSign: false,
@@ -38,8 +37,8 @@ export default function TokenTransferFeesWarning({ transaction, tokenAccount }: 
 
   return (
     <div>
-      <Alert>
-        <Trans i18nKey="solana.token.transferFees.feesPercentHint" values={values} />
+      <Alert data-testid="solana-token-transfer-fees-hint">
+        <Trans i18nKey="solana.token.transferFees.feesHint" values={values} />
       </Alert>
     </div>
   );

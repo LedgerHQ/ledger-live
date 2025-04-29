@@ -18,7 +18,7 @@ import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { StyleSheet, View } from "react-native";
+import { Linking, StyleSheet, View } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useSelector } from "react-redux";
 import { TrackScreen, track } from "~/analytics";
@@ -41,6 +41,12 @@ import { MemoTagDrawer } from "LLM/features/MemoTag/components/MemoTagDrawer";
 import { useMemoTagInput } from "LLM/features/MemoTag/hooks/useMemoTagInput";
 import DomainServiceRecipientRow from "./DomainServiceRecipientRow";
 import RecipientRow from "./RecipientRow";
+import {
+  getTokenExtensions,
+  hasProblematicExtension,
+} from "@ledgerhq/live-common/families/solana/token";
+import { urls } from "~/utils/urls";
+import LText from "~/components/LText";
 
 const withoutHiddenError = (error: Error): Error | null =>
   error instanceof RecipientRequired ? null : error;
@@ -230,6 +236,8 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     !!memoTag?.error;
 
   const stuckAccountAndOperation = getStuckAccountAndOperation(account, mainAccount);
+  const extensions = getTokenExtensions(account);
+
   return (
     <>
       <SafeAreaView
@@ -340,12 +348,26 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 <Alert type="warning">{t("send.pendingTxWarning")}</Alert>
               </View>
             ) : null}
-            {(!isDomainResolutionEnabled || !isCurrencySupported) &&
-            transaction.recipient &&
-            !(error || warning) ? (
+            {
               <View style={styles.infoBox}>
                 <Alert type="primary">{t("send.recipient.verifyAddress")}</Alert>
               </View>
+            }
+            {extensions && hasProblematicExtension(extensions) ? (
+              <Alert testID="spl-2022-problematic-extension" type="warning">
+                <LText>
+                  <Trans i18nKey="send.spl2022.warning" />
+                </LText>
+                <LText
+                  style={styles.spl2022LinkLabel}
+                  onPress={() => Linking.openURL(urls.solana.splTokenExtensions)}
+                >
+                  <Trans i18nKey="send.spl2022.linkLabel" />
+                </LText>
+                <LText>
+                  <Trans i18nKey="send.spl2022.linkFollowUp" />
+                </LText>
+              </Alert>
             ) : null}
           </NavigationScrollView>
           <View style={styles.container}>
@@ -396,6 +418,7 @@ const styles = StyleSheet.create({
   memoTagInputContainer: { marginTop: 32 },
   infoBox: {
     marginTop: 24,
+    paddingBottom: 24,
   },
   pendingIncomingTxWarning: {
     marginBottom: 8,
@@ -417,6 +440,9 @@ const styles = StyleSheet.create({
   },
   buttonRight: {
     marginLeft: 8,
+  },
+  spl2022LinkLabel: {
+    textDecorationLine: "underline",
   },
 });
 

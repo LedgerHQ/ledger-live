@@ -1,5 +1,6 @@
 import React from "react";
 import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
+import { Trans } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -29,6 +30,14 @@ import { alwaysShowMemoTagInfoSelector } from "~/renderer/reducers/settings";
 import { toggleShouldDisplayMemoTagInfo } from "~/renderer/actions/settings";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getMemoTagValueByTransactionFamily } from "LLD/features/MemoTag/utils";
+import {
+  getTokenExtensions,
+  hasProblematicExtension,
+} from "@ledgerhq/live-common/families/solana/token";
+import Alert from "~/renderer/components/Alert";
+import ExternalLink from "~/renderer/components/ExternalLink";
+import { openURL } from "~/renderer/linking";
+import { urls } from "~/config/urls";
 
 const StepRecipient = ({
   t,
@@ -55,6 +64,8 @@ const StepRecipient = ({
   if (!status || !account) return null;
 
   const mainAccount = getMainAccount(account, parentAccount);
+  const extensions = getTokenExtensions(account);
+
   // check if there is a stuck transaction. If so, display a warning panel with "speed up or cancel" button
   const stuckAccountAndOperation = getStuckAccountAndOperation(account, parentAccount);
 
@@ -97,6 +108,17 @@ const StepRecipient = ({
               />
             </Box>
           )}
+          {extensions && hasProblematicExtension(extensions) ? (
+            <Alert data-testid="spl-2022-problematic-extension" type="warning" small={true}>
+              <Trans i18nKey="send.steps.details.spl2022Warning" />
+              <ExternalLink
+                label={<Trans i18nKey="send.steps.details.spl2022UrlLabel" />}
+                onClick={() => openURL(urls.solana.splTokenExtensions)}
+                isInternal={true}
+              />
+              <Trans i18nKey="send.steps.details.spl2022UrlFollowUp" />
+            </Alert>
+          ) : null}
           {stuckAccountAndOperation ? (
             <EditOperationPanel
               operation={stuckAccountAndOperation.operation}

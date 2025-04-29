@@ -2393,7 +2393,10 @@
         "suggested": "Suggested",
         "unitVByte": "{{unit}}/vbyte",
         "nft": "NFT",
-        "nftQuantity": "Quantity"
+        "nftQuantity": "Quantity",
+        "spl2022Warning": "You are interacting with a token that is part of the Token-2022 program, also known as Token Extensions. This token comes with specific risks. ",
+        "spl2022UrlLabel": "Click here",
+        "spl2022UrlFollowUp": " to learn more."
       },
       "verification": {
         "streaming": {
@@ -3784,7 +3787,7 @@
       "frozenStateWarning": "Account assets are frozen!",
       "transferWarning": "To verify the recipient address for Solana tokens using a Ledger Nano S™, <0>follow these instructions.</0>",
       "transferFees": {
-        "feesPercentHint": "Token has {{feePercent}}% ({{feeBps}}bps) transfer fee. {{maxFee}} max",
+        "feesHint": "Token transfer fee: {{transferFee}}",
         "notice": "Transfer fee {{fee}}%",
         "tooltipHint": "Percentage of transfer withheld for token creator",
         "transferFeesLabel": "Transfer fees"
@@ -4247,7 +4250,6 @@
       "debugAppsDesc": "Display and allow opening debug tagged platform apps.",
       "debugReactQuery": "Allow debug ReactQuery",
       "debugReactQueryDesc": "Display and allow opening debug ReactQuery console.",
-
       "nfts": {
         "title": "NFTs HiddenCollections",
         "description": "Reset the hidden collections list",
@@ -6601,7 +6603,7 @@
         "swap": "Swap",
         "deposit": "Deposit"
       }
-    }, 
+    },
     "InvalidMemoMina": {
       "title": "Memo text cannot be longer than 32 characters"
     },
