@@ -3168,7 +3168,7 @@
     "debug" : {
       "title" : "Debug",
       "desc" : "Use por sua própria conta e risco – Ferramentas de desenvolvedor",
-      "featureFlagsTitle" : "Marcadores definidos usados no Ledger Live",
+      "featureFlagsTitle" : "Marcadores de recursos definidos usados no Ledger Live",
       "featureFlagsDesc" : "Valores sobrepostos serão redefinidos se o aplicativo for reexecutado. Apenas strings JSON válidas serão aceitas.",
       "featureFlagsEdit" : "Editar",
       "featureFlagsRestore" : "Restaurar",
@@ -6443,7 +6443,9 @@
     },
     "stepVerification" : {
       "action" : "Confirme a operação em seu dispositivo",
-      "accountName" : "Nome da conta"
+      "accountName" : "Nome da conta",
+      "title" : "Continue na sua Ledger {{wording}}",
+      "description" : "Siga as instruções exibidas na sua Tela Touch Segura."
     }
   },
   "notificationCenter" : {
@@ -6623,13 +6625,14 @@
     },
     "range" : {
       "1h" : "1H",
+      "1H_label" : "1H",
       "24h" : "24H",
-      "1d" : "1D",
+      "1D_label" : "1D",
       "7d" : "7D",
-      "1w" : "1S",
+      "1W_label" : "1S",
       "30d" : "30D",
-      "1m" : "1M",
-      "1y" : "1A"
+      "1M_label" : "1M",
+      "1Y_label" : "1A"
     },
     "warnings" : {
       "connectionError" : "Erro de conexão",
@@ -7364,7 +7367,7 @@
     }
   },
   "largeMover" : {
-    "performance" : "Performance",
+    "performance" : "Desempenho",
     "low" : "Baixo",
     "high" : "Alto"
   }
