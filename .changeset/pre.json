@@ -150,25 +150,16 @@
     "ledger-live-mobile-e2e-tests": "0.0.1"
   },
   "changesets": [
-    "chilled-bikes-act",
     "chilled-dryers-train",
-    "fast-bugs-run",
-    "green-garlics-enjoy",
-    "hot-crabs-arrive",
-    "large-zebras-learn",
-    "light-houses-visit",
-    "many-jobs-tie",
-    "modern-papayas-impress",
+    "fuzzy-dolls-grab",
+    "grumpy-actors-cross",
     "moody-games-fix",
-    "nasty-cows-retire",
-    "old-snails-sell",
     "orange-wolves-lie",
+    "quiet-pets-fail",
+    "quiet-seals-begin",
+    "real-snakes-arrive",
     "rich-mice-mate",
-    "rotten-bats-accept",
-    "shaggy-knives-judge",
-    "short-ravens-explode",
-    "soft-taxis-count",
-    "swift-garlics-work",
-    "twenty-cows-talk"
+    "smooth-birds-chew",
+    "strange-suits-fix"
   ]
 }

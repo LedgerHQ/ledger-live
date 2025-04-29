@@ -1,5 +1,31 @@
 # ledger-live-desktop
 
+## 2.112.0-nightly.0
+
+### Minor Changes
+
+- [#10045](https://github.com/LedgerHQ/ledger-live/pull/10045) [`1d72da9`](https://github.com/LedgerHQ/ledger-live/commit/1d72da911a56d5b25fb6464e60ac236927823ce4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - NFT support in LLD
+
+### Patch Changes
+
+- Updated dependencies [[`a4b6b29`](https://github.com/LedgerHQ/ledger-live/commit/a4b6b29df7ef74129345278cf07942619b36435b), [`1d72da9`](https://github.com/LedgerHQ/ledger-live/commit/1d72da911a56d5b25fb6464e60ac236927823ce4)]:
+  - @ledgerhq/live-common@34.32.0-nightly.0
+  - @ledgerhq/types-live@6.69.0-nightly.0
+  - @ledgerhq/react-ui@0.23.1-nightly.0
+  - @ledgerhq/live-dmk-desktop@0.3.3-nightly.0
+  - @ledgerhq/coin-framework@4.0.1-nightly.0
+  - @ledgerhq/coin-aptos@1.9.4-nightly.0
+  - @ledgerhq/coin-bitcoin@0.15.4-nightly.0
+  - @ledgerhq/coin-cosmos@0.13.3-nightly.0
+  - @ledgerhq/coin-evm@2.19.2-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.4-nightly.0
+  - @ledgerhq/domain-service@1.2.28-nightly.0
+  - @ledgerhq/live-countervalues@0.5.4-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.33-nightly.0
+  - @ledgerhq/live-nft@0.8.4-nightly.0
+  - @ledgerhq/live-nft-react@0.9.4-nightly.0
+  - @ledgerhq/live-wallet@0.10.7-nightly.0
+
 ## 2.111.1
 
 ### Patch Changes

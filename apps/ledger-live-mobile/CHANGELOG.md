@@ -1,5 +1,41 @@
 # live-mobile
 
+## 3.77.0-nightly.0
+
+### Minor Changes
+
+- [#10062](https://github.com/LedgerHQ/ledger-live/pull/10062) [`5f907b4`](https://github.com/LedgerHQ/ledger-live/commit/5f907b41a48f78ed951486df9b36d95425055d92) Thanks [@Justkant](https://github.com/Justkant)! - fix(LLM): discover search bar auto correct
+
+- [#10016](https://github.com/LedgerHQ/ledger-live/pull/10016) [`3dcd080`](https://github.com/LedgerHQ/ledger-live/commit/3dcd08004974ebbd601a5c7313e4f2dd132f0843) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix MemoTag Focus
+
+- [#10025](https://github.com/LedgerHQ/ledger-live/pull/10025) [`a4b6b29`](https://github.com/LedgerHQ/ledger-live/commit/a4b6b29df7ef74129345278cf07942619b36435b) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Adds a new `ProtocolInfoModal` for the Defi yield flow.
+  Fixes typo in one of the tests for `live-common`
+
+- [#10001](https://github.com/LedgerHQ/ledger-live/pull/10001) [`ea24006`](https://github.com/LedgerHQ/ledger-live/commit/ea24006d327bbfd1f721f544c3abbc89ca7c5165) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Renaming accounts in EditAccountSettings
+
+- [#10063](https://github.com/LedgerHQ/ledger-live/pull/10063) [`7e61b9c`](https://github.com/LedgerHQ/ledger-live/commit/7e61b9c6c6477f60793989430b7c9bac639da52a) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - bugfixe: Discreet mode wallet selection
+
+- [#10051](https://github.com/LedgerHQ/ledger-live/pull/10051) [`a7ecf2d`](https://github.com/LedgerHQ/ledger-live/commit/a7ecf2d6017fbfd0bd18c54c99a172a01df1da1b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix type of appFirstStartDate
+
+### Patch Changes
+
+- Updated dependencies [[`a4b6b29`](https://github.com/LedgerHQ/ledger-live/commit/a4b6b29df7ef74129345278cf07942619b36435b), [`1d72da9`](https://github.com/LedgerHQ/ledger-live/commit/1d72da911a56d5b25fb6464e60ac236927823ce4)]:
+  - @ledgerhq/icons-ui@0.10.0-nightly.0
+  - @ledgerhq/types-live@6.69.0-nightly.0
+  - @ledgerhq/native-ui@0.33.1-nightly.0
+  - @ledgerhq/coin-framework@4.0.1-nightly.0
+  - @ledgerhq/coin-cosmos@0.13.3-nightly.0
+  - @ledgerhq/coin-evm@2.19.2-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.4-nightly.0
+  - @ledgerhq/coin-multiversx@0.4.4-nightly.0
+  - @ledgerhq/coin-stacks@0.8.4-nightly.0
+  - @ledgerhq/domain-service@1.2.28-nightly.0
+  - @ledgerhq/live-countervalues@0.5.4-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.33-nightly.0
+  - @ledgerhq/live-nft@0.8.4-nightly.0
+  - @ledgerhq/live-nft-react@0.9.4-nightly.0
+  - @ledgerhq/live-wallet@0.10.7-nightly.0
+
 ## 3.76.1
 
 ### Patch Changes

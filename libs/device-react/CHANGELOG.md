@@ -1,5 +1,12 @@
 # @ledgerhq/device-react
 
+## 0.2.29-nightly.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.23-nightly.0
+
 ## 0.2.28
 
 ### Patch Changes
