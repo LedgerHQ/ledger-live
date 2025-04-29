@@ -148,7 +148,7 @@ export class AptosAPI {
     return pendingTx.data.hash;
   }
 
-  private async getBalance(address: string): Promise<BigNumber> {
+  async getBalance(address: string): Promise<BigNumber> {
     try {
       const [balanceStr] = await this.aptosClient.view<[string]>({
         payload: {
