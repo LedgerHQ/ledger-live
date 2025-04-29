@@ -874,9 +874,6 @@ importers:
       '@braze/react-native-sdk':
         specifier: 10.0.0
         version: 10.0.0
-      '@exodus/patch-broken-hermes-typed-arrays':
-        specifier: 1.0.0-alpha.1
-        version: 1.0.0-alpha.1
       '@formatjs/intl-locale':
         specifier: 3.4.5
         version: 3.4.5
@@ -3691,6 +3688,9 @@ importers:
 
   libs/coin-modules/coin-stellar:
     dependencies:
+      '@exodus/patch-broken-hermes-typed-arrays':
+        specifier: 1.0.0-alpha.1
+        version: 1.0.0-alpha.1
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../coin-framework

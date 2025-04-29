@@ -132,7 +132,8 @@
     "bignumber.js": "^9.1.2",
     "expect": "^27.4.6",
     "invariant": "^2.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "@exodus/patch-broken-hermes-typed-arrays": "1.0.0-alpha.1"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
