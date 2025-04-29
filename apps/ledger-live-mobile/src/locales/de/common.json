@@ -6443,7 +6443,9 @@
     },
     "stepVerification" : {
       "action" : "Bitte bestätige den Vorgang auf deinem Gerät",
-      "accountName" : "Kontoname"
+      "accountName" : "Kontoname",
+      "title" : "Vorgang fortsetzen auf deiner Ledger {{wording}}",
+      "description" : "Befolge die Anweisungen, die auf deinem Secure Touchscreen angezeigt werden."
     }
   },
   "notificationCenter" : {
@@ -6623,13 +6625,14 @@
     },
     "range" : {
       "1h" : "1Std",
+      "1H_label" : "1Std",
       "24h" : "24h",
-      "1d" : "1T",
+      "1D_label" : "1T",
       "7d" : "7T",
-      "1w" : "1W",
+      "1W_label" : "1W",
       "30d" : "30T",
-      "1m" : "1M",
-      "1y" : "1J"
+      "1M_label" : "1M",
+      "1Y_label" : "1J"
     },
     "warnings" : {
       "connectionError" : "Verbindungsfehler",
