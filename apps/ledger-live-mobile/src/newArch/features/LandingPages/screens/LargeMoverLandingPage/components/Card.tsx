@@ -12,7 +12,7 @@ import { CurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/util
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { Informations } from "./Information";
 import { useTheme } from "styled-components/native";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 
 type CardProps = CurrencyData & {
   range: KeysPriceChange;
@@ -47,6 +47,7 @@ export const Card: React.FC<CardProps> = ({
   const { colors } = useTheme();
   const middleColor = colors.neutral.c20;
   const currency = getCryptoCurrencyById(id);
+  const midColor = getCurrencyColor(currency);
 
   return (
     <Flex
@@ -56,11 +57,21 @@ export const Card: React.FC<CardProps> = ({
       marginLeft={5}
       overflow="hidden"
     >
+      <Flex alignItems="center" zIndex={10} top={4}>
+        <Ticker currencyId={id} />
+      </Flex>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Flex padding={4}>
-          <Flex padding={4}>
-            <Ticker currencyId={id} />
-          </Flex>
+        <Svg style={styles.gradientTop}>
+          <Defs>
+            <LinearGradient id="midGlow" x1="0" y1="0" x2="0" y2="1">
+              <Stop offset="0" stopColor={midColor} stopOpacity="0" />
+              <Stop offset="0.6" stopColor={midColor} stopOpacity="0.15" />
+              <Stop offset="1" stopColor={midColor} stopOpacity="0" />
+            </LinearGradient>
+          </Defs>
+          <Rect x="0" y="0" width="100%" height="100" fill="url(#midGlow)" />
+        </Svg>
+        <Flex padding={4} paddingTop={12}>
           <PriceAndVariation
             price={price}
             priceChangePercentage={priceChangePercentage}
@@ -123,6 +134,13 @@ const styles = StyleSheet.create({
   gradient: {
     position: "absolute",
     bottom: 0,
+    width: width,
+    height: 100,
+    zIndex: 1,
+  },
+  gradientTop: {
+    position: "absolute",
+    top: -15,
     width: width,
     height: 100,
     zIndex: 1,
