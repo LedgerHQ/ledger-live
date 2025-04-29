@@ -6443,7 +6443,9 @@
     },
     "stepVerification" : {
       "action" : "장치에서 거래를 확인하세요",
-      "accountName" : "계정 이름"
+      "accountName" : "계정 이름",
+      "title" : "Ledger {{wording}}에서 계속하세요",
+      "description" : "보안 터치스크린에 표시된 안내를 따라주세요."
     }
   },
   "notificationCenter" : {
@@ -6623,13 +6625,14 @@
     },
     "range" : {
       "1h" : "1시간",
+      "1H_label" : "1시간",
       "24h" : "24시간",
-      "1d" : "1일",
+      "1D_label" : "1일",
       "7d" : "7일",
-      "1w" : "1주",
+      "1W_label" : "1주",
       "30d" : "30일",
-      "1m" : "1달",
-      "1y" : "1년"
+      "1M_label" : "1달",
+      "1Y_label" : "1년"
     },
     "warnings" : {
       "connectionError" : "연결 오류",
