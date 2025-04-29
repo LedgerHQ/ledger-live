@@ -1,7 +1,11 @@
+/* eslint-disable no-irregular-whitespace */
 import BigNumber from "bignumber.js";
-import { fromTransactionRaw, toTransactionRaw } from "./transaction";
-import type { TonPayloadFormat, TonPayloadFormatRaw, Transaction, TransactionRaw } from "./types";
 import { Address, Cell } from "@ton/core";
+import type { Account } from "@ledgerhq/types-live";
+import type { TonPayloadFormat, TonPayloadFormatRaw, Transaction, TransactionRaw } from "./types";
+import { formatTransaction, fromTransactionRaw, toTransactionRaw } from "./transaction";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 
 const baseTx: Transaction = {
   family: "ton",
@@ -94,6 +98,43 @@ const cases: Array<{
     },
   },
   {
+    name: "tx with payload for jetton-transfer and no customPayload",
+    tx: {
+      ...baseTx,
+      payload: {
+        type: "jetton-transfer",
+        queryId: BigInt(0),
+        amount: BigInt(0),
+        destination: randomAddress,
+        responseDestination: randomAddress,
+        customPayload: null,
+        forwardAmount: BigInt(0),
+        forwardPayload: emptyCell,
+        knownJetton: {
+          jettonId: 0,
+          workchain: 0,
+        },
+      },
+    },
+    rawTx: {
+      ...baseRawTx,
+      payload: {
+        type: "jetton-transfer",
+        queryId: "0",
+        amount: "0",
+        destination: rawRandomAddress,
+        responseDestination: rawRandomAddress,
+        customPayload: null,
+        forwardAmount: "0",
+        forwardPayload: rawEmptyCell,
+        knownJetton: {
+          jettonId: 0,
+          workchain: 0,
+        },
+      },
+    },
+  },
+  {
     name: "tx with payload for nft-transfer",
     tx: {
       ...baseTx,
@@ -112,6 +153,33 @@ const cases: Array<{
       payload: {
         type: "nft-transfer",
         queryId: "0",
+        newOwner: rawRandomAddress,
+        responseDestination: rawRandomAddress,
+        customPayload: rawEmptyCell,
+        forwardAmount: "0",
+        forwardPayload: rawEmptyCell,
+      },
+    },
+  },
+  {
+    name: "tx with payload for nft-transfer and no queryId",
+    tx: {
+      ...baseTx,
+      payload: {
+        type: "nft-transfer",
+        queryId: null,
+        newOwner: randomAddress,
+        responseDestination: randomAddress,
+        customPayload: emptyCell,
+        forwardAmount: BigInt(0),
+        forwardPayload: emptyCell,
+      },
+    },
+    rawTx: {
+      ...baseRawTx,
+      payload: {
+        type: "nft-transfer",
+        queryId: null,
         newOwner: rawRandomAddress,
         responseDestination: rawRandomAddress,
         customPayload: rawEmptyCell,
@@ -214,6 +282,29 @@ const cases: Array<{
         amount: "0",
         responseDestination: rawRandomAddress,
         customPayload: "74657374",
+      },
+    },
+  },
+  {
+    name: "tx with payload for jetton-burn and no customPayload",
+    tx: {
+      ...baseTx,
+      payload: {
+        type: "jetton-burn",
+        queryId: BigInt(0),
+        amount: BigInt(0),
+        responseDestination: randomAddress,
+        customPayload: null,
+      },
+    },
+    rawTx: {
+      ...baseRawTx,
+      payload: {
+        type: "jetton-burn",
+        queryId: "0",
+        amount: "0",
+        responseDestination: rawRandomAddress,
+        customPayload: null,
       },
     },
   },
@@ -354,6 +445,31 @@ const cases: Array<{
     },
   },
   {
+    name: "tx with payload for change-dns-record type wallet no value",
+    tx: {
+      ...baseTx,
+      payload: {
+        type: "change-dns-record",
+        queryId: BigInt(0),
+        record: {
+          type: "wallet",
+          value: null,
+        },
+      },
+    },
+    rawTx: {
+      ...baseRawTx,
+      payload: {
+        type: "change-dns-record",
+        queryId: "0",
+        record: {
+          type: "wallet",
+          value: null,
+        },
+      },
+    },
+  },
+  {
     name: "tx with payload for change-dns-record type unknown",
     tx: {
       ...baseTx,
@@ -431,5 +547,68 @@ describe("fromTransactionRaw", () => {
     const resTx = fromTransactionRaw(rawTx);
 
     expect(resTx).toEqual(tx);
+  });
+});
+
+const TON = getCryptoCurrencyById("ton");
+
+describe("formatTransaction", () => {
+  const account: Account = genAccount("mocked-ton-account-1", {
+    currency: TON,
+  });
+
+  it("transaction with 0 amount", () => {
+    const transaction: Transaction = {
+      family: "ton",
+      amount: BigNumber(0),
+      recipient: "test-recipient",
+      fees: BigNumber(0),
+      comment: {
+        isEncrypted: false,
+        text: "",
+      },
+    };
+    expect(formatTransaction(transaction, account)).toMatchInlineSnapshot(`
+"
+SEND 
+TO test-recipient"
+`);
+  });
+
+  it("transaction with amount", () => {
+    const transaction: Transaction = {
+      family: "ton",
+      amount: BigNumber(1000),
+      recipient: "test-recipient",
+      fees: BigNumber(0),
+      comment: {
+        isEncrypted: false,
+        text: "",
+      },
+    };
+    expect(formatTransaction(transaction, account)).toMatchInlineSnapshot(`
+"
+SEND  0.000001 TON
+TO test-recipient"
+`);
+  });
+
+  it("transaction with useAllAmount", () => {
+    const transaction: Transaction = {
+      family: "ton",
+      amount: BigNumber(1000),
+      recipient: "test-recipient",
+      fees: BigNumber(0),
+      comment: {
+        isEncrypted: false,
+        text: "",
+      },
+      useAllAmount: true,
+    };
+    expect(formatTransaction(transaction, account)).toMatchInlineSnapshot(`
+"
+SEND MAX
+TO test-recipient"
+`);
   });
 });
