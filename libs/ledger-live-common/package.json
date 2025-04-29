@@ -201,7 +201,7 @@
     "@ledgerhq/wallet-api-exchange-module": "workspace:^",
     "@ledgerhq/wallet-api-server": "^1.8.2",
     "@stricahq/typhonjs": "^3.0.0",
-    "@taquito/ledger-signer": "^20.0.0",
+    "@taquito/ledger-signer": "^22.0.0",
     "@ton-community/ton-ledger": "^7.2.0",
     "@ton/core": "^0.60.1",
     "@ton/crypto": "^3.3.0",
