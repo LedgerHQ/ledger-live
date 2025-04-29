@@ -55,12 +55,8 @@ export type TransactionResponseTronAPI<T> = {
   };
 };
 
-export type WithBlockAPI = {
-  block_timestamp: number;
-};
-
 //-- TRANSACTION
-export type TransactionTronAPI<T = TransactionContract> = WithBlockAPI & {
+export type TransactionTronAPI<T = TransactionContract> = {
   ret: Ret[];
   signature: string[];
   txID: string;
@@ -69,6 +65,7 @@ export type TransactionTronAPI<T = TransactionContract> = WithBlockAPI & {
   raw_data_hex: string;
   net_fee: number;
   energy_usage: number;
+  block_timestamp: number;
   blockNumber?: number;
   energy_fee: number;
   energy_usage_total: number;
@@ -143,8 +140,9 @@ export function isTransactionTronAPI(tx: unknown): tx is TransactionTronAPI {
 }
 
 //-- TRC20
-export type Trc20API = WithBlockAPI & {
+export type Trc20API = {
   transaction_id: string;
+  block_timestamp: number;
   token_info: TokenInfo;
   from: string;
   to: string;
@@ -167,7 +165,7 @@ type Trc20Contract = {
 };
 
 //-- Malformed?
-export type MalformedTransactionTronAPI = WithBlockAPI & {
+export type MalformedTransactionTronAPI = {
   internal_tx_id: string;
   data: {
     note: string;
@@ -178,6 +176,7 @@ export type MalformedTransactionTronAPI = WithBlockAPI & {
   };
   to_address: string;
   tx_id: string;
+  block_timestamp: number;
   from_address: string;
 };
 

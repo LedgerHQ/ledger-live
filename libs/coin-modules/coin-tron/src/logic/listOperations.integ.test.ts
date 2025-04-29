@@ -129,7 +129,6 @@ describe("listOperations", () => {
             recipients: [testingAccount],
             senders: ["THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi"],
             asset: { type: "native" },
-            operationIndex: 0,
           });
         });
 
@@ -144,7 +143,6 @@ describe("listOperations", () => {
             senders: [testingAccount],
             recipients: ["TASbVCzbnwu8swZEGFBAH88Z4AwTTBt1PW"],
             asset: { type: "native" },
-            operationIndex: 0,
           });
         });
       });
@@ -165,7 +163,6 @@ describe("listOperations", () => {
               standard: "trc10",
               tokenId: "1004031",
             },
-            operationIndex: 0,
           });
         });
 
@@ -183,7 +180,6 @@ describe("listOperations", () => {
               standard: "trc10",
               tokenId: "1002000",
             },
-            operationIndex: 0,
           });
         });
       });
@@ -204,7 +200,6 @@ describe("listOperations", () => {
               standard: "trc20",
               contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
             },
-            operationIndex: 0,
           });
         });
 
@@ -223,7 +218,6 @@ describe("listOperations", () => {
               standard: "trc20",
               contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
             },
-            operationIndex: 0,
           });
         });
       });
