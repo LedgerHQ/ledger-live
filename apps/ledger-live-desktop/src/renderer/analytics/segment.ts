@@ -163,6 +163,9 @@ const extraProperties = (store: ReduxStore) => {
   const devices = devicesModelListSelector(state);
   const accounts = accountsSelector(state);
   const ptxAttributes = getPtxAttributes();
+  const ldmkTransport = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("ldmkTransport")
+    : { enabled: false };
 
   const ledgerSyncAttributes = getLedgerSyncAttributes(state);
   const mevProtectionAttributes = getMEVAttributes(state);
@@ -223,6 +226,7 @@ const extraProperties = (store: ReduxStore) => {
     ...ledgerSyncAttributes,
     ...mevProtectionAttributes,
     ...marketWidgetAttributes,
+    isLDMKTransportEnabled: ldmkTransport?.enabled,
   };
 };
 
