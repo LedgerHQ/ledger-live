@@ -2,7 +2,6 @@ import AssetAccountsPage from "./accounts/assetAccounts.page";
 import AccountPage from "./accounts/account.page";
 import AccountsPage from "./accounts/accounts.page";
 import AddAccountDrawer from "./accounts/addAccount.drawer";
-import BuyDevicePage from "./discover/buyDevice.page";
 import CommonPage from "./common.page";
 import CustomLockscreenPage from "./stax/customLockscreen.page";
 import DeviceValidationPage from "./trade/deviceValidation.page";
@@ -104,7 +103,6 @@ export class Application {
   private accountPageInstance = lazyInit(AccountPage);
   private accountsPageInstance = lazyInit(AccountsPage);
   private addAccountDrawerInstance = lazyInit(AddAccountDrawer);
-  private buyDevicePageInstance = lazyInit(BuyDevicePage);
   private commonPageInstance = lazyInit(CommonPage);
   private customLockscreenPageInstance = lazyInit(CustomLockscreenPage);
   private deviceValidationPageInstance = lazyInit(DeviceValidationPage);
@@ -128,83 +126,6 @@ export class Application {
   private swapPageInstance = lazyInit(SwapPage);
   private walletTabNavigatorPageInstance = lazyInit(WalletTabNavigatorPage);
   private celoManageAssetsPageInstance = lazyInit(CeloManageAssetsPage);
-
-  // public async init({
-  //   speculosApp,
-  //   cliCommands = [],
-  //   cliCommandsOnApp = [],
-  //   userdata,
-  //   knownDevices,
-  //   testedCurrencies,
-  //   featureFlags,
-  // }: ApplicationOptions) {
-  //   const userdataSpeculos = `temp-userdata-${Date.now()}`;
-  //   const userdataPath = getUserdataPath(userdataSpeculos);
-  //
-  //   // 0) prep user‑data
-  //   if (!getEnv("MOCK")) {
-  //     await timeIt("copy mock userdata", async () => {
-  //       fs.copyFileSync(getUserdataPath(userdata || "skip-onboarding"), userdataPath);
-  //     });
-  //   }
-  //
-  //   // 1) parallel on‑app CLI commands
-  //   await timeIt(`cliCommandsOnApp (${cliCommandsOnApp.length})`, async () => {
-  //     for (let i = 0; i < cliCommandsOnApp.length; i++) {
-  //       const { app, cmd } = cliCommandsOnApp[i];
-  //       await timeIt(`onApp[${i}] ${app.name}`, async () => {
-  //         const port = await this.common.addSpeculos(app.name);
-  //         await executeCliCommand(cmd, userdataPath);
-  //         await this.common.removeSpeculos(port);
-  //       });
-  //     }
-  //   });
-  //
-  //   // 2) launch real speculos app
-  //   if (speculosApp) {
-  //     await timeIt(`addSpeculos(${speculosApp.name})`, () =>
-  //       this.common.addSpeculos(speculosApp.name),
-  //     );
-  //   }
-  //
-  //   // 3) parallel global CLI commands
-  //   await timeIt(`cliCommands (${cliCommands.length})`, async () => {
-  //     for (let i = 0; i < cliCommands.length; i++) {
-  //       await timeIt(`cliCommand[${i}]`, async () => {
-  //         await executeCliCommand(cliCommands[i], userdataPath);
-  //       });
-  //     }
-  //   });
-  //
-  //   // 4) bridge tasks in parallel
-  //   const bridgeTasks: Array<Promise<unknown>> = [];
-  //
-  //   if (!getEnv("MOCK")) {
-  //     bridgeTasks.push(
-  //       timeIt("loadConfig+cleanup", async () => {
-  //         await loadConfig(userdataSpeculos, true);
-  //         fs.existsSync(userdataPath) && fs.unlinkSync(userdataPath);
-  //       }),
-  //     );
-  //   } else if (userdata) {
-  //     bridgeTasks.push(timeIt("loadConfig(mock)", () => loadConfig(userdata, true)));
-  //   }
-  //
-  //   if (featureFlags) {
-  //     bridgeTasks.push(timeIt("setFeatureFlags", () => setFeatureFlags(featureFlags)));
-  //   }
-  //
-  //   if (knownDevices) {
-  //     bridgeTasks.push(timeIt("loadBleState", () => loadBleState({ knownDevices })));
-  //   }
-  //
-  //   // if (testedCurrencies) {
-  //   //   this.testAccounts = initTestAccounts(testedCurrencies);
-  //   //   bridgeTasks.push(timeIt("loadAccounts", () => loadAccounts(this.testAccounts)));
-  //   // }
-  //
-  //   await timeIt(`bridge tasks (${bridgeTasks.length})`, () => Promise.all(bridgeTasks));
-  // }
 
   public async init({
     speculosApp,
@@ -254,10 +175,6 @@ export class Application {
 
   public get addAccount() {
     return this.addAccountDrawerInstance();
-  }
-
-  public get buyDevice() {
-    return this.buyDevicePageInstance();
   }
 
   public get common() {

@@ -1,0 +1,4 @@
+artifacts/
+node_modules/
+allure-results
+test-tracker.json

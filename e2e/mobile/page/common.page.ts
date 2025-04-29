@@ -1,15 +1,6 @@
-import { DeviceUSB, getUSBDevice, knownDevices, ModelId } from "../models/devices";
 import { expect } from "detox";
 import { deleteSpeculos, launchProxy, launchSpeculos } from "../utils/speculosUtils";
-import DeviceAction from "../models/DeviceAction";
-import {
-  addDevicesBT,
-  addDevicesUSB,
-  addKnownSpeculos,
-  findFreePort,
-  open,
-  removeKnownSpeculos,
-} from "../bridge/server";
+import { addKnownSpeculos, findFreePort, removeKnownSpeculos } from "../bridge/server";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
 
 const proxyAddress = "localhost";
@@ -31,11 +22,6 @@ export default class CommonPage {
   accountItemNameRegExp = new RegExp(`${this.accountItemId}.*-name`);
   accountItem = (id: string) => getElementById(this.accountItemRegExp(id));
   accountItemName = (accountId: string) => getElementById(`${this.accountItemId + accountId}-name`);
-
-  addDeviceButton = () => getElementById("connect-with-bluetooth");
-  scannedDeviceRow = (id: string) => `device-scanned-${id}`;
-  pluggedDeviceRow = (nano: DeviceUSB) => `device-item-usb|${JSON.stringify(nano)}`;
-  blePairingLoadingId = "ble-pairing-loading";
   deviceRowRegex = /device-item-.*/;
 
   @Step("Perform search")
@@ -103,29 +89,6 @@ export default class CommonPage {
     const id = await getIdOfElement(await accountTitle);
     jestExpect(id).toContain(this.accountItemId);
     await tapByElement(await accountTitle);
-  }
-
-  async selectAddDevice() {
-    await tapByElement(await this.addDeviceButton());
-  }
-
-  async addDeviceViaBluetooth(device = knownDevices.nanoX) {
-    const deviceAction = new DeviceAction(device);
-    await addDevicesBT(device);
-    await waitForElementById(this.scannedDeviceRow(device.id));
-    await tapById(this.scannedDeviceRow(device.id));
-    await waitForElementById(this.blePairingLoadingId);
-    await open();
-    await deviceAction.accessManager();
-  }
-
-  async addDeviceViaUSB(device: ModelId) {
-    const nano = getUSBDevice(device);
-    await addDevicesUSB(nano);
-    await scrollToId(this.pluggedDeviceRow(nano));
-    await waitForElementById(this.pluggedDeviceRow(nano));
-    await tapById(this.pluggedDeviceRow(nano));
-    await new DeviceAction(nano).accessManager();
   }
 
   async addSpeculos(nanoApp: string, speculosAddress = "localhost") {

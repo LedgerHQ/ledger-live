@@ -1,4 +1,4 @@
-import { expect, log, waitFor } from "detox";
+import { expect, log } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class DiscoverPage {
@@ -21,7 +21,6 @@ export default class DiscoverPage {
     { name: "Transak", url: " https://transak.com" },
   ];
   baseLink = "discover/";
-  waitForSelectCrypto = () => waitForElementByText("Select crypto");
   discoverPageHeader = () => getElementById("discover-banner");
   liveAppTitle = () => getElementById("live-app-title");
 
