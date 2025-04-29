@@ -1103,6 +1103,32 @@
     "tryEnablingAgain" : "Prueba a activar la ubicación de nuevo",
     "noInfos" : "Ledger no accederá a tu información de ubicación."
   },
+  "earn" : {
+    "deposit" : {
+      "protocolInfoModal" : {
+        "title" : "Te recomendamos que, cuando vayas a elegir un protocolo, tengas en cuenta lo siguiente:",
+        "items" : {
+          "protocol" : {
+            "highlighted" : "Un protocolo ",
+            "description" : " es una plataforma que te permite obtener recompensas por prestar, ofrecer liquidez o poner en participación las cripto que has depositado."
+          },
+          "apy" : {
+            "highlighted" : "El APY (porcentaje de rendimiento anual)",
+            "description" : " indica la cantidad de interés que puedes ganar en el transcurso de un año. Un APY más alto supone ganancias más elevadas."
+          },
+          "tvl" : {
+            "highlighted" : "El TVL (Valor total bloqueado) ",
+            "description" : " es el total del dinero que otros usuarios han depositado en el protocolo. Un TVL más alto indica que hay más personas que confían en el protocolo."
+          },
+          "strategy" : {
+            "highlighted" : "La estrategia ",
+            "description0" : " es el método que un protocolo usa para generar recompensas para ti.",
+            "description1" : "Por ejemplo, si un protocolo usa el préstamo como estrategia, presta las monedas estables que tú has depositado a prestatarios. De esta forma tú obtienes un interés que varía según la demanda."
+          }
+        }
+      }
+    }
+  },
   "permissions" : {
     "open" : "Abrir permisos de aplicación",
     "authorize" : "Autorizar",
@@ -7388,6 +7414,9 @@
       "minutes_plural" : "(hace {{count}} minutos)",
       "seconds" : "(hace {{count}} segundo)",
       "seconds_plural" : "(hace {{count}} segundos)"
-    }
+    },
+    "performance" : "Rendimiento",
+    "low" : "Baja",
+    "high" : "Alta"
   }
 }
