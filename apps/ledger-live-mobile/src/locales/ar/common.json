@@ -6443,7 +6443,9 @@
     },
     "stepVerification" : {
       "action" : "يرجى تأكيد العملية على جهازك",
-      "accountName" : "اسم الحساب"
+      "accountName" : "اسم الحساب",
+      "title" : "تابع على جهازك Ledger {{wording}}",
+      "description" : "اتبع التعليمات المعروضة على شاشتك الآمنة التي تعمل باللمس."
     }
   },
   "notificationCenter" : {
@@ -6623,13 +6625,14 @@
     },
     "range" : {
       "1h" : "1 ساعة",
+      "1H_label" : "1 ساعة",
       "24h" : "24 ساعة",
-      "1d" : "1D",
+      "1D_label" : "1 يوم",
       "7d" : "7 أيام",
-      "1w" : "1W",
+      "1W_label" : "1 أسبوع",
       "30d" : "30 يوم",
-      "1m" : "1M",
-      "1y" : "1 سنة"
+      "1M_label" : "1 شهر",
+      "1Y_label" : "1 سنة"
     },
     "warnings" : {
       "connectionError" : "خطأ في الاتصال",
@@ -7364,8 +7367,8 @@
     }
   },
   "largeMover" : {
-    "performance" : "Performance",
-    "low" : "Low",
-    "high" : "High"
+    "performance" : "الأداء",
+    "low" : "منخفض",
+    "high" : "مرتفع"
   }
 }
