@@ -4,8 +4,14 @@ import asyncStorageWrapper from "./asyncStorageWrapper";
 import mmkvStorageWrapper from "./mmkvStorageWrapper";
 import { MAX_NUMBER_OF_ERRORS, STORAGE_TYPE } from "./constants";
 import { migrator } from "./utils/migrations/asyncStorageToMMKV";
-import { MIGRATION_STATUS, ROLLBACK_STATUS } from "./utils/migrations/constants";
+import {
+  MIGRATION_STATUS,
+  MIGRATION_STATUS_KEY,
+  ROLLBACK_STATUS,
+  ROLLBACK_STATUS_KEY,
+} from "./utils/migrations/constants";
 import { track } from "~/analytics";
+import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
 
 /** Singleton reference to the global application storage object. */
 export default createStorage();
@@ -207,9 +213,9 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
       }
     },
 
-    async handleMigration() {
+    async handleMigration(featureFlag: Feature_LlmMmkvMigration) {
       try {
-        await migrator.handleMigration(state);
+        await migrator.handleMigration(state, featureFlag);
       } catch (e) {
         console.error("Error handling migration", {
           error: e,
@@ -228,7 +234,25 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
  * The storage state to initialize.
  */
 export function initStorageState(state: StorageState): void {
-  state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
+  const isMMKVReady =
+    mmkvStorageWrapper.getString(MIGRATION_STATUS_KEY) === MIGRATION_STATUS.COMPLETED;
+
+  const hasRolledBack =
+    mmkvStorageWrapper.getString(ROLLBACK_STATUS_KEY) === ROLLBACK_STATUS.COMPLETED;
+
+  if (hasRolledBack) {
+    state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
+    state.migrationStatus = MIGRATION_STATUS.ROLLED_BACK;
+    state.rollbackStatus = ROLLBACK_STATUS.COMPLETED;
+    return;
+  }
+
+  if (isMMKVReady) {
+    state.storageType = STORAGE_TYPE.MMKV;
+    state.migrationStatus = MIGRATION_STATUS.COMPLETED;
+    state.rollbackStatus = ROLLBACK_STATUS.NOT_STARTED;
+    return;
+  }
 }
 
 async function incrementNumberOfErrors(state: StorageState, error: unknown): Promise<void> {
