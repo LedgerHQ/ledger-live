@@ -6,6 +6,7 @@ export class Drawer extends Component {
   readonly content = this.page.getByTestId("drawer-content");
   private drawerOverlay = this.page.locator("[data-testid='drawer-overlay'][style='opacity: 1;']");
   private closeButton = this.page.getByTestId("drawer-close-button").first();
+  private addAccountButton = this.page.getByTestId("add-account-button");
 
   @step("Wait for drawer to be visible")
   async waitForDrawerToBeVisible() {
@@ -27,5 +28,10 @@ export class Drawer extends Component {
     await this.getAccountButton(account.currency.name)
       .locator(`text=${account.accountName}`)
       .click();
+  }
+
+  @step("Click on add account button")
+  async clickOnAddAccountButton() {
+    await this.addAccountButton.click();
   }
 }
