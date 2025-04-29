@@ -37,6 +37,7 @@ import {
 } from "./format";
 import {
   AccountTronAPI,
+  Block,
   isMalformedTransactionTronAPI,
   isTransactionTronAPI,
   MalformedTransactionTronAPI,
@@ -365,12 +366,17 @@ export async function fetchTronAccount(addr: string): Promise<AccountTronAPI[]> 
   }
 }
 
-export async function getLastBlock(): Promise<{
-  height: number;
-  hash: string;
-  time: Date;
-}> {
+export async function getLastBlock(): Promise<Block> {
   const data = await fetch(`/wallet/getnowblock`);
+  return toBlock(data);
+}
+
+export async function getBlock(blockNumber: number): Promise<Block> {
+  const data = await fetch(`/wallet/getblock?id_or_num=${encodeURIComponent(blockNumber)}`);
+  return toBlock(data);
+}
+
+function toBlock(data: any): Block {
   return {
     height: data.block_header.raw_data.number,
     hash: data.blockID,
@@ -463,11 +469,13 @@ const getTrc20 = async (
   };
 };
 
+export type FetchTxsStopPredicate = (
+  txs: Array<TransactionTronAPI | Trc20API | MalformedTransactionTronAPI>,
+) => boolean;
+
 export async function fetchTronAccountTxs(
   addr: string,
-  shouldFetchMoreTxs: (
-    txs: Array<TransactionTronAPI | Trc20API | MalformedTransactionTronAPI>,
-  ) => boolean,
+  shouldFetchMoreTxs: FetchTxsStopPredicate,
   cacheTransactionInfoById: Record<string, TronTransactionInfo>,
 ): Promise<TrongridTxInfo[]> {
   const entireTxs = (
@@ -479,7 +487,7 @@ export async function fetchTronAccountTxs(
       getTransactions(cacheTransactionInfoById),
     )
   )
-    .filter((tx): tx is TransactionTronAPI => isTransactionTronAPI(tx))
+    .filter(isTransactionTronAPI)
     .filter(tx => {
       // custom smart contract tx has internal txs
       const hasInternalTxs =
@@ -496,6 +504,7 @@ export async function fetchTronAccountTxs(
       return !isDuplicated && !hasInternalTxs && type !== "TriggerSmartContract";
     })
     .map(tx => formatTrongridTxResponse(tx));
+
   // we need to fetch and filter trc20 transactions from another endpoint
 
   const entireTrc20Txs = (

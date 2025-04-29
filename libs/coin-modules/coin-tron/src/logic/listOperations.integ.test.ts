@@ -29,7 +29,7 @@ describe("listOperations", () => {
     const magnitudeMultiplier = 1000000;
 
     beforeAll(async () => {
-      [operations] = await listOperations(testingAccount);
+      [operations] = await listOperations(testingAccount, 0);
     });
 
     describe("List", () => {
