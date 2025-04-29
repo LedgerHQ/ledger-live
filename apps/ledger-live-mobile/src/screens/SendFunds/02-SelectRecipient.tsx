@@ -1,6 +1,6 @@
 import { isConfirmedOperation } from "@ledgerhq/coin-framework/operation";
 import { RecipientRequired } from "@ledgerhq/errors";
-import { Text } from "@ledgerhq/native-ui";
+import { Link, Text } from "@ledgerhq/native-ui";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
@@ -14,11 +14,11 @@ import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
 import { Operation } from "@ledgerhq/types-live";
 import QrCode from "@ledgerhq/icons-ui/native/QrCode";
-import { useTheme } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { StyleSheet, View } from "react-native";
+import { Linking, StyleSheet, View } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useSelector } from "react-redux";
 import { TrackScreen, track } from "~/analytics";
@@ -42,15 +42,24 @@ import { useMemoTagInput } from "LLM/features/MemoTag/hooks/useMemoTagInput";
 import { hasMemoDisclaimer } from "LLM/features/MemoTag/utils/hasMemoTag";
 import DomainServiceRecipientRow from "./DomainServiceRecipientRow";
 import RecipientRow from "./RecipientRow";
+import {
+  getTokenExtensions,
+  hasProblematicExtension,
+} from "@ledgerhq/live-common/families/solana/token";
+import { urls } from "~/utils/urls";
 
 const withoutHiddenError = (error: Error): Error | null =>
   error instanceof RecipientRequired ? null : error;
 
-type Props = BaseComposite<
+type Navigation = BaseComposite<
   StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSelectRecipient>
 >;
+type Props = Pick<Navigation, "route">;
 
-export default function SendSelectRecipient({ navigation, route }: Props) {
+const openSplTokenExtensionsArticle = () => Linking.openURL(urls.solana.splTokenExtensions);
+
+export default function SendSelectRecipient({ route }: Props) {
+  const navigation = useNavigation<Navigation["navigation"]>();
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
@@ -236,6 +245,8 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     !!memoTag?.error;
 
   const stuckAccountAndOperation = getStuckAccountAndOperation(account, mainAccount);
+  const extensions = getTokenExtensions(account);
+
   return (
     <>
       <SafeAreaView
@@ -346,12 +357,17 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 <Alert type="warning">{t("send.pendingTxWarning")}</Alert>
               </View>
             ) : null}
-            {(!isDomainResolutionEnabled || !isCurrencySupported) &&
-            transaction.recipient &&
-            !(error || warning) ? (
+            {
               <View style={styles.infoBox}>
                 <Alert type="primary">{t("send.recipient.verifyAddress")}</Alert>
               </View>
+            }
+            {extensions && hasProblematicExtension(extensions) ? (
+              <Alert testID="spl-2022-problematic-extension" type="warning">
+                <Trans i18nKey="send.spl2022.splExtensionsWarning">
+                  <Link type="color" onPress={openSplTokenExtensionsArticle} />
+                </Trans>
+              </Alert>
             ) : null}
           </NavigationScrollView>
           <View style={styles.container}>
@@ -402,6 +418,7 @@ const styles = StyleSheet.create({
   memoTagInputContainer: { marginTop: 32 },
   infoBox: {
     marginTop: 24,
+    paddingBottom: 24,
   },
   pendingIncomingTxWarning: {
     marginBottom: 8,
@@ -423,6 +440,9 @@ const styles = StyleSheet.create({
   },
   buttonRight: {
     marginLeft: 8,
+  },
+  spl2022LinkLabel: {
+    textDecorationLine: "underline",
   },
 });
 

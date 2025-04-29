@@ -127,6 +127,11 @@ export default function SendAmountCoin({ navigation, route }: Props) {
   const { amount } = status;
   const currency = getAccountCurrency(account);
 
+  const transferFee =
+    "model" in transaction && transaction.model.commandDescriptor?.command.kind === "token.transfer"
+      ? transaction.model.commandDescriptor.command.extensions?.transferFee
+      : undefined;
+
   return (
     <>
       <TrackScreen category="SendFunds" name="Amount" currencyName={currency.name} />
@@ -149,6 +154,7 @@ export default function SendAmountCoin({ navigation, route }: Props) {
                 account={account}
                 onChange={onChange}
                 value={amount}
+                transferFeeCalculated={transferFee}
                 error={
                   status.errors.dustLimit
                     ? status.errors.dustLimit
