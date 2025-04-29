@@ -57,10 +57,33 @@ function AptosValidatorRow({ validator, active, onClick, unit, currency, disable
           <Trans i18nKey="aptos.delegation.commission" />
           <Text
             style={{
-              marginLeft: 5,
+              marginLeft: 2,
+              marginRight: 5,
               fontSize: 11,
             }}
-          >{`${validator.commission} %`}</Text>
+          >{`${validator.commission}%`}</Text>
+          <Text
+            style={{
+              marginLeft: 8,
+              fontSize: 11,
+            }}
+          >
+            {"\u{1F512}"}
+          </Text>
+          <Text
+            style={{
+              marginLeft: 3,
+              fontSize: 11,
+            }}
+          >
+            <Trans i18nKey="aptos.delegation.nextUnlockIn" />
+          </Text>
+          <Text
+            style={{
+              marginLeft: 2,
+              fontSize: 11,
+            }}
+          >{`${validator.nextUnlockTime || ""} `}</Text>
         </>
       }
       sideInfo={

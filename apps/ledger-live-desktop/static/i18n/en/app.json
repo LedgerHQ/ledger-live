@@ -3855,6 +3855,7 @@
       }
     },
     "delegation": {
+      "nextUnlockIn": "Next unlock in",
       "totalStake": "Total stake",
       "commission": "Commission",
       "delegate": "Add",
