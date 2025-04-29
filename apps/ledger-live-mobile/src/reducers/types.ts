@@ -31,8 +31,9 @@ import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-case
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
-import { SupportedBlockchainsType, BlockchainsType } from "@ledgerhq/live-nft/supported";
+import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 import { NftStatus } from "@ledgerhq/live-nft/types";
+import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/useListsAnimation";
 
 // === ACCOUNT STATE ===
 
@@ -220,7 +221,7 @@ export type SettingsState = {
   blacklistedTokenIds: string[];
   hiddenNftCollections: string[];
   whitelistedNftCollections: string[];
-  nftCollectionsStatusByNetwork: Record<SupportedBlockchainsType, Record<string, NftStatus>>;
+  nftCollectionsStatusByNetwork: Record<SupportedBlockchain, Record<string, NftStatus>>;
   dismissedBanners: string[];
   hasAvailableUpdate: boolean;
   theme: Theme;
@@ -236,13 +237,14 @@ export type SettingsState = {
     acceptedProviders: string[];
     selectableCurrencies: string[];
   };
-  lastSeenDevice: DeviceModelInfo | null;
+  seenDevices: DeviceModelInfo[];
   knownDeviceModelIds: Record<DeviceModelId, boolean>;
   hasSeenStaxEnabledNftsPopup: boolean;
   lastConnectedDevice: Device | null;
   marketCounterCurrency: string | null | undefined;
   sensitiveAnalytics: boolean;
   onboardingHasDevice: boolean | null;
+  isReborn: boolean | null;
   onboardingType: OnboardingType | null;
   customLockScreenType: ImageType | null;
   customLockScreenBackup: {
@@ -277,6 +279,7 @@ export type SettingsState = {
   starredMarketCoins: string[];
   fromLedgerSyncOnboarding: boolean;
   mevProtection: boolean;
+  selectedTabPortfolioAssets: TabPortfolioAssetsType;
 };
 
 export type NotificationsSettings = {
@@ -304,12 +307,19 @@ export type SwapStateType = {
 
 // === EARN STATE ===
 
+export type OptionMetadata = { button: string; live_app: string; flow: string; link?: string };
+
 export type EarnState = {
   infoModal: {
     message?: string;
     messageTitle?: string;
     learnMoreLink?: string;
   };
+  menuModal?: {
+    title?: string;
+    options: { label: string; metadata: OptionMetadata }[];
+  };
+  protocolInfoModal?: true;
 };
 
 // === PROTECT STATE ===
@@ -343,10 +353,7 @@ export type NftState = {
   galleryChainFilters: NftGalleryChainFiltersState;
 };
 
-export type NftGalleryChainFiltersState = Pick<
-  Record<BlockchainsType, boolean>,
-  SupportedBlockchainsType
->;
+export type NftGalleryChainFiltersState = Record<SupportedBlockchain, boolean>;
 
 // === MARKET STATE ===
 

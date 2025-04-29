@@ -9,19 +9,24 @@ import { AssetsListNavigator } from "./types";
 import { useTranslation } from "react-i18next";
 import { TrackScreen } from "~/analytics";
 import { useSelector } from "react-redux";
-import { isUpToDateSelector } from "~/reducers/accounts";
+import { hasNoAccountsSelector, isUpToDateSelector } from "~/reducers/accounts";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/useGlobalSyncState";
 import { RefreshMedium } from "@ledgerhq/icons-ui/nativeLegacy";
 import Spinning from "~/components/Spinning";
+import { parseBoolean } from "LLM/utils/parseBoolean";
+import AccountsEmptyList from "LLM/components/EmptyList/AccountsEmptyList";
 
 type Props = StackNavigatorProps<AssetsListNavigator, ScreenName.AssetsList>;
 
 export default function AssetsList({ route }: Props) {
   const { params } = route;
   const { t } = useTranslation();
-  const showHeader = params?.showHeader;
+  const hasNoAccount = useSelector(hasNoAccountsSelector);
+
+  const showHeader =
+    (params?.showHeader ? parseBoolean(params?.showHeader) : false) && !hasNoAccount;
+  const isSyncEnabled = params?.isSyncEnabled ? parseBoolean(params?.isSyncEnabled) : false;
   const sourceScreenName = params?.sourceScreenName;
-  const isSyncEnabled = params?.isSyncEnabled;
 
   const isUpToDate = useSelector(isUpToDateSelector);
   const globalSyncState = useGlobalSyncState();
@@ -29,7 +34,7 @@ export default function AssetsList({ route }: Props) {
 
   return (
     <>
-      <TrackScreen event="Accounts" />
+      <TrackScreen name="Assets" source={sourceScreenName} />
       <ReactNavigationPerformanceView screenName={ScreenName.AssetsList} interactive>
         <SafeAreaView edges={["left", "right", "bottom"]} isFlex style={{ marginHorizontal: 16 }}>
           {showHeader && (
@@ -47,7 +52,11 @@ export default function AssetsList({ route }: Props) {
               </Text>
             </Flex>
           )}
-          <AssetsListView sourceScreenName={sourceScreenName} isSyncEnabled={isSyncEnabled} />
+          {hasNoAccount ? (
+            <AccountsEmptyList sourceScreenName={sourceScreenName} />
+          ) : (
+            <AssetsListView sourceScreenName={sourceScreenName} isSyncEnabled={isSyncEnabled} />
+          )}
         </SafeAreaView>
       </ReactNavigationPerformanceView>
     </>

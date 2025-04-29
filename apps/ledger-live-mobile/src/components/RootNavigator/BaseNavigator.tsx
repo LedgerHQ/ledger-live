@@ -95,6 +95,7 @@ import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
 import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
 import AssetSelectionNavigator from "LLM/features/AssetSelection/Navigator";
 import AssetsListNavigator from "LLM/features/Assets/Navigator";
+import FeesNavigator from "./FeesNavigator";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -177,7 +178,6 @@ export default function BaseNavigator() {
           })}
           {...noNanoBuyNanoWallScreenOptions}
         />
-
         <Stack.Screen
           name={ScreenName.EditCurrencyUnits}
           component={EditCurrencyUnits}
@@ -209,7 +209,6 @@ export default function BaseNavigator() {
           options={{
             headerStyle: styles.headerNoShadow,
           }}
-          {...noNanoBuyNanoWallScreenOptions}
         />
         <Stack.Screen
           name={ScreenName.Recover}
@@ -273,7 +272,11 @@ export default function BaseNavigator() {
           component={ClaimRewardsNavigator}
           options={{ headerShown: false }}
         />
-
+        <Stack.Screen
+          name={NavigatorName.Fees}
+          component={FeesNavigator}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name={NavigatorName.RequestAccount}
           component={RequestAccountNavigator}
@@ -349,6 +352,7 @@ export default function BaseNavigator() {
                 ),
                 headerLeft: () => <NavigationHeaderBackButton />,
                 headerRight: () => <NavigationHeaderCloseButton />,
+                cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
               };
             }
 
@@ -366,6 +370,7 @@ export default function BaseNavigator() {
               ),
               headerLeft: () => <NavigationHeaderBackButton />,
               headerRight: () => null,
+              cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
             };
           }}
         />
@@ -423,16 +428,13 @@ export default function BaseNavigator() {
           options={{
             title: t("analytics.operations.title"),
             headerRight: () => null,
-            cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
           }}
         />
-
         <Stack.Screen
           name={NavigatorName.WalletSync}
           component={WalletSyncNavigator}
           options={{ headerShown: false }}
         />
-
         {MarketNavigator({ Stack })}
         <Stack.Screen
           name={ScreenName.PortfolioOperationHistory}
@@ -463,7 +465,6 @@ export default function BaseNavigator() {
             headerLeft: () => null,
           }}
         />
-
         <Stack.Screen
           name={NavigatorName.WalletConnect}
           component={WalletConnectLiveAppNavigator}
@@ -472,7 +473,6 @@ export default function BaseNavigator() {
           }}
           {...noNanoBuyNanoWallScreenOptions}
         />
-
         <Stack.Screen
           name={NavigatorName.NotificationCenter}
           component={NotificationCenterNavigator}
@@ -589,7 +589,6 @@ export default function BaseNavigator() {
           }
           options={{ headerShown: false }}
         />
-
         {llmNetworkBasedAddAccountFlow?.enabled && (
           <Stack.Screen
             name={NavigatorName.DeviceSelection}
@@ -597,7 +596,6 @@ export default function BaseNavigator() {
             options={{ headerShown: false }}
           />
         )}
-
         {llmNetworkBasedAddAccountFlow?.enabled && (
           <Stack.Screen
             name={NavigatorName.AssetSelection}

@@ -10,6 +10,7 @@ import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { StepProps } from "../Body";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { getEnv } from "@ledgerhq/live-env";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 export default function StepConnectDevice({
   account,
@@ -34,6 +35,7 @@ export default function StepConnectDevice({
         request={request}
         onResult={() => transitionTo("receive")}
         analyticsPropertyFlow="receive"
+        location={HOOKS_TRACKING_LOCATIONS.receiveModal}
       />
     </>
   );

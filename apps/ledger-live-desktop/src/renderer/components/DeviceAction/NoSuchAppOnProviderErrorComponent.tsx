@@ -10,6 +10,7 @@ import { urls } from "~/config/urls";
 import { CircleWrapper } from "../CryptoCurrencyIcon";
 import { track } from "~/renderer/analytics/segment";
 import { openURL } from "~/renderer/linking";
+import TrackPage from "~/renderer/analytics/TrackPage";
 
 const CtaContainer = styled(Box)`
   margin-top: 32px;
@@ -48,6 +49,8 @@ const StyledLinkLearnMoreButton = styled(Link)`
   line-height: normal;
 `;
 
+const PAGE_NAME = "LNS Upsell Ledger Sync";
+
 const NoSuchAppOnProviderErrorComponent: React.FC<{
   error: Error;
   productName: string;
@@ -70,6 +73,7 @@ const NoSuchAppOnProviderErrorComponent: React.FC<{
 
   return (
     <Wrapper id="error-NoSuchAppOnProvider">
+      <TrackPage category={PAGE_NAME} />
       <ErrorBody
         top={
           <CircleWrapper color={theme.colors.palette.opacityDefault.c05} size={72}>
@@ -92,14 +96,18 @@ const NoSuchAppOnProviderErrorComponent: React.FC<{
       <CtaContainer>
         <StyledLinkExploreButton
           onClick={handleOnOpenExternalLink(urls.ledgerShop, "button_clicked", {
-            button: "Explore more compatible devices |  page: NanoS connection LS",
+            button: "Explore more compatible devices",
+            page: PAGE_NAME,
           })}
         >
           <Trans i18nKey="errors.NoSuchAppOnProvider.exploreCTA" />
         </StyledLinkExploreButton>
         {learnMoreLink && learnMoreTextKey && (
           <StyledLinkLearnMoreButton
-            onClick={handleOnOpenExternalLink(learnMoreLink)}
+            onClick={handleOnOpenExternalLink(learnMoreLink, "button_clicked", {
+              button: "Learn more about LS",
+              page: PAGE_NAME,
+            })}
             Icon={renderExploreIcon}
           >
             <Trans i18nKey={learnMoreTextKey} />

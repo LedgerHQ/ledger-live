@@ -2,17 +2,15 @@ import React, { useCallback } from "react";
 import config from "react-native-config";
 import { getEnv } from "@ledgerhq/live-env";
 import { Alert as Confirmation } from "react-native";
-import { Alert, Flex, IconsLegacy } from "@ledgerhq/native-ui";
+import { Alert, Flex, Icons, IconsLegacy } from "@ledgerhq/native-ui";
 import { useDispatch } from "react-redux";
 import GenerateMockAccounts from "./GenerateMockAccounts";
-import GenerateMockAccountsNft from "./GenerateMockAccountsNFTs";
 import ImportBridgeStreamData from "./ImportBridgeStreamData";
 import GenerateMockAccount from "./GenerateMockAccountsSelect";
-import GenerateAnnouncement from "./GenerateAnnouncementMockData";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import ToggleServiceStatusIncident from "./ToggleServiceStatus";
 import SettingsRow from "~/components/SettingsRow";
-import { dangerouslyOverrideState } from "~/actions/settings";
+import { dangerouslyOverrideState, resetNftStatus } from "~/actions/settings";
 import { useReboot } from "~/context/Reboot";
 
 import { INITIAL_STATE as INITIAL_SETTINGS_STATE } from "~/reducers/settings";
@@ -78,20 +76,28 @@ export default function Generators() {
     reboot();
   }, [reboot]);
 
+  const onWipeAntiSpam = useCallback(() => {
+    dispatch(resetNftStatus());
+  }, [dispatch]);
+
   return (
     <SettingsNavigationScrollView>
-      <GenerateMockAccount />
+      <GenerateMockAccount
+        title="Accounts by currency"
+        desc="Select for which currencies you want to generate accounts"
+        iconLeft={<IconsLegacy.ClipboardListCheckMedium size={24} color="black" />}
+      />
       <GenerateMockAccounts
         title="Accounts"
         desc="Replace existing accounts with 10 mock accounts from random currencies."
         count={10}
       />
-      <GenerateMockAccountsNft
-        title="Accounts + NFTs"
-        desc="Replace existing accounts with 10 mock accounts with NFTs."
-        count={10}
+      <GenerateMockAccount
+        title="Accounts with NFTs"
+        desc="Select for which currencies you want to generate accounts and NFTs"
+        iconLeft={<Icons.Nft size="M" color="black" />}
+        withNft
       />
-      <GenerateAnnouncement title="Mock a new announcement" />
       {getEnv("MOCK") ? <ToggleServiceStatusIncident /> : null}
       <ImportBridgeStreamData
         title="Import .env BRIDGESTREAM_DATA"
@@ -127,6 +133,12 @@ export default function Generators() {
         desc="Forget all seed devices"
         iconLeft={<IconsLegacy.NanoMedium size={24} color="black" />}
         onPress={onWipeBLE}
+      />
+      <SettingsRow
+        title="Reset HiddenCollections NFTs"
+        desc="Remove all NFTs from the HiddenCollection list"
+        iconLeft={<Icons.Nft size="M" color="black" />}
+        onPress={onWipeAntiSpam}
       />
     </SettingsNavigationScrollView>
   );

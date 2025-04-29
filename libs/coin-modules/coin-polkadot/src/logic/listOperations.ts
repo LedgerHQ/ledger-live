@@ -1,58 +1,38 @@
+import { Operation } from "@ledgerhq/coin-framework/api/types";
 import network from "../network";
-import { PolkadotOperation } from "../types";
-
-export type Operation = {
-  hash: string;
-  address: string;
-  type: string;
-  value: bigint;
-  fee: bigint;
-  block: {
-    height: number;
-    hash?: string;
-    time?: Date;
-  };
-  senders: string[];
-  recipients: string[];
-  date: Date;
-  transactionSequenceNumber: number;
-};
+import { PolkadotOperation, PolkadotAsset } from "../types";
 
 export async function listOperations(
   addr: string,
   { limit, startAt }: { limit: number; startAt?: number | undefined },
-): Promise<[Operation[], number]> {
+): Promise<[Operation<PolkadotAsset>[], number]> {
   //The accountId is used to map Operations to Live types.
   const fakeAccountId = "";
   const operations = await network.getOperations(fakeAccountId, addr, startAt, limit);
-
-  return [operations.map(convertToCoreOperation(addr)), operations.slice(-1)[0].blockHeight ?? 0];
+  const blockHeight = operations.length > 0 ? operations.slice(-1)[0].blockHeight ?? 0 : 0;
+  return [operations.map(convertToCoreOperation), blockHeight];
 }
 
-const convertToCoreOperation = (address: string) => (operation: PolkadotOperation) => {
-  const {
-    hash,
-    type,
-    value,
-    fee,
-    blockHeight,
-    senders,
-    recipients,
-    date,
-    transactionSequenceNumber,
-  } = operation;
+const convertToCoreOperation = (operation: PolkadotOperation): Operation<PolkadotAsset> => {
+  const { hash, type, value, fee, blockHeight, senders, recipients, date, extra } = operation;
+  // The recommended identifier is to use the block ID (height or hash) and operation index.
+  // However, `blockHash` is always set to `null` in our codebase.
+  // https://wiki.polkadot.network/build/build-protocol-info/#unique-identifiers-for-extrinsics
   return {
-    hash,
-    address,
+    id: `${blockHeight ?? 0}-${extra.index}`,
+    asset: { type: "native" },
+    tx: {
+      hash,
+      fees: BigInt(fee.toString()),
+      block: {
+        height: blockHeight ?? 0,
+        time: date,
+      },
+      date: date,
+    },
     type,
     value: BigInt(value.toString()),
-    fee: BigInt(fee.toString()),
-    block: {
-      height: blockHeight ?? 0,
-    },
     senders,
     recipients,
-    date,
-    transactionSequenceNumber: transactionSequenceNumber ?? 0,
   };
 };

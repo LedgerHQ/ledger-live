@@ -8,12 +8,12 @@ import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 import GradientContainer from "~/components/GradientContainer";
 import Animation from "~/components/Animation";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import lottie from "~/screens/ReceiveFunds/assets/lottie.json";
+import lottie from "~/animations/lottie.json";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
-import { completeOnboarding } from "~/actions/settings";
+import { completeOnboarding, setIsReborn, setOnboardingHasDevice } from "~/actions/settings";
 import PreventNativeBack from "~/components/PreventNativeBack";
 
 type Props = BaseComposite<
@@ -34,6 +34,8 @@ export function ActivationLoading({ route }: Props) {
   useEffect(() => {
     if (!hasCompletedOnboarding) {
       dispatch(completeOnboarding());
+      dispatch(setIsReborn(false));
+      dispatch(setOnboardingHasDevice(true));
     }
   }, [dispatch, hasCompletedOnboarding]);
 

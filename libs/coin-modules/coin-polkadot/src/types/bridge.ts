@@ -148,6 +148,7 @@ export type PolkadotOperationExtra = {
   withdrawUnbondedAmount?: BigNumber;
   validatorStash?: string | undefined;
   validators?: string[] | undefined;
+  index?: number;
 };
 
 export function isPolkadotOperationExtra(op: OperationExtra): op is PolkadotOperationExtra {

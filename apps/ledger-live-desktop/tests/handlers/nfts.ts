@@ -4,7 +4,7 @@ import { ETHmockedResponse } from "./fixtures/nfts";
 import { OrdinalsMockedResponse } from "./fixtures/ordinals";
 
 const handlers = [
-  http.post("https://nft.api.live.ledger.com/v1/ethereum/1/contracts/tokens/infos", () => {
+  http.post("https://nft.api.live.ledger.com/v2/ethereum/1/contracts/tokens/infos", () => {
     return HttpResponse.json(ETHmockedResponse.tokenInfos1);
   }),
   http.get("https://simplehash.api.live.ledger.com/api/v0/nfts/owners_v2", ({ request }) => {

@@ -1,51 +1,43 @@
-import {
-  getElementById,
-  getWebElementById,
-  getWebElementByTag,
-  openDeeplink,
-  waitForElementByText,
-} from "../../helpers";
 import { expect, log } from "detox";
-import jestExpect from "expect";
-
-const baseLink = "discover/";
-const discoverApps = [
-  // for some reason there is a space before the URL so this is required
-  { name: "MoonPay", url: " https://www.moonpay.com/" },
-  { name: "Ramp", url: " https://ramp.network/buy" },
-  { name: "ParaSwap", url: " https://paraswap.io" },
-  { name: "Kiln", url: " https://kiln.fi" },
-  { name: "Lido", url: " https://lido.fi/" },
-  { name: "1inch", url: " https://1inch.io/" },
-  { name: "BTCDirect", url: " https://btcdirect.eu/" },
-  { name: "Banxa", url: " https://banxa.com/" },
-  { name: "Bitrefill", url: " https://bitrefill.com" },
-  { name: "Zerion", url: " https://zerion.io/" },
-  { name: "Rainbow", url: " https://rainbow.me" },
-  { name: "POAP", url: " https://app.poap.xyz/" },
-  { name: "Yearn", url: " https://beta.yearn.finance" },
-  { name: "ChangeNOW", url: " https://changenow.io/" },
-  { name: "Transak", url: " https://transak.com" },
-];
+import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class DiscoverPage {
+  discoverApps = [
+    // for some reason there is a space before the URL so this is required
+    { name: "MoonPay", url: " https://www.moonpay.com/" },
+    { name: "Ramp", url: " https://ramp.network/buy" },
+    { name: "ParaSwap", url: " https://paraswap.io" },
+    { name: "Kiln", url: " https://kiln.fi" },
+    { name: "Lido", url: " https://lido.fi/" },
+    { name: "1inch", url: " https://1inch.io/" },
+    { name: "BTCDirect", url: " https://btcdirect.eu/" },
+    { name: "Banxa", url: " https://banxa.com/" },
+    { name: "Bitrefill", url: " https://bitrefill.com" },
+    { name: "Zerion", url: " https://zerion.io/" },
+    { name: "Rainbow", url: " https://rainbow.me" },
+    { name: "POAP", url: " https://app.poap.xyz/" },
+    { name: "Yearn", url: " https://beta.yearn.finance" },
+    { name: "ChangeNOW", url: " https://changenow.io/" },
+    { name: "Transak", url: " https://transak.com" },
+  ];
+  baseLink = "discover/";
   waitForSelectCrypto = () => waitForElementByText("Select crypto");
   discoverPageHeader = () => getElementById("discover-banner");
   liveAppTitle = () => getElementById("live-app-title");
 
   getRandomLiveApp() {
-    const app = discoverApps[Math.floor(Math.random() * discoverApps.length)].name;
+    const app = this.discoverApps[Math.floor(Math.random() * this.discoverApps.length)].name;
     log.info(`Selected Live app: ${app}`);
     return app;
   }
 
   getAppUrl(name: string) {
-    const app = discoverApps.find(app => app.name === name);
+    const app = this.discoverApps.find(app => app.name === name);
     return app ? app.url : "App not found";
   }
 
   async openViaDeeplink(discoverApps = "") {
-    await openDeeplink(baseLink + discoverApps);
+    await openDeeplink(this.baseLink + discoverApps);
   }
 
   async expectApp(app: string) {

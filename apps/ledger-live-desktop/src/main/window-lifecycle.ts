@@ -80,6 +80,16 @@ export const loadWindow = async () => {
     fullUrl.searchParams.append("appLocale", app.getLocale());
     fullUrl.searchParams.append("systemLocale", app.getSystemLocale());
 
+    if (__DEV__) {
+      const setUserAgent = (webContents: Electron.WebContents) => {
+        webContents.setUserAgent(`${webContents.getUserAgent()} LedgerLive/${__APP_VERSION__}`);
+      };
+      setUserAgent(mainWindow.webContents);
+      mainWindow.webContents.on("did-attach-webview", function (_event, webContents) {
+        setUserAgent(webContents);
+      });
+    }
+
     await mainWindow.loadURL(fullUrl.href);
   }
 };

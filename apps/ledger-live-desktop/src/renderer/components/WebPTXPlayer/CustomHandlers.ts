@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import {
   handlers as exchangeHandlers,
@@ -13,13 +13,10 @@ import { closePlatformAppDrawer, openExchangeDrawer } from "~/renderer/actions/U
 import { WebviewProps } from "../Web3AppWebview/types";
 import { context } from "~/renderer/drawers/Provider";
 import WebviewErrorDrawer from "~/renderer/screens/exchange/Swap2/Form/WebviewErrorDrawer";
-import { platformAppDrawerStateSelector } from "~/renderer/reducers/UI";
 
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const dispatch = useDispatch();
   const { setDrawer } = React.useContext(context);
-
-  const { isOpen: isDrawerOpen } = useSelector(platformAppDrawerStateSelector);
 
   const tracking = useMemo(
     () =>
@@ -82,14 +79,12 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
             );
           },
           "custom.exchange.error": ({ error }) => {
-            if (!isDrawerOpen) {
-              dispatch(closePlatformAppDrawer());
-              setDrawer(WebviewErrorDrawer, error);
-            }
+            dispatch(closePlatformAppDrawer());
+            setDrawer(WebviewErrorDrawer, error);
             return Promise.resolve();
           },
         },
       }),
     };
-  }, [accounts, tracking, manifest, dispatch, setDrawer, isDrawerOpen]);
+  }, [accounts, tracking, manifest, dispatch, setDrawer]);
 }

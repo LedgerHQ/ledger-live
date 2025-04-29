@@ -12,7 +12,7 @@ import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/O
 import { TrackScreen, track, updateIdentify } from "~/analytics";
 import Illustration from "~/images/illustration/Illustration";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
-import ImageLedger from "~/images/double-ledger.png";
+import ImageLedger from "~/images/double-ledger.webp";
 
 type Props = {
   onClose: () => void;
@@ -32,7 +32,7 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
   const { navigateToRebornFlow, rebornFeatureFlagEnabled } = useRebornFlow(true);
 
   const identifyUser = useCallback(
-    (hasDevice: boolean) => {
+    (hasDevice: boolean | null) => {
       dispatch(setOnboardingHasDevice(hasDevice));
       updateIdentify();
     },
@@ -52,7 +52,7 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
   const exploreLedger = useCallback(() => {
     dispatch(setHasOrderedNano(false));
     navigation.navigate(ScreenName.OnboardingModalDiscoverLive);
-    identifyUser(false);
+    identifyUser(null);
     track("button_clicked", {
       button: "Explore the app",
       page: "Onboarding Get Started",

@@ -44,7 +44,14 @@ const AnimationContainer = styled(Flex).attrs({
 
 function AmountField({ account, status, field }: FieldComponentProps) {
   const unit = useAccountUnit(account);
-  return <DataRowUnitValue label={field.label} unit={unit} value={status.amount} />;
+  return (
+    <DataRowUnitValue
+      label={field.label}
+      unit={unit}
+      value={status.amount}
+      testID="device-validation-amount"
+    />
+  );
 }
 
 function FeesField({ account, parentAccount, status, field }: FieldComponentProps) {
@@ -57,14 +64,22 @@ function FeesField({ account, parentAccount, status, field }: FieldComponentProp
 
 function AddressField({ field }: FieldComponentProps) {
   invariant(field.type === "address", "AddressField invalid");
-  return <TextValueField label={field.label} value={field.address} />;
+  return (
+    <TextValueField label={field.label} value={field.address} testID="device-validation-address" />
+  );
 }
 
 // NB Leaving AddressField although I think it's redundant at this point
 // in case we want specific styles for addresses.
 function TextField({ field }: FieldComponentProps) {
   invariant(field.type === "text", "TextField invalid");
-  return <TextValueField label={field.label} value={field.value} />;
+  return (
+    <TextValueField
+      label={field.label}
+      value={field.value}
+      testID={"device-validation-" + field.label.toLowerCase().replace(/\s+/g, "-")}
+    />
+  );
 }
 
 const commonFieldComponents: Record<string, FieldComponent> = {
@@ -87,6 +102,7 @@ type SubComponentCommonProps = {
   parentAccount?: Account | null | undefined;
   transaction: Transaction;
   status: TransactionStatus;
+  device: Device;
 };
 
 export default function ValidateOnDevice({
@@ -165,6 +181,7 @@ export default function ValidateOnDevice({
           flexGrow: 1,
           justifyContent: "center",
         }}
+        testID="device-validation-scroll-view"
       >
         <Flex alignItems="center">
           <AnimationContainer>
@@ -179,6 +196,7 @@ export default function ValidateOnDevice({
               parentAccount={parentAccount}
               transaction={transaction}
               status={status}
+              device={device}
             />
           ) : (
             <TitleText>{titleWording}</TitleText>
@@ -214,6 +232,7 @@ export default function ValidateOnDevice({
                 transaction={transaction}
                 recipientWording={recipientWording}
                 status={status}
+                device={device}
               />
             ) : null}
           </DataRowsContainer>

@@ -4,7 +4,7 @@
     "composite": false,
     "incremental": false,
     "declaration": true,
-    "target": "ES6",
+    "target": "esnext",
     "noEmit": false,
     "jsx": "react",
     "rootDir": "./src",

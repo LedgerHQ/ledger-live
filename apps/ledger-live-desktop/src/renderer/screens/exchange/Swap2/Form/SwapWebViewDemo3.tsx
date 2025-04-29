@@ -17,7 +17,7 @@ import {
   accountToWalletAPIAccount,
   getAccountIdFromWalletAccountId,
 } from "@ledgerhq/live-common/wallet-api/converters";
-import { Account, AccountLike, SubAccount, SwapOperation } from "@ledgerhq/types-live";
+import { Account, AccountLike, TokenAccount, SwapOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -41,7 +41,7 @@ import {
   developerModeSelector,
   enablePlatformDevToolsSelector,
   languageSelector,
-  shareAnalyticsSelector,
+  lastSeenDeviceSelector,
 } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { captureException } from "~/sentry/renderer";
@@ -89,6 +89,11 @@ export type SwapWebProps = {
   liveAppUnavailable: () => void;
 };
 
+type TokenParams = {
+  fromTokenId?: string;
+  toTokenId?: string;
+};
+
 const SwapWebAppWrapper = styled.div`
   display: flex;
   width: 100%;
@@ -118,9 +123,10 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(languageSelector);
+  const lastSeenDevice = useSelector(lastSeenDeviceSelector);
+  const currentVersion = __APP_VERSION__;
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const devMode = useSelector(developerModeSelector);
-  const shareAnalytics = useSelector(shareAnalyticsSelector);
   const accounts = useSelector(flattenAccountsSelector);
   const { t } = useTranslation();
   const swapDefaultTrack = useGetSwapTrackingProperties();
@@ -129,6 +135,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
     defaultParentAccount?: Account;
     defaultAmountFrom?: string;
     from?: string;
+    defaultToken?: TokenParams;
   }>();
   const { networkStatus } = useNetworkStatus();
   const isOffline = networkStatus === NetworkStatus.OFFLINE;
@@ -202,8 +209,9 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
           return newTransaction;
         };
 
-        // filters out the custom fee config for chains without drawer
-        const hasDrawer = ["evm", "bitcoin"].includes(transaction.family);
+        const hasDrawer =
+          ["evm", "bitcoin"].includes(transaction.family) &&
+          !["optimism", "arbitrum", "base"].includes(mainAccount.currency.id);
         if (!params.openDrawer) {
           return {
             feesStrategy: finalTx.feesStrategy,
@@ -277,6 +285,9 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             },
           );
         });
+      },
+      "custom.isReady": async () => {
+        console.info("Swap Live App Loaded");
       },
       "custom.getTransactionByHash": async ({
         params,
@@ -375,7 +386,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             }
             return {
               ...account,
-              subAccounts: account.subAccounts?.map<SubAccount>((a: SubAccount) => {
+              subAccounts: account.subAccounts?.map<TokenAccount>((a: TokenAccount) => {
                 const subAccount = {
                   ...a,
                   swapHistory: [...a.swapHistory, swapOperation],
@@ -411,6 +422,13 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
               fromPath: simplifyFromPath(state?.from),
             }
           : {}),
+        ...(state?.defaultToken
+          ? {
+              fromTokenId: state.defaultToken.fromTokenId,
+              toTokenId: state.defaultToken.toTokenId,
+              amountFrom: state?.defaultAmountFrom || "",
+            }
+          : {}),
       }).toString(),
     [
       isOffline,
@@ -418,6 +436,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
       state?.defaultParentAccount,
       state?.defaultAmountFrom,
       state?.from,
+      state?.defaultToken,
       walletState,
     ],
   );
@@ -469,7 +488,9 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             swapApiBase: SWAP_API_BASE,
             swapUserIp: SWAP_USER_IP,
             devMode,
-            shareAnalytics,
+            lastSeenDevice: lastSeenDevice?.modelId,
+            currentVersion,
+            platform: "LLD",
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}

@@ -38,7 +38,10 @@ const icon: AppSpec<Transaction> = {
   genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
   transactionCheck: ({ maxSpendable }) => {
-    invariant(maxSpendable.gt(EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN), "balance is too low");
+    invariant(
+      maxSpendable.gt(EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN.multipliedBy(2)),
+      "balance is too low",
+    );
   },
   test: ({ operation, optimisticOperation }) => {
     const opExpected: Record<string, any> = toOperationRaw({
@@ -57,6 +60,7 @@ const icon: AppSpec<Transaction> = {
   mutations: [
     {
       name: "send 50%~",
+      feature: "send",
       maxRun: 1,
       transaction: ({ account, siblings, bridge }) => {
         invariant(account.spendableBalance.gt(0), "balance is 0");
@@ -94,6 +98,7 @@ const icon: AppSpec<Transaction> = {
     },
     {
       name: "send max",
+      feature: "sendMax",
       maxRun: 1,
       transaction: ({ account, siblings, bridge }) => {
         invariant(account.spendableBalance.gt(0), "balance is 0");

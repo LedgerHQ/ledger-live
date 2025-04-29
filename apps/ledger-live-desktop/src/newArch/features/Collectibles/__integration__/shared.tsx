@@ -1,33 +1,41 @@
 import { genAccount } from "@ledgerhq/coin-framework/lib/mocks/account";
 import React from "react";
-import { Switch, Route, withRouter } from "react-router";
+import { Switch, Route, withRouter, RouteComponentProps, StaticContext } from "react-router";
 import NftBreadCrumb from "LLD/components/BreadCrumb";
 import NFTGallery from "../Nfts/screens/Gallery";
 import NftCollection from "../Nfts/screens/Collection";
 import NftCollections from "../Nfts/Collections";
-import { account } from "./mockedAccount";
+import { account as ethAccount } from "./mocks/mockedAccount";
 import OrdinalsAccount from "LLD/features/Collectibles/Ordinals/screens/Account";
-import { MockedbtcAccount } from "./mockedBTCAccount";
-import { MockedTransaction } from "./mockedTx";
-import { getMockedTxStatus } from "./mockedTxStatus";
+import { MockedbtcAccount } from "./mocks/mockedBTCAccount";
+import { MockedTransaction } from "./mocks/mockedTx";
+import { getMockedTxStatus } from "./mocks/mockedTxStatus";
+import { Account } from "@ledgerhq/types-live";
 
-const NftCollectionNavigation = () => (
+const NftCollectionNavigation = ({ account }: { account?: Account }) => (
   <Switch>
-    <Route exact path="/" render={() => <NftCollections account={account} />} />
+    <Route exact path="/" render={() => <NftCollections account={account ?? ethAccount} />} />
     <Route path="/account/:id/nft-collection/:collectionAddress" render={() => <NftCollection />} />
     <Route path="/account/:id/nft-collection" render={() => <NFTGallery />} />
   </Switch>
 );
 
-const NftCollectionTestBase = () => (
+const NftCollectionTestBase = (
+  props: { account?: Account } & RouteComponentProps<never, StaticContext, unknown>,
+) => (
   <>
     <div id="modals"></div>
     <NftBreadCrumb />
-    <NftCollectionNavigation />
+    <NftCollectionNavigation {...props} />
   </>
 );
 
-export const NftCollectionTest = withRouter(NftCollectionTestBase);
+export const NftCollectionTest = withRouter(
+  (arg: { account?: Account } & RouteComponentProps<never, StaticContext, unknown>) => {
+    return <NftCollectionTestBase {...arg} />;
+  },
+);
+
 export const NoNftCollectionTest = withRouter(() => (
   <>
     <div id="modals"></div>

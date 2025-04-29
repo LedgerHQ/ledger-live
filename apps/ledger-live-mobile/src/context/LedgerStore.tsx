@@ -1,6 +1,6 @@
-import React, { Component } from "react";
+import React, { useEffect, useState, ReactNode, useCallback } from "react";
 import { Provider } from "react-redux";
-import { type StoreType } from "./store";
+import { Store } from "redux";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
@@ -26,57 +26,83 @@ import { importMarket } from "~/actions/market";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { importWalletState } from "@ledgerhq/live-wallet/store";
 
-export default class LedgerStoreProvider extends Component<
-  {
-    onInitFinished: () => void;
-    children: (ready: boolean, initialCountervalues?: CounterValuesStateRaw) => JSX.Element;
-    store: StoreType;
-  },
-  {
-    ready: boolean;
-    initialCountervalues?: CounterValuesStateRaw;
+interface Props {
+  onInitFinished: () => void;
+  children: (ready: boolean, initialCountervalues?: CounterValuesStateRaw) => ReactNode;
+  store: Store;
+}
+
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 500;
+
+async function retry<T>(fn: () => Promise<T>, retries: number, delay: number): Promise<T> {
+  try {
+    return await fn();
+  } catch (error) {
+    if (retries > 0) {
+      await new Promise(res => setTimeout(res, delay));
+      return retry(fn, retries - 1, delay);
+    } else {
+      throw new Error(`Max retries reached for ${fn.name}`);
+    }
   }
-> {
-  state = {
-    ready: false,
-    initialCountervalues: undefined,
-  };
+}
 
-  componentDidMount() {
-    return this.init();
-  }
+const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store }) => {
+  const [ready, setReady] = useState(false);
+  const [initialCountervalues, setInitialCountervalues] = useState<
+    CounterValuesStateRaw | undefined
+  >(undefined);
 
-  componentDidCatch(e: Error) {
-    console.error(e);
-    throw e;
-  }
+  const init = useCallback(async () => {
+    try {
+      const [
+        bleData,
+        settingsData,
+        cachedCurrencyIds,
+        supportedFiats,
+        accountsData,
+        postOnboardingState,
+        marketState,
+        trustchainStore,
+        walletStore,
+        protect,
+        initialCountervalues,
+      ] = await Promise.all([
+        retry(getBle, MAX_RETRIES, RETRY_DELAY),
+        retry(getSettings, MAX_RETRIES, RETRY_DELAY),
+        retry(listCachedCurrencyIds, MAX_RETRIES, RETRY_DELAY),
+        retry(listSupportedFiats, MAX_RETRIES, RETRY_DELAY),
+        retry(getAccounts, MAX_RETRIES, RETRY_DELAY),
+        retry(getPostOnboardingState, MAX_RETRIES, RETRY_DELAY),
+        retry(getMarketState, MAX_RETRIES, RETRY_DELAY),
+        retry(getTrustchainState, MAX_RETRIES, RETRY_DELAY),
+        retry(getWalletExportState, MAX_RETRIES, RETRY_DELAY),
+        retry(getProtect, MAX_RETRIES, RETRY_DELAY),
+        retry(getCountervalues, MAX_RETRIES, RETRY_DELAY),
+      ]);
 
-  async init() {
-    const bleData = await getBle();
-    this.props.store.dispatch(importBle(bleData));
-    const settingsData = await getSettings();
+      store.dispatch(importBle(bleData));
 
-    const cachedCurrencyIds = await listCachedCurrencyIds();
-    // hydrate the store with the bridge/cache
-    // Promise.allSettled doesn't exist in RN
-    await Promise.all(
-      cachedCurrencyIds
-        .map(id => {
-          const currency = findCryptoCurrencyById?.(id);
-          return currency ? hydrateCurrency(currency) : Promise.reject();
-        })
-        .map(promise =>
-          promise
-            .then((value: unknown) => ({ status: "fulfilled", value }))
-            .catch((reason: unknown) => ({ status: "rejected", reason })),
-        ),
-    );
-    const bitcoin = getCryptoCurrencyById("bitcoin");
-    const ethereum = getCryptoCurrencyById("ethereum");
-    const possibleIntermediaries = [bitcoin, ethereum];
+      // hydrate the store with the bridge/cache
+      // Promise.allSettled doesn't exist in RN
+      await Promise.all(
+        cachedCurrencyIds
+          .map(id => {
+            const currency = findCryptoCurrencyById?.(id);
+            return currency ? hydrateCurrency(currency) : Promise.reject();
+          })
+          .map(promise =>
+            promise
+              .then((value: unknown) => ({ status: "fulfilled", value }))
+              .catch((reason: unknown) => ({ status: "rejected", reason })),
+          ),
+      );
 
-    const getsupportedCountervalues = async () => {
-      const supportedFiats = await listSupportedFiats();
+      const bitcoin = getCryptoCurrencyById("bitcoin");
+      const ethereum = getCryptoCurrencyById("ethereum");
+      const possibleIntermediaries = [bitcoin, ethereum];
+
       const supportedCounterValues = [...supportedFiats, ...possibleIntermediaries]
         .map(currency => ({
           value: currency.ticker,
@@ -86,68 +112,57 @@ export default class LedgerStoreProvider extends Component<
         }))
         .sort((a, b) => (a.currency.name < b.currency.name ? -1 : 1));
 
-      if (this.props?.store?.dispatch) {
-        this.props.store.dispatch(setSupportedCounterValues(supportedCounterValues));
+      store.dispatch(setSupportedCounterValues(supportedCounterValues));
+
+      if (
+        settingsData &&
+        settingsData.counterValue &&
+        !supportedCounterValues.find(({ ticker }) => ticker === settingsData.counterValue)
+      ) {
+        settingsData.counterValue = settingsState.counterValue;
       }
 
-      return supportedCounterValues || [];
-    };
+      store.dispatch(importSettings(settingsData));
+      store.dispatch(importAccountsRaw(accountsData));
 
-    const supportedCV = await getsupportedCountervalues();
+      if (postOnboardingState) {
+        store.dispatch(importPostOnboardingState({ newState: postOnboardingState }));
+      }
 
-    if (
-      settingsData &&
-      settingsData.counterValue &&
-      !supportedCV.find(({ ticker }) => ticker === settingsData.counterValue)
-    ) {
-      settingsData.counterValue = settingsState.counterValue;
+      if (marketState) {
+        store.dispatch(importMarket(marketState));
+      }
+
+      if (trustchainStore) {
+        store.dispatch(importTrustchainStoreState(trustchainStore));
+      }
+
+      if (walletStore) {
+        store.dispatch(importWalletState(walletStore));
+      }
+
+      if (protect) {
+        store.dispatch(updateProtectData(protect.data));
+        store.dispatch(updateProtectStatus(protect.protectStatus));
+      }
+
+      setInitialCountervalues(initialCountervalues);
+      setReady(true);
+      onInitFinished();
+    } catch (error) {
+      console.error(
+        error instanceof Error
+          ? error.message
+          : "An unknown error occurred during the StoreProvider initialization",
+      );
     }
+  }, [store, onInitFinished]);
 
-    this.props.store.dispatch(importSettings(settingsData));
-    const accountsData = await getAccounts();
-    this.props.store.dispatch(importAccountsRaw(accountsData));
+  useEffect(() => {
+    init();
+  }, [init]);
 
-    const postOnboardingState = await getPostOnboardingState();
-    if (postOnboardingState) {
-      this.props.store.dispatch(importPostOnboardingState({ newState: postOnboardingState }));
-    }
+  return <Provider store={store}>{children(ready, initialCountervalues)}</Provider>;
+};
 
-    const marketState = await getMarketState();
-    if (marketState) {
-      this.props.store.dispatch(importMarket(marketState));
-    }
-
-    const trustchainStore = await getTrustchainState();
-    if (trustchainStore) {
-      this.props.store.dispatch(importTrustchainStoreState(trustchainStore));
-    }
-
-    const walletStore = await getWalletExportState();
-    if (walletStore) {
-      this.props.store.dispatch(importWalletState(walletStore));
-    }
-
-    const protect = await getProtect();
-    if (protect) {
-      this.props.store.dispatch(updateProtectData(protect.data));
-      this.props.store.dispatch(updateProtectStatus(protect.protectStatus));
-    }
-
-    const initialCountervalues = await getCountervalues();
-    this.setState(
-      {
-        ready: true,
-        initialCountervalues,
-      },
-      () => {
-        this.props.onInitFinished();
-      },
-    );
-  }
-
-  render() {
-    const { children, store } = this.props;
-    const { ready, initialCountervalues } = this.state;
-    return <Provider store={store}>{children(ready, initialCountervalues)}</Provider>;
-  }
-}
+export default LedgerStoreProvider;

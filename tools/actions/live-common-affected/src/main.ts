@@ -26,21 +26,22 @@ function main(ref: string) {
           stdout
             .split("\n")
             .map(line => {
-              const m = line.match(/live-common\/src\/([^/]+)\/([^/]+)/);
+              const m = line.match(/(live-common\/src\/([^/]+)\/([^/]+))|(coin-modules\/([^/]+))/);
               if (m) {
-                const [, first, second] = m;
-                if (first === "families") {
+                const [first, second, third] = m;
+                if (second === "families") {
                   // in case of coin implementations, we will stop at the coin family level
-                  return `${first}/${second}`;
+                  return `${second}/${third}`;
                 } else {
-                  // in any other case, we consider the first src/* folder level to be relevant filter
-                  return first;
+                  // in any other case, we consider the second src/* folder level to be relevant filter
+                  return second || first;
                 }
               }
             })
             .filter(Boolean),
         ),
       ];
+
       core.setOutput("is-affected", String(list.length > 0));
       core.setOutput("paths", list.join(" "));
       if (list.length > 0) {

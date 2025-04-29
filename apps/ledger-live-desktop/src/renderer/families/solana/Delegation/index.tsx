@@ -1,7 +1,7 @@
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { useSolanaStakesWithMeta } from "@ledgerhq/live-common/families/solana/react";
 import { SolanaAccount, SolanaStakeWithMeta } from "@ledgerhq/live-common/families/solana/types";
-import { Account, SubAccount } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
@@ -153,7 +153,7 @@ function EarnRewardsCTA({ account, onEarnRewards }: EarnRewardsCTAProps) {
     </Wrapper>
   );
 }
-const Delegations = ({ account }: { account: SolanaAccount | SubAccount }) => {
+const Delegations = ({ account }: { account: SolanaAccount | TokenAccount }) => {
   if (account.type !== "Account") return null;
   return <Delegation account={account} />;
 };

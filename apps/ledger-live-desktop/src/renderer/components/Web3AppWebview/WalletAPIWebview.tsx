@@ -2,7 +2,6 @@
 
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
-import { TrackFunction } from "@ledgerhq/live-common/platform/tracking";
 import {
   ExchangeType,
   UiHook,
@@ -32,7 +31,7 @@ import { track } from "~/renderer/analytics/segment";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { shareAnalyticsSelector } from "~/renderer/reducers/settings";
+import { mevProtectionSelector, shareAnalyticsSelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { getStoreValue, setStoreValue } from "~/renderer/store";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
@@ -44,10 +43,11 @@ import { NoAccountOverlay } from "./NoAccountOverlay";
 import { useWebviewState } from "./helpers";
 import { Loader } from "./styled";
 import { WebviewAPI, WebviewProps, WebviewTag } from "./types";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 
-function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction>): UiHook {
+function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
   const { pushToast } = useToasts();
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -74,7 +74,14 @@ function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction
           },
         );
       },
-      "account.receive": ({ account, parentAccount, accountAddress, onSuccess, onError }) => {
+      "account.receive": ({
+        account,
+        parentAccount,
+        accountAddress,
+        onSuccess,
+        onError,
+        onCancel,
+      }) => {
         ipcRenderer.send("show-app", {});
         dispatch(
           openModal("MODAL_EXCHANGE_CRYPTO_DEVICE", {
@@ -84,6 +91,7 @@ function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction
               onSuccess(accountAddress);
             },
             onCancel: onError,
+            onClose: onCancel,
             verifyAddress: true,
           }),
         );
@@ -128,6 +136,7 @@ function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction
             onCancel: onError,
             manifestId: manifest.id,
             manifestName: manifest.name,
+            location: HOOKS_TRACKING_LOCATIONS.genericDAppTransactionSend,
           }),
         );
       },
@@ -238,6 +247,7 @@ function useWebView(
   customWebviewStyle?: React.CSSProperties,
 ) {
   const accounts = useSelector(flattenAccountsSelector);
+  const mevProtected = useSelector(mevProtectionSelector);
 
   const uiHook = useUiHook(manifest, tracking);
   const shareAnalytics = useSelector(shareAnalyticsSelector);
@@ -247,6 +257,7 @@ function useWebView(
     userId,
     tracking: shareAnalytics,
     wallet,
+    mevProtected,
   });
 
   const webviewHook = useMemo(() => {
@@ -290,6 +301,7 @@ function useWebView(
     currentAccountHistDb,
     tracking,
     initialAccountId: inputs?.accountId?.toString(),
+    mevProtected,
   });
 
   const handleMessage = useCallback(

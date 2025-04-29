@@ -17,8 +17,9 @@ import {
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk-mobile";
 
 import { SeedPhraseType, StorylyInstanceID } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -29,7 +30,9 @@ import DesyncOverlay from "./DesyncOverlay";
 import {
   completeOnboarding,
   setHasOrderedNano,
+  setIsReborn,
   setLastConnectedDevice,
+  setOnboardingHasDevice,
   setReadOnlyMode,
 } from "~/actions/settings";
 import InstallSetOfApps from "~/components/DeviceAction/InstallSetOfApps";
@@ -40,6 +43,9 @@ import ContinueOnEuropa from "./assets/ContinueOnEuropa";
 import type { SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
 import { useIsFocused } from "@react-navigation/native";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
+import { hasCompletedOnboardingSelector } from "~/reducers/settings";
+import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 
@@ -53,6 +59,13 @@ type Step = {
   estimatedTime?: number;
   renderBody?: (isDisplayed?: boolean) => ReactNode;
 };
+
+export type SeedPathStatus =
+  | "choice_new_or_restore"
+  | "new_seed"
+  | "choice_restore_direct_or_recover"
+  | "restore_seed"
+  | "recover_seed";
 
 export type SyncOnboardingCompanionProps = {
   /**
@@ -108,7 +121,6 @@ enum CompanionStepKey {
   EarlySecurityCheckCompleted = 0,
   Pin,
   Seed,
-  Backup,
   Apps,
   Ready,
   Exit,
@@ -136,6 +148,7 @@ const ContinueOnDeviceWithAnim: React.FC<{
  * The desync alert message overlay is rendered from this component to better handle relative position
  * with the vertical timeline.
  */
+
 export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   navigation,
   device,
@@ -146,6 +159,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
 }) => {
   const { t } = useTranslation();
   const dispatchRedux = useDispatch();
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const deviceInitialApps = useFeature("deviceInitialApps");
 
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
@@ -157,13 +171,13 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     CompanionStepKey.EarlySecurityCheckCompleted,
   );
   const lastCompanionStepKey = useRef<CompanionStepKey>();
-  const [seedPathStatus, setSeedPathStatus] = useState<
-    | "choice_new_or_restore"
-    | "new_seed"
-    | "choice_restore_direct_or_recover"
-    | "restore_seed"
-    | "recover_seed"
-  >("choice_new_or_restore");
+  const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
+
+  useTrackOnboardingFlow({
+    location: HOOKS_TRACKING_LOCATIONS.onboardingFlow,
+    device,
+    seedPathStatus,
+  });
 
   const servicesConfig = useFeature("protectServicesMobile");
 
@@ -219,6 +233,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     device,
     pollingPeriodMs: POLLING_PERIOD_MS,
     stopPolling: !isPollingOn,
+    allowedErrorChecks: [isAllowedOnboardingStatePollingErrorDmk],
   });
 
   // Unmount cleanup to make sure the polling is stopped.
@@ -371,7 +386,9 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
         deviceOnboardingState.currentOnboardingStep,
       )
     ) {
-      setCompanionStepKey(CompanionStepKey.Apps);
+      setCompanionStepKey(
+        deviceInitialApps?.enabled ? CompanionStepKey.Apps : CompanionStepKey.Ready,
+      );
       seededDeviceHandled.current = true;
       return;
     }
@@ -424,7 +441,12 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       default:
         break;
     }
-  }, [deviceOnboardingState, notifyEarlySecurityCheckShouldReset, shouldRestoreApps]);
+  }, [
+    deviceInitialApps?.enabled,
+    deviceOnboardingState,
+    notifyEarlySecurityCheckShouldReset,
+    shouldRestoreApps,
+  ]);
 
   // When the user gets close to the seed generation step, sets the lost synchronization delay
   // and timers to a higher value. It avoids having a warning message while the connection is lost
@@ -452,11 +474,15 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
 
   const addedToKnownDevices = useRef(false);
   useEffect(() => {
-    if (companionStepKey >= CompanionStepKey.Backup) {
+    if (companionStepKey >= CompanionStepKey.Apps) {
       // Stops the polling once the device is seeded
       setIsPollingOn(false);
       // At this step, device has been successfully setup so it can be saved in
       // the list of known devices
+      dispatchRedux(setIsReborn(false));
+      if (!hasCompletedOnboarding) {
+        dispatchRedux(setOnboardingHasDevice(true));
+      }
       if (!addedToKnownDevices.current) {
         addedToKnownDevices.current = true;
         addToKnownDevices();
@@ -478,7 +504,13 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
         readyRedirectTimerRef.current = null;
       }
     };
-  }, [companionStepKey, addToKnownDevices, handleOnboardingDone]);
+  }, [
+    companionStepKey,
+    addToKnownDevices,
+    handleOnboardingDone,
+    dispatchRedux,
+    hasCompletedOnboarding,
+  ]);
 
   useEffect(
     () =>

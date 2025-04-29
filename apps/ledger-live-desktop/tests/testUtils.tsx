@@ -17,6 +17,7 @@ import DrawerProvider from "~/renderer/drawers/Provider";
 import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
 import { getFeature } from "./featureFlags";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
+import CustomLiveAppProvider from "./CustomLiveAppProvider";
 
 config.disabled = true;
 
@@ -37,6 +38,14 @@ interface RenderReturn {
   store: ReturnType<typeof createStore>;
   user: ReturnType<typeof userEvent.setup>;
 }
+
+type DeepPartial<T> = T extends Function
+  ? T
+  : T extends Array<infer U>
+    ? Array<DeepPartial<U>>
+    : T extends object
+      ? { [P in keyof T]?: DeepPartial<T[P]> }
+      : T;
 
 function render(
   ui: JSX.Element,
@@ -79,13 +88,18 @@ function render(
   };
 }
 
-function renderHook<Result>(
-  hook: () => Result,
+function renderHook<Result, Props = undefined>(
+  hook: (props: Props) => Result,
   {
+    initialProps,
     initialState = {},
     //initialRoute = "/",
     store = createStore({ state: { ...(initialState || {}) } as State, dbMiddleware }),
-  },
+  }: {
+    initialProps?: Props;
+    initialState?: DeepPartial<State>;
+    store?: ReturnType<typeof createStore>;
+  } = {},
 ) {
   const queryClient = new QueryClient();
   function Wrapper({ children }: ChildrenProps): JSX.Element {
@@ -103,10 +117,45 @@ function renderHook<Result>(
   return {
     store,
 
-    ...rtlRenderHook(hook, { wrapper: Wrapper as React.ComponentType }),
+    ...rtlRenderHook(hook, { wrapper: Wrapper as React.ComponentType, initialProps }),
+  };
+}
+
+function renderHookWithLiveAppProvider<Result, Props = undefined>(
+  hook: (props: Props) => Result,
+  {
+    initialProps,
+    initialState = {},
+    //initialRoute = "/",
+    store = createStore({ state: { ...(initialState || {}) } as State, dbMiddleware }),
+  }: {
+    initialProps?: Props;
+    initialState?: DeepPartial<State>;
+    store?: ReturnType<typeof createStore>;
+  } = {},
+) {
+  const queryClient = new QueryClient();
+  function Wrapper({ children }: ChildrenProps): JSX.Element {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <Provider store={store}>
+          <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+            <CustomLiveAppProvider>
+              <MemoryRouter>{children}</MemoryRouter>
+            </CustomLiveAppProvider>
+          </FirebaseFeatureFlagsProvider>
+        </Provider>
+      </QueryClientProvider>
+    );
+  }
+
+  return {
+    store,
+
+    ...rtlRenderHook(hook, { wrapper: Wrapper as React.ComponentType, initialProps }),
   };
 }
 
 export * from "@testing-library/react";
 
-export { render, userEvent, renderHook };
+export { render, userEvent, renderHook, renderHookWithLiveAppProvider };

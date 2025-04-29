@@ -4,7 +4,11 @@ export {
   encodeTokenAccountId,
   decodeTokenAccountId,
 } from "./accountId";
-export { emptyHistoryCache, getAccountHistoryBalances } from "./balanceHistoryCache";
+export {
+  createEmptyHistoryCache,
+  emptyHistoryCache,
+  getAccountHistoryBalances,
+} from "./balanceHistoryCache";
 export { groupAccountOperationsByDay, groupAccountsOperationsByDay } from "./groupOperations";
 export {
   getMainAccount,

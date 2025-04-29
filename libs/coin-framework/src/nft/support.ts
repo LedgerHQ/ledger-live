@@ -38,29 +38,23 @@ const batchersMap = new Map<string, NftRequestsBatcher>();
  * This method is still EVM based for now but can be improved
  * to implement an even more generic solution
  */
-export const metadataCallBatcher = (
+export const metadataCallBatcher = <Params>(
   currency: CryptoCurrency,
   api: {
-    getNftMetadata: (
-      input: NftMetadataInput[],
-      params: { chainId: number },
-    ) => Promise<NFTMetadataResponse[]>;
+    getNftMetadata: (input: NftMetadataInput[], params: Params) => Promise<NFTMetadataResponse[]>;
     getNftCollectionMetadata: (
       input: CollectionMetadataInput[],
-      params: { chainId: number },
+      params: Params,
     ) => Promise<NFTCollectionMetadataResponse[]>;
+    getParams: (currency: CryptoCurrency) => Params;
   },
 ): NftRequestsBatcher => {
-  const chainId = currency?.ethereumLikeInfo?.chainId;
-
-  if (!chainId) {
-    throw new Error("Ethereum: No chainId for this Currency");
-  }
-
   if (!batchersMap.has(currency.id)) {
+    const params = api.getParams(currency);
+
     const batcher = {
-      loadNft: makeBatcher(api.getNftMetadata, { chainId }),
-      loadCollection: makeBatcher(api.getNftCollectionMetadata, { chainId }),
+      loadNft: makeBatcher(api.getNftMetadata, params),
+      loadCollection: makeBatcher(api.getNftCollectionMetadata, params),
     };
     batchersMap.set(currency.id, batcher);
   }

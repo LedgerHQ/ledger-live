@@ -50,6 +50,7 @@ const vet: AppSpec<Transaction> = {
   mutations: [
     {
       name: "move ~50% VET",
+      feature: "send",
       maxRun: 1,
       transaction: ({
         account,
@@ -87,6 +88,7 @@ const vet: AppSpec<Transaction> = {
     },
     {
       name: "move all VET",
+      feature: "sendMax",
       maxRun: 1,
       transaction: ({
         account,
@@ -124,6 +126,7 @@ const vtho: AppSpec<Transaction> = {
   mutations: [
     {
       name: "move ~50% VTHO",
+      feature: "tokens",
       maxRun: 1,
       transaction: ({
         account,
@@ -168,6 +171,7 @@ const vtho: AppSpec<Transaction> = {
     },
     {
       name: "move all VTHO",
+      feature: "tokens",
       maxRun: 1,
       transaction: ({
         account,

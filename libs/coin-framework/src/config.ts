@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { MissingCoinConfig } from "./errors";
 
 type ConfigStatus =
@@ -8,6 +8,28 @@ type ConfigStatus =
   | {
       type: "under_maintenance";
       message?: string;
+    }
+  | {
+      type: "migration";
+      chain: CryptoCurrencyId;
+      from: string;
+      to: string;
+      link: string;
+    }
+  | {
+      type: "feature_unavailable";
+      link: string;
+      feature:
+        | "history"
+        | "swap"
+        | "token_history"
+        | "send_and_receive"
+        | "send"
+        | "receive"
+        | "sending_tokens"
+        | "receiving_tokens"
+        | "staking"
+        | "claiming_staking_rewards";
     }
   | {
       type: "will_be_deprecated";

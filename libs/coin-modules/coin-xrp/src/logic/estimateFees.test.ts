@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
-import { estimateFees } from "./estimateFees";
 import { NetworkInfo } from "../types";
+import { estimateFees } from "./estimateFees";
 
 const mockGetServerInfos = jest.fn();
 jest.mock("../network", () => ({

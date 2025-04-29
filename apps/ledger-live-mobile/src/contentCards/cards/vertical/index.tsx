@@ -55,7 +55,12 @@ const VerticalCard = ContentCardBuilder<Props>(
       <TouchableOpacity onPress={metadata.actions?.onClick}>
         {tag && <Tag size={size} label={tag} />}
         {metadata.actions?.onDismiss && <Close onPress={metadata.actions?.onDismiss} />}
-        <Container size={size} widthFactor={widthFactor} isMediaOnly={isMediaOnly}>
+        <Container
+          size={size}
+          widthFactor={widthFactor}
+          isMediaOnly={isMediaOnly}
+          isFilledMedia={filledMedia}
+        >
           {media && (
             <Media
               uri={media}
@@ -66,7 +71,7 @@ const VerticalCard = ContentCardBuilder<Props>(
             />
           )}
           {!isMediaOnly ? (
-            <Flex px={6} pt={tag ? 8 : 4}>
+            <Flex px={6} pt={3}>
               {title && <Title size={size} label={title} textAlign={titleTextAlign} />}
               {description && (
                 <Description size={size} label={description} textAlign={descriptionTextAlign} />

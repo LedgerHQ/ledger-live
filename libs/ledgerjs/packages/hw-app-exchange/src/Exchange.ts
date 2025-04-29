@@ -24,6 +24,7 @@ export function isExchangeTypeNg(type: ExchangeTypes): boolean {
   return ExchangeTypeNg.includes(type);
 }
 
+const CLA = 0xe0;
 const START_NEW_TRANSACTION_COMMAND = 0x03;
 const SET_PARTNER_KEY_COMMAND = 0x04;
 const CHECK_PARTNER_COMMAND = 0x05;
@@ -35,6 +36,7 @@ const CHECK_REFUND_ADDRESS = 0x09;
 // const CHECK_REFUND_ADDRESS_NO_DISPLAY = 0x0c;
 const SIGN_COIN_TRANSACTION = 0x0a;
 const CHECK_ASSET_IN_AND_DISPLAY = 0x0b;
+const SEND_PKI_CERTIFICATE = 0x0e;
 const GET_CHALLENGE = 0x10;
 const SEND_TRUSTED_NAME_DESCRIPTOR = 0x11;
 
@@ -116,7 +118,7 @@ export default class Exchange {
 
   async startNewTransaction(): Promise<string> {
     const result: Buffer = await this.transport.send(
-      0xe0,
+      CLA,
       START_NEW_TRANSACTION_COMMAND,
       this.transactionRate,
       this.transactionType,
@@ -141,7 +143,7 @@ export default class Exchange {
   async setPartnerKey(info: PartnerKeyInfo): Promise<void> {
     const partnerNameAndPublicKey = this.getPartnerKeyInfo(info);
     const result: Buffer = await this.transport.send(
-      0xe0,
+      CLA,
       SET_PARTNER_KEY_COMMAND,
       this.transactionRate,
       this.transactionType,
@@ -153,7 +155,7 @@ export default class Exchange {
 
   async checkPartner(signatureOfPartnerData: Buffer): Promise<void> {
     const result: Buffer = await this.transport.send(
-      0xe0,
+      CLA,
       CHECK_PARTNER_COMMAND,
       this.transactionRate,
       this.transactionType,
@@ -205,7 +207,7 @@ export default class Exchange {
     }
 
     const result: Buffer = await this.transport.send(
-      0xe0,
+      CLA,
       PROCESS_TRANSACTION_RESPONSE,
       this.transactionRate,
       p2Value,
@@ -230,7 +232,7 @@ export default class Exchange {
       const extFlag = i == 0 ? P2_MORE : P2_MORE | P2_EXTEND;
 
       const result = await this.transport.send(
-        0xe0,
+        CLA,
         PROCESS_TRANSACTION_RESPONSE,
         this.transactionRate,
         this.transactionType | extFlag,
@@ -254,7 +256,7 @@ export default class Exchange {
     }
 
     const result: Buffer = await this.transport.send(
-      0xe0,
+      CLA,
       CHECK_TRANSACTION_SIGNATURE,
       this.transactionRate,
       this.transactionType,
@@ -283,7 +285,7 @@ export default class Exchange {
       addressParameters,
     ]);
     const result: Buffer = await this.transport.send(
-      0xe0,
+      CLA,
       this.transactionType === ExchangeTypes.Swap || this.transactionType === ExchangeTypes.SwapNg
         ? CHECK_PAYOUT_ADDRESS
         : CHECK_ASSET_IN_AND_DISPLAY,
@@ -314,7 +316,7 @@ export default class Exchange {
       addressParameters,
     ]);
     const result: Buffer = await this.transport.send(
-      0xe0,
+      CLA,
       CHECK_REFUND_ADDRESS,
       this.transactionRate,
       this.transactionType,
@@ -326,7 +328,7 @@ export default class Exchange {
 
   async signCoinTransaction(): Promise<void> {
     const result: Buffer = await this.transport.send(
-      0xe0,
+      CLA,
       SIGN_COIN_TRANSACTION,
       this.transactionRate,
       this.transactionType,
@@ -338,7 +340,7 @@ export default class Exchange {
 
   async getChallenge(): Promise<number> {
     const result: Buffer = await this.transport.send(
-      0xe0,
+      CLA,
       GET_CHALLENGE,
       this.transactionRate,
       this.transactionType,
@@ -349,9 +351,26 @@ export default class Exchange {
     return result.slice(0, 4).readUInt32BE();
   }
 
+  async sendPKICertificate(descriptor: Buffer, signature: Buffer): Promise<void> {
+    const result: Buffer = await this.transport.send(
+      CLA,
+      SEND_PKI_CERTIFICATE,
+      this.transactionRate,
+      this.transactionType,
+      Buffer.concat([
+        descriptor,
+        Buffer.from("15", "hex"),
+        Buffer.from([signature.length]),
+        signature,
+      ]),
+      this.allowedStatuses,
+    );
+    maybeThrowProtocolError(result);
+  }
+
   async sendTrustedDescriptor(buffer: Buffer): Promise<void> {
     const result: Buffer = await this.transport.send(
-      0xe0,
+      CLA,
       SEND_TRUSTED_NAME_DESCRIPTOR,
       this.transactionRate,
       this.transactionType,

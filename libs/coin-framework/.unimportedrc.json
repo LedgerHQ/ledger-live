@@ -18,19 +18,14 @@
     "src/index.ts",
     "src/operation.ts",
     "src/signer.ts",
-    "src/transaction/common.ts"
+    "src/transaction/common.ts",
+    "src/utils.ts"
   ],
   "ignoreUnimported": [
     "src/config.ts",
     "src/test-helpers/bridge-integration-suite.ts",
     "src/test-helpers/staticTime.ts"
   ],
-  "ignoreUnresolved": [
-    "follow-redirects",
-    "form-data",
-    "proxy-from-env"
-  ],
-  "ignoreUnused": [
-    "lru-cache"
-  ]
+  "ignoreUnresolved": ["follow-redirects", "form-data", "proxy-from-env"],
+  "ignoreUnused": ["lru-cache"]
 }

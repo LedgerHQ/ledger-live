@@ -43,7 +43,6 @@ jobs:
       win: ${{ steps.status.outputs.win }}
       mac: ${{ steps.status.outputs.mac }}
 
-    continue-on-error: true
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -113,14 +112,17 @@ jobs:
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
       - uses: actions/download-artifact@v4
+        if: ${{ needs.build-desktop-app.outputs.linux == 'success' }}
         with:
           name: linux-js-bundle-metafiles
           path: linux-js-bundle-metafiles
       - uses: actions/download-artifact@v4
+        if: ${{ needs.build-desktop-app.outputs.win == 'success' }}
         with:
           name: win-js-bundle-metafiles
           path: win-js-bundle-metafiles
       - uses: actions/download-artifact@v4
+        if: ${{ needs.build-desktop-app.outputs.mac == 'success' }}
         with:
           name: mac-js-bundle-metafiles
           path: mac-js-bundle-metafiles

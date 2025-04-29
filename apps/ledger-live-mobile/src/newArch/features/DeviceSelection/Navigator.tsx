@@ -3,47 +3,36 @@ import { Platform } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
-import { NavigationProp, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { track } from "~/analytics";
-import SelectDevice, {
-  addAccountsSelectDeviceHeaderOptions,
-} from "LLM/features/DeviceSelection/screens/SelectDevice";
-import ConnectDevice, {
-  connectDeviceHeaderOptions,
-} from "LLM/features/DeviceSelection/screens/ConnectDevice";
+import SelectDevice from "LLM/features/DeviceSelection/screens/SelectDevice";
 import StepHeader from "~/components/StepHeader";
-import { NavigationHeaderCloseButtonAdvanced } from "~/components/NavigationHeaderCloseButton";
 import { DeviceSelectionNavigatorParamsList } from "./types";
+import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
 
 export default function Navigator() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const route = useRoute();
+  const navigation = useNavigation();
 
   const onClose = useCallback(() => {
     track("button_clicked", {
       button: "Close",
       screen: route.name,
     });
-  }, [route]);
+    navigation.getParent()?.goBack();
+  }, [route, navigation]);
 
   const stackNavigationConfig = useMemo(
     () => ({
       ...getStackNavigatorConfig(colors, true),
-      headerRight: () => <NavigationHeaderCloseButtonAdvanced onClose={onClose} />,
+      headerRight: () => <CloseWithConfirmation onClose={onClose} />,
     }),
     [colors, onClose],
   );
-
-  const onConnectDeviceBack = useCallback((navigation: NavigationProp<Record<string, unknown>>) => {
-    track("button_clicked", {
-      button: "Back arrow",
-      page: ScreenName.ConnectDevice,
-    });
-    navigation.goBack();
-  }, []);
 
   return (
     <Stack.Navigator
@@ -66,28 +55,11 @@ export default function Navigator() {
               title={t("transfer.receive.stepperHeader.connectDevice")}
             />
           ),
-          ...addAccountsSelectDeviceHeaderOptions(onClose),
         }}
         initialParams={route.params}
       />
 
-      {/* Select / Connect Device */}
-      <Stack.Screen
-        name={ScreenName.ConnectDevice}
-        component={ConnectDevice}
-        options={({ navigation }) => ({
-          headerTitle: () => (
-            <StepHeader
-              subtitle={t("transfer.receive.stepperHeader.range", {
-                currentStep: "2",
-                totalSteps: 3,
-              })}
-              title={t("transfer.receive.stepperHeader.connectDevice")}
-            />
-          ),
-          ...connectDeviceHeaderOptions(() => onConnectDeviceBack(navigation)),
-        })}
-      />
+      {/*Connect Device : Only for receive flow context it will be re-added & adjusted in https://ledgerhq.atlassian.net/browse/LIVE-14726 */}
     </Stack.Navigator>
   );
 }

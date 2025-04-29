@@ -1,4 +1,5 @@
 import { Address, toNano } from "@ton/core";
+import { setCoinConfig } from "../../config";
 import {
   TOKEN_TRANSFER_FORWARD_AMOUNT,
   TOKEN_TRANSFER_MAX_FEE,
@@ -13,6 +14,7 @@ import {
   getTransferExpirationTime,
   isAddressValid,
 } from "../../utils";
+import mockServer, { API_TON_ENDPOINT } from "../fixtures/api.fixtures";
 import {
   account,
   transaction as baseTransaction,
@@ -90,6 +92,7 @@ describe("TON transfers", () => {
     customPayload: null,
     forwardAmount: BigInt(0),
     forwardPayload: null,
+    knownJetton: null,
   };
 
   const nftPayload: TonPayloadFormat = {
@@ -139,6 +142,23 @@ describe("Get TON paths", () => {
 });
 
 describe("Build TON transaction", () => {
+  beforeAll(() => {
+    setCoinConfig(() => ({
+      status: {
+        type: "active",
+      },
+      infra: {
+        API_TON_ENDPOINT: API_TON_ENDPOINT,
+        KNOWN_JETTONS: [],
+      },
+    }));
+    mockServer.listen();
+  });
+
+  afterAll(() => {
+    mockServer.close();
+  });
+
   const seqno = 22;
 
   test("Build TON transaction with an specific amount", () => {
@@ -184,7 +204,7 @@ describe("Build TON transaction", () => {
       to: jettonTransfer.to.toString(),
       payload: undefined,
     }).toStrictEqual({
-      to: Address.parse(account.subAccounts?.[0].token.contractAddress ?? "").toString(),
+      to: Address.parse(account.subAccounts?.[0].jettonWallet ?? "").toString(),
       seqno,
       amount: toNano(TOKEN_TRANSFER_MAX_FEE),
       bounce: true,
@@ -213,6 +233,7 @@ describe("Build TON transaction", () => {
       customPayload: null,
       forwardAmount: TOKEN_TRANSFER_FORWARD_AMOUNT.toString(),
       forwardPayload: null,
+      knownJetton: null,
     });
   });
 });

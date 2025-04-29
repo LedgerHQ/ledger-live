@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { Platform } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { track } from "~/analytics";
@@ -13,10 +13,11 @@ import { hasClosedNetworkBannerSelector } from "~/reducers/settings";
 import { urls } from "~/utils/urls";
 import SelectCrypto from "LLM/features/AssetSelection/screens/SelectCrypto";
 import SelectNetwork from "LLM/features/AssetSelection/screens/SelectNetwork";
-import { NavigationHeaderCloseButtonAdvanced } from "~/components/NavigationHeaderCloseButton";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import { AssetSelectionNavigatorParamsList } from "./types";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
+import useAnalytics from "../../hooks/useAnalytics";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<AssetSelectionNavigatorParamsList, NavigatorName.AssetSelection>
@@ -27,21 +28,40 @@ export default function Navigator() {
   const route = useRoute<NavigationProps["route"]>();
   const hasClosedNetworkBanner = useSelector(hasClosedNetworkBannerSelector);
 
-  const { token, currency } = route.params || {};
+  const { token, currency, context, sourceScreenName } = route.params || {};
 
-  const onClose = useCallback(() => {
-    track("button_clicked", {
-      button: "Close",
-      screen: route.name,
-    });
-  }, [route]);
+  const navigation = useNavigation();
+  const { analyticsMetadata } = useAnalytics(context, sourceScreenName);
+
+  const handleOnCloseAssetSelectionNavigator = useCallback(
+    (screenName: string) => () => {
+      const closeMetadata = analyticsMetadata[screenName]?.onClose;
+      if (closeMetadata)
+        track(closeMetadata.eventName, {
+          ...closeMetadata.payload,
+        });
+      navigation.getParent()?.goBack();
+    },
+    [navigation, analyticsMetadata],
+  );
+
+  const handleOnBack = useCallback(
+    (screenName: string) => (nav: typeof navigation) => {
+      const backMetadata = analyticsMetadata[screenName]?.onBack;
+      if (backMetadata)
+        track(backMetadata.eventName, {
+          ...backMetadata.payload,
+        });
+      nav.goBack();
+    },
+    [analyticsMetadata],
+  );
 
   const stackNavigationConfig = useMemo(
     () => ({
       ...getStackNavigatorConfig(colors, true),
-      headerRight: () => <NavigationHeaderCloseButtonAdvanced onClose={onClose} />,
     }),
-    [colors, onClose],
+    [colors],
   );
 
   return (
@@ -58,9 +78,18 @@ export default function Navigator() {
         name={ScreenName.AddAccountsSelectCrypto}
         component={SelectCrypto}
         options={{
-          headerLeft: () => <NavigationHeaderBackButton />,
           title: "",
-          headerRight: () => <NavigationHeaderCloseButtonAdvanced onClose={onClose} />,
+          headerRight: () => (
+            <CloseWithConfirmation
+              onClose={handleOnCloseAssetSelectionNavigator(ScreenName.AddAccountsSelectCrypto)}
+            />
+          ),
+
+          headerLeft: () => (
+            <NavigationHeaderBackButton
+              onPress={handleOnBack(ScreenName.AddAccountsSelectCrypto)}
+            />
+          ),
         }}
         initialParams={route.params}
       />
@@ -69,14 +98,18 @@ export default function Navigator() {
         name={ScreenName.SelectNetwork}
         component={SelectNetwork}
         options={{
-          headerLeft: () => <NavigationHeaderBackButton />,
           headerTitle: "",
+          headerLeft: () => (
+            <NavigationHeaderBackButton onPress={handleOnBack(ScreenName.SelectNetwork)} />
+          ),
           headerRight: () => (
             <Flex alignItems="center" justifyContent="center" flexDirection="row">
               {hasClosedNetworkBanner && (
                 <HelpButton eventButton="Choose a network article" url={urls.chooseNetwork} />
               )}
-              <NavigationHeaderCloseButtonAdvanced onClose={onClose} />
+              <CloseWithConfirmation
+                onClose={handleOnCloseAssetSelectionNavigator(ScreenName.SelectNetwork)}
+              />
             </Flex>
           ),
         }}

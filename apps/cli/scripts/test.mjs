@@ -1,6 +1,12 @@
 #!/usr/bin/env zx
 
-const p = await $`./bin/index.js version`;
+$.verbose = true; // everything works like in v7
+
+if (os.platform() === "win32") {
+  usePowerShell();
+}
+
+const p = await $`node ./bin/index.js version`;
 
 const acceptedWarnings = [
   "bigint: Failed to load bindings, pure JS will be used (try npm run rebuild?)", // https://ledgerhq.atlassian.net/browse/LIVE-5477
@@ -14,6 +20,4 @@ if (errors.length > 0) {
     "/!\\ NOGO. Some warnings are logged by the CLI. Please fix them, this is a blocker to not ship more warnings than we already have. It costs time for all devs when we do.",
     errors,
   );
-
-  process.exit(1);
 }

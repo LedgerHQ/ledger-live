@@ -22,6 +22,7 @@ import { notAvailableModalInfo } from "../NftInfoNotAvailable";
 import invariant from "invariant";
 import { useNftGalleryFilter, getThreshold } from "@ledgerhq/live-nft-react";
 import { useNftCollectionsStatus } from "~/hooks/nfts/useNftCollectionsStatus";
+import SafeAreaView from "~/components/SafeAreaView";
 
 const MAX_COLLECTIONS_FIRST_RENDER = 12;
 const COLLECTIONS_TO_ADD_ON_LIST_END_REACHED = 6;
@@ -107,9 +108,10 @@ const NftGallery = () => {
   );
 
   const isNFTDisabled = useFeature("disableNftSend")?.enabled && Platform.OS === "ios";
+  const displaySendBtn = account.currency.id !== "solana";
 
   return (
-    <>
+    <SafeAreaView isFlex edges={["bottom"]}>
       <InfoModal
         isOpened={isOpen}
         onClose={onCloseModal}
@@ -124,21 +126,23 @@ const NftGallery = () => {
         initialNumToRender={1}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
-          <View style={styles.sendButtonContainer}>
-            <Button
-              type="primary"
-              IconLeft={SendIcon}
-              containerStyle={styles.sendButton}
-              title={t("account.send")}
-              onPress={isNFTDisabled ? onOpenModal : goToCollectionSelection}
-            />
-          </View>
+          displaySendBtn ? (
+            <View style={styles.sendButtonContainer}>
+              <Button
+                type="primary"
+                IconLeft={SendIcon}
+                containerStyle={styles.sendButton}
+                title={t("account.send")}
+                onPress={isNFTDisabled ? onOpenModal : goToCollectionSelection}
+              />
+            </View>
+          ) : null
         }
         ListFooterComponent={() =>
           collections.length > collectionsCount ? <LoadingFooter /> : null
         }
       />
-    </>
+    </SafeAreaView>
   );
 };
 

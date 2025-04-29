@@ -1,8 +1,8 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React, { ReactNode } from "react";
 import { BigNumber } from "bignumber.js";
-import { NFTs } from "@ledgerhq/coin-framework/mocks/fixtures/nfts";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
+import { NFTs } from "@ledgerhq/coin-framework/mocks/fixtures/nftsSamples";
 
 const queryClient = new QueryClient();
 

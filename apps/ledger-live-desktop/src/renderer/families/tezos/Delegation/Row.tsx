@@ -11,7 +11,7 @@ import {
   getTransactionExplorer,
   getAddressExplorer,
 } from "@ledgerhq/live-common/explorers";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { Delegation } from "@ledgerhq/live-common/families/tezos/types";
 import { openURL } from "~/renderer/linking";
 import CounterValue from "~/renderer/components/CounterValue";
@@ -25,7 +25,7 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 type Props = {
   delegation: Delegation;
-  account: TezosAccount | SubAccount;
+  account: TezosAccount | TokenAccount;
   parentAccount: TezosAccount | undefined | null;
 };
 const Wrapper = styled.div<{

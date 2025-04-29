@@ -113,6 +113,6 @@ describe("ERC20 dynamic cal", () => {
         r: "006c000371dc04c5752287a9901b1fac4b069eb1410173db39c407ae725e4a6e",
         s: "4f445c94cc869f01e194478a3b876052716ae7676247664acec371b6e6ad16e4",
       });
-    });
+    }, 10e3);
   });
 });

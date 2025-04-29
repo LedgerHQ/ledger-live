@@ -7,8 +7,9 @@ import {
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import type { AlgorandAccount, Transaction, TransactionStatus } from "../types";
+import type { AlgorandAccount, AlgorandOperation, Transaction, TransactionStatus } from "../types";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
+import formatters from "../formatters";
 import { getTransactionStatus } from "../getTransactionStatus";
 import { getAccountShape, sync } from "../synchronization";
 import { prepareTransaction } from "../prepareTransaction";
@@ -42,7 +43,7 @@ export function buildCurrencyBridge(signerContext: SignerContext<AlgorandSigner>
 
 export function buildAccountBridge(
   signerContext: SignerContext<AlgorandSigner>,
-): AccountBridge<Transaction, AlgorandAccount, TransactionStatus> {
+): AccountBridge<Transaction, AlgorandAccount, TransactionStatus, AlgorandOperation> {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -63,6 +64,8 @@ export function buildAccountBridge(
     estimateMaxSpendable,
     fromOperationExtraRaw,
     toOperationExtraRaw,
+    formatAccountSpecifics: formatters.formatAccountSpecifics,
+    formatOperationSpecifics: formatters.formatOperationSpecifics,
     getSerializedAddressParameters,
   };
 }

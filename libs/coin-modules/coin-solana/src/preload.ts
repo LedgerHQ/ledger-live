@@ -1,6 +1,6 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { flow } from "lodash/fp";
-import { ChainAPI } from "./api";
+import { ChainAPI } from "./network";
 import { setSolanaPreloadData as setPreloadData } from "./preload-data";
 import { SolanaPreloadData, SolanaPreloadDataV1 } from "./types";
 import {
@@ -9,7 +9,7 @@ import {
   profitableValidators,
   ledgerFirstValidators,
 } from "./utils";
-import { getValidators, ValidatorsAppValidator } from "./validator-app";
+import { getValidators, ValidatorsAppValidator } from "./network/validator-app";
 
 export const PRELOAD_MAX_AGE = 15 * 60 * 1000; // 15min
 

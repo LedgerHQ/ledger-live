@@ -1,8 +1,9 @@
-import { isSwapOperationPending } from "@ledgerhq/live-common/exchange/swap/index";
 import { mappedSwapOperationsToCSV } from "@ledgerhq/live-common/exchange/swap/csvExport";
 import getCompleteSwapHistory from "@ledgerhq/live-common/exchange/swap/getCompleteSwapHistory";
-import updateAccountSwapStatus from "@ledgerhq/live-common/exchange/swap/updateAccountSwapStatus";
+import { isSwapOperationPending } from "@ledgerhq/live-common/exchange/swap/index";
 import { MappedSwapOperation, SwapHistorySection } from "@ledgerhq/live-common/exchange/swap/types";
+import updateAccountSwapStatus from "@ledgerhq/live-common/exchange/swap/updateAccountSwapStatus";
+import type { Account } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
@@ -16,7 +17,6 @@ import {
 } from "react-native";
 import Share from "react-native-share";
 import { useDispatch, useSelector } from "react-redux";
-import type { Account } from "@ledgerhq/types-live";
 import { updateAccountWithUpdater } from "~/actions/accounts";
 import { track, TrackScreen } from "~/analytics";
 import Alert from "~/components/Alert";
@@ -24,8 +24,9 @@ import Button from "~/components/Button";
 import LText from "~/components/LText";
 import useInterval from "~/components/useInterval";
 import DownloadFileIcon from "~/icons/DownloadFile";
-import logger from "../../../logger";
 import { flattenAccountsSelector } from "~/reducers/accounts";
+import logger from "../../../logger";
+import { useSyncAllAccounts } from "../LiveApp/hooks/useSyncAllAccounts";
 import EmptyState from "./EmptyState";
 import OperationRow from "./OperationRow";
 
@@ -42,15 +43,17 @@ const History = () => {
   const [sections, setSections] = useState<SwapHistorySection[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const ref = useRef(null);
+  const syncAccounts = useSyncAllAccounts();
 
   useEffect(() => {
     setSections(getCompleteSwapHistory(accounts));
   }, [accounts, setSections]);
 
   const refreshSwapHistory = useCallback(() => {
+    syncAccounts();
     setIsRefreshing(true);
     track("buttonClicked", { button: "pull to refresh" });
-  }, [setIsRefreshing]);
+  }, [syncAccounts]);
 
   const updateSwapStatus = useCallback(() => {
     let cancelled = false;

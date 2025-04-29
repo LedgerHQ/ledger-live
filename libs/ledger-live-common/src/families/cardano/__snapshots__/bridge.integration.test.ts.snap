@@ -6,6 +6,7 @@ exports[`cardano_testnet currency bridge scanAccounts cardano_testnet seed 1 1`]
     "balance": "10098829375",
     "cardanoResources": {
       "delegation": {
+        "dRepHex": undefined,
         "name": "Apex Cardano Pool",
         "poolId": "7facad662e180ce45e5c504957cd1341940c72a708728f7ecfc6e349",
         "rewards": "0",
@@ -688,6 +689,7 @@ exports[`cardano_testnet currency bridge scanAccounts cardano_testnet seed 1 1`]
         "maxValueSize": "5000",
         "minFeeA": "44",
         "minFeeB": "155381",
+        "minFeeRefScriptCostPerByte": "15",
         "priceMem": "0.0577",
         "priceSteps": "0.0000721",
         "stakeKeyDeposit": "2000000",
@@ -1394,6 +1396,7 @@ exports[`cardano_testnet currency bridge scanAccounts cardano_testnet seed 1 1`]
         "maxValueSize": "5000",
         "minFeeA": "44",
         "minFeeB": "155381",
+        "minFeeRefScriptCostPerByte": "15",
         "priceMem": "0.0577",
         "priceSteps": "0.0000721",
         "stakeKeyDeposit": "2000000",

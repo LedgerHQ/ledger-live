@@ -30,7 +30,7 @@ export default function ResetButton() {
   }, [pending, handleConfirm, handleError, hardReset]);
   return (
     <>
-      <Button small danger onClick={open} event="HardResetIntent">
+      <Button data-testid="reset-button" small danger onClick={open} event="HardResetIntent">
         {t("common.reset")}
       </Button>
 
@@ -48,7 +48,7 @@ export default function ResetButton() {
         desc={
           <Box>
             {t("settings.hardResetModal.desc")}
-            <Alert type="warning" mt={4}>
+            <Alert data-testid="warning-message" type="warning" mt={4}>
               {t("settings.hardResetModal.warning")}
             </Alert>
           </Box>

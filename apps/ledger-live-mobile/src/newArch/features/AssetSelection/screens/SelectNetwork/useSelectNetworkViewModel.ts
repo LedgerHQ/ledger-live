@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import { Linking } from "react-native";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import { hasClosedNetworkBannerSelector } from "~/reducers/settings";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { setCloseNetworkBanner } from "~/actions/settings";
@@ -17,11 +16,15 @@ import { AssetSelectionNavigationProps, SelectNetworkRouteParams } from "../../t
 import { CryptoWithAccounts } from "./types";
 import { LoadingBasedGroupedCurrencies } from "@ledgerhq/live-common/deposit/type";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
+import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 
 export default function useSelectNetworkViewModel({
   filterCurrencyIds,
   context,
   currency,
+  inline,
+  analyticsMetadata,
+  onSuccess,
 }: SelectNetworkRouteParams) {
   const navigation = useNavigation<AssetSelectionNavigationProps["navigation"]>();
 
@@ -75,30 +78,48 @@ export default function useSelectNetworkViewModel({
 
   const accounts = useSelector(flattenAccountsSelector);
 
-  const sortedCryptoCurrencies = useCurrenciesByMarketcap(
-    cryptoCurrencies.filter(e => !!e) as CryptoCurrency[],
+  const filteredCryptoCurrencies = useMemo(
+    () => cryptoCurrencies.filter(e => !!e) as CryptoCurrency[],
+    [cryptoCurrencies],
   );
 
-  const sortedCryptoCurrenciesWithAccounts: CryptoWithAccounts[] = useMemo(
-    () =>
-      sortedCryptoCurrencies
-        .map(crypto => {
-          const accs = findAccountByCurrency(accounts, crypto);
-          return {
-            crypto,
-            accounts: accs,
-          };
-        })
-        .sort((a, b) => b.accounts.length - a.accounts.length),
-    [accounts, sortedCryptoCurrencies],
+  const sortedCryptoCurrenciesWithAccounts: CryptoWithAccounts[] = useMemo(() => {
+    const withAccounts = filteredCryptoCurrencies.map(crypto => ({
+      crypto,
+      accounts: findAccountByCurrency(accounts, crypto),
+    }));
+
+    return withAccounts.sort((a, b) => {
+      const accountDiff = b.accounts.length - a.accounts.length;
+      return accountDiff !== 0 ? accountDiff : a.crypto.name.localeCompare(b.crypto.name);
+    });
+  }, [accounts, filteredCryptoCurrencies]);
+
+  const navigateToDevice = useCallback(
+    (currency: CryptoCurrency, createTokenAccount: boolean) => {
+      const processNavigate = inline ? navigation.replace : navigation.navigate;
+      processNavigate(NavigatorName.DeviceSelection, {
+        screen: ScreenName.SelectDevice,
+        params: {
+          currency,
+          createTokenAccount,
+          context,
+          inline,
+          onSuccess,
+        },
+      });
+    },
+    [navigation, context, inline, onSuccess],
   );
 
   const processNetworkSelection = useCallback(
     (selectedCurrency: CryptoCurrency | TokenCurrency) => {
-      track("network_clicked", {
-        network: selectedCurrency.name,
-        page: "Choose a network",
-      });
+      const clickMetadata = analyticsMetadata?.SelectNetwork?.onNetworkClick;
+      if (clickMetadata)
+        track(clickMetadata.eventName, {
+          network: selectedCurrency.name,
+          ...clickMetadata.payload,
+        });
 
       const cryptoToSend = provider?.currenciesByNetwork.find(curByNetwork =>
         curByNetwork.type === "TokenCurrency"
@@ -107,10 +128,11 @@ export default function useSelectNetworkViewModel({
       );
 
       if (!cryptoToSend) return;
+      const isAddAccountContext = context === AddAccountContexts.AddAccounts;
 
       const accs = findAccountByCurrency(accounts, cryptoToSend);
 
-      if (accs.length > 0) {
+      if (accs.length > 0 && !isAddAccountContext) {
         // if we found one or more accounts of the given currency we go to select account
         navigation.navigate(NavigatorName.AddAccounts, {
           screen: ScreenName.SelectAccounts,
@@ -120,43 +142,41 @@ export default function useSelectNetworkViewModel({
           },
         });
       } else if (cryptoToSend.type === "TokenCurrency") {
-        // cases for token currencies
-        const parentAccounts = findAccountByCurrency(accounts, cryptoToSend.parentCurrency);
-
-        if (parentAccounts.length > 0) {
-          // if we found one or more accounts of the parent currency we select account
-
-          navigation.navigate(NavigatorName.AddAccounts, {
-            screen: ScreenName.SelectAccounts,
-            params: {
-              currency: cryptoToSend,
-              createTokenAccount: true,
-              context,
-            },
-          });
+        if (isAddAccountContext) {
+          navigateToDevice(cryptoToSend.parentCurrency, true);
         } else {
-          // if we didn't find any account of the parent currency we add and create one
-          navigation.navigate(NavigatorName.DeviceSelection, {
-            screen: ScreenName.SelectDevice,
-            params: {
-              currency: cryptoToSend.parentCurrency,
-              createTokenAccount: true,
-              context,
-            },
-          });
+          // cases for token currencies
+          const parentAccounts = findAccountByCurrency(accounts, cryptoToSend.parentCurrency);
+
+          if (parentAccounts.length > 0) {
+            // if we found one or more accounts of the parent currency we select account
+
+            navigation.navigate(NavigatorName.AddAccounts, {
+              screen: ScreenName.SelectAccounts,
+              params: {
+                currency: cryptoToSend,
+                createTokenAccount: true,
+                context,
+              },
+            });
+          } else {
+            // if we didn't find any account of the parent currency we add and create one
+            navigateToDevice(cryptoToSend.parentCurrency, true);
+          }
         }
       } else {
         // else we create a currency account
-        navigation.navigate(NavigatorName.DeviceSelection, {
-          screen: ScreenName.SelectDevice,
-          params: {
-            currency: cryptoToSend,
-            context,
-          },
-        });
+        navigateToDevice(cryptoToSend, false);
       }
     },
-    [accounts, navigation, provider, context],
+    [
+      accounts,
+      navigation,
+      provider,
+      context,
+      navigateToDevice,
+      analyticsMetadata?.SelectNetwork?.onNetworkClick,
+    ],
   );
 
   const hideBanner = useCallback(() => {
@@ -182,7 +202,7 @@ export default function useSelectNetworkViewModel({
     string
   > => {
     switch (context) {
-      case "receiveFunds":
+      case AddAccountContexts.ReceiveFunds:
         return {
           titleText: t("selectNetwork.swap.title"),
           titleTestId: "receive-header-step2-title",
@@ -190,7 +210,7 @@ export default function useSelectNetworkViewModel({
           subTitleTestId: "transfer.receive.selectNetwork.subtitle",
           listTestId: "receive-header-step2-networks",
         };
-      case "addAccounts":
+      case AddAccountContexts.AddAccounts:
         return {
           titleText: t("assetSelection.selectNetwork.title"),
           titleTestId: "addAccounts-header-step2-title",

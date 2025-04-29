@@ -1,5 +1,17 @@
 # @ledgerhq/icons-ui
 
+## 0.9.0
+
+### Minor Changes
+
+- [#9541](https://github.com/LedgerHQ/ledger-live/pull/9541) [`eea82e7`](https://github.com/LedgerHQ/ledger-live/commit/eea82e7993c27eacdbaba2f5418df64c75db3f2d) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add Warning Rounded Fill icon and use it for notification tag in sidebar for recover. Move notification and recover status icon close to sidebar icon.
+
+## 0.9.0-next.0
+
+### Minor Changes
+
+- [#9541](https://github.com/LedgerHQ/ledger-live/pull/9541) [`eea82e7`](https://github.com/LedgerHQ/ledger-live/commit/eea82e7993c27eacdbaba2f5418df64c75db3f2d) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add Warning Rounded Fill icon and use it for notification tag in sidebar for recover. Move notification and recover status icon close to sidebar icon.
+
 ## 0.8.1
 
 ### Patch Changes

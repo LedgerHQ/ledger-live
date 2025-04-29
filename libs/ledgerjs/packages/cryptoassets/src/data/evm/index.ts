@@ -11,6 +11,7 @@ import bsc_tokens from "./56/erc20.json";
 import syscoin_tokens from "./57/erc20.json";
 import velas_evm_tokens from "./106/erc20.json";
 import polygon_tokens from "./137/erc20.json";
+import sonic_tokens from "./146/erc20.json";
 import bittorrent_tokens from "./199/erc20.json";
 import energy_web_tokens from "./246/erc20.json";
 import fantom_tokens from "./250/erc20.json";
@@ -47,6 +48,7 @@ import bsc_tokens_hash from "./56/erc20-hash.json";
 import syscoin_tokens_hash from "./57/erc20-hash.json";
 import velas_evm_tokens_hash from "./106/erc20-hash.json";
 import polygon_tokens_hash from "./137/erc20-hash.json";
+import sonic_tokens_hash from "./146/erc20-hash.json";
 import bittorrent_tokens_hash from "./199/erc20-hash.json";
 import energy_web_tokens_hash from "./246/erc20-hash.json";
 import fantom_tokens_hash from "./250/erc20-hash.json";
@@ -83,6 +85,7 @@ import bsc_signatures from "./56/erc20-signatures.json";
 import syscoin_signatures from "./57/erc20-signatures.json";
 import velas_evm_signatures from "./106/erc20-signatures.json";
 import polygon_signatures from "./137/erc20-signatures.json";
+import sonic_signatures from "./146/erc20-signatures.json";
 import bittorrent_signatures from "./199/erc20-signatures.json";
 import energy_web_signatures from "./246/erc20-signatures.json";
 import fantom_signatures from "./250/erc20-signatures.json";
@@ -120,6 +123,7 @@ export const tokens = {
   57: syscoin_tokens as ERC20Token[],
   106: velas_evm_tokens as ERC20Token[],
   137: polygon_tokens as ERC20Token[],
+  146: sonic_tokens as ERC20Token[],
   199: bittorrent_tokens as ERC20Token[],
   246: energy_web_tokens as ERC20Token[],
   250: fantom_tokens as ERC20Token[],
@@ -158,6 +162,7 @@ export const signatures = {
   57: syscoin_signatures,
   106: velas_evm_signatures,
   137: polygon_signatures,
+  146: sonic_signatures,
   199: bittorrent_signatures,
   246: energy_web_signatures,
   250: fantom_signatures,
@@ -196,6 +201,7 @@ export const hashes = {
   57: syscoin_tokens_hash,
   106: velas_evm_tokens_hash,
   137: polygon_tokens_hash,
+  146: sonic_tokens_hash,
   199: bittorrent_tokens_hash,
   246: energy_web_tokens_hash,
   250: fantom_tokens_hash,

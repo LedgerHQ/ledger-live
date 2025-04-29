@@ -15,6 +15,7 @@ import {
   DISCOVER_STORE_KEY,
   BROWSE_SEARCH_OPTIONS,
   WC_ID,
+  LEDGER_SHOP_ID,
 } from "@ledgerhq/live-common/wallet-api/constants";
 import { DiscoverDB, AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -128,7 +129,9 @@ function useDisclaimer(appendRecentlyUsed: (manifest: AppManifest) => void): Dis
         return;
       }
 
-      if (isReadOnly && !hasOrderedNano) {
+      const isLedgerShopApp = manifest.id === LEDGER_SHOP_ID;
+
+      if (isReadOnly && !hasOrderedNano && !isLedgerShopApp) {
         navigateToRebornFlow();
         return;
       }

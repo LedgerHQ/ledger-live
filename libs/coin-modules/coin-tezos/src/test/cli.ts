@@ -3,7 +3,7 @@ import { map } from "rxjs/operators";
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import flatMap from "lodash/flatMap";
-import type { Account, AccountLike, AccountLikeArray, SubAccount } from "@ledgerhq/types-live";
+import type { Account, AccountLike, AccountLikeArray, TokenAccount } from "@ledgerhq/types-live";
 import type { Transaction, Baker } from "../types";
 import { listBakers, fetchAllBakers } from "../network/bakers";
 import defaultList from "../network/bakers.whitelist-default";
@@ -48,7 +48,7 @@ function inferAccounts(account: Account, opts: Record<string, any>): AccountLike
   const { subAccounts } = account;
   invariant(subAccounts, "no sub accounts");
   return opts.subAccount.map((i: number) => {
-    const acc = (subAccounts as SubAccount[])[i];
+    const acc = (subAccounts as TokenAccount[])[i];
     invariant(acc, "sub account not found (index %s)", i);
     return acc;
   });

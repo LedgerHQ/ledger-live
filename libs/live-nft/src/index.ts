@@ -1,6 +1,5 @@
 import { getEnv } from "@ledgerhq/live-env";
-import { groupAccountsOperationsByDay } from "@ledgerhq/coin-framework/account/index";
-import type { Operation, ProtoNFT, NFT, Account } from "@ledgerhq/types-live";
+import type { ProtoNFT, NFT, Account } from "@ledgerhq/types-live";
 import { NFTResource } from "./types";
 import { replacements } from "./supported";
 
@@ -63,37 +62,6 @@ export const groupByCurrency = (nfts: ProtoNFT[]): ProtoNFT[] => {
 
   return Array.from(groupMap, ([_key, value]) => value).flat();
 };
-
-export function orderByLastReceived(accounts: Account[], nfts: ProtoNFT[]): ProtoNFT[] {
-  const orderedNFTs: ProtoNFT[] = [];
-  let operationMapping: Operation[] = [];
-
-  // TODO optimize: there is no need to use this grouping logic as we just want a sorted merge of all operations
-  const res = groupAccountsOperationsByDay(accounts, {
-    count: Infinity,
-  });
-
-  // Sections are sorted by Date, the most recent being the first
-  res.sections.forEach(section => {
-    // Get all operation linked to the reception of an NFT
-    const operations = section.data.filter(d => d.type === "NFT_IN" && d.contract && d.tokenId);
-    operationMapping = operationMapping.concat(operations);
-  });
-
-  operationMapping.forEach(operation => {
-    // Prevent multiple occurences due to Exchange Send/Receive same NFT several times
-    const isAlreadyIn = orderedNFTs.find(
-      nft => nft.contract === operation.contract && nft.tokenId === operation.tokenId,
-    );
-
-    if (!isAlreadyIn) {
-      const nft = getNFT(operation.contract, operation.tokenId, nfts);
-      if (nft) orderedNFTs.push(nft);
-    }
-  });
-
-  return groupByCurrency([...new Set(orderedNFTs)]);
-}
 
 export const hasNftInAccounts = (nftCollection: string, accounts: Account[]): boolean =>
   accounts &&

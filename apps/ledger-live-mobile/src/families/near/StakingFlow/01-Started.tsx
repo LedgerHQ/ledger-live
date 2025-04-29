@@ -12,8 +12,8 @@ import NavigationScrollView from "~/components/NavigationScrollView";
 import { urls } from "~/utils/urls";
 import { TrackScreen } from "~/analytics";
 import Illustration from "~/images/illustration/Illustration";
-import EarnLight from "~/images/illustration/Light/_003.png";
-import EarnDark from "~/images/illustration/Dark/_003.png";
+import EarnLight from "~/images/illustration/Light/_003.webp";
+import EarnDark from "~/images/illustration/Dark/_003.webp";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { NearStakingFlowParamList } from "./types";
 
@@ -75,7 +75,7 @@ export default function StakingStarted({ navigation, route }: Props) {
         <View>
           <Alert type="info" title={t("near.staking.flow.steps.starter.warning.description")} />
         </View>
-        <Button onPress={onNext} type="main" mt={6}>
+        <Button onPress={onNext} type="main" mt={6} testID="near-delegation-start-button">
           <Trans i18nKey="near.staking.flow.steps.starter.cta" />
         </Button>
       </View>

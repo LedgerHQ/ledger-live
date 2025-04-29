@@ -1,4 +1,3 @@
-import { getElementById, typeTextByElement, tapByText, tapByElement } from "../../helpers";
 import { expect } from "detox";
 
 export default class MarketPage {

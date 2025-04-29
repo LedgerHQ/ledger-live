@@ -133,6 +133,13 @@ jobs:
           skip_ruby: true
           install_playwright: true
           turborepo-server-port: ${{ steps.caches.outputs.port }}
+      - name: Install CLI dependencies
+        env:
+          LANG: en_US.UTF-8
+        run: pnpm i --filter="live-cli*..."
+        shell: bash
+      - name: Build CLI
+        run: pnpm build:cli --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
@@ -421,15 +428,17 @@ jobs:
     runs-on: [ledger-live-medium]
     if: ${{ !cancelled() && github.ref_name == 'develop' }}
     steps:
-      - name: checkout
-        uses: actions/checkout@v4
+      - name: Download Allure Report
+        uses: actions/download-artifact@v4
         with:
-          ref: ${{ ((github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request') && (inputs.ref || github.ref_name)) || github.sha }}
+          path: allure-results-linux
+          pattern: allure-results-linux*
+          merge-multiple: true
       - name: Send Results and Generate Allure Report - Linux
         uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         if: ${{ !cancelled() }}
         with:
-          platform: linux
+          platform: linux-mocked
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: allure-results-linux

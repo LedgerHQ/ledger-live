@@ -82,7 +82,7 @@ jobs:
           path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/stagingRelease
 
   build-mobile-app-ios:
-    runs-on: [m1, ARM64]
+    runs-on: [ledger-live-4xlarge]
     name: "Build LLM | iOS"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -99,7 +99,7 @@ jobs:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          skip-pod-cache: "false"
+          skip-pod-cache: "true"
           skip-turbo-cache: "false"
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: nick-fields/retry@v3

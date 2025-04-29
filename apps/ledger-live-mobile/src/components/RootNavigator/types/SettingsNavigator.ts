@@ -38,7 +38,11 @@ export type SettingsNavigatorStackParamList = {
     | undefined;
   [ScreenName.DebugConnectivity]: undefined;
   [ScreenName.DebugGenerators]: undefined;
-  [ScreenName.DebugMockGenerateAccounts]: undefined;
+  [ScreenName.DebugMockGenerateAccounts]:
+    | {
+        withNft?: boolean;
+      }
+    | undefined;
   [ScreenName.DebugExport]: undefined;
   [ScreenName.DebugNetwork]: undefined;
   [ScreenName.DebugCommandSender]: {
@@ -64,6 +68,7 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugLottie]: undefined;
   [ScreenName.DebugPlayground]: undefined;
   [ScreenName.DebugBluetoothAndLocationServices]: undefined;
+  [ScreenName.DebugStorageMigration]: undefined;
   [ScreenName.DebugTermsOfUse]: undefined;
   [ScreenName.DebugVideos]: undefined;
   [ScreenName.DebugInstallSetOfApps]: undefined;
@@ -81,4 +86,6 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugQueuedDrawerScreen0]: undefined;
   [ScreenName.DebugQueuedDrawerScreen1]: undefined;
   [ScreenName.DebugQueuedDrawerScreen2]: undefined;
+  [ScreenName.LargeMoverLandingPage]: undefined;
+  [ScreenName.DebugSwipe]: undefined;
 };

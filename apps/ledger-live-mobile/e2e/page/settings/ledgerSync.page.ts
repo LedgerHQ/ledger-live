@@ -1,4 +1,4 @@
-import { getElementById, tapByElement, tapById, waitForElementById } from "../../helpers";
+import { activateLedgerSync } from "@ledgerhq/live-common/e2e/speculos";
 import { expect } from "detox";
 
 export default class LedgerSyncPage {
@@ -8,9 +8,14 @@ export default class LedgerSyncPage {
   activationDescription = () => getElementById("walletsync-activation-description");
   successPage = "walletsync-success";
   activationSuccessCloseButton = () => getElementById("walletsync-activation-success-close");
-  deleteSync = () => getElementById("walletSync-manage-backup");
+  deleteSyncId = "walletSync-manage-backup";
   confirmDeleteSyncId = "delete-trustchain";
   deletionSuccessCloseButton = () => getElementById("walletsync-deletion-success-close");
+
+  @Step("Activate Ledger Sync on Speculos")
+  async activateLedgerSyncOnSpeculos() {
+    await activateLedgerSync();
+  }
 
   @Step("Expect Ledger Sync activation page is displayed")
   async expectLedgerSyncPageIsDisplayed() {
@@ -40,7 +45,8 @@ export default class LedgerSyncPage {
 
   @Step("Select delete sync")
   async openDeleteSync() {
-    await tapByElement(this.deleteSync());
+    await waitForElementById(this.deleteSyncId);
+    await tapById(this.deleteSyncId);
   }
 
   @Step("Confirm deletion of sync")

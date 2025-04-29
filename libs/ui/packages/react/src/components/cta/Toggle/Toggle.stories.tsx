@@ -1,6 +1,5 @@
 import React from "react";
-// @ts-expect-error Typings…
-import { useArgs } from "@storybook/client-api";
+import { useArgs } from "@storybook/manager-api";
 
 import Toggle from "./index";
 import type { ToggleProps } from "./index";

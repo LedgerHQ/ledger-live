@@ -15,14 +15,18 @@ import {
   sync,
   makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
-import { getEstimatedFees } from "./bridgeHelpers/fee";
+import { getEstimatedFees } from "@ledgerhq/coin-casper/bridge/bridgeHelpers/fee";
 import {
   getSerializedAddressParameters,
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getAddress, isAddressValid } from "./bridgeHelpers/addresses";
-import { isTransferIdValid } from "./bridgeHelpers/transferId";
-import { CasperInvalidTransferId, InvalidMinimumAmount, MayBlockAccount } from "../errors";
+import { getAddress, isAddressValid } from "@ledgerhq/coin-casper/bridge/bridgeHelpers/addresses";
+import { isTransferIdValid } from "@ledgerhq/coin-casper/bridge/bridgeHelpers/transferId";
+import {
+  CasperInvalidTransferId,
+  InvalidMinimumAmount,
+  MayBlockAccount,
+} from "@ledgerhq/coin-casper/errors";
 import {
   CASPER_FEES_CSPR,
   CASPER_MAX_TRANSFER_ID,

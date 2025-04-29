@@ -1,7 +1,7 @@
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, Button, Flex, Icons, Text } from "@ledgerhq/react-ui";
-import { Account, EthStakingProvider, EthStakingProviderCategory } from "@ledgerhq/types-live";
+import { AccountLike, EthStakingProvider, EthStakingProviderCategory } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -29,7 +29,7 @@ type Option = EthStakingProviderCategory | "all";
 const OPTION_VALUES: Option[] = ["all", "liquid", "protocol", "pooling", "restaking"] as const;
 
 export interface Props {
-  account: Account;
+  account: AccountLike;
   /** Analytics source */
   source?: string;
   hasCheckbox?: boolean;
@@ -94,7 +94,7 @@ export const StakeModal = ({ account, source }: Props) => {
           flex={1}
           flexDirection="column"
           height="100%"
-          px={3}
+          px={2}
         >
           <Header p={3} pt={5} pb={0} width="100%" position="relative" isScrollable={isScrollable}>
             <Flex flexDirection="column" alignItems="center">

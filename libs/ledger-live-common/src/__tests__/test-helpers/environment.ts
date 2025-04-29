@@ -1,11 +1,11 @@
-import winston from "winston";
-import { listen } from "@ledgerhq/logs";
-import { setSupportedCurrencies } from "../../currencies";
-import { EnvName, setEnvUnsafe, setEnv } from "@ledgerhq/live-env";
-import { setWalletAPIVersion } from "../../wallet-api/version";
-import { WALLET_API_VERSION } from "../../wallet-api/constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { EnvName, setEnv, setEnvUnsafe } from "@ledgerhq/live-env";
+import { listen } from "@ledgerhq/logs";
+import winston from "winston";
 import { liveConfig } from "../../config/sharedConfig";
+import { setSupportedCurrencies } from "../../currencies";
+import { WALLET_API_VERSION } from "../../wallet-api/constants";
+import { setWalletAPIVersion } from "../../wallet-api/version";
 
 setWalletAPIVersion(WALLET_API_VERSION);
 setSupportedCurrencies([
@@ -24,7 +24,7 @@ setSupportedCurrencies([
   "ethereum",
   "bsc",
   "polygon",
-  "elrond",
+  "elrond", // NOTE: legacy 'multiversx' name, kept for compatibility
   "ripple",
   "bitcoin_cash",
   "litecoin",
@@ -104,7 +104,15 @@ setSupportedCurrencies([
   "zksync",
   "zksync_sepolia",
   "mantra",
+  "aptos",
+  "aptos_testnet",
   "xion",
+  "sui",
+  "zenrock",
+  "sonic",
+  "sonic_blaze",
+  "mina",
+  "babylon",
 ]);
 LiveConfig.setConfig(liveConfig);
 

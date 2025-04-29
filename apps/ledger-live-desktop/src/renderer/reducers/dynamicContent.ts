@@ -1,3 +1,4 @@
+import type { Card as BrazeCard } from "@braze/web-sdk";
 import { handleActions } from "redux-actions";
 import {
   ActionContentCard,
@@ -9,18 +10,21 @@ import { SettingsState, trackingEnabledSelector } from "./settings";
 import { State } from ".";
 
 export type DynamicContentState = {
+  desktopCards: BrazeCard[];
   portfolioCards: PortfolioContentCard[];
   actionCards: ActionContentCard[];
   notificationsCards: NotificationContentCard[];
 };
 
 const state: DynamicContentState = {
+  desktopCards: [],
   portfolioCards: [],
   actionCards: [],
   notificationsCards: [],
 };
 
 type HandlersPayloads = {
+  DYNAMIC_CONTENT_SET_DESKTOP_CARDS: BrazeCard[];
   DYNAMIC_CONTENT_SET_PORTFOLIO_CARDS: PortfolioContentCard[];
   DYNAMIC_CONTENT_SET_ACTION_CARDS: ActionContentCard[];
   DYNAMIC_CONTENT_SET_NOTIFICATIONS_CARDS: NotificationContentCard[];
@@ -32,6 +36,13 @@ type DynamicContentHandlers<PreciseKey = true> = Handlers<
 >;
 
 const handlers: DynamicContentHandlers = {
+  DYNAMIC_CONTENT_SET_DESKTOP_CARDS: (
+    state: DynamicContentState,
+    { payload }: { payload: BrazeCard[] },
+  ) => ({
+    ...state,
+    desktopCards: payload,
+  }),
   DYNAMIC_CONTENT_SET_PORTFOLIO_CARDS: (
     state: DynamicContentState,
     { payload }: { payload: PortfolioContentCard[] },
@@ -56,6 +67,9 @@ const handlers: DynamicContentHandlers = {
 };
 
 // Selectors
+
+export const desktopContentCardSelector = (state: { dynamicContent: DynamicContentState }) =>
+  state.dynamicContent.desktopCards;
 
 export const portfolioContentCardSelector = (state: { dynamicContent: DynamicContentState }) =>
   state.dynamicContent.portfolioCards;

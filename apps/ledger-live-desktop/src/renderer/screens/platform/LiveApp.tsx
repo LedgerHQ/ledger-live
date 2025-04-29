@@ -10,7 +10,7 @@ import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalL
 import { useTrack } from "~/renderer/analytics/segment";
 import { useGetSwapTrackingProperties } from "../exchange/Swap2/utils";
 
-type Props = {
+export type LiveAppProps = {
   match: {
     params: {
       appId: string;
@@ -31,13 +31,13 @@ type Props = {
   };
 };
 
-export function LiveApp({ match, appId: propsAppId, location }: Props) {
+export function LiveApp({ match, appId: propsAppId, location }: LiveAppProps) {
   const history = useHistory();
   const track = useTrack();
   const swapTrackingProperties = useGetSwapTrackingProperties();
   const { params: internalParams, search } = location;
   const { state: urlParams, customDappUrl } = useLocation() as ReturnType<typeof useLocation> &
-    Props["location"] & {
+    LiveAppProps["location"] & {
       state: {
         returnTo: string;
         accountId?: string;

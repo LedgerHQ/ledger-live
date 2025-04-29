@@ -50,7 +50,7 @@ docker build -f Dockerfile -t speculos:latest .
 - Generate a [Github token classic](https://github.com/settings/tokens) and give it full "repo" and "project" rights. Make sure to authorize Ledger SSO.
 
 - Go in the coin-module you want to test and create a `.env` in the folder where your test resides.
-For exemple for `coin-evm` create the file should be located in: `src/__test__/coin-tester/.env`.
+  For exemple for `coin-evm` create the file should be located in: `coin-tester-modules/coin-tester-evm/.env`.
 
 Copy `.env.example`.
 
@@ -75,18 +75,14 @@ If you want you can generate a new seed using [this tool](https://iancoleman.io/
 
 To coin Polkadot Coin tester we will need to build the local test node Docker image.
 
-```sh
-cd libs/coin-modules/coin-polkadot/src/test/coin-tester
-make build
-```
 ## [Run tests for a coin module](#run-tests-for-a-coin-module)
 
 ```sh
-pnpm coin:<coin-module-name> coin-tester
+pnpm coin:tester:<coin-tester-modules-name> start
 
 # e.g
-# pnpm coin:evm coin-tester
-# pnpm coin:polkadot coin-tester
+# pnpm coin:tester:evm start
+# pnpm coin:tester:polkadot start
 ```
 
 ## Troubleshooting

@@ -1,5 +1,6 @@
-import React, { forwardRef } from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import React, { forwardRef, useState } from "react";
+import VersionNumber from "react-native-version-number";
+import { ActivityIndicator, Platform, StyleSheet, View } from "react-native";
 import { WebView as RNWebView } from "react-native-webview";
 import Config from "react-native-config";
 import { WebviewAPI, WebviewProps } from "./types";
@@ -9,6 +10,8 @@ import { INTERNAL_APP_IDS, WC_ID } from "@ledgerhq/live-common/wallet-api/consta
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { INJECTED_JAVASCRIPT } from "./dappInject";
 import { NoAccountScreen } from "./NoAccountScreen";
+
+const APPLICATION_NAME = `ledgerlivemobile/${VersionNumber.appVersion} llm-${Platform.OS}/${VersionNumber.appVersion}`;
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   (
@@ -41,8 +44,10 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       ref,
       onStateChange,
     );
+    const [error, setError] = useState(false);
 
     const reloadWebView = () => {
+      setError(false);
       webviewRef.current?.reload();
     };
 
@@ -68,16 +73,20 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         originWhitelist={manifest.domains}
         allowsInlineMediaPlayback
         onMessage={onMessage}
-        onError={onLoadError}
+        onError={() => {
+          onLoadError();
+          setError(true);
+        }}
         onOpenWindow={onOpenWindow}
         overScrollMode="content"
         bounces={false}
         mediaPlaybackRequiresUserAction={false}
         automaticallyAdjustContentInsets={false}
         scrollEnabled={true}
-        style={styles.webview}
+        style={[styles.webview, { display: error ? "none" : "flex" }]}
         renderError={() => <NetworkError handleTryAgain={reloadWebView} />}
         testID="wallet-api-webview"
+        applicationNameForUserAgent={APPLICATION_NAME}
         webviewDebuggingEnabled={__DEV__}
         allowsUnsecureHttps={__DEV__ && !!Config.IGNORE_CERTIFICATE_ERRORS}
         javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}

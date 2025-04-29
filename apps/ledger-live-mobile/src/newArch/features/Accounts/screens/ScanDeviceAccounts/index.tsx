@@ -1,367 +1,257 @@
-import React, { useEffect, useCallback, useState, useRef, memo } from "react";
-import { FlatList } from "react-native";
-import { concat, from } from "rxjs";
-import type { Subscription } from "rxjs";
-import { ignoreElements } from "rxjs/operators";
-import { useDispatch, useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
-import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import { Currency } from "@ledgerhq/types-cryptoassets";
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import React from "react";
+import { StyleSheet, View, SafeAreaView, Pressable } from "react-native";
+import { useSelector } from "react-redux";
+import { Trans, useTranslation } from "react-i18next";
+import Config from "react-native-config";
+import styled, { useTheme } from "styled-components/native";
 
-import { Flex, Text } from "@ledgerhq/native-ui";
-import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
+import type { DerivationMode } from "@ledgerhq/types-live";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
-import { ScreenName } from "~/const";
+import { accountsSelector } from "~/reducers/accounts";
+import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { TrackScreen } from "~/analytics";
-import Button from "~/components/Button";
 import PreventNativeBack from "~/components/PreventNativeBack";
-import LText from "~/components/LText";
 import RetryButton from "~/components/RetryButton";
 import CancelButton from "~/components/CancelButton";
 import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
-import { prepareCurrency } from "~/bridge/cache";
-import AccountCard from "~/components/AccountCard";
-import {
-  StackNavigatorNavigation,
-  StackNavigatorProps,
-} from "~/components/RootNavigator/types/helpers";
-import { RootStackParamList } from "~/components/RootNavigator/types/RootNavigator";
-import Animation from "~/components/Animation";
-import lottie from "~/screens/ReceiveFunds/assets/lottie.json";
-import GradientContainer from "~/components/GradientContainer";
-import { useTheme } from "styled-components/native";
-import { walletSelector } from "~/reducers/wallet";
-import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
-import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
-import { accountsSelector } from "~/reducers/accounts";
-import logger from "~/logger";
-import { NetworkBasedAddAccountNavigator } from "LLM/features/Accounts/screens/AddAccount/types";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import { Flex, Text, Icons } from "@ledgerhq/native-ui";
 
-type Props = StackNavigatorProps<NetworkBasedAddAccountNavigator, ScreenName.ScanDeviceAccounts>;
+import useScanDeviceAccountsViewModel from "./useScanDeviceAccountsViewModel";
+import AnimatedGradient from "./components/AnimatedGradient";
+import ScanDeviceAccountsFooter from "./components/ScanDeviceAccountsFooter";
+import AddressTypeTooltip from "./components/AddressTypeTooltip";
+import ScannedAccountsSection from "./components/ScannedAccountsSection";
+import { useRoute } from "@react-navigation/core";
+import { ScanDeviceAccountsNavigationProps } from "./types";
+import useAnalytics from "LLM/hooks/useAnalytics";
 
-function ScanDeviceAccounts({ navigation, route }: Props) {
-  const dispatch = useDispatch();
-  const { t } = useTranslation();
+const StyledPressable = styled(Pressable)`
+  border-width: 1px;
+  border-style: dotted;
+  border-color: ${({ theme }) => theme.colors.opacityDefault.c10};
+  padding: 16px;
+  margin-vertical: 8px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: 12px;
+`;
 
-  const [scanning, setScanning] = useState(true);
-  const [addingAccount, setAddingAccount] = useState(false);
-  const [error, setError] = useState(null);
-  const [scannedAccounts, setScannedAccounts] = useState<Account[]>([]);
-  const [cancelled, setCancelled] = useState(false);
+function ScanDeviceAccounts() {
+  const { colors } = useTheme();
 
   const existingAccounts = useSelector(accountsSelector);
-  const scanSubscription = useRef<Subscription | null>();
+  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
+
+  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
+  const { t } = useTranslation();
+  const route = useRoute<ScanDeviceAccountsNavigationProps["route"]>();
+  const { context, sourceScreenName } = route.params || {};
+
+  const { analyticsMetadata } = useAnalytics(context, sourceScreenName);
 
   const {
+    cantCreateAccount,
+    error,
+    importAccounts,
+    newAccountSchemes,
+    noImportableAccounts,
+    onAccountNameChange,
+    onCancel,
+    onModalHide,
+    onPressAccount,
+    quitFlow,
+    restartSubscription,
+    scannedAccounts,
+    scanning,
+    sections,
+    selectAll,
+    selectedIds,
+    showAllCreatedAccounts,
+    stopSubscription,
+    unselectAll,
+    viewAllCreatedAccounts,
     currency,
-    device: { deviceId },
-  } = route.params || {};
+    returnToSwap,
+  } = useScanDeviceAccountsViewModel({
+    existingAccounts,
+    blacklistedTokenIds,
+    analyticsMetadata,
+  });
 
-  const selectAccount = useCallback(
-    (account: Account, currentScannedAccounts: Account[], addingAccountDelayMs?: number) => {
-      dispatch(
-        addAccountsAction({
-          existingAccounts,
-          scannedAccounts: currentScannedAccounts,
-          selectedIds: [account.id],
-          renamings: {},
-        }),
-      );
-      if (addingAccountDelayMs) {
-        setTimeout(() => {
-          setAddingAccount(false);
-          // TODO: navigate to next screen to be done in the next feature
-        }, addingAccountDelayMs);
-      } else {
-        // TODO: navigate to next screen to be done in the next feature
-      }
-    },
-    //[dispatch, navigation, route.params, existingAccounts],
-    [dispatch, existingAccounts],
-  );
-
-  const startSubscription = useCallback(() => {
-    const c = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
-    const bridge = getCurrencyBridge(c);
-    const syncConfig = {
-      paginationConfig: {
-        operations: 0,
-      },
-      blacklistedTokenIds: [],
-    };
-    // will be set to false if an existing account is found
-    // @TODO observable similar to the one in AddAccounts Flow maybe refactor both in single workflow
-    scanSubscription.current = concat(
-      from(prepareCurrency(c)).pipe(ignoreElements()),
-      bridge.scanAccounts({
-        currency: c,
-        deviceId,
-        syncConfig,
-      }),
-    ).subscribe({
-      next: ({ account }: { account: Account }) => {
-        if (currency.type === "TokenCurrency") {
-          // handle token accounts cases where we want to create empty new token accounts
-          const pa = { ...account };
-
-          if (
-            !pa.subAccounts ||
-            !pa.subAccounts.find(a => (a as TokenAccount)?.token?.id === currency.id) // in case we dont already have one we create an empty token account
-          ) {
-            const tokenAcc = makeEmptyTokenAccount(pa, currency);
-            const tokenA = {
-              ...tokenAcc,
-              parentAccount: pa,
-            };
-
-            pa.subAccounts = [...(pa.subAccounts || []), tokenA];
-          }
-
-          setScannedAccounts((accs: Account[]) => [...accs, pa]); // add the account with the newly added token account to the list of scanned accounts
-        } else {
-          setScannedAccounts((accs: Account[]) => [...accs, account]); // add the account to the list of scanned accounts
-        }
-      },
-      complete: () => {
-        setScanning(false);
-        setScannedAccounts(prevScannedAccounts => {
-          if (prevScannedAccounts.length === 1) {
-            setAddingAccount(true);
-            selectAccount(prevScannedAccounts[0], prevScannedAccounts, 4000);
-          }
-          return prevScannedAccounts;
-        });
-      },
-      error: error => {
-        logger.critical(error);
-        setError(error);
-      },
-    });
-  }, [currency, deviceId, selectAccount]);
-
-  const restartSubscription = useCallback(() => {
-    setScanning(true);
-    setScannedAccounts([]);
-    setError(null);
-    setCancelled(false);
-    startSubscription();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const stopSubscription = useCallback((syncUI = true) => {
-    if (scanSubscription.current) {
-      scanSubscription.current.unsubscribe();
-      scanSubscription.current = null;
-      if (syncUI) {
-        setScanning(false);
-      }
-    }
-  }, []);
-
-  const onCancel = useCallback(() => {
-    setError(null);
-    setCancelled(true);
-  }, []);
-
-  const onModalHide = useCallback(() => {
-    if (cancelled) {
-      navigation.getParent<StackNavigatorNavigation<RootStackParamList>>()?.pop();
-    }
-  }, [cancelled, navigation]);
-
-  const walletState = useSelector(walletSelector);
-
-  const renderItem = useCallback(
-    ({ item: account }: { item: Account }) => {
-      const acc =
-        currency.type === "TokenCurrency"
-          ? account.subAccounts?.find(a => (a as TokenAccount).token.id === currency.id)
-          : account;
-
-      return acc ? (
-        <Flex px={6}>
-          <AccountCard
-            account={acc}
-            onPress={() => selectAccount(account, scannedAccounts)}
-            AccountSubTitle={
-              currency.type === "TokenCurrency" ? (
-                <LText color="neutral.c70">
-                  {accountNameWithDefaultSelector(walletState, account)}
-                </LText>
-              ) : null
-            }
-          />
-        </Flex>
-      ) : null;
-    },
-    [currency.id, currency.type, scannedAccounts, selectAccount, walletState],
-  );
-
-  const renderHeader = useCallback(
-    () => (
-      <Flex p={6}>
-        <LText fontSize="32px" fontFamily="InterMedium" semiBold>
-          {t("transfer.receive.selectAccount.title")}
-        </LText>
-        <LText variant="body" color="neutral.c70">
-          {t("transfer.receive.selectAccount.subtitle", {
-            currencyTicker: currency.ticker,
-          })}
-        </LText>
-      </Flex>
-    ),
-    [currency.ticker, t],
-  );
-
-  const keyExtractor = useCallback((item: Account) => item?.id, []);
-
-  useEffect(() => {
-    startSubscription();
-    return () => stopSubscription(false);
-  }, [startSubscription, stopSubscription]);
+  const pageTrackingEvent =
+    sections?.length === 0
+      ? analyticsMetadata.ScanDeviceAccounts?.onAccessScreen
+      : analyticsMetadata.AccountsFound?.onAccessScreen;
 
   return (
-    <>
-      <TrackScreen category="Deposit" name="Accounts" asset={currency.name} />
+    <SafeAreaView
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background.main,
+        },
+      ]}
+    >
+      <TrackScreen name={pageTrackingEvent?.eventName} {...pageTrackingEvent?.payload} />
       <PreventNativeBack />
-      {scanning ? (
-        <ScanLoading
-          currency={currency}
-          scannedAccounts={scannedAccounts}
-          stopSubscription={stopSubscription}
-        />
-      ) : addingAccount ? (
-        <AddingAccountLoading currency={currency} />
+      {scanning || !scannedAccounts.length ? (
+        <Flex px={6} style={styles.headerTitle}>
+          <Text
+            variant="h4"
+            testID="receive-header-step2-title"
+            fontSize="24px"
+            color="neutral.c100"
+          >
+            <Trans i18nKey="addAccounts.scanDeviceAccounts.scanningTitle" />
+          </Text>
+        </Flex>
       ) : (
-        <>
-          <TrackScreen
-            category="Deposit"
-            name="Select account to deposit to"
-            asset={currency.name}
-          />
-          <FlatList
-            data={scannedAccounts}
-            renderItem={renderItem}
-            ListHeaderComponent={renderHeader}
-            keyExtractor={keyExtractor}
-            showsVerticalScrollIndicator={false}
-          />
-        </>
+        !cantCreateAccount && (
+          <Flex px={6} style={styles.headerTitle}>
+            <Text
+              variant="h4"
+              testID="receive-header-step2-title"
+              fontSize="24px"
+              color="neutral.c100"
+            >
+              <Trans i18nKey="addAccounts.scanDeviceAccounts.title" />
+            </Text>
+          </Flex>
+        )
+      )}
+      {scanning ? <AnimatedGradient /> : null}
+      <NavigationScrollView style={styles.inner} contentContainerStyle={styles.innerContent}>
+        {sections.map(({ id, selectable, defaultSelected, data }, i) => {
+          const hasMultipleSchemes =
+            id === "creatable" &&
+            newAccountSchemes &&
+            newAccountSchemes.length > 1 &&
+            data.length > 0 &&
+            !scanning;
+          return (
+            <View key={id}>
+              <ScannedAccountsSection
+                defaultSelected={defaultSelected}
+                key={id}
+                showHint={selectable && i === 0 && !Config.DETOX}
+                header={
+                  data.length ? (
+                    <Trans
+                      values={{
+                        count: data.length,
+                      }}
+                      i18nKey={
+                        llmNetworkBasedAddAccountFlow?.enabled
+                          ? `addAccounts.scanDeviceAccounts.sections.${id}.title`
+                          : `addAccounts.sections.${id}.title`
+                      }
+                    />
+                  ) : null
+                }
+                index={i}
+                accounts={data}
+                onAccountNameChange={!selectable ? undefined : onAccountNameChange}
+                onPressAccount={!selectable ? undefined : onPressAccount}
+                onSelectAll={!selectable || id === "creatable" ? undefined : selectAll}
+                onUnselectAll={!selectable ? undefined : unselectAll}
+                selectedIds={selectedIds}
+                isDisabled={!selectable}
+                forceSelected={id === "existing"}
+                style={hasMultipleSchemes ? styles.smallMarginBottom : {}}
+              />
+              {hasMultipleSchemes ? (
+                <View style={styles.moreAddressTypesContainer}>
+                  {showAllCreatedAccounts ? (
+                    currency.type === "CryptoCurrency" ? (
+                      <AddressTypeTooltip
+                        accountSchemes={newAccountSchemes as DerivationMode[]}
+                        currency={currency}
+                      />
+                    ) : null
+                  ) : (
+                    <StyledPressable onPress={viewAllCreatedAccounts}>
+                      <Text variant="large" fontWeight="semiBold">
+                        {t("addAccounts.showMoreChainType")}
+                      </Text>
+                      <Icons.ChevronDown size="S" color="neutral.c100" />
+                    </StyledPressable>
+                  )}
+                </View>
+              ) : null}
+            </View>
+          );
+        })}
+      </NavigationScrollView>
+      {!!scannedAccounts.length && (
+        <ScanDeviceAccountsFooter
+          isScanning={scanning}
+          canRetry={
+            (!scanning && noImportableAccounts && !cantCreateAccount) ||
+            (!scanning && scannedAccounts.length === 0)
+          }
+          canDone={!scanning && cantCreateAccount && noImportableAccounts}
+          onRetry={restartSubscription}
+          onStop={stopSubscription}
+          onDone={quitFlow}
+          onContinue={importAccounts}
+          isDisabled={selectedIds.length === 0}
+          returnToSwap={returnToSwap}
+        />
       )}
       <GenericErrorBottomModal
         error={error}
+        onClose={onCancel}
         onModalHide={onModalHide}
         footerButtons={
           <>
-            <CancelButton flex={1} mx={8} onPress={onCancel} />
-            <RetryButton flex={1} mx={8} onPress={restartSubscription} />
+            <CancelButton containerStyle={styles.button} onPress={onCancel} />
+            <RetryButton
+              containerStyle={[styles.button, styles.buttonRight]}
+              onPress={restartSubscription}
+            />
           </>
         }
       />
-    </>
+    </SafeAreaView>
   );
 }
 
-function ScanLoading({
-  currency,
-  scannedAccounts,
-  stopSubscription,
-}: {
-  currency: Currency;
-  scannedAccounts: Account[];
-  stopSubscription: () => void;
-}) {
-  const { t } = useTranslation();
-  const numberOfAccountsFound = scannedAccounts?.length;
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: "transparent",
+    marginTop: 50,
+  },
+  headerTitle: {
+    marginTop: 50,
+    marginBottom: 16,
+  },
+  inner: {
+    backgroundColor: "transparent",
+  },
+  innerContent: {
+    paddingBottom: 24,
+    backgroundColor: "transparent",
+  },
+  button: {
+    flex: 1,
+    marginHorizontal: 8,
+  },
+  buttonRight: {
+    marginLeft: 8,
+  },
+  smallMarginBottom: {
+    marginBottom: 8,
+  },
+  moreAddressTypesContainer: {
+    paddingHorizontal: 16,
+    marginBottom: 32,
+  },
+});
 
-  return (
-    <Loading
-      title={t("transfer.receive.addAccount.subtitle", {
-        currencyName: currency.name,
-      })}
-    >
-      <TrackScreen category="Deposit" name="Create account" asset={currency.name} />
-      <Flex
-        minHeight={120}
-        flexDirection="column"
-        alignItems="stretch"
-        p={6}
-        position="absolute"
-        bottom={0}
-        left={0}
-        width="100%"
-      >
-        <Flex
-          minHeight={120}
-          flexDirection="column"
-          alignItems="stretch"
-          m={6}
-          justifyContent="flex-end"
-        >
-          {numberOfAccountsFound > 0 ? (
-            <>
-              <LText textAlign="center" mb={6} variant="body" color="neutral.c80">
-                {t("transfer.receive.addAccount.foundAccount", {
-                  count: numberOfAccountsFound,
-                })}
-              </LText>
-              <Button type="secondary" onPress={stopSubscription}>
-                {t("transfer.receive.addAccount.stopSynchronization")}
-              </Button>
-            </>
-          ) : null}
-        </Flex>
-      </Flex>
-    </Loading>
-  );
-}
-
-function AddingAccountLoading({ currency }: { currency: Currency }) {
-  const { t } = useTranslation();
-
-  return (
-    <Loading
-      title={t("transfer.receive.addAccount.addingAccount", { currencyName: currency.name })}
-    />
-  );
-}
-
-function Loading({
-  children,
-  title,
-  subtitle,
-}: {
-  children?: React.ReactNode;
-  title: string;
-  subtitle?: string;
-}) {
-  const { colors } = useTheme();
-
-  return (
-    <>
-      <GradientContainer
-        color={colors.background.main}
-        startOpacity={1}
-        endOpacity={0}
-        containerStyle={{ borderRadius: 0, position: "absolute", bottom: 0, left: 0 }}
-        gradientStyle={{ zIndex: 1 }}
-      >
-        <Animation style={{ width: "100%" }} source={lottie} />
-      </GradientContainer>
-      <Flex flex={1} position="relative">
-        <Flex flex={1} alignItems="center" justifyContent="center" m={6}>
-          <Text variant="h4" fontWeight="semiBold" textAlign="center">
-            {title}
-          </Text>
-          <Text mt={6} textAlign="center" variant="body" fontWeight="medium" color="neutral.c80">
-            {subtitle}
-          </Text>
-        </Flex>
-        {children}
-      </Flex>
-    </>
-  );
-}
-
-export default memo(ScanDeviceAccounts);
+export default ScanDeviceAccounts;

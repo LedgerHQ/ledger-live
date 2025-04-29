@@ -1,6 +1,11 @@
 name: "[PR] Build and Test"
 on:
+  merge_group:
+    types: [checks_requested]
   pull_request:
+    branches-ignore:
+        - 'smartling-content-updated**'
+        - 'smartling-translation-completed**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
@@ -10,11 +15,26 @@ permissions:
   id-token: write
   contents: read
   pull-requests: write
+  actions: write
 
 jobs:
+  pre_job:
+    # continue-on-error: true # Uncomment once integration is finished
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@v5
+        with:
+          concurrent_skipping: 'never'
+          skip_after_successful_duplicate: 'true'
+          do_not_skip: '["pull_request", "workflow_dispatch", "schedule"]'
+
   determine-affected:
     name: "Turbo Affected"
-    if: ${{!github.event.pull_request.head.repo.fork }}
+    needs: pre_job
+    if: ${{!github.event.pull_request.head.repo.fork && needs.pre_job.outputs.should_skip != 'true'}}
     uses: LedgerHQ/ledger-live/.github/workflows/turbo-affected-reusable.yml@develop
     with:
       head_branch: ${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref }}
@@ -56,6 +76,8 @@ jobs:
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@develop
     secrets: inherit
+    with:
+      use-performance-pool: true
 
   # Tests
   test-libraries:

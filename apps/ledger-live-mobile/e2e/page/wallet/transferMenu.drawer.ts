@@ -1,5 +1,3 @@
-import { tapById } from "../../helpers";
-
 export default class TransferMenuDrawer {
   stakeMenuButtonId = "transfer-stake-button";
   transferButtonId = "transfer-button";

@@ -1,5 +1,4 @@
-import { decodeAccountId, findSubAccountById } from "@ledgerhq/coin-framework/account/index";
-import { Account } from "@ledgerhq/types-live";
+import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import {
   Builder,
   SendMode,
@@ -11,17 +10,22 @@ import {
 } from "@ton/ton";
 import BigNumber from "bignumber.js";
 import { estimateFee } from "./bridge/bridgeHelpers/api";
+import { getCoinConfig } from "./config";
 import {
   JettonOpCode,
   MAX_COMMENT_BYTES,
   TOKEN_TRANSFER_FORWARD_AMOUNT,
   TOKEN_TRANSFER_MAX_FEE,
   TOKEN_TRANSFER_QUERY_ID,
+  WORKCHAIN,
 } from "./constants";
 import {
+  KnownJetton,
+  TonAccount,
   TonCell,
   TonComment,
   TonPayloadJettonTransfer,
+  TonSubAccount,
   TonTransaction,
   Transaction,
 } from "./types";
@@ -56,13 +60,30 @@ export const addressesAreEqual = (addr1: string, addr2: string) => {
 };
 
 /**
+ * Returns the known jetton ID and workchain for a given token address.
+ * Returns null if the token is not found in the known jettons list.
+ */
+function getKnownJettonId(tokenAddress: string, knownJettons: KnownJetton[]) {
+  const index = knownJettons.findIndex(jetton => jetton.masterAddress.toString() === tokenAddress);
+  return index > -1 ? { jettonId: index, workchain: WORKCHAIN } : null;
+}
+
+/**
+ * Finds a sub-account by its ID in a TON account.
+ * Returns undefined if no matching sub-account is found.
+ */
+export function findSubAccountById(account: TonAccount, id: string): TonSubAccount | undefined {
+  return account.subAccounts?.find(a => a.id === id) as TonSubAccount | undefined;
+}
+
+/**
  * Builds a TonTransaction object based on the given transaction details.
  */
-export const buildTonTransaction = (
+export function buildTonTransaction(
   transaction: Transaction,
   seqno: number,
-  account: Account,
-): TonTransaction => {
+  account: TonAccount,
+): TonTransaction {
   const { subAccountId, useAllAmount, amount, comment: commentTx, recipient } = transaction;
   let recipientParsed = recipient;
   // if recipient is not valid calculate fees with empty address
@@ -76,12 +97,16 @@ export const buildTonTransaction = (
   // if there is a sub account, the transaction is a token transfer
   const subAccount = findSubAccountById(account, subAccountId ?? "");
 
+  if (subAccount && !subAccount.jettonWallet) {
+    throw new Error("[ton] jetton wallet not found");
+  }
+
   const finalAmount = subAccount
     ? toNano(TOKEN_TRANSFER_MAX_FEE) // for commission fees, excess will be returned
     : useAllAmount
       ? BigInt(0)
       : BigInt(amount.toFixed());
-  const to = subAccount ? subAccount.token.contractAddress : recipientParsed;
+  const to = subAccount?.jettonWallet ?? recipientParsed;
 
   const tonTransaction: TonTransaction = {
     to: TonAddress.parse(to),
@@ -102,6 +127,9 @@ export const buildTonTransaction = (
   if (subAccount) {
     const forwardPayload = commentTx.text.length ? comment(commentTx.text) : null;
 
+    const currencyConfig = getCoinConfig();
+    const knownJettons = currencyConfig.infra.KNOWN_JETTONS;
+
     tonTransaction.payload = {
       type: "jetton-transfer",
       queryId: BigInt(TOKEN_TRANSFER_QUERY_ID),
@@ -111,11 +139,14 @@ export const buildTonTransaction = (
       customPayload: null,
       forwardAmount: BigInt(TOKEN_TRANSFER_FORWARD_AMOUNT),
       forwardPayload,
+      knownJetton: knownJettons
+        ? getKnownJettonId(subAccount?.token.contractAddress, knownJettons)
+        : null,
     };
   }
 
   return tonTransaction;
-};
+}
 
 /**
  * Validates if the given comment is valid.
@@ -132,7 +163,7 @@ export const getTransferExpirationTime = () => Math.floor(Date.now() / 1000 + 60
  * Estimates the fees for a Ton transaction.
  */
 export const getTonEstimatedFees = async (
-  account: Account,
+  account: TonAccount,
   needsInit: boolean,
   tx: TonTransaction,
 ) => {

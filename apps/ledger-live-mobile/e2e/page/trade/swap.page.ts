@@ -1,16 +1,8 @@
-import {
-  clearTextByElement,
-  getElementById,
-  openDeeplink,
-  tapByElement,
-  tapByText,
-  typeTextByElement,
-} from "../../helpers";
 import { expect } from "detox";
-
-const baseLink = "swap";
+import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class SwapPage {
+  baseLink = "swap";
   swapFormTab = () => getElementById("swap-form-tab");
   swapHistoryTab = () => getElementById("swap-history-tab");
   swapSourceSelector = () => getElementById("swap-source-selector");
@@ -22,9 +14,11 @@ export default class SwapPage {
   sendMaxToggle = () => getElementById("exchange-send-max-toggle");
   termsAcceptButton = () => getElementById("terms-accept-button");
   termsCloseButton = () => getElementById("terms-close-button");
+  confirmSwapOnDeviceDrawerId = "confirm-swap-on-device";
+  swapSuccessTitleId = "swap-success-title";
 
   async openViaDeeplink() {
-    await openDeeplink(baseLink);
+    await openDeeplink(this.baseLink);
   }
 
   async expectSwapPage() {
@@ -80,5 +74,16 @@ export default class SwapPage {
   async expectTerms() {
     await expect(this.termsAcceptButton()).toBeVisible();
     await expect(this.termsCloseButton()).toBeVisible();
+  }
+
+  @Step("Wait for device confirm drawer")
+  async waitForDeviceConfirmDrawer() {
+    await waitForElementById(this.confirmSwapOnDeviceDrawerId);
+  }
+
+  @Step("Wait for swap success and continue")
+  async waitForSuccessAndContinue() {
+    await waitForElementById(this.swapSuccessTitleId, 2 * 60000);
+    await tapById(app.common.proceedButtonId);
   }
 }

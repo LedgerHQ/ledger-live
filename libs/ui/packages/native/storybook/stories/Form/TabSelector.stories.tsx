@@ -6,17 +6,18 @@ export default {
   title: "Form/TabSelector",
   component: TabSelector,
   argTypes: {
-    labels: { control: "array" },
+    labels: { control: "object" },
     onToggle: { action: "toggled" },
   },
 };
 
 type TabSelectorStoryArgs = {
-  labels: string[];
-  labels2: string[];
-  labels3: string[];
-  labels4: string[];
+  labels: { id: string; value: string }[];
+  labels2: { id: string; value: string }[];
+  labels3: { id: string; value: string }[];
+  labels4: { id: string; value: string }[];
   onToggle: (value: string) => void;
+  initialTab?: string;
 };
 
 export const TabSelectorStory = (args: TabSelectorStoryArgs) => {
@@ -30,13 +31,21 @@ export const TabSelectorStory = (args: TabSelectorStoryArgs) => {
         <TabSelector labels={args.labels} onToggle={handleToggle} />
       </View>
       <View style={{ padding: 20, height: 80, width: 500 }}>
-        <TabSelector labels={args.labels2} onToggle={handleToggle} />
+        <TabSelector labels={args.labels2} onToggle={handleToggle} initialTab="tab2" />
       </View>
       <View style={{ padding: 20, height: 80, width: 500 }}>
         <TabSelector labels={args.labels3} onToggle={handleToggle} />
       </View>
       <View style={{ padding: 20, height: 80, width: 500 }}>
-        <TabSelector labels={args.labels4} onToggle={handleToggle} />
+        <TabSelector labels={args.labels4} onToggle={handleToggle} initialTab="tab3" />
+      </View>
+      <View style={{ padding: 20, height: 80, width: 500 }}>
+        <TabSelector
+          labels={args.labels4}
+          onToggle={handleToggle}
+          initialTab="tab3"
+          filledVariant
+        />
       </View>
     </>
   );
@@ -45,14 +54,21 @@ export const TabSelectorStory = (args: TabSelectorStoryArgs) => {
 TabSelectorStory.storyName = "TabSelectorStory";
 
 const TabSelectorStoryArgs = {
-  labels: ["First tab"],
-  labels2: ["First tab", "Second Tab"],
-  labels3: ["First tab", "Second Tab", "Third Tab"],
+  labels: [{ id: "tab1", value: "first tab" }],
+  labels2: [
+    { id: "tab1", value: "first tab" },
+    { id: "tab2", value: "second tab" },
+  ],
+  labels3: [
+    { id: "tab1", value: "first tab" },
+    { id: "tab2", value: "second tab" },
+    { id: "tab3", value: "third tab" },
+  ],
   labels4: [
-    "First tab First tab First tab",
-    "Second Tab Second Tab Second Tab",
-    "Third Tab Third Tab Third Tab",
-    "Fourth Tab Fourth Tab Fourth Tab",
+    { id: "tab1", value: "first tab" },
+    { id: "tab2", value: "second tab" },
+    { id: "tab3", value: "third tab" },
+    { id: "tab4", value: "fourth tab" },
   ],
 };
 

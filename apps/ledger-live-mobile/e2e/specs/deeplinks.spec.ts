@@ -1,15 +1,12 @@
-import { Application } from "../page";
 import { knownDevices } from "../models/devices";
-
-const app = new Application();
-
-const ethereumLong = "ethereum";
-const bitcoinLong = "bitcoin";
-const arbitrumLong = "arbitrum";
-const bobaLong = "boba";
 
 $TmsLink("B2CQA-1837");
 describe("DeepLinks Tests", () => {
+  const ethereumLong = "ethereum";
+  const bitcoinLong = "bitcoin";
+  const arbitrumLong = "arbitrum";
+  const bobaLong = "boba";
+
   beforeAll(async () => {
     await app.init({
       userdata: "1AccountBTC1AccountETHReadOnlyFalse",
@@ -30,7 +27,7 @@ describe("DeepLinks Tests", () => {
 
   it("should open Add Account drawer", async () => {
     await app.addAccount.openViaDeeplink();
-    await app.addAccount.selectCurrency(bitcoinLong);
+    await app.receive.selectCurrency(bitcoinLong);
   });
 
   it("should open ETH Account Asset page when given currency param", async () => {

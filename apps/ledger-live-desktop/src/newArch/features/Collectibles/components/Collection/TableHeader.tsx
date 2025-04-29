@@ -9,11 +9,13 @@ const TableHeader: React.FC<Props> = ({ titleKey, actions }) => {
   return (
     <HeaderContainer title={t(titleKey)}>
       <Flex columnGap={12} alignItems={"center"}>
-        {actions?.map(({ element, action }, index) => (
-          <div key={index} onClick={action}>
-            {element}
-          </div>
-        ))}
+        {actions
+          ?.filter(action => !action.hidden)
+          .map(({ element, action }, index) => (
+            <div key={index} onClick={action}>
+              {element}
+            </div>
+          ))}
       </Flex>
     </HeaderContainer>
   );

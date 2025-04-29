@@ -38,7 +38,7 @@ export function createFixtureCryptoCurrency(family: string): CryptoCurrency {
 }
 
 const defaultEthCryptoFamily = cryptocurrenciesById["ethereum"];
-const defaultERC20USDTToken = findTokenById["usd_tether__erc20_"];
+const defaultERC20USDTToken = findTokenById("ethereum/erc20/usd_tether__erc20_")!;
 
 export function createFixtureTokenAccount(
   id = "00",

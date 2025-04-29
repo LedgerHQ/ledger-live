@@ -25,7 +25,7 @@ module.exports = {
     },
     launchApp: "auto",
     cleanup: {
-      shutdownDevice: false,
+      shutdownDevice: process.env.CI ? true : false,
     },
   },
   apps: {
@@ -44,30 +44,42 @@ module.exports = {
       build: `export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=YES -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Release -sdk iphonesimulator -derivedDataPath ios/build`,
       binaryPath: "ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app",
     },
+    "ios.prerelease": {
+      type: "ios.app",
+      build: `export ENVFILE=.env.mock.prerelease && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=YES -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Release -sdk iphonesimulator -derivedDataPath ios/build`,
+      binaryPath: "ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app",
+    },
     "android.debug": {
       type: "android.apk",
-      build: `cd android && ENVFILE=.env.mock ./gradlew app:assembleDebug app:assembleAndroidTest -DtestBuildType=debug -PreactNativeArchitectures=${androidArch} && cd ..`,
+      build: `cd android && ENVFILE=.env.mock SENTRY_DISABLE_AUTO_UPLOAD=true ./gradlew app:assembleDebug app:assembleAndroidTest -DtestBuildType=debug -PreactNativeArchitectures=${androidArch} && cd ..`,
       binaryPath: `android/app/build/outputs/apk/debug/app-${androidArch}-debug.apk`,
       testBinaryPath: "android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
     },
     "android.release": {
       type: "android.apk",
-      build: `cd android && ENVFILE=.env.mock ./gradlew app:assembleDetox app:assembleAndroidTest -DtestBuildType=detox -PreactNativeArchitectures=${androidArch} && cd ..`,
+      build: `cd android && ENVFILE=.env.mock SENTRY_DISABLE_AUTO_UPLOAD=true ./gradlew app:assembleDetox app:assembleAndroidTest -DtestBuildType=detox -PreactNativeArchitectures=${androidArch} && cd ..`,
       binaryPath: `android/app/build/outputs/apk/detox/app-${androidArch}-detox.apk`,
       testBinaryPath: "android/app/build/outputs/apk/androidTest/detox/app-detox-androidTest.apk",
+    },
+    "android.prerelease": {
+      type: "android.apk",
+      build: `cd android && ENVFILE=.env.mock.prerelease SENTRY_DISABLE_AUTO_UPLOAD=true ./gradlew app:assembleDetoxPreRelease app:assembleAndroidTest -DtestBuildType=detoxPreRelease -PreactNativeArchitectures=${androidArch} && cd ..`,
+      binaryPath: `android/app/build/outputs/apk/detoxPreRelease/app-${androidArch}-detoxPreRelease.apk`,
+      testBinaryPath:
+        "android/app/build/outputs/apk/androidTest/detoxPreRelease/app-detoxPreRelease-androidTest.apk",
     },
   },
   devices: {
     simulator: {
       type: "ios.simulator",
       device: {
-        type: "iPhone 14",
+        name: "iOS Simulator",
       },
     },
     emulator: {
       type: "android.emulator",
       device: {
-        avdName: "Pixel_6_Pro_API_32",
+        avdName: "Android_Emulator",
       },
       gpuMode: "swiftshader_indirect",
       headless: process.env.CI ? true : false,
@@ -87,6 +99,10 @@ module.exports = {
       device: "simulator",
       app: "ios.release",
     },
+    "ios.sim.prerelease": {
+      device: "simulator",
+      app: "ios.prerelease",
+    },
     "android.emu.debug": {
       device: "emulator",
       app: "android.debug",
@@ -94,6 +110,10 @@ module.exports = {
     "android.emu.release": {
       device: "emulator",
       app: "android.release",
+    },
+    "android.emu.prerelease": {
+      device: "emulator",
+      app: "android.prerelease",
     },
   },
 };

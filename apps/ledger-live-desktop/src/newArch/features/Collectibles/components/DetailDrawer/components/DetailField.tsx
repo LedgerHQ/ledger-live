@@ -52,6 +52,7 @@ const DetailFieldComponent: React.FC<DetailFieldProps> = ({
   isCopyable,
   isLoading,
   isHash,
+  id,
 }: DetailFieldProps) => {
   const { t } = useTranslation();
 
@@ -74,6 +75,7 @@ const DetailFieldComponent: React.FC<DetailFieldProps> = ({
           <Skeleton show={isLoading} width={100} barHeight={10} minHeight={24}>
             <ValueBox isHorizontal={isHorizontal}>
               <Text
+                data-testid={`nft-${id}`}
                 lineHeight="15.73px"
                 fontSize={4}
                 color="palette.text.shade100"

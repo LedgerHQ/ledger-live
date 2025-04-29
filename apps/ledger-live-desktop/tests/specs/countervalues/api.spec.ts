@@ -27,7 +27,7 @@ test("Countervalues: at least one call is made and successful to the API", async
       });
     });
 
-    await layout.topbarSynchronizeButton.click();
+    await layout.syncAccounts();
 
     expect(await firstSuccessfulQuery).toBeDefined();
   });

@@ -1,18 +1,18 @@
-import { useMemo, useState } from "react";
-import type { AccountLike } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
-import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking";
 import {
   handlers as exchangeHandlers,
   ExchangeType,
 } from "@ledgerhq/live-common/wallet-api/Exchange/server";
+import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking";
+import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { useNavigation } from "@react-navigation/native";
-import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
+import { useMemo, useState } from "react";
 import { track } from "~/analytics";
-import { NavigatorName, ScreenName } from "~/const";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
+import { NavigatorName, ScreenName } from "~/const";
+import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
+import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { WebviewProps } from "../Web3AppWebview/types";
 
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
@@ -81,6 +81,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
                   binaryPayload: exchangeParams.binaryPayload,
                   signature: exchangeParams.signature,
                   feesStrategy: exchangeParams.feesStrategy,
+                  amountExpectedTo: exchangeParams.amountExpectedTo,
                 },
                 device,
                 onResult: result => {

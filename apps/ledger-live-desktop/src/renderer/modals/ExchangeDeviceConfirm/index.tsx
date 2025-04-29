@@ -154,6 +154,7 @@ export type DataProp = {
   onResult: (c: AccountLike, b: Account | undefined | null, a: AppResult | boolean) => void;
   verifyAddress?: boolean;
   onCancel?: (error: Error) => void;
+  onClose?: () => void;
   flow?: string;
 };
 type Props = {
@@ -298,13 +299,13 @@ const BuyCryptoModal = ({
     />
   );
 };
-const BuyCrypto = ({ flow }: { flow?: string }) => {
+const BuyCrypto = ({ flow, onClose }: { flow?: string; onClose?: () => void }) => {
   const render = useCallback(
     ({ data, onClose }: { data: DataProp; onClose: () => void }) => (
       <BuyCryptoModal data={data} onClose={onClose} flow={flow} />
     ),
     [flow],
   );
-  return <Modal name="MODAL_EXCHANGE_CRYPTO_DEVICE" centered render={render} />;
+  return <Modal name="MODAL_EXCHANGE_CRYPTO_DEVICE" centered render={render} onClose={onClose} />;
 };
 export default BuyCrypto;

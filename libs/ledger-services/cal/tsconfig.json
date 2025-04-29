@@ -4,7 +4,6 @@
     "declaration": true,
     "declarationMap": true,
     "downlevelIteration": true,
-    "module": "commonjs",
     "lib": ["es2020", "dom"],
     "outDir": "lib"
   },

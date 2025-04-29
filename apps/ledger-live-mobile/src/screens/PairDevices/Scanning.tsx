@@ -10,12 +10,13 @@ import { Device as DeviceMeta } from "@ledgerhq/live-common/hw/actions/types";
 import { TransportBleDevice } from "@ledgerhq/live-common/ble/types";
 import logger from "../../logger";
 import { BLE_SCANNING_NOTHING_TIMEOUT } from "~/utils/constants";
-import { knownDevicesSelector } from "~/reducers/ble";
-import TransportBLE from "../../react-native-hw-transport-ble";
+import { bleDevicesSelector } from "~/reducers/ble";
+import getBLETransport from "../../react-native-hw-transport-ble";
 import { TrackScreen } from "~/analytics";
 import DeviceItem from "~/components/SelectDevice/DeviceItem";
 import ScanningHeader from "./ScanningHeader";
 import Config from "react-native-config";
+import { useDeviceManagementKitEnabled } from "@ledgerhq/live-dmk-mobile";
 
 type Props = {
   onSelect: (device: TransportBleDevice, deviceMeta?: DeviceMeta) => Promise<void>;
@@ -27,8 +28,10 @@ type Props = {
 
 export default function Scanning({ onTimeout, onError, onSelect, deviceModelIds }: Props) {
   const { t } = useTranslation();
-  const knownDevices = useSelector(knownDevicesSelector);
+  const knownDevices = useSelector(bleDevicesSelector);
   const [devices, setDevices] = useState<TransportBleDevice[]>([]);
+
+  const isLDMKEnabled = useDeviceManagementKitEnabled();
 
   const filteredDevices = useMemo(() => {
     if (!deviceModelIds) return devices;
@@ -70,7 +73,7 @@ export default function Scanning({ onTimeout, onError, onSelect, deviceModelIds 
       onTimeout();
     }, BLE_SCANNING_NOTHING_TIMEOUT);
 
-    const sub = Observable.create(TransportBLE.listen).subscribe({
+    const sub = Observable.create(getBLETransport({ isLDMKEnabled }).listen).subscribe({
       next: (e: DescriptorEvent<TransportBleDevice>) => {
         if (e.type === "add") {
           clearTimeout(timeout);
@@ -91,7 +94,7 @@ export default function Scanning({ onTimeout, onError, onSelect, deviceModelIds 
       sub.unsubscribe();
       clearTimeout(timeout);
     };
-  }, [onTimeout, onError]);
+  }, [onTimeout, onError, isLDMKEnabled]);
 
   return (
     <>

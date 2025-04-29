@@ -1,11 +1,13 @@
-import { IncorrectTypeError, type Api } from "@ledgerhq/coin-framework/api/index";
+import { localForger } from "@taquito/local-forging";
 import { createApi } from ".";
+import type { TezosApi } from "./types";
+
 /**
  * https://teztnets.com/ghostnet-about
  * https://api.tzkt.io/#section/Get-Started/Free-TzKT-API
  */
 describe("Tezos Api", () => {
-  let module: Api;
+  let module: TezosApi;
   const address = "tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ";
 
   beforeAll(() => {
@@ -36,38 +38,44 @@ describe("Tezos Api", () => {
       const amount = BigInt(100);
 
       // When
-      const result = await module.estimateFees(address, amount);
+      const result = await module.estimateFees({
+        asset: { type: "native" },
+        type: "send",
+        sender: { address },
+        recipient: "tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ",
+        amount,
+      });
 
       // Then
-      expect(result).toEqual(BigInt(287));
+      expect(result.value).toBeGreaterThanOrEqual(BigInt(0));
+      expect(result.parameters).toBeDefined();
+      expect(result.parameters?.gasLimit).toBeGreaterThanOrEqual(BigInt(0));
+      expect(result.parameters?.storageLimit).toBeGreaterThanOrEqual(BigInt(0));
     });
   });
 
-  describe.only("listOperations", () => {
+  describe("listOperations", () => {
     it("returns a list regarding address parameter", async () => {
       // When
-      const [tx, _] = await module.listOperations(address, { limit: 100 });
+      const [tx, _] = await module.listOperations(address, { minHeight: 0 });
 
       // Then
       expect(tx.length).toBeGreaterThanOrEqual(1);
       tx.forEach(operation => {
-        expect(operation.address).toEqual(address);
         const isSenderOrReceipt =
           operation.senders.includes(address) || operation.recipients.includes(address);
         expect(isSenderOrReceipt).toBeTruthy();
-        expect(operation.block).toBeDefined();
+        expect(operation.tx.block).toBeDefined();
       });
     });
 
-    it("returns paginated operations", async () => {
+    it("returns all operations", async () => {
       // When
-      const [tx, idx] = await module.listOperations(address, { limit: 100 });
-      const [tx2, _] = await module.listOperations(address, { limit: 100, start: idx });
-      tx.push(...tx2);
+      const [tx, _] = await module.listOperations(address, { minHeight: 0 });
 
       // Then
       // Find a way to create a unique id. In Tezos, the same hash may represent different operations in case of delegation.
-      const checkSet = new Set(tx.map(elt => `${elt.hash}${elt.type}${elt.senders[0]}`));
+      const checkSet = new Set(tx.map(elt => `${elt.tx.hash}${elt.type}${elt.senders[0]}`));
       expect(checkSet.size).toEqual(tx.length);
     });
   });
@@ -90,49 +98,74 @@ describe("Tezos Api", () => {
       const result = await module.getBalance(address);
 
       // Then
-      expect(result).toBeGreaterThan(0);
+      expect(result[0].asset).toEqual({ type: "native" });
+      expect(result[0].value).toBeGreaterThan(0);
     });
   });
 
   describe("craftTransaction", () => {
-    it.each([
-      {
-        type: "send",
-        rawTx:
-          "6c0053ddb3b3a89ed5c8d8326066032beac6de225c9e010300000a0000a31e81ac3425310e3274a4698a793b2839dc0afa00",
-      },
-      {
-        type: "delegate",
-        rawTx:
-          "6e0053ddb3b3a89ed5c8d8326066032beac6de225c9e01030000ff00a31e81ac3425310e3274a4698a793b2839dc0afa",
-      },
-      {
-        type: "undelegate",
-        rawTx: "6e0053ddb3b3a89ed5c8d8326066032beac6de225c9e0103000000",
-      },
-    ])("returns a raw transaction with $type", async ({ type, rawTx }) => {
+    async function decode(sbytes: string) {
+      return await localForger.parse(sbytes);
+    }
+
+    it.each(["send", "delegate", "undelegate"])("returns a raw transaction with %s", async type => {
+      const recipient = "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9";
+      const amount = BigInt(10);
       // When
-      const result = await module.craftTransaction(address, {
+      const encodedTransaction = await module.craftTransaction({
+        asset: { type: "native" },
         type,
-        recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
-        amount: BigInt(10),
-        fee: BigInt(1),
+        sender: { address },
+        recipient: recipient,
+        amount: amount,
       });
 
-      // Then
-      expect(result.slice(64)).toEqual(rawTx);
+      const decodedTransaction = await decode(encodedTransaction);
+      expect(decodedTransaction.contents).toHaveLength(1);
+
+      const operationContent = decodedTransaction.contents[0];
+      expect(operationContent.source).toEqual(address);
+      expect(BigInt(operationContent.fee)).toBeGreaterThan(0);
+
+      if (type === "send") {
+        expect(BigInt(operationContent.amount)).toEqual(amount);
+        expect(operationContent.destination).toEqual(recipient);
+      } else if (type === "delegate") {
+        expect(operationContent.delegate).toEqual(recipient);
+      }
     });
 
-    it("throws an error if type in 'send' or 'delegate' or 'undelegate'", async () => {
-      // When
-      await expect(
-        module.craftTransaction(address, {
-          type: "WHATEVERTYPE",
-          recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
-          amount: BigInt(10),
-          fee: BigInt(1),
-        }),
-      ).rejects.toThrow(IncorrectTypeError);
+    it("should use estimated fees when user does not provide them for crafting a transaction", async () => {
+      const encodedTransaction = await module.craftTransaction({
+        asset: { type: "native" },
+        type: "send",
+        sender: { address },
+        recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
+        amount: BigInt(10),
+      });
+
+      const decodedTransaction = await decode(encodedTransaction);
+      const transactionFee = BigInt(decodedTransaction.contents[0].fee);
+      expect(transactionFee).toBeGreaterThan(0);
     });
+
+    it.each([1n, 50n, 99n])(
+      "should use custom user fees when user provides it for crafting a transaction",
+      async (customFees: bigint) => {
+        const encodedTransaction = await module.craftTransaction(
+          {
+            asset: { type: "native" },
+            type: "send",
+            sender: { address },
+            recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
+            amount: BigInt(10),
+          },
+          customFees,
+        );
+
+        const decodedTransaction = await decode(encodedTransaction);
+        expect(decodedTransaction.contents[0].fee).toEqual(customFees.toString());
+      },
+    );
   });
 });

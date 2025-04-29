@@ -9,7 +9,7 @@ import { track, TrackScreen } from "~/analytics";
 import useRatings from "~/logic/ratings";
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { lastSeenDeviceSelector, notificationsSelector } from "~/reducers/settings";
-import { knownDevicesSelector } from "~/reducers/ble";
+import { bleDevicesSelector } from "~/reducers/ble";
 import { useSettings } from "~/hooks";
 
 const { height } = getWindowDimensions();
@@ -58,7 +58,7 @@ type Props = {
 const DisappointedForm = ({ setStep }: Props) => {
   const { ratingsHappyMoment, ratingsFeatureParams } = useRatings();
   const { language } = useSettings();
-  const devices = useSelector(knownDevicesSelector);
+  const devices = useSelector(bleDevicesSelector);
   const lastDevice = useSelector(lastSeenDeviceSelector) || devices[devices.length - 1];
 
   const notifications = useSelector(notificationsSelector);

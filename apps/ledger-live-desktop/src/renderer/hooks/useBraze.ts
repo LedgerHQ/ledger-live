@@ -13,6 +13,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import {
   setActionCards,
+  setDesktopCards,
   setNotificationsCards,
   setPortfolioCards,
 } from "../actions/dynamicContent";
@@ -117,7 +118,7 @@ export async function useBraze() {
       const expiredAnonymousUserNotifications = getOldCampaignIds(anonymousUserNotifications);
       if (expiredAnonymousUserNotifications.length) {
         const validAnonymousUserNotificationsOnly = Object.keys(anonymousUserNotifications).reduce(
-          (validNotifications: Record<string, string | number>, key: string) => {
+          (validNotifications: Record<string, number>, key: string) => {
             if (!expiredAnonymousUserNotifications.includes(key)) {
               validNotifications[key] = anonymousUserNotifications[key];
             }
@@ -140,6 +141,7 @@ export async function useBraze() {
       enableHtmlInAppMessages: true,
       enableLogging: __DEV__,
       sessionTimeoutInSeconds: devMode ? 1 : 1800,
+      appVersion: isTrackedUser ? __APP_VERSION__ : undefined,
     });
 
     // If it's playwright, we don't want to fetch content cards
@@ -173,6 +175,7 @@ export async function useBraze() {
         .map(card => mapAsNotificationContentCard(card as ClassicCard))
         .sort(compareCards);
 
+      dispatch(setDesktopCards(filteredDesktopCards));
       dispatch(setPortfolioCards(portfolioCards));
       dispatch(setActionCards(actionCards));
       dispatch(setNotificationsCards(notificationsCards));

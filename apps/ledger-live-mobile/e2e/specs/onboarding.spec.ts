@@ -1,12 +1,9 @@
 import { device } from "detox";
-import { isAndroid, launchApp } from "../helpers";
-import { Application } from "../page";
-
-const app = new Application();
-
-let isFirstTest = true;
+import { isAndroid, launchApp } from "../helpers/commonHelpers";
 
 describe("Onboarding", () => {
+  let isFirstTest = true;
+
   beforeEach(async () => {
     if (!isFirstTest) {
       await device.uninstallApp();
@@ -20,7 +17,6 @@ describe("Onboarding", () => {
     await app.onboarding.startOnboarding();
     await app.onboarding.chooseToAccessYourWallet();
     await app.onboarding.chooseToConnectYourLedger();
-    await app.onboarding.selectPairMyNano();
     await app.common.selectAddDevice();
     await app.common.addDeviceViaBluetooth();
     await app.portfolio.waitForPortfolioPageToLoad();
@@ -33,7 +29,6 @@ describe("Onboarding", () => {
     await app.onboarding.chooseSetupLedger();
     await app.onboarding.chooseDevice("nanoX");
     await app.onboarding.goesThroughRestorePhrase();
-    await app.onboarding.selectPairMyNano();
     await app.common.selectAddDevice();
     await app.common.addDeviceViaBluetooth();
     await app.portfolio.waitForPortfolioPageToLoad();
@@ -52,7 +47,6 @@ describe("Onboarding", () => {
       await app.onboarding.checkDeviceNotCompatible();
     } else {
       await app.onboarding.goesThroughRestorePhrase();
-      await app.onboarding.selectPairMyNano();
       await app.common.addDeviceViaUSB("nanoSP");
       await app.portfolio.waitForPortfolioPageToLoad();
     }
@@ -64,7 +58,6 @@ describe("Onboarding", () => {
     await app.onboarding.chooseSetupLedger();
     await app.onboarding.chooseDevice("nanoX");
     await app.onboarding.goesThroughCreateWallet();
-    await app.onboarding.selectPairMyNano();
     await app.common.selectAddDevice();
     await app.common.addDeviceViaBluetooth();
     await app.portfolio.waitForPortfolioPageToLoad();

@@ -24,11 +24,11 @@ const StyledSafeAreaView = styled(SafeAreaView)`
 
 const images = {
   light: [
-    require("~/images/illustration/Light/_049.png"),
-    require("~/images/illustration/Light/_073.png"),
-    require("~/images/illustration/Light/_070.png"),
-    require("~/images/illustration/Light/_069.png"),
-    require("~/images/illustration/Light/_066.png"),
+    require("~/images/illustration/Light/_049.webp"),
+    require("~/images/illustration/Light/_073.webp"),
+    require("~/images/illustration/Light/_070.webp"),
+    require("~/images/illustration/Light/_069.webp"),
+    require("~/images/illustration/Light/_066.webp"),
   ],
 };
 

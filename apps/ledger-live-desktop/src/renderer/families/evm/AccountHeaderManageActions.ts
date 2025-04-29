@@ -9,7 +9,7 @@ import { useHistory } from "react-router";
 
 type Props = {
   account: AccountLike;
-  parentAccount: Account | undefined | null;
+  parentAccount?: Account | null;
 };
 
 const AccountHeaderActions = ({ account, parentAccount }: Props) => {
@@ -19,19 +19,26 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
 
   const isEthereumAccount = account.type === "Account" && account.currency.id === "ethereum";
   const isBscAccount = account.type === "Account" && account.currency.id === "bsc";
+  const isPOLAccount =
+    account.type === "TokenAccount" &&
+    account.token.id === "ethereum/erc20/polygon_ecosystem_token";
+  const isAvaxAccount = account.type === "Account" && account.currency.id === "avalanche_c_chain";
 
-  const onClickStakekit = useCallback(() => {
-    const value = "/platform/stakekit";
+  const onClickStakekit = useCallback(
+    (yieldId: string) => {
+      const value = "/platform/stakekit";
 
-    history.push({
-      pathname: value,
-      state: {
-        yieldId: "bsc-bnb-native-staking",
-        accountId: account.id,
-        returnTo: `/account/${account.id}`,
-      },
-    });
-  }, [account.id, history]);
+      history.push({
+        pathname: value,
+        state: {
+          yieldId,
+          accountId: account.id,
+          returnTo: `/account/${account.id}`,
+        },
+      });
+    },
+    [account.id, history],
+  );
 
   const onClickStakeModal = useCallback(() => {
     if (isAccountEmpty(account)) {
@@ -54,11 +61,22 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
     if (isEthereumAccount) {
       onClickStakeModal();
     } else if (isBscAccount) {
-      onClickStakekit();
+      onClickStakekit("bsc-bnb-native-staking");
+    } else if (isPOLAccount) {
+      onClickStakekit("ethereum-matic-native-staking");
+    } else if (isAvaxAccount) {
+      onClickStakekit("avalanche-avax-liquid-staking");
     }
-  }, [isEthereumAccount, isBscAccount, onClickStakeModal, onClickStakekit]);
+  }, [
+    isEthereumAccount,
+    isBscAccount,
+    isAvaxAccount,
+    onClickStakeModal,
+    onClickStakekit,
+    isPOLAccount,
+  ]);
 
-  if (isEthereumAccount || isBscAccount) {
+  if (isEthereumAccount || isBscAccount || isPOLAccount || isAvaxAccount) {
     return [
       {
         key: "Stake",

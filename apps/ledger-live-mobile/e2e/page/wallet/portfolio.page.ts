@@ -1,17 +1,8 @@
 import { expect } from "detox";
-import {
-  getElementById,
-  getTextOfElement,
-  openDeeplink,
-  scrollToId,
-  tapByElement,
-  tapById,
-  waitForElementById,
-} from "../../helpers";
-import jestExpect from "expect";
+import { openDeeplink } from "../../helpers/commonHelpers";
 
-const baseLink = "portfolio";
 export default class PortfolioPage {
+  baseLink = "portfolio";
   zeroBalance = "$0.00";
   graphCardBalanceId = "graphCard-balance";
   assetBalanceId = "asset-balance";
@@ -29,6 +20,8 @@ export default class PortfolioPage {
   earnButton = () => getElementById("tab-bar-earn");
   addAccountCta = "add-account-cta";
   lastTransactionAmount = () => getElementById(this.transactionAmountId, 0);
+  assetItemId = (currencyName: string) => `assetItem-${currencyName}`;
+  allocationSectionTitleId = "portfolio-allocation-section";
 
   @Step("Navigate to Settings")
   async navigateToSettings() {
@@ -58,7 +51,7 @@ export default class PortfolioPage {
 
   @Step("Open Portfolio via deeplink")
   async openViaDeeplink() {
-    await openDeeplink(baseLink);
+    await openDeeplink(this.baseLink);
   }
 
   async openMyLedger() {
@@ -69,6 +62,7 @@ export default class PortfolioPage {
     await tapByElement(this.earnButton());
   }
 
+  @Step("Click on Add account button in portfolio")
   async addAccount() {
     await scrollToId(this.addAccountCta, this.emptyPortfolioListId);
     await tapById(this.addAccountCta);
@@ -78,6 +72,7 @@ export default class PortfolioPage {
     await scrollToId(this.seeAllTransactionButton, this.accountsListView);
   }
 
+  @Step("Expect Portfolio with accounts")
   async expectPortfolioWithAccounts() {
     await expect(getElementById(this.accountsListView)).toBeVisible();
   }
@@ -88,5 +83,11 @@ export default class PortfolioPage {
 
   async openLastTransaction() {
     await tapByElement(this.lastTransactionAmount());
+  }
+
+  @Step("Go to asset's accounts from portfolio")
+  async goToAccounts(currencyName: string) {
+    await scrollToId(this.allocationSectionTitleId, this.accountsListView);
+    await tapById(this.assetItemId(currencyName));
   }
 }

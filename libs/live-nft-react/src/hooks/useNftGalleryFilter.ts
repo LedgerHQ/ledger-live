@@ -36,7 +36,7 @@ export function useNftGalleryFilter({
   // for performance, we hashmap the list of nfts by hash.
   const nftsWithProperties = useMemo(
     () =>
-      new Map(nftsOwned.map(obj => [hashProtoNFT(obj.contract, obj.tokenId, obj.currencyId), obj])),
+      new Map(nftsOwned.map(obj => [hashProtoNFT(obj.contract, obj.currencyId, obj.tokenId), obj])),
     [nftsOwned],
   );
 
@@ -45,7 +45,7 @@ export function useNftGalleryFilter({
     if (queryResult.data) {
       for (const page of queryResult.data.pages) {
         for (const nft of page.nfts) {
-          const hash = hashProtoNFT(nft.contract_address, nft.token_id, nft.chain);
+          const hash = hashProtoNFT(nft.contract_address, nft.chain, nft.token_id);
           const existing = nftsWithProperties.get(hash);
           if (existing) {
             nfts.push(existing);

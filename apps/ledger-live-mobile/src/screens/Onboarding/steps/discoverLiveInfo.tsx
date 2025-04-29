@@ -7,7 +7,12 @@ import styled, { useTheme } from "styled-components/native";
 import { useDispatch } from "react-redux";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { Image, ImageProps } from "react-native";
-import { completeOnboarding, setOnboardingHasDevice, setReadOnlyMode } from "~/actions/settings";
+import {
+  completeOnboarding,
+  setIsReborn,
+  setOnboardingHasDevice,
+  setReadOnlyMode,
+} from "~/actions/settings";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import { NavigatorName, ScreenName } from "~/const";
 import { screen, track } from "~/analytics";
@@ -22,10 +27,10 @@ import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/typ
 import Config from "react-native-config";
 
 const slidesImages = [
-  require("../../../../assets/images/onboarding/stories/slide1.png"),
-  require("../../../../assets/images/onboarding/stories/slide2.png"),
-  require("../../../../assets/images/onboarding/stories/slide3.png"),
-  require("../../../../assets/images/onboarding/stories/slide4.png"),
+  require("../../../../assets/images/onboarding/stories/slide1.webp"),
+  require("../../../../assets/images/onboarding/stories/slide2.webp"),
+  require("../../../../assets/images/onboarding/stories/slide3.webp"),
+  require("../../../../assets/images/onboarding/stories/slide4.webp"),
 ];
 
 const StyledSafeAreaView = styled(SafeAreaView)`
@@ -78,7 +83,6 @@ const Item = ({
     dispatch(completeOnboarding());
     dispatch(setReadOnlyMode(true));
     onClick("Explore without a device");
-    dispatch(setOnboardingHasDevice(false));
 
     navigation.reset({
       index: 0,
@@ -88,9 +92,10 @@ const Item = ({
 
   const pressExplore = useCallback(() => {
     exploreLedger();
+    dispatch(setIsReborn(true));
     dispatch(setOnboardingHasDevice(false));
     onClick("Explore without a device");
-  }, [exploreLedger, dispatch, onClick]);
+  }, [dispatch, exploreLedger, onClick]);
 
   const pressBuy = useCallback(() => {
     buyLedger();
@@ -116,7 +121,7 @@ const Item = ({
       </Svg>
       <Text
         variant="h4"
-        style={{ fontSize: 40, lineHeight: 45 }}
+        style={{ fontSize: 40, lineHeight: 54 }}
         mx={7}
         mt={3}
         mb={10}

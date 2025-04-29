@@ -1,7 +1,10 @@
 import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
-import byFamily from "./generated/operation";
-
+import {
+  isEditableOperation as isEditableOperationEvm,
+  isStuckOperation as isStuckOperationEvm,
+  getStuckAccountAndOperation as getStuckAccountAndOperationEvm,
+} from "@ledgerhq/coin-evm/operation";
 export * from "@ledgerhq/coin-framework/operation";
 
 /**
@@ -14,10 +17,8 @@ export const isEditableOperation = ({
   account: Account;
   operation: Operation;
 }): boolean => {
-  const specific = byFamily[account.currency.family];
-
-  if (specific?.isEditableOperation) {
-    return specific.isEditableOperation(account, operation);
+  if (account.currency.family === "evm") {
+    return isEditableOperationEvm(account, operation);
   }
 
   return false;
@@ -33,10 +34,8 @@ export const isStuckOperation = ({
   family: string;
   operation: Operation;
 }): boolean => {
-  const specific = byFamily[family];
-
-  if (specific?.isStuckOperation) {
-    return specific.isStuckOperation(operation);
+  if (family === "evm") {
+    return isStuckOperationEvm(operation);
   }
 
   return false;
@@ -58,10 +57,8 @@ export const getStuckAccountAndOperation = (
   | undefined => {
   const mainAccount = getMainAccount(account, parentAccount);
 
-  const specific = byFamily[mainAccount.currency.family];
-
-  if (specific?.getStuckAccountAndOperation) {
-    return specific.getStuckAccountAndOperation(account, parentAccount);
+  if (mainAccount.currency.family === "evm") {
+    return getStuckAccountAndOperationEvm(account, parentAccount);
   }
 
   return undefined;

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -12,6 +12,7 @@ import { useTransactionDeviceAction, useCompleteExchangeDeviceAction } from "~/h
 import { mevProtectionSelector } from "~/reducers/settings";
 import { SignedOperation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
 type Props = StackNavigatorProps<
   PlatformExchangeNavigatorParamList,
@@ -34,6 +35,7 @@ const PlatformCompleteExchange: React.FC<Props> = ({
   const [transaction, setTransaction] = useState<Transaction>();
   const [signedOperation, setSignedOperation] = useState<SignedOperation>();
   const [error, setError] = useState<Error>();
+  const hasPopped = useRef(false);
 
   useEffect(() => {
     if (signedOperation) {
@@ -50,7 +52,11 @@ const PlatformCompleteExchange: React.FC<Props> = ({
   }, [onResult, error]);
 
   const onClose = useCallback(() => {
-    navigation.pop();
+    // Prevent onClose being called twice
+    if (!hasPopped.current) {
+      navigation.pop();
+    }
+    hasPopped.current = true;
   }, [navigation]);
 
   const onCompleteExchange = useCallback(
@@ -101,6 +107,7 @@ const PlatformCompleteExchange: React.FC<Props> = ({
           onClose={onClose}
           onResult={onCompleteExchange}
           request={request}
+          location={HOOKS_TRACKING_LOCATIONS.swapFlow}
         />
       ) : (
         <DeviceActionModal
@@ -110,6 +117,7 @@ const PlatformCompleteExchange: React.FC<Props> = ({
           onClose={onClose}
           onResult={onSign}
           request={signRequest}
+          location={HOOKS_TRACKING_LOCATIONS.swapFlow}
         />
       )}
     </SafeAreaView>

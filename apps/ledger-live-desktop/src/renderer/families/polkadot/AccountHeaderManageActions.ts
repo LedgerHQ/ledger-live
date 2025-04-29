@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import {
   hasExternalController,
   hasExternalStash,
@@ -12,7 +12,7 @@ import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLo
 import { useHistory } from "react-router";
 
 type Props = {
-  account: PolkadotAccount | SubAccount;
+  account: PolkadotAccount | TokenAccount;
   parentAccount: PolkadotAccount | undefined | null;
   source?: string;
 };

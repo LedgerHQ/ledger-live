@@ -5,8 +5,17 @@ import {
   SolanaOperationExtraRaw,
   SolanaResources,
   SolanaResourcesRaw,
+  SolanaTokenAccount,
+  SolanaTokenAccountRaw,
 } from "./types";
-import { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountRaw,
+  OperationExtra,
+  OperationExtraRaw,
+  TokenAccount,
+  TokenAccountRaw,
+} from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 
 export function toSolanaResourcesRaw(resources: SolanaResources): SolanaResourcesRaw {
@@ -78,4 +87,32 @@ export function toOperationExtraRaw(extra: OperationExtra): OperationExtraRaw {
 
 function isExtraValid(extra: OperationExtra | OperationExtraRaw): boolean {
   return !!extra && typeof extra === "object";
+}
+
+export function assignToTokenAccountRaw(
+  tokenAccount: TokenAccount,
+  tokenAccountRaw: TokenAccountRaw,
+) {
+  const solanaTokenAccount = tokenAccount as SolanaTokenAccount;
+  const solanaTokenAccountRaw = tokenAccountRaw as SolanaTokenAccountRaw;
+  if (solanaTokenAccount.state) {
+    solanaTokenAccountRaw.state = solanaTokenAccount.state;
+  }
+  if (solanaTokenAccount.extensions) {
+    solanaTokenAccountRaw.extensions = JSON.stringify(solanaTokenAccount.extensions);
+  }
+}
+
+export function assignFromTokenAccountRaw(
+  tokenAccountRaw: TokenAccountRaw,
+  tokenAccount: TokenAccount,
+) {
+  const solanaTokenAccount = tokenAccount as SolanaTokenAccount;
+  const solanaTokenAccountRaw = tokenAccountRaw as SolanaTokenAccountRaw;
+  if (solanaTokenAccountRaw.state) {
+    solanaTokenAccount.state = solanaTokenAccountRaw.state;
+  }
+  if (solanaTokenAccountRaw.extensions) {
+    solanaTokenAccount.extensions = JSON.parse(solanaTokenAccountRaw.extensions);
+  }
 }

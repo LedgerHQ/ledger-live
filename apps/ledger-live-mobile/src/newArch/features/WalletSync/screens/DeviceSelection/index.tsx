@@ -18,6 +18,7 @@ import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<
@@ -121,6 +122,7 @@ const WalletSyncActivationDeviceSelection: React.FC<ChooseDeviceProps> = ({
         request={request}
         onError={onError}
         registerDeviceSelection={registerDeviceSelection}
+        location={HOOKS_TRACKING_LOCATIONS.ledgerSyncFlow}
       />
     </SafeAreaView>
   );

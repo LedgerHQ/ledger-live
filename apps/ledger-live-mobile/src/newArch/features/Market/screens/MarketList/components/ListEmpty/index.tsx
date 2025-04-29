@@ -6,13 +6,13 @@ import EmptyState from "../EmptyState";
 import EmptyStarredCoins from "../EmptyStarredCoins";
 
 const noResultIllustration = {
-  dark: require("~/images/illustration/Dark/_051.png"),
-  light: require("~/images/illustration/Light/_051.png"),
+  dark: require("~/images/illustration/Dark/_051.webp"),
+  light: require("~/images/illustration/Light/_051.webp"),
 };
 
 const noNetworkIllustration = {
-  dark: require("~/images/illustration/Dark/_078.png"),
-  light: require("~/images/illustration/Light/_078.png"),
+  dark: require("~/images/illustration/Dark/_078.webp"),
+  light: require("~/images/illustration/Light/_078.webp"),
 };
 
 interface ListEmptyProps {

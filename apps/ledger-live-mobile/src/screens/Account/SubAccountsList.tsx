@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import take from "lodash/take";
 import { StyleSheet, View, FlatList, ListRenderItem } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { getAccountCurrency, listSubAccounts } from "@ledgerhq/live-common/account/index";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
@@ -19,7 +19,7 @@ import SectionTitle from "../WalletCentricSections/SectionTitle";
 import Button from "~/components/Button";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 
-const keyExtractor = (item: SubAccount): string => item.id;
+const keyExtractor = (item: TokenAccount): string => item.id;
 
 const styles = StyleSheet.create({
   footer: {
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
 
 type Props = {
   parentAccount: Account;
-  onAccountPress: (_: SubAccount) => void;
+  onAccountPress: (_: TokenAccount) => void;
   accountId: string;
   useCounterValue?: boolean;
 };
@@ -195,7 +195,7 @@ export default function SubAccountsList({
     accountId,
   ]);
 
-  const renderItem: ListRenderItem<SubAccount> = useCallback(
+  const renderItem: ListRenderItem<TokenAccount> = useCallback(
     ({ item }) => (
       <Flex alignItems={"center"}>
         <SubAccountRow

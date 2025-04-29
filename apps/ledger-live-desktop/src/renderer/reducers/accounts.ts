@@ -9,7 +9,7 @@ import {
   isUpToDateAccount,
 } from "@ledgerhq/live-common/account/index";
 import { decodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
-import { orderByLastReceived } from "@ledgerhq/live-nft";
+import { groupByCurrency } from "@ledgerhq/live-nft";
 import { getEnv } from "@ledgerhq/live-env";
 import isEqual from "lodash/isEqual";
 import { State } from ".";
@@ -225,7 +225,7 @@ export const flattenAccountsSelector = createSelector(accountsSelector, flattenA
 export const orderedVisibleNftsSelector = createSelector(
   accountsSelector,
   nftCollectionsStatusByNetworkSelector,
-  (_: State, hideSpam: boolean) => hideSpam,
+  (_: State, hideSpams: boolean) => hideSpams,
   (accounts, nftCollectionsStatusByNetwork, hideSpams) => {
     const nfts = accounts.map(a => a.nfts ?? []).flat();
 
@@ -238,6 +238,6 @@ export const orderedVisibleNftsSelector = createSelector(
     const visibleNfts = nfts.filter(
       nft => !hiddenNftCollections.includes(`${decodeNftId(nft.id).accountId}|${nft.contract}`),
     );
-    return orderByLastReceived(accounts, visibleNfts);
+    return groupByCurrency(visibleNfts);
   },
 );

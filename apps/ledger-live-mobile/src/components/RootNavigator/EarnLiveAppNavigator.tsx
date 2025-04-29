@@ -1,19 +1,20 @@
-import React, { useEffect, useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
-
-import { useTheme } from "styled-components/native";
-import { useRoute } from "@react-navigation/native";
-import { useDispatch, useSelector } from "react-redux";
+import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/lib/account/helpers";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
-
-import { ScreenName, NavigatorName } from "~/const";
+import { useRoute } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import React, { useEffect, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useTheme } from "styled-components/native";
+import { NavigatorName, ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { flattenAccountsSelector } from "~/reducers/accounts";
+import { EarnScreen } from "~/screens/PTX/Earn";
+import { EarnInfoDrawer } from "~/screens/PTX/Earn/EarnInfoDrawer";
+import { EarnMenuDrawer } from "~/screens/PTX/Earn/EarnMenuDrawer";
+import { EarnProtocolInfoDrawer } from "~/screens/PTX/Earn/EarnProtocolInfoDrawer";
+import { useStakingDrawer } from "../Stake/useStakingDrawer";
 import type { EarnLiveAppNavigatorParamList } from "./types/EarnLiveAppNavigator";
 import type { BaseComposite, StackNavigatorProps } from "./types/helpers";
-import { EarnScreen } from "~/screens/PTX/Earn";
-import { shallowAccountsSelector } from "~/reducers/accounts";
-import { EarnInfoDrawer } from "~/screens/PTX/Earn/EarnInfoDrawer";
-import { useStakingDrawer } from "../Stake/useStakingDrawer";
 
 const Stack = createStackNavigator<EarnLiveAppNavigatorParamList>();
 
@@ -25,7 +26,7 @@ const Earn = (props: NavigationProps) => {
   const dispatch = useDispatch();
   const paramAction = props.route.params?.action;
   const navigation = props.navigation;
-  const accounts = useSelector(shallowAccountsSelector);
+  const accounts = useSelector(flattenAccountsSelector);
   const route = useRoute();
 
   const openStakingDrawer = useStakingDrawer({
@@ -69,10 +70,12 @@ const Earn = (props: NavigationProps) => {
           const accountId = getAccountIdFromWalletAccountId(walletId);
           const account = accounts.find(acc => acc.id === accountId);
           if (account) {
-            openStakingDrawer(account);
+            const parent = isTokenAccount(account)
+              ? getParentAccount(account, accounts)
+              : undefined;
+            openStakingDrawer(account, parent);
           } else {
-            // eslint-disable-next-line no-console
-            console.log("no matching account found for given id.");
+            console.warn("no matching account found for given id.");
           }
           break;
         }
@@ -119,7 +122,9 @@ const Earn = (props: NavigationProps) => {
           },
         }}
       />
+      <EarnProtocolInfoDrawer />
       <EarnInfoDrawer />
+      <EarnMenuDrawer />
     </>
   );
 };

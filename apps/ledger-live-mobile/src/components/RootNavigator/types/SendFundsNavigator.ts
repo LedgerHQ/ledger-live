@@ -29,6 +29,7 @@ import {
 } from "@ledgerhq/live-common/families/solana/types";
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/xrp/types";
 import type { Transaction as ICPTransaction } from "@ledgerhq/live-common/families/internet_computer/types";
+import type { Transaction as MinaTransaction } from "@ledgerhq/live-common/families/mina/types";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/families/stacks/types";
 import type { Transaction as CasperTransaction } from "@ledgerhq/live-common/families/casper/types";
@@ -305,7 +306,14 @@ export type SendFundsNavigatorStackParamList = {
     account: Account;
     parentId?: string;
     transaction: ICPTransaction;
-    currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SignTransactionSummary;
+    currentNavigation: ScreenName.SignTransactionSummary;
+  };
+  [ScreenName.MinaEditMemo]: {
+    accountId: string;
+    account: Account;
+    parentId?: string;
+    transaction: MinaTransaction;
+    currentNavigation: ScreenName.SignTransactionSummary;
   };
   [ScreenName.StacksEditMemo]: {
     accountId: string;

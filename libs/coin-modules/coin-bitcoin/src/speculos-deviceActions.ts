@@ -27,9 +27,15 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
         if (prevSteps.find(step => step.title === "Address")) {
           if (account.currency.id === "bitcoin" || account.currency.id === "bitcoin_testnet") {
             return `OP_RETURN 0x${transaction.opReturnData?.toString("hex")}`;
+          } else if (transaction?.opReturnData && transaction.opReturnData.length > 0) {
+            return transaction.recipient;
           } else {
             return "OP_RETURN";
           }
+        }
+
+        if (transaction?.opReturnData && transaction.opReturnData.length > 0) {
+          return "OP_RETURN";
         }
 
         if (perCoin?.onScreenTransactionRecipient) {

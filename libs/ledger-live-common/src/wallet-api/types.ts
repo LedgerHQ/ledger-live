@@ -17,7 +17,7 @@ export type {
 
 export type { WalletAPIServer } from "@ledgerhq/wallet-api-server";
 
-export {
+export type {
   CurrencyType as WalletAPICurrencyType,
   TokenStandard as WalletAPITokenStandard,
 } from "@ledgerhq/wallet-api-core";
@@ -77,3 +77,9 @@ export type RecentlyUsedIdDb = {
 };
 
 export type CurrentAccountHistIDb = Record<string, string>;
+
+export type DAppTrackingData = {
+  type: "approve" | "transfer";
+  currency: string;
+  network: CryptoCurrency["id"];
+};

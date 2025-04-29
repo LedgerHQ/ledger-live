@@ -121,6 +121,28 @@ describe("fetchAndMergeProviderData", () => {
         ),
         version: 1,
       },
+      lifi: {
+        type: "CEX",
+        displayName: "LI.FI",
+        name: "LI.FI",
+        useInExchangeApp: true,
+        termsOfUseUrl: "https://li.fi/legal/terms-and-conditions/",
+        supportUrl: "https://discord.gg/jumperexchange",
+        mainUrl: "https://li.fi/",
+        needsKYC: false,
+        version: 2,
+        publicKey: {
+          curve: "secp256k1",
+          data: Buffer.from(
+            "04e5f4fa0f28dec3b1f52934f29bd91ab862b003a531d67ba3864e3ba4303be8e815a619ee6f78e8079acf46f0d0d8fc664be2f343d1c9a20c4d2420f51a56ccea",
+            "hex",
+          ),
+        },
+        signature: Buffer.from(
+          "3044022041344dba7353fe94a4d24a20285b5afaa8fa9a022a62e1042d059b0f1d37cbc302200a3ed5d661df0c44d78c439939c4c49868936c7357da3807a19104bcfb323d24",
+          "hex",
+        ),
+      },
       moonpay: {
         displayName: "MoonPay",
         useInExchangeApp: true,

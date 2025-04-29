@@ -1,5 +1,5 @@
 import { Image } from "react-native";
-import customLockScreenBanner from "~/images/customLockScreenBanner.png";
+import customLockScreenBanner from "~/images/customLockScreenBanner.webp";
 import React from "react";
 import { useSystem } from "~/hooks";
 

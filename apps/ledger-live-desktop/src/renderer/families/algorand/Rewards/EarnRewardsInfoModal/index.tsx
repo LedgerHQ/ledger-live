@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { openModal } from "~/renderer/actions/modals";
 import EarnRewardsInfoModal from "~/renderer/components/EarnRewardsInfoModal";
 import { urls } from "~/config/urls";
@@ -11,7 +11,7 @@ import { AlgorandAccount } from "@ledgerhq/live-common/families/algorand/types";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
 export type Props = {
-  account: AlgorandAccount | SubAccount;
+  account: AlgorandAccount | TokenAccount;
 };
 export default function AlgorandEarnRewardsInfoModal({ account }: Props) {
   const { t } = useTranslation();

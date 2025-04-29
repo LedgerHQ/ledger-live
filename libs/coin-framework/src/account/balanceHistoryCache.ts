@@ -8,7 +8,7 @@ import type {
 } from "@ledgerhq/types-live";
 import { getOperationAmountNumberWithInternals } from "../operation";
 
-export const emptyHistoryCache = {
+export const createEmptyHistoryCache = () => ({
   HOUR: {
     latestDate: null,
     balances: [],
@@ -21,7 +21,9 @@ export const emptyHistoryCache = {
     latestDate: null,
     balances: [],
   },
-};
+});
+
+export const emptyHistoryCache = createEmptyHistoryCache();
 
 const hourIncrement = 60 * 60 * 1000;
 const dayIncrement = 24 * hourIncrement;

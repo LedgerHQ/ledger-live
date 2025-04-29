@@ -6,6 +6,8 @@ import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { LandingPagesNavigatorParamList } from "./types/LandingPagesNavigator";
 import GenericLandingPage from "LLM/features/LandingPages/screens/GenericLandingPage";
 import { NavigationHeaderCloseButton } from "../NavigationHeaderCloseButton";
+import { LargeMoverLandingPage } from "LLM/features/LandingPages/screens/LargeMoverLandingPage";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const Stack = createStackNavigator<LandingPagesNavigatorParamList>();
 
@@ -19,6 +21,8 @@ export default function LandingPagesNavigator() {
     headerRight: () => <NavigationHeaderCloseButton />,
   };
 
+  const isLargeMoverFeatureEnabled = useFeature("largemoverLandingpage")?.enabled;
+
   return (
     <Stack.Navigator screenOptions={stackNavigationConfig}>
       <Stack.Screen
@@ -26,6 +30,13 @@ export default function LandingPagesNavigator() {
         component={GenericLandingPage}
         options={navigationOptions}
       />
+      {isLargeMoverFeatureEnabled && (
+        <Stack.Screen
+          name={ScreenName.LargeMoverLandingPage}
+          component={LargeMoverLandingPage}
+          options={navigationOptions}
+        />
+      )}
     </Stack.Navigator>
   );
 }

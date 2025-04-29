@@ -50,9 +50,7 @@ import StyledStatusBar from "~/components/StyledStatusBar";
 import AnalyticsConsole from "~/components/AnalyticsConsole";
 import DebugTheme from "~/components/DebugTheme";
 import useDBSaveEffect from "~/components/DBSave";
-import useAppStateListener from "~/components/useAppStateListener";
 import SyncNewAccounts from "~/bridge/SyncNewAccounts";
-
 import SegmentSetup from "~/analytics/SegmentSetup";
 import HookSentry from "~/components/HookSentry";
 import HookNotifications from "~/notifications/HookNotifications";
@@ -91,10 +89,15 @@ import { exportMarketSelector } from "./reducers/market";
 import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { walletSelector } from "~/reducers/wallet";
 import { exportWalletState, walletStateExportShouldDiffer } from "@ledgerhq/live-wallet/store";
-import { useSyncNFTsWithAccounts } from "./hooks/nfts/useSyncNFTsWithAccounts";
+import { registerTransports } from "~/services/registerTransports";
+import { useDeviceManagementKitEnabled } from "@ledgerhq/live-dmk-mobile";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
+}
+
+if (__DEV__) {
+  require("./ReactotronConfig");
 }
 
 checkLibs({
@@ -117,9 +120,12 @@ function walletExportSelector(state: State) {
 function App() {
   const accounts = useSelector(accountsSelector);
   const analyticsFF = useFeature("llmAnalyticsOptInPrompt");
+  const isLDMKEnabled = useDeviceManagementKitEnabled();
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const dispatch = useDispatch();
+
+  useEffect(() => registerTransports(isLDMKEnabled), [isLDMKEnabled]);
 
   useEffect(() => {
     if (
@@ -139,13 +145,10 @@ function App() {
   ]);
 
   useAccountsWithFundsListener(accounts, updateIdentify);
-  useAppStateListener();
   useFetchCurrencyAll();
   useFetchCurrencyFrom();
   useListenToHidDevices();
   useAutoDismissPostOnboardingEntryPoint();
-
-  useSyncNFTsWithAccounts();
 
   const getSettingsChanged = useCallback((a: State, b: State) => a.settings !== b.settings, []);
   const getAccountsChanged = useCallback(
@@ -338,11 +341,11 @@ export default class Root extends Component {
                 <HookDynamicContentCards />
                 <TermsAndConditionMigrateLegacyData />
                 <QueuedDrawersContextProvider>
-                  <I18nextProvider i18n={i18n}>
-                    <LocaleProvider>
-                      <PlatformAppProviderWrapper>
-                        <FirebaseRemoteConfigProvider>
-                          <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+                  <FirebaseRemoteConfigProvider>
+                    <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+                      <I18nextProvider i18n={i18n}>
+                        <LocaleProvider>
+                          <PlatformAppProviderWrapper>
                             <SafeAreaProvider>
                               <PerformanceProvider>
                                 <StorylyProvider>
@@ -358,11 +361,11 @@ export default class Root extends Component {
                                 </StorylyProvider>
                               </PerformanceProvider>
                             </SafeAreaProvider>
-                          </FirebaseFeatureFlagsProvider>
-                        </FirebaseRemoteConfigProvider>
-                      </PlatformAppProviderWrapper>
-                    </LocaleProvider>
-                  </I18nextProvider>
+                          </PlatformAppProviderWrapper>
+                        </LocaleProvider>
+                      </I18nextProvider>
+                    </FirebaseFeatureFlagsProvider>
+                  </FirebaseRemoteConfigProvider>
                 </QueuedDrawersContextProvider>
               </>
             ) : (

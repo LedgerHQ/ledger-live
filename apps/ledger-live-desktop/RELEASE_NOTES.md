@@ -1,3 +1,39 @@
+# 2.111.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.109.0
+
+Addressed a bug affecting the reliability of Zcash transaction processing.
+
+# 2.107.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.106.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.104.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.102.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.100.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.98.0
+
+Ledger Live now supports SPL tokens, enabling you to securely manage & swap more than 130 solana tokens.
+
+# 2.96.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
 # 2.94.0
 
 This release includes small security improvements, UI tweaks, and minor bug fixes.
@@ -24,7 +60,7 @@ This release includes minor bug fixes.
 
 # 2.91.0
 
-Ledger Sync is now available on desktop! Easily sync your Ledger Live accounts across devices for seamless access. To enable Ledger Sync, go to Settings  > General tab > Ledger Sync, then click Manage. Ensure you have the latest Ledger Live and OS versions to get started, with full data encryption for security.
+Ledger Sync is now available on desktop! Easily sync your Ledger Live accounts across devices for seamless access. To enable Ledger Sync, go to Settings > General tab > Ledger Sync, then click Manage. Ensure you have the latest Ledger Live and OS versions to get started, with full data encryption for security.
 To Learn more about Ledger Sync, see our article [here](https://support.ledger.com/article/How-to-synchronize-your-Ledger-Live-accounts-with-Ledger-Sync).
 
 # 2.89.1

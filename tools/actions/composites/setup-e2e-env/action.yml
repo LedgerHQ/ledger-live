@@ -1,0 +1,36 @@
+name: "Setup E2E tests environment variables"
+description: "Export env variable needed for testing"
+inputs:
+  build_type:
+    description: "Firebase env to target"
+    required: false
+    default: "testing"
+  enable_broadcast:
+    description: "Enable transaction broadcast"
+    required: false
+    default: "false"
+
+runs:
+  using: composite
+  steps:
+    - name: Set DISABLE_TRANSACTION_BROADCAST
+      id: set-broadcast
+      shell: bash
+      run: |
+        if [[ "${{ inputs.enable_broadcast }}" == "true" || ("${{ github.event_name }}" == "schedule" && "$(date +%u)" == "1") ]]; then
+          echo "DISABLE_TRANSACTION_BROADCAST=0" >> $GITHUB_ENV
+        else
+          echo "DISABLE_TRANSACTION_BROADCAST=1" >> $GITHUB_ENV
+        fi
+
+    - name: Set SWAP_API_BASE and LEDGER_SYNC_ENVIRONMENT
+      id: set-envs
+      shell: bash
+      run: |
+        if [[ "${{ inputs.build_type }}" == "js" ]]; then
+          echo "SWAP_API_BASE=https://swap.ledger.com/v5" >> $GITHUB_ENV
+          echo "LEDGER_SYNC_ENVIRONMENT=PROD" >> $GITHUB_ENV
+        else
+          echo "SWAP_API_BASE=https://swap-stg.ledger-test.com/v5" >> $GITHUB_ENV
+          echo "LEDGER_SYNC_ENVIRONMENT=STAGING" >> $GITHUB_ENV
+        fi

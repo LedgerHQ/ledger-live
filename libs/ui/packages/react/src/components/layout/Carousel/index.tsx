@@ -2,7 +2,7 @@ import type { EmblaCarouselType, EmblaEventType } from "embla-carousel";
 import Autoplay from "embla-carousel-autoplay";
 import useEmblaCarousel from "embla-carousel-react";
 import debounce from "lodash/debounce";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import Footer from "./Footer";
 import { Props } from "./types";
@@ -37,12 +37,30 @@ const CarouselContainer = styled.div<Pick<Props, "variant">>`
 /**
  * This component uses the https://github.com/davidjerleke/embla-carousel library.
  */
-const Carousel = ({ children, variant = "default", autoPlay = 0, onNext, onPrev }: Props) => {
+const Carousel = ({
+  children,
+  variant = "default",
+  initialDelay = 0,
+  autoPlay = 0,
+  onNext,
+  onPrev,
+}: Props) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [emblaRef, emblaApi] = useEmblaCarousel(
-    { loop: true },
-    autoPlay ? [Autoplay({ delay: autoPlay, ...AutoplayFlags })] : [],
+  const [autoplayEnabled, setAutoplayEnabled] = useState<boolean>(false);
+
+  const plugins = useMemo(
+    () => (autoplayEnabled && autoPlay ? [Autoplay({ delay: autoPlay, ...AutoplayFlags })] : []),
+    [autoplayEnabled, autoPlay],
   );
+
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, plugins);
+
+  useEffect(() => {
+    if (autoPlay) {
+      const timer = setTimeout(() => setAutoplayEnabled(true), initialDelay);
+      return () => clearTimeout(timer);
+    }
+  }, [autoPlay]);
 
   const updateIndex = useCallback(() => {
     if (!emblaApi) return;

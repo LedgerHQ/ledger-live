@@ -11,7 +11,7 @@ import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { StepId, StepProps, St } from "./types";
-import { Account, Operation, SubAccount } from "@ledgerhq/types-live";
+import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
@@ -26,7 +26,7 @@ import logger from "~/renderer/logger";
 import { AlgorandAccount } from "@ledgerhq/live-common/families/algorand/types";
 
 export type Data = {
-  account: AlgorandAccount | SubAccount;
+  account: AlgorandAccount | TokenAccount;
   parentAccount: AlgorandAccount | undefined | null;
 };
 

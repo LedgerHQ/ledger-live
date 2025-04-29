@@ -52,7 +52,8 @@ export function useMarket() {
     () =>
       Object.keys(rangeDataTable)
         .filter(k => k !== "1h")
-        .map(value => ({ value, label: t(`market.range.${value}`) })),
+        .map(key => ({ value: key, label: t(`market.range.${rangeDataTable[key].label}`) }))
+        .reverse(),
     [t],
   );
 

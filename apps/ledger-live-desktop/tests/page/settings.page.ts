@@ -3,9 +3,6 @@ import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
 
 export class SettingsPage extends AppPage {
-  private manageLedgerSyncButton = this.page.getByRole("button", { name: "Manage" });
-  private clearCacheButton = this.page.getByRole("button", { name: "Clear" });
-  private confirmButton = this.page.getByRole("button", { name: "Confirm" });
   private accountsTab = this.page.getByTestId("settings-accounts-tab");
   private aboutTab = this.page.getByTestId("settings-about-tab");
   private helpTab = this.page.getByTestId("settings-help-tab");
@@ -27,7 +24,6 @@ export class SettingsPage extends AppPage {
   private themeChoiceLight = this.page.locator("text='Clair'");
   private versionRow = this.page.getByTestId("version-row");
   private deviceLanguagesDrawer = this.page.getByTestId("device-language-installation-container");
-  private hideEmptyTokenAccountsToggle = this.page.getByTestId("hideEmptyTokenAccounts");
   readonly openLocalManifestFormButton = this.page.getByTestId("settings-open-local-manifest-form");
   readonly exportLocalManifestButton = this.page.getByTestId("settings-export-local-manifest");
   readonly createLocalManifestButton = this.page.getByTestId("create-local-manifest");
@@ -37,14 +33,17 @@ export class SettingsPage extends AppPage {
     await this.accountsTab.click();
   }
 
+  @step("Go to Settings About tab")
   async goToAboutTab() {
     await this.aboutTab.click();
   }
 
+  @step("Go to Settings Help tab")
   async goToHelpTab() {
     await this.helpTab.click();
   }
 
+  @step("Go to Settings Experimental tab")
   async goToExperimentalTab() {
     await this.experimentalTab.click();
   }
@@ -89,21 +88,5 @@ export class SettingsPage extends AppPage {
       await this.versionRow.click();
     }
     await this.developerTab.click();
-  }
-
-  @step("Click 'Hide Empty Token Accounts' toggle")
-  async clickHideEmptyTokenAccountsToggle() {
-    await this.hideEmptyTokenAccountsToggle.click();
-  }
-
-  @step("Open Ledger Sync Manager")
-  async openManageLedgerSync() {
-    await this.manageLedgerSyncButton.click();
-  }
-
-  @step("Clear cache")
-  async clearCache() {
-    await this.clearCacheButton.click();
-    await this.confirmButton.click();
   }
 }

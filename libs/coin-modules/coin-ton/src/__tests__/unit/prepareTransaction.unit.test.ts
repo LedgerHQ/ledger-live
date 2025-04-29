@@ -1,5 +1,7 @@
 import { estimateFee, fetchAccountInfo } from "../../bridge/bridgeHelpers/api";
+import { setCoinConfig } from "../../config";
 import prepareTransaction from "../../prepareTransaction";
+import mockServer, { API_TON_ENDPOINT } from "../fixtures/api.fixtures";
 import {
   account,
   accountInfo,
@@ -17,6 +19,21 @@ describe("prepareTransaction", () => {
     fetchAccountInfoMock.mockReturnValue(Promise.resolve(accountInfo));
     const fetchEstimateFeeMock = jest.mocked(estimateFee);
     fetchEstimateFeeMock.mockReturnValue(Promise.resolve(fees));
+
+    setCoinConfig(() => ({
+      status: {
+        type: "active",
+      },
+      infra: {
+        API_TON_ENDPOINT: API_TON_ENDPOINT,
+        KNOWN_JETTONS: [],
+      },
+    }));
+    mockServer.listen();
+  });
+
+  afterAll(() => {
+    mockServer.close();
   });
 
   describe("Ton Transaction", () => {

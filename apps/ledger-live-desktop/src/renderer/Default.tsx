@@ -56,7 +56,7 @@ import { isLocked as isLockedSelector } from "~/renderer/reducers/application";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { setShareAnalytics, setSharePersonalizedRecommendations } from "./actions/settings";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { useSyncNFTsWithAccounts } from "./hooks/nfts/useSyncNFTsWithAccounts";
+import { useEnforceSupportedLanguage } from "./hooks/useEnforceSupportedLanguage";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
@@ -202,8 +202,7 @@ export default function Default() {
   useFetchCurrencyFrom();
   useRecoverRestoreOnboarding();
   useAutoDismissPostOnboardingEntryPoint();
-
-  useSyncNFTsWithAccounts();
+  useEnforceSupportedLanguage();
 
   const analyticsFF = useFeature("lldAnalyticsOptInPrompt");
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);

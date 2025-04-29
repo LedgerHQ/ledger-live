@@ -26,6 +26,7 @@ type State = {
   deviceSignatureRequested: boolean;
   deviceStreamingProgress: number | null | undefined;
   transactionSignError: Error | null | undefined;
+  transactionChecksOptInTriggered: boolean;
   manifestId?: string;
   manifestName?: string;
 };
@@ -81,6 +82,7 @@ const initialState = {
   deviceSignatureRequested: false,
   deviceStreamingProgress: null,
   transactionSignError: null,
+  transactionChecksOptInTriggered: false,
 };
 
 const reducer = (state: State, e: Event): State => {
@@ -106,6 +108,9 @@ const reducer = (state: State, e: Event): State => {
     case "device-streaming":
       return { ...state, deviceStreamingProgress: e.progress };
 
+    case "transaction-checks-opt-in-triggered":
+      return { ...state, transactionChecksOptInTriggered: true };
+
     default:
       return state;
   }
@@ -129,7 +134,7 @@ export const createAction = (
     } = txRequest;
     const mainAccount = getMainAccount(txRequest.account, txRequest.parentAccount);
     const appState = createAppAction(connectAppExec).useHook(reduxDevice, {
-      account: appName ? undefined : mainAccount,
+      account: isACRE ? undefined : mainAccount, // Bypass derivation check with ACRE as we can use other addresses than the freshest
       appName,
       dependencies,
       requireLatestFirmware,
@@ -151,6 +156,7 @@ export const createAction = (
           account: mainAccount,
           transaction,
           deviceId: device.deviceId,
+          deviceModelId: device.modelId,
         })
         .pipe(
           catchError(error =>

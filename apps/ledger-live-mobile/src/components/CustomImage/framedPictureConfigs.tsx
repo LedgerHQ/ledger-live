@@ -1,8 +1,8 @@
-import staxPreviewBackground from "./assets/staxPreviewBackground.png";
-import staxBackgroundLight from "./assets/staxBackgroundLight.png";
-import staxBackgroundDark from "./assets/staxBackgroundDark.png";
-import europaBackgroundLight from "./assets/europaBackgroundLight.png";
-import europaBackgroundDark from "./assets/europaBackgroundDark.png";
+import staxPreviewBackground from "./assets/staxPreviewBackground.webp";
+import staxBackgroundLight from "./assets/staxBackgroundLight.webp";
+import staxBackgroundDark from "./assets/staxBackgroundDark.webp";
+import europaBackgroundLight from "./assets/europaBackgroundLight.webp";
+import europaBackgroundDark from "./assets/europaBackgroundDark.webp";
 import { FramedPictureConfig } from "./FramedPicture";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 

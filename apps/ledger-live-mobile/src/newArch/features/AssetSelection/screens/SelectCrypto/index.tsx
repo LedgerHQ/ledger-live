@@ -18,6 +18,7 @@ import BigCurrencyRow from "~/components/BigCurrencyRow";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { AssetSelectionNavigatorParamsList } from "../../types";
 import useSelectCryptoViewModel from "./useSelectCryptoViewModel";
+import useAnalytics from "../../../../hooks/useAnalytics";
 
 const SEARCH_KEYS = getEnv("CRYPTO_ASSET_SEARCH_KEYS");
 
@@ -34,7 +35,14 @@ const renderEmptyList = () => (
 export default function SelectCrypto({
   route,
 }: StackNavigatorProps<AssetSelectionNavigatorParamsList, ScreenName.AddAccountsSelectCrypto>) {
-  const { filterCurrencyIds, currency: paramsCurrency, context } = route?.params || {};
+  const {
+    filterCurrencyIds,
+    currency: paramsCurrency,
+    context,
+    sourceScreenName,
+  } = route?.params || {};
+
+  const { analyticsMetadata } = useAnalytics(context, sourceScreenName);
   const {
     titleText,
     titleTestId,
@@ -42,7 +50,13 @@ export default function SelectCrypto({
     onPressItem,
     debounceTrackOnSearchChange,
     providersLoadingStatus,
-  } = useSelectCryptoViewModel({ context, filterCurrencyIds, paramsCurrency });
+  } = useSelectCryptoViewModel({
+    context,
+    filterCurrencyIds,
+    paramsCurrency,
+    analyticsMetadata,
+    path: route?.path,
+  });
 
   const renderList = useCallback(
     (items: CryptoOrTokenCurrency[]) => (
@@ -87,9 +101,15 @@ export default function SelectCrypto({
     }
   }, [providersLoadingStatus, list, renderList, debounceTrackOnSearchChange]);
 
+  const pageTrackingEvent = analyticsMetadata?.AddAccountsSelectCrypto?.onAccessScreen;
+
   return (
     <SafeAreaView edges={["left", "right"]} isFlex testID="select-crypto-view-area">
-      <TrackScreen category="Deposit" name="Choose a crypto to secure" />
+      <TrackScreen
+        name={pageTrackingEvent?.eventName}
+        {...pageTrackingEvent?.payload}
+        source={sourceScreenName}
+      />
       <Text variant="h4" fontWeight="semiBold" mx={6} testID={titleTestId}>
         {titleText}
       </Text>

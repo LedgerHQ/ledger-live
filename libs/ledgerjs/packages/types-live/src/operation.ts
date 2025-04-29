@@ -11,6 +11,8 @@ export type OperationType =
   | "NONE"
   | "CREATE"
   | "REVEAL"
+  // APTOS
+  | "UNKNOWN"
   // COSMOS
   | "DELEGATE"
   | "UNDELEGATE"
@@ -51,7 +53,9 @@ export type OperationType =
   // NEAR
   | "STAKE"
   | "UNSTAKE"
-  | "WITHDRAW_UNSTAKED";
+  | "WITHDRAW_UNSTAKED"
+  // SOLANA
+  | "BURN";
 
 export type OperationExtra = unknown;
 /**

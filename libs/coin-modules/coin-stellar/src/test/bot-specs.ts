@@ -2,7 +2,7 @@ import expect from "expect";
 import invariant from "invariant";
 import BigNumber from "bignumber.js";
 import { DeviceModelId } from "@ledgerhq/devices";
-import type { SubAccount } from "@ledgerhq/types-live";
+import type { TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
@@ -38,7 +38,8 @@ const stellar: AppSpec<Transaction> = {
   mutations: [
     {
       name: "move ~50% XLM",
-      maxRun: 2,
+      feature: "send",
+      maxRun: 1,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minAmountCutoff), "XLM balance is too low");
 
@@ -112,7 +113,8 @@ const stellar: AppSpec<Transaction> = {
     },
     {
       name: "Send max XLM",
-      maxRun: 2,
+      feature: "sendMax",
+      maxRun: 1,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minAmountCutoff), "XLM balance is too low");
 
@@ -177,6 +179,7 @@ const stellar: AppSpec<Transaction> = {
     },
     {
       name: "add USDC asset",
+      feature: "tokens",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(reserve), "XLM balance is too low 1");
@@ -217,11 +220,12 @@ const stellar: AppSpec<Transaction> = {
     },
     {
       name: "move ~50% USDC asset",
+      feature: "tokens",
       maxRun: 1,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minAmountCutoff), "XLM balance is too low");
 
-        const usdcSubAccount = findAssetUSDC<SubAccount>(account?.subAccounts);
+        const usdcSubAccount = findAssetUSDC<TokenAccount>(account?.subAccounts);
 
         invariant(usdcSubAccount, "USDC asset not found");
         invariant(usdcSubAccount?.balance.gt(MIN_ASSET_BALANCE), "USDC balance is too low");
@@ -265,8 +269,8 @@ const stellar: AppSpec<Transaction> = {
         };
       },
       test: ({ account, accountBeforeTransaction, operation, transaction, status }) => {
-        const asset = findAssetUSDC<SubAccount>(account?.subAccounts);
-        const assetBeforeTx = findAssetUSDC<SubAccount>(accountBeforeTransaction?.subAccounts);
+        const asset = findAssetUSDC<TokenAccount>(account?.subAccounts);
+        const assetBeforeTx = findAssetUSDC<TokenAccount>(accountBeforeTransaction?.subAccounts);
 
         botTest("asset balance decreased with operation", () =>
           expect(asset?.balance.toString()).toBe(

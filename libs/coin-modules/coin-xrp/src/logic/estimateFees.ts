@@ -1,5 +1,5 @@
-import BigNumber from "bignumber.js";
 import { NetworkDown } from "@ledgerhq/errors";
+import BigNumber from "bignumber.js";
 import { getServerInfos } from "../network";
 import { NetworkInfo } from "../types";
 import { parseAPIValue } from "./common";

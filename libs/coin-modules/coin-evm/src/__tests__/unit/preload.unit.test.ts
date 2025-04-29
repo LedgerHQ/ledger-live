@@ -219,6 +219,14 @@ describe("EVM Family", () => {
         ]);
       });
 
+      it("should register ERC20 tokens from embedded with anything other than an array", async () => {
+        hydrate({}, currency1);
+
+        expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([
+          CALTokensAPI.convertERC20(usdcDefinition),
+        ]);
+      });
+
       it("should register ERC20 tokens", async () => {
         hydrate([usdcDefinition, usdtDefinition], currency1);
 

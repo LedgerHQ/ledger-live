@@ -64,9 +64,7 @@ const PostOnboardingHub = () => {
         <Flex pb={8}>
           <Text variant="h1Inter" fontWeight="semiBold">
             {areAllPostOnboardingActionsCompleted
-              ? t("postOnboarding.hub.areAllPostOnboardingActionsCompletedTitle", {
-                  productName,
-                })
+              ? t("postOnboarding.hub.areAllPostOnboardingActionsCompletedTitle")
               : t("postOnboarding.hub.title", { productName })}
           </Text>
         </Flex>

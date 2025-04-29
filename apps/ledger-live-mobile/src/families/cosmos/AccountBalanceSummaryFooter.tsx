@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import { CosmosAccount } from "@ledgerhq/coin-cosmos/types/index";
-import { CosmosAPI } from "@ledgerhq/coin-cosmos/api/Cosmos";
+import { CosmosAPI } from "@ledgerhq/coin-cosmos/network/Cosmos";
 import { Account } from "@ledgerhq/types-live";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import { Unit } from "@ledgerhq/types-cryptoassets";
@@ -14,6 +14,7 @@ import type { ModalInfo } from "~/modals/Info";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import InfoItem from "~/components/BalanceSummaryInfoItem";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 
 type Props = {
   account: CosmosAccount;
@@ -39,6 +40,10 @@ function AccountBalanceSummaryFooter({ account }: Props) {
   const onPressInfoCreator = useCallback((infoName: InfoName) => () => setInfoName(infoName), []);
 
   const [dydxUsdcRewards, setDydxUsdcRewards] = useState(new BigNumber(0));
+
+  const coinConfig = getCurrencyConfiguration(account.currency);
+  const disableDelegation =
+    "disableDelegation" in coinConfig && coinConfig.disableDelegation === true;
 
   useEffect(() => {
     if (account.type !== "Account") {
@@ -79,7 +84,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
           value={<CurrencyUnitValue unit={unit} value={spendableBalance} disableRounding />}
           isLast={!delegatedBalance.gt(0) && !unbondingBalance.gt(0)}
         />
-        {delegatedBalance.gt(0) && (
+        {delegatedBalance.gt(0) && !disableDelegation && (
           <InfoItem
             title={t("account.delegatedAssets")}
             onPress={onPressInfoCreator("delegated")}
@@ -96,7 +101,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
             isLast={!dydxUsdcRewards.gt(0)}
           />
         )}
-        {unbondingBalance.gt(0) && (
+        {unbondingBalance.gt(0) && !disableDelegation && (
           <InfoItem
             title={t("account.undelegating")}
             onPress={onPressInfoCreator("undelegating")}

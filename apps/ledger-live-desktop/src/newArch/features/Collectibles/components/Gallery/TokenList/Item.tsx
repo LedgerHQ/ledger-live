@@ -69,6 +69,7 @@ const Item = ({
       horizontal={!isGridLayout}
       alignItems={!isGridLayout ? "center" : undefined}
       onClick={onItemClick}
+      data-testid={`nft-row-gallery-${nft?.contract}`}
     >
       <Flex
         flexDirection={isGridLayout ? "column" : "row"}

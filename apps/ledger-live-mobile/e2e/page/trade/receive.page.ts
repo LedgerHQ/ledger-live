@@ -1,19 +1,8 @@
-import {
-  currencyParam,
-  getElementById,
-  getElementByText,
-  getTextOfElement,
-  openDeeplink,
-  scrollToId,
-  tapById,
-  waitForElementById,
-} from "../../helpers";
 import { by, element, expect } from "detox";
-import jestExpect from "expect";
-
-const baseLink = "receive";
+import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 
 export default class ReceivePage {
+  baseLink = "receive";
   noVerifyAddressButton = "button-DontVerify-my-address";
   noVerifyValidateButton = "button-confirm-dont-verify";
   accountAddress = "receive-fresh-address";
@@ -31,6 +20,7 @@ export default class ReceivePage {
   step1HeaderTitle = () => getElementById("receive-header-step1-title");
   step2HeaderTitleId = "receive-header-step2-title";
   step2HeaderTitle = () => getElementById(this.step2HeaderTitleId);
+  networkBasedStep2HeaderTitleId = "addAccounts-header-step2-title";
   titleReceiveConfirmationPageId = (t: string) => `receive-confirmation-title-${t}`;
   accountNameReceiveId = (t: string) => `receive-account-name-${t}`;
   receivePageScrollViewId = "receive-screen-scrollView";
@@ -45,11 +35,11 @@ export default class ReceivePage {
     "You first need to send at least 0.1 TRX to this address to activate it.";
 
   async openViaDeeplink() {
-    await openDeeplink(baseLink);
+    await openDeeplink(this.baseLink);
   }
 
   async receiveViaDeeplink(currencyLong?: string) {
-    const link = currencyLong ? baseLink + currencyParam + currencyLong : baseLink;
+    const link = currencyLong ? this.baseLink + currencyParam + currencyLong : this.baseLink;
     await openDeeplink(link);
   }
 
@@ -70,6 +60,7 @@ export default class ReceivePage {
     await expect(this.step2Accounts()).toBeVisible();
   }
 
+  @Step("Select currency in receive list")
   async selectCurrency(currencyName: string) {
     const id = this.currencyNameId(currencyName.toLowerCase());
     await tapById(id);
@@ -83,6 +74,11 @@ export default class ReceivePage {
   async selectNetwork(networkId: string) {
     const id = this.currencyNameId(networkId);
     return tapById(id);
+  }
+
+  @Step("Select network in list if needed")
+  async selectNetworkIfAsked(networkId: string) {
+    if (await IsIdVisible(this.networkBasedStep2HeaderTitleId)) await this.selectNetwork(networkId);
   }
 
   async selectAccount(account: string) {

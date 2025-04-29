@@ -34,8 +34,8 @@ import { Grid } from "@ledgerhq/react-ui";
 import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
 import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
 import PortfolioContentCards from "LLD/features/DynamicContent/components/PortfolioContentCards";
+import { LNSUpsellBanner, useLNSUpsellBannerState } from "LLD/features/LNSUpsell";
 import useActionCards from "~/renderer/hooks/useActionCards";
-import { useAutoRedirectToPostOnboarding } from "~/renderer/hooks/useAutoRedirectToPostOnboarding";
 import { useNftCollectionsStatus } from "~/renderer/hooks/nfts/useNftCollectionsStatus";
 
 // This forces only one visible top banner at a time
@@ -63,11 +63,8 @@ export default function DashboardPage() {
     [accounts],
   );
   const isPostOnboardingBannerVisible = usePostOnboardingEntryPointVisibleOnWallet();
-
-  useAutoRedirectToPostOnboarding();
-
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
-  const { hiddenNftCollections } = useNftCollectionsStatus();
+  const { hiddenNftCollections } = useNftCollectionsStatus(true);
   const filterOperations = useCallback(
     (operation: Operation, account: AccountLike) => {
       // Remove operations linked to address poisoning
@@ -90,6 +87,8 @@ export default function DashboardPage() {
   const { isFeatureFlagsAnalyticsPrefDisplayed, analyticsOptInPromptProps } =
     useDisplayOnPortfolioAnalytics();
 
+  const isLNSUpsellBannerShown = useLNSUpsellBannerState("portfolio").isShown;
+
   return (
     <>
       <TopBannerContainer>
@@ -103,6 +102,8 @@ export default function DashboardPage() {
           <RecoverBanner>
             {isActionCardsCampainRunning && lldActionCarousel?.enabled ? (
               <ActionContentCards variant={ABTestingVariants.variantA} />
+            ) : isLNSUpsellBannerShown ? (
+              <LNSUpsellBanner location="portfolio" />
             ) : (
               <PortfolioContentCards />
             )}
@@ -145,7 +146,6 @@ export default function DashboardPage() {
             <AssetDistribution />
             {totalOperations > 0 && (
               <OperationsList
-                t={t}
                 accounts={accounts}
                 title={t("dashboard.recentActivity")}
                 withAccount

@@ -18,5 +18,5 @@ describe("fetchValidators", () => {
     const requestCount = provider.stats.total.requests;
     expect(requestCount).toBeGreaterThan(0); // should have made at least one request
     expect(requestCount).toBeLessThanOrEqual(40); // should not exceed 50 requests
-  }, 10000);
+  });
 });

@@ -2,6 +2,12 @@
 import rimraf from "rimraf";
 import "zx/globals";
 
+$.verbose = true; // everything works like in v7
+
+if (os.platform() === "win32") {
+  usePowerShell();
+}
+
 const targets = [
   "hw-getAddress.ts",
   "hw-signMessage.ts",
@@ -13,24 +19,25 @@ const targets = [
   "deviceTransactionConfig.ts",
   "mock.ts",
   "account.ts",
-  "formatters.ts",
   "platformAdapter.ts",
   "walletApiAdapter.ts",
-  "operation.ts",
 ];
 
 // Coins using coin-framework
 const familiesWPackage = [
   "algorand",
+  "aptos",
   "bitcoin",
   "cardano",
+  "casper",
+  "celo",
   "cosmos",
-  "elrond",
   "evm",
   "hedera",
   "filecoin",
   "internet_computer",
   "icon",
+  "multiversx",
   "near",
   "polkadot",
   "solana",
@@ -41,6 +48,8 @@ const familiesWPackage = [
   "tron",
   "vechain",
   "xrp",
+  "sui",
+  "mina",
 ];
 
 cd(path.join(__dirname, "..", "src"));
@@ -166,7 +175,7 @@ async function getDeviceTransactionConfig(families) {
 
   const libsDir = path.join(__dirname, "../..");
   const target = "deviceTransactionConfig.ts";
-  for (const family of ["filecoin", "stacks", "polkadot", "tron"]) {
+  for (const family of ["aptos", "casper", "filecoin", "stacks", "polkadot", "tron"]) {
     if (fs.existsSync(path.join(libsDir, `coin-modules/coin-${family}/src/bridge`, target))) {
       imports += `import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_${family} } from "@ledgerhq/coin-${family}/bridge/deviceTransactionConfig";\n`;
       exprts += `\n  | ExtraDeviceTransactionField_${family}`;

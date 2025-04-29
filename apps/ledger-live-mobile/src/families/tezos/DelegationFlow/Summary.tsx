@@ -34,6 +34,7 @@ import { useAccountName } from "~/reducers/wallet";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
 import { NotEnoughBalanceToDelegate } from "@ledgerhq/errors";
 import NotEnoughFundFeesAlert from "~/families/shared/StakingErrors/NotEnoughFundFeesAlert";
+import Config from "react-native-config";
 
 type Props = StackNavigatorProps<TezosDelegationFlowParamList, ScreenName.DelegationSummary>;
 
@@ -143,26 +144,28 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   const [rotateAnim] = useState(() => new Animated.Value(0));
   useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(rotateAnim, {
-          toValue: 1,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(rotateAnim, {
-          toValue: -1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(rotateAnim, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.delay(1000),
-      ]),
-    ).start();
+    if (!Config.DETOX) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(rotateAnim, {
+            toValue: 1,
+            duration: 200,
+            useNativeDriver: true,
+          }),
+          Animated.timing(rotateAnim, {
+            toValue: -1,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+          Animated.timing(rotateAnim, {
+            toValue: 0,
+            duration: 200,
+            useNativeDriver: true,
+          }),
+          Animated.delay(1000),
+        ]),
+      ).start();
+    }
     return () => {
       rotateAnim.setValue(0);
     };
@@ -273,7 +276,11 @@ export default function DelegationSummary({ navigation, route }: Props) {
               <Words>
                 <Trans i18nKey="delegation.to" />
               </Words>
-              <Touchable event="DelegationFlowSummaryChangeBtn" onPress={onChangeDelegator}>
+              <Touchable
+                event="DelegationFlowSummaryChangeBtn"
+                onPress={onChangeDelegator}
+                testID="tezos-delegation-summary-validator"
+              >
                 <BakerSelection name={bakerName} />
               </Touchable>
             </Line>
@@ -321,6 +328,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
           onPress={onContinue}
           disabled={bridgePending || !!bridgeError || hasNotEnoughBalanceWhenUndelegating}
           pending={bridgePending}
+          testID="tezos-summary-continue-button"
         />
       </View>
     </SafeAreaView>

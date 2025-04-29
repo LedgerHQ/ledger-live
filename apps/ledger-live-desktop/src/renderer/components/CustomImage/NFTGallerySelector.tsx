@@ -10,9 +10,10 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { useOnScreen } from "~/renderer/screens/nft/useOnScreen";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
+import { getThreshold, useNftGalleryFilter, useNftQueriesSources } from "@ledgerhq/live-nft-react";
 import { getEnv } from "@ledgerhq/live-env";
 import { State } from "~/renderer/reducers";
+import NftGalleryLoadingState from "./NftGalleryLoadingState";
 
 const ScrollContainer = styled(Flex).attrs({
   flexDirection: "column",
@@ -34,6 +35,7 @@ type Props = {
 const NFTGallerySelector = ({ handlePickNft, selectedNftId }: Props) => {
   const SUPPORTED_NFT_CURRENCIES = getEnv("NFT_CURRENCIES");
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
+  const lldSolanaNftsFeature = useFeature("lldSolanaNfts");
   const threshold = nftsFromSimplehashFeature?.params?.threshold;
   const accounts = useSelector(accountsSelector);
   const nftsOrdered = useSelector(
@@ -42,25 +44,22 @@ const NFTGallerySelector = ({ handlePickNft, selectedNftId }: Props) => {
     isEqual,
   );
 
-  const addresses = useMemo(
-    () =>
-      [
-        ...new Set(
-          accounts.map(account => account.freshAddress).filter(addr => addr.startsWith("0x")),
-        ),
-      ].join(","),
-    [accounts],
-  );
+  const { addresses, chains } = useNftQueriesSources({
+    accounts,
+    supportedCurrencies: SUPPORTED_NFT_CURRENCIES,
+    config: { featureFlagEnabled: lldSolanaNftsFeature?.enabled },
+  });
 
   const {
     nfts: nftsFiltered,
     fetchNextPage,
     hasNextPage,
+    isLoading,
   } = useNftGalleryFilter({
     nftsOwned: nftsOrdered || [],
-    addresses: addresses,
-    chains: SUPPORTED_NFT_CURRENCIES,
-    threshold: isThresholdValid(threshold) ? Number(threshold) : 75,
+    addresses,
+    chains,
+    threshold: getThreshold(threshold),
     enabled: nftsFromSimplehashFeature?.enabled || false,
   });
 
@@ -101,6 +100,8 @@ const NFTGallerySelector = ({ handlePickNft, selectedNftId }: Props) => {
     target: loaderContainerRef,
     threshold: 0.5,
   });
+
+  if (isLoading) return <NftGalleryLoadingState />;
 
   if (nfts.length <= 0) return <NftGalleryEmptyState />;
 

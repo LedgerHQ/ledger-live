@@ -28,13 +28,24 @@ export default function useSelectDeviceViewModel(
   const onResult = useCallback(
     (meta: AppResult) => {
       setDevice(null);
-      const arg = { ...route.params, ...meta, context };
-      navigation.navigate(NavigatorName.AddAccounts, {
-        screen: ScreenName.ScanDeviceAccounts,
-        params: {
-          ...arg,
-        },
-      });
+
+      const { inline } = route.params;
+      const params = {
+        ...route.params,
+        ...meta,
+        context,
+        sourceScreenName: ScreenName.SelectDevice,
+      };
+      if (inline) {
+        navigation.replace(NavigatorName.AddAccounts, {
+          screen: ScreenName.ScanDeviceAccounts,
+          params,
+        });
+      } else
+        navigation.navigate(NavigatorName.AddAccounts, {
+          screen: ScreenName.ScanDeviceAccounts,
+          params,
+        });
     },
     [navigation, route, context],
   );

@@ -151,6 +151,7 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
                     : status.errors.amount
                 }
                 warning={status.warnings.amount}
+                testID="solana-delegation-amount-input"
               />
 
               <View style={styles.bottomWrapper}>
@@ -183,7 +184,7 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
                     />
                   </View>
                 </View>
-                <View>
+                <View style={styles.available}>
                   <Text color="grey">
                     <InfoIcon size={12} color="grey" />{" "}
                     <Trans
@@ -204,6 +205,7 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
                       />
                     }
                     onPress={onContinue}
+                    testID="solana-delegation-amount-continue"
                     disabled={!!status.errors.amount || bridgePending}
                   />
                 </View>

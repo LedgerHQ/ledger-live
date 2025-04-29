@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "Cancelar",
+    "copy" : "Copiar",
+    "copied" : "Copiado",
     "apply" : "Aplicar",
     "seeAll" : "Ver todo",
     "seeAllWithNumber" : "Ver todos ({{number}})",
@@ -99,7 +101,9 @@
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
     },
-    "quote" : "Cotización"
+    "quote" : "Cotización",
+    "tryAgain" : "Inténtalo de nuevo",
+    "ldmkEnabled" : "Transporte LDMK activado"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -476,17 +480,17 @@
       "title" : "No se encontró ninguna cuenta",
       "description" : "Algo ha salido mal en el cálculo de la dirección. Inténtalo de nuevo. Si el problema persiste, guarda los registros con el botón que se muestra a continuación y envíalos al Soporte de Ledger."
     },
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "Límite máximo de decimales alcanzado",
       "description" : "Asegúrate de que el importe proporcionado tenga 18 decimales."
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "La cantidad delegada debe ser al menos {{formattedAmount}}"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "La cantidad desdelegada debe ser al menos {{formattedAmount}}"
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "La delegación restante no puede ser menor a {{formattedAmount}}"
     },
     "NotEnoughVTHO" : {
@@ -790,6 +794,30 @@
     "SolanaAccountNotFunded" : {
       "title" : "Cuenta sin fondos"
     },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "Esta cuenta de token asociada contiene otro token."
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "Esta no es una dirección de billetera normal, sino una cuenta de token asociada. Continúa sólo si sabes lo que estás haciendo."
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "Esta es una cuenta de token. Especifica una dirección de billetera normal."
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "Esta es una dirección de token. Especifica una dirección de billetera normal."
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Se agregarán fondos a la cuenta"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Los activos de la cuenta de tokens están inmovilizados"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Cuenta no inicializada"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "La dirección del receptor es la misma que la dirección del emisor del token"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Dirección fuera de la curva ed25519"
     },
@@ -804,6 +832,13 @@
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "Tu transacción puede haber fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+    },
+    "SolanaRecipientMemoIsRequired" : {
+      "title" : "Se requiere una memo para la dirección del destinatario"
+    },
+    "SolanaTokenNonTransferable" : {
+      "title" : "El token no es transferible",
+      "description" : "Estos tokens \"soul-bound\" (vinculados a la identidad) y no se pueden transferir."
     },
     "CardanoMinAmountError" : {
       "title" : "Tienes que enviar un mínimo de {{amount}} ADA"
@@ -971,6 +1006,9 @@
       "title" : "Proveedor no válido",
       "description" : "Tienes que cambiar el ajuste \"Proveedor de Mi Ledger\". Para cambiarlo, abre los \"Ajustes\" de Ledger Live, selecciona \"Funciones experimentales\" y, a continuación, elige un proveedor distinto."
     },
+    "GasLessThanEstimate" : {
+      "title" : "Puede que sea demasiado bajo. Auméntalo"
+    },
     "SequenceNumberError" : {
       "title" : "Error de número de secuencia",
       "description" : "Cierra la ventana e inténtalo de nuevo más tarde"
@@ -1019,6 +1057,21 @@
     "ScannedNewImportQrCode" : {
       "title" : "Actualización necesaria",
       "description" : "Para sincronizar tus aplicaciones, asegúrate de que ambas estén actualizadas a la versión más reciente."
+    },
+    "AppManifestUnknownError" : {
+      "title" : "Aplicación Permuta de Live no encontrada"
+    },
+    "AppManifestNotFoundError" : {
+      "title" : "Error al cargar Aplicación Permuta de Live"
+    },
+    "InvalidMemoMina" : {
+      "title" : "El texto de un memo no debe superar los 32 caracteres"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Esta transacción conlleva asociada una tarifa de creación de cuenta de {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "La cantidad mínima necesaria para esta transacción es de {{amount}}"
     }
   },
   "crash" : {
@@ -1085,6 +1138,11 @@
       "fast" : "rápida",
       "custom" : "Personalizada",
       "blockCount" : "{{blockCount}} bloques"
+    },
+    "estimatedTime" : {
+      "slow" : "Aprox. 2-3 min",
+      "medium" : "Aprox. 30 seg",
+      "fast" : "Aprox. 15 seg"
     }
   },
   "signout" : {
@@ -1285,7 +1343,7 @@
       "desc" : "Nuestros productos son las únicas billeteras de hardware con seguridad certificada por agencias internacionales de seguridad cibernética."
     },
     "title" : "Necesitas un Ledger",
-    "desc" : "Por motivos de seguridad, Ledger Live solo se puede usar en conjunto con un dispositivo físico. Necesitas un dispositivo para poder continuar.",
+    "desc" : "Por motivos de seguridad,\n Ledger Live solo es compatible con dispositivos Ledger.",
     "cta" : "Compra tu Ledger ahora",
     "footer" : "Ya tengo un Ledger y quiero configurarlo",
     "bannerTitle" : "La máxima seguridad para tus cripto y NFTs",
@@ -2342,7 +2400,8 @@
       "seeMarket" : "Ver todo"
     },
     "walletBalance" : "Saldo de la billetera",
-    "seelAllAssets" : "Ver todos los activos",
+    "seeAllAssets" : "Ver todos los activos",
+    "seeAllAccounts" : "Ver todas las cuentas",
     "marketPriceSection" : {
       "title" : "Precio de mercado de {{currencyTicker}}",
       "currencyPrice" : "Precio de 1 {{currencyTicker}}",
@@ -2364,16 +2423,13 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "Termina de agregar tu tarjeta de pago",
-        "description" : "Restauración fiable con Ledger Recover."
+        "title" : "Recordatorio: termina de suscribirte a Ledger Recover"
       },
       "verifyIdentity" : {
-        "title" : "Termina de verificar tu identidad",
-        "description" : "Restauración fiable con Ledger Recover."
+        "title" : "Todavía no se ha hecho una copia de respaldo del acceso a tu billetera"
       },
       "connectDevice" : {
-        "title" : "Último paso: conecta tu Ledger",
-        "description" : "Solo te queda un paso para disfrutar de Ledger Recover."
+        "title" : "Todavía no se ha hecho una copia de respaldo del acceso a tu billetera"
       }
     }
   },
@@ -2546,7 +2602,8 @@
       "gasLimit" : "Límite de gas",
       "id" : "Id",
       "autoClaimedRewards" : "Recompensas Autoreclamadas",
-      "stakedAmount" : "Cantidad en participación"
+      "stakedAmount" : "Cantidad en participación",
+      "accountCreationFee" : "Tarifa de creación de cuenta"
     },
     "multipleAddresses" : "¿Por qué hay múltiples direcciones?",
     "tokenName" : "Nombre del token",
@@ -2578,6 +2635,10 @@
         "description3" : "Esta integración ha sido llevada adelante por {{team}} en colaboración con Ledger",
         "description3Link" : "Esta integración la ha realizado <1><0>{{team}}</0></1> en colaboración con Ledger"
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}} está migrando a {{to}}. Visita este <0>enlace</0> para obtener más información o contacta con el equipo de soporte si necesitas ayuda.",
+      "contactSupport" : "Ponte en contacto con Soporte"
     },
     "willBedeprecatedBanner" : {
       "title" : "Por razones de optimización de eficiencia, {{currencyName}} dejará de ser compatible con Ledger Live el {{deprecatedDate}}. No obstante, seguirá siendo compatible con las billeteras de hardware de Ledger. Ponte en contacto con el servicio de soporte al cliente de Ledger si necesitas ayuda con esto.",
@@ -2749,6 +2810,9 @@
       }
     }
   },
+  "assets" : {
+    "title" : "Activos"
+  },
   "accounts" : {
     "title" : "Cuentas",
     "cryptoAccountsTitle" : "Cuentas de {{currencyTicker}}",
@@ -2871,7 +2935,8 @@
       "analytics" : "Análisis",
       "analyticsDesc" : "Permite que Ledger recopile los datos de uso de la aplicación para ayudarnos a medir el rendimiento de Ledger Live y mejorar tanto la aplicación como tu experiencia.",
       "mevProtection" : "Protección contra MEV",
-      "mevProtectionDesc" : "Activa Protección contra MEV para lograr transacciones más fiables en Ethereum",
+      "mevProtectionDesc" : "Activa la Protección contra MEV para lograr transacciones más fiables en Ethereum.",
+      "mevProtectionLearnMore" : "Aviso de privacidad",
       "personalizedRecommendations" : "Experiencia personalizada",
       "personalizedRecommendationsDesc" : "Permite que la aplicación de Ledger recopile los datos de uso de la aplicación para ofrecerte recomendaciones y contenido personalizados que se ajusten a tus preferencias y para ayudarnos a medir el rendimiento de nuestras campañas de marketing.",
       "analyticsModal" : {
@@ -3090,7 +3155,7 @@
       "title" : "Desarrollador",
       "desc" : "Prueba las funciones experimentales y envíanos tu opinión.",
       "customManifest" : {
-        "title" : "Cargar manifiesto de plataforma personalizada"
+        "title" : "Cargar manifiesto"
       },
       "exchangeDeveloperMode" : {
         "title" : "Modo de desarrollador del exchange",
@@ -3213,7 +3278,7 @@
       },
       "verifyAddress" : {
         "title" : "Verifica la dirección",
-        "subtitle" : "Verifica que la dirección que se muestra en tu dispositivo es la misma que figura a continuación. Una vez que lo hayas comprobado, haz clic en Approve (Aprobar) en tu dispositivo.",
+        "subtitle" : "Verifica que la dirección que se muestra en tu dispositivo es la misma que figura a continuación. Tras comprobarlo, puedes confirmar en tu dispositivo.",
         "cancel" : {
           "title" : "Acabas de rechazar esta dirección",
           "subtitle" : "Si lo has hecho por error, puedes hacer clic en el siguiente botón para volver a intentarlo.",
@@ -3319,7 +3384,7 @@
       },
       "form" : {
         "validate" : "Confirmar transacción de permuta",
-        "tab" : "Cambia",
+        "tab" : "Permutar",
         "button" : "Continuar",
         "from" : "De",
         "to" : "A",
@@ -3410,6 +3475,7 @@
         "CTAButton" : "Agregar cuenta"
       },
       "history" : {
+        "button" : "Ir al historial",
         "tab" : "Historial",
         "disclaimer" : "Tus transacciones de permuta en Mobile no están sincronizadas con Ledger Live Desktop",
         "exportButton" : "Exportar operaciones",
@@ -3428,8 +3494,8 @@
           "receive" : "Recibir"
         },
         "placeholder" : "Seleccionar",
-        "title" : "Cambia",
-        "cta" : "Cambia",
+        "title" : "Permutar",
+        "cta" : "Permutar",
         "from" : "De",
         "to" : "A",
         "loading" : "Cargando...",
@@ -3467,6 +3533,28 @@
         "providers" : {
           "noProviders" : "No se han encontrado resultados. No hay cotizaciones disponibles con las preferencias actuales."
         }
+      },
+      "incompatibility" : {
+        "explore_compatible_devices" : "Explorar dispositivos compatibles",
+        "contact_support" : "Ponte en contacto con Soporte",
+        "ton_title" : "No es posible utilizar el Ledger Nano S™ para permutar Ton",
+        "ton_description" : "Para permutar Ton, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "spl_tokens_title" : "No es posible utilizar el Ledger Nano S™ para permutar tokens de Solana",
+        "spl_tokens_description" : "Para permutar tokens de Solana, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "near_title" : "No es posible usar el Ledger Nano S™ para permutar Near",
+        "near_description" : "Para permutar Near, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "ada_title" : "No es posible utilizar el Ledger Nano S™ para permutar Cardano",
+        "ada_description" : "Para permutar Cardano, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "apt_title" : "No es posible usar el Ledger Nano S™ para permutar Aptos",
+        "apt_description" : "Para permutar Aptos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "cosmos_title" : "No es posible usar el Ledger Nano S™ para permutar Cosmos",
+        "cosmos_description" : "Para permutar Cosmos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "osmo_title" : "No es posible usar el Ledger Nano S™ para permutar Osmosis",
+        "osmo_description" : "Para permutar Osmosis, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "dydx_title" : "No es posible usar el Ledger Nano S™ para permutar dYdX",
+        "dydx_description" : "Para permutar dYdX, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "sui_title" : "No es posible utilizar el Ledger Nano S™ para permutar Sui",
+        "sui_description" : "Para permutar Sui, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
       }
     },
     "lending" : {
@@ -3693,7 +3781,7 @@
     "highFeeModal" : "Ten cuidado, las tarifas de red son superiores al <1>10%</1> del monto. ¿Deseas continuar?",
     "scan" : {
       "title" : "Escanear código QR",
-      "descBottom" : "Centra el código QR dentro del recuadro.",
+      "descBottom" : "Escanear código QR",
       "fallback" : {
         "header" : "Escanear código QR",
         "title" : "Habilitar cámara",
@@ -3748,6 +3836,7 @@
       "to" : "A",
       "infoTotalTitle" : "Débito total",
       "infoTotalDesc" : "Incluye importe de la transacción y las tarifas de red seleccionadas",
+      "gasFee" : "Tarifa de gas",
       "gasLimit" : "Límite de gas",
       "gasPrice" : "Precio de gas",
       "maxFee" : "Tarifa máxima",
@@ -3961,14 +4050,24 @@
   },
   "addAccounts" : {
     "addNew" : "Agregar nueva",
+    "seeAllAccounts" : "Ver todas las cuentas",
+    "addNewOrExisting" : "Agregar cuenta nueva o existente",
     "supportLinks" : {
       "segwit_or_native_segwit" : "¿Segwit o Native segwit?"
     },
     "quitConfirmation" : {
       "title" : "Cancelar agregar cuenta",
-      "desc" : "¿Deseas cancelar la agregación de cuentas?"
+      "desc" : "¿Deseas cancelar la agregación de cuentas?",
+      "v2" : {
+        "title" : "¿Cancelar la acción de agregar cuenta?",
+        "desc" : "No se agregará ninguna cuenta a Ledger Live.",
+        "continue" : "Seguir agregándola",
+        "cancel" : "Cancelar"
+      }
     },
     "imported" : "Activo añadido con éxito",
+    "added" : "Cuenta agregada a tu portfolio",
+    "added_plural" : "{{count}} cuentas agregadas a tu portfolio",
     "sections" : {
       "importable" : {
         "title" : "Agregar cuenta existente"
@@ -4001,7 +4100,7 @@
       "title" : "Agregar token",
       "createParentCurrencyAccount" : "Agregar cuenta {{parrentCurrencyName}}",
       "generic" : {
-        "disclaimer" : "{{token}} ({{ticker}}) es un token {{tokenType}}. Puedes recibir tokens directamente en una cuenta de {{currency}}.",
+        "disclaimer" : "{{token}} ({{ticker}}) es un token {{tokenType}}.\nPuedes recibir tokens directamente en una cuenta de {{currency}}.",
         "learnMore" : "Más informaciónacerca de {{tokenType}}"
       }
     },
@@ -4025,7 +4124,41 @@
         "title" : "Taproot",
         "desc" : "Actualización de la red de {{currency}} más reciente. Ofrecerá una mejor privacidad y tarifas más bajas, una vez difundida. Todavía con compatibilidad limitada en billeteras y exchanges."
       }
-    }
+    },
+    "scanDeviceAccounts" : {
+      "title" : "Selecciona las cuentas que quieres agregar",
+      "ctaStopScan" : "Detener escaneo",
+      "confirm" : "Confirmar",
+      "scanningTitle" : "Buscando cuentas existentes en la cadena de bloques...",
+      "whichAddressType" : "Descubre cómo elegir el tipo de dirección",
+      "sections" : {
+        "importable" : {
+          "title" : "Hemos encontrado {{count}} cuenta",
+          "title_plural" : "Hemos encontrado {{count}} cuentas"
+        },
+        "creatable" : {
+          "title" : "Nueva cuenta"
+        },
+        "migrate" : {
+          "title" : "Cuentas a actualizar"
+        }
+      },
+      "retryScanning" : "Inténtalo de nuevo"
+    },
+    "addAccountsSuccess" : {
+      "ctaAddFunds" : "Agregar fondos a mi cuenta",
+      "ctaClose" : "Cerrar"
+    },
+    "addAccountsWarning" : {
+      "cantCreateAccount" : {
+        "title" : "No podemos agregar una cuenta nueva",
+        "body" : "No es posible agregar una cuenta nueva antes de recibir activos en tu cuenta {{accountName}}."
+      },
+      "noAccountToCreate" : {
+        "title" : "No fue posible agregar una cuenta nueva en {{currency}}"
+      }
+    },
+    "chooseAccountToFund" : "Elige la cuenta a la que quieres añadir los fondos"
   },
   "DeviceAction" : {
     "stayInTheAppPlz" : "Mantente dentro de la aplicación Ledger Live y con tu Ledger disponible.",
@@ -4091,7 +4224,9 @@
     "installApp" : "{{percentage}} de instalación de la aplicación {{appName}}",
     "installAppDescription" : "Espera hasta que finalice la instalación",
     "listApps" : "Comprobando dependencias de la aplicación",
-    "listAppsDescription" : "Espera hasta que verifiquemos que tienes todas las aplicaciones necesarias"
+    "listAppsDescription" : "Espera hasta que verifiquemos que tienes todas las aplicaciones necesarias",
+    "confirmExchangeOnDevice" : "Confirma el intercambio en tu dispositivo",
+    "confirmSwapOnDevice" : "Confirma la permuta en tu dispositivo"
   },
   "SelectDevice" : {
     "title" : "Emparejar nuevo dispositivo",
@@ -4560,7 +4695,8 @@
       "tr" : "Türk",
       "ja" : "日本",
       "ko" : "한국어",
-      "pt" : "Português (Br)"
+      "pt" : "Português (Br)",
+      "th" : "ภาษาไทย"
     }
   },
   "deviceLocalization" : {
@@ -4584,7 +4720,8 @@
       "german" : "Alemán",
       "brazilian" : "Português (Br)",
       "russian" : "Ruso",
-      "turkish" : "Türkçe"
+      "turkish" : "Türkçe",
+      "thai" : "ภาษาไทย"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -5912,7 +6049,74 @@
         "description" : "Puedes recibir recompensas delegando tus activos SOL a un validador."
       },
       "reserveWarning" : "Asegúrate de reservar al menos {{amount}} SOL en tu billetera para cubrir las futuras tarifas de red, necesarias para quitar de participación tus activos y retirarlos."
+    },
+    "token" : {
+      "frozenStateWarning" : "Los activos de la cuenta están inmovilizados.",
+      "transferWarning" : "Para verificar la dirección del receptor de los tokens de Solana con un Ledger Nano S™, <0>sigue estas instrucciones</0>.",
+      "transferFees" : {
+        "title" : "Tarifas de transferencia",
+        "feesPercentHint" : "El token tiene una tarifa de transferencia del {{feePercent}}% ({{feeBps}} bps) ({{maxFee}} máx.)",
+        "notice" : "Tarifa de transferencia del {{fee}}%",
+        "tooltipHint" : "Porcentaje de transferencia retenido para el creador del token"
+      },
+      "nonTransferable" : {
+        "notice" : "El token no es transferible"
+      },
+      "interestRate" : {
+        "notice" : "Tasa de interés: {{rate}}%",
+        "tooltipHint" : "Sólo con fines estéticos. No se crean token nuevos a raíz del interés"
+      },
+      "permanentDelegate" : {
+        "notice" : "La autoridad delegada permanente está activada",
+        "initializationNotice" : "La autoridad delegada permanente está iniciada pero no activada",
+        "initializedNoticeTooltipHint" : "El delegado tiene la capacidad de transferir o quemar este token desde tu cuenta",
+        "tooltipHint" : "{{delegateAddress}}<0></0> tiene la capacidad de transferir o quemar este token desde tu cuenta"
+      },
+      "requiredMemoOnTransfer" : {
+        "notice" : "Está habilitado el requisito de memo en transferencia",
+        "tooltipHint" : "Todas las transferencias entrantes a esta cuenta deben tener un memo"
+      },
+      "transferHook" : {
+        "notice" : "El hook de transferencia está activado",
+        "initializationNotice" : "El hook de transferencia ha sido iniciado pero no activado",
+        "tooltipHint" : "El token tiene una funcionalidad adicional gestionada por {{programAddress}}<0></0>"
+      },
+      "extensionsInfo" : {
+        "title" : "Extensiones de tokens de Solana",
+        "commonInfo" : "Las extensiones de tokens son la nueva generación del estándar de tokens de Solana. Estas extensiones introducen una serie de maneras de ampliar la funcionalidad normal del token, añadiendo características como las transferencias confidenciales, el delegado permanente, la lógica de transferencia personalizada, los metadatos ampliados y muchas más.",
+        "permanentDelegate" : {
+          "title" : "Delegado permanente",
+          "permanentDelegateAddress" : "La autoridad delegada actual es {{address}}",
+          "permanentDelegateNotSetup" : "La autoridad delegada actual no ha sido definida.",
+          "description" : "El delegado permanente es una autoridad que tiene privilegios delegados ilimitados sobre cualquier cuenta referida a esa acuñación. El delegado puede quemar o transferir la cantidad de tokens que desee, en cualquier momento, en virtud de su propia autoridad."
+        },
+        "nonTransferable" : {
+          "title" : "Tokens no transferibles",
+          "description" : "Estos tokens son \"soul-bound\" (vinculados a la identidad) y no se pueden mover ni quemar. Sólo puede hacerlo quien emite el token."
+        },
+        "transferHook" : {
+          "title" : "Hook de transferencia",
+          "transferHookAddress" : "El programa de hook de transferencia actual es {{address}}",
+          "transferHookNotSetup" : "El programa de hook de transferencia actual no ha sido definido.",
+          "description" : "El hook de transferencia permite a los emisores del token decidir la forma en que se realizará la interacción entre los usuarios y los tokens. En lugar de realizarse una transferencia normal, el emisor puede insertar una lógica personalizada en un programa para aplicarla a través de la extensión de hook de transferencia."
+        },
+        "transferFee" : {
+          "title" : "Tarifa de transferencia",
+          "currentTransferFee" : "La tarifa de transferencia actual es de un {{feePercent}}% ({{feeBps}} bps). Máx. {{maxFee}}.",
+          "description" : "Las tarifas se cobran por cada transferencia de un token y se retienen en la cuenta del destinatario, quien no puede tocarlas."
+        },
+        "interestBearing" : {
+          "title" : "Tokens con interés asociado",
+          "currentInterestRate" : "La tasa de interés actual es del {{rate}}%.",
+          "accruedDelta" : "Acumulado: {{delta}}.",
+          "interestRateNotSetup" : "La tasa de interés actual se ha fijado al 0%.",
+          "description" : "Tokens cuyo valor aumenta o disminuye constantemente según su propia tasa de interés. Nunca se crean tokens nuevos, esta característica es simplemente estética."
+        }
+      }
     }
+  },
+  "mina" : {
+    "memoPlaceholder" : "Memo opcional"
   },
   "near" : {
     "info" : {
@@ -6102,7 +6306,7 @@
     },
     "warning" : "Asegúrate de que la dirección que se muestra en tu Ledger coincide con la dirección de {{recipientWording}}",
     "recipientWording" : {
-      "send" : "Verifica siempre que la dirección que muestra tu dispositivo coincida exactamente con la que te haya proporcionado el receptor",
+      "send" : "Comprueba siempre que la dirección mostrada en tu dispositivo coincida exactamente con la indicada por el destinatario.",
       "delegate" : "Verifica siempre que tu dispositivo muestre exactamente la dirección que te haya proporcionado el validador",
       "undelegate" : "Verifica siempre que tu dispositivo muestre exactamente la dirección que te haya proporcionado el validador",
       "freeze" : "Verifica siempre que tu dispositivo muestre exactamente la dirección que te hayan proporcionado",
@@ -6422,7 +6626,12 @@
       "24h" : "24H",
       "7d" : "7D",
       "30d" : "30D",
-      "1y" : "1 A"
+      "1y" : "1 A",
+      "1D_label" : "1D",
+      "1H_label" : "1H",
+      "1W_label" : "1S",
+      "1M_label" : "1M",
+      "1Y_label" : "1A"
     },
     "warnings" : {
       "connectionError" : "Error de conexión",
@@ -6500,7 +6709,9 @@
     "name" : "Hedera",
     "createHederaAccountHelp" : {
       "text" : "Consulta este artículo de soporte para aprender",
-      "link" : "a crear una cuenta de Hedera"
+      "link" : "¿Cómo crear una cuenta de Hedera?",
+      "title" : "No podemos crear una cuenta de Hedera nueva",
+      "description" : "El ecosistema Hedera sólo permite la creación de cuentas nuevas a través de un número limitado de servicios. Aunque Ledger no ofrece actualmente este servicio de incorporación, tienes disponibles varias alternativas. Podrás agregar tu cuenta de Hedera a Ledger Live tras crearla."
     },
     "currentAddress" : {
       "messageIfVirtual" : "No se puede confirmar tu dirección {{name}} en tu dispositivo Ledger. Si lo usas es bajo tu propio riesgo."
@@ -6557,7 +6768,7 @@
   "postOnboarding" : {
     "hub" : {
       "title" : "A continuación, usa tu {{productName}} para...",
-      "allDoneTitle" : "¡Todo listo! Ya puedes explorar tu portfolio.",
+      "areAllPostOnboardingActionsCompletedTitle" : "¡Todo listo! Ya puedes explorar tu portfolio.",
       "skip" : "Lo haré más tarde",
       "viewWallet" : "Explorar mi portfolio"
     },
@@ -6609,6 +6820,7 @@
         "hide" : "Ocultar {{count}} colección",
         "hiddenCollections" : "Colecciones ocultas",
         "hide_plural" : "Ocultar {{count}} colecciones",
+        "empty" : "No hay colecciones ocultas que mostrar",
         "alertHide" : "1 colección oculta. Puedes volver a mostrarla desde el filtro de la galería.",
         "alertHide_plural" : "{{count}} colecciones ocultas. Puedes volver a mostrarlas desde el filtro de la galería."
       },
@@ -6886,6 +7098,16 @@
   },
   "walletSync" : {
     "title" : "Ledger Sync",
+    "entryPoints" : {
+      "simpleCta" : {
+        "title" : "Activar Ledger Sync"
+      },
+      "card" : {
+        "title" : "Ledger Sync",
+        "description" : "Sincroniza tus cuentas automáticamente, incluso si cambias a un teléfono nuevo.",
+        "cta" : "Activar Ledger Sync"
+      }
+    },
     "activation" : {
       "screen" : {
         "title" : "¿Activar Ledger Sync para este teléfono?",
@@ -6989,9 +7211,10 @@
           "explanation" : {
             "title" : "Escanea y sincroniza tus cuentas con otra aplicación Ledger Live",
             "steps" : {
-              "step1" : "Abre la aplicación Ledger Live que quieras sincronizar",
-              "step2" : "Ve a <0>Ajustes</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Activar Ledger Sync</0> <1>></1> <0>Escanear código QR</0>",
-              "step3" : "Escanear código QR"
+              "step1" : "Asegúrate de que Ledger Sync esté activado en una de tus aplicaciones.",
+              "step2" : "Abre la aplicación Ledger Live que quieres sincronizar.",
+              "step3" : "Ve a <0>Ajustes</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Ya lo he activado</0> <1>></1> <0>Escanear código QR</0>.",
+              "step4" : "Escanea el código QR."
             }
           }
         },
@@ -7001,9 +7224,10 @@
           "explanation" : {
             "title" : "Para sincronizar con Ledger Live en otro teléfono o PC...",
             "steps" : {
-              "step1" : "Abre el Ledger Live con el que quieras sincronizar.",
-              "step2" : "Ve a <0>Ajustes/0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Activar Ledger Sync</0> <1>></1> <0>Mostrar QR</0>",
-              "step3" : "Escanear código QR"
+              "step1" : "Asegúrate de que Ledger Sync esté activado en una de tus aplicaciones.",
+              "step2" : "Abre la aplicación Ledger Live con la que quieres sincronizar.",
+              "step3" : "Ve a <0>Ajustes</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Ya lo he activado</0> <1>></1> <0>Mostrar QR</0>.",
+              "step4" : "Escanea el código QR."
             }
           }
         },
@@ -7111,6 +7335,59 @@
           "name" : "Agregar una cuenta"
         }
       }
+    }
+  },
+  "assetSelection" : {
+    "selectCrypto" : {
+      "title" : "Seleccionar activo"
+    },
+    "selectNetwork" : {
+      "title" : "Selecciona la red de cadena de bloques a la que pertenece el activo",
+      "detectedAccounts" : "{{count}} cuenta (detectada)",
+      "detectedAccounts_plural" : "{{count}} cuentas (detectadas)"
+    }
+  },
+  "emptyList" : {
+    "accounts" : {
+      "title" : "No se encontraron cuentas",
+      "subTitle" : "Parece que todavía no has agregado ninguna cuenta. Es el momento de comenzar.",
+      "cta" : "Agregar una cuenta",
+      "link" : "¿Necesitas ayuda? Obtén más información sobre cómo agregar una cuenta a Ledger Live."
+    }
+  },
+  "lnsUpsell" : {
+    "opted_in" : {
+      "description" : "Actualiza tu Ledger Nano S a un dispositivo Ledger más moderno, como el Ledger Flex, para disponer de más memoria, mejoras de seguridad más recientes y nuevas funciones. Además, un exclusivo 20% de descuento. ",
+      "cta" : "Renovar mi Ledger"
+    },
+    "opted_out" : {
+      "description" : "La memoria limitada de tu Ledger Nano S restringe tu acceso a las opciones más recientes, a cambios en la blockchain y a mejoras de seguridad. Cambia a un dispositivo Ledger más moderno para garantizar un uso prolongado.",
+      "cta" : "Más información"
+    }
+  },
+  "largeMover" : {
+    "info" : "Info",
+    "marketCap" : "Capitalización de mercado",
+    "volume" : "Volumen (24 h)",
+    "fdv" : "FDV",
+    "marketCap24h" : "Vol/Cap. merc. (24 h)",
+    "circulatingSupply" : "Suministro circulante",
+    "totalSupply" : "Suministro total",
+    "ath" : "Máximo histórico",
+    "atl" : "Mínimo histórico",
+    "timeAgo" : {
+      "years" : "(hace {{count}} año)",
+      "years_plural" : "(hace {{count}} años)",
+      "months" : "(hace {{count}} mes)",
+      "months_plural" : "(hace {{count}} meses)",
+      "days" : "(hace {{count}} día)",
+      "days_plural" : "(hace {{count}} días)",
+      "hours" : "(hace {{count}} hora)",
+      "hours_plural" : "(hace {{count}} horas)",
+      "minutes" : "(hace {{count}} minuto)",
+      "minutes_plural" : "(hace {{count}} minutos)",
+      "seconds" : "(hace {{count}} segundo)",
+      "seconds_plural" : "(hace {{count}} segundos)"
     }
   }
 }

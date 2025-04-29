@@ -22,6 +22,8 @@ const jestAllure2ReporterOptions = {
   },
 };
 
+const transformIncludePatterns = ["ky"];
+
 module.exports = async () => ({
   rootDir: "..",
   maxWorkers: process.env.CI ? 2 : 1,
@@ -40,9 +42,9 @@ module.exports = async () => ({
   testTimeout: 150000,
   testMatch: ["<rootDir>/e2e/specs/{*.spec.ts,!(speculos)/**/*.spec.ts}"],
   reporters: ["detox/runners/jest/reporter", ["jest-allure2-reporter", jestAllure2ReporterOptions]],
-  globalSetup: "detox/runners/jest/globalSetup",
+  globalSetup: "<rootDir>/e2e/jest.globalSetup.ts",
   globalTeardown: "<rootDir>/e2e/jest.globalTeardown.ts",
-  testEnvironment: "detox/runners/jest/testEnvironment",
+  testEnvironment: "<rootDir>/e2e/jest.environment.ts",
   testEnvironmentOptions: {
     eventListeners: [
       "jest-metadata/environment-listener",
@@ -50,5 +52,7 @@ module.exports = async () => ({
       "detox-allure2-adapter",
     ],
   },
+  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${transformIncludePatterns.join("|")}))`],
   verbose: true,
+  resetModules: true,
 });

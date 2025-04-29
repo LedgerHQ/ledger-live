@@ -8,10 +8,14 @@ import { getBipPathString } from "./logic";
 import { CertificateType } from "@stricahq/typhonjs/dist/types";
 import {
   CardanoTxOutputFormat,
+  DelegationCertificate,
+  DeregistrationCertificate,
+  RegistrationCertificate,
   SignerTxCertificate,
   SignerTxInput,
   SignerTxOutput,
   SignerTxWithdrawal,
+  VoteDelegationCertificate,
 } from "./signer";
 
 /**
@@ -141,41 +145,35 @@ const prepareLedgerOutput =
   };
 
 function prepareCertificate(cert: TyphonTypes.Certificate): SignerTxCertificate {
-  if (cert.certType === CertificateType.STAKE_REGISTRATION) {
-    return prepareStakeRegistrationCertificate(cert as TyphonTypes.StakeRegistrationCertificate);
-  } else if (cert.certType === CertificateType.STAKE_DELEGATION) {
-    return prepareStakeDelegationCertificate(cert as TyphonTypes.StakeDelegationCertificate);
-  } else if (cert.certType === CertificateType.STAKE_DE_REGISTRATION) {
-    return prepareStakeDeRegistrationCertificate(
-      cert as TyphonTypes.StakeDeRegistrationCertificate,
-    );
-  } else {
-    throw new Error("Invalid Certificate type");
+  switch (cert.type) {
+    case CertificateType.STAKE_REGISTRATION:
+      return prepareStakeRegistrationCertificate(cert);
+    case CertificateType.STAKE_DELEGATION:
+      return prepareStakeDelegationCertificate(cert);
+    case CertificateType.STAKE_DE_REGISTRATION:
+      return prepareStakeDeRegistrationCertificate(cert);
+    case CertificateType.VOTE_DELEGATION:
+      return prepareVoteDelegationCertificate(cert);
+    default:
+      throw new Error("Invalid Certificate type");
   }
 }
 
 function prepareStakeRegistrationCertificate(
   certificate: TyphonTypes.StakeRegistrationCertificate,
-): {
-  type: "REGISTRATION";
-  params: {
-    stakeCredential: {
-      keyPath: string;
-    };
-  };
-} {
+): RegistrationCertificate {
   if (
-    certificate.stakeCredential.type === TyphonTypes.HashType.ADDRESS &&
-    certificate.stakeCredential.bipPath
+    certificate.cert.stakeCredential.type === TyphonTypes.HashType.ADDRESS &&
+    certificate.cert.stakeCredential.bipPath
   ) {
     return {
       type: "REGISTRATION",
       params: {
         stakeCredential: {
           keyPath: getBipPathString({
-            account: certificate.stakeCredential.bipPath.account,
-            chain: certificate.stakeCredential.bipPath.chain,
-            index: certificate.stakeCredential.bipPath.index,
+            account: certificate.cert.stakeCredential.bipPath.account,
+            chain: certificate.cert.stakeCredential.bipPath.chain,
+            index: certificate.cert.stakeCredential.bipPath.index,
           }),
         },
       },
@@ -185,30 +183,24 @@ function prepareStakeRegistrationCertificate(
   }
 }
 
-function prepareStakeDelegationCertificate(certificate: TyphonTypes.StakeDelegationCertificate): {
-  type: "DELEGATION";
-  params: {
-    stakeCredential: {
-      keyPath: string;
-    };
-    poolKeyHashHex: string;
-  };
-} {
+function prepareStakeDelegationCertificate(
+  certificate: TyphonTypes.StakeDelegationCertificate,
+): DelegationCertificate {
   if (
-    certificate.stakeCredential.type === TyphonTypes.HashType.ADDRESS &&
-    certificate.stakeCredential.bipPath
+    certificate.cert.stakeCredential.type === TyphonTypes.HashType.ADDRESS &&
+    certificate.cert.stakeCredential.bipPath
   ) {
     return {
       type: "DELEGATION",
       params: {
         stakeCredential: {
           keyPath: getBipPathString({
-            account: certificate.stakeCredential.bipPath.account,
-            chain: certificate.stakeCredential.bipPath.chain,
-            index: certificate.stakeCredential.bipPath.index,
+            account: certificate.cert.stakeCredential.bipPath.account,
+            chain: certificate.cert.stakeCredential.bipPath.chain,
+            index: certificate.cert.stakeCredential.bipPath.index,
           }),
         },
-        poolKeyHashHex: certificate.poolHash,
+        poolKeyHashHex: certificate.cert.poolHash,
       },
     };
   } else {
@@ -216,26 +208,49 @@ function prepareStakeDelegationCertificate(certificate: TyphonTypes.StakeDelegat
   }
 }
 
-function prepareStakeDeRegistrationCertificate(certificate: TyphonTypes.Certificate): {
-  type: "DEREGISTRATION";
-  params: {
-    stakeCredential: {
-      keyPath: string;
-    };
-  };
-} {
+function prepareStakeDeRegistrationCertificate(
+  certificate: TyphonTypes.StakeDeRegistrationCertificate,
+): DeregistrationCertificate {
   if (
-    certificate.stakeCredential.type === TyphonTypes.HashType.ADDRESS &&
-    certificate.stakeCredential.bipPath
+    certificate.cert.stakeCredential.type === TyphonTypes.HashType.ADDRESS &&
+    certificate.cert.stakeCredential.bipPath
   ) {
     return {
       type: "DEREGISTRATION",
       params: {
         stakeCredential: {
           keyPath: getBipPathString({
-            account: certificate.stakeCredential.bipPath.account,
-            chain: certificate.stakeCredential.bipPath.chain,
-            index: certificate.stakeCredential.bipPath.index,
+            account: certificate.cert.stakeCredential.bipPath.account,
+            chain: certificate.cert.stakeCredential.bipPath.chain,
+            index: certificate.cert.stakeCredential.bipPath.index,
+          }),
+        },
+      },
+    };
+  } else {
+    throw new Error("Invalid stakeKey type");
+  }
+}
+
+function prepareVoteDelegationCertificate(
+  certificate: TyphonTypes.VoteDelegationCertificate,
+): VoteDelegationCertificate {
+  if (certificate.cert.dRep.type !== TyphonTypes.DRepType.ABSTAIN) {
+    throw new Error(`DRep type ${certificate.cert.dRep.type} not supported`);
+  }
+
+  if (
+    certificate.cert.stakeCredential.type === TyphonTypes.HashType.ADDRESS &&
+    certificate.cert.stakeCredential.bipPath
+  ) {
+    return {
+      type: "VOTE_DELEGATION_ABSTAIN",
+      params: {
+        stakeCredential: {
+          keyPath: getBipPathString({
+            account: certificate.cert.stakeCredential.bipPath.account,
+            chain: certificate.cert.stakeCredential.bipPath.chain,
+            index: certificate.cert.stakeCredential.bipPath.index,
           }),
         },
       },

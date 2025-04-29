@@ -9,7 +9,6 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import {
   canNominate,
-  isStash,
   hasExternalController,
   hasExternalStash,
   hasPendingOperationType,
@@ -42,10 +41,13 @@ import {
   ExternalStashUnsupportedWarning,
 } from "./UnsupportedWarning";
 import Illustration from "~/images/illustration/Illustration";
-import EarnLight from "~/images/illustration/Light/_003.png";
-import EarnDark from "~/images/illustration/Dark/_003.png";
+import EarnLight from "~/images/illustration/Light/_003.webp";
+import EarnDark from "~/images/illustration/Dark/_003.webp";
 import FirstLetterIcon from "~/components/FirstLetterIcon";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useStake } from "LLM/hooks/useStake/useStake";
+import { useSelector } from "react-redux";
+import { walletSelector } from "~/reducers/wallet";
 
 type Props = {
   account: AccountLike;
@@ -143,17 +145,25 @@ export default function Nominations(props: Props) {
     [navigation, account.id],
   );
 
+  const { getRouteParamsForPlatformApp } = useStake();
+  const walletState = useSelector(walletSelector);
   const onEarnRewards = useCallback(() => {
-    isStash(account)
-      ? onNavigate({
-          route: NavigatorName.PolkadotNominateFlow,
-          screen: ScreenName.PolkadotNominateSelectValidators,
-        })
-      : onNavigate({
-          route: NavigatorName.PolkadotBondFlow,
-          screen: ScreenName.PolkadotBondStarted,
-        });
-  }, [account, onNavigate]);
+    const { screen, params } = getRouteParamsForPlatformApp(account, walletState, mainAccount) ?? {
+      screen: ScreenName.PlatformApp,
+      params: {
+        platform: "stakekit",
+        name: "StakeKit",
+        accountId: account.id,
+        yieldId: "polkadot-dot-validator-staking",
+      },
+    };
+
+    onNavigate({
+      route: NavigatorName.Base,
+      screen,
+      params,
+    });
+  }, [account, getRouteParamsForPlatformApp, mainAccount, onNavigate, walletState]);
 
   const onNominate = useCallback(() => {
     onNavigate({

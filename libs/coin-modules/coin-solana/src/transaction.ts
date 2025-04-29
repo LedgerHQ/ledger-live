@@ -8,6 +8,8 @@ import type {
   StakeWithdrawCommand,
   TokenCreateATACommand,
   TokenTransferCommand,
+  TokenCreateApproveCommand,
+  TokenCreateRevokeCommand,
   Transaction,
   TransactionRaw,
   TransferCommand,
@@ -20,11 +22,10 @@ import {
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
-import { getTokenById } from "@ledgerhq/cryptoassets/index";
+import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/index";
 import { findSubAccountById, getAccountCurrency } from "@ledgerhq/coin-framework/account";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { assertUnreachable } from "./utils";
-import { toTokenId } from "./logic";
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
@@ -72,7 +73,11 @@ function formatCommand(mainAccount: Account, tx: Transaction, command: Command) 
     case "token.transfer":
       return formatTokenTransfer(mainAccount, tx, command);
     case "token.createATA":
-      return formatCreateATA(command);
+      return formatCreateATA(mainAccount, command);
+    case "token.approve":
+      return formatCreateApprove(mainAccount, tx, command);
+    case "token.revoke":
+      return formatCreateRevoke(mainAccount, tx, command);
     case "stake.createAccount":
       return formatStakeCreateAccount(mainAccount, tx, command);
     case "stake.delegate":
@@ -147,9 +152,62 @@ function formatTokenTransfer(mainAccount: Account, tx: Transaction, command: Tok
   return "\n" + str;
 }
 
-function formatCreateATA(command: TokenCreateATACommand) {
-  const token = getTokenById(toTokenId(command.mint));
+function formatCreateATA(mainAccount: Account, command: TokenCreateATACommand) {
+  const token = findTokenByAddressInCurrency(command.mint, mainAccount.currency.id);
+  if (!token) {
+    throw new Error(`token for mint "${command.mint}" not found`);
+  }
   const str = [`  OPT IN TOKEN: ${token.ticker}`].filter(Boolean).join("\n");
+  return "\n" + str;
+}
+
+function formatCreateApprove(
+  mainAccount: Account,
+  tx: Transaction,
+  command: TokenCreateApproveCommand,
+) {
+  if (!tx.subAccountId) {
+    throw new Error("expected subaccountId on transaction");
+  }
+  const subAccount = findSubAccountById(mainAccount, tx.subAccountId);
+  if (!subAccount || subAccount.type !== "TokenAccount") {
+    throw new Error("token subaccount expected");
+  }
+  const amount = formatCurrencyUnit(
+    getAccountCurrency(subAccount).units[0],
+    new BigNumber(command.amount),
+    {
+      showCode: true,
+      disableRounding: true,
+    },
+  );
+  const str = [
+    `  OWNER: ${command.owner}`,
+    `  APPROVE: ${command.account}`,
+    `  DELEGATE: ${command.recipientDescriptor.walletAddress}`,
+    `  AMOUNT: ${amount}${tx.useAllAmount ? " (ALL)" : ""}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+  return "\n" + str;
+}
+
+function formatCreateRevoke(
+  mainAccount: Account,
+  tx: Transaction,
+  command: TokenCreateRevokeCommand,
+) {
+  if (!tx.subAccountId) {
+    throw new Error("expected subaccountId on transaction");
+  }
+  const subAccount = findSubAccountById(mainAccount, tx.subAccountId);
+  if (!subAccount || subAccount.type !== "TokenAccount") {
+    throw new Error("token subaccount expected");
+  }
+
+  const str = [`  OWNER: ${command.owner}`, `  REVOKE: ${command.account}`]
+    .filter(Boolean)
+    .join("\n");
   return "\n" + str;
 }
 

@@ -13,19 +13,23 @@ import EntryButton from "~/renderer/components/EntryButton/EntryButton";
 import CoinsIcon from "./assets/CoinsIcon";
 import { trackPage, track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
 
-const useText = (entryPoint: "noFunds" | "getFunds", currency: CryptoCurrency) => {
+const useText = (
+  entryPoint: "noFunds" | "getFunds",
+  ticker: CryptoCurrency["ticker"] | TokenCurrency["ticker"],
+) => {
   const { t } = useTranslation();
 
   const textMap = {
     noFunds: {
-      title: t("stake.noFundsModal.text", { coin: currency.ticker }),
+      title: t("stake.noFundsModal.text", { coin: ticker }),
       body: t("stake.noFundsModal.description"),
     },
     getFunds: {
-      title: t("stake.getFundsModal.text", { coin: currency.ticker }),
+      title: t("stake.getFundsModal.text", { coin: ticker }),
       body: t("stake.getFundsModal.description"),
     },
   };
@@ -34,7 +38,7 @@ const useText = (entryPoint: "noFunds" | "getFunds", currency: CryptoCurrency) =
 };
 
 interface NoFundsStakeModalProps {
-  account: AccountLike | undefined | null;
+  account: AccountLike;
   parentAccount?: Account | undefined | null;
   entryPoint?: "get-funds" | undefined;
 }
@@ -45,7 +49,7 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
   const history = useHistory();
   const { data: currenciesAll } = useFetchCurrencyAll();
 
-  const currency: CryptoCurrency = parentAccount?.currency || (account as Account).currency;
+  const currency = isTokenAccount(account) ? account.token : account?.currency;
 
   const { isCurrencyAvailable } = useRampCatalog();
 
@@ -134,7 +138,7 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
       i === 0 ? `${action.substring(0, 1).toUpperCase()}${action.slice(1)}` : action,
     );
 
-  const text = useText(entryPoint === "get-funds" ? "getFunds" : "noFunds", currency);
+  const text = useText(entryPoint === "get-funds" ? "getFunds" : "noFunds", currency.ticker);
 
   return (
     <Modal name={modalName} centered>
