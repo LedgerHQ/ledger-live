@@ -4,7 +4,6 @@ import merge from "lodash/merge";
 import * as path from "path";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { stopSpeculos } from "@ledgerhq/live-common/e2e/speculos";
 
 import { Application } from "tests/page";
 import { safeAppendFile } from "tests/utils/fileUtils";
@@ -14,7 +13,7 @@ import { randomUUID } from "crypto";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { lastValueFrom, Observable } from "rxjs";
 import { CLI } from "../utils/cliUtils";
-import { launchSpeculos } from "tests/utils/speculosUtils";
+import { launchSpeculos, killSpeculos } from "tests/utils/speculosUtils";
 
 type CliCommand = (appjsonPath: string) => Observable<unknown> | Promise<unknown> | string;
 
@@ -119,7 +118,7 @@ export const test = base.extend<TestFixtures>({
             speculos = await launchSpeculos(app.name);
             CLI.registerSpeculosTransport(speculos.ports.apiPort.toString());
             await executeCliCommand(cmd, userdataDestinationPath);
-            await stopSpeculos(speculos.id);
+            await killSpeculos(speculos.id);
           }
         }
 
@@ -170,7 +169,7 @@ export const test = base.extend<TestFixtures>({
       await electronApp.close();
     } finally {
       if (speculos) {
-        await stopSpeculos(speculos.id);
+        await killSpeculos(speculos.id);
       }
     }
   },

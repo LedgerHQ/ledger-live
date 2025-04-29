@@ -1,6 +1,21 @@
 #!/bin/bash
 
-cd apps/ledger-live-desktop/artifacts/xray
+# Check if testExecutionKey is provided as an argument
+if [ "$#" -lt 1 ]; then
+    echo "Usage: $0 <path>"
+    exit 1
+fi
+
+# Assignation des arguments
+XRAY_PATH="$1"
+
+# Check if the provided path exists
+if [ ! -d "$XRAY_PATH" ]; then
+    echo "The path $XRAY_PATH doesn't exist"
+    exit 1
+fi
+
+cd "$XRAY_PATH" || exit 1
 
 # Initialize an empty array for storing test results
 aggregated_tests=()
@@ -29,7 +44,6 @@ xray_payload+=']}'
 # Print the content of the aggregated Xray payload
 echo "Xray Payload Content:"
 echo "$xray_payload"
-
 
 # Output the aggregated Xray payload to a file
 echo "$xray_payload" > aggregated-xray-reports.json

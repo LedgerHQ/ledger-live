@@ -211,7 +211,7 @@ jobs:
           merge-multiple: false
 
       - name: Extract and Aggregate Xray results
-        run: ./aggregate-xray-reports.sh
+        run: e2e/desktop/aggregate-xray-reports.sh e2e/desktop/artifacts/xray
 
       - name: Upload aggregated xray results
         uses: actions/upload-artifact@v4.3.0

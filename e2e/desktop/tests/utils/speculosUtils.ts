@@ -1,5 +1,5 @@
 import { setEnv } from "@ledgerhq/live-env";
-import { startSpeculos, specs } from "@ledgerhq/live-common/e2e/speculos";
+import { startSpeculos, specs, stopSpeculos } from "@ledgerhq/live-common/e2e/speculos";
 import invariant from "invariant";
 
 const BASE_PORT = 30000;
@@ -35,4 +35,8 @@ export async function launchSpeculos(appName: string, testTitle?: string) {
 
   console.warn(`Speculos ${device.id} started on ${speculosApiPort}`);
   return device;
+}
+
+export async function killSpeculos(deviceId: string) {
+  await stopSpeculos(deviceId);
 }

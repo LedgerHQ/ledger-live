@@ -907,7 +907,7 @@ async function validateRecipientCommon(
     const mintTokenAccount = await getMaybeMintAccount(tx.recipient, api);
 
     if (mintTokenAccount instanceof Error) {
-      throw recipientTokenAccount;
+      throw mintTokenAccount;
     }
 
     if (mintTokenAccount) {
