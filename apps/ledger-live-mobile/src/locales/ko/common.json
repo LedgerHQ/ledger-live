@@ -1103,6 +1103,32 @@
     "tryEnablingAgain" : "위치를 다시 활성화해보세요",
     "noInfos" : "Ledger는 사용자의 위치 정보를 사용하지 않습니다."
   },
+  "earn" : {
+    "deposit" : {
+      "protocolInfoModal" : {
+        "title" : "프로토콜을 선택 시 다음 사항을 유의하세요.",
+        "items" : {
+          "protocol" : {
+            "highlighted" : "프로토콜은",
+            "description" : " 예치한 암호화폐를 대출, 유동성 공급 또는 스테이킹에 사용하여 보상을 받을 수 있는 플랫폼입니다."
+          },
+          "apy" : {
+            "highlighted" : "APY(연이율)",
+            "description" : " 1년간 벌 수 있는 이자 수익을 의미합니다. APY가 높을수록 수익률도 높아집니다."
+          },
+          "tvl" : {
+            "highlighted" : "TVL(총 잠금 가치)",
+            "description" : " 다른 사용자가 프로토콜에 예치한 총 자산 가치를 의미합니다. TVL이 높을수록 더 많은 사람들이 프로토콜을 신뢰한다는 것을 의미합니다."
+          },
+          "strategy" : {
+            "highlighted" : "전략",
+            "description0" : " 프로토콜의 보상 생성 방식을 의미합니다.",
+            "description1" : "예를 들어, 대출을 전략으로 사용하는 경우 예치된 스테이블코인을 다른 사용자에게 빌려주면 이자 수익이 발생합니다. 이자는 수요에 따라 달라집니다."
+          }
+        }
+      }
+    }
+  },
   "permissions" : {
     "open" : "앱 사용 권한 열기",
     "authorize" : "승인",
@@ -7388,6 +7414,9 @@
       "minutes_plural" : "({{count}}분 전)",
       "seconds" : "({{count}}초 전)",
       "seconds_plural" : "({{count}}초 전)"
-    }
+    },
+    "performance" : "가격 추이",
+    "low" : "낮음",
+    "high" : "높음"
   }
 }
