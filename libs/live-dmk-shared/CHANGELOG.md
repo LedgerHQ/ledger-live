@@ -1,5 +1,11 @@
 # @ledgerhq/live-dmk
 
+## 0.8.1
+
+### Patch Changes
+
+- [#10055](https://github.com/LedgerHQ/ledger-live/pull/10055) [`486e860`](https://github.com/LedgerHQ/ledger-live/commit/486e860cbad0ca9ba54e231c9d42739e0ccee662) Thanks [@mbertin-ledger](https://github.com/mbertin-ledger)! - DMK fixes for LLM
+
 ## 0.8.0
 
 ### Minor Changes

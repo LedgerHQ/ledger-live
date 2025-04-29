@@ -8,10 +8,12 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useSelector } from "react-redux";
 import { bleDevicesSelector } from "~/reducers/ble";
 import { FilterByDeviceModelId } from "~/components/BleDevicePairingFlow/LegacyBleDevicesScanning";
+import { useIsFocused } from "@react-navigation/core";
 
 type DmkBleDevicesScanningProps = Omit<BleDevicesScanningProps, "devices">;
 
 export const DmkBleDevicesScanning = (scanningProps: DmkBleDevicesScanningProps) => {
+  const isFocused = useIsFocused();
   const filterByDeviceModelIds = useMemo(() => {
     if (Array.isArray(scanningProps.filterByDeviceModelId)) {
       return scanningProps.filterByDeviceModelId.filter(
@@ -33,7 +35,7 @@ export const DmkBleDevicesScanning = (scanningProps: DmkBleDevicesScanningProps)
     () => (scanningProps.areKnownDevicesDisplayed ? [] : knownDeviceIds),
     [scanningProps.areKnownDevicesDisplayed, knownDeviceIds],
   );
-  const { scannedDevices } = useBleDevicesScanning({
+  const { scannedDevices } = useBleDevicesScanning(isFocused, {
     filterOutDevicesByDeviceIds,
     filterByDeviceModelIds,
   });

@@ -1,20 +1,36 @@
 # web-tools
 
-## 0.17.2-nightly.1
+## 0.17.3
+
+### Patch Changes
+
+- Updated dependencies [[`486e860`](https://github.com/LedgerHQ/ledger-live/commit/486e860cbad0ca9ba54e231c9d42739e0ccee662)]:
+  - @ledgerhq/live-common@34.31.2
+
+## 0.17.2
+
+### Patch Changes
+
+- Updated dependencies [[`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601)]:
+  - @ledgerhq/coin-framework@4.0.0
+  - @ledgerhq/live-common@34.31.1
+  - @ledgerhq/live-wallet@0.10.6
+
+## 0.17.2-next.1
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/live-common@34.31.1-nightly.1
+  - @ledgerhq/live-common@34.31.1-next.1
 
-## 0.17.2-nightly.0
+## 0.17.2-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`b599ac4`](https://github.com/LedgerHQ/ledger-live/commit/b599ac4697688459aad15371f9efea58f331dc33)]:
-  - @ledgerhq/coin-framework@4.0.0-nightly.0
-  - @ledgerhq/live-common@34.31.1-nightly.0
-  - @ledgerhq/live-wallet@0.10.6-nightly.0
+- Updated dependencies [[`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601)]:
+  - @ledgerhq/coin-framework@4.0.0-next.0
+  - @ledgerhq/live-common@34.31.1-next.0
+  - @ledgerhq/live-wallet@0.10.6-next.0
 
 ## 0.17.1
 

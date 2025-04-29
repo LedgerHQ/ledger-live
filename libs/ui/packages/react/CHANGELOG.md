@@ -1,10 +1,20 @@
 # @ledgerhq/react-ui
 
-## 0.23.0-nightly.0
+## 0.23.0
 
 ### Minor Changes
 
-- [#10018](https://github.com/LedgerHQ/ledger-live/pull/10018) [`1d3be0d`](https://github.com/LedgerHQ/ledger-live/commit/1d3be0d5b13b09ec08908406711400ef5b286d69) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add Asset Type List component
+- [#10003](https://github.com/LedgerHQ/ledger-live/pull/10003) [`8e627c3`](https://github.com/LedgerHQ/ledger-live/commit/8e627c3823b3c798c9807a40f47897c7e36f485b) Thanks [@thesan](https://github.com/thesan)! - Implement the new search component UI
+
+- [#9962](https://github.com/LedgerHQ/ledger-live/pull/9962) [`6685d6d`](https://github.com/LedgerHQ/ledger-live/commit/6685d6df4cd13b8124264ea8d782cdab6871c8f8) Thanks [@thesan](https://github.com/thesan)! - Fix Storybook types and hot reload after an error
+
+## 0.23.0-next.0
+
+### Minor Changes
+
+- [#10003](https://github.com/LedgerHQ/ledger-live/pull/10003) [`8e627c3`](https://github.com/LedgerHQ/ledger-live/commit/8e627c3823b3c798c9807a40f47897c7e36f485b) Thanks [@thesan](https://github.com/thesan)! - Implement the new search component UI
+
+- [#9962](https://github.com/LedgerHQ/ledger-live/pull/9962) [`6685d6d`](https://github.com/LedgerHQ/ledger-live/commit/6685d6df4cd13b8124264ea8d782cdab6871c8f8) Thanks [@thesan](https://github.com/thesan)! - Fix Storybook types and hot reload after an error
 
 ## 0.22.0
 

@@ -6624,12 +6624,14 @@
     "range" : {
       "1h" : "1시간",
       "24h" : "24시간",
-      "1d" : "1일",
       "7d" : "7일",
-      "1w" : "1주",
       "30d" : "30일",
-      "1m" : "1달",
-      "1y" : "1년"
+      "1y" : "1년",
+      "1D_label" : "1일",
+      "1H_label" : "1시간",
+      "1W_label" : "1주",
+      "1M_label" : "1달",
+      "1Y_label" : "1년"
     },
     "warnings" : {
       "connectionError" : "연결 오류",
@@ -7364,8 +7366,28 @@
     }
   },
   "largeMover" : {
-    "performance" : "가격 추이",
-    "low" : "낮음",
-    "high" : "높음"
+    "info" : "정보",
+    "marketCap" : "시가총액",
+    "volume" : "거래량(24시간)",
+    "fdv" : "FDV",
+    "marketCap24h" : "거래량/시가총액(24시간)",
+    "circulatingSupply" : "유통량",
+    "totalSupply" : "총 공급량",
+    "ath" : "사상 최고치",
+    "atl" : "사상 최저치",
+    "timeAgo" : {
+      "years" : "({{count}}년 전)",
+      "years_plural" : "({{count}}년 전)",
+      "months" : "({{count}}개월 전)",
+      "months_plural" : "({{count}}개월 전)",
+      "days" : "({{count}}일 전)",
+      "days_plural" : "({{count}}일 전)",
+      "hours" : "({{count}}시간 전)",
+      "hours_plural" : "({{count}}시간 전)",
+      "minutes" : "({{count}}분 전)",
+      "minutes_plural" : "({{count}}분 전)",
+      "seconds" : "({{count}}초 전)",
+      "seconds_plural" : "({{count}}초 전)"
+    }
   }
 }

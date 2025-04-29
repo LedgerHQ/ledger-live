@@ -164,6 +164,11 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     MemoTagDrawerState.INITIAL,
   );
 
+  const handleMemoTagDrawerClose = useCallback(
+    () => setMemoTagDrawerState(MemoTagDrawerState.SHOWN),
+    [],
+  );
+
   const onPressContinue = useCallback(() => {
     if (memoTag?.isEmpty && memoTagDrawerState === MemoTagDrawerState.INITIAL) {
       return setMemoTagDrawerState(MemoTagDrawerState.SHOWING);
@@ -171,7 +176,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
 
     track("SendRecipientContinue");
 
-    // ERC721 transactions are always sending 1 NFT, so amount step is unecessary
+    // ERC721 transactions are always sending 1 NFT, so amount step is unnecessary
     if (shouldSkipAmount) {
       return navigation.navigate(ScreenName.SendSummary, {
         ...route.params,
@@ -321,7 +326,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 <memoTag.Input
                   testID="memo-tag-input"
                   placeholder={t("send.summary.memo.title")}
-                  autoFocus={memoTagDrawerState !== MemoTagDrawerState.INITIAL}
+                  autoFocus={memoTagDrawerState === MemoTagDrawerState.SHOWN}
                   onChange={memoTag.handleChange}
                 />
                 <Text mt={4} pl={2} color="alert">
@@ -358,7 +363,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
 
       <MemoTagDrawer
         open={memoTagDrawerState === MemoTagDrawerState.SHOWING}
-        onClose={() => setMemoTagDrawerState(MemoTagDrawerState.SHOWN)}
+        onClose={handleMemoTagDrawerClose}
         onNext={onPressContinue}
       />
 

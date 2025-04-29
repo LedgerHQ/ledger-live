@@ -319,6 +319,7 @@ export type EarnState = {
     title?: string;
     options: { label: string; metadata: OptionMetadata }[];
   };
+  protocolInfoModal?: true;
 };
 
 // === PROTECT STATE ===

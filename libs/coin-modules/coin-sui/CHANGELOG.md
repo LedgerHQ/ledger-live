@@ -1,11 +1,26 @@
 # @ledgerhq/coin-sui
 
-## 0.2.4-nightly.0
+## 0.3.0
+
+### Minor Changes
+
+- [#10010](https://github.com/LedgerHQ/ledger-live/pull/10010) [`27ccebf`](https://github.com/LedgerHQ/ledger-live/commit/27ccebfe727362d6055698251dad582d195f3dac) Thanks [@sponomarev](https://github.com/sponomarev)! - Fix HW operations order during TX signing
 
 ### Patch Changes
 
-- Updated dependencies [[`b599ac4`](https://github.com/LedgerHQ/ledger-live/commit/b599ac4697688459aad15371f9efea58f331dc33)]:
-  - @ledgerhq/coin-framework@4.0.0-nightly.0
+- Updated dependencies [[`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601)]:
+  - @ledgerhq/coin-framework@4.0.0
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#10010](https://github.com/LedgerHQ/ledger-live/pull/10010) [`27ccebf`](https://github.com/LedgerHQ/ledger-live/commit/27ccebfe727362d6055698251dad582d195f3dac) Thanks [@sponomarev](https://github.com/sponomarev)! - Fix HW operations order during TX signing
+
+### Patch Changes
+
+- Updated dependencies [[`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601)]:
+  - @ledgerhq/coin-framework@4.0.0-next.0
 
 ## 0.2.3
 

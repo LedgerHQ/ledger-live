@@ -1,11 +1,18 @@
 # @ledgerhq/coin-stacks
 
-## 0.8.3-nightly.0
+## 0.8.3
 
 ### Patch Changes
 
-- Updated dependencies [[`b599ac4`](https://github.com/LedgerHQ/ledger-live/commit/b599ac4697688459aad15371f9efea58f331dc33)]:
-  - @ledgerhq/coin-framework@4.0.0-nightly.0
+- Updated dependencies [[`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601)]:
+  - @ledgerhq/coin-framework@4.0.0
+
+## 0.8.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601)]:
+  - @ledgerhq/coin-framework@4.0.0-next.0
 
 ## 0.8.2
 

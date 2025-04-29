@@ -827,6 +827,18 @@ async function deriveStakeSplitCommandDescriptor(
 
 // if subaccountid present - it's a token transfer
 function updateModelIfSubAccountIdPresent(tx: Transaction): Transaction {
+  if (tx.subAccountId && tx.model.kind === "transfer") {
+    return {
+      ...tx,
+      model: {
+        kind: "token.transfer",
+        uiState: {
+          ...tx.model.uiState,
+          subAccountId: tx.subAccountId,
+        },
+      },
+    };
+  }
   if (
     tx.subAccountId &&
     // Using this instead of includes to get proper type narrowing

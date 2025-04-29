@@ -1,33 +1,68 @@
 # ledger-live-desktop
 
-## 2.110.1-nightly.1
+## 2.111.1
 
 ### Patch Changes
 
-- Updated dependencies [[`a11fd0b`](https://github.com/LedgerHQ/ledger-live/commit/a11fd0bbb687edc9e279bd4d63352658cae92c63), [`1d3be0d`](https://github.com/LedgerHQ/ledger-live/commit/1d3be0d5b13b09ec08908406711400ef5b286d69)]:
-  - @ledgerhq/coin-evm@2.20.0-nightly.1
-  - @ledgerhq/react-ui@0.23.0-nightly.0
-  - @ledgerhq/live-common@34.31.1-nightly.1
-  - @ledgerhq/live-dmk-desktop@0.3.1-nightly.1
+- Updated dependencies [[`486e860`](https://github.com/LedgerHQ/ledger-live/commit/486e860cbad0ca9ba54e231c9d42739e0ccee662)]:
+  - @ledgerhq/live-common@34.31.2
+  - @ledgerhq/live-dmk-desktop@0.3.2
 
-## 2.110.1-nightly.0
+## 2.111.0
+
+### Minor Changes
+
+- [#9989](https://github.com/LedgerHQ/ledger-live/pull/9989) [`9d995eb`](https://github.com/LedgerHQ/ledger-live/commit/9d995eb0fac251c124e6f6a9116b08d094bbfd8d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Cannot use 'in' operator to search for 'links' in Invalid extension provided error fixed
 
 ### Patch Changes
 
-- Updated dependencies [[`b599ac4`](https://github.com/LedgerHQ/ledger-live/commit/b599ac4697688459aad15371f9efea58f331dc33)]:
-  - @ledgerhq/coin-framework@4.0.0-nightly.0
-  - @ledgerhq/live-common@34.31.1-nightly.0
-  - @ledgerhq/coin-aptos@1.9.3-nightly.0
-  - @ledgerhq/coin-bitcoin@0.15.3-nightly.0
-  - @ledgerhq/coin-cosmos@0.13.2-nightly.0
-  - @ledgerhq/coin-evm@2.19.1-nightly.0
-  - @ledgerhq/coin-filecoin@1.9.3-nightly.0
-  - @ledgerhq/live-countervalues@0.5.3-nightly.0
-  - @ledgerhq/live-countervalues-react@0.2.32-nightly.0
-  - @ledgerhq/live-nft@0.8.3-nightly.0
-  - @ledgerhq/live-nft-react@0.9.3-nightly.0
-  - @ledgerhq/live-wallet@0.10.6-nightly.0
-  - @ledgerhq/live-dmk-desktop@0.3.1-nightly.0
+- Updated dependencies [[`8e627c3`](https://github.com/LedgerHQ/ledger-live/commit/8e627c3823b3c798c9807a40f47897c7e36f485b), [`6685d6d`](https://github.com/LedgerHQ/ledger-live/commit/6685d6df4cd13b8124264ea8d782cdab6871c8f8), [`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601)]:
+  - @ledgerhq/react-ui@0.23.0
+  - @ledgerhq/coin-framework@4.0.0
+  - @ledgerhq/live-common@34.31.1
+  - @ledgerhq/coin-aptos@1.9.3
+  - @ledgerhq/coin-bitcoin@0.15.3
+  - @ledgerhq/coin-cosmos@0.13.2
+  - @ledgerhq/coin-evm@2.19.1
+  - @ledgerhq/coin-filecoin@1.9.3
+  - @ledgerhq/live-countervalues@0.5.3
+  - @ledgerhq/live-countervalues-react@0.2.32
+  - @ledgerhq/live-nft@0.8.3
+  - @ledgerhq/live-nft-react@0.9.3
+  - @ledgerhq/live-wallet@0.10.6
+  - @ledgerhq/live-dmk-desktop@0.3.1
+
+## 2.111.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.31.1-next.1
+  - @ledgerhq/live-dmk-desktop@0.3.1-next.1
+
+## 2.111.0-next.0
+
+### Minor Changes
+
+- [#9989](https://github.com/LedgerHQ/ledger-live/pull/9989) [`9d995eb`](https://github.com/LedgerHQ/ledger-live/commit/9d995eb0fac251c124e6f6a9116b08d094bbfd8d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Cannot use 'in' operator to search for 'links' in Invalid extension provided error fixed
+
+### Patch Changes
+
+- Updated dependencies [[`8e627c3`](https://github.com/LedgerHQ/ledger-live/commit/8e627c3823b3c798c9807a40f47897c7e36f485b), [`6685d6d`](https://github.com/LedgerHQ/ledger-live/commit/6685d6df4cd13b8124264ea8d782cdab6871c8f8), [`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601)]:
+  - @ledgerhq/react-ui@0.23.0-next.0
+  - @ledgerhq/coin-framework@4.0.0-next.0
+  - @ledgerhq/live-common@34.31.1-next.0
+  - @ledgerhq/coin-aptos@1.9.3-next.0
+  - @ledgerhq/coin-bitcoin@0.15.3-next.0
+  - @ledgerhq/coin-cosmos@0.13.2-next.0
+  - @ledgerhq/coin-evm@2.19.1-next.0
+  - @ledgerhq/coin-filecoin@1.9.3-next.0
+  - @ledgerhq/live-countervalues@0.5.3-next.0
+  - @ledgerhq/live-countervalues-react@0.2.32-next.0
+  - @ledgerhq/live-nft@0.8.3-next.0
+  - @ledgerhq/live-nft-react@0.9.3-next.0
+  - @ledgerhq/live-wallet@0.10.6-next.0
+  - @ledgerhq/live-dmk-desktop@0.3.1-next.0
 
 ## 2.110.0
 

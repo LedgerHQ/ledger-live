@@ -23,7 +23,11 @@ import { useGeneralTermsAccepted } from "~/logic/terms";
 import { Writeable } from "~/types/helpers";
 import { lightTheme, darkTheme, Theme } from "../colors";
 import { track } from "~/analytics";
-import { makeSetEarnInfoModalAction, makeSetEarnMenuModalAction } from "~/actions/earn";
+import {
+  makeSetEarnInfoModalAction,
+  makeSetEarnMenuModalAction,
+  makeSetEarnProtocolInfoModalAction,
+} from "~/actions/earn";
 import { blockPasswordLock } from "../actions/appstate";
 import { useStorylyContext } from "~/components/StorylyStories/StorylyProvider";
 import { navigationIntegration } from "../sentry";
@@ -592,34 +596,38 @@ export const DeeplinksProvider = ({
           }
 
           if (hostname === "earn") {
-            if (searchParams.get("action") === "info-modal") {
-              const message = searchParams.get("message") ?? "";
-              const messageTitle = searchParams.get("messageTitle") ?? "";
-              const learnMoreLink = searchParams.get("learnMoreLink") ?? "";
-
-              dispatch(
-                makeSetEarnInfoModalAction({
-                  message,
-                  messageTitle,
-                  learnMoreLink,
-                }),
-              );
-              return;
-            }
-            if (searchParams.get("action") === "menu-modal") {
-              const title = searchParams.get("title") ?? "";
-              const options = searchParams.get("options") ?? "";
-
-              dispatch(
-                makeSetEarnMenuModalAction({
-                  title,
-                  options: JSON.parse(options) as {
-                    label: string;
-                    metadata: OptionMetadata;
-                  }[],
-                }),
-              );
-              return;
+            switch (searchParams.get("action")) {
+              case "info-modal": {
+                const message = searchParams.get("message") ?? "";
+                const messageTitle = searchParams.get("messageTitle") ?? "";
+                const learnMoreLink = searchParams.get("learnMoreLink") ?? "";
+                dispatch(
+                  makeSetEarnInfoModalAction({
+                    message,
+                    messageTitle,
+                    learnMoreLink,
+                  }),
+                );
+                return;
+              }
+              case "menu-modal": {
+                const title = searchParams.get("title") ?? "";
+                const options = searchParams.get("options") ?? "";
+                dispatch(
+                  makeSetEarnMenuModalAction({
+                    title,
+                    options: JSON.parse(options) as {
+                      label: string;
+                      metadata: OptionMetadata;
+                    }[],
+                  }),
+                );
+                return;
+              }
+              case "protocol-info-modal": {
+                dispatch(makeSetEarnProtocolInfoModalAction(true));
+                return;
+              }
             }
           }
           if ((hostname === "discover" || hostname === "recover") && platform) {

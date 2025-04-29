@@ -6624,12 +6624,14 @@
     "range" : {
       "1h" : "1H",
       "24h" : "24H",
-      "1d" : "1J",
       "7d" : "7J",
-      "1w" : "1S",
       "30d" : "30J",
-      "1m" : "1M",
-      "1y" : "1A"
+      "1y" : "1A",
+      "1D_label" : "1J",
+      "1H_label" : "1H",
+      "1W_label" : "1S",
+      "1M_label" : "1M",
+      "1Y_label" : "1A"
     },
     "warnings" : {
       "connectionError" : "Erreur de connexion",
@@ -7364,8 +7366,28 @@
     }
   },
   "largeMover" : {
-    "performance" : "Performance",
-    "low" : "Faible",
-    "high" : "Élevée"
+    "info" : "Informations",
+    "marketCap" : "Capitalisation",
+    "volume" : "Volume (24h)",
+    "fdv" : "FDV",
+    "marketCap24h" : "Vol./Cap. (24h)",
+    "circulatingSupply" : "Offre en circulation",
+    "totalSupply" : "Offre totale",
+    "ath" : "Haut (historique)",
+    "atl" : "Bas (historique)",
+    "timeAgo" : {
+      "years" : "(il y a {{count}} an)",
+      "years_plural" : "(il y a {{count}} ans)",
+      "months" : "(il y a {{count}} mois)",
+      "months_plural" : "(il y a {{count}} mois)",
+      "days" : "(il y a {{count}} jour)",
+      "days_plural" : "(il y a {{count}} jours)",
+      "hours" : "(il y a {{count}} heure)",
+      "hours_plural" : "(il y a {{count}} heures)",
+      "minutes" : "(il y a {{count}} minute)",
+      "minutes_plural" : "(il y a {{count}} minutes)",
+      "seconds" : "(il y a {{count}} seconde)",
+      "seconds_plural" : "(il y a {{count}} secondes)"
+    }
   }
 }

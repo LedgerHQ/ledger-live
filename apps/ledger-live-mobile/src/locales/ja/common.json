@@ -6624,12 +6624,14 @@
     "range" : {
       "1h" : "1時間",
       "24h" : "24時間",
-      "1d" : "1日",
       "7d" : "7日間",
-      "1w" : "1週",
       "30d" : "30日間",
-      "1m" : "1月",
-      "1y" : "1年"
+      "1y" : "1年",
+      "1D_label" : "1日",
+      "1H_label" : "1時間",
+      "1W_label" : "1週",
+      "1M_label" : "1月",
+      "1Y_label" : "1年"
     },
     "warnings" : {
       "connectionError" : "接続エラー",
@@ -7364,8 +7366,28 @@
     }
   },
   "largeMover" : {
-    "performance" : "パフォーマンス",
-    "low" : "低速",
-    "high" : "高速"
+    "info" : "情報",
+    "marketCap" : "マーケットキャップ",
+    "volume" : "ボリューム（24時間）",
+    "fdv" : "FDV",
+    "marketCap24h" : "ボリューム/マーケットキャップ（24時間）",
+    "circulatingSupply" : "循環供給",
+    "totalSupply" : "総供給量",
+    "ath" : "最高値",
+    "atl" : "最安値",
+    "timeAgo" : {
+      "years" : "（{{count}}年前）",
+      "years_plural" : "（{{count}}年前）",
+      "months" : "（{{count}}か月前）",
+      "months_plural" : "（{{count}}か月前）",
+      "days" : "（{{count}}日前）",
+      "days_plural" : "（{{count}}日前）",
+      "hours" : "（{{count}}時間前）",
+      "hours_plural" : "（{{count}}時間前）",
+      "minutes" : "（{{count}}分前）",
+      "minutes_plural" : "（{{count}}分前）",
+      "seconds" : "（{{count}}秒前）",
+      "seconds_plural" : "（{{count}}秒前）"
+    }
   }
 }

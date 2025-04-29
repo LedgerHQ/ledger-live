@@ -6624,12 +6624,14 @@
     "range" : {
       "1h" : "1SA",
       "24h" : "24SA",
-      "1d" : "1G",
       "7d" : "7G",
-      "1w" : "1H",
       "30d" : "30G",
-      "1m" : "1A",
-      "1y" : "1Y"
+      "1y" : "1Y",
+      "1D_label" : "1G",
+      "1H_label" : "1SA",
+      "1W_label" : "1H",
+      "1M_label" : "1A",
+      "1Y_label" : "1Y"
     },
     "warnings" : {
       "connectionError" : "Bağlantı Hatası",
@@ -7364,8 +7366,28 @@
     }
   },
   "largeMover" : {
-    "performance" : "Performans",
-    "low" : "Düşük",
-    "high" : "Yüksek"
+    "info" : "Bilgi",
+    "marketCap" : "Piyasa değeri",
+    "volume" : "Hacim (24 sa.)",
+    "fdv" : "FDV",
+    "marketCap24h" : "Hacim/Piyasa Değ. (24 sa.)",
+    "circulatingSupply" : "Dolaşımdaki arz",
+    "totalSupply" : "Toplam arz",
+    "ath" : "Tüm zamanlar en yüksek",
+    "atl" : "Tüm zamanlar en düşük",
+    "timeAgo" : {
+      "years" : "({{count}} yıl önce)",
+      "years_plural" : "({{count}} yıl önce)",
+      "months" : "({{count}} ay önce)",
+      "months_plural" : "({{count}} ay önce)",
+      "days" : "({{count}} gün önce)",
+      "days_plural" : "({{count}} gün önce)",
+      "hours" : "({{count}} saat önce)",
+      "hours_plural" : "({{count}} saat önce)",
+      "minutes" : "({{count}} dakika önce)",
+      "minutes_plural" : "({{count}} dakika önce)",
+      "seconds" : "({{count}} saniye önce)",
+      "seconds_plural" : "({{count}} saniye önce)"
+    }
   }
 }

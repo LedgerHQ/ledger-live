@@ -1,17 +1,18 @@
 # @ledgerhq/coin-evm
 
-## 2.20.0-nightly.1
-
-### Minor Changes
-
-- [#10007](https://github.com/LedgerHQ/ledger-live/pull/10007) [`a11fd0b`](https://github.com/LedgerHQ/ledger-live/commit/a11fd0bbb687edc9e279bd4d63352658cae92c63) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): make batch size configurable for EVM Ledger explorer
-
-## 2.19.1-nightly.0
+## 2.19.1
 
 ### Patch Changes
 
-- Updated dependencies [[`b599ac4`](https://github.com/LedgerHQ/ledger-live/commit/b599ac4697688459aad15371f9efea58f331dc33)]:
-  - @ledgerhq/coin-framework@4.0.0-nightly.0
+- Updated dependencies [[`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601)]:
+  - @ledgerhq/coin-framework@4.0.0
+
+## 2.19.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601)]:
+  - @ledgerhq/coin-framework@4.0.0-next.0
 
 ## 2.19.0
 
