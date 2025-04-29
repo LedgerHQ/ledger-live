@@ -14,7 +14,6 @@
 		17F58472269C64670070C475 /* RCTBluetoothHelperModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 17F58471269C64670070C475 /* RCTBluetoothHelperModule.m */; };
 		2EA091AF2C3FBD5900B6181E /* GoogleService-Info-Testing.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2EA091AE2C3FBD5900B6181E /* GoogleService-Info-Testing.plist */; };
 		3407D5D9215D2AB800C9D40B /* NeededForBLE.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3407D5D8215D2AB800C9D40B /* NeededForBLE.swift */; };
-		45B0253AE1D79A453AB53143 /* libPods-ledgerlivemobile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B9515574E8065B5076C60B8 /* libPods-ledgerlivemobile.a */; };
 		515E9C2C8C0049EC992210D9 /* Inter-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3B6982A2E67F482A8069215B /* Inter-Medium.otf */; };
 		9DB523402249BD405124BA05 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 3FF1B576B23156C611F7B818 /* PrivacyInfo.xcprivacy */; };
 		AD6EE26071FA4673B5C89936 /* FontAwesome5_Pro_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4BD106EA37CA467F9525D699 /* FontAwesome5_Pro_Brands.ttf */; };
@@ -30,6 +29,7 @@
 		E55EFC09114D43B3AB041882 /* FontAwesome5_Pro_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 991AA9919E4840DBB799E117 /* FontAwesome5_Pro_Solid.ttf */; };
 		E85A22C62B17E835005A8E6D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E85A22C52B17E835005A8E6D /* LaunchScreen.storyboard */; };
 		E9558EFF2AF93CD200BBEB55 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E9558F012AF93CD200BBEB55 /* InfoPlist.strings */; };
+		EA14F1B689379B6274F90C4A /* Pods_ledgerlivemobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 510A60318CDED86B41BF35FA /* Pods_ledgerlivemobile.framework */; };
 		F45A09B01925C0C58A9D40CE /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6562F0F2E65142E04A9EDDEB /* ExpoModulesProvider.swift */; };
 		F837348722721A48009D747A /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F837348622721A48009D747A /* JavaScriptCore.framework */; };
 		F99BEAC629E8441C83104922 /* FontAwesome5_Pro_Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6D891D99F1084D459DBF667F /* FontAwesome5_Pro_Light.ttf */; };
@@ -67,6 +67,7 @@
 		44387CB2EE84464C83A75FD7 /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Regular.ttf"; path = "../assets/fonts/OpenSans-Regular.ttf"; sourceTree = "<group>"; };
 		4BD106EA37CA467F9525D699 /* FontAwesome5_Pro_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Pro_Brands.ttf; path = ../assets/fonts/FontAwesome5_Pro_Brands.ttf; sourceTree = "<group>"; };
 		4C2397DC873B4F8E91B750A8 /* Inter-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Regular.otf"; path = "../assets/fonts/Inter-Regular.otf"; sourceTree = "<group>"; };
+		510A60318CDED86B41BF35FA /* Pods_ledgerlivemobile.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ledgerlivemobile.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		55D1E3EC76A24523BF26BC61 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
 		57675DE3CEFA48B4AEFB711C /* OpenSans-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Bold.ttf"; path = "../assets/fonts/OpenSans-Bold.ttf"; sourceTree = "<group>"; };
 		5F63C9E4AC284203A95B417E /* libz.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
@@ -75,7 +76,6 @@
 		6562F0F2E65142E04A9EDDEB /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-ledgerlivemobile/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		668E26194DD94B6D8F10D450 /* FontAwesome5_Pro_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Pro_Regular.ttf; path = ../assets/fonts/FontAwesome5_Pro_Regular.ttf; sourceTree = "<group>"; };
 		689DEFC120BB8D8C1AC24535 /* Pods-ledgerlivemobile.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ledgerlivemobile.staging.xcconfig"; path = "Target Support Files/Pods-ledgerlivemobile/Pods-ledgerlivemobile.staging.xcconfig"; sourceTree = "<group>"; };
-		6B9515574E8065B5076C60B8 /* libPods-ledgerlivemobile.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ledgerlivemobile.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C1563DFEE064431AF4F8F6B /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		6D891D99F1084D459DBF667F /* FontAwesome5_Pro_Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Pro_Light.ttf; path = ../assets/fonts/FontAwesome5_Pro_Light.ttf; sourceTree = "<group>"; };
 		793F2C3B8DC0475194262928 /* libRCTCamera.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTCamera.a; sourceTree = "<group>"; };
@@ -122,7 +122,7 @@
 				F837348722721A48009D747A /* JavaScriptCore.framework in Frameworks */,
 				BC25CCBE6BEA4D62BE203C17 /* libz.tbd in Frameworks */,
 				0EC70FE5282B9CAA00E9E355 /* AdServices.framework in Frameworks */,
-				45B0253AE1D79A453AB53143 /* libPods-ledgerlivemobile.a in Frameworks */,
+				EA14F1B689379B6274F90C4A /* Pods_ledgerlivemobile.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -287,7 +287,7 @@
 				0EC70FE4282B9CAA00E9E355 /* AdServices.framework */,
 				F837348622721A48009D747A /* JavaScriptCore.framework */,
 				5F63C9E4AC284203A95B417E /* libz.tbd */,
-				6B9515574E8065B5076C60B8 /* libPods-ledgerlivemobile.a */,
+				510A60318CDED86B41BF35FA /* Pods_ledgerlivemobile.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
