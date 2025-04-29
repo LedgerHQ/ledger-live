@@ -202,6 +202,7 @@
     "@commitlint/prompt-cli": "17.8.1",
     "@ledgerhq/create-release-hash": "workspace:*",
     "@ledgerhq/pnpm-utils": "workspace:*",
+    "@ton/crypto": "^3.3.0",
     "@typescript-eslint/eslint-plugin": "6.21.0",
     "@typescript-eslint/parser": "6.21.0",
     "chalk": "4.1.2",
@@ -267,8 +268,5 @@
       }
     }
   },
-  "packageManager": "pnpm@9.12.3",
-  "dependencies": {
-    "@ton/crypto": "^3.3.0"
-  }
+  "packageManager": "pnpm@9.12.3"
 }

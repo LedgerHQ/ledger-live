@@ -50,7 +50,6 @@
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
-    "@ton/crypto": "^3.3.0",
     "asciichart": "1.5.25",
     "bigint-buffer": "*",
     "bignumber.js": "9.1.2",
