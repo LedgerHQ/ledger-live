@@ -3,7 +3,7 @@
 exports[`persistence currency bridge scanAccounts persistence seed 1 1`] = `
 [
   {
-    "balance": "2636573",
+    "balance": "2636574",
     "currencyId": "persistence",
     "derivationMode": "",
     "freshAddress": "persistence1gyauvl44q2apn3u3aujm36q8zrj74vrym5cypd",
@@ -12,14 +12,14 @@ exports[`persistence currency bridge scanAccounts persistence seed 1 1`] = `
     "index": 0,
     "pendingOperations": [],
     "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
-    "spendableBalance": "1202569",
+    "spendableBalance": "1202570",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,
     "xpub": "persistence1gyauvl44q2apn3u3aujm36q8zrj74vrym5cypd",
   },
   {
-    "balance": "230004",
+    "balance": "230005",
     "currencyId": "persistence",
     "derivationMode": "",
     "freshAddress": "persistence1v2mp0m7k96dm9qv60fkspcqlzpkzrwnevf47z2",
@@ -28,7 +28,7 @@ exports[`persistence currency bridge scanAccounts persistence seed 1 1`] = `
     "index": 1,
     "pendingOperations": [],
     "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
-    "spendableBalance": "230004",
+    "spendableBalance": "230005",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,

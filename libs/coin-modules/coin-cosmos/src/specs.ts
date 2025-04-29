@@ -633,6 +633,15 @@ const zenrock = {
   }),
 };
 
+const babylonMinimalTransactionAmount = new BigNumber(20000); // TODO: check amount
+const babylon = {
+  ...generateGenericCosmosTest("babylon", false, {
+    minViableAmount: babylonMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(babylonMinimalTransactionAmount),
+    skipOperationHistory: true,
+  }),
+};
+
 export default {
   axelar,
   cosmos,
@@ -652,4 +661,5 @@ export default {
   cryptoOrg,
   xion,
   zenrock,
+  babylon,
 };

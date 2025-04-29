@@ -57,6 +57,7 @@ import ValidatorImage from "../shared/ValidatorImage";
 import { useAccountName } from "~/reducers/wallet";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
 import { useStake } from "LLM/hooks/useStake/useStake";
+import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 
 type Props = {
   account: CosmosAccount;
@@ -557,8 +558,14 @@ function Delegations({ account }: Props) {
   );
 }
 
-export default function CosmosDelegations({ account }: { account: AccountLike }) {
-  if (!(account as CosmosAccount).cosmosResources) return null;
+export default function CosmosDelegations({ account }: { account: AccountLike<CosmosAccount> }) {
+  if (account.type !== "Account" || !account.cosmosResources) return null;
+
+  const coinConfig = getCurrencyConfiguration(account.currency);
+  if ("disableDelegation" in coinConfig && coinConfig.disableDelegation === true) {
+    return null;
+  }
+
   return <Delegations account={account as CosmosAccount} />;
 }
 

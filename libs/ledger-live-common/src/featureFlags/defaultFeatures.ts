@@ -91,6 +91,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencySonic: DEFAULT_FEATURE,
   currencySui: DEFAULT_FEATURE,
   currencyMina: DEFAULT_FEATURE,
+  currencyBabylon: DEFAULT_FEATURE,
 };
 
 /**
