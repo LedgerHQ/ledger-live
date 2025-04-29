@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
   createMaterialTopTabNavigator,
@@ -38,11 +38,19 @@ export default function WalletTabNavigator() {
 
   const llmNftSupport = useFeature("llNftSupport");
 
+  const initialRouteName = useMemo(
+    () =>
+      lastVisitedTab === ScreenName.WalletNftGallery && !llmNftSupport?.enabled
+        ? ScreenName.Portfolio
+        : lastVisitedTab,
+    [lastVisitedTab, llmNftSupport?.enabled],
+  );
+
   return (
     <WalletTabNavigatorScrollManager currentRouteName={currentRouteName}>
       <Box flexGrow={1} bg={"background.main"}>
         <WalletTab.Navigator
-          initialRouteName={lastVisitedTab}
+          initialRouteName={initialRouteName}
           tabBar={tabBarOptions}
           style={{ backgroundColor: "transparent" }}
           sceneContainerStyle={{ backgroundColor: "transparent" }}
