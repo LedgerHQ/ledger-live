@@ -4,7 +4,6 @@ import { fromTrongridTxInfoToOperation } from "../network/trongrid/trongrid-adap
 import { TrongridTxInfo, TronAsset } from "../types";
 import { listOperations } from "./listOperations";
 import type { Operation } from "@ledgerhq/coin-framework/api/index";
-import { get } from "lodash";
 
 // Mock the fetchTronAccountTxs and fromTrongridTxInfoToOperation functions
 jest.mock("../network", () => ({
