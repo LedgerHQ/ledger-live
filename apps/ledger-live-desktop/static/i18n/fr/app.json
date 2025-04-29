@@ -1554,7 +1554,7 @@
       }
     },
     "marketPerformanceWidget" : {
-      "title" : "Tendance {{time}}",
+      "title" : "Tendance - {{time}}",
       "buy" : "Acheter",
       "swap" : "Échanger",
       "gainers" : "Hausses",
@@ -4424,7 +4424,7 @@
       "firebaseProject" : "Projet Firebase ciblé par ce build :",
       "addLocalApp" : "Ajouter une app locale",
       "addLocalAppDesc" : "Parcourez vos fichiers et ajoutez une app locale avec un manifeste local.",
-      "addLocalAppButton" : "Naviguer",
+      "addLocalAppButton" : "Parcourir",
       "createLocalAppModal" : {
         "title" : {
           "create" : "Créer une app locale",
@@ -5420,7 +5420,9 @@
     "stringHash" : "Hash du message",
     "domainHash" : "Hash du domaine",
     "messageHash" : "Hash du message",
-    "message" : "Message"
+    "message" : "Message",
+    "title" : "Continuez sur votre Ledger {{wording}}",
+    "description" : "Consultez les instructions sur son écran tactile sécurisé."
   },
   "TransactionConfirm" : {
     "title" : "Confirmez l’opération sur votre appareil pour la finaliser.",
