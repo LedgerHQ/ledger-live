@@ -373,15 +373,24 @@ export async function getLastBlock(): Promise<Block> {
 
 export async function getBlock(blockNumber: number): Promise<Block> {
   const data = await fetch(`/wallet/getblock?id_or_num=${encodeURIComponent(blockNumber)}`);
-  return toBlock(data);
+  const ret = toBlock(data);
+  if (!ret.height) {
+    ret.height = blockNumber;
+  }
+  return ret;
 }
 
 function toBlock(data: any): Block {
-  return {
+  // some old blocks doesn't have a timestamp
+  const timestamp = data.block_header.raw_data.timestamp;
+  const ret: Block = {
     height: data.block_header.raw_data.number,
     hash: data.blockID,
-    time: new Date(data.block_header.raw_data.timestamp),
   };
+  if (timestamp) {
+    ret.time = new Date(timestamp);
+  }
+  return ret;
 }
 
 // For the moment, fetching transaction info is the only way to get fees from a transaction

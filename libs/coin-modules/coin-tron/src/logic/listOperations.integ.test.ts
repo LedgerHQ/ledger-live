@@ -15,6 +15,37 @@ describe("listOperations", () => {
     }));
   });
 
+  describe("Account TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9 with minHeight", () => {
+    // https://tronscan.org/#/address/TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9
+
+    // 2 operations >= 40832955 as of 17/02/2025
+    const historySize = 2;
+
+    let operations: Operation<TronAsset>[];
+
+    const testingAccount = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
+
+    // there are 2 operations with height >= 40832955
+    const minHeight = 40832955;
+
+    beforeAll(async () => {
+      [operations] = await listOperations(testingAccount, minHeight);
+    });
+
+    describe("List", () => {
+      it("should fetch operations successfully", async () => {
+        expect(Array.isArray(operations)).toBeDefined();
+        expect(operations.length).toBeGreaterThanOrEqual(historySize);
+        expect(operations.filter(op => op.tx.block.height < minHeight).length).toEqual(0);
+        expect(
+          operations.find(
+            op => op.tx.hash === "242591f43c74e45bf4c5c423be2f600c9a53237bde4c793faff5f3120f8745d7",
+          ),
+        ).toBeDefined();
+      });
+    });
+  });
+
   // We could create a loop on array of account addresses and use standard test cases, but this way it's more readable / flexible
   describe("Account TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9", () => {
     // https://tronscan.org/#/address/TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9

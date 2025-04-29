@@ -9,16 +9,19 @@ function fetchUntilTimestamp(minTimestamp: number): FetchTxsStopPredicate {
     // note: would be nice if we could use the blockHeight here
     // but looks like unavaible on MalformedTransactionTronAPI
     const withBlocks = txs as Array<WithBlockAPI>;
-    return withBlocks.find(tx => tx.block_timestamp < minTimestamp) !== undefined;
+    return withBlocks.find(tx => tx.block_timestamp <= minTimestamp) == undefined;
   };
 }
+
+const neverStop: FetchTxsStopPredicate = () => true;
 
 export async function listOperations(
   address: string,
   minHeight: number,
 ): Promise<[Operation<TronAsset>[], string]> {
-  const minTimestamp = (await getBlock(minHeight)).time.getTime();
-  const txs = await fetchTronAccountTxs(address, fetchUntilTimestamp(minTimestamp), {});
+  const block = await getBlock(minHeight);
+  const shouldFetchMoreTxs = block.time ? fetchUntilTimestamp(block.time.getTime()) : neverStop;
+  const txs = await fetchTronAccountTxs(address, shouldFetchMoreTxs, {});
   return [
     txs
       // there maybe some transactions that doesn't satisfy the minHeight condition

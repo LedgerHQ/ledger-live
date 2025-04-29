@@ -184,7 +184,7 @@ export type MalformedTransactionTronAPI = WithBlockAPI & {
 export type Block = {
   height: number;
   hash: string;
-  time: Date;
+  time?: Date;
 };
 
 export function isMalformedTransactionTronAPI(
