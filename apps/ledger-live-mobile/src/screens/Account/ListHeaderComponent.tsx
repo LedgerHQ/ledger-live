@@ -138,9 +138,10 @@ export function useListHeaderComponents({
     llmSolanaNftsEnabled: llmSolanaNfts?.enabled,
   });
 
-  const coinConfig = getCurrencyConfiguration(currency);
   const disableDelegation =
-    "disableDelegation" in coinConfig && coinConfig.disableDelegation === true;
+    currencyConfig &&
+    "disableDelegation" in currencyConfig &&
+    currencyConfig.disableDelegation === true;
 
   return {
     listHeaderComponents: [
