@@ -36,7 +36,8 @@ describe("Xrp Api", () => {
       expect(tx.length).toBeGreaterThanOrEqual(287);
       tx.forEach(operation => {
         const isSenderOrReceipt =
-          operation.senders.includes(SENDER.address) || operation.recipients.includes(SENDER.address);
+          operation.senders.includes(SENDER.address) ||
+          operation.recipients.includes(SENDER.address);
         expect(isSenderOrReceipt).toBeTruthy();
       });
     });
