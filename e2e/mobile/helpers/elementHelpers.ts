@@ -1,25 +1,22 @@
-import { Direction, NativeElement, NativeMatcher, WebElement } from "detox/detox";
-import { by, element, waitFor, web, expect as detoxExpect, log } from "detox";
+import { Direction, NativeElement, WebElement } from "detox/detox";
+import { by, element, expect as detoxExpect, waitFor, web } from "detox";
 import { delay, isAndroid } from "./commonHelpers";
 import { retryUntilTimeout } from "../utils/retry";
+import { PageScroller } from "./pageScroller";
 
 interface IndexedWebElement extends WebElement {
   atIndex(index: number): WebElement;
 }
 
-const DEFAULT_TIMEOUT = 60000; // 60s
-const START_POSITION_Y = 0.8; // Android scroll workaround: https://github.com/wix/Detox/issues/3918
-const ANDROID_SCROLL_DELAY = 500; // Tap after scroll workaround: https://github.com/wix/Detox/issues/3637
-const RN75_DELAY = 200; // React Native 75 workaround: QAA-370
-const MAX_SCROLL_ATTEMPTS_PER_DIRECTION = 30; // Prevent infinite scrolling per direction
-const SCROLL_STALL_THRESHOLD = 30; // Number of unchanged scrolls to detect limit
+const scroller = new PageScroller();
 
-// Async delay
+const DEFAULT_TIMEOUT = 60000;
+const RN75_DELAY = 200; // React Native 75 workaround: QAA-370
+
 async function asyncDelay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// RN75 workaround wrapper
 async function withRN75Delay<T>(fn: () => T): Promise<T> {
   if (!isAndroid()) await asyncDelay(RN75_DELAY);
   return fn();
@@ -146,97 +143,6 @@ export const NativeElementHelpers = {
     await retryUntilTimeout(async () => elem.clearText());
   },
 
-  async performScroll(
-    elementMatcher: NativeMatcher,
-    scrollViewId?: string | RegExp,
-    pixels = 300,
-    direction: Direction = "down",
-    androidDelay = ANDROID_SCROLL_DELAY,
-  ): Promise<void> {
-    if (!elementMatcher) {
-      throw new Error("Element matcher is required");
-    }
-
-    const scrollElement = scrollViewId
-      ? element(by.id(scrollViewId))
-      : element(by.type(isAndroid() ? "android.widget.ScrollView" : "RCTScrollView")).atIndex(0);
-
-    try {
-      await waitFor(element(elementMatcher).atIndex(0)).toBeVisible().withTimeout(androidDelay);
-      return;
-    } catch {
-      // Element not visible, proceed with scrolling
-    }
-
-    let currentDirection: Direction = direction;
-    let topReached = false;
-    let bottomReached = false;
-    let totalAttempts = 0;
-    let unchangedScrollCount = 0;
-    let lastVisibleElementId: string | null = null;
-
-    while (totalAttempts < MAX_SCROLL_ATTEMPTS_PER_DIRECTION * 2) {
-      let currentVisibleElementId: string | null = null;
-      try {
-        await waitFor(element(elementMatcher).atIndex(0)).toBeVisible().withTimeout(androidDelay);
-        currentVisibleElementId = JSON.stringify(elementMatcher);
-        return;
-      } catch {
-        // Element not visible, continue scrolling
-      }
-
-      try {
-        if (currentDirection == "bottom") {
-          await scrollElement.scrollTo(currentDirection);
-        } else {
-          await scrollElement.scroll(pixels, currentDirection, NaN, START_POSITION_Y);
-        }
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        log.warn(`Scroll attempt failed: ${errorMessage}`);
-        unchangedScrollCount++;
-      }
-
-      // if (isAndroid() && androidDelay > 0) {
-      //   await delay(androidDelay);
-      // }
-
-      if (currentVisibleElementId === lastVisibleElementId && elementMatcher) {
-        unchangedScrollCount++;
-      } else {
-        unchangedScrollCount = 0;
-        lastVisibleElementId = currentVisibleElementId;
-      }
-
-      if (unchangedScrollCount >= SCROLL_STALL_THRESHOLD) {
-        if (currentDirection === "down") {
-          bottomReached = true;
-        } else {
-          topReached = true;
-        }
-
-        currentDirection = currentDirection === "down" ? "up" : "down";
-        unchangedScrollCount = 0;
-
-        if (topReached && bottomReached) {
-          throw new Error(
-            `Failed to find element after reaching both scroll limits. Matcher: ${JSON.stringify(
-              elementMatcher,
-            )}`,
-          );
-        }
-      }
-
-      totalAttempts++;
-    }
-
-    throw new Error(
-      `Failed to find element after ${totalAttempts} scroll attempts. Matcher: ${JSON.stringify(
-        elementMatcher,
-      )}`,
-    );
-  },
-
   async scrollToText(
     text: string | RegExp,
     scrollViewId?: string | RegExp,
@@ -244,13 +150,7 @@ export const NativeElementHelpers = {
     direction?: Direction,
     androidDelay?: number,
   ): Promise<void> {
-    await NativeElementHelpers.performScroll(
-      by.text(text),
-      scrollViewId,
-      pixels,
-      direction,
-      androidDelay,
-    );
+    await scroller.performScroll(by.text(text), scrollViewId, pixels, direction, androidDelay);
   },
 
   async scrollToId(
@@ -260,13 +160,7 @@ export const NativeElementHelpers = {
     direction?: Direction,
     androidDelay?: number,
   ): Promise<void> {
-    await NativeElementHelpers.performScroll(
-      by.id(id),
-      scrollViewId,
-      pixels,
-      direction,
-      androidDelay,
-    );
+    await scroller.performScroll(by.id(id), scrollViewId, pixels, direction, androidDelay);
   },
 
   async getTextOfElement(id: string | RegExp, index = 0): Promise<string> {

@@ -1,13 +1,13 @@
 import { allure } from "jest-allure2-reporter/api";
 import {
+  specs,
   startSpeculos,
   stopSpeculos,
-  specs,
   takeScreenshot,
 } from "@ledgerhq/live-common/e2e/speculos";
 import invariant from "invariant";
 import { setEnv } from "@ledgerhq/live-env";
-import { startProxy, closeProxy } from "../bridge/proxy";
+import { closeProxy, startProxy } from "../bridge/proxy";
 import { device } from "detox";
 import { log } from "@ledgerhq/logs";
 

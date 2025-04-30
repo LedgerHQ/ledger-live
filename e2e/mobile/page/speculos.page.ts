@@ -1,11 +1,11 @@
 import {
-  expectValidAddressDevice,
-  signSendTransaction,
-  signDelegationTransaction,
   activateContractData,
   activateExpertMode,
-  verifyAmountsAndAcceptSwap,
+  expectValidAddressDevice,
   setExchangeDependencies,
+  signDelegationTransaction,
+  signSendTransaction,
+  verifyAmountsAndAcceptSwap,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { DelegateType } from "@ledgerhq/live-common/e2e/models/Delegate";

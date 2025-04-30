@@ -3,14 +3,16 @@ import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class NftGalleryPage {
   baseLink = "nftgallery";
-  root = () => getElementById("wallet-nft-gallery-screen");
-  emptyScreen = () => getElementById("wallet-nft-gallery-empty");
-  emptyScreenResetButton = () => getElementById("wallet-nft-gallery-empty-reset-button");
   nftListPrefix = "wallet-nft-gallery-list-";
   nftListRegexp = new RegExp(`^${this.nftListPrefix}.`);
-  nftListComponent = () => getElementById(this.nftListRegexp);
+
+  root = () => getElementById("wallet-nft-gallery-screen");
+
+  emptyScreen = () => getElementById("wallet-nft-gallery-empty");
+
+  emptyScreenResetButton = () => getElementById("wallet-nft-gallery-empty-reset-button");
+
   nftAddNewListItem = () => getElementById("wallet-nft-gallery-add-new-list-item");
-  receiveNftButton = () => getElementById("wallet-nft-gallery-receive-nft-button");
   nftReceiveModalContinueButton = () =>
     getElementById("wallet-nft-gallery-receive-modal-continue-button");
   nftReceiveModal = () => getElementById("wallet-nft-gallery-receive-modal");
@@ -30,14 +32,6 @@ export default class NftGalleryPage {
     await tapByElement(await this.nftListItem(index));
   }
 
-  async hideNft(index = 0) {
-    await expect(await this.nftListItem(index)).toBeVisible();
-    await tapByElement(await this.selectAndHide());
-    await tapByElement(await this.nftListItem(index));
-    await tapByElement(await this.confirmHide());
-    await expect(await this.nftListItem(index)).not.toBeVisible();
-  }
-
   @Step("Hide All Nft")
   async hideAllNft() {
     // Get total number of NFTs given by the list identifier
@@ -54,6 +48,7 @@ export default class NftGalleryPage {
     await expect(await this.nftListItem()).not.toBeVisible();
   }
 
+  @Step("Continue from receive NFTs modal")
   async continueFromReceiveNFTsModal() {
     await tapByElement(await this.nftReceiveModalContinueButton());
   }

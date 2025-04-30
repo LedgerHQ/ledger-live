@@ -1,4 +1,4 @@
-import { findFreePort, close as closeBridge, init as initBridge } from "../bridge/server";
+import { close as closeBridge, findFreePort, init as initBridge } from "../bridge/server";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { exec } from "child_process";
 import { device, log } from "detox";
@@ -48,7 +48,7 @@ export async function launchApp() {
       locale: "en-US",
     },
     permissions: {
-      camera: "YES", // Give iOS permissions for the camera
+      camera: "YES",
     },
   });
   return port;

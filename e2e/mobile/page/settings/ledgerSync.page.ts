@@ -2,14 +2,19 @@ import { activateLedgerSync } from "@ledgerhq/live-common/e2e/speculos";
 import { expect } from "detox";
 
 export default class LedgerSyncPage {
-  activationButton = () => getElementById("walletsync-activation-button");
-  useLedgerButton = () => getElementById("walletsync-choose-sync-method-connect-device");
-  activationTitle = () => getElementById("walletsync-activation-title");
-  activationDescription = () => getElementById("walletsync-activation-description");
   successPage = "walletsync-success";
-  activationSuccessCloseButton = () => getElementById("walletsync-activation-success-close");
-  deleteSync = () => getElementById("walletSync-manage-backup");
   confirmDeleteSyncId = "delete-trustchain";
+
+  activationButton = () => getElementById("walletsync-activation-button");
+
+  activationTitle = () => getElementById("walletsync-activation-title");
+
+  activationDescription = () => getElementById("walletsync-activation-description");
+
+  activationSuccessCloseButton = () => getElementById("walletsync-activation-success-close");
+
+  deleteSync = () => getElementById("walletSync-manage-backup");
+
   deletionSuccessCloseButton = () => getElementById("walletsync-deletion-success-close");
 
   @Step("Activate Ledger Sync on Speculos")
@@ -26,11 +31,6 @@ export default class LedgerSyncPage {
   @Step("Tap on the activation button")
   async tapTurnOnSync() {
     await tapByElement(await this.activationButton());
-  }
-
-  @Step("Select Use Ledger")
-  async selectUseLedger() {
-    await tapByElement(await this.useLedgerButton());
   }
 
   @Step("Expect Ledger Sync success page")

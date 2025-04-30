@@ -2,13 +2,14 @@ import { expect } from "detox";
 
 export default class CeloManageAssetsPage {
   titleId = "live-app-title";
-  title = () => getElementById(this.titleId);
   celoLockButton = "celo-lock-button";
   celoUnlockButton = "celo-unlock-button";
   celoWithdrawButton = "celo-withdraw-button";
   celoVoteButton = "celo-vote-button";
   celoActivateVoteButton = "celo-activate-vote-button";
   celoRevokeButton = "celo-revoke-button";
+
+  title = () => getElementById(this.titleId);
 
   @Step("Wait for CELO manage assets")
   async waitForManageAssets() {

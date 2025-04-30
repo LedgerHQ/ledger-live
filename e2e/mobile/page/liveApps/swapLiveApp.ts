@@ -13,26 +13,32 @@ export default class SwapLiveAppPage {
   quoteProviderName = "quote-card-provider-name";
   executeSwapButton = "execute-button";
 
+  @Step("Wait for swap live app")
   async waitForSwapLiveApp() {
     await waitWebElementByTestId(this.getQuotesButton);
   }
 
+  @Step("Tap from currency")
   async tapFromCurrency() {
     await tapWebElementByTestId(this.fromSelector);
   }
 
+  @Step("Tap to currency")
   async tapToCurrency() {
     await tapWebElementByTestId(this.toSelector);
   }
 
+  @Step("Input amount")
   async inputAmount(amount: string) {
     await typeTextByWebTestId(this.fromAmountInput, amount);
   }
 
+  @Step("Tap get quotes button")
   async tapGetQuotesButton() {
     await tapWebElementByTestId(this.getQuotesButton);
   }
 
+  @Step("Wait for quotes")
   async waitForQuotes() {
     await waitWebElementByTestId(this.numberOfQuotes);
   }
@@ -61,10 +67,12 @@ export default class SwapLiveAppPage {
     throw new Error("No valid providers found");
   }
 
+  @Step("Tap execute swap button")
   async tapExecuteSwap() {
     await tapWebElementByTestId(this.executeSwapButton, 1);
   }
 
+  @Step("Get minimum amount for swap")
   async getMinimumAmount(swap: SwapType) {
     return (
       (await getMinimumSwapAmount(swap.accountToDebit, swap.accountToCredit))?.toString() ?? ""

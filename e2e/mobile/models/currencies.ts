@@ -1,10 +1,10 @@
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import {
+  findCryptoCurrencyById,
   formatCurrencyUnit,
   formatCurrencyUnitOptions,
 } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
-import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 
 const defaultFormatOptions = {
   showCode: true,

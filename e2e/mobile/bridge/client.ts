@@ -15,7 +15,7 @@ import { LaunchArguments } from "react-native-launch-arguments";
 import logReport from "~/log-report";
 import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
 import { getAllEnvs, setEnv } from "@ledgerhq/live-env";
-import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e/index";
+import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e";
 import { DeviceModelId } from "@ledgerhq/devices";
 import Config from "react-native-config";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
@@ -24,8 +24,8 @@ export const e2eBridgeClient = new Subject<MessageData>();
 
 let ws: WebSocket;
 let retryCount = 0;
-const maxRetries = 5; // Maximum number of retry attempts
-const retryDelay = 500; // Initial retry delay in milliseconds
+const maxRetries = 5;
+const retryDelay = 500;
 
 export function init() {
   const wsPort = LaunchArguments.value()["wsPort"] || "8099";
@@ -178,12 +178,14 @@ function onMessage(event: WebSocketMessageEvent) {
   }
 }
 
+//TODO: replace in apps/ledger-live-mobile/src/screens/Swap/LiveApp/customHandlers/index.ts
 export function sendSwapLiveAppReady() {
   postMessage({
     type: "swapLiveAppReady",
   });
 }
 
+// TODO: replace in apps/ledger-live-mobile/src/components/Web3AppWebview/helpers.ts
 export function sendWalletAPIResponse(payload: Record<string, unknown>) {
   postMessage({
     type: "walletAPIResponse",

@@ -15,13 +15,13 @@ import expect from "expect";
 import fs from "fs";
 import path from "path";
 import { NativeElementHelpers, WebElementHelpers } from "./helpers/elementHelpers";
+import { log } from "detox";
 
 global.Step = Step;
 global.$TmsLink = $TmsLink;
 
 // Import Application after Step globals to avoid premature loading
 import { Application } from "./page";
-import { log } from "detox";
 
 // Cleanup logic
 async function cleanupSpeculos() {
@@ -79,7 +79,6 @@ export default async function setup(): Promise<void> {
   // Assign utilities and enums
   global.CLI = CLI;
   global.jestExpect = expect;
-  // global.detoxExpect = detoxExpect;
   global.Currency = Currency;
   global.Delegate = Delegate;
   global.Account = Account;
@@ -102,7 +101,6 @@ export default async function setup(): Promise<void> {
   global.typeTextById = NativeElementHelpers.typeTextById;
   global.typeTextByElement = NativeElementHelpers.typeTextByElement;
   global.clearTextByElement = NativeElementHelpers.clearTextByElement;
-  global.performScroll = NativeElementHelpers.performScroll;
   global.scrollToText = NativeElementHelpers.scrollToText;
   global.scrollToId = NativeElementHelpers.scrollToId;
   global.getTextOfElement = NativeElementHelpers.getTextOfElement;

@@ -6,7 +6,6 @@ export default class ReceivePage {
   noVerifyAddressButton = "button-DontVerify-my-address";
   noVerifyValidateButton = "button-confirm-dont-verify";
   accountAddress = "receive-fresh-address";
-  accountFreshAddressTitle = "receive-verifyAddress-title";
   accountFreshAddress = "receive-verifyAddress-freshAdress";
   buttonVerifyAddressId = "button-verify-my-address";
   buttonCreateAccountId = "button-create-account";
@@ -42,19 +41,23 @@ export default class ReceivePage {
     return `receive-account-name-${t}`;
   }
 
+  @Step("Open receive via deeplink")
   async openViaDeeplink(): Promise<void> {
     await openDeeplink(this.baseLink);
   }
 
+  @Step("Receive via deeplink")
   async receiveViaDeeplink(currencyLong?: string): Promise<void> {
     const link = currencyLong ? this.baseLink + currencyParam + currencyLong : this.baseLink;
     await openDeeplink(link);
   }
 
+  @Step("Expect first step")
   async expectFirstStep(): Promise<void> {
     await expect(await getElementById(this.step1HeaderTitleId)).toBeVisible();
   }
 
+  @Step("Expect second step networks")
   async expectSecondStepNetworks(networks: string[]): Promise<void> {
     await expect(await getElementById(this.step2HeaderTitleId)).toBeVisible();
     await expect(await getElementById("receive-header-step2-networks")).toBeVisible();
@@ -63,28 +66,26 @@ export default class ReceivePage {
     }
   }
 
-  async expectSecondStepAccounts(): Promise<void> {
-    await expect(await getElementById(this.step2HeaderTitleId)).toBeVisible();
-    await expect(await getElementById("receive-header-step2-accounts")).toBeVisible();
-  }
-
   @Step("Select currency in receive list")
   async selectCurrency(currencyName: string): Promise<void> {
     const id = this.currencyNameId(currencyName.toLowerCase());
     await tapById(id);
   }
 
+  @Step("Select assets")
   async selectAsset(assetText: string): Promise<void> {
     const id = this.currencySubtitleId(assetText);
     await tapById(id);
   }
 
+  @Step("Select network")
   async selectNetwork(networkId: string): Promise<void> {
     const id = this.currencyNameId(networkId);
     await tapById(id);
   }
 
-  async expectSecoundStepAccounts() {
+  @Step("Expect second step accounts")
+  async expectSecondStepAccounts() {
     await expect(await this.step2HeaderTitle()).toBeVisible();
     await expect(await this.step2Accounts()).toBeVisible();
   }
@@ -96,6 +97,7 @@ export default class ReceivePage {
     }
   }
 
+  @Step("Select account in list")
   async selectAccount(account: string): Promise<void> {
     const id = this.accountId(account);
     await waitForElementById(id);
@@ -108,24 +110,13 @@ export default class ReceivePage {
     await tapById(this.buttonVerifyAddressId);
   }
 
-  async expectAddressIsVerified(address: string): Promise<void> {
-    await waitForElementById(this.accountFreshAddressTitle);
-    const shown = await getTextOfElement(this.accountFreshAddress);
-    jestExpect(shown).toEqual(address);
-  }
-
-  async expectAddressIsDisplayed(address: string): Promise<void> {
-    await waitForElementById(this.accountAddress);
-    const shown = await getTextOfElement(this.accountAddress);
-    jestExpect(shown).toEqual(address);
-  }
-
   @Step("Get the fresh address displayed")
   async getFreshAddressDisplayed(): Promise<string> {
     await waitForElementById(this.accountFreshAddress);
     return await getTextOfElement(this.accountFreshAddress);
   }
 
+  @Step("Expect number of account in list is displayed")
   async expectNumberOfAccountInListIsDisplayed(
     currencyName: string,
     accountNumber: number,
@@ -146,27 +137,32 @@ export default class ReceivePage {
     ).toBeVisible();
   }
 
+  @Step("Create account")
   async createAccount(): Promise<void> {
     await waitForElementById(this.buttonCreateAccountId);
     await tapById(this.buttonCreateAccountId);
   }
 
+  @Step("Continue to create account")
   async continueCreateAccount(): Promise<void> {
     await waitForElementById(this.buttonContinueId);
     await tapById(this.buttonContinueId);
   }
 
+  @Step("Expect account is created")
   async expectAccountIsCreated(accountName: string): Promise<void> {
     await waitForElementById(this.step2HeaderTitleId);
     await expect(await getElementById(this.step2HeaderTitleId)).toBeVisible();
     await expect(await getElementByText(accountName)).toBeVisible();
   }
 
+  @Step("Select dont verify address")
   async selectDontVerifyAddress(): Promise<void> {
     await waitForElementById(this.noVerifyAddressButton);
     await tapById(this.noVerifyAddressButton);
   }
 
+  @Step("Select reconfirm dont verify")
   async selectReconfirmDontVerify(): Promise<void> {
     await waitForElementById(this.noVerifyValidateButton);
     await tapById(this.noVerifyValidateButton);

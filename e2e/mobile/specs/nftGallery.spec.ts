@@ -51,7 +51,7 @@ describe("NFT Gallery screen", () => {
     await app.receive.selectCurrency(accountCurrency);
     await app.receive.expectSecondStepNetworks([accountCurrency]);
     await app.receive.selectNetwork(accountCurrency);
-    await app.receive.expectSecoundStepAccounts();
+    await app.receive.expectSecondStepAccounts();
     await app.common.closePage();
   });
 

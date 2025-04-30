@@ -1,4 +1,4 @@
-// types/global.d.ts
+/// <reference path=".//global.d.ts" />
 import type { Subject, Subscription } from "rxjs";
 import type { Server, WebSocket } from "ws";
 import type { Application } from "../page";
@@ -52,7 +52,6 @@ declare global {
   var typeTextById: typeof NativeElementHelpers.typeTextById;
   var typeTextByElement: typeof NativeElementHelpers.typeTextByElement;
   var clearTextByElement: typeof NativeElementHelpers.clearTextByElement;
-  var performScroll: typeof NativeElementHelpers.performScroll;
   var scrollToText: typeof NativeElementHelpers.scrollToText;
   var scrollToId: typeof NativeElementHelpers.scrollToId;
   var getTextOfElement: typeof NativeElementHelpers.getTextOfElement;

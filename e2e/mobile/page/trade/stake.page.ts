@@ -2,6 +2,9 @@ import { expect } from "detox";
 import invariant from "invariant";
 
 export default class StakePage {
+  celoLockAmountInputId = "celo-lock-amount-input";
+  searchPoolInputId = "delegation-search-pool-input";
+
   // IDs stay as simple strings
   delegationSummaryValidatorId(currencyId: string): string {
     return `${currencyId}-delegation-summary-validator`;
@@ -11,20 +14,8 @@ export default class StakePage {
     return `${currencyId}-delegation-summary-amount`;
   }
 
-  assetsRemainingId(currencyId: string): string {
-    return `${currencyId}-assets-remaining`;
-  }
-
-  delegatedRatioId(currencyId: string, delegatedPercent: number): string {
-    return `${currencyId}-delegate-ratio-${delegatedPercent}%`;
-  }
-
   delegationAmountInputId(currencyId: string): string {
     return `${currencyId}-delegation-amount-input`;
-  }
-
-  allAssetsUsedTextId(currencyId: string): string {
-    return `${currencyId}-all-assets-used-text`;
   }
 
   delegationFeesId(currencyId: string): string {
@@ -47,31 +38,15 @@ export default class StakePage {
     return `currency-row-${currencyId}`;
   }
 
-  celoLockAmountInputId = "celo-lock-amount-input";
-  searchPoolInputId = "delegation-search-pool-input";
-
   providerRowId(providerTicker: string): string {
     return `provider-row-${providerTicker}`;
   }
 
-  zeroAssetText = "0\u00a0ATOM";
-
-  /** Helpers to read text */
   async delegationSummaryValidator(currencyId: string): Promise<string> {
     return await getTextOfElement(this.delegationSummaryValidatorId(currencyId));
   }
 
-  async delegationAmountValue(currencyId: string): Promise<string> {
-    return await getTextOfElement(this.delegationSummaryAmountId(currencyId));
-  }
-
-  async getFeesDisplayed(currencyId: string): Promise<string> {
-    const fees = await getTextOfElement(this.delegationFeesId(currencyId));
-    invariant(fees, "Fees empty in summary");
-    return fees;
-  }
-
-  /** Actions */
+  @Step("Select currency in stake list")
   async selectCurrency(currencyId: string): Promise<void> {
     const id = this.currencyRowId(currencyId);
     await waitForElementById(id);
@@ -105,13 +80,6 @@ export default class StakePage {
     await typeTextById(this.delegationAmountInputId(currencyId), amount);
   }
 
-  @Step("Set delegated amount percent")
-  async setAmountPercent(currencyId: string, delegatedPercent: 25 | 50 | 75 | 100): Promise<void> {
-    await waitForElementById(this.delegationSummaryAmountId(currencyId));
-    await tapById(this.delegationSummaryAmountId(currencyId));
-    await tapById(this.delegatedRatioId(currencyId, delegatedPercent));
-  }
-
   @Step("Expect provider in summary")
   async expectProvider(currencyId: string, provider: string): Promise<void> {
     const actual = await this.delegationSummaryValidator(currencyId);
@@ -133,31 +101,12 @@ export default class StakePage {
     await expect(feesElem).toBeVisible();
   }
 
-  @Step("Expect assets remaining after delegation")
-  async expectRemainingAmount(
-    currencyId: string,
-    delegatedPercent: 25 | 50 | 75 | 100,
-    remainingFormatted: string,
-  ): Promise<void> {
-    const max = delegatedPercent === 100;
-    const id = max ? this.allAssetsUsedTextId(currencyId) : this.assetsRemainingId(currencyId);
-    await waitForElementById(id);
-    const text = max ? this.zeroAssetText : (await getTextOfElement(id)).split(": ")[1];
-    jestExpect(text).toEqual(remainingFormatted);
-  }
-
   @Step("Validate the amount entered")
   async validateAmount(currencyId: string): Promise<void> {
     await tapById(this.delegationAmountContinueId(currencyId));
     if (currencyId !== Currency.CELO.id) {
       await waitForElementById(this.delegationSummaryAmountId(currencyId));
     }
-  }
-
-  @Step("Expect delegated amount in summary")
-  async expectDelegatedAmount(currencyId: string, delegatedFormatted: string): Promise<void> {
-    const actual = await this.delegationAmountValue(currencyId);
-    jestExpect(actual).toEqual(delegatedFormatted);
   }
 
   @Step("Click on continue button in summary")

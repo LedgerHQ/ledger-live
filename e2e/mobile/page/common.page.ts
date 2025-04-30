@@ -1,7 +1,7 @@
 import { expect } from "detox";
 import { deleteSpeculos, launchProxy, launchSpeculos } from "../utils/speculosUtils";
 import { addKnownSpeculos, findFreePort, removeKnownSpeculos } from "../bridge/server";
-import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
+import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw";
 
 const proxyAddress = "localhost";
 
@@ -30,17 +30,14 @@ export default class CommonPage {
     await typeTextByElement(await this.searchBar(), text);
   }
 
+  @Step("Expect search")
   async expectSearch(text: string) {
     await expect(await this.searchBar()).toHaveText(text);
   }
 
+  @Step("Close page")
   async closePage() {
     await tapByElement(await this.closeButton());
-  }
-
-  async successClose() {
-    await waitForElementById(this.successCloseButtonId);
-    await tapById(this.successCloseButtonId);
   }
 
   @Step("Tap on view details")
@@ -49,6 +46,7 @@ export default class CommonPage {
     await tapById(this.successViewDetailsButtonId);
   }
 
+  @Step("Select account")
   async selectAccount(accountId: string) {
     const id = this.accountCardId(accountId);
     await waitForElementById(id);
@@ -58,13 +56,6 @@ export default class CommonPage {
   @Step("Select the first displayed account")
   async selectFirstAccount() {
     await tapById(this.accountCardRegExp());
-  }
-
-  async getAccountId(index: number) {
-    return (await getIdByRegexp(this.accountCardRegExp(), index)).replace(
-      this.accountCardPrefix,
-      "",
-    );
   }
 
   @Step("Go to the account")

@@ -45,6 +45,6 @@ describe("Password Lock Screen", () => {
     await app.passwordEntry.enterPassword(CORRECT_PASSWORD);
     await app.passwordEntry.login();
     await app.passwordEntry.expectNoLock();
-    await app.settingsGeneral.expectpreferredCurrencyButton();
+    await app.settingsGeneral.expectPreferredCurrencyButton();
   });
 });

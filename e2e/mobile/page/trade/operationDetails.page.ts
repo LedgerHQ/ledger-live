@@ -2,15 +2,11 @@ import { expect } from "detox";
 
 export default class OperationDetailsPage {
   titleId = "operationDetails-title";
-  title = () => getElementById(this.titleId);
-  account = () => getElementById("operationDetails-account");
-  amount = () => getElementById("operationDetails-amount");
   recipientId = "operationDetails-recipient0";
   delegatedAmountId = "operationDetails-delegatedAmount";
   providerId = "operationDetails-delegatedTo";
   senderId = "operationDetails-sender0";
   feesId = "operationDetails-fees";
-
   "operationsType" = {
     OUT: "Sent",
     DELEGATE: "Delegated",
@@ -18,9 +14,11 @@ export default class OperationDetailsPage {
     LOCK: "Locked",
   };
 
-  async isOpened() {
-    await expect(await this.title()).toBeVisible();
-  }
+  title = () => getElementById(this.titleId);
+
+  account = () => getElementById("operationDetails-account");
+
+  amount = () => getElementById("operationDetails-amount");
 
   @Step("Wait for operation details")
   async waitForOperationDetails() {
@@ -30,10 +28,6 @@ export default class OperationDetailsPage {
   @Step("Check account details")
   async checkAccount(account: string) {
     await expect(await this.account()).toHaveText(account);
-  }
-
-  async checkAmount(amount: string) {
-    await expect(await this.amount()).toHaveText(amount);
   }
 
   @Step("Check recipient details")

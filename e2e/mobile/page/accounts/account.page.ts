@@ -1,32 +1,35 @@
 import { expect } from "detox";
-import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class AccountPage {
   baseLink = "account";
-  accountGraph = (accountId: string) => getElementById(`account-graph-${accountId}`);
-  accountBalance = (accountId: string) => getElementById(`account-balance-${accountId}`);
-  accountSettingsButton = () => getElementById("account-settings-button");
-  accountAdvancedLogRow = () => getElementById("account-advanced-log-row");
-  accountDeleteRow = () => getElementById("account-settings-delete-row");
-  accountDeleteConfirm = () => getElementById("delete-account-confirmation-button");
   operationHistorySection = "operations-history-";
-  operationHistorySectionRegexp = new RegExp(this.operationHistorySection + ".*");
-  operationHistorySectionId = (accountId: string) => this.operationHistorySection + accountId;
   accountScreenScrollView = "account-screen-scrollView";
   accountAdvancedLogsId = "account-advanced-logs";
-  receiveButton = () => getElementById("account-quick-action-button-receive");
-  sendButton = () => getElementById("account-quick-action-button-send");
   earnButtonId = "account-quick-action-button-earn";
-  accountRenameRow = () => getElementById("account-settings-rename-row");
   accountRenameTextInputId = "account-rename-text-input";
   accountList = /accounts-list-.*/;
   baseAccountName = "account-row-name-";
   accountNameRegExp = new RegExp(`${this.baseAccountName}.*`);
 
-  @Step("Open accounts list via deeplink")
-  async openViaDeeplink() {
-    await openDeeplink(this.baseLink);
-  }
+  accountGraph = (accountId: string) => getElementById(`account-graph-${accountId}`);
+
+  accountBalance = (accountId: string) => getElementById(`account-balance-${accountId}`);
+
+  accountSettingsButton = () => getElementById("account-settings-button");
+
+  accountAdvancedLogRow = () => getElementById("account-advanced-log-row");
+
+  accountDeleteRow = () => getElementById("account-settings-delete-row");
+
+  accountDeleteConfirm = () => getElementById("delete-account-confirmation-button");
+
+  operationHistorySectionId = (accountId: string) => this.operationHistorySection + accountId;
+
+  receiveButton = () => getElementById("account-quick-action-button-receive");
+
+  sendButton = () => getElementById("account-quick-action-button-send");
+
+  accountRenameRow = () => getElementById("account-settings-rename-row");
 
   @Step("Expect accounts number")
   async expectAccountsNumber(number: number) {
@@ -83,11 +86,6 @@ export default class AccountPage {
     const id = this.operationHistorySectionId(accountId);
     await scrollToId(id, this.accountScreenScrollView, 300, "bottom");
     await expect(await getElementById(id)).toBeVisible();
-  }
-
-  @Step("Scroll to transaction history")
-  async scrollToTransactions() {
-    await scrollToId(this.operationHistorySectionRegexp, this.accountScreenScrollView);
   }
 
   @Step("Expect account balance to be visible")

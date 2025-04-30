@@ -44,7 +44,7 @@ describe("Receive Flow", () => {
     await app.receive.selectNetwork("bsc");
     await app.addAccount.addAccountAtIndex(Currency.BSC.name, Currency.BSC.id, 0);
     await app.addAccount.tapAddFunds();
-    await app.addAccount.tapReceiveinActionDrawer();
+    await app.addAccount.tapReceiveActionDrawer();
     await app.receive.doNotVerifyAddress();
     await app.receive.expectReceivePageIsDisplayed("BNB", "Binance Smart Chain 1");
   });

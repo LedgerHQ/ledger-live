@@ -5,11 +5,8 @@ import net from "net";
 import merge from "lodash/merge";
 
 import { NavigatorName } from "~/const";
-import { BleState, DeviceLike } from "~/reducers/types";
-import { Account, AccountRaw } from "@ledgerhq/types-live";
-import { DeviceUSB, nanoS_USB, nanoSP_USB, nanoX_USB } from "../models/devices";
+import { BleState } from "~/reducers/types";
 import { MessageData, MockDeviceEvent, ServerData } from "./types";
-import { getDeviceModel } from "@ledgerhq/devices";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
 import { log as detoxLog } from "detox";
 import { execSync } from "child_process";
@@ -26,19 +23,19 @@ export async function findFreePort(): Promise<number> {
       if (address && typeof address !== "string") {
         const port: number = address.port;
         server.close(() => {
-          resolve(port); // Resolve with the free port
+          resolve(port);
         });
       } else {
-        console.warn("Unable to determine port. Selecting default");
-        resolve(8099); // Resolve with the free port
+        log("Unable to determine port. Selecting default");
+        resolve(8099);
       }
     });
 
     server.on("error", err => {
-      reject(err); // Reject with the error
+      reject(err);
     });
 
-    server.listen(0); // Let the system choose an available port
+    server.listen(0);
   });
 }
 
@@ -103,54 +100,25 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
 
   const defaultSettings = { shareAnalytics: true, hasSeenAnalyticsOptInPrompt: true };
   const settings = merge(defaultSettings, data.settings || {});
-  await postMessage({ type: "importSettings", id: uniqueId(), payload: settings });
+  postMessage({ type: "importSettings", id: uniqueId(), payload: settings });
 
   await navigate(NavigatorName.Base);
 
   if (data.accounts?.length) {
-    await postMessage({ type: "importAccounts", id: uniqueId(), payload: data.accounts });
+    postMessage({ type: "importAccounts", id: uniqueId(), payload: data.accounts });
   }
 }
 
 export async function setFeatureFlags(flags: SettingsSetOverriddenFeatureFlagsPlayload) {
-  await postMessage({ type: "overrideFeatureFlags", id: uniqueId(), payload: flags });
+  postMessage({ type: "overrideFeatureFlags", id: uniqueId(), payload: flags });
 }
 
 export async function loadBleState(bleState: BleState) {
-  await postMessage({ type: "importBle", id: uniqueId(), payload: bleState });
-}
-
-export async function loadAccountsRaw(
-  payload: {
-    data: AccountRaw;
-    version: number;
-  }[],
-) {
-  await postMessage({
-    type: "importAccounts",
-    id: uniqueId(),
-    payload,
-  });
-}
-
-export async function loadAccounts(accounts: Account[]) {
-  const modulePath = "@ledgerhq/live-common/account/index";
-  delete require.cache[require.resolve(modulePath)];
-
-  // Dynamically import fresh version of the module
-  const { toAccountRaw } = await import(modulePath);
-  await postMessage({
-    type: "importAccounts",
-    id: uniqueId(),
-    payload: accounts.map(account => ({
-      version: 1,
-      data: toAccountRaw(account),
-    })),
-  });
+  postMessage({ type: "importBle", id: uniqueId(), payload: bleState });
 }
 
 async function navigate(name: string) {
-  await postMessage({
+  postMessage({
     type: "navigate",
     id: uniqueId(),
     payload: name,
@@ -158,52 +126,19 @@ async function navigate(name: string) {
 }
 
 export async function mockDeviceEvent(...args: MockDeviceEvent[]) {
-  await postMessage({
+  postMessage({
     type: "mockDeviceEvent",
     id: uniqueId(),
     payload: args,
   });
 }
 
-export async function addDevicesBT(devices: DeviceLike | DeviceLike[]) {
-  const devicesList = Array.isArray(devices) ? devices : [devices];
-  devicesList.forEach(device => {
-    postMessage({
-      type: "add",
-      id: uniqueId(),
-      payload: {
-        id: device.id,
-        name: device.name,
-        serviceUUID: getDeviceModel(device.modelId).bluetoothSpec![0].serviceUuid,
-      },
-    });
-  });
-}
-
-export async function addDevicesUSB(
-  devices: DeviceUSB | DeviceUSB[] = [nanoX_USB, nanoSP_USB, nanoS_USB],
-): Promise<DeviceUSB[]> {
-  const devicesArray = Array.isArray(devices) ? devices : [devices];
-  for (const device of devicesArray) {
-    await postMessage({ type: "addUSB", id: uniqueId(), payload: device });
-  }
-  return devicesArray;
-}
-
-export async function setInstalledApps(apps: string[] = []) {
-  await postMessage({
-    type: "setGlobals",
-    id: uniqueId(),
-    payload: { _listInstalledApps_mock_result: apps },
-  });
-}
-
 export async function open() {
-  await postMessage({ type: "open", id: uniqueId() });
+  postMessage({ type: "open", id: uniqueId() });
 }
 
 export async function swapSetup() {
-  await postMessage({ type: "swapSetup", id: uniqueId() });
+  postMessage({ type: "swapSetup", id: uniqueId() });
 }
 
 export async function waitSwapReady() {
@@ -238,11 +173,11 @@ async function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Prom
 }
 
 export async function addKnownSpeculos(proxyAddress: string) {
-  await postMessage({ type: "addKnownSpeculos", id: uniqueId(), payload: proxyAddress });
+  postMessage({ type: "addKnownSpeculos", id: uniqueId(), payload: proxyAddress });
 }
 
 export async function removeKnownSpeculos(id: string) {
-  await postMessage({ type: "removeKnownSpeculos", id: uniqueId(), payload: id });
+  postMessage({ type: "removeKnownSpeculos", id: uniqueId(), payload: id });
 }
 
 export function killDockerSpeculos() {
@@ -304,10 +239,10 @@ function log(message: string) {
 }
 
 async function acceptTerms() {
-  await postMessage({ type: "acceptTerms", id: uniqueId() });
+  postMessage({ type: "acceptTerms", id: uniqueId() });
 }
 
-async function postMessage(message: MessageData) {
+function postMessage(message: MessageData) {
   log(`Message sending ${message.type}: ${message.id}`);
   try {
     webSocket.messages[message.id] = message;
@@ -317,6 +252,8 @@ async function postMessage(message: MessageData) {
       log("WebSocket connection is not open. Message not sent.");
     }
   } catch (error: unknown) {
-    log(`Error occurred while waiting for WebSocket connection: ${JSON.stringify(error)}`);
+    detoxLog.error(
+      `Error occurred while waiting for WebSocket connection: ${JSON.stringify(error)}`,
+    );
   }
 }

@@ -1,4 +1,4 @@
-import { by, element, expect } from "detox";
+import { expect } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
 import CommonPage from "../common.page";
 import { getEnv } from "@ledgerhq/live-env";
@@ -7,13 +7,14 @@ import { retryUntilTimeout } from "../../utils/retry";
 export default class AddAccountDrawer extends CommonPage {
   baseLink = "add-account";
   deselectAllButtonId = "add-accounts-deselect-all";
-  accountId = (currency: string, index: number) =>
-    getEnv("MOCK") ? `mock:1:${currency}:MOCK_${currency}_${index}:` : `js:2:${currency}:.*`;
   modalButtonId = "add-accounts-modal-add-button";
   continueButtonId = "add-accounts-continue-button";
   closeAddAccountButtonId = "button-close-add-account";
   addFundsButtonId = "button-add-funds";
   actionDrawerReceiveButtonId = "action-drawer-receive-button";
+
+  accountId = (currency: string, index: number) =>
+    getEnv("MOCK") ? `mock:1:${currency}:MOCK_${currency}_${index}:` : `js:2:${currency}:.*`;
 
   @Step("Open add account via deeplink")
   async openViaDeeplink() {
@@ -73,7 +74,7 @@ export default class AddAccountDrawer extends CommonPage {
   }
 
   @Step("Click on 'Receive' in action drawer")
-  async tapReceiveinActionDrawer() {
+  async tapReceiveActionDrawer() {
     await tapById(this.actionDrawerReceiveButtonId);
   }
 }

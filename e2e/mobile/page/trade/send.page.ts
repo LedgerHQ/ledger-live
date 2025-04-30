@@ -4,14 +4,8 @@ import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 export default class SendPage {
   baseLink = "send";
   summaryAmountId = "send-summary-amount";
-  summaryRecipient = () => getElementById("send-summary-recipient");
-  summaryRecipientEns = () => getElementById("send-summary-recipient-ens");
   summaryMemoTagId = "summary-memo-tag";
-  summaryMemoTag = () => getElementById(this.summaryMemoTagId);
-  validationAmountId = "device-validation-amount";
-  validationAddressId = "device-validation-address";
   validationEnsId = "device-validation-domain";
-  getStep1HeaderTitle = () => getElementById("send-header-step1-title");
   recipientContinueButtonId = "recipient-continue-button";
   recipientInputId = "recipient-input";
   recipientErrorId = "send-recipient-error";
@@ -20,23 +14,39 @@ export default class SendPage {
   memoTagIgnoreButtonId = "memo-tag-ignore-button";
   amountInputId = "amount-input";
   amountErrorId = "send-amount-error";
-  amountMaxSwitch = () => getElementById("send-amount-max-switch");
-  amountContinueButton = () => getElementById("amount-continue-button");
   summaryErrorId = "insufficient-fee-error";
-  summaryWarning = () => getElementById("send-summary-warning");
-  summaryContinueButton = () => getElementById("summary-continue-button");
   highFeeConfirmButtonID = "confirmation-modal-confirm-button";
+
+  summaryRecipient = () => getElementById("send-summary-recipient");
+
+  summaryRecipientEns = () => getElementById("send-summary-recipient-ens");
+
+  summaryMemoTag = () => getElementById(this.summaryMemoTagId);
+
+  getStep1HeaderTitle = () => getElementById("send-header-step1-title");
+
+  amountMaxSwitch = () => getElementById("send-amount-max-switch");
+
+  amountContinueButton = () => getElementById("amount-continue-button");
+
+  summaryWarning = () => getElementById("send-summary-warning");
+
+  summaryContinueButton = () => getElementById("summary-continue-button");
+
   feeStrategy = (fee: string) => getElementByText(fee);
 
+  @Step("Open send via deeplink")
   async openViaDeeplink() {
     await openDeeplink(this.baseLink);
   }
 
+  @Step("Send via deeplink")
   async sendViaDeeplink(currencyLong?: string) {
     const link = currencyLong ? this.baseLink + currencyParam + currencyLong : this.baseLink;
     await openDeeplink(link);
   }
 
+  @Step("Expect first step")
   async expectFirstStep() {
     const header = await this.getStep1HeaderTitle();
     await expect(header).toBeVisible();
@@ -132,6 +142,7 @@ export default class SendPage {
     await this.amountContinue();
   }
 
+  @Step("Summary continue")
   async summaryContinue() {
     const btn = await this.summaryContinueButton();
     await tapByElement(btn);
@@ -194,18 +205,6 @@ export default class SendPage {
     if (await IsIdVisible(this.highFeeConfirmButtonID)) {
       await tapById(this.highFeeConfirmButtonID);
     }
-  }
-
-  @Step("Expect amount in device validation screen")
-  async expectValidationAmount(amount: string) {
-    const elem = await getElementById(this.validationAmountId);
-    await expect(elem).toHaveText(amount);
-  }
-
-  @Step("Expect address in device validation screen")
-  async expectValidationAddress(recipient: string) {
-    const elem = await getElementById(this.validationAddressId);
-    await expect(elem).toHaveText(recipient);
   }
 
   @Step("Expect ENS name in device validation screen")

@@ -27,7 +27,8 @@
       ],
       "~/*": [
         "../../apps/ledger-live-mobile/src/*"
-      ]
+      ],
+      "@ledgerhq/live-common/*": ["../../libs/ledger-live-common/src/*"]
     }
   },
   "include": [

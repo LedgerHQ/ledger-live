@@ -24,6 +24,7 @@ export default class DiscoverPage {
   discoverPageHeader = () => getElementById("discover-banner");
   liveAppTitle = () => getElementById("live-app-title");
 
+  @Step("Get live App")
   getRandomLiveApp() {
     const app = this.discoverApps[Math.floor(Math.random() * this.discoverApps.length)].name;
     log.info(`Selected Live app: ${app}`);
@@ -35,29 +36,18 @@ export default class DiscoverPage {
     return app ? app.url : "App not found";
   }
 
+  @Step("Open discover page via deeplink")
   async openViaDeeplink(discoverApps = "") {
     await openDeeplink(this.baseLink + discoverApps);
   }
 
+  @Step("Expect live app title")
   async expectApp(app: string) {
     await expect(await this.liveAppTitle()).toHaveText(this.getAppUrl(app));
   }
 
+  @Step("Expect discover page")
   async expectDiscoverPage() {
     await expect(await this.discoverPageHeader()).toBeVisible();
-  }
-
-  async expect1inchParams() {
-    const title = await getWebElementById("__next").getTitle();
-    jestExpect(title).toBe("Ledger Platform Apps");
-
-    const url = await getWebElementById("__next").getCurrentUrl();
-    jestExpect(url).toContain("app.1inch.io");
-    jestExpect(url).toContain("usdt");
-    jestExpect(url).toContain("sourceTokenAmount%3D");
-    jestExpect(url).toContain("currency%22%3A%22ethereum");
-    jestExpect(url).toContain("accountId=d9d1d396-2081-53e1-9c67-f0623e0c4d3a");
-
-    await expect(getWebElementByTag("iframe")).toExist();
   }
 }
