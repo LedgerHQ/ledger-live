@@ -291,6 +291,7 @@ describe("Testing craftTransaction function", () => {
       expect.objectContaining({
         fee: customFees,
       }),
+      undefined,
     );
   });
 
@@ -302,6 +303,7 @@ describe("Testing craftTransaction function", () => {
       expect.objectContaining({
         fee: DEFAULT_ESTIMATED_FEES,
       }),
+      undefined,
     );
   });
 
@@ -312,9 +314,8 @@ describe("Testing craftTransaction function", () => {
 
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
-      expect.objectContaining({
-        publicKey: "test",
-      }),
+      expect.any(Object),
+      "test",
     );
   });
 
@@ -328,6 +329,7 @@ describe("Testing craftTransaction function", () => {
       expect.objectContaining({
         memos: [{ data: "testdata", format: "testformat", type: "testtype" }],
       }),
+      undefined,
     );
   });
 
@@ -341,6 +343,7 @@ describe("Testing craftTransaction function", () => {
       expect.objectContaining({
         destinationTag: 1337,
       }),
+      undefined,
     );
   });
 });
