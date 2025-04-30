@@ -880,6 +880,18 @@ importers:
       '@braze/react-native-sdk':
         specifier: 10.0.0
         version: 10.0.0
+<<<<<<< HEAD
+=======
+      '@datadog/mobile-react-native':
+        specifier: 2.7.0
+        version: 2.7.0(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
+      '@datadog/mobile-react-navigation':
+        specifier: 2.7.0
+        version: 2.7.0(@datadog/mobile-react-native@2.7.0(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
+      '@exodus/patch-broken-hermes-typed-arrays':
+        specifier: 1.0.0-alpha.1
+        version: 1.0.0-alpha.1
+>>>>>>> 9c8b7222bb (enable datadog poc)
       '@formatjs/intl-locale':
         specifier: 3.4.5
         version: 3.4.5
@@ -11443,6 +11455,19 @@ packages:
 
   '@dabh/diagnostics@2.0.3':
     resolution: {integrity: sha512-hrlQOIi7hAfzsMqlGSFyVucrx38O+j6wiGOf//H2ecvIEqYN4ADBSS2iLMh5UFyDunCNniUIPk/q3riFv45xRA==}
+
+  '@datadog/mobile-react-native@2.7.0':
+    resolution: {integrity: sha512-gzO+6Fmh9/ewnubwoLFLV2A43Q0vvQk2WHiFGiX7lBog0CCNY+GVeIDWBelFLc5WLi7ecPTeZuUZIWNTSEZ68Q==}
+    peerDependencies:
+      react: '>=16.13.1'
+      react-native: '>=0.63.4 <1.0'
+
+  '@datadog/mobile-react-navigation@2.7.0':
+    resolution: {integrity: sha512-Hc4xG2H/volOPMsFPOrVSGbmSpwUnoWIF4HFOkyjg94u4M9bD5LgECzrzY6dkFLaGiqFrGfFtME4Vu+z5VkcDQ==}
+    peerDependencies:
+      '@datadog/mobile-react-native': ^2.0.1
+      react: '>=16.13.1'
+      react-native: '>=0.63.4 <1.0'
 
   '@develar/schema-utils@2.6.5':
     resolution: {integrity: sha512-0cp4PsWQ/9avqTVMCtZ+GirikIA36ikvjtHweU4/j8yLtgObI0+JUPhYFScgwlteveGB1rt3Cm8UhN04XayDig==}
@@ -36715,7 +36740,7 @@ snapshots:
       '@babel/parser': 7.27.0
       '@babel/template': 7.27.0
       '@babel/types': 7.27.0
-      debug: 4.3.4
+      debug: 4.4.0
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -37698,6 +37723,18 @@ snapshots:
       colorspace: 1.1.4
       enabled: 2.0.0
       kuler: 2.0.0
+
+  '@datadog/mobile-react-native@2.7.0(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)':
+    dependencies:
+      big-integer: 1.6.52
+      react: 18.3.1
+      react-native: 0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3)
+
+  '@datadog/mobile-react-navigation@2.7.0(@datadog/mobile-react-native@2.7.0(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)':
+    dependencies:
+      '@datadog/mobile-react-native': 2.7.0(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
+      react: 18.3.1
+      react-native: 0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3)
 
   '@develar/schema-utils@2.6.5':
     dependencies:

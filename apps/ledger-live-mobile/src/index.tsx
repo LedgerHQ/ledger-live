@@ -93,8 +93,44 @@ import { registerTransports } from "~/services/registerTransports";
 import { useDeviceManagementKitEnabled } from "@ledgerhq/live-dmk-mobile";
 import { StoragePerformanceOverlay } from "./newArch/storage/screens/PerformanceMonitor";
 
-import { firebase } from '@react-native-firebase/perf';
+import { firebase } from "@react-native-firebase/perf";
+import {
+  BatchSize,
+  DatadogProvider,
+  DatadogProviderConfiguration,
+  SdkVerbosity,
+  UploadFrequency,
+} from "@datadog/mobile-react-native";
 
+/** Datadog configuration */
+
+const config = new DatadogProviderConfiguration(
+  "pubfbc8fe698e8a05aebc350e19c20b2e1e",
+  "staging",
+  "b3cd5313-b4a9-44b9-8056-229166316663",
+  true, // track User interactions (e.g.: Tap on buttons. You can use 'accessibilityLabel' element property to give tap action the name, otherwise element type will be reported)
+  true, // track XHR Resources
+  true, // track Errors
+);
+// Optional: Select your Datadog website (one of "US1", "EU1", "US3", "US5", "AP1" or "GOV")
+config.site = "EU1";
+// Optional: Enable JavaScript long task collection
+config.longTaskThresholdMs = 100;
+// Optional: enable or disable native crash reports
+config.nativeCrashReportEnabled = true;
+// Optional: sample RUM sessions (here, 100% of session will be sent to Datadog. Default = 100%. Only tracked sessions send RUM events.)
+config.sessionSamplingRate = 100;
+
+if (__DEV__) {
+  // Optional: Send data more frequently
+  config.uploadFrequency = UploadFrequency.FREQUENT;
+  // Optional: Send smaller batches of data
+  config.batchSize = BatchSize.SMALL;
+  // Optional: Enable debug logging
+  config.verbosity = SdkVerbosity.DEBUG;
+}
+
+/** end of DD configuration */
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -248,7 +284,9 @@ function App() {
       <SyncNewAccounts priority={5} />
       <TransactionsAlerts />
       <ExperimentalHeader />
-      <RootNavigator />
+      <DatadogProvider configuration={config}>
+        <RootNavigator />
+      </DatadogProvider>
       <AnalyticsConsole />
       <PerformanceConsole />
       <DebugTheme />
@@ -361,7 +399,7 @@ export default class Root extends Component {
                                     <NavBarColorHandler />
                                     <AuthPass>
                                       <AppProviders initialCountervalues={initialCountervalues}>
-                                        <App />
+                                          <App />
                                       </AppProviders>
                                     </AuthPass>
                                   </StylesProvider>

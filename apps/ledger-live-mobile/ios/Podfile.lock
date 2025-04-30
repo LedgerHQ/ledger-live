@@ -30,6 +30,29 @@ PODS:
   - BrazeUI (9.0.0):
     - BrazeKit (= 9.0.0)
   - CocoaAsyncSocket (7.6.5)
+  - DatadogCore (2.25.0):
+    - DatadogInternal (= 2.25.0)
+  - DatadogCrashReporting (2.25.0):
+    - DatadogInternal (= 2.25.0)
+    - PLCrashReporter (~> 1.12.0)
+  - DatadogInternal (2.25.0)
+  - DatadogLogs (2.25.0):
+    - DatadogInternal (= 2.25.0)
+  - DatadogRUM (2.25.0):
+    - DatadogInternal (= 2.25.0)
+  - DatadogSDKReactNative (2.7.0):
+    - DatadogCore (~> 2.25.0)
+    - DatadogCrashReporting (~> 2.25.0)
+    - DatadogLogs (~> 2.25.0)
+    - DatadogRUM (~> 2.25.0)
+    - DatadogTrace (~> 2.25.0)
+    - DatadogWebViewTracking (~> 2.25.0)
+    - React-Core
+  - DatadogTrace (2.25.0):
+    - DatadogInternal (= 2.25.0)
+    - OpenTelemetrySwiftApi (= 1.13.1)
+  - DatadogWebViewTracking (2.25.0):
+    - DatadogInternal (= 2.25.0)
   - DoubleConversion (1.1.6)
   - EXConstants (16.0.2):
     - ExpoModulesCore
@@ -214,6 +237,8 @@ PODS:
     - nanopb/encode (= 2.30908.0)
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
+  - OpenTelemetrySwiftApi (1.13.1)
+  - PLCrashReporter (1.12.0)
   - PromisesObjC (2.4.0)
   - RCT-Folly (2024.01.01.00):
     - boost
@@ -2105,6 +2130,7 @@ PODS:
 DEPENDENCIES:
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
   - "braze-react-native-sdk (from `../node_modules/@braze/react-native-sdk`)"
+  - "DatadogSDKReactNative (from `../node_modules/@datadog/mobile-react-native`)"
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - "EXConstants (from `../../../node_modules/.pnpm/expo-constants@16.0.2_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@types_rproegwlxlnson7miipd77adb4/node_modules/expo-constants/ios`)"
   - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@4.7.0_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@typ_6lnceoomhdx2gskrzh3nbqbw6q/node_modules/expo-image-loader/ios`)"
@@ -2237,6 +2263,13 @@ SPEC REPOS:
     - BrazeLocation
     - BrazeUI
     - CocoaAsyncSocket
+    - DatadogCore
+    - DatadogCrashReporting
+    - DatadogInternal
+    - DatadogLogs
+    - DatadogRUM
+    - DatadogTrace
+    - DatadogWebViewTracking
     - Firebase
     - FirebaseABTesting
     - FirebaseCore
@@ -2253,6 +2286,8 @@ SPEC REPOS:
     - MMKVCore
     - MultiplatformBleAdapter
     - nanopb
+    - OpenTelemetrySwiftApi
+    - PLCrashReporter
     - PromisesObjC
     - SDWebImage
     - SDWebImageWebPCoder
@@ -2267,6 +2302,8 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/boost.podspec"
   braze-react-native-sdk:
     :path: "../node_modules/@braze/react-native-sdk"
+  DatadogSDKReactNative:
+    :path: "../node_modules/@datadog/mobile-react-native"
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   EXConstants:
@@ -2522,6 +2559,14 @@ SPEC CHECKSUMS:
   BrazeLocation: 43405bf92037c9840f5f5467a7b8418583bc7850
   BrazeUI: 9e86bd30ca84f66444a5f6d95e438057000f4d0f
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
+  DatadogCore: a068d264191f687d00125aafa8042110cf886cd7
+  DatadogCrashReporting: b19d80a98b1eb51bdb3ec5b1a7f339769fb70b95
+  DatadogInternal: e9b6cef84448ee32f73bc9b37646708a65c1b8ae
+  DatadogLogs: 623d89158ef3a4a7545a8fbce9afa4cedc576324
+  DatadogRUM: ff0661b42124d90c9ff2538c3cc1b806ddf7620c
+  DatadogSDKReactNative: 21b414ecbecb85867c1e0da5f9328d85747ed50b
+  DatadogTrace: 4e1aac322eafd8568fd4a966b02e58fbb5af0612
+  DatadogWebViewTracking: 3b2465b5a5bf10f187807e490678a2e0a3c2daae
   DoubleConversion: 76ab83afb40bddeeee456813d9c04f67f78771b5
   EXConstants: 409690fbfd5afea964e5e9d6c4eb2c2b59222c59
   EXImageLoader: ab589d67d6c5f2c33572afea9917304418566334
@@ -2555,6 +2600,8 @@ SPEC CHECKSUMS:
   MMKVCore: 1eb661c6c498ab88e3df9ce5d8ff94d05fcc0567
   MultiplatformBleAdapter: b1fddd0d499b96b607e00f0faa8e60648343dc1d
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
+  OpenTelemetrySwiftApi: aaee576ed961e0c348af78df58b61300e95bd104
+  PLCrashReporter: db59ef96fa3d25f3650040d02ec2798cffee75f2
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   RCT-Folly: 4464f4d875961fce86008d45f4ecf6cef6de0740
   RCTDeprecation: 726d24248aeab6d7180dac71a936bbca6a994ed1
