@@ -1,7 +1,7 @@
 ---
 "live-mobile": minor
 "@ledgerhq/icons-ui": minor
-"@ledgerhq/live-common": patch
+"@ledgerhq/live-common": minor
 ---
 
 Adds a new `ProtocolInfoModal` for the Defi yield flow.
