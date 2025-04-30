@@ -22,4 +22,5 @@ module.exports = {
       { outputName: "bitcoin-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
     ],
   ],
+  setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
 };

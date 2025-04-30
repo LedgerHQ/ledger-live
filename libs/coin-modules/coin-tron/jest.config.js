@@ -18,4 +18,5 @@ module.exports = {
       { outputName: "tron-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
     ],
   ],
+  setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
 };

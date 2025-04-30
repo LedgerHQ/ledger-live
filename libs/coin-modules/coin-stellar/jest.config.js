@@ -18,4 +18,5 @@ module.exports = {
       { outputName: "stellar-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
     ],
   ],
+  setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
 };
