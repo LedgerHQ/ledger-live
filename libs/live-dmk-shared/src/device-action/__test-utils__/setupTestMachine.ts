@@ -1,6 +1,7 @@
 import {
   GetDeviceMetadataDeviceAction,
   GetDeviceMetadataDAOutput,
+  GoToDashboardDeviceAction,
   InstallOrUpdateAppsDeviceAction,
   InstallOrUpdateAppsDAIntermediateValue,
   InstallOrUpdateAppsDAOutput,
@@ -13,6 +14,35 @@ import {
 import { Left, Right } from "purify-ts";
 import type { Mock } from "vitest";
 import { assign, createMachine } from "xstate";
+
+export const setupGoToDashboardMock = (error: boolean = false) => {
+  (GoToDashboardDeviceAction as Mock).mockImplementation(() => ({
+    makeStateMachine: vi.fn().mockImplementation(() =>
+      createMachine({
+        id: "MockGoToDashboardDeviceAction",
+        initial: "ready",
+        states: {
+          ready: {
+            after: {
+              0: "done",
+            },
+            entry: assign({
+              intermediateValue: () => ({
+                requiredUserInteraction: UserInteractionRequired.None,
+              }),
+            }),
+          },
+          done: {
+            type: "final",
+          },
+        },
+        output: () => {
+          return error ? Left(new UnknownDAError("GoToDashboard failed")) : Right(undefined);
+        },
+      }),
+    ),
+  }));
+};
 
 export const setupGetDeviceMetadataMock = (metadata: GetDeviceMetadataDAOutput, error = false) => {
   (GetDeviceMetadataDeviceAction as Mock).mockImplementation(() => ({
