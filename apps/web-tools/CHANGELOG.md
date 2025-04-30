@@ -1,5 +1,23 @@
 # web-tools
 
+## 0.18.0-nightly.1
+
+### Minor Changes
+
+- [#9888](https://github.com/LedgerHQ/ledger-live/pull/9888) [`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431) Thanks [@palra](https://github.com/palra)! - add babylon currency
+
+### Patch Changes
+
+- Updated dependencies [[`00ecb4b`](https://github.com/LedgerHQ/ledger-live/commit/00ecb4b3dae8abf861679fb35a2794a308851a47), [`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431)]:
+  - @ledgerhq/live-common@34.32.0-nightly.1
+  - @ledgerhq/types-cryptoassets@7.23.0-nightly.0
+  - @ledgerhq/cryptoassets@13.16.0-nightly.0
+  - @ledgerhq/types-live@6.69.0-nightly.1
+  - @ledgerhq/coin-framework@4.1.0-nightly.1
+  - @ledgerhq/domain-service@1.2.28-nightly.1
+  - @ledgerhq/live-wallet@0.10.7-nightly.1
+  - @ledgerhq/hw-app-eth@6.45.3-nightly.1
+
 ## 0.17.4-nightly.0
 
 ### Patch Changes

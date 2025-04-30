@@ -1,5 +1,35 @@
 # ledger-live-desktop
 
+## 2.112.0-nightly.1
+
+### Minor Changes
+
+- [#9888](https://github.com/LedgerHQ/ledger-live/pull/9888) [`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431) Thanks [@palra](https://github.com/palra)! - add babylon currency
+
+### Patch Changes
+
+- [#9869](https://github.com/LedgerHQ/ledger-live/pull/9869) [`e67a296`](https://github.com/LedgerHQ/ledger-live/commit/e67a296d5e1f10cf4ac133f0d00da760a24381f3) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add LDMK related FF in segment extra payload
+
+- Updated dependencies [[`00ecb4b`](https://github.com/LedgerHQ/ledger-live/commit/00ecb4b3dae8abf861679fb35a2794a308851a47), [`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431)]:
+  - @ledgerhq/live-common@34.32.0-nightly.1
+  - @ledgerhq/types-cryptoassets@7.23.0-nightly.0
+  - @ledgerhq/cryptoassets@13.16.0-nightly.0
+  - @ledgerhq/types-live@6.69.0-nightly.1
+  - @ledgerhq/coin-cosmos@0.14.0-nightly.1
+  - @ledgerhq/coin-framework@4.1.0-nightly.1
+  - @ledgerhq/live-dmk-desktop@0.3.3-nightly.1
+  - @ledgerhq/coin-bitcoin@0.15.4-nightly.1
+  - @ledgerhq/coin-evm@2.19.2-nightly.1
+  - @ledgerhq/coin-filecoin@1.9.4-nightly.1
+  - @ledgerhq/domain-service@1.2.28-nightly.1
+  - @ledgerhq/live-countervalues@0.5.4-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.33-nightly.1
+  - @ledgerhq/live-nft@0.8.4-nightly.1
+  - @ledgerhq/live-nft-react@0.9.4-nightly.1
+  - @ledgerhq/live-wallet@0.10.7-nightly.1
+  - @ledgerhq/coin-aptos@1.9.4-nightly.1
+  - @ledgerhq/react-ui@0.23.1-nightly.1
+
 ## 2.112.0-nightly.0
 
 ### Minor Changes

@@ -1,5 +1,40 @@
 # live-mobile
 
+## 3.77.0-nightly.1
+
+### Minor Changes
+
+- [#10067](https://github.com/LedgerHQ/ledger-live/pull/10067) [`f0f5562`](https://github.com/LedgerHQ/ledger-live/commit/f0f55629e999e5bf912ca473969e927eedd4659e) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - bugfixe: Wrong size for ledger nano X Image on ledger sync
+
+- [#10066](https://github.com/LedgerHQ/ledger-live/pull/10066) [`6b29491`](https://github.com/LedgerHQ/ledger-live/commit/6b294915b022551a6eb23e1edf6d59e43b896310) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: isolate stellar polyfill and revert it once used
+
+- [#10005](https://github.com/LedgerHQ/ledger-live/pull/10005) [`dceb318`](https://github.com/LedgerHQ/ledger-live/commit/dceb3186de596fb8cd34b8f9acc592a478d9c0e9) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Connect storage migration logic to the rest of the code
+
+- [#9888](https://github.com/LedgerHQ/ledger-live/pull/9888) [`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431) Thanks [@palra](https://github.com/palra)! - add babylon currency
+
+- [#10092](https://github.com/LedgerHQ/ledger-live/pull/10092) [`99c2277`](https://github.com/LedgerHQ/ledger-live/commit/99c227745f7c1d3992e91fcc9848ad55f17ccb70) Thanks [@sarneijim](https://github.com/sarneijim)! - Return hash instead id in exchange complete methods
+
+### Patch Changes
+
+- [#9869](https://github.com/LedgerHQ/ledger-live/pull/9869) [`e67a296`](https://github.com/LedgerHQ/ledger-live/commit/e67a296d5e1f10cf4ac133f0d00da760a24381f3) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add LDMK related FF in segment extra payload
+
+- Updated dependencies [[`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431)]:
+  - @ledgerhq/types-cryptoassets@7.23.0-nightly.0
+  - @ledgerhq/types-live@6.69.0-nightly.1
+  - @ledgerhq/coin-cosmos@0.14.0-nightly.1
+  - @ledgerhq/coin-framework@4.1.0-nightly.1
+  - @ledgerhq/coin-evm@2.19.2-nightly.1
+  - @ledgerhq/coin-filecoin@1.9.4-nightly.1
+  - @ledgerhq/coin-multiversx@0.4.4-nightly.1
+  - @ledgerhq/coin-stacks@0.8.4-nightly.1
+  - @ledgerhq/domain-service@1.2.28-nightly.1
+  - @ledgerhq/live-countervalues@0.5.4-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.33-nightly.1
+  - @ledgerhq/live-nft@0.8.4-nightly.1
+  - @ledgerhq/live-nft-react@0.9.4-nightly.1
+  - @ledgerhq/live-wallet@0.10.7-nightly.1
+  - @ledgerhq/native-ui@0.33.1-nightly.1
+
 ## 3.77.0-nightly.0
 
 ### Minor Changes
