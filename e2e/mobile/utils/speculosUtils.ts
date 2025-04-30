@@ -8,8 +8,7 @@ import {
 import invariant from "invariant";
 import { setEnv } from "@ledgerhq/live-env";
 import { closeProxy, startProxy } from "../bridge/proxy";
-import { device } from "detox";
-import { log } from "@ledgerhq/logs";
+import { device, log } from "detox";
 
 const BASE_PORT = 30000;
 const MAX_PORT = 65535;
@@ -30,7 +29,7 @@ export async function launchSpeculos(appName: string) {
   const speculosPort = portCounter++;
 
   if (speculosDevices.has(speculosPort)) {
-    log("e2e", `[E2E Setup] Speculos already launched on port ${speculosPort}`);
+    log.info("e2e", `[E2E Setup] Speculos already launched on port ${speculosPort}`);
     return speculosPort;
   }
 
@@ -51,7 +50,7 @@ export async function launchSpeculos(appName: string) {
   speculosDevices.set(speculosApiPort, speculosDevice.id);
   setEnv("SPECULOS_API_PORT", speculosApiPort);
 
-  log("e2e", `Speculos started: id=${speculosDevice.id}, port=${speculosApiPort}`);
+  log.info("e2e", `Speculos started: id=${speculosDevice.id}, port=${speculosApiPort}`);
   return speculosApiPort;
 }
 
@@ -67,7 +66,7 @@ export async function launchProxy(
 export async function deleteSpeculos(apiPort?: number) {
   if (!apiPort) {
     if (!speculosDevices.size) {
-      log("e2e", "[E2E Teardown] No active Speculos instances to stop.");
+      log.info("e2e", "[E2E Teardown] No active Speculos instances to stop.");
     }
     const ports = Array.from(speculosDevices.keys());
     await Promise.all(
@@ -75,7 +74,7 @@ export async function deleteSpeculos(apiPort?: number) {
         try {
           await deleteSpeculos(port);
         } catch (err) {
-          log("e2e", `Failed to stop Speculos on port ${port}: ${String(err)}`);
+          log.error("e2e", `Failed to stop Speculos on port ${port}: ${String(err)}`);
         }
       }),
     );
@@ -86,9 +85,9 @@ export async function deleteSpeculos(apiPort?: number) {
     const speculosId = speculosDevices.get(apiPort);
     if (speculosId) await stopSpeculos(speculosId);
     speculosDevices.delete(apiPort);
-    log("e2e", `Speculos successfully stopped on port ${apiPort}`);
+    log.info("e2e", `Speculos successfully stopped on port ${apiPort}`);
   } else {
-    log("e2e", `Speculos not found on port ${apiPort}`);
+    log.warn("e2e", `Speculos not found on port ${apiPort}`);
   }
 
   setEnv("SPECULOS_API_PORT", 0);

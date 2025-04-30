@@ -9,7 +9,6 @@ import { glob } from "glob";
 import { log } from "detox";
 
 const ARTIFACT_ENV_PATH = path.resolve("artifacts/environment.properties");
-const TRACKER_PATH = path.resolve(__dirname, "test-tracker.json");
 const USERDATA_DIR = path.resolve(__dirname, "userdata");
 const USERDATA_GLOB = path.join(USERDATA_DIR, "temp-userdata-*.json");
 
@@ -39,7 +38,7 @@ export default async function globalTeardownWrapper() {
   await globalTeardown();
 
   // parallel file cleanups
-  await Promise.all([cleanupTracker(), cleanupUserdata()]);
+  await Promise.all([cleanupUserdata()]);
 }
 
 async function initDetox() {
@@ -72,14 +71,5 @@ async function cleanupUserdata() {
     }
   } catch (err) {
     log.warn("🧹 failed to cleanup temp‑userdata files:", err);
-  }
-}
-
-async function cleanupTracker() {
-  try {
-    await fs.rm(TRACKER_PATH);
-    log.info("🧹 test-tracker.json removed");
-  } catch {
-    // ignore if it doesn't exist
   }
 }

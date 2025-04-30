@@ -1,5 +1,3 @@
-import { ModelId } from "../../models/devices";
-
 export default class OnboardingStepsPage {
   getStartedButtonId = "onboarding-getStarted-button";
   acceptAnalyticsButtonId = "accept-analytics-button";
@@ -16,8 +14,6 @@ export default class OnboardingStepsPage {
   noLedgerYetButton = () => getElementById("onboarding-noLedgerYet");
 
   exploreAppButton = () => getElementById("onboarding-noLedgerYetModal-explore");
-
-  selectDevice = (device: ModelId) => `onboarding-device-selection-${device}`;
 
   @Step("Start onboarding")
   async startOnboarding(): Promise<void> {

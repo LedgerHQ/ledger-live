@@ -139,9 +139,6 @@ const configurations = configurationNames.reduce((acc, config) => {
   return acc;
 }, {});
 
-const shouldReinstallApp =
-  process.env.REINSTALL_APP !== undefined ? process.env.REINSTALL_APP === "true" : !process.env.CI;
-
 module.exports = {
   configuration: "ios.sim.debug",
   testRunner: {
@@ -163,7 +160,7 @@ module.exports = {
   },
   behavior: {
     init: {
-      reinstallApp: shouldReinstallApp,
+      reinstallApp: true,
       exposeGlobals: false,
     },
     launchApp: "auto",

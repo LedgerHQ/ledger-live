@@ -13,7 +13,7 @@ import { navigate } from "~/rootnavigation";
 import { addKnownDevice, importBle, removeKnownDevice } from "~/actions/ble";
 import { LaunchArguments } from "react-native-launch-arguments";
 import logReport from "~/log-report";
-import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
+import { MessageData, ServerData } from "./types";
 import { getAllEnvs, setEnv } from "@ledgerhq/live-env";
 import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -27,6 +27,7 @@ let retryCount = 0;
 const maxRetries = 5;
 const retryDelay = 500;
 
+//TODO: replace in apps/ledger-live-mobile/src/index.tsx
 export function init() {
   const wsPort = LaunchArguments.value()["wsPort"] || "8099";
   const mock = LaunchArguments.value()["mock"];
@@ -91,10 +92,6 @@ function onMessage(event: WebSocketMessageEvent) {
         break;
       case "importAccounts": {
         store.dispatch(importAccountsRaw({ active: msg.payload }));
-        break;
-      }
-      case "mockDeviceEvent": {
-        msg.payload.forEach(e => mockDeviceEventSubject.next(e));
         break;
       }
       case "importSettings": {

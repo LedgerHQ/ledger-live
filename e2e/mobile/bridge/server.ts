@@ -6,10 +6,9 @@ import merge from "lodash/merge";
 
 import { NavigatorName } from "~/const";
 import { BleState } from "~/reducers/types";
-import { MessageData, MockDeviceEvent, ServerData } from "./types";
+import { MessageData, ServerData } from "./types";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
 import { log as detoxLog } from "detox";
-import { execSync } from "child_process";
 
 let clientResponse: (data: string) => void;
 const RESPONSE_TIMEOUT = 10000;
@@ -125,18 +124,6 @@ async function navigate(name: string) {
   });
 }
 
-export async function mockDeviceEvent(...args: MockDeviceEvent[]) {
-  postMessage({
-    type: "mockDeviceEvent",
-    id: uniqueId(),
-    payload: args,
-  });
-}
-
-export async function open() {
-  postMessage({ type: "open", id: uniqueId() });
-}
-
 export async function swapSetup() {
   postMessage({ type: "swapSetup", id: uniqueId() });
 }
@@ -178,33 +165,6 @@ export async function addKnownSpeculos(proxyAddress: string) {
 
 export async function removeKnownSpeculos(id: string) {
   postMessage({ type: "removeKnownSpeculos", id: uniqueId(), payload: id });
-}
-
-export function killDockerSpeculos() {
-  try {
-    const output = execSync(
-      `docker ps -a --format '{{.ID}} {{.Image}}' | grep ledgerhq/speculos || true`,
-    )
-      .toString()
-      .trim();
-
-    if (!output) {
-      detoxLog.info("No Speculos containers found to remove.");
-      return;
-    }
-
-    const containerIds = output
-      .split("\n")
-      .map(line => line.split(" ")[0])
-      .filter(Boolean);
-
-    if (containerIds.length > 0) {
-      execSync(`docker rm -f ${containerIds.join(" ")}`);
-      detoxLog.info(`Removed Speculos Docker containers: ${containerIds.join(", ")}`);
-    }
-  } catch (error) {
-    detoxLog.error(`Failed to remove Speculos Docker container: ${error}`);
-  }
 }
 
 function onMessage(messageStr: string) {
