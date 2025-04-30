@@ -57,7 +57,7 @@ const getPayload = (
       case "add":
         return {
           function: "0x1::delegation_pool::add_stake",
-          typeArguments: [],
+          typeArguments: [APTOS_ASSET_ID],
           functionArguments: [transaction.stake.poolAddr, transaction.amount.toString()],
         };
     }
