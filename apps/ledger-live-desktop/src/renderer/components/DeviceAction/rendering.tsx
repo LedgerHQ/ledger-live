@@ -206,8 +206,8 @@ const ButtonContainer = styled(Box).attrs(({ theme }) => ({
   alignItems: "center",
   justifyContent: "center",
   gap: `${theme.space[4]}px`,
-}))`
-  align-self: stretch;
+}))<{ stretch?: boolean }>`
+  ${({ stretch }) => stretch && "align-self: stretch;"}
 `;
 
 const ButtonGroup = styled(Box).attrs(({ theme }) => ({
@@ -784,6 +784,7 @@ export const renderError = ({
   learnMoreLink,
   learnMoreTextKey,
   Icon,
+  stretch,
 }: {
   error: Error | ErrorConstructor;
   t: TFunction;
@@ -803,6 +804,7 @@ export const renderError = ({
   device?: Device | null;
   inlineRetry?: boolean;
   withDescription?: boolean;
+  stretch?: boolean;
   Icon?: (props: { color?: string | undefined; size?: number | undefined }) => JSX.Element;
 }) => {
   let tmpError = error;
@@ -864,7 +866,7 @@ export const renderError = ({
           ) : undefined
         }
       />
-      <ButtonContainer>
+      <ButtonContainer stretch={stretch}>
         {managerAppName || requireFirmwareUpdate ? (
           <OpenManagerButton
             appName={managerAppName}
@@ -919,6 +921,7 @@ export const renderInWrongAppForAccount = ({
     error: new WrongDeviceForAccount(""),
     withExportLogs: true,
     onRetry,
+    stretch: true,
   });
 
 export const renderConnectYourDevice = ({
