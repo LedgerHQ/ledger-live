@@ -36,7 +36,6 @@ import WarningBannerStatus from "~/components/WarningBannerStatus";
 import ErrorWarning from "./ErrorWarning";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isNFTCollectionsDisplayable } from "./nftHelper";
-import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 
 type Props = {
   account?: AccountLike;
