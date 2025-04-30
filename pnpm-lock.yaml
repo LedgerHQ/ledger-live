@@ -8916,13 +8916,13 @@ importers:
         version: link:../../libs/ledger-live-common
       '@ledgerhq/wallet-api-client':
         specifier: ^1.7.5
-        version: 1.7.5
+        version: 1.7.5(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-client-react':
         specifier: ^1.4.8
-        version: 1.4.8(react@18.3.1)
+        version: 1.4.8(@ton/crypto@3.3.0)(react@18.3.1)
       '@ledgerhq/wallet-api-simulator':
         specifier: ^1.2.9
-        version: 1.2.9(react@18.3.1)
+        version: 1.2.9(@ton/crypto@3.3.0)(react@18.3.1)
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -8936,6 +8936,9 @@ importers:
         specifier: ^18.2.0
         version: 18.3.1(react@18.3.1)
     devDependencies:
+      '@rollup/plugin-inject':
+        specifier: 5.0.5
+        version: 5.0.5
       '@types/jest':
         specifier: ^27.0.1
         version: 27.5.2
@@ -15113,6 +15116,15 @@ packages:
     engines: {node: '>=14.0.0'}
     peerDependencies:
       rollup: ^2.68.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+
+  '@rollup/plugin-inject@5.0.5':
+    resolution: {integrity: sha512-2+DEJbNBoPROPkgTDNe8/1YXWcqxbN5DTjASVIOx8HS+pITXushyNiBV56RB08zuptzz8gT3YfkqriTBVycepg==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
     peerDependenciesMeta:
       rollup:
         optional: true
@@ -41041,9 +41053,9 @@ snapshots:
       bignumber.js: 9.1.2
       rxjs: 7.8.1
 
-  '@ledgerhq/wallet-api-client-react@1.4.8(react@18.3.1)':
+  '@ledgerhq/wallet-api-client-react@1.4.8(@ton/crypto@3.3.0)(react@18.3.1)':
     dependencies:
-      '@ledgerhq/wallet-api-client': 1.7.5
+      '@ledgerhq/wallet-api-client': 1.7.5(@ton/crypto@3.3.0)
       react: 18.3.1
     transitivePeerDependencies:
       - '@ton/crypto'
@@ -41105,24 +41117,12 @@ snapshots:
       - '@ton/crypto'
       - encoding
 
-  '@ledgerhq/wallet-api-server@1.8.5(react@18.3.1)(rxjs@7.8.1)':
-    dependencies:
-      '@ledgerhq/wallet-api-core': 1.19.1
-      bignumber.js: 9.1.2
-      picomatch: 4.0.2
-      rxjs: 7.8.1
-    optionalDependencies:
-      react: 18.3.1
-    transitivePeerDependencies:
-      - '@ton/crypto'
-      - encoding
-
-  '@ledgerhq/wallet-api-simulator@1.2.9(react@18.3.1)':
+  '@ledgerhq/wallet-api-simulator@1.2.9(@ton/crypto@3.3.0)(react@18.3.1)':
     dependencies:
       '@ledgerhq/hw-transport': 6.31.4
-      '@ledgerhq/wallet-api-client': 1.7.5
-      '@ledgerhq/wallet-api-core': 1.19.1
-      '@ledgerhq/wallet-api-server': 1.8.5(react@18.3.1)(rxjs@7.8.1)
+      '@ledgerhq/wallet-api-client': 1.7.5(@ton/crypto@3.3.0)
+      '@ledgerhq/wallet-api-core': 1.19.1(@ton/crypto@3.3.0)
+      '@ledgerhq/wallet-api-server': 1.8.5(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.1)
       rxjs: 7.8.1
       ws: 8.18.0
     transitivePeerDependencies:
@@ -43926,6 +43926,12 @@ snapshots:
     optionalDependencies:
       rollup: 4.24.0
 
+  '@rollup/plugin-inject@5.0.5':
+    dependencies:
+      '@rollup/pluginutils': 5.1.0
+      estree-walker: 2.0.2
+      magic-string: 0.30.17
+
   '@rollup/plugin-node-resolve@11.2.1(rollup@2.79.2)':
     dependencies:
       '@rollup/pluginutils': 3.1.0(rollup@2.79.2)
@@ -43959,6 +43965,12 @@ snapshots:
       estree-walker: 1.0.1
       picomatch: 2.3.1
       rollup: 2.79.2
+
+  '@rollup/pluginutils@5.1.0':
+    dependencies:
+      '@types/estree': 1.0.6
+      estree-walker: 2.0.2
+      picomatch: 2.3.1
 
   '@rollup/pluginutils@5.1.0(rollup@4.24.0)':
     dependencies:
