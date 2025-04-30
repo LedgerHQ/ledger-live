@@ -34,7 +34,7 @@ const FollowInstructions: React.FC<Props> = ({ device }) => {
             key: "openApp",
             theme,
           })}
-          style={animationStyles(device.modelId)}
+          style={{ ...animationStyles(device.modelId), width: "60%" }}
         />
       </AnimationContainer>
       <Flex justifyContent="center" alignItems="center" flexDirection="column" rowGap={16}>

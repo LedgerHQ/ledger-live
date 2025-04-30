@@ -32,6 +32,7 @@ import {
   getReservedBalance,
   rawOperationsToOperations,
 } from "./serialization";
+import { patchHermesTypedArraysIfNeeded, unpatchHermesTypedArrays } from "../polyfill";
 
 const FALLBACK_BASE_FEE = 100;
 const TRESHOLD_LOW = 0.5;
@@ -385,7 +386,10 @@ export async function fetchSigners(account: Account): Promise<Signer[]> {
 }
 
 export async function broadcastTransaction(signedTransaction: string): Promise<string> {
+  patchHermesTypedArraysIfNeeded();
   const transaction = new StellarSdkTransaction(signedTransaction, Networks.PUBLIC);
+  // Immediately restore
+  unpatchHermesTypedArrays();
   const res = await getServer().submitTransaction(transaction, {
     skipMemoRequiredCheck: true,
   });

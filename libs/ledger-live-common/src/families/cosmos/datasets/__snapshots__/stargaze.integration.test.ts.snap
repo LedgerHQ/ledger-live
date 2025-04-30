@@ -3,7 +3,7 @@
 exports[`stargaze currency bridge scanAccounts stargaze seed 1 1`] = `
 [
   {
-    "balance": "2000004",
+    "balance": "2000005",
     "currencyId": "stargaze",
     "derivationMode": "",
     "freshAddress": "stars1gyauvl44q2apn3u3aujm36q8zrj74vrypyf2yc",
@@ -12,7 +12,7 @@ exports[`stargaze currency bridge scanAccounts stargaze seed 1 1`] = `
     "index": 0,
     "pendingOperations": [],
     "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
-    "spendableBalance": "2000004",
+    "spendableBalance": "2000005",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,

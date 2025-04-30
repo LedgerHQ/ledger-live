@@ -3,8 +3,6 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "lint:fix": "pnpm lint --fix",
-    "typecheck": "tsc --noEmit -p tsconfig.json",
     "e2e:test": "export MOCK=0 && pnpm detox test"
   },
   "dependencies": {

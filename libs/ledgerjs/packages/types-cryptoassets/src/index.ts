@@ -11,6 +11,7 @@ export type CryptoCurrencyId =
   | "atheios"
   | "avalanche_c_chain"
   | "axelar"
+  | "babylon"
   | "banano"
   | "binance_beacon_chain"
   | "bitcoin"

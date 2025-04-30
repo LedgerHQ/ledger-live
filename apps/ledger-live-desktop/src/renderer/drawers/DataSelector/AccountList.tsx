@@ -58,7 +58,7 @@ export function AccountList({ currency, onAccountSelect, accounts$ }: Props) {
 
   return (
     <>
-      <RowContainer onClick={openAddAccounts} id="add-account">
+      <RowContainer onClick={openAddAccounts} id="add-account" data-testId="add-account-button">
         <RowInnerContainer>
           <Box horizontal alignItems="center">
             <AddIconContainer>
