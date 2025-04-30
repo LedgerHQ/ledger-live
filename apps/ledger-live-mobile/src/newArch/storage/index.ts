@@ -12,6 +12,7 @@ import {
 } from "./utils/migrations/constants";
 import { track } from "~/analytics";
 import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
+import { trackStorageOperation } from "./utils/performance";
 
 /** Singleton reference to the global application storage object. */
 export default createStorage();
@@ -35,145 +36,185 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
 
     incrementNumberOfErrorsDebug,
 
-    keys() {
+    async keys() {
       try {
         return state.storageType === STORAGE_TYPE.MMKV
-          ? Promise.resolve(mmkvStorageWrapper.keys())
-          : asyncStorageWrapper.keys();
+          ? await trackStorageOperation("keys", STORAGE_TYPE.MMKV, "all", () =>
+              Promise.resolve(mmkvStorageWrapper.keys()),
+            )
+          : await trackStorageOperation("keys", STORAGE_TYPE.ASYNC_STORAGE, "all", () =>
+              asyncStorageWrapper.keys(),
+            );
       } catch (e) {
         console.error("Error getting keys from storage", {
           error: e,
           state: state,
         });
-        return rejectWithError(e);
+        return rejectWithError({ e, extraData: { op: "keys" } });
       }
     },
 
     async get(key) {
       try {
         return state.storageType === STORAGE_TYPE.MMKV
-          ? Promise.resolve(mmkvStorageWrapper.get(key))
-          : asyncStorageWrapper.get(key);
+          ? await trackStorageOperation("get", STORAGE_TYPE.MMKV, key, () =>
+              Promise.resolve(mmkvStorageWrapper.get(key)),
+            )
+          : await trackStorageOperation("get", STORAGE_TYPE.ASYNC_STORAGE, key, () =>
+              asyncStorageWrapper.get(key),
+            );
       } catch (e) {
         console.error("Error getting key from storage", {
           error: e,
           state: state,
         });
         await incrementNumberOfErrors(state, e);
-        return rejectWithError(e);
+        return rejectWithError({ e, extraData: { op: "get", key } });
       }
     },
 
     async getString(key) {
       try {
         return state.storageType === STORAGE_TYPE.MMKV
-          ? Promise.resolve(mmkvStorageWrapper.getString(key))
-          : asyncStorageWrapper.getString(key);
+          ? await trackStorageOperation("getString", STORAGE_TYPE.MMKV, key, () =>
+              Promise.resolve(mmkvStorageWrapper.getString(key)),
+            )
+          : await trackStorageOperation("getString", STORAGE_TYPE.ASYNC_STORAGE, key, () =>
+              asyncStorageWrapper.getString(key),
+            );
       } catch (e) {
         console.error("Error getting key from storage", {
           error: e,
           state: state,
         });
         await incrementNumberOfErrors(state, e);
-        return rejectWithError(e);
+        return rejectWithError({ e, extraData: { op: "getString", key } });
       }
     },
 
-    save(key, value) {
+    async save(key, value) {
       try {
         return state.storageType === STORAGE_TYPE.MMKV
-          ? Promise.resolve(mmkvStorageWrapper.save(key, value))
-          : asyncStorageWrapper.save(key, value);
+          ? await trackStorageOperation("save", STORAGE_TYPE.MMKV, key as string, () =>
+              Promise.resolve(mmkvStorageWrapper.save(key, value)),
+            )
+          : await trackStorageOperation("save", STORAGE_TYPE.ASYNC_STORAGE, key as string, () =>
+              asyncStorageWrapper.save(key, value),
+            );
       } catch (e) {
         console.error("Error saving key to storage", {
           error: e,
           state: state,
         });
-        return rejectWithError(e);
+        return rejectWithError({ e, extraData: { op: "save", key, value } });
       }
     },
 
-    saveString(key, value) {
+    async saveString(key, value) {
       try {
         return state.storageType === STORAGE_TYPE.MMKV
-          ? Promise.resolve(mmkvStorageWrapper.saveString(key, value))
-          : asyncStorageWrapper.saveString(key, value);
+          ? await trackStorageOperation("saveString", STORAGE_TYPE.MMKV, key, () =>
+              Promise.resolve(mmkvStorageWrapper.saveString(key, value)),
+            )
+          : await trackStorageOperation("saveString", STORAGE_TYPE.ASYNC_STORAGE, key, () =>
+              asyncStorageWrapper.saveString(key, value),
+            );
       } catch (e) {
         console.error("Error saving key to storage", {
           error: e,
           state: state,
         });
-        return rejectWithError(e);
+        return rejectWithError({ e, extraData: { op: "saveString", key } });
       }
     },
 
-    update(key, value) {
+    async update(key, value) {
       try {
         return state.storageType === STORAGE_TYPE.MMKV
-          ? Promise.resolve(mmkvStorageWrapper.update(key, value))
-          : asyncStorageWrapper.update(key, value);
+          ? await trackStorageOperation("update", STORAGE_TYPE.MMKV, key, () =>
+              Promise.resolve(mmkvStorageWrapper.update(key, value)),
+            )
+          : await trackStorageOperation("update", STORAGE_TYPE.ASYNC_STORAGE, key, () =>
+              asyncStorageWrapper.update(key, value),
+            );
       } catch (e) {
         console.error("Error updating key in storage", {
           error: e,
           state: state,
         });
-        return rejectWithError(e);
+        return rejectWithError({ e, extraData: { op: "update", key } });
       }
     },
 
     async delete(key) {
       try {
         return state.storageType === STORAGE_TYPE.MMKV
-          ? await mmkvStorageWrapper.delete(key)
-          : await asyncStorageWrapper.delete(key);
+          ? await trackStorageOperation("delete", STORAGE_TYPE.MMKV, key, () =>
+              mmkvStorageWrapper.delete(key),
+            )
+          : await trackStorageOperation("delete", STORAGE_TYPE.ASYNC_STORAGE, key, () =>
+              asyncStorageWrapper.delete(key),
+            );
       } catch (e) {
         console.error("Error deleting key from storage", {
           error: e,
           state: state,
         });
-        return rejectWithError(e);
+        return rejectWithError({ e, extraData: { op: "delete", key } });
       }
     },
 
     async deleteAll() {
       try {
         return state.storageType === STORAGE_TYPE.MMKV
-          ? await mmkvStorageWrapper.deleteAll()
-          : await asyncStorageWrapper.deleteAll();
+          ? await trackStorageOperation("deleteAll", STORAGE_TYPE.MMKV, "all", () =>
+              mmkvStorageWrapper.deleteAll(),
+            )
+          : await trackStorageOperation("deleteAll", STORAGE_TYPE.ASYNC_STORAGE, "all", () =>
+              asyncStorageWrapper.deleteAll(),
+            );
       } catch (e) {
         console.error("Error deleting all keys from storage", {
           error: e,
           state: state,
         });
-        return rejectWithError(e);
+        return rejectWithError({ e, extraData: { op: "deleteAll" } });
       }
     },
 
-    push(key, value) {
+    async push(key, value) {
       try {
         return state.storageType === STORAGE_TYPE.MMKV
-          ? Promise.resolve(mmkvStorageWrapper.push(key, value))
-          : asyncStorageWrapper.push(key, value);
+          ? await trackStorageOperation("push", STORAGE_TYPE.MMKV, key, () =>
+              Promise.resolve(mmkvStorageWrapper.push(key, value)),
+            )
+          : await trackStorageOperation("push", STORAGE_TYPE.ASYNC_STORAGE, key, () =>
+              asyncStorageWrapper.push(key, value),
+            );
       } catch (e) {
         console.error("Error pushing value to storage", {
           error: e,
           state: state,
         });
-        return rejectWithError(e);
+        return rejectWithError({ e, extraData: { op: "push", key, value } });
       }
     },
 
-    stringify() {
+    async stringify() {
       try {
         return state.storageType === STORAGE_TYPE.MMKV
-          ? Promise.resolve(mmkvStorageWrapper.stringify())
-          : asyncStorageWrapper.stringify();
+          ? await trackStorageOperation("stringify", STORAGE_TYPE.MMKV, "all", () =>
+              Promise.resolve(mmkvStorageWrapper.stringify()),
+            )
+          : await trackStorageOperation("stringify", STORAGE_TYPE.ASYNC_STORAGE, "all", () =>
+              asyncStorageWrapper.stringify(),
+            );
       } catch (e) {
-        console.error("Error pushing value to storage", {
+        console.error("Error stringifying storage", {
           error: e,
           state: state,
         });
-        return rejectWithError(e);
+        return rejectWithError({ e, extraData: { op: "stringify" } });
       }
     },
 
@@ -185,7 +226,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
           error: e,
           state: state,
         });
-        return rejectWithError(e);
+        return rejectWithError({ e, extraData: { op: "migrate" } });
       }
     },
 
@@ -197,7 +238,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
           error: e,
           state: state,
         });
-        return rejectWithError(e);
+        return rejectWithError({ e, extraData: { op: "resetMigration" } });
       }
     },
 
@@ -209,7 +250,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
           error: e,
           state: state,
         });
-        return rejectWithError(e);
+        return rejectWithError({ e, extraData: { op: "rollbackMigration" } });
       }
     },
 
@@ -221,7 +262,7 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
           error: e,
           state: state,
         });
-        return rejectWithError(e);
+        return rejectWithError({ e, extraData: { op: "handleMigration", featureFlag } });
       }
     },
   } satisfies Storage;
