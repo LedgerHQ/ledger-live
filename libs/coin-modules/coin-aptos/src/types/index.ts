@@ -59,6 +59,7 @@ export type TransactionErrors = {
 };
 
 export type StakeOperationType = "add" | "unlock" | "reactivate" | "withdraw";
+export type StakeAction = "deactivate" | "activate" | "withdraw" | "reactivate";
 
 export type StakeTransaction = {
   op: StakeOperationType;
@@ -182,4 +183,25 @@ export type AptosValidatorWithMeta = {
 export type AptosPreloadData = {
   validatorsWithMeta: AptosValidatorWithMeta[];
   validators: Validator[];
+};
+
+export type AptosMappedStakingPosition = AptosStakingPosition & {
+  formattedAmount: string;
+  formattedPending: string;
+  formattedAvailable: string;
+  rank: number;
+  validator: AptosValidatorItem | null | undefined;
+};
+
+export type AptosStakingPosition = {
+  staked: BigNumber;
+  available: BigNumber;
+  pending: BigNumber;
+  validatorId: string;
+};
+
+export type AptosValidatorItem = {
+  validatorAddress: string;
+  commission: number | null;
+  tokens: string;
 };
