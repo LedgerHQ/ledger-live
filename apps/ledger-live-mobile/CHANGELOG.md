@@ -1,5 +1,58 @@
 # live-mobile
 
+## 3.77.0-next.0
+
+### Minor Changes
+
+- [#10067](https://github.com/LedgerHQ/ledger-live/pull/10067) [`f0f5562`](https://github.com/LedgerHQ/ledger-live/commit/f0f55629e999e5bf912ca473969e927eedd4659e) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - bugfixe: Wrong size for ledger nano X Image on ledger sync
+
+- [#10062](https://github.com/LedgerHQ/ledger-live/pull/10062) [`5f907b4`](https://github.com/LedgerHQ/ledger-live/commit/5f907b41a48f78ed951486df9b36d95425055d92) Thanks [@Justkant](https://github.com/Justkant)! - fix(LLM): discover search bar auto correct
+
+- [#10066](https://github.com/LedgerHQ/ledger-live/pull/10066) [`6b29491`](https://github.com/LedgerHQ/ledger-live/commit/6b294915b022551a6eb23e1edf6d59e43b896310) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: isolate stellar polyfill and revert it once used
+
+- [#10016](https://github.com/LedgerHQ/ledger-live/pull/10016) [`3dcd080`](https://github.com/LedgerHQ/ledger-live/commit/3dcd08004974ebbd601a5c7313e4f2dd132f0843) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix MemoTag Focus
+
+- [#10005](https://github.com/LedgerHQ/ledger-live/pull/10005) [`dceb318`](https://github.com/LedgerHQ/ledger-live/commit/dceb3186de596fb8cd34b8f9acc592a478d9c0e9) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Connect storage migration logic to the rest of the code
+
+- [#9888](https://github.com/LedgerHQ/ledger-live/pull/9888) [`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431) Thanks [@palra](https://github.com/palra)! - add babylon currency
+
+- [#10025](https://github.com/LedgerHQ/ledger-live/pull/10025) [`a4b6b29`](https://github.com/LedgerHQ/ledger-live/commit/a4b6b29df7ef74129345278cf07942619b36435b) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Adds a new `ProtocolInfoModal` for the Defi yield flow.
+  Fixes typo in one of the tests for `live-common`
+
+- [#10001](https://github.com/LedgerHQ/ledger-live/pull/10001) [`ea24006`](https://github.com/LedgerHQ/ledger-live/commit/ea24006d327bbfd1f721f544c3abbc89ca7c5165) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Renaming accounts in EditAccountSettings
+
+- [#9996](https://github.com/LedgerHQ/ledger-live/pull/9996) [`c530552`](https://github.com/LedgerHQ/ledger-live/commit/c5305528d6705db07db53d570f88cd12da2fa8d5) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Reset Swap Navigation stack after successful swap transaction when navigating to transaction history screen
+
+- [#10020](https://github.com/LedgerHQ/ledger-live/pull/10020) [`20a73cb`](https://github.com/LedgerHQ/ledger-live/commit/20a73cb5a632c19bb107db35549d726e801605ac) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Storage perfomance debug tool. Enhance sentry error and analytics
+
+- [#10063](https://github.com/LedgerHQ/ledger-live/pull/10063) [`7e61b9c`](https://github.com/LedgerHQ/ledger-live/commit/7e61b9c6c6477f60793989430b7c9bac639da52a) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - bugfixe: Discreet mode wallet selection
+
+- [#10092](https://github.com/LedgerHQ/ledger-live/pull/10092) [`99c2277`](https://github.com/LedgerHQ/ledger-live/commit/99c227745f7c1d3992e91fcc9848ad55f17ccb70) Thanks [@sarneijim](https://github.com/sarneijim)! - Return hash instead id in exchange complete methods
+
+- [#10051](https://github.com/LedgerHQ/ledger-live/pull/10051) [`a7ecf2d`](https://github.com/LedgerHQ/ledger-live/commit/a7ecf2d6017fbfd0bd18c54c99a172a01df1da1b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix type of appFirstStartDate
+
+- [#9869](https://github.com/LedgerHQ/ledger-live/pull/9869) [`e67a296`](https://github.com/LedgerHQ/ledger-live/commit/e67a296d5e1f10cf4ac133f0d00da760a24381f3) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add LDMK related FF in segment extra payload
+
+### Patch Changes
+
+- Updated dependencies [[`a11fd0b`](https://github.com/LedgerHQ/ledger-live/commit/a11fd0bbb687edc9e279bd4d63352658cae92c63), [`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431), [`b599ac4`](https://github.com/LedgerHQ/ledger-live/commit/b599ac4697688459aad15371f9efea58f331dc33), [`a4b6b29`](https://github.com/LedgerHQ/ledger-live/commit/a4b6b29df7ef74129345278cf07942619b36435b), [`1d72da9`](https://github.com/LedgerHQ/ledger-live/commit/1d72da911a56d5b25fb6464e60ac236927823ce4)]:
+  - @ledgerhq/coin-evm@2.20.0-next.0
+  - @ledgerhq/types-cryptoassets@7.23.0-next.0
+  - @ledgerhq/types-live@6.69.0-next.0
+  - @ledgerhq/coin-cosmos@0.14.0-next.0
+  - @ledgerhq/coin-framework@5.0.0-next.0
+  - @ledgerhq/icons-ui@0.10.0-next.0
+  - @ledgerhq/coin-filecoin@1.9.4-next.0
+  - @ledgerhq/coin-multiversx@0.4.4-next.0
+  - @ledgerhq/coin-stacks@0.8.4-next.0
+  - @ledgerhq/domain-service@1.2.28-next.0
+  - @ledgerhq/live-countervalues@0.5.4-next.0
+  - @ledgerhq/live-countervalues-react@0.2.33-next.0
+  - @ledgerhq/live-nft@0.8.4-next.0
+  - @ledgerhq/live-nft-react@0.9.4-next.0
+  - @ledgerhq/live-wallet@0.10.7-next.0
+  - @ledgerhq/native-ui@0.33.1-next.0
+
 ## 3.76.1
 
 ### Patch Changes

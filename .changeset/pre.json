@@ -146,5 +146,26 @@
     "@ledgerhq/native-modules-tools": "1.0.3",
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "chilled-dryers-train",
+    "curvy-needles-mate",
+    "famous-nails-give",
+    "fuzzy-dolls-grab",
+    "fuzzy-gorillas-help",
+    "gorgeous-weeks-protect",
+    "grumpy-actors-cross",
+    "lemon-spiders-jam",
+    "metal-planes-visit",
+    "moody-games-fix",
+    "orange-wolves-lie",
+    "quiet-pets-fail",
+    "quiet-seals-begin",
+    "real-snakes-arrive",
+    "rich-mice-mate",
+    "silver-crews-relate",
+    "smooth-birds-chew",
+    "soft-meals-cover",
+    "strange-suits-fix",
+    "swift-dogs-wink"
+  ]
 }

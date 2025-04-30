@@ -1,5 +1,59 @@
 # @ledgerhq/live-common
 
+## 34.32.0-next.0
+
+### Minor Changes
+
+- [#10087](https://github.com/LedgerHQ/ledger-live/pull/10087) [`00ecb4b`](https://github.com/LedgerHQ/ledger-live/commit/00ecb4b3dae8abf861679fb35a2794a308851a47) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - conf(live-common): add polygon explorer batch size default value
+
+- [#9888](https://github.com/LedgerHQ/ledger-live/pull/9888) [`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431) Thanks [@palra](https://github.com/palra)! - add babylon currency
+
+- [#10025](https://github.com/LedgerHQ/ledger-live/pull/10025) [`a4b6b29`](https://github.com/LedgerHQ/ledger-live/commit/a4b6b29df7ef74129345278cf07942619b36435b) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Adds a new `ProtocolInfoModal` for the Defi yield flow.
+  Fixes typo in one of the tests for `live-common`
+
+- [#10045](https://github.com/LedgerHQ/ledger-live/pull/10045) [`1d72da9`](https://github.com/LedgerHQ/ledger-live/commit/1d72da911a56d5b25fb6464e60ac236927823ce4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - NFT support in LLD
+
+### Patch Changes
+
+- Updated dependencies [[`a11fd0b`](https://github.com/LedgerHQ/ledger-live/commit/a11fd0bbb687edc9e279bd4d63352658cae92c63), [`30795dd`](https://github.com/LedgerHQ/ledger-live/commit/30795dd032278d98aa67da1e809cd1d5dcfc5501), [`6b29491`](https://github.com/LedgerHQ/ledger-live/commit/6b294915b022551a6eb23e1edf6d59e43b896310), [`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431), [`b599ac4`](https://github.com/LedgerHQ/ledger-live/commit/b599ac4697688459aad15371f9efea58f331dc33)]:
+  - @ledgerhq/coin-evm@2.20.0-next.0
+  - @ledgerhq/coin-tron@3.0.0-next.0
+  - @ledgerhq/coin-stellar@5.0.0-next.0
+  - @ledgerhq/cryptoassets@13.16.0-next.0
+  - @ledgerhq/coin-cosmos@0.14.0-next.0
+  - @ledgerhq/crypto-icons-ui@1.13.0-next.0
+  - @ledgerhq/coin-framework@5.0.0-next.0
+  - @ledgerhq/coin-polkadot@6.0.0-next.0
+  - @ledgerhq/coin-tezos@5.0.0-next.0
+  - @ledgerhq/coin-xrp@6.0.0-next.0
+  - @ledgerhq/coin-celo@1.1.2-next.0
+  - @ledgerhq/live-signer-evm@0.3.2-next.0
+  - @ledgerhq/coin-algorand@0.9.4-next.0
+  - @ledgerhq/coin-bitcoin@0.15.4-next.0
+  - @ledgerhq/coin-cardano@0.8.4-next.0
+  - @ledgerhq/coin-casper@1.6.4-next.0
+  - @ledgerhq/coin-filecoin@1.9.4-next.0
+  - @ledgerhq/coin-icon@0.10.4-next.0
+  - @ledgerhq/coin-mina@1.1.3-next.0
+  - @ledgerhq/coin-multiversx@0.4.4-next.0
+  - @ledgerhq/coin-near@0.11.4-next.0
+  - @ledgerhq/coin-solana@0.21.1-next.0
+  - @ledgerhq/coin-stacks@0.8.4-next.0
+  - @ledgerhq/coin-sui@0.3.1-next.0
+  - @ledgerhq/coin-ton@0.9.1-next.0
+  - @ledgerhq/coin-vechain@2.7.4-next.0
+  - @ledgerhq/live-countervalues@0.5.4-next.0
+  - @ledgerhq/live-countervalues-react@0.2.33-next.0
+  - @ledgerhq/live-nft@0.8.4-next.0
+  - @ledgerhq/live-wallet@0.10.7-next.0
+  - @ledgerhq/coin-aptos@1.9.4-next.0
+  - @ledgerhq/coin-hedera@1.6.4-next.0
+  - @ledgerhq/coin-internet_computer@1.7.4-next.0
+  - @ledgerhq/hw-app-vet@0.5.2-next.0
+  - @ledgerhq/device-core@0.4.23-next.0
+  - @ledgerhq/hw-app-eth@6.45.3-next.0
+  - @ledgerhq/hw-app-celo@6.33.1-next.0
+
 ## 34.31.2
 
 ### Patch Changes
