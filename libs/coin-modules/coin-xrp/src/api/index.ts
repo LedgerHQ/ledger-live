@@ -37,6 +37,7 @@ export function createApi(config: XrpConfig): Api<XrpAsset, TransactionIntentExt
 export type TransactionIntentExtra = {
   destinationTag?: number | null | undefined;
   memos?: MemoInput[];
+  publicKey?: string;
 };
 
 async function craft(
@@ -54,6 +55,7 @@ async function craft(
       destinationTag: transactionIntent.destinationTag,
       memos: transactionIntent.memos,
     },
+    transactionIntent.publicKey,
   );
   return tx.serializedTransaction;
 }

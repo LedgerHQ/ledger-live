@@ -305,6 +305,19 @@ describe("Testing craftTransaction function", () => {
     );
   });
 
+  it("should pass signing pub key when user provides it for crafting a transaction", async () => {
+    await api.craftTransaction({
+      publicKey: "test",
+    } as TransactionIntent<XrpAsset, TransactionIntentExtra>);
+
+    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.objectContaining({
+        publicKey: "test",
+      }),
+    );
+  });
+
   it("should pass memos when user provides it for crafting a transaction", async () => {
     await api.craftTransaction({
       memos: [{ data: "testdata", format: "testformat", type: "testtype" }],
