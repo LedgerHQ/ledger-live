@@ -2,4 +2,4 @@
 "live-mobile": minor
 ---
 
-skip memo tag disclaimer for ICP
+Hide memo disclaimer for Internet Computer

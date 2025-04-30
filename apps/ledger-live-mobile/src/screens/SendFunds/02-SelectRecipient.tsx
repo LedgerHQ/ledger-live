@@ -39,6 +39,7 @@ import { currencySettingsForAccountSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 import { MemoTagDrawer } from "LLM/features/MemoTag/components/MemoTagDrawer";
 import { useMemoTagInput } from "LLM/features/MemoTag/hooks/useMemoTagInput";
+import { hasMemoDisclaimer } from "LLM/features/MemoTag/utils/hasMemoTag";
 import DomainServiceRecipientRow from "./DomainServiceRecipientRow";
 import RecipientRow from "./RecipientRow";
 
@@ -170,7 +171,11 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   );
 
   const onPressContinue = useCallback(() => {
-    if (memoTag?.isEmpty && memoTagDrawerState === MemoTagDrawerState.INITIAL) {
+    if (
+      memoTag?.isEmpty &&
+      memoTagDrawerState === MemoTagDrawerState.INITIAL &&
+      hasMemoDisclaimer(currency)
+    ) {
       return setMemoTagDrawerState(MemoTagDrawerState.SHOWING);
     }
 
@@ -211,6 +216,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     route.params,
     memoTag?.isEmpty,
     memoTagDrawerState,
+    currency,
   ]);
 
   if (!account || !transaction) return null;
