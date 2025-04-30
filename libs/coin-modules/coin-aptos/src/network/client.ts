@@ -149,6 +149,16 @@ export class AptosAPI {
     return pendingTx.data.hash;
   }
 
+  async getLastBlock(): Promise<BlockInfo> {
+    const { block_height } = await this.aptosClient.getLedgerInfo();
+    const block = await this.aptosClient.getBlockByHeight({ blockHeight: Number(block_height) });
+    return {
+      height: Number(block.block_height),
+      hash: block.block_hash,
+      time: new Date(Number(block.block_timestamp)),
+    };
+  }
+
   private async getBalance(address: string): Promise<BigNumber> {
     try {
       const [balanceStr] = await this.aptosClient.view<[string]>({
@@ -223,16 +233,6 @@ export class AptosAPI {
     return {
       height: parseInt(block.block_height),
       hash: block.block_hash,
-    };
-  }
-
-  public async getLastBlock(): Promise<BlockInfo> {
-    const { block_height } = await this.aptosClient.getLedgerInfo();
-    const block = await this.aptosClient.getBlockByHeight({ blockHeight: Number(block_height) });
-    return {
-      height: Number(block.block_height),
-      hash: block.block_hash,
-      time: new Date(block.block_timestamp),
     };
   }
 }
