@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { ListRenderItemInfo, Platform } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -44,6 +44,8 @@ export { default as PortfolioTabIcon } from "./TabIcon";
 import Animated, { useSharedValue } from "react-native-reanimated";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import AnimatedContainer from "./AnimatedContainer";
+import storage from "LLM/storage";
+import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
@@ -61,6 +63,15 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const { isAWalletCardDisplayed } = useDynamicContent();
   const accountListFF = useFeature("llmAccountListUI");
   const isAccountListUIEnabled = accountListFF?.enabled;
+
+  const mmkvMigrationFF = useFeature("llmMmkvMigration");
+
+  useEffect(() => {
+    async function handleMigration() {
+      await storage.handleMigration(mmkvMigrationFF as Feature_LlmMmkvMigration);
+    }
+    handleMigration();
+  }, [mmkvMigrationFF]);
 
   const onBackFromUpdate = useCallback(
     (_updateState: UpdateStep) => {

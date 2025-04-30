@@ -36,6 +36,7 @@ import WarningBannerStatus from "~/components/WarningBannerStatus";
 import ErrorWarning from "./ErrorWarning";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isNFTCollectionsDisplayable } from "./nftHelper";
+import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 
 type Props = {
   account?: AccountLike;
@@ -137,6 +138,10 @@ export function useListHeaderComponents({
     llmSolanaNftsEnabled: llmSolanaNfts?.enabled,
   });
 
+  const coinConfig = getCurrencyConfiguration(currency);
+  const disableDelegation =
+    "disableDelegation" in coinConfig && coinConfig.disableDelegation === true;
+
   return {
     listHeaderComponents: [
       <Box mt={6} onLayout={onAccountCardLayout} key="AccountGraphCard">
@@ -177,6 +182,7 @@ export function useListHeaderComponents({
         <FabAccountMainActions account={account} parentAccount={parentAccount} />
       </SectionContainer>,
       ...(!empty &&
+      !disableDelegation &&
       (AccountHeaderRendered || AccountBalanceSummaryFooterRendered || secondaryActions.length > 0)
         ? [
             <SectionContainer key="AccountHeader">

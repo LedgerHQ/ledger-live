@@ -515,7 +515,7 @@ function useUiHook(): UiHook {
                 onCancel(result.error);
               }
               if (result.operation) {
-                onSuccess(result.operation.id);
+                onSuccess(result.operation.hash);
               }
               setDevice(undefined);
               const n =

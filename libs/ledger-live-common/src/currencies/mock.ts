@@ -43,6 +43,7 @@ export const IDS = [
   "crypto_org",
   "xion",
   "zenrock",
+  "babylon",
 ];
 
 export const CURRENCIES_LIST: CryptoCurrency[] = [
@@ -623,6 +624,35 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
       {
         tx: "https://explorer.diamond.zenrocklabs.io/transactions/$hash",
         address: "https://explorer.diamond.zenrocklabs.io/validators/$address",
+      },
+    ],
+  },
+  {
+    type: "CryptoCurrency",
+    id: "babylon",
+    coinType: 118,
+    name: "Babylon",
+    managerAppName: "Cosmos",
+    ticker: "BABY",
+    scheme: "babylon",
+    color: "#CE6533",
+    family: "cosmos",
+    units: [
+      {
+        name: "Babylon",
+        code: "BABY",
+        magnitude: 6,
+      },
+      {
+        name: "micro BBN",
+        code: "ubbn",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/babylon/txs/$hash",
+        address: "https://www.mintscan.io/babylon/validators/$address",
       },
     ],
   },
