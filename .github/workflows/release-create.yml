@@ -26,7 +26,6 @@ jobs:
       - name: create release branch
         run: |
           git checkout -b $RELEASE_BRANCH
-          git push -u origin $RELEASE_BRANCH
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
@@ -38,6 +37,8 @@ jobs:
         run: pnpm build:libs
       - name: import CAL tokens
         run: pnpm import:cal-tokens
+      - name: Push branch
+        run: git push -u origin $RELEASE_BRANCH
       - name: Add changed files
         run: |
           git add .
