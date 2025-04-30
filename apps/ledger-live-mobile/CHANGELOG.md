@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.77.0-next.1
+
+### Minor Changes
+
+- [#10101](https://github.com/LedgerHQ/ledger-live/pull/10101) [`c0ed799`](https://github.com/LedgerHQ/ledger-live/commit/c0ed7999590a19b5c79b8f5fab427017af942dc3) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - fix: safely access delegation flag from currency config in account header
+
 ## 3.77.0-next.0
 
 ### Minor Changes
