@@ -210,6 +210,7 @@ const extraProperties = (store: ReduxStore) => {
     appLanguage: language, // Needed for braze
     region,
     environment: process.env.SEGMENT_TEST ? "test" : __DEV__ ? "development" : "production",
+    platform: "desktop",
     systemLanguage: systemLocale.language,
     systemRegion: systemLocale.region,
     osType,
