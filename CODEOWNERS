@@ -11,6 +11,7 @@
 .github/workflows/test-ui-e2e-only-desktop.yml          @ledgerhq/fdp-ci  @ledgerhq/qaa
 .github/workflows/test-mobile-e2e-reusable.yml          @ledgerhq/fdp-ci  @ledgerhq/qaa
 .github/workflows/test-design-system-reusable.yml       @ledgerhq/fdp-ci  @ledgerhq/live-hub
+tools                                                   @ledgerhq/fdp-ci
 
 # Hub team
 ## by default, hub manage apps and libs related to it & then we overrides many exceptions
