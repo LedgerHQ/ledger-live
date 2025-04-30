@@ -31,6 +31,7 @@ import {
   GetAccountTransactionsDataQuery,
   GetAccountTransactionsDataGtQueryVariables,
 } from "./graphql/types";
+import { BlockInfo } from "@ledgerhq/coin-framework/api/types";
 
 const getApiEndpoint = (currencyId: string) =>
   isTestnet(currencyId) ? getEnv("APTOS_TESTNET_API_ENDPOINT") : getEnv("APTOS_API_ENDPOINT");
@@ -222,6 +223,16 @@ export class AptosAPI {
     return {
       height: parseInt(block.block_height),
       hash: block.block_hash,
+    };
+  }
+
+  public async getLastBlock(): Promise<BlockInfo> {
+    const { block_height } = await this.aptosClient.getLedgerInfo();
+    const block = await this.aptosClient.getBlockByHeight({ blockHeight: Number(block_height) });
+    return {
+      height: Number(block.block_height),
+      hash: block.block_hash,
+      time: new Date(block.block_timestamp),
     };
   }
 }
