@@ -320,13 +320,13 @@ describe("Testing craftTransaction function", () => {
 
   it("should pass signing pub key when user provides it for crafting a transaction", async () => {
     await api.craftTransaction({
-      sender: { address: "foo", publicKey: "foo" },
+      sender: { address: "foo", publicKey: "bar" },
     } as TransactionIntent<XrpAsset, TransactionIntentExtra, XrpSender>);
 
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.any(Object),
-      "foo",
+      "bar",
     );
   });
 
