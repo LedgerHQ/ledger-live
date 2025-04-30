@@ -94,7 +94,7 @@
     "@types/qrcode": "1.5.5",
     "@types/react-key-handler": "1.2.4",
     "@types/semver": "7.5.8",
-    "@xstate/react": "1.6.3",
+    "@xstate/react": "^5.0.2",
     "allure-commandline": "2.28.0",
     "bignumber.js": "9.1.2",
     "chart.js": "2.9.4",
@@ -156,7 +156,7 @@
     "winston": "3.13.0",
     "winston-transport": "4.7.0",
     "write-file-atomic": "5.0.1",
-    "xstate": "4.38.3"
+    "xstate": "^5.19.2"
   },
   "devDependencies": {
     "@electron/notarize": "2.3.2",
