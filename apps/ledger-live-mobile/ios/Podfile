@@ -57,9 +57,9 @@ target 'ledgerlivemobile' do
     installer.pods_project.targets.each do |target|
 
       target.build_configurations.each do |config|
-        if ['react-native-fast-crypto'].include? target.name
-          config.build_settings["USE_HEADERMAP"] = "NO"
-        end
+        # if ['react-native-fast-crypto'].include? target.name
+        #   config.build_settings["USE_HEADERMAP"] = "NO"
+        # end
 
         # Using the un-qualified names means you can swap in different implementations, for example ccache
         # see: https://reactnative.dev/docs/build-speed#xcode-specific-setup
