@@ -1,4 +1,5 @@
 import { expect } from "detox";
+import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class AccountPage {
   baseLink = "account";
@@ -30,6 +31,11 @@ export default class AccountPage {
   sendButton = () => getElementById("account-quick-action-button-send");
 
   accountRenameRow = () => getElementById("account-settings-rename-row");
+
+  @Step("Open accounts list via deeplink")
+  async openViaDeeplink() {
+    await openDeeplink(this.baseLink);
+  }
 
   @Step("Expect accounts number")
   async expectAccountsNumber(number: number) {

@@ -38,6 +38,7 @@ const config: Config = {
       {
         tsconfig: "<rootDir>/tsconfig.json",
         babelConfig: true,
+        diagnostics: false,
       },
     ],
   },

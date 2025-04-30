@@ -4,9 +4,15 @@
   "private": true,
   "scripts": {
     "lint:fix": "pnpm lint --fix",
-    "e2e:test": "export MOCK=0 && jest --config jest.config.ts pnpm detox test --configuration ios.sim.debug",
+    "e2e:test": "export MOCK=0 && pnpm detox test --configuration ios.sim.debug",
     "e2e:test:ios": "pnpm e2e:test --configuration ios.sim.release",
-    "e2e:test:android": "pnpm e2e:test --configuration android.emu.release"
+    "e2e:test:android": "pnpm e2e:test --configuration android.emu.release",
+    "e2e:build:ios": "pnpm --filter live-mobile run e2e:build --configuration ios.sim.release",
+    "e2e:build:android": "pnpm --filter live-mobile run e2e:build --configuration android.emu.release",
+    "e2e:test:ios:debug": "pnpm e2e:test --configuration ios.sim.debug",
+    "e2e:test:android:debug": "pnpm e2e:test --configuration android.emu.debug",
+    "e2e:build:ios:debug": "pnpm --filter live-mobile run e2e:build --configuration ios.sim.debug",
+    "e2e:build:android:debug": "pnpm --filter live-mobile run e2e:build --configuration android.emu.debug"
   },
   "dependencies": {
     "@ledgerhq/logs": "workspace:^",
@@ -50,7 +56,7 @@
     "eslint-plugin-json": "3.1.0",
     "eslint-plugin-prettier": "5.1.3",
     "expect": "27.5.1",
-    "express": "5.1.0",
+    "express": "4.19.2",
     "glob": "^11.0.1",
     "jest": "29.7.0",
     "jest-allure2-reporter": "2.0.0",
@@ -59,7 +65,6 @@
     "jest-metadata": "1.5.3",
     "lodash": "4.17.21",
     "metro-react-native-babel-preset": "0.77.0",
-    "perf_hooks": "^0.0.1",
     "react-native-config": "1.5.3",
     "react-native-launch-arguments": "4.0.2",
     "react-native-reanimated": "3.16.1",

@@ -41,6 +41,7 @@
     "babel.config.js",
     "jest.config.js",
     "**/*.js",
-    "../../apps/ledger-live-mobile/src/**/*"
+    "../../apps/ledger-live-mobile/src/**/*",
+    " ../../libs/ledger-live-common/src/**/*"
   ]
 }
