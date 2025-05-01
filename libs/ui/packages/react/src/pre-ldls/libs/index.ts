@@ -6,6 +6,15 @@ import { dark, light, ModeColors, spacing, SpacingScale } from "./design-tokens"
 const extraOther = {
   "radius-s": "8px",
   "radius-xs": "4px",
+  "margin-xs": "8px", // redefines marging-xs
+  "margin-s": "16px", // redefines marging-s
+  "margin-m": "24px", // redefines marging-m
+  "margin-l": "32px", // redefines marging-l
+} as const;
+
+const overrideOther = {
+  "spacing-xs": "12px", // from "spacing-xxs": "12px"
+  "spacing-xxs": "8px", // from "spacing-xs": "8px"
 } as const;
 
 // override colours based on Figma differing from design-tokens.ts
@@ -32,10 +41,12 @@ export const withTokens = (...usedTokens: Array<ColorToken | OtherToken>) => {
       if (!usedTokens.includes(color)) return [];
       return [[`--${color}`, value]];
     });
-    const otherEntries = [spacing, extraOther].flatMap(Object.entries).flatMap(([key, value]) => {
-      if (!usedTokens.includes(key as OtherToken)) return [];
-      return [[`--${key}`, value]];
-    });
+    const otherEntries = [spacing, overrideOther, extraOther]
+      .flatMap(Object.entries)
+      .flatMap(([key, value]) => {
+        if (!usedTokens.includes(key as OtherToken)) return [];
+        return [[`--${key}`, value]];
+      });
 
     return Object.fromEntries([...colorEntries, ...otherEntries]);
   });

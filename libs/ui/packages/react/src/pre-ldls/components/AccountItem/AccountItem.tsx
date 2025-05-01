@@ -21,7 +21,7 @@ type AccountItemProps = AssetType & {
 
 const Wrapper = styled.div`
   ${withTokens(
-    "spacing-xs",
+    "spacing-xxs",
     "colors-content-default-default",
     "colors-surface-transparent-hover",
     "colors-surface-transparent-pressed",
@@ -29,7 +29,7 @@ const Wrapper = styled.div`
   )}
 
   display: flex;
-  padding: var(--spacing-xs);
+  padding: var(--spacing-xxs);
   cursor: pointer;
   justify-content: space-between;
   align-items: center;
