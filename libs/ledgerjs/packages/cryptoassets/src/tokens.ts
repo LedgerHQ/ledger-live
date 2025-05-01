@@ -18,6 +18,7 @@ import spltokens, { SPLToken } from "./data/spl";
 import aptCoinTokens, { AptosToken as AptosCoinToken } from "./data/apt_coin";
 import aptFATokens, { AptosToken as AptosFAToken } from "./data/apt_fungible_asset";
 import { ERC20Token } from "./types";
+import { getEnv } from "@ledgerhq/live-env";
 
 const emptyArray = [];
 const tokensArray: TokenCurrency[] = [];
@@ -59,10 +60,13 @@ addTokens(filecoinTokens.map(convertERC20));
 addTokens(spltokens.map(convertSplTokens));
 // Sonic
 addTokens(sonicTokens.map(convertERC20));
-// Aptos Legacy Coin tokens
-addTokens(aptCoinTokens.map(convertAptCoinTokens));
-// Aptos fungible assets tokens
-addTokens(aptFATokens.map(convertAptFaTokens));
+
+if (getEnv("APTOS_ENABLE_TOKENS")) {
+  // Aptos Legacy Coin tokens
+  addTokens(aptCoinTokens.map(convertAptCoinTokens));
+  // Aptos fungible assets tokens
+  addTokens(aptFATokens.map(convertAptFaTokens));
+}
 
 type TokensListOptions = {
   withDelisted: boolean;
