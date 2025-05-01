@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tron
 
+## 2.1.0-nightly.2
+
+### Minor Changes
+
+- [#10099](https://github.com/LedgerHQ/ledger-live/pull/10099) [`30795dd`](https://github.com/LedgerHQ/ledger-live/commit/30795dd032278d98aa67da1e809cd1d5dcfc5501) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - [coin-modules][tron] improve broadcast failure error
+
 ## 2.0.1-nightly.1
 
 ### Patch Changes

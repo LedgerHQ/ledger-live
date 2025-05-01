@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.24.0-nightly.2
+
+### Minor Changes
+
+- [#10034](https://github.com/LedgerHQ/ledger-live/pull/10034) [`98adc70`](https://github.com/LedgerHQ/ledger-live/commit/98adc70de21ac0423e378ea2a7076e15e8fc8191) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add network selection components
+
 ## 0.23.1-nightly.1
 
 ### Patch Changes

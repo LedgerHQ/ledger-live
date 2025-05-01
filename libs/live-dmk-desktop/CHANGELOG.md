@@ -1,5 +1,12 @@
 # @ledgerhq/live-dmk-desktop
 
+## 0.3.3-nightly.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.32.0-nightly.2
+
 ## 0.3.3-nightly.1
 
 ### Patch Changes

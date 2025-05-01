@@ -1,5 +1,26 @@
 # ledger-live-desktop
 
+## 2.112.0-nightly.2
+
+### Minor Changes
+
+- [#9742](https://github.com/LedgerHQ/ledger-live/pull/9742) [`57833f5`](https://github.com/LedgerHQ/ledger-live/commit/57833f5d577535ad4734e6436098899daaf0d968) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Sync error add a fallback message to avoid non ux error message
+
+- [#10034](https://github.com/LedgerHQ/ledger-live/pull/10034) [`98adc70`](https://github.com/LedgerHQ/ledger-live/commit/98adc70de21ac0423e378ea2a7076e15e8fc8191) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add network selection components
+
+- [#10059](https://github.com/LedgerHQ/ledger-live/pull/10059) [`3b9ab8e`](https://github.com/LedgerHQ/ledger-live/commit/3b9ab8ed587984954228aee66849426f1df41ad8) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - bugfixe: wrong size for retry button in device action
+
+- [#9833](https://github.com/LedgerHQ/ledger-live/pull/9833) [`0bafd55`](https://github.com/LedgerHQ/ledger-live/commit/0bafd5508d3762db1cf0874a9fef5e66bc683558) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - skip memo tag disclaimer for ICP
+
+### Patch Changes
+
+- [#10109](https://github.com/LedgerHQ/ledger-live/pull/10109) [`ac44149`](https://github.com/LedgerHQ/ledger-live/commit/ac441496bfec48facdbfe728d7f12b41ad1bc1db) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Add a platform user property
+
+- Updated dependencies [[`98adc70`](https://github.com/LedgerHQ/ledger-live/commit/98adc70de21ac0423e378ea2a7076e15e8fc8191)]:
+  - @ledgerhq/react-ui@0.24.0-nightly.2
+  - @ledgerhq/live-common@34.32.0-nightly.2
+  - @ledgerhq/live-dmk-desktop@0.3.3-nightly.2
+
 ## 2.112.0-nightly.1
 
 ### Minor Changes

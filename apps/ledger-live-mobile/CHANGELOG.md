@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.77.0-nightly.2
+
+### Minor Changes
+
+- [#10020](https://github.com/LedgerHQ/ledger-live/pull/10020) [`20a73cb`](https://github.com/LedgerHQ/ledger-live/commit/20a73cb5a632c19bb107db35549d726e801605ac) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Storage perfomance debug tool. Enhance sentry error and analytics
+
+### Patch Changes
+
+- [#10109](https://github.com/LedgerHQ/ledger-live/pull/10109) [`ac44149`](https://github.com/LedgerHQ/ledger-live/commit/ac441496bfec48facdbfe728d7f12b41ad1bc1db) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Add a platform user property
+
 ## 3.77.0-nightly.1
 
 ### Minor Changes

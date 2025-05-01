@@ -1,5 +1,12 @@
 # @ledgerhq/live-common
 
+## 34.32.0-nightly.2
+
+### Patch Changes
+
+- Updated dependencies [[`30795dd`](https://github.com/LedgerHQ/ledger-live/commit/30795dd032278d98aa67da1e809cd1d5dcfc5501)]:
+  - @ledgerhq/coin-tron@2.1.0-nightly.2
+
 ## 34.32.0-nightly.1
 
 ### Minor Changes
