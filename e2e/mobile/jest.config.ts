@@ -25,7 +25,7 @@ const jestAllure2ReporterOptions: ReporterOptions = {
 };
 
 // Include problematic ESM packages and their submodules
-const ESM_PACKAGES = ["ky", "@polkadot", "@ledgerhq", "@solana"].join("|");
+const ESM_PACKAGES = ["ky", "@polkadot"].join("|");
 
 const config: Config = {
   rootDir: ".",

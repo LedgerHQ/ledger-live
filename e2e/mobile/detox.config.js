@@ -1,16 +1,15 @@
 const path = require("path");
-
 const iosArch = "arm64";
+// NOTE: Pass CI=1 if you want to build locally when you don't have a mac M1. This works better if you do export CI=1 for the whole session.
 const androidArch = process.env.CI ? "x86_64" : "arm64-v8a";
-const ENV_FILE_MOCK = path.join("apps", "ledger-live-mobile", ".env.mock");
-const ENV_FILE_MOCK_PRERELEASE = path.join("apps", "ledger-live-mobile", ".env.mock.prerelease");
 const SCHEME = "ledgerlivemobile";
-const ANDROID_ASSEMBLE_TEST = "app:assembleAndroidTest";
 
 const rootDir = path.resolve(__dirname, "../..");
 const iosDir = path.join(rootDir, "apps/ledger-live-mobile/ios");
 const iosBuildDir = path.join(iosDir, "build");
 const androidDir = path.join(rootDir, "apps/ledger-live-mobile/android");
+const ENV_FILE_MOCK = path.join("apps", "ledger-live-mobile", ".env.mock");
+const ENV_FILE_MOCK_PRERELEASE = path.join("apps", "ledger-live-mobile", ".env.mock.prerelease");
 
 const getIosBinary = config =>
   path.join(iosBuildDir, `Build/Products/${config}-iphonesimulator/${SCHEME}.app`);
@@ -19,128 +18,8 @@ const getAndroidBinary = type =>
 const getAndroidTestBinary = type =>
   path.join(androidDir, `app/build/outputs/apk/androidTest/${type}/app-${type}-androidTest.apk`);
 
-const getIosBuildCommand = (configuration, envFile = ENV_FILE_MOCK) =>
-  `
-  cd ${iosDir} &&
-  export ENVFILE=${envFile} &&
-  xcodebuild
-    ARCHS=${iosArch}
-    ONLY_ACTIVE_ARCH=YES
-    -workspace ${SCHEME}.xcworkspace
-    -scheme ${SCHEME}
-    -configuration ${configuration}
-    -sdk iphonesimulator
-    -derivedDataPath build
-`
-    .replace(/\s+/g, " ")
-    .trim();
-
-const getAndroidBuildCommand = (assembleTask, testBuildType, envFile = ENV_FILE_MOCK) =>
-  `
-  cd ${androidDir} &&
-  ENVFILE=${envFile}
-  SENTRY_DISABLE_AUTO_UPLOAD=true
-  ./gradlew
-    app:${assembleTask}
-    ${ANDROID_ASSEMBLE_TEST}
-    -DtestBuildType=${testBuildType}
-    -PreactNativeArchitectures=${androidArch}
-`
-    .replace(/\s+/g, " ")
-    .trim();
-
-const createIosAppConfig = (name, configuration, envFile = ENV_FILE_MOCK) => ({
-  type: "ios.app",
-  build: getIosBuildCommand(configuration, envFile),
-  binaryPath: getIosBinary(configuration),
-  webView: {
-    enabled: true,
-    type: "react-native-webview",
-  },
-});
-
-const createAndroidAppConfig = (name, assembleTask, testBuildType, envFile = ENV_FILE_MOCK) => ({
-  type: "android.apk",
-  build: getAndroidBuildCommand(assembleTask, testBuildType, envFile),
-  binaryPath: getAndroidBinary(testBuildType),
-  testBinaryPath: getAndroidTestBinary(testBuildType),
-  webView: {
-    enabled: true,
-    type: "react-native-webview",
-  },
-});
-
-const appConfigs = [
-  { name: "ios.debug", factory: createIosAppConfig, args: ["Debug"] },
-  { name: "ios.staging", factory: createIosAppConfig, args: ["Staging"] },
-  { name: "ios.release", factory: createIosAppConfig, args: ["Release"] },
-  {
-    name: "ios.prerelease",
-    factory: createIosAppConfig,
-    args: ["Release", ENV_FILE_MOCK_PRERELEASE],
-  },
-  { name: "android.debug", factory: createAndroidAppConfig, args: ["assembleDebug", "debug"] },
-  { name: "android.release", factory: createAndroidAppConfig, args: ["assembleDetox", "detox"] },
-  {
-    name: "android.prerelease",
-    factory: createAndroidAppConfig,
-    args: ["assembleDetoxPreRelease", "detoxPreRelease", ENV_FILE_MOCK_PRERELEASE],
-  },
-];
-
-const apps = appConfigs.reduce((acc, { name, factory, args }) => {
-  acc[name] = factory(name, ...args);
-  return acc;
-}, {});
-
-const deviceConfigs = [
-  {
-    name: "simulator",
-    type: "ios.simulator",
-    device: { name: "iOS Simulator" },
-  },
-  {
-    name: "emulator",
-    type: "android.emulator",
-    device: { avdName: "Android_Emulator" },
-    gpuMode: "swiftshader_indirect",
-    headless: !!process.env.CI,
-  },
-];
-
-const devices = deviceConfigs.reduce((acc, config) => {
-  acc[config.name] = {
-    type: config.type,
-    device: config.device,
-    ...(config.gpuMode && {
-      gpuMode: config.gpuMode,
-      headless: config.headless,
-    }),
-  };
-  return acc;
-}, {});
-
-const configurationNames = [
-  "ios.sim.debug",
-  "ios.sim.staging",
-  "ios.sim.release",
-  "ios.sim.prerelease",
-  "android.emu.debug",
-  "android.emu.release",
-  "android.emu.prerelease",
-];
-
-const configurations = configurationNames.reduce((acc, config) => {
-  const [platform] = config.split(".");
-  acc[config] = {
-    device: platform === "ios" ? "simulator" : "emulator",
-    app: config.replace("sim.", "").replace("emu.", ""),
-  };
-  return acc;
-}, {});
-
+/** @type {Detox.DetoxConfig} */
 module.exports = {
-  configuration: "ios.sim.debug",
   testRunner: {
     $0: "ts-jest",
     args: {
@@ -154,11 +33,8 @@ module.exports = {
   logger: {
     level: process.env.DEBUG_DETOX ? "trace" : "info",
   },
-  artifacts: {
-    screenshots: "failing",
-    logs: "all",
-  },
   behavior: {
+    // NOTE: https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#behavior-configuration
     init: {
       reinstallApp: true,
       exposeGlobals: false,
@@ -168,7 +44,91 @@ module.exports = {
       shutdownDevice: !!process.env.CI,
     },
   },
-  apps,
-  devices,
-  configurations,
+  apps: {
+    "ios.debug": {
+      type: "ios.app",
+      build: `export ENVFILE=${ENV_FILE_MOCK} && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=YES -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build`,
+      binaryPath: getIosBinary("Debug"),
+    },
+    "ios.staging": {
+      type: "ios.app",
+      build: `export ENVFILE=${ENV_FILE_MOCK} && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=YES -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Staging -sdk iphonesimulator -derivedDataPath ios/build`,
+      binaryPath: getIosBinary("staging"),
+    },
+    "ios.release": {
+      type: "ios.app",
+      build: `export ENVFILE=${ENV_FILE_MOCK} && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=YES -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Release -sdk iphonesimulator -derivedDataPath ios/build`,
+      binaryPath: getIosBinary("release"),
+    },
+    "ios.prerelease": {
+      type: "ios.app",
+      build: `export ENVFILE=${ENV_FILE_MOCK_PRERELEASE} && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=YES -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Release -sdk iphonesimulator -derivedDataPath ios/build`,
+      binaryPath: getIosBinary("prerelease"),
+    },
+    "android.debug": {
+      type: "android.apk",
+      build: `cd android && ENVFILE=${ENV_FILE_MOCK} SENTRY_DISABLE_AUTO_UPLOAD=true ./gradlew app:assembleDebug app:assembleAndroidTest -DtestBuildType=debug -PreactNativeArchitectures=${androidArch} && cd ..`,
+      binaryPath: getAndroidBinary("debug"),
+      testBinaryPath: getAndroidTestBinary("debug"),
+    },
+    "android.release": {
+      type: "android.apk",
+      build: `cd android && ENVFILE=${ENV_FILE_MOCK} SENTRY_DISABLE_AUTO_UPLOAD=true ./gradlew app:assembleDetox app:assembleAndroidTest -DtestBuildType=detox -PreactNativeArchitectures=${androidArch} && cd ..`,
+      binaryPath: getAndroidBinary("release"),
+      testBinaryPath: getAndroidTestBinary("release"),
+    },
+    "android.prerelease": {
+      type: "android.apk",
+      build: `cd android && ENVFILE=${ENV_FILE_MOCK_PRERELEASE} SENTRY_DISABLE_AUTO_UPLOAD=true ./gradlew app:assembleDetoxPreRelease app:assembleAndroidTest -DtestBuildType=detoxPreRelease -PreactNativeArchitectures=${androidArch} && cd ..`,
+      binaryPath: getAndroidBinary("prerelease"),
+      testBinaryPath: getAndroidTestBinary("prerelease"),
+    },
+  },
+  devices: {
+    simulator: {
+      type: "ios.simulator",
+      device: {
+        name: "iOS Simulator",
+      },
+    },
+    emulator: {
+      type: "android.emulator",
+      device: {
+        avdName: "Android_Emulator",
+      },
+      gpuMode: "swiftshader_indirect",
+      headless: !!process.env.CI,
+    },
+  },
+  configurations: {
+    "ios.sim.debug": {
+      device: "simulator",
+      app: "ios.debug",
+      // artifacts: { https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#artifacts-configuration },
+    },
+    "ios.sim.staging": {
+      device: "simulator",
+      app: "ios.staging",
+    },
+    "ios.sim.release": {
+      device: "simulator",
+      app: "ios.release",
+    },
+    "ios.sim.prerelease": {
+      device: "simulator",
+      app: "ios.prerelease",
+    },
+    "android.emu.debug": {
+      device: "emulator",
+      app: "android.debug",
+    },
+    "android.emu.release": {
+      device: "emulator",
+      app: "android.release",
+    },
+    "android.emu.prerelease": {
+      device: "emulator",
+      app: "android.prerelease",
+    },
+  },
 };
