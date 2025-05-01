@@ -285,6 +285,7 @@ const extraProperties = async (store: AppStore) => {
     androidVersionCode: getAndroidVersionCode(VersionNumber.buildVersion),
     androidArchitecture: getAndroidArchitecture(VersionNumber.buildVersion),
     environment: ANALYTICS_LOGS ? "development" : "production",
+    platform: "mobile",
     systemLanguage: sensitiveAnalytics ? null : systemLanguage,
     language,
     appLanguage: language, // In Braze it can't be called language

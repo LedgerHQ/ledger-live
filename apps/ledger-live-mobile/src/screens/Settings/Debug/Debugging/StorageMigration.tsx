@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import styled from "styled-components/native";
 import { useTheme } from "@react-navigation/native";
 import Clipboard from "@react-native-clipboard/clipboard";
-import { Flex, Alert, Text, Tag } from "@ledgerhq/native-ui";
+import { Flex, Alert, Text, Tag, Switch } from "@ledgerhq/native-ui";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import Button from "~/components/Button";
 import type { Theme } from "~/colors";
@@ -10,6 +10,9 @@ import storage from "LLM/storage";
 import type { StorageState } from "LLM/storage/types";
 import { MIGRATION_STATUS, ROLLBACK_STATUS } from "LLM/storage/utils/migrations/constants";
 import type { MigrationStatus, RollbackStatus } from "LLM/storage/utils/migrations/types";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import { setEnv } from "@ledgerhq/live-env";
+import { rejectWithError } from "LLM/utils/rejectWithError";
 
 export function DebugStorageMigration() {
   const { colors } = useTheme();
@@ -31,8 +34,10 @@ export function DebugStorageMigration() {
   }
 
   async function handleTriggerErrorBtnPress() {
-    await storage.incrementNumberOfErrorsDebug(new SyntaxError("Debug error"));
+    const usedError = new Error("Debug Storage Error");
+    await storage.incrementNumberOfErrorsDebug(usedError);
     setStorageState({ ...storage.getState() });
+    return rejectWithError({ e: usedError, extraData: { itsforTesting: "test" } });
   }
 
   async function handleCopyBtnPress() {
@@ -41,7 +46,7 @@ export function DebugStorageMigration() {
   }
 
   return (
-    <NavigationScrollView>
+    <NavigationScrollView style={{ flex: 1, marginBottom: 16 }}>
       <Flex p={4}>
         <Alert
           type="info"
@@ -60,7 +65,11 @@ export function DebugStorageMigration() {
         <Text variant="body">Rollback: </Text>
         <Tag>{storageState.rollbackStatus}</Tag>
       </Flex>
-      <Flex p={4}>
+      <Flex py={4} mx={6}>
+        <Flex flexDirection="row" alignItems="center" justifyContent="space-between" mt={4}>
+          <Text p={4}>Performance console</Text>
+          <PerformanceConsoleSwitch />
+        </Flex>
         <DebugMigrationAction
           helperText="Migrate data from AsyncStorage to MMKV"
           buttonText="Migrate"
@@ -107,6 +116,21 @@ function DebugMigrationAction({
         {buttonText}
       </Button>
     </Flex>
+  );
+}
+
+function PerformanceConsoleSwitch() {
+  const performanceConsoleVisibility = useEnv("STORAGE_PERFORMANCE_OVERLAY");
+  const togglePerformanceConsole = useCallback(() => {
+    setEnv("STORAGE_PERFORMANCE_OVERLAY", !performanceConsoleVisibility);
+  }, [performanceConsoleVisibility]);
+
+  return (
+    <Switch
+      checked={performanceConsoleVisibility}
+      value={performanceConsoleVisibility}
+      onChange={togglePerformanceConsole}
+    />
   );
 }
 

@@ -757,7 +757,7 @@ describe("storage", () => {
       });
 
       it("should log the #stringify error", () => {
-        expect(console.error).toHaveBeenCalledWith("Error pushing value to storage", {
+        expect(console.error).toHaveBeenCalledWith("Error stringifying storage", {
           error: error,
           state: {
             migrationStatus: MIGRATION_STATUS.NOT_STARTED,
