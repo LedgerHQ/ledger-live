@@ -20,7 +20,8 @@ import Config from "react-native-config";
 import { LogLevel, PerformanceProfiler, RenderPassReport } from "@shopify/react-native-performance";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useDispatch, useSelector } from "react-redux";
-import { init } from "../e2e/bridge/client";
+// @ts-ignore
+import { init } from "../../../e2e/mobile/bridge/client";
 import logger from "./logger";
 import {
   saveAccounts,
