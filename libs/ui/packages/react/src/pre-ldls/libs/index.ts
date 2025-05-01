@@ -5,6 +5,7 @@ import { dark, light, ModeColors, spacing, SpacingScale } from "./design-tokens"
 // Add temporarily missing tokens here
 const extraOther = {
   "radius-s": "8px",
+  "radius-xs": "4px",
 } as const;
 
 // override colours based on Figma differing from design-tokens.ts
