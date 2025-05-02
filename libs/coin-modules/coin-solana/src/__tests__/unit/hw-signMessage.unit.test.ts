@@ -22,17 +22,20 @@ describe("Testing call to hardware off-chain sign message on Solana", () => {
 
     const signerContext: SignerContext<SolanaSigner> = (_, fn) => fn(solanaSigner);
     const accountFreshAddressPath = "44'/501'/0'/0/0";
-    const messageHex = "54 65 73 74 69 6E 67 20 6F 6E 20 53 6F 6C 61 6E 61";
+    const freshAddress = "8DpKDisipx6f76cEmuGvCX9TrA3SjeR76HaTRePxHBDe";
+    const messageHex = "54657374696E67206F6E20536F6C616E61";
+    const offchainMessage =
+      "ff736f6c616e61206f6666636861696e00000000000000000000000000000000000000000000000000000000000000000000016b4a46c53959cac0eff146ab323053cfc503321adfd453a7c67c91a24be03235220035343635373337343639364536373230364636453230353336463643363136453631";
 
     const result = await signMessage(signerContext)(
       "",
-      { freshAddressPath: accountFreshAddressPath } as Account,
+      { freshAddressPath: accountFreshAddressPath, freshAddress } as Account,
       { message: messageHex },
     );
 
     expect(result.signature).toEqual("0x" + HEXADECIMAL_SIGNATURE);
     expect(signMessageMock).toHaveBeenCalledTimes(1);
-    expect(signMessageMock).toHaveBeenCalledWith(accountFreshAddressPath, messageHex);
+    expect(signMessageMock).toHaveBeenCalledWith(accountFreshAddressPath, offchainMessage);
   });
 
   it.each([{} as AnyMessage, {} as TypedEvmMessage])(

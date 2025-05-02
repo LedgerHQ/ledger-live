@@ -1,6 +1,7 @@
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { Account, AnyMessage, DeviceId } from "@ledgerhq/types-live";
 import { SolanaSigner } from "./signer";
+import { toOffChainMessage } from "./offchainMessage/format";
 
 export const signMessage =
   (signerContext: SignerContext<SolanaSigner>) =>
@@ -19,7 +20,10 @@ export const signMessage =
     }
 
     const result = await signerContext(deviceId, signer => {
-      return signer.signMessage(account.freshAddressPath, message);
+      return signer.signMessage(
+        account.freshAddressPath,
+        toOffChainMessage(message, account.freshAddress).toString("hex"),
+      );
     });
 
     return { signature: "0x" + result.signature.toString("hex") };

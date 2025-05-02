@@ -22,10 +22,11 @@ describe("Testing setup on Solana", () => {
   describe("Testing message signer", () => {
     it("should call hardware for off-chain message signature", async () => {
       const freshAddressPath = "44'/60'/0'/0/0";
+      const freshAddress = "8DpKDisipx6f76cEmuGvCX9TrA3SjeR76HaTRePxHBDe";
       const message = "4c6f6e67204f66662d436861696e2054657374204d6573736167652e";
       const result = await messageSigner.signMessage(
         {} as Transport,
-        { freshAddressPath: freshAddressPath } as Account,
+        { freshAddressPath: freshAddressPath, freshAddress } as Account,
         { message: message } as AnyMessage,
       );
 
@@ -35,10 +36,8 @@ describe("Testing setup on Solana", () => {
       const args = signOffchainMessageMock.mock.calls[0] as unknown[];
       expect(args[0]).toEqual(freshAddressPath);
 
-      // Sign off-chain message must have an header: "\xff solana offchain"
-      // We check here that the message passed as parameter start with this header
-      expect((args[1] as Buffer).toString("hex")).toMatch(
-        /^ff736f6c616e61206f6666636861696e000138003463366636653637323034663636363632643433363836313639366532303534363537333734323034643635373337333631363736353265$/,
+      expect((args[1] as Buffer).toString("hex")).toEqual(
+        "ff736f6c616e61206f6666636861696e00000000000000000000000000000000000000000000000000000000000000000000016b4a46c53959cac0eff146ab323053cfc503321adfd453a7c67c91a24be0323538003463366636653637323034663636363632643433363836313639366532303534363537333734323034643635373337333631363736353265",
       );
 
       expect(result.signature).toEqual("0x" + SIGNATURE);
