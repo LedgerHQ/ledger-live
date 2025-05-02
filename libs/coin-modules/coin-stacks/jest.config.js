@@ -18,5 +18,5 @@ module.exports = {
       { outputName: "stacks-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
     ],
   ],
-  setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
+  // setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
 };
