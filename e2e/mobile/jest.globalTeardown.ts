@@ -14,7 +14,7 @@ const USERDATA_GLOB = path.join(USERDATA_DIR, "temp-userdata-*.json");
 
 const shouldManageDetox = detox.getStatus() === "inactive";
 
-export default async function globalTeardownWrapper() {
+export default async () => {
   if (process.env.CI) {
     try {
       await initDetox();
@@ -39,7 +39,7 @@ export default async function globalTeardownWrapper() {
 
   // parallel file cleanups
   await Promise.all([cleanupUserdata()]);
-}
+};
 
 async function initDetox() {
   if (detox.session.unsafe_earlyTeardown) {

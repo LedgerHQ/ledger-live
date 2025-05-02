@@ -6,7 +6,6 @@
       }
     },
     "settings": {
-      "enablePlatformDevTools": true,
       "hasCompletedOnboarding": true,
       "counterValue": "USD",
       "language": "en",
@@ -35,6 +34,7 @@
       "hasInstalledApps": true,
       "dismissedDynamicCards": [],
       "seenDevices": [],
+      "readOnlyModeEnabled": false,
       "blacklistedTokenIds": [],
       "swapAcceptedProviderIds": [],
       "deepLinkUrl": null,
@@ -42,7 +42,15 @@
       "swapProviders": [],
       "showClearCacheBanner": false,
       "starredAccountIds": [],
-      "hasPassword": false
+      "hasPassword": false,
+      "overriddenFeatureFlags": {
+        "ptxServiceCtaScreens": {
+          "enabled": true
+        },
+        "ptxServiceCtaExchangeDrawer": {
+          "enabled": true
+        }
+      }
     },
     "user": {
       "id": "08cf3393-c5eb-4ea7-92de-0deea22e3971"

@@ -10,11 +10,8 @@ export function runAddAccountTest(currency: CurrencyType, tmsLinks: string | str
       await app.portfolio.waitForPortfolioPageToLoad();
     });
 
-    // normalize to an array, splitting on commas if it’s a string
     const links = Array.isArray(tmsLinks) ? tmsLinks : tmsLinks.split(/\s*,\s*/);
-
     links.forEach(link => $TmsLink(link));
-
     it(`Perform a Network Based add account - ${currency.name}`, async () => {
       await app.portfolio.addAccount();
       await app.addAccount.importWithYourLedger();

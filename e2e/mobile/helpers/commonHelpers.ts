@@ -82,8 +82,7 @@ export const logMemoryUsage = async (): Promise<void> => {
         log.error(`Error getting memory usage:\n Error: ${error}\n Stderr: ${stderr}`);
         return;
       }
-      const usage = stdout.trim();
-      const logMessage = `📦 Detox Memory Usage: ${usage}`;
+      const logMessage = `📦 Detox Memory Usage: ${stdout.trim()}`;
       await allure.attachment("Memory Usage Details", logMessage, "text/plain");
       log.warn(logMessage);
     },

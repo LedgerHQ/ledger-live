@@ -5,7 +5,6 @@ import net from "net";
 import merge from "lodash/merge";
 
 import { NavigatorName } from "~/const";
-import { BleState } from "~/reducers/types";
 import { MessageData, ServerData } from "./types";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
 import { log as detoxLog } from "detox";
@@ -110,10 +109,6 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
 
 export async function setFeatureFlags(flags: SettingsSetOverriddenFeatureFlagsPlayload) {
   postMessage({ type: "overrideFeatureFlags", id: uniqueId(), payload: flags });
-}
-
-export async function loadBleState(bleState: BleState) {
-  postMessage({ type: "importBle", id: uniqueId(), payload: bleState });
 }
 
 async function navigate(name: string) {

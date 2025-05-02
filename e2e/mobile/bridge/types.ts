@@ -1,6 +1,6 @@
 import { DescriptorEventType } from "@ledgerhq/hw-transport";
 import { AccountRaw } from "@ledgerhq/types-live";
-import { BleState, SettingsState } from "~/reducers/types";
+import { SettingsState } from "~/reducers/types";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
 
 export type ServerData =
@@ -45,9 +45,7 @@ export type MessageData =
         version: number;
       }[];
     }
-  | { type: "importBle"; id: string; payload: BleState }
   | { type: "overrideFeatureFlags"; id: string; payload: SettingsSetOverriddenFeatureFlagsPlayload }
-  | { type: "setGlobals"; id: string; payload: { [key: string]: unknown } }
   | { type: "swapSetup"; id: string }
   | { type: "waitSwapReady"; id: string }
   | { type: "ACK"; id: string };

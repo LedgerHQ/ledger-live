@@ -28,9 +28,8 @@ async function initializeLedgerKeyRingProtocol() {
   return CLI.ledgerKeyRingProtocol({
     initMemberCredentials: true,
     apiBaseUrl: ledgerKeyRingProtocolArgs.apiBaseUrl,
-    // @ts-expect-error
-  }).then(output => {
-    if (output && typeof output !== "string" && "pubkey" in output) {
+  }).then((output: { pubkey: string; privatekey: string }) => {
+    if (output && "pubkey" in output) {
       ledgerKeyRingProtocolArgs.pubKey = output.pubkey;
       ledgerKeyRingProtocolArgs.privateKey = output.privatekey;
     }
@@ -43,7 +42,7 @@ async function initializeLedgerSync() {
     getKeyRingTree: true,
     ...ledgerKeyRingProtocolArgs,
   }).then((out: { rootId: string; walletSyncEncryptionKey: string; applicationPath: string }) => {
-    if (out && typeof out !== "string" && "rootId" in out) {
+    if (out && "rootId" in out) {
       ledgerSyncPushDataArgs.rootId = out.rootId;
       ledgerSyncPushDataArgs.walletSyncEncryptionKey = out.walletSyncEncryptionKey;
       ledgerSyncPushDataArgs.applicationPath = out.applicationPath;
@@ -76,10 +75,11 @@ describe(`Ledger Sync Accounts`, () => {
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 
-  async function goToLedgerSync() {
+  async function goToLedgerSync(disableSync = false) {
     await app.portfolio.openViaDeeplink();
     await app.portfolio.navigateToSettings();
     await app.settings.navigateToGeneralSettings();
+    disableSync && (await device.disableSynchronization()); // TODO: Remove line when LIVE-15405 is fixed
     await app.settingsGeneral.navigateToLedgerSync();
   }
 
@@ -96,10 +96,8 @@ describe(`Ledger Sync Accounts`, () => {
     await app.ledgerSync.closeActivationSuccessPage();
     await app.accounts.openViaDeeplink();
     await app.accounts.expectAccountsNumber(2);
-    await goToLedgerSync();
+    await goToLedgerSync(true);
     await app.ledgerSync.openDeleteSync();
-    // TODO: Remove the following line when the issue is fixed
-    await device.disableSynchronization();
     await app.ledgerSync.confirmDeleteSync();
     await app.ledgerSync.expectLedgerSyncSuccessPage();
     await app.ledgerSync.closeDeletionSuccessPage();

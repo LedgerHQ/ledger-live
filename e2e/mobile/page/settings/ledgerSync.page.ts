@@ -4,6 +4,7 @@ import { expect } from "detox";
 export default class LedgerSyncPage {
   successPage = "walletsync-success";
   confirmDeleteSyncId = "delete-trustchain";
+  deleteSyncId = "walletSync-manage-backup";
 
   activationButton = () => getElementById("walletsync-activation-button");
 
@@ -45,7 +46,8 @@ export default class LedgerSyncPage {
 
   @Step("Select delete sync")
   async openDeleteSync() {
-    await tapByElement(await this.deleteSync());
+    await waitForElementById(this.deleteSyncId);
+    await tapById(this.deleteSyncId);
   }
 
   @Step("Confirm deletion of sync")

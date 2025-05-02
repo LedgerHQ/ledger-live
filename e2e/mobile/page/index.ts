@@ -26,8 +26,7 @@ import SwapLiveAppPage from "./liveApps/swapLiveApp";
 import WalletTabNavigatorPage from "./wallet/walletTabNavigator.page";
 import CeloManageAssetsPage from "./trade/celoManageAssets.page";
 
-import { DeviceLike } from "~/reducers/types";
-import { loadBleState, loadConfig, setFeatureFlags } from "../bridge/server";
+import { loadConfig, setFeatureFlags } from "../bridge/server";
 import { isObservable, lastValueFrom, Observable } from "rxjs";
 import path from "path";
 import fs from "fs";
@@ -51,7 +50,6 @@ type ApplicationOptions = {
     cmd: CliCommand;
   }[];
   userdata?: string;
-  knownDevices?: DeviceLike[];
   testedCurrencies?: string[];
   featureFlags?: SettingsSetOverriddenFeatureFlagsPlayload;
 };
@@ -132,7 +130,6 @@ export class Application {
     cliCommands,
     cliCommandsOnApp,
     userdata,
-    knownDevices,
     featureFlags,
   }: ApplicationOptions) {
     const userdataSpeculos = `temp-userdata-${Date.now()}`;
@@ -158,7 +155,6 @@ export class Application {
     } else userdata && (await loadConfig(userdata, true));
 
     featureFlags && (await setFeatureFlags(featureFlags));
-    knownDevices && (await loadBleState({ knownDevices }));
   }
 
   public get assetAccountsPage() {
