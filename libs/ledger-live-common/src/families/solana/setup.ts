@@ -46,6 +46,7 @@ function isPKIUnsupportedError(err: unknown): err is TransportStatusError {
 const createSigner: CreateSigner<SolanaSigner> = (transport: Transport) => {
   const app = new Solana(transport);
   return {
+    getAppConfiguration: app.getAppConfiguration,
     getAddress: app.getAddress,
     signTransaction: async (path, tx, resolution) => {
       if (resolution) {

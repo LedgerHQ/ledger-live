@@ -8,18 +8,21 @@ import { PublicKey } from "@solana/web3.js";
 
 // Max off-chain message length supported by Ledger
 const OFFCM_MAX_LEDGER_LEN = 15 * 1024 - 40 - 8;
+const LEGACY_OFFCM_MAX_LEDGER_LEN = 1280 - 40 - 8;
 // Max length of version 0 off-chain message
 const OFFCM_MAX_V0_LEN = 65515;
 
 const MAX_PRINTABLE_ASCII = 0x7e;
 const MIN_PRINTABLE_ASCII = 0x20;
 const LINE_FEED_ASCII = 0x0a;
-function isPrintableASCII(buffer: Buffer) {
+function isPrintableASCII(buffer: Buffer, isLegacy: boolean) {
   return (
     buffer &&
     buffer.every(element => {
       return (
-        element === LINE_FEED_ASCII ||
+        // The solana app was not allowing new lines as ascii
+        // and would treat the message as UTF-8 (requiring blind signing)
+        (!isLegacy && element === LINE_FEED_ASCII) ||
         (MIN_PRINTABLE_ASCII <= element && element <= MAX_PRINTABLE_ASCII)
       );
     })
@@ -35,9 +38,11 @@ function isUTF8(buffer: Buffer) {
   }
 }
 
-function findMessageFormat(messageBuffer: Buffer): number {
-  if (messageBuffer.length <= OFFCM_MAX_LEDGER_LEN) {
-    if (isPrintableASCII(messageBuffer)) {
+function findMessageFormat(messageBuffer: Buffer, isLegacy: boolean): number {
+  const maxLedgerLen = isLegacy ? LEGACY_OFFCM_MAX_LEDGER_LEN : OFFCM_MAX_LEDGER_LEN;
+
+  if (messageBuffer.length <= maxLedgerLen) {
+    if (isPrintableASCII(messageBuffer, isLegacy)) {
       return 0;
     } else if (isUTF8(messageBuffer)) {
       return 1;
@@ -66,23 +71,31 @@ const messageFormat = Buffer.alloc(1);
 const signerCount = Buffer.alloc(1);
 signerCount.writeUInt8(1);
 const messageLength = Buffer.alloc(2);
-export function toOffChainMessage(message: string, signerAddress: string): Buffer {
+export function toOffChainMessage(
+  message: string,
+  signerAddress: string,
+  isLegacy: boolean,
+): Buffer {
   const messageBuffer = Buffer.from(message);
 
-  messageFormat.writeUInt8(findMessageFormat(messageBuffer));
+  messageFormat.writeUInt8(findMessageFormat(messageBuffer, isLegacy));
 
   const signers = new PublicKey(signerAddress).toBuffer();
 
   messageLength.writeUint16LE(messageBuffer.length);
 
-  return Buffer.concat([
-    signingDomain,
-    headerVersion,
-    applicationDomain,
-    messageFormat,
-    signerCount,
-    signers,
-    messageLength,
-    messageBuffer,
-  ]);
+  return Buffer.concat(
+    isLegacy
+      ? [signingDomain, headerVersion, messageFormat, messageLength, messageBuffer]
+      : [
+          signingDomain,
+          headerVersion,
+          applicationDomain,
+          messageFormat,
+          signerCount,
+          signers,
+          messageLength,
+          messageBuffer,
+        ],
+  );
 }

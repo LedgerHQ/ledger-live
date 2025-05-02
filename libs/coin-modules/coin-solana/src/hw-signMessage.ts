@@ -1,7 +1,10 @@
+import semver from "semver";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { Account, AnyMessage, DeviceId } from "@ledgerhq/types-live";
 import { SolanaSigner } from "./signer";
 import { toOffChainMessage } from "./offchainMessage/format";
+
+const LEGACY_MAX_VERSION = "1.8.2";
 
 export const signMessage =
   (signerContext: SignerContext<SolanaSigner>) =>
@@ -19,10 +22,13 @@ export const signMessage =
       );
     }
 
-    const result = await signerContext(deviceId, signer => {
+    const result = await signerContext(deviceId, async signer => {
+      const { version } = await signer.getAppConfiguration();
+      const isLegacy = semver.lt(version, LEGACY_MAX_VERSION);
+
       return signer.signMessage(
         account.freshAddressPath,
-        toOffChainMessage(message, account.freshAddress).toString("hex"),
+        toOffChainMessage(message, account.freshAddress, isLegacy).toString("hex"),
       );
     });
 
