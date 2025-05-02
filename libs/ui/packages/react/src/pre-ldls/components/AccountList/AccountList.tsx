@@ -9,27 +9,29 @@ export const AccountList = ({
   accounts: {
     name: string;
     id: string;
-    ticker: string;
     balance: string;
     fiatValue: string;
     protocol: string;
     address: string;
+    ticker: string;
+    cryptoId: string;
   }[];
   onClick: (networkId: string) => void;
 }) => {
   return (
     <VirtualList
-      itemHeight={64}
+      itemHeight={68}
       count={accounts.length}
       renderItem={(i: number) => (
         <AccountItem
           name={accounts[i].name}
           onClick={() => onClick(accounts[i].id)}
-          ticker={accounts[i].ticker}
           balance={accounts[i].balance}
           fiatValue={accounts[i].fiatValue}
           protocol={accounts[i].protocol}
           address={accounts[i].address}
+          cryptoId={accounts[i].cryptoId}
+          ticker={accounts[i].ticker}
         />
       )}
     />

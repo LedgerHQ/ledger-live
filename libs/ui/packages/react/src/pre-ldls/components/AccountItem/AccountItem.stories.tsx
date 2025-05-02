@@ -8,10 +8,11 @@ const meta: Meta<typeof AccountItem> = {
   tags: ["autodocs"],
   args: {
     name: "Main BTC",
-    ticker: "BTC",
     balance: "0.118 ETH",
     fiatValue: "$5,969.83",
     address: "n4A9...Zgty",
+    cryptoId: "bitcoin",
+    ticker: "btc",
   },
 };
 export default meta;
@@ -23,11 +24,12 @@ export const Default: Story = {};
 export const TestAccount: Story = {
   args: {
     name: "Main BTC",
-    ticker: "BTC",
     balance: "0.118 BTC",
     fiatValue: "$5,969.83",
     protocol: "Native Segwit",
     address: "n4A9...Zgty",
+    cryptoId: "bitcoin",
+    ticker: "btc",
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -52,10 +54,11 @@ export const TestAccount: Story = {
 export const TestWithoutProtocol: Story = {
   args: {
     name: "Main BTC",
-    ticker: "BTC",
     balance: "0.118 BTC",
     fiatValue: "$5,969.83",
     address: "n4A9...Zgty",
+    cryptoId: "bitcoin",
+    ticker: "btc",
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -69,7 +72,6 @@ export const TestWithoutProtocol: Story = {
 export const TestWithoutAddressIcon: Story = {
   args: {
     name: "Main BTC",
-    ticker: "BTC",
     balance: "0.118 BTC",
     fiatValue: "$5,969.83",
     address: "n4A9...Zgty",
@@ -83,5 +85,3 @@ export const TestWithoutAddressIcon: Story = {
     await expect(addressIcon).not.toBeInTheDocument();
   },
 };
-
-// test a proper click

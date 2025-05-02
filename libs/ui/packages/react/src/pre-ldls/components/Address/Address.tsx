@@ -3,7 +3,13 @@ import { Text } from "../../../components";
 import styled from "styled-components";
 import { withTokens } from "../../libs";
 
-const TempAssetBadge = ({ icon: _icon }: { icon?: string }) => (
+const TempAssetBadge = ({
+  ledgerId: _ledgerId,
+  ticker: _ticker,
+}: {
+  ledgerId?: string;
+  ticker?: string;
+}) => (
   // TODO: To be replaced with LIVE-18221
   <div style={{ display: "flex", alignItems: "center" }} data-testid="address-icon">
     <span
@@ -19,7 +25,7 @@ const TempAssetBadge = ({ icon: _icon }: { icon?: string }) => (
 );
 
 const Wrapper = styled.div`
-  ${withTokens("colors-content-subdued-default-default")}
+  ${withTokens("spacing-xxxs", "colors-content-subdued-default-default")}
 
   display: flex;
   flex-direction: row;
@@ -29,25 +35,24 @@ const Wrapper = styled.div`
 export const Address = ({
   address,
   showIcon,
-  icon,
+  cryptoId,
+  ticker,
 }: {
   address: string;
   showIcon: boolean;
-  icon?: string;
+  cryptoId?: string;
+  ticker?: string;
 }) => {
-  // TODO change to the ID of the icon
   return (
     <Wrapper>
       <Text
-        style={{
-          marginRight: 6,
-          fontSize: 12,
-          color: "var(--colors-content-subdued-default-default)",
-        }}
+        marginRight="var(--spacing-xxxs)"
+        fontSize="12px"
+        color="var(--colors-content-subdued-default-default)"
       >
         {address}
       </Text>
-      {showIcon && <TempAssetBadge icon={icon} />}
+      {showIcon && <TempAssetBadge ledgerId={cryptoId} ticker={ticker} />}
     </Wrapper>
   );
 };

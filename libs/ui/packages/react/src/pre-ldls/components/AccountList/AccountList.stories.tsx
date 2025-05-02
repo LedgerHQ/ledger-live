@@ -18,15 +18,15 @@ const meta: Meta<typeof AccountList> = {
   tags: ["autodocs"],
   args: {
     accounts: Array.from({ length: 50 }, (_, i) => {
-      const p = Math.random() > 0.5;
       return {
-        name: p ? `Bitcoin ${i}` : `Ethereum ${i}`,
-        id: p ? `btc${i}` : `eth${i}`,
-        ticker: p ? "BTC" : "ETH",
-        balance: p ? "0.004 BTC" : "0.004 ETH",
-        fiatValue: p ? "£288.53" : "£5.53",
-        protocol: p ? "Native Segwit" : "",
-        address: p ? "aJf2...ffa3d" : "nIl4...f72n",
+        name: `Bitcoin ${i}`,
+        id: `btc${i}`,
+        balance: "0.004 BTC",
+        fiatValue: "£288.53",
+        protocol: "Native Segwit",
+        address: "n4A9...Zgty",
+        ticker: "btc",
+        cryptoId: "bitcoin",
       };
     }),
     onClick: testFn,
@@ -41,8 +41,6 @@ export const Default: Story = {};
 
 export const TestAccountClick: Story = {
   play: async ({ canvasElement }) => {
-    // TODO does this need to be more comprehensive
-    // and to actually support the proper payload of a click callback
     const canvas = within(canvasElement);
     const input = canvas.getByText("Bitcoin 1");
     await userEvent.click(input);

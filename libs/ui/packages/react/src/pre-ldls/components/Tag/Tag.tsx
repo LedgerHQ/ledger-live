@@ -8,13 +8,10 @@ const Wrapper = styled.div`
     "colors-surface-transparent-subdued-default",
     "colors-content-subdued-default-default",
     "radius-xs",
+    "spacing-xxxs",
   )}
 
-  padding-left: 6px; // Check this
-  padding-right: 6px; // Check this
-  padding-top: 4px; // Check this
-  padding-bottom: 4px; // Check this
-
+  padding: 1px var(--spacing-xxxs);
   border-radius: var(--radius-xs);
   display: inline-flex;
   background-color: var(--colors-surface-transparent-subdued-default);
@@ -23,7 +20,7 @@ const Wrapper = styled.div`
 export const Tag = ({ children }: { children: ReactNode }) => {
   return (
     <Wrapper data-testid="tag">
-      <Text color="var(--colors-content-subdued-default-default)" fontSize="10px">
+      <Text color="var(--colors-content-subdued-default-default)" fontSize="10px" lineHeight="16px">
         {children}
       </Text>
     </Wrapper>

@@ -2,26 +2,26 @@ import React from "react";
 import styled from "styled-components";
 import { withTokens } from "../../libs";
 import { Text } from "../../../components";
-import { Tag } from "../Tag/Tag"; // TODO add to index
+import { Tag } from "../Tag/Tag";
 import { Address } from "../Address/Address";
 
-export type AssetType = {
+type AccountItemProps = {
   name: string;
-  ticker: string;
-};
-
-type AccountItemProps = AssetType & {
-  onClick: (asset: AssetType) => void;
+  onClick: () => void;
   fiatValue: string;
   balance: string;
   address: string;
   protocol?: string;
   showIcon?: boolean;
+  cryptoId?: string;
+  ticker?: string;
 };
 
 const Wrapper = styled.div`
   ${withTokens(
+    "spacing-xxxs",
     "spacing-xxs",
+    "spacing-xs",
     "colors-content-default-default",
     "colors-surface-transparent-hover",
     "colors-surface-transparent-pressed",
@@ -29,7 +29,7 @@ const Wrapper = styled.div`
   )}
 
   display: flex;
-  padding: var(--spacing-xxs);
+  padding: var(--spacing-xs) var(--spacing-xxs);
   cursor: pointer;
   justify-content: space-between;
   align-items: center;
@@ -45,17 +45,17 @@ const Wrapper = styled.div`
 
 export const AccountItem = ({
   name,
-  ticker,
   onClick,
   balance,
   fiatValue,
   protocol,
   address,
   showIcon = true,
+  cryptoId,
+  ticker,
 }: AccountItemProps) => {
   return (
-    <Wrapper onClick={() => onClick({ name, ticker })}>
-      {/* TODO sort out this onclick */}
+    <Wrapper onClick={onClick}>
       <div
         style={{
           display: "flex",
@@ -69,25 +69,27 @@ export const AccountItem = ({
               display: "flex",
               flexDirection: "row",
               alignItems: "center",
-              marginBottom: 10,
+              marginBottom: "var(--spacing-xxxs)",
             }}
           >
             <Text
               variant="largeLineHeight"
               fontWeight="semiBold"
               color="var(--colors-content-default-default)"
-              style={{ marginRight: 6, fontSize: 14, lineHeight: "14px" }}
+              marginRight="var(--spacing-xxs)"
+              fontSize="14px"
+              lineHeight="20px"
             >
               {name}
             </Text>
             {protocol && <Tag>{protocol}</Tag>}
           </div>
-          <Address address={address} icon="BTC" showIcon={showIcon} />
+          <Address address={address} cryptoId={cryptoId} ticker={ticker} showIcon={showIcon} />
         </div>
       </div>
       <div style={{ display: "flex", flexDirection: "column", textAlign: "right" }}>
-        <Text style={{ fontSize: 14 }}>{fiatValue}</Text>
-        <Text style={{ fontSize: 12 }} color="var(--colors-content-subdued-default-default)">
+        <Text fontSize="14px">{fiatValue}</Text>
+        <Text fontSize="12px" color="var(--colors-content-subdued-default-default)">
           {balance}
         </Text>
       </div>

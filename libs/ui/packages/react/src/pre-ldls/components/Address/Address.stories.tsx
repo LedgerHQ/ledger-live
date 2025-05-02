@@ -6,7 +6,7 @@ const meta: Meta<typeof Address> = {
   component: Address,
   title: "PreLdls/Components/Address",
   tags: ["autodocs"],
-  args: { address: "n4A9...Zgty", icon: "BTC" },
+  args: { address: "n4A9...Zgty", cryptoId: "bitcoin", ticker: "BTC" },
 };
 export default meta;
 
