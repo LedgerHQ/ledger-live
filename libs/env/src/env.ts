@@ -83,7 +83,7 @@ const envDefinitions = {
     desc: "Indexer endpoint for Aptos",
   },
   APTOS_ENABLE_TOKENS: {
-    def: true,
+    def: false,
     parser: boolParser,
     desc: "Enable tokens on Aptos",
   },
