@@ -16,17 +16,14 @@ const MAX_PRINTABLE_ASCII = 0x7e;
 const MIN_PRINTABLE_ASCII = 0x20;
 const LINE_FEED_ASCII = 0x0a;
 function isPrintableASCII(buffer: Buffer, isLegacy: boolean) {
-  return (
-    buffer &&
-    buffer.every(element => {
-      return (
-        // The solana app was not allowing new lines as ascii
-        // and would treat the message as UTF-8 (requiring blind signing)
-        (!isLegacy && element === LINE_FEED_ASCII) ||
-        (MIN_PRINTABLE_ASCII <= element && element <= MAX_PRINTABLE_ASCII)
-      );
-    })
-  );
+  return buffer.every(element => {
+    return (
+      // The solana app was not allowing new lines as ascii
+      // and would treat the message as UTF-8 (requiring blind signing)
+      (!isLegacy && element === LINE_FEED_ASCII) ||
+      (MIN_PRINTABLE_ASCII <= element && element <= MAX_PRINTABLE_ASCII)
+    );
+  });
 }
 
 function isUTF8(buffer: Buffer) {
