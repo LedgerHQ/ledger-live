@@ -29,7 +29,7 @@ export const LargeMoverGraph: React.FC<GraphProps> = ({ chartData, range, curren
     [chartData, range],
   );
 
-  const mapGraphValue = useCallback((d: Item) => d?.value || 0, []);
+  const mapGraphValue = useCallback((d: Item) => d?.value ?? 0, []);
 
   const graphColor = useMemo(
     () =>
