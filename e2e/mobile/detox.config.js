@@ -74,14 +74,14 @@ module.exports = {
     "android.release": {
       type: "android.apk",
       build: `cd android && ENVFILE=${ENV_FILE_MOCK} SENTRY_DISABLE_AUTO_UPLOAD=true ./gradlew app:assembleDetox app:assembleAndroidTest -DtestBuildType=detox -PreactNativeArchitectures=${androidArch} && cd ..`,
-      binaryPath: getAndroidBinary("release"),
-      testBinaryPath: getAndroidTestBinary("release"),
+      binaryPath: getAndroidBinary("detox"),
+      testBinaryPath: getAndroidTestBinary("detox"),
     },
     "android.prerelease": {
       type: "android.apk",
       build: `cd android && ENVFILE=${ENV_FILE_MOCK_PRERELEASE} SENTRY_DISABLE_AUTO_UPLOAD=true ./gradlew app:assembleDetoxPreRelease app:assembleAndroidTest -DtestBuildType=detoxPreRelease -PreactNativeArchitectures=${androidArch} && cd ..`,
-      binaryPath: getAndroidBinary("prerelease"),
-      testBinaryPath: getAndroidTestBinary("prerelease"),
+      binaryPath: getAndroidBinary("detoxPreRelease"),
+      testBinaryPath: getAndroidTestBinary("detoxPreRelease"),
     },
   },
   devices: {
