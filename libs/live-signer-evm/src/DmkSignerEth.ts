@@ -91,7 +91,7 @@ export class DmkSignerEth implements EvmSigner {
 
     return new Observable(observer => {
       observer.next({ type: "signer.evm.signing" });
-      this.signer.signMessage(path, buffer).observable.subscribe({
+      this.signer.signMessage(path, buffer, { skipOpenApp: true }).observable.subscribe({
         next: result => {
           if (result.status === DeviceActionStatus.Error) {
             observer.error(this._mapError<SignPersonalMessageDAError>(result.error));
@@ -119,6 +119,7 @@ export class DmkSignerEth implements EvmSigner {
         this.signer.getAddress(path, {
           checkOnDevice: boolDisplay,
           returnChainCode: boolChaincode,
+          skipOpenApp: true,
         }).observable,
       ),
     );
@@ -137,7 +138,7 @@ export class DmkSignerEth implements EvmSigner {
     }
 
     return new Observable(observer => {
-      this.signer.signTransaction(path, buffer).observable.subscribe({
+      this.signer.signTransaction(path, buffer, { skipOpenApp: true }).observable.subscribe({
         next: result => {
           if (result.status === DeviceActionStatus.Error) {
             observer.error(this._mapError<SignTransactionDAError>(result.error));
@@ -183,7 +184,7 @@ export class DmkSignerEth implements EvmSigner {
     _fullImplem?: boolean,
   ): Observable<EvmSignerEvent> {
     return new Observable(observer => {
-      this.signer.signTypedData(path, jsonMessage).observable.subscribe({
+      this.signer.signTypedData(path, jsonMessage, { skipOpenApp: true }).observable.subscribe({
         next: result => {
           if (result.status === DeviceActionStatus.Error) {
             observer.error(this._mapError<SignTypedDataDAError>(result.error));
