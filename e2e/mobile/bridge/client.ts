@@ -10,7 +10,7 @@ import {
 import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { acceptGeneralTerms } from "~/logic/terms";
 import { navigate } from "~/rootnavigation";
-import { addKnownDevice, importBle, removeKnownDevice } from "~/actions/ble";
+import { addKnownDevice, removeKnownDevice } from "~/actions/ble";
 import { LaunchArguments } from "react-native-launch-arguments";
 import logReport from "~/log-report";
 import { MessageData, ServerData } from "./types";
@@ -81,12 +81,6 @@ function onMessage(event: WebSocketMessageEvent) {
     e2eBridgeClient.next(msg);
 
     switch (msg.type) {
-      case "setGlobals":
-        Object.entries(msg.payload).forEach(([k, v]) => {
-          //  @ts-expect-error global bullshit
-          global[k] = v;
-        });
-        break;
       case "acceptTerms":
         acceptGeneralTerms(store);
         break;
@@ -96,10 +90,6 @@ function onMessage(event: WebSocketMessageEvent) {
       }
       case "importSettings": {
         store.dispatch(importSettings(msg.payload));
-        break;
-      }
-      case "importBle": {
-        store.dispatch(importBle(msg.payload));
         break;
       }
       case "overrideFeatureFlags": {

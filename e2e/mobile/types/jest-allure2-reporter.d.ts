@@ -1,6 +1,10 @@
 // jest-allure2-reporter-api.d.ts
 declare module "jest-allure2-reporter/api" {
-  export function $TmsLink(tmsLink: string): void;
+  /**
+   * Link one or more TMS issues to this test.
+   * You can pass either a single string or a list of strings.
+   */
+  export function $TmsLink(...tmsLinks: string[]): void;
 
   export function $Severity(severity: string): void;
 
@@ -17,7 +21,7 @@ declare module "jest-allure2-reporter/api" {
 }
 
 declare global {
-  function $TmsLink(tmsLink: string): void;
+  function $TmsLink(...tmsLinks: string[]): void;
 
   function $Severity(severity: string): void;
 

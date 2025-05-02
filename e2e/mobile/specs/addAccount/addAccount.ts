@@ -10,8 +10,7 @@ export function runAddAccountTest(currency: CurrencyType, tmsLinks: string | str
       await app.portfolio.waitForPortfolioPageToLoad();
     });
 
-    const links = Array.isArray(tmsLinks) ? tmsLinks : tmsLinks.split(/\s*,\s*/);
-    links.forEach(link => $TmsLink(link));
+    $TmsLink(...tmsLinks);
     it(`Perform a Network Based add account - ${currency.name}`, async () => {
       await app.portfolio.addAccount();
       await app.addAccount.importWithYourLedger();
