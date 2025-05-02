@@ -13,8 +13,7 @@ const prepareTransaction = async (
   if (transaction.stake) {
     transaction.recipient = transaction.stake.poolAddr;
 
-    if (!transaction.useAllAmount && transaction.amount.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS))
-      return transaction;
+    if (transaction.amount.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS)) return transaction;
   }
 
   if (!transaction.recipient) {
