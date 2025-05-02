@@ -1,7 +1,15 @@
-import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { Account, AnyMessage, TypedEvmMessage } from "@ledgerhq/types-live";
 import { signMessage } from "../../hw-signMessage";
 import { PubKeyDisplayMode, SolanaSigner } from "../../signer";
+import coinConfig from "../../config";
+
+coinConfig.setCoinConfig(() => ({
+  legacyOCMSMaxVersion: "1.8.2",
+  queuedInterval: 1,
+  token2022Enabled: false,
+  status: { type: "active" },
+}));
 
 describe("Testing call to hardware off-chain sign message on Solana", () => {
   it("should sign a message off-chain on hardware and return the generated signature", async () => {

@@ -23,7 +23,7 @@ import {
 import { LatestFirmwareVersionRequired } from "../../errors";
 import type { Resolver } from "../../hw/getAddress/types";
 import { getCurrencyConfiguration } from "../../config";
-import { SolanaCoinConfig } from "@ledgerhq/coin-solana/lib/config";
+import { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
 import { getCryptoCurrencyById } from "../../currencies";
 import { signMessage } from "@ledgerhq/coin-solana/hw-signMessage";
 

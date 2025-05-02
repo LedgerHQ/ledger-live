@@ -3,8 +3,7 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { Account, AnyMessage, DeviceId } from "@ledgerhq/types-live";
 import { SolanaSigner } from "./signer";
 import { toOffChainMessage } from "./offchainMessage/format";
-
-const LEGACY_MAX_VERSION = "1.8.2";
+import coinConfig from "./config";
 
 export const signMessage =
   (signerContext: SignerContext<SolanaSigner>) =>
@@ -24,7 +23,7 @@ export const signMessage =
 
     const result = await signerContext(deviceId, async signer => {
       const { version } = await signer.getAppConfiguration();
-      const isLegacy = semver.lt(version, LEGACY_MAX_VERSION);
+      const isLegacy = semver.lt(version, coinConfig.getCoinConfig().legacyOCMSMaxVersion);
 
       return signer.signMessage(
         account.freshAddressPath,
