@@ -382,7 +382,9 @@ export class SwapPage extends AppPage {
           swap.amount,
           debit,
           credit,
-          `swap%2F${debit}%2F${credit}`,
+          `swap%3Fledgerlive%3dtrue`,
+          `src%3d${debit}`,
+          `dst%3d${credit}`,
         ]);
         break;
       }

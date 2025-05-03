@@ -44,20 +44,19 @@ export const account = {
   subAccounts: [tokenAccount],
 } as TonAccount;
 
-export const transaction = {
-  mode: "send",
+export const transaction: Transaction = {
   recipient: "UQCOvQLYvTcbi5tL9MaDNzuVl3-J3vATimNm9yO5XPafLfV4",
   amount: new BigNumber("1000000"),
   useAllAmount: false,
   comment: { isEncrypted: false, text: "" },
-  payload: "",
   family: "ton",
-} as unknown as Transaction;
+  fees: new BigNumber(1000),
+};
 
-export const jettonTransaction = {
+export const jettonTransaction: Transaction = {
   ...transaction,
   subAccountId: "subAccountId",
-} as Transaction;
+};
 
 export const fees = {
   in_fwd_fee: 10000,

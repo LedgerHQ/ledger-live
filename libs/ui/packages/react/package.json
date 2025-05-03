@@ -78,6 +78,7 @@
     "@ledgerhq/crypto-icons-ui": "workspace:^",
     "@ledgerhq/icons-ui": "workspace:^",
     "@ledgerhq/ui-shared": "workspace:^",
+    "@tanstack/react-virtual": "3.13.6",
     "@tippyjs/react": "^4.2.6",
     "color": "^4.0.0",
     "embla-carousel-autoplay": "8.4.0",
@@ -88,7 +89,6 @@
     "react-select": "^5.2.1",
     "react-spring": "8.0.27",
     "react-transition-group": "^4.4.2",
-    "react-virtualized-auto-sizer": "1.0.24",
     "react-window": "^1.8.6",
     "styled-system": "^5.1.5"
   },
