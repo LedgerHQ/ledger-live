@@ -1,5 +1,21 @@
 # @ledgerhq/live-common
 
+## 34.32.0-nightly.3
+
+### Minor Changes
+
+- [#10114](https://github.com/LedgerHQ/ledger-live/pull/10114) [`b976361`](https://github.com/LedgerHQ/ledger-live/commit/b97636178a7bc1b6f0d1acbbeccf51d843198a10) Thanks [@Justkant](https://github.com/Justkant)! - fix: solana sign off-chain message
+
+- [#9837](https://github.com/LedgerHQ/ledger-live/pull/9837) [`1488235`](https://github.com/LedgerHQ/ledger-live/commit/1488235ee13fd1f6e71b7bae0da88142986e6c6d) Thanks [@Justkant](https://github.com/Justkant)! - chore: bump wallet-api versions
+
+### Patch Changes
+
+- Updated dependencies [[`b976361`](https://github.com/LedgerHQ/ledger-live/commit/b97636178a7bc1b6f0d1acbbeccf51d843198a10), [`29b72fe`](https://github.com/LedgerHQ/ledger-live/commit/29b72fe9d1b7697c0fef53fd11e3d2d775032f68), [`1488235`](https://github.com/LedgerHQ/ledger-live/commit/1488235ee13fd1f6e71b7bae0da88142986e6c6d)]:
+  - @ledgerhq/coin-solana@0.22.0-nightly.2
+  - @ledgerhq/coin-ton@0.10.0-nightly.2
+  - @ledgerhq/wallet-api-acre-module@0.5.0-nightly.0
+  - @ledgerhq/wallet-api-exchange-module@0.13.0-nightly.0
+
 ## 34.32.0-nightly.2
 
 ### Patch Changes

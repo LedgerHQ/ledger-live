@@ -1,5 +1,11 @@
 # @ledgerhq/coin-ton
 
+## 0.10.0-nightly.2
+
+### Minor Changes
+
+- [#9837](https://github.com/LedgerHQ/ledger-live/pull/9837) [`29b72fe`](https://github.com/LedgerHQ/ledger-live/commit/29b72fe9d1b7697c0fef53fd11e3d2d775032f68) Thanks [@Justkant](https://github.com/Justkant)! - feat(coin-ton): expose ton payload for all possible actions
+
 ## 0.9.1-nightly.1
 
 ### Patch Changes

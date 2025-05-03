@@ -1,5 +1,11 @@
 # @ledgerhq/coin-solana
 
+## 0.22.0-nightly.2
+
+### Minor Changes
+
+- [#10114](https://github.com/LedgerHQ/ledger-live/pull/10114) [`b976361`](https://github.com/LedgerHQ/ledger-live/commit/b97636178a7bc1b6f0d1acbbeccf51d843198a10) Thanks [@Justkant](https://github.com/Justkant)! - fix: solana sign off-chain message
+
 ## 0.21.1-nightly.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.24.0-nightly.3
+
+### Minor Changes
+
+- [#10118](https://github.com/LedgerHQ/ledger-live/pull/10118) [`e0cf0ed`](https://github.com/LedgerHQ/ledger-live/commit/e0cf0ed7987da2e4cd7cfcc389e9804ab86129f9) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Use tanstack/virtual to handle the pagination of the virtual list
+
 ## 0.24.0-nightly.2
 
 ### Minor Changes
