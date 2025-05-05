@@ -1,5 +1,32 @@
 # live-mobile
 
+## 3.77.0-nightly.3
+
+### Minor Changes
+
+- [#10047](https://github.com/LedgerHQ/ledger-live/pull/10047) [`a7ba19c`](https://github.com/LedgerHQ/ledger-live/commit/a7ba19cfa5a895572edfcf036a10d2af83efdf38) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - NFT Support in LLM
+
+- [#10136](https://github.com/LedgerHQ/ledger-live/pull/10136) [`8b75ba3`](https://github.com/LedgerHQ/ledger-live/commit/8b75ba3b6485e6db12fa3d9030a73f99476b112e) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - add header with title and back button to exchange start device select screen
+
+- [#9969](https://github.com/LedgerHQ/ledger-live/pull/9969) [`b225fa3`](https://github.com/LedgerHQ/ledger-live/commit/b225fa3d18bfe87e880ef4c70ab7b747a83642ca) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - Remove EIP712 clear signing screen
+
+### Patch Changes
+
+- Updated dependencies [[`a7ba19c`](https://github.com/LedgerHQ/ledger-live/commit/a7ba19cfa5a895572edfcf036a10d2af83efdf38)]:
+  - @ledgerhq/types-live@6.69.0-nightly.2
+  - @ledgerhq/coin-framework@4.1.0-nightly.2
+  - @ledgerhq/coin-cosmos@0.14.0-nightly.2
+  - @ledgerhq/coin-evm@2.19.2-nightly.2
+  - @ledgerhq/coin-filecoin@1.9.4-nightly.2
+  - @ledgerhq/coin-multiversx@0.4.4-nightly.2
+  - @ledgerhq/coin-stacks@0.8.4-nightly.2
+  - @ledgerhq/domain-service@1.2.28-nightly.2
+  - @ledgerhq/live-countervalues@0.5.4-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.33-nightly.2
+  - @ledgerhq/live-nft@0.8.4-nightly.2
+  - @ledgerhq/live-nft-react@0.9.4-nightly.2
+  - @ledgerhq/live-wallet@0.10.7-nightly.2
+
 ## 3.77.0-nightly.2
 
 ### Minor Changes

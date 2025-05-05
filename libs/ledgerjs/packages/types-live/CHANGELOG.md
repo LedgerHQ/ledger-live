@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.69.0-nightly.2
+
+### Minor Changes
+
+- [#10047](https://github.com/LedgerHQ/ledger-live/pull/10047) [`a7ba19c`](https://github.com/LedgerHQ/ledger-live/commit/a7ba19cfa5a895572edfcf036a10d2af83efdf38) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - NFT Support in LLM
+
 ## 6.69.0-nightly.1
 
 ### Minor Changes

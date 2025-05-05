@@ -1,5 +1,30 @@
 # ledger-live-desktop
 
+## 2.112.0-nightly.4
+
+### Minor Changes
+
+- [#9969](https://github.com/LedgerHQ/ledger-live/pull/9969) [`b225fa3`](https://github.com/LedgerHQ/ledger-live/commit/b225fa3d18bfe87e880ef4c70ab7b747a83642ca) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - Remove EIP712 clear signing screen
+
+### Patch Changes
+
+- Updated dependencies [[`a7ba19c`](https://github.com/LedgerHQ/ledger-live/commit/a7ba19cfa5a895572edfcf036a10d2af83efdf38), [`b08fe72`](https://github.com/LedgerHQ/ledger-live/commit/b08fe724f23c0b4df5ade92610b6f2e10d17385e)]:
+  - @ledgerhq/types-live@6.69.0-nightly.2
+  - @ledgerhq/live-common@34.32.0-nightly.4
+  - @ledgerhq/coin-framework@4.1.0-nightly.2
+  - @ledgerhq/coin-aptos@1.9.4-nightly.2
+  - @ledgerhq/coin-bitcoin@0.15.4-nightly.2
+  - @ledgerhq/coin-cosmos@0.14.0-nightly.2
+  - @ledgerhq/coin-evm@2.19.2-nightly.2
+  - @ledgerhq/coin-filecoin@1.9.4-nightly.2
+  - @ledgerhq/domain-service@1.2.28-nightly.2
+  - @ledgerhq/live-countervalues@0.5.4-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.33-nightly.2
+  - @ledgerhq/live-nft@0.8.4-nightly.2
+  - @ledgerhq/live-nft-react@0.9.4-nightly.2
+  - @ledgerhq/live-wallet@0.10.7-nightly.2
+  - @ledgerhq/live-dmk-desktop@0.3.3-nightly.4
+
 ## 2.112.0-nightly.3
 
 ### Patch Changes
