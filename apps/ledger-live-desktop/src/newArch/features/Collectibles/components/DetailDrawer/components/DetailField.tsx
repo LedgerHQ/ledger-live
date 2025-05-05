@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { Skeleton } from "LLD/features/Collectibles/components/Skeleton";
+import { Skeleton } from "../../../components";
 import { DetailFieldProps } from "LLD/features/Collectibles/types/DetailDrawer";
 import { CopyableField } from ".";
 import Text from "~/renderer/components/Text";
