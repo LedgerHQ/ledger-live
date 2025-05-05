@@ -1554,7 +1554,7 @@
       }
     },
     "marketPerformanceWidget" : {
-      "title" : "Tendance {{time}}",
+      "title" : "Tendance - {{time}}",
       "buy" : "Acheter",
       "swap" : "Échanger",
       "gainers" : "Hausses",
@@ -5420,7 +5420,9 @@
     "stringHash" : "Hash du message",
     "domainHash" : "Hash du domaine",
     "messageHash" : "Hash du message",
-    "message" : "Message"
+    "message" : "Message",
+    "title" : "Continuez sur votre Ledger {{wording}}",
+    "description" : "Consultez les instructions sur son écran tactile sécurisé."
   },
   "TransactionConfirm" : {
     "title" : "Confirmez l’opération sur votre appareil pour la finaliser.",
@@ -5866,6 +5868,10 @@
     },
     "NotEnoughBalance" : {
       "title" : "Solde insuffisant",
+      "description" : "Vérifiez que ce compte a un solde suffisant."
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "Solde insuffisant pour couvrir les frais",
       "description" : "Vérifiez que ce compte a un solde suffisant."
     },
     "NotEnoughBalanceSwap" : {
