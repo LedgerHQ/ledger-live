@@ -1554,7 +1554,7 @@
       }
     },
     "marketPerformanceWidget" : {
-      "title" : "Tendance {{time}}",
+      "title" : "Tendance - {{time}}",
       "buy" : "Acheter",
       "swap" : "Échanger",
       "gainers" : "Hausses",
