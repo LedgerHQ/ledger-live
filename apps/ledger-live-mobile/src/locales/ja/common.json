@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "キャンセル",
+    "copy" : "コピー",
+    "copied" : "コピー済み",
     "apply" : "適用",
     "seeAll" : "すべて表示",
     "seeAllWithNumber" : "すべて表示（{{number}}）",
@@ -1061,6 +1063,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "スワップLiveアプリの読み込みに失敗しました"
+    },
+    "InvalidMemoMina" : {
+      "title" : "メモに入力できる文字数は32文字以内です"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "このトランザクションには、{{fee}}のアカウント作成手数料が発生します"
+    },
+    "AmountTooSmall" : {
+      "title" : "このトランザクションに最低限必要な金額は、{{amount}}です"
     }
   },
   "crash" : {
@@ -2591,7 +2602,8 @@
       "gasLimit" : "ガスリミット",
       "id" : "ID",
       "autoClaimedRewards" : "自動獲得報酬",
-      "stakedAmount" : "ステーキング済み量"
+      "stakedAmount" : "ステーキング済み量",
+      "accountCreationFee" : "アカウント作成手数料"
     },
     "multipleAddresses" : "なぜ複数のアドレスがあるのですか？",
     "tokenName" : "トークン名",
@@ -6103,6 +6115,9 @@
       }
     }
   },
+  "mina" : {
+    "memoPlaceholder" : "任意のメモ"
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -6612,8 +6627,8 @@
       "7d" : "7日間",
       "30d" : "30日間",
       "1y" : "1年",
-      "1H_label" : "1時間",
       "1D_label" : "1日",
+      "1H_label" : "1時間",
       "1W_label" : "1週",
       "1M_label" : "1月",
       "1Y_label" : "1年"
@@ -7348,6 +7363,31 @@
     "opted_out" : {
       "description" : "Ledger Nano Sの限られたメモリでは、複数の最新機能、ブロックチェーンの変更、セキュリティ強化も制限されます。ぜひ、新しいLedgerデバイスへのアップグレードをご検討ください。",
       "cta" : "詳細はこちら"
+    }
+  },
+  "largeMover" : {
+    "info" : "情報",
+    "marketCap" : "マーケットキャップ",
+    "volume" : "ボリューム（24時間）",
+    "fdv" : "FDV",
+    "marketCap24h" : "ボリューム/マーケットキャップ（24時間）",
+    "circulatingSupply" : "循環供給",
+    "totalSupply" : "総供給量",
+    "ath" : "最高値",
+    "atl" : "最安値",
+    "timeAgo" : {
+      "years" : "（{{count}}年前）",
+      "years_plural" : "（{{count}}年前）",
+      "months" : "（{{count}}か月前）",
+      "months_plural" : "（{{count}}か月前）",
+      "days" : "（{{count}}日前）",
+      "days_plural" : "（{{count}}日前）",
+      "hours" : "（{{count}}時間前）",
+      "hours_plural" : "（{{count}}時間前）",
+      "minutes" : "（{{count}}分前）",
+      "minutes_plural" : "（{{count}}分前）",
+      "seconds" : "（{{count}}秒前）",
+      "seconds_plural" : "（{{count}}秒前）"
     }
   }
 }

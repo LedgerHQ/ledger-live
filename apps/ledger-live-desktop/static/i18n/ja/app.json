@@ -1879,7 +1879,8 @@
       "palletMethod" : "方法",
       "transferAmount" : "送付額",
       "validatorsCount" : "バリデータ（{{number}}）",
-      "version" : "バージョン"
+      "version" : "バージョン",
+      "accountCreationFee" : "アカウント作成手数料"
     }
   },
   "operationList" : {
@@ -2390,7 +2391,7 @@
         "ethereumPriorityFee" : "最大優先手数料 ({{unitName}})",
         "nextBlock" : "次のブロック",
         "suggested" : "提案済み",
-        "unitPerByte" : "1バイトあたり{{unit}}",
+        "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
         "nftQuantity" : "数量"
       },
@@ -2423,8 +2424,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "タグ/メモを使用しませんか？",
-        "description" : "資金を中央集権型取引所やカストディアルウォレットに送付するときにタグ/メモを追加しないと、資金が失われます。",
+        "title" : "タグ/メモがご必要ですか？",
+        "description" : "中央集権型取引所に資金を送る際にタグ/メモを追加しない場合、資金が失われる可能性が高くなります。",
         "cta.addTag" : "タグを追加",
         "cta.not.addTag" : "タグを追加しない",
         "checkbox.label" : "今後は表示しない。"
@@ -4834,7 +4835,7 @@
         "description" : "Ledger Liveで、暗号資産とNFTを安全に管理・購入・運用しましょう。",
         "nextButton" : "はじめに",
         "noDevice" : "デバイスをお持ちでない場合",
-        "buyLink" : "デバイスをお持ちですか？Nano Xの購入はこちら",
+        "buyLink" : "デバイスをお持ちでない場合Ledgerを購入する",
         "byTapping" : "「はじめる」をタップすることで、お客様が同意したことになります。",
         "termsAndConditions" : "利用規約",
         "and" : "そして",
@@ -5541,6 +5542,9 @@
       "memo" : "タグ/メモ",
       "memoPlaceholder" : "任意",
       "requiredMemoPlaceholder" : "必須"
+    },
+    "mina" : {
+      "memoPlaceholder" : "任意のメモ"
     }
   },
   "errors" : {
@@ -6571,6 +6575,15 @@
         "swap" : "スワップ",
         "deposit" : "入金"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "メモに入力できる文字数は32文字以内です"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "このトランザクションには、{{fee}}のアカウント作成手数料が発生します"
+    },
+    "AmountTooSmall" : {
+      "title" : "このトランザクションに最低限必要な金額は、{{amount}}です"
     }
   },
   "cryptoOrg" : {

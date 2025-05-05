@@ -1,5 +1,17 @@
 # @ledgerhq/hw-app-btc
 
+## 10.9.0
+
+### Minor Changes
+
+- [#9554](https://github.com/LedgerHQ/ledger-live/pull/9554) [`ab287c0`](https://github.com/LedgerHQ/ledger-live/commit/ab287c09028b00e4f01da22982644366b4325c15) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: zcash, fix consensus branch id computation
+
+## 10.9.0-next.0
+
+### Minor Changes
+
+- [#9554](https://github.com/LedgerHQ/ledger-live/pull/9554) [`ab287c0`](https://github.com/LedgerHQ/ledger-live/commit/ab287c09028b00e4f01da22982644366b4325c15) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: zcash, fix consensus branch id computation
+
 ## 10.8.0
 
 ### Minor Changes

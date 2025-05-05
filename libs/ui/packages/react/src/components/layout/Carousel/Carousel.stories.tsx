@@ -46,7 +46,7 @@ export default {
     },
   },
   decorators: [
-    (Story: FC, { args, parameters }: { args: Args; parameters: Parameters }) => (
+    (Story, { args, parameters }) => (
       <SlideContext.Provider
         value={Array.from({ length: args.children }, (_, index) => (
           <parameters.Slide key={index} index={index} />

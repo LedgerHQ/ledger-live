@@ -14,6 +14,7 @@ export type QuickActionButtonProps = TouchableOpacityProps &
     onPressWhenDisabled?: TouchableOpacityProps["onPress"];
     textVariant?: TextVariants;
     variant?: Variant;
+    isActive?: boolean;
   };
 
 export const StyledText = baseStyled(Text)`
@@ -22,20 +23,25 @@ export const StyledText = baseStyled(Text)`
 `;
 
 export const Base = baseStyled(TouchableOpacity)<
-  TouchableOpacityProps & { visuallyDisabled?: boolean; variant: Variant }
+  TouchableOpacityProps & { visuallyDisabled?: boolean; variant: Variant; isActive?: boolean }
 >`
   height: ${({ variant }) => (variant === "small" ? 59 : 80)}px;
   flex-direction: column;
   text-align: center;
   align-items: center;
   justify-content: center;
-  border-radius: ${(p) => p.theme.radii[2]}px;
+  border-radius: ${({ isActive, theme }) => (isActive ? 14 : theme.radii[2])}px;
   padding: ${({ theme, variant }) =>
     variant === "small" ? `${theme.space[3]}px ${theme.space[2]}px` : `0 ${theme.space[6]}px`};
-  ${({ visuallyDisabled, theme }) =>
-    visuallyDisabled
-      ? `border: 1px solid ${theme.colors.neutral.c30};`
-      : `background-color: ${theme.colors.neutral.c20};`}
+  ${({ visuallyDisabled, isActive, theme }) => {
+    if (visuallyDisabled) {
+      return `border: 1px solid ${theme.colors.neutral.c30};`;
+    } else if (isActive) {
+      return `background-color: ${theme.colors.neutral.c30};`;
+    } else {
+      return `background-color: ${theme.colors.neutral.c20};`;
+    }
+  }}
 `;
 
 const QuickActionButton = ({
@@ -47,6 +53,7 @@ const QuickActionButton = ({
   textVariant = "body",
   variant = "large",
   testID,
+  isActive = true,
   ...otherProps
 }: QuickActionButtonProps): React.ReactElement => {
   const text = // Extract the text to use it as a testID
@@ -59,6 +66,7 @@ const QuickActionButton = ({
       onPress={disabled ? onPressWhenDisabled : onPress}
       visuallyDisabled={disabled}
       variant={variant}
+      isActive={!disabled && isActive}
       {...otherProps}
       testID={`${testID}-${text}`}
     >

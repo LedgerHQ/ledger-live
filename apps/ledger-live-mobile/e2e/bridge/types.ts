@@ -34,7 +34,8 @@ export type ServerData =
       type: "appEnvs";
       payload: string;
     }
-  | { type: "ACK"; id: string };
+  | { type: "ACK"; id: string }
+  | { type: "swapLiveAppReady" };
 
 export type MessageData =
   | {
@@ -65,6 +66,7 @@ export type MessageData =
   | { type: "overrideFeatureFlags"; id: string; payload: SettingsSetOverriddenFeatureFlagsPlayload }
   | { type: "setGlobals"; id: string; payload: { [key: string]: unknown } }
   | { type: "swapSetup"; id: string }
+  | { type: "waitSwapReady"; id: string }
   | { type: "ACK"; id: string };
 
 export type MockDeviceEvent =

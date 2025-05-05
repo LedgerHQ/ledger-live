@@ -25,4 +25,5 @@ module.exports = {
     "src/index.ts",
     "src/bridge/bridge.fixture.ts",
   ],
+  setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
 };

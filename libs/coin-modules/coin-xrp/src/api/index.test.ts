@@ -2,7 +2,7 @@ import { Operation, TransactionIntent } from "@ledgerhq/coin-framework/api/types
 import * as LogicFunctions from "../logic";
 import { GetTransactionsOptions } from "../network";
 import { NetworkInfo, XrpAsset } from "../types";
-import { createApi, TransactionIntentExtra } from "./index";
+import { createApi, TransactionIntentExtra, XrpSender } from "./index";
 
 const mockGetServerInfos = jest.fn().mockResolvedValue({
   info: {
@@ -183,8 +183,8 @@ describe("listOperations", () => {
       // the order is reversed so that the result is always sorted by newest tx first element of the list
       expect(results).toEqual([
         {
+          id: "HASH_VALUE",
           asset: { type: "native" },
-          operationIndex: 0,
           tx: {
             hash: "HASH_VALUE",
             fees: fee,
@@ -211,8 +211,8 @@ describe("listOperations", () => {
           },
         },
         {
+          id: "HASH_VALUE",
           asset: { type: "native" },
-          operationIndex: 0,
           tx: {
             hash: "HASH_VALUE",
             fees: fee,
@@ -234,8 +234,8 @@ describe("listOperations", () => {
           },
         },
         {
+          id: "HASH_VALUE",
           asset: { type: "native" },
-          operationIndex: 0,
           tx: {
             hash: "HASH_VALUE",
             fees: fee,
@@ -284,50 +284,79 @@ describe("Testing craftTransaction function", () => {
 
   it("should use custom user fees when user provides it for crafting a transaction", async () => {
     const customFees = 99n;
-    await api.craftTransaction({} as TransactionIntent<XrpAsset>, customFees);
+    await api.craftTransaction(
+      { sender: { address: "foo" } } as TransactionIntent<
+        XrpAsset,
+        TransactionIntentExtra,
+        XrpSender
+      >,
+      customFees,
+    );
 
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
         fee: customFees,
       }),
+      undefined,
     );
   });
 
   it("should use default fees when user does not provide them for crafting a transaction", async () => {
-    await api.craftTransaction({} as TransactionIntent<XrpAsset>);
+    await api.craftTransaction({ sender: { address: "foo" } } as TransactionIntent<
+      XrpAsset,
+      TransactionIntentExtra,
+      XrpSender
+    >);
 
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
         fee: DEFAULT_ESTIMATED_FEES,
       }),
+      undefined,
+    );
+  });
+
+  it("should pass signing pub key when user provides it for crafting a transaction", async () => {
+    await api.craftTransaction({
+      sender: { address: "foo", publicKey: "bar" },
+    } as TransactionIntent<XrpAsset, TransactionIntentExtra, XrpSender>);
+
+    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.any(Object),
+      "bar",
     );
   });
 
   it("should pass memos when user provides it for crafting a transaction", async () => {
     await api.craftTransaction({
+      sender: { address: "foo" },
       memos: [{ data: "testdata", format: "testformat", type: "testtype" }],
-    } as TransactionIntent<XrpAsset, TransactionIntentExtra>);
+    } as TransactionIntent<XrpAsset, TransactionIntentExtra, XrpSender>);
 
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
         memos: [{ data: "testdata", format: "testformat", type: "testtype" }],
       }),
+      undefined,
     );
   });
 
   it("should pass destination tag when user provides it for crafting a transaction", async () => {
     await api.craftTransaction({
+      sender: { address: "foo" },
       destinationTag: 1337,
-    } as TransactionIntent<XrpAsset, TransactionIntentExtra>);
+    } as TransactionIntent<XrpAsset, TransactionIntentExtra, XrpSender>);
 
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
         destinationTag: 1337,
       }),
+      undefined,
     );
   });
 });

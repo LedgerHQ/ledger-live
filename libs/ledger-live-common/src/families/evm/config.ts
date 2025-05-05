@@ -240,6 +240,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       explorer: {
         type: "ledger",
         explorerId: "matic",
+        batchSize: 10,
       },
       gasTracker: {
         type: "ledger",

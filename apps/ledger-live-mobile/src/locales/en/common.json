@@ -1107,6 +1107,32 @@
     "tryEnablingAgain": "Try enabling location again",
     "noInfos": "Ledger does not access your location information."
   },
+  "earn": {
+    "deposit": {
+      "protocolInfoModal": {
+        "title": "To choose a protocol, here’s a few things to bear in mind:",
+        "items": {
+          "protocol": {
+            "highlighted": "A protocol",
+            "description": " is a platform that lets you get rewards by using your deposited crypto for lending, liquidity, or staking."
+          },
+          "apy": {
+            "highlighted": "APY (Annual Percentage Yield)",
+            "description": " is how much interest you can earn over a year. Higher APY means higher earnings."
+          },
+          "tvl": {
+            "highlighted": "TVL (Total value locked)",
+            "description": " is the total money deposited on the protocol by other users. Higher TVL means the protocol is trusted by more people."
+          },
+          "strategy": {
+            "highlighted": "Strategy",
+            "description0": " is the method a protocol uses to generate rewards for you.",
+            "description1": "For example, if a protocol uses lending as its strategy, it lends out your deposited stablecoin to borrowers. You then earn interest which varies based on demand."
+          }
+        }
+      }
+    }
+  },
   "permissions": {
     "open": "Open app permissions",
     "authorize": "Authorize",
@@ -6453,7 +6479,9 @@
     },
     "stepVerification": {
       "action": "Please confirm the operation on your device",
-      "accountName": "Account name"
+      "accountName": "Account name",
+      "title": "Continue on your Ledger {{wording}}",
+      "description": "Follow the instructions displayed on your Secure Touchscreen."
     }
   },
   "notificationCenter": {
@@ -6634,12 +6662,14 @@
     "range": {
       "1h": "1H",
       "24h": "24H",
-      "1d": "1D",
       "7d": "7D",
-      "1w": "1W",
       "30d": "30D",
-      "1m": "1M",
-      "1y": "1Y"
+      "1y": "1Y",
+      "1D_label": "1D",
+      "1H_label": "1H",
+      "1W_label": "1W",
+      "1M_label": "1M",
+      "1Y_label": "1Y"
     },
     "warnings": {
       "connectionError": "Connection Error",
@@ -7374,8 +7404,28 @@
     }
   },
   "largeMover": {
-    "performance": "Performance",
-    "low": "Low",
-    "high": "High"
+    "info": "Info",
+    "marketCap": "Market cap",
+    "volume": "Volume (24h)",
+    "fdv": "FDV",
+    "marketCap24h": "Vol/Mkt Cap (24h)",
+    "circulatingSupply": "Circulating supply",
+    "totalSupply": "Total supply",
+    "ath": "All-time high",
+    "atl": "All-time low",
+    "timeAgo": {
+      "years": "({{count}} year ago)",
+      "years_plural": "({{count}} years ago)",
+      "months": "({{count}} month ago)",
+      "months_plural": "({{count}} months ago)",
+      "days": "({{count}} day ago)",
+      "days_plural": "({{count}} days ago)",
+      "hours": "({{count}} hour ago)",
+      "hours_plural": "({{count}} hours ago)",
+      "minutes": "({{count}} minute ago)",
+      "minutes_plural": "({{count}} minutes ago)",
+      "seconds": "({{count}} second ago)",
+      "seconds_plural": "({{count}} seconds ago)"
+    }
   }
 }

@@ -10,24 +10,19 @@
   ],
   "ignorePatterns": [
     "**/node_modules/**",
-    "**/*.fixture.ts",
     "**/*.mock.ts",
     "**/*.test.{js,jsx,ts,tsx}"
   ],
   "ignoreUnresolved": [],
   "ignoreUnimported": [
-    "src/test/coin-tester/chopsticks-sidecar.ts",
-    "src/test/coin-tester/indexer.ts",
-    "src/test/coin-tester/scenarii/Polkadot.ts",
-    "src/test/coin-tester/helpers.ts",
-    "src/test/fixtures.ts",
     "src/network/node/apiPromise.ts",
     "src/network/node/constants.ts",
-    "src/network/node/identities.ts",
     "src/network/node/index.ts",
     "src/network/node/nominations.ts",
     "src/network/node/stakingInfo.ts",
-    "src/network/node/validators.ts"
+    "src/network/node/validators.ts",
+    "src/network/sidecar.fixture.ts",
+    "src/types/bridge.fixture.ts"
   ],
   "ignoreUnused": [
     "@polkadot/api",

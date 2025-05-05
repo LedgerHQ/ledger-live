@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-multiversx",
-  "version": "0.4.0",
+  "version": "0.4.3",
   "description": "Ledger MultiversX Coin integration",
   "keywords": [
     "Ledger",
@@ -64,6 +64,7 @@
     "axios": "^1.7.4"
   },
   "devDependencies": {
+    "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/invariant": "^2.2.37",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.17.7",

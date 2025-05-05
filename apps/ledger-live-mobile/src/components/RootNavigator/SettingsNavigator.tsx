@@ -78,6 +78,7 @@ import {
 } from "LLM/components/QueuedDrawer/TestScreens";
 import { LargeMoverLandingPage } from "LLM/features/LandingPages/screens/LargeMoverLandingPage";
 import SwiperScreenDebug from "~/screens/Settings/Debug/Features/SwiperScreenDebug";
+import { DebugStorageMigration } from "~/screens/Settings/Debug/Debugging/StorageMigration";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
@@ -303,6 +304,13 @@ export default function SettingsNavigator() {
         component={DebugBluetoothAndLocationServices}
         options={{
           title: "Bluetooth and location services",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugStorageMigration}
+        component={DebugStorageMigration}
+        options={{
+          title: "Storage migration",
         }}
       />
       <Stack.Screen

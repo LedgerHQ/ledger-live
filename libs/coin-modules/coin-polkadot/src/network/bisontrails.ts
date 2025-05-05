@@ -112,6 +112,7 @@ const getOperationType = (
 const getExtra = (type: OperationType, extrinsic: ExplorerExtrinsic): PolkadotOperationExtra => {
   const extra: PolkadotOperationExtra = {
     palletMethod: `${extrinsic.section}.${extrinsic.method}` as PalletMethod,
+    index: extrinsic.index,
   };
 
   switch (type) {

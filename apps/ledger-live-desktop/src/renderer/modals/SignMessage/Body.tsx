@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { AccountLike, AnyMessage } from "@ledgerhq/types-live";
 import Track from "~/renderer/analytics/Track";
 import { Trans, useTranslation } from "react-i18next";
@@ -18,12 +18,15 @@ export type Data = {
   isACRE?: boolean;
 };
 
-type OwnProps = {
-  onClose?: () => void;
-  data: Data;
-};
-type Props = OwnProps;
-const steps: Array<St> = [
+const eip712Step: Array<St> = [
+  {
+    id: "sign",
+    label: "",
+    component: StepSign,
+  },
+];
+
+const messageSteps: Array<St> = [
   {
     id: "summary",
     label: <Trans i18nKey="signmessage.steps.summary.title" />,
@@ -39,9 +42,19 @@ const steps: Array<St> = [
     },
   },
 ];
+
+type OwnProps = {
+  onClose?: () => void;
+  data: Data;
+};
+type Props = OwnProps;
+
 const Body = ({ onClose, data }: Props) => {
+  const steps = useMemo(() => {
+    return data.message.standard === "EIP712" ? eip712Step : messageSteps;
+  }, [data.message.standard]);
   const { t } = useTranslation();
-  const [stepId, setStepId] = useState("summary");
+  const [stepId, setStepId] = useState(data.message.standard === "EIP712" ? "sign" : "summary");
   const handleStepChange = useCallback((e: { id: string }) => setStepId(e.id), [setStepId]);
   const stepperOnClose = useCallback(() => {
     if (onClose) {
@@ -61,10 +74,12 @@ const Body = ({ onClose, data }: Props) => {
     useApp: data.useApp,
     dependencies: data.dependencies,
     message: data.message,
+    hideBreadcrumb: data.message.standard === "EIP712",
     onConfirmationHandler: data.onConfirmationHandler,
     onFailHandler: data.onFailHandler,
     onClose: stepperOnClose,
   };
+
   return (
     <Stepper {...stepperProps}>
       <Track onUnmount event="CloseModalWalletConnectPasteLink" />

@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "Abbrechen",
+    "copy" : "Kopieren",
+    "copied" : "Kopiert",
     "apply" : "Anwenden",
     "seeAll" : "Alles anzeigen",
     "seeAllWithNumber" : "Alle anzeigen ({{number}})",
@@ -1061,6 +1063,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Fehler beim Laden der Swap Live-App"
+    },
+    "InvalidMemoMina" : {
+      "title" : "Der Memotext darf nicht länger als 32 Zeichen sein."
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Für diese Transaktion fällt eine Kontoerstellungsgebühr in Höhe von {{fee}} an"
+    },
+    "AmountTooSmall" : {
+      "title" : "Der Mindestbetrag für diese Transaktion beläuft sich auf {{amount}}"
     }
   },
   "crash" : {
@@ -2591,7 +2602,8 @@
       "gasLimit" : "Gaslimit",
       "id" : "ID",
       "autoClaimedRewards" : "Automatisch beanspruchte Prämien",
-      "stakedAmount" : "Betrag gestaked"
+      "stakedAmount" : "Betrag gestaked",
+      "accountCreationFee" : "Kontoerstellungsgebühr"
     },
     "multipleAddresses" : "Warum mehrere Adressen?",
     "tokenName" : "Token-Name",
@@ -6103,6 +6115,9 @@
       }
     }
   },
+  "mina" : {
+    "memoPlaceholder" : "Optionales Memo"
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -6612,8 +6627,8 @@
       "7d" : "7T",
       "30d" : "30T",
       "1y" : "1J",
-      "1H_label" : "1Std",
       "1D_label" : "1T",
+      "1H_label" : "1Std",
       "1W_label" : "1W",
       "1M_label" : "1M",
       "1Y_label" : "1J"
@@ -7348,6 +7363,31 @@
     "opted_out" : {
       "description" : "Der begrenzte Speicher deiner Ledger Nano S schränkt deinen Zugang zu aktuellen Funktionen, Blockchain-Änderungen und Sicherheitsverbesserungen ein. Für die längerfristige Nutzung solltest du auf ein neueres Ledger-Gerät aufrüsten.",
       "cta" : "Weitere Informationen"
+    }
+  },
+  "largeMover" : {
+    "info" : "Informationen",
+    "marketCap" : "Marktkapitalisierung",
+    "volume" : "Volumen (24 Std.)",
+    "fdv" : "FDV",
+    "marketCap24h" : "Volumen/Marktkapitalisierung (24 Std.)",
+    "circulatingSupply" : "Angebot im Umlauf",
+    "totalSupply" : "Angebot gesamt",
+    "ath" : "Allzeithoch",
+    "atl" : "Allzeittief",
+    "timeAgo" : {
+      "years" : "(vor {{count}} Jahr)",
+      "years_plural" : "(vor {{count}} Jahren)",
+      "months" : "(vor {{count}} Monat)",
+      "months_plural" : "(vor {{count}} Monaten)",
+      "days" : "(vor {{count}} Tag)",
+      "days_plural" : "(vor {{count}} Tagen)",
+      "hours" : "(vor {{count}} Stunde)",
+      "hours_plural" : "(vor {{count}} Stunden)",
+      "minutes" : "(vor {{count}} Minute)",
+      "minutes_plural" : "(vor {{count}} Minuten)",
+      "seconds" : "(vor {{count}} Sekunde)",
+      "seconds_plural" : "(vor {{count}} Sekunden)"
     }
   }
 }

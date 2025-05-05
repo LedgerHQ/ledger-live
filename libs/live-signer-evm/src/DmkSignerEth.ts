@@ -36,6 +36,7 @@ export class DmkSignerEth implements EvmSigner {
     this.signer = new SignerEthBuilder({
       dmk,
       sessionId,
+      originToken: "1e55ba3959f4543af24809d9066a2120bd2ac9246e626e26a1ff77eb109ca0e5",
     }).build();
   }
 
@@ -147,6 +148,9 @@ export class DmkSignerEth implements EvmSigner {
             }
             if (result.intermediateValue.step === SignTransactionDAStep.BUILD_CONTEXT) {
               observer.next({ type: "signer.evm.loading-context" });
+            }
+            if (result.intermediateValue.step === SignTransactionDAStep.WEB3_CHECKS_OPT_IN) {
+              observer.next({ type: "signer.evm.transaction-checks-opt-in-triggered" });
             }
           } else if (result.status === DeviceActionStatus.Completed) {
             observer.next({

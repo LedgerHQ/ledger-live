@@ -30,7 +30,7 @@ import { DeviceList } from "./DeviceList";
 import {
   useBleDevicesScanning,
   useDeviceManagementKit,
-  useLdmkFeatureEnabled,
+  useDeviceManagementKitEnabled,
 } from "@ledgerhq/live-dmk-mobile";
 import getBLETransport from "../../react-native-hw-transport-ble";
 import { useBleDevicesScanning as useLegacyBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
@@ -91,10 +91,12 @@ export default function SelectDevice({
   const knownDevices = useSelector(bleDevicesSelector);
   const navigation = useNavigation<Navigation["navigation"]>();
 
-  const isLDMKEnabled = useLdmkFeatureEnabled();
+  const isLDMKEnabled = useDeviceManagementKitEnabled();
   const dmk = useDeviceManagementKit();
 
-  const { scannedDevices: DMKscannedDevices } = useBleDevicesScanning();
+  const { scannedDevices: DMKscannedDevices } = useBleDevicesScanning(
+    isFocused && !isPairingDevices && !stopBleScanning,
+  );
   const { scannedDevices: legacyScannedDevices } = useLegacyBleDevicesScanning({
     bleTransportListen: getBLETransport({ isLDMKEnabled }).listen,
     stopBleScanning,

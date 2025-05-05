@@ -37,6 +37,7 @@ import {
 } from "./format";
 import {
   AccountTronAPI,
+  Block,
   isMalformedTransactionTronAPI,
   isTransactionTronAPI,
   MalformedTransactionTronAPI,
@@ -323,7 +324,7 @@ export const broadcastTron = async (
     if (result.code === "TRANSACTION_EXPIRATION_ERROR") {
       throw new TronTransactionExpired();
     } else {
-      throw new Error(result.message);
+      throw new Error(`${result.code}: ${result.message}`);
     }
   }
 
@@ -365,17 +366,31 @@ export async function fetchTronAccount(addr: string): Promise<AccountTronAPI[]> 
   }
 }
 
-export async function getLastBlock(): Promise<{
-  height: number;
-  hash: string;
-  time: Date;
-}> {
+export async function getLastBlock(): Promise<Block> {
   const data = await fetch(`/wallet/getnowblock`);
-  return {
+  return toBlock(data);
+}
+
+export async function getBlock(blockNumber: number): Promise<Block> {
+  const data = await fetch(`/wallet/getblock?id_or_num=${encodeURIComponent(blockNumber)}`);
+  const ret = toBlock(data);
+  if (!ret.height) {
+    ret.height = blockNumber;
+  }
+  return ret;
+}
+
+function toBlock(data: any): Block {
+  // some old blocks doesn't have a timestamp
+  const timestamp = data.block_header.raw_data.timestamp;
+  const ret: Block = {
     height: data.block_header.raw_data.number,
     hash: data.blockID,
-    time: new Date(data.block_header.raw_data.timestamp),
   };
+  if (timestamp) {
+    ret.time = new Date(timestamp);
+  }
+  return ret;
 }
 
 // For the moment, fetching transaction info is the only way to get fees from a transaction
@@ -463,23 +478,37 @@ const getTrc20 = async (
   };
 };
 
+export type FetchTxsStopPredicate = (
+  txs: Array<TransactionTronAPI | Trc20API | MalformedTransactionTronAPI>,
+) => boolean;
+
+export type FetchParams = {
+  limit: number;
+  minTimestamp: number;
+};
+
+export const defaultFetchParams: FetchParams = {
+  limit: 100,
+  minTimestamp: 0,
+} as const;
+
 export async function fetchTronAccountTxs(
   addr: string,
-  shouldFetchMoreTxs: (
-    txs: Array<TransactionTronAPI | Trc20API | MalformedTransactionTronAPI>,
-  ) => boolean,
+  shouldFetchMoreTxs: FetchTxsStopPredicate,
   cacheTransactionInfoById: Record<string, TronTransactionInfo>,
+  params: FetchParams,
 ): Promise<TrongridTxInfo[]> {
-  const entireTxs = (
+  const queryParamsNativeTxs = `limit=${params.limit}&min_timestamp=${params.minTimestamp}`;
+  const nativeTxs = (
     await getAllTransactions<
       (TransactionTronAPI & { detail?: TronTransactionInfo }) | MalformedTransactionTronAPI
     >(
-      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions?limit=100`,
+      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions?${queryParamsNativeTxs}`,
       shouldFetchMoreTxs,
       getTransactions(cacheTransactionInfoById),
     )
   )
-    .filter((tx): tx is TransactionTronAPI => isTransactionTronAPI(tx))
+    .filter(isTransactionTronAPI)
     .filter(tx => {
       // custom smart contract tx has internal txs
       const hasInternalTxs =
@@ -496,17 +525,19 @@ export async function fetchTronAccountTxs(
       return !isDuplicated && !hasInternalTxs && type !== "TriggerSmartContract";
     })
     .map(tx => formatTrongridTxResponse(tx));
-  // we need to fetch and filter trc20 transactions from another endpoint
 
-  const entireTrc20Txs = (
+  // we need to fetch and filter trc20 transactions from another endpoint
+  // doc https://developers.tron.network/reference/get-trc20-transaction-info-by-account-address
+  const queryParamsTrc20Txs = `limit=${params.limit}&min_timestamp=${params.minTimestamp}`;
+  const trc20Txs = (
     await getAllTransactions<Trc20API>(
-      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions/trc20?get_detail=true`,
+      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions/trc20?${queryParamsTrc20Txs}&get_detail=true`,
       shouldFetchMoreTxs,
       getTrc20,
     )
   ).map(tx => formatTrongridTrc20TxResponse(tx));
 
-  const txInfos: TrongridTxInfo[] = compact(entireTxs.concat(entireTrc20Txs)).sort(
+  const txInfos: TrongridTxInfo[] = compact(nativeTxs.concat(trc20Txs)).sort(
     (a, b) => b.date.getTime() - a.date.getTime(),
   );
   return txInfos;

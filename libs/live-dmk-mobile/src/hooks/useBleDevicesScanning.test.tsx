@@ -19,7 +19,7 @@ const TestComponent = <T = Device,>(
     filterOutDevicesByDeviceIds?: DeviceId[];
   } = { mapper: deviceMapper },
 ) => {
-  const { scannedDevices, scanningBleError } = useBleDevicesScanning({
+  const { scannedDevices, scanningBleError } = useBleDevicesScanning(true, {
     mapper,
     filterOutDevicesByDeviceIds,
     filterByDeviceModelIds,
@@ -152,11 +152,9 @@ describe("useBleDevicesScanning", () => {
         rssi: 63,
       },
     ] as DiscoveredDevice[];
-    vi.spyOn(dmk, "startDiscovering").mockReturnValue(
+    vi.spyOn(dmk, "listenToAvailableDevices").mockReturnValue(
       new Observable(subscriber => {
-        subscriber.next(scannedDevices[0]);
-        subscriber.next(scannedDevices[1]);
-        subscriber.next(scannedDevices[2]);
+        subscriber.next(scannedDevices);
       }),
     );
 
@@ -175,10 +173,11 @@ describe("useBleDevicesScanning", () => {
     expect(devices).toHaveTextContent(JSON.stringify(scannedDevices.map(defaultMapper)));
     expect(scanError).toHaveTextContent("null");
   });
+
   it("should set an error", async () => {
     // given
     let result: ReturnType<typeof render> | undefined;
-    vi.spyOn(dmk, "startDiscovering").mockReturnValue(
+    vi.spyOn(dmk, "listenToAvailableDevices").mockReturnValue(
       new Observable(subscriber => {
         subscriber.error(new Error("scan error"));
       }),
@@ -199,6 +198,7 @@ describe("useBleDevicesScanning", () => {
     expect(devices).toHaveTextContent(JSON.stringify([]));
     expect(scanError).toHaveTextContent("Error: scan error");
   });
+
   it("should filter devices by model ids", async () => {
     // given
     let result: ReturnType<typeof render> | undefined;
@@ -228,11 +228,9 @@ describe("useBleDevicesScanning", () => {
         rssi: 63,
       },
     ] as DiscoveredDevice[];
-    vi.spyOn(dmk, "startDiscovering").mockReturnValue(
+    vi.spyOn(dmk, "listenToAvailableDevices").mockReturnValue(
       new Observable(subscriber => {
-        subscriber.next(scannedDevices[0]);
-        subscriber.next(scannedDevices[1]);
-        subscriber.next(scannedDevices[2]);
+        subscriber.next(scannedDevices);
       }),
     );
 
@@ -255,6 +253,7 @@ describe("useBleDevicesScanning", () => {
     );
     expect(scanError).toHaveTextContent("null");
   });
+
   it("should filter out devices by device ids", async () => {
     // given
     let result: ReturnType<typeof render> | undefined;
@@ -284,11 +283,9 @@ describe("useBleDevicesScanning", () => {
         rssi: 63,
       },
     ] as DiscoveredDevice[];
-    vi.spyOn(dmk, "startDiscovering").mockReturnValue(
+    vi.spyOn(dmk, "listenToAvailableDevices").mockReturnValue(
       new Observable(subscriber => {
-        subscriber.next(scannedDevices[0]);
-        subscriber.next(scannedDevices[1]);
-        subscriber.next(scannedDevices[2]);
+        subscriber.next(scannedDevices);
       }),
     );
 

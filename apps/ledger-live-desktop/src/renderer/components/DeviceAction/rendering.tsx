@@ -15,6 +15,7 @@ import {
   LockedDeviceError,
   UpdateYourApp,
   WrongDeviceForAccount,
+  DisconnectedDevice,
 } from "@ledgerhq/errors";
 import {
   DeviceNotOnboarded,
@@ -72,6 +73,7 @@ import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-case
 import NoSuchAppOnProviderErrorComponent from "./NoSuchAppOnProviderErrorComponent";
 import Image from "~/renderer/components/Image";
 import Nano from "~/renderer/images/nanoS.v4.svg";
+import { isWebHidSendReportError } from "@ledgerhq/live-dmk-desktop";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -204,8 +206,8 @@ const ButtonContainer = styled(Box).attrs(({ theme }) => ({
   alignItems: "center",
   justifyContent: "center",
   gap: `${theme.space[4]}px`,
-}))`
-  align-self: stretch;
+}))<{ stretch?: boolean }>`
+  ${({ stretch }) => stretch && "align-self: stretch;"}
 `;
 
 const ButtonGroup = styled(Box).attrs(({ theme }) => ({
@@ -782,6 +784,7 @@ export const renderError = ({
   learnMoreLink,
   learnMoreTextKey,
   Icon,
+  stretch,
 }: {
   error: Error | ErrorConstructor;
   t: TFunction;
@@ -801,6 +804,7 @@ export const renderError = ({
   device?: Device | null;
   inlineRetry?: boolean;
   withDescription?: boolean;
+  stretch?: boolean;
   Icon?: (props: { color?: string | undefined; size?: number | undefined }) => JSX.Element;
 }) => {
   let tmpError = error;
@@ -825,8 +829,9 @@ export const renderError = ({
         learnMoreTextKey={learnMoreTextKey}
       />
     );
+  } else if (isWebHidSendReportError(tmpError)) {
+    tmpError = new DisconnectedDevice();
   }
-
   // if no supportLink is provided, we fallback on the related url linked to
   // tmpError name, if any
   const supportLinkUrl = supportLink ?? urls.errors[error?.name];
@@ -861,7 +866,7 @@ export const renderError = ({
           ) : undefined
         }
       />
-      <ButtonContainer>
+      <ButtonContainer stretch={stretch}>
         {managerAppName || requireFirmwareUpdate ? (
           <OpenManagerButton
             appName={managerAppName}
@@ -916,6 +921,7 @@ export const renderInWrongAppForAccount = ({
     error: new WrongDeviceForAccount(""),
     withExportLogs: true,
     onRetry,
+    stretch: true,
   });
 
 export const renderConnectYourDevice = ({

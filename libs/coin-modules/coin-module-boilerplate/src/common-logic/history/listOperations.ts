@@ -41,6 +41,11 @@ const convertToCoreOperation =
     }
 
     return {
+      /**
+       * Note: The operation ID must be concatenated with another
+       * value if the transaction hash is not enough to identify it
+       */
+      id: hash,
       asset: { type: "native" },
       tx: {
         hash,
@@ -56,6 +61,5 @@ const convertToCoreOperation =
       value,
       senders: [Account],
       recipients: [Destination],
-      operationIndex: 0,
     };
   };

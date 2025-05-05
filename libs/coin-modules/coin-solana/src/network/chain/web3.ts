@@ -1,7 +1,9 @@
 import BigNumber from "bignumber.js";
 import {
   createAmountToUiAmountInstruction,
+  createApproveCheckedInstruction,
   createAssociatedTokenAccountInstruction,
+  createRevokeInstruction,
   createTransferCheckedInstruction,
   createTransferCheckedWithTransferHookInstruction,
   getAssociatedTokenAddress,
@@ -32,7 +34,9 @@ import {
   StakeSplitCommand,
   StakeUndelegateCommand,
   StakeWithdrawCommand,
+  TokenCreateApproveCommand,
   TokenCreateATACommand,
+  TokenCreateRevokeCommand,
   TokenTransferCommand,
   TransferCommand,
 } from "../../types";
@@ -256,6 +260,59 @@ export const buildTokenTransferInstructions = async (
   }
 
   return appendMaybePriorityFeeInstructions(api, instructions, ownerPubkey);
+};
+
+export const buildApproveTransactionInstructions = async (
+  api: ChainAPI,
+  {
+    account,
+    mintAddress,
+    recipientDescriptor,
+    owner,
+    amount,
+    decimals,
+    tokenProgram,
+  }: TokenCreateApproveCommand,
+): Promise<TransactionInstruction[]> => {
+  const instructions: TransactionInstruction[] = [];
+
+  const programId = getTokenAccountProgramId(tokenProgram);
+
+  const accountPubKey = new PublicKey(account);
+  const destinationOwnerPubkey = new PublicKey(recipientDescriptor.walletAddress);
+  const ownerPubKey = new PublicKey(owner);
+  const mintPubkey = new PublicKey(mintAddress);
+
+  instructions.push(
+    createApproveCheckedInstruction(
+      accountPubKey,
+      mintPubkey,
+      destinationOwnerPubkey,
+      ownerPubKey,
+      amount,
+      decimals,
+      undefined,
+      programId,
+    ),
+  );
+
+  return appendMaybePriorityFeeInstructions(api, instructions, ownerPubKey);
+};
+
+export const buildRevokeTransactionInstructions = async (
+  api: ChainAPI,
+  { account, owner, tokenProgram }: TokenCreateRevokeCommand,
+): Promise<TransactionInstruction[]> => {
+  const instructions: TransactionInstruction[] = [];
+
+  const programId = getTokenAccountProgramId(tokenProgram);
+
+  const accountPubKey = new PublicKey(account);
+  const ownerPubKey = new PublicKey(owner);
+
+  instructions.push(createRevokeInstruction(accountPubKey, ownerPubKey, undefined, programId));
+
+  return appendMaybePriorityFeeInstructions(api, instructions, ownerPubKey);
 };
 
 export async function findAssociatedTokenAccountPubkey(

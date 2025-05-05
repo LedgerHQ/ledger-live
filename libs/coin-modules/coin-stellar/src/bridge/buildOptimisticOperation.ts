@@ -29,6 +29,7 @@ export async function buildOptimisticOperation(
     extra: {
       ledgerOpType: type,
       blockTime: new Date(),
+      index: "0",
     },
   };
 

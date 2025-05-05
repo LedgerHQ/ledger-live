@@ -39,8 +39,8 @@ export default class SpeculosPage {
   }
 
   @Step("Verify amounts and accept swap")
-  async verifyAmountsAndAcceptSwap(swap: SwapType) {
-    await verifyAmountsAndAcceptSwap(swap);
+  async verifyAmountsAndAcceptSwap(swap: SwapType, amount: string) {
+    await verifyAmountsAndAcceptSwap(swap, amount);
   }
 
   async setExchangeDependencies(swap: SwapType) {

@@ -10,11 +10,6 @@ import {
 } from "@ledgerhq/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
-jest.mock("../segment", () => ({
-  track: jest.fn(),
-  setAnalyticsFeatureFlagMethod: jest.fn(),
-}));
-
 describe("useTrackAddAccountFlow", () => {
   const deviceMock = {
     modelId: "Europa",

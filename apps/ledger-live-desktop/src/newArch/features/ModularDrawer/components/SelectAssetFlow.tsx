@@ -6,7 +6,7 @@ import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import Fuse from "fuse.js";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import Text from "~/renderer/components/Text";
-import { CurrencyList } from "~/renderer/drawers/DataSelector/CurrencyList";
+import { SelectNetwork } from "./SelectNetwork";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 import { getEnv } from "@ledgerhq/live-env";
 
@@ -81,8 +81,13 @@ function SelectAssetFlow(props: SelectAccountAndCurrencyDrawerProps) {
             onChange={setSearchValue}
           />
         </SearchInputContainer>
-        {/* @ts-expect-error compatibility issue betwenn CryptoOrTokenCurrency and Currency (which includes Fiat) and the SelectAccountDrawer components  */}
-        <CurrencyList currencies={filteredCurrencies} onCurrencySelect={handleCurrencySelected} />
+        <SelectNetwork
+          // @ts-expect-error compatibility issue between CryptoOrTokenCurrency and Currency (which includes Fiat) and the SelectAccountDrawer components
+          networks={filteredCurrencies}
+          onNetworkSelected={handleCurrencySelected}
+          flow="Modular Asset Flow"
+          source="Accounts"
+        />
       </SelectorContent>
     </SelectAccountAndCurrencyDrawerContainer>
   );

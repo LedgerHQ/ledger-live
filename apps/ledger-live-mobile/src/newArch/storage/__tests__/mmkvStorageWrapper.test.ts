@@ -267,6 +267,22 @@ describe("MMKVStorageWrapper", () => {
     });
   });
 
+  describe("deleteAll", () => {
+    let clearMethod: jest.SpyInstance;
+
+    beforeEach(() => {
+      // Arrange
+      clearMethod = jest.spyOn(MMKV.prototype, "clearAll").mockImplementation(() => {});
+
+      // Act
+      storage.deleteAll();
+    });
+
+    it("should call MMKV#clearAll once", () => {
+      expect(clearMethod).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe("push", () => {
     let getMethod: jest.SpyInstance;
     let saveMethod: jest.SpyInstance;
@@ -353,5 +369,45 @@ describe("MMKVStorageWrapper", () => {
         expect(saveMethod).not.toHaveBeenCalled();
       });
     });
+  });
+});
+
+describe("stringify", () => {
+  const testKeys = ["key1", "key2"];
+  const getResults: Record<string, string> = {
+    key1: `{"a": 1}`,
+    key2: `{"b": 1}`,
+  } as const;
+
+  let keysMethod: jest.SpyInstance;
+  let multiGetMethod: jest.SpyInstance;
+  let result: Awaited<ReturnType<typeof storage.stringify>>;
+
+  beforeEach(async () => {
+    // Arrange
+
+    keysMethod = jest.spyOn(storage, "keys").mockImplementation(() => testKeys);
+    multiGetMethod = jest.spyOn(storage, "getString").mockImplementation(key => getResults[key]);
+
+    // Act
+    result = storage.stringify();
+  });
+
+  it("should call MMKVStorageWrapper#keys once", () => {
+    expect(keysMethod).toHaveBeenCalledTimes(1);
+  });
+
+  it("should call MMKVStorageWrapperc#getString", () => {
+    expect(multiGetMethod).toHaveBeenCalledTimes(testKeys.length);
+  });
+
+  testKeys.forEach((key, index) => {
+    it(`[${index}] should call MMKVStorageWrapper#getString with the correct key`, () => {
+      expect(multiGetMethod).toHaveBeenNthCalledWith(index + 1, key);
+    });
+  });
+
+  it("should returns the storage content as a JSON string", () => {
+    expect(result).toBe(JSON.stringify(getResults));
   });
 });

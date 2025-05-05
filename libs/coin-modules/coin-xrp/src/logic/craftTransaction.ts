@@ -46,7 +46,7 @@ export async function craftTransaction(
     amount: bigint;
     fee: bigint;
     destinationTag?: number | null | undefined;
-    memos?: MemoInput[];
+    memos?: MemoInput[] | undefined;
   },
   publicKey?: string,
 ): Promise<{

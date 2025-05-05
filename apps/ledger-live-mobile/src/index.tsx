@@ -79,7 +79,7 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { updateIdentify } from "./analytics";
-import { getFeature, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle, getFeature, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { StorylyProvider } from "./components/StorylyStories/StorylyProvider";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
@@ -90,7 +90,8 @@ import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/stor
 import { walletSelector } from "~/reducers/wallet";
 import { exportWalletState, walletStateExportShouldDiffer } from "@ledgerhq/live-wallet/store";
 import { registerTransports } from "~/services/registerTransports";
-import { useLdmkFeatureEnabled } from "@ledgerhq/live-dmk-mobile";
+import { useDeviceManagementKitEnabled } from "@ledgerhq/live-dmk-mobile";
+import { StoragePerformanceOverlay } from "./newArch/storage/screens/PerformanceMonitor";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -120,7 +121,7 @@ function walletExportSelector(state: State) {
 function App() {
   const accounts = useSelector(accountsSelector);
   const analyticsFF = useFeature("llmAnalyticsOptInPrompt");
-  const isLDMKEnabled = useLdmkFeatureEnabled();
+  const isLDMKEnabled = useDeviceManagementKitEnabled();
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const dispatch = useDispatch();
@@ -249,6 +250,9 @@ function App() {
       <PerformanceConsole />
       <DebugTheme />
       <Modals />
+      <FeatureToggle featureId="llmMmkvMigration">
+        <StoragePerformanceOverlay />
+      </FeatureToggle>
     </GestureHandlerRootView>
   );
 }

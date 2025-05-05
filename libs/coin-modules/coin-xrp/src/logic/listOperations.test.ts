@@ -221,8 +221,8 @@ describe("listOperations", () => {
         expectedType === "IN" ? BigInt(deliveredAmount) : BigInt(deliveredAmount + fee);
       expect(results).toEqual([
         {
+          id: "HASH_VALUE",
           asset: { type: "native" },
-          operationIndex: 0,
           tx: {
             fees: BigInt(10),
             hash: "HASH_VALUE",
@@ -250,8 +250,8 @@ describe("listOperations", () => {
           },
         },
         {
+          id: "HASH_VALUE",
           asset: { type: "native" },
-          operationIndex: 0,
           tx: {
             hash: "HASH_VALUE",
             fees: BigInt(10),
@@ -274,6 +274,7 @@ describe("listOperations", () => {
           },
         },
         {
+          id: "HASH_VALUE",
           asset: { type: "native" },
           tx: {
             hash: "HASH_VALUE",
@@ -294,7 +295,6 @@ describe("listOperations", () => {
           value: expectedValue,
           senders: [opSender],
           recipients: [opDestination],
-          operationIndex: 0,
         },
       ] satisfies Operation<XrpAsset>[]);
     },

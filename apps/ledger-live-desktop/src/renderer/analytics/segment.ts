@@ -33,6 +33,7 @@ import createStore from "../createStore";
 import { analyticsDrawerContext } from "../drawers/Provider";
 import { accountsSelector } from "../reducers/accounts";
 import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
+import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -115,31 +116,25 @@ const getPtxAttributes = () => {
       ? stakingProviders?.params?.listProvider.length
       : "flag not loaded";
 
-  const stakingCurrenciesEnabled =
+  const stakingCurrenciesEnabled: string[] | string =
     stakePrograms?.enabled && stakePrograms?.params?.list?.length
-      ? Object.fromEntries(
-          stakePrograms.params.list.map((currencyId: string) => [
-            `feature_earn_${currencyId}_enabled`,
-            true,
-          ]),
-        )
-      : {};
-  const partnerStakingCurrenciesEnabled =
+      ? stakePrograms.params.list
+      : "flag not loaded";
+  const partnerStakingCurrenciesEnabled: string[] | string =
     stakePrograms?.enabled && stakePrograms?.params?.redirects
-      ? Object.keys(stakePrograms.params.redirects).map(assetId => [
-          `feature_earn_${JSON.stringify(assetId)}_enabled`,
-          true,
-        ])
-      : {};
+      ? Object.keys(stakePrograms.params.redirects)
+      : "flag not loaded";
+  const stablecoinYield = getStablecoinYieldSetting(stakePrograms);
 
   return {
     isBatch1Enabled,
     isBatch2Enabled,
     isBatch3Enabled,
     stakingProvidersEnabled,
-    ptxCard,
-    ...stakingCurrenciesEnabled,
-    ...partnerStakingCurrenciesEnabled,
+    ptxCard: ptxCard?.enabled,
+    stablecoinYield,
+    stakingCurrenciesEnabled,
+    partnerStakingCurrenciesEnabled,
   };
 };
 
@@ -168,6 +163,9 @@ const extraProperties = (store: ReduxStore) => {
   const devices = devicesModelListSelector(state);
   const accounts = accountsSelector(state);
   const ptxAttributes = getPtxAttributes();
+  const ldmkTransport = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("ldmkTransport")
+    : { enabled: false };
 
   const ledgerSyncAttributes = getLedgerSyncAttributes(state);
   const mevProtectionAttributes = getMEVAttributes(state);
@@ -212,6 +210,7 @@ const extraProperties = (store: ReduxStore) => {
     appLanguage: language, // Needed for braze
     region,
     environment: process.env.SEGMENT_TEST ? "test" : __DEV__ ? "development" : "production",
+    platform: "desktop",
     systemLanguage: systemLocale.language,
     systemRegion: systemLocale.region,
     osType,
@@ -228,6 +227,7 @@ const extraProperties = (store: ReduxStore) => {
     ...ledgerSyncAttributes,
     ...mevProtectionAttributes,
     ...marketWidgetAttributes,
+    isLDMKTransportEnabled: ldmkTransport?.enabled,
   };
 };
 

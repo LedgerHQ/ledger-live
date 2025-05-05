@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-casper",
-  "version": "1.6.0",
+  "version": "1.6.3",
   "description": "Ledger Casper integration",
   "keywords": [
     "Ledger",
@@ -102,6 +102,7 @@
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",

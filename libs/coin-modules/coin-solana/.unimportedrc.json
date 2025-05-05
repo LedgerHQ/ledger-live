@@ -8,7 +8,8 @@
     "src/hw-getAddress.ts",
     "src/serialization.ts",
     "src/specs.ts",
-    "src/transaction.ts"
+    "src/transaction.ts",
+    "src/hw-signMessage.ts"
   ],
   "ignorePatterns": [
     "**/node_modules/**",
@@ -19,5 +20,6 @@
   "ignoreUnresolved": [],
   "ignoreUnimported": [
     "src/datasets/solana.scanAccounts.1.ts"
-  ]
+  ],
+  "ignoreUnused": []
 }

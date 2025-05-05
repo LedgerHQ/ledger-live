@@ -6,9 +6,10 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Swap";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
+import fs from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "../utils/fileUtils";
-import fs from "fs/promises";
+import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
 
 export class SwapPage extends AppPage {
   // Swap Amount and Currency components
@@ -21,6 +22,7 @@ export class SwapPage extends AppPage {
   private destinationCurrencyDropdown = this.page.getByTestId("destination-currency-dropdown");
   private destinationCurrencyAmount = this.page.getByTestId("destination-currency-amount");
   private feesValue = this.page.getByTestId("fees-value");
+  private switchButton = "to-account-switch-accounts";
 
   // Exchange Button Component
   private exchangeButton = this.page.getByTestId("exchange-button");
@@ -109,8 +111,8 @@ export class SwapPage extends AppPage {
     }
   }
 
-  @step("Select available provider")
-  async selectExchange(electronApp: ElectronApplication) {
+  @step("Select available provider without KYC")
+  async selectExchangeWithoutKyc(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
 
     const providersList = await this.getProviderList(electronApp);
@@ -135,6 +137,31 @@ export class SwapPage extends AppPage {
       }
     }
 
+    throw new Error("No providers without KYC found");
+  }
+
+  @step("Select available provider")
+  async selectExchange(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+
+    const providersList = await this.getProviderList(electronApp);
+
+    const providers = providersList.filter(providerName => {
+      const provider = Object.values(Provider).find(p => p.uiName === providerName);
+      return provider;
+    });
+
+    for (const providerName of providers) {
+      const providerLocator = webview
+        .getByTestId(this.quoteCardProviderName)
+        .getByText(providerName)
+        .first();
+
+      await providerLocator.isVisible();
+      await providerLocator.click();
+
+      return providerName;
+    }
     throw new Error("No valid providers found");
   }
 
@@ -253,6 +280,12 @@ export class SwapPage extends AppPage {
     await this.chooseAssetDrawer.chooseFromAsset(accountToSwapFrom.currency.name);
   }
 
+  @step("Check currency to swap from is $0")
+  async swithYouSendAndYouReceive(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+    await webview.getByTestId(this.switchButton).click();
+  }
+
   @step("Check currency to swap from is $1")
   async checkAssetFrom(electronApp: ElectronApplication, currency: string) {
     const [, webview] = electronApp.windows();
@@ -315,22 +348,17 @@ export class SwapPage extends AppPage {
   }
 
   @step("Go and wait for Swap app to be ready")
-  async goAndWaitForSwapToBeReady(swapFunction: () => Promise<void>, url?: string) {
-    const successfulQuery = new Promise(resolve => {
-      this.page.on("response", response => {
-        if (
-          response
-            .url()
-            .startsWith(url ?? "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees") &&
-          response.status() === 200
-        ) {
-          resolve(response);
+  async goAndWaitForSwapToBeReady(swapFunction: () => Promise<void>) {
+    const appReadyPromise = new Promise<void>(resolve => {
+      this.page.on("console", msg => {
+        if (msg.type() === "info" && msg.text().includes("Swap Live App Loaded")) {
+          resolve();
         }
       });
     });
 
     await swapFunction();
-    expect(await successfulQuery).toBeDefined();
+    await appReadyPromise;
   }
 
   @step("Verify provider URL")
@@ -343,25 +371,40 @@ export class SwapPage extends AppPage {
 
     switch (selectedProvider) {
       case Provider.ONE_INCH.uiName: {
-        expect(url).toContain(swap.accountToDebit.currency.ticker.toLowerCase());
-        expect(url).toContain(swap.accountToCredit.currency.ticker.toLowerCase());
-        expect(url).toContain(
-          `swap%2F${swap.accountToDebit.currency.ticker.toLowerCase()}%2F${swap.accountToCredit.currency.ticker.toLowerCase()}`,
-        );
-        expect(url).toContain(swap.amount);
+        const debit = swap.accountToDebit.currency.ticker;
+        const credit = swap.accountToCredit.currency.ticker;
+
+        if (!debit || !credit) {
+          throw new Error("Missing ticker for one of the currencies");
+        }
+
+        this.expectUrlToContainAll(url, [
+          swap.amount,
+          debit,
+          credit,
+          `swap%3Fledgerlive%3dtrue`,
+          `src%3d${debit}`,
+          `dst%3d${credit}`,
+        ]);
         break;
       }
       case Provider.PARASWAP.uiName: {
-        expect(url).toContain(swap.amount);
-        expect(url).toContain(swap.accountToDebit.currency.contractAddress);
-        expect(url).toContain(swap.accountToCredit.currency.contractAddress);
-        expect(url).toContain(
-          `${swap.accountToDebit.currency.contractAddress}-${swap.accountToCredit.currency.contractAddress}`,
-        );
+        const debit = swap.accountToDebit.currency.contractAddress;
+        const credit = swap.accountToCredit.currency.contractAddress;
+
+        if (!debit || !credit) {
+          throw new Error("Missing contract address on one of the currencies");
+        }
+
+        this.expectUrlToContainAll(url, [swap.amount, debit, credit, `${debit}-${credit}`]);
         break;
       }
       default:
-        throw new Error(`Unknown provider: ${selectedProvider}`);
+        throw new Error(
+          `Unknown provider: ${selectedProvider}. Supported providers: ${Object.values(Provider)
+            .map(p => p.uiName)
+            .join(", ")}`,
+        );
     }
   }
 
@@ -419,5 +462,20 @@ export class SwapPage extends AppPage {
     expect(fileContents).toContain(swap.accountToDebit.address);
     expect(fileContents).toContain(swap.accountToCredit.accountName);
     expect(fileContents).toContain(swap.accountToCredit.address);
+  }
+
+  @step("Check minimum amount for swap")
+  async getMinimumAmount(accountFrom: Account, accountTo: Account) {
+    return (await getMinimumSwapAmount(accountFrom, accountTo))?.toString() ?? "";
+  }
+
+  expectUrlToContainAll(url: string, values: string[]) {
+    if (!url) {
+      throw new Error("URL is null or undefined");
+    }
+    const normalizedUrl = url.toLowerCase();
+    for (const value of values) {
+      expect(normalizedUrl).toContain(value.toLowerCase());
+    }
   }
 }

@@ -96,7 +96,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
                     });
                   }
                   if (result.operation) {
-                    onSuccess(result.operation.id);
+                    onSuccess(result.operation.hash);
                   }
                   setDevice(undefined);
                   !result.error && navigation.pop();

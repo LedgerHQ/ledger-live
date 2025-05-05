@@ -50,7 +50,7 @@ describe("backend api tests", () => {
       expect(transactions).toBeDefined();
       expect(transactions.length).toBe(0);
     }
-  }, 30000);
+  });
 
   it("get transactions should succeed for valid address", async () => {
     for (const address of validAddress) {
@@ -58,5 +58,5 @@ describe("backend api tests", () => {
       expect(transactions).toBeDefined();
       expect(transactions.length).toBeGreaterThan(0);
     }
-  }, 30000);
+  });
 });

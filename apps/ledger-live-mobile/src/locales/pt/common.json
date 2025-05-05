@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "Cancelar",
+    "copy" : "Copiar",
+    "copied" : "Copiado",
     "apply" : "Aplicar",
     "seeAll" : "Ver tudo",
     "seeAllWithNumber" : "Ver todos ({{number}})",
@@ -101,7 +103,7 @@
     },
     "quote" : "Cotação",
     "tryAgain" : "Tente novamente",
-    "ldmkEnabled" : "LDMK transport enabled"
+    "ldmkEnabled" : "Transporte LDMK habilitado"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -1061,6 +1063,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Falha ao carregar o aplicativo Swap Live"
+    },
+    "InvalidMemoMina" : {
+      "title" : "O texto do memo não pode ter mais de 32 caracteres"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Esta transação incorrerá em uma taxa de criação de conta de {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "A quantia mínima exigida para esta transação é {{amount}}"
     }
   },
   "crash" : {
@@ -2591,7 +2602,8 @@
       "gasLimit" : "Limite de gas",
       "id" : "Id",
       "autoClaimedRewards" : "Recompensas automaticamente resgatadas",
-      "stakedAmount" : "Quantia aplicada"
+      "stakedAmount" : "Quantia aplicada",
+      "accountCreationFee" : "Taxa de Criação de Conta"
     },
     "multipleAddresses" : "Por que múltiplos endereços?",
     "tokenName" : "Nome do token",
@@ -6103,6 +6115,9 @@
       }
     }
   },
+  "mina" : {
+    "memoPlaceholder" : "Memo opcional"
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -6612,8 +6627,8 @@
       "7d" : "7D",
       "30d" : "30D",
       "1y" : "1A",
-      "1H_label" : "1H",
       "1D_label" : "1D",
+      "1H_label" : "1H",
       "1W_label" : "1S",
       "1M_label" : "1M",
       "1Y_label" : "1A"
@@ -7348,6 +7363,31 @@
     "opted_out" : {
       "description" : "A memória limitada da Ledger Nano S restringe seu acesso aos últimos recursos, mudanças em blockchains e aprimoramentos de segurança. Para uso prolongado, atualize para um dispositivo Ledger mais recente.",
       "cta" : "Saiba mais"
+    }
+  },
+  "largeMover" : {
+    "info" : "Informações",
+    "marketCap" : "Capitalização de mercado",
+    "volume" : "Volume (24h)",
+    "fdv" : "FDV",
+    "marketCap24h" : "Vol/Capital de mercado (24h)",
+    "circulatingSupply" : "Oferta em circulação",
+    "totalSupply" : "Oferta Total",
+    "ath" : "Máxima Histórica",
+    "atl" : "Mínima Histórica",
+    "timeAgo" : {
+      "years" : "(Há {{count}} ano)",
+      "years_plural" : "(Há {{count}} anos)",
+      "months" : "(Há {{count}} mês)",
+      "months_plural" : "(Há {{count}} meses)",
+      "days" : "(há {{count}} dia)",
+      "days_plural" : "(há {{count}} dias)",
+      "hours" : "({{count}} hora atrás)",
+      "hours_plural" : "({{count}} horas atrás)",
+      "minutes" : "({{count}} minuto atrás)",
+      "minutes_plural" : "({{count}} minutos atrás)",
+      "seconds" : "({{count}} segundo atrás)",
+      "seconds_plural" : "({{count}} segundos atrás)"
     }
   }
 }

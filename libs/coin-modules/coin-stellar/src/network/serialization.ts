@@ -108,6 +108,7 @@ async function formatOperation(
     extra: {
       ledgerOpType: type,
       blockTime: new Date(blockTime),
+      index: rawOperation.id,
     },
   };
 
