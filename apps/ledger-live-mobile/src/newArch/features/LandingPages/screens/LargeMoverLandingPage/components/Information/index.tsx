@@ -2,7 +2,6 @@ import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { StyleSheet } from "react-native";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
-
 import { InformationsProps } from "../../types";
 import { formatCounterValue } from "../../utils";
 import { AthAtlBlock } from "./AthAtlBlock";
@@ -25,12 +24,13 @@ export const Informations: React.FC<InformationsProps> = props => {
     atlDate,
     percentChangeATH,
     percentChangeATL,
-    percentChangeMkt24h,
     counterValueCurrency,
     dateFormatter,
     locale,
     t,
   } = useInformations(props);
+
+  const marketCapVolume24h = (volume / (marketCap ?? 1)) * 10000;
   return (
     <Flex flexDirection="column">
       <Text style={styles.title}>{t("largeMover.info")}</Text>
@@ -56,13 +56,12 @@ export const Informations: React.FC<InformationsProps> = props => {
           value={
             <CurrencyUnitValue
               unit={{ ...counterValueCurrency.units[0], code: "" }}
-              value={percentChangeMkt24h.percentage}
+              value={marketCapVolume24h}
               after="%"
             />
           }
         />
       </Flex>
-
       <Flex style={styles.row}>
         <InfoCard
           label={t("largeMover.circulatingSupply")}

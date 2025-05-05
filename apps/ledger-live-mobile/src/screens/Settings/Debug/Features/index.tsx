@@ -9,6 +9,7 @@ import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 
 export default function Features() {
   const navigation = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
@@ -111,7 +112,12 @@ export default function Features() {
           title="Large Mover"
           desc="See the large mover landing page"
           iconLeft={<Icons.Dollar />}
-          onPress={() => navigation.navigate(ScreenName.LargeMoverLandingPage)}
+          onPress={() =>
+            navigation.navigate(ScreenName.LargeMoverLandingPage, {
+              currencyIds: ["bitcoin", "ethereum", "ripple"],
+              initialRange: KeysPriceChange.day,
+            })
+          }
         />
       </FeatureToggle>
       <SettingsRow
