@@ -498,7 +498,7 @@ export async function fetchTronAccountTxs(
   cacheTransactionInfoById: Record<string, TronTransactionInfo>,
   params: FetchParams,
 ): Promise<TrongridTxInfo[]> {
-  const queryParamsAllTxs = `?limit=${params.limit}&min_timestamp=${params.minTimestamp}`;
+  const queryParamsAllTxs = `limit=${params.limit}&min_timestamp=${params.minTimestamp}`;
   const entireTxs = (
     await getAllTransactions<
       (TransactionTronAPI & { detail?: TronTransactionInfo }) | MalformedTransactionTronAPI
@@ -528,10 +528,11 @@ export async function fetchTronAccountTxs(
 
   // we need to fetch and filter trc20 transactions from another endpoint
   // doc https://developers.tron.network/reference/get-trc20-transaction-info-by-account-address
-  // I don't know why but passing min_timestamp in the query params doesn't work  
+  // FIXME I don't know why but passing min_timestamp in the query params doesn't work  
+  const queryParamsAllTrc20 = `limit=${params.limit}&min_timestamp=${params.minTimestamp}`;
   const entireTrc20Txs = (
     await getAllTransactions<Trc20API>(
-      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions/trc20?get_detail=true`,
+      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions/trc20?${queryParamsAllTrc20}&get_detail=true`,
       shouldFetchMoreTxs,
       getTrc20,
     )
