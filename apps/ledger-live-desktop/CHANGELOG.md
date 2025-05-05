@@ -1,5 +1,37 @@
 # ledger-live-desktop
 
+## 2.112.0
+
+### Minor Changes
+
+- [#9888](https://github.com/LedgerHQ/ledger-live/pull/9888) [`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431) Thanks [@palra](https://github.com/palra)! - add babylon currency
+
+- [#10045](https://github.com/LedgerHQ/ledger-live/pull/10045) [`1d72da9`](https://github.com/LedgerHQ/ledger-live/commit/1d72da911a56d5b25fb6464e60ac236927823ce4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - NFT support in LLD
+
+- [#9869](https://github.com/LedgerHQ/ledger-live/pull/9869) [`e67a296`](https://github.com/LedgerHQ/ledger-live/commit/e67a296d5e1f10cf4ac133f0d00da760a24381f3) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add LDMK related FF in segment extra payload
+
+### Patch Changes
+
+- Updated dependencies [[`a11fd0b`](https://github.com/LedgerHQ/ledger-live/commit/a11fd0bbb687edc9e279bd4d63352658cae92c63), [`00ecb4b`](https://github.com/LedgerHQ/ledger-live/commit/00ecb4b3dae8abf861679fb35a2794a308851a47), [`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431), [`1d3be0d`](https://github.com/LedgerHQ/ledger-live/commit/1d3be0d5b13b09ec08908406711400ef5b286d69), [`b599ac4`](https://github.com/LedgerHQ/ledger-live/commit/b599ac4697688459aad15371f9efea58f331dc33), [`a4b6b29`](https://github.com/LedgerHQ/ledger-live/commit/a4b6b29df7ef74129345278cf07942619b36435b), [`1d72da9`](https://github.com/LedgerHQ/ledger-live/commit/1d72da911a56d5b25fb6464e60ac236927823ce4)]:
+  - @ledgerhq/coin-evm@2.20.0
+  - @ledgerhq/live-common@34.32.0
+  - @ledgerhq/types-cryptoassets@7.23.0
+  - @ledgerhq/cryptoassets@13.16.0
+  - @ledgerhq/types-live@6.69.0
+  - @ledgerhq/coin-cosmos@0.14.0
+  - @ledgerhq/coin-framework@5.0.0
+  - @ledgerhq/react-ui@0.24.0
+  - @ledgerhq/live-dmk-desktop@0.3.3
+  - @ledgerhq/coin-bitcoin@0.15.4
+  - @ledgerhq/coin-filecoin@1.9.4
+  - @ledgerhq/domain-service@1.2.28
+  - @ledgerhq/live-countervalues@0.5.4
+  - @ledgerhq/live-countervalues-react@0.2.33
+  - @ledgerhq/live-nft@0.8.4
+  - @ledgerhq/live-nft-react@0.9.4
+  - @ledgerhq/live-wallet@0.10.7
+  - @ledgerhq/coin-aptos@1.9.4
+
 ## 2.112.0-next.0
 
 ### Minor Changes

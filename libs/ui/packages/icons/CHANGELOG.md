@@ -1,5 +1,12 @@
 # @ledgerhq/icons-ui
 
+## 0.10.0
+
+### Minor Changes
+
+- [#10025](https://github.com/LedgerHQ/ledger-live/pull/10025) [`a4b6b29`](https://github.com/LedgerHQ/ledger-live/commit/a4b6b29df7ef74129345278cf07942619b36435b) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Adds a new `ProtocolInfoModal` for the Defi yield flow.
+  Fixes typo in one of the tests for `live-common`
+
 ## 0.10.0-next.0
 
 ### Minor Changes
