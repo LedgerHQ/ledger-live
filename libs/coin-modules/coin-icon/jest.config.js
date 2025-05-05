@@ -21,4 +21,5 @@ module.exports = {
       { outputName: "icon-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
     ],
   ],
+  setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
 };

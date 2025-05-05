@@ -114,6 +114,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
+    "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/invariant": "^2.2.37",
     "@types/jest": "^29.5.12",
