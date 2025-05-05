@@ -137,6 +137,11 @@ export function useListHeaderComponents({
     llmSolanaNftsEnabled: llmSolanaNfts?.enabled,
   });
 
+  const disableDelegation =
+    currencyConfig &&
+    "disableDelegation" in currencyConfig &&
+    currencyConfig.disableDelegation === true;
+
   return {
     listHeaderComponents: [
       <Box mt={6} onLayout={onAccountCardLayout} key="AccountGraphCard">
@@ -177,6 +182,7 @@ export function useListHeaderComponents({
         <FabAccountMainActions account={account} parentAccount={parentAccount} />
       </SectionContainer>,
       ...(!empty &&
+      !disableDelegation &&
       (AccountHeaderRendered || AccountBalanceSummaryFooterRendered || secondaryActions.length > 0)
         ? [
             <SectionContainer key="AccountHeader">

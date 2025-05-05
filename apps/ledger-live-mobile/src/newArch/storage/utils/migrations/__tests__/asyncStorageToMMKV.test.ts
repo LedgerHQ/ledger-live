@@ -110,12 +110,17 @@ describe("handleMigration", () => {
         .mockImplementation(() => undefined);
 
       // Act
-      migrator.handleMigration({
-        storageType: STORAGE_TYPE.ASYNC_STORAGE,
-        migrationStatus,
-        rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
-        numberOfReadErrors: 0,
-      });
+      migrator.handleMigration(
+        {
+          storageType: STORAGE_TYPE.ASYNC_STORAGE,
+          migrationStatus,
+          rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
+          numberOfReadErrors: 0,
+        },
+        {
+          enabled: true,
+        },
+      );
     });
   }
 

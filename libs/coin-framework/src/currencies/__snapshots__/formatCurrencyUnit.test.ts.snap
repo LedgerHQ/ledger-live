@@ -24,6 +24,8 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Axelar unit (Axelar) 1`] = `"12.345.678.900,000000- -AXL"`;
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Babylon unit (Babylon) 1`] = `"12.345.678.900,000000- -BABY"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Banano unit (BANANO) 1`] = `"123.456.789,00000000- -BANANO"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
@@ -371,6 +373,8 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Avalanche C-Chain unit (AVAX) 1`] = `"0.012345678900000000- -AVAX"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Axelar unit (Axelar) 1`] = `"12,345,678,900.000000- -AXL"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Babylon unit (Babylon) 1`] = `"12,345,678,900.000000- -BABY"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Banano unit (BANANO) 1`] = `"123,456,789.00000000- -BANANO"`;
 
@@ -720,6 +724,8 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Axelar unit (Axelar) 1`] = `"12.345.678.900,000000- -AXL"`;
 
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Babylon unit (Babylon) 1`] = `"12.345.678.900,000000- -BABY"`;
+
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Banano unit (BANANO) 1`] = `"123.456.789,00000000- -BANANO"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
@@ -1067,6 +1073,8 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Avalanche C-Chain unit (AVAX) 1`] = `"0,012345678900000000- -AVAX"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Axelar unit (Axelar) 1`] = `"12 345 678 900,000000- -AXL"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Babylon unit (Babylon) 1`] = `"12 345 678 900,000000- -BABY"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Banano unit (BANANO) 1`] = `"123 456 789,00000000- -BANANO"`;
 
@@ -1416,6 +1424,8 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Axelar unit (Axelar) 1`] = `"12,345,678,900.000000- -AXL"`;
 
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Babylon unit (Babylon) 1`] = `"12,345,678,900.000000- -BABY"`;
+
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Banano unit (BANANO) 1`] = `"123,456,789.00000000- -BANANO"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Base Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
@@ -1763,6 +1773,8 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Avalanche C-Chain unit (AVAX) 1`] = `"0.012345678900000000- -AVAX"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Axelar unit (Axelar) 1`] = `"12,345,678,900.000000- -AXL"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Babylon unit (Babylon) 1`] = `"12,345,678,900.000000- -BABY"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Banano unit (BANANO) 1`] = `"123,456,789.00000000- -BANANO"`;
 
@@ -2112,6 +2124,8 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Axelar unit (Axelar) 1`] = `"12.345.678.900,000000- -AXL"`;
 
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Babylon unit (Babylon) 1`] = `"12.345.678.900,000000- -BABY"`;
+
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Banano unit (BANANO) 1`] = `"123.456.789,00000000- -BANANO"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
@@ -2459,6 +2473,8 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Avalanche C-Chain unit (AVAX) 1`] = `"0,012345678900000000- -AVAX"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Axelar unit (Axelar) 1`] = `"12 345 678 900,000000- -AXL"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Babylon unit (Babylon) 1`] = `"12 345 678 900,000000- -BABY"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Banano unit (BANANO) 1`] = `"123 456 789,00000000- -BANANO"`;
 
@@ -2808,6 +2824,8 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Axelar unit (Axelar) 1`] = `"12.345.678.900,000000- -AXL"`;
 
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Babylon unit (Babylon) 1`] = `"12.345.678.900,000000- -BABY"`;
+
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Banano unit (BANANO) 1`] = `"123.456.789,00000000- -BANANO"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
@@ -3156,6 +3174,8 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Axelar unit (Axelar) 1`] = `"12,345,678,900.000000- -AXL"`;
 
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Babylon unit (Babylon) 1`] = `"12,345,678,900.000000- -BABY"`;
+
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Banano unit (BANANO) 1`] = `"123,456,789.00000000- -BANANO"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Base Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
@@ -3503,6 +3523,8 @@ exports[`formatCurrencyUnit with default options should correctly format Atheios
 exports[`formatCurrencyUnit with default options should correctly format Avalanche C-Chain unit (AVAX) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Axelar unit (Axelar) 1`] = `"12,345,678,900"`;
+
+exports[`formatCurrencyUnit with default options should correctly format Babylon unit (Babylon) 1`] = `"12,345,678,900"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Banano unit (BANANO) 1`] = `"123,456,789"`;
 

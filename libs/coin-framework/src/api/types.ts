@@ -48,13 +48,19 @@ export type Balance<AssetInfo extends Asset<TokenInfoCommon>> = {
 export type TransactionIntent<
   AssetInfo extends Asset<TokenInfoCommon>,
   Extra = Record<string, unknown>,
+  Sender extends Record<string, string> | string = string,
 > = {
   type: string;
-  sender: string;
+  sender: Sender;
   recipient: string;
   amount: bigint;
   asset: AssetInfo;
 } & Extra;
+
+export type FeeEstimation<FeeParameters extends Record<string, bigint> = never> = {
+  value: bigint;
+  parameters?: FeeParameters;
+};
 
 // TODO rename start to minHeight
 //       and add a `token: string` field to the pagination if we really need to support pagination
@@ -63,12 +69,19 @@ export type TransactionIntent<
 //       limit is unused for now
 //       see design document at https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/5446205788/coin-modules+lama-adapter+APIs+refinements
 export type Pagination = { minHeight: number };
-export type Api<AssetInfo extends Asset<TokenInfoCommon>> = {
+export type Api<
+  AssetInfo extends Asset<TokenInfoCommon>,
+  TxExtra = Record<string, unknown>,
+  Sender extends Record<string, string> | string = string,
+  FeeParameters extends Record<string, bigint> = never,
+> = {
   broadcast: (tx: string) => Promise<string>;
   combine: (tx: string, signature: string, pubkey?: string) => string;
-  estimateFees: (transactionIntent: TransactionIntent<AssetInfo>) => Promise<bigint>;
+  estimateFees: (
+    transactionIntent: TransactionIntent<AssetInfo, TxExtra, Sender>,
+  ) => Promise<FeeEstimation<FeeParameters>>;
   craftTransaction: (
-    transactionIntent: TransactionIntent<AssetInfo>,
+    transactionIntent: TransactionIntent<AssetInfo, TxExtra, Sender>,
     customFees?: bigint,
   ) => Promise<string>;
   getBalance: (address: string) => Promise<Balance<AssetInfo>[]>;

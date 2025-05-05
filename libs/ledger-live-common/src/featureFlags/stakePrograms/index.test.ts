@@ -33,7 +33,7 @@ const feature_stake_programs_json: Feature_StakePrograms = {
   },
 };
 
-describe("stakeProgramToEarnParam", () => {
+describe("stakeProgramsToEarnParam", () => {
   it("should return `undefined` when there are no redirects", () => {
     const result = stakeProgramsToEarnParam(feature_stake_programs_empty_json);
     expect(result).toEqual(undefined);

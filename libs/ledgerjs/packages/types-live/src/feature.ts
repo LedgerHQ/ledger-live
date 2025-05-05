@@ -133,6 +133,7 @@ export type CurrencyFeatures = {
   currencySonicBlaze: DefaultFeature;
   currencySui: DefaultFeature;
   currencyMina: DefaultFeature;
+  currencyBabylon: DefaultFeature;
 };
 
 /**
@@ -223,6 +224,7 @@ export type Features = CurrencyFeatures & {
   largemoverLandingpage: DefaultFeature;
   llmMmkvMigration: Feature_LlmMmkvMigration;
   lldModularDrawer: Feature_LldModularDrawer;
+  llNftSupport: DefaultFeature;
 };
 
 /**
@@ -622,6 +624,7 @@ export type Feature_SpamFilteringTx = DefaultFeature;
 export type Feature_MemoTag = DefaultFeature;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 export type Feature_PtxSwapExodusProvider = DefaultFeature;
+
 export type Feature_LlmRebornLP = Feature<{
   variant: ABTestingVariants;
 }>;

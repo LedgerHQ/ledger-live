@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-solana",
-  "version": "0.21.0",
+  "version": "0.21.1",
   "description": "Ledger Solana Coin integration",
   "keywords": [
     "Ledger",
@@ -92,6 +92,7 @@
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
+    "test-integ": "jest --config=jest.integ.config.js",
     "typecheck": "tsc --noEmit",
     "unimported": "unimported"
   }

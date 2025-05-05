@@ -1,11 +1,21 @@
-import { createStorage } from "LLM/storage";
+import { createStorage, initStorageState } from "LLM/storage";
 import { STORAGE_TYPE } from "../constants";
 import type { StorageInitializer } from "../types";
 import asyncStorageWrapper from "../asyncStorageWrapper";
 import mmkvStorageWrapper from "../mmkvStorageWrapper";
-import { MIGRATION_STATUS, ROLLBACK_STATUS } from "../utils/migrations/constants";
+import {
+  MIGRATION_STATUS,
+  MIGRATION_STATUS_KEY,
+  ROLLBACK_STATUS,
+} from "../utils/migrations/constants";
+
+beforeEach(() => {
+  jest.spyOn(console, "error").mockImplementation(() => {});
+});
 
 afterEach(() => jest.restoreAllMocks());
+
+const error = new Error("Test error");
 
 describe("storage", () => {
   let mockInitStorageState: jest.SpyInstance;
@@ -79,7 +89,50 @@ describe("storage", () => {
         expect(result).toEqual(expectedValue);
       });
     });
+
+    describe("handles error", () => {
+      beforeEach(async () => {
+        // Arrange
+        mockInitStorageState = jest.fn().mockImplementation(state => {
+          state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
+        });
+        keysMethod = jest.spyOn(asyncStorageWrapper, "keys").mockImplementation(() => {
+          throw error;
+        });
+        const storage = createTestStorage();
+
+        await storage.save("key", { value: 1 });
+
+        // Act
+        try {
+          result = await storage.keys();
+        } catch (e) {
+          result = e as string[];
+        }
+      });
+
+      it("should call #get once", () => {
+        expect(keysMethod).toHaveBeenCalledTimes(1);
+      });
+
+      it("should return the value returned by #get", () => {
+        expect(result).toEqual(error);
+      });
+
+      it("should log the #save error", () => {
+        expect(console.error).toHaveBeenCalledWith("Error getting keys from storage", {
+          error: error,
+          state: {
+            migrationStatus: MIGRATION_STATUS.NOT_STARTED,
+            numberOfReadErrors: 0,
+            rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
+            storageType: STORAGE_TYPE.ASYNC_STORAGE,
+          },
+        });
+      });
+    });
   });
+
   describe("get", () => {
     let getMethod: jest.SpyInstance;
     let result: Awaited<ReturnType<typeof asyncStorageWrapper.get>>;
@@ -132,6 +185,48 @@ describe("storage", () => {
         expect(result).toEqual(expectedValue);
       });
     });
+
+    describe("handles error", () => {
+      beforeEach(async () => {
+        // Arrange
+        mockInitStorageState = jest.fn().mockImplementation(state => {
+          state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
+        });
+        getMethod = jest.spyOn(asyncStorageWrapper, "get").mockImplementation(() => {
+          throw error;
+        });
+        const storage = createTestStorage();
+
+        await storage.save("key", { value: 1 });
+
+        // Act
+        try {
+          result = await storage.get("key");
+        } catch (e) {
+          result = e;
+        }
+      });
+
+      it("should call #get once", () => {
+        expect(getMethod).toHaveBeenCalledTimes(1);
+      });
+
+      it("should return the value returned by #get", () => {
+        expect(result).toEqual(error);
+      });
+
+      it("should log the #save error", () => {
+        expect(console.error).toHaveBeenCalledWith("Error getting key from storage", {
+          error: error,
+          state: {
+            migrationStatus: MIGRATION_STATUS.NOT_STARTED,
+            numberOfReadErrors: 0,
+            rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
+            storageType: STORAGE_TYPE.ASYNC_STORAGE,
+          },
+        });
+      });
+    });
   });
 
   describe("save", () => {
@@ -179,6 +274,47 @@ describe("storage", () => {
 
       it("should call asyncStorageWrapper#save with corresponding arguments", () => {
         expect(saveMethod).toHaveBeenCalledWith(...args);
+      });
+    });
+
+    describe("handles error", () => {
+      let result: Awaited<ReturnType<Storage["save"]>>;
+      beforeEach(async () => {
+        // Arrange
+        mockInitStorageState = jest.fn().mockImplementation(state => {
+          state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
+        });
+        saveMethod = jest.spyOn(asyncStorageWrapper, "save").mockImplementation(() => {
+          throw error;
+        });
+        const storage = createTestStorage();
+
+        // Act
+        try {
+          result = await storage.save("test", { value: 1 });
+        } catch (e) {
+          result = e;
+        }
+      });
+
+      it("should call #save once", () => {
+        expect(saveMethod).toHaveBeenCalledTimes(1);
+      });
+
+      it("should return the value returned by #save", () => {
+        expect(result).toEqual(error);
+      });
+
+      it("should log the #save error", () => {
+        expect(console.error).toHaveBeenCalledWith("Error saving key to storage", {
+          error: error,
+          state: {
+            migrationStatus: MIGRATION_STATUS.NOT_STARTED,
+            numberOfReadErrors: 0,
+            rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
+            storageType: STORAGE_TYPE.ASYNC_STORAGE,
+          },
+        });
       });
     });
   });
@@ -230,6 +366,49 @@ describe("storage", () => {
         expect(updateMethod).toHaveBeenCalledWith(...args);
       });
     });
+
+    describe("handles error", () => {
+      let result: Awaited<ReturnType<Storage["update"]>>;
+      beforeEach(async () => {
+        // Arrange
+        mockInitStorageState = jest.fn().mockImplementation(state => {
+          state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
+        });
+        updateMethod = jest.spyOn(asyncStorageWrapper, "update").mockImplementation(() => {
+          throw error;
+        });
+        const storage = createTestStorage();
+
+        await storage.save("key", { value: 1 });
+
+        // Act
+        try {
+          result = await storage.update("key", { value: 2 });
+        } catch (e) {
+          result = e;
+        }
+      });
+
+      it("should call #update once", () => {
+        expect(updateMethod).toHaveBeenCalledTimes(1);
+      });
+
+      it("should return the value returned by #update", () => {
+        expect(result).toEqual(error);
+      });
+
+      it("should log the #update error", () => {
+        expect(console.error).toHaveBeenCalledWith("Error updating key in storage", {
+          error: error,
+          state: {
+            migrationStatus: MIGRATION_STATUS.NOT_STARTED,
+            numberOfReadErrors: 0,
+            rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
+            storageType: STORAGE_TYPE.ASYNC_STORAGE,
+          },
+        });
+      });
+    });
   });
 
   describe("delete", () => {
@@ -277,6 +456,47 @@ describe("storage", () => {
 
       it("should call asyncStorageWrapper#delete with corresponding arguments", () => {
         expect(deleteMethod).toHaveBeenCalledWith(...args);
+      });
+    });
+
+    describe("handles error", () => {
+      let result: Awaited<ReturnType<Storage["delete"]>>;
+      beforeEach(async () => {
+        // Arrange
+        mockInitStorageState = jest.fn().mockImplementation(state => {
+          state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
+        });
+        deleteMethod = jest.spyOn(asyncStorageWrapper, "delete").mockImplementation(() => {
+          throw error;
+        });
+        const storage = createTestStorage();
+
+        // Act
+        try {
+          result = await storage.delete("test");
+        } catch (e) {
+          result = e;
+        }
+      });
+
+      it("should call #delete once", () => {
+        expect(deleteMethod).toHaveBeenCalledTimes(1);
+      });
+
+      it("should return the value returned by #delete", () => {
+        expect(result).toEqual(error);
+      });
+
+      it("should log the #delete error", () => {
+        expect(console.error).toHaveBeenCalledWith("Error deleting key from storage", {
+          error: error,
+          state: {
+            migrationStatus: MIGRATION_STATUS.NOT_STARTED,
+            numberOfReadErrors: 0,
+            rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
+            storageType: STORAGE_TYPE.ASYNC_STORAGE,
+          },
+        });
       });
     });
   });
@@ -328,6 +548,47 @@ describe("storage", () => {
         expect(pushMethod).toHaveBeenCalledWith(...args);
       });
     });
+
+    describe("handles error", () => {
+      let result: Awaited<ReturnType<Storage["push"]>>;
+      beforeEach(async () => {
+        // Arrange
+        mockInitStorageState = jest.fn().mockImplementation(state => {
+          state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
+        });
+        pushMethod = jest.spyOn(asyncStorageWrapper, "push").mockImplementation(() => {
+          throw error;
+        });
+        const storage = createTestStorage();
+
+        // Act
+        try {
+          result = await storage.push("test", 1);
+        } catch (e) {
+          result = e;
+        }
+      });
+
+      it("should call #push once", () => {
+        expect(pushMethod).toHaveBeenCalledTimes(1);
+      });
+
+      it("should return the value returned by #push", () => {
+        expect(result).toEqual(error);
+      });
+
+      it("should log the #push error", () => {
+        expect(console.error).toHaveBeenCalledWith("Error pushing value to storage", {
+          error: error,
+          state: {
+            migrationStatus: MIGRATION_STATUS.NOT_STARTED,
+            numberOfReadErrors: 0,
+            rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
+            storageType: STORAGE_TYPE.ASYNC_STORAGE,
+          },
+        });
+      });
+    });
   });
 
   describe("deleteAll", () => {
@@ -370,6 +631,47 @@ describe("storage", () => {
 
       it("should call asyncStorageWrapper#deleteAll once", () => {
         expect(deleteAllMethod).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe("handles error", () => {
+      let result: Awaited<ReturnType<Storage["deleteAll"]>>;
+      beforeEach(async () => {
+        // Arrange
+        mockInitStorageState = jest.fn().mockImplementation(state => {
+          state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
+        });
+        deleteAllMethod = jest.spyOn(asyncStorageWrapper, "deleteAll").mockImplementation(() => {
+          throw error;
+        });
+        const storage = createTestStorage();
+
+        // Act
+        try {
+          result = await storage.deleteAll();
+        } catch (e) {
+          result = e;
+        }
+      });
+
+      it("should call #deleteAllMethod once", () => {
+        expect(deleteAllMethod).toHaveBeenCalledTimes(1);
+      });
+
+      it("should return the value returned by #deleteAllMethod", () => {
+        expect(result).toEqual(error);
+      });
+
+      it("should log the #deleteAllMethod error", () => {
+        expect(console.error).toHaveBeenCalledWith("Error deleting all keys from storage", {
+          error: error,
+          state: {
+            migrationStatus: MIGRATION_STATUS.NOT_STARTED,
+            numberOfReadErrors: 0,
+            rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
+            storageType: STORAGE_TYPE.ASYNC_STORAGE,
+          },
+        });
       });
     });
   });
@@ -425,6 +727,111 @@ describe("storage", () => {
       it("should return the value returned by asyncStorageWrapper#keys", () => {
         expect(result).toEqual(expectedValue);
       });
+    });
+
+    describe("handles error", () => {
+      beforeEach(async () => {
+        // Arrange
+        mockInitStorageState = jest.fn().mockImplementation(state => {
+          state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
+        });
+        stringifyMethod = jest.spyOn(asyncStorageWrapper, "stringify").mockImplementation(() => {
+          throw error;
+        });
+        const storage = createTestStorage();
+
+        // Act
+        try {
+          result = await storage.stringify();
+        } catch (e) {
+          result = e;
+        }
+      });
+
+      it("should call #stringify once", () => {
+        expect(stringifyMethod).toHaveBeenCalledTimes(1);
+      });
+
+      it("should return the value returned by #stringify", () => {
+        expect(result).toEqual(error);
+      });
+
+      it("should log the #stringify error", () => {
+        expect(console.error).toHaveBeenCalledWith("Error stringifying storage", {
+          error: error,
+          state: {
+            migrationStatus: MIGRATION_STATUS.NOT_STARTED,
+            numberOfReadErrors: 0,
+            rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
+            storageType: STORAGE_TYPE.ASYNC_STORAGE,
+          },
+        });
+      });
+    });
+  });
+
+  describe("initStorageState", () => {
+    beforeEach(() => {
+      mockInitStorageState = jest.fn();
+    });
+
+    it("should set the storage type to MMKV if migration status is completed", () => {
+      // Arrange
+      mmkvStorageWrapper.getString = jest
+        .fn()
+        .mockImplementation(key =>
+          key === MIGRATION_STATUS_KEY ? MIGRATION_STATUS.COMPLETED : null,
+        );
+      const state = {
+        storageType: STORAGE_TYPE.ASYNC_STORAGE,
+        migrationStatus: MIGRATION_STATUS.NOT_STARTED,
+        rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
+        numberOfReadErrors: 0,
+      };
+
+      // Act
+      initStorageState(state);
+
+      // Assert
+      expect(state.storageType).toBe(STORAGE_TYPE.MMKV);
+    });
+
+    it("should set the storage type to AsyncStorage if migration status is not completed", () => {
+      // Arrange
+      mmkvStorageWrapper.getString = jest
+        .fn()
+        .mockImplementation(key =>
+          key === MIGRATION_STATUS_KEY ? MIGRATION_STATUS.NOT_STARTED : null,
+        );
+      const state = {
+        storageType: STORAGE_TYPE.ASYNC_STORAGE,
+        migrationStatus: MIGRATION_STATUS.NOT_STARTED,
+        rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
+        numberOfReadErrors: 0,
+      };
+
+      // Act
+      initStorageState(state);
+
+      // Assert
+      expect(state.storageType).toBe(STORAGE_TYPE.ASYNC_STORAGE);
+    });
+
+    it("should set the migration status to rolled back if rollback status is completed", () => {
+      // Arrange
+      mmkvStorageWrapper.getString = jest.fn().mockReturnValue(ROLLBACK_STATUS.COMPLETED);
+      const state = {
+        storageType: STORAGE_TYPE.ASYNC_STORAGE,
+        migrationStatus: MIGRATION_STATUS.NOT_STARTED,
+        rollbackStatus: ROLLBACK_STATUS.NOT_STARTED,
+        numberOfReadErrors: 0,
+      };
+
+      // Act
+      initStorageState(state);
+
+      // Assert
+      expect(state.migrationStatus).toBe(MIGRATION_STATUS.ROLLED_BACK);
     });
   });
 });

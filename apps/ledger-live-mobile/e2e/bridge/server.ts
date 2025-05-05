@@ -199,7 +199,11 @@ export async function open() {
 }
 
 export async function swapSetup() {
-  return fetchData({ type: "swapSetup", id: uniqueId() }, RESPONSE_TIMEOUT * 6);
+  await postMessage({ type: "swapSetup", id: uniqueId() });
+}
+
+export async function waitSwapReady() {
+  return fetchData({ type: "waitSwapReady", id: uniqueId() }, RESPONSE_TIMEOUT * 6);
 }
 
 export async function getLogs() {

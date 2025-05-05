@@ -1,14 +1,13 @@
-import { type Api } from "@ledgerhq/coin-framework/api/index";
 import { localForger } from "@taquito/local-forging";
 import { createApi } from ".";
-import { TezosAsset } from "../types";
+import type { TezosApi } from "./types";
 
 /**
  * https://teztnets.com/ghostnet-about
  * https://api.tzkt.io/#section/Get-Started/Free-TzKT-API
  */
 describe("Tezos Api", () => {
-  let module: Api<TezosAsset>;
+  let module: TezosApi;
   const address = "tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ";
 
   beforeAll(() => {
@@ -42,13 +41,16 @@ describe("Tezos Api", () => {
       const result = await module.estimateFees({
         asset: { type: "native" },
         type: "send",
-        sender: address,
+        sender: { address },
         recipient: "tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ",
         amount,
       });
 
       // Then
-      expect(result).toBeGreaterThanOrEqual(BigInt(0));
+      expect(result.value).toBeGreaterThanOrEqual(BigInt(0));
+      expect(result.parameters).toBeDefined();
+      expect(result.parameters?.gasLimit).toBeGreaterThanOrEqual(BigInt(0));
+      expect(result.parameters?.storageLimit).toBeGreaterThanOrEqual(BigInt(0));
     });
   });
 
@@ -113,7 +115,7 @@ describe("Tezos Api", () => {
       const encodedTransaction = await module.craftTransaction({
         asset: { type: "native" },
         type,
-        sender: address,
+        sender: { address },
         recipient: recipient,
         amount: amount,
       });
@@ -137,7 +139,7 @@ describe("Tezos Api", () => {
       const encodedTransaction = await module.craftTransaction({
         asset: { type: "native" },
         type: "send",
-        sender: address,
+        sender: { address },
         recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
         amount: BigInt(10),
       });
@@ -154,7 +156,7 @@ describe("Tezos Api", () => {
           {
             asset: { type: "native" },
             type: "send",
-            sender: address,
+            sender: { address },
             recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
             amount: BigInt(10),
           },

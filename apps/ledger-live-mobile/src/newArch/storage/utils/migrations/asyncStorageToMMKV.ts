@@ -10,8 +10,8 @@ import {
 import mmkvStorage from "LLM/storage/mmkvStorageWrapper";
 import asyncStorage, { CHUNKED_KEY } from "LLM/storage/asyncStorageWrapper";
 import { MigrationStatus, RollbackStatus } from "./types";
-import { getFeature } from "@ledgerhq/live-common/featureFlags/firebaseFeatureFlags";
 import { trackStorageMigration } from "./analytics";
+import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
 
 export const migrator = {
   /**
@@ -30,12 +30,13 @@ export const migrator = {
    * @param state
    * The current state of the application storage.
    */
-  async handleMigration(state: StorageState): Promise<boolean> {
+  async handleMigration(
+    state: StorageState,
+    featureFag: Feature_LlmMmkvMigration,
+  ): Promise<boolean> {
     try {
-      const feature = getFeature({ key: "llmMmkvMigration" });
-      if (!feature?.enabled) return false;
-
-      const shouldRollback = feature.params?.shouldRollback ?? false;
+      if (!featureFag?.enabled) return false;
+      const shouldRollback = featureFag.params?.shouldRollback ?? false;
 
       if (
         shouldRollback &&
@@ -53,7 +54,10 @@ export const migrator = {
         return false;
       }
 
-      if (state.migrationStatus !== MIGRATION_STATUS.COMPLETED) {
+      if (
+        state.migrationStatus !== MIGRATION_STATUS.COMPLETED &&
+        state.rollbackStatus !== ROLLBACK_STATUS.COMPLETED
+      ) {
         log("Storage", "Running rollback...");
         migrator.migrate(state);
         return true;
@@ -127,12 +131,6 @@ export const migrator = {
 
     migrator.markRollbackStatusInProgress(state);
     migrator.selectAsyncStorage(state);
-
-    try {
-      await mmkvStorage.deleteAll();
-    } catch (e) {
-      console.warn("Failed to delete all data from MMKV during rollback", e);
-    }
 
     migrator.markMigrationStatusRollbacked(state);
     migrator.markRollbackStatusCompleted(state);

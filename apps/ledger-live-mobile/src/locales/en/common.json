@@ -1103,6 +1103,32 @@
     "tryEnablingAgain": "Try enabling location again",
     "noInfos": "Ledger does not access your location information."
   },
+  "earn": {
+    "deposit": {
+      "protocolInfoModal": {
+        "title": "To choose a protocol, here’s a few things to bear in mind:",
+        "items": {
+          "protocol": {
+            "highlighted": "A protocol",
+            "description": " is a platform that lets you get rewards by using your deposited crypto for lending, liquidity, or staking."
+          },
+          "apy": {
+            "highlighted": "APY (Annual Percentage Yield)",
+            "description": " is how much interest you can earn over a year. Higher APY means higher earnings."
+          },
+          "tvl": {
+            "highlighted": "TVL (Total value locked)",
+            "description": " is the total money deposited on the protocol by other users. Higher TVL means the protocol is trusted by more people."
+          },
+          "strategy": {
+            "highlighted": "Strategy",
+            "description0": " is the method a protocol uses to generate rewards for you.",
+            "description1": "For example, if a protocol uses lending as its strategy, it lends out your deposited stablecoin to borrowers. You then earn interest which varies based on demand."
+          }
+        }
+      }
+    }
+  },
   "permissions": {
     "open": "Open app permissions",
     "authorize": "Authorize",

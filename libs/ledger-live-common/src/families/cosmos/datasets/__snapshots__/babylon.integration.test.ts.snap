@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`babylon currency bridge scanAccounts babylon seed 1 1`] = `
+[
+  {
+    "balance": "1000000",
+    "currencyId": "babylon",
+    "derivationMode": "",
+    "freshAddress": "bbn1uwpws077a0a9pclapv3f2fyj5u0mlh6ewmds8n",
+    "freshAddressPath": "44'/118'/0'/0/0",
+    "id": "js:2:babylon:bbn1uwpws077a0a9pclapv3f2fyj5u0mlh6ewmds8n:",
+    "index": 0,
+    "pendingOperations": [],
+    "seedIdentifier": "03cd9e27aa78eddce3fda5f8050db35196b188d80d10bd04aab15e5669defee8b0",
+    "spendableBalance": "1000000",
+    "swapHistory": [],
+    "syncHash": undefined,
+    "used": true,
+    "xpub": "bbn1uwpws077a0a9pclapv3f2fyj5u0mlh6ewmds8n",
+  },
+  {
+    "balance": "0",
+    "currencyId": "babylon",
+    "derivationMode": "",
+    "freshAddress": "bbn1jy28znlkp4x7gf8cxlj6n2ngkrkxh2yy7t2m9y",
+    "freshAddressPath": "44'/118'/1'/0/0",
+    "id": "js:2:babylon:bbn1jy28znlkp4x7gf8cxlj6n2ngkrkxh2yy7t2m9y:",
+    "index": 1,
+    "pendingOperations": [],
+    "seedIdentifier": "03cd9e27aa78eddce3fda5f8050db35196b188d80d10bd04aab15e5669defee8b0",
+    "spendableBalance": "0",
+    "swapHistory": [],
+    "syncHash": undefined,
+    "used": false,
+    "xpub": "bbn1jy28znlkp4x7gf8cxlj6n2ngkrkxh2yy7t2m9y",
+  },
+]
+`;
+
+exports[`babylon currency bridge scanAccounts babylon seed 1 2`] = `
+[
+  [
+    {
+      "accountId": "js:2:babylon:bbn1uwpws077a0a9pclapv3f2fyj5u0mlh6ewmds8n:",
+      "blockHash": null,
+      "blockHeight": 207584,
+      "extra": {},
+      "fee": "213",
+      "hasFailed": false,
+      "hash": "9C1E5CE07E13F80CDF16EF217F765CCF0FDE4A561FC24A65021AA00DA3844DD3",
+      "id": "js:2:babylon:bbn1uwpws077a0a9pclapv3f2fyj5u0mlh6ewmds8n:-9C1E5CE07E13F80CDF16EF217F765CCF0FDE4A561FC24A65021AA00DA3844DD3-IN",
+      "recipients": [
+        "bbn1uwpws077a0a9pclapv3f2fyj5u0mlh6ewmds8n",
+      ],
+      "senders": [
+        "bbn1g84934jpu3v5de5yqukkkhxmcvsw3u2a9casjx",
+      ],
+      "transactionSequenceNumber": 3,
+      "type": "IN",
+      "value": "1000000",
+    },
+  ],
+  [],
+]
+`;

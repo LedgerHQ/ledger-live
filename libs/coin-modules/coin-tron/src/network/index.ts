@@ -323,7 +323,7 @@ export const broadcastTron = async (
     if (result.code === "TRANSACTION_EXPIRATION_ERROR") {
       throw new TronTransactionExpired();
     } else {
-      throw new Error(result.message);
+      throw new Error(`${result.code}: ${result.message}`);
     }
   }
 
