@@ -5420,7 +5420,9 @@
     "stringHash" : "دالة تجزئة الرسالة",
     "domainHash" : "دالة تجزئة المجال",
     "messageHash" : "دالة تجزئة الرسالة",
-    "message" : "رسالة"
+    "message" : "رسالة",
+    "title" : "تابع على جهازك Ledger {{wording}}",
+    "description" : "اتبع التعليمات المعروضة على شاشتك الآمنة التي تعمل باللمس."
   },
   "TransactionConfirm" : {
     "title" : "يرجى تأكيد العملية على جهازك لإنهائها",
@@ -5866,6 +5868,10 @@
     },
     "NotEnoughBalance" : {
       "title" : "عفواً، الأموال المتوفرة غير كافية",
+      "description" : "يرجى التأكد من أن الحساب به أموال كافية."
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "عذراً، الأموال غير كافية لتغطية الرسوم",
       "description" : "يرجى التأكد من أن الحساب به أموال كافية."
     },
     "NotEnoughBalanceSwap" : {
