@@ -1,26 +1,30 @@
+import { Aptos } from "@aptos-labs/ts-sdk";
 import type { Api } from "@ledgerhq/coin-framework/api/types";
 import type { AptosAsset } from "../../types/assets";
 import type { AptosConfig } from "../../config";
 import { createApi } from "../../api";
 import coinConfig from "../../config";
 
+jest.mock("@aptos-labs/ts-sdk");
+let mockedAptos: jest.Mocked<any>;
+
 jest.mock("../../config", () => ({
   setCoinConfig: jest.fn(),
 }));
 
-jest.mock("../../logic", () => ({
-  broadcast: jest.fn(),
-  combine: jest.fn(),
-  craftTransaction: jest.fn(),
-  estimateFees: jest.fn(),
-  getBalance: jest.fn(),
-  listOperations: jest.fn(),
-  lastBlock: jest.fn(),
-}));
+// jest.mock("../../logic", () => ({
+//   broadcast: jest.fn(),
+//   combine: jest.fn(),
+//   craftTransaction: jest.fn(),
+//   estimateFees: jest.fn(),
+//   getBalance: jest.fn(),
+//   listOperations: jest.fn(),
+//   lastBlock: jest.fn(),
+// }));
+
+const mockAptosConfig: AptosConfig = {} as AptosConfig;
 
 describe("createApi", () => {
-  const mockAptosConfig: AptosConfig = {} as AptosConfig;
-
   it("should set the coin config value", () => {
     const setCoinConfigSpy = jest.spyOn(coinConfig, "setCoinConfig");
 
@@ -49,5 +53,38 @@ describe("createApi", () => {
     expect(api.getBalance).toBeDefined();
     expect(api.lastBlock).toBeDefined();
     expect(api.listOperations).toBeDefined();
+  });
+});
+
+describe("lastBlock", () => {
+  beforeEach(() => {
+    mockedAptos = jest.mocked(Aptos);
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
+  it("returns the last block information", async () => {
+    mockedAptos.mockImplementation(() => ({
+      getLedgerInfo: jest.fn().mockReturnValue({
+        block_height: "123",
+      }),
+      getBlockByHeight: jest.fn().mockReturnValue({
+        block_height: "123",
+        block_hash: "123hash",
+        block_timestamp: "1746021098623892",
+        first_version: "1",
+        last_version: "1",
+      }),
+    }));
+
+    const api: Api<AptosAsset> = createApi(mockAptosConfig);
+
+    expect(await api.lastBlock()).toStrictEqual({
+      height: 123,
+      hash: "123hash",
+      time: new Date(1746021098623892),
+    });
   });
 });
