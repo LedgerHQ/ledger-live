@@ -65,6 +65,83 @@ export class AptosAPI {
     });
   }
 
+  private async getBalance(address: string): Promise<BigNumber> {
+    try {
+      const [balanceStr] = await this.aptosClient.view<[string]>({
+        payload: {
+          function: "0x1::coin::balance",
+          typeArguments: [APTOS_ASSET_ID],
+          functionArguments: [address],
+        },
+      });
+      const balance = parseInt(balanceStr, 10);
+      return new BigNumber(balance);
+    } catch (_) {
+      return new BigNumber(0);
+    }
+  }
+
+  private async fetchTransactions(address: string, gt?: string) {
+    if (!address) {
+      return [];
+    }
+
+    let query = GetAccountTransactionsData;
+    if (gt) {
+      query = GetAccountTransactionsDataGt;
+    }
+
+    const queryResponse = await this.apolloClient.query<
+      GetAccountTransactionsDataQuery,
+      GetAccountTransactionsDataGtQueryVariables
+    >({
+      query,
+      variables: {
+        address,
+        limit: 1000,
+        gt,
+      },
+      fetchPolicy: "network-only",
+    });
+
+    return Promise.all(
+      queryResponse.data.address_version_from_move_resources.map(({ transaction_version }) => {
+        return this.richItemByVersion(transaction_version);
+      }),
+    );
+  }
+
+  private async richItemByVersion(version: number): Promise<AptosTransaction | null> {
+    try {
+      const tx: TransactionResponse = await this.aptosClient.getTransactionByVersion({
+        ledgerVersion: version,
+      });
+      const block = await this.getBlock(version);
+      return {
+        ...tx,
+        block,
+      } as AptosTransaction;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  private async getHeight(): Promise<number> {
+    const { data } = await network<Block>({
+      method: "GET",
+      url: this.aptosConfig.fullnode || "",
+    });
+    return parseInt(data.block_height);
+  }
+
+  private async getBlock(version: number) {
+    const block = await this.aptosClient.getBlockByVersion({ ledgerVersion: version });
+    return {
+      height: parseInt(block.block_height),
+      hash: block.block_hash,
+    };
+  }
+
   async getAccount(address: string): Promise<AccountData> {
     return this.aptosClient.getAccountInfo({ accountAddress: address });
   }
@@ -156,83 +233,6 @@ export class AptosAPI {
       height: Number(block.block_height),
       hash: block.block_hash,
       time: new Date(Number(block.block_timestamp)),
-    };
-  }
-
-  private async getBalance(address: string): Promise<BigNumber> {
-    try {
-      const [balanceStr] = await this.aptosClient.view<[string]>({
-        payload: {
-          function: "0x1::coin::balance",
-          typeArguments: [APTOS_ASSET_ID],
-          functionArguments: [address],
-        },
-      });
-      const balance = parseInt(balanceStr, 10);
-      return new BigNumber(balance);
-    } catch (_) {
-      return new BigNumber(0);
-    }
-  }
-
-  private async fetchTransactions(address: string, gt?: string) {
-    if (!address) {
-      return [];
-    }
-
-    let query = GetAccountTransactionsData;
-    if (gt) {
-      query = GetAccountTransactionsDataGt;
-    }
-
-    const queryResponse = await this.apolloClient.query<
-      GetAccountTransactionsDataQuery,
-      GetAccountTransactionsDataGtQueryVariables
-    >({
-      query,
-      variables: {
-        address,
-        limit: 1000,
-        gt,
-      },
-      fetchPolicy: "network-only",
-    });
-
-    return Promise.all(
-      queryResponse.data.address_version_from_move_resources.map(({ transaction_version }) => {
-        return this.richItemByVersion(transaction_version);
-      }),
-    );
-  }
-
-  private async richItemByVersion(version: number): Promise<AptosTransaction | null> {
-    try {
-      const tx: TransactionResponse = await this.aptosClient.getTransactionByVersion({
-        ledgerVersion: version,
-      });
-      const block = await this.getBlock(version);
-      return {
-        ...tx,
-        block,
-      } as AptosTransaction;
-    } catch (error) {
-      return null;
-    }
-  }
-
-  private async getHeight(): Promise<number> {
-    const { data } = await network<Block>({
-      method: "GET",
-      url: this.aptosConfig.fullnode || "",
-    });
-    return parseInt(data.block_height);
-  }
-
-  private async getBlock(version: number) {
-    const block = await this.aptosClient.getBlockByVersion({ ledgerVersion: version });
-    return {
-      height: parseInt(block.block_height),
-      hash: block.block_hash,
     };
   }
 }
