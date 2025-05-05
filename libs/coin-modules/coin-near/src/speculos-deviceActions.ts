@@ -11,7 +11,7 @@ const confirmWording: Record<string, string> = {
   withdraw: "withdraw",
 };
 
-export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
+export const stakeTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [
     {
       title: "Confirm",
@@ -70,6 +70,59 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       title: "Approve",
       button: SpeculosButton.BOTH,
       final: true,
+    },
+  ],
+});
+
+export const sendTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
+  steps: [
+    {
+      title: "View header",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Signer Id (1/2)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Signer Id (2/2)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Receiver Id (1/2)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Receiver Id (2/2)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Total actions",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Continue to actions",
+      button: SpeculosButton.BOTH,
+    },
+    {
+      title: "Total actions",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "View action 1/1",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Action type",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Amount",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Sign",
+      button: SpeculosButton.BOTH,
     },
   ],
 });

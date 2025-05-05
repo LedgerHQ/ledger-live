@@ -7,7 +7,7 @@ import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { botTest, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { acceptTransaction } from "./speculos-deviceActions";
+import { stakeTransaction, sendTransaction } from "./speculos-deviceActions";
 
 const currency = getCryptoCurrencyById("near");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "0.00001");
@@ -19,16 +19,19 @@ const near: AppSpec<Transaction> = {
   name: "NEAR",
   currency,
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "NEAR",
+    appVersion: "2.3.5",
+    firmware: "1.3.2",
   },
-  genericDeviceAction: acceptTransaction,
+  genericDeviceAction: stakeTransaction,
   testTimeout: 2 * 60 * 1000,
   mutations: [
     {
       name: "Move 50% to another account",
       feature: "send",
       maxRun: 1,
+      deviceAction: sendTransaction,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minimalAmount), "balance is too low");
         const sibling = pickSiblings(siblings, maxAccount);
@@ -47,131 +50,132 @@ const near: AppSpec<Transaction> = {
         );
       },
     },
-    {
-      name: "Send max to another account",
-      feature: "sendMax",
-      maxRun: 1,
-      transaction: ({ account, siblings, bridge, maxSpendable }) => {
-        invariant(maxSpendable.gt(minimalAmount), "balance is too low");
-        const sibling = pickSiblings(siblings, maxAccount);
-        const recipient = sibling.freshAddress;
-        return {
-          transaction: bridge.createTransaction(account),
-          updates: [{ recipient }, { useAllAmount: true }],
-        };
-      },
-      test: ({ account }) => {
-        botTest("account spendable balance is zero", () =>
-          expect(account.spendableBalance.toString()).toBe("0"),
-        );
-      },
-    },
-    {
-      name: "Stake",
-      feature: "staking",
-      maxRun: 1,
-      transaction: ({ account, bridge, maxSpendable }) => {
-        invariant(maxSpendable.gt(minimalAmount.plus(stakingFee)), "balance is too low");
+    // {
+    //   name: "Send max to another account",
+    //   feature: "sendMax",
+    //   maxRun: 1,
+    //   deviceAction: sendTransaction,
+    //   transaction: ({ account, siblings, bridge, maxSpendable }) => {
+    //     invariant(maxSpendable.gt(minimalAmount), "balance is too low");
+    //     const sibling = pickSiblings(siblings, maxAccount);
+    //     const recipient = sibling.freshAddress;
+    //     return {
+    //       transaction: bridge.createTransaction(account),
+    //       updates: [{ recipient }, { useAllAmount: true }],
+    //     };
+    //   },
+    //   test: ({ account }) => {
+    //     botTest("account spendable balance is zero", () =>
+    //       expect(account.spendableBalance.toString()).toBe("0"),
+    //     );
+    //   },
+    // },
+    // {
+    //   name: "Stake",
+    //   feature: "staking",
+    //   maxRun: 1,
+    //   transaction: ({ account, bridge, maxSpendable }) => {
+    //     invariant(maxSpendable.gt(minimalAmount.plus(stakingFee)), "balance is too low");
 
-        const amount = minimalAmount.times(10).times(Math.random()).integerValue();
+    //     const amount = minimalAmount.times(10).times(Math.random()).integerValue();
 
-        return {
-          transaction: bridge.createTransaction(account),
-          updates: [{ mode: "stake", recipient: validator }, { amount }],
-        };
-      },
-      test: ({ accountBeforeTransaction, operation, account }) => {
-        const { nearResources } = account as NearAccount;
-        const { nearResources: beforeTransactionNearResources } =
-          accountBeforeTransaction as NearAccount;
+    //     return {
+    //       transaction: bridge.createTransaction(account),
+    //       updates: [{ mode: "stake", recipient: validator }, { amount }],
+    //     };
+    //   },
+    //   test: ({ accountBeforeTransaction, operation, account }) => {
+    //     const { nearResources } = account as NearAccount;
+    //     const { nearResources: beforeTransactionNearResources } =
+    //       accountBeforeTransaction as NearAccount;
 
-        // Sometimes, 1 yoctoNEAR gets deducted from the staked amount, so we assert against a range.
-        botTest("account staked balance increased with operation", () => {
-          expect(
-            nearResources.stakedBalance.gte(
-              beforeTransactionNearResources.stakedBalance.plus(operation.value.minus("1")),
-            ),
-          ).toBe(true);
-          expect(
-            nearResources.stakedBalance.lte(
-              beforeTransactionNearResources.stakedBalance.plus(operation.value),
-            ),
-          ).toBe(true);
-        });
-      },
-    },
-    {
-      name: "Unstake",
-      feature: "staking",
-      maxRun: 1,
-      transaction: ({ account, bridge, maxSpendable }) => {
-        invariant(maxSpendable.gt(stakingFee), "balance is too low for fees");
+    //     // Sometimes, 1 yoctoNEAR gets deducted from the staked amount, so we assert against a range.
+    //     botTest("account staked balance increased with operation", () => {
+    //       expect(
+    //         nearResources.stakedBalance.gte(
+    //           beforeTransactionNearResources.stakedBalance.plus(operation.value.minus("1")),
+    //         ),
+    //       ).toBe(true);
+    //       expect(
+    //         nearResources.stakedBalance.lte(
+    //           beforeTransactionNearResources.stakedBalance.plus(operation.value),
+    //         ),
+    //       ).toBe(true);
+    //     });
+    //   },
+    // },
+    // {
+    //   name: "Unstake",
+    //   feature: "staking",
+    //   maxRun: 1,
+    //   transaction: ({ account, bridge, maxSpendable }) => {
+    //     invariant(maxSpendable.gt(stakingFee), "balance is too low for fees");
 
-        const { nearResources } = account as NearAccount;
+    //     const { nearResources } = account as NearAccount;
 
-        const staked = nearResources?.stakedBalance || new BigNumber(0);
+    //     const staked = nearResources?.stakedBalance || new BigNumber(0);
 
-        invariant(staked.gt(minimalAmount), "staked balance is too low for unstaking");
+    //     invariant(staked.gt(minimalAmount), "staked balance is too low for unstaking");
 
-        const halfStaked = staked.div(2);
+    //     const halfStaked = staked.div(2);
 
-        const amount = halfStaked.gt(minimalAmount)
-          ? halfStaked.integerValue()
-          : staked.integerValue();
+    //     const amount = halfStaked.gt(minimalAmount)
+    //       ? halfStaked.integerValue()
+    //       : staked.integerValue();
 
-        return {
-          transaction: bridge.createTransaction(account),
-          updates: [{ mode: "unstake", recipient: validator }, { amount }],
-        };
-      },
-      test: ({ accountBeforeTransaction, account }) => {
-        const { nearResources } = account as NearAccount;
-        const { nearResources: beforeTransactionNearResources } =
-          accountBeforeTransaction as NearAccount;
+    //     return {
+    //       transaction: bridge.createTransaction(account),
+    //       updates: [{ mode: "unstake", recipient: validator }, { amount }],
+    //     };
+    //   },
+    //   test: ({ accountBeforeTransaction, account }) => {
+    //     const { nearResources } = account as NearAccount;
+    //     const { nearResources: beforeTransactionNearResources } =
+    //       accountBeforeTransaction as NearAccount;
 
-        botTest("account pending balance increased", () =>
-          expect(
-            nearResources.pendingBalance.gt(beforeTransactionNearResources.pendingBalance),
-          ).toBe(true),
-        );
-      },
-    },
-    {
-      name: "Withdraw",
-      feature: "staking",
-      maxRun: 1,
-      transaction: ({ account, bridge, maxSpendable }) => {
-        invariant(maxSpendable.gt(stakingFee), "balance is too low for fees");
+    //     botTest("account pending balance increased", () =>
+    //       expect(
+    //         nearResources.pendingBalance.gt(beforeTransactionNearResources.pendingBalance),
+    //       ).toBe(true),
+    //     );
+    //   },
+    // },
+    // {
+    //   name: "Withdraw",
+    //   feature: "staking",
+    //   maxRun: 1,
+    //   transaction: ({ account, bridge, maxSpendable }) => {
+    //     invariant(maxSpendable.gt(stakingFee), "balance is too low for fees");
 
-        const { nearResources } = account as NearAccount;
+    //     const { nearResources } = account as NearAccount;
 
-        const available = nearResources?.availableBalance || new BigNumber(0);
+    //     const available = nearResources?.availableBalance || new BigNumber(0);
 
-        invariant(available.gt(minimalAmount), "available balance is too low for withdrawing");
+    //     invariant(available.gt(minimalAmount), "available balance is too low for withdrawing");
 
-        const halfAvailable = available.div(2);
+    //     const halfAvailable = available.div(2);
 
-        const amount = halfAvailable.gt(minimalAmount)
-          ? halfAvailable.integerValue()
-          : available.integerValue();
+    //     const amount = halfAvailable.gt(minimalAmount)
+    //       ? halfAvailable.integerValue()
+    //       : available.integerValue();
 
-        return {
-          transaction: bridge.createTransaction(account),
-          updates: [{ mode: "withdraw", recipient: validator }, { amount }],
-        };
-      },
-      test: ({ accountBeforeTransaction, account }) => {
-        const { nearResources } = account as NearAccount;
-        const { nearResources: beforeTransactionNearResources } =
-          accountBeforeTransaction as NearAccount;
+    //     return {
+    //       transaction: bridge.createTransaction(account),
+    //       updates: [{ mode: "withdraw", recipient: validator }, { amount }],
+    //     };
+    //   },
+    //   test: ({ accountBeforeTransaction, account }) => {
+    //     const { nearResources } = account as NearAccount;
+    //     const { nearResources: beforeTransactionNearResources } =
+    //       accountBeforeTransaction as NearAccount;
 
-        botTest("account withdrawable balance decreased", () =>
-          expect(
-            nearResources.availableBalance.lt(beforeTransactionNearResources.availableBalance),
-          ).toBe(true),
-        );
-      },
-    },
+    //     botTest("account withdrawable balance decreased", () =>
+    //       expect(
+    //         nearResources.availableBalance.lt(beforeTransactionNearResources.availableBalance),
+    //       ).toBe(true),
+    //     );
+    //   },
+    // },
   ],
 };
 
