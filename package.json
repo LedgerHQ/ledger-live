@@ -235,7 +235,8 @@
       "@hashgraph/sdk>@hashgraph/cryptography": "1.1.2",
       "@hashgraph/sdk>@grpc/grpc-js": "1.6.7",
       "@ethersproject/providers>ws": "7.5.10",
-      "elliptic": "6.6.1"
+      "elliptic": "6.6.1",
+      "@sentry/react-native>metro": "0.81.3"
     },
     "patchedDependencies": {
       "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
