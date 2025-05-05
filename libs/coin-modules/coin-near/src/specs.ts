@@ -20,9 +20,9 @@ const near: AppSpec<Transaction> = {
   currency,
   appQuery: {
     model: DeviceModelId.nanoSP,
+    firmware: "1.2.0",
     appName: "NEAR",
-    appVersion: "2.3.5",
-    firmware: "1.3.2",
+    appVersion: "2.2.1",
   },
   genericDeviceAction: stakeTransaction,
   testTimeout: 2 * 60 * 1000,
