@@ -12,16 +12,6 @@ jest.mock("../../config", () => ({
   setCoinConfig: jest.fn(),
 }));
 
-// jest.mock("../../logic", () => ({
-//   broadcast: jest.fn(),
-//   combine: jest.fn(),
-//   craftTransaction: jest.fn(),
-//   estimateFees: jest.fn(),
-//   getBalance: jest.fn(),
-//   listOperations: jest.fn(),
-//   lastBlock: jest.fn(),
-// }));
-
 const mockAptosConfig: AptosConfig = {} as AptosConfig;
 
 describe("createApi", () => {
