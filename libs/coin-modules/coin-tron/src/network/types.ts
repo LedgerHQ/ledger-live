@@ -65,8 +65,8 @@ export type TransactionTronAPI<T = TransactionContract> = {
   raw_data_hex: string;
   net_fee: number;
   energy_usage: number;
-  blockNumber?: number;
   block_timestamp: number;
+  blockNumber?: number;
   energy_fee: number;
   energy_usage_total: number;
   unfreeze_amount?: number;
@@ -178,6 +178,12 @@ export type MalformedTransactionTronAPI = {
   to_address: string;
   tx_id: string;
   from_address: string;
+};
+
+export type Block = {
+  height: number;
+  hash: string;
+  time?: Date;
 };
 
 export function isMalformedTransactionTronAPI(

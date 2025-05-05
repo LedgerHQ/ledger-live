@@ -74,6 +74,7 @@
     "varuint-bitcoin": "1.1.2"
   },
   "devDependencies": {
+    "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/bchaddrjs": "^0.4.3",
     "@types/bs58": "^4.0.1",
     "@types/bs58check": "^2.1.2",

@@ -67,6 +67,7 @@
     "superstruct": "0.16.7"
   },
   "devDependencies": {
+    "@ledgerhq/disable-network-setup": "workspace:^",
     "@faker-js/faker": "^8.4.1",
     "@swc/core": "1.4.11",
     "@swc/jest": "0.2.36",

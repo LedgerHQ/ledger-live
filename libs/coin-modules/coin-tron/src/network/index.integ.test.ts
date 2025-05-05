@@ -1,4 +1,10 @@
-import { fetchTronAccount, fetchTronAccountTxs, fetchTronTxDetail, getTronAccountNetwork } from ".";
+import {
+  defaultFetchParams,
+  fetchTronAccount,
+  fetchTronAccountTxs,
+  fetchTronTxDetail,
+  getTronAccountNetwork,
+} from ".";
 import coinConfig from "../config";
 import fetchTronTxs from "./fixtures/fetchTronAccountTxs.fixture.json";
 
@@ -24,7 +30,12 @@ describe("TronGrid", () => {
       "maps all fields correctly",
       async () => {
         // WHEN
-        const results = await fetchTronAccountTxs(address, txs => txs.length < 100, {});
+        const results = await fetchTronAccountTxs(
+          address,
+          txs => txs.length < 100,
+          {},
+          defaultFetchParams,
+        );
 
         // THEN
         expect(results).not.toHaveLength(0);

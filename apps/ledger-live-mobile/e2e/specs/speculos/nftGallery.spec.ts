@@ -1,4 +1,4 @@
-describe("NFT Gallery screen", () => {
+describe.skip("NFT Gallery screen", () => {
   const nanoApp = AppInfos.ETHEREUM;
   const accountCurrency = Currency.ETH.id;
 

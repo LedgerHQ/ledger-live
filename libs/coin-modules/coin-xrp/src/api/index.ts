@@ -20,7 +20,7 @@ import {
 } from "../logic";
 import { ListOperationsOptions, XrpAsset } from "../types";
 
-export function createApi(config: XrpConfig): Api<XrpAsset, TransactionIntentExtra> {
+export function createApi(config: XrpConfig): Api<XrpAsset, TransactionIntentExtra, XrpSender> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -39,14 +39,19 @@ export type TransactionIntentExtra = {
   memos?: MemoInput[];
 };
 
+export type XrpSender = {
+  address: string;
+  publicKey?: string;
+};
+
 async function craft(
-  transactionIntent: TransactionIntent<XrpAsset, TransactionIntentExtra>,
+  transactionIntent: TransactionIntent<XrpAsset, TransactionIntentExtra, XrpSender>,
   customFees?: bigint,
 ): Promise<string> {
-  const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
+  const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender.address);
   const estimatedFees = customFees !== undefined ? customFees : (await estimateFees()).fee;
   const tx = await craftTransaction(
-    { address: transactionIntent.sender, nextSequenceNumber },
+    { address: transactionIntent.sender.address, nextSequenceNumber },
     {
       recipient: transactionIntent.recipient,
       amount: transactionIntent.amount,
@@ -54,6 +59,7 @@ async function craft(
       destinationTag: transactionIntent.destinationTag,
       memos: transactionIntent.memos,
     },
+    transactionIntent.sender.publicKey,
   );
   return tx.serializedTransaction;
 }

@@ -5441,7 +5441,9 @@
     "stringHash": "Message Hash",
     "domainHash": "Domain Hash",
     "messageHash": "Message Hash",
-    "message": "Message"
+    "message": "Message",
+    "title": "Continue on your Ledger {{wording}}",
+    "description": "Follow the instructions displayed on your Secure Touchscreen."
   },
   "TransactionConfirm": {
     "title": "Please confirm the operation on your device to finalize it",
