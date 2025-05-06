@@ -2393,7 +2393,10 @@
         "suggested" : "Önerilen",
         "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
-        "nftQuantity" : "Miktar"
+        "nftQuantity" : "Miktar",
+        "spl2022Warning" : "Token Uzantıları (Token Extensions) olarak da bilinen Token-2022 programı kapsamındaki bir token’la etkileşime geçiyorsunuz. Bu token’ın belirli riskleri bulunmaktadır. ",
+        "spl2022UrlLabel" : "Buraya tıklayarak",
+        "spl2022UrlFollowUp" : " daha fazla bilgi edinebilirsiniz."
       },
       "verification" : {
         "streaming" : {
@@ -3768,7 +3771,7 @@
       "frozenStateWarning" : "Hesap varlıkları donduruldu!",
       "transferWarning" : "Ledger Nano S™ kullanarak Solana token'ları için alıcı adresini doğrulamak üzere <0>bu yönergeleri uygulayın.</0>",
       "transferFees" : {
-        "feesPercentHint" : "Bu token için %{{feePercent}} ({{feeBps}} bps) transfer ücreti alınır. Maks. {{maxFee}}",
+        "feesHint" : "Token transfer ücreti: {{transferFee}}",
         "notice" : "Transfer ücreti: %{{fee}}",
         "tooltipHint" : "Token oluşturucu için alıkoyulan transfer yüzdesi",
         "transferFeesLabel" : "Transfer ücretleri"
@@ -5420,7 +5423,9 @@
     "stringHash" : "Mesaj Hash'i",
     "domainHash" : "Alan Adı Hash'i",
     "messageHash" : "Mesaj Hash'i",
-    "message" : "Mesaj"
+    "message" : "Mesaj",
+    "title" : "Ledger {{wording}} üzerinde devam edin",
+    "description" : "Güvenli Dokunmatik Ekranınızda gösterilen yönergeleri izleyin."
   },
   "TransactionConfirm" : {
     "title" : "Sonlandırmak için lütfen cihazınızdaki işlemi onaylayın",
