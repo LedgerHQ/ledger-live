@@ -9,18 +9,7 @@
     "src/serialization.ts",
     "src/specs.ts",
     "src/transaction.ts",
-    "src/hw-signMessage.ts",
-    "src/helpers/kind/export.ts",
-    "src/helpers/kind/helper.ts",
-    "src/helpers/kind/mappers/stakeCreateAccount.ts",
-    "src/helpers/kind/mappers/stakeDelegate.ts",
-    "src/helpers/kind/mappers/stakeSplit.ts",
-    "src/helpers/kind/mappers/stakeUndelegate.ts",
-    "src/helpers/kind/mappers/stakeWithdraw.ts",
-    "src/helpers/kind/mappers/tokenCreateATA.ts",
-    "src/helpers/kind/mappers/tokenTransfer.ts",
-    "src/helpers/kind/mappers/transfer.ts",
-    "src/helpers/kind/type.ts"
+    "src/hw-signMessage.ts"
   ],
   "ignorePatterns": [
     "**/node_modules/**",
