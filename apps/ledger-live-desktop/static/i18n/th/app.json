@@ -2393,7 +2393,10 @@
         "suggested" : "แนะนำ",
         "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
-        "nftQuantity" : "ปริมาณ"
+        "nftQuantity" : "ปริมาณ",
+        "spl2022Warning" : "คุณกำลังโต้ตอบกับโทเคนที่เป็นส่วนหนึ่งของโปรแกรม Token-2022 หรือที่เรียกว่า Token Extensions โทเคนนี้มาพร้อมกับความเสี่ยง ",
+        "spl2022UrlLabel" : "คลิกที่นี่",
+        "spl2022UrlFollowUp" : " เพื่อเรียนรู้เพิ่มเติม"
       },
       "verification" : {
         "streaming" : {
@@ -3768,7 +3771,7 @@
       "frozenStateWarning" : "สินทรัพย์บัญชีถูก Freeze!",
       "transferWarning" : "ในการตรวจสอบ Address ผู้รับสำหรับโทเคน Solana โดยใช้ Ledger Nano S™ ให้<0>ทำตามคำแนะนำต่อไปนี้</0>",
       "transferFees" : {
-        "feesPercentHint" : "โทเคนมีค่าธรรมเนียม {{feePercent}}% ({{feeBps}}bps) แต่ไม่เกิน {{maxFee}}",
+        "feesHint" : "ค่าธรรมเนียมการโอนโทเคน: {{transferFee}}",
         "notice" : "ค่าธรรมเนียมการโอน {{fee}}%",
         "tooltipHint" : "เปอร์เซ็นต์การโอนที่ถูกระงับไว้สำหรับผู้สร้างโทเคน",
         "transferFeesLabel" : "ค่าธรรมเนียมการโอน"
@@ -5420,7 +5423,9 @@
     "stringHash" : "Message Hash",
     "domainHash" : "Hash โดเมน",
     "messageHash" : "Message Hash",
-    "message" : "ข้อความ"
+    "message" : "ข้อความ",
+    "title" : "ดำเนินการต่อบน Ledger {{wording}} ของคุณ",
+    "description" : "ปฏิบัติตามคำแนะนำที่ปรากฏบน Secure Touchscreen ของคุณ"
   },
   "TransactionConfirm" : {
     "title" : "โปรดยืนยันการดำเนินการบนอุปกรณ์ของคุณเพื่อทำให้เสร็จสิ้น",
