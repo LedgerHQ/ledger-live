@@ -16,11 +16,11 @@ import {
   isTestnet,
   processRecipients,
   getMaxSendBalance,
-  normalizeTransactionOptions,
   getBlankOperation,
   txsToOps,
 } from "../../bridge/logic";
 import type { AptosTransaction, TransactionOptions } from "../../types";
+import { normalizeTransactionOptions } from "../../logic/normalizeTransactionOptions";
 
 jest.mock("@ledgerhq/cryptoassets", () => ({
   getCryptoCurrencyById: jest.fn(),
