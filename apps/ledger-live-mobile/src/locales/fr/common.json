@@ -1103,6 +1103,32 @@
     "tryEnablingAgain" : "Réessayez d’autoriser la localisation",
     "noInfos" : "Ledger n’utilise pas vos données de localisation."
   },
+  "earn" : {
+    "deposit" : {
+      "protocolInfoModal" : {
+        "title" : "Pour choisir un protocole, voici quelques éléments à connaître :",
+        "items" : {
+          "protocol" : {
+            "highlighted" : "Un protocole",
+            "description" : " est une plateforme qui vous permet de recevoir des récompenses grâce aux cryptos que vous y déposez (prêt, liquidité ou staking)."
+          },
+          "apy" : {
+            "highlighted" : "L’APY (\"Annual Percentage Yield\" ou rendement annuel en pourcentage)",
+            "description" : " correspond aux récompenses que vous pouvez recevoir sur une année. Plus il est élevé, plus elles sont importantes."
+          },
+          "tvl" : {
+            "highlighted" : "La TVL (\"Total Value Locked\" ou valeur totale immobilisée)",
+            "description" : " correspondant au montant total déposé sur le protocole par les autres utilisateurs. Plus elle est élevée, plus la confiance accordée au protocole est grande."
+          },
+          "strategy" : {
+            "highlighted" : "La stratégie",
+            "description0" : " se réfère à la méthode qu’utilise un protocole pour générer les récompenses que vous recevez.",
+            "description1" : "Par exemple, si un protocole utilise une stratégie de prêt, il prête les stablecoins déposés à des emprunteurs. Vous recevez alors des récompenses, dont le taux varie en fonction de la demande."
+          }
+        }
+      }
+    }
+  },
   "permissions" : {
     "open" : "Ouvrir autorisa. des apps",
     "authorize" : "Autoriser",
@@ -4671,7 +4697,7 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "Mise à jour du {{deviceName}} vers la version {{version}}",
-    "recoveryPhraseBackupInstructions" : "Assurez-vous par précaution que votre phrase de récupération de 24 mots est accessible et bien écrite sur votre feuille de récupération.",
+    "recoveryPhraseBackupInstructions" : "Assurez-vous par précaution que votre phrase de récupération secrète de 24 mots est accessible et bien écrite sur votre feuille de récupération.\n\nVous pouvez également utiliser Ledger Recover comme accès de secours à votre wallet, pour plus de sérénité.",
     "confirmRecoveryPhrase" : "J’ai ma phrase de récupération.",
     "introDescription1" : "Toutes les apps sur votre appareil seront supprimées. Vous pouvez réinstaller vos apps après la mise à jour du micrologiciel.",
     "introDescription2" : "Cela n’a pas d’effet sur vos crypto-actifs.",
@@ -6624,12 +6650,14 @@
     "range" : {
       "1h" : "1H",
       "24h" : "24H",
-      "1d" : "1J",
       "7d" : "7J",
-      "1w" : "1S",
       "30d" : "30J",
-      "1m" : "1M",
-      "1y" : "1A"
+      "1y" : "1A",
+      "1D_label" : "1J",
+      "1H_label" : "1H",
+      "1W_label" : "1S",
+      "1M_label" : "1M",
+      "1Y_label" : "1A"
     },
     "warnings" : {
       "connectionError" : "Erreur de connexion",
@@ -7364,8 +7392,28 @@
     }
   },
   "largeMover" : {
-    "performance" : "Performance",
-    "low" : "Faible",
-    "high" : "Élevée"
+    "info" : "Informations",
+    "marketCap" : "Capitalisation",
+    "volume" : "Volume (24h)",
+    "fdv" : "FDV",
+    "marketCap24h" : "Vol./Cap. (24h)",
+    "circulatingSupply" : "Offre en circulation",
+    "totalSupply" : "Offre totale",
+    "ath" : "Haut (historique)",
+    "atl" : "Bas (historique)",
+    "timeAgo" : {
+      "years" : "(il y a {{count}} an)",
+      "years_plural" : "(il y a {{count}} ans)",
+      "months" : "(il y a {{count}} mois)",
+      "months_plural" : "(il y a {{count}} mois)",
+      "days" : "(il y a {{count}} jour)",
+      "days_plural" : "(il y a {{count}} jours)",
+      "hours" : "(il y a {{count}} heure)",
+      "hours_plural" : "(il y a {{count}} heures)",
+      "minutes" : "(il y a {{count}} minute)",
+      "minutes_plural" : "(il y a {{count}} minutes)",
+      "seconds" : "(il y a {{count}} seconde)",
+      "seconds_plural" : "(il y a {{count}} secondes)"
+    }
   }
 }
