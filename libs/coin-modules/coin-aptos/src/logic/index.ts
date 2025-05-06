@@ -1,19 +1,19 @@
-import {
+import type {
   Balance,
   BlockInfo,
+  FeeEstimation,
   Operation,
   Pagination,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
-import { AptosAsset } from "../types/assets";
+import type { AptosAsset, AptosExtra, AptosSender, FeeParameters } from "../types/assets";
 export * from "./broadcast";
+export * from "./craftTransaction";
 
 type combineFunc = (tx: string, signature: string, pubkey?: string) => string;
-type craftTransactionFunc = (
-  transactionIntent: TransactionIntent<AptosAsset>,
-  customFees?: bigint,
-) => Promise<string>;
-type estimateFeesFunc = (transactionIntent: TransactionIntent<AptosAsset>) => Promise<bigint>;
+type estimateFeesFunc = (
+  transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender>,
+) => Promise<FeeEstimation<never>>;
 type getBalanceFunc = (address: string) => Promise<Balance<AptosAsset>[]>;
 type lastBlockFunc = () => Promise<BlockInfo>;
 type listOperationsFunc = (
@@ -26,10 +26,6 @@ function NotImplemented(): Error {
 }
 
 export const combine: combineFunc = (_tx, _signature, _pubkey) => {
-  throw NotImplemented();
-};
-
-export const craftTransaction: craftTransactionFunc = async (_transactionIntent, _customFees) => {
   throw NotImplemented();
 };
 

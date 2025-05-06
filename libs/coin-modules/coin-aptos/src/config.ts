@@ -1,4 +1,4 @@
-import { type AptosSettings } from "@aptos-labs/ts-sdk";
+import type { AptosSettings } from "@aptos-labs/ts-sdk";
 import buildCoinConfig, {
   type CoinConfig,
   type CurrencyConfig,
