@@ -1103,6 +1103,32 @@
     "tryEnablingAgain" : "Versuchen Sie, den Standort erneut zu aktivieren",
     "noInfos" : "Ledger greift nicht auf Ihre Standortinformationen zu."
   },
+  "earn" : {
+    "deposit" : {
+      "protocolInfoModal" : {
+        "title" : "Bei der Auswahl eines Protokolls solltest du ein paar Dinge beachten:",
+        "items" : {
+          "protocol" : {
+            "highlighted" : "Ein Protokoll",
+            "description" : " ist eine Plattform, auf der du Prämien erhältst, wenn du deine hinterlegten Krypto für Kredite, Liquidität oder Staking nutzt."
+          },
+          "apy" : {
+            "highlighted" : "APY (Annual Percentage Yield, Jahresertrag)",
+            "description" : " gibt an, wie viel Zinsen du in einem Jahr verdienen kannst. Ein höherer APY bedeutet höhere Erträge."
+          },
+          "tvl" : {
+            "highlighted" : "TVL (Total Value Locked)",
+            "description" : " ist der Gesamtbetrag, der von anderen Nutzern im Protokoll hinterlegt wurde. Ein höherer TVL bedeutet, dass das Protokoll von mehr Leuten als vertrauenswürdig angesehen wird."
+          },
+          "strategy" : {
+            "highlighted" : "Strategie",
+            "description0" : " ist die Methode, mit der ein Protokoll Prämien für dich generiert.",
+            "description1" : "Wenn ein Protokoll zum Beispiel die Kreditvergabe als Strategie nutzt, verleiht es deine hinterlegten Stablecoins an Kreditnehmer. Dafür bekommst du dann Zinsen, die je nach Nachfrage höher oder niedriger ausfallen können."
+          }
+        }
+      }
+    }
+  },
   "permissions" : {
     "open" : "App-Berechtigungen öffnen",
     "authorize" : "Autorisieren",
@@ -4671,7 +4697,7 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "Update Ihrer {{deviceName}} auf Version {{version}} durchführen",
-    "recoveryPhraseBackupInstructions" : "Vergewissern Sie sich vorsichtshalber, dass Ihre 24-Wort-Wiederherstellungsphrase auf dem Wiederherstellungszettel notiert ist und Ihnen vorliegt.",
+    "recoveryPhraseBackupInstructions" : "Vergewissere dich vorsichtshalber, dass deine geheime 24-Wort-Wiederherstellungsphrase auf dem Wiederherstellungszettel notiert ist und dir vorliegt.\n\nDu solltest dir überlegen, Ledger Recover zu nutzen, um ein Backup für deinen Wallet-Zugang zu erhalten und sicherzustellen, dass du immer darauf zugreifen kannst.",
     "confirmRecoveryPhrase" : "Ich habe meine Wiederherstellungsphrase zur Hand",
     "introDescription1" : "Bitte beachten Sie, dass alle Apps auf Ihrem Gerät gelöscht werden. Sie können Ihre Apps nach dem Firmware-Update neu installieren.",
     "introDescription2" : "Dies hat keinen Einfluss auf Ihr Krypto-Vermögen.",
@@ -6624,12 +6650,14 @@
     "range" : {
       "1h" : "1Std",
       "24h" : "24h",
-      "1d" : "1T",
       "7d" : "7T",
-      "1w" : "1W",
       "30d" : "30T",
-      "1m" : "1M",
-      "1y" : "1J"
+      "1y" : "1J",
+      "1D_label" : "1T",
+      "1H_label" : "1Std",
+      "1W_label" : "1W",
+      "1M_label" : "1M",
+      "1Y_label" : "1J"
     },
     "warnings" : {
       "connectionError" : "Verbindungsfehler",
@@ -7364,8 +7392,28 @@
     }
   },
   "largeMover" : {
-    "performance" : "Performance",
-    "low" : "Niedrig",
-    "high" : "Hoch"
+    "info" : "Informationen",
+    "marketCap" : "Marktkapitalisierung",
+    "volume" : "Volumen (24 Std.)",
+    "fdv" : "FDV",
+    "marketCap24h" : "Volumen/Marktkapitalisierung (24 Std.)",
+    "circulatingSupply" : "Angebot im Umlauf",
+    "totalSupply" : "Angebot gesamt",
+    "ath" : "Allzeithoch",
+    "atl" : "Allzeittief",
+    "timeAgo" : {
+      "years" : "(vor {{count}} Jahr)",
+      "years_plural" : "(vor {{count}} Jahren)",
+      "months" : "(vor {{count}} Monat)",
+      "months_plural" : "(vor {{count}} Monaten)",
+      "days" : "(vor {{count}} Tag)",
+      "days_plural" : "(vor {{count}} Tagen)",
+      "hours" : "(vor {{count}} Stunde)",
+      "hours_plural" : "(vor {{count}} Stunden)",
+      "minutes" : "(vor {{count}} Minute)",
+      "minutes_plural" : "(vor {{count}} Minuten)",
+      "seconds" : "(vor {{count}} Sekunde)",
+      "seconds_plural" : "(vor {{count}} Sekunden)"
+    }
   }
 }
