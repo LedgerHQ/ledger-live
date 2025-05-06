@@ -30,7 +30,7 @@ jobs:
           skip_after_successful_duplicate: 'true'
           do_not_skip: '["pull_request", "workflow_dispatch", "schedule"]'
       - id: smartling_check
-        if: ${{ env.IS_SMARTLING }}
+        if: ${{ env.IS_SMARTLING == 'true' }}
         run: |
           echo "should_skip=true" >> $GITHUB_OUTPUT
           gh pr close
