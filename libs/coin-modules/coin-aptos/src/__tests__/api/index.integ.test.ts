@@ -5,18 +5,18 @@ import {
   Hex,
   Network,
   SimpleTransaction,
-  DEFAULT_MAX_GAS_AMOUNT,
   AccountAddress,
   Ed25519PrivateKey,
   PrivateKey,
   PrivateKeyVariants,
+  RawTransaction,
+  Deserializer,
 } from "@aptos-labs/ts-sdk";
 import { createApi } from "../../api";
-import buildTransaction from "../../bridge/buildTransaction";
-import BigNumber from "bignumber.js";
-import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
 import { AptosAPI } from "../../network";
-import { DEFAULT_GAS_PRICE } from "../../bridge/logic";
+import { craftTransaction } from "../../logic/craftTransaction";
+import { DEFAULT_GAS, DEFAULT_GAS_PRICE } from "../../constants";
+import { DEFAULT_MAX_VERSION } from "tls";
 
 describe("createApi", () => {
   const settings: AptosSettings = { network: Network.DEVNET };
@@ -92,19 +92,20 @@ describe("createApi", () => {
   describe("combine and broadcast", () => {
     it("sign and submit the transaction using combine and broadcast", async () => {
       // arrange
-
-      // TODO: should be replaced by the craftTransaction method
       const aptosApi = new AptosAPI(settings);
-      const transaction = createFixtureTransaction();
-      transaction.recipient = receiverAddress;
-      transaction.amount = BigNumber(10);
-      transaction.options.gasUnitPrice = DEFAULT_GAS_PRICE.toString();
-      transaction.options.maxGasAmount = DEFAULT_MAX_GAS_AMOUNT.toString();
 
-      const senderAccount = createFixtureAccount({
-        freshAddress: senderAddress,
+      const hexTx = await craftTransaction(aptosApi, {
+        amount: BigInt(10),
+        recipient: receiverAddress,
+        sender: { freshAddress: senderAddress, xpub: senderPublicKey },
+        type: "send",
+        asset: {
+          type: "native",
+        },
       });
-      const tx = await buildTransaction(senderAccount, transaction, aptosApi);
+
+      const txBytes = Hex.fromHexString(hexTx).toUint8Array();
+      const tx = RawTransaction.deserialize(new Deserializer(txBytes));
 
       // generating signature
       const signingMessage = aptos.getSigningMessage({ transaction: new SimpleTransaction(tx) });
@@ -116,6 +117,9 @@ describe("createApi", () => {
       const hash = await api.broadcast(signedTx);
 
       // asset
+      expect(tx.sender.toString()).toBe(senderAddress);
+      expect(tx.gas_unit_price).toBe(DEFAULT_GAS_PRICE);
+      expect(tx.max_gas_amount).toBe(DEFAULT_GAS);
       expect(() => Hex.isValid(signedTx).valid).toBeTruthy();
       expect(hash).toEqual(expect.any(String));
     });
