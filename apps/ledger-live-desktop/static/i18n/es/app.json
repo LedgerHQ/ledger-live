@@ -2393,7 +2393,10 @@
         "suggested" : "Sugerida",
         "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
-        "nftQuantity" : "Cantidad"
+        "nftQuantity" : "Cantidad",
+        "spl2022Warning" : "Estás interactuando con un token incluido en el programa Token-2022, también conocido como Token Extensions. Este token conlleva riesgos concretos. ",
+        "spl2022UrlLabel" : "Haz clic aquí ",
+        "spl2022UrlFollowUp" : " para obtener más información."
       },
       "verification" : {
         "streaming" : {
@@ -3768,7 +3771,7 @@
       "frozenStateWarning" : "Los activos de la cuenta están inmovilizados.",
       "transferWarning" : "Para verificar la dirección del receptor de los tokens de Solana con un Ledger Nano S™, <0>sigue estas instrucciones</0>.",
       "transferFees" : {
-        "feesPercentHint" : "El token tiene una tarifa de transferencia del {{feePercent}}% ({{feeBps}} bps). {{maxFee}} máx.",
+        "feesHint" : "Tarifa de transferencia del token: {{transferFee}}",
         "notice" : "Tarifa de transferencia del {{fee}}%",
         "tooltipHint" : "Porcentaje de transferencia retenido para el creador del token",
         "transferFeesLabel" : "Tarifas de transferencia"
@@ -5420,7 +5423,9 @@
     "stringHash" : "Hash de mensaje",
     "domainHash" : "Hash de dominio",
     "messageHash" : "Hash de mensaje",
-    "message" : "Mensaje"
+    "message" : "Mensaje",
+    "title" : "Continúa en tu Ledger {{wording}}",
+    "description" : "Sigue las instrucciones que aparecen en tu pantalla táctil segura."
   },
   "TransactionConfirm" : {
     "title" : "Confirma la operación en tu dispositivo para finalizarla",
