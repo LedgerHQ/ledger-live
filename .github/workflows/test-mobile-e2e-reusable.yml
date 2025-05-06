@@ -95,7 +95,7 @@ jobs:
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
       SEED: ${{ vars.SEED_QAA_B2C }}
-      INPUT_SPECULOS: ${{ inputs.speculos_tests || github.event_name == 'schedule' }}
+      $INPUT_E2E: ${{ inputs.e2e_tests || github.event_name == 'schedule' }}
       INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
     outputs:
       status: ${{ steps.detox.outcome }}
