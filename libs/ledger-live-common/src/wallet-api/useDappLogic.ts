@@ -604,10 +604,12 @@ export function useDappLogic({
               message,
             );
 
+            const options = nanoApp ? { hwAppId: nanoApp, dependencies: dependencies } : undefined;
             const signedMessage = await new Promise<string>((resolve, reject) =>
               uiHook["message.sign"]({
                 account: currentAccount,
                 message: formattedMessage,
+                options,
                 onSuccess: resolve,
                 onError: reject,
                 onCancel: () => {
@@ -649,10 +651,12 @@ export function useDappLogic({
               Buffer.from(message).toString("hex"),
             );
 
+            const options = nanoApp ? { hwAppId: nanoApp, dependencies: dependencies } : undefined;
             const signedMessage = await new Promise<string>((resolve, reject) =>
               uiHook["message.sign"]({
                 account: currentAccount,
                 message: formattedMessage,
+                options,
                 onSuccess: resolve,
                 onError: reject,
                 onCancel: () => {
