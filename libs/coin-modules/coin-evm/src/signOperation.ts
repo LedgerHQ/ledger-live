@@ -51,6 +51,12 @@ export const buildSignOperation =
                       if (event.type === "signer.evm.transaction-checks-opt-in-triggered") {
                         o.next({ type: "transaction-checks-opt-in-triggered" });
                       }
+                      if (event.type === "signer.evm.transaction-checks-opt-in") {
+                        o.next({ type: "transaction-checks-opt-in" });
+                      }
+                      if (event.type === "signer.evm.transaction-checks-opt-out") {
+                        o.next({ type: "transaction-checks-opt-out" });
+                      }
                       if (event.type === "signer.evm.signing") {
                         o.next({ type: "device-signature-requested" });
                       }

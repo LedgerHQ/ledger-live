@@ -201,6 +201,70 @@ describe("EVM Family", () => {
           },
         });
       });
+
+      it("should emit transaction-checks-opt-out event", done => {
+        // GIVEN
+        const signOpObservable = buildSignOperation(mockSignerContext)({
+          account,
+          transaction: transactionEIP1559,
+          deviceId: "",
+        });
+        clearSignTransactionMock.mockImplementation(() =>
+          concat(
+            of({ type: "signer.evm.transaction-checks-opt-out" }),
+            of({ type: "signer.evm.signing" }),
+            of({ type: "signer.evm.signed", value: { r: "123", s: "abc", v: "27" } }),
+          ),
+        );
+
+        // WHEN
+        const subscription = signOpObservable.subscribe({
+          next: event => {
+            if (event.type === "transaction-checks-opt-out") {
+              subscription.unsubscribe();
+              done();
+            }
+          },
+          error: err => {
+            throw err;
+          },
+          complete: () => {
+            throw new Error("no transaction-checks-opt-out event");
+          },
+        });
+      });
+
+      it("should emit transaction-checks-opt-in event", done => {
+        // GIVEN
+        const signOpObservable = buildSignOperation(mockSignerContext)({
+          account,
+          transaction: transactionEIP1559,
+          deviceId: "",
+        });
+        clearSignTransactionMock.mockImplementation(() =>
+          concat(
+            of({ type: "signer.evm.transaction-checks-opt-in" }),
+            of({ type: "signer.evm.signing" }),
+            of({ type: "signer.evm.signed", value: { r: "123", s: "abc", v: "27" } }),
+          ),
+        );
+
+        // WHEN
+        const subscription = signOpObservable.subscribe({
+          next: event => {
+            if (event.type === "transaction-checks-opt-in") {
+              subscription.unsubscribe();
+              done();
+            }
+          },
+          error: err => {
+            throw err;
+          },
+          complete: () => {
+            throw new Error("no transaction-checks-opt-in-failed event");
+          },
+        });
+      });
     });
   });
 });
