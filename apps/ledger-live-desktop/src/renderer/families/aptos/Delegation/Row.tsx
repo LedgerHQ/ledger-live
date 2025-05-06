@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-
+import { stakeActions as aptosStakeActions } from "@ledgerhq/live-common/families/aptos/logic";
 import { Account } from "@ledgerhq/types-live";
 
 import { TableLine } from "./Header";
@@ -15,6 +15,8 @@ import ToolTip from "~/renderer/components/Tooltip";
 import Text from "~/renderer/components/Text";
 import Discreet from "~/renderer/components/Discreet";
 import BigNumber from "bignumber.js";
+import { AptosStakeWithMeta } from "@ledgerhq/coin-aptos/lib-es/types/index";
+import { DelegateModalName } from "../modals";
 
 const Wrapper = styled.div`
   display: flex;
@@ -82,40 +84,27 @@ const ManageDropDownItem = ({
 type Props = {
   account: Account;
   stakingPosition: AptosMappedStakingPosition;
-  onManageAction: (address: string, action: "MODAL_APTOS_UNSTAKE" | "MODAL_APTOS_WITHDRAW") => void;
+  stakeWithMeta: AptosStakeWithMeta;
+  onManageAction: (stakeWithMeta: AptosStakeWithMeta, action: DelegateModalName) => void;
   onExternalLink: (address: string) => void;
 };
-export function Row({ stakingPosition, onManageAction, onExternalLink }: Props) {
-  console.log("stakingPosition", stakingPosition);
+export function Row({ stakingPosition, stakeWithMeta, onManageAction, onExternalLink }: Props) {
+  const { stake } = stakeWithMeta;
   const unstakingEnabled = (): boolean => {
     return false;
   };
   const withdawingEnabled = (): boolean => {
     return false;
   };
+
+  const stakeActions = aptosStakeActions(stake).map(toStakeDropDownItem);
   const onSelect = useCallback(
-    (action: (typeof dropDownItems)[number]) => {
-      onManageAction(
-        stakingPosition.validatorId || "",
-        action.key as "MODAL_APTOS_UNSTAKE" | "MODAL_APTOS_WITHDRAW",
-      );
+    (action: (typeof stakeActions)[number]) => {
+      onManageAction(stakeWithMeta, action.key);
     },
-    [onManageAction, stakingPosition],
+    [onManageAction, stakeWithMeta],
   );
-  const dropDownItems = [
-    {
-      key: "MODAL_APTOS_UNSTAKE",
-      label: <Trans i18nKey="aptos.stake.unstake" />,
-      disabled: !unstakingEnabled,
-      tooltip: !unstakingEnabled ? <Trans i18nKey="aptos.unstake.disabledTooltip" /> : null,
-    },
-    {
-      key: "MODAL_APTOS_WITHDRAW",
-      label: <Trans i18nKey="aptos.stake.withdraw" />,
-      disabled: !withdawingEnabled,
-      tooltip: !withdawingEnabled ? <Trans i18nKey="aptos.withdraw.disabledTooltip" /> : null,
-    },
-  ];
+
   const onExternalLinkClick = useCallback(
     () => onExternalLink(stakingPosition.validatorId),
     [onExternalLink, stakingPosition.validatorId],
@@ -157,7 +146,7 @@ export function Row({ stakingPosition, onManageAction, onExternalLink }: Props) 
         </Ellipsis>
       </Column>
       <Column>
-        <DropDown items={dropDownItems} renderItem={ManageDropDownItem} onChange={onSelect}>
+        <DropDown items={stakeActions} renderItem={ManageDropDownItem} onChange={onSelect}>
           {() => (
             <Box horizontal alignItems="center">
               <Trans i18nKey="common.manage" />
@@ -196,3 +185,33 @@ export type AptosValidatorItem = {
   commission: number | null;
   tokens: string;
 };
+
+function toStakeDropDownItem(stakeAction: string): {
+  key: DelegateModalName;
+  label: React.ReactNode;
+} {
+  switch (stakeAction) {
+    case "activate":
+      return {
+        key: "MODAL_APTOS_DELEGATION_ACTIVATE",
+        label: <Trans i18nKey="aptos.delegation.activate.flow.title" />,
+      };
+    case "reactivate":
+      return {
+        key: "MODAL_APTOS_DELEGATION_REACTIVATE",
+        label: <Trans i18nKey="aptos.delegation.reactivate.flow.title" />,
+      };
+    case "deactivate":
+      return {
+        key: "MODAL_APTOS_DELEGATION_DEACTIVATE",
+        label: <Trans i18nKey="aptos.delegation.deactivate.flow.title" />,
+      };
+    case "withdraw":
+      return {
+        key: "MODAL_APTOS_DELEGATION_WITHDRAW",
+        label: <Trans i18nKey="aptos.delegation.withdraw.flow.title" />,
+      };
+    default:
+      throw new Error(`unsupported stake action: ${stakeAction}`);
+  }
+}

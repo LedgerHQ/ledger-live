@@ -15,9 +15,9 @@ type Cluster = "devnet" | "testnet" | "mainnet";
 
 // export const SYSTEM_ACCOUNT_RENT_EXEMPT = 890880;
 
-// export const assertUnreachable = (_: never): never => {
-//   throw new Error("unreachable assertion failed");
-// };
+export const assertUnreachable = (_: never): never => {
+  throw new Error("unreachable assertion failed");
+};
 
 // export async function drainSeqAsyncGen<T>(...asyncGens: AsyncGenerator<T>[]): Promise<T[]> {
 //   const items: T[] = [];

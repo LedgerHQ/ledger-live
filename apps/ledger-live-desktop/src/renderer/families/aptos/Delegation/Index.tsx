@@ -18,6 +18,7 @@ import { Row } from "./Row";
 import BigNumber from "bignumber.js";
 import { useAptosStakesWithMeta } from "@ledgerhq/live-common/families/aptos/react"; // Replace with the correct hook
 import { Box, Icons, Flex } from "@ledgerhq/react-ui";
+import { DelegateModalName } from "../modals";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
@@ -43,13 +44,17 @@ const Delegation = ({ account }: { account: AptosAccount }) => {
       }),
     );
   }, [account, dispatch]);
-  const onRedirect = useCallback(() => {
-    dispatch(
-      openModal("MODAL_APTOS_DELEGATE", {
-        account,
-      }),
-    );
-  }, [account, dispatch]);
+  const onRedirect = useCallback(
+    (stakeWithMeta: AptosStakeWithMeta, modalName: DelegateModalName) => {
+      dispatch(
+        openModal(modalName, {
+          account,
+          stakeWithMeta,
+        }),
+      );
+    },
+    [account, dispatch],
+  );
 
   const explorerView = getDefaultExplorerView(account.currency);
   const onExternalLink = useCallback(
@@ -118,6 +123,7 @@ const Delegation = ({ account }: { account: AptosAccount }) => {
           {stakesWithMeta.map((stakeWithMeta: AptosStakeWithMeta) => (
             <Row
               stakingPosition={convertToAptosMappedStakingPosition(stakeWithMeta)}
+              stakeWithMeta={stakeWithMeta}
               key={stakeWithMeta.stake.stakeAccAddr}
               account={account}
               onManageAction={onRedirect}

@@ -41,7 +41,6 @@ export function stakeActions(stake: AptosStake): StakeAction[] {
       actions.push("activate");
       break;
   }
-
   return actions;
 }
 
