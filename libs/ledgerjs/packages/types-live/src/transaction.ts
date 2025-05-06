@@ -53,6 +53,12 @@ export type SignOperationEvent = // Used when lot of exchange is needed with the
     }
   | {
       type: "transaction-checks-opt-in-triggered";
+    }
+  | {
+      type: "transaction-checks-opt-in";
+    }
+  | {
+      type: "transaction-checks-opt-out";
     };
 
 /**
@@ -77,6 +83,12 @@ export type SignOperationEventRaw =
     }
   | {
       type: "transaction-checks-opt-in-triggered";
+    }
+  | {
+      type: "transaction-checks-opt-in";
+    }
+  | {
+      type: "transaction-checks-opt-out";
     };
 /**
  * Transaction is a generic object that holds all state for all transactions
