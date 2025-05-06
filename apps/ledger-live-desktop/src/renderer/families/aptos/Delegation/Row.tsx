@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { stakeActions as aptosStakeActions } from "@ledgerhq/live-common/families/aptos/logic";
 import { Account } from "@ledgerhq/types-live";
-
 import { TableLine } from "./Header";
 import DropDown, { DropDownItem } from "~/renderer/components/DropDownSelector";
 import Box from "~/renderer/components/Box/Box";
@@ -11,12 +10,11 @@ import ChevronRight from "~/renderer/icons/ChevronRight";
 import CheckCircle from "~/renderer/icons/CheckCircle";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import ToolTip from "~/renderer/components/Tooltip";
-
 import Text from "~/renderer/components/Text";
 import Discreet from "~/renderer/components/Discreet";
-import BigNumber from "bignumber.js";
 import { AptosStakeWithMeta } from "@ledgerhq/coin-aptos/lib-es/types/index";
 import { DelegateModalName } from "../modals";
+import { convertToAptosMappedStakingPosition } from "@ledgerhq/live-common/families/aptos/react"; 
 
 const Wrapper = styled.div`
   display: flex;
@@ -83,14 +81,13 @@ const ManageDropDownItem = ({
 };
 type Props = {
   account: Account;
-  stakingPosition: AptosMappedStakingPosition;
   stakeWithMeta: AptosStakeWithMeta;
   onManageAction: (stakeWithMeta: AptosStakeWithMeta, action: DelegateModalName) => void;
   onExternalLink: (address: string) => void;
 };
-export function Row({ stakingPosition, stakeWithMeta, onManageAction, onExternalLink }: Props) {
+export function Row({ stakeWithMeta, onManageAction, onExternalLink }: Props) {
   const { stake } = stakeWithMeta;
-
+  const stakingPosition = convertToAptosMappedStakingPosition(stakeWithMeta);
   const stakeActions = aptosStakeActions(stake).map(toStakeDropDownItem);
   const onSelect = useCallback(
     (action: (typeof stakeActions)[number]) => {
@@ -158,27 +155,6 @@ export function Row({ stakingPosition, stakeWithMeta, onManageAction, onExternal
     </Wrapper>
   );
 }
-
-export type AptosMappedStakingPosition = AptosStakingPosition & {
-  formattedAmount: string;
-  formattedPending: string;
-  formattedAvailable: string;
-  rank: number;
-  validator: AptosValidatorItem | null | undefined;
-};
-
-export type AptosStakingPosition = {
-  staked: BigNumber;
-  available: BigNumber;
-  pending: BigNumber;
-  validatorId: string;
-};
-
-export type AptosValidatorItem = {
-  validatorAddress: string;
-  commission: number | null;
-  tokens: string;
-};
 
 function toStakeDropDownItem(stakeAction: string): {
   key: DelegateModalName;

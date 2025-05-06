@@ -15,8 +15,7 @@ import IconChartLine from "~/renderer/icons/ChartLine";
 import { openURL } from "~/renderer/linking";
 import { Header } from "./Header";
 import { Row } from "./Row";
-import BigNumber from "bignumber.js";
-import { useAptosStakesWithMeta, convertToAptosMappedStakingPosition } from "@ledgerhq/live-common/families/aptos/react"; // Replace with the correct hook
+import { useAptosStakesWithMeta } from "@ledgerhq/live-common/families/aptos/react"; // Replace with the correct hook
 import { Box, Icons, Flex } from "@ledgerhq/react-ui";
 import { DelegateModalName } from "../modals";
 
@@ -94,7 +93,6 @@ const Delegation = ({ account }: { account: AptosAccount }) => {
           <Header />
           {stakesWithMeta.map((stakeWithMeta: AptosStakeWithMeta) => (
             <Row
-              stakingPosition={convertToAptosMappedStakingPosition(stakeWithMeta)}
               stakeWithMeta={stakeWithMeta}
               key={stakeWithMeta.stake.stakeAccAddr}
               account={account}
