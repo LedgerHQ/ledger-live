@@ -13,7 +13,6 @@ export const NetworkList = ({
     <VirtualList
       items={networks}
       itemHeight={64}
-      count={networks.length}
       renderItem={({ name, id }: { name: string; id: string }) => (
         <NetworkItem name={name} onClick={() => onClick(id)} />
       )}

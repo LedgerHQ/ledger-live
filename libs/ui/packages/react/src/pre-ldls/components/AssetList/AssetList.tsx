@@ -12,7 +12,6 @@ export const AssetList = ({
   return (
     <VirtualList
       itemHeight={64}
-      count={assets.length}
       items={assets}
       renderItem={({ name, ticker }) => <AssetItem name={name} ticker={ticker} onClick={onClick} />}
     />

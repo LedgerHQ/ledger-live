@@ -27,9 +27,6 @@ const meta: Meta<typeof VirtualList<{ i: number }>> = {
     },
   },
   argTypes: {
-    count: {
-      description: "Total number of items in the list.",
-    },
     itemHeight: {
       description: "Height of each item in the list.",
     },
@@ -74,7 +71,6 @@ const meta: Meta<typeof VirtualList<{ i: number }>> = {
   },
   args: {
     itemHeight: 64,
-    count: 50,
     LoadingComponent: undefined,
     isLoading: false,
     overscan: 5,
@@ -91,7 +87,6 @@ type Story = StoryObj<typeof VirtualList<{ i: number }>>;
 
 export const Default: Story = {
   args: {
-    count: 20,
     itemHeight: 50,
     overscan: 5,
     items,
@@ -105,7 +100,7 @@ export const Default: Story = {
 
 export const WithPagination: Story = {
   render: args => {
-    const [items, setItems] = useState(Array.from({ length: args.count }, (_, i) => i));
+    const [items, setItems] = useState(Array.from({ length: 50 }, (_, i) => i));
     const [isFetching, setIsFetching] = useState(false);
 
     const handleFetchNextPage = async () => {
@@ -120,7 +115,6 @@ export const WithPagination: Story = {
     return (
       <VirtualList
         {...args}
-        count={items.length}
         isLoading={isFetching}
         onVisibleItemsScrollEnd={handleFetchNextPage}
         hasNextPage={true}
@@ -134,7 +128,6 @@ export const WithPagination: Story = {
     );
   },
   args: {
-    count: 50,
     itemHeight: 50,
     overscan: 5,
     hasNextPage: true,

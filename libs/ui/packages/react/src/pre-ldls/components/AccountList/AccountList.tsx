@@ -13,7 +13,5 @@ export const AccountList = ({
     <AccountItem onClick={() => onClick(account.id)} account={account} />
   );
 
-  return (
-    <VirtualList items={accounts} itemHeight={68} count={accounts.length} renderItem={renderItem} />
-  );
+  return <VirtualList items={accounts} itemHeight={68} renderItem={renderItem} />;
 };
