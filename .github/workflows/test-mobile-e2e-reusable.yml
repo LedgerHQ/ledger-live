@@ -210,7 +210,7 @@ jobs:
         if: ${{ !cancelled() && env.SHOULD_UPLOAD == 'true' }}
         id: upload
         with:
-          platform: ios-${{ env.E2E_RUN == 'true' && 'speculos' || 'mocked' }}
+          platform: ios-${{ env.E2E_RUN == 'true' && 'e2e' || 'mocked' }}
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ios-test-artifacts
