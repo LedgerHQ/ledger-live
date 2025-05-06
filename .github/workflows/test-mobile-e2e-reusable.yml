@@ -20,7 +20,6 @@ on:
         description: Ref to checkout
         required: false
         type: string
-        default: "refs/heads/develop"
   workflow_dispatch:
     inputs:
       ref:
