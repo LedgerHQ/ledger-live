@@ -446,7 +446,11 @@ export function useWalletAPIServer({
                 if (done) return;
                 done = true;
                 tracking.signMessageSuccess(manifest);
-                resolve(Buffer.from(signature.replace("0x", ""), "hex"));
+                resolve(
+                  signature.startsWith("0x")
+                    ? Buffer.from(signature.replace("0x", ""), "hex")
+                    : Buffer.from(signature),
+                );
               },
               onCancel: () => {
                 if (done) return;
