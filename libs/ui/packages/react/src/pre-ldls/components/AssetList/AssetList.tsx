@@ -13,9 +13,8 @@ export const AssetList = ({
     <VirtualList
       itemHeight={64}
       count={assets.length}
-      renderItem={(i: number) => (
-        <AssetItem name={assets[i].name} ticker={assets[i].ticker} onClick={onClick} />
-      )}
+      items={assets}
+      renderItem={({ name, ticker }) => <AssetItem name={name} ticker={ticker} onClick={onClick} />}
     />
   );
 };

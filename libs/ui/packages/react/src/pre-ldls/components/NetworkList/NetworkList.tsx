@@ -11,10 +11,11 @@ export const NetworkList = ({
 }) => {
   return (
     <VirtualList
+      items={networks}
       itemHeight={64}
       count={networks.length}
-      renderItem={(i: number) => (
-        <NetworkItem name={networks[i].name} onClick={() => onClick(networks[i].id)} />
+      renderItem={({ name, id }: { name: string; id: string }) => (
+        <NetworkItem name={name} onClick={() => onClick(id)} />
       )}
     />
   );

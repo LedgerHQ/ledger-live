@@ -5,16 +5,21 @@ import { Text } from "../../../components";
 import { Tag } from "../Tag/Tag";
 import { Address } from "../Address/Address";
 
-type AccountItemProps = {
+export type Account = {
   name: string;
-  onClick: () => void;
-  fiatValue: string;
+  id: string;
   balance: string;
+  fiatValue: string;
   address: string;
   protocol?: string;
-  showIcon?: boolean;
   cryptoId?: string;
   ticker?: string;
+};
+
+type AccountItemProps = {
+  onClick: () => void;
+  showIcon?: boolean;
+  account: Account;
 };
 
 const Wrapper = styled.div`
@@ -43,17 +48,9 @@ const Wrapper = styled.div`
   }
 `;
 
-export const AccountItem = ({
-  name,
-  onClick,
-  balance,
-  fiatValue,
-  protocol,
-  address,
-  showIcon = true,
-  cryptoId,
-  ticker,
-}: AccountItemProps) => {
+export const AccountItem = ({ onClick, account, showIcon = true }: AccountItemProps) => {
+  const { name, balance, fiatValue, protocol, address, ticker, cryptoId } = account;
+
   return (
     <Wrapper onClick={onClick}>
       <div

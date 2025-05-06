@@ -14,7 +14,7 @@ interface VirtualItem {
  * Props for the VirtualList component, which efficiently renders large lists
  * by virtualizing DOM nodes to improve performance.
  */
-type VirtualListProps = {
+type VirtualListProps<T> = {
   /**
    * Total number of items in the list.
    * This is used to calculate the total height of the list.
@@ -57,7 +57,11 @@ type VirtualListProps = {
    * Function to render each item in the list.
    * Receives the index of the item as an argument and should return a React node.
    */
-  renderItem: (index: number) => React.ReactNode;
+  renderItem: (item: T) => React.ReactNode;
+  /**
+   * The items
+   */
+  items: T[];
 };
 
 const DefaultLoadingComponent = () => (
@@ -66,7 +70,7 @@ const DefaultLoadingComponent = () => (
   </Flex>
 );
 
-export const VirtualList = ({
+export const VirtualList = <T,>({
   count,
   itemHeight,
   overscan = 5,
@@ -75,8 +79,9 @@ export const VirtualList = ({
   hasNextPage = false,
   threshold = 5,
   onVisibleItemsScrollEnd,
+  items,
   renderItem,
-}: VirtualListProps) => {
+}: VirtualListProps<T>) => {
   const parentRef = useRef<HTMLDivElement>(null);
 
   const rowVirtualizer = useVirtualizer({
@@ -126,7 +131,7 @@ export const VirtualList = ({
               width: "100%",
             }}
           >
-            {renderItem(virtualRow.index)}
+            {renderItem(items[virtualRow.index])}
           </div>
         ))}
       </div>
