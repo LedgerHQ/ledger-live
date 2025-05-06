@@ -36,7 +36,7 @@ jobs:
         if: ${{ env.IS_SMARTLING == 'true' }}
         run: |
           echo "should_skip=true" >> $GITHUB_OUTPUT
-          gh pr close ${{ github.event.pull_request.number }}
+          gh pr close ${{ github.event.pull_request.number }} -R LedgerHQ/ledger-live
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
