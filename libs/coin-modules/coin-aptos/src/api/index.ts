@@ -1,6 +1,6 @@
 import type { Api } from "@ledgerhq/coin-framework/api/index";
 import type { AptosConfig as AptosConfigApi } from "../config";
-import { Balance, FeeEstimation, Operation } from "@ledgerhq/coin-framework/api/types";
+import type { Balance, FeeEstimation, Operation } from "@ledgerhq/coin-framework/api/types";
 import coinConfig from "../config";
 import type { AptosAsset } from "../types/assets";
 import { AptosAPI } from "../network";
