@@ -1103,6 +1103,32 @@
     "tryEnablingAgain" : "重新尝试启用位置",
     "noInfos" : "Ledger 并不会获取您的位置信息。"
   },
+  "earn" : {
+    "deposit" : {
+      "protocolInfoModal" : {
+        "title" : "选择协议时，请记住以下几点：",
+        "items" : {
+          "protocol" : {
+            "highlighted" : "协议",
+            "description" : " 是一个平台，可让您通过将存入的加密货币用于借贷、提供流动性或权益质押来获得奖励。"
+          },
+          "apy" : {
+            "highlighted" : "APY（年收益率）",
+            "description" : " 是指您一年可以赚取的利息。APY 越高，收益越高。"
+          },
+          "tvl" : {
+            "highlighted" : "TVL（总锁定价值）",
+            "description" : " 是其他用户存入协议的总金额。TVL 越高，说明信任该协议的人越多。"
+          },
+          "strategy" : {
+            "highlighted" : "策略",
+            "description0" : " 是指协议如何产生奖励。",
+            "description1" : "例如，如果协议采用借贷作为策略，就会将你存入的稳定币借给借款人。然后您将获得利息，利息会根据需求而变化。"
+          }
+        }
+      }
+    }
+  },
   "permissions" : {
     "open" : "打开应用程序权限",
     "authorize" : "授权",
@@ -4671,7 +4697,7 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "更新 {{deviceName}} 到版本 {{version}}",
-    "recoveryPhraseBackupInstructions" : "预防起见，请确保将您的 24 词恢复短语写在所提供的恢复表中。",
+    "recoveryPhraseBackupInstructions" : "请确保将您的 24 词秘密恢复短语写在恢复表中并妥善保管，以备不时之需。\n\n建议使用 Ledger Recover 备份您的钱包访问权限，确保其始终触手可及。",
     "confirmRecoveryPhrase" : "我有自己的恢复短语",
     "introDescription1" : "请注意，您设备上的所有应用程序都会被删除。您可以在固件更新后重新安装这些应用程序。",
     "introDescription2" : "该操作不会影响您的加密资产。",
@@ -6624,12 +6650,14 @@
     "range" : {
       "1h" : "1 小时",
       "24h" : "24 小时",
-      "1d" : "1 天",
       "7d" : "7 天",
-      "1w" : "1 周",
       "30d" : "30 天",
-      "1m" : "1 月",
-      "1y" : "1 年"
+      "1y" : "1 年",
+      "1D_label" : "1 天",
+      "1H_label" : "1 小时",
+      "1W_label" : "1 周",
+      "1M_label" : "1 月",
+      "1Y_label" : "1 年"
     },
     "warnings" : {
       "connectionError" : "连接错误",
@@ -7364,8 +7392,28 @@
     }
   },
   "largeMover" : {
-    "performance" : "Performance",
-    "low" : "低",
-    "high" : "高"
+    "info" : "信息",
+    "marketCap" : "市值",
+    "volume" : "交易量（24 小时）",
+    "fdv" : "完全稀释估值",
+    "marketCap24h" : "交易量/市值（24 小时）",
+    "circulatingSupply" : "流通供应量",
+    "totalSupply" : "总供应量",
+    "ath" : "历史最高",
+    "atl" : "历史最低",
+    "timeAgo" : {
+      "years" : "（{{count}} 年前）",
+      "years_plural" : "（{{count}} 年前）",
+      "months" : "（{{count}} 个月前）",
+      "months_plural" : "（{{count}} 个月前）",
+      "days" : "（{{count}} 天前）",
+      "days_plural" : "（{{count}} 天前）",
+      "hours" : "（{{count}} 小时前）",
+      "hours_plural" : "（{{count}} 小时前）",
+      "minutes" : "（{{count}} 分钟前）",
+      "minutes_plural" : "（{{count}} 分钟前）",
+      "seconds" : "（{{count}} 秒前）",
+      "seconds_plural" : "（{{count}} 秒前）"
+    }
   }
 }
