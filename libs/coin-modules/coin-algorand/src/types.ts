@@ -86,7 +86,7 @@ export type AlgorandAccountRaw = AccountRaw & {
 };
 
 export type AlgorandAccountBridge = AccountBridge<
-  Transaction,
+  AlgorandTransaction,
   AlgorandAccount,
   TransactionStatus,
   AlgorandAccountRaw,
@@ -94,7 +94,7 @@ export type AlgorandAccountBridge = AccountBridge<
   AlgorandOperationExtraRaw
 >;
 export type AlgorandBridge = Bridge<
-  Transaction,
+  AlgorandTransaction,
   AlgorandTransactionRaw,
   AlgorandAccount,
   AlgorandAccountRaw,

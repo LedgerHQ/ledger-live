@@ -64,14 +64,18 @@ function buildAccountBridge(signerContext: SignerContext<AlgorandSigner>): Algor
     fromOperationExtraRaw,
     toOperationExtraRaw,
     getSerializedAddressParameters,
-    ...formatters,
   };
 }
+
+export type { AlgorandBridge };
 
 export function createBridges(signerContext: SignerContext<AlgorandSigner>): AlgorandBridge {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
-    ...serialization,
+    serializationBridge: {
+      ...serialization,
+      ...formatters,
+    },
   };
 }

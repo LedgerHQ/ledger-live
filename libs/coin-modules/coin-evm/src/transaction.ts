@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { BigNumber } from "bignumber.js";
-import type { Account, SerializationTransactionBridge } from "@ledgerhq/types-live";
+import type { Account, SerializationBridge } from "@ledgerhq/types-live";
 import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
   fromTransactionCommonRaw,
@@ -30,7 +30,7 @@ import type {
 
 export const DEFAULT_GAS_LIMIT = new BigNumber(21000);
 
-type EvmSerializationTransactionBridge = SerializationTransactionBridge<
+type EvmSerializationBridge = SerializationBridge<
   EvmTransaction,
   EvmTransactionRaw,
   TransactionStatus,
@@ -324,4 +324,4 @@ export const serialization = {
   toTransactionStatusRaw,
   formatTransactionStatus,
   fromTransactionStatusRaw,
-} satisfies EvmSerializationTransactionBridge;
+} satisfies EvmSerializationBridge;

@@ -1,21 +1,22 @@
 // TODO: update path by moving mockHelpers to coin-framework
 
-import { BigNumber } from "bignumber.js";
-import { NotEnoughBalance, RecipientRequired, InvalidAddress, FeeTooHigh } from "@ledgerhq/errors";
+import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import { getSerializedAddressParameters } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import type { PolkadotAccountBridge } from "@ledgerhq/coin-polkadot/bridge/index";
+import { hydrate } from "@ledgerhq/coin-polkadot/preload";
+import { assignFromAccountRaw, assignToAccountRaw } from "@ledgerhq/coin-polkadot/serialization";
 import type { PolkadotAccount, Transaction } from "@ledgerhq/coin-polkadot/types/index";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { FeeTooHigh, InvalidAddress, NotEnoughBalance, RecipientRequired } from "@ledgerhq/errors";
+import type { CurrencyBridge } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 import {
+  broadcast,
+  isInvalidRecipient,
   makeAccountBridgeReceive,
   scanAccounts,
   signOperation,
-  broadcast,
   sync,
-  isInvalidRecipient,
 } from "../../../bridge/mockHelpers";
-import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
-import { getSerializedAddressParameters } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { assignToAccountRaw, assignFromAccountRaw } from "@ledgerhq/coin-polkadot/serialization";
-import { hydrate } from "@ledgerhq/coin-polkadot/preload";
 
 const receive = makeAccountBridgeReceive();
 
@@ -87,13 +88,13 @@ const prepareTransaction = async (a, t) => {
   return t;
 };
 
-const accountBridge: AccountBridge<Transaction> = {
+const accountBridge: PolkadotAccountBridge = {
   estimateMaxSpendable,
   createTransaction,
   updateTransaction,
   getTransactionStatus,
   prepareTransaction,
-  sync,
+  sync: sync as unknown as PolkadotAccountBridge["sync"],
   receive,
   assignToAccountRaw,
   assignFromAccountRaw,

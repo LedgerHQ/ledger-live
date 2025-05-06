@@ -56,10 +56,12 @@ function buildAccountBridge(signerContext: SignerContext<FilecoinSigner>): Filec
   };
 }
 
+export { type FilecoinBridge };
+
 export function createBridges(signerContext: SignerContext<FilecoinSigner>): FilecoinBridge {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
-    ...serialization,
+    serializationBridge: serialization,
   };
 }

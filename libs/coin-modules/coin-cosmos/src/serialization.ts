@@ -1,9 +1,8 @@
 import { BigNumber } from "bignumber.js";
-import { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
+import { Account, AccountRaw } from "@ledgerhq/types-live";
 import {
   CosmosOperationExtra,
   CosmosOperationExtraRaw,
-  isCosmosOperationExtraRaw,
   type CosmosAccount,
   type CosmosAccountRaw,
   type CosmosResources,
@@ -103,11 +102,8 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
     (account as CosmosAccount).cosmosResources = fromCosmosResourcesRaw(cosmosResourcesRaw);
 }
 
-export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExtra {
+export function fromOperationExtraRaw(extraRaw: CosmosOperationExtraRaw): CosmosOperationExtra {
   const extra: CosmosOperationExtra = {};
-  if (!isCosmosOperationExtraRaw(extraRaw)) {
-    return extra;
-  }
 
   if (extraRaw.validator) {
     extra.validator = {
@@ -138,11 +134,8 @@ export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExt
   return extra;
 }
 
-export function toOperationExtraRaw(extra: OperationExtra): OperationExtraRaw {
+export function toOperationExtraRaw(extra: CosmosOperationExtra): CosmosOperationExtraRaw {
   const extraRaw: CosmosOperationExtraRaw = {};
-  if (!isCosmosOperationExtraRaw(extra)) {
-    return extraRaw;
-  }
 
   if (extra.validator) {
     extraRaw.validator = {

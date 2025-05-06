@@ -20,7 +20,7 @@ import { NearSigner } from "../signer";
 import { buildSignOperation } from "../signOperation";
 import { getAccountShape, sync } from "../synchronisation";
 import { serialization } from "../transaction";
-import type { NearAccount, Transaction, TransactionRaw, TransactionStatus } from "../types";
+import type { NearAccount, NearAccountRaw, Transaction, TransactionRaw, TransactionStatus } from "../types";
 
 function buildCurrencyBridge(signerContext: SignerContext<NearSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -40,7 +40,7 @@ function buildCurrencyBridge(signerContext: SignerContext<NearSigner>): Currency
 
 function buildAccountBridge(
   signerContext: SignerContext<NearSigner>,
-): AccountBridge<Transaction, NearAccount, TransactionStatus, TransactionRaw> {
+): AccountBridge<Transaction, NearAccount, TransactionStatus, NearAccountRaw> {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -59,11 +59,10 @@ function buildAccountBridge(
     assignToAccountRaw,
     assignFromAccountRaw,
     getSerializedAddressParameters,
-    ...serialization,
   };
 }
 
-export type NearBridge = Bridge<Transaction, NearAccount, TransactionStatus, TransactionRaw>;
+export type NearBridge = Bridge<Transaction, TransactionRaw, NearAccount, NearAccountRaw>;
 
 export function createBridges(
   signerContext: SignerContext<NearSigner>,
@@ -74,5 +73,6 @@ export function createBridges(
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
+    serializationBridge: serialization,
   };
 }

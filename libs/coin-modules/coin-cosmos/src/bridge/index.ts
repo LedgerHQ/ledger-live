@@ -26,10 +26,7 @@ import {
 import { buildSignOperation } from "../signOperation";
 import { getAccountShape } from "../synchronisation";
 import { serialization } from "../transaction";
-import type {
-  CosmosAccountBridge,
-  CosmosBridge
-} from "../types";
+import type { CosmosAccountBridge, CosmosBridge } from "../types";
 import { CosmosSigner } from "../types/signer";
 import { updateTransaction } from "../updateTransaction";
 import { getPreloadStrategy, hydrate, preload } from "./preload";
@@ -81,6 +78,8 @@ function buildAccountBridge(signerContext: SignerContext<CosmosSigner>): CosmosA
   };
 }
 
+export type { CosmosBridge };
+
 export function createBridges(
   signerContext: SignerContext<CosmosSigner>,
   coinConfig: CoinConfig<CosmosCoinConfig>,
@@ -89,6 +88,6 @@ export function createBridges(
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
-    ...serialization,
+    serializationBridge: serialization,
   };
 }

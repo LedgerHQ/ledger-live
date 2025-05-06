@@ -22,7 +22,7 @@ import { buildSignOperation } from "./signOperation";
 import { getAccountShape } from "./synchronization";
 import { serialization } from "./transaction";
 
-export type XrpBridge = Bridge<Transaction, Account, TransactionStatus, TransactionRaw>;
+export type XrpBridge = Bridge<Transaction, TransactionRaw, Account>;
 
 export function createBridges(
   signerContext: SignerContext<XrpSigner>,
@@ -42,7 +42,7 @@ export function createBridges(
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
   const signOperation = buildSignOperation(signerContext);
   const sync = makeSync({ getAccountShape });
-  const accountBridge: AccountBridge<Transaction, Account, TransactionStatus, TransactionRaw> = {
+  const accountBridge: AccountBridge<Transaction, Account, TransactionStatus> = {
     createTransaction,
     updateTransaction: updateTransaction<Transaction>,
     prepareTransaction,
@@ -53,11 +53,11 @@ export function createBridges(
     signOperation,
     broadcast,
     getSerializedAddressParameters,
-    ...serialization,
   };
 
   return {
     currencyBridge,
     accountBridge,
+    serializationBridge: serialization,
   };
 }

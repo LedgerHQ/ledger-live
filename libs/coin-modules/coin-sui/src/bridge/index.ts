@@ -47,7 +47,7 @@ function buildCurrencyBridge(signerContext: SignerContext<SuiSigner>): CurrencyB
 
 function buildAccountBridge(
   signerContext: SignerContext<SuiSigner>,
-): AccountBridge<Transaction, SuiAccount, TransactionStatus, TransactionRaw> {
+): AccountBridge<Transaction, SuiAccount, TransactionStatus> {
   const getAddress = signerGetAddress(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -68,11 +68,10 @@ function buildAccountBridge(
     fromOperationExtraRaw,
     toOperationExtraRaw,
     getSerializedAddressParameters,
-    ...serialization,
   };
 }
 
-export type SuiBridge = Bridge<Transaction, SuiAccount, TransactionStatus, TransactionRaw>;
+export type SuiBridge = Bridge<Transaction, TransactionRaw, SuiAccount>;
 
 export function createBridges(
   signerContext: SignerContext<SuiSigner>,
@@ -83,5 +82,6 @@ export function createBridges(
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
+    serializationBridge: serialization,
   };
 }

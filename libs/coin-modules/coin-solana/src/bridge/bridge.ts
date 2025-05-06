@@ -12,6 +12,7 @@ import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper"
 import type { AccountBridge, AccountLike, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
 import type {
   SolanaAccount,
+  SolanaAccountRaw,
   SolanaPreloadDataV1,
   Transaction,
   TransactionRaw,
@@ -156,7 +157,7 @@ function getPreloadStrategy() {
   };
 }
 
-export type SolanaBridge = Bridge<Transaction, SolanaAccount, TransactionStatus, TransactionRaw>;
+export type SolanaBridge = Bridge<Transaction, TransactionRaw, SolanaAccount, SolanaAccountRaw>;
 
 export function makeBridges({
   getAPI,
@@ -176,7 +177,7 @@ export function makeBridges({
     Transaction,
     SolanaAccount,
     TransactionStatus,
-    TransactionRaw
+    SolanaAccountRaw
   > = {
     createTransaction,
     updateTransaction,
@@ -194,7 +195,6 @@ export function makeBridges({
     getSerializedAddressParameters,
     assignFromTokenAccountRaw,
     assignToTokenAccountRaw,
-    ...serialization,
   };
 
   const currencyBridge: CurrencyBridge = {
@@ -208,5 +208,6 @@ export function makeBridges({
   return {
     currencyBridge,
     accountBridge,
+    serializationBridge: serialization,
   };
 }

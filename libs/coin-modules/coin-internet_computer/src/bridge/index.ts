@@ -58,10 +58,12 @@ function buildAccountBridge(
   };
 }
 
+export type { InternetComputerBridge };
+
 export function createBridges(signerContext: SignerContext<ICPSigner>): InternetComputerBridge {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
-    ...serializaiton,
+    serializationBridge: serializaiton,
   };
 }

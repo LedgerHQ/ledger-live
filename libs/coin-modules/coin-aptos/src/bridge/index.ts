@@ -56,10 +56,12 @@ function buildAccountBridge(signerContext: SignerContext<AptosSigner>): AptosAcc
   };
 }
 
+export { type AptosBridge };
+
 export function createBridges(signerContext: SignerContext<AptosSigner>): AptosBridge {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
-    ...serialization,
+    serializationBridge: serialization,
   };
 }

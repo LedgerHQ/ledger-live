@@ -56,10 +56,12 @@ function buildAccountBridge(signerContext: SignerContext<HederaSigner>): HederaA
   };
 }
 
+export type { HederaBridge };
+
 export function createBridges(signerContext: SignerContext<HederaSigner>): HederaBridge {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
-    ...serialization,
+    serializationBridge: serialization,
   };
 }

@@ -4,7 +4,7 @@ import {
   makeScanAccounts,
   makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { AccountBridge } from "@ledgerhq/types-live";
+import { AccountBridge, Bridge, OperationExtraRaw } from "@ledgerhq/types-live";
 import { broadcast } from "../broadcast";
 import { calculateFees } from "../cache";
 import { CoinConfig, setCoinConfig } from "../config";
@@ -21,7 +21,15 @@ import { SignerContext } from "../signer";
 import { buildSignOperation } from "../signOperation";
 import { makeGetAccountShape, postSync } from "../synchronisation";
 import { serialization } from "../transaction";
-import { BitcoinAccount, Transaction, TransactionStatus } from "../types";
+import {
+  BitcoinAccount,
+  BitcoinAccountRaw,
+  BtcOperationExtra,
+  Transaction,
+  TransactionRaw,
+  TransactionStatus,
+  TransactionStatusRaw,
+} from "../types";
 import { updateTransaction } from "../updateTransaction";
 
 function buildCurrencyBridge(signerContext: SignerContext) {
@@ -82,15 +90,26 @@ function buildAccountBridge(signerContext: SignerContext) {
     assignToAccountRaw,
     formatAccountSpecifics: formatters.formatAccountSpecifics,
     getSerializedAddressParameters,
-    ...serialization,
   };
 }
 
-export function createBridges(signerContext: SignerContext, coinConfig: CoinConfig) {
+export type BitcoinBridge = Bridge<
+  Transaction,
+  TransactionRaw,
+  BitcoinAccount,
+  BitcoinAccountRaw,
+  BtcOperationExtra,
+  OperationExtraRaw,
+  TransactionStatus,
+  TransactionStatusRaw
+>;
+
+export function createBridges(signerContext: SignerContext, coinConfig: CoinConfig): BitcoinBridge {
   setCoinConfig(coinConfig);
 
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
+    serializationBridge: serialization,
   };
 }
