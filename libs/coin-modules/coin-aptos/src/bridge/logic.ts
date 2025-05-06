@@ -47,13 +47,16 @@ export function isTestnet(currencyId: string): boolean {
 }
 
 export const getMaxSendBalance = (
-  gas: BigNumber,
-  gasPrice: BigNumber,
   account: Account,
   transaction?: Transaction,
+  gas?: BigNumber,
+  gasPrice?: BigNumber,
 ): BigNumber => {
   const tokenAccount = findSubAccountById(account, transaction?.subAccountId ?? "");
   const fromTokenAccount = tokenAccount && isTokenAccount(tokenAccount);
+
+  gas = gas ?? BigNumber(DEFAULT_GAS);
+  gasPrice = gasPrice ?? BigNumber(DEFAULT_GAS_PRICE);
 
   const totalGas = gas.multipliedBy(gasPrice);
 
@@ -402,3 +405,28 @@ export function getTokenAccount(
   const fromTokenAccount = tokenAccount && isTokenAccount(tokenAccount);
   return fromTokenAccount ? tokenAccount : undefined;
 }
+
+// export const canStake = (account: AptosAccount): boolean => {
+//   let transaction = createTransaction(account);
+//   transaction = updateTransaction(transaction, {
+//     mode: "stake",
+//   });
+
+//   const { gasPrice } = getCurrentNearPreloadData();
+
+//   const fees = getStakingFees(transaction, gasPrice).multipliedBy(3);
+
+//   return getMaxAmount(account, transaction, fees).gt(0);
+// };
+
+// export const canUnstake = (
+//   stakingPosition: NearMappedStakingPosition | NearStakingPosition,
+// ): boolean => {
+//   return stakingPosition.staked.gte(getYoctoThreshold());
+// };
+
+// export const canWithdraw = (
+//   stakingPosition: NearMappedStakingPosition | NearStakingPosition,
+// ): boolean => {
+//   return stakingPosition.available.gte(getYoctoThreshold());
+// };

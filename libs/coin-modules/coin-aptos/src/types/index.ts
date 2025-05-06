@@ -126,7 +126,7 @@ export type AptosStake = {
   delegation:
     | {
         stake: number;
-        voteAccAddr: string;
+        validatorAddress: string;
       }
     | undefined;
   stakeAccBalance: number;
@@ -158,6 +158,10 @@ export type AptosStakeWithMeta = {
 export type AptosResources = {
   stakes: AptosStake[];
   unstakeReserve: BigNumber;
+  stakedBalance: BigNumber;
+  availableBalance: BigNumber;
+  pendingBalance: BigNumber;
+  storageUsageBalance: BigNumber;
 };
 
 export type AptosResourcesRaw = {
@@ -166,7 +170,7 @@ export type AptosResourcesRaw = {
 };
 
 export type AptosValidator = {
-  voteAccAddr: string;
+  validatorAddress: string;
   commission: number;
   activatedStake: number;
 };
@@ -182,4 +186,12 @@ export type AptosValidatorWithMeta = {
 export type AptosPreloadData = {
   validatorsWithMeta: AptosValidatorWithMeta[];
   validators: Validator[];
+};
+
+export type AptosMappedStakingPosition = AptosStake & {
+  formattedAmount: string;
+  formattedPending: string;
+  formattedAvailable: string;
+  rank: number;
+  validator: AptosValidator | null | undefined;
 };

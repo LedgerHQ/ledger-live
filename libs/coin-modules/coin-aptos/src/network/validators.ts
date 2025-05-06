@@ -3,8 +3,6 @@ import { AptosAPI } from "../api";
 import { GetCurrentDelegatorBalancesData } from "../api/graphql/queries";
 import { CurrentDelegatorBalance, GetCurrentDelegatorBalancesQuery } from "../api/graphql/types";
 
-// const MAX_VALIDATORS_NB = 1000; // Max number of validators to fetch
-
 export type ValidatorRaw = {
   active_stake?: number | null;
   commission?: number | null;
@@ -29,20 +27,7 @@ export type Validator = {
   nextUnlockTime?: string | undefined;
 };
 
-// const URLS = {
-//   validatorList: (cluster: Extract<Cluster, "mainnet-beta" | "testnet">) => {
-//     if (cluster === "testnet") {
-//       const baseUrl = getEnv("SOLANA_TESTNET_VALIDATORS_APP_BASE_URL");
-//       return `${baseUrl}/${cluster}.json?order=score&limit=${MAX_VALIDATORS_NB}`;
-//     }
-
-//     const baseUrl = getEnv("SOLANA_VALIDATORS_APP_BASE_URL");
-//     return baseUrl;
-//   },
-// };
-
 export async function getValidators(currencyId: string): Promise<Validator[]> {
-  // TODO : remove console.log
   const api = new AptosAPI(currencyId);
   const querySecond = GetCurrentDelegatorBalancesData;
   const queryResponseSecond = await api.apolloClient.query<
@@ -55,7 +40,6 @@ export async function getValidators(currencyId: string): Promise<Validator[]> {
 
   const stakingData: CurrentDelegatorBalance[] =
     queryResponseSecond.data.current_delegator_balances;
-  console.log("stakingData", stakingData);
 
   const list: Validator[] = await Promise.all(
     stakingData.map(async pool => {

@@ -98,7 +98,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     const transaction = bridge.updateTransaction(bridge.createTransaction(account), {
       stake: {
         op: "add",
-        poolAddr: stake.delegation.voteAccAddr,
+        poolAddr: stake.delegation.validatorAddress,
       },
     });
     return {

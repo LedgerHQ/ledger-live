@@ -206,6 +206,10 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
   const aptosResources = initialAccount?.aptosResources || {
     stakes: [],
     unstakeReserve: BigNumber(0),
+    stakedBalance: BigNumber(0),
+    availableBalance: BigNumber(0),
+    pendingBalance: BigNumber(0),
+    storageUsageBalance: BigNumber(0),
   };
 
   const shape: Partial<AptosAccount> = {

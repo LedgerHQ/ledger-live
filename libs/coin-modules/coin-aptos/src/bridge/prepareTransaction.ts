@@ -36,10 +36,10 @@ const prepareTransaction = async (
   if (transaction.useAllAmount) {
     // we will use this amount in simulation, to estimate gas
     transaction.amount = getMaxSendBalance(
-      new BigNumber(DEFAULT_GAS),
-      new BigNumber(DEFAULT_GAS_PRICE),
       account,
       transaction,
+      new BigNumber(DEFAULT_GAS),
+      new BigNumber(DEFAULT_GAS_PRICE),
     );
   }
 
@@ -48,10 +48,10 @@ const prepareTransaction = async (
   if (transaction.useAllAmount) {
     // correct the transaction amount according to estimated fees
     transaction.amount = getMaxSendBalance(
-      BigNumber(estimate.maxGasAmount),
-      BigNumber(estimate.gasUnitPrice),
       account,
       transaction,
+      BigNumber(estimate.maxGasAmount),
+      BigNumber(estimate.gasUnitPrice),
     );
 
     // Reserve a certain amount to cover future network fees to deactivate and withdraw
