@@ -67,4 +67,5 @@ export interface MinaSignedTransaction {
   transaction: MinaUnsignedTransaction;
 }
 
-export type MinaOperation = Operation<{ memo: string | undefined; accountCreationFee: string }>;
+export type MinaOperationExtra = { memo: string | undefined; accountCreationFee: string };
+export type MinaOperation = Operation<MinaOperationExtra>;

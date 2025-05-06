@@ -7,14 +7,11 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
-import type { Account, SerializationTransactionBridge } from "@ledgerhq/types-live";
+import type { Account, SerializationBridge } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 
-type NearSerializationTransactionBridge = SerializationTransactionBridge<
-  Transaction,
-  TransactionRaw
->;
+type NearSerializationBridge = SerializationBridge<Transaction, TransactionRaw>;
 
 const formatTransaction = (
   { mode, amount, recipient, useAllAmount }: Transaction,
@@ -63,4 +60,4 @@ export const serialization = {
   fromTransactionStatusRaw,
   toTransactionStatusRaw,
   formatTransactionStatus,
-} satisfies NearSerializationTransactionBridge;
+} satisfies NearSerializationBridge;

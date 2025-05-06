@@ -7,7 +7,7 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon,
 } from "@ledgerhq/coin-framework/serialization";
-import type { Account, SerializationTransactionBridge } from "@ledgerhq/types-live";
+import type { Account, SerializationBridge } from "@ledgerhq/types-live";
 import type {
   Transaction,
   TransactionRaw,
@@ -15,10 +15,7 @@ import type {
   TransactionStatusRaw,
 } from "../types";
 
-type VechainSerializationTransactionBridge = SerializationTransactionBridge<
-  Transaction,
-  TransactionRaw
->;
+type VechainSerializationBridge = SerializationBridge<Transaction, TransactionRaw>;
 
 const formatTransaction = (t: Transaction, account: Account): string => {
   const { amount, recipient, useAllAmount } = t;
@@ -81,4 +78,4 @@ export const serialization = {
   toTransactionRaw,
   fromTransactionStatusRaw,
   toTransactionStatusRaw,
-} satisfies VechainSerializationTransactionBridge;
+} satisfies VechainSerializationBridge;

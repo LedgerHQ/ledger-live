@@ -56,10 +56,12 @@ function buildAccountBridge(signerContext: SignerContext<CasperSigner>): CasperA
   };
 }
 
+export type { CasperBridge };
+
 export function createBridges(signerContext: SignerContext<CasperSigner>): CasperBridge {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
-    ...serialization,
+    serializationBridge: serialization,
   };
 }

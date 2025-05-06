@@ -48,9 +48,9 @@ function buildCurrencyBridge(signerContext: SignerContext<TronSigner>): Currency
   };
 }
 
-function buildAccountBridge(
-  signerContext: SignerContext<TronSigner>,
-): AccountBridge<Transaction, TronAccount, TransactionStatus, TransactionRaw> {
+export type TronAccountBridge = AccountBridge<Transaction, TronAccount, TransactionStatus>;
+
+function buildAccountBridge(signerContext: SignerContext<TronSigner>): TronAccountBridge {
   const getAddress = signerGetAddress(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -71,11 +71,10 @@ function buildAccountBridge(
     fromOperationExtraRaw,
     toOperationExtraRaw,
     getSerializedAddressParameters,
-    ...serialization,
   };
 }
 
-export type TronBridge = Bridge<Transaction, TronAccount, TransactionStatus, TransactionRaw>;
+export type TronBridge = Bridge<Transaction, TransactionRaw, TronAccount>;
 
 export function createBridges(
   signerContext: SignerContext<TronSigner>,
@@ -86,5 +85,6 @@ export function createBridges(
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
+    serializationBridge: serialization,
   };
 }

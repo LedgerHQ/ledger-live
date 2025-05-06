@@ -8,7 +8,7 @@ import {
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/index";
-import type { Account, SerializationTransactionBridge } from "@ledgerhq/types-live";
+import type { Account, SerializationBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import type {
   Command,
@@ -27,10 +27,7 @@ import type {
 } from "./types";
 import { assertUnreachable } from "./utils";
 
-type SolanaSerializationTransactionBridge = SerializationTransactionBridge<
-  Transaction,
-  TransactionRaw
->;
+type SolanaSerializationBridge = SerializationBridge<Transaction, TransactionRaw>;
 
 const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
@@ -259,4 +256,4 @@ export const serialization = {
   fromTransactionStatusRaw,
   toTransactionStatusRaw,
   formatTransactionStatus,
-} satisfies SolanaSerializationTransactionBridge;
+} satisfies SolanaSerializationBridge;

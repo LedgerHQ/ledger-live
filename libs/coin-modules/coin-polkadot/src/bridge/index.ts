@@ -15,6 +15,9 @@ import type {
   TransactionRaw,
   TransactionStatus,
   Transaction,
+  PolkadotAccountRaw,
+  PolkadotOperationExtra,
+  PolkadotOperationExtraRaw,
 } from "../types";
 import { broadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
@@ -50,9 +53,16 @@ function buildCurrencyBridge(signerContext: SignerContext<PolkadotSigner>): Curr
   };
 }
 
-function buildAccountBridge(
-  signerContext: SignerContext<PolkadotSigner>,
-): AccountBridge<Transaction, PolkadotAccount, TransactionStatus, TransactionRaw> {
+export type PolkadotAccountBridge = AccountBridge<
+  Transaction,
+  PolkadotAccount,
+  TransactionStatus,
+  PolkadotAccountRaw,
+  PolkadotOperationExtra,
+  PolkadotOperationExtraRaw
+>;
+
+function buildAccountBridge(signerContext: SignerContext<PolkadotSigner>): PolkadotAccountBridge {
   const getAddress = signerGetAddress(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -75,15 +85,16 @@ function buildAccountBridge(
     formatAccountSpecifics: formatters.formatAccountSpecifics,
     formatOperationSpecifics: formatters.formatOperationSpecifics,
     getSerializedAddressParameters,
-    ...serialization,
   };
 }
 
 export type PolkadotBridge = Bridge<
   Transaction,
+  TransactionRaw,
   PolkadotAccount,
-  TransactionStatus,
-  TransactionRaw
+  PolkadotAccountRaw,
+  PolkadotOperationExtra,
+  PolkadotOperationExtraRaw
 >;
 
 export function createBridges(
@@ -95,5 +106,6 @@ export function createBridges(
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
+    serializationBridge: serialization,
   };
 }

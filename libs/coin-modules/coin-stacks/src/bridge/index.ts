@@ -38,7 +38,7 @@ const sync = makeSync({ getAccountShape });
 
 function buildAccountBridge(
   signerContext: SignerContext<StacksSigner>,
-): AccountBridge<Transaction, Account, TransactionStatus, TransactionRaw> {
+): AccountBridge<Transaction> {
   const getAddress = resolver(signerContext);
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
 
@@ -55,15 +55,15 @@ function buildAccountBridge(
     signOperation,
     broadcast,
     getSerializedAddressParameters,
-    ...serialization,
   };
 }
 
-export type StacksBridge = Bridge<Transaction, Account, TransactionStatus, TransactionRaw>;
+export type StacksBridge = Bridge<Transaction, TransactionRaw>;
 
 export function createBridges(signerContext: SignerContext<StacksSigner>): StacksBridge {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
+    serializationBridge: serialization,
   };
 }

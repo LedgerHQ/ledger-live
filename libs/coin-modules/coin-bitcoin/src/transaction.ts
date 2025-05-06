@@ -8,7 +8,7 @@ import {
   toTransactionStatusRawCommon,
 } from "@ledgerhq/coin-framework/serialization";
 import { getEnv } from "@ledgerhq/live-env";
-import type { Account, SerializationTransactionBridge } from "@ledgerhq/types-live";
+import type { Account, SerializationBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { formatInput, formatOutput } from "./formatters";
 import {
@@ -28,7 +28,7 @@ import type {
 } from "./types";
 import { bitcoinPickingStrategy } from "./types";
 
-type BitcoinSerializationTransactionBridge = SerializationTransactionBridge<
+type BitcoinSerializationBridge = SerializationBridge<
   Transaction,
   TransactionRaw,
   TransactionStatus,
@@ -189,4 +189,4 @@ export const serialization = {
   formatTransactionStatus,
   fromTransactionStatusRaw,
   toTransactionStatusRaw,
-} satisfies BitcoinSerializationTransactionBridge;
+} satisfies BitcoinSerializationBridge;

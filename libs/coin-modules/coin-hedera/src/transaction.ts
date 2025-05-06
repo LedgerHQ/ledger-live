@@ -7,13 +7,10 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
-import type { Account, SerializationTransactionBridge } from "@ledgerhq/types-live";
+import type { Account, SerializationBridge } from "@ledgerhq/types-live";
 import type { Transaction, TransactionRaw } from "./types";
 
-type HederaSerializationTransactionBridge = SerializationTransactionBridge<
-  Transaction,
-  TransactionRaw
->;
+type HederaSerializationBridge = SerializationBridge<Transaction, TransactionRaw>;
 
 export function formatTransaction(transaction: Transaction, account: Account): string {
   const amount = formatCurrencyUnit(getAccountCurrency(account).units[0], transaction.amount, {
@@ -51,4 +48,4 @@ export const serialization = {
   fromTransactionStatusRaw,
   toTransactionStatusRaw,
   formatTransactionStatus,
-} satisfies HederaSerializationTransactionBridge;
+} satisfies HederaSerializationBridge;

@@ -7,14 +7,11 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
-import type { Account, SerializationTransactionBridge } from "@ledgerhq/types-live";
+import type { Account, SerializationBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import type { Transaction, TransactionRaw } from "../types";
 
-type PolkadotSerializationTransactionBridge = SerializationTransactionBridge<
-  Transaction,
-  TransactionRaw
->;
+type PolkadotSerializationBridge = SerializationBridge<Transaction, TransactionRaw>;
 
 const formatTransaction = (
   { mode, amount, recipient, validators, useAllAmount }: Transaction,
@@ -67,4 +64,4 @@ export const serialization = {
   fromTransactionStatusRaw,
   toTransactionStatusRaw,
   formatTransactionStatus,
-} satisfies PolkadotSerializationTransactionBridge;
+} satisfies PolkadotSerializationBridge;

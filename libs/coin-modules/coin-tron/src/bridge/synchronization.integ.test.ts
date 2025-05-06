@@ -4,13 +4,12 @@ import {
   AccountBridge,
   SyncConfig,
   TransactionCommon,
-  TransactionCommonRaw,
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { firstValueFrom, reduce } from "rxjs";
 import { TronCoinConfig } from "../config";
-import { Transaction, TransactionRaw, TransactionStatus, TronAccount } from "../types";
+import { Transaction, TransactionStatus, TronAccount } from "../types";
 import { createBridges } from "./index";
 import { defaultTronResources } from "./utils";
 
@@ -23,9 +22,8 @@ function syncAccount<
   T extends TransactionCommon,
   A extends Account = Account,
   U extends TransactionStatusCommon = TransactionStatusCommon,
-  TR extends TransactionCommonRaw = TransactionCommonRaw,
 >(
-  bridge: AccountBridge<T, A, U, TR>,
+  bridge: AccountBridge<T, A, U>,
   account: A,
   syncConfig: SyncConfig = defaultSyncConfig,
 ): Promise<A> {
@@ -87,7 +85,7 @@ describe("Sync Accounts", () => {
   });
 
   it("should always have tronResources", async () => {
-    const account = await syncAccount<Transaction, TronAccount, TransactionStatus, TransactionRaw>(
+    const account = await syncAccount<Transaction, TronAccount, TransactionStatus>(
       bridge.accountBridge,
       dummyAccount,
       defaultSyncConfig,
@@ -101,7 +99,7 @@ describe("Sync Accounts", () => {
     const id = "TL24LCps5FKwp3PoU1MvrYrwhi5LU1tHre";
 
     // WHEN
-    const account = await syncAccount<Transaction, TronAccount, TransactionStatus, TransactionRaw>(
+    const account = await syncAccount<Transaction, TronAccount, TransactionStatus>(
       bridge.accountBridge,
       {
         ...dummyAccount,

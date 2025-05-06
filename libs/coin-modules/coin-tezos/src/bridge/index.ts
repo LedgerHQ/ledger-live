@@ -46,7 +46,7 @@ function buildCurrencyBridge(signerContext: SignerContext<TezosSigner>): Currenc
 
 function buildAccountBridge(
   signerContext: SignerContext<TezosSigner>,
-): AccountBridge<Transaction, TezosAccount, TransactionStatus, TransactionRaw> {
+): AccountBridge<Transaction, TezosAccount, TransactionStatus> {
   const getAddress = signerGetAddress(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -65,11 +65,10 @@ function buildAccountBridge(
     assignFromAccountRaw,
     assignToAccountRaw,
     getSerializedAddressParameters,
-    ...serialization,
   };
 }
 
-export type TezosBridge = Bridge<Transaction, TezosAccount, TransactionStatus, TransactionRaw>;
+export type TezosBridge = Bridge<Transaction, TransactionRaw, TezosAccount>;
 
 export function createBridges(
   signerContext: SignerContext<TezosSigner>,
@@ -80,5 +79,6 @@ export function createBridges(
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
+    serializationBridge: serialization,
   };
 }

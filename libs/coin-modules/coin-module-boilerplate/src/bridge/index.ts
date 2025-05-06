@@ -59,6 +59,6 @@ export function createBridges(
   return {
     currencyBridge,
     accountBridge,
-    ...serialiation,
+    serializationBridge: serialiation,
   };
 }

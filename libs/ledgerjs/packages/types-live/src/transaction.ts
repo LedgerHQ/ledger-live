@@ -101,6 +101,7 @@ export type TransactionCommon = {
   useAllAmount?: boolean;
   subAccountId?: string | null | undefined;
   feesStrategy?: "slow" | "medium" | "fast" | "custom" | null | undefined;
+  family: string;
 };
 
 /**
@@ -113,6 +114,7 @@ export type TransactionCommonRaw = {
   useAllAmount?: boolean;
   subAccountId?: string | null | undefined;
   feesStrategy?: "slow" | "medium" | "fast" | "custom" | null | undefined;
+  family: string;
 };
 
 /**

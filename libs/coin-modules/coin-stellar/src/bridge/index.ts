@@ -47,7 +47,7 @@ function buildCurrencyBridge(signerContext: SignerContext<StellarSigner>): Curre
 
 function buildAccountBridge(
   signerContext: SignerContext<StellarSigner>,
-): AccountBridge<Transaction, Account, TransactionStatus, TransactionRaw> {
+): AccountBridge<Transaction> {
   const getAddress = signerGetAddress(signerContext);
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
   const signOperation = buildSignOperation(signerContext);
@@ -64,11 +64,10 @@ function buildAccountBridge(
     signOperation,
     broadcast,
     getSerializedAddressParameters,
-    ...serialization,
   };
 }
 
-export type StellarBridge = Bridge<Transaction, Account, TransactionStatus, TransactionRaw>;
+export type StellarBridge = Bridge<Transaction, TransactionRaw>;
 
 export function createBridges(
   signerContext: SignerContext<StellarSigner>,
@@ -79,5 +78,6 @@ export function createBridges(
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
+    serializationBridge: serialization,
   };
 }

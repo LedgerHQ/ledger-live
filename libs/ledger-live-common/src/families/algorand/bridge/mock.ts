@@ -4,6 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { NotEnoughBalance, RecipientRequired, InvalidAddress, FeeTooHigh } from "@ledgerhq/errors";
 import type {
   AlgorandAccount,
+  AlgorandAccountBridge,
   AlgorandTransaction,
   Transaction,
 } from "@ledgerhq/coin-algorand/types";
@@ -94,13 +95,13 @@ const prepareTransaction = async (a, t) => {
   return t;
 };
 
-const accountBridge: AccountBridge<AlgorandTransaction, any> = {
+const accountBridge: AlgorandAccountBridge = {
   estimateMaxSpendable,
   createTransaction,
   updateTransaction,
   getTransactionStatus,
   prepareTransaction,
-  sync,
+  sync: sync as unknown as AlgorandAccountBridge["sync"],
   receive,
   assignToAccountRaw,
   assignFromAccountRaw,

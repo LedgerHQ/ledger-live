@@ -318,4 +318,11 @@ export type CosmosAccountBridge = AccountBridge<
   CosmosOperationExtra,
   CosmosOperationExtraRaw
 >;
-export type CosmosBridge = Bridge<Transaction, TransactionRaw, CosmosAccount, CosmosAccountRaw>;
+export type CosmosBridge = Bridge<
+  Transaction,
+  TransactionRaw,
+  CosmosAccount,
+  CosmosAccountRaw,
+  CosmosOperationExtra,
+  CosmosOperationExtraRaw
+>;

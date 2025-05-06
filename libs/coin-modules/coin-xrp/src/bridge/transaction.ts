@@ -7,14 +7,11 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization/transaction";
-import type { Account, SerializationTransactionBridge } from "@ledgerhq/types-live";
+import type { Account, SerializationBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import type { Transaction, TransactionRaw } from "../types";
 
-type XrpSerializationTransactionBridge = SerializationTransactionBridge<
-  Transaction,
-  TransactionRaw
->;
+type XrpSerializationBridge = SerializationBridge<Transaction, TransactionRaw>;
 
 export const formatTransaction = (
   { amount, recipient, fee, tag, useAllAmount }: Transaction,
@@ -81,4 +78,4 @@ export const serialization = {
   fromTransactionStatusRaw,
   toTransactionStatusRaw,
   formatTransactionStatus,
-} satisfies XrpSerializationTransactionBridge;
+} satisfies XrpSerializationBridge;

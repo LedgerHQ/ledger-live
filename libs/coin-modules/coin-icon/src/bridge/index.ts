@@ -64,6 +64,8 @@ function buildAccountBridge(signerContext: SignerContext<IconSigner>): IconAccou
   };
 }
 
+export type { IconBridge };
+
 export function createBridges(
   signerContext: SignerContext<IconSigner>,
   coinConfig: CoinConfig<IconCoinConfig>,
@@ -73,6 +75,6 @@ export function createBridges(
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
-    ...serialization,
+    serializationBridge: serialization,
   };
 }

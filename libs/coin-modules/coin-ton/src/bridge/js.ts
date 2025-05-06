@@ -18,7 +18,7 @@ import { buildSignOperation } from "../signOperation";
 import { TonSigner } from "../signer";
 import { getAccountShape, sync } from "../synchronisation";
 import { serialization } from "../transaction";
-import type { TonAccount, Transaction, TransactionRaw, TransactionStatus } from "../types";
+import type { TonAccount, Transaction, TransactionRaw } from "../types";
 
 function buildCurrencyBridge(signerContext: SignerContext<TonSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -37,7 +37,7 @@ function buildCurrencyBridge(signerContext: SignerContext<TonSigner>): CurrencyB
 
 function buildAccountBridge(
   signerContext: SignerContext<TonSigner>,
-): AccountBridge<Transaction, TonAccount, TransactionStatus, TransactionRaw> {
+): AccountBridge<Transaction, TonAccount> {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -54,11 +54,10 @@ function buildAccountBridge(
     signOperation,
     broadcast,
     getSerializedAddressParameters,
-    ...serialization,
   };
 }
 
-export type TonBridge = Bridge<Transaction, TonAccount, TransactionStatus, TransactionRaw>;
+export type TonBridge = Bridge<Transaction, TransactionRaw, TonAccount>;
 
 export function createBridges(
   signerContext: SignerContext<TonSigner>,
@@ -69,5 +68,6 @@ export function createBridges(
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
+    serializationBridge: serialization,
   };
 }

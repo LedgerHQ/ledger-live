@@ -7,7 +7,7 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
-import type { Account, SerializationTransactionBridge } from "@ledgerhq/types-live";
+import type { Account, SerializationBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Address, Cell } from "@ton/core";
 import type {
@@ -19,10 +19,7 @@ import type {
   TransactionRaw,
 } from "./types";
 
-type TonSerializationTransactionBridge = SerializationTransactionBridge<
-  Transaction,
-  TransactionRaw
->;
+type TonSerializationBridge = SerializationBridge<Transaction, TransactionRaw>;
 
 const formatTransaction = (
   { recipient, useAllAmount, amount }: Transaction,
@@ -323,4 +320,4 @@ export const serialization = {
   fromTransactionStatusRaw,
   toTransactionStatusRaw,
   formatTransactionStatus,
-} satisfies TonSerializationTransactionBridge;
+} satisfies TonSerializationBridge;

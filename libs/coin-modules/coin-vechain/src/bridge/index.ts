@@ -38,7 +38,7 @@ const sync = makeSync({ getAccountShape });
 
 function buildAccountBridge(
   signerContext: SignerContext<VechainSigner>,
-): AccountBridge<Transaction, Account, TransactionStatus, TransactionRaw> {
+): AccountBridge<Transaction, Account, TransactionStatus> {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -55,15 +55,15 @@ function buildAccountBridge(
     signOperation,
     broadcast,
     getSerializedAddressParameters,
-    ...serialization,
   };
 }
 
-export type VechainBridge = Bridge<Transaction, Account, TransactionStatus, TransactionRaw>;
+export type VechainBridge = Bridge<Transaction, TransactionRaw, Account>;
 
 export function createBridges(signerContext: SignerContext<VechainSigner>): VechainBridge {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
+    serializationBridge: serialization,
   };
 }

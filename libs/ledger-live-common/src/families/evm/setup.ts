@@ -1,6 +1,6 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
-import { createBridges } from "@ledgerhq/coin-evm/bridge/js";
+import { createBridges, type EvmBrige } from "@ledgerhq/coin-evm/bridge/js";
 import makeCliTools from "@ledgerhq/coin-evm/cli-transaction";
 import evmResolver from "@ledgerhq/coin-evm/hw-getAddress";
 import { prepareMessageToSign, signMessage } from "@ledgerhq/coin-evm/hw-signMessage";
@@ -44,10 +44,7 @@ const getCurrencyConfig = (currency: CryptoCurrency) => {
   return { info: getCurrencyConfiguration<EvmConfigInfo>(currency) };
 };
 
-const bridge: Bridge<EvmTransaction> = createBridges(
-  executeWithSigner(createSigner),
-  getCurrencyConfig,
-);
+const bridge: EvmBrige = createBridges(executeWithSigner(createSigner), getCurrencyConfig);
 
 const messageSigner = {
   prepareMessageToSign,

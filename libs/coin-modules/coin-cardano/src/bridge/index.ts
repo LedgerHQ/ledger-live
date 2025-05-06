@@ -64,6 +64,8 @@ function buildAccountBridge(signerContext: SignerContext<CardanoSigner>): Cardan
   };
 }
 
+export type { CardanoBridge };
+
 export function createBridges(
   signerContext: SignerContext<CardanoSigner>,
   coinConfig: CoinConfig<CardanoCoinConfig>,
@@ -72,6 +74,6 @@ export function createBridges(
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
-    ...serialization,
+    serializationBridge: serialization,
   };
 }

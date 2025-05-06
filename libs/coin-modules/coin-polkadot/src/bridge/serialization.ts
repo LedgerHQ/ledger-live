@@ -55,26 +55,15 @@ function fromPolkadotResourcesRaw(r: PolkadotResourcesRaw): PolkadotResources {
   };
 }
 
-export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
-  const polkadotAccount = account as PolkadotAccount;
-  if (polkadotAccount.polkadotResources) {
-    (accountRaw as PolkadotAccountRaw).polkadotResources = toPolkadotResourcesRaw(
-      polkadotAccount.polkadotResources,
-    );
-  }
+export function assignToAccountRaw(account: PolkadotAccount, accountRaw: PolkadotAccountRaw) {
+  accountRaw.polkadotResources = toPolkadotResourcesRaw(account.polkadotResources);
 }
 
-export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
-  const polkadotResourcesRaw = (accountRaw as PolkadotAccountRaw).polkadotResources;
-  if (polkadotResourcesRaw)
-    (account as PolkadotAccount).polkadotResources = fromPolkadotResourcesRaw(polkadotResourcesRaw);
+export function assignFromAccountRaw(accountRaw: PolkadotAccountRaw, account: PolkadotAccount) {
+  account.polkadotResources = fromPolkadotResourcesRaw(accountRaw.polkadotResources);
 }
 
-export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExtra {
-  if (!isPolkadotOperationExtraRaw(extraRaw)) {
-    throw Error("Unsupported OperationExtraRaw");
-  }
-
+export function fromOperationExtraRaw(extraRaw: PolkadotOperationExtraRaw): PolkadotOperationExtra {
   const extra: PolkadotOperationExtra = {
     palletMethod: extraRaw.palletMethod as PalletMethod,
     validatorStash: extraRaw.validatorStash,
@@ -100,11 +89,7 @@ export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExt
   return extra;
 }
 
-export function toOperationExtraRaw(extra: OperationExtra): OperationExtraRaw {
-  if (!isPolkadotOperationExtra(extra)) {
-    throw Error("Unsupported OperationExtra");
-  }
-
+export function toOperationExtraRaw(extra: PolkadotOperationExtra): PolkadotOperationExtraRaw {
   const extraRaw: PolkadotOperationExtraRaw = {
     palletMethod: extra.palletMethod,
     validatorStash: extra.validatorStash,
