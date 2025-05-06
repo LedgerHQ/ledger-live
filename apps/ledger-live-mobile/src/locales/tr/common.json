@@ -1103,6 +1103,32 @@
     "tryEnablingAgain" : "Konumu yeniden etkinleştirmeyi deneyin",
     "noInfos" : "Ledger konum bilgilerinize erişmez."
   },
+  "earn" : {
+    "deposit" : {
+      "protocolInfoModal" : {
+        "title" : "Bir protokol seçerken aklınızda bulundurmanız gereken birkaç şey:",
+        "items" : {
+          "protocol" : {
+            "highlighted" : "Bir protokol,",
+            "description" : " yatırdığınız kriptoları borç vermek, likidite sunmak veya staking yapmak için kullanarak ödüller kazanmanızı sağlayan bir platformdur."
+          },
+          "apy" : {
+            "highlighted" : "APY (Yıllık Getiri Yüzdesi),",
+            "description" : " bir yılda ne kadar faiz getirisi elde edebileceğinizi ifade eder. Daha yüksek bir APY, daha yüksek kazançlar anlamına gelir."
+          },
+          "tvl" : {
+            "highlighted" : "TVL (Kilitli toplam değer),",
+            "description" : " diğer kullanıcılar tarafından protokole yatırılan toplam paradır. Daha yüksek bir TVL, protokole daha fazla kişinin güvendiği anlamına gelir."
+          },
+          "strategy" : {
+            "highlighted" : "Strateji,",
+            "description0" : " protokolün sizin için ödüller üretmek amacıyla kullandığı yöntemdir.",
+            "description1" : "Örneğin bir protokol, stratejisi olarak borç vermeyi kullanırsa, yatırdığınız stabil coin’leri borç alanlara borç verir. Siz de talebe göre değişen bir faiz getirisi elde edersiniz."
+          }
+        }
+      }
+    }
+  },
   "permissions" : {
     "open" : "Uygulama izinlerini aç",
     "authorize" : "İzin ver",
@@ -4671,7 +4697,7 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "{{deviceName}} cihazınızı {{version}} sürümüne güncelleyin",
-    "recoveryPhraseBackupInstructions" : "Önlem olarak, 24 kelimelik kurtarma ifadenizi bir Kurtarma Kağıdına yazdığınızdan ve ona kolayca ulaşabileceğinizden emin olun.",
+    "recoveryPhraseBackupInstructions" : "Önlem olarak, 24 kelimelik Gizli Kurtarma İfadenizi kurtarma Kâğıdına yazdığınızdan ve bu kâğıda kolayca erişebileceğinizden emin olun.\n\nCüzdan erişiminizi yedekleyip cüzdanınıza erişimi asla kaybetmeyeceğinizden emin olmak için Ledger Recover’ı kullanmayı düşünün.",
     "confirmRecoveryPhrase" : "Kurtarma ifadem var",
     "introDescription1" : "Cihazınızdaki tüm uygulamaların silineceğini lütfen unutmayın. Yazılım güncellemesinden sonra uygulamalarınızı yeniden yükleyebilirsiniz.",
     "introDescription2" : "Bunun kripto varlıklarınız üzerinde hiçbir etkisi yoktur.",
@@ -6624,12 +6650,14 @@
     "range" : {
       "1h" : "1SA",
       "24h" : "24SA",
-      "1d" : "1G",
       "7d" : "7G",
-      "1w" : "1H",
       "30d" : "30G",
-      "1m" : "1A",
-      "1y" : "1Y"
+      "1y" : "1Y",
+      "1D_label" : "1G",
+      "1H_label" : "1SA",
+      "1W_label" : "1H",
+      "1M_label" : "1A",
+      "1Y_label" : "1Y"
     },
     "warnings" : {
       "connectionError" : "Bağlantı Hatası",
@@ -7364,8 +7392,28 @@
     }
   },
   "largeMover" : {
-    "performance" : "Performans",
-    "low" : "Düşük",
-    "high" : "Yüksek"
+    "info" : "Bilgi",
+    "marketCap" : "Piyasa değeri",
+    "volume" : "Hacim (24 sa.)",
+    "fdv" : "FDV",
+    "marketCap24h" : "Hacim/Piyasa Değ. (24 sa.)",
+    "circulatingSupply" : "Dolaşımdaki arz",
+    "totalSupply" : "Toplam arz",
+    "ath" : "Tüm zamanlar en yüksek",
+    "atl" : "Tüm zamanlar en düşük",
+    "timeAgo" : {
+      "years" : "({{count}} yıl önce)",
+      "years_plural" : "({{count}} yıl önce)",
+      "months" : "({{count}} ay önce)",
+      "months_plural" : "({{count}} ay önce)",
+      "days" : "({{count}} gün önce)",
+      "days_plural" : "({{count}} gün önce)",
+      "hours" : "({{count}} saat önce)",
+      "hours_plural" : "({{count}} saat önce)",
+      "minutes" : "({{count}} dakika önce)",
+      "minutes_plural" : "({{count}} dakika önce)",
+      "seconds" : "({{count}} saniye önce)",
+      "seconds_plural" : "({{count}} saniye önce)"
+    }
   }
 }
