@@ -20,7 +20,7 @@
     "e2e:build": "pnpm detox build",
     "e2e:ci": "zx ./scripts/e2e-ci.mjs",
     "mock:test": "export MOCK=1 && pnpm detox test",
-    "e2e:test": "pnpm --filter ledger-live-mobile-e2e-tests pnpm e2e:test",
+    "e2e:test": "pnpm --filter ledger-live-mobile-e2e-tests e2e:test",
     "prebeta": "bundle install",
     "debug:detox": "pnpm detox test -c ios.manual currencies.spec.ts",
     "ios:staging": "ENVFILE=.env.ios.staging react-native run-ios --mode Staging",
