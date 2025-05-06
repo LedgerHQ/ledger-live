@@ -6,7 +6,7 @@ import {
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import resolver from "../signer";
 import type { Transaction, TransactionStatus, AptosSigner } from "../types";
