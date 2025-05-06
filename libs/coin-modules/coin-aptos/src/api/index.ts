@@ -5,6 +5,7 @@ import coinConfig from "../config";
 import type { AptosAsset, AptosExtra, AptosFeeParameters, AptosSender } from "../types/assets";
 import { AptosAPI } from "../network";
 import { combine } from "../logic/combine";
+import { craftTransaction } from "../logic/craftTransaction";
 
 export function createApi(
   config: AptosConfigApi,
@@ -16,9 +17,8 @@ export function createApi(
   return {
     broadcast: (tx: string) => client.broadcast(tx),
     combine: (tx, signature, pubkey): string => combine(tx, signature, pubkey),
-    craftTransaction: (_transactionIntent, _customFees): Promise<string> => {
-      throw new Error("Not Implemented");
-    },
+    craftTransaction: (transactionIntent, _customFees): Promise<string> =>
+      craftTransaction(client, transactionIntent),
     estimateFees: (transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender>) =>
       client.estimateFees(transactionIntent),
     getBalance: (_address): Promise<Balance<AptosAsset>[]> => {

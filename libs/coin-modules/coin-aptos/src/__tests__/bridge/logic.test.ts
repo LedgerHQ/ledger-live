@@ -22,7 +22,6 @@ import {
   isTestnet,
   processRecipients,
   getMaxSendBalance,
-  normalizeTransactionOptions,
   getBlankOperation,
   txsToOps,
   getEventCoinAddress,
@@ -32,6 +31,7 @@ import type { AptosTransaction, TransactionOptions } from "../../types";
 import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { decodeTokenAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
+import { normalizeTransactionOptions } from "../../logic/normalizeTransactionOptions";
 
 jest.mock("@ledgerhq/cryptoassets");
 jest.mock("@ledgerhq/coin-framework/account/index");
