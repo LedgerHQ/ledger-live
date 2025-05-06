@@ -1,5 +1,6 @@
 import { expect } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 export default class AccountPage {
   baseLink = "account";
   accountGraph = (accountId: string) => getElementById(`account-graph-${accountId}`);
@@ -118,5 +119,15 @@ export default class AccountPage {
   async tapEarn() {
     await scrollToId(this.earnButtonId, this.accountScreenScrollView);
     await tapById(this.earnButtonId);
+  }
+
+  @Step("Expect account balance")
+  async expectAccountBalance(accountid: string, balance: string) {
+    jestExpect(this.accountBalance(accountid)).toBe(balance);
+  }
+
+  @Step("Navigate to token in account")
+  async navigateToTokenInAccount(SubAccount: Account) {
+    await tapById(this.baseAccountName + SubAccount.currency.name);
   }
 }
