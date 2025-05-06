@@ -29,6 +29,9 @@ jobs:
           concurrent_skipping: 'never'
           skip_after_successful_duplicate: 'true'
           do_not_skip: '["pull_request", "workflow_dispatch", "schedule"]'
+      - run: echo "${{ github.event.pull_request.base.ref }}"
+      - run: echo "${{ startsWith(github.event.pull_request.base.ref, 'lp-smartling-test') }}"
+      - run: echo "${{ env.IS_SMARTLING }}"
       - id: smartling_check
         if: ${{ env.IS_SMARTLING == 'true' }}
         run: |
