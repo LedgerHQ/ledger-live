@@ -2393,7 +2393,10 @@
         "suggested" : "추천",
         "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
-        "nftQuantity" : "수량"
+        "nftQuantity" : "수량",
+        "spl2022Warning" : "현재 사용 중인 토큰은 토큰 확장 프로그램(Token Extensions)으로도 알려진 토큰-2022 프로그램의 일부입니다. 이 토큰은 몇 가지 리스크가 수반됩니다. ",
+        "spl2022UrlLabel" : "여기를 클릭하여",
+        "spl2022UrlFollowUp" : " 자세히 알아보세요."
       },
       "verification" : {
         "streaming" : {
@@ -3768,7 +3771,7 @@
       "frozenStateWarning" : "계정 자산이 동결되었습니다!",
       "transferWarning" : "Ledger Nano S™를 사용해 솔라나 토큰의 수령인 주소를 확인하려면 <0>다음 지침을 따르세요.</0>",
       "transferFees" : {
-        "feesPercentHint" : "토큰에는 {{feePercent}}%({{feeBps}}bps)의 전송 수수료가 부과됩니다. 최대 {{maxFee}}",
+        "feesHint" : "토큰 이체 수수료: {{transferFee}}",
         "notice" : "전송 수수료 {{fee}}%",
         "tooltipHint" : "토큰 생성자의 전송 보류 비율",
         "transferFeesLabel" : "전송 수수료"
@@ -5420,7 +5423,9 @@
     "stringHash" : "메시지 해시",
     "domainHash" : "도메인 해시",
     "messageHash" : "메시지 해시",
-    "message" : "메시지"
+    "message" : "메시지",
+    "title" : "Ledger {{wording}}에서 계속하세요",
+    "description" : "보안 터치스크린에 표시된 안내를 따라주세요."
   },
   "TransactionConfirm" : {
     "title" : "거래를 장치에서 확인하고 완료하세요",
