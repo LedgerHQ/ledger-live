@@ -113,12 +113,14 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
           }),
         );
       },
-      "message.sign": ({ account, message, onSuccess, onError, onCancel }) => {
+      "message.sign": ({ account, message, options, onSuccess, onError, onCancel }) => {
         ipcRenderer.send("show-app", {});
         dispatch(
           openModal("MODAL_SIGN_MESSAGE", {
             account,
             message,
+            useApp: options?.hwAppId,
+            dependencies: options?.dependencies,
             onConfirmationHandler: onSuccess,
             onFailHandler: onError,
             onClose: onCancel,

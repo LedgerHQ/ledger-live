@@ -411,13 +411,15 @@ function useUiHook(): UiHook {
           onError,
         });
       },
-      "message.sign": ({ account, message, onSuccess, onError, onCancel }) => {
+      "message.sign": ({ account, message, options, onSuccess, onError, onCancel }) => {
         navigation.navigate(NavigatorName.SignMessage, {
           screen:
             message.standard === "EIP712" ? ScreenName.SignSelectDevice : ScreenName.SignSummary,
           params: {
             message,
             accountId: account.id,
+            appName: options?.hwAppId,
+            dependencies: options?.dependencies,
             onConfirmationHandler: onSuccess,
             onFailHandler: onError,
           },
