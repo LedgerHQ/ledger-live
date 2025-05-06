@@ -74,4 +74,3 @@ export function stakeActivePercent(stake: AptosStake) {
   }
   return (stake.activation.active / amount) * 100;
 }
-

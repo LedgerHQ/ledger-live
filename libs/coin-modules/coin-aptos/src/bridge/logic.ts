@@ -113,11 +113,11 @@ export const txsToOps = (
   info: { address: string },
   id: string,
   txs: (AptosTransaction | null)[],
-): [Operation[], Operation[]] => {
+): [Operation[], Operation[], Operation[]] => {
   const { address } = info;
   const ops: Operation[] = [];
+  const opsStaking: Operation[] = [];
   const opsTokens: Operation[] = [];
-
   txs.forEach(tx => {
     if (tx !== null) {
       const op: Operation = getBlankOperation(tx, id);
@@ -133,9 +133,14 @@ export const txsToOps = (
         return; // skip transaction without functions in payload
       }
 
-      const { coin_id, amount_in, amount_out } = getCoinAndAmounts(tx, address);
+      const { coin_id, amount_in, amount_out, staked_amount } = getCoinAndAmounts(tx, address);
+
       op.value = calculateAmount(tx.sender, address, amount_in, amount_out);
-      op.type = compareAddress(tx.sender, address) ? DIRECTION.OUT : DIRECTION.IN;
+      op.type = staked_amount.gt(0)
+        ? DIRECTION.DELEGATE
+        : compareAddress(tx.sender, address)
+          ? DIRECTION.OUT
+          : DIRECTION.IN;
       op.senders.push(tx.sender);
       op.hasFailed = !tx.success;
       op.id = encodeOperationId(op.accountId, tx.hash, op.type);
@@ -146,8 +151,11 @@ export const txsToOps = (
         // skip transaction that result no Aptos change
         op.type = DIRECTION.UNKNOWN;
       }
-
-      if (op.type !== DIRECTION.UNKNOWN && coin_id !== null) {
+      if (op.type === DIRECTION.DELEGATE) {
+        console.log("stake operation", op);
+        op.value = staked_amount;
+        opsStaking.push(op);
+      } else if (op.type !== DIRECTION.UNKNOWN && coin_id !== null) {
         if (coin_id === APTOS_ASSET_ID) {
           ops.push(op);
         } else {
@@ -170,7 +178,7 @@ export const txsToOps = (
     }
   });
 
-  return [ops, opsTokens];
+  return [ops, opsTokens, opsStaking];
 };
 
 export function compareAddress(addressA: string, addressB: string) {
@@ -325,13 +333,22 @@ export function checkFAOwner(tx: AptosTransaction, event: Event, user_address: s
 export function getCoinAndAmounts(
   tx: AptosTransaction,
   address: string,
-): { coin_id: string | null; amount_in: BigNumber; amount_out: BigNumber } {
+): {
+  coin_id: string | null;
+  amount_in: BigNumber;
+  amount_out: BigNumber;
+  staked_amount: BigNumber;
+} {
   let coin_id: string | null = null;
   let amount_in = BigNumber(0);
   let amount_out = BigNumber(0);
+  let staked_amount = BigNumber(0);
 
   // collect all events related to the address and calculate the overall amounts
   tx.events.forEach(event => {
+    if (event.type === "0x1::stake::AddStakeEvent") {
+      console.log("AddStakeEvent", event);
+    }
     switch (event.type) {
       case "0x1::coin::WithdrawEvent":
         if (compareAddress(event.guid.account_address, address)) {
@@ -366,9 +383,23 @@ export function getCoinAndAmounts(
           }
         }
         break;
+      case "0x1::stake::AddStakeEvent":
+        if (tx.sender === address) {
+          if (coin_id === null) coin_id = APTOS_ASSET_ID;
+          if (coin_id === APTOS_ASSET_ID) {
+            // STAKED AMOUNT IS A AMOUNT OUT
+            // IT SHOULD BE CALCULATED HERE
+            // STAKED_AMOUNT HOLDS THE CURRENT STAKED TOTAL AMOUNT.
+            // WHENEVER A UNLOCKED OR WITHDRAWABLE EVENT IS IN,
+            // SHOULD SUBTREACT IT FROM THE STAKED_AMOUNT
+            staked_amount = staked_amount.plus(event.data.amount_added);
+            amount_out = amount_out.plus(event.data.amount_added);
+          }
+        }
+        break;
     }
   });
-  return { coin_id, amount_in, amount_out }; // TODO: manage situation when there are several coinID from the events parsing
+  return { coin_id, amount_in, amount_out, staked_amount }; // TODO: manage situation when there are several coinID from the events parsing
 }
 
 export function calculateAmount(

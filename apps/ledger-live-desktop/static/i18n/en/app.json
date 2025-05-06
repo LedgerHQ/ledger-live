@@ -3858,7 +3858,7 @@
       "nextUnlockIn": "Next unlock in",
       "totalStake": "Total stake",
       "commission": "Commission",
-      "delegate": "Add",
+      "delegate": "Add Stake",
       "stakingPositionHeader": "Staking Positions",
       "stakedHeader": "Staked",
       "pendingReleaseHeader": "Pending Release",
@@ -3960,6 +3960,11 @@
             }
           }
         }
+      },
+      "stake": {
+        "unstake": "Unstake",
+        "withdraw": "Withdraw",
+        "restake" : "Re-stake"
       }
     }
   },

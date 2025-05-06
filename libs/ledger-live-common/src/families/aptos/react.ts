@@ -56,6 +56,10 @@ export function useAptosStakesWithMeta(
 
   const validatorByVoteAccAddr = new Map(validators.map(v => [v.accountAddr, v]));
 
+  if (!stakes || !Array.isArray(stakes)) {
+    return [];
+  }
+
   return stakes.map(stake => {
     const voteAccAddr = stake.delegation?.voteAccAddr;
     const validator =

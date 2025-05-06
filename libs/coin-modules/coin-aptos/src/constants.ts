@@ -45,6 +45,7 @@ export enum DIRECTION {
   IN = "IN",
   OUT = "OUT",
   UNKNOWN = "UNKNOWN",
+  DELEGATE = "DELEGATE",
 }
 
 export const SUPPORTED_TOKEN_TYPES = ["coin", "fungible_asset"];

@@ -1,6 +1,5 @@
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
-//import { useAptosStakesWithMeta } from "@ledgerhq/live-common/families/aptos/react";
-import { AptosAccount } from "@ledgerhq/live-common/families/aptos/types";
+import { AptosAccount, AptosStakeWithMeta } from "@ledgerhq/live-common/families/aptos/types";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
@@ -8,19 +7,17 @@ import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { urls } from "~/config/urls";
 import { openModal } from "~/renderer/actions/modals";
-import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import Text from "~/renderer/components/Text";
 import IconChartLine from "~/renderer/icons/ChartLine";
-import DelegateIcon from "~/renderer/icons/Delegate";
 import { openURL } from "~/renderer/linking";
 import { Header } from "./Header";
 import { Row } from "./Row";
 import BigNumber from "bignumber.js";
-
-//import { DelegateModalName } from "../modals";
+import { useAptosStakesWithMeta } from "@ledgerhq/live-common/families/aptos/react"; // Replace with the correct hook
+import { Box, Icons, Flex } from "@ledgerhq/react-ui";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
@@ -30,10 +27,8 @@ const Wrapper = styled(Box).attrs(() => ({
   align-items: center;
 `;
 const Delegation = ({ account }: { account: AptosAccount }) => {
-  // const { aptosResources } = account;
+  const { aptosResources } = account;
   const dispatch = useDispatch();
-  const stakesWithMeta = generateFakeStakingPositions(5); //useAptosStakesWithMeta(account.currency, aptosResources.stakes);
-
   const onEarnRewards = useCallback(() => {
     dispatch(
       openModal("MODAL_APTOS_REWARDS_INFO", {
@@ -55,6 +50,7 @@ const Delegation = ({ account }: { account: AptosAccount }) => {
       }),
     );
   }, [account, dispatch]);
+
   const explorerView = getDefaultExplorerView(account.currency);
   const onExternalLink = useCallback(
     (address: string) => {
@@ -67,7 +63,36 @@ const Delegation = ({ account }: { account: AptosAccount }) => {
     },
     [explorerView],
   );
+  const stakesWithMeta = useAptosStakesWithMeta(account.currency, aptosResources?.stakes);
+
   const hasStakes = stakesWithMeta.length > 0;
+
+  function convertToAptosMappedStakingPosition(
+    stakeWithMeta: AptosStakeWithMeta,
+  ): AptosMappedStakingPosition {
+    console.log("convertToAptosMappedStakingPosition", stakeWithMeta);
+    const { stake } = stakeWithMeta;
+    const OCTA_UNIT = new BigNumber(10).pow(8);
+    const staked = new BigNumber(stake.delegation?.stake || 0).dividedBy(OCTA_UNIT);
+    const pending = new BigNumber(stake.reward?.amount || 0).dividedBy(OCTA_UNIT);
+    const available = new BigNumber(stake.withdrawable || 0).dividedBy(OCTA_UNIT);
+
+    return {
+      staked,
+      available,
+      pending,
+      validatorId: stake.delegation?.voteAccAddr || "",
+      formattedAmount: staked.toFormat(2),
+      formattedPending: pending.toFormat(2),
+      formattedAvailable: available.toFormat(2),
+      rank: 0,
+      validator: {
+        validatorAddress: stake.delegation?.voteAccAddr || "",
+        commission: null,
+        tokens: "",
+      },
+    };
+  }
 
   return (
     <>
@@ -75,26 +100,25 @@ const Delegation = ({ account }: { account: AptosAccount }) => {
         <TableContainer mb={6}>
           <TableHeader title={<Trans i18nKey="aptos.delegation.stakingPositionHeader" />}>
             <Button
+              small
+              primary
               id={"account-delegate-button"}
               mr={2}
               color="palette.primary.main"
-              small
               onClick={onDelegate}
             >
-              <Box horizontal flow={1} alignItems="center">
-                <DelegateIcon size={12} />
-                <Box>
-                  <Trans i18nKey="aptos.delegation.delegate" />
-                </Box>
-              </Box>
+              <Flex alignItems={"center"}>
+                <Icons.Plus size="XS" />
+                <Trans i18nKey="aptos.delegation.delegate" />
+              </Flex>
             </Button>
           </TableHeader>
 
           <Header />
-          {stakesWithMeta.map(stakeWithMeta => (
+          {stakesWithMeta.map((stakeWithMeta: AptosStakeWithMeta) => (
             <Row
-              stakingPosition={stakeWithMeta}
-              key={stakeWithMeta.validator?.validatorAddress}
+              stakingPosition={convertToAptosMappedStakingPosition(stakeWithMeta)}
+              key={stakeWithMeta.stake.stakeAccAddr}
               account={account}
               onManageAction={onRedirect}
               onExternalLink={onExternalLink}
@@ -117,7 +141,7 @@ type EarnRewardsCTAProps = {
 };
 function EarnRewardsCTA({ account, onEarnRewards }: EarnRewardsCTAProps) {
   return (
-    <Wrapper horizontal>
+    <Wrapper display="flex" flexDirection="row">
       <Box
         style={{
           maxWidth: "65%",
@@ -140,7 +164,7 @@ function EarnRewardsCTA({ account, onEarnRewards }: EarnRewardsCTAProps) {
       </Box>
       <Box>
         <Button primary small onClick={onEarnRewards}>
-          <Box horizontal flow={1} alignItems="center">
+          <Box display="flex" flexDirection="row" alignItems="center">
             <IconChartLine size={12} />
             <Box>
               <Trans i18nKey="solana.delegation.emptyState.delegation" />
@@ -156,36 +180,6 @@ const Delegations = ({ account }: { account: AptosAccount | TokenAccount }) => {
   return <Delegation account={account} />;
 };
 export default Delegations;
-
-function generateFakeStakingPositions(count: number): AptosMappedStakingPosition[] {
-  const positions: AptosMappedStakingPosition[] = [];
-
-  for (let i = 0; i < count; i++) {
-    const staked = new BigNumber((Math.random() * 1000).toFixed(2));
-    const pending = new BigNumber((Math.random() * 500).toFixed(2));
-    const available = new BigNumber((Math.random() * 200).toFixed(2));
-
-    const validator: AptosValidatorItem = {
-      validatorAddress: `0xV${i}`,
-      commission: Math.floor(Math.random() * 100),
-      tokens: (Math.random() * 1_000_000).toFixed(0),
-    };
-
-    positions.push({
-      staked,
-      available,
-      pending,
-      validatorId: validator.validatorAddress,
-      formattedAmount: staked.toFormat(2),
-      formattedPending: pending.toFormat(2),
-      formattedAvailable: available.toFormat(2),
-      rank: i + 1,
-      validator,
-    });
-  }
-
-  return positions;
-}
 
 export type AptosMappedStakingPosition = AptosStakingPosition & {
   formattedAmount: string;

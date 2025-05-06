@@ -4,7 +4,7 @@ import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers"
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { AptosAPI } from "../api";
 import { txsToOps } from "./logic";
-import type { AptosAccount } from "../types";
+import type { AptosAccount, AptosStake } from "../types";
 import { Operation, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
@@ -181,16 +181,17 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
 
   const oldOperations = initialAccount?.operations || [];
 
+  //const oldStakingOperations = initialAccount?.aptosResources?.stakes || [];
+
   const aptosClient = new AptosAPI(currency.id);
   const { balance, transactions, blockHeight } = await aptosClient.getAccountInfo(address);
 
-  const [newOperations, tokenOperations]: [Operation[], Operation[]] = txsToOps(
-    info,
-    accountId,
-    transactions,
-  );
+  const [newOperations, tokenOperations, stakingOperations]: [
+    Operation[],
+    Operation[],
+    Operation[],
+  ] = txsToOps(info, accountId, transactions);
   const operations = mergeOps(oldOperations, newOperations);
-
   const newSubAccounts = await getSubAccounts(info, address, accountId, tokenOperations);
   const shouldSyncFromScratch = initialAccount === undefined;
   const subAccounts = shouldSyncFromScratch
@@ -203,10 +204,18 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
       subOperations.length === 1 ? subOperations : subOperations.filter(op => !!op.blockHash);
   });
 
+  // PREPARE STAKING OPERATIONS
+  const stakes = generateStakes(stakingOperations);
+  //const mergedStakingOperations = mergeStakes(oldStakingOperations, stakes);
+
   const aptosResources = initialAccount?.aptosResources || {
     stakes: [],
     unstakeReserve: BigNumber(0),
   };
+
+  if (stakes && stakes.length > 0) {
+    aptosResources.stakes = stakes;
+  }
 
   const shape: Partial<AptosAccount> = {
     type: "Account",
@@ -221,6 +230,123 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
     subAccounts,
     aptosResources,
   };
-
+  console.log("aptosResources?", aptosResources);
+  console.log("initialAccount?", initialAccount);
   return shape;
 };
+
+function generateStakes(stakingOperations: Operation[]): AptosStake[] {
+  const stakesMap: Record<string, AptosStake> = {};
+  console.log("stakingOperations", stakingOperations);
+  for (const op of stakingOperations) {
+    if (!op.recipients?.length || !op.senders?.length) continue;
+
+    const validatorAddress = op.recipients[0];
+    const accountAddress = op.senders[0];
+    const value = new BigNumber(op.value || 0);
+
+    if (!stakesMap[validatorAddress]) {
+      stakesMap[validatorAddress] = {
+        stakeAccAddr: accountAddress,
+        hasStakeAuth: true,
+        hasWithdrawAuth: true,
+        delegation: undefined,
+        stakeAccBalance: 0,
+        withdrawable: 0,
+        activation: {
+          state: "active",
+          active: 0,
+          inactive: 0,
+        },
+      };
+    }
+
+    const stake = stakesMap[validatorAddress];
+
+    switch (op.type) {
+      case "DELEGATE": {
+        const current = stake.delegation?.stake ?? 0;
+        const totalStake = new BigNumber(current).plus(value);
+
+        stake.delegation = {
+          stake: totalStake.toNumber(),
+          voteAccAddr: validatorAddress,
+        };
+
+        stake.activation.active = totalStake.toNumber();
+        break;
+      }
+
+      case "UNLOCK": {
+        // Decrease from stake if delegation exists
+        if (stake.delegation) {
+          const newStake = new BigNumber(stake.delegation.stake).minus(value);
+          stake.delegation.stake = Math.max(0, newStake.toNumber());
+          stake.activation.active = Math.max(0, newStake.toNumber());
+        }
+        break;
+      }
+
+      case "WITHDRAW": {
+        const newWithdrawable = new BigNumber(stake.withdrawable).plus(value);
+        stake.withdrawable = newWithdrawable.toNumber();
+        break;
+      }
+
+      default:
+        break;
+    }
+  }
+
+  return Object.values(stakesMap);
+}
+
+function mergeStakes(oldStakingOperations: AptosStake[], stakes: AptosStake[]): AptosStake[] {
+  const mergedMap: Record<string, AptosStake> = {};
+
+  // Add old stakes to map
+  for (const old of oldStakingOperations) {
+    mergedMap[old.stakeAccAddr] = { ...old };
+  }
+
+  // Merge or add new stakes
+  for (const newStake of stakes) {
+    const key = newStake.stakeAccAddr;
+    const existing = mergedMap[key];
+
+    if (existing) {
+      // Merge delegation stake
+      const oldStake = existing.delegation?.stake ?? 0;
+      const newStakeValue = newStake.delegation?.stake ?? 0;
+
+      const mergedDelegation =
+        oldStake + newStakeValue > 0
+          ? {
+              stake: oldStake + newStakeValue,
+              voteAccAddr:
+                newStake.delegation?.voteAccAddr ?? existing.delegation?.voteAccAddr ?? "",
+            }
+          : undefined;
+
+      mergedMap[key] = {
+        ...existing,
+        hasStakeAuth: existing.hasStakeAuth || newStake.hasStakeAuth,
+        hasWithdrawAuth: existing.hasWithdrawAuth || newStake.hasWithdrawAuth,
+        delegation: mergedDelegation,
+        stakeAccBalance: Math.max(existing.stakeAccBalance, newStake.stakeAccBalance),
+        withdrawable: existing.withdrawable + newStake.withdrawable,
+        activation: {
+          active: (existing.activation?.active ?? 0) + (newStake.activation?.active ?? 0),
+          inactive: (existing.activation?.inactive ?? 0) + (newStake.activation?.inactive ?? 0),
+          state: existing.activation?.state || newStake.activation?.state || "inactive",
+        },
+        reward: newStake.reward ?? existing.reward,
+      };
+    } else {
+      // Add new stake
+      mergedMap[key] = { ...newStake };
+    }
+  }
+
+  return Object.values(mergedMap);
+}

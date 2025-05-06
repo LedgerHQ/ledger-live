@@ -15,7 +15,6 @@ import ToolTip from "~/renderer/components/Tooltip";
 import Text from "~/renderer/components/Text";
 import Discreet from "~/renderer/components/Discreet";
 import BigNumber from "bignumber.js";
-//import { AptosStakeWithMeta } from "@ledgerhq/coin-aptos/lib-es/types/index";
 
 const Wrapper = styled.div`
   display: flex;
