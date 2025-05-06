@@ -18,9 +18,8 @@ on:
         default: false
       ref:
         description: Ref to checkout
-        required: true
+        required: false
         type: string
-        default: "refs/heads/develop"
   workflow_dispatch:
     inputs:
       ref:
