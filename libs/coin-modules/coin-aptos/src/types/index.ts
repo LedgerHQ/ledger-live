@@ -205,3 +205,4 @@ export type AptosValidatorItem = {
   commission: number | null;
   tokens: string;
 };
+

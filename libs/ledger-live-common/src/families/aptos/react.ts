@@ -2,12 +2,14 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { useMemo } from "react";
 import { getCurrentAptosPreloadData, getAptosPreloadData } from "@ledgerhq/coin-aptos/preload-data";
 import type {
+  AptosMappedStakingPosition,
   AptosPreloadData,
   AptosStake,
   AptosStakeWithMeta,
   Validator,
 } from "@ledgerhq/coin-aptos/types";
 import { useObservable } from "../../observable";
+import BigNumber from "bignumber.js";
 
 export function useAptosPreloadData(currency: CryptoCurrency): AptosPreloadData | undefined | null {
   return useObservable(getAptosPreloadData(currency), getCurrentAptosPreloadData(currency));
@@ -76,4 +78,30 @@ export function useAptosStakesWithMeta(
       },
     };
   });
+}
+
+export function convertToAptosMappedStakingPosition(
+  stakeWithMeta: AptosStakeWithMeta,
+): AptosMappedStakingPosition {
+  const { stake } = stakeWithMeta;
+  const OCTA_UNIT = new BigNumber(10).pow(8);
+  const staked = new BigNumber(stake.delegation?.stake || 0).dividedBy(OCTA_UNIT);
+  const pending = new BigNumber(stake.reward?.amount || 0).dividedBy(OCTA_UNIT);
+  const available = new BigNumber(stake.withdrawable || 0).dividedBy(OCTA_UNIT);
+
+  return {
+    staked,
+    available,
+    pending,
+    validatorId: stake.delegation?.voteAccAddr || "",
+    formattedAmount: staked.toFormat(2),
+    formattedPending: pending.toFormat(2),
+    formattedAvailable: available.toFormat(2),
+    rank: 0,
+    validator: {
+      validatorAddress: stake.delegation?.voteAccAddr || "",
+      commission: null,
+      tokens: "",
+    },
+  };
 }

@@ -16,7 +16,7 @@ import { openURL } from "~/renderer/linking";
 import { Header } from "./Header";
 import { Row } from "./Row";
 import BigNumber from "bignumber.js";
-import { useAptosStakesWithMeta } from "@ledgerhq/live-common/families/aptos/react"; // Replace with the correct hook
+import { useAptosStakesWithMeta, convertToAptosMappedStakingPosition } from "@ledgerhq/live-common/families/aptos/react"; // Replace with the correct hook
 import { Box, Icons, Flex } from "@ledgerhq/react-ui";
 import { DelegateModalName } from "../modals";
 
@@ -71,34 +71,6 @@ const Delegation = ({ account }: { account: AptosAccount }) => {
   const stakesWithMeta = useAptosStakesWithMeta(account.currency, aptosResources?.stakes);
 
   const hasStakes = stakesWithMeta.length > 0;
-
-  function convertToAptosMappedStakingPosition(
-    stakeWithMeta: AptosStakeWithMeta,
-  ): AptosMappedStakingPosition {
-    console.log("convertToAptosMappedStakingPosition", stakeWithMeta);
-    const { stake } = stakeWithMeta;
-    const OCTA_UNIT = new BigNumber(10).pow(8);
-    const staked = new BigNumber(stake.delegation?.stake || 0).dividedBy(OCTA_UNIT);
-    const pending = new BigNumber(stake.reward?.amount || 0).dividedBy(OCTA_UNIT);
-    const available = new BigNumber(stake.withdrawable || 0).dividedBy(OCTA_UNIT);
-
-    return {
-      staked,
-      available,
-      pending,
-      validatorId: stake.delegation?.voteAccAddr || "",
-      formattedAmount: staked.toFormat(2),
-      formattedPending: pending.toFormat(2),
-      formattedAvailable: available.toFormat(2),
-      rank: 0,
-      validator: {
-        validatorAddress: stake.delegation?.voteAccAddr || "",
-        commission: null,
-        tokens: "",
-      },
-    };
-  }
-
   return (
     <>
       {hasStakes ? (
@@ -186,24 +158,3 @@ const Delegations = ({ account }: { account: AptosAccount | TokenAccount }) => {
   return <Delegation account={account} />;
 };
 export default Delegations;
-
-export type AptosMappedStakingPosition = AptosStakingPosition & {
-  formattedAmount: string;
-  formattedPending: string;
-  formattedAvailable: string;
-  rank: number;
-  validator: AptosValidatorItem | null | undefined;
-};
-
-export type AptosStakingPosition = {
-  staked: BigNumber;
-  available: BigNumber;
-  pending: BigNumber;
-  validatorId: string;
-};
-
-export type AptosValidatorItem = {
-  validatorAddress: string;
-  commission: number | null;
-  tokens: string;
-};

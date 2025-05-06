@@ -90,12 +90,6 @@ type Props = {
 };
 export function Row({ stakingPosition, stakeWithMeta, onManageAction, onExternalLink }: Props) {
   const { stake } = stakeWithMeta;
-  const unstakingEnabled = (): boolean => {
-    return false;
-  };
-  const withdawingEnabled = (): boolean => {
-    return false;
-  };
 
   const stakeActions = aptosStakeActions(stake).map(toStakeDropDownItem);
   const onSelect = useCallback(
