@@ -15,6 +15,32 @@ describe("listOperations", () => {
     }));
   });
 
+  describe("Account TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9 with minHeight", () => {
+    // https://tronscan.org/#/address/TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9
+
+    let operations: Operation<TronAsset>[];
+
+    const testingAccount = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
+
+    // there are 2 operations with height >= 40832955
+    const minHeight = 40832955;
+    const historySize = 2;
+    const txHashAtMinHeight = "242591f43c74e45bf4c5c423be2f600c9a53237bde4c793faff5f3120f8745d7";
+
+    beforeAll(async () => {
+      [operations] = await listOperations(testingAccount, minHeight);
+    });
+
+    describe("List", () => {
+      it("should fetch operations successfully", async () => {
+        expect(Array.isArray(operations)).toBeDefined();
+        expect(operations.length).toBeGreaterThanOrEqual(historySize);
+        expect(operations.filter(op => op.tx.block.height < minHeight).length).toEqual(0);
+        expect(operations.find(op => op.tx.hash === txHashAtMinHeight)).toBeDefined();
+      });
+    });
+  });
+
   // We could create a loop on array of account addresses and use standard test cases, but this way it's more readable / flexible
   describe("Account TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9", () => {
     // https://tronscan.org/#/address/TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9
@@ -29,7 +55,7 @@ describe("listOperations", () => {
     const magnitudeMultiplier = 1000000;
 
     beforeAll(async () => {
-      [operations] = await listOperations(testingAccount);
+      [operations] = await listOperations(testingAccount, 0);
     });
 
     describe("List", () => {
@@ -98,7 +124,6 @@ describe("listOperations", () => {
             recipients: [testingAccount],
             senders: ["THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi"],
             asset: { type: "native" },
-            operationIndex: 0,
           });
         });
 
@@ -113,7 +138,6 @@ describe("listOperations", () => {
             senders: [testingAccount],
             recipients: ["TASbVCzbnwu8swZEGFBAH88Z4AwTTBt1PW"],
             asset: { type: "native" },
-            operationIndex: 0,
           });
         });
       });
@@ -134,7 +158,6 @@ describe("listOperations", () => {
               standard: "trc10",
               tokenId: "1004031",
             },
-            operationIndex: 0,
           });
         });
 
@@ -152,7 +175,6 @@ describe("listOperations", () => {
               standard: "trc10",
               tokenId: "1002000",
             },
-            operationIndex: 0,
           });
         });
       });
@@ -173,7 +195,6 @@ describe("listOperations", () => {
               standard: "trc20",
               contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
             },
-            operationIndex: 0,
           });
         });
 
@@ -192,7 +213,6 @@ describe("listOperations", () => {
               standard: "trc20",
               contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
             },
-            operationIndex: 0,
           });
         });
       });

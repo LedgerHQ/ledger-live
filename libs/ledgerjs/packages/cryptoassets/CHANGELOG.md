@@ -1,5 +1,17 @@
 # @ledgerhq/cryptoassets
 
+## 13.16.0
+
+### Minor Changes
+
+- [#9888](https://github.com/LedgerHQ/ledger-live/pull/9888) [`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431) Thanks [@palra](https://github.com/palra)! - add babylon currency
+
+## 13.16.0-next.0
+
+### Minor Changes
+
+- [#9888](https://github.com/LedgerHQ/ledger-live/pull/9888) [`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431) Thanks [@palra](https://github.com/palra)! - add babylon currency
+
 ## 13.15.0
 
 ### Minor Changes

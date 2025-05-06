@@ -68,7 +68,7 @@ describe("createApi", () => {
     await api.estimateFees(intent);
     await api.getBalance("address");
     await api.lastBlock();
-    await api.listOperations("address", {} as Pagination);
+    await api.listOperations("address", { minHeight: 14 } as Pagination);
 
     // Test that each of the methods was called with correct arguments
     expect(broadcast).toHaveBeenCalledWith("transaction");
@@ -77,6 +77,6 @@ describe("createApi", () => {
     expect(craftTransaction).toHaveBeenCalledWith(intent);
     expect(getBalance).toHaveBeenCalledWith("address");
     expect(lastBlock).toHaveBeenCalled();
-    expect(listOperations).toHaveBeenCalledWith("address", {});
+    expect(listOperations).toHaveBeenCalledWith("address", 14);
   });
 });

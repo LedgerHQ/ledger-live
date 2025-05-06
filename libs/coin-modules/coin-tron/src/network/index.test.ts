@@ -2,7 +2,7 @@ import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import { TRANSACTION_DETAIL_FIXTURE, TRANSACTION_FIXTURE, TRC20_FIXTURE } from "./types.fixture";
 import coinConfig from "../config";
-import { fetchTronAccountTxs } from ".";
+import { defaultFetchParams, fetchTronAccountTxs } from ".";
 
 const TRON_BASE_URL_TEST = "https://httpbin.org";
 
@@ -50,7 +50,12 @@ describe("fetchTronAccountTxs", () => {
 
   it("convert correctly operations from the blockchain", async () => {
     // WHEN
-    const results = await fetchTronAccountTxs("ADDRESS", txs => txs.length < 100, {});
+    const results = await fetchTronAccountTxs(
+      "ADDRESS",
+      txs => txs.length < 100,
+      {},
+      defaultFetchParams,
+    );
 
     // THEN
     const tx = results.find(tx => tx.blockHeight === 62258698);

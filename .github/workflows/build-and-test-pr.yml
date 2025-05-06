@@ -77,7 +77,7 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@develop
     secrets: inherit
     with:
-      use-performance-pool: true
+      macos-specificity-runner-label: "performance-pool"
 
   # Tests
   test-libraries:

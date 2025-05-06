@@ -16,6 +16,7 @@ import { useReboot } from "~/context/Reboot";
 import { INITIAL_STATE as INITIAL_SETTINGS_STATE } from "~/reducers/settings";
 import { INITIAL_STATE as INITIAL_ACCOUNTS_STATE } from "~/reducers/accounts";
 import { INITIAL_STATE as INITIAL_BLE_STATE } from "~/reducers/ble";
+import FeatureToggle from "@ledgerhq/live-common/featureFlags/FeatureToggle";
 
 export default function Generators() {
   const dispatch = useDispatch();
@@ -92,12 +93,15 @@ export default function Generators() {
         desc="Replace existing accounts with 10 mock accounts from random currencies."
         count={10}
       />
-      <GenerateMockAccount
-        title="Accounts with NFTs"
-        desc="Select for which currencies you want to generate accounts and NFTs"
-        iconLeft={<Icons.Nft size="M" color="black" />}
-        withNft
-      />
+      <FeatureToggle featureId="llNftSupport">
+        <GenerateMockAccount
+          title="Accounts with NFTs"
+          desc="Select for which currencies you want to generate accounts and NFTs"
+          iconLeft={<Icons.Nft size="M" color="black" />}
+          withNft
+        />
+      </FeatureToggle>
+
       {getEnv("MOCK") ? <ToggleServiceStatusIncident /> : null}
       <ImportBridgeStreamData
         title="Import .env BRIDGESTREAM_DATA"
@@ -134,12 +138,14 @@ export default function Generators() {
         iconLeft={<IconsLegacy.NanoMedium size={24} color="black" />}
         onPress={onWipeBLE}
       />
-      <SettingsRow
-        title="Reset HiddenCollections NFTs"
-        desc="Remove all NFTs from the HiddenCollection list"
-        iconLeft={<Icons.Nft size="M" color="black" />}
-        onPress={onWipeAntiSpam}
-      />
+      <FeatureToggle featureId="llNftSupport">
+        <SettingsRow
+          title="Reset HiddenCollections NFTs"
+          desc="Remove all NFTs from the HiddenCollection list"
+          iconLeft={<Icons.Nft size="M" color="black" />}
+          onPress={onWipeAntiSpam}
+        />
+      </FeatureToggle>
     </SettingsNavigationScrollView>
   );
 }

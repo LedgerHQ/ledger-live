@@ -84,7 +84,14 @@ export function buildTonTransaction(
   seqno: number,
   account: TonAccount,
 ): TonTransaction {
-  const { subAccountId, useAllAmount, amount, comment: commentTx, recipient } = transaction;
+  const {
+    subAccountId,
+    useAllAmount,
+    amount,
+    comment: commentTx,
+    recipient,
+    payload,
+  } = transaction;
   let recipientParsed = recipient;
   // if recipient is not valid calculate fees with empty address
   // we handle invalid addresses in account bridge
@@ -118,6 +125,7 @@ export function buildTonTransaction(
       useAllAmount && !subAccount
         ? SendMode.CARRY_ALL_REMAINING_BALANCE
         : SendMode.IGNORE_ERRORS + SendMode.PAY_GAS_SEPARATELY,
+    payload,
   };
 
   if (commentTx.text.length) {

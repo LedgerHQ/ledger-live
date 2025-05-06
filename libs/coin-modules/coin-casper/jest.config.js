@@ -19,4 +19,5 @@ module.exports = {
       { outputName: "casper-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
     ],
   ],
+  //setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
 };

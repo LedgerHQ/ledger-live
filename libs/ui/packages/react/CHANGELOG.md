@@ -1,5 +1,29 @@
 # @ledgerhq/react-ui
 
+## 0.24.0
+
+### Minor Changes
+
+- [#10018](https://github.com/LedgerHQ/ledger-live/pull/10018) [`1d3be0d`](https://github.com/LedgerHQ/ledger-live/commit/1d3be0d5b13b09ec08908406711400ef5b286d69) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add Asset Type List component
+
+### Patch Changes
+
+- Updated dependencies [[`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431), [`a4b6b29`](https://github.com/LedgerHQ/ledger-live/commit/a4b6b29df7ef74129345278cf07942619b36435b)]:
+  - @ledgerhq/crypto-icons-ui@1.13.0
+  - @ledgerhq/icons-ui@0.10.0
+
+## 0.24.0-next.0
+
+### Minor Changes
+
+- [#10018](https://github.com/LedgerHQ/ledger-live/pull/10018) [`1d3be0d`](https://github.com/LedgerHQ/ledger-live/commit/1d3be0d5b13b09ec08908406711400ef5b286d69) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add Asset Type List component
+
+### Patch Changes
+
+- Updated dependencies [[`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431), [`a4b6b29`](https://github.com/LedgerHQ/ledger-live/commit/a4b6b29df7ef74129345278cf07942619b36435b)]:
+  - @ledgerhq/crypto-icons-ui@1.13.0-next.0
+  - @ledgerhq/icons-ui@0.10.0-next.0
+
 ## 0.23.0
 
 ### Minor Changes
