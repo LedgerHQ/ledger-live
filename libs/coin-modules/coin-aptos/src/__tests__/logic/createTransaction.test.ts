@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
-import createTransaction from "../../bridge/createTransaction";
+import createTransaction from "../../logic/createTransaction";
 
-jest.mock("../../bridge/logic", () => ({
+jest.mock("../../constants.ts", () => ({
   DEFAULT_GAS: 100,
   DEFAULT_GAS_PRICE: 200,
 }));

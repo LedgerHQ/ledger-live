@@ -1,4 +1,5 @@
-import { MoveStructId } from "@aptos-labs/ts-sdk";
+import type { MoveStructId } from "@aptos-labs/ts-sdk";
+import BigNumber from "bignumber.js";
 
 export const LOAD_LIMIT = 10;
 
@@ -32,3 +33,6 @@ export enum DIRECTION {
   OUT = "OUT",
   UNKNOWN = "UNKNOWN",
 }
+
+export const DEFAULT_GAS = new BigNumber(200);
+export const DEFAULT_GAS_PRICE = new BigNumber(100);
