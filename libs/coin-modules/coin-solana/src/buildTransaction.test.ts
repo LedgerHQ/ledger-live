@@ -49,7 +49,9 @@ describe("Testing buildTransaction", () => {
     );
 
     expect(VersionedTransaction.deserialize).toHaveBeenCalledTimes(1);
-    expect(VersionedTransaction.deserialize).toHaveBeenCalledWith(Buffer.from(rawTransaction.raw!));
+    expect(VersionedTransaction.deserialize).toHaveBeenCalledWith(
+      Buffer.from(rawTransaction.raw!, "base64"),
+    );
   });
 
   it("should build the transaction when user does not provide raw", async () => {

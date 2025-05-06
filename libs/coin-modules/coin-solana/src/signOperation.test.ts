@@ -1,12 +1,11 @@
 import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
 import { SolanaAddress } from "./signer";
 import { buildSignOperation } from "./signOperation";
-import { Account, Operation, SignOperationEvent } from "@ledgerhq/types-live";
+import { Account, Operation, OperationType, SignOperationEvent } from "@ledgerhq/types-live";
 import { ChainAPI } from "./network";
 import { DeviceModelId } from "@ledgerhq/devices/lib/index";
 import { Transaction } from "./types";
 import { BlockhashWithExpiryBlockHeight, VersionedTransaction } from "@solana/web3.js";
-import { toOperationType } from "./helpers/kind/helper";
 
 const TRANSFER_KINDS = [
   "transfer",
@@ -147,4 +146,24 @@ function transaction(kind: string): Transaction {
     },
     subAccountId: "any random value", // needed only for "token.transfer" kind
   } as Transaction;
+}
+
+const OPERATION_TYPE_BY_KIND: Record<string, OperationType> = {
+  "stake.createAccount": "DELEGATE",
+  "stake.delegate": "DELEGATE",
+  "stake.split": "OUT",
+  "stake.undelegate": "UNDELEGATE",
+  "stake.withdraw": "IN",
+  "token.createATA": "OPT_IN",
+  "token.transfer": "FEES",
+  transfer: "OUT",
+};
+
+export function toOperationType(kind: string): OperationType {
+  const operationType = OPERATION_TYPE_BY_KIND[kind];
+  if (operationType) {
+    return operationType;
+  }
+
+  throw new Error(`${kind} is not supported by OperationType`);
 }

@@ -1,7 +1,7 @@
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { SolanaTransaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import BigNumber from "bignumber.js";
-import { Transaction, TransactionModel } from "@ledgerhq/coin-solana/types";
+import { Transaction } from "@ledgerhq/coin-solana/types";
 import sol from "./walletApiAdapter";
 
 describe("getWalletAPITransactionSignFlowInfos", () => {
@@ -19,7 +19,7 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
 
       const expectedLiveTx: Transaction = {
         ...solanaTx,
-        model: { ...solanaTx.model, commandDescriptor: undefined } as TransactionModel, //TODO revert once missing transaction model type are available
+        model: { ...solanaTx.model, commandDescriptor: undefined },
       };
 
       const { canEditFees, hasFeesProvided, liveTx } = sol.getWalletAPITransactionSignFlowInfos({
@@ -49,7 +49,7 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
 
       const expectedLiveTx: Transaction = {
         ...solanaTx,
-        model: { ...solanaTx.model, commandDescriptor: undefined } as TransactionModel, //TODO revert once missing transaction model type are available
+        model: { ...solanaTx.model, commandDescriptor: undefined },
         subAccountId: "subAccountId",
       };
 

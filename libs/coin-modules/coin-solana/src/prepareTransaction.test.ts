@@ -14,6 +14,7 @@ import { ChainAPI } from "./network";
 import { prepareTransaction } from "./prepareTransaction";
 import { SolanaAccount, Transaction, TransferCommand } from "./types";
 import BigNumber from "bignumber.js";
+import { transaction } from "./__tests__/fixtures/helpers.fixture";
 
 jest.mock("./estimateMaxSpendable", () => {
   const originalModule = jest.requireActual("./estimateMaxSpendable");
@@ -29,7 +30,7 @@ jest.mock("./estimateMaxSpendable", () => {
 });
 
 describe("testing prepareTransaction", () => {
-  it.only("should return a new transaction from the raw transaction when user provide it", async () => {
+  it("should return a new transaction from the raw transaction when user provide it", async () => {
     // Given
     const solanaTransaction = {
       message: {
@@ -129,16 +130,4 @@ function api(estimatedFees?: number) {
 
     getFeeForMessage: (_message: VersionedMessage) => Promise.resolve(estimatedFees),
   } as ChainAPI;
-}
-
-function transaction(raw?: string): Transaction {
-  return {
-    amount: new BigNumber(0),
-    model: {
-      uiState: {},
-      kind: "transfer",
-    },
-    raw: raw,
-    family: "solana",
-  } as Transaction;
 }

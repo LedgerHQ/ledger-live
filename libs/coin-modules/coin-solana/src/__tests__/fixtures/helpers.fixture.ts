@@ -159,22 +159,24 @@ export function epochInfo({ epoch }: { epoch: number }) {
 
 export function transaction(raw?: string): Transaction {
   return {
+    family: "solana",
     amount: new BigNumber(0),
     recipient: "",
     model: {
+      kind: "transfer",
+      uiState: {},
       commandDescriptor: {
-        fee: 0,
-        warnings: {},
         command: {
           kind: "transfer", // any kind can work, just needed a value for the test
           sender: "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp",
           recipient: "DwRL6XkPAtM1bfuySJKZGn2t9WeG25RC39isAu2nwak4",
           amount: 0,
         },
+        fee: 0,
+        warnings: {},
         errors: {},
       },
     },
-    raw: raw,
-    family: "solana",
-  } as Transaction;
+    raw: raw ?? "",
+  };
 }
