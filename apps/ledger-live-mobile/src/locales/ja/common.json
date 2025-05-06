@@ -1103,6 +1103,32 @@
     "tryEnablingAgain" : "位置情報を再度有効にしてみてください",
     "noInfos" : "Ledgerがあなたの位置情報にアクセスすることはありません。"
   },
+  "earn" : {
+    "deposit" : {
+      "protocolInfoModal" : {
+        "title" : "プロトコルを選ぶ際は、以下にご注意ください。",
+        "items" : {
+          "protocol" : {
+            "highlighted" : "プロトコル",
+            "description" : " は、預けた暗号資産をレンディング（貸す）、流動性、ステーキングに使用することで報酬を得ることができるプラットフォームです。"
+          },
+          "apy" : {
+            "highlighted" : "APY（年利）",
+            "description" : " は、1年間にどれだけの利息を得ることができるかを示したものです。APYが高い場合は、収益が高いことを意味します。"
+          },
+          "tvl" : {
+            "highlighted" : "TVL（ロックされた合計価値）",
+            "description" : " は、他のユーザーによって当該プロトコルに預け入れられた資金の合計です。TVLが高いと、そのプロトコルが、より多くの人々から信頼されていることを意味します。"
+          },
+          "strategy" : {
+            "highlighted" : "戦略",
+            "description0" : " は、プロトコルが、お客様に報酬を生み出すのに使用する方法です。",
+            "description1" : "例えば、プロトコルが、レンディング（貸し出し）を戦略としている場合、お客様が預けたステーブルコインを借り手に貸し出します。その後、需要に応じて変動する利息を得ることができます。"
+          }
+        }
+      }
+    }
+  },
   "permissions" : {
     "open" : "アプリの許可設定を開く",
     "authorize" : "許可する",
@@ -4671,7 +4697,7 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "{{deviceName}}をバージョン{{version}}にアップデートします",
-    "recoveryPhraseBackupInstructions" : "万が一に備えて、書き留めた24単語のリカバリーフレーズを用意してください。",
+    "recoveryPhraseBackupInstructions" : "念のため、24単語のシークレットリカバリーフレーズがリカバリーシートに書き留められており、利用可能であることをご確認ください。\n\nまた、Ledger Recoverをご使用いただくと、ウォレットへのアクセスをバックアップし、常に確実にアクセスできるようになります。",
     "confirmRecoveryPhrase" : "リカバリーフレーズを持っています",
     "introDescription1" : "デバイス上のアプリは、すべて削除されますのでご注意ください。ファームウェアのアップデート後に、アプリを再インストールできます。",
     "introDescription2" : "この操作は、所有する暗号資産には影響を及ぼしません。",
@@ -6624,12 +6650,14 @@
     "range" : {
       "1h" : "1時間",
       "24h" : "24時間",
-      "1d" : "1日",
       "7d" : "7日間",
-      "1w" : "1週",
       "30d" : "30日間",
-      "1m" : "1月",
-      "1y" : "1年"
+      "1y" : "1年",
+      "1D_label" : "1日",
+      "1H_label" : "1時間",
+      "1W_label" : "1週",
+      "1M_label" : "1月",
+      "1Y_label" : "1年"
     },
     "warnings" : {
       "connectionError" : "接続エラー",
@@ -7364,8 +7392,28 @@
     }
   },
   "largeMover" : {
-    "performance" : "パフォーマンス",
-    "low" : "低速",
-    "high" : "高速"
+    "info" : "情報",
+    "marketCap" : "マーケットキャップ",
+    "volume" : "ボリューム（24時間）",
+    "fdv" : "FDV",
+    "marketCap24h" : "ボリューム/マーケットキャップ（24時間）",
+    "circulatingSupply" : "循環供給",
+    "totalSupply" : "総供給量",
+    "ath" : "最高値",
+    "atl" : "最安値",
+    "timeAgo" : {
+      "years" : "（{{count}}年前）",
+      "years_plural" : "（{{count}}年前）",
+      "months" : "（{{count}}か月前）",
+      "months_plural" : "（{{count}}か月前）",
+      "days" : "（{{count}}日前）",
+      "days_plural" : "（{{count}}日前）",
+      "hours" : "（{{count}}時間前）",
+      "hours_plural" : "（{{count}}時間前）",
+      "minutes" : "（{{count}}分前）",
+      "minutes_plural" : "（{{count}}分前）",
+      "seconds" : "（{{count}}秒前）",
+      "seconds_plural" : "（{{count}}秒前）"
+    }
   }
 }
