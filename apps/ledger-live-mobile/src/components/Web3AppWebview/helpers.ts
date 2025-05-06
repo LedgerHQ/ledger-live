@@ -31,7 +31,7 @@ import { mevProtectionSelector, trackingEnabledSelector } from "../../reducers/s
 import storage from "LLM/storage";
 import { track } from "../../analytics";
 import getOrCreateUser from "../../user";
-import { sendWalletAPIResponse } from "../../../../../e2e/mobile/bridge/client";
+import { sendWalletAPIResponse } from "../../../e2e/bridge/client";
 import Config from "react-native-config";
 import { currentRouteNameRef } from "../../analytics/screenRefs";
 import { walletSelector } from "~/reducers/wallet";

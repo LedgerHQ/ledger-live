@@ -130,7 +130,7 @@ jobs:
         with:
           max_attempts: 2
           timeout_minutes: 15
-          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="@ledgerhq/dummy-*-app..."  --filter="ledger-live-mobile-e2e-tests --no-frozen-lockfile --unsafe-perm
           new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
 
       - name: Flake alert - ArgumentError
@@ -200,7 +200,7 @@ jobs:
         timeout-minutes: 75
         uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
         with:
-          command: pnpm test:llm:ios:e2e -- -p ios -t $([[ "$INPUT_E2E" == "true" ]] && printf %s '--testType') ${INPUTS_TEST_FILTER:+--filter} "${{ inputs.test_filter }}"
+          command: pnpm test:llm:ios:e2e -- -p ios -t $([[ "$INPUT_E2E" == "true" ]] && printf %s '--e2e') ${INPUTS_TEST_FILTER:+--filter} "${{ inputs.test_filter }}"
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           turbo_port: ${{ steps.setup-caches.outputs.port }}
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
@@ -321,7 +321,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..."  --filter="ledger-live-mobile-e2e-tests --no-frozen-lockfile --unsafe-perm
 
       - name: Build dependencies
         uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
@@ -405,7 +405,7 @@ jobs:
 
       - name: Run Android Tests
         id: detox
-        run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_E2E" == "true" ]] && printf %s '--testType') $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }} ${INPUTS_TEST_FILTER:+--filter} "${{ inputs.test_filter }}"
+        run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_E2E" == "true" ]] && printf %s '--e2e') $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }} ${INPUTS_TEST_FILTER:+--filter} "${{ inputs.test_filter }}"
         timeout-minutes: ${{ env.E2E_RUN == 'true' && 120 || 45 }}
         env:
           DETOX_INSTALL_TIMEOUT: 120000
@@ -563,7 +563,7 @@ jobs:
                   "type": "plain_text",
                   "text": process.env.E2E_RUN == 'false'
                     ? "Ledger Live Mobile Mocked Tests on ${{ github.ref_name }}"
-                    : ":ledger-logo: Ledger Live Mobile E2E Speculos tests results on ${{ github.ref_name }}",
+                    : ":ledger-logo: Ledger Live Mobile E2E tests results on ${{ github.ref_name }}",
                   "emoji": true
                 }
               },
