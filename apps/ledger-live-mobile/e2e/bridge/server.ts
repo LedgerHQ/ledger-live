@@ -266,6 +266,9 @@ function onMessage(messageStr: string) {
     case "swapLiveAppReady":
       clientResponse("Swap Live App is ready");
       break;
+    case "earnLiveAppReady":
+      clientResponse("Earn Live App is ready");
+      break;
     default:
       break;
   }

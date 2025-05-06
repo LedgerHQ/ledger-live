@@ -17,7 +17,7 @@ import {
   exportSettingsSelector,
   lastSeenDeviceSelector,
 } from "~/reducers/settings";
-import { useSwapLiveAppCustomHandlers } from "./hooks/useSwapLiveAppCustomHandlers";
+import { useLiveAppCustomHandlers } from "./hooks/useSwapLiveAppCustomHandlers";
 import { DefaultAccountSwapParamList } from "../types";
 import { useTranslateToSwapAccount } from "./hooks/useTranslateToSwapAccount";
 import { flattenAccountsSelector } from "~/reducers/accounts";
@@ -29,7 +29,7 @@ type Props = {
 };
 
 export function WebView({ manifest, params, setWebviewState }: Props) {
-  const customHandlers = useSwapLiveAppCustomHandlers(manifest);
+  const customHandlers = useLiveAppCustomHandlers(manifest);
   const { theme } = useTheme();
   const { language } = useSettings();
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);

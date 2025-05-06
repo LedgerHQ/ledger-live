@@ -195,6 +195,12 @@ export function sendSwapLiveAppReady() {
   });
 }
 
+export function sendEarnLiveAppReady() {
+  postMessage({
+    type: "earnLiveAppReady",
+  });
+}
+
 async function postMessage(message: ServerData) {
   log(`Message sending\n${JSON.stringify(message, null, 2)}`);
   try {

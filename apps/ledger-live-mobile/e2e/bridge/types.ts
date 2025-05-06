@@ -35,7 +35,8 @@ export type ServerData =
       payload: string;
     }
   | { type: "ACK"; id: string }
-  | { type: "swapLiveAppReady" };
+  | { type: "swapLiveAppReady" }
+  | { type: "earnLiveAppReady" };
 
 export type MessageData =
   | {
