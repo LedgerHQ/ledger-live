@@ -7,11 +7,8 @@ export default class NftGalleryPage {
   nftListRegexp = new RegExp(`^${this.nftListPrefix}.`);
 
   root = () => getElementById("wallet-nft-gallery-screen");
-
   emptyScreen = () => getElementById("wallet-nft-gallery-empty");
-
   emptyScreenResetButton = () => getElementById("wallet-nft-gallery-empty-reset-button");
-
   nftAddNewListItem = () => getElementById("wallet-nft-gallery-add-new-list-item");
   nftReceiveModalContinueButton = () =>
     getElementById("wallet-nft-gallery-receive-modal-continue-button");

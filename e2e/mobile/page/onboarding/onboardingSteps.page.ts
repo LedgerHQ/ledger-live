@@ -6,13 +6,9 @@ export default class OnboardingStepsPage {
   recoveryPhrase = "onboarding-useCase-recoveryPhrase";
 
   discoverLiveTitle = (index: number) => `onboarding-discoverLive-${index}-title`;
-
   onboardingGetStartedButton = () => getElementById(this.getStartedButtonId);
-
   acceptAnalyticsButton = () => getElementById(this.acceptAnalyticsButtonId);
-
   noLedgerYetButton = () => getElementById("onboarding-noLedgerYet");
-
   exploreAppButton = () => getElementById("onboarding-noLedgerYetModal-explore");
 
   @Step("Start onboarding")

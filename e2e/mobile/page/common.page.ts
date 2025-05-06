@@ -7,22 +7,20 @@ const proxyAddress = "localhost";
 
 export default class CommonPage {
   searchBarId = "common-search-field";
-  searchBar = () => getElementById(this.searchBarId);
-  successCloseButtonId = "success-close-button";
   successViewDetailsButtonId = "success-view-details-button";
-  closeButton = () => getElementById("NavigationHeaderCloseButton");
   proceedButtonId = "proceed-button";
-
   accountCardPrefix = "account-card-";
+  accountItemId = "account-item-";
+  accountItemNameRegExp = new RegExp(`${this.accountItemId}.*-name`);
+  deviceRowRegex = /device-item-.*/;
+
+  searchBar = () => getElementById(this.searchBarId);
+  closeButton = () => getElementById("NavigationHeaderCloseButton");
   accountCardRegExp = (id = ".*") => new RegExp(this.accountCardPrefix + id);
   accountCardId = (id: string) => this.accountCardPrefix + id;
-
-  accountItemId = "account-item-";
   accountItemRegExp = (id = ".*(?<!-name)$") => new RegExp(`${this.accountItemId}${id}`);
-  accountItemNameRegExp = new RegExp(`${this.accountItemId}.*-name`);
   accountItem = (id: string) => getElementById(this.accountItemRegExp(id));
   accountItemName = (accountId: string) => getElementById(`${this.accountItemId + accountId}-name`);
-  deviceRowRegex = /device-item-.*/;
 
   @Step("Perform search")
   async performSearch(text: string) {
@@ -76,10 +74,15 @@ export default class CommonPage {
 
   @Step("Go to the account with the name")
   async goToAccountByName(name: string) {
-    const accountTitle = getElementByText(name);
-    const id = await getIdOfElement(await accountTitle);
+    console.log("Go to account with name", name);
+    const accountTitle = await getElementByText(name);
+    console.log("Account title", accountTitle);
+    const id = await getIdOfElement(accountTitle);
+    console.log("Account id", id);
     jestExpect(id).toContain(this.accountItemId);
-    await tapByElement(await accountTitle);
+    console.log("Account id 2", id);
+    await tapByElement(accountTitle);
+    console.log("Element tapped ");
   }
 
   async addSpeculos(nanoApp: string, speculosAddress = "localhost") {

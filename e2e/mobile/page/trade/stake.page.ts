@@ -1,112 +1,116 @@
-import { expect } from "detox";
+import { by, element, expect, waitFor } from "detox";
 import invariant from "invariant";
 
 export default class StakePage {
-  celoLockAmountInputId = "celo-lock-amount-input";
-  searchPoolInputId = "delegation-search-pool-input";
+  zeroAssetText = "0\u00a0ATOM";
+  celoLockAmountInput = "celo-lock-amount-input";
+  searchPoolInput = "delegation-search-pool-input";
 
-  // IDs stay as simple strings
-  delegationSummaryValidatorId(currencyId: string): string {
-    return `${currencyId}-delegation-summary-validator`;
-  }
+  delegationSummaryValidatorId = (currencyId: string) =>
+    `${currencyId}-delegation-summary-validator`;
+  delegationSummaryValidator = (currencyId: string) =>
+    getTextOfElement(this.delegationSummaryValidatorId(currencyId));
+  delegationSummaryAmountId = (currencyId: string) => `${currencyId}-delegation-summary-amount`;
+  delegationAmountValue = (currencyId: string) =>
+    getTextOfElement(this.delegationSummaryAmountId(currencyId));
+  assetsRemainingId = (currencyId: string) => `${currencyId}-assets-remaining`;
+  delegatedRatioId = (currencyId: string, delegatedPercent: number) =>
+    `${currencyId}-delegate-ratio-${delegatedPercent}%`;
+  delegationAmountInput = (currencyId: string) => `${currencyId}-delegation-amount-input`;
+  allAssetsUsedText = (currencyId: string) => `${currencyId}-all-assets-used-text`;
+  delegationFees = (currencyId: string) => `${currencyId}-delegation-summary-fees`;
+  summaryContinueButtonId = (currencyId: string) => `${currencyId}-summary-continue-button`;
+  delegationStartId = (currencyId: string) => `${currencyId}-delegation-start-button`;
+  delegationAmountContinueId = (currencyId: string) => `${currencyId}-delegation-amount-continue`;
+  currencyRow = (currencyId: string) => `currency-row-${currencyId}`;
+  providerRow = (providerTicker: string) => `provider-row-${providerTicker}`;
 
-  delegationSummaryAmountId(currencyId: string): string {
-    return `${currencyId}-delegation-summary-amount`;
-  }
-
-  delegationAmountInputId(currencyId: string): string {
-    return `${currencyId}-delegation-amount-input`;
-  }
-
-  delegationFeesId(currencyId: string): string {
-    return `${currencyId}-delegation-summary-fees`;
-  }
-
-  summaryContinueButtonId(currencyId: string): string {
-    return `${currencyId}-summary-continue-button`;
-  }
-
-  delegationStartButtonId(currencyId: string): string {
-    return `${currencyId}-delegation-start-button`;
-  }
-
-  delegationAmountContinueId(currencyId: string): string {
-    return `${currencyId}-delegation-amount-continue`;
-  }
-
-  currencyRowId(currencyId: string): string {
-    return `currency-row-${currencyId}`;
-  }
-
-  providerRowId(providerTicker: string): string {
-    return `provider-row-${providerTicker}`;
-  }
-
-  async delegationSummaryValidator(currencyId: string): Promise<string> {
-    return await getTextOfElement(this.delegationSummaryValidatorId(currencyId));
-  }
-
-  @Step("Select currency in stake list")
-  async selectCurrency(currencyId: string): Promise<void> {
-    const id = this.currencyRowId(currencyId);
+  @Step("Select currency")
+  async selectCurrency(currencyId: string) {
+    const id = this.currencyRow(currencyId);
     await waitForElementById(id);
     await tapById(id);
   }
 
-  @Step("Get fees displayed in summary")
-  async getDisplayedFees(currencyId: string): Promise<string> {
-    const fees = await getTextOfElement(this.delegationFeesId(currencyId));
-    invariant(fees, "Fees empty in summary");
-    return fees;
-  }
-
   @Step("Click on start delegation button")
-  async delegationStart(currencyId: string): Promise<void> {
-    await tapById(this.delegationStartButtonId(currencyId));
+  async delegationStart(currencyId: string) {
+    await tapById(this.delegationStartId(currencyId));
     await waitForElementById(this.delegationSummaryValidatorId(currencyId));
   }
 
   @Step("Dismiss delegation start page if displayed")
-  async dismissDelegationStart(currencyId: string): Promise<void> {
-    if (await IsIdVisible(this.delegationStartButtonId(currencyId))) {
+  async dismissDelegationStart(currencyId: string) {
+    if (await IsIdVisible(this.delegationStartId(currencyId))) {
       await this.delegationStart(currencyId);
     }
   }
 
   @Step("Set delegated amount")
-  async setAmount(currencyId: string, amount: string): Promise<void> {
+  async setAmount(currencyId: string, amount: string) {
     await waitForElementById(this.delegationSummaryAmountId(currencyId));
     await tapById(this.delegationSummaryAmountId(currencyId));
-    await typeTextById(this.delegationAmountInputId(currencyId), amount);
+    await typeTextById(this.delegationAmountInput(currencyId), amount);
+  }
+
+  @Step("Set delegated amount percent")
+  async setAmountPercent(currencyId: string, delegatedPercent: 25 | 50 | 75 | 100) {
+    await waitForElementById(this.delegationSummaryAmountId(currencyId));
+    await tapById(this.delegationSummaryAmountId(currencyId));
+    await tapById(this.delegatedRatioId(currencyId, delegatedPercent));
   }
 
   @Step("Expect provider in summary")
-  async expectProvider(currencyId: string, provider: string): Promise<void> {
-    const actual = await this.delegationSummaryValidator(currencyId);
-    jestExpect(actual).toEqual(provider);
+  async expectProvider(currencyId: string, provider: string) {
+    jestExpect(await this.delegationSummaryValidator(currencyId)).toEqual(provider);
   }
 
   @Step("Select new provider")
-  async selectValidator(currencyId: string, provider: string): Promise<void> {
+  async selectValidator(currencyId: string, provider: string) {
     const ticker = provider.split(" - ")[0];
     await tapById(this.delegationSummaryValidatorId(currencyId));
-    await typeTextById(this.searchPoolInputId, ticker);
-    await waitForElementById(this.searchPoolInputId);
-    await tapById(this.providerRowId(ticker));
+    await typeTextById(this.searchPoolInput, ticker);
+    await waitForElementById(this.searchPoolInput);
+    await tapById(this.providerRow(ticker));
   }
 
   @Step("Verify fees visible in summary")
-  async verifyFeesVisible(currencyId: string): Promise<void> {
-    const feesElem = await getElementById(this.delegationFeesId(currencyId));
-    await expect(feesElem).toBeVisible();
+  async verifyFeesVisible(currencyId: string) {
+    await expect(await getElementById(this.delegationFees(currencyId))).toBeVisible();
+  }
+
+  @Step("Get fees displayed in summary")
+  async getDisplayedFees(currencyId: string) {
+    const fees = getTextOfElement(this.delegationFees(currencyId));
+    invariant(fees, "Fees empty in summary");
+    return fees;
+  }
+
+  @Step("Expect assets remaining after delegation")
+  async expectRemainingAmount(
+    currencyId: string,
+    delegatedPercent: 25 | 50 | 75 | 100,
+    remainingAmountFormated: string,
+  ) {
+    const max = delegatedPercent == 100;
+    const id = max ? this.allAssetsUsedText(currencyId) : this.assetsRemainingId(currencyId);
+    await waitForElementById(id);
+    const assetsRemaining = max ? this.zeroAssetText : (await getTextOfElement(id)).split(": ")[1];
+
+    jestExpect(assetsRemaining).toEqual(remainingAmountFormated);
   }
 
   @Step("Validate the amount entered")
-  async validateAmount(currencyId: string): Promise<void> {
+  async validateAmount(currencyId: string) {
     await tapById(this.delegationAmountContinueId(currencyId));
     if (currencyId !== Currency.CELO.id) {
       await waitForElementById(this.delegationSummaryAmountId(currencyId));
     }
+  }
+
+  @Step("Expect delegated amount in summary")
+  async expectDelegatedAmount(currencyId: string, delegatedAmountFormated: string) {
+    const assetsDelegated = await this.delegationAmountValue(currencyId);
+    jestExpect(assetsDelegated).toEqual(delegatedAmountFormated);
   }
 
   @Step("Click on continue button in summary")
@@ -117,7 +121,7 @@ export default class StakePage {
   }
 
   @Step("Set Celo lock amount")
-  async setCeloLockAmount(amount: string): Promise<void> {
-    await typeTextById(this.celoLockAmountInputId, amount);
+  async setCeloLockAmount(amount: string) {
+    await typeTextById(this.celoLockAmountInput, amount);
   }
 }

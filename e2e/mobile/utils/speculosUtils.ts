@@ -13,44 +13,26 @@ import { device, log } from "detox";
 const BASE_PORT = 30000;
 const MAX_PORT = 65535;
 let portCounter = BASE_PORT; // Counter for generating unique ports
-const speculosDevices = new Map<number, string>();
-
-/**
- * Waits for a specified amount of time
- * /!\ Do not use it to wait for a specific element, use waitFor instead.
- * @param {number} ms
- */
-export function delay(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 export async function launchSpeculos(appName: string) {
-  if (portCounter > MAX_PORT) portCounter = BASE_PORT;
-  const speculosPort = portCounter++;
-
-  if (speculosDevices.has(speculosPort)) {
-    log.info("e2e", `[E2E Setup] Speculos already launched on port ${speculosPort}`);
-    return speculosPort;
+  // Ensure the portCounter stays within the valid port range
+  if (portCounter > MAX_PORT) {
+    portCounter = BASE_PORT;
   }
-
+  const speculosPort = portCounter++;
   const speculosPidOffset =
     (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.JEST_WORKER_ID || "0") * 100;
   setEnv("SPECULOS_PID_OFFSET", speculosPidOffset);
 
   const testName = jestExpect.getState().testPath || "unknown";
-  const specKey = appName.replace(/ /g, "_");
-  const spec = specs[specKey];
-  invariant(spec, `[E2E Setup] Spec '${specKey}' not found in specs`);
-
-  const speculosDevice = await startSpeculos(testName, spec);
+  const speculosDevice = await startSpeculos(testName, specs[appName.replace(/ /g, "_")]);
   invariant(speculosDevice, "[E2E Setup] Speculos not started");
 
   const speculosApiPort = speculosDevice.ports.apiPort;
   invariant(speculosApiPort, "[E2E Setup] speculosApiPort not defined");
-  speculosDevices.set(speculosApiPort, speculosDevice.id);
   setEnv("SPECULOS_API_PORT", speculosApiPort);
-
-  log.info("e2e", `Speculos started: id=${speculosDevice.id}, port=${speculosApiPort}`);
+  speculosDevices.set(speculosApiPort, speculosDevice.id);
+  log.warn(`Speculos ${speculosDevice.id} started on ${speculosApiPort}`);
   return speculosApiPort;
 }
 

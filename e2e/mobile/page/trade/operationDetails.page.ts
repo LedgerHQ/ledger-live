@@ -15,9 +15,7 @@ export default class OperationDetailsPage {
   };
 
   title = () => getElementById(this.titleId);
-
   account = () => getElementById("operationDetails-account");
-
   amount = () => getElementById("operationDetails-amount");
 
   @Step("Wait for operation details")

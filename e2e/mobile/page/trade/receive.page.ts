@@ -10,36 +10,19 @@ export default class ReceivePage {
   buttonVerifyAddressId = "button-verify-my-address";
   buttonCreateAccountId = "button-create-account";
   buttonContinueId = "add-accounts-continue-button";
-  step1HeaderTitleId = "receive-header-step1-title";
   step2HeaderTitleId = "receive-header-step2-title";
   networkBasedStep2HeaderTitleId = "addAccounts-header-step2-title";
   receivePageScrollViewId = "receive-screen-scrollView";
+
+  accountId = (t: string) => `test-id-account-${t}`;
+  currencyRowId = (t: string) => `big-currency-row-${t}`;
+  currencyNameId = (t: string) => `big-currency-name-${t}`;
+  currencySubtitleId = (t: string) => `big-currency-subtitle-${t}`;
+  step1HeaderTitle = () => getElementById("receive-header-step1-title");
   step2HeaderTitle = () => getElementById(this.step2HeaderTitleId);
+  titleReceiveConfirmationPageId = (t: string) => `receive-confirmation-title-${t}`;
+  accountNameReceiveId = (t: string) => `receive-account-name-${t}`;
   step2Accounts = () => getElementById("receive-header-step2-accounts");
-
-  accountId(t: string): string {
-    return `test-id-account-${t}`;
-  }
-
-  currencyRowId(t: string): string {
-    return `big-currency-row-${t}`;
-  }
-
-  currencyNameId(t: string): string {
-    return `big-currency-name-${t}`;
-  }
-
-  currencySubtitleId(t: string): string {
-    return `big-currency-subtitle-${t}`;
-  }
-
-  titleReceiveConfirmationPageId(t: string): string {
-    return `receive-confirmation-title-${t}`;
-  }
-
-  accountNameReceiveId(t: string): string {
-    return `receive-account-name-${t}`;
-  }
 
   @Step("Open receive via deeplink")
   async openViaDeeplink(): Promise<void> {
@@ -53,8 +36,8 @@ export default class ReceivePage {
   }
 
   @Step("Expect first step")
-  async expectFirstStep(): Promise<void> {
-    await expect(await getElementById(this.step1HeaderTitleId)).toBeVisible();
+  async expectFirstStep() {
+    await expect(await this.step1HeaderTitle()).toBeVisible();
   }
 
   @Step("Expect second step networks")

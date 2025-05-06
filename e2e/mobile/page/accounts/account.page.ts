@@ -13,23 +13,14 @@ export default class AccountPage {
   accountNameRegExp = new RegExp(`${this.baseAccountName}.*`);
 
   accountGraph = (accountId: string) => getElementById(`account-graph-${accountId}`);
-
   accountBalance = (accountId: string) => getElementById(`account-balance-${accountId}`);
-
   accountSettingsButton = () => getElementById("account-settings-button");
-
   accountAdvancedLogRow = () => getElementById("account-advanced-log-row");
-
   accountDeleteRow = () => getElementById("account-settings-delete-row");
-
   accountDeleteConfirm = () => getElementById("delete-account-confirmation-button");
-
   operationHistorySectionId = (accountId: string) => this.operationHistorySection + accountId;
-
   receiveButton = () => getElementById("account-quick-action-button-receive");
-
   sendButton = () => getElementById("account-quick-action-button-send");
-
   accountRenameRow = () => getElementById("account-settings-rename-row");
 
   @Step("Open accounts list via deeplink")

@@ -14,7 +14,6 @@ export default class PortfolioPage {
   allocationSectionTitleId = "portfolio-allocation-section";
 
   portfolioSettingsButton = async () => await getElementById(this.portfolioSettingsButtonId);
-
   assetItemId = (currencyName: string) => `assetItem-${currencyName}`;
 
   @Step("Navigate to Settings")
@@ -54,7 +53,9 @@ export default class PortfolioPage {
 
   @Step("Go to asset's accounts from portfolio")
   async goToAccounts(currencyName: string) {
+    console.log("Go to asset's accounts from portfolio");
     await scrollToId(this.allocationSectionTitleId, this.accountsListView);
+    console.log("Scroll to allocation section");
     await tapById(this.assetItemId(currencyName));
   }
 }

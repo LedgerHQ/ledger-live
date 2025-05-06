@@ -6,7 +6,6 @@ export default class MarketPage {
   assetCardBackBtn = () => getElementById("market-back-btn");
   marketRowTitle = (index = 0) => getElementById("market-row-title", index);
   starMarketListButton = () => getElementById("toggle-starred-currencies");
-  buyAssetButton = () => getElementById("market-buy-btn");
 
   @Step("Search for asset")
   async searchAsset(asset: string) {

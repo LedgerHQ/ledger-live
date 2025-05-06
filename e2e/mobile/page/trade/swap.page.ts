@@ -1,6 +1,5 @@
 import { expect } from "detox";
 import { delay, openDeeplink } from "../../helpers/commonHelpers";
-import type { NativeElement } from "detox/detox";
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 
 export default class SwapPage {
@@ -8,13 +7,8 @@ export default class SwapPage {
   confirmSwapOnDeviceDrawerId = "confirm-swap-on-device";
   swapSuccessTitleId = "swap-success-title";
 
-  async swapFormTab(): Promise<NativeElement> {
-    return getElementById("swap-form-tab");
-  }
-
-  async sendMaxToggle(): Promise<NativeElement> {
-    return getElementById("exchange-send-max-toggle");
-  }
+  swapFormTab = () => getElementById("swap-form-tab");
+  sendMaxToggle = () => getElementById("exchange-send-max-toggle");
 
   @Step("Open swap via deeplink")
   async openViaDeeplink(): Promise<void> {

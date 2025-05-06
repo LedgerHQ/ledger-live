@@ -7,15 +7,9 @@ export default class LedgerSyncPage {
   deleteSyncId = "walletSync-manage-backup";
 
   activationButton = () => getElementById("walletsync-activation-button");
-
   activationTitle = () => getElementById("walletsync-activation-title");
-
   activationDescription = () => getElementById("walletsync-activation-description");
-
   activationSuccessCloseButton = () => getElementById("walletsync-activation-success-close");
-
-  deleteSync = () => getElementById("walletSync-manage-backup");
-
   deletionSuccessCloseButton = () => getElementById("walletsync-deletion-success-close");
 
   @Step("Activate Ledger Sync on Speculos")
