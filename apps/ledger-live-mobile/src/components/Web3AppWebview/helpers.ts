@@ -413,7 +413,8 @@ function useUiHook(): UiHook {
       },
       "message.sign": ({ account, message, onSuccess, onError, onCancel }) => {
         navigation.navigate(NavigatorName.SignMessage, {
-          screen: ScreenName.SignSummary,
+          screen:
+            message.standard === "EIP712" ? ScreenName.SignSelectDevice : ScreenName.SignSummary,
           params: {
             message,
             accountId: account.id,

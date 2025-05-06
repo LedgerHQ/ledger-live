@@ -155,6 +155,7 @@ type States = PartialNullable<{
   manifestName: string;
   manifestId: string;
   transactionChecksOptInTriggered: boolean;
+  transactionChecksOptIn: boolean;
 }>;
 
 type InnerProps<P> = {
@@ -229,6 +230,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     deviceSignatureRequested,
     deviceStreamingProgress,
     transactionChecksOptInTriggered,
+    transactionChecksOptIn,
     displayUpgradeWarning,
     passWarning,
     initSwapRequested,
@@ -328,6 +330,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     deviceInfo,
     appAndVersion,
     transactionChecksOptInTriggered,
+    transactionChecksOptIn,
     isTrackingEnabled,
   });
 

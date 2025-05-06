@@ -2,6 +2,7 @@ import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-manage
 import { EIP712Message } from "@ledgerhq/types-live";
 import { lastValueFrom, of } from "rxjs";
 import { DmkSignerEth } from "../src/DmkSignerEth";
+import { SignTransactionDAStep } from "@ledgerhq/device-signer-kit-ethereum";
 
 describe("DmkSignerEth", () => {
   const dmkMock = {
@@ -324,6 +325,52 @@ describe("DmkSignerEth", () => {
           s: "02",
           v: 3,
         },
+      });
+    });
+
+    it("should emit transaction-checks-opt-in event", async () => {
+      // GIVEN
+      const path = "path";
+      const rawTxHex = "0x010203040506";
+      dmkMock.executeDeviceAction.mockReturnValue({
+        observable: of({
+          status: DeviceActionStatus.Pending,
+          intermediateValue: {
+            step: SignTransactionDAStep.WEB3_CHECKS_OPT_IN_RESULT,
+            result: true,
+          },
+        }),
+      });
+
+      // WHEN
+      const result = await lastValueFrom(signer.signTransaction(path, rawTxHex));
+
+      // THEN
+      expect(result).toEqual({
+        type: "signer.evm.transaction-checks-opt-in",
+      });
+    });
+
+    it("should emit transaction-checks-opt-out event", async () => {
+      // GIVEN
+      const path = "path";
+      const rawTxHex = "0x010203040506";
+      dmkMock.executeDeviceAction.mockReturnValue({
+        observable: of({
+          status: DeviceActionStatus.Pending,
+          intermediateValue: {
+            step: SignTransactionDAStep.WEB3_CHECKS_OPT_IN_RESULT,
+            result: false,
+          },
+        }),
+      });
+
+      // WHEN
+      const result = await lastValueFrom(signer.signTransaction(path, rawTxHex));
+
+      // THEN
+      expect(result).toEqual({
+        type: "signer.evm.transaction-checks-opt-out",
       });
     });
   });

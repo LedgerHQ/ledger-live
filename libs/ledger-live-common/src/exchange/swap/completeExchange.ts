@@ -93,6 +93,15 @@ const completeExchange = (
         } else {
           transaction = await accountBridge.prepareTransaction(refundAccount, transaction);
         }
+
+        if (transaction.family === "bitcoin") {
+          const transactionFixed = {
+            ...transaction,
+            rbf: true,
+          };
+          transaction = await accountBridge.prepareTransaction(refundAccount, transactionFixed);
+        }
+
         if (unsubscribed) return;
 
         const { errors, estimatedFees } = await accountBridge.getTransactionStatus(

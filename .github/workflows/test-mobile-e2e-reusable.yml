@@ -3,13 +3,23 @@ name: "Test Mobile E2E"
 on:
   schedule:
     - cron: "0 3 * * 1-5"
+
   workflow_call:
     inputs:
-      use-performance-pool:
-        description: Use performance-pool of mac runners. Defaults to false, in which case the general-pool will be used
+      macos-specificity-runner-label:
+        description: The specificity runner label to run the tests on (e.g. performance-pool, general-pool or runner)
+        required: false
+        type: string
+        default: "general-pool"
+      disable-turbo-cache:
+        description: Disable turbo caching
         required: false
         type: boolean
         default: false
+      ref:
+        description: Ref to checkout
+        required: false
+        type: string
   workflow_dispatch:
     inputs:
       ref:
@@ -77,23 +87,28 @@ env:
 jobs:
   detox-tests-ios:
     name: "LLM - iOS Detox Tests"
-    runs-on: ["${{ inputs.use-performance-pool && 'performance-pool' || 'general-pool' }}", macOS, ARM64]
+    runs-on: ["${{ inputs.macos-specificity-runner-label || 'general-pool' }}", macOS, ARM64]
     if: ${{ !inputs.e2e_tests && github.event_name != 'schedule' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
+      SEED: ${{ vars.SEED_QAA_B2C }}
+      INPUT_SPECULOS: ${{ inputs.speculos_tests || github.event_name == 'schedule' }}
+      INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
     outputs:
       status: ${{ steps.detox.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
     steps:
+
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
+          repository: LedgerHQ/ledger-live
 
       - name: setup caches
-        id: caches
+        id: setup-caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
           skip-pod-cache: "true"
@@ -145,22 +160,32 @@ jobs:
           bucket: ll-gha-s3-cache
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
+
       - name: Build dependencies
-        run: |
-          pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        with:
+          command: pnpm build:llm:deps
+          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          turbo_port: ${{ steps.setup-caches.outputs.port }}
+          disable_cache: ${{ inputs.disable-turbo-cache || false }}
+
       - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
         run: |
           pnpm build:dummy-apps
         shell: bash
+
       - name: Create iOS simulator
         id: simulator
         run: xcrun simctl create "iOS Simulator" "iPhone 15"
+
       - name: Build iOS app for Detox test run
         if: steps.detox-build.outputs.cache-hit != 'true'
         run: pnpm mobile e2e:ci -p ios -b
+
       - name: Build JS Bundle app for Detox test run
         if: steps.detox-build.outputs.cache-hit == 'true'
         run: pnpm mobile e2e:ci -p ios --bundle
+
       - name: Setup Speculos image and Coin Apps
         if: ${{ env.E2E_RUN == 'true' }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
@@ -169,18 +194,22 @@ jobs:
           speculos_tag: ${{ env.SPECULOS_IMAGE_TAG }}
           bot_id: ${{ secrets.GH_BOT_APP_ID }}
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
       - name: Test iOS app
         id: detox
         timeout-minutes: 75
-        run: pnpm test:llm:ios:e2e --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" -- -p ios -t $([[ "$INPUT_E2E" == "true" ]] && printf %s '--testType') ${INPUTS_TEST_FILTER:+--filter} "${{ inputs.test_filter }}"
-        env:
-          SEED: ${{ secrets.SEED_QAA_B2C }}
-          INPUT_E2E: ${{ env.E2E_RUN }}
-          INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        with:
+          command: pnpm test:llm:ios:e2e -- -p ios -t $([[ "$E2E_RUN" == "true" ]] && printf %s '--e2e') ${INPUTS_TEST_FILTER:+--filter} "${{ inputs.test_filter }}"
+          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          turbo_port: ${{ steps.setup-caches.outputs.port }}
+          disable_cache: ${{ inputs.disable-turbo-cache || false }}
+
       - name: Delete iOS simulator
         if: ${{ always() }}
         run: |
           xcrun simctl list devices | grep 'iOS Simulator' | awk -F '[()]' '{print $2}' | xargs -I {} sh -c 'echo "Deleting simulator: {}"; xcrun simctl delete {} || echo "Failed to delete: {}"'
+
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
@@ -258,6 +287,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
+          repository: LedgerHQ/ledger-live
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
@@ -292,13 +322,23 @@ jobs:
       - name: Install dependencies
         run: |
           pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+
       - name: Build dependencies
-        run: |
-          pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        with:
+          command: pnpm build:llm:deps
+          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          turbo_port: ${{ steps.setup-caches.outputs.port }}
+          disable_cache: ${{ inputs.disable-turbo-cache || false }}
+
       - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
-        run: |
-          pnpm build:dummy-apps --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
-        shell: bash
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        with:
+          command: pnpm build:dummy-apps
+          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          turbo_port: ${{ steps.setup-caches.outputs.port }}
+          disable_cache: ${{ inputs.disable-turbo-cache || false }}
+
       - name: Build Android app for Detox test run
         run: |
           pnpm mobile e2e:ci -p android -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
@@ -338,6 +378,7 @@ jobs:
           disable-linux-hw-accel: false
           emulator-options: ${{ env.AVD_OPTIONS }}
           script: ./tools/scripts/wait_emulator_idle.sh
+
       - name: Setup Speculos image and Coin Apps
         if: ${{ env.E2E_RUN == 'true' }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
@@ -346,14 +387,22 @@ jobs:
           speculos_tag: ${{ env.SPECULOS_IMAGE_TAG }}
           bot_id: ${{ secrets.GH_BOT_APP_ID }}
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
       - name: Build CLI
         if: ${{ env.E2E_RUN == 'true' }}
-        run: pnpm build:cli --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        with:
+          command: pnpm build:cli
+          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          turbo_port: ${{ steps.setup-caches.outputs.port }}
+          disable_cache: ${{ inputs.disable-turbo-cache || false }}
+
       - name: Set DISABLE_TRANSACTION_BROADCAST
         if: ${{ env.E2E_RUN == 'true' }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
         with:
           enable_broadcast: ${{ inputs.enable_broadcast }}
+
       - name: Run Android Tests
         id: detox
         run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_E2E" == "true" ]] && printf %s '--testType') $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }} ${INPUTS_TEST_FILTER:+--filter} "${{ inputs.test_filter }}"
@@ -364,6 +413,7 @@ jobs:
           INPUT_E2E: ${{ env.E2E_RUN }}
           PRODUCTION: ${{ inputs.production_firebase }}
           INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
+
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
@@ -371,6 +421,7 @@ jobs:
         with:
           name: "android-test-artifacts-${{ matrix.shardIndex }}"
           path: apps/ledger-live-mobile/artifacts/
+
       - name: Set job output based on detox result
         id: set-output
         if: ${{ !cancelled() }}
@@ -446,6 +497,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
+          repository: LedgerHQ/ledger-live
 
       - name: Download Allure Results
         uses: actions/download-artifact@v4

@@ -23,6 +23,7 @@ export class SwapPage extends AppPage {
   private destinationCurrencyAmount = this.page.getByTestId("destination-currency-amount");
   private feesValue = this.page.getByTestId("fees-value");
   private switchButton = "to-account-switch-accounts";
+  private swapMaxToggle = "from-account-max-toggle";
 
   // Exchange Button Component
   private exchangeButton = this.page.getByTestId("exchange-button");
@@ -267,6 +268,12 @@ export class SwapPage extends AppPage {
     return await this.destinationCurrencyAmount.inputValue();
   }
 
+  @step("Retrieve send currency amount value")
+  async getAmountToSend(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+    return await webview.getByTestId(this.fromAccountAmoutInput).inputValue();
+  }
+
   @step("Retrieve fees amount value")
   async getFeesValue() {
     const text = await this.feesValue.textContent();
@@ -371,30 +378,37 @@ export class SwapPage extends AppPage {
 
     switch (selectedProvider) {
       case Provider.ONE_INCH.uiName: {
-        const debit = swap.accountToDebit.currency.ticker;
-        const credit = swap.accountToCredit.currency.ticker;
+        const debitTicker = swap.accountToDebit.currency.ticker;
+        const creditTicker = swap.accountToCredit.currency.ticker;
 
-        if (!debit || !credit) {
+        if (!debitTicker || !creditTicker) {
           throw new Error("Missing ticker for one of the currencies");
         }
 
         this.expectUrlToContainAll(url, [
           swap.amount,
-          debit,
-          credit,
-          `swap%2F${debit}%2F${credit}`,
+          debitTicker,
+          creditTicker,
+          `swap%3Fledgerlive%3dtrue`,
+          `src%3d${debitTicker}`,
+          `dst%3d${creditTicker}`,
         ]);
         break;
       }
       case Provider.PARASWAP.uiName: {
-        const debit = swap.accountToDebit.currency.contractAddress;
-        const credit = swap.accountToCredit.currency.contractAddress;
+        const debitContractAddress = swap.accountToDebit.currency.contractAddress;
+        const creditContractAddress = swap.accountToCredit.currency.contractAddress;
 
-        if (!debit || !credit) {
+        if (!debitContractAddress || !creditContractAddress) {
           throw new Error("Missing contract address on one of the currencies");
         }
 
-        this.expectUrlToContainAll(url, [swap.amount, debit, credit, `${debit}-${credit}`]);
+        this.expectUrlToContainAll(url, [
+          swap.amount,
+          debitContractAddress,
+          creditContractAddress,
+          `${debitContractAddress}-${creditContractAddress}`,
+        ]);
         break;
       }
       default:
@@ -467,7 +481,8 @@ export class SwapPage extends AppPage {
     return (await getMinimumSwapAmount(accountFrom, accountTo))?.toString() ?? "";
   }
 
-  expectUrlToContainAll(url: string, values: string[]) {
+  @step("Check URL contains all values")
+  async expectUrlToContainAll(url: string, values: string[]) {
     if (!url) {
       throw new Error("URL is null or undefined");
     }
@@ -475,5 +490,11 @@ export class SwapPage extends AppPage {
     for (const value of values) {
       expect(normalizedUrl).toContain(value.toLowerCase());
     }
+  }
+
+  @step("Click on swap max")
+  async clickSwapMax(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+    await webview.getByTestId(this.swapMaxToggle).click();
   }
 }
