@@ -1103,6 +1103,32 @@
     "tryEnablingAgain" : "위치를 다시 활성화해보세요",
     "noInfos" : "Ledger는 사용자의 위치 정보를 사용하지 않습니다."
   },
+  "earn" : {
+    "deposit" : {
+      "protocolInfoModal" : {
+        "title" : "프로토콜을 선택 시 다음 사항을 유의하세요.",
+        "items" : {
+          "protocol" : {
+            "highlighted" : "프로토콜은",
+            "description" : " 예치한 암호화폐를 대출, 유동성 공급 또는 스테이킹에 사용하여 보상을 받을 수 있는 플랫폼입니다."
+          },
+          "apy" : {
+            "highlighted" : "APY(연이율)",
+            "description" : " 1년간 벌 수 있는 이자 수익을 의미합니다. APY가 높을수록 수익률도 높아집니다."
+          },
+          "tvl" : {
+            "highlighted" : "TVL(총 잠금 가치)",
+            "description" : " 다른 사용자가 프로토콜에 예치한 총 자산 가치를 의미합니다. TVL이 높을수록 더 많은 사람들이 프로토콜을 신뢰한다는 것을 의미합니다."
+          },
+          "strategy" : {
+            "highlighted" : "전략",
+            "description0" : " 프로토콜의 보상 생성 방식을 의미합니다.",
+            "description1" : "예를 들어, 대출을 전략으로 사용하는 경우 예치된 스테이블코인을 다른 사용자에게 빌려주면 이자 수익이 발생합니다. 이자는 수요에 따라 달라집니다."
+          }
+        }
+      }
+    }
+  },
   "permissions" : {
     "open" : "앱 사용 권한 열기",
     "authorize" : "승인",
@@ -4671,7 +4697,7 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "{{deviceName}}을 버전 {{version}}로 업데이트",
-    "recoveryPhraseBackupInstructions" : "만약을 대비하여 24개의 단어 복구 문구를 복구 시트에 반드시 기록해 두고 언제든 사용 가능한 상태로 준비해 두세요.",
+    "recoveryPhraseBackupInstructions" : "만약을 대비하여 24개의 단어 복구 문구를 복구 시트에 기록해 두고 언제든 사용할 수 있도록 안전하게 보관하세요.안전한 액세스 백업 수단인 Ledger Recover를 통해 필요할 때 언제든 지갑 액세스를 복구하세요.",
     "confirmRecoveryPhrase" : "복구 문구가 있습니다",
     "introDescription1" : "장치의 모든 앱이 제거될 것이니 주의하세요. 펌웨어 업데이트 후에 앱을 재설치할 수 있습니다.",
     "introDescription2" : "귀하의 암호화 자산에는 영향을 주지 않습니다.",
@@ -6624,12 +6650,14 @@
     "range" : {
       "1h" : "1시간",
       "24h" : "24시간",
-      "1d" : "1일",
       "7d" : "7일",
-      "1w" : "1주",
       "30d" : "30일",
-      "1m" : "1달",
-      "1y" : "1년"
+      "1y" : "1년",
+      "1D_label" : "1일",
+      "1H_label" : "1시간",
+      "1W_label" : "1주",
+      "1M_label" : "1달",
+      "1Y_label" : "1년"
     },
     "warnings" : {
       "connectionError" : "연결 오류",
@@ -7364,8 +7392,28 @@
     }
   },
   "largeMover" : {
-    "performance" : "가격 추이",
-    "low" : "낮음",
-    "high" : "높음"
+    "info" : "정보",
+    "marketCap" : "시가총액",
+    "volume" : "거래량(24시간)",
+    "fdv" : "FDV",
+    "marketCap24h" : "거래량/시가총액(24시간)",
+    "circulatingSupply" : "유통량",
+    "totalSupply" : "총 공급량",
+    "ath" : "사상 최고치",
+    "atl" : "사상 최저치",
+    "timeAgo" : {
+      "years" : "({{count}}년 전)",
+      "years_plural" : "({{count}}년 전)",
+      "months" : "({{count}}개월 전)",
+      "months_plural" : "({{count}}개월 전)",
+      "days" : "({{count}}일 전)",
+      "days_plural" : "({{count}}일 전)",
+      "hours" : "({{count}}시간 전)",
+      "hours_plural" : "({{count}}시간 전)",
+      "minutes" : "({{count}}분 전)",
+      "minutes_plural" : "({{count}}분 전)",
+      "seconds" : "({{count}}초 전)",
+      "seconds_plural" : "({{count}}초 전)"
+    }
   }
 }
