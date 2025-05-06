@@ -1,4 +1,4 @@
-import { by, element, expect, waitFor } from "detox";
+import { expect } from "detox";
 import invariant from "invariant";
 
 export default class StakePage {
