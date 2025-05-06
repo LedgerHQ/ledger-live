@@ -2,10 +2,7 @@ name: "[PR] Build and Test"
 on:
   merge_group:
     types: [checks_requested]
-  pull_request:
-    branches-ignore:
-        - 'smartling-content-updated**'
-        - 'smartling-translation-completed**'
+  pull_request: ~
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
@@ -22,7 +19,9 @@ jobs:
     # continue-on-error: true # Uncomment once integration is finished
     runs-on: ubuntu-latest
     outputs:
-      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+      should_skip: ${{ steps.skip_check.outputs.should_skip == 'true' || steps.smartling_check.outputs.should_skip == 'true' }}
+    env:
+      IS_SMARTLING: ${{ startsWith(github.event.pull_request.base.ref, 'lp-smartling-test') }}
     steps:
       - id: skip_check
         uses: fkirc/skip-duplicate-actions@v5
@@ -30,6 +29,13 @@ jobs:
           concurrent_skipping: 'never'
           skip_after_successful_duplicate: 'true'
           do_not_skip: '["pull_request", "workflow_dispatch", "schedule"]'
+      - id: smartling_check
+        if: ${{ env.IS_SMARTLING }}
+        run: |
+          echo "should_skip=true" >> $GITHUB_OUTPUT
+          gh pr close
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   determine-affected:
     name: "Turbo Affected"
