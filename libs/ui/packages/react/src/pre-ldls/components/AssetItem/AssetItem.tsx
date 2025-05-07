@@ -6,6 +6,7 @@ import { Text } from "../../../components";
 export type AssetType = {
   name: string;
   ticker: string;
+  id: string;
 };
 
 type AssetItemProps = AssetType & {
@@ -31,6 +32,7 @@ const Wrapper = styled.div`
   ${withTokens(
     "spacing-xxs",
     "margin-s",
+    "radius-s",
     "colors-content-subdued-default-default",
     "colors-content-default-default",
     "colors-surface-transparent-hover",
@@ -40,6 +42,7 @@ const Wrapper = styled.div`
   display: flex;
   padding: var(--spacing-xxs);
   cursor: pointer;
+  border-radius: var(--radius-s, 8px);
 
   :hover {
     background-color: var(--colors-surface-transparent-hover);
@@ -57,9 +60,9 @@ const InfoWrapper = styled.div`
   margin-left: var(--margin-s);
 `;
 
-export const AssetItem = ({ name, ticker, onClick }: AssetItemProps) => {
+export const AssetItem = ({ name, ticker, id, onClick }: AssetItemProps) => {
   return (
-    <Wrapper onClick={() => onClick({ name, ticker })}>
+    <Wrapper onClick={() => onClick({ name, ticker, id })}>
       <TempAssetBadge />
       <InfoWrapper>
         <Text

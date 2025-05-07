@@ -27,6 +27,7 @@ const Wrapper = styled.div`
   ${withTokens(
     "spacing-xxs",
     "margin-s",
+    "radius-s",
     "colors-content-default-default",
     "colors-surface-transparent-hover",
     "colors-surface-transparent-pressed",
@@ -34,6 +35,7 @@ const Wrapper = styled.div`
   display: flex;
   padding: var(--spacing-xxs);
   cursor: pointer;
+  border-radius: var(--radius-s, 8px);
 
   :hover {
     background-color: var(--colors-surface-transparent-hover);

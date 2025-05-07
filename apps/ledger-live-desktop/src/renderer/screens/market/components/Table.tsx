@@ -1,32 +1,32 @@
 import { Flex } from "@ledgerhq/react-ui";
+import { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex/index";
 import React from "react";
-import styled, { StyledComponent, DefaultTheme } from "styled-components";
-import { FlexProps } from "styled-system";
+import styled from "styled-components";
+
 import LoadingPlaceholder from "~/renderer/components/LoadingPlaceholder";
 
 export const listItemHeight = 73;
 export const miniChartThreshold = 900;
 export const miniMarketCapThreshold = 1100;
 
-export const TableCellBase: StyledComponent<"div", DefaultTheme, FlexProps> = styled(Flex).attrs({
-  alignItems: "center",
-})<{ disabled?: boolean }>`
+export const TableCellBase = styled(props => <Flex alignItems="center" {...props} />)<{
+  disabled?: boolean;
+}>`
   padding-left: 5px;
   padding-right: 5px;
   cursor: ${p => (p.disabled ? "default" : "pointer")};
 `;
 
-export const TableRow: StyledComponent<
-  "div",
-  DefaultTheme,
-  FlexProps & { header?: boolean; disabled?: boolean }
-> = styled(Flex).attrs({
-  flexDirection: "row",
-  alignItems: "stretch",
-  justifyContent: "flex-start",
-  height: listItemHeight,
-  py: 3,
-})<{ header?: boolean; disabled?: boolean }>`
+export const TableRow = styled((props: FlexBoxProps & { header?: boolean; disabled?: boolean }) => (
+  <Flex
+    flexDirection="row"
+    alignItems="stretch"
+    justifyContent="flex-start"
+    height={listItemHeight}
+    py={3}
+    {...props}
+  />
+))<{ header?: boolean; disabled?: boolean }>`
   line-height: 16px;
   ${p =>
     p.header
