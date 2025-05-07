@@ -6,12 +6,12 @@ import Illustration from "~/renderer/components/Illustration";
 import styled from "styled-components";
 import { rgba } from "~/renderer/styles/helpers";
 
-type RowProps = {
+type RowProps = Readonly<{
   entryPoint: Entry;
   illustration: string;
   link: string;
   redirect: () => void;
-};
+}>;
 
 export function Row({ entryPoint, link, illustration, redirect }: RowProps) {
   const { t } = useTranslation();
@@ -19,7 +19,7 @@ export function Row({ entryPoint, link, illustration, redirect }: RowProps) {
 
   return (
     <StyledRow
-      justifyContent={"space-between"}
+      justifyContent="space-between"
       alignItems="center"
       padding="12px"
       onClick={redirect}
