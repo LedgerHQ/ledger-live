@@ -1,4 +1,4 @@
-name: "Test libraries"
+name: "[Libraries] - Test - Called"
 
 on:
   workflow_call:
@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   test-libraries:
-    name: "Test Libraries"
+    name: "Libraries Test"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -68,7 +68,7 @@ jobs:
           path: ${{ github.workspace }}/summary-tests.txt
 
   codecheck-libraries:
-    name: "Codecheck Libraries"
+    name: "Libraries Codecheck"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -117,8 +117,9 @@ jobs:
             ${{ github.workspace }}/summary-typecheck.txt
             ${{ github.workspace }}/summary-lint.txt
 
+
   test-docs:
-    name: "Test Docs"
+    name: "Libraries Documentation Check"
     runs-on: ubuntu-22.04
     outputs:
       fail: ${{ steps.diff.outputs.diff }}
@@ -147,8 +148,10 @@ jobs:
           echo "diff=$diff" >> $GITHUB_OUTPUT
           exit $diff
 
+
   report:
     needs: [test-docs, test-libraries, codecheck-libraries]
+    name: "Libraries Test > Report"
     if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-22.04
     steps:

@@ -52,7 +52,9 @@ function getResolution(
   transaction: Transaction,
   deviceModelId?: DeviceModelId,
 ): Resolution | undefined {
-  if (!transaction.subAccountId || !transaction.model.commandDescriptor) return;
+  if (!transaction.subAccountId || !transaction.model.commandDescriptor) {
+    return;
+  }
 
   const { command } = transaction.model.commandDescriptor;
   switch (command.kind) {

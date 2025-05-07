@@ -17,7 +17,11 @@ const meta: Meta<typeof AssetList> = {
   title: "PreLdls/Components/AssetList",
   tags: ["autodocs"],
   args: {
-    assets: Array.from({ length: 50 }).map((_, i) => ({ name: `Bitcoin ${i}`, ticker: "BTC" })),
+    assets: Array.from({ length: 50 }).map((_, i) => ({
+      name: `Bitcoin ${i}`,
+      ticker: "BTC",
+      id: `bitcoin-${i}`,
+    })),
     onClick: testFn,
   },
 };

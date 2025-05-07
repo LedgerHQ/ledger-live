@@ -1,25 +1,11 @@
-import React, { useMemo, useState, memo, useCallback } from "react";
+import React, { useState, memo, useCallback } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-import { SearchInput } from "@ledgerhq/react-ui";
-import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
-import Fuse from "fuse.js";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import Text from "~/renderer/components/Text";
 import { SelectNetwork } from "./SelectNetwork";
-import { getEnv } from "@ledgerhq/live-env";
-
-const options = {
-  includeScore: false,
-  threshold: 0.1,
-  // Search in `ticker`, `name`, `keywords` values
-  keys: getEnv("CRYPTO_ASSET_SEARCH_KEYS"),
-  shouldSort: false,
-};
-function fuzzySearch(currencies: Currency[], searchValue: string): Currency[] {
-  const fuse = new Fuse(currencies, options);
-  return fuse.search(searchValue).map(res => res.item);
-}
+import { SearchItem } from "./Search";
 
 export type SelectAccountAndCurrencyDrawerProps = {
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
@@ -27,21 +13,13 @@ export type SelectAccountAndCurrencyDrawerProps = {
 };
 
 function SelectAssetFlow(props: SelectAccountAndCurrencyDrawerProps) {
-  const { onAssetSelected, currencies } = props;
   const { t } = useTranslation();
-  const [searchValue, setSearchValue] = useState<string>("");
+  const { onAssetSelected, currencies } = props;
 
   // sorting them by marketcap
   const sortedCurrencies = useCurrenciesByMarketcap(currencies);
 
-  // performing fuzzy search if there is a valid searchValue
-  const filteredCurrencies = useMemo(() => {
-    if (searchValue.length < 2) {
-      return sortedCurrencies;
-    }
-
-    return fuzzySearch(sortedCurrencies, searchValue);
-  }, [searchValue, sortedCurrencies]);
+  const [itemsToDisplay, setItemsToDisplay] = useState<CryptoOrTokenCurrency[]>(sortedCurrencies);
 
   const handleCurrencySelected = useCallback(
     (currency: CryptoOrTokenCurrency) => {
@@ -64,9 +42,6 @@ function SelectAssetFlow(props: SelectAccountAndCurrencyDrawerProps) {
           ff="Inter|Medium"
           color="palette.text.shade100"
           fontSize="24px"
-          style={{
-            textTransform: "uppercase",
-          }}
           data-testid="select-asset-drawer-title"
         >
           {t("drawers.selectCurrency.title")}
@@ -74,15 +49,15 @@ function SelectAssetFlow(props: SelectAccountAndCurrencyDrawerProps) {
       </HeaderContainer>
       <SelectorContent>
         <SearchInputContainer>
-          <SearchInput
-            data-testid="select-asset-drawer-search-input"
-            value={searchValue}
-            onChange={setSearchValue}
+          <SearchItem
+            flow="Modular Asset Flow"
+            source="Accounts"
+            items={sortedCurrencies}
+            setItemsToDisplay={setItemsToDisplay}
           />
         </SearchInputContainer>
         <SelectNetwork
-          // @ts-expect-error compatibility issue between CryptoOrTokenCurrency and Currency (which includes Fiat) and the SelectAccountDrawer components
-          networks={filteredCurrencies}
+          networks={itemsToDisplay}
           onNetworkSelected={handleCurrencySelected}
           flow="Modular Asset Flow"
           source="Accounts"
@@ -104,22 +79,25 @@ const SelectAccountAndCurrencyDrawerContainer = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
+  height: 100%;
 `;
+
 const SelectorContent = styled.div`
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
+  margin: 0px 16px 0px;
+  height: 100%;
 `;
 const HeaderContainer = styled.div`
-  padding: 40px 0px 32px 0px;
+  padding: 54px 0px 16px 24px;
   flex: 0 1 auto;
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
 `;
 
 const SearchInputContainer = styled.div`
-  padding: 0px 40px 16px 40px;
+  padding: 0px 0px 16px 0px;
   flex: 0 1 auto;
 `;

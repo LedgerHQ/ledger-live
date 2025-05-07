@@ -1,4 +1,4 @@
-name: "[Release](Hotfix) Prepare for releasing"
+name: "[Release] - Prepare & Publish Hotfix - Manual"
 
 on:
   workflow_dispatch:
@@ -131,7 +131,7 @@ jobs:
           fi
 
   release-final:
-    name: "[Release] Publish packages and apps"
+    name: "Prepare Hotfix > Publish packages and apps"
     needs: prepare-release
     uses: LedgerHQ/ledger-live/.github/workflows/release-final.yml@develop
     with:
@@ -143,7 +143,7 @@ jobs:
     secrets: inherit
 
   release-fail:
-    name: Hotfix Preparation Failure Reporting
+    name: "Prepare Hotfix > Failure Reporting"
     needs: release-final
     if: failure()
     runs-on: ubuntu-latest

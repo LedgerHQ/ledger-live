@@ -1,4 +1,4 @@
-name: "@Desktop • Test App (external)"
+name: "[EXT-Desktop] - Test (External) - Called"
 
 on:
   workflow_call:
@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   codechecks:
-    name: "Desktop Code Checks"
+    name: "Desktop Code Check (External)"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -60,7 +60,7 @@ jobs:
         shell: bash
 
   unit-tests:
-    name: "Desktop Unit Tests"
+    name: "Desktop Unit Tests (External)"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -86,7 +86,7 @@ jobs:
         run: pnpm desktop test:jest
 
   e2e-tests-linux:
-    name: "Desktop Tests E2E (Ubuntu)"
+    name: "Desktop E2E (External)"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -144,6 +144,7 @@ jobs:
 
   report:
     needs: [codechecks, unit-tests, e2e-tests-linux]
+    name: "Test Desktop (External) > Report"
     runs-on: ubuntu-22.04
     if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
     steps:

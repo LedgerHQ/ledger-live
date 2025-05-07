@@ -1,4 +1,4 @@
-name: "[Release] Create Branch"
+name: "[Release] - Start Release - Manual"
 
 on:
   workflow_dispatch:
@@ -85,7 +85,7 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
   create-release-fail:
-    name: Create Release Failure Reporting
+    name: Create Release > Failure Reporting
     needs: create-release
     if: failure()
     runs-on: ubuntu-latest

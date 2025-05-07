@@ -1,4 +1,4 @@
-name: "Test Design System"
+name: "[UI Libs] - Test - Called"
 
 on:
   workflow_call:
@@ -31,7 +31,7 @@ permissions:
 
 jobs:
   test-design-system:
-    name: "Design System Tests"
+    name: "UI Libs Test"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
