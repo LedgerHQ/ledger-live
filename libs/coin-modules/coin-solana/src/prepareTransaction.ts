@@ -79,7 +79,6 @@ import { MemoTransferExt, TransferFeeConfigExt } from "./network/chain/account/t
 import { calculateToken2022TransferFees } from "./helpers/token";
 import { TokenAccountInfo } from "./network/chain/account/token";
 import {
-  CompiledInstruction,
   DecodedTransferInstruction,
   MessageCompiledInstruction,
   PublicKey,

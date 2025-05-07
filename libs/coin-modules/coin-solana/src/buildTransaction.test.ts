@@ -17,7 +17,7 @@ describe("Testing buildTransaction", () => {
 
   afterEach(() => jest.clearAllMocks());
 
-  it.only("should decode raw transaction and use it when user provide it", async () => {
+  it("should decode raw transaction and use it when user provide it", async () => {
     const expectedSolanaTransaction = {} as VersionedTransaction;
     expectedSolanaTransaction.addSignature = jest.fn();
 
