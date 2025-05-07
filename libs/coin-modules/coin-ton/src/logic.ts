@@ -7,6 +7,7 @@ export function getSyncHash(currency: CryptoCurrency, blacklistedList: string[])
   const tokens = listTokensForCryptoCurrency(currency).filter(
     token => !blacklistedList.includes(token.id),
   );
+
   const stringToHash = tokens
     .map(token => token.id + token.contractAddress + token.name + token.ticker + token.units)
     .join("");
