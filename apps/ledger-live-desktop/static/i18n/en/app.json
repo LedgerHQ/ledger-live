@@ -6601,7 +6601,7 @@
         "swap": "Swap",
         "deposit": "Deposit"
       }
-    }, 
+    },
     "InvalidMemoMina": {
       "title": "Memo text cannot be longer than 32 characters"
     },
@@ -6638,7 +6638,8 @@
       "title": "choose asset"
     },
     "selectAccount": {
-      "title": "choose account"
+      "title": "choose account",
+      "addAccount": "Add new or existing account"
     }
   },
   "customImage": {
