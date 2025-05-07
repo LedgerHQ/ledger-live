@@ -33,6 +33,10 @@ const bundle_ios = async () => {
   await $`pnpm mobile bundle:ios --dev false --minify false`;
 };
 
+const bundle_android = async () => {
+  await $`pnpm mobile bundle:android --dev false --minify false`;
+};
+
 const bundle_ios_with_cache = async () => {
   await bundle_ios();
 
@@ -40,8 +44,8 @@ const bundle_ios_with_cache = async () => {
   await $`pnpm mobile exec detox build-framework-cache`;
   within(async () => {
     cd("apps/ledger-live-mobile");
-    await $`cp main.jsbundle ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle`;
-    await $`mv main.jsbundle ios/build/Build/Products/Release-iphonesimulator/main.jsbundle`;
+    await $`mkdir -p ios/build/Build/Products/Release-iphonesimulator`
+    await $`cp main.jsbundle ios/build/Build/Products/Release-iphonesimulator/main.jsbundle`;
   });
 };
 
@@ -88,7 +92,7 @@ const getTasksFrom = {
   },
   android: {
     build: build_android,
-    bundle: () => undefined,
+    bundle: async () =>  await bundle_android(),
     test: test_android,
   },
 };
