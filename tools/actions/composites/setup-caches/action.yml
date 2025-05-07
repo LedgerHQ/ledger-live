@@ -114,7 +114,7 @@ runs:
       uses: LedgerHQ/ledger-live/tools/actions/turborepo-s3-cache@develop
       with:
         server-token: "${{ inputs.turbo-server-token }}"
-        cleanup-cache-folder: "true"
+        cleanup-cache-folder: "false"
         aws-access-key: ${{ env.AWS_ACCESS_KEY_ID }}
         aws-secret-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
         aws-session-token: ${{ env.AWS_SESSION_TOKEN }}
