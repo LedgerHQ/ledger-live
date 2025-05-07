@@ -12,6 +12,8 @@ import {
 import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import { AptosAPI } from "../../network";
+import { AptosAsset, AptosExtra, AptosSender } from "../../types/assets";
+import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 
 jest.mock("@aptos-labs/ts-sdk");
 jest.mock("@apollo/client");
@@ -474,6 +476,7 @@ describe("Aptos API", () => {
       });
     });
   });
+
   describe("broadcast", () => {
     it("broadcasts the transaction", async () => {
       mockedPost.mockImplementation(async () => ({ data: { hash: "ok" } }));
@@ -494,6 +497,54 @@ describe("Aptos API", () => {
         type: "Fullnode",
         originMethod: "",
       });
+    });
+  });
+
+  describe("estimateFees", () => {
+    it("estimates the fees", async () => {
+      const gasEstimation = { gas_estimate: 100 };
+      mockedAptos.mockImplementation(() => ({
+        getLedgerInfo: jest.fn().mockResolvedValue({
+          ledger_timestamp: Date.now(),
+        }),
+        transaction: {
+          build: {
+            simple: jest.fn().mockResolvedValue({ rawTransaction: {} }),
+          },
+          simulate: {
+            simple: jest.fn().mockResolvedValue([
+              {
+                gas_used: 10,
+                gas_unit_price: 4,
+              },
+            ]),
+          },
+        },
+        getGasPriceEstimation: jest.fn().mockReturnValue(gasEstimation),
+      }));
+
+      const amount = BigInt(100);
+      const SENDER: AptosSender = {
+        xpub: "xpub",
+        freshAddress: "address1",
+      };
+      const RECIPIENT = "address2";
+
+      const api = new AptosAPI("aptos");
+      const transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender> = {
+        asset: {
+          type: "native",
+          function: "0x1::aptos_account::transfer_coins",
+        },
+        type: "send",
+        sender: SENDER,
+        amount,
+        recipient: RECIPIENT,
+      };
+
+      const fees = await api.estimateFees(transactionIntent);
+
+      expect(fees.value.toString()).toEqual("40");
     });
   });
 });

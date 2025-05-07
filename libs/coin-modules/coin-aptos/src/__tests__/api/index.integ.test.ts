@@ -46,14 +46,16 @@ describe("createApi", () => {
       const amount = BigInt(100);
 
       const fees = await api.estimateFees({
-        asset: { type: "native", function: "0x1::aptos_account::transfer_coins" },
+        asset: {
+          type: "native",
+          function: "0x1::aptos_account::transfer_coins",
+        },
         type: "send",
         sender: SENDER,
         amount,
         recipient: RECIPIENT,
       });
 
-      // Then
       expect(fees.value).toEqual(BigInt(55100));
     });
   });
