@@ -56,6 +56,7 @@ const test_ios = async () => {
     --retries 1 \
     --runInBand \
     --cleanup \
+    --shard ${shard} \
     ${filter.split(" ")}`;
 };
 
