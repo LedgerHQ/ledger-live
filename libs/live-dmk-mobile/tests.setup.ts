@@ -11,6 +11,7 @@ afterEach(() => {
 vi.mock("react-native", () => ({
   Platform: {},
   PermissionsAndroid: {},
+  NativeModules: {},
 }));
 
 vi.mock("react-native-ble-plx", () => ({
