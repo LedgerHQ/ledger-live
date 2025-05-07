@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.70.0-nightly.0
+
+### Minor Changes
+
+- [#10103](https://github.com/LedgerHQ/ledger-live/pull/10103) [`91fe526`](https://github.com/LedgerHQ/ledger-live/commit/91fe526be2710f0fb18b4d035a5d8de630b3d4b5) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add tracking for transaction checks opt in result
+
 ## 6.69.0
 
 ### Minor Changes

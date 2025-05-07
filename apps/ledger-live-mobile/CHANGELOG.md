@@ -1,5 +1,33 @@
 # live-mobile
 
+## 3.78.0-nightly.0
+
+### Minor Changes
+
+- [#9845](https://github.com/LedgerHQ/ledger-live/pull/9845) [`72282ce`](https://github.com/LedgerHQ/ledger-live/commit/72282ce028fd05e4e672dce0a468c31ad285bf8e) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Hide memo disclaimer for Internet Computer
+
+- [#10146](https://github.com/LedgerHQ/ledger-live/pull/10146) [`ff447b4`](https://github.com/LedgerHQ/ledger-live/commit/ff447b4ded74469b3e9599068951c7f4f2aa4dc5) Thanks [@Justkant](https://github.com/Justkant)! - feat: add wallet-api sign message options
+
+- [#10071](https://github.com/LedgerHQ/ledger-live/pull/10071) [`2ff4c03`](https://github.com/LedgerHQ/ledger-live/commit/2ff4c03ca7d8232563141b9531b1359087e57c59) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Generic Card for Large Mover
+
+### Patch Changes
+
+- Updated dependencies [[`91fe526`](https://github.com/LedgerHQ/ledger-live/commit/91fe526be2710f0fb18b4d035a5d8de630b3d4b5), [`2ff4c03`](https://github.com/LedgerHQ/ledger-live/commit/2ff4c03ca7d8232563141b9531b1359087e57c59)]:
+  - @ledgerhq/types-live@6.70.0-nightly.0
+  - @ledgerhq/coin-evm@2.21.0-nightly.0
+  - @ledgerhq/native-ui@0.34.0-nightly.0
+  - @ledgerhq/coin-framework@5.0.1-nightly.0
+  - @ledgerhq/coin-cosmos@0.14.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.5-nightly.0
+  - @ledgerhq/coin-multiversx@0.4.5-nightly.0
+  - @ledgerhq/coin-stacks@0.8.5-nightly.0
+  - @ledgerhq/domain-service@1.2.29-nightly.0
+  - @ledgerhq/live-countervalues@0.5.5-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.34-nightly.0
+  - @ledgerhq/live-nft@0.8.5-nightly.0
+  - @ledgerhq/live-nft-react@0.9.5-nightly.0
+  - @ledgerhq/live-wallet@0.10.8-nightly.0
+
 ## 3.77.0
 
 ### Minor Changes

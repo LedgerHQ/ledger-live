@@ -1,5 +1,15 @@
 # @ledgerhq/coin-solana
 
+## 0.21.2-nightly.0
+
+### Patch Changes
+
+- [#10132](https://github.com/LedgerHQ/ledger-live/pull/10132) [`ce912b3`](https://github.com/LedgerHQ/ledger-live/commit/ce912b35437c1f71d1566fa010c309beeea01b03) Thanks [@qperrot](https://github.com/qperrot)! - Update commande if transaction is updated
+
+- Updated dependencies [[`91fe526`](https://github.com/LedgerHQ/ledger-live/commit/91fe526be2710f0fb18b4d035a5d8de630b3d4b5)]:
+  - @ledgerhq/types-live@6.70.0-nightly.0
+  - @ledgerhq/coin-framework@5.0.1-nightly.0
+
 ## 0.21.1
 
 ### Patch Changes

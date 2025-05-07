@@ -1,5 +1,34 @@
 # ledger-live-desktop
 
+## 2.113.0-nightly.0
+
+### Minor Changes
+
+- [#9911](https://github.com/LedgerHQ/ledger-live/pull/9911) [`a0de4b8`](https://github.com/LedgerHQ/ledger-live/commit/a0de4b8812d1c055db598532ee5547d8eccabc9e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Modular drawer - Integrate into LiveApps flows
+
+- [#10103](https://github.com/LedgerHQ/ledger-live/pull/10103) [`91fe526`](https://github.com/LedgerHQ/ledger-live/commit/91fe526be2710f0fb18b4d035a5d8de630b3d4b5) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add tracking for transaction checks opt in result
+
+- [#10146](https://github.com/LedgerHQ/ledger-live/pull/10146) [`ff447b4`](https://github.com/LedgerHQ/ledger-live/commit/ff447b4ded74469b3e9599068951c7f4f2aa4dc5) Thanks [@Justkant](https://github.com/Justkant)! - feat: add wallet-api sign message options
+
+### Patch Changes
+
+- Updated dependencies [[`91fe526`](https://github.com/LedgerHQ/ledger-live/commit/91fe526be2710f0fb18b4d035a5d8de630b3d4b5), [`ff447b4`](https://github.com/LedgerHQ/ledger-live/commit/ff447b4ded74469b3e9599068951c7f4f2aa4dc5), [`ff447b4`](https://github.com/LedgerHQ/ledger-live/commit/ff447b4ded74469b3e9599068951c7f4f2aa4dc5)]:
+  - @ledgerhq/types-live@6.70.0-nightly.0
+  - @ledgerhq/coin-evm@2.21.0-nightly.0
+  - @ledgerhq/live-common@34.33.0-nightly.0
+  - @ledgerhq/coin-framework@5.0.1-nightly.0
+  - @ledgerhq/coin-aptos@1.9.5-nightly.0
+  - @ledgerhq/coin-bitcoin@0.15.5-nightly.0
+  - @ledgerhq/coin-cosmos@0.14.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.5-nightly.0
+  - @ledgerhq/domain-service@1.2.29-nightly.0
+  - @ledgerhq/live-countervalues@0.5.5-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.34-nightly.0
+  - @ledgerhq/live-nft@0.8.5-nightly.0
+  - @ledgerhq/live-nft-react@0.9.5-nightly.0
+  - @ledgerhq/live-wallet@0.10.8-nightly.0
+  - @ledgerhq/live-dmk-desktop@0.3.4-nightly.0
+
 ## 2.112.0
 
 ### Minor Changes
