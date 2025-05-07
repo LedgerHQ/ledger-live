@@ -1,4 +1,4 @@
-name: "[Code Quality Check] Sonar Scan"
+name: "[All Platforms] - SonarQube Scan - Scheduled"
 
 on:
   schedule:

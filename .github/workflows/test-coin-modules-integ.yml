@@ -1,4 +1,4 @@
-name: "[Test] Coin modules"
+name: "[Coin] - Test Coin modules - Scheduled"
 
 on:
   schedule:
