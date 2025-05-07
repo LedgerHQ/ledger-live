@@ -6,6 +6,8 @@ import { dark, light, ModeColors, spacing, SpacingScale } from "./design-tokens"
 const overrideOther = {
   "radius-s": "8px", // missing from tokens
   "radius-xs": "4px", // missing from tokens
+  "border-width-default": "1px", // missing from tokens
+  "border-width-focus": "2px", // missing from tokens
   "margin-xs": "8px", // redefines marging-xs
   "margin-s": "16px", // redefines marging-s
   "margin-m": "24px", // redefines marging-m
