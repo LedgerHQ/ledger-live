@@ -1,5 +1,17 @@
 # @ledgerhq/coin-casper
 
+## 1.7.0-next.0
+
+### Minor Changes
+
+- [#10150](https://github.com/LedgerHQ/ledger-live/pull/10150) [`9d2c1d9`](https://github.com/LedgerHQ/ledger-live/commit/9d2c1d9e563c22b3ec559305e595dcb58d913c0d) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update coin-casper tests + error management in api
+
+### Patch Changes
+
+- Updated dependencies [[`a7ba19c`](https://github.com/LedgerHQ/ledger-live/commit/a7ba19cfa5a895572edfcf036a10d2af83efdf38), [`91fe526`](https://github.com/LedgerHQ/ledger-live/commit/91fe526be2710f0fb18b4d035a5d8de630b3d4b5)]:
+  - @ledgerhq/types-live@6.70.0-next.0
+  - @ledgerhq/coin-framework@5.0.1-next.0
+
 ## 1.6.4
 
 ### Patch Changes

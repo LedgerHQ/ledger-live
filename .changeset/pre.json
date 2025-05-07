@@ -146,5 +146,32 @@
     "@ledgerhq/native-modules-tools": "1.0.3",
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "breezy-dancers-sing",
+    "calm-ties-tickle",
+    "chilly-hairs-cough",
+    "cold-tomatoes-greet",
+    "dry-owls-complain",
+    "eight-parrots-leave",
+    "empty-ants-hug",
+    "fifty-elephants-jog",
+    "flat-buses-vanish",
+    "fresh-fishes-change",
+    "funny-brooms-tell",
+    "gold-turtles-fly",
+    "gorgeous-sloths-swim",
+    "khaki-rocks-wave",
+    "light-mice-boil",
+    "many-feet-wonder",
+    "nervous-experts-wave",
+    "ninety-pumpkins-remain",
+    "popular-plums-play",
+    "slimy-ravens-joke",
+    "smooth-mangos-sort",
+    "spicy-pumas-juggle",
+    "tender-feet-knock",
+    "thick-coats-doubt",
+    "three-items-suffer",
+    "tidy-zebras-greet"
+  ]
 }
