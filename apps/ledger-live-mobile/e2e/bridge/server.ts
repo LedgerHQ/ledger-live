@@ -206,6 +206,10 @@ export async function waitSwapReady() {
   return fetchData({ type: "waitSwapReady", id: uniqueId() }, RESPONSE_TIMEOUT * 6);
 }
 
+export async function waitEarnReady() {
+  return fetchData({ type: "waitEarnReady", id: uniqueId() }, RESPONSE_TIMEOUT * 6);
+}
+
 export async function getLogs() {
   return fetchData({ type: "getLogs", id: uniqueId() });
 }

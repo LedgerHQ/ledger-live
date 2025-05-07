@@ -15,7 +15,6 @@ import {
   localeSelector,
 } from "~/renderer/reducers/settings";
 import { useDeepLinkListener } from "~/renderer/screens/earn/useDeepLinkListener";
-import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 
 const DEFAULT_EARN_APP_ID = "earn";
 
@@ -35,16 +34,6 @@ const Earn = () => {
   const stakeProgramsParam = useMemo(
     () => stakeProgramsToEarnParam(stakePrograms),
     [stakePrograms],
-  );
-
-  const customHandlers = useMemo(
-    () => ({
-      ...loggerHandlers,
-      "custom.isReady": async () => {
-        console.info("Earn Live App Loaded");
-      },
-    }),
-    [],
   );
 
   return (
@@ -70,7 +59,6 @@ const Earn = () => {
             OS: "web",
             stakeProgramsParam: stakeProgramsParam ? JSON.stringify(stakeProgramsParam) : undefined,
           }}
-          customHandlers={customHandlers}
         />
       ) : null}
     </Card>

@@ -5,9 +5,9 @@ import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { usePTXCustomHandlers } from "~/components/WebPTXPlayer/CustomHandlers";
 import { flattenAccountsSelector } from "~/reducers/accounts";
-import { earnCustomHandlers, swapCustomHandlers } from "../customHandlers";
+import { swapCustomHandlers } from "../customHandlers";
 
-export function useLiveAppCustomHandlers(manifest: LiveAppManifest) {
+export function useSwapLiveAppCustomHandlers(manifest: LiveAppManifest) {
   const accounts = useSelector(flattenAccountsSelector);
   const ptxCustomHandlers = usePTXCustomHandlers(manifest, accounts);
   const dispatch = useDispatch();
@@ -22,7 +22,6 @@ export function useLiveAppCustomHandlers(manifest: LiveAppManifest) {
         dispatch,
         navigation,
       }),
-      ...earnCustomHandlers(),
     } as unknown;
 
     // Then cast to the final type

@@ -68,6 +68,7 @@ export type MessageData =
   | { type: "setGlobals"; id: string; payload: { [key: string]: unknown } }
   | { type: "swapSetup"; id: string }
   | { type: "waitSwapReady"; id: string }
+  | { type: "waitEarnReady"; id: string }
   | { type: "ACK"; id: string };
 
 export type MockDeviceEvent =
