@@ -225,6 +225,7 @@ export type Features = CurrencyFeatures & {
   llmMmkvMigration: Feature_LlmMmkvMigration;
   lldModularDrawer: Feature_LldModularDrawer;
   llNftSupport: DefaultFeature;
+  ldmkConnectApp: DefaultFeature;
 };
 
 /**

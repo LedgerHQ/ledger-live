@@ -21,7 +21,8 @@ import { FullNodeSteps, ConnectionStatus, CheckWrapper, connectionStatus } from 
 import IconCheck from "~/renderer/icons/Check";
 import { Device } from "@ledgerhq/types-devices";
 import { ScannedDescriptor } from "../../types";
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+
 const StepConnectDevice = ({
   setScannedDescriptors,
   numberOfAccountsToScan,
@@ -35,6 +36,11 @@ const StepConnectDevice = ({
   const [device, setDevice] = useState<Device>(null);
   const [scanStatus, setScanStatus] = useState<ConnectionStatus>(connectionStatus.IDLE);
   const request = useMemo(() => ({ currency }), [currency]);
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
+  const action = createAction(
+    getEnv("MOCK") ? mockedEventEmitter : connectApp({ isLdmkConnectAppEnabled }),
+  );
+
   useEffect(() => {
     if (device) {
       const sub = scanDescriptors(

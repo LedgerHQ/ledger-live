@@ -601,6 +601,7 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   llNftSupport: DEFAULT_FEATURE,
+  ldmkConnectApp: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

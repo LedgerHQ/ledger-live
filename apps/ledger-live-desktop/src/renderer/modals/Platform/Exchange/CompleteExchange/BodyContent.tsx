@@ -12,9 +12,9 @@ import BigSpinner from "~/renderer/components/BigSpinner";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { TransactionBroadcastedContent } from "./TransactionBroadcastedContent";
 import { ExchangeMode } from "./Body";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const exchangeAction = createAction(completeExchange);
-const sendAction = txCreateAction(connectApp);
 
 export type BodyContentProps = {
   error?: Error;
@@ -51,6 +51,9 @@ export type BodyContentProps = {
 };
 
 export const BodyContent = (props: BodyContentProps) => {
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
+  const sendAction = txCreateAction(connectApp({ isLdmkConnectAppEnabled }));
+
   if (props.error) {
     return <ErrorDisplay error={props.error} />;
   }
