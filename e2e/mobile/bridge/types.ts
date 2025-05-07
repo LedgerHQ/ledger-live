@@ -21,7 +21,8 @@ export type ServerData =
       payload: string;
     }
   | { type: "ACK"; id: string }
-  | { type: "swapLiveAppReady" };
+  | { type: "swapLiveAppReady" }
+  | { type: "earnLiveAppReady" };
 
 export type MessageData =
   | {
@@ -48,4 +49,5 @@ export type MessageData =
   | { type: "overrideFeatureFlags"; id: string; payload: SettingsSetOverriddenFeatureFlagsPlayload }
   | { type: "swapSetup"; id: string }
   | { type: "waitSwapReady"; id: string }
+  | { type: "waitEarnReady"; id: string }
   | { type: "ACK"; id: string };

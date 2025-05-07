@@ -180,6 +180,13 @@ export function sendWalletAPIResponse(payload: Record<string, unknown>) {
   });
 }
 
+// TODO: replace in apps/ledger-live-mobile/src/components/WebPTXPlayer/CustomHandlers.ts
+export function sendEarnLiveAppReady() {
+  postMessage({
+    type: "earnLiveAppReady",
+  });
+}
+
 function postMessage(message: ServerData) {
   log(`Message sending\n${JSON.stringify(message, null, 2)}`);
   try {

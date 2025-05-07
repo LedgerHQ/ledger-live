@@ -127,6 +127,10 @@ export async function waitSwapReady() {
   return fetchData({ type: "waitSwapReady", id: uniqueId() }, RESPONSE_TIMEOUT * 3);
 }
 
+export async function waitEarnReady() {
+  return fetchData({ type: "waitEarnReady", id: uniqueId() }, RESPONSE_TIMEOUT * 6);
+}
+
 export async function getLogs() {
   return fetchData({ type: "getLogs", id: uniqueId() });
 }
@@ -174,15 +178,16 @@ function onMessage(messageStr: string) {
     case "walletAPIResponse":
       webSocket.e2eBridgeServer.next(msg);
       break;
-    case "appLogs": {
-      clientResponse(msg.payload);
-      break;
-    }
+    case "appLogs":
     case "appFlags":
-      clientResponse(msg.payload);
-      break;
     case "appEnvs":
       clientResponse(msg.payload);
+      break;
+    case "swapLiveAppReady":
+      clientResponse("Swap Live App is ready");
+      break;
+    case "earnLiveAppReady":
+      clientResponse("Earn Live App is ready");
       break;
     default:
       break;
