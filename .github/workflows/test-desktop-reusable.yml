@@ -235,14 +235,11 @@ jobs:
               attempt_number: "${{ github.run_attempt }}",
             });
 
-            const findJobUrl = os =>
-              jobs.find(job => job.name == `Live Desktop Tests (${os})`)?.html_url;
-
             const keys = {
               linux: {
                 symbol: "🐧",
                 name: "Linux",
-                jobUrl: findJobUrl("Linux")
+                jobUrl: jobs.find(job => job.name == `Ubuntu E2E`)?.html_url
               },
             };
 
