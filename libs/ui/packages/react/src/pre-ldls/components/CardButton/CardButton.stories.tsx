@@ -5,7 +5,14 @@ import { expect, fn, userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof CardButton> = {
   component: CardButton,
-  title: "PreLdls/Atoms/CardButton",
+  title: "PreLdls/Components/CardButton",
+  decorators: [
+    Story => (
+      <div style={{ display: "flex" }}>
+        <Story />
+      </div>
+    ),
+  ],
   tags: ["autodocs"],
   args: {
     onClick: () => null,
