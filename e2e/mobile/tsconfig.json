@@ -42,6 +42,6 @@
     "jest.config.js",
     "**/*.js",
     "../../apps/ledger-live-mobile/src/**/*",
-    " ../../libs/ledger-live-common/src/**/*"
+    "../../libs/ledger-live-common/src/**/*"
   ]
 }

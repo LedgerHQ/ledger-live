@@ -216,7 +216,7 @@ jobs:
         id: "test-artifacts"
         with:
           name: "ios-test-artifacts"
-          path: apps/ledger-live-mobile/artifacts
+          path: ${{ env.E2E_RUN == 'true' && 'e2e/mobile/' || 'apps/ledger-live-mobile/artifacts/' }}
       - run: echo "${{ steps.test-artifacts.outputs.artifact-id }}"
 
   allure-report-ios:
@@ -420,7 +420,7 @@ jobs:
         id: "test-artifacts"
         with:
           name: "android-test-artifacts-${{ matrix.shardIndex }}"
-          path: apps/ledger-live-mobile/artifacts/
+          path: ${{ env.E2E_RUN == 'true' && 'e2e/mobile/' || 'apps/ledger-live-mobile/artifacts/' }}
 
       - name: Set job output based on detox result
         id: set-output
