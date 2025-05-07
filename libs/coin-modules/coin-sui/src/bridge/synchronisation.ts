@@ -1,5 +1,4 @@
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { log } from "@ledgerhq/logs";
 import {
   makeSync,
   mergeOps,
@@ -7,7 +6,7 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getAccount, getOperations } from "../network";
 import { SuiAccount } from "../types";
-import { OperationType, type Operation } from "@ledgerhq/types-live";
+import { type Operation } from "@ledgerhq/types-live";
 
 /**
  * Get the shape of the account including its operations and balance.
@@ -32,27 +31,17 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async info => {
 
   const { blockHeight, balance } = await getAccount(address);
 
-  // Merge new operations with the previously synced ones
   let operations: Operation[] = [];
-  try {
-    // Needed for incremental synchronisation
-    const startAtIn = latestHash(oldOperations, "IN");
-    const startAtOut = latestHash(oldOperations, "OUT");
-    const newOperations = await getOperations(accountId, address, startAtIn, startAtOut);
-    operations = mergeOps(oldOperations, newOperations);
-  } catch (e) {
-    log(
-      "sui/getAccountShape",
-      "failed to sync with incremental strategy, falling back to full resync",
-      { error: e },
-    );
-    // if we could NOT sync with existing transaction - we start from the beggining, rewritting transaction history
-    operations = await getOperations(accountId, address);
-  }
+
+  const syncHash = initialAccount?.syncHash ?? latestHash(oldOperations);
+  const newOperations = await getOperations(accountId, address, syncHash);
+  operations = mergeOps(oldOperations, newOperations);
 
   operations.sort((a, b) => b.date.valueOf() - a.date.valueOf());
+
   const shape = {
     id: accountId,
+    syncHash: syncHash ?? undefined,
     balance,
     spendableBalance: balance,
     operationsCount: operations.length,
@@ -68,8 +57,8 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async info => {
  * @param {Object} params - The parameters for synchronisation.
  * @returns {Promise<void>} A promise that resolves when synchronisation is complete.
  */
-export const sync = makeSync({ getAccountShape });
+export const sync = makeSync({ getAccountShape, shouldMergeOps: false });
 
-function latestHash(operations: Operation[], type: OperationType) {
-  return operations.find(el => type === el.type)?.blockHash ?? null;
+function latestHash(operations: Operation[]) {
+  return operations.length ? operations[0].blockHash : null;
 }
