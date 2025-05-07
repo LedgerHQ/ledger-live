@@ -1343,9 +1343,11 @@ describe("Aptos sync logic ", () => {
         } as unknown as AptosTransaction,
       ];
 
-      const [ops, tokenOps] = txsToOps({ address }, id, txs);
-
+      const [ops, tokenOps, stakedOps, withdrawableOps] = txsToOps({ address }, id, txs);
+      console.log("THIS IS THE OPS", ops);
       expect(ops).toHaveLength(1);
+      expect(withdrawableOps).toHaveLength(0);
+      expect(stakedOps).toHaveLength(0);
       expect(ops[0]).toEqual({
         id: expect.any(String),
         hash: "0x123",

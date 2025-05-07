@@ -186,7 +186,7 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
   const aptosClient = new AptosAPI(currency.id);
   const { balance, transactions, blockHeight } = await aptosClient.getAccountInfo(address);
 
-  const [newOperations, tokenOperations, stakingOperations, withDrawableOperations]: [
+  const [newOperations, tokenOperations, stakingOperations, withdrawableOperations]: [
     Operation[],
     Operation[],
     Operation[],
@@ -206,7 +206,7 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
   });
 
   // PREPARE STAKING OPERATIONS
-  const groupedStakeOps = groupAllStakeOpsByValidator(stakingOperations, withDrawableOperations);
+  const groupedStakeOps = groupAllStakeOpsByValidator(stakingOperations, withdrawableOperations);
   const stakes = generateStakes(groupedStakeOps);
   //const mergedStakingOperations = mergeStakes(oldStakingOperations, stakes);
 
@@ -303,10 +303,10 @@ function generateStakes3(stakingOperations: Operation[]): AptosStake[] {
   return Object.values(stakesMap);
 }
 */
-const groupAllStakeOpsByValidator = (
+export function groupAllStakeOpsByValidator(
   stakingOperations: Operation[],
   withdrawableOperations: Operation[],
-): Record<string, Operation[]> => {
+): Record<string, Operation[]> {
   return [...stakingOperations, ...withdrawableOperations].reduce(
     (acc, op) => {
       const poolAddress = op.recipients[0];
@@ -316,9 +316,9 @@ const groupAllStakeOpsByValidator = (
     },
     {} as Record<string, Operation[]>,
   );
-};
+}
 
-const generateStakes = (groupedOps: Record<string, Operation[]>): AptosStake[] => {
+export function generateStakes(groupedOps: Record<string, Operation[]>): AptosStake[] {
   return Object.entries(groupedOps).map(([poolAddress, ops]) => {
     let delegated = BigNumber(0);
     let withdrawable = BigNumber(0);
@@ -350,7 +350,8 @@ const generateStakes = (groupedOps: Record<string, Operation[]>): AptosStake[] =
       },
     };
   });
-};
+}
+
 /*
 function mergeStakes(oldStakingOperations: AptosStake[], stakes: AptosStake[]): AptosStake[] {
   const mergedMap: Record<string, AptosStake> = {};
