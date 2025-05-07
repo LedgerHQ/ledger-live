@@ -65,7 +65,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
+    jest.mocked(txsToOps).mockReturnValue([[], [], [], []]);
 
     const account = await getAccountShape(
       {
@@ -119,7 +119,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
+    jest.mocked(txsToOps).mockReturnValue([[], [], [], []]);
 
     const account = await getAccountShape(
       {
@@ -172,7 +172,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
+    jest.mocked(txsToOps).mockReturnValue([[], [], [], []]);
 
     const account = await getAccountShape(
       {
@@ -205,7 +205,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
+    jest.mocked(txsToOps).mockReturnValue([[], [], [], []]);
 
     const account = await getAccountShape(
       {
@@ -258,7 +258,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
+    jest.mocked(txsToOps).mockReturnValue([[], [], [], []]);
 
     const account = await getAccountShape(
       {
@@ -311,7 +311,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
+    jest.mocked(txsToOps).mockReturnValue([[], [], [], []]);
 
     const account = await getAccountShape(
       {
@@ -932,7 +932,7 @@ describe("getAccountShape", () => {
     ] as Operation[];
     const stakingOperations = [] as Operation[];
     jest.mocked(mergeOps).mockReturnValue(operations);
-    jest.mocked(txsToOps).mockReturnValue([operations, tokenOperations, stakingOperations]);
+    jest.mocked(txsToOps).mockReturnValue([operations, tokenOperations, stakingOperations, []]);
 
     const info = {
       currency: {
@@ -1566,5 +1566,131 @@ describe("getSubAccounts", () => {
         swapHistory: [],
       },
     ]);
+  });
+});
+
+describe("getStaked", () => {
+  beforeEach(() => {
+    mockedAptosAPI = jest.mocked(AptosAPI);
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
+  it("should correctly create stakingOperations from staking transactions", async () => {
+    const mockStakingTransactions = [
+      {
+        version: "2532591430",
+        hash: "0x1234",
+        state_change_hash: "0xbbbb",
+        event_root_hash: "0xcccc",
+        gas_used: "10",
+        success: true,
+        vm_status: "Executed successfully",
+        accumulator_root_hash: "0xdddd",
+        changes: [],
+        sender: "0xa0d8",
+        sequence_number: "100",
+        max_gas_amount: "10",
+        gas_unit_price: "100",
+        expiration_timestamp_secs: "1743177500",
+        payload: {
+          function: "0x1::staking::delegate",
+          type_arguments: [],
+          arguments: ["0xvalidator", "3000000"],
+          type: "entry_function_payload",
+        },
+        signature: {
+          public_key: "0x474d",
+          signature: "0x1a2b",
+          type: "ed25519_signature",
+        },
+        events: [
+          {
+            guid: {
+              creation_number: "15",
+              account_address: "0xa0d8",
+            },
+            sequence_number: "1",
+            type: "0x1::staking::DelegationEvent",
+            data: {
+              amount: "3000000",
+              validator: "0xvalidator",
+            },
+          },
+        ],
+        timestamp: "1743177400000000",
+        type: "user_transaction",
+        block: {
+          height: 311900000,
+          hash: "0xblock1",
+        },
+      },
+    ];
+
+    const mockedTokenInfo: TokenCurrency = {
+      type: "TokenCurrency",
+      id: "aptos/coin/dstapt_0xd111::staked_coin::StakedAptos",
+      contractAddress: "0xd111::staked_coin::StakedAptos",
+      parentCurrency: getCryptoCurrencyById("aptos"),
+      name: "dstAPT",
+      tokenType: "coin",
+      ticker: "dstAPT",
+      disableCountervalue: false,
+      delisted: false,
+      units: [{ name: "dstAPT", code: "dstAPT", magnitude: 8 }],
+    };
+
+    mockedAptosAPI.getAccountInfo = jest.fn().mockResolvedValue({
+      balance: BigNumber("68254118"),
+      transactions: mockStakingTransactions,
+      blockHeight: 316278241,
+    });
+
+    mockedAptosAPI.getBalance = jest.fn().mockReturnValue(BigNumber("3000000"));
+
+    mockedDecodeTokenAccountId.mockReturnValue({
+      token: mockedTokenInfo,
+      accountId: "js:2:aptos:474d:aptos",
+    });
+
+    const expectedStakingOps: Operation[] = [
+      {
+        id: "js:2:aptos:474d:aptos-0x1234-STAKE",
+        hash: "0x1234",
+        type: "STAKE",
+        value: BigNumber("3000000"),
+        fee: BigNumber("1000"),
+        blockHash: "0xblock1",
+        blockHeight: 311900000,
+        senders: ["0xa0d8"],
+        recipients: ["0xvalidator"],
+        accountId: "js:2:aptos:474d:aptos",
+        date: new Date("2025-03-28T12:00:00.000Z"),
+        extra: { version: "2532591430" },
+        transactionSequenceNumber: 100,
+        hasFailed: false,
+      },
+    ];
+
+    jest.mocked(txsToOps).mockReturnValue([[], [], expectedStakingOps, []]);
+    jest.mocked(mergeOps).mockReturnValue([]);
+
+    const info = {
+      address: "0xa0d8",
+      currency: getCryptoCurrencyById("aptos"),
+      derivationMode: "",
+      index: 0,
+      derivationPath: "",
+    } as unknown as AccountShapeInfo<AptosAccount>;
+
+    const shape = await getAccountShape(info, {} as SyncConfig);
+
+    const tokenSubAccount = (shape.subAccounts || []).find(
+      a => a.type === "TokenAccount" && a.id.includes("stakedaptos"),
+    ) as TokenAccount;
+
+    expect(tokenSubAccount?.operations).toEqual(expectedStakingOps);
   });
 });

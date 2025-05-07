@@ -186,7 +186,8 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
   const aptosClient = new AptosAPI(currency.id);
   const { balance, transactions, blockHeight } = await aptosClient.getAccountInfo(address);
 
-  const [newOperations, tokenOperations, stakingOperations]: [
+  const [newOperations, tokenOperations, stakingOperations, withDrawableOperations]: [
+    Operation[],
     Operation[],
     Operation[],
     Operation[],
@@ -205,7 +206,8 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
   });
 
   // PREPARE STAKING OPERATIONS
-  const stakes = generateStakes(stakingOperations);
+  const groupedStakeOps = groupAllStakeOpsByValidator(stakingOperations, withDrawableOperations);
+  const stakes = generateStakes(groupedStakeOps);
   //const mergedStakingOperations = mergeStakes(oldStakingOperations, stakes);
 
   const aptosResources = initialAccount?.aptosResources || {
@@ -234,8 +236,8 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
   console.log("initialAccount?", initialAccount);
   return shape;
 };
-
-function generateStakes(stakingOperations: Operation[]): AptosStake[] {
+/*
+function generateStakes3(stakingOperations: Operation[]): AptosStake[] {
   const stakesMap: Record<string, AptosStake> = {};
   console.log("stakingOperations", stakingOperations);
   for (const op of stakingOperations) {
@@ -300,7 +302,56 @@ function generateStakes(stakingOperations: Operation[]): AptosStake[] {
 
   return Object.values(stakesMap);
 }
+*/
+const groupAllStakeOpsByValidator = (
+  stakingOperations: Operation[],
+  withdrawableOperations: Operation[],
+): Record<string, Operation[]> => {
+  return [...stakingOperations, ...withdrawableOperations].reduce(
+    (acc, op) => {
+      const poolAddress = op.recipients[0];
+      if (!acc[poolAddress]) acc[poolAddress] = [];
+      acc[poolAddress].push(op);
+      return acc;
+    },
+    {} as Record<string, Operation[]>,
+  );
+};
 
+const generateStakes = (groupedOps: Record<string, Operation[]>): AptosStake[] => {
+  return Object.entries(groupedOps).map(([poolAddress, ops]) => {
+    let delegated = BigNumber(0);
+    let withdrawable = BigNumber(0);
+
+    ops.forEach(op => {
+      if (op.type === "DELEGATE") {
+        delegated = delegated.plus(op.value);
+      } else if (op.type === "UNDELEGATE") {
+        withdrawable = withdrawable.plus(op.value);
+      }
+    });
+
+    return {
+      stakeAccAddr: poolAddress,
+      hasStakeAuth: true,
+      hasWithdrawAuth: true,
+      delegation: delegated.gt(0)
+        ? {
+            stake: delegated.toNumber(),
+            voteAccAddr: poolAddress,
+          }
+        : undefined,
+      stakeAccBalance: delegated.toNumber(), // this is optional or external
+      withdrawable: withdrawable.toNumber(),
+      activation: {
+        state: delegated.gt(0) ? (withdrawable.gt(0) ? "deactivating" : "active") : "inactive",
+        active: delegated.toNumber(),
+        inactive: withdrawable.toNumber(),
+      },
+    };
+  });
+};
+/*
 function mergeStakes(oldStakingOperations: AptosStake[], stakes: AptosStake[]): AptosStake[] {
   const mergedMap: Record<string, AptosStake> = {};
 
@@ -350,3 +401,4 @@ function mergeStakes(oldStakingOperations: AptosStake[], stakes: AptosStake[]): 
 
   return Object.values(mergedMap);
 }
+*/

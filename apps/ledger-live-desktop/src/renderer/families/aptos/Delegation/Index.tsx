@@ -125,7 +125,7 @@ function EarnRewardsCTA({ account, onEarnRewards }: EarnRewardsCTAProps) {
       >
         <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={4}>
           <Trans
-            i18nKey="solana.delegation.emptyState.description"
+            i18nKey="aptos.delegation.emptyState.description"
             values={{
               name: account.currency.name,
             }}
@@ -133,7 +133,7 @@ function EarnRewardsCTA({ account, onEarnRewards }: EarnRewardsCTAProps) {
         </Text>
         <Box mt={2}>
           <LinkWithExternalIcon
-            label={<Trans i18nKey="solana.delegation.emptyState.info" />}
+            label={<Trans i18nKey="aptos.delegation.emptyState.info" />}
             onClick={() => openURL(urls.solana.staking)}
           />
         </Box>
@@ -143,7 +143,7 @@ function EarnRewardsCTA({ account, onEarnRewards }: EarnRewardsCTAProps) {
           <Box display="flex" flexDirection="row" alignItems="center">
             <IconChartLine size={12} />
             <Box>
-              <Trans i18nKey="solana.delegation.emptyState.delegation" />
+              <Trans i18nKey="aptos.delegation.emptyState.delegation" />
             </Box>
           </Box>
         </Button>
