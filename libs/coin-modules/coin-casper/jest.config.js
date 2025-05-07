@@ -11,7 +11,7 @@ module.exports = {
   coverageReporters: ["json", ["lcov", { file: "casper-lcov.info", projectRoot: "../" }], "text"],
   preset: "ts-jest",
   testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".integ.test.ts"],
   reporters: [
     "default",
     [
@@ -19,4 +19,5 @@ module.exports = {
       { outputName: "casper-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
     ],
   ],
+  setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
 };

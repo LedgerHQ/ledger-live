@@ -23,10 +23,9 @@ import {
 import { LatestFirmwareVersionRequired } from "../../errors";
 import type { Resolver } from "../../hw/getAddress/types";
 import { getCurrencyConfiguration } from "../../config";
-import { SolanaCoinConfig } from "@ledgerhq/coin-solana/lib/config";
+import { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
 import { getCryptoCurrencyById } from "../../currencies";
 import { signMessage } from "@ledgerhq/coin-solana/hw-signMessage";
-import { toOffChainMessage } from "./offchainMessage/format";
 
 const TRUSTED_NAME_MIN_VERSION = "1.7.1";
 const MANAGER_APP_NAME = "Solana";
@@ -47,6 +46,7 @@ function isPKIUnsupportedError(err: unknown): err is TransportStatusError {
 const createSigner: CreateSigner<SolanaSigner> = (transport: Transport) => {
   const app = new Solana(transport);
   return {
+    getAppConfiguration: app.getAppConfiguration,
     getAddress: app.getAddress,
     signTransaction: async (path, tx, resolution) => {
       if (resolution) {
@@ -99,8 +99,8 @@ const createSigner: CreateSigner<SolanaSigner> = (transport: Transport) => {
 
       return app.signTransaction(path, tx);
     },
-    signMessage: (path: string, message: string) => {
-      return app.signOffchainMessage(path, toOffChainMessage(message));
+    signMessage: (path: string, messageHex: string) => {
+      return app.signOffchainMessage(path, Buffer.from(messageHex, "hex"));
     },
   };
 };

@@ -1,5 +1,17 @@
 # @ledgerhq/coin-tron
 
+## 4.0.0-next.0
+
+### Major Changes
+
+- [#10131](https://github.com/LedgerHQ/ledger-live/pull/10131) [`1b7521a`](https://github.com/LedgerHQ/ledger-live/commit/1b7521a7c17e9cdc0e817f9f8324fe3a41c69a96) Thanks [@jprudent](https://github.com/jprudent)! - Implement filter by min height on tron listOperations
+
+### Patch Changes
+
+- Updated dependencies [[`a7ba19c`](https://github.com/LedgerHQ/ledger-live/commit/a7ba19cfa5a895572edfcf036a10d2af83efdf38), [`91fe526`](https://github.com/LedgerHQ/ledger-live/commit/91fe526be2710f0fb18b4d035a5d8de630b3d4b5)]:
+  - @ledgerhq/types-live@6.70.0-next.0
+  - @ledgerhq/coin-framework@5.0.1-next.0
+
 ## 3.0.0
 
 ### Major Changes

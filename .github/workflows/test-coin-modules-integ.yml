@@ -47,3 +47,51 @@ jobs:
       - name: Test
         shell: bash
         run: pnpm coin-modules:test-integ
+
+  integ-tests-fail:
+    name: failure report
+    needs: integ-tests
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: post to coin-integration slack channel
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          method: chat.postMessage
+          payload: |
+            channel: "C06RTDKT324"
+            text: "[Test] Coin modules"
+            blocks: 
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "❌ *Coin modules integration tests failed*"
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
+  integ-tests-success:
+    name: success report
+    needs: integ-tests
+    if: success()
+    runs-on: ubuntu-latest
+    steps:
+      - name: post to coin-integration slack channel
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          method: chat.postMessage
+          payload: |
+            channel: "C06RTDKT324"
+            text: "[Test] Coin modules"
+            blocks: 
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "✅️ *Coin modules integration tests success*"
+            blocks: 
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"

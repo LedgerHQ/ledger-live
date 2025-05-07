@@ -85,7 +85,10 @@ class StatusError extends PureComponent<{
               maxWidth: 250,
             }}
           >
-            <TranslatedError error={error} />
+            <TranslatedError
+              fallback={<Trans i18nKey="errors.AccountNeedResync.title" />}
+              error={error}
+            />
           </Box>
         }
       >

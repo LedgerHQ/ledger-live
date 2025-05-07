@@ -3,18 +3,16 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components/native";
 import { TrackScreen } from "~/analytics";
-import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
 
 import Animation from "~/components/Animation";
+import { getProductName } from "~/newArch/utils/getProductName";
 
 type Props = {
   device: Device;
 };
-const getProductName = (modelId: DeviceModelId) =>
-  getDeviceModel(modelId)?.productName.replace("Ledger", "").trimStart() || modelId;
 
 const animationStyles = (modelId: DeviceModelId) =>
   [DeviceModelId.stax, DeviceModelId.europa].includes(modelId) ? { height: 210 } : {};

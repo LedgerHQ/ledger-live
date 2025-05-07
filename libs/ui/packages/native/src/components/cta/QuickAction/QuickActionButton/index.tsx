@@ -37,7 +37,7 @@ export const Base = baseStyled(TouchableOpacity)<
     if (visuallyDisabled) {
       return `border: 1px solid ${theme.colors.neutral.c30};`;
     } else if (isActive) {
-      return `background-color: ${theme.colors.neutral.c30};`;
+      return `background-color: ${theme.colors.neutral.c40};`;
     } else {
       return `background-color: ${theme.colors.neutral.c20};`;
     }

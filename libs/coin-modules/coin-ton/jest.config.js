@@ -8,6 +8,7 @@ module.exports = {
     "!src/test/**/*.ts",
   ],
   coverageReporters: ["json", ["lcov", { file: "ton-lcov.info", projectRoot: "../" }], "text"],
+  prettierPath: null,
   preset: "ts-jest",
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
@@ -22,4 +23,5 @@ module.exports = {
       { outputName: "ton-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
     ],
   ],
+  // setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
 };

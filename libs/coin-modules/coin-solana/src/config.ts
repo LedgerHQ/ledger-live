@@ -3,6 +3,7 @@ import buildCoinConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/c
 export type SolanaConfig = {
   token2022Enabled: boolean;
   queuedInterval: number;
+  legacyOCMSMaxVersion: string;
 };
 
 export type SolanaCoinConfig = CurrencyConfig & SolanaConfig;

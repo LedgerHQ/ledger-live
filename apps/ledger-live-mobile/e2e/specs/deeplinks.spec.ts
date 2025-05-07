@@ -57,7 +57,7 @@ describe("DeepLinks Tests", () => {
     await app.discover.expectApp(randomLiveApp);
   });
 
-  it("should open NFT Gallery", async () => {
+  it.skip("should open NFT Gallery", async () => {
     await app.nftGallery.openViaDeeplink();
     await app.nftGallery.expectGalleryVisible();
   });

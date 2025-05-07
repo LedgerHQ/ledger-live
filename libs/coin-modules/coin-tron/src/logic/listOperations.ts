@@ -1,11 +1,29 @@
 import { Operation } from "@ledgerhq/coin-framework/api/index";
-import { fetchTronAccountTxs } from "../network";
+import {
+  defaultFetchParams,
+  fetchTronAccountTxs,
+  FetchTxsStopPredicate as FetchTxsContinuePredicate,
+  getBlock,
+} from "../network";
 import { fromTrongridTxInfoToOperation } from "../network/trongrid/trongrid-adapters";
 import { TronAsset } from "../types";
 
-export async function listOperations(address: string): Promise<[Operation<TronAsset>[], string]> {
-  // TODO: do not use 1000 as a limit, but depending on account state
-  const txs = await fetchTronAccountTxs(address, txs => txs.length < 1000, {});
-  // TODO: adapt directly in network calls
-  return [txs.map(tx => fromTrongridTxInfoToOperation(tx, address)), ""];
+const neverStop: FetchTxsContinuePredicate = () => true;
+
+export async function listOperations(
+  address: string,
+  minHeight: number,
+): Promise<[Operation<TronAsset>[], string]> {
+  // there is a possible optimisation here: when height is 0, set the minTimestamp to 0
+  const block = await getBlock(minHeight);
+  const fetchParams = block.time
+    ? { ...defaultFetchParams, minTimestamp: block.time?.getTime() }
+    : defaultFetchParams;
+  const txs = await fetchTronAccountTxs(address, neverStop, {}, fetchParams);
+  return [
+    txs
+      // TODO: adapt directly in network calls
+      .map(tx => fromTrongridTxInfoToOperation(tx, address)),
+    "",
+  ];
 }

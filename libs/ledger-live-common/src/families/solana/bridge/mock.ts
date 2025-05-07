@@ -8,7 +8,7 @@ import {
 } from "@ledgerhq/coin-solana/network/index";
 import { Functions } from "@ledgerhq/coin-solana/utils";
 import { makeBridges } from "@ledgerhq/coin-solana/bridge/bridge";
-import { SolanaSigner } from "@ledgerhq/coin-solana/signer";
+import { PubKeyDisplayMode, SolanaSigner } from "@ledgerhq/coin-solana/signer";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { Message } from "@solana/web3.js";
 import { flow, isArray, isEqual, isObject, isUndefined, mapValues, omitBy } from "lodash/fp";
@@ -84,8 +84,15 @@ function createMockDataForAPI() {
   };
 }
 
+const APP_VERSION = "1.7.1";
 function getMockedAPIs() {
   const signer = {
+    getAppConfiguration: () =>
+      Promise.resolve({
+        version: APP_VERSION,
+        blindSigningEnabled: false,
+        pubKeyDisplayMode: PubKeyDisplayMode.LONG,
+      }),
     getAddress: (_path: string, _display?: boolean) =>
       Promise.resolve({ address: Buffer.from("") }),
     signTransaction: (_path: string, _txBuffer: Buffer) =>

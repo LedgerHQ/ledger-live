@@ -1,5 +1,15 @@
 # @ledgerhq/react-ui
 
+## 0.25.0-next.0
+
+### Minor Changes
+
+- [#10127](https://github.com/LedgerHQ/ledger-live/pull/10127) [`41d82c2`](https://github.com/LedgerHQ/ledger-live/commit/41d82c211ffc03882d101fecd1175d8f8a823341) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Added Select Account components
+
+- [#10034](https://github.com/LedgerHQ/ledger-live/pull/10034) [`98adc70`](https://github.com/LedgerHQ/ledger-live/commit/98adc70de21ac0423e378ea2a7076e15e8fc8191) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add network selection components
+
+- [#10118](https://github.com/LedgerHQ/ledger-live/pull/10118) [`e0cf0ed`](https://github.com/LedgerHQ/ledger-live/commit/e0cf0ed7987da2e4cd7cfcc389e9804ab86129f9) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Use tanstack/virtual to handle the pagination of the virtual list
+
 ## 0.24.0
 
 ### Minor Changes

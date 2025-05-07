@@ -40,6 +40,7 @@ import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
+import { ModularDrawerLocation, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
 
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
@@ -89,11 +90,14 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const listAccounts = useListPlatformAccounts(walletState, accounts);
     const listCurrencies = useListPlatformCurrencies();
 
+    const { isModularDrawerVisible } = useModularDrawerVisibility();
+    const modularDrawerVisible = isModularDrawerVisible(ModularDrawerLocation.LIVE_APP);
+
     const requestAccount = useCallback(
       (request: RequestAccountParams) => {
-        return requestAccountLogic(walletState, { manifest }, request);
+        return requestAccountLogic(walletState, { manifest }, request, modularDrawerVisible);
       },
-      [walletState, manifest],
+      [walletState, manifest, modularDrawerVisible],
     );
 
     const receiveOnAccount = useCallback(
