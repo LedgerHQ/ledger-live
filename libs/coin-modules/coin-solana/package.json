@@ -96,6 +96,7 @@
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "test-integ": "jest --config=jest.integ.config.js",
+    "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "typecheck": "tsc --noEmit",
     "unimported": "unimported"
   }
