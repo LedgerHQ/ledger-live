@@ -2,6 +2,7 @@ import { PublicKey } from "@solana/web3.js";
 import { StakeMeta } from "./network/chain/account/stake";
 import { SolanaStake, StakeAction } from "./types";
 import { assertUnreachable } from "./utils";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export type Awaited<T> = T extends PromiseLike<infer U> ? U : T;
 
@@ -103,3 +104,30 @@ export function stakeActivePercent(stake: SolanaStake) {
   }
   return (stake.activation.active / amount) * 100;
 }
+
+/**
+ * Map of Crypto Asset List content hash per currency.
+ * Used to detect changes between syncs and trigger
+ * a full synchronization in order to detect
+ * freshly added token definitions
+ */
+const CALHashByChainIdMap = new Map<CryptoCurrency, string>();
+
+/**
+ * Getter for the CAL content hash
+ */
+export const getCALHash = (currency: CryptoCurrency): string => {
+  return CALHashByChainIdMap.get(currency) || "";
+};
+
+/**
+ * Setter for the CAL content hash
+ */
+export const setCALHash = (currency: CryptoCurrency, hash: string): string => {
+  CALHashByChainIdMap.set(currency, hash);
+  return CALHashByChainIdMap.get(currency)!;
+};
+
+export const __resetCALHash = (): void => {
+  CALHashByChainIdMap.clear();
+};
