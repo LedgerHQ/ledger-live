@@ -483,13 +483,18 @@ export type FetchTxsStopPredicate = (
 ) => boolean;
 
 export type FetchParams = {
-  limit: number;
+  /** The maximum number of transactions to fetch per call. */
+  limitPerCall: number;
+  /** Hint about the number of transactions to be fetched in total (hint to optimize `limitPerCall`) */
+  hintGlobalLimit?: number;
   minTimestamp: number;
+  order: "asc" | "desc";
 };
 
 export const defaultFetchParams: FetchParams = {
-  limit: 100,
+  limitPerCall: 200,
   minTimestamp: 0,
+  order: "desc",
 } as const;
 
 export async function fetchTronAccountTxs(
@@ -498,12 +503,16 @@ export async function fetchTronAccountTxs(
   cacheTransactionInfoById: Record<string, TronTransactionInfo>,
   params: FetchParams,
 ): Promise<TrongridTxInfo[]> {
-  const queryParamsNativeTxs = `limit=${params.limit}&min_timestamp=${params.minTimestamp}`;
+  const adjustedLimitPerCall = params.hintGlobalLimit
+    ? Math.min(params.limitPerCall, params.hintGlobalLimit)
+    : params.limitPerCall;
+  console.log("🦄🦄 adjustedLimitPerCall", adjustedLimitPerCall);
+  const queryParams = `limit=${adjustedLimitPerCall}&min_timestamp=${params.minTimestamp}&order_by=block_timestamp,${params.order}`;
   const nativeTxs = (
     await getAllTransactions<
       (TransactionTronAPI & { detail?: TronTransactionInfo }) | MalformedTransactionTronAPI
     >(
-      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions?${queryParamsNativeTxs}`,
+      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions?${queryParams}`,
       shouldFetchMoreTxs,
       getTransactions(cacheTransactionInfoById),
     )
@@ -528,10 +537,9 @@ export async function fetchTronAccountTxs(
 
   // we need to fetch and filter trc20 transactions from another endpoint
   // doc https://developers.tron.network/reference/get-trc20-transaction-info-by-account-address
-  const queryParamsTrc20Txs = `limit=${params.limit}&min_timestamp=${params.minTimestamp}`;
   const trc20Txs = (
     await getAllTransactions<Trc20API>(
-      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions/trc20?${queryParamsTrc20Txs}&get_detail=true`,
+      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions/trc20?${queryParams}&get_detail=true`,
       shouldFetchMoreTxs,
       getTrc20,
     )
