@@ -214,14 +214,14 @@ jobs:
         run: |
           xcrun simctl list devices | grep 'iOS Simulator' | awk -F '[()]' '{print $2}' | xargs -I {} sh -c 'echo "Deleting simulator: {}"; xcrun simctl delete {} || echo "Failed to delete: {}"'
 
-      - name: Upload test artifacts
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
-        id: "test-artifacts"
-        with:
-          name: "ios-test-artifacts"
-          path: apps/ledger-live-mobile/artifacts
-      - run: echo "${{ steps.test-artifacts.outputs.artifact-id }}"
+#      - name: Upload test artifacts
+#        uses: actions/upload-artifact@v4
+#        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
+#        id: "test-artifacts"
+#        with:
+#          name: "ios-test-artifacts"
+#          path: apps/ledger-live-mobile/artifacts
+#      - run: echo "${{ steps.test-artifacts.outputs.artifact-id }}"
 #
 #  allure-report-ios:
 #    name: "iOS Detox > Allure Report"
