@@ -14,12 +14,7 @@ interface VirtualItem {
  * Props for the VirtualList component, which efficiently renders large lists
  * by virtualizing DOM nodes to improve performance.
  */
-type VirtualListProps = {
-  /**
-   * Total number of items in the list.
-   * This is used to calculate the total height of the list.
-   */
-  count: number;
+type VirtualListProps<T> = {
   /**
    * Height of each item in the list.
    * This is used to calculate the total height of the list and the position of each item.
@@ -55,9 +50,13 @@ type VirtualListProps = {
   onVisibleItemsScrollEnd?: () => void;
   /**
    * Function to render each item in the list.
-   * Receives the index of the item as an argument and should return a React node.
+   * Receives a single value from the items array as an argument and should return a React node.
    */
-  renderItem: (index: number) => React.ReactNode;
+  renderItem: (item: T) => React.ReactNode;
+  /**
+   * The array of items which will be rendered
+   */
+  items: T[];
 };
 
 const DefaultLoadingComponent = () => (
@@ -66,8 +65,7 @@ const DefaultLoadingComponent = () => (
   </Flex>
 );
 
-export const VirtualList = ({
-  count,
+export const VirtualList = <T,>({
   itemHeight,
   overscan = 5,
   LoadingComponent,
@@ -75,12 +73,13 @@ export const VirtualList = ({
   hasNextPage = false,
   threshold = 5,
   onVisibleItemsScrollEnd,
+  items,
   renderItem,
-}: VirtualListProps) => {
+}: VirtualListProps<T>) => {
   const parentRef = useRef<HTMLDivElement>(null);
 
   const rowVirtualizer = useVirtualizer({
-    count: hasNextPage ? count + 1 : count,
+    count: hasNextPage ? items.length + 1 : items.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => itemHeight,
     overscan,
@@ -92,14 +91,20 @@ export const VirtualList = ({
     const lastItem = items[items.length - 1];
 
     if (
-      lastItem.index >= count - 1 - threshold &&
+      lastItem.index >= items.length - 1 - threshold &&
       hasNextPage &&
       !isLoading &&
       onVisibleItemsScrollEnd
     ) {
       onVisibleItemsScrollEnd();
     }
-  }, [hasNextPage, onVisibleItemsScrollEnd, count, isLoading, rowVirtualizer.getVirtualItems()]);
+  }, [
+    hasNextPage,
+    onVisibleItemsScrollEnd,
+    items.length,
+    isLoading,
+    rowVirtualizer.getVirtualItems(),
+  ]);
 
   const showCustomLoadingComponent = !!LoadingComponent;
 
@@ -126,7 +131,7 @@ export const VirtualList = ({
               width: "100%",
             }}
           >
-            {renderItem(virtualRow.index)}
+            {renderItem(items[virtualRow.index])}
           </div>
         ))}
       </div>
