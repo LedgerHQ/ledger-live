@@ -14,6 +14,8 @@ import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { WebviewProps } from "../Web3AppWebview/types";
+import Config from "react-native-config";
+import { sendEarnLiveAppReady } from "../../../e2e/bridge/client";
 
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
@@ -111,6 +113,11 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
                 error,
               },
             });
+          },
+          "custom.isReady": async () => {
+            if (Config.DETOX) {
+              sendEarnLiveAppReady();
+            }
           },
         },
       }),
