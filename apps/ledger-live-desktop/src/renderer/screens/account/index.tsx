@@ -40,7 +40,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isBitcoinBasedAccount, isBitcoinAccount } from "@ledgerhq/live-common/account/typeGuards";
 import { useNftCollectionsStatus } from "~/renderer/hooks/nfts/useNftCollectionsStatus";
 import { useNftSupportFeature } from "~/renderer/hooks/nfts/useNftSupportFeature";
-import NftEntryPoint from "~/newArch/features/NftEntryPoint";
+import NftEntryPoint from "LLD/features/NftEntryPoint";
 
 type Params = {
   id: string;

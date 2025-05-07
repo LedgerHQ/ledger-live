@@ -7,6 +7,17 @@ import MagicEden from "./assets/magiceden.svg";
 import OpenSea from "./assets/opensea.svg";
 import { useHistory } from "react-router-dom";
 
+const entryPointConfig = {
+  [Entry.magiceden]: {
+    illustration: MagicEden,
+    link: "https://magiceden.io",
+  },
+  [Entry.opensea]: {
+    illustration: OpenSea,
+    link: "https://opensea.io",
+  },
+};
+
 export default function useNftsEntryPointViewModel() {
   const featureNftEntryPoint = useFeature("llNftEntryPoint");
   const history = useHistory();
@@ -26,8 +37,8 @@ export default function useNftsEntryPointViewModel() {
       component: () => (
         <Row
           entryPoint={Entry.magiceden}
-          illustration={MagicEden}
-          link={"https://magiceden.io"}
+          illustration={entryPointConfig[Entry.magiceden].illustration}
+          link={entryPointConfig[Entry.magiceden].link}
           redirect={() => openLiveApp("magic-eden", Entry.magiceden)}
         />
       ),
@@ -38,8 +49,8 @@ export default function useNftsEntryPointViewModel() {
       component: () => (
         <Row
           entryPoint={Entry.opensea}
-          illustration={OpenSea}
-          link={"https://opensea.io"}
+          illustration={entryPointConfig[Entry.opensea].illustration}
+          link={entryPointConfig[Entry.opensea].link}
           redirect={() => openLiveApp("opensea", Entry.opensea)}
         />
       ),
