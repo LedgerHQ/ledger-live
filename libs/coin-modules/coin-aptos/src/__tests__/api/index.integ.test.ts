@@ -88,4 +88,13 @@ describe("createApi", () => {
       expect(hash).toEqual(expect.any(String));
     });
   });
+
+  // describe("combine and broadcast", () => {
+  //   it("returns the hash", async () => {
+  //     const tx = await api.combine("tx", "signature", "xpub");
+  //     const hash = await api.broadcast(tx);
+
+  //     expect(hash).toEqual(expect.any(String));
+  //   });
+  // });
 });
