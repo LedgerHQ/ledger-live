@@ -1,30 +1,28 @@
 # @ledgerhq/react-ui
 
-## 0.24.0-nightly.3
+## 0.24.0
 
 ### Minor Changes
 
-- [#10118](https://github.com/LedgerHQ/ledger-live/pull/10118) [`e0cf0ed`](https://github.com/LedgerHQ/ledger-live/commit/e0cf0ed7987da2e4cd7cfcc389e9804ab86129f9) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Use tanstack/virtual to handle the pagination of the virtual list
+- [#10018](https://github.com/LedgerHQ/ledger-live/pull/10018) [`1d3be0d`](https://github.com/LedgerHQ/ledger-live/commit/1d3be0d5b13b09ec08908406711400ef5b286d69) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add Asset Type List component
 
-## 0.24.0-nightly.2
+### Patch Changes
+
+- Updated dependencies [[`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431), [`a4b6b29`](https://github.com/LedgerHQ/ledger-live/commit/a4b6b29df7ef74129345278cf07942619b36435b)]:
+  - @ledgerhq/crypto-icons-ui@1.13.0
+  - @ledgerhq/icons-ui@0.10.0
+
+## 0.24.0-next.0
 
 ### Minor Changes
 
-- [#10034](https://github.com/LedgerHQ/ledger-live/pull/10034) [`98adc70`](https://github.com/LedgerHQ/ledger-live/commit/98adc70de21ac0423e378ea2a7076e15e8fc8191) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add network selection components
-
-## 0.23.1-nightly.1
+- [#10018](https://github.com/LedgerHQ/ledger-live/pull/10018) [`1d3be0d`](https://github.com/LedgerHQ/ledger-live/commit/1d3be0d5b13b09ec08908406711400ef5b286d69) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add Asset Type List component
 
 ### Patch Changes
 
-- Updated dependencies [[`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431)]:
-  - @ledgerhq/crypto-icons-ui@1.13.0-nightly.0
-
-## 0.23.1-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`a4b6b29`](https://github.com/LedgerHQ/ledger-live/commit/a4b6b29df7ef74129345278cf07942619b36435b)]:
-  - @ledgerhq/icons-ui@0.10.0-nightly.0
+- Updated dependencies [[`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431), [`a4b6b29`](https://github.com/LedgerHQ/ledger-live/commit/a4b6b29df7ef74129345278cf07942619b36435b)]:
+  - @ledgerhq/crypto-icons-ui@1.13.0-next.0
+  - @ledgerhq/icons-ui@0.10.0-next.0
 
 ## 0.23.0
 

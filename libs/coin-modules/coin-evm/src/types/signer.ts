@@ -18,7 +18,9 @@ export type EvmSignerEventType =
   | "signer.evm.loading-context"
   | "signer.evm.signing"
   | "signer.evm.signed"
-  | "signer.evm.transaction-checks-opt-in-triggered";
+  | "signer.evm.transaction-checks-opt-in-triggered"
+  | "signer.evm.transaction-checks-opt-in"
+  | "signer.evm.transaction-checks-opt-out";
 
 export type EvmSignerEvent =
   | {

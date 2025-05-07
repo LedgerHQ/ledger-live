@@ -1,115 +1,68 @@
 # ledger-live-desktop
 
-## 2.112.0-nightly.4
-
-### Minor Changes
-
-- [#9969](https://github.com/LedgerHQ/ledger-live/pull/9969) [`b225fa3`](https://github.com/LedgerHQ/ledger-live/commit/b225fa3d18bfe87e880ef4c70ab7b747a83642ca) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - Remove EIP712 clear signing screen
-
-### Patch Changes
-
-- Updated dependencies [[`a7ba19c`](https://github.com/LedgerHQ/ledger-live/commit/a7ba19cfa5a895572edfcf036a10d2af83efdf38), [`b08fe72`](https://github.com/LedgerHQ/ledger-live/commit/b08fe724f23c0b4df5ade92610b6f2e10d17385e)]:
-  - @ledgerhq/types-live@6.69.0-nightly.2
-  - @ledgerhq/live-common@34.32.0-nightly.4
-  - @ledgerhq/coin-framework@4.1.0-nightly.2
-  - @ledgerhq/coin-aptos@1.9.4-nightly.2
-  - @ledgerhq/coin-bitcoin@0.15.4-nightly.2
-  - @ledgerhq/coin-cosmos@0.14.0-nightly.2
-  - @ledgerhq/coin-evm@2.19.2-nightly.2
-  - @ledgerhq/coin-filecoin@1.9.4-nightly.2
-  - @ledgerhq/domain-service@1.2.28-nightly.2
-  - @ledgerhq/live-countervalues@0.5.4-nightly.2
-  - @ledgerhq/live-countervalues-react@0.2.33-nightly.2
-  - @ledgerhq/live-nft@0.8.4-nightly.2
-  - @ledgerhq/live-nft-react@0.9.4-nightly.2
-  - @ledgerhq/live-wallet@0.10.7-nightly.2
-  - @ledgerhq/live-dmk-desktop@0.3.3-nightly.4
-
-## 2.112.0-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`b976361`](https://github.com/LedgerHQ/ledger-live/commit/b97636178a7bc1b6f0d1acbbeccf51d843198a10), [`1488235`](https://github.com/LedgerHQ/ledger-live/commit/1488235ee13fd1f6e71b7bae0da88142986e6c6d), [`e0cf0ed`](https://github.com/LedgerHQ/ledger-live/commit/e0cf0ed7987da2e4cd7cfcc389e9804ab86129f9)]:
-  - @ledgerhq/live-common@34.32.0-nightly.3
-  - @ledgerhq/react-ui@0.24.0-nightly.3
-  - @ledgerhq/live-dmk-desktop@0.3.3-nightly.3
-
-## 2.112.0-nightly.2
-
-### Minor Changes
-
-- [#9742](https://github.com/LedgerHQ/ledger-live/pull/9742) [`57833f5`](https://github.com/LedgerHQ/ledger-live/commit/57833f5d577535ad4734e6436098899daaf0d968) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Sync error add a fallback message to avoid non ux error message
-
-- [#10034](https://github.com/LedgerHQ/ledger-live/pull/10034) [`98adc70`](https://github.com/LedgerHQ/ledger-live/commit/98adc70de21ac0423e378ea2a7076e15e8fc8191) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add network selection components
-
-- [#10059](https://github.com/LedgerHQ/ledger-live/pull/10059) [`3b9ab8e`](https://github.com/LedgerHQ/ledger-live/commit/3b9ab8ed587984954228aee66849426f1df41ad8) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - bugfixe: wrong size for retry button in device action
-
-- [#9833](https://github.com/LedgerHQ/ledger-live/pull/9833) [`0bafd55`](https://github.com/LedgerHQ/ledger-live/commit/0bafd5508d3762db1cf0874a9fef5e66bc683558) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - skip memo tag disclaimer for ICP
-
-### Patch Changes
-
-- [#10109](https://github.com/LedgerHQ/ledger-live/pull/10109) [`ac44149`](https://github.com/LedgerHQ/ledger-live/commit/ac441496bfec48facdbfe728d7f12b41ad1bc1db) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Add a platform user property
-
-- Updated dependencies [[`98adc70`](https://github.com/LedgerHQ/ledger-live/commit/98adc70de21ac0423e378ea2a7076e15e8fc8191)]:
-  - @ledgerhq/react-ui@0.24.0-nightly.2
-  - @ledgerhq/live-common@34.32.0-nightly.2
-  - @ledgerhq/live-dmk-desktop@0.3.3-nightly.2
-
-## 2.112.0-nightly.1
+## 2.112.0
 
 ### Minor Changes
 
 - [#9888](https://github.com/LedgerHQ/ledger-live/pull/9888) [`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431) Thanks [@palra](https://github.com/palra)! - add babylon currency
 
-### Patch Changes
+- [#10045](https://github.com/LedgerHQ/ledger-live/pull/10045) [`1d72da9`](https://github.com/LedgerHQ/ledger-live/commit/1d72da911a56d5b25fb6464e60ac236927823ce4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - NFT support in LLD
 
 - [#9869](https://github.com/LedgerHQ/ledger-live/pull/9869) [`e67a296`](https://github.com/LedgerHQ/ledger-live/commit/e67a296d5e1f10cf4ac133f0d00da760a24381f3) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add LDMK related FF in segment extra payload
 
-- Updated dependencies [[`00ecb4b`](https://github.com/LedgerHQ/ledger-live/commit/00ecb4b3dae8abf861679fb35a2794a308851a47), [`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431)]:
-  - @ledgerhq/live-common@34.32.0-nightly.1
-  - @ledgerhq/types-cryptoassets@7.23.0-nightly.0
-  - @ledgerhq/cryptoassets@13.16.0-nightly.0
-  - @ledgerhq/types-live@6.69.0-nightly.1
-  - @ledgerhq/coin-cosmos@0.14.0-nightly.1
-  - @ledgerhq/coin-framework@4.1.0-nightly.1
-  - @ledgerhq/live-dmk-desktop@0.3.3-nightly.1
-  - @ledgerhq/coin-bitcoin@0.15.4-nightly.1
-  - @ledgerhq/coin-evm@2.19.2-nightly.1
-  - @ledgerhq/coin-filecoin@1.9.4-nightly.1
-  - @ledgerhq/domain-service@1.2.28-nightly.1
-  - @ledgerhq/live-countervalues@0.5.4-nightly.1
-  - @ledgerhq/live-countervalues-react@0.2.33-nightly.1
-  - @ledgerhq/live-nft@0.8.4-nightly.1
-  - @ledgerhq/live-nft-react@0.9.4-nightly.1
-  - @ledgerhq/live-wallet@0.10.7-nightly.1
-  - @ledgerhq/coin-aptos@1.9.4-nightly.1
-  - @ledgerhq/react-ui@0.23.1-nightly.1
+### Patch Changes
 
-## 2.112.0-nightly.0
+- Updated dependencies [[`a11fd0b`](https://github.com/LedgerHQ/ledger-live/commit/a11fd0bbb687edc9e279bd4d63352658cae92c63), [`00ecb4b`](https://github.com/LedgerHQ/ledger-live/commit/00ecb4b3dae8abf861679fb35a2794a308851a47), [`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431), [`1d3be0d`](https://github.com/LedgerHQ/ledger-live/commit/1d3be0d5b13b09ec08908406711400ef5b286d69), [`b599ac4`](https://github.com/LedgerHQ/ledger-live/commit/b599ac4697688459aad15371f9efea58f331dc33), [`a4b6b29`](https://github.com/LedgerHQ/ledger-live/commit/a4b6b29df7ef74129345278cf07942619b36435b), [`1d72da9`](https://github.com/LedgerHQ/ledger-live/commit/1d72da911a56d5b25fb6464e60ac236927823ce4)]:
+  - @ledgerhq/coin-evm@2.20.0
+  - @ledgerhq/live-common@34.32.0
+  - @ledgerhq/types-cryptoassets@7.23.0
+  - @ledgerhq/cryptoassets@13.16.0
+  - @ledgerhq/types-live@6.69.0
+  - @ledgerhq/coin-cosmos@0.14.0
+  - @ledgerhq/coin-framework@5.0.0
+  - @ledgerhq/react-ui@0.24.0
+  - @ledgerhq/live-dmk-desktop@0.3.3
+  - @ledgerhq/coin-bitcoin@0.15.4
+  - @ledgerhq/coin-filecoin@1.9.4
+  - @ledgerhq/domain-service@1.2.28
+  - @ledgerhq/live-countervalues@0.5.4
+  - @ledgerhq/live-countervalues-react@0.2.33
+  - @ledgerhq/live-nft@0.8.4
+  - @ledgerhq/live-nft-react@0.9.4
+  - @ledgerhq/live-wallet@0.10.7
+  - @ledgerhq/coin-aptos@1.9.4
+
+## 2.112.0-next.0
 
 ### Minor Changes
 
+- [#9888](https://github.com/LedgerHQ/ledger-live/pull/9888) [`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431) Thanks [@palra](https://github.com/palra)! - add babylon currency
+
 - [#10045](https://github.com/LedgerHQ/ledger-live/pull/10045) [`1d72da9`](https://github.com/LedgerHQ/ledger-live/commit/1d72da911a56d5b25fb6464e60ac236927823ce4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - NFT support in LLD
+
+- [#9869](https://github.com/LedgerHQ/ledger-live/pull/9869) [`e67a296`](https://github.com/LedgerHQ/ledger-live/commit/e67a296d5e1f10cf4ac133f0d00da760a24381f3) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add LDMK related FF in segment extra payload
 
 ### Patch Changes
 
-- Updated dependencies [[`a4b6b29`](https://github.com/LedgerHQ/ledger-live/commit/a4b6b29df7ef74129345278cf07942619b36435b), [`1d72da9`](https://github.com/LedgerHQ/ledger-live/commit/1d72da911a56d5b25fb6464e60ac236927823ce4)]:
-  - @ledgerhq/live-common@34.32.0-nightly.0
-  - @ledgerhq/types-live@6.69.0-nightly.0
-  - @ledgerhq/react-ui@0.23.1-nightly.0
-  - @ledgerhq/live-dmk-desktop@0.3.3-nightly.0
-  - @ledgerhq/coin-framework@4.0.1-nightly.0
-  - @ledgerhq/coin-aptos@1.9.4-nightly.0
-  - @ledgerhq/coin-bitcoin@0.15.4-nightly.0
-  - @ledgerhq/coin-cosmos@0.13.3-nightly.0
-  - @ledgerhq/coin-evm@2.19.2-nightly.0
-  - @ledgerhq/coin-filecoin@1.9.4-nightly.0
-  - @ledgerhq/domain-service@1.2.28-nightly.0
-  - @ledgerhq/live-countervalues@0.5.4-nightly.0
-  - @ledgerhq/live-countervalues-react@0.2.33-nightly.0
-  - @ledgerhq/live-nft@0.8.4-nightly.0
-  - @ledgerhq/live-nft-react@0.9.4-nightly.0
-  - @ledgerhq/live-wallet@0.10.7-nightly.0
+- Updated dependencies [[`a11fd0b`](https://github.com/LedgerHQ/ledger-live/commit/a11fd0bbb687edc9e279bd4d63352658cae92c63), [`00ecb4b`](https://github.com/LedgerHQ/ledger-live/commit/00ecb4b3dae8abf861679fb35a2794a308851a47), [`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431), [`1d3be0d`](https://github.com/LedgerHQ/ledger-live/commit/1d3be0d5b13b09ec08908406711400ef5b286d69), [`b599ac4`](https://github.com/LedgerHQ/ledger-live/commit/b599ac4697688459aad15371f9efea58f331dc33), [`a4b6b29`](https://github.com/LedgerHQ/ledger-live/commit/a4b6b29df7ef74129345278cf07942619b36435b), [`1d72da9`](https://github.com/LedgerHQ/ledger-live/commit/1d72da911a56d5b25fb6464e60ac236927823ce4)]:
+  - @ledgerhq/coin-evm@2.20.0-next.0
+  - @ledgerhq/live-common@34.32.0-next.0
+  - @ledgerhq/types-cryptoassets@7.23.0-next.0
+  - @ledgerhq/cryptoassets@13.16.0-next.0
+  - @ledgerhq/types-live@6.69.0-next.0
+  - @ledgerhq/coin-cosmos@0.14.0-next.0
+  - @ledgerhq/coin-framework@5.0.0-next.0
+  - @ledgerhq/react-ui@0.24.0-next.0
+  - @ledgerhq/live-dmk-desktop@0.3.3-next.0
+  - @ledgerhq/coin-bitcoin@0.15.4-next.0
+  - @ledgerhq/coin-filecoin@1.9.4-next.0
+  - @ledgerhq/domain-service@1.2.28-next.0
+  - @ledgerhq/live-countervalues@0.5.4-next.0
+  - @ledgerhq/live-countervalues-react@0.2.33-next.0
+  - @ledgerhq/live-nft@0.8.4-next.0
+  - @ledgerhq/live-nft-react@0.9.4-next.0
+  - @ledgerhq/live-wallet@0.10.7-next.0
+  - @ledgerhq/coin-aptos@1.9.4-next.0
 
 ## 2.111.1
 

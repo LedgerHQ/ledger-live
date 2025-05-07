@@ -143,6 +143,7 @@ export interface UiHook {
   "message.sign": (params: {
     account: AccountLike;
     message: AnyMessage;
+    options: Parameters<WalletHandlers["message.sign"]>[0]["options"];
     onSuccess: (signature: string) => void;
     onError: (error: Error) => void;
     onCancel: () => void;
@@ -431,7 +432,7 @@ export function useWalletAPIServer({
   useEffect(() => {
     if (!uiMessageSign) return;
 
-    server.setHandler("message.sign", ({ account, message }) =>
+    server.setHandler("message.sign", ({ account, message, options }) =>
       signMessageLogic(
         { manifest, accounts, tracking },
         account.id,
@@ -442,6 +443,7 @@ export function useWalletAPIServer({
             return uiMessageSign({
               account,
               message,
+              options,
               onSuccess: signature => {
                 if (done) return;
                 done = true;

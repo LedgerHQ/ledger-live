@@ -118,7 +118,7 @@ export const fetchAccountStateInfo = async (
 
     return { purseUref: uRef, accountHash };
   } catch (error) {
-    if (error instanceof Error && error.message.includes("ValueNotFound")) {
+    if (error instanceof Error && error.message.includes("No such account")) {
       return {
         purseUref: undefined,
         accountHash: undefined,

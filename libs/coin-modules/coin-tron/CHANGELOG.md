@@ -1,40 +1,40 @@
 # @ledgerhq/coin-tron
 
-## 3.0.0-nightly.3
+## 3.0.0
 
 ### Major Changes
 
-- [#10131](https://github.com/LedgerHQ/ledger-live/pull/10131) [`1b7521a`](https://github.com/LedgerHQ/ledger-live/commit/1b7521a7c17e9cdc0e817f9f8324fe3a41c69a96) Thanks [@jprudent](https://github.com/jprudent)! - Implement filter by min height on tron listOperations
-
-### Patch Changes
-
-- Updated dependencies [[`a7ba19c`](https://github.com/LedgerHQ/ledger-live/commit/a7ba19cfa5a895572edfcf036a10d2af83efdf38)]:
-  - @ledgerhq/types-live@6.69.0-nightly.2
-  - @ledgerhq/coin-framework@4.1.0-nightly.2
-
-## 2.1.0-nightly.2
+- [#9993](https://github.com/LedgerHQ/ledger-live/pull/9993) [`b599ac4`](https://github.com/LedgerHQ/ledger-live/commit/b599ac4697688459aad15371f9efea58f331dc33) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Change alpaca estimate signature
 
 ### Minor Changes
 
 - [#10099](https://github.com/LedgerHQ/ledger-live/pull/10099) [`30795dd`](https://github.com/LedgerHQ/ledger-live/commit/30795dd032278d98aa67da1e809cd1d5dcfc5501) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - [coin-modules][tron] improve broadcast failure error
 
-## 2.0.1-nightly.1
+### Patch Changes
+
+- Updated dependencies [[`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431), [`b599ac4`](https://github.com/LedgerHQ/ledger-live/commit/b599ac4697688459aad15371f9efea58f331dc33), [`1d72da9`](https://github.com/LedgerHQ/ledger-live/commit/1d72da911a56d5b25fb6464e60ac236927823ce4)]:
+  - @ledgerhq/types-cryptoassets@7.23.0
+  - @ledgerhq/cryptoassets@13.16.0
+  - @ledgerhq/types-live@6.69.0
+  - @ledgerhq/coin-framework@5.0.0
+
+## 3.0.0-next.0
+
+### Major Changes
+
+- [#9993](https://github.com/LedgerHQ/ledger-live/pull/9993) [`b599ac4`](https://github.com/LedgerHQ/ledger-live/commit/b599ac4697688459aad15371f9efea58f331dc33) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Change alpaca estimate signature
+
+### Minor Changes
+
+- [#10099](https://github.com/LedgerHQ/ledger-live/pull/10099) [`30795dd`](https://github.com/LedgerHQ/ledger-live/commit/30795dd032278d98aa67da1e809cd1d5dcfc5501) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - [coin-modules][tron] improve broadcast failure error
 
 ### Patch Changes
 
-- Updated dependencies [[`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431)]:
-  - @ledgerhq/types-cryptoassets@7.23.0-nightly.0
-  - @ledgerhq/cryptoassets@13.16.0-nightly.0
-  - @ledgerhq/types-live@6.69.0-nightly.1
-  - @ledgerhq/coin-framework@4.1.0-nightly.1
-
-## 2.0.1-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`1d72da9`](https://github.com/LedgerHQ/ledger-live/commit/1d72da911a56d5b25fb6464e60ac236927823ce4)]:
-  - @ledgerhq/types-live@6.69.0-nightly.0
-  - @ledgerhq/coin-framework@4.0.1-nightly.0
+- Updated dependencies [[`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431), [`b599ac4`](https://github.com/LedgerHQ/ledger-live/commit/b599ac4697688459aad15371f9efea58f331dc33), [`1d72da9`](https://github.com/LedgerHQ/ledger-live/commit/1d72da911a56d5b25fb6464e60ac236927823ce4)]:
+  - @ledgerhq/types-cryptoassets@7.23.0-next.0
+  - @ledgerhq/cryptoassets@13.16.0-next.0
+  - @ledgerhq/types-live@6.69.0-next.0
+  - @ledgerhq/coin-framework@5.0.0-next.0
 
 ## 2.0.0
 

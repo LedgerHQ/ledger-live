@@ -1,0 +1,34 @@
+name: turbo-step
+description: Configures turborepo credentials
+inputs:
+  command:
+    description: "Command to run"
+  turbo_server_token:
+    type: string
+    description: "The turborepo server token"
+  turbo_port:
+    description: "Turbo Server Port Number"
+    type: string
+    required: true
+  disable_cache:
+    description: "Disable turbo caching"
+    type: boolean
+    required: false
+    default: false
+runs:
+  using: composite
+  steps:
+
+    - name: "Uncached turbo run"
+      if: ${{ inputs.disable_cache == 'true' }}
+      run: ${{ inputs.command }}
+      shell: bash
+
+    - name: "Cached turbo run"
+      if: ${{ inputs.disable_cache != 'true' }}
+      shell: bash
+      run: ${{ inputs.command }}
+      env:
+        TURBO_TOKEN: ${{ inputs.turbo_server_token }}
+        TURBO_TEAM: "foo"
+        TURBO_API: http://127.0.0.1:${{ inputs.turbo_port }}

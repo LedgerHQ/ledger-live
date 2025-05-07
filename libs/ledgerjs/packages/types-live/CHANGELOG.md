@@ -1,20 +1,18 @@
 # @ledgerhq/types-live
 
-## 6.69.0-nightly.2
-
-### Minor Changes
-
-- [#10047](https://github.com/LedgerHQ/ledger-live/pull/10047) [`a7ba19c`](https://github.com/LedgerHQ/ledger-live/commit/a7ba19cfa5a895572edfcf036a10d2af83efdf38) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - NFT Support in LLM
-
-## 6.69.0-nightly.1
+## 6.69.0
 
 ### Minor Changes
 
 - [#9888](https://github.com/LedgerHQ/ledger-live/pull/9888) [`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431) Thanks [@palra](https://github.com/palra)! - add babylon currency
 
-## 6.69.0-nightly.0
+- [#10045](https://github.com/LedgerHQ/ledger-live/pull/10045) [`1d72da9`](https://github.com/LedgerHQ/ledger-live/commit/1d72da911a56d5b25fb6464e60ac236927823ce4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - NFT support in LLD
+
+## 6.69.0-next.0
 
 ### Minor Changes
+
+- [#9888](https://github.com/LedgerHQ/ledger-live/pull/9888) [`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431) Thanks [@palra](https://github.com/palra)! - add babylon currency
 
 - [#10045](https://github.com/LedgerHQ/ledger-live/pull/10045) [`1d72da9`](https://github.com/LedgerHQ/ledger-live/commit/1d72da911a56d5b25fb6464e60ac236927823ce4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - NFT support in LLD
 

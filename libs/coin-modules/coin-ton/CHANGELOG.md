@@ -1,36 +1,24 @@
 # @ledgerhq/coin-ton
 
-## 0.10.0-nightly.3
+## 0.9.1
 
 ### Patch Changes
 
-- Updated dependencies [[`a7ba19c`](https://github.com/LedgerHQ/ledger-live/commit/a7ba19cfa5a895572edfcf036a10d2af83efdf38)]:
-  - @ledgerhq/types-live@6.69.0-nightly.2
-  - @ledgerhq/coin-framework@4.1.0-nightly.2
+- Updated dependencies [[`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431), [`b599ac4`](https://github.com/LedgerHQ/ledger-live/commit/b599ac4697688459aad15371f9efea58f331dc33), [`1d72da9`](https://github.com/LedgerHQ/ledger-live/commit/1d72da911a56d5b25fb6464e60ac236927823ce4)]:
+  - @ledgerhq/types-cryptoassets@7.23.0
+  - @ledgerhq/cryptoassets@13.16.0
+  - @ledgerhq/types-live@6.69.0
+  - @ledgerhq/coin-framework@5.0.0
 
-## 0.10.0-nightly.2
-
-### Minor Changes
-
-- [#9837](https://github.com/LedgerHQ/ledger-live/pull/9837) [`29b72fe`](https://github.com/LedgerHQ/ledger-live/commit/29b72fe9d1b7697c0fef53fd11e3d2d775032f68) Thanks [@Justkant](https://github.com/Justkant)! - feat(coin-ton): expose ton payload for all possible actions
-
-## 0.9.1-nightly.1
+## 0.9.1-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431)]:
-  - @ledgerhq/types-cryptoassets@7.23.0-nightly.0
-  - @ledgerhq/cryptoassets@13.16.0-nightly.0
-  - @ledgerhq/types-live@6.69.0-nightly.1
-  - @ledgerhq/coin-framework@4.1.0-nightly.1
-
-## 0.9.1-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`1d72da9`](https://github.com/LedgerHQ/ledger-live/commit/1d72da911a56d5b25fb6464e60ac236927823ce4)]:
-  - @ledgerhq/types-live@6.69.0-nightly.0
-  - @ledgerhq/coin-framework@4.0.1-nightly.0
+- Updated dependencies [[`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431), [`b599ac4`](https://github.com/LedgerHQ/ledger-live/commit/b599ac4697688459aad15371f9efea58f331dc33), [`1d72da9`](https://github.com/LedgerHQ/ledger-live/commit/1d72da911a56d5b25fb6464e60ac236927823ce4)]:
+  - @ledgerhq/types-cryptoassets@7.23.0-next.0
+  - @ledgerhq/cryptoassets@13.16.0-next.0
+  - @ledgerhq/types-live@6.69.0-next.0
+  - @ledgerhq/coin-framework@5.0.0-next.0
 
 ## 0.9.0
 
