@@ -22,7 +22,7 @@ export default function StepValidator({ account, transaction, status, error }: S
     throw new Error("unsupported transaction");
   }
   const stakeAccAddr = transaction.stake?.poolAddr;
-  const stakesWithMeta = useAptosStakesWithMeta(account.currency, aptosResources.stakes);
+  const stakesWithMeta = useAptosStakesWithMeta(account.currency, aptosResources.stakingPositions);
   const stakeWithMeta = stakesWithMeta.find(s => s.stake.stakeAccAddr === stakeAccAddr);
   if (stakeWithMeta === undefined) {
     throw new Error(`stake with account address <${stakeAccAddr}> not found`);

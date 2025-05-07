@@ -2,9 +2,9 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { flow } from "lodash/fp";
 // import { ChainAPI } from "./network";
 import { setAptosPreloadData as setPreloadData } from "./preload-data";
-import { AptosPreloadData } from "./types";
+import { AptosPreloadData, AptosValidator } from "./types";
 import { clusterByCurrencyId, profitableValidators /* , ledgerFirstValidators */ } from "./utils";
-import { getValidators, Validator } from "./network/validators";
+import { getValidators } from "./network/validators";
 
 export const PRELOAD_MAX_AGE = 15 * 60 * 1000; // 15min
 
@@ -16,7 +16,7 @@ export async function preloadWithAPI(
 
   const cluster = clusterByCurrencyId(currency.id);
 
-  const validators: Validator[] =
+  const validators: AptosValidator[] =
     // cluster === "devnet" ? await loadDevnetValidators(api) : await getValidators(cluster);
     await getValidators(currency.id);
 
@@ -30,7 +30,7 @@ export async function preloadWithAPI(
   return data;
 }
 
-function preprocessMainnetValidators(validators: Validator[]): Validator[] {
+function preprocessMainnetValidators(validators: AptosValidator[]): AptosValidator[] {
   // return flow(() => validators, profitableValidators, ledgerFirstValidators)();
   return flow(() => validators, profitableValidators)();
 }

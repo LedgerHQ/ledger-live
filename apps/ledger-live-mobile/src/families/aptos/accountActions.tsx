@@ -19,9 +19,9 @@ const getMainActions = ({
   parentAccount: Account;
   parentRoute: RouteProp<ParamListBase, ScreenName>;
 }): ActionButtonEvent[] => {
-  // const stakingDisabled = getMaxSendBalance(account) < MIN_COINS_ON_SHARES_POOL_IN_OCTAS;
   const stakingDisabled = false;
-  const startWithValidator = account.aptosResources && account.aptosResources?.stakes.length > 0;
+  const startWithValidator =
+    account.aptosResources && account.aptosResources?.stakingPositions.length > 0;
   const label = getStakeLabelLocaleBased();
 
   const navigationParams: NavigationParamsType = stakingDisabled

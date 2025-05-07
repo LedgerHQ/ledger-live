@@ -26,7 +26,7 @@ const AccountHeaderActions: AptosFamily["accountHeaderManageActions"] = ({
     } else {
       dispatch(
         openModal(
-          aptosResources && aptosResources.stakes.length > 0
+          aptosResources && aptosResources.stakingPositions.length > 0
             ? "MODAL_APTOS_DELEGATE"
             : "MODAL_APTOS_REWARDS_INFO",
           {

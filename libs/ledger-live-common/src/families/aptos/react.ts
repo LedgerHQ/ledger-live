@@ -2,18 +2,23 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { useMemo } from "react";
 import { getCurrentAptosPreloadData, getAptosPreloadData } from "@ledgerhq/coin-aptos/preload-data";
 import type {
+  AptosAccount,
+  AptosMappedStakingPosition,
   AptosPreloadData,
   AptosStake,
   AptosStakeWithMeta,
-  Validator,
+  AptosValidator,
 } from "@ledgerhq/coin-aptos/types";
 import { useObservable } from "../../observable";
+import invariant from "invariant";
+import { getAccountCurrency } from "../../account";
+import { mapStakingPositions } from "./logic";
 
 export function useAptosPreloadData(currency: CryptoCurrency): AptosPreloadData | undefined | null {
   return useObservable(getAptosPreloadData(currency), getCurrentAptosPreloadData(currency));
 }
 
-export function useValidators(currency: CryptoCurrency, search?: string): Validator[] {
+export function useValidators(currency: CryptoCurrency, search?: string): AptosValidator[] {
   const data = useAptosPreloadData(currency);
 
   return useMemo(() => {
@@ -28,14 +33,14 @@ export function useValidators(currency: CryptoCurrency, search?: string): Valida
     const filtered = validators.filter(
       validator =>
         validator.name?.toLowerCase().includes(lowercaseSearch) ||
-        validator.accountAddr.toLowerCase().includes(lowercaseSearch),
+        validator.address.toLowerCase().includes(lowercaseSearch),
     );
 
     const flags = [];
-    const output: Validator[] = [];
+    const output: AptosValidator[] = [];
     for (let i = 0; i < filtered.length; i++) {
-      if (flags[filtered[i].accountAddr]) continue;
-      flags[filtered[i].accountAddr] = true;
+      if (flags[filtered[i].address]) continue;
+      flags[filtered[i].address] = true;
       output.push(filtered[i]);
     }
     return output;
@@ -54,7 +59,7 @@ export function useAptosStakesWithMeta(
 
   const { validators } = data;
 
-  const validatorByAddress = new Map(validators.map(v => [v.accountAddr, v]));
+  const validatorByAddress = new Map(validators.map(v => [v.address, v]));
 
   return stakes.map(stake => {
     const validatorAddress = stake.delegation?.validatorAddress;
@@ -72,4 +77,18 @@ export function useAptosStakesWithMeta(
       },
     };
   });
+}
+
+export function useNearMappedStakingPositions(account: AptosAccount): AptosMappedStakingPosition[] {
+  const { validators } = getCurrentAptosPreloadData(account.currency);
+  const stakingPositions = account.aptosResources?.stakingPositions;
+
+  invariant(stakingPositions, "aptos: stakingPositions is required");
+
+  const unit = getAccountCurrency(account).units[0];
+
+  return useMemo(() => {
+    const mappedStakingPositions = mapStakingPositions(stakingPositions || [], validators, unit);
+    return mappedStakingPositions;
+  }, [stakingPositions, validators, unit]);
 }

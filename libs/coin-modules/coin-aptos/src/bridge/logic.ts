@@ -25,16 +25,23 @@ import {
   COIN_TRANSFER_TYPES,
   FA_TRANSFER_TYPES,
   APTOS_OBJECT_CORE,
+  MIN_COINS_ON_SHARES_POOL_IN_OCTAS,
 } from "../constants";
 import type {
+  AptosAccount,
   AptosFungibleoObjectCoreResourceData,
   AptosFungibleStoreResourceData,
+  AptosMappedStakingPosition,
   AptosMoveResource,
+  AptosStakingPosition,
   AptosTransaction,
+  AptosValidator,
   Transaction,
   TransactionOptions,
 } from "../types";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
+import { Unit } from "@ledgerhq/types-cryptoassets";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 
 export const DEFAULT_GAS = new BigNumber(200);
 export const DEFAULT_GAS_PRICE = new BigNumber(100);
@@ -406,18 +413,34 @@ export function getTokenAccount(
   return fromTokenAccount ? tokenAccount : undefined;
 }
 
-// export const canStake = (account: AptosAccount): boolean => {
-//   let transaction = createTransaction(account);
-//   transaction = updateTransaction(transaction, {
-//     mode: "stake",
-//   });
+export const mapStakingPositions = (
+  stakingPositions: AptosStakingPosition[],
+  validators: AptosValidator[],
+  unit: Unit,
+): AptosMappedStakingPosition[] => {
+  return stakingPositions.map(sp => {
+    const rank = validators.findIndex(v => v.address === sp.validatorId);
+    const validator = validators[rank] ?? sp;
+    const formatConfig = {
+      disableRounding: false,
+      alwaysShowSign: false,
+      showCode: true,
+    };
 
-//   const { gasPrice } = getCurrentNearPreloadData();
+    return {
+      ...sp,
+      formattedAmount: formatCurrencyUnit(unit, sp.staked, formatConfig),
+      formattedPending: formatCurrencyUnit(unit, sp.pending, formatConfig),
+      formattedAvailable: formatCurrencyUnit(unit, sp.available, formatConfig),
+      rank,
+      validator,
+    };
+  });
+};
 
-//   const fees = getStakingFees(transaction, gasPrice).multipliedBy(3);
-
-//   return getMaxAmount(account, transaction, fees).gt(0);
-// };
+export const canStake = (account: AptosAccount): boolean => {
+  return getMaxSendBalance(account) > MIN_COINS_ON_SHARES_POOL_IN_OCTAS;
+};
 
 // export const canUnstake = (
 //   stakingPosition: NearMappedStakingPosition | NearStakingPosition,

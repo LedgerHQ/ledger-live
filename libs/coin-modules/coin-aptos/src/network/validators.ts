@@ -2,32 +2,10 @@ import * as blockies from "blockies-ts";
 import { AptosAPI } from "../api";
 import { GetCurrentDelegatorBalancesData } from "../api/graphql/queries";
 import { CurrentDelegatorBalance, GetCurrentDelegatorBalancesQuery } from "../api/graphql/types";
+import { AptosValidator } from "../types";
+import BigNumber from "bignumber.js";
 
-export type ValidatorRaw = {
-  active_stake?: number | null;
-  commission?: number | null;
-  total_score?: number | null;
-  account_addr?: string | null;
-  name?: string | null;
-  avatar_url?: string | null;
-  delinquent?: boolean | null;
-  www_url?: string | null;
-  nextUnlockTime?: string | undefined;
-};
-
-export type Validator = {
-  activeStake: number;
-  commission: number;
-  totalScore: number;
-  accountAddr: string;
-  shares: string;
-  name?: string | undefined;
-  avatarUrl?: string | undefined;
-  wwwUrl?: string | undefined;
-  nextUnlockTime?: string | undefined;
-};
-
-export async function getValidators(currencyId: string): Promise<Validator[]> {
+export async function getValidators(currencyId: string): Promise<AptosValidator[]> {
   const api = new AptosAPI(currencyId);
   const querySecond = GetCurrentDelegatorBalancesData;
   const queryResponseSecond = await api.apolloClient.query<
@@ -41,7 +19,7 @@ export async function getValidators(currencyId: string): Promise<Validator[]> {
   const stakingData: CurrentDelegatorBalance[] =
     queryResponseSecond.data.current_delegator_balances;
 
-  const list: Validator[] = await Promise.all(
+  const list: AptosValidator[] = await Promise.all(
     stakingData.map(async pool => {
       const imgSrc = blockies.create({ seed: pool.delegator_address }).toDataURL();
       const aptosName = pool.staking_pool_metadata.operator_aptos_name;
@@ -63,12 +41,11 @@ export async function getValidators(currencyId: string): Promise<Validator[]> {
       const nextUnlockTime = formatUnlockTime(unblockdata); //`${30}d ${20}h ${30}m`;
 
       return {
-        commission: parseFloat(pool.current_pool_balance.operator_commission_percentage) / 100,
-        activeStake: parseInt(pool.current_pool_balance.total_coins, 10),
-        shares: pool.current_pool_balance.total_shares,
-        accountAddr: pool.current_pool_balance.staking_pool_address,
-        totalScore: 1, // Do I need it?
+        commission: BigNumber(pool.current_pool_balance.operator_commission_percentage).div(100),
+        activeStake: BigNumber(pool.current_pool_balance.total_coins),
+        address: pool.current_pool_balance.staking_pool_address,
         name: naming,
+        shares: pool.current_pool_balance.total_shares,
         avatarUrl: imgSrc,
         wwwUrl: url,
         nextUnlockTime: nextUnlockTime,
@@ -76,7 +53,7 @@ export async function getValidators(currencyId: string): Promise<Validator[]> {
     }),
   );
 
-  return list.sort((a, b) => b.activeStake - a.activeStake);
+  return list.sort((a, b) => b.activeStake.toNumber() - a.activeStake.toNumber());
 }
 
 function formatUnlockTime(epochSecs: string): string {
