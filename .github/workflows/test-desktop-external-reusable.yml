@@ -185,4 +185,3 @@ jobs:
         with:
           images: images.json
           no-actor: true
-          path: ${{ github.workspace }}/summary.json
