@@ -5,6 +5,7 @@ import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { Icons } from "@ledgerhq/react-ui/index";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   asset: CryptoOrTokenCurrency;
@@ -14,6 +15,8 @@ type Props = {
 };
 
 export const SelectAccount = ({ asset, onAccountSelected, source, flow }: Props) => {
+  const { t } = useTranslation();
+
   const getAccountsByAsset = () => {
     // TODO: To be implemented in LIVE-17272
     return Array.from({ length: 50 }, (_, i) => ({
@@ -46,7 +49,7 @@ export const SelectAccount = ({ asset, onAccountSelected, source, flow }: Props)
       <TrackPage category={source} name="Modular Account Selection" flow={flow} />
       <CardButton
         onClick={onAddAccountClick}
-        title="Add new or existing account"
+        title={t("drawers.selectAccount.addAccount")}
         iconRight={<Icons.Plus size="S" />}
         variant="dashed"
       />

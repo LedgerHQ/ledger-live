@@ -2,6 +2,7 @@ import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { CardButton } from "./CardButton";
 import { expect, fn, userEvent, within } from "@storybook/test";
+import { Icons } from "../../../assets";
 
 const meta: Meta<typeof CardButton> = {
   component: CardButton,
@@ -38,7 +39,7 @@ export const IconRight: Story = {
   args: {
     onClick: () => null,
     title: "title",
-    iconRight: <span style={{ backgroundColor: "aqua" }}>icon</span>,
+    iconRight: <Icons.Plus size="S" />,
   },
 };
 
