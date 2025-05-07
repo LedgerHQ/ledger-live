@@ -67,6 +67,7 @@ export function setupEnvironment() {
   if (process.env.MOCK == "0") {
     setEnv("MOCK", "");
     process.env.MOCK = "";
+    setEnv("DETOX", "1");
   } else if (process.env.MOCK == "1") {
     setEnv("MOCK", "1");
   }
