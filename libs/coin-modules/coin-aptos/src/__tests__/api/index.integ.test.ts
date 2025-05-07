@@ -16,4 +16,13 @@ describe("createApi", () => {
       expect(lastBlock.time).not.toBe(new Date("1970-01-01"));
     });
   });
+
+  // describe("combine and broadcast", () => {
+  //   it("returns the hash", async () => {
+  //     const tx = await api.combine("tx", "signature", "xpub");
+  //     const hash = await api.broadcast(tx);
+
+  //     expect(hash).toEqual(expect.any(String));
+  //   });
+  // });
 });
