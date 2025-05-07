@@ -67,10 +67,10 @@ export function setupEnvironment() {
   if (process.env.MOCK == "0") {
     setEnv("MOCK", "");
     process.env.MOCK = "";
+    setEnv("DETOX", "1");
   } else if (process.env.MOCK == "1") {
     setEnv("MOCK", "1");
   }
-
   if (process.env.DISABLE_TRANSACTION_BROADCAST == "0") {
     setEnv("DISABLE_TRANSACTION_BROADCAST", false);
   } else if (getEnv("MOCK") != "1") {
