@@ -19,9 +19,13 @@ export const useLargeMoverDataProvider = ({
   counterCurrency,
   range,
 }: UseLargeMoverDataProviderParams): {
-  data: CurrencyData[];
-  isLoading: boolean;
-  isError: boolean;
+  currencies: {
+    id: string;
+    data?: CurrencyData;
+    chartData?: MarketCoinDataChart;
+    isLoading: boolean;
+    isError: boolean;
+  }[];
 } => {
   const currencyQueries = useQueries({
     queries: ids.map(id => ({
@@ -42,29 +46,22 @@ export const useLargeMoverDataProvider = ({
     })),
   });
 
-  const isLoading =
-    currencyQueries.some(query => query.isLoading) || chartQueries.some(query => query.isLoading);
+  const currencyQueryMap = Object.fromEntries(ids.map((id, index) => [id, currencyQueries[index]]));
 
-  const isError =
-    currencyQueries.some(query => query.isError) || chartQueries.some(query => query.isError);
+  const chartQueryMap = Object.fromEntries(ids.map((id, index) => [id, chartQueries[index]]));
 
-  const data = ids
-    .map((id, index) => {
-      const currencyData = currencyQueries[index]?.data;
-      const chartData = chartQueries[index]?.data;
+  const currencies = ids.map(id => {
+    const currencyQuery = currencyQueryMap[id];
+    const chartQuery = chartQueryMap[id];
 
-      if (!currencyData) return null;
+    return {
+      id,
+      data: currencyQuery?.data,
+      chartData: chartQuery?.data,
+      isLoading: currencyQuery?.isLoading || chartQuery?.isLoading || false,
+      isError: currencyQuery?.isError || chartQuery?.isError || false,
+    };
+  });
 
-      return {
-        ...currencyData,
-        chartData: chartData as MarketCoinDataChart | undefined,
-      };
-    })
-    .filter(Boolean) as CurrencyData[];
-
-  return {
-    data,
-    isLoading,
-    isError,
-  };
+  return { currencies };
 };

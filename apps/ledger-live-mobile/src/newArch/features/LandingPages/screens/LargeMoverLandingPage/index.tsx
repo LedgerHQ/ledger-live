@@ -46,7 +46,14 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
     <Flex>
       <Button onPress={handleNext}>{"Next"}</Button>
       <Flex padding={1} paddingBottom={120} paddingTop={8}>
-        <Card {...currencies[currentIndex]} range={range} setRange={setRange} />
+        {currencies[currentIndex].data && currencies[currentIndex].chartData ? (
+          <Card
+            {...currencies[currentIndex].data!}
+            chartData={currencies[currentIndex].chartData!}
+            range={range}
+            setRange={setRange}
+          />
+        ) : null}
       </Flex>
     </Flex>
   );

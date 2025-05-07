@@ -13,21 +13,18 @@ export const useLargeMover = ({ currencyIds, initialRange = KeysPriceChange.day 
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const [range, setRange] = useState<KeysPriceChange>(initialRange);
 
-  const {
-    data: currencies,
-    isLoading: loading,
-    isError: error,
-  } = useLargeMoverDataProvider({
+  const { currencies } = useLargeMoverDataProvider({
     ids: currencyIds,
     counterCurrency: counterValueCurrency.ticker,
     range,
   });
+
+  const loading = currencies.some(currencies => currencies.isLoading);
 
   return {
     range,
     setRange,
     currencies,
     loading,
-    error,
   };
 };
