@@ -398,12 +398,14 @@ export async function broadcastTransaction(signedTransaction: string): Promise<s
 
 export async function loadAccount(addr: string): Promise<AccountRecord | null> {
   if (!addr || !addr.length) {
+    log("coin:stellar", "loadAccount: empty address");
     return null;
   }
 
   try {
     return await getServer().loadAccount(addr);
   } catch (e) {
+    log("coin:stellar", "loadAccount error", e);
     return null;
   }
 }
