@@ -7078,5 +7078,12 @@
       "asset": "asset",
       "network": "network"
     }
+  },
+  "nftEntryPoint": {
+    "title": "NFT (Non Fungible Tokens)",
+    "entry": {
+      "magiceden": "Magic Eden",
+      "opensea": "OpenSea"
+    }
   }
 }
