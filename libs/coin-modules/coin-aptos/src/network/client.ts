@@ -261,8 +261,6 @@ export class AptosAPI {
     const simulation = await this.simulateTransaction(publicKeyEd, tx);
     const completedTx = simulation[0];
 
-    console.log(completedTx);
-
     const gasLimit = new BigNumber(completedTx.gas_used).multipliedBy(ESTIMATE_GAS_MUL);
     const gasPrice = new BigNumber(completedTx.gas_unit_price);
 
