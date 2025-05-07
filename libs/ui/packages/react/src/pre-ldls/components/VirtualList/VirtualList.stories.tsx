@@ -4,7 +4,9 @@ import { VirtualList } from "./VirtualList";
 import { action } from "@storybook/addon-actions";
 import { expect, userEvent, waitFor, within } from "@storybook/test";
 
-const meta: Meta<typeof VirtualList> = {
+const items = Array.from({ length: 50 }, (_, i) => ({ i }));
+
+const meta: Meta<typeof VirtualList<{ i: number }>> = {
   component: VirtualList,
   decorators: [
     Story => (
@@ -25,9 +27,6 @@ const meta: Meta<typeof VirtualList> = {
     },
   },
   argTypes: {
-    count: {
-      description: "Total number of items in the list.",
-    },
     itemHeight: {
       description: "Height of each item in the list.",
     },
@@ -72,28 +71,28 @@ const meta: Meta<typeof VirtualList> = {
   },
   args: {
     itemHeight: 64,
-    count: 50,
     LoadingComponent: undefined,
     isLoading: false,
     overscan: 5,
     hasNextPage: false,
     threshold: 5,
     onVisibleItemsScrollEnd: () => {},
-    renderItem: (index: number) => <h1 tabIndex={index}>Item #{index}</h1>,
+    items,
+    renderItem: ({ i }: { i: number }) => <h1 tabIndex={i}>Item #{i}</h1>,
   },
 };
 export default meta;
 
-type Story = StoryObj<typeof VirtualList>;
+type Story = StoryObj<typeof VirtualList<{ i: number }>>;
 
 export const Default: Story = {
   args: {
-    count: 20,
     itemHeight: 50,
     overscan: 5,
-    renderItem: (index: number) => (
+    items,
+    renderItem: ({ i }: { i: number }) => (
       <div style={{ height: 50, backgroundColor: "lightblue", border: "1px solid black" }}>
-        Item {index}
+        Item {i}
       </div>
     ),
   },
@@ -101,7 +100,7 @@ export const Default: Story = {
 
 export const WithPagination: Story = {
   render: args => {
-    const [items, setItems] = useState(Array.from({ length: args.count }, (_, i) => i));
+    const [items, setItems] = useState(Array.from({ length: 50 }, (_, i) => i));
     const [isFetching, setIsFetching] = useState(false);
 
     const handleFetchNextPage = async () => {
@@ -116,20 +115,19 @@ export const WithPagination: Story = {
     return (
       <VirtualList
         {...args}
-        count={items.length}
         isLoading={isFetching}
         onVisibleItemsScrollEnd={handleFetchNextPage}
         hasNextPage={true}
-        renderItem={index => (
+        items={items}
+        renderItem={item => (
           <div style={{ height: 50, backgroundColor: "lightgreen", border: "1px solid black" }}>
-            Item {items[index]}
+            Item {item}
           </div>
         )}
       />
     );
   },
   args: {
-    count: 50,
     itemHeight: 50,
     overscan: 5,
     hasNextPage: true,

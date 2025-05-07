@@ -2,9 +2,17 @@ import memoize from "lodash/memoize";
 import { css, DefaultTheme } from "styled-components";
 import { dark, light, ModeColors, spacing, SpacingScale } from "./design-tokens";
 
-// Add temporarily missing tokens here
-const extraOther = {
-  "radius-s": "8px",
+// Add temporarily missing and override incorrect tokens here
+const overrideOther = {
+  "radius-s": "8px", // missing from tokens
+  "radius-xs": "4px", // missing from tokens
+  "margin-xs": "8px", // redefines marging-xs
+  "margin-s": "16px", // redefines marging-s
+  "margin-m": "24px", // redefines marging-m
+  "margin-l": "32px", // redefines marging-l
+
+  "spacing-xs": "12px", // override from "spacing-xxs": "12px"
+  "spacing-xxs": "8px", // override from "spacing-xs": "8px"
 } as const;
 
 // override colours based on Figma differing from design-tokens.ts
@@ -17,7 +25,7 @@ const overrideColor = {
 } as const;
 
 type ColorToken = `colors-${keyof ModeColors}`;
-type OtherToken = keyof (SpacingScale & typeof extraOther);
+type OtherToken = keyof (SpacingScale & typeof overrideOther);
 
 export const withTokens = (...usedTokens: Array<ColorToken | OtherToken>) => {
   const filterTokens = memoize((theme: DefaultTheme["theme"]) => {
@@ -31,10 +39,12 @@ export const withTokens = (...usedTokens: Array<ColorToken | OtherToken>) => {
       if (!usedTokens.includes(color)) return [];
       return [[`--${color}`, value]];
     });
-    const otherEntries = [spacing, extraOther].flatMap(Object.entries).flatMap(([key, value]) => {
-      if (!usedTokens.includes(key as OtherToken)) return [];
-      return [[`--${key}`, value]];
-    });
+    const otherEntries = [spacing, overrideOther]
+      .flatMap(Object.entries)
+      .flatMap(([key, value]) => {
+        if (!usedTokens.includes(key as OtherToken)) return [];
+        return [[`--${key}`, value]];
+      });
 
     return Object.fromEntries([...colorEntries, ...otherEntries]);
   });
