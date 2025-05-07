@@ -203,7 +203,7 @@
       "env": ["CI_OS"]
     },
     "live-mobile#e2e:ci": {
-      "cache": true,
+      "cache": false,
       "dependsOn": ["^build"],
       "inputs": [],
       "outputs": ["artifacts/**"]
