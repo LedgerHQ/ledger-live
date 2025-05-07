@@ -75,7 +75,7 @@ export default class StakePage {
 
   @Step("Verify fees visible in summary")
   async verifyFeesVisible(currencyId: string) {
-    await expect(await getElementById(this.delegationFees(currencyId))).toBeVisible();
+    await expect(getElementById(this.delegationFees(currencyId))).toBeVisible();
   }
 
   @Step("Get fees displayed in summary")

@@ -43,12 +43,12 @@ export default class AddAccountDrawer extends CommonPage {
   @Step("Expect account discovered")
   async expectAccountDiscovery(currencyName: string, currencyId: string, index = 0) {
     const accountName = `${currencyName} ${index + 1}`;
-    await expect(await this.accountItem(this.accountId(currencyId, index))).toBeVisible();
+    await expect(this.accountItem(this.accountId(currencyId, index))).toBeVisible();
     const accountId = (await getIdByRegexp(this.accountItemRegExp(), index)).replace(
       this.accountItemId,
       "",
     );
-    await expect(await this.accountItemName(accountId)).toHaveText(accountName);
+    await expect(this.accountItemName(accountId)).toHaveText(accountName);
     return accountId;
   }
 

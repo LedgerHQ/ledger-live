@@ -6,11 +6,11 @@ export default class NftViewerPage {
 
   @Step("Navigate back to NFT gallery")
   async navigateToNftGallery() {
-    await tapByElement(await this.backButton());
+    await tapByElement(this.backButton());
   }
 
   @Step("Expect NFT viewer page to be visible")
   async expectVisible() {
-    await expect(await this.mainScrollView()).toBeVisible();
+    await expect(this.mainScrollView()).toBeVisible();
   }
 }

@@ -18,21 +18,13 @@ export default class SendPage {
   highFeeConfirmButtonID = "confirmation-modal-confirm-button";
 
   summaryRecipient = () => getElementById("send-summary-recipient");
-
   summaryRecipientEns = () => getElementById("send-summary-recipient-ens");
-
   summaryMemoTag = () => getElementById(this.summaryMemoTagId);
-
   getStep1HeaderTitle = () => getElementById("send-header-step1-title");
-
   amountMaxSwitch = () => getElementById("send-amount-max-switch");
-
   amountContinueButton = () => getElementById("amount-continue-button");
-
   summaryWarning = () => getElementById("send-summary-warning");
-
   summaryContinueButton = () => getElementById("summary-continue-button");
-
   feeStrategy = (fee: string) => getElementByText(fee);
 
   @Step("Open send via deeplink")
@@ -48,7 +40,7 @@ export default class SendPage {
 
   @Step("Expect first step")
   async expectFirstStep() {
-    const header = await this.getStep1HeaderTitle();
+    const header = this.getStep1HeaderTitle();
     await expect(header).toBeVisible();
   }
 
@@ -73,25 +65,25 @@ export default class SendPage {
 
   @Step("Expect recipient error message")
   async expectSendRecipientError(errorMessage: string) {
-    const errElem = await getElementById(this.recipientErrorId);
+    const errElem = getElementById(this.recipientErrorId);
     if (errorMessage) {
       await expect(errElem).toHaveText(errorMessage);
     } else {
       await expect(errElem).not.toBeVisible();
     }
-    const contBtn = await getElementById(this.recipientContinueButtonId);
+    const contBtn = getElementById(this.recipientContinueButtonId);
     await expect(contBtn).not.toBeVisible();
   }
 
   @Step("Expect recipient step success")
   async expectSendRecipientSuccess(expectedWarningMessage?: string) {
-    const errElem = await getElementById(this.recipientErrorId);
+    const errElem = getElementById(this.recipientErrorId);
     if (!expectedWarningMessage) {
       await expect(errElem).not.toBeVisible();
     } else {
       await expect(errElem).toHaveText(expectedWarningMessage);
     }
-    const contBtn = await getElementById(this.recipientContinueButtonId);
+    const contBtn = getElementById(this.recipientContinueButtonId);
     await expect(contBtn).toBeVisible();
   }
 
@@ -104,10 +96,10 @@ export default class SendPage {
   @Step("Set the amount and return the value")
   async setAmount(amount: string): Promise<string> {
     if (amount === "max") {
-      const switchEl = await this.amountMaxSwitch();
+      const switchEl = this.amountMaxSwitch();
       await tapByElement(switchEl);
     } else {
-      const input = await getElementById(this.amountInputId);
+      const input = getElementById(this.amountInputId);
       await input.replaceText(amount);
       await input.tapReturnKey();
     }
@@ -116,23 +108,23 @@ export default class SendPage {
   }
 
   async amountContinue() {
-    const btn = await this.amountContinueButton();
+    const btn = this.amountContinueButton();
     await tapByElement(btn);
   }
 
   @Step("Expect amount step success")
   async expectSendAmountSuccess() {
-    const errElem = await getElementById(this.amountErrorId);
+    const errElem = getElementById(this.amountErrorId);
     await expect(errElem).toHaveText("");
-    const contBtn = await this.amountContinueButton();
+    const contBtn = this.amountContinueButton();
     await expect(contBtn).toBeVisible();
   }
 
   @Step("Expect amount error message")
   async expectSendAmountError(errorMessage: string) {
-    const errElem = await getElementById(this.amountErrorId);
+    const errElem = getElementById(this.amountErrorId);
     await expect(errElem).toHaveText(errorMessage);
-    const contBtn = await this.amountContinueButton();
+    const contBtn = this.amountContinueButton();
     await expect(contBtn).not.toBeVisible();
   }
 
@@ -144,13 +136,13 @@ export default class SendPage {
 
   @Step("Summary continue")
   async summaryContinue() {
-    const btn = await this.summaryContinueButton();
+    const btn = this.summaryContinueButton();
     await tapByElement(btn);
   }
 
   @Step("Expect amount in summary")
   async expectSummaryAmount(amount: string) {
-    const amt = await getElementById(this.summaryAmountId);
+    const amt = getElementById(this.summaryAmountId);
     await expect(amt).toHaveText(amount);
   }
 
@@ -165,7 +157,7 @@ export default class SendPage {
 
   @Step("Expect recipient in summary")
   async expectSummaryRecipient(recipient: string) {
-    const rec = await this.summaryRecipient();
+    const rec = this.summaryRecipient();
     await expect(rec).toHaveText(recipient);
   }
 
@@ -173,29 +165,29 @@ export default class SendPage {
   async expectSendSummaryError(errorMessage: RegExp) {
     const err = await getTextOfElement(this.summaryErrorId);
     jestExpect(err).toMatch(errorMessage);
-    const btn = await this.summaryContinueButton();
+    const btn = this.summaryContinueButton();
     await expect(btn).not.toBeVisible();
   }
 
   @Step("Expect warning in summary")
   async expectSummaryWarning(warningMessage: string) {
-    const warn = await this.summaryWarning();
+    const warn = this.summaryWarning();
     await expect(warn).toHaveText(warningMessage);
   }
 
   @Step("Expect recipient ENS in summary")
   async expectSummaryRecipientEns(ensName: string) {
-    const ens = await this.summaryRecipientEns();
+    const ens = this.summaryRecipientEns();
     await expect(ens).toHaveText(ensName);
   }
 
   @Step("Expect memo tag in summary")
   async expectSummaryMemoTag(memoTag?: string) {
     if (memoTag && memoTag !== "noTag") {
-      const memoEl = await this.summaryMemoTag();
+      const memoEl = this.summaryMemoTag();
       await expect(memoEl).toHaveText(memoTag);
     } else if (await IsIdVisible(this.summaryMemoTagId)) {
-      const memoEl = await this.summaryMemoTag();
+      const memoEl = this.summaryMemoTag();
       await expect(memoEl).toHaveText("");
     }
   }
@@ -209,14 +201,14 @@ export default class SendPage {
 
   @Step("Expect ENS name in device validation screen")
   async expectValidationEnsName(ensName: string) {
-    const elem = await getElementById(this.validationEnsId);
+    const elem = getElementById(this.validationEnsId);
     await expect(elem).toHaveText(ensName);
   }
 
   @Step("Choose fee strategy")
   async chooseFeeStrategy(fee?: string) {
     if (fee) {
-      const feeBtn = await this.feeStrategy(fee);
+      const feeBtn = this.feeStrategy(fee);
       await tapByElement(feeBtn);
     }
   }

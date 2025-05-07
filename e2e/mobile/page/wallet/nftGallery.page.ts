@@ -26,7 +26,7 @@ export default class NftGalleryPage {
 
   @Step("Select NFT")
   async clickOnNft(index = 0) {
-    await tapByElement(await this.nftListItem(index));
+    await tapByElement(this.nftListItem(index));
   }
 
   @Step("Hide All Nft")
@@ -37,17 +37,17 @@ export default class NftGalleryPage {
     );
 
     // Select all NFTs and confirm hidding
-    await tapByElement(await this.selectAndHide());
+    await tapByElement(this.selectAndHide());
     for (let nb = nftNumber; nb > 0; nb--) await this.clickOnNft(nb - 1);
-    await tapByElement(await this.confirmHide());
+    await tapByElement(this.confirmHide());
 
     // Expect no NFT displayed
-    await expect(await this.nftListItem()).not.toBeVisible();
+    await expect(this.nftListItem()).not.toBeVisible();
   }
 
   @Step("Continue from receive NFTs modal")
   async continueFromReceiveNFTsModal() {
-    await tapByElement(await this.nftReceiveModalContinueButton());
+    await tapByElement(this.nftReceiveModalContinueButton());
   }
 
   @Step("Wait for NFT list")
@@ -57,47 +57,47 @@ export default class NftGalleryPage {
 
   @Step("Expect NFT Gallery visible")
   async expectGalleryVisible() {
-    await expect(await this.root()).toBeVisible();
+    await expect(this.root()).toBeVisible();
   }
 
   @Step("Expect NFT Gallery not visible")
   async expectGalleryNotVisible() {
-    await expect(await this.root()).not.toBeVisible();
+    await expect(this.root()).not.toBeVisible();
   }
 
   @Step("Expect Gallery empty state")
   async expectGalleryEmptyState() {
     await this.expectGalleryVisible();
-    await expect(await this.emptyScreen()).toBeVisible(50);
+    await expect(this.emptyScreen()).toBeVisible(50);
   }
 
   @Step("Expect NFT visible")
   async expectNftVisible(index = 0) {
-    await expect(await this.nftListItem(index)).toBeVisible();
+    await expect(this.nftListItem(index)).toBeVisible();
   }
 
   @Step("Expect Filter drawer to be visible")
   async expectFilterDrawerVisible() {
-    await expect(await this.nftFilterDrawer()).toBeVisible();
+    await expect(this.nftFilterDrawer()).toBeVisible();
   }
 
   @Step("Expect Filter Drawer not to be visible")
   async expectFilterDrawerNotVisible() {
-    await expect(await this.nftFilterDrawer()).not.toBeVisible();
+    await expect(this.nftFilterDrawer()).not.toBeVisible();
   }
 
   @Step("Click on reset filters")
   async tapResetFilters() {
-    await tapByElement(await this.emptyScreenResetButton());
+    await tapByElement(this.emptyScreenResetButton());
   }
 
   @Step("Click on Add new NFT")
   async tapAddNew() {
-    await tapByElement(await this.nftAddNewListItem());
+    await tapByElement(this.nftAddNewListItem());
   }
 
   @Step("Expect NFT receive modal visible")
   async expectNftReceiveModalVisible() {
-    await expect(await this.nftReceiveModal()).toBeVisible();
+    await expect(this.nftReceiveModal()).toBeVisible();
   }
 }

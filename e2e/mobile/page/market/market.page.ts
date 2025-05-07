@@ -9,7 +9,7 @@ export default class MarketPage {
 
   @Step("Search for asset")
   async searchAsset(asset: string) {
-    await typeTextByElement(await this.searchBar(), asset);
+    await typeTextByElement(this.searchBar(), asset);
   }
 
   @Step("Open asset page")
@@ -19,21 +19,21 @@ export default class MarketPage {
 
   @Step("Star favorite coin")
   async starFavoriteCoin() {
-    await tapByElement(await this.starButton());
+    await tapByElement(this.starButton());
   }
 
   @Step("Back to asset list")
   async backToAssetList() {
-    await tapByElement(await this.assetCardBackBtn());
+    await tapByElement(this.assetCardBackBtn());
   }
 
   @Step("Filter starred asset")
   async filterStaredAsset() {
-    await tapByElement(await this.starMarketListButton());
+    await tapByElement(this.starMarketListButton());
   }
 
   @Step("Expect market row title")
   async expectMarketRowTitle(title: string) {
-    await expect(await this.marketRowTitle()).toHaveText(title);
+    await expect(this.marketRowTitle()).toHaveText(title);
   }
 }

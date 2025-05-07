@@ -19,13 +19,13 @@ export default class LedgerSyncPage {
 
   @Step("Expect Ledger Sync activation page is displayed")
   async expectLedgerSyncPageIsDisplayed() {
-    await expect(await this.activationTitle()).toBeVisible();
-    await expect(await this.activationDescription()).toBeVisible();
+    await expect(this.activationTitle()).toBeVisible();
+    await expect(this.activationDescription()).toBeVisible();
   }
 
   @Step("Tap on the activation button")
   async tapTurnOnSync() {
-    await tapByElement(await this.activationButton());
+    await tapByElement(this.activationButton());
   }
 
   @Step("Expect Ledger Sync success page")
@@ -35,7 +35,7 @@ export default class LedgerSyncPage {
 
   @Step("Close the activation success page")
   async closeActivationSuccessPage() {
-    await tapByElement(await this.activationSuccessCloseButton());
+    await tapByElement(this.activationSuccessCloseButton());
   }
 
   @Step("Select delete sync")
@@ -53,6 +53,6 @@ export default class LedgerSyncPage {
   @Step("Expect deletion success page")
   async closeDeletionSuccessPage() {
     await waitForElementById(this.successPage);
-    await tapByElement(await this.deletionSuccessCloseButton());
+    await tapByElement(this.deletionSuccessCloseButton());
   }
 }

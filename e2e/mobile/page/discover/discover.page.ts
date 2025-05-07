@@ -31,23 +31,23 @@ export default class DiscoverPage {
     return app;
   }
 
-  getAppUrl(name: string) {
-    const app = this.discoverApps.find(app => app.name === name);
-    return app ? app.url : "App not found";
-  }
-
   @Step("Open discover page via deeplink")
   async openViaDeeplink(discoverApps = "") {
     await openDeeplink(this.baseLink + discoverApps);
   }
 
+  getAppUrl(name: string) {
+    const app = this.discoverApps.find(app => app.name === name);
+    return app ? app.url : "App not found";
+  }
+
   @Step("Expect live app title")
   async expectApp(app: string) {
-    await expect(await this.liveAppTitle()).toHaveText(this.getAppUrl(app));
+    await expect(this.liveAppTitle()).toHaveText(this.getAppUrl(app));
   }
 
   @Step("Expect discover page")
   async expectDiscoverPage() {
-    await expect(await this.discoverPageHeader()).toBeVisible();
+    await expect(this.discoverPageHeader()).toBeVisible();
   }
 }

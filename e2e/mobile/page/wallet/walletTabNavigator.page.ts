@@ -1,9 +1,9 @@
 import { ScreenName, NavigatorName } from "~/const";
 
 export default class WalletTabNavigatorPage {
-  nftGalleryTab = async () => await getElementById(`wallet-tab-${ScreenName.WalletNftGallery}`);
-  portfolioTab = async () => await getElementById(`wallet-tab-${ScreenName.Portfolio}`);
-  marketTab = async () => await getElementById(`wallet-tab-${NavigatorName.Market}`);
+  nftGalleryTab = async () => getElementById(`wallet-tab-${ScreenName.WalletNftGallery}`);
+  portfolioTab = async () => getElementById(`wallet-tab-${ScreenName.Portfolio}`);
+  marketTab = async () => getElementById(`wallet-tab-${NavigatorName.Market}`);
 
   @Step("Click on NFT Gallery tab")
   async navigateToNftGallery() {

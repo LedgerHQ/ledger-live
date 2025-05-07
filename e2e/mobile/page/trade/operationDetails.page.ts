@@ -25,31 +25,31 @@ export default class OperationDetailsPage {
 
   @Step("Check account details")
   async checkAccount(account: string) {
-    await expect(await this.account()).toHaveText(account);
+    await expect(this.account()).toHaveText(account);
   }
 
   @Step("Check recipient details")
   async checkRecipient(recipient: string) {
     await scrollToId(this.recipientId);
-    await expect(await getElementById(this.recipientId)).toHaveText(recipient);
+    await expect(getElementById(this.recipientId)).toHaveText(recipient);
   }
 
   @Step("Check delegated provider")
   async checkProvider(provider: string) {
     await scrollToId(this.providerId);
-    await expect(await getElementById(this.providerId)).toHaveText(provider);
+    await expect(getElementById(this.providerId)).toHaveText(provider);
   }
 
   @Step("Check delegated amount")
   async checkDelegatedAmount(amount: string) {
     await scrollToId(this.delegatedAmountId);
-    await expect(await getElementById(this.delegatedAmountId)).toHaveText(amount);
+    await expect(getElementById(this.delegatedAmountId)).toHaveText(amount);
   }
 
   @Step("Check sender")
   async checkSender(sender: string) {
     await scrollToId(this.senderId);
-    await expect(await getElementById(this.senderId)).toHaveText(sender);
+    await expect(getElementById(this.senderId)).toHaveText(sender);
   }
 
   @Step("Check Fees")

@@ -14,11 +14,11 @@ export default class OnboardingStepsPage {
   @Step("Start onboarding")
   async startOnboarding(): Promise<void> {
     await waitForElementById(this.getStartedButtonId);
-    const getStarted = await this.onboardingGetStartedButton();
+    const getStarted = this.onboardingGetStartedButton();
     await tapByElement(getStarted);
     await waitForElementById(new RegExp(`${this.setupLedger}|${this.acceptAnalyticsButtonId}`));
     try {
-      const analyticsBtn = await this.acceptAnalyticsButton();
+      const analyticsBtn = this.acceptAnalyticsButton();
       await tapByElement(analyticsBtn);
     } catch {
       // Analytics prompt not enabled
@@ -27,13 +27,13 @@ export default class OnboardingStepsPage {
 
   @Step("Choose no ledger yet")
   async chooseNoLedgerYet(): Promise<void> {
-    const btn = await this.noLedgerYetButton();
+    const btn = this.noLedgerYetButton();
     await tapByElement(btn);
   }
 
   @Step("Choose to explore app")
   async chooseToExploreApp(): Promise<void> {
-    const exploreBtn = await this.exploreAppButton();
+    const exploreBtn = this.exploreAppButton();
     await tapByElement(exploreBtn);
     for (let i = 0; i < 4; i++) {
       const titleId = this.discoverLiveTitle(i);

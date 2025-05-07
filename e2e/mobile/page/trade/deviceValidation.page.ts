@@ -14,21 +14,21 @@ export default class DeviceValidationPage {
 
   @Step("Expect amount in device validation screen")
   async expectAmount(amount: string) {
-    await expect(await this.validationAmount()).toHaveText(amount);
+    await expect(this.validationAmount()).toHaveText(amount);
   }
 
   @Step("Expect address in device validation screen")
   async expectAddress(recipient: string) {
-    await expect(await this.validationAddress()).toHaveText(recipient);
+    await expect(this.validationAddress()).toHaveText(recipient);
   }
 
   @Step("Expect provider in device validation screen")
   async expectProvider(provider: string) {
-    await expect(await this.validationProvider()).toHaveText(provider);
+    await expect(this.validationProvider()).toHaveText(provider);
   }
 
   @Step("Expect fees in device validation screen")
   async expectFees(fees: string) {
-    await expect(await this.validationFees()).toHaveText(fees);
+    await expect(this.validationFees()).toHaveText(fees);
   }
 }

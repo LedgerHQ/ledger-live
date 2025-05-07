@@ -24,11 +24,11 @@ export default class CeloManageAssetsPage {
   @Step("Check manage assets page - CELO")
   async checkManagePage() {
     await this.waitForManageAssets();
-    await expect(await getElementById(this.celoLockButton)).toBeVisible();
-    await expect(await getElementById(this.celoUnlockButton)).toBeVisible();
-    await expect(await getElementById(this.celoWithdrawButton)).not.toBeVisible();
-    await expect(await getElementById(this.celoVoteButton)).toBeVisible();
-    await expect(await getElementById(this.celoActivateVoteButton)).not.toBeVisible();
-    await expect(await getElementById(this.celoRevokeButton)).not.toBeVisible();
+    await expect(getElementById(this.celoLockButton)).toBeVisible();
+    await expect(getElementById(this.celoUnlockButton)).toBeVisible();
+    await expect(getElementById(this.celoWithdrawButton)).not.toBeVisible();
+    await expect(getElementById(this.celoVoteButton)).toBeVisible();
+    await expect(getElementById(this.celoActivateVoteButton)).not.toBeVisible();
+    await expect(getElementById(this.celoRevokeButton)).not.toBeVisible();
   }
 }

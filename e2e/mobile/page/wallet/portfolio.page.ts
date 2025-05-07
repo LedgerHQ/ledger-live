@@ -48,14 +48,12 @@ export default class PortfolioPage {
 
   @Step("Expect Portfolio with accounts")
   async expectPortfolioWithAccounts() {
-    await expect(await getElementById(this.accountsListView)).toBeVisible();
+    await expect(getElementById(this.accountsListView)).toBeVisible();
   }
 
   @Step("Go to asset's accounts from portfolio")
   async goToAccounts(currencyName: string) {
-    console.log("Go to asset's accounts from portfolio");
     await scrollToId(this.allocationSectionTitleId, this.accountsListView);
-    console.log("Scroll to allocation section");
     await tapById(this.assetItemId(currencyName));
   }
 }

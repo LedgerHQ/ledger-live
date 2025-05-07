@@ -11,28 +11,28 @@ export default class SwapPage {
   sendMaxToggle = () => getElementById("exchange-send-max-toggle");
 
   @Step("Open swap via deeplink")
-  async openViaDeeplink(): Promise<void> {
+  async openViaDeeplink() {
     await openDeeplink(this.baseLink);
   }
 
   @Step("Expect swap page")
-  async expectSwapPage(): Promise<void> {
-    const tab = await this.swapFormTab();
+  async expectSwapPage() {
+    const tab = this.swapFormTab();
     await expect(tab).toBeVisible();
   }
 
-  async sendMax(): Promise<void> {
-    const toggle = await this.sendMaxToggle();
+  async sendMax() {
+    const toggle = this.sendMaxToggle();
     await tapByElement(toggle);
   }
 
   @Step("Verify the amounts and accept swap")
-  async verifyAmountsAndAcceptSwap(swap: SwapType, amount: string): Promise<void> {
+  async verifyAmountsAndAcceptSwap(swap: SwapType, amount: string) {
     const MAX_RETRIES = 3;
     const RETRY_DELAY_MS = 20_000;
 
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-      const isVisible = await waitForElementById(this.confirmSwapOnDeviceDrawerId, 10_000);
+      const isVisible = await IsIdVisible(this.confirmSwapOnDeviceDrawerId, 10_000);
 
       if (isVisible) {
         await app.speculos.verifyAmountsAndAcceptSwap(swap, amount);
@@ -58,7 +58,7 @@ export default class SwapPage {
   }
 
   @Step("Wait for swap success and continue")
-  async waitForSuccessAndContinue(): Promise<void> {
+  async waitForSuccessAndContinue() {
     await waitForElementById(this.swapSuccessTitleId, 30_000);
     await tapById(app.common.proceedButtonId);
   }

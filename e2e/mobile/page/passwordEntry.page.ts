@@ -6,24 +6,24 @@ export default class PasswordEntryPage {
 
   @Step("Enter password")
   async enterPassword(password: string) {
-    await tapByElement(await this.getPasswordTextInput()); //prevent flakiness with Log in button not appearing
-    await typeTextByElement(await this.getPasswordTextInput(), password, false);
+    await tapByElement(this.getPasswordTextInput()); //prevent flakiness with Log in button not appearing
+    await typeTextByElement(this.getPasswordTextInput(), password, false);
   }
 
   @Step("Login")
   async login() {
-    await tapByElement(await this.getLogin());
+    await tapByElement(this.getLogin());
   }
 
   @Step("Expect lock")
   async expectLock() {
-    await expect(await this.getPasswordTextInput()).toBeVisible();
-    await expect(await this.getPasswordTextInput()).toBeVisible();
+    await expect(this.getPasswordTextInput()).toBeVisible();
+    await expect(this.getPasswordTextInput()).toBeVisible();
   }
 
   @Step("Expect no lock")
   async expectNoLock() {
-    await expect(await this.getPasswordTextInput()).not.toBeVisible();
-    await expect(await this.getPasswordTextInput()).not.toBeVisible();
+    await expect(this.getPasswordTextInput()).not.toBeVisible();
+    await expect(this.getPasswordTextInput()).not.toBeVisible();
   }
 }

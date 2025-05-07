@@ -2,7 +2,11 @@ import { expect } from "detox";
 import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 
 export default class AssetAccountsPage {
-  private baseLink = "account";
+  baseLink = "account";
+
+  assetBalance = () => getElementById("asset-graph-balance");
+  titleId = (assetName: string) => `accounts-title-${assetName}`;
+  accountAssetId = (assetName: string) => `account-assets-${assetName}`;
 
   @Step("Wait for asset page to load")
   async waitForAccountPageToLoad(assetName: string) {
@@ -11,7 +15,7 @@ export default class AssetAccountsPage {
 
   @Step("Expect asset balance to be visible")
   async expectAccountsBalanceVisible() {
-    const balanceEl = await this.assetBalance();
+    const balanceEl = this.assetBalance();
     await expect(balanceEl).toBeVisible();
   }
 
@@ -25,17 +29,5 @@ export default class AssetAccountsPage {
   async openViaDeeplink(currencyLong?: string) {
     const link = currencyLong ? this.baseLink + currencyParam + currencyLong : this.baseLink;
     await openDeeplink(link);
-  }
-
-  private async assetBalance() {
-    return await getElementById("asset-graph-balance");
-  }
-
-  private titleId(assetName: string) {
-    return `accounts-title-${assetName}`;
-  }
-
-  private accountAssetId(assetName: string) {
-    return `account-assets-${assetName}`;
   }
 }

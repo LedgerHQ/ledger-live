@@ -13,7 +13,7 @@ export default class CustomLockscreenPage {
 
   @Step("Expect custom lockscreen page")
   async expectCustomLockscreenPage() {
-    await expect(await this.welcomeCustomImageTitle()).toBeVisible();
-    await expect(await this.welcomeChoosePictureButton()).toBeVisible();
+    await expect(this.welcomeCustomImageTitle()).toBeVisible();
+    await expect(this.welcomeChoosePictureButton()).toBeVisible();
   }
 }

@@ -37,15 +37,15 @@ export default class ReceivePage {
 
   @Step("Expect first step")
   async expectFirstStep() {
-    await expect(await this.step1HeaderTitle()).toBeVisible();
+    await expect(this.step1HeaderTitle()).toBeVisible();
   }
 
   @Step("Expect second step networks")
   async expectSecondStepNetworks(networks: string[]): Promise<void> {
-    await expect(await getElementById(this.step2HeaderTitleId)).toBeVisible();
-    await expect(await getElementById("receive-header-step2-networks")).toBeVisible();
+    await expect(getElementById(this.step2HeaderTitleId)).toBeVisible();
+    await expect(getElementById("receive-header-step2-networks")).toBeVisible();
     for (const network of networks) {
-      await expect(await getElementById(this.currencyNameId(network))).toBeVisible();
+      await expect(getElementById(this.currencyNameId(network))).toBeVisible();
     }
   }
 
@@ -69,8 +69,8 @@ export default class ReceivePage {
 
   @Step("Expect second step accounts")
   async expectSecondStepAccounts() {
-    await expect(await this.step2HeaderTitle()).toBeVisible();
-    await expect(await this.step2Accounts()).toBeVisible();
+    await expect(this.step2HeaderTitle()).toBeVisible();
+    await expect(this.step2Accounts()).toBeVisible();
   }
 
   @Step("Select network in list if needed")
@@ -135,8 +135,8 @@ export default class ReceivePage {
   @Step("Expect account is created")
   async expectAccountIsCreated(accountName: string): Promise<void> {
     await waitForElementById(this.step2HeaderTitleId);
-    await expect(await getElementById(this.step2HeaderTitleId)).toBeVisible();
-    await expect(await getElementByText(accountName)).toBeVisible();
+    await expect(getElementById(this.step2HeaderTitleId)).toBeVisible();
+    await expect(getElementByText(accountName)).toBeVisible();
   }
 
   @Step("Select dont verify address")
@@ -157,13 +157,13 @@ export default class ReceivePage {
     const accountNameID = this.accountNameReceiveId(accountName);
     await waitForElementById(this.accountAddress);
     await waitForElementById(titleID);
-    await expect(await getElementById(titleID)).toBeVisible();
-    await expect(await getElementById(accountNameID)).toBeVisible();
+    await expect(getElementById(titleID)).toBeVisible();
+    await expect(getElementById(accountNameID)).toBeVisible();
   }
 
   @Step("Expect given address is displayed on receive page")
   async expectAddressIsCorrect(address: string): Promise<void> {
-    await expect(await getElementById(this.accountAddress)).toHaveText(address);
+    await expect(getElementById(this.accountAddress)).toHaveText(address);
   }
 
   @Step("Expect tron new address warning")
@@ -173,8 +173,8 @@ export default class ReceivePage {
     const scrollView = this.receivePageScrollViewId;
 
     await scrollToId(warnId, scrollView);
-    await expect(await getElementById(warnId)).toBeVisible();
-    await expect(await getElementById(descId)).toHaveText(
+    await expect(getElementById(warnId)).toBeVisible();
+    await expect(getElementById(descId)).toHaveText(
       "You first need to send at least 0.1 TRX to this address to activate it.",
     );
   }

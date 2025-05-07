@@ -50,27 +50,27 @@ export default class AccountPage {
 
   @Step("Open account settings")
   async openAccountSettings() {
-    await tapByElement(await this.accountSettingsButton());
+    await tapByElement(this.accountSettingsButton());
   }
 
   @Step("Open account advanced logs")
   async openAccountAdvancedLogs() {
-    await tapByElement(await this.accountAdvancedLogRow());
+    await tapByElement(this.accountAdvancedLogRow());
   }
 
   @Step("Select account deletion")
   async selectAccountDelete() {
-    await tapByElement(await this.accountDeleteRow());
+    await tapByElement(this.accountDeleteRow());
   }
 
   @Step("Confirm account deletion")
   async confirmAccountDelete() {
-    await tapByElement(await this.accountDeleteConfirm());
+    await tapByElement(this.accountDeleteConfirm());
   }
 
   @Step("Select account edit name")
   async selectAccountRename() {
-    await tapByElement(await this.accountRenameRow());
+    await tapByElement(this.accountRenameRow());
   }
 
   @Step("Enter new account name and submit")
@@ -82,13 +82,13 @@ export default class AccountPage {
   async expectOperationHistoryVisible(accountId: string) {
     const id = this.operationHistorySectionId(accountId);
     await scrollToId(id, this.accountScreenScrollView, 300, "bottom");
-    await expect(await getElementById(id)).toBeVisible();
+    await expect(getElementById(id)).toBeVisible();
   }
 
   @Step("Expect account balance to be visible")
   async expectAccountBalanceVisible(accountId: string) {
-    await expect(await this.accountGraph(accountId)).toBeVisible();
-    await expect(await this.accountBalance(accountId)).toBeVisible();
+    await expect(this.accountGraph(accountId)).toBeVisible();
+    await expect(this.accountBalance(accountId)).toBeVisible();
   }
 
   @Step("Expect address index")
@@ -102,12 +102,12 @@ export default class AccountPage {
 
   @Step("Tap on receive button")
   async tapReceive() {
-    await tapByElement(await this.receiveButton());
+    await tapByElement(this.receiveButton());
   }
 
   @Step("Tap on send button")
   async tapSend() {
-    await tapByElement(await this.sendButton());
+    await tapByElement(this.sendButton());
   }
 
   @Step("Tap on earn button")

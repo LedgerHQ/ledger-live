@@ -10,23 +10,23 @@ export default class SettingsGeneralPage {
 
   @Step("Toggle password")
   async togglePassword() {
-    const password = await this.passwordSettingsSwitch();
+    const password = this.passwordSettingsSwitch();
     await password.tap();
   }
 
   @Step("Enter new password")
   async enterNewPassword(passwordText: string) {
-    await typeTextByElement(await this.passwordTextInput(), passwordText);
+    await typeTextByElement(this.passwordTextInput(), passwordText);
   }
 
   @Step("Navigate to language select")
   async navigateToLanguageSelect() {
-    await tapByElement(await this.enterLanguageMenuButton());
+    await tapByElement(this.enterLanguageMenuButton());
   }
 
   @Step("Go to Ledger Sync")
   async navigateToLedgerSync() {
-    await tapByElement(await this.enterLedgerSync());
+    await tapByElement(this.enterLedgerSync());
   }
 
   @Step("Select language")
@@ -37,11 +37,11 @@ export default class SettingsGeneralPage {
 
   @Step("Expect preferred currency button")
   async expectPreferredCurrencyButton() {
-    await expect(await this.preferredCurrencyButton()).toBeVisible();
+    await expect(this.preferredCurrencyButton()).toBeVisible();
   }
 
   @Step("Expect localized text")
   async expectLocalizedText(text: string) {
-    await expect(await this.localizedText(text)).toBeVisible();
+    await expect(this.localizedText(text)).toBeVisible();
   }
 }

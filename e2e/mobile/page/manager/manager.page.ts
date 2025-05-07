@@ -15,6 +15,6 @@ export default class ManagerPage {
 
   @Step("Expect manager page")
   async expectManagerPage() {
-    await expect(await getElementById(this.managerTitleId)).toBeVisible();
+    await expect(getElementById(this.managerTitleId)).toBeVisible();
   }
 }

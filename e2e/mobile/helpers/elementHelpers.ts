@@ -13,30 +13,27 @@ const scroller = new PageScroller();
 const DEFAULT_TIMEOUT = 60000;
 const RN75_DELAY = 200; // React Native 75 workaround: QAA-370
 
-async function asyncDelay(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+function sync_delay(ms: number) {
+  const done = new Int32Array(new SharedArrayBuffer(4));
+  Atomics.wait(done, 0, 0, ms); // Wait for the specified duration
 }
 
-async function withRN75Delay<T>(fn: () => T): Promise<T> {
-  if (!isAndroid()) await asyncDelay(RN75_DELAY);
+function withRN75Delay<T>(fn: () => T) {
+  if (!isAndroid()) sync_delay(RN75_DELAY);
   return fn();
 }
 
 export const NativeElementHelpers = {
-  async waitForElementById(id: string | RegExp, timeout = DEFAULT_TIMEOUT): Promise<boolean> {
-    const el = element(by.id(id));
+  waitForElementById(id: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
+    return waitFor(element(by.id(id)))
+      .toBeVisible()
+      .withTimeout(timeout);
+  },
 
-    try {
-      await detoxExpect(el).toBeVisible();
-      return true;
-    } catch {
-      try {
-        await waitFor(el).toBeVisible().withTimeout(timeout);
-        return true;
-      } catch {
-        return false;
-      }
-    }
+  waitForElementByText(text: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
+    return waitFor(element(by.text(text)))
+      .toBeVisible()
+      .withTimeout(timeout);
   },
 
   async waitForElementNotVisible(id: string | RegExp, timeout = DEFAULT_TIMEOUT): Promise<boolean> {
@@ -55,63 +52,39 @@ export const NativeElementHelpers = {
     }
   },
 
-  async waitForElementByText(text: string | RegExp, timeout = DEFAULT_TIMEOUT): Promise<boolean> {
-    const el = element(by.text(text));
-
-    try {
-      await detoxExpect(el).toBeVisible();
-      return true;
-    } catch {
-      try {
-        await waitFor(el).toBeVisible().withTimeout(timeout);
-        return true;
-      } catch {
-        return false;
-      }
-    }
-  },
-
-  async getElementsById(id: string | RegExp): Promise<NativeElement> {
+  getElementsById(id: string | RegExp) {
     return withRN75Delay(() => element(by.id(id)));
   },
 
-  async getElementById(id: string | RegExp, index = 0): Promise<NativeElement> {
+  getElementById(id: string | RegExp, index = 0) {
     return withRN75Delay(() => element(by.id(id)).atIndex(index));
   },
 
-  async getElementByText(text: string | RegExp, index = 0): Promise<NativeElement> {
+  getElementByText(text: string | RegExp, index = 0) {
     return withRN75Delay(() => element(by.text(text)).atIndex(index));
   },
 
-  async isIdVisible(id: string | RegExp): Promise<boolean> {
+  async isIdVisible(id: string | RegExp, timeout: number = DEFAULT_TIMEOUT): Promise<boolean> {
     try {
       await waitFor(element(by.id(id)))
         .toBeVisible()
-        .withTimeout(1000);
+        .withTimeout(timeout);
       return true;
     } catch {
       return false;
     }
   },
 
-  async tapById(id: string | RegExp, index = 0): Promise<void> {
-    await retryUntilTimeout(async () => {
-      const el = await NativeElementHelpers.getElementById(id, index);
-      await detoxExpect(el).toBeVisible();
-      await el.tap();
-    });
+  async tapById(id: string | RegExp, index = 0) {
+    return await NativeElementHelpers.getElementById(id, index).tap();
   },
 
-  async tapByText(text: string | RegExp, index = 0): Promise<void> {
-    await retryUntilTimeout(async () =>
-      (await NativeElementHelpers.getElementByText(text, index)).tap(),
-    );
+  async tapByText(text: string | RegExp, index = 0) {
+    return await NativeElementHelpers.getElementByText(text, index).tap();
   },
 
-  async tapByElement(elem: NativeElement): Promise<void> {
-    await retryUntilTimeout(async () => {
-      return elem.tap();
-    });
+  async tapByElement(elem: Detox.NativeElement) {
+    await elem.tap();
   },
 
   async typeTextById(
@@ -121,7 +94,7 @@ export const NativeElementHelpers = {
     focus = true,
   ): Promise<void> {
     await NativeElementHelpers.typeTextByElement(
-      await NativeElementHelpers.getElementById(id),
+      NativeElementHelpers.getElementById(id),
       text,
       closeKeyboard,
       focus,
@@ -165,7 +138,7 @@ export const NativeElementHelpers = {
 
   async getTextOfElement(id: string | RegExp, index = 0): Promise<string> {
     const attributes = await retryUntilTimeout(async () =>
-      (await NativeElementHelpers.getElementById(id, index)).getAttributes(),
+      NativeElementHelpers.getElementById(id, index).getAttributes(),
     );
     return (!("elements" in attributes) ? attributes.text : attributes.elements[index].text) || "";
   },
@@ -180,7 +153,7 @@ export const NativeElementHelpers = {
   },
 
   async getIdByRegexp(id: RegExp, index = 0): Promise<string> {
-    const elem = await NativeElementHelpers.getElementById(id, index);
+    const elem = NativeElementHelpers.getElementById(id, index);
     return await NativeElementHelpers.getIdOfElement(elem, index);
   },
 };

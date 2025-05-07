@@ -6,6 +6,8 @@ export default class AccountsPage extends CommonPage {
   private baseLink = "accounts";
   private listTitle = "accounts-list-title";
 
+  emptyAccountDisplay = () => getElementById("empty-accounts-component");
+
   @Step("Open accounts list via deeplink")
   async openViaDeeplink() {
     await openDeeplink(this.baseLink);
@@ -18,7 +20,7 @@ export default class AccountsPage extends CommonPage {
 
   @Step("Expect accounts number")
   async expectAccountsNumber(expected: number) {
-    const listEl = await getElementsById(this.accountItemRegExp());
+    const listEl = getElementsById(this.accountItemRegExp());
     const attrs = await listEl.getAttributes();
     if ("elements" in attrs) {
       jestExpect(attrs.elements.length).toBe(expected);
@@ -29,12 +31,7 @@ export default class AccountsPage extends CommonPage {
 
   @Step("Expect no accounts screen")
   async expectNoAccount() {
-    const el = await this.emptyAccountDisplay();
+    const el = this.emptyAccountDisplay();
     await expect(el).toBeVisible();
-  }
-
-  // getter for the "no accounts" component
-  private async emptyAccountDisplay() {
-    return await getElementById("empty-accounts-component");
   }
 }

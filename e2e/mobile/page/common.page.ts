@@ -25,17 +25,17 @@ export default class CommonPage {
   @Step("Perform search")
   async performSearch(text: string) {
     await waitForElementById(this.searchBarId);
-    await typeTextByElement(await this.searchBar(), text);
+    await typeTextByElement(this.searchBar(), text);
   }
 
   @Step("Expect search")
   async expectSearch(text: string) {
-    await expect(await this.searchBar()).toHaveText(text);
+    await expect(this.searchBar()).toHaveText(text);
   }
 
   @Step("Close page")
   async closePage() {
-    await tapByElement(await this.closeButton());
+    await tapByElement(this.closeButton());
   }
 
   @Step("Tap on view details")
@@ -59,7 +59,7 @@ export default class CommonPage {
   @Step("Go to the account")
   async goToAccount(accountId: string) {
     await scrollToId(this.accountItemNameRegExp);
-    await tapByElement(await this.accountItem(accountId));
+    await tapByElement(this.accountItem(accountId));
   }
 
   @Step("Get the account name at index")
@@ -74,15 +74,10 @@ export default class CommonPage {
 
   @Step("Go to the account with the name")
   async goToAccountByName(name: string) {
-    console.log("Go to account with name", name);
-    const accountTitle = await getElementByText(name);
-    console.log("Account title", accountTitle);
+    const accountTitle = getElementByText(name);
     const id = await getIdOfElement(accountTitle);
-    console.log("Account id", id);
     jestExpect(id).toContain(this.accountItemId);
-    console.log("Account id 2", id);
     await tapByElement(accountTitle);
-    console.log("Element tapped ");
   }
 
   async addSpeculos(nanoApp: string, speculosAddress = "localhost") {
