@@ -1,5 +1,4 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
-
 import {
   AccountData,
   Aptos,
@@ -21,6 +20,7 @@ import {
 } from "@aptos-labs/ts-sdk";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
+import type { Operation, Pagination } from "@ledgerhq/coin-framework/api/types";
 import BigNumber from "bignumber.js";
 import isUndefined from "lodash/isUndefined";
 import { APTOS_ASSET_ID, DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "../constants";
@@ -273,5 +273,12 @@ export class AptosAPI {
         gasPrice: BigInt(gasPrice.toString()),
       },
     };
+  }
+
+  async listOperations(
+    _address: string,
+    _pagination: Pagination,
+  ): Promise<[Operation<AptosAsset>[], string]> {
+    return [[], ""];
   }
 }
