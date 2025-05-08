@@ -2,7 +2,7 @@ import { Network } from "@aptos-labs/ts-sdk";
 import { createApi } from "../../api";
 
 describe("createApi", () => {
-  const api = createApi({ aptosSettings: { network: Network.MAINNET } });
+  const api = createApi({ aptosSettings: { network: Network.DEVNET } });
 
   describe("lastBlock", () => {
     it("returns the last block information", async () => {
@@ -15,7 +15,7 @@ describe("createApi", () => {
 
   // describe("combine and broadcast", () => {
   //   it("returns the hash", async () => {
-  //     const tx = await api.combine("tx", "signature", "xpub");
+  //     const tx = api.combine("tx", "signature", "xpub");
   //     const hash = await api.broadcast(tx);
 
   //     expect(hash).toEqual(expect.any(String));
