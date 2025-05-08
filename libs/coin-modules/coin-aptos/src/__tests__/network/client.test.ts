@@ -4,10 +4,11 @@ import {
   Aptos,
   ChainId,
   Ed25519PublicKey,
+  Hex,
   InputEntryFunctionData,
   RawTransaction,
   Serializable,
-  post,
+  postAptosFullNode,
 } from "@aptos-labs/ts-sdk";
 import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
@@ -21,6 +22,7 @@ jest.mock("@apollo/client");
 let mockedAptos: jest.Mocked<any>;
 let mockedApolloClient: jest.Mocked<any>;
 let mockedPost = jest.fn();
+let mockedHex: jest.Mocked<any>;
 
 jest.mock("@ledgerhq/live-network/network");
 const mockedNetwork = jest.mocked(network);
@@ -28,8 +30,9 @@ const mockedNetwork = jest.mocked(network);
 describe("Aptos API", () => {
   beforeEach(() => {
     mockedAptos = jest.mocked(Aptos);
+    mockedHex = jest.mocked(Hex);
     mockedApolloClient = jest.mocked(ApolloClient);
-    mockedPost = jest.mocked(post);
+    mockedPost = jest.mocked(postAptosFullNode);
   });
 
   afterEach(() => jest.clearAllMocks());
@@ -549,22 +552,25 @@ describe("Aptos API", () => {
   describe("broadcast", () => {
     it("broadcasts the transaction", async () => {
       mockedPost.mockImplementation(async () => ({ data: { hash: "ok" } }));
-      const mockedPostSpy = jest.spyOn({ post: mockedPost }, "post");
+      const mockedPostSpy = jest.spyOn({ postAptosFullNode: mockedPost }, "postAptosFullNode");
 
+      // const txBytes = Hex.fromHexString(tx).toUint8Array();
       mockedAptos.mockImplementation(() => ({
         config: "config",
       }));
 
+      mockedHex.fromHexString = jest.fn().mockReturnValue({ toUint8Array: () => "123" });
+
       const api = new AptosAPI("aptos");
-      await api.broadcast("signature");
+
+      await api.broadcast("signed transaction");
 
       expect(mockedPostSpy).toHaveBeenCalledWith({
-        contentType: "application/x.aptos.signed_transaction+bcs",
         aptosConfig: "config",
-        body: Uint8Array.from(Buffer.from("signature", "hex")),
+        body: "123",
         path: "transactions",
-        type: "Fullnode",
         originMethod: "",
+        contentType: "application/x.aptos.signed_transaction+bcs",
       });
     });
   });

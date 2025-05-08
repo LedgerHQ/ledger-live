@@ -4,6 +4,7 @@ import type { Balance, Operation, TransactionIntent } from "@ledgerhq/coin-frame
 import coinConfig from "../config";
 import type { AptosAsset, AptosExtra, AptosFeeParameters, AptosSender } from "../types/assets";
 import { AptosAPI } from "../network";
+import { combine } from "../logic/combine";
 
 export function createApi(
   config: AptosConfigApi,
@@ -14,9 +15,7 @@ export function createApi(
 
   return {
     broadcast: (tx: string) => client.broadcast(tx),
-    combine: (_tx, _signature, _pubkey): string => {
-      throw new Error("Not Implemented");
-    },
+    combine: (tx, signature, pubkey): string => combine(tx, signature, pubkey),
     craftTransaction: (_transactionIntent, _customFees): Promise<string> => {
       throw new Error("Not Implemented");
     },
