@@ -10,9 +10,7 @@ export const NetworkList = ({
   onClick: (networkId: string) => void;
 }) => {
   const renderNetworkItem = useCallback(
-    ({ name, id, ticker }: Network) => (
-      <NetworkItem name={name} id={id} ticker={ticker} onClick={() => onClick(id)} />
-    ),
+    (network: Network) => <NetworkItem {...network} onClick={() => onClick(network.id)} />,
     [onClick],
   );
 
