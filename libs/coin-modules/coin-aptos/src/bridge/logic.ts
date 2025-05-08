@@ -442,14 +442,16 @@ export const canStake = (account: AptosAccount): boolean => {
   return getMaxSendBalance(account) > MIN_COINS_ON_SHARES_POOL_IN_OCTAS;
 };
 
-// export const canUnstake = (
-//   stakingPosition: NearMappedStakingPosition | NearStakingPosition,
-// ): boolean => {
-//   return stakingPosition.staked.gte(getYoctoThreshold());
-// };
+export const canUnstake = (
+  stakingPosition: AptosMappedStakingPosition | AptosStakingPosition,
+): boolean => {
+  // TODO: this is a placeholder, proper calculations need to be placed
+  return stakingPosition.staked.gte(0);
+};
 
-// export const canWithdraw = (
-//   stakingPosition: NearMappedStakingPosition | NearStakingPosition,
-// ): boolean => {
-//   return stakingPosition.available.gte(getYoctoThreshold());
-// };
+export const canWithdraw = (
+  stakingPosition: AptosMappedStakingPosition | AptosStakingPosition,
+): boolean => {
+  // TODO: this is a placeholder, proper calculations need to be placed
+  return stakingPosition.available.gte(0);
+};

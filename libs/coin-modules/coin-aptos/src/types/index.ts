@@ -117,32 +117,8 @@ export type ExtraStakeInfoRaw = {
   amount: string;
 };
 
-export type AptosStake = {
-  stakeAccAddr: string;
-  hasStakeAuth: boolean;
-  hasWithdrawAuth: boolean;
-  delegation:
-    | {
-        stake: number;
-        validatorAddress: string;
-      }
-    | undefined;
-  stakeAccBalance: number;
-  withdrawable: number;
-  activation: {
-    state: "active" | "inactive" | "activating" | "deactivating";
-    active: number;
-    inactive: number;
-  };
-  reward?:
-    | {
-        amount: number;
-      }
-    | undefined;
-};
-
 export type AptosStakeWithMeta = {
-  stake: AptosStake;
+  stake: AptosStakingPosition;
   meta: {
     validator?: {
       name?: string;
@@ -178,11 +154,11 @@ export type AptosStakingPosition = {
   validatorId: string;
 };
 
-export type NearMappedStakingPosition = AptosStakingPosition & {
+export type AptosMappedStakingPosition = AptosStakingPosition & {
   formattedAmount: string;
   formattedPending: string;
   formattedAvailable: string;
-  rank: BigNumber;
+  rank: number;
   validator: AptosValidator | null | undefined;
 };
 
@@ -219,12 +195,4 @@ export type AptosValidatorWithMeta = {
 export type AptosPreloadData = {
   validatorsWithMeta: AptosValidatorWithMeta[];
   validators: AptosValidator[];
-};
-
-export type AptosMappedStakingPosition = AptosStakingPosition & {
-  formattedAmount: string;
-  formattedPending: string;
-  formattedAvailable: string;
-  rank: number;
-  validator: AptosValidator | null | undefined;
 };

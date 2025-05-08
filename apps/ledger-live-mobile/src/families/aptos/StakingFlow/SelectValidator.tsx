@@ -1,4 +1,4 @@
-import { useValidators } from "@ledgerhq/live-common/families/aptos/react";
+import { useAptosValidators } from "@ledgerhq/live-common/families/aptos/react";
 import { AptosValidator } from "@ledgerhq/live-common/families/aptos/types";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
@@ -25,7 +25,7 @@ export default function SelectValidator({ navigation, route }: Props) {
 
   const [searchQuery, setSearchQuery] = useState("");
 
-  const validators = useValidators(account.currency, searchQuery);
+  const validators = useAptosValidators(account.currency, searchQuery);
 
   const onItemPress = useCallback(
     (validator: AptosValidator) => {

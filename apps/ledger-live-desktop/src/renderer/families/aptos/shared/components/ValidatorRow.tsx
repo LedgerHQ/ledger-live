@@ -1,19 +1,15 @@
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+// import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { AptosValidator } from "@ledgerhq/live-common/families/aptos/types";
 import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
-import { BigNumber } from "bignumber.js";
+// import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
-import ValidatorRow, {
-  ValidatorRowProps,
-  IconContainer,
-} from "~/renderer/components/Delegation/ValidatorRow";
-import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
-import Image from "~/renderer/components/Image";
+import ValidatorRow from "~/renderer/components/Delegation/ValidatorRow";
 import Text from "~/renderer/components/Text";
+import LedgerValidatorIcon from "~/renderer/families/aptos/shared/components/LedgerValidatorIcon";
 import Check from "~/renderer/icons/Check";
 import { openURL } from "~/renderer/linking";
 
@@ -21,112 +17,77 @@ type Props = {
   currency: CryptoCurrency;
   validator: AptosValidator;
   active?: boolean;
-  onClick?: (v: { address: string }) => void;
-  disableHover?: boolean;
+  onClick: (a: { address: string }) => void;
   unit: Unit;
 };
-function AptosValidatorRow({ validator, active, onClick, unit, currency, disableHover }: Props) {
+
+function AptosValidatorRow({ validator, active, onClick, unit, currency }: Props) {
   const explorerView = getDefaultExplorerView(currency);
-  const onExternalLink = useCallback(() => {
-    const url = validator.wwwUrl || getAddressExplorer(explorerView, validator.address);
-    if (url) {
-      openURL(url);
-    }
-  }, [explorerView, validator]);
+
+  const onExternalLink = useCallback(
+    (address: string) => {
+      // if (address === FIGMENT_APTOS_VALIDATOR_ADDRESS) {
+      //   openURL(urls.ledgerValidator);
+      // } else {
+      const srURL = explorerView && getAddressExplorer(explorerView, address);
+      if (srURL) openURL(srURL);
+      // }
+    },
+    [explorerView],
+  );
+
   return (
     <StyledValidatorRow
-      disableHover={disableHover ?? false}
       onClick={onClick}
       key={validator.address}
       validator={{
         address: validator.address,
       }}
-      icon={
-        <IconContainer isSR>
-          {validator.avatarUrl === undefined && <FirstLetterIcon label={validator.address} />}
-          {validator.avatarUrl !== undefined && (
-            <Image resource={validator.avatarUrl} alt="" width={32} height={32} />
-          )}
-        </IconContainer>
-      }
-      title={validator.name || validator.address}
+      icon={<LedgerValidatorIcon validator={validator} />}
+      title={validator.address}
       onExternalLink={onExternalLink}
       unit={unit}
-      subtitle={
-        <>
-          <Trans i18nKey="aptos.delegation.commission" />
-          <Text
-            style={{
-              marginLeft: 2,
-              marginRight: 5,
-              fontSize: 11,
-            }}
-          >{`${validator.commission}%`}</Text>
-          <Text
-            style={{
-              marginLeft: 8,
-              fontSize: 11,
-            }}
-          >
-            {"\u{1F512}"}
-          </Text>
-          <Text
-            style={{
-              marginLeft: 3,
-              fontSize: 11,
-            }}
-          >
-            <Trans i18nKey="aptos.delegation.nextUnlockIn" />
-          </Text>
-          <Text
-            style={{
-              marginLeft: 2,
-              fontSize: 11,
-            }}
-          >{`${validator.nextUnlockTime || ""} `}</Text>
-        </>
-      }
       sideInfo={
         <Box
-          ml={5}
           style={{
             flexDirection: "row",
-            alignItems: "center",
           }}
         >
-          <Box>
-            <Text
-              textAlign="right"
-              ff="Inter|SemiBold"
-              style={{
-                fontSize: 13,
-              }}
-            >
-              {formatCurrencyUnit(unit, new BigNumber(validator.activeStake), {
+          <Box
+            style={{
+              flexDirection: "column",
+            }}
+          >
+            {/* <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={4}>
+              {formatCurrencyUnit(unit, new BigNumber(validator.tokens), {
                 showCode: true,
               })}
+            </Text> */}
+            <Text fontSize={2} textAlign="right">
+              <Trans color="palette.text.shade50" i18nKey="aptos.stake.totalStake" />
             </Text>
-            <TotalStakeTitle>
-              <Trans i18nKey="aptos.delegation.totalStake"></Trans>
-            </TotalStakeTitle>
           </Box>
-          <Box ml={3}>
-            <ChosenMark active={active ?? false} />
+          <Box ml={2} justifyContent="center" alignContent="center">
+            <ChosenMark active={active ?? false} size={14} />
           </Box>
+        </Box>
+      }
+      subtitle={
+        <Box>
+          <Text ff="Inter|Medium" fontSize={2} color="palette.text.shade50">
+            <Trans i18nKey="aptos.stake.commission" /> {`${validator.commission}%`}
+          </Text>
         </Box>
       }
     ></StyledValidatorRow>
   );
 }
-const StyledValidatorRow = styled(ValidatorRow)<
-  ValidatorRowProps & {
-    disableHover: boolean;
-  }
->`
+
+const StyledValidatorRow = styled(ValidatorRow)`
   border-color: transparent;
   margin-bottom: 0;
-  ${p => (p.disableHover ? "&:hover { border-color: transparent; }" : "")}
 `;
+
 const ChosenMark = styled(Check).attrs<{
   active?: boolean;
 }>(p => ({
@@ -135,10 +96,5 @@ const ChosenMark = styled(Check).attrs<{
 }))<{
   active?: boolean;
 }>``;
-const TotalStakeTitle = styled(Text)`
-  font-size: 11px;
-  font-weight: 500;
-  text-align: right;
-  color: ${p => p.theme.colors.palette.text.shade60};
-`;
+
 export default AptosValidatorRow;

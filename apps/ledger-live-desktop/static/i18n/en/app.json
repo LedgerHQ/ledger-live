@@ -3854,108 +3854,115 @@
         "title": "Confirmation"
       }
     },
-    "delegation": {
-      "nextUnlockIn": "Next unlock in",
-      "totalStake": "Total stake",
-      "commission": "Commission",
-      "delegate": "Add",
-      "listHeader": "Delegations",
-      "availableBalance": "Withdrawable",
-      "active": "Active",
-      "activeTooltip": "Active amount generate rewards",
-      "inactiveTooltip": "Inactive amount does not generate rewards",
-      "delegatedInfoTooltip": "Total amount that is delegated to validators.",
-      "withdrawableInfoTooltip": "Total amount that is withdrawable from delegations.",
-      "withdrawableTitle": "Withdrawable",
-      "statusUpdateNotice": "The status of the delegation will be updated when the transaction is confirmed.",
-      "ledgerByFigmentTC": "Ledger by Figment T&Cs",
-      "ledgerByChorusOneTC": "Ledger by Chorus One T&Cs",
+    "stake": {
       "emptyState": {
-        "description": "You can earn APT rewards by delegating your assets.",
-        "info": "How Delegation works",
-        "delegation": "Earn rewards"
+        "description": "You can earn Aptos rewards by staking your assets.",
+        "info": "How Staking Works",
+        "earnRewards": "Earn rewards"
       },
-      "earnRewards": {
-        "description": "You may earn rewards by delegating your APT assets to a validator.",
-        "bullet": {
-          "0": "You keep ownership of delegated assets",
-          "1": "Delegate using your Ledger device",
-          "2": "Assets will be available after undelegation"
-        },
-        "warning": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
+      "table": {
+        "header": "Staking Position(s)",
+        "stake": "Add",
+        "staked": "Staked",
+        "pending": "Pending Release",
+        "available": "Withdrawable"
       },
-      "states": {
-        "active": "Active",
-        "inactive": "Inactive",
-        "activating": "Activating",
-        "deactivating": "Deactivating"
-      },
+      "unstake": "Unstake",
+      "withdraw": "Withdraw",
+      "activeTooltip": "Staked amounts generate rewards",
+      "inactiveTooltip": "Unstaked amounts do not generate rewards",
+      "commission": "Commission",
+      "totalStake": "Total Stake",
+      "minSafeWarning": "Not enough funds",
       "flow": {
-        "title": "Delegate",
+        "title": "Stake",
         "steps": {
-          "validator": {
-            "title": "Validator"
+          "starter": {
+            "description": "You may earn rewards by staking your Aptos assets to a validator.",
+            "bullet": [
+              "You keep ownership of staked assets",
+              "Stake using your Ledger device",
+              "Assets will be available 52 - 65 hours after unstaking"
+            ],
+            "warning": {
+              "description": "Choose your validator wisely: Part of your staked assets may be irrevocably lost if the validator does not behave appropriately."
+            }
           },
           "amount": {
-            "title": "Amount",
-            "reserveWarning": "Please ensure you reserve at least {{amount}} APT in your wallet to cover future network fees to deactivate and withdraw your stake"
+            "title": "Amount"
+          },
+          "validator": {
+            "title": "Validators",
+            "ledgerByChorusOneTC": "Ledger by Chorus One T&Cs",
+            "ledgerByFigmentTC": "Ledger by Figment T&Cs"
+          },
+          "connectDevice": {
+            "title": "Device"
           },
           "confirmation": {
+            "title": "Confirmation",
             "success": {
-              "title": "You have successfully delegated your assets"
-            }
-          }
-        }
-      },
-      "withdraw": {
-        "flow": {
-          "title": "Withdraw",
-          "steps": {
-            "amount": {
-              "title": "Amount"
+              "title": "You have successfully staked your assets",
+              "text": "Your account balance will be updated when the blockchain confirms the transaction.",
+              "cta": "View details"
             },
-            "confirmation": {
-              "success": {
-                "title": "You have successfully withdrawn your assets.",
-                "text": "Your account balance will be updated when the transaction is confirmed."
-              }
-            }
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
           }
         }
-      },
-      "activate": {
-        "flow": {
-          "title": "Activate",
-          "steps": {
-            "confirmation": {
-              "success": {
-                "title": "You have successfully activated your delegation."
-              }
+      }
+    },
+    "unstake": {
+      "disabledTooltip": "There aren't enough staked assets to unstake",
+      "flow": {
+        "title": "Unstake",
+        "steps": {
+          "amount": {
+            "title": "Amount",
+            "subtitle": "The unstaking process takes <0>52 to 65 hours</0> to finalize.",
+            "warning": "Rewards will be immediately cashed in. The unstaked amount will be available for withdrawal after the <0>52 to 65 hour timelock</0>.",
+            "fields": {
+              "validator": "Validator",
+              "amount": "Amount to unstake"
             }
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully unstaked your assets.",
+              "description": "<0>{{amount}}</0> were unstaked from <0>{{validator}}</0>",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
           }
         }
-      },
-      "reactivate": {
-        "flow": {
-          "title": "Reactivate",
-          "steps": {
-            "confirmation": {
-              "success": {
-                "title": "You have successfully reactivated your delegation."
-              }
+      }
+    },
+    "withdraw": {
+      "disabledTooltip": "There aren't enough assets to withdraw",
+      "flow": {
+        "title": "Withdraw",
+        "steps": {
+          "amount": {
+            "title": "Amount",
+            "fields": {
+              "validator": "Validator",
+              "amount": "Amount to withdraw"
             }
-          }
-        }
-      },
-      "deactivate": {
-        "flow": {
-          "title": "Deactivate",
-          "steps": {
-            "confirmation": {
-              "success": {
-                "title": "You have successfully deactivated your delegation."
-              }
-            }
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully withdrawn your assets.",
+              "description": "<0>{{amount}}</0> were withdrawn from <0>{{validator}}</0>",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
           }
         }
       }

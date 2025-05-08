@@ -2,7 +2,7 @@ import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/accoun
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import { useValidators } from "@ledgerhq/live-common/families/aptos/react";
+import { useAptosValidators } from "@ledgerhq/live-common/families/aptos/react";
 import { AptosAccount } from "@ledgerhq/live-common/families/aptos/types";
 // import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -46,7 +46,7 @@ export default function StakingSummary({ navigation, route }: Props) {
 
   invariant(account, "account must be defined");
 
-  const validators = useValidators(account.currency);
+  const validators = useAptosValidators(account.currency);
   const mainAccount = getMainAccount(account, parentAccount);
   const bridge = getAccountBridge(account, undefined);
 

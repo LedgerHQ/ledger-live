@@ -1,4 +1,5 @@
-import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
+import { canStake } from "@ledgerhq/live-common/families/aptos/logic";
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
@@ -15,32 +16,36 @@ const AccountHeaderActions: AptosFamily["accountHeaderManageActions"] = ({
   const label = useGetStakeLabelLocaleBased();
   const mainAccount = getMainAccount(account, parentAccount);
   const { aptosResources } = mainAccount;
+  const stakingEnabled = canStake(mainAccount);
+  const hasStakingPositions = aptosResources?.stakingPositions.length > 0;
 
   const onClick = useCallback(() => {
-    if (isAccountEmpty(account)) {
+    if (!stakingEnabled) {
       dispatch(
         openModal("MODAL_NO_FUNDS_STAKE", {
           account,
+          parentAccount,
         }),
       );
     } else {
-      dispatch(
-        openModal(
-          aptosResources && aptosResources.stakingPositions.length > 0
-            ? "MODAL_APTOS_DELEGATE"
-            : "MODAL_APTOS_REWARDS_INFO",
-          {
+      if (hasStakingPositions) {
+        dispatch(
+          openModal("MODAL_APTOS_STAKE", {
             account: mainAccount,
             source,
-          },
-        ),
-      );
+          }),
+        );
+      } else {
+        dispatch(
+          openModal("MODAL_APTOS_REWARDS_INFO", {
+            account: mainAccount,
+          }),
+        );
+      }
     }
-  }, [account, dispatch, source, aptosResources, mainAccount]);
+  }, [stakingEnabled, dispatch, account, mainAccount, parentAccount, hasStakingPositions, source]);
 
-  if (account.type === "TokenAccount") {
-    return null;
-  }
+  if (parentAccount) return null;
 
   return [
     {
