@@ -23,7 +23,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import isUndefined from "lodash/isUndefined";
-import { APTOS_ASSET_ID } from "../constants";
+import { APTOS_ASSET_ID, DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "../constants";
 import { isTestnet } from "../bridge/logic";
 import type { AptosTransaction, TransactionOptions } from "../types";
 import { GetAccountTransactionsData, GetAccountTransactionsDataGt } from "./graphql/queries";
@@ -31,7 +31,8 @@ import {
   GetAccountTransactionsDataQuery,
   GetAccountTransactionsDataGtQueryVariables,
 } from "./graphql/types";
-import { BlockInfo } from "@ledgerhq/coin-framework/api/types";
+import { BlockInfo, FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { AptosAsset, AptosExtra, AptosFeeParameters, AptosSender } from "../types/assets";
 
 const getApiEndpoint = (currencyId: string) =>
   isTestnet(currencyId) ? getEnv("APTOS_TESTNET_API_ENDPOINT") : getEnv("APTOS_API_ENDPOINT");
@@ -233,6 +234,44 @@ export class AptosAPI {
       height: Number(block.block_height),
       hash: block.block_hash,
       time: new Date(Number(block.block_timestamp)),
+    };
+  }
+
+  async estimateFees(
+    transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender>,
+  ): Promise<FeeEstimation<AptosFeeParameters>> {
+    const publicKeyEd = new Ed25519PublicKey(transactionIntent.sender.xpub);
+    const txPayload: InputEntryFunctionData = {
+      function: transactionIntent.asset.function,
+      typeArguments: [APTOS_ASSET_ID],
+      functionArguments: [transactionIntent.recipient, transactionIntent.amount],
+    };
+
+    const txOptions: TransactionOptions = {
+      maxGasAmount: DEFAULT_GAS.toString(),
+      gasUnitPrice: DEFAULT_GAS_PRICE.toString(),
+    };
+
+    const tx = await this.generateTransaction(
+      transactionIntent.sender.freshAddress,
+      txPayload,
+      txOptions,
+    );
+
+    const simulation = await this.simulateTransaction(publicKeyEd, tx);
+    const completedTx = simulation[0];
+
+    const gasLimit = new BigNumber(completedTx.gas_used).multipliedBy(ESTIMATE_GAS_MUL);
+    const gasPrice = new BigNumber(completedTx.gas_unit_price);
+
+    const expectedGas = gasPrice.multipliedBy(gasLimit);
+
+    return {
+      value: BigInt(expectedGas.toString()),
+      parameters: {
+        gasLimit: BigInt(gasLimit.toString()),
+        gasPrice: BigInt(gasPrice.toString()),
+      },
     };
   }
 }
