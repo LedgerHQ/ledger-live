@@ -17,16 +17,24 @@ const overrideOther = {
   "spacing-xxs": "8px", // override from "spacing-xs": "8px"
 } as const;
 
-// override colours based on Figma differing from design-tokens.ts
+// Add temporarily missing and override incorrect colours here
 const overrideColor = {
   light: {
-    "surface-transparent-hover": "#0000000D",
-    "surface-transparent-pressed": "#0000001A",
+    "surface-transparent-hover": "#0000000D", // override from colours
+    "surface-transparent-pressed": "#0000001A", // override from colours
+
+    "border-subdued-default-hover": "#D5D5D5", // missing from colours
+    "border-subdued-default-pressed": "#C1C1C1", // missing from colours
   },
-  dark: {},
+  dark: {
+    "opacity-default-10": "#FFFFFF1A", // missing from colours
+  },
 } as const;
 
-type ColorToken = `colors-${keyof ModeColors}`;
+type ColorToken =
+  | `colors-${keyof ModeColors}`
+  | `colors-${keyof typeof overrideColor.light}`
+  | `colors-${keyof typeof overrideColor.dark}`;
 type OtherToken = keyof (SpacingScale & typeof overrideOther);
 
 export const withTokens = (...usedTokens: Array<ColorToken | OtherToken>) => {

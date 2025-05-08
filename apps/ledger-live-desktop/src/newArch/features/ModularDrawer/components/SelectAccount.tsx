@@ -18,7 +18,7 @@ export const SelectAccount = ({ asset, onAccountSelected, source, flow }: Props)
   const { t } = useTranslation();
 
   const getAccountsByAsset = () => {
-    // TODO: To be implemented in LIVE-17272
+    // TODO: To be implemented in LIVE-18127
     return Array.from({ length: 50 }, (_, i) => ({
       name: `${asset.name} ${i}`,
       id: `btc${i}`,
