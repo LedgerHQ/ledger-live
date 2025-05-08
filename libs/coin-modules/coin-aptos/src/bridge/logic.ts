@@ -1,4 +1,5 @@
 import {
+  APTOS_COIN,
   EntryFunctionPayloadResponse,
   Event,
   InputEntryFunctionData,
@@ -25,6 +26,7 @@ import {
   COIN_TRANSFER_TYPES,
   FA_TRANSFER_TYPES,
   APTOS_OBJECT_CORE,
+  APTOS_DELEAGATED_STORE,
 } from "../constants";
 import type {
   AptosFungibleoObjectCoreResourceData,
@@ -266,7 +268,7 @@ export function getEventCoinAddress(
   }
 
   const change_event_data = mr.data[event_name];
-  
+
   if (
     change_event_data.guid.id.addr !== event.guid.account_address ||
     change_event_data.guid.id.creation_num !== event.guid.creation_number
@@ -277,6 +279,28 @@ export function getEventCoinAddress(
   const address = extractAddress(mr.type);
 
   return address;
+}
+
+
+export function getEventDelegatedCoinAddress(
+  change: WriteSetChangeWriteResource,
+  event: Event,
+  _event_name: string,
+): string | null {
+  const change_data = change.data;
+  console.log("getEventCoinAddress", change_data, event, _event_name);
+
+  if (!change_data.type.includes(APTOS_DELEAGATED_STORE)) {
+    return null;
+  }
+
+  const mr = change_data as MoveResource<AptosMoveResource>; // -> this is data that we want to parse
+  console.log("mr", mr);
+  if (change.address !== event.data.address) {
+    return null;
+  }
+
+  return change.address;
 }
 
 export function getEventFAAddress(
@@ -401,7 +425,7 @@ export function getCoinAndAmounts(
         if (tx.sender === address) {
           if (coin_id === null) coin_id = APTOS_ASSET_ID;
           if (coin_id === APTOS_ASSET_ID) {
-            coin_id = getResourceAddress(tx, event, "total_joining_power", getEventCoinAddress);
+            //coin_id = getResourceAddress(tx, event, APTOS_COIN, getEventDelegatedCoinAddress);
             // STAKED AMOUNT IS ALSO A AMOUNT OUT
             staked_amount = staked_amount.plus(event.data.amount_added);
             amount_out = amount_out.plus(event.data.amount_added);
