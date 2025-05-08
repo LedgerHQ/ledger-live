@@ -55,7 +55,7 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
     errors.amount = new NotEnoughBalance();
   }
 
-  if (t.stake && t.stake.op === "add" && t.amount.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS)) {
+  if (t.mode === "stake" && t.amount.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS)) {
     errors.amount = new NotEnoughToStake("", {
       minStake: MIN_COINS_ON_SHARES_POOL,
       currency: a.currency.ticker,
@@ -67,7 +67,7 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
       ? tokenAccount.spendableBalance
       : a.spendableBalance.minus(estimatedFees).isLessThan(0)
         ? BigNumber(0)
-        : t.stake
+        : t.mode === "stake"
           ? a.spendableBalance.minus(estimatedFees).minus(APTOS_DELEGATION_RESERVE_IN_OCTAS)
           : a.spendableBalance.minus(estimatedFees)
     : t.amount;

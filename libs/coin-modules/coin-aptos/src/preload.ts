@@ -1,7 +1,7 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { flow } from "lodash/fp";
 // import { ChainAPI } from "./network";
-import { setAptosPreloadData as setPreloadData } from "./preload-data";
+import { setAptosPreloadData } from "./preload-data";
 import { AptosPreloadData, AptosValidator } from "./types";
 import { clusterByCurrencyId, profitableValidators /* , ledgerFirstValidators */ } from "./utils";
 import { getValidators } from "./network/validators";
@@ -25,7 +25,7 @@ export async function preloadWithAPI(
     validators: cluster === "mainnet" ? preprocessMainnetValidators(validators) : validators,
   };
 
-  setPreloadData(data, currency);
+  setAptosPreloadData(data, currency);
 
   return data;
 }
@@ -47,5 +47,5 @@ function preprocessMainnetValidators(validators: AptosValidator[]): AptosValidat
 // }
 
 export function hydrate(data: AptosPreloadData, currency: CryptoCurrency): void {
-  setPreloadData(data, currency);
+  setAptosPreloadData(data, currency);
 }

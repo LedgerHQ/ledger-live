@@ -56,20 +56,12 @@ export type TransactionErrors = {
   gasUnitPrice?: string;
 };
 
-export type StakeOperationType = "add" | "unlock" | "reactivate" | "withdraw";
-
-export type StakeTransaction = {
-  op: StakeOperationType;
-  poolAddr: string;
-};
-
 export type Transaction = TransactionCommon & {
   family: "aptos";
   mode: string;
   fees?: BigNumber | null;
   options: TransactionOptions;
   errors?: TransactionErrors;
-  stake?: StakeTransaction;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -78,7 +70,6 @@ export type TransactionRaw = TransactionCommonRaw & {
   fees?: string | null;
   options: string;
   errors?: string;
-  stake?: string;
 };
 
 export type AptosFungibleStoreResourceData = {

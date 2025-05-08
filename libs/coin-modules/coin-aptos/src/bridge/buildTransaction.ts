@@ -24,43 +24,41 @@ const getPayload = (
   tokenAccount: TokenAccount | undefined,
   transaction: Transaction,
 ): InputEntryFunctionData => {
-  if (tokenAccount && isTokenAccount(tokenAccount)) {
-    const { tokenType } = tokenAccount.token;
-
-    if (!SUPPORTED_TOKEN_TYPES.includes(tokenType)) {
-      throw new Error(`Token type ${tokenType} not supported`);
-    }
-
-    if (tokenType === "fungible_asset") {
+  switch (transaction.mode) {
+    case "stake":
       return {
-        function: `0x1::primary_fungible_store::transfer`,
-        typeArguments: ["0x1::fungible_asset::Metadata"],
-        functionArguments: [
-          tokenAccount.token.contractAddress,
-          transaction.recipient,
-          transaction.amount.toString(),
-        ],
-      };
-    }
-
-    if (tokenType === "coin") {
-      return {
-        function: `0x1::aptos_account::transfer_coins`,
-        typeArguments: [tokenAccount.token.contractAddress],
+        function: "0x1::delegation_pool::add_stake",
+        typeArguments: [],
         functionArguments: [transaction.recipient, transaction.amount.toString()],
       };
-    }
-  }
+    case "send":
+      if (tokenAccount && isTokenAccount(tokenAccount)) {
+        const { tokenType } = tokenAccount.token;
 
-  if (transaction.stake) {
-    switch (transaction.stake.op) {
-      case "add":
-        return {
-          function: "0x1::delegation_pool::add_stake",
-          typeArguments: [],
-          functionArguments: [transaction.stake.poolAddr, transaction.amount.toString()],
-        };
-    }
+        if (!SUPPORTED_TOKEN_TYPES.includes(tokenType)) {
+          throw new Error(`Token type ${tokenType} not supported`);
+        }
+
+        if (tokenType === "fungible_asset") {
+          return {
+            function: `0x1::primary_fungible_store::transfer`,
+            typeArguments: ["0x1::fungible_asset::Metadata"],
+            functionArguments: [
+              tokenAccount.token.contractAddress,
+              transaction.recipient,
+              transaction.amount.toString(),
+            ],
+          };
+        }
+
+        if (tokenType === "coin") {
+          return {
+            function: `0x1::aptos_account::transfer_coins`,
+            typeArguments: [tokenAccount.token.contractAddress],
+            functionArguments: [transaction.recipient, transaction.amount.toString()],
+          };
+        }
+      }
   }
 
   return {

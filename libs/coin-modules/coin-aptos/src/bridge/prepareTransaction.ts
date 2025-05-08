@@ -10,11 +10,8 @@ const prepareTransaction = async (
   account: Account,
   transaction: Transaction,
 ): Promise<Transaction> => {
-  if (transaction.stake) {
-    transaction.recipient = transaction.stake.poolAddr;
-
-    if (transaction.amount.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS)) return transaction;
-  }
+  if (transaction.mode === "stake" && transaction.amount.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS))
+    return transaction;
 
   if (!transaction.recipient) {
     return transaction;
@@ -55,7 +52,7 @@ const prepareTransaction = async (
     );
 
     // Reserve a certain amount to cover future network fees to deactivate and withdraw
-    if (transaction.stake) {
+    if (transaction.mode === "stake") {
       transaction.amount = transaction.amount.minus(APTOS_DELEGATION_RESERVE_IN_OCTAS);
     }
   }
