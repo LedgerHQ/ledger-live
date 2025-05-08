@@ -3,9 +3,8 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useValidators } from "@ledgerhq/live-common/families/aptos/react";
-import { AptosValidator, AptosAccount } from "@ledgerhq/live-common/families/aptos/types";
+import { AptosAccount } from "@ledgerhq/live-common/families/aptos/types";
 // import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
-import { getMaxSendBalance } from "@ledgerhq/live-common/families/aptos/logic";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
@@ -34,6 +33,7 @@ import type { BaseComposite, StackNavigatorProps } from "~/components/RootNaviga
 import type { AptosStakingFlowParamList } from "./types";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
 import Config from "react-native-config";
+import { getMaxSendBalance } from "@ledgerhq/live-common/families/aptos/logic";
 
 type Props = BaseComposite<
   StackNavigatorProps<AptosStakingFlowParamList, ScreenName.AptosStakingValidator>
@@ -69,7 +69,7 @@ export default function StakingSummary({ navigation, route }: Props) {
           account,
           transaction: bridge.updateTransaction(t, {
             mode: "stake",
-            recipient: chosenValidator.validatorAddress,
+            recipient: chosenValidator.address,
           }),
         };
       }
@@ -86,10 +86,10 @@ export default function StakingSummary({ navigation, route }: Props) {
       updateTransaction(_ => tmpTransaction);
     }
 
-    if (chosenValidator.validatorAddress !== transaction.recipient) {
+    if (chosenValidator.address !== transaction.recipient) {
       setTransaction(
         bridge.updateTransaction(transaction, {
-          recipient: chosenValidator.validatorAddress,
+          recipient: chosenValidator.address,
         }),
       );
     }
@@ -153,7 +153,7 @@ export default function StakingSummary({ navigation, route }: Props) {
       ...route.params,
       transaction,
       validator: chosenValidator,
-      max: getMaxAmount(account as AptosAccount, transaction, transaction.fees),
+      max: getMaxSendBalance(account as AptosAccount, transaction, transaction.fees),
       value: transaction.amount,
       nextScreen: ScreenName.AptosStakingValidator,
     });
@@ -209,9 +209,9 @@ export default function StakingSummary({ navigation, route }: Props) {
                 >
                   <ValidatorImage
                     // TODO: set isLedger value properly
-                    // isLedger={chosenValidator.validatorAddress === FIGMENT_NEAR_VALIDATOR_ADDRESS}
+                    // isLedger={chosenValidator.address === FIGMENT_NEAR_VALIDATOR_ADDRESS}
                     isLedger={false}
-                    name={chosenValidator?.validatorAddress}
+                    name={chosenValidator?.address}
                   />
                 </Animated.View>
                 <ChangeValidator />
@@ -373,7 +373,7 @@ function SummaryWords({
         </Words>
         <Touchable onPress={onChangeValidator}>
           <Selectable
-            name={validator?.validatorAddress ?? "-"}
+            name={validator?.address ?? "-"}
             testID="aptos-delegation-summary-validator"
           />
         </Touchable>

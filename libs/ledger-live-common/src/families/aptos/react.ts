@@ -5,7 +5,7 @@ import type {
   AptosAccount,
   AptosMappedStakingPosition,
   AptosPreloadData,
-  AptosStake,
+  AptosStakingPosition,
   AptosStakeWithMeta,
   AptosValidator,
 } from "@ledgerhq/coin-aptos/types";
@@ -49,7 +49,7 @@ export function useValidators(currency: CryptoCurrency, search?: string): AptosV
 
 export function useAptosStakesWithMeta(
   currency: CryptoCurrency,
-  stakes: AptosStake[],
+  stakingPositions: AptosStakingPosition[],
 ): AptosStakeWithMeta[] {
   const data = useAptosPreloadData(currency);
 
@@ -61,8 +61,8 @@ export function useAptosStakesWithMeta(
 
   const validatorByAddress = new Map(validators.map(v => [v.address, v]));
 
-  return stakes.map(stake => {
-    const validatorAddress = stake.delegation?.validatorAddress;
+  return stakingPositions.map(stake => {
+    const validatorAddress = stake.validatorId;
     const validator =
       validatorAddress === undefined ? undefined : validatorByAddress.get(validatorAddress);
 

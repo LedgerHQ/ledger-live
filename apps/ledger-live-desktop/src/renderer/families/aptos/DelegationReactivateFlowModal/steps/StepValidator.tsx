@@ -29,7 +29,7 @@ export default function StepValidator({ account, transaction, status, error }: S
   }
   const { stake } = stakeWithMeta;
   const validators = useValidators(account.currency);
-  const validator = validators.find(v => v.accountAddr === stake.delegation?.validatorAddress);
+  const validator = validators.find(v => v.address === stake.delegation?.validatorAddress);
   if (validator === undefined) {
     return null;
   }
@@ -47,7 +47,7 @@ export default function StepValidator({ account, transaction, status, error }: S
         disableHover
         active
         currency={account.currency}
-        key={validator.accountAddr}
+        key={validator.address}
         validator={validator}
         unit={unit}
       ></ValidatorRow>

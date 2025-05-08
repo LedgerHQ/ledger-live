@@ -12,7 +12,7 @@ import type {
   AptosAccount,
 } from "@ledgerhq/live-common/families/aptos/types";
 // import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
-import { canStake, canUnstake, canWithdraw } from "@ledgerhq/live-common/families/near/logic";
+// import { canStake, canUnstake, canWithdraw } from "@ledgerhq/live-common/families/near/logic";
 import { Account } from "@ledgerhq/types-live";
 import AccountDelegationInfo from "~/components/AccountDelegationInfo";
 import IlluRewards from "~/icons/images/Rewards";
@@ -171,8 +171,11 @@ function StakingPositions({ account }: Props) {
   }, [stakingPosition, t, onOpenExplorer]);
 
   const actions = useMemo<DelegationDrawerActions>(() => {
-    const unstakingEnabled = stakingPosition && canUnstake(stakingPosition);
-    const withdrawingEnabled = stakingPosition && canWithdraw(stakingPosition);
+    // TODO: create canStake, canUnstake and canWithdraw functions
+    // const unstakingEnabled = stakingPosition && canUnstake(stakingPosition);
+    // const withdrawingEnabled = stakingPosition && canWithdraw(stakingPosition);
+    const unstakingEnabled = true;
+    const withdrawingEnabled = true;
 
     return stakingPosition
       ? [
@@ -214,7 +217,8 @@ function StakingPositions({ account }: Props) {
     colors.alert,
   ]);
 
-  const stakingDisabled = stakingPositions.length <= 0 || !canStake(account as AptosAccount);
+  // const stakingDisabled = stakingPositions.length <= 0 || !canStake(account as AptosAccount);
+  const stakingDisabled = false;
 
   return (
     <View style={styles.root}>

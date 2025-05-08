@@ -68,7 +68,7 @@ function StakingFlow() {
           headerRight: undefined,
           headerTitle: () => (
             <StepHeader
-              title={route.params.validator.validatorAddress}
+              title={route.params.validator.address}
               subtitle={t("aptos.staking.stepperHeader.amountSubTitle")}
             />
           ),

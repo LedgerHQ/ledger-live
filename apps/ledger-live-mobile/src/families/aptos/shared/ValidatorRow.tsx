@@ -28,20 +28,20 @@ const ValidatorRow = ({
     <Touchable
       event="DelegationFlowChosevalidator"
       eventProperties={{
-        validatorName: validator.validatorAddress,
+        validatorName: validator.address,
       }}
       onPress={onPressT}
     >
       <View style={styles.validator}>
         <ValidatorImage
-          // isLedger={FIGMENT_NEAR_VALIDATOR_ADDRESS === validator.validatorAddress}
+          // isLedger={FIGMENT_NEAR_VALIDATOR_ADDRESS === validator.address}
           isLedger={false}
           size={32}
-          name={validator.validatorAddress}
+          name={validator.address}
         />
         <View style={styles.validatorBody}>
           <Text numberOfLines={1} fontWeight="semiBold" style={styles.validatorName}>
-            {validator.validatorAddress}
+            {validator.address}
           </Text>
           {validator.commission ? (
             <Text fontWeight="semiBold" numberOfLines={1} style={styles.overdelegated}>

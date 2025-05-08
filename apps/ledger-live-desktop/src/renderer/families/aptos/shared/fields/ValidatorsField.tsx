@@ -1,5 +1,5 @@
 import { useValidators } from "@ledgerhq/live-common/families/aptos/react";
-import { AptosAccount, Validator } from "@ledgerhq/live-common/families/aptos/types";
+import { AptosAccount, AptosValidator } from "@ledgerhq/live-common/families/aptos/types";
 import React, { useState, useEffect, useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
@@ -22,7 +22,7 @@ type Props = {
 const ValidatorField = ({ account, onChangeValidator, chosenValidatorAddr }: Props) => {
   const [search, setSearch] = useState("");
   const [showAll, setShowAll] = useState(true);
-  const [currentValidator, setCurrentValidator] = useState<Validator | null>(null);
+  const [currentValidator, setCurrentValidator] = useState<AptosValidator | null>(null);
 
   const unit = useAccountUnit(account);
   const validators = useValidators(account.currency, search);
@@ -33,7 +33,7 @@ const ValidatorField = ({ account, onChangeValidator, chosenValidatorAddr }: Pro
   );
 
   useEffect(() => {
-    const selected = validators.find(v => v.accountAddr === chosenValidatorAddr) || null;
+    const selected = validators.find(v => v.address === chosenValidatorAddr) || null;
     setCurrentValidator(selected);
   }, [chosenValidatorAddr, validators]);
   /* 
@@ -54,13 +54,13 @@ const ValidatorField = ({ account, onChangeValidator, chosenValidatorAddr }: Pro
   }, [chosenValidatorAddr]);
   */
 
-  const renderItem = (validator: Validator) => {
+  const renderItem = (validator: AptosValidator) => {
     return (
       <ValidatorRow
-        key={validator.accountAddr}
+        key={validator.address}
         validator={validator}
         currency={account.currency}
-        active={chosenValidatorAddr === validator.accountAddr}
+        active={chosenValidatorAddr === validator.address}
         onClick={onChangeValidator}
         unit={unit}
       />
