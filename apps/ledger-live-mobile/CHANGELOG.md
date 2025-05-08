@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.78.0-nightly.1
+
+### Minor Changes
+
+- [#10154](https://github.com/LedgerHQ/ledger-live/pull/10154) [`1e5c638`](https://github.com/LedgerHQ/ledger-live/commit/1e5c638dfea57d171cbd562f577eaee5b79fd66b) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add opt in result analytics for transaction checks
+
 ## 3.78.0-nightly.0
 
 ### Minor Changes

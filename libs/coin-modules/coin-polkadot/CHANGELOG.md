@@ -1,5 +1,11 @@
 # @ledgerhq/coin-polkadot
 
+## 6.0.1-nightly.1
+
+### Patch Changes
+
+- [#10156](https://github.com/LedgerHQ/ledger-live/pull/10156) [`0f7b53d`](https://github.com/LedgerHQ/ledger-live/commit/0f7b53dc5a3583f11a24f531ed6b2d2361cd4f27) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Fix polkadot api integration test
+
 ## 6.0.1-nightly.0
 
 ### Patch Changes

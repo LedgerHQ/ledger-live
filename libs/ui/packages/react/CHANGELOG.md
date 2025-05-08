@@ -1,5 +1,13 @@
 # @ledgerhq/react-ui
 
+## 0.25.0-nightly.0
+
+### Minor Changes
+
+- [#10127](https://github.com/LedgerHQ/ledger-live/pull/10127) [`41d82c2`](https://github.com/LedgerHQ/ledger-live/commit/41d82c211ffc03882d101fecd1175d8f8a823341) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Added Select Account components
+
+- [#10137](https://github.com/LedgerHQ/ledger-live/pull/10137) [`afe36ae`](https://github.com/LedgerHQ/ledger-live/commit/afe36ae4f19a50757c65180a842d2087c56856dc) Thanks [@LucasWerey](https://github.com/LucasWerey)! - SelectAssetList under newArch. Small fixes inside the ui lib
+
 ## 0.24.0
 
 ### Minor Changes

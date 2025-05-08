@@ -1,5 +1,13 @@
 # @ledgerhq/coin-solana
 
+## 0.22.0-nightly.1
+
+### Minor Changes
+
+- [#10153](https://github.com/LedgerHQ/ledger-live/pull/10153) [`3c515ee`](https://github.com/LedgerHQ/ledger-live/commit/3c515ee6f582e35d5722e445f0bb9a104e935917) Thanks [@Justkant](https://github.com/Justkant)! - fix: use base58 encoding for Solana signMessage signature
+
+- [#9873](https://github.com/LedgerHQ/ledger-live/pull/9873) [`1aa6339`](https://github.com/LedgerHQ/ledger-live/commit/1aa63397067accf265ed978748cd33d83bfa972e) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - support RAW tx for Solana
+
 ## 0.21.2-nightly.0
 
 ### Patch Changes
