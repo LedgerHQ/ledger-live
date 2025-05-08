@@ -17,7 +17,7 @@ const meta: Meta<typeof CardButton> = {
   tags: ["autodocs"],
   args: {
     onClick: () => null,
-    title: "title",
+    title: "Title",
     variant: "default",
   },
 };
@@ -30,7 +30,7 @@ export const Default: Story = {};
 export const Dashed: Story = {
   args: {
     onClick: () => null,
-    title: "title",
+    title: "Title",
     variant: "dashed",
   },
 };
@@ -38,7 +38,7 @@ export const Dashed: Story = {
 export const IconRight: Story = {
   args: {
     onClick: () => null,
-    title: "title",
+    title: "Title",
     iconRight: <Icons.Plus size="S" />,
   },
 };
@@ -48,7 +48,7 @@ const onClick = fn();
 export const TestOnClick: Story = {
   args: {
     onClick,
-    title: "title",
+    title: "Title",
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

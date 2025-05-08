@@ -4,10 +4,13 @@ import styled from "styled-components";
 
 const Button = styled.button`
   ${withTokens(
-    "colors-border-subdued-default-default",
     "colors-content-default-default",
     "colors-surface-transparent-hover",
     "colors-surface-transparent-pressed",
+    "colors-border-light-default",
+    "colors-opacity-default-10",
+    "colors-border-subdued-default-hover",
+    "colors-border-subdued-default-pressed",
     "colors-border-focus-default",
     "radius-s",
     "border-width-default",
@@ -24,17 +27,22 @@ const Button = styled.button`
 
   background-color: transparent;
   color: var(--colors-content-default-default);
+  font-weight: 600;
 
   border-width: var(--border-width-default);
   border-radius: var(--radius-s);
-  border-color: var(--colors-border-subdued-default-default);
+  border-color: ${({ theme: { theme } }) =>
+    theme === "light" ? "var(--colors-border-light-default);" : "var(--colors-opacity-default-10);"}
 
   :hover {
     background-color: var(--colors-surface-transparent-hover);
+    ${({ theme: { theme } }) =>
+      theme === "light" && "border-color: var(--colors-border-subdued-default-hover);"}
   }
 
   :active {
     background-color: var(--colors-surface-transparent-pressed);
+    ${({ theme: { theme } }) => theme === "light" && "border-color: var(--colors-border-subdued-default-pressed);"}
   }
 
   :focus-visible {
