@@ -32,7 +32,7 @@ describe("Polkadot Api", () => {
       const amount = BigInt(100);
 
       // When
-      const result = await module.estimateFees({
+      const { value } = await module.estimateFees({
         asset: { type: "native" },
         type: "send",
         sender: address,
@@ -41,8 +41,8 @@ describe("Polkadot Api", () => {
       });
 
       // Then
-      expect(result).toBeGreaterThanOrEqual(BigInt(100000000));
-      expect(result).toBeLessThanOrEqual(BigInt(200000000));
+      expect(value).toBeGreaterThanOrEqual(BigInt(100000000));
+      expect(value).toBeLessThanOrEqual(BigInt(200000000));
     });
   });
 

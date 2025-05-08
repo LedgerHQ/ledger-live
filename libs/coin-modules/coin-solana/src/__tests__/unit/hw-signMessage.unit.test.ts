@@ -17,8 +17,8 @@ describe("Testing call to hardware off-chain sign message on Solana", () => {
     const SIGNATURE =
       "4gVuB1KsM58fb3vRpnDucwW4Vi6fVGA51QDQd9ARvx4GH5yYVDPzDnvzUbSJf3YLWWdsX7zCMSN9N1GMnTYwWiJf";
 
-    const HEXADECIMAL_SIGNATURE =
-      "3467567542314b734d35386662337652706e4475637757345669366656474135315144516439415276783447483579595644507a446e767a5562534a6633594c5757647358377a434d534e394e31474d6e54597757694a66";
+    const BASE58_SIGNATURE =
+      "RTCCo3j8Nx4FocNfEjPqTFgsDjxge5YR3tapEpbWVRgzbPcnTAYD54KiodwhVETwHYLLb5gVACSmrH8RN5ZMEhq7iH88mVb1peF3pDKRgJGZ3opDhonkc5Tj";
 
     const getAppConfigurationMock = jest.fn(() => {
       return Promise.resolve({
@@ -50,7 +50,7 @@ describe("Testing call to hardware off-chain sign message on Solana", () => {
       { message: messageHex },
     );
 
-    expect(result.signature).toEqual("0x" + HEXADECIMAL_SIGNATURE);
+    expect(result.signature).toEqual(BASE58_SIGNATURE);
     expect(signMessageMock).toHaveBeenCalledTimes(1);
     expect(signMessageMock).toHaveBeenCalledWith(accountFreshAddressPath, offchainMessage);
   });
@@ -60,8 +60,8 @@ describe("Testing call to hardware off-chain sign message on Solana", () => {
     const SIGNATURE =
       "4gVuB1KsM58fb3vRpnDucwW4Vi6fVGA51QDQd9ARvx4GH5yYVDPzDnvzUbSJf3YLWWdsX7zCMSN9N1GMnTYwWiJf";
 
-    const HEXADECIMAL_SIGNATURE =
-      "3467567542314b734d35386662337652706e4475637757345669366656474135315144516439415276783447483579595644507a446e767a5562534a6633594c5757647358377a434d534e394e31474d6e54597757694a66";
+    const BASE58_SIGNATURE =
+      "RTCCo3j8Nx4FocNfEjPqTFgsDjxge5YR3tapEpbWVRgzbPcnTAYD54KiodwhVETwHYLLb5gVACSmrH8RN5ZMEhq7iH88mVb1peF3pDKRgJGZ3opDhonkc5Tj";
 
     const getAppConfigurationMock = jest.fn(() => {
       return Promise.resolve({
@@ -93,7 +93,7 @@ describe("Testing call to hardware off-chain sign message on Solana", () => {
       { message: messageHex },
     );
 
-    expect(result.signature).toEqual("0x" + HEXADECIMAL_SIGNATURE);
+    expect(result.signature).toEqual(BASE58_SIGNATURE);
     expect(signMessageMock).toHaveBeenCalledTimes(1);
     expect(signMessageMock).toHaveBeenCalledWith(accountFreshAddressPath, offchainMessage);
   });

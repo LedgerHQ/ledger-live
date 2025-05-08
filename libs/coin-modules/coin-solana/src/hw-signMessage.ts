@@ -4,6 +4,7 @@ import { Account, AnyMessage, DeviceId } from "@ledgerhq/types-live";
 import { SolanaSigner } from "./signer";
 import { toOffChainMessage } from "./offchainMessage/format";
 import coinConfig from "./config";
+import bs58 from "bs58";
 
 export const signMessage =
   (signerContext: SignerContext<SolanaSigner>) =>
@@ -31,5 +32,5 @@ export const signMessage =
       );
     });
 
-    return { signature: "0x" + result.signature.toString("hex") };
+    return { signature: bs58.encode(result.signature) };
   };

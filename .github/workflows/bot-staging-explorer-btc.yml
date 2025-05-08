@@ -1,4 +1,4 @@
-name: "[Bot] Bitcoin on Staging"
+name: "[Coin] - Bitcoin on Staging - Scheduled"
 on:
   workflow_dispatch:
   schedule:

@@ -7,27 +7,28 @@ type Props = Readonly<React.ComponentProps<"input"> & { icon?: React.ReactNode }
 const Wrapper = styled.div`
   ${withTokens(
     "spacing-s",
-    "spacing-xs",
+    "spacing-xxs",
     "radius-s",
     "colors-surface-transparent-subdued-default",
     "colors-content-subdued-default-default",
   )}
 
   display: flex;
-  width: 328px;
   height: 40px;
   min-width: 328px;
   padding: 0px var(--spacing-s, 16px);
   align-items: center;
-  gap: var(--spacing-xs, 8px);
+  gap: var(--spacing-xxs, 8px);
 
   border-radius: var(--radius-s, 8px);
   background: var(--colors-surface-transparent-subdued-default, rgba(0, 0, 0, 0.03));
   color: var(--colors-content-subdued-default-default);
+  overflow: hidden;
 `;
 
 const StyledInput = styled.input`
   background: none;
+  cursor: text;
   border: none;
   width: 100%;
 `;

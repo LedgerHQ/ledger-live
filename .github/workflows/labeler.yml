@@ -1,4 +1,4 @@
-name: "@PR • Labeler"
+name: "[CI] - Labeler - PR"
 run-name: "@PR • Labeler triggered by ${{ github.actor }} ${{ format('on branch {0}', github.head_ref) }}"
 
 on:

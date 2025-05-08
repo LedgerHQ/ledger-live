@@ -25,15 +25,17 @@ const TempAssetBadge = () => (
 
 const Wrapper = styled.div`
   ${withTokens(
-    "spacing-xs",
-    "marging-s",
+    "spacing-xxs",
+    "margin-s",
+    "radius-s",
     "colors-content-default-default",
     "colors-surface-transparent-hover",
     "colors-surface-transparent-pressed",
   )}
   display: flex;
-  padding: var(--spacing-xs);
+  padding: var(--spacing-xxs);
   cursor: pointer;
+  border-radius: var(--radius-s, 8px);
 
   :hover {
     background-color: var(--colors-surface-transparent-hover);
@@ -48,7 +50,7 @@ const InfoWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-left: var(--marging-s);
+  margin-left: var(--margin-s);
 `;
 
 export const NetworkItem = ({ name, onClick }: NetworkItemProps) => {

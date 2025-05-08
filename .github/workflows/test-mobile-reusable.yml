@@ -1,4 +1,4 @@
-name: "Test Mobile"
+name: "[Mobile] - Code Check - Called"
 
 on:
   workflow_call:
@@ -27,7 +27,7 @@ permissions:
 
 jobs:
   codecheck:
-    name: "LLM CodeCheck"
+    name: "Mobile Code Check"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
