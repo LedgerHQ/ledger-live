@@ -2,12 +2,11 @@ module.exports = {
   env: {
     jest: true,
   },
-  rules: {
-    "no-var": "off",
-  },
+  parser: "@typescript-eslint/parser",
+  plugins: ["@typescript-eslint"],
   overrides: [
     {
-      files: ["**/*.{js,jsx}"],
+      files: ["**/*.{ts,js,jsx}"],
       rules: {
         "@typescript-eslint/no-var-requires": "off",
       },

@@ -197,7 +197,7 @@ export function runSendMaxTest(transaction: TransactionType, tmsLinks: string[])
   });
 }
 
-export async function runSendENSTest(transaction: TransactionType, tmsLinks: string[]) {
+export function runSendENSTest(transaction: TransactionType, tmsLinks: string[]) {
   setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));

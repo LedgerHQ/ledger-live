@@ -64,7 +64,7 @@ export const NativeElementHelpers = {
     return withRN75Delay(() => element(by.text(text)).atIndex(index));
   },
 
-  async isIdVisible(id: string | RegExp, timeout: number = DEFAULT_TIMEOUT): Promise<boolean> {
+  async isIdVisible(id: string | RegExp, timeout: number = 1_000): Promise<boolean> {
     try {
       await waitFor(element(by.id(id)))
         .toBeVisible()

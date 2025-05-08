@@ -1,7 +1,7 @@
 import { expect } from "detox";
 import { deleteSpeculos, launchProxy, launchSpeculos } from "../utils/speculosUtils";
 import { addKnownSpeculos, findFreePort, removeKnownSpeculos } from "../bridge/server";
-import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw";
+import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
 
 const proxyAddress = "localhost";
 

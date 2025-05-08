@@ -1,7 +1,7 @@
 import { globalTeardown } from "detox/runners/jest";
 import { promises as fs } from "fs";
 import { close as closeBridge, getEnvs, getFlags, loadConfig } from "./bridge/server";
-import { formatEnvData, formatFlagsData } from "@ledgerhq/live-common/e2e/index";
+import { formatEnvData, formatFlagsData } from "@ledgerhq/live-common/e2e";
 import { launchApp } from "./helpers/commonHelpers";
 import detox from "detox/internals";
 import path from "path";
