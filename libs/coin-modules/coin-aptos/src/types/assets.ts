@@ -5,7 +5,7 @@ export type AptosAsset = Asset & {
   function: MoveFunctionId;
 };
 
-export type AptosExtra = unknown;
+export type AptosExtra = Record<string, unknown>;
 
 export type AptosSender = {
   xpub: string;

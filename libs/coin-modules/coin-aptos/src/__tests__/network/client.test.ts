@@ -524,11 +524,11 @@ describe("Aptos API", () => {
       }));
 
       const amount = BigInt(100);
-      const SENDER: AptosSender = {
+      const sender: AptosSender = {
         xpub: "xpub",
         freshAddress: "address1",
       };
-      const RECIPIENT = "address2";
+      const recipient = "address2";
 
       const api = new AptosAPI("aptos");
       const transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender> = {
@@ -537,9 +537,9 @@ describe("Aptos API", () => {
           function: "0x1::aptos_account::transfer_coins",
         },
         type: "send",
-        sender: SENDER,
+        sender,
         amount,
-        recipient: RECIPIENT,
+        recipient,
       };
 
       const fees = await api.estimateFees(transactionIntent);

@@ -26,22 +26,12 @@ describe("createApi", () => {
 
   describe("estimateFees", () => {
     it("returns a default value", async () => {
-      // const accountA = Account.generate();
-
-      const SENDER: AptosSender = {
+      // Account has been funded using the await aptos.fundAccount method
+      const sender: AptosSender = {
         xpub: "0xc7a5a529eb69b4f40519c3334eed48f090af354ec6c0893129ebed30328e245c",
         freshAddress: "0xf2a89ea976c60f98bd8a2cbc33b49e6d1de38618a6991692dee61c9b4745ad4a",
       };
-      const RECIPIENT = Account.generate().accountAddress.toString();
-
-      // const aptos = new Aptos(new AptosConfig({ network: Network.DEVNET }));
-
-      // const res = await aptos.fundAccount({
-      //   accountAddress: SENDER.freshAddress,
-      //   amount: 1000,
-      // });
-
-      // console.log(res);
+      const recipient = Account.generate().accountAddress.toString();
 
       const amount = BigInt(100);
 
@@ -51,12 +41,17 @@ describe("createApi", () => {
           function: "0x1::aptos_account::transfer_coins",
         },
         type: "send",
-        sender: SENDER,
+        sender,
         amount,
-        recipient: RECIPIENT,
+        recipient,
       });
 
       expect(fees.value).toEqual(BigInt(55100));
+
+      if (fees.parameters) {
+        expect(fees.parameters.gasLimit).toEqual(BigInt(551));
+        expect(fees.parameters.gasPrice).toEqual(BigInt(100));
+      }
     });
   });
 });
