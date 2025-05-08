@@ -161,26 +161,16 @@ export const txsToOps = (
         op.type = DIRECTION.UNKNOWN;
       }
       if (op.type === DIRECTION.DELEGATE) {
-        console.log("op.type === DIRECTION.DELEGATE)", op);
         op.value = staked_amount;
         opsStaking.push(op);
       } else if (op.type === DIRECTION.UNDELEGATE) {
-        console.log("op.type === DIRECTION.UNDELEGATE)", op);
         op.value = unlocked_amount;
         opsWithdrawable.push(op);
       } else if (op.type !== DIRECTION.UNKNOWN && coin_id !== null) {
-        console.log("op.type !== DIRECTION.UNKNOWN && coin_id !== null", op);
         if (coin_id === APTOS_ASSET_ID) {
-          console.log("coin_id === APTOS_ASSET_ID", op);
-          console.log("coin_id !== APTOS_ASSET_ID", coin_id);
-          console.log("coin_id !== APTOS_ASSET_ID", APTOS_ASSET_ID);
           ops.push(op);
         } else {
-          console.log("coin_id !== APTOS_ASSET_ID", op);
-          console.log("coin_id !== APTOS_ASSET_ID", coin_id);
-          console.log("coin_id !== APTOS_ASSET_ID", APTOS_ASSET_ID);
           const token = findTokenByAddressInCurrency(coin_id.toLowerCase(), "aptos");
-          console.log("token", token);
           if (token !== undefined) {
             op.accountId = encodeTokenAccountId(id, token);
             opsTokens.push(op);
@@ -198,10 +188,6 @@ export const txsToOps = (
       }
     }
   });
-  console.log("ops", ops);
-  console.log("opsTokens", opsTokens);
-  console.log("opsStaking", opsStaking);
-
   return [ops, opsTokens, opsStaking, opsWithdrawable];
 };
 
@@ -271,14 +257,16 @@ export function getEventCoinAddress(
   event_name: string,
 ): string | null {
   const change_data = change.data;
-
+  console.log("getEventCoinAddress", change_data, event, event_name);
   const mr = change_data as MoveResource<AptosMoveResource>; // -> this is data that we want to parse
 
   if (!(event_name in mr.data)) {
+    console.log("event_name not in mr.data", event_name, mr.data);
     return null;
   }
 
   const change_event_data = mr.data[event_name];
+  
   if (
     change_event_data.guid.id.addr !== event.guid.account_address ||
     change_event_data.guid.id.creation_num !== event.guid.creation_number
@@ -328,6 +316,8 @@ export function getResourceAddress(
       if (address !== null) {
         return address;
       }
+    } else {
+      console.log("change", change);
     }
   }
   return null;
@@ -373,9 +363,6 @@ export function getCoinAndAmounts(
 
   // collect all events related to the address and calculate the overall amounts
   tx.events.forEach(event => {
-    if (event.type === "0x1::stake::AddStakeEvent") {
-      console.log("AddStakeEvent", event);
-    }
     switch (event.type) {
       case "0x1::coin::WithdrawEvent":
         if (compareAddress(event.guid.account_address, address)) {
@@ -414,8 +401,8 @@ export function getCoinAndAmounts(
         if (tx.sender === address) {
           if (coin_id === null) coin_id = APTOS_ASSET_ID;
           if (coin_id === APTOS_ASSET_ID) {
+            coin_id = getResourceAddress(tx, event, "total_joining_power", getEventCoinAddress);
             // STAKED AMOUNT IS ALSO A AMOUNT OUT
-            coin_id = getResourceAddress(tx, event, "stake_events", getEventCoinAddress);
             staked_amount = staked_amount.plus(event.data.amount_added);
             amount_out = amount_out.plus(event.data.amount_added);
           }
@@ -427,7 +414,6 @@ export function getCoinAndAmounts(
           if (coin_id === APTOS_ASSET_ID) {
             // WHENEVER A UNLOCKED EVENT IS IN,
             // DO NOT CHANGE THE AMOUNT OUT JUST REDUCE STAKED AMOUNT
-            coin_id = getResourceAddress(tx, event, "unlock_events", getEventCoinAddress);
             staked_amount = staked_amount.minus(event.data.amount_added);
             unlocked_amount = unlocked_amount.plus(event.data.amount_added);
           }
@@ -439,7 +425,6 @@ export function getCoinAndAmounts(
           if (coin_id === APTOS_ASSET_ID) {
             // WHENEVER A WITHDRAW EVENT IS IN,
             // DO NOT CHANGE THE AMOUNT OUT JUST REDUCE STAKED AMOUNT
-            coin_id = getResourceAddress(tx, event, "withdraw_events", getEventCoinAddress);
             unlocked_amount = unlocked_amount.minus(event.data.amount_added);
             amount_in = amount_in.plus(event.data.amount_added);
           }
@@ -451,7 +436,6 @@ export function getCoinAndAmounts(
           if (coin_id === APTOS_ASSET_ID) {
             // WHENEVER A REWARD EVENT IS IN,
             // DO NOT CHANGE THE AMOUNT OUT JUST ADD STAKED AMOUNT
-            coin_id = getResourceAddress(tx, event, "reward_events", getEventCoinAddress);
             staked_amount = staked_amount.plus(event.data.amount_added);
           }
         }
