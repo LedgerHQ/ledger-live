@@ -9,20 +9,12 @@ import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { useTranslation } from "react-i18next";
 import { useLocale } from "~/context/Locale";
 import { counterValueFormatter } from "~/newArch/features/Market/utils";
+import { getColors } from "../utils";
 
 type PriceAndVariationProps = {
   price: number;
   priceChangePercentage: Record<KeysPriceChange, number>;
   range: KeysPriceChange;
-};
-const getColors = (priceChangePercentage: number) => {
-  if (priceChangePercentage > 0) {
-    return { textColor: "success.c70", bgColor: "success.c10" };
-  }
-  if (priceChangePercentage < 0) {
-    return { textColor: "error.c50", bgColor: "error.c10" };
-  }
-  return { textColor: "neutral.c100", bgColor: "neutral.c20" };
 };
 
 export const PriceAndVariation: React.FC<PriceAndVariationProps> = ({

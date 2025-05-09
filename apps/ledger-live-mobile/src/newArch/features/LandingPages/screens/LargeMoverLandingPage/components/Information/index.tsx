@@ -28,9 +28,9 @@ export const Informations: React.FC<InformationsProps> = props => {
     dateFormatter,
     locale,
     t,
+    marketCapVolume24h,
   } = useInformations(props);
 
-  const marketCapVolume24h = (volume / (marketCap ?? 1)) * 10000;
   return (
     <Flex flexDirection="column">
       <Text style={styles.title}>{t("largeMover.info")}</Text>

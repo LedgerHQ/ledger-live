@@ -14,6 +14,10 @@ type UseLargeMoverDataProviderParams = {
   range: string;
 };
 
+function mapIdsToQueries<T>(ids: string[], queries: T[]): Record<string, T> {
+  return Object.fromEntries(ids.map((id, index) => [id, queries[index]]));
+}
+
 export const useLargeMoverDataProvider = ({
   ids,
   counterCurrency,
@@ -46,9 +50,8 @@ export const useLargeMoverDataProvider = ({
     })),
   });
 
-  const currencyQueryMap = Object.fromEntries(ids.map((id, index) => [id, currencyQueries[index]]));
-
-  const chartQueryMap = Object.fromEntries(ids.map((id, index) => [id, chartQueries[index]]));
+  const currencyQueryMap = mapIdsToQueries(ids, currencyQueries);
+  const chartQueryMap = mapIdsToQueries(ids, chartQueries);
 
   const currencies = ids.map(id => {
     const currencyQuery = currencyQueryMap[id];
