@@ -9,7 +9,7 @@ import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import ValidatorRow from "~/renderer/components/Delegation/ValidatorRow";
 import Text from "~/renderer/components/Text";
-import LedgerValidatorIcon from "~/renderer/families/aptos/shared/components/LedgerValidatorIcon";
+import ValidatorIcon from "~/renderer/families/aptos/shared/components/ValidatorIcon";
 import Check from "~/renderer/icons/Check";
 import { openURL } from "~/renderer/linking";
 
@@ -43,7 +43,7 @@ function AptosValidatorRow({ validator, active, onClick, unit, currency }: Props
       validator={{
         address: validator.address,
       }}
-      icon={<LedgerValidatorIcon validator={validator} />}
+      icon={<ValidatorIcon validator={validator} />}
       title={validator.address}
       onExternalLink={onExternalLink}
       unit={unit}

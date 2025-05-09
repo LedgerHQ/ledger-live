@@ -7,17 +7,13 @@ import BigNumber from "bignumber.js";
 
 export async function getValidators(currencyId: string): Promise<AptosValidator[]> {
   const api = new AptosAPI(currencyId);
-  const querySecond = GetCurrentDelegatorBalancesData;
-  const queryResponseSecond = await api.apolloClient.query<
-    GetCurrentDelegatorBalancesQuery,
-    object
-  >({
-    query: querySecond,
+  const query = GetCurrentDelegatorBalancesData;
+  const queryResponse = await api.apolloClient.query<GetCurrentDelegatorBalancesQuery, object>({
+    query: query,
     fetchPolicy: "network-only",
   });
 
-  const stakingData: CurrentDelegatorBalance[] =
-    queryResponseSecond.data.current_delegator_balances;
+  const stakingData: CurrentDelegatorBalance[] = queryResponse.data.current_delegator_balances;
 
   const list: AptosValidator[] = await Promise.all(
     stakingData.map(async pool => {

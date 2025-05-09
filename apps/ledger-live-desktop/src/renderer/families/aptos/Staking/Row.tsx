@@ -11,7 +11,7 @@ import ChevronRight from "~/renderer/icons/ChevronRight";
 import CheckCircle from "~/renderer/icons/CheckCircle";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import ToolTip from "~/renderer/components/Tooltip";
-import LedgerValidatorIcon from "~/renderer/families/aptos/shared/components/LedgerValidatorIcon";
+import ValidatorIcon from "~/renderer/families/aptos/shared/components/ValidatorIcon";
 import Text from "~/renderer/components/Text";
 import Discreet from "~/renderer/components/Discreet";
 const Wrapper = styled.div`
@@ -126,7 +126,7 @@ export function Row({
     <Wrapper>
       <Column strong clickable onClick={onExternalLinkClick}>
         <Box mr={2}>
-          <LedgerValidatorIcon validator={validator} validatorId={validatorId} />
+          <ValidatorIcon validator={validator} validatorId={validatorId} />
         </Box>
         <Ellipsis>{validatorId}</Ellipsis>
       </Column>

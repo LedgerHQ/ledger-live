@@ -5,8 +5,9 @@ import { IconContainer } from "~/renderer/components/Delegation/ValidatorRow";
 // import LedgerLiveLogo from "~/renderer/components/LedgerLiveLogo";
 // import Logo from "~/renderer/icons/Logo";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
+import Image from "~/renderer/components/Image";
 
-const LedgerValidatorIcon = ({
+const ValidatorIcon = ({
   validator,
   validatorId,
 }: {
@@ -22,9 +23,13 @@ const LedgerValidatorIcon = ({
       ) : (
         <FirstLetterIcon label={address} />
       )} */}
-      <FirstLetterIcon label={address} />
+      {validator && validator.avatarUrl !== undefined ? (
+        <Image resource={validator.avatarUrl} alt="" width={32} height={32} />
+      ) : (
+        <FirstLetterIcon label={address} />
+      )}
     </IconContainer>
   );
 };
 
-export default LedgerValidatorIcon;
+export default ValidatorIcon;

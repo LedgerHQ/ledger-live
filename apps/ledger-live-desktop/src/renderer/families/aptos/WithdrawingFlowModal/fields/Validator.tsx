@@ -6,7 +6,7 @@ import {
   AptosMappedStakingPosition,
   AptosAccount,
 } from "@ledgerhq/live-common/families/aptos/types";
-import LedgerValidatorIcon from "~/renderer/families/aptos/shared/components/LedgerValidatorIcon";
+import ValidatorIcon from "~/renderer/families/aptos/shared/components/ValidatorIcon";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import Select from "~/renderer/components/Select";
@@ -45,7 +45,7 @@ function OptionRow({ data: { validatorId, validator, formattedAvailable } }: Opt
   return (
     <Box key={validatorId} horizontal alignItems="center" justifyContent="space-between">
       <Box horizontal alignItems="center">
-        <LedgerValidatorIcon validator={validator} />
+        <ValidatorIcon validator={validator} />
         <Text ml={2} ff="Inter|Medium">
           {validatorId}
         </Text>
