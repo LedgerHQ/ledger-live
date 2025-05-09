@@ -1,5 +1,5 @@
-import { Account } from "@ledgerhq/types-live";
 import { getParentAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { Account } from "@ledgerhq/types-live";
 
 export const getTokensWithFunds = (accounts: Account[]): string[] => {
   if (!accounts?.length) return [];

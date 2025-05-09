@@ -1,8 +1,8 @@
 import { genAccount } from "@ledgerhq/coin-framework/lib/mocks/account";
-import { getTokensWithFunds } from "../getTokensWithFunds";
-import { Account } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { getTokensWithFunds } from "./getTokensWithFunds";
 
 const ETH = getCryptoCurrencyById("ethereum");
 
