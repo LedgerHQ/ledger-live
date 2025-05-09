@@ -1,5 +1,5 @@
-import { Flex, InfiniteLoader, Text, Button } from "@ledgerhq/native-ui";
-import React, { useState } from "react";
+import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import React, { useState, useMemo } from "react";
 import { useLargeMover } from "./hooks/useLargeMover";
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { Card } from "./components/Card";
@@ -10,6 +10,7 @@ import { StickyHeader } from "./components/StickyHeader";
 import { SafeAreaView } from "react-native";
 import { useTheme } from "styled-components/native";
 import { rangeMap } from "./utils";
+import { SwiperComponent } from "~/newArch/components/Swiper/components/Swiper";
 
 type LargeMoverLandingPageProps = StackNavigatorProps<
   LandingPagesNavigatorParamList,
@@ -29,9 +30,14 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
   const height = getWindowDimensions().height * 0.75;
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const handleNext = () => {
-    setCurrentIndex(prevIndex => (prevIndex + 1) % currencies.length);
-  };
+  const currenciesWithId = useMemo(
+    () =>
+      currencies.map((currency, index) => ({
+        ...currency,
+        idCard: index,
+      })),
+    [currencies],
+  );
 
   if (loading) {
     return (
@@ -51,21 +57,19 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.neutral.c00 }}>
-      <Flex width="100%" flex={1}>
-        <StickyHeader />
-        <Button onPress={handleNext} size="large">
-          {"Next"}
-        </Button>
-        <Flex padding={1}>
-          {currencies[currentIndex].data && currencies[currentIndex].chartData ? (
-            <Card
-              {...currencies[currentIndex].data!}
-              chartData={currencies[currentIndex].chartData!}
-              range={range}
-              setRange={setRange}
-            />
-          ) : null}
-        </Flex>
+      <StickyHeader />
+      <Flex paddingTop={20}>
+        {currencies[0].data && currencies[0].chartData ? (
+          <SwiperComponent
+            cardContainerStyle={{ justifyContent: "flex-start" }}
+            currentIndex={currentIndex}
+            onIndexChange={setCurrentIndex}
+            initialCards={currenciesWithId}
+            renderCard={card => (
+              <Card {...card.data!} chartData={card.chartData!} range={range} setRange={setRange} />
+            )}
+          />
+        ) : null}
       </Flex>
     </SafeAreaView>
   );

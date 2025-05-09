@@ -1,22 +1,33 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSharedValue } from "react-native-reanimated";
 import { useCardRotation } from "./useCardRotation";
 import { createGesture } from "../utils/gesture";
 
-export function useSwiper<T>(initialCards: T[]) {
-  const [cardIndex, setCardIndex] = useState(0);
-  const activeIndex = useSharedValue(0);
+export function useSwiper<T>(
+  initialCards: T[],
+  currentIndex: number,
+  onIndexChange: (index: number) => void,
+) {
+  const [cardIndex, setCardIndex] = useState(currentIndex);
+  const activeIndex = useSharedValue(currentIndex);
   const swipeX = useSharedValue(0);
   const swipeY = useSharedValue(0);
+
+  useEffect(() => {
+    setCardIndex(currentIndex);
+    activeIndex.value = currentIndex;
+  }, [currentIndex, activeIndex]);
 
   const cards = useCardRotation(cardIndex, initialCards);
 
   const handleSwipeComplete = useCallback(() => {
-    setCardIndex((prev: number) => (prev + 1) % initialCards.length);
-    activeIndex.value = (activeIndex.value + 1) % initialCards.length;
+    const nextIndex = (cardIndex + 1) % initialCards.length;
+    setCardIndex((cardIndex + 1) % initialCards.length);
+    activeIndex.value = nextIndex;
     swipeX.value = 0;
     swipeY.value = 0;
-  }, [setCardIndex, activeIndex, initialCards.length, swipeX, swipeY]);
+    onIndexChange(nextIndex);
+  }, [cardIndex, initialCards.length, onIndexChange, activeIndex, swipeX, swipeY]);
 
   const gesture = createGesture(swipeX, swipeY, handleSwipeComplete);
 
