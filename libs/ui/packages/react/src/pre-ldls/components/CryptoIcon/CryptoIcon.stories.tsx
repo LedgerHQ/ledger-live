@@ -9,6 +9,7 @@ const meta: Meta<typeof CryptoIcon> = {
     ledgerId: "bitcoin",
     ticker: "BTC",
     size: "56px",
+    network: "",
   },
   argTypes: {
     size: { options: ["16px", "24px", "32px", "40px", "48px", "56px"], control: "select" },
