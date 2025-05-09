@@ -4,13 +4,13 @@
   "private": true,
   "scripts": {
     "lint:fix": "pnpm lint --fix",
-    "test": "export MOCK=0 && pnpm detox test",
-    "test:ios": "export MOCK=0 && pnpm detox test --configuration ios.sim.release",
-    "test:android": "export MOCK=0 && pnpm detox test --configuration android.emu.release",
+    "test:detox": "export MOCK=0 && pnpm detox test",
+    "test:ios": "pnpm test:detox --configuration ios.sim.release",
+    "test:android": "pnpm test:detox --configuration android.emu.release",
     "build:ios": "pnpm --filter live-mobile run e2e:build --configuration ios.sim.release",
     "build:android": "pnpm --filter live-mobile run e2e:build --configuration android.emu.release",
-    "test:ios:debug": "export MOCK=0 && pnpm detox test --configuration ios.sim.debug",
-    "test:android:debug": "export MOCK=0 && pnpm detox test --configuration android.emu.debug",
+    "test:ios:debug": "pnpm test:detox --configuration ios.sim.debug",
+    "test:android:debug": "pnpm test:detox --configuration android.emu.debug",
     "build:ios:debug": "pnpm --filter live-mobile run e2e:build --configuration ios.sim.debug",
     "build:android:debug": "pnpm --filter live-mobile run e2e:build --configuration android.emu.debug"
   },

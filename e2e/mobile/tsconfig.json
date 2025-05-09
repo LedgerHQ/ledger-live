@@ -24,6 +24,9 @@
       ],
       "@ledgerhq/live-common/hw/index": [
         "../../libs/ledger-live-common/src/hw/index"
+      ],
+      "@ledgerhq/live-common/hw/deviceAccess": [
+        "../../libs/ledger-live-common/src/hw/deviceAccess"
       ]
     }
   },

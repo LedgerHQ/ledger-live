@@ -36,8 +36,6 @@ import { log } from "detox";
 import { AppInfosType } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { setupEnvironment } from "../helpers/commonHelpers";
 
-import { performance } from "perf_hooks";
-
 setupEnvironment();
 
 type CliCommand = (userdataPath?: string) => Observable<unknown> | Promise<unknown> | string;
@@ -67,33 +65,22 @@ const lazyInit = <T>(PageClass: new () => T) => {
 };
 
 async function executeCliCommand(cmd: CliCommand, userdataPath?: string): Promise<unknown> {
-  return await timeIt(`[CLI] executeCliCommand`, async () => {
-    const resultOrPromise = await cmd(userdataPath);
+  const resultOrPromise = await cmd(userdataPath);
 
-    let result: unknown;
-
-    try {
-      if (isObservable(resultOrPromise)) {
-        result = await lastValueFrom(resultOrPromise);
-      } else {
-        result = resultOrPromise;
-      }
-    } catch (err) {
-      log.error("[CLI] ❌ Error executing command:", err);
-      throw err;
+  let result: unknown;
+  try {
+    if (isObservable(resultOrPromise)) {
+      result = await lastValueFrom(resultOrPromise);
+    } else {
+      result = resultOrPromise;
     }
+  } catch (err) {
+    log.error("[CLI] ❌ Error executing command:", err);
+    throw err;
+  }
 
-    log.info("[CLI] 🎉 Final result:", result);
-    return result;
-  });
-}
-
-async function timeIt<T>(label: string, fn: () => Promise<T>): Promise<T> {
-  const start = performance.now();
-  const result_1 = await fn();
-  const duration = (performance.now() - start).toFixed(1);
-  log.info(`[INIT] ${label} took ${duration}ms`);
-  return result_1;
+  log.info("[CLI] 🎉 Final result:", result);
+  return result;
 }
 
 export class Application {
