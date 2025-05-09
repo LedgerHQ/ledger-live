@@ -36,7 +36,7 @@ export type ExchangeSwapParams = ExchangeStartSwapParams & {
   toNewTokenId?: string;
   feeStrategy: "slow" | "medium" | "fast" | "custom";
   // customFeeConfig: {
-  //   [key: string]: number;
+  //   [key: string]: BigNumber;
   // };
 };
 
