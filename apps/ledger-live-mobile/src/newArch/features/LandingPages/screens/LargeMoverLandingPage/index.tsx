@@ -6,6 +6,9 @@ import { Card } from "./components/Card";
 import { LandingPagesNavigatorParamList } from "~/components/RootNavigator/types/LandingPagesNavigator";
 import { ScreenName } from "~/const";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { StickyHeader } from "./components/StickyHeader";
+import { SafeAreaView } from "react-native";
+import { useTheme } from "styled-components/native";
 
 type LargeMoverLandingPageProps = StackNavigatorProps<
   LandingPagesNavigatorParamList,
@@ -18,6 +21,8 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
     currencyIds,
     initialRange,
   });
+
+  const { colors } = useTheme();
   const height = getWindowDimensions().height * 0.75;
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -43,18 +48,23 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
   }
 
   return (
-    <Flex>
-      <Button onPress={handleNext}>{"Next"}</Button>
-      <Flex padding={1} paddingBottom={120} paddingTop={8}>
-        {currencies[currentIndex].data && currencies[currentIndex].chartData ? (
-          <Card
-            {...currencies[currentIndex].data!}
-            chartData={currencies[currentIndex].chartData!}
-            range={range}
-            setRange={setRange}
-          />
-        ) : null}
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.neutral.c00 }}>
+      <Flex width="100%" flex={1}>
+        <StickyHeader />
+        <Button onPress={handleNext} size="large">
+          {"Next"}
+        </Button>
+        <Flex padding={1}>
+          {currencies[currentIndex].data && currencies[currentIndex].chartData ? (
+            <Card
+              {...currencies[currentIndex].data!}
+              chartData={currencies[currentIndex].chartData!}
+              range={range}
+              setRange={setRange}
+            />
+          ) : null}
+        </Flex>
       </Flex>
-    </Flex>
+    </SafeAreaView>
   );
 };
