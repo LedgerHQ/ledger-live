@@ -52,6 +52,7 @@ import {
 } from "../utils/index";
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
+import { useDiscreetMode } from "~/renderer/components/Discreet";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -127,6 +128,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
   const currentVersion = __APP_VERSION__;
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const devMode = useSelector(developerModeSelector);
+  const discreet = useDiscreetMode();
   const accounts = useSelector(flattenAccountsSelector);
   const { t } = useTranslation();
   const swapDefaultTrack = useGetSwapTrackingProperties();
@@ -488,6 +490,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             swapApiBase: SWAP_API_BASE,
             swapUserIp: SWAP_USER_IP,
             devMode,
+            discreetMode: discreet,
             lastSeenDevice: lastSeenDevice?.modelId,
             currentVersion,
             platform: "LLD",
