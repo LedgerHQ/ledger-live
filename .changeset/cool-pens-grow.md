@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/crypto-icons-ui": major
+"@ledgerhq/crypto-icons-ui": minor
 ---
 
 Add logo for SIDESHIFT XAI token to ledger. Support for tokens was added to ledger live desktop already
