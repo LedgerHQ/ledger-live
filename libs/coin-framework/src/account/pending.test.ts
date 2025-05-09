@@ -180,9 +180,20 @@ describe("shouldRetainPendingOperation", () => {
     // Then
     expect(shouldRetainPending).toBe(true);
   });
+
+  it("should replace existing pending operation with same transactionSequenceNumber", () => {
+    const account = createAccount("12");
+    const op1 = createOperation("12", ["addr"], 5);
+    const op2 = createOperation("12", ["addr"], 5); // same sequence
+
+    const result = addPendingOperation(addPendingOperation(account, op1), op2);
+
+    expect(result.pendingOperations.length).toBe(1);
+    expect(result.pendingOperations[0]).toBe(op2);
+  });
 });
 
-function createAccount(id: string): Account {
+export function createAccount(id: string): Account {
   const currency = listCryptoCurrencies(true)[0];
 
   return {
@@ -226,7 +237,7 @@ function createTokenAccount(id: string): TokenAccount {
   };
 }
 
-function createOperation(
+export function createOperation(
   accountId: string,
   sender?: string[],
   sequenceNumber?: number,
