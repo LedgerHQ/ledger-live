@@ -15,8 +15,8 @@ type SelectNetworkProps = {
 const CURRENT_PAGE = "Modular Network Selection";
 const ROW_HEIGHT = 64;
 const SPACING = 16;
-const THREE_ROWS_HEIGHT = 3 * ROW_HEIGHT;
-const EXTRA_BOTTOM_MARGIN = THREE_ROWS_HEIGHT - SPACING;
+const TWO_ROWS_HEIGHT = 2 * ROW_HEIGHT;
+const EXTRA_BOTTOM_MARGIN = TWO_ROWS_HEIGHT - SPACING;
 const EXTRA_PADDING_HIDDEN_SCROLLBAR = 12;
 
 export const SelectNetwork = ({
@@ -27,7 +27,6 @@ export const SelectNetwork = ({
 }: SelectNetworkProps) => {
   const onClick = (networkId: string) => {
     track("network_clicked", { network: networkId, page: "Modular Asset Flow", flow });
-
     const network = networks.find(({ id }) => id === networkId);
     if (!network) return;
 

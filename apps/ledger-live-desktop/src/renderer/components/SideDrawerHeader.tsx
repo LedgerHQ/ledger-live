@@ -19,7 +19,6 @@ const TouchButton = styled.button`
   color: ${p => p.theme.colors.palette.text.shade80};
   transition: filter 150ms ease-out;
   cursor: pointer;
-
   :hover {
     filter: opacity(0.8);
   }
@@ -45,6 +44,8 @@ const SideDrawerHeader = ({ title, onRequestClose, onRequestBack }: Props) => {
           height={62}
           alignItems="center"
           m={0}
+          width={onRequestBack ? "100%" : "fit-content"}
+          alignSelf={onRequestBack ? "auto" : "flex-end"}
           p="24px"
           style={{
             zIndex: 200,

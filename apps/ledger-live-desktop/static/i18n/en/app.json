@@ -7072,6 +7072,11 @@
     }
   },
   "modularAssetDrawer": {
-    "searchPlaceholder": "Search"
+    "searchPlaceholder": "Search",
+    "assetFlow": {
+      "select": "Select",
+      "network": "network",
+      "asset": "asset"
+    }
   }
 }
