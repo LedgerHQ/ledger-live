@@ -1,5 +1,4 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
-
 import {
   AccountData,
   Aptos,
@@ -17,6 +16,7 @@ import {
   UserTransactionResponse,
   PostRequestOptions,
   Block,
+  MoveStructId,
 } from "@aptos-labs/ts-sdk";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
@@ -31,6 +31,8 @@ import {
   GetAccountTransactionsDataGtQueryVariables,
 } from "./graphql/types";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { GetCurrentDelegatorBalancesData } from "../api/graphql/queries";
+import { CurrentDelegatorBalance, GetCurrentDelegatorBalancesQuery } from "../api/graphql/types";
 
 const getApiEndpoint = (currencyId: string) =>
   isTestnet(currencyId) ? getEnv("APTOS_TESTNET_API_ENDPOINT") : getEnv("APTOS_API_ENDPOINT");
@@ -39,12 +41,17 @@ const getIndexerEndpoint = (currencyId: string) =>
     ? getEnv("APTOS_TESTNET_INDEXER_ENDPOINT")
     : getEnv("APTOS_INDEXER_ENDPOINT");
 
+interface StakePoolResource {
+  locked_until_secs: string;
+  // Add other fields as needed
+}
+
 export class AptosAPI {
   private apiUrl: string;
   private indexerUrl: string;
   private aptosConfig: AptosConfig;
   private aptosClient: Aptos;
-  private apolloClient: ApolloClient<object>;
+  public apolloClient: ApolloClient<object>;
 
   constructor(currencyId: string) {
     this.apiUrl = getApiEndpoint(currencyId);
@@ -80,6 +87,33 @@ export class AptosAPI {
       blockHeight,
     };
   }
+
+  async getValidators() {
+    const querySecond = GetCurrentDelegatorBalancesData;
+    const queryResponseSecond = await this.apolloClient.query<
+      GetCurrentDelegatorBalancesQuery,
+      object
+    >({
+      query: querySecond,
+      fetchPolicy: "network-only",
+    });
+    const stakingData: CurrentDelegatorBalance[] =
+      queryResponseSecond.data.current_delegator_balances;
+
+    return stakingData;
+  }
+
+  // async getValidators() {
+  //   const payload = {
+  //     function: "0x1::delegation_pool::operator_commission_percentage",
+  //     functionArguments: [
+  //       "0x9bfd93ebaa1efd65515642942a607eeca53a0188c04c21ced646d2f0b9f551e8",
+  //       // "0xb909f0e057974fde136548160898ec1fe629351c9aabdf2d189c5691f0b5093a",
+  //     ],
+  //   } as InputViewFunctionData;
+
+  //   return await this.aptosClient.view<[string]>({ payload });
+  // }
 
   async estimateGasPrice(): Promise<GasEstimation> {
     return this.aptosClient.getGasPriceEstimation();
@@ -170,6 +204,24 @@ export class AptosAPI {
       return new BigNumber(balance);
     } catch (_) {
       return new BigNumber(0);
+    }
+  }
+
+  async getNextUnlockTime(stakingPoolAddress: string): Promise<string> {
+    const resourceType: MoveStructId = "0x1::stake::StakePool";
+    try {
+      const resource = await this.aptosClient.getAccountResource({
+        accountAddress: stakingPoolAddress,
+        resourceType,
+      });
+      const data = resource as StakePoolResource;
+      if (data && data.locked_until_secs) {
+        return data.locked_until_secs;
+      }
+      return "";
+    } catch (error) {
+      console.error("Failed to fetch StakePool resource:", error);
+      return "";
     }
   }
 
