@@ -40,9 +40,11 @@ describe("mapTxToOperations", () => {
         outputs: [
           {
             address: "myAddress",
+            value: 1000,
           },
         ],
         inputs: [],
+        received_at: new Date().toISOString(),
       } as unknown as TX,
       "bitcoin",
       "accountId",
@@ -50,5 +52,82 @@ describe("mapTxToOperations", () => {
       new Set(["changeAddress"]),
     );
     expect(ops.length).toEqual(1);
+    expect(ops[0]?.type).toBe("IN");
+  });
+
+  it("should set transactionSequenceNumber when input sequence is defined and non-zero", () => {
+    const ops = mapTxToOperations(
+      {
+        outputs: [],
+        inputs: [
+          {
+            address: "inputAddr",
+            value: 1000,
+            sequence: 4294967293,
+            output_hash: "abc",
+            output_index: 0,
+          },
+        ],
+        received_at: new Date().toISOString(),
+      } as unknown as TX,
+      "bitcoin",
+      "accountId",
+      new Set(["inputAddr"]),
+      new Set(),
+    );
+
+    expect(ops.length).toBe(1);
+    expect(ops[0]?.transactionSequenceNumber).toBe(4294967293);
+  });
+
+  it("should retain transactionSequenceNumber = 0 when explicitly set", () => {
+    const ops = mapTxToOperations(
+      {
+        outputs: [],
+        inputs: [
+          {
+            address: "inputAddr",
+            value: 1000,
+            sequence: 0,
+            output_hash: "abc",
+            output_index: 0,
+          },
+        ],
+        received_at: new Date().toISOString(),
+      } as unknown as TX,
+      "bitcoin",
+      "accountId",
+      new Set(["inputAddr"]),
+      new Set(),
+    );
+
+    expect(ops.length).toBe(1);
+    expect(ops[0]?.transactionSequenceNumber).toBe(0); // important: not undefined
+  });
+
+  it("should set transactionSequenceNumber to undefined when sequence is missing", () => {
+    const ops = mapTxToOperations(
+      {
+        outputs: [],
+        inputs: [
+          {
+            address: "inputAddr",
+            value: 1000,
+            output_hash: "abc",
+            output_index: 0,
+            // no sequence
+          },
+        ],
+        received_at: new Date().toISOString(),
+      } as unknown as TX,
+      "bitcoin",
+      "accountId",
+      new Set(["inputAddr"]),
+      new Set(),
+    );
+
+    expect(ops.length).toBe(1);
+    // missing sequence implies 0xffffffff (non-RBF, default)"
+    expect(ops[0]?.transactionSequenceNumber).toBe(0xffffffff);
   });
 });
