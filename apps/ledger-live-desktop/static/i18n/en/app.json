@@ -7074,9 +7074,9 @@
   "modularAssetDrawer": {
     "searchPlaceholder": "Search",
     "assetFlow": {
-      "select": "Select",
-      "network": "network",
-      "asset": "asset"
+      "selectTemplate": "Select {{dynamic}}",
+      "asset": "asset",
+      "network": "network"
     }
   }
 }
