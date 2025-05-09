@@ -1,4 +1,3 @@
-// We need to target CJS for the CJS build of the lib
 import { gql } from "@apollo/client";
 
 export const GetDelegatedStakingActivities = gql`
@@ -16,6 +15,7 @@ export const GetDelegatedStakingActivities = gql`
     }
   }
 `;
+
 export const GetAccountTransactionsData = gql`
   query GetAccountTransactionsData($address: String, $limit: Int) {
     account_transactions(
@@ -28,6 +28,7 @@ export const GetAccountTransactionsData = gql`
     }
   }
 `;
+
 export const GetAccountTransactionsDataGt = gql`
   query GetAccountTransactionsDataGt($address: String, $limit: Int, $gt: bigint) {
     account_transactions(
@@ -40,6 +41,7 @@ export const GetAccountTransactionsDataGt = gql`
     }
   }
 `;
+
 export const GetAccountTransactionsDataLt = gql`
   query GetAccountTransactionsDataLt($address: String, $limit: Int, $lt: bigint) {
     account_transactions(

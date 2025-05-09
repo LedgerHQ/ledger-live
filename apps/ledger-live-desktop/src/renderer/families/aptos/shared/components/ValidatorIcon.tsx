@@ -1,11 +1,10 @@
-import { AptosValidator } from "@ledgerhq/live-common/families/aptos/types";
 import React from "react";
-// import { FIGMENT_APTOS_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/aptos/constants";
+import { AptosValidator } from "@ledgerhq/live-common/families/aptos/types";
 import { IconContainer } from "~/renderer/components/Delegation/ValidatorRow";
-// import LedgerLiveLogo from "~/renderer/components/LedgerLiveLogo";
-// import Logo from "~/renderer/icons/Logo";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import Image from "~/renderer/components/Image";
+// import LedgerLiveLogo from "~/renderer/components/LedgerLiveLogo";
+// import Logo from "~/renderer/icons/Logo";
 
 const ValidatorIcon = ({
   validator,
@@ -18,7 +17,7 @@ const ValidatorIcon = ({
 
   return (
     <IconContainer isSR>
-      {/* {address === FIGMENT_APTOS_VALIDATOR_ADDRESS ? (
+      {/* {LEDGER_APTOS_VALIDATOR_ADDRESS.includes(address) ? (
         <LedgerLiveLogo width={24} height={24} icon={<Logo size={15} />} />
       ) : (
         <FirstLetterIcon label={address} />

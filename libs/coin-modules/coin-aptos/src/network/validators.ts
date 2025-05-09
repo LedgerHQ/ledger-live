@@ -1,9 +1,9 @@
 import * as blockies from "blockies-ts";
+import BigNumber from "bignumber.js";
 import { AptosAPI } from "../api";
 import { GetCurrentDelegatorBalancesData } from "../api/graphql/queries";
 import { CurrentDelegatorBalance, GetCurrentDelegatorBalancesQuery } from "../api/graphql/types";
 import { AptosValidator } from "../types";
-import BigNumber from "bignumber.js";
 
 export async function getValidators(currencyId: string): Promise<AptosValidator[]> {
   const api = new AptosAPI(currencyId);
