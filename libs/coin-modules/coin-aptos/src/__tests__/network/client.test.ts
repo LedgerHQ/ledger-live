@@ -4,16 +4,32 @@ import {
   Aptos,
   ChainId,
   Ed25519PublicKey,
+  Hex,
   InputEntryFunctionData,
   RawTransaction,
   Serializable,
-  post,
+  postAptosFullNode,
 } from "@aptos-labs/ts-sdk";
 import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import { AptosAPI } from "../../network";
 
-jest.mock("@aptos-labs/ts-sdk");
+jest.mock("@aptos-labs/ts-sdk", () => {
+  const originalModule = jest.requireActual("@aptos-labs/ts-sdk");
+  const partialMockedModule = Object.keys(originalModule).reduce(
+    (pre: { [key: string]: jest.Mock }, methodName) => {
+      pre[methodName] = jest.fn();
+      return pre;
+    },
+    {} as { [key: string]: jest.Mock },
+  );
+  return {
+    ...partialMockedModule,
+    // mock all except these
+    Hex: originalModule.Hex,
+    MimeType: originalModule.MimeType,
+  };
+});
 jest.mock("@apollo/client");
 let mockedAptos: jest.Mocked<any>;
 let mockedApolloClient: jest.Mocked<any>;
@@ -26,7 +42,7 @@ describe("Aptos API", () => {
   beforeEach(() => {
     mockedAptos = jest.mocked(Aptos);
     mockedApolloClient = jest.mocked(ApolloClient);
-    mockedPost = jest.mocked(post);
+    mockedPost = jest.mocked(postAptosFullNode);
   });
 
   afterEach(() => jest.clearAllMocks());
@@ -477,22 +493,24 @@ describe("Aptos API", () => {
   describe("broadcast", () => {
     it("broadcasts the transaction", async () => {
       mockedPost.mockImplementation(async () => ({ data: { hash: "ok" } }));
-      const mockedPostSpy = jest.spyOn({ post: mockedPost }, "post");
+      const mockedPostSpy = jest.spyOn({ postAptosFullNode: mockedPost }, "postAptosFullNode");
 
       mockedAptos.mockImplementation(() => ({
         config: "config",
       }));
 
       const api = new AptosAPI("aptos");
-      await api.broadcast("signature");
+
+      const signedTransaction =
+        "0x6aee3f5731475b98ca82fe40498a6d7486c1ccb1c252a6b11e0a4b2b6b8b6e2a00000000000000000200000000000000000000000000000000000000000000000000000000000000010d6170746f735f6163636f756e740e7472616e736665725f636f696e73010700000000000000000000000000000000000000000000000000000000000000010a6170746f735f636f696e094170746f73436f696e000220eb590233a1a5ebf083d6d37ff7e1ba2cc852311ba08d5e9c0ca5e341a8e991b9080a00000000000000400d0300000000006400000000000000c6191e6800000000b70020507808b24fba3d09c1b47d6b424d0e05edc57a8d341c26ffbd3852d66794a4a440e2f267756cad8345b72f162ad5ae2c28b7f847195c9a130104bbb2281ddddc310a751f8412a4364fc725e2bb8493b83f7d4cd4d277ce7a14b3714e8f6dc20e04";
+      await api.broadcast(signedTransaction);
 
       expect(mockedPostSpy).toHaveBeenCalledWith({
-        contentType: "application/x.aptos.signed_transaction+bcs",
         aptosConfig: "config",
-        body: Uint8Array.from(Buffer.from("signature", "hex")),
+        body: Hex.fromHexString(signedTransaction).toUint8Array(),
         path: "transactions",
-        type: "Fullnode",
         originMethod: "",
+        contentType: "application/x.aptos.signed_transaction+bcs",
       });
     });
   });
