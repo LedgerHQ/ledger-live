@@ -52,7 +52,7 @@ export const TestOnClick: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const button = canvas.getByText("title");
+    const button = canvas.getByText(/title/i);
 
     await userEvent.click(button);
 

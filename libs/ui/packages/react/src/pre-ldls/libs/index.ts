@@ -22,8 +22,8 @@ const overrideColor = {
   light: {
     "surface-transparent-hover": "#0000000D", // override from colours
     "surface-transparent-pressed": "#0000001A", // override from colours
+    "border-subdued-default-hover": "#D5D5D5", // override from colours
 
-    "border-subdued-default-hover": "#D5D5D5", // missing from colours
     "border-subdued-default-pressed": "#C1C1C1", // missing from colours
   },
   dark: {
