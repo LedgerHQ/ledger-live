@@ -1,7 +1,7 @@
 ---
 "ledger-live-desktop": minor
 "@ledgerhq/live-common": minor
-"live-mobile": patch
+"live-mobile": minor
 ---
 
 move `getTokensWithFunds` from mobile to common, for use in LLD
