@@ -1,22 +1,26 @@
 import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
-import buildTransaction from "../../bridge/buildTransaction";
-import { AptosAPI } from "../../api";
-import { normalizeTransactionOptions } from "../../bridge/logic";
-import { InputEntryFunctionData } from "@aptos-labs/ts-sdk";
-import { TransactionOptions } from "../../types";
+import buildTransaction from "../../logic/buildTransaction";
+import { AptosAPI } from "../../network";
+import { normalizeTransactionOptions } from "../../logic/normalizeTransactionOptions";
+import type { InputEntryFunctionData } from "@aptos-labs/ts-sdk";
+import type { TransactionOptions } from "../../types";
 
 const generateTransaction = jest.fn(() => "tx");
 
-jest.mock("../../bridge/logic", () => ({
+jest.mock("../../logic/normalizeTransactionOptions", () => ({
   normalizeTransactionOptions: jest.fn(() => ({
     maxGasAmount: "100",
     gasUnitPrice: "200",
   })),
-  DEFAULT_GAS: 100,
-  DEFAULT_GAS_PRICE: 200,
 }));
 
-jest.mock("../../api", () => {
+jest.mock("../../constants", () => ({
+  DEFAULT_GAS: 100,
+  DEFAULT_GAS_PRICE: 200,
+  APTOS_ASSET_ID: "0x1::aptos_coin::AptosCoin",
+}));
+
+jest.mock("../../network", () => {
   return {
     AptosAPI: function () {
       return {

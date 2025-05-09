@@ -1,9 +1,9 @@
-import { InputEntryFunctionData, RawTransaction } from "@aptos-labs/ts-sdk";
+import type { InputEntryFunctionData, RawTransaction } from "@aptos-labs/ts-sdk";
 import type { Account } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
-import { AptosAPI } from "../api";
+import type BigNumber from "bignumber.js";
+import type { AptosAPI } from "../network";
 import { APTOS_ASSET_ID } from "../constants";
-import { normalizeTransactionOptions } from "./logic";
+import { normalizeTransactionOptions } from "./normalizeTransactionOptions";
 import type { Transaction } from "../types";
 
 const buildTransaction = async (

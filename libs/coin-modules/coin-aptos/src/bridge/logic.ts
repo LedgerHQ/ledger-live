@@ -19,8 +19,6 @@ import {
 } from "../constants";
 import type { AptosMoveResource, AptosTransaction, TransactionOptions } from "../types";
 
-export const DEFAULT_GAS = new BigNumber(200);
-export const DEFAULT_GAS_PRICE = new BigNumber(100);
 export const ESTIMATE_GAS_MUL = new BigNumber(1.0); // define buffer for gas estimation change here, if needed
 
 const CLEAN_HEX_REGEXP = /^0x0*|^0+/;
@@ -38,23 +36,6 @@ export const getMaxSendBalance = (
 
   return amount.gt(totalGas) ? amount.minus(totalGas) : new BigNumber(0);
 };
-
-export function normalizeTransactionOptions(options: TransactionOptions): TransactionOptions {
-  // FIXME: this is wrong. TransactionOptions is
-  // {
-  //     maxGasAmount: string;
-  //     gasUnitPrice: string;
-  //     sequenceNumber?: string;
-  //     expirationTimestampSecs?: string;
-  // }
-  // meaning we can't return undefined in check method.
-  // This method is useless, not deleting as it breaks code and this iteration is coin modularisation.
-  const check = (v: any) => ((v ?? "").toString().trim() ? v : undefined);
-  return {
-    maxGasAmount: check(options.maxGasAmount),
-    gasUnitPrice: check(options.gasUnitPrice),
-  };
-}
 
 export const getBlankOperation = (
   tx: AptosTransaction,

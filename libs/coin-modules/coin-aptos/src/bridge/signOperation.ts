@@ -1,14 +1,14 @@
 import type { AptosAccount, Transaction } from "../types";
 import { Observable } from "rxjs";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import buildTransaction from "./buildTransaction";
 import BigNumber from "bignumber.js";
 import type { Account, AccountBridge, Operation, OperationType } from "@ledgerhq/types-live";
-import { AptosAPI } from "../api";
+import { AptosAPI } from "../network";
 
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { AptosSigner } from "../types";
 import { signTransaction } from "../network";
+import buildTransaction from "../logic/buildTransaction";
 
 export const getAddress = (a: Account) => ({
   address: a.freshAddress,
