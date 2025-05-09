@@ -129,7 +129,7 @@ describe("Aptos logic ", () => {
         recipients: [],
         accountId: id,
         date: new Date(1000),
-        extra: { version: "1" },
+        extra: { type: "native", version: "1" },
         transactionSequenceNumber: 1,
         hasFailed: false,
       });
@@ -157,7 +157,7 @@ describe("Aptos logic ", () => {
         recipients: [],
         accountId: id,
         date: new Date(1000),
-        extra: { version: undefined },
+        extra: { type: "native", version: undefined },
         transactionSequenceNumber: 1,
         hasFailed: false,
       });
@@ -732,7 +732,7 @@ describe("Aptos sync logic ", () => {
         recipients: ["0x12"],
         accountId: id,
         date: new Date(1000),
-        extra: { version: undefined },
+        extra: { type: "native", version: undefined },
         transactionSequenceNumber: 1,
         hasFailed: false,
       });

@@ -1,3 +1,5 @@
+// import { MoveFunctionId } from "@aptos-labs/ts-sdk";
+
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -28,10 +30,24 @@ export type GetAccountTransactionsDataQuery = {
   }>;
 };
 
+export type GetAccountTransactionsV2DataQuery = {
+  __typename?: "query_root";
+  account_transactions: Array<{
+    __typename: "account_transactions";
+    account_address: string;
+  }>;
+};
+
 export type GetAccountTransactionsDataGtQueryVariables = Exact<{
   address?: InputMaybe<Scalars["String"]>;
   limit?: InputMaybe<Scalars["Int"]>;
   gt?: InputMaybe<Scalars["bigint"]>;
+}>;
+
+export type GetAccountTransactionsV2DataQueryVariables = Exact<{
+  address?: InputMaybe<Scalars["String"]>;
+  limit?: InputMaybe<Scalars["Int"]>;
+  // gt?: InputMaybe<Scalars["bigint"]>;
 }>;
 
 export type GetAccountTransactionsDataGtQuery = {

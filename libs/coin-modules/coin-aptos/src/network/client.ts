@@ -17,21 +17,33 @@ import {
   PostRequestOptions,
   Block,
   AptosSettings,
+  MoveFunctionId,
 } from "@aptos-labs/ts-sdk";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
-import type { Operation, Pagination } from "@ledgerhq/coin-framework/api/types";
+import type { Pagination } from "@ledgerhq/coin-framework/api/types";
 import BigNumber from "bignumber.js";
 import isUndefined from "lodash/isUndefined";
 import { APTOS_ASSET_ID, DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "../constants";
 import { isTestnet } from "../bridge/logic";
 import type { AptosTransaction, TransactionOptions } from "../types";
-import { GetAccountTransactionsData, GetAccountTransactionsDataGt } from "./graphql/queries";
+import {
+  GetAccountTransactionsData,
+  GetAccountTransactionsDataGt,
+  GetAccountTransactionsV2Data,
+} from "./graphql/queries";
 import {
   GetAccountTransactionsDataQuery,
   GetAccountTransactionsDataGtQueryVariables,
+  GetAccountTransactionsV2DataQuery,
+  GetAccountTransactionsV2DataQueryVariables,
 } from "./graphql/types";
-import { BlockInfo, FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import {
+  Operation,
+  BlockInfo,
+  FeeEstimation,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/types";
 import { AptosAsset, AptosExtra, AptosFeeParameters, AptosSender } from "../types/assets";
 
 const getApiEndpoint = (currencyId: string) =>
@@ -104,6 +116,8 @@ export class AptosAPI {
       },
       fetchPolicy: "network-only",
     });
+
+    console.log("queryResponse!", queryResponse);
 
     return Promise.all(
       queryResponse.data.address_version_from_move_resources.map(({ transaction_version }) => {
@@ -242,7 +256,7 @@ export class AptosAPI {
   ): Promise<FeeEstimation<AptosFeeParameters>> {
     const publicKeyEd = new Ed25519PublicKey(transactionIntent.sender.xpub);
     const txPayload: InputEntryFunctionData = {
-      function: transactionIntent.asset.function,
+      function: transactionIntent.asset.function as MoveFunctionId,
       typeArguments: [APTOS_ASSET_ID],
       functionArguments: [transactionIntent.recipient, transactionIntent.amount],
     };
@@ -275,10 +289,72 @@ export class AptosAPI {
     };
   }
 
+  private async accountTransactions(address: string) {
+    if (!address) {
+      return [];
+    }
+
+    const query = GetAccountTransactionsV2Data;
+
+    const variables: GetAccountTransactionsV2DataQueryVariables = {
+      address,
+      limit: 1000,
+    };
+
+    const queryResponse = await this.apolloClient.query<
+      GetAccountTransactionsV2DataQuery,
+      GetAccountTransactionsV2DataQueryVariables
+    >({
+      query,
+      variables,
+      fetchPolicy: "network-only",
+    });
+
+    console.log("query", query);
+    console.log("variables", variables);
+    console.log("queryResponse", queryResponse);
+
+    return queryResponse;
+
+    // return Promise.all(
+    //   queryResponse.data.map(({ transaction_version }) => {
+    //     return this.richItemByVersion(transaction_version);
+    //   }),
+    // );
+  }
+
   async listOperations(
-    _address: string,
+    address: string,
     _pagination: Pagination,
   ): Promise<[Operation<AptosAsset>[], string]> {
+    const txs = await this.accountTransactions(address);
+    await this.fetchTransactions(address);
+    // const transactions = await this.accountTransactions(address, 0);
+    console.log("txs", txs);
+    // const ops = txsToOps(
+    //   address,
+    //   transactions.filter(tx => tx !== null),
+    // );
+
     return [[], ""];
   }
 }
+
+// function txsToOps(_address: string, transactions: AptosTransaction[]): Operation<AptosAsset>[] {
+//   return transactions.map((tx: AptosTransaction) => ({
+//     id: "tx.id",
+//     tx: {
+//       hash: tx.hash,
+//       block: { height: tx.block?.height },
+//       fees: BigInt(
+//         BigNumber(tx.gas_used).multipliedBy(new BigNumber(tx.gas_unit_price)).toString(),
+//       ),
+//       date: new Date(parseInt(tx.timestamp) / 1000),
+//     },
+//     type: "inferOperationType(trongridTxInfo, userAddress)",
+//     value: BigInt(0), //"fromBigNumberToBigInt<bigint>(trongridTxInfo.value, BigInt(0))",
+//     senders: ["trongridTxInfo.from"],
+//     recipients: ["trongridTxInfo.to != null ? [trongridTxInfo.to] : []"],
+//     asset: { type: "native" }, //"inferAssetInfo(trongridTxInfo)",
+//   }));
+// }

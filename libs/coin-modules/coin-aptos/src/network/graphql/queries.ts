@@ -52,3 +52,14 @@ export const GetAccountTransactionsDataLt = gql`
     }
   }
 `;
+export const GetAccountTransactionsV2Data = gql`
+  query GetAccountTransactionsV2Data($address: String, $limit: Int) {
+    account_transactions(
+      where: { account_address: { _eq: $address } }
+      limit: $limit
+      order_by: { transaction_version: desc }
+    ) {
+      account_address
+    }
+  }
+`;

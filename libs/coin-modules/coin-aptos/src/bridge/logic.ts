@@ -18,6 +18,7 @@ import {
   WRITE_RESOURCE,
 } from "../constants";
 import type { AptosMoveResource, AptosTransaction, TransactionOptions } from "../types";
+import { AptosAsset } from "../types/assets";
 
 const CLEAN_HEX_REGEXP = /^0x0*|^0+/;
 
@@ -52,10 +53,7 @@ export function normalizeTransactionOptions(options: TransactionOptions): Transa
   };
 }
 
-export const getBlankOperation = (
-  tx: AptosTransaction,
-  id: string,
-): Operation<Record<string, string>> => ({
+export const getBlankOperation = (tx: AptosTransaction, id: string): Operation<AptosAsset> => ({
   id: "",
   hash: tx.hash,
   type: "" as OperationType,
@@ -67,7 +65,10 @@ export const getBlankOperation = (
   recipients: [] as string[],
   accountId: id,
   date: new Date(parseInt(tx.timestamp) / 1000),
-  extra: { version: tx.version },
+  extra: {
+    type: "native",
+    version: tx.version,
+  },
   transactionSequenceNumber: parseInt(tx.sequence_number),
   hasFailed: false,
 });
@@ -84,13 +85,13 @@ export const txsToOps = (
   info: { address: string },
   id: string,
   txs: (AptosTransaction | null)[],
-): Operation[] => {
+): Operation<AptosAsset>[] => {
   const { address } = info;
-  const ops: Operation[] = [];
+  const ops: Operation<AptosAsset>[] = [];
 
   txs.forEach(tx => {
     if (tx !== null) {
-      const op: Operation = getBlankOperation(tx, id);
+      const op: Operation<AptosAsset> = getBlankOperation(tx, id);
       op.fee = new BigNumber(tx.gas_used).multipliedBy(new BigNumber(tx.gas_unit_price));
 
       const payload = convertFunctionPayloadResponseToInputEntryFunctionData(

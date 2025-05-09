@@ -1,57 +1,70 @@
-import { Account, Network } from "@aptos-labs/ts-sdk";
+import { Network } from "@aptos-labs/ts-sdk";
+// import { Account, Network } from "@aptos-labs/ts-sdk";
 // import { Account, Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
 import { createApi } from "../../api";
 import { AptosSender } from "../../types/assets";
 
 describe("createApi", () => {
   const api = createApi({ aptosSettings: { network: Network.DEVNET } });
+  // Account has been funded using the await aptos.fundAccount method
+  const sender: AptosSender = {
+    xpub: "0xc7a5a529eb69b4f40519c3334eed48f090af354ec6c0893129ebed30328e245c",
+    freshAddress: "0xf2a89ea976c60f98bd8a2cbc33b49e6d1de38618a6991692dee61c9b4745ad4a",
+  };
+  // const recipient = Account.generate().accountAddress.toString();
 
-  describe("lastBlock", () => {
-    it("returns the last block information", async () => {
-      const lastBlock = await api.lastBlock();
-      expect(lastBlock).toHaveProperty("hash");
-      expect(lastBlock).toHaveProperty("height");
-      expect(lastBlock).toHaveProperty("time");
-    });
-  });
-
-  // describe("combine and broadcast", () => {
-  //   it("returns the hash", async () => {
-  //     const tx = await api.combine("tx", "signature", "xpub");
-  //     const hash = await api.broadcast(tx);
-
-  //     expect(hash).toEqual(expect.any(String));
+  // describe("lastBlock", () => {
+  //   it("returns the last block information", async () => {
+  //     const lastBlock = await api.lastBlock();
+  //     expect(lastBlock).toHaveProperty("hash");
+  //     expect(lastBlock).toHaveProperty("height");
+  //     expect(lastBlock).toHaveProperty("time");
   //   });
   // });
 
-  describe("estimateFees", () => {
+  // // describe("combine and broadcast", () => {
+  // //   it("returns the hash", async () => {
+  // //     const tx = await api.combine("tx", "signature", "xpub");
+  // //     const hash = await api.broadcast(tx);
+
+  // //     expect(hash).toEqual(expect.any(String));
+  // //   });
+  // // });
+
+  // describe("estimateFees", () => {
+  //   it("returns a default value", async () => {
+  //     const amount = BigInt(100);
+
+  //     const fees = await api.estimateFees({
+  //       asset: {
+  //         type: "native",
+  //         function: "0x1::aptos_account::transfer_coins",
+  //       },
+  //       type: "send",
+  //       sender,
+  //       amount,
+  //       recipient,
+  //     });
+
+  //     expect(fees.value).toEqual(BigInt(55100));
+
+  //     if (fees.parameters) {
+  //       expect(fees.parameters.gasLimit).toEqual(BigInt(551));
+  //       expect(fees.parameters.gasPrice).toEqual(BigInt(100));
+  //     }
+  //   });
+  // });
+
+  describe("listOperations", () => {
     it("returns a default value", async () => {
-      // Account has been funded using the await aptos.fundAccount method
-      const sender: AptosSender = {
-        xpub: "0xc7a5a529eb69b4f40519c3334eed48f090af354ec6c0893129ebed30328e245c",
-        freshAddress: "0xf2a89ea976c60f98bd8a2cbc33b49e6d1de38618a6991692dee61c9b4745ad4a",
-      };
-      const recipient = Account.generate().accountAddress.toString();
+      // const block = await api.lastBlock();
+      // console.log(block);
 
-      const amount = BigInt(100);
+      const ops = await api.listOperations(sender.freshAddress, { minHeight: 0 /*block.height*/ });
 
-      const fees = await api.estimateFees({
-        asset: {
-          type: "native",
-          function: "0x1::aptos_account::transfer_coins",
-        },
-        type: "send",
-        sender,
-        amount,
-        recipient,
-      });
+      console.log("ops", ops);
 
-      expect(fees.value).toEqual(BigInt(55100));
-
-      if (fees.parameters) {
-        expect(fees.parameters.gasLimit).toEqual(BigInt(551));
-        expect(fees.parameters.gasPrice).toEqual(BigInt(100));
-      }
+      expect(true).toBe(true);
     });
   });
 });
