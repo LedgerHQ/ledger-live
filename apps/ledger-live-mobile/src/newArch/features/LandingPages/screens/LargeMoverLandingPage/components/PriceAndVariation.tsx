@@ -6,7 +6,10 @@ import { useSelector } from "react-redux";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import Delta from "~/components/Delta";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
-import { useTheme } from "styled-components/native";
+import { useTranslation } from "react-i18next";
+import { useLocale } from "~/context/Locale";
+import { counterValueFormatter } from "~/newArch/features/Market/utils";
+import { getColors } from "../utils";
 
 type PriceAndVariationProps = {
   price: number;
@@ -20,14 +23,12 @@ export const PriceAndVariation: React.FC<PriceAndVariationProps> = ({
   range,
 }) => {
   const counterValueCurrency: Currency = useSelector(counterValueCurrencySelector);
-  const totalPriceChange = price * (priceChangePercentage[range] / 10000);
-  const { colors } = useTheme();
+  const totalPriceChange = price * priceChangePercentage[range];
+  const { t } = useTranslation();
+  const { locale } = useLocale();
 
-  const getColor = () => {
-    if (priceChangePercentage[range] > 0) return "success.c70";
-    if (priceChangePercentage[range] < 0) return "error.c50";
-    return "neutral.c100";
-  };
+  const { textColor, bgColor } = getColors(priceChangePercentage[range]);
+
   return (
     <Flex flexDirection="column" alignItems="center" justifyContent="center">
       <Text
@@ -37,7 +38,12 @@ export const PriceAndVariation: React.FC<PriceAndVariationProps> = ({
         numberOfLines={1}
         adjustsFontSizeToFit
       >
-        <CurrencyUnitValue unit={counterValueCurrency.units[0]} value={price} />
+        {counterValueFormatter({
+          currency: counterValueCurrency.ticker,
+          value: price || 0,
+          locale,
+          t,
+        })}
       </Text>
       <Flex flexDirection="row" alignItems="center" marginTop={3}>
         <Flex justifyContent="center" alignItems="center" marginRight={"8px"}>
@@ -50,14 +56,8 @@ export const PriceAndVariation: React.FC<PriceAndVariationProps> = ({
             isPercentSignDisplayed={true}
           />
         </Flex>
-        <Flex
-          background={colors.success.c10}
-          borderRadius={6}
-          padding={2}
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Text variant="large" color={getColor()}>
+        <Flex bg={bgColor} borderRadius={6} padding={2} alignItems="center" justifyContent="center">
+          <Text variant="large" color={textColor}>
             <CurrencyUnitValue unit={counterValueCurrency.units[0]} value={totalPriceChange} />
           </Text>
         </Flex>
