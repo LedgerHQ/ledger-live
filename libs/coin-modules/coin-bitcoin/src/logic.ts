@@ -202,9 +202,11 @@ export const mapTxToOperations = (
     }
   }
 
-  // All inputs of a same transaction have the same sequence
+  // NOTE: why only accountInputs ?
   const transactionSequenceNumber =
-    (accountInputs.length > 0 && accountInputs[0].sequence) || undefined;
+    accountInputs.length > 0
+      ? Math.min(...accountInputs.map(input => input.sequence ?? 0xffffffff))
+      : undefined;
 
   const hasSpentNothing = value.eq(0);
 

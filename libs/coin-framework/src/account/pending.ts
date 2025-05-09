@@ -1,6 +1,10 @@
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
 
+/*
+We want to discard pendingOperations if their transaction sequence number
+has been out-numbered by the last operation...
+*/
 export function shouldRetainPendingOperation(account: Account, op: Operation): boolean {
   // FIXME: valueOf to compare dates in typescript
   const delay = new Date().valueOf() - op.date.valueOf();
