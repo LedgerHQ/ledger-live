@@ -407,7 +407,14 @@ function convertMultiversXESDTTokens([
   };
 }
 
-function convertSplTokens([id, network, name, symbol, address, decimals]: SPLToken): TokenCurrency {
+export function convertSplTokens([
+  id,
+  network,
+  name,
+  symbol,
+  address,
+  decimals,
+]: SPLToken): TokenCurrency {
   return {
     type: "TokenCurrency",
     id,
