@@ -202,7 +202,15 @@ export const mapTxToOperations = (
     }
   }
 
-  // NOTE: why only accountInputs ?
+  // NOTE: why only accountInputs?
+  // We derive the transactionSequenceNumber only from inputs that belong to the account,
+  // because those are the ones we control and use to infer properties like RBF or replaceability.
+  // Setting a default of 0xffffffff (max uint32) for inputs without a defined sequence
+  // mirrors Bitcoin's behavior: this is the default sequence used when locktime or RBF is *not* intended.
+  // In Bitcoin, any sequence < 0xffffffff enables locktime or RBF, so defaulting to 0xffffffff
+  // implies "non-RBF, no locktime" and is safe as a fallback.
+  //
+  // If no account inputs exist, we leave transactionSequenceNumber undefined (likely a watch-only receive).
   const transactionSequenceNumber =
     accountInputs.length > 0
       ? Math.min(...accountInputs.map(input => input.sequence ?? 0xffffffff))

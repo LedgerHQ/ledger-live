@@ -102,7 +102,7 @@ describe("mapTxToOperations", () => {
     );
 
     expect(ops.length).toBe(1);
-    expect(ops[0]?.transactionSequenceNumber).toBe(0);;// important: not undefined
+    expect(ops[0]?.transactionSequenceNumber).toBe(0); // important: not undefined
   });
 
   it("should set transactionSequenceNumber to undefined when sequence is missing", () => {
@@ -127,6 +127,7 @@ describe("mapTxToOperations", () => {
     );
 
     expect(ops.length).toBe(1);
-    expect(ops[0]?.transactionSequenceNumber).toBeUndefined();
+    // missing sequence implies 0xffffffff (non-RBF, default)"
+    expect(ops[0]?.transactionSequenceNumber).toBe(0xffffffff);
   });
 });
