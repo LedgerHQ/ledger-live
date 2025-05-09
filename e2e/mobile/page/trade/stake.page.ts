@@ -2,7 +2,6 @@ import { expect } from "detox";
 import invariant from "invariant";
 
 export default class StakePage {
-  zeroAssetText = "0\u00a0ATOM";
   celoLockAmountInput = "celo-lock-amount-input";
   searchPoolInput = "delegation-search-pool-input";
 
@@ -11,13 +10,9 @@ export default class StakePage {
   delegationSummaryValidator = (currencyId: string) =>
     getTextOfElement(this.delegationSummaryValidatorId(currencyId));
   delegationSummaryAmountId = (currencyId: string) => `${currencyId}-delegation-summary-amount`;
-  delegationAmountValue = (currencyId: string) =>
-    getTextOfElement(this.delegationSummaryAmountId(currencyId));
-  assetsRemainingId = (currencyId: string) => `${currencyId}-assets-remaining`;
   delegatedRatioId = (currencyId: string, delegatedPercent: number) =>
     `${currencyId}-delegate-ratio-${delegatedPercent}%`;
   delegationAmountInput = (currencyId: string) => `${currencyId}-delegation-amount-input`;
-  allAssetsUsedText = (currencyId: string) => `${currencyId}-all-assets-used-text`;
   delegationFees = (currencyId: string) => `${currencyId}-delegation-summary-fees`;
   summaryContinueButtonId = (currencyId: string) => `${currencyId}-summary-continue-button`;
   delegationStartId = (currencyId: string) => `${currencyId}-delegation-start-button`;
@@ -85,32 +80,12 @@ export default class StakePage {
     return fees;
   }
 
-  @Step("Expect assets remaining after delegation")
-  async expectRemainingAmount(
-    currencyId: string,
-    delegatedPercent: 25 | 50 | 75 | 100,
-    remainingAmountFormated: string,
-  ) {
-    const max = delegatedPercent == 100;
-    const id = max ? this.allAssetsUsedText(currencyId) : this.assetsRemainingId(currencyId);
-    await waitForElementById(id);
-    const assetsRemaining = max ? this.zeroAssetText : (await getTextOfElement(id)).split(": ")[1];
-
-    jestExpect(assetsRemaining).toEqual(remainingAmountFormated);
-  }
-
   @Step("Validate the amount entered")
   async validateAmount(currencyId: string) {
     await tapById(this.delegationAmountContinueId(currencyId));
     if (currencyId !== Currency.CELO.id) {
       await waitForElementById(this.delegationSummaryAmountId(currencyId));
     }
-  }
-
-  @Step("Expect delegated amount in summary")
-  async expectDelegatedAmount(currencyId: string, delegatedAmountFormated: string) {
-    const assetsDelegated = await this.delegationAmountValue(currencyId);
-    jestExpect(assetsDelegated).toEqual(delegatedAmountFormated);
   }
 
   @Step("Click on continue button in summary")

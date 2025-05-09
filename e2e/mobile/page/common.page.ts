@@ -17,7 +17,6 @@ export default class CommonPage {
   searchBar = () => getElementById(this.searchBarId);
   closeButton = () => getElementById("NavigationHeaderCloseButton");
   accountCardRegExp = (id = ".*") => new RegExp(this.accountCardPrefix + id);
-  accountCardId = (id: string) => this.accountCardPrefix + id;
   accountItemRegExp = (id = ".*(?<!-name)$") => new RegExp(`${this.accountItemId}${id}`);
   accountItem = (id: string) => getElementById(this.accountItemRegExp(id));
   accountItemName = (accountId: string) => getElementById(`${this.accountItemId + accountId}-name`);
@@ -42,13 +41,6 @@ export default class CommonPage {
   async successViewDetails() {
     await waitForElementById(this.successViewDetailsButtonId);
     await tapById(this.successViewDetailsButtonId);
-  }
-
-  @Step("Select account")
-  async selectAccount(accountId: string) {
-    const id = this.accountCardId(accountId);
-    await waitForElementById(id);
-    await tapById(id);
   }
 
   @Step("Select the first displayed account")

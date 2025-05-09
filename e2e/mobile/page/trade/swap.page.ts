@@ -8,7 +8,6 @@ export default class SwapPage {
   swapSuccessTitleId = "swap-success-title";
 
   swapFormTab = () => getElementById("swap-form-tab");
-  sendMaxToggle = () => getElementById("exchange-send-max-toggle");
 
   @Step("Open swap via deeplink")
   async openViaDeeplink() {
@@ -19,11 +18,6 @@ export default class SwapPage {
   async expectSwapPage() {
     const tab = this.swapFormTab();
     await expect(tab).toBeVisible();
-  }
-
-  async sendMax() {
-    const toggle = this.sendMaxToggle();
-    await tapByElement(toggle);
   }
 
   @Step("Verify the amounts and accept swap")

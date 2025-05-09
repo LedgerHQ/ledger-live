@@ -4,15 +4,15 @@
   "private": true,
   "scripts": {
     "lint:fix": "pnpm lint --fix",
-    "e2e:test": "export MOCK=0 && pnpm detox test --configuration ios.sim.debug",
-    "e2e:test:ios": "pnpm e2e:test --configuration ios.sim.release",
-    "e2e:test:android": "pnpm e2e:test --configuration android.emu.release",
-    "e2e:build:ios": "pnpm --filter live-mobile run e2e:build --configuration ios.sim.release",
-    "e2e:build:android": "pnpm --filter live-mobile run e2e:build --configuration android.emu.release",
-    "e2e:test:ios:debug": "pnpm e2e:test --configuration ios.sim.debug",
-    "e2e:test:android:debug": "pnpm e2e:test --configuration android.emu.debug",
-    "e2e:build:ios:debug": "pnpm --filter live-mobile run e2e:build --configuration ios.sim.debug",
-    "e2e:build:android:debug": "pnpm --filter live-mobile run e2e:build --configuration android.emu.debug"
+    "test": "export MOCK=0 && pnpm detox test",
+    "test:ios": "export MOCK=0 && pnpm detox test --configuration ios.sim.release",
+    "test:android": "export MOCK=0 && pnpm detox test --configuration android.emu.release",
+    "build:ios": "pnpm --filter live-mobile run e2e:build --configuration ios.sim.release",
+    "build:android": "pnpm --filter live-mobile run e2e:build --configuration android.emu.release",
+    "test:ios:debug": "export MOCK=0 && pnpm detox test --configuration ios.sim.debug",
+    "test:android:debug": "export MOCK=0 && pnpm detox test --configuration android.emu.debug",
+    "build:ios:debug": "pnpm --filter live-mobile run e2e:build --configuration ios.sim.debug",
+    "build:android:debug": "pnpm --filter live-mobile run e2e:build --configuration android.emu.debug"
   },
   "dependencies": {
     "@ledgerhq/logs": "workspace:^",

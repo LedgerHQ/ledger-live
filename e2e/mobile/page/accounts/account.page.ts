@@ -8,7 +8,6 @@ export default class AccountPage {
   accountAdvancedLogsId = "account-advanced-logs";
   earnButtonId = "account-quick-action-button-earn";
   accountRenameTextInputId = "account-rename-text-input";
-  accountList = /accounts-list-.*/;
   baseAccountName = "account-row-name-";
   accountNameRegExp = new RegExp(`${this.baseAccountName}.*`);
 
@@ -26,11 +25,6 @@ export default class AccountPage {
   @Step("Open accounts list via deeplink")
   async openViaDeeplink() {
     await openDeeplink(this.baseLink);
-  }
-
-  @Step("Expect accounts number")
-  async expectAccountsNumber(number: number) {
-    jestExpect((await getIdByRegexp(this.accountList)).endsWith(number.toString())).toBeTruthy();
   }
 
   @Step("Go to the account with the name")
