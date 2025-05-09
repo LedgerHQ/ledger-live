@@ -136,11 +136,8 @@ export const handlers = ({
     "custom.exchange.start": uiExchangeStart,
     "custom.exchange.complete": uiExchangeComplete,
     "custom.exchange.error": uiError,
-<<<<<<< HEAD
     "custom.isReady": uiIsReady,
-=======
     "custom.exchange.swap": uiSwap,
->>>>>>> 83ed662c66 (feat: add custom.exchange.swap)
   },
 }: {
   accounts: AccountLike[];
