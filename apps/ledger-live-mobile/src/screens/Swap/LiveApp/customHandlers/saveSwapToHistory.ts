@@ -30,7 +30,7 @@ export type SwapProps = {
   swapId?: string;
 };
 
-export function saveSwapToHistory(
+export function saveSwapToHistoryAndRedirectFn(
   accounts: AccountLike[],
   dispatch: Dispatch,
   navigation: NavigationType,

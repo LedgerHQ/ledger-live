@@ -47,7 +47,7 @@ const getSwapOperationMap =
       if (account && toAccount && status) {
         let fromParentAccount;
 
-        if (account.type !== "Account") {
+        if (account.type === "TokenAccount") {
           fromParentAccount = accounts.find(a => a.id === account.parentId);
         }
 

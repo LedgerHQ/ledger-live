@@ -17,9 +17,12 @@ import { WebviewProps } from "../Web3AppWebview/types";
 import Config from "react-native-config";
 import { sendEarnLiveAppReady } from "../../../e2e/bridge/client";
 
+import { useSyncAccountById } from "~/screens/Swap/LiveApp/hooks/useSyncAccountById";
+
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const [device, setDevice] = useState<Device>();
+  const syncAccountById = useSyncAccountById();
 
   const tracking = useMemo(
     () =>
@@ -106,6 +109,45 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
               },
             });
           },
+          "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
+            navigation.navigate(NavigatorName.PlatformExchange, {
+              screen: ScreenName.PlatformCompleteExchange,
+              params: {
+                request: {
+                  exchangeType: exchangeParams.exchangeType,
+                  provider: exchangeParams.provider,
+                  exchange: exchangeParams.exchange,
+                  transaction: exchangeParams.transaction,
+                  binaryPayload: exchangeParams.binaryPayload,
+                  signature: exchangeParams.signature,
+                  feesStrategy: exchangeParams.feesStrategy,
+                  amountExpectedTo: exchangeParams.amountExpectedTo,
+                },
+                device,
+                onResult: result => {
+                  if (result.error) {
+                    onCancel(result.error);
+                    navigation.pop();
+                    navigation.navigate(NavigatorName.CustomError, {
+                      screen: ScreenName.CustomErrorScreen,
+                      params: {
+                        error: result.error,
+                      },
+                    });
+                  }
+                  if (result.operation && exchangeParams.swapId) {
+                    syncAccountById(exchangeParams.exchange.fromAccount.id);
+                    const operationHash = result.operation.hash;
+
+                    // return success to swap live app
+                    onSuccess({ operationHash, swapId: exchangeParams.swapId });
+                  }
+                  setDevice(undefined);
+                  !result.error && navigation.pop();
+                },
+              },
+            });
+          },
           "custom.exchange.error": ({ error }) => {
             navigation.navigate(NavigatorName.CustomError, {
               screen: ScreenName.CustomErrorScreen,
@@ -122,5 +164,5 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
         },
       }),
     };
-  }, [accounts, device, manifest, navigation, tracking]);
+  }, [accounts, device, manifest, navigation, syncAccountById, tracking]);
 }
