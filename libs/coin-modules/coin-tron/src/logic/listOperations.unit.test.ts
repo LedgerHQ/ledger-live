@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { defaultFetchParams, fetchTronAccountTxs, getBlock } from "../network";
 import { fromTrongridTxInfoToOperation } from "../network/trongrid/trongrid-adapters";
 import { TrongridTxInfo, TronAsset } from "../types";
-import { listOperations } from "./listOperations";
+import { defaultOptions, listOperations } from "./listOperations";
 import type { Operation } from "@ledgerhq/coin-framework/api/index";
 
 // Mock the fetchTronAccountTxs and fromTrongridTxInfoToOperation functions
@@ -51,7 +51,7 @@ describe("listOperations", () => {
       };
     });
 
-    const [operations, token] = await listOperations(mockAddress, 0);
+    const [operations, token] = await listOperations(mockAddress, defaultOptions);
 
     expect(fetchTronAccountTxs).toHaveBeenCalledWith(
       mockAddress,
@@ -71,7 +71,7 @@ describe("listOperations", () => {
     (fetchTronAccountTxs as jest.Mock).mockResolvedValue(mockTxs);
     (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation(() => null);
 
-    const [operations, token] = await listOperations(mockAddress, 0);
+    const [operations, token] = await listOperations(mockAddress, defaultOptions);
 
     expect(fetchTronAccountTxs).toHaveBeenCalledWith(
       mockAddress,
@@ -87,6 +87,8 @@ describe("listOperations", () => {
     const exampleError = new Error("Network error!");
     (fetchTronAccountTxs as jest.Mock).mockRejectedValue(exampleError);
 
-    await expect(listOperations(mockAddress, 0)).rejects.toThrow(new Error(exampleError.message));
+    await expect(listOperations(mockAddress, defaultOptions)).rejects.toThrow(
+      new Error(exampleError.message),
+    );
   });
 });
