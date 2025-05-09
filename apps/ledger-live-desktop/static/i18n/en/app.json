@@ -7072,5 +7072,12 @@
   },
   "modularAssetDrawer": {
     "searchPlaceholder": "Search"
+  },
+  "nftEntryPoint": {
+    "title": "NFT (Non Fungible Tokens)",
+    "entry": {
+      "magiceden": "Magic Eden",
+      "opensea": "OpenSea"
+    }
   }
 }
