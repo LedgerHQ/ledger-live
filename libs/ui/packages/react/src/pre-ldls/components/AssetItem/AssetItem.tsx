@@ -29,6 +29,7 @@ const Wrapper = styled.div`
   padding: var(--spacing-xxs);
   cursor: pointer;
   border-radius: var(--radius-s, 8px);
+  align-items: center;
 
   :hover {
     background-color: var(--colors-surface-transparent-hover);
