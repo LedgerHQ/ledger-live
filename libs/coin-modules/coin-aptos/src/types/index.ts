@@ -189,7 +189,6 @@ export type AptosMappedStakingPosition = AptosStakingPosition & {
   formattedAmount: string;
   formattedPending: string;
   formattedAvailable: string;
-  rank: number;
   validator: AptosValidatorItem | null | undefined;
 };
 
@@ -202,7 +201,5 @@ export type AptosStakingPosition = {
 
 export type AptosValidatorItem = {
   validatorAddress: string;
-  commission: number | null;
-  tokens: string;
 };
 

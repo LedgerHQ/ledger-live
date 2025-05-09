@@ -180,9 +180,7 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
   const xpub = initialAccount?.xpub || publicKey || "";
 
   const oldOperations = initialAccount?.operations || [];
-
-  //const oldStakingOperations = initialAccount?.aptosResources?.stakes || [];
-
+  
   const aptosClient = new AptosAPI(currency.id);
   const { balance, transactions, blockHeight } = await aptosClient.getAccountInfo(address);
 
@@ -208,7 +206,6 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
   // PREPARE STAKING OPERATIONS
   const groupedStakeOps = groupAllStakeOpsByValidator(stakingOperations, withdrawableOperations);
   const stakes = generateStakes(groupedStakeOps);
-  //const mergedStakingOperations = mergeStakes(oldStakingOperations, stakes);
 
   const aptosResources = initialAccount?.aptosResources || {
     stakes: [],
@@ -236,73 +233,7 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
   console.log("initialAccount?", initialAccount);
   return shape;
 };
-/*
-function generateStakes3(stakingOperations: Operation[]): AptosStake[] {
-  const stakesMap: Record<string, AptosStake> = {};
-  console.log("stakingOperations", stakingOperations);
-  for (const op of stakingOperations) {
-    if (!op.recipients?.length || !op.senders?.length) continue;
 
-    const validatorAddress = op.recipients[0];
-    const accountAddress = op.senders[0];
-    const value = new BigNumber(op.value || 0);
-
-    if (!stakesMap[validatorAddress]) {
-      stakesMap[validatorAddress] = {
-        stakeAccAddr: accountAddress,
-        hasStakeAuth: true,
-        hasWithdrawAuth: true,
-        delegation: undefined,
-        stakeAccBalance: 0,
-        withdrawable: 0,
-        activation: {
-          state: "active",
-          active: 0,
-          inactive: 0,
-        },
-      };
-    }
-
-    const stake = stakesMap[validatorAddress];
-
-    switch (op.type) {
-      case "DELEGATE": {
-        const current = stake.delegation?.stake ?? 0;
-        const totalStake = new BigNumber(current).plus(value);
-
-        stake.delegation = {
-          stake: totalStake.toNumber(),
-          voteAccAddr: validatorAddress,
-        };
-
-        stake.activation.active = totalStake.toNumber();
-        break;
-      }
-
-      case "UNLOCK": {
-        // Decrease from stake if delegation exists
-        if (stake.delegation) {
-          const newStake = new BigNumber(stake.delegation.stake).minus(value);
-          stake.delegation.stake = Math.max(0, newStake.toNumber());
-          stake.activation.active = Math.max(0, newStake.toNumber());
-        }
-        break;
-      }
-
-      case "WITHDRAW": {
-        const newWithdrawable = new BigNumber(stake.withdrawable).plus(value);
-        stake.withdrawable = newWithdrawable.toNumber();
-        break;
-      }
-
-      default:
-        break;
-    }
-  }
-
-  return Object.values(stakesMap);
-}
-*/
 export function groupAllStakeOpsByValidator(
   stakingOperations: Operation[],
   withdrawableOperations: Operation[],
@@ -341,7 +272,7 @@ export function generateStakes(groupedOps: Record<string, Operation[]>): AptosSt
             voteAccAddr: poolAddress,
           }
         : undefined,
-      stakeAccBalance: delegated.toNumber(), // this is optional or external
+      stakeAccBalance: delegated.toNumber(), 
       withdrawable: withdrawable.toNumber(),
       activation: {
         state: delegated.gt(0) ? (withdrawable.gt(0) ? "deactivating" : "active") : "inactive",
@@ -351,55 +282,3 @@ export function generateStakes(groupedOps: Record<string, Operation[]>): AptosSt
     };
   });
 }
-
-/*
-function mergeStakes(oldStakingOperations: AptosStake[], stakes: AptosStake[]): AptosStake[] {
-  const mergedMap: Record<string, AptosStake> = {};
-
-  // Add old stakes to map
-  for (const old of oldStakingOperations) {
-    mergedMap[old.stakeAccAddr] = { ...old };
-  }
-
-  // Merge or add new stakes
-  for (const newStake of stakes) {
-    const key = newStake.stakeAccAddr;
-    const existing = mergedMap[key];
-
-    if (existing) {
-      // Merge delegation stake
-      const oldStake = existing.delegation?.stake ?? 0;
-      const newStakeValue = newStake.delegation?.stake ?? 0;
-
-      const mergedDelegation =
-        oldStake + newStakeValue > 0
-          ? {
-              stake: oldStake + newStakeValue,
-              voteAccAddr:
-                newStake.delegation?.voteAccAddr ?? existing.delegation?.voteAccAddr ?? "",
-            }
-          : undefined;
-
-      mergedMap[key] = {
-        ...existing,
-        hasStakeAuth: existing.hasStakeAuth || newStake.hasStakeAuth,
-        hasWithdrawAuth: existing.hasWithdrawAuth || newStake.hasWithdrawAuth,
-        delegation: mergedDelegation,
-        stakeAccBalance: Math.max(existing.stakeAccBalance, newStake.stakeAccBalance),
-        withdrawable: existing.withdrawable + newStake.withdrawable,
-        activation: {
-          active: (existing.activation?.active ?? 0) + (newStake.activation?.active ?? 0),
-          inactive: (existing.activation?.inactive ?? 0) + (newStake.activation?.inactive ?? 0),
-          state: existing.activation?.state || newStake.activation?.state || "inactive",
-        },
-        reward: newStake.reward ?? existing.reward,
-      };
-    } else {
-      // Add new stake
-      mergedMap[key] = { ...newStake };
-    }
-  }
-
-  return Object.values(mergedMap);
-}
-*/

@@ -1344,7 +1344,7 @@ describe("Aptos sync logic ", () => {
       ];
 
       const [ops, tokenOps, stakedOps, withdrawableOps] = txsToOps({ address }, id, txs);
-      console.log("THIS IS THE OPS", ops);
+
       expect(ops).toHaveLength(1);
       expect(withdrawableOps).toHaveLength(0);
       expect(stakedOps).toHaveLength(0);

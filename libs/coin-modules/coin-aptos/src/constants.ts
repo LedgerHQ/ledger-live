@@ -39,9 +39,6 @@ export const APTOS_COIN_CHANGE: MoveStructId = `0x1::coin::CoinStore<${APTOS_ASS
 
 export const APTOS_FUNGIBLE_STORE: MoveStructId = "0x1::fungible_asset::FungibleStore";
 
-export const APTOS_DELEAGATED_STORE: MoveStructId =
-  "0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>";
-
 export const APTOS_OBJECT_CORE: MoveStructId = "0x1::object::ObjectCore";
 
 export enum DIRECTION {

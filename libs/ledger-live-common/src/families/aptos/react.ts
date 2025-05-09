@@ -97,11 +97,8 @@ export function convertToAptosMappedStakingPosition(
     formattedAmount: staked.toFormat(2),
     formattedPending: pending.toFormat(2),
     formattedAvailable: available.toFormat(2),
-    rank: 0,
     validator: {
       validatorAddress: stake.delegation?.voteAccAddr || "",
-      commission: null,
-      tokens: "",
     },
   };
 }
