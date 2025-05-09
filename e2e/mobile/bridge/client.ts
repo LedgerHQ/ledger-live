@@ -10,10 +10,10 @@ import {
 import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { acceptGeneralTerms } from "~/logic/terms";
 import { navigate } from "~/rootnavigation";
-import { addKnownDevice, importBle, removeKnownDevice } from "~/actions/ble";
+import { addKnownDevice, removeKnownDevice } from "~/actions/ble";
 import { LaunchArguments } from "react-native-launch-arguments";
 import logReport from "~/log-report";
-import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
+import { MessageData, ServerData } from "./types";
 import { getAllEnvs, setEnv } from "@ledgerhq/live-env";
 import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -24,9 +24,10 @@ export const e2eBridgeClient = new Subject<MessageData>();
 
 let ws: WebSocket;
 let retryCount = 0;
-const maxRetries = 5; // Maximum number of retry attempts
-const retryDelay = 500; // Initial retry delay in milliseconds
+const maxRetries = 5;
+const retryDelay = 500;
 
+//TODO: replace in apps/ledger-live-mobile/src/index.tsx
 export function init() {
   const wsPort = LaunchArguments.value()["wsPort"] || "8099";
   const mock = LaunchArguments.value()["mock"];
@@ -75,17 +76,11 @@ function onMessage(event: WebSocketMessageEvent) {
     const msg: MessageData = JSON.parse(event.data);
     invariant(msg.type, "[E2E Bridge Client]: type is missing");
 
-    log(`Message recieved\n${JSON.stringify(msg, null, 2)}`);
+    log(`Message received\n${JSON.stringify(msg, null, 2)}`);
 
     e2eBridgeClient.next(msg);
 
     switch (msg.type) {
-      case "setGlobals":
-        Object.entries(msg.payload).forEach(([k, v]) => {
-          //  @ts-expect-error global bullshit
-          global[k] = v;
-        });
-        break;
       case "acceptTerms":
         acceptGeneralTerms(store);
         break;
@@ -93,16 +88,8 @@ function onMessage(event: WebSocketMessageEvent) {
         store.dispatch(importAccountsRaw({ active: msg.payload }));
         break;
       }
-      case "mockDeviceEvent": {
-        msg.payload.forEach(e => mockDeviceEventSubject.next(e));
-        break;
-      }
       case "importSettings": {
         store.dispatch(importSettings(msg.payload));
-        break;
-      }
-      case "importBle": {
-        store.dispatch(importBle(msg.payload));
         break;
       }
       case "overrideFeatureFlags": {
@@ -178,6 +165,14 @@ function onMessage(event: WebSocketMessageEvent) {
   }
 }
 
+//TODO: replace in apps/ledger-live-mobile/src/screens/Swap/LiveApp/customHandlers/index.ts
+export function sendSwapLiveAppReady() {
+  postMessage({
+    type: "swapLiveAppReady",
+  });
+}
+
+// TODO: replace in apps/ledger-live-mobile/src/components/Web3AppWebview/helpers.ts
 export function sendWalletAPIResponse(payload: Record<string, unknown>) {
   postMessage({
     type: "walletAPIResponse",
@@ -185,7 +180,14 @@ export function sendWalletAPIResponse(payload: Record<string, unknown>) {
   });
 }
 
-async function postMessage(message: ServerData) {
+// TODO: replace in apps/ledger-live-mobile/src/components/WebPTXPlayer/CustomHandlers.ts
+export function sendEarnLiveAppReady() {
+  postMessage({
+    type: "earnLiveAppReady",
+  });
+}
+
+function postMessage(message: ServerData) {
   log(`Message sending\n${JSON.stringify(message, null, 2)}`);
   try {
     if (ws) {
