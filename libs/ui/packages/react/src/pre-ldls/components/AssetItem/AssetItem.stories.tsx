@@ -6,7 +6,7 @@ const meta: Meta<typeof AssetItem> = {
   component: AssetItem,
   title: "PreLdls/Components/AssetItem",
   tags: ["autodocs"],
-  args: { name: "Bitcoin", ticker: "BTC" },
+  args: { name: "Bitcoin", ticker: "BTC", id: "bitcoin" },
 };
 export default meta;
 

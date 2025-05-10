@@ -3,7 +3,8 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { useSelector } from "react-redux";
-import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import { counterValueFormatter } from "~/newArch/features/Market/utils";
+import { useLocale } from "~/context/Locale";
 
 type PerformanceProps = {
   low: number;
@@ -13,6 +14,7 @@ type PerformanceProps = {
 
 export const Performance: React.FC<PerformanceProps> = ({ low, high, price }) => {
   const { t } = useTranslation();
+  const { locale } = useLocale();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
   return (
@@ -26,7 +28,12 @@ export const Performance: React.FC<PerformanceProps> = ({ low, high, price }) =>
             {t("largeMover.low")}
           </Text>
           <Text fontSize={14} fontWeight="bold">
-            <CurrencyUnitValue unit={counterValueCurrency.units[0]} value={low} />
+            {counterValueFormatter({
+              currency: counterValueCurrency.ticker,
+              value: low || 0,
+              locale,
+              t,
+            })}
           </Text>
         </Flex>
         <Flex flexDirection="column" alignItems="flex-end">
@@ -34,7 +41,12 @@ export const Performance: React.FC<PerformanceProps> = ({ low, high, price }) =>
             {t("largeMover.high")}
           </Text>
           <Text fontSize={14} fontWeight="bold">
-            <CurrencyUnitValue unit={counterValueCurrency.units[0]} value={high} />
+            {counterValueFormatter({
+              currency: counterValueCurrency.ticker,
+              value: high || 0,
+              locale,
+              t,
+            })}
           </Text>
         </Flex>
       </Flex>

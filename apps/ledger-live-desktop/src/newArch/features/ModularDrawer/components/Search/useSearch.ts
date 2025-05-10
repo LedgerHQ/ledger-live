@@ -1,20 +1,22 @@
-import React, { useCallback, useMemo, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import Fuse from "fuse.js";
 import { getEnv } from "@ledgerhq/live-env";
 import { track } from "~/renderer/analytics/segment";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export type SearchProps = {
-  setItemsToDisplay: React.Dispatch<React.SetStateAction<CryptoOrTokenCurrency[]>>;
+  setItemsToDisplay: (assets: CryptoOrTokenCurrency[]) => void;
+  setSearchedValue?: (value: string) => void;
+  defaultValue?: string;
   source: string;
   flow: string;
   items: CryptoOrTokenCurrency[];
 };
 
 export type SearchResult = {
-  handleSearch: (query: string) => void;
+  handleSearch: (queryOrEvent: string | ChangeEvent<HTMLInputElement>) => void;
   trackSearch: (current: string, previous: string) => void;
-  searchQuery?: string;
+  searchQuery: string;
 };
 
 const FUZE_OPTIONS = {
@@ -26,11 +28,13 @@ const FUZE_OPTIONS = {
 
 export const useSearch = ({
   setItemsToDisplay,
+  setSearchedValue,
+  defaultValue = "",
   items,
   source,
   flow,
 }: SearchProps): SearchResult => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(defaultValue);
 
   const fuse = useMemo(() => new Fuse(items, FUZE_OPTIONS), [items]);
 
@@ -46,17 +50,29 @@ export const useSearch = ({
     [source, flow],
   );
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
+  const handleSearch = useCallback(
+    (queryOrEvent: string | ChangeEvent<HTMLInputElement>) => {
+      const query = typeof queryOrEvent === "string" ? queryOrEvent : queryOrEvent.target.value;
 
-    if (query.trim().length < 2) {
-      return setItemsToDisplay(items);
+      setSearchQuery(query);
+      setSearchedValue?.(query);
+
+      if (query.trim().length < 2) {
+        return setItemsToDisplay(items);
+      }
+
+      const results = fuse.search(query).map(result => result.item);
+
+      setItemsToDisplay(results);
+    },
+    [fuse, items, setItemsToDisplay, setSearchedValue],
+  );
+
+  useEffect(() => {
+    if (defaultValue && defaultValue.trim().length > 0) {
+      handleSearch(defaultValue);
     }
-
-    const results = fuse.search(query).map(result => result.item);
-
-    setItemsToDisplay(results);
-  };
+  }, [defaultValue, handleSearch]);
 
   return {
     searchQuery,

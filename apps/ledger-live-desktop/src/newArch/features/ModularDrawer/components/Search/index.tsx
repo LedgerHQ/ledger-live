@@ -3,11 +3,20 @@ import { useTranslation } from "react-i18next";
 import { Search } from "@ledgerhq/react-ui/pre-ldls";
 import { SearchProps, useSearch } from "./useSearch";
 
-export const SearchItem = ({ setItemsToDisplay, source, flow, items }: SearchProps) => {
+export const SearchInputContainer = ({
+  setItemsToDisplay,
+  setSearchedValue,
+  defaultValue,
+  source,
+  flow,
+  items,
+}: SearchProps) => {
   const { t } = useTranslation();
 
   const { searchQuery, handleSearch, trackSearch } = useSearch({
     setItemsToDisplay,
+    setSearchedValue,
+    defaultValue,
     items,
     source,
     flow,
@@ -17,7 +26,7 @@ export const SearchItem = ({ setItemsToDisplay, source, flow, items }: SearchPro
     <Search
       placeholder={t("modularAssetDrawer.searchPlaceholder")}
       value={searchQuery}
-      onChange={e => handleSearch(e.target.value)}
+      onChange={handleSearch}
       onDebouncedChange={trackSearch}
     />
   );
