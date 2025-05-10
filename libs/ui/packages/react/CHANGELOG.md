@@ -1,5 +1,15 @@
 # @ledgerhq/react-ui
 
+## 0.25.0-nightly.1
+
+### Minor Changes
+
+- [#10128](https://github.com/LedgerHQ/ledger-live/pull/10128) [`e1de0ec`](https://github.com/LedgerHQ/ledger-live/commit/e1de0ecf023ecb6acca23edaf296621eae2a5175) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add CryptoIcon
+
+- [#10172](https://github.com/LedgerHQ/ledger-live/pull/10172) [`2c8fec7`](https://github.com/LedgerHQ/ledger-live/commit/2c8fec74600b76b87ca46e5ad38e7158c1cc10ba) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add align center css property to asset and network items
+
+- [#10159](https://github.com/LedgerHQ/ledger-live/pull/10159) [`8d9e6ee`](https://github.com/LedgerHQ/ledger-live/commit/8d9e6ee8235463f02c66887c11838cbd7fcc95a8) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add SelectAccount button for MAD
+
 ## 0.25.0-nightly.0
 
 ### Minor Changes

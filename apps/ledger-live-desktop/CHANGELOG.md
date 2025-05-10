@@ -1,5 +1,22 @@
 # ledger-live-desktop
 
+## 2.113.0-nightly.2
+
+### Minor Changes
+
+- [#10166](https://github.com/LedgerHQ/ledger-live/pull/10166) [`cc1fd45`](https://github.com/LedgerHQ/ledger-live/commit/cc1fd45a0b742ace4f408e301c0c2ef988ddc2ec) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD select asset flow
+
+- [#10159](https://github.com/LedgerHQ/ledger-live/pull/10159) [`8d9e6ee`](https://github.com/LedgerHQ/ledger-live/commit/8d9e6ee8235463f02c66887c11838cbd7fcc95a8) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add SelectAccount button for MAD
+
+### Patch Changes
+
+- [#10167](https://github.com/LedgerHQ/ledger-live/pull/10167) [`4769b48`](https://github.com/LedgerHQ/ledger-live/commit/4769b48d7d9aadf5446ccd80426d552953a61db3) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - add the discreetMode parameter back to the swap live app web view
+
+- Updated dependencies [[`e1de0ec`](https://github.com/LedgerHQ/ledger-live/commit/e1de0ecf023ecb6acca23edaf296621eae2a5175), [`2c8fec7`](https://github.com/LedgerHQ/ledger-live/commit/2c8fec74600b76b87ca46e5ad38e7158c1cc10ba), [`94f21a7`](https://github.com/LedgerHQ/ledger-live/commit/94f21a7cc31d35f41ae22290b9eec4d600d3360e), [`8d9e6ee`](https://github.com/LedgerHQ/ledger-live/commit/8d9e6ee8235463f02c66887c11838cbd7fcc95a8)]:
+  - @ledgerhq/react-ui@0.25.0-nightly.1
+  - @ledgerhq/live-common@34.33.0-nightly.2
+  - @ledgerhq/live-dmk-desktop@0.3.4-nightly.2
+
 ## 2.113.0-nightly.1
 
 ### Minor Changes

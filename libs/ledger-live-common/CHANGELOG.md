@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 34.33.0-nightly.2
+
+### Minor Changes
+
+- [#10145](https://github.com/LedgerHQ/ledger-live/pull/10145) [`94f21a7`](https://github.com/LedgerHQ/ledger-live/commit/94f21a7cc31d35f41ae22290b9eec4d600d3360e) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: added useLargeMover to fetch data
+
 ## 34.33.0-nightly.1
 
 ### Minor Changes
