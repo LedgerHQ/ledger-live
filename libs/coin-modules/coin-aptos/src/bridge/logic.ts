@@ -508,3 +508,45 @@ export const canWithdraw = (
   // TODO: this is a placeholder, proper calculations need to be placed
   return stakingPosition.available.gte(0);
 };
+
+export const getMaxUnstakableAmount = (
+  account: AptosAccount,
+  validatorAddress: string,
+  mode: string,
+): BigNumber => {
+  let maxAmount: BigNumber | undefined;
+
+  const stakingPosition = account.aptosResources?.stakingPositions.find(
+    ({ validatorId }) => validatorId === validatorAddress,
+  );
+
+  // let pendingUnstakingAmount = new BigNumber(0);
+  // let pendingWithdrawingAmount = new BigNumber(0);
+
+  // account.pendingOperations.forEach(({ type, value, recipients }) => {
+  //   const recipient = recipients[0];
+
+  //   if (recipient === selectedValidator?.validatorId) {
+  //     if (type === "UNSTAKE") {
+  //       pendingUnstakingAmount = pendingUnstakingAmount.plus(value);
+  //     } else if (type === "WITHDRAW_UNSTAKED") {
+  //       pendingWithdrawingAmount = pendingWithdrawingAmount.plus(value);
+  //     }
+  //   }
+  // });
+
+  switch (mode) {
+    case "unstake":
+      maxAmount = stakingPosition?.staked;
+      break;
+    case "withdraw":
+      maxAmount = stakingPosition?.available;
+      break;
+  }
+
+  if (maxAmount === undefined || maxAmount.lt(0)) {
+    return new BigNumber(0);
+  }
+
+  return maxAmount;
+};

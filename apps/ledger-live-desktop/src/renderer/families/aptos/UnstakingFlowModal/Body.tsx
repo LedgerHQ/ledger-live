@@ -9,7 +9,7 @@ import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import { getMaxSendBalance } from "@ledgerhq/live-common/families/aptos/logic";
+import { getMaxUnstakableAmount } from "@ledgerhq/live-common/families/aptos/logic";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { St, StepId } from "./types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -84,11 +84,7 @@ function Body({
     const mode = "unstake";
     const recipient = validatorAddress;
 
-    const maxAmount = getMaxSendBalance(accountProp, {
-      ...initTx,
-      mode,
-      recipient,
-    });
+    const maxAmount = getMaxUnstakableAmount(accountProp, recipient, mode);
 
     const newTx = {
       mode,

@@ -102,9 +102,7 @@ export default function StepAmount({
       <Box mb={1} />
       {notEnoughFundsError ? <NotEnoughFundsToUnstake account={account} onClose={onClose} /> : null}
       <Alert mt={2}>
-        <Trans i18nKey="aptos.unstake.flow.steps.amount.warning">
-          <b></b>
-        </Trans>
+        <Trans i18nKey="aptos.unstake.flow.steps.amount.warning" />
       </Alert>
     </Box>
   );
