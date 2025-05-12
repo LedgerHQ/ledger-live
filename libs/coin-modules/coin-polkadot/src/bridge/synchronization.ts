@@ -33,7 +33,6 @@ export const getAccountShape: GetAccountShape<PolkadotAccount> = async info => {
     xpubOrAddress: address,
     derivationMode,
   });
-  debugger;
   const oldOperations = initialAccount?.operations || [];
   const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
   const newOperations = await polkadotAPI.getOperations(accountId, address, startAt);
