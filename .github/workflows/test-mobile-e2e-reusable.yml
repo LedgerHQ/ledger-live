@@ -250,8 +250,8 @@ jobs:
     if: ${{ !inputs.speculos_tests && github.event_name != 'schedule' }}
     strategy:
       matrix:
-        shardIndex: [1, 2, 3]
-        shardTotal: [3]
+        shardIndex: [1, 2]
+        shardTotal: [2]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
