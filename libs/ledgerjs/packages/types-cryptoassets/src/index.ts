@@ -182,6 +182,7 @@ export type CryptoCurrencyId =
   | "zenrock"
   | "sonic"
   | "sonic_blaze"
+  | "westend"
   | "mina";
 
 export type LedgerExplorerId =

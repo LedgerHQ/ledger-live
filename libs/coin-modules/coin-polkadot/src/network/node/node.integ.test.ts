@@ -1,6 +1,7 @@
 import { ApiPromise, HttpProvider } from "@polkadot/api";
 import { fetchValidators } from "./validators";
 import getApiPromise from "./apiPromise";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 jest.mock("./apiPromise");
 
@@ -13,7 +14,7 @@ describe("fetchValidators", () => {
   });
 
   it("should not exceed 40 RPC API calls to fetch all validators", async () => {
-    const result = await fetchValidators();
+    const result = await fetchValidators(undefined, undefined, getCryptoCurrencyById("polkadot"));
     expect(result.length).toBeGreaterThan(300);
     const requestCount = provider.stats.total.requests;
     expect(requestCount).toBeGreaterThan(0); // should have made at least one request
