@@ -60,7 +60,7 @@ jobs:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           method: chat.postMessage
           payload: |
-            channel: "C06RTDKT324"
+            channel: "C05FKJ7DFAP"
             text: "[Test] Coin modules"
             blocks: 
               - type: "section"
@@ -83,7 +83,7 @@ jobs:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           method: chat.postMessage
           payload: |
-            channel: "C06RTDKT324"
+            channel: "C05FKJ7DFAP"
             text: "[Test] Coin modules"
             blocks: 
               - type: "section"
