@@ -12,4 +12,4 @@ const getTransactionExplorer = (
   return explorerView?.tx?.replace("$hash", extra.consensusTimestamp ?? extra.transactionId ?? "0");
 };
 
-export default getTransactionExplorer;
+export default { getTransactionExplorer };

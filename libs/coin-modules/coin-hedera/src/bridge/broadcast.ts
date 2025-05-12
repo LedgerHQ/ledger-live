@@ -1,8 +1,8 @@
 import { Transaction as HederaSDKTransaction } from "@hashgraph/sdk";
-import { AccountBridge } from "@ledgerhq/types-live";
+import { AccountBridge, Operation } from "@ledgerhq/types-live";
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
-import { base64ToUrlSafeBase64 } from "./utils";
-import { Transaction } from "../types";
+import { base64ToUrlSafeBase64, patchOperationWithExtra } from "./utils";
+import { HederaOperationExtra, Transaction } from "../types";
 import { broadcastTransaction } from "../api/network";
 
 export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({ signedOperation }) => {
@@ -15,6 +15,13 @@ export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({ signe
 
   const base64Hash = Buffer.from(response.transactionHash).toString("base64");
   const base64HashUrlSafe = base64ToUrlSafeBase64(base64Hash);
+  const extra: HederaOperationExtra = {
+    transactionId: response.transactionId.toString(),
+  };
 
-  return patchOperationWithHash(operation, base64HashUrlSafe);
+  let patchedOperation: Operation = operation;
+  patchedOperation = patchOperationWithHash(patchedOperation, base64HashUrlSafe);
+  patchedOperation = patchOperationWithExtra(patchedOperation, extra);
+
+  return patchedOperation;
 };

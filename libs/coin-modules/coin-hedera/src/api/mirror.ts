@@ -6,6 +6,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getAccountBalance } from "./network";
 import { base64ToUrlSafeBase64 } from "../bridge/utils";
+import { HederaOperationExtra } from "../types";
 
 const getMirrorApiUrl = (): string => getEnv("API_HEDERA_MIRROR");
 
@@ -54,6 +55,7 @@ interface HederaMirrorTransaction {
   charged_tx_fee: string;
   transaction_hash: string;
   consensus_timestamp: string;
+  transaction_id: string;
 }
 
 export async function getAccountTransactions(
@@ -93,7 +95,7 @@ export async function getOperationsForAccount(
   const operations: Operation[] = [];
 
   for (const raw of rawOperations) {
-    const { consensus_timestamp } = raw;
+    const { consensus_timestamp, transaction_id } = raw;
     const timestamp = new Date(parseInt(consensus_timestamp.split(".")[0], 10) * 1000);
     const senders: string[] = [];
     const recipients: string[] = [];
@@ -150,7 +152,10 @@ export async function getOperationsForAccount(
       // Set a value just so that it's considered confirmed according to isConfirmedOperation
       blockHeight: 5,
       blockHash: null,
-      extra: { consensusTimestamp: consensus_timestamp },
+      extra: {
+        consensusTimestamp: consensus_timestamp,
+        transactionId: transaction_id,
+      } satisfies HederaOperationExtra,
       fee,
       hash,
       recipients,
