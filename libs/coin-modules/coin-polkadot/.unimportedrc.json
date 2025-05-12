@@ -25,6 +25,7 @@
     "src/types/bridge.fixture.ts"
   ],
   "ignoreUnused": [
+    "@ledgerhq/live-env",
     "@polkadot/api",
     "@polkadot/api-augment",
     "@polkadot/api-derive"
