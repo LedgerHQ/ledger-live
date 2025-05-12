@@ -51,10 +51,10 @@ jobs:
   integ-tests-fail:
     name: failure report
     needs: integ-tests
-    if: failure()
+    if: failure() && github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
-      - name: post to coin-integration slack channel
+      - name: post to live-repo-health slack channel
         uses: slackapi/slack-github-action@v2.0.0
         with:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
@@ -74,10 +74,10 @@ jobs:
   integ-tests-success:
     name: success report
     needs: integ-tests
-    if: success()
+    if: success() && github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
-      - name: post to coin-integration slack channel
+      - name: post to live-repo-health slack channel
         uses: slackapi/slack-github-action@v2.0.0
         with:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
