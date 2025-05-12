@@ -53,7 +53,7 @@ describe("SelectAssetFlow Components", () => {
 
       expect(screen.getByText(/select/i)).toBeVisible();
       expect(screen.getByTestId("select-asset-drawer-title-dynamic")).toHaveTextContent(/network/i);
-      expect(screen.getByTestId("select-asset-back-button")).toBeVisible();
+      expect(screen.getByTestId("mad-back-button")).toBeVisible();
     });
 
     it("should call onBackClick when back button is clicked", async () => {
@@ -67,7 +67,7 @@ describe("SelectAssetFlow Components", () => {
 
       const { user } = render(<Header {...props} />);
 
-      const backButton = screen.getByTestId("select-asset-back-button");
+      const backButton = screen.getByTestId("mad-back-button");
       await user.click(backButton);
 
       expect(onBackClick).toHaveBeenCalled();

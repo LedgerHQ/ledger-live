@@ -78,7 +78,7 @@ export const AccountItem = ({ onClick, account, showIcon = true }: AccountItemPr
             >
               {name}
             </Text>
-            {protocol && <Tag>{protocol}</Tag>}
+            {protocol && <Tag textTransform="capitalize">{protocol}</Tag>}
           </div>
           <Address address={address} cryptoId={id} ticker={ticker} showIcon={showIcon} />
         </div>
