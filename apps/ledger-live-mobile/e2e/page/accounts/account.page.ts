@@ -1,8 +1,10 @@
 import { expect } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+
 export default class AccountPage {
   baseLink = "account";
+  accountListTitleId = "accounts-list-title";
   accountGraph = (accountId: string) => getElementById(`account-graph-${accountId}`);
   accountBalance = (accountId: string) => getElementById(`account-balance-${accountId}`);
   accountSettingsButton = () => getElementById("account-settings-button");
@@ -22,10 +24,22 @@ export default class AccountPage {
   accountList = /accounts-list-.*/;
   baseAccountName = "account-row-name-";
   accountNameRegExp = new RegExp(`${this.baseAccountName}.*`);
+  baseOperationRow = "operation-row-";
+  operationRowRegexp = new RegExp(this.baseOperationRow + ".*");
+  subAccountsSection = "subAccounts-";
+  subAccountsSectionRegexp = new RegExp(this.subAccountsSection + ".*");
+  baseSubAccountRow = "subAccount-row-name-";
+
+  selectSpecificOperation = (operationType: string) =>
+    getElementByIdAndText(this.operationRowRegexp, operationType);
+
+  subAccountId = (account: Account) =>
+    `js:2:${account.currency.id}:${account.address}:${account.currency.id}Sub+${account.ataAddress}`;
 
   @Step("Open accounts list via deeplink")
   async openViaDeeplink() {
     await openDeeplink(this.baseLink);
+    await waitForElementById(this.accountListTitleId);
   }
 
   @Step("Expect accounts number")
@@ -35,6 +49,7 @@ export default class AccountPage {
 
   @Step("Go to the account with the name")
   async goToAccountByName(name: string) {
+    await waitForElementById(this.baseAccountName + name);
     await tapById(this.baseAccountName + name);
   }
 
@@ -85,9 +100,16 @@ export default class AccountPage {
     await expect(getElementById(id)).toBeVisible();
   }
 
-  @Step("Scroll to transaction history")
+  @Step("Scroll to operation history")
   async scrollToTransactions() {
+    await waitForElementById(this.accountScreenScrollView);
     await scrollToId(this.operationHistorySectionRegexp, this.accountScreenScrollView);
+  }
+
+  @Step("Scroll to SubAccounts Section")
+  async scrollToSubAccounts() {
+    await waitForElementById(this.accountScreenScrollView);
+    await scrollToId(this.subAccountsSectionRegexp, this.accountScreenScrollView);
   }
 
   @Step("Expect account balance to be visible")
@@ -121,13 +143,16 @@ export default class AccountPage {
     await tapById(this.earnButtonId);
   }
 
-  @Step("Expect account balance")
-  async expectAccountBalance(accountid: string, balance: string) {
-    jestExpect(this.accountBalance(accountid)).toBe(balance);
+  @Step("Navigate to token in account")
+  async navigateToTokenInAccount(subAccount: Account) {
+    await this.scrollToSubAccounts();
+    await tapById(this.baseSubAccountRow + subAccount.currency.ticker);
+    await waitForElementById(`account-graph-${this.subAccountId(subAccount)}`);
   }
 
-  @Step("Navigate to token in account")
-  async navigateToTokenInAccount(SubAccount: Account) {
-    await tapById(this.baseAccountName + SubAccount.currency.name);
+  @Step("Click on selected last operation")
+  async selectAndClickOnLastOperation(operationType: string) {
+    await this.scrollToTransactions();
+    await tapByElement(this.selectSpecificOperation(operationType));
   }
 }
