@@ -1,0 +1,13 @@
+diff --git a/out/node-module-collector/npmNodeModulesCollector.js b/out/node-module-collector/npmNodeModulesCollector.js
+index 9c222a25dc8d3059a6e9fbcaaafe800ac14bbaa8..21d641fec9d213cd7e899384c3c124d26206daf1 100644
+--- a/out/node-module-collector/npmNodeModulesCollector.js
++++ b/out/node-module-collector/npmNodeModulesCollector.js
+@@ -7,7 +7,7 @@ const builder_util_1 = require("builder-util");
+ class NpmNodeModulesCollector extends nodeModulesCollector_1.NodeModulesCollector {
+     constructor(rootDir) {
+         super(rootDir);
+-        this.pmCommand = new lazy_val_1.Lazy(() => Promise.resolve(process.platform === "win32" ? "npm.cmd" : "npm"));
++        this.pmCommand = new lazy_val_1.Lazy(() => Promise.resolve("npm"));
+         this.installOptions = this.pmCommand.value.then(cmd => ({ cmd, args: ["ci"], lockfile: "package-lock.json" }));
+     }
+     getArgs() {
