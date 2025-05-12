@@ -4,7 +4,7 @@ import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
-import SelectAccountFlow from "../components/SelectAccountFlow/index";
+import { SelectAccountFlow } from "../components/SelectAccountFlow";
 
 type Result = {
   account: AccountLike;

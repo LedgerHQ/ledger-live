@@ -2,25 +2,36 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { Text } from "@ledgerhq/react-ui";
-import { HeaderContainer } from "./StyledComponents";
-import { NavigateBackButton } from "../../NavigateBackButton";
-import { ANIMATION_VARIANTS, NavigationDirection } from "../../SelectAssetFlow/useSelectAssetFlow";
+import { NavigateBackButton } from "./NavigateBackButton";
+import { ANIMATION_VARIANTS, NavigationDirection } from "./navigation";
+import styled from "styled-components";
 
 export type HeaderProps = {
   navDirection: NavigationDirection;
-  ticker: string;
+  navKey: string;
   onBackClick: () => void;
+  showBackButton?: boolean;
+  title: string;
 };
 
-export function Header({ navDirection, ticker, onBackClick }: Readonly<HeaderProps>) {
-  // TODO reduce duplication - can this be shared with SelectAssetFlow
-
+export function Header({
+  navDirection,
+  navKey,
+  onBackClick,
+  showBackButton = true,
+  title,
+}: Readonly<HeaderProps>) {
   const { t } = useTranslation();
+
+  const titleTemplate = t("modularAssetDrawer.assetFlow.selectTemplate", {
+    dynamic: "{{dynamic}}",
+  });
+
+  const [beforeDynamic, afterDynamic] = titleTemplate.split("{{dynamic}}");
 
   return (
     <HeaderContainer>
-      <NavigateBackButton hidden={false} onClick={onBackClick} />{" "}
-      {/* TODO work out how this back can interact with SelectAssetFlow too */}
+      <NavigateBackButton hidden={!showBackButton} onClick={onBackClick} />
       <Text
         display="flex"
         flexDirection="row"
@@ -32,10 +43,10 @@ export function Header({ navDirection, ticker, onBackClick }: Readonly<HeaderPro
         color="palette.text.shade100"
         data-testid="select-asset-drawer-title"
       >
-        {t("modularAssetDrawer.assetFlow.select")}
+        {beforeDynamic}
         <AnimatePresence mode="wait" custom={navDirection}>
           <motion.span
-            key={"SELECT_ACCOUNT"}
+            key={navKey}
             initial="initial"
             animate="animate"
             exit="exit"
@@ -43,10 +54,19 @@ export function Header({ navDirection, ticker, onBackClick }: Readonly<HeaderPro
             custom={navDirection}
             data-testid="select-asset-drawer-title-dynamic"
           >
-            a {ticker} account {/* TODO translate this + work out 'a' vs 'an' */}
+            {title}
           </motion.span>
         </AnimatePresence>
+        {afterDynamic}
       </Text>
     </HeaderContainer>
   );
 }
+
+const HeaderContainer = styled.div`
+  padding: 54px 0 16px 24px;
+  flex: 0 1 auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+`;

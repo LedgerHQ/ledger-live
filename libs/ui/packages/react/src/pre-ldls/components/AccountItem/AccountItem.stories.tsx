@@ -41,7 +41,7 @@ export const TestAccount: Story = {
     const name = canvas.getByText("Main BTC");
     const protocol = canvas.getByTestId("tag");
     const address = canvas.getByText("n4A9...Zgty");
-    const addressIcon = canvas.getByTestId("address-icon"); // TODO this now fails
+    const addressIcon = canvas.getByRole("img");
     const fiatValue = canvas.getByText("$5,969.83");
     const balance = canvas.getByText("0.118 BTC");
 
@@ -89,7 +89,7 @@ export const TestWithoutAddressIcon: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const addressIcon = canvas.queryByTestId("address-icon");
+    const addressIcon = canvas.queryByRole("img");
 
     await expect(addressIcon).not.toBeInTheDocument();
   },

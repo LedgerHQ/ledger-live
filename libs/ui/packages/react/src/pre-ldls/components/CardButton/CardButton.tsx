@@ -20,6 +20,7 @@ const Button = styled.button`
 
   display: flex;
   padding: var(--spacing-xs);
+  flex-grow: 1;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;

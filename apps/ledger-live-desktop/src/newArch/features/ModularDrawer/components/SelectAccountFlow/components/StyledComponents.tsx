@@ -20,10 +20,8 @@ export const SelectorContent = styled.div`
   height: 100%;
 `;
 
-export const HeaderContainer = styled.div`
-  padding: 54px 0 16px 24px;
-  flex: 0 1 auto;
-  width: 100%;
+export const AddAccountContainer = styled.div`
   display: flex;
-  align-items: center;
+  padding: 0 0 16px 0;
+  flex: 0 1 auto;
 `;

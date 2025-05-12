@@ -17,7 +17,7 @@ export const NavigateBackButton = ({ hidden, onClick }: Readonly<BackButtonProps
   );
 };
 
-export const BackButton = styled.button`
+const BackButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
