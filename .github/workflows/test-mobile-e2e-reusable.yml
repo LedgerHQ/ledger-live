@@ -249,6 +249,7 @@ jobs:
     runs-on: ["${{ inputs.macos-specificity-runner-label || 'general-pool' }}", macOS, ARM64]
     if: ${{ !inputs.speculos_tests && github.event_name != 'schedule' }}
     strategy:
+      fail-fast: false
       matrix:
         shardIndex: [1, 2]
         shardTotal: [2]
@@ -355,7 +356,7 @@ jobs:
         timeout-minutes: 75
         uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
         with:
-          command: pnpm test:llm:ios:e2e -- -p ios -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos') ${INPUTS_TEST_FILTER:+--filter} "${{ inputs.test_filter }}" --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          command: zx apps/ledger-live-mobile/scripts/e2e-ci.mjs -p ios -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos') ${INPUTS_TEST_FILTER:+--filter} "${{ inputs.test_filter }}" --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           turbo_port: ${{ steps.setup-caches.outputs.port }}
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
