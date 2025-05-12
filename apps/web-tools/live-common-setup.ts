@@ -76,4 +76,5 @@ setSupportedCurrencies([
   "mina",
   "babylon",
   "kaspa",
+  "westend",
 ]);
