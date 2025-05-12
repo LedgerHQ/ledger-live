@@ -61,8 +61,6 @@ describe("listOperations", () => {
         expect(Array.isArray(operations)).toBeDefined();
         expect(operations.length).toBeLessThanOrEqual(options.softLimit * 2);
         expect(operations.filter(op => op.tx.block.height < options.minHeight).length).toEqual(0);
-        // FIXME
-        operations.forEach(op => console.log(op.tx.hash));
         expect(operations.find(op => op.tx.hash === oldestNativeTxHash)).toBeDefined();
         expect(operations.find(op => op.tx.hash === oldestTrc20TxHash)).toBeDefined();
         for (let i = 0; i < operations.length - 2; i++) {
@@ -99,8 +97,6 @@ describe("listOperations", () => {
         expect(Array.isArray(operations)).toBeDefined();
         expect(operations.length).toBeLessThanOrEqual(options.softLimit * 2);
         expect(operations.filter(op => op.tx.block.height < options.minHeight).length).toEqual(0);
-        // FIXME
-        operations.forEach(op => console.log(op.tx.hash));
         expect(operations.find(op => op.tx.hash === oldestNativeTxHash)).toBeDefined();
         expect(operations.find(op => op.tx.hash === oldestTrc20TxHash)).toBeDefined();
         for (let i = 0; i < operations.length - 2; i++) {

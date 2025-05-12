@@ -43,7 +43,7 @@ async function listOperations(
 ): Promise<[Operation<TronAsset>[], string]> {
   const { minHeight } = pagination;
   const options: Options = {
-    softLimit: 1000,
+    softLimit: 200,
     minHeight: minHeight,
     order: "asc",
   } as const;

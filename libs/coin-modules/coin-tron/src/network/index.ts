@@ -492,7 +492,7 @@ export type FetchParams = {
 };
 
 export const defaultFetchParams: FetchParams = {
-  limitPerCall: 200,
+  limitPerCall: 100,
   minTimestamp: 0,
   order: "desc",
 } as const;
@@ -506,7 +506,6 @@ export async function fetchTronAccountTxs(
   const adjustedLimitPerCall = params.hintGlobalLimit
     ? Math.min(params.limitPerCall, params.hintGlobalLimit)
     : params.limitPerCall;
-  console.log("🦄🦄 adjustedLimitPerCall", adjustedLimitPerCall);
   const queryParams = `limit=${adjustedLimitPerCall}&min_timestamp=${params.minTimestamp}&order_by=block_timestamp,${params.order}`;
   const nativeTxs = (
     await getAllTransactions<

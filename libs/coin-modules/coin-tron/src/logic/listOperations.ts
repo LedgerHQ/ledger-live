@@ -38,7 +38,7 @@ export async function listOperations(
     hintGlobalLimit: options.softLimit,
   };
 
-  // under the hood, the netwark fetches native transactions and trc20 transactions separately
+  // under the hood, the network fetches native transactions and trc20 transactions separately
   // that same predicate is used to stop fetching both calls
   // that's why we have a "soft" limit, with the guarantee of total number of transactions to be less than 2 * softLimit
   const untilLimitReached: FetchTxsContinuePredicate = ops => ops.length < options.softLimit;
