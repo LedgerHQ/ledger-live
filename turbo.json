@@ -192,7 +192,7 @@
     },
     "live-mobile#e2e:ci": {
       "cache": false,
-      "dependsOn": ["^build", "@ledgerhq/test-utils#build"],
+      "dependsOn": ["^build"],
       "inputs": [],
       "outputs": ["artifacts/**"]
     }
