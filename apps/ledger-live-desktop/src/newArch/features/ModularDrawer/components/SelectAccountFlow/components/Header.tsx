@@ -4,38 +4,23 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Text } from "@ledgerhq/react-ui";
 import { HeaderContainer } from "./StyledComponents";
 import { NavigateBackButton } from "../../NavigateBackButton";
-import { ANIMATION_VARIANTS, NavigationDirection, FlowStep } from "../useSelectAssetFlow";
+import { ANIMATION_VARIANTS, NavigationDirection } from "../../SelectAssetFlow/useSelectAssetFlow";
 
 export type HeaderProps = {
-  isAssetSelectionVisible: boolean;
-  currentStep: FlowStep;
   navDirection: NavigationDirection;
+  ticker: string;
   onBackClick: () => void;
 };
 
-export function Header({
-  isAssetSelectionVisible,
-  currentStep,
-  navDirection,
-  onBackClick,
-}: Readonly<HeaderProps>) {
+export function Header({ navDirection, ticker, onBackClick }: Readonly<HeaderProps>) {
+  // TODO reduce duplication - can this be shared with SelectAssetFlow
+
   const { t } = useTranslation();
-
-  const isAssetSelection = currentStep === FlowStep.SELECT_ASSET_TYPE;
-
-  const animatedPart = isAssetSelection
-    ? t("modularAssetDrawer.assetFlow.asset")
-    : t("modularAssetDrawer.assetFlow.network");
-
-  const titleTemplate = t("modularAssetDrawer.assetFlow.selectTemplate", {
-    dynamic: "{{dynamic}}",
-  });
-
-  const [beforeDynamic, afterDynamic] = titleTemplate.split("{{dynamic}}");
 
   return (
     <HeaderContainer>
-      <NavigateBackButton hidden={isAssetSelectionVisible} onClick={onBackClick} />
+      <NavigateBackButton hidden={false} onClick={onBackClick} />{" "}
+      {/* TODO work out how this back can interact with SelectAssetFlow too */}
       <Text
         display="flex"
         flexDirection="row"
@@ -47,10 +32,10 @@ export function Header({
         color="palette.text.shade100"
         data-testid="select-asset-drawer-title"
       >
-        {beforeDynamic}
+        {t("modularAssetDrawer.assetFlow.select")}
         <AnimatePresence mode="wait" custom={navDirection}>
           <motion.span
-            key={currentStep}
+            key={"SELECT_ACCOUNT"}
             initial="initial"
             animate="animate"
             exit="exit"
@@ -58,10 +43,9 @@ export function Header({
             custom={navDirection}
             data-testid="select-asset-drawer-title-dynamic"
           >
-            {animatedPart}
+            a {ticker} account {/* TODO translate this + work out 'a' vs 'an' */}
           </motion.span>
         </AnimatePresence>
-        {afterDynamic}
       </Text>
     </HeaderContainer>
   );
