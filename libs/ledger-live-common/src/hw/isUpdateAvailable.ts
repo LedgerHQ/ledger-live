@@ -12,6 +12,7 @@ import semver from "semver";
 import { AppAndVersion } from "./connectApp";
 import { mustUpgrade } from "../apps";
 import { getAppsCatalogForDevice } from "../device/use-cases/getAppsCatalogForDevice";
+import { identifyTargetId } from "@ledgerhq/devices/lib/index";
 
 const isUpdateAvailable = async (
   deviceInfo: DeviceInfo,
@@ -32,7 +33,11 @@ const isUpdateAvailable = async (
 
   return (
     !!appAvailableInProvider &&
-    !mustUpgrade(appAvailableInProvider.versionName, appAvailableInProvider.version)
+    !mustUpgrade(
+      appAvailableInProvider.versionName,
+      appAvailableInProvider.version,
+      identifyTargetId(Number(deviceInfo.targetId))?.id,
+    )
   );
 };
 

@@ -79,7 +79,7 @@ export async function listAppCandidates(cwd: string): Promise<AppCandidate[]> {
             if (
               semver.valid(appVersion) &&
               !shouldUpgrade(appName, appVersion) &&
-              !mustUpgrade(appName, appVersion)
+              !mustUpgrade(appName, appVersion, model)
             ) {
               c.push({
                 path: p4,
