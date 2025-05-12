@@ -2,13 +2,10 @@ import React from "react";
 import { render, screen } from "tests/testSetup";
 import {
   AssetSelectionStep,
-  Header,
   NetworkSelectionStep,
-  type HeaderProps,
   type AssetSelectionStepProps,
   type NetworkSelectionStepProps,
 } from "../components";
-import { FlowStep, NavigationDirection } from "../useSelectAssetFlow";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { MockedList } from "./Shared";
 
@@ -26,54 +23,6 @@ jest.mock("@ledgerhq/react-ui/pre-ldls", () => {
 });
 
 describe("SelectAssetFlow Components", () => {
-  describe("Header", () => {
-    it("should render Header component correctly in asset selection step", () => {
-      const props: HeaderProps = {
-        isAssetSelectionVisible: true,
-        currentStep: FlowStep.SELECT_ASSET_TYPE,
-        navDirection: NavigationDirection.FORWARD,
-        onBackClick: jest.fn(),
-      };
-
-      render(<Header {...props} />);
-
-      expect(screen.getByText(/select/i)).toBeVisible();
-      expect(screen.getByTestId("select-asset-drawer-title-dynamic")).toHaveTextContent(/asset/i);
-    });
-
-    it("should render Header component correctly in network selection step", () => {
-      const props: HeaderProps = {
-        isAssetSelectionVisible: false,
-        currentStep: FlowStep.SELECT_NETWORK,
-        navDirection: NavigationDirection.FORWARD,
-        onBackClick: jest.fn(),
-      };
-
-      render(<Header {...props} />);
-
-      expect(screen.getByText(/select/i)).toBeVisible();
-      expect(screen.getByTestId("select-asset-drawer-title-dynamic")).toHaveTextContent(/network/i);
-      expect(screen.getByTestId("mad-back-button")).toBeVisible();
-    });
-
-    it("should call onBackClick when back button is clicked", async () => {
-      const onBackClick = jest.fn();
-      const props: HeaderProps = {
-        isAssetSelectionVisible: false,
-        currentStep: FlowStep.SELECT_NETWORK,
-        navDirection: NavigationDirection.FORWARD,
-        onBackClick,
-      };
-
-      const { user } = render(<Header {...props} />);
-
-      const backButton = screen.getByTestId("mad-back-button");
-      await user.click(backButton);
-
-      expect(onBackClick).toHaveBeenCalled();
-    });
-  });
-
   describe("AssetSelectionStep", () => {
     it("should render AssetSelectionStep component correctly", () => {
       const props: AssetSelectionStepProps = {

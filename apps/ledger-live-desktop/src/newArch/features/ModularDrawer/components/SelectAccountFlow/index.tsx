@@ -1,13 +1,14 @@
 import React, { memo, useState } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
-import { SelectAccountFlowContainer, SelectorContent, Header } from "./components";
-import { SelectAccount } from "../SelectAccount";
-import MemoizedSelectAssetFlow from "../SelectAssetFlow";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
-import { NavigationDirection } from "../SelectAssetFlow/useSelectAssetFlow";
+import { useTranslation } from "react-i18next";
+import { SelectAccountFlowContainer, SelectorContent, AccountSelectionStep } from "./components";
+import MemoizedSelectAssetFlow from "../SelectAssetFlow";
+import { Header } from "../Header/Header";
+import { FlowStep, NavigationDirection } from "../Header/navigation";
 
 type SelectAccountDrawerProps = {
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
@@ -15,28 +16,31 @@ type SelectAccountDrawerProps = {
   accounts$?: Observable<WalletAPIAccount[]>;
 };
 
-function SelectAccountFlow(props: SelectAccountDrawerProps) {
+export const SelectAccountFlow = memo((props: SelectAccountDrawerProps) => {
+  const { t } = useTranslation();
   const [selectedAsset, setSelectedAsset] = useState<undefined | CryptoOrTokenCurrency>();
 
   const onAssetSelected = (asset: CryptoOrTokenCurrency) => {
     setSelectedAsset(asset);
   };
 
-  if (!selectedAsset)
+  if (!selectedAsset) {
     return <MemoizedSelectAssetFlow onAssetSelected={onAssetSelected} {...props} />;
+  }
 
   return (
     <SelectAccountFlowContainer>
       <Header
-        ticker={selectedAsset.ticker}
-        navDirection={NavigationDirection.FORWARD} // TODO this import should be moved
+        title={t("modularAssetDrawer.assetFlow.account")}
+        navDirection={NavigationDirection.FORWARD}
+        navKey={FlowStep.SELECT_ACCOUNT}
         onBackClick={() => setSelectedAsset(undefined)}
       />
       <SelectorContent>
-        <SelectAccount {...props} asset={selectedAsset} source="source" flow="flow" />
+        <AccountSelectionStep {...props} asset={selectedAsset} source="source" flow="flow" />
       </SelectorContent>
     </SelectAccountFlowContainer>
   );
-}
+});
 
-export default memo(SelectAccountFlow);
+SelectAccountFlow.displayName = "SelectAccountFlow";

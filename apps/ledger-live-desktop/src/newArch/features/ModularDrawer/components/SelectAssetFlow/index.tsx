@@ -1,13 +1,15 @@
 import React, { memo } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useSelectAssetFlow, FlowStep } from "./useSelectAssetFlow";
+import { useSelectAssetFlow } from "./useSelectAssetFlow";
 import {
   SelectAssetFlowContainer,
   SelectorContent,
-  Header,
   AssetSelectionStep,
   NetworkSelectionStep,
 } from "./components";
+import { Header } from "../Header/Header";
+import { FlowStep } from "../Header/navigation";
+import { useTranslation } from "react-i18next";
 
 export type SelectAssetFlowProps = {
   currencies: CryptoOrTokenCurrency[];
@@ -15,6 +17,8 @@ export type SelectAssetFlowProps = {
 };
 
 function SelectAssetFlow({ onAssetSelected, currencies }: Readonly<SelectAssetFlowProps>) {
+  const { t } = useTranslation();
+
   const {
     currentStep,
     navDirection,
@@ -39,8 +43,13 @@ function SelectAssetFlow({ onAssetSelected, currencies }: Readonly<SelectAssetFl
   return (
     <SelectAssetFlowContainer>
       <Header
-        isAssetSelectionVisible={currentStep === FlowStep.SELECT_ASSET_TYPE}
-        currentStep={currentStep}
+        showBackButton={currentStep === FlowStep.SELECT_NETWORK}
+        navKey={currentStep}
+        title={
+          isAssetSelection
+            ? t("modularAssetDrawer.assetFlow.asset")
+            : t("modularAssetDrawer.assetFlow.network")
+        }
         navDirection={navDirection}
         onBackClick={handleBackClick}
       />
