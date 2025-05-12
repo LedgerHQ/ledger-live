@@ -1,5 +1,4 @@
 import React, { useCallback } from "react";
-import invariant from "invariant";
 import { useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
@@ -31,13 +30,11 @@ const Wrapper = styled(Box).attrs(() => ({
   justify-content: space-between;
   align-items: center;
 `;
+
 const Staking = ({ account }: { account: AptosAccount }) => {
   const dispatch = useDispatch();
 
-  const { aptosResources } = account;
-  invariant(aptosResources, "aptos account expected");
-
-  const { stakingPositions } = aptosResources;
+  const stakingPositions = account.aptosResources?.stakingPositions || [];
   const mappedStakingPositions = useAptosMappedStakingPositions(account);
   const stakingEnabled = canStake(account);
 
@@ -74,7 +71,9 @@ const Staking = ({ account }: { account: AptosAccount }) => {
     },
     [explorerView],
   );
+
   const hasStakingPositions = stakingPositions.length > 0;
+
   return (
     <>
       <TableContainer mb={6}>
@@ -161,6 +160,7 @@ const Staking = ({ account }: { account: AptosAccount }) => {
     </>
   );
 };
+
 const StakingPositions = ({ account }: { account: AptosAccount | TokenAccount }) => {
   if (account.type !== "Account") return null;
   return <Staking account={account} />;

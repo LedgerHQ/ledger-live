@@ -103,18 +103,6 @@ export class AptosAPI {
     return stakingData;
   }
 
-  // async getValidators() {
-  //   const payload = {
-  //     function: "0x1::delegation_pool::operator_commission_percentage",
-  //     functionArguments: [
-  //       "0x9bfd93ebaa1efd65515642942a607eeca53a0188c04c21ced646d2f0b9f551e8",
-  //       // "0xb909f0e057974fde136548160898ec1fe629351c9aabdf2d189c5691f0b5093a",
-  //     ],
-  //   } as InputViewFunctionData;
-
-  //   return await this.aptosClient.view<[string]>({ payload });
-  // }
-
   async estimateGasPrice(): Promise<GasEstimation> {
     return this.aptosClient.getGasPriceEstimation();
   }
@@ -207,7 +195,7 @@ export class AptosAPI {
     }
   }
 
-  async getNextUnlockTime(stakingPoolAddress: string): Promise<string> {
+  async getNextUnlockTime(stakingPoolAddress: string): Promise<string | undefined> {
     const resourceType: MoveStructId = "0x1::stake::StakePool";
     try {
       const resource = await this.aptosClient.getAccountResource({
@@ -218,10 +206,8 @@ export class AptosAPI {
       if (data && data.locked_until_secs) {
         return data.locked_until_secs;
       }
-      return "";
     } catch (error) {
       console.error("Failed to fetch StakePool resource:", error);
-      return "";
     }
   }
 
@@ -238,6 +224,25 @@ export class AptosAPI {
       return new BigNumber(balance);
     } catch (_) {
       return new BigNumber(0);
+    }
+  }
+
+  async getDelegatorBalanceInPool(poolAddress: string, delegatorAddress: string): Promise<any> {
+    try {
+      // Query the delegator balance in the pool
+      return await this.aptosClient.view<[string]>({
+        payload: {
+          function: "0x1::delegation_pool::get_stake",
+          typeArguments: [],
+          functionArguments: [poolAddress, delegatorAddress],
+        },
+      });
+    } catch (_) {
+      return {
+        active: 0,
+        inactive: 0,
+        pending_inactive: 0,
+      };
     }
   }
 

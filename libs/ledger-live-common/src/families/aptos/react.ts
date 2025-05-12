@@ -11,7 +11,6 @@ import type {
   Transaction,
 } from "./types";
 import { useObservable } from "../../observable";
-import invariant from "invariant";
 import { getAccountCurrency } from "../../account";
 import { mapStakingPositions } from "./logic";
 
@@ -85,8 +84,6 @@ export function useAptosMappedStakingPositions(
 ): AptosMappedStakingPosition[] {
   const validators = useAptosValidators(account.currency, "");
   const stakingPositions = account.aptosResources?.stakingPositions;
-
-  invariant(stakingPositions, "aptos: stakingPositions is required");
 
   const unit = getAccountCurrency(account).units[0];
 

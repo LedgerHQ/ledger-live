@@ -316,7 +316,6 @@ describe("getTransactionStatus Test", () => {
 
     const transaction = createFixtureTransaction();
     transaction.recipient = "0x" + "0".repeat(64);
-    //transaction.amount = BigNumber(2);
     transaction.fees = BigNumber(2);
     transaction.useAllAmount = true;
 

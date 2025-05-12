@@ -3867,6 +3867,7 @@
         "pending": "Pending Release",
         "available": "Withdrawable"
       },
+      "nextUnlockIn": "Next unlock in",
       "unstake": "Unstake",
       "withdraw": "Withdraw",
       "activeTooltip": "Staked amounts generate rewards",

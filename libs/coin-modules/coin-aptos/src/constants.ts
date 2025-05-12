@@ -44,6 +44,7 @@ export const APTOS_OBJECT_CORE: MoveStructId = "0x1::object::ObjectCore";
 export enum DIRECTION {
   IN = "IN",
   OUT = "OUT",
+  DELEGATE = "DELEGATE",
   UNKNOWN = "UNKNOWN",
 }
 

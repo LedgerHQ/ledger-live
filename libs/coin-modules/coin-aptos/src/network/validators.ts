@@ -34,7 +34,7 @@ export async function getValidators(currencyId: string): Promise<AptosValidator[
       const unblockdata = await api.getNextUnlockTime(
         pool.current_pool_balance.staking_pool_address,
       );
-      const nextUnlockTime = formatUnlockTime(unblockdata); //`${30}d ${20}h ${30}m`;
+      const nextUnlockTime = unblockdata ? formatUnlockTime(unblockdata) : undefined; //`${30}d ${20}h ${30}m`;
 
       return {
         commission: BigNumber(pool.current_pool_balance.operator_commission_percentage).div(100),

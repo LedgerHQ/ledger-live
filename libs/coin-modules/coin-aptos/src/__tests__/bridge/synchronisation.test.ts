@@ -65,7 +65,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], []]);
+    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
 
     const account = await getAccountShape(
       {
@@ -119,7 +119,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], []]);
+    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
 
     const account = await getAccountShape(
       {
@@ -172,7 +172,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], []]);
+    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
 
     const account = await getAccountShape(
       {
@@ -205,7 +205,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], []]);
+    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
 
     const account = await getAccountShape(
       {
@@ -258,7 +258,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], []]);
+    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
 
     const account = await getAccountShape(
       {
@@ -311,7 +311,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], []]);
+    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
 
     const account = await getAccountShape(
       {
@@ -890,6 +890,7 @@ describe("getAccountShape", () => {
         hasFailed: false,
       },
     ] as Operation[];
+
     const tokenOperations = [
       {
         id: "js:2:aptos:474d:aptos-0x3f35-OUT",
@@ -930,8 +931,11 @@ describe("getAccountShape", () => {
         hasFailed: false,
       },
     ] as Operation[];
+
+    const stakingOperations = [] as Operation[];
+
     jest.mocked(mergeOps).mockReturnValue(operations);
-    jest.mocked(txsToOps).mockReturnValue([operations, tokenOperations]);
+    jest.mocked(txsToOps).mockReturnValue([operations, tokenOperations, stakingOperations]);
 
     const info = {
       currency: {

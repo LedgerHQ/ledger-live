@@ -3,6 +3,7 @@ jest.mock("blockies-ts", () => ({
     toDataURL: () => "data:image/png;base64,fakebase64string",
   })),
 }));
+
 jest.mock("../../network/validators", () => ({
   getValidators: jest.fn(() => Promise.resolve([])),
 }));

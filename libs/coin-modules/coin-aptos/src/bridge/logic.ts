@@ -123,10 +123,11 @@ export const txsToOps = (
   info: { address: string },
   id: string,
   txs: (AptosTransaction | null)[],
-): [Operation[], Operation[]] => {
+): [Operation[], Operation[], Operation[]] => {
   const { address } = info;
   const ops: Operation[] = [];
   const opsTokens: Operation[] = [];
+  const opsStaking: Operation[] = [];
 
   txs.forEach(tx => {
     if (tx !== null) {
@@ -143,9 +144,13 @@ export const txsToOps = (
         return; // skip transaction without functions in payload
       }
 
-      const { coin_id, amount_in, amount_out } = getCoinAndAmounts(tx, address);
+      const { coin_id, amount_in, amount_out, staked_amount } = getCoinAndAmounts(tx, address);
       op.value = calculateAmount(tx.sender, address, amount_in, amount_out);
-      op.type = compareAddress(tx.sender, address) ? DIRECTION.OUT : DIRECTION.IN;
+      op.type = staked_amount.gt(0)
+        ? DIRECTION.DELEGATE
+        : compareAddress(tx.sender, address)
+          ? DIRECTION.OUT
+          : DIRECTION.IN;
       op.senders.push(tx.sender);
       op.hasFailed = !tx.success;
       op.id = encodeOperationId(op.accountId, tx.hash, op.type);
@@ -157,7 +162,10 @@ export const txsToOps = (
         op.type = DIRECTION.UNKNOWN;
       }
 
-      if (op.type !== DIRECTION.UNKNOWN && coin_id !== null) {
+      if (op.type === DIRECTION.DELEGATE) {
+        op.value = staked_amount;
+        opsStaking.push(op);
+      } else if (op.type !== DIRECTION.UNKNOWN && coin_id !== null) {
         if (coin_id === APTOS_ASSET_ID) {
           ops.push(op);
         } else {
@@ -180,7 +188,7 @@ export const txsToOps = (
     }
   });
 
-  return [ops, opsTokens];
+  return [ops, opsTokens, opsStaking];
 };
 
 export function compareAddress(addressA: string, addressB: string) {
@@ -335,10 +343,16 @@ export function checkFAOwner(tx: AptosTransaction, event: Event, user_address: s
 export function getCoinAndAmounts(
   tx: AptosTransaction,
   address: string,
-): { coin_id: string | null; amount_in: BigNumber; amount_out: BigNumber } {
+): {
+  coin_id: string | null;
+  amount_in: BigNumber;
+  amount_out: BigNumber;
+  staked_amount: BigNumber;
+} {
   let coin_id: string | null = null;
   let amount_in = BigNumber(0);
   let amount_out = BigNumber(0);
+  let staked_amount = BigNumber(0);
 
   // collect all events related to the address and calculate the overall amounts
   tx.events.forEach(event => {
@@ -376,9 +390,48 @@ export function getCoinAndAmounts(
           }
         }
         break;
+      case "0x1::stake::AddStakeEvent":
+        if (tx.sender === address) {
+          coin_id = APTOS_ASSET_ID;
+          // STAKED AMOUNT IS A AMOUNT OUT
+          // IT SHOULD BE CALCULATED HERE
+          // STAKED_AMOUNT HOLDS THE CURRENT STAKED TOTAL AMOUNT.
+          // WHENEVER A UNLOCKED OR WITHDRAWABLE EVENT IS IN,
+          // SHOULD SUBTREACT IT FROM THE STAKED_AMOUNT
+          staked_amount = staked_amount.plus(event.data.amount_added);
+          amount_out = amount_out.plus(event.data.amount_added);
+        }
+        break;
+      // case "0x1::stake::UnlockStakeEvent":
+      //   if (tx.sender === address) {
+      //     coin_id = APTOS_ASSET_ID;
+      //     // WHENEVER A UNLOCKED EVENT IS IN,
+      //     // DO NOT CHANGE THE AMOUNT OUT JUST REDUCE STAKED AMOUNT
+      //     staked_amount = staked_amount.minus(event.data.amount_added);
+      //     unlocked_amount = unlocked_amount.plus(event.data.amount_added);
+      //   }
+      //   break;
+      // case "0x1::stake::WithdrawStakeEvent":
+      //   if (tx.sender === address) {
+      //     coin_id = APTOS_ASSET_ID;
+      //     // WHENEVER A WITHDRAW EVENT IS IN,
+      //     // DO NOT CHANGE THE AMOUNT OUT JUST REDUCE STAKED AMOUNT
+      //     unlocked_amount = unlocked_amount.minus(event.data.amount_added);
+      //     amount_in = amount_in.plus(event.data.amount_added);
+      //   }
+      //   break;
+      // case "0x1::stake::RewardEvent":
+      //   if (tx.sender === address) {
+      //     coin_id = APTOS_ASSET_ID;
+      //     // WHENEVER A REWARD EVENT IS IN,
+      //     // DO NOT CHANGE THE AMOUNT OUT JUST ADD STAKED AMOUNT
+      //     staked_amount = staked_amount.plus(event.data.amount_added);
+      //   }
+      //   break;
     }
   });
-  return { coin_id, amount_in, amount_out }; // TODO: manage situation when there are several coinID from the events parsing
+
+  return { coin_id, amount_in, amount_out, staked_amount };
 }
 
 export function calculateAmount(

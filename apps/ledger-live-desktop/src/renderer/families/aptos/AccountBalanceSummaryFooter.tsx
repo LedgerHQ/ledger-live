@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import BigNumber from "bignumber.js";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -58,14 +59,7 @@ const AccountBalanceSummaryFooter: AptosFamily["AccountBalanceSummaryFooter"] = 
 
   if (account.type !== "Account") return null;
 
-  const {
-    spendableBalance: _spendableBalance,
-    aptosResources: {
-      stakedBalance: _stakedBalance,
-      availableBalance: _availableBalance,
-      pendingBalance: _pendingBalance,
-    },
-  } = account;
+  const { spendableBalance: _spendableBalance, aptosResources } = account;
 
   const formatConfig = {
     alwaysShowSign: false,
@@ -73,6 +67,10 @@ const AccountBalanceSummaryFooter: AptosFamily["AccountBalanceSummaryFooter"] = 
     discreet,
     locale,
   };
+
+  const _stakedBalance = aptosResources?.stakedBalance || BigNumber(0);
+  const _availableBalance = aptosResources?.availableBalance || BigNumber(0);
+  const _pendingBalance = aptosResources?.pendingBalance || BigNumber(0);
 
   const spendableBalance = formatCurrencyUnit(unit, _spendableBalance, formatConfig);
   const stakedBalance = formatCurrencyUnit(unit, _stakedBalance, formatConfig);

@@ -14,12 +14,14 @@ import ToolTip from "~/renderer/components/Tooltip";
 import ValidatorIcon from "~/renderer/families/aptos/shared/components/ValidatorIcon";
 import Text from "~/renderer/components/Text";
 import Discreet from "~/renderer/components/Discreet";
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   padding: 16px 20px;
 `;
+
 const Column = styled(TableLine).attrs<{
   clickable?: boolean;
   strong?: boolean;
@@ -41,6 +43,7 @@ const Column = styled(TableLine).attrs<{
     `
       : ``}
 `;
+
 const Ellipsis = styled.div`
   flex: 1;
   display: block;
@@ -48,6 +51,7 @@ const Ellipsis = styled.div`
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
+
 const ManageDropDownItem = ({
   item,
   isActive,
@@ -77,12 +81,14 @@ const ManageDropDownItem = ({
     </>
   );
 };
+
 type Props = {
   account: Account;
   stakingPosition: AptosMappedStakingPosition;
   onManageAction: (address: string, action: "MODAL_APTOS_UNSTAKE" | "MODAL_APTOS_WITHDRAW") => void;
   onExternalLink: (address: string) => void;
 };
+
 export function Row({
   stakingPosition: {
     validatorId,
@@ -98,12 +104,14 @@ export function Row({
 }: Props) {
   const unstakingEnabled = canUnstake(stakingPosition);
   const withdawingEnabled = canWithdraw(stakingPosition);
+
   const onSelect = useCallback(
     (action: (typeof dropDownItems)[number]) => {
       onManageAction(validatorId, action.key as "MODAL_APTOS_UNSTAKE" | "MODAL_APTOS_WITHDRAW");
     },
     [onManageAction, validatorId],
   );
+
   const dropDownItems = [
     {
       key: "MODAL_APTOS_UNSTAKE",
@@ -118,10 +126,12 @@ export function Row({
       tooltip: !withdawingEnabled ? <Trans i18nKey="aptos.withdraw.disabledTooltip" /> : null,
     },
   ];
+
   const onExternalLinkClick = useCallback(
     () => onExternalLink(validatorId),
     [onExternalLink, validatorId],
   );
+
   return (
     <Wrapper>
       <Column strong clickable onClick={onExternalLinkClick}>

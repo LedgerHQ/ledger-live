@@ -75,7 +75,39 @@ function AptosValidatorRow({ validator, active, onClick, unit, currency }: Props
       subtitle={
         <Box>
           <Text ff="Inter|Medium" fontSize={2} color="palette.text.shade50">
-            <Trans i18nKey="aptos.stake.commission" /> {`${validator.commission}%`}
+            <Trans i18nKey="aptos.stake.commission" />
+            <Text
+              style={{
+                marginRight: 5,
+                fontSize: 11,
+              }}
+            >{` ${validator.commission}%`}</Text>
+            {!!validator.nextUnlockTime && (
+              <>
+                <Text
+                  style={{
+                    marginLeft: 8,
+                    fontSize: 11,
+                  }}
+                >
+                  {"\u{1F512}"}
+                </Text>
+                <Text
+                  style={{
+                    marginLeft: 3,
+                    fontSize: 11,
+                  }}
+                >
+                  <Trans i18nKey="aptos.stake.nextUnlockIn" />
+                </Text>
+                <Text
+                  style={{
+                    marginLeft: 2,
+                    fontSize: 11,
+                  }}
+                >{` ${validator.nextUnlockTime}`}</Text>
+              </>
+            )}
           </Text>
         </Box>
       }
