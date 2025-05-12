@@ -3,18 +3,22 @@ import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { useLargeMoverDataProvider } from "@ledgerhq/live-common/market/hooks/useLargeMoverDataProvider";
 import { useSelector } from "react-redux";
 import { counterValueCurrencySelector } from "~/reducers/settings";
+import { getCurrencyIdsFromTickers } from "../utils";
 
 type HookProps = {
-  currencyIds: string[];
-  initialRange?: KeysPriceChange;
+  currencyIdsArray: string[];
+  initialKeyRange?: KeysPriceChange;
 };
 
-export const useLargeMover = ({ currencyIds, initialRange = KeysPriceChange.day }: HookProps) => {
+export const useLargeMover = ({
+  currencyIdsArray,
+  initialKeyRange = KeysPriceChange.day,
+}: HookProps) => {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const [range, setRange] = useState<KeysPriceChange>(initialRange);
-
+  const currenciesIds = getCurrencyIdsFromTickers(currencyIdsArray);
+  const [range, setRange] = useState<KeysPriceChange>(initialKeyRange);
   const { currencies } = useLargeMoverDataProvider({
-    ids: currencyIds,
+    ids: currenciesIds,
     counterCurrency: counterValueCurrency.ticker,
     range,
   });
