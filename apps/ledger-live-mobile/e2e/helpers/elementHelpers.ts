@@ -38,6 +38,11 @@ export const ElementHelpers = {
     return element(by.text(text)).atIndex(index);
   },
 
+  getElementByIdAndText(id: string | RegExp, text: string | RegExp, index = 0) {
+    if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
+    return element(by.id(id).and(by.text(text))).atIndex(index);
+  },
+
   getWebElementById(id: string, index = 0) {
     if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
     return web.element(by.web.id(id)).atIndex(index);

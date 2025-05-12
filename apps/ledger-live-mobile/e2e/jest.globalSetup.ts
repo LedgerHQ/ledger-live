@@ -72,6 +72,7 @@ declare global {
   var getElementById: typeof ElementHelpers.getElementById;
   var getElementsById: typeof ElementHelpers.getElementsById;
   var getElementByText: typeof ElementHelpers.getElementByText;
+  var getElementByIdAndText: typeof ElementHelpers.getElementByIdAndText;
   var getWebElementById: typeof ElementHelpers.getWebElementById;
   var getWebElementByTag: typeof ElementHelpers.getWebElementByTag;
   var IsIdVisible: typeof ElementHelpers.IsIdVisible;
@@ -123,6 +124,7 @@ export default async () => {
   global.getElementById = ElementHelpers.getElementById;
   global.getElementsById = ElementHelpers.getElementsById;
   global.getElementByText = ElementHelpers.getElementByText;
+  global.getElementByIdAndText = ElementHelpers.getElementByIdAndText;
   global.getWebElementById = ElementHelpers.getWebElementById;
   global.getWebElementByTag = ElementHelpers.getWebElementByTag;
   global.IsIdVisible = ElementHelpers.IsIdVisible;
