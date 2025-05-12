@@ -19,7 +19,6 @@ import {
 import { PolkadotAsset } from "../types";
 
 export function createApi(config: PolkadotConfig): Api<PolkadotAsset> {
-  console.log("westend: ", config);
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {

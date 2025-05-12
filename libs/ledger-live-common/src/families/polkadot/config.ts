@@ -33,21 +33,21 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
         type: "active",
       },
       sidecar: {
-        url: "https://polkadot-westend-sidecar.coin.ledger.com/",
+        url: "https://polkadot-westend-sidecar.coin.ledger.com",
         // credentials: getEnv("API_POLKADOT_SIDECAR_CREDENTIALS"),
       },
       node: {
-        url: "https://polkadot-westend-fullnodes.api.live.ledger.com/",
+        url: "https://polkadot-westend-fullnodes.api.live.ledger.com",
       },
       // staking: {
       //   electionStatusThreshold: getEnv("POLKADOT_ELECTION_STATUS_THRESHOLD"),
       // },
       metadataShortener: {
-        url: "https://polkadot-westend-metadata-shortener.api.live.ledger.com/",
+        url: "https://polkadot-westend-metadata-shortener.api.live.ledger.com/transaction/metadata",
       },
-      // metadataHash: {
-      //   url: "https://polkadot-metadata-shortener.api.live.ledger.com/node/metadata/hash",
-      // },
+      metadataHash: {
+        url: "https://polkadot-westend-metadata-shortener.api.live.ledger.com/node/metadata/hash",
+      },
     },
   },
 };
