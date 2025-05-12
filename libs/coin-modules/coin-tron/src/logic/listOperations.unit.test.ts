@@ -30,6 +30,8 @@ describe("listOperations", () => {
   const expectedFetchParams = {
     ...defaultFetchParams,
     minTimestamp: mockBlockTimestamp,
+    hintGlobalLimit: 1000,
+    order: "desc",
   };
 
   it("should fetch transactions and return operations", async () => {
