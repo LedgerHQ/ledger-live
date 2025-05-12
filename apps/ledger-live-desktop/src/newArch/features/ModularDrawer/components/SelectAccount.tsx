@@ -56,7 +56,7 @@ const useDetailedAccounts = (
           showCode: true,
         });
 
-        const address = `${account.freshAddress.slice(0, 5)}...${account.freshAddress.slice(-5)}`;
+        const address = `${account.seedIdentifier.slice(0, 5)}...${account.seedIdentifier.slice(-5)}`;
         const protocol = getTagDerivationMode(account.currency, account.derivationMode); // TODO consider capital letters
 
         return {
@@ -100,7 +100,7 @@ export const SelectAccount = ({ asset, accounts$, onAccountSelected, source, flo
         iconRight={<Icons.Plus size="S" />}
         variant="dashed"
       />
-      <div style={{ flex: "1 1 auto", width: "100%" }}>
+      <div style={{ flex: "1 1 auto", width: "100%", padding: "16px 0 0 0" }}>
         <AccountList accounts={detailedAccounts} onClick={onAccountClick} />
       </div>
     </>
