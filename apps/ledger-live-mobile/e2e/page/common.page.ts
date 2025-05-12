@@ -20,7 +20,10 @@ export default class CommonPage {
   searchBar = () => getElementById(this.searchBarId);
   successCloseButtonId = "success-close-button";
   successViewDetailsButtonId = "success-view-details-button";
-  closeButton = () => getElementById("NavigationHeaderCloseButton");
+  closeButtonId = "NavigationHeaderCloseButton";
+  closeButton = () => getElementById(this.closeButtonId);
+  backButtonId = "navigation-header-back-button";
+  backButton = () => getElementById(this.backButtonId);
   proceedButtonId = "proceed-button";
 
   accountCardPrefix = "account-card-";
@@ -51,7 +54,13 @@ export default class CommonPage {
   }
 
   async closePage() {
+    await waitForElementById(this.closeButtonId);
     await tapByElement(this.closeButton());
+  }
+
+  async goBackToPreviousPage() {
+    await waitForElementById(this.backButtonId);
+    await tapByElement(this.backButton());
   }
 
   async successClose() {
