@@ -606,7 +606,7 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       opensea: false,
       magiceden: false,
-      chains: ["ETH", "POL", "BASE", "ARB"],
+      chains: ["ethereum", "polygon", "base", "arbitrum"],
     },
   },
 };

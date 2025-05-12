@@ -18,16 +18,29 @@ const entryPointConfig = {
   },
 };
 
-export default function useNftsEntryPointViewModel() {
+type Props = {
+  accountId: string;
+  currencyId: string;
+};
+
+export default function useNftsEntryPointViewModel({ accountId, currencyId }: Props) {
   const featureNftEntryPoint = useFeature("llNftEntryPoint");
   const history = useHistory();
 
   const chains =
-    featureNftEntryPoint?.params?.chains?.map((chain: string) => chain.toUpperCase()) ?? [];
+    featureNftEntryPoint?.params?.chains?.map((chain: string) => chain.toLowerCase()) ?? [];
 
   const openLiveApp = (liveAppId: string, entry: Entry) => {
     track("entry_nft_clicked", { item: entry, page: AnalyticsPage.Account });
-    history.push(`/platform/${liveAppId}`);
+
+    history.push({
+      pathname: `/platform/${liveAppId}`,
+      state: {
+        accountId,
+        chainId: currencyId,
+        returnTo: `/account/${accountId}`,
+      },
+    });
   };
 
   const entryPoints: EntryPointNft = {
@@ -61,5 +74,6 @@ export default function useNftsEntryPointViewModel() {
     isFeatureNftEntryPointEnabled: featureNftEntryPoint?.enabled ?? false,
     entryPoints,
     chains,
+    currencyId,
   };
 }

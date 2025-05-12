@@ -198,9 +198,7 @@ const AccountPage = ({
             )
           ) : null}
 
-          {account.type === "Account" && (
-            <NftEntryPoint chainId={account.currency.ticker.toUpperCase()} />
-          )}
+          {account.type === "Account" && <NftEntryPoint account={account} />}
 
           {displayOrdinals ? <OrdinalsAccount account={account} /> : null}
           {account.type === "Account" ? <TokensList account={account} /> : null}

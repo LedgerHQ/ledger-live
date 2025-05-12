@@ -5,6 +5,7 @@ import { render, screen } from "tests/testSetup";
 import NftEntryPoint from "..";
 import { Entry } from "../types";
 import { track } from "~/renderer/analytics/segment";
+import { Account } from "@ledgerhq/types-live";
 
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
@@ -19,9 +20,19 @@ jest.mock("~/renderer/analytics/segment", () => ({
 const mockPush = jest.fn();
 (useHistory as jest.Mock).mockReturnValue({ push: mockPush });
 
+const mockAccount = {
+  id: "testAccountId",
+  currency: { id: "ethereum" },
+} as unknown as Account;
+
+const mockAccountBTC = {
+  id: "testAccountBTC",
+  currency: { id: "bitcoin" },
+} as unknown as Account;
+
 describe("NftEntryPoint", () => {
   it("should render nothing if isFeatureNftEntryPointEnabled is false", () => {
-    const { store } = render(<NftEntryPoint chainId={"ETH"} />, {
+    const { store } = render(<NftEntryPoint account={mockAccount} />, {
       initialState: {
         settings: {
           overriddenFeatureFlags: {
@@ -36,14 +47,14 @@ describe("NftEntryPoint", () => {
   });
 
   it("should render enabled entry points if enabled", () => {
-    render(<NftEntryPoint chainId={"ETH"} />, {
+    render(<NftEntryPoint account={mockAccount} />, {
       initialState: {
         settings: {
           overriddenFeatureFlags: {
             llNftEntryPoint: {
               enabled: true,
               params: {
-                chains: ["ETH"],
+                chains: ["ethereum"],
                 [Entry.magiceden]: true,
                 [Entry.opensea]: true,
               },
@@ -57,14 +68,14 @@ describe("NftEntryPoint", () => {
   });
 
   it("should not render disabled entry points if not enabled", () => {
-    render(<NftEntryPoint chainId={"ETH"} />, {
+    render(<NftEntryPoint account={mockAccount} />, {
       initialState: {
         settings: {
           overriddenFeatureFlags: {
             llNftEntryPoint: {
               enabled: true,
               params: {
-                chains: ["ETH"],
+                chains: ["ethereum"],
                 [Entry.magiceden]: true,
                 [Entry.opensea]: false,
               },
@@ -79,14 +90,14 @@ describe("NftEntryPoint", () => {
   });
 
   it("should render nothing if chainId is not included in chains", () => {
-    render(<NftEntryPoint chainId={"BTC"} />, {
+    render(<NftEntryPoint account={mockAccountBTC} />, {
       initialState: {
         settings: {
           overriddenFeatureFlags: {
             llNftEntryPoint: {
               enabled: true,
               params: {
-                chains: ["ETH", "SOL"],
+                chains: ["ethereum", "solana"],
                 [Entry.magiceden]: true,
                 [Entry.opensea]: true,
               },
@@ -100,14 +111,14 @@ describe("NftEntryPoint", () => {
   });
 
   it("should call onClick when a Row is clicked", () => {
-    render(<NftEntryPoint chainId={"ETH"} />, {
+    render(<NftEntryPoint account={mockAccount} />, {
       initialState: {
         settings: {
           overriddenFeatureFlags: {
             llNftEntryPoint: {
               enabled: true,
               params: {
-                chains: ["ETH"],
+                chains: ["ethereum"],
                 [Entry.magiceden]: true,
               },
             },
@@ -123,6 +134,13 @@ describe("NftEntryPoint", () => {
       item: Entry.magiceden,
       page: "Account",
     });
-    expect(mockPush).toHaveBeenCalledWith("/platform/magic-eden");
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: "/platform/magic-eden",
+      state: {
+        accountId: mockAccount.id,
+        chainId: mockAccount.currency.id,
+        returnTo: `/account/${mockAccount.id}`,
+      },
+    });
   });
 });
