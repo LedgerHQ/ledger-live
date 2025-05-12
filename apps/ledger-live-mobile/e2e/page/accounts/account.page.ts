@@ -106,10 +106,10 @@ export default class AccountPage {
     await scrollToId(this.operationHistorySectionRegexp, this.accountScreenScrollView);
   }
 
-  @Step("Scroll to SubAccounts Section")
-  async scrollToSubAccounts() {
+  @Step("Scroll to a Specific SubAccount Row")
+  async scrollToSubAccount(subAccountId: string) {
     await waitForElementById(this.accountScreenScrollView);
-    await scrollToId(this.subAccountsSectionRegexp, this.accountScreenScrollView);
+    await scrollToId(subAccountId, this.accountScreenScrollView);
   }
 
   @Step("Expect account balance to be visible")
@@ -145,8 +145,9 @@ export default class AccountPage {
 
   @Step("Navigate to token in account")
   async navigateToTokenInAccount(subAccount: Account) {
-    await this.scrollToSubAccounts();
-    await tapById(this.baseSubAccountRow + subAccount.currency.ticker);
+    const subAccountId = this.baseSubAccountRow + subAccount.currency.ticker;
+    await this.scrollToSubAccount(subAccountId);
+    await tapById(subAccountId);
     await waitForElementById(`account-graph-${this.subAccountId(subAccount)}`);
   }
 
