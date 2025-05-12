@@ -2,7 +2,7 @@ import querystring from "querystring";
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import type { OperationType } from "@ledgerhq/types-live";
-import { getEnv } from "@ledgerhq/live-env";
+// import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { isValidAddress } from "../common";
@@ -21,7 +21,8 @@ const LIMIT = 200;
  *
  * @returns {string}
  */
-const getBaseApiUrl = (): string => getEnv("API_POLKADOT_INDEXER");
+// const getBaseApiUrl = (): string => getEnv("API_POLKADOT_INDEXER");
+const getBaseApiUrl = (): string => "https://polkadot-westend-fullnodes.coin.ledger.com/";
 
 /**
  * Fetch operation lists from indexer

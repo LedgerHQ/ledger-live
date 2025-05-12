@@ -3245,26 +3245,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     color: "#E6007A",
     units: [
       {
-        code: "Planck",
-        name: "Planck",
-        magnitude: 0,
-      },
-      {
-        code: "Point",
-        name: "Point",
-        magnitude: 3,
-      },
-      {
-        code: "uWND",
-        name: "MicroWND",
-        magnitude: 6,
-      },
-      {
-        code: "mWND",
-        name: "MilliWND",
-        magnitude: 9,
-      },
-      {
         code: "WND",
         name: "WND",
         magnitude: 12,
@@ -3274,8 +3254,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     family: "polkadot",
     explorerViews: [
       {
-        address: "https://polkadot.subscan.io/account/$address",
-        tx: "https://polkadot.subscan.io/extrinsic/$hash",
+        address: "https://westend.subscan.io/account/$address",
+        tx: "https://westend.subscan.io/extrinsic/$hash",
       },
       {
         address: "https://polkascan.io/polkadot/account/$address",
