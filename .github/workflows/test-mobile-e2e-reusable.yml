@@ -300,7 +300,6 @@ jobs:
       - name: Download Native Build
         uses: tespkg/actions-cache/restore@v1
         if: steps.aws.conclusion == 'success'
-        id: detox-build
         with:
           path: ${{ github.workspace }}${{ env.IOS_NATIVE_PATH }}
           key: ${{ runner.os }}-poc-detox-native-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js', 'apps/ledger-live-mobile/.env.mock', 'apps/ledger-live-mobile/ios/ledgerlivemobile/AppDelegate.mm') }}
@@ -314,7 +313,6 @@ jobs:
       - name: Download JS Build
         uses: tespkg/actions-cache/restore@v1
         if: steps.aws.conclusion == 'success'
-        id: detox-build
         with:
           path: ${{ github.workspace }}${{ env.IOS_JSBUNDLE_PATH }}
           key: ${{ runner.os }}-poc-detox-js-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js', 'apps/ledger-live-mobile/.env.mock', 'apps/ledger-live-mobile/ios/ledgerlivemobile/AppDelegate.mm') }}
