@@ -118,15 +118,12 @@ const Nomination = ({ account }: { account: PolkadotAccount }) => {
     };
   }, [unlockings, unlockedBalance]);
   const onEarnRewards = useCallback(() => {
-    history.push({
-      pathname: "/platform/stakekit",
-      state: {
-        yieldId: "polkadot-dot-validator-staking",
-        accountId: account.id,
-        returnTo: `/account/${account.id}`,
-      },
-    });
-  }, [account, history]);
+    dispatch(
+      openModal("MODAL_POLKADOT_REWARDS_INFO", {
+        account,
+      }),
+    );
+  }, [account, dispatch]);
   const onNominate = useCallback(() => {
     dispatch(
       openModal("MODAL_POLKADOT_NOMINATE", {

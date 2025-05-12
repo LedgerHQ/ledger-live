@@ -139,6 +139,7 @@ export type CurrencyFeatures = {
   currencyBerachain: DefaultFeature;
   currencyHyperevm: DefaultFeature;
   currencyCantonNetwork: DefaultFeature;
+  currencyWestend: DefaultFeature;
 };
 
 /**

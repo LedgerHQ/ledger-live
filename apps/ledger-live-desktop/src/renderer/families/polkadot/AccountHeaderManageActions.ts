@@ -26,19 +26,27 @@ const AccountHeaderManageActions = ({ account, parentAccount }: Props) => {
   const hasPendingBondOperation = hasPendingOperationType(mainAccount, "BOND");
   const history = useHistory();
   if (!polkadotResources || parentAccount) return null;
+  console.log("AccountHeaderManageActions", {
+    hasBondedBalance,
+    hasPendingBondOperation,
+    account,
+    mainAccount,
+    polkadotResources,
+  });
 
   const onClick = () => {
-    history.push({
-      pathname: "/platform/stakekit",
-      state: {
-        yieldId: "polkadot-dot-validator-staking",
-        accountId: account.id,
-        returnTo:
-          account.type === "TokenAccount"
-            ? `/account/${account.parentId}/${account.id}`
-            : `/account/${account.id}`,
-      },
-    });
+    console.log("Stake button clicked");
+    // history.push({
+    //   pathname: "/platform/stakekit",
+    //   state: {
+    //     yieldId: "polkadot-dot-validator-staking",
+    //     accountId: account.id,
+    //     returnTo:
+    //       account.type === "TokenAccount"
+    //         ? `/account/${account.parentId}/${account.id}`
+    //         : `/account/${account.id}`,
+    //   },
+    // });
   };
 
   const _hasExternalController = hasExternalController(mainAccount);

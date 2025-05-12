@@ -5,6 +5,7 @@ import type { PolkadotPreloadData, PolkadotStakingProgress, PolkadotValidator } 
 import polkadotAPI from "../network";
 import { loadPolkadotCrypto } from "../logic/polkadot-crypto"; //FIXME: Polkadot SDK should not be used in bridge
 import { getCurrentPolkadotPreloadData, setPolkadotPreloadData } from "./state";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const PRELOAD_MAX_AGE = 60 * 1000;
 
@@ -77,11 +78,14 @@ const shouldRefreshValidators = (
   return !previousState || currentState.activeEra !== previousState.activeEra;
 };
 
-export const preload = async (): Promise<PolkadotPreloadData> => {
+export const preload = async (currency: CryptoCurrency): Promise<PolkadotPreloadData> => {
   await loadPolkadotCrypto();
-  await polkadotAPI.getRegistry(); // ensure registry is already in cache.
-  const minimumBondBalance = await polkadotAPI.getMinimumBondBalance();
-  const currentStakingProgress = await polkadotAPI.getStakingProgress();
+  await polkadotAPI.getRegistry(currency); // ensure registry is already in cache.
+
+  const minimumBondBalance = await polkadotAPI.getMinimumBondBalance(currency);
+
+  const currentStakingProgress = await polkadotAPI.getStakingProgress(currency);
+
   const { validators: previousValidators, staking: previousStakingProgress } =
     getCurrentPolkadotPreloadData();
   let validators = previousValidators;
@@ -94,7 +98,7 @@ export const preload = async (): Promise<PolkadotPreloadData> => {
     log("polkadot/preload", "refreshing polkadot validators...");
 
     try {
-      validators = await polkadotAPI.getValidators("all");
+      validators = await polkadotAPI.getValidators("all", currency);
     } catch (error) {
       log("polkadot/preload", "failed to fetch validators", {
         error,

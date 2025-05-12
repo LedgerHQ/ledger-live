@@ -1,6 +1,9 @@
 import BigNumber from "bignumber.js";
 import { getAccount, getStakingInfo, getStakingProgress, getValidators } from "./sidecar";
 import coinConfig from "../config";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+
+const currency = getCryptoCurrencyById("polkadot");
 
 describe("sidecar integration test", () => {
   beforeAll(() => {
@@ -14,10 +17,14 @@ describe("sidecar integration test", () => {
       sidecar: {
         url: "https://polkadot-sidecar.coin.ledger.com",
       },
+      indexer: {
+        url: "https://polkadot.coin.ledger.com",
+      },
       staking: {
         electionStatusThreshold: 25,
       },
       metadataShortener: {
+        id: "dot",
         url: "https://polkadot-metadata-shortener.api.live.ledger.com/transaction/metadata",
       },
       metadataHash: {
@@ -28,7 +35,7 @@ describe("sidecar integration test", () => {
 
   describe("getStakingProgress", () => {
     it("returns expected result", async () => {
-      const result = await getStakingProgress();
+      const result = await getStakingProgress(currency);
 
       expect(result).toEqual({
         activeEra: expect.any(Number),
@@ -42,7 +49,7 @@ describe("sidecar integration test", () => {
   describe("getStakingInfo", () => {
     it("returns expected result", async () => {
       const address = "163WJAxWrQzsAVEZdn2w6mq4gmT4FmEgvCfex3uEEUHTE9GL";
-      const result = await getStakingInfo(address);
+      const result = await getStakingInfo(address, currency);
 
       expect(result).toEqual({
         controller: "163WJAxWrQzsAVEZdn2w6mq4gmT4FmEgvCfex3uEEUHTE9GL",
@@ -58,7 +65,7 @@ describe("sidecar integration test", () => {
   describe("getAccount", () => {
     it("returns expected result", async () => {
       const address = "163WJAxWrQzsAVEZdn2w6mq4gmT4FmEgvCfex3uEEUHTE9GL";
-      const result = await getAccount(address);
+      const result = await getAccount(address, currency);
 
       expect(result).toMatchObject({
         balance: expect.any(BigNumber),
@@ -79,7 +86,7 @@ describe("sidecar integration test", () => {
 
   describe("getValidators", () => {
     it.skip("returns expected result", async () => {
-      const result = await getValidators();
+      const result = await getValidators(undefined, getCryptoCurrencyById("polkadot"));
 
       expect(result).toEqual(
         expect.arrayContaining([
