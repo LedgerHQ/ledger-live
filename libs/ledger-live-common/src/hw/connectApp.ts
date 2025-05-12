@@ -26,10 +26,13 @@ import getDeviceInfo from "./getDeviceInfo";
 import getAddress from "./getAddress";
 import openApp from "./openApp";
 import quitApp from "./quitApp";
-import { mustUpgrade } from "../apps";
+import { LatestFirmwareVersionRequired } from "../errors";
+import { hasDeviceConfigForApp, mustUpgrade } from "../apps";
 import isUpdateAvailable from "./isUpdateAvailable";
 import { LockedDeviceEvent } from "./actions/types";
 import { getLatestFirmwareForDeviceUseCase } from "../device/use-cases/getLatestFirmwareForDeviceUseCase";
+import { identifyTargetId } from "@ledgerhq/devices/lib/index";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 export type RequiresDerivation = {
   currencyId: string;
@@ -47,6 +50,8 @@ export type ConnectAppRequest = {
   dependencies?: string[];
   requireLatestFirmware?: boolean;
   outdatedApp?: AppAndVersion;
+  deviceModelId?: DeviceModelId;
+  mightHaveOutdatedApp: boolean;
   allowPartialDependencies: boolean;
 };
 
@@ -113,6 +118,13 @@ export type ConnectAppEvent =
   | {
       type: "has-outdated-app";
       outdatedApp: AppAndVersion;
+    }
+  | {
+      type: "might-have-outdated-app";
+    }
+  | {
+      type: "set-device-model-id";
+      deviceModelId?: DeviceModelId;
     }
   | {
       type: "opened";
@@ -281,6 +293,8 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
     dependencies,
     requireLatestFirmware,
     outdatedApp,
+    deviceModelId,
+    mightHaveOutdatedApp,
     allowPartialDependencies = false,
   } = request;
   return withDevice(deviceId)(
@@ -343,6 +357,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                               appName,
                               dependencies,
                               allowPartialDependencies,
+                              mightHaveOutdatedApp,
                               // requireLatestFirmware // Resolved!.
                             });
                           } else {
@@ -372,6 +387,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                       return innerSub({
                         appName,
                         allowPartialDependencies,
+                        mightHaveOutdatedApp,
                         // dependencies // Resolved!
                       });
                     },
@@ -388,11 +404,36 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                   return of(e);
                 }
 
+                if (!deviceModelId && mightHaveOutdatedApp) {
+                  // get and set deviceModelId, and open app from dashboard.
+                  return from(getDeviceInfo(transport)).pipe(
+                    mergeMap((deviceInfo: DeviceInfo) => {
+                      o.next({
+                        type: "set-device-model-id",
+                        deviceModelId: identifyTargetId(Number(deviceInfo.targetId))?.id,
+                      });
+                      return openAppFromDashboard(transport, appName);
+                    }),
+                  );
+                }
+
                 // we're in dashboard
                 return openAppFromDashboard(transport, appName);
               }
 
-              const appNeedsUpgrade = mustUpgrade(appAndVersion.name, appAndVersion.version);
+              const appMightNeedUpgrade = hasDeviceConfigForApp(appAndVersion.name);
+              if (!deviceModelId && appMightNeedUpgrade) {
+                // quit app to get the deviceModelId and get the proper min app version.
+                o.next({
+                  type: "might-have-outdated-app",
+                });
+              }
+
+              const appNeedsUpgrade = mustUpgrade(
+                appAndVersion.name,
+                appAndVersion.version,
+                deviceModelId,
+              );
               if (appNeedsUpgrade) {
                 // quit app, check provider's app update for device's minimum requirements.
                 o.next({
@@ -406,7 +447,8 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                 dependencies?.length ||
                 requireLatestFirmware ||
                 appAndVersion.name !== appName ||
-                appNeedsUpgrade
+                appNeedsUpgrade ||
+                appMightNeedUpgrade
               ) {
                 return attemptToQuitApp(transport, appAndVersion as AppAndVersion);
               }
@@ -469,6 +511,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
           dependencies,
           requireLatestFirmware,
           allowPartialDependencies,
+          mightHaveOutdatedApp,
         }).subscribe(o);
 
         return () => {

@@ -23,6 +23,7 @@ import type { Account, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getImplementation, ImplementationType } from "./implementations";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 export type State = {
   isLoading: boolean;
@@ -455,6 +456,8 @@ export const createAction = (
     const dependenciesResolvedRef = useRef(false);
     const firmwareResolvedRef = useRef(false);
     const outdatedAppRef = useRef<AppAndVersion>();
+    const deviceModelIdRef = useRef<DeviceModelId>();
+    const mightHaveOutdatedAppRef = useRef(false);
 
     const request = useMemo(
       () => inferCommandParams(appRequest), // for now i don't have better
@@ -479,6 +482,8 @@ export const createAction = (
             dependencies: dependenciesResolvedRef.current ? undefined : dependencies,
             requireLatestFirmware: firmwareResolvedRef.current ? undefined : requireLatestFirmware,
             outdatedApp: outdatedAppRef.current,
+            deviceModelId: deviceModelIdRef.current,
+            mightHaveOutdatedApp: mightHaveOutdatedAppRef.current,
           },
         }).pipe(
           tap(e => {
@@ -489,6 +494,10 @@ export const createAction = (
               firmwareResolvedRef.current = true;
             } else if (e.type === "has-outdated-app") {
               outdatedAppRef.current = e.outdatedApp as AppAndVersion;
+            } else if (e.type === "might-have-outdated-app") {
+              mightHaveOutdatedAppRef.current = true;
+            } else if (e.type === "set-device-model-id") {
+              deviceModelIdRef.current = e.deviceModelId;
             }
           }),
         );
