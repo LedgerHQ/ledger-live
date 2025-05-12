@@ -2,12 +2,23 @@ import { verifyAppValidationSendInfo } from "../../../models/send";
 import { device } from "detox";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { getEnv } from "@ledgerhq/live-env";
+import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
 
-async function navigateToSendScreen(account: Account) {
-  await app.accounts.openViaDeeplink();
+async function navigateToSubAccount(account: Account) {
   await app.account.openViaDeeplink();
+  await app.account.goToAccountByName(account.accountName);
   await app.account.navigateToTokenInAccount(account);
-  await app.account.tapSend();
+}
+
+async function checkOperationInfos(
+  transaction: TransactionType,
+  operationType?: keyof typeof app.operationDetails.operationsType,
+) {
+  await app.operationDetails.waitForOperationDetails();
+  await app.operationDetails.checkAccount(transaction.accountToDebit.currency.name);
+  await app.operationDetails.checkRecipient(transaction.accountToCredit.address);
+  if (operationType) await app.operationDetails.checkTransactionType(operationType);
 }
 
 const beforeAllFunction = async (transaction: TransactionType) => {
@@ -47,9 +58,10 @@ export async function runSendSPL(transaction: TransactionType, tmsLinks: string[
     beforeAll(async () => {
       await beforeAllFunction(transaction);
     });
-    it(`Send from ${transaction.accountToDebit.accountName} to ${transaction.accountToCredit.accountName} - ${transaction.accountToDebit.currency.name} - E2E test`, async () => {
+    it(`Send from ${transaction.accountToDebit.accountName} Account to ${transaction.accountToCredit.accountName} Account - ${transaction.accountToDebit.currency.name} - E2E test`, async () => {
       const addressToCredit = transaction.accountToCredit.address;
-      await navigateToSendScreen(transaction.accountToDebit);
+      await navigateToSubAccount(transaction.accountToDebit);
+      await app.account.tapSend();
       await app.send.setRecipientAndContinue(addressToCredit, transaction.memoTag);
       await app.send.setAmountAndContinue(transaction.amount);
 
@@ -68,10 +80,15 @@ export async function runSendSPL(transaction: TransactionType, tmsLinks: string[
       await device.disableSynchronization();
       await app.common.successViewDetails();
 
-      await app.operationDetails.waitForOperationDetails();
-      await app.operationDetails.checkAccount(transaction.accountToDebit.accountName);
-      await app.operationDetails.checkRecipient(addressToCredit);
-      await app.operationDetails.checkTransactionType("OUT");
+      await checkOperationInfos(transaction, "OUT");
+
+      if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+        const subAccountId = app.account.subAccountId(transaction.accountToCredit);
+        await navigateToSubAccount(transaction.accountToCredit);
+        await app.account.expectAccountBalanceVisible(subAccountId);
+        await app.account.selectAndClickOnLastOperation(TransactionStatus.RECEIVED);
+        await checkOperationInfos(transaction);
+      }
     });
   });
 }
