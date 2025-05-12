@@ -265,8 +265,8 @@ importers:
         specifier: 2.1.0
         version: 2.1.0
       purify-ts:
-        specifier: 2.1.1
-        version: 2.1.1
+        specifier: 2.1.0
+        version: 2.1.0
       qrcode-terminal:
         specifier: 0.12.0
         version: 0.12.0
@@ -539,6 +539,9 @@ importers:
       prop-types:
         specifier: 15.8.1
         version: 15.8.1
+      purify-ts:
+        specifier: 2.1.0
+        version: 2.1.0
       qrcode:
         specifier: 1.5.3
         version: 1.5.3
@@ -28642,9 +28645,8 @@ packages:
   pure-rand@6.1.0:
     resolution: {integrity: sha512-bVWawvoZoBYpp6yIoQtQXHZjmz35RSVHnUOTefl8Vcjr8snTPY1wnpSPMWekcFwbxI6gtmT7rSYPFvz71ldiOA==}
 
-  purify-ts@2.1.1:
-    resolution: {integrity: sha512-usEWO44vu0GnfnvfmgT5L8LDO4dTHVC2kcITclDi2tbNGMEcbQm7IZADs8FD8chqni7tU5F0LZQRQdzFHndnPw==}
-    deprecated: this version contains broken build
+  purify-ts@2.1.0:
+    resolution: {integrity: sha512-+KNUHV9FxB9BbjadFdvxa+LNJIaqZmSF7CQH5Rv6+f0rBzsxm9FEqrvkALQbWYJobAja2ZCbBDUY7O4fH2znMA==}
 
   pushdata-bitcoin@1.0.1:
     resolution: {integrity: sha512-hw7rcYTJRAl4olM8Owe8x0fBuJJ+WGbMhQuLWOXEMN3PxPCKQHRkhfL+XG0+iXUmSHjkMmb3Ba55Mt21cZc9kQ==}
@@ -40049,7 +40051,7 @@ snapshots:
       crypto-js: 4.2.0
       ethers: 6.13.4
       inversify: 6.2.2(reflect-metadata@0.2.2)
-      purify-ts: 2.1.1
+      purify-ts: 2.1.0
       reflect-metadata: 0.2.2
     transitivePeerDependencies:
       - bufferutil
@@ -40082,7 +40084,7 @@ snapshots:
       inversify: 6.2.2(reflect-metadata@0.2.2)
       inversify-logger-middleware: 3.1.0
       isomorphic-ws: 5.0.0(ws@8.18.0)
-      purify-ts: 2.1.1
+      purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       rxjs: 7.8.1
       semver: 7.7.1
@@ -40102,7 +40104,7 @@ snapshots:
       ethers: 6.13.4
       inversify: 6.2.2(reflect-metadata@0.2.2)
       inversify-logger-middleware: 3.1.0
-      purify-ts: 2.1.1
+      purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       semver: 7.7.1
       xstate: 5.19.2
@@ -40115,7 +40117,7 @@ snapshots:
       '@ledgerhq/device-management-kit': 0.0.0-fix-rn-ble-20250425173318(rxjs@7.8.1)
       '@sentry/minimal': 6.19.7
       js-base64: 3.7.7
-      purify-ts: 2.1.1
+      purify-ts: 2.1.0
       react-native: 0.76.3(react@18.3.1)
       react-native-ble-plx: 3.4.0(react-native@0.76.3(react@18.3.1))(react@18.3.1)
       rxjs: 7.8.1
@@ -40125,7 +40127,7 @@ snapshots:
     dependencies:
       '@ledgerhq/device-management-kit': 0.0.0-fix-rn-ble-20250425173318(rxjs@7.8.1)
       '@sentry/minimal': 6.19.7
-      purify-ts: 2.1.1
+      purify-ts: 2.1.0
       rxjs: 7.8.1
       uuid: 11.1.0
 
@@ -63026,7 +63028,7 @@ snapshots:
 
   pure-rand@6.1.0: {}
 
-  purify-ts@2.1.1:
+  purify-ts@2.1.0:
     dependencies:
       '@types/json-schema': 7.0.15
 
