@@ -20,8 +20,18 @@ function setupEnv(disableBroadcast?: boolean) {
 const ethEarn = [
   {
     account: Account.ETH_1,
-    provider: "lido",
+    provider: "Lido",
     xrayTicket: "B2CQA-2452-1",
+  },
+  {
+    account: Account.ETH_1,
+    provider: "Stader Labs",
+    xrayTicket: "B2CQA-2452-2",
+  },
+  {
+    account: Account.ETH_1,
+    provider: "Kiln staking Pool",
+    xrayTicket: "B2CQA-2452-3",
   },
 ];
 
@@ -57,8 +67,7 @@ for (const { account, provider, xrayTicket } of ethEarn) {
         await app.earn.clickEarnMoreButton(electronApp);
         await app.earn.clickStakeCurrencyButton(electronApp, account.accountName);
         await app.delegate.chooseStakeProvider(provider);
-        await app.earn.verifyProviderURL(electronApp);
-        await app.liveApp.verifyLiveAppTitle(provider);
+        await app.earn.verifyProviderURL(electronApp, provider, account);
       },
     );
   });

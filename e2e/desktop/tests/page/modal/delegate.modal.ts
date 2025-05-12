@@ -9,8 +9,7 @@ export class DelegateModal extends Modal {
   private searchCloseButton = this.page.getByText("Show less");
   private validatorList = this.page.getByTestId("validator-list");
   private inputSearchField = this.page.getByPlaceholder("Search by name or address...");
-  private stakeProviderContainer = (stakeProviderID: string) =>
-    this.page.getByTestId(`stake-provider-container-${stakeProviderID}`);
+  private stakeProvider = (stakeProvider: string) => this.page.getByText(`${stakeProvider}`);
   private detailsButton = this.page.getByRole("button", { name: "View details" });
   private validatorTC = this.page.getByTestId("ledger-validator-tc");
   private validatorName = this.page.getByTestId("validator-name-label");
@@ -127,7 +126,7 @@ export class DelegateModal extends Modal {
 
   @step("Click on chosen stake provider $0")
   async chooseStakeProvider(stakeProvider: string) {
-    await this.stakeProviderContainer(stakeProvider).click();
+    await this.stakeProvider(stakeProvider).click();
   }
 
   @step("Click on view details button")

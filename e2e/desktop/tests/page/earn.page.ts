@@ -1,3 +1,4 @@
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { step } from "../misc/reporters/step";
 import { AppPage } from "./abstractClasses";
 import { ElectronApplication } from "@playwright/test";
@@ -36,14 +37,36 @@ export class EarnPage extends AppPage {
   }
 
   @step("Verify provider URL")
-  async verifyProviderURL(electronApp: ElectronApplication) {
-    //, selectedProvider: string) {
+  async verifyProviderURL(
+    electronApp: ElectronApplication,
+    selectedProvider: string,
+    account: Account,
+  ) {
     const newWindow = await electronApp.waitForEvent("window");
 
     await newWindow.waitForLoadState();
 
     const url = newWindow.url();
-    console.log("URL:", url);
-    //todo: ajouter les verifs sur l'url en fonction du provider
+
+    switch (selectedProvider) {
+      case "Lido": {
+        this.expectUrlToContainAll(url, [account.currency.id, "stake.lido.fi"]);
+        break;
+      }
+      case "Stader Labs": {
+        this.expectUrlToContainAll(url, [
+          account.currency.id,
+          `staderlabs.com/${account.currency.ticker}`,
+          account.address,
+        ]);
+        break;
+      }
+      case "Kiln staking Pool": {
+        this.expectUrlToContainAll(url, [account.currency.id, "kiln.fi%2F%3Ffocus%3Dpooled"]);
+        break;
+      }
+      default:
+        throw new Error(`Unknown provider: ${selectedProvider}`);
+    }
   }
 }
