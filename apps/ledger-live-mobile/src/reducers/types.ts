@@ -34,6 +34,7 @@ import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 import { NftStatus } from "@ledgerhq/live-nft/types";
 import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/useListsAnimation";
+import { LargeMoverState } from "./LargeMover";
 
 // === ACCOUNT STATE ===
 
@@ -391,4 +392,5 @@ export type State = {
   wallet: WalletState;
   trustchain: TrustchainStore;
   walletSync: WalletSyncState;
+  largeMover: LargeMoverState;
 };
