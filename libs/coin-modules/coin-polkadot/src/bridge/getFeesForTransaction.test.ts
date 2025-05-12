@@ -40,6 +40,7 @@ describe("getEstimatedFees", () => {
         },
         metadataShortener: {
           url: "https://polkadot-metadata-shortener.api.live.ledger.com/transaction/metadata",
+          id: "dot",
         },
         metadataHash: {
           url: "https://polkadot-metadata-shortener.api.live.ledger.com/node/metadata/hash",

@@ -132,7 +132,12 @@ function createValidators(): Validators {
       status: SidecarValidatorsParamStatus | SidecarValidatorsParamAddresses;
       validator: string[];
     }>): Observable<string> =>
-      from(polkadotAPI.getValidators(validator && validator.length ? validator : status)).pipe(
+      from(
+        polkadotAPI.getValidators(
+          validator && validator.length ? validator : status,
+          getCryptoCurrencyById("polkadot"),
+        ),
+      ).pipe(
         map(validators => {
           const f =
             format && format in polkadotValidatorsFormatters

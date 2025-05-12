@@ -41,6 +41,7 @@ setSupportedCurrencies([
   "ethereum",
   "bsc",
   "polkadot",
+  "westend",
   "solana",
   "solana_testnet",
   "solana_devnet",
