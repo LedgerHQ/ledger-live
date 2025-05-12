@@ -35,6 +35,8 @@ type Props = {
 const SideDrawerHeader = ({ title, onRequestClose, onRequestBack }: Props) => {
   const blocked = useDeviceBlocked();
 
+  const hasOnlyCloseButton = !onRequestBack && !title && onRequestClose;
+
   return (
     <>
       {onRequestClose || onRequestBack || title ? (
@@ -44,8 +46,8 @@ const SideDrawerHeader = ({ title, onRequestClose, onRequestBack }: Props) => {
           height={62}
           alignItems="center"
           m={0}
-          width={onRequestBack ? "100%" : "fit-content"}
-          alignSelf={onRequestBack ? "auto" : "flex-end"}
+          width={hasOnlyCloseButton ? "fit-content" : "100%"}
+          alignSelf={hasOnlyCloseButton ? "flex-end" : "auto"}
           p="24px"
           style={{
             zIndex: 200,
