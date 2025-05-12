@@ -1,9 +1,9 @@
 import BigNumber from "bignumber.js";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, Operation } from "@ledgerhq/types-live";
 import cvsApi from "@ledgerhq/live-countervalues/api/index";
 import { getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
-import type { Transaction } from "../types";
+import type { HederaOperationExtra, Transaction } from "../types";
 
 export const estimatedFeeSafetyRate = 2;
 
@@ -58,4 +58,16 @@ export function base64ToUrlSafeBase64(data: string): string {
   // Buffer.from(data, "base64").toString("base64url");
 
   return data.replace(/\//g, "_").replace(/\+/g, "-");
+}
+
+export function patchOperationWithExtra(
+  operation: Operation,
+  extra: HederaOperationExtra,
+): Operation {
+  return {
+    ...operation,
+    extra,
+    subOperations: (operation.subOperations ?? []).map(op => ({ ...op, extra })),
+    nftOperations: (operation.nftOperations ?? []).map(op => ({ ...op, extra })),
+  };
 }
