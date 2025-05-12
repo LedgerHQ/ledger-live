@@ -83,6 +83,8 @@ env:
   COINAPPS: ${{ github.workspace }}/coin-apps
   SPECULOS_RUN: ${{ inputs.speculos_tests || github.event_name == 'schedule' }}
   SHOULD_UPLOAD: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || (github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) }}
+  IOS_JSBUNDLE_PATH: /apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
+  IOS_NATIVE_PATH: /apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
 
 jobs:
   build-ios-native:
@@ -164,7 +166,7 @@ jobs:
       - name: Upload Detox Build
         uses: tespkg/actions-cache/save@v1
         with:
-          path: ${{ github.workspace }}/apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
+          path: ${{ github.workspace }}${{ env.IOS_NATIVE_PATH }}
           key: ${{ runner.os }}-poc-detox-native-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js', 'apps/ledger-live-mobile/.env.mock', 'apps/ledger-live-mobile/ios/ledgerlivemobile/AppDelegate.mm') }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -223,13 +225,16 @@ jobs:
           turbo_port: ${{ steps.setup-caches.outputs.port }}
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
 
+      - name: Create Directory or build
+        run: mkdir -p ${{ github.workspace }}${{ env.IOS_JSBUNDLE_PATH }}
+
       - name: Build JS Bundle app for Detox test run
         run: pnpm mobile e2e:ci -p ios --bundle
 
       - name: Upload Detox JS Build
         uses: tespkg/actions-cache/save@v1
         with:
-          path: ${{ github.workspace }}/apps/ledger-live-mobile/main.jsbundle
+          path: ${{ github.workspace }}${{ env.IOS_JSBUNDLE_PATH }}
           key: ${{ runner.os }}-poc-detox-js-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js', 'apps/ledger-live-mobile/.env.mock', 'apps/ledger-live-mobile/ios/ledgerlivemobile/AppDelegate.mm') }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -292,13 +297,27 @@ jobs:
           command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
           new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
 
-      - name: Download Detox Build
+      - name: Download Native Build
         uses: tespkg/actions-cache/restore@v1
         if: steps.aws.conclusion == 'success'
         id: detox-build
         with:
-          path: ${{ github.workspace }}/apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
-          key: ${{ runner.os }}-poc-detox-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js', 'apps/ledger-live-mobile/.env.mock', 'apps/ledger-live-mobile/ios/ledgerlivemobile/AppDelegate.mm') }}
+          path: ${{ github.workspace }}${{ env.IOS_NATIVE_PATH }}
+          key: ${{ runner.os }}-poc-detox-native-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js', 'apps/ledger-live-mobile/.env.mock', 'apps/ledger-live-mobile/ios/ledgerlivemobile/AppDelegate.mm') }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ll-gha-s3-cache
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+
+      - name: Download JS Build
+        uses: tespkg/actions-cache/restore@v1
+        if: steps.aws.conclusion == 'success'
+        id: detox-build
+        with:
+          path: ${{ github.workspace }}${{ env.IOS_JSBUNDLE_PATH }}
+          key: ${{ runner.os }}-poc-detox-js-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js', 'apps/ledger-live-mobile/.env.mock', 'apps/ledger-live-mobile/ios/ledgerlivemobile/AppDelegate.mm') }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
