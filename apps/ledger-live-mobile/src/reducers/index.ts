@@ -18,6 +18,7 @@ import trustchain from "./trustchain";
 import walletSync from "./walletSync";
 import { State } from "./types";
 import { ActionsPayload } from "../actions/types";
+import largeMover from "./LargeMover";
 
 export type AppStore = Store<State>;
 
@@ -39,6 +40,7 @@ const appReducer = combineReducers({
   market,
   trustchain,
   walletSync,
+  largeMover,
 });
 
 // TODO: EXPORT ALL POSSIBLE ACTION TYPES AND USE ACTION<TYPES>
