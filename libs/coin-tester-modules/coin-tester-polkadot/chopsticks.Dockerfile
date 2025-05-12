@@ -6,6 +6,9 @@ HEALTHCHECK --interval=10s --timeout=30s --start-period=5s --retries=10 CMD [ "c
 
 RUN npm install -g @acala-network/chopsticks@latest
 
+
+ENV CHOPSTICKS_CONFIG=/coin-tester-chopsticks/polkadot.yml
+
 EXPOSE 8000
 
-CMD ["chopsticks", "--config", "coin-tester-chopsticks.yml"]
+CMD ["sh", "-lc", "chopsticks --config \"$CHOPSTICKS_CONFIG\" --port 8000"]

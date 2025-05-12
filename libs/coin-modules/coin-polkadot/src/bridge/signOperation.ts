@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Observable } from "rxjs";
 import { BigNumber } from "bignumber.js";
 import { FeeNotLoaded } from "@ledgerhq/errors";
@@ -9,6 +10,7 @@ import { buildTransaction } from "./buildTransaction";
 import { calculateAmount } from "./utils";
 import { signExtrinsic } from "../logic";
 import polkadotAPI from "../network";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 /**
  * Sign Transaction with Ledger hardware
@@ -28,7 +30,7 @@ export const buildSignOperation =
           throw new FeeNotLoaded();
         }
 
-        // Ensure amount is filled when useAllAmount
+        // Ensure amount is filled when uxseAllAmount
         const transactionToSign = {
           ...transaction,
           amount: calculateAmount({
@@ -44,8 +46,11 @@ export const buildSignOperation =
           .toU8a({
             method: true,
           });
+        const currency = getCryptoCurrencyById(account.currency.id);
         const payloadString = Buffer.from(payload).toString("hex");
-        const metadata = await polkadotAPI.shortenMetadata(payloadString);
+        console.log("unsigned:", unsigned);
+
+        const metadata = await polkadotAPI.shortenMetadata(payloadString, currency);
         const r = await signerContext(deviceId, signer =>
           signer.sign(account.freshAddressPath, payload, metadata),
         );

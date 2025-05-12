@@ -1,11 +1,12 @@
 import { ApiPromise, HttpProvider, WsProvider } from "@polkadot/api";
 import polkadotCoinConfig, { type PolkadotCoinConfig } from "../../config";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 let coinConfig: PolkadotCoinConfig | undefined;
 let api: ApiPromise | undefined;
 
-export default async function () {
-  const config = polkadotCoinConfig.getCoinConfig();
+export default async function (currency?: CryptoCurrency) {
+  const config = polkadotCoinConfig.getCoinConfig(currency);
   // Need to constantly check if a new config is setted
   if (!api || coinConfig !== config) {
     coinConfig = config;

@@ -3267,6 +3267,32 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
   },
   // Testnets
+  westend: {
+    type: "CryptoCurrency",
+    id: "westend",
+    coinType: CoinType.POLKADOT,
+    name: "Westend",
+    managerAppName: "Polkadot",
+    ticker: "WND",
+    deviceTicker: "DOT",
+    scheme: "westend",
+    color: "#00ff00",
+    units: [
+      {
+        code: "WND",
+        name: "WND",
+        magnitude: 10,
+      },
+    ],
+    isTestnetFor: "polkadot",
+    family: "polkadot",
+    explorerViews: [
+      {
+        address: "https://westend.subscan.io/account/$address",
+        tx: "https://westend.subscan.io/extrinsic/$hash",
+      },
+    ],
+  },
   bitcoin_testnet: {
     type: "CryptoCurrency",
     id: "bitcoin_testnet",

@@ -8,6 +8,7 @@ import {
 import getApiPromise from "./apiPromise";
 import { ApiPromise } from "@polkadot/api";
 import type { SpStakingPagedExposureMetadata } from "@polkadot/types/lookup";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 /**
  * Fetch a list of validators with some info and indentity.
@@ -23,8 +24,9 @@ import type { SpStakingPagedExposureMetadata } from "@polkadot/types/lookup";
 export const fetchValidators = async (
   status: SidecarValidatorsParamStatus = "all",
   addresses?: SidecarValidatorsParamAddresses,
+  currency?: CryptoCurrency,
 ): Promise<SidecarValidators> => {
-  const api = await getApiPromise();
+  const api = await getApiPromise(currency);
 
   const [activeOpt, allStashes, elected] = await Promise.all([
     api.query.staking.activeEra(),

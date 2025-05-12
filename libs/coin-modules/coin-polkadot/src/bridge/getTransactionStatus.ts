@@ -38,6 +38,8 @@ import { isValidAddress } from "../common";
 import { getCurrentPolkadotPreloadData } from "./state";
 import { loadPolkadotCrypto } from "../logic/polkadot-crypto";
 import polkadotAPI from "../network";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 // Should try to refacto
 const getSendTransactionStatus: AccountBridge<
@@ -61,6 +63,8 @@ const getSendTransactionStatus: AccountBridge<
       currencyName: account.currency.name,
     });
   }
+
+  const currency: CryptoCurrency = getCryptoCurrencyById(account.currency.id);
 
   const estimatedFees = transaction.fees || new BigNumber(0);
   const amount = calculateAmount({
@@ -93,7 +97,7 @@ const getSendTransactionStatus: AccountBridge<
   if (
     !errors.recipient &&
     amount.lt(EXISTENTIAL_DEPOSIT) &&
-    (await polkadotAPI.isNewAccount(transaction.recipient))
+    (await polkadotAPI.isNewAccount(transaction.recipient, currency))
   ) {
     errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
       minimalAmount: formatCurrencyUnit(account.currency.units[0], EXISTENTIAL_DEPOSIT, {
@@ -131,6 +135,7 @@ export const getTransactionStatus: AccountBridge<
   const preloaded = getCurrentPolkadotPreloadData();
   const { staking, validators } = preloaded;
   const minimumBondBalance = new BigNumber(preloaded.minimumBondBalance);
+  const currency: CryptoCurrency = getCryptoCurrencyById(account.currency.id);
 
   if (transaction.mode === "send") {
     return await getSendTransactionStatus(account, transaction);
@@ -138,7 +143,7 @@ export const getTransactionStatus: AccountBridge<
 
   if (
     (staking && !staking.electionClosed) || // Preloaded
-    (!staking && (await !polkadotAPI.isElectionClosed())) // Fallback
+    (!staking && !(await polkadotAPI.isElectionClosed(currency))) // Fallback
   ) {
     errors.staking = new PolkadotElectionClosed();
   }
@@ -172,7 +177,7 @@ export const getTransactionStatus: AccountBridge<
           errors.recipient = new InvalidAddress("", {
             currencyName: account.currency.name,
           });
-        } else if (await polkadotAPI.isControllerAddress(transaction.recipient)) {
+        } else if (await polkadotAPI.isControllerAddress(transaction.recipient, currency)) {
           errors.recipient = new PolkadotUnauthorizedOperation("Recipient is already a controller");
         }
       }
@@ -253,6 +258,7 @@ export const getTransactionStatus: AccountBridge<
           // Fallback with api call
           const notValidators = await polkadotAPI.verifyValidatorAddresses(
             transaction.validators || [],
+            currency,
           );
 
           if (notValidators.length) {
