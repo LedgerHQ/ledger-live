@@ -54,7 +54,7 @@ const test_ios = async () => {
     --forceExit \
     --headless \
     --retries 1 \
-    --maxWorkers 2 \
+    --runInBand \
     --cleanup \
     --shard ${shard} \
     ${filter.split(" ")}`;
