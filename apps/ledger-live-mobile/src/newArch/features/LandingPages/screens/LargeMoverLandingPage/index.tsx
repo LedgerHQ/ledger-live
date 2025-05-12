@@ -1,5 +1,5 @@
 import { Flex } from "@ledgerhq/native-ui";
-import React, { useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useLargeMover } from "./hooks/useLargeMover";
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { Card } from "./components/Card";
@@ -17,15 +17,21 @@ import { LoadingIndicator } from "./components/Loading";
 import { CardType } from "./types";
 import { TrackScreen } from "~/analytics";
 import { PAGE_NAME } from "./const";
-
-import { useSelector } from "react-redux";
 import { useLargeMoverChartData } from "@ledgerhq/live-common/market/hooks/useLargeMoverChartData";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
+import { OverlayTutorial } from "./components/OverlayTutotial";
+import { useSelector, useDispatch } from "react-redux";
+import { tutorialSelector } from "~/reducers/LargeMover";
+import { createAction } from "redux-actions";
+import { LargeMoverActionTypes } from "~/reducers/LargeMover";
+
 type LargeMoverLandingPageProps = StackNavigatorProps<
   LandingPagesNavigatorParamList,
   ScreenName.LargeMoverLandingPage
 >;
+
+export const setTutorial = createAction<boolean>(LargeMoverActionTypes.SET_TUTORIAL);
 
 export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => {
   const { currencyIds, initialRange = "day" } = route.params;
@@ -50,6 +56,19 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
   const constHeight = Platform.OS === "ios" ? 0.75 : 0.8;
   const height = getWindowDimensions().height * constHeight;
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  const dispatch = useDispatch();
+  const showOverlay = useSelector(tutorialSelector);
+
+  useEffect(() => {
+    if (showOverlay === undefined) {
+      dispatch(setTutorial(true));
+    }
+  }, [dispatch, showOverlay]);
+
+  const handleCloseOverlay = () => {
+    dispatch(setTutorial(false));
+  };
 
   const currenciesWithId = useMemo(
     () =>
@@ -93,24 +112,27 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.neutral.c00, paddingTop: 10 }}>
-      <TrackScreen name={PAGE_NAME} initialRange={initialRange} currencyIds={currencyIds} />
-      <StickyHeader />
-      <Flex paddingTop={40}>
-        {loading && loadingChart ? (
-          <LoadingIndicator height={height} />
-        ) : (
-          <Flex>
-            <SwiperComponent
-              cardContainerStyle={{ justifyContent: "flex-start" }}
-              currentIndex={currentIndex}
-              onIndexChange={setCurrentIndex}
-              initialCards={currenciesWithId}
-              renderCard={renderCard}
-            />
-          </Flex>
-        )}
-      </Flex>
-    </SafeAreaView>
+    <>
+      {showOverlay && !loading && <OverlayTutorial handleCloseOverlay={handleCloseOverlay} />}
+      <SafeAreaView style={{ flex: 1, backgroundColor: colors.neutral.c00, paddingTop: 10 }}>
+        <TrackScreen name={PAGE_NAME} initialRange={initialRange} currencyIds={currencyIds} />
+        <StickyHeader />
+        <Flex paddingTop={40}>
+          {loading && loadingChart ? (
+            <LoadingIndicator height={height} />
+          ) : (
+            <Flex>
+              <SwiperComponent
+                cardContainerStyle={{ justifyContent: "flex-start" }}
+                currentIndex={currentIndex}
+                onIndexChange={setCurrentIndex}
+                initialCards={currenciesWithId}
+                renderCard={renderCard}
+              />
+            </Flex>
+          )}
+        </Flex>
+      </SafeAreaView>
+    </>
   );
 };
