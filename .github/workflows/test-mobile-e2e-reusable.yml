@@ -85,7 +85,8 @@ env:
   SHOULD_UPLOAD: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || (github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) }}
 
 jobs:
-  build-ios:
+  build-ios-native:
+    name: "iOS Build Native"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
@@ -93,6 +94,13 @@ jobs:
       LC_ALL: en_US.UTF-8
     runs-on: ["${{ inputs.macos-specificity-runner-label || 'general-pool' }}", macOS, ARM64]
     steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        id: aws
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
+          aws-region: ${{ secrets.AWS_CACHE_REGION }}
+
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
@@ -109,13 +117,6 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        id: aws
-        with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
-          aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
       - uses: nick-fields/retry@v3
         name: install dependencies
@@ -160,15 +161,76 @@ jobs:
       - name: Build iOS app for Detox test run
         run: pnpm mobile e2e:ci -p ios -b
 
+      - name: Upload Detox Build
+        uses: tespkg/actions-cache/save@v1
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
+          key: ${{ runner.os }}-poc-detox-native-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js', 'apps/ledger-live-mobile/.env.mock', 'apps/ledger-live-mobile/ios/ledgerlivemobile/AppDelegate.mm') }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ll-gha-s3-cache
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+
+  build-ios-js:
+    name: "iOS Build JS"
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      LANG: en_US.UTF-8
+      LANGUAGE: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
+    runs-on: [ ledger-live-4xlarge ]
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        id: aws
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
+          aws-region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          repository: LedgerHQ/ledger-live
+
+      - name: setup caches
+        id: setup-caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          skip-pod-cache: "true"
+          skip-turbo-cache: "false"
+          skip-pnpm-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - uses: nick-fields/retry@v3
+        name: install dependencies
+        id: install-dependencies
+        with:
+          max_attempts: 2
+          timeout_minutes: 15
+          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+
+      - name: Build dependencies
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        with:
+          command: pnpm build:llm:deps
+          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          turbo_port: ${{ steps.setup-caches.outputs.port }}
+          disable_cache: ${{ inputs.disable-turbo-cache || false }}
+
       - name: Build JS Bundle app for Detox test run
         run: pnpm mobile e2e:ci -p ios --bundle
 
-      - name: Upload Detox Build
+      - name: Upload Detox JS Build
         uses: tespkg/actions-cache/save@v1
-        if: steps.aws.conclusion == 'success'
         with:
-          path: ${{ github.workspace }}/apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
-          key: ${{ runner.os }}-poc-detox-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js', 'apps/ledger-live-mobile/.env.mock', 'apps/ledger-live-mobile/ios/ledgerlivemobile/AppDelegate.mm') }}
+          path: ${{ github.workspace }}/apps/ledger-live-mobile/main.jsbundle
+          key: ${{ runner.os }}-poc-detox-js-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js', 'apps/ledger-live-mobile/.env.mock', 'apps/ledger-live-mobile/ios/ledgerlivemobile/AppDelegate.mm') }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
@@ -178,7 +240,7 @@ jobs:
 
   detox-tests-ios:
     name: "iOS Detox"
-    needs: [build-ios]
+    needs: [build-ios-native, build-ios-js]
     runs-on: ["${{ inputs.macos-specificity-runner-label || 'general-pool' }}", macOS, ARM64]
     if: ${{ !inputs.speculos_tests && github.event_name != 'schedule' }}
     strategy:
