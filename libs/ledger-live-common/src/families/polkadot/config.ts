@@ -26,4 +26,28 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
       },
     },
   },
+  config_currency_westend: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+      },
+      sidecar: {
+        url: "https://polkadot-westend-sidecar.coin.ledger.com/",
+        // credentials: getEnv("API_POLKADOT_SIDECAR_CREDENTIALS"),
+      },
+      node: {
+        url: "https://polkadot-westend-fullnodes.api.live.ledger.com/",
+      },
+      // staking: {
+      //   electionStatusThreshold: getEnv("POLKADOT_ELECTION_STATUS_THRESHOLD"),
+      // },
+      metadataShortener: {
+        url: "https://polkadot-westend-metadata-shortener.api.live.ledger.com/",
+      },
+      // metadataHash: {
+      //   url: "https://polkadot-metadata-shortener.api.live.ledger.com/node/metadata/hash",
+      // },
+    },
+  },
 };
