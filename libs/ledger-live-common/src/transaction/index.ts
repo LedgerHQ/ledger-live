@@ -25,31 +25,30 @@ export const fromTransactionStatusRaw = (
   tr: TransactionStatusRaw,
   family: string,
 ): TransactionStatus => {
-  // const bridge = getBridgeByFamily(family);
-  // return bridge.serializationBridge.fromTransactionStatusRaw(tr);
-  return callSerializeBridgeFunc(t, "toTransactionRaw");
+  const bridge = getBridgeByFamily(family);
+  return bridge.serializationBridge.fromTransactionStatusRaw(tr as any);
+  // return callSerializeBridgeFunc(t, "toTransactionRaw");
 };
 export const toTransactionStatusRaw = (
   t: TransactionStatus,
   family: string,
 ): TransactionStatusRaw => {
-  // const bridge = getBridgeByFamily(family);
-  // return bridge.serializationBridge.toTransactionStatusRaw(t);
-  return callSerializeBridgeFunc(t, "toTransactionRaw");
+  const bridge = getBridgeByFamily(family);
+  return bridge.serializationBridge.toTransactionStatusRaw(t as any);
+  // return callSerializeBridgeFunc(t, "toTransactionRaw");
 };
 
 export const formatTransaction = (t: Transaction, a: Account): string => {
-  // const bridge = getBridgeByTransaction(t);
-  // return bridge.serializationBridge.formatTransaction(t, a);
-  return callSerializeBridgeFunc(t, "toTransactionRaw");
+  const bridge = getBridgeByTransaction(t);
+  return bridge.serializationBridge.formatTransaction(t as any, a);
+  // return callSerializeBridgeFunc(t, "toTransactionRaw");
 };
-
 export const formatTransactionStatus = (
   t: Transaction,
   ts: TransactionStatus,
   mainAccount: Account,
 ): string => {
-  // const bridge = getBridgeByTransaction(t);
-  // return bridge.serializationBridge.formatTransactionStatus(t, ts, mainAccount);
-  return callSerializeBridgeFunc(t, "toTransactionRaw");
+  const bridge = getBridgeByTransaction(t);
+  return bridge.serializationBridge.formatTransactionStatus(t as any, ts as any, mainAccount);
+  // return callSerializeBridgeFunc(t, "toTransactionRaw");
 };
