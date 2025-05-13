@@ -86,6 +86,7 @@ env:
   IOS_JSBUNDLE_PATH: /apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
   IOS_NATIVE_PATH: /apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
   ANDROID_APK_PATH: /apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-x86_64-detox.apk
+  ANDROID_TESTBINARY_PATH: /apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
   ANDROID_JSBUNDLE_PATH: /apps/ledger-live-mobile/main.jsbundle
 jobs:
 #  build-ios-native:
@@ -479,6 +480,18 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
+      - name: Upload Detox Testbinary Build
+        uses: tespkg/actions-cache/save@v1
+        with:
+          path: ${{ github.workspace }}${{ env.ANDROID_TESTBINARY_PATH }}
+          key: poc-detox-native-android
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ll-gha-s3-cache
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+
   build-android-js:
     name: "Android Build JS"
     runs-on: [ ledger-live-4xlarge ]
@@ -564,19 +577,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3]
-        shardTotal: [3, 1]
-        exclude:
-          - shardIndex: ${{ (github.event.inputs.speculos_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'merge_group') && '2' }}
-          - shardIndex: ${{ (github.event.inputs.speculos_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'merge_group') && '3' }}
-          - shardTotal: ${{ (github.event.inputs.speculos_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'merge_group') && '3' }}
-          - shardTotal: ${{ github.event.inputs.speculos_tests != 'false' && github.event_name != 'push' && github.event_name != 'pull_request' && github.event_name != 'merge_group' && '1' }}
+        shardIndex: [1, 2]
+        shardTotal: [2]
 
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
+
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
@@ -640,26 +649,38 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
-#      - name: cache android emulator
-#        timeout-minutes: 5
-#        uses: tespkg/actions-cache@v1
-#        id: detox-avd
-#        with:
-#          path: |
-#            ~/.android/avd/*
-#            ~/.android/adb*
-#            /usr/local/lib/android/sdk/system-images/android-${{ env.AVD_API }}/${{ env.AVD_TARGET }}/${{ env.AVD_ARCH }}/*
-#            /usr/local/lib/android/sdk/emulator/*
-#          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}
-#          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-#          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-#          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
-#          bucket: ll-gha-s3-cache
-#          region: ${{ secrets.AWS_CACHE_REGION }}
-#          use-fallback: false
+      - name: Download Native Testbinary
+        uses: tespkg/actions-cache/restore@v1
+        with:
+          path: ${{ github.workspace }}${{ env.ANDROID_TESTBINARY_PATH }}
+          key: poc-detox-native-android
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ll-gha-s3-cache
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+
+      - name: cache android emulator
+        timeout-minutes: 5
+        uses: tespkg/actions-cache@v1
+        id: detox-avd
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+            /usr/local/lib/android/sdk/system-images/android-${{ env.AVD_API }}/${{ env.AVD_TARGET }}/${{ env.AVD_ARCH }}/*
+            /usr/local/lib/android/sdk/emulator/*
+          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ll-gha-s3-cache
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
 
       - name: create AVD and generate snapshot for caching
-#        if: steps.detox-avd.outputs.cache-hit != 'true'
+        if: steps.detox-avd.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ env.AVD_API }}
