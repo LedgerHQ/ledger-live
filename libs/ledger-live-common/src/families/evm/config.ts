@@ -595,8 +595,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://developer-access-mainnet.base.org",
       },
       explorer: {
-        type: "blockscout",
-        uri: "https://base.blockscout.com/api",
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/8453",
       },
     },
   },
