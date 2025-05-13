@@ -1,3 +1,4 @@
+import { reduce } from "rxjs";
 import { Strategy } from "@ledgerhq/coin-evm/lib/types/index";
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -117,8 +118,22 @@ export const getFee =
 
     // Setup accounts and bridge
     const fromParentAccount = getParentAccount(fromAccount, accounts);
-    const mainAccount = getMainAccount(fromAccount, fromParentAccount);
+    let mainAccount = getMainAccount(fromAccount, fromParentAccount);
     const bridge = getAccountBridge(fromAccount, fromParentAccount);
+    
+    if (mainAccount.currency.id === "bitcoin") {
+      try {
+        const observable = bridge.sync(mainAccount, { paginationConfig: {} });
+        const reduced = observable.pipe(reduce((a, f) => f(a), mainAccount));
+        const syncedAccount = await reduced.toPromise();
+        if (syncedAccount) {
+          mainAccount = syncedAccount;
+        }
+      } catch (e) {
+        console.error("Error syncing account:", e);
+      }
+    }
+
 
     // Create and prepare transaction
     const subAccountId = fromAccount.type !== "Account" && fromAccount.id;
