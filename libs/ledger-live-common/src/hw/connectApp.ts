@@ -1,6 +1,6 @@
 import semver from "semver";
-import { Observable, concat, from, of, throwError, defer, merge, combineLatest } from "rxjs";
-import { mergeMap, concatMap, map, catchError, delay, mapTo, switchMap } from "rxjs/operators";
+import { Observable, concat, from, of, throwError, defer, merge } from "rxjs";
+import { mergeMap, concatMap, map, catchError, delay } from "rxjs/operators";
 import {
   TransportStatusError,
   FirmwareOrAppUpdateRequired,
@@ -51,7 +51,6 @@ export type ConnectAppRequest = {
   requireLatestFirmware?: boolean;
   outdatedApp?: AppAndVersion;
   deviceModelId?: DeviceModelId;
-  mightHaveOutdatedApp: boolean;
   allowPartialDependencies: boolean;
 };
 
@@ -118,9 +117,6 @@ export type ConnectAppEvent =
   | {
       type: "has-outdated-app";
       outdatedApp: AppAndVersion;
-    }
-  | {
-      type: "might-have-outdated-app";
     }
   | {
       type: "set-device-model-id";
@@ -294,7 +290,6 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
     requireLatestFirmware,
     outdatedApp,
     deviceModelId,
-    mightHaveOutdatedApp,
     allowPartialDependencies = false,
   } = request;
   return withDevice(deviceId)(
@@ -357,7 +352,6 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                               appName,
                               dependencies,
                               allowPartialDependencies,
-                              mightHaveOutdatedApp,
                               // requireLatestFirmware // Resolved!.
                             });
                           } else {
@@ -387,7 +381,6 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                       return innerSub({
                         appName,
                         allowPartialDependencies,
-                        mightHaveOutdatedApp,
                         // dependencies // Resolved!
                       });
                     },
@@ -412,7 +405,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                         type: "set-device-model-id",
                         deviceModelId: identifyTargetId(Number(deviceInfo.targetId))?.id,
                       });
-                        return openAppFromDashboard(transport, appName);
+                      return openAppFromDashboard(transport, appName);
                     }),
                   );
                 }
@@ -425,22 +418,14 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
               if (!deviceModelId && appMightNeedUpgrade) {
                 return from(getDeviceInfo(transport)).pipe(
                   mergeMap((deviceInfo: DeviceInfo) => {
-                    o.next({
+                    const e: ConnectAppEvent = {
                       type: "set-device-model-id",
                       deviceModelId: identifyTargetId(Number(deviceInfo.targetId))?.id,
-                    });
-
-                    const e: ConnectAppEvent = {
-                      type: "might-have-outdated-app",
                     };
 
                     return of(e);
                   }),
                 );
-                // quit app to get the deviceModelId and get the proper min app version.
-                o.next({
-                  type: "might-have-outdated-app",
-                });
               }
 
               const appNeedsUpgrade = mustUpgrade(
@@ -527,7 +512,6 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
           dependencies,
           requireLatestFirmware,
           allowPartialDependencies,
-          mightHaveOutdatedApp,
         }).subscribe(o);
 
         return () => {

@@ -36,12 +36,9 @@ const appConfig: Record<string, ConfigInfo> = {
     type: "object",
     default: {
       minVersion: "1.2.0",
-      // nanoS: {
-      //   minVersion: "1.8.0",
-      // },
-      //  nanoSP: {
-      //    minVersion: "1.7.0",
-      //  },
+      nanoSP: {
+        minVersion: "1.8.0",
+      },
     },
   },
   config_nanoapp_celo: {
