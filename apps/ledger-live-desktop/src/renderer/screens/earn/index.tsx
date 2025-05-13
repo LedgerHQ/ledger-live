@@ -1,6 +1,6 @@
 import { stakeProgramsToEarnParam } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/defaultFeatures";
+import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import React, { useMemo } from "react";
