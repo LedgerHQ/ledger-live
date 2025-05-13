@@ -1,8 +1,6 @@
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import {
-  handlers as exchangeHandlers,
-  ExchangeType,
-} from "@ledgerhq/live-common/wallet-api/Exchange/server";
+import { handlers as exchangeHandlers } from "@ledgerhq/live-common/wallet-api/Exchange/server";
+import { ExchangeType } from "@ledgerhq/live-common/wallet-api/react";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import type { AccountLike } from "@ledgerhq/types-live";
@@ -96,7 +94,14 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
                     });
                   }
                   if (result.operation) {
-                    onSuccess(result.operation.hash);
+                    const isSwapTransaction =
+                      exchangeParams.exchangeType === ExchangeType.SWAP ||
+                      exchangeParams.exchangeType === ExchangeType.SWAP_NG;
+                    if (isSwapTransaction) {
+                      onSuccess(result.operation.id);
+                    } else {
+                      onSuccess(result.operation.hash);
+                    }
                   }
                   setDevice(undefined);
                   !result.error && navigation.pop();

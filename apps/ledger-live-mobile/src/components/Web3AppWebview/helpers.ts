@@ -515,7 +515,14 @@ function useUiHook(): UiHook {
                 onCancel(result.error);
               }
               if (result.operation) {
-                onSuccess(result.operation.hash);
+                const isSwapTransaction =
+                  exchangeParams.exchangeType === ExchangeType.SWAP ||
+                  exchangeParams.exchangeType === ExchangeType.SWAP_NG;
+                if (isSwapTransaction) {
+                  onSuccess(result.operation.id);
+                } else {
+                  onSuccess(result.operation.hash);
+                }
               }
               setDevice(undefined);
               const n =
