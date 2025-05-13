@@ -554,25 +554,26 @@ export async function fetchTronAccountTxs(
     return Array.isArray(ret) && ret.length > 0;
   }
 
-  function flagInvalids(txs: Trc20API[]): number[] {
+  function getInvalidTxIndexes(txs: Trc20API[]): number[] {
     const invalids: number[] = [];
     for (let i = 0; i < txs.length; i++) {
       if (!isValid(txs[i])) {
         invalids.push(i);
       }
     }
+    txs.filter(tx => !isValid(tx)).map((tx, index) => index);
     return invalids;
   }
 
-  function pre(pred: boolean, message: string) {
-    if (!pred) {
+  function assert(predicate: boolean, message: string) {
+    if (!predicate) {
       throw new Error(message);
     }
   }
 
   // Merge the two results
   function mergeAccs(acc1: Acc, acc2: Acc): Acc {
-    pre(acc1.txs.length == acc2.txs.length, "accs should have the same length");
+    assert(acc1.txs.length == acc2.txs.length, "accs should have the same length");
     const accRet: Acc = { txs: acc1.txs, invalids: [] };
     acc1.invalids.forEach(invalidIndex => {
       acc2.invalids.includes(invalidIndex)
@@ -584,14 +585,14 @@ export async function fetchTronAccountTxs(
 
   // see LIVE-18992 for an explanation to why we need this
   async function getTrc20TxsWithRetry(acc: Acc | null, times: number): Promise<Trc20API[]> {
-    pre(
+    assert(
       times > 0,
       "getTrc20TxsWithRetry: couldn't fetch trc20 transactions after several attempts",
     );
     const ret = await callTrc20Endpoint();
     const thisAcc: Acc = {
       txs: ret,
-      invalids: flagInvalids(ret),
+      invalids: getInvalidTxIndexes(ret),
     };
     const newAcc = acc ? mergeAccs(acc, thisAcc) : thisAcc;
     if (newAcc.invalids.length == 0) {
