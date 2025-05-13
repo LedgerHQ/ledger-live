@@ -85,7 +85,7 @@ env:
   SHOULD_UPLOAD: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || (github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) }}
   IOS_JSBUNDLE_PATH: /apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
   IOS_NATIVE_PATH: /apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
-  ANDROID_APK_PATH: /apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-arm64-v8a-detox.apk
+  ANDROID_APK_PATH: /apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-x86_64-detox.apk
   ANDROID_JSBUNDLE_PATH: /apps/ledger-live-mobile/main.jsbundle
 jobs:
 #  build-ios-native:
@@ -466,9 +466,6 @@ jobs:
           pnpm mobile e2e:ci -p android -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
         env:
           PRODUCTION: ${{ inputs.production_firebase }}
-
-      - name: ls
-        run: ls ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/detox/
 
       - name: Upload Detox Native Build
         uses: tespkg/actions-cache/save@v1
