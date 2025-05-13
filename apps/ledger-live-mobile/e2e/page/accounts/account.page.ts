@@ -27,10 +27,8 @@ export default class AccountPage {
   baseOperationRow = "operation-row-";
   operationRowRegexp = new RegExp(this.baseOperationRow + ".*");
   baseSubAccountRow = "subAccount-row-name-";
-
   selectSpecificOperation = (operationType: string) =>
     getElementByIdAndText(this.operationRowRegexp, operationType);
-
   subAccountId = (account: Account) =>
     `js:2:${account.currency.id}:${account.address}:${account.currency.id}Sub+${account.ataAddress}`;
 
