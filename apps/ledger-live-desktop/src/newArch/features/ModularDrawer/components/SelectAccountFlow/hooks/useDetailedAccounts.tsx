@@ -33,7 +33,8 @@ const formatDetailedAccount = (
 ): DetailedAccount => {
   const details = account.type === "Account" ? account.currency : account.token;
 
-  const { name, id, ticker, units } = details;
+  const { id } = account;
+  const { name, ticker, units, id: cryptoId } = details;
 
   const balance = formatCurrencyUnit(units[0], account.balance, { showCode: true });
 
@@ -46,7 +47,7 @@ const formatDetailedAccount = (
 
   const address = formatAddress(parentAddress);
 
-  return { name, id, ticker, balance, fiatValue, address };
+  return { name, id, ticker, balance, fiatValue, address, cryptoId };
 };
 
 export const useDetailedAccounts = (
