@@ -1,5 +1,22 @@
 # ledger-live-desktop
 
+## 2.113.0-nightly.3
+
+### Minor Changes
+
+- [#10173](https://github.com/LedgerHQ/ledger-live/pull/10173) [`6dfcef4`](https://github.com/LedgerHQ/ledger-live/commit/6dfcef420d81132f9c89a1ecb07221c019e71640) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - Ensure that the header animation is working in every languages
+
+- [#10181](https://github.com/LedgerHQ/ledger-live/pull/10181) [`30aadb4`](https://github.com/LedgerHQ/ledger-live/commit/30aadb4c3c26b8f1b04470e0ef0cd57c23868b1e) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Sidedrawer header conditionnal style
+
+### Patch Changes
+
+- [#10175](https://github.com/LedgerHQ/ledger-live/pull/10175) [`4bc32c4`](https://github.com/LedgerHQ/ledger-live/commit/4bc32c46ee2c3869e97b164a07119c168d58711e) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Remove passing of discreetmode parameter to swap live app to prevent page refreh on LLD when the mode is toggled and for consistency on LLM
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.33.0-nightly.3
+  - @ledgerhq/react-ui@0.25.0-nightly.2
+  - @ledgerhq/live-dmk-desktop@0.3.4-nightly.3
+
 ## 2.113.0-nightly.2
 
 ### Minor Changes

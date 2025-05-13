@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.78.0-nightly.3
+
+### Minor Changes
+
+- [#10170](https://github.com/LedgerHQ/ledger-live/pull/10170) [`b74ae92`](https://github.com/LedgerHQ/ledger-live/commit/b74ae927606c97b868e2d29de41be41752e9ba38) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Sticky header component
+
+### Patch Changes
+
+- [#10175](https://github.com/LedgerHQ/ledger-live/pull/10175) [`4bc32c4`](https://github.com/LedgerHQ/ledger-live/commit/4bc32c46ee2c3869e97b164a07119c168d58711e) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Remove passing of discreetmode parameter to swap live app to prevent page refreh on LLD when the mode is toggled and for consistency on LLM
+
+- Updated dependencies []:
+  - @ledgerhq/native-ui@0.34.0-nightly.1
+
 ## 3.78.0-nightly.2
 
 ### Minor Changes

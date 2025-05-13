@@ -1,5 +1,11 @@
 # @ledgerhq/coin-solana
 
+## 0.22.0-nightly.2
+
+### Minor Changes
+
+- [#10176](https://github.com/LedgerHQ/ledger-live/pull/10176) [`2967b6a`](https://github.com/LedgerHQ/ledger-live/commit/2967b6ad07fe1c9399b81b39376a42e55b71e4f2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-solana): fix little typo
+
 ## 0.22.0-nightly.1
 
 ### Minor Changes

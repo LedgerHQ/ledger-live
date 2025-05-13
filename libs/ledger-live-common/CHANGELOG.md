@@ -1,5 +1,14 @@
 # @ledgerhq/live-common
 
+## 34.33.0-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`8b0e0dd`](https://github.com/LedgerHQ/ledger-live/commit/8b0e0dd3f910389e85cf0b72eea504656464cace), [`0c268fb`](https://github.com/LedgerHQ/ledger-live/commit/0c268fbc9d08f98b2b383fde36d77e92b5953675), [`2967b6a`](https://github.com/LedgerHQ/ledger-live/commit/2967b6ad07fe1c9399b81b39376a42e55b71e4f2)]:
+  - @ledgerhq/coin-tron@3.1.0-nightly.1
+  - @ledgerhq/crypto-icons-ui@1.14.0-nightly.0
+  - @ledgerhq/coin-solana@0.22.0-nightly.2
+
 ## 34.33.0-nightly.2
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tron
 
+## 3.1.0-nightly.1
+
+### Minor Changes
+
+- [#10161](https://github.com/LedgerHQ/ledger-live/pull/10161) [`8b0e0dd`](https://github.com/LedgerHQ/ledger-live/commit/8b0e0dd3f910389e85cf0b72eea504656464cace) Thanks [@jprudent](https://github.com/jprudent)! - On tron, API has a hard limit on the number of operations to retrieve. The API returns the oldest set of operations it can find according to the minHeight parameter.
+
 ## 3.0.1-nightly.0
 
 ### Patch Changes
