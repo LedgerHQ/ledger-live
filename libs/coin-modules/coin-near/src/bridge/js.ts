@@ -20,7 +20,13 @@ import { NearSigner } from "../signer";
 import { buildSignOperation } from "../signOperation";
 import { getAccountShape, sync } from "../synchronisation";
 import { serialization } from "../transaction";
-import type { NearAccount, NearAccountRaw, Transaction, TransactionRaw, TransactionStatus } from "../types";
+import type {
+  NearAccount,
+  NearAccountRaw,
+  Transaction,
+  TransactionRaw,
+  TransactionStatus,
+} from "../types";
 
 function buildCurrencyBridge(signerContext: SignerContext<NearSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);

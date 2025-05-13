@@ -54,4 +54,3 @@ const resolver: Resolver = createResolver(createSigner, evmResolver);
 const cliTools = makeCliTools();
 
 export { bridge, cliTools, messageSigner, resolver };
-

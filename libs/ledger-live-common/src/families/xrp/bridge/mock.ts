@@ -10,7 +10,7 @@ import {
   AmountRequired,
 } from "@ledgerhq/errors";
 import type { Transaction } from "@ledgerhq/coin-xrp/types";
-import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { Account, CurrencyBridge } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import {
   getSerializedAddressParameters,
