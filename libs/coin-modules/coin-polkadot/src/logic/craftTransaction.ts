@@ -1,11 +1,11 @@
 import BigNumber from "bignumber.js";
 import { stringCamelCase } from "@polkadot/util";
-import type { CoreTransaction, PalletMethodName, PolkadotOperationMode } from "../types";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
 import polkadotAPI from "../network";
-import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/index";
+import { getAbandonSeedAddress, getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { hexToU8a } from "@polkadot/util";
 import { TransactionPayloadInfo } from "../types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const EXTRINSIC_VERSION = 4;
 // Default values for tx parameters, if the user doesn't specify any
@@ -165,15 +165,15 @@ export const defaultExtrinsicArg = (amount: bigint, recipient: string): CreateEx
 });
 
 export async function craftTransaction(
-  address: string,
+  account: PolkadotAccount,
   nonceToUse: number,
   extractExtrinsicArg: CreateExtrinsicArg,
   forceLatestParams: boolean = false,
 ): Promise<CoreTransaction> {
   await loadPolkadotCrypto();
-
-  const { extrinsics, registry } = await polkadotAPI.getRegistry();
-  const info = await polkadotAPI.getTransactionParams({
+  const currency: CryptoCurrency = getCryptoCurrencyById(account.currency.id);
+  const { extrinsics, registry } = await polkadotAPI.getRegistry(currency);
+  const info = await polkadotAPI.getTransactionParams(currency, {
     force: forceLatestParams,
   });
   // Get the correct extrinsics params depending on transaction
@@ -205,9 +205,9 @@ export async function craftTransaction(
   ).toHex();
 
   const { blockHash, genesisHash } = info;
-  const metadataHash = await polkadotAPI.metadataHash();
+  const metadataHash = await polkadotAPI.metadataHash(currency);
   const unsigned: TransactionPayloadInfo = {
-    address,
+    address: account.freshAddress,
     blockHash,
     era,
     genesisHash,

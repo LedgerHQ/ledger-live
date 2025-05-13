@@ -12,6 +12,9 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
         url: getEnv("API_POLKADOT_SIDECAR"),
         credentials: getEnv("API_POLKADOT_SIDECAR_CREDENTIALS"),
       },
+      indexer: {
+        url: getEnv("API_POLKADOT_INDEXER"),
+      },
       node: {
         url: getEnv("API_POLKADOT_NODE"),
       },
@@ -38,6 +41,9 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
       },
       node: {
         url: "https://polkadot-westend-fullnodes.api.live.ledger.com",
+      },
+      indexer: {
+        url: getEnv("API_POLKADOT_INDEXER"),
       },
       // staking: {
       //   electionStatusThreshold: getEnv("POLKADOT_ELECTION_STATUS_THRESHOLD"),

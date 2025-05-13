@@ -13,6 +13,8 @@ import type {
   PolkadotOperation,
   PolkadotOperationExtra,
 } from "../types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import coinConfig from "../config";
 
 const LIMIT = 200;
 
@@ -22,7 +24,8 @@ const LIMIT = 200;
  * @returns {string}
  */
 // const getBaseApiUrl = (): string => getEnv("API_POLKADOT_INDEXER");
-const getBaseApiUrl = (): string => "https://polkadot-westend-fullnodes.coin.ledger.com/";
+const getBaseApiUrl = (currency: CryptoCurrency): string =>
+  coinConfig.getCoinConfig(currency).indexer.url;
 
 /**
  * Fetch operation lists from indexer
@@ -38,9 +41,10 @@ const getAccountOperationUrl = (
   addr: string,
   offset: number,
   startAt: number,
+  currency: CryptoCurrency,
   limit: number = LIMIT,
 ): string =>
-  `${getBaseApiUrl()}/accounts/${addr}/operations?${querystring.stringify({
+  `${getBaseApiUrl(currency)}/accounts/${addr}/operations?${querystring.stringify({
     limit,
     offset,
     startAt,
@@ -297,13 +301,14 @@ const fetchOperationList = async (
   accountId: string,
   addr: string,
   startAt: number,
+  currency: CryptoCurrency,
   limit = LIMIT,
   offset = 0,
   prevOperations: PolkadotOperation[] = [],
 ): Promise<PolkadotOperation[]> => {
   const { data } = await network({
     method: "GET",
-    url: getAccountOperationUrl(addr, offset, startAt, limit),
+    url: getAccountOperationUrl(addr, offset, startAt, currency, limit),
   });
   const operations = data.extrinsics.map((extrinsic: any) =>
     extrinsicToOperation(addr, accountId, extrinsic),
@@ -316,7 +321,15 @@ const fetchOperationList = async (
     return mergedOp.filter(Boolean).sort((a, b) => b.date - a.date);
   }
 
-  return await fetchOperationList(accountId, addr, startAt, limit, offset + LIMIT, mergedOp);
+  return await fetchOperationList(
+    accountId,
+    addr,
+    startAt,
+    currency,
+    limit,
+    offset + LIMIT,
+    mergedOp,
+  );
 };
 
 /**
@@ -331,8 +344,9 @@ const fetchOperationList = async (
 export const getOperations = async (
   accountId: string,
   addr: string,
+  currency: CryptoCurrency,
   startAt = 0,
   limit = LIMIT,
 ) => {
-  return await fetchOperationList(accountId, addr, startAt, limit);
+  return await fetchOperationList(accountId, addr, startAt, currency, limit);
 };
