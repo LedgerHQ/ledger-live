@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useSharedValue } from "react-native-reanimated";
 import { useCardRotation } from "./useCardRotation";
 import { createGesture } from "../utils/gesture";
@@ -13,16 +13,11 @@ export function useSwiper<T>(
   const swipeX = useSharedValue(0);
   const swipeY = useSharedValue(0);
 
-  useEffect(() => {
-    setCardIndex(currentIndex);
-    activeIndex.value = currentIndex;
-  }, [currentIndex, activeIndex]);
-
   const cards = useCardRotation(cardIndex, initialCards);
 
   const handleSwipeComplete = useCallback(() => {
     const nextIndex = (cardIndex + 1) % initialCards.length;
-    setCardIndex((cardIndex + 1) % initialCards.length);
+    setCardIndex(nextIndex);
     activeIndex.value = nextIndex;
     swipeX.value = 0;
     swipeY.value = 0;
