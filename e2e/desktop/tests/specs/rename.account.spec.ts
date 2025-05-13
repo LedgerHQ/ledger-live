@@ -1,6 +1,6 @@
-import test from "../../fixtures/common";
-import { AccountsPage } from "../../page/accounts.page";
-import { Layout } from "../../component/layout.component";
+import { test } from "../fixtures/common";
+import { AccountsPage } from "../page/accounts.page";
+import { Layout } from "../component/layout.component";
 import fsPromises from "fs/promises";
 import { expect } from "@playwright/test";
 

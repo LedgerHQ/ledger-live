@@ -2,7 +2,7 @@ import { launchApp } from "../../../helpers/commonHelpers";
 import { device } from "detox";
 
 $TmsLink("B2CQA-2996");
-describe.skip("Account name change", () => {
+describe("Account name change", () => {
   const account = Account.BTC_NATIVE_SEGWIT_1;
   const newAccountName = "New Account Name";
 
