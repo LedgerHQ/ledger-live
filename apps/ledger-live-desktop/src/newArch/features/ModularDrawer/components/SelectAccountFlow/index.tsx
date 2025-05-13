@@ -1,10 +1,9 @@
 import React, { memo, useState } from "react";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-
-import { Account, AccountLike } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
-import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { useTranslation } from "react-i18next";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Account, AccountLike } from "@ledgerhq/types-live";
+import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { SelectAccountFlowContainer, SelectorContent, AccountSelectionStep } from "./components";
 import MemoizedSelectAssetFlow from "../SelectAssetFlow";
 import { Header } from "../Header/Header";
