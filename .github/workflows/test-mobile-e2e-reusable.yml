@@ -94,7 +94,7 @@ jobs:
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
-    runs-on: ["${{ inputs.macos-specificity-runner-label || 'general-pool' }}", macOS, ARM64]
+    runs-on: ["${{ inputs.macos-specificity-runner-label || 'performance-pool' }}", macOS, ARM64]
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -246,7 +246,7 @@ jobs:
   detox-tests-ios:
     name: "iOS Detox"
     needs: [build-ios-native, build-ios-js]
-    runs-on: ["${{ inputs.macos-specificity-runner-label || 'general-pool' }}", macOS, ARM64]
+    runs-on: ["${{ inputs.macos-specificity-runner-label || 'performance-pool' }}", macOS, ARM64]
     if: ${{ !inputs.speculos_tests && github.event_name != 'schedule' }}
     strategy:
       fail-fast: false
