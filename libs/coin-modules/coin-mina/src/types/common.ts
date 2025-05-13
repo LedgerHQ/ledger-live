@@ -9,6 +9,9 @@ import {
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 
+export function isMinaTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "mina";
+}
 export type Transaction = TransactionCommon & {
   family: "mina";
   fees: {
@@ -19,6 +22,9 @@ export type Transaction = TransactionCommon & {
   nonce: number;
 };
 
+export function isMinaTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "mina";
+}
 export type TransactionRaw = TransactionCommonRaw & {
   family: "mina";
   fees: {

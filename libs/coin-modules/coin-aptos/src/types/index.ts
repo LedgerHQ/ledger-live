@@ -53,6 +53,9 @@ export type TransactionErrors = {
   gasUnitPrice?: string;
 };
 
+export function isAptosTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "aptos";
+}
 export type Transaction = TransactionCommon & {
   mode: string;
   family: "aptos";
@@ -61,6 +64,9 @@ export type Transaction = TransactionCommon & {
   errors?: TransactionErrors;
 };
 
+export function isAptosTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "aptos";
+}
 export type TransactionRaw = TransactionCommonRaw & {
   family: "aptos";
   mode: string;

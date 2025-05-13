@@ -19,6 +19,9 @@ export type SuiResources = object;
  */
 export type SuiResourcesRaw = object;
 
+export function isSuiTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "sui";
+}
 /**
  * Sui transaction
  */
@@ -32,6 +35,9 @@ export type Transaction = TransactionCommon & {
   // add here all transaction-specific fields when implement other modes than "send"
 };
 
+export function isSuiTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "sui";
+}
 /**
  * Sui transaction from a raw JSON
  */

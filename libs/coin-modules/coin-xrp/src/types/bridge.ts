@@ -19,6 +19,9 @@ export type NetworkInfoRaw = {
   baseReserve: string;
 };
 
+export function isXrpTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "xrp";
+}
 export type Transaction = TransactionCommon & {
   family: "xrp";
   fee: BigNumber | null | undefined;
@@ -27,6 +30,9 @@ export type Transaction = TransactionCommon & {
   feeCustomUnit: Unit | null | undefined;
 };
 
+export function isXrpTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "xrp";
+}
 export type TransactionRaw = TransactionCommonRaw & {
   family: "xrp";
   fee: string | null | undefined;

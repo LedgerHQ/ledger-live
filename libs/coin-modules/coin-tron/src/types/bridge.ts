@@ -41,6 +41,9 @@ export type NetworkInfoRaw = {
   energyUsed: string;
   energyLimit: string;
 };
+export function isTronTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "tron";
+}
 export type Transaction = TransactionCommon & {
   family: "tron";
   mode: TronOperationMode;
@@ -49,6 +52,9 @@ export type Transaction = TransactionCommon & {
   duration: number | null | undefined;
   votes: Vote[];
 };
+export function isTronTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "tron";
+}
 export type TransactionRaw = TransactionCommonRaw & {
   mode: TronOperationMode;
   family: "tron";

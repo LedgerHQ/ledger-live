@@ -29,6 +29,9 @@ export type IconResourcesRaw = {
   totalDelegated: string | BigNumber;
 };
 
+export function isIconTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "icon";
+}
 /**
  * Icon transaction
  */
@@ -39,6 +42,9 @@ export type Transaction = TransactionCommon & {
   stepLimit?: BigNumber;
 };
 
+export function isIconTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "icon";
+}
 /**
  * Icon transaction from a raw JSON
  */

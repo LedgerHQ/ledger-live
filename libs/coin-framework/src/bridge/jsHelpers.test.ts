@@ -20,6 +20,7 @@ import { createEmptyHistoryCache } from "../account/balanceHistoryCache";
 describe("updateTransaction", () => {
   it("should not update the transaction object", () => {
     const transaction: TransactionCommon = {
+      family: "any",
       recipient: "0x17733CAb76d9A2112576443F21735789733B1ca3",
       amount: new BigNumber("10000000000000"),
     };
@@ -34,6 +35,7 @@ describe("updateTransaction", () => {
 
   it("should update the transaction object", () => {
     const transaction: TransactionCommon = {
+      family: "any",
       recipient: "0x17733CAb76d9A2112576443F21735789733B1ca3",
       amount: new BigNumber("10000000000000"),
     };

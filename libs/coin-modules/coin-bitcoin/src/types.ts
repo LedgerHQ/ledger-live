@@ -138,6 +138,9 @@ export type UtxoStrategy = {
   }>;
 };
 
+export function isBitcoinTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "bitcoin";
+}
 export type Transaction = TransactionCommon & {
   family: "bitcoin";
   utxoStrategy: UtxoStrategy;
@@ -147,6 +150,9 @@ export type Transaction = TransactionCommon & {
   opReturnData?: Buffer | undefined;
 };
 
+export function isBitcoinTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "bitcoin";
+}
 export type TransactionRaw = TransactionCommonRaw & {
   family: "bitcoin";
   utxoStrategy: UtxoStrategy;

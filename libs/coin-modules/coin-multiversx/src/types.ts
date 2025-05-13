@@ -44,6 +44,9 @@ export type UserUndelegated = {
   seconds: number;
 };
 
+export function isMultiversXTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "multiversx";
+}
 /**
  * MultiversX transaction
  */
@@ -55,6 +58,9 @@ export type Transaction = TransactionCommon & {
   gasLimit: number;
 };
 
+export function isMultiversXTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "multiversx";
+}
 export type TransactionRaw = TransactionCommonRaw & {
   family: "multiversx";
   mode: MultiversXTransactionMode;

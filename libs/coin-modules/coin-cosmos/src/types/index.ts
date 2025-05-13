@@ -198,6 +198,9 @@ export type CosmosLikeTransaction = TransactionCommon & {
   sourceValidator: string | null | undefined;
 };
 
+export function isCosmosTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "cosmos";
+}
 export type Transaction = CosmosLikeTransaction & {
   family: "cosmos";
   networkInfo: NetworkInfo | null | undefined;
@@ -214,6 +217,9 @@ export type CosmosLikeTransactionRaw = TransactionCommonRaw & {
   sourceValidator: string | null | undefined;
 };
 
+export function isCosmosTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "cosmos";
+}
 export type TransactionRaw = CosmosLikeTransactionRaw & {
   family: "cosmos";
   networkInfo: NetworkInfoRaw | null | undefined;

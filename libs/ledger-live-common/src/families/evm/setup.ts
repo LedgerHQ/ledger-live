@@ -1,25 +1,23 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
-import { createBridges, type EvmBrige } from "@ledgerhq/coin-evm/bridge/js";
+import { createBridges, type EvmBridge } from "@ledgerhq/coin-evm/bridge/js";
 import makeCliTools from "@ledgerhq/coin-evm/cli-transaction";
+import { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import evmResolver from "@ledgerhq/coin-evm/hw-getAddress";
 import { prepareMessageToSign, signMessage } from "@ledgerhq/coin-evm/hw-signMessage";
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import { EvmSigner } from "@ledgerhq/coin-evm/lib/types/signer";
+import { type DeviceManagementKit } from "@ledgerhq/device-management-kit";
+import Transport from "@ledgerhq/hw-transport";
+import { DmkSignerEth, LegacySignerEth } from "@ledgerhq/live-signer-evm";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   CreateSigner,
   createMessageSigner,
   createResolver,
   executeWithSigner,
 } from "../../bridge/setup";
-import { Resolver } from "../../hw/getAddress/types";
-import Transport from "@ledgerhq/hw-transport";
-import type { Bridge } from "@ledgerhq/types-live";
 import { getCurrencyConfiguration } from "../../config";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
-import { type DeviceManagementKit } from "@ledgerhq/device-management-kit";
-import { DmkSignerEth, LegacySignerEth } from "@ledgerhq/live-signer-evm";
-import { EvmSigner } from "@ledgerhq/coin-evm/lib/types/signer";
+import { Resolver } from "../../hw/getAddress/types";
 
 const createSigner: CreateSigner<EvmSigner> = (transport: Transport) => {
   if (isDmkTransport(transport)) {
@@ -44,7 +42,7 @@ const getCurrencyConfig = (currency: CryptoCurrency) => {
   return { info: getCurrencyConfiguration<EvmConfigInfo>(currency) };
 };
 
-const bridge: EvmBrige = createBridges(executeWithSigner(createSigner), getCurrencyConfig);
+const bridge: EvmBridge = createBridges(executeWithSigner(createSigner), getCurrencyConfig);
 
 const messageSigner = {
   prepareMessageToSign,
@@ -55,4 +53,5 @@ const resolver: Resolver = createResolver(createSigner, evmResolver);
 
 const cliTools = makeCliTools();
 
-export { bridge, cliTools, resolver, messageSigner };
+export { bridge, cliTools, messageSigner, resolver };
+

@@ -77,7 +77,7 @@ export function buildAccountBridge(signerContext: SignerContext<EvmSigner>): Evm
   };
 }
 
-export type EvmBrige = Bridge<
+export type EvmBridge = Bridge<
   EvmTransaction,
   EvmTransactionRaw,
   Account,
@@ -91,7 +91,7 @@ export type EvmBrige = Bridge<
 export function createBridges(
   signerContext: SignerContext<EvmSigner>,
   coinConfig: CoinConfig,
-): EvmBrige {
+): EvmBridge {
   setCoinConfig(coinConfig);
 
   return {

@@ -19,12 +19,18 @@ export interface TonComment {
   text: string;
 }
 
+export function isTonTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "ton";
+}
 export type Transaction = TransactionCommon & {
   family: FamilyType;
   fees: BigNumber;
   comment: TonComment;
   payload?: TonPayloadFormat;
 };
+export function isTonTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "ton";
+}
 export type TransactionRaw = TransactionCommonRaw & {
   family: FamilyType;
   fees: string;

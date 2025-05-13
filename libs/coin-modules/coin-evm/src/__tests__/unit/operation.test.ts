@@ -131,6 +131,7 @@ describe("EVM Family", () => {
             value: new BigNumber(0),
             blockHeight: null, // pending transaction
             transactionRaw: {
+              family: "evm",
               amount: "1",
               recipient: "MockRecipient",
             },
@@ -149,6 +150,7 @@ describe("EVM Family", () => {
             value: new BigNumber(0),
             blockHeight: null, // pending transaction
             transactionRaw: {
+              family: "evm",
               amount: "1",
               recipient: "MockRecipient",
             },
