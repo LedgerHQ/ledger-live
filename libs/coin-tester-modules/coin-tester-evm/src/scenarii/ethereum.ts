@@ -13,6 +13,7 @@ import resolver from "@ledgerhq/coin-evm/hw-getAddress";
 import {
   EvmNftTransaction,
   Transaction as EvmTransaction,
+  TransactionStatus,
 } from "@ledgerhq/coin-evm/types/transaction";
 import { killAnvil, spawnAnvil } from "../anvil";
 import { callMyDealer, ethereum, VITALIK } from "../helpers";
@@ -131,13 +132,7 @@ const makeScenarioTransactions = ({
   ];
 };
 
-export const scenarioEthereum: Scenario<
-  EvmTransaction,
-  Account,
-  TransactionStatus,
-  EvmTransactionRaw,
-  TransactionStatusRaw
-> = {
+export const scenarioEthereum: Scenario<EvmTransaction, Account, TransactionStatus> = {
   name: "Ledger Live Basic ETH Transactions",
   setup: async () => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([

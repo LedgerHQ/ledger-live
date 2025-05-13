@@ -22,6 +22,8 @@ import { getAccountShape } from "./sync";
 import { serialiation } from "./transaction";
 import { updateTransaction } from "./updateTransaction";
 
+export type { BoilerplateBridge };
+
 export function createBridges(
   signerContext: SignerContext<BoilerplateSigner>,
   coinConfig: CoinConfig<BoilerplateCoinConfig>,

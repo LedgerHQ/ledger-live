@@ -9,7 +9,7 @@ import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/specu
 import { resetIndexer, setBlock, indexBlocks, initMswHandlers } from "../indexer";
 import { buildAccountBridge, buildCurrencyBridge } from "@ledgerhq/coin-evm/bridge/js";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
+import { Transaction as EvmTransaction, TransactionStatus } from "@ledgerhq/coin-evm/types/transaction";
 import { makeAccount } from "@ledgerhq/coin-evm/__tests__/fixtures/common.fixtures";
 import { callMyDealer, scroll, VITALIK } from "../helpers";
 import { defaultNanoApp } from "../scenarii.test";
@@ -67,13 +67,7 @@ const makeScenarioTransactions = ({
   return [scenarioSendEthTransaction, scenarioSendUSDCTransaction];
 };
 
-export const scenarioScroll: Scenario<
-  EvmTransaction,
-  Account,
-  TransactionStatus,
-  EvmTransactionRaw,
-  TransactionStatusRaw
-> = {
+export const scenarioScroll: Scenario<EvmTransaction, Account, TransactionStatus> = {
   name: "Ledger Live Basic Scroll Transactions",
   setup: async () => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
