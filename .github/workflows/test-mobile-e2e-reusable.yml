@@ -85,9 +85,9 @@ env:
   SHOULD_UPLOAD: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || (github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) }}
   IOS_JSBUNDLE_PATH: /apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
   IOS_NATIVE_PATH: /apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
-  ANDROID_APK_PATH: /apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-x86_64-detox.apk
-  ANDROID_TESTBINARY_PATH: /apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
-  ANDROID_JSBUNDLE_PATH: /apps/ledger-live-mobile/main.jsbundle
+  ANDROID_APK_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-x86_64-detox.apk
+  ANDROID_TESTBINARY_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+  ANDROID_JSBUNDLE_PATH: apps/ledger-live-mobile/main.jsbundle
 jobs:
 #  build-ios-native:
 #    name: "iOS Build Native"
@@ -469,13 +469,13 @@ jobs:
           PRODUCTION: ${{ inputs.production_firebase }}
       - name: ls
         run: |
-          ls ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/detox/
-          ls ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/debug/
+          ls apps/ledger-live-mobile/android/app/build/outputs/apk/detox/
+          ls apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/debug/
 
       - name: Upload Detox Native Build
         uses: tespkg/actions-cache/save@v1
         with:
-          path: ${{ github.workspace }}${{ env.ANDROID_APK_PATH }}
+          path: ${{ env.ANDROID_APK_PATH }}
           key: poc-detox-native-android
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -487,7 +487,7 @@ jobs:
       - name: Upload Detox Testbinary Build
         uses: tespkg/actions-cache/save@v1
         with:
-          path: ${{ github.workspace }}${{ env.ANDROID_TESTBINARY_PATH }}
+          path: ${{ env.ANDROID_TESTBINARY_PATH }}
           key: poc-detox-native-android
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -547,7 +547,7 @@ jobs:
 #      - name: Upload Detox JS Build
 #        uses: tespkg/actions-cache/save@v1
 #        with:
-#          path: ${{ github.workspace }}${{ env.ANDROID_JSBUNDLE_PATH }}
+#          path: ${{ env.ANDROID_JSBUNDLE_PATH }}
 #          key: poc-detox-js-android
 #          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
 #          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
