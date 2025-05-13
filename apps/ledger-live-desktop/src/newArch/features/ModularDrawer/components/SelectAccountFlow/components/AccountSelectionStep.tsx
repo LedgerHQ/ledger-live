@@ -1,14 +1,14 @@
 import React from "react";
+import { Observable } from "rxjs";
+import { useTranslation } from "react-i18next";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { Observable } from "rxjs";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
-import { SelectAccount } from "../../SelectAccount";
-import { useDetailedAccounts } from "../hooks/useDetailedAccounts";
 import { CardButton } from "@ledgerhq/react-ui/pre-ldls/index";
-import { useTranslation } from "react-i18next";
 import { Icons } from "@ledgerhq/react-ui/index";
 import { track } from "~/renderer/analytics/segment";
+import { SelectAccount } from "../../SelectAccount";
+import { useDetailedAccounts } from "../hooks/useDetailedAccounts";
 import { AddAccountContainer } from "./StyledComponents";
 
 type Props = {
