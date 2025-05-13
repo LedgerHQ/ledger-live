@@ -38,7 +38,7 @@ describe("createApi", () => {
 
     await aptos.fundAccount({
       accountAddress: AccountAddress.fromString(senderAddress),
-      amount: 100,
+      amount: 100_000_000,
     });
   });
 
@@ -81,6 +81,15 @@ describe("createApi", () => {
       // asset
       expect(() => Hex.isValid(signedTx).valid).toBeTruthy();
       expect(hash).toEqual(expect.any(String));
+    });
+  });
+
+  describe("getBalance", () => {
+    it("return balances from account", async () => {
+      const balances = await api.getBalance(receiverAddress);
+
+      expect(balances.length).toBeGreaterThan(0);
+      expect(balances[0].value).toBeGreaterThan(0);
     });
   });
 });
