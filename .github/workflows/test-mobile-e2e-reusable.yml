@@ -416,68 +416,71 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
 
-#      - name: Setup the caches
-#        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
-#        id: setup-caches
-#        with:
-#          install-proto: true
-#          skip-turbo-cache: "false"
-#          skip-pnpm-cache: "false"
-#          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-#          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-#          region: ${{ secrets.AWS_CACHE_REGION }}
-#          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-#
-#      - name: setup JDK 17
-#        uses: actions/setup-java@v3
-#        with:
-#          distribution: "zulu"
-#          java-version: "17"
-#          cache: "gradle"
-#
-#      - name: setup Android SDK
-#        uses: android-actions/setup-android@v2.0.10
-#
-#      - name: Gradle cache
-#        uses: gradle/actions/setup-gradle@v3
-#
-#      - name: Install dependencies
-#        run: |
-#          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
-#
-#      - name: Build dependencies
-#        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
-#        with:
-#          command: pnpm build:llm:deps
-#          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-#          turbo_port: ${{ steps.setup-caches.outputs.port }}
-#          disable_cache: ${{ inputs.disable-turbo-cache || false }}
-#
-#      - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
-#        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
-#        with:
-#          command: pnpm build:dummy-apps
-#          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-#          turbo_port: ${{ steps.setup-caches.outputs.port }}
-#          disable_cache: ${{ inputs.disable-turbo-cache || false }}
-#
-#      - name: Build Android app for Detox test run
-#        run: |
-#          pnpm mobile e2e:ci -p android -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
-#        env:
-#          PRODUCTION: ${{ inputs.production_firebase }}
-#
-#      - name: Upload Detox Native Build
-#        uses: tespkg/actions-cache/save@v1
-#        with:
-#          path: ${{ github.workspace }}${{ env.ANDROID_APK_PATH }}
-#          key: poc-detox-native-android
-#          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-#          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-#          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-#          bucket: ll-gha-s3-cache
-#          region: ${{ secrets.AWS_CACHE_REGION }}
-#          use-fallback: false
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          install-proto: true
+          skip-turbo-cache: "false"
+          skip-pnpm-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - name: setup JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: "zulu"
+          java-version: "17"
+          cache: "gradle"
+
+      - name: setup Android SDK
+        uses: android-actions/setup-android@v2.0.10
+
+      - name: Gradle cache
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Install dependencies
+        run: |
+          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+
+      - name: Build dependencies
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        with:
+          command: pnpm build:llm:deps
+          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          turbo_port: ${{ steps.setup-caches.outputs.port }}
+          disable_cache: ${{ inputs.disable-turbo-cache || false }}
+
+      - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        with:
+          command: pnpm build:dummy-apps
+          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          turbo_port: ${{ steps.setup-caches.outputs.port }}
+          disable_cache: ${{ inputs.disable-turbo-cache || false }}
+
+      - name: Build Android app for Detox test run
+        run: |
+          pnpm mobile e2e:ci -p android -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
+        env:
+          PRODUCTION: ${{ inputs.production_firebase }}
+
+      - name: ls
+        run: ls ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/detox/
+
+      - name: Upload Detox Native Build
+        uses: tespkg/actions-cache/save@v1
+        with:
+          path: ${{ github.workspace }}${{ env.ANDROID_APK_PATH }}
+          key: poc-detox-native-android
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ll-gha-s3-cache
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
 
   build-android-js:
     name: "Android Build JS"
@@ -594,7 +597,6 @@ jobs:
         with:
           distribution: "zulu"
           java-version: "17"
-          cache: "gradle"
 
       - name: setup Android SDK
         uses: android-actions/setup-android@v2.0.10
