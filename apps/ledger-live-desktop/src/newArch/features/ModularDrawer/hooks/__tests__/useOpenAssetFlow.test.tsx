@@ -65,6 +65,7 @@ describe("useOpenAssetFlow", () => {
     expect(setDrawer).toHaveBeenLastCalledWith(
       SelectAssetFlow,
       {
+        currencies: [],
         onAssetSelected: expect.any(Function),
       },
       {

@@ -6469,7 +6469,9 @@
     },
     "stepVerification" : {
       "action" : "Bitte bestätige den Vorgang auf deinem Gerät",
-      "accountName" : "Kontoname"
+      "accountName" : "Kontoname",
+      "title" : "Vorgang fortsetzen auf deiner Ledger {{wording}}",
+      "description" : "Befolge die Anweisungen, die auf deinem Secure Touchscreen angezeigt werden."
     }
   },
   "notificationCenter" : {
@@ -7414,6 +7416,9 @@
       "minutes_plural" : "(vor {{count}} Minuten)",
       "seconds" : "(vor {{count}} Sekunde)",
       "seconds_plural" : "(vor {{count}} Sekunden)"
-    }
+    },
+    "performance" : "Performance",
+    "low" : "Niedrig",
+    "high" : "Hoch"
   }
 }

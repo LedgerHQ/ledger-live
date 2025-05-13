@@ -152,6 +152,18 @@ export class DmkSignerEth implements EvmSigner {
             if (result.intermediateValue.step === SignTransactionDAStep.WEB3_CHECKS_OPT_IN) {
               observer.next({ type: "signer.evm.transaction-checks-opt-in-triggered" });
             }
+            if (
+              result.intermediateValue.step === SignTransactionDAStep.WEB3_CHECKS_OPT_IN_RESULT &&
+              result.intermediateValue.result === true
+            ) {
+              observer.next({ type: "signer.evm.transaction-checks-opt-in" });
+            }
+            if (
+              result.intermediateValue.step === SignTransactionDAStep.WEB3_CHECKS_OPT_IN_RESULT &&
+              result.intermediateValue.result === false
+            ) {
+              observer.next({ type: "signer.evm.transaction-checks-opt-out" });
+            }
           } else if (result.status === DeviceActionStatus.Completed) {
             observer.next({
               type: "signer.evm.signed",

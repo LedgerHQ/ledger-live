@@ -6,8 +6,7 @@ import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import Fuse from "fuse.js";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import Text from "~/renderer/components/Text";
-import { CurrencyList } from "~/renderer/drawers/DataSelector/CurrencyList";
-import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
+import { SelectNetwork } from "./SelectNetwork";
 import { getEnv } from "@ledgerhq/live-env";
 
 const options = {
@@ -23,21 +22,14 @@ function fuzzySearch(currencies: Currency[], searchValue: string): Currency[] {
 }
 
 export type SelectAccountAndCurrencyDrawerProps = {
-  assetIds?: string[];
-  includeTokens?: boolean;
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
+  currencies: CryptoOrTokenCurrency[];
 };
 
 function SelectAssetFlow(props: SelectAccountAndCurrencyDrawerProps) {
-  const { onAssetSelected, assetIds, includeTokens } = props;
-
+  const { onAssetSelected, currencies } = props;
   const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState<string>("");
-
-  const currencies = listAndFilterCurrencies({
-    currencies: assetIds,
-    includeTokens,
-  });
 
   // sorting them by marketcap
   const sortedCurrencies = useCurrenciesByMarketcap(currencies);
@@ -57,6 +49,13 @@ function SelectAssetFlow(props: SelectAccountAndCurrencyDrawerProps) {
     },
     [onAssetSelected],
   );
+
+  // TODO : this is a temporary to handle the case where we have only one asset and one currency
+  if (currencies.length === 1) {
+    const currency = currencies[0];
+    onAssetSelected(currency);
+    return null;
+  }
 
   return (
     <SelectAccountAndCurrencyDrawerContainer>
@@ -81,8 +80,13 @@ function SelectAssetFlow(props: SelectAccountAndCurrencyDrawerProps) {
             onChange={setSearchValue}
           />
         </SearchInputContainer>
-        {/* @ts-expect-error compatibility issue betwenn CryptoOrTokenCurrency and Currency (which includes Fiat) and the SelectAccountDrawer components  */}
-        <CurrencyList currencies={filteredCurrencies} onCurrencySelect={handleCurrencySelected} />
+        <SelectNetwork
+          // @ts-expect-error compatibility issue between CryptoOrTokenCurrency and Currency (which includes Fiat) and the SelectAccountDrawer components
+          networks={filteredCurrencies}
+          onNetworkSelected={handleCurrencySelected}
+          flow="Modular Asset Flow"
+          source="Accounts"
+        />
       </SelectorContent>
     </SelectAccountAndCurrencyDrawerContainer>
   );

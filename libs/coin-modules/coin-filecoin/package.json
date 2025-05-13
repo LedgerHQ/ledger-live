@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-filecoin",
-  "version": "1.9.4",
+  "version": "1.9.5",
   "description": "Ledger Filecoin Coin integration",
   "keywords": [
     "Ledger",
@@ -111,6 +111,7 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
+    "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",

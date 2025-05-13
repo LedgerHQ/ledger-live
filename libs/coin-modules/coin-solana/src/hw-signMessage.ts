@@ -1,6 +1,10 @@
+import semver from "semver";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { Account, AnyMessage, DeviceId } from "@ledgerhq/types-live";
 import { SolanaSigner } from "./signer";
+import { toOffChainMessage } from "./offchainMessage/format";
+import coinConfig from "./config";
+import bs58 from "bs58";
 
 export const signMessage =
   (signerContext: SignerContext<SolanaSigner>) =>
@@ -18,9 +22,15 @@ export const signMessage =
       );
     }
 
-    const result = await signerContext(deviceId, signer => {
-      return signer.signMessage(account.freshAddressPath, message);
+    const result = await signerContext(deviceId, async signer => {
+      const { version } = await signer.getAppConfiguration();
+      const isLegacy = semver.lt(version, coinConfig.getCoinConfig().legacyOCMSMaxVersion);
+
+      return signer.signMessage(
+        account.freshAddressPath,
+        toOffChainMessage(message, account.freshAddress, isLegacy).toString("hex"),
+      );
     });
 
-    return { signature: "0x" + result.signature.toString("hex") };
+    return { signature: bs58.encode(result.signature) };
   };

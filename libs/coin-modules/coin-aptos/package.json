@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-aptos",
-  "version": "1.9.4",
+  "version": "1.9.5",
   "description": "Ledger Aptos Coin integration",
   "keywords": [
     "Ledger",
@@ -109,7 +109,8 @@
     "ts-jest": "^29.2.5",
     "axios": "^1.7.9",
     "react": "^18.3.1",
-    "jest-sonar": "0.2.16"
+    "jest-sonar": "0.2.16",
+    "@ledgerhq/disable-network-setup": "workspace:^"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
