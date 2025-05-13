@@ -513,6 +513,10 @@
       "title" : "عفواً، الأموال المتوفرة غير كافية",
       "description" : "يرجى التأكد من أن الحساب به أموال كافية."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "عذراً، الأموال غير كافية لتغطية الرسوم",
+      "description" : "يرجى التأكد من أن الحساب به أموال كافية."
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "رصيدك المتاح (غير المُكدّس) هو حالياً {{currentBalance}} وهو غير كافٍ لدفع رسوم الشبكة لإلغاء تكديس {{assetName}} خاصتك. ",
       "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} في حسابك.",
@@ -6469,7 +6473,9 @@
     },
     "stepVerification" : {
       "action" : "يرجى تأكيد العملية على جهازك",
-      "accountName" : "اسم الحساب"
+      "accountName" : "اسم الحساب",
+      "title" : "تابع على جهازك Ledger {{wording}}",
+      "description" : "اتبع التعليمات المعروضة على شاشتك الآمنة التي تعمل باللمس."
     }
   },
   "notificationCenter" : {
@@ -7414,6 +7420,10 @@
       "minutes_plural" : "(منذ {{count}} دقيقة)",
       "seconds" : "(منذ {{count}} ثانية)",
       "seconds_plural" : "(منذ {{count}} ثانية)"
-    }
+    },
+    "performance" : "الأداء",
+    "low" : "منخفض",
+    "high" : "مرتفع",
+    "title" : "تحركات السوق"
   }
 }
