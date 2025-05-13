@@ -6469,7 +6469,9 @@
     },
     "stepVerification" : {
       "action" : "Lütfen işlemi cihazınızdan onaylayın",
-      "accountName" : "Hesap adı"
+      "accountName" : "Hesap adı",
+      "title" : "Ledger {{wording}} üzerinde devam edin",
+      "description" : "Güvenli Dokunmatik Ekranınızda gösterilen yönergeleri izleyin."
     }
   },
   "notificationCenter" : {
@@ -7414,6 +7416,9 @@
       "minutes_plural" : "({{count}} dakika önce)",
       "seconds" : "({{count}} saniye önce)",
       "seconds_plural" : "({{count}} saniye önce)"
-    }
+    },
+    "performance" : "Performans",
+    "low" : "Düşük",
+    "high" : "Yüksek"
   }
 }

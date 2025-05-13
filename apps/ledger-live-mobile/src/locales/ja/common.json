@@ -6469,7 +6469,9 @@
     },
     "stepVerification" : {
       "action" : "デバイス上で処理を確定してください。",
-      "accountName" : "アカウント名"
+      "accountName" : "アカウント名",
+      "title" : "Ledger {{wording}}で続ける",
+      "description" : "セキュアタッチスクリーンに表示される指示に従ってください。"
     }
   },
   "notificationCenter" : {
@@ -7414,6 +7416,9 @@
       "minutes_plural" : "（{{count}}分前）",
       "seconds" : "（{{count}}秒前）",
       "seconds_plural" : "（{{count}}秒前）"
-    }
+    },
+    "performance" : "パフォーマンス",
+    "low" : "低速",
+    "high" : "高速"
   }
 }
