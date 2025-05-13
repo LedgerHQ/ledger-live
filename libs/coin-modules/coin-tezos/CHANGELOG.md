@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tezos
 
+## 5.1.0-nightly.1
+
+### Minor Changes
+
+- [#10188](https://github.com/LedgerHQ/ledger-live/pull/10188) [`7dbf446`](https://github.com/LedgerHQ/ledger-live/commit/7dbf446811bbc99a15a04bc1294c6b3b8401f667) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - [coin-modules][tezos] fix tezos transaction crafting setting gasLimit/storageLimit to 0
+
 ## 5.0.1-nightly.0
 
 ### Patch Changes

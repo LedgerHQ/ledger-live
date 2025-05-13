@@ -1,5 +1,16 @@
 # @ledgerhq/live-common
 
+## 34.33.0-nightly.4
+
+### Minor Changes
+
+- [#10168](https://github.com/LedgerHQ/ledger-live/pull/10168) [`1583a97`](https://github.com/LedgerHQ/ledger-live/commit/1583a976bac264fbdea91a3db750b6777415915b) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - move `getTokensWithFunds` from mobile to common, for use in LLD
+
+### Patch Changes
+
+- Updated dependencies [[`7dbf446`](https://github.com/LedgerHQ/ledger-live/commit/7dbf446811bbc99a15a04bc1294c6b3b8401f667)]:
+  - @ledgerhq/coin-tezos@5.1.0-nightly.1
+
 ## 34.33.0-nightly.3
 
 ### Patch Changes

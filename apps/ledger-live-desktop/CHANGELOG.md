@@ -1,5 +1,17 @@
 # ledger-live-desktop
 
+## 2.113.0-nightly.4
+
+### Minor Changes
+
+- [#10168](https://github.com/LedgerHQ/ledger-live/pull/10168) [`1583a97`](https://github.com/LedgerHQ/ledger-live/commit/1583a976bac264fbdea91a3db750b6777415915b) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - move `getTokensWithFunds` from mobile to common, for use in LLD
+
+### Patch Changes
+
+- Updated dependencies [[`1583a97`](https://github.com/LedgerHQ/ledger-live/commit/1583a976bac264fbdea91a3db750b6777415915b)]:
+  - @ledgerhq/live-common@34.33.0-nightly.4
+  - @ledgerhq/live-dmk-desktop@0.3.4-nightly.4
+
 ## 2.113.0-nightly.3
 
 ### Minor Changes
