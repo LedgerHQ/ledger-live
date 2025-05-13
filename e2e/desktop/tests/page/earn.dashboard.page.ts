@@ -5,19 +5,23 @@ import { ElectronApplication } from "@playwright/test";
 
 export class EarnPage extends AppPage {
   private earnMoreRewardButton = "tab-earn-more";
+  private learnMoreButton = (currency: string) => `get-${currency}-button`;
 
   @step("Go and wait for Earn app to be ready")
   async goAndWaitForEarnToBeReady(earnFunction: () => Promise<void>) {
-    const appReadyPromise = new Promise<void>(resolve => {
-      this.page.on("console", msg => {
-        if (msg.type() === "info" && msg.text().includes("Earn Live App Loaded")) {
-          resolve();
-        }
-      });
-    });
+    // todo: uncomment when the custom method is merged
+
+    // const appReadyPromise = new Promise<void>(resolve => {
+    //   this.page.on("console", msg => {
+    //     if (msg.type() === "info" && msg.text().includes("Earn Live App Loaded")) {
+    //       resolve();
+    //     }
+    //   });
+    // });
 
     await earnFunction();
-    await appReadyPromise;
+
+    //await appReadyPromise;
   }
 
   @step("Click on earn more rewards button")
@@ -25,7 +29,7 @@ export class EarnPage extends AppPage {
     const [, webview] = electronApp.windows();
     // const buttonLocator = webview.getByTestId(this.earnMoreRewardButton);
     // await buttonLocator.click();
-    await webview.getByRole("link", { name: "Earn more rewards" }).click(); // todo: changer quand le loctor est mergé dans le repo earn-live-app
+    await webview.getByRole("link", { name: "Earn more rewards" }).click(); // todo: uncomment when the custom method is merged
   }
 
   @step("Click on stake button for $1")
@@ -33,7 +37,7 @@ export class EarnPage extends AppPage {
     const [, webview] = electronApp.windows();
     const row = await webview.locator("tr", { hasText: `${account}` });
     console.log("Row:", row);
-    await row.getByRole("button", { name: "Earn" }).first().click(); //todo: remove le .first()
+    await row.getByRole("button", { name: "Earn" }).first().click(); //todo: remove le .first() en targetant mieux la bonne ligne
   }
 
   @step("Verify provider URL")
@@ -68,5 +72,12 @@ export class EarnPage extends AppPage {
       default:
         throw new Error(`Unknown provider: ${selectedProvider}`);
     }
+  }
+
+  @step("Click on learn more button for $1")
+  async clickLeanrMoreButton(electronApp: ElectronApplication, currency: string) {
+    const [, webview] = electronApp.windows();
+    const buttonLocator = webview.getByTestId(this.learnMoreButton(currency));
+    await buttonLocator.click();
   }
 }

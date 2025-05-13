@@ -13,7 +13,7 @@ import { Drawer } from "../component/drawer.component";
 import { SettingsPage } from "./settings.page";
 import { LedgerSyncDrawer } from "./drawer/ledger.sync.drawer";
 import { SwapPage } from "./swap.page";
-import { EarnPage } from "./earn.page";
+import { EarnPage } from "./earn.dashboard.page";
 import { SwapConfirmationDrawer } from "./drawer/swap.confirmation.drawer";
 import { DelegateModal } from "./modal/delegate.modal";
 import { DelegateDrawer } from "./drawer/delegate.drawer";
@@ -45,7 +45,7 @@ export class Application extends PageHolder {
   public settings = new SettingsPage(this.page);
   public ledgerSync = new LedgerSyncDrawer(this.page);
   public swap = new SwapPage(this.page);
-  public earn = new EarnPage(this.page);
+  public earnDashboard = new EarnPage(this.page);
   public swapDrawer = new SwapConfirmationDrawer(this.page);
   public delegateDrawer = new DelegateDrawer(this.page);
   public sendDrawer = new SendDrawer(this.page);
