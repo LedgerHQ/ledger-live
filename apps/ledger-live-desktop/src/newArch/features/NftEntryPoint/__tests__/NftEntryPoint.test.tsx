@@ -135,11 +135,12 @@ describe("NftEntryPoint", () => {
       page: "Account",
     });
     expect(mockPush).toHaveBeenCalledWith({
-      pathname: "/platform/magic-eden",
+      pathname: "/platform/nft-viewer-redirector",
       state: {
         accountId: mockAccount.id,
         chainId: mockAccount.currency.id,
         returnTo: `/account/${mockAccount.id}`,
+        website: "https://magiceden.io",
       },
     });
   });

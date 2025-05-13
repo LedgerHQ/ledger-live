@@ -3,20 +3,9 @@ import { AnalyticsPage, Entry, EntryPointNft } from "./types";
 import { track } from "~/renderer/analytics/segment";
 import { Row } from "./components/Row";
 import React from "react";
-import MagicEden from "./assets/magiceden.svg";
-import OpenSea from "./assets/opensea.svg";
-import { useHistory } from "react-router-dom";
 
-const entryPointConfig = {
-  [Entry.magiceden]: {
-    illustration: MagicEden,
-    link: "https://magiceden.io",
-  },
-  [Entry.opensea]: {
-    illustration: OpenSea,
-    link: "https://opensea.io",
-  },
-};
+import { useHistory } from "react-router-dom";
+import { entryPointConfig } from "./config/config";
 
 type Props = {
   accountId: string;
@@ -30,17 +19,23 @@ export default function useNftsEntryPointViewModel({ accountId, currencyId }: Pr
   const chains =
     featureNftEntryPoint?.params?.chains?.map((chain: string) => chain.toLowerCase()) ?? [];
 
-  const openLiveApp = (liveAppId: string, entry: Entry) => {
+  const openLiveApp = (link: string, entry: Entry) => {
     track("entry_nft_clicked", { item: entry, page: AnalyticsPage.Account });
 
     history.push({
-      pathname: `/platform/${liveAppId}`,
+      pathname: "/platform/nft-viewer-redirector",
       state: {
+        website: link,
         accountId,
         chainId: currencyId,
         returnTo: `/account/${accountId}`,
       },
     });
+  };
+
+  const handleRedirect = (entry: Entry) => {
+    const { link } = entryPointConfig[entry];
+    openLiveApp(link, entry);
   };
 
   const entryPoints: EntryPointNft = {
@@ -52,7 +47,7 @@ export default function useNftsEntryPointViewModel({ accountId, currencyId }: Pr
           entryPoint={Entry.magiceden}
           illustration={entryPointConfig[Entry.magiceden].illustration}
           link={entryPointConfig[Entry.magiceden].link}
-          redirect={() => openLiveApp("magic-eden", Entry.magiceden)}
+          redirect={() => handleRedirect(Entry.magiceden)}
         />
       ),
     },
@@ -64,7 +59,7 @@ export default function useNftsEntryPointViewModel({ accountId, currencyId }: Pr
           entryPoint={Entry.opensea}
           illustration={entryPointConfig[Entry.opensea].illustration}
           link={entryPointConfig[Entry.opensea].link}
-          redirect={() => openLiveApp("opensea", Entry.opensea)}
+          redirect={() => handleRedirect(Entry.opensea)}
         />
       ),
     },
