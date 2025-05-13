@@ -6,6 +6,7 @@ import { getAbandonSeedAddress } from "@ledgerhq/live-common/currencies/index";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { AccountLike, Account } from "@ledgerhq/types-live";
+import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { NavigatorName, ScreenName } from "~/const";
 import { NavigationType } from ".";
@@ -133,10 +134,9 @@ export const getFee =
           mainAccount = syncedAccount;
         }
       } catch (e) {
-        console.error("Error syncing account:", e);
+        log("swap", "Error syncing account", e);
       }
     }
-
 
     // Create and prepare transaction
     const subAccountId = fromAccount.type !== "Account" && fromAccount.id;
