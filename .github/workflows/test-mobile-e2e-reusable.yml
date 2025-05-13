@@ -19,17 +19,9 @@ on:
         description: The version of the device OS
         required: true
         type: string
-      speculos_appname:
-        description: Speculos app name
-        required: false
-        type: string
       additional_args:
         description: Additional arguments for speculos
         required: false
-        type: string
-      github_token:
-        description: GitHub token for authentication
-        required: true
         type: string
       cluster:
         description: Cluster where to launch the speculos instance
@@ -53,8 +45,6 @@ jobs:
       coin_app_version: ${{ inputs.coin_app_version }}
       device: ${{ inputs.device }}
       device_os_version: ${{ inputs.device_os_version }}
-      speculos_appname: ${{ inputs.speculos_appname }}
-      github_token: ${{ inputs.github_token }}
       aws_role: ${{ inputs.aws_role }}
       additional_args: ${{ inputs.additional_args }}
       cluster: ${{ inputs.cluster }}
