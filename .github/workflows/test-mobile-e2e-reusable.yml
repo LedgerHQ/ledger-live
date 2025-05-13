@@ -545,7 +545,7 @@ jobs:
   detox-tests-android:
     name: "Android Detox"
     needs: [build-android-native, build-android-js]
-    runs-on: [ledger-live-4xlarge]
+    runs-on: [ledger-live-linux-8CPU-32RAM]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
