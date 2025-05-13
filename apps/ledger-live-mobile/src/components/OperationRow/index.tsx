@@ -81,7 +81,7 @@ type Props = {
   multipleAccounts?: boolean;
   isLast: boolean;
   isSubOperation?: boolean;
-  testID: string;
+  testID?: string;
 };
 
 const placeholderProps = {
