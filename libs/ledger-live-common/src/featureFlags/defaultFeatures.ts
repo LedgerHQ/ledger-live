@@ -408,6 +408,13 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  ptxEarnLiveApp: {
+    enabled: true,
+    params: {
+      manifest_id: "earn",
+    },
+  },
+
   ptxSwapLiveAppMobile: {
     enabled: false,
     params: {
