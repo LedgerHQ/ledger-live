@@ -33,7 +33,7 @@ export type LedgerExplorerERC20ApprovalEvent = {
 export type LedgerExplorerInternalTransaction = {
   from: string;
   to: string;
-  input: string | null;
+  // input: string | null;
   value: string;
   gas: string | null;
   gas_used: string | null;
