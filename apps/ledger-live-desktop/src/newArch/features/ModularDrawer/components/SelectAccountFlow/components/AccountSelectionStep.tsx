@@ -26,7 +26,7 @@ export const AccountSelectionStep = ({
   source,
   flow,
 }: Props) => {
-  const detailedAccounts = useDetailedAccounts(asset, accounts$);
+  const { detailedAccounts, accounts } = useDetailedAccounts(asset, accounts$);
   const { t } = useTranslation();
 
   const onAddAccountClick = () => {
@@ -50,6 +50,7 @@ export const AccountSelectionStep = ({
       </AddAccountContainer>
       <SelectAccount
         detailedAccounts={detailedAccounts}
+        accounts={accounts}
         onAccountSelected={onAccountSelected}
         source={source}
         flow={flow}
