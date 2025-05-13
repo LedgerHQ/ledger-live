@@ -1,21 +1,23 @@
-import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { AptosAPI } from "../api";
 import { getEstimatedGas } from "./getFeesForTransaction";
-import type { Transaction } from "../types";
+import type { AptosAccount, Transaction } from "../types";
 import { DEFAULT_GAS, DEFAULT_GAS_PRICE, getMaxSendBalance } from "./logic";
 import { APTOS_DELEGATION_RESERVE_IN_OCTAS, MIN_COINS_ON_SHARES_POOL_IN_OCTAS } from "../constants";
 
 const prepareTransaction = async (
-  account: Account,
+  account: AptosAccount,
   transaction: Transaction,
 ): Promise<Transaction> => {
-  if (transaction.mode === "stake" && transaction.amount.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS))
+  if (
+    !transaction.recipient ||
+    (transaction.mode === "stake" && transaction.amount.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS)) ||
+    (transaction.mode !== "unstake" && transaction.amount.gt(account.balance)) ||
+    (transaction.mode === "unstake" &&
+      account.aptosResources &&
+      transaction.amount.gt(account.aptosResources.stakedBalance))
+  )
     return transaction;
-
-  if (!transaction.recipient) {
-    return transaction;
-  }
 
   // if transaction.useAllAmount is true, then we expect transaction.amount to be 0
   // so to check that actual amount is zero or not, we also need to check if useAllAmount is false
@@ -25,8 +27,6 @@ const prepareTransaction = async (
       fees: BigNumber(0),
     };
   }
-
-  if (transaction.amount.gt(account.balance)) return transaction;
 
   const aptosClient = new AptosAPI(account.currency.id);
 

@@ -10,11 +10,8 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import { ValidatorField, AmountField } from "../fields";
 import Text from "~/renderer/components/Text";
-import Alert from "~/renderer/components/Alert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
-import NotEnoughFundsToUnstake from "~/renderer/components/NotEnoughFundsToUnstake";
-import { NotEnoughBalance } from "@ledgerhq/errors";
 
 export default function StepAmount({
   account,
@@ -22,7 +19,6 @@ export default function StepAmount({
   onUpdateTransaction,
   status,
   error,
-  onClose,
 }: StepProps) {
   const [staked, setStaked] = useState(transaction.amount);
   const bridge = getAccountBridge(account);
@@ -71,7 +67,7 @@ export default function StepAmount({
   }, [transaction]);
 
   const amount = useMemo(() => (validator ? validator.amount : new BigNumber(0)), [validator]);
-  const notEnoughFundsError = status.errors?.amount instanceof NotEnoughBalance;
+  // const notEnoughFundsError = status.errors?.amount instanceof NotEnoughBalance;
 
   return (
     <Box flow={1}>
@@ -100,10 +96,6 @@ export default function StepAmount({
         label={<Trans i18nKey="aptos.unstake.flow.steps.amount.fields.amount" />}
       />
       <Box mb={1} />
-      {notEnoughFundsError ? <NotEnoughFundsToUnstake account={account} onClose={onClose} /> : null}
-      <Alert mt={2}>
-        <Trans i18nKey="aptos.unstake.flow.steps.amount.warning" />
-      </Alert>
     </Box>
   );
 }

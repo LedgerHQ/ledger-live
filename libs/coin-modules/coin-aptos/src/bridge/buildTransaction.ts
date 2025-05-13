@@ -31,6 +31,12 @@ const getPayload = (
         typeArguments: [],
         functionArguments: [transaction.recipient, transaction.amount.toString()],
       };
+    case "unstake":
+      return {
+        function: "0x1::delegation_pool::unlock",
+        typeArguments: [],
+        functionArguments: [transaction.recipient, transaction.amount.toString()],
+      };
     case "send":
       if (tokenAccount && isTokenAccount(tokenAccount)) {
         const { tokenType } = tokenAccount.token;
