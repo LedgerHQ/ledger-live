@@ -118,7 +118,7 @@ describe("NftEntryPoint", () => {
     expect(screen.queryByTestId(/nft-entry-point/i)).toBeNull();
   });
 
-  it.only("should call onClick when a Row is clicked", async () => {
+  it("should call onClick when a Row is clicked", async () => {
     const { user } = render(<NftEntryPoint account={mockAccount} />, {
       overrideInitialState: (state: State) => ({
         ...state,
@@ -147,7 +147,8 @@ describe("NftEntryPoint", () => {
     expect(mockNavigate).toHaveBeenCalledWith("Base", {
       screen: "PlatformApp",
       params: {
-        platform: "magic-eden",
+        platform: "nft-viewer-redirector",
+        website: "https://magiceden.io",
         accountId: mockAccount.id,
         chainId: mockAccount.currency.id,
       },
