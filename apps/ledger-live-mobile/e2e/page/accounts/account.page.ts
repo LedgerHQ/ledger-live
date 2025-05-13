@@ -26,8 +26,6 @@ export default class AccountPage {
   accountNameRegExp = new RegExp(`${this.baseAccountName}.*`);
   baseOperationRow = "operation-row-";
   operationRowRegexp = new RegExp(this.baseOperationRow + ".*");
-  subAccountsSection = "subAccounts-";
-  subAccountsSectionRegexp = new RegExp(this.subAccountsSection + ".*");
   baseSubAccountRow = "subAccount-row-name-";
 
   selectSpecificOperation = (operationType: string) =>
