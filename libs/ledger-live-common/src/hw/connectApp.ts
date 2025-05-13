@@ -1,6 +1,6 @@
 import semver from "semver";
-import { Observable, concat, from, of, throwError, defer, merge } from "rxjs";
-import { mergeMap, concatMap, map, catchError, delay } from "rxjs/operators";
+import { Observable, concat, from, of, throwError, defer, merge, combineLatest } from "rxjs";
+import { mergeMap, concatMap, map, catchError, delay, mapTo, switchMap } from "rxjs/operators";
 import {
   TransportStatusError,
   FirmwareOrAppUpdateRequired,
@@ -31,7 +31,7 @@ import { hasDeviceConfigForApp, mustUpgrade } from "../apps";
 import isUpdateAvailable from "./isUpdateAvailable";
 import { LockedDeviceEvent } from "./actions/types";
 import { getLatestFirmwareForDeviceUseCase } from "../device/use-cases/getLatestFirmwareForDeviceUseCase";
-import { identifyTargetId } from "@ledgerhq/devices/lib/index";
+import { identifyTargetId } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
 export type RequiresDerivation = {
@@ -404,7 +404,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                   return of(e);
                 }
 
-                if (!deviceModelId && mightHaveOutdatedApp) {
+                if (!deviceModelId) {
                   // get and set deviceModelId, and open app from dashboard.
                   return from(getDeviceInfo(transport)).pipe(
                     mergeMap((deviceInfo: DeviceInfo) => {
@@ -412,7 +412,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                         type: "set-device-model-id",
                         deviceModelId: identifyTargetId(Number(deviceInfo.targetId))?.id,
                       });
-                      return openAppFromDashboard(transport, appName);
+                        return openAppFromDashboard(transport, appName);
                     }),
                   );
                 }
@@ -421,8 +421,22 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                 return openAppFromDashboard(transport, appName);
               }
 
-              const appMightNeedUpgrade = hasDeviceConfigForApp(appAndVersion.name);
+              let appMightNeedUpgrade = hasDeviceConfigForApp(appAndVersion.name);
               if (!deviceModelId && appMightNeedUpgrade) {
+                return from(getDeviceInfo(transport)).pipe(
+                  mergeMap((deviceInfo: DeviceInfo) => {
+                    o.next({
+                      type: "set-device-model-id",
+                      deviceModelId: identifyTargetId(Number(deviceInfo.targetId))?.id,
+                    });
+
+                    const e: ConnectAppEvent = {
+                      type: "might-have-outdated-app",
+                    };
+
+                    return of(e);
+                  }),
+                );
                 // quit app to get the deviceModelId and get the proper min app version.
                 o.next({
                   type: "might-have-outdated-app",
@@ -440,6 +454,8 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                   type: "has-outdated-app",
                   outdatedApp: appAndVersion,
                 });
+              } else {
+                appMightNeedUpgrade = false;
               }
 
               // need dashboard to check firmware, install dependencies, or verify app update

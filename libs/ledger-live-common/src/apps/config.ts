@@ -39,9 +39,9 @@ const appConfig: Record<string, ConfigInfo> = {
       // nanoS: {
       //   minVersion: "1.8.0",
       // },
-      // nanoSP: {
-      //   minVersion: "1.8.0",
-      // },
+      //  nanoSP: {
+      //    minVersion: "1.7.0",
+      //  },
     },
   },
   config_nanoapp_celo: {

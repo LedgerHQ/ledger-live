@@ -12,7 +12,7 @@ import semver from "semver";
 import { AppAndVersion } from "./connectApp";
 import { mustUpgrade } from "../apps";
 import { getAppsCatalogForDevice } from "../device/use-cases/getAppsCatalogForDevice";
-import { identifyTargetId } from "@ledgerhq/devices/lib/index";
+import { identifyTargetId } from "@ledgerhq/devices";
 
 const isUpdateAvailable = async (
   deviceInfo: DeviceInfo,
