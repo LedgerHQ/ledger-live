@@ -34,6 +34,7 @@ export const TinyCard = ({ text, cta, onClick, testId, currentInstance = false }
       </Flex>
       <ButtonContainer>
         <Text
+          data-testId="testRemoves"
           fontSize={14}
           variant="body"
           fontWeight="semiBold"
