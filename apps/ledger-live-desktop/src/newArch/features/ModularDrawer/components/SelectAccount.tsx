@@ -2,11 +2,13 @@ import React from "react";
 import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { Box, Flex } from "@ledgerhq/react-ui/index";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { AccountList, Account as DetailedAccount } from "@ledgerhq/react-ui/pre-ldls/index";
+import { AccountTuple } from "~/renderer/components/PerCurrencySelectAccount/state";
 
 type SelectAccountProps = {
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
+  accounts: AccountTuple[];
   source: string;
   flow: string;
   detailedAccounts: DetailedAccount[];
@@ -21,14 +23,44 @@ const EXTRA_BOTTOM_MARGIN = TWO_ROWS_HEIGHT + INPUT_HEIGHT + SPACING;
 
 export const SelectAccount = ({
   detailedAccounts,
+  accounts,
   onAccountSelected,
   source,
   flow,
 }: SelectAccountProps) => {
+  const trackAccountClick = (ticker: string) => {
+    track("account_clicked", {
+      currency: ticker,
+      page: "Modular Account Selection",
+      flow,
+    });
+  };
+
   const onAccountClick = (accountId: string) => {
-    track("account_clicked", { currency: accountId, page: "Modular Account Selection", flow });
-    // TODO to be implemented as part of LIVE-17272
-    onAccountSelected({} as AccountLike, {} as Account);
+    const currencyAccount = accounts.find(({ account }) => account.id === accountId);
+
+    if (currencyAccount) {
+      onAccountSelected(currencyAccount.account);
+      trackAccountClick(currencyAccount.account.currency.ticker);
+    } else {
+      let tokenAccount: TokenAccount | undefined;
+      let parentAccount: Account | undefined;
+
+      for (const { account } of accounts) {
+        tokenAccount = account.subAccounts?.find(({ id }) => id === accountId);
+        if (tokenAccount) {
+          parentAccount = accounts.find(
+            ({ account }) => account.id === tokenAccount?.parentId,
+          )?.account;
+          break;
+        }
+      }
+
+      if (tokenAccount && parentAccount) {
+        onAccountSelected(tokenAccount, parentAccount);
+        trackAccountClick(tokenAccount.token.ticker);
+      }
+    }
   };
 
   return (

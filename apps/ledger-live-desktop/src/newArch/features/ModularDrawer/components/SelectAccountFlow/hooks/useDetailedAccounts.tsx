@@ -61,7 +61,7 @@ export const useDetailedAccounts = (
 
   const accounts = getAccountTuplesForCurrency(asset, nestedAccounts, false, accountIds);
 
-  return useMemo(
+  const detailedAccounts = useMemo(
     () =>
       accounts.flatMap(({ account }) => {
         const currencyAccount = formatDetailedAccount(account, account.freshAddress, state, to);
@@ -78,4 +78,6 @@ export const useDetailedAccounts = (
       }),
     [accounts, state, to],
   );
+
+  return { detailedAccounts, accounts };
 };
