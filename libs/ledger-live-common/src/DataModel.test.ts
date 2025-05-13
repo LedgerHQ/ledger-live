@@ -6,6 +6,10 @@ import {
   APTOS_HARDENED_DERIVATION_PATH,
   APTOS_NON_HARDENED_DERIVATION_PATH,
 } from "./families/aptos/consts";
+import { getCurrencyConfiguration } from "./config";
+jest.mock("./config", () => ({
+  getCurrencyConfiguration: jest.fn(),
+}));
 
 const opRetentionStategy =
   (maxDaysOld: number, keepFirst: number) =>
@@ -40,6 +44,22 @@ const aptosAccount = {
   version: 1,
 };
 
+const evmAccount = {
+  data: {
+    currencyId: "ethereum",
+    operations: [
+      {
+        id: "op_evm_001",
+      },
+      {
+        id: "op_evm_002",
+        nftOperations: [{ id: "op_evm_nft_001" }],
+      },
+    ],
+  } as AccountRaw,
+  version: 1,
+};
+
 describe("DataModel", () => {
   test("createDataModel for crypto.org account", () => {
     const migratedCryptoOrgAccount = createDataModel(schema).decode(cryptoOrgAccount);
@@ -57,5 +77,36 @@ describe("DataModel", () => {
 
     const migratedAptosAccountRaw = migratedAptosAccount.at(0) as Account;
     expect(migratedAptosAccountRaw.freshAddressPath).toEqual(APTOS_HARDENED_DERIVATION_PATH);
+  });
+
+  describe("test for shownNfts true", () => {
+    beforeAll(() => {
+      (getCurrencyConfiguration as jest.Mock).mockReturnValue({
+        showNfts: true,
+      });
+    });
+
+    test("evm account", () => {
+      const data = createDataModel(schema).decode(evmAccount);
+      const account = data.at(0) as Account;
+      expect(account.operations).toEqual([
+        expect.objectContaining({ id: "op_evm_001" }),
+        expect.objectContaining({ id: "op_evm_002" }),
+      ]);
+    });
+  });
+
+  describe("test for shownNfts false", () => {
+    beforeAll(() => {
+      (getCurrencyConfiguration as jest.Mock).mockReturnValue({
+        showNfts: false,
+      });
+    });
+
+    test("evm account", () => {
+      const data = createDataModel(schema).decode(evmAccount);
+      const account = data.at(0) as Account;
+      expect(account.operations).toEqual([expect.objectContaining({ id: "op_evm_001" })]);
+    });
   });
 });
