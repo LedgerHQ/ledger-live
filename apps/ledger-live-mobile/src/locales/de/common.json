@@ -4697,7 +4697,7 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "Update Ihrer {{deviceName}} auf Version {{version}} durchführen",
-    "recoveryPhraseBackupInstructions" : "Vergewissern Sie sich vorsichtshalber, dass Ihre 24-Wort-Wiederherstellungsphrase auf dem Wiederherstellungszettel notiert ist und Ihnen vorliegt.",
+    "recoveryPhraseBackupInstructions" : "Vergewissere dich vorsichtshalber, dass deine geheime 24-Wort-Wiederherstellungsphrase auf dem Wiederherstellungszettel notiert ist und dir vorliegt.\n\nDu solltest dir überlegen, Ledger Recover zu nutzen, um ein Backup für deinen Wallet-Zugang zu erhalten und sicherzustellen, dass du immer darauf zugreifen kannst.",
     "confirmRecoveryPhrase" : "Ich habe meine Wiederherstellungsphrase zur Hand",
     "introDescription1" : "Bitte beachten Sie, dass alle Apps auf Ihrem Gerät gelöscht werden. Sie können Ihre Apps nach dem Firmware-Update neu installieren.",
     "introDescription2" : "Dies hat keinen Einfluss auf Ihr Krypto-Vermögen.",
