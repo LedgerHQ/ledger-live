@@ -1,11 +1,11 @@
-import { reduce } from "rxjs";
+import { reduce, firstValueFrom } from "rxjs";
 import { Strategy } from "@ledgerhq/coin-evm/lib/types/index";
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAbandonSeedAddress } from "@ledgerhq/live-common/currencies/index";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
-import { AccountLike } from "@ledgerhq/types-live";
+import { AccountLike, Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { NavigatorName, ScreenName } from "~/const";
 import { NavigationType } from ".";
@@ -120,12 +120,15 @@ export const getFee =
     const fromParentAccount = getParentAccount(fromAccount, accounts);
     let mainAccount = getMainAccount(fromAccount, fromParentAccount);
     const bridge = getAccountBridge(fromAccount, fromParentAccount);
-    
+
     if (mainAccount.currency.id === "bitcoin") {
       try {
-        const observable = bridge.sync(mainAccount, { paginationConfig: {} });
-        const reduced = observable.pipe(reduce((a, f) => f(a), mainAccount));
-        const syncedAccount = await reduced.toPromise();
+        const syncedAccount = await firstValueFrom(
+          bridge
+            .sync(mainAccount, { paginationConfig: {} })
+            .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), mainAccount)),
+        );
+
         if (syncedAccount) {
           mainAccount = syncedAccount;
         }
