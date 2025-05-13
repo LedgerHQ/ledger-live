@@ -115,6 +115,7 @@ export function useListHeaderComponents({
     AccountBalanceSummaryFooter &&
     AccountBalanceSummaryFooter({
       account: account as Account &
+        AptosAccount &
         CosmosAccount &
         PolkadotAccount &
         MultiversXAccount &
