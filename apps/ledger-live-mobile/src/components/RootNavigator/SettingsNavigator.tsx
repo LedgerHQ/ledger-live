@@ -518,7 +518,7 @@ export default function SettingsNavigator() {
           name={ScreenName.LargeMoverLandingPage}
           component={LargeMoverLandingPage}
           options={{
-            title: "Large Mover",
+            headerShown: false,
           }}
         />
       )}

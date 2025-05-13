@@ -14,6 +14,7 @@ import {
   getBalance,
   listOperations as logicListOperations,
   lastBlock,
+  Options,
 } from "../logic";
 import type { TronAsset } from "../types";
 
@@ -41,5 +42,10 @@ async function listOperations(
   pagination: Pagination,
 ): Promise<[Operation<TronAsset>[], string]> {
   const { minHeight } = pagination;
-  return logicListOperations(address, minHeight);
+  const options: Options = {
+    softLimit: 200,
+    minHeight: minHeight,
+    order: "asc",
+  } as const;
+  return logicListOperations(address, options);
 }

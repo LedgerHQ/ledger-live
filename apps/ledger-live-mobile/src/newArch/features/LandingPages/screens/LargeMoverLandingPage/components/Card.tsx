@@ -56,6 +56,7 @@ export const Card: React.FC<CardProps> = ({
       marginRight={5}
       marginLeft={5}
       overflow="hidden"
+      height="88%"
     >
       <Flex alignItems="center" zIndex={10} top={4}>
         <Ticker currencyId={id} />

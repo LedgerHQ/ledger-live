@@ -22,9 +22,16 @@ export function Header({
   const { t } = useTranslation();
 
   const isAssetSelection = currentStep === FlowStep.SELECT_ASSET_TYPE;
-  const titleText = isAssetSelection
+
+  const animatedPart = isAssetSelection
     ? t("modularAssetDrawer.assetFlow.asset")
     : t("modularAssetDrawer.assetFlow.network");
+
+  const titleTemplate = t("modularAssetDrawer.assetFlow.selectTemplate", {
+    dynamic: "{{dynamic}}",
+  });
+
+  const [beforeDynamic, afterDynamic] = titleTemplate.split("{{dynamic}}");
 
   return (
     <HeaderContainer>
@@ -40,7 +47,7 @@ export function Header({
         color="palette.text.shade100"
         data-testid="select-asset-drawer-title"
       >
-        {t("modularAssetDrawer.assetFlow.select")}
+        {beforeDynamic}
         <AnimatePresence mode="wait" custom={navDirection}>
           <motion.span
             key={currentStep}
@@ -51,9 +58,10 @@ export function Header({
             custom={navDirection}
             data-testid="select-asset-drawer-title-dynamic"
           >
-            {titleText}
+            {animatedPart}
           </motion.span>
         </AnimatePresence>
+        {afterDynamic}
       </Text>
     </HeaderContainer>
   );

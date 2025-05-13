@@ -7425,6 +7425,7 @@
     },
     "performance": "Performance",
     "low": "Low",
-    "high": "High"
+    "high": "High",
+    "title": "Market Movements"
   }
 }

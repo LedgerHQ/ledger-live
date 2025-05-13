@@ -1,4 +1,4 @@
-import { listOperations } from "./listOperations";
+import { defaultOptions, listOperations, Options } from "./listOperations";
 import coinConfig from "../config";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
 import { TronAsset } from "../types";
@@ -23,20 +23,89 @@ describe("listOperations", () => {
     const testingAccount = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
 
     // there are 2 operations with height >= 40832955
-    const minHeight = 40832955;
+    const options = { ...defaultOptions, minHeight: 40832955 };
     const historySize = 2;
     const txHashAtMinHeight = "242591f43c74e45bf4c5c423be2f600c9a53237bde4c793faff5f3120f8745d7";
 
     beforeAll(async () => {
-      [operations] = await listOperations(testingAccount, minHeight);
+      [operations] = await listOperations(testingAccount, options);
     });
 
     describe("List", () => {
       it("should fetch operations successfully", async () => {
         expect(Array.isArray(operations)).toBeDefined();
         expect(operations.length).toBeGreaterThanOrEqual(historySize);
-        expect(operations.filter(op => op.tx.block.height < minHeight).length).toEqual(0);
+        expect(operations.filter(op => op.tx.block.height < options.minHeight).length).toEqual(0);
         expect(operations.find(op => op.tx.hash === txHashAtMinHeight)).toBeDefined();
+      });
+    });
+  });
+
+  describe("Account TRRYfGVrzuUvJYRe9UaA8KqxjgVSwU9m6L withe more than 15k+ txs, with minHeight 0 / order asc / softLimit 2", () => {
+    // https://tronscan.org/#/address/TRRYfGVrzuUvJYRe9UaA8KqxjgVSwU9m6L
+
+    let operations: Operation<TronAsset>[];
+
+    const testingAccount = "TRRYfGVrzuUvJYRe9UaA8KqxjgVSwU9m6L";
+
+    const options: Options = { minHeight: 0, order: "asc", softLimit: 2 };
+    const oldestNativeTxHash = "ebd45e2bd6a83949971554ff84fd6253bc7c77f7ef38cc9ca98c070feeac30d0";
+    const oldestTrc20TxHash = "d9e56dbac3b7bcab20ae72beaaae9634155bbc0855d230fb8fdb9139b3696796";
+
+    beforeAll(async () => {
+      [operations] = await listOperations(testingAccount, options);
+    });
+
+    describe("List", () => {
+      it("should fetch operations successfully", async () => {
+        expect(Array.isArray(operations)).toBeDefined();
+        expect(operations.length).toBeLessThanOrEqual(options.softLimit * 2);
+        expect(operations.filter(op => op.tx.block.height < options.minHeight).length).toEqual(0);
+        expect(operations.find(op => op.tx.hash === oldestNativeTxHash)).toBeDefined();
+        expect(operations.find(op => op.tx.hash === oldestTrc20TxHash)).toBeDefined();
+        for (let i = 0; i < operations.length - 2; i++) {
+          // transactions are sorted by descencing order (newest first)
+          // even if we query oldest tx ("asc" order)
+          expect(operations[i].tx.block.height).toBeGreaterThanOrEqual(
+            operations[i + 1].tx.block.height,
+          );
+        }
+      });
+    });
+  });
+
+  describe("Account TRRYfGVrzuUvJYRe9UaA8KqxjgVSwU9m6L withe more than 15k+ txs, with minHeight / order asc / softLimit 2", () => {
+    // https://tronscan.org/#/address/TRRYfGVrzuUvJYRe9UaA8KqxjgVSwU9m6L
+
+    let operations: Operation<TronAsset>[];
+
+    const testingAccount = "TRRYfGVrzuUvJYRe9UaA8KqxjgVSwU9m6L";
+
+    const options: Options = { minHeight: 52848767, order: "asc", softLimit: 2 };
+
+    // at height 52848767 there is a trc20 tx with hash:
+    const oldestTrc20TxHash = "ab4dba763e4f320f4631268c413926e680c58a3d5228b504d79e9d974dcf9c4b";
+    // the counterpart native tx height is at 53204348 with tx hash:
+    const oldestNativeTxHash = "9d51fb7877a7193af05917dee3aaa5e1e22fcbce36ad0d4593eaca4b8d5d1002";
+
+    beforeAll(async () => {
+      [operations] = await listOperations(testingAccount, options);
+    });
+
+    describe("List", () => {
+      it("should fetch operations successfully", async () => {
+        expect(Array.isArray(operations)).toBeDefined();
+        expect(operations.length).toBeLessThanOrEqual(options.softLimit * 2);
+        expect(operations.filter(op => op.tx.block.height < options.minHeight).length).toEqual(0);
+        expect(operations.find(op => op.tx.hash === oldestNativeTxHash)).toBeDefined();
+        expect(operations.find(op => op.tx.hash === oldestTrc20TxHash)).toBeDefined();
+        for (let i = 0; i < operations.length - 2; i++) {
+          // transactions are sorted by descencing order (newest first)
+          // even if we query oldest tx ("asc" order)
+          expect(operations[i].tx.block.height).toBeGreaterThanOrEqual(
+            operations[i + 1].tx.block.height,
+          );
+        }
       });
     });
   });
@@ -55,7 +124,7 @@ describe("listOperations", () => {
     const magnitudeMultiplier = 1000000;
 
     beforeAll(async () => {
-      [operations] = await listOperations(testingAccount, 0);
+      [operations] = await listOperations(testingAccount, defaultOptions);
     });
 
     describe("List", () => {
