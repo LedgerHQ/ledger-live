@@ -10,6 +10,7 @@ export type SolanaSignature = {
 export type Resolution = {
   deviceModelId?: DeviceModelId | undefined;
   tokenAddress?: string;
+  tokenInternalId?: string;
   createATA?: {
     address: string;
     mintAddress: string;

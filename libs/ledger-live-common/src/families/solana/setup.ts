@@ -42,6 +42,15 @@ async function checkVersion(app: Solana) {
 function isPKIUnsupportedError(err: unknown): err is TransportStatusError {
   return err instanceof TransportStatusError && err.message.includes("0x6a81");
 }
+async function tryLoadPKI(...args: Parameters<typeof loadPKI>) {
+  try {
+    await loadPKI(...args);
+  } catch (err) {
+    if (isPKIUnsupportedError(err)) {
+      throw new LatestFirmwareVersionRequired("LatestFirmwareVersionRequired");
+    }
+  }
+}
 
 const createSigner: CreateSigner<SolanaSigner> = (transport: Transport) => {
   const app = new Solana(transport);
@@ -55,17 +64,10 @@ const createSigner: CreateSigner<SolanaSigner> = (transport: Transport) => {
         }
 
         if (resolution.deviceModelId !== DeviceModelId.nanoS) {
-          const { descriptor, signature } = await calService.getCertificate(
-            resolution.deviceModelId,
-          );
+          const { descriptor: trustedNameDescriptor, signature: trustedNameSignature } =
+            await calService.getCertificate(resolution.deviceModelId, "trusted_name");
 
-          try {
-            await loadPKI(transport, "TRUSTED_NAME", descriptor, signature);
-          } catch (err) {
-            if (isPKIUnsupportedError(err)) {
-              throw new LatestFirmwareVersionRequired("LatestFirmwareVersionRequired");
-            }
-          }
+          await tryLoadPKI(transport, "TRUSTED_NAME", trustedNameDescriptor, trustedNameSignature);
 
           if (resolution.tokenAddress) {
             await checkVersion(app);
@@ -93,6 +95,19 @@ const createSigner: CreateSigner<SolanaSigner> = (transport: Transport) => {
             if (signedDescriptor) {
               await app.provideTrustedName(signedDescriptor);
             }
+          }
+          if (resolution.tokenInternalId) {
+            const { descriptor: coinMetaDescriptor, signature: coinMetaSignature } =
+              await calService.getCertificate(resolution.deviceModelId, "coin_meta");
+
+            await tryLoadPKI(transport, "COIN_META", coinMetaDescriptor, coinMetaSignature);
+
+            const token = await calService.findToken({ id: resolution.tokenInternalId }, {});
+
+            await app.provideTrustedDynamicDescriptor({
+              data: Buffer.from(token.descriptor.data, "hex"),
+              signature: Buffer.from(token.descriptor.signature, "hex"),
+            });
           }
         }
       }
