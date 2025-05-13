@@ -6,11 +6,8 @@ import {
   type PolkadotAccountRaw,
   type PolkadotOperationExtra,
   type PolkadotOperationExtraRaw,
-  isPolkadotOperationExtraRaw,
-  isPolkadotOperationExtra,
   PalletMethod,
 } from "../types";
-import { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
 
 function toPolkadotResourcesRaw(r: PolkadotResources): PolkadotResourcesRaw {
   const { nonce, controller, stash } = r;

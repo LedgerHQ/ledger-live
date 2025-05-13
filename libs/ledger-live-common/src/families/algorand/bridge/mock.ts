@@ -8,7 +8,7 @@ import type {
   AlgorandTransaction,
   Transaction,
 } from "@ledgerhq/coin-algorand/types";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { CurrencyBridge } from "@ledgerhq/types-live";
 import {
   makeAccountBridgeReceive,
   scanAccounts,

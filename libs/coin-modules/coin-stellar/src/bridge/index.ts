@@ -8,10 +8,10 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { Account, AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
 import stellarCoinConfig, { type StellarCoinConfig } from "../config";
 import signerGetAddress from "../signer";
-import type { StellarSigner, Transaction, TransactionRaw, TransactionStatus } from "../types";
+import type { StellarSigner, Transaction, TransactionRaw } from "../types";
 import { broadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";

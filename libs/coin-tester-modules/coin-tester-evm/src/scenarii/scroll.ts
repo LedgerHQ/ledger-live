@@ -9,7 +9,10 @@ import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/specu
 import { resetIndexer, setBlock, indexBlocks, initMswHandlers } from "../indexer";
 import { buildAccountBridge, buildCurrencyBridge } from "@ledgerhq/coin-evm/bridge/js";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
-import { Transaction as EvmTransaction, TransactionStatus } from "@ledgerhq/coin-evm/types/transaction";
+import {
+  Transaction as EvmTransaction,
+  TransactionStatus,
+} from "@ledgerhq/coin-evm/types/transaction";
 import { makeAccount } from "@ledgerhq/coin-evm/__tests__/fixtures/common.fixtures";
 import { callMyDealer, scroll, VITALIK } from "../helpers";
 import { defaultNanoApp } from "../scenarii.test";

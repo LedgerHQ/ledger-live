@@ -28,7 +28,6 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   Account,
   AccountBridge,
-  AccountRaw,
   CurrencyBridge,
   DerivationMode,
   Operation,
@@ -36,9 +35,7 @@ import type {
   ScanAccountEvent,
   SyncConfig,
   TransactionCommon,
-  TransactionCommonRaw,
   TransactionStatusCommon,
-  TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 
 // Customize the way to iterate on the keychain derivation
