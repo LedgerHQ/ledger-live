@@ -467,6 +467,10 @@ jobs:
           pnpm mobile e2e:ci -p android -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
         env:
           PRODUCTION: ${{ inputs.production_firebase }}
+      - name: ls
+        run: |
+          ls ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/detox/
+          ls ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/debug/
 
       - name: Upload Detox Native Build
         uses: tespkg/actions-cache/save@v1
