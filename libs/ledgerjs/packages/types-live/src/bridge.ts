@@ -83,14 +83,14 @@ export type Bridge<
   T extends TransactionCommon,
   TR extends TransactionCommonRaw = TransactionCommonRaw,
   A extends Account = Account,
-  R extends AccountRaw = AccountRaw,
+  AR extends AccountRaw = AccountRaw,
   OE extends OperationExtra = OperationExtra,
   OER extends OperationExtraRaw = OperationExtraRaw,
   U extends TransactionStatusCommon = TransactionStatusCommon,
   UR extends TransactionStatusCommonRaw = TransactionStatusCommonRaw,
 > = {
   currencyBridge: CurrencyBridge;
-  accountBridge: AccountBridge<T, A, U, R, OE, OER>;
+  accountBridge: AccountBridge<T, A, U, AR, OE, OER>;
   serializationBridge: SerializationBridge<T, TR, U, UR>;
 };
 
@@ -270,12 +270,12 @@ export type AccountBridge<
   T extends TransactionCommon,
   A extends Account = Account,
   U extends TransactionStatusCommon = TransactionStatusCommon,
-  R extends AccountRaw = AccountRaw,
+  AR extends AccountRaw = AccountRaw,
   OE extends OperationExtra = OperationExtra,
   OER extends OperationExtraRaw = OperationExtraRaw,
 > = SendReceiveAccountBridge<T, A, U> &
   AccountBridgeWithExchange<A> &
-  Partial<SerializationAccountBridge<A, R, OE, OER>>;
+  Partial<SerializationAccountBridge<A, AR, OE, OER>>;
 
 type ExpectFn = (...args: Array<any>) => any;
 
