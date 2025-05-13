@@ -3,8 +3,9 @@ import { BigNumber } from "bignumber.js";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { AptosAPI } from "../network";
 import { getEstimatedGas } from "./getFeesForTransaction";
-import { DEFAULT_GAS, DEFAULT_GAS_PRICE, getMaxSendBalance } from "./logic";
+import { getMaxSendBalance } from "./logic";
 import type { Transaction } from "../types";
+import { DEFAULT_GAS, DEFAULT_GAS_PRICE } from "../constants";
 
 const estimateMaxSpendable = async ({
   account,

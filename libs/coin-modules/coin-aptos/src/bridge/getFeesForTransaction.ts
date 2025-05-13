@@ -4,9 +4,10 @@ import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
 import { AptosAPI } from "../network";
-import buildTransaction from "./buildTransaction";
-import { DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "./logic";
+import { ESTIMATE_GAS_MUL } from "./logic";
 import type { Transaction, TransactionErrors } from "../types";
+import { DEFAULT_GAS, DEFAULT_GAS_PRICE } from "../constants";
+import buildTransaction from "../logic/buildTransaction";
 
 type IGetEstimatedGasReturnType = {
   fees: BigNumber;
