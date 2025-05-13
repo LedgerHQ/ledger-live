@@ -513,6 +513,10 @@
       "title" : "Üzgünüz, fon miktarı yetersiz",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "Üzgünüz, fon miktarı işlem ücretlerini karşılamıyor",
+      "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Kullanılabilir (stake edilmemiş) bakiyeniz şu anda {{currentBalance}} ve {{assetName}} varlığınızın stake'ini durdurmak için gereken ağ ücretini karşılamıyor. ",
       "oneCta" : "Hesabınıza {{assetName}} <cta1>{{cta1Label}}</cta1>.",
@@ -6469,7 +6473,9 @@
     },
     "stepVerification" : {
       "action" : "Lütfen işlemi cihazınızdan onaylayın",
-      "accountName" : "Hesap adı"
+      "accountName" : "Hesap adı",
+      "title" : "Ledger {{wording}} üzerinde devam edin",
+      "description" : "Güvenli Dokunmatik Ekranınızda gösterilen yönergeleri izleyin."
     }
   },
   "notificationCenter" : {
@@ -7414,6 +7420,10 @@
       "minutes_plural" : "({{count}} dakika önce)",
       "seconds" : "({{count}} saniye önce)",
       "seconds_plural" : "({{count}} saniye önce)"
-    }
+    },
+    "performance" : "Performans",
+    "low" : "Düşük",
+    "high" : "Yüksek",
+    "title" : "Market Movements"
   }
 }
