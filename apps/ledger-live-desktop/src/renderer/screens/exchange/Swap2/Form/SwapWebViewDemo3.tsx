@@ -35,6 +35,7 @@ import { context } from "~/renderer/drawers/Provider";
 import { NetworkStatus, useNetworkStatus } from "~/renderer/hooks/useNetworkStatus";
 import useTheme from "~/renderer/hooks/useTheme";
 import logger from "~/renderer/logger";
+import { reduce } from "rxjs";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import {
   counterValueCurrencySelector,
@@ -177,10 +178,25 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
         }
         const fromParentAccount = getParentAccount(fromAccount, accounts);
 
-        const mainAccount = getMainAccount(fromAccount, fromParentAccount);
+        let mainAccount = getMainAccount(fromAccount, fromParentAccount);
         const bridge = getAccountBridge(fromAccount, fromParentAccount);
 
         const subAccountId = fromAccount.type !== "Account" && fromAccount.id;
+
+        // NOTE: we might sync all types of accounts here
+        if (mainAccount.currency.id === "bitcoin") {
+          try {
+            const observable = bridge.sync(mainAccount, { paginationConfig: {} });
+            const reduced = observable.pipe(reduce((a, f) => f(a), mainAccount));
+            const syncedAccount = await reduced.toPromise();
+            if (syncedAccount) {
+              mainAccount = syncedAccount;
+            }
+          } catch (e) {
+            logger.error(e);
+          }
+        }
+
         const transaction = bridge.createTransaction(mainAccount);
 
         const preparedTransaction = await bridge.prepareTransaction(mainAccount, {
