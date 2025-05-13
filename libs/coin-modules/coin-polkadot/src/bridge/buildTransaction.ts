@@ -29,7 +29,7 @@ export const buildTransaction = async (
   forceLatestParams = false,
 ) => {
   return craftTransaction(
-    account.freshAddress,
+    account,
     getNonce(account),
     extractExtrinsicArg(account, transaction),
     forceLatestParams,
