@@ -24,6 +24,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router";
 import styled from "styled-components";
+import { reduce, firstValueFrom } from "rxjs";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { track } from "~/renderer/analytics/segment";
 import { Web3AppWebview } from "~/renderer/components/Web3AppWebview";
@@ -35,7 +36,6 @@ import { context } from "~/renderer/drawers/Provider";
 import { NetworkStatus, useNetworkStatus } from "~/renderer/hooks/useNetworkStatus";
 import useTheme from "~/renderer/hooks/useTheme";
 import logger from "~/renderer/logger";
-import { reduce } from "rxjs";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import {
   counterValueCurrencySelector,
@@ -186,9 +186,11 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
         // NOTE: we might sync all types of accounts here
         if (mainAccount.currency.id === "bitcoin") {
           try {
-            const observable = bridge.sync(mainAccount, { paginationConfig: {} });
-            const reduced = observable.pipe(reduce((a, f) => f(a), mainAccount));
-            const syncedAccount = await reduced.toPromise();
+            const syncedAccount = await firstValueFrom(
+              bridge
+                .sync(mainAccount, { paginationConfig: {} })
+                .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), mainAccount)),
+            );
             if (syncedAccount) {
               mainAccount = syncedAccount;
             }
