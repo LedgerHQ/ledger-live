@@ -17,6 +17,9 @@ export type NetworkInfoRaw = {
   family: FamilyType;
 };
 
+export function isFilecoinTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "filecoin";
+}
 export type Transaction = TransactionCommon & {
   family: FamilyType;
   nonce: number;
@@ -28,6 +31,9 @@ export type Transaction = TransactionCommon & {
   gasFeeCap: BigNumber;
   gasPremium: BigNumber;
 };
+export function isFilecoinTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "filecoin";
+}
 export type TransactionRaw = TransactionCommonRaw & {
   family: FamilyType;
   version: number;

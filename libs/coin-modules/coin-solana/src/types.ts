@@ -226,12 +226,18 @@ export type TransactionModel = { commandDescriptor?: CommandDescriptor } & (
   | StakeSplitTransaction
 );
 
+export function isSolanaTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "solana";
+}
 export type Transaction = TransactionCommon & {
   family: "solana";
   model: TransactionModel;
   raw?: string;
 };
 
+export function isSolanaTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "solana";
+}
 export type TransactionRaw = TransactionCommonRaw & {
   family: "solana";
   model: string;

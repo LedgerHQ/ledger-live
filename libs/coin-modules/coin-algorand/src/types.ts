@@ -32,6 +32,9 @@ export type AlgorandResourcesRaw = {
 };
 export type AlgorandOperationMode = "send" | "optIn" | "claimReward";
 
+export function isAlgorandTransaction(tx: TransactionCommon): tx is AlgorandTransaction {
+  return tx.family === "algorand";
+}
 export type AlgorandTransaction = TransactionCommon & {
   family: "algorand";
   mode: AlgorandOperationMode;
@@ -39,6 +42,9 @@ export type AlgorandTransaction = TransactionCommon & {
   assetId: string | null | undefined;
   memo: string | null | undefined;
 };
+export function isAlgorandTransactionRaw(tx: TransactionCommonRaw): tx is AlgorandTransactionRaw {
+  return tx.family === "algorand";
+}
 export type AlgorandTransactionRaw = TransactionCommonRaw & {
   family: "algorand";
   mode: AlgorandOperationMode;

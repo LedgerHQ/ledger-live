@@ -174,6 +174,9 @@ export type CardanoResourcesRaw = {
 
 export type CardanoOperationMode = "send" | "delegate" | "undelegate";
 
+export function isCardanoTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "cardano";
+}
 /**
  * Cardano transaction
  */
@@ -187,6 +190,9 @@ export type Transaction = TransactionCommon & {
   // add here all transaction-specific fields if you implement other modes than "send"
 };
 
+export function isCardanoTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "cardano";
+}
 /**
  * Cardano transaction from a raw JSON
  */

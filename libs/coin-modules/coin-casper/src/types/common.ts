@@ -13,6 +13,9 @@ type FamilyType = "casper";
 
 export type CasperAccount = Account;
 
+export function isCasperTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "casper";
+}
 export type Transaction = TransactionCommon & {
   family: FamilyType;
   fees: BigNumber;
@@ -25,6 +28,9 @@ interface CasperOperationExtra {
   transferId?: string | undefined;
 }
 
+export function isCasperTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "casper";
+}
 export type TransactionRaw = TransactionCommonRaw & {
   family: FamilyType;
   transferId?: string | undefined;

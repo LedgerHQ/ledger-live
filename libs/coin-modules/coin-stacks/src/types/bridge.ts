@@ -20,6 +20,9 @@ export type NetworkInfoRaw = {
   family: FamilyType;
 };
 
+export function isStacksTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "stacks";
+}
 export type Transaction = TransactionCommon & {
   family: FamilyType;
   fee?: BigNumber;
@@ -29,6 +32,9 @@ export type Transaction = TransactionCommon & {
   anchorMode: AnchorMode;
 };
 
+export function isStacksTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "stacks";
+}
 export type TransactionRaw = TransactionCommonRaw & {
   family: FamilyType;
   fee?: string;

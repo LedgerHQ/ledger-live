@@ -11,11 +11,17 @@ import BigNumber from "bignumber.js";
 
 type FamilyType = "internet_computer";
 
+export function isInternetComputerTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "internet_computer";
+}
 export type Transaction = TransactionCommon & {
   family: FamilyType;
   fees: BigNumber;
   memo?: string | undefined;
 };
+export function isInternetComputerTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "internet_computer";
+}
 export type TransactionRaw = TransactionCommonRaw & {
   family: FamilyType;
   fees: string;

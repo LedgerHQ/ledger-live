@@ -30,6 +30,9 @@ export type NetworkInfoRaw = {
   fees: string;
 };
 
+export function isTezosTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "tezos";
+}
 // TODO add a field for indicating if staking
 export type Transaction = TransactionCommon & {
   family: "tezos";
@@ -42,6 +45,9 @@ export type Transaction = TransactionCommon & {
   taquitoError: string | null | undefined;
 };
 
+export function isTezosTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "tezos";
+}
 export type TransactionRaw = TransactionCommonRaw & {
   family: "tezos";
   mode: TezosOperationMode;

@@ -15,11 +15,17 @@ export type NetworkInfoRaw = {
   family: "hedera";
 };
 
+export function isHederaTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "hedera";
+}
 export type Transaction = TransactionCommon & {
   family: "hedera";
   memo?: string | undefined;
 };
 
+export function isHederaTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "hedera";
+}
 export type TransactionRaw = TransactionCommonRaw & {
   family: "hedera";
   memo?: string | undefined;
