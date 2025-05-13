@@ -469,8 +469,7 @@ jobs:
           PRODUCTION: ${{ inputs.production_firebase }}
       - name: ls
         run: |
-          ls apps/ledger-live-mobile/android/app/build/outputs/apk/detox/
-          ls apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/debug/
+          ls -R apps/ledger-live-mobile/android/app/build/outputs/apk/
 
       - name: Upload Detox Native Build
         uses: tespkg/actions-cache/save@v1
