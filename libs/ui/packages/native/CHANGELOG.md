@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.34.0
+
+### Minor Changes
+
+- [#10071](https://github.com/LedgerHQ/ledger-live/pull/10071) [`2ff4c03`](https://github.com/LedgerHQ/ledger-live/commit/2ff4c03ca7d8232563141b9531b1359087e57c59) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Generic Card for Large Mover
+
 ## 0.34.0-next.0
 
 ### Minor Changes

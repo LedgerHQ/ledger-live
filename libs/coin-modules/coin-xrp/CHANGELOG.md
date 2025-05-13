@@ -1,5 +1,17 @@
 # @ledgerhq/coin-xrp
 
+## 6.1.0
+
+### Minor Changes
+
+- [#10104](https://github.com/LedgerHQ/ledger-live/pull/10104) [`bd7ddea`](https://github.com/LedgerHQ/ledger-live/commit/bd7ddead5bece9471bc371f4f9b061a48c43be7b) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - [coin-modules][ripple] allow to pass signing pub key to craft
+
+### Patch Changes
+
+- Updated dependencies [[`a7ba19c`](https://github.com/LedgerHQ/ledger-live/commit/a7ba19cfa5a895572edfcf036a10d2af83efdf38), [`91fe526`](https://github.com/LedgerHQ/ledger-live/commit/91fe526be2710f0fb18b4d035a5d8de630b3d4b5)]:
+  - @ledgerhq/types-live@6.70.0
+  - @ledgerhq/coin-framework@5.0.1
+
 ## 6.1.0-next.0
 
 ### Minor Changes
