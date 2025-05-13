@@ -300,7 +300,7 @@ const toTransactionPayloadRaw = (payload: TonPayloadFormat): TonPayloadFormatRaw
   }
 };
 
-export const toTransactionRaw = (transaction: Transaction): TransactionRaw => {
+const toTransactionRaw = (transaction: Transaction): TransactionRaw => {
   const common = toTransactionCommonRaw(transaction);
 
   return {

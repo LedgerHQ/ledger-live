@@ -249,11 +249,9 @@ export function callSerializeBridgeFunc(
   tx: TransactionCommon | TransactionCommonRaw,
   func: string,
 ) {
-  if (isTransaction(tx) === false) {
-    return callSerializeBridgeFuncOnTransactionRaw(tx, func);
-  }
-
-  return callSerializeBridgeFuncOnTransaction(tx, func);
+  return isTransaction(tx)
+    ? callSerializeBridgeFuncOnTransaction(tx, func)
+    : callSerializeBridgeFuncOnTransactionRaw(tx, func);
 }
 
 function callSerializeBridgeFuncOnTransaction(tx: TransactionCommon, func: string) {
