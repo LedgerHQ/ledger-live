@@ -87,6 +87,7 @@ export type AppRequest = {
   withInlineInstallProgress?: boolean;
   requireLatestFirmware?: boolean;
   allowPartialDependencies?: boolean;
+  mightHaveOutdatedApp?: boolean;
 };
 
 export type AppResult = {
@@ -381,6 +382,7 @@ function inferCommandParams(appRequest: AppRequest): ConnectAppRequest {
     requireLatestFirmware,
     allowPartialDependencies = false,
     dependencies: appDependencies,
+    mightHaveOutdatedApp,
   } = appRequest;
   let { appName, currency } = appRequest;
 
@@ -405,6 +407,7 @@ function inferCommandParams(appRequest: AppRequest): ConnectAppRequest {
       dependencies,
       requireLatestFirmware,
       allowPartialDependencies,
+      mightHaveOutdatedApp: mightHaveOutdatedApp ?? false,
     };
   }
 
@@ -441,6 +444,7 @@ function inferCommandParams(appRequest: AppRequest): ConnectAppRequest {
       ...extra,
     },
     allowPartialDependencies,
+    mightHaveOutdatedApp: mightHaveOutdatedApp ?? false,
   };
 }
 
