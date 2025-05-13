@@ -617,8 +617,8 @@ jobs:
 #          sudo udevadm control --reload-rules
 #          sudo udevadm trigger --name-match=kvm
 
-      - name: Fix emulator directory permissions
-        run: sudo chown -R $(whoami):$(id -ng) /usr/local/lib/android/sdk/emulator/
+#      - name: Fix emulator directory permissions
+#        run: sudo chown -R $(whoami):$(id -ng) /usr/local/lib/android/sdk/emulator/
 
       - name: Install dependencies
         run: |
