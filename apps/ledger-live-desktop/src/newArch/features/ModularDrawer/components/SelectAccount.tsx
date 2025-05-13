@@ -25,8 +25,8 @@ export const SelectAccount = ({
   source,
   flow,
 }: SelectAccountProps) => {
-  const onAccountClick = (networkId: string) => {
-    track("account_clicked", { currency: networkId, page: "Modular Account Selection", flow });
+  const onAccountClick = (accountId: string) => {
+    track("account_clicked", { currency: accountId, page: "Modular Account Selection", flow });
     // TODO to be implemented as part of LIVE-17272
     onAccountSelected({} as AccountLike, {} as Account);
   };

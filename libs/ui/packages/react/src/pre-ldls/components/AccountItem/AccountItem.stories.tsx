@@ -8,7 +8,8 @@ const meta: Meta<typeof AccountItem> = {
   tags: ["autodocs"],
   args: {
     account: {
-      id: "bitcoin",
+      id: "12345",
+      cryptoId: "bitcoin",
       name: "Main BTC",
       balance: "0.118 ETH",
       fiatValue: "$5,969.83",
@@ -26,7 +27,8 @@ export const Default: Story = {};
 export const TestAccount: Story = {
   args: {
     account: {
-      id: "bitcoin",
+      id: "12345",
+      cryptoId: "bitcoin",
       name: "Main BTC",
       balance: "0.118 BTC",
       fiatValue: "$5,969.83",
@@ -58,7 +60,8 @@ export const TestAccount: Story = {
 export const TestWithoutProtocol: Story = {
   args: {
     account: {
-      id: "bitcoin",
+      id: "21345",
+      cryptoId: "bitcoin",
       name: "Main BTC",
       balance: "0.118 BTC",
       fiatValue: "$5,969.83",
