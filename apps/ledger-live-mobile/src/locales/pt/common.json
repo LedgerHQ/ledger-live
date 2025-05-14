@@ -6469,7 +6469,9 @@
     },
     "stepVerification" : {
       "action" : "Confirme a operação em seu dispositivo",
-      "accountName" : "Nome da conta"
+      "accountName" : "Nome da conta",
+      "title" : "Continue na sua Ledger {{wording}}",
+      "description" : "Siga as instruções exibidas na sua Tela Touch Segura."
     }
   },
   "notificationCenter" : {
@@ -7414,6 +7416,9 @@
       "minutes_plural" : "({{count}} minutos atrás)",
       "seconds" : "({{count}} segundo atrás)",
       "seconds_plural" : "({{count}} segundos atrás)"
-    }
+    },
+    "performance" : "Desempenho",
+    "low" : "Baixo",
+    "high" : "Alto"
   }
 }
