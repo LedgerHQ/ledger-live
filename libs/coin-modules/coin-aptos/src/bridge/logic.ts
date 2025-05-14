@@ -147,7 +147,7 @@ export const txsToOps = (
       const { coin_id, amount_in, amount_out, staked_amount } = getCoinAndAmounts(tx, address);
       op.value = calculateAmount(tx.sender, address, amount_in, amount_out);
       op.type = staked_amount.gt(0)
-        ? DIRECTION.DELEGATE
+        ? DIRECTION.STAKE
         : compareAddress(tx.sender, address)
           ? DIRECTION.OUT
           : DIRECTION.IN;
@@ -162,7 +162,7 @@ export const txsToOps = (
         op.type = DIRECTION.UNKNOWN;
       }
 
-      if (op.type === DIRECTION.DELEGATE) {
+      if (op.type === DIRECTION.STAKE) {
         op.value = staked_amount;
         opsStaking.push(op);
       } else if (op.type !== DIRECTION.UNKNOWN && coin_id !== null) {
