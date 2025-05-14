@@ -4697,7 +4697,7 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "Mise à jour du {{deviceName}} vers la version {{version}}",
-    "recoveryPhraseBackupInstructions" : "Assurez-vous par précaution que votre phrase de récupération de 24 mots est accessible et bien écrite sur votre feuille de récupération.",
+    "recoveryPhraseBackupInstructions" : "Assurez-vous par précaution que votre phrase de récupération secrète de 24 mots est accessible et bien écrite sur votre feuille de récupération.\n\nVous pouvez également utiliser Ledger Recover comme accès de secours à votre wallet, pour plus de sérénité.",
     "confirmRecoveryPhrase" : "J’ai ma phrase de récupération.",
     "introDescription1" : "Toutes les apps sur votre appareil seront supprimées. Vous pouvez réinstaller vos apps après la mise à jour du micrologiciel.",
     "introDescription2" : "Cela n’a pas d’effet sur vos crypto-actifs.",

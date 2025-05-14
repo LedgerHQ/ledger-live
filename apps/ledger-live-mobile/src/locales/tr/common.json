@@ -4697,7 +4697,7 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "{{deviceName}} cihazınızı {{version}} sürümüne güncelleyin",
-    "recoveryPhraseBackupInstructions" : "Önlem olarak, 24 kelimelik kurtarma ifadenizi bir Kurtarma Kağıdına yazdığınızdan ve ona kolayca ulaşabileceğinizden emin olun.",
+    "recoveryPhraseBackupInstructions" : "Önlem olarak, 24 kelimelik Gizli Kurtarma İfadenizi kurtarma Kâğıdına yazdığınızdan ve bu kâğıda kolayca erişebileceğinizden emin olun.\n\nCüzdan erişiminizi yedekleyip cüzdanınıza erişimi asla kaybetmeyeceğinizden emin olmak için Ledger Recover’ı kullanmayı düşünün.",
     "confirmRecoveryPhrase" : "Kurtarma ifadem var",
     "introDescription1" : "Cihazınızdaki tüm uygulamaların silineceğini lütfen unutmayın. Yazılım güncellemesinden sonra uygulamalarınızı yeniden yükleyebilirsiniz.",
     "introDescription2" : "Bunun kripto varlıklarınız üzerinde hiçbir etkisi yoktur.",
