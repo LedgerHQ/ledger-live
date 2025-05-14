@@ -63,6 +63,8 @@ async function getAccountTransactions(
   const transactions: HederaMirrorTransaction[] = [];
   const params = new URLSearchParams({
     "account.id": address,
+    order: "desc",
+    limit: "100",
   });
 
   if (since) {
