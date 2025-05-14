@@ -3845,6 +3845,9 @@
         }
       }
     },
+    "spl2022" : {
+      "splExtensionsWarning" : "Vous interagissez avec un token faisant partie du programme Token-2022, aussi appelé extension de tokens. Ce token présente des risques spécifiques. <0>Cliquez ici</0> pour en savoir plus."
+    },
     "amount" : {
       "available" : "Total disponible",
       "useMax" : "Maximum",
@@ -4317,7 +4320,7 @@
     "charactersRemaining" : "{{remainingCount}} caractères restants",
     "action" : "Définir le nom",
     "rename" : "Renommer",
-    "success" : "Appareil renommé : « {{deviceName}} »"
+    "success" : "Appareil renommé : {{deviceName}}"
   },
   "PairDevices" : {
     "Paired" : {
@@ -6074,7 +6077,7 @@
       "started" : {
         "description" : "Vous pouvez gagner des récompenses en déléguant vos SOL à un validateur."
       },
-      "reserveWarning" : "Conservez au minimum {{amount}} SOL dans votre wallet pour couvrir les frais de réseau futurs afin de désactiver et retirer vos cryptos stakées"
+      "reserveWarning" : "Conservez au minimum {{amount}} SOL dans votre compte pour couvrir les frais de réseau futurs afin de désactiver et retirer vos cryptos stakées"
     },
     "token" : {
       "frozenStateWarning" : "Les actifs du compte sont gelés",
@@ -6082,6 +6085,7 @@
       "transferFees" : {
         "title" : "Frais de transfert",
         "feesPercentHint" : "Le token a des frais de transfert de {{feePercent}}% ({{feeBps}} bps). Max : {{maxFee}}",
+        "feesHint" : "Frais de transfert du token : {{transferFee}}",
         "notice" : "Frais de transfert : {{fee}}%",
         "tooltipHint" : "Pourcentage du transfert prélevé pour le créateur du token."
       },
@@ -6469,7 +6473,9 @@
     },
     "stepVerification" : {
       "action" : "Confirmez l’opération sur votre appareil.",
-      "accountName" : "Nom du compte"
+      "accountName" : "Nom du compte",
+      "title" : "Continuez sur votre Ledger {{wording}}",
+      "description" : "Consultez les instructions sur son écran tactile sécurisé."
     }
   },
   "notificationCenter" : {
@@ -7202,13 +7208,13 @@
         "error" : "Synchronisations",
         "unsecuredError" : {
           "title" : "Connectez l’appareil Ledger que vous avez utilisé pour activer Ledger Sync",
-          "description" : "Si vous n’avez pas le même appareil Ledger, sélectionnez « Supprimer la synchronisation ».",
+          "description" : "Si vous n’avez pas le même appareil Ledger, sélectionnez : Supprimer la synchronisation.",
           "cta" : "Connecter un autre appareil Ledger",
           "ctaDelete" : "Supprimer la synchronisation"
         },
         "autoRemoveError" : {
           "title" : "Impossible de retirer ce téléphone pendant que vous l’utilisez",
-          "description" : "Pour le retirer, utilisez un autre téléphone ou ordinateur sur lequel Ledger Sync est activé. Si vous n’avez pas d’autre appareil, sélectionnez « Supprimer la synchronisation ».",
+          "description" : "Pour le retirer, utilisez un autre téléphone ou ordinateur sur lequel Ledger Sync est activé. Si vous n’avez pas d’autre appareil, sélectionnez : Supprimer la synchronisation.",
           "info" : "En supprimant vote clé de chiffrement, vos appareils seront désynchronisés, et toutes les données synchronisées seront supprimées. Cette action n’a aucune répercussion sur vos actifs. Vous pouvez resynchroniser vos comptes à tout moment.",
           "cta" : "Compris",
           "ctaDelete" : "Supprimer la synchronisation"
@@ -7269,7 +7275,7 @@
         "scannedInvalidQrCode" : {
           "title" : "Code QR invalide",
           "desc" : "Pour synchroniser vos applications Ledger Live, scannez uniquement le code QR affiché sur Ledger Live.",
-          "info" : "Trouvez votre code QR dans « Paramètres » > « Général » > « Ledger Sync » > « Activer Sync » > « Voir le code QR ».",
+          "info" : "Trouvez votre code QR dans Paramètres > Général > Ledger Sync > Activer Sync > Voir le code QR.",
           "cta" : "Compris",
           "tryAgain" : "Réessayer"
         },
@@ -7286,7 +7292,7 @@
         },
         "unbackedOnboarding" : {
           "title" : "Aucune synchronisation détectée",
-          "description" : "Après avoir activé la synchronisation pour l’autre application Ledger Live, revenez ici et sélectionnez « Réessayer ».",
+          "description" : "Après avoir activé la synchronisation pour l’autre application Ledger Live, revenez ici et sélectionnez Réessayer.",
           "info" : "Si Ledger Sync n’est activé sur aucune application, continuez sans l’activer.",
           "cta" : "Réessayer",
           "cancel" : "Continuer sans synchronisation"
@@ -7304,7 +7310,7 @@
       },
       "unbackedOnboarding" : {
         "title" : "Aucune synchronisation détectée",
-        "description" : "Si Ledger Sync est activé, sélectionnez « Réessayer » et connectez le même appareil Ledger que celui que vous avez utilisé pour l’activer.",
+        "description" : "Si Ledger Sync est activé, sélectionnez Réessayer, et connectez le même appareil Ledger que celui que vous avez utilisé pour l’activer.",
         "info" : "Ou continuez sans Ledger Sync.",
         "cta" : "Réessayer",
         "cancel" : "Continuer sans synchronisation"
@@ -7414,6 +7420,9 @@
       "minutes_plural" : "(il y a {{count}} minutes)",
       "seconds" : "(il y a {{count}} seconde)",
       "seconds_plural" : "(il y a {{count}} secondes)"
-    }
+    },
+    "performance" : "Performance",
+    "low" : "Faible",
+    "high" : "Élevée"
   }
 }
