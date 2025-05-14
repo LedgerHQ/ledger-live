@@ -3,7 +3,7 @@ import { QuickActionButtonProps } from "@ledgerhq/native-ui";
 import { EntryOf } from "~/types/helpers";
 import { useTranslation } from "react-i18next";
 import { track } from "~/analytics";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import useQuickActions, { QuickActionProps } from "~/hooks/useQuickActions";
@@ -26,7 +26,6 @@ const QUICK_ACTIONS = {
 export const useFooterQuickActions = (quickActionsProps: QuickActionProps) => {
   const { t } = useTranslation();
   const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
-  const router = useRoute();
   const { quickActionsList } = useQuickActions(quickActionsProps);
   const quickActionsData: QuickActionButtonProps[] = useMemo(
     () =>
@@ -40,13 +39,17 @@ export const useFooterQuickActions = (quickActionsProps: QuickActionProps) => {
           Icon: quickActionsItem.icon,
           children: t(prop.name),
           onPress: () => {
-            track("button_clicked", { button: prop.analytics, page: router.name });
+            track("button_clicked", {
+              button: prop.analytics,
+              page: "Large Mover Landing Page",
+              coin: quickActionsProps.currency?.name,
+            });
             navigation.navigate<keyof BaseNavigatorStackParamList>(...quickActionsItem.route);
           },
           disabled: quickActionsItem.disabled,
         };
       }),
-    [quickActionsList, t, navigation, router.name],
+    [quickActionsList, t, quickActionsProps.currency?.name, navigation],
   );
   return quickActionsData;
 };

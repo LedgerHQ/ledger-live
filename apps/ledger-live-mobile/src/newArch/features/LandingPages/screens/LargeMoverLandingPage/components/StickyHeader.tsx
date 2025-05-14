@@ -2,9 +2,16 @@ import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { NavigationHeaderCloseButtonAdvanced } from "~/components/NavigationHeaderCloseButton";
+import { track } from "~/analytics";
 
 export const StickyHeader = () => {
   const { t } = useTranslation();
+  const handleClose = () => {
+    track("button_clicked", {
+      button: "Close",
+      page: "Large Mover Landing Page",
+    });
+  };
   return (
     <Flex
       flexDirection="row"
@@ -15,7 +22,7 @@ export const StickyHeader = () => {
       <Text fontSize={22} fontWeight="bold" color="neutral.c100" padding={6}>
         {t(`largeMover.title`)}
       </Text>
-      <NavigationHeaderCloseButtonAdvanced />
+      <NavigationHeaderCloseButtonAdvanced onClose={handleClose} />
     </Flex>
   );
 };
