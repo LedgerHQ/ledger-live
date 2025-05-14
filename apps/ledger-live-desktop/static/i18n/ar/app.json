@@ -5420,7 +5420,9 @@
     "stringHash" : "دالة تجزئة الرسالة",
     "domainHash" : "دالة تجزئة المجال",
     "messageHash" : "دالة تجزئة الرسالة",
-    "message" : "رسالة"
+    "message" : "رسالة",
+    "title" : "تابع على جهازك Ledger {{wording}}",
+    "description" : "اتبع التعليمات المعروضة على شاشتك الآمنة التي تعمل باللمس."
   },
   "TransactionConfirm" : {
     "title" : "يرجى تأكيد العملية على جهازك لإنهائها",
@@ -6612,7 +6614,8 @@
       "title" : "اختر أصل"
     },
     "selectAccount" : {
-      "title" : "اختر حساب"
+      "title" : "اختر حساب",
+      "addAccount" : "إضافة حساب جديد أو قائم"
     }
   },
   "customImage" : {
@@ -7042,6 +7045,21 @@
     "opted_out" : {
       "description" : "الذاكرة المحدودة في ledger Nano S الخاصة بك تُقيد وصولك إلى أحدث الميزات، ومتغيّرات سلاسل الكتل، وتحسينات الأمان. من أجل الاستخدام على المدى الطويل، قم بالترقية إلى جهاز Ledger أحدث.",
       "cta" : "تعرّف على المزيد"
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "بحث",
+    "assetFlow" : {
+      "selectTemplate" : "Select {{dynamic}}",
+      "asset" : "أصل",
+      "network" : "الشبكة"
+    }
+  },
+  "nftEntryPoint" : {
+    "title" : "الرموز غير القابلة للاستبدال (NFT)",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
     }
   }
 }
