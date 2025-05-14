@@ -43,4 +43,11 @@ const formatCounterValue = (
     .replace(/ /g, "")
     .replace(/n/g, "");
 
-export { formatCounterValue, getTimeAgoCode };
+const getColors = (priceChangePercentage: number) => {
+  if (priceChangePercentage === 0) return { textColor: "neutral.c100", bgColor: "neutral.c20" };
+
+  return priceChangePercentage > 0
+    ? { textColor: "success.c70", bgColor: "success.c10" }
+    : { textColor: "error.c50", bgColor: "error.c10" };
+};
+export { formatCounterValue, getTimeAgoCode, getColors };

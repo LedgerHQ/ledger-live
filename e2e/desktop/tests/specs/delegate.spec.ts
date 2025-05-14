@@ -158,7 +158,7 @@ for (const account of e2eDelegationAccounts) {
 
         if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
           await app.layout.syncAccounts();
-          await app.account.clickOnLastOperation();
+          await app.account.clickOnLastOperationAndReturnStatus();
           await app.delegateDrawer.expectDelegationInfos(account.delegate);
           await app.delegateDrawer.verifyTxTypeIs(transactionType);
           await app.delegateDrawer.operationTypeIsCorrect(transactionType);

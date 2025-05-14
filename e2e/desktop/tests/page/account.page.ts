@@ -24,6 +24,7 @@ export class AccountPage extends AppPage {
   private advancedButton = this.page.getByText("Advanced");
   private accountAdvancedLogs = this.page.getByTestId("Advanced_Logs");
   private operationRows = this.page.locator("[data-testid^='operation-row-']");
+  private operationStatus = this.page.locator("[data-testid^='operation-status-']");
   private selectSpecificOperation = (operationType: string) =>
     this.page.locator("[data-testid^='operation-row-']").filter({ hasText: operationType });
   private closeModal = this.page.getByTestId("modal-close-button");
@@ -82,9 +83,11 @@ export class AccountPage extends AppPage {
     await this.selectSpecificOperation(operation).first().click();
   }
 
-  @step("Click on last operation")
-  async clickOnLastOperation() {
+  @step("Click on last operation and return status")
+  async clickOnLastOperationAndReturnStatus() {
+    const status = await this.operationStatus.first().textContent();
     await this.operationRows.first().click();
+    return status;
   }
 
   @step("Click Stake button on banner")

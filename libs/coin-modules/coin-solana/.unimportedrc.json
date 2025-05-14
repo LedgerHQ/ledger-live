@@ -17,9 +17,14 @@
     "**/*.mock.ts",
     "**/*.test.{js,jsx,ts,tsx}"
   ],
-  "ignoreUnresolved": [],
+  "ignoreUnresolved": [
+      "follow-redirects",
+      "form-data",
+      "proxy-from-env"
+  ],
   "ignoreUnimported": [
-    "src/datasets/solana.scanAccounts.1.ts"
+    "src/datasets/solana.scanAccounts.1.ts",
+    "src/tests/preload.fixtures.ts"
   ],
   "ignoreUnused": []
 }

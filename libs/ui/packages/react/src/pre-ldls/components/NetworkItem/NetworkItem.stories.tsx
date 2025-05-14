@@ -6,7 +6,7 @@ const meta: Meta<typeof NetworkItem> = {
   component: NetworkItem,
   title: "PreLdls/Components/NetworkItem",
   tags: ["autodocs"],
-  args: { name: "Bitcoin" },
+  args: { name: "Bitcoin", id: "bitcoin", ticker: "btc" },
 };
 export default meta;
 

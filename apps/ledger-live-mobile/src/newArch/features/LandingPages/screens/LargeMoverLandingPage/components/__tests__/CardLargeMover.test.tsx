@@ -32,16 +32,16 @@ describe("Card", () => {
       <Card {...mockCurrencyData} range={KeysPriceChange.day} setRange={mockSetRange} />,
     );
     expect(getByText("ETH")).toBeTruthy();
-    expect(getByText(/1,883.50/)).toBeTruthy();
-    expect(getByText("0.01%")).toBeTruthy();
+    expect(getByText(/188,350/)).toBeTruthy();
+    expect(getByText("+1.50%")).toBeTruthy();
   });
 
   it("displays market values: 24h low/high, ATH, ATL, dates", () => {
     const { getByText } = render(
       <Card {...mockCurrencyData} range={KeysPriceChange.day} setRange={mockSetRange} />,
     );
-    expect(getByText(/1,828/)).toBeTruthy();
-    expect(getByText(/1,912/)).toBeTruthy();
+    expect(getByText(/188,350/)).toBeTruthy();
+    expect(getByText(/191,200/)).toBeTruthy();
     expect(getByText(/480,978/)).toBeTruthy();
     expect(getByText(/0.42/)).toBeTruthy();
     expect(getByText(/2021/)).toBeTruthy();

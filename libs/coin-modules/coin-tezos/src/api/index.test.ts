@@ -5,8 +5,8 @@ import { createApi } from "./index";
 import type { TezosAsset, TezosTransactionIntent } from "./types";
 
 const DEFAULT_ESTIMATED_FEES = 300n;
-const DEFAUTL_GAS_LIMIT = 30n;
-const DEFAUTL_STORAGE_LIMIT = 40n;
+const DEFAULT_GAS_LIMIT = 30n;
+const DEFAULT_STORAGE_LIMIT = 40n;
 
 const logicGetTransactions = jest.fn();
 const logicEstimateFees = jest.fn();
@@ -106,15 +106,25 @@ describe("Testing craftTransaction function", () => {
   it.each([[1n], [50n], [99n]])(
     "should use custom user fees when user provides it for crafting a transaction",
     async (customFees: bigint) => {
-      logicEstimateFees.mockResolvedValue({ estimatedFees: DEFAULT_ESTIMATED_FEES });
+      logicEstimateFees.mockResolvedValue({
+        estimatedFees: DEFAULT_ESTIMATED_FEES,
+        gasLimit: DEFAULT_GAS_LIMIT,
+        storageLimit: DEFAULT_STORAGE_LIMIT,
+      });
       await api.craftTransaction(
         { type: "send", sender: {} } as TezosTransactionIntent,
         customFees,
       );
-      expect(logicEstimateFees).toHaveBeenCalledTimes(0);
+      expect(logicEstimateFees).toHaveBeenCalledTimes(1);
       expect(logicCraftTransactionMock).toHaveBeenCalledWith(
         expect.any(Object),
-        expect.objectContaining({ fee: { fees: customFees.toString() } }),
+        expect.objectContaining({
+          fee: {
+            fees: customFees.toString(),
+            gasLimit: DEFAULT_GAS_LIMIT.toString(),
+            storageLimit: DEFAULT_STORAGE_LIMIT.toString(),
+          },
+        }),
       );
     },
   );
@@ -126,15 +136,15 @@ describe("Testing estimateFees function", () => {
   it("should return estimation from logic module", async () => {
     logicEstimateFees.mockResolvedValue({
       estimatedFees: DEFAULT_ESTIMATED_FEES,
-      gasLimit: DEFAUTL_GAS_LIMIT,
-      storageLimit: DEFAUTL_STORAGE_LIMIT,
+      gasLimit: DEFAULT_GAS_LIMIT,
+      storageLimit: DEFAULT_STORAGE_LIMIT,
     });
     const result = await api.estimateFees({ type: "send", sender: {} } as TezosTransactionIntent);
     expect(result).toEqual({
       value: DEFAULT_ESTIMATED_FEES,
       parameters: {
-        gasLimit: DEFAUTL_GAS_LIMIT,
-        storageLimit: DEFAUTL_STORAGE_LIMIT,
+        gasLimit: DEFAULT_GAS_LIMIT,
+        storageLimit: DEFAULT_STORAGE_LIMIT,
       },
     });
   });

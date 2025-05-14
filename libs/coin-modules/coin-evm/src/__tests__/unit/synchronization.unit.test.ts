@@ -56,6 +56,7 @@ describe("EVM Family", () => {
             type: "etherscan",
             uri: "https://api.com",
           },
+          showNfts: true,
         },
       };
     });
@@ -114,6 +115,7 @@ describe("EVM Family", () => {
                 uri: "http://nope.com",
                 type: "unsupported" as any,
               },
+              showNfts: true,
             },
           };
         });
@@ -151,6 +153,7 @@ describe("EVM Family", () => {
               explorer: {
                 type: "none",
               },
+              showNfts: true,
             },
           };
         });
@@ -633,6 +636,7 @@ describe("EVM Family", () => {
                   type: "blockscout",
                   uri: "https://api.com",
                 },
+                showNfts: true,
               },
             };
           });

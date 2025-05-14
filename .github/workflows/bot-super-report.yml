@@ -1,4 +1,4 @@
-name: "Bot Super Report"
+name: "[Coin] - Bot Super Report - Scheduled"
 on:
   schedule:
     - cron: "0 14 * * 5"

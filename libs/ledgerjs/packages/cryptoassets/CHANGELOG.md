@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.17.0-next.0
+
+### Minor Changes
+
+- [#10162](https://github.com/LedgerHQ/ledger-live/pull/10162) [`f92f49a`](https://github.com/LedgerHQ/ledger-live/commit/f92f49a003767b83b94955e920cfac8cd565c162) Thanks [@qperrot](https://github.com/qperrot)! - Add fetching of tokens signature in preload method of the solana bridge
+
 ## 13.16.0
 
 ### Minor Changes

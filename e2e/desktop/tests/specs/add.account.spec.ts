@@ -2,6 +2,7 @@ import { test } from "../fixtures/common";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { addTmsLink } from "../utils/allureUtils";
 import { getDescription } from "../utils/customJsonReporter";
+import invariant from "invariant";
 
 const currencies = [
   {
@@ -56,8 +57,9 @@ for (const currency of currencies) {
         await app.account.expectAccountVisibility(firstAccountName);
         await app.account.expectAccountBalance();
         await app.account.expectLastOperationsVisibility();
-        await app.account.clickOnLastOperation();
-        await app.operationDrawer.expectDrawerInfos(firstAccountName);
+        const operationStatus = await app.account.clickOnLastOperationAndReturnStatus();
+        invariant(operationStatus, "Expected operationStatus to be defined");
+        await app.operationDrawer.expectDrawerInfos(firstAccountName, operationStatus);
         await app.operationDrawer.closeDrawer();
         await app.account.expectAddressIndex(0);
         await app.account.expectShowMoreButton();

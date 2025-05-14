@@ -74,7 +74,7 @@ import type {
 } from "./types";
 import { assertUnreachable } from "./utils";
 import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { estimateFeeAndSpendable, extimateTokenMaxSpendable } from "./estimateMaxSpendable";
+import { estimateFeeAndSpendable, estimateTokenMaxSpendable } from "./estimateMaxSpendable";
 import { MemoTransferExt, TransferFeeConfigExt } from "./network/chain/account/tokenExtensions";
 import { calculateToken2022TransferFees } from "./helpers/token";
 import { TokenAccountInfo } from "./network/chain/account/token";
@@ -323,7 +323,7 @@ const deriveTokenTransferCommandDescriptor = async (
     errors.amount = new AmountRequired();
   }
 
-  const spendableBalance = await extimateTokenMaxSpendable(api, tokenAccount, tx);
+  const spendableBalance = await estimateTokenMaxSpendable(api, tokenAccount, tx);
   const txAmount = tx.useAllAmount ? spendableBalance.toNumber() : tx.amount.toNumber();
 
   if (!errors.amount && txAmount > spendableBalance.toNumber()) {
