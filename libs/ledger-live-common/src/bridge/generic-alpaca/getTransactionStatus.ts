@@ -1,27 +1,23 @@
-import { FeeNotLoaded, InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
 import { AccountBridge, TransactionCommon } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { getAlpacaApi } from "./alpaca";
 
 // => alpaca validateIntent
 export function genericGetTransactionStatus(
-  _network,
-  _kind,
+  network,
+  kind,
 ): AccountBridge<any>["getTransactionStatus"] {
   return async (account, transaction: TransactionCommon & { fees: BigNumber }) => {
-    const errors: Record<string, Error> = {};
-    const warnings: Record<string, Error> = {};
-
-    if (account.freshAddress === transaction.recipient) {
-      errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
-    }
-
-    if (!transaction.fees || !transaction.fees.gt(0)) {
-      errors.fees = new FeeNotLoaded();
-    }
-    // TODO ------
-    // const {errors, status} = await getAlpacaApi(network, kind).validateIntent(
-    //   transactionToIntent(account, transaction),
-    // );
+    const { freshAddress, balance, currency } = account;
+    const { errors, warnings } = await getAlpacaApi(network, kind).validateIntent(
+      {
+        currencyName: currency.name,
+        address: freshAddress,
+        balance: BigInt(balance.toString()),
+        currencyUnit: currency.units[0],
+      },
+      transaction,
+    );
 
     const estimatedFees = transaction.fees || new BigNumber(0);
 
