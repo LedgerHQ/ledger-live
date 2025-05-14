@@ -4697,7 +4697,7 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "{{deviceName}}をバージョン{{version}}にアップデートします",
-    "recoveryPhraseBackupInstructions" : "万が一に備えて、書き留めた24単語のリカバリーフレーズを用意してください。",
+    "recoveryPhraseBackupInstructions" : "念のため、24単語のシークレットリカバリーフレーズがリカバリーシートに書き留められており、利用可能であることをご確認ください。\n\nまた、Ledger Recoverをご使用いただくと、ウォレットへのアクセスをバックアップし、常に確実にアクセスできるようになります。",
     "confirmRecoveryPhrase" : "リカバリーフレーズを持っています",
     "introDescription1" : "デバイス上のアプリは、すべて削除されますのでご注意ください。ファームウェアのアップデート後に、アプリを再インストールできます。",
     "introDescription2" : "この操作は、所有する暗号資産には影響を及ぼしません。",
