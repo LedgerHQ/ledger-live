@@ -1,12 +1,12 @@
-import React, { memo, useState } from "react";
+import React, { memo, useCallback, useState } from "react";
 import { Observable } from "rxjs";
 import { useTranslation } from "react-i18next";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { SelectAccountFlowContainer, SelectorContent, AccountSelectionStep } from "./components";
-import MemoizedSelectAssetFlow from "../SelectAssetFlow";
-import { Header } from "../Header/Header";
+import SelectAssetFlow from "../SelectAssetFlow";
+import { Header } from "../Header";
 import { FlowStep, NavigationDirection } from "../Header/navigation";
 
 type SelectAccountDrawerProps = {
@@ -19,12 +19,12 @@ export const SelectAccountFlow = memo((props: SelectAccountDrawerProps) => {
   const { t } = useTranslation();
   const [selectedAsset, setSelectedAsset] = useState<undefined | CryptoOrTokenCurrency>();
 
-  const onAssetSelected = (asset: CryptoOrTokenCurrency) => {
+  const onAssetSelected = useCallback((asset: CryptoOrTokenCurrency) => {
     setSelectedAsset(asset);
-  };
+  }, []);
 
   if (!selectedAsset) {
-    return <MemoizedSelectAssetFlow onAssetSelected={onAssetSelected} {...props} />;
+    return <SelectAssetFlow onAssetSelected={onAssetSelected} {...props} />;
   }
 
   return (

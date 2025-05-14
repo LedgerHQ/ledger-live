@@ -7,7 +7,7 @@ import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { CardButton } from "@ledgerhq/react-ui/pre-ldls/index";
 import { Icons } from "@ledgerhq/react-ui/index";
 import { track } from "~/renderer/analytics/segment";
-import { SelectAccount } from "../../SelectAccount";
+import { SelectAccount } from "./SelectAccount";
 import { useDetailedAccounts } from "../hooks/useDetailedAccounts";
 import { AddAccountContainer } from "./StyledComponents";
 

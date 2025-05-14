@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
-import { Header, HeaderProps } from "../Header";
+import { Header, HeaderProps } from "..";
 import { FlowStep, NavigationDirection } from "../navigation";
 
 describe("Header", () => {
