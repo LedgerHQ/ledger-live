@@ -77,6 +77,7 @@ const buildEstimateFees = networkFamily =>
     };
   };
 
+// FIXME: shouldn't hardcode
 type AssetInfo = {
   type: "native"; // or "token" if applicable
 };
