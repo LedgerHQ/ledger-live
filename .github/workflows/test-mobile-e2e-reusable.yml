@@ -623,7 +623,7 @@ jobs:
         run: |
           mkdir -p /tmp/apk/assets
           mv ${{ env.ANDROID_JSBUNDLE_PATH }} /tmp/apk/assets/index.android.bundle
-          (cd /tmp/apk/; zip -r ${{ env.ANDROID_APK_PATH }} assets/index.android.bundle)
+          (cd /tmp/apk/; zip -r /home/runner/work/ledger-live/ledger-live/${{ env.ANDROID_APK_PATH }} assets/index.android.bundle)
           apksigner sign --ks ${{ secrets.ANDROID_KEYSTORE_PATH }} --ks-pass pass:${{ secrets.ANDROID_KEYSTORE_PASSWORD }} ${{ env.ANDROID_APK_PATH }}
 
       - name: Setup the caches
