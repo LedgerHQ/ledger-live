@@ -85,7 +85,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.build-desktop.outputs.version }}-${{ matrix.config.image }}
-          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ matrix.config.output-name }}-${{ steps.build-desktop.outputs.version }}-${{ matrix.config.image }}
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/ledger-live-desktop-${{ steps.build-desktop.outputs.version }}-${{ matrix.config.image }}
 
   report:
     name: "Build Desktop (External) > Report"
