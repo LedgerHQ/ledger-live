@@ -626,7 +626,7 @@ jobs:
           mv ${{ env.ANDROID_JSBUNDLE_PATH }} /tmp/apk/assets/index.android.bundle
           ls -R /home/runner/.android/sdk/build-tools/
           (cd /tmp/apk/; zip -r /home/runner/work/ledger-live/ledger-live/${{ env.ANDROID_APK_PATH }} assets/index.android.bundle)
-          /home/runner/.android/sdk/build-tools/apksigner sign --ks ${{ secrets.ANDROID_KEYSTORE_PATH }} --ks-pass pass:${{ secrets.ANDROID_KEYSTORE_PASSWORD }} ${{ env.ANDROID_APK_PATH }}
+          apksigner sign --ks ${{ secrets.ANDROID_KEYSTORE_PATH }} --ks-pass pass:${{ secrets.ANDROID_KEYSTORE_PASSWORD }} ${{ env.ANDROID_APK_PATH }}
 
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
@@ -648,6 +648,8 @@ jobs:
 
       - name: setup Android SDK
         uses: android-actions/setup-android@v2.0.10
+        with:
+          packages: "tools platform-tools build-tools"
 
         # https://github.blog/changelog/2023-02-23-hardware-accelerated-android-virtualization-on-actions-windows-and-linux-larger-hosted-runners/
       - name: Enable Hardware Acceleration
