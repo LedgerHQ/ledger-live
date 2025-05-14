@@ -6469,7 +6469,9 @@
     },
     "stepVerification" : {
       "action" : "Подтвердите операцию на устройстве",
-      "accountName" : "Название счёта"
+      "accountName" : "Название счёта",
+      "title" : "Продолжите на устройстве Ledger {{wording}}",
+      "description" : "Следуйте руководству на защищённом сенсорном экране."
     }
   },
   "notificationCenter" : {
@@ -7414,6 +7416,10 @@
       "minutes_plural" : "({{count}} мин. назад)",
       "seconds" : "({{count}} сек. назад)",
       "seconds_plural" : "({{count}} сек. назад)"
-    }
+    },
+    "performance" : "Изменение цены",
+    "low" : "Мин.",
+    "high" : "Макс.",
+    "title" : "Динамика рынка"
   }
 }
