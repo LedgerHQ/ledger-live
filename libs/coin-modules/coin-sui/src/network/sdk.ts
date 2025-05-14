@@ -1,29 +1,28 @@
 import {
   PaginatedTransactionResponse,
-  QueryTransactionBlocksParams,
   SuiClient,
   ExecuteTransactionBlockParams,
   TransactionEffects,
+  QueryTransactionBlocksParams,
 } from "@mysten/sui/client";
 import { JsonRpcError } from "@mysten/sui/client";
 import { TransactionBlockData, SuiTransactionBlockResponse, SuiCallArg } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { BigNumber } from "bignumber.js";
+import type { Operation as Op } from "@ledgerhq/coin-framework/api/index";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
+import uniqBy from "lodash/unionBy";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { log } from "@ledgerhq/logs";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
-import { getEnv } from "@ledgerhq/live-env";
-
-import type { Transaction as TransactionType } from "../types";
 import type { CreateExtrinsicArg } from "../logic/craftTransaction";
 import { ensureAddressFormat } from "../utils";
+import coinConfig from "../config";
+import { SuiAsset } from "../api/types";
 
 type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
 
-const rpcUrl = getEnv("API_SUI_NODE_PROXY");
-
-let api: SuiClient | null = null;
+const apiMap: Record<string, SuiClient> = {};
 
 export const TRANSACTIONS_LIMIT_PER_QUERY = 50;
 export const TRANSACTIONS_LIMIT = 300;
@@ -33,11 +32,12 @@ const BLOCK_HEIGHT = 5; // sui has no block height metainfo, we use it simulate 
  * Connects to Sui Api
  */
 async function withApi<T>(execute: AsyncApiFunction<T>) {
-  if (!api) {
-    api = new SuiClient({ url: rpcUrl });
+  const url = coinConfig.getCoinConfig().node.url;
+  if (!apiMap[url]) {
+    apiMap[url] = new SuiClient({ url });
   }
 
-  const result = await execute(api);
+  const result = await execute(apiMap[url]);
   return result;
 }
 
@@ -169,6 +169,36 @@ export function transactionToOperation(
   };
 }
 
+function transactionToOp(address: string, transaction: SuiTransactionBlockResponse): Op<SuiAsset> {
+  const type = getOperationType(address, transaction.transaction?.data);
+  const hash = transaction.digest;
+  return {
+    id: hash,
+    tx: {
+      date: getOperationDate(transaction),
+      hash,
+      fees: BigInt(getOperationFee(transaction).toString()),
+      block: {
+        // agreed to return bigint
+        height: BigInt(transaction.checkpoint || "") as unknown as number,
+      },
+    },
+    asset: { type: "native" },
+    recipients: getOperationRecipients(transaction.transaction?.data),
+    senders: getOperationSenders(transaction.transaction?.data),
+    type,
+    value: BigInt(getOperationAmount(address, transaction).toString()),
+  };
+}
+
+export const getLastBlock = () =>
+  withApi(async api => {
+    const checkpoint = await api.getLatestCheckpointSequenceNumber();
+    const { digest, sequenceNumber, timestampMs } = await api.getCheckpoint({ id: checkpoint });
+
+    return { digest, sequenceNumber, timestampMs };
+  });
+
 /**
  * Fetch operation list
  */
@@ -187,6 +217,18 @@ export const getOperations = async (
     return rawTransactions.map(transaction => transactionToOperation(accountId, addr, transaction));
   });
 
+export const getListOperations = async (addr: string, cursor = ""): Promise<Op<SuiAsset>[]> =>
+  withApi(async api => {
+    const opsOut = await loadOperations({ api, addr, type: "OUT", cursor });
+    const opsIn = await loadOperations({ api, addr, type: "IN", cursor });
+
+    const rawTransactions = [...opsIn, ...opsOut].sort(
+      (a, b) => Number(b.timestampMs) - Number(a.timestampMs),
+    );
+    const list = uniqBy(rawTransactions, tx => tx.digest);
+    return list.map(t => transactionToOp(addr, t));
+  });
+
 const getTotalGasUsed = (effects?: TransactionEffects | null): bigint => {
   const gasSummary = effects?.gasUsed;
   if (!gasSummary) return BigInt(0);
@@ -197,12 +239,15 @@ const getTotalGasUsed = (effects?: TransactionEffects | null): bigint => {
   );
 };
 
-export const paymentInfo = async (sender: string, fakeTransaction: TransactionType) =>
+export const paymentInfo = async (
+  sender: string,
+  { amount, recipient }: { amount: BigNumber; recipient: string },
+) =>
   withApi(async api => {
     const tx = new Transaction();
     tx.setSender(ensureAddressFormat(sender));
-    const [coin] = tx.splitCoins(tx.gas, [fakeTransaction.amount.toNumber()]);
-    tx.transferObjects([coin], fakeTransaction.recipient);
+    const [coin] = tx.splitCoins(tx.gas, [amount.toNumber()]);
+    tx.transferObjects([coin], recipient);
     const txb = await tx.build({ client: api });
     const dryRunTxResponse = await api.dryRunTransactionBlock({ transactionBlock: txb });
     const fees = getTotalGasUsed(dryRunTxResponse.effects);
