@@ -2393,7 +2393,8 @@
         "suggested" : "مُقترح",
         "unitVByte" : "{{unit}}/بايت افتراضي (vbyte)",
         "nft" : "NFT",
-        "nftQuantity" : "الكمية"
+        "nftQuantity" : "الكمية",
+        "splExtensionsWarning" : "أنت تتفاعل مع رمز توكن يشكل جزءاً من برنامج Token-2022، المعروف أيضاً باسم Token Extensions (ملحقات رموز التوكن). رمز التوكن هذا يأتي مع مخاطر محددة. <0>انقر هنا</0> لمعرفة المزيد."
       },
       "verification" : {
         "streaming" : {
@@ -3768,7 +3769,7 @@
       "frozenStateWarning" : "تمّ تجميد أصول الحساب!",
       "transferWarning" : "للتحقق من عنوان المستلم لرموز سولانا (Solana) باستخدام ™Ledger Nano S، <0>يرجى اتباع هذه التعليمات.</0>",
       "transferFees" : {
-        "feesPercentHint" : "رمز التوكن له %{{feePercent}} ({{feeBps}} نقطة أساس (bps) ) رسوم تحويل. {{maxFee}} بحد أقصى",
+        "feesHint" : "رسوم تحويل رمز التوكن: {{transferFee}}",
         "notice" : "رسوم التحويل %{{fee}}",
         "tooltipHint" : "النسبة المئوية من التحويل المحتجزة من أجل منشئ رمز التوكن",
         "transferFeesLabel" : "رسوم التحويل"
@@ -5420,7 +5421,9 @@
     "stringHash" : "دالة تجزئة الرسالة",
     "domainHash" : "دالة تجزئة المجال",
     "messageHash" : "دالة تجزئة الرسالة",
-    "message" : "رسالة"
+    "message" : "رسالة",
+    "title" : "تابع على جهازك Ledger {{wording}}",
+    "description" : "اتبع التعليمات المعروضة على شاشتك الآمنة التي تعمل باللمس."
   },
   "TransactionConfirm" : {
     "title" : "يرجى تأكيد العملية على جهازك لإنهائها",
