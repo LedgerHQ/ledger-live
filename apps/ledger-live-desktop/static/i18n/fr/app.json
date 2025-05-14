@@ -2070,7 +2070,8 @@
       "latest" : "Version {{version}} du micrologiciel disponible",
       "contactSupport" : "Contacter l’Assistance",
       "deprecated" : "La version du micrologiciel de l’appareil est trop ancienne pour être mise à jour. Contactez l’Assistance Ledger pour le remplacer.",
-      "prepareSeed" : "Assurez-vous par précaution que votre phrase de récupération de 24 mots est accessible et bien écrite sur votre feuille de récupération.",
+      "prepareSeed" : "Assurez-vous par précaution que votre phrase de récupération secrète de 24 mots est accessible et bien écrite sur votre feuille de récupération.",
+      "prepareSeedRecover" : "Vous pouvez également utiliser Ledger Recover comme accès de secours à votre wallet, pour plus de sérénité.",
       "disclaimerTitle" : "Vous êtes sur le point d’installer la <1>version {{version}} du micrologiciel</1>.",
       "cancelUpdate" : "Annuler la mise à jour",
       "continueUpdate" : "Continuer la mise à jour",
@@ -3702,7 +3703,7 @@
           },
           "amount" : {
             "title" : "Montant",
-            "reserveWarning" : "Conservez au minimum {{amount}} SOL dans votre wallet pour couvrir les frais de réseau futurs afin de désactiver et retirer vos cryptos stakées"
+            "reserveWarning" : "Conservez au minimum {{amount}} SOL dans votre compte pour couvrir les frais de réseau futurs afin de désactiver et retirer vos cryptos stakées"
           },
           "confirmation" : {
             "success" : {
