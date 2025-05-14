@@ -5420,7 +5420,9 @@
     "stringHash" : "메시지 해시",
     "domainHash" : "도메인 해시",
     "messageHash" : "메시지 해시",
-    "message" : "메시지"
+    "message" : "메시지",
+    "title" : "Ledger {{wording}}에서 계속하세요",
+    "description" : "보안 터치스크린에 표시된 안내를 따라주세요."
   },
   "TransactionConfirm" : {
     "title" : "거래를 장치에서 확인하고 완료하세요",
@@ -5866,6 +5868,10 @@
     },
     "NotEnoughBalance" : {
       "title" : "죄송하지만 자금이 부족합니다",
+      "description" : "계정에 자금이 충분한지 확인해 주세요."
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "죄송하지만, 수수료를 충당할 자금이 부족합니다",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
     },
     "NotEnoughBalanceSwap" : {
@@ -6612,7 +6618,8 @@
       "title" : "자산 선택"
     },
     "selectAccount" : {
-      "title" : "계정 선택"
+      "title" : "계정 선택",
+      "addAccount" : "기존 계정이나 신규 계정 추가"
     }
   },
   "customImage" : {
@@ -7042,6 +7049,14 @@
     "opted_out" : {
       "description" : "Ledger Nano S의 제한된 메모리로 인해 최신 기능, 블록체인 변경 사항 및 보안 업데이트에 대한 액세스가 제한됩니다. 장기적으로 사용하려면 최신 Ledger 장치로 업그레이드하세요.",
       "cta" : "자세히 알아보기"
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "검색",
+    "assetFlow" : {
+      "selectTemplate" : "Select {{dynamic}}",
+      "asset" : "자산",
+      "network" : "네트워크"
     }
   }
 }
