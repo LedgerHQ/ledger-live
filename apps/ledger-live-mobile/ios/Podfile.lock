@@ -1,9 +1,9 @@
 PODS:
   - boost (1.84.0)
-  - braze-react-native-sdk (13.2.0):
-    - BrazeKit (~> 11.2.0)
-    - BrazeLocation (~> 11.2.0)
-    - BrazeUI (~> 11.2.0)
+  - braze-react-native-sdk (14.1.0):
+    - BrazeKit (~> 11.9.0)
+    - BrazeLocation (~> 11.9.0)
+    - BrazeUI (~> 11.9.0)
     - DoubleConversion
     - glog
     - hermes-engine
@@ -24,11 +24,11 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - BrazeKit (11.2.0)
-  - BrazeLocation (11.2.0):
-    - BrazeKit (= 11.2.0)
-  - BrazeUI (11.2.0):
-    - BrazeKit (= 11.2.0)
+  - BrazeKit (11.9.0)
+  - BrazeLocation (11.9.0):
+    - BrazeKit (= 11.9.0)
+  - BrazeUI (11.9.0):
+    - BrazeKit (= 11.9.0)
   - CocoaAsyncSocket (7.6.5)
   - DoubleConversion (1.1.6)
   - EXConstants (17.0.8):
@@ -129,28 +129,28 @@ PODS:
   - GoogleDataTransport (10.1.0):
     - nanopb (~> 3.30910.0)
     - PromisesObjC (~> 2.4)
-  - GoogleUtilities/AppDelegateSwizzler (8.0.2):
+  - GoogleUtilities/AppDelegateSwizzler (8.1.0):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
     - GoogleUtilities/Network
     - GoogleUtilities/Privacy
-  - GoogleUtilities/Environment (8.0.2):
+  - GoogleUtilities/Environment (8.1.0):
     - GoogleUtilities/Privacy
-  - GoogleUtilities/Logger (8.0.2):
+  - GoogleUtilities/Logger (8.1.0):
     - GoogleUtilities/Environment
     - GoogleUtilities/Privacy
-  - GoogleUtilities/Network (8.0.2):
+  - GoogleUtilities/Network (8.1.0):
     - GoogleUtilities/Logger
     - "GoogleUtilities/NSData+zlib"
     - GoogleUtilities/Privacy
     - GoogleUtilities/Reachability
-  - "GoogleUtilities/NSData+zlib (8.0.2)":
+  - "GoogleUtilities/NSData+zlib (8.1.0)":
     - GoogleUtilities/Privacy
-  - GoogleUtilities/Privacy (8.0.2)
-  - GoogleUtilities/Reachability (8.0.2):
+  - GoogleUtilities/Privacy (8.1.0)
+  - GoogleUtilities/Reachability (8.1.0):
     - GoogleUtilities/Logger
     - GoogleUtilities/Privacy
-  - GoogleUtilities/UserDefaults (8.0.2):
+  - GoogleUtilities/UserDefaults (8.1.0):
     - GoogleUtilities/Logger
     - GoogleUtilities/Privacy
   - hermes-engine (0.77.2):
@@ -191,9 +191,6 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - MMKV (2.1.0):
-    - MMKVCore (~> 2.1.0)
-  - MMKVCore (2.1.1)
   - MultiplatformBleAdapter (0.2.0)
   - nanopb (3.30910.0):
     - nanopb/decode (= 3.30910.0)
@@ -1463,11 +1460,10 @@ PODS:
     - Yoga
   - react-native-launch-arguments (4.0.2):
     - React
-  - react-native-mmkv (2.12.2):
+  - react-native-mmkv (3.2.0):
     - DoubleConversion
     - glog
     - hermes-engine
-    - MMKV (>= 1.3.3)
     - RCT-Folly (= 2024.11.18.00)
     - RCTRequired
     - RCTTypeSafety
@@ -1894,7 +1890,7 @@ PODS:
     - RNFBApp
   - RNFlashList (1.6.4):
     - React-Core
-  - RNGestureHandler (2.22.0):
+  - RNGestureHandler (2.25.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1940,8 +1936,27 @@ PODS:
     - Yoga
   - RNLocalize (2.2.6):
     - React-Core
-  - RNReactNativeHapticFeedback (2.2.0):
+  - RNReactNativeHapticFeedback (2.3.3):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNReanimated (3.16.7):
     - DoubleConversion
     - glog
@@ -2276,8 +2291,6 @@ SPEC REPOS:
     - GoogleUtilities
     - libwebp
     - lottie-ios
-    - MMKV
-    - MMKVCore
     - MultiplatformBleAdapter
     - nanopb
     - PromisesObjC
@@ -2550,10 +2563,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: 7e761d76ca2ce687f7cc98e698152abd03a18f90
-  braze-react-native-sdk: e36f6470a42b119696143051ba44ad200f2b99d8
-  BrazeKit: d430e506a325f0f5a1b60cea61ef95035c1d396b
-  BrazeLocation: f574503d26e00658c7a6ddfa1efec68ddaa12e4d
-  BrazeUI: 1500cfce86252db6ce280815c94e0eed03e42691
+  braze-react-native-sdk: 0a3ad1c8a4a7bb37d63b7e78f82d522f8508cfa0
+  BrazeKit: b21335426470a4e80b0a21fdeec69bdbe6852222
+  BrazeLocation: 03848efc27e835646013aa297868707111a1e715
+  BrazeUI: 913416d6420606c18e81de9ee0195813b1de4a66
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
   EXConstants: a1f35b9aabbb3c6791f8e67722579b1ffcdd3f18
@@ -2582,13 +2595,11 @@ SPEC CHECKSUMS:
   fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd
   glog: eb93e2f488219332457c3c4eafd2738ddc7e80b8
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
-  GoogleUtilities: 26a3abef001b6533cf678d3eb38fd3f614b7872d
+  GoogleUtilities: 00c88b9a86066ef77f0da2fab05f65d7768ed8e1
   hermes-engine: 8eb265241fa1d7095d3a40d51fd90f7dce68217c
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
   lottie-ios: a881093fab623c467d3bce374367755c272bdd59
   lottie-react-native: 025359cc1370416fd1e0a765b4a4f299b877e467
-  MMKV: ce484c1ac40bf76d5f09a0195d2ec5b3d3840d55
-  MMKVCore: 1eb661c6c498ab88e3df9ce5d8ff94d05fcc0567
   MultiplatformBleAdapter: b1fddd0d499b96b607e00f0faa8e60648343dc1d
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
@@ -2630,7 +2641,7 @@ SPEC CHECKSUMS:
   react-native-image-crop-tools: a751dae773f66ceac0bea7d894dc6bc219a69c03
   react-native-image-picker: 9deb548a46b6418470afad3003fcfe5d0e3b5686
   react-native-launch-arguments: 5f41e0abf88a15e3c5309b8875d6fd5ac43df49d
-  react-native-mmkv: 3c0891cce2d6a496b8cb4757c6399d2ea2548ad2
+  react-native-mmkv: 6019690e0765f11a2d90d3c41d8e052b4e4cd7b7
   react-native-netinfo: f0a9899081c185db1de5bb2fdc1c88c202a059ac
   react-native-pager-view: b8b7c09ce10ed0ca632689570aa1020271b44156
   react-native-performance: ff93f8af3b2ee9519fd7879896aa9b8b8272691d
@@ -2685,11 +2696,11 @@ SPEC CHECKSUMS:
   RNFBMessaging: 97193911e8858103ff7305477d40e116ae30f240
   RNFBRemoteConfig: 3b06742fcd55ce0b1e5a43fa6c9b013564492f87
   RNFlashList: b521ebdd7f9352673817f1d98e8bdc0c8cf8545b
-  RNGestureHandler: b6a1c02ff11a1e36cac969eb12940aebb1f9d588
+  RNGestureHandler: 0573a746155b37786d57d89951f71433c90f80a5
   RNInAppBrowser: e36d6935517101ccba0e875bac8ad7b0cb655364
   RNKeychain: d7907a05d9694d9f2d186ffecf579e4dd76a1837
   RNLocalize: d4b8af4e442d4bcca54e68fc687a2129b4d71a81
-  RNReactNativeHapticFeedback: ec56a5f81c3941206fd85625fa669ffc7b4545f9
+  RNReactNativeHapticFeedback: def3d525e9608fa524a3296e7d44715f4d8bec39
   RNReanimated: 6088075615e0794a9f02c2c1155713b76a383bdb
   RNScreens: a953f67eea22690217f29fb996857cafad0a4350
   RNSentry: 793a8d1bc0163a177d9f1a200f6d0c6259e0c4b2
