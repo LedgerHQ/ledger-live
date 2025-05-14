@@ -16,7 +16,6 @@ overrides:
   elliptic: 6.6.1
   use-latest-callback: 0.1.9
   '@sentry/react-native>metro': 0.81.5
-  eslint-config-react-app>@babel/eslint-parser: 7.27.1
 
 packageExtensionsChecksum: 505470d279d34dbf557b1005424e3d1d
 
