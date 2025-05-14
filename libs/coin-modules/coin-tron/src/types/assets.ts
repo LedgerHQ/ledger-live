@@ -16,8 +16,6 @@ export type TronAsset = AssetInfo;
     tokenId: "1002000",
   }
 */
-// export type Trc10Token = TokenInfoCommon; // & {
-// };
 
 /*
   TRC20 tokens are smart contracts that implement the TRC20 interface.
@@ -28,10 +26,6 @@ export type TronAsset = AssetInfo;
     contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
   }
 */
-// export type Trc20Token = TokenInfoCommon; // & {
-//   standard: "trc20";
-//   contractAddress: string;
-// };
 
 // Since memo is not always present and depends on transaction type (e.g. not allowed for TRC20):
 export type TronMemo = MemoNotSupported | StringMemo<"memo">;

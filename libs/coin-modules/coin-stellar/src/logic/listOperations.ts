@@ -49,10 +49,21 @@ const convertToCoreOperation = (operation: StellarOperation): Operation => {
       fees: BigInt(operation.fee.toString()),
       date: operation.date,
     },
+    details: {
+      sequence: operation.transactionSequenceNumber,
+      // NOTE: could be in operation.details instead?
+      // blockTime: operation.extra.blockTime,
+      // index: operation.extra.index,
+      ledgerOpType: operation.extra.ledgerOpType,
+      // pagingToken: operation.extra.pagingToken,
+      assetAmount: operation.extra.assetAmount
+        ? operation.extra.assetAmount
+        : operation.value.toString(),
+      memo: operation.extra.memo,
+    },
     type: operation.type,
     value: BigInt(operation.value.toString()),
     senders: operation.senders,
     recipients: operation.recipients,
-    details: operation.extra.memo === undefined ? {} : { memo: operation.extra.memo },
   };
 };
