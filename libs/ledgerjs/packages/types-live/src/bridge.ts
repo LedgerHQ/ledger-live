@@ -301,8 +301,8 @@ type CurrencyTransaction<T extends TransactionCommon> = {
   ) => any;
 };
 
-export type AccountTestData<T extends TransactionCommon> = {
-  raw: AccountRaw;
+export type AccountTestData<T extends TransactionCommon, AR extends AccountRaw = AccountRaw> = {
+  raw: AR;
   implementations?: string[];
   FIXME_tests?: Array<string | RegExp>;
   transactions?: Array<CurrencyTransaction<T>>;
@@ -312,7 +312,7 @@ export type AccountTestData<T extends TransactionCommon> = {
 /**
  *
  */
-export type CurrenciesData<T extends TransactionCommon> = {
+export type CurrenciesData<T extends TransactionCommon, AR extends AccountRaw = AccountRaw> = {
   FIXME_ignoreAccountFields?: string[];
   FIXME_ignoreOperationFields?: string[];
   FIXME_ignorePreloadFields?: string[] | true;
@@ -324,16 +324,16 @@ export type CurrenciesData<T extends TransactionCommon> = {
     unstableAccounts?: boolean;
     test?: (expect: ExpectFn, scanned: Account[], bridge: CurrencyBridge) => any;
   }>;
-  accounts?: Array<AccountTestData<T>>;
+  accounts?: Array<AccountTestData<T, AR>>;
   test?: (arg0: ExpectFn, arg1: CurrencyBridge) => any;
 };
 
 /**
  *
  */
-export type DatasetTest<T extends TransactionCommon> = {
+export type DatasetTest<T extends TransactionCommon, AR extends AccountRaw = AccountRaw> = {
   implementations: string[];
-  currencies: Record<CryptoCurrencyIds, CurrenciesData<T>> | Record<string, never>;
+  currencies: Record<CryptoCurrencyIds, CurrenciesData<T, AR>> | Record<string, never>;
 };
 
 /**

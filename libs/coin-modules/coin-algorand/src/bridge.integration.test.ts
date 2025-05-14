@@ -6,9 +6,9 @@ import {
 import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { AlgorandASANotOptInInRecipient } from "./errors";
-import type { AlgorandTransaction, Transaction } from "./types";
+import type { AlgorandAccountRaw, AlgorandTransaction, Transaction } from "./types";
 
-const algorand: CurrenciesData<Transaction> = {
+const algorand: CurrenciesData<Transaction, AlgorandAccountRaw> = {
   FIXME_ignoreAccountFields: [
     "algorandResources.rewards", // We cant keep track of this since it's always moving
     "balance", // Rewards are included, same as above
@@ -54,6 +54,10 @@ const algorand: CurrenciesData<Transaction> = {
         balance: "1167089",
         spendableBalance: "567089",
         subAccounts: [],
+        algorandResources: {
+          rewards: "0",
+          nbAssets: 0,
+        },
       },
       transactions: [
         {
@@ -220,6 +224,10 @@ const algorand: CurrenciesData<Transaction> = {
         lastSyncDate: "",
         operations: [],
         pendingOperations: [],
+        algorandResources: {
+          rewards: "0",
+          nbAssets: 0,
+        },
       },
       transactions: [
         {
