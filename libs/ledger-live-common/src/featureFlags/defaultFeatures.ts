@@ -601,6 +601,14 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   llNftSupport: DEFAULT_FEATURE,
+  llNftEntryPoint: {
+    ...DEFAULT_FEATURE,
+    params: {
+      opensea: false,
+      magiceden: false,
+      chains: ["ethereum", "polygon", "base", "arbitrum"],
+    },
+  },
 };
 
 // Firebase SDK treat JSON values as strings
