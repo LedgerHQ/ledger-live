@@ -17,6 +17,7 @@ import {
   lastBlock,
   listOperations,
   MemoInput,
+  getTransactionStatus,
 } from "../logic";
 import { ListOperationsOptions, XrpAsset } from "../types";
 
@@ -31,6 +32,7 @@ export function createApi(config: XrpConfig): Api<XrpAsset, TransactionIntentExt
     getBalance,
     lastBlock,
     listOperations: operations,
+    validateIntent: getTransactionStatus,
   };
 }
 

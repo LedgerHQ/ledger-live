@@ -142,6 +142,7 @@ const buildCraftTransaction = networkFamily =>
 
 export const getNetworkAlpacaApi = (networkFamily: string) =>
   ({
+    // TODO need to creat validateIntent: buildValidateIntent(networkFamily),
     broadcast: buildBroadcast(networkFamily),
     combine: buildCombine(networkFamily),
     estimateFees: buildEstimateFees(networkFamily),
