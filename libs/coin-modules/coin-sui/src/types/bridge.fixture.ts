@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { SuiAccount } from "./bridge";
+import { DEFAULT_COIN_TYPE } from "../network/sdk";
 
 export const createFixtureAccount = (overrides = {}) =>
   ({
@@ -57,7 +58,8 @@ export const createFixtureAccount = (overrides = {}) =>
 
 export const createFixtureTransaction = (overrides = {}) => ({
   family: "sui" as const,
-  mode: "send",
+  mode: "send" as const,
+  coinType: DEFAULT_COIN_TYPE,
   amount: BigNumber(3000000000),
   recipient: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
   useAllAmount: false,

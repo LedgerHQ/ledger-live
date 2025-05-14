@@ -9,8 +9,9 @@ import {
   FeeTooHigh,
 } from "@ledgerhq/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
-import type { SuiAccount, Transaction, TransactionStatus } from "../types";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { isValidSuiAddress } from "@mysten/sui/utils";
+import type { SuiAccount, Transaction, TransactionStatus } from "../types";
 import { ensureAddressFormat } from "../utils";
 
 /**
@@ -29,36 +30,41 @@ export const getTransactionStatus: AccountBridge<
   const warnings: Record<string, Error> = {};
   const amount = new BigNumber(transaction?.amount || 0);
   const estimatedFees = new BigNumber(transaction?.fees || 0);
-  const totalSpent = amount.plus(estimatedFees);
+  let accountBalance = account.balance;
+  let totalSpent = transaction.subAccountId ? amount : amount.plus(estimatedFees);
+
+  if (transaction.subAccountId) {
+    const subAccount = findSubAccountById(account, transaction.subAccountId);
+    accountBalance = subAccount?.balance ?? new BigNumber(0);
+    totalSpent = amount;
+  }
 
   if (amount.lte(0)) {
     errors.amount = new AmountRequired();
-  } else if (estimatedFees.times(10).gt(amount)) {
+  } else if (estimatedFees.times(10).gt(amount) && !transaction.subAccountId) {
     warnings.feeTooHigh = new FeeTooHigh();
   }
 
-  if (transaction) {
-    if (!transaction.recipient) {
-      errors.recipient = new RecipientRequired();
-    } else if (!isValidSuiAddress(transaction.recipient)) {
-      errors.recipient = new InvalidAddress(undefined, {
-        currencyName: account.currency.name,
-      });
-    }
+  if (!transaction.recipient) {
+    errors.recipient = new RecipientRequired();
+  } else if (!isValidSuiAddress(transaction.recipient)) {
+    errors.recipient = new InvalidAddress(undefined, {
+      currencyName: account.currency.name,
+    });
+  }
 
-    if (ensureAddressFormat(account.freshAddress) === ensureAddressFormat(transaction.recipient)) {
-      errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
-    }
+  if (ensureAddressFormat(account.freshAddress) === ensureAddressFormat(transaction.recipient)) {
+    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+  }
 
-    if (totalSpent.eq(0) && transaction.useAllAmount) {
-      errors.amount = new NotEnoughBalance();
-    }
-    if (totalSpent.gt(account.balance)) {
-      errors.amount = new NotEnoughBalance();
-    }
-    if (!transaction.fees) {
-      errors.fees = new FeeNotLoaded();
-    }
+  if (totalSpent.eq(0) && transaction.useAllAmount) {
+    errors.amount = new NotEnoughBalance();
+  }
+  if (totalSpent.gt(accountBalance)) {
+    errors.amount = new NotEnoughBalance();
+  }
+  if (!transaction.fees) {
+    errors.fees = new FeeNotLoaded();
   }
 
   return {
