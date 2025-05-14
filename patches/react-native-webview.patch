@@ -14,7 +14,7 @@ index 5932fc189d192cfd1209509170c816ddcaed0a10..f5d00db2d8d4c10dc254328277f4aaef
          this.sendContentSizeChangeEvents = sendContentSizeChangeEvents;
      }
 diff --git a/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java b/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java
-index 251939e56ac24832e6272f77b324eb2d51442ad7..43f2426fdd1e433c5f87b8db6958bdd90e4defb1 100644
+index 251939e56ac24832e6272f77b324eb2d51442ad7..89197601a279dc4bbf07109782a2efa0c700a745 100644
 --- a/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java
 +++ b/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java
 @@ -41,6 +41,7 @@ public class RNCWebViewClient extends WebViewClient {
@@ -36,15 +36,16 @@ index 251939e56ac24832e6272f77b324eb2d51442ad7..43f2426fdd1e433c5f87b8db6958bdd9
      @Override
      public void onPageFinished(WebView webView, String url) {
          super.onPageFinished(webView, url);
-@@ -171,7 +176,11 @@ public class RNCWebViewClient extends WebViewClient {
+@@ -171,7 +176,12 @@ public class RNCWebViewClient extends WebViewClient {
          // Cancel request after obtaining top-level URL.
          // If request is cancelled before obtaining top-level URL, undesired behavior may occur.
          // Undesired behavior: Return value of WebView.getUrl() may be the current URL instead of the failing URL.
 -        handler.cancel();
++
 +        if (mAllowsUnsecureHttps) {
-+          handler.proceed();
++            handler.proceed();
 +        } else {
-+          handler.cancel();
++            handler.cancel();
 +        }
  
          if (!topWindowUrl.equalsIgnoreCase(failingUrl)) {
@@ -63,16 +64,15 @@ index 51338df91864ef20bba811265a8019fbbf83f931..e6f969bf80f61e610e357cbbe445c20c
 +
      fun setAndroidLayerType(viewWrapper: RNCWebViewWrapper, layerTypeString: String?) {
          val view = viewWrapper.webView
-         val layerType = when (layerTypeString) {          
+         val layerType = when (layerTypeString) {
 diff --git a/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java b/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java
-index ff2cba5f710988acafe9dbc42ca814ea8622d8c3..110740ae11fc1e825b0457923be8c1336061b26f 100644
+index ff2cba5f710988acafe9dbc42ca814ea8622d8c3..873cb0993b2b9a00287b8d120cb17f4c37244e1f 100644
 --- a/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java
 +++ b/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java
-@@ -87,6 +87,12 @@ public class RNCWebViewManager extends ViewGroupManager<RNCWebViewWrapper>
+@@ -87,6 +87,11 @@ public class RNCWebViewManager extends ViewGroupManager<RNCWebViewWrapper>
          mRNCWebViewManagerImpl.setAllowsFullscreenVideo(view, value);
      }
  
-+    @Override
 +    @ReactProp(name = "allowsUnsecureHttps")
 +    public void setAllowsUnsecureHttps(RNCWebViewWrapper view, boolean value) {
 +        mRNCWebViewManagerImpl.setAllowsUnsecureHttps(view, value);
@@ -110,21 +110,19 @@ index 6246c45ef70c63ff1c05da489c0703f86a74109c..03a87930fd000ceb70ef6d037a4182e8
  @property (nonatomic, assign) BOOL bounces;
  @property (nonatomic, assign) BOOL mediaPlaybackRequiresUserAction;
 diff --git a/apple/RNCWebViewImpl.m b/apple/RNCWebViewImpl.m
-index d2923edf7f1470a09ed9e090287bf6e234b95554..0027e25c7215428177fdaae311351c3fb71cf96c 100644
+index d2923edf7f1470a09ed9e090287bf6e234b95554..4387f6a1be57f7b5e0a000ad303afcc9a1c17e0d 100644
 --- a/apple/RNCWebViewImpl.m
 +++ b/apple/RNCWebViewImpl.m
-@@ -1139,6 +1139,14 @@ RCTAutoInsetsProtocol>
+@@ -1139,6 +1139,12 @@ - (void)                    webView:(WKWebView *)webView
      completionHandler(NSURLSessionAuthChallengeUseCredential, clientAuthenticationCredential);
      return;
    }
-+
 +  if (_allowsUnsecureHttps == true) {
 +    SecTrustRef trust = [[challenge protectionSpace] serverTrust];
 +    NSURLCredential *useCredential = [NSURLCredential credentialForTrust:trust];
 +    completionHandler(NSURLSessionAuthChallengeUseCredential, useCredential);
 +    return;
 +  }
-+
    if ([[challenge protectionSpace] serverTrust] != nil && customCertificatesForHost != nil && host != nil) {
      SecCertificateRef localCertificate = (__bridge SecCertificateRef)([customCertificatesForHost objectForKey:host]);
      if (localCertificate != nil) {
@@ -132,7 +130,7 @@ diff --git a/apple/RNCWebViewManager.mm b/apple/RNCWebViewManager.mm
 index a0e0d00630d13a92e27ec8de7714597a378928e3..3e723e6844d764d15a3f697de11fc53e96c6677a 100644
 --- a/apple/RNCWebViewManager.mm
 +++ b/apple/RNCWebViewManager.mm
-@@ -64,6 +64,7 @@ RCT_EXPORT_VIEW_PROPERTY(allowUniversalAccessFromFileURLs, BOOL)
+@@ -64,6 +64,7 @@ - (RNCView *)view
  RCT_EXPORT_VIEW_PROPERTY(allowsInlineMediaPlayback, BOOL)
  RCT_EXPORT_VIEW_PROPERTY(allowsPictureInPictureMediaPlayback, BOOL)
  RCT_EXPORT_VIEW_PROPERTY(webviewDebuggingEnabled, BOOL)
@@ -176,3 +174,6 @@ index b31398ba49962960fa8b28f06a74178176e74ec0..bf909df0e058fa3e1527ba85b831b5e6
      /**
       * Configuring Dark Theme
       *
+diff --git a/windows/.gitignore b/windows/.gitignore
+deleted file mode 100644
+index a57fdbbc37f41b02b03a4cd12d45d618a01ddeed..0000000000000000000000000000000000000000

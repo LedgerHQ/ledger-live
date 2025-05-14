@@ -256,7 +256,6 @@ function App() {
     <GestureHandlerRootView style={styles.root}>
       <SyncNewAccounts priority={5} />
       <TransactionsAlerts />
-      <ExperimentalHeader />
       <RootNavigator />
       <AnalyticsConsole />
       <PerformanceConsole />
