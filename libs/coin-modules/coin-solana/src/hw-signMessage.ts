@@ -5,6 +5,7 @@ import { SolanaSigner } from "./signer";
 import { toOffChainMessage } from "./offchainMessage/format";
 import coinConfig from "./config";
 import bs58 from "bs58";
+import invariant from "invariant";
 
 export const signMessage =
   (signerContext: SignerContext<SolanaSigner>) =>
@@ -22,15 +23,23 @@ export const signMessage =
       );
     }
 
+    let signedMessage: Buffer | undefined;
+
     const result = await signerContext(deviceId, async signer => {
       const { version } = await signer.getAppConfiguration();
       const isLegacy = semver.lt(version, coinConfig.getCoinConfig().legacyOCMSMaxVersion);
 
-      return signer.signMessage(
-        account.freshAddressPath,
-        toOffChainMessage(message, account.freshAddress, isLegacy).toString("hex"),
-      );
+      signedMessage = toOffChainMessage(message, account.freshAddress, isLegacy);
+
+      return signer.signMessage(account.freshAddressPath, signedMessage.toString("hex"));
     });
 
-    return { signature: bs58.encode(result.signature) };
+    invariant(signedMessage, "signedMessage should exist");
+
+    const signatureCount = Buffer.from([1]);
+
+    // https://docs.anza.xyz/proposals/off-chain-message-signing#envelope
+    const envelope = Buffer.concat([signatureCount, result.signature, signedMessage]);
+
+    return { signature: bs58.encode(envelope) };
   };
