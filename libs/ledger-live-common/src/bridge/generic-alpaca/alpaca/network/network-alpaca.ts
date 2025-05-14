@@ -1,8 +1,9 @@
 import type {
   Api,
-  Asset,
+  Balance,
   BlockInfo,
   Operation,
+  FeeEstimation,
   Pagination,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
@@ -60,7 +61,7 @@ const buildCombine = networkFamily =>
   };
 
 const buildEstimateFees = networkFamily =>
-  async function estimateFees(intent: TransactionIntent<any>): Promise<bigint> {
+  async function estimateFees(intent: TransactionIntent<any>): Promise<FeeEstimation> {
     const { data } = await network<{ fee: string }, unknown>({
       method: "POST",
       url: `${ALPACA_URL}/${networkFamily}/transaction/estimate`,
@@ -71,16 +72,28 @@ const buildEstimateFees = networkFamily =>
         },
       },
     });
-    return BigInt(data.fee);
+    return {
+      value: BigInt(data.fee),
+    };
   };
 
-const buildGetBalance = networkFamily =>
-  async function getBalance(address: string): Promise<bigint> {
-    const { data } = await network<Asset, unknown>({
+type AssetInfo = {
+  type: "native"; // or "token" if applicable
+};
+
+const buildGetBalance = (networkFamily: string) =>
+  async function getBalance(address: string): Promise<Balance<AssetInfo>[]> {
+    const { data } = await network<Balance<AssetInfo>, unknown>({
       method: "GET",
       url: `${ALPACA_URL}/${networkFamily}/account/${address}/balance`,
     });
-    return BigInt(data.native);
+
+    return [
+      {
+        value: BigInt(data.value),
+        asset: data.asset,
+      },
+    ];
   };
 
 const buildListOperations = networkFamily =>

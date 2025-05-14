@@ -1,12 +1,16 @@
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { Account, Operation, OperationType, TransactionCommon } from "@ledgerhq/types-live";
-import { Operation as CoreOperation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import {
+  Operation as CoreOperation,
+  Asset,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/types";
 import BigNumber from "bignumber.js";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
 
 export function adaptCoreOperationToLiveOperation(
   accountId: string,
-  op: CoreOperation<void>,
+  op: CoreOperation<Asset>,
 ): Operation {
   return {
     id: encodeOperationId(accountId, op.tx.hash, op.type),
@@ -34,6 +38,7 @@ export function transactionToIntent(
     sender: _account.freshAddress,
     recipient: transaction.recipient,
     amount: fromBigNumberToBigInt(transaction.amount, BigInt(0)),
+    asset: null, // TODO: check
   };
 }
 
