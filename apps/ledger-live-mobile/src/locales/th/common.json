@@ -4697,7 +4697,7 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "อัปเดต {{deviceName}} เป็นเวอร์ชัน {{version}}",
-    "recoveryPhraseBackupInstructions" : "ตรวจสอบให้แน่ใจว่าวลีกู้คืน 24 คำของคุณถูกเขียนลงใน Recovery Sheet และพร้อมใช้งาน เพื่อเป็นการป้องกันไว้ก่อน",
+    "recoveryPhraseBackupInstructions" : "ตรวจสอบให้แน่ใจว่ามีการเขียน Secret Recovery Phrase 24 คำของคุณลงใน Recovery Sheet และพร้อมใช้งาน เพื่อเป็นการป้องกันไว้ก่อน\n\nพิจารณาใช้ Ledger Recover เพื่อสำรองการเข้าถึงวอลเล็ตของคุณและะแน่ใจว่าจะสามารถเข้าถึงได้เสมอ",
     "confirmRecoveryPhrase" : "ฉันมี Recovery Phrase ของฉัน",
     "introDescription1" : "โปรดทราบว่าแอปทั้งหมดในอุปกรณ์ของคุณจะถูกลบ คุณสามารถติดตั้งแอปของคุณอีกครั้งหลังจากการอัปเดตระบบปฏิบัติการ",
     "introDescription2" : "การดำเนินการนี้ไม่มีผลกระทบต่อสินทรัพย์คริปโตของคุณ",
