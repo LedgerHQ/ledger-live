@@ -447,6 +447,8 @@
     "incompatibility" : {
       "ton_title" : "Die Ledger Nano S™ unterstützt das Swappen von Ton nicht",
       "ton_description" : "Zum Swappen von Ton kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
+      "ton_tokens_title" : "Ledger Nano S™ does not support swapping Ton Tokens",
+      "ton_tokens_description" : "To swap Ton Tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "spl_tokens_title" : "Die Ledger Nano S™ unterstützt das Swappen von Solana-Token nicht",
       "spl_tokens_description" : "Zum Swappen von Solana-Token kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
       "sui_tokens_title" : "Die Ledger Nano S™ unterstützt das Swappen von Sui-Token nicht",
@@ -5421,7 +5423,9 @@
     "stringHash" : "Nachrichten-Hash",
     "domainHash" : "Domain-Hash",
     "messageHash" : "Nachrichten-Hash",
-    "message" : "Nachricht"
+    "message" : "Nachricht",
+    "title" : "Vorgang fortsetzen auf deiner Ledger {{wording}}",
+    "description" : "Befolge die Anweisungen, die auf deinem Secure Touchscreen angezeigt werden."
   },
   "TransactionConfirm" : {
     "title" : "Bitte bestätigen Sie den Vorgang auf Ihrem Gerät, um ihn abzuschließen",
@@ -6613,7 +6617,8 @@
       "title" : "Vermögenswert auswählen"
     },
     "selectAccount" : {
-      "title" : "Konto auswählen"
+      "title" : "Konto auswählen",
+      "addAccount" : "Neues oder bestehendes Konto hinzufügen"
     }
   },
   "customImage" : {
@@ -7043,6 +7048,14 @@
     "opted_out" : {
       "description" : "Der begrenzte Speicher deiner Ledger Nano S schränkt deinen Zugang zu aktuellen Funktionen, Blockchain-Änderungen und Sicherheitsverbesserungen ein. Für die längerfristige Nutzung solltest du auf ein neueres Ledger-Gerät aufrüsten.",
       "cta" : "Weitere Informationen"
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "Suche",
+    "assetFlow" : {
+      "selectTemplate" : "Select {{dynamic}}",
+      "asset" : "Asset",
+      "network" : "Netzwerk"
     }
   }
 }
