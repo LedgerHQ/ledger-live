@@ -2393,7 +2393,8 @@
         "suggested" : "Önerilen",
         "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
-        "nftQuantity" : "Miktar"
+        "nftQuantity" : "Miktar",
+        "splExtensionsWarning" : "Token Uzantıları (Token Extensions) olarak da bilinen Token-2022 programı kapsamındaki bir token’la etkileşime geçiyorsunuz. Bu token’ın belirli riskleri bulunmaktadır. Daha fazla bilgi edinmek için <0>buraya tıklayın</0>."
       },
       "verification" : {
         "streaming" : {
@@ -2579,7 +2580,7 @@
             "amount" : "Stake edilecek miktar"
           },
           "starter" : {
-            "description" : "EGLD varlıklarınızın yetkisini bir Staking Sağlayıcısına devrederek ödüller kazanabilirsiniz.",
+            "description" : "EGLD varlıklarınızla bir Staking Sağlayıcısına yetki devrederek ödüller kazanabilirsiniz.",
             "bullet" : ["Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.", "Ledger cihazınızı kullanarak yetki devredin.", "Yetki Devirleri İptal Edilen varlıklar 10 gün sonra yeniden kullanılabilir"],
             "warning" : {
               "description" : "Staking Sağlayıcınızı akıllıca seçin! Şu anda tek risk, çeşitli nedenlerden ötürü ödül alamamaktır. Dolayısıyla bir sağlayıcıyı Güvenilirlik, İletişim ve Ekonomi kriterlerine göre seçmelisiniz."
@@ -2908,12 +2909,12 @@
         "revoke" : "İptal et"
       },
       "emptyState" : {
-        "description" : "Varlıklarınızın yetkisini devrederek CELO ödülleri kazanabilirsiniz.",
+        "description" : "Varlıklarınızla yetki devrederek CELO ödülleri kazanabilirsiniz.",
         "info" : "Yetki Devri nasıl çalışır?",
         "delegation" : "Ödüller kazanın"
       },
       "earnRewards" : {
-        "description" : "CELO varlıklarınızın yetkisini bir doğrulayıcıya devrederek ödüller kazanabilirsiniz.",
+        "description" : "CELO varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz.",
         "bullet" : {
           "0" : "Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.",
           "1" : "Ledger cihazınızı kullanarak yetki devredin.",
@@ -3147,7 +3148,7 @@
   "cosmos" : {
     "delegation" : {
       "emptyState" : {
-        "description" : "Varlıklarınızın yetkisini devrederek {{currencyTicker}} ödülleri kazanabilirsiniz.",
+        "description" : "Varlıklarınızla yetki devrederek {{currencyTicker}} ödülleri kazanabilirsiniz.",
         "info" : "Yetki Devri nasıl çalışır?",
         "delegation" : "Ödüller kazanın"
       },
@@ -3172,7 +3173,7 @@
         "title" : "Yetki Devredin",
         "steps" : {
           "starter" : {
-            "description" : "{{currencyTicker}} varlıklarınızın yetkisini bir doğrulayıcıya devrederek ödüller kazanabilirsiniz.",
+            "description" : "{{currencyTicker}} varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz.",
             "bullet" : ["Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.", "Ledger cihazınızı kullanarak yetki devredin.", "Varlıklar, yetki devirleri iptal edildikten {{numberOfDays}} gün sonra tekrar kullanılabilir"],
             "warning" : {
               "description" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz."
@@ -3675,7 +3676,7 @@
       "ledgerByFigmentTC" : "Ledger by Figment Hüküm ve Koşulları",
       "ledgerByChorusOneTC" : "Ledger by Chorus One Hüküm ve Koşulları",
       "emptyState" : {
-        "description" : "Varlıklarınızın yetkisini devrederek SOL ödülleri kazanabilirsiniz.",
+        "description" : "Varlıklarınızla yetki devrederek SOL ödülleri kazanabilirsiniz.",
         "info" : "Yetki Devri nasıl çalışır?",
         "delegation" : "Ödüller kazanın"
       },
@@ -3768,7 +3769,7 @@
       "frozenStateWarning" : "Hesap varlıkları donduruldu!",
       "transferWarning" : "Ledger Nano S™ kullanarak Solana token'ları için alıcı adresini doğrulamak üzere <0>bu yönergeleri uygulayın.</0>",
       "transferFees" : {
-        "feesPercentHint" : "Bu token için %{{feePercent}} ({{feeBps}} bps) transfer ücreti alınır. Maks. {{maxFee}}",
+        "feesHint" : "Token transfer ücreti: {{transferFee}}",
         "notice" : "Transfer ücreti: %{{fee}}",
         "tooltipHint" : "Token oluşturucu için alıkoyulan transfer yüzdesi",
         "transferFeesLabel" : "Transfer ücretleri"
@@ -4083,7 +4084,7 @@
     "durationDays" : "{{count}} gün",
     "durationDays_plural" : "{{count}} gün",
     "howItWorks" : "Yetki devri nasıl çalışır?",
-    "delegationEarn" : "Artık hesabınızın yetkisini devrederek {{name}} staking ödülleri kazanabilirsiniz.",
+    "delegationEarn" : "Artık hesabınızla yetki devrederek {{name}} staking ödülleri kazanabilirsiniz.",
     "earnRewards" : "Ödüller kazanın",
     "overdelegated" : "Yetki Devri Aşımı",
     "status" : "Durum",
@@ -5420,7 +5421,9 @@
     "stringHash" : "Mesaj Hash'i",
     "domainHash" : "Alan Adı Hash'i",
     "messageHash" : "Mesaj Hash'i",
-    "message" : "Mesaj"
+    "message" : "Mesaj",
+    "title" : "Ledger {{wording}} üzerinde devam edin",
+    "description" : "Güvenli Dokunmatik Ekranınızda gösterilen yönergeleri izleyin."
   },
   "TransactionConfirm" : {
     "title" : "Sonlandırmak için lütfen cihazınızdaki işlemi onaylayın",
