@@ -447,6 +447,8 @@
     "incompatibility" : {
       "ton_title" : "No es posible utilizar el Ledger Nano S™ para permutar Ton",
       "ton_description" : "Para permutar Ton, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "ton_tokens_title" : "Ledger Nano S™ does not support swapping Ton Tokens",
+      "ton_tokens_description" : "To swap Ton Tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "spl_tokens_title" : "No es posible utilizar el Ledger Nano S™ para permutar tokens de Solana",
       "spl_tokens_description" : "Para permutar tokens de Solana, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "sui_tokens_title" : "No es posible utilizar el Ledger Nano S™ para permutar tokens de Sui",
@@ -5421,7 +5423,9 @@
     "stringHash" : "Hash de mensaje",
     "domainHash" : "Hash de dominio",
     "messageHash" : "Hash de mensaje",
-    "message" : "Mensaje"
+    "message" : "Mensaje",
+    "title" : "Continúa en tu Ledger {{wording}}",
+    "description" : "Sigue las instrucciones que aparecen en tu pantalla táctil segura."
   },
   "TransactionConfirm" : {
     "title" : "Confirma la operación en tu dispositivo para finalizarla",
@@ -6613,7 +6617,8 @@
       "title" : "elige un activo"
     },
     "selectAccount" : {
-      "title" : "elige una cuenta"
+      "title" : "elige una cuenta",
+      "addAccount" : "Agregar cuenta nueva o existente"
     }
   },
   "customImage" : {
@@ -7043,6 +7048,14 @@
     "opted_out" : {
       "description" : "La memoria limitada de tu Ledger Nano S restringe tu acceso a las opciones más recientes, a cambios en la blockchain y a mejoras de seguridad. Cambia a un dispositivo Ledger más moderno para garantizar un uso prolongado.",
       "cta" : "Más información"
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "Buscar",
+    "assetFlow" : {
+      "selectTemplate" : "Select {{dynamic}}",
+      "asset" : "activo",
+      "network" : "red"
     }
   }
 }
