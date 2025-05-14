@@ -120,6 +120,7 @@ type Status = PartialNullable<{
   imageLoaded: boolean;
   imageCommitRequested: boolean;
   transactionChecksOptInTriggered: boolean;
+  transactionChecksOptIn: boolean;
 }>;
 
 type Props<H extends Status, P> = {
@@ -222,6 +223,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     progress,
     listingApps,
     transactionChecksOptInTriggered,
+    transactionChecksOptIn,
   } = status;
 
   useTrackMyLedgerSectionEvents({
@@ -283,6 +285,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     deviceInfo,
     appAndVersion,
     transactionChecksOptInTriggered,
+    transactionChecksOptIn,
   });
 
   useEffect(() => {

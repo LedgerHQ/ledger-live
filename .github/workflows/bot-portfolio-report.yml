@@ -1,4 +1,4 @@
-name: "Bots Portfolio"
+name: "[Coin] - Bots Portfolio - Scheduled"
 on:
   workflow_dispatch:
     inputs:

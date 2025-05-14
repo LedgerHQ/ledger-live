@@ -6601,7 +6601,7 @@
         "swap": "Swap",
         "deposit": "Deposit"
       }
-    }, 
+    },
     "InvalidMemoMina": {
       "title": "Memo text cannot be longer than 32 characters"
     },
@@ -6638,7 +6638,8 @@
       "title": "choose asset"
     },
     "selectAccount": {
-      "title": "choose account"
+      "title": "choose account",
+      "addAccount": "Add new or existing account"
     }
   },
   "customImage": {
@@ -7068,6 +7069,14 @@
     "opted_out": {
       "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements. For long-term use, upgrade to a newer Ledger device.",
       "cta": "Learn more"
+    }
+  },
+  "modularAssetDrawer": {
+    "searchPlaceholder": "Search",
+    "assetFlow": {
+      "selectTemplate": "Select {{dynamic}}",
+      "asset": "asset",
+      "network": "network"
     }
   }
 }

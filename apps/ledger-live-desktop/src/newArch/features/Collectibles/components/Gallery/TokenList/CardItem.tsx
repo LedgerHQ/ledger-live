@@ -1,7 +1,7 @@
 import { Flex, Text } from "@ledgerhq/react-ui";
 import React, { memo } from "react";
 import { TitleContainer } from "./Common";
-import { Skeleton } from "../../Skeleton";
+import { Skeleton } from "../../../components";
 import { Trans } from "react-i18next";
 import { centerEllipsis } from "~/renderer/styles/helpers";
 import BigNumber from "bignumber.js";

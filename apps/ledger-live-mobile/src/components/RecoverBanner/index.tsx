@@ -99,7 +99,7 @@ function RecoverBanner() {
   const isWarning = stepNumber > 2;
 
   return (
-    <Flex justifyContent="center" position="relative">
+    <Flex justifyContent="center" position="relative" mt={3}>
       <Flex
         position="relative"
         columnGap={12}

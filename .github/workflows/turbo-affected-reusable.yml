@@ -1,4 +1,4 @@
-name: Turbo Affected
+name: "[All Platforms] - Determine Affected - Called"
 
 on:
   workflow_call:
