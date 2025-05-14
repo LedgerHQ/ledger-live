@@ -3845,6 +3845,9 @@
         }
       }
     },
+    "spl2022" : {
+      "splExtensionsWarning" : "현재 사용 중인 토큰은 토큰 확장 프로그램(Token Extensions)으로도 알려진 토큰-2022 프로그램의 일부입니다. 이 토큰은 몇 가지 리스크가 수반됩니다. <0>여기</0>를 클릭하여 자세히 알아보세요."
+    },
     "amount" : {
       "available" : "총 이용 가능",
       "useMax" : "최대치 사용",
@@ -6082,6 +6085,7 @@
       "transferFees" : {
         "title" : "전송 수수료",
         "feesPercentHint" : "토큰에는 {{feePercent}}%({{feeBps}}bps)의 전송 수수료가 부과됩니다. 최대 {{maxFee}}",
+        "feesHint" : "토큰 이체 수수료: {{transferFee}}",
         "notice" : "전송 수수료 {{fee}}%",
         "tooltipHint" : "토큰 생성자의 전송 보류 비율"
       },
@@ -6469,7 +6473,9 @@
     },
     "stepVerification" : {
       "action" : "장치에서 거래를 확인하세요",
-      "accountName" : "계정 이름"
+      "accountName" : "계정 이름",
+      "title" : "Ledger {{wording}}에서 계속하세요",
+      "description" : "보안 터치스크린에 표시된 안내를 따라주세요."
     }
   },
   "notificationCenter" : {
@@ -7414,6 +7420,9 @@
       "minutes_plural" : "({{count}}분 전)",
       "seconds" : "({{count}}초 전)",
       "seconds_plural" : "({{count}}초 전)"
-    }
+    },
+    "performance" : "가격 추이",
+    "low" : "낮음",
+    "high" : "높음"
   }
 }
