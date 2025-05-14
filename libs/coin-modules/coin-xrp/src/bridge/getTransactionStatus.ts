@@ -17,6 +17,7 @@ import { getServerInfos } from "../network";
 import { cachedRecipientIsNew, parseAPIValue } from "../logic";
 import { Transaction, TransactionStatus } from "../types";
 
+// TODO: almost like estimateMaxSpendable
 export const getTransactionStatus: AccountBridge<
   Transaction,
   Account,

@@ -71,7 +71,7 @@ async function filterOperations(
 
 export function adaptCoreOperationToLiveOperation(
   accountId: string,
-  op: CoreOperation<void>,
+  op: CoreOperation<XrpAsset>,
 ): Operation {
   return {
     id: encodeOperationId(accountId, op.tx.hash, op.type),
