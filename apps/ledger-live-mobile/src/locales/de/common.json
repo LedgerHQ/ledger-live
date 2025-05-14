@@ -513,6 +513,10 @@
       "title" : "Entschuldigung, Guthaben reicht nicht aus",
       "description" : "Bitte stellen Sie sicher, dass das Konto ausreichend gedeckt ist."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "Leider reicht das Guthaben zur Deckung der Gebühren nicht aus",
+      "description" : "Bitte vergewissere dich, dass das Konto über ausreichende Deckung verfügt."
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Dein verfügbares (nicht gestaketes) Guthaben beläuft sich derzeit auf {{currentBalance}}. Dies reicht nicht aus, um die Netzwerkgebühren für das Beenden des Stakings deiner {{assetName}} zu bezahlen. ",
       "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} auf deinem Konto.",
@@ -6469,7 +6473,9 @@
     },
     "stepVerification" : {
       "action" : "Bitte bestätige den Vorgang auf deinem Gerät",
-      "accountName" : "Kontoname"
+      "accountName" : "Kontoname",
+      "title" : "Vorgang fortsetzen auf deiner Ledger {{wording}}",
+      "description" : "Befolge die Anweisungen, die auf deinem Secure Touchscreen angezeigt werden."
     }
   },
   "notificationCenter" : {
@@ -7414,6 +7420,10 @@
       "minutes_plural" : "(vor {{count}} Minuten)",
       "seconds" : "(vor {{count}} Sekunde)",
       "seconds_plural" : "(vor {{count}} Sekunden)"
-    }
+    },
+    "performance" : "Performance",
+    "low" : "Niedrig",
+    "high" : "Hoch",
+    "title" : "Marktbewegungen"
   }
 }
