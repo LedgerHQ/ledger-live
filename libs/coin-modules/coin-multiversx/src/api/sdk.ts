@@ -366,3 +366,5 @@ export const getFees = async (t: Transaction): Promise<BigNumber> => {
 export const broadcastTransaction = async (signedOperation: SignedOperation): Promise<string> => {
   return await api.submit(signedOperation);
 };
+
+// TODO:  validateIntent
