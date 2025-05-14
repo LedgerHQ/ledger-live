@@ -447,6 +447,8 @@
     "incompatibility" : {
       "ton_title" : "™Ledger Nano S لا تدعم مبادلة Ton",
       "ton_description" : "لمبادلة Ton، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+      "ton_tokens_title" : "Ledger Nano S™ does not support swapping Ton Tokens",
+      "ton_tokens_description" : "To swap Ton Tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "spl_tokens_title" : "™Ledger Nano S لا تدعم مبادلة رموز سولانا (Solana)",
       "spl_tokens_description" : "لمبادلة رموز سولانا (Solana)، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "sui_tokens_title" : "™Ledger Nano S لا تدعم مبادلة رموز Sui",
@@ -5421,7 +5423,9 @@
     "stringHash" : "دالة تجزئة الرسالة",
     "domainHash" : "دالة تجزئة المجال",
     "messageHash" : "دالة تجزئة الرسالة",
-    "message" : "رسالة"
+    "message" : "رسالة",
+    "title" : "تابع على جهازك Ledger {{wording}}",
+    "description" : "اتبع التعليمات المعروضة على شاشتك الآمنة التي تعمل باللمس."
   },
   "TransactionConfirm" : {
     "title" : "يرجى تأكيد العملية على جهازك لإنهائها",
@@ -6613,7 +6617,8 @@
       "title" : "اختر أصل"
     },
     "selectAccount" : {
-      "title" : "اختر حساب"
+      "title" : "اختر حساب",
+      "addAccount" : "إضافة حساب جديد أو قائم"
     }
   },
   "customImage" : {
@@ -7043,6 +7048,14 @@
     "opted_out" : {
       "description" : "الذاكرة المحدودة في ledger Nano S الخاصة بك تُقيد وصولك إلى أحدث الميزات، ومتغيّرات سلاسل الكتل، وتحسينات الأمان. من أجل الاستخدام على المدى الطويل، قم بالترقية إلى جهاز Ledger أحدث.",
       "cta" : "تعرّف على المزيد"
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "بحث",
+    "assetFlow" : {
+      "selectTemplate" : "Select {{dynamic}}",
+      "asset" : "أصل",
+      "network" : "الشبكة"
     }
   }
 }
