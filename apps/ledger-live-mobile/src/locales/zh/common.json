@@ -6469,7 +6469,9 @@
     },
     "stepVerification" : {
       "action" : "请在您的设备上确认该操作",
-      "accountName" : "账户名"
+      "accountName" : "账户名",
+      "title" : "继续在您的 Ledger {{wording}} 上操作",
+      "description" : "按照安全触摸屏上的指示进行操作。"
     }
   },
   "notificationCenter" : {
@@ -7414,6 +7416,10 @@
       "minutes_plural" : "（{{count}} 分钟前）",
       "seconds" : "（{{count}} 秒前）",
       "seconds_plural" : "（{{count}} 秒前）"
-    }
+    },
+    "performance" : "表现",
+    "low" : "低",
+    "high" : "高",
+    "title" : "市场走势"
   }
 }
