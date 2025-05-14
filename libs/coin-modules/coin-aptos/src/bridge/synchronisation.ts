@@ -263,6 +263,8 @@ export const getStakingPoolAddresses = (stakingOperations: Operation[]): string[
     if (!op.recipients.length) continue;
 
     const poolAddress = op.recipients[0];
+    if (poolAddress === "0x1") continue;
+
     if (!stakingPoolsAddrs.includes(poolAddress)) stakingPoolsAddrs.push(poolAddress);
   }
 

@@ -41,10 +41,12 @@ export const APTOS_FUNGIBLE_STORE: MoveStructId = "0x1::fungible_asset::Fungible
 
 export const APTOS_OBJECT_CORE: MoveStructId = "0x1::object::ObjectCore";
 
-export enum DIRECTION {
+export enum OP_TYPE {
   IN = "IN",
   OUT = "OUT",
   STAKE = "STAKE",
+  UNSTAKE = "UNSTAKE",
+  WITHDRAW = "WITHDRAW",
   UNKNOWN = "UNKNOWN",
 }
 

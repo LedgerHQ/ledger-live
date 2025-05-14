@@ -11,7 +11,7 @@ import {
   APTOS_COIN_CHANGE,
   APTOS_FUNGIBLE_STORE,
   APTOS_OBJECT_CORE,
-  DIRECTION,
+  OP_TYPE,
 } from "../../constants";
 import {
   calculateAmount,
@@ -870,7 +870,7 @@ describe("Aptos sync logic ", () => {
       expect(result[0]).toEqual({
         id: expect.any(String),
         hash: "0x123",
-        type: DIRECTION.OUT,
+        type: OP_TYPE.OUT,
         value: new BigNumber(100),
         fee: new BigNumber(20000),
         blockHash: "0xabc",
@@ -1069,7 +1069,7 @@ describe("Aptos sync logic ", () => {
       expect(result[0]).toEqual({
         id: expect.any(String),
         hash: "0x0189",
-        type: DIRECTION.OUT,
+        type: OP_TYPE.OUT,
         value: new BigNumber(20000),
         fee: new BigNumber(20000),
         blockHash: "0xc496",
@@ -1367,7 +1367,7 @@ describe("Aptos sync logic ", () => {
       expect(tokenOps[0]).toEqual({
         id: expect.any(String),
         hash: "0x123",
-        type: DIRECTION.OUT,
+        type: OP_TYPE.OUT,
         value: new BigNumber(1500000),
         fee: new BigNumber(20000),
         blockHash: "0xabc",
@@ -1663,7 +1663,7 @@ describe("Aptos sync logic ", () => {
         id: expect.any(String),
         accountId: "token_account_id",
         hash: "0x10c9",
-        type: DIRECTION.IN,
+        type: OP_TYPE.IN,
         value: new BigNumber(193),
         fee: new BigNumber(20000),
         blockHash: "0xabc",

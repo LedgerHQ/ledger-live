@@ -21,7 +21,7 @@ import {
   APTOS_FUNGIBLE_STORE,
   BATCH_TRANSFER_TYPES,
   DELEGATION_POOL_TYPES,
-  DIRECTION,
+  OP_TYPE,
   COIN_TRANSFER_TYPES,
   FA_TRANSFER_TYPES,
   APTOS_OBJECT_CORE,
@@ -144,13 +144,14 @@ export const txsToOps = (
         return; // skip transaction without functions in payload
       }
 
-      const { coin_id, amount_in, amount_out, staked_amount } = getCoinAndAmounts(tx, address);
+      const { coin_id, amount_in, amount_out, type } = getCoinAndAmounts(tx, address);
       op.value = calculateAmount(tx.sender, address, amount_in, amount_out);
-      op.type = staked_amount.gt(0)
-        ? DIRECTION.STAKE
-        : compareAddress(tx.sender, address)
-          ? DIRECTION.OUT
-          : DIRECTION.IN;
+      op.type =
+        type !== OP_TYPE.UNKNOWN
+          ? type
+          : compareAddress(tx.sender, address)
+            ? OP_TYPE.OUT
+            : OP_TYPE.IN;
       op.senders.push(tx.sender);
       op.hasFailed = !tx.success;
       op.id = encodeOperationId(op.accountId, tx.hash, op.type);
@@ -159,13 +160,17 @@ export const txsToOps = (
 
       if (op.value.isZero()) {
         // skip transaction that result no Aptos change
-        op.type = DIRECTION.UNKNOWN;
+        op.type = OP_TYPE.UNKNOWN;
       }
 
-      if (op.type === DIRECTION.STAKE) {
-        op.value = staked_amount;
+      if (
+        op.type === OP_TYPE.STAKE ||
+        op.type === OP_TYPE.UNSTAKE ||
+        op.type === OP_TYPE.WITHDRAW
+      ) {
+        ops.push(op);
         opsStaking.push(op);
-      } else if (op.type !== DIRECTION.UNKNOWN && coin_id !== null) {
+      } else if (op.type !== OP_TYPE.UNKNOWN && coin_id !== null) {
         if (coin_id === APTOS_ASSET_ID) {
           ops.push(op);
         } else {
@@ -174,7 +179,7 @@ export const txsToOps = (
             op.accountId = encodeTokenAccountId(id, token);
             opsTokens.push(op);
 
-            if (op.type === DIRECTION.OUT) {
+            if (op.type === OP_TYPE.OUT) {
               ops.push({
                 ...op,
                 accountId: decodeTokenAccountId(op.accountId).accountId,
@@ -347,12 +352,12 @@ export function getCoinAndAmounts(
   coin_id: string | null;
   amount_in: BigNumber;
   amount_out: BigNumber;
-  staked_amount: BigNumber;
+  type: OP_TYPE;
 } {
   let coin_id: string | null = null;
   let amount_in = BigNumber(0);
   let amount_out = BigNumber(0);
-  let staked_amount = BigNumber(0);
+  let type = OP_TYPE.UNKNOWN;
 
   // collect all events related to the address and calculate the overall amounts
   tx.events.forEach(event => {
@@ -393,45 +398,28 @@ export function getCoinAndAmounts(
       case "0x1::stake::AddStakeEvent":
         if (tx.sender === address) {
           coin_id = APTOS_ASSET_ID;
-          // STAKED AMOUNT IS A AMOUNT OUT
-          // IT SHOULD BE CALCULATED HERE
-          // STAKED_AMOUNT HOLDS THE CURRENT STAKED TOTAL AMOUNT.
-          // WHENEVER A UNLOCKED OR WITHDRAWABLE EVENT IS IN,
-          // SHOULD SUBTREACT IT FROM THE STAKED_AMOUNT
-          staked_amount = staked_amount.plus(event.data.amount_added);
+          type = OP_TYPE.STAKE;
           amount_out = amount_out.plus(event.data.amount_added);
         }
         break;
-      // case "0x1::stake::UnlockStakeEvent":
-      //   if (tx.sender === address) {
-      //     coin_id = APTOS_ASSET_ID;
-      //     // WHENEVER A UNLOCKED EVENT IS IN,
-      //     // DO NOT CHANGE THE AMOUNT OUT JUST REDUCE STAKED AMOUNT
-      //     staked_amount = staked_amount.minus(event.data.amount_added);
-      //     unlocked_amount = unlocked_amount.plus(event.data.amount_added);
-      //   }
-      //   break;
-      // case "0x1::stake::WithdrawStakeEvent":
-      //   if (tx.sender === address) {
-      //     coin_id = APTOS_ASSET_ID;
-      //     // WHENEVER A WITHDRAW EVENT IS IN,
-      //     // DO NOT CHANGE THE AMOUNT OUT JUST REDUCE STAKED AMOUNT
-      //     unlocked_amount = unlocked_amount.minus(event.data.amount_added);
-      //     amount_in = amount_in.plus(event.data.amount_added);
-      //   }
-      //   break;
-      // case "0x1::stake::RewardEvent":
-      //   if (tx.sender === address) {
-      //     coin_id = APTOS_ASSET_ID;
-      //     // WHENEVER A REWARD EVENT IS IN,
-      //     // DO NOT CHANGE THE AMOUNT OUT JUST ADD STAKED AMOUNT
-      //     staked_amount = staked_amount.plus(event.data.amount_added);
-      //   }
-      //   break;
+      case "0x1::stake::UnlockStakeEvent":
+        if (tx.sender === address) {
+          coin_id = APTOS_ASSET_ID;
+          type = OP_TYPE.UNSTAKE;
+          amount_in = amount_in.plus(event.data.amount_added);
+        }
+        break;
+      case "0x1::stake::WithdrawStakeEvent":
+        if (tx.sender === address) {
+          coin_id = APTOS_ASSET_ID;
+          type = OP_TYPE.WITHDRAW;
+          amount_in = amount_in.plus(event.data.amount_added);
+        }
+        break;
     }
   });
 
-  return { coin_id, amount_in, amount_out, staked_amount };
+  return { coin_id, amount_in, amount_out, type };
 }
 
 export function calculateAmount(

@@ -238,11 +238,7 @@ export class AptosAPI {
         },
       });
     } catch (_) {
-      return {
-        active: 0,
-        inactive: 0,
-        pending_inactive: 0,
-      };
+      return [0, 0, 0];
     }
   }
 
