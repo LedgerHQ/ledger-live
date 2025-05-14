@@ -3845,6 +3845,9 @@
         }
       }
     },
+    "spl2022" : {
+      "splExtensionsWarning" : "คุณกำลังโต้ตอบกับโทเคนที่เป็นส่วนหนึ่งของโปรแกรม Token-2022 หรือที่เรียกว่า Token Extensions โทเคนนี้มาพร้อมกับความเสี่ยง <0>คลิกที่นี่</0>เพื่อเรียนรู้เพิ่มเติม"
+    },
     "amount" : {
       "available" : "จำนวนพร้อมใช้งานทั้งหมด",
       "useMax" : "ใช้สูงสุด",
@@ -6082,6 +6085,7 @@
       "transferFees" : {
         "title" : "ค่าธรรมเนียมการโอน",
         "feesPercentHint" : "โทเคนมีค่าธรรมเนียม {{feePercent}}% ({{feeBps}}bps) แต่ไม่เกิน {{maxFee}}",
+        "feesHint" : "ค่าธรรมเนียมการโอนโทเคน: {{transferFee}}",
         "notice" : "ค่าธรรมเนียมการโอน {{fee}}%",
         "tooltipHint" : "เปอร์เซ็นต์การโอนที่ถูกระงับไว้สำหรับผู้สร้างโทเคน"
       },
@@ -6469,7 +6473,9 @@
     },
     "stepVerification" : {
       "action" : "โปรดยืนยันการทำงานบนอุปกรณ์ของคุณ",
-      "accountName" : "ชื่อบัญชี"
+      "accountName" : "ชื่อบัญชี",
+      "title" : "ดำเนินการต่อบน Ledger {{wording}} ของคุณ",
+      "description" : "ปฏิบัติตามคำแนะนำที่ปรากฏบน Secure Touchscreen ของคุณ"
     }
   },
   "notificationCenter" : {
@@ -7414,6 +7420,9 @@
       "minutes_plural" : "({{count}} นาทีที่แล้ว)",
       "seconds" : "({{count}} วินาทีที่แล้ว)",
       "seconds_plural" : "({{count}} วินาทีที่แล้ว)"
-    }
+    },
+    "performance" : "ประสิทธิภาพ",
+    "low" : "ต่ำ",
+    "high" : "สูง"
   }
 }
