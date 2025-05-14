@@ -21,8 +21,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
   const [infoName, setInfoName] = useState<InfoName>();
   const info = useMemo(() => getInfo(t), [t]);
   const { spendableBalance, aptosResources } = account;
-  const { storageUsageBalance, stakedBalance, pendingBalance, availableBalance } =
-    aptosResources || {};
+  const { stakedBalance, pendingBalance, availableBalance } = aptosResources || {};
   const unit = useAccountUnit(account);
   const onCloseModal = useCallback(() => {
     setInfoName(undefined);
@@ -48,11 +47,6 @@ function AccountBalanceSummaryFooter({ account }: Props) {
         title={t("account.availableBalance")}
         onPress={onPressInfoCreator("available")}
         value={<CurrencyUnitValue unit={unit} value={spendableBalance} disableRounding />}
-      />
-      <InfoItem
-        title={t("aptos.info.storageUsage.title")}
-        onPress={onPressInfoCreator("storageUsage")}
-        value={<CurrencyUnitValue unit={unit} value={storageUsageBalance} disableRounding />}
       />
       {stakedBalance.gt(0) && (
         <InfoItem

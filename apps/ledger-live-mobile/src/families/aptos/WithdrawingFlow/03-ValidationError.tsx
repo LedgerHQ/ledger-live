@@ -11,10 +11,10 @@ import type {
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import type { NearWithdrawingFlowParamList } from "./types";
+import type { AptosWithdrawingFlowParamList } from "./types";
 
 type Props = BaseComposite<
-  StackNavigatorProps<NearWithdrawingFlowParamList, ScreenName.NearWithdrawingValidationError>
+  StackNavigatorProps<AptosWithdrawingFlowParamList, ScreenName.AptosWithdrawingValidationError>
 >;
 
 export default function ValidationError({ navigation, route }: Props) {
@@ -36,11 +36,11 @@ export default function ValidationError({ navigation, route }: Props) {
       ]}
     >
       <TrackScreen
-        category="NearWithdrawing"
+        category="AptosWithdrawing"
         name="ValidationError"
         flow="stake"
         action="withdrawing"
-        currency="near"
+        currency="aptos"
       />
       <ValidateError error={error} onRetry={retry} onClose={onClose} />
     </SafeAreaView>

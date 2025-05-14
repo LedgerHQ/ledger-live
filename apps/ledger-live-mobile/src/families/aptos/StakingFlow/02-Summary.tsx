@@ -3,7 +3,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useAptosValidators } from "@ledgerhq/live-common/families/aptos/react";
-import { AptosAccount } from "@ledgerhq/live-common/families/aptos/types";
+import { AptosAccount, AptosValidator } from "@ledgerhq/live-common/families/aptos/types";
 // import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
@@ -46,8 +46,8 @@ export default function StakingSummary({ navigation, route }: Props) {
 
   invariant(account, "account must be defined");
 
-  const validators = useAptosValidators(account.currency);
   const mainAccount = getMainAccount(account, parentAccount);
+  const validators = useAptosValidators(mainAccount.currency);
   const bridge = getAccountBridge(account, undefined);
 
   const chosenValidator = useMemo(() => {
@@ -345,7 +345,7 @@ function SummaryWords({
   onChangeValidator,
   onChangeAmount,
 }: {
-  validator?: AptosValidatorItem;
+  validator?: AptosValidator;
   account: AccountLike;
   amount: BigNumber;
   onChangeValidator: () => void;

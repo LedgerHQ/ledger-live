@@ -14,10 +14,10 @@ import type {
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import type { NearWithdrawingFlowParamList } from "./types";
+import type { AptosWithdrawingFlowParamList } from "./types";
 
 type Props = BaseComposite<
-  StackNavigatorProps<NearWithdrawingFlowParamList, ScreenName.NearWithdrawingValidationSuccess>
+  StackNavigatorProps<AptosWithdrawingFlowParamList, ScreenName.AptosWithdrawingValidationSuccess>
 >;
 
 export default function ValidationSuccess({ navigation, route }: Props) {
@@ -45,18 +45,18 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       ]}
     >
       <TrackScreen
-        category="NearWithdrawing"
+        category="AptosWithdrawing"
         name="ValidationSuccess"
         flow="stake"
         action="withdrawing"
-        currency="near"
+        currency="aptos"
       />
       <PreventNativeBack />
       <ValidateSuccess
         onClose={onClose}
         onViewDetails={goToOperationDetails}
-        title={<Trans i18nKey="near.withdrawing.flow.steps.verification.success.title" />}
-        description={<Trans i18nKey="near.staking.flow.steps.verification.success.text" />}
+        title={<Trans i18nKey="aptos.withdrawing.flow.steps.verification.success.title" />}
+        description={<Trans i18nKey="aptos.staking.flow.steps.verification.success.text" />}
       />
     </View>
   );

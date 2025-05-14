@@ -46,7 +46,7 @@ function WithdrawingAmount({ navigation, route }: Props) {
       transaction,
       max: getMaxSendBalance(account as AptosAccount, transaction),
       value: transaction ? transaction.amount : new BigNumber(0),
-      nextScreen: ScreenName.NearWithdrawingSelectDevice,
+      nextScreen: ScreenName.AptosWithdrawingSelectDevice,
       updateTransaction,
       status,
       bridgePending,

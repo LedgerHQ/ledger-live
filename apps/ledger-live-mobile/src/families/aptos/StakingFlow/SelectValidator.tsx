@@ -121,4 +121,4 @@ const styles = StyleSheet.create({
   },
 });
 
-const keyExtractor = (v: AptosValidator) => v.validatorAddress;
+const keyExtractor = (v: AptosValidator) => v.address;
