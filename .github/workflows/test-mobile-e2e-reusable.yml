@@ -585,8 +585,6 @@ jobs:
 
       - name: setup Android SDK
         uses: android-actions/setup-android@v3.2.2
-        with:
-          packages: "tools platform-tools build-tools"
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
