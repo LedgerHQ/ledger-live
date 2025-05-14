@@ -5,7 +5,7 @@ export async function getMinimumSwapAmount(AccountFrom: Account, AccountTo: Acco
   try {
     const { data } = await axios({
       method: "GET",
-      url: `https://swap-stg.ledger-test.com/v5/quote`,
+      url: `https://swap-ppr.ledger-test.com/v5/quote`,
       params: {
         from: AccountFrom.currency.id,
         to: AccountTo.currency.id,

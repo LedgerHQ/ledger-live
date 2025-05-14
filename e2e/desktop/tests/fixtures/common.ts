@@ -42,7 +42,7 @@ type TestFixtures = {
 const IS_NOT_MOCK = process.env.MOCK == "0";
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
 if (IS_NOT_MOCK) setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
-setEnv("SWAP_API_BASE", process.env.SWAP_API_BASE || "https://swap-stg.ledger-test.com/v5");
+setEnv("SWAP_API_BASE", process.env.SWAP_API_BASE || "https://swap-ppr.ledger-test.com/v5");
 
 async function executeCliCommand(cmd: CliCommand, userdataDestinationPath?: string) {
   const promise = await cmd(`${userdataDestinationPath}/app.json`);

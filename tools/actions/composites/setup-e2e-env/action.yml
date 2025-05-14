@@ -31,6 +31,6 @@ runs:
           echo "SWAP_API_BASE=https://swap.ledger.com/v5" >> $GITHUB_ENV
           echo "LEDGER_SYNC_ENVIRONMENT=PROD" >> $GITHUB_ENV
         else
-          echo "SWAP_API_BASE=https://swap-stg.ledger-test.com/v5" >> $GITHUB_ENV
+          echo "SWAP_API_BASE=https://swap-ppr.ledger-test.com/v5" >> $GITHUB_ENV
           echo "LEDGER_SYNC_ENVIRONMENT=STAGING" >> $GITHUB_ENV
         fi
