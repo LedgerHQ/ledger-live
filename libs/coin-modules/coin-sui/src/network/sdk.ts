@@ -5,6 +5,7 @@ import {
   ExecuteTransactionBlockParams,
   TransactionEffects,
 } from "@mysten/sui/client";
+import { JsonRpcError } from "@mysten/sui/client";
 import { TransactionBlockData, SuiTransactionBlockResponse, SuiCallArg } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { BigNumber } from "bignumber.js";
@@ -256,12 +257,7 @@ export const loadOperations = async (params: {
 
       currentCursor = nextCursor;
     } catch (error: unknown) {
-      if (
-        error !== null &&
-        typeof error === "object" &&
-        "type" in error &&
-        error.type === "InvalidParams"
-      ) {
+      if (error instanceof JsonRpcError && error.type === "InvalidParams") {
         log("coin:sui", "(network/sdk): loadOperations failed with cursor, retrying without it", {
           error,
           params,

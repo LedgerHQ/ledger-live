@@ -37,8 +37,6 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async info => {
   const newOperations = await getOperations(accountId, address, syncHash);
   operations = mergeOps(oldOperations, newOperations);
 
-  operations.sort((a, b) => b.date.valueOf() - a.date.valueOf());
-
   const shape = {
     id: accountId,
     syncHash: syncHash ?? undefined,
