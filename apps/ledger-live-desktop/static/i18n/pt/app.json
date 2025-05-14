@@ -447,6 +447,8 @@
     "incompatibility" : {
       "ton_title" : "A Ledger Nano S™ não é compatível com a troca de Ton",
       "ton_description" : "Para trocar Ton, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "ton_tokens_title" : "Ledger Nano S™ does not support swapping Ton Tokens",
+      "ton_tokens_description" : "To swap Ton Tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "spl_tokens_title" : "A Ledger Nano S™ não é compatível com a troca de tokens Solana",
       "spl_tokens_description" : "Para trocar tokens Solana, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "sui_tokens_title" : "A Ledger Nano S™ não é compatível com a troca de tokens Sui",
@@ -5421,7 +5423,9 @@
     "stringHash" : "Hash da mensagem",
     "domainHash" : "Hash do domínio",
     "messageHash" : "Hash da mensagem",
-    "message" : "Mensagem"
+    "message" : "Mensagem",
+    "title" : "Continue na sua Ledger {{wording}}",
+    "description" : "Siga as instruções exibidas na sua Tela Touch Segura."
   },
   "TransactionConfirm" : {
     "title" : "Confirme a operação no seu dispositivo para finalizá-la",
@@ -6613,7 +6617,8 @@
       "title" : "escolher ativo"
     },
     "selectAccount" : {
-      "title" : "escolher conta"
+      "title" : "escolher conta",
+      "addAccount" : "Adicionar conta nova ou existente"
     }
   },
   "customImage" : {
@@ -7043,6 +7048,14 @@
     "opted_out" : {
       "description" : "A memória limitada da Ledger Nano S restringe seu acesso aos últimos recursos, mudanças em blockchains e aprimoramentos de segurança. Para uso prolongado, atualize para um dispositivo Ledger mais recente.",
       "cta" : "Saiba mais"
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "Buscar",
+    "assetFlow" : {
+      "selectTemplate" : "Select {{dynamic}}",
+      "asset" : "ativo",
+      "network" : "rede"
     }
   }
 }
