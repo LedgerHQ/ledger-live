@@ -6469,7 +6469,9 @@
     },
     "stepVerification" : {
       "action" : "장치에서 거래를 확인하세요",
-      "accountName" : "계정 이름"
+      "accountName" : "계정 이름",
+      "title" : "Ledger {{wording}}에서 계속하세요",
+      "description" : "보안 터치스크린에 표시된 안내를 따라주세요."
     }
   },
   "notificationCenter" : {
@@ -7414,6 +7416,10 @@
       "minutes_plural" : "({{count}}분 전)",
       "seconds" : "({{count}}초 전)",
       "seconds_plural" : "({{count}}초 전)"
-    }
+    },
+    "performance" : "가격 추이",
+    "low" : "낮음",
+    "high" : "높음",
+    "title" : "시장 변동성"
   }
 }
