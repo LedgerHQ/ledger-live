@@ -1,4 +1,5 @@
 import { Unit } from "@ledgerhq/types-cryptoassets";
+import { TokenAccount } from "@ledgerhq/types-live";
 
 export type BlockInfo = {
   height: number;
@@ -9,8 +10,27 @@ export type BlockInfo = {
   time?: Date;
 };
 
-type TokenInfoCommon = Record<string, unknown>;
-// TODO add a `token: string` field to the pagination if we really need to support pagination (which is not the case for now)
+export type TokenInfoCommon = {
+  id?: string;
+  contractAddress?: string;
+  assetCode?: string;
+  assetIssuer?: string;
+  tokenType?: string;
+  // Stellar specific
+  blockTime?: Date;
+  index?: string;
+  ledgerOpType?: string;
+  pagingToken?: string | undefined;
+
+  // Token-account-like metadata
+  creationDate?: Date;
+  operations?: Operation[];
+  operationsCount?: number;
+  pendingOperations?: Operation[];
+  // balanceHistoryCache?: BalanceHistoryCache;
+  // swapHistory?: SwapOperation[];
+};
+
 export type Asset<TokenInfo extends TokenInfoCommon = never> =
   | { type: "native" }
   | (TokenInfo extends never ? TokenInfo : { type: "token" } & TokenInfo);
@@ -54,6 +74,11 @@ export type Transaction = {
   recipient: string;
   amount: bigint;
   fee: bigint;
+  baseReserve?: bigint; // NOTE: used for changeTrust mode in stellar
+  networkInfo?: {
+    baseFee?: bigint;
+    fees?: bigint;
+  };
 } & Record<string, unknown>; // Field containing dedicated value for each blockchain
 
 // Other coins take differents parameters What do we want to do ?
@@ -62,6 +87,9 @@ export type Account = {
   address: string;
   balance: bigint;
   currencyUnit: Unit;
+  pendingOperations: number; // NOTE: can get away with only the number of pending operations?
+  spendableBalance: bigint; // NOTE:: check if we can get rid of this one
+  subAccount?: TokenAccount;
 };
 
 export type Balance<AssetInfo extends Asset<TokenInfoCommon>> = {
@@ -87,12 +115,12 @@ export interface StringMemo<Kind extends string = "text"> extends Memo {
 }
 
 export interface MapMemo<Kind extends string, Value> extends Memo {
-  type: "map";
+  type: string;
   memos: Map<Kind, Value>;
 }
 
 export interface TypedMapMemo<KindToValueMap extends Record<string, unknown>> extends Memo {
-  type: "map";
+  type: string;
   memos: Map<keyof KindToValueMap, KindToValueMap[keyof KindToValueMap]>;
 }
 
@@ -137,13 +165,16 @@ export type FeeEstimation = {
 //       for now start is used as a minHeight from which we want to fetch ALL operations
 //       limit is unused for now
 //       see design document at https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/5446205788/coin-modules+lama-adapter+APIs+refinements
-export type Pagination = { minHeight: number };
+export type Pagination = { minHeight: number } & { pagingToken?: string; limit?: number }; // For evm, XRP, etc. // NOTE: For Stellar
+// NOTE: future proof export type Pagination = Record<string, unknown>;
 
 export type AccountInfo = {
   isNewAccount: boolean;
   balance: string;
   ownerCount: number;
   sequence: number;
+  assets?: BalanceAsset[]; // Optional, depending on the API
+  spendableBalance?: string; // Optional, depending on the API
 };
 
 export type AlpacaApi<
@@ -165,6 +196,21 @@ export type AlpacaApi<
     address: string,
     pagination: Pagination,
   ) => Promise<[Operation<AssetInfo>[], string]>;
+};
+
+// NOTE: taken from coin-stellar/bridge/types
+export type BalanceAsset = {
+  balance: string;
+  limit: string;
+  buying_liabilities: string;
+  selling_liabilities: string;
+  last_modified_ledger: number;
+  is_authorized: boolean;
+  is_authorized_to_maintain_liabilities: boolean;
+  asset_type: string;
+  asset_code: string;
+  asset_issuer: string;
+  liquidity_pool_id?: string;
 };
 
 export type BridgeApi = {

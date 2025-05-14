@@ -10,8 +10,9 @@ import type { Account } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 import { getAssetCodeIssuer } from "./logic";
-import type { Transaction, TransactionRaw } from "../types";
+import type { Transaction, TransactionRaw } from "./types";
 
+// FIXME: recheck fields here (mode -> type?)
 export function formatTransaction(
   { amount, recipient, fees, memoValue, useAllAmount, subAccountId }: Transaction,
   mainAccount: Account,

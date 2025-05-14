@@ -31,7 +31,14 @@ export async function listOperations(
 const convertToCoreOperation = (operation: StellarOperation): Operation<StellarAsset> => {
   return {
     id: `${operation.hash}-${operation.extra.index}`,
-    asset: { type: "native" },
+    asset:
+      operation.extra?.assetCode && operation.extra?.assetIssuer
+        ? {
+            type: "token",
+            assetCode: operation.extra.assetCode,
+            assetIssuer: operation.extra.assetIssuer,
+          }
+        : { type: "native" },
     tx: {
       hash: operation.hash,
       block: {
@@ -41,6 +48,17 @@ const convertToCoreOperation = (operation: StellarOperation): Operation<StellarA
       },
       fees: BigInt(operation.fee.toString()),
       date: operation.date,
+    },
+    details: {
+      sequence: operation.transactionSequenceNumber,
+      // NOTE: could be in operation.details instead?
+      // blockTime: operation.extra.blockTime,
+      // index: operation.extra.index,
+      ledgerOpType: operation.extra.ledgerOpType,
+      // pagingToken: operation.extra.pagingToken,
+      assetAmount: operation.extra.assetAmount
+        ? operation.extra.assetAmount
+        : operation.value.toString(),
     },
     type: operation.type,
     value: BigInt(operation.value.toString()),

@@ -15,7 +15,7 @@ const dummyAccount = {
   id: "js:2:ripple:r123:",
   type: "Account", // <-- this is mandatory for getMainAccount to work
   spendableBalance: new BigNumber(50000000),
-  currency: { id: "ripple", name: "XRP", units: [{ name: "XRP", magnitude: 6 }] },
+  currency: { id: "ripple", family: "xrp", name: "XRP", units: [{ name: "XRP", magnitude: 6 }] },
   freshAddress: "r123",
 } as unknown as Account;
 
