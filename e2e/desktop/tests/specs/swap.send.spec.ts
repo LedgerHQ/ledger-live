@@ -128,6 +128,11 @@ const swaps = [
     toAccount: Account.SOL_1,
     xrayTicket: "B2CQA-3081",
   },
+  {
+    fromAccount: Account.SOL_GIGA_1,
+    toAccount: Account.BTC_NATIVE_SEGWIT_1,
+    xrayTicket: "B2CQA-3268",
+  },
 ];
 
 for (const { fromAccount, toAccount, xrayTicket } of swaps) {

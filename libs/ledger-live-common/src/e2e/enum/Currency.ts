@@ -120,7 +120,7 @@ export class Currency {
   static readonly SOL_GIGA = new Currency(
     "GIGACHAD",
     "GIGA",
-    "solana",
+    "solana/spl/gigachad_63lfdmnb3mq8mw9mtz2to9bea2m71kzuugq5tijxcqj9",
     AppInfos.SOLANA,
     "63LfDmNb3MQ8mw9MtZ2To9bEA2M71kZUUGq5tiJxcqj9",
   );
