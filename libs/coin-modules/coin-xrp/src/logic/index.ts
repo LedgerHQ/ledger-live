@@ -4,13 +4,10 @@ export { craftTransaction } from "./craftTransaction";
 export type { MemoInput } from "./craftTransaction";
 export { estimateFees } from "./estimateFees";
 export { getBalance } from "./getBalance";
+export { getAccountInfo } from "./getAccountInfo";
 export { lastBlock } from "./lastBlock";
 export { listOperations } from "./listOperations";
-export {
-  RIPPLE_EPOCH,
-  cachedRecipientIsNew,
-  getNextValidSequence,
-  removeCachedRecipientIsNew,
-} from "./utils";
+export { getTransactionStatus } from "./getTransactionStatus";
+export { RIPPLE_EPOCH, cachedRecipientIsNew, getNextValidSequence } from "./utils";
 
 export { parseAPIValue } from "./common";
