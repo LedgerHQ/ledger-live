@@ -585,6 +585,8 @@ jobs:
 
       - name: setup Android SDK
         uses: android-actions/setup-android@v3.2.2
+        with:
+          packages: "tools platform-tools"
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -631,6 +633,7 @@ jobs:
 
       - name: Prepare APK
         run: |
+          ls -R /usr/local/lib/android/sdk/
           mkdir -p /tmp/apk/assets
           mv ${{ env.ANDROID_JSBUNDLE_PATH }} /tmp/apk/assets/index.android.bundle
           (cd /tmp/apk/; zip -r /home/runner/work/ledger-live/ledger-live/${{ env.ANDROID_APK_PATH }} assets/index.android.bundle)
