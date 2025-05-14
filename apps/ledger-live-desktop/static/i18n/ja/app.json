@@ -2393,7 +2393,8 @@
         "suggested" : "提案済み",
         "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
-        "nftQuantity" : "数量"
+        "nftQuantity" : "数量",
+        "splExtensionsWarning" : "お客様は、トークン拡張としても知られる、Token-2022プログラムの一部であるトークンを扱おうとしています。このトークンには特定のリスクが伴います。詳しくは<0>こちら</0>。"
       },
       "verification" : {
         "streaming" : {
@@ -3768,7 +3769,7 @@
       "frozenStateWarning" : "アカウント資産が凍結されています！",
       "transferWarning" : "Ledger Nano S™を使用してSolanaトークンの受取人アドレスを認証するには、<0>こちらの手順に従ってください。</0>",
       "transferFees" : {
-        "feesPercentHint" : "トークンには{{feePercent}}%（{{feeBps}}bps）の転送手数料がかかります。最大{{maxFee}}",
+        "feesHint" : "トークン転送手数料：{{transferFee}}",
         "notice" : "転送手数料{{fee}}%",
         "tooltipHint" : "トークン作成者のために保留された転送の割合",
         "transferFeesLabel" : "転送手数料"
@@ -5420,7 +5421,9 @@
     "stringHash" : "メッセージのハッシュ",
     "domainHash" : "ドメインのハッシュ",
     "messageHash" : "メッセージのハッシュ",
-    "message" : "メッセージ"
+    "message" : "メッセージ",
+    "title" : "Ledger {{wording}}で続ける",
+    "description" : "セキュアタッチスクリーンに表示される指示に従ってください。"
   },
   "TransactionConfirm" : {
     "title" : "デバイス上で処理を確定してください。",
