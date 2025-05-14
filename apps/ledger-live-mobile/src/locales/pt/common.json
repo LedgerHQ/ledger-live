@@ -3845,6 +3845,9 @@
         }
       }
     },
+    "spl2022" : {
+      "splExtensionsWarning" : "Você está interagindo com um token que faz parte do programa Token-2022, também conhecido como Token Extensions. Este token tem riscos específicos. <0>Clique aqui</0> para saber mais."
+    },
     "amount" : {
       "available" : "Total Disponível",
       "useMax" : "Usar o máximo",
@@ -6082,6 +6085,7 @@
       "transferFees" : {
         "title" : "Taxas de transferência",
         "feesPercentHint" : "O token tem {{feePercent}}% de taxa de transferência ({{feeBps}}bps) ({{maxFee}} máximo)",
+        "feesHint" : "Taxa de transferência do token: {{transferFee}}",
         "notice" : "Taxa de transferência {{fee}}%",
         "tooltipHint" : "Porcentagem da transferência retida para o criador do token"
       },
@@ -6469,7 +6473,9 @@
     },
     "stepVerification" : {
       "action" : "Confirme a operação em seu dispositivo",
-      "accountName" : "Nome da conta"
+      "accountName" : "Nome da conta",
+      "title" : "Continue na sua Ledger {{wording}}",
+      "description" : "Siga as instruções exibidas na sua Tela Touch Segura."
     }
   },
   "notificationCenter" : {
@@ -7414,6 +7420,9 @@
       "minutes_plural" : "({{count}} minutos atrás)",
       "seconds" : "({{count}} segundo atrás)",
       "seconds_plural" : "({{count}} segundos atrás)"
-    }
+    },
+    "performance" : "Desempenho",
+    "low" : "Baixo",
+    "high" : "Alto"
   }
 }
