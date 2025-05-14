@@ -67,6 +67,14 @@ export type TransactionIntent<
   asset: AssetInfo;
 } & Extra;
 
+export type TransactionValidation = {
+  errors: Record<string, Error>;
+  warnings: Record<string, Error>;
+  estimatedFees: bigint;
+  amount: bigint;
+  totalSpent: bigint;
+};
+
 export type FeeEstimation<FeeParameters extends Record<string, bigint> = never> = {
   value: bigint;
   parameters?: FeeParameters;

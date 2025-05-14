@@ -9,14 +9,32 @@ export function genericGetTransactionStatus(
 ): AccountBridge<any>["getTransactionStatus"] {
   return async (account, transaction: TransactionCommon & { fees: BigNumber }) => {
     const { freshAddress, balance, currency } = account;
-    const { errors, warnings } = await getAlpacaApi(network, kind).validateIntent(
+    const alpacaApi = getAlpacaApi(network, kind);
+    if (!alpacaApi.validateIntent) {
+      throw new Error("validateIntent is not implemented for this network/kind");
+    }
+
+    const { errors, warnings } = await alpacaApi.validateIntent(
       {
         currencyName: currency.name,
         address: freshAddress,
         balance: BigInt(balance.toString()),
         currencyUnit: currency.units[0],
       },
-      transaction,
+      /*
+        *Transaction = {
+    type: string;
+    recipient: string;
+    amount: bigint;
+    fee: bigint;
+} &
+        */
+      {
+        type: "TODO",
+        recipient: transaction.recipient,
+        amount: BigInt(transaction.amount.toString()),
+        fee: BigInt(transaction.fees.toString()),
+      },
     );
 
     const estimatedFees = transaction.fees || new BigNumber(0);
