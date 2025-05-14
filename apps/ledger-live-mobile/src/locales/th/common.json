@@ -513,6 +513,10 @@
       "title" : "ขออภัย เงินทุนไม่พอ",
       "description" : "โปรดตรวจสอบให้แน่ใจว่าบัญชีมีเงินทุนเพียงพอ"
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "ขออภัย เงินทุนไม่เพียงพอสำหรับการชำระค่าธรรมเนียม",
+      "description" : "โปรดตรวจสอบให้แน่ใจว่าบัญชีมีเงินทุนเพียงพอ"
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "ยอดคงเหลือ (ที่ไม่มีการ Stake) ที่คุณสามารถใช้ได้ คือ {{currentBalance}} เป็นจำนวนที่ไม่เพียงพอสำหรับการจ่ายค่าธรรมเนียมเครือข่ายเพื่อ Unstake {{assetName}} ของคุณ ",
       "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} ลงในบัญชีของคุณ",
@@ -6469,7 +6473,9 @@
     },
     "stepVerification" : {
       "action" : "โปรดยืนยันการทำงานบนอุปกรณ์ของคุณ",
-      "accountName" : "ชื่อบัญชี"
+      "accountName" : "ชื่อบัญชี",
+      "title" : "ดำเนินการต่อบน Ledger {{wording}} ของคุณ",
+      "description" : "ปฏิบัติตามคำแนะนำที่ปรากฏบน Secure Touchscreen ของคุณ"
     }
   },
   "notificationCenter" : {
@@ -7414,6 +7420,10 @@
       "minutes_plural" : "({{count}} นาทีที่แล้ว)",
       "seconds" : "({{count}} วินาทีที่แล้ว)",
       "seconds_plural" : "({{count}} วินาทีที่แล้ว)"
-    }
+    },
+    "performance" : "ประสิทธิภาพ",
+    "low" : "ต่ำ",
+    "high" : "สูง",
+    "title" : "การเคลื่อนไหวของตลาด"
   }
 }
