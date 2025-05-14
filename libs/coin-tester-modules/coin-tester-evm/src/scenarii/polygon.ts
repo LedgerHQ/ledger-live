@@ -152,6 +152,7 @@ export const scenarioPolygon: Scenario<EvmTransaction, Account> = {
           type: "ledger",
           explorerId: "matic",
         },
+        showNfts: true,
       },
     }));
     initMswHandlers(getCoinConfig(polygon).info);

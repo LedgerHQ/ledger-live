@@ -4434,7 +4434,7 @@ export const TRC20_FIXTURE = {
     at: 1718032314555,
     page_size: 8,
   },
-};
+} as const;
 
 export const TRANSACTION_DETAIL_FIXTURE = (id: string) => ({
   id,

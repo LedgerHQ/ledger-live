@@ -30,6 +30,7 @@ type EvmConfig = {
     type: "ledger";
     explorerId: LedgerExplorerId;
   };
+  showNfts: boolean;
 };
 
 export type EvmConfigInfo = CurrencyConfig & EvmConfig;

@@ -792,7 +792,7 @@ const swapMax = [
 ];
 
 for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
-  test.describe("Swap - Send Max)", () => {
+  test.describe("Swap - Send Max", () => {
     setupEnv(true);
 
     const accPair: string[] = [fromAccount, toAccount].map(acc =>
