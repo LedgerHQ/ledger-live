@@ -1,5 +1,17 @@
 # @ledgerhq/coin-evm
 
+## 2.22.0-next.0
+
+### Minor Changes
+
+- [#10094](https://github.com/LedgerHQ/ledger-live/pull/10094) [`5657584`](https://github.com/LedgerHQ/ledger-live/commit/565758426688c9604c7958183ec5b3d4e35ffbe4) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - Remove NFT tx history for evm
+
+### Patch Changes
+
+- Updated dependencies [[`f92f49a`](https://github.com/LedgerHQ/ledger-live/commit/f92f49a003767b83b94955e920cfac8cd565c162)]:
+  - @ledgerhq/cryptoassets@13.17.0-next.0
+  - @ledgerhq/coin-framework@5.0.2-next.0
+
 ## 2.21.0
 
 ### Minor Changes

@@ -146,5 +146,32 @@
     "@ledgerhq/native-modules-tools": "1.0.3",
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "afraid-suns-dance",
+    "angry-insects-punch",
+    "angry-scissors-argue",
+    "chatty-clocks-pull",
+    "cool-pens-grow",
+    "flat-trees-pay",
+    "four-rules-flow",
+    "gorgeous-donuts-stare",
+    "healthy-cows-itch",
+    "heavy-dodos-judge",
+    "modern-jobs-sniff",
+    "new-tools-shout",
+    "odd-drinks-cheer",
+    "old-mice-deny",
+    "pink-cougars-confess",
+    "proud-emus-whisper",
+    "seven-roses-double",
+    "slimy-ants-hammer",
+    "slimy-cats-sin",
+    "soft-bobcats-unite",
+    "tame-rats-vanish",
+    "thirty-apples-tease",
+    "twelve-insects-cross",
+    "weak-seas-deny",
+    "wise-jokes-dream",
+    "young-feet-invite"
+  ]
 }
