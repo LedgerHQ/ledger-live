@@ -1,11 +1,14 @@
 import type {
   Api,
+  Account,
   Balance,
   BlockInfo,
   Operation,
   FeeEstimation,
   Pagination,
   TransactionIntent,
+  Transaction,
+  TransactionValidation,
 } from "@ledgerhq/coin-framework/api/index";
 import network from "@ledgerhq/live-network";
 
@@ -77,6 +80,32 @@ const buildEstimateFees = networkFamily =>
     };
   };
 
+const buildValidateIntent = networkFamily =>
+  async function validateIntent(
+    account: Account,
+    transaction: Transaction,
+  ): Promise<TransactionValidation> {
+    // TODO: check returned value
+    const { data } = await network<
+      {
+        errors: Record<string, never>;
+        warnings: Record<string, never>;
+        estimatedFees: bigint;
+        amount: bigint;
+        totalSpent: bigint;
+      },
+      unknown
+    >({
+      method: "POST",
+      url: `${ALPACA_URL}/${networkFamily}/transaction/validate`,
+      data: {
+        transaction,
+        account,
+      },
+    });
+    return data;
+  };
+
 // FIXME: shouldn't hardcode
 type AssetInfo = {
   type: "native"; // or "token" if applicable
@@ -144,9 +173,10 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
   ({
     broadcast: buildBroadcast(networkFamily),
     combine: buildCombine(networkFamily),
+    validateIntent: buildValidateIntent(networkFamily),
     estimateFees: buildEstimateFees(networkFamily),
     getBalance: buildGetBalance(networkFamily),
     listOperations: buildListOperations(networkFamily),
     lastBlock: buildLastBlock(networkFamily),
     craftTransaction: buildCraftTransaction(networkFamily),
-  }) satisfies Api<any>;
+  }) satisfies Api<any, any, any>; // TODO: Api<any>?

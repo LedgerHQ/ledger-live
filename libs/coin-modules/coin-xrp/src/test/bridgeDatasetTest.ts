@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { DatasetTest } from "@ledgerhq/types-live";
 import { InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
-import { fromTransactionRaw } from "../bridge/transaction";
+import { fromTransactionRaw } from "../logic/transaction";
 import { Transaction } from "../types";
 
 export const newAddress1 = "rZvBc5e2YR1A9otS3r9DyGh3NDP8XLLp4";

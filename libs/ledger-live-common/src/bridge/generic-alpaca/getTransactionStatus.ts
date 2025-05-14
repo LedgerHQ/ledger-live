@@ -1,27 +1,41 @@
-import { FeeNotLoaded, InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
 import { AccountBridge, TransactionCommon } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { getAlpacaApi } from "./alpaca";
 
 // => alpaca validateIntent
 export function genericGetTransactionStatus(
-  _network,
-  _kind,
+  network,
+  kind,
 ): AccountBridge<any>["getTransactionStatus"] {
   return async (account, transaction: TransactionCommon & { fees: BigNumber }) => {
-    const errors: Record<string, Error> = {};
-    const warnings: Record<string, Error> = {};
-
-    if (account.freshAddress === transaction.recipient) {
-      errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+    const { freshAddress, balance, currency } = account;
+    const alpacaApi = getAlpacaApi(network, kind);
+    if (!alpacaApi.validateIntent) {
+      throw new Error("validateIntent is not implemented for this network/kind");
     }
-
-    if (!transaction.fees || !transaction.fees.gt(0)) {
-      errors.fees = new FeeNotLoaded();
-    }
-    // TODO ------
-    // const {errors, status} = await getAlpacaApi(network, kind).validateIntent(
-    //   transactionToIntent(account, transaction),
-    // );
+    console.log("Transaction:", transaction);
+    const { errors, warnings } = await alpacaApi.validateIntent(
+      {
+        currencyName: currency.name,
+        address: freshAddress,
+        balance: BigInt(balance.toString()),
+        currencyUnit: currency.units[0],
+      },
+      /*
+        *Transaction = {
+    type: string;
+    recipient: string;
+    amount: bigint;
+    fee: bigint;
+} &
+        */
+      {
+        type: "TODO",
+        recipient: transaction.recipient,
+        amount: BigInt(transaction.amount.toString()),
+        fee: BigInt(transaction.fees.toString()),
+      },
+    );
 
     const estimatedFees = transaction.fees || new BigNumber(0);
 
