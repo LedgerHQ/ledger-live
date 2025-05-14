@@ -7,7 +7,7 @@ import {
   AssetSelectionStep,
   NetworkSelectionStep,
 } from "./components";
-import { Header } from "../Header/Header";
+import { Header } from "../Header";
 import { FlowStep } from "../Header/navigation";
 import { useTranslation } from "react-i18next";
 
