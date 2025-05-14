@@ -2,6 +2,7 @@ import { Account, AccountBridge, TransactionCommon } from "@ledgerhq/types-live"
 import { getAlpacaApi } from "./alpaca";
 import { transactionToIntent } from "./utils";
 import BigNumber from "bignumber.js";
+import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 
 function bnEq(a: BigNumber | null | undefined, b: BigNumber | null | undefined): boolean {
   return !a && !b ? true : !a || !b ? false : a.eq(b);
@@ -9,18 +10,42 @@ function bnEq(a: BigNumber | null | undefined, b: BigNumber | null | undefined):
 
 export function genericPrepareTransaction(
   network: string,
-  kind: "local" | "remote",
+  kind,
 ): AccountBridge<TransactionCommon, Account, any, any>["prepareTransaction"] {
-  return async (account, transaction: TransactionCommon & { fees: BigNumber }) => {
+  return async (
+    account,
+    transaction: TransactionCommon & {
+      fees: BigNumber;
+      assetCode?: string;
+      assetIssuer?: string;
+      subAccountId?: string;
+    },
+  ) => {
+    const [assetCode, assetIssuer] = getAssetCodeIssuer(transaction);
+    console.log({ assetCode, assetIssuer });
     const fees = await getAlpacaApi(network, kind).estimateFees(
       transactionToIntent(account, transaction),
     );
     const bnFee = BigNumber(fees.value.toString());
 
+    // NOTE: this is problematic, we should maybe have a method / object that lists what field warrant an update per chain
+    // for reference, stellar checked this:
+    // transaction.networkInfo !== networkInfo ||
+    // transaction.baseReserve !== baseReserve
     if (!bnEq(transaction.fees, bnFee)) {
-      return { ...transaction, fees: bnFee };
+      return { ...transaction, fees: bnFee, assetCode, assetIssuer };
     }
 
     return transaction;
   };
+}
+
+export function getAssetCodeIssuer(
+  tr: TransactionCommon & { assetCode?: string; assetIssuer?: string },
+): string[] {
+  if (tr.subAccountId) {
+    const assetString = tr.subAccountId.split("+")[1];
+    return assetString.split(":");
+  }
+  return [tr.assetCode || "", tr.assetIssuer || ""];
 }

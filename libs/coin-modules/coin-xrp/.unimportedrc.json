@@ -20,5 +20,7 @@
     "jest-message-util"
   ],
   "ignoreUnimported": [],
-  "ignoreUnused": []
+  "ignoreUnused": [
+    "rxjs"
+  ]
 }
