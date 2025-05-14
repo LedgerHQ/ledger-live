@@ -634,6 +634,7 @@ jobs:
       - name: Prepare APK
         run: |
           mkdir -p /tmp/apk/assets
+          mkdir /home/runner/.android/
           mv ${{ env.ANDROID_JSBUNDLE_PATH }} /tmp/apk/assets/index.android.bundle
           (cd /tmp/apk/; zip -r /home/runner/work/ledger-live/ledger-live/${{ env.ANDROID_APK_PATH }} assets/index.android.bundle)
           echo y | keytool -genkey -v -keystore ${{ secrets.ANDROID_KEYSTORE_PATH }} -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
