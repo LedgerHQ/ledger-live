@@ -60,6 +60,58 @@ export const GetAccountTransactionsV2Data = gql`
       order_by: { transaction_version: desc }
     ) {
       account_address
+      transaction_version
+      user_transaction {
+        block_height
+        gas_unit_price
+      }
+      fungible_asset_activities {
+        amount
+        asset_type
+        gas_fee_payer_address
+        block_height
+        is_gas_fee
+        is_transaction_success
+        transaction_timestamp
+        transaction_version
+        type
+        event_index
+      }
+      coin_activities {
+        amount
+        activity_type
+        coin_type
+        transaction_version
+        is_transaction_success
+        is_gas_fee
+        owner_address
+        transaction_timestamp
+        block_height
+      }
+      token_activities_v2 {
+        is_fungible_v2
+        token_amount
+        transaction_timestamp
+        transaction_version
+        type
+      }
+      token_activities {
+        coin_type
+        from_address
+        token_amount
+        to_address
+        transaction_timestamp
+        transaction_version
+        transfer_type
+        coin_amount
+      }
+      delegated_staking_activities {
+        amount
+        pool_address
+        transaction_version
+        delegator_address
+        event_type
+      }
     }
   }
 `;

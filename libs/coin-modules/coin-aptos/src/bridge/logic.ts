@@ -19,6 +19,7 @@ import {
 } from "../constants";
 import type { AptosMoveResource, AptosTransaction, TransactionOptions } from "../types";
 import { AptosAsset } from "../types/assets";
+import { Operation as APIOperation } from "@ledgerhq/coin-framework/api/types";
 
 const CLEAN_HEX_REGEXP = /^0x0*|^0+/;
 
@@ -125,6 +126,76 @@ export const txsToOps = (
   return ops;
 };
 
+export function txsToApiOps(
+  address: string,
+  txs: (AptosTransaction | null)[],
+): APIOperation<AptosAsset>[] {
+  const ops: APIOperation<AptosAsset>[] = [];
+
+  txs.forEach(tx => {
+    if (tx === null) {
+      return;
+    }
+
+    const op: APIOperation<AptosAsset> = {
+      id: "",
+      type: "",
+      senders: [],
+      recipients: [],
+      value: BigInt(0),
+      asset: { type: "native" },
+      details: {
+        hasFailed: false,
+      },
+      tx: {
+        hash: tx.hash,
+        block: { height: 0 },
+        fees: BigInt(0),
+        date: new Date(),
+      },
+    };
+
+    const fees = new BigNumber(tx.gas_used).multipliedBy(new BigNumber(tx.gas_unit_price));
+    op.tx.fees = BigInt(fees.toString());
+
+    const payload = convertFunctionPayloadResponseToInputEntryFunctionData(
+      tx.payload as EntryFunctionPayloadResponse,
+    );
+
+    const function_address = getFunctionAddress(payload);
+
+    if (!function_address) {
+      return; // skip transaction without functions in payload
+    }
+
+    const { amount_in, amount_out } = getAptosAmounts(tx, address);
+    op.value = BigInt(
+      calculateAmount(
+        tx.sender,
+        address,
+        BigNumber(op.tx.fees.toString()),
+        amount_in,
+        amount_out,
+      ).toString(),
+    );
+    op.type = compareAddress(tx.sender, address) ? DIRECTION.OUT : DIRECTION.IN;
+    op.senders.push(tx.sender);
+
+    processRecipients(payload, address, op, function_address);
+
+    if (op.value) {
+      // skip transaction that result no Aptos change
+      op.type = DIRECTION.UNKNOWN;
+    }
+
+    op.details!.hasFailed = !tx.success;
+    op.id = tx.hash;
+    if (op.type !== DIRECTION.UNKNOWN) ops.push(op);
+  });
+
+  return ops;
+}
+
 export function compareAddress(addressA: string, addressB: string) {
   return (
     addressA.replace(CLEAN_HEX_REGEXP, "").toLowerCase() ===
@@ -143,7 +214,7 @@ export function getFunctionAddress(payload: InputEntryFunctionData): string | un
 export function processRecipients(
   payload: InputEntryFunctionData,
   address: string,
-  op: Operation,
+  op: Operation | APIOperation<AptosAsset>,
   function_address: string,
 ): void {
   // get recipients buy 3 groups
