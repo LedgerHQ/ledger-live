@@ -18,8 +18,10 @@ export class LedgerSyncDrawer extends Drawer {
   private removeMemberSuccessText = this.page.getByText(
     "Your Ledger Live app on CLI is no longer connected to Ledger Sync",
   );
-  private displayInstances = this.page.getByTestId("walletSync-manage-instances");
-  private removeCLI = this.page.getByTestId("walletSync-manage-instance-CLI");
+  private displayInstances = this.page
+    .getByTestId("walletSync-manage-instances")
+    .getByText("Manage");
+  private removeCLI = this.page.getByTestId("walletSync-manage-instance-CLI").getByText("Remove");
 
   @step("Synchronize accounts")
   async syncAccounts() {
@@ -35,6 +37,7 @@ export class LedgerSyncDrawer extends Drawer {
 
   @step("Delete Sync")
   async deleteSync() {
+    // Redundant check should be removed after this ticket is fixed: https://ledgerhq.atlassian.net/browse/LIVE-19021
     await this.deleteSyncButton.click();
     if (await this.deleteSyncButton.isVisible()) {
       await this.deleteSyncButton.click();
@@ -77,15 +80,16 @@ export class LedgerSyncDrawer extends Drawer {
 
   @step("Manage instances")
   async manageInstances() {
-    await this.displayInstances.getByText("Manage").click();
-    if (await this.displayInstances.getByText("Manage").isVisible()) {
-      await this.displayInstances.getByText("Manage").click();
+    // Redundant check should be removed after this ticket is fixed: https://ledgerhq.atlassian.net/browse/LIVE-19021
+    await this.displayInstances.click();
+    if (await this.displayInstances.isVisible()) {
+      await this.displayInstances.click();
     }
   }
 
   @step("Remove ClI member")
   async removeCLIMember() {
-    await this.removeCLI.getByText("Remove").click();
+    await this.removeCLI.click();
   }
 
   @step("Check if the member removal was successful")
