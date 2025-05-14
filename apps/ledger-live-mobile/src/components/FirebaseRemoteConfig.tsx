@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import remoteConfig from "@react-native-firebase/remote-config";
+import { getRemoteConfig } from "@react-native-firebase/remote-config";
 import { DEFAULT_FEATURES, formatDefaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { FirebaseRemoteConfigProvider as FirebaseProvider } from "@ledgerhq/live-config/providers/index";
+
+const FETCH_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
 export const FirebaseRemoteConfigProvider = ({
   children,
@@ -13,23 +15,23 @@ export const FirebaseRemoteConfigProvider = ({
 
   useEffect(() => {
     let unmounted = false;
+
+    const rc = getRemoteConfig();
+
     LiveConfig.setProvider(
       new FirebaseProvider({
-        getValue: (key: string) => {
-          return remoteConfig().getValue(key);
-        },
+        getValue: (key: string) => rc.getValue(key),
       }),
     );
+
     const fetchConfig = async () => {
       try {
-        remoteConfig().setConfigSettings({ minimumFetchIntervalMillis: 0 });
-        await remoteConfig().setDefaults({
-          ...formatDefaultFeatures(DEFAULT_FEATURES),
-        });
-        await remoteConfig().fetchAndActivate();
+        await rc.setConfigSettings({ minimumFetchIntervalMillis: 0 });
+        await rc.setDefaults(formatDefaultFeatures(DEFAULT_FEATURES));
+        await rc.fetchAndActivate();
       } catch (error) {
         if (!unmounted) {
-          console.error(`Failed to fetch Firebase remote config with error: ${error}`);
+          console.error(`Failed to fetch Firebase remote config with error:`, error);
         }
       } finally {
         if (!unmounted) {
@@ -37,9 +39,11 @@ export const FirebaseRemoteConfigProvider = ({
         }
       }
     };
+
     fetchConfig();
-    // 5 minutes fetch interval. TODO: make this configurable
-    const intervalId = setInterval(fetchConfig, 5 * 60 * 1000);
+
+    const intervalId = setInterval(fetchConfig, FETCH_INTERVAL);
+
     return () => {
       clearInterval(intervalId);
       unmounted = true;

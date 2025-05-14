@@ -127,7 +127,7 @@ jest.mock("~/analytics", () => ({
 }));
 
 jest.mock("@react-native-firebase/messaging", () => ({
-  messaging: jest.fn(() => ({
+  getMessaging: jest.fn(() => ({
     hasPermission: jest.fn(() => Promise.resolve(true)),
     subscribeToTopic: jest.fn(),
     unsubscribeFromTopic: jest.fn(),
