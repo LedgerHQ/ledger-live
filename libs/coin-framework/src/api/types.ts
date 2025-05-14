@@ -1,3 +1,5 @@
+import { Unit } from "@ledgerhq/types-cryptoassets";
+
 export type BlockInfo = {
   height: number;
   hash?: string;
@@ -39,6 +41,13 @@ export type Transaction = {
   amount: bigint;
   fee: bigint;
 } & Record<string, unknown>; // Field containing dedicated value for each blockchain
+
+export type Account = {
+  currencyName: string;
+  address: string;
+  balance: bigint;
+  currencyUnit: Unit;
+} & Record<string, unknown>;
 
 export type Balance<AssetInfo extends Asset<TokenInfoCommon>> = {
   value: bigint;
@@ -86,6 +95,7 @@ export type Api<
     transactionIntent: TransactionIntent<AssetInfo, TxExtra, Sender>,
     customFees?: bigint,
   ) => Promise<string>;
+  validateIntent?: (account: Account, transaction: Transaction) => Promise<any>;
   // TODO: add validateIntent
   getBalance: (address: string) => Promise<Balance<AssetInfo>[]>;
   lastBlock: () => Promise<BlockInfo>;
