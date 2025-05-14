@@ -607,8 +607,8 @@ importers:
         specifier: 7.5.4
         version: 7.5.4
       storyly-web:
-        specifier: 3.6.7
-        version: 3.6.7
+        specifier: 4.5.4
+        version: 4.5.4
       styled-components:
         specifier: 5.3.11
         version: 5.3.11(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1)
@@ -30851,8 +30851,8 @@ packages:
       prop-types:
         optional: true
 
-  storyly-web@3.6.7:
-    resolution: {integrity: sha512-2i7yOUF4xENFynQwDGZmGWLKHcXeTjhxJwtD8g4Vj163GI9Zw8WfLwsYgSZWgP1mMC+vq3iP+l8TgHuBd/r2rg==}
+  storyly-web@4.5.4:
+    resolution: {integrity: sha512-1TaHP0fjD50EABk86PEykVmE/JfVYpk6WMzG9gKOWuL5iOGaiqWnd3iIGWb9Lo76NzTeZWFGuFdy0DBxe5iRmQ==}
 
   stream-browserify@3.0.0:
     resolution: {integrity: sha512-H73RAHsVBapbim0tU2JwwOiXUj+fikfiaoYAKHF3VJfA0pe2BCzkhAHBlLG6REzE+2WNZcxOXjK7lkso+9euLA==}
@@ -50863,7 +50863,7 @@ snapshots:
 
   babel-plugin-macros@3.1.0:
     dependencies:
-      '@babel/runtime': 7.25.0
+      '@babel/runtime': 7.24.1
       cosmiconfig: 7.1.0
       resolve: 1.22.8
 
@@ -67334,7 +67334,7 @@ snapshots:
     optionalDependencies:
       prop-types: 15.8.1
 
-  storyly-web@3.6.7:
+  storyly-web@4.5.4:
     dependencies:
       '@babel/runtime': 7.24.1
       canvas-confetti: 1.9.2
