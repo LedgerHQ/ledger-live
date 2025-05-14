@@ -31,7 +31,7 @@ import { mevProtectionSelector, trackingEnabledSelector } from "../../reducers/s
 import storage from "LLM/storage";
 import { track } from "../../analytics";
 import getOrCreateUser from "../../user";
-import * as bridge from "../../../e2e/bridge/client";
+import { sendWalletAPIResponse } from "../../../e2e/bridge/client";
 import Config from "react-native-config";
 import { currentRouteNameRef } from "../../analytics/screenRefs";
 import { walletSelector } from "~/reducers/wallet";
@@ -157,7 +157,7 @@ export function useWebView(
           const msg = JSON.parse(e.nativeEvent.data);
 
           if (Config.MOCK && msg.type === "e2eTest") {
-            bridge.sendWalletAPIResponse(msg.payload);
+            sendWalletAPIResponse(msg.payload);
           } else if (msg.type === "dapp") {
             onDappMessage(msg);
           } else {

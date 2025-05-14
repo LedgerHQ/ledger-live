@@ -84,7 +84,7 @@ describe("Aptos API", () => {
   });
 
   describe("getAccountInfo", () => {
-    it("calls getBalance, fetchTransactions and getHeight", async () => {
+    it("calls getCoinBalance, fetchTransactions and getHeight", async () => {
       mockedAptos.mockImplementation(() => ({
         view: jest.fn().mockReturnValue(["123"]),
         getTransactionByVersion: jest.fn().mockReturnValue({
@@ -124,7 +124,7 @@ describe("Aptos API", () => {
       mockedApolloClient.mockImplementation(() => ({
         query: async () => ({
           data: {
-            address_version_from_move_resources: [{ transaction_version: "v1" }],
+            account_transactions: [{ transaction_version: 1 }],
           },
           loading: false,
           networkStatus: 7,
@@ -190,7 +190,7 @@ describe("Aptos API", () => {
       mockedApolloClient.mockImplementation(() => ({
         query: async () => ({
           data: {
-            address_version_from_move_resources: [{ transaction_version: "v1" }],
+            account_transactions: [{ transaction_version: 1 }],
           },
           loading: false,
           networkStatus: 7,
@@ -254,7 +254,7 @@ describe("Aptos API", () => {
       mockedApolloClient.mockImplementation(() => ({
         query: async () => ({
           data: {
-            address_version_from_move_resources: [{ transaction_version: "v1" }],
+            account_transactions: [{ transaction_version: 1 }],
           },
           loading: false,
           networkStatus: 7,
@@ -308,7 +308,7 @@ describe("Aptos API", () => {
       mockedApolloClient.mockImplementation(() => ({
         query: async () => ({
           data: {
-            address_version_from_move_resources: [{ transaction_version: "v1" }],
+            account_transactions: [{ transaction_version: 1 }],
           },
           loading: false,
           networkStatus: 7,
