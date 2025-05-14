@@ -3,13 +3,14 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { NavigationHeaderCloseButtonAdvanced } from "~/components/NavigationHeaderCloseButton";
 import { track } from "~/analytics";
+import { PAGE_NAME } from "../const";
 
 export const StickyHeader = () => {
   const { t } = useTranslation();
   const handleClose = () => {
     track("button_clicked", {
       button: "Close",
-      page: "Large Mover Landing Page",
+      page: PAGE_NAME,
     });
   };
   return (

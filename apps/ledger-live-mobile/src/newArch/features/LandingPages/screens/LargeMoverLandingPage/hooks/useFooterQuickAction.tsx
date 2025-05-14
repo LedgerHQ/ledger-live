@@ -7,6 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import useQuickActions, { QuickActionProps } from "~/hooks/useQuickActions";
+import { PAGE_NAME } from "../const";
 
 const QUICK_ACTIONS = {
   BUY: {
@@ -41,7 +42,7 @@ export const useFooterQuickActions = (quickActionsProps: QuickActionProps) => {
           onPress: () => {
             track("button_clicked", {
               button: prop.analytics,
-              page: "Large Mover Landing Page",
+              page: PAGE_NAME,
               coin: quickActionsProps.currency?.name,
             });
             navigation.navigate<keyof BaseNavigatorStackParamList>(...quickActionsItem.route);
