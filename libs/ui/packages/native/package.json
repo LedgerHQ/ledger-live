@@ -89,7 +89,7 @@
     "@react-native-async-storage/async-storage": "2.1.2",
     "@react-native-community/cli-server-api": "^7.0.3",
     "@react-native-community/datetimepicker": "6.7.5",
-    "@react-native-community/slider": "^4.4.2",
+    "@react-native-community/slider": "4.5.6",
     "@storybook/addon-actions": "^7.6.18",
     "@storybook/addon-controls": "^7.6.18",
     "@storybook/addon-essentials": "^7.6.18",
