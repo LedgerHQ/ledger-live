@@ -513,6 +513,10 @@
       "title" : "Fondos insuficientes",
       "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "Fondos insuficientes para cubrir las tarifas",
+      "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Tu saldo disponible (no puesto en participación) es de {{currentBalance}}. Esta cantidad no es suficiente para pagar las tarifas de red necesarias para retirar tu {{assetName}} de la puesta en participación. ",
       "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} en tu cuenta.",
@@ -6469,7 +6473,9 @@
     },
     "stepVerification" : {
       "action" : "Confirma la operación en tu dispositivo",
-      "accountName" : "Nombre de la cuenta"
+      "accountName" : "Nombre de la cuenta",
+      "title" : "Continúa en tu Ledger {{wording}}",
+      "description" : "Sigue las instrucciones que aparecen en tu pantalla táctil segura."
     }
   },
   "notificationCenter" : {
@@ -7414,6 +7420,10 @@
       "minutes_plural" : "(hace {{count}} minutos)",
       "seconds" : "(hace {{count}} segundo)",
       "seconds_plural" : "(hace {{count}} segundos)"
-    }
+    },
+    "performance" : "Rendimiento",
+    "low" : "Baja",
+    "high" : "Alta",
+    "title" : "Movimientos del mercado"
   }
 }
