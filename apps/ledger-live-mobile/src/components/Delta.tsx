@@ -45,7 +45,9 @@ function Delta({
   ) : null;
 
   const delta =
-    percent && valueChange.percentage ? valueChange.percentage * 100 : valueChange.value;
+    (percent || isPercentSignDisplayed) && valueChange.percentage
+      ? valueChange.percentage * 100
+      : valueChange.value;
 
   const roundedDelta = parseFloat(delta.toFixed(0));
 

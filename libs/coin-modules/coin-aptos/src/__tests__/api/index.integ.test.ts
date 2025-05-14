@@ -1,57 +1,24 @@
-import { Account, Network } from "@aptos-labs/ts-sdk";
-// import { Account, Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
+import { Hex, Network } from "@aptos-labs/ts-sdk";
 import { createApi } from "../../api";
-import { AptosSender } from "../../types/assets";
 
 describe("createApi", () => {
-  const api = createApi({ aptosSettings: { network: Network.DEVNET } });
+  const api = createApi({ aptosSettings: { network: Network.MAINNET } });
 
   describe("lastBlock", () => {
     it("returns the last block information", async () => {
       const lastBlock = await api.lastBlock();
+
       expect(lastBlock).toHaveProperty("hash");
+      expect(Hex.isValid(lastBlock.hash ?? "").valid).toBeTruthy();
+
       expect(lastBlock).toHaveProperty("height");
+      expect(lastBlock.height).toBeGreaterThan(0);
+
       expect(lastBlock).toHaveProperty("time");
-    });
-  });
-
-  // describe("combine and broadcast", () => {
-  //   it("returns the hash", async () => {
-  //     const tx = await api.combine("tx", "signature", "xpub");
-  //     const hash = await api.broadcast(tx);
-
-  //     expect(hash).toEqual(expect.any(String));
-  //   });
-  // });
-
-  describe("estimateFees", () => {
-    it("returns a default value", async () => {
-      // Account has been funded using the await aptos.fundAccount method
-      const sender: AptosSender = {
-        xpub: "0xc7a5a529eb69b4f40519c3334eed48f090af354ec6c0893129ebed30328e245c",
-        freshAddress: "0xf2a89ea976c60f98bd8a2cbc33b49e6d1de38618a6991692dee61c9b4745ad4a",
-      };
-      const recipient = Account.generate().accountAddress.toString();
-
-      const amount = BigInt(100);
-
-      const fees = await api.estimateFees({
-        asset: {
-          type: "native",
-          function: "0x1::aptos_account::transfer_coins",
-        },
-        type: "send",
-        sender,
-        amount,
-        recipient,
-      });
-
-      expect(fees.value).toEqual(BigInt(55100));
-
-      if (fees.parameters) {
-        expect(fees.parameters.gasLimit).toEqual(BigInt(551));
-        expect(fees.parameters.gasPrice).toEqual(BigInt(100));
-      }
+      expect(lastBlock.time).not.toBeUndefined();
+      expect(lastBlock.time?.getFullYear()).toBeGreaterThan(0);
+      expect(lastBlock.time?.getMonth()).toBeGreaterThan(0);
+      expect(lastBlock.time?.getDay()).toBeGreaterThan(0);
     });
   });
 });

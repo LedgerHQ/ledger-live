@@ -82,6 +82,10 @@ export function Actionable<I extends Array<unknown>, A>({
         error => {
           if (setValue) setValue(null);
           console.error(error);
+          if (error && error.message?.includes("Ledger device: UNKNOWN_APDU (0x6d02)")) {
+            setError(new Error("Error: Make sure you opened the Ledger Sync app on your device."));
+            return;
+          }
           setError(error);
         },
       )

@@ -1,4 +1,4 @@
-name: "@Mobile • Build App (external)"
+name: "[EXT-Mobile] - Build (External) - Called"
 
 on:
   workflow_call:
@@ -20,7 +20,7 @@ permissions:
 
 jobs:
   build-mobile-app-android:
-    name: "Build Ledger Live Mobile (Android)"
+    name: "Android Build"
     runs-on: ubuntu-22.04
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -86,7 +86,7 @@ jobs:
 
   build-mobile-app-ios:
     runs-on: macos-14
-    name: "Build Ledger Live Mobile (Mac OS X)"
+    name: "iOS Build"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -110,6 +110,7 @@ jobs:
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
 
   report:
+    name: "Build Mobile > Report"
     runs-on: ubuntu-22.04
     needs: [build-mobile-app-android, build-mobile-app-ios]
     if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
@@ -135,13 +136,13 @@ jobs:
             });
 
             const findJobUrl = os =>
-              jobs.find(job => job.name == `Build Ledger Live Mobile (${os})`)?.html_url;
+              jobs.find(job => job.name == `${os} Build`)?.html_url;
 
             const keys = {
               ios: {
                 symbol: "🍏",
                 name: "iOS",
-                jobUrl: findJobUrl("Mac OS X")
+                jobUrl: findJobUrl("iOS")
               },
               android: {
                 symbol: "🤖",

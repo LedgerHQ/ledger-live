@@ -34,6 +34,7 @@ export type WebPlatformPlayerConfig = {
 type Props = {
   onClose?: () => void;
   config?: WebPlatformPlayerConfig;
+  customHandlers?: WalletAPICustomHandlers;
 } & WebviewProps;
 
 export default function WebPlatformPlayer({ manifest, inputs, onClose, config, ...props }: Props) {
@@ -49,8 +50,9 @@ export default function WebPlatformPlayer({ manifest, inputs, onClose, config, .
       ...loggerHandlers,
       ...customACREHandlers,
       ...customPTXHandlers,
+      ...props.customHandlers,
     };
-  }, [customACREHandlers, customPTXHandlers]);
+  }, [customACREHandlers, customPTXHandlers, props.customHandlers]);
 
   const onStateChange: WebviewProps["onStateChange"] = state => {
     setWebviewState(state);

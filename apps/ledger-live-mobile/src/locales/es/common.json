@@ -4697,7 +4697,7 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "Actualiza {{deviceName}} a la versión {{version}}",
-    "recoveryPhraseBackupInstructions" : "Como precaución, asegúrate de que la Frase de Recuperación de 24 Palabras esté escrita en la Hoja de Recuperación y de tener fácil acceso a ella.",
+    "recoveryPhraseBackupInstructions" : "Como precaución, asegúrate de que la Frase de Recuperación Secreta de 24 palabras esté escrita en la Hoja de Recuperación y de tener fácil acceso a ella.\n\nConsidera la opción de usar Ledger Recover para realizar una copia de respaldo del acceso a tu billetera y asegurarte de que siempre esté a mano.",
     "confirmRecoveryPhrase" : "Tengo mi Frase de Recuperación",
     "introDescription1" : "Ten en cuenta que se eliminarán todas las aplicaciones de tu dispositivo. Puedes volver a instalar las aplicaciones después de actualizar el firmware.",
     "introDescription2" : "Esto no afecta de ninguna manera tus activos cripto.",
@@ -6469,7 +6469,9 @@
     },
     "stepVerification" : {
       "action" : "Confirma la operación en tu dispositivo",
-      "accountName" : "Nombre de la cuenta"
+      "accountName" : "Nombre de la cuenta",
+      "title" : "Continúa en tu Ledger {{wording}}",
+      "description" : "Sigue las instrucciones que aparecen en tu pantalla táctil segura."
     }
   },
   "notificationCenter" : {
@@ -7414,6 +7416,9 @@
       "minutes_plural" : "(hace {{count}} minutos)",
       "seconds" : "(hace {{count}} segundo)",
       "seconds_plural" : "(hace {{count}} segundos)"
-    }
+    },
+    "performance" : "Rendimiento",
+    "low" : "Baja",
+    "high" : "Alta"
   }
 }

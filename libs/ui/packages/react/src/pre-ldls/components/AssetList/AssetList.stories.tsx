@@ -17,7 +17,11 @@ const meta: Meta<typeof AssetList> = {
   title: "PreLdls/Components/AssetList",
   tags: ["autodocs"],
   args: {
-    assets: Array.from({ length: 50 }).map((_, i) => ({ name: `Bitcoin ${i}`, ticker: "BTC" })),
+    assets: Array.from({ length: 50 }).map((_, i) => ({
+      name: `Bitcoin ${i}`,
+      ticker: "BTC",
+      id: "bitcoin",
+    })),
     onClick: testFn,
   },
 };
@@ -32,6 +36,6 @@ export const TestAssetClick: Story = {
     const canvas = within(canvasElement);
     const input = canvas.getByText("Bitcoin 1");
     await userEvent.click(input);
-    await expect(testFn).toHaveBeenCalledWith({ name: "Bitcoin 1", ticker: "BTC" });
+    await expect(testFn).toHaveBeenCalledWith({ name: "Bitcoin 1", ticker: "BTC", id: "bitcoin" });
   },
 };

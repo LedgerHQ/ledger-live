@@ -1,5 +1,29 @@
 # @ledgerhq/coin-ton
 
+## 0.10.0
+
+### Minor Changes
+
+- [#9837](https://github.com/LedgerHQ/ledger-live/pull/9837) [`29b72fe`](https://github.com/LedgerHQ/ledger-live/commit/29b72fe9d1b7697c0fef53fd11e3d2d775032f68) Thanks [@Justkant](https://github.com/Justkant)! - feat(coin-ton): expose ton payload for all possible actions
+
+### Patch Changes
+
+- Updated dependencies [[`a7ba19c`](https://github.com/LedgerHQ/ledger-live/commit/a7ba19cfa5a895572edfcf036a10d2af83efdf38), [`91fe526`](https://github.com/LedgerHQ/ledger-live/commit/91fe526be2710f0fb18b4d035a5d8de630b3d4b5)]:
+  - @ledgerhq/types-live@6.70.0
+  - @ledgerhq/coin-framework@5.0.1
+
+## 0.10.0-next.0
+
+### Minor Changes
+
+- [#9837](https://github.com/LedgerHQ/ledger-live/pull/9837) [`29b72fe`](https://github.com/LedgerHQ/ledger-live/commit/29b72fe9d1b7697c0fef53fd11e3d2d775032f68) Thanks [@Justkant](https://github.com/Justkant)! - feat(coin-ton): expose ton payload for all possible actions
+
+### Patch Changes
+
+- Updated dependencies [[`a7ba19c`](https://github.com/LedgerHQ/ledger-live/commit/a7ba19cfa5a895572edfcf036a10d2af83efdf38), [`91fe526`](https://github.com/LedgerHQ/ledger-live/commit/91fe526be2710f0fb18b4d035a5d8de630b3d4b5)]:
+  - @ledgerhq/types-live@6.70.0-next.0
+  - @ledgerhq/coin-framework@5.0.1-next.0
+
 ## 0.9.1
 
 ### Patch Changes

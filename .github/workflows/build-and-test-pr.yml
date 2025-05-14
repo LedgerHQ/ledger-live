@@ -1,4 +1,4 @@
-name: "[PR] Build and Test"
+name: "[All Platforms] - Build and Test - PR"
 on:
   merge_group:
     types: [checks_requested]
@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   pre_job:
-    # continue-on-error: true # Uncomment once integration is finished
+    name: "Skip Check"
     runs-on: ubuntu-latest
     outputs:
       should_skip: ${{ steps.skip_check.outputs.should_skip == 'true' || steps.smartling_check.outputs.should_skip == 'true' }}
@@ -94,7 +94,7 @@ jobs:
     secrets: inherit
 
   test-design-system:
-    name: "Test Design System"
+    name: "Test UI Libs"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'libs/ui') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@develop

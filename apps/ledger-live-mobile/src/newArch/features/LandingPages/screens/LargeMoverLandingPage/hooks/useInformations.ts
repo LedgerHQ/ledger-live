@@ -7,8 +7,16 @@ import { InformationsProps } from "../types";
 import { useDateFormat } from "./useDateFormat";
 
 export function useInformations(props: InformationsProps) {
-  const { price, allTimeHighDate, allTimeLowDate, allTimeHigh, allTimeLow, marketCapPercent } =
-    props;
+  const {
+    price,
+    allTimeHighDate,
+    allTimeLowDate,
+    allTimeHigh,
+    allTimeLow,
+    marketCapPercent,
+    volume,
+    marketCap,
+  } = props;
 
   const { dateFormatter, locale } = useDateFormat();
   const { t } = useTranslation();
@@ -38,6 +46,8 @@ export function useInformations(props: InformationsProps) {
     percentage: marketCapPercent,
   };
 
+  const marketCapVolume24h = (volume / (marketCap ?? 1)) * 10000;
+
   return {
     athDate,
     atlDate,
@@ -48,5 +58,6 @@ export function useInformations(props: InformationsProps) {
     dateFormatter,
     locale,
     t,
+    marketCapVolume24h,
   };
 }

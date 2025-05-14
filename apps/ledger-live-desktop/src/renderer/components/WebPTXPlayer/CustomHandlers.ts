@@ -83,6 +83,9 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
             setDrawer(WebviewErrorDrawer, error);
             return Promise.resolve();
           },
+          "custom.isReady": async () => {
+            console.info("Earn Live App Loaded");
+          },
         },
       }),
     };

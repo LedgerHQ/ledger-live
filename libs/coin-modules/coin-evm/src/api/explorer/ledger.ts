@@ -108,16 +108,18 @@ export const getLastOperations: ExplorerApi["getLastOperations"] = async (
     const erc20Ops = ledgerOp.transfer_events.flatMap((event, index) =>
       ledgerERC20EventToOperations(coinOps[0], event, index),
     );
-    const erc721Ops = isNFTActive(currency)
-      ? ledgerOp.erc721_transfer_events.flatMap((event, index) =>
-          ledgerERC721EventToOperations(coinOps[0], event, index),
-        )
-      : [];
-    const erc1155Ops = isNFTActive(currency)
-      ? ledgerOp.erc1155_transfer_events.flatMap((event, index) =>
-          ledgerERC1155EventToOperations(coinOps[0], event, index),
-        )
-      : [];
+    const erc721Ops =
+      isNFTActive(currency) && config.showNfts
+        ? ledgerOp.erc721_transfer_events.flatMap((event, index) =>
+            ledgerERC721EventToOperations(coinOps[0], event, index),
+          )
+        : [];
+    const erc1155Ops =
+      isNFTActive(currency) && config.showNfts
+        ? ledgerOp.erc1155_transfer_events.flatMap((event, index) =>
+            ledgerERC1155EventToOperations(coinOps[0], event, index),
+          )
+        : [];
     const internalOps = ledgerOp.actions.flatMap((action, index) =>
       ledgerInternalTransactionToOperations(coinOps[0], action, index),
     );

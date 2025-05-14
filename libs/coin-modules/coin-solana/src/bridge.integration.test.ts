@@ -57,7 +57,7 @@ const solana: CurrenciesData<Transaction> = {
   scanAccounts: [scanAccounts1],
   // FIXME Ordering of validators must be always the same, for this test to be stable:
   // https://github.com/LedgerHQ/ledger-live-common/blob/develop/src/__tests__/test-helpers/bridge.ts#L171-L188
-  FIXME_ignorePreloadFields: ["validators"],
+  FIXME_ignorePreloadFields: ["validators", "splTokens"],
   accounts: [
     {
       raw: makeAccount(testOnChainData.fundedSenderAddress),

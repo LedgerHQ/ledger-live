@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/live-nft";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { AccountLike, Feature, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
+import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
 import invariant from "invariant";
 import { useCallback, useContext } from "react";
 import { ReplaySubject } from "rxjs";
@@ -202,6 +203,7 @@ const extraProperties = (store: ReduxStore) => {
     : [];
   const hasGenesisPass = hasNftInAccounts(GENESIS_PASS_COLLECTION_CONTRACT, accounts);
   const hasInfinityPass = hasNftInAccounts(INFINITY_PASS_COLLECTION_CONTRACT, accounts);
+  const tokenWithFunds = getTokensWithFunds(accounts);
 
   return {
     ...mandatoryProperties,
@@ -221,6 +223,7 @@ const extraProperties = (store: ReduxStore) => {
     blockchainsWithNftsOwned,
     hasGenesisPass,
     hasInfinityPass,
+    tokenWithFunds,
     modelIdList: devices,
     ...ptxAttributes,
     ...deviceInfo,

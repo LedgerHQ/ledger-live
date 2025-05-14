@@ -1,4 +1,4 @@
-name: "@PR • Lint Commits"
+name: "[CI] - Lint Commits - Manual"
 run-name: "@PR • Lint Commits triggered by ${{ inputs.login }} ${{ format('on branch {0}', inputs.ref) }}"
 
 on:

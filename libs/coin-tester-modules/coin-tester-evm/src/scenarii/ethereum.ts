@@ -159,6 +159,7 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
           type: "ledger",
           explorerId: "eth",
         },
+        showNfts: true,
       },
     }));
 

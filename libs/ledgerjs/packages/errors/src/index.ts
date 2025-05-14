@@ -81,6 +81,7 @@ export const NetworkDown = createCustomErrorClass("NetworkDown");
 export const NetworkError = createCustomErrorClass("NetworkError");
 export const NoAddressesFound = createCustomErrorClass("NoAddressesFound");
 export const NotEnoughBalance = createCustomErrorClass("NotEnoughBalance");
+export const NotEnoughBalanceFees = createCustomErrorClass("NotEnoughBalanceFees");
 export const NotEnoughBalanceSwap = createCustomErrorClass("NotEnoughBalanceSwap");
 export const NotEnoughBalanceToDelegate = createCustomErrorClass("NotEnoughBalanceToDelegate");
 export const NotEnoughBalanceInParentAccount = createCustomErrorClass(
