@@ -625,6 +625,7 @@ jobs:
           mkdir /tmp/apk
           unzip /tmp/apk.zip -d /tmp/apk
           mv ${{ env.ANDROID_JSBUNDLE_PATH }} /tmp/apk/assets/index.android.bundle
+          mkdir -p apps/ledger-live-mobile/android/app/build/outputs/apk/detox/
           (cd /tmp/apk ; zip -r ${{ env.ANDROID_APK_PATH }} ./)
 
       - name: Setup the caches
