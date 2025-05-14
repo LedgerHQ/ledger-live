@@ -3845,6 +3845,9 @@
         }
       }
     },
+    "spl2022" : {
+      "splExtensionsWarning" : "Du interagierst mit einem Token, das Teil des Token-2022-Programms ist (auch bekannt unter der Bezeichnung „Token Extensions“). Dieses Token birgt gewisse Risiken. <0>Klicke hier</0>, um mehr zu erfahren."
+    },
     "amount" : {
       "available" : "Insgesamt verfügbar",
       "useMax" : "Max. verwenden",
@@ -6082,6 +6085,7 @@
       "transferFees" : {
         "title" : "Überweisungsgebühren",
         "feesPercentHint" : "Für das Token fällt eine Übertragungsgebühr in Höhe von {{feePercent}} % ({{feeBps}} bps) an (max. {{maxFee}})",
+        "feesHint" : "Tokenübertragungsgebühr: {{transferFee}}",
         "notice" : "Überweisungsgebühr {{fee}} %",
         "tooltipHint" : "Prozentualer Anteil der Überweisung, der für den Tokenersteller einbehalten wird"
       },
@@ -6469,7 +6473,9 @@
     },
     "stepVerification" : {
       "action" : "Bitte bestätige den Vorgang auf deinem Gerät",
-      "accountName" : "Kontoname"
+      "accountName" : "Kontoname",
+      "title" : "Vorgang fortsetzen auf deiner Ledger {{wording}}",
+      "description" : "Befolge die Anweisungen, die auf deinem Secure Touchscreen angezeigt werden."
     }
   },
   "notificationCenter" : {
@@ -7414,6 +7420,9 @@
       "minutes_plural" : "(vor {{count}} Minuten)",
       "seconds" : "(vor {{count}} Sekunde)",
       "seconds_plural" : "(vor {{count}} Sekunden)"
-    }
+    },
+    "performance" : "Performance",
+    "low" : "Niedrig",
+    "high" : "Hoch"
   }
 }
