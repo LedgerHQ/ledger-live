@@ -1,5 +1,4 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
-
 import {
   AccountData,
   Aptos,
@@ -18,20 +17,33 @@ import {
   PostRequestOptions,
   Block,
   AptosSettings,
+  MoveFunctionId,
 } from "@aptos-labs/ts-sdk";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
+import type { Pagination } from "@ledgerhq/coin-framework/api/types";
 import BigNumber from "bignumber.js";
 import isUndefined from "lodash/isUndefined";
 import { APTOS_ASSET_ID, DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "../constants";
-import { isTestnet } from "../bridge/logic";
+import { isTestnet, txsToApiOps } from "../bridge/logic";
 import type { AptosTransaction, TransactionOptions } from "../types";
-import { GetAccountTransactionsData, GetAccountTransactionsDataGt } from "./graphql/queries";
+import {
+  GetAccountTransactionsData,
+  GetAccountTransactionsDataGt,
+  GetAccountTransactionsV2Data,
+} from "./graphql/queries";
 import {
   GetAccountTransactionsDataQuery,
   GetAccountTransactionsDataGtQueryVariables,
+  GetAccountTransactionsV2DataQuery,
+  GetAccountTransactionsV2DataQueryVariables,
 } from "./graphql/types";
-import { BlockInfo, FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import {
+  Operation,
+  BlockInfo,
+  FeeEstimation,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/types";
 import { AptosAsset, AptosExtra, AptosFeeParameters, AptosSender } from "../types/assets";
 
 const getApiEndpoint = (currencyId: string) =>
@@ -58,7 +70,7 @@ export class AptosAPI {
 
     this.aptosClient = new Aptos(this.aptosConfig);
     this.apolloClient = new ApolloClient({
-      uri: this.aptosConfig.indexer || "",
+      uri: this.aptosClient.config.indexer || "",
       cache: new InMemoryCache(),
       headers: {
         "x-client": "ledger-live",
@@ -242,7 +254,7 @@ export class AptosAPI {
   ): Promise<FeeEstimation<AptosFeeParameters>> {
     const publicKeyEd = new Ed25519PublicKey(transactionIntent.sender.xpub);
     const txPayload: InputEntryFunctionData = {
-      function: transactionIntent.asset.function,
+      function: transactionIntent.asset.function as MoveFunctionId,
       typeArguments: [APTOS_ASSET_ID],
       functionArguments: [transactionIntent.recipient, transactionIntent.amount],
     };
@@ -274,4 +286,100 @@ export class AptosAPI {
       },
     };
   }
+
+  private async accountTransactions(address: string) {
+    if (!address) {
+      return [];
+    }
+
+    const query = GetAccountTransactionsV2Data;
+
+    const variables: GetAccountTransactionsV2DataQueryVariables = {
+      address,
+      limit: 1,
+    };
+
+    const queryResponse = await this.apolloClient.query<
+      GetAccountTransactionsV2DataQuery,
+      GetAccountTransactionsV2DataQueryVariables
+    >({
+      query,
+      variables,
+      fetchPolicy: "network-only",
+    });
+
+    return queryResponse.data.account_transactions;
+  }
+
+  async listOperations(
+    address: string,
+    pagination: Pagination,
+  ): Promise<[Operation<AptosAsset>[], string]> {
+    const { transactions } = await this.getAccountInfo(address, pagination.minHeight.toString());
+
+    const newOperations = txsToApiOps(address, transactions);
+
+    return [newOperations, ""];
+  }
 }
+
+//   async listOperations(
+//     address: string,
+//     _pagination: Pagination,
+//   ): Promise<[Operation<AptosAsset>[], string]> {
+//     const txs = await this.accountTransactions(address);
+
+//     const ops: Operation<AptosAsset>[] = [];
+
+//     txs.reduce((acc, tx) => {
+//       acc.push(...fungibleAssetActivitiesToOps(tx.fungible_asset_activities));
+
+//       return acc;
+//     }, ops);
+
+//     console.log("ops", ops);
+
+//     return [[], ""];
+//   }
+// }
+
+// function checkType(coinType: MoveFunctionId): "native" | "token" {
+//   return coinType === "0x1::aptos_coin::AptosCoin" ? "native" : "token";
+// }
+
+// function fungibleAssetActivitiesToOps(
+//   activities: FungibleAssetActivity[],
+// ): Operation<AptosAsset>[] {
+//   const ops: Operation<AptosAsset>[] = [];
+
+//   activities.reduce((acc: Operation<AptosAsset>[], activity: FungibleAssetActivity) => {
+//     if (activity.amount === 0) {
+//       return acc;
+//     }
+
+//     const type =
+//       activity.owner_address === activity.gas_fee_payer_address ? DIRECTION.OUT : DIRECTION.IN;
+//     const hash = `${activity.transaction_version}_${activity.block_height}_${activity.event_index}`;
+
+//     const fees = activity.is_gas_fee ? BigInt(activity.amount) : BigInt(0);
+
+//     acc.push({
+//       id: hash,
+//       type,
+//       value: BigInt(activity.amount),
+//       senders: [],
+//       recipients: [],
+//       asset: { type: checkType(activity.asset_type) },
+//       tx: {
+//         hash,
+//         block: { height: activity.block_height },
+//         fees,
+//         date: activity.transaction_timestamp,
+//       },
+//     });
+
+//     return acc;
+//   }, ops);
+
+//   return ops;
+// }
