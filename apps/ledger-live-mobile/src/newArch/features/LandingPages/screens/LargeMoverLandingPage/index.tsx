@@ -10,6 +10,7 @@ import { StickyHeader } from "./components/StickyHeader";
 import { SafeAreaView } from "react-native";
 import { useTheme } from "styled-components/native";
 import { rangeMap } from "./utils";
+import { TrackScreen } from "~/analytics";
 
 type LargeMoverLandingPageProps = StackNavigatorProps<
   LandingPagesNavigatorParamList,
@@ -51,6 +52,7 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.neutral.c00 }}>
+      <TrackScreen name="Large Mover Landing Page" />
       <Flex width="100%" flex={1}>
         <StickyHeader />
         <Button onPress={handleNext} size="large">

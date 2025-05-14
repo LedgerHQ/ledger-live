@@ -13,6 +13,7 @@ import getWindowDimensions from "~/logic/getWindowDimensions";
 import { Informations } from "./Information";
 import { useTheme } from "styled-components/native";
 import { getCryptoCurrencyById, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import { track } from "~/analytics";
 
 type CardProps = CurrencyData & {
   range: KeysPriceChange;
@@ -49,6 +50,14 @@ export const Card: React.FC<CardProps> = ({
   const currency = getCryptoCurrencyById(id);
   const midColor = getCurrencyColor(currency);
 
+  const handleScroll = () => {
+    track("button_clicked", {
+      button: "Scroll",
+      coin: currency.name,
+      page: "Large Mover Landing Page",
+    });
+  };
+
   return (
     <Flex
       backgroundColor="neutral.c20"
@@ -61,7 +70,7 @@ export const Card: React.FC<CardProps> = ({
       <Flex alignItems="center" zIndex={10} top={4}>
         <Ticker currencyId={id} />
       </Flex>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false} onScrollEndDrag={handleScroll}>
         <Svg style={styles.gradientTop}>
           <Defs>
             <LinearGradient id="midGlow" x1="0" y1="0" x2="0" y2="1">
@@ -85,7 +94,12 @@ export const Card: React.FC<CardProps> = ({
               currencyId={id}
               width={graphWidth}
             />
-            <TimeFrame setRange={setRange} range={range} width={timeframehWidth} />
+            <TimeFrame
+              setRange={setRange}
+              range={range}
+              width={timeframehWidth}
+              coin={currency.name}
+            />
             <Performance low={low24h} high={high24h} price={price} />
             <Flex pt={8} width="100%" pb={80}>
               <Informations
