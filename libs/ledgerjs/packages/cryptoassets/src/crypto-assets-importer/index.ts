@@ -12,6 +12,7 @@ import { importTonJettonTokens } from "./importers/ton";
 import { importTRC10Tokens } from "./importers/trc10";
 import { importTRC20Tokens } from "./importers/trc20";
 import { importVip180Tokens } from "./importers/vip180";
+import { importStacksSip010Tokens } from "./importers/stacks";
 
 import { importBEP20Exchange } from "./exchange/bep20";
 import { importCoinsExchange } from "./exchange/coins";
@@ -36,6 +37,7 @@ const importTokens = async () => {
     importFilecoinERC20Tokens(outputFolder),
     importTonJettonTokens(outputFolder),
     importVip180Tokens(outputFolder),
+    importStacksSip010Tokens(outputFolder),
   ];
 
   await Promise.allSettled(promises);

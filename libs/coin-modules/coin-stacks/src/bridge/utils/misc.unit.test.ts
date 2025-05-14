@@ -1,6 +1,6 @@
 import { mapPendingTxToOps, mapTxToOps } from "./misc";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { TransactionResponse, fetchFullTxs } from "../../network/index";
+import { fetchFullTxs } from "../../network/index";
 import { Operation } from "@ledgerhq/types-live";
 
 const Address = "SP26AZ1JSFZQ82VH5W2NJSB2QW15EW5YKT6WMD69J";
@@ -206,7 +206,7 @@ describe("operation building from raw", () => {
 });
 
 test("convert raw transactions to live operations", async () => {
-  const rawTxs: TransactionResponse[] = await fetchFullTxs(Address);
+  const [rawTxs] = await fetchFullTxs(Address);
   const operations: Operation[] = rawTxs.flatMap(mapTxToOps("dummyAccountID", Address));
 
   expect(operations).toBeDefined();
