@@ -4,10 +4,6 @@ import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 export default class SendPage {
   baseLink = "send";
   summaryAmountId = "send-summary-amount";
-  summaryRecipient = () => getElementById("send-summary-recipient");
-  summaryRecipientEns = () => getElementById("send-summary-recipient-ens");
-  summaryMemoTagId = "summary-memo-tag";
-  summaryMemoTag = () => getElementById(this.summaryMemoTagId);
   validationAmountId = "device-validation-amount";
   validationAddressId = "device-validation-address";
   validationEnsId = "device-validation-domain";
@@ -25,7 +21,6 @@ export default class SendPage {
   summaryErrorId = "insufficient-fee-error";
   summaryWarning = () => getElementById("send-summary-warning");
   summaryContinueButton = () => getElementById("summary-continue-button");
-  highFreeConfirmButtonID = "confirmation-modal-confirm-button";
   feeStrategy = (fee: string) => getElementByText(fee);
 
   async openViaDeeplink() {
@@ -74,12 +69,6 @@ export default class SendPage {
     await expect(getElementById(this.recipientContinueButtonId)).toBeVisible();
   }
 
-  @Step("Set recipient and continue")
-  async setRecipientAndContinue(address: string, memoTag?: string) {
-    await this.setRecipient(address, memoTag);
-    await this.recipientContinue(memoTag);
-  }
-
   @Step("Set the amount and return the value")
   async setAmount(amount: string) {
     if (amount === "max") await tapByElement(this.amountMaxSwitch());
@@ -107,12 +96,6 @@ export default class SendPage {
     await expect(this.amountContinueButton()).not.toBeVisible();
   }
 
-  @Step("Set amount and continue")
-  async setAmountAndContinue(amount: string) {
-    await this.setAmount(amount);
-    await this.amountContinue();
-  }
-
   async summaryContinue() {
     await tapByElement(this.summaryContinueButton());
   }
@@ -133,11 +116,6 @@ export default class SendPage {
     jestExpect(summaryAmount).toBeLessThanOrEqual(expectedAmount + tolerance);
   }
 
-  @Step("Expect recipient in summary")
-  async expectSummaryRecipient(recipient: string) {
-    await expect(this.summaryRecipient()).toHaveText(recipient);
-  }
-
   @Step("Expect error in summary")
   async expectSendSummaryError(errorMessage: RegExp) {
     const error = await getTextOfElement(this.summaryErrorId);
@@ -148,25 +126,6 @@ export default class SendPage {
   @Step("Expect warning in summary")
   async expectSummaryWarning(warningMessage: string) {
     await expect(this.summaryWarning()).toHaveText(warningMessage);
-  }
-
-  @Step("Expect recipient ENS in summary")
-  async expectSummaryRecipientEns(ensName: string) {
-    await expect(this.summaryRecipientEns()).toHaveText(ensName);
-  }
-
-  @Step("Expect memo tag in summary")
-  async expectSummaryMemoTag(memoTag?: string) {
-    if (memoTag && memoTag !== "noTag") await expect(this.summaryMemoTag()).toHaveText(memoTag);
-    else if (await IsIdVisible(this.summaryMemoTagId)) {
-      await expect(this.summaryMemoTag()).toHaveText("");
-    }
-  }
-
-  @Step("Dismiss high fee modal if visible")
-  async dismissHighFeeModal() {
-    if (await IsIdVisible(this.highFreeConfirmButtonID))
-      await tapById(this.highFreeConfirmButtonID);
   }
 
   @Step("Expect amount in device validation screen")
@@ -185,12 +144,5 @@ export default class SendPage {
   async expectValidationEnsName(ensName: string) {
     await waitForElementById(this.validationEnsId);
     await expect(getElementById(this.validationEnsId)).toHaveText(ensName);
-  }
-
-  @Step("choose fee startegy")
-  async chooseFeeStrategy(fee: string | undefined) {
-    if (fee) {
-      await tapByElement(this.feeStrategy(fee));
-    }
   }
 }

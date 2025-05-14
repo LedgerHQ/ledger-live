@@ -16,7 +16,6 @@ export default class PortfolioPage {
   emptyPortfolioList = () => getElementById(this.emptyPortfolioListId);
   portfolioSettingsButtonId = "settings-icon";
   portfolioSettingsButton = () => getElementById(this.portfolioSettingsButtonId);
-  sendMenuButton = () => getElementById("send-button");
   earnButton = () => getElementById("tab-bar-earn");
   addAccountCta = "add-account-cta";
   lastTransactionAmount = () => getElementById(this.transactionAmountId, 0);

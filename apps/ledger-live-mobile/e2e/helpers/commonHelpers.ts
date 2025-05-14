@@ -6,14 +6,7 @@ import { allure } from "jest-allure2-reporter/api";
 
 const BASE_DEEPLINK = "ledgerlive://";
 
-export const itifAndroid = (...args: Parameters<typeof test>) =>
-  isAndroid() ? test(...args) : test.skip("[Android only] " + args[0], args[1], args[2]);
-export const describeifAndroid = (...args: Parameters<typeof describe>) =>
-  isAndroid() ? describe(...args) : describe.skip("[Android only] " + args[0], args[1]);
 export const currencyParam = "?currency=";
-export const recipientParam = "&recipient=";
-export const amountParam = "&amount=";
-export const accountIdParam = "?accountId=";
 
 /**
  * Waits for a specified amount of time
