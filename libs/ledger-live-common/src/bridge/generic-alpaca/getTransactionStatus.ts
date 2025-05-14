@@ -18,6 +18,10 @@ export function genericGetTransactionStatus(
     if (!transaction.fees || !transaction.fees.gt(0)) {
       errors.fees = new FeeNotLoaded();
     }
+    // TODO ------
+    // const {errors, status} = await getAlpacaApi(network, kind).validateIntent(
+    //   transactionToIntent(account, transaction),
+    // );
 
     const estimatedFees = transaction.fees || new BigNumber(0);
 
