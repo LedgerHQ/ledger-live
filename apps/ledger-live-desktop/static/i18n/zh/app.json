@@ -5420,7 +5420,9 @@
     "stringHash" : "Message Hash 消息哈希字符串",
     "domainHash" : "Domain Hash 域名哈希字符串",
     "messageHash" : "Message Hash 消息哈希字符串",
-    "message" : "消息"
+    "message" : "消息",
+    "title" : "继续在您的 Ledger {{wording}} 上操作",
+    "description" : "按照安全触摸屏上的指示进行操作。"
   },
   "TransactionConfirm" : {
     "title" : "请在您的设备上确认操作从而完成交易",
@@ -5866,6 +5868,10 @@
     },
     "NotEnoughBalance" : {
       "title" : "抱歉，资金不足",
+      "description" : "请确保该账户资金充足。"
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "抱歉，资金不够支付费用",
       "description" : "请确保该账户资金充足。"
     },
     "NotEnoughBalanceSwap" : {
@@ -6612,7 +6618,8 @@
       "title" : "选择资产"
     },
     "selectAccount" : {
-      "title" : "选择账户"
+      "title" : "选择账户",
+      "addAccount" : "添加新账户或现有账户"
     }
   },
   "customImage" : {
@@ -7042,6 +7049,14 @@
     "opted_out" : {
       "description" : "Ledger Nano S 内存有限，影响您访问最新功能、区块链变更和增强安全保护。为保证长期使用体验，请升级到新款 Ledger 设备。",
       "cta" : "了解更多"
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "搜索",
+    "assetFlow" : {
+      "selectTemplate" : "Select {{dynamic}}",
+      "asset" : "资产",
+      "network" : "网络"
     }
   }
 }
