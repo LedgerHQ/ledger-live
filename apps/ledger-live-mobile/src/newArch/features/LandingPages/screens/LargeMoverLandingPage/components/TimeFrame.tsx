@@ -5,6 +5,7 @@ import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTabl
 import { useTranslation } from "react-i18next";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { track } from "~/analytics";
+import { PAGE_NAME } from "../const";
 
 type TimeFrameProps = {
   range: KeysPriceChange;
@@ -23,13 +24,14 @@ export const TimeFrame: React.FC<TimeFrameProps> = ({ range, setRange, width, co
     }))
     .reverse();
 
-  const handleTrackTimeframe = (id: KeysPriceChange) => {
+  const handleTabSelection = (id: KeysPriceChange) => {
     track("button_clicked", {
       button: "timeframe",
       timeframe: id,
-      page: "Large Mover Landing Page",
+      page: PAGE_NAME,
       coin: coin,
     });
+    setRange(id);
   };
 
   return (
@@ -44,8 +46,7 @@ export const TimeFrame: React.FC<TimeFrameProps> = ({ range, setRange, width, co
         initialTab={range}
         labels={labels}
         onToggle={id => {
-          setRange(id);
-          handleTrackTimeframe(id);
+          handleTabSelection(id);
         }}
         filledVariant
       />

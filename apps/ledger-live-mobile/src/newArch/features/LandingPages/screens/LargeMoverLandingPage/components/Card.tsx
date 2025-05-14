@@ -18,6 +18,7 @@ import { Informations } from "./Information";
 import { useTheme } from "styled-components/native";
 import { getCryptoCurrencyById, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { track } from "~/analytics";
+import { PAGE_NAME } from "../const";
 
 type CardProps = {
   data: CurrencyData;
@@ -60,7 +61,7 @@ export const Card: React.FC<CardProps> = ({ data, range, setRange, height, chart
     track("button_clicked", {
       button: "Scroll",
       coin: currency.name,
-      page: "Large Mover Landing Page",
+      page: PAGE_NAME,
     });
   };
 
