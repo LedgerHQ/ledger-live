@@ -1,5 +1,29 @@
 # ledger-live-desktop
 
+## 2.113.0-nightly.5
+
+### Minor Changes
+
+- [#10189](https://github.com/LedgerHQ/ledger-live/pull/10189) [`c66b4ac`](https://github.com/LedgerHQ/ledger-live/commit/c66b4ac72c856666f56b0233a4ffa8a302bae860) Thanks [@Wozacosta](https://github.com/Wozacosta)! - feat: sync btc account when selecting it in swap flow
+
+### Patch Changes
+
+- Updated dependencies [[`f92f49a`](https://github.com/LedgerHQ/ledger-live/commit/f92f49a003767b83b94955e920cfac8cd565c162), [`5657584`](https://github.com/LedgerHQ/ledger-live/commit/565758426688c9604c7958183ec5b3d4e35ffbe4)]:
+  - @ledgerhq/cryptoassets@13.17.0-nightly.0
+  - @ledgerhq/live-common@34.33.0-nightly.5
+  - @ledgerhq/coin-evm@2.21.0-nightly.1
+  - @ledgerhq/coin-framework@5.0.1-nightly.1
+  - @ledgerhq/coin-aptos@1.9.5-nightly.1
+  - @ledgerhq/coin-bitcoin@0.15.5-nightly.1
+  - @ledgerhq/coin-cosmos@0.14.1-nightly.1
+  - @ledgerhq/coin-filecoin@1.9.5-nightly.1
+  - @ledgerhq/live-countervalues@0.5.5-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.34-nightly.1
+  - @ledgerhq/live-nft@0.8.5-nightly.1
+  - @ledgerhq/live-nft-react@0.9.5-nightly.1
+  - @ledgerhq/live-wallet@0.10.8-nightly.1
+  - @ledgerhq/live-dmk-desktop@0.3.4-nightly.5
+
 ## 2.113.0-nightly.4
 
 ### Minor Changes

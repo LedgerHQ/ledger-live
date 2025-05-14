@@ -1,5 +1,17 @@
 # @ledgerhq/coin-solana
 
+## 0.22.0-nightly.3
+
+### Minor Changes
+
+- [#10162](https://github.com/LedgerHQ/ledger-live/pull/10162) [`f92f49a`](https://github.com/LedgerHQ/ledger-live/commit/f92f49a003767b83b94955e920cfac8cd565c162) Thanks [@qperrot](https://github.com/qperrot)! - Add fetching of tokens signature in preload method of the solana bridge
+
+### Patch Changes
+
+- Updated dependencies [[`f92f49a`](https://github.com/LedgerHQ/ledger-live/commit/f92f49a003767b83b94955e920cfac8cd565c162)]:
+  - @ledgerhq/cryptoassets@13.17.0-nightly.0
+  - @ledgerhq/coin-framework@5.0.1-nightly.1
+
 ## 0.22.0-nightly.2
 
 ### Minor Changes

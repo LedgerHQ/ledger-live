@@ -1,5 +1,50 @@
 # @ledgerhq/live-common
 
+## 34.33.0-nightly.5
+
+### Minor Changes
+
+- [#10162](https://github.com/LedgerHQ/ledger-live/pull/10162) [`f92f49a`](https://github.com/LedgerHQ/ledger-live/commit/f92f49a003767b83b94955e920cfac8cd565c162) Thanks [@qperrot](https://github.com/qperrot)! - Add fetching of tokens signature in preload method of the solana bridge
+
+- [#10094](https://github.com/LedgerHQ/ledger-live/pull/10094) [`5657584`](https://github.com/LedgerHQ/ledger-live/commit/565758426688c9604c7958183ec5b3d4e35ffbe4) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - Remove NFT tx history for evm
+
+### Patch Changes
+
+- Updated dependencies [[`f92f49a`](https://github.com/LedgerHQ/ledger-live/commit/f92f49a003767b83b94955e920cfac8cd565c162), [`5657584`](https://github.com/LedgerHQ/ledger-live/commit/565758426688c9604c7958183ec5b3d4e35ffbe4), [`8f4a6ed`](https://github.com/LedgerHQ/ledger-live/commit/8f4a6ed8b5c9a673a2b5fd0e8fa0a9783cecaa34)]:
+  - @ledgerhq/cryptoassets@13.17.0-nightly.0
+  - @ledgerhq/coin-solana@0.22.0-nightly.3
+  - @ledgerhq/coin-evm@2.21.0-nightly.1
+  - @ledgerhq/coin-tron@3.1.0-nightly.2
+  - @ledgerhq/coin-framework@5.0.1-nightly.1
+  - @ledgerhq/coin-algorand@0.9.5-nightly.1
+  - @ledgerhq/coin-aptos@1.9.5-nightly.1
+  - @ledgerhq/coin-bitcoin@0.15.5-nightly.1
+  - @ledgerhq/coin-cardano@0.8.5-nightly.1
+  - @ledgerhq/coin-casper@1.6.5-nightly.1
+  - @ledgerhq/coin-celo@1.1.3-nightly.1
+  - @ledgerhq/coin-cosmos@0.14.1-nightly.1
+  - @ledgerhq/coin-filecoin@1.9.5-nightly.1
+  - @ledgerhq/coin-hedera@1.6.5-nightly.1
+  - @ledgerhq/coin-icon@0.10.5-nightly.1
+  - @ledgerhq/coin-internet_computer@1.7.5-nightly.1
+  - @ledgerhq/coin-mina@1.1.4-nightly.1
+  - @ledgerhq/coin-multiversx@0.4.5-nightly.1
+  - @ledgerhq/coin-near@0.11.5-nightly.1
+  - @ledgerhq/coin-polkadot@6.0.1-nightly.2
+  - @ledgerhq/coin-stacks@0.8.5-nightly.1
+  - @ledgerhq/coin-stellar@5.0.1-nightly.1
+  - @ledgerhq/coin-sui@0.3.2-nightly.1
+  - @ledgerhq/coin-tezos@5.1.0-nightly.2
+  - @ledgerhq/coin-ton@0.9.2-nightly.1
+  - @ledgerhq/coin-vechain@2.7.5-nightly.1
+  - @ledgerhq/coin-xrp@6.0.1-nightly.1
+  - @ledgerhq/hw-app-vet@0.5.3-nightly.0
+  - @ledgerhq/live-countervalues@0.5.5-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.34-nightly.1
+  - @ledgerhq/live-nft@0.8.5-nightly.1
+  - @ledgerhq/live-wallet@0.10.8-nightly.1
+  - @ledgerhq/live-signer-evm@0.4.0-nightly.1
+
 ## 34.33.0-nightly.4
 
 ### Minor Changes

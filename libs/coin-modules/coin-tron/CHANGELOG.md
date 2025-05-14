@@ -1,5 +1,17 @@
 # @ledgerhq/coin-tron
 
+## 3.1.0-nightly.2
+
+### Minor Changes
+
+- [#10192](https://github.com/LedgerHQ/ledger-live/pull/10192) [`8f4a6ed`](https://github.com/LedgerHQ/ledger-live/commit/8f4a6ed8b5c9a673a2b5fd0e8fa0a9783cecaa34) Thanks [@jprudent](https://github.com/jprudent)! - retry fetching incorrect trc20 ops
+
+### Patch Changes
+
+- Updated dependencies [[`f92f49a`](https://github.com/LedgerHQ/ledger-live/commit/f92f49a003767b83b94955e920cfac8cd565c162)]:
+  - @ledgerhq/cryptoassets@13.17.0-nightly.0
+  - @ledgerhq/coin-framework@5.0.1-nightly.1
+
 ## 3.1.0-nightly.1
 
 ### Minor Changes
