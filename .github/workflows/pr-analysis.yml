@@ -1,0 +1,90 @@
+name: "[All Platforms] - Pull Request Analysis - PR"
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: ["develop"]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  determine-affected:
+    name: "Turbo Affected"
+    if: ${{!github.event.pull_request.head.repo.fork}}
+    uses: LedgerHQ/ledger-live/.github/workflows/turbo-affected-reusable.yml@develop
+    with:
+      head_branch: ${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref }}
+      base_branch: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}
+
+  sonarqube:
+    name: "SonarQube"
+    needs: determine-affected
+    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') || contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') || contains(needs.determine-affected.outputs.paths, 'coin-modules') || contains(needs.determine-affected.outputs.paths, 'coin-framework') || contains(needs.determine-affected.outputs.paths, 'packages/hw-app')}}
+    runs-on: [ledger-live-4xlarge]
+    env:
+      MOBILE_AFFECTED: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile')}}
+      DESKTOP_AFFECTED: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop')}}
+      COIN_MODULES_AFFECTED: ${{contains(needs.determine-affected.outputs.paths, 'coin-modules') || contains(needs.determine-affected.outputs.paths, 'coin-framework')}}
+      HW_APP_AFFECTED: ${{contains(needs.determine-affected.outputs.paths, 'packages/hw-app')}}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup git user
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: caches
+        with:
+          skip-turbo-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - name: fetch develop
+        run: |
+          git fetch origin develop
+
+      - name: install dependencies
+        run: pnpm i
+
+      - name: Build and Test affected libraries
+        id: test-libs
+        run: pnpm run test --continue --filter="!./apps/**" --filter="!./libs/ui/**" --filter="!./tools/**" --filter="!./e2e/mobile/**" --filter="!./apps/ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        shell: bash
+
+      - name: "Prepare Pull Request Analysis"
+        run: |
+          paths="${{needs.determine-affected.outputs.paths}}"
+          paths="${paths#[}"; paths="${paths%]}"
+          IFS=',' read -r -a paths_array <<< "$paths"
+          for path in "${paths_array[@]}"
+          do
+            echo "$path"
+            cat $path/coverage/lcov.info >> ./lcov.info
+            cat $path/coverage/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
+          done
+
+      - name: Process paths
+        run: |
+          paths="${{ needs.determine-affected.outputs.paths }}"
+          modified_paths="${paths:1:-1}"
+          echo "modified_paths=$modified_paths" >> $GITHUB_ENV
+
+      - name: SonarQubeScan
+        if: ${{ env.DESKTOP_AFFECTED == 'true' || env.MOBILE_AFFECTED == 'true' || env.COIN_MODULES_AFFECTED == 'true' || env.HW_APP_AFFECTED == 'true' }}
+        uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.sources=${{env.modified_paths}}
+            -Dsonar.testExecutionReportPaths=sonar-executionTests-report.xml

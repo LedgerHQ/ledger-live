@@ -114,48 +114,6 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
     secrets: inherit
 
-  prepare-pr-analysis:
-    name: "Prepare Pull Request Analysis"
-    runs-on: ubuntu-latest
-    needs:
-      - build-mobile
-      - test-mobile
-      - build-desktop
-      - test-desktop
-      - test-libraries
-    steps:
-      - name: Prepare PR Analysis
-        run: |
-          paths="${{needs.determine-affected.outputs.paths}}"
-          paths="${paths#[}"; paths="${paths%]}"
-          IFS=',' read -r -a paths_array <<< "$paths"
-          for path in "${paths_array[@]}"
-          do
-            echo "$path"
-            cat $path/coverage/lcov.info >> ./lcov.info
-            cat $path/coverage/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
-          done
-
-  perform-pr-analysis:
-    name: "SonarQube Pull Request Analysis"
-    runs-on: ubuntu-latest
-    needs: prepare-pr-analysis
-    steps:
-      - name: Process paths
-        run: |
-          paths="${{ needs.determine-affected.outputs.paths }}"
-          modified_paths="${paths:1:-1}"
-          echo "modified_paths=$modified_paths" >> $GITHUB_ENV
-
-      - name: Run Scan
-        uses: SonarSource/sonarqube-scan-action@v4
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.sources=${{env.modified_paths}}
-            -Dsonar.testExecutionReportPaths=sonar-executionTests-report.xml
-
   # Final Check required
   ok:
     name: "OK"
