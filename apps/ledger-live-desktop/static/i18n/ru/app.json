@@ -447,6 +447,8 @@
     "incompatibility" : {
       "ton_title" : "Ledger Nano S™ не поддерживает обмен TON",
       "ton_description" : "Используйте другие совместимые устройства Ledger для обмена TON. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+      "ton_tokens_title" : "Ledger Nano S™ does not support swapping Ton Tokens",
+      "ton_tokens_description" : "To swap Ton Tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "spl_tokens_title" : "Ledger Nano S™ не поддерживает обмен токенов сети Solana",
       "spl_tokens_description" : "Используйте другие совместимые устройства Ledger для обмена токенов сети Solana. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
       "sui_tokens_title" : "Ledger Nano S™ не поддерживает обмен токенов сети Sui",
@@ -5421,7 +5423,9 @@
     "stringHash" : "Хэш сообщения",
     "domainHash" : "Хэш домена",
     "messageHash" : "Хэш сообщения",
-    "message" : "Сообщение"
+    "message" : "Сообщение",
+    "title" : "Продолжите на устройстве Ledger {{wording}}",
+    "description" : "Следуйте руководству на защищённом сенсорном экране."
   },
   "TransactionConfirm" : {
     "title" : "Подтвердите операцию на устройстве для её завершения",
@@ -6613,7 +6617,8 @@
       "title" : "выберите актив"
     },
     "selectAccount" : {
-      "title" : "выберите счёт"
+      "title" : "выберите счёт",
+      "addAccount" : "Добавить ещё один счёт"
     }
   },
   "customImage" : {
@@ -7043,6 +7048,14 @@
     "opted_out" : {
       "description" : "У Ledger Nano S ограниченный объём памяти, что не позволяет владельцам аппаратного кошелька использовать актуальные функции и изменения в блокчейне, а также наслаждаться улучшениями безопасности. Перейдите на новое устройство Ledger, и пользуйтесь им ещё долгие годы.",
       "cta" : "Подробнее..."
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "Поиск...",
+    "assetFlow" : {
+      "selectTemplate" : "Select {{dynamic}}",
+      "asset" : "актив",
+      "network" : "сеть"
     }
   }
 }
