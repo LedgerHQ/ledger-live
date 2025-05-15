@@ -108,8 +108,8 @@ export const test = base.extend<TestFixtures>({
     let speculos: any | undefined;
 
     try {
+      setEnv("PLAYWRIGHT_RUN", true);
       if (IS_NOT_MOCK && speculosApp) {
-        setEnv("PLAYWRIGHT_RUN", true);
         setEnv("MOCK", "");
         process.env.MOCK = "";
 
