@@ -66,10 +66,15 @@ const polkadot: CurrenciesData<Transaction, PolkadotAccountRaw> = {
         lastSyncDate: "",
         balance: "21000310",
         polkadotResources: {
+          controller: undefined,
+          stash: undefined,
           nonce: 0,
           lockedBalance: "0",
           unlockedBalance: "0",
           unlockingBalance: "0",
+          unlockings: undefined,
+          nominations: undefined,
+          numSlashingSpans: undefined,
         },
       },
       transactions: [
@@ -378,10 +383,15 @@ const polkadot: CurrenciesData<Transaction, PolkadotAccountRaw> = {
         lastSyncDate: "",
         balance: "11000000000",
         polkadotResources: {
+          controller: undefined,
+          stash: undefined,
           nonce: 0,
           lockedBalance: "0",
           unlockedBalance: "0",
           unlockingBalance: "0",
+          unlockings: undefined,
+          nominations: undefined,
+          numSlashingSpans: undefined,
         },
       },
       transactions: [
@@ -500,10 +510,15 @@ const polkadot: CurrenciesData<Transaction, PolkadotAccountRaw> = {
         lastSyncDate: "",
         balance: "11000000000",
         polkadotResources: {
+          controller: undefined,
+          stash: undefined,
           nonce: 0,
           lockedBalance: "0",
           unlockedBalance: "0",
           unlockingBalance: "0",
+          unlockings: undefined,
+          nominations: undefined,
+          numSlashingSpans: undefined,
         },
       },
       transactions: [
