@@ -146,7 +146,7 @@ jobs:
     needs: [codechecks, unit-tests, e2e-tests-linux]
     name: "Test Desktop (External) > Report"
     runs-on: ubuntu-22.04
-    if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
+    if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' && needs.codechecks.result == 'success' && needs.unit-tests.result == 'success' && needs.e2e-tests-linux.outputs.status == 'success' }}
     steps:
       - uses: actions/checkout@v4
         with:
