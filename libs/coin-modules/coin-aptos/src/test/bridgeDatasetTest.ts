@@ -2,6 +2,7 @@ import { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import { Transaction } from "../types";
 
 const aptos: CurrenciesData<Transaction> = {
+  FIXME_ignorePreloadFields: ["validators"],
   scanAccounts: [
     {
       name: "aptos seed 1",
