@@ -88,20 +88,30 @@ jobs:
   detox-tests-ios:
     name: "iOS Detox"
     runs-on: ["${{ inputs.macos-specificity-runner-label || 'general-pool' }}", macOS, ARM64]
-    if: ${{ !inputs.e2e_tests && github.event_name != 'schedule' }}
+    if: ${{ !inputs.e2e_tests && github.event_name != 'schedule' && !cancelled() }}
     env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
+      NODE_OPTIONS: "--max-old-space-size=8192"
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
-      SEED: ${{ vars.SEED_QAA_B2C }}
       INPUT_E2E: ${{ inputs.e2e_tests || github.event_name == 'schedule' }}
       INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
     outputs:
-      status: ${{ steps.detox.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
+      status_1: ${{ steps.set-output.outputs.status_1 }}
+      status_2: ${{ steps.set-output.outputs.status_2 }}
+      status_3: ${{ steps.set-output.outputs.status_3 }}
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2, 3]
+        shardTotal: [3, 1]
+        exclude:
+          - shardIndex: ${{ (github.event.inputs.speculos_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request') && '2' }}
+          - shardIndex: ${{ (github.event.inputs.speculos_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request') && '3' }}
+          - shardTotal: ${{ (github.event.inputs.speculos_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request') && '3' }}
+          - shardTotal: ${{ github.event.inputs.speculos_tests != 'false' && github.event_name != 'push' && github.event_name != 'pull_request' && '1' }}
     steps:
-
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
@@ -179,24 +189,42 @@ jobs:
         run: xcrun simctl create "iOS Simulator" "iPhone 15"
 
       - name: Build iOS app for Detox test run
-        if: steps.detox-build.outputs.cache-hit != 'true'
-        run: pnpm mobile e2e:ci -p ios -b
+        if: steps.detox-build.outputs.cache-hit != 'true' || inputs.production_firebase == 'true'
+        run: pnpm mobile e2e:ci -p ios -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
 
       - name: Build JS Bundle app for Detox test run
-        if: steps.detox-build.outputs.cache-hit == 'true'
+        if: steps.detox-build.outputs.cache-hit == 'true' && inputs.production_firebase == 'false'
         run: pnpm mobile e2e:ci -p ios --bundle
 
       - name: Setup Speculos image and Coin Apps
         if: ${{ env.E2E_RUN == 'true' }}
+        id: setup-speculos
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
         with:
           coinapps_path: ${{ env.COINAPPS }}
-          speculos_tag: ${{ env.SPECULOS_IMAGE_TAG }}
           bot_id: ${{ secrets.GH_BOT_APP_ID }}
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
-      - name: Test iOS app
+      - name: Set DISABLE_TRANSACTION_BROADCAST
+        if: ${{ env.E2E_RUN == 'true' }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
+        with:
+          enable_broadcast: ${{ inputs.enable_broadcast }}
+
+      - name: Test iOS app E2E
+        if: ${{ env.E2E_RUN == 'true' }}
         id: detox
+        run: pnpm test:llm:ios:e2e --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" -- -p ios -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos') --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        env:
+          SEED: ${{ secrets.SEED_QAA_B2C }}
+          AWS_ROLE: ${{ secrets.B2CQA_AWS_ROLE }}
+          CLUSTER: ${{ secrets.B2CQA_CLUSTER }}
+          GITHUB_TOKEN: ${{ steps.setup-speculos.outputs.token }}
+          INPUT_SPECULOS: ${{ env.E2E_RUN }}
+          REMOTE_SPECULOS: "true"
+
+      - name: Test iOS app Mock
+        if: ${{ env.E2E_RUN != 'true' }}
         timeout-minutes: 75
         uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
         with:
@@ -215,9 +243,13 @@ jobs:
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         id: "test-artifacts"
         with:
-          name: "ios-test-artifacts"
+          name: "ios-test-artifacts-${{ matrix.shardIndex }}"
           path: ${{ env.E2E_RUN == 'true' && 'e2e/mobile/artifacts/' || 'apps/ledger-live-mobile/artifacts/' }}
       - run: echo "${{ steps.test-artifacts.outputs.artifact-id }}"
+      - name: Set job output based on detox result
+        id: set-output
+        if: always()
+        run: echo "status_${{ matrix.shardIndex }}=${{ steps.detox.outcome }}" >> $GITHUB_OUTPUT
 
   allure-report-ios:
     name: "iOS Detox > Allure Report"
