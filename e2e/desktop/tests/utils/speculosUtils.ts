@@ -26,14 +26,12 @@ export async function launchSpeculos(appName: string, testTitle?: string) {
     testTitle ?? "cli_speculos",
     specs[appName.replace(/ /g, "_")],
   );
+
   invariant(device, "[E2E Setup] Speculos not started");
+  setEnv("SPECULOS_API_PORT", device.port);
+  process.env.SPECULOS_API_PORT = device.port.toString();
 
-  const speculosApiPort = device.ports.apiPort;
-  invariant(speculosApiPort, "[E2E Setup] speculosApiPort not defined");
-  setEnv("SPECULOS_API_PORT", speculosApiPort);
-  process.env.SPECULOS_API_PORT = speculosApiPort.toString();
-
-  console.warn(`Speculos ${device.id} started on ${speculosApiPort}`);
+  console.warn(`Speculos ${device.id} started on ${device.port}`);
   return device;
 }
 
