@@ -38,7 +38,7 @@ export const Dashed: Story = {
 export const IconRight: Story = {
   args: {
     onClick: () => null,
-    title: "title",
+    title: "Title",
     iconRight: <Icons.Plus size="S" />,
   },
 };
