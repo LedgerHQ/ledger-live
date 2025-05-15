@@ -124,10 +124,10 @@ const AccountBalanceSummaryFooter: AptosFamily["AccountBalanceSummaryFooter"] = 
       )}
       {_availableBalance.gt(0) && (
         <BalanceDetail>
-          <ToolTip content={<Trans i18nKey="aptos.account.availableBalanceTooltip" />}>
+          <ToolTip content={<Trans i18nKey="aptos.account.withdrawableBalanceTooltip" />}>
             <TitleWrapper>
               <Title>
-                <Trans i18nKey="aptos.account.availableBalance" />
+                <Trans i18nKey="aptos.account.withdrawableBalance" />
               </Title>
               <InfoCircle size={13} />
             </TitleWrapper>

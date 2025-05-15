@@ -3844,6 +3844,14 @@
     }
   },
   "aptos": {
+    "account": {
+      "stakedBalance": "Staked balance",
+      "stakedBalanceTooltip": "This amount is currently staked with validators.",
+      "withdrawableBalance": "Withdawable balance",
+      "withdrawableBalanceTooltip": "This amount has been unstaked and is currently able to be withdrawn.",
+      "pendingBalance": "Pending balance",
+      "pendingBalanceTooltip": "This amount has been unstaked and is currently pending availability."
+    },
     "common": {
       "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again.",
       "viewDetails": "View details",
