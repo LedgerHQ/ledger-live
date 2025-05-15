@@ -8,7 +8,7 @@ import polkadotAPI from "../network";
 export const getAccountShape: GetAccountShape<PolkadotAccount> = async info => {
   await loadPolkadotCrypto();
   const { address, initialAccount, currency, derivationMode } = info;
-
+  console.log(address, initialAccount, currency, derivationMode);
   // Retrieve account info
   const {
     blockHeight,
@@ -37,7 +37,6 @@ export const getAccountShape: GetAccountShape<PolkadotAccount> = async info => {
   const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
   const newOperations = await polkadotAPI.getOperations(accountId, address, currency, startAt);
   const operations = mergeOps(oldOperations, newOperations);
-
   return {
     id: accountId,
     balance,

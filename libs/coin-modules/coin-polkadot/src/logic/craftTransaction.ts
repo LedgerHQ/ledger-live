@@ -2,9 +2,14 @@ import BigNumber from "bignumber.js";
 import { stringCamelCase } from "@polkadot/util";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
 import polkadotAPI from "../network";
-import { getAbandonSeedAddress, getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/index";
 import { hexToU8a } from "@polkadot/util";
-import { TransactionPayloadInfo } from "../types";
+import {
+  CoreTransaction,
+  PalletMethodName,
+  PolkadotOperationMode,
+  TransactionPayloadInfo,
+} from "../types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const EXTRINSIC_VERSION = 4;
@@ -165,13 +170,13 @@ export const defaultExtrinsicArg = (amount: bigint, recipient: string): CreateEx
 });
 
 export async function craftTransaction(
-  account: PolkadotAccount,
+  address: string,
   nonceToUse: number,
   extractExtrinsicArg: CreateExtrinsicArg,
   forceLatestParams: boolean = false,
+  currency?: CryptoCurrency,
 ): Promise<CoreTransaction> {
   await loadPolkadotCrypto();
-  const currency: CryptoCurrency = getCryptoCurrencyById(account.currency.id);
   const { extrinsics, registry } = await polkadotAPI.getRegistry(currency);
   const info = await polkadotAPI.getTransactionParams(currency, {
     force: forceLatestParams,
@@ -207,7 +212,7 @@ export async function craftTransaction(
   const { blockHash, genesisHash } = info;
   const metadataHash = await polkadotAPI.metadataHash(currency);
   const unsigned: TransactionPayloadInfo = {
-    address: account.freshAddress,
+    address,
     blockHash,
     era,
     genesisHash,
