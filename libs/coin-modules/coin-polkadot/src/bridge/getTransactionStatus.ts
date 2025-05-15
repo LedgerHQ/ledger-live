@@ -41,7 +41,7 @@ import { isValidAddress } from "../common";
 import { getCurrentPolkadotPreloadData } from "./state";
 import { loadPolkadotCrypto } from "../logic/polkadot-crypto";
 import polkadotAPI from "../network";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/lib-es/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 // Should try to refacto

@@ -40,10 +40,10 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
         // credentials: getEnv("API_POLKADOT_SIDECAR_CREDENTIALS"),
       },
       node: {
-        url: "https://polkadot-westend-fullnodes.api.live.ledger.com",
+        url: "https://polkadot-westend-fullnodes.api.live.ledger.com/",
       },
       indexer: {
-        url: getEnv("API_POLKADOT_INDEXER"),
+        url: "https://polkadot.coin.ledger.com",
       },
       // staking: {
       //   electionStatusThreshold: getEnv("POLKADOT_ELECTION_STATUS_THRESHOLD"),

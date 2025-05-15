@@ -24,7 +24,7 @@ const LIMIT = 200;
  * @returns {string}
  */
 // const getBaseApiUrl = (): string => getEnv("API_POLKADOT_INDEXER");
-const getBaseApiUrl = (currency: CryptoCurrency): string =>
+const getBaseApiUrl = (currency?: CryptoCurrency): string =>
   coinConfig.getCoinConfig(currency).indexer.url;
 
 /**
@@ -41,8 +41,8 @@ const getAccountOperationUrl = (
   addr: string,
   offset: number,
   startAt: number,
-  currency: CryptoCurrency,
   limit: number = LIMIT,
+  currency?: CryptoCurrency,
 ): string =>
   `${getBaseApiUrl(currency)}/accounts/${addr}/operations?${querystring.stringify({
     limit,
@@ -301,14 +301,14 @@ const fetchOperationList = async (
   accountId: string,
   addr: string,
   startAt: number,
-  currency: CryptoCurrency,
+  currency?: CryptoCurrency,
   limit = LIMIT,
   offset = 0,
   prevOperations: PolkadotOperation[] = [],
 ): Promise<PolkadotOperation[]> => {
   const { data } = await network({
     method: "GET",
-    url: getAccountOperationUrl(addr, offset, startAt, currency, limit),
+    url: getAccountOperationUrl(addr, offset, startAt, limit, currency),
   });
   const operations = data.extrinsics.map((extrinsic: any) =>
     extrinsicToOperation(addr, accountId, extrinsic),
@@ -344,7 +344,7 @@ const fetchOperationList = async (
 export const getOperations = async (
   accountId: string,
   addr: string,
-  currency: CryptoCurrency,
+  currency?: CryptoCurrency,
   startAt = 0,
   limit = LIMIT,
 ) => {

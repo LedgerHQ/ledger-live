@@ -9,7 +9,7 @@ import { buildTransaction } from "./buildTransaction";
 import { calculateAmount } from "./utils";
 import { signExtrinsic } from "../logic";
 import polkadotAPI from "../network";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/lib-es/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 /**
  * Sign Transaction with Ledger hardware

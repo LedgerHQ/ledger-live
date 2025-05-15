@@ -6,7 +6,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 export async function listOperations(
   addr: string,
   { limit, startAt }: { limit: number; startAt?: number | undefined },
-  currency: CryptoCurrency,
+  currency?: CryptoCurrency,
 ): Promise<[Operation<PolkadotAsset>[], number]> {
   //The accountId is used to map Operations to Live types.
   const fakeAccountId = "";

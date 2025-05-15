@@ -3242,7 +3242,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ticker: "WND",
     deviceTicker: "DOT",
     scheme: "westend",
-    color: "#E6007A",
+    color: "#00ff00",
     units: [
       {
         code: "WND",
@@ -3256,10 +3256,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         address: "https://westend.subscan.io/account/$address",
         tx: "https://westend.subscan.io/extrinsic/$hash",
-      },
-      {
-        address: "https://polkascan.io/polkadot/account/$address",
-        tx: "https://polkascan.io/polkadot/transaction/$hash",
       },
     ],
   },
