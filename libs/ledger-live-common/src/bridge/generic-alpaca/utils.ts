@@ -43,13 +43,13 @@ export function transactionToIntent(
   };
 }
 
-export function AccountIntent(account: Account): CoreAccount<any> {
-  return {
-    address: account.freshAddress,
-    balance: account.balance,
-    unit: account.currency.units[0],
-  };
-}
+// export function AccountIntent(account: Account): CoreAccount<any> {
+//   return {
+//     address: account.freshAddress,
+//     balance: account.balance,
+//     unit: account.currency.units[0],
+//   };
+// }
 
 export const buildOptimisticOperation = (
   account: Account,
