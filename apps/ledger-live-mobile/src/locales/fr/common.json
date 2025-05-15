@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "Annuler",
+    "copy" : "Copier",
+    "copied" : "Copié",
     "apply" : "Appliquer",
     "seeAll" : "Afficher tout",
     "seeAllWithNumber" : "Afficher tout ({{number}})",
@@ -100,7 +102,8 @@
       "times" : "x {{ value }}"
     },
     "quote" : "Prix",
-    "tryAgain" : "Réessayer"
+    "tryAgain" : "Réessayer",
+    "ldmkEnabled" : "Transport LDMK activé"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -190,7 +193,7 @@
     },
     "CosmosBroadcastCodeInsufficientFunds" : {
       "title" : "Solde insuffisant",
-      "description" : "Vérifiez que ce compte a des fonds suffisants."
+      "description" : "Vérifiez que ce compte a un solde suffisant."
     },
     "CosmosBroadcastCodeUnknownRequest" : {
       "title" : "Une erreur est survenue (Erreur #6)",
@@ -506,9 +509,17 @@
       "title" : "Solde d’EGLD insuffisant pour payer les frais de transaction",
       "description" : "Envoyez des EGLD sur votre compte pour régler vos transactions."
     },
+    "NotEnoughToStake" : {
+      "title" : "Montant de staking minimal : {{minStake}} {{currency}}",
+      "description" : "Vous devez allouer au moins {{minStake}} {{currency}} pour staker."
+    },
     "NotEnoughBalance" : {
       "title" : "Solde insuffisant",
-      "description" : "Vérifiez que ce compte a des fonds suffisants."
+      "description" : "Vérifiez que ce compte a un solde suffisant."
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "Solde insuffisant pour couvrir les frais",
+      "description" : "Vérifiez que ce compte a un solde suffisant."
     },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Votre solde disponible (non-staké) est de {{currentBalance}}. C’est insuffisant pour couvrir les frais de réseau afin de déstaker vos {{assetName}}. ",
@@ -523,7 +534,7 @@
     },
     "NotEnoughBalanceSwap" : {
       "title" : "Solde insuffisant, frais de réseau inclus. Modifiez le montant ou vérifiez votre solde.",
-      "description" : "Vérifiez que ce compte a des fonds suffisants."
+      "description" : "Vérifiez que ce compte a un solde suffisant."
     },
     "NoSuchAppOnProvider" : {
       "title" : "Échec de la localisation de l’app {{appName}} pour votre appareil.",
@@ -3814,7 +3825,7 @@
       "quantityAvailable" : "Quantité disponible"
     },
     "summary" : {
-      "subaccountsWarning" : "Vous devez recharger ce compte avec des {{ currency }} afin d’envoyer les tokens de ce compte.",
+      "subaccountsWarning" : "Vous devez approvisionner ce compte avec des {{ currency }} afin d’envoyer les tokens de ce compte.",
       "tag" : "Tag (Facultatif)",
       "validateTag" : "Valider le tag",
       "total" : "Total",
@@ -4047,7 +4058,9 @@
       "desc" : "Voulez-vous vraiment annuler l’ajout de comptes ?",
       "v2" : {
         "title" : "Annuler l’ajout de compte ?",
-        "desc" : "Aucun compte ne sera ajouté dans Ledger Live."
+        "desc" : "Aucun compte ne sera ajouté dans Ledger Live.",
+        "continue" : "Poursuivre l’ajout",
+        "cancel" : "Annuler"
       }
     },
     "imported" : "Actif bien ajouté",
@@ -4276,7 +4289,7 @@
     "charactersRemaining" : "{{remainingCount}} caractères restants",
     "action" : "Définir le nom",
     "rename" : "Renommer",
-    "success" : "Appareil renommé : « {{deviceName}} »"
+    "success" : "Appareil renommé : {{deviceName}}"
   },
   "PairDevices" : {
     "Paired" : {
@@ -6033,7 +6046,7 @@
       "started" : {
         "description" : "Vous pouvez gagner des récompenses en déléguant vos SOL à un validateur."
       },
-      "reserveWarning" : "Conservez au minimum {{amount}} SOL dans votre wallet pour couvrir les frais de réseau futurs afin de désactiver et retirer vos cryptos stakées"
+      "reserveWarning" : "Conservez au minimum {{amount}} SOL dans votre compte pour couvrir les frais de réseau futurs afin de désactiver et retirer vos cryptos stakées"
     },
     "token" : {
       "frozenStateWarning" : "Les actifs du compte sont gelés",
@@ -7158,13 +7171,13 @@
         "error" : "Synchronisations",
         "unsecuredError" : {
           "title" : "Connectez l’appareil Ledger que vous avez utilisé pour activer Ledger Sync",
-          "description" : "Si vous n’avez pas le même appareil Ledger, sélectionnez « Supprimer la synchronisation ».",
+          "description" : "Si vous n’avez pas le même appareil Ledger, sélectionnez : Supprimer la synchronisation.",
           "cta" : "Connecter un autre appareil Ledger",
           "ctaDelete" : "Supprimer la synchronisation"
         },
         "autoRemoveError" : {
           "title" : "Impossible de retirer ce téléphone pendant que vous l’utilisez",
-          "description" : "Pour le retirer, utilisez un autre téléphone ou ordinateur sur lequel Ledger Sync est activé. Si vous n’avez pas d’autre appareil, sélectionnez « Supprimer la synchronisation ».",
+          "description" : "Pour le retirer, utilisez un autre téléphone ou ordinateur sur lequel Ledger Sync est activé. Si vous n’avez pas d’autre appareil, sélectionnez : Supprimer la synchronisation.",
           "info" : "En supprimant vote clé de chiffrement, vos appareils seront désynchronisés, et toutes les données synchronisées seront supprimées. Cette action n’a aucune répercussion sur vos actifs. Vous pouvez resynchroniser vos comptes à tout moment.",
           "cta" : "Compris",
           "ctaDelete" : "Supprimer la synchronisation"
@@ -7225,7 +7238,7 @@
         "scannedInvalidQrCode" : {
           "title" : "Code QR invalide",
           "desc" : "Pour synchroniser vos applications Ledger Live, scannez uniquement le code QR affiché sur Ledger Live.",
-          "info" : "Trouvez votre code QR dans « Paramètres » > « Général » > « Ledger Sync » > « Activer Sync » > « Voir le code QR ».",
+          "info" : "Trouvez votre code QR dans Paramètres > Général > Ledger Sync > Activer Sync > Voir le code QR.",
           "cta" : "Compris",
           "tryAgain" : "Réessayer"
         },
@@ -7242,7 +7255,7 @@
         },
         "unbackedOnboarding" : {
           "title" : "Aucune synchronisation détectée",
-          "description" : "Après avoir activé la synchronisation pour l’autre application Ledger Live, revenez ici et sélectionnez « Réessayer ».",
+          "description" : "Après avoir activé la synchronisation pour l’autre application Ledger Live, revenez ici et sélectionnez Réessayer.",
           "info" : "Si Ledger Sync n’est activé sur aucune application, continuez sans l’activer.",
           "cta" : "Réessayer",
           "cancel" : "Continuer sans synchronisation"
@@ -7260,7 +7273,7 @@
       },
       "unbackedOnboarding" : {
         "title" : "Aucune synchronisation détectée",
-        "description" : "Si Ledger Sync est activé, sélectionnez « Réessayer » et connectez le même appareil Ledger que celui que vous avez utilisé pour l’activer.",
+        "description" : "Si Ledger Sync est activé, sélectionnez Réessayer, et connectez le même appareil Ledger que celui que vous avez utilisé pour l’activer.",
         "info" : "Ou continuez sans Ledger Sync.",
         "cta" : "Réessayer",
         "cancel" : "Continuer sans synchronisation"
