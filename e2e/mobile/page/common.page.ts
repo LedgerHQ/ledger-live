@@ -82,14 +82,15 @@ export default class CommonPage {
     await tapByElement(accountTitle);
   }
 
-  async addSpeculos(nanoApp: string, speculosAddress = "localhost") {
+  async addSpeculos(nanoApp: string) {
     unregisterAllTransportModules();
     const proxyPort = await findFreePort();
     const speculosPort = await launchSpeculos(nanoApp);
+    const speculosAddress = process.env.SPECULOS_ADDRESS;
     await launchProxy(proxyPort, speculosAddress, speculosPort);
     await addKnownSpeculos(`${proxyAddress}:${proxyPort}`);
     process.env.DEVICE_PROXY_URL = `ws://localhost:${proxyPort}`;
-    CLI.registerSpeculosTransport(speculosPort.toString(), `http://${speculosAddress}`);
+    CLI.registerSpeculosTransport(speculosPort.toString(), speculosAddress);
     return speculosPort;
   }
 
