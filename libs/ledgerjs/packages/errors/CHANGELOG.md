@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.20.0-nightly.1
+
+### Minor Changes
+
+- [#9929](https://github.com/LedgerHQ/ledger-live/pull/9929) [`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47) Thanks [@semeano](https://github.com/semeano)! - Add aptos tokens functionality
+
 ## 6.20.0-nightly.0
 
 ### Minor Changes

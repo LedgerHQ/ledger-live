@@ -1,5 +1,45 @@
 # live-mobile
 
+## 3.79.0-nightly.0
+
+### Minor Changes
+
+- [#9929](https://github.com/LedgerHQ/ledger-live/pull/9929) [`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47) Thanks [@semeano](https://github.com/semeano)! - Add aptos tokens functionality
+
+- [#10214](https://github.com/LedgerHQ/ledger-live/pull/10214) [`ea4e1f3`](https://github.com/LedgerHQ/ledger-live/commit/ea4e1f306b025840fc99f2ba42d952a2187b6002) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Update copy of recovery phrase seed to include mention of Recover services
+
+### Patch Changes
+
+- [#10226](https://github.com/LedgerHQ/ledger-live/pull/10226) [`6cb1f8b`](https://github.com/LedgerHQ/ledger-live/commit/6cb1f8b42197a974478ba7ec4e03f7df24cbbe4e) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - add check for existing provider url config to prevent app from crashing on navigation
+
+- [#10195](https://github.com/LedgerHQ/ledger-live/pull/10195) [`d738b06`](https://github.com/LedgerHQ/ledger-live/commit/d738b061d2353b019eade9c08c46413f995cb8f7) Thanks [@qperrot](https://github.com/qperrot)! - Add polyfill for ky retry on LLM Android
+
+- Updated dependencies [[`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47), [`eff3c94`](https://github.com/LedgerHQ/ledger-live/commit/eff3c94c1eded61518097a4544c3f5b25db1e28a)]:
+  - @ledgerhq/errors@6.20.0-nightly.1
+  - @ledgerhq/coin-framework@5.1.0-nightly.0
+  - @ledgerhq/live-env@2.9.0-nightly.0
+  - @ledgerhq/types-live@6.71.0-nightly.0
+  - @ledgerhq/coin-cosmos@0.14.2-nightly.0
+  - @ledgerhq/coin-evm@2.21.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.6-nightly.0
+  - @ledgerhq/coin-multiversx@0.4.6-nightly.0
+  - @ledgerhq/coin-stacks@0.8.6-nightly.0
+  - @ledgerhq/live-countervalues@0.5.6-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.35-nightly.0
+  - @ledgerhq/live-nft@0.8.6-nightly.0
+  - @ledgerhq/live-nft-react@0.9.6-nightly.0
+  - @ledgerhq/live-wallet@0.10.9-nightly.0
+  - @ledgerhq/domain-service@1.2.30-nightly.0
+  - @ledgerhq/ledger-key-ring-protocol@0.5.7-nightly.0
+  - @ledgerhq/devices@8.4.5-nightly.1
+  - @ledgerhq/hw-transport@6.31.5-nightly.1
+  - @ledgerhq/hw-transport-http@6.30.5-nightly.1
+  - @ledgerhq/react-native-hid@6.32.5-nightly.1
+  - @ledgerhq/react-native-hw-transport-ble@6.34.1-nightly.1
+  - @ledgerhq/live-dmk-mobile@0.4.2-nightly.0
+  - @ledgerhq/live-network@2.0.8-nightly.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.5-nightly.0
+
 ## 3.78.0
 
 ### Minor Changes

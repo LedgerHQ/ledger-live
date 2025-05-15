@@ -1,5 +1,29 @@
 # web-tools
 
+## 0.18.2-nightly.0
+
+### Patch Changes
+
+- [#10223](https://github.com/LedgerHQ/ledger-live/pull/10223) [`4b63bbd`](https://github.com/LedgerHQ/ledger-live/commit/4b63bbd52e34dff860d26860ff0f8c4d20c845fa) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Web Tool - Improve Ledger Sync Error message displayed when the app is closed
+
+- Updated dependencies [[`b44563b`](https://github.com/LedgerHQ/ledger-live/commit/b44563b8ee4b639b2b2ab7d0cdf3ed10a2802582), [`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47), [`3a845ae`](https://github.com/LedgerHQ/ledger-live/commit/3a845ae1ed5dc86388c156e05c34c4642181d779), [`eff3c94`](https://github.com/LedgerHQ/ledger-live/commit/eff3c94c1eded61518097a4544c3f5b25db1e28a), [`79e9806`](https://github.com/LedgerHQ/ledger-live/commit/79e9806fda726324a44de5a8ea7891c305e7611b)]:
+  - @ledgerhq/live-common@34.34.0-nightly.0
+  - @ledgerhq/cryptoassets@13.17.0-nightly.1
+  - @ledgerhq/errors@6.20.0-nightly.1
+  - @ledgerhq/coin-framework@5.1.0-nightly.0
+  - @ledgerhq/live-env@2.9.0-nightly.0
+  - @ledgerhq/types-live@6.71.0-nightly.0
+  - @ledgerhq/live-wallet@0.10.9-nightly.0
+  - @ledgerhq/domain-service@1.2.30-nightly.0
+  - @ledgerhq/ledger-key-ring-protocol@0.5.7-nightly.0
+  - @ledgerhq/hw-app-eth@6.45.5-nightly.0
+  - @ledgerhq/hw-transport@6.31.5-nightly.1
+  - @ledgerhq/hw-transport-http@6.30.5-nightly.1
+  - @ledgerhq/hw-transport-web-ble@6.29.5-nightly.1
+  - @ledgerhq/hw-transport-webhid@6.30.1-nightly.1
+  - @ledgerhq/hw-transport-webusb@6.29.5-nightly.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.5-nightly.0
+
 ## 0.18.1
 
 ### Patch Changes

@@ -1,5 +1,50 @@
 # ledger-live-desktop
 
+## 2.114.0-nightly.0
+
+### Minor Changes
+
+- [#10231](https://github.com/LedgerHQ/ledger-live/pull/10231) [`7058050`](https://github.com/LedgerHQ/ledger-live/commit/70580506e3f961661752c18eb5a0ccf8986d9aea) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Upgrade storyly sdk to latest version
+
+- [#9929](https://github.com/LedgerHQ/ledger-live/pull/9929) [`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47) Thanks [@semeano](https://github.com/semeano)! - Add aptos tokens functionality
+
+- [#10214](https://github.com/LedgerHQ/ledger-live/pull/10214) [`ea4e1f3`](https://github.com/LedgerHQ/ledger-live/commit/ea4e1f306b025840fc99f2ba42d952a2187b6002) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Update copy of recovery phrase seed to include mention of Recover services
+
+- [#10158](https://github.com/LedgerHQ/ledger-live/pull/10158) [`eff3c94`](https://github.com/LedgerHQ/ledger-live/commit/eff3c94c1eded61518097a4544c3f5b25db1e28a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a NFT entry that redirect to the 3rd party marketplace in EVM accounts
+
+### Patch Changes
+
+- [#10180](https://github.com/LedgerHQ/ledger-live/pull/10180) [`3a845ae`](https://github.com/LedgerHQ/ledger-live/commit/3a845ae1ed5dc86388c156e05c34c4642181d779) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add nano S error message for ton tokens
+
+- Updated dependencies [[`b44563b`](https://github.com/LedgerHQ/ledger-live/commit/b44563b8ee4b639b2b2ab7d0cdf3ed10a2802582), [`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47), [`3a845ae`](https://github.com/LedgerHQ/ledger-live/commit/3a845ae1ed5dc86388c156e05c34c4642181d779), [`eff3c94`](https://github.com/LedgerHQ/ledger-live/commit/eff3c94c1eded61518097a4544c3f5b25db1e28a), [`79e9806`](https://github.com/LedgerHQ/ledger-live/commit/79e9806fda726324a44de5a8ea7891c305e7611b)]:
+  - @ledgerhq/live-common@34.34.0-nightly.0
+  - @ledgerhq/cryptoassets@13.17.0-nightly.1
+  - @ledgerhq/errors@6.20.0-nightly.1
+  - @ledgerhq/coin-aptos@1.10.0-nightly.0
+  - @ledgerhq/coin-framework@5.1.0-nightly.0
+  - @ledgerhq/live-env@2.9.0-nightly.0
+  - @ledgerhq/types-live@6.71.0-nightly.0
+  - @ledgerhq/live-dmk-desktop@0.3.5-nightly.0
+  - @ledgerhq/coin-bitcoin@0.15.6-nightly.0
+  - @ledgerhq/coin-cosmos@0.14.2-nightly.0
+  - @ledgerhq/coin-evm@2.21.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.6-nightly.0
+  - @ledgerhq/live-countervalues@0.5.6-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.35-nightly.0
+  - @ledgerhq/live-nft@0.8.6-nightly.0
+  - @ledgerhq/live-nft-react@0.9.6-nightly.0
+  - @ledgerhq/live-wallet@0.10.9-nightly.0
+  - @ledgerhq/domain-service@1.2.30-nightly.0
+  - @ledgerhq/ledger-key-ring-protocol@0.5.7-nightly.0
+  - @ledgerhq/devices@8.4.5-nightly.1
+  - @ledgerhq/hw-transport@6.31.5-nightly.1
+  - @ledgerhq/hw-transport-http@6.30.5-nightly.1
+  - @ledgerhq/hw-transport-node-hid-singleton@6.31.6-nightly.1
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.5-nightly.1
+  - @ledgerhq/hw-transport-vault@1.3.5-nightly.1
+  - @ledgerhq/live-network@2.0.8-nightly.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.5-nightly.0
+
 ## 2.113.0
 
 ### Minor Changes

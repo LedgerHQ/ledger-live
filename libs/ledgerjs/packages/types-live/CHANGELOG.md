@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.71.0-nightly.0
+
+### Minor Changes
+
+- [#10158](https://github.com/LedgerHQ/ledger-live/pull/10158) [`eff3c94`](https://github.com/LedgerHQ/ledger-live/commit/eff3c94c1eded61518097a4544c3f5b25db1e28a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a NFT entry that redirect to the 3rd party marketplace in EVM accounts
+
 ## 6.70.0
 
 ### Minor Changes

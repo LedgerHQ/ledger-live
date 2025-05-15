@@ -1,5 +1,18 @@
 # @ledgerhq/coin-sui
 
+## 0.3.3-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47), [`eff3c94`](https://github.com/LedgerHQ/ledger-live/commit/eff3c94c1eded61518097a4544c3f5b25db1e28a)]:
+  - @ledgerhq/cryptoassets@13.17.0-nightly.1
+  - @ledgerhq/errors@6.20.0-nightly.1
+  - @ledgerhq/coin-framework@5.1.0-nightly.0
+  - @ledgerhq/live-env@2.9.0-nightly.0
+  - @ledgerhq/types-live@6.71.0-nightly.0
+  - @ledgerhq/live-network@2.0.8-nightly.0
+  - @ledgerhq/hw-app-sui@1.1.0
+
 ## 0.3.2
 
 ### Patch Changes
