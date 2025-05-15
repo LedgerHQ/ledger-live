@@ -104,6 +104,7 @@ export type Api<
     customFees?: bigint,
   ) => Promise<string>;
   validateIntent?: (account: Account, transaction: Transaction) => Promise<any>;
+  getServerInfo?: () => Promise<any>;
   // TODO: add validateIntent
   getBalance: (address: string) => Promise<Balance<AssetInfo>[]>;
   lastBlock: () => Promise<BlockInfo>;

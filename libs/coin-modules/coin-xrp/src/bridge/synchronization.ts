@@ -9,6 +9,11 @@ import { getAccountInfo, getServerInfos } from "../network";
 import { ServerInfoResponse } from "../network/types";
 import { AccountInfo, XrpAsset } from "../types";
 
+export const getServerInfoBis = async () => {
+  const serverInfo = await getServerInfos();
+  return serverInfo;
+};
+
 export const getAccountShape: GetAccountShape = async info => {
   const { address, initialAccount, currency, derivationMode } = info;
   const accountId = encodeAccountId({
