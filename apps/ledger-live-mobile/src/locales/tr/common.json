@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "İptal et",
+    "copy" : "Kopyala",
+    "copied" : "Kopyalandı",
     "apply" : "Uygula",
     "seeAll" : "Tümünü gör",
     "seeAllWithNumber" : "Tümünü gör ({{number}})",
@@ -100,7 +102,8 @@
       "times" : "x{{ value }}"
     },
     "quote" : "Teklif",
-    "tryAgain" : "Tekrar dene"
+    "tryAgain" : "Tekrar dene",
+    "ldmkEnabled" : "LDMK taşıma etkinleştirildi"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -506,8 +509,16 @@
       "title" : "İşlem ücretlerini ödemek için yeterli EGLD yok",
       "description" : "İşlem ücretlerini ödemek için lütfen hesabınıza bir miktar EGLD gönderin."
     },
+    "NotEnoughToStake" : {
+      "title" : "Stake edilmesi gereken asgari tutar: {{minStake}} {{currency}}",
+      "description" : "En az {{minStake}} {{currency}} stake etmeniz gerekir."
+    },
     "NotEnoughBalance" : {
       "title" : "Üzgünüz, fon miktarı yetersiz",
+      "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "Üzgünüz, fon miktarı işlem ücretlerini karşılamıyor",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
     },
     "NotEnoughBalanceForUnstaking" : {
@@ -4047,7 +4058,9 @@
       "desc" : "Hesap eklemeyi iptal etmek istediğinizden emin misiniz?",
       "v2" : {
         "title" : "Hesap ekleme işlemi iptal edilsin mi?",
-        "desc" : "Ledger Live'a hiçbir hesap eklenmeyecek."
+        "desc" : "Ledger Live'a hiçbir hesap eklenmeyecek.",
+        "continue" : "Eklemeye devam et",
+        "cancel" : "İptal et"
       }
     },
     "imported" : "Varlık başarıyla eklendi",
@@ -4085,7 +4098,7 @@
       "title" : "Token ekle",
       "createParentCurrencyAccount" : "{{parrentCurrencyName}} hesabı ekle",
       "generic" : {
-        "disclaimer" : "{{token}} ({{ticker}}) bir {{tokenType}} token'ıdır.\n Token'ları doğrudan bir {{currency}} hesabına alabilirsiniz.",
+        "disclaimer" : "{{token}} ({{ticker}}) bir {{tokenType}} token'ıdır.\nToken'ları doğrudan bir {{currency}} hesabına alabilirsiniz.",
         "learnMore" : "{{tokenType}} hakkında daha fazla bilgi edinin"
       }
     },
@@ -4823,7 +4836,7 @@
       "poolId" : "Havuz Kimliği",
       "selectPool" : "Havuz seçin",
       "pools" : "Havuzlar",
-      "delegationEarn" : "Varlıklarınızın yetkisini devrederek ADA ödülleri kazanabilirsiniz.",
+      "delegationEarn" : "Varlıklarınızla yetki devrederek ADA ödülleri kazanabilirsiniz.",
       "delegatingFrom" : "Yetkiyi devreden:",
       "delegatingTo" : "Yetkiyi devralan:",
       "info" : "Yetki Devri nasıl çalışır?",
@@ -4983,7 +4996,7 @@
       "flow" : {
         "steps" : {
           "starter" : {
-            "description" : "CELO varlıklarınızın yetkisini bir doğrulayıcıya devrederek ödüller kazanabilirsiniz.",
+            "description" : "CELO varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz.",
             "bullet" : {
               "0" : "Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.",
               "1" : "Ledger cihazınızı kullanarak yetki devredin.",
@@ -5150,12 +5163,12 @@
       }
     },
     "emptyState" : {
-      "description" : "Varlıklarınızın yetkisini devrederek CELO ödülleri kazanabilirsiniz.",
+      "description" : "Varlıklarınızla yetki devrederek CELO ödülleri kazanabilirsiniz.",
       "info" : "Yetki Devri nasıl çalışır?",
       "delegation" : "Ödüller kazanın"
     },
     "earnRewards" : {
-      "description" : "CELO varlıklarınızın yetkisini bir doğrulayıcıya devrederek ödüller kazanabilirsiniz.",
+      "description" : "CELO varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz.",
       "bullet" : {
         "0" : "Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.",
         "1" : "Ledger cihazınızı kullanarak yetki devredin.",
@@ -5191,7 +5204,7 @@
       }
     },
     "delegation" : {
-      "delegationEarn" : "Varlıklarınızın yetkisini devrederek {{ticker}} ödülleri kazanabilirsiniz.",
+      "delegationEarn" : "Varlıklarınızla yetki devrederek {{ticker}} ödülleri kazanabilirsiniz.",
       "info" : "Yetki Devri nasıl çalışır?",
       "claimRewards" : "Ödüllerinizi alın",
       "claimAvailableRewards" : "{{amount}} topla",
@@ -6025,7 +6038,7 @@
         "activating" : "Etkinleştiriliyor",
         "deactivating" : "Devre dışı bırakılıyor"
       },
-      "delegationEarn" : "Varlıklarınızın yetkisini devrederek SOL ödülleri kazanabilirsiniz.",
+      "delegationEarn" : "Varlıklarınızla yetki devrederek SOL ödülleri kazanabilirsiniz.",
       "info" : "Yetki Devri nasıl çalışır?",
       "broadcastSuccessTitle" : "İşlem gönderildi",
       "broadcastSuccessDescription" : "İşlem onaylandığında yetki devrinin durumu güncellenir.",
@@ -7012,7 +7025,7 @@
           "moreOptions" : "Tercihlerinizi yönetin",
           "ctas" : {
             "refuse" : "Tümünü reddet",
-            "accept" : "Tümünü kabul et"
+            "accept" : "Tümünü kabul et"
           },
           "infoText" : {
             "info" : "Onayınızı, dilediğiniz zaman uygulama ayarlarından iptal edebilirsiniz.",
