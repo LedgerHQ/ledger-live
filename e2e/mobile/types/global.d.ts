@@ -45,6 +45,7 @@ declare global {
   var getElementById: typeof NativeElementHelpers.getElementById;
   var getElementsById: typeof NativeElementHelpers.getElementsById;
   var getElementByText: typeof NativeElementHelpers.getElementByText;
+  var getElementByIdAndText: typeof NativeElementHelpers.getElementByIdAndText;
   var IsIdVisible: typeof NativeElementHelpers.isIdVisible;
   var tapById: typeof NativeElementHelpers.tapById;
   var tapByText: typeof NativeElementHelpers.tapByText;
