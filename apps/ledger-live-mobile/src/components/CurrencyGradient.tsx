@@ -10,7 +10,6 @@ function CurrencyGradient({ gradientColor }: { gradientColor: string }) {
     <Svg width={850} height={454} viewBox="0 0 850 454" fill="none">
       <Mask
         id="a"
-        // @ts-expect-error maskType is not in the type definition
         style={{
           maskType: "alpha",
         }}
