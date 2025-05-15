@@ -1,6 +1,5 @@
 import { BigNumber } from "bignumber.js";
 import { AptosValidator } from "@ledgerhq/live-common/families/aptos/types";
-// import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
@@ -33,12 +32,7 @@ const ValidatorRow = ({
       onPress={onPressT}
     >
       <View style={styles.validator}>
-        <ValidatorImage
-          // isLedger={FIGMENT_NEAR_VALIDATOR_ADDRESS === validator.address}
-          isLedger={false}
-          size={32}
-          name={validator.address}
-        />
+        <ValidatorImage isLedger={false} size={32} name={validator.address} />
         <View style={styles.validatorBody}>
           <Text numberOfLines={1} fontWeight="semiBold" style={styles.validatorName}>
             {validator.address}

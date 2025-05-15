@@ -5,8 +5,6 @@ import { AptosMappedStakingPosition } from "@ledgerhq/live-common/families/aptos
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
-// import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
-
 import CounterValue from "~/components/CounterValue";
 import ArrowRight from "~/icons/ArrowRight";
 import ValidatorImage from "../shared/ValidatorImage";
@@ -33,12 +31,7 @@ export default function StakingRow({ stakingPosition, currency, onPress, isLast 
       onPress={() => onPress(stakingPosition)}
     >
       <View style={[styles.icon]}>
-        <ValidatorImage
-          size={42}
-          // isLedger={validatorId === FIGMENT_NEAR_VALIDATOR_ADDRESS}
-          isLedger={false}
-          name={validatorId ?? ""}
-        />
+        <ValidatorImage size={42} isLedger={false} name={validatorId ?? ""} />
       </View>
 
       <View style={styles.nameWrapper}>

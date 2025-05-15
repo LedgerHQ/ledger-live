@@ -32,7 +32,7 @@ function UnstakingFlow() {
         options={({ route }) => ({
           headerTitle: () => (
             <StepHeader
-              title={route.params?.stakingPosition?.validator?.validatorAddress ?? ""}
+              title={route.params?.stakingPosition?.validator?.address ?? ""}
               subtitle={t("aptos.unstaking.stepperHeader.amountSubTitle")}
             />
           ),

@@ -11,8 +11,7 @@ import type {
   AptosMappedStakingPosition,
   AptosAccount,
 } from "@ledgerhq/live-common/families/aptos/types";
-// import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
-// import { canStake, canUnstake, canWithdraw } from "@ledgerhq/live-common/families/near/logic";
+import { canUnstake, canWithdraw } from "@ledgerhq/live-common/families/aptos/logic";
 import { Account } from "@ledgerhq/types-live";
 import AccountDelegationInfo from "~/components/AccountDelegationInfo";
 import IlluRewards from "~/icons/images/Rewards";
@@ -171,11 +170,8 @@ function StakingPositions({ account }: Props) {
   }, [stakingPosition, t, onOpenExplorer]);
 
   const actions = useMemo<DelegationDrawerActions>(() => {
-    // TODO: create canStake, canUnstake and canWithdraw functions
-    // const unstakingEnabled = stakingPosition && canUnstake(stakingPosition);
-    // const withdrawingEnabled = stakingPosition && canWithdraw(stakingPosition);
-    const unstakingEnabled = true;
-    const withdrawingEnabled = true;
+    const unstakingEnabled = stakingPosition && canUnstake(stakingPosition);
+    const withdrawingEnabled = stakingPosition && canWithdraw(stakingPosition);
 
     return stakingPosition
       ? [
@@ -227,12 +223,7 @@ function StakingPositions({ account }: Props) {
         onClose={onCloseDrawer}
         account={account}
         ValidatorImage={({ size }) => (
-          <ValidatorImage
-            // isLedger={stakingPosition?.validatorId === FIGMENT_NEAR_VALIDATOR_ADDRESS}
-            isLedger={false}
-            name={stakingPosition?.validatorId ?? ""}
-            size={size}
-          />
+          <ValidatorImage isLedger={false} name={stakingPosition?.validatorId ?? ""} size={size} />
         )}
         amount={stakingPosition?.staked ?? new BigNumber(0)}
         data={data}
