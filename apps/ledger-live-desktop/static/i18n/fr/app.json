@@ -1091,7 +1091,7 @@
           },
           "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer.",
           "tooltip" : {
-            "amountWithdrawn" : "Le montant retiré est affiché en {{ tokenName }}. Les {{ tokenName }} sont des tokens ERC-20 que vous gagnez en prêtant vos actifs."
+            "amountWithdrawn" : "Le montant retiré est affiché en {{ tokenName }}. Les {{ tokenName }} sont des tokens ERC20 que vous gagnez en prêtant vos actifs."
           }
         }
       }
@@ -1145,7 +1145,7 @@
     },
     "noEthAccount" : {
       "title" : "Merci de créer un compte ETH",
-      "description" : "<0>{{ asset }} ({{ ticker }})</0> est un token Ethereum ERC-20. Pour prêter des {{ ticker }}, installez l’app Ethereum et créez un compte Ethereum.",
+      "description" : "<0>{{ asset }} ({{ ticker }})</0> est un token Ethereum ERC20. Pour prêter des {{ ticker }}, installez l’app Ethereum et créez un compte Ethereum.",
       "cta" : "Ajouter un compte"
     },
     "emptyAccountDeposit" : {
@@ -2461,7 +2461,7 @@
     "chooseName" : "Choisissez un nom",
     "placeholder" : "Stax de Tony",
     "remainingCharacters" : "{{ remainingCharacters }} caractères restants",
-    "renamed" : "Le nouveau nom de votre {{ productName }} est \n« {{ name }} » "
+    "renamed" : "Le nouveau nom de votre {{ productName }} est \n{{ name }} "
   },
   "removeCustomLockscreen" : {
     "title" : "Retirer l’image de fond d’écran",
@@ -3702,7 +3702,7 @@
           },
           "amount" : {
             "title" : "Montant",
-            "reserveWarning" : "Conservez au minimum {{amount}} SOL dans votre wallet pour couvrir les frais de réseau futurs afin de désactiver et retirer vos cryptos stakées"
+            "reserveWarning" : "Conservez au minimum {{amount}} SOL dans votre compte pour couvrir les frais de réseau futurs afin de désactiver et retirer vos cryptos stakées"
           },
           "confirmation" : {
             "success" : {
@@ -5420,7 +5420,9 @@
     "stringHash" : "Hash du message",
     "domainHash" : "Hash du domaine",
     "messageHash" : "Hash du message",
-    "message" : "Message"
+    "message" : "Message",
+    "title" : "Continuez sur votre Ledger {{wording}}",
+    "description" : "Consultez les instructions sur son écran tactile sécurisé."
   },
   "TransactionConfirm" : {
     "title" : "Confirmez l’opération sur votre appareil pour la finaliser.",
@@ -6612,7 +6614,8 @@
       "title" : "Choisir un actif"
     },
     "selectAccount" : {
-      "title" : "Choisir un compte"
+      "title" : "Choisir un compte",
+      "addAccount" : "Créer ou ajouter un compte"
     }
   },
   "customImage" : {
@@ -6835,7 +6838,7 @@
     },
     "unsecuredError" : {
       "title" : "Connectez l’appareil Ledger que vous avez utilisé pour activer Ledger Sync",
-      "description" : "Si vous n’avez pas le même appareil Ledger, sélectionnez plutôt « Supprimer la synchronisation ».",
+      "description" : "Si vous n’avez pas le même appareil Ledger, sélectionnez plutôt : Supprimer la synchronisation.",
       "cta" : "Connecter un autre appareil Ledger",
       "ctaDelete" : "Supprimer la synchronisation"
     },
@@ -6851,7 +6854,7 @@
     },
     "autoRemoveError" : {
       "title" : "Impossible de retirer cet ordinateur pendant que vous l’utilisez",
-      "description" : "Pour le retirer, utilisez un autre téléphone ou ordinateur sur lequel Ledger Sync est activé. Si vous n’avez pas d’autre appareil, sélectionnez plutôt « Supprimer la synchronisation ».",
+      "description" : "Pour le retirer, utilisez un autre téléphone ou ordinateur sur lequel Ledger Sync est activé. Si vous n’avez pas d’autre appareil, sélectionnez plutôt : Supprimer la synchronisation.",
       "cta" : "Compris",
       "ctaDelete" : "Supprimer la synchronisation"
     },
@@ -7042,6 +7045,14 @@
     "opted_out" : {
       "description" : "Avec sa mémoire limitée, votre Ledger Nano S vous prive des dernières fonctionnalités, innovations blockchain et améliorations de sécurité. Pour en bénéficier, choisissez un wallet Ledger plus récent.",
       "cta" : "En savoir plus"
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "Rechercher",
+    "assetFlow" : {
+      "selectTemplate" : "Sélectionner {{dynamic}}",
+      "asset" : "un actif",
+      "network" : "un réseau"
     }
   }
 }
