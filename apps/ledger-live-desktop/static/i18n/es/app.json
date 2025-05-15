@@ -2390,7 +2390,7 @@
         "ethereumPriorityFee" : "Tarifa de prioridad máxima ({{unitName}})",
         "nextBlock" : "Siguiente bloque",
         "suggested" : "Sugerida",
-        "unitPerByte" : "{{unit}} por byte",
+        "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
         "nftQuantity" : "Cantidad"
       },
@@ -2423,8 +2423,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "¿No vas a usar una nota/memo?",
-        "description" : "Tus fondos se perderán si no agregas una etiqueta/memo al enviarlos a un exchange centralizado o una billetera con custodia.",
+        "title" : "¿Necesitas una etiqueta o memo?",
+        "description" : "No incluir una etiqueta o memo cuando envías fondos a un exchange centralizado aumenta las probabilidades de perder tus fondos.",
         "cta.addTag" : "Agregar etiqueta",
         "cta.not.addTag" : "No agregar etiqueta",
         "checkbox.label" : "No mostrar esto de nuevo."
@@ -3827,6 +3827,131 @@
       }
     }
   },
+  "aptos" : {
+    "common" : {
+      "broadcastError" : "Tu transacción puede haber fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo.",
+      "viewDetails" : "Ver detalles",
+      "connectDevice" : {
+        "title" : "Dispositivo"
+      },
+      "confirmation" : {
+        "title" : "Confirmación"
+      }
+    },
+    "delegation" : {
+      "nextUnlockIn" : "Siguiente unlock en",
+      "totalStake" : "Participación total",
+      "commission" : "Comisión",
+      "delegate" : "Agregar participación",
+      "stakingPositionHeader" : "Posiciones de participación",
+      "stakedHeader" : "En participación",
+      "pendingReleaseHeader" : "Pendiente de liberación",
+      "availableBalance" : "Puede retirarse",
+      "active" : "Activo",
+      "activeTooltip" : "Cantidad activa genera recompensas",
+      "inactiveTooltip" : "Cantidad inactiva no genera recompensas",
+      "delegatedInfoTooltip" : "Cantidad total delegada a validadores.",
+      "withdrawableInfoTooltip" : "Cantidad total que es posible retirar de las delegaciones.",
+      "withdrawableTitle" : "Puede retirarse",
+      "statusUpdateNotice" : "El estado de la delegación se actualizará cuando se confirme la transacción.",
+      "ledgerByFigmentTC" : "Términos y condiciones de Ledger by Figment",
+      "ledgerByChorusOneTC" : "Términos y condiciones de Ledger by Chorus One",
+      "emptyState" : {
+        "description" : "Puedes recibir recompensas de APT al delegar tus activos.",
+        "info" : "Cómo funciona la delegación",
+        "delegation" : "Ganar recompensas"
+      },
+      "earnRewards" : {
+        "description" : "Es posible recibir recompensas al delegar tus activos APT a un validador.",
+        "bullet" : {
+          "0" : "Conservas la propiedad de los activos delegados",
+          "1" : "Delegar utilizando tu dispositivo Ledger",
+          "2" : "Los activos estarán disponibles después de la desdelegación"
+        },
+        "warning" : "Elige tu validador con cuidado: Puedes perder definitivamente parte de tus activos delegados si el validador no se comporta apropiadamente."
+      },
+      "states" : {
+        "active" : "Activo",
+        "inactive" : "Inactivo",
+        "activating" : "Activando",
+        "deactivating" : "Desactivando"
+      },
+      "flow" : {
+        "title" : "Delegar",
+        "steps" : {
+          "validator" : {
+            "title" : "Validador"
+          },
+          "amount" : {
+            "title" : "Importe",
+            "reserveWarning" : "Asegúrate de contar con al menos {{amount}} APT en tu billetera para cubrir las futuras tarifas de red, necesarias para quitar de participación tus activos y retirarlos."
+          },
+          "confirmation" : {
+            "success" : {
+              "title" : "Has delegado tus activos con éxito"
+            }
+          }
+        }
+      },
+      "withdraw" : {
+        "flow" : {
+          "title" : "Retirar",
+          "steps" : {
+            "amount" : {
+              "title" : "Importe"
+            },
+            "confirmation" : {
+              "success" : {
+                "title" : "Has retirado con éxito tus activos.",
+                "text" : "El saldo de tu cuenta se actualizará cuando se confirme la transacción."
+              }
+            }
+          }
+        }
+      },
+      "activate" : {
+        "flow" : {
+          "title" : "Activar",
+          "steps" : {
+            "confirmation" : {
+              "success" : {
+                "title" : "Has activado correctamente tu delegación."
+              }
+            }
+          }
+        }
+      },
+      "reactivate" : {
+        "flow" : {
+          "title" : "Reactivar",
+          "steps" : {
+            "confirmation" : {
+              "success" : {
+                "title" : "Has reactivado correctamente tu delegación."
+              }
+            }
+          }
+        }
+      },
+      "deactivate" : {
+        "flow" : {
+          "title" : "Desactivar",
+          "steps" : {
+            "confirmation" : {
+              "success" : {
+                "title" : "Has desactivado correctamente tu delegación."
+              }
+            }
+          }
+        }
+      },
+      "stake" : {
+        "unstake" : "Cancelar la puesta en participación",
+        "withdraw" : "Retirar",
+        "restake" : "Volver a poner en participación"
+      }
+    }
+  },
   "ethereum" : {
     "stake_deprecated" : {
       "title" : "Rentabiliza tus tenencias en ETH",
@@ -4834,7 +4959,7 @@
         "description" : "Gestiona, compra y rentabiliza tus cripto y NFTs con seguridad desde Ledger Live",
         "nextButton" : "Comenzar",
         "noDevice" : "¿No tienes un dispositivo?",
-        "buyLink" : "¿No tienes un dispositivo? Compra un Ledger Nano X",
+        "buyLink" : "¿No tienes un dispositivo? Compra un Ledger",
         "byTapping" : "Al tocar “Comenzar”, otorgas tu consentimiento y aceptas nuestros",
         "termsAndConditions" : "Términos y condiciones",
         "and" : "y",
@@ -5860,8 +5985,16 @@
       "title" : "El cálculo de tarifas ha fallado",
       "description" : "La estimación de tarifas falló en la red. Comprueba la información aportada; lo más probable es que la transacción falle"
     },
+    "NotEnoughToStake" : {
+      "title" : "Cantidad mínima para poner en participación: {{minStake}} {{currency}}",
+      "description" : "Para la puesta en participación se requiere una cantidad mínima de {{minStake}} {{currency}}."
+    },
     "NotEnoughBalance" : {
       "title" : "Fondos insuficientes",
+      "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "Fondos insuficientes para cubrir las tarifas",
       "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
     },
     "NotEnoughBalanceSwap" : {
