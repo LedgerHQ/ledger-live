@@ -82,6 +82,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Indexer endpoint for Aptos",
   },
+  APTOS_ENABLE_TOKENS: {
+    def: false,
+    parser: boolParser,
+    desc: "Enable tokens on Aptos",
+  },
   API_CASPER_INDEXER_ENDPOINT: {
     parser: stringParser,
     def: "https://casper.coin.ledger.com/indexer",

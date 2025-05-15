@@ -1,26 +1,20 @@
 # @ledgerhq/coin-tezos
 
-## 5.1.0-nightly.2
+## 5.0.1
 
 ### Patch Changes
 
-- Updated dependencies [[`f92f49a`](https://github.com/LedgerHQ/ledger-live/commit/f92f49a003767b83b94955e920cfac8cd565c162)]:
-  - @ledgerhq/cryptoassets@13.17.0-nightly.0
-  - @ledgerhq/coin-framework@5.0.1-nightly.1
+- Updated dependencies [[`a7ba19c`](https://github.com/LedgerHQ/ledger-live/commit/a7ba19cfa5a895572edfcf036a10d2af83efdf38), [`91fe526`](https://github.com/LedgerHQ/ledger-live/commit/91fe526be2710f0fb18b4d035a5d8de630b3d4b5)]:
+  - @ledgerhq/types-live@6.70.0
+  - @ledgerhq/coin-framework@5.0.1
 
-## 5.1.0-nightly.1
-
-### Minor Changes
-
-- [#10188](https://github.com/LedgerHQ/ledger-live/pull/10188) [`7dbf446`](https://github.com/LedgerHQ/ledger-live/commit/7dbf446811bbc99a15a04bc1294c6b3b8401f667) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - [coin-modules][tezos] fix tezos transaction crafting setting gasLimit/storageLimit to 0
-
-## 5.0.1-nightly.0
+## 5.0.1-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`91fe526`](https://github.com/LedgerHQ/ledger-live/commit/91fe526be2710f0fb18b4d035a5d8de630b3d4b5)]:
-  - @ledgerhq/types-live@6.70.0-nightly.0
-  - @ledgerhq/coin-framework@5.0.1-nightly.0
+- Updated dependencies [[`a7ba19c`](https://github.com/LedgerHQ/ledger-live/commit/a7ba19cfa5a895572edfcf036a10d2af83efdf38), [`91fe526`](https://github.com/LedgerHQ/ledger-live/commit/91fe526be2710f0fb18b4d035a5d8de630b3d4b5)]:
+  - @ledgerhq/types-live@6.70.0-next.0
+  - @ledgerhq/coin-framework@5.0.1-next.0
 
 ## 5.0.0
 

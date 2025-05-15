@@ -1,4 +1,4 @@
-import { renderHook } from "tests/testUtils";
+import { renderHook } from "tests/testSetup";
 import {
   useTrackTransactionChecksFlow,
   UseTrackTransactionChecksFlow,

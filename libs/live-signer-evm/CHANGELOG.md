@@ -1,13 +1,6 @@
 # @ledgerhq/live-signer-evm
 
-## 0.4.0-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`5657584`](https://github.com/LedgerHQ/ledger-live/commit/565758426688c9604c7958183ec5b3d4e35ffbe4)]:
-  - @ledgerhq/coin-evm@2.21.0-nightly.1
-
-## 0.4.0-nightly.0
+## 0.4.0
 
 ### Minor Changes
 
@@ -16,8 +9,20 @@
 ### Patch Changes
 
 - Updated dependencies [[`91fe526`](https://github.com/LedgerHQ/ledger-live/commit/91fe526be2710f0fb18b4d035a5d8de630b3d4b5)]:
-  - @ledgerhq/coin-evm@2.21.0-nightly.0
-  - @ledgerhq/hw-app-eth@6.45.4-nightly.0
+  - @ledgerhq/coin-evm@2.21.0
+  - @ledgerhq/hw-app-eth@6.45.4
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#10103](https://github.com/LedgerHQ/ledger-live/pull/10103) [`91fe526`](https://github.com/LedgerHQ/ledger-live/commit/91fe526be2710f0fb18b4d035a5d8de630b3d4b5) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add tracking for transaction checks opt in result
+
+### Patch Changes
+
+- Updated dependencies [[`91fe526`](https://github.com/LedgerHQ/ledger-live/commit/91fe526be2710f0fb18b4d035a5d8de630b3d4b5)]:
+  - @ledgerhq/coin-evm@2.21.0-next.0
+  - @ledgerhq/hw-app-eth@6.45.4-next.0
 
 ## 0.3.2
 

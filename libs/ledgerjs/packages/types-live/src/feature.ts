@@ -225,6 +225,7 @@ export type Features = CurrencyFeatures & {
   llmMmkvMigration: Feature_LlmMmkvMigration;
   lldModularDrawer: Feature_LldModularDrawer;
   llNftSupport: DefaultFeature;
+  llNftEntryPoint: Feature_LlNftEntryPoint;
 };
 
 /**
@@ -577,6 +578,12 @@ export type Feature_LldLedgerSyncEntryPoints = Feature<{
   accounts: boolean;
   settings: boolean;
   onboarding: boolean;
+}>;
+
+export type Feature_LlNftEntryPoint = Feature<{
+  magiceden: boolean;
+  opensea: boolean;
+  chains: string[];
 }>;
 
 export type Feature_LlCounterValueGranularitiesRates = Feature<{

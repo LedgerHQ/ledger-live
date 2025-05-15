@@ -1,13 +1,12 @@
 # @ledgerhq/native-ui
 
-## 0.34.0-nightly.1
+## 0.34.0
 
-### Patch Changes
+### Minor Changes
 
-- Updated dependencies [[`0c268fb`](https://github.com/LedgerHQ/ledger-live/commit/0c268fbc9d08f98b2b383fde36d77e92b5953675)]:
-  - @ledgerhq/crypto-icons-ui@1.14.0-nightly.0
+- [#10071](https://github.com/LedgerHQ/ledger-live/pull/10071) [`2ff4c03`](https://github.com/LedgerHQ/ledger-live/commit/2ff4c03ca7d8232563141b9531b1359087e57c59) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Generic Card for Large Mover
 
-## 0.34.0-nightly.0
+## 0.34.0-next.0
 
 ### Minor Changes
 
