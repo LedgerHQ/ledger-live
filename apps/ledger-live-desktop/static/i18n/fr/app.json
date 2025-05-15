@@ -120,7 +120,7 @@
     "addressCopiedSuspicious" : "Différence entre l’adresse copiée et celle dans le presse-papiers.",
     "experimentalFeature" : "Expérimental",
     "featureFlags" : "Feature flag",
-    "ldmkEnabled" : "Transport du LDMK",
+    "ldmkEnabled" : "Transport LDMK",
     "information" : "Informations",
     "search" : "Rechercher...",
     "searchWithoutEllipsis" : "Rechercher",
@@ -1091,7 +1091,7 @@
           },
           "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer.",
           "tooltip" : {
-            "amountWithdrawn" : "Le montant retiré est affiché en {{ tokenName }}. Les {{ tokenName }} sont des tokens ERC-20 que vous gagnez en prêtant vos actifs."
+            "amountWithdrawn" : "Le montant retiré est affiché en {{ tokenName }}. Les {{ tokenName }} sont des tokens ERC20 que vous gagnez en prêtant vos actifs."
           }
         }
       }
@@ -1145,7 +1145,7 @@
     },
     "noEthAccount" : {
       "title" : "Merci de créer un compte ETH",
-      "description" : "<0>{{ asset }} ({{ ticker }})</0> est un token Ethereum ERC-20. Pour prêter des {{ ticker }}, installez l’app Ethereum et créez un compte Ethereum.",
+      "description" : "<0>{{ asset }} ({{ ticker }})</0> est un token Ethereum ERC20. Pour prêter des {{ ticker }}, installez l’app Ethereum et créez un compte Ethereum.",
       "cta" : "Ajouter un compte"
     },
     "emptyAccountDeposit" : {
@@ -1554,7 +1554,7 @@
       }
     },
     "marketPerformanceWidget" : {
-      "title" : "Tendance {{time}}",
+      "title" : "Tendance - {{time}}",
       "buy" : "Acheter",
       "swap" : "Échanger",
       "gainers" : "Hausses",
@@ -1779,7 +1779,7 @@
     },
     "fullNodeReadyInfo" : "Les comptes seront ajoutés en utilisant votre nœud Bitcoin.",
     "fullNodeConfigure" : "Configurer le nœud",
-    "tokensTip" : "{{token}} ({{ticker}}) est un token {{tokenType}}. Vous pouvez recevoir ces tokens directement sur un compte {{currency}}.",
+    "tokensTip" : "{{token}} ({{ticker}}) est un token {{tokenType}}.\n Vous pouvez recevoir ces tokens directement sur un compte {{currency}}.",
     "accountToImportSubtitle_plural" : "Ajouter des comptes existants",
     "selectAll" : "Sélectionner tout ({{count}})",
     "unselectAll" : "Désélectionner tout ({{count}})",
@@ -2370,7 +2370,7 @@
       },
       "details" : {
         "utxoLag" : "Cette transaction peut prendre plus de temps à être vérifiée et signée, car le compte a un nombre élevé de coins.",
-        "subaccountsWarning" : "Vous devez recharger ce compte avec des {{ currency }} afin d’envoyer les tokens de ce compte.",
+        "subaccountsWarning" : "Vous devez approvisionner ce compte avec des {{ currency }} afin d’envoyer les tokens de ce compte.",
         "from" : "De",
         "to" : "À",
         "selectAccountDebit" : "Compte à débiter",
@@ -2390,7 +2390,7 @@
         "ethereumPriorityFee" : "Frais de priorité maximaux ({{unitName}})",
         "nextBlock" : "Bloc suivant",
         "suggested" : "Suggéré",
-        "unitPerByte" : "{{unit}} par byte",
+        "unitVByte" : "{{unit}}/vByte",
         "nft" : "NFT",
         "nftQuantity" : "Nombre"
       },
@@ -2423,8 +2423,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "Vous n’utilisez pas de tag/mémo ?",
-        "description" : "Vos actifs seront perdus si vous n’ajoutez pas un tag/mémo lorsque vous les envoyez vers une plateforme d’échange centralisée ou un wallet dépositaire.",
+        "title" : "Besoin d’un tag/mémo ?",
+        "description" : "Ne pas ajouter de tag/mémo lors d’un envoi vers une plateforme centralisée augmente le risque de perte d’actifs.",
         "cta.addTag" : "Ajouter un tag",
         "cta.not.addTag" : "Ne pas ajouter de tag",
         "checkbox.label" : "Ne plus afficher"
@@ -2460,7 +2460,7 @@
     "chooseName" : "Choisissez un nom",
     "placeholder" : "Stax de Tony",
     "remainingCharacters" : "{{ remainingCharacters }} caractères restants",
-    "renamed" : "Le nouveau nom de votre {{ productName }} est \n« {{ name }} » "
+    "renamed" : "Le nouveau nom de votre {{ productName }} est \n{{ name }} "
   },
   "removeCustomLockscreen" : {
     "title" : "Retirer l’image de fond d’écran",
@@ -2562,7 +2562,7 @@
       "totalStake" : "Stake total",
       "activeTooltip" : "Les montants délégués génèrent des récompenses.",
       "inactiveTooltip" : "Les montants retirés de la délégation ne génèrent pas de récompenses.",
-      "minSafeWarning" : "Fonds insuffisants. Vous devez avoir au moins 1 EGLD disponible.",
+      "minSafeWarning" : "Solde insuffisant. Vous devez avoir au moins 1 EGLD disponible.",
       "flow" : {
         "title" : "Déléguer",
         "steps" : {
@@ -3166,7 +3166,7 @@
       "estYield" : "rendement estimé",
       "activeTooltip" : "Les montants délégués génèrent des récompenses.",
       "inactiveTooltip" : "Les montants retirés de la délégation ne génèrent pas de récompenses.",
-      "minSafeWarning" : "Fonds insuffisants",
+      "minSafeWarning" : "Solde insuffisant",
       "flow" : {
         "title" : "Déléguer",
         "steps" : {
@@ -3701,7 +3701,7 @@
           },
           "amount" : {
             "title" : "Montant",
-            "reserveWarning" : "Conservez au minimum {{amount}} SOL dans votre wallet pour couvrir les frais de réseau futurs afin de désactiver et retirer vos cryptos stakées"
+            "reserveWarning" : "Conservez au minimum {{amount}} SOL dans votre compte pour couvrir les frais de réseau futurs afin de désactiver et retirer vos cryptos stakées"
           },
           "confirmation" : {
             "success" : {
@@ -3824,6 +3824,131 @@
           "interestRateNotSetup" : "Le taux d’intérêt actuel est fixé à 0%.",
           "description" : "Tokens dont la valeur augmente ou diminue constamment en fonction de leur taux d’intérêt. Fonctionnalité purement visuelle : aucun nouveau token n’est créé."
         }
+      }
+    }
+  },
+  "aptos" : {
+    "common" : {
+      "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer.",
+      "viewDetails" : "Voir les détails",
+      "connectDevice" : {
+        "title" : "Appareil"
+      },
+      "confirmation" : {
+        "title" : "Confirmation"
+      }
+    },
+    "delegation" : {
+      "nextUnlockIn" : "Disponible dans",
+      "totalStake" : "Stake total",
+      "commission" : "Commission",
+      "delegate" : "Ajouter",
+      "stakingPositionHeader" : "Positions de staking",
+      "stakedHeader" : "Staké",
+      "pendingReleaseHeader" : "En attente de libération",
+      "availableBalance" : "Disponible au retrait",
+      "active" : "Actif",
+      "activeTooltip" : "Montant actif générant des récompenses",
+      "inactiveTooltip" : "Montant inactif ne générant pas de récompenses",
+      "delegatedInfoTooltip" : "Montant total délégué à des validateurs",
+      "withdrawableInfoTooltip" : "Montant total pouvant être retiré des délégations",
+      "withdrawableTitle" : "Disponible au retrait",
+      "statusUpdateNotice" : "Le statut de la délégation sera mis à jour une fois la transaction confirmée.",
+      "ledgerByFigmentTC" : "CG de Ledger by Figment",
+      "ledgerByChorusOneTC" : "CG de Ledger by Chorus One",
+      "emptyState" : {
+        "description" : "Vous pouvez gagner des récompenses en APT en déléguant vos actifs.",
+        "info" : "Fonctionnement de la délégation",
+        "delegation" : "Gagnez des récompenses"
+      },
+      "earnRewards" : {
+        "description" : "Vous pouvez gagner des récompenses en déléguant vos APT à un validateur.",
+        "bullet" : {
+          "0" : "Vous gardez la propriété de vos actifs délégués.",
+          "1" : "Déléguez avec votre appareil Ledger",
+          "2" : "Les actifs seront disponibles une fois la délégation arrêtée."
+        },
+        "warning" : "Choisissez votre validateur judicieusement : vous pouvez perdre une partie de vos actifs délégués si le validateur ne respecte pas les règles."
+      },
+      "states" : {
+        "active" : "Actif",
+        "inactive" : "Inactif",
+        "activating" : "Activation",
+        "deactivating" : "Désactivation"
+      },
+      "flow" : {
+        "title" : "Déléguer",
+        "steps" : {
+          "validator" : {
+            "title" : "Validateur"
+          },
+          "amount" : {
+            "title" : "Montant",
+            "reserveWarning" : "Conservez au minimum {{amount}} APT dans votre compte pour couvrir les frais de réseau futurs afin de désactiver et retirer vos cryptos stakées"
+          },
+          "confirmation" : {
+            "success" : {
+              "title" : "Actifs délégués"
+            }
+          }
+        }
+      },
+      "withdraw" : {
+        "flow" : {
+          "title" : "Retirer",
+          "steps" : {
+            "amount" : {
+              "title" : "Montant"
+            },
+            "confirmation" : {
+              "success" : {
+                "title" : "Retrait des actifs effectué",
+                "text" : "Le solde de votre compte sera mis à jour une fois la transaction confirmée."
+              }
+            }
+          }
+        }
+      },
+      "activate" : {
+        "flow" : {
+          "title" : "Activer",
+          "steps" : {
+            "confirmation" : {
+              "success" : {
+                "title" : "Activation de la délégation effectuée"
+              }
+            }
+          }
+        }
+      },
+      "reactivate" : {
+        "flow" : {
+          "title" : "Réactiver",
+          "steps" : {
+            "confirmation" : {
+              "success" : {
+                "title" : "Réactivation de la délégation effectuée"
+              }
+            }
+          }
+        }
+      },
+      "deactivate" : {
+        "flow" : {
+          "title" : "Désactiver",
+          "steps" : {
+            "confirmation" : {
+              "success" : {
+                "title" : "Désactivation de la délégation effectuée"
+              }
+            }
+          }
+        }
+      },
+      "stake" : {
+        "unstake" : "Déstaker",
+        "withdraw" : "Retirer",
+        "restake" : "Restaker"
       }
     }
   },
@@ -3974,7 +4099,7 @@
       "inactiveTooltip" : "Les montants déstakés ne génèrent plus de récompenses.",
       "commission" : "Commission",
       "totalStake" : "Stake total",
-      "minSafeWarning" : "Fonds insuffisants",
+      "minSafeWarning" : "Solde insuffisant",
       "flow" : {
         "title" : "Staker",
         "steps" : {
@@ -4423,7 +4548,7 @@
       "firebaseProject" : "Projet Firebase ciblé par ce build :",
       "addLocalApp" : "Ajouter une app locale",
       "addLocalAppDesc" : "Parcourez vos fichiers et ajoutez une app locale avec un manifeste local.",
-      "addLocalAppButton" : "Naviguer",
+      "addLocalAppButton" : "Parcourir",
       "createLocalAppModal" : {
         "title" : {
           "create" : "Créer une app locale",
@@ -4834,7 +4959,7 @@
         "description" : "Gérez, achetez et faites fructifier vos cryptos et NFT en toute sécurité via Ledger Live.",
         "nextButton" : "Commencer",
         "noDevice" : "Pas encore d’appareil ?",
-        "buyLink" : "Pas encore d’appareil ? Achetez un Ledger Nano X.",
+        "buyLink" : "Pas encore d’appareil ? Acheter un wallet",
         "byTapping" : "En appuyant sur Commencer, vous acceptez nos",
         "termsAndConditions" : "Conditions générales",
         "and" : "et",
@@ -5616,7 +5741,7 @@
     },
     "CosmosBroadcastCodeInsufficientFunds" : {
       "title" : "Solde insuffisant",
-      "description" : "Assurez-vous que le compte utilisé a des fonds suffisants et réessayez."
+      "description" : "Assurez-vous que le compte utilisé a un solde suffisant et réessayez."
     },
     "CosmosBroadcastCodeUnknownRequest" : {
       "title" : "Une erreur est survenue (Erreur #6)",
@@ -5636,7 +5761,7 @@
     },
     "CosmosBroadcastCodeInsufficientCoins" : {
       "title" : "Fonds insuffisants",
-      "description" : "Assurez-vous que le compte utilisé a des fonds suffisants et réessayez."
+      "description" : "Assurez-vous que le compte utilisé a un solde suffisant et réessayez."
     },
     "CosmosBroadcastCodeInvalidCoins" : {
       "title" : "Une erreur est survenue (Erreur #11)",
@@ -5860,13 +5985,21 @@
       "title" : "Échec de l’estimation des frais",
       "description" : "Échec de l’estimation des frais sur le réseau. Vérifiez les entrées, la transaction risque de ne pas aboutir."
     },
+    "NotEnoughToStake" : {
+      "title" : "Montant de staking minimal : {{minStake}} {{currency}}",
+      "description" : "Vous devez allouer au moins {{minStake}} {{currency}} pour staker."
+    },
     "NotEnoughBalance" : {
       "title" : "Solde insuffisant",
-      "description" : "Vérifiez que ce compte a des fonds suffisants."
+      "description" : "Vérifiez que ce compte a un solde suffisant."
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "Solde insuffisant pour couvrir les frais",
+      "description" : "Vérifiez que ce compte a un solde suffisant."
     },
     "NotEnoughBalanceSwap" : {
       "title" : "Solde insuffisant, frais de réseau inclus. Modifiez le montant ou vérifiez votre solde.",
-      "description" : "Vérifiez que ce compte a des fonds suffisants."
+      "description" : "Vérifiez que ce compte a un solde suffisant."
     },
     "NotEnoughBalanceBecauseDestinationNotCreated" : {
       "title" : "L’adresse du bénéficiaire est inactive. Envoyez au minimum {{minimalAmount}} pour l’activer."
@@ -6822,7 +6955,7 @@
     },
     "unsecuredError" : {
       "title" : "Connectez l’appareil Ledger que vous avez utilisé pour activer Ledger Sync",
-      "description" : "Si vous n’avez pas le même appareil Ledger, sélectionnez plutôt « Supprimer la synchronisation ».",
+      "description" : "Si vous n’avez pas le même appareil Ledger, sélectionnez plutôt : Supprimer la synchronisation.",
       "cta" : "Connecter un autre appareil Ledger",
       "ctaDelete" : "Supprimer la synchronisation"
     },
@@ -6838,7 +6971,7 @@
     },
     "autoRemoveError" : {
       "title" : "Impossible de retirer cet ordinateur pendant que vous l’utilisez",
-      "description" : "Pour le retirer, utilisez un autre téléphone ou ordinateur sur lequel Ledger Sync est activé. Si vous n’avez pas d’autre appareil, sélectionnez plutôt « Supprimer la synchronisation ».",
+      "description" : "Pour le retirer, utilisez un autre téléphone ou ordinateur sur lequel Ledger Sync est activé. Si vous n’avez pas d’autre appareil, sélectionnez plutôt : Supprimer la synchronisation.",
       "cta" : "Compris",
       "ctaDelete" : "Supprimer la synchronisation"
     },
