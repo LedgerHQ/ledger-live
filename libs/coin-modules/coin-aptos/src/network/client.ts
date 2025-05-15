@@ -269,8 +269,8 @@ export class AptosAPI {
     transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender>,
   ): Promise<FeeEstimation<AptosFeeParameters>> {
     const publicKeyEd = new Ed25519PublicKey(transactionIntent.sender.xpub);
-    const fn: MoveFunctionId =
-      transactionIntent.asset.type === "native" ? "0x1::aptos_account::transfer_coins" : "x::x::x";
+    const fn: MoveFunctionId = "0x1::aptos_account::transfer_coins";
+
     const txPayload: InputEntryFunctionData = {
       function: fn,
       typeArguments: [APTOS_ASSET_ID],
