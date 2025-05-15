@@ -1,16 +1,16 @@
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
 import { broadcast as logicBroadcast } from "../logic";
-import { PolkadotAccount, Transaction } from "../types";
+import { Transaction } from "../types";
 
 /**
  * Broadcast the signed transaction
  * @param {signature: string, operation: string} signedOperation
  */
 export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
-  account,
   signedOperation: { signature, operation },
+  account,
 }) => {
-  const hash = await logicBroadcast(signature, account as PolkadotAccount);
+  const hash = await logicBroadcast(signature, account.currency.id);
   return patchOperationWithHash(operation, hash);
 };

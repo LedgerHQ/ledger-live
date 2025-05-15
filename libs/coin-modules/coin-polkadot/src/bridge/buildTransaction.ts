@@ -1,6 +1,7 @@
 import type { PolkadotAccount, Transaction } from "../types";
 import { craftTransaction, type CreateExtrinsicArg } from "../logic";
 import { isFirstBond, getNonce } from "./utils";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/lib-es/currencies";
 
 export const extractExtrinsicArg = (
   account: PolkadotAccount,
@@ -29,9 +30,10 @@ export const buildTransaction = async (
   forceLatestParams = false,
 ) => {
   return craftTransaction(
-    account,
+    account.freshAddress,
     getNonce(account),
     extractExtrinsicArg(account, transaction),
     forceLatestParams,
+    getCryptoCurrencyById(account.currency.id),
   );
 };
