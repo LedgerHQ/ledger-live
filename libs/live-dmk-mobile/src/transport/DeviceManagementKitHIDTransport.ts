@@ -12,6 +12,12 @@ import { BehaviorSubject, firstValueFrom, pairwise, startWith, Subscription } fr
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
 import { LocalTracer } from "@ledgerhq/logs";
 
+const isDeviceSessionNotFoundError = (error: unknown): error is { _tag: "DeviceSessionNotFound" } =>
+  typeof error === "object" &&
+  error !== null &&
+  "_tag" in error &&
+  error._tag === "DeviceSessionNotFound";
+
 type DMKTransport = Transport & {
   sessionId: string;
   dmk: DeviceManagementKit;
@@ -91,9 +97,6 @@ export class DeviceManagementKitHIDTransport extends Transport {
 
   static listen(observer: TransportObserver<DescriptorEvent<string>, HwTransportError>) {
     const dmk = getDeviceManagementKit();
-    const observable = dmk.listenToAvailableDevices({
-      transport: rnHidTransportIdentifier,
-    });
 
     let availableSubscription: Subscription | undefined = undefined;
     let connectedSubscription: Subscription | undefined = undefined;
@@ -138,12 +141,19 @@ export class DeviceManagementKitHIDTransport extends Transport {
           });
         } catch (err) {
           tracer.trace("[DMKTransportHID] [listen] listen getDeviceSessionState error", { err });
-          observer.error(err as HwTransportError);
+          // if a connected device is manually disconnected and connected after the disconnect timeout the device
+          // session not found error block the discovering
+          if (!isDeviceSessionNotFoundError(err)) {
+            observer.error(err as HwTransportError);
+          }
         }
       },
     });
 
-    availableSubscription = observable
+    availableSubscription = dmk
+      .listenToAvailableDevices({
+        transport: rnHidTransportIdentifier,
+      })
       .pipe(startWith([] as DiscoveredDevice[]), pairwise())
       .subscribe({
         next: ([prevDevices, currDevices]) => {
@@ -224,7 +234,6 @@ export class DeviceManagementKitHIDTransport extends Transport {
 
   close() {
     tracer.trace("[DMKTransportHID] [close] closing transport");
-    this.dmk.stopDiscovering();
     return Promise.resolve();
   }
 
