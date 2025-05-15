@@ -1779,7 +1779,7 @@
     },
     "fullNodeReadyInfo" : "ستتم إضافة الحسابات باستخدام عقدتك الكاملة لبيتكوين.",
     "fullNodeConfigure" : "تكوين العقدة",
-    "tokensTip" : "{{token}} ({{ticker}}) هو رمز {{tokenType}}. يمكنك تلقي رموز التوكن مباشرةً على حساب {{currency}}.",
+    "tokensTip" : "{{token}} ({{ticker}}) هو رمز {{tokenType}}. يمكنك تلقي رموز التوكن مباشرةً في حساب {{currency}}.",
     "accountToImportSubtitle_plural" : "إضافة حسابات موجودة",
     "selectAll" : "اختر الكل ({{count}})",
     "unselectAll" : "إلغاء اختيار الكل ({{count}})",
@@ -2390,7 +2390,7 @@
         "ethereumPriorityFee" : "الحد الأقصى لرسوم الأولوية ({{unitName}})",
         "nextBlock" : "الكتلة التالية",
         "suggested" : "مُقترح",
-        "unitPerByte" : "{{unit}} لكل بايت",
+        "unitVByte" : "{{unit}}/بايت افتراضي (vbyte)",
         "nft" : "NFT",
         "nftQuantity" : "الكمية"
       },
@@ -2423,8 +2423,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "لا تستخدم علامة/ملاحظة (تسمية الوجهة)؟",
-        "description" : "أموالك سوف تُفقَد إذا لم تقم بإضافة علامة/ملاحظة (تسمية الوجهة) عند إرسالها إلى أي منصة تداول مركزية أو محفظة وصاية.",
+        "title" : "تحتاج إلى علامة/ملاحظة (تسمية الوجهة)؟",
+        "description" : "عدم إضافة علامة/ملاحظة (تسمية الوجهة) عند إرسال الأموال إلى منصة تداول مركزية يزيد من احتمالات ضياع أموالك.",
         "cta.addTag" : "إضافة علامة",
         "cta.not.addTag" : "لا تضف علامة",
         "checkbox.label" : "لا تظهر هذا مرةً أخرى."
@@ -3827,6 +3827,131 @@
       }
     }
   },
+  "aptos" : {
+    "common" : {
+      "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى.",
+      "viewDetails" : "عرض التفاصيل",
+      "connectDevice" : {
+        "title" : "الجهاز"
+      },
+      "confirmation" : {
+        "title" : "تأكيد"
+      }
+    },
+    "delegation" : {
+      "nextUnlockIn" : "إلغاء القفل القادم خلال",
+      "totalStake" : "إجمالي التكديس",
+      "commission" : "العمولة",
+      "delegate" : "إضافة حصة",
+      "stakingPositionHeader" : "مراكز التكديس",
+      "stakedHeader" : "مُكدَّس",
+      "pendingReleaseHeader" : "بانتظار الإتاحة",
+      "availableBalance" : "قابل للسحب",
+      "active" : "نشِط",
+      "activeTooltip" : "المبالغ النشطة تولد مكافآت",
+      "inactiveTooltip" : "المبالغ غير النشطة لا تولد مكافآت",
+      "delegatedInfoTooltip" : "إجمالي المبلغ الذي تم تفويضه لمدققين.",
+      "withdrawableInfoTooltip" : "مجموع المبلغ القابل للسحب من التفويضات.",
+      "withdrawableTitle" : "قابل للسحب",
+      "statusUpdateNotice" : "ستُحدّث حالة التفويض عندما يتم تأكيد المعاملة.",
+      "ledgerByFigmentTC" : "شروط وأحكام Ledger by Figment",
+      "ledgerByChorusOneTC" : "شروط وأحكام Ledger by Chorus One",
+      "emptyState" : {
+        "description" : "يمكنك كسب مكافآت APT عن طريق تفويض أصولك.",
+        "info" : "كيف يعمل التفويض",
+        "delegation" : "اكسب مكافآت"
+      },
+      "earnRewards" : {
+        "description" : "يمكنك كسب المكافآت عن طريق تفويض أصولك APT إلى مدقق.",
+        "bullet" : {
+          "0" : "أنت تحتفظ بملكية الأصول المفوضة",
+          "1" : "قم بالتفويض باستخدام جهازك Ledger",
+          "2" : "الأصول ستكون متاحة بعد إلغاء التفويض"
+        },
+        "warning" : "اختر المدقق بحكمة: فقد يتم فقدان جزء من أصولك المفوضة بشكل لا رجعة فيه إذا لم يتصرف المدقق بشكل لائق."
+      },
+      "states" : {
+        "active" : "نشِط",
+        "inactive" : "غير نشِط",
+        "activating" : "جارٍ التنشيط",
+        "deactivating" : "جارٍ إلغاء التنشيط"
+      },
+      "flow" : {
+        "title" : "تفويض",
+        "steps" : {
+          "validator" : {
+            "title" : "المدقق"
+          },
+          "amount" : {
+            "title" : "المبلغ",
+            "reserveWarning" : "يُرجى التأكد من أنك تحتفظ بـ {{amount}} APT على الأقل في محفظتك لتغطية رسوم الشبكة المستقبلية من أجل إلغاء تنشيط وسحب حصتك"
+          },
+          "confirmation" : {
+            "success" : {
+              "title" : "لقد قمت بتفويض أصولك بنجاح"
+            }
+          }
+        }
+      },
+      "withdraw" : {
+        "flow" : {
+          "title" : "سحب",
+          "steps" : {
+            "amount" : {
+              "title" : "المبلغ"
+            },
+            "confirmation" : {
+              "success" : {
+                "title" : "لقد قمت بسحب أصولك بنجاح.",
+                "text" : "سيتم تحديث رصيد حسابك عندما يتم تأكيد المعاملة."
+              }
+            }
+          }
+        }
+      },
+      "activate" : {
+        "flow" : {
+          "title" : "تنشيط",
+          "steps" : {
+            "confirmation" : {
+              "success" : {
+                "title" : "لقد قمت بتنشيط تفويضك بنجاح."
+              }
+            }
+          }
+        }
+      },
+      "reactivate" : {
+        "flow" : {
+          "title" : "إعادة تنشيط",
+          "steps" : {
+            "confirmation" : {
+              "success" : {
+                "title" : "لقد قمت بإعادة تنشيط تفويضك بنجاح."
+              }
+            }
+          }
+        }
+      },
+      "deactivate" : {
+        "flow" : {
+          "title" : "إلغاء تنشيط",
+          "steps" : {
+            "confirmation" : {
+              "success" : {
+                "title" : "لقد قمت بإلغاء تنشيط تفويضك بنجاح."
+              }
+            }
+          }
+        }
+      },
+      "stake" : {
+        "unstake" : "إلغاء التكديس",
+        "withdraw" : "سحب",
+        "restake" : "إعادة التكديس"
+      }
+    }
+  },
   "ethereum" : {
     "stake_deprecated" : {
       "title" : "قم بتنمية ما تملك من ETH",
@@ -4834,7 +4959,7 @@
         "description" : "إدارة وشراء وتنمية أصولك المشفرة رموزك غير القابلة للاستبدال بأمان على Ledger Live.",
         "nextButton" : "بدء الاستخدام",
         "noDevice" : "ليس لديك جهاز؟",
-        "buyLink" : "ليس لديك جهاز؟ قم بشراء Ledger Nano X",
+        "buyLink" : "ليس لديك جهاز؟ شراء Ledger",
         "byTapping" : "بالضغط على \"Get Started (بدء الاستخدام)\" أنت توافق على وتقبل",
         "termsAndConditions" : "الشروط والأحكام",
         "and" : "و",
@@ -5860,8 +5985,16 @@
       "title" : "عذراً، فشل تقدير الرسوم",
       "description" : "فشل تقدير الرسوم على الشبكة. تحقق من المُدخلات، من المرجح أن تفشل المعاملة"
     },
+    "NotEnoughToStake" : {
+      "title" : "الحد الأدنى للتكديس: {{currency}} {{minStake}}",
+      "description" : "هناك حد أدنى يبلغ {{currency}} {{minStake}} مطلوب للتكديس."
+    },
     "NotEnoughBalance" : {
       "title" : "عفواً، الأموال المتوفرة غير كافية",
+      "description" : "يرجى التأكد من أن الحساب به أموال كافية."
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "عذراً، الأموال غير كافية لتغطية الرسوم",
       "description" : "يرجى التأكد من أن الحساب به أموال كافية."
     },
     "NotEnoughBalanceSwap" : {
