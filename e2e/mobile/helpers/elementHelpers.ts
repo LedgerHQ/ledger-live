@@ -64,6 +64,11 @@ export const NativeElementHelpers = {
     return withRN75Delay(() => element(by.text(text)).atIndex(index));
   },
 
+  getElementByIdAndText(id: string | RegExp, text: string | RegExp, index = 0) {
+    if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
+    return element(by.id(id).and(by.text(text))).atIndex(index);
+  },
+
   async isIdVisible(id: string | RegExp, timeout: number = 1_000): Promise<boolean> {
     try {
       await waitFor(element(by.id(id)))
