@@ -37,7 +37,7 @@ export const injectNftIntoTransaction = (
 
   return {
     ...transaction,
-    mode: <Lowercase<typeof standard>>standard.toLowerCase(),
+    mode: standard.toLowerCase() as Lowercase<typeof standard>,
     nft: {
       collectionName: transaction.nft?.collectionName ?? "",
       contract: nftProperties?.contract ?? transaction.nft?.contract ?? "",

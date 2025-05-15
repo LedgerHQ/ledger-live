@@ -1,0 +1,56 @@
+import { fn } from "@storybook/test";
+
+export const access = fsFn;
+export const appendFile = fsFn;
+export const chmod = fsFn;
+export const chown = fsFn;
+export const close = fsFn;
+export const copyFile = fsFn;
+export const cp = fsFn;
+export const createReadStream = fsFn;
+export const createWriteStream = fsFn;
+export const exists = fsFn;
+export const fchmod = fsFn;
+export const fchown = fsFn;
+export const fdatasync = fsFn;
+export const fstat = fsFn;
+export const fsync = fsFn;
+export const ftruncate = fsFn;
+export const futimes = fsFn;
+export const glob = fsFn;
+export const lchmod = fsFn;
+export const lchown = fsFn;
+export const lutimes = fsFn;
+export const link = fsFn;
+export const lstat = fsFn;
+export const mkdir = fsFn;
+export const mkdtemp = fsFn;
+export const open = fsFn;
+export const openAsBlob = fsFn;
+export const opendir = fsFn;
+export const read = fsFn;
+export const readdir = fsFn;
+export const readFile = fsFn;
+export const readlink = fsFn;
+export const readv = fsFn;
+export const realpath = fsFn;
+export const rename = fsFn;
+export const rmdir = fsFn;
+export const rm = fsFn;
+export const stat = fsFn;
+export const statfs = fsFn;
+export const symlink = fsFn;
+export const truncate = fsFn;
+export const unlink = fsFn;
+export const unwatchFile = fsFn;
+export const utimes = fsFn;
+export const watch = fsFn;
+export const watchFile = fsFn;
+export const write = fsFn;
+export const writeFile = fsFn;
+export const writev = fsFn;
+
+function fsFn(...args) {
+  fn(...args);
+  args.at(-1)?.();
+}
