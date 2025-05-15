@@ -1,9 +1,6 @@
-import { MoveFunctionId } from "@aptos-labs/ts-sdk";
 import type { Asset } from "@ledgerhq/coin-framework/api/types";
 
-export type AptosAsset = Asset & {
-  function: MoveFunctionId;
-};
+export type AptosAsset = Asset;
 
 export type AptosExtra = Record<string, unknown>;
 

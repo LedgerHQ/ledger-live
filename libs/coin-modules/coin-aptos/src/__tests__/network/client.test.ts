@@ -533,7 +533,6 @@ describe("Aptos API", () => {
       const transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender> = {
         asset: {
           type: "native",
-          function: "0x1::aptos_account::transfer_coins",
         },
         type: "send",
         sender,

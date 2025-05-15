@@ -18,6 +18,7 @@ import {
   PostRequestOptions,
   Block,
   AptosSettings,
+  MoveFunctionId,
 } from "@aptos-labs/ts-sdk";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
@@ -268,8 +269,10 @@ export class AptosAPI {
     transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender>,
   ): Promise<FeeEstimation<AptosFeeParameters>> {
     const publicKeyEd = new Ed25519PublicKey(transactionIntent.sender.xpub);
+    const fn: MoveFunctionId =
+      transactionIntent.asset.type === "native" ? "0x1::aptos_account::transfer_coins" : "x::x::x";
     const txPayload: InputEntryFunctionData = {
-      function: transactionIntent.asset.function,
+      function: fn,
       typeArguments: [APTOS_ASSET_ID],
       functionArguments: [transactionIntent.recipient, transactionIntent.amount],
     };
