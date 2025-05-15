@@ -42,14 +42,7 @@ export const TimeFrame: React.FC<TimeFrameProps> = ({ range, setRange, width, co
         width: width,
       }}
     >
-      <TabSelector
-        initialTab={range}
-        labels={labels}
-        onToggle={id => {
-          handleTabSelection(id);
-        }}
-        filledVariant
-      />
+      <TabSelector initialTab={range} labels={labels} onToggle={handleTabSelection} filledVariant />
     </View>
   );
 };
