@@ -2390,7 +2390,7 @@
         "ethereumPriorityFee" : "Öncelik Ücreti Üst Limiti ({{unitName}})",
         "nextBlock" : "Sonraki blok",
         "suggested" : "Önerilen",
-        "unitPerByte" : "bayt başına {{unit}}",
+        "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
         "nftQuantity" : "Miktar"
       },
@@ -2423,8 +2423,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "Etiket/Memo eklenmesin mi?",
-        "description" : "Fonlarınızı herhangi bir merkezî borsaya veya custodial cüzdana gönderirken bir Etiket/Memo eklemezseniz fonlarınız kaybolacaktır.",
+        "title" : "Etikete/Memo’ya mı ihtiyacınız var?",
+        "description" : "Merkezî bir borsaya fon gönderirken Etiket/Memo eklememek fonlarınızı kaybetme ihtimalinizi artırır.",
         "cta.addTag" : "Etiket ekle",
         "cta.not.addTag" : "Etiket ekleme",
         "checkbox.label" : "Bunu bir daha gösterme."
@@ -2578,7 +2578,7 @@
             "amount" : "Stake edilecek miktar"
           },
           "starter" : {
-            "description" : "EGLD varlıklarınızın yetkisini bir Staking Sağlayıcısına devrederek ödüller kazanabilirsiniz.",
+            "description" : "EGLD varlıklarınızla bir Staking Sağlayıcısına yetki devrederek ödüller kazanabilirsiniz.",
             "bullet" : ["Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.", "Ledger cihazınızı kullanarak yetki devredin.", "Yetki Devirleri İptal Edilen varlıklar 10 gün sonra yeniden kullanılabilir"],
             "warning" : {
               "description" : "Staking Sağlayıcınızı akıllıca seçin! Şu anda tek risk, çeşitli nedenlerden ötürü ödül alamamaktır. Dolayısıyla bir sağlayıcıyı Güvenilirlik, İletişim ve Ekonomi kriterlerine göre seçmelisiniz."
@@ -2907,12 +2907,12 @@
         "revoke" : "İptal et"
       },
       "emptyState" : {
-        "description" : "Varlıklarınızın yetkisini devrederek CELO ödülleri kazanabilirsiniz.",
+        "description" : "Varlıklarınızla yetki devrederek CELO ödülleri kazanabilirsiniz.",
         "info" : "Yetki Devri nasıl çalışır?",
         "delegation" : "Ödüller kazanın"
       },
       "earnRewards" : {
-        "description" : "CELO varlıklarınızın yetkisini bir doğrulayıcıya devrederek ödüller kazanabilirsiniz.",
+        "description" : "CELO varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz.",
         "bullet" : {
           "0" : "Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.",
           "1" : "Ledger cihazınızı kullanarak yetki devredin.",
@@ -3146,7 +3146,7 @@
   "cosmos" : {
     "delegation" : {
       "emptyState" : {
-        "description" : "Varlıklarınızın yetkisini devrederek {{currencyTicker}} ödülleri kazanabilirsiniz.",
+        "description" : "Varlıklarınızla yetki devrederek {{currencyTicker}} ödülleri kazanabilirsiniz.",
         "info" : "Yetki Devri nasıl çalışır?",
         "delegation" : "Ödüller kazanın"
       },
@@ -3171,7 +3171,7 @@
         "title" : "Yetki Devredin",
         "steps" : {
           "starter" : {
-            "description" : "{{currencyTicker}} varlıklarınızın yetkisini bir doğrulayıcıya devrederek ödüller kazanabilirsiniz.",
+            "description" : "{{currencyTicker}} varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz.",
             "bullet" : ["Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.", "Ledger cihazınızı kullanarak yetki devredin.", "Varlıklar, yetki devirleri iptal edildikten {{numberOfDays}} gün sonra tekrar kullanılabilir"],
             "warning" : {
               "description" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz."
@@ -3674,7 +3674,7 @@
       "ledgerByFigmentTC" : "Ledger by Figment Hüküm ve Koşulları",
       "ledgerByChorusOneTC" : "Ledger by Chorus One Hüküm ve Koşulları",
       "emptyState" : {
-        "description" : "Varlıklarınızın yetkisini devrederek SOL ödülleri kazanabilirsiniz.",
+        "description" : "Varlıklarınızla yetki devrederek SOL ödülleri kazanabilirsiniz.",
         "info" : "Yetki Devri nasıl çalışır?",
         "delegation" : "Ödüller kazanın"
       },
@@ -3824,6 +3824,131 @@
           "interestRateNotSetup" : "Güncel faiz oranı %0 olarak belirlenmiştir.",
           "description" : "Faiz oranına bağlı olarak değeri sürekli artan veya azalan token'lar. Hiçbir zaman yeni token'lar oluşturulmaz, özellik tamamen gösterim amaçlıdır."
         }
+      }
+    }
+  },
+  "aptos" : {
+    "common" : {
+      "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin.",
+      "viewDetails" : "Ayrıntıları gör",
+      "connectDevice" : {
+        "title" : "Cihaz"
+      },
+      "confirmation" : {
+        "title" : "Onaylayın"
+      }
+    },
+    "delegation" : {
+      "nextUnlockIn" : "Bir sonraki kilit açımına kalan süre:",
+      "totalStake" : "Toplam stake",
+      "commission" : "Komisyon",
+      "delegate" : "Stake Ekle",
+      "stakingPositionHeader" : "Staking Pozisyonları",
+      "stakedHeader" : "Stake edildi",
+      "pendingReleaseHeader" : "Bırakılmayı bekleyen",
+      "availableBalance" : "Çekilebilir bakiye",
+      "active" : "Aktif",
+      "activeTooltip" : "Aktif yetkilendirme tutarı ödül üretir",
+      "inactiveTooltip" : "Aktif olmayan yetkilendirme tutarı ödül üretmez",
+      "delegatedInfoTooltip" : "Doğrulayıcılara yetkisi devredilen toplam tutar.",
+      "withdrawableInfoTooltip" : "Yetki devrinden çekilebilecek toplam tutar.",
+      "withdrawableTitle" : "Çekilebilir bakiye",
+      "statusUpdateNotice" : "İşlem onaylandığında yetki devri durumu güncellenir.",
+      "ledgerByFigmentTC" : "Ledger by Figment Hüküm ve Koşulları",
+      "ledgerByChorusOneTC" : "Ledger by Chorus One Hüküm ve Koşulları",
+      "emptyState" : {
+        "description" : "Varlıklarınızla yetki devrederek APT ödülleri kazanabilirsiniz.",
+        "info" : "Yetki Devri nasıl çalışır?",
+        "delegation" : "Ödüller kazanın"
+      },
+      "earnRewards" : {
+        "description" : "APT varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz.",
+        "bullet" : {
+          "0" : "Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.",
+          "1" : "Ledger cihazınızı kullanarak yetki devredin.",
+          "2" : "Varlıklar, yetki devri iptal edildikten sonra mevcut olacak"
+        },
+        "warning" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz."
+      },
+      "states" : {
+        "active" : "Aktif",
+        "inactive" : "Devre Dışı",
+        "activating" : "Etkinleştiriliyor",
+        "deactivating" : "Devre dışı bırakılıyor"
+      },
+      "flow" : {
+        "title" : "Yetki Devret",
+        "steps" : {
+          "validator" : {
+            "title" : "Doğrulayıcı"
+          },
+          "amount" : {
+            "title" : "Tutar",
+            "reserveWarning" : "Gelecekte staking’inizi durdurmak ve çekmek için gerekecek ağ ücretlerini karşılamak üzere cüzdanınızda en az {{amount}} APT bulundurduğunuzdan lütfen emin olun"
+          },
+          "confirmation" : {
+            "success" : {
+              "title" : "Varlıklarınızla başarıyla yetki devrettiniz."
+            }
+          }
+        }
+      },
+      "withdraw" : {
+        "flow" : {
+          "title" : "Çekim",
+          "steps" : {
+            "amount" : {
+              "title" : "Tutar"
+            },
+            "confirmation" : {
+              "success" : {
+                "title" : "Varlıklarınızı başarıyla çektiniz.",
+                "text" : "İşlem, ağ tarafından onaylandığında hesap bakiyeniz güncellenecek."
+              }
+            }
+          }
+        }
+      },
+      "activate" : {
+        "flow" : {
+          "title" : "Etkinleştir",
+          "steps" : {
+            "confirmation" : {
+              "success" : {
+                "title" : "Yetkilendirmenizi başarıyla etkinleştirdiniz."
+              }
+            }
+          }
+        }
+      },
+      "reactivate" : {
+        "flow" : {
+          "title" : "Yeniden etkinleştir",
+          "steps" : {
+            "confirmation" : {
+              "success" : {
+                "title" : "Yetkilendirmenizi başarıyla yeniden etkinleştirdiniz."
+              }
+            }
+          }
+        }
+      },
+      "deactivate" : {
+        "flow" : {
+          "title" : "Devre dışı bırak",
+          "steps" : {
+            "confirmation" : {
+              "success" : {
+                "title" : "Yetkilendirmenizi başarıyla devre dışı bıraktınız."
+              }
+            }
+          }
+        }
+      },
+      "stake" : {
+        "unstake" : "Staking'i durdur",
+        "withdraw" : "Çekim",
+        "restake" : "Yeniden Stake Et"
       }
     }
   },
@@ -4082,7 +4207,7 @@
     "durationDays" : "{{count}} gün",
     "durationDays_plural" : "{{count}} gün",
     "howItWorks" : "Yetki devri nasıl çalışır?",
-    "delegationEarn" : "Artık hesabınızın yetkisini devrederek {{name}} staking ödülleri kazanabilirsiniz.",
+    "delegationEarn" : "Artık hesabınızla yetki devrederek {{name}} staking ödülleri kazanabilirsiniz.",
     "earnRewards" : "Ödüller kazanın",
     "overdelegated" : "Yetki Devri Aşımı",
     "status" : "Durum",
@@ -4834,7 +4959,7 @@
         "description" : "Ledger Live ile güvenle kripto ve NFT satın alın, varlıklarınızı yönetin ve bakiyenizi artırın.",
         "nextButton" : "Devam",
         "noDevice" : "Cihazınız yok mu?",
-        "buyLink" : "Cihazınız yok mu? Ledger Nano X satın alın",
+        "buyLink" : "Cihazınız yok mu? Ledger satın alın",
         "byTapping" : "“Hemen Başla” butonuna dokunduğunuzda bunlara izin vermiş ve rıza göstermiş olursunuz:",
         "termsAndConditions" : "Hüküm ve Koşullar",
         "and" : "ve",
@@ -5860,8 +5985,16 @@
       "title" : "Üzgünüz, ücret tahmini başarısız oldu",
       "description" : "Ağda ücret hesaplama başarısız oldu. Girilen bilgileri kontrol edin, işlem muhtemelen başarısız olacak"
     },
+    "NotEnoughToStake" : {
+      "title" : "Stake edilmesi gereken asgari tutar: {{minStake}} {{currency}}",
+      "description" : "En az {{minStake}} {{currency}} stake etmeniz gerekir."
+    },
     "NotEnoughBalance" : {
       "title" : "Üzgünüz, fon miktarı yetersiz",
+      "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "Üzgünüz, fon miktarı işlem ücretlerini karşılamıyor",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
     },
     "NotEnoughBalanceSwap" : {
