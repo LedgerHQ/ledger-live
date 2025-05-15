@@ -2,11 +2,12 @@ import { useEffect, useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Observable, Subscription } from "rxjs";
 import { DescriptorEvent, DeviceModelId } from "@ledgerhq/types-devices";
-import HIDTransport from "@ledgerhq/react-native-hid";
 import { map } from "rxjs/operators";
 import useIsMounted from "@ledgerhq/live-common/hooks/useIsMounted";
 import { DeviceLike } from "../reducers/types";
 import { setLastConnectedDevice } from "../actions/settings";
+import { getHIDTransport } from "~/services/getHidTransport";
+import { useLdmkFeatureEnabled } from "@ledgerhq/live-dmk-mobile";
 
 /**
  * Allows LLM to be aware of USB OTG connections on Android as they happen.
@@ -19,6 +20,7 @@ export const useListenToHidDevices = () => {
   const dispatch = useDispatch();
   const [nonce, setNonce] = useState(0);
   const isMounted = useIsMounted();
+  const isLDMKEnabled = useLdmkFeatureEnabled();
 
   // Error and Complete will trigger a new listen.
   const onScheduleNewListen = useCallback(() => {
@@ -32,7 +34,9 @@ export const useListenToHidDevices = () => {
   useEffect(() => {
     let sub: Subscription;
     if (isMounted()) {
-      sub = new Observable<DescriptorEvent<DeviceLike | null>>(o => HIDTransport.listen(o))
+      sub = new Observable<DescriptorEvent<DeviceLike | string | null>>(o =>
+        getHIDTransport(isLDMKEnabled).listen(o),
+      )
         .pipe(
           map(({ type, descriptor, deviceModel }) =>
             type === "add"
@@ -69,7 +73,7 @@ export const useListenToHidDevices = () => {
     return () => {
       if (sub) sub.unsubscribe();
     };
-  }, [dispatch, isMounted, nonce, onScheduleNewListen]);
+  }, [dispatch, isLDMKEnabled, isMounted, nonce, onScheduleNewListen]);
 
   return null;
 };
