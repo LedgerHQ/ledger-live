@@ -30,6 +30,7 @@ export const BATCH_TRANSFER_TYPES: MoveStructId[] = [
 
 export const DELEGATION_POOL_TYPES: MoveStructId[] = [
   "0x1::delegation_pool::add_stake",
+  "0x1::delegation_pool::unlock",
   "0x1::delegation_pool::withdraw",
 ];
 
