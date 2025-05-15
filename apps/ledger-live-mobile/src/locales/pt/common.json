@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "Cancelar",
+    "copy" : "Copiar",
+    "copied" : "Copiado",
     "apply" : "Aplicar",
     "seeAll" : "Ver tudo",
     "seeAllWithNumber" : "Ver todos ({{number}})",
@@ -100,7 +102,8 @@
       "times" : "x{{ value }}"
     },
     "quote" : "Cotação",
-    "tryAgain" : "Tente novamente"
+    "tryAgain" : "Tente novamente",
+    "ldmkEnabled" : "Transporte LDMK habilitado"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -506,9 +509,17 @@
       "title" : "EGLD insuficientes para pagar as taxas de transação",
       "description" : "Envie um pouco de EGLD para a sua conta para pagar pelas transações."
     },
+    "NotEnoughToStake" : {
+      "title" : "Quantia mínima para staking: {{currency}} {{minStake}}",
+      "description" : "Uma quantia mínima de {{currency}} {{minStake}} é necessária para fazer staking."
+    },
     "NotEnoughBalance" : {
       "title" : "Fundos Insuficientes",
       "description" : "Certifique-se de que a conta tem fundos suficientes."
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "Fundos insuficientes para cobrir as taxas",
+      "description" : "Certifique-se de que a conta tenha fundos suficientes."
     },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Atualmente, seu saldo (fora de staking) disponível é de {{currentBalance}}, que é insuficiente para pagar as taxas de rede necessárias para desaplicar {{assetName}}. ",
@@ -3155,7 +3166,7 @@
     "debug" : {
       "title" : "Debug",
       "desc" : "Use por sua própria conta e risco – Ferramentas de desenvolvedor",
-      "featureFlagsTitle" : "Marcadores definidos usados no Ledger Live",
+      "featureFlagsTitle" : "Marcadores de recursos definidos usados no Ledger Live",
       "featureFlagsDesc" : "Valores sobrepostos serão redefinidos se o aplicativo for reexecutado. Apenas strings JSON válidas serão aceitas.",
       "featureFlagsEdit" : "Editar",
       "featureFlagsRestore" : "Restaurar",
@@ -4047,7 +4058,9 @@
       "desc" : "Você tem certeza de que quer cancelar a adição de contas?",
       "v2" : {
         "title" : "Cancelar adição de conta?",
-        "desc" : "Nenhuma conta será adicionada ao Ledger Live."
+        "desc" : "Nenhuma conta será adicionada ao Ledger Live.",
+        "continue" : "Continuar adicionando",
+        "cancel" : "Cancelar"
       }
     },
     "imported" : "Ativos adicionados com sucesso",
