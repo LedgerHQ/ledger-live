@@ -2390,7 +2390,7 @@
         "ethereumPriorityFee" : "最高优先费用 ({{unitName}})",
         "nextBlock" : "下一个区块",
         "suggested" : "建议",
-        "unitPerByte" : "{{unit}} 每字节",
+        "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
         "nftQuantity" : "数量"
       },
@@ -2423,8 +2423,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "不使用标签/备忘标签？",
-        "description" : "将资金发送到任何中心化交易所或托管钱包时，如果不添加标签/备忘标签，您的资金将会丢失。",
+        "title" : "需要标签/备忘标签？",
+        "description" : "向中心化交易所发送资金时不添加标签/备忘标签会提高资金丢失的可能性。",
         "cta.addTag" : "添加标签",
         "cta.not.addTag" : "不添加标签",
         "checkbox.label" : "不再显示。"
@@ -3827,6 +3827,131 @@
       }
     }
   },
+  "aptos" : {
+    "common" : {
+      "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。",
+      "viewDetails" : "查看详情",
+      "connectDevice" : {
+        "title" : "设备"
+      },
+      "confirmation" : {
+        "title" : "确认"
+      }
+    },
+    "delegation" : {
+      "nextUnlockIn" : "下次解锁剩余时间",
+      "totalStake" : "质押总额",
+      "commission" : "佣金",
+      "delegate" : "添加质押",
+      "stakingPositionHeader" : "质押持仓",
+      "stakedHeader" : "已质押",
+      "pendingReleaseHeader" : "等待解除",
+      "availableBalance" : "可提取",
+      "active" : "活跃",
+      "activeTooltip" : "活跃的数额产生奖励",
+      "inactiveTooltip" : "未激活的数额不产生奖励",
+      "delegatedInfoTooltip" : "委托至验证者的总数额。",
+      "withdrawableInfoTooltip" : "可从委托提取的总数额。",
+      "withdrawableTitle" : "可提取",
+      "statusUpdateNotice" : "交易确认后，委托状态将更新。",
+      "ledgerByFigmentTC" : "Figment 在 Ledger 的条款与条件",
+      "ledgerByChorusOneTC" : "Ledger by Chorus One 条款与条件",
+      "emptyState" : {
+        "description" : "您可以通过委托资产赚取 APT 奖励。",
+        "info" : "委托机制如何运作",
+        "delegation" : "赚取奖励"
+      },
+      "earnRewards" : {
+        "description" : "您可以通过将 APT 资产委托给验证者来赚取奖励。",
+        "bullet" : {
+          "0" : "您保有对已委托资产的所有权",
+          "1" : "使用您的 Ledger 设备进行委托",
+          "2" : "资产将在解除委托后可用"
+        },
+        "warning" : "请明智地选择验证者：如果验证者表现不当，您可能会不可挽回地损失部分已委托资产。"
+      },
+      "states" : {
+        "active" : "活跃",
+        "inactive" : "不活跃",
+        "activating" : "正在激活",
+        "deactivating" : "正在停用"
+      },
+      "flow" : {
+        "title" : "委托",
+        "steps" : {
+          "validator" : {
+            "title" : "验证者"
+          },
+          "amount" : {
+            "title" : "数额",
+            "reserveWarning" : "请确保您的钱包中至少保留 {{amount}} APT，用来支付未来停用和撤回质押所需的网络费用"
+          },
+          "confirmation" : {
+            "success" : {
+              "title" : "您的资产已经成功委托。"
+            }
+          }
+        }
+      },
+      "withdraw" : {
+        "flow" : {
+          "title" : "提取",
+          "steps" : {
+            "amount" : {
+              "title" : "数额"
+            },
+            "confirmation" : {
+              "success" : {
+                "title" : "您的资产已成功提取。",
+                "text" : "该交易一经确认，就会更新您的账户余额。"
+              }
+            }
+          }
+        }
+      },
+      "activate" : {
+        "flow" : {
+          "title" : "激活",
+          "steps" : {
+            "confirmation" : {
+              "success" : {
+                "title" : "您已成功激活委托。"
+              }
+            }
+          }
+        }
+      },
+      "reactivate" : {
+        "flow" : {
+          "title" : "重新激活",
+          "steps" : {
+            "confirmation" : {
+              "success" : {
+                "title" : "您已成功重新激活委托。"
+              }
+            }
+          }
+        }
+      },
+      "deactivate" : {
+        "flow" : {
+          "title" : "停用",
+          "steps" : {
+            "confirmation" : {
+              "success" : {
+                "title" : "您的委托已成功停用。"
+              }
+            }
+          }
+        }
+      },
+      "stake" : {
+        "unstake" : "解除质押",
+        "withdraw" : "提取",
+        "restake" : "再质押"
+      }
+    }
+  },
   "ethereum" : {
     "stake_deprecated" : {
       "title" : "增长您的以太币持有量",
@@ -4834,7 +4959,7 @@
         "description" : "在 Ledger Live 上安全地管理、买入和增长您的加密货币和 NFT。",
         "nextButton" : "开始",
         "noDevice" : "没有设备？",
-        "buyLink" : "没有设备？购买 Ledger Nano X",
+        "buyLink" : "没有设备？购买 Ledger 设备",
         "byTapping" : "点按“开始”即表示您应允并同意我们的",
         "termsAndConditions" : "条款与条件",
         "and" : "和",
@@ -5860,8 +5985,16 @@
       "title" : "抱歉，费用估算失败",
       "description" : "网络费用估算失败。检查输入，交易最有可能失败"
     },
+    "NotEnoughToStake" : {
+      "title" : "最低质押数额：{{minStake}} {{currency}}",
+      "description" : "最少必须质押 {{minStake}} {{currency}}。"
+    },
     "NotEnoughBalance" : {
       "title" : "抱歉，资金不足",
+      "description" : "请确保该账户资金充足。"
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "抱歉，资金不够支付费用",
       "description" : "请确保该账户资金充足。"
     },
     "NotEnoughBalanceSwap" : {
