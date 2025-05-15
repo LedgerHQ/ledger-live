@@ -31,8 +31,6 @@ import {
   GetAccountTransactionsDataGtQueryVariables,
 } from "./graphql/types";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { GetCurrentDelegatorBalancesData } from "../api/graphql/queries";
-import { CurrentDelegatorBalance, GetCurrentDelegatorBalancesQuery } from "../api/graphql/types";
 
 const getApiEndpoint = (currencyId: string) =>
   isTestnet(currencyId) ? getEnv("APTOS_TESTNET_API_ENDPOINT") : getEnv("APTOS_API_ENDPOINT");
@@ -86,21 +84,6 @@ export class AptosAPI {
       transactions,
       blockHeight,
     };
-  }
-
-  async getValidators() {
-    const querySecond = GetCurrentDelegatorBalancesData;
-    const queryResponseSecond = await this.apolloClient.query<
-      GetCurrentDelegatorBalancesQuery,
-      object
-    >({
-      query: querySecond,
-      fetchPolicy: "network-only",
-    });
-    const stakingData: CurrentDelegatorBalance[] =
-      queryResponseSecond.data.current_delegator_balances;
-
-    return stakingData;
   }
 
   async estimateGasPrice(): Promise<GasEstimation> {
@@ -198,14 +181,11 @@ export class AptosAPI {
   async getNextUnlockTime(stakingPoolAddress: string): Promise<string | undefined> {
     const resourceType: MoveStructId = "0x1::stake::StakePool";
     try {
-      const resource = await this.aptosClient.getAccountResource({
+      const resource = await this.aptosClient.getAccountResource<StakePoolResource>({
         accountAddress: stakingPoolAddress,
         resourceType,
       });
-      const data = resource as StakePoolResource;
-      if (data && data.locked_until_secs) {
-        return data.locked_until_secs;
-      }
+      return resource.locked_until_secs;
     } catch (error) {
       console.error("Failed to fetch StakePool resource:", error);
     }

@@ -26,7 +26,7 @@ export async function getValidators(currencyId: string): Promise<AptosValidator[
           ? aptosName[0].domain_with_suffix
           : pool.current_pool_balance.staking_pool_address;
 
-      const url = `${APTOS_EXPLORER_ACCOUNT_URL}/${pool.current_pool_balance.staking_pool_address}}?network=${isTestnet(currencyId) ? "testnet" : "mainnet"}`;
+      const url = `${APTOS_EXPLORER_ACCOUNT_URL}/${pool.current_pool_balance.staking_pool_address}?network=${isTestnet(currencyId) ? "testnet" : "mainnet"}`;
 
       const unblockdata = await api.getNextUnlockTime(
         pool.current_pool_balance.staking_pool_address,
