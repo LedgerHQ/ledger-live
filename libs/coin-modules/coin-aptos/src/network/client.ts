@@ -1,7 +1,6 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 
 import {
-  AccountData,
   Aptos,
   AptosApiType,
   AptosConfig,
@@ -18,6 +17,7 @@ import {
   PostRequestOptions,
   Block,
   AptosSettings,
+  AccountData,
 } from "@aptos-labs/ts-sdk";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
@@ -32,6 +32,7 @@ import {
   GetAccountTransactionsDataGtQueryVariables,
 } from "./graphql/types";
 import { BlockInfo } from "@ledgerhq/coin-framework/api/types";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const getApiEndpoint = (currencyId: string) =>
   isTestnet(currencyId) ? getEnv("APTOS_TESTNET_API_ENDPOINT") : getEnv("APTOS_API_ENDPOINT");
@@ -65,22 +66,6 @@ export class AptosAPI {
     });
   }
 
-  private async getBalance(address: string): Promise<BigNumber> {
-    try {
-      const [balanceStr] = await this.aptosClient.view<[string]>({
-        payload: {
-          function: "0x1::coin::balance",
-          typeArguments: [APTOS_ASSET_ID],
-          functionArguments: [address],
-        },
-      });
-      const balance = parseInt(balanceStr, 10);
-      return new BigNumber(balance);
-    } catch (_) {
-      return new BigNumber(0);
-    }
-  }
-
   private async fetchTransactions(address: string, gt?: string) {
     if (!address) {
       return [];
@@ -105,7 +90,7 @@ export class AptosAPI {
     });
 
     return Promise.all(
-      queryResponse.data.address_version_from_move_resources.map(({ transaction_version }) => {
+      queryResponse.data.account_transactions.map(({ transaction_version }) => {
         return this.richItemByVersion(transaction_version);
       }),
     );
@@ -142,13 +127,55 @@ export class AptosAPI {
     };
   }
 
+  async getBalance(address: string, token: TokenCurrency): Promise<BigNumber> {
+    let balance = new BigNumber(0);
+    if (token.tokenType === "coin") {
+      balance = await this.getCoinBalance(address, token.contractAddress);
+    } else {
+      balance = await this.getFABalance(address, token.contractAddress);
+    }
+    return balance;
+  }
+
+  async getCoinBalance(address: string, contract_address: string): Promise<BigNumber> {
+    try {
+      const [balanceStr] = await this.aptosClient.view<[string]>({
+        payload: {
+          function: "0x1::coin::balance",
+          typeArguments: [contract_address],
+          functionArguments: [address],
+        },
+      });
+      const balance = parseInt(balanceStr, 10);
+      return new BigNumber(balance);
+    } catch (_) {
+      return new BigNumber(0);
+    }
+  }
+
+  async getFABalance(address: string, contract_address: string): Promise<BigNumber> {
+    try {
+      const [balanceStr] = await this.aptosClient.view<[string]>({
+        payload: {
+          function: "0x1::primary_fungible_store::balance",
+          typeArguments: ["0x1::object::ObjectCore"],
+          functionArguments: [address, contract_address],
+        },
+      });
+      const balance = parseInt(balanceStr, 10);
+      return new BigNumber(balance);
+    } catch (_) {
+      return new BigNumber(0);
+    }
+  }
+
   async getAccount(address: string): Promise<AccountData> {
     return this.aptosClient.getAccountInfo({ accountAddress: address });
   }
 
-  async getAccountInfo(address: string, startAt: string) {
+  async getAccountInfo(address: string, startAt?: string) {
     const [balance, transactions, blockHeight] = await Promise.all([
-      this.getBalance(address),
+      this.getCoinBalance(address, APTOS_ASSET_ID),
       this.fetchTransactions(address, startAt),
       this.getHeight(),
     ]);
