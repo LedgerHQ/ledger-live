@@ -463,7 +463,7 @@ jobs:
         uses: tespkg/actions-cache/save@v1
         with:
           path: ${{ env.ANDROID_APK_PATH }}
-          key: poc-detox-native-android-apk
+          key: poc-detox-native-android-apk-1
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
@@ -599,7 +599,7 @@ jobs:
         uses: tespkg/actions-cache/restore@v1
         with:
           path: ${{ env.ANDROID_APK_PATH }}
-          key: poc-detox-native-android-apk
+          key: poc-detox-native-android-apk-1
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
