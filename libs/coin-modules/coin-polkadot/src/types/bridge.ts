@@ -65,6 +65,9 @@ export type PolkadotResourcesRaw = {
   numSlashingSpans: number | undefined;
 };
 
+export function isPolkadotTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "polkadot";
+}
 export type Transaction = TransactionCommon & {
   mode: PolkadotOperationMode;
   family: "polkadot";
@@ -75,6 +78,9 @@ export type Transaction = TransactionCommon & {
   numSlashingSpans: number | null | undefined;
 };
 
+export function isPolkadotTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "polkadot";
+}
 export type TransactionRaw = TransactionCommonRaw & {
   family: "polkadot";
   mode: PolkadotOperationMode;

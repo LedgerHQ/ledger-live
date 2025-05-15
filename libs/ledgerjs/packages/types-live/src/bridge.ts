@@ -12,7 +12,9 @@ import type {
   SignOperationEvent,
   SignedOperation,
   TransactionCommon,
+  TransactionCommonRaw,
   TransactionStatusCommon,
+  TransactionStatusCommonRaw,
 } from "./transaction";
 import type { Operation, OperationExtra, OperationExtraRaw } from "./operation";
 import type { DerivationMode } from "./derivation";
@@ -79,13 +81,17 @@ export type BroadcastFnSignature<A extends Account = Account> = (
 
 export type Bridge<
   T extends TransactionCommon,
+  TR extends TransactionCommonRaw = TransactionCommonRaw,
   A extends Account = Account,
+  AR extends AccountRaw = AccountRaw,
+  OE extends OperationExtra = OperationExtra,
+  OER extends OperationExtraRaw = OperationExtraRaw,
   U extends TransactionStatusCommon = TransactionStatusCommon,
-  O extends Operation = Operation,
-  R extends AccountRaw = AccountRaw,
+  UR extends TransactionStatusCommonRaw = TransactionStatusCommonRaw,
 > = {
   currencyBridge: CurrencyBridge;
-  accountBridge: AccountBridge<T, A, U, O, R>;
+  accountBridge: AccountBridge<T, A, U, AR, OE, OER>;
+  serializationBridge: SerializationBridge<T, TR, U, UR>;
 };
 
 export type ScanInfo = {
@@ -197,9 +203,10 @@ interface SendReceiveAccountBridge<
 }
 
 interface SerializationAccountBridge<
-  A extends Account,
-  O extends Operation = Operation,
+  A extends Account = Account,
   R extends AccountRaw = AccountRaw,
+  OE extends OperationExtra = OperationExtra,
+  OER extends OperationExtraRaw = OperationExtraRaw,
 > {
   /**
    * This function mutates the 'accountRaw' object in-place to add any extra fields that the coin may need to set.
@@ -236,10 +243,23 @@ interface SerializationAccountBridge<
     tokenAccountRaw: TokenAccountRaw,
     tokenAccount: TokenAccount,
   ) => void;
-  fromOperationExtraRaw: (extraRaw: OperationExtraRaw) => OperationExtra;
-  toOperationExtraRaw: (extra: OperationExtra) => OperationExtraRaw;
+  fromOperationExtraRaw: (extraRaw: OER) => OE;
+  toOperationExtraRaw: (extra: OE) => OER;
   formatAccountSpecifics: (account: A) => string;
-  formatOperationSpecifics: (operation: O, unit: Unit | null | undefined) => string;
+  formatOperationSpecifics: (operation: Operation<OE>, unit: Unit | null | undefined) => string;
+}
+export interface SerializationBridge<
+  T extends TransactionCommon,
+  TR extends TransactionCommonRaw = TransactionCommonRaw,
+  U extends TransactionStatusCommon = TransactionStatusCommon,
+  UR extends TransactionStatusCommonRaw = TransactionStatusCommonRaw,
+> {
+  formatTransaction: (tx: T, mainAccount: Account) => string;
+  fromTransactionRaw: (txRaw: TR) => T;
+  toTransactionRaw: (tx: T) => TR;
+  fromTransactionStatusRaw: (txStatusRaw: UR) => U;
+  toTransactionStatusRaw: (txStatus: U) => UR;
+  formatTransactionStatus: (tx: T, txStatus: U, mainAccount: Account) => string;
 }
 
 type AccountBridgeWithExchange<A extends Account = Account> = {
@@ -250,11 +270,12 @@ export type AccountBridge<
   T extends TransactionCommon,
   A extends Account = Account,
   U extends TransactionStatusCommon = TransactionStatusCommon,
-  O extends Operation = Operation,
-  R extends AccountRaw = AccountRaw,
+  AR extends AccountRaw = AccountRaw,
+  OE extends OperationExtra = OperationExtra,
+  OER extends OperationExtraRaw = OperationExtraRaw,
 > = SendReceiveAccountBridge<T, A, U> &
   AccountBridgeWithExchange<A> &
-  Partial<SerializationAccountBridge<A, O, R>>;
+  Partial<SerializationAccountBridge<A, AR, OE, OER>>;
 
 type ExpectFn = (...args: Array<any>) => any;
 
@@ -280,8 +301,8 @@ type CurrencyTransaction<T extends TransactionCommon> = {
   ) => any;
 };
 
-export type AccountTestData<T extends TransactionCommon> = {
-  raw: AccountRaw;
+export type AccountTestData<T extends TransactionCommon, AR extends AccountRaw = AccountRaw> = {
+  raw: AR;
   implementations?: string[];
   FIXME_tests?: Array<string | RegExp>;
   transactions?: Array<CurrencyTransaction<T>>;
@@ -291,7 +312,7 @@ export type AccountTestData<T extends TransactionCommon> = {
 /**
  *
  */
-export type CurrenciesData<T extends TransactionCommon> = {
+export type CurrenciesData<T extends TransactionCommon, AR extends AccountRaw = AccountRaw> = {
   FIXME_ignoreAccountFields?: string[];
   FIXME_ignoreOperationFields?: string[];
   FIXME_ignorePreloadFields?: string[] | true;
@@ -303,16 +324,16 @@ export type CurrenciesData<T extends TransactionCommon> = {
     unstableAccounts?: boolean;
     test?: (expect: ExpectFn, scanned: Account[], bridge: CurrencyBridge) => any;
   }>;
-  accounts?: Array<AccountTestData<T>>;
+  accounts?: Array<AccountTestData<T, AR>>;
   test?: (arg0: ExpectFn, arg1: CurrencyBridge) => any;
 };
 
 /**
  *
  */
-export type DatasetTest<T extends TransactionCommon> = {
+export type DatasetTest<T extends TransactionCommon, AR extends AccountRaw = AccountRaw> = {
   implementations: string[];
-  currencies: Record<CryptoCurrencyIds, CurrenciesData<T>> | Record<string, never>;
+  currencies: Record<CryptoCurrencyIds, CurrenciesData<T, AR>> | Record<string, never>;
 };
 
 /**

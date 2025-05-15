@@ -1,24 +1,25 @@
-import { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
   getSerializedAddressParameters,
-  updateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
   makeSync,
+  updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import { getTransactionStatus } from "./getTransactionStatus";
-import { estimateMaxSpendable } from "./estimateMaxSpendable";
-import { prepareTransaction } from "./prepareTransaction";
-import { createTransaction } from "./createTransaction";
-import { getAccountShape } from "./synchronisation";
-import { buildSignOperation } from "./signOperation";
-import { broadcast } from "./broadcast";
+import { Account, AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
 import resolver from "../signer";
-import type { Transaction, VechainSigner } from "../types";
+import type { Transaction, TransactionRaw, TransactionStatus, VechainSigner } from "../types";
+import { broadcast } from "./broadcast";
+import { createTransaction } from "./createTransaction";
+import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import { getTransactionStatus } from "./getTransactionStatus";
+import { prepareTransaction } from "./prepareTransaction";
+import { buildSignOperation } from "./signOperation";
+import { getAccountShape } from "./synchronisation";
+import { serialization } from "./transaction";
 
-export function buildCurrencyBridge(signerContext: SignerContext<VechainSigner>): CurrencyBridge {
+function buildCurrencyBridge(signerContext: SignerContext<VechainSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
 
   const scanAccounts = makeScanAccounts({
@@ -35,9 +36,9 @@ export function buildCurrencyBridge(signerContext: SignerContext<VechainSigner>)
 
 const sync = makeSync({ getAccountShape });
 
-export function buildAccountBridge(
+function buildAccountBridge(
   signerContext: SignerContext<VechainSigner>,
-): AccountBridge<Transaction> {
+): AccountBridge<Transaction, Account, TransactionStatus> {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -57,9 +58,12 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<VechainSigner>) {
+export type VechainBridge = Bridge<Transaction, TransactionRaw, Account>;
+
+export function createBridges(signerContext: SignerContext<VechainSigner>): VechainBridge {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
+    serializationBridge: serialization,
   };
 }

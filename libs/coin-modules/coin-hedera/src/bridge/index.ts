@@ -1,22 +1,23 @@
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
   getSerializedAddressParameters,
   makeScanAccounts,
   makeSync,
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import resolver from "../signer/index";
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus, HederaSigner } from "../types";
-import { getTransactionStatus } from "./getTransactionStatus";
-import { estimateMaxSpendable } from "./estimateMaxSpendable";
-import { prepareTransaction } from "./prepareTransaction";
-import { createTransaction } from "./createTransaction";
-import { getAccountShape, buildIterateResult } from "./synchronisation";
-import { buildSignOperation } from "./signOperation";
+import type { CurrencyBridge } from "@ledgerhq/types-live";
+import resolver from "../signer/index";
+import { serialization } from "../transaction";
+import type { HederaAccountBridge, HederaBridge, HederaSigner } from "../types";
 import { broadcast } from "./broadcast";
+import { createTransaction } from "./createTransaction";
+import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import { getTransactionStatus } from "./getTransactionStatus";
+import { prepareTransaction } from "./prepareTransaction";
 import { receive } from "./receive";
+import { buildSignOperation } from "./signOperation";
+import { buildIterateResult, getAccountShape } from "./synchronisation";
 
 function buildCurrencyBridge(signerContext: SignerContext<HederaSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -36,9 +37,7 @@ function buildCurrencyBridge(signerContext: SignerContext<HederaSigner>): Curren
 
 const sync = makeSync({ getAccountShape });
 
-function buildAccountBridge(
-  signerContext: SignerContext<HederaSigner>,
-): AccountBridge<Transaction, Account, TransactionStatus> {
+function buildAccountBridge(signerContext: SignerContext<HederaSigner>): HederaAccountBridge {
   const getAddress = resolver(signerContext);
 
   const signOperation = buildSignOperation(signerContext);
@@ -57,9 +56,12 @@ function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<HederaSigner>) {
+export type { HederaBridge };
+
+export function createBridges(signerContext: SignerContext<HederaSigner>): HederaBridge {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
+    serializationBridge: serialization,
   };
 }

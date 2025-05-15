@@ -1,9 +1,15 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { Account, AccountBridge, SyncConfig, TransactionCommon } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountBridge,
+  SyncConfig,
+  TransactionCommon,
+  TransactionStatusCommon,
+} from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { firstValueFrom, reduce } from "rxjs";
 import { TronCoinConfig } from "../config";
-import { Transaction, TronAccount } from "../types";
+import { Transaction, TransactionStatus, TronAccount } from "../types";
 import { createBridges } from "./index";
 import { defaultTronResources } from "./utils";
 
@@ -12,8 +18,12 @@ const defaultSyncConfig = {
   paginationConfig: {},
   blacklistedTokenIds: [],
 };
-function syncAccount<T extends TransactionCommon, A extends Account = Account>(
-  bridge: AccountBridge<T, A>,
+function syncAccount<
+  T extends TransactionCommon,
+  A extends Account = Account,
+  U extends TransactionStatusCommon = TransactionStatusCommon,
+>(
+  bridge: AccountBridge<T, A, U>,
   account: A,
   syncConfig: SyncConfig = defaultSyncConfig,
 ): Promise<A> {
@@ -75,7 +85,7 @@ describe("Sync Accounts", () => {
   });
 
   it("should always have tronResources", async () => {
-    const account = await syncAccount<Transaction, TronAccount>(
+    const account = await syncAccount<Transaction, TronAccount, TransactionStatus>(
       bridge.accountBridge,
       dummyAccount,
       defaultSyncConfig,
@@ -89,11 +99,14 @@ describe("Sync Accounts", () => {
     const id = "TL24LCps5FKwp3PoU1MvrYrwhi5LU1tHre";
 
     // WHEN
-    const account = await syncAccount<Transaction, TronAccount>(bridge.accountBridge, {
-      ...dummyAccount,
-      id: `js:2:tron:${id}:`,
-      freshAddress: id,
-    });
+    const account = await syncAccount<Transaction, TronAccount, TransactionStatus>(
+      bridge.accountBridge,
+      {
+        ...dummyAccount,
+        id: `js:2:tron:${id}:`,
+        freshAddress: id,
+      },
+    );
 
     // THEN
     expect(account.id).toEqual(`js:2:tron:${id}:`);

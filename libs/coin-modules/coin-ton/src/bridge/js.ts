@@ -6,8 +6,7 @@ import {
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
 import broadcast from "../broadcast";
 import { TonCoinConfig, setCoinConfig } from "../config";
 import createTransaction from "../createTransaction";
@@ -18,9 +17,10 @@ import prepareTransaction from "../prepareTransaction";
 import { buildSignOperation } from "../signOperation";
 import { TonSigner } from "../signer";
 import { getAccountShape, sync } from "../synchronisation";
-import type { TonAccount, Transaction } from "../types";
+import { serialization } from "../transaction";
+import type { TonAccount, Transaction, TransactionRaw } from "../types";
 
-export function buildCurrencyBridge(signerContext: SignerContext<TonSigner>): CurrencyBridge {
+function buildCurrencyBridge(signerContext: SignerContext<TonSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
 
   const scanAccounts = makeScanAccounts({
@@ -35,7 +35,7 @@ export function buildCurrencyBridge(signerContext: SignerContext<TonSigner>): Cu
   };
 }
 
-export function buildAccountBridge(
+function buildAccountBridge(
   signerContext: SignerContext<TonSigner>,
 ): AccountBridge<Transaction, TonAccount> {
   const getAddress = resolver(signerContext);
@@ -57,11 +57,17 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<TonSigner>, coinConfig: TonCoinConfig) {
+export type TonBridge = Bridge<Transaction, TransactionRaw, TonAccount>;
+
+export function createBridges(
+  signerContext: SignerContext<TonSigner>,
+  coinConfig: TonCoinConfig,
+): TonBridge {
   setCoinConfig(coinConfig);
 
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
+    serializationBridge: serialization,
   };
 }

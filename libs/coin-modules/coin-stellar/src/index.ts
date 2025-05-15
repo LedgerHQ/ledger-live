@@ -1,1 +1,1 @@
-export { createBridges } from "./bridge";
+export { createBridges, type StellarBridge } from "./bridge";

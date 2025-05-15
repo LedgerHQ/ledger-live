@@ -1,52 +1,54 @@
 export * from "@ledgerhq/coin-framework/transaction/common";
-export * from "./signOperation";
 export * from "./deviceTransactionConfig";
+export * from "./signOperation";
+import type { Account } from "@ledgerhq/types-live";
+import { callSerializeBridgeFunc, getBridgeByFamily, getBridgeByTransaction } from "../bridge/impl";
 import type {
   Transaction,
   TransactionRaw,
   TransactionStatus,
   TransactionStatusRaw,
 } from "../generated/types";
-import transactionModulePerFamily from "../generated/transaction";
-import type { Account } from "@ledgerhq/types-live";
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
-  const TM = transactionModulePerFamily[tr.family];
-  // FIXME: something is wrong with TM.fromTransactionRaw expecting a (arg: never) => for some reasons
-  return TM.fromTransactionRaw(tr as any);
+  // const bridge = getBridgeByTransaction(tr);
+  // return bridge.serializationBridge.fromTransactionRaw(tr);
+  return callSerializeBridgeFunc(tr, "fromTransactionRaw");
 };
 export const toTransactionRaw = (t: Transaction): TransactionRaw => {
-  const TM = transactionModulePerFamily[t.family];
-  // FIXME: something is wrong with TM.toTransactionRaw expecting a (arg: never) => for some reasons
-  return TM.toTransactionRaw(t as any);
+  // const bridge = getBridgeByTransaction(t);
+  // return bridge.serializationBridge.toTransactionRaw(t);
+  return callSerializeBridgeFunc(t, "toTransactionRaw");
 };
 
 export const fromTransactionStatusRaw = (
   tr: TransactionStatusRaw,
   family: string,
 ): TransactionStatus => {
-  const TM = transactionModulePerFamily[family];
-  return TM.fromTransactionStatusRaw(tr as any);
+  const bridge = getBridgeByFamily(family);
+  return bridge.serializationBridge.fromTransactionStatusRaw(tr as any);
+  // return callSerializeBridgeFunc(t, "toTransactionRaw");
 };
 export const toTransactionStatusRaw = (
   t: TransactionStatus,
   family: string,
 ): TransactionStatusRaw => {
-  const TM = transactionModulePerFamily[family];
-  return TM.toTransactionStatusRaw(t as any);
+  const bridge = getBridgeByFamily(family);
+  return bridge.serializationBridge.toTransactionStatusRaw(t as any);
+  // return callSerializeBridgeFunc(t, "toTransactionRaw");
 };
 
 export const formatTransaction = (t: Transaction, a: Account): string => {
-  const TM = transactionModulePerFamily[t.family];
-  // FIXME: something is wrong with TM.formatTransaction expecting a (arg: never) => for some reasons
-  return TM.formatTransaction ? TM.formatTransaction(t as any, a as any) : "";
+  const bridge = getBridgeByTransaction(t);
+  return bridge.serializationBridge.formatTransaction(t as any, a);
+  // return callSerializeBridgeFunc(t, "toTransactionRaw");
 };
-
 export const formatTransactionStatus = (
   t: Transaction,
   ts: TransactionStatus,
   mainAccount: Account,
 ): string => {
-  const TM = transactionModulePerFamily[t.family];
-  return TM.formatTransactionStatus(t as any, ts as any, mainAccount as any);
+  const bridge = getBridgeByTransaction(t);
+  return bridge.serializationBridge.formatTransactionStatus(t as any, ts as any, mainAccount);
+  // return callSerializeBridgeFunc(t, "toTransactionRaw");
 };

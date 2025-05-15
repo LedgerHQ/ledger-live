@@ -7,6 +7,8 @@ import {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
   Operation,
+  Bridge,
+  AccountBridge,
 } from "@ledgerhq/types-live";
 
 /**
@@ -27,6 +29,9 @@ export type IconResourcesRaw = {
   totalDelegated: string | BigNumber;
 };
 
+export function isIconTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "icon";
+}
 /**
  * Icon transaction
  */
@@ -37,6 +42,9 @@ export type Transaction = TransactionCommon & {
   stepLimit?: BigNumber;
 };
 
+export function isIconTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "icon";
+}
 /**
  * Icon transaction from a raw JSON
  */
@@ -59,3 +67,6 @@ export type IconAccountRaw = AccountRaw & {
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type IconAccountBridge = AccountBridge<Transaction, Account, TransactionStatus, AccountRaw>;
+export type IconBridge = Bridge<Transaction, TransactionRaw, Account, AccountRaw>;

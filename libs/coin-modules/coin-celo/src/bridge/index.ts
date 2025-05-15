@@ -1,4 +1,4 @@
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
 import {
   getSerializedAddressParameters,
   updateTransaction,
@@ -18,15 +18,14 @@ import {
 } from "./serialization";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import resolver from "../signer/hw-getAddress";
-import type { CeloAccount, Transaction, TransactionStatus } from "../types";
+import type { CeloAccount, Transaction, TransactionRaw } from "../types";
 import { broadcast } from "./broadcast";
-
-import { EvmSigner } from "@ledgerhq/coin-evm/types/signer";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { getAccountShape } from "./synchronisation";
 import { buildSignOperation } from "./signOperation";
 import { sync } from "./synchronisation";
 import { CeloSigner } from "../signer/signer";
+import serialization from "./transaction";
 
 export function buildCurrencyBridge(signerContext: SignerContext<CeloSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -43,9 +42,9 @@ export function buildCurrencyBridge(signerContext: SignerContext<CeloSigner>): C
   };
 }
 
-export function buildAccountBridge(
-  signerContext: SignerContext<CeloSigner>,
-): AccountBridge<Transaction, CeloAccount, TransactionStatus> {
+type CeloAccountBridge = AccountBridge<Transaction, CeloAccount>;
+
+export function buildAccountBridge(signerContext: SignerContext<CeloSigner>): CeloAccountBridge {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -69,9 +68,12 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<CeloSigner>) {
+export type CeloBridge = Bridge<Transaction, TransactionRaw, CeloAccount>;
+
+export function createBridges(signerContext: SignerContext<CeloSigner>): CeloBridge {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
+    serializationBridge: serialization,
   };
 }

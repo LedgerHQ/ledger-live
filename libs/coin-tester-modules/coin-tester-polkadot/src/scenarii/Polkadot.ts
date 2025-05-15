@@ -16,8 +16,11 @@ import { polkadot } from "../helpers";
 import resolver from "@ledgerhq/coin-polkadot/signer/index";
 import {
   PolkadotAccount,
+  PolkadotAccountRaw,
   PolkadotOperationExtra,
+  PolkadotOperationExtraRaw,
   Transaction as PolkadotTransaction,
+  TransactionStatus,
 } from "@ledgerhq/coin-polkadot/types/bridge";
 
 type PolkadotScenarioTransaction = ScenarioTransaction<PolkadotTransaction, PolkadotAccount>;
@@ -241,7 +244,14 @@ const coinConfig: PolkadotCoinConfig = {
 
 const subscriptions: any[] = [];
 
-export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
+export const PolkadotScenario: Scenario<
+  PolkadotTransaction,
+  PolkadotAccount,
+  TransactionStatus,
+  PolkadotAccountRaw,
+  PolkadotOperationExtra,
+  PolkadotOperationExtraRaw
+> = {
   name: "Polkadot Ledger Live transactions",
   setup: async () => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([

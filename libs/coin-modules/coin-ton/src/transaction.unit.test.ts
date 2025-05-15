@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { Address, Cell } from "@ton/core";
 import type { Account } from "@ledgerhq/types-live";
 import type { TonPayloadFormat, TonPayloadFormatRaw, Transaction, TransactionRaw } from "./types";
-import { formatTransaction, fromTransactionRaw, toTransactionRaw } from "./transaction";
+import { serialization } from "./transaction";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 
@@ -536,7 +536,7 @@ const cases: Array<{
 
 describe("toTransactionRaw", () => {
   it.each(cases)("should work for $name", ({ tx, rawTx }) => {
-    const resTx = toTransactionRaw(tx);
+    const resTx = serialization.toTransactionRaw(tx);
 
     expect(resTx).toEqual(rawTx);
   });
@@ -544,7 +544,7 @@ describe("toTransactionRaw", () => {
 
 describe("fromTransactionRaw", () => {
   it.each(cases)("should work for $name", ({ tx, rawTx }) => {
-    const resTx = fromTransactionRaw(rawTx);
+    const resTx = serialization.fromTransactionRaw(rawTx);
 
     expect(resTx).toEqual(tx);
   });
@@ -568,7 +568,7 @@ describe("formatTransaction", () => {
         text: "",
       },
     };
-    expect(formatTransaction(transaction, account)).toMatchInlineSnapshot(`
+    expect(serialization.formatTransaction(transaction, account)).toMatchInlineSnapshot(`
 "
 SEND 
 TO test-recipient"
@@ -586,7 +586,7 @@ TO test-recipient"
         text: "",
       },
     };
-    expect(formatTransaction(transaction, account)).toMatchInlineSnapshot(`
+    expect(serialization.formatTransaction(transaction, account)).toMatchInlineSnapshot(`
 "
 SEND  0.000001 TON
 TO test-recipient"
@@ -605,7 +605,7 @@ TO test-recipient"
       },
       useAllAmount: true,
     };
-    expect(formatTransaction(transaction, account)).toMatchInlineSnapshot(`
+    expect(serialization.formatTransaction(transaction, account)).toMatchInlineSnapshot(`
 "
 SEND MAX
 TO test-recipient"

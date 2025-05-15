@@ -1,8 +1,8 @@
-import type { BigNumber } from "bignumber.js";
-import { types as TyphonTypes } from "@stricahq/typhonjs";
 import type {
   Account,
+  AccountBridge,
   AccountRaw,
+  Bridge,
   Operation,
   OperationRaw,
   TransactionCommon,
@@ -10,6 +10,8 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
+import { types as TyphonTypes } from "@stricahq/typhonjs";
+import type { BigNumber } from "bignumber.js";
 
 export enum PaymentChain {
   external = 0,
@@ -172,6 +174,9 @@ export type CardanoResourcesRaw = {
 
 export type CardanoOperationMode = "send" | "delegate" | "undelegate";
 
+export function isCardanoTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "cardano";
+}
 /**
  * Cardano transaction
  */
@@ -185,6 +190,9 @@ export type Transaction = TransactionCommon & {
   // add here all transaction-specific fields if you implement other modes than "send"
 };
 
+export function isCardanoTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "cardano";
+}
 /**
  * Cardano transaction from a raw JSON
  */
@@ -237,3 +245,20 @@ export type CardanoOperationExtra = {
   refund?: string;
   rewards?: string;
 };
+
+export type CardanoAccountBridge = AccountBridge<
+  Transaction,
+  CardanoAccount,
+  TransactionStatus,
+  CardanoAccountRaw,
+  CardanoOperationExtra,
+  CardanoOperationExtra
+>;
+export type CardanoBridge = Bridge<
+  Transaction,
+  TransactionRaw,
+  CardanoAccount,
+  CardanoAccountRaw,
+  CardanoOperationExtra,
+  CardanoOperationExtra
+>;

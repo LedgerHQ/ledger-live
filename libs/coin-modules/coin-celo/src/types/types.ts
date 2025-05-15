@@ -55,12 +55,19 @@ export type CeloResourcesRaw = {
   lockedGoldAddress: string | null | undefined;
   maxNumGroupsVotedFor: string;
 };
+
+export function isCeloTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "celo";
+}
 export type Transaction = TransactionCommon & {
   family: "celo";
   fees: BigNumber | null | undefined;
   mode: CeloOperationMode;
   index: number | null | undefined;
 };
+export function isCeloTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "celo";
+}
 export type TransactionRaw = TransactionCommonRaw & {
   family: "celo";
   fees: string | null | undefined;

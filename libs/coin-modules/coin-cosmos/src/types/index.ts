@@ -1,7 +1,9 @@
 import type { BigNumber } from "bignumber.js";
 import {
   Account,
+  AccountBridge,
   AccountRaw,
+  Bridge,
   Operation,
   OperationExtra,
   OperationExtraRaw,
@@ -196,6 +198,9 @@ export type CosmosLikeTransaction = TransactionCommon & {
   sourceValidator: string | null | undefined;
 };
 
+export function isCosmosTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "cosmos";
+}
 export type Transaction = CosmosLikeTransaction & {
   family: "cosmos";
   networkInfo: NetworkInfo | null | undefined;
@@ -212,6 +217,9 @@ export type CosmosLikeTransactionRaw = TransactionCommonRaw & {
   sourceValidator: string | null | undefined;
 };
 
+export function isCosmosTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "cosmos";
+}
 export type TransactionRaw = CosmosLikeTransactionRaw & {
   family: "cosmos";
   networkInfo: NetworkInfoRaw | null | undefined;
@@ -307,3 +315,20 @@ export interface CosmosSignerOld {
     chainPrefix?: string,
   ): Promise<{ return_code: any; signature: any }>;
 }
+
+export type CosmosAccountBridge = AccountBridge<
+  Transaction,
+  CosmosAccount,
+  TransactionStatus,
+  CosmosAccountRaw,
+  CosmosOperationExtra,
+  CosmosOperationExtraRaw
+>;
+export type CosmosBridge = Bridge<
+  Transaction,
+  TransactionRaw,
+  CosmosAccount,
+  CosmosAccountRaw,
+  CosmosOperationExtra,
+  CosmosOperationExtraRaw
+>;

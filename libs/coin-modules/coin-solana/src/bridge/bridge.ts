@@ -9,8 +9,15 @@ import {
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { minutes, makeLRUCache } from "@ledgerhq/live-network/cache";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import type { AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
-import type { SolanaAccount, SolanaPreloadDataV1, Transaction, TransactionStatus } from "../types";
+import type { AccountBridge, AccountLike, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type {
+  SolanaAccount,
+  SolanaAccountRaw,
+  SolanaPreloadDataV1,
+  Transaction,
+  TransactionRaw,
+  TransactionStatus,
+} from "../types";
 import { prepareTransaction as prepareTransactionWithAPI } from "../prepareTransaction";
 import { estimateMaxSpendableWithAPI } from "../estimateMaxSpendable";
 import { PRELOAD_MAX_AGE, hydrate, preloadWithAPI } from "../preload";
@@ -31,6 +38,7 @@ import {
   assignFromTokenAccountRaw,
   assignToTokenAccountRaw,
 } from "../serialization";
+import { serialization } from "../transaction";
 import nftResolvers from "../nftResolvers";
 
 function makePrepare(getChainAPI: (config: Config) => Promise<ChainAPI>) {
@@ -149,6 +157,8 @@ function getPreloadStrategy() {
   };
 }
 
+export type SolanaBridge = Bridge<Transaction, TransactionRaw, SolanaAccount, SolanaAccountRaw>;
+
 export function makeBridges({
   getAPI,
   getQueuedAPI,
@@ -159,14 +169,16 @@ export function makeBridges({
   getQueuedAPI: (config: Config) => Promise<ChainAPI>;
   getQueuedAndCachedAPI: (config: Config) => Promise<ChainAPI>;
   signerContext: SignerContext<SolanaSigner>;
-}): {
-  currencyBridge: CurrencyBridge;
-  accountBridge: AccountBridge<Transaction, SolanaAccount, TransactionStatus>;
-} {
+}): SolanaBridge {
   const getAddress = resolver(signerContext);
   const { sync, scan } = makeSyncAndScan(getQueuedAPI, getAddress);
 
-  const accountBridge: AccountBridge<Transaction, SolanaAccount, TransactionStatus> = {
+  const accountBridge: AccountBridge<
+    Transaction,
+    SolanaAccount,
+    TransactionStatus,
+    SolanaAccountRaw
+  > = {
     createTransaction,
     updateTransaction,
     estimateMaxSpendable: makeEstimateMaxSpendable(getQueuedAndCachedAPI),
@@ -196,5 +208,6 @@ export function makeBridges({
   return {
     currencyBridge,
     accountBridge,
+    serializationBridge: serialization,
   };
 }

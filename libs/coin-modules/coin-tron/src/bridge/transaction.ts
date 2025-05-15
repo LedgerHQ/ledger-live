@@ -7,9 +7,11 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, SerializationBridge } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+
+type TronSerializationBridge = SerializationBridge<Transaction, TransactionRaw>;
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
@@ -33,7 +35,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   };
 };
 
-export const toTransactionRaw = (t: Transaction): TransactionRaw => {
+const toTransactionRaw = (t: Transaction): TransactionRaw => {
   const common = toTransactionCommonRaw(t);
   const { networkInfo } = t;
   return {
@@ -55,7 +57,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   };
 };
 
-export const formatTransaction = (t: Transaction, mainAccount: Account): string => {
+const formatTransaction = (t: Transaction, mainAccount: Account): string => {
   const account =
     (t.subAccountId && (mainAccount.subAccounts || []).find(a => a.id === t.subAccountId)) ||
     mainAccount;
@@ -74,11 +76,11 @@ ${t.mode.toUpperCase()}${t.resource ? " " + t.resource : ""} ${
 TO ${t.recipient}`;
 };
 
-export default {
+export const serialization = {
   formatTransaction,
   fromTransactionRaw,
   toTransactionRaw,
   fromTransactionStatusRaw,
   toTransactionStatusRaw,
   formatTransactionStatus,
-};
+} satisfies TronSerializationBridge;

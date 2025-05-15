@@ -8,8 +8,10 @@ import type {
 import { BigNumber } from "bignumber.js";
 import mapValues from "lodash/mapValues";
 
-export const fromTransactionCommonRaw = (raw: TransactionCommonRaw): TransactionCommon => {
-  const common: TransactionCommon = {
+export const fromTransactionCommonRaw = (
+  raw: TransactionCommonRaw,
+): Omit<TransactionCommon, "family"> => {
+  const common: Omit<TransactionCommon, "family"> = {
     amount: new BigNumber(raw.amount),
     recipient: raw.recipient,
   };
@@ -29,8 +31,10 @@ export const fromTransactionCommonRaw = (raw: TransactionCommonRaw): Transaction
   return common;
 };
 
-export const toTransactionCommonRaw = (raw: TransactionCommon): TransactionCommonRaw => {
-  const common: TransactionCommonRaw = {
+export const toTransactionCommonRaw = (
+  raw: TransactionCommon,
+): Omit<TransactionCommonRaw, "family"> => {
+  const common: Omit<TransactionCommonRaw, "family"> = {
     amount: raw.amount.toString(),
     recipient: raw.recipient,
   };
