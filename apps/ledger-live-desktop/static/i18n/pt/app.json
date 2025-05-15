@@ -119,7 +119,7 @@
     "addressCopied" : "Endereço Copiado",
     "addressCopiedSuspicious" : "Incompatibilidade entre o endereço copiado e o que está na área de transferência.",
     "experimentalFeature" : "Experimental",
-    "featureFlags" : "Marcadores de funções",
+    "featureFlags" : "Marcador de Recurso",
     "ldmkEnabled" : "Transporte LDMK",
     "information" : "Informações",
     "search" : "Pesquisar...",
@@ -2390,7 +2390,7 @@
         "ethereumPriorityFee" : "Taxa de Prioridade Máxima ({{unitName}})",
         "nextBlock" : "Próximo bloco",
         "suggested" : "Sugerido",
-        "unitPerByte" : "{{unit}} por byte",
+        "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
         "nftQuantity" : "Quantidade"
       },
@@ -2423,8 +2423,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "Não usa tag/memo?",
-        "description" : "Seus fundos serão perdidos se você não adicionar uma tag ou memo ao enviá-los para qualquer corretora centralizada ou carteira de custódia.",
+        "title" : "Precisa de Tag/Memo?",
+        "description" : "Ao não adicionar Tag/Memo ao enviar fundos para uma corretora centralizada, você corre o risco de perder seus fundos.",
         "cta.addTag" : "Adicionar tag",
         "cta.not.addTag" : "Não adicione a tag",
         "checkbox.label" : "Não mostrar isso novamente."
@@ -3827,6 +3827,131 @@
       }
     }
   },
+  "aptos" : {
+    "common" : {
+      "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente.",
+      "viewDetails" : "Ver detalhes",
+      "connectDevice" : {
+        "title" : "Dispositivo"
+      },
+      "confirmation" : {
+        "title" : "Confirmação"
+      }
+    },
+    "delegation" : {
+      "nextUnlockIn" : "Próximo desbloqueio em",
+      "totalStake" : "Aplicação Total",
+      "commission" : "Comissão",
+      "delegate" : "Adicionar staking",
+      "stakingPositionHeader" : "Posições de staking",
+      "stakedHeader" : "Em staking",
+      "pendingReleaseHeader" : "Liberação Pendente",
+      "availableBalance" : "Disponíveis para saque",
+      "active" : "Ativo",
+      "activeTooltip" : "A quantia ativa gera recompensas",
+      "inactiveTooltip" : "A quantia inativa não gera recompensas",
+      "delegatedInfoTooltip" : "Quantia total delegada aos validadores.",
+      "withdrawableInfoTooltip" : "Quantia total que pode ser sacada das delegações.",
+      "withdrawableTitle" : "Disponíveis para saque",
+      "statusUpdateNotice" : "O estado da delegação será atualizado quando a transação for confirmada.",
+      "ledgerByFigmentTC" : "Ledger by Figment T&Cs",
+      "ledgerByChorusOneTC" : "Termos e Condições da Ledger by Chorus One",
+      "emptyState" : {
+        "description" : "Você pode ganhar recompensas em APT delegando seus ativos.",
+        "info" : "Como a Delegação Funciona",
+        "delegation" : "Receber recompensas"
+      },
+      "earnRewards" : {
+        "description" : "Você pode ganhar recompensas delegando seus ativos APT a um validador.",
+        "bullet" : {
+          "0" : "Você mantém a posse dos ativos delegados",
+          "1" : "Delegar usando seu dispositivo Ledger",
+          "2" : "Os ativos estarão disponíveis após parar delegação"
+        },
+        "warning" : "Escolha seu validador com sabedoria: parte de seus ativos delegados pode ser irrevogavelmente perdida se o validador não se comportar adequadamente."
+      },
+      "states" : {
+        "active" : "Ativo",
+        "inactive" : "Inativo",
+        "activating" : "Ativando",
+        "deactivating" : "Desativando"
+      },
+      "flow" : {
+        "title" : "Delegar",
+        "steps" : {
+          "validator" : {
+            "title" : "Validador"
+          },
+          "amount" : {
+            "title" : "Quantia",
+            "reserveWarning" : "Deixe sempre {{amount}} APT reservados em sua carteira para cobrir futuras taxas de rede na hora de retirar suas moedas do staking"
+          },
+          "confirmation" : {
+            "success" : {
+              "title" : "Você delegou seus ativos com sucesso"
+            }
+          }
+        }
+      },
+      "withdraw" : {
+        "flow" : {
+          "title" : "Sacar",
+          "steps" : {
+            "amount" : {
+              "title" : "Quantia"
+            },
+            "confirmation" : {
+              "success" : {
+                "title" : "Você sacou seus ativos com sucesso.",
+                "text" : "O saldo da sua conta será atualizado quando a transação for confirmada."
+              }
+            }
+          }
+        }
+      },
+      "activate" : {
+        "flow" : {
+          "title" : "Ativar",
+          "steps" : {
+            "confirmation" : {
+              "success" : {
+                "title" : "Você ativou sua delegação com sucesso."
+              }
+            }
+          }
+        }
+      },
+      "reactivate" : {
+        "flow" : {
+          "title" : "Reativar",
+          "steps" : {
+            "confirmation" : {
+              "success" : {
+                "title" : "Você reativou sua delegação com sucesso."
+              }
+            }
+          }
+        }
+      },
+      "deactivate" : {
+        "flow" : {
+          "title" : "Desativar",
+          "steps" : {
+            "confirmation" : {
+              "success" : {
+                "title" : "Você desativou sua delegação com sucesso."
+              }
+            }
+          }
+        }
+      },
+      "stake" : {
+        "unstake" : "Desaplicar",
+        "withdraw" : "Sacar",
+        "restake" : "Re-aplicar"
+      }
+    }
+  },
   "ethereum" : {
     "stake_deprecated" : {
       "title" : "Multiplique suas posições de ETH",
@@ -4405,14 +4530,14 @@
       "customLockScreen" : "Ativos personalizados da tela de bloqueio",
       "customLockScreenDesc" : "Faça o debug de gráficos da tela de bloqueio",
       "customLockScreenCTA" : "Iniciar",
-      "featureFlagsTitle" : "Marcadores definidos usados no Ledger Live",
+      "featureFlagsTitle" : "Marcadores de recursos definidos usados no Ledger Live",
       "featureFlagsDesc" : "Valores sobrepostos serão redefinidos se o aplicativo for reexecutado. Apenas strings JSON válidas serão aceitas.",
       "featureFlagsEdit" : "Editar",
       "featureFlagsRestore" : "Restaurar",
       "featureFlagsOverride" : "Sobrepor",
       "featureFlagsRestoreAll" : "Restaurar valores de todos os marcadores",
-      "flagHint" : "Se um marcador de recurso (“feature flag”) estiver definido no ambiente Firebase de destino,\nmas estiver faltando na lista a seguir, você poderá digitar seu nome **exato** na \nbarra de busca e ele aparecerá na lista. Digite o \nnome do marcador em camelCase sem o prefixo “feature”.",
-      "showButtonDesc" : "Sempre exibir o botão Incluir Marcadores na barra lateral",
+      "flagHint" : "Se um marcador de recurso (“feature flag”) estiver definido no ambiente Firebase de destino,\nmas estiver faltando na lista a seguir, você poderá digitar seu nome **exato** na \nbarra de busca e ele aparecerá na lista. Digite o nome do marcador em camelCase sem o prefixo “feature”.",
+      "showButtonDesc" : "Sempre exibir o botão Marcadores de Recursos na barra lateral",
       "buttonTitle" : "Marcadores desativados localmente",
       "overridden" : {
         "byEnv" : "sobrepostos pelo ambiente",
@@ -5860,9 +5985,17 @@
       "title" : "Desculpe, falha na estimativa de taxas",
       "description" : "A estimativa de taxa falhou na rede. Verifique suas entradas, é provável que a transação vá falhar"
     },
+    "NotEnoughToStake" : {
+      "title" : "Quantia mínima para staking: {{currency}} {{minStake}}",
+      "description" : "Uma quantia mínima de {{currency}} {{minStake}} é necessária para fazer staking."
+    },
     "NotEnoughBalance" : {
       "title" : "Fundos Insuficientes",
       "description" : "Certifique-se de que a conta tem fundos suficientes."
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "Fundos insuficientes para cobrir as taxas",
+      "description" : "Certifique-se de que a conta tenha fundos suficientes."
     },
     "NotEnoughBalanceSwap" : {
       "title" : "Saldo insuficiente incluindo taxas de rede. Ajuste a quantia ou verifique o saldo.",
