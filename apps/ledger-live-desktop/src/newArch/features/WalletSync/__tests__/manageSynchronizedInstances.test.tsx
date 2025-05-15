@@ -58,7 +58,7 @@ describe("manageSynchronizedInstances", () => {
 
     expect(await screen.findByText("Ledger Live is synched across")).toBeDefined();
 
-    const instance = screen.getByTestId("walletSync-manage-instance-currentInstance");
+    const instance = screen.getByTestId("walletSync-manage-instance-macOS");
     expect(instance).toBeDefined();
 
     await user.click(screen.getAllByText("Remove")[0]);
