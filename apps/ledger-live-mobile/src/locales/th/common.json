@@ -6469,7 +6469,9 @@
     },
     "stepVerification" : {
       "action" : "โปรดยืนยันการทำงานบนอุปกรณ์ของคุณ",
-      "accountName" : "ชื่อบัญชี"
+      "accountName" : "ชื่อบัญชี",
+      "title" : "ดำเนินการต่อบน Ledger {{wording}} ของคุณ",
+      "description" : "ปฏิบัติตามคำแนะนำที่ปรากฏบน Secure Touchscreen ของคุณ"
     }
   },
   "notificationCenter" : {
@@ -7414,6 +7416,10 @@
       "minutes_plural" : "({{count}} นาทีที่แล้ว)",
       "seconds" : "({{count}} วินาทีที่แล้ว)",
       "seconds_plural" : "({{count}} วินาทีที่แล้ว)"
-    }
+    },
+    "performance" : "ประสิทธิภาพ",
+    "low" : "ต่ำ",
+    "high" : "สูง",
+    "title" : "การเคลื่อนไหวของตลาด"
   }
 }
