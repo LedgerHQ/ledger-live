@@ -1,13 +1,12 @@
 import React from "react";
-// import { getMaxSendBalance } from "@ledgerhq/live-common/families/aptos/logic";
-// import { MIN_COINS_ON_SHARES_POOL_IN_OCTAS } from "@ledgerhq/live-common/families/aptos/constants";
 import { AptosAccount } from "@ledgerhq/live-common/families/aptos/types";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/types-live";
-import { NavigatorName, ScreenName } from "~/const";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
+import { canStake } from "@ledgerhq/live-common/families/aptos/logic";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
+import { NavigatorName, ScreenName } from "~/const";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 
 const getMainActions = ({
@@ -19,7 +18,7 @@ const getMainActions = ({
   parentAccount: Account;
   parentRoute: RouteProp<ParamListBase, ScreenName>;
 }): ActionButtonEvent[] => {
-  const stakingDisabled = false;
+  const stakingDisabled = !canStake(account);
   const startWithValidator =
     account.aptosResources && account.aptosResources?.stakingPositions.length > 0;
   const label = getStakeLabelLocaleBased();
@@ -47,6 +46,7 @@ const getMainActions = ({
           },
         },
       ];
+
   return [
     {
       id: "stake",
