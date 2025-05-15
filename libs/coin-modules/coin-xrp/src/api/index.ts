@@ -7,6 +7,7 @@ import type {
 } from "@ledgerhq/coin-framework/api/index";
 import { log } from "@ledgerhq/logs";
 import coinConfig, { type XrpConfig } from "../config";
+import { getServerInfos } from "../network";
 import {
   broadcast,
   combine,
@@ -27,6 +28,7 @@ export function createApi(config: XrpConfig): Api<XrpAsset, TransactionIntentExt
   return {
     broadcast,
     combine,
+    getServerInfo,
     craftTransaction: craft,
     estimateFees: estimate,
     getBalance,
@@ -69,6 +71,11 @@ async function craft(
 async function estimate(): Promise<FeeEstimation> {
   const estimation = await estimateFees();
   return { value: estimation.fee };
+}
+
+async function getServerInfo(): Promise<any> {
+  const serverInfo = await getServerInfos();
+  return serverInfo.info;
 }
 
 type PaginationState = {
