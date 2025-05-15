@@ -4,7 +4,6 @@ import storage from "LLM/storage";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import InitMessage from "./InitMessage";
 import ConfirmUnverified from "./ConfirmUnverified";
-import Config from "react-native-config";
 import { LayoutChangeEvent } from "react-native";
 
 const shouldNotRemindUserAgainToVerifyAddressOnReceive =
@@ -88,7 +87,7 @@ const ReceiveSecurityModal = ({
       noCloseButton
       preventBackdropClick
     >
-      <Animated.ScrollView style={Config.DETOX ? undefined : animatedStyle}>
+      <Animated.ScrollView style={animatedStyle}>
         <Animated.View onLayout={onLayout}>{component}</Animated.View>
       </Animated.ScrollView>
     </QueuedDrawer>

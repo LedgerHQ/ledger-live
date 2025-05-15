@@ -4,6 +4,8 @@ import { INITIAL_TEST, WalletSyncSettingsNavigator } from "./shared";
 import { createQRCodeCandidateInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
 import { BarcodeScanningResult } from "expo-camera";
 
+import { mockSimulateBarcodeScanned } from "@tests/jest-setup";
+
 const MOCK_BARCODE: BarcodeScanningResult = {
   cornerPoints: [],
   bounds: {
@@ -19,14 +21,6 @@ const MOCK_BARCODE: BarcodeScanningResult = {
   type: "",
   data: "",
 };
-
-const mockSimulateBarcodeScanned = jest.fn();
-jest.mock("expo-camera", () => ({
-  CameraView: jest.fn(({ onBarcodeScanned }) => {
-    mockSimulateBarcodeScanned.mockImplementation(onBarcodeScanned);
-    return null;
-  }),
-}));
 
 jest.mock("@ledgerhq/ledger-key-ring-protocol/qrcode/index", () => ({
   createQRCodeCandidateInstance: jest.fn(),
