@@ -1,7 +1,9 @@
 // import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib-es/currencies/formatCurrencyUnit";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { AptosValidator } from "@ledgerhq/live-common/families/aptos/types";
 import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
 // import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
@@ -58,11 +60,11 @@ function AptosValidatorRow({ validator, active, onClick, unit, currency }: Props
               flexDirection: "column",
             }}
           >
-            {/* <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={4}>
-              {formatCurrencyUnit(unit, new BigNumber(validator.tokens), {
+            <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={4}>
+              {formatCurrencyUnit(unit, new BigNumber(validator.activeStake?.toString()), {
                 showCode: true,
               })}
-            </Text> */}
+            </Text>
             <Text fontSize={2} textAlign="right">
               <Trans color="palette.text.shade50" i18nKey="aptos.stake.totalStake" />
             </Text>
