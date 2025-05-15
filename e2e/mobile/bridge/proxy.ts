@@ -33,7 +33,7 @@ export async function startProxy(
   speculosApiPort?: number,
 ): Promise<string> {
   if (!speculosApiPort) speculosApiPort = getEnv("SPECULOS_API_PORT");
-  if (!speculosAddress) speculosAddress = "localhost";
+  if (!speculosAddress) speculosAddress = "http://localhost";
 
   invariant(speculosApiPort, "E2E Proxy : speculosApiPort is not defined");
 
@@ -43,7 +43,7 @@ export async function startProxy(
       port: proxyPort,
       silent: true,
       verbose: false,
-      speculosUrl: `http://${speculosAddress}`,
+      speculosUrl: speculosAddress,
       speculosApiPort,
     };
 
