@@ -53,7 +53,7 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.neutral.c00 }}>
-      <TrackScreen name={PAGE_NAME} />
+      <TrackScreen name={PAGE_NAME} currencyIds={currencyIds} initialRange={initialRange} />
       <Flex width="100%" flex={1}>
         <StickyHeader />
         <Button onPress={handleNext} size="large">

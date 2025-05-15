@@ -28,6 +28,16 @@ export const useFooterQuickActions = (quickActionsProps: QuickActionProps) => {
   const { t } = useTranslation();
   const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
   const { quickActionsList } = useQuickActions(quickActionsProps);
+  function trackQuickAction(
+    prop: (typeof QUICK_ACTIONS)[keyof typeof QUICK_ACTIONS],
+    quickActionsProps: QuickActionProps,
+  ) {
+    track("button_clicked", {
+      button: prop.analytics,
+      page: PAGE_NAME,
+      coin: quickActionsProps.currency?.name,
+    });
+  }
   const quickActionsData: QuickActionButtonProps[] = useMemo(
     () =>
       (Object.entries(QUICK_ACTIONS) as EntryOf<typeof QUICK_ACTIONS>[]).flatMap(([key, prop]) => {
@@ -40,17 +50,13 @@ export const useFooterQuickActions = (quickActionsProps: QuickActionProps) => {
           Icon: quickActionsItem.icon,
           children: t(prop.name),
           onPress: () => {
-            track("button_clicked", {
-              button: prop.analytics,
-              page: PAGE_NAME,
-              coin: quickActionsProps.currency?.name,
-            });
+            trackQuickAction(prop, quickActionsProps);
             navigation.navigate<keyof BaseNavigatorStackParamList>(...quickActionsItem.route);
           },
           disabled: quickActionsItem.disabled,
         };
       }),
-    [quickActionsList, t, quickActionsProps.currency?.name, navigation],
+    [quickActionsList, t, quickActionsProps, navigation],
   );
   return quickActionsData;
 };
