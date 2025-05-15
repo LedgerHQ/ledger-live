@@ -234,13 +234,15 @@ export const WebPTXPlayer = ({
     return false;
   }, [webviewState.canGoBack, webviewAPIRef]);
 
-  // eslint-disable-next-line consistent-return
   useEffect(() => {
     if (Platform.OS === "android") {
-      BackHandler.addEventListener("hardwareBackPress", handleHardwareBackPress);
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        handleHardwareBackPress,
+      );
 
       return () => {
-        BackHandler.removeEventListener("hardwareBackPress", handleHardwareBackPress);
+        subscription.remove();
       };
     }
   }, [handleHardwareBackPress]);
