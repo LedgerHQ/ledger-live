@@ -168,6 +168,7 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     broadcast: buildBroadcast(networkFamily),
     combine: buildCombine(networkFamily),
     validateIntent: buildValidateIntent(networkFamily),
+    getServerInfo: () => Promise.resolve({}), // TODO: cleanup
     estimateFees: buildEstimateFees(networkFamily),
     getBalance: buildGetBalance(networkFamily),
     listOperations: buildListOperations(networkFamily),
