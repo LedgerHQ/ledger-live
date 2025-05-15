@@ -7984,8 +7984,8 @@ importers:
         specifier: 0.7.0
         version: 0.7.0(rxjs@7.8.1)
       '@ledgerhq/device-signer-kit-ethereum':
-        specifier: 1.4.0
-        version: 1.4.0(@ledgerhq/context-module@1.4.0(@ledgerhq/device-management-kit@0.7.0(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.7.0(rxjs@7.8.1))
+        specifier: 0.0.0-challenge-nano-s-20250515081938
+        version: 0.0.0-challenge-nano-s-20250515081938(@ledgerhq/context-module@1.4.0(@ledgerhq/device-management-kit@0.7.0(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.7.0(rxjs@7.8.1))
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -13019,11 +13019,30 @@ packages:
   '@inversifyjs/common@1.4.0':
     resolution: {integrity: sha512-qfRJ/3iOlCL/VfJq8+4o5X4oA14cZSBbpAmHsYj8EsIit1xDndoOl0xKOyglKtQD4u4gdNVxMHx4RWARk/I4QA==}
 
+  '@inversifyjs/common@1.5.0':
+    resolution: {integrity: sha512-Qj5BELk11AfI2rgZEAaLPmOftmQRLLmoCXgAjmaF0IngQN5vHomVT5ML7DZ3+CA5fgGcEVMcGbUDAun+Rz+oNg==}
+
+  '@inversifyjs/container@1.9.1':
+    resolution: {integrity: sha512-8EhjFoAx1LoD7TpCuP9ptitwc+7kVXEpZB0IeoEsCQb9sWaNYYaBi+7Lommu3/1nYxdMbX2t7AJhQnryT1EEsg==}
+    peerDependencies:
+      reflect-metadata: ~0.2.2
+
   '@inversifyjs/core@1.3.5':
     resolution: {integrity: sha512-B4MFXabhNTAmrfgB+yeD6wd/GIvmvWC6IQ8Rh/j2C3Ix69kmqwz9pr8Jt3E+Nho9aEHOQCZaGmrALgtqRd+oEQ==}
 
+  '@inversifyjs/core@5.2.0':
+    resolution: {integrity: sha512-MMaHGGRjQWT9uAof63sbZyEhRl4XptEAE17DJwrgUcN9LsdIEvecKP3r53pE9VF88PFR41knUKKzagUBvWLHmw==}
+
+  '@inversifyjs/prototype-utils@0.1.0':
+    resolution: {integrity: sha512-lNz1yyajMRDXBHLvJsYYX81FcmeD15e5Qz1zAZ/3zeYTl+u7ZF/GxNRKJzNOloeMPMtuR8BnvzHA1SZxjR+J9w==}
+
   '@inversifyjs/reflect-metadata-utils@0.2.4':
     resolution: {integrity: sha512-u95rV3lKfG+NT2Uy/5vNzoDujos8vN8O18SSA5UyhxsGYd4GLQn/eUsGXfOsfa7m34eKrDelTKRUX1m/BcNX5w==}
+    peerDependencies:
+      reflect-metadata: 0.2.2
+
+  '@inversifyjs/reflect-metadata-utils@1.1.0':
+    resolution: {integrity: sha512-jmuAuC3eL1GnFAYfJGJOMKRDL9q1mgzOyrban6zxfM8Yg1FUHsj25h27bW2G7p8X1Amvhg3MLkaOuogszkrofA==}
     peerDependencies:
       reflect-metadata: 0.2.2
 
@@ -13349,11 +13368,11 @@ packages:
     peerDependencies:
       rxjs: ^7.8.2
 
-  '@ledgerhq/device-signer-kit-ethereum@1.4.0':
-    resolution: {integrity: sha512-WgEXm0rNB3wL7xRNcpeijAul8i4h4AtRrmLounbvitbWL94uG+QZReqCyRIv0vf6ZnJr7+OtD6/oD/Q0YAY4JA==}
+  '@ledgerhq/device-signer-kit-ethereum@0.0.0-challenge-nano-s-20250515081938':
+    resolution: {integrity: sha512-EZCI/w7jCOe9bduytUAViN2GOUMk9/g6FLno272fP+zqUGCcI7Vht0UjFh45uN2Q9GhzwgD7Jx+afTrJvMTAfA==}
     peerDependencies:
-      '@ledgerhq/context-module': ^1.4.0
-      '@ledgerhq/device-management-kit': ^0.7.0
+      '@ledgerhq/context-module': 1.4.0
+      '@ledgerhq/device-management-kit': 0.7.0
 
   '@ledgerhq/device-transport-kit-react-native-ble@1.0.0':
     resolution: {integrity: sha512-gYc2/0O72ldEZLYyTtO00cY+baeqZDP1rqWLGSz0zX2PXz29ufzD4J/DJ9KXAzjWE83YMALCILZWiWxdVzyJzw==}
@@ -24444,6 +24463,11 @@ packages:
 
   inversify@6.2.2:
     resolution: {integrity: sha512-KB836KHbZ9WrUnB8ax5MtadOwnqQYa+ZJO3KWbPFgcr4RIEnHM621VaqFZzOZd9+U7ln6upt9n0wJei7x2BNqw==}
+    peerDependencies:
+      reflect-metadata: ~0.2.2
+
+  inversify@7.5.1:
+    resolution: {integrity: sha512-oWWFDU2BXiuqZynGcLDDD4tqiWAeaEUCALlCj0vk/QwHGgZY/tzDFPuTmWMY3jwRmDIHxVDkcj9SL3MFTlCEDw==}
     peerDependencies:
       reflect-metadata: ~0.2.2
 
@@ -39934,6 +39958,15 @@ snapshots:
 
   '@inversifyjs/common@1.4.0': {}
 
+  '@inversifyjs/common@1.5.0': {}
+
+  '@inversifyjs/container@1.9.1(reflect-metadata@0.2.2)':
+    dependencies:
+      '@inversifyjs/common': 1.5.0
+      '@inversifyjs/core': 5.2.0(reflect-metadata@0.2.2)
+      '@inversifyjs/reflect-metadata-utils': 1.1.0(reflect-metadata@0.2.2)
+      reflect-metadata: 0.2.2
+
   '@inversifyjs/core@1.3.5(reflect-metadata@0.2.2)':
     dependencies:
       '@inversifyjs/common': 1.4.0
@@ -39941,7 +39974,23 @@ snapshots:
     transitivePeerDependencies:
       - reflect-metadata
 
+  '@inversifyjs/core@5.2.0(reflect-metadata@0.2.2)':
+    dependencies:
+      '@inversifyjs/common': 1.5.0
+      '@inversifyjs/prototype-utils': 0.1.0
+      '@inversifyjs/reflect-metadata-utils': 1.1.0(reflect-metadata@0.2.2)
+    transitivePeerDependencies:
+      - reflect-metadata
+
+  '@inversifyjs/prototype-utils@0.1.0':
+    dependencies:
+      '@inversifyjs/common': 1.5.0
+
   '@inversifyjs/reflect-metadata-utils@0.2.4(reflect-metadata@0.2.2)':
+    dependencies:
+      reflect-metadata: 0.2.2
+
+  '@inversifyjs/reflect-metadata-utils@1.1.0(reflect-metadata@0.2.2)':
     dependencies:
       reflect-metadata: 0.2.2
 
@@ -40989,14 +41038,13 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-ethereum@1.4.0(@ledgerhq/context-module@1.4.0(@ledgerhq/device-management-kit@0.7.0(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.7.0(rxjs@7.8.1))':
+  '@ledgerhq/device-signer-kit-ethereum@0.0.0-challenge-nano-s-20250515081938(@ledgerhq/context-module@1.4.0(@ledgerhq/device-management-kit@0.7.0(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.7.0(rxjs@7.8.1))':
     dependencies:
       '@ledgerhq/context-module': 1.4.0(@ledgerhq/device-management-kit@0.7.0(rxjs@7.8.1))
       '@ledgerhq/device-management-kit': 0.7.0(rxjs@7.8.1)
       '@ledgerhq/signer-utils': 1.0.5(@ledgerhq/device-management-kit@0.7.0(rxjs@7.8.1))
       ethers: 6.13.4
-      inversify: 6.2.2(reflect-metadata@0.2.2)
-      inversify-logger-middleware: 3.1.0
+      inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       semver: 7.7.0
@@ -57309,6 +57357,13 @@ snapshots:
     dependencies:
       '@inversifyjs/common': 1.4.0
       '@inversifyjs/core': 1.3.5(reflect-metadata@0.2.2)
+      reflect-metadata: 0.2.2
+
+  inversify@7.5.1(reflect-metadata@0.2.2):
+    dependencies:
+      '@inversifyjs/common': 1.5.0
+      '@inversifyjs/container': 1.9.1(reflect-metadata@0.2.2)
+      '@inversifyjs/core': 5.2.0(reflect-metadata@0.2.2)
       reflect-metadata: 0.2.2
 
   io-ts@2.0.1(fp-ts@2.1.1):
