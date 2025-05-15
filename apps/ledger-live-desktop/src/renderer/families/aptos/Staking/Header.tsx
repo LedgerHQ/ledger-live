@@ -40,6 +40,9 @@ export const Header = () => (
     <TableLine>
       <Trans i18nKey="aptos.stake.table.available" />
     </TableLine>
+    <TableLine>
+      <Trans i18nKey="aptos.stake.table.nextUnlock" />
+    </TableLine>
     <TableLine />
   </HeaderWrapper>
 );

@@ -171,6 +171,11 @@ export function Row({
         </Ellipsis>
       </Column>
       <Column>
+        <Ellipsis>
+          <Discreet>{validator?.nextUnlockTime}</Discreet>
+        </Ellipsis>
+      </Column>
+      <Column>
         <DropDown items={dropDownItems} renderItem={ManageDropDownItem} onChange={onSelect}>
           {() => (
             <Box horizontal alignItems="center">

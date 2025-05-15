@@ -3865,7 +3865,8 @@
         "stake": "Add",
         "staked": "Staked",
         "pending": "Pending Release",
-        "available": "Withdrawable"
+        "available": "Withdrawable",
+        "nextUnlock": "Next unlock"
       },
       "nextUnlockIn": "Next unlock in",
       "unstake": "Unstake",

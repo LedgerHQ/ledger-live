@@ -189,7 +189,6 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
     Operation[],
     Operation[],
   ] = txsToOps(info, accountId, transactions);
-
   const operations = mergeOps(oldOperations, newOperations);
 
   const newSubAccounts = await getSubAccounts(info, address, accountId, tokenOperations);
@@ -198,7 +197,7 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
     ? newSubAccounts
     : mergeSubAccounts(initialAccount, newSubAccounts);
 
-  operations.forEach(op => {
+  operations?.forEach(op => {
     const subOperations = inferSubOperations(op.hash, subAccounts);
     op.subOperations =
       subOperations.length === 1 ? subOperations : subOperations.filter(op => !!op.blockHash);

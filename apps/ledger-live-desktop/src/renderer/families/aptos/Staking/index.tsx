@@ -62,12 +62,8 @@ const Staking = ({ account }: { account: AptosAccount }) => {
 
   const onExternalLink = useCallback(
     (address: string) => {
-      // if (address === FIGMENT_APTOS_VALIDATOR_ADDRESS) {
-      //   openURL(urls.ledgerValidator);
-      // } else {
       const srURL = explorerView && getAddressExplorer(explorerView, address);
       if (srURL) openURL(srURL);
-      // }
     },
     [explorerView],
   );
@@ -90,8 +86,8 @@ const Staking = ({ account }: { account: AptosAccount }) => {
               <Button
                 id={"account-stake-button"}
                 mr={2}
-                color="palette.primary.main"
                 small
+                primary
                 disabled={!stakingEnabled}
                 onClick={onStake}
               >
