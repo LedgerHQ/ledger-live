@@ -263,7 +263,7 @@ const algorand: CurrenciesData<Transaction, AlgorandAccountRaw> = {
   ],
 };
 
-export const dataset: DatasetTest<AlgorandTransaction> = {
+export const dataset: DatasetTest<AlgorandTransaction, AlgorandAccountRaw> = {
   implementations: ["js"],
   currencies: {
     algorand,
