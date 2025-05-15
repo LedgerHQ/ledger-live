@@ -486,14 +486,12 @@ export const canStake = (account: AptosAccount): boolean => {
 export const canUnstake = (
   stakingPosition: AptosMappedStakingPosition | AptosStakingPosition,
 ): boolean => {
-  // TODO: this is a placeholder, proper calculations need to be placed
   return stakingPosition.staked.gte(0);
 };
 
 export const canWithdraw = (
   stakingPosition: AptosMappedStakingPosition | AptosStakingPosition,
 ): boolean => {
-  // TODO: this is a placeholder, proper calculations need to be placed
   return stakingPosition.available.gte(0);
 };
 
@@ -507,21 +505,6 @@ export const getMaxUnstakableAmount = (
   const stakingPosition = account.aptosResources?.stakingPositions.find(
     ({ validatorId }) => validatorId === validatorAddress,
   );
-
-  // let pendingUnstakingAmount = new BigNumber(0);
-  // let pendingWithdrawingAmount = new BigNumber(0);
-
-  // account.pendingOperations.forEach(({ type, value, recipients }) => {
-  //   const recipient = recipients[0];
-
-  //   if (recipient === selectedValidator?.validatorId) {
-  //     if (type === "UNSTAKE") {
-  //       pendingUnstakingAmount = pendingUnstakingAmount.plus(value);
-  //     } else if (type === "WITHDRAW_UNSTAKED") {
-  //       pendingWithdrawingAmount = pendingWithdrawingAmount.plus(value);
-  //     }
-  //   }
-  // });
 
   switch (mode) {
     case "unstake":

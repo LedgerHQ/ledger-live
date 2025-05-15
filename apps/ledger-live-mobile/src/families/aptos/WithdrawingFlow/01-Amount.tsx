@@ -3,7 +3,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import type { Transaction, AptosAccount } from "@ledgerhq/live-common/families/aptos/types";
-import { getMaxSendBalance } from "@ledgerhq/live-common/families/aptos/logic";
+import { getMaxUnstakableAmount } from "@ledgerhq/live-common/families/aptos/logic";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -20,9 +20,11 @@ type Props = BaseComposite<
 function WithdrawingAmount({ navigation, route }: Props) {
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account, "account required");
+
   const bridge = getAccountBridge(account, undefined);
   const mainAccount = getMainAccount(account, undefined);
   const { validatorId } = route.params.stakingPosition;
+
   const {
     transaction: bridgeTransaction,
     updateTransaction,
@@ -38,13 +40,15 @@ function WithdrawingAmount({ navigation, route }: Props) {
       }),
     };
   });
+
   const transaction = bridgeTransaction as Transaction;
+
   const newRoute = {
     ...route,
     params: {
       ...route.params,
       transaction,
-      max: getMaxSendBalance(account as AptosAccount, transaction),
+      max: getMaxUnstakableAmount(account as AptosAccount, validatorId, "withdraw"),
       value: transaction ? transaction.amount : new BigNumber(0),
       nextScreen: ScreenName.AptosWithdrawingSelectDevice,
       updateTransaction,
@@ -52,6 +56,7 @@ function WithdrawingAmount({ navigation, route }: Props) {
       bridgePending,
     },
   };
+
   return <SelectAmount navigation={navigation} route={newRoute} />;
 }
 
