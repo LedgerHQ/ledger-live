@@ -1,7 +1,7 @@
 import { InputEntryFunctionData, RawTransaction } from "@aptos-labs/ts-sdk";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/index";
-import { AptosAPI } from "../api";
+import { AptosAPI } from "../network";
 import { APTOS_ASSET_ID, SUPPORTED_TOKEN_TYPES } from "../constants";
 import { normalizeTransactionOptions } from "./logic";
 import type { Transaction } from "../types";
