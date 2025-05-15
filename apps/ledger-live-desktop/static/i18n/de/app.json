@@ -1779,7 +1779,7 @@
     },
     "fullNodeReadyInfo" : "Die Konten werden über Ihren Bitcoin-Knoten (Full Node) hinzugefügt.",
     "fullNodeConfigure" : "Knoten konfigurieren",
-    "tokensTip" : "{{token}} ({{ticker}}) ist ein {{tokenType}}-Token. Du kannst Token direkt auf einem {{currency}}-Konto empfangen.",
+    "tokensTip" : "{{token}} ({{ticker}}) ist ein {{tokenType}}-Token.\n Du kannst Token auf einem {{currency}}-Konto direkt empfangen.",
     "accountToImportSubtitle_plural" : "Bestehende Konten hinzufügen",
     "selectAll" : "Alle auswählen ({{count}})",
     "unselectAll" : "Alle abwählen ({{count}})",
@@ -2390,7 +2390,7 @@
         "ethereumPriorityFee" : "Max. Prioritätsgebühr ({{unitName}})",
         "nextBlock" : "Nächster Block",
         "suggested" : "Empfohlen",
-        "unitPerByte" : "{{unit}} pro Byte",
+        "unitVByte" : "{{unit}}/vByte",
         "nft" : "NFT",
         "nftQuantity" : "Menge"
       },
@@ -2423,8 +2423,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "Du verwendest Tag/Memo nicht?",
-        "description" : "Deine Vermögenswerte gehen verloren, wenn du beim Senden an eine zentralisierte Börse oder eine verwahrende Geldbörse kein Tag/Memo hinzufügst.",
+        "title" : "Brauchst du ein Tag/Memo?",
+        "description" : "Wenn du beim Senden von Assets an eine zentralisierte Börse kein Tag/Memo hinzufügst, erhöht sich die Wahrscheinlichkeit, dass deine Assets verloren gehen.",
         "cta.addTag" : "Tag hinzufügen",
         "cta.not.addTag" : "Kein Tag hinzufügen",
         "checkbox.label" : "Nicht erneut anzeigen."
@@ -3827,6 +3827,131 @@
       }
     }
   },
+  "aptos" : {
+    "common" : {
+      "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf.",
+      "viewDetails" : "Details anzeigen",
+      "connectDevice" : {
+        "title" : "Gerät"
+      },
+      "confirmation" : {
+        "title" : "Bestätigung"
+      }
+    },
+    "delegation" : {
+      "nextUnlockIn" : "Nächste Freischaltung in",
+      "totalStake" : "Stake-Gesamtsumme",
+      "commission" : "Provision",
+      "delegate" : "Stake hinzufügen",
+      "stakingPositionHeader" : "Staking-Positionen",
+      "stakedHeader" : "Gestaked",
+      "pendingReleaseHeader" : "Freigabe ausstehend",
+      "availableBalance" : "Auszahlbar",
+      "active" : "Aktiv",
+      "activeTooltip" : "Aktive Beträge generieren Rewards",
+      "inactiveTooltip" : "Inaktive Beträge generieren keine Rewards",
+      "delegatedInfoTooltip" : "Gesamtbetrag, der an Validatoren delegiert ist.",
+      "withdrawableInfoTooltip" : "Gesamtbetrag, der von Delegationen entnommen werden kann.",
+      "withdrawableTitle" : "Auszahlbar",
+      "statusUpdateNotice" : "Der Status der Delegation wird bei der Bestätigung der Transaktion aktualisiert.",
+      "ledgerByFigmentTC" : "Ledger laut Figment AGBs",
+      "ledgerByChorusOneTC" : "AGB zu Ledger by Chorus One",
+      "emptyState" : {
+        "description" : "Du kannst durch Delegieren deiner Assets APT-Rewards verdienen.",
+        "info" : "So funktioniert Delegierung",
+        "delegation" : "Rewards verdienen"
+      },
+      "earnRewards" : {
+        "description" : "Du kannst Rewards verdienen, indem du deine APT-Assets an einen Validator delegierst.",
+        "bullet" : {
+          "0" : "Du behältst das Eigentum an delegierten Assets",
+          "1" : "Delegiere mit deinem Ledger-Gerät",
+          "2" : "Assets sind nach nach Aufhebung der Delegierung verfügbar"
+        },
+        "warning" : "Wähle deinen Validator mit Bedacht: Ein Teil deiner delegierten Assets kann unwiderruflich verloren gehen, wenn sich der Validator nicht angemessen verhält."
+      },
+      "states" : {
+        "active" : "Aktiv",
+        "inactive" : "Inaktiv",
+        "activating" : "Aktivieren",
+        "deactivating" : "Deaktivieren"
+      },
+      "flow" : {
+        "title" : "Delegieren",
+        "steps" : {
+          "validator" : {
+            "title" : "Validator"
+          },
+          "amount" : {
+            "title" : "Betrag",
+            "reserveWarning" : "Bitte stelle sicher, dass du mindestens {{amount}} APT in deiner Wallet hast, um zukünftige Netzwerkgebühren für die Deaktivierung und Auszahlung deines Stakes zu decken."
+          },
+          "confirmation" : {
+            "success" : {
+              "title" : "Du hast deine Assets erfolgreich delegiert"
+            }
+          }
+        }
+      },
+      "withdraw" : {
+        "flow" : {
+          "title" : "Abheben",
+          "steps" : {
+            "amount" : {
+              "title" : "Betrag"
+            },
+            "confirmation" : {
+              "success" : {
+                "title" : "Du hast deine Assets erfolgreich zurückgezogen.",
+                "text" : "Dein Kontostand wird aktualisiert, sobald die Transaktion bestätigt wurde."
+              }
+            }
+          }
+        }
+      },
+      "activate" : {
+        "flow" : {
+          "title" : "Aktivieren",
+          "steps" : {
+            "confirmation" : {
+              "success" : {
+                "title" : "Du hast deine Delegierung erfolgreich aktiviert."
+              }
+            }
+          }
+        }
+      },
+      "reactivate" : {
+        "flow" : {
+          "title" : "Reaktivieren",
+          "steps" : {
+            "confirmation" : {
+              "success" : {
+                "title" : "Du hast deine Delegierung erfolgreich reaktiviert."
+              }
+            }
+          }
+        }
+      },
+      "deactivate" : {
+        "flow" : {
+          "title" : "Deaktivieren",
+          "steps" : {
+            "confirmation" : {
+              "success" : {
+                "title" : "Du hast deine Delegierung erfolgreich deaktiviert."
+              }
+            }
+          }
+        }
+      },
+      "stake" : {
+        "unstake" : "Unstake",
+        "withdraw" : "Abheben",
+        "restake" : "Erneut staken"
+      }
+    }
+  },
   "ethereum" : {
     "stake_deprecated" : {
       "title" : "Vermehre dein ETH-Guthaben",
@@ -4834,7 +4959,7 @@
         "description" : "Verwalten, kaufen und vermehren Sie Ihre Krypto und NFTs auf Ledger Live.",
         "nextButton" : "Erste Schritte",
         "noDevice" : "Kein Gerät?",
-        "buyLink" : "Kein Gerät? Kaufen Sie eine Ledger Nano X",
+        "buyLink" : "Kein Gerät? Ledger-Gerät kaufen",
         "byTapping" : "Indem Sie auf \"Erste Schritte\" tippen, erklären Sie sich einverstanden mit unseren ",
         "termsAndConditions" : "Allgemeine Geschäftsbedingungen",
         "and" : "Hinzu kommt:",
@@ -5860,9 +5985,17 @@
       "title" : "Sorry, Gebührenschätzung fehlgeschlagen",
       "description" : "Gebührenschätzung im Netzwerk fehlgeschlagen. Prüfe die Eingabe; die Transaktion schlägt höchstwahrscheinlich fehl"
     },
+    "NotEnoughToStake" : {
+      "title" : "Mindestbetrag für das Staking: {{minStake}} {{currency}}",
+      "description" : "Für das Staking ist ein Mindestbetrag von {{minStake}} {{currency}} erforderlich."
+    },
     "NotEnoughBalance" : {
       "title" : "Entschuldigung, Guthaben reicht nicht aus",
       "description" : "Bitte stellen Sie sicher, dass das Konto ausreichend gedeckt ist."
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "Leider reicht das Guthaben zur Deckung der Gebühren nicht aus",
+      "description" : "Bitte vergewissere dich, dass das Konto über ausreichende Deckung verfügt."
     },
     "NotEnoughBalanceSwap" : {
       "title" : "Leider ist für den Betrag einschließlich der Netzwerkgebühren nicht genügend Guthaben vorhanden. Bitte Betrag ändern oder Guthaben verifizieren.",
