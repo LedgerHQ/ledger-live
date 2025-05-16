@@ -12,11 +12,6 @@ export default class AssetAccountsPage {
     await waitForElementById(this.titleId(assetName.toLowerCase()));
   }
 
-  @Step("Expect asset balance to be visible")
-  async expectAccountsBalanceVisible() {
-    await expect(this.assetBalance()).toBeVisible();
-  }
-
   async expectAccountsBalance(expectedBalance: string) {
     await expect(this.assetBalance()).toHaveText(expectedBalance);
   }

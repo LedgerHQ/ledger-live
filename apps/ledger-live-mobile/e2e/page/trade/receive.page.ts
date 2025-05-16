@@ -14,13 +14,9 @@ export default class ReceivePage {
   currencyNameId = (t: string) => `big-currency-name-${t}`;
   currencySubtitleId = (t: string) => `big-currency-subtitle-${t}`;
   buttonCreateAccountId = "button-create-account";
-  buttonCreateAccount = () => getElementById(this.buttonCreateAccountId);
-  buttonContinueId = "add-accounts-continue-button";
-  buttonContinue = () => getElementById(this.buttonContinueId);
   step1HeaderTitle = () => getElementById("receive-header-step1-title");
   step2HeaderTitleId = "receive-header-step2-title";
   step2HeaderTitle = () => getElementById(this.step2HeaderTitleId);
-  networkBasedStep2HeaderTitleId = "addAccounts-header-step2-title";
   titleReceiveConfirmationPageId = (t: string) => `receive-confirmation-title-${t}`;
   accountNameReceiveId = (t: string) => `receive-account-name-${t}`;
   receivePageScrollViewId = "receive-screen-scrollView";
@@ -76,11 +72,6 @@ export default class ReceivePage {
     return tapById(id);
   }
 
-  @Step("Select network in list if needed")
-  async selectNetworkIfAsked(networkId: string) {
-    if (await IsIdVisible(this.networkBasedStep2HeaderTitleId)) await this.selectNetwork(networkId);
-  }
-
   async selectAccount(account: string) {
     const CurrencyRowId = this.accountId(account);
     await waitForElementById(CurrencyRowId);
@@ -103,12 +94,6 @@ export default class ReceivePage {
     jestExpect(await getTextOfElement(this.accountAddress)).toEqual(address);
   }
 
-  @Step("Get the fresh address displayed")
-  async getFreshAddressDisplayed() {
-    await waitForElementById(this.accountFreshAddress);
-    return await getTextOfElement(this.accountFreshAddress);
-  }
-
   async expectNumberOfAccountInListIsDisplayed(currencyName: string, accountNumber: number) {
     //set "account" in plural or not in fonction of number account
     const accountCount: string = accountNumber + " account" + (accountNumber > 1 ? "s" : "");
@@ -129,11 +114,6 @@ export default class ReceivePage {
   async createAccount() {
     await waitForElementById(this.buttonCreateAccountId);
     return tapById(this.buttonCreateAccountId);
-  }
-
-  async continueCreateAccount() {
-    await waitForElementById(this.buttonContinueId);
-    return tapById(this.buttonContinueId);
   }
 
   async expectAccountIsCreated(accountName: string) {
@@ -160,11 +140,6 @@ export default class ReceivePage {
     await waitForElementById(receiveTitleTickerId);
     await expect(getElementById(receiveTitleTickerId)).toBeVisible();
     await expect(getElementById(accountNameId)).toBeVisible();
-  }
-
-  @Step("Expect given address is displayed on receive page")
-  async expectAddressIsCorrect(address: string) {
-    await expect(getElementById(this.accountAddress)).toHaveText(address);
   }
 
   @Step("Expect tron new address warning")

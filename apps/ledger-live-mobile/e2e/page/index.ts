@@ -2,15 +2,12 @@ import AssetAccountsPage from "./accounts/assetAccounts.page";
 import AccountPage from "./accounts/account.page";
 import AccountsPage from "./accounts/accounts.page";
 import AddAccountDrawer from "./accounts/addAccount.drawer";
-import BuyDevicePage from "./discover/buyDevice.page";
 import CommonPage from "./common.page";
 import CryptoDrawer from "./liveApps/cryptoDrawer";
 import CustomLockscreenPage from "./stax/customLockscreen.page";
-import DeviceValidationPage from "./trade/deviceValidation.page";
 import DiscoverPage from "./discover/discover.page";
 import DummyWalletApp from "./liveApps/dummyWalletApp.webView";
 import WalletAPIReceivePage from "./liveApps/walletAPIReceive";
-import LedgerSyncPage from "./settings/ledgerSync.page";
 import ManagerPage from "./manager/manager.page";
 import MarketPage from "./market/market.page";
 import NftGalleryPage from "./wallet/nftGallery.page";
@@ -23,13 +20,10 @@ import ReceivePage from "./trade/receive.page";
 import SendPage from "./trade/send.page";
 import SettingsGeneralPage from "./settings/settingsGeneral.page";
 import SettingsPage from "./settings/settings.page";
-import SpeculosPage from "./speculos.page";
 import StakePage from "./trade/stake.page";
 import SwapPage from "./trade/swap.page";
-import SwapLiveAppPage from "./liveApps/swapLiveApp";
-import TransfertMenuDrawer from "./wallet/transferMenu.drawer";
+import TransferMenuDrawer from "./wallet/transferMenu.drawer";
 import WalletTabNavigatorPage from "./wallet/walletTabNavigator.page";
-import CeloManageAssetsPage from "./trade/celoManageAssets.page";
 
 import type { Account } from "@ledgerhq/types-live";
 import { DeviceLike } from "~/reducers/types";
@@ -85,15 +79,12 @@ export class Application {
   private accountPageInstance = lazyInit(AccountPage);
   private accountsPageInstance = lazyInit(AccountsPage);
   private addAccountDrawerInstance = lazyInit(AddAccountDrawer);
-  private buyDevicePageInstance = lazyInit(BuyDevicePage);
   private commonPageInstance = lazyInit(CommonPage);
   private cryptoDrawerInstance = lazyInit(CryptoDrawer);
   private customLockscreenPageInstance = lazyInit(CustomLockscreenPage);
-  private deviceValidationPageInstance = lazyInit(DeviceValidationPage);
   private discoverPageInstance = lazyInit(DiscoverPage);
   private dummyWalletAppInstance = lazyInit(DummyWalletApp);
   private walletAPIReceivePageInstance = lazyInit(WalletAPIReceivePage);
-  private ledgerSyncPageInstance = lazyInit(LedgerSyncPage);
   private managerPageInstance = lazyInit(ManagerPage);
   private marketPageInstance = lazyInit(MarketPage);
   private nftGalleryPageInstance = lazyInit(NftGalleryPage);
@@ -106,13 +97,10 @@ export class Application {
   private sendPageInstance = lazyInit(SendPage);
   private settingsPageInstance = lazyInit(SettingsPage);
   private settingsGeneralPageInstance = lazyInit(SettingsGeneralPage);
-  private speculosPageInstance = lazyInit(SpeculosPage);
   private stakePageInstance = lazyInit(StakePage);
-  private swapLiveAppInstance = lazyInit(SwapLiveAppPage);
   private swapPageInstance = lazyInit(SwapPage);
-  private transfertMenuDrawerInstance = lazyInit(TransfertMenuDrawer);
+  private transfertMenuDrawerInstance = lazyInit(TransferMenuDrawer);
   private walletTabNavigatorPageInstance = lazyInit(WalletTabNavigatorPage);
-  private celoManageAssetsPageInstance = lazyInit(CeloManageAssetsPage);
 
   public async init({
     speculosApp,
@@ -165,9 +153,6 @@ export class Application {
   public get addAccount() {
     return this.addAccountDrawerInstance();
   }
-  public get buyDevice() {
-    return this.buyDevicePageInstance();
-  }
   public get common() {
     return this.commonPageInstance();
   }
@@ -177,9 +162,6 @@ export class Application {
   public get customLockscreen() {
     return this.customLockscreenPageInstance();
   }
-  public get deviceValidation() {
-    return this.deviceValidationPageInstance();
-  }
   public get discover() {
     return this.discoverPageInstance();
   }
@@ -188,9 +170,6 @@ export class Application {
   }
   public get walletAPIReceive() {
     return this.walletAPIReceivePageInstance();
-  }
-  public get ledgerSync() {
-    return this.ledgerSyncPageInstance();
   }
   public get manager() {
     return this.managerPageInstance();
@@ -228,25 +207,16 @@ export class Application {
   public get settingsGeneral() {
     return this.settingsGeneralPageInstance();
   }
-  public get speculos() {
-    return this.speculosPageInstance();
-  }
   public get stake() {
     return this.stakePageInstance();
   }
   public get swap() {
     return this.swapPageInstance();
   }
-  public get swapLiveApp() {
-    return this.swapLiveAppInstance();
-  }
   public get transfertMenu() {
     return this.transfertMenuDrawerInstance();
   }
   public get walletTabNavigator() {
     return this.walletTabNavigatorPageInstance();
-  }
-  public get celoManageAssets() {
-    return this.celoManageAssetsPageInstance();
   }
 }
