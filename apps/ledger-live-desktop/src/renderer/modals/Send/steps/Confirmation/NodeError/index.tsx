@@ -86,7 +86,7 @@ const NodeError: React.FC<Props> = ({ error }) => {
         </InteractFlex>
         {isShowMore && (
           <Flex flexDirection="column" flex={2} maxWidth="100%">
-            <HelpSection onGetHelp={onGetHelp} />
+            <HelpSection onGetHelp={onGetHelp} error={error} />
             <TechnicalErrorSection error={error} onSaveLogs={onSaveLogs} />
           </Flex>
         )}

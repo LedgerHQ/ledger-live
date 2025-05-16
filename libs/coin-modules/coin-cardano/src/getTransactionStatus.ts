@@ -31,6 +31,8 @@ import type {
 } from "./types";
 import { CARDANO_MAX_SUPPLY } from "./constants";
 import coinConfig from "./config";
+import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,
@@ -44,6 +46,29 @@ export const getTransactionStatus: AccountBridge<
   if (account.cardanoResources.utxos.length === 0) {
     const errors = {
       amount: new CardanoNotEnoughFunds(),
+    };
+    return Promise.resolve({
+      errors,
+      warnings: {},
+      estimatedFees: new BigNumber(0),
+      amount: new BigNumber(transaction.amount),
+      totalSpent: new BigNumber(transaction.amount),
+    });
+  }
+
+  const sanctionedAddresses: string[] = [];
+  for (const utxo of account.cardanoResources.utxos) {
+    const addressIsSanctioned = await isAddressSanctioned(account.currency, utxo.address);
+    if (addressIsSanctioned) {
+      sanctionedAddresses.push(utxo.address);
+    }
+  }
+
+  if (sanctionedAddresses.length > 0) {
+    const errors = {
+      sender: new AddressesSanctionedError("AddressesSanctionedError", {
+        addresses: sanctionedAddresses,
+      }),
     };
     return Promise.resolve({
       errors,
