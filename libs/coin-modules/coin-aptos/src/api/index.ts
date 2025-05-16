@@ -1,5 +1,4 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
-
 import {
   AccountData,
   Aptos,
@@ -17,6 +16,7 @@ import {
   UserTransactionResponse,
   PostRequestOptions,
   Block,
+  MoveStructId,
 } from "@aptos-labs/ts-sdk";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
@@ -39,12 +39,17 @@ const getIndexerEndpoint = (currencyId: string) =>
     ? getEnv("APTOS_TESTNET_INDEXER_ENDPOINT")
     : getEnv("APTOS_INDEXER_ENDPOINT");
 
+interface StakePoolResource {
+  locked_until_secs: string;
+  // Add other fields as needed
+}
+
 export class AptosAPI {
   private apiUrl: string;
   private indexerUrl: string;
   private aptosConfig: AptosConfig;
   private aptosClient: Aptos;
-  private apolloClient: ApolloClient<object>;
+  public apolloClient: ApolloClient<object>;
 
   constructor(currencyId: string) {
     this.apiUrl = getApiEndpoint(currencyId);
@@ -173,6 +178,19 @@ export class AptosAPI {
     }
   }
 
+  async getNextUnlockTime(stakingPoolAddress: string): Promise<string | undefined> {
+    const resourceType: MoveStructId = "0x1::stake::StakePool";
+    try {
+      const resource = await this.aptosClient.getAccountResource<StakePoolResource>({
+        accountAddress: stakingPoolAddress,
+        resourceType,
+      });
+      return resource.locked_until_secs;
+    } catch (error) {
+      console.error("Failed to fetch StakePool resource:", error);
+    }
+  }
+
   async getFABalance(address: string, contract_address: string): Promise<BigNumber> {
     try {
       const [balanceStr] = await this.aptosClient.view<[string]>({
@@ -186,6 +204,21 @@ export class AptosAPI {
       return new BigNumber(balance);
     } catch (_) {
       return new BigNumber(0);
+    }
+  }
+
+  async getDelegatorBalanceInPool(poolAddress: string, delegatorAddress: string): Promise<any> {
+    try {
+      // Query the delegator balance in the pool
+      return await this.aptosClient.view<[string]>({
+        payload: {
+          function: "0x1::delegation_pool::get_stake",
+          typeArguments: [],
+          functionArguments: [poolAddress, delegatorAddress],
+        },
+      });
+    } catch (_) {
+      return [0, 0, 0];
     }
   }
 

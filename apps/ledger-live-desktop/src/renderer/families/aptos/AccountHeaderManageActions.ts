@@ -1,4 +1,5 @@
-import { /* getMainAccount, */ isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
+import { canStake } from "@ledgerhq/live-common/families/aptos/logic";
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
@@ -8,42 +9,43 @@ import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLo
 
 const AccountHeaderActions: AptosFamily["accountHeaderManageActions"] = ({
   account,
-  // parentAccount,
-  // source,
-  parentAccount: _parentAccount,
-  source: _source,
+  parentAccount,
+  source,
 }) => {
   const dispatch = useDispatch();
   const label = useGetStakeLabelLocaleBased();
-  // const mainAccount = getMainAccount(account, parentAccount);
-  // const { aptosResources } = mainAccount;
+  const mainAccount = getMainAccount(account, parentAccount);
+  const { aptosResources } = mainAccount;
+  const stakingEnabled = canStake(mainAccount);
+  const hasStakingPositions = aptosResources?.stakingPositions.length > 0;
 
   const onClick = useCallback(() => {
-    if (isAccountEmpty(account)) {
+    if (!stakingEnabled) {
       dispatch(
         openModal("MODAL_NO_FUNDS_STAKE", {
           account,
+          parentAccount,
         }),
       );
+    } else {
+      if (hasStakingPositions) {
+        dispatch(
+          openModal("MODAL_APTOS_STAKE", {
+            account: mainAccount,
+            source,
+          }),
+        );
+      } else {
+        dispatch(
+          openModal("MODAL_APTOS_REWARDS_INFO", {
+            account: mainAccount,
+          }),
+        );
+      }
     }
-    // else {
-    // dispatch(
-    //   openModal(
-    //     aptosResources && aptosResources.stakes.length > 0
-    //       ? "MODAL_APTOS_DELEGATE"
-    //       : "MODAL_APTOS_REWARDS_INFO",
-    //     {
-    //       account: mainAccount,
-    //       source,
-    //     },
-    //   ),
-    // );
-    // }, [account, dispatch, source, aptosResources, mainAccount]);
-  }, [account, dispatch]);
+  }, [stakingEnabled, dispatch, account, mainAccount, parentAccount, hasStakingPositions, source]);
 
-  if (account.type === "TokenAccount") {
-    return null;
-  }
+  if (parentAccount) return null;
 
   return [
     {

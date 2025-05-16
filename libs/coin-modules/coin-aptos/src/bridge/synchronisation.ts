@@ -4,7 +4,7 @@ import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers"
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { AptosAPI } from "../api";
 import { txsToOps } from "./logic";
-import type { AptosAccount } from "../types";
+import type { AptosAccount, AptosStakingPosition } from "../types";
 import { Operation, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
@@ -13,6 +13,7 @@ import {
   encodeTokenAccountId,
 } from "@ledgerhq/coin-framework/account/index";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import BigNumber from "bignumber.js";
 
 /**
  * List of properties of a sub account that can be updated when 2 "identical" accounts are found
@@ -183,11 +184,11 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
   const aptosClient = new AptosAPI(currency.id);
   const { balance, transactions, blockHeight } = await aptosClient.getAccountInfo(address);
 
-  const [newOperations, tokenOperations]: [Operation[], Operation[]] = txsToOps(
-    info,
-    accountId,
-    transactions,
-  );
+  const [newOperations, tokenOperations, stakingOperations]: [
+    Operation[],
+    Operation[],
+    Operation[],
+  ] = txsToOps(info, accountId, transactions);
   const operations = mergeOps(oldOperations, newOperations);
 
   const newSubAccounts = await getSubAccounts(info, address, accountId, tokenOperations);
@@ -196,11 +197,46 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
     ? newSubAccounts
     : mergeSubAccounts(initialAccount, newSubAccounts);
 
-  operations.forEach(op => {
+  operations?.forEach(op => {
     const subOperations = inferSubOperations(op.hash, subAccounts);
     op.subOperations =
       subOperations.length === 1 ? subOperations : subOperations.filter(op => !!op.blockHash);
   });
+
+  const stakingPositions: AptosStakingPosition[] = [];
+  let stakedBalance = BigNumber(0);
+  let availableBalance = BigNumber(0);
+  let pendingBalance = BigNumber(0);
+
+  const stakingPoolAddresses = getStakingPoolAddresses(stakingOperations);
+  for (const stakingPoolAddress of stakingPoolAddresses) {
+    const [active, inactive, pending_inactive] = await aptosClient.getDelegatorBalanceInPool(
+      stakingPoolAddress,
+      address,
+    );
+
+    const staked = BigNumber(active);
+    const available = BigNumber(inactive);
+    const pending = BigNumber(pending_inactive);
+
+    stakingPositions.push({
+      staked,
+      available,
+      pending,
+      validatorId: stakingPoolAddress,
+    });
+
+    stakedBalance = stakedBalance.plus(staked);
+    availableBalance = availableBalance.plus(available);
+    pendingBalance = pendingBalance.plus(pending);
+  }
+
+  const aptosResources = initialAccount?.aptosResources || {
+    stakedBalance,
+    availableBalance,
+    pendingBalance,
+    stakingPositions,
+  };
 
   const shape: Partial<AptosAccount> = {
     type: "Account",
@@ -213,7 +249,23 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
     blockHeight,
     lastSyncDate: new Date(),
     subAccounts,
+    aptosResources,
   };
 
   return shape;
+};
+
+export const getStakingPoolAddresses = (stakingOperations: Operation[]): string[] => {
+  const stakingPoolsAddrs: string[] = [];
+
+  for (const op of stakingOperations) {
+    if (!op.recipients.length) continue;
+
+    const poolAddress = op.recipients[0];
+    if (poolAddress === "0x1") continue;
+
+    if (!stakingPoolsAddrs.includes(poolAddress)) stakingPoolsAddrs.push(poolAddress);
+  }
+
+  return stakingPoolsAddrs;
 };

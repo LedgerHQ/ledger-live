@@ -34,8 +34,10 @@ export function createFixtureAccount(account?: Partial<AptosAccount>): AptosAcco
     balanceHistoryCache: emptyHistoryCache,
     swapHistory: [],
     aptosResources: {
-      stakes: [],
-      unstakeReserve: BigNumber(0),
+      stakingPositions: [],
+      stakedBalance: BigNumber(0),
+      availableBalance: BigNumber(0),
+      pendingBalance: BigNumber(0),
     },
     ...account,
   };
@@ -95,8 +97,10 @@ export function createFixtureAccountWithSubAccount(
       },
     ],
     aptosResources: {
-      stakes: [],
-      unstakeReserve: BigNumber(0),
+      stakingPositions: [],
+      stakedBalance: BigNumber(0),
+      availableBalance: BigNumber(0),
+      pendingBalance: BigNumber(0),
     },
     ...account,
   };

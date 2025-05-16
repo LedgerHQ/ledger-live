@@ -21,20 +21,27 @@ import {
   APTOS_FUNGIBLE_STORE,
   BATCH_TRANSFER_TYPES,
   DELEGATION_POOL_TYPES,
-  DIRECTION,
+  OP_TYPE,
   COIN_TRANSFER_TYPES,
   FA_TRANSFER_TYPES,
   APTOS_OBJECT_CORE,
+  MIN_COINS_ON_SHARES_POOL_IN_OCTAS,
 } from "../constants";
 import type {
+  AptosAccount,
   AptosFungibleoObjectCoreResourceData,
   AptosFungibleStoreResourceData,
+  AptosMappedStakingPosition,
   AptosMoveResource,
+  AptosStakingPosition,
   AptosTransaction,
+  AptosValidator,
   Transaction,
   TransactionOptions,
 } from "../types";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
+import { Unit } from "@ledgerhq/types-cryptoassets";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 
 export const DEFAULT_GAS = new BigNumber(200);
 export const DEFAULT_GAS_PRICE = new BigNumber(100);
@@ -47,13 +54,16 @@ export function isTestnet(currencyId: string): boolean {
 }
 
 export const getMaxSendBalance = (
-  gas: BigNumber,
-  gasPrice: BigNumber,
   account: Account,
   transaction?: Transaction,
+  gas?: BigNumber,
+  gasPrice?: BigNumber,
 ): BigNumber => {
   const tokenAccount = findSubAccountById(account, transaction?.subAccountId ?? "");
   const fromTokenAccount = tokenAccount && isTokenAccount(tokenAccount);
+
+  gas = gas ?? BigNumber(DEFAULT_GAS);
+  gasPrice = gasPrice ?? BigNumber(DEFAULT_GAS_PRICE);
 
   const totalGas = gas.multipliedBy(gasPrice);
 
@@ -113,10 +123,11 @@ export const txsToOps = (
   info: { address: string },
   id: string,
   txs: (AptosTransaction | null)[],
-): [Operation[], Operation[]] => {
+): [Operation[], Operation[], Operation[]] => {
   const { address } = info;
   const ops: Operation[] = [];
   const opsTokens: Operation[] = [];
+  const opsStaking: Operation[] = [];
 
   txs.forEach(tx => {
     if (tx !== null) {
@@ -133,9 +144,14 @@ export const txsToOps = (
         return; // skip transaction without functions in payload
       }
 
-      const { coin_id, amount_in, amount_out } = getCoinAndAmounts(tx, address);
+      const { coin_id, amount_in, amount_out, type } = getCoinAndAmounts(tx, address);
       op.value = calculateAmount(tx.sender, address, amount_in, amount_out);
-      op.type = compareAddress(tx.sender, address) ? DIRECTION.OUT : DIRECTION.IN;
+      op.type =
+        type !== OP_TYPE.UNKNOWN
+          ? type
+          : compareAddress(tx.sender, address)
+            ? OP_TYPE.OUT
+            : OP_TYPE.IN;
       op.senders.push(tx.sender);
       op.hasFailed = !tx.success;
       op.id = encodeOperationId(op.accountId, tx.hash, op.type);
@@ -144,10 +160,17 @@ export const txsToOps = (
 
       if (op.value.isZero()) {
         // skip transaction that result no Aptos change
-        op.type = DIRECTION.UNKNOWN;
+        op.type = OP_TYPE.UNKNOWN;
       }
 
-      if (op.type !== DIRECTION.UNKNOWN && coin_id !== null) {
+      if (
+        op.type === OP_TYPE.STAKE ||
+        op.type === OP_TYPE.UNSTAKE ||
+        op.type === OP_TYPE.WITHDRAW
+      ) {
+        ops.push(op);
+        opsStaking.push(op);
+      } else if (op.type !== OP_TYPE.UNKNOWN && coin_id !== null) {
         if (coin_id === APTOS_ASSET_ID) {
           ops.push(op);
         } else {
@@ -156,7 +179,7 @@ export const txsToOps = (
             op.accountId = encodeTokenAccountId(id, token);
             opsTokens.push(op);
 
-            if (op.type === DIRECTION.OUT) {
+            if (op.type === OP_TYPE.OUT) {
               ops.push({
                 ...op,
                 accountId: decodeTokenAccountId(op.accountId).accountId,
@@ -170,7 +193,7 @@ export const txsToOps = (
     }
   });
 
-  return [ops, opsTokens];
+  return [ops, opsTokens, opsStaking];
 };
 
 export function compareAddress(addressA: string, addressB: string) {
@@ -325,50 +348,71 @@ export function checkFAOwner(tx: AptosTransaction, event: Event, user_address: s
 export function getCoinAndAmounts(
   tx: AptosTransaction,
   address: string,
-): { coin_id: string | null; amount_in: BigNumber; amount_out: BigNumber } {
+): {
+  coin_id: string | null;
+  amount_in: BigNumber;
+  amount_out: BigNumber;
+  type: OP_TYPE;
+} {
   let coin_id: string | null = null;
   let amount_in = BigNumber(0);
   let amount_out = BigNumber(0);
+  let type = OP_TYPE.UNKNOWN;
 
   // collect all events related to the address and calculate the overall amounts
   tx.events.forEach(event => {
-    switch (event.type) {
-      case "0x1::coin::WithdrawEvent":
-        if (compareAddress(event.guid.account_address, address)) {
-          coin_id = getResourceAddress(tx, event, "withdraw_events", getEventCoinAddress);
-          amount_out = amount_out.plus(event.data.amount);
-        }
-        break;
-      case "0x1::coin::DepositEvent":
-        if (compareAddress(event.guid.account_address, address)) {
-          coin_id = getResourceAddress(tx, event, "deposit_events", getEventCoinAddress);
-          amount_in = amount_in.plus(event.data.amount);
-        }
-        break;
-      case "0x1::fungible_asset::Withdraw":
-        if (checkFAOwner(tx, event, address)) {
-          coin_id = getResourceAddress(tx, event, "withdraw_events", getEventFAAddress);
-          amount_out = amount_out.plus(event.data.amount);
-        }
-        break;
-      case "0x1::fungible_asset::Deposit":
-        if (checkFAOwner(tx, event, address)) {
-          coin_id = getResourceAddress(tx, event, "deposit_events", getEventFAAddress);
-          amount_in = amount_in.plus(event.data.amount);
-        }
-        break;
-      case "0x1::transaction_fee::FeeStatement":
-        if (tx.sender === address) {
-          if (coin_id === null) coin_id = APTOS_ASSET_ID;
-          if (coin_id === APTOS_ASSET_ID) {
-            const fees = BigNumber(tx.gas_unit_price).times(BigNumber(tx.gas_used));
-            amount_out = amount_out.plus(fees);
-          }
-        }
-        break;
+    if (
+      event.type === "0x1::coin::WithdrawEvent" &&
+      compareAddress(event.guid.account_address, address)
+    ) {
+      coin_id = getResourceAddress(tx, event, "withdraw_events", getEventCoinAddress);
+      amount_out = amount_out.plus(event.data.amount);
+    } else if (
+      event.type === "0x1::coin::DepositEvent" &&
+      compareAddress(event.guid.account_address, address)
+    ) {
+      coin_id = getResourceAddress(tx, event, "deposit_events", getEventCoinAddress);
+      amount_in = amount_in.plus(event.data.amount);
+    } else if (event.type === "0x1::fungible_asset::Withdraw" && checkFAOwner(tx, event, address)) {
+      coin_id = getResourceAddress(tx, event, "withdraw_events", getEventFAAddress);
+      amount_out = amount_out.plus(event.data.amount);
+    } else if (event.type === "0x1::fungible_asset::Deposit" && checkFAOwner(tx, event, address)) {
+      coin_id = getResourceAddress(tx, event, "deposit_events", getEventFAAddress);
+      amount_in = amount_in.plus(event.data.amount);
+    } else if (event.type === "0x1::transaction_fee::FeeStatement" && tx.sender === address) {
+      if (coin_id === null) coin_id = APTOS_ASSET_ID;
+      if (coin_id === APTOS_ASSET_ID) {
+        const fees = BigNumber(tx.gas_unit_price).times(BigNumber(tx.gas_used));
+        amount_out = amount_out.plus(fees);
+      }
+    } else if (
+      (event.type === "0x1::stake::AddStakeEvent" ||
+        event.type === "0x1::delegation_pool::AddStakeEvent") &&
+      tx.sender === address
+    ) {
+      coin_id = APTOS_ASSET_ID;
+      type = OP_TYPE.STAKE;
+      amount_out = amount_out.plus(event.data.amount_added);
+    } else if (
+      (event.type === "0x1::stake::UnlockStakeEvent" ||
+        event.type === "0x1::delegation_pool::UnlockStakeEvent") &&
+      tx.sender === address
+    ) {
+      coin_id = APTOS_ASSET_ID;
+      type = OP_TYPE.UNSTAKE;
+      amount_in = amount_in.plus(event.data.amount_added);
+    } else if (
+      (event.type === "0x1::stake::WithdrawStakeEvent" ||
+        event.type === "0x1::delegation_pool::WithdrawStakeEvent") &&
+      tx.sender === address
+    ) {
+      coin_id = APTOS_ASSET_ID;
+      type = OP_TYPE.WITHDRAW;
+      amount_in = amount_in.plus(event.data.amount_added);
     }
   });
-  return { coin_id, amount_in, amount_out }; // TODO: manage situation when there are several coinID from the events parsing
+
+  return { coin_id, amount_in, amount_out, type };
 }
 
 export function calculateAmount(
@@ -402,3 +446,71 @@ export function getTokenAccount(
   const fromTokenAccount = tokenAccount && isTokenAccount(tokenAccount);
   return fromTokenAccount ? tokenAccount : undefined;
 }
+
+export const mapStakingPositions = (
+  stakingPositions: AptosStakingPosition[],
+  validators: AptosValidator[],
+  unit: Unit,
+): AptosMappedStakingPosition[] => {
+  return stakingPositions.map(sp => {
+    const rank = validators.findIndex(v => v.address === sp.validatorId);
+    const validator = validators[rank] ?? sp;
+    const formatConfig = {
+      disableRounding: false,
+      alwaysShowSign: false,
+      showCode: true,
+    };
+
+    return {
+      ...sp,
+      formattedAmount: formatCurrencyUnit(unit, sp.staked, formatConfig),
+      formattedPending: formatCurrencyUnit(unit, sp.pending, formatConfig),
+      formattedAvailable: formatCurrencyUnit(unit, sp.available, formatConfig),
+      rank,
+      validator,
+    };
+  });
+};
+
+export const canStake = (account: AptosAccount): boolean => {
+  return getMaxSendBalance(account) > MIN_COINS_ON_SHARES_POOL_IN_OCTAS;
+};
+
+export const canUnstake = (
+  stakingPosition: AptosMappedStakingPosition | AptosStakingPosition,
+): boolean => {
+  return stakingPosition.staked.gte(0);
+};
+
+export const canWithdraw = (
+  stakingPosition: AptosMappedStakingPosition | AptosStakingPosition,
+): boolean => {
+  return stakingPosition.available.gte(0);
+};
+
+export const getMaxUnstakableAmount = (
+  account: AptosAccount,
+  validatorAddress: string,
+  mode: string,
+): BigNumber => {
+  let maxAmount: BigNumber | undefined;
+
+  const stakingPosition = account.aptosResources?.stakingPositions.find(
+    ({ validatorId }) => validatorId === validatorAddress,
+  );
+
+  switch (mode) {
+    case "unstake":
+      maxAmount = stakingPosition?.staked;
+      break;
+    case "withdraw":
+      maxAmount = stakingPosition?.available;
+      break;
+  }
+
+  if (maxAmount === undefined || maxAmount.lt(0)) {
+    return new BigNumber(0);
+  }
+
+  return maxAmount;
+};

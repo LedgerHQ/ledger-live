@@ -41,10 +41,8 @@ const buildSignOperation =
         const senders: string[] = [];
         const recipients: string[] = [];
 
-        if (transaction.mode === "send") {
-          senders.push(account.freshAddress);
-          recipients.push(transaction.recipient);
-        }
+        senders.push(account.freshAddress);
+        recipients.push(transaction.recipient);
 
         const subAccount =
           !!transaction.subAccountId && findSubAccountById(account, transaction.subAccountId);

@@ -11,7 +11,7 @@ import {
   APTOS_COIN_CHANGE,
   APTOS_FUNGIBLE_STORE,
   APTOS_OBJECT_CORE,
-  DIRECTION,
+  OP_TYPE,
 } from "../../constants";
 import {
   calculateAmount,
@@ -54,7 +54,7 @@ describe("Aptos logic ", () => {
       const transaction = createFixtureTransaction();
       const gas = new BigNumber(200);
       const gasPrice = new BigNumber(100);
-      const result = getMaxSendBalance(gas, gasPrice, account, transaction);
+      const result = getMaxSendBalance(account, transaction, gas, gasPrice);
       expect(result.isEqualTo(amount.minus(gas.multipliedBy(gasPrice)))).toBe(true);
     });
 
@@ -63,7 +63,7 @@ describe("Aptos logic ", () => {
       const transaction = createFixtureTransaction();
       const gas = new BigNumber(200);
       const gasPrice = new BigNumber(100);
-      const result = getMaxSendBalance(gas, gasPrice, account, transaction);
+      const result = getMaxSendBalance(account, transaction, gas, gasPrice);
       expect(result.isEqualTo(new BigNumber(0))).toBe(true);
     });
 
@@ -72,7 +72,7 @@ describe("Aptos logic ", () => {
       const transaction = createFixtureTransaction();
       const gas = new BigNumber(200);
       const gasPrice = new BigNumber(100);
-      const result = getMaxSendBalance(gas, gasPrice, account, transaction);
+      const result = getMaxSendBalance(account, transaction, gas, gasPrice);
       expect(result.isEqualTo(new BigNumber(0))).toBe(true);
     });
 
@@ -81,7 +81,7 @@ describe("Aptos logic ", () => {
       const transaction = createFixtureTransaction();
       const gas = new BigNumber(200);
       const gasPrice = new BigNumber(100);
-      const result = getMaxSendBalance(gas, gasPrice, account, transaction);
+      const result = getMaxSendBalance(account, transaction, gas, gasPrice);
       expect(result.isEqualTo(new BigNumber(0))).toBe(true);
     });
 
@@ -91,7 +91,7 @@ describe("Aptos logic ", () => {
       const transaction = createFixtureTransaction();
       const gas = new BigNumber(0);
       const gasPrice = new BigNumber(0);
-      const result = getMaxSendBalance(gas, gasPrice, account, transaction);
+      const result = getMaxSendBalance(account, transaction, gas, gasPrice);
       expect(result.isEqualTo(amount)).toBe(true);
     });
   });
@@ -870,7 +870,7 @@ describe("Aptos sync logic ", () => {
       expect(result[0]).toEqual({
         id: expect.any(String),
         hash: "0x123",
-        type: DIRECTION.OUT,
+        type: OP_TYPE.OUT,
         value: new BigNumber(100),
         fee: new BigNumber(20000),
         blockHash: "0xabc",
@@ -1069,7 +1069,7 @@ describe("Aptos sync logic ", () => {
       expect(result[0]).toEqual({
         id: expect.any(String),
         hash: "0x0189",
-        type: DIRECTION.OUT,
+        type: OP_TYPE.OUT,
         value: new BigNumber(20000),
         fee: new BigNumber(20000),
         blockHash: "0xc496",
@@ -1367,7 +1367,7 @@ describe("Aptos sync logic ", () => {
       expect(tokenOps[0]).toEqual({
         id: expect.any(String),
         hash: "0x123",
-        type: DIRECTION.OUT,
+        type: OP_TYPE.OUT,
         value: new BigNumber(1500000),
         fee: new BigNumber(20000),
         blockHash: "0xabc",
@@ -1663,7 +1663,7 @@ describe("Aptos sync logic ", () => {
         id: expect.any(String),
         accountId: "token_account_id",
         hash: "0x10c9",
-        type: DIRECTION.IN,
+        type: OP_TYPE.IN,
         value: new BigNumber(193),
         fee: new BigNumber(20000),
         blockHash: "0xabc",

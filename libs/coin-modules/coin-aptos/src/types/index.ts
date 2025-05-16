@@ -8,6 +8,7 @@ import type {
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import type { BigNumber } from "bignumber.js";
+
 export * from "./signer";
 export * from "./bridge";
 
@@ -56,8 +57,8 @@ export type TransactionErrors = {
 };
 
 export type Transaction = TransactionCommon & {
-  mode: string;
   family: "aptos";
+  mode: string;
   fees?: BigNumber | null;
   options: TransactionOptions;
   errors?: TransactionErrors;
@@ -107,37 +108,82 @@ export type ExtraStakeInfoRaw = {
   amount: string;
 };
 
-export type AptosStake = {
-  stakeAccAddr: string;
-  hasStakeAuth: boolean;
-  hasWithdrawAuth: boolean;
-  // delegation:
-  //   | {
-  //       stake: number;
-  //       voteAccAddr: string;
-  //     }
-  //   | undefined;
-  stakeAccBalance: number;
-  // rentExemptReserve: number;
-  withdrawable: number;
-  activation: {
-    state: "active" | "inactive" | "activating" | "deactivating";
-    active: number;
-    inactive: number;
+export type AptosStakeWithMeta = {
+  stake: AptosStakingPosition;
+  meta: {
+    validator?: {
+      name?: string;
+      img?: string;
+      url?: string;
+    };
   };
-  reward?:
-    | {
-        amount: number;
-      }
-    | undefined;
 };
 
 export type AptosResources = {
-  stakes: AptosStake[];
-  unstakeReserve: BigNumber;
+  stakedBalance: BigNumber;
+  availableBalance: BigNumber;
+  pendingBalance: BigNumber;
+  stakingPositions: AptosStakingPosition[];
 };
 
 export type AptosResourcesRaw = {
-  stakes: string;
-  unstakeReserve: string;
+  stakedBalance: string;
+  availableBalance: string;
+  pendingBalance: string;
+  stakingPositions: {
+    staked: string;
+    available: string;
+    pending: string;
+    validatorId: string;
+  }[];
+};
+
+export type AptosStakingPosition = {
+  staked: BigNumber;
+  available: BigNumber;
+  pending: BigNumber;
+  validatorId: string;
+};
+
+export type AptosMappedStakingPosition = AptosStakingPosition & {
+  formattedAmount: string;
+  formattedPending: string;
+  formattedAvailable: string;
+  rank: number;
+  validator: AptosValidator | null | undefined;
+};
+
+export type AptosValidator = {
+  activeStake: BigNumber;
+  commission: BigNumber;
+  address: string;
+  name?: string | undefined;
+  shares: string;
+  avatarUrl?: string | undefined;
+  wwwUrl?: string | undefined;
+  nextUnlockTime?: string | undefined;
+};
+
+export type AptosValidatorRaw = {
+  active_stake?: number | null;
+  commission?: number | null;
+  addr?: string | null;
+  name?: string | null;
+  shares: string;
+  avatar_url?: string | null;
+  www_url?: string | null;
+  nextUnlockTime?: string | undefined;
+};
+
+export type AptosValidatorWithMeta = {
+  validator: AptosValidator;
+  meta: {
+    name?: string;
+    img?: string;
+  };
+};
+
+export type AptosPreloadData = {
+  validatorsWithMeta: AptosValidatorWithMeta[];
+  validators: AptosValidator[];
 };

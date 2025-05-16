@@ -1,18 +1,9 @@
 import {
   AptosAccount,
+  Transaction,
   TransactionStatus,
-  AptosOperation,
-} from "@ledgerhq/coin-aptos/lib/types/index";
-import { FieldComponentProps, LLDCoinFamily } from "../types";
+} from "@ledgerhq/live-common/families/aptos/types";
+import { LLDCoinFamily } from "../types";
+import { Operation } from "@ledgerhq/types-live";
 
-export type AptosFamily = LLDCoinFamily<
-  AptosAccount,
-  Transaction,
-  TransactionStatus,
-  AptosOperation
->;
-export type AptosFieldComponentProps = FieldComponentProps<
-  AptosAccount,
-  Transaction,
-  TransactionStatus
->;
+export type AptosFamily = LLDCoinFamily<AptosAccount, Transaction, TransactionStatus, Operation>;
