@@ -11,6 +11,7 @@ import {
   DisconnectedDevice,
   StatusCodes,
   LockedDeviceError,
+  LatestFirmwareVersionRequired,
 } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
 import { type DerivationMode, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
@@ -25,7 +26,6 @@ import getDeviceInfo from "./getDeviceInfo";
 import getAddress from "./getAddress";
 import openApp from "./openApp";
 import quitApp from "./quitApp";
-import { LatestFirmwareVersionRequired } from "../errors";
 import { mustUpgrade } from "../apps";
 import isUpdateAvailable from "./isUpdateAvailable";
 import { LockedDeviceEvent } from "./actions/types";
