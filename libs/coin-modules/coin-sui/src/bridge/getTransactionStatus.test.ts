@@ -1,5 +1,6 @@
 import {
   NotEnoughBalance,
+  NotEnoughBalanceInParentAccount,
   RecipientRequired,
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -8,6 +9,7 @@ import {
 } from "@ledgerhq/errors";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import getTransactionStatus from "./getTransactionStatus";
+import BigNumber from "bignumber.js";
 
 const account = createFixtureAccount();
 
@@ -47,11 +49,32 @@ describe("getTransactionStatus", () => {
     const expected = { amount: new NotEnoughBalance() };
     expect(result.errors).toEqual(expected);
   });
-  it("should return errors if amount exceeds balance", async () => {
+  it("should return errors fees not loaded", async () => {
     const transaction = createFixtureTransaction({ fees: null });
     const result = await getTransactionStatus(account, transaction);
 
     const expected = { fees: new FeeNotLoaded() };
+    expect(result.errors).toEqual(expected);
+  });
+  it("should return errors if not enought balance for fees", async () => {
+    const transaction = createFixtureTransaction({
+      subAccountId: "subAccountId",
+    });
+    const account = createFixtureAccount({
+      id: "parentAccountId",
+      balance: BigNumber(0),
+      spendableBalance: BigNumber(0),
+      subAccounts: [
+        createFixtureAccount({
+          id: "subAccountId",
+          parentId: "parentAccountId",
+          type: "TokenAccount",
+        }),
+      ],
+    });
+    const result = await getTransactionStatus(account, transaction);
+
+    const expected = { amount: new NotEnoughBalanceInParentAccount() };
     expect(result.errors).toEqual(expected);
   });
 });

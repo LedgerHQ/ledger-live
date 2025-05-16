@@ -11,11 +11,9 @@ import { SuiSignedOperation, Transaction } from "../types";
  * @param {Object} params.signedOperation.rawData - The raw data of the signed operation.
  * @returns {Promise<Object>} The operation with the hash of the transaction.
  */
-export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({ signedOperation }) => {
-  const {
-    operation,
-    rawData: { unsigned, serializedSignature },
-  } = signedOperation as unknown as SuiSignedOperation;
-  const hash = await logicBroadcast(unsigned, serializedSignature);
+export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
+  signedOperation: { operation, signature, rawData },
+}) => {
+  const hash = await logicBroadcast(rawData!.unsigned as Uint8Array, signature);
   return patchOperationWithHash(operation, hash);
 };
