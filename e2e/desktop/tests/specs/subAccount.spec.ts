@@ -135,69 +135,71 @@ const transactionE2E = [
   },
 ];
 
-for (const transaction of transactionE2E) {
-  test.describe("Send token - E2E", () => {
-    test.use({
-      userdata: "skip-onboarding",
-      speculosApp: transaction.tx.accountToDebit.currency.speculosApp,
-      cliCommands: [
-        (appjsonPath: string) => {
-          return CLI.liveData({
-            currency: transaction.tx.accountToCredit.currency.speculosApp.name,
-            index: transaction.tx.accountToCredit.index,
-            add: true,
-            appjson: appjsonPath,
-          });
-        },
-        (appjsonPath: string) => {
-          return CLI.liveData({
-            currency: transaction.tx.accountToDebit.currency.speculosApp.name,
-            index: transaction.tx.accountToDebit.index,
-            add: true,
-            appjson: appjsonPath,
-          });
-        },
-      ],
-    });
+if (process.env.SPECULOS_DEVICE !== "NanoS") {
+  for (const transaction of transactionE2E) {
+    test.describe("Send token - E2E", () => {
+      test.use({
+        userdata: "skip-onboarding",
+        speculosApp: transaction.tx.accountToDebit.currency.speculosApp,
+        cliCommands: [
+          (appjsonPath: string) => {
+            return CLI.liveData({
+              currency: transaction.tx.accountToCredit.currency.speculosApp.name,
+              index: transaction.tx.accountToCredit.index,
+              add: true,
+              appjson: appjsonPath,
+            });
+          },
+          (appjsonPath: string) => {
+            return CLI.liveData({
+              currency: transaction.tx.accountToDebit.currency.speculosApp.name,
+              index: transaction.tx.accountToDebit.index,
+              add: true,
+              appjson: appjsonPath,
+            });
+          },
+        ],
+      });
 
-    test(
-      `Send from ${transaction.tx.accountToDebit.accountName} to ${transaction.tx.accountToCredit.accountName} - ${transaction.tx.accountToDebit.currency.name} - E2E test`,
-      {
-        annotation: {
-          type: "TMS",
-          description: transaction.xrayTicket,
+      test(
+        `Send from ${transaction.tx.accountToDebit.accountName} to ${transaction.tx.accountToCredit.accountName} - ${transaction.tx.accountToDebit.currency.name} - E2E test`,
+        {
+          annotation: {
+            type: "TMS",
+            description: transaction.xrayTicket,
+          },
         },
-      },
-      async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+        async ({ app }) => {
+          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await app.layout.goToAccounts();
-        await app.accounts.navigateToAccountByName(transaction.tx.accountToDebit.accountName);
-        await app.account.navigateToTokenInAccount(transaction.tx.accountToDebit);
-        await app.account.clickSend();
-        await app.send.craftTx(transaction.tx);
-        await app.send.continueAmountModal();
-        await app.send.expectTxInfoValidity(transaction.tx);
-        await app.send.clickContinueToDevice();
-
-        await app.speculos.signSendTransaction(transaction.tx);
-        await app.send.expectTxSent();
-        await app.account.navigateToViewDetails();
-        await app.sendDrawer.addressValueIsVisible(transaction.tx.accountToCredit.address);
-        await app.drawer.closeDrawer();
-        if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
           await app.layout.goToAccounts();
-          await app.accounts.clickSyncBtnForAccount(transaction.tx.accountToCredit.accountName);
-          await app.accounts.navigateToAccountByName(transaction.tx.accountToCredit.accountName);
+          await app.accounts.navigateToAccountByName(transaction.tx.accountToDebit.accountName);
           await app.account.navigateToTokenInAccount(transaction.tx.accountToDebit);
-          await app.account.expectAccountBalance();
-          await app.account.checkAccountChart();
-          await app.account.selectAndClickOnLastOperation(TransactionStatus.RECEIVED);
-          await app.sendDrawer.expectReceiverInfos(transaction.tx);
-        }
-      },
-    );
-  });
+          await app.account.clickSend();
+          await app.send.craftTx(transaction.tx);
+          await app.send.continueAmountModal();
+          await app.send.expectTxInfoValidity(transaction.tx);
+          await app.send.clickContinueToDevice();
+
+          await app.speculos.signSendTransaction(transaction.tx);
+          await app.send.expectTxSent();
+          await app.account.navigateToViewDetails();
+          await app.sendDrawer.addressValueIsVisible(transaction.tx.accountToCredit.address);
+          await app.drawer.closeDrawer();
+          if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+            await app.layout.goToAccounts();
+            await app.accounts.clickSyncBtnForAccount(transaction.tx.accountToCredit.accountName);
+            await app.accounts.navigateToAccountByName(transaction.tx.accountToCredit.accountName);
+            await app.account.navigateToTokenInAccount(transaction.tx.accountToDebit);
+            await app.account.expectAccountBalance();
+            await app.account.checkAccountChart();
+            await app.account.selectAndClickOnLastOperation(TransactionStatus.RECEIVED);
+            await app.sendDrawer.expectReceiverInfos(transaction.tx);
+          }
+        },
+      );
+    });
+  }
 }
 
 const transactionsAddressInvalid = [

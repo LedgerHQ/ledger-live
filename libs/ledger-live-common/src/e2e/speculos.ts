@@ -61,7 +61,7 @@ export function setExchangeDependencies(dependencies: Dependency[]) {
   specs["Exchange"].dependencies = Array.from(map.values());
 }
 
-function setSpeculosModel() {
+export function setSpeculosModel() {
   const speculosDevice = process.env.SPECULOS_DEVICE;
   switch (speculosDevice) {
     case "NanoS":
