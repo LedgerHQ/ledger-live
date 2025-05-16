@@ -1,5 +1,5 @@
 name: "[Desktop] - E2E Test - Scheduled"
-run-name: "@Desktop • UI e2e • Test App triggered by ${{ inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
+run-name: "@Desktop • UI e2e • Test App triggered by ${{ github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
   schedule:
@@ -8,9 +8,6 @@ on:
     inputs:
       ref:
         description: the branch which triggered this workflow
-        required: false
-      login:
-        description: The GitHub username that triggered the workflow
         required: false
       base_ref:
         description: The base branch to merge the head into when checking out the code
@@ -51,6 +48,14 @@ on:
           - staging
           - testing
         default: testing
+      speculos_device:
+        description: "Device to be used in Speculos"
+        required: false
+        type: choice
+        options:
+          - NanoS
+          - NanoSP
+        default: NanoSP
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
@@ -70,6 +75,7 @@ jobs:
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:master
+      SPECULOS_DEVICE: ${{ inputs.speculos_device }}
     runs-on: [ledger-live-4xlarge-e2e]
     strategy:
       fail-fast: false
@@ -176,7 +182,6 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         with:
           platform: linux-speculos
-          login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ${{ env.ALLURE_RESULTS }}
 
