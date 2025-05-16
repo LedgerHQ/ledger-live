@@ -447,6 +447,8 @@
     "incompatibility": {
       "ton_title": "Ledger Nano S™ does not support swapping Ton",
       "ton_description": "To swap Ton, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "ton_tokens_title": "Ledger Nano S™ does not support swapping Ton Tokens",
+      "ton_tokens_description": "To swap Ton Tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "spl_tokens_title": "Ledger Nano S™ does not support swapping Solana tokens",
       "spl_tokens_description": "To swap Solana tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "sui_tokens_title": "Ledger Nano S™ does not support swapping Sui tokens",
@@ -6601,7 +6603,7 @@
         "swap": "Swap",
         "deposit": "Deposit"
       }
-    }, 
+    },
     "InvalidMemoMina": {
       "title": "Memo text cannot be longer than 32 characters"
     },
@@ -6638,7 +6640,8 @@
       "title": "choose asset"
     },
     "selectAccount": {
-      "title": "choose account"
+      "title": "choose account",
+      "addAccount": "Add new or existing account"
     }
   },
   "customImage": {
@@ -7068,6 +7071,14 @@
     "opted_out": {
       "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements. For long-term use, upgrade to a newer Ledger device.",
       "cta": "Learn more"
+    }
+  },
+  "modularAssetDrawer": {
+    "searchPlaceholder": "Search",
+    "assetFlow": {
+      "selectTemplate": "Select {{dynamic}}",
+      "asset": "asset",
+      "network": "network"
     }
   }
 }

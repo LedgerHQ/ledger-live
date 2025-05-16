@@ -24,6 +24,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router";
 import styled from "styled-components";
+import { reduce, firstValueFrom } from "rxjs";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { track } from "~/renderer/analytics/segment";
 import { Web3AppWebview } from "~/renderer/components/Web3AppWebview";
@@ -177,10 +178,27 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
         }
         const fromParentAccount = getParentAccount(fromAccount, accounts);
 
-        const mainAccount = getMainAccount(fromAccount, fromParentAccount);
+        let mainAccount = getMainAccount(fromAccount, fromParentAccount);
         const bridge = getAccountBridge(fromAccount, fromParentAccount);
 
         const subAccountId = fromAccount.type !== "Account" && fromAccount.id;
+
+        // NOTE: we might sync all types of accounts here
+        if (mainAccount.currency.id === "bitcoin") {
+          try {
+            const syncedAccount = await firstValueFrom(
+              bridge
+                .sync(mainAccount, { paginationConfig: {} })
+                .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), mainAccount)),
+            );
+            if (syncedAccount) {
+              mainAccount = syncedAccount;
+            }
+          } catch (e) {
+            logger.error(e);
+          }
+        }
+
         const transaction = bridge.createTransaction(mainAccount);
 
         const preparedTransaction = await bridge.prepareTransaction(mainAccount, {

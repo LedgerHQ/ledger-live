@@ -2,31 +2,19 @@ import React from "react";
 import styled from "styled-components";
 import { withTokens } from "../../libs";
 import { Text } from "../../../components";
+import { CryptoIcon } from "../CryptoIcon/CryptoIcon";
 
-type NetworkItemProps = {
-  name: string;
+export type Network = { name: string; id: string; ticker: string };
+
+type NetworkItemProps = Network & {
   onClick: () => void;
 };
-
-const TempAssetBadge = () => (
-  // TODO: To be replaced with LIVE-18221
-  <div style={{ display: "flex", alignItems: "center" }}>
-    <span
-      style={{
-        height: 48,
-        width: 48,
-        borderRadius: 48,
-        backgroundColor: "grey",
-        display: "inline-block",
-      }}
-    />
-  </div>
-);
 
 const Wrapper = styled.div`
   ${withTokens(
     "spacing-xxs",
     "margin-s",
+    "radius-s",
     "colors-content-default-default",
     "colors-surface-transparent-hover",
     "colors-surface-transparent-pressed",
@@ -34,6 +22,8 @@ const Wrapper = styled.div`
   display: flex;
   padding: var(--spacing-xxs);
   cursor: pointer;
+  border-radius: var(--radius-s, 8px);
+  align-items: center;
 
   :hover {
     background-color: var(--colors-surface-transparent-hover);
@@ -51,10 +41,10 @@ const InfoWrapper = styled.div`
   margin-left: var(--margin-s);
 `;
 
-export const NetworkItem = ({ name, onClick }: NetworkItemProps) => {
+export const NetworkItem = ({ name, onClick, id, ticker }: NetworkItemProps) => {
   return (
     <Wrapper onClick={onClick}>
-      <TempAssetBadge />
+      <CryptoIcon size="48px" ledgerId={id} ticker={ticker} />
       <InfoWrapper>
         <Text
           variant="largeLineHeight"

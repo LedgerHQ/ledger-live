@@ -87,6 +87,7 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
           type: "etherscan",
           uri: "https://proxyetherscan.api.live.ledger.com/v2/api/146",
         },
+        showNfts: true,
       },
     }));
 

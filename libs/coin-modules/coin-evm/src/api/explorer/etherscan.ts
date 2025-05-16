@@ -262,6 +262,11 @@ export const getLastNftOperations = async (
   fromBlock: number,
   toBlock?: number,
 ): Promise<Operation[]> => {
+  const config = getCoinConfig(currency).info;
+  if (!config.showNfts) {
+    return [];
+  }
+
   const erc721Ops = await getLastERC721Operations(currency, address, accountId, fromBlock, toBlock);
   const erc1155Ops = await getLastERC1155Operations(
     currency,

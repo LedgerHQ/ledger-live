@@ -2,35 +2,23 @@ import React from "react";
 import styled from "styled-components";
 import { withTokens } from "../../libs";
 import { Text } from "../../../components";
+import { CryptoIcon } from "../CryptoIcon/CryptoIcon";
 
 export type AssetType = {
   name: string;
   ticker: string;
+  id: string;
 };
 
 type AssetItemProps = AssetType & {
   onClick: (asset: AssetType) => void;
 };
 
-const TempAssetBadge = () => (
-  // TODO: To be replaced with LIVE-18221
-  <div style={{ display: "flex", alignItems: "center" }}>
-    <span
-      style={{
-        height: 48,
-        width: 48,
-        borderRadius: 48,
-        backgroundColor: "grey",
-        display: "inline-block",
-      }}
-    />
-  </div>
-);
-
 const Wrapper = styled.div`
   ${withTokens(
     "spacing-xxs",
     "margin-s",
+    "radius-s",
     "colors-content-subdued-default-default",
     "colors-content-default-default",
     "colors-surface-transparent-hover",
@@ -40,6 +28,8 @@ const Wrapper = styled.div`
   display: flex;
   padding: var(--spacing-xxs);
   cursor: pointer;
+  border-radius: var(--radius-s, 8px);
+  align-items: center;
 
   :hover {
     background-color: var(--colors-surface-transparent-hover);
@@ -57,10 +47,10 @@ const InfoWrapper = styled.div`
   margin-left: var(--margin-s);
 `;
 
-export const AssetItem = ({ name, ticker, onClick }: AssetItemProps) => {
+export const AssetItem = ({ name, ticker, id, onClick }: AssetItemProps) => {
   return (
-    <Wrapper onClick={() => onClick({ name, ticker })}>
-      <TempAssetBadge />
+    <Wrapper onClick={() => onClick({ name, ticker, id })}>
+      <CryptoIcon size="48px" ledgerId={id} ticker={ticker} />
       <InfoWrapper>
         <Text
           variant="largeLineHeight"

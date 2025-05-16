@@ -11,7 +11,33 @@ export type UseTrackTransactionChecksFlow = {
   deviceInfo: DeviceInfo | undefined | null;
   appAndVersion: AppAndVersion | undefined | null;
   transactionChecksOptInTriggered: boolean | undefined | null;
+  transactionChecksOptIn: boolean | undefined | null;
 };
+
+const getDefaultPayload = ({
+  location,
+  device,
+  deviceInfo,
+  appAndVersion,
+}: {
+  location: string | undefined;
+  device: Device;
+  deviceInfo: DeviceInfo | undefined | null;
+  appAndVersion: AppAndVersion | undefined | null;
+}) => ({
+  page: location ?? "unknown",
+  deviceType: device?.modelId,
+  connectionType: device?.wired ? CONNECTION_TYPES.USB : CONNECTION_TYPES.BLE,
+  platform: "LLM",
+  appName: appAndVersion?.name,
+  appVersion: appAndVersion?.version,
+  appFlags: appAndVersion?.flags.toString(),
+  deviceInfoHardwareVersion: deviceInfo?.hardwareVersion,
+  deviceInfoMcuVersion: deviceInfo?.mcuVersion,
+  deviceInfoBootloaderVersion: deviceInfo?.bootloaderVersion,
+  deviceInfoProviderName: deviceInfo?.providerName,
+  deviceInfoLanguageId: deviceInfo?.languageId,
+});
 
 export const useTrackTransactionChecksFlow = ({
   location,
@@ -19,27 +45,30 @@ export const useTrackTransactionChecksFlow = ({
   deviceInfo,
   appAndVersion,
   transactionChecksOptInTriggered,
+  transactionChecksOptIn,
 }: UseTrackTransactionChecksFlow) => {
-  const triggered = useRef(false);
+  const optInTriggered = useRef(false);
+  const optInResult = useRef(false);
 
-  if (transactionChecksOptInTriggered && !triggered.current) {
-    triggered.current = true;
+  if (transactionChecksOptInTriggered && !optInTriggered.current) {
+    optInTriggered.current = true;
 
-    const defaultPayload = {
-      page: location ?? "unknown",
-      deviceType: device?.modelId,
-      connectionType: device?.wired ? CONNECTION_TYPES.USB : CONNECTION_TYPES.BLE,
-      platform: "LLM",
-      appName: appAndVersion?.name,
-      appVersion: appAndVersion?.version,
-      appFlags: appAndVersion?.flags.toString(),
-      deviceInfoHardwareVersion: deviceInfo?.hardwareVersion,
-      deviceInfoMcuVersion: deviceInfo?.mcuVersion,
-      deviceInfoBootloaderVersion: deviceInfo?.bootloaderVersion,
-      deviceInfoProviderName: deviceInfo?.providerName,
-      deviceInfoLanguageId: deviceInfo?.languageId,
-    };
+    track(
+      "Transaction Check Opt-in Triggered",
+      getDefaultPayload({ location, device, deviceInfo, appAndVersion }),
+    );
+  }
 
-    track("Transaction Check Opt-in Triggered", defaultPayload);
+  if (
+    transactionChecksOptIn !== null &&
+    transactionChecksOptIn !== undefined &&
+    !optInResult.current
+  ) {
+    optInResult.current = true;
+
+    track(
+      transactionChecksOptIn ? "Transaction Check Opt-in" : "Transaction Check Opt-out",
+      getDefaultPayload({ location, device, deviceInfo, appAndVersion }),
+    );
   }
 };
