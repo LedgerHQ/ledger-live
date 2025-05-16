@@ -1,4 +1,3 @@
-import { expect } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class ManagerPage {
@@ -15,6 +14,6 @@ export default class ManagerPage {
 
   @Step("Expect manager page")
   async expectManagerPage() {
-    await expect(getElementById(this.managerTitleId)).toBeVisible();
+    await detoxExpect(getElementById(this.managerTitleId)).toBeVisible();
   }
 }
