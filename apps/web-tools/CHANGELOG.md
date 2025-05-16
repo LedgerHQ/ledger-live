@@ -1,6 +1,6 @@
 # web-tools
 
-## 0.18.2-next.0
+## 0.18.3-next.0
 
 ### Patch Changes
 
@@ -9,6 +9,20 @@
   - @ledgerhq/cryptoassets@13.17.0-next.0
   - @ledgerhq/coin-framework@5.0.2-next.0
   - @ledgerhq/live-wallet@0.10.9-next.0
+
+## 0.18.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.33.1
+
+## 0.18.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.33.1-hotfix.0
 
 ## 0.18.1
 

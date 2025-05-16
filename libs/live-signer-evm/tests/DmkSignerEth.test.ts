@@ -43,8 +43,9 @@ describe("DmkSignerEth", () => {
               command: expect.objectContaining({
                 args: expect.objectContaining({
                   derivationPath: "path",
-                  checkOnDevice: undefined,
-                  returnChainCode: undefined,
+                  checkOnDevice: false,
+                  returnChainCode: false,
+                  skipOpenApp: true,
                 }),
               }),
             }),
@@ -87,6 +88,7 @@ describe("DmkSignerEth", () => {
                   derivationPath: "path",
                   checkOnDevice: true,
                   returnChainCode: true,
+                  skipOpenApp: true,
                 }),
               }),
             }),
