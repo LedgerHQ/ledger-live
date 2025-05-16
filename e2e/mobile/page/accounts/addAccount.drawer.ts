@@ -1,4 +1,3 @@
-import { expect } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
 import CommonPage from "../common.page";
 import { getEnv } from "@ledgerhq/live-env";
@@ -43,12 +42,12 @@ export default class AddAccountDrawer extends CommonPage {
   @Step("Expect account discovered")
   async expectAccountDiscovery(currencyName: string, currencyId: string, index = 0) {
     const accountName = `${currencyName} ${index + 1}`;
-    await expect(this.accountItem(this.accountId(currencyId, index))).toBeVisible();
+    await detoxExpect(this.accountItem(this.accountId(currencyId, index))).toBeVisible();
     const accountId = (await getIdByRegexp(this.accountItemRegExp(), index)).replace(
       this.accountItemId,
       "",
     );
-    await expect(this.accountItemName(accountId)).toHaveText(accountName);
+    await detoxExpect(this.accountItemName(accountId)).toHaveText(accountName);
     return accountId;
   }
 

@@ -1,4 +1,3 @@
-import { expect } from "detox";
 import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 
 export default class AssetAccountsPage {
@@ -16,7 +15,7 @@ export default class AssetAccountsPage {
   @Step("Expect asset balance to be visible")
   async expectAccountsBalanceVisible() {
     const balanceEl = this.assetBalance();
-    await expect(balanceEl).toBeVisible();
+    await detoxExpect(balanceEl).toBeVisible();
   }
 
   @Step("Wait for individual asset rows to load")
