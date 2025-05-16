@@ -258,8 +258,6 @@ export function mapJettonTxToOps(
     }
 
     if (isSending) {
-      console.log("token sending tx.transaction_hash");
-      console.log(tx.transaction_hash);
       ops.push({
         id: encodeOperationId(tokenAccountId, hash, "OUT"),
         hash,
