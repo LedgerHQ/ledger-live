@@ -2,6 +2,10 @@ import React from "react";
 import { Flex, Text, Icons } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
+import ExternalLink from "~/renderer/components/ExternalLink";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+import { openURL } from "~/renderer/linking";
+import { urls } from "~/config/urls";
 
 type Props = {
   onGetHelp: () => void;

@@ -113,3 +113,43 @@ test.describe("Receive", () => {
     },
   );
 });
+
+test.describe("Receive assets on a blacklisted address", () => {
+  const account = Account.SANCTIONED_ETH;
+  test.use({
+    userdata: "speculos-sanctioned-eth",
+    speculosApp: account.currency.speculosApp,
+    cliCommands: [
+      (appjsonPath: string) => {
+        return CLI.liveData({
+          currency: account.currency.id,
+          index: account.index,
+          add: false,
+          appjson: appjsonPath,
+        });
+      },
+    ],
+  });
+  test(
+    `${account.currency.ticker} sanctioned address Receive displays error message`,
+    {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-3538",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.layout.goToAccounts();
+      await app.accounts.navigateToAccountByName(account.accountName);
+      await app.account.expectAccountVisibility(account.accountName);
+      await app.account.clickReceive();
+      await app.receive.verifyErrorMessage("Keeping you safe");
+      await app.receive.verifyErrorMessage(
+        "This transaction involves a sanctioned wallet address and cannot be processed. -- 0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf Learn more",
+      );
+    },
+  );
+});
