@@ -15,10 +15,10 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const AmountCellExtra = ({ operation, currency, unit }: AmountCellExtraProps<Operation>) => {
   const amount = operation.value;
+
   return !amount.isZero() ? (
     <>
       <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"palette.text.shade80"} />
-
       <CounterValue
         color="palette.text.shade60"
         fontSize={3}
@@ -29,6 +29,7 @@ const AmountCellExtra = ({ operation, currency, unit }: AmountCellExtraProps<Ope
     </>
   ) : null;
 };
+
 const amountCellExtra = {
   STAKE: AmountCellExtra,
 };
@@ -40,6 +41,7 @@ const OperationDetailsExtra = ({
 }: OperationDetailsExtraProps<AptosAccount, Operation>) => {
   const amount = operation.value;
   const unit = useAccountUnit(account);
+
   let i18nKey = "";
   if (type === "STAKE") {
     i18nKey = "aptos.operationDetails.extra.stakedAmount";
@@ -47,6 +49,7 @@ const OperationDetailsExtra = ({
   if (!i18nKey || amount.isZero()) {
     return null;
   }
+
   return (
     <OpDetailsSection>
       <OpDetailsTitle>
@@ -86,6 +89,7 @@ const OperationDetailsExtra = ({
     </OpDetailsSection>
   );
 };
+
 export default {
   amountCellExtra,
   OperationDetailsExtra,

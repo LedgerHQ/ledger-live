@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { AptosAPI } from "../api";
 import { getEstimatedGas } from "./getFeesForTransaction";
 import type { AptosAccount, Transaction } from "../types";
-import { DEFAULT_GAS, DEFAULT_GAS_PRICE, getMaxSendBalance } from "./logic";
+import { getMaxSendBalance } from "./logic";
 import { APTOS_DELEGATION_RESERVE_IN_OCTAS, MIN_COINS_ON_SHARES_POOL_IN_OCTAS } from "../constants";
 
 const prepareTransaction = async (
@@ -31,31 +31,16 @@ const prepareTransaction = async (
   const aptosClient = new AptosAPI(account.currency.id);
 
   if (transaction.useAllAmount) {
-    // we will use this amount in simulation, to estimate gas
-    transaction.amount = getMaxSendBalance(
-      account,
-      transaction,
-      new BigNumber(DEFAULT_GAS),
-      new BigNumber(DEFAULT_GAS_PRICE),
-    );
-  }
-
-  const { fees, estimate, errors } = await getEstimatedGas(account, transaction, aptosClient);
-
-  if (transaction.useAllAmount) {
-    // correct the transaction amount according to estimated fees
-    transaction.amount = getMaxSendBalance(
-      account,
-      transaction,
-      BigNumber(estimate.maxGasAmount),
-      BigNumber(estimate.gasUnitPrice),
-    );
-
-    // Reserve a certain amount to cover future network fees to deactivate and withdraw
+    if (transaction.mode === "send") {
+      transaction.amount = getMaxSendBalance(account, transaction);
+    }
     if (transaction.mode === "stake") {
+      // Reserve a certain amount to cover future network fees to deactivate and withdraw
       transaction.amount = transaction.amount.minus(APTOS_DELEGATION_RESERVE_IN_OCTAS);
     }
   }
+
+  const { fees, estimate, errors } = await getEstimatedGas(account, transaction, aptosClient);
 
   transaction.fees = fees;
   transaction.options = estimate;
