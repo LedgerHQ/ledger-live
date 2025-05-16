@@ -24,6 +24,7 @@ import {
 } from "./errors";
 import type {
   CardanoAccount,
+  CardanoOutput,
   CardanoResources,
   Token,
   Transaction,
@@ -31,6 +32,9 @@ import type {
 } from "./types";
 import { CARDANO_MAX_SUPPLY } from "./constants";
 import coinConfig from "./config";
+import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
+import { UserUtxoAddressSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,

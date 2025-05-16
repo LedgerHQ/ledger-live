@@ -1,3 +1,7 @@
+import {
+  isAddressSanctioned,
+  isCheckSanctionedAddressEnabled,
+} from "@ledgerhq/coin-framework/sanction/index";
 import { CurrencyNotSupported } from "@ledgerhq/errors";
 import { decodeAccountId, getMainAccount } from "../account";
 import { getEnv } from "@ledgerhq/live-env";
@@ -61,5 +65,56 @@ export function getAccountBridgeByFamily(family: string, accountId?: string): Ac
   if (!jsBridge) {
     throw new CurrencyNotSupported("currency bridge not found " + family);
   }
-  return jsBridge.accountBridge;
+  return wrapAccountBridge(jsBridge.accountBridge);
+}
+
+function wrapAccountBridge<T extends TransactionCommon>(
+  bridge: AccountBridge<T>,
+): AccountBridge<T> {
+  return {
+    ...bridge,
+    getTransactionStatus: async (...args) => {
+      const blockchainTransactionStatus = await bridge.getTransactionStatus(...args);
+
+      const account = args[0];
+      if (!isCheckSanctionedAddressEnabled(account.currency)) {
+        return blockchainTransactionStatus;
+      }
+
+      const commonTransactionStatus = await commonGetTransactionStatus(...args);
+      return mergeResults(blockchainTransactionStatus, commonTransactionStatus);
+    },
+  };
+}
+
+function mergeResults(
+  blockchainTransactionStatus: TransactionStatusCommon,
+  commonTransactionStatus: Partial<TransactionStatusCommon>,
+): TransactionStatusCommon {
+  const errors = { ...blockchainTransactionStatus.errors, ...commonTransactionStatus.errors };
+  const warnings = { ...blockchainTransactionStatus.warnings, ...commonTransactionStatus.warnings };
+  return { ...blockchainTransactionStatus, errors, warnings };
+}
+
+async function commonGetTransactionStatus(
+  account: Account,
+  transaction: TransactionCommon,
+): Promise<Partial<TransactionStatusCommon>> {
+  const errors: Record<string, Error> = {};
+  const warnings: Record<string, Error> = {};
+
+  let isRecipientSanctioned = false;
+  if (transaction.recipient && transaction.recipient !== "") {
+    isRecipientSanctioned = await isAddressSanctioned(account.currency, transaction.recipient);
+    if (isRecipientSanctioned) {
+      errors.recipient = new AddressesSanctionedError(transaction.recipient);
+    }
+  }
+
+  const isSenderSanctioned = await isAddressSanctioned(account.currency, account.freshAddress);
+  if (isSenderSanctioned) {
+    errors.sender = new AddressesSanctionedError(account.freshAddress);
+  }
+
+  return { errors, warnings };
 }

@@ -17,6 +17,8 @@ import cryptoFactory from "./wallet-btc/crypto/factory";
 import { computeDustAmount } from "./wallet-btc/utils";
 import { TaprootNotActivated } from "./errors";
 import { Currency } from "./wallet-btc";
+import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
+import { UserUtxoAddressSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import {
@@ -62,6 +62,7 @@ const WARN_FROM_UTXO_COUNT = 50;
 const StepSummary = (props: StepProps) => {
   const { account, parentAccount, transaction, status, currencyName, isNFTSend, transitionTo } =
     props;
+  //const [propsState, setPropsState] = useState(props);
   const mainAccount = account && getMainAccount(account, parentAccount);
   const unit = useMaybeAccountUnit(account);
   const accountName = useMaybeAccountName(account);
@@ -373,7 +374,7 @@ const StepSummary = (props: StepProps) => {
 export const StepSummaryFooter = (props: StepProps) => {
   const { account, status, bridgePending, transitionTo } = props;
 
-  const onNext = async () => {
+  const onNext = () => {
     transitionTo("device");
   };
 
