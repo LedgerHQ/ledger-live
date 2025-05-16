@@ -237,7 +237,7 @@ export default function SelectFeesStrategy({
         </SummaryRow>
         {insufficientError && (
           <TouchableOpacity onPress={() => onBuy(mainAccount)}>
-            <Alert type="warning">
+            <Alert type={"warning"}>
               <Flex width={"90%"}>
                 <Text testID="insufficient-fee-error">
                   <TranslatedError error={insufficientError} />

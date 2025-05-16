@@ -221,6 +221,7 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
 
   const error = transactionError || bridgeError || getStatusError(status, "errors");
   const warning = getStatusError(status, "warnings");
+
   const stepperProps = {
     title,
     stepId,
