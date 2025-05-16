@@ -1,5 +1,3 @@
-import { expect } from "detox";
-
 export default class SettingsGeneralPage {
   passwordSettingsSwitch = () => getElementById("password-settings-switch");
   passwordTextInput = () => getElementById("password-text-input");
@@ -37,11 +35,11 @@ export default class SettingsGeneralPage {
 
   @Step("Expect preferred currency button")
   async expectPreferredCurrencyButton() {
-    await expect(this.preferredCurrencyButton()).toBeVisible();
+    await detoxExpect(this.preferredCurrencyButton()).toBeVisible();
   }
 
   @Step("Expect localized text")
   async expectLocalizedText(text: string) {
-    await expect(this.localizedText(text)).toBeVisible();
+    await detoxExpect(this.localizedText(text)).toBeVisible();
   }
 }
