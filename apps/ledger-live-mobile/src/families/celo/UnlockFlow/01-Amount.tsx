@@ -162,7 +162,7 @@ export default function UnlockAmount({ navigation, route }: Props) {
                 <LText
                   style={[styles.fieldStatus]}
                   color={error ? "alert" : warning ? "orange" : "darkBlue"}
-                  numberOfLines={2}
+                  numberOfLines={5}
                 >
                   <TranslatedError error={error || warning} />
                 </LText>

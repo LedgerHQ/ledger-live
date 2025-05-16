@@ -12,6 +12,7 @@ import { NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import invariant from "invariant";
+import { UserAddressSanctionedError } from "@ledgerhq/live-common/sanction/errors";
 
 import MemoTagSummary from "LLM/features/MemoTag/components/MemoTagSummary";
 import { accountScreenSelector } from "~/reducers/accounts";
@@ -243,7 +244,10 @@ function SendSummary({ navigation, route }: Props) {
           containerStyle={styles.continueButton}
           onPress={() => setContinuing(true)}
           disabled={
-            bridgePending || !!transactionError || (!!error && error instanceof NotEnoughGas)
+            bridgePending ||
+            !!transactionError ||
+            (!!error &&
+              (error instanceof NotEnoughGas || error instanceof UserAddressSanctionedError))
           }
           pending={bridgePending}
         />

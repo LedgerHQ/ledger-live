@@ -152,8 +152,10 @@ export default function WithdrawAmount({ navigation, route }: Props) {
       </View>
 
       <View style={styles.footer}>
-        {!!(error && error instanceof Error) && <ErrorAndWarning error={error} />}
-        {!!(warning && warning instanceof Error) && <ErrorAndWarning warning={warning} />}
+        <View style={styles.errors}>
+          {!!(error && error instanceof Error) && <ErrorAndWarning error={error} />}
+          {!!(warning && warning instanceof Error) && <ErrorAndWarning warning={warning} />}
+        </View>
         <View style={styles.feesRow}>
           <SendRowsFee
             account={account}
@@ -291,6 +293,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 24,
     paddingBottom: 16,
+  },
+  errors: {
+    paddingBottom: 25,
   },
   feesRow: {
     width: 330,

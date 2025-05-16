@@ -1,4 +1,4 @@
-import { isAddressSanctioned } from "../sanction";
+import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
 import { CurrencyNotSupported } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -13,7 +13,10 @@ import { decodeAccountId, getMainAccount } from "../account";
 import { checkAccountSupported } from "../account/index";
 import jsBridges from "../generated/bridge/js";
 import mockBridges from "../generated/bridge/mock";
-import { RecipientAddressSanctionedError, UserAddressSanctionedError } from "../sanction/errors";
+import {
+  RecipientAddressSanctionedError,
+  UserAddressSanctionedError,
+} from "@ledgerhq/coin-framework/sanction/errors";
 import { getAlpacaCurrencyBridge } from "./generic-alpaca/currencyBridge";
 import { getAlpacaAccountBridge } from "./generic-alpaca/accountBridge";
 import { TransactionCommon } from "@ledgerhq/types-live";
