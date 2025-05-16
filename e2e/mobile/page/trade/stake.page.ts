@@ -1,4 +1,3 @@
-import { expect } from "detox";
 import invariant from "invariant";
 
 export default class StakePage {
@@ -70,7 +69,7 @@ export default class StakePage {
 
   @Step("Verify fees visible in summary")
   async verifyFeesVisible(currencyId: string) {
-    await expect(getElementById(this.delegationFees(currencyId))).toBeVisible();
+    await detoxExpect(getElementById(this.delegationFees(currencyId))).toBeVisible();
   }
 
   @Step("Get fees displayed in summary")

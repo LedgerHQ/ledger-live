@@ -1,4 +1,3 @@
-import { expect } from "detox";
 import { deleteSpeculos, launchProxy, launchSpeculos } from "../utils/speculosUtils";
 import { addKnownSpeculos, findFreePort, removeKnownSpeculos } from "../bridge/server";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
@@ -39,7 +38,7 @@ export default class CommonPage {
 
   @Step("Expect search")
   async expectSearch(text: string) {
-    await expect(this.searchBar()).toHaveText(text);
+    await detoxExpect(this.searchBar()).toHaveText(text);
   }
 
   @Step("Close page")
