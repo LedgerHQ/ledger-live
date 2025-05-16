@@ -7,6 +7,7 @@ protocols:
 
 beforePack: scripts/beforePack.js
 afterSign: scripts/notarize.js
+afterPack: scripts/afterPack.js
 
 directories:
   buildResources: "build-rc"
@@ -23,6 +24,7 @@ mac:
   entitlements: build-rc/mac/entitlements.plist
   entitlementsInherit: build-rc/mac/entitlements.plist
   icon: build-rc/icon.icns
+  mergeASARs: false
   target:
     - target: dmg
       arch:
@@ -59,7 +61,6 @@ nsis:
   uninstallerIcon: build-rc/windows/uninstaller.ico
   uninstallerSidebar: build-rc/windows/uninstallerSidebar.bmp
 
-includeSubNodeModules: true
 files:
   # Include files
   - .webpack/**/*
