@@ -169,7 +169,7 @@ export function mapTxToOps(
     if (isSending) {
       ops.push({
         id: encodeOperationId(accountId, hash, "OUT"),
-        hash: tx.out_msgs[0].hash, // this hash matches with in_msg.hash of IN transaction
+        hash,
         type: "OUT",
         value: BigNumber(tx.out_msgs[0].value ?? 0),
         fee: BigNumber(tx.total_fees),
