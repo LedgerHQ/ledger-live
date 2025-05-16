@@ -64,7 +64,6 @@ export const coinOperation2: LedgerExplorerOperation = {
     {
       from: "0x267be1c1d684f78cb4f6a176c4911b741e4ffdc0",
       to: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
-      input: null,
       value: "93140000000000000",
       gas: null,
       gas_used: null,
@@ -151,7 +150,6 @@ export const coinOperation4: LedgerExplorerOperation = {
     {
       from: "0x267be1c1d684f78cb4f6a176c4911b741e4ffdc0",
       to: "0xb0b5b0106d69fe64545a60a68c014f7570d3f861",
-      input: null,
       value: "93140000000000000",
       gas: null,
       gas_used: null,
