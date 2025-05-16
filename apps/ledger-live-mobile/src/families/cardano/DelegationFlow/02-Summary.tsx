@@ -45,6 +45,7 @@ import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import RetryButton from "~/components/RetryButton";
 import CancelButton from "~/components/CancelButton";
 import Config from "react-native-config";
+import SupportLinkError from "~/components/SupportLinkError";
 
 type Props = StackNavigatorProps<
   CardanoDelegationFlowParamList,
@@ -210,6 +211,19 @@ export default function DelegationSummary({ navigation, route }: Props) {
             <Text fontSize={13} color="orange">
               <TranslatedError error={displayWarning} field="title" />
             </Text>
+          </Box>
+        ) : (
+          <></>
+        )}
+        {status.errors.sender ? (
+          <Box>
+            <Text fontSize={13} color="red">
+              <TranslatedError error={status.errors.sender} />
+            </Text>
+            <Text fontSize={12} color="red">
+              <TranslatedError error={status.errors.sender} field="description" />
+            </Text>
+            <SupportLinkError error={status.errors.sender} type="alert" />
           </Box>
         ) : (
           <></>

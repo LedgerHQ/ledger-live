@@ -8,6 +8,8 @@ export default class SendPage {
   recipientContinueButtonId = "recipient-continue-button";
   recipientInputId = "recipient-input";
   recipientErrorId = "send-recipient-error";
+  recipientErrorDescriptionId = "send-recipient-error-description";
+  learnMoreLinkId = "learn-more-link";
   memoTagInputId = "memo-tag-input";
   memoTagDrawerTitleId = "memo-tag-drawer-title";
   memoTagIgnoreButtonId = "memo-tag-ignore-button";
@@ -15,6 +17,8 @@ export default class SendPage {
   amountErrorId = "send-amount-error";
   summaryErrorId = "insufficient-fee-error";
   highFeeConfirmButtonID = "confirmation-modal-confirm-button";
+  senderErrorTitleId = "send-sender-error-title";
+  senderErrorDescriptionId = "send-sender-error-description";
 
   summaryRecipient = () => getElementById("send-summary-recipient");
   summaryRecipientEns = () => getElementById("send-summary-recipient-ens");
@@ -68,12 +72,34 @@ export default class SendPage {
     await this.expectRecipientMessage(errorMessage);
   }
 
+  @Step("Expect recipient error message description")
+  async expectSendRecipientErrorDescription(errorMessageDescription: string) {
+    await this.expectRecipientMessageDescription(errorMessageDescription);
+  }
+
   @Step("Expect recipient warning message")
   async expectSendRecipientWarning(expectedWarningMessage: string | null) {
     await this.expectRecipientMessage(expectedWarningMessage, true);
   }
 
+  @Step("Expect sender error title and description")
+  async expectSendSenderError(title: string, description: string) {
+    await this.expectSenderMessageError(title, description);
+  }
+
+  @Step("Expect Learn more link")
+  async expectLearnMoreLink() {
+    await detoxExpect(getElementById(this.learnMoreLinkId)).toBeVisible();
+  }
+
+  @Step("Expect Continue button not visible")
+  async expectContinueButtonNotVisible() {
+    await detoxExpect(getElementById(this.recipientContinueButtonId)).not.toBeVisible();
+  }
+
   private async expectRecipientMessage(message: string | null, continueButtonVisible = false) {
+    const text = await getTextOfElement(this.recipientErrorId);
+    console.log("text", text);
     const errElem = getElementById(this.recipientErrorId);
     if (message) {
       await detoxExpect(errElem).toHaveText(message);
@@ -87,6 +113,18 @@ export default class SendPage {
     } else {
       await detoxExpect(contBtn).not.toBeVisible();
     }
+  }
+
+  private async expectRecipientMessageDescription(message: string) {
+    const errElem = getElementById(this.recipientErrorDescriptionId);
+    await detoxExpect(errElem).toHaveText(message);
+  }
+
+  private async expectSenderMessageError(title: string, description: string) {
+    const titleElement = getElementById(this.senderErrorTitleId);
+    await detoxExpect(titleElement).toHaveText(title);
+    const descriptionElement = getElementById(this.senderErrorDescriptionId);
+    await detoxExpect(descriptionElement).toHaveText(description);
   }
 
   @Step("Expect recipient step success")
