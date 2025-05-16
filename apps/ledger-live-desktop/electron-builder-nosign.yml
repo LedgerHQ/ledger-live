@@ -8,6 +8,7 @@ protocols:
 beforePack: scripts/beforePack.js
 
 npmRebuild: false
+nativeRebuilder: legacy
 
 mac:
   artifactName: ${name}-${version}-${os}.${ext}

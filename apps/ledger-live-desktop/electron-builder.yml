@@ -10,6 +10,7 @@ afterSign: scripts/notarize.js
 afterPack: scripts/afterPack.js
 
 npmRebuild: false
+nativeRebuilder: legacy
 
 mac:
   artifactName: ${name}-${version}-${os}.${ext}
