@@ -24,7 +24,13 @@ import network from "@ledgerhq/live-network";
 import type { Pagination } from "@ledgerhq/coin-framework/api/types";
 import BigNumber from "bignumber.js";
 import isUndefined from "lodash/isUndefined";
-import { APTOS_ASSET_ID, DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "../constants";
+import {
+  APTOS_ASSET_ID,
+  DEFAULT_GAS,
+  DEFAULT_GAS_PRICE,
+  DIRECTION,
+  ESTIMATE_GAS_MUL,
+} from "../constants";
 import { isTestnet, txsToApiOps } from "../bridge/logic";
 import type { AptosTransaction, TransactionOptions } from "../types";
 import {
@@ -37,6 +43,7 @@ import {
   GetAccountTransactionsDataGtQueryVariables,
   GetAccountTransactionsV2DataQuery,
   GetAccountTransactionsV2DataQueryVariables,
+  FungibleAssetActivity,
 } from "./graphql/types";
 import {
   Operation,
@@ -321,65 +328,63 @@ export class AptosAPI {
 
     return [newOperations, ""];
   }
+
+  // work to make one single request instead 1 for each tx
+  async listOperationsV2(
+    address: string,
+    _pagination: Pagination,
+  ): Promise<[Operation<AptosAsset>[], string]> {
+    const txs = await this.accountTransactions(address);
+
+    const ops: Operation<AptosAsset>[] = [];
+
+    txs.reduce((acc, tx) => {
+      acc.push(...fungibleAssetActivitiesToOps(tx.fungible_asset_activities));
+
+      return acc;
+    }, ops);
+
+    return [ops, ""];
+  }
 }
 
-//   async listOperations(
-//     address: string,
-//     _pagination: Pagination,
-//   ): Promise<[Operation<AptosAsset>[], string]> {
-//     const txs = await this.accountTransactions(address);
+function checkType(coinType: MoveFunctionId): "native" | "token" {
+  return coinType === "0x1::aptos_coin::AptosCoin" ? "native" : "token";
+}
 
-//     const ops: Operation<AptosAsset>[] = [];
+function fungibleAssetActivitiesToOps(
+  activities: FungibleAssetActivity[],
+): Operation<AptosAsset>[] {
+  const ops: Operation<AptosAsset>[] = [];
 
-//     txs.reduce((acc, tx) => {
-//       acc.push(...fungibleAssetActivitiesToOps(tx.fungible_asset_activities));
+  activities.reduce((acc: Operation<AptosAsset>[], activity: FungibleAssetActivity) => {
+    if (activity.amount === 0) {
+      return acc;
+    }
 
-//       return acc;
-//     }, ops);
+    const type =
+      activity.owner_address === activity.gas_fee_payer_address ? DIRECTION.OUT : DIRECTION.IN;
+    const hash = `${activity.transaction_version}_${activity.block_height}_${activity.event_index}`;
 
-//     console.log("ops", ops);
+    const fees = activity.is_gas_fee ? BigInt(activity.amount) : BigInt(0);
 
-//     return [[], ""];
-//   }
-// }
+    acc.push({
+      id: hash,
+      type,
+      value: BigInt(activity.amount),
+      senders: [],
+      recipients: [],
+      asset: { type: checkType(activity.asset_type) },
+      tx: {
+        hash,
+        block: { height: activity.block_height },
+        fees,
+        date: activity.transaction_timestamp,
+      },
+    });
 
-// function checkType(coinType: MoveFunctionId): "native" | "token" {
-//   return coinType === "0x1::aptos_coin::AptosCoin" ? "native" : "token";
-// }
+    return acc;
+  }, ops);
 
-// function fungibleAssetActivitiesToOps(
-//   activities: FungibleAssetActivity[],
-// ): Operation<AptosAsset>[] {
-//   const ops: Operation<AptosAsset>[] = [];
-
-//   activities.reduce((acc: Operation<AptosAsset>[], activity: FungibleAssetActivity) => {
-//     if (activity.amount === 0) {
-//       return acc;
-//     }
-
-//     const type =
-//       activity.owner_address === activity.gas_fee_payer_address ? DIRECTION.OUT : DIRECTION.IN;
-//     const hash = `${activity.transaction_version}_${activity.block_height}_${activity.event_index}`;
-
-//     const fees = activity.is_gas_fee ? BigInt(activity.amount) : BigInt(0);
-
-//     acc.push({
-//       id: hash,
-//       type,
-//       value: BigInt(activity.amount),
-//       senders: [],
-//       recipients: [],
-//       asset: { type: checkType(activity.asset_type) },
-//       tx: {
-//         hash,
-//         block: { height: activity.block_height },
-//         fees,
-//         date: activity.transaction_timestamp,
-//       },
-//     });
-
-//     return acc;
-//   }, ops);
-
-//   return ops;
-// }
+  return ops;
+}
