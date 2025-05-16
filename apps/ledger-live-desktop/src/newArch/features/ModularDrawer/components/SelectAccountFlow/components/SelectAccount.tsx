@@ -6,6 +6,7 @@ import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { AccountList, Account as DetailedAccount } from "@ledgerhq/react-ui/pre-ldls/index";
 import { AccountTuple } from "~/renderer/components/PerCurrencySelectAccount/state";
 import { ACCOUNT_PAGE, EXTRA_BOTTOM_MARGIN } from "./constants";
+import { useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
 
 type SelectAccountProps = {
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
@@ -57,6 +58,16 @@ export const SelectAccount = ({
     }
   };
 
+  const overridedAccountName = useBatchMaybeAccountName(accounts.map(({ account }) => account));
+
+  const detailedAccountsWithName = detailedAccounts.map((account, index) => {
+    const accountName = overridedAccountName[index];
+    return {
+      ...account,
+      name: accountName ?? account.name,
+    };
+  });
+
   return (
     <Box style={{ height: "100%", display: "flex", flexDirection: "column" }}>
       <TrackPage category={source} name={ACCOUNT_PAGE} flow={flow} />
@@ -67,7 +78,7 @@ export const SelectAccount = ({
           paddingBottom: `${EXTRA_BOTTOM_MARGIN}px`,
         }}
       >
-        <AccountList accounts={detailedAccounts} onClick={onAccountClick} />
+        <AccountList accounts={detailedAccountsWithName} onClick={onAccountClick} />
       </Flex>
     </Box>
   );
