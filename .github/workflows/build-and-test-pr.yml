@@ -22,7 +22,7 @@ jobs:
     outputs:
       should_skip: ${{ steps.skip_check.outputs.should_skip == 'true' || steps.smartling_check.outputs.should_skip == 'true' }}
     env:
-      IS_SMARTLING: ${{ startsWith(github.event.pull_request.head.ref, 'smartling-content-updated') == true || startsWith(github.event.pull_request.head.ref, 'smartling-translation-completed') == true || startsWith(github.event.pull_request.head.ref, 'lp-close-test') == true }}
+      IS_SMARTLING: ${{ startsWith(github.event.pull_request.head.ref, 'smartling-content-updated') == true || startsWith(github.event.pull_request.head.ref, 'smartling-translation-completed') == true}}
     steps:
       - id: skip_check
         uses: fkirc/skip-duplicate-actions@v5
