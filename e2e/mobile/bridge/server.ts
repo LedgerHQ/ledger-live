@@ -159,7 +159,12 @@ async function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Prom
 }
 
 export async function addKnownSpeculos(proxyAddress: string) {
-  postMessage({ type: "addKnownSpeculos", id: uniqueId(), payload: proxyAddress });
+  const payload = {
+    address: proxyAddress,
+    model: process.env.SPECULOS_DEVICE,
+  };
+
+  postMessage({ type: "addKnownSpeculos", id: uniqueId(), payload: JSON.stringify(payload) });
 }
 
 export async function removeKnownSpeculos(id: string) {
