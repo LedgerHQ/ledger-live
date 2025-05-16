@@ -14,16 +14,17 @@ export default class AccountPage {
   operationRowRegexp = new RegExp("operation-row-" + ".*");
   operationHistorySection = "operations-history-";
   operationHistorySectionRegexp = new RegExp(this.operationHistorySection + ".*");
+  accountSettingsButtonId = "account-settings-button";
+  receiveButtonId = "account-quick-action-button-receive";
+  sendButtonId = "account-quick-action-button-send";
 
   accountGraph = (accountId: string) => getElementById(this.accountGraphId(accountId));
   accountBalance = (accountId: string) => getElementById(`account-balance-${accountId}`);
-  accountSettingsButton = () => getElementById("account-settings-button");
   accountAdvancedLogRow = () => getElementById("account-advanced-log-row");
   accountDeleteRow = () => getElementById("account-settings-delete-row");
   accountDeleteConfirm = () => getElementById("delete-account-confirmation-button");
   operationHistorySectionId = (accountId: string) => this.operationHistorySection + accountId;
-  receiveButton = () => getElementById("account-quick-action-button-receive");
-  sendButton = () => getElementById("account-quick-action-button-send");
+
   accountRenameRow = () => getElementById("account-settings-rename-row");
   getSpecificOperation = (operationType: string) =>
     getElementByIdAndText(this.operationRowRegexp, operationType, 0);
@@ -55,7 +56,8 @@ export default class AccountPage {
 
   @Step("Open account settings")
   async openAccountSettings() {
-    await tapByElement(this.accountSettingsButton());
+    await waitForElementById(this.accountSettingsButtonId); // Issue with RN75 : QAA-370
+    await tapById(this.accountSettingsButtonId);
   }
 
   @Step("Open account advanced logs")
@@ -86,7 +88,7 @@ export default class AccountPage {
   @Step("Expect operation history to be visible")
   async expectOperationHistoryVisible(accountId: string) {
     const id = this.operationHistorySectionId(accountId);
-    await scrollToId(id, this.accountScreenScrollView, 300, "bottom");
+    await scrollToId(id, this.accountScreenScrollView, 1000, "bottom");
     await detoxExpect(getElementById(id)).toBeVisible();
   }
 
@@ -124,12 +126,14 @@ export default class AccountPage {
 
   @Step("Tap on receive button")
   async tapReceive() {
-    await tapByElement(this.receiveButton());
+    await waitForElementById(this.receiveButtonId); // Issue with RN75 : QAA-370
+    await tapById(this.receiveButtonId);
   }
 
   @Step("Tap on send button")
   async tapSend() {
-    await tapByElement(this.sendButton());
+    await waitForElementById(this.sendButtonId); // Issue with RN75 : QAA-370
+    await tapById(this.sendButtonId);
   }
 
   @Step("Tap on earn button")
