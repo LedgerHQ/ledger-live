@@ -17,7 +17,6 @@ const ROW_HEIGHT = 64;
 const SPACING = 16;
 const TWO_ROWS_HEIGHT = 2 * ROW_HEIGHT;
 const EXTRA_BOTTOM_MARGIN = TWO_ROWS_HEIGHT - SPACING;
-const EXTRA_PADDING_HIDDEN_SCROLLBAR = 12;
 
 export const SelectNetwork = ({
   networks,
@@ -40,7 +39,6 @@ export const SelectNetwork = ({
         style={{
           flex: "1",
           overflow: "auto",
-          width: `calc(100% + ${EXTRA_PADDING_HIDDEN_SCROLLBAR + "px"})`,
           paddingBottom: `${EXTRA_BOTTOM_MARGIN}px`,
         }}
       >

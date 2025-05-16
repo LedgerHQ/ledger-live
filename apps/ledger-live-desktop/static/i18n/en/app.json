@@ -7083,7 +7083,8 @@
     "assetFlow": {
       "selectTemplate": "Select {{dynamic}}",
       "asset": "asset",
-      "network": "network"
+      "network": "network",
+      "account": "account"
     }
   },
   "nftEntryPoint": {
