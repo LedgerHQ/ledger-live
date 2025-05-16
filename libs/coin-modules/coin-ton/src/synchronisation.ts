@@ -144,7 +144,7 @@ const getSubAccountShape = async (
     pendingOperations: maybeExistingSubAccount ? maybeExistingSubAccount.pendingOperations : [],
     creationDate: operations.length > 0 ? operations[operations.length - 1].date : new Date(),
     balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
-    swapHistory: [],
+    swapHistory: maybeExistingSubAccount ? maybeExistingSubAccount.swapHistory : [],
     jettonWallet, // Address of the jetton wallet contract that holds the token balance and handles transfers
   };
 };
