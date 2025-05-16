@@ -87,7 +87,13 @@ const buildValidateIntent = networkFamily =>
   ): Promise<TransactionValidation> {
     // TODO: check returned value
     const { data } = await network<
-      { errors: {}; warnings: {}; estimatedFees: bigint; amount: bigint; totalSpent: bigint },
+      {
+        errors: Record<string, never>;
+        warnings: Record<string, never>;
+        estimatedFees: bigint;
+        amount: bigint;
+        totalSpent: bigint;
+      },
       unknown
     >({
       method: "POST",
@@ -168,7 +174,6 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     broadcast: buildBroadcast(networkFamily),
     combine: buildCombine(networkFamily),
     validateIntent: buildValidateIntent(networkFamily),
-    getServerInfo: () => Promise.resolve({}), // TODO: cleanup
     estimateFees: buildEstimateFees(networkFamily),
     getBalance: buildGetBalance(networkFamily),
     listOperations: buildListOperations(networkFamily),

@@ -18,12 +18,6 @@ export function genericGetAccountShape(network, kind): GetAccountShape {
       console.log(`getAccountShape, kind = ${kind}`, accountId, address, initialAccount);
 
       const blockInfo = await getAlpacaApi(network, kind).lastBlock();
-      const api = await getAlpacaApi(network, kind);
-      let serverInfo = null;
-      if (api.getServerInfo) {
-        serverInfo = await api.getServerInfo();
-      }
-      console.log({ blockInfo, serverInfo });
 
       const balanceRes = await getAlpacaApi(network, kind).getBalance(address);
       console.log({ balanceRes });

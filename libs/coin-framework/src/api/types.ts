@@ -103,8 +103,7 @@ export type Api<
     transactionIntent: TransactionIntent<AssetInfo, TxExtra, Sender>,
     customFees?: bigint,
   ) => Promise<string>;
-  validateIntent?: (account: Account, transaction: Transaction) => Promise<any>;
-  getServerInfo?: () => Promise<any>;
+  validateIntent?: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;
   // TODO: add validateIntent
   getBalance: (address: string) => Promise<Balance<AssetInfo>[]>;
   lastBlock: () => Promise<BlockInfo>;
