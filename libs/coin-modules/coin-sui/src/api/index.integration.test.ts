@@ -5,7 +5,7 @@ import { getFullnodeUrl } from "@mysten/sui/client";
 
 describe("Sui Api", () => {
   let module: Api<SuiAsset>;
-  const SENDER = "0x117527fdcf2f5f6e82fa499c0398def2643550d63f7e8311245d75f4635f0435";
+  const SENDER = "0x67b511de2697e4567e41a4477a3abccd4c7c00f4c59b45ab8c72d1544f58ceb8";
   const RECIPIENT = "0xba7080172a6d957b9ed2e3eb643529860be963cf4af896fb84f1cde00f46b561";
 
   beforeAll(() => {

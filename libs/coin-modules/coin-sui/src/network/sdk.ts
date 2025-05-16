@@ -301,8 +301,8 @@ export const loadOperations = async (params: {
       }
 
       currentCursor = nextCursor;
-    } catch (error: unknown) {
-      if (error instanceof JsonRpcError && error.type === "InvalidParams") {
+    } catch (error: any) {
+      if (error.type === "InvalidParams") {
         log("coin:sui", "(network/sdk): loadOperations failed with cursor, retrying without it", {
           error,
           params,
