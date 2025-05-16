@@ -8,40 +8,46 @@ import { TimeFrame } from "./TimeFrame";
 import { Performance } from "./Performance";
 import { PriceAndVariation } from "./PriceAndVariation";
 import { Footer } from "./Footer";
-import { CurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
+import {
+  CurrencyData,
+  KeysPriceChange,
+  MarketCoinDataChart,
+} from "@ledgerhq/live-common/market/utils/types";
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { Informations } from "./Information";
 import { useTheme } from "styled-components/native";
 import { getCryptoCurrencyById, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 
-type CardProps = CurrencyData & {
+type CardProps = {
+  data: CurrencyData;
+  chartData: MarketCoinDataChart;
   range: KeysPriceChange;
   setRange: (range: KeysPriceChange) => void;
+  height: number;
 };
 
 const { width } = getWindowDimensions();
 
-export const Card: React.FC<CardProps> = ({
-  id,
-  price,
-  priceChangePercentage,
-  chartData,
-  low24h,
-  high24h,
-  range,
-  setRange,
-  ticker,
-  marketcap,
-  totalVolume,
-  marketCapChangePercentage24h,
-  maxSupply,
-  circulatingSupply,
-  totalSupply,
-  ath,
-  atl,
-  athDate,
-  atlDate,
-}) => {
+export const Card: React.FC<CardProps> = ({ data, range, setRange, height, chartData }) => {
+  const {
+    id,
+    price,
+    priceChangePercentage,
+    low24h,
+    high24h,
+    ticker,
+    marketcap,
+    totalVolume,
+    marketCapChangePercentage24h,
+    maxSupply,
+    circulatingSupply,
+    totalSupply,
+    ath,
+    atl,
+    athDate,
+    atlDate,
+  } = data;
+
   const graphWidth = width * 0.86;
   const timeframehWidth = width * 0.96;
   const { colors } = useTheme();
@@ -56,7 +62,7 @@ export const Card: React.FC<CardProps> = ({
       marginRight={5}
       marginLeft={5}
       overflow="hidden"
-      height="88%"
+      height={height}
     >
       <Flex alignItems="center" zIndex={10} top={4}>
         <Ticker currencyId={id} />
