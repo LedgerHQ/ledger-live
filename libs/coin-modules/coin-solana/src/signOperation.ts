@@ -62,6 +62,7 @@ function getResolution(
       if (command.recipientDescriptor.shouldCreateAsAssociatedTokenAccount) {
         return {
           deviceModelId,
+          tokenInternalId: command.tokenId,
           createATA: {
             address: command.recipientDescriptor.walletAddress,
             mintAddress: command.mintAddress,
@@ -70,6 +71,7 @@ function getResolution(
       }
       return {
         deviceModelId,
+        tokenInternalId: command.tokenId,
         tokenAddress: command.recipientDescriptor.tokenAccAddress,
       };
     }

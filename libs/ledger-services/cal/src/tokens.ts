@@ -24,6 +24,14 @@ type TokenDataResponse = {
   chain_id?: number;
   contract_address: string;
   decimals: number;
+  descriptor: {
+    data: string;
+    descriptorType: string;
+    signatures: {
+      prod: string;
+      test: string;
+    };
+  };
   descriptor_exchange_app: {
     data: string;
     descriptorType: string;
@@ -63,6 +71,10 @@ export type TokenData = {
   symbol: string;
   ticker: string;
   units: Unit[];
+  descriptor: {
+    data: string;
+    signature: string;
+  };
 };
 
 export const findCachedToken = makeLRUCache(
@@ -115,5 +127,9 @@ export async function findToken(
     symbol: data[0].symbol,
     ticker: data[0].ticker,
     units: data[0].units,
+    descriptor: {
+      data: data[0].descriptor.data,
+      signature: data[0].descriptor.signatures[signatureKind],
+    },
   };
 }
