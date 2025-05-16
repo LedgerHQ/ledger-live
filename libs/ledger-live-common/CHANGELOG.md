@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 34.34.0-nightly.1
+
+### Patch Changes
+
+- [#10204](https://github.com/LedgerHQ/ledger-live/pull/10204) [`063e941`](https://github.com/LedgerHQ/ledger-live/commit/063e941ab5036a945b33dbdb42970f03c174e1fd) Thanks [@sergiubreban](https://github.com/sergiubreban)! - fix: load earn app by feature flag value
+
 ## 34.34.0-nightly.0
 
 ### Minor Changes
