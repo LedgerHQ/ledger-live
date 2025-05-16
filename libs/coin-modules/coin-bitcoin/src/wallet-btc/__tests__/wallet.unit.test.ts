@@ -243,10 +243,6 @@ describe("BitcoinLikeWallet", () => {
         return Promise.resolve({ txs: [], nextPageToken: null });
       });
 
-    // Spy on appendTxs
-    const appendSpy = jest.spyOn(xpub.storage, "appendTxs");
-    const appendedTxsBefore = appendSpy.mock.calls.flatMap(([txs]) => txs);
-
     await xpub.sync();
 
     // ✅ Ensure wallet returns only that one deduplicated transaction
@@ -317,8 +313,6 @@ describe("BitcoinLikeWallet", () => {
     // First sync with pending only
     await xpub.sync();
     expect(appendSpy).toHaveBeenCalled();
-    const transactionsFirst = await wallet.getAccountTransactions(mockAccount);
-    const txsFromWalletFirst = transactionsFirst.txs.filter(tx => tx.id === "duplicate-tx");
 
     // Clear calls and simulate next sync with both versions
     appendSpy.mockClear();
