@@ -135,6 +135,8 @@ const productMap = {
 
 const devicesList: DeviceModel[] = Object.values(devices);
 
+export const deviceIdsList = Object.values(productMap);
+
 /**
  *
  */
