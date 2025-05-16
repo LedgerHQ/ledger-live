@@ -14,7 +14,7 @@ describe("Sui Api", () => {
         type: "active",
       },
       node: {
-        url: getFullnodeUrl("testnet"),
+        url: getFullnodeUrl("mainnet"),
       },
     });
   });
