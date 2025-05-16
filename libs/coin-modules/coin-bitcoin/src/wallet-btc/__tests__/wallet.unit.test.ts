@@ -187,6 +187,78 @@ describe("BitcoinLikeWallet", () => {
     expect(signature).toBe("createPaymentTransactionReturn");
   });
 
+  it("should not store the same transaction twice if it's both pending and confirmed", async () => {
+    const fakeTx = {
+      id: "duplicate-tx",
+      inputs: [],
+      outputs: [],
+      account: 0,
+      index: 0,
+      address: "address1",
+      received_at: new Date().toISOString(),
+      block: null,
+    };
+
+    const confirmedTx = {
+      ...fakeTx,
+      block: {
+        hash: "some-block-hash",
+        height: 123,
+        time: new Date().toISOString(),
+      },
+    };
+
+    // Let sync run
+    const xpub = mockAccount.xpub;
+    xpub.GAP = 1;
+
+    // Mock getBlockByHeight to match highestBlockHash check
+    xpub.explorer.getBlockByHeight = jest.fn().mockResolvedValue(confirmedTx.block);
+
+    // Force synced block height
+    xpub.currentBlockHeight = 123;
+    xpub.syncedBlockHeight = -1;
+
+    // Mock unique address for sync
+    xpub.crypto.getAddress = jest.fn().mockImplementation((_mode, _xpub, account, index) => {
+      if (account === 0 && index === 0) return "address1";
+      return `unused-${account}-${index}`;
+    });
+    // xpub.crypto.getAddress = jest.fn().mockResolvedValue("address1");
+    xpub.getXpubAddresses = jest
+      .fn()
+      .mockResolvedValue([{ address: "address1", account: 0, index: 0 }]);
+
+    // Mock explorer tx fetch
+    xpub.explorer.getTxsSinceBlockheight = jest
+      .fn()
+      .mockImplementation((_size, addr, _from, _to, isPending, _token) => {
+        if (addr.address === "address1") {
+          if (isPending) {
+            return Promise.resolve({ txs: [fakeTx], nextPageToken: null });
+          } else {
+            return Promise.resolve({ txs: [confirmedTx], nextPageToken: null });
+          }
+        }
+        return Promise.resolve({ txs: [], nextPageToken: null });
+      });
+
+    // Spy on appendTxs
+    const appendSpy = jest.spyOn(xpub.storage, "appendTxs");
+    const appendedTxsBefore = appendSpy.mock.calls.flatMap(([txs]) => txs);
+    console.log({ appendedTxsBefore });
+
+    await xpub.sync();
+
+    // Expect only one tx appended (confirmed wins)
+    const appendedTxs = appendSpy.mock.calls.flatMap(([txs]) => txs);
+    // console.log({ appendedTxs });
+
+    const allTxs = appendedTxs.filter(tx => tx.id === "duplicate-tx");
+    expect(allTxs).toHaveLength(1);
+    expect(allTxs[0].block).toEqual(confirmedTx.block);
+  });
+
   describe("estimateAccountMaxSpendable", () => {
     const addresses = [{ address: "address1", account: 0, index: 0 }] as Address[];
 

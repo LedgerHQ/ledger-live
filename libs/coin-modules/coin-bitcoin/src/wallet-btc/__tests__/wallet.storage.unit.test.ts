@@ -165,4 +165,125 @@ describe("Unit tests for bitcoin storage", () => {
     expect(storage.hasTx({ account: 0, index: 0 })).toBe(false);
     expect(storage.getHighestBlockHeightAndHash()).toBeNull();
   }, 30000);
+
+  it("should update highest block when a higher block is added", () => {
+    storage.appendTxs([
+      {
+        id: "new-tx",
+        inputs: [],
+        outputs: [],
+        block: {
+          hash: "new-block-hash",
+          height: 121,
+          time: "2021-07-28T14:00:00Z",
+        },
+        account: 0,
+        index: 0,
+        address: "some-address",
+        received_at: "2021-07-28T14:00:00Z",
+      },
+    ]);
+
+    const highestBlock = storage.getHighestBlockHeightAndHash();
+    expect(highestBlock).toEqual({
+      height: 121,
+      hash: "new-block-hash",
+      time: "2021-07-28T14:00:00Z",
+    });
+  });
+
+  it("should not change highest block if same height is added with a different hash", () => {
+    const original = storage.getHighestBlockHeightAndHash();
+    storage.appendTxs([
+      {
+        id: "another-tx",
+        inputs: [],
+        outputs: [],
+        block: {
+          hash: "different-hash",
+          height: 120,
+          time: "2021-07-28T14:10:00Z",
+        },
+        account: 0,
+        index: 0,
+        address: "another-address",
+        received_at: "2021-07-28T14:10:00Z",
+      },
+    ]);
+    expect(storage.getHighestBlockHeightAndHash()).toEqual(original);
+  });
+
+  it("should return null for highest block when only pending txs exist", () => {
+    storage.removeTxs({ account: 0, index: 0 }); // remove all
+    storage.appendTxs([
+      {
+        id: "pending-only",
+        inputs: [],
+        outputs: [],
+        block: null,
+        account: 0,
+        index: 0,
+        address: "pending-address",
+        received_at: new Date().toISOString(),
+      },
+    ]);
+    expect(storage.getHighestBlockHeightAndHash()).toBeNull();
+  });
+
+  it("should not duplicate tx if it exists as both pending and confirmed", () => {
+    storage.appendTxs([
+      {
+        id: "duplicate-tx",
+        inputs: [],
+        outputs: [],
+        block: null,
+        account: 0,
+        index: 0,
+        address: "addr",
+        received_at: "2021-07-28T14:30:00Z",
+      },
+    ]);
+
+    // Simulate same tx confirmed later
+    storage.appendTxs([
+      {
+        id: "duplicate-tx",
+        inputs: [],
+        outputs: [],
+        block: {
+          hash: "block-hash",
+          height: 130,
+          time: "2021-07-28T14:35:00Z",
+        },
+        account: 0,
+        index: 0,
+        address: "addr",
+        received_at: "2021-07-28T14:35:00Z",
+      },
+    ]);
+
+    expect(storage.txsSize()).toBe(4); // should only increase by 1 from the fixture (3 → 4), not 5
+  });
+
+  it("should replace earlier confirmed tx with newer version (higher block)", () => {
+    const originalBlock = storage.getHighestBlockHeightAndHash();
+    storage.appendTxs([
+      {
+        id: "replaced-tx",
+        inputs: [],
+        outputs: [],
+        block: {
+          hash: "replaced-block",
+          height: 150,
+          time: "2021-07-28T15:00:00Z",
+        },
+        account: 0,
+        index: 0,
+        address: "replace-address",
+        received_at: "2021-07-28T15:00:00Z",
+      },
+    ]);
+
+    expect(storage.getHighestBlockHeightAndHash()?.height).toBeGreaterThan(originalBlock!.height);
+  });
 });
