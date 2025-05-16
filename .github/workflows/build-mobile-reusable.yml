@@ -125,7 +125,7 @@ jobs:
     name: "Build Mobile > Report"
     runs-on: ubuntu-22.04
     needs: [build-mobile-app-android, build-mobile-app-ios]
-    if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request' ) }}
+    if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request' ) && needs.build-mobile-app-android.result == 'success' && needs.build-mobile-app-ios.result == 'success' }}
     steps:
       - name: generate token
         id: generate-token
