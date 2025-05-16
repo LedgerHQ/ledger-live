@@ -1,6 +1,7 @@
 import findLast from "lodash/findLast";
 import filter from "lodash/filter";
 import uniqBy from "lodash/uniqBy";
+import { log } from "@ledgerhq/logs";
 import findIndex from "lodash/findIndex";
 import Base from "../crypto/base";
 import { Input, IStorage, Output, TX, Address, Block } from "./types";
@@ -33,6 +34,10 @@ class BitcoinLikeStorage implements IStorage {
 
   txsSize(): number {
     return this.txs.length;
+  }
+
+  getTxs(): TX[] {
+    return [...this.txs]; // return a shallow copy to avoid external mutation
   }
 
   hasPendingTx(txFilter: { account: number; index: number }): boolean {
@@ -101,8 +106,17 @@ class BitcoinLikeStorage implements IStorage {
 
       // we reject already seen tx
       if (this.txs[this.primaryIndex[index]]) {
+        const existing = this.txs[this.primaryIndex[index]];
+        if (!existing.block && tx.block) {
+          // Replace pending with confirmed version
+          this.txs[this.primaryIndex[index]] = tx;
+          return;
+        }
+        log("bitcoin[storage]", `appendTxs - rejecting ${index}, already have it`);
+
         return;
       }
+
       const idx = this.txs.push(tx) - 1;
       this.primaryIndex[index] = idx;
       this.accountIndex[`${tx.account}-${tx.index}`] =

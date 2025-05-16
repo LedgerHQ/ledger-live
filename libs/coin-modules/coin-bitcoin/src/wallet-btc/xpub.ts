@@ -2,6 +2,7 @@ import maxBy from "lodash/maxBy";
 import range from "lodash/range";
 import some from "lodash/some";
 import BigNumber from "bignumber.js";
+import { log } from "@ledgerhq/logs";
 import { TX, Address, IStorage } from "./storage/types";
 import { IExplorer } from "./explorer/types";
 import { ICrypto } from "./crypto/types";
@@ -329,6 +330,7 @@ class Xpub {
         index,
       })?.height || -1;
     lastTxBlockheight = Math.max(lastTxBlockheight, this.syncedBlockHeight);
+    log("bitcoin[xpub]", `fetchHydrateAndStoreNewTxs ${address}, ${account}, ${index}`);
     let token: string | null = null;
     do {
       if (token) {
@@ -344,6 +346,10 @@ class Xpub {
         txs = result.txs;
         token = result.nextPageToken;
         inserted += this.storage.appendTxs(txs); // insert not pending tx
+        log(
+          "bitcoin[xpub]",
+          `fetchHydrateAndStoreNewTxs - appending ${txs.length} txs, inserted=${inserted}`,
+        );
       } else {
         // if there is no token it means it's the first page, we need to fetch pending txs and non-pending txs
         const [pendingResult, txsResult]: [
@@ -371,9 +377,17 @@ class Xpub {
         txs = txsResult.txs;
         token = txsResult.nextPageToken;
         inserted += this.storage.appendTxs(txs); // insert not pending tx
+        log(
+          "bitcoin[xpub]",
+          `fetchHydrateAndStoreNewTxs - else appending ${txs.length} txs, inserted=${inserted}`,
+        );
       }
     } while (token); // loop until no more txs, if there is a token it means there is more txs to fetch
     inserted += this.storage.appendTxs(pendingTxs); // insert pending tx
+    log(
+      "bitcoin[xpub]",
+      `fetchHydrateAndStoreNewTxs - appending pending ${pendingTxs.length} txs, inserted=${inserted}`,
+    );
     return inserted;
   }
 

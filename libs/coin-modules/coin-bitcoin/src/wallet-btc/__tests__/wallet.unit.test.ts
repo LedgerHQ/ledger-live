@@ -251,12 +251,180 @@ describe("BitcoinLikeWallet", () => {
     await xpub.sync();
 
     // Expect only one tx appended (confirmed wins)
-    const appendedTxs = appendSpy.mock.calls.flatMap(([txs]) => txs);
-    // console.log({ appendedTxs });
+    // const appendedTxs = appendSpy.mock.calls.flatMap(([txs]) => txs);
+    // const allTxs = appendedTxs.filter(tx => tx.id === "duplicate-tx");
 
-    const allTxs = appendedTxs.filter(tx => tx.id === "duplicate-tx");
-    expect(allTxs).toHaveLength(1);
-    expect(allTxs[0].block).toEqual(confirmedTx.block);
+    // ✅ Confirm only 1 instance of the tx stored, and it's the confirmed one
+    // expect(allTxs).toHaveLength(1);
+    // expect(allTxs[0].block).toEqual(confirmedTx.block);
+
+    // ✅ Ensure wallet returns only that one deduplicated transaction
+    const transactions = await wallet.getAccountTransactions(mockAccount);
+    console.log({ transactions });
+    const txsFromWallet = transactions.txs.filter(tx => tx.id === "duplicate-tx");
+    console.log({ txsFromWallet });
+    expect(txsFromWallet).toHaveLength(1);
+    expect(txsFromWallet[0].block).toEqual(confirmedTx.block);
+  });
+
+  it("should replace pending tx with confirmed one if both are fetched over two syncs", async () => {
+    const now = new Date().toISOString();
+    const pendingTx = {
+      id: "duplicate-tx",
+      inputs: [],
+      outputs: [],
+      account: 0,
+      index: 0,
+      address: "address1",
+      received_at: now,
+      block: null,
+    };
+
+    const confirmedTx = {
+      ...pendingTx,
+      block: {
+        hash: "some-block-hash",
+        height: 123,
+        time: now,
+      },
+    };
+
+    const xpub = mockAccount.xpub;
+    xpub.GAP = 1;
+    xpub.currentBlockHeight = 123;
+    xpub.syncedBlockHeight = -1;
+
+    xpub.crypto.getAddress = jest.fn().mockImplementation((_mode, _xpub, account, index) => {
+      if (account === 0 && index === 0) return "address1";
+      return `unused-${account}-${index}`;
+    });
+
+    xpub.getXpubAddresses = jest
+      .fn()
+      .mockResolvedValue([{ address: "address1", account: 0, index: 0 }]);
+
+    xpub.explorer.getBlockByHeight = jest.fn().mockResolvedValue(confirmedTx.block);
+
+    // Simulate first sync returning only pending
+    let syncRound = 0;
+    xpub.explorer.getTxsSinceBlockheight = jest
+      .fn()
+      .mockImplementation((_size, addr, _from, _to, isPending, _token) => {
+        if (addr.address !== "address1") return Promise.resolve({ txs: [], nextPageToken: null });
+
+        if (syncRound === 0) {
+          return isPending
+            ? Promise.resolve({ txs: [pendingTx], nextPageToken: null })
+            : Promise.resolve({ txs: [], nextPageToken: null });
+        } else {
+          return isPending
+            ? Promise.resolve({ txs: [pendingTx], nextPageToken: null })
+            : Promise.resolve({ txs: [confirmedTx], nextPageToken: null });
+        }
+      });
+
+    const appendSpy = jest.spyOn(xpub.storage, "appendTxs");
+
+    // First sync with pending only
+    await xpub.sync();
+    expect(appendSpy).toHaveBeenCalled();
+    const transactionsFirst = await wallet.getAccountTransactions(mockAccount);
+    const txsFromWalletFirst = transactionsFirst.txs.filter(tx => tx.id === "duplicate-tx");
+    console.log({ transactionsFirst, txsFromWalletFirst });
+
+    // Clear calls and simulate next sync with both versions
+    appendSpy.mockClear();
+    syncRound = 1;
+    await xpub.sync();
+
+    // const allAppended = appendSpy.mock.calls.flatMap(([txs]) => txs);
+    // const filtered = allAppended.filter(tx => tx.id === "duplicate-tx");
+
+    // expect(filtered).toHaveLength(1);
+    // expect(filtered[0].block).toEqual(confirmedTx.block);
+
+    // Optional: check wallet.getAccountTransactions reflects correct result
+    const transactions = await wallet.getAccountTransactions(mockAccount);
+    const txsFromWallet = transactions.txs.filter(tx => tx.id === "duplicate-tx");
+    console.log({ transactions, txsFromWallet });
+    expect(txsFromWallet).toHaveLength(1);
+    expect(txsFromWallet[0].block).toEqual(confirmedTx.block);
+  });
+
+  it("should remove the pending tx after it gets confirmed on resync", async () => {
+    const now = new Date().toISOString();
+
+    const pendingTx = {
+      id: "tx-duplicate",
+      inputs: [],
+      outputs: [],
+      account: 0,
+      index: 0,
+      address: "some-address",
+      received_at: now,
+      block: null,
+    };
+
+    const confirmedTx = {
+      ...pendingTx,
+      block: {
+        hash: "block123",
+        height: 42,
+        time: now,
+      },
+    };
+
+    const xpub = mockAccount.xpub;
+    xpub.GAP = 1;
+    xpub.getXpubAddresses = jest
+      .fn()
+      .mockResolvedValue([{ address: "some-address", account: 0, index: 0 }]);
+    xpub.crypto.getAddress = jest.fn().mockImplementation(() => "some-address");
+    xpub.currentBlockHeight = 42;
+    xpub.syncedBlockHeight = -1;
+
+    xpub.explorer.getBlockByHeight = jest.fn().mockResolvedValue(confirmedTx.block);
+
+    let syncRound = 0;
+
+    xpub.explorer.getTxsSinceBlockheight = jest
+      .fn()
+      .mockImplementation((_size, addr, _from, _to, isPending) => {
+        if (addr.address === "some-address") {
+          if (syncRound === 0) {
+            return Promise.resolve({ txs: [pendingTx], nextPageToken: null });
+          } else {
+            return Promise.resolve({
+              txs: isPending ? [pendingTx] : [confirmedTx],
+              nextPageToken: null,
+            });
+          }
+        }
+        return Promise.resolve({ txs: [], nextPageToken: null });
+      });
+
+    const appendSpy = jest.spyOn(xpub.storage, "appendTxs");
+
+    // First sync with only pending
+    await xpub.sync();
+    expect(appendSpy).toHaveBeenCalledWith(
+      expect.arrayContaining([expect.objectContaining({ block: null })]),
+    );
+
+    // Second sync, simulate confirmed coming in
+    syncRound = 1;
+    await xpub.sync();
+    // const appendedTxs = appendSpy.mock.calls
+    //   .flatMap(([txs]) => txs)
+    //   .filter(tx => tx.id === "tx-duplicate");
+    // expect(appendedTxs).toHaveLength(1);
+    // expect(appendedTxs[0].block).toEqual(confirmedTx.block);
+
+    // Check that storage doesn't hold both
+    const storedTxs = xpub.storage.getTxs();
+    const duplicates = storedTxs.filter(tx => tx.id === "tx-duplicate");
+    expect(duplicates).toHaveLength(1);
+    expect(duplicates[0].block).toEqual(confirmedTx.block);
   });
 
   describe("estimateAccountMaxSpendable", () => {

@@ -286,4 +286,97 @@ describe("Unit tests for bitcoin storage", () => {
 
     expect(storage.getHighestBlockHeightAndHash()?.height).toBeGreaterThan(originalBlock!.height);
   });
+
+  it("should replace a pending tx with confirmed version even if other txs remain pending", () => {
+    // Step 1: Add 4 pending txs
+    const baseTime = new Date("2021-07-28T16:00:00Z").toISOString();
+    for (let i = 0; i < 4; i++) {
+      storage.appendTxs([
+        {
+          id: `tx-${i}`,
+          inputs: [],
+          outputs: [],
+          block: null,
+          account: 0,
+          index: 0,
+          address: "addr",
+          received_at: baseTime,
+        },
+      ]);
+    }
+
+    // Sanity: should have 4 more txs (fixture already has 3)
+    expect(storage.txsSize()).toBe(7);
+
+    // Step 2: Confirm tx-2
+    storage.appendTxs([
+      {
+        id: "tx-2",
+        inputs: [],
+        outputs: [],
+        block: {
+          hash: "confirmed-block-hash",
+          height: 200,
+          time: new Date("2021-07-28T16:10:00Z").toISOString(),
+        },
+        account: 0,
+        index: 0,
+        address: "addr",
+        received_at: new Date("2021-07-28T16:10:00Z").toISOString(),
+      },
+    ]);
+
+    // Step 3: It should still be 7, not 8 — tx-2 should be updated, not duplicated
+    expect(storage.txsSize()).toBe(7);
+
+    // Step 4: Confirm it’s no longer pending
+    const lastUnconfirmed = storage.getLastUnconfirmedTx();
+    expect(lastUnconfirmed?.id).not.toBe("tx-2");
+
+    // Step 5: Confirm tx-2 has a block now
+    const txs = storage.exportSync();
+    const tx2 = storage.exportSync().txs.find(tx => tx.id === "tx-2");
+    expect(tx2?.block?.height).toBe(200);
+  });
+
+  it("should replace pending tx with confirmed tx after removePendingTxs", () => {
+    // Step 1: Add a pending transaction
+    const pendingTx = {
+      id: "duplicate-tx",
+      inputs: [],
+      outputs: [],
+      block: null,
+      account: 0,
+      index: 0,
+      address: "test-address",
+      received_at: "2021-07-28T15:00:00Z",
+    };
+
+    storage.appendTxs([pendingTx]);
+    expect(storage.txsSize()).toBe(4); // 3 fixtures + 1 pending
+
+    // Simulate what xpub.syncAddress does: remove pending txs first
+    storage.removePendingTxs({ account: 0, index: 0 });
+
+    // Step 2: Add a confirmed version of the same tx
+    const confirmedTx = {
+      ...pendingTx,
+      block: {
+        hash: "confirmed-block-hash",
+        height: 150,
+        time: "2021-07-28T15:05:00Z",
+      },
+      received_at: "2021-07-28T15:05:00Z",
+    };
+
+    storage.appendTxs([confirmedTx]);
+
+    // ✅ Confirm it's replaced correctly
+    const txs = storage.exportSync().txs;
+    const found = txs.filter(tx => tx.id === "duplicate-tx");
+
+    expect(found).toHaveLength(1); // Only one with that ID
+    expect(found[0].block).not.toBeNull(); // It's now the confirmed version
+    expect(found[0].block?.height).toBe(150);
+  });
 });

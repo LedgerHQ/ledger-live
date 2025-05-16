@@ -226,6 +226,7 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
       ?.map(tx => mapTxToOperations(tx, currency.id, accountId, accountAddresses, changeAddresses))
       .flat();
 
+    // TODO: check
     const newUniqueOperations = deduplicateOperations(newOperations);
 
     const _operations = mergeOps(oldOperations, newUniqueOperations);

@@ -5,6 +5,7 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { addPendingOperation, shouldRetainPendingOperation } from "./pending";
 import { emptyHistoryCache } from "./balanceHistoryCache";
 import { getEnv } from "@ledgerhq/live-env";
+// TODO: improve
 
 describe("addPendingOperation", () => {
   it("add the operation to the matching account Id", () => {
@@ -190,6 +191,31 @@ describe("shouldRetainPendingOperation", () => {
 
     expect(result.pendingOperations.length).toBe(1);
     expect(result.pendingOperations[0]).toBe(op2);
+  });
+
+  it("should remove the pending operation when confirmed version appears in second sync", () => {
+    const account = createAccount("12");
+    const now = new Date();
+    const senders = ["abc"];
+
+    // First sync: we get a pending operation
+    const pendingOp = createOperation("12", senders, 42, now);
+    const withPending = addPendingOperation(account, pendingOp);
+
+    expect(withPending.pendingOperations).toHaveLength(1);
+    expect(withPending.pendingOperations[0]).toBe(pendingOp);
+
+    // Second sync: confirmed operation shows up in the history
+    const confirmedOp: Operation = {
+      ...pendingOp,
+      blockHeight: 100,
+      blockHash: "blockhash",
+    };
+    withPending.operations.push(confirmedOp);
+
+    // Should not retain pending now
+    const retain = shouldRetainPendingOperation(withPending, pendingOp);
+    expect(retain).toBe(false);
   });
 });
 
