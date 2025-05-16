@@ -194,6 +194,7 @@ export const makeSync =
   (initial, syncConfig): Observable<AccountUpdater<A>> =>
     new Observable((o: Observer<(acc: A) => A>) => {
       async function main() {
+        // TODO: check
         const accountId = encodeAccountId({
           type: "js",
           version: "2",
@@ -233,6 +234,7 @@ export const makeSync =
               ? mergeOps(a.operations, shape.operations || [])
               : shape.operations || [];
 
+            // TODO: check
             a = postSync(a, {
               ...a,
               id: accountId,
