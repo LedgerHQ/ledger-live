@@ -5,7 +5,7 @@ import React, { useCallback, useState } from "react";
 import { Flex, Switch, BaseInput, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import { TouchableOpacity } from "react-native";
 import { InputRenderRightContainer } from "@ledgerhq/native-ui/components/Form/Input/BaseInput/index";
-import { useCameraPermissions, CameraView, BarCodeScanningResult, CameraType } from "expo-camera";
+import { useCameraPermissions, CameraView, BarcodeScanningResult } from "expo-camera";
 import QueuedDrawer from "../QueuedDrawer";
 
 type Props = {
@@ -58,7 +58,7 @@ const StoriesConfig: React.FC<Props> = ({ instanceID }) => {
   );
 
   const handleBarCodeScanned = useCallback(
-    ({ data }: BarCodeScanningResult) => {
+    ({ data }: BarcodeScanningResult) => {
       try {
         const parsedData = JSON.parse(data);
         const { token } = parsedData;
@@ -114,9 +114,9 @@ const StoriesConfig: React.FC<Props> = ({ instanceID }) => {
             it here
           </Text>
           <CameraView
-            facing={CameraType.back}
+            facing="back"
             style={{ height: 250, width: 250, alignSelf: "center" }}
-            onBarCodeScanned={handleBarCodeScanned}
+            onBarcodeScanned={handleBarCodeScanned}
           />
         </Flex>
       </QueuedDrawer>

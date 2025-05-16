@@ -26,7 +26,7 @@ const CameraPermissions: React.FC<Record<string, never>> = () => {
               permissionGranted ? (
                 isFocused ? (
                   <CameraView
-                    type={CameraType.back}
+                    facing={"back" as CameraType}
                     style={{
                       height: 200,
                       width: 200,
