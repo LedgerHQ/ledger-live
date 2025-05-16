@@ -9,6 +9,8 @@ beforePack: scripts/beforePack.js
 afterSign: scripts/notarize.js
 afterPack: scripts/afterPack.js
 
+npmRebuild: false
+
 mac:
   artifactName: ${name}-${version}-${os}.${ext}
   category: public.app-category.wallet
