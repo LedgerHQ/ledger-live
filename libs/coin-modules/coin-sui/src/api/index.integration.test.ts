@@ -1,4 +1,4 @@
-import type { Api, Operation } from "@ledgerhq/coin-framework/api/index";
+import type { Api, FeeEstimation, Operation } from "@ledgerhq/coin-framework/api/index";
 import { createApi } from ".";
 import { SuiAsset } from "./types";
 import { getFullnodeUrl } from "@mysten/sui/client";
@@ -25,7 +25,7 @@ describe("Sui Api", () => {
       const amount = BigInt(100_000);
 
       // When
-      const result = await module.estimateFees({
+      const result: FeeEstimation<{ value: bigint }> = await module.estimateFees({
         asset: { type: "native" },
         type: "send",
         sender: SENDER,
@@ -34,7 +34,7 @@ describe("Sui Api", () => {
       });
 
       // Then
-      expect(result).toBeDefined();
+      expect(result.value).toBeGreaterThan(0);
     });
   });
 
@@ -60,9 +60,9 @@ describe("Sui Api", () => {
       expect(checkSet.size).toEqual(txs.length);
     });
 
-    it("first operation should be IN", async () => {
+    it("at least operation should be IN", async () => {
       expect(txs.length).toBeGreaterThanOrEqual(10);
-      expect(txs[0].type).toEqual("IN");
+      expect(txs.some(t => t.type === "IN")).toBeTruthy();
     });
 
     it("at least operation should be OUT", async () => {

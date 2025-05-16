@@ -31,6 +31,24 @@ describe("broadcast", () => {
         },
       });
     });
+
+    it("should not call executeTransactionBlock if format is not hex", async () => {
+      const mockTransaction = "000g1234567890abcdef";
+
+      const result = await broadcast(mockTransaction);
+
+      expect(result).toBe("");
+      expect(suiAPI.executeTransactionBlock).toHaveBeenCalledTimes(0);
+    });
+
+    it("should not call executeTransactionBlock if format is incorrect", async () => {
+      const mockTransaction = "000a1";
+
+      const result = await broadcast(mockTransaction);
+
+      expect(result).toBe("");
+      expect(suiAPI.executeTransactionBlock).toHaveBeenCalledTimes(0);
+    });
   });
 
   describe("with ExecuteTransactionBlockParams input", () => {
