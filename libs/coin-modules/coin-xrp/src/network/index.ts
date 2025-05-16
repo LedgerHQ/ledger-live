@@ -42,6 +42,7 @@ export const getAccountInfo = async (
   });
 
   if (result.status !== "success" && result.error !== NEW_ACCOUNT_ERROR_MESSAGE) {
+    console.log("This is error:", recipient);
     throw new Error(`couldn't fetch account info ${recipient}`);
   }
 

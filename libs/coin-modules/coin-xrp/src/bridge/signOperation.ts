@@ -21,7 +21,7 @@ export const buildSignOperation =
           o.next({
             type: "device-signature-requested",
           });
-
+          console.log("IN SIGN OP")
           const nextSequenceNumber = await getNextValidSequence(account.freshAddress);
 
           const signature = await signerContext(deviceId, async signer => {

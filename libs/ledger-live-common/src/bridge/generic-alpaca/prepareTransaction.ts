@@ -11,8 +11,9 @@ export function genericPrepareTransaction(
     const fees = await getAlpacaApi(network, kind).estimateFees(
       transactionToIntent(_account, transaction),
     );
-
-    const bnFee = BigNumber(fees.toString());
+    console.log("prepar fees:", fees);
+    const bnFee = BigNumber(fees.value.toString());
+    console.log("prepar bnFee:", bnFee);
 
     if (transaction.fees !== bnFee) {
       return { ...transaction, fees: bnFee };
