@@ -2,7 +2,7 @@ import type { Device } from "@ledgerhq/types-devices";
 import { ScreenName } from "~/const";
 import { FilterByDeviceModelId } from "../../BleDevicePairingFlow/BleDevicesScanning";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
+import { InitialRange } from "./LandingPagesNavigator";
 
 export type SettingsNavigatorStackParamList = {
   [ScreenName.SettingsScreen]: undefined;
@@ -88,8 +88,8 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugQueuedDrawerScreen1]: undefined;
   [ScreenName.DebugQueuedDrawerScreen2]: undefined;
   [ScreenName.LargeMoverLandingPage]: {
-    currencyIds: string[];
-    initialRange: KeysPriceChange;
+    currencyIds: string;
+    initialRange?: InitialRange;
   };
   [ScreenName.DebugSwipe]: undefined;
 };
