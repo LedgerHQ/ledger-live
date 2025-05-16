@@ -55,6 +55,7 @@ export default function StepDelegation({
         type="modal"
       />
       {error && <ErrorBanner error={error} />}
+      {status.errors.sender && <ErrorBanner error={status.errors.sender} />}
       <ValidatorField
         account={account}
         status={status}
@@ -77,7 +78,11 @@ export function StepDelegationFooter({
 }: StepProps) {
   const { errors } = status;
   const canNext =
-    !bridgePending && !errors.validators && transaction && transaction.validators.length > 0;
+    !bridgePending &&
+    !errors.validators &&
+    transaction &&
+    transaction.validators.length > 0 &&
+    !errors.sender;
   return (
     <>
       <AccountFooter parentAccount={parentAccount} account={account} status={status} />
