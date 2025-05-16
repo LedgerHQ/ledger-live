@@ -79,10 +79,7 @@ module.exports = {
   coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "json-summary"],
   reporters: [
     "default",
-    [
-      "jest-sonar",
-      { outputName: "lld-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
-    ],
+    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
   silent: false,
   verbose: true,

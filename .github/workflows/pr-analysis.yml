@@ -53,55 +53,31 @@ jobs:
         run: |
           git fetch origin develop
 
-      - name: Install and Build desktop dependencies
-        if: ${{ env.DESKTOP_AFFECTED == 'true' }}
+      - name: install dependencies
+        run: pnpm i
+
+      - name: Build and Test affected libraries
+        id: test-libs
+        run: pnpm run test --continue --filter="!./apps/**" --filter="!./libs/ui/**" --filter="!./tools/**" --filter="!./e2e/mobile/**" --filter="!./apps/ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        shell: bash
+
+      - name: "Prepare Pull Request Analysis"
         run: |
-          pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
-          pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+          paths="${{needs.determine-affected.outputs.paths}}"
+          paths="${paths#[}"; paths="${paths%]}"
+          IFS=',' read -r -a paths_array <<< "$paths"
+          for path in "${paths_array[@]}"
+          do
+            echo "$path"
+            cat $path/coverage/lcov.info >> ./lcov.info
+            cat $path/coverage/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
+          done
 
-      - name: Install and Build mobile dependencies
-        if: ${{ env.MOBILE_AFFECTED == 'true' }}
+      - name: Process paths
         run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
-          pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
-
-      - name: Install and Build coin modules dependencies
-        if: ${{ env.COIN_MODULES_AFFECTED == 'true' }}
-        run: |
-          pnpm i --filter="ledger-live-desktop..." --filter="@ledgerhq/coin-*..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
-          pnpm build:coin:deps
-
-      - name: Install and Build hw-app dependencies
-        if: ${{ env.COIN_MODULES_AFFECTED == 'true' }}
-        run: |
-          pnpm i --filter="@ledgerhq/hw-app-*..." --no-frozen-lockfile --unsafe-perm
-          pnpm build:hw-app
-
-      - name: Generate Unit test coverage for affected components
-        run: |
-          if [[ "$DESKTOP_AFFECTED" == 'true' ]]; then 
-            pnpm desktop test:jest:coverage 
-            cat apps/ledger-live-desktop/coverage/lcov.info >> ./lcov.info 
-            cat apps/ledger-live-desktop/coverage/lld-sonar-executionTests-report.xml >> ./lld-sonar-executionTests-report.xml 
-          fi
-
-          if [[ "$MOBILE_AFFECTED" == 'true' ]]; then 
-            pnpm mobile test:jest:coverage 
-            cat apps/ledger-live-mobile/coverage/lcov.info >> ./lcov.info 
-            cat apps/ledger-live-mobile/coverage/llm-sonar-executionTests-report.xml >> ./llm-sonar-executionTests-report.xml 
-          fi
-
-          if [[ "$COIN_MODULES_AFFECTED" == 'true' ]]; then 
-            pnpm coin:coverage 
-            cat coverage/coin-lcov.info >> ./lcov.info 
-            cat coverage/coin-sonar-executionTests-report.xml >> ./coin-sonar-executionTests-report.xml
-          fi
-
-          if [[ "$HW_APP_AFFECTED" == 'true' ]]; then 
-            pnpm ljs:hw-app:coverage
-            cat coverage/hw-app-lcov.info >> ./lcov.info 
-            cat coverage/hw-app-sonar-executionTests-report.xml >> ./hw-app-sonar-executionTests-report.xml
-          fi
+          paths="${{ needs.determine-affected.outputs.paths }}"
+          modified_paths="${paths:1:-1}"
+          echo "modified_paths=$modified_paths" >> $GITHUB_ENV
 
       - name: SonarQubeScan
         if: ${{ env.DESKTOP_AFFECTED == 'true' || env.MOBILE_AFFECTED == 'true' || env.COIN_MODULES_AFFECTED == 'true' || env.HW_APP_AFFECTED == 'true' }}
@@ -110,5 +86,5 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.sources=${{ env.DESKTOP_AFFECTED == 'true' && 'apps/ledger-live-desktop,' || '' }}${{ env.MOBILE_AFFECTED == 'true' && 'apps/ledger-live-mobile,' || '' }}libs
-            -Dsonar.testExecutionReportPaths=${{ env.DESKTOP_AFFECTED == 'true' && 'lld-sonar-executionTests-report.xml,' || '' }}${{ env.MOBILE_AFFECTED == 'true' && 'llm-sonar-executionTests-report.xml,' || '' }}${{ env.COIN_MODULES_AFFECTED == 'true' && 'coin-sonar-executionTests-report.xml,' || '' }}${{ env.HW_APP_AFFECTED == 'true' && 'hw-app-sonar-executionTests-report.xml' || '' }}
+            -Dsonar.sources=${{env.modified_paths}}
+            -Dsonar.testExecutionReportPaths=sonar-executionTests-report.xml
