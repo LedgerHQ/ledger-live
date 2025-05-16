@@ -1,4 +1,5 @@
 import { TransactionBlockData, SuiTransactionBlockResponse, SuiClient } from "@mysten/sui/client";
+import { JsonRpcError } from "@mysten/sui/client";
 import {
   getOperationType,
   getOperationSenders,
@@ -110,6 +111,7 @@ const mockTransaction = {
 
 jest.mock("@mysten/sui/client", () => {
   return {
+    ...jest.requireActual("@mysten/sui/client"),
     SuiClient: jest.fn().mockImplementation(() => ({
       queryTransactionBlocks: jest.fn(),
     })),
@@ -293,7 +295,8 @@ describe("loadOperations", () => {
 
   it("should retry without cursor when InvalidParams error occurs", async () => {
     // First call with cursor fails with InvalidParams
-    mockApi.queryTransactionBlocks.mockRejectedValueOnce({ type: "InvalidParams" });
+    const invalidParamsError = new JsonRpcError("InvalidParams", -32602);
+    mockApi.queryTransactionBlocks.mockRejectedValueOnce(invalidParamsError);
 
     // Second call without cursor succeeds
     mockApi.queryTransactionBlocks.mockResolvedValueOnce({
