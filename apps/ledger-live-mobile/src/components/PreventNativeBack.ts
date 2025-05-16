@@ -1,17 +1,18 @@
 import { PureComponent } from "react";
-import { BackHandler } from "react-native";
+import { BackHandler, NativeEventSubscription } from "react-native";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 class PreventNativeBack extends PureComponent<{}> {
+  removeBoundEventListener: NativeEventSubscription | undefined;
+
   componentDidMount() {
-    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
+    this.removeBoundEventListener = BackHandler.addEventListener("hardwareBackPress", () => true);
   }
 
   componentWillUnmount() {
-    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
+    this.removeBoundEventListener?.remove();
+    this.removeBoundEventListener = undefined;
   }
-
-  handleBackButton = () => true;
 
   render() {
     return null;
