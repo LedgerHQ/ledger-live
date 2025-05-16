@@ -19,6 +19,17 @@ import StepConnectDevice, { StepConnectDeviceFooter } from "./steps/StepConnectD
 import StepWarning, { StepWarningFooter } from "./steps/StepWarning";
 import StepReceiveFunds from "./steps/StepReceiveFunds";
 import StepReceiveStakingFlow, { StepReceiveStakingFooter } from "./steps/StepReceiveStakingFlow";
+import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+import { getReceiveFlowError } from "@ledgerhq/live-common/account/index";
+
+async function checkAddressBlacklisted(account: AccountLike | null | undefined): Promise<boolean> {
+  if (!account || account.type !== "Account") {
+    return false;
+  }
+
+  return isAddressSanctioned(account.currency, account.freshAddress);
+}
 
 export type StepId = "warning" | "account" | "device" | "receive" | "stakingFlow";
 
@@ -72,6 +83,7 @@ export type StepProps = {
   onClose: () => void;
   currencyName: string | undefined | null;
   isFromPostOnboardingEntryPoint?: boolean;
+  accountError?: Error;
 };
 export type St = Step<StepId, StepProps>;
 const createSteps = (): Array<St> => [
@@ -133,12 +145,25 @@ const Body = ({
   const [token, setToken] = useState(null);
   const [hideBreadcrumb, setHideBreadcrumb] = useState<boolean | undefined>(false);
   const [title, setTitle] = useState("");
+  const [accountError, setAccountError] = useState<Error | undefined>(undefined);
   const currency = getAccountCurrency(account);
   const currencyName = currency ? currency.name : undefined;
   const handleChangeAccount = useCallback(
-    (account: Account | TokenAccount, parentAccount?: Account | null) => {
+    async (account: Account | TokenAccount, parentAccount?: Account | null) => {
       setAccount(account);
       setParentAccount(parentAccount);
+
+      const addressSanctioned = await checkAddressBlacklisted(account);
+      if (addressSanctioned && account.type === "Account") {
+        setAccountError(
+          new AddressesSanctionedError("AddressesSanctionedError", {
+            addresses: [account.freshAddress],
+          }),
+        );
+      } else {
+        const error = account ? getReceiveFlowError(account, parentAccount) : undefined;
+        setAccountError(error);
+      }
     },
     [setParentAccount, setAccount],
   );
@@ -197,6 +222,23 @@ const Body = ({
         setTitle(t("receive.title"));
     }
   }, [steps, stepId, t, currency.name]);
+  useEffect(() => {
+    async function computeAccountError() {
+      const addressSanctioned = await checkAddressBlacklisted(account);
+      if (addressSanctioned && account.type === "Account") {
+        setAccountError(
+          new AddressesSanctionedError("AddressesSanctionedError", {
+            addresses: [account.freshAddress],
+          }),
+        );
+      } else {
+        const error = account ? getReceiveFlowError(account, parentAccount) : undefined;
+        setAccountError(error);
+      }
+    }
+
+    computeAccountError();
+  }, [account, parentAccount]);
   const errorSteps = verifyAddressError ? [2] : [];
   const stepperProps = {
     title,
@@ -226,6 +268,7 @@ const Body = ({
     onClose: handleCloseModal,
     currencyName,
     isFromPostOnboardingEntryPoint: !!params.isFromPostOnboardingEntryPoint,
+    accountError: accountError,
   };
   return (
     <Stepper {...stepperProps}>
