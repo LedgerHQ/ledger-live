@@ -1,6 +1,7 @@
 import {
   NotEnoughBalance,
   NotEnoughToStake,
+  NotEnoughStakedBalanceLeft,
   RecipientRequired,
   InvalidAddress,
   FeeNotLoaded,
@@ -27,6 +28,10 @@ const getTransactionStatus = async (
 
   const estimatedFees = t.fees || BigNumber(0);
   const tokenAccount = getTokenAccount(a, t);
+
+  const stakingPosition = a.aptosResources.stakingPositions.find(
+    stakingPosition => stakingPosition.validatorId === t.recipient,
+  );
 
   if (!t.useAllAmount && t.amount.lte(0)) {
     errors.amount = new AmountRequired();
@@ -81,9 +86,17 @@ const getTransactionStatus = async (
       }
       break;
     case "unstake":
-      if (t.amount.gt(a.aptosResources?.stakedBalance)) {
-        errors.amount = new NotEnoughBalance();
+      if (!stakingPosition) {
+        errors.recipient = new RecipientRequired();
+      } else {
+        if (t.amount.gt(stakingPosition.staked)) {
+          errors.amount = new NotEnoughBalance();
+        }
+        if (stakingPosition.staked.minus(t.amount).lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS)) {
+          errors.amount = new NotEnoughStakedBalanceLeft();
+        }
       }
+
       break;
   }
 
