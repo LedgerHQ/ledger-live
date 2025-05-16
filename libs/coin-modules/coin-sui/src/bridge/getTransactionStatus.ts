@@ -1,6 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import {
   NotEnoughBalance,
+  NotEnoughBalanceInParentAccount,
   RecipientRequired,
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -30,13 +31,12 @@ export const getTransactionStatus: AccountBridge<
   const warnings: Record<string, Error> = {};
   const amount = new BigNumber(transaction?.amount || 0);
   const estimatedFees = new BigNumber(transaction?.fees || 0);
+  const totalSpent = transaction.subAccountId ? amount : amount.plus(estimatedFees);
   let accountBalance = account.balance;
-  let totalSpent = transaction.subAccountId ? amount : amount.plus(estimatedFees);
 
   if (transaction.subAccountId) {
     const subAccount = findSubAccountById(account, transaction.subAccountId);
     accountBalance = subAccount?.balance ?? new BigNumber(0);
-    totalSpent = amount;
   }
 
   if (amount.lte(0)) {
@@ -55,6 +55,10 @@ export const getTransactionStatus: AccountBridge<
 
   if (ensureAddressFormat(account.freshAddress) === ensureAddressFormat(transaction.recipient)) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+  }
+
+  if (transaction.subAccountId && estimatedFees.gt(account.balance)) {
+    errors.amount = new NotEnoughBalanceInParentAccount();
   }
 
   if (totalSpent.eq(0) && transaction.useAllAmount) {

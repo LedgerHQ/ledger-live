@@ -28,14 +28,16 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
       useAllAmount: true,
     };
 
-    const fees = await getFeesForTransaction({
-      account: mainAccount,
-      transaction: estimatedTransaction,
-    });
-
     let spendableBalance = account.spendableBalance;
-    if (fees && account?.type == "Account") {
-      spendableBalance = BigNumber.max(spendableBalance.minus(fees), 0);
+
+    if (account.type == "Account") {
+      const fees = await getFeesForTransaction({
+        account: mainAccount,
+        transaction: estimatedTransaction,
+      });
+      if (fees) {
+        spendableBalance = BigNumber.max(spendableBalance.minus(fees), 0);
+      }
     }
 
     return spendableBalance;

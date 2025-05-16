@@ -298,7 +298,7 @@ describe("SDK Functions", () => {
       ],
     };
 
-    expect(getOperationCoinType(suiTx as SuiTransactionBlockResponse)).toBe("");
+    expect(getOperationCoinType(suiTx as SuiTransactionBlockResponse)).toBe(DEFAULT_COIN_TYPE);
   });
 
   test("transactionToOperation should map transaction to operation", () => {
@@ -335,7 +335,7 @@ describe("SDK Functions", () => {
     expect(operation).toHaveProperty("id");
     expect(operation).toHaveProperty("accountId", accountId);
     expect(operation).toHaveProperty("extra");
-    expect((operation.extra as { coinType: string }).coinType).toBe("");
+    expect((operation.extra as { coinType: string }).coinType).toBe(DEFAULT_COIN_TYPE);
 
     // Directly calculate expected amount for SUI coin type
     const expectedAmount = getOperationAmount(
@@ -344,9 +344,6 @@ describe("SDK Functions", () => {
       DEFAULT_COIN_TYPE,
     );
     expect(expectedAmount.toString()).toBe("9998990120");
-
-    // Note: The operation.value may be 0 because transactionToOperation is using the empty coinType
-    // to get the amount. This is a known issue, but we're testing the expected behavior here.
   });
 
   test("transactionToOperation should map token transaction to operation", () => {

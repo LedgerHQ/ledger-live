@@ -11,7 +11,7 @@ import { DEFAULT_COIN_TYPE } from "../network/sdk";
 export const createTransaction: AccountBridge<Transaction>["createTransaction"] = () => {
   const transaction: Transaction = {
     family: "sui" as const,
-    mode: "send",
+    mode: "send" as const,
     coinType: DEFAULT_COIN_TYPE,
     amount: new BigNumber(0),
     recipient: "",
