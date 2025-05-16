@@ -9,16 +9,17 @@ export default class AccountPage {
   accountRenameTextInputId = "account-rename-text-input";
   baseAccountName = "account-row-name-";
   accountNameRegExp = new RegExp(`${this.baseAccountName}.*`);
+  accountSettingsButtonId = "account-settings-button";
+  receiveButtonId = "account-quick-action-button-receive";
+  sendButtonId = "account-quick-action-button-send";
 
   accountGraph = (accountId: string) => getElementById(`account-graph-${accountId}`);
   accountBalance = (accountId: string) => getElementById(`account-balance-${accountId}`);
-  accountSettingsButton = () => getElementById("account-settings-button");
   accountAdvancedLogRow = () => getElementById("account-advanced-log-row");
   accountDeleteRow = () => getElementById("account-settings-delete-row");
   accountDeleteConfirm = () => getElementById("delete-account-confirmation-button");
   operationHistorySectionId = (accountId: string) => this.operationHistorySection + accountId;
-  receiveButton = () => getElementById("account-quick-action-button-receive");
-  sendButton = () => getElementById("account-quick-action-button-send");
+
   accountRenameRow = () => getElementById("account-settings-rename-row");
 
   @Step("Open accounts list via deeplink")
@@ -43,7 +44,8 @@ export default class AccountPage {
 
   @Step("Open account settings")
   async openAccountSettings() {
-    await tapByElement(this.accountSettingsButton());
+    await waitForElementById(this.accountSettingsButtonId); // Issue with RN75 : QAA-370
+    await tapById(this.accountSettingsButtonId);
   }
 
   @Step("Open account advanced logs")
@@ -95,12 +97,14 @@ export default class AccountPage {
 
   @Step("Tap on receive button")
   async tapReceive() {
-    await tapByElement(this.receiveButton());
+    await waitForElementById(this.receiveButtonId); // Issue with RN75 : QAA-370
+    await tapById(this.receiveButtonId);
   }
 
   @Step("Tap on send button")
   async tapSend() {
-    await tapByElement(this.sendButton());
+    await waitForElementById(this.sendButtonId); // Issue with RN75 : QAA-370
+    await tapById(this.sendButtonId);
   }
 
   @Step("Tap on earn button")

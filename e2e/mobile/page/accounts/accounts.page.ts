@@ -10,6 +10,7 @@ export default class AccountsPage extends CommonPage {
   @Step("Open accounts list via deeplink")
   async openViaDeeplink() {
     await openDeeplink(this.baseLink);
+    await this.waitForAccountsPageToLoad(); // Issue with RN75 : QAA-370
   }
 
   @Step("Wait for accounts page to load")
