@@ -108,6 +108,7 @@ class BitcoinLikeStorage implements IStorage {
       if (this.txs[this.primaryIndex[index]]) {
         const existing = this.txs[this.primaryIndex[index]];
         if (!existing.block && tx.block) {
+          log("bitcoin[storage]", `appendTxs - FIX ${index}, pending->confirmed`);
           // Replace pending with confirmed version
           this.txs[this.primaryIndex[index]] = tx;
           return;
