@@ -7,7 +7,7 @@ export async function sendEVM(tx: Transaction) {
   const events = await pressUntilTextFound(DeviceLabels.ACCEPT);
   const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
   expect(isAmountCorrect).toBeTruthy();
-  if (tx.accountToCredit.ensName) {
+  if (tx.accountToCredit.ensName && process.env.SPECULOS_DEVICE !== "nanoS") {
     const isENSNameCorrect = containsSubstringInEvent(tx.accountToCredit.ensName, events);
     expect(isENSNameCorrect).toBeTruthy();
   } else {

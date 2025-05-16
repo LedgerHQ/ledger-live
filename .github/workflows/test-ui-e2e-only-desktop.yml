@@ -1,5 +1,5 @@
 name: "[Desktop] - E2E Test - Scheduled"
-run-name: "@Desktop • UI e2e • Test App triggered by ${{ inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
+run-name: "@Desktop • UI e2e • Test App triggered by ${{ github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
   schedule:
@@ -8,9 +8,6 @@ on:
     inputs:
       ref:
         description: the branch which triggered this workflow
-        required: false
-      login:
-        description: The GitHub username that triggered the workflow
         required: false
       base_ref:
         description: The base branch to merge the head into when checking out the code
@@ -51,6 +48,15 @@ on:
           - staging
           - testing
         default: testing
+      speculos_device:
+        description: "Device to be used in Speculos"
+        required: false
+        type: choice
+        options:
+          - nanoS
+          - nanoSP
+          - nanoX
+        default: nanoSP
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
@@ -70,6 +76,7 @@ jobs:
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:master
+      SPECULOS_DEVICE: ${{ inputs.speculos_device }}
     runs-on: [ledger-live-4xlarge-e2e]
     strategy:
       fail-fast: false
@@ -128,10 +135,33 @@ jobs:
           export SPECULOS_IMAGE_TAG=${{ env.SPECULOS_IMAGE_TAG }}
           export COINAPPS=$PWD/coin-apps
           export MOCK=0
-          if [ "${{ inputs.invert_filter }}" = true ]; then invert_filter="-invert"; fi
-          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm e2e:desktop test:playwright --max-failures 50 ${INPUTS_TEST_FILTER:+--grep$invert_filter} "${{ inputs.test_filter }}" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+
+          case "${{ inputs.speculos_device }}" in
+            nanoS)    device_tag='@LNS' ;;
+            nanoSP)   device_tag='@nanoSP' ;;
+            nanoX)    device_tag='@nanoX' ;;
+            *)        echo "Unknown SPECULOS_DEVICE: ${SPECULOS_DEVICE}"; exit 1 ;;
+          esac
+
+          grep_filter="$device_tag"
+          if [ -n "${{ inputs.test_filter }}" ]; then
+            grep_filter="(${grep_filter}|${{ inputs.test_filter }})"
+          fi
+
+          if [ "${{ inputs.invert_filter }}" = true ]; then
+            grep_option="--grep-invert"
+          else
+            grep_option="--grep"
+          fi
+
+          echo "Running tests with filter: $grep_option \"$grep_filter\""
+
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" \
+            -- pnpm e2e:desktop test:playwright \
+            --max-failures 50 \
+            $grep_option "$grep_filter" \
+            --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
         env:
-          INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
           SEED: ${{ secrets.SEED_QAA_B2C }}
           XRAY: ${{ inputs.export_to_xray }}
           TEST_EXECUTION: ${{ inputs.test_execution }}
@@ -341,7 +371,7 @@ jobs:
                       "type": "header",
                       "text": {
                         "type": "plain_text",
-                        "text": ":ledger-logo: Ledger Live Desktop E2E tests results on ${{ github.ref_name }}",
+                        "text": ":ledger-logo: Ledger Live Desktop E2E tests results on ${{ github.ref_name }} - ${{ inputs.speculos_device }}",
                         "emoji": true
                       }
                     },

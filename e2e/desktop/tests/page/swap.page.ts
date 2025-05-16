@@ -120,6 +120,9 @@ export class SwapPage extends AppPage {
 
     const providersWithoutKYC = providersList.filter(providerName => {
       const provider = Object.values(Provider).find(p => p.uiName === providerName);
+      if (process.env.SPECULOS_DEVICE === "nanoS") {
+        return provider && !provider.kyc && provider.availableOnLns;
+      }
       return provider && !provider.kyc;
     });
 
