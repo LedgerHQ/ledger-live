@@ -3,6 +3,7 @@ import { Account, AnyMessage, TypedEvmMessage } from "@ledgerhq/types-live";
 import { signMessage } from "../../hw-signMessage";
 import { PubKeyDisplayMode, SolanaSigner } from "../../signer";
 import coinConfig from "../../config";
+import bs58 from "bs58";
 
 coinConfig.setCoinConfig(() => ({
   legacyOCMSMaxVersion: "1.8.2",
@@ -18,7 +19,9 @@ describe("Testing call to hardware off-chain sign message on Solana", () => {
       "4gVuB1KsM58fb3vRpnDucwW4Vi6fVGA51QDQd9ARvx4GH5yYVDPzDnvzUbSJf3YLWWdsX7zCMSN9N1GMnTYwWiJf";
 
     const BASE58_SIGNATURE =
-      "RTCCo3j8Nx4FocNfEjPqTFgsDjxge5YR3tapEpbWVRgzbPcnTAYD54KiodwhVETwHYLLb5gVACSmrH8RN5ZMEhq7iH88mVb1peF3pDKRgJGZ3opDhonkc5Tj";
+      "23mXB2pc8EQzc2mT3VJR4KkBFZaUVL9Pn7LUn8NMKeHKbS1hMj1QqGsUHHD3JMGhAWtFfcmnPhFSpPttChTNzsB9";
+    const BASE58_ENVELOPE =
+      "LwsiJTXpooGk31Y4CaV1Qs12wTabaF83J9Tg32kPb7kk9BXc8ncpoDBzV1NPSumKckhx7dVwFH729vdvB71f8KGpp18g29N2XAD3MUiNz9tPJu36GGN4pkL7vXurXUeQqMTXdJMdH2tzaXkT3vQ9hSLDfBPhQ7Vx9Echz5CYu5u4hZapaytx177WNke8oWDTqABnqQZ3YDGt7vYDoJ2LkiGHqcqXfeVmmsAtuALSxqo75zrWi7EXadQ9CZWWX7tFnXHLY6kEksqVj2ERM9RZEyNQ3tt";
 
     const getAppConfigurationMock = jest.fn(() => {
       return Promise.resolve({
@@ -50,7 +53,8 @@ describe("Testing call to hardware off-chain sign message on Solana", () => {
       { message: messageHex },
     );
 
-    expect(result.signature).toEqual(BASE58_SIGNATURE);
+    expect(result.signature).toEqual(BASE58_ENVELOPE);
+    expect(bs58.encode(bs58.decode(result.signature).subarray(1, 65))).toEqual(BASE58_SIGNATURE);
     expect(signMessageMock).toHaveBeenCalledTimes(1);
     expect(signMessageMock).toHaveBeenCalledWith(accountFreshAddressPath, offchainMessage);
   });
@@ -61,7 +65,9 @@ describe("Testing call to hardware off-chain sign message on Solana", () => {
       "4gVuB1KsM58fb3vRpnDucwW4Vi6fVGA51QDQd9ARvx4GH5yYVDPzDnvzUbSJf3YLWWdsX7zCMSN9N1GMnTYwWiJf";
 
     const BASE58_SIGNATURE =
-      "RTCCo3j8Nx4FocNfEjPqTFgsDjxge5YR3tapEpbWVRgzbPcnTAYD54KiodwhVETwHYLLb5gVACSmrH8RN5ZMEhq7iH88mVb1peF3pDKRgJGZ3opDhonkc5Tj";
+      "23mXB2pc8EQzc2mT3VJR4KkBFZaUVL9Pn7LUn8NMKeHKbS1hMj1QqGsUHHD3JMGhAWtFfcmnPhFSpPttChTNzsB9";
+    const BASE58_ENVELOPE =
+      "tDAHsdMRLpSiAFbdWRS6d7TyG64QSwJFuRSHNH6UyjE8wQwDgawYRsUsau2n9s5drPkmDLTJdTrkA5uRYsHmmfzuMsBQvo6e72LwNjfNhmVko8ffmfM1ZNKZmyiurvDb2nfoFsLXmYTainNmRKwS6iGSBvWBYHRDMwUiX2z15gBokN2iMhuCvDsFHHVn7H4vQG";
 
     const getAppConfigurationMock = jest.fn(() => {
       return Promise.resolve({
@@ -93,7 +99,8 @@ describe("Testing call to hardware off-chain sign message on Solana", () => {
       { message: messageHex },
     );
 
-    expect(result.signature).toEqual(BASE58_SIGNATURE);
+    expect(result.signature).toEqual(BASE58_ENVELOPE);
+    expect(bs58.encode(bs58.decode(result.signature).subarray(1, 65))).toEqual(BASE58_SIGNATURE);
     expect(signMessageMock).toHaveBeenCalledTimes(1);
     expect(signMessageMock).toHaveBeenCalledWith(accountFreshAddressPath, offchainMessage);
   });
