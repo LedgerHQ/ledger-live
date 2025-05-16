@@ -37,6 +37,7 @@ export default class PortfolioPage {
   @Step("Open Portfolio via deeplink")
   async openViaDeeplink() {
     await openDeeplink(this.baseLink);
+    await waitForElementById(this.portfolioSettingsButtonId); // Issue with RN75 : QAA-370
   }
 
   @Step("Click on Add account button in portfolio")
