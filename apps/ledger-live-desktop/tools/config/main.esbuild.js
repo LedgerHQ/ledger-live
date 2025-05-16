@@ -16,10 +16,10 @@ module.exports = {
   // See this comment: https://github.com/webpack/webpack/issues/4742#issuecomment-295115576
   mainFields: ["main", "module"],
   external: [...electronMainExternals],
-  plugins: [
-    ...common.plugins,
-    CopyPlugin({
-      patterns: [{ from: path.join(rootFolder, "build/icons"), to: "build/icons" }],
-    }),
-  ],
+  // plugins: [
+  //   ...common.plugins,
+  //   CopyPlugin({
+  //     patterns: [{ from: path.join(rootFolder, "build/icons"), to: "build/icons" }],
+  //   }),
+  // ],
 };

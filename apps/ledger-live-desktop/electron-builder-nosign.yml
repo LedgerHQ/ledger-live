@@ -7,6 +7,8 @@ protocols:
 
 beforePack: scripts/beforePack.js
 
+npmRebuild: false
+
 mac:
   artifactName: ${name}-${version}-${os}.${ext}
   category: public.app-category.wallet
