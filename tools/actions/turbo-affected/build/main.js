@@ -19117,7 +19117,7 @@ var package_default = {
       "usb@2.9.0": "patches/usb@2.9.0.patch",
       "react-native-video@5.2.1": "patches/react-native-video@5.2.1.patch",
       "@changesets/get-github-info@0.6.0": "patches/@changesets__get-github-info@0.6.0.patch",
-      "react-native-webview@13.10.3": "patches/react-native-webview@13.10.3.patch",
+      "react-native-webview": "patches/react-native-webview.patch",
       "buffer@6.0.3": "patches/buffer@6.0.3.patch",
       "react-native-fast-pbkdf2@0.3.1": "patches/react-native-fast-pbkdf2@0.3.1.patch",
       "@hashgraph/sdk@2.14.2": "patches/@hashgraph__sdk@2.14.2.patch",
