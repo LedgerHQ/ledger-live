@@ -17,6 +17,7 @@ import {
   lastBlock,
   listOperations,
   MemoInput,
+  getTransactionStatus,
 } from "../logic";
 import { ListOperationsOptions, XrpAsset } from "../types";
 
@@ -31,6 +32,7 @@ export function createApi(config: XrpConfig): Api<XrpAsset, TransactionIntentExt
     getBalance,
     lastBlock,
     listOperations: operations,
+    validateIntent: getTransactionStatus,
   };
 }
 
@@ -48,6 +50,7 @@ async function craft(
   transactionIntent: TransactionIntent<XrpAsset, TransactionIntentExtra, XrpSender>,
   customFees?: bigint,
 ): Promise<string> {
+  console.log("IN CRAFT: ", transactionIntent);
   const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender.address);
   const estimatedFees = customFees !== undefined ? customFees : (await estimateFees()).fee;
   const tx = await craftTransaction(
