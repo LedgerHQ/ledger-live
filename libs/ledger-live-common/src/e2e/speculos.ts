@@ -61,6 +61,17 @@ export function setExchangeDependencies(dependencies: Dependency[]) {
   specs["Exchange"].dependencies = Array.from(map.values());
 }
 
+function setSpeculosModel() {
+  const speculosDevice = process.env.SPECULOS_DEVICE;
+  switch (speculosDevice) {
+    case "NanoS":
+      return DeviceModelId.nanoS;
+    case "NanoSP":
+    default:
+      return DeviceModelId.nanoSP;
+  }
+}
+
 type Specs = {
   [key: string]: Spec;
 };
@@ -75,7 +86,7 @@ export const specs: Specs = {
   Bitcoin: {
     currency: getCryptoCurrencyById("bitcoin"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "Bitcoin",
     },
     dependency: "",
@@ -83,21 +94,21 @@ export const specs: Specs = {
   Aptos: {
     currency: getCryptoCurrencyById("aptos"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "Aptos",
     },
     dependency: "",
   },
   Exchange: {
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "Exchange",
     },
     dependencies: [],
   },
   LedgerSync: {
     appQuery: {
-      model: DeviceModelId.nanoX,
+      model: setSpeculosModel(),
       appName: "Ledger Sync",
     },
     dependency: "",
@@ -105,7 +116,7 @@ export const specs: Specs = {
   Dogecoin: {
     currency: getCryptoCurrencyById("dogecoin"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "Dogecoin",
     },
     dependency: "",
@@ -113,7 +124,7 @@ export const specs: Specs = {
   Ethereum: {
     currency: getCryptoCurrencyById("ethereum"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "Ethereum",
     },
     dependency: "",
@@ -121,7 +132,7 @@ export const specs: Specs = {
   Ethereum_Holesky: {
     currency: getCryptoCurrencyById("ethereum_holesky"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "Ethereum",
     },
     dependency: "",
@@ -129,7 +140,7 @@ export const specs: Specs = {
   Ethereum_Sepolia: {
     currency: getCryptoCurrencyById("ethereum_sepolia"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "Ethereum",
     },
     dependency: "",
@@ -137,7 +148,7 @@ export const specs: Specs = {
   Ethereum_Classic: {
     currency: getCryptoCurrencyById("ethereum_classic"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "Ethereum Classic",
     },
     dependency: "Ethereum",
@@ -145,7 +156,7 @@ export const specs: Specs = {
   Bitcoin_Testnet: {
     currency: getCryptoCurrencyById("bitcoin_testnet"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "Bitcoin Test",
     },
     dependency: "",
@@ -153,7 +164,7 @@ export const specs: Specs = {
   Solana: {
     currency: getCryptoCurrencyById("solana"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "Solana",
     },
     dependency: "",
@@ -161,7 +172,7 @@ export const specs: Specs = {
   Cardano: {
     currency: getCryptoCurrencyById("cardano"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "CardanoADA",
     },
     dependency: "",
@@ -169,7 +180,7 @@ export const specs: Specs = {
   Polkadot: {
     currency: getCryptoCurrencyById("polkadot"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "Polkadot",
     },
     dependency: "",
@@ -177,7 +188,7 @@ export const specs: Specs = {
   Tron: {
     currency: getCryptoCurrencyById("tron"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "Tron",
     },
     dependency: "",
@@ -185,7 +196,7 @@ export const specs: Specs = {
   XRP: {
     currency: getCryptoCurrencyById("ripple"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "XRP",
     },
     dependency: "",
@@ -193,7 +204,7 @@ export const specs: Specs = {
   Stellar: {
     currency: getCryptoCurrencyById("stellar"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "Stellar",
     },
     dependency: "",
@@ -201,7 +212,7 @@ export const specs: Specs = {
   Bitcoin_Cash: {
     currency: getCryptoCurrencyById("bitcoin_cash"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "Bitcoin Cash",
     },
     dependency: "",
@@ -209,7 +220,7 @@ export const specs: Specs = {
   Algorand: {
     currency: getCryptoCurrencyById("algorand"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "Algorand",
     },
     dependency: "",
@@ -217,7 +228,7 @@ export const specs: Specs = {
   Cosmos: {
     currency: getCryptoCurrencyById("cosmos"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "Cosmos",
     },
     dependency: "",
@@ -225,7 +236,7 @@ export const specs: Specs = {
   Tezos: {
     currency: getCryptoCurrencyById("tezos"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "TezosWallet",
     },
     dependency: "",
@@ -233,7 +244,7 @@ export const specs: Specs = {
   Polygon: {
     currency: getCryptoCurrencyById("polygon"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "Ethereum",
     },
     dependency: "",
@@ -241,7 +252,7 @@ export const specs: Specs = {
   Binance_Smart_Chain: {
     currency: getCryptoCurrencyById("bsc"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "Ethereum",
     },
     dependency: "",
@@ -249,7 +260,7 @@ export const specs: Specs = {
   Ton: {
     currency: getCryptoCurrencyById("ton"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "TON",
     },
     dependency: "",
@@ -257,7 +268,7 @@ export const specs: Specs = {
   Near: {
     currency: getCryptoCurrencyById("near"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "NEAR",
     },
     dependency: "",
@@ -265,7 +276,7 @@ export const specs: Specs = {
   Multivers_X: {
     currency: getCryptoCurrencyById("elrond"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "MultiversX",
     },
     dependency: "",
@@ -273,7 +284,7 @@ export const specs: Specs = {
   Osmosis: {
     currency: getCryptoCurrencyById("osmo"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "Cosmos",
     },
     dependency: "",
@@ -281,7 +292,7 @@ export const specs: Specs = {
   Injective: {
     currency: getCryptoCurrencyById("injective"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "Cosmos",
     },
     dependency: "",
@@ -290,7 +301,7 @@ export const specs: Specs = {
   Celo: {
     currency: getCryptoCurrencyById("celo"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "Celo",
     },
     dependency: "",
@@ -298,7 +309,7 @@ export const specs: Specs = {
   Litecoin: {
     currency: getCryptoCurrencyById("litecoin"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: setSpeculosModel(),
       appName: "Litecoin",
     },
     dependency: "",

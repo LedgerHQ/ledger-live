@@ -6,6 +6,9 @@ import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { getEnv } from "@ledgerhq/live-env";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
+
+// Soucis avec ada sur LNS
+
 function setupEnv(disableBroadcast?: boolean) {
   const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
   test.beforeAll(async () => {

@@ -112,7 +112,6 @@ export const test = base.extend<TestFixtures>({
         setEnv("PLAYWRIGHT_RUN", true);
         setEnv("MOCK", "");
         process.env.MOCK = "";
-        console.log(process.env.SPECULOS_DEVICE);
 
         if (cliCommandsOnApp?.length) {
           for (const { app, cmd } of cliCommandsOnApp) {

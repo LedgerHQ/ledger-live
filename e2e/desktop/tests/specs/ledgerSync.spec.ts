@@ -8,6 +8,8 @@ import { LedgerSyncCliHelper } from "../utils/ledgerSyncCliUtils";
 import { accountNames, accounts } from "../testdata/ledgerSyncTestData";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 
+// marche pas avec LNS...
+
 const app: AppInfos = AppInfos.LS;
 const firstAccountId = accounts[0].id;
 const firstAccountName = accountNames[firstAccountId];
