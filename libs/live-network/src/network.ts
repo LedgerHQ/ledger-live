@@ -193,6 +193,7 @@ export const newImplementation = async <T = unknown, U = unknown>(
   if (!("method" in request)) {
     request.method = "GET";
   }
+  console.log(request);
 
   if (request.method === "GET") {
     if (!("timeout" in request)) {

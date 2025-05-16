@@ -9,6 +9,9 @@ export type PolkadotConfig = {
     url: string;
     credentials?: string;
   };
+  indexer: {
+    url: string;
+  };
   staking?: {
     electionStatusThreshold: number;
   };
