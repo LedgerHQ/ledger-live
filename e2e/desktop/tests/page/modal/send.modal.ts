@@ -20,6 +20,7 @@ export class SendModal extends Modal {
   private ENSAddressLabel = this.page.getByTestId("ens-address-sendModal");
 
   readonly inputError = this.page.locator("id=input-error"); // no data-testid because css style is applied
+  readonly senderError = this.page.getByTestId("sender-error");
   readonly insufficientFundsWarning = this.page.getByTestId("insufficient-funds-warning");
   readonly inputWarning = this.page.locator("id=input-warning");
   readonly cryptoAmountField = this.page.getByTestId("modal-amount-field");
@@ -149,6 +150,17 @@ export class SendModal extends Modal {
       const normalize = (str: string) => str.replace(/\u00A0/g, " ").trim();
       expect(normalize(errorText)).toEqual(normalize(errorMessage));
     }
+  }
+
+  @step("Check the sender error message")
+  async checkSenderError(errorTitle: string, errorMessage: string) {
+    await this.senderError.waitFor({ state: "visible", timeout: 5000 });
+
+    const title = await this.senderError.getByText(errorTitle);
+    expect(title).toBeVisible();
+
+    const messageText = await this.senderError.getByText(errorMessage);
+    expect(messageText).toBeVisible();
   }
 
   @step("Check warning message")

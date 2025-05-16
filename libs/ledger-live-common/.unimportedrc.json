@@ -391,6 +391,7 @@
     "bech32",
     "bip32",
     "bip39",
+    "i18next",
     "rlp",
     "tsx",
     "yargs"
