@@ -246,23 +246,12 @@ describe("BitcoinLikeWallet", () => {
     // Spy on appendTxs
     const appendSpy = jest.spyOn(xpub.storage, "appendTxs");
     const appendedTxsBefore = appendSpy.mock.calls.flatMap(([txs]) => txs);
-    console.log({ appendedTxsBefore });
 
     await xpub.sync();
 
-    // Expect only one tx appended (confirmed wins)
-    // const appendedTxs = appendSpy.mock.calls.flatMap(([txs]) => txs);
-    // const allTxs = appendedTxs.filter(tx => tx.id === "duplicate-tx");
-
-    // ✅ Confirm only 1 instance of the tx stored, and it's the confirmed one
-    // expect(allTxs).toHaveLength(1);
-    // expect(allTxs[0].block).toEqual(confirmedTx.block);
-
     // ✅ Ensure wallet returns only that one deduplicated transaction
     const transactions = await wallet.getAccountTransactions(mockAccount);
-    console.log({ transactions });
     const txsFromWallet = transactions.txs.filter(tx => tx.id === "duplicate-tx");
-    console.log({ txsFromWallet });
     expect(txsFromWallet).toHaveLength(1);
     expect(txsFromWallet[0].block).toEqual(confirmedTx.block);
   });
@@ -330,23 +319,15 @@ describe("BitcoinLikeWallet", () => {
     expect(appendSpy).toHaveBeenCalled();
     const transactionsFirst = await wallet.getAccountTransactions(mockAccount);
     const txsFromWalletFirst = transactionsFirst.txs.filter(tx => tx.id === "duplicate-tx");
-    console.log({ transactionsFirst, txsFromWalletFirst });
 
     // Clear calls and simulate next sync with both versions
     appendSpy.mockClear();
     syncRound = 1;
     await xpub.sync();
 
-    // const allAppended = appendSpy.mock.calls.flatMap(([txs]) => txs);
-    // const filtered = allAppended.filter(tx => tx.id === "duplicate-tx");
-
-    // expect(filtered).toHaveLength(1);
-    // expect(filtered[0].block).toEqual(confirmedTx.block);
-
     // Optional: check wallet.getAccountTransactions reflects correct result
     const transactions = await wallet.getAccountTransactions(mockAccount);
     const txsFromWallet = transactions.txs.filter(tx => tx.id === "duplicate-tx");
-    console.log({ transactions, txsFromWallet });
     expect(txsFromWallet).toHaveLength(1);
     expect(txsFromWallet[0].block).toEqual(confirmedTx.block);
   });
@@ -414,11 +395,6 @@ describe("BitcoinLikeWallet", () => {
     // Second sync, simulate confirmed coming in
     syncRound = 1;
     await xpub.sync();
-    // const appendedTxs = appendSpy.mock.calls
-    //   .flatMap(([txs]) => txs)
-    //   .filter(tx => tx.id === "tx-duplicate");
-    // expect(appendedTxs).toHaveLength(1);
-    // expect(appendedTxs[0].block).toEqual(confirmedTx.block);
 
     // Check that storage doesn't hold both
     const storedTxs = xpub.storage.getTxs();

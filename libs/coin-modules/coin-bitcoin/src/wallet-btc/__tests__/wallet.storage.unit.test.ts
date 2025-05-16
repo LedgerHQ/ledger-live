@@ -334,7 +334,6 @@ describe("Unit tests for bitcoin storage", () => {
     expect(lastUnconfirmed?.id).not.toBe("tx-2");
 
     // Step 5: Confirm tx-2 has a block now
-    const txs = storage.exportSync();
     const tx2 = storage.exportSync().txs.find(tx => tx.id === "tx-2");
     expect(tx2?.block?.height).toBe(200);
   });
