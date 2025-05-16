@@ -112,20 +112,30 @@ export function Row({
     [onManageAction, validatorId],
   );
 
+  const parsedAmount = parseFloat(formattedAmount);
+  const parsedAvailable = parseFloat(formattedAvailable);
+  const parsedPending = parseFloat(formattedPending);
+
   const dropDownItems = [
-    {
+    parsedAmount > 0 && {
       key: "MODAL_APTOS_UNSTAKE",
       label: <Trans i18nKey="aptos.stake.unstake" />,
       disabled: !unstakingEnabled,
       tooltip: !unstakingEnabled ? <Trans i18nKey="aptos.unstake.disabledTooltip" /> : null,
     },
-    {
+    parsedAvailable > 0 && {
       key: "MODAL_APTOS_WITHDRAW",
       label: <Trans i18nKey="aptos.stake.withdraw" />,
       disabled: !withdawingEnabled,
       tooltip: !withdawingEnabled ? <Trans i18nKey="aptos.withdraw.disabledTooltip" /> : null,
     },
-  ];
+    parsedPending > 0 && {
+      key: "MODAL_APTOS_RESTAKE",
+      label: <Trans i18nKey="aptos.stake.restake" />,
+      disabled: !withdawingEnabled,
+      tooltip: !withdawingEnabled ? <Trans i18nKey="aptos.restake.disabledTooltip" /> : null,
+    },
+  ].filter(Boolean);
 
   const onExternalLinkClick = useCallback(
     () => onExternalLink(validatorId),

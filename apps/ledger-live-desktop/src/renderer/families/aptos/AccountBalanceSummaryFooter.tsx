@@ -131,7 +131,6 @@ const AccountBalanceSummaryFooter: AptosFamily["AccountBalanceSummaryFooter"] = 
           <Discreet>{availableBalance}</Discreet>
         </AmountValue>
       </BalanceDetail>
-      
     </Wrapper>
   );
 };
