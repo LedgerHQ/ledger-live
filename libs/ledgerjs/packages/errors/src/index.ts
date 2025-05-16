@@ -160,7 +160,7 @@ export const SyncError = createCustomErrorClass("SyncError");
 export const PairingFailed = createCustomErrorClass("PairingFailed");
 export const PeerRemovedPairing = createCustomErrorClass("PeerRemovedPairing");
 export const GenuineCheckFailed = createCustomErrorClass("GenuineCheckFailed");
-type NetworkType = {
+export type NetworkType = {
   status: number;
   url: string | undefined;
   method: string;

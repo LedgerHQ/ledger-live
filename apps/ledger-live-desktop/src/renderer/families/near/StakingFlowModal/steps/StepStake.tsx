@@ -11,6 +11,8 @@ import ValidatorField from "../fields/ValidatorField";
 import LedgerByFigmentTCLink from "../components/LedgerByFigmentTCLink";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import { Transaction } from "@ledgerhq/live-common/families/near/types";
+import Alert from "~/renderer/components/Alert";
+import TranslatedError from "~/renderer/components/TranslatedError";
 
 export default function StepStake({
   account,
@@ -18,6 +20,7 @@ export default function StepStake({
   onUpdateTransaction,
   transaction,
   error,
+  status,
 }: StepProps) {
   invariant(account && transaction, "account and transaction required");
   const updateValidator = ({ address }: { address: string }) => {
@@ -46,6 +49,11 @@ export default function StepStake({
         onChangeValidator={updateValidator}
         chosenVoteAccAddr={chosenVoteAccAddr}
       />
+      {status.errors.user ? (
+        <Alert type="error">
+          <TranslatedError error={status.errors.user} field="description" />
+        </Alert>
+      ) : null}
     </Box>
   );
 }
@@ -59,7 +67,8 @@ export function StepStakeFooter({
 }: StepProps) {
   invariant(account, "account required");
   const { errors } = status;
-  const canNext = !bridgePending && !errors.validators && transaction && transaction.recipient;
+  const canNext =
+    !bridgePending && !errors.validators && !errors.user && transaction && transaction.recipient;
   return (
     <>
       {transaction && <LedgerByFigmentTCLink transaction={transaction} />}

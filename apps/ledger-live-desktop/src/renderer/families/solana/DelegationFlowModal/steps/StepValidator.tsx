@@ -14,6 +14,8 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import LedgerValidatorTCLink from "../../shared/components/LedgerValidatorTCLink";
 import ValidatorsField from "../../shared/fields/ValidatorsField";
 import { StepProps } from "../types";
+import Alert from "~/renderer/components/Alert";
+import TranslatedError from "~/renderer/components/TranslatedError";
 
 export default function StepValidator({
   account,
@@ -63,6 +65,11 @@ export default function StepValidator({
           onChangeValidator={updateValidator}
         />
       ) : null}
+      {status.errors.user ? (
+        <Alert type="error">
+          <TranslatedError error={status.errors.user} field="description" />
+        </Alert>
+      ) : null}
     </Box>
   );
 }
@@ -74,7 +81,7 @@ export function StepValidatorFooter({
   transaction,
 }: StepProps) {
   const { errors } = status;
-  const canNext = !bridgePending && !errors.voteAccAddr;
+  const canNext = !bridgePending && !errors.voteAccAddr && !errors.user;
   if (!transaction) return null;
   return (
     <>

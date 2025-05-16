@@ -53,6 +53,7 @@ import {
 } from "../utils/index";
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
+import { UserAddressSanctionedError } from "@ledgerhq/live-common/sanction/errors";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -217,6 +218,14 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
           ...transformToBigNumbers(params.customFeeConfig),
         });
         let status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
+        if (
+          status.errors &&
+          "user" in status.errors &&
+          status.errors.user instanceof UserAddressSanctionedError
+        ) {
+          return Promise.reject(status.errors.user);
+        }
+
         const statusInit = status;
         let finalTx = preparedTransaction;
         let customFeeConfig = transaction && getCustomFeesPerFamily(finalTx);
@@ -230,20 +239,6 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
         const hasDrawer =
           ["evm", "bitcoin"].includes(transaction.family) &&
           !["optimism", "arbitrum", "base"].includes(mainAccount.currency.id);
-        if (!params.openDrawer) {
-          return {
-            feesStrategy: finalTx.feesStrategy,
-            estimatedFees: convertToNonAtomicUnit({
-              amount: status.estimatedFees,
-              account: mainAccount,
-            }),
-            errors: status.errors,
-            warnings: status.warnings,
-            customFeeConfig,
-            hasDrawer,
-            gasLimit: finalTx.gasLimit,
-          };
-        }
 
         return new Promise(resolve => {
           const performClose = (save: boolean) => {

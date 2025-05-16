@@ -63,6 +63,11 @@ export default function StepDelegation({
           <TranslatedError error={displayError} field="title" />
         </Alert>
       ) : null}
+      {errors.user ? (
+        <Alert type="error">
+          <TranslatedError error={errors.user} field="description" />
+        </Alert>
+      ) : null}
     </Box>
   );
 }

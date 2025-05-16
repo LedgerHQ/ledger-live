@@ -6610,6 +6610,13 @@
     },
     "AmountTooSmall": {
       "title": "Minimum required amount for this transaction is {{amount}}"
+    },
+    "UserAddressSanctionedError": {
+      "title": "Keeping you safe",
+      "description": "This transaction involves a sanctioned wallet address and cannot be processed - CTA - Learn more"
+    },
+    "RecipientAddressSanctionedError": {
+      "title": "This transaction involves a sanctioned wallet address and cannot be processed - CTA - Learn more"
     }
   },
   "cryptoOrg": {

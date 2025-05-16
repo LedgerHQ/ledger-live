@@ -12,6 +12,8 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import ValidatorField from "../fields/ValidatorField";
 import { StepProps } from "../types";
+import Alert from "~/renderer/components/Alert";
+import TranslatedError from "~/renderer/components/TranslatedError";
 
 export default function StepDelegation({
   account,
@@ -63,6 +65,11 @@ export default function StepDelegation({
         onChangeValidator={updateValidator}
         chosenVoteAccAddr={chosenVoteAccAddr}
       />
+      {status.errors.user ? (
+        <Alert type="error">
+          <TranslatedError error={status.errors.user} field="description" />
+        </Alert>
+      ) : null}
     </Box>
   );
 }
@@ -77,7 +84,11 @@ export function StepDelegationFooter({
 }: StepProps) {
   const { errors } = status;
   const canNext =
-    !bridgePending && !errors.validators && transaction && transaction.validators.length > 0;
+    !bridgePending &&
+    !errors.validators &&
+    transaction &&
+    transaction.validators.length > 0 &&
+    !status.errors.user;
   return (
     <>
       <AccountFooter parentAccount={parentAccount} account={account} status={status} />

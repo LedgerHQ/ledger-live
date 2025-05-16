@@ -34,7 +34,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
         ? t("cardano.delegation.addFundsToStake")
         : "";
 
-  const onClick = useCallback(() => {
+  const onClick = useCallback(async () => {
     dispatch(
       openModal("MODAL_CARDANO_REWARDS_INFO", {
         account: account as CardanoAccount,

@@ -12,6 +12,7 @@ import SendAmountFields from "../SendAmountFields";
 import { StepProps } from "../types";
 import LowGasAlertBuyMore from "~/renderer/families/evm/SendAmountFields/LowGasAlertBuyMore";
 import { closeAllModal } from "~/renderer/actions/modals";
+import { UserAddressSanctionedError } from "@ledgerhq/live-common/sanction/errors";
 const StepAmount = ({
   account,
   parentAccount,
@@ -34,7 +35,10 @@ const StepAmount = ({
       {error || warning
         ? !gasPriceError && (
             <Alert type={error ? "error" : "warning"}>
-              <TranslatedError error={error || warning} />
+              <TranslatedError
+                error={error || warning}
+                field={error instanceof UserAddressSanctionedError ? "description" : "title"}
+              />
             </Alert>
           )
         : null}

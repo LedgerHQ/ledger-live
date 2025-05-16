@@ -30,7 +30,7 @@ const useStakeFlow = () => {
   const list = enabledCurrencies.concat(partnerSupportedAssets);
 
   const handleAccountSelected = useCallback(
-    (
+    async (
       account: AccountLike,
       parentAccount: Account | undefined,
       alwaysShowNoFunds: StakeFlowProps["alwaysShowNoFunds"],

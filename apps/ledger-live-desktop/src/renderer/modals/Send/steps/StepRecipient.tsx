@@ -87,6 +87,8 @@ const StepRecipient = ({
           ) : (
             <Box flow={1}>
               <Label>{t("send.steps.details.selectAccountDebit")}</Label>
+              {status && status.errors?.user ? <ErrorBanner error={status.errors.user} /> : null}
+
               <SelectAccount
                 id="account-debit-placeholder"
                 withSubAccounts
@@ -151,7 +153,8 @@ export const StepRecipientFooter = ({
   const fields = ["recipient"].concat(
     mainAccount ? getFields(mainAccount, lldMemoTag?.enabled) : [],
   );
-  const hasFieldError = Object.keys(errors).some(name => fields.includes(name));
+  const hasFieldError =
+    Object.keys(errors).some(name => fields.includes(name)) || status.errors?.user;
   const canNext = !bridgePending && !hasFieldError && !isTerminated;
   const isMemoTagBoxVisibile = useSelector(memoTagBoxVisibilitySelector);
   const alwaysShowMemoTagInfo = useSelector(alwaysShowMemoTagInfoSelector);
