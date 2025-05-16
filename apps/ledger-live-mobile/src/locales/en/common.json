@@ -7431,5 +7431,12 @@
     "low": "Low",
     "high": "High",
     "title": "Market Movements"
+  },
+  "nftEntryPoint": {
+    "title": "Your NFTs",
+    "entry": {
+      "magiceden": "Magic Eden",
+      "opensea": "OpenSea"
+    }
   }
 }

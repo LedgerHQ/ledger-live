@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Account, Hex, Network } from "@aptos-labs/ts-sdk";
 import { createApi } from "../../api";
 import { AptosSender } from "../../types/assets";
@@ -16,6 +17,13 @@ describe("createApi", () => {
     freshAddress: "0xa0d8abc262e3321f87d745bd5d687e8f3fb14c87d48f840b6b56867df0026ec8",
   };
   const recipient = Account.generate().accountAddress.toString();
+=======
+import { Hex, Network } from "@aptos-labs/ts-sdk";
+import { createApi } from "../../api";
+
+describe("createApi", () => {
+  const api = createApi({ aptosSettings: { network: Network.MAINNET } });
+>>>>>>> develop
 
   describe("lastBlock", () => {
     it("returns the last block information", async () => {
@@ -34,6 +42,7 @@ describe("createApi", () => {
       expect(lastBlock.time?.getDay()).toBeGreaterThan(0);
     });
   });
+<<<<<<< HEAD
 
   describe("estimateFees", () => {
     it("returns a default value", async () => {
@@ -52,4 +61,6 @@ describe("createApi", () => {
       expect(fees.value).toBeGreaterThanOrEqual(0);
     });
   });
+=======
+>>>>>>> develop
 });

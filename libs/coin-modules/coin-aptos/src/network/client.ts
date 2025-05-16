@@ -32,9 +32,9 @@ import {
   GetAccountTransactionsDataQuery,
   GetAccountTransactionsDataGtQueryVariables,
 } from "./graphql/types";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { BlockInfo, FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { AptosAsset, AptosExtra, AptosFeeParameters, AptosSender } from "../types/assets";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const getApiEndpoint = (currencyId: string) =>
   isTestnet(currencyId) ? getEnv("APTOS_TESTNET_API_ENDPOINT") : getEnv("APTOS_API_ENDPOINT");
@@ -66,109 +66,6 @@ export class AptosAPI {
         "x-client": "ledger-live",
       },
     });
-  }
-
-  async getBalance(address: string, token: TokenCurrency): Promise<BigNumber> {
-    let balance = new BigNumber(0);
-    if (token.tokenType === "coin") {
-      balance = await this.getCoinBalance(address, token.contractAddress);
-    } else {
-      balance = await this.getFABalance(address, token.contractAddress);
-    }
-    return balance;
-  }
-
-  async getCoinBalance(address: string, contract_address: string): Promise<BigNumber> {
-    try {
-      const [balanceStr] = await this.aptosClient.view<[string]>({
-        payload: {
-          function: "0x1::coin::balance",
-          typeArguments: [contract_address],
-          functionArguments: [address],
-        },
-      });
-      const balance = parseInt(balanceStr, 10);
-      return new BigNumber(balance);
-    } catch (_) {
-      return new BigNumber(0);
-    }
-  }
-
-  async getFABalance(address: string, contract_address: string): Promise<BigNumber> {
-    try {
-      const [balanceStr] = await this.aptosClient.view<[string]>({
-        payload: {
-          function: "0x1::primary_fungible_store::balance",
-          typeArguments: ["0x1::object::ObjectCore"],
-          functionArguments: [address, contract_address],
-        },
-      });
-      const balance = parseInt(balanceStr, 10);
-      return new BigNumber(balance);
-    } catch (_) {
-      return new BigNumber(0);
-    }
-  }
-
-  private async fetchTransactions(address: string, gt?: string) {
-    if (!address) {
-      return [];
-    }
-
-    let query = GetAccountTransactionsData;
-    if (gt) {
-      query = GetAccountTransactionsDataGt;
-    }
-
-    const queryResponse = await this.apolloClient.query<
-      GetAccountTransactionsDataQuery,
-      GetAccountTransactionsDataGtQueryVariables
-    >({
-      query,
-      variables: {
-        address,
-        limit: 1000,
-        gt,
-      },
-      fetchPolicy: "network-only",
-    });
-
-    return Promise.all(
-      queryResponse.data.account_transactions.map(({ transaction_version }) => {
-        return this.richItemByVersion(transaction_version);
-      }),
-    );
-  }
-
-  private async richItemByVersion(version: number): Promise<AptosTransaction | null> {
-    try {
-      const tx: TransactionResponse = await this.aptosClient.getTransactionByVersion({
-        ledgerVersion: version,
-      });
-      const block = await this.getBlock(version);
-      return {
-        ...tx,
-        block,
-      } as AptosTransaction;
-    } catch (error) {
-      return null;
-    }
-  }
-
-  private async getHeight(): Promise<number> {
-    const { data } = await network<Block>({
-      method: "GET",
-      url: this.aptosConfig.fullnode || "",
-    });
-    return parseInt(data.block_height);
-  }
-
-  private async getBlock(version: number) {
-    const block = await this.aptosClient.getBlockByVersion({ ledgerVersion: version });
-    return {
-      height: parseInt(block.block_height),
-      hash: block.block_hash,
-    };
   }
 
   async getAccount(address: string): Promise<AccountData> {
@@ -255,6 +152,16 @@ export class AptosAPI {
     return pendingTx.data.hash;
   }
 
+  async getBalance(address: string, token: TokenCurrency): Promise<BigNumber> {
+    let balance = new BigNumber(0);
+    if (token.tokenType === "coin") {
+      balance = await this.getCoinBalance(address, token.contractAddress);
+    } else {
+      balance = await this.getFABalance(address, token.contractAddress);
+    }
+    return balance;
+  }
+
   async getLastBlock(): Promise<BlockInfo> {
     const { block_height } = await this.aptosClient.getLedgerInfo();
     const block = await this.aptosClient.getBlockByHeight({ blockHeight: Number(block_height) });
@@ -263,6 +170,38 @@ export class AptosAPI {
       hash: block.block_hash,
       time: new Date(Number(block.block_timestamp)),
     };
+  }
+
+  async getCoinBalance(address: string, contract_address: string): Promise<BigNumber> {
+    try {
+      const [balanceStr] = await this.aptosClient.view<[string]>({
+        payload: {
+          function: "0x1::coin::balance",
+          typeArguments: [contract_address],
+          functionArguments: [address],
+        },
+      });
+      const balance = parseInt(balanceStr, 10);
+      return new BigNumber(balance);
+    } catch (_) {
+      return new BigNumber(0);
+    }
+  }
+
+  async getFABalance(address: string, contract_address: string): Promise<BigNumber> {
+    try {
+      const [balanceStr] = await this.aptosClient.view<[string]>({
+        payload: {
+          function: "0x1::primary_fungible_store::balance",
+          typeArguments: ["0x1::object::ObjectCore"],
+          functionArguments: [address, contract_address],
+        },
+      });
+      const balance = parseInt(balanceStr, 10);
+      return new BigNumber(balance);
+    } catch (_) {
+      return new BigNumber(0);
+    }
   }
 
   async estimateFees(
@@ -302,6 +241,67 @@ export class AptosAPI {
         gasLimit: BigInt(gasLimit.toString()),
         gasPrice: BigInt(gasPrice.toString()),
       },
+    };
+  }
+
+  private async fetchTransactions(address: string, gt?: string) {
+    if (!address) {
+      return [];
+    }
+
+    let query = GetAccountTransactionsData;
+    if (gt) {
+      query = GetAccountTransactionsDataGt;
+    }
+
+    const queryResponse = await this.apolloClient.query<
+      GetAccountTransactionsDataQuery,
+      GetAccountTransactionsDataGtQueryVariables
+    >({
+      query,
+      variables: {
+        address,
+        limit: 1000,
+        gt,
+      },
+      fetchPolicy: "network-only",
+    });
+
+    return Promise.all(
+      queryResponse.data.account_transactions.map(({ transaction_version }) => {
+        return this.richItemByVersion(transaction_version);
+      }),
+    );
+  }
+
+  private async richItemByVersion(version: number): Promise<AptosTransaction | null> {
+    try {
+      const tx: TransactionResponse = await this.aptosClient.getTransactionByVersion({
+        ledgerVersion: version,
+      });
+      const block = await this.getBlock(version);
+      return {
+        ...tx,
+        block,
+      } as AptosTransaction;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  private async getHeight(): Promise<number> {
+    const { data } = await network<Block>({
+      method: "GET",
+      url: this.aptosConfig.fullnode || "",
+    });
+    return parseInt(data.block_height);
+  }
+
+  private async getBlock(version: number) {
+    const block = await this.aptosClient.getBlockByVersion({ ledgerVersion: version });
+    return {
+      height: parseInt(block.block_height),
+      hash: block.block_hash,
     };
   }
 }

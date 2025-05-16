@@ -36,6 +36,7 @@ import WarningBannerStatus from "~/components/WarningBannerStatus";
 import ErrorWarning from "./ErrorWarning";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isNFTCollectionsDisplayable } from "./nftHelper";
+import NftEntryPoint from "LLM/features/NftEntryPoint";
 
 type Props = {
   account?: AccountLike;
@@ -225,6 +226,7 @@ export function useListHeaderComponents({
             </SectionContainer>,
           ]
         : []),
+      ...(account.type === "Account" ? [<NftEntryPoint account={account} key={account.id} />] : []),
     ],
     stickyHeaderIndices,
   };

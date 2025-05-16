@@ -9,6 +9,7 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { StickyHeader } from "./components/StickyHeader";
 import { SafeAreaView } from "react-native";
 import { useTheme } from "styled-components/native";
+import { rangeMap } from "./utils";
 
 type LargeMoverLandingPageProps = StackNavigatorProps<
   LandingPagesNavigatorParamList,
@@ -16,15 +17,16 @@ type LargeMoverLandingPageProps = StackNavigatorProps<
 >;
 
 export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => {
-  const { currencyIds, initialRange } = route.params;
+  const { currencyIds, initialRange = "day" } = route.params;
+  const currencyIdsArray = currencyIds.toUpperCase().split(",");
+  const initialKeyRange = rangeMap[initialRange];
   const { range, setRange, currencies, loading } = useLargeMover({
-    currencyIds,
-    initialRange,
+    currencyIdsArray,
+    initialKeyRange,
   });
 
   const { colors } = useTheme();
   const height = getWindowDimensions().height * 0.75;
-
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleNext = () => {

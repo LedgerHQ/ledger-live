@@ -1,5 +1,6 @@
 import { stakeProgramsToEarnParam } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
@@ -25,7 +26,9 @@ import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/s
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
 
 const appManifestNotFoundError = new Error("Earn App not found");
-const DEFAULT_EARN_APP_ID = "earn";
+
+const DEFAULT_MANIFEST_ID =
+  process.env.DEFAULT_EARN_MANIFEST_ID || DEFAULT_FEATURES.ptxEarnLiveApp.params?.manifest_id;
 
 export const EarnScreen = memo(Earn);
 
@@ -39,8 +42,10 @@ function Earn({ route }: Props) {
     ? new URL("ledgerlive://" + route.path).searchParams
     : new URLSearchParams();
 
-  const localManifest: LiveAppManifest | undefined = useLocalLiveAppManifest(DEFAULT_EARN_APP_ID);
-  const remoteManifest: LiveAppManifest | undefined = useRemoteLiveAppManifest(DEFAULT_EARN_APP_ID);
+  const earnFlag = useFeature("ptxEarnLiveApp");
+  const earnManifestId = earnFlag?.enabled ? earnFlag.params?.manifest_id : DEFAULT_MANIFEST_ID;
+  const localManifest: LiveAppManifest | undefined = useLocalLiveAppManifest(earnManifestId);
+  const remoteManifest: LiveAppManifest | undefined = useRemoteLiveAppManifest(earnManifestId);
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
 
   const manifest: LiveAppManifest | undefined = !localManifest ? remoteManifest : localManifest;

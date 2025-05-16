@@ -12,8 +12,12 @@ import {
 import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import { AptosAPI } from "../../network";
+<<<<<<< HEAD
 import { AptosAsset, AptosExtra, AptosSender } from "../../types/assets";
 import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+=======
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+>>>>>>> develop
 
 jest.mock("@aptos-labs/ts-sdk");
 jest.mock("@apollo/client");
@@ -85,6 +89,78 @@ describe("Aptos API", () => {
     });
   });
 
+<<<<<<< HEAD
+=======
+  describe("getBalance", () => {
+    let token: TokenCurrency;
+
+    beforeEach(() => {
+      token = {
+        type: "TokenCurrency",
+        id: "aptos_token",
+        name: "Aptos Token",
+        ticker: "APT",
+        units: [{ name: "APT", code: "APT", magnitude: 6 }],
+        contractAddress: "APTOS_1_ADDRESS",
+        tokenType: "fungible_asset",
+        parentCurrency: {
+          type: "CryptoCurrency",
+          id: "aptos",
+          name: "Aptos",
+          ticker: "APT",
+          units: [{ name: "APT", code: "APT", magnitude: 6 }],
+          color: "#000000",
+          family: "aptos",
+          scheme: "aptos",
+          explorerViews: [],
+          managerAppName: "Aptos",
+          coinType: 637,
+        },
+      };
+    });
+
+    it("get coin balance", async () => {
+      mockedAptos.mockImplementation(() => ({
+        view: jest.fn().mockReturnValue(["1234"]),
+      }));
+
+      token.tokenType = "coin";
+      const api = new AptosAPI("aptos");
+      const balance = await api.getBalance("address", token);
+
+      expect(balance).toEqual(new BigNumber(1234));
+    });
+
+    it("get fungible assets balance", async () => {
+      mockedAptos.mockImplementation(() => ({
+        view: jest.fn().mockReturnValue(["12345"]),
+      }));
+
+      token.tokenType = "fungible_asset";
+
+      const api = new AptosAPI("aptos");
+      const balance = await api.getBalance("address", token);
+
+      expect(balance).toEqual(new BigNumber(12345));
+    });
+
+    it("return 0 balace if could not retrieve proper balance of fungible assets", async () => {
+      mockedAptos.mockImplementation(() => ({
+        view: jest.fn().mockImplementation(() => {
+          throw new Error("error");
+        }),
+      }));
+
+      token.tokenType = "fungible_asset";
+
+      const api = new AptosAPI("aptos");
+      const balance = await api.getBalance("address", token);
+
+      expect(balance).toEqual(new BigNumber(0));
+    });
+  });
+
+>>>>>>> develop
   describe("getAccountInfo", () => {
     it("calls getCoinBalance, fetchTransactions and getHeight", async () => {
       mockedAptos.mockImplementation(() => ({
@@ -498,6 +574,7 @@ describe("Aptos API", () => {
       });
     });
   });
+<<<<<<< HEAD
 
   describe("estimateFees", () => {
     it("estimates the fees", async () => {
@@ -545,4 +622,6 @@ describe("Aptos API", () => {
       expect(fees.value.toString()).toEqual("40");
     });
   });
+=======
+>>>>>>> develop
 });

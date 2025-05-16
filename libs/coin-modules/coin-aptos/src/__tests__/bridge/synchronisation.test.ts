@@ -35,12 +35,18 @@ jest.mock("@ledgerhq/coin-framework/account", () => {
 
 const mockedDecodeTokenAccountId = jest.mocked(decodeTokenAccountId);
 
-jest.mock("@ledgerhq/coin-framework/bridge/jsHelpers");
-jest.mock("invariant", () => jest.fn());
-
 jest.mock("../../network");
 let mockedAptosAPI: jest.Mocked<any>;
 
+jest.mock("@ledgerhq/coin-framework/bridge/jsHelpers");
+jest.mock("invariant", () => jest.fn());
+
+<<<<<<< HEAD
+jest.mock("../../network");
+let mockedAptosAPI: jest.Mocked<any>;
+
+=======
+>>>>>>> develop
 jest.mock("../../bridge/logic");
 
 describe("getAccountShape", () => {
