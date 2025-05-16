@@ -11,13 +11,14 @@ async function navigateToSendScreen(accountName: string) {
   await app.account.tapSend();
 }
 
-const beforeAllFunction = async (transaction: TransactionType) => {
+const beforeAllFunction = async (transaction: TransactionType, userdata?: string) => {
   await app.init({
     speculosApp: transaction.accountToDebit.currency.speculosApp,
     featureFlags: {
       llmAccountListUI: { enabled: true },
       llmNetworkBasedAddAccountFlow: { enabled: true },
     },
+    userdata: userdata,
     cliCommands: [
       (userdataPath?: string) => {
         return CLI.liveData({
@@ -51,7 +52,7 @@ export function runSendTest(
       await app.send.setRecipientAndContinue(addressToCredit, transaction.memoTag);
       await app.send.setAmountAndContinue(transaction.amount);
 
-      const amountWithCode = transaction.amount + " " + transaction.accountToCredit.currency.ticker;
+      const amountWithCode = transaction.amount + " " + transaction.accountToCredit.currency.ticker;
       await app.send.expectSummaryAmount(amountWithCode);
       await app.send.expectSummaryRecipient(addressToCredit);
       await app.send.expectSummaryMemoTag(transaction.memoTag);
@@ -91,6 +92,81 @@ export function runSendInvalidAddressTest(
       await navigateToSendScreen(accountName || transaction.accountToDebit.accountName);
       await app.send.setRecipient(transaction.accountToCredit.address, transaction.memoTag);
       await app.send.expectSendRecipientError(expectedErrorMessage);
+    });
+  });
+}
+
+export function runSendToSanctionedAddressTest(
+  transaction: TransactionType,
+  expectedErrorMessage: string,
+  expectedErrorMessageDescription: string,
+  tmsLinks: string[],
+  tags: string[] = ["@NanoSP", "@LNS", "@NanoX"],
+  accountName?: string,
+) {
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
+  describe("Blacklist - Blocking transactions to sanctioned recipient addresses in send flow", () => {
+    beforeAll(async () => {
+      await beforeAllFunction(transaction);
+    });
+
+    it(`Send from ${transaction.accountToDebit.accountName} ${accountName || ""} to ${transaction.accountToCredit.accountName} - receiver is sanctioned address`, async () => {
+      await navigateToSendScreen(accountName || transaction.accountToDebit.accountName);
+      await app.send.setRecipient(transaction.accountToCredit.address, transaction.memoTag);
+      await app.send.expectSendRecipientError(expectedErrorMessage);
+      await app.send.expectSendRecipientErrorDescription(expectedErrorMessageDescription);
+      await app.send.expectLearnMoreLink();
+    });
+  });
+}
+
+export function runSendFromSanctionedAddressTest(
+  transaction: TransactionType,
+  expectedErrorTitle: string,
+  expectedErrorMessageDescription: string,
+  tmsLinks: string[],
+  tags: string[] = ["@NanoSP", "@LNS", "@NanoX"],
+  accountName?: string,
+) {
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
+  describe("Blacklist - Blocking transactions from sanctioned user addresses in send flow", () => {
+    beforeAll(async () => {
+      await beforeAllFunction(transaction, "sanctioned-eth");
+    });
+
+    it(`Send from ${transaction.accountToDebit.accountName} ${accountName || ""} to ${transaction.accountToCredit.accountName} - sender is sanctioned address`, async () => {
+      await navigateToSendScreen(accountName || transaction.accountToDebit.accountName);
+      await app.send.setRecipient(transaction.accountToCredit.address, transaction.memoTag);
+      await app.send.expectSendSenderError(expectedErrorTitle, expectedErrorMessageDescription);
+      await app.send.expectLearnMoreLink();
+      await app.send.expectContinueButtonNotVisible();
+    });
+  });
+}
+
+export function runSendToAndFromSanctionedAddressTest(
+  transaction: TransactionType,
+  errorTitle: string,
+  errorDescription: string,
+  tmsLinks: string[],
+  tags: string[] = ["@NanoSP", "@LNS", "@NanoX"],
+  accountName?: string,
+) {
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
+  describe("Blacklist - Blocking transactions to sanctioned recipient addresses in send flow", () => {
+    beforeAll(async () => {
+      await beforeAllFunction(transaction, "sanctioned-eth");
+    });
+
+    it(`Send from ${transaction.accountToDebit.accountName} ${accountName || ""} to ${transaction.accountToCredit.accountName} - both sender and receiver are sanctioned addresses`, async () => {
+      await navigateToSendScreen(accountName || transaction.accountToDebit.accountName);
+      await app.send.setRecipient(transaction.accountToCredit.address, transaction.memoTag);
+      await app.send.expectSendSenderError(errorTitle, errorDescription);
+      await app.send.expectSendRecipientError(errorTitle);
+      await app.send.expectSendRecipientErrorDescription(errorDescription);
     });
   });
 }

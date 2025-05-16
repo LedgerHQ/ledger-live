@@ -6,6 +6,7 @@ import TranslatedError from "~/components/TranslatedError";
 import SupportLinkError from "~/components/SupportLinkError";
 import LText from "~/components/LText";
 import RecipientInput from "~/components/RecipientInput";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 
 type Props = {
   onChangeText: (value: string) => void;
@@ -47,6 +48,11 @@ const RecipientRow = ({
           >
             <TranslatedError error={error || warning} />
           </LText>
+          {error instanceof AddressesSanctionedError && (
+            <LText style={[styles.warningBox]} color="alert">
+              <TranslatedError error={error} field="description" />
+            </LText>
+          )}
           <View
             style={{
               display: "flex",

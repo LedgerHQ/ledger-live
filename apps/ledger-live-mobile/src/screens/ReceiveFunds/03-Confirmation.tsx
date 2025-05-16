@@ -48,8 +48,10 @@ import Animated, {
   runOnJS,
 } from "react-native-reanimated";
 import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
+import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
 import { NeedMemoTagModal } from "./NeedMemoTagModal";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
+import SanctionedAccountModal from "./SanctionedAccountModal";
 
 type ScreenProps = BaseComposite<
   StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConfirmation>
@@ -89,9 +91,18 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
   const withdrawCryptoUrl = useLocalizedUrl(urls.withdrawCrypto);
+  const [isUserAddressSanctioned, setIsUserAddressSanctioned] = useState(false);
 
   const hasClosedWithdrawBanner = useSelector(hasClosedWithdrawBannerSelector);
   const [displayBanner, setDisplayBanner] = useState(!hasClosedWithdrawBanner);
+
+  const onClose = useCallback(() => {
+    if (account && account.type === "Account") {
+      navigation.navigate(ScreenName.ReceiveSelectAccount, {
+        currency: account.currency,
+      });
+    }
+  }, [account, navigation]);
 
   const onRetry = useCallback(() => {
     track("button_clicked", {
@@ -252,6 +263,18 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
     bannerHeight.value = 0;
     bannerOpacity.value = 0;
   }, [bannerHeight, bannerOpacity]);
+
+  useEffect(() => {
+    const checkUserAddressSanctioned = async () => {
+      if (account && account.type === "Account") {
+        setIsUserAddressSanctioned(
+          await isAddressSanctioned(account.currency, account.freshAddress),
+        );
+      }
+    };
+
+    checkUserAddressSanctioned();
+  }, [account]);
 
   if (!account || !currency || !mainAccount) return null;
 
@@ -434,7 +457,12 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
           </Button>
         </Flex>
       </Flex>
-      {verified ? null : isModalOpened ? (
+      {isUserAddressSanctioned ? (
+        <SanctionedAccountModal
+          userAddress={account.type === "Account" ? account.freshAddress : ""}
+          onClose={onClose}
+        />
+      ) : verified ? null : isModalOpened ? (
         <ReceiveSecurityModal onVerifyAddress={onRetry} triggerSuccessEvent={triggerSuccessEvent} />
       ) : null}
     </Flex>
