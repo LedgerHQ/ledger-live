@@ -20,6 +20,7 @@ describe("Market page for user with no device", () => {
   });
 
   $TmsLink("B2CQA-1880");
+  $Tags("@NanoSP", "@LNS", "@NanoX");
   it("should find the researched crypto", async () => {
     await app.walletTabNavigator.navigateToMarket();
     await app.market.searchAsset("eth");
@@ -27,6 +28,7 @@ describe("Market page for user with no device", () => {
   });
 
   $TmsLink("B2CQA-1879");
+  $Tags("@NanoSP", "@LNS", "@NanoX");
   it("should filter starred asset in the list", async () => {
     await app.market.openAssetPage(asset);
     await app.market.starFavoriteCoin();

@@ -4,8 +4,13 @@ import { verifyAppValidationStakeInfo, verifyStakeOperationDetailsInfo } from ".
 import { device } from "detox";
 import { getCurrencyManagerApp } from "../../models/currencies";
 
-export function runDelegateTest(delegation: DelegateType, tmsLinks: string[]) {
+export function runDelegateTest(
+  delegation: DelegateType,
+  tmsLinks: string[],
+  tags: string[] = ["@NanoSP", "@LNS", "@NanoX"],
+) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
   describe("Delegate", () => {
     beforeAll(async () => {
       await app.init({
