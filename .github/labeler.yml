@@ -28,3 +28,7 @@ translations:
 
 screenshots:
   - apps/ledger-live-desktop/tests/specs/**/*.png
+
+coin-modules-api:
+ - libs/coin-framework/src/api/**
+ - libs/coin-modules/*/src/api/**
