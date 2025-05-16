@@ -180,3 +180,49 @@ test.describe("Reset app", () => {
     },
   );
 });
+
+test.describe("Verify that user can view user data folder", () => {
+  test.use({
+    userdata: "1AccountBTC1AccountETH",
+  });
+
+  test(
+    "Verify that user can view user data folder",
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-825",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.layout.goToSettings();
+      await app.settings.goToHelpTab();
+      await app.settings.checkViewUserDataButtonIsEnabled();
+    },
+  );
+});
+
+test.describe("User can export logs", () => {
+  test.use({
+    userdata: "1AccountBTC1AccountETH",
+  });
+
+  test(
+    "User can export logs",
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2074",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.layout.goToSettings();
+      await app.settings.goToHelpTab();
+      await app.settings.clickExportLogs();
+    },
+  );
+});
