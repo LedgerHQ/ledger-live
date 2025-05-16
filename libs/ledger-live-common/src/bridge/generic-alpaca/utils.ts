@@ -4,7 +4,7 @@ import {
   Operation as CoreOperation,
   Asset,
   TransactionIntent,
-  Account as CoreAccount,
+  // Account as CoreAccount,
 } from "@ledgerhq/coin-framework/api/types";
 import BigNumber from "bignumber.js";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
@@ -33,10 +33,12 @@ export function adaptCoreOperationToLiveOperation(
 export function transactionToIntent(
   _account: Account,
   transaction: TransactionCommon,
-): TransactionIntent<any> {
+): TransactionIntent<any, any, any> {
   return {
-    type: "send",
-    sender: _account.freshAddress,
+    type: "Payment",
+    sender: {
+      address: _account.freshAddress,
+    },
     recipient: transaction.recipient,
     amount: fromBigNumberToBigInt(transaction.amount, BigInt(0)),
     asset: null, // TODO: check
@@ -60,7 +62,7 @@ export const buildOptimisticOperation = (
     hash: "",
     type: "OUT",
     value: transaction.amount,
-    fee: BigNumber(0),
+    fee: transaction["fees"] ? transaction["fees"] : BigNumber(0),
     blockHash: null,
     blockHeight: null,
     senders: [account.freshAddress.toString()],
