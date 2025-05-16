@@ -46,7 +46,13 @@
       ],
       "ignore": ["src/newArch/features/Collectibles/**", "**/types.*", "src/newArch/features/ModularDrawer/components/SelectAccount.tsx"],
       "ignoreBinaries": ["eslint", "knip", "prettier", "zx", "lint"],
-      "ignoreDependencies": ["prop-types", "allure-commandline", "msw", "buffer"]
+      "ignoreDependencies": [
+        "@electron/fuses",
+        "prop-types",
+        "allure-commandline",
+        "msw",
+        "buffer"
+      ]
     },
     "./apps/ledger-live-mobile": {
       "entry": ["index.js", "src/families/**"],
