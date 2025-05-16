@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from "react";
+import React, { memo, useState } from "react";
 import { Observable } from "rxjs";
 import { useTranslation } from "react-i18next";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -17,14 +17,16 @@ type SelectAccountDrawerProps = {
 
 export const SelectAccountFlow = memo((props: SelectAccountDrawerProps) => {
   const { t } = useTranslation();
-  const [selectedAsset, setSelectedAsset] = useState<undefined | CryptoOrTokenCurrency>();
+  const [selectedAsset, setSelectedAsset] = useState<undefined | CryptoOrTokenCurrency>(() => {
+    if (props.currencies.length === 1) {
+      return props.currencies[0];
+    }
 
-  const onAssetSelected = useCallback((asset: CryptoOrTokenCurrency) => {
-    setSelectedAsset(asset);
-  }, []);
+    return undefined;
+  });
 
   if (!selectedAsset) {
-    return <SelectAssetFlow onAssetSelected={onAssetSelected} {...props} />;
+    return <SelectAssetFlow onAssetSelected={setSelectedAsset} {...props} />;
   }
 
   return (
@@ -34,6 +36,7 @@ export const SelectAccountFlow = memo((props: SelectAccountDrawerProps) => {
         navDirection={NavigationDirection.FORWARD}
         navKey={FlowStep.SELECT_ACCOUNT}
         onBackClick={() => setSelectedAsset(undefined)}
+        showBackButton={props.currencies.length > 1}
       />
       <SelectorContent>
         <AccountSelectionStep {...props} asset={selectedAsset} source="source" flow="flow" />
