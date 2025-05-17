@@ -105,6 +105,7 @@ export default function SubAccountsList({
           </>
         }
         containerProps={{ mb: 6 }}
+        testID="subAccounts-"
       />
     ),
     [isToken, hasSpecificTokenWording, family, subAccounts.length],
@@ -204,6 +205,7 @@ export default function SubAccountsList({
           onSubAccountLongPress={account => setAccount(account)}
           onSubAccountPress={onAccountPress}
           useCounterValue={useCounterValue}
+          testID={`subAccount-row-name-${item.token.ticker}`}
         />
       </Flex>
     ),

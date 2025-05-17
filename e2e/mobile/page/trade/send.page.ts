@@ -1,5 +1,6 @@
 import { expect } from "detox";
 import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export default class SendPage {
   baseLink = "send";
@@ -26,6 +27,8 @@ export default class SendPage {
   summaryWarning = () => getElementById("send-summary-warning");
   summaryContinueButton = () => getElementById("summary-continue-button");
   feeStrategy = (fee: string) => getElementByText(fee);
+  accountId = (account: Account) =>
+    `test-id-account-${account.accountName}${account.tokenType !== undefined ? ` (${account.currency.ticker})` : ""}`;
 
   @Step("Open send via deeplink")
   async openViaDeeplink() {
@@ -73,6 +76,18 @@ export default class SendPage {
     }
     const contBtn = getElementById(this.recipientContinueButtonId);
     await expect(contBtn).not.toBeVisible();
+  }
+
+  @Step("Expect recipient warning message")
+  async expectSendRecipientWarning(expectedWarningMessage: string | null) {
+    const errElem = getElementById(this.recipientErrorId);
+    if (expectedWarningMessage) {
+      await expect(errElem).toHaveText(expectedWarningMessage);
+    } else {
+      await expect(errElem).not.toBeVisible();
+    }
+    const contBtn = getElementById(this.recipientContinueButtonId);
+    await expect(contBtn).toBeVisible();
   }
 
   @Step("Expect recipient step success")
@@ -211,5 +226,13 @@ export default class SendPage {
       const feeBtn = this.feeStrategy(fee);
       await tapByElement(feeBtn);
     }
+  }
+
+  @Step("Select currency to debit")
+  async selectDebitCurrency(account: Account) {
+    await app.common.performSearch(account.currency.ticker);
+    const accountId = this.accountId(account);
+    await waitForElementById(accountId);
+    await tapById(accountId);
   }
 }

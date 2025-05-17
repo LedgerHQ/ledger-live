@@ -10,6 +10,7 @@ type OperationRowContainerProps = {
   account: AccountLike;
   multipleAccounts: boolean;
   isLast: boolean;
+  testID: string;
 };
 
 export function OperationRowContainer({
@@ -17,6 +18,7 @@ export function OperationRowContainer({
   account,
   multipleAccounts,
   isLast,
+  testID,
 }: Readonly<OperationRowContainerProps>) {
   const parentAccount = useSelector((state: State) => parentAccountSelector(state, { account }));
 
@@ -27,6 +29,7 @@ export function OperationRowContainer({
       account={account}
       multipleAccounts={multipleAccounts}
       isLast={isLast}
+      testID={testID}
     />
   );
 }

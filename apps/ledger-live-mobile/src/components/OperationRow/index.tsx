@@ -81,6 +81,7 @@ type Props = {
   multipleAccounts?: boolean;
   isLast: boolean;
   isSubOperation?: boolean;
+  testID?: string;
 };
 
 const placeholderProps = {
@@ -95,6 +96,7 @@ function OperationRow({
   isSubOperation,
   multipleAccounts,
   isLast,
+  testID,
 }: Props) {
   const navigation = useNavigation<BaseNavigation>();
 
@@ -190,7 +192,13 @@ function OperationRow({
       </Box>
       <Wrapper opacity={isOptimistic ? 0.5 : 1}>
         <BodyLeftContainer>
-          <Text variant="body" fontWeight="semiBold" color={colors.neutral.c100} numberOfLines={1}>
+          <Text
+            variant="body"
+            fontWeight="semiBold"
+            color={colors.neutral.c100}
+            numberOfLines={1}
+            testID={testID}
+          >
             {multipleAccounts ? accountName : text}
           </Text>
 
