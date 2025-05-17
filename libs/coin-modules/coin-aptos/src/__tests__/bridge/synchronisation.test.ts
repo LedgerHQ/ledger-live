@@ -41,12 +41,6 @@ let mockedAptosAPI: jest.Mocked<any>;
 jest.mock("@ledgerhq/coin-framework/bridge/jsHelpers");
 jest.mock("invariant", () => jest.fn());
 
-<<<<<<< HEAD
-jest.mock("../../network");
-let mockedAptosAPI: jest.Mocked<any>;
-
-=======
->>>>>>> develop
 jest.mock("../../bridge/logic");
 
 describe("getAccountShape", () => {

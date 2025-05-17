@@ -12,12 +12,9 @@ import {
 import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import { AptosAPI } from "../../network";
-<<<<<<< HEAD
 import { AptosAsset, AptosExtra, AptosSender } from "../../types/assets";
 import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
-=======
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
->>>>>>> develop
 
 jest.mock("@aptos-labs/ts-sdk");
 jest.mock("@apollo/client");
@@ -89,8 +86,6 @@ describe("Aptos API", () => {
     });
   });
 
-<<<<<<< HEAD
-=======
   describe("getBalance", () => {
     let token: TokenCurrency;
 
@@ -160,7 +155,6 @@ describe("Aptos API", () => {
     });
   });
 
->>>>>>> develop
   describe("getAccountInfo", () => {
     it("calls getCoinBalance, fetchTransactions and getHeight", async () => {
       mockedAptos.mockImplementation(() => ({
@@ -574,7 +568,6 @@ describe("Aptos API", () => {
       });
     });
   });
-<<<<<<< HEAD
 
   describe("estimateFees", () => {
     it("estimates the fees", async () => {
@@ -622,6 +615,4 @@ describe("Aptos API", () => {
       expect(fees.value.toString()).toEqual("40");
     });
   });
-=======
->>>>>>> develop
 });
