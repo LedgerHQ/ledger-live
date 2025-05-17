@@ -14,12 +14,12 @@ import {
   FirmwareNotRecognized,
   LockedDeviceError,
   UpdateYourApp,
+  LatestFirmwareVersionRequired,
   WrongDeviceForAccount,
   DisconnectedDevice,
 } from "@ledgerhq/errors";
 import {
   DeviceNotOnboarded,
-  LatestFirmwareVersionRequired,
   NoSuchAppOnProvider,
   TransactionRefusedOnDevice,
 } from "@ledgerhq/live-common/errors";
