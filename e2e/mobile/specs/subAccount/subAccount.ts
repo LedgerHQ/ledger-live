@@ -4,6 +4,7 @@ import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { getEnv } from "@ledgerhq/live-env";
 import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
+import invariant from "invariant";
 
 async function navigateToSubAccount(account: Account) {
   await app.account.openViaDeeplink();
@@ -21,10 +22,10 @@ async function checkOperationInfos(
   if (operationType) await app.operationDetails.checkTransactionType(operationType);
 }
 
-const beforeAllFunction = async (transaction: TransactionType) => {
+const beforeAllFunction_Set2Accounts = async (transaction: TransactionType) => {
   await app.init({
     userdata: "skip-onboarding",
-    speculosApp: transaction.accountToCredit.currency.speculosApp,
+    speculosApp: transaction.accountToDebit.currency.speculosApp,
     featureFlags: {
       llmAccountListUI: { enabled: true },
       llmNetworkBasedAddAccountFlow: { enabled: true },
@@ -52,11 +53,34 @@ const beforeAllFunction = async (transaction: TransactionType) => {
   await app.portfolio.waitForPortfolioPageToLoad();
 };
 
+const beforeAllFunction_Set1Account = async (transaction: TransactionType) => {
+  await app.init({
+    userdata: "skip-onboarding",
+    speculosApp: transaction.accountToDebit.currency.speculosApp,
+    featureFlags: {
+      llmAccountListUI: { enabled: true },
+      llmNetworkBasedAddAccountFlow: { enabled: true },
+    },
+    cliCommands: [
+      (userDataPath?: string) => {
+        return CLI.liveData({
+          currency: transaction.accountToDebit.currency.speculosApp.name,
+          index: transaction.accountToDebit.index,
+          appjson: userDataPath,
+          add: true,
+        });
+      },
+    ],
+  });
+
+  await app.portfolio.waitForPortfolioPageToLoad();
+};
+
 export async function runSendSPL(transaction: TransactionType, tmsLinks: string[]) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe("Send SPL tokens from 1 account to another", () => {
     beforeAll(async () => {
-      await beforeAllFunction(transaction);
+      await beforeAllFunction_Set2Accounts(transaction);
     });
     it(`Send from ${transaction.accountToDebit.accountName} Account to ${transaction.accountToCredit.accountName} Account - ${transaction.accountToDebit.currency.name} - E2E test`, async () => {
       const addressToCredit = transaction.accountToCredit.address;
@@ -89,6 +113,49 @@ export async function runSendSPL(transaction: TransactionType, tmsLinks: string[
         await app.account.selectAndClickOnLastOperation(TransactionStatus.RECEIVED);
         await checkOperationInfos(transaction);
       }
+    });
+  });
+}
+
+export async function runSendSPLAdressValid(
+  transaction: TransactionType,
+  expectedWarningMessage: string,
+  tmsLinks: string[],
+) {
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  describe("Send token - valid address input", () => {
+    beforeAll(async () => {
+      await beforeAllFunction_Set1Account(transaction);
+    });
+
+    it(`Send from ${transaction.accountToDebit.accountName} to ${transaction.accountToCredit.accountName} - ${transaction.accountToDebit.currency.name} - valid address input`, async () => {
+      await app.send.openViaDeeplink();
+      await app.send.selectDebitCurrency(transaction.accountToDebit);
+      const addressToCredit = transaction.accountToCredit.ataAddress as string;
+      await app.send.setRecipient(addressToCredit, transaction.memoTag);
+      await app.send.expectSendRecipientWarning(expectedWarningMessage);
+    });
+  });
+}
+
+export async function runSendSPLAddressInvalid(
+  transaction: TransactionType,
+  recipientContractAddress: string | undefined,
+  expectedErrorMessage: string,
+  tmsLinks: string[],
+) {
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  describe("Send token - invalid address input", () => {
+    beforeAll(async () => {
+      await beforeAllFunction_Set1Account(transaction);
+    });
+
+    it(`Send from ${transaction.accountToDebit.accountName} to ${transaction.accountToCredit.accountName} - ${transaction.accountToCredit.currency.name} - ${expectedErrorMessage}`, async () => {
+      await app.send.openViaDeeplink();
+      await app.send.selectDebitCurrency(transaction.accountToDebit);
+      invariant(recipientContractAddress, "Recipient address is not defined");
+      await app.send.setRecipient(recipientContractAddress, transaction.memoTag);
+      await app.send.expectSendRecipientError(expectedErrorMessage);
     });
   });
 }
