@@ -1,5 +1,11 @@
 # @ledgerhq/coin-aptos
 
+## 2.0.0-nightly.1
+
+### Major Changes
+
+- [#10144](https://github.com/LedgerHQ/ledger-live/pull/10144) [`20ccc74`](https://github.com/LedgerHQ/ledger-live/commit/20ccc74b61e67906071f4a264497e6a9feac5b53) Thanks [@pvoliveira](https://github.com/pvoliveira)! - add initial Alpaca API integration for Aptos
+
 ## 1.10.0-nightly.0
 
 ### Minor Changes

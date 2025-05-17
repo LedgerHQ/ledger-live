@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.114.0-nightly.2
+
+### Patch Changes
+
+- Updated dependencies [[`20ccc74`](https://github.com/LedgerHQ/ledger-live/commit/20ccc74b61e67906071f4a264497e6a9feac5b53)]:
+  - @ledgerhq/coin-aptos@2.0.0-nightly.1
+  - @ledgerhq/live-common@34.34.0-nightly.2
+  - @ledgerhq/live-dmk-desktop@0.3.5-nightly.2
+
 ## 2.114.0-nightly.1
 
 ### Minor Changes

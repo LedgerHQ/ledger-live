@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.79.0-nightly.2
+
+### Minor Changes
+
+- [#10179](https://github.com/LedgerHQ/ledger-live/pull/10179) [`4c48771`](https://github.com/LedgerHQ/ledger-live/commit/4c4877143743ba1d4cca380f50e8b4a2e88f3909) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a NFT entry that redirect to the 3rd party marketplace in EVM accounts
+
+- [#10248](https://github.com/LedgerHQ/ledger-live/pull/10248) [`668f528`](https://github.com/LedgerHQ/ledger-live/commit/668f528c9802326b0a2e19d696805a5f38e1fdc6) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Large Mover Deeplink
+
+- [#10241](https://github.com/LedgerHQ/ledger-live/pull/10241) [`4655744`](https://github.com/LedgerHQ/ledger-live/commit/4655744f65626feee7e99387792b87ddf6e891b7) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix track component so it triggers analytics depending on parent lifecycle
+
 ## 3.79.0-nightly.1
 
 ### Minor Changes
