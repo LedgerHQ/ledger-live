@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
-import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
 import buildSignOperation, { getAddress } from "../../bridge/signOperation";
 import { AptosSigner } from "../../types";
@@ -9,11 +9,13 @@ import { TokenAccount } from "@ledgerhq/types-live";
 import { faker } from "@faker-js/faker";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 
-jest.mock("../../api", () => {
+const generateTransaction = jest.fn(() => "tx");
+
+jest.mock("../../network/client", () => {
   return {
     AptosAPI: function () {
       return {
-        generateTransaction: jest.fn(() => "tx"),
+        generateTransaction,
       };
     },
   };
@@ -41,6 +43,7 @@ describe("buildSignOperation", () => {
   beforeEach(() => {
     mockedSignTransaction = jest.mocked(signTransaction);
   });
+
   afterEach(() => jest.clearAllMocks());
 
   it("should thrown an error", async () => {

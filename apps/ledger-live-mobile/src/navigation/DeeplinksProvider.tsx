@@ -262,6 +262,7 @@ const linkingOptions = () => ({
                *
                */
               [ScreenName.GenericLandingPage]: "landing-page",
+              [ScreenName.LargeMoverLandingPage]: "landing-page-large-mover",
             },
           },
 
