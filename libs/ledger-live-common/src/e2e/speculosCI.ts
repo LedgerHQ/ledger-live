@@ -1,4 +1,3 @@
-import { log } from "@ledgerhq/logs";
 import axios from "axios";
 import {
   conventionalAppSubpath,
@@ -12,7 +11,8 @@ const GIT_API_URL = "https://api.github.com/repos/LedgerHQ/actions/actions/";
 const START_WORKFLOW_ID = "workflows/161487603/dispatches";
 const STOP_WORKFLOW_ID = "workflows/161487604/dispatches";
 const GITHUB_REF = "qaa"; // TODO: use the correct ref for your workflow
-const getSpeculosAddress = (runId: string) => `https://${runId}.speculos.aws.stg.ldg-tech.com`;
+const getSpeculosAddress = (runId: string) => `https://speculos-${runId}.aws.stg.ldg-tech.com`;
+const speculosPort = 443;
 
 function uniqueId(): string {
   const timestamp = Date.now().toString(36);
@@ -56,7 +56,7 @@ async function githubApiRequest<T = unknown>({
     throw error;
   }
 }
-const waitForSpeculosReady = async (run_id: string, timeout = 300_000, interval = 5_000) => {
+const waitForSpeculosReady = async (runId: string, timeout = 300_000, interval = 5_000) => {
   const startTime = Date.now();
 
   while (Date.now() - startTime < timeout) {
@@ -65,8 +65,8 @@ const waitForSpeculosReady = async (run_id: string, timeout = 300_000, interval 
       urlSuffix: "artifacts",
     });
 
-    const match = data.artifacts.find(a => a.name === run_id);
-    if (match) return run_id;
+    const match = data.artifacts.find(a => a.name === runId);
+    if (match) return runId;
     await new Promise(resolve => setTimeout(resolve, interval));
   }
   throw new Error(`Timeout: Speculos not ready in ${timeout}ms`);
@@ -85,7 +85,7 @@ function createStartPayload(deviceParams: DeviceParams) {
       aws_role: AWS_ROLE,
       cluster: CLUSTER,
       seed: SEED,
-      run_id: uniqueId(),
+      run_id: runId,
       additional_args: [
         ...(dependency
           ? [
@@ -109,19 +109,20 @@ export async function createSpeculosDeviceCI(
   deviceParams: DeviceParams,
 ): Promise<SpeculosDevice | undefined> {
   try {
-    const data = createStartPayload(deviceParams);
+    const runId = uniqueId();
+    console.warn("Creating remote speculos:", runId);
+    const data = createStartPayload(deviceParams, runId);
     await githubApiRequest({ urlSuffix: START_WORKFLOW_ID, data });
-    const runId = await waitForSpeculosReady(data.inputs.run_id);
+    await waitForSpeculosReady(runId);
     process.env.SPECULOS_ADDRESS = getSpeculosAddress(runId);
 
     return {
       id: runId,
-      port: 443,
+      port: speculosPort,
     };
   } catch (e: unknown) {
     console.error(e);
-    log(
-      "engine",
+    console.warn(
       `Creating remote speculos ${deviceParams.appName}:${deviceParams.appVersion} failed with ${String(e)}`,
     );
   }
