@@ -18,12 +18,13 @@ import {
   PostRequestOptions,
   Block,
   AptosSettings,
+  MoveFunctionId,
 } from "@aptos-labs/ts-sdk";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import isUndefined from "lodash/isUndefined";
-import { APTOS_ASSET_ID } from "../constants";
+import { APTOS_ASSET_ID, DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "../constants";
 import { isTestnet } from "../bridge/logic";
 import type { AptosTransaction, TransactionOptions } from "../types";
 import { GetAccountTransactionsData, GetAccountTransactionsDataGt } from "./graphql/queries";
@@ -32,7 +33,8 @@ import {
   GetAccountTransactionsDataGtQueryVariables,
 } from "./graphql/types";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { BlockInfo } from "@ledgerhq/coin-framework/api/types";
+import { BlockInfo, FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { AptosAsset, AptosExtra, AptosFeeParameters, AptosSender } from "../types/assets";
 
 const getApiEndpoint = (currencyId: string) =>
   isTestnet(currencyId) ? getEnv("APTOS_TESTNET_API_ENDPOINT") : getEnv("APTOS_API_ENDPOINT");
@@ -200,6 +202,46 @@ export class AptosAPI {
     } catch (_) {
       return new BigNumber(0);
     }
+  }
+
+  async estimateFees(
+    transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender>,
+  ): Promise<FeeEstimation<AptosFeeParameters>> {
+    const publicKeyEd = new Ed25519PublicKey(transactionIntent.sender.xpub);
+    const fn: MoveFunctionId = "0x1::aptos_account::transfer_coins";
+
+    const txPayload: InputEntryFunctionData = {
+      function: fn,
+      typeArguments: [APTOS_ASSET_ID],
+      functionArguments: [transactionIntent.recipient, transactionIntent.amount],
+    };
+
+    const txOptions: TransactionOptions = {
+      maxGasAmount: DEFAULT_GAS.toString(),
+      gasUnitPrice: DEFAULT_GAS_PRICE.toString(),
+    };
+
+    const tx = await this.generateTransaction(
+      transactionIntent.sender.freshAddress,
+      txPayload,
+      txOptions,
+    );
+
+    const simulation = await this.simulateTransaction(publicKeyEd, tx);
+    const completedTx = simulation[0];
+
+    const gasLimit = new BigNumber(completedTx.gas_used).multipliedBy(ESTIMATE_GAS_MUL);
+    const gasPrice = new BigNumber(completedTx.gas_unit_price);
+
+    const expectedGas = gasPrice.multipliedBy(gasLimit);
+
+    return {
+      value: BigInt(expectedGas.toString()),
+      parameters: {
+        gasLimit: BigInt(gasLimit.toString()),
+        gasPrice: BigInt(gasPrice.toString()),
+      },
+    };
   }
 
   private async fetchTransactions(address: string, gt?: string) {

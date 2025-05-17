@@ -5,7 +5,8 @@ import BigNumber from "bignumber.js";
 import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
 import { AptosAPI } from "../network";
 import buildTransaction from "./buildTransaction";
-import { DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL, getTokenAccount } from "./logic";
+import { getTokenAccount } from "./logic";
+import { DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "../constants";
 import type { Transaction, TransactionErrors } from "../types";
 
 type IGetEstimatedGasReturnType = {
