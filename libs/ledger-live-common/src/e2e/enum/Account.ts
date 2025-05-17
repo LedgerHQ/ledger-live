@@ -606,7 +606,7 @@ export class Account {
 
   static readonly SOL_WIF_1 = new Account(
     Currency.SOL_WIF,
-    "Solana 2",
+    "Solana 1",
     "HxoKQ5eu5MkqaAw7DaGVermrJqeNH8XkVnEKEpFuS9id",
     0,
     TokenType.SPL,
