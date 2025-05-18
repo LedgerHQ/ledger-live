@@ -154,7 +154,7 @@ const envDefinitions = {
   },
   API_KASPA_ENDPOINT: {
     parser: stringParser,
-    def: "http://127.0.0.1:8000",
+    def: "https://api.kaspa.org",
     desc: "Kaspa API url",
   },
   API_STELLAR_HORIZON: {
