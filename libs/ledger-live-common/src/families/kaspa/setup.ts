@@ -5,7 +5,7 @@ import Kaspa from "@ledgerhq/hw-app-kaspa";
 import Transport from "@ledgerhq/hw-transport";
 import { createResolver, CreateSigner, executeWithSigner } from "../../bridge/setup";
 import type { Resolver } from "../../hw/getAddress/types";
-import { KaspaSigner } from "@ledgerhq/coin-kaspa/lib/signer";
+import { KaspaSigner } from "@ledgerhq/coin-kaspa/types/signer";
 import { KaspaAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-kaspa/types/bridge";
 import { createBridges } from "@ledgerhq/coin-kaspa/lib/bridge/index";
 import type { Bridge } from "@ledgerhq/types-live";
