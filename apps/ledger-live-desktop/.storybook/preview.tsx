@@ -1,5 +1,6 @@
 import React from "react";
 import type { Preview } from "@storybook/react";
+import { initialize, mswLoader } from "msw-storybook-addon";
 import "./__mocks__/_globals";
 import { palettes, StyleProvider } from "../../../libs/ui/packages/react/src/styles";
 import "../src/renderer/i18n/init";
@@ -20,7 +21,11 @@ import "../src/renderer/i18n/init";
 //   },
 // ];
 
+initialize();
+
 const preview: Preview = {
+  loaders: [mswLoader],
+
   parameters: {
     controls: {
       matchers: {
