@@ -447,6 +447,8 @@
     "incompatibility" : {
       "ton_title" : "Ledger Nano S™ не поддерживает обмен TON",
       "ton_description" : "Используйте другие совместимые устройства Ledger для обмена TON. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+      "ton_tokens_title" : "Ledger Nano S™ не поддерживает обмен токенов сети Ton",
+      "ton_tokens_description" : "Используйте другие совместимые устройства Ledger для обмена токенов сети Ton. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
       "spl_tokens_title" : "Ledger Nano S™ не поддерживает обмен токенов сети Solana",
       "spl_tokens_description" : "Используйте другие совместимые устройства Ledger для обмена токенов сети Solana. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
       "sui_tokens_title" : "Ledger Nano S™ не поддерживает обмен токенов сети Sui",
@@ -2071,7 +2073,6 @@
       "contactSupport" : "Связаться с Поддержкой",
       "deprecated" : "ОС устройства устарела и не может быть обновлена. Обратитесь в Поддержку Ledger для решения этого вопроса.",
       "prepareSeed" : "Запишите фразу восстановления из 24 слов на специальный лист. Убедитесь, что в случае необходимости к нему будет доступ.",
-      "prepareSeedRecover" : "Также используйте услугу Ledger Recover для сохранения доступа к криптокошельку, который всегда будет под рукой.",
       "disclaimerTitle" : "Вы собираетесь установить <1>прошивку версии {{version}}</1>.",
       "cancelUpdate" : "Отменить обновление",
       "continueUpdate" : "Продолжить",
@@ -6615,7 +6616,8 @@
       "title" : "выберите актив"
     },
     "selectAccount" : {
-      "title" : "выберите счёт"
+      "title" : "выберите счёт",
+      "addAccount" : "Добавить ещё один счёт"
     }
   },
   "customImage" : {
@@ -7045,6 +7047,14 @@
     "opted_out" : {
       "description" : "У Ledger Nano S ограниченный объём памяти, что не позволяет владельцам аппаратного кошелька использовать актуальные функции и изменения в блокчейне, а также наслаждаться улучшениями безопасности. Перейдите на новое устройство Ledger, и пользуйтесь им ещё долгие годы.",
       "cta" : "Подробнее..."
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "Поиск...",
+    "assetFlow" : {
+      "select" : "Выберите",
+      "network" : "сеть",
+      "asset" : "актив"
     }
   }
 }
