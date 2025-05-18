@@ -447,6 +447,8 @@
     "incompatibility" : {
       "ton_title" : "Die Ledger Nano S™ unterstützt das Swappen von Ton nicht",
       "ton_description" : "Zum Swappen von Ton kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
+      "ton_tokens_title" : "Die Ledger Nano S™ unterstützt das Swappen von Ton-Token nicht",
+      "ton_tokens_description" : "Zum Swappen von Ton-Token kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "spl_tokens_title" : "Die Ledger Nano S™ unterstützt das Swappen von Solana-Token nicht",
       "spl_tokens_description" : "Zum Swappen von Solana-Token kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
       "sui_tokens_title" : "Die Ledger Nano S™ unterstützt das Swappen von Sui-Token nicht",
@@ -2070,8 +2072,7 @@
       "latest" : "Firmware-Version {{version}} ist verfügbar",
       "contactSupport" : "Support kontaktieren",
       "deprecated" : "Die Version der Geräte-Firmware ist für ein Update zu alt. Kontaktiere den Ledger-Support für einen Ersatz.",
-      "prepareSeed" : "Vergewissere dich vorsichtshalber, dass deine geheime 24-Wort-Wiederherstellungsphrase auf dem Wiederherstellungszettel notiert ist und dir vorliegt.",
-      "prepareSeedRecover" : "Du solltest dir überlegen, Ledger Recover zu nutzen, um ein Backup für deinen Wallet-Zugang zu erhalten und sicherzustellen, dass du immer darauf zugreifen kannst.",
+      "prepareSeed" : "Vergewissere dich vorsichtshalber, dass deine 24-Wort-Wiederherstellungsphrase auf dem Wiederherstellungszettel notiert ist und dir vorliegt.",
       "disclaimerTitle" : "Du bist im Begriff, <1>Firmware-Version {{version}}</1> zu installieren.",
       "cancelUpdate" : "Betriebssystem-Update abbrechen",
       "continueUpdate" : "Betriebssystem-Update fortsetzen",
@@ -6615,7 +6616,8 @@
       "title" : "Vermögenswert auswählen"
     },
     "selectAccount" : {
-      "title" : "Konto auswählen"
+      "title" : "Konto auswählen",
+      "addAccount" : "Neues oder bestehendes Konto hinzufügen"
     }
   },
   "customImage" : {
@@ -7045,6 +7047,14 @@
     "opted_out" : {
       "description" : "Der begrenzte Speicher deiner Ledger Nano S schränkt deinen Zugang zu aktuellen Funktionen, Blockchain-Änderungen und Sicherheitsverbesserungen ein. Für die längerfristige Nutzung solltest du auf ein neueres Ledger-Gerät aufrüsten.",
       "cta" : "Weitere Informationen"
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "Suche",
+    "assetFlow" : {
+      "select" : "Auswählen",
+      "network" : "Netzwerk",
+      "asset" : "Asset"
     }
   }
 }
