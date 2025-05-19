@@ -51,6 +51,7 @@ export type Account = {
 
 export type Balance<AssetInfo extends Asset<TokenInfoCommon>> = {
   value: bigint;
+  locked?: bigint;
   asset: AssetInfo;
 };
 
