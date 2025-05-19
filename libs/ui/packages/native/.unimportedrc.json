@@ -75,6 +75,7 @@
     "use-sync-external-store/shim",
     "css-select",
     "css-tree",
+    "warn-once",
     "whatwg-fetch"
   ],
   "ignoreUnused": ["react", "react-dom", "react-native"]
