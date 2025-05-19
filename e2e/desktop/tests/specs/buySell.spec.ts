@@ -5,9 +5,9 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { CLI } from "../utils/cliUtils";
 
 const accounts = [
-  { account: Account.BTC_NATIVE_SEGWIT_1, xrayTicket: "B2CQA-3391" },
-  { account: Account.ETH_1, xrayTicket: "B2CQA-3392" },
-  { account: Account.ETH_USDT_1, xrayTicket: "B2CQA-3393" },
+  { account: Account.BTC_NATIVE_SEGWIT_1, xrayTicket: "B2CQA-3391, B2CQA-3412" },
+  { account: Account.ETH_1, xrayTicket: "B2CQA-3392, B2CQA-3413" },
+  { account: Account.ETH_USDT_1, xrayTicket: "B2CQA-3393, B2CQA-3414" },
 ];
 
 for (const account of accounts) {
@@ -28,7 +28,7 @@ for (const account of accounts) {
     });
 
     test(
-      `- Navigate to [${account.account.currency.name}] buy from asset page`,
+      `Navigate to [${account.account.currency.name}] buy from asset page`,
       {
         annotation: {
           type: "TMS",
@@ -48,19 +48,21 @@ for (const account of accounts) {
     );
 
     test(
-      `- Navigate to [${account.account.currency.name}] buy from market page`,
+      `Navigate to [${account.account.currency.name}] buy from market page`,
       {
         annotation: {
           type: "TMS",
           description: account.xrayTicket,
         },
       },
-      async ({ app }) => {
+      async ({ app, electronApp }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.layout.goToMarket();
         await app.market.search(account.account.currency.name);
         await app.market.openBuyPage(account.account.currency.ticker);
+        await app.layout.verifyBuySellSideBarIsSelected();
+        await app.buyAndSell.verifyBuySellScreen(electronApp);
       },
     );
   });
