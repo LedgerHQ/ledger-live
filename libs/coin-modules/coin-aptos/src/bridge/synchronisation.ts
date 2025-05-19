@@ -242,7 +242,10 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
     type: "Account",
     id: accountId,
     xpub,
-    balance: balance,
+    balance: balance
+      .plus(aptosResources.stakedBalance)
+      .plus(aptosResources.pendingBalance)
+      .plus(aptosResources.availableBalance),
     spendableBalance: balance,
     operations,
     operationsCount: operations.length,
