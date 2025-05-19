@@ -3932,8 +3932,9 @@
         "steps": {
           "amount": {
             "title": "Amount",
-            "subtitle": "The unstaking process takes <0>52 to 65 hours</0> to finalize.",
-            "warning": "Rewards will be immediately cashed in. The unstaked amount will be available for withdrawal after the <0>52 to 65 hour timelock</0>.",
+            "subtitle": "The unstaking process will take {{timeToUnlock}} to finalize.",
+            "subtitle2": "The unstaking process could take up to 30 days to finalize.",
+            "warning": "Rewards will be immediately cashed in. The unstaked amount will be available for withdrawal after the unlock time.",
             "fields": {
               "validator": "Validator",
               "amount": "Amount to unstake"

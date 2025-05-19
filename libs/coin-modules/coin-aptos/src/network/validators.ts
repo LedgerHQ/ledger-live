@@ -4,7 +4,7 @@ import { AptosAPI } from "../api";
 import { GetCurrentDelegatorBalancesData } from "../api/graphql/queries";
 import { CurrentDelegatorBalance, GetCurrentDelegatorBalancesQuery } from "../api/graphql/types";
 import { AptosValidator } from "../types";
-import { isTestnet } from "../bridge/logic";
+import { formatUnlockTime, isTestnet } from "../bridge/logic";
 import { APTOS_EXPLORER_ACCOUNT_URL } from "../constants";
 
 export async function getValidators(currencyId: string): Promise<AptosValidator[]> {
@@ -47,19 +47,4 @@ export async function getValidators(currencyId: string): Promise<AptosValidator[
   );
 
   return list.sort((a, b) => b.activeStake.toNumber() - a.activeStake.toNumber());
-}
-
-function formatUnlockTime(epochSecs: string): string {
-  const unlockTime = parseInt(epochSecs, 10) * 1000; // Convert to ms
-  const now = Date.now();
-  const diffMs = unlockTime - now;
-
-  if (diffMs <= 0) return "Unlocked";
-
-  const totalMinutes = Math.floor(diffMs / (1000 * 60));
-  const days = Math.floor(totalMinutes / (60 * 24));
-  const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
-  const minutes = totalMinutes % 60;
-
-  return `${days}d ${hours}h ${minutes}m`;
 }

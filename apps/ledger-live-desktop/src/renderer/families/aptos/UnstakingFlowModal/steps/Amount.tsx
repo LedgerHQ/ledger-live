@@ -12,6 +12,7 @@ import { ValidatorField, AmountField } from "../fields";
 import Text from "~/renderer/components/Text";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
+import { useAptosValidators } from "@ledgerhq/live-common/families/aptos/react";
 
 export default function StepAmount({
   account,
@@ -20,6 +21,10 @@ export default function StepAmount({
   status,
   error,
 }: StepProps) {
+  const { t } = useTranslation();
+
+  const validators = useAptosValidators(account.currency);
+
   const [staked, setStaked] = useState(transaction.amount);
   const bridge = getAccountBridge(account);
 
@@ -67,7 +72,9 @@ export default function StepAmount({
   }, [transaction]);
 
   const amount = useMemo(() => (validator ? validator.amount : new BigNumber(0)), [validator]);
-  // const notEnoughFundsError = status.errors?.amount instanceof NotEnoughBalance;
+
+  const validatorData = validators.find(v => v.address === validator.validatorAddress);
+  const nextUnlockTime = validatorData?.nextUnlockTime || undefined;
 
   return (
     <Box flow={1}>
@@ -81,9 +88,15 @@ export default function StepAmount({
       {error && <ErrorBanner error={error} />}
       <Box horizontal justifyContent="center" mb={2}>
         <Text ff="Inter|Medium" fontSize={4}>
-          <Trans i18nKey="aptos.unstake.flow.steps.amount.subtitle">
-            <b></b>
-          </Trans>
+          {nextUnlockTime ? (
+            <Trans
+              i18nKey={t("aptos.unstake.flow.steps.amount.subtitle", {
+                timeToUnlock: nextUnlockTime,
+              })}
+            />
+          ) : (
+            <Trans i18nKey="aptos.unstake.flow.steps.amount.subtitle2" />
+          )}
         </Text>
       </Box>
       <ValidatorField account={account} transaction={transaction} onChange={onChangeValidator} />

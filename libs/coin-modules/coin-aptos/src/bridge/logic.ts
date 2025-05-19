@@ -514,3 +514,18 @@ export const getMaxUnstakableAmount = (
 
   return maxAmount;
 };
+
+export const formatUnlockTime = (epochSecs: string): string => {
+  const unlockTime = parseInt(epochSecs, 10) * 1000; // Convert to ms
+  const now = Date.now();
+  const diffMs = unlockTime - now;
+
+  if (diffMs <= 0) return "Unlocked";
+
+  const totalMinutes = Math.floor(diffMs / (1000 * 60));
+  const days = Math.floor(totalMinutes / (60 * 24));
+  const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
+  const minutes = totalMinutes % 60;
+
+  return `${days}d ${hours}h ${minutes}m`;
+};
