@@ -447,6 +447,8 @@
     "incompatibility" : {
       "ton_title" : "Ledger Nano S™는 Ton 스왑을 지원하지 않습니다",
       "ton_description" : "Ton을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+      "ton_tokens_title" : "Ledger Nano S™는 Ton 토큰 스왑을 지원하지 않습니다.",
+      "ton_tokens_description" : "Ton 토큰을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
       "spl_tokens_title" : "Ledger Nano S™는 솔라나 토큰 스왑을 지원하지 않습니다.",
       "spl_tokens_description" : "솔라노 토큰을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
       "sui_tokens_title" : "Ledger Nano S™는 Sui 토큰 스왑을 지원하지 않습니다.",
@@ -2394,7 +2396,8 @@
         "suggested" : "추천",
         "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
-        "nftQuantity" : "수량"
+        "nftQuantity" : "수량",
+        "splExtensionsWarning" : "현재 사용 중인 토큰은 토큰 확장 프로그램(Token Extensions)으로도 알려진 토큰-2022 프로그램의 일부입니다. 이 토큰은 몇 가지 리스크가 수반됩니다. <0>여기</0>를 클릭하여 자세히 알아보세요."
       },
       "verification" : {
         "streaming" : {
@@ -3769,7 +3772,7 @@
       "frozenStateWarning" : "계정 자산이 동결되었습니다!",
       "transferWarning" : "Ledger Nano S™를 사용해 솔라나 토큰의 수령인 주소를 확인하려면 <0>다음 지침을 따르세요.</0>",
       "transferFees" : {
-        "feesPercentHint" : "토큰에는 {{feePercent}}%({{feeBps}}bps)의 전송 수수료가 부과됩니다. 최대 {{maxFee}}",
+        "feesHint" : "토큰 이체 수수료: {{transferFee}}",
         "notice" : "전송 수수료 {{fee}}%",
         "tooltipHint" : "토큰 생성자의 전송 보류 비율",
         "transferFeesLabel" : "전송 수수료"
@@ -5871,6 +5874,10 @@
       "title" : "죄송하지만 자금이 부족합니다",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "죄송하지만, 수수료를 충당할 자금이 부족합니다",
+      "description" : "계정에 자금이 충분한지 확인해 주세요."
+    },
     "NotEnoughBalanceSwap" : {
       "title" : "죄송합니다. 네트워크 수수료를 포함한 잔액이 부족합니다. 금액을 조정하거나 잔액을 확인하세요",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
@@ -6615,7 +6622,8 @@
       "title" : "자산 선택"
     },
     "selectAccount" : {
-      "title" : "계정 선택"
+      "title" : "계정 선택",
+      "addAccount" : "기존 계정이나 신규 계정 추가"
     }
   },
   "customImage" : {
@@ -7045,6 +7053,21 @@
     "opted_out" : {
       "description" : "Ledger Nano S의 제한된 메모리로 인해 최신 기능, 블록체인 변경 사항 및 보안 업데이트에 대한 액세스가 제한됩니다. 장기적으로 사용하려면 최신 Ledger 장치로 업그레이드하세요.",
       "cta" : "자세히 알아보기"
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "검색",
+    "assetFlow" : {
+      "selectTemplate" : "{{dynamic}} 선택",
+      "asset" : "자산",
+      "network" : "네트워크"
+    }
+  },
+  "nftEntryPoint" : {
+    "title" : "NFT(대체 불가능 토큰)",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
     }
   }
 }
