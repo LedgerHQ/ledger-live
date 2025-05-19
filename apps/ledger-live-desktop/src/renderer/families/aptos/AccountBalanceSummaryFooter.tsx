@@ -92,45 +92,51 @@ const AccountBalanceSummaryFooter: AptosFamily["AccountBalanceSummaryFooter"] = 
           <Discreet>{spendableBalance}</Discreet>
         </AmountValue>
       </BalanceDetail>
-      <BalanceDetail>
-        <ToolTip content={<Trans i18nKey="aptos.account.stakedBalanceTooltip" />}>
-          <TitleWrapper>
-            <Title>
-              <Trans i18nKey="aptos.account.stakedBalance" />
-            </Title>
-            <InfoCircle size={13} />
-          </TitleWrapper>
-        </ToolTip>
-        <AmountValue>
-          <Discreet>{stakedBalance}</Discreet>
-        </AmountValue>
-      </BalanceDetail>
-      <BalanceDetail>
-        <ToolTip content={<Trans i18nKey="aptos.account.pendingBalanceTooltip" />}>
-          <TitleWrapper>
-            <Title>
-              <Trans i18nKey="aptos.account.pendingBalance" />
-            </Title>
-            <InfoCircle size={13} />
-          </TitleWrapper>
-        </ToolTip>
-        <AmountValue>
-          <Discreet>{pendingBalance}</Discreet>
-        </AmountValue>
-      </BalanceDetail>
-      <BalanceDetail>
-        <ToolTip content={<Trans i18nKey="aptos.account.withdrawableBalanceTooltip" />}>
-          <TitleWrapper>
-            <Title>
-              <Trans i18nKey="aptos.account.withdrawableBalance" />
-            </Title>
-            <InfoCircle size={13} />
-          </TitleWrapper>
-        </ToolTip>
-        <AmountValue>
-          <Discreet>{availableBalance}</Discreet>
-        </AmountValue>
-      </BalanceDetail>
+      {_stakedBalance.gt(0) && (
+        <BalanceDetail>
+          <ToolTip content={<Trans i18nKey="aptos.account.stakedBalanceTooltip" />}>
+            <TitleWrapper>
+              <Title>
+                <Trans i18nKey="aptos.account.stakedBalance" />
+              </Title>
+              <InfoCircle size={13} />
+            </TitleWrapper>
+          </ToolTip>
+          <AmountValue>
+            <Discreet>{stakedBalance}</Discreet>
+          </AmountValue>
+        </BalanceDetail>
+      )}
+      {_pendingBalance.gt(0) && (
+        <BalanceDetail>
+          <ToolTip content={<Trans i18nKey="aptos.account.pendingBalanceTooltip" />}>
+            <TitleWrapper>
+              <Title>
+                <Trans i18nKey="aptos.account.pendingBalance" />
+              </Title>
+              <InfoCircle size={13} />
+            </TitleWrapper>
+          </ToolTip>
+          <AmountValue>
+            <Discreet>{pendingBalance}</Discreet>
+          </AmountValue>
+        </BalanceDetail>
+      )}
+      {_availableBalance.gt(0) && (
+        <BalanceDetail>
+          <ToolTip content={<Trans i18nKey="aptos.account.withdrawableBalanceTooltip" />}>
+            <TitleWrapper>
+              <Title>
+                <Trans i18nKey="aptos.account.withdrawableBalance" />
+              </Title>
+              <InfoCircle size={13} />
+            </TitleWrapper>
+          </ToolTip>
+          <AmountValue>
+            <Discreet>{availableBalance}</Discreet>
+          </AmountValue>
+        </BalanceDetail>
+      )}
     </Wrapper>
   );
 };
