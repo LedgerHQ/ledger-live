@@ -27,6 +27,7 @@ import { SettingsModal } from "./modal/settings.modal";
 import { OperationDrawer } from "./drawer/operation.drawer";
 import { LiveApp } from "./liveApp.page";
 import { OnboardingPage } from "./onboarding.page";
+import { BuyAndSellPage } from "./buyAndSell.page";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
@@ -57,4 +58,5 @@ export class Application extends PageHolder {
   public onboarding = new OnboardingPage(this.page);
   public operationDrawer = new OperationDrawer(this.page);
   public liveApp = new LiveApp(this.page);
+  public buyAndSell = new BuyAndSellPage(this.page);
 }
