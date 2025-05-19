@@ -2,6 +2,7 @@ import { AccountBridge } from "@ledgerhq/types-live";
 import { makeSync } from "../jsHelpers";
 import { genericGetAccountShape } from "./getAccountShape";
 import {
+  getSerializedAddressParameters,
   makeAccountBridgeReceive,
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
@@ -26,5 +27,6 @@ export function getAlpacaAccountBridge(network: string, kind: string): AccountBr
     estimateMaxSpendable: genericEstimateMaxSpendable(network, kind),
     broadcast: genericBroadcast(network, kind),
     signOperation: genericSignOperation(network, kind)(signer.context),
+    getSerializedAddressParameters, // NOTE: check weither should be exposed by coin-xrp api instead?
   } satisfies Partial<AccountBridge<any>> as AccountBridge<any>;
 }
