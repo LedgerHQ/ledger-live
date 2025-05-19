@@ -513,6 +513,10 @@
       "title" : "Entschuldigung, Guthaben reicht nicht aus",
       "description" : "Bitte stellen Sie sicher, dass das Konto ausreichend gedeckt ist."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "Leider reicht das Guthaben zur Deckung der Gebühren nicht aus",
+      "description" : "Bitte vergewissere dich, dass das Konto über ausreichende Deckung verfügt."
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Dein verfügbares (nicht gestaketes) Guthaben beläuft sich derzeit auf {{currentBalance}}. Dies reicht nicht aus, um die Netzwerkgebühren für das Beenden des Stakings deiner {{assetName}} zu bezahlen. ",
       "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} auf deinem Konto.",
@@ -3845,6 +3849,9 @@
         }
       }
     },
+    "spl2022" : {
+      "splExtensionsWarning" : "Du interagierst mit einem Token, das Teil des Token-2022-Programms ist (auch bekannt unter der Bezeichnung „Token Extensions“). Dieses Token birgt gewisse Risiken. <0>Klicke hier</0>, um mehr zu erfahren."
+    },
     "amount" : {
       "available" : "Insgesamt verfügbar",
       "useMax" : "Max. verwenden",
@@ -6082,6 +6089,7 @@
       "transferFees" : {
         "title" : "Überweisungsgebühren",
         "feesPercentHint" : "Für das Token fällt eine Übertragungsgebühr in Höhe von {{feePercent}} % ({{feeBps}} bps) an (max. {{maxFee}})",
+        "feesHint" : "Tokenübertragungsgebühr: {{transferFee}}",
         "notice" : "Überweisungsgebühr {{fee}} %",
         "tooltipHint" : "Prozentualer Anteil der Überweisung, der für den Tokenersteller einbehalten wird"
       },
@@ -7419,6 +7427,14 @@
     },
     "performance" : "Performance",
     "low" : "Niedrig",
-    "high" : "Hoch"
+    "high" : "Hoch",
+    "title" : "Marktbewegungen"
+  },
+  "nftEntryPoint" : {
+    "title" : "Deine NFTs",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
+    }
   }
 }
