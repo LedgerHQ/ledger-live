@@ -447,6 +447,8 @@
     "incompatibility" : {
       "ton_title" : "Ledger Nano S™ не поддерживает обмен TON",
       "ton_description" : "Используйте другие совместимые устройства Ledger для обмена TON. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+      "ton_tokens_title" : "Ledger Nano S™ не поддерживает обмен токенов сети Ton",
+      "ton_tokens_description" : "Используйте другие совместимые устройства Ledger для обмена токенов сети Ton. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
       "spl_tokens_title" : "Ledger Nano S™ не поддерживает обмен токенов сети Solana",
       "spl_tokens_description" : "Используйте другие совместимые устройства Ledger для обмена токенов сети Solana. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
       "sui_tokens_title" : "Ledger Nano S™ не поддерживает обмен токенов сети Sui",
@@ -2394,7 +2396,8 @@
         "suggested" : "Рекомендовано",
         "unitVByte" : "{{unit}}/вБайт",
         "nft" : "NFT",
-        "nftQuantity" : "Количество"
+        "nftQuantity" : "Количество",
+        "splExtensionsWarning" : "Вы взаимодействуете с токеном, который является составляющей программы Token-2022 или «Расширения токенов». Это несёт определённые риски. <0>Нажмите здесь</0> для подробностей."
       },
       "verification" : {
         "streaming" : {
@@ -3769,7 +3772,7 @@
       "frozenStateWarning" : "Активы на счету заморожены",
       "transferWarning" : "<0>Используйте это руководство</0>, чтобы подтвердить адрес получения токенов Solana с помощью Ledger Nano S™.",
       "transferFees" : {
-        "feesPercentHint" : "Комиссия за перевод этого токена составляет {{feePercent}}% ({{feeBps}} bps). Она не превысит {{maxFee}}.",
+        "feesHint" : "Комиссия за перевод токена: {{transferFee}}",
         "notice" : "Комиссия за перевод — {{fee}}%",
         "tooltipHint" : "Процент от суммы перевода, который получает создатель токена",
         "transferFeesLabel" : "Комиссии за перевод"
@@ -5871,6 +5874,10 @@
       "title" : "Кажется, у вас недостаточно средств",
       "description" : "Пожалуйста, убедитесь, что на счёте достаточно средств."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "Кажется, у вас недостаточно средств для покрытия комиссии",
+      "description" : "Пожалуйста, убедитесь, что на счёте достаточно средств."
+    },
     "NotEnoughBalanceSwap" : {
       "title" : "Недостаточный баланс с учётом комиссий сети. Измените сумму или пополните счёт.",
       "description" : "Пожалуйста, убедитесь, что на счёте достаточно средств."
@@ -6615,7 +6622,8 @@
       "title" : "выберите актив"
     },
     "selectAccount" : {
-      "title" : "выберите счёт"
+      "title" : "выберите счёт",
+      "addAccount" : "Добавить ещё один счёт"
     }
   },
   "customImage" : {
@@ -7045,6 +7053,21 @@
     "opted_out" : {
       "description" : "У Ledger Nano S ограниченный объём памяти, что не позволяет владельцам аппаратного кошелька использовать актуальные функции и изменения в блокчейне, а также наслаждаться улучшениями безопасности. Перейдите на новое устройство Ledger, и пользуйтесь им ещё долгие годы.",
       "cta" : "Подробнее..."
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "Поиск...",
+    "assetFlow" : {
+      "selectTemplate" : "Выберите {{dynamic}}",
+      "asset" : "актив",
+      "network" : "сеть"
+    }
+  },
+  "nftEntryPoint" : {
+    "title" : "NFT (невзаимозаменяемые токены)",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
     }
   }
 }
