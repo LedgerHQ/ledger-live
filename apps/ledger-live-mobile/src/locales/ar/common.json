@@ -513,6 +513,10 @@
       "title" : "عفواً، الأموال المتوفرة غير كافية",
       "description" : "يرجى التأكد من أن الحساب به أموال كافية."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "عذراً، الأموال غير كافية لتغطية الرسوم",
+      "description" : "يرجى التأكد من أن الحساب به أموال كافية."
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "رصيدك المتاح (غير المُكدّس) هو حالياً {{currentBalance}} وهو غير كافٍ لدفع رسوم الشبكة لإلغاء تكديس {{assetName}} خاصتك. ",
       "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} في حسابك.",
@@ -3845,6 +3849,9 @@
         }
       }
     },
+    "spl2022" : {
+      "splExtensionsWarning" : "أنت تتفاعل مع رمز توكن يشكل جزءاً من برنامج Token-2022، المعروف أيضاً باسم Token Extensions (ملحقات رموز التوكن). رمز التوكن هذا يأتي مع مخاطر محددة. <0>انقر هنا</0> لمعرفة المزيد."
+    },
     "amount" : {
       "available" : "إجمالي المتاح",
       "useMax" : "استخدم الحد الأقصى",
@@ -6082,6 +6089,7 @@
       "transferFees" : {
         "title" : "رسوم التحويل",
         "feesPercentHint" : "رمز التوكن عليه رسوم تحويل %{{feePercent}} ({{feeBps}} نقطة أساس) ({{maxFee}} بحد أقصى)",
+        "feesHint" : "رسوم تحويل رمز التوكن: {{transferFee}}",
         "notice" : "رسوم التحويل %{{fee}}",
         "tooltipHint" : "النسبة المئوية من التحويل المحتجزة من أجل منشئ رمز التوكن"
       },
@@ -7419,6 +7427,14 @@
     },
     "performance" : "الأداء",
     "low" : "منخفض",
-    "high" : "مرتفع"
+    "high" : "مرتفع",
+    "title" : "تحركات السوق"
+  },
+  "nftEntryPoint" : {
+    "title" : "Your NFTs",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
+    }
   }
 }
