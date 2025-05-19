@@ -513,6 +513,10 @@
       "title" : "抱歉，资金不足",
       "description" : "请确保该账户资金充足。"
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "抱歉，资金不够支付费用",
+      "description" : "请确保该账户资金充足。"
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "您目前的可用（非质押）余额为 {{currentBalance}}，不足以支付解除质押 {{assetName}} 的网络费用。 ",
       "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} 到您的账户",
@@ -3845,6 +3849,9 @@
         }
       }
     },
+    "spl2022" : {
+      "splExtensionsWarning" : "您正在交互的代币属于 Token-2022 程序（亦称代币扩展程序）。该代币具有特定风险。<0>点击此处</0>了解详情。"
+    },
     "amount" : {
       "available" : "可用总额",
       "useMax" : "使用最大值",
@@ -6082,6 +6089,7 @@
       "transferFees" : {
         "title" : "转账费用",
         "feesPercentHint" : "代币转账费用为 {{feePercent}}%（{{feeBps}} 个基点）（最高为 {{maxFee}}）",
+        "feesHint" : "代币转账费用：{{transferFee}}",
         "notice" : "转账费用 {{fee}}%",
         "tooltipHint" : "归属代币创建者的转账百分比"
       },
@@ -7419,6 +7427,14 @@
     },
     "performance" : "表现",
     "low" : "低",
-    "high" : "高"
+    "high" : "高",
+    "title" : "市场走势"
+  },
+  "nftEntryPoint" : {
+    "title" : "您的 NFT",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
+    }
   }
 }
