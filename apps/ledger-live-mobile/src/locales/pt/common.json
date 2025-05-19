@@ -513,6 +513,10 @@
       "title" : "Fundos Insuficientes",
       "description" : "Certifique-se de que a conta tem fundos suficientes."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "Fundos insuficientes para cobrir as taxas",
+      "description" : "Certifique-se de que a conta tenha fundos suficientes."
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Atualmente, seu saldo (fora de staking) disponível é de {{currentBalance}}, que é insuficiente para pagar as taxas de rede necessárias para desaplicar {{assetName}}. ",
       "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} em sua conta.",
@@ -3845,6 +3849,9 @@
         }
       }
     },
+    "spl2022" : {
+      "splExtensionsWarning" : "Você está interagindo com um token que faz parte do programa Token-2022, também conhecido como Token Extensions. Este token tem riscos específicos. <0>Clique aqui</0> para saber mais."
+    },
     "amount" : {
       "available" : "Total Disponível",
       "useMax" : "Usar o máximo",
@@ -6082,6 +6089,7 @@
       "transferFees" : {
         "title" : "Taxas de transferência",
         "feesPercentHint" : "O token tem {{feePercent}}% de taxa de transferência ({{feeBps}}bps) ({{maxFee}} máximo)",
+        "feesHint" : "Taxa de transferência do token: {{transferFee}}",
         "notice" : "Taxa de transferência {{fee}}%",
         "tooltipHint" : "Porcentagem da transferência retida para o criador do token"
       },
@@ -7138,9 +7146,9 @@
     },
     "activation" : {
       "screen" : {
-        "title" : "Ativar o Ledger Sync para esse telefone?",
-        "description" : "Isso sincroniza automaticamente suas contas cripto em todos os seus telefones e computadores, mesmo ao fazer uma transição para um novo dispositivo.",
-        "mainCta" : "Ative o Ledger Sync",
+        "title" : "Ativar o Ledger Sync neste smartphone?",
+        "description" : "Isso vai sincronizar suas contas cripto automaticamente por todos os seus smartphones e computadores, mesmo ao trocar de dispositivo.",
+        "mainCta" : "Ativar o Ledger Sync",
         "secondCta" : "Já ativei",
         "learnMore" : "Como o Ledger Sync funciona?"
       }
@@ -7284,7 +7292,7 @@
         "unbacked" : {
           "title" : "Sincronização não detectada",
           "description" : "Ative o Ledger Sync nesse Ledger Live ou no qual você está sincronizando.",
-          "cta" : "Ative o Ledger Sync"
+          "cta" : "Ativar o Ledger Sync"
         },
         "unbackedOnboarding" : {
           "title" : "Sincronização não detectada",
@@ -7419,6 +7427,14 @@
     },
     "performance" : "Desempenho",
     "low" : "Baixo",
-    "high" : "Alto"
+    "high" : "Alto",
+    "title" : "Movimentações de Mercado"
+  },
+  "nftEntryPoint" : {
+    "title" : "Seus NFTs",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
+    }
   }
 }
