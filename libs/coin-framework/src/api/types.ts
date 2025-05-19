@@ -1,4 +1,5 @@
 import { Unit } from "@ledgerhq/types-cryptoassets";
+import { TransactionCommon } from "@ledgerhq/types-live";
 
 export type BlockInfo = {
   height: number;
@@ -88,6 +89,11 @@ export type FeeEstimation<FeeParameters extends Record<string, bigint> = never> 
 //       limit is unused for now
 //       see design document at https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/5446205788/coin-modules+lama-adapter+APIs+refinements
 export type Pagination = { minHeight: number };
+
+export type PreSignOperationHook = (opts: {
+  transaction: TransactionCommon;
+}) => Promise<void> | void;
+
 export type Api<
   AssetInfo extends Asset<TokenInfoCommon>,
   TxExtra = Record<string, unknown>,
@@ -112,4 +118,5 @@ export type Api<
     address: string,
     pagination: Pagination,
   ) => Promise<[Operation<AssetInfo>[], string]>;
+  preSignOperationHook?: PreSignOperationHook;
 };

@@ -28,6 +28,11 @@ export const genericSignOperation =
     deviceId: DeviceId;
   }): Observable<SignOperationEvent> =>
     new Observable(o => {
+      const alpacaApi = getAlpacaApi(network, kind);
+      if (alpacaApi.preSignOperationHook) {
+        alpacaApi.preSignOperationHook({ transaction });
+      }
+
       async function main() {
         if (!transaction["fees"]) throw new FeeNotLoaded();
         o.next({ type: "device-signature-requested" });
