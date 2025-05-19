@@ -51,6 +51,7 @@ export type ConnectAppRequest = {
   requireLatestFirmware?: boolean;
   outdatedApp?: AppAndVersion;
   deviceModelId?: DeviceModelId;
+  mightHaveOutdatedApp?: boolean;
   allowPartialDependencies: boolean;
 };
 
@@ -117,6 +118,9 @@ export type ConnectAppEvent =
   | {
       type: "has-outdated-app";
       outdatedApp: AppAndVersion;
+    }
+  | {
+      type: "might-have-outdated-app";
     }
   | {
       type: "set-device-model-id";
@@ -290,6 +294,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
     requireLatestFirmware,
     outdatedApp,
     deviceModelId,
+    mightHaveOutdatedApp,
     allowPartialDependencies = false,
   } = request;
   return withDevice(deviceId)(
@@ -352,6 +357,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                               appName,
                               dependencies,
                               allowPartialDependencies,
+                              mightHaveOutdatedApp,
                               // requireLatestFirmware // Resolved!.
                             });
                           } else {
@@ -381,6 +387,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                       return innerSub({
                         appName,
                         allowPartialDependencies,
+                        mightHaveOutdatedApp,
                         // dependencies // Resolved!
                       });
                     },
@@ -414,18 +421,12 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                 return openAppFromDashboard(transport, appName);
               }
 
-              let appMightNeedUpgrade = hasDeviceConfigForApp(appAndVersion.name);
+              const appMightNeedUpgrade = hasDeviceConfigForApp(appAndVersion.name);
               if (!deviceModelId && appMightNeedUpgrade) {
-                return from(getDeviceInfo(transport)).pipe(
-                  mergeMap((deviceInfo: DeviceInfo) => {
-                    const e: ConnectAppEvent = {
-                      type: "set-device-model-id",
-                      deviceModelId: identifyTargetId(Number(deviceInfo.targetId))?.id,
-                    };
-
-                    return of(e);
-                  }),
-                );
+                // quit app to get the deviceModelId and get the proper min app version.
+                o.next({
+                  type: "might-have-outdated-app",
+                });
               }
 
               const appNeedsUpgrade = mustUpgrade(
@@ -439,8 +440,6 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                   type: "has-outdated-app",
                   outdatedApp: appAndVersion,
                 });
-              } else {
-                appMightNeedUpgrade = false;
               }
 
               // need dashboard to check firmware, install dependencies, or verify app update
@@ -449,7 +448,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                 requireLatestFirmware ||
                 appAndVersion.name !== appName ||
                 appNeedsUpgrade ||
-                appMightNeedUpgrade
+                (appMightNeedUpgrade && !deviceModelId)
               ) {
                 return attemptToQuitApp(transport, appAndVersion as AppAndVersion);
               }
@@ -512,6 +511,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
           dependencies,
           requireLatestFirmware,
           allowPartialDependencies,
+          mightHaveOutdatedApp,
         }).subscribe(o);
 
         return () => {

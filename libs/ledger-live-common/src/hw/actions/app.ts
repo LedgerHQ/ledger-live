@@ -457,6 +457,7 @@ export const createAction = (
     const firmwareResolvedRef = useRef(false);
     const outdatedAppRef = useRef<AppAndVersion>();
     const deviceModelIdRef = useRef<DeviceModelId>();
+    const mightHaveOutdatedAppRef = useRef(false);
 
     const request = useMemo(
       () => inferCommandParams(appRequest), // for now i don't have better
@@ -482,6 +483,7 @@ export const createAction = (
             requireLatestFirmware: firmwareResolvedRef.current ? undefined : requireLatestFirmware,
             outdatedApp: outdatedAppRef.current,
             deviceModelId: deviceModelIdRef.current,
+            mightHaveOutdatedApp: mightHaveOutdatedAppRef.current,
           },
         }).pipe(
           tap(e => {
@@ -492,6 +494,8 @@ export const createAction = (
               firmwareResolvedRef.current = true;
             } else if (e.type === "has-outdated-app") {
               outdatedAppRef.current = e.outdatedApp as AppAndVersion;
+            } else if (e.type === "might-have-outdated-app") {
+              mightHaveOutdatedAppRef.current = true;
             } else if (e.type === "set-device-model-id") {
               deviceModelIdRef.current = e.deviceModelId;
             }
