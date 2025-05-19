@@ -27,7 +27,7 @@ for (const account of accounts) {
       ],
     });
 
-    test.only(
+    test(
       `- Navigate to [${account.account.currency.name}] buy from asset page`,
       {
         annotation: {
@@ -42,6 +42,23 @@ for (const account of accounts) {
         await app.portfolio.checkBuySellButtonVisibility();
         await app.portfolio.navigateToAsset(account.account.currency.name);
         await app.assetPage.startBuyFlow();
+      },
+    );
+
+    test(
+      `- Navigate to [${account.account.currency.name}] buy from market page`,
+      {
+        annotation: {
+          type: "TMS",
+          description: account.xrayTicket,
+        },
+      },
+      async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+        await app.layout.goToMarket();
+        await app.market.search(account.account.currency.name);
+        await app.market.openBuyPage(account.account.currency.ticker);
       },
     );
   });
