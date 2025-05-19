@@ -513,6 +513,10 @@
       "title" : "資金が不足しています。",
       "description" : "アカウントに十分な資金があることを確認してください。"
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "申し訳ございませんが、手数料のための資金が不足しています",
+      "description" : "アカウントに十分な資金があることを確認してください。"
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "現在利用可能な（ステーキングされていない）残高は{{currentBalance}}ですが、これは{{assetName}}のステーキングを解除するためのネットワーク手数料を支払うには不十分です。 ",
       "oneCta" : "アカウントに{{assetName}}を<cta1>{{cta1Label}}</cta1>してください。",
@@ -3845,6 +3849,9 @@
         }
       }
     },
+    "spl2022" : {
+      "splExtensionsWarning" : "お客様は、トークン拡張としても知られる、Token-2022プログラムの一部であるトークンを扱おうとしています。このトークンには特定のリスクが伴います。詳しくは<0>こちら</0>。"
+    },
     "amount" : {
       "available" : "合計利用可能額",
       "useMax" : "全額を選択",
@@ -6082,6 +6089,7 @@
       "transferFees" : {
         "title" : "転送手数料",
         "feesPercentHint" : "トークンには{{feePercent}}%（{{feeBps}}bps）の転送手数料がかかります（最大{{maxFee}}）",
+        "feesHint" : "トークン転送手数料：{{transferFee}}",
         "notice" : "転送手数料{{fee}}%",
         "tooltipHint" : "トークン作成者のために保留された転送の割合"
       },
@@ -7419,6 +7427,14 @@
     },
     "performance" : "パフォーマンス",
     "low" : "低速",
-    "high" : "高速"
+    "high" : "高速",
+    "title" : "市場の動向"
+  },
+  "nftEntryPoint" : {
+    "title" : "所有するNFT",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
+    }
   }
 }
