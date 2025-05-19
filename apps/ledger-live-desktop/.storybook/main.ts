@@ -1,4 +1,3 @@
-import path from "path";
 import type { StorybookConfig } from "@storybook/react-vite";
 import { join, dirname, resolve } from "path";
 import { mergeConfig } from "vite";
@@ -13,7 +12,7 @@ function getAbsolutePath(value: string): any {
 }
 const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
-  staticDirs: ["../public"],
+  staticDirs: ["./public"],
 
   addons: [
     getAbsolutePath("@storybook/addon-essentials"),
@@ -24,7 +23,7 @@ const config: StorybookConfig = {
     options: {},
   },
 
-  viteFinal: async (config, { configType }) => {
+  viteFinal: async config => {
     console.log(config);
     return mergeConfig(config, {
       define: {
@@ -33,18 +32,19 @@ const config: StorybookConfig = {
       resolve: {
         alias: {
           qs: require.resolve("qs"),
-          fs: resolve(".storybook/__mocks__/fs.ts"),
 
           // Explicitly alias the 'buffer' module to the installed 'buffer' package
           "buffer/": "buffer/", // Alias 'buffer/' imports
           buffer: "buffer", // Alias 'buffer' imports
 
-          electron: resolve(".storybook/__mocks__/electron.ts"),
-          "electron-store": resolve(".storybook/__mocks__/electron-store.ts"),
+          fs: resolve(".storybook/__mocks__/modules/fs.ts"),
 
-          "@braze/web-sdk": resolve(".storybook/__mocks__/braze.ts"),
+          electron: resolve(".storybook/__mocks__/modules/electron.ts"),
+          "electron-store": resolve(".storybook/__mocks__/modules/electron-store.ts"),
+
+          "@braze/web-sdk": resolve(".storybook/__mocks__/modules/braze.ts"),
           "@braze/web-sdk/src/InAppMessage/models/html-message.js": resolve(
-            ".storybook/__mocks__/_null.ts",
+            ".storybook/__mocks__/modules/_null.ts",
           ),
 
           LLD: resolve("./src/newArch"),

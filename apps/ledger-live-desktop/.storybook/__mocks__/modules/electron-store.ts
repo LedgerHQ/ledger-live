@@ -1,4 +1,4 @@
-import { apiProxy } from "./_utils";
+import { apiProxy } from "../_utils";
 
 export default class ElectronStoreMock {
   constructor() {

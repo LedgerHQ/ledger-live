@@ -1,6 +1,6 @@
 import { fn } from "@storybook/test";
 import type { Clipboard, IpcRenderer, Shell, WebFrame } from "electron";
-import { apiProxy } from "./_utils";
+import { apiProxy } from "../_utils";
 
 export default apiProxy("Electron.default");
 

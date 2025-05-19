@@ -1,12 +1,12 @@
 import { apiProxy } from "./_utils";
-import * as electron from "./electron";
+import * as electron from "./modules/electron";
 
 defineGlobal({
-  __DEV__: false,
+  __DEV__: true,
   __APP_VERSION__: "2.0.0",
   __GIT_REVISION__: "xxx",
   __SENTRY_URL__: null,
-  __PRERELEASE__: "null",
+  __PRERELEASE__: false,
   __CHANNEL__: "null",
 
   // Why ???

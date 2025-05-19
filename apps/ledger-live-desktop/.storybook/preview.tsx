@@ -1,27 +1,26 @@
 import React from "react";
 import type { Preview } from "@storybook/react";
 import { initialize, mswLoader } from "msw-storybook-addon";
+import { appConfig } from "@ledgerhq/live-common/apps/config";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import "./__mocks__/_globals";
-import { palettes, StyleProvider } from "../../../libs/ui/packages/react/src/styles";
+import { palettes } from "../../../libs/ui/packages/react/src/styles";
 import "../src/renderer/i18n/init";
 
-// export const decorators = [
-//   (Story, { globals }) => {
-//     const backgrounds = globals?.backgrounds ?? {};
-//     const theme = backgrounds?.value === palettes.dark.background.default ? "dark" : "light";
-//     return (
-//       <StyleProvider selectedPalette={theme}>
-//         <link
-//           href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-//           rel="stylesheet"
-//         ></link>
-//         <Story />
-//       </StyleProvider>
-//     );
-//   },
-// ];
+LiveConfig.setConfig(appConfig);
 
-initialize();
+{
+  // Get the Storybook's own origin
+  const storybookOrigin = window.location.origin;
+
+  initialize({
+    onUnhandledRequest: (request, print) => {
+      if (new URL(request.url).origin === storybookOrigin) return;
+
+      print.warning();
+    },
+  });
+}
 
 const preview: Preview = {
   loaders: [mswLoader],

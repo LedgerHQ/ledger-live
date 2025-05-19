@@ -2,7 +2,7 @@ import { fn } from "@storybook/test";
 
 export const logContentCardImpressions = fn();
 export const logContentCardClick = fn();
-export const getCachedContentCards = fn();
+export const getCachedContentCards = fn(() => ({ cards: [] }));
 export const logCardDismissal = fn();
 export const initialize = fn();
 export const changeUser = fn();

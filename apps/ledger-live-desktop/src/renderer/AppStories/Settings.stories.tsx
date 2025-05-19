@@ -1,18 +1,14 @@
-import Default from "../Default";
 import { MockProviderDecorator } from "./__mocks__/providers/MockAppProviders";
+import Default from "../Default";
 
 export default {
   component: Default,
-  title: "App/Onboarding",
+  title: "App/Settings",
   tags: ["!autodocs"],
   decorators: [MockProviderDecorator],
   parameters: {
-    state: {
-      settings: {
-        hasCompletedOnboarding: false,
-      },
-    },
+    path: "/settings",
   },
 };
 
-export const Onboarding = {};
+export const Settings = {};
