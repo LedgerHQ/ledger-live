@@ -41,7 +41,7 @@
         "lib/test/bot-specs"
       ],
       "transaction": [
-        "lib/bridge/transaction"
+        "lib/logic/transaction"
       ],
       "types": [
         "lib/types/index"
@@ -80,8 +80,8 @@
       "default": "./lib-es/test/bot-specs.js"
     },
     "./transaction": {
-      "require": "./lib/bridge/transaction.js",
-      "default": "./lib-es/bridge/transaction.js"
+      "require": "./lib/logic/transaction.js",
+      "default": "./lib-es/logic/transaction.js"
     },
     "./types": {
       "require": "./lib/types/index.js",
