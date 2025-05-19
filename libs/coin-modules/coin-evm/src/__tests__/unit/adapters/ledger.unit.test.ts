@@ -1253,7 +1253,6 @@ describe("EVM Family", () => {
           const ledgerAction: LedgerExplorerInternalTransaction = {
             from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
             to: "0x49048044d57e1c92a77f79988d21fa8faf74e97e",
-            input: null,
             value: "10000000000000000",
             gas: "57090",
             gas_used: "27485",
@@ -1272,7 +1271,6 @@ describe("EVM Family", () => {
           const ledgerAction: LedgerExplorerInternalTransaction = {
             from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
             to: "0x49048044d57e1c92a77f79988d21fa8faf74e97e",
-            input: null,
             value: "10000000000000000",
             gas: "57090",
             gas_used: "27485",
@@ -1304,7 +1302,6 @@ describe("EVM Family", () => {
           const ledgerAction: LedgerExplorerInternalTransaction = {
             from: "0x49048044d57e1c92a77f79988d21fa8faf74e97e",
             to: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
-            input: null,
             value: "10000000000000000",
             gas: "57090",
             gas_used: "27485",
@@ -1348,7 +1345,6 @@ describe("EVM Family", () => {
           const ledgerActionOutOrFees: LedgerExplorerInternalTransaction = {
             from: coinOperationFees.senders[0],
             to: coinOperationFees.recipients[0],
-            input: null,
             value: coinOperationFees.value.minus(coinOperationFees.fee).toFixed(),
             gas: "57090",
             gas_used: "27485",
@@ -1378,7 +1374,6 @@ describe("EVM Family", () => {
           const ledgerAction: LedgerExplorerInternalTransaction = {
             from: "0x49048044d57e1c92a77f79988d21fa8faf74e97e",
             to: "0x3244100A07c7fEE9bDE409e877ed2e8Ff1EdeEda", // pdv.eth
-            input: null,
             value: "10000000000000000",
             gas: "57090",
             gas_used: "27485",
@@ -1392,7 +1387,6 @@ describe("EVM Family", () => {
           const ledgerAction: LedgerExplorerInternalTransaction = {
             from: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
             to: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d", // pdv.eth
-            input: null,
             value: "10000000000000000",
             gas: "57090",
             gas_used: "27485",
