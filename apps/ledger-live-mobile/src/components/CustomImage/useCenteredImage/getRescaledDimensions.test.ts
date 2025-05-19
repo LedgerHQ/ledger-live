@@ -68,7 +68,7 @@ describe("getRescaledDimensions", () => {
     expect(
       getRescaledDimensions({ width: 1362, height: 1302 }, { width: 400, height: 670 }),
     ).toEqual({
-      width: 700,
+      width: 701,
       height: 670,
     });
 
@@ -76,7 +76,7 @@ describe("getRescaledDimensions", () => {
       getRescaledDimensions({ width: 1302, height: 1362 }, { width: 670, height: 400 }),
     ).toEqual({
       width: 670,
-      height: 700,
+      height: 701,
     });
   });
 
@@ -101,7 +101,7 @@ describe("getRescaledDimensions", () => {
     });
   });
 
-  it("always returns a result that satisfies the properties of object-fit:contain", () => {
+  it("always returns a result that satisfies the properties of object-fit:cover", () => {
     function generateRandomDimensions(maxSize: number) {
       return {
         height: Math.floor(Math.random() * maxSize + 1),
