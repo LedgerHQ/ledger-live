@@ -4,7 +4,6 @@ import {
   Operation as CoreOperation,
   Asset,
   TransactionIntent,
-  // Account as CoreAccount,
 } from "@ledgerhq/coin-framework/api/types";
 import BigNumber from "bignumber.js";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
@@ -44,14 +43,6 @@ export function transactionToIntent(
     asset: null, // TODO: check
   };
 }
-
-// export function AccountIntent(account: Account): CoreAccount<any> {
-//   return {
-//     address: account.freshAddress,
-//     balance: account.balance,
-//     unit: account.currency.units[0],
-//   };
-// }
 
 export const buildOptimisticOperation = (
   account: Account,
