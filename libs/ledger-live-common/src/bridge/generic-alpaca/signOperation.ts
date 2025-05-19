@@ -66,6 +66,8 @@ export const genericSignOperation =
         console.log("signed", signed);
 
         const operation = buildOptimisticOperation(account, transaction);
+        // TODO: we set the transactionSequenceNumber before on the operation
+        // now that we create it in craftTransaction, we might need to return it back from craftTransaction also
         console.log("operation", operation);
 
         o.next({

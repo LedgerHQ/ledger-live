@@ -92,7 +92,7 @@ export type Pagination = { minHeight: number };
 
 export type PreSignOperationHook = (opts: {
   transaction: TransactionCommon;
-}) => Promise<void> | void;
+}) => void;
 
 export type Api<
   AssetInfo extends Asset<TokenInfoCommon>,
