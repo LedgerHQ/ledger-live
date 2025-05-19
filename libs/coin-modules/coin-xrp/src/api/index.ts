@@ -18,6 +18,7 @@ import {
   listOperations,
   MemoInput,
   getTransactionStatus,
+  removeCachedRecipientIsNew,
 } from "../logic";
 import { ListOperationsOptions, XrpAsset } from "../types";
 
@@ -33,6 +34,7 @@ export function createApi(config: XrpConfig): Api<XrpAsset, TransactionIntentExt
     lastBlock,
     listOperations: operations,
     validateIntent: getTransactionStatus,
+    preSignOperationHook: ({ transaction }) => removeCachedRecipientIsNew(transaction.recipient),
   };
 }
 
