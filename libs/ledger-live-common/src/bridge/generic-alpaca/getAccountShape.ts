@@ -2,7 +2,7 @@ import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import BigNumber from "bignumber.js";
 import { getAlpacaApi } from "./alpaca";
-import { adaptCoreOperationToLiveOperation, parseAPIValue } from "./utils";
+import { adaptCoreOperationToLiveOperation } from "./utils";
 
 export function genericGetAccountShape(network, kind): GetAccountShape {
   return async info => {
