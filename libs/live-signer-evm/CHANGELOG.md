@@ -1,11 +1,31 @@
 # @ledgerhq/live-signer-evm
 
-## 0.4.1-next.0
+## 0.4.2-next.0
 
 ### Patch Changes
 
 - Updated dependencies [[`5657584`](https://github.com/LedgerHQ/ledger-live/commit/565758426688c9604c7958183ec5b3d4e35ffbe4)]:
   - @ledgerhq/coin-evm@2.22.0-next.0
+
+## 0.4.1
+
+### Patch Changes
+
+- [#10237](https://github.com/LedgerHQ/ledger-live/pull/10237) [`6abef9a`](https://github.com/LedgerHQ/ledger-live/commit/6abef9a8cb62df478dcf9ba9be36bbd566e133a1) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Skip open app in DMK ETH signer
+
+- [#10237](https://github.com/LedgerHQ/ledger-live/pull/10237) [`6abef9a`](https://github.com/LedgerHQ/ledger-live/commit/6abef9a8cb62df478dcf9ba9be36bbd566e133a1) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix sending USDT with LNS
+
+- [#10237](https://github.com/LedgerHQ/ledger-live/pull/10237) [`612a274`](https://github.com/LedgerHQ/ledger-live/commit/612a274abd1692aa9fab450854ab12ff90f6e41e) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix interaction between signer in exchange app
+
+## 0.4.1-hotfix.0
+
+### Patch Changes
+
+- [#10237](https://github.com/LedgerHQ/ledger-live/pull/10237) [`6abef9a`](https://github.com/LedgerHQ/ledger-live/commit/6abef9a8cb62df478dcf9ba9be36bbd566e133a1) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Skip open app in DMK ETH signer
+
+- [#10237](https://github.com/LedgerHQ/ledger-live/pull/10237) [`6abef9a`](https://github.com/LedgerHQ/ledger-live/commit/6abef9a8cb62df478dcf9ba9be36bbd566e133a1) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix sending USDT with LNS
+
+- [#10237](https://github.com/LedgerHQ/ledger-live/pull/10237) [`612a274`](https://github.com/LedgerHQ/ledger-live/commit/612a274abd1692aa9fab450854ab12ff90f6e41e) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix interaction between signer in exchange app
 
 ## 0.4.0
 
