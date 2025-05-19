@@ -447,6 +447,8 @@
     "incompatibility" : {
       "ton_title" : "A Ledger Nano S™ não é compatível com a troca de Ton",
       "ton_description" : "Para trocar Ton, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "ton_tokens_title" : "A Ledger Nano S™ não é compatível com trocas de tokens Ton",
+      "ton_tokens_description" : "Para trocar tokens Ton, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "spl_tokens_title" : "A Ledger Nano S™ não é compatível com a troca de tokens Solana",
       "spl_tokens_description" : "Para trocar tokens Solana, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "sui_tokens_title" : "A Ledger Nano S™ não é compatível com a troca de tokens Sui",
@@ -2394,7 +2396,8 @@
         "suggested" : "Sugerido",
         "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
-        "nftQuantity" : "Quantidade"
+        "nftQuantity" : "Quantidade",
+        "splExtensionsWarning" : "Você está interagindo com um token que faz parte do programa Token-2022, também conhecido como Token Extensions. Este token tem riscos específicos. <0>Clique aqui</0> para saber mais."
       },
       "verification" : {
         "streaming" : {
@@ -3769,7 +3772,7 @@
       "frozenStateWarning" : "Os ativos da conta estão congelados!",
       "transferWarning" : "Para verificar o endereço do destinatário para tokens Solana usando uma Ledger Nano S™, <0>siga essas instruções.</0>",
       "transferFees" : {
-        "feesPercentHint" : "O token tem {{feePercent}}% de taxa de transferência ({{feeBps}}bps). {{maxFee}} max",
+        "feesHint" : "Taxa de transferência do token: {{transferFee}}",
         "notice" : "Taxa de transferência {{fee}}%",
         "tooltipHint" : "Porcentagem da transferência retida para o criador do token",
         "transferFeesLabel" : "Taxas de transferência"
@@ -5871,6 +5874,10 @@
       "title" : "Fundos Insuficientes",
       "description" : "Certifique-se de que a conta tem fundos suficientes."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "Fundos insuficientes para cobrir as taxas",
+      "description" : "Certifique-se de que a conta tenha fundos suficientes."
+    },
     "NotEnoughBalanceSwap" : {
       "title" : "Saldo insuficiente incluindo taxas de rede. Ajuste a quantia ou verifique o saldo.",
       "description" : "Certifique-se de que a conta tenha fundos suficientes."
@@ -6615,7 +6622,8 @@
       "title" : "escolher ativo"
     },
     "selectAccount" : {
-      "title" : "escolher conta"
+      "title" : "escolher conta",
+      "addAccount" : "Adicionar conta nova ou existente"
     }
   },
   "customImage" : {
@@ -6785,9 +6793,9 @@
     "title" : "Ledger Sync",
     "close" : "Fechar",
     "activate" : {
-      "title" : "Ativar o Ledger Sync para esse computador?",
+      "title" : "Ativar o Ledger Sync neste computador?",
       "description" : "Sincronize automaticamente suas contas cripto em todos os seus telefones e computadores, mesmo ao fazer transição para um novo dispositivo.",
-      "cta" : "Ative o Ledger Sync",
+      "cta" : "Ativar o Ledger Sync",
       "alreadySync" : "Já ativei",
       "learnMore" : "Como o Ledger Sync funciona?"
     },
@@ -7045,6 +7053,21 @@
     "opted_out" : {
       "description" : "A memória limitada da Ledger Nano S restringe seu acesso aos últimos recursos, mudanças em blockchains e aprimoramentos de segurança. Para uso prolongado, atualize para um dispositivo Ledger mais recente.",
       "cta" : "Saiba mais"
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "Buscar",
+    "assetFlow" : {
+      "selectTemplate" : "Selecionar {{dynamic}}",
+      "asset" : "ativo",
+      "network" : "rede"
+    }
+  },
+  "nftEntryPoint" : {
+    "title" : "NFT (Tokens Não Fungíveis)",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
     }
   }
 }
