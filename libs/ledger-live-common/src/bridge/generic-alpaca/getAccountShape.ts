@@ -18,6 +18,17 @@ export function genericGetAccountShape(network, kind): GetAccountShape {
       });
       console.log(`getAccountShape, kind = ${kind}`, accountId, address, initialAccount);
 
+      if (!initialAccount?.used) {
+        return {
+          id: accountId,
+          xpub: address,
+          blockHeight: 0,
+          balance: new BigNumber(0),
+          spendableBalance: new BigNumber(0),
+          operations: [],
+          operationsCount: 0,
+        };
+      }
       const blockInfo = await getAlpacaApi(network, kind).lastBlock();
 
       const balanceRes = await getAlpacaApi(network, kind).getBalance(address);
@@ -65,6 +76,7 @@ export function genericGetAccountShape(network, kind): GetAccountShape {
         operationsCount: operations.length,
       };
       console.log({ shape });
+
       return {
         id: accountId,
         xpub: address,
