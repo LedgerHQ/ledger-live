@@ -28,6 +28,8 @@ type Props = {
 };
 
 export function WebView({ manifest, params, setWebviewState }: Props) {
+  // Swap duplicated the Custom Handlers due to different needs compared to the rest of the platform apps,
+  // to avoid complexifying the logic in the shared custom handlers.
   const customHandlers = useSwapLiveAppCustomHandlers(manifest);
   const { theme } = useTheme();
   const { language } = useSettings();
