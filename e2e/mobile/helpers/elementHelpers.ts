@@ -57,6 +57,15 @@ export const NativeElementHelpers = {
     }
   },
 
+  async countElementsById(id: string | RegExp, index = 0): Promise<number> {
+    try {
+      await detoxExpect(element(by.id(id)).atIndex(index)).toBeVisible();
+      return countElementsById(id, index + 1);
+    } catch {
+      return index;
+    }
+  },
+
   getElementsById(id: string | RegExp) {
     return withRN75Delay(() => element(by.id(id)));
   },
