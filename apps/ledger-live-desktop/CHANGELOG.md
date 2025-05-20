@@ -43,6 +43,22 @@
   - @ledgerhq/live-nft-react@0.9.6-next.0
   - @ledgerhq/live-wallet@0.10.9-next.0
 
+## 2.113.2
+
+### Patch Changes
+
+- Updated dependencies [[`422c046`](https://github.com/LedgerHQ/ledger-live/commit/422c0468aa865a0840bb6c23506173621b0930be)]:
+  - @ledgerhq/live-common@34.33.2
+  - @ledgerhq/live-dmk-desktop@0.3.6
+
+## 2.113.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`422c046`](https://github.com/LedgerHQ/ledger-live/commit/422c0468aa865a0840bb6c23506173621b0930be)]:
+  - @ledgerhq/live-common@34.33.2-hotfix.0
+  - @ledgerhq/live-dmk-desktop@0.3.6-hotfix.0
+
 ## 2.113.1
 
 ### Patch Changes

@@ -10,6 +10,20 @@
   - @ledgerhq/coin-framework@5.0.2-next.0
   - @ledgerhq/live-wallet@0.10.9-next.0
 
+## 0.18.3
+
+### Patch Changes
+
+- Updated dependencies [[`422c046`](https://github.com/LedgerHQ/ledger-live/commit/422c0468aa865a0840bb6c23506173621b0930be)]:
+  - @ledgerhq/live-common@34.33.2
+
+## 0.18.3-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`422c046`](https://github.com/LedgerHQ/ledger-live/commit/422c0468aa865a0840bb6c23506173621b0930be)]:
+  - @ledgerhq/live-common@34.33.2-hotfix.0
+
 ## 0.18.2
 
 ### Patch Changes

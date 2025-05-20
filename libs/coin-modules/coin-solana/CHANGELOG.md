@@ -16,6 +16,18 @@
   - @ledgerhq/cryptoassets@13.17.0-next.0
   - @ledgerhq/coin-framework@5.0.2-next.0
 
+## 0.22.1
+
+### Patch Changes
+
+- [#10261](https://github.com/LedgerHQ/ledger-live/pull/10261) [`422c046`](https://github.com/LedgerHQ/ledger-live/commit/422c0468aa865a0840bb6c23506173621b0930be) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - feat: solana off-chain message signing returns the envelope with the signedMessage
+
+## 0.22.1-hotfix.0
+
+### Patch Changes
+
+- [#10261](https://github.com/LedgerHQ/ledger-live/pull/10261) [`422c046`](https://github.com/LedgerHQ/ledger-live/commit/422c0468aa865a0840bb6c23506173621b0930be) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - feat: solana off-chain message signing returns the envelope with the signedMessage
+
 ## 0.22.0
 
 ### Minor Changes

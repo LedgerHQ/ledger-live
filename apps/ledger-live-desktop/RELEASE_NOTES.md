@@ -1,3 +1,7 @@
+# 2.113.2
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
 # 2.113.1
 
 We have resolved an issue that was affecting several Ledger Live services for Ledger Nano S users.

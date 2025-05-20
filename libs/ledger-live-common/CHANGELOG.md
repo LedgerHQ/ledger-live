@@ -56,6 +56,24 @@
   - @ledgerhq/live-wallet@0.10.9-next.0
   - @ledgerhq/live-signer-evm@0.4.1-next.0
 
+## 34.33.2
+
+### Patch Changes
+
+- [#10261](https://github.com/LedgerHQ/ledger-live/pull/10261) [`422c046`](https://github.com/LedgerHQ/ledger-live/commit/422c0468aa865a0840bb6c23506173621b0930be) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - feat: solana off-chain message signing returns the envelope with the signedMessage
+
+- Updated dependencies [[`422c046`](https://github.com/LedgerHQ/ledger-live/commit/422c0468aa865a0840bb6c23506173621b0930be)]:
+  - @ledgerhq/coin-solana@0.22.1
+
+## 34.33.2-hotfix.0
+
+### Patch Changes
+
+- [#10261](https://github.com/LedgerHQ/ledger-live/pull/10261) [`422c046`](https://github.com/LedgerHQ/ledger-live/commit/422c0468aa865a0840bb6c23506173621b0930be) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - feat: solana off-chain message signing returns the envelope with the signedMessage
+
+- Updated dependencies [[`422c046`](https://github.com/LedgerHQ/ledger-live/commit/422c0468aa865a0840bb6c23506173621b0930be)]:
+  - @ledgerhq/coin-solana@0.22.1-hotfix.0
+
 ## 34.33.1
 
 ### Patch Changes
