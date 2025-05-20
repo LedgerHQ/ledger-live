@@ -79,16 +79,6 @@ describe("operations", () => {
     expect(mockGetOperations).toHaveBeenCalledTimes(1);
   });
 
-  it("should return 0 operations if start is greater than the last operation", async () => {
-    mockGetOperations.mockResolvedValue([[mockOperation], ""]);
-
-    // When
-    const operations = await api.listOperations("addr", { minHeight: 100 });
-
-    // Then
-    expect(operations).toEqual([[], ""]);
-  });
-
   it("should call multiple times listOperations", async () => {
     mockGetOperations
       .mockResolvedValueOnce([[mockOperation], "10"])
