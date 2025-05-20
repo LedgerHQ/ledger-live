@@ -447,6 +447,8 @@
     "incompatibility" : {
       "ton_title" : "Ledger Nano S™はTonのスワップに対応していません",
       "ton_description" : "Tonをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+      "ton_tokens_title" : "Ledger Nano S™は、Tonトークンのスワップに対応していません",
+      "ton_tokens_description" : "Tonトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
       "spl_tokens_title" : "Ledger Nano S™はSolanaトークンのスワップに対応していません",
       "spl_tokens_description" : "Solanaトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
       "sui_tokens_title" : "Ledger Nano S™は、Suiトークンのスワップに対応していません",
@@ -2070,8 +2072,7 @@
       "latest" : "ファームウェアバージョン{{version}}が利用可能です",
       "contactSupport" : "サポートへお問い合わせ",
       "deprecated" : "デバイスのファームウェアのバージョンが古いため、アップデートできません。Ledgerサポートに連絡して、デバイスを交換してください。",
-      "prepareSeed" : "念のため、24単語のシークレットリカバリーフレーズがリカバリーシートに書き留められており、利用可能であることをご確認ください。",
-      "prepareSeedRecover" : "また、Ledger Recoverをご使用いただくと、ウォレットへのアクセスをバックアップし、常に確実にアクセスできるようになります。",
+      "prepareSeed" : "念のために、24単語のリカバリーフレーズがリカバリーシートに書き留められており、利用可能であることを確認してください。",
       "disclaimerTitle" : "<1>ファームウェアバージョン{{version}}</1>をインストールします。",
       "cancelUpdate" : "OSアップデートをキャンセル",
       "continueUpdate" : "OSアップデートを続行",
@@ -6615,7 +6616,8 @@
       "title" : "資産を選択"
     },
     "selectAccount" : {
-      "title" : "アカウントを選択"
+      "title" : "アカウントを選択",
+      "addAccount" : "新規または既存のアカウントを追加する"
     }
   },
   "customImage" : {
@@ -7045,6 +7047,14 @@
     "opted_out" : {
       "description" : "Ledger Nano Sの限られたメモリでは、複数の最新機能、ブロックチェーンの変更、セキュリティ強化も制限されます。ぜひ、新しいLedgerデバイスへのアップグレードをご検討ください。",
       "cta" : "詳細はこちら"
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "検索",
+    "assetFlow" : {
+      "select" : "選択",
+      "network" : "ネットワーク",
+      "asset" : "資産"
     }
   }
 }

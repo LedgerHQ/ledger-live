@@ -447,6 +447,8 @@
     "incompatibility" : {
       "ton_title" : "Ledger Nano S™ ไม่รองรับการ Swap Ton",
       "ton_description" : "ในการ Swap Ton ให้ใช้อุปกรณ์ Ledger ที่เข้ากันได้อื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
+      "ton_tokens_title" : "Ledger Nano S™ ไม่สามารถสวอปโทเคน Ton ได้",
+      "ton_tokens_description" : "หากต้องการสวอปโทเคน Ton ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
       "spl_tokens_title" : "Ledger Nano S™ ไม่รองรับการ Swap โทเคน Solana",
       "spl_tokens_description" : "ในการ Swap โทเคน Solana ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่เข้ากันได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
       "sui_tokens_title" : "Ledger Nano S™ ไม่รองรับการ Swap โทเคน Sui",
@@ -2070,8 +2072,7 @@
       "latest" : "ระบบปฏิบัติการเวอร์ชัน {{version}} พร้อมใช้งานแล้ว",
       "contactSupport" : "ติดต่อฝ่ายสนับสนุน",
       "deprecated" : "เวอร์ชันระบบปฏิบัติการของอุปกรณ์เก่าเกินกว่าที่จะอัปเดตได้ ติดต่อ Ledger Support เพื่อขอรับการเปลี่ยน",
-      "prepareSeed" : "ตรวจสอบให้แน่ใจว่ามีการเขียน Secret Recovery Phrase 24 คำของคุณลงใน Recovery Sheet และพร้อมใช้งาน เพื่อเป็นการป้องกันไว้ก่อน",
-      "prepareSeedRecover" : "พิจารณาใช้ Ledger Recover เพื่อสำรองการเข้าถึงวอลเล็ตของคุณและแน่ใจว่าจะสามารถเข้าถึงได้เสมอ",
+      "prepareSeed" : "ตรวจสอบให้แน่ใจว่าวลีกู้คืน 24 คำของคุณถูกเขียนลงใน Recovery Sheet และพร้อมใช้งาน เพื่อเป็นการป้องกันไว้ก่อน",
       "disclaimerTitle" : "คุณกำลังจะติดตั้ง<1>ระบบปฏิบัติการเวอร์ชัน {{version}}</1>",
       "cancelUpdate" : "ยกเลิกการอัปเดต OS",
       "continueUpdate" : "ดำเนินการอัปเดต OS ต่อ",
@@ -6615,7 +6616,8 @@
       "title" : "เลือกสินทรัพย์"
     },
     "selectAccount" : {
-      "title" : "เลือกบัญชี"
+      "title" : "เลือกบัญชี",
+      "addAccount" : "เพิ่มบัญชีใหม่หรือใช้บัญชีที่มีอยู่"
     }
   },
   "customImage" : {
@@ -7045,6 +7047,14 @@
     "opted_out" : {
       "description" : "หน่วยความจำที่จำกัดของ Ledger Nano S ของคุณจะยับยั้งการเข้าถึงฟีเจอร์ล่าสุด การเปลี่ยนแปลงบล็อกเชน และการเพิ่มความปลอดภัยให้กับคุณ เพื่อการใช้งานระยะยาว ควรอัปเกรดเป็นอุปกรณ์ Ledger รุ่นใหม่กว่า",
       "cta" : "เรียนรู้เพิ่มเติม"
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "ค้นหา",
+    "assetFlow" : {
+      "select" : "เลือก",
+      "network" : "เครือข่าย",
+      "asset" : "สินทรัพย์"
     }
   }
 }

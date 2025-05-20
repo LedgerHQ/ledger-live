@@ -447,6 +447,8 @@
     "incompatibility" : {
       "ton_title" : "No es posible utilizar el Ledger Nano S™ para permutar Ton",
       "ton_description" : "Para permutar Ton, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "ton_tokens_title" : "No es posible utilizar el Ledger Nano S™ para permutar tokens de Ton",
+      "ton_tokens_description" : "Para permutar tokens de Ton, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "spl_tokens_title" : "No es posible utilizar el Ledger Nano S™ para permutar tokens de Solana",
       "spl_tokens_description" : "Para permutar tokens de Solana, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "sui_tokens_title" : "No es posible utilizar el Ledger Nano S™ para permutar tokens de Sui",
@@ -2070,8 +2072,7 @@
       "latest" : "La versión {{version}} del firmware está disponible",
       "contactSupport" : "Ponte en contacto con Soporte",
       "deprecated" : "La versión de firmware del dispositivo es demasiado antigua para poder actualizarla. Contacta al Soporte de Ledger para obtener un reemplazo.",
-      "prepareSeed" : "Como precaución, asegúrate de que la Frase de Recuperación Secreta de 24 palabras esté escrita en la Hoja de Recuperación y de tener fácil acceso a ella.",
-      "prepareSeedRecover" : "Considera la opción de usar Ledger Recover para realizar una copia de respaldo del acceso a tu billetera y asegurarte de que siempre esté a mano.",
+      "prepareSeed" : "Como precaución, asegúrate de que la Frase de Recuperación de 24 palabras esté escrita en la Hoja de Recuperación y de tener fácil acceso a ella.",
       "disclaimerTitle" : "Estás a punto de instalar <1>la versión de firmware {{version}}</1>.",
       "cancelUpdate" : "Cancelar actualización del SO",
       "continueUpdate" : "Continuar con actualización del SO",
@@ -6615,7 +6616,8 @@
       "title" : "elige un activo"
     },
     "selectAccount" : {
-      "title" : "elige una cuenta"
+      "title" : "elige una cuenta",
+      "addAccount" : "Agregar cuenta nueva o existente"
     }
   },
   "customImage" : {
@@ -7045,6 +7047,14 @@
     "opted_out" : {
       "description" : "La memoria limitada de tu Ledger Nano S restringe tu acceso a las opciones más recientes, a cambios en la blockchain y a mejoras de seguridad. Cambia a un dispositivo Ledger más moderno para garantizar un uso prolongado.",
       "cta" : "Más información"
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "Buscar",
+    "assetFlow" : {
+      "select" : "Seleccionar",
+      "network" : "red",
+      "asset" : "activo"
     }
   }
 }
