@@ -118,6 +118,21 @@
       "entry": ["src/index.ts"],
       "ignoreDependencies": ["@ledgerhq/logs", "@ledgerhq/live-env"]
     },
-    "./libs/promise": { "entry": ["src/index.ts"] }
+    "./libs/promise": { "entry": ["src/index.ts"] },
+    "./libs/ui/packages/native": {
+      "entry": [
+        "src/assets/cryptoIcons.ts",
+        "src/assets/icons.ts",
+        "src/index.ts",
+        "src/styles/index.ts",
+        "src/styles/InvertTheme.tsx",
+        "src/icons/Close.tsx",
+        "src/icons/Info.tsx",
+        "storybook/stories/index.ts",
+        "App.tsx",
+        "index.js"
+      ],
+      "ignore": [".storybook*/*", "storybook/constants/*"]
+    }
   }
 }

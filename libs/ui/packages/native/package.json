@@ -52,7 +52,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "exit 0",
     "web": "expo start --web",
-    "unimported": "unimported"
+    "unimported": "pnpm knip --directory ../../../.. -W libs/ui/packages/native"
   },
   "dependencies": {
     "@ledgerhq/crypto-icons-ui": "workspace:^",
