@@ -53,6 +53,7 @@ describe("EVM Family", () => {
             type: "external",
             uri: "mock",
           },
+          showNfts: true,
         },
       };
     });
@@ -869,6 +870,36 @@ describe("EVM Family", () => {
             endBlock: 100,
           },
         });
+      });
+    });
+
+    describe("getLastNftOperations without nft", () => {
+      beforeEach(() => {
+        mockGetConfig.mockImplementation((): any => {
+          return {
+            info: {
+              explorer: {
+                type: "etherscan",
+                uri: "mock",
+              },
+              node: {
+                type: "external",
+                uri: "mock",
+              },
+              showNfts: false,
+            },
+          };
+        });
+      });
+
+      it("should not return NFT opperation", async () => {
+        const response = await ETHERSCAN_API.getLastNftOperations(
+          currency,
+          account.freshAddress,
+          account.id,
+          0,
+        );
+        expect(response).toEqual([]);
       });
     });
   });

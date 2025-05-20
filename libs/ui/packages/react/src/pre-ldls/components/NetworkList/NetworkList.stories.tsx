@@ -17,7 +17,11 @@ const meta: Meta<typeof NetworkList> = {
   title: "PreLdls/Components/NetworkList",
   tags: ["autodocs"],
   args: {
-    networks: Array.from({ length: 50 }, (_, i) => ({ name: `Bitcoin ${i}`, id: `btc${i}` })),
+    networks: Array.from({ length: 50 }, (_, i) => ({
+      name: `Bitcoin ${i}`,
+      id: `bitcoin`,
+      ticker: "btc",
+    })),
     onClick: testFn,
   },
 };
@@ -32,6 +36,6 @@ export const TestNetworkClick: Story = {
     const canvas = within(canvasElement);
     const input = canvas.getByText("Bitcoin 1");
     await userEvent.click(input);
-    await expect(testFn).toHaveBeenCalledWith("btc1");
+    await expect(testFn).toHaveBeenCalledWith("bitcoin");
   },
 };

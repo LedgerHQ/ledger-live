@@ -1,4 +1,4 @@
-name: "Account migration test"
+name: "[Common] - Account migration test - Manual"
 
 on:
   workflow_dispatch:

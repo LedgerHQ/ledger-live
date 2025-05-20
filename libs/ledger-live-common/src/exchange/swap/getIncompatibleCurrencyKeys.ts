@@ -20,6 +20,10 @@ const INCOMPATIBLE_NANO_S_TOKENS_KEYS: Keys = {
     title: "swap.incompatibility.spl_tokens_title",
     description: "swap.incompatibility.spl_tokens_description",
   },
+  ton: {
+    title: "swap.incompatibility.ton_tokens_title",
+    description: "swap.incompatibility.ton_tokens_description",
+  },
 };
 
 const INCOMPATIBLE_NANO_S_CURRENCY_KEYS: Keys = {

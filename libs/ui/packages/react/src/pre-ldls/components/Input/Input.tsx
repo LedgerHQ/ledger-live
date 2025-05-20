@@ -14,7 +14,6 @@ const Wrapper = styled.div`
   )}
 
   display: flex;
-  width: 328px;
   height: 40px;
   min-width: 328px;
   padding: 0px var(--spacing-s, 16px);
@@ -24,10 +23,12 @@ const Wrapper = styled.div`
   border-radius: var(--radius-s, 8px);
   background: var(--colors-surface-transparent-subdued-default, rgba(0, 0, 0, 0.03));
   color: var(--colors-content-subdued-default-default);
+  overflow: hidden;
 `;
 
 const StyledInput = styled.input`
   background: none;
+  cursor: text;
   border: none;
   width: 100%;
 `;

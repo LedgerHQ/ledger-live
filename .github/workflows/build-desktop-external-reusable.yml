@@ -1,4 +1,4 @@
-name: "@Desktop • Build App (external)"
+name: "[EXT-Desktop] - Build (External) - Called"
 
 on:
   workflow_call:
@@ -21,16 +21,16 @@ jobs:
       matrix:
         config:
           [
-            { name: "linux", os: "ubuntu-22.04", image: "linux-x86_64.AppImage" },
-            { name: "win", os: "windows-2022", dotnet: true, image: "win-x64.exe" },
-            { name: "mac", os: "macos-14", image: "mac.dmg" },
+            { name: "Linux", os: "ubuntu-22.04", image: "linux-x86_64.AppImage", output-name: "linux" },
+            { name: "Windows", os: "windows-2022", dotnet: true, image: "win-x64.exe", output-name: "win" },
+            { name: "macOS", os: "macos-14", image: "mac.dmg", output-name: "mac" },
           ]
     runs-on: ${{ matrix.config.os }}
-    name: "Build LLD (external) | ${{ matrix.config.name }}"
+    name: "${{ matrix.config.name }} Build (External)"
     outputs:
-      linux: ${{ steps.save-result.outputs.linux }}
-      windows: ${{ steps.save-result.outputs.win }}
-      mac: ${{ steps.save-result.outputs.mac }}
+      linux: ${{ steps.save-result.outputs.Linux }}
+      windows: ${{ steps.save-result.outputs.Windows }}
+      mac: ${{ steps.save-result.outputs.macOS }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -40,11 +40,11 @@ jobs:
         with:
           result-encoding: string
           script: |
-            if ("${{ matrix.config.name }}" === "linux") {
+            if ("${{ matrix.config.output-name }}" === "linux") {
               return "linux"
-            } else if ("${{ matrix.config.name }}" === "mac") {
+            } else if ("${{ matrix.config.output-name }}" === "mac") {
               return "mac"
-            } else if ("${{ matrix.config.name }}" === "win") {
+            } else if ("${{ matrix.config.output-name }}" === "win") {
               return "win"
             }
       - uses: actions/checkout@v4
@@ -80,14 +80,15 @@ jobs:
         shell: bash
         if: ${{ !cancelled() }}
         run: |
-          echo "${{matrix.config.name}}=${{steps.build-app.outcome}}" >> $GITHUB_OUTPUT
+          echo "${{matrix.config.output-name}}=${{steps.build-app.outcome}}" >> $GITHUB_OUTPUT
       - name: Upload app
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.build-desktop.outputs.version }}-${{ matrix.config.image }}
-          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-${{ matrix.config.image }}
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/ledger-live-desktop-${{ steps.build-desktop.outputs.version }}-${{ matrix.config.image }}
 
   report:
+    name: "Build Desktop (External) > Report"
     needs: build-desktop-app
     runs-on: ubuntu-22.04
     if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
@@ -109,23 +110,23 @@ jobs:
             });
 
             const findJobUrl = os =>
-              jobs.find(job => job.name == `Build LLD (external) | ${os}`)?.html_url;
+              jobs.find(job => job.name == `${os} Build (External)`)?.html_url;
 
             const keys = {
               mac: {
                 symbol: "🍏",
                 name: "macOS",
-                jobUrl: findJobUrl("mac")
+                jobUrl: findJobUrl("macOS")
               },
               windows: {
                 symbol: "🪟",
                 name: "Windows",
-                jobUrl: findJobUrl("win")
+                jobUrl: findJobUrl("Windows")
               },
               linux: {
                 symbol: "🐧",
                 name: "Linux",
-                jobUrl: findJobUrl("linux")
+                jobUrl: findJobUrl("Linux")
               },
             };
 
@@ -139,8 +140,8 @@ jobs:
                 status: "${{ needs.build-desktop-app.outputs.linux }}",
               },
               windows: {
-                pass: ${{ needs.build-desktop-app.outputs.windows == 'success' }},
-                status: "${{ needs.build-desktop-app.outputs.windows }}",
+                pass: ${{ needs.build-desktop-app.outputs.win == 'success' }},
+                status: "${{ needs.build-desktop-app.outputs.win }}",
               },
             };
 
