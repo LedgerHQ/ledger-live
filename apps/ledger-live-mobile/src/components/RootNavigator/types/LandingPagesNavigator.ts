@@ -14,4 +14,5 @@ export type LandingPagesNavigatorParamList = {
     currencyIds: string;
     initialRange?: InitialRange;
   };
+  [ScreenName.MarketList]: undefined;
 };

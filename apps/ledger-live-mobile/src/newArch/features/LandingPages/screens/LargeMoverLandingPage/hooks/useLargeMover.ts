@@ -24,11 +24,13 @@ export const useLargeMover = ({
   });
 
   const loading = currencies.some(currencies => currencies.isLoading);
+  const isError = currencies.every(currencies => currencies.isError);
 
   return {
     range,
     setRange,
     currencies,
     loading,
+    isError,
   };
 };
