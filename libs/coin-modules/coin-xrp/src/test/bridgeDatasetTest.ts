@@ -97,18 +97,19 @@ export const dataset: DatasetTest<Transaction> = {
                 recipient: "rageXHB6Q4VbvvWdTzKANwjeCT4HXFCKX7",
                 amount: "10000000",
                 tag: null,
-                fee: "1",
+                fee: "1", // NOTE: fee is not customizable, this field is ignored
                 feeCustomUnit: null,
                 networkInfo: null,
               }),
               expectedStatus: {
                 amount: new BigNumber("10000000"),
-                estimatedFees: new BigNumber("1"),
+                estimatedFees: new BigNumber("10"), // NOTE: hardcoded fee
+
                 errors: {
                   recipient: new InvalidAddressBecauseDestinationIsAlsoSource(),
                 },
                 warnings: {},
-                totalSpent: new BigNumber("10000001"),
+                totalSpent: new BigNumber("10000010"), // NOTE: amount + hardcoded fee
               },
             },
             {
@@ -118,16 +119,16 @@ export const dataset: DatasetTest<Transaction> = {
                 recipient: "rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi",
                 amount: "10000000",
                 tag: 12345,
-                fee: "1",
+                fee: "1", // NOTE: fee is not customizable, this field is ignored
                 feeCustomUnit: null,
                 networkInfo: null,
               }),
               expectedStatus: {
                 amount: new BigNumber("10000000"),
-                estimatedFees: new BigNumber("1"),
+                estimatedFees: new BigNumber("10"), // NOTE: hardcoded fee
                 errors: {},
                 warnings: {},
-                totalSpent: new BigNumber("10000001"),
+                totalSpent: new BigNumber("10000010"), // NOTE: amount + hardcoded fee
               },
             },
           ],
