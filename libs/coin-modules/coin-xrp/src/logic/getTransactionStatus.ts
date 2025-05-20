@@ -62,7 +62,7 @@ export const getTransactionStatus = async (
 
   if (!transaction.recipient) {
     errors.recipient = new RecipientRequired("");
-  } else if (account.freshAddress === transaction.recipient) {
+  } else if (account.address === transaction.recipient) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   } else if (!isValidClassicAddress(transaction.recipient)) {
     errors.recipient = new InvalidAddress("", {

@@ -49,6 +49,7 @@ export type Account = {
   balance: bigint;
   currencyUnit: Unit;
 } & Record<string, unknown>;
+// TODO: more descriptive / errors? if entering a wrong field
 
 export type Balance<AssetInfo extends Asset<TokenInfoCommon>> = {
   value: bigint;
@@ -90,9 +91,7 @@ export type FeeEstimation<FeeParameters extends Record<string, bigint> = never> 
 //       see design document at https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/5446205788/coin-modules+lama-adapter+APIs+refinements
 export type Pagination = { minHeight: number };
 
-export type PreSignOperationHook = (opts: {
-  transaction: TransactionCommon;
-}) => void;
+export type PreSignOperationHook = (opts: { transaction: TransactionCommon }) => void;
 
 export type Api<
   AssetInfo extends Asset<TokenInfoCommon>,
