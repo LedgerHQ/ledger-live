@@ -15,11 +15,14 @@ const alpacaized = {
 
 export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   if (alpacaized[currency.family]) {
+    console.log("getCurrencyBridge", currency.family);
     return getAlpacaCurrencyBridge(currency.family, "local");
   }
+  console.log("getCurrencyBridge2", currency.family);
 
   if (getEnv("MOCK")) {
     const mockBridge = mockBridges[currency.family];
+
     if (mockBridge) return mockBridge.currencyBridge;
     throw new CurrencyNotSupported("no mock implementation available for currency " + currency.id, {
       currencyName: currency.id,
