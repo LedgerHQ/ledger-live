@@ -2,15 +2,13 @@
 
 import { firstValueFrom, from } from "rxjs";
 import Transport from "@ledgerhq/hw-transport";
-import { Bridge } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import Btc from "@ledgerhq/hw-app-btc";
-import { createBridges } from "@ledgerhq/coin-bitcoin/bridge/js";
+import { createBridges, type BitcoinBridge } from "@ledgerhq/coin-bitcoin/bridge/js";
 import type { SignerContext } from "@ledgerhq/coin-bitcoin/signer";
 import makeCliTools from "@ledgerhq/coin-bitcoin/cli-transaction";
 import bitcoinResolver from "@ledgerhq/coin-bitcoin/hw-getAddress";
 import { signMessage } from "@ledgerhq/coin-bitcoin/hw-signMessage";
-import { BitcoinAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-bitcoin/types";
 import { GetAddressOptions, Resolver } from "../../hw/getAddress/types";
 import { withDevice } from "../../hw/deviceAccess";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
@@ -35,10 +33,7 @@ const getCurrencyConfig = (currency: CryptoCurrency) => {
   return { info: getCurrencyConfiguration<BitcoinConfigInfo>(currency) };
 };
 
-const bridge: Bridge<Transaction, BitcoinAccount, TransactionStatus> = createBridges(
-  signerContext,
-  getCurrencyConfig,
-);
+const bridge: BitcoinBridge = createBridges(signerContext, getCurrencyConfig);
 
 export function createMessageSigner(): SignMessage {
   return (transport, account, messageData) => {

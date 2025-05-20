@@ -7,10 +7,13 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
-import type { Account } from "@ledgerhq/types-live";
+import { type Account, SerializationBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import type { AlgorandTransaction, AlgorandTransactionRaw } from "./types";
-export const formatTransaction = (
+
+type AlgorandSerializationBridge = SerializationBridge<AlgorandTransaction, AlgorandTransactionRaw>;
+
+const formatTransaction = (
   { mode, subAccountId, amount, recipient, fees, useAllAmount }: AlgorandTransaction,
   mainAccount: Account,
 ): string => {
@@ -61,11 +64,11 @@ const toTransactionRaw = (t: AlgorandTransaction): AlgorandTransactionRaw => {
   };
 };
 
-export default {
+export const serialization = {
   formatTransaction,
   fromTransactionRaw,
   toTransactionRaw,
   fromTransactionStatusRaw,
   toTransactionStatusRaw,
   formatTransactionStatus,
-};
+} satisfies AlgorandSerializationBridge;

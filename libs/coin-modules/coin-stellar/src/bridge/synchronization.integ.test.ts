@@ -1,7 +1,13 @@
 import { firstValueFrom, reduce } from "rxjs";
-import { Account, AccountBridge, SyncConfig, TransactionCommon } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountBridge,
+  SyncConfig,
+  TransactionCommon,
+  TransactionStatusCommon,
+} from "@ledgerhq/types-live";
 import type { StellarCoinConfig } from "../config";
-import { Transaction, StellarAccount } from "../types";
+import { Transaction, StellarAccount, TransactionStatus } from "../types";
 import { createBridges } from "../bridge/index";
 import { createFixtureAccount } from "../types/bridge.fixture";
 
@@ -9,8 +15,12 @@ const defaultSyncConfig = {
   paginationConfig: {},
   blacklistedTokenIds: [],
 };
-function syncAccount<T extends TransactionCommon, A extends Account = Account>(
-  bridge: AccountBridge<T, A>,
+function syncAccount<
+  T extends TransactionCommon,
+  A extends Account = Account,
+  U extends TransactionStatusCommon = TransactionStatusCommon,
+>(
+  bridge: AccountBridge<T, A, U>,
   account: A,
   syncConfig: SyncConfig = defaultSyncConfig,
 ): Promise<A> {
@@ -39,11 +49,14 @@ describe("Sync Accounts", () => {
     "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
     "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
   ])("should always be sync without error for address %s", async (accountId: string) => {
-    const account = await syncAccount<Transaction, StellarAccount>(bridge.accountBridge, {
-      ...dummyAccount,
-      id: `js:2:stellar:${accountId}:`,
-      freshAddress: accountId,
-    });
+    const account = await syncAccount<Transaction, StellarAccount, TransactionStatus>(
+      bridge.accountBridge,
+      {
+        ...dummyAccount,
+        id: `js:2:stellar:${accountId}:`,
+        freshAddress: accountId,
+      },
+    );
 
     expect(account.id).toEqual(`js:2:stellar:${accountId}:`);
   });

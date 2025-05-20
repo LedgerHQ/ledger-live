@@ -1,21 +1,14 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
-import { createBridges } from "@ledgerhq/coin-filecoin/index";
+import { createBridges, type FilecoinBridge } from "@ledgerhq/coin-filecoin/index";
 import Transport from "@ledgerhq/hw-transport";
 import FilecoinApp from "@zondax/ledger-filecoin";
 import filecoinResolver from "@ledgerhq/coin-filecoin/signer/index";
 import { signMessage } from "@ledgerhq/coin-filecoin/hw-signMessage";
-import type { Account, Bridge } from "@ledgerhq/types-live";
 import makeCliTools from "@ledgerhq/coin-filecoin/test/cli";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
-import {
-  TransactionStatus,
-  Transaction,
-  FilecoinGetAddrResponse,
-  FilecoinSignature,
-  FilecoinSigner,
-} from "./types";
+import { FilecoinGetAddrResponse, FilecoinSignature, FilecoinSigner } from "./types";
 import { getPath, isError } from "./common";
 
 const createSigner: CreateSigner<FilecoinSigner> = (transport: Transport) => {
@@ -42,9 +35,7 @@ const createSigner: CreateSigner<FilecoinSigner> = (transport: Transport) => {
   };
 };
 
-const bridge: Bridge<Transaction, Account, TransactionStatus> = createBridges(
-  executeWithSigner(createSigner),
-);
+const bridge: FilecoinBridge = createBridges(executeWithSigner(createSigner));
 
 const messageSigner = {
   signMessage,

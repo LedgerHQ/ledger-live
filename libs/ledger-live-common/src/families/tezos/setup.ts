@@ -3,19 +3,13 @@
 import { DerivationType, LedgerSigner } from "@taquito/ledger-signer";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { TezosCoinConfig } from "@ledgerhq/coin-tezos/config";
-import { createBridges } from "@ledgerhq/coin-tezos/bridge/index";
-import type {
-  Transaction,
-  TezosSigner,
-  TransactionStatus,
-  TezosAccount,
-} from "@ledgerhq/coin-tezos/types/index";
+import { createBridges, type TezosBridge } from "@ledgerhq/coin-tezos/bridge/index";
+import type { TezosSigner } from "@ledgerhq/coin-tezos/types/index";
 import makeCliTools from "@ledgerhq/coin-tezos/test/cli";
 import type { CliTools } from "@ledgerhq/coin-tezos/test/cli";
 import tezosResolver from "@ledgerhq/coin-tezos/signer/index";
 import Xtz, { Curve } from "@ledgerhq/hw-app-tezos";
 import Transport from "@ledgerhq/hw-transport";
-import type { Bridge } from "@ledgerhq/types-live";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
 import { getCurrencyConfiguration } from "../../config";
@@ -50,10 +44,7 @@ const getCurrencyConfig = (): TezosCoinConfig => {
   return getCurrencyConfiguration(getCryptoCurrencyById("tezos"));
 };
 
-const bridge: Bridge<Transaction, TezosAccount, TransactionStatus> = createBridges(
-  executeWithSigner(createSigner),
-  getCurrencyConfig,
-);
+const bridge: TezosBridge = createBridges(executeWithSigner(createSigner), getCurrencyConfig);
 
 const resolver: Resolver = createResolver(createSigner, tezosResolver);
 

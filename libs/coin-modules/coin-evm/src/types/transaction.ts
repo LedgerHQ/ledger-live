@@ -10,6 +10,9 @@ import {
 
 export type EvmTransactionMode = "send" | "erc721" | "erc1155";
 
+export function isEvmTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "evm";
+}
 export type EvmTransactionBase = TransactionCommon & {
   family: "evm";
   mode: EvmTransactionMode;
@@ -73,6 +76,9 @@ export type EvmTransactionEIP1559 = EvmTransactionUntyped & {
 
 export type Transaction = EvmTransactionLegacy | EvmTransactionEIP1559;
 
+export function isEvmTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "evm";
+}
 type EvmTransactionBaseRaw = TransactionCommonRaw & {
   family: "evm";
   mode: EvmTransactionMode;

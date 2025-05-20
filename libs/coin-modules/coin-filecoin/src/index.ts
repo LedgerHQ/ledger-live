@@ -1,1 +1,1 @@
-export { createBridges } from "./bridge/index";
+export { createBridges, type FilecoinBridge } from "./bridge/index";

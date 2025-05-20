@@ -1,4 +1,6 @@
 import {
+  AccountBridge,
+  Bridge,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -15,6 +17,9 @@ export type NetworkInfoRaw = {
   family: FamilyType;
 };
 
+export function isFilecoinTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "filecoin";
+}
 export type Transaction = TransactionCommon & {
   family: FamilyType;
   nonce: number;
@@ -26,6 +31,9 @@ export type Transaction = TransactionCommon & {
   gasFeeCap: BigNumber;
   gasPremium: BigNumber;
 };
+export function isFilecoinTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "filecoin";
+}
 export type TransactionRaw = TransactionCommonRaw & {
   family: FamilyType;
   version: number;
@@ -40,3 +48,6 @@ export type TransactionRaw = TransactionCommonRaw & {
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type FilecoinAccountBridge = AccountBridge<Transaction>;
+export type FilecoinBridge = Bridge<Transaction, TransactionRaw>;

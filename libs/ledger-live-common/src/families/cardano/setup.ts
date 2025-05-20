@@ -3,16 +3,10 @@
 import Ada, { Networks, AddressType } from "@cardano-foundation/ledgerjs-hw-app-cardano";
 import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils/address";
 import Transport from "@ledgerhq/hw-transport";
-import type { Bridge } from "@ledgerhq/types-live";
-import { createBridges } from "@ledgerhq/coin-cardano/bridge";
+import { createBridges, type CardanoBridge } from "@ledgerhq/coin-cardano/bridge";
 import makeCliTools from "@ledgerhq/coin-cardano/cli-transaction";
 import cardanoResolver from "@ledgerhq/coin-cardano/hw-getAddress";
-import type {
-  CardanoAccount,
-  CardanoLikeNetworkParameters,
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/coin-cardano/types";
+import type { CardanoLikeNetworkParameters } from "@ledgerhq/coin-cardano/types";
 import type {
   CardanoAddress,
   CardanoExtendedPublicKey,
@@ -88,10 +82,7 @@ const getCurrencyConfig = () => {
   return getCurrencyConfiguration<CardanoCoinConfig>(getCryptoCurrencyById("cardano"));
 };
 
-const bridge: Bridge<Transaction, CardanoAccount, TransactionStatus> = createBridges(
-  executeWithSigner(createSigner),
-  getCurrencyConfig,
-);
+const bridge: CardanoBridge = createBridges(executeWithSigner(createSigner), getCurrencyConfig);
 
 const resolver: Resolver = createResolver(createSigner, cardanoResolver);
 

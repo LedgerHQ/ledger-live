@@ -1,7 +1,8 @@
 import { BigNumber } from "bignumber.js";
 import { NotEnoughBalance, RecipientRequired, InvalidAddress } from "@ledgerhq/errors";
+import type { TronBridge } from "@ledgerhq/coin-tron/index";
 import type { Transaction } from "@ledgerhq/coin-tron/types/index";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { CurrencyBridge } from "@ledgerhq/types-live";
 import { getSerializedAddressParameters } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import {
   scanAccounts,
@@ -105,13 +106,13 @@ const prepareTransaction = async (a, t) => {
   return res;
 };
 
-const accountBridge: AccountBridge<Transaction> = {
+const accountBridge: TronBridge["accountBridge"] = {
   createTransaction,
   updateTransaction,
   getTransactionStatus,
   estimateMaxSpendable,
   prepareTransaction,
-  sync,
+  sync: sync as unknown as TronBridge["accountBridge"]["sync"],
   receive,
   signOperation,
   broadcast,

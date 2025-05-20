@@ -18,14 +18,14 @@ import {
 } from "../types";
 
 import { fromTransactionRaw } from "../bridge/transaction";
-import type { PolkadotAccount, Transaction } from "../types";
+import type { PolkadotAccount, PolkadotAccountRaw, Transaction } from "../types";
 const ACCOUNT_SAME_STASHCONTROLLER = "12YA86tRQhHgwU3SSj56aesUKB7GKvdnZTTTXRop4vd3YgDV";
 const ACCOUNT_STASH = "13jAJfhpFkRZj1TSSdFopaiFeKnof2q7g4GNdcxcg8Lvx6QN";
 const ACCOUNT_CONTROLLER = "15oodc5d8DWJodZhTD6qsxxSQRYWhdkWCrwqNHajDirXRrAD";
 const ACCOUNT_EMPTY = "111111111111111111111111111111111HC1";
 const ACCOUNT_WITH_NO_OPERATION = "12EsPA79dvhtjp1bYvCiEWPsQmmdKGss44GzE3CT9tTo9g4Q";
 
-const polkadot: CurrenciesData<Transaction> = {
+const polkadot: CurrenciesData<Transaction, PolkadotAccountRaw> = {
   FIXME_ignoreAccountFields: [
     "polkadotResources.unlockings", // Due to completion date that change everyday (estimated time)
     "polkadotResources.nominations", // TODO: try to only ignore status
@@ -65,6 +65,17 @@ const polkadot: CurrenciesData<Transaction> = {
         currencyId: "polkadot",
         lastSyncDate: "",
         balance: "21000310",
+        polkadotResources: {
+          controller: undefined,
+          stash: undefined,
+          nonce: 0,
+          lockedBalance: "0",
+          unlockedBalance: "0",
+          unlockingBalance: "0",
+          unlockings: undefined,
+          nominations: undefined,
+          numSlashingSpans: undefined,
+        },
       },
       transactions: [
         {
@@ -371,6 +382,17 @@ const polkadot: CurrenciesData<Transaction> = {
         currencyId: "polkadot",
         lastSyncDate: "",
         balance: "11000000000",
+        polkadotResources: {
+          controller: undefined,
+          stash: undefined,
+          nonce: 0,
+          lockedBalance: "0",
+          unlockedBalance: "0",
+          unlockingBalance: "0",
+          unlockings: undefined,
+          nominations: undefined,
+          numSlashingSpans: undefined,
+        },
       },
       transactions: [
         {
@@ -487,6 +509,17 @@ const polkadot: CurrenciesData<Transaction> = {
         currencyId: "polkadot",
         lastSyncDate: "",
         balance: "11000000000",
+        polkadotResources: {
+          controller: undefined,
+          stash: undefined,
+          nonce: 0,
+          lockedBalance: "0",
+          unlockedBalance: "0",
+          unlockingBalance: "0",
+          unlockings: undefined,
+          nominations: undefined,
+          numSlashingSpans: undefined,
+        },
       },
       transactions: [
         {
@@ -672,7 +705,7 @@ const polkadot: CurrenciesData<Transaction> = {
   ],
 };
 
-export const dataset: DatasetTest<Transaction> = {
+export const dataset: DatasetTest<Transaction, PolkadotAccountRaw> = {
   implementations: ["js"],
   currencies: {
     polkadot,

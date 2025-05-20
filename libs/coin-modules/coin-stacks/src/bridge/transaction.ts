@@ -1,4 +1,4 @@
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, SerializationBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { StacksNetwork } from "../network/api.types";
 
@@ -13,7 +13,9 @@ import {
 } from "@ledgerhq/coin-framework/serialization";
 import type { Transaction, TransactionRaw } from "../types";
 
-export const formatTransaction = (
+type StacksSerializationBridge = SerializationBridge<Transaction, TransactionRaw>;
+
+const formatTransaction = (
   { recipient, useAllAmount, amount }: Transaction,
   account: Account,
 ): string => `
@@ -72,4 +74,4 @@ export default {
   formatTransactionStatus,
   fromTransactionStatusRaw,
   toTransactionStatusRaw,
-};
+} satisfies StacksSerializationBridge;

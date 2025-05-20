@@ -75,7 +75,7 @@
     },
     "./specs": {
       "require": "./lib/test/bot-specs.js",
-      "default": "./lib-es/bridge/transaction.js"
+      "default": "./lib-es/test/bot-specs.js"
     },
     "./transaction": {
       "require": "./lib/bridge/transaction.js",

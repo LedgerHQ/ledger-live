@@ -6,13 +6,15 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, SerializationBridge } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 import { getAssetCodeIssuer } from "./logic";
 import type { Transaction, TransactionRaw } from "../types";
 
-export function formatTransaction(
+type StellarSerializationBridge = SerializationBridge<Transaction, TransactionRaw>;
+
+function formatTransaction(
   { amount, recipient, fees, memoValue, useAllAmount, subAccountId }: Transaction,
   mainAccount: Account,
 ): string {
@@ -96,4 +98,4 @@ export default {
   fromTransactionStatusRaw,
   toTransactionStatusRaw,
   formatTransactionStatus,
-};
+} satisfies StellarSerializationBridge;

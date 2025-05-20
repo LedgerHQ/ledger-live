@@ -1,4 +1,4 @@
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
 import {
   makeAccountBridgeReceive,
   getSerializedAddressParameters,
@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import type { Transaction } from "../types/common";
+import type { Transaction, TransactionRaw } from "../types/common";
 import resolver from "../signer/getAddress";
 import { sync, getAccountShape } from "./synchronisation";
 import { MinaSigner } from "../types/signer";
@@ -19,6 +19,7 @@ import getTransactionStatus from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
 import buildSignOperation from "./signOperation";
 import makeCliTools from "./cli-transaction";
+import serialization from "./transaction";
 
 export { makeCliTools };
 
@@ -37,9 +38,9 @@ export function buildCurrencyBridge(signerContext: SignerContext<MinaSigner>): C
   };
 }
 
-export function buildAccountBridge(
-  signerContext: SignerContext<MinaSigner>,
-): AccountBridge<Transaction> {
+type MinaAccountBridge = AccountBridge<Transaction>;
+
+export function buildAccountBridge(signerContext: SignerContext<MinaSigner>): MinaAccountBridge {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -59,14 +60,17 @@ export function buildAccountBridge(
   };
 }
 
+export type MinaBridge = Bridge<Transaction, TransactionRaw>;
+
 export function createBridges(
   signerContext: SignerContext<MinaSigner>,
   coinConfig: MinaCoinConfig,
-) {
+): MinaBridge {
   setCoinConfig(coinConfig);
 
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
+    serializationBridge: serialization,
   };
 }

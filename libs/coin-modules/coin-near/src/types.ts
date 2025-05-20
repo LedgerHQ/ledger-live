@@ -11,12 +11,18 @@ import type { NearStakingPosition } from "./api/sdk.types";
 
 export type { NearStakingPosition } from "./api/sdk.types";
 
+export function isNearTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "near";
+}
 export type Transaction = TransactionCommon & {
   family: "near";
   mode: string;
   fees?: BigNumber;
 };
 
+export function isNearTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "near";
+}
 export type TransactionRaw = TransactionCommonRaw & {
   family: "near";
   mode: string;

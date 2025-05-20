@@ -1,6 +1,8 @@
 import type {
   Account,
+  AccountBridge,
   AccountRaw,
+  Bridge,
   Operation,
   OperationExtra,
   OperationExtraRaw,
@@ -30,6 +32,9 @@ export type AlgorandResourcesRaw = {
 };
 export type AlgorandOperationMode = "send" | "optIn" | "claimReward";
 
+export function isAlgorandTransaction(tx: TransactionCommon): tx is AlgorandTransaction {
+  return tx.family === "algorand";
+}
 export type AlgorandTransaction = TransactionCommon & {
   family: "algorand";
   mode: AlgorandOperationMode;
@@ -37,6 +42,9 @@ export type AlgorandTransaction = TransactionCommon & {
   assetId: string | null | undefined;
   memo: string | null | undefined;
 };
+export function isAlgorandTransactionRaw(tx: TransactionCommonRaw): tx is AlgorandTransactionRaw {
+  return tx.family === "algorand";
+}
 export type AlgorandTransactionRaw = TransactionCommonRaw & {
   family: "algorand";
   mode: AlgorandOperationMode;
@@ -82,3 +90,20 @@ export type AlgorandAccount = Account & {
 export type AlgorandAccountRaw = AccountRaw & {
   algorandResources: AlgorandResourcesRaw;
 };
+
+export type AlgorandAccountBridge = AccountBridge<
+  AlgorandTransaction,
+  AlgorandAccount,
+  TransactionStatus,
+  AlgorandAccountRaw,
+  AlgorandOperationExtra,
+  AlgorandOperationExtraRaw
+>;
+export type AlgorandBridge = Bridge<
+  AlgorandTransaction,
+  AlgorandTransactionRaw,
+  AlgorandAccount,
+  AlgorandAccountRaw,
+  AlgorandOperationExtra,
+  AlgorandOperationExtraRaw
+>;

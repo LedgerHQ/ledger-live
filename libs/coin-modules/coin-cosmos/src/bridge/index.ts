@@ -6,16 +6,16 @@ import {
   makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { CurrencyBridge } from "@ledgerhq/types-live";
 
 import { CoinConfig } from "@ledgerhq/coin-framework/lib/config";
-import { CosmosAPI } from "../network/Cosmos";
 import cosmosCoinConfig, { CosmosCoinConfig } from "../config";
 import { createTransaction } from "../createTransaction";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import formatters from "../formatters";
 import getTransactionStatus from "../getTransactionStatus";
 import resolver from "../hw-getAddress";
+import { CosmosAPI } from "../network/Cosmos";
 import { prepareTransaction } from "../prepareTransaction";
 import {
   assignFromAccountRaw,
@@ -25,7 +25,8 @@ import {
 } from "../serialization";
 import { buildSignOperation } from "../signOperation";
 import { getAccountShape } from "../synchronisation";
-import type { CosmosAccount, CosmosOperation, Transaction, TransactionStatus } from "../types";
+import { serialization } from "../transaction";
+import type { CosmosAccountBridge, CosmosBridge } from "../types";
 import { CosmosSigner } from "../types/signer";
 import { updateTransaction } from "../updateTransaction";
 import { getPreloadStrategy, hydrate, preload } from "./preload";
@@ -48,9 +49,7 @@ function buildCurrencyBridge(signerContext: SignerContext<CosmosSigner>): Curren
   };
 }
 
-function buildAccountBridge(
-  signerContext: SignerContext<CosmosSigner>,
-): AccountBridge<Transaction, CosmosAccount, TransactionStatus, CosmosOperation> {
+function buildAccountBridge(signerContext: SignerContext<CosmosSigner>): CosmosAccountBridge {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -74,19 +73,21 @@ function buildAccountBridge(
     },
     fromOperationExtraRaw,
     toOperationExtraRaw,
-    formatAccountSpecifics: formatters.formatAccountSpecifics,
-    formatOperationSpecifics: formatters.formatOperationSpecifics,
     getSerializedAddressParameters,
+    ...formatters,
   };
 }
+
+export type { CosmosBridge };
 
 export function createBridges(
   signerContext: SignerContext<CosmosSigner>,
   coinConfig: CoinConfig<CosmosCoinConfig>,
-) {
+): CosmosBridge {
   cosmosCoinConfig.setCoinConfig(coinConfig);
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
+    serializationBridge: serialization,
   };
 }

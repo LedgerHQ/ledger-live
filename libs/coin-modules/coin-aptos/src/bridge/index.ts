@@ -1,22 +1,23 @@
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
+  getSerializedAddressParameters,
   makeAccountBridgeReceive,
   makeScanAccounts,
-  getSerializedAddressParameters,
   makeSync,
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import type { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { CurrencyBridge } from "@ledgerhq/types-live";
 import resolver from "../signer";
-import type { Transaction, TransactionStatus, AptosSigner } from "../types";
-import getTransactionStatus from "./getTransactionStatus";
-import estimateMaxSpendable from "./estimateMaxSpendable";
-import prepareTransaction from "./prepareTransaction";
-import createTransaction from "./createTransaction";
-import { getAccountShape } from "./synchronisation";
-import buildSignOperation from "./signOperation";
+import type { AptosAccountBridge, AptosBridge, AptosSigner } from "../types";
 import broadcast from "./broadcast";
+import createTransaction from "./createTransaction";
+import estimateMaxSpendable from "./estimateMaxSpendable";
+import getTransactionStatus from "./getTransactionStatus";
+import prepareTransaction from "./prepareTransaction";
+import buildSignOperation from "./signOperation";
+import { getAccountShape } from "./synchronisation";
+import serialization from "./transaction";
 
 function buildCurrencyBridge(signerContext: SignerContext<AptosSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -35,9 +36,7 @@ function buildCurrencyBridge(signerContext: SignerContext<AptosSigner>): Currenc
 
 const sync = makeSync({ getAccountShape });
 
-function buildAccountBridge(
-  signerContext: SignerContext<AptosSigner>,
-): AccountBridge<Transaction, Account, TransactionStatus> {
+function buildAccountBridge(signerContext: SignerContext<AptosSigner>): AptosAccountBridge {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -57,9 +56,12 @@ function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<AptosSigner>) {
+export { type AptosBridge };
+
+export function createBridges(signerContext: SignerContext<AptosSigner>): AptosBridge {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
+    serializationBridge: serialization,
   };
 }

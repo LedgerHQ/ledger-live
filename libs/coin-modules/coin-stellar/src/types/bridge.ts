@@ -42,6 +42,9 @@ export const StellarMemoType = [
 
 export type StellarTransactionMode = "send" | "changeTrust";
 
+export function isStellarTransaction(tx: TransactionCommon): tx is Transaction {
+  return tx.family === "stellar";
+}
 export type Transaction = TransactionCommon & {
   family: "stellar";
   networkInfo?: NetworkInfo | null | undefined;
@@ -54,6 +57,9 @@ export type Transaction = TransactionCommon & {
   assetIssuer?: string;
 };
 
+export function isStellarTransactionRaw(tx: TransactionCommonRaw): tx is TransactionRaw {
+  return tx.family === "stellar";
+}
 export type TransactionRaw = TransactionCommonRaw & {
   family: "stellar";
   networkInfo?: NetworkInfoRaw | null | undefined;
