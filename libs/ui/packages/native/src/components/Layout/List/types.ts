@@ -13,4 +13,5 @@ export type Item = {
   estimatedTime?: number;
   progress?: number;
   renderBody?: (isDisplayed?: boolean) => ReactNode;
+  background?: ReactNode;
 };

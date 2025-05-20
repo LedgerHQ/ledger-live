@@ -11,6 +11,7 @@ export const aDeviceInfoBuilder = (props?: Partial<DeviceInfo>): DeviceInfo => {
     providerName: undefined,
     managerAllowed: false,
     pinValidated: true,
+    seFlags: Buffer.alloc(0),
     ...props,
   };
 };
