@@ -7,10 +7,6 @@ export const GetAppAndVersionUnsupportedFormat = createCustomErrorClass(
   "GetAppAndVersionUnsupportedFormat",
 );
 
-export const LatestFirmwareVersionRequired = createCustomErrorClass(
-  "LatestFirmwareVersionRequired",
-);
-
 export const FeeEstimationFailed = createCustomErrorClass("FeeEstimationFailed");
 export const TransactionRefusedOnDevice = createCustomErrorClass("TransactionRefusedOnDevice");
 

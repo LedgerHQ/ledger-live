@@ -1,5 +1,9 @@
-import { ManagerNotEnoughSpaceError, UpdateYourApp } from "@ledgerhq/errors";
-import { LatestFirmwareVersionRequired, OutdatedApp } from "@ledgerhq/live-common/errors";
+import {
+  ManagerNotEnoughSpaceError,
+  UpdateYourApp,
+  LatestFirmwareVersionRequired,
+} from "@ledgerhq/errors";
+import { OutdatedApp } from "@ledgerhq/live-common/errors";
 import { useTranslation } from "react-i18next";
 import { renderError } from "~/renderer/components/DeviceAction/rendering";
 
