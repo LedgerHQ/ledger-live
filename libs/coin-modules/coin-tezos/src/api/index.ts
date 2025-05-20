@@ -55,14 +55,14 @@ async function craft(
   if (!isTezosTransactionType(transactionIntent.type)) {
     throw new IncorrectTypeError(transactionIntent.type);
   }
-  const fee =
-    customFees !== undefined
-      ? { fees: customFees.toString() }
-      : await estimate(transactionIntent).then(fees => ({
-          fees: fees.value.toString(),
-          gasLimit: fees.parameters?.gasLimit?.toString(),
-          storageLimit: fees.parameters?.storageLimit?.toString(),
-        }));
+
+  // note that an estimation is always necessary to get gasLimit and storageLimit, if even using custom fees
+  const fee = await estimate(transactionIntent).then(fees => ({
+    fees: (customFees ?? fees.value).toString(),
+    gasLimit: fees.parameters?.gasLimit?.toString(),
+    storageLimit: fees.parameters?.storageLimit?.toString(),
+  }));
+
   const { contents } = await craftTransaction(
     { address: transactionIntent.sender.address },
     {

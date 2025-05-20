@@ -447,6 +447,8 @@
     "incompatibility" : {
       "ton_title" : "Ledger Nano S™はTonのスワップに対応していません",
       "ton_description" : "Tonをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+      "ton_tokens_title" : "Ledger Nano S™は、Tonトークンのスワップに対応していません",
+      "ton_tokens_description" : "Tonトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
       "spl_tokens_title" : "Ledger Nano S™はSolanaトークンのスワップに対応していません",
       "spl_tokens_description" : "Solanaトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
       "sui_tokens_title" : "Ledger Nano S™は、Suiトークンのスワップに対応していません",
@@ -6614,7 +6616,8 @@
       "title" : "資産を選択"
     },
     "selectAccount" : {
-      "title" : "アカウントを選択"
+      "title" : "アカウントを選択",
+      "addAccount" : "新規または既存のアカウントを追加する"
     }
   },
   "customImage" : {
@@ -7044,6 +7047,14 @@
     "opted_out" : {
       "description" : "Ledger Nano Sの限られたメモリでは、複数の最新機能、ブロックチェーンの変更、セキュリティ強化も制限されます。ぜひ、新しいLedgerデバイスへのアップグレードをご検討ください。",
       "cta" : "詳細はこちら"
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "検索",
+    "assetFlow" : {
+      "selectTemplate" : "{{dynamic}}を選択",
+      "asset" : "資産",
+      "network" : "ネットワーク"
     }
   }
 }

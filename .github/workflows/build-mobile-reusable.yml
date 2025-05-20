@@ -1,4 +1,4 @@
-name: "Build Mobile"
+name: "[Mobile] - Build - Called"
 
 on:
   workflow_call:
@@ -27,7 +27,7 @@ permissions:
 
 jobs:
   build-mobile-app-android:
-    name: "Build LLM | Android"
+    name: "Android Build"
     runs-on: [ledger-live-4xlarge]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -83,7 +83,7 @@ jobs:
 
   build-mobile-app-ios:
     runs-on: [ledger-live-4xlarge]
-    name: "Build LLM | iOS"
+    name: "iOS Build"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -122,6 +122,7 @@ jobs:
           path: ${{ github.workspace }}/apps/ledger-live-mobile/mobile.metafile.json
 
   report:
+    name: "Build Mobile > Report"
     runs-on: ubuntu-22.04
     needs: [build-mobile-app-android, build-mobile-app-ios]
     if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request' ) }}
@@ -167,13 +168,13 @@ jobs:
             });
 
             const findJobUrl = os =>
-              jobs.find(job => job.name == `Build Ledger Live Mobile (${os})`)?.html_url;
+              jobs.find(job => job.name == `${os} Build`)?.html_url;
 
             const keys = {
               ios: {
                 symbol: "🍏",
                 name: "iOS",
-                jobUrl: findJobUrl("Mac OS X")
+                jobUrl: findJobUrl("iOS")
               },
               android: {
                 symbol: "🤖",

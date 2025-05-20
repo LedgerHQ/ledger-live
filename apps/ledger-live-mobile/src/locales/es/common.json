@@ -7419,6 +7419,7 @@
     },
     "performance" : "Rendimiento",
     "low" : "Baja",
-    "high" : "Alta"
+    "high" : "Alta",
+    "title" : "Movimientos del mercado"
   }
 }

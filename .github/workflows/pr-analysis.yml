@@ -1,4 +1,4 @@
-name: Pull Request Analysis
+name: "[All Platforms] - Pull Request Analysis - PR"
 on:
   pull_request:
     types: [opened, synchronize, reopened]

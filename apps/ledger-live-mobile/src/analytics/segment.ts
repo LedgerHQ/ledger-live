@@ -23,6 +23,9 @@ import {
   INFINITY_PASS_COLLECTION_CONTRACT,
 } from "@ledgerhq/live-nft";
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
+import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
+import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
+import { getEnv } from "@ledgerhq/live-env";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
 import { getIsNotifEnabled } from "../logic/getNotifPermissions";
 import getOrCreateUser from "../user";
@@ -56,9 +59,6 @@ import { BrazePlugin } from "./BrazePlugin";
 import { Maybe } from "../types/helpers";
 import { appStartupTime } from "../StartupTimeMarker";
 import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
-import { getEnv } from "@ledgerhq/live-env";
-import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
-import { getTokensWithFunds } from "LLM/utils/getTokensWithFunds";
 import { getMigrationUserProps } from "LLM/storage/utils/migrations/analytics";
 
 let sessionId = uuid();

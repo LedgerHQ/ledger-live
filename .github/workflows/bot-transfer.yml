@@ -1,4 +1,4 @@
-name: "Bot Transfer"
+name: "[Coin] - Bot Transfer - Manual"
 run-name: Transfer from bot ${{inputs.origin}} to ${{inputs.recipient}} (${{inputs.currencies}} 100%/${{inputs.split}})
 on:
   workflow_dispatch:

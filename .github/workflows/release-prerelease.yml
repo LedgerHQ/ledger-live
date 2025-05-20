@@ -1,4 +1,4 @@
-name: "[Release](Prerelease) Publish packages and apps"
+name: "[Release] - Build Prerelease - Push"
 on:
   push:
     branches:
@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   prerelease:
-    name: Prerelease
+    name: "Prerelease"
     runs-on: ubuntu-24.04
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -167,7 +167,7 @@ jobs:
             });
 
   prerelease-fail:
-    name: Prerelease Failure Reporting
+    name: "Prerelease > Failure Reporting"
     needs: prerelease
     if: failure()
     runs-on: ubuntu-latest

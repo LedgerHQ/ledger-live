@@ -483,13 +483,18 @@ export type FetchTxsStopPredicate = (
 ) => boolean;
 
 export type FetchParams = {
-  limit: number;
+  /** The maximum number of transactions to fetch per call. */
+  limitPerCall: number;
+  /** Hint about the number of transactions to be fetched in total (hint to optimize `limitPerCall`) */
+  hintGlobalLimit?: number;
   minTimestamp: number;
+  order: "asc" | "desc";
 };
 
 export const defaultFetchParams: FetchParams = {
-  limit: 100,
+  limitPerCall: 100,
   minTimestamp: 0,
+  order: "desc",
 } as const;
 
 export async function fetchTronAccountTxs(
@@ -498,12 +503,15 @@ export async function fetchTronAccountTxs(
   cacheTransactionInfoById: Record<string, TronTransactionInfo>,
   params: FetchParams,
 ): Promise<TrongridTxInfo[]> {
-  const queryParamsNativeTxs = `limit=${params.limit}&min_timestamp=${params.minTimestamp}`;
+  const adjustedLimitPerCall = params.hintGlobalLimit
+    ? Math.min(params.limitPerCall, params.hintGlobalLimit)
+    : params.limitPerCall;
+  const queryParams = `limit=${adjustedLimitPerCall}&min_timestamp=${params.minTimestamp}&order_by=block_timestamp,${params.order}`;
   const nativeTxs = (
     await getAllTransactions<
       (TransactionTronAPI & { detail?: TronTransactionInfo }) | MalformedTransactionTronAPI
     >(
-      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions?${queryParamsNativeTxs}`,
+      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions?${queryParams}`,
       shouldFetchMoreTxs,
       getTransactions(cacheTransactionInfoById),
     )
@@ -528,14 +536,77 @@ export async function fetchTronAccountTxs(
 
   // we need to fetch and filter trc20 transactions from another endpoint
   // doc https://developers.tron.network/reference/get-trc20-transaction-info-by-account-address
-  const queryParamsTrc20Txs = `limit=${params.limit}&min_timestamp=${params.minTimestamp}`;
-  const trc20Txs = (
+
+  const callTrc20Endpoint = async () =>
     await getAllTransactions<Trc20API>(
-      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions/trc20?${queryParamsTrc20Txs}&get_detail=true`,
+      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions/trc20?${queryParams}&get_detail=true`,
       shouldFetchMoreTxs,
       getTrc20,
-    )
-  ).map(tx => formatTrongridTrc20TxResponse(tx));
+    );
+
+  type Acc = {
+    txs: Trc20API[];
+    invalids: number[];
+  };
+
+  function isValid(tx: Trc20API): boolean {
+    const ret = tx?.detail?.ret;
+    return Array.isArray(ret) && ret.length > 0;
+  }
+
+  function getInvalidTxIndexes(txs: Trc20API[]): number[] {
+    const invalids: number[] = [];
+    for (let i = 0; i < txs.length; i++) {
+      if (!isValid(txs[i])) {
+        invalids.push(i);
+      }
+    }
+    txs.filter(tx => !isValid(tx)).map((tx, index) => index);
+    return invalids;
+  }
+
+  function assert(predicate: boolean, message: string) {
+    if (!predicate) {
+      throw new Error(message);
+    }
+  }
+
+  // Merge the two results
+  function mergeAccs(acc1: Acc, acc2: Acc): Acc {
+    assert(acc1.txs.length == acc2.txs.length, "accs should have the same length");
+    const accRet: Acc = { txs: acc1.txs, invalids: [] };
+    acc1.invalids.forEach(invalidIndex => {
+      acc2.invalids.includes(invalidIndex)
+        ? accRet.invalids.push(invalidIndex)
+        : (accRet.txs[invalidIndex] = acc2.txs[invalidIndex]);
+    });
+    return accRet;
+  }
+
+  // see LIVE-18992 for an explanation to why we need this
+  async function getTrc20TxsWithRetry(acc: Acc | null, times: number): Promise<Trc20API[]> {
+    assert(
+      times > 0,
+      "getTrc20TxsWithRetry: couldn't fetch trc20 transactions after several attempts",
+    );
+    const ret = await callTrc20Endpoint();
+    const thisAcc: Acc = {
+      txs: ret,
+      invalids: getInvalidTxIndexes(ret),
+    };
+    const newAcc = acc ? mergeAccs(acc, thisAcc) : thisAcc;
+    if (newAcc.invalids.length == 0) {
+      return newAcc.txs;
+    } else {
+      log(
+        "coin-tron",
+        `getTrc20TxsWithRetry: got ${newAcc.invalids.length} invalid trc20 transactions, retrying...`,
+      );
+      return await getTrc20TxsWithRetry(newAcc, times - 1);
+    }
+  }
+
+  const trc20Txs = (await getTrc20TxsWithRetry(null, 3)).map(formatTrongridTrc20TxResponse);
 
   const txInfos: TrongridTxInfo[] = compact(nativeTxs.concat(trc20Txs)).sort(
     (a, b) => b.date.getTime() - a.date.getTime(),

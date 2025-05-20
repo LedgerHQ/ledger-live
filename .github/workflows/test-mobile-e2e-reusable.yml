@@ -1,4 +1,4 @@
-name: "Test Mobile E2E"
+name: "[Mobile] - E2E Test - Scheduled/Called"
 
 on:
   schedule:
@@ -86,7 +86,7 @@ env:
 
 jobs:
   detox-tests-ios:
-    name: "LLM - iOS Detox Tests"
+    name: "iOS Detox"
     runs-on: ["${{ inputs.macos-specificity-runner-label || 'general-pool' }}", macOS, ARM64]
     if: ${{ !inputs.speculos_tests && github.event_name != 'schedule' }}
     env:
@@ -220,7 +220,7 @@ jobs:
       - run: echo "${{ steps.test-artifacts.outputs.artifact-id }}"
 
   allure-report-ios:
-    name: "Allure Reports Export on Server"
+    name: "iOS Detox > Allure Report"
     runs-on: [ledger-live-medium]
     if: ${{ !cancelled() && !inputs.speculos_tests && needs.detox-tests-ios.outputs.artifact }}
     needs: [detox-tests-ios]
@@ -252,7 +252,7 @@ jobs:
           platform: iOS
 
   detox-tests-android:
-    name: "Ledger Live Mobile - Android Detox Tests"
+    name: "Android Detox"
     runs-on: [ledger-live-linux-8CPU-32RAM]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -428,7 +428,7 @@ jobs:
         run: echo "status_${{ matrix.shardIndex }}=${{ steps.detox.outcome }}" >> $GITHUB_OUTPUT
 
   allure-report-android:
-    name: "Allure Reports Export on Server"
+    name: "Android Detox > Allure Report"
     runs-on: [ledger-live-medium]
     if: ${{ !cancelled() && needs.detox-tests-android.outputs.artifact }}
     outputs:
@@ -475,9 +475,8 @@ jobs:
           done
           echo "finalStatus=$finalStatus" >> $GITHUB_OUTPUT
 
-
   upload-to-xray:
-    name: "Upload to Xray"
+    name: "Test Mobile E2E > XRAY Report"
     runs-on: [ledger-live-medium]
     strategy:
       matrix:
@@ -540,6 +539,7 @@ jobs:
         run: echo "::notice title=${{ matrix.platform }} Xray report URL::${{ env.JIRA_URL }}/${{ steps.publish-xray.outputs.xray_key }}"
 
   report-on-slack:
+    name: "Test Mobile E2E > Slack Report"
     runs-on: ubuntu-22.04
     needs: [allure-report-android, allure-report-ios]
     if: ${{ !cancelled() && (needs.allure-report-ios.outputs.report-url || needs.allure-report-android.outputs.report-url) }}

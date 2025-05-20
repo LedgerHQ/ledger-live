@@ -3,13 +3,21 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { NetworkList } from "@ledgerhq/react-ui/pre-ldls";
 import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import { Box, Flex } from "@ledgerhq/react-ui/index";
 
 type SelectNetworkProps = {
   networks: CryptoOrTokenCurrency[];
-  onNetworkSelected: (network: CryptoOrTokenCurrency) => void;
   source: string;
   flow: string;
+  onNetworkSelected: (network: CryptoOrTokenCurrency) => void;
 };
+
+const CURRENT_PAGE = "Modular Network Selection";
+const ROW_HEIGHT = 64;
+const SPACING = 16;
+const TWO_ROWS_HEIGHT = 2 * ROW_HEIGHT;
+const EXTRA_BOTTOM_MARGIN = TWO_ROWS_HEIGHT - SPACING;
+const EXTRA_PADDING_HIDDEN_SCROLLBAR = 12;
 
 export const SelectNetwork = ({
   networks,
@@ -19,7 +27,6 @@ export const SelectNetwork = ({
 }: SelectNetworkProps) => {
   const onClick = (networkId: string) => {
     track("network_clicked", { network: networkId, page: "Modular Asset Flow", flow });
-
     const network = networks.find(({ id }) => id === networkId);
     if (!network) return;
 
@@ -27,11 +34,18 @@ export const SelectNetwork = ({
   };
 
   return (
-    <>
-      <TrackPage category={source} name="Modular Network Selection" flow={flow} />
-      <div style={{ flex: "1 1 auto", width: "100%" }}>
+    <Box style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+      <TrackPage category={source} name={CURRENT_PAGE} flow={flow} />
+      <Flex
+        style={{
+          flex: "1",
+          overflow: "auto",
+          width: `calc(100% + ${EXTRA_PADDING_HIDDEN_SCROLLBAR + "px"})`,
+          paddingBottom: `${EXTRA_BOTTOM_MARGIN}px`,
+        }}
+      >
         <NetworkList networks={networks} onClick={onClick} />
-      </div>
-    </>
+      </Flex>
+    </Box>
   );
 };
