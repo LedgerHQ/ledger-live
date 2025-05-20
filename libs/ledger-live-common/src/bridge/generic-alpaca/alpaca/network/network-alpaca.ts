@@ -88,8 +88,8 @@ const buildValidateIntent = networkFamily =>
     // TODO: check returned value
     const { data } = await network<
       {
-        errors: Record<string, never>;
-        warnings: Record<string, never>;
+        errors: Record<string, Error>;
+        warnings: Record<string, Error>;
         estimatedFees: bigint;
         amount: bigint;
         totalSpent: bigint;
