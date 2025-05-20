@@ -6,6 +6,8 @@ import {
   StatusCodes,
   LockedDeviceError,
 } from "@ledgerhq/errors";
+import { isCharonSupported } from "@ledgerhq/device-core";
+import { getDeviceModel, identifyTargetId } from "@ledgerhq/devices";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import type Transport from "@ledgerhq/hw-transport";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
@@ -21,6 +23,8 @@ import attemptToQuitApp, { AttemptToQuitAppEvent } from "./attemptToQuitApp";
 import { LockedDeviceEvent } from "./actions/types";
 import { ManagerRequest } from "./actions/manager";
 import { PrepareConnectManagerEventMapper } from "./connectManagerEventMapper";
+import { extractOnboardingState, OnboardingStep } from "./extractOnboardingState";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 export type Input = {
   deviceId: string;
@@ -59,6 +63,22 @@ const cmd = (transport: Transport, { request }: Input): Observable<ConnectManage
 
           if (!deviceInfo.onboarded && !deviceInfo.isRecoveryMode) {
             throw new DeviceNotOnboarded();
+          }
+
+          if (
+            isCharonSupported(
+              deviceInfo.seVersion ?? "",
+              identifyTargetId(deviceInfo.seTargetId ?? 0)?.id,
+            )
+          ) {
+            const onboardingState = extractOnboardingState(
+              deviceInfo.seFlags,
+              deviceInfo.charonState,
+            );
+            console.log("onboardingState", onboardingState);
+            if (onboardingState.currentOnboardingStep === OnboardingStep.BackupCharon) {
+              throw new DeviceNotOnboarded();
+            }
           }
 
           if (deviceInfo.isBootloader) {

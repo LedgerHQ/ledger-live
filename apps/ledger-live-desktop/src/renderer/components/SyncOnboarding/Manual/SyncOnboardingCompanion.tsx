@@ -38,6 +38,8 @@ import { LockedDeviceError } from "@ledgerhq/errors";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
 import { useTrackOnboardingFlow } from "~/renderer/analytics/hooks/useTrackOnboardingFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
+import BackgroundRedSvg from "./assets/BackgroundRed";
+import BackgroundBlueSvg from "./assets/BackgroundBlue";
 
 const READY_REDIRECT_DELAY_MS = 2000;
 const POLLING_PERIOD_MS = 1000;
@@ -74,6 +76,7 @@ type Step = {
   hasLoader?: boolean;
   estimatedTime?: number;
   renderBody?: () => ReactNode;
+  background?: ReactNode;
 };
 
 function nextStepKey(step: StepKey): StepKey {
@@ -189,6 +192,12 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         status: "inactive",
         title: t("syncOnboarding.manual.seedContent.title"),
         titleCompleted: t("syncOnboarding.manual.seedContent.titleCompleted"),
+        background:
+          seedPathStatus === "new_seed" ? (
+            <BackgroundBlueSvg />
+          ) : seedPathStatus === "backup_charon" ? (
+            <BackgroundRedSvg />
+          ) : null,
         renderBody: () => (
           <>
             <TrackPage
@@ -403,6 +412,14 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         setStepKey(StepKey.Seed);
         setSeedPathStatus("recover_seed");
         analyticsSeedConfiguration.current = "recover_seed";
+        break;
+      case DeviceOnboardingStep.BackupCharon:
+        setStepKey(StepKey.Seed);
+        setSeedPathStatus("backup_charon");
+        break;
+      case DeviceOnboardingStep.RestoreCharon:
+        setStepKey(StepKey.Seed);
+        setSeedPathStatus("restore_charon");
         break;
       case DeviceOnboardingStep.Pin:
         setStepKey(StepKey.Pin);

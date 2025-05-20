@@ -43,6 +43,8 @@ export type DeviceInfo = {
   bootloaderVersion?: string;
   hardwareVersion?: number;
   languageId?: number;
+  seFlags: Buffer;
+  charonState?: Buffer;
 };
 
 /**
@@ -117,6 +119,8 @@ export type FirmwareInfo = {
   bootloaderVersion?: string;
   hardwareVersion?: number;
   languageId?: number;
+  recoverState?: Buffer;
+  charonState?: Buffer;
 };
 type BaseFirmware = {
   id: Id;
