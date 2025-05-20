@@ -359,6 +359,7 @@ export default function Content({
 
       <Section
         title={t("operationDetails.date")}
+        testID="operationDetails-date"
         value={<FormatDate withHoursMinutes date={operation.date} />}
       />
 
@@ -404,7 +405,11 @@ export default function Content({
         </Section>
       ) : null}
 
-      <Section title={t("operationDetails.identifier")} value={operation.hash} />
+      <Section
+        title={t("operationDetails.identifier")}
+        value={operation.hash}
+        testID="operationDetails-identifier"
+      />
 
       {uniqueSenders.length > 0 && (
         <View style={sectionStyles.wrapper}>

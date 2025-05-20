@@ -180,7 +180,10 @@ function PortfolioScreen({ navigation }: NavigationProps) {
               </Flex>
             </SectionContainer>,
             <SectionContainer px={6} key="PortfolioOperationsHistorySection">
-              <SectionTitle title={t("analytics.operations.title")} />
+              <SectionTitle
+                title={t("analytics.operations.title")}
+                testID="portfolio-transaction-history-section"
+              />
               <PortfolioOperationsHistorySection />
             </SectionContainer>,
           ]
