@@ -26,10 +26,18 @@ import getDeviceInfo from "./getDeviceInfo";
 import getAddress from "./getAddress";
 import openApp from "./openApp";
 import quitApp from "./quitApp";
-import { mustUpgrade } from "../apps";
+import { mustUpgrade, getMinVersion } from "../apps";
 import isUpdateAvailable from "./isUpdateAvailable";
 import { LockedDeviceEvent } from "./actions/types";
 import { getLatestFirmwareForDeviceUseCase } from "../device/use-cases/getLatestFirmwareForDeviceUseCase";
+import {
+  type ApplicationDependency,
+  type ApplicationConstraint,
+  type ApplicationVersionConstraint,
+  type DeviceManagementKit,
+} from "@ledgerhq/device-management-kit";
+import { ConnectAppDeviceAction } from "@ledgerhq/live-dmk-shared";
+import { ConnectAppEventMapper } from "./connectAppEventMapper";
 
 export type RequiresDerivation = {
   currencyId: string;
@@ -479,6 +487,29 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
   );
 };
 
+const isDmkTransport = (
+  transport: Transport,
+): transport is Transport & { dmk: DeviceManagementKit; sessionId: string } => {
+  return (
+    "dmk" in transport &&
+    transport.dmk !== undefined &&
+    "sessionId" in transport &&
+    transport.sessionId !== undefined
+  );
+};
+
+const appNameToDependency = (appName: string): ApplicationDependency => {
+  let constraints: ApplicationConstraint[] | undefined = undefined;
+  const minVersion = getMinVersion(appName);
+  if (minVersion !== undefined) {
+    constraints = [{ minVersion: minVersion as ApplicationVersionConstraint }];
+  }
+  return {
+    name: appName,
+    constraints,
+  };
+};
+
 export default function connectAppFactory(
   {
     isLdmkConnectAppEnabled,
@@ -489,5 +520,43 @@ export default function connectAppFactory(
   if (!isLdmkConnectAppEnabled) {
     return cmd;
   }
-  throw new Error("LdkmConnectApp is not supported yet");
+  return ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
+    const {
+      appName,
+      requiresDerivation,
+      dependencies,
+      requireLatestFirmware,
+      allowPartialDependencies = false,
+    } = request;
+    return withDevice(deviceId)(transport => {
+      if (!isDmkTransport(transport)) {
+        throw new Error("LdkmConnectApp is not supported without LDMK transport");
+      }
+      const { dmk, sessionId } = transport;
+      const deviceAction = new ConnectAppDeviceAction({
+        input: {
+          application: appNameToDependency(appName),
+          dependencies: dependencies ? dependencies.map(name => appNameToDependency(name)) : [],
+          requireLatestFirmware,
+          allowMissingApplication: allowPartialDependencies,
+          unlockTimeout: 0, // Expect to fail immediately when device is locked
+          requiredDerivation: requiresDerivation
+            ? async () => {
+                const { currencyId, ...derivationRest } = requiresDerivation;
+                const derivation = await getAddress(transport, {
+                  currency: getCryptoCurrencyById(currencyId),
+                  ...derivationRest,
+                });
+                return derivation.address;
+              }
+            : undefined,
+        },
+      });
+      const observable = dmk.executeDeviceAction({
+        sessionId,
+        deviceAction,
+      });
+      return new ConnectAppEventMapper(dmk, sessionId, appName, observable).map();
+    });
+  };
 }

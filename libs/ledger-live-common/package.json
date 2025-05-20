@@ -182,6 +182,7 @@
     "@ledgerhq/live-app-sdk": "^0.8.1",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",
+    "@ledgerhq/live-dmk-shared": "workspace:^",
     "@ledgerhq/live-countervalues-react": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-hooks": "workspace:*",
