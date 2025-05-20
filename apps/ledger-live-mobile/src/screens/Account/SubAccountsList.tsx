@@ -105,7 +105,6 @@ export default function SubAccountsList({
           </>
         }
         containerProps={{ mb: 6 }}
-        testID="subAccounts-"
       />
     ),
     [isToken, hasSpecificTokenWording, family, subAccounts.length],
