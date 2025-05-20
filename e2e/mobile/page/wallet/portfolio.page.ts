@@ -5,6 +5,7 @@ export default class PortfolioPage {
   baseLink = "portfolio";
   zeroBalance = "$0.00";
   graphCardBalanceId = "graphCard-balance";
+  graphCardChart = "graphCard-chart";
   assetBalanceId = "asset-balance";
   readOnlyItemsId = "PortfolioReadOnlyItems";
   accountsListView = "PortfolioAccountsList";
@@ -12,6 +13,11 @@ export default class PortfolioPage {
   portfolioSettingsButtonId = "settings-icon";
   addAccountCta = "add-account-cta";
   allocationSectionTitleId = "portfolio-allocation-section";
+  quickActionBuyButton = "portoflio-quick-action-button-buy";
+  quickActionSwapButton = "portoflio-quick-action-button-swap";
+  quickActionSendButton = "portoflio-quick-action-button-send";
+  quickActionReceiveButton = "portoflio-quick-action-button-receive";
+  quickActionEarnButton = "portoflio-quick-action-button-earn";
 
   portfolioSettingsButton = async () => await getElementById(this.portfolioSettingsButtonId);
   assetItemId = (currencyName: string) => `assetItem-${currencyName}`;
@@ -55,5 +61,19 @@ export default class PortfolioPage {
   async goToAccounts(currencyName: string) {
     await scrollToId(this.allocationSectionTitleId, this.accountsListView);
     await tapById(this.assetItemId(currencyName));
+  }
+
+  @Step("Check quick action 'Buy' button visibility")
+  async checkQuickActionButtonsVisibility() {
+    await expect(getElementById(this.quickActionBuyButton)).toBeVisible();
+    await expect(getElementById(this.quickActionSwapButton)).toBeVisible();
+    await expect(getElementById(this.quickActionSendButton)).toBeVisible();
+    await expect(getElementById(this.quickActionReceiveButton)).toBeVisible();
+    await expect(getElementById(this.quickActionEarnButton)).toBeVisible();
+  }
+
+  @Step("Check chart visibility")
+  async checkChartVisibility() {
+    await expect(getElementById(this.graphCardChart)).toBeVisible();
   }
 }
