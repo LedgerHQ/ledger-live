@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.114.0-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`18ec8af`](https://github.com/LedgerHQ/ledger-live/commit/18ec8af922c053909835b5ef2b0a94d2763df192), [`15ab9eb`](https://github.com/LedgerHQ/ledger-live/commit/15ab9eba3ff4cf95f983d18c4122a474aa935261), [`ea559bc`](https://github.com/LedgerHQ/ledger-live/commit/ea559bc6676a9c8fc1bb371dd1d570b7d2258689)]:
+  - @ledgerhq/live-common@34.34.0-nightly.3
+  - @ledgerhq/coin-aptos@2.0.0-nightly.2
+  - @ledgerhq/live-dmk-desktop@0.3.5-nightly.3
+
 ## 2.114.0-nightly.2
 
 ### Patch Changes

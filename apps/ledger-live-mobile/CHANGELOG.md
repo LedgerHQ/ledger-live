@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.79.0-nightly.3
+
+### Minor Changes
+
+- [#10183](https://github.com/LedgerHQ/ledger-live/pull/10183) [`18ec8af`](https://github.com/LedgerHQ/ledger-live/commit/18ec8af922c053909835b5ef2b0a94d2763df192) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Large Mover swipe card
+
+### Patch Changes
+
+- [#10277](https://github.com/LedgerHQ/ledger-live/pull/10277) [`6ed93ee`](https://github.com/LedgerHQ/ledger-live/commit/6ed93eecf9d9055b21ab098aee4feaf568b760ed) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - Fix mobile success screen not appearing when broadcast disabled
+
 ## 3.79.0-nightly.2
 
 ### Minor Changes

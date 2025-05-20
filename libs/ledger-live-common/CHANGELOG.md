@@ -1,5 +1,18 @@
 # @ledgerhq/live-common
 
+## 34.34.0-nightly.3
+
+### Minor Changes
+
+- [#10183](https://github.com/LedgerHQ/ledger-live/pull/10183) [`18ec8af`](https://github.com/LedgerHQ/ledger-live/commit/18ec8af922c053909835b5ef2b0a94d2763df192) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Large Mover swipe card
+
+### Patch Changes
+
+- [#10186](https://github.com/LedgerHQ/ledger-live/pull/10186) [`ea559bc`](https://github.com/LedgerHQ/ledger-live/commit/ea559bc6676a9c8fc1bb371dd1d570b7d2258689) Thanks [@sponomarev](https://github.com/sponomarev)! - Fix incompatibility messages for Nano S during Sui swaps
+
+- Updated dependencies [[`15ab9eb`](https://github.com/LedgerHQ/ledger-live/commit/15ab9eba3ff4cf95f983d18c4122a474aa935261)]:
+  - @ledgerhq/coin-aptos@2.0.0-nightly.2
+
 ## 34.34.0-nightly.2
 
 ### Patch Changes

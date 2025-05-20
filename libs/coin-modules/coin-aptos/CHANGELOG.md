@@ -1,5 +1,11 @@
 # @ledgerhq/coin-aptos
 
+## 2.0.0-nightly.2
+
+### Patch Changes
+
+- [#10031](https://github.com/LedgerHQ/ledger-live/pull/10031) [`15ab9eb`](https://github.com/LedgerHQ/ledger-live/commit/15ab9eba3ff4cf95f983d18c4122a474aa935261) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - Add estimatefees for Aptos alpaca
+
 ## 2.0.0-nightly.1
 
 ### Major Changes
