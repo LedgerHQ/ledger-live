@@ -22,45 +22,10 @@ async function checkOperationInfos(
   if (operationType) await app.operationDetails.checkTransactionType(operationType);
 }
 
-const beforeAllFunction_Set2Accounts = async (transaction: TransactionType) => {
+const beforeAllFunction = async (transaction: TransactionType, setAccountToCredit: boolean) => {
   await app.init({
     userdata: "skip-onboarding",
     speculosApp: transaction.accountToDebit.currency.speculosApp,
-    featureFlags: {
-      llmAccountListUI: { enabled: true },
-      llmNetworkBasedAddAccountFlow: { enabled: true },
-    },
-    cliCommands: [
-      (userDataPath?: string) => {
-        return CLI.liveData({
-          currency: transaction.accountToCredit.currency.speculosApp.name,
-          index: transaction.accountToCredit.index,
-          appjson: userDataPath,
-          add: true,
-        });
-      },
-      (userDataPath?: string) => {
-        return CLI.liveData({
-          currency: transaction.accountToDebit.currency.speculosApp.name,
-          index: transaction.accountToDebit.index,
-          appjson: userDataPath,
-          add: true,
-        });
-      },
-    ],
-  });
-
-  await app.portfolio.waitForPortfolioPageToLoad();
-};
-
-const beforeAllFunction_Set1Account = async (transaction: TransactionType) => {
-  await app.init({
-    userdata: "skip-onboarding",
-    speculosApp: transaction.accountToDebit.currency.speculosApp,
-    featureFlags: {
-      llmAccountListUI: { enabled: true },
-      llmNetworkBasedAddAccountFlow: { enabled: true },
-    },
     cliCommands: [
       (userDataPath?: string) => {
         return CLI.liveData({
@@ -70,6 +35,18 @@ const beforeAllFunction_Set1Account = async (transaction: TransactionType) => {
           add: true,
         });
       },
+      ...(setAccountToCredit
+        ? [
+            (userDataPath?: string) => {
+              return CLI.liveData({
+                currency: transaction.accountToCredit.currency.speculosApp.name,
+                index: transaction.accountToCredit.index,
+                appjson: userDataPath,
+                add: true,
+              });
+            },
+          ]
+        : []),
     ],
   });
 
@@ -80,8 +57,9 @@ export async function runSendSPL(transaction: TransactionType, tmsLinks: string[
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe("Send SPL tokens from 1 account to another", () => {
     beforeAll(async () => {
-      await beforeAllFunction_Set2Accounts(transaction);
+      await beforeAllFunction(transaction, true);
     });
+
     it(`Send from ${transaction.accountToDebit.accountName} Account to ${transaction.accountToCredit.accountName} Account - ${transaction.accountToDebit.currency.name} - E2E test`, async () => {
       const addressToCredit = transaction.accountToCredit.address;
       await navigateToSubAccount(transaction.accountToDebit);
@@ -117,7 +95,7 @@ export async function runSendSPL(transaction: TransactionType, tmsLinks: string[
   });
 }
 
-export async function runSendSPLAdressValid(
+export async function runSendSPLAddressValid(
   transaction: TransactionType,
   expectedWarningMessage: string,
   tmsLinks: string[],
@@ -125,13 +103,15 @@ export async function runSendSPLAdressValid(
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe("Send token - valid address input", () => {
     beforeAll(async () => {
-      await beforeAllFunction_Set1Account(transaction);
+      await beforeAllFunction(transaction, false);
     });
 
     it(`Send from ${transaction.accountToDebit.accountName} to ${transaction.accountToCredit.accountName} - ${transaction.accountToDebit.currency.name} - valid address input`, async () => {
+      const accountid = app.send.accountId(transaction.accountToDebit);
       await app.send.openViaDeeplink();
-      await app.send.selectDebitCurrency(transaction.accountToDebit);
-      const addressToCredit = transaction.accountToCredit.ataAddress as string;
+      await app.common.performSearch(transaction.accountToDebit.currency.ticker);
+      await app.common.selectAccount(accountid);
+      const addressToCredit = transaction.accountToCredit.ataAddress || "";
       await app.send.setRecipient(addressToCredit, transaction.memoTag);
       await app.send.expectSendRecipientWarning(expectedWarningMessage);
     });
@@ -147,12 +127,14 @@ export async function runSendSPLAddressInvalid(
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe("Send token - invalid address input", () => {
     beforeAll(async () => {
-      await beforeAllFunction_Set1Account(transaction);
+      await beforeAllFunction(transaction, false);
     });
 
     it(`Send from ${transaction.accountToDebit.accountName} to ${transaction.accountToCredit.accountName} - ${transaction.accountToCredit.currency.name} - ${expectedErrorMessage}`, async () => {
+      const accountid = app.send.accountId(transaction.accountToDebit);
       await app.send.openViaDeeplink();
-      await app.send.selectDebitCurrency(transaction.accountToDebit);
+      await app.common.performSearch(transaction.accountToDebit.currency.ticker);
+      await app.common.selectAccount(accountid);
       invariant(recipientContractAddress, "Recipient address is not defined");
       await app.send.setRecipient(recipientContractAddress, transaction.memoTag);
       await app.send.expectSendRecipientError(expectedErrorMessage);

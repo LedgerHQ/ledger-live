@@ -27,6 +27,12 @@ export default class CommonPage {
     await typeTextByElement(this.searchBar(), text);
   }
 
+  @Step("Select currency to debit")
+  async selectAccount(accountId: string): Promise<void> {
+    await waitForElementById(accountId);
+    await tapById(accountId);
+  }
+
   @Step("Expect search")
   async expectSearch(text: string) {
     await expect(this.searchBar()).toHaveText(text);
