@@ -5,6 +5,7 @@ import { ElectronApplication, expect } from "@playwright/test";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Swap";
+import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import fs from "fs/promises";
 import * as path from "path";
@@ -120,7 +121,7 @@ export class SwapPage extends AppPage {
 
     const providersWithoutKYC = providersList.filter(providerName => {
       const provider = Object.values(Provider).find(p => p.uiName === providerName);
-      if (process.env.SPECULOS_DEVICE === "nanoS") {
+      if (process.env.SPECULOS_DEVICE === Device.LNS) {
         return provider && !provider.kyc && provider.availableOnLns;
       }
       return provider && !provider.kyc;

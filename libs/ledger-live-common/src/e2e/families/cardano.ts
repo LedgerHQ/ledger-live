@@ -8,9 +8,10 @@ import {
   pressRightButton,
 } from "../speculos";
 import { DeviceLabels } from "../enum/DeviceLabels";
+import { Device } from "../enum/Device";
 
 export async function sendCardano(tx: Transaction) {
-  const isNanoS = process.env.SPECULOS_DEVICE === "nanoS";
+  const isNanoS = process.env.SPECULOS_DEVICE === Device.LNS;
   await waitFor(DeviceLabels.NEW_ORDINARY);
   await (isNanoS ? pressRightButton() : pressBoth());
   if (isNanoS) {
@@ -63,7 +64,8 @@ export async function delegateCardano() {
     { label: DeviceLabels.CONFIRM, action: "right" },
   ];
 
-  const stepsToExecute = process.env.SPECULOS_DEVICE === "nanoS" ? LNSSpecificSteps : commonSteps;
+  const stepsToExecute =
+    process.env.SPECULOS_DEVICE === Device.LNS ? LNSSpecificSteps : commonSteps;
 
   for (const step of stepsToExecute) {
     await waitFor(step.label);

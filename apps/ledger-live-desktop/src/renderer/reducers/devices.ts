@@ -4,7 +4,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Handlers } from "./types";
 import { SettingsState } from "./settings";
-import { setSpeculosModel } from "@ledgerhq/live-common/e2e/speculos";
+import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculos";
 
 export type DevicesState = {
   /**
@@ -73,7 +73,7 @@ export function getCurrentDevice(state: { devices: DevicesState; settings: Setti
   const envConditions = [
     { condition: getEnv("DEVICE_PROXY_URL"), modelId: DeviceModelId.nanoS },
     { condition: getEnv("MOCK") && !getEnv("MOCK_NO_BYPASS"), modelId: DeviceModelId.nanoS },
-    { condition: getEnv("SPECULOS_API_PORT"), modelId: setSpeculosModel() },
+    { condition: getEnv("SPECULOS_API_PORT"), modelId: getSpeculosModel() },
   ];
 
   for (const { condition, modelId } of envConditions) {
@@ -91,7 +91,7 @@ export function getCurrentDevice(state: { devices: DevicesState; settings: Setti
 export function getDevices(state: { devices: DevicesState }) {
   const envConditions = [
     { condition: getEnv("DEVICE_PROXY_URL"), modelId: DeviceModelId.nanoS },
-    { condition: getEnv("SPECULOS_API_PORT"), modelId: setSpeculosModel() },
+    { condition: getEnv("SPECULOS_API_PORT"), modelId: getSpeculosModel() },
   ];
   for (const { condition, modelId } of envConditions) {
     if (condition) {

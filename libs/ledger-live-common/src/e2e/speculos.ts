@@ -16,6 +16,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { getCryptoCurrencyById } from "../currencies";
 import { DeviceLabels } from "../e2e/enum/DeviceLabels";
 import { Account } from "./enum/Account";
+import { Device as CryptoWallet } from "./enum/Device";
 import { Currency } from "./enum/Currency";
 import expect from "expect";
 import { sendBTCBasedCoin } from "./families/bitcoin";
@@ -61,14 +62,14 @@ export function setExchangeDependencies(dependencies: Dependency[]) {
   specs["Exchange"].dependencies = Array.from(map.values());
 }
 
-export function setSpeculosModel() {
+export function getSpeculosModel() {
   const speculosDevice = process.env.SPECULOS_DEVICE;
   switch (speculosDevice) {
-    case "nanoS":
+    case CryptoWallet.LNS:
       return DeviceModelId.nanoS;
-    case "nanoX":
+    case CryptoWallet.LNX:
       return DeviceModelId.nanoX;
-    case "nanoSP":
+    case CryptoWallet.LNSP:
     default:
       return DeviceModelId.nanoSP;
   }
@@ -88,7 +89,7 @@ export const specs: Specs = {
   Bitcoin: {
     currency: getCryptoCurrencyById("bitcoin"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "Bitcoin",
     },
     dependency: "",
@@ -96,21 +97,21 @@ export const specs: Specs = {
   Aptos: {
     currency: getCryptoCurrencyById("aptos"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "Aptos",
     },
     dependency: "",
   },
   Exchange: {
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "Exchange",
     },
     dependencies: [],
   },
   LedgerSync: {
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "Ledger Sync",
     },
     dependency: "",
@@ -118,7 +119,7 @@ export const specs: Specs = {
   Dogecoin: {
     currency: getCryptoCurrencyById("dogecoin"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "Dogecoin",
     },
     dependency: "",
@@ -126,7 +127,7 @@ export const specs: Specs = {
   Ethereum: {
     currency: getCryptoCurrencyById("ethereum"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "Ethereum",
     },
     dependency: "",
@@ -134,7 +135,7 @@ export const specs: Specs = {
   Ethereum_Holesky: {
     currency: getCryptoCurrencyById("ethereum_holesky"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "Ethereum",
     },
     dependency: "",
@@ -142,7 +143,7 @@ export const specs: Specs = {
   Ethereum_Sepolia: {
     currency: getCryptoCurrencyById("ethereum_sepolia"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "Ethereum",
     },
     dependency: "",
@@ -150,7 +151,7 @@ export const specs: Specs = {
   Ethereum_Classic: {
     currency: getCryptoCurrencyById("ethereum_classic"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "Ethereum Classic",
     },
     dependency: "Ethereum",
@@ -158,7 +159,7 @@ export const specs: Specs = {
   Bitcoin_Testnet: {
     currency: getCryptoCurrencyById("bitcoin_testnet"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "Bitcoin Test",
     },
     dependency: "",
@@ -166,7 +167,7 @@ export const specs: Specs = {
   Solana: {
     currency: getCryptoCurrencyById("solana"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "Solana",
     },
     dependency: "",
@@ -174,7 +175,7 @@ export const specs: Specs = {
   Cardano: {
     currency: getCryptoCurrencyById("cardano"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "CardanoADA",
     },
     dependency: "",
@@ -182,7 +183,7 @@ export const specs: Specs = {
   Polkadot: {
     currency: getCryptoCurrencyById("polkadot"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "Polkadot",
     },
     dependency: "",
@@ -190,7 +191,7 @@ export const specs: Specs = {
   Tron: {
     currency: getCryptoCurrencyById("tron"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "Tron",
     },
     dependency: "",
@@ -198,7 +199,7 @@ export const specs: Specs = {
   XRP: {
     currency: getCryptoCurrencyById("ripple"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "XRP",
     },
     dependency: "",
@@ -206,7 +207,7 @@ export const specs: Specs = {
   Stellar: {
     currency: getCryptoCurrencyById("stellar"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "Stellar",
     },
     dependency: "",
@@ -214,7 +215,7 @@ export const specs: Specs = {
   Bitcoin_Cash: {
     currency: getCryptoCurrencyById("bitcoin_cash"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "Bitcoin Cash",
     },
     dependency: "",
@@ -222,7 +223,7 @@ export const specs: Specs = {
   Algorand: {
     currency: getCryptoCurrencyById("algorand"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "Algorand",
     },
     dependency: "",
@@ -230,7 +231,7 @@ export const specs: Specs = {
   Cosmos: {
     currency: getCryptoCurrencyById("cosmos"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "Cosmos",
     },
     dependency: "",
@@ -238,7 +239,7 @@ export const specs: Specs = {
   Tezos: {
     currency: getCryptoCurrencyById("tezos"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "TezosWallet",
     },
     dependency: "",
@@ -246,7 +247,7 @@ export const specs: Specs = {
   Polygon: {
     currency: getCryptoCurrencyById("polygon"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "Ethereum",
     },
     dependency: "",
@@ -254,7 +255,7 @@ export const specs: Specs = {
   Binance_Smart_Chain: {
     currency: getCryptoCurrencyById("bsc"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "Ethereum",
     },
     dependency: "",
@@ -262,7 +263,7 @@ export const specs: Specs = {
   Ton: {
     currency: getCryptoCurrencyById("ton"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "TON",
     },
     dependency: "",
@@ -270,7 +271,7 @@ export const specs: Specs = {
   Near: {
     currency: getCryptoCurrencyById("near"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "NEAR",
     },
     dependency: "",
@@ -278,7 +279,7 @@ export const specs: Specs = {
   Multivers_X: {
     currency: getCryptoCurrencyById("elrond"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "MultiversX",
     },
     dependency: "",
@@ -286,7 +287,7 @@ export const specs: Specs = {
   Osmosis: {
     currency: getCryptoCurrencyById("osmo"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "Cosmos",
     },
     dependency: "",
@@ -294,7 +295,7 @@ export const specs: Specs = {
   Injective: {
     currency: getCryptoCurrencyById("injective"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "Cosmos",
     },
     dependency: "",
@@ -303,7 +304,7 @@ export const specs: Specs = {
   Celo: {
     currency: getCryptoCurrencyById("celo"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "Celo",
     },
     dependency: "",
@@ -311,7 +312,7 @@ export const specs: Specs = {
   Litecoin: {
     currency: getCryptoCurrencyById("litecoin"),
     appQuery: {
-      model: setSpeculosModel(),
+      model: getSpeculosModel(),
       appName: "Litecoin",
     },
     dependency: "",

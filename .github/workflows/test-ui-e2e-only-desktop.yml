@@ -49,7 +49,7 @@ on:
           - testing
         default: testing
       speculos_device:
-        description: "Device to be used in Speculos"
+        description: "Device to be used"
         required: false
         type: choice
         options:
@@ -129,38 +129,14 @@ jobs:
           enable_broadcast: ${{ inputs.enable_broadcast }}
           build_type: ${{ inputs.build_type }}
 
-      - name: Run playwright tests [Linux => xvfb-run]
-        id: tests
-        run: |
-          export SPECULOS_IMAGE_TAG=${{ env.SPECULOS_IMAGE_TAG }}
-          export COINAPPS=$PWD/coin-apps
-          export MOCK=0
-
-          case "${{ inputs.speculos_device }}" in
-            nanoS)    device_tag='@LNS' ;;
-            nanoSP)   device_tag='@nanoSP' ;;
-            nanoX)    device_tag='@nanoX' ;;
-            *)        echo "Unknown SPECULOS_DEVICE: ${SPECULOS_DEVICE}"; exit 1 ;;
-          esac
-
-          grep_filter="$device_tag"
-          if [ -n "${{ inputs.test_filter }}" ]; then
-            grep_filter="(${grep_filter}|${{ inputs.test_filter }})"
-          fi
-
-          if [ "${{ inputs.invert_filter }}" = true ]; then
-            grep_option="--grep-invert"
-          else
-            grep_option="--grep"
-          fi
-
-          echo "Running tests with filter: $grep_option \"$grep_filter\""
-
-          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" \
-            -- pnpm e2e:desktop test:playwright \
-            --max-failures 50 \
-            $grep_option "$grep_filter" \
-            --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      - name: Run Playwright Tests
+        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
+        with:
+          speculos_device: ${{ inputs.speculos_device }}
+          test_filter: ${{ inputs.test_filter }}
+          invert_filter: ${{ inputs.invert_filter }}
+          shard_index: ${{ matrix.shardIndex }}
+          shard_total: ${{ matrix.shardTotal }}
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           XRAY: ${{ inputs.export_to_xray }}
@@ -371,7 +347,7 @@ jobs:
                       "type": "header",
                       "text": {
                         "type": "plain_text",
-                        "text": ":ledger-logo: Ledger Live Desktop E2E tests results on ${{ github.ref_name }} - ${{ inputs.speculos_device }}",
+                        "text": ":ledger-logo: Ledger Live Desktop E2E tests results on ${{ github.ref_name }}",
                         "emoji": true
                       }
                     },
@@ -382,7 +358,7 @@ jobs:
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": `- 🐧 linux: ${statusEmoji} ${{ needs.report-to-allure.outputs.test_result || 'No test results' }}`
+                        "text": `- 🐧 linux - ${{ inputs.speculos_device }} : ${statusEmoji} ${{ needs.report-to-allure.outputs.test_result || 'No test results' }}`
                       }
                     },
                     {
