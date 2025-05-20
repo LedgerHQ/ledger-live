@@ -24,7 +24,7 @@ import {
   sync,
   isInvalidRecipient,
   makeAccountBridgeReceive,
-} from "../../../bridge/mockHelpers";
+} from "../../bridge/mockHelpers";
 
 const receive = makeAccountBridgeReceive();
 const notCreatedAddresses: string[] = [];

@@ -111,6 +111,9 @@ function genCoinFrameworkTarget(targetFile) {
   // Behavior for coin family with their own package
   const libsDir = path.join(__dirname, "../..");
   for (const family of familiesWPackage) {
+    if (family === "xrp") {
+      console.log("XRP: ", targetFile);
+    }
     const targetImportPath = `@ledgerhq/coin-${family}/${targetName}`;
 
     switch (targetFile) {
