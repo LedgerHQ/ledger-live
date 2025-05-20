@@ -92,6 +92,7 @@ import { exportWalletState, walletStateExportShouldDiffer } from "@ledgerhq/live
 import { registerTransports } from "~/services/registerTransports";
 import { useDeviceManagementKitEnabled } from "@ledgerhq/live-dmk-mobile";
 import { StoragePerformanceOverlay } from "./newArch/storage/screens/PerformanceMonitor";
+import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -122,9 +123,19 @@ function App() {
   const accounts = useSelector(accountsSelector);
   const analyticsFF = useFeature("llmAnalyticsOptInPrompt");
   const isLDMKEnabled = useDeviceManagementKitEnabled();
+  const providerNumber = useEnv("FORCE_PROVIDER");
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const dmk = useDeviceManagementKit();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (providerNumber && isLDMKEnabled) {
+      dmk?.setProvider(providerNumber);
+    }
+    // setting provider only at initialisation
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLDMKEnabled, dmk]);
 
   useEffect(() => registerTransports(isLDMKEnabled), [isLDMKEnabled]);
 
