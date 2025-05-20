@@ -1,5 +1,73 @@
 # @ledgerhq/live-common
 
+## 34.34.0-nightly.4
+
+### Minor Changes
+
+- [#10269](https://github.com/LedgerHQ/ledger-live/pull/10269) [`9081c26`](https://github.com/LedgerHQ/ledger-live/commit/9081c2648490f977469a33762a3c67bb2c2a0be5) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(llc): extract Solana signer creation logic
+
+### Patch Changes
+
+- Updated dependencies [[`9081c26`](https://github.com/LedgerHQ/ledger-live/commit/9081c2648490f977469a33762a3c67bb2c2a0be5), [`0aa48e8`](https://github.com/LedgerHQ/ledger-live/commit/0aa48e8f52b7f91174f34c7db596ae8d783e7e30)]:
+  - @ledgerhq/errors@6.21.0-nightly.0
+  - @ledgerhq/coin-stellar@5.1.0-nightly.1
+  - @ledgerhq/coin-framework@5.1.0-nightly.1
+  - @ledgerhq/coin-algorand@0.9.6-nightly.1
+  - @ledgerhq/coin-aptos@2.0.0-nightly.3
+  - @ledgerhq/coin-bitcoin@0.15.6-nightly.1
+  - @ledgerhq/coin-cardano@0.8.6-nightly.1
+  - @ledgerhq/coin-casper@1.7.1-nightly.1
+  - @ledgerhq/coin-celo@1.1.4-nightly.1
+  - @ledgerhq/coin-cosmos@0.14.2-nightly.1
+  - @ledgerhq/coin-evm@2.21.1-nightly.1
+  - @ledgerhq/coin-filecoin@1.9.6-nightly.1
+  - @ledgerhq/coin-hedera@1.6.6-nightly.1
+  - @ledgerhq/coin-icon@0.10.6-nightly.1
+  - @ledgerhq/coin-internet_computer@1.7.6-nightly.1
+  - @ledgerhq/coin-mina@1.1.5-nightly.1
+  - @ledgerhq/coin-multiversx@0.4.6-nightly.1
+  - @ledgerhq/coin-near@0.11.6-nightly.1
+  - @ledgerhq/coin-polkadot@6.0.2-nightly.1
+  - @ledgerhq/coin-solana@0.23.0-nightly.1
+  - @ledgerhq/coin-stacks@0.8.6-nightly.1
+  - @ledgerhq/coin-sui@0.3.3-nightly.1
+  - @ledgerhq/coin-tezos@5.0.2-nightly.1
+  - @ledgerhq/coin-ton@0.10.1-nightly.1
+  - @ledgerhq/coin-tron@4.0.1-nightly.1
+  - @ledgerhq/coin-vechain@2.7.6-nightly.1
+  - @ledgerhq/coin-xrp@6.1.1-nightly.1
+  - @ledgerhq/device-core@0.4.25-nightly.1
+  - @ledgerhq/devices@8.4.5-nightly.2
+  - @ledgerhq/hw-app-algorand@6.31.1-nightly.1
+  - @ledgerhq/hw-app-aptos@6.34.1-nightly.1
+  - @ledgerhq/hw-app-celo@6.33.3-nightly.1
+  - @ledgerhq/hw-app-cosmos@6.32.1-nightly.1
+  - @ledgerhq/hw-app-eth@6.45.5-nightly.1
+  - @ledgerhq/hw-app-exchange@0.10.1-nightly.1
+  - @ledgerhq/hw-app-hedera@1.2.1-nightly.1
+  - @ledgerhq/hw-app-icon@1.3.1-nightly.1
+  - @ledgerhq/hw-app-polkadot@6.34.1-nightly.1
+  - @ledgerhq/hw-app-str@7.2.1-nightly.1
+  - @ledgerhq/hw-app-vet@0.5.3-nightly.2
+  - @ledgerhq/hw-transport@6.31.5-nightly.2
+  - @ledgerhq/live-network@2.0.8-nightly.1
+  - @ledgerhq/live-signer-evm@0.4.1-nightly.1
+  - @ledgerhq/live-signer-solana@0.1.1-nightly.0
+  - @ledgerhq/live-countervalues@0.5.6-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.35-nightly.1
+  - @ledgerhq/live-nft@0.8.6-nightly.1
+  - @ledgerhq/live-wallet@0.10.9-nightly.1
+  - @ledgerhq/speculos-transport@0.2.1-nightly.1
+  - @ledgerhq/hw-app-btc@10.9.1-nightly.1
+  - @ledgerhq/hw-app-multiversx@6.24.1-nightly.1
+  - @ledgerhq/hw-app-near@6.31.1-nightly.1
+  - @ledgerhq/hw-app-tezos@6.31.1-nightly.1
+  - @ledgerhq/hw-app-trx@6.31.1-nightly.1
+  - @ledgerhq/hw-app-xrp@6.31.1-nightly.1
+  - @ledgerhq/hw-transport-mocker@6.29.5-nightly.2
+  - @ledgerhq/ledger-cal-service@0.4.3-nightly.1
+  - @ledgerhq/hw-app-sui@1.1.0
+
 ## 34.34.0-nightly.3
 
 ### Minor Changes

@@ -1,5 +1,15 @@
 # @ledgerhq/live-wallet
 
+## 0.10.9-nightly.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@5.1.0-nightly.1
+  - @ledgerhq/ledger-key-ring-protocol@0.5.7-nightly.1
+  - @ledgerhq/devices@8.4.5-nightly.2
+  - @ledgerhq/live-network@2.0.8-nightly.1
+
 ## 0.10.9-nightly.0
 
 ### Patch Changes

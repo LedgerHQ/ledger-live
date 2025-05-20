@@ -1,5 +1,16 @@
 # ledger-live-desktop-e2e-tests
 
+## 0.0.8-nightly.4
+
+### Patch Changes
+
+- Updated dependencies [[`9081c26`](https://github.com/LedgerHQ/ledger-live/commit/9081c2648490f977469a33762a3c67bb2c2a0be5)]:
+  - @ledgerhq/live-common@34.34.0-nightly.4
+  - @ledgerhq/live-cli@24.18.2-nightly.4
+  - @ledgerhq/ledger-key-ring-protocol@0.5.7-nightly.1
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.5-nightly.2
+  - @ledgerhq/live-wallet@0.10.9-nightly.1
+
 ## 0.0.8-nightly.3
 
 ### Patch Changes

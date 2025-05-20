@@ -147,7 +147,8 @@
     "@ledgerhq/coin-celo": "1.0.0",
     "@ledgerhq/disable-network-setup": "0.0.0",
     "@ledgerhq/hw-app-celo": "6.32.0",
-    "ledger-live-mobile-e2e-tests": "0.0.1"
+    "ledger-live-mobile-e2e-tests": "0.0.1",
+    "@ledgerhq/live-signer-solana": "0.1.0"
   },
   "changesets": [
     "afraid-suns-dance",
@@ -164,6 +165,7 @@
     "fuzzy-plums-care",
     "good-ghosts-laugh",
     "gorgeous-donuts-stare",
+    "great-laws-obey",
     "happy-peaches-fetch",
     "happy-wolves-speak",
     "healthy-cows-itch",
@@ -178,6 +180,7 @@
     "odd-drinks-cheer",
     "old-mice-deny",
     "pink-cougars-confess",
+    "pretty-spoons-buy",
     "proud-emus-whisper",
     "purple-foxes-grow",
     "rotten-roses-begin",
@@ -191,6 +194,7 @@
     "tame-rats-vanish",
     "thin-mice-study",
     "thirty-apples-tease",
+    "tidy-cheetahs-exercise",
     "twelve-insects-cross",
     "weak-seas-deny",
     "wicked-donkeys-approve",

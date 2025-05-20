@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.21.0-nightly.0
+
+### Minor Changes
+
+- [#10269](https://github.com/LedgerHQ/ledger-live/pull/10269) [`9081c26`](https://github.com/LedgerHQ/ledger-live/commit/9081c2648490f977469a33762a3c67bb2c2a0be5) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(llc): extract Solana signer creation logic
+
 ## 6.20.0-nightly.1
 
 ### Minor Changes

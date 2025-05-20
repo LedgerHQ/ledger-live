@@ -1,5 +1,14 @@
 # @ledgerhq/coin-framework
 
+## 5.1.0-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`9081c26`](https://github.com/LedgerHQ/ledger-live/commit/9081c2648490f977469a33762a3c67bb2c2a0be5)]:
+  - @ledgerhq/errors@6.21.0-nightly.0
+  - @ledgerhq/devices@8.4.5-nightly.2
+  - @ledgerhq/live-network@2.0.8-nightly.1
+
 ## 5.1.0-nightly.0
 
 ### Minor Changes
