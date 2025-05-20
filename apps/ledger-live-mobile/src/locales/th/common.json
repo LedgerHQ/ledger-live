@@ -513,6 +513,10 @@
       "title" : "ขออภัย เงินทุนไม่พอ",
       "description" : "โปรดตรวจสอบให้แน่ใจว่าบัญชีมีเงินทุนเพียงพอ"
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "ขออภัย เงินทุนไม่เพียงพอสำหรับการชำระค่าธรรมเนียม",
+      "description" : "โปรดตรวจสอบให้แน่ใจว่าบัญชีมีเงินทุนเพียงพอ"
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "ยอดคงเหลือ (ที่ไม่มีการ Stake) ที่คุณสามารถใช้ได้ คือ {{currentBalance}} เป็นจำนวนที่ไม่เพียงพอสำหรับการจ่ายค่าธรรมเนียมเครือข่ายเพื่อ Unstake {{assetName}} ของคุณ ",
       "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} ลงในบัญชีของคุณ",
@@ -3565,6 +3569,8 @@
         "contact_support" : "ติดต่อฝ่ายสนับสนุนลูกค้า",
         "ton_title" : "Ledger Nano S™ ไม่รองรับการ Swap Ton",
         "ton_description" : "ในการ Swap Ton ให้ใช้อุปกรณ์ Ledger ที่เข้ากันได้อื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
+        "ton_tokens_title" : "Ledger Nano S™ ไม่สามารถสวอปโทเคน Ton ได้",
+        "ton_tokens_description" : "หากต้องการสวอปโทเคน Ton ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
         "spl_tokens_title" : "Ledger Nano S™ ไม่รองรับการ Swap โทเคน Solana",
         "spl_tokens_description" : "ในการ Swap โทเคน Solana ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่เข้ากันได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
         "near_title" : "Ledger Nano S™ ไม่รองรับการ Swap Near",
@@ -7419,6 +7425,7 @@
     },
     "performance" : "ประสิทธิภาพ",
     "low" : "ต่ำ",
-    "high" : "สูง"
+    "high" : "สูง",
+    "title" : "การเคลื่อนไหวของตลาด"
   }
 }
