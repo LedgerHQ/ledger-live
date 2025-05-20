@@ -25,8 +25,8 @@ describe("Receive Flow", () => {
 
   $TmsLink("B2CQA-1864");
   it("Should verify the address after importing an account working on a single network", async () => {
-    await app.transfertMenu.open();
-    await app.transfertMenu.navigateToReceive();
+    await app.transferMenu.open();
+    await app.transferMenu.navigateToReceive();
     await app.common.performSearch("Bitcoin");
     await app.receive.selectAsset("BTC");
     first && (await deviceAction.selectMockDevice(), (first = false));
