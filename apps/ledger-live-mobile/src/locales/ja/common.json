@@ -513,6 +513,10 @@
       "title" : "資金が不足しています。",
       "description" : "アカウントに十分な資金があることを確認してください。"
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "申し訳ございませんが、手数料のための資金が不足しています",
+      "description" : "アカウントに十分な資金があることを確認してください。"
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "現在利用可能な（ステーキングされていない）残高は{{currentBalance}}ですが、これは{{assetName}}のステーキングを解除するためのネットワーク手数料を支払うには不十分です。 ",
       "oneCta" : "アカウントに{{assetName}}を<cta1>{{cta1Label}}</cta1>してください。",
@@ -7419,6 +7423,14 @@
     },
     "performance" : "パフォーマンス",
     "low" : "低速",
-    "high" : "高速"
+    "high" : "高速",
+    "title" : "市場の動向"
+  },
+  "nftEntryPoint" : {
+    "title" : "所有するNFT",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
+    }
   }
 }
