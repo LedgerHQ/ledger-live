@@ -7419,6 +7419,7 @@
     },
     "performance" : "Performance",
     "low" : "Niedrig",
-    "high" : "Hoch"
+    "high" : "Hoch",
+    "title" : "Marktbewegungen"
   }
 }
