@@ -513,6 +513,10 @@
       "title" : "죄송하지만 자금이 부족합니다",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "죄송하지만, 수수료를 충당할 자금이 부족합니다",
+      "description" : "계정에 자금이 충분한지 확인해 주세요."
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "사용 가능한(스테이킹되지 않은) 잔액은 현재 {{currentBalance}}이며, {{assetName}} 언스테이킹에 필요한 네트워크 수수료를 지불하기에 부족합니다. ",
       "oneCta" : "본인 계정에 {{assetName}}(을)를 <cta1>{{cta1Label}}</cta1>하거나",
@@ -7419,6 +7423,14 @@
     },
     "performance" : "가격 추이",
     "low" : "낮음",
-    "high" : "높음"
+    "high" : "높음",
+    "title" : "시장 변동성"
+  },
+  "nftEntryPoint" : {
+    "title" : "고객의 NFT",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
+    }
   }
 }
