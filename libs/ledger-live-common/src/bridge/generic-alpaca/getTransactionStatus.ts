@@ -30,10 +30,10 @@ export function genericGetTransactionStatus(
 } &
         */
       {
-        type: "TODO",
+        type: "PAYMENT", // NOTE: assuming payment by default here
         recipient: transaction.recipient,
-        amount: BigInt(transaction.amount.toString()),
-        fee: BigInt(transaction.fees.toString()),
+        amount: BigInt(transaction.amount?.toString() ?? "0"),
+        fee: BigInt(transaction.fees?.toString() ?? "0"),
       },
     );
 
