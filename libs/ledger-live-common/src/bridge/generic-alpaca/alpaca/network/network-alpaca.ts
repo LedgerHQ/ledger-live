@@ -1,5 +1,5 @@
 import type {
-  Api,
+  // Api,
   Account,
   Balance,
   BlockInfo,
@@ -9,6 +9,7 @@ import type {
   TransactionIntent,
   Transaction,
   TransactionValidation,
+  BridgeApi,
 } from "@ledgerhq/coin-framework/api/index";
 import network from "@ledgerhq/live-network";
 
@@ -64,7 +65,7 @@ const buildCombine = networkFamily =>
   };
 
 const buildEstimateFees = networkFamily =>
-  async function estimateFees(intent: TransactionIntent<any>): Promise<FeeEstimation> {
+  async function estimateFees(intent: TransactionIntent<any, any, any>): Promise<FeeEstimation> {
     const { data } = await network<{ fee: string }, unknown>({
       method: "POST",
       url: `${ALPACA_URL}/${networkFamily}/transaction/estimate`,
@@ -88,8 +89,8 @@ const buildValidateIntent = networkFamily =>
     // TODO: check returned value
     const { data } = await network<
       {
-        errors: Record<string, never>;
-        warnings: Record<string, never>;
+        errors: Record<string, Error>;
+        warnings: Record<string, Error>;
         estimatedFees: bigint;
         amount: bigint;
         totalSpent: bigint;
@@ -155,7 +156,7 @@ const buildLastBlock = networkFamily =>
   };
 
 const buildCraftTransaction = networkFamily =>
-  async function craftTransaction(intent: TransactionIntent<any>): Promise<string> {
+  async function craftTransaction(intent: TransactionIntent<any, any, any>): Promise<string> {
     const { data } = await network<any, unknown>({
       method: "POST",
       url: `${ALPACA_URL}/${networkFamily}/transaction/encode`,
@@ -179,4 +180,4 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     listOperations: buildListOperations(networkFamily),
     lastBlock: buildLastBlock(networkFamily),
     craftTransaction: buildCraftTransaction(networkFamily),
-  }) satisfies Api<any, any, any>; // TODO: Api<any>?
+  }) satisfies BridgeApi<any, any, any>; // TODO: Api<any>?

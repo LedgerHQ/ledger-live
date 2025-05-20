@@ -1,7 +1,6 @@
 import { Deserializer, Hex, Network, RawTransaction } from "@aptos-labs/ts-sdk";
 import { createApi } from "../../api";
 import { getEnv } from "@ledgerhq/live-env";
-import type { AptosSender } from "../../types/assets";
 import { DEFAULT_GAS, DEFAULT_GAS_PRICE } from "../../constants";
 
 describe("createApi", () => {
@@ -56,7 +55,8 @@ describe("createApi", () => {
           type: "native",
         },
         type: "send",
-        sender,
+        sender: sender.freshAddress,
+        senderPublicKey: sender.xpub,
         amount,
         recipient: recipient.freshAddress,
       });
@@ -107,7 +107,8 @@ describe("createApi", () => {
       const hex = await api.craftTransaction(
         {
           amount: 1n,
-          sender: sender,
+          sender: sender.freshAddress,
+          senderPublicKey: sender.xpub,
           recipient: recipient.freshAddress,
           type: "send",
           asset: { type: "native" },

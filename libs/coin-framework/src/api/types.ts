@@ -1,5 +1,4 @@
 import { Unit } from "@ledgerhq/types-cryptoassets";
-import { TransactionCommon } from "@ledgerhq/types-live";
 
 export type BlockInfo = {
   height: number;
@@ -16,13 +15,26 @@ export type Asset<TokenInfo extends TokenInfoCommon = never> =
   | { type: "native" }
   | (TokenInfo extends never ? TokenInfo : { type: "token" } & TokenInfo);
 
-export type Operation<AssetInfo extends Asset<TokenInfoCommon>> = {
+export type Operation<
+  AssetInfo extends Asset<TokenInfoCommon>,
+  MemoKind = never,
+  MemoValue = never,
+> = {
   id: string;
   type: string;
   senders: string[];
   recipients: string[];
   value: bigint;
   asset: AssetInfo;
+  /**
+   * Optional memo associated with the operation.
+   * `type` defines the memo format (e.g. "hex", "text", "id").
+   * `value` holds the actual memo payload.
+   */
+  memo?: {
+    type: MemoKind;
+    value: MemoValue;
+  };
   // Field containing dedicated value for each blockchain
   details?: Record<string, unknown>;
   tx: {
@@ -48,7 +60,7 @@ export type Account = {
   address: string;
   balance: bigint;
   currencyUnit: Unit;
-} & Record<string, unknown>;
+};
 // TODO: more descriptive / errors? if entering a wrong field
 
 export type Balance<AssetInfo extends Asset<TokenInfoCommon>> = {
@@ -59,16 +71,18 @@ export type Balance<AssetInfo extends Asset<TokenInfoCommon>> = {
 
 export type TransactionIntent<
   AssetInfo extends Asset<TokenInfoCommon>,
-  Extra = Record<string, unknown>,
-  Sender extends Record<string, string> | string = string,
+  MemoKinds = never,
+  MemoValue = never,
 > = {
   type: string;
-  sender: Sender;
+  sender: string;
   senderPublicKey?: string;
+  expiration?: number;
   recipient: string;
   amount: bigint;
   asset: AssetInfo;
-} & Extra;
+  memos?: { type: MemoKinds; value: MemoValue }[];
+};
 
 export type TransactionValidation = {
   errors: Record<string, Error>;
@@ -78,9 +92,14 @@ export type TransactionValidation = {
   totalSpent: bigint;
 };
 
-export type FeeEstimation<FeeParameters extends Record<string, bigint> = never> = {
+export type FeeEstimation = {
   value: bigint;
-  parameters?: FeeParameters;
+  parameters?: {
+    storageLimit: bigint;
+    gasLimit: bigint;
+    // Optional gas price, only for Aptos (need to improve)
+    gasPrice?: bigint;
+  };
 };
 
 // TODO rename start to minHeight
@@ -91,26 +110,19 @@ export type FeeEstimation<FeeParameters extends Record<string, bigint> = never> 
 //       see design document at https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/5446205788/coin-modules+lama-adapter+APIs+refinements
 export type Pagination = { minHeight: number };
 
-export type PreSignOperationHook = (opts: { transaction: TransactionCommon }) => void;
+export type PreSignOperationHook = (recipient: string) => void;
 
-export type Api<
-  AssetInfo extends Asset<TokenInfoCommon>,
-  TxExtra = Record<string, unknown>,
-  Sender extends Record<string, string> | string = string,
-  FeeParameters extends Record<string, bigint> = never,
-> = {
+export type Api<AssetInfo extends Asset<TokenInfoCommon>, MemoKind = never, MemoValue = string> = {
   broadcast: (tx: string) => Promise<string>;
-  // TODO: why add Promise<string> below?
   combine: (tx: string, signature: string, pubkey?: string) => string | Promise<string>;
   estimateFees: (
-    transactionIntent: TransactionIntent<AssetInfo, TxExtra, Sender>,
-  ) => Promise<FeeEstimation<FeeParameters>>;
+    transactionIntent: TransactionIntent<AssetInfo, MemoKind, MemoValue>,
+  ) => Promise<FeeEstimation>;
   craftTransaction: (
-    transactionIntent: TransactionIntent<AssetInfo, TxExtra, Sender>,
+    transactionIntent: TransactionIntent<AssetInfo, MemoKind, MemoValue>,
     customFees?: bigint,
   ) => Promise<string>;
-  validateIntent?: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;
-  // TODO: add validateIntent
+  // validateIntent?: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;
   getBalance: (address: string) => Promise<Balance<AssetInfo>[]>;
   lastBlock: () => Promise<BlockInfo>;
   listOperations: (
@@ -118,4 +130,12 @@ export type Api<
     pagination: Pagination,
   ) => Promise<[Operation<AssetInfo>[], string]>;
   preSignOperationHook?: PreSignOperationHook;
+};
+
+export type BridgeApi<
+  AssetInfo extends Asset<TokenInfoCommon>,
+  MemoKind = never,
+  MemoValue = string,
+> = Api<AssetInfo, MemoKind, MemoValue> & {
+  validateIntent: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;
 };

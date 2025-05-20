@@ -1,4 +1,6 @@
 import type { TransactionIntent } from "@ledgerhq/coin-framework/lib/api/types";
+import type { AptosAsset, AptosExtra } from "../types/assets";
+import type { Account } from "@ledgerhq/types-live";
 import type { AptosAsset, AptosExtra, AptosSender } from "../types/assets";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { AptosAPI } from "../network";
@@ -10,8 +12,13 @@ import type { AptosBalance } from "../types";
 
 export async function craftTransaction(
   aptosClient: AptosAPI,
-  transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender>,
+  transactionIntent: TransactionIntent<AptosAsset, AptosExtra, string>,
 ): Promise<string> {
+  const account = {
+    freshAddress: transactionIntent.sender,
+    xpub: transactionIntent.senderPublicKey,
+  } as Account;
+
   const newTx = createTransaction();
   newTx.amount = BigNumber(transactionIntent.amount.toString());
   newTx.recipient = transactionIntent.recipient;

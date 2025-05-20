@@ -1,6 +1,8 @@
 import { Hex, RawTransaction, Deserializer } from "@aptos-labs/ts-sdk";
 import type { TransactionIntent } from "@ledgerhq/coin-framework/lib/api/types";
 import { createApi } from "../../api";
+import type { TransactionOptions } from "../../types";
+import type { AptosAsset, AptosExtra } from "../../types/assets";
 import type { AptosAsset, AptosExtra, AptosSender } from "../../types/assets";
 import { AptosAPI } from "../../network";
 import { APTOS_ASSET_ID } from "../../constants";
@@ -54,7 +56,51 @@ describe("craftTransaction", () => {
       sender: SENDER,
       recipient: RECIPIENT_ADDR,
       amount: 10n,
-      asset: { type: "native" },
+      asset: { type: "token", standard: "coin", contractAddress: "0x42::token::Token" },
+    };
+
+    const tx = await api.craftTransaction(txArg);
+
+    expect(tx).not.toEqual("");
+    expect(Hex.isValid(tx).valid).toBeTruthy();
+    expect(mockGetBalances).toHaveBeenCalledTimes(0);
+    expect(mockGenerateTransaction).toHaveBeenCalledTimes(1);
+
+    expect(mockGenerateTransaction).toHaveBeenCalledWith(
+      SENDER.freshAddress,
+      expect.objectContaining({
+        function: "0x1::aptos_account::transfer_coins",
+        typeArguments: ["0x42::token::Token"],
+        functionArguments: [RECIPIENT_ADDR, txArg.amount.toString()],
+      }),
+      expect.anything(),
+    );
+  });
+
+  it("creates a fungible_asset token transaction using all amount available", async () => {
+    const mockGenerateTransaction = jest.fn().mockResolvedValue(rawTxn);
+    const mockGetBalances = jest
+      .fn()
+      .mockResolvedValue([{ contractAddress: "0x42", amount: 12345 }]);
+    mockedAptosApi.mockImplementation(() => ({
+      generateTransaction: mockGenerateTransaction,
+      getBalances: mockGetBalances,
+    }));
+
+    const SENDER: AptosSender = {
+      xpub: "public-key",
+      freshAddress: SENDER_ADDR,
+    };
+    const api = createApi({
+      aptosSettings: {},
+    });
+
+    const txArg: TransactionIntent<AptosAsset, AptosExtra, AptosSender> = {
+      type: "send",
+      sender: SENDER,
+      recipient: RECIPIENT_ADDR,
+      amount: 0n,
+      asset: { type: "token", standard: "fungible_asset", contractAddress: "0x42" },
     };
 
     const tx = await api.craftTransaction(txArg);

@@ -379,7 +379,6 @@ export const makeScanAccounts =
           blockHeight: 0,
           balanceHistoryCache: emptyHistoryCache,
         };
-        console.log(`makeScanAccount initialAccount`, initialAccount);
         const account = { ...initialAccount, ...accountShape };
 
         if (account.balanceHistoryCache === emptyHistoryCache) {

@@ -7,7 +7,6 @@ import { adaptCoreOperationToLiveOperation } from "./utils";
 export function genericGetAccountShape(network, kind): GetAccountShape {
   return async info => {
     try {
-      // console.log("genericGetAccountShape", info);
       const { address, initialAccount, currency, derivationMode } = info;
       const accountId = encodeAccountId({
         type: "js",
@@ -16,19 +15,14 @@ export function genericGetAccountShape(network, kind): GetAccountShape {
         xpubOrAddress: address,
         derivationMode,
       });
-      // console.log(`getAccountShape, kind = ${kind}`, accountId, address, initialAccount);
 
       const blockInfo = await getAlpacaApi(network, kind).lastBlock();
 
       const balanceRes = await getAlpacaApi(network, kind).getBalance(address);
-      console.log({ balanceRes });
-      // const balance = BigNumber((await getAlpacaApi(network, kind).getBalance(address)).toString());
       // FIXME: fix type Balance -> check "native" balance
       // is balance[0] always the native ?
       const balance = BigNumber(balanceRes[0].value.toString());
 
-      // TODO
-      // const spendableBalance = await getAlpacaApi(network, kind).getSpendableBalance(address);
       let spendableBalance: BigNumber;
       if (balanceRes[0]?.locked) {
         spendableBalance = BigNumber.max(
@@ -38,41 +32,23 @@ export function genericGetAccountShape(network, kind): GetAccountShape {
       } else {
         spendableBalance = initialAccount?.spendableBalance || balance;
       }
-      // let spendableBalance = initialAccount?.spendableBalance || balance;
-      console.log("spendableBalance", spendableBalance.toString());
       const oldOperations = initialAccount?.operations || [];
 
       const blockHeight = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
-      console.log({ blockHeight, blockInfo });
 
       const [newOperations, _] = await getAlpacaApi(network, kind).listOperations(address, {
         minHeight: blockHeight,
       });
-      // console.log({ newOperations });
 
       const operations = mergeOps(
         oldOperations,
         newOperations.map(op => adaptCoreOperationToLiveOperation(accountId, op)),
       );
-      // console.log({ operations });
-
-      // NOTE: old shape
-      const shape = {
-        id: accountId,
-        xpub: address,
-        // blockHeight: maxLedgerVersion, // NOTE: original
-        blockHeight: blockInfo.height,
-        balance,
-        spendableBalance,
-        operations,
-        operationsCount: operations.length,
-      };
-      // console.log({ shape });
 
       return {
         id: accountId,
         xpub: address,
-        blockHeight: blockInfo.height,
+        blockHeight: initialAccount?.blockHeight || blockInfo.height,
         balance,
         spendableBalance,
         operations,
