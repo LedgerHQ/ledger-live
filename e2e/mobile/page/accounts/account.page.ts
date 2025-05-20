@@ -1,5 +1,5 @@
 import { expect } from "detox";
-import { openDeeplink, delay } from "../../helpers/commonHelpers";
+import { openDeeplink } from "../../helpers/commonHelpers";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export default class AccountPage {
@@ -12,8 +12,7 @@ export default class AccountPage {
   baseSubAccountRow = "subAccount-row-name-";
   baseAccountName = "account-row-name-";
   accountNameRegExp = new RegExp(`${this.baseAccountName}.*`);
-  baseOperationRow = "operation-row-";
-  operationRowRegexp = new RegExp(this.baseOperationRow + ".*");
+  operationRowRegexp = new RegExp("operation-row-" + ".*");
   operationHistorySection = "operations-history-";
   operationHistorySectionRegexp = new RegExp(this.operationHistorySection + ".*");
 
@@ -27,8 +26,8 @@ export default class AccountPage {
   receiveButton = () => getElementById("account-quick-action-button-receive");
   sendButton = () => getElementById("account-quick-action-button-send");
   accountRenameRow = () => getElementById("account-settings-rename-row");
-  selectSpecificOperation = (operationType: string) =>
-    getElementByIdAndText(this.operationRowRegexp, operationType);
+  getSpecificOperation = (operationType: string) =>
+    getElementByIdAndText(this.operationRowRegexp, operationType, 0);
   subAccountId = (account: Account) =>
     `js:2:${account.currency.id}:${account.address}:${account.currency.id}Sub+${account.ataAddress}`;
 
@@ -94,7 +93,12 @@ export default class AccountPage {
   @Step("Scroll to operation history")
   async scrollToTransactions() {
     await waitForElementById(this.accountScreenScrollView);
-    await scrollToId(this.operationHistorySectionRegexp, this.accountScreenScrollView, 300, "down");
+    await scrollToId(
+      this.operationHistorySectionRegexp,
+      this.accountScreenScrollView,
+      300,
+      "bottom",
+    );
   }
 
   @Step("Scroll to a Specific SubAccount Row")
@@ -146,7 +150,6 @@ export default class AccountPage {
   @Step("Click on selected last operation")
   async selectAndClickOnLastOperation(operationType: string) {
     await this.scrollToTransactions();
-    await delay(30);
-    await tapByElement(this.selectSpecificOperation(operationType));
+    await tapByElement(this.getSpecificOperation(operationType));
   }
 }
