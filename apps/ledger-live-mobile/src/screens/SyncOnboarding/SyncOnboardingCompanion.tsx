@@ -7,7 +7,7 @@ import React, {
   useRef,
   useLayoutEffect,
 } from "react";
-import { Flex, VerticalTimeline, Text, ContinueOnDevice, Divider } from "@ledgerhq/native-ui";
+import { Flex, VerticalTimeline, Text, ContinueOnDevice } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import {
@@ -165,7 +165,6 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
   const deviceInitialApps = useFeature("deviceInitialApps");
 
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
-  const deviceName = device.deviceName || productName;
 
   const initialAppsToInstall = deviceInitialApps?.params?.apps || fallbackDefaultAppsToInstall;
 
@@ -570,7 +569,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                 text={t("syncOnboarding.earlySecurityCheckCompletedStep.description", {
                   productName,
                 })}
-                withTopDivider={false}
+                withTopDivider={true}
               />
             </>
           ),
@@ -601,6 +600,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
               <TrackScreen category={"Set up device: Step 3 Seed Intro"} />
               {seedPathStatus === "new_seed" ? (
                 <Flex pb={1}>
+                  <SubtitleText mb={6}>{t("syncOnboarding.seedStep.newSeedTitle")}</SubtitleText>
                   <BodyText mb={6}>
                     {t("syncOnboarding.seedStep.newSeedDescription", {
                       productName,
@@ -616,49 +616,75 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                 </Flex>
               ) : seedPathStatus === "choice_restore_direct_or_recover" ? (
                 <Flex>
-                  <SubtitleText>{t("syncOnboarding.seedStep.restoreChoiceSRPTitle")}</SubtitleText>
-                  <BodyText>{t("syncOnboarding.seedStep.restoreChoiceSRPDescription")}</BodyText>
-                  <Divider text={t("common.or")} my={6} />
                   <SubtitleText>
-                    {t("syncOnboarding.seedStep.restoreChoiceRecoverTitle")}
+                    {t("syncOnboarding.seedStep.selectionRestoreChoice.secretRecoveryPhrase.title")}
                   </SubtitleText>
                   <BodyText>
-                    {t("syncOnboarding.seedStep.restoreChoiceRecoverDescription")}
+                    {t(
+                      "syncOnboarding.seedStep.selectionRestoreChoice.secretRecoveryPhrase.description",
+                    )}
+                  </BodyText>
+
+                  <SubtitleText mt={6}>
+                    {t("syncOnboarding.seedStep.selectionRestoreChoice.ledgerRecoveryKey.title")}
+                  </SubtitleText>
+                  <BodyText>
+                    {t(
+                      "syncOnboarding.seedStep.selectionRestoreChoice.ledgerRecoveryKey.description",
+                    )}
+                  </BodyText>
+
+                  <SubtitleText mt={6}>
+                    {t("syncOnboarding.seedStep.selectionRestoreChoice.ledgerRecover.title")}
+                  </SubtitleText>
+                  <BodyText>
+                    {t("syncOnboarding.seedStep.selectionRestoreChoice.ledgerRecover.description")}
                   </BodyText>
                   <ContinueOnDeviceWithAnim
                     deviceModelId={device.modelId}
-                    text={t("syncOnboarding.seedStep.restoreChoiceContinueOnDevice", {
+                    text={t("syncOnboarding.seedStep.selectionRestoreChoice.continueOnDevice", {
                       productName,
                     })}
                   />
                 </Flex>
               ) : seedPathStatus === "restore_seed" ? (
-                <BodyText>{t("syncOnboarding.seedStep.restoreSeed", { productName })}</BodyText>
+                <Flex>
+                  <SubtitleText>{t("syncOnboarding.seedStep.restoreSeed.title")}</SubtitleText>
+                  <BodyText>{t("syncOnboarding.seedStep.restoreSeed.description")}</BodyText>
+                  <ContinueOnDeviceWithAnim
+                    deviceModelId={device.modelId}
+                    text={t("syncOnboarding.seedStep.restoreSeed.continueOnDevice", {
+                      productName,
+                    })}
+                  />
+                </Flex>
               ) : seedPathStatus === "recover_seed" ? (
                 <BodyText>{t("syncOnboarding.seedStep.recoverSeed")}</BodyText>
               ) : seedPathStatus === "backup_recovery_key" ? (
                 <Flex>
-                  <BodyText>{t("syncOnboarding.seedStep.backupRecoveryKeyTitle")}</BodyText>
-                  <BodyText>{t("syncOnboarding.seedStep.backupRecoveryKeyDescription")}</BodyText>
-                  <ExternalLink
-                    text={t("syncOnboarding.seedStep.backupRecoveryKeyExternalLink", {
-                      productName,
-                    })}
-                  />
+                  <SubtitleText>
+                    {t("syncOnboarding.seedStep.backupRecoveryKey.title")}
+                  </SubtitleText>
+                  <BodyText mb={6}>{t("syncOnboarding.seedStep.backupRecoveryKey.desc")}</BodyText>
+                  <ExternalLink text={t("syncOnboarding.seedStep.backupRecoveryKey.cta")} />
                   <ContinueOnDeviceWithAnim
                     deviceModelId={device.modelId}
-                    text={t("syncOnboarding.seedStep.backupRecoveryKeyContinueOnDevice", {
+                    text={t("syncOnboarding.seedStep.backupRecoveryKey.continueOnDevice", {
                       productName,
                     })}
                   />
                 </Flex>
               ) : seedPathStatus === "restore_recovery_key" ? (
                 <Flex>
-                  <BodyText>{t("syncOnboarding.seedStep.restoreRecoveryKeyTitle")}</BodyText>
-                  <BodyText>{t("syncOnboarding.seedStep.restoreRecoveryKeyDescription")}</BodyText>
+                  <SubtitleText>
+                    {t("syncOnboarding.seedStep.restoreLedgerRecoveryKey.title")}
+                  </SubtitleText>
+                  <BodyText>
+                    {t("syncOnboarding.seedStep.restoreLedgerRecoveryKey.description")}
+                  </BodyText>
                   <ContinueOnDeviceWithAnim
                     deviceModelId={device.modelId}
-                    text={t("syncOnboarding.seedStep.restoreRecoveryKeyContinueOnDevice", {
+                    text={t("syncOnboarding.seedStep.restoreLedgerRecoveryKey.continueOnDevice", {
                       productName,
                     })}
                   />
@@ -760,7 +786,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
             header={
               <Flex mb={8} flexDirection="row" alignItems="center">
                 <Text variant="h4" fontWeight="semiBold">
-                  {t("syncOnboarding.title", { deviceName })}
+                  {t("syncOnboarding.title", { productName })}
                 </Text>
                 {/* TODO: disabled for now but will be used in the future */}
                 {/* <Button
