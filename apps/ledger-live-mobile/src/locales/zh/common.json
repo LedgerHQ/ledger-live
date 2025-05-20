@@ -513,6 +513,10 @@
       "title" : "抱歉，资金不足",
       "description" : "请确保该账户资金充足。"
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "抱歉，资金不够支付费用",
+      "description" : "请确保该账户资金充足。"
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "您目前的可用（非质押）余额为 {{currentBalance}}，不足以支付解除质押 {{assetName}} 的网络费用。 ",
       "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} 到您的账户",
@@ -3565,6 +3569,8 @@
         "contact_support" : "联系客服",
         "ton_title" : "Ledger Nano S™ 不支持互换 TON",
         "ton_description" : "要互换 TON，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+        "ton_tokens_title" : "Ledger Nano S™ 不支持互换 Ton 代币",
+        "ton_tokens_description" : "要互换 Ton 代币，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
         "spl_tokens_title" : "Ledger Nano S™ 不支持互换 Solana 代币",
         "spl_tokens_description" : "要互换 Solana 代币，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
         "near_title" : "Ledger Nano S™ 不支持互换 Near",
@@ -7419,6 +7425,7 @@
     },
     "performance" : "表现",
     "low" : "低",
-    "high" : "高"
+    "high" : "高",
+    "title" : "市场走势"
   }
 }
