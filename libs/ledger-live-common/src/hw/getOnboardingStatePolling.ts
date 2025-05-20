@@ -83,7 +83,10 @@ export const getOnboardingStatePolling = ({
           }
 
           try {
-            onboardingState = extractOnboardingState(firmwareInfo.flags);
+            onboardingState = extractOnboardingState(
+              firmwareInfo.flags,
+              firmwareInfo.recoveryKeyState,
+            );
           } catch (error: unknown) {
             if (error instanceof DeviceExtractOnboardingStateError) {
               return {

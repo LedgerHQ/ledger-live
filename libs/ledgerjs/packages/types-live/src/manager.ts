@@ -117,6 +117,8 @@ export type FirmwareInfo = {
   bootloaderVersion?: string;
   hardwareVersion?: number;
   languageId?: number;
+  recoverState?: Buffer;
+  recoveryKeyState?: Buffer;
 };
 type BaseFirmware = {
   id: Id;

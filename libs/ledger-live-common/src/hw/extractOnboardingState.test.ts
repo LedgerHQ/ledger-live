@@ -282,13 +282,100 @@ describe("@hw/extractOnboardingState", () => {
         });
       });
 
-      describe("and the user finished the onboarding process", () => {
+      describe("and the user finished the onboarding process with a device that does not support recovery key", () => {
         beforeEach(() => {
           flagsBytes[3] = 11;
+          flagsBytes[4] = 0; // recover
+          flagsBytes[5] = undefined as unknown as number; // recovery key not supported
         });
 
         it("should return an onboarding step that is set at ready", () => {
           const onboardingState = extractOnboardingState(flagsBytes);
+
+          expect(onboardingState).not.toBeNull();
+          expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.Ready);
+        });
+      });
+
+      describe("and the user finished the onboarding process with a device that does not support recover and recovery key", () => {
+        beforeEach(() => {
+          flagsBytes[3] = 11;
+          flagsBytes[4] = undefined as unknown as number; // recover not supported
+          flagsBytes[5] = undefined as unknown as number; // recovery key not supported
+        });
+
+        it("should return an onboarding step that is set at ready", () => {
+          const onboardingState = extractOnboardingState(flagsBytes);
+
+          expect(onboardingState).not.toBeNull();
+          expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.Ready);
+        });
+      });
+
+      describe("and the user is on the recovery key screen", () => {
+        beforeEach(() => {
+          flagsBytes = Buffer.from([0, 0, 0, 0xb]);
+        });
+
+        it("should return an onboarding step that is set at the recovery key screen", () => {
+          const recoveryKeyState = Buffer.from([0x0]);
+          const onboardingState = extractOnboardingState(flagsBytes, recoveryKeyState);
+
+          expect(onboardingState).not.toBeNull();
+          expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.BackupRecoveryKey);
+        });
+
+        describe("and the user refuse to backup the recovery key", () => {
+          it("should return an onboarding step that is set at ready", () => {
+            const recoveryKeyState = Buffer.from([0x1]);
+            const onboardingState = extractOnboardingState(flagsBytes, recoveryKeyState);
+
+            expect(onboardingState).not.toBeNull();
+            expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.Ready);
+          });
+
+          describe("and recovery key backup process started but not finished", () => {
+            it("should return an onboarding step that is set at the recovery key screen", () => {
+              const recoveryKeyState = Buffer.from([0x3]);
+              const onboardingState = extractOnboardingState(flagsBytes, recoveryKeyState);
+
+              expect(onboardingState).not.toBeNull();
+              expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.BackupRecoveryKey);
+            });
+
+            describe("and the recovery key backup is done and naming not finished", () => {
+              it("should return an onboarding step that is set at the recovery key screen", () => {
+                const recoveryKeyState = Buffer.from([0x4]);
+                const onboardingState = extractOnboardingState(flagsBytes, recoveryKeyState);
+
+                expect(onboardingState).not.toBeNull();
+                expect(onboardingState?.currentOnboardingStep).toBe(
+                  OnboardingStep.BackupRecoveryKey,
+                );
+              });
+
+              describe("and the recovery key backup is done and backup-process exited", () => {
+                it("should return an onboarding step that is set at ready", () => {
+                  const recoveryKeyState = Buffer.from([0x5]);
+                  const onboardingState = extractOnboardingState(flagsBytes, recoveryKeyState);
+
+                  expect(onboardingState).not.toBeNull();
+                  expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.Ready);
+                });
+              });
+            });
+          });
+        });
+      });
+
+      describe("and recovery key backup is not started or fully refused", () => {
+        beforeEach(() => {
+          flagsBytes = Buffer.from([0, 0, 0, 0xb]);
+        });
+
+        it("should return an onboarding step that is set at ready", () => {
+          const recoveryKeyState = Buffer.from([0x2]);
+          const onboardingState = extractOnboardingState(flagsBytes, recoveryKeyState);
 
           expect(onboardingState).not.toBeNull();
           expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.Ready);
@@ -307,6 +394,19 @@ describe("@hw/extractOnboardingState", () => {
           expect(() => extractOnboardingState(flagsBytes)).toThrow(
             DeviceExtractOnboardingStateError,
           );
+        });
+      });
+
+      describe("and the user is on the recovery key screen", () => {
+        beforeEach(() => {
+          flagsBytes = Buffer.from([0, 0, 0, 0x10]);
+        });
+
+        it("should return an onboarding step that is set at the backup from recovery key screen", () => {
+          const onboardingState = extractOnboardingState(flagsBytes);
+
+          expect(onboardingState).not.toBeNull();
+          expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.RestoreRecoveryKey);
         });
       });
     });

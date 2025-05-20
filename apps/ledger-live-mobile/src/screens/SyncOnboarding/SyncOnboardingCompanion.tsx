@@ -46,6 +46,7 @@ import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
+import ExternalLink from "~/components/ExternalLink";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 
@@ -65,8 +66,9 @@ export type SeedPathStatus =
   | "new_seed"
   | "choice_restore_direct_or_recover"
   | "restore_seed"
-  | "recover_seed";
-
+  | "recover_seed"
+  | "backup_recovery_key"
+  | "restore_recovery_key";
 export type SyncOnboardingCompanionProps = {
   /**
    * A `Device` object
@@ -438,6 +440,14 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
         setSeedPathStatus("recover_seed");
         analyticsSeedConfiguration.current = "recover_seed";
         break;
+      case DeviceOnboardingStep.RestoreRecoveryKey:
+        setCompanionStepKey(CompanionStepKey.Seed);
+        setSeedPathStatus("restore_recovery_key");
+        break;
+      case DeviceOnboardingStep.BackupRecoveryKey:
+        setCompanionStepKey(CompanionStepKey.Seed);
+        setSeedPathStatus("backup_recovery_key");
+        break;
       default:
         break;
     }
@@ -626,6 +636,33 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                 <BodyText>{t("syncOnboarding.seedStep.restoreSeed", { productName })}</BodyText>
               ) : seedPathStatus === "recover_seed" ? (
                 <BodyText>{t("syncOnboarding.seedStep.recoverSeed")}</BodyText>
+              ) : seedPathStatus === "backup_recovery_key" ? (
+                <Flex>
+                  <BodyText>{t("syncOnboarding.seedStep.backupRecoveryKeyTitle")}</BodyText>
+                  <BodyText>{t("syncOnboarding.seedStep.backupRecoveryKeyDescription")}</BodyText>
+                  <ExternalLink
+                    text={t("syncOnboarding.seedStep.backupRecoveryKeyExternalLink", {
+                      productName,
+                    })}
+                  />
+                  <ContinueOnDeviceWithAnim
+                    deviceModelId={device.modelId}
+                    text={t("syncOnboarding.seedStep.backupRecoveryKeyContinueOnDevice", {
+                      productName,
+                    })}
+                  />
+                </Flex>
+              ) : seedPathStatus === "restore_recovery_key" ? (
+                <Flex>
+                  <BodyText>{t("syncOnboarding.seedStep.restoreRecoveryKeyTitle")}</BodyText>
+                  <BodyText>{t("syncOnboarding.seedStep.restoreRecoveryKeyDescription")}</BodyText>
+                  <ContinueOnDeviceWithAnim
+                    deviceModelId={device.modelId}
+                    text={t("syncOnboarding.seedStep.restoreRecoveryKeyContinueOnDevice", {
+                      productName,
+                    })}
+                  />
+                </Flex>
               ) : (
                 <Flex>
                   <BodyText color="neutral.c80">

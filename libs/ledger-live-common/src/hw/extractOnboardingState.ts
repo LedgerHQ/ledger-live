@@ -1,6 +1,8 @@
 import { DeviceExtractOnboardingStateError } from "@ledgerhq/errors";
 import { SeedPhraseType } from "@ledgerhq/types-live";
 
+const RECOVERY_KEY_STEP_BIT_MASK = 0x1000;
+
 const onboardingFlagsBytesLength = 4;
 
 const onboardedMask = 0x04;
@@ -38,25 +40,34 @@ export enum OnboardingStep {
   RecoverRestore = "RECOVER_RESTORE", // path "restore with Recover"
   SafetyWarning = "SAFETY WARNING",
   Ready = "READY",
+  BackupRecoveryKey = "BACKUP_RECOVERY_KEY",
+  RestoreRecoveryKey = "RESTORE_RECOVERY_KEY",
 }
 
 const fromBitsToOnboardingStep = new Map<number, OnboardingStep>([
-  [0, OnboardingStep.WelcomeScreen1],
-  [1, OnboardingStep.WelcomeScreen2],
-  [2, OnboardingStep.WelcomeScreen3],
-  [3, OnboardingStep.WelcomeScreen4],
-  [4, OnboardingStep.WelcomeScreenReminder],
-  [5, OnboardingStep.SetupChoice],
-  [6, OnboardingStep.Pin],
-  [7, OnboardingStep.NewDevice],
-  [8, OnboardingStep.NewDeviceConfirming],
-  [9, OnboardingStep.RestoreSeed],
-  [10, OnboardingStep.SafetyWarning],
-  [11, OnboardingStep.Ready],
-  [12, OnboardingStep.ChooseName],
-  [13, OnboardingStep.RecoverRestore],
-  [14, OnboardingStep.SetupChoiceRestore],
-  [15, OnboardingStep.OnboardingEarlyCheck],
+  [0x0, OnboardingStep.WelcomeScreen1],
+  [0x1, OnboardingStep.WelcomeScreen2],
+  [0x2, OnboardingStep.WelcomeScreen3],
+  [0x3, OnboardingStep.WelcomeScreen4],
+  [0x4, OnboardingStep.WelcomeScreenReminder],
+  [0x5, OnboardingStep.SetupChoice],
+  [0x6, OnboardingStep.Pin],
+  [0x7, OnboardingStep.NewDevice],
+  [0x8, OnboardingStep.NewDeviceConfirming],
+  [0x9, OnboardingStep.RestoreSeed],
+  [0xa, OnboardingStep.SafetyWarning],
+  [0xb, OnboardingStep.Ready],
+  [0xc, OnboardingStep.ChooseName],
+  [0xd, OnboardingStep.RecoverRestore],
+  [0xe, OnboardingStep.SetupChoiceRestore],
+  [0xf, OnboardingStep.OnboardingEarlyCheck],
+  [0x10, OnboardingStep.RestoreRecoveryKey],
+  [RECOVERY_KEY_STEP_BIT_MASK + 0x0, OnboardingStep.BackupRecoveryKey], // default state, after boot, if no backup was pending
+  [RECOVERY_KEY_STEP_BIT_MASK + 0x1, OnboardingStep.Ready], // backup fully refused
+  [RECOVERY_KEY_STEP_BIT_MASK + 0x2, OnboardingStep.Ready], // backup not started or fully refused
+  [RECOVERY_KEY_STEP_BIT_MASK + 0x3, OnboardingStep.BackupRecoveryKey], // backup process started but not finished
+  [RECOVERY_KEY_STEP_BIT_MASK + 0x4, OnboardingStep.BackupRecoveryKey], // backup done on RK and naming not finished
+  [RECOVERY_KEY_STEP_BIT_MASK + 0x5, OnboardingStep.Ready], // backup done on RK and backup-process exited
 ]);
 
 export type OnboardingState = {
@@ -74,9 +85,13 @@ export type OnboardingState = {
 /**
  * Extracts the onboarding state of the device
  * @param flagsBytes Buffer of bytes of length onboardingFlagsBytesLength representing the device state flags
+ * @param recoveryKeyStatusFlags Buffer of bytes of length recoveryKeyStatusFlagsLength representing the recovery key status flags
  * @returns An OnboardingState
  */
-export const extractOnboardingState = (flagsBytes: Buffer): OnboardingState => {
+export const extractOnboardingState = (
+  flagsBytes: Buffer,
+  recoveryKeyState?: Buffer,
+): OnboardingState => {
   if (!flagsBytes || flagsBytes.length < onboardingFlagsBytesLength) {
     throw new DeviceExtractOnboardingStateError("Incorrect onboarding flags bytes");
   }
@@ -94,7 +109,7 @@ export const extractOnboardingState = (flagsBytes: Buffer): OnboardingState => {
   }
 
   const currentOnboardingStepBits = flagsBytes[3];
-  const currentOnboardingStep = fromBitsToOnboardingStep.get(currentOnboardingStepBits);
+  let currentOnboardingStep = fromBitsToOnboardingStep.get(currentOnboardingStepBits);
 
   if (!currentOnboardingStep) {
     throw new DeviceExtractOnboardingStateError(
@@ -103,6 +118,20 @@ export const extractOnboardingState = (flagsBytes: Buffer): OnboardingState => {
   }
 
   const currentSeedWordIndex = flagsBytes[2] & currentSeedWordIndexMask;
+
+  // If the device is in the ready state and the recovery key step is set,
+  // we need to update the onboarding step, to override the default state
+  if (currentOnboardingStep === OnboardingStep.Ready && recoveryKeyState !== undefined) {
+    currentOnboardingStep = fromBitsToOnboardingStep.get(
+      recoveryKeyState[0] + RECOVERY_KEY_STEP_BIT_MASK,
+    );
+
+    if (!currentOnboardingStep) {
+      throw new DeviceExtractOnboardingStateError(
+        "Incorrect onboarding bits for the current recovery key step",
+      );
+    }
+  }
 
   return {
     isOnboarded,
