@@ -295,7 +295,12 @@
     "src/wallet-api/version.ts",
     "src/walletConnect/index.ts"
   ],
-  "extensions": [".ts", ".js", ".jsx", ".tsx"],
+  "extensions": [
+    ".ts",
+    ".js",
+    ".jsx",
+    ".tsx"
+  ],
   "ignorePatterns": [
     "**/node_modules/**",
     "**/__tests__/**",
