@@ -513,6 +513,10 @@
       "title" : "عفواً، الأموال المتوفرة غير كافية",
       "description" : "يرجى التأكد من أن الحساب به أموال كافية."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "عذراً، الأموال غير كافية لتغطية الرسوم",
+      "description" : "يرجى التأكد من أن الحساب به أموال كافية."
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "رصيدك المتاح (غير المُكدّس) هو حالياً {{currentBalance}} وهو غير كافٍ لدفع رسوم الشبكة لإلغاء تكديس {{assetName}} خاصتك. ",
       "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} في حسابك.",
@@ -3565,6 +3569,8 @@
         "contact_support" : "تواصل مع دعم العملاء",
         "ton_title" : "™Ledger Nano S لا تدعم مبادلة Ton",
         "ton_description" : "لمبادلة Ton، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+        "ton_tokens_title" : "™Ledger Nano S لا تدعم مبادلة رموز Ton",
+        "ton_tokens_description" : "لمبادلة رموز Ton، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "spl_tokens_title" : "™Ledger Nano S لا تدعم مبادلة رموز سولانا (Solana)",
         "spl_tokens_description" : "لمبادلة رموز سولانا (Solana)، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "near_title" : "™Ledger Nano S لا تدعم مبادلة Near",
@@ -7419,6 +7425,7 @@
     },
     "performance" : "الأداء",
     "low" : "منخفض",
-    "high" : "مرتفع"
+    "high" : "مرتفع",
+    "title" : "تحركات السوق"
   }
 }
