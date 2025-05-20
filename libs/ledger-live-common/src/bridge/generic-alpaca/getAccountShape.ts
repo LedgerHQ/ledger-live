@@ -7,7 +7,7 @@ import { adaptCoreOperationToLiveOperation } from "./utils";
 export function genericGetAccountShape(network, kind): GetAccountShape {
   return async info => {
     try {
-      console.log("genericGetAccountShape", info);
+      // console.log("genericGetAccountShape", info);
       const { address, initialAccount, currency, derivationMode } = info;
       const accountId = encodeAccountId({
         type: "js",
@@ -16,7 +16,7 @@ export function genericGetAccountShape(network, kind): GetAccountShape {
         xpubOrAddress: address,
         derivationMode,
       });
-      console.log(`getAccountShape, kind = ${kind}`, accountId, address, initialAccount);
+      // console.log(`getAccountShape, kind = ${kind}`, accountId, address, initialAccount);
 
       const blockInfo = await getAlpacaApi(network, kind).lastBlock();
 
@@ -48,13 +48,13 @@ export function genericGetAccountShape(network, kind): GetAccountShape {
       const [newOperations, _] = await getAlpacaApi(network, kind).listOperations(address, {
         minHeight: blockHeight,
       });
-      console.log({ newOperations });
+      // console.log({ newOperations });
 
       const operations = mergeOps(
         oldOperations,
         newOperations.map(op => adaptCoreOperationToLiveOperation(accountId, op)),
       );
-      console.log({ operations });
+      // console.log({ operations });
 
       // NOTE: old shape
       const shape = {
@@ -67,7 +67,7 @@ export function genericGetAccountShape(network, kind): GetAccountShape {
         operations,
         operationsCount: operations.length,
       };
-      console.log({ shape });
+      // console.log({ shape });
 
       return {
         id: accountId,
