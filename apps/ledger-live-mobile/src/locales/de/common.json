@@ -513,6 +513,10 @@
       "title" : "Entschuldigung, Guthaben reicht nicht aus",
       "description" : "Bitte stellen Sie sicher, dass das Konto ausreichend gedeckt ist."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "Leider reicht das Guthaben zur Deckung der Gebühren nicht aus",
+      "description" : "Bitte vergewissere dich, dass das Konto über ausreichende Deckung verfügt."
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Dein verfügbares (nicht gestaketes) Guthaben beläuft sich derzeit auf {{currentBalance}}. Dies reicht nicht aus, um die Netzwerkgebühren für das Beenden des Stakings deiner {{assetName}} zu bezahlen. ",
       "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} auf deinem Konto.",
@@ -3565,6 +3569,8 @@
         "contact_support" : "Kundensupport kontaktieren",
         "ton_title" : "Die Ledger Nano S™ unterstützt das Swappen von Ton nicht",
         "ton_description" : "Zum Swappen von Ton kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
+        "ton_tokens_title" : "Die Ledger Nano S™ unterstützt das Swappen von Ton-Token nicht",
+        "ton_tokens_description" : "Zum Swappen von Ton-Token kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
         "spl_tokens_title" : "Die Ledger Nano S™ unterstützt das Swappen von Solana-Token nicht",
         "spl_tokens_description" : "Zum Swappen von Solana-Token kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
         "near_title" : "Ledger Nano S™ unterstützt das Swappen von Near nicht",
@@ -7419,6 +7425,7 @@
     },
     "performance" : "Performance",
     "low" : "Niedrig",
-    "high" : "Hoch"
+    "high" : "Hoch",
+    "title" : "Marktbewegungen"
   }
 }
