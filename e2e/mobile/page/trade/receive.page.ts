@@ -80,13 +80,6 @@ export default class ReceivePage {
     }
   }
 
-  @Step("Select account in list")
-  async selectAccount(account: string): Promise<void> {
-    const id = this.accountId(account);
-    await waitForElementById(id);
-    await tapById(id);
-  }
-
   @Step("Accept to verify address")
   async selectVerifyAddress(): Promise<void> {
     await waitForElementById(this.buttonVerifyAddressId);
