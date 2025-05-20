@@ -67,6 +67,8 @@ class Xpub {
   async syncAddress(account: number, index: number, needReorg: boolean): Promise<boolean> {
     const address = await this.crypto.getAddress(this.derivationMode, this.xpub, account, index);
 
+    log("bitcoin[xpub]", `[syncAddress] account=${account}, index=${index}`, { address });
+
     this.storage.addAddress(
       `${this.crypto.network.name}-${this.derivationMode}-${this.xpub}-${account}-${index}`,
       address,
@@ -102,6 +104,7 @@ class Xpub {
   }
 
   async syncAccount(account: number, needReorg: boolean): Promise<number> {
+    log("bitcoin[xpub]", `[syncAccount], ${account}, ${needReorg}`);
     let index = 0;
     // eslint-disable-next-line no-await-in-loop
     while (await this.checkAddressesBlock(account, index, needReorg)) {
@@ -115,9 +118,18 @@ class Xpub {
     this.freshAddressIndex = 0;
     const highestBlockFromStorage = this.storage.getHighestBlockHeightAndHash();
     let needReorg = !!highestBlockFromStorage;
+
+    log("bitcoin[xpub]", `[sync] blockStorage=${highestBlockFromStorage?.height}`, {
+      highestBlockFromStorage,
+    });
     if (highestBlockFromStorage) {
       const highestBlockFromExplorer = await this.explorer.getBlockByHeight(
         highestBlockFromStorage.height,
+      );
+      log(
+        "bitcoin[xpub]",
+        `[sync] blockStorage=${highestBlockFromStorage.height}, fromExpl=${highestBlockFromExplorer?.height}`,
+        { highestBlockFromExplorer, highestBlockFromStorage },
       );
       if (highestBlockFromExplorer?.hash === highestBlockFromStorage.hash) {
         needReorg = false;
@@ -350,6 +362,7 @@ class Xpub {
           log(
             "bitcoin[xpub]",
             `fetchHydrateAndStoreNewTxs - appending ${txs.length} txs, inserted=${inserted}`,
+            { txs },
           );
         }
       } else {
@@ -383,6 +396,7 @@ class Xpub {
           log(
             "bitcoin[xpub]",
             `fetchHydrateAndStoreNewTxs - else appending ${txs.length} txs, inserted=${inserted}`,
+            { txs },
           );
         }
       }
@@ -392,6 +406,7 @@ class Xpub {
       log(
         "bitcoin[xpub]",
         `fetchHydrateAndStoreNewTxs - appending pending ${pendingTxs.length} txs, inserted=${inserted}`,
+        { pendingTxs },
       );
     }
     return inserted;

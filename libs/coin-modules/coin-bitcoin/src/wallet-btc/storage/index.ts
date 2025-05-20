@@ -197,6 +197,7 @@ class BitcoinLikeStorage implements IStorage {
   // We are a bit ugly because we can't rely undo unspentUTXO
   // So we clean the address and rebuild without the pendings
   removePendingTxs(txsFilter: { account: number; index: number }): void {
+    log("bitcoin[storage]", `removePendingTxs`, { txsFilter });
     const newTxs: TX[] = [];
     const txsToReAdd: TX[] = [];
     this.primaryIndex = {};
