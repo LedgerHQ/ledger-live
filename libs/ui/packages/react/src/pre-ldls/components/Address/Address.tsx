@@ -17,11 +17,13 @@ export const Address = ({
   showIcon,
   cryptoId,
   ticker,
+  parentId,
 }: {
   address: string;
   showIcon: boolean;
   cryptoId?: string;
   ticker?: string;
+  parentId?: string;
 }) => {
   return (
     <Wrapper>
@@ -32,7 +34,7 @@ export const Address = ({
       >
         {address}
       </Text>
-      {showIcon && <CryptoIcon ledgerId={cryptoId} ticker={ticker} />}
+      {showIcon && <CryptoIcon ledgerId={cryptoId} ticker={ticker} network={parentId} />}
     </Wrapper>
   );
 };

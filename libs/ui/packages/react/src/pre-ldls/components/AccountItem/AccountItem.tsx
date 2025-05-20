@@ -14,6 +14,7 @@ export type Account = {
   protocol?: string;
   cryptoId?: string;
   ticker?: string;
+  parentId?: string;
 };
 
 type AccountItemProps = {
@@ -51,7 +52,7 @@ const Wrapper = styled.div`
 `;
 
 export const AccountItem = ({ onClick, account, showIcon = true }: AccountItemProps) => {
-  const { name, balance, fiatValue, protocol, address, ticker, cryptoId } = account;
+  const { name, balance, fiatValue, protocol, address, ticker, cryptoId, parentId } = account;
 
   return (
     <Wrapper onClick={onClick}>
@@ -83,7 +84,13 @@ export const AccountItem = ({ onClick, account, showIcon = true }: AccountItemPr
             </Text>
             {protocol && <Tag textTransform="capitalize">{protocol}</Tag>}
           </div>
-          <Address address={address} cryptoId={cryptoId} ticker={ticker} showIcon={showIcon} />
+          <Address
+            address={address}
+            cryptoId={cryptoId}
+            ticker={ticker}
+            parentId={parentId}
+            showIcon={showIcon}
+          />
         </div>
       </div>
       <div style={{ display: "flex", flexDirection: "column", textAlign: "right" }}>

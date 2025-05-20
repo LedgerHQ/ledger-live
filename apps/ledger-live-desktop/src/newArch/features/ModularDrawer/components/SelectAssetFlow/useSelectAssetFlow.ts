@@ -2,7 +2,11 @@ import { useState, useCallback, useMemo, useEffect } from "react";
 import { CryptoCurrency, CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { LoadingBasedGroupedCurrencies, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
+import {
+  CurrenciesByProviderId,
+  LoadingBasedGroupedCurrencies,
+  LoadingStatus,
+} from "@ledgerhq/live-common/deposit/type";
 import { AssetType } from "@ledgerhq/react-ui/pre-ldls";
 import { FlowStep, NavigationDirection } from "../Header/navigation";
 
@@ -13,11 +17,12 @@ type UseSelectAssetFlowProps = {
 
 export function useSelectAssetFlow({ onAssetSelected, currencies }: UseSelectAssetFlowProps) {
   const [currentStep, setCurrentStep] = useState<FlowStep>(FlowStep.SELECT_ASSET_TYPE);
-  const [networksToDisplay, setNetworksToDisplay] = useState<CryptoOrTokenCurrency[]>([]);
+  const [networksToDisplay, setNetworksToDisplay] = useState<CryptoCurrency[]>([]);
   const [searchedValue, setSearchedValue] = useState<string | undefined>(undefined);
   const [navDirection, setNavDirection] = useState<NavigationDirection>(
     NavigationDirection.FORWARD,
   );
+  const [providers, setProviders] = useState<CurrenciesByProviderId | undefined>(undefined);
 
   const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(
     true,
@@ -55,14 +60,15 @@ export function useSelectAssetFlow({ onAssetSelected, currencies }: UseSelectAss
 
   const handleAssetTypeSelected = useCallback(
     (currency: CryptoOrTokenCurrency) => {
-      const provider = getProvider(currency);
+      const currentProvider = getProvider(currency);
+      setProviders(currentProvider);
 
-      if (!provider) {
+      if (!currentProvider) {
         onAssetSelected(currency);
         return;
       }
 
-      const networks = provider.currenciesByNetwork.map(elem =>
+      const networks = currentProvider.currenciesByNetwork.map(elem =>
         elem.type === "TokenCurrency" ? elem?.parentCurrency?.id : elem.id,
       );
 
@@ -72,7 +78,7 @@ export function useSelectAssetFlow({ onAssetSelected, currencies }: UseSelectAss
         setNavDirection(NavigationDirection.FORWARD);
         const filteredCryptoCurrencies = networks
           .map(net => findCryptoCurrencyById(net))
-          .filter(Boolean) as CryptoCurrency[];
+          .filter((c): c is CryptoCurrency => Boolean(c));
 
         setNetworksToDisplay(filteredCryptoCurrencies);
         setCurrentStep(FlowStep.SELECT_NETWORK);
@@ -84,8 +90,19 @@ export function useSelectAssetFlow({ onAssetSelected, currencies }: UseSelectAss
   );
 
   const handleNetworkSelected = useCallback(
-    (network: CryptoOrTokenCurrency) => onAssetSelected(network),
-    [onAssetSelected],
+    (network: CryptoOrTokenCurrency) => {
+      const correspondingCurrency = providers?.currenciesByNetwork.find(
+        elem =>
+          (elem as CryptoCurrency | TokenCurrency).id === network.id ||
+          (elem as TokenCurrency).parentCurrency?.id === network.id,
+      );
+      if (!correspondingCurrency) {
+        return;
+      }
+
+      return onAssetSelected(correspondingCurrency);
+    },
+    [onAssetSelected, providers],
   );
 
   useEffect(() => {
