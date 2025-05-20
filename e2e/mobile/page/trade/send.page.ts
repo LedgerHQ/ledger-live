@@ -68,26 +68,28 @@ export default class SendPage {
 
   @Step("Expect recipient error message")
   async expectSendRecipientError(errorMessage: string) {
-    const errElem = getElementById(this.recipientErrorId);
-    if (errorMessage) {
-      await expect(errElem).toHaveText(errorMessage);
-    } else {
-      await expect(errElem).not.toBeVisible();
-    }
-    const contBtn = getElementById(this.recipientContinueButtonId);
-    await expect(contBtn).not.toBeVisible();
+    await this.expectRecipientMessage(errorMessage);
   }
 
   @Step("Expect recipient warning message")
   async expectSendRecipientWarning(expectedWarningMessage: string | null) {
+    await this.expectRecipientMessage(expectedWarningMessage, true);
+  }
+
+  private async expectRecipientMessage(message: string | null, continueButtonVisible = false) {
     const errElem = getElementById(this.recipientErrorId);
-    if (expectedWarningMessage) {
-      await expect(errElem).toHaveText(expectedWarningMessage);
+    if (message) {
+      await expect(errElem).toHaveText(message);
     } else {
       await expect(errElem).not.toBeVisible();
     }
+
     const contBtn = getElementById(this.recipientContinueButtonId);
-    await expect(contBtn).toBeVisible();
+    if (continueButtonVisible) {
+      await expect(contBtn).toBeVisible();
+    } else {
+      await expect(contBtn).not.toBeVisible();
+    }
   }
 
   @Step("Expect recipient step success")
@@ -226,13 +228,5 @@ export default class SendPage {
       const feeBtn = this.feeStrategy(fee);
       await tapByElement(feeBtn);
     }
-  }
-
-  @Step("Select currency to debit")
-  async selectDebitCurrency(account: Account) {
-    await app.common.performSearch(account.currency.ticker);
-    const accountId = this.accountId(account);
-    await waitForElementById(accountId);
-    await tapById(accountId);
   }
 }
