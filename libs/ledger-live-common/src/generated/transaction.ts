@@ -20,6 +20,7 @@ import tezos from "@ledgerhq/coin-tezos/transaction";
 import ton from "@ledgerhq/coin-ton/transaction";
 import tron from "@ledgerhq/coin-tron/transaction";
 import vechain from "@ledgerhq/coin-vechain/transaction";
+import xrp from "@ledgerhq/coin-xrp/transaction";
 import sui from "@ledgerhq/coin-sui/transaction";
 import mina from "@ledgerhq/coin-mina/transaction";
 
@@ -46,6 +47,7 @@ export default {
   ton,
   tron,
   vechain,
+  xrp,
   sui,
   mina,
 };
