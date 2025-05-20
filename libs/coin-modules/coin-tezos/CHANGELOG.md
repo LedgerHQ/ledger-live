@@ -1,5 +1,17 @@
 # @ledgerhq/coin-tezos
 
+## 5.1.0
+
+### Minor Changes
+
+- [#10188](https://github.com/LedgerHQ/ledger-live/pull/10188) [`7dbf446`](https://github.com/LedgerHQ/ledger-live/commit/7dbf446811bbc99a15a04bc1294c6b3b8401f667) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - [coin-modules][tezos] fix tezos transaction crafting setting gasLimit/storageLimit to 0
+
+### Patch Changes
+
+- Updated dependencies [[`f92f49a`](https://github.com/LedgerHQ/ledger-live/commit/f92f49a003767b83b94955e920cfac8cd565c162)]:
+  - @ledgerhq/cryptoassets@13.17.0
+  - @ledgerhq/coin-framework@5.0.2
+
 ## 5.1.0-next.0
 
 ### Minor Changes
