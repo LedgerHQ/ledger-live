@@ -47,7 +47,9 @@ export const genericSignOperation =
           ...transactionIntent.sender,
           publicKey,
         };
-
+        if (transaction["tag"]) {
+          transactionIntent.destinationTag = transaction["tag"];
+        }
         const unsigned = await getAlpacaApi(network, kind).craftTransaction({
           ...transactionIntent,
         });
