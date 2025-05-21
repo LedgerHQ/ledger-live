@@ -6,6 +6,7 @@ import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { StackScreenProps } from "@react-navigation/stack";
 import { BaseComposite } from "~/components/RootNavigator/types/helpers";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import { SwapWebviewAllowedPageNames } from "~/components/Web3AppWebview/types";
 import { ScreenName } from "~/const";
 
 export type SwapFormParamList = MaterialTopTabScreenProps<
@@ -44,13 +45,13 @@ export type OperationDetailsParamList = StackScreenProps<
 
 export type Target = "from" | "to";
 
-export type DetailsSwapParamList = {
+export interface DetailsSwapParamList extends SwapLiveAppNavigationParams {
   accountId?: string;
   currency?: CryptoCurrency | TokenCurrency;
   rate?: ExchangeRate;
   transaction?: Transaction;
   target?: Target;
-};
+}
 
 export type SwapSelectCurrency = {
   currencies: Currency[];
@@ -64,14 +65,22 @@ export type SwapOperation = Omit<MappedSwapOperation, "fromAccount" | "toAccount
 
 export type SwapPendingOperation = { swapOperation: SwapOperation };
 
-export type DefaultAccountSwapParamList = {
+export interface DefaultAccountSwapParamList extends SwapLiveAppNavigationParams {
   defaultAccount?: Account;
   defaultParentAccount?: Account;
   defaultCurrency?: CryptoCurrency | TokenCurrency;
-};
+}
 
 export type SwapFormNavParamList = {
   SwapForm: DetailsSwapParamList | DefaultAccountSwapParamList | undefined;
   SwapHistory: undefined;
   SwapPendingOperation: undefined;
+};
+
+export type SwapLiveAppNavigationParams = {
+  swapNavigationParams?: {
+    tab?: "ACCOUNTS_SELECTION" | "QUOTES_LIST" | null;
+    page?: SwapWebviewAllowedPageNames;
+    canGoBack?: boolean;
+  };
 };
