@@ -32,7 +32,7 @@ export default function WebPTXPlayer({
   manifest,
   inputs,
   CustomLoader,
-}: WebviewProps & { CustomLoader: CustomLoaderType }) {
+}: WebviewProps & { CustomLoader?: CustomLoaderType }) {
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const [isWidgetLoaded, setIsWidgetLoaded] = useState(true);
