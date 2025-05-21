@@ -35,9 +35,7 @@ export function transactionToIntent(
 ): TransactionIntent<any, any, any> {
   return {
     type: "Payment",
-    sender: {
-      address: _account.freshAddress,
-    },
+    sender: _account.freshAddress,
     recipient: transaction.recipient,
     amount: fromBigNumberToBigInt(transaction.amount, BigInt(0)),
     asset: null, // TODO: check
