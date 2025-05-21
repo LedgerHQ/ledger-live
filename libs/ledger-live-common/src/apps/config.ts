@@ -53,7 +53,7 @@ const appConfig: Record<string, ConfigInfo> = {
   config_nanoapp_zcash: {
     type: "object",
     default: {
-      minVersion: "2.3.1",
+      minVersion: "2.3.2",
     },
   },
   config_nanoapp_near: {
@@ -66,12 +66,6 @@ const appConfig: Record<string, ConfigInfo> = {
     type: "object",
     default: {
       minVersion: "2.4.5",
-    },
-  },
-  config_nanoapp_aptos: {
-    type: "object",
-    default: {
-      minVersion: "0.8.12",
     },
   },
 };

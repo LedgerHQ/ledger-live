@@ -4,7 +4,7 @@ import coinConfig from "../config";
 import { UnsupportedTransactionMode } from "../types/errors";
 import { getTezosToolkit } from "./tezosToolkit";
 
-type TransactionFee = {
+export type TransactionFee = {
   fees?: string;
   gasLimit?: string;
   storageLimit?: string;

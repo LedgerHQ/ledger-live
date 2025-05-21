@@ -13,6 +13,7 @@ import {
 import { ValidatorsAppValidator } from "./network/validator-app";
 import { TokenAccountState } from "./network/chain/account/token";
 import { PARSED_PROGRAMS } from "./network/chain/program/constants";
+import { SPLToken } from "@ledgerhq/cryptoassets/data/spl";
 
 export type TransferCommand = {
   kind: "transfer";
@@ -27,6 +28,24 @@ export type TokenCreateATACommand = {
   owner: string;
   mint: string;
   associatedTokenAccountAddress: string;
+};
+
+export type TokenCreateApproveCommand = {
+  kind: "token.approve";
+  account: string;
+  mintAddress: string;
+  recipientDescriptor: TokenRecipientDescriptor;
+  owner: string;
+  amount: number;
+  decimals: number;
+  tokenProgram: SolanaTokenProgram;
+};
+
+export type TokenCreateRevokeCommand = {
+  kind: "token.revoke";
+  account: string;
+  owner: string;
+  tokenProgram: SolanaTokenProgram;
 };
 
 export type StakeCreateAccountCommand = {
@@ -105,6 +124,8 @@ export type Command =
   | TransferCommand
   | TokenTransferCommand
   | TokenCreateATACommand
+  | TokenCreateApproveCommand
+  | TokenCreateRevokeCommand
   | StakeCreateAccountCommand
   | StakeDelegateCommand
   | StakeUndelegateCommand
@@ -137,6 +158,20 @@ export type TokenCreateATATransaction = {
   kind: "token.createATA";
   uiState: {
     tokenId: string;
+  };
+};
+
+export type TokenCreateApproveTransaction = {
+  kind: "token.approve";
+  uiState: {
+    subAccountId: string;
+  };
+};
+
+export type TokenCreateRevokeTransaction = {
+  kind: "token.revoke";
+  uiState: {
+    subAccountId: string;
   };
 };
 
@@ -182,6 +217,8 @@ export type TransactionModel = { commandDescriptor?: CommandDescriptor } & (
   | TransferTransaction
   | TokenTransferTransaction
   | TokenCreateATATransaction
+  | TokenCreateApproveTransaction
+  | TokenCreateRevokeTransaction
   | StakeCreateAccountTransaction
   | StakeDelegateTransaction
   | StakeUndelegateTransaction
@@ -192,6 +229,7 @@ export type TransactionModel = { commandDescriptor?: CommandDescriptor } & (
 export type Transaction = TransactionCommon & {
   family: "solana";
   model: TransactionModel;
+  raw?: string;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -255,6 +293,7 @@ export type SolanaPreloadDataV1 = {
   version: "1";
   validatorsWithMeta: SolanaValidatorWithMeta[];
   validators: ValidatorsAppValidator[];
+  splTokens: SPLToken[] | null;
 };
 
 // exists for discriminated union to work

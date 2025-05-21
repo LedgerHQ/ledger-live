@@ -1,4 +1,4 @@
-name: "[Bot] Testing with 'Nitrogen'"
+name: "[Coin] - Testing with 'Nitrogen' - Manual"
 run-name: Test with 🤖 Nitrogen by @${{github.actor}} ${{inputs.families &&  format('families={0}',inputs.families) || ''}} ${{inputs.currencies && format('currencies={0}',inputs.currencies) || ''}}
 on:
   workflow_dispatch:

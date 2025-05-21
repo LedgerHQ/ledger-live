@@ -7,6 +7,7 @@ import {
 } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
 import { v4, v5, parse } from "uuid";
+import { Transaction } from "../../types";
 
 const seed = v4();
 
@@ -153,5 +154,29 @@ export function epochInfo({ epoch }: { epoch: number }) {
     slotIndex: 2790,
     slotsInEpoch: 8192,
     transactionCount: 22661093,
+  };
+}
+
+export function transaction(raw?: string): Transaction {
+  return {
+    family: "solana",
+    amount: new BigNumber(0),
+    recipient: "",
+    model: {
+      kind: "transfer",
+      uiState: {},
+      commandDescriptor: {
+        command: {
+          kind: "transfer", // any kind can work, just needed a value for the test
+          sender: "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp",
+          recipient: "DwRL6XkPAtM1bfuySJKZGn2t9WeG25RC39isAu2nwak4",
+          amount: 0,
+        },
+        fee: 0,
+        warnings: {},
+        errors: {},
+      },
+    },
+    raw: raw ?? "",
   };
 }

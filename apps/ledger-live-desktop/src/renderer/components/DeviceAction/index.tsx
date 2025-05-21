@@ -7,10 +7,10 @@ import {
   EConnResetError,
   ImageDoesNotExistOnDevice,
   LanguageInstallRefusedOnDevice,
-  LatestFirmwareVersionRequired,
   NoSuchAppOnProvider,
   OutdatedApp,
 } from "@ledgerhq/live-common/errors";
+import { LatestFirmwareVersionRequired } from "@ledgerhq/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import {
   addNewDeviceModel,
@@ -87,6 +87,8 @@ import { useTrackExchangeFlow } from "~/renderer/analytics/hooks/useTrackExchang
 import { useTrackSendFlow } from "~/renderer/analytics/hooks/useTrackSendFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { useTrackSyncFlow } from "~/renderer/analytics/hooks/useTrackSyncFlow";
+import { useTrackGenericDAppTransactionSend } from "~/renderer/analytics/hooks/useTrackGenericDAppTransactionSend";
+import { useTrackTransactionChecksFlow } from "~/renderer/analytics/hooks/useTrackTransactionChecksFlow";
 
 export type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
@@ -152,6 +154,8 @@ type States = PartialNullable<{
   imageCommitRequested: boolean;
   manifestName: string;
   manifestId: string;
+  transactionChecksOptInTriggered: boolean;
+  transactionChecksOptIn: boolean;
 }>;
 
 type InnerProps<P> = {
@@ -225,6 +229,8 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     onRepairModal,
     deviceSignatureRequested,
     deviceStreamingProgress,
+    transactionChecksOptInTriggered,
+    transactionChecksOptIn,
     displayUpgradeWarning,
     passWarning,
     initSwapRequested,
@@ -244,6 +250,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const stateSettings = useSelector(settingsSelector);
   const walletState = useSelector(walletSelector);
+  const isTrackingEnabled = useSelector(trackingEnabledSelector);
 
   useTrackManagerSectionEvents({
     location: location === HOOKS_TRACKING_LOCATIONS.managerDashboard ? location : undefined,
@@ -251,7 +258,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     allowManagerRequested: hookState.allowManagerRequested,
     clsImageRemoved: hookState.imageRemoved,
     error,
-    isTrackingEnabled: useSelector(trackingEnabledSelector),
+    isTrackingEnabled,
   });
 
   useTrackReceiveFlow({
@@ -259,14 +266,15 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     device,
     error,
     inWrongDeviceForAccount,
-    isTrackingEnabled: useSelector(trackingEnabledSelector),
+    isLocked,
+    isTrackingEnabled,
   });
 
   useTrackAddAccountModal({
     location: location === HOOKS_TRACKING_LOCATIONS.addAccountModal ? location : undefined,
     device,
     error,
-    isTrackingEnabled: useSelector(trackingEnabledSelector),
+    isTrackingEnabled,
     requestOpenApp,
     userMustConnectDevice: !isLoading && !device,
     isLocked,
@@ -276,7 +284,9 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     location: location === HOOKS_TRACKING_LOCATIONS.exchange ? location : undefined,
     device,
     error,
-    isTrackingEnabled: useSelector(trackingEnabledSelector),
+    isTrackingEnabled,
+    isLocked,
+    inWrongDeviceForAccount,
     isRequestOpenAppExchange: requestOpenApp === "Exchange",
   });
 
@@ -287,7 +297,9 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     allowManagerRequested: hookState.allowManagerRequested,
     requestOpenApp,
     isLedgerSyncAppOpen: appAndVersion?.name === "Ledger Sync",
-    isTrackingEnabled: useSelector(trackingEnabledSelector),
+    isLocked,
+    isTrackingEnabled,
+    inWrongDeviceForAccount,
   });
 
   useTrackSendFlow({
@@ -295,7 +307,31 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     device,
     error,
     inWrongDeviceForAccount,
-    isTrackingEnabled: useSelector(trackingEnabledSelector),
+    isLocked,
+    isTrackingEnabled,
+  });
+
+  useTrackGenericDAppTransactionSend({
+    location:
+      location === HOOKS_TRACKING_LOCATIONS.genericDAppTransactionSend ? location : undefined,
+    device,
+    error,
+    allowManagerRequested: hookState.allowManagerRequested,
+    requestOpenApp,
+    openedAppName: appAndVersion?.name,
+    isLocked,
+    inWrongDeviceForAccount,
+    isTrackingEnabled,
+  });
+
+  useTrackTransactionChecksFlow({
+    location,
+    device,
+    deviceInfo,
+    appAndVersion,
+    transactionChecksOptInTriggered,
+    transactionChecksOptIn,
+    isTrackingEnabled,
   });
 
   const type = useTheme().colors.palette.type;

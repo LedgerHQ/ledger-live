@@ -3,11 +3,6 @@ import { useTrackOnboardingFlow, UseTrackOnboardingFlow } from "./useTrackOnboar
 import { track } from "../segment";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
-jest.mock("../segment", () => ({
-  track: jest.fn(),
-  setAnalyticsFeatureFlagMethod: jest.fn(),
-}));
-
 describe("useTrackOnboardingFlow", () => {
   const deviceMock = {
     modelId: "Europa",

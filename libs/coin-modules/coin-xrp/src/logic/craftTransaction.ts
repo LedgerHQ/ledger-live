@@ -31,7 +31,7 @@ type XrplTransaction = {
   Memos?: MemoWrapper[];
 };
 
-type MemoInput = {
+export type MemoInput = {
   data?: string;
   format?: string;
   type?: string;
@@ -46,7 +46,7 @@ export async function craftTransaction(
     amount: bigint;
     fee: bigint;
     destinationTag?: number | null | undefined;
-    memos?: MemoInput[];
+    memos?: MemoInput[] | undefined;
   },
   publicKey?: string,
 ): Promise<{

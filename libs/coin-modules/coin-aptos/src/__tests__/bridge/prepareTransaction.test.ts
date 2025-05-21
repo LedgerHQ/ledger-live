@@ -1,11 +1,11 @@
 import prepareTransaction from "../../bridge/prepareTransaction";
-import { AptosAPI } from "../../api";
+import { AptosAPI } from "../../network";
 import { getEstimatedGas } from "../../bridge/getFeesForTransaction";
 import { getMaxSendBalance } from "../../bridge/logic";
 import BigNumber from "bignumber.js";
 import type { AptosAccount, Transaction } from "../../types";
 
-jest.mock("../../api");
+jest.mock("../../network");
 jest.mock("../../bridge/getFeesForTransaction");
 jest.mock("../../bridge/logic");
 

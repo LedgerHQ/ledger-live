@@ -11,7 +11,7 @@ import coinConfig from "../config";
 import { TronConfig } from "../config";
 import { Api, Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { createApi } from ".";
-import { TronToken } from "../types";
+import { TronAsset } from "../types";
 
 jest.mock("../config", () => ({
   setCoinConfig: jest.fn(),
@@ -48,27 +48,15 @@ describe("createApi", () => {
     );
   });
 
-  it("should return an API object with alpaca api methods", () => {
-    const api = createApi(mockTronConfig);
-
-    // Check that methods are set with what we expect
-    expect(api.broadcast).toBe(broadcast);
-    expect(api.combine).toBe(combine);
-    expect(api.craftTransaction).toBe(craftTransaction);
-    expect(api.estimateFees).toBe(estimateFees);
-    expect(api.getBalance).toBe(getBalance);
-    expect(api.lastBlock).toBe(lastBlock);
-    expect(api.listOperations).toBe(listOperations);
-  });
-
-  it("should pass parameters well", async () => {
-    const api: Api<TronToken> = createApi(mockTronConfig);
-    const intent: TransactionIntent<TronToken> = {
+  it("should pass parameters correctly", async () => {
+    const api: Api<TronAsset> = createApi(mockTronConfig);
+    const intent: TransactionIntent<TronAsset> = {
       type: "send",
       sender: "sender",
       recipient: "recipient",
       amount: BigInt(10),
       asset: {
+        type: "token",
         standard: "trc10",
         tokenId: "1002000",
       },
@@ -80,7 +68,8 @@ describe("createApi", () => {
     await api.estimateFees(intent);
     await api.getBalance("address");
     await api.lastBlock();
-    await api.listOperations("address", {} as Pagination);
+    const minHeight = 14;
+    await api.listOperations("address", { minHeight: minHeight } as Pagination);
 
     // Test that each of the methods was called with correct arguments
     expect(broadcast).toHaveBeenCalledWith("transaction");
@@ -89,6 +78,10 @@ describe("createApi", () => {
     expect(craftTransaction).toHaveBeenCalledWith(intent);
     expect(getBalance).toHaveBeenCalledWith("address");
     expect(lastBlock).toHaveBeenCalled();
-    expect(listOperations).toHaveBeenCalledWith("address", {});
+    expect(listOperations).toHaveBeenCalledWith("address", {
+      minHeight: minHeight,
+      order: "asc",
+      softLimit: 200,
+    });
   });
 });

@@ -3,6 +3,7 @@ import { listOperations } from "./listOperations";
 import { RIPPLE_EPOCH } from "./utils";
 import { Marker } from "../network/types";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { XrpAsset } from "../types";
 
 const maxHeight = 2;
 const minHeight = 1;
@@ -220,7 +221,8 @@ describe("listOperations", () => {
         expectedType === "IN" ? BigInt(deliveredAmount) : BigInt(deliveredAmount + fee);
       expect(results).toEqual([
         {
-          operationIndex: 0,
+          id: "HASH_VALUE",
+          asset: { type: "native" },
           tx: {
             fees: BigInt(10),
             hash: "HASH_VALUE",
@@ -248,7 +250,8 @@ describe("listOperations", () => {
           },
         },
         {
-          operationIndex: 0,
+          id: "HASH_VALUE",
+          asset: { type: "native" },
           tx: {
             hash: "HASH_VALUE",
             fees: BigInt(10),
@@ -271,6 +274,8 @@ describe("listOperations", () => {
           },
         },
         {
+          id: "HASH_VALUE",
+          asset: { type: "native" },
           tx: {
             hash: "HASH_VALUE",
             fees: BigInt(10),
@@ -290,9 +295,8 @@ describe("listOperations", () => {
           value: expectedValue,
           senders: [opSender],
           recipients: [opDestination],
-          operationIndex: 0,
         },
-      ] satisfies Operation<void>[]);
+      ] satisfies Operation<XrpAsset>[]);
     },
   );
 });

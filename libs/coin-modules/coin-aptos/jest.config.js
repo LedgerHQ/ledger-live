@@ -11,7 +11,7 @@ module.exports = {
   ],
   coverageReporters: ["json", ["lcov", { file: "aptos-lcov.info", projectRoot: "../" }], "text"],
   testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".integ.test.ts"],
   reporters: [
     "default",
     [
@@ -25,4 +25,5 @@ module.exports = {
     "src/index.ts",
     "src/bridge/bridge.fixture.ts",
   ],
+  setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
 };

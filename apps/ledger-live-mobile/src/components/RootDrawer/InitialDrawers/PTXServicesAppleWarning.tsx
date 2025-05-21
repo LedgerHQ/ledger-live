@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import QueuedDrawer from "../../QueuedDrawer";
 import { useRootDrawerContext } from "~/context/RootDrawerContext";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import storage from "LLM/storage";
 import { InitialDrawerID } from "../types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Button, Checkbox, Flex, IconsLegacy, Link, Text } from "@ledgerhq/native-ui";
@@ -37,7 +37,7 @@ export function PTXServicesAppleWarning() {
     () =>
       onClose(() => {
         if (persistentHide) {
-          AsyncStorage.setItem(InitialDrawerID.PTXServicesAppleDrawerKey, "true");
+          storage.save(InitialDrawerID.PTXServicesAppleDrawerKey, "true");
         }
       }),
     [persistentHide, onClose],

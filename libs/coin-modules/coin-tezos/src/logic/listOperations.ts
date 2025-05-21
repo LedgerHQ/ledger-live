@@ -2,12 +2,15 @@ import { tzkt } from "../network";
 import { log } from "@ledgerhq/logs";
 import {
   type APIDelegationType,
+  type APIRevealType,
   type APITransactionType,
   AccountsGetOperationsOptions,
   isAPIDelegationType,
+  isAPIRevealType,
   isAPITransactionType,
 } from "../network/types";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { TezosAsset } from "../api/types";
 
 /**
  * Returns list of "Transfer", "Delegate" and "Undelegate" Operations associated to an account.
@@ -29,7 +32,7 @@ export async function listOperations(
     sort,
     minHeight,
   }: { limit?: number; token?: string; sort: "Ascending" | "Descending"; minHeight: number },
-): Promise<[Operation<void>[], string]> {
+): Promise<[Operation<TezosAsset>[], string]> {
   let options: AccountsGetOperationsOptions = { limit, sort, "level.ge": minHeight };
   if (token) {
     options = { ...options, lastId: JSON.parse(token) };
@@ -40,8 +43,8 @@ export async function listOperations(
   // otherwise we might miss operations
   const nextToken = lastOperation ? JSON.stringify(lastOperation?.id) : "";
   const filteredOperations = operations
-    .filter(op => isAPITransactionType(op) || isAPIDelegationType(op))
-    .reduce((acc, op) => acc.concat(convertOperation(address, op)), [] as Operation<void>[]);
+    .filter(op => isAPITransactionType(op) || isAPIDelegationType(op) || isAPIRevealType(op))
+    .reduce((acc, op) => acc.concat(convertOperation(address, op)), [] as Operation<TezosAsset>[]);
   if (sort === "Ascending") {
     //results are always sorted in descending order
     filteredOperations.reverse();
@@ -52,9 +55,9 @@ export async function listOperations(
 // note that "initiator" of APITransactionType is never used in the conversion
 function convertOperation(
   address: string,
-  operation: APITransactionType | APIDelegationType,
-): Operation<void> {
-  const { amount, hash, sender, type } = operation;
+  operation: APITransactionType | APIDelegationType | APIRevealType,
+): Operation<TezosAsset> {
+  const { hash, sender, type, id } = operation;
 
   let targetAddress = undefined;
   if (isAPITransactionType(operation)) {
@@ -73,13 +76,16 @@ function convertOperation(
 
   const senders = sender?.address ? [sender.address] : [];
 
+  const amount = isAPIRevealType(operation) ? BigInt(0) : BigInt(operation.amount);
+
   const fee =
     BigInt(operation.storageFee ?? 0) +
     BigInt(operation.bakerFee ?? 0) +
     BigInt(operation.allocationFee ?? 0);
 
   return {
-    operationIndex: 0,
+    id: `${hash ?? ""}-${id}`,
+    asset: { type: "native" },
     tx: {
       // hash id defined nullable in the tzkt API, but I wonder when it would be null ?
       hash: hash ?? "",
@@ -93,8 +99,13 @@ function convertOperation(
       date: new Date(operation.timestamp),
     },
     type: type,
-    value: BigInt(amount),
+    value: amount,
     senders: senders,
     recipients: recipients,
+    details: {
+      counter: operation.counter,
+      gasLimit: operation.gasLimit,
+      storageLimit: operation.storageLimit,
+    },
   };
 }

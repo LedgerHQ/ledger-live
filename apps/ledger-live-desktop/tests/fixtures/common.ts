@@ -3,23 +3,16 @@ import fsPromises from "fs/promises";
 import merge from "lodash/merge";
 import * as path from "path";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { startSpeculos, stopSpeculos, specs } from "@ledgerhq/live-common/e2e/speculos";
-import invariant from "invariant";
 
 import { Application } from "tests/page";
 import { safeAppendFile } from "tests/utils/fileUtils";
 import { launchApp } from "tests/utils/electronUtils";
 import { captureArtifacts } from "tests/utils/allureUtils";
 import { randomUUID } from "crypto";
-import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { lastValueFrom, Observable } from "rxjs";
-import { CLI } from "../utils/cliUtils";
 
 type TestFixtures = {
   lang: string;
   theme: "light" | "dark" | "no-preference" | undefined;
-  speculosApp: AppInfos;
   userdata?: string;
   settings: Record<string, unknown>;
   userdataDestinationPath: string;
@@ -31,16 +24,9 @@ type TestFixtures = {
   featureFlags: OptionalFeatureMap;
   simulateCamera: string;
   app: Application;
-  cliCommands?: ((appjsonPath: string) => Observable<unknown> | Promise<unknown> | string)[];
 };
 
-const IS_NOT_MOCK = process.env.MOCK == "0";
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
-if (IS_NOT_MOCK) setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
-setEnv("SWAP_API_BASE", process.env.SWAP_API_BASE || "https://swap-stg.ledger-test.com/v5");
-const BASE_PORT = 30000;
-const MAX_PORT = 65535;
-let portCounter = BASE_PORT; // Counter for generating unique ports
 
 export const test = base.extend<TestFixtures>({
   env: undefined,
@@ -50,8 +36,6 @@ export const test = base.extend<TestFixtures>({
   settings: { shareAnalytics: true, hasSeenAnalyticsOptInPrompt: true },
   featureFlags: undefined,
   simulateCamera: undefined,
-  speculosApp: undefined,
-  cliCommands: [],
 
   app: async ({ page }, use) => {
     const app = new Application(page);
@@ -79,11 +63,8 @@ export const test = base.extend<TestFixtures>({
       env,
       featureFlags,
       simulateCamera,
-      speculosApp,
-      cliCommands,
     },
     use,
-    testInfo,
   ) => {
     // create userdata path
     await fsPromises.mkdir(userdataDestinationPath, { recursive: true });
@@ -95,84 +76,39 @@ export const test = base.extend<TestFixtures>({
     const userData = merge({ data: { settings } }, fileUserData);
     await fsPromises.writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
 
-    let device: any | undefined;
+    // default environment variables
+    env = Object.assign(
+      {
+        ...process.env,
+        VERBOSE: true,
+        MOCK: true,
+        MOCK_COUNTERVALUES: true,
+        HIDE_DEBUG_MOCK: true,
+        CI: process.env.CI || undefined,
+        PLAYWRIGHT_RUN: true,
+        CRASH_ON_INTERNAL_CRASH: true,
+        LEDGER_MIN_HEIGHT: 768,
+        FEATURE_FLAGS: JSON.stringify(featureFlags),
+      },
+      env,
+    );
 
-    try {
-      if (IS_NOT_MOCK && speculosApp) {
-        // Ensure the portCounter stays within the valid port range
-        if (portCounter > MAX_PORT) {
-          portCounter = BASE_PORT;
-        }
-        const speculosPort = portCounter++;
-        setEnv("PLAYWRIGHT_RUN", true);
-        setEnv(
-          "SPECULOS_PID_OFFSET",
-          (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100,
-        );
-        device = await startSpeculos(
-          testInfo.title.replace(/ /g, "_"),
-          specs[speculosApp.name.replace(/ /g, "_")],
-        );
-        invariant(device, "[E2E Setup] Speculos not started");
-        invariant(device.ports.apiPort, "[E2E Setup] speculosApiPort not defined");
-        const speculosApiPort = device.ports.apiPort.toString();
+    // launch app
+    const windowSize = { width: 1024, height: 768 };
 
-        setEnv("SPECULOS_API_PORT", speculosApiPort);
-        setEnv("MOCK", "");
-        process.env.SPECULOS_API_PORT = speculosApiPort;
-        process.env.MOCK = "";
+    const electronApp: ElectronApplication = await launchApp({
+      env,
+      lang,
+      theme,
+      userdataDestinationPath,
+      simulateCamera,
+      windowSize,
+    });
 
-        if (cliCommands?.length) {
-          CLI.registerSpeculosTransport(speculosApiPort);
-          for (const cmd of cliCommands) {
-            const promise = await cmd(`${userdataDestinationPath}/app.json`);
-            const result =
-              promise instanceof Observable ? await lastValueFrom(promise) : await promise;
-            console.log("CLI result: ", result);
-          }
-        }
-      }
+    await use(electronApp);
 
-      // default environment variables
-      env = Object.assign(
-        {
-          ...process.env,
-          VERBOSE: true,
-          MOCK: IS_NOT_MOCK ? undefined : true,
-          MOCK_COUNTERVALUES: IS_NOT_MOCK ? undefined : true,
-          HIDE_DEBUG_MOCK: true,
-          CI: process.env.CI || undefined,
-          PLAYWRIGHT_RUN: true,
-          CRASH_ON_INTERNAL_CRASH: true,
-          LEDGER_MIN_HEIGHT: 768,
-          FEATURE_FLAGS: JSON.stringify(featureFlags),
-          MANAGER_DEV_MODE: IS_NOT_MOCK ? true : undefined,
-          SPECULOS_API_PORT: IS_NOT_MOCK ? getEnv("SPECULOS_API_PORT")?.toString() : undefined,
-        },
-        env,
-      );
-
-      // launch app
-      const windowSize = { width: 1024, height: 768 };
-
-      const electronApp: ElectronApplication = await launchApp({
-        env,
-        lang,
-        theme,
-        userdataDestinationPath,
-        simulateCamera,
-        windowSize,
-      });
-
-      await use(electronApp);
-
-      // close app
-      await electronApp.close();
-    } finally {
-      if (device) {
-        await stopSpeculos(device.id);
-      }
-    }
+    // close app
+    await electronApp.close();
   },
   page: async ({ electronApp }, use, testInfo) => {
     // app is ready

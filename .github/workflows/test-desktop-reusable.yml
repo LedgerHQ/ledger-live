@@ -1,4 +1,4 @@
-name: "Test Desktop"
+name: "[Desktop] - Test - Called"
 
 on:
   workflow_call:
@@ -30,7 +30,7 @@ permissions:
 
 jobs:
   codechecks:
-    name: "LLD Code Checks"
+    name: "Desktop Code Check"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -101,7 +101,7 @@ jobs:
         run: pnpm desktop test:jest:coverage
 
   e2e-tests-linux:
-    name: "Desktop Tests E2E (Ubuntu)"
+    name: "Ubuntu E2E"
     outputs:
       status: ${{ steps.tests.outcome }}
     env:
@@ -177,7 +177,9 @@ jobs:
         with:
           name: allure-results-linux
           path: apps/ledger-live-desktop/allure-results
+
   report:
+    name: "Test Desktop > Report"
     needs: [codechecks, unit-tests, e2e-tests-linux]
     runs-on: ubuntu-22.04
     if: ${{ !cancelled() }}
@@ -233,14 +235,11 @@ jobs:
               attempt_number: "${{ github.run_attempt }}",
             });
 
-            const findJobUrl = os =>
-              jobs.find(job => job.name == `Live Desktop Tests (${os})`)?.html_url;
-
             const keys = {
               linux: {
                 symbol: "🐧",
                 name: "Linux",
-                jobUrl: findJobUrl("Linux")
+                jobUrl: jobs.find(job => job.name == `Ubuntu E2E`)?.html_url
               },
             };
 
@@ -423,7 +422,7 @@ jobs:
           path: ${{ github.workspace }}/summary-test-desktop.json
 
   allure-report:
-    name: "Allure Reports Export on Server"
+    name: "Ubuntu E2E > Allure Report"
     needs: e2e-tests-linux
     runs-on: [ledger-live-medium]
     if: ${{ !cancelled() && github.ref_name == 'develop' }}

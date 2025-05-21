@@ -39,6 +39,8 @@ import { getLLDCoinFamily } from "~/renderer/families";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isBitcoinBasedAccount, isBitcoinAccount } from "@ledgerhq/live-common/account/typeGuards";
 import { useNftCollectionsStatus } from "~/renderer/hooks/nfts/useNftCollectionsStatus";
+import { useNftSupportFeature } from "~/renderer/hooks/nfts/useNftSupportFeature";
+import NftEntryPoint from "LLD/features/NftEntryPoint";
 
 type Params = {
   id: string;
@@ -102,6 +104,8 @@ const AccountPage = ({
   const bgColor = useTheme().colors.palette.background.paper;
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
   const { hiddenNftCollections } = useNftCollectionsStatus(true);
+
+  const { nftSupportEnabled } = useNftSupportFeature();
 
   const nftReworked = useFeature("lldNftsGalleryNewArch");
   const isNftReworkedEnabled = nftReworked?.enabled;
@@ -186,13 +190,16 @@ const AccountPage = ({
           {AccountBodyHeader ? (
             <AccountBodyHeader account={account} parentAccount={parentAccount} />
           ) : null}
-          {account.type === "Account" && isNFTActive(account.currency) ? (
+          {nftSupportEnabled && account.type === "Account" && isNFTActive(account.currency) ? (
             isNftReworkedEnabled ? (
               <NftCollections account={account} />
             ) : (
               <Collections account={account} />
             )
           ) : null}
+
+          {account.type === "Account" && <NftEntryPoint account={account} />}
+
           {displayOrdinals ? <OrdinalsAccount account={account} /> : null}
           {account.type === "Account" ? <TokensList account={account} /> : null}
           <OperationsList

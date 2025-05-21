@@ -1,9 +1,13 @@
 import BigNumber from "bignumber.js";
-import { AptosAPI } from "../api";
+
+import { AptosAPI } from "../network";
 import { getEstimatedGas } from "./getFeesForTransaction";
 import type { AptosAccount, Transaction } from "../types";
 import { getMaxSendBalance } from "./logic";
-import { APTOS_DELEGATION_RESERVE_IN_OCTAS, MIN_COINS_ON_SHARES_POOL_IN_OCTAS } from "../constants";
+import {
+  APTOS_DELEGATION_RESERVE_IN_OCTAS,
+  MIN_COINS_ON_SHARES_POOL_IN_OCTAS,
+} from "./../constants";
 
 const prepareTransaction = async (
   account: AptosAccount,

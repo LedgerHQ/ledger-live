@@ -26,6 +26,7 @@ type Props = {
   shape?: keyof typeof d3shape;
   verticalRangeRatio?: number;
   fill?: string;
+  testID?: string;
 };
 const STROKE_WIDTH = 2;
 const FOCUS_RADIUS = 4;
@@ -43,6 +44,7 @@ function Graph({
   onItemHover,
   verticalRangeRatio = 2,
   fill,
+  testID,
 }: Props) {
   const { colors } = useTheme();
   const color = initialColor || colors.primary.c80;
@@ -78,6 +80,7 @@ function Graph({
     .curve(curve)(data);
   const content = (
     <Svg
+      testID={testID}
       height={height}
       width={width}
       viewBox={`${xOffset * -1} ${yOffset * -1} ${width} ${height}`}

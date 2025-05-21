@@ -43,10 +43,6 @@ import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 
-export const DEFAULT_GAS = new BigNumber(200);
-export const DEFAULT_GAS_PRICE = new BigNumber(100);
-export const ESTIMATE_GAS_MUL = new BigNumber(1.0); // define buffer for gas estimation change here, if needed
-
 const CLEAN_HEX_REGEXP = /^0x0*|^0+/;
 
 export function isTestnet(currencyId: string): boolean {

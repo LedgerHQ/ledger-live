@@ -18,7 +18,7 @@ const meta: Meta<typeof NotificationIcon> = {
     },
   },
   args: {
-    icon: "Info",
+    icon: "Information",
     variant: "round",
   },
 };

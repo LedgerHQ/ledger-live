@@ -2,6 +2,8 @@
 import { basename } from "path";
 import stylish from "../../../node_modules/eslint/lib/cli-engine/formatters/stylish.js";
 
+$.verbose = true; // everything works like in v7
+
 if (os.platform() === "win32") {
   usePowerShell();
 }

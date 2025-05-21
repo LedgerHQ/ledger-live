@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "Annuler",
+    "copy" : "Copier",
+    "copied" : "Copié",
     "apply" : "Appliquer",
     "seeAll" : "Afficher tout",
     "seeAllWithNumber" : "Afficher tout ({{number}})",
@@ -100,7 +102,8 @@
       "times" : "x {{ value }}"
     },
     "quote" : "Prix",
-    "tryAgain" : "Réessayer"
+    "tryAgain" : "Réessayer",
+    "ldmkEnabled" : "Transport LDMK activé"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -190,7 +193,7 @@
     },
     "CosmosBroadcastCodeInsufficientFunds" : {
       "title" : "Solde insuffisant",
-      "description" : "Vérifiez que ce compte a des fonds suffisants."
+      "description" : "Vérifiez que ce compte a un solde suffisant."
     },
     "CosmosBroadcastCodeUnknownRequest" : {
       "title" : "Une erreur est survenue (Erreur #6)",
@@ -508,7 +511,7 @@
     },
     "NotEnoughBalance" : {
       "title" : "Solde insuffisant",
-      "description" : "Vérifiez que ce compte a des fonds suffisants."
+      "description" : "Vérifiez que ce compte a un solde suffisant."
     },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Votre solde disponible (non-staké) est de {{currentBalance}}. C’est insuffisant pour couvrir les frais de réseau afin de déstaker vos {{assetName}}. ",
@@ -523,7 +526,7 @@
     },
     "NotEnoughBalanceSwap" : {
       "title" : "Solde insuffisant, frais de réseau inclus. Modifiez le montant ou vérifiez votre solde.",
-      "description" : "Vérifiez que ce compte a des fonds suffisants."
+      "description" : "Vérifiez que ce compte a un solde suffisant."
     },
     "NoSuchAppOnProvider" : {
       "title" : "Échec de la localisation de l’app {{appName}} pour votre appareil.",
@@ -1060,6 +1063,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Échec du chargement de l’app Live Swap"
+    },
+    "InvalidMemoMina" : {
+      "title" : "Le mémo ne peut pas dépasser 32 caractères"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Les frais de création de compte pour cette transaction s’élèveront à {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "Le montant minimal requis pour cette transaction est {{amount}}"
     }
   },
   "crash" : {
@@ -1090,6 +1102,32 @@
     "openSettings" : "Ouvrir les paramètres de localisation",
     "tryEnablingAgain" : "Réessayez d’autoriser la localisation",
     "noInfos" : "Ledger n’utilise pas vos données de localisation."
+  },
+  "earn" : {
+    "deposit" : {
+      "protocolInfoModal" : {
+        "title" : "Pour choisir un protocole, voici quelques éléments à connaître :",
+        "items" : {
+          "protocol" : {
+            "highlighted" : "Un protocole",
+            "description" : " est une plateforme qui vous permet de recevoir des récompenses grâce aux cryptos que vous y déposez (prêt, liquidité ou staking)."
+          },
+          "apy" : {
+            "highlighted" : "L’APY (\"Annual Percentage Yield\" ou rendement annuel en pourcentage)",
+            "description" : " correspond aux récompenses que vous pouvez recevoir sur une année. Plus il est élevé, plus elles sont importantes."
+          },
+          "tvl" : {
+            "highlighted" : "La TVL (\"Total Value Locked\" ou valeur totale immobilisée)",
+            "description" : " correspondant au montant total déposé sur le protocole par les autres utilisateurs. Plus elle est élevée, plus la confiance accordée au protocole est grande."
+          },
+          "strategy" : {
+            "highlighted" : "La stratégie",
+            "description0" : " se réfère à la méthode qu’utilise un protocole pour générer les récompenses que vous recevez.",
+            "description1" : "Par exemple, si un protocole utilise une stratégie de prêt, il prête les stablecoins déposés à des emprunteurs. Vous recevez alors des récompenses, dont le taux varie en fonction de la demande."
+          }
+        }
+      }
+    }
   },
   "permissions" : {
     "open" : "Ouvrir autorisa. des apps",
@@ -2590,7 +2628,8 @@
       "gasLimit" : "Limite de gaz",
       "id" : "Identifiant (ID)",
       "autoClaimedRewards" : "Récompenses automatiques",
-      "stakedAmount" : "Montant en staking"
+      "stakedAmount" : "Montant en staking",
+      "accountCreationFee" : "Frais de création de compte"
     },
     "multipleAddresses" : "Pourquoi plusieurs adresses ?",
     "tokenName" : "Nom du token",
@@ -3814,7 +3853,7 @@
       "quantityAvailable" : "Quantité disponible"
     },
     "summary" : {
-      "subaccountsWarning" : "Vous devez recharger ce compte avec des {{ currency }} afin d’envoyer les tokens de ce compte.",
+      "subaccountsWarning" : "Vous devez approvisionner ce compte avec des {{ currency }} afin d’envoyer les tokens de ce compte.",
       "tag" : "Tag (Facultatif)",
       "validateTag" : "Valider le tag",
       "total" : "Total",
@@ -4047,7 +4086,9 @@
       "desc" : "Voulez-vous vraiment annuler l’ajout de comptes ?",
       "v2" : {
         "title" : "Annuler l’ajout de compte ?",
-        "desc" : "Aucun compte ne sera ajouté dans Ledger Live."
+        "desc" : "Aucun compte ne sera ajouté dans Ledger Live.",
+        "continue" : "Poursuivre l’ajout",
+        "cancel" : "Annuler"
       }
     },
     "imported" : "Actif bien ajouté",
@@ -4276,7 +4317,7 @@
     "charactersRemaining" : "{{remainingCount}} caractères restants",
     "action" : "Définir le nom",
     "rename" : "Renommer",
-    "success" : "Appareil renommé : « {{deviceName}} »"
+    "success" : "Appareil renommé : {{deviceName}}"
   },
   "PairDevices" : {
     "Paired" : {
@@ -4656,7 +4697,7 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "Mise à jour du {{deviceName}} vers la version {{version}}",
-    "recoveryPhraseBackupInstructions" : "Assurez-vous par précaution que votre phrase de récupération de 24 mots est accessible et bien écrite sur votre feuille de récupération.",
+    "recoveryPhraseBackupInstructions" : "Assurez-vous par précaution que votre phrase de récupération secrète de 24 mots est accessible et bien écrite sur votre feuille de récupération.\n\nVous pouvez également utiliser Ledger Recover comme accès de secours à votre wallet, pour plus de sérénité.",
     "confirmRecoveryPhrase" : "J’ai ma phrase de récupération.",
     "introDescription1" : "Toutes les apps sur votre appareil seront supprimées. Vous pouvez réinstaller vos apps après la mise à jour du micrologiciel.",
     "introDescription2" : "Cela n’a pas d’effet sur vos crypto-actifs.",
@@ -6100,6 +6141,9 @@
       }
     }
   },
+  "mina" : {
+    "memoPlaceholder" : "Mémo facultatif"
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -6425,7 +6469,9 @@
     },
     "stepVerification" : {
       "action" : "Confirmez l’opération sur votre appareil.",
-      "accountName" : "Nom du compte"
+      "accountName" : "Nom du compte",
+      "title" : "Continuez sur votre Ledger {{wording}}",
+      "description" : "Consultez les instructions sur son écran tactile sécurisé."
     }
   },
   "notificationCenter" : {
@@ -6609,8 +6655,8 @@
       "7d" : "7J",
       "30d" : "30J",
       "1y" : "1A",
-      "1H_label" : "1H",
       "1D_label" : "1J",
+      "1H_label" : "1H",
       "1W_label" : "1S",
       "1M_label" : "1M",
       "1Y_label" : "1A"
@@ -7158,13 +7204,13 @@
         "error" : "Synchronisations",
         "unsecuredError" : {
           "title" : "Connectez l’appareil Ledger que vous avez utilisé pour activer Ledger Sync",
-          "description" : "Si vous n’avez pas le même appareil Ledger, sélectionnez « Supprimer la synchronisation ».",
+          "description" : "Si vous n’avez pas le même appareil Ledger, sélectionnez : Supprimer la synchronisation.",
           "cta" : "Connecter un autre appareil Ledger",
           "ctaDelete" : "Supprimer la synchronisation"
         },
         "autoRemoveError" : {
           "title" : "Impossible de retirer ce téléphone pendant que vous l’utilisez",
-          "description" : "Pour le retirer, utilisez un autre téléphone ou ordinateur sur lequel Ledger Sync est activé. Si vous n’avez pas d’autre appareil, sélectionnez « Supprimer la synchronisation ».",
+          "description" : "Pour le retirer, utilisez un autre téléphone ou ordinateur sur lequel Ledger Sync est activé. Si vous n’avez pas d’autre appareil, sélectionnez : Supprimer la synchronisation.",
           "info" : "En supprimant vote clé de chiffrement, vos appareils seront désynchronisés, et toutes les données synchronisées seront supprimées. Cette action n’a aucune répercussion sur vos actifs. Vous pouvez resynchroniser vos comptes à tout moment.",
           "cta" : "Compris",
           "ctaDelete" : "Supprimer la synchronisation"
@@ -7225,7 +7271,7 @@
         "scannedInvalidQrCode" : {
           "title" : "Code QR invalide",
           "desc" : "Pour synchroniser vos applications Ledger Live, scannez uniquement le code QR affiché sur Ledger Live.",
-          "info" : "Trouvez votre code QR dans « Paramètres » > « Général » > « Ledger Sync » > « Activer Sync » > « Voir le code QR ».",
+          "info" : "Trouvez votre code QR dans Paramètres > Général > Ledger Sync > Activer Sync > Voir le code QR.",
           "cta" : "Compris",
           "tryAgain" : "Réessayer"
         },
@@ -7242,7 +7288,7 @@
         },
         "unbackedOnboarding" : {
           "title" : "Aucune synchronisation détectée",
-          "description" : "Après avoir activé la synchronisation pour l’autre application Ledger Live, revenez ici et sélectionnez « Réessayer ».",
+          "description" : "Après avoir activé la synchronisation pour l’autre application Ledger Live, revenez ici et sélectionnez Réessayer.",
           "info" : "Si Ledger Sync n’est activé sur aucune application, continuez sans l’activer.",
           "cta" : "Réessayer",
           "cancel" : "Continuer sans synchronisation"
@@ -7260,7 +7306,7 @@
       },
       "unbackedOnboarding" : {
         "title" : "Aucune synchronisation détectée",
-        "description" : "Si Ledger Sync est activé, sélectionnez « Réessayer » et connectez le même appareil Ledger que celui que vous avez utilisé pour l’activer.",
+        "description" : "Si Ledger Sync est activé, sélectionnez Réessayer, et connectez le même appareil Ledger que celui que vous avez utilisé pour l’activer.",
         "info" : "Ou continuez sans Ledger Sync.",
         "cta" : "Réessayer",
         "cancel" : "Continuer sans synchronisation"
@@ -7346,5 +7392,33 @@
       "description" : "Avec sa mémoire limitée, votre Ledger Nano S vous prive des dernières fonctionnalités, innovations blockchain et améliorations de sécurité. Pour en bénéficier, choisissez un wallet Ledger plus récent.",
       "cta" : "En savoir plus"
     }
+  },
+  "largeMover" : {
+    "info" : "Informations",
+    "marketCap" : "Capitalisation",
+    "volume" : "Volume (24h)",
+    "fdv" : "FDV",
+    "marketCap24h" : "Vol./Cap. (24h)",
+    "circulatingSupply" : "Offre en circulation",
+    "totalSupply" : "Offre totale",
+    "ath" : "Haut (historique)",
+    "atl" : "Bas (historique)",
+    "timeAgo" : {
+      "years" : "(il y a {{count}} an)",
+      "years_plural" : "(il y a {{count}} ans)",
+      "months" : "(il y a {{count}} mois)",
+      "months_plural" : "(il y a {{count}} mois)",
+      "days" : "(il y a {{count}} jour)",
+      "days_plural" : "(il y a {{count}} jours)",
+      "hours" : "(il y a {{count}} heure)",
+      "hours_plural" : "(il y a {{count}} heures)",
+      "minutes" : "(il y a {{count}} minute)",
+      "minutes_plural" : "(il y a {{count}} minutes)",
+      "seconds" : "(il y a {{count}} seconde)",
+      "seconds_plural" : "(il y a {{count}} secondes)"
+    },
+    "performance" : "Performance",
+    "low" : "Faible",
+    "high" : "Élevée"
   }
 }

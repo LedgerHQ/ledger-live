@@ -132,6 +132,8 @@ export type CurrencyFeatures = {
   currencySonic: DefaultFeature;
   currencySonicBlaze: DefaultFeature;
   currencySui: DefaultFeature;
+  currencyMina: DefaultFeature;
+  currencyBabylon: DefaultFeature;
 };
 
 /**
@@ -177,6 +179,7 @@ export type Features = CurrencyFeatures & {
   ptxCard: DefaultFeature;
   ptxSwapLiveAppMobile: Feature_PtxSwapLiveApp;
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
+  ptxEarnLiveApp: Feature_PtxEarnLiveApp;
   ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
   flexibleContentCards: Feature_FlexibleContentCards;
   llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
@@ -220,8 +223,11 @@ export type Features = CurrencyFeatures & {
   lldSolanaNfts: DefaultFeature;
   llmSolanaNfts: DefaultFeature;
   largemoverLandingpage: DefaultFeature;
-  llmMmkvMigration: DefaultFeature;
+  llmMmkvMigration: Feature_LlmMmkvMigration;
   lldModularDrawer: Feature_LldModularDrawer;
+  llNftSupport: DefaultFeature;
+  llNftEntryPoint: Feature_LlNftEntryPoint;
+  ldmkConnectApp: DefaultFeature;
 };
 
 /**
@@ -279,27 +285,24 @@ export type Feature_SwapWalletApiPartnerList = Feature<{
   list: string[];
 }>;
 
-export type RedirectQueryParam<ManifestId> = "stakekit" extends ManifestId
+export type PlatformManifestId = "stakekit" | "kiln-widget" | "earn";
+
+export type RedirectQueryParam<M extends PlatformManifestId> = "stakekit" extends M
   ? {
       yieldId: string;
     }
-  : "kiln-widget" extends ManifestId
-    ? {
-        chaidId: number;
-      }
-    : unknown;
+  : unknown;
 
-export type Redirect<ManifestId> = {
-  platform: ManifestId;
-  /** @developer asssetId resolves to string but is either CryptoCurrency["id"] | TokenCurrency["id"]; */
-  assetId: string;
+export type Redirect<M extends PlatformManifestId> = {
+  platform: PlatformManifestId;
   name: string;
-  queryParams?: Record<string, string> & RedirectQueryParam<ManifestId>;
+  queryParams?: Record<string, string> & RedirectQueryParam<M>;
 };
 
-export type Feature_StakePrograms<ManifestId = "stakekit" | "kiln-widget"> = Feature<{
+export type Feature_StakePrograms = Feature<{
   list: string[];
-  redirects: Record<string, Redirect<ManifestId>>;
+  /** redirects is a dictionary of crypto asset ids to partner app params for overriding flows for specific tokens. */
+  redirects: Record<string, Redirect<PlatformManifestId>>;
 }>;
 
 export type Feature_StakeAccountBanner = Feature<{ [blockchainName: string]: any }>;
@@ -513,6 +516,10 @@ export type Feature_PtxSwapLiveApp = Feature<{
   families?: string[];
 }>;
 
+export type Feature_PtxEarnLiveApp = Feature<{
+  manifest_id: string;
+}>;
+
 export type Feature_FetchAdditionalCoins = Feature<{
   batch: number;
 }>;
@@ -579,6 +586,12 @@ export type Feature_LldLedgerSyncEntryPoints = Feature<{
   onboarding: boolean;
 }>;
 
+export type Feature_LlNftEntryPoint = Feature<{
+  magiceden: boolean;
+  opensea: boolean;
+  chains: string[];
+}>;
+
 export type Feature_LlCounterValueGranularitiesRates = Feature<{
   daily: number;
   hourly: number;
@@ -586,6 +599,10 @@ export type Feature_LlCounterValueGranularitiesRates = Feature<{
 
 export type Feature_LlMevProtection = Feature<{
   link: string | null;
+}>;
+
+export type Feature_LlmMmkvMigration = Feature<{
+  shouldRollback: boolean | null;
 }>;
 
 export type Feature_LldModularDrawer = Feature<{
@@ -620,6 +637,7 @@ export type Feature_SpamFilteringTx = DefaultFeature;
 export type Feature_MemoTag = DefaultFeature;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 export type Feature_PtxSwapExodusProvider = DefaultFeature;
+
 export type Feature_LlmRebornLP = Feature<{
   variant: ABTestingVariants;
 }>;

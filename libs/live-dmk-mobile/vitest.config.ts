@@ -6,15 +6,16 @@ export default defineConfig({
   plugins: [reactPlugin()],
   test: {
     globals: true,
-    // setupFiles: ["./tests.setup.ts"],
     exclude: ["node_modules", "lib-es"],
     silent: false,
+    setupFiles: ["./tests.setup.ts"],
     include: ["src/**/*.test.*"],
+    environment: "jsdom",
     printConsoleTrace: true,
     coverage: {
       enabled: true,
       provider: "istanbul",
-      reporter: ["text", "html"],
+      reporter: ["text", "lcov"],
       include: ["src/**/*.ts", "src/**/*.tsx"],
       exclude: ["node_modules", "lib-es", "src/hooks/index.ts", "src/index.ts", "src/**/*.test.*"],
     },

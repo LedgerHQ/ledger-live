@@ -83,6 +83,8 @@ function runHashChecks(writeCache = false) {
   return compareHashes(cache, result);
 }
 
+$.verbose = true; // everything works like in v7
+
 if (os.platform() === "win32") {
   usePowerShell();
 }
@@ -174,10 +176,10 @@ BRAZE_CUSTOM_ENDPOINT="sdk.fra-02.braze.eu"`;
       echo(chalk.red(str));
 
       if (process.env.CI) {
-        const output = process.env['GITHUB_OUTPUT']
-        const data = `error<<GHA_OUTPUT_DELIMITER\n${str}\nGHA_OUTPUT_DELIMITER\n`
+        const output = process.env["GITHUB_OUTPUT"];
+        const data = `error<<GHA_OUTPUT_DELIMITER\n${str}\nGHA_OUTPUT_DELIMITER\n`;
         writeFileSync(output, data);
-        echo(chalk.red('Error available in step output.error'));
+        echo(chalk.red("Error available in step output.error"));
       }
 
       await $`exit 1`;

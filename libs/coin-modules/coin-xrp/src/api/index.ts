@@ -1,5 +1,6 @@
 import type {
   Api,
+  FeeEstimation,
   Operation,
   Pagination,
   TransactionIntent,
@@ -15,38 +16,57 @@ import {
   getNextValidSequence,
   lastBlock,
   listOperations,
+  MemoInput,
 } from "../logic";
-import { ListOperationsOptions } from "../types";
+import { ListOperationsOptions, XrpAsset } from "../types";
 
-export function createApi(config: XrpConfig): Api<void> {
+export function createApi(config: XrpConfig): Api<XrpAsset, TransactionIntentExtra, XrpSender> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
     broadcast,
     combine,
     craftTransaction: craft,
-    estimateFees: () => estimateFees().then(fees => fees.fee),
+    estimateFees: estimate,
     getBalance,
     lastBlock,
     listOperations: operations,
   };
 }
 
+export type TransactionIntentExtra = {
+  destinationTag?: number | null | undefined;
+  memos?: MemoInput[];
+};
+
+export type XrpSender = {
+  address: string;
+  publicKey?: string;
+};
+
 async function craft(
-  transactionIntent: TransactionIntent<void>,
+  transactionIntent: TransactionIntent<XrpAsset, TransactionIntentExtra, XrpSender>,
   customFees?: bigint,
 ): Promise<string> {
-  const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
+  const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender.address);
   const estimatedFees = customFees !== undefined ? customFees : (await estimateFees()).fee;
   const tx = await craftTransaction(
-    { address: transactionIntent.sender, nextSequenceNumber },
+    { address: transactionIntent.sender.address, nextSequenceNumber },
     {
       recipient: transactionIntent.recipient,
       amount: transactionIntent.amount,
       fee: estimatedFees,
+      destinationTag: transactionIntent.destinationTag,
+      memos: transactionIntent.memos,
     },
+    transactionIntent.sender.publicKey,
   );
   return tx.serializedTransaction;
+}
+
+async function estimate(): Promise<FeeEstimation> {
+  const estimation = await estimateFees();
+  return { value: estimation.fee };
 }
 
 type PaginationState = {
@@ -56,13 +76,13 @@ type PaginationState = {
   readonly minHeight: number;
   continueIterations: boolean;
   apiNextCursor?: string;
-  accumulator: Operation<void>[];
+  accumulator: Operation<XrpAsset>[];
 };
 
 async function operationsFromHeight(
   address: string,
   minHeight: number,
-): Promise<[Operation<void>[], string]> {
+): Promise<[Operation<XrpAsset>[], string]> {
   async function fetchNextPage(state: PaginationState): Promise<PaginationState> {
     const options: ListOperationsOptions = {
       limit: state.pageSize,
@@ -110,7 +130,7 @@ async function operationsFromHeight(
 async function operations(
   address: string,
   { minHeight }: Pagination,
-): Promise<[Operation<void>[], string]> {
+): Promise<[Operation<XrpAsset>[], string]> {
   // TODO token must be implemented properly (waiting ack from the design document)
   return await operationsFromHeight(address, minHeight);
 }

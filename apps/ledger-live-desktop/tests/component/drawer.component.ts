@@ -1,6 +1,5 @@
 import { Component } from "tests/page/abstractClasses";
 import { step } from "tests/misc/reporters/step";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export class Drawer extends Component {
   readonly content = this.page.getByTestId("drawer-content");
@@ -11,10 +10,6 @@ export class Drawer extends Component {
     this.page.getByTestId(`currency-row-${currency.toLowerCase()}`).first();
   readonly selectAssetTitle = this.page.getByTestId("select-asset-drawer-title").first();
   readonly selectAccountTitle = this.page.getByTestId("select-account-drawer-title").first();
-  readonly swapAmountFrom = this.page.getByTestId("swap-amount-from").first();
-  readonly swapAmountTo = this.page.getByTestId("swap-amount-to").first();
-  readonly swapAccountFrom = this.page.getByTestId("swap-account-from").first();
-  readonly swapAccountTo = this.page.getByTestId("swap-account-to").first();
   readonly backButton = this.page.getByRole("button", { name: "Back" });
 
   async continue() {
@@ -49,13 +44,6 @@ export class Drawer extends Component {
 
   async selectAccount(accountName: string, index = 0) {
     await this.getAccountButton(accountName, index).click();
-  }
-
-  @step("Select account by name")
-  async selectAccountByName(account: Account) {
-    await this.getAccountButton(account.currency.name, account.index)
-      .locator(`text=${account.accountName}`)
-      .click();
   }
 
   back() {

@@ -14,11 +14,11 @@ import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
 import { Operation } from "@ledgerhq/types-live";
 import QrCode from "@ledgerhq/icons-ui/native/QrCode";
-import { useTheme } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { StyleSheet, View } from "react-native";
+import { Linking, StyleSheet, View } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useSelector } from "react-redux";
 import { TrackScreen, track } from "~/analytics";
@@ -39,17 +39,27 @@ import { currencySettingsForAccountSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 import { MemoTagDrawer } from "LLM/features/MemoTag/components/MemoTagDrawer";
 import { useMemoTagInput } from "LLM/features/MemoTag/hooks/useMemoTagInput";
+import { hasMemoDisclaimer } from "LLM/features/MemoTag/utils/hasMemoTag";
 import DomainServiceRecipientRow from "./DomainServiceRecipientRow";
 import RecipientRow from "./RecipientRow";
+import {
+  getTokenExtensions,
+  hasProblematicExtension,
+} from "@ledgerhq/live-common/families/solana/token";
+import { urls } from "~/utils/urls";
 
 const withoutHiddenError = (error: Error): Error | null =>
   error instanceof RecipientRequired ? null : error;
 
-type Props = BaseComposite<
+type Navigation = BaseComposite<
   StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSelectRecipient>
 >;
+type Props = Pick<Navigation, "route">;
 
-export default function SendSelectRecipient({ navigation, route }: Props) {
+const openSplTokenExtensionsArticle = () => Linking.openURL(urls.solana.splTokenExtensions);
+
+export default function SendSelectRecipient({ route }: Props) {
+  const navigation = useNavigation<Navigation["navigation"]>();
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
@@ -164,14 +174,23 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     MemoTagDrawerState.INITIAL,
   );
 
+  const handleMemoTagDrawerClose = useCallback(
+    () => setMemoTagDrawerState(MemoTagDrawerState.SHOWN),
+    [],
+  );
+
   const onPressContinue = useCallback(() => {
-    if (memoTag?.isEmpty && memoTagDrawerState === MemoTagDrawerState.INITIAL) {
+    if (
+      memoTag?.isEmpty &&
+      memoTagDrawerState === MemoTagDrawerState.INITIAL &&
+      hasMemoDisclaimer(currency)
+    ) {
       return setMemoTagDrawerState(MemoTagDrawerState.SHOWING);
     }
 
     track("SendRecipientContinue");
 
-    // ERC721 transactions are always sending 1 NFT, so amount step is unecessary
+    // ERC721 transactions are always sending 1 NFT, so amount step is unnecessary
     if (shouldSkipAmount) {
       return navigation.navigate(ScreenName.SendSummary, {
         ...route.params,
@@ -206,6 +225,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     route.params,
     memoTag?.isEmpty,
     memoTagDrawerState,
+    currency,
   ]);
 
   if (!account || !transaction) return null;
@@ -225,6 +245,8 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     !!memoTag?.error;
 
   const stuckAccountAndOperation = getStuckAccountAndOperation(account, mainAccount);
+  const extensions = getTokenExtensions(account);
+
   return (
     <>
       <SafeAreaView
@@ -321,7 +343,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 <memoTag.Input
                   testID="memo-tag-input"
                   placeholder={t("send.summary.memo.title")}
-                  autoFocus={memoTagDrawerState !== MemoTagDrawerState.INITIAL}
+                  autoFocus={memoTagDrawerState === MemoTagDrawerState.SHOWN}
                   onChange={memoTag.handleChange}
                 />
                 <Text mt={4} pl={2} color="alert">
@@ -335,12 +357,22 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 <Alert type="warning">{t("send.pendingTxWarning")}</Alert>
               </View>
             ) : null}
-            {(!isDomainResolutionEnabled || !isCurrencySupported) &&
-            transaction.recipient &&
-            !(error || warning) ? (
+            {
               <View style={styles.infoBox}>
                 <Alert type="primary">{t("send.recipient.verifyAddress")}</Alert>
               </View>
+            }
+            {extensions && hasProblematicExtension(extensions) ? (
+              <Alert testID="spl-2022-problematic-extension" type="warning">
+                <Trans i18nKey="send.spl2022.splExtensionsWarning">
+                  <Text
+                    onPress={openSplTokenExtensionsArticle}
+                    style={styles.spl2022LinkLabel}
+                    variant="bodyLineHeight"
+                    fontWeight="semiBold"
+                  />
+                </Trans>
+              </Alert>
             ) : null}
           </NavigationScrollView>
           <View style={styles.container}>
@@ -358,7 +390,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
 
       <MemoTagDrawer
         open={memoTagDrawerState === MemoTagDrawerState.SHOWING}
-        onClose={() => setMemoTagDrawerState(MemoTagDrawerState.SHOWN)}
+        onClose={handleMemoTagDrawerClose}
         onNext={onPressContinue}
       />
 
@@ -391,6 +423,7 @@ const styles = StyleSheet.create({
   memoTagInputContainer: { marginTop: 32 },
   infoBox: {
     marginTop: 24,
+    paddingBottom: 24,
   },
   pendingIncomingTxWarning: {
     marginBottom: 8,
@@ -412,6 +445,9 @@ const styles = StyleSheet.create({
   },
   buttonRight: {
     marginLeft: 8,
+  },
+  spl2022LinkLabel: {
+    textDecorationLine: "underline",
   },
 });
 

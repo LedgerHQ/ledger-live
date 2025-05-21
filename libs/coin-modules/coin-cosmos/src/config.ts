@@ -172,7 +172,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_crypto_org: {
     type: "object",
     default: {
-      lcd: "https://cryptocom-api.polkachu.com",
+      lcd: "https://rest.cosmos.directory/cryptoorgchain",
       minGasPrice: 0.025,
       status: {
         type: "active",
@@ -198,6 +198,17 @@ export const cosmosConfig: CosmosConfig = {
       status: {
         type: "active",
       },
+    },
+  },
+  config_currency_babylon: {
+    type: "object",
+    default: {
+      lcd: "https://babylon.nodes.guru/api",
+      minGasPrice: 0.002, // source: https://www.mintscan.io/babylon/parameters
+      status: {
+        type: "active",
+      },
+      disableDelegation: true,
     },
   },
 };

@@ -2224,6 +2224,29 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 2`] = `
     {
       "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
       "blockHash": null,
+      "blockHeight": 25282323,
+      "extra": {
+        "memo": "Ledger Live",
+        "validators": [
+          {
+            "address": "cosmosvaloper1uxlf7mvr8nep3gm7udf2u9remms2jyjqvwdul2",
+            "amount": "1000000",
+          },
+        ],
+      },
+      "fee": "19620",
+      "hasFailed": false,
+      "hash": "C959BCB9E4DDCE4E04222622471EA3497667B86FB51FF81005EA533FBD3B44EC",
+      "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-C959BCB9E4DDCE4E04222622471EA3497667B86FB51FF81005EA533FBD3B44EC-UNDELEGATE",
+      "recipients": [],
+      "senders": [],
+      "transactionSequenceNumber": 166,
+      "type": "UNDELEGATE",
+      "value": "19620",
+    },
+    {
+      "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
+      "blockHash": null,
       "blockHeight": 12790186,
       "extra": {},
       "fee": "3344",

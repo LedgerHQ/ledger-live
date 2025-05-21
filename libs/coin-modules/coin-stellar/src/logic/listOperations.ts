@@ -1,23 +1,25 @@
 import type { StellarOperation } from "../types/bridge";
 import { fetchOperations } from "../network";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
-import { StellarToken } from "../types";
+import { StellarAsset } from "../types";
 
 export type ListOperationsOptions = {
   limit?: number;
   cursor?: string;
   order: "asc" | "desc";
+  minHeight: number;
 };
 
 export async function listOperations(
   address: string,
-  { limit, cursor, order }: ListOperationsOptions,
-): Promise<[Operation<StellarToken>[], string]> {
+  { limit, cursor, order, minHeight }: ListOperationsOptions,
+): Promise<[Operation<StellarAsset>[], string]> {
   // Fake accountId
   const accountId = "";
   const [operations, nextCursor] = await fetchOperations({
     accountId,
     addr: address,
+    minHeight,
     order: order,
     limit,
     cursor: cursor,
@@ -26,8 +28,10 @@ export async function listOperations(
   return [operations.map(op => convertToCoreOperation(op)), nextCursor];
 }
 
-const convertToCoreOperation = (operation: StellarOperation) => {
+const convertToCoreOperation = (operation: StellarOperation): Operation<StellarAsset> => {
   return {
+    id: `${operation.hash}-${operation.extra.index}`,
+    asset: { type: "native" },
     tx: {
       hash: operation.hash,
       block: {
@@ -38,7 +42,6 @@ const convertToCoreOperation = (operation: StellarOperation) => {
       fees: BigInt(operation.fee.toString()),
       date: operation.date,
     },
-    operationIndex: 0,
     type: operation.type,
     value: BigInt(operation.value.toString()),
     senders: operation.senders,

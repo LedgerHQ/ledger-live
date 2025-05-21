@@ -2,7 +2,14 @@ import { useEffect, useRef } from "react";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 import { track } from "../segment";
 import { Device } from "@ledgerhq/types-devices";
-import { UserRefusedAddress, UserRefusedOnDevice } from "@ledgerhq/errors";
+import {
+  UserRefusedAddress,
+  UserRefusedOnDevice,
+  TransportRaceCondition,
+  LockedDeviceError,
+  CantOpenDevice,
+  TransportError,
+} from "@ledgerhq/errors";
 import { LedgerError } from "~/types/error";
 
 export type UseTrackReceiveFlow = {
@@ -13,6 +20,7 @@ export type UseTrackReceiveFlow = {
     accountName: string;
   } | null;
   error: LedgerError | undefined | null;
+  isLocked?: boolean | null | undefined;
 };
 
 /**
@@ -24,6 +32,7 @@ export type UseTrackReceiveFlow = {
  * @param requestOpenApp - optional - which app if any has been requested to be opened.
  * @param inWrongDeviceForAccount - optional - indicating if the user is in the wrong device for the account.
  * @param error - current error state.
+ * @param isLocked - optional - flag indicating if the device is locked.
  */
 export const useTrackReceiveFlow = ({
   location,
@@ -31,9 +40,9 @@ export const useTrackReceiveFlow = ({
   requestOpenApp,
   inWrongDeviceForAccount,
   error,
+  isLocked,
 }: UseTrackReceiveFlow) => {
   const previousRequestOpenApp = useRef<string | null | undefined>(undefined);
-
   useEffect(() => {
     if (location !== HOOKS_TRACKING_LOCATIONS.receiveFlow) return;
 
@@ -52,11 +61,33 @@ export const useTrackReceiveFlow = ({
     if (previousRequestOpenApp.current && !requestOpenApp && error instanceof UserRefusedOnDevice) {
       // user refused to open app
       track("Open app denied", defaultPayload);
-    } else if (error instanceof UserRefusedAddress) {
+    }
+
+    if (error instanceof UserRefusedAddress) {
       // user refused to verify address
       track("Address confirmation rejected", defaultPayload);
     }
 
+    if (error instanceof TransportRaceCondition) {
+      // transport race condition
+      track("Transport race condition", defaultPayload);
+    }
+
+    if (error instanceof CantOpenDevice) {
+      // device disconnected during receive flow
+      track("Connection failed", defaultPayload);
+    }
+
+    if (error instanceof TransportError) {
+      // transport error during receive flow
+      track("Transport error", defaultPayload);
+    }
+
+    if (isLocked || error instanceof LockedDeviceError) {
+      // device locked during receive flow
+      track("Device locked", defaultPayload);
+    }
+
     previousRequestOpenApp.current = requestOpenApp;
-  }, [error, location, device, requestOpenApp, inWrongDeviceForAccount]);
+  }, [error, location, device, requestOpenApp, inWrongDeviceForAccount, isLocked]);
 };

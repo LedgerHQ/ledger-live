@@ -253,6 +253,7 @@ describe("useStake()", () => {
           name: "Mock Dapp v3",
           platform: "mock-dapp-v3",
           walletAccountId: "1a536838-dd18-5e39-b13f-0ba422fb395c",
+          chainId: 1,
         },
       }),
     );
@@ -288,6 +289,7 @@ describe("useStake()", () => {
           name: "Mock dapp browser v1 app",
           platform: "mock-dapp-v1",
           walletAccountId: "6760dd02-ab43-5c5a-9c7e-c75731580a08",
+          chainId: 1,
         },
       }),
     );
@@ -316,6 +318,7 @@ describe("useStake()", () => {
         name: "Mock Live App",
         platform: "mock-live-app",
         walletAccountId: "0eda416c-9669-57a2-84f6-741df8c11267",
+        yieldId: "native-staking",
       },
     });
   });

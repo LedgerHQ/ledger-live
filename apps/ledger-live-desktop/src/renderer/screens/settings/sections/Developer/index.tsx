@@ -105,11 +105,12 @@ const Default = () => {
         <WalletSyncTester />
       </FeatureToggle>
 
-      <FeatureToggle featureId="nftsFromSimplehash">
-        <SimpleHashTools />
+      <FeatureToggle featureId="llNftSupport">
+        <FeatureToggle featureId="nftsFromSimplehash">
+          <SimpleHashTools />
+        </FeatureToggle>
+        <NftsTools />
       </FeatureToggle>
-
-      <NftsTools />
 
       <BrazeTools />
 

@@ -1071,6 +1071,15 @@
     },
     "AppManifestNotFoundError": {
       "title": "Failed to load Swap Live App"
+    },
+    "InvalidMemoMina": {
+      "title": "Memo text cannot be longer than 32 characters"
+    },
+    "AccountCreationFeeWarning": {
+      "title": "This transaction will incur an account creation fee of {{fee}}"
+    },
+    "AmountTooSmall": {
+      "title": "Minimum required amount for this transaction is {{amount}}"
     }
   },
   "crash": {
@@ -1101,6 +1110,32 @@
     "openSettings": "Open location settings",
     "tryEnablingAgain": "Try enabling location again",
     "noInfos": "Ledger does not access your location information."
+  },
+  "earn": {
+    "deposit": {
+      "protocolInfoModal": {
+        "title": "To choose a protocol, here’s a few things to bear in mind:",
+        "items": {
+          "protocol": {
+            "highlighted": "A protocol",
+            "description": " is a platform that lets you get rewards by using your deposited crypto for lending, liquidity, or staking."
+          },
+          "apy": {
+            "highlighted": "APY (Annual Percentage Yield)",
+            "description": " is how much interest you can earn over a year. Higher APY means higher earnings."
+          },
+          "tvl": {
+            "highlighted": "TVL (Total value locked)",
+            "description": " is the total money deposited on the protocol by other users. Higher TVL means the protocol is trusted by more people."
+          },
+          "strategy": {
+            "highlighted": "Strategy",
+            "description0": " is the method a protocol uses to generate rewards for you.",
+            "description1": "For example, if a protocol uses lending as its strategy, it lends out your deposited stablecoin to borrowers. You then earn interest which varies based on demand."
+          }
+        }
+      }
+    }
   },
   "permissions": {
     "open": "Open app permissions",
@@ -2601,7 +2636,8 @@
       "gasLimit": "Gas Limit",
       "id": "Id",
       "autoClaimedRewards": "Auto Claimed Rewards",
-      "stakedAmount": "Staked amount"
+      "stakedAmount": "Staked amount",
+      "accountCreationFee": "Account Creation Fee"
     },
     "multipleAddresses": "Why multiple addresses?",
     "tokenName": "Token Name",
@@ -3537,6 +3573,8 @@
         "contact_support": "Contact customer support",
         "ton_title": "Ledger Nano S™ does not support swapping Ton",
         "ton_description": "To swap Ton, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "ton_tokens_title": "Ledger Nano S™ does not support swapping Ton Tokens",
+        "ton_tokens_description": "To swap Ton Tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
         "spl_tokens_title": "Ledger Nano S™ does not support swapping Solana tokens",
         "spl_tokens_description": "To swap Solana tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
         "near_title": "Ledger Nano S™ does not support swapping Near",
@@ -3816,6 +3854,9 @@
           "title": "No address found for this domain"
         }
       }
+    },
+    "spl2022": {
+      "splExtensionsWarning": "You are interacting with a token that is part of the Token-2022 program, also known as Token Extensions. This token comes with specific risks. <0>Click here</0> to learn more."
     },
     "amount": {
       "available": "Total available",
@@ -4667,7 +4708,7 @@
   },
   "FirmwareUpdateReleaseNotes": {
     "introTitle": "Update {{deviceName}} to version {{version}}",
-    "recoveryPhraseBackupInstructions": "Ensure your 24-word recovery phrase is written down on the Recovery sheet and it is available, as a precaution.",
+    "recoveryPhraseBackupInstructions": "Ensure your 24-word Secret Recovery Phrase is written down on the recovery Sheet and is available, as a precaution.\n\nConsider using Ledger Recover to back up access to your wallet and ensure it's always within reach.",
     "confirmRecoveryPhrase": "I have my recovery phrase",
     "introDescription1": "Please note that all the apps on your device will be deleted. You can reinstall your apps after the firmware update.",
     "introDescription2": "This has no impact on your crypto assets.",
@@ -6056,6 +6097,7 @@
       "transferFees": {
         "title": "Transfer fees",
         "feesPercentHint": "Token has {{feePercent}}% ({{feeBps}}bps) transfer fee ({{maxFee}} max)",
+        "feesHint": "Token transfer fee: {{transferFee}}",
         "notice": "Transfer fee {{fee}}%",
         "tooltipHint": "Percentage of transfer withheld for token creator"
       },
@@ -6114,6 +6156,9 @@
         }
       }
     }
+  },
+  "mina": {
+    "memoPlaceholder": "Optional Memo"
   },
   "near": {
     "info": {
@@ -6555,7 +6600,9 @@
     },
     "stepVerification": {
       "action": "Please confirm the operation on your device",
-      "accountName": "Account name"
+      "accountName": "Account name",
+      "title": "Continue on your Ledger {{wording}}",
+      "description": "Follow the instructions displayed on your Secure Touchscreen."
     }
   },
   "notificationCenter": {
@@ -7475,6 +7522,42 @@
     "opted_out": {
       "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements. For long-term use, upgrade to a newer Ledger device.",
       "cta": "Learn more"
+    }
+  },
+  "largeMover": {
+    "info": "Info",
+    "marketCap": "Market cap",
+    "volume": "Volume (24h)",
+    "fdv": "FDV",
+    "marketCap24h": "Vol/Mkt Cap (24h)",
+    "circulatingSupply": "Circulating supply",
+    "totalSupply": "Total supply",
+    "ath": "All-time high",
+    "atl": "All-time low",
+    "timeAgo": {
+      "years": "({{count}} year ago)",
+      "years_plural": "({{count}} years ago)",
+      "months": "({{count}} month ago)",
+      "months_plural": "({{count}} months ago)",
+      "days": "({{count}} day ago)",
+      "days_plural": "({{count}} days ago)",
+      "hours": "({{count}} hour ago)",
+      "hours_plural": "({{count}} hours ago)",
+      "minutes": "({{count}} minute ago)",
+      "minutes_plural": "({{count}} minutes ago)",
+      "seconds": "({{count}} second ago)",
+      "seconds_plural": "({{count}} seconds ago)"
+    },
+    "performance": "Performance",
+    "low": "Low",
+    "high": "High",
+    "title": "Market Movements"
+  },
+  "nftEntryPoint": {
+    "title": "Your NFTs",
+    "entry": {
+      "magiceden": "Magic Eden",
+      "opensea": "OpenSea"
     }
   }
 }

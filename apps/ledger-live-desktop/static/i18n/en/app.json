@@ -447,6 +447,8 @@
     "incompatibility": {
       "ton_title": "Ledger Nano S™ does not support swapping Ton",
       "ton_description": "To swap Ton, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "ton_tokens_title": "Ledger Nano S™ does not support swapping Ton Tokens",
+      "ton_tokens_description": "To swap Ton Tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "spl_tokens_title": "Ledger Nano S™ does not support swapping Solana tokens",
       "spl_tokens_description": "To swap Solana tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "sui_tokens_title": "Ledger Nano S™ does not support swapping Sui tokens",
@@ -1879,7 +1881,8 @@
       "palletMethod": "Method",
       "transferAmount": "Transfer Amount",
       "validatorsCount": "Validators ({{number}})",
-      "version": "Version"
+      "version": "Version",
+      "accountCreationFee": "Account Creation Fee"
     }
   },
   "operationList": {
@@ -2069,7 +2072,8 @@
       "latest": "Firmware version {{version}} is available",
       "contactSupport": "Contact support",
       "deprecated": "Device firmware version too old to be updated. Contact Ledger Support for a replacement.",
-      "prepareSeed": "Ensure your 24-word recovery phrase is written down on the Recovery Sheet and is available, as a precaution.",
+      "prepareSeed": "Ensure your 24-word Secret Recovery Phrase is written down on the recovery Sheet and is available, as a precaution.",
+      "prepareSeedRecover": "Consider using Ledger Recover to back up access to your wallet and ensure it's always within reach.",
       "disclaimerTitle": "You are about to install <1>firmware version {{version}}</1>.",
       "cancelUpdate": "Cancel OS update",
       "continueUpdate": "Continue OS update",
@@ -2392,7 +2396,8 @@
         "suggested": "Suggested",
         "unitVByte": "{{unit}}/vbyte",
         "nft": "NFT",
-        "nftQuantity": "Quantity"
+        "nftQuantity": "Quantity",
+        "splExtensionsWarning": "You are interacting with a token that is part of the Token-2022 program, also known as Token Extensions. This token comes with specific risks. <0>Click here</0> to learn more."
       },
       "verification": {
         "streaming": {
@@ -3783,7 +3788,7 @@
       "frozenStateWarning": "Account assets are frozen!",
       "transferWarning": "To verify the recipient address for Solana tokens using a Ledger Nano S™, <0>follow these instructions.</0>",
       "transferFees": {
-        "feesPercentHint": "Token has {{feePercent}}% ({{feeBps}}bps) transfer fee. {{maxFee}} max",
+        "feesHint": "Token transfer fee: {{transferFee}}",
         "notice": "Transfer fee {{fee}}%",
         "tooltipHint": "Percentage of transfer withheld for token creator",
         "transferFeesLabel": "Transfer fees"
@@ -4386,7 +4391,6 @@
       "debugAppsDesc": "Display and allow opening debug tagged platform apps.",
       "debugReactQuery": "Allow debug ReactQuery",
       "debugReactQueryDesc": "Display and allow opening debug ReactQuery console.",
-
       "nfts": {
         "title": "NFTs HiddenCollections",
         "description": "Reset the hidden collections list",
@@ -5580,7 +5584,9 @@
     "stringHash": "Message Hash",
     "domainHash": "Domain Hash",
     "messageHash": "Message Hash",
-    "message": "Message"
+    "message": "Message",
+    "title": "Continue on your Ledger {{wording}}",
+    "description": "Follow the instructions displayed on your Secure Touchscreen."
   },
   "TransactionConfirm": {
     "title": "Please confirm the operation on your device to finalize it",
@@ -5705,6 +5711,9 @@
       "memo": "Tag / Memo",
       "memoPlaceholder": "Optional",
       "requiredMemoPlaceholder": "Required"
+    },
+    "mina": {
+      "memoPlaceholder": "Optional Memo"
     }
   },
   "errors": {
@@ -6747,6 +6756,15 @@
         "swap": "Swap",
         "deposit": "Deposit"
       }
+    },
+    "InvalidMemoMina": {
+      "title": "Memo text cannot be longer than 32 characters"
+    },
+    "AccountCreationFeeWarning": {
+      "title": "This transaction will incur an account creation fee of {{fee}}"
+    },
+    "AmountTooSmall": {
+      "title": "Minimum required amount for this transaction is {{amount}}"
     }
   },
   "cryptoOrg": {
@@ -6775,7 +6793,8 @@
       "title": "choose asset"
     },
     "selectAccount": {
-      "title": "choose account"
+      "title": "choose account",
+      "addAccount": "Add new or existing account"
     }
   },
   "customImage": {
@@ -7205,6 +7224,21 @@
     "opted_out": {
       "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements. For long-term use, upgrade to a newer Ledger device.",
       "cta": "Learn more"
+    }
+  },
+  "modularAssetDrawer": {
+    "searchPlaceholder": "Search",
+    "assetFlow": {
+      "selectTemplate": "Select {{dynamic}}",
+      "asset": "asset",
+      "network": "network"
+    }
+  },
+  "nftEntryPoint": {
+    "title": "NFT (Non Fungible Tokens)",
+    "entry": {
+      "magiceden": "Magic Eden",
+      "opensea": "OpenSea"
     }
   }
 }

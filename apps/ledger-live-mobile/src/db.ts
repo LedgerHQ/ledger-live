@@ -9,7 +9,7 @@ import type {
 import { Announcement } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
 import { useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
 import { Dispatch, SetStateAction } from "react";
-import store from "./logic/storeWrapper";
+import storage from "LLM/storage";
 import type { User } from "./types/store";
 import type { BleState, MarketState, ProtectState, SettingsState } from "./reducers/types";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
@@ -27,33 +27,33 @@ const ACCOUNTS_KEY_SORT = "accounts.sort";
 const ACCOUNTS_DB_PREFIX = "accounts.active.";
 const COUNTERVALUES_DB_PREFIX = "countervalues.";
 export async function clearDb() {
-  const list = await store.keys();
-  await store.delete(list.filter(k => k !== "user"));
+  const list = await storage.keys();
+  await storage.delete(list.filter(k => k !== "user"));
 }
 export async function getUser(): Promise<User> {
-  const user = (await store.get("user")) as User;
+  const user = (await storage.get("user")) as User;
   return user;
 }
 export async function setUser(user: User): Promise<void> {
-  await store.update("user", user);
+  await storage.update("user", user);
 }
 export async function updateUser(user: User): Promise<void> {
-  await store.update("user", user);
+  await storage.update("user", user);
 }
 export async function getSettings(): Promise<Partial<SettingsState>> {
-  const settings = (await store.get("settings")) as Partial<SettingsState>;
+  const settings = (await storage.get("settings")) as Partial<SettingsState>;
   return settings;
 }
 export async function saveSettings(obj: Partial<SettingsState>): Promise<void> {
-  await store.save("settings", obj);
+  await storage.save("settings", obj);
 }
 
 export async function getWCSession(): Promise<unknown> {
-  const wcsession = await store.get("wcsession");
+  const wcsession = await storage.get("wcsession");
   return wcsession;
 }
 export async function saveWCSession(obj: unknown): Promise<void> {
-  await store.save("wcsession", obj);
+  await storage.save("wcsession", obj);
 }
 export const getCountervalues: typeof unsafeGetCountervalues = atomicQueue(unsafeGetCountervalues);
 export const saveCountervalues: typeof unsafeSaveCountervalues =
@@ -67,7 +67,7 @@ export async function unsafeGetCountervalues(): Promise<CounterValuesStateRaw> {
     };
   }
 
-  return ((await store.get(keys)) as CounterValuesStateRaw[]).reduce(
+  return ((await storage.get(keys)) as CounterValuesStateRaw[]).reduce(
     (prev: CounterValuesStateRaw, val: RateMapRaw | CounterValuesStatus, i: number) =>
       ({
         ...prev,
@@ -78,7 +78,7 @@ export async function unsafeGetCountervalues(): Promise<CounterValuesStateRaw> {
 }
 
 async function getKeys(prefix: string) {
-  return (await store.keys()).filter(k => k.indexOf(prefix) === 0);
+  return (await storage.keys()).filter(k => k.indexOf(prefix) === 0);
 }
 
 async function unsafeSaveCountervalues(
@@ -98,19 +98,19 @@ async function unsafeSaveCountervalues(
   const data = Object.entries(state).map<[string, RateMapRaw | CounterValuesStatus]>(
     ([key, val]) => [`${COUNTERVALUES_DB_PREFIX}${key}`, val],
   );
-  await store.save(data);
+  await storage.save(data);
 
   if (deletedKeys.length) {
-    await store.delete(deletedKeys);
+    await storage.delete(deletedKeys);
   }
 }
 
 export async function getBle(): Promise<BleState> {
-  const ble = (await store.get("ble")) as BleState;
+  const ble = (await storage.get("ble")) as BleState;
   return ble;
 }
 export async function saveBle(obj: BleState): Promise<void> {
-  await store.save("ble", obj);
+  await storage.save("ble", obj);
 }
 
 const formatAccountDBKey = (id: string): string => `${ACCOUNTS_DB_PREFIX}${id}`;
@@ -125,15 +125,15 @@ async function unsafeGetAccounts(): Promise<{
   active: { data: AccountRaw }[];
 }> {
   await migrateAccountsIfNecessary();
-  const keys = await store.keys();
+  const keys = await storage.keys();
   const accountKeys = onlyAccountsKeys(keys);
 
   // if some account keys, we retrieve them and return
   if (accountKeys && accountKeys.length > 0) {
-    let active = (await store.get(accountKeys)) as { data: AccountRaw }[];
+    let active = (await storage.get(accountKeys)) as { data: AccountRaw }[];
 
     if (keys.includes(ACCOUNTS_KEY_SORT)) {
-      const ids = (await store.get(ACCOUNTS_KEY_SORT)) as string[];
+      const ids = (await storage.get(ACCOUNTS_KEY_SORT)) as string[];
       active = active
         .map<[{ data: AccountRaw }, number]>(a => [a, ids.indexOf(a.data.id)])
         .sort((a, b) => a[1] - b[1])
@@ -166,7 +166,7 @@ async function unsafeSaveAccounts(
     | undefined,
 ): Promise<void> {
   log("db", "saving accounts...");
-  const keys = await store.keys();
+  const keys = await storage.keys();
   const currentAccountKeys = onlyAccountsKeys(keys);
 
   /** format data for DB persist */
@@ -190,14 +190,14 @@ async function unsafeSaveAccounts(
     : dbData.filter(([_key, { data }]) => stats.changed.includes(data.id));
 
   /** persist store data to DB */
-  await store.save([
+  await storage.save([
     ...dbDataWithOnlyChanges, // also store an index of ids to keep sort in memory
     [ACCOUNTS_KEY_SORT, newAccounts.map(a => a.data.id)],
   ] as [string, string | { data: AccountRaw; version: number }][]);
 
   /** then delete potential removed keys */
   if (deletedKeys.length > 0) {
-    await store.delete(deletedKeys);
+    await storage.delete(deletedKeys);
   }
 
   log(
@@ -213,7 +213,7 @@ export const getAccounts: typeof unsafeGetAccounts = atomicQueue(unsafeGetAccoun
 export const saveAccounts: typeof unsafeSaveAccounts = atomicQueue(unsafeSaveAccounts);
 
 async function migrateAccountsIfNecessary(): Promise<void> {
-  const keys = await store.keys();
+  const keys = await storage.keys();
 
   /** check if old data is present */
   const hasOldAccounts = keys.includes(ACCOUNTS_KEY);
@@ -226,7 +226,7 @@ async function migrateAccountsIfNecessary(): Promise<void> {
 
     try {
       /** fetch old accounts db data */
-      oldAccounts = (await store.get(ACCOUNTS_KEY)) as {
+      oldAccounts = (await storage.get(ACCOUNTS_KEY)) as {
         active: { data: Account }[];
       };
     } catch (e) {
@@ -247,56 +247,56 @@ async function migrateAccountsIfNecessary(): Promise<void> {
     );
 
     /** save new formatted data then remove old data from DB */
-    await store.save(newDBData);
-    await store.delete(ACCOUNTS_KEY);
+    await storage.save(newDBData);
+    await storage.delete(ACCOUNTS_KEY);
     log("db", "done migrateAccountsIfNecessary");
   }
 }
 
 export function getPostOnboardingState(): Promise<PostOnboardingState> {
-  return store.get("postOnboarding") as Promise<PostOnboardingState>;
+  return storage.get("postOnboarding") as Promise<PostOnboardingState>;
 }
 
 export async function savePostOnboardingState(obj: PostOnboardingState): Promise<void> {
-  await store.save("postOnboarding", obj);
+  await storage.save("postOnboarding", obj);
 }
 
 export function getMarketState(): Promise<MarketState> {
-  return store.get("market") as Promise<MarketState>;
+  return storage.get("market") as Promise<MarketState>;
 }
 
 export async function saveMarketState(obj: MarketState): Promise<void> {
-  await store.save("market", obj);
+  await storage.save("market", obj);
 }
 
 export function getTrustchainState(): Promise<TrustchainStore> {
-  return store.get("trustchain") as Promise<TrustchainStore>;
+  return storage.get("trustchain") as Promise<TrustchainStore>;
 }
 
 export async function saveTrustchainState(obj: TrustchainStore): Promise<void> {
-  await store.save("trustchain", obj);
+  await storage.save("trustchain", obj);
 }
 
 export async function getWalletExportState(): Promise<ExportedWalletState> {
-  const wallet = (await store.get("wallet")) as ExportedWalletState;
+  const wallet = (await storage.get("wallet")) as ExportedWalletState;
   return wallet;
 }
 
 export async function saveWalletExportState(obj: ExportedWalletState): Promise<void> {
-  await store.save("wallet", obj);
+  await storage.save("wallet", obj);
 }
 
 export async function getProtect(): Promise<ProtectState> {
-  const protect = (await store.get("protect")) as ProtectState;
+  const protect = (await storage.get("protect")) as ProtectState;
   return protect;
 }
 
 export async function saveProtect(obj: ProtectState): Promise<void> {
-  await store.save("protect", obj);
+  await storage.save("protect", obj);
 }
 
 export async function deleteProtect(): Promise<void> {
-  await store.delete("protect");
+  await storage.delete("protect");
 }
 
 export function useDB<State, Selected>(
@@ -307,8 +307,8 @@ export function useDB<State, Selected>(
 ): [Selected, Dispatch<SetStateAction<State>>] {
   return useDBRaw<State, Selected>({
     initialState,
-    getter: () => store.get(key) as Promise<State>,
-    setter: (state: State) => store.save(key, state),
+    getter: () => storage.get(key) as Promise<State>,
+    setter: (state: State) => storage.save(key, state),
     selector,
   });
 }

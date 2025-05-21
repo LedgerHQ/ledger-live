@@ -12,6 +12,7 @@ import { fileCoinConfig } from "../families/filecoin/config";
 import { hederaConfig } from "../families/hedera/config";
 import { internetComputerConfig } from "../families/internet_computer/config";
 import { nearConfig } from "../families/near/config";
+import { minaConfig } from "../families/mina/config";
 import { polkadotConfig } from "../families/polkadot/config";
 import { xrpConfig } from "../families/xrp/config";
 import { solanaConfig } from "../families/solana/config";
@@ -54,6 +55,7 @@ export const liveConfig: ConfigSchema = {
   ...hederaConfig,
   ...internetComputerConfig,
   ...nearConfig,
+  ...minaConfig,
   ...polkadotConfig,
   ...xrpConfig,
   ...solanaConfig,

@@ -111,6 +111,8 @@ setSupportedCurrencies([
   "zenrock",
   "sonic",
   "sonic_blaze",
+  "mina",
+  "babylon",
 ]);
 LiveConfig.setConfig(liveConfig);
 

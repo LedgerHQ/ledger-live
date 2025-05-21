@@ -3495,6 +3495,30 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  mina: {
+    type: "CryptoCurrency",
+    id: "mina",
+    coinType: CoinType.MINA,
+    name: "Mina",
+    managerAppName: "Mina",
+    ticker: "MINA",
+    scheme: "mina",
+    color: "#e1effa",
+    family: "mina",
+    units: [
+      {
+        name: "MINA",
+        code: "MINA",
+        magnitude: 9,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://minascan.io/mainnet/tx/$hash/txInfo",
+        address: "https://minascan.io/mainnet/account/$address",
+      },
+    ],
+  },
   injective: {
     type: "CryptoCurrency",
     id: "injective",
@@ -4391,6 +4415,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://suivision.xyz/txblock/$hash",
         address: "https://suivision.xyz/account/$address",
+      },
+    ],
+  },
+  babylon: {
+    type: "CryptoCurrency",
+    id: "babylon",
+    coinType: CoinType.ATOM,
+    name: "Babylon",
+    managerAppName: "Cosmos",
+    ticker: "BABY",
+    scheme: "babylon",
+    color: "#CE6533",
+    family: "cosmos",
+    units: [
+      {
+        name: "Babylon",
+        code: "BABY",
+        magnitude: 6,
+      },
+      {
+        name: "micro BBN",
+        code: "ubbn",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/babylon/txs/$hash",
+        address: "https://www.mintscan.io/babylon/validators/$address",
       },
     ],
   },

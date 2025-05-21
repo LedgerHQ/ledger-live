@@ -195,27 +195,26 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     ...extraReceiveActionParams,
   };
 
-  const StakeAction = canStakeUsingPlatformApp
-    ? {
-        id: "stake",
-        disabled: isZeroBalance,
-        navigationParams: [
-          NavigatorName.Base,
-          getRouteParamsForPlatformApp(account, walletState, parentAccount),
-        ],
-        label: t("account.stake"),
-        Icon: IconsLegacy.CoinsMedium,
-        event: "button_clicked",
-        eventProperties: {
-          button: "stake",
-          currency: currency.ticker,
-          page: "Account Page",
-          isRedirectConfig: true,
-          partner: getRouteParamsForPlatformApp(account, walletState, parentAccount)?.params
-            ?.platform,
-        },
-      }
-    : null;
+  const platformStakeRoute = getRouteParamsForPlatformApp(account, walletState, parentAccount);
+
+  const StakeAction =
+    canStakeUsingPlatformApp && platformStakeRoute
+      ? {
+          id: "stake",
+          disabled: isZeroBalance,
+          navigationParams: [NavigatorName.Base, platformStakeRoute],
+          label: t("account.stake"),
+          Icon: IconsLegacy.CoinsMedium,
+          event: "button_clicked",
+          eventProperties: {
+            button: "stake",
+            currency: currency.ticker,
+            page: "Account Page",
+            isRedirectConfig: true,
+            partner: platformStakeRoute?.params?.platform,
+          },
+        }
+      : null;
 
   const familySpecificMainActions: Array<ActionButtonEvent> =
     decorators?.getMainActions?.({

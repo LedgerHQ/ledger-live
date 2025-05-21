@@ -1,4 +1,7 @@
+import { Asset } from "@ledgerhq/coin-framework/api/types";
+
 export type TronToken = Trc10Token | Trc20Token;
+export type TronAsset = Asset<TronToken>;
 
 /*
   TRC10 tokens use a standard implementation on the protocol level.

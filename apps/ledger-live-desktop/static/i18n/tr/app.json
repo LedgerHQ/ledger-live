@@ -1879,7 +1879,8 @@
       "palletMethod" : "Yöntem",
       "transferAmount" : "Transfer Tutarı",
       "validatorsCount" : "Doğrulayıcılar ({{number}})",
-      "version" : "Sürüm"
+      "version" : "Sürüm",
+      "accountCreationFee" : "Hesap Oluşturma Ücreti"
     }
   },
   "operationList" : {
@@ -2069,7 +2070,8 @@
       "latest" : "Donanım yazılımının {{version}} sürümü mevcut",
       "contactSupport" : "Destek al",
       "deprecated" : "Cihazın yazılım sürümü güncellenemeyecek kadar eski. Değiştirmek için Ledger Destek ekibiyle iletişime geçin.",
-      "prepareSeed" : "Önlem olarak, 24 kelimelik kurtarma ifadenizi Kurtarma Kağıdına yazdığınızdan ve bu kağıda kolayca ulaşabileceğinizden emin olun.",
+      "prepareSeed" : "Önlem olarak, 24 kelimelik Gizli Kurtarma İfadenizi kurtarma Kâğıdına yazdığınızdan ve bu kâğıda kolayca erişebileceğinizden emin olun.",
+      "prepareSeedRecover" : "Cüzdan erişiminizi yedekleyip cüzdanınıza erişimi asla kaybetmeyeceğinizden emin olmak için Ledger Recover’ı kullanmayı düşünün.",
       "disclaimerTitle" : "<1>Donanım yazılımının {{version}} sürümünü</1> yüklemek üzeresiniz.",
       "cancelUpdate" : "Güncellemeyi iptal et",
       "continueUpdate" : "Güncellemeye devam et",
@@ -2390,7 +2392,7 @@
         "ethereumPriorityFee" : "Öncelik Ücreti Üst Limiti ({{unitName}})",
         "nextBlock" : "Sonraki blok",
         "suggested" : "Önerilen",
-        "unitPerByte" : "bayt başına {{unit}}",
+        "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
         "nftQuantity" : "Miktar"
       },
@@ -2423,8 +2425,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "Etiket/Memo eklenmesin mi?",
-        "description" : "Fonlarınızı herhangi bir merkezî borsaya veya custodial cüzdana gönderirken bir Etiket/Memo eklemezseniz fonlarınız kaybolacaktır.",
+        "title" : "Etikete/Memo’ya mı ihtiyacınız var?",
+        "description" : "Merkezî bir borsaya fon gönderirken Etiket/Memo eklememek fonlarınızı kaybetme ihtimalinizi artırır.",
         "cta.addTag" : "Etiket ekle",
         "cta.not.addTag" : "Etiket ekleme",
         "checkbox.label" : "Bunu bir daha gösterme."
@@ -4834,7 +4836,7 @@
         "description" : "Ledger Live ile güvenle kripto ve NFT satın alın, varlıklarınızı yönetin ve bakiyenizi artırın.",
         "nextButton" : "Devam",
         "noDevice" : "Cihazınız yok mu?",
-        "buyLink" : "Cihazınız yok mu? Ledger Nano X satın alın",
+        "buyLink" : "Cihazınız yok mu? Ledger satın alın",
         "byTapping" : "“Hemen Başla” butonuna dokunduğunuzda bunlara izin vermiş ve rıza göstermiş olursunuz:",
         "termsAndConditions" : "Hüküm ve Koşullar",
         "and" : "ve",
@@ -5419,7 +5421,9 @@
     "stringHash" : "Mesaj Hash'i",
     "domainHash" : "Alan Adı Hash'i",
     "messageHash" : "Mesaj Hash'i",
-    "message" : "Mesaj"
+    "message" : "Mesaj",
+    "title" : "Ledger {{wording}} üzerinde devam edin",
+    "description" : "Güvenli Dokunmatik Ekranınızda gösterilen yönergeleri izleyin."
   },
   "TransactionConfirm" : {
     "title" : "Sonlandırmak için lütfen cihazınızdaki işlemi onaylayın",
@@ -5541,6 +5545,9 @@
       "memo" : "Etiket / Memo",
       "memoPlaceholder" : "Opsiyonel",
       "requiredMemoPlaceholder" : "Gerekli"
+    },
+    "mina" : {
+      "memoPlaceholder" : "İsteğe Bağlı Memo"
     }
   },
   "errors" : {
@@ -6571,6 +6578,15 @@
         "swap" : "takas edin",
         "deposit" : "yatırın"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "Memo metni 32 karakterden uzun olamaz"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Bu işlem için {{fee}} tutarında bir hesap oluşturma ücreti alınacaktır"
+    },
+    "AmountTooSmall" : {
+      "title" : "Bu işlem için gerekli minimum tutar: {{amount}}"
     }
   },
   "cryptoOrg" : {

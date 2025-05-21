@@ -86,6 +86,10 @@ const envDefinitions = {
     parser: stringParser,
     def: "https://aptos.coin.ledger.com",
     desc: "proxy url for aptos API",
+  APTOS_ENABLE_TOKENS: {
+    def: false,
+    parser: boolParser,
+    desc: "Enable tokens on Aptos",
   },
   API_CASPER_INDEXER_ENDPOINT: {
     parser: stringParser,
@@ -852,6 +856,11 @@ const envDefinitions = {
     def: false,
     parser: boolParser,
     desc: "Show a performance overlay on the app UI",
+  },
+  STORAGE_PERFORMANCE_OVERLAY: {
+    def: false,
+    parser: boolParser,
+    desc: "Show a performance overlay on the app storage",
   },
   ETHEREUM_STUCK_TRANSACTION_TIMEOUT: {
     def: 5 * 60 * 1000,
