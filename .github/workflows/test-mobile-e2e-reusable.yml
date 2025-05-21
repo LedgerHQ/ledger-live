@@ -227,7 +227,7 @@ jobs:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           AWS_ROLE: ${{ secrets.B2CQA_AWS_ROLE }}
           CLUSTER: ${{ secrets.B2CQA_CLUSTER }}
-          GITHUB_TOKEN: ${{ steps.setup-speculos.outputs.token }}
+          GITHUB_TOKEN: ${{ secrets.B2CQA_PAT }}
           INPUT_E2E: ${{ env.E2E_RUN }}
           REMOTE_SPECULOS: "true"
           PRODUCTION: ${{ inputs.production_firebase }}
