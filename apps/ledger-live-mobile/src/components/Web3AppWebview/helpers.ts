@@ -23,7 +23,7 @@ import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { flattenAccountsSelector } from "../../reducers/accounts";
-import { WebviewAPI, WebviewProps, WebviewState } from "./types";
+import { SwapWebviewAllowedPageNames, WebviewAPI, WebviewProps, WebviewState } from "./types";
 import prepareSignTransaction from "./liveSDKLogic";
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
@@ -38,6 +38,7 @@ import { walletSelector } from "~/reducers/wallet";
 import { CacheMode, WebViewOpenWindowEvent } from "react-native-webview/lib/WebViewTypes";
 import { Linking } from "react-native";
 import { useCacheBustedLiveAppsDB } from "~/screens/Platform/v2/hooks";
+import { useIsSwapTab } from "./useIsSwapTab";
 
 export function useWebView(
   {
@@ -240,6 +241,8 @@ export function useWebviewState(
   const initialURL = useMemo(() => getInitialURL(inputs, manifest), [manifest, inputs]);
   const [state, setState] = useState<WebviewState>(initialWebviewState);
 
+  const navigation = useNavigation();
+
   useEffect(() => {
     setURI(initialURL);
   }, [initialURL]);
@@ -298,6 +301,8 @@ export function useWebviewState(
     [],
   );
 
+  const { isSwapTabScreen } = useIsSwapTab();
+
   const onLoad: Required<WebViewProps>["onLoad"] = useCallback(({ nativeEvent }) => {
     setState({
       title: nativeEvent.title,
@@ -330,6 +335,29 @@ export function useWebviewState(
 
   const onNavigationStateChange: Required<WebViewProps>["onNavigationStateChange"] = useCallback(
     event => {
+      if (isSwapTabScreen) {
+        const url = new URL(event.url);
+        const tabParam = url.searchParams.get("tab");
+
+        let page: SwapWebviewAllowedPageNames =
+          tabParam === "QUOTES_LIST"
+            ? SwapWebviewAllowedPageNames.QuotesList
+            : SwapWebviewAllowedPageNames.AccountSelection;
+
+        let canGoBack = event.canGoBack;
+
+        if (event.url.includes("two-step-approval")) {
+          page = SwapWebviewAllowedPageNames.TwoStepApproval;
+        }
+
+        if (event.url.includes("unknown-error")) {
+          page = SwapWebviewAllowedPageNames.UnknownError;
+          canGoBack = false;
+        }
+
+        navigation.setParams({ params: { tab: tabParam, page: page, canGoBack } });
+      }
+
       setState({
         title: event.title,
         url: event.url,
@@ -338,7 +366,7 @@ export function useWebviewState(
         loading: event.loading,
       });
     },
-    [],
+    [navigation, isSwapTabScreen],
   );
 
   useEffect(() => {

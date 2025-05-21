@@ -10,6 +10,7 @@ import { INTERNAL_APP_IDS, WC_ID } from "@ledgerhq/live-common/wallet-api/consta
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { INJECTED_JAVASCRIPT } from "./dappInject";
 import { NoAccountScreen } from "./NoAccountScreen";
+import { useSwapHeaderNavigation } from "./useSwapHeaderNavigation";
 
 const APPLICATION_NAME = `ledgerlivemobile/${VersionNumber.appVersion} llm-${Platform.OS}/${VersionNumber.appVersion}`;
 
@@ -52,6 +53,8 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     };
 
     const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
+
+    useSwapHeaderNavigation(webviewRef);
 
     const javaScriptCanOpenWindowsAutomatically =
       internalAppIds.includes(manifest.id) || manifest.id === WC_ID;
