@@ -3,7 +3,7 @@ import { createApi } from ".";
 import { PolkadotAsset } from "../types";
 
 describe("Polkadot Api", () => {
-  let module: Api<PolkadotAsset>;
+  let module: Api<PolkadotAsset, never, never>;
   const address = "144HGaYrSdK3543bi26vT6Rd8Bg7pLPMipJNr2WLc3NuHgD2";
 
   beforeAll(() => {
