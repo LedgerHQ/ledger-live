@@ -29,7 +29,7 @@ const getTransactionStatus = async (
   const estimatedFees = t.fees || BigNumber(0);
   const tokenAccount = getTokenAccount(a, t);
 
-  const stakingPosition = a.aptosResources.stakingPositions.find(
+  const stakingPosition = (a.aptosResources?.stakingPositions ?? []).find(
     stakingPosition => stakingPosition.validatorId === t.recipient,
   );
 

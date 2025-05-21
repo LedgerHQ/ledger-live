@@ -495,7 +495,7 @@ export const getMaxUnstakableAmount = (
 ): BigNumber => {
   let maxAmount: BigNumber | undefined;
 
-  const stakingPosition = account.aptosResources?.stakingPositions.find(
+  const stakingPosition = (account.aptosResources?.stakingPositions ?? []).find(
     ({ validatorId }) => validatorId === validatorAddress,
   );
 

@@ -123,7 +123,7 @@ export type AptosResources = {
   stakedBalance: BigNumber;
   availableBalance: BigNumber;
   pendingBalance: BigNumber;
-  stakingPositions: AptosStakingPosition[];
+  stakingPositions?: AptosStakingPosition[];
 };
 
 export type AptosResourcesRaw = {

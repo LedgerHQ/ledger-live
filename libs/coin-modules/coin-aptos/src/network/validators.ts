@@ -20,7 +20,6 @@ export async function getValidators(currencyId: string): Promise<AptosValidator[
   const list: AptosValidator[] = await Promise.all(
     stakingData.map(async pool => {
       const poolId = pool.current_pool_balance.staking_pool_address.toLowerCase();
-      console.log("poolId", poolId);
       const imgSrc = blockies.create({ seed: poolId }).toDataURL();
       const aptosName = pool.staking_pool_metadata.operator_aptos_name;
       const naming =

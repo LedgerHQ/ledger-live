@@ -20,7 +20,7 @@ const getMainActions = ({
 }): ActionButtonEvent[] => {
   const stakingDisabled = !canStake(account);
   const startWithValidator =
-    account.aptosResources && account.aptosResources?.stakingPositions.length > 0;
+    account.aptosResources && (account.aptosResources?.stakingPositions ?? []).length > 0;
   const label = getStakeLabelLocaleBased();
 
   const navigationParams: NavigationParamsType = stakingDisabled

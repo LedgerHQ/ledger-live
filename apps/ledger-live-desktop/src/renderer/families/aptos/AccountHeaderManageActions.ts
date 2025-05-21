@@ -17,7 +17,7 @@ const AccountHeaderActions: AptosFamily["accountHeaderManageActions"] = ({
   const mainAccount = getMainAccount(account, parentAccount);
   const { aptosResources } = mainAccount;
   const stakingEnabled = canStake(mainAccount);
-  const hasStakingPositions = aptosResources?.stakingPositions.length > 0;
+  const hasStakingPositions = (aptosResources?.stakingPositions?.length ?? 0) > 0;
 
   const onClick = useCallback(() => {
     if (!stakingEnabled) {

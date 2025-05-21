@@ -49,7 +49,7 @@ export function useAptosValidators(currency: CryptoCurrency, search?: string): A
 
 export function useAptosStakesWithMeta(
   currency: CryptoCurrency,
-  stakingPositions: AptosStakingPosition[],
+  stakingPositions: AptosStakingPosition[] = [],
 ): AptosStakeWithMeta[] {
   const data = useAptosPreloadData(currency);
 

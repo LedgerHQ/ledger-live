@@ -2313,7 +2313,7 @@ describe("getStake", () => {
     expect(result.aptosResources).toBeDefined();
     expect(result.aptosResources?.stakingPositions).toHaveLength(1);
 
-    const position = result.aptosResources?.stakingPositions[0];
+    const position = result.aptosResources?.stakingPositions?.[0];
     expect(position).toEqual({
       staked: BigNumber(mockDelegatorBalance[0]),
       available: BigNumber(mockDelegatorBalance[1]),
