@@ -16,13 +16,17 @@ export type Asset<TokenInfo extends TokenInfoCommon = never> =
   | { type: "native" }
   | (TokenInfo extends never ? TokenInfo : { type: "token" } & TokenInfo);
 
-export type Operation<AssetInfo extends Asset<TokenInfoCommon>> = {
+export type Operation<AssetInfo extends Asset<TokenInfoCommon>, MemoKind> = {
   id: string;
   type: string;
   senders: string[];
   recipients: string[];
   value: bigint;
   asset: AssetInfo;
+  memo: {
+    type: MemoKind;
+    value: string;
+  };
   // Field containing dedicated value for each blockchain
   details?: Record<string, unknown>;
   tx: {
@@ -57,18 +61,15 @@ export type Balance<AssetInfo extends Asset<TokenInfoCommon>> = {
   asset: AssetInfo;
 };
 
-export type TransactionIntent<
-  AssetInfo extends Asset<TokenInfoCommon>,
-  Extra = Record<string, unknown>,
-  Sender extends Record<string, string> | string = string,
-> = {
+export type TransactionIntent<AssetInfo extends Asset<TokenInfoCommon>, MemoKinds, MemoValue> = {
   type: string;
-  sender: Sender;
+  sender: string;
   senderPublicKey?: string;
   recipient: string;
   amount: bigint;
   asset: AssetInfo;
-} & Extra;
+  memos: { type: MemoKinds; value: MemoValue }[];
+};
 
 export type TransactionValidation = {
   errors: Record<string, Error>;
@@ -93,29 +94,20 @@ export type Pagination = { minHeight: number };
 
 export type PreSignOperationHook = (opts: { transaction: TransactionCommon }) => void;
 
-export type Api<
-  AssetInfo extends Asset<TokenInfoCommon>,
-  TxExtra = Record<string, unknown>,
-  Sender extends Record<string, string> | string = string,
-  FeeParameters extends Record<string, bigint> = never,
-> = {
+export type Api<AssetInfo extends Asset<TokenInfoCommon>, Memo = never> = {
   broadcast: (tx: string) => Promise<string>;
-  // TODO: why add Promise<string> below?
   combine: (tx: string, signature: string, pubkey?: string) => string | Promise<string>;
-  estimateFees: (
-    transactionIntent: TransactionIntent<AssetInfo, TxExtra, Sender>,
-  ) => Promise<FeeEstimation<FeeParameters>>;
+  estimateFees: (transactionIntent: TransactionIntent<AssetInfo, Memo>) => Promise<FeeEstimation>;
   craftTransaction: (
-    transactionIntent: TransactionIntent<AssetInfo, TxExtra, Sender>,
+    transactionIntent: TransactionIntent<AssetInfo, Memo>,
     customFees?: bigint,
   ) => Promise<string>;
   validateIntent?: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;
-  // TODO: add validateIntent
   getBalance: (address: string) => Promise<Balance<AssetInfo>[]>;
   lastBlock: () => Promise<BlockInfo>;
   listOperations: (
     address: string,
     pagination: Pagination,
-  ) => Promise<[Operation<AssetInfo>[], string]>;
+  ) => Promise<[Operation<AssetInfo, MemoKinds>[], string]>;
   preSignOperationHook?: PreSignOperationHook;
 };

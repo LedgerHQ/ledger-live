@@ -161,8 +161,7 @@ describe.skip("Stellar Api", () => {
         sender: ADDRESS,
         recipient: RECIPIENT,
         amount: AMOUNT,
-        memoType: "MEMO_TEXT",
-        memoValue: "test",
+        memo: "test",
       });
       expect(readMemo(transactionXdr)).toEqual(xdr.Memo.memoText(Buffer.from("test", "ascii")));
     });

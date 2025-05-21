@@ -16,7 +16,7 @@ import {
   listOperations,
 } from "../logic";
 import { ListOperationsOptions } from "../logic/listOperations";
-import { StellarAsset } from "../types";
+import { MemoKinds, StellarAsset, StellarMemoKind } from "../types";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { xdr } from "@stellar/stellar-sdk";
@@ -34,17 +34,11 @@ export function createApi(config: StellarConfig): Api<StellarAsset> {
   };
 }
 
-type TransactionIntentExtra = {
-  memoType?: string | null | undefined;
-  memoValue?: string | null | undefined;
-};
-
 async function craft(
-  transactionIntent: TransactionIntent<StellarAsset>,
+  transactionIntent: TransactionIntent<StellarAsset, StellarMemoKind>,
   customFees?: bigint,
 ): Promise<string> {
   const fees = customFees !== undefined ? customFees : await estimateFees();
-  const extra = transactionIntent as TransactionIntentExtra;
   const tx = await craftTransaction(
     { address: transactionIntent.sender },
     {
@@ -58,8 +52,8 @@ async function craft(
             assetIssuer: transactionIntent.asset.assetIssuer,
           }
         : {}),
-      memoType: extra.memoType,
-      memoValue: extra.memoValue,
+      memoType: transactionIntent.memo.type,
+      memoValue: transactionIntent.memo.value,
     },
   );
   // note: API does not return the  transaction envelope but the signature payload instead, see BACK-8727 for more context
