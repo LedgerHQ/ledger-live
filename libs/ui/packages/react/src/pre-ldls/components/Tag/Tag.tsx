@@ -15,6 +15,7 @@ const Wrapper = styled.div`
   border-radius: var(--radius-xs);
   display: inline-flex;
   background-color: var(--colors-surface-transparent-subdued-default);
+  flex-shrink: 0;
 `;
 
 export const Tag = ({

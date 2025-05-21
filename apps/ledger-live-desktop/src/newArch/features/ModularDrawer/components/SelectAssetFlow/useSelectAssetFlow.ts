@@ -78,7 +78,7 @@ export function useSelectAssetFlow({ onAssetSelected, currencies }: UseSelectAss
         setNavDirection(NavigationDirection.FORWARD);
         const filteredCryptoCurrencies = networks
           .map(net => findCryptoCurrencyById(net))
-          .filter((c): c is CryptoCurrency => Boolean(c));
+          .filter((cur): cur is CryptoCurrency => Boolean(cur));
 
         setNetworksToDisplay(filteredCryptoCurrencies);
         setCurrentStep(FlowStep.SELECT_NETWORK);
@@ -91,16 +91,20 @@ export function useSelectAssetFlow({ onAssetSelected, currencies }: UseSelectAss
 
   const handleNetworkSelected = useCallback(
     (network: CryptoOrTokenCurrency) => {
-      const correspondingCurrency = providers?.currenciesByNetwork.find(
-        elem =>
-          (elem as CryptoCurrency | TokenCurrency).id === network.id ||
-          (elem as TokenCurrency).parentCurrency?.id === network.id,
-      );
-      if (!correspondingCurrency) {
-        return;
-      }
+      if (!providers) return;
 
-      return onAssetSelected(correspondingCurrency);
+      const correspondingCurrency = providers.currenciesByNetwork.find(elem => {
+        if (elem.type === "TokenCurrency") {
+          return elem.id === network.id || elem.parentCurrency?.id === network.id;
+        } else if (elem.type === "CryptoCurrency") {
+          return elem.id === network.id;
+        }
+        return false;
+      });
+
+      if (correspondingCurrency) {
+        onAssetSelected(correspondingCurrency);
+      }
     },
     [onAssetSelected, providers],
   );

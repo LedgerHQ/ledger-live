@@ -246,9 +246,14 @@ export const flattenAccountsByCryptoCurrencySelector = createSelector(
   flattenAccountsSelector,
   (_: State, currency: string) => currency,
   (accounts, currency): AccountLike[] => {
-    return currency
-      ? accounts.filter(a => currency === (a.type === "TokenAccount" ? a.token.id : a.currency.id))
-      : accounts;
+    const filterByCurrency = (a: AccountLike) => {
+      if (a.type === "TokenAccount") {
+        return a.token.id === currency;
+      }
+      return a.currency.id === currency;
+    };
+
+    return currency ? accounts.filter(filterByCurrency) : accounts;
   },
 );
 
