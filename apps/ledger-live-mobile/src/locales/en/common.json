@@ -3851,6 +3851,9 @@
         }
       }
     },
+    "spl2022": {
+      "splExtensionsWarning": "You are interacting with a token that is part of the Token-2022 program, also known as Token Extensions. This token comes with specific risks. <0>Click here</0> to learn more."
+    },
     "amount": {
       "available": "Total available",
       "useMax": "Use max",
@@ -6090,6 +6093,7 @@
       "transferFees": {
         "title": "Transfer fees",
         "feesPercentHint": "Token has {{feePercent}}% ({{feeBps}}bps) transfer fee ({{maxFee}} max)",
+        "feesHint": "Token transfer fee: {{transferFee}}",
         "notice": "Transfer fee {{fee}}%",
         "tooltipHint": "Percentage of transfer withheld for token creator"
       },
