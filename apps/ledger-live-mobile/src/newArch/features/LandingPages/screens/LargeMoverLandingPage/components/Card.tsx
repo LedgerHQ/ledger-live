@@ -22,15 +22,24 @@ import { PAGE_NAME } from "../const";
 
 type CardProps = {
   data: CurrencyData;
-  chartData: MarketCoinDataChart;
+  chartData?: MarketCoinDataChart;
+  height: number;
+  currencyIdsArray: string[];
+  loading: boolean;
   range: KeysPriceChange;
   setRange: (range: KeysPriceChange) => void;
-  height: number;
 };
 
 const { width } = getWindowDimensions();
 
-export const Card: React.FC<CardProps> = ({ data, range, setRange, height, chartData }) => {
+export const Card: React.FC<CardProps> = ({
+  data,
+  height,
+  loading,
+  chartData,
+  range,
+  setRange,
+}) => {
   const {
     id,
     price,
@@ -100,6 +109,7 @@ export const Card: React.FC<CardProps> = ({ data, range, setRange, height, chart
               range={range}
               currencyId={id}
               width={graphWidth}
+              loading={loading}
             />
             <TimeFrame
               setRange={setRange}
