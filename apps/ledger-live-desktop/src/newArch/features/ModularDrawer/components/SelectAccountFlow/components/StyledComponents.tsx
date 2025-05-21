@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const SelectAssetFlowContainer = styled.div`
+export const SelectAccountFlowContainer = styled.div`
   display: flex;
   flex-direction: column;
   overflow-y: hidden;
@@ -20,7 +20,8 @@ export const SelectorContent = styled.div`
   height: 100%;
 `;
 
-export const SearchContainer = styled.div`
+export const AddAccountContainer = styled.div`
+  display: flex;
   padding: 0 0 16px 0;
   flex: 0 1 auto;
 `;

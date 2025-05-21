@@ -8,12 +8,12 @@ const meta: Meta<typeof AccountItem> = {
   tags: ["autodocs"],
   args: {
     account: {
-      id: "1234",
+      id: "12345",
+      cryptoId: "bitcoin",
       name: "Main BTC",
       balance: "0.118 ETH",
       fiatValue: "$5,969.83",
       address: "n4A9...Zgty",
-      cryptoId: "bitcoin",
       ticker: "btc",
     },
   },
@@ -27,13 +27,13 @@ export const Default: Story = {};
 export const TestAccount: Story = {
   args: {
     account: {
-      id: "1234",
+      id: "12345",
+      cryptoId: "bitcoin",
       name: "Main BTC",
       balance: "0.118 BTC",
       fiatValue: "$5,969.83",
       protocol: "Native Segwit",
       address: "n4A9...Zgty",
-      cryptoId: "bitcoin",
       ticker: "btc",
     },
   },
@@ -43,7 +43,7 @@ export const TestAccount: Story = {
     const name = canvas.getByText("Main BTC");
     const protocol = canvas.getByTestId("tag");
     const address = canvas.getByText("n4A9...Zgty");
-    const addressIcon = canvas.getByTestId("address-icon");
+    const addressIcon = canvas.getByRole("img");
     const fiatValue = canvas.getByText("$5,969.83");
     const balance = canvas.getByText("0.118 BTC");
 
@@ -60,12 +60,12 @@ export const TestAccount: Story = {
 export const TestWithoutProtocol: Story = {
   args: {
     account: {
-      id: "1234",
+      id: "21345",
+      cryptoId: "bitcoin",
       name: "Main BTC",
       balance: "0.118 BTC",
       fiatValue: "$5,969.83",
       address: "n4A9...Zgty",
-      cryptoId: "bitcoin",
       ticker: "btc",
     },
   },
@@ -81,7 +81,7 @@ export const TestWithoutProtocol: Story = {
 export const TestWithoutAddressIcon: Story = {
   args: {
     account: {
-      id: "1234",
+      id: "bitcoin",
       name: "Main BTC",
       balance: "0.118 BTC",
       fiatValue: "$5,969.83",
@@ -92,7 +92,7 @@ export const TestWithoutAddressIcon: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const addressIcon = canvas.queryByTestId("address-icon");
+    const addressIcon = canvas.queryByRole("img");
 
     await expect(addressIcon).not.toBeInTheDocument();
   },

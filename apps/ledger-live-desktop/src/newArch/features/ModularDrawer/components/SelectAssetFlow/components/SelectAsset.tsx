@@ -20,7 +20,6 @@ const SPACING = 8;
 const TWO_ROWS_HEIGHT = 2 * ROW_HEIGHT;
 const INPUT_HEIGHT = 40;
 const EXTRA_BOTTOM_MARGIN = TWO_ROWS_HEIGHT + INPUT_HEIGHT + SPACING;
-const EXTRA_PADDING_HIDDEN_SCROLLBAR = 12;
 
 export const SelectAsset = ({
   assetTypes,
@@ -64,7 +63,6 @@ export const SelectAsset = ({
         style={{
           flex: "1",
           overflow: "auto",
-          width: `calc(100% + ${EXTRA_PADDING_HIDDEN_SCROLLBAR + "px"})`,
           paddingBottom: `${EXTRA_BOTTOM_MARGIN}px`,
         }}
       >

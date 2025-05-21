@@ -2,30 +2,26 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { Text } from "@ledgerhq/react-ui";
-import { HeaderContainer } from "./StyledComponents";
 import { NavigateBackButton } from "./NavigateBackButton";
-import { ANIMATION_VARIANTS, NavigationDirection, FlowStep } from "../useSelectAssetFlow";
+import { ANIMATION_VARIANTS, NavigationDirection } from "./navigation";
+import styled from "styled-components";
 
 export type HeaderProps = {
-  isAssetSelectionVisible: boolean;
-  currentStep: FlowStep;
   navDirection: NavigationDirection;
+  navKey: string;
   onBackClick: () => void;
+  showBackButton?: boolean;
+  title: string;
 };
 
 export function Header({
-  isAssetSelectionVisible,
-  currentStep,
   navDirection,
+  navKey,
   onBackClick,
+  showBackButton = true,
+  title,
 }: Readonly<HeaderProps>) {
   const { t } = useTranslation();
-
-  const isAssetSelection = currentStep === FlowStep.SELECT_ASSET_TYPE;
-
-  const animatedPart = isAssetSelection
-    ? t("modularAssetDrawer.assetFlow.asset")
-    : t("modularAssetDrawer.assetFlow.network");
 
   const titleTemplate = t("modularAssetDrawer.assetFlow.selectTemplate", {
     dynamic: "{{dynamic}}",
@@ -35,7 +31,7 @@ export function Header({
 
   return (
     <HeaderContainer>
-      <NavigateBackButton hidden={isAssetSelectionVisible} onClick={onBackClick} />
+      <NavigateBackButton hidden={!showBackButton} onClick={onBackClick} />
       <Text
         display="flex"
         flexDirection="row"
@@ -50,7 +46,7 @@ export function Header({
         {beforeDynamic}
         <AnimatePresence mode="wait" custom={navDirection}>
           <motion.span
-            key={currentStep}
+            key={navKey}
             initial="initial"
             animate="animate"
             exit="exit"
@@ -58,7 +54,7 @@ export function Header({
             custom={navDirection}
             data-testid="select-asset-drawer-title-dynamic"
           >
-            {animatedPart}
+            {title}
           </motion.span>
         </AnimatePresence>
         {afterDynamic}
@@ -66,3 +62,11 @@ export function Header({
     </HeaderContainer>
   );
 }
+
+const HeaderContainer = styled.div`
+  padding: 54px 0 16px 24px;
+  flex: 0 1 auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+`;

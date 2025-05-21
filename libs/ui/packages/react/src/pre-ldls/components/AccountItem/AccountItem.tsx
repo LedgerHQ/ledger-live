@@ -27,6 +27,7 @@ const Wrapper = styled.div`
     "spacing-xxxs",
     "spacing-xxs",
     "spacing-xs",
+    "radius-s",
     "colors-content-default-default",
     "colors-surface-transparent-hover",
     "colors-surface-transparent-pressed",
@@ -36,6 +37,7 @@ const Wrapper = styled.div`
   display: flex;
   padding: var(--spacing-xs) var(--spacing-xxs);
   cursor: pointer;
+  border-radius: var(--radius-s, 8px);
   justify-content: space-between;
   align-items: center;
 
@@ -79,7 +81,7 @@ export const AccountItem = ({ onClick, account, showIcon = true }: AccountItemPr
             >
               {name}
             </Text>
-            {protocol && <Tag>{protocol}</Tag>}
+            {protocol && <Tag textTransform="capitalize">{protocol}</Tag>}
           </div>
           <Address address={address} cryptoId={cryptoId} ticker={ticker} showIcon={showIcon} />
         </div>
