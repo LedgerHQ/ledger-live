@@ -318,7 +318,6 @@ jobs:
   detox-tests-android:
     name: "Android Detox"
     runs-on: [ledger-live-linux-8CPU-32RAM]
-    if: ${{ !inputs.e2e_tests }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
@@ -495,8 +494,7 @@ jobs:
   allure-report-android:
     name: "Android Detox > Allure Report"
     runs-on: [ledger-live-medium]
-    if: ${{ !inputs.e2e_tests }}
-    #if: ${{ !cancelled() && needs.detox-tests-android.outputs.artifact }}
+    if: ${{ !cancelled() && needs.detox-tests-android.outputs.artifact }}
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
       result: ${{ steps.summary.outputs.test_result }}
