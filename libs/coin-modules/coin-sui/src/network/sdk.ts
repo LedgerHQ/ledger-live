@@ -5,7 +5,6 @@ import {
   TransactionEffects,
   QueryTransactionBlocksParams,
 } from "@mysten/sui/client";
-import { JsonRpcError } from "@mysten/sui/client";
 import { TransactionBlockData, SuiTransactionBlockResponse, SuiCallArg } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { BigNumber } from "bignumber.js";
