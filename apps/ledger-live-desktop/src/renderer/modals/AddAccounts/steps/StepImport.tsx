@@ -131,12 +131,14 @@ class StepImport extends PureComponent<
         },
         blacklistedTokenIds,
       };
-      this.scanSubscription = bridge
-        .scanAccounts({
+      this.scanSubscription = concat(
+        from(prepareCurrency(mainCurrency)).pipe(ignoreElements()),
+        bridge.scanAccounts({
           currency: mainCurrency,
           deviceId: device.deviceId,
           syncConfig,
-        })
+        }),
+      )
         .pipe(
           filter(e => e.type === "discovered"),
           map(e => e.account),
