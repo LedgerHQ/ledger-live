@@ -151,6 +151,7 @@ export type Features = CurrencyFeatures & {
   buyDeviceFromLive: Feature_BuyDeviceFromLive;
   mockFeature: Feature_MockFeature;
   buySellUi: Feature_BuySellUiManifest;
+  buySellLoader: Feature_BuySellLoader;
   buySellShortcut: DefaultFeature;
   referralProgramDesktopSidebar: Feature_ReferralProgramDesktopSidebar;
   disableNftSend: Feature_DisableNftSend;
@@ -564,6 +565,10 @@ export type Feature_LlmRefreshMarketData = Feature<{
 
 export type Feature_BuySellUiManifest = Feature<{
   manifestId: string; // id of the app to use for the Buy/Sell UI, e.g. "buy-sell-ui"
+}>;
+
+export type Feature_BuySellLoader = Feature<{
+  durationMs: number;
 }>;
 
 export type Feature_LldWalletSync = Feature<{
