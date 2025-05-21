@@ -3,6 +3,7 @@ import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class PortfolioPage {
   baseLink = "portfolio";
+  baseAssetName = "assetItem-";
   zeroBalance = "$0.00";
   graphCardBalanceId = "graphCard-balance";
   graphCardChart = "graphCard-chart";
@@ -18,9 +19,11 @@ export default class PortfolioPage {
   quickActionSendButton = "portoflio-quick-action-button-send";
   quickActionReceiveButton = "portoflio-quick-action-button-receive";
   quickActionEarnButton = "portoflio-quick-action-button-earn";
+  showAllAssetsButton = "assets-button";
+  assetNameRegExp = new RegExp(`${this.baseAssetName}.*`);
 
   portfolioSettingsButton = async () => await getElementById(this.portfolioSettingsButtonId);
-  assetItemId = (currencyName: string) => `assetItem-${currencyName}`;
+  assetItemId = (currencyName: string) => `${this.baseAssetName}${currencyName}`;
 
   @Step("Navigate to Settings")
   async navigateToSettings() {
@@ -63,7 +66,7 @@ export default class PortfolioPage {
     await tapById(this.assetItemId(currencyName));
   }
 
-  @Step("Check quick action 'Buy' button visibility")
+  @Step("Check quick action buttons visibility")
   async checkQuickActionButtonsVisibility() {
     await expect(getElementById(this.quickActionBuyButton)).toBeVisible();
     await expect(getElementById(this.quickActionSwapButton)).toBeVisible();
@@ -75,5 +78,16 @@ export default class PortfolioPage {
   @Step("Check chart visibility")
   async checkChartVisibility() {
     await expect(getElementById(this.graphCardChart)).toBeVisible();
+  }
+
+  @Step("Check asset allocation section")
+  async checkAssetAllocationSection() {
+    await scrollToId(this.allocationSectionTitleId);
+    await expect(getElementById(this.allocationSectionTitleId)).toBeVisible();
+    jestExpect(await countElementsById(this.assetNameRegExp)).toBeLessThanOrEqual(5);
+    await expect(getElementById(this.showAllAssetsButton)).toBeVisible();
+    await tapById(this.showAllAssetsButton);
+    await app.assets.expectAssetsPage();
+    jestExpect(await countElementsById(this.assetNameRegExp)).toBeGreaterThan(5);
   }
 }
