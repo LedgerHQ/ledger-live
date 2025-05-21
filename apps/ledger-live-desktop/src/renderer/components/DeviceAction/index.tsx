@@ -7,10 +7,10 @@ import {
   EConnResetError,
   ImageDoesNotExistOnDevice,
   LanguageInstallRefusedOnDevice,
-  LatestFirmwareVersionRequired,
   NoSuchAppOnProvider,
   OutdatedApp,
 } from "@ledgerhq/live-common/errors";
+import { LatestFirmwareVersionRequired } from "@ledgerhq/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import {
   addNewDeviceModel,

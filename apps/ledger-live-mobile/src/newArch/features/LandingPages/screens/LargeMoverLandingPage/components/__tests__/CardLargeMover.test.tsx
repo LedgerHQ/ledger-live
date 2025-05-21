@@ -29,7 +29,13 @@ describe("Card", () => {
 
   it("displays the ticker, price, and variation", () => {
     const { getByText } = render(
-      <Card {...mockCurrencyData} range={KeysPriceChange.day} setRange={mockSetRange} />,
+      <Card
+        data={mockCurrencyData}
+        chartData={mockCurrencyData.chartData}
+        range={KeysPriceChange.day}
+        setRange={mockSetRange}
+        height={100}
+      />,
     );
     expect(getByText("ETH")).toBeTruthy();
     expect(getByText(/188,350/)).toBeTruthy();
@@ -38,7 +44,13 @@ describe("Card", () => {
 
   it("displays market values: 24h low/high, ATH, ATL, dates", () => {
     const { getByText } = render(
-      <Card {...mockCurrencyData} range={KeysPriceChange.day} setRange={mockSetRange} />,
+      <Card
+        data={mockCurrencyData}
+        chartData={mockCurrencyData.chartData}
+        range={KeysPriceChange.day}
+        setRange={mockSetRange}
+        height={100}
+      />,
     );
     expect(getByText(/188,350/)).toBeTruthy();
     expect(getByText(/191,200/)).toBeTruthy();
@@ -50,7 +62,13 @@ describe("Card", () => {
 
   it("triggers setRange when selecting another range via TabSelector", async () => {
     const { getByText, user } = render(
-      <Card {...mockCurrencyData} range={KeysPriceChange.day} setRange={mockSetRange} />,
+      <Card
+        data={mockCurrencyData}
+        chartData={mockCurrencyData.chartData}
+        range={KeysPriceChange.day}
+        setRange={mockSetRange}
+        height={100}
+      />,
     );
     const tab = getByText("1W");
     await user.press(tab);
