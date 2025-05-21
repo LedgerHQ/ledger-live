@@ -13,7 +13,7 @@ import { KaspaSigner } from "../types";
 
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import getTransactionStatus from "./getTransactionStatus";
-import { makeGetAccountShape } from "./synchronization";
+import { getAccountShape } from "./synchronization";
 import { prepareTransaction } from "./prepareTransaction";
 import { createTransaction } from "./createTransaction";
 import { updateTransaction } from "./updateTransaction";
@@ -28,7 +28,7 @@ export function buildCurrencyBridge(signerContext: SignerContext<KaspaSigner>): 
   const getAddress = resolver(signerContext);
 
   const scanAccounts = makeScanAccounts({
-    getAccountShape: makeGetAccountShape(),
+    getAccountShape,
     getAddressFn: getAddressWrapper(getAddress),
     buildIterateResult: kaspaIterateResultBuilder(getAddress),
   });
@@ -79,10 +79,7 @@ export function buildAccountBridge(
 ): AccountBridge<Transaction, KaspaAccount, TransactionStatus> {
   const getAddress = resolver(signerContext);
 
-  const sync = makeSync({
-    getAccountShape: makeGetAccountShape(),
-  });
-
+  const sync = makeSync({ getAccountShape });
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
   const signOperation = buildSignOperation(signerContext);
 

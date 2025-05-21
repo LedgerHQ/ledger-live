@@ -5,7 +5,7 @@ import { Operation } from "@ledgerhq/types-live";
 import { parseExtendedPublicKey, scanAddresses, scanOperations } from "../logic";
 import { getBlockDagInfo, getVirtualChainBlueScore } from "../network";
 
-export const makeGetAccountShape = (): GetAccountShape<KaspaAccount> => async info => {
+export const getAccountShape: GetAccountShape<KaspaAccount> = async info => {
   const { initialAccount, index, rest } = info;
 
   const xpub =
