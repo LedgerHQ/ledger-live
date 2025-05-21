@@ -6,8 +6,8 @@ import {
 import { accountRawToAccountUserData } from "@ledgerhq/live-wallet/lib/store";
 import { createDataModel } from "./DataModel";
 import { fromAccountRaw, toAccountRaw } from "./account";
-
 import { getCurrencyConfiguration } from "./config";
+
 jest.mock("./config", () => ({
   getCurrencyConfiguration: jest.fn(),
 }));
