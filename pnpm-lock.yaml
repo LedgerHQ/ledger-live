@@ -8026,8 +8026,8 @@ importers:
         specifier: 0.7.0
         version: 0.7.0(rxjs@7.8.1)
       '@ledgerhq/device-signer-kit-ethereum':
-        specifier: 1.4.0
-        version: 1.4.0(@ledgerhq/context-module@1.4.0(@ledgerhq/device-management-kit@0.7.0(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.7.0(rxjs@7.8.1))
+        specifier: 0.0.0-challenge-nano-s-20250515175634
+        version: 0.0.0-challenge-nano-s-20250515175634(@ledgerhq/context-module@1.4.0(@ledgerhq/device-management-kit@0.7.0(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.7.0(rxjs@7.8.1))
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -13453,8 +13453,8 @@ packages:
     peerDependencies:
       rxjs: ^7.8.2
 
-  '@ledgerhq/device-signer-kit-ethereum@1.4.0':
-    resolution: {integrity: sha512-WgEXm0rNB3wL7xRNcpeijAul8i4h4AtRrmLounbvitbWL94uG+QZReqCyRIv0vf6ZnJr7+OtD6/oD/Q0YAY4JA==}
+  '@ledgerhq/device-signer-kit-ethereum@0.0.0-challenge-nano-s-20250515175634':
+    resolution: {integrity: sha512-xIPHVT/saB74BvJOoRpBjiAILzyetVBJZ5C5F7YJ/h2TG7V4WuA4U6R4vtdAfyg7wmKPhvvr7WcR2FATy/r6Og==}
     peerDependencies:
       '@ledgerhq/context-module': ^1.4.0
       '@ledgerhq/device-management-kit': ^0.7.0
@@ -41124,7 +41124,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-ethereum@1.4.0(@ledgerhq/context-module@1.4.0(@ledgerhq/device-management-kit@0.7.0(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.7.0(rxjs@7.8.1))':
+  '@ledgerhq/device-signer-kit-ethereum@0.0.0-challenge-nano-s-20250515175634(@ledgerhq/context-module@1.4.0(@ledgerhq/device-management-kit@0.7.0(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.7.0(rxjs@7.8.1))':
     dependencies:
       '@ledgerhq/context-module': 1.4.0(@ledgerhq/device-management-kit@0.7.0(rxjs@7.8.1))
       '@ledgerhq/device-management-kit': 0.7.0(rxjs@7.8.1)

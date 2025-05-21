@@ -1,5 +1,73 @@
 # live-mobile
 
+## 3.79.0
+
+### Minor Changes
+
+- [#10170](https://github.com/LedgerHQ/ledger-live/pull/10170) [`b74ae92`](https://github.com/LedgerHQ/ledger-live/commit/b74ae927606c97b868e2d29de41be41752e9ba38) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Sticky header component
+
+- [#10164](https://github.com/LedgerHQ/ledger-live/pull/10164) [`3ad4efa`](https://github.com/LedgerHQ/ledger-live/commit/3ad4efa18b3fae44e5820fc4264965644572d87e) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - add spacing above recover banner to avoid overlapping other components
+
+- [#10168](https://github.com/LedgerHQ/ledger-live/pull/10168) [`1583a97`](https://github.com/LedgerHQ/ledger-live/commit/1583a976bac264fbdea91a3db750b6777415915b) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - move `getTokensWithFunds` from mobile to common, for use in LLD
+
+- [#10154](https://github.com/LedgerHQ/ledger-live/pull/10154) [`1e5c638`](https://github.com/LedgerHQ/ledger-live/commit/1e5c638dfea57d171cbd562f577eaee5b79fd66b) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add opt in result analytics for transaction checks
+
+- [#10189](https://github.com/LedgerHQ/ledger-live/pull/10189) [`c66b4ac`](https://github.com/LedgerHQ/ledger-live/commit/c66b4ac72c856666f56b0233a4ffa8a302bae860) Thanks [@Wozacosta](https://github.com/Wozacosta)! - feat: sync btc account when selecting it in swap flow
+
+- [#10145](https://github.com/LedgerHQ/ledger-live/pull/10145) [`94f21a7`](https://github.com/LedgerHQ/ledger-live/commit/94f21a7cc31d35f41ae22290b9eec4d600d3360e) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: added useLargeMover to fetch data
+
+- [#10175](https://github.com/LedgerHQ/ledger-live/pull/10175) [`4bc32c4`](https://github.com/LedgerHQ/ledger-live/commit/4bc32c46ee2c3869e97b164a07119c168d58711e) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Remove passing of discreetmode parameter to swap live app to prevent page refreh on LLD when the mode is toggled and for consistency on LLM
+
+### Patch Changes
+
+- Updated dependencies [[`5657584`](https://github.com/LedgerHQ/ledger-live/commit/565758426688c9604c7958183ec5b3d4e35ffbe4)]:
+  - @ledgerhq/coin-evm@2.22.0
+  - @ledgerhq/native-ui@0.34.1
+  - @ledgerhq/coin-framework@5.0.2
+  - @ledgerhq/coin-cosmos@0.14.2
+  - @ledgerhq/coin-filecoin@1.9.6
+  - @ledgerhq/coin-multiversx@0.4.6
+  - @ledgerhq/coin-stacks@0.8.6
+  - @ledgerhq/live-countervalues@0.5.6
+  - @ledgerhq/live-countervalues-react@0.2.35
+  - @ledgerhq/live-nft@0.8.6
+  - @ledgerhq/live-nft-react@0.9.6
+  - @ledgerhq/live-wallet@0.10.9
+
+## 3.79.0-next.0
+
+### Minor Changes
+
+- [#10170](https://github.com/LedgerHQ/ledger-live/pull/10170) [`b74ae92`](https://github.com/LedgerHQ/ledger-live/commit/b74ae927606c97b868e2d29de41be41752e9ba38) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Sticky header component
+
+- [#10164](https://github.com/LedgerHQ/ledger-live/pull/10164) [`3ad4efa`](https://github.com/LedgerHQ/ledger-live/commit/3ad4efa18b3fae44e5820fc4264965644572d87e) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - add spacing above recover banner to avoid overlapping other components
+
+- [#10168](https://github.com/LedgerHQ/ledger-live/pull/10168) [`1583a97`](https://github.com/LedgerHQ/ledger-live/commit/1583a976bac264fbdea91a3db750b6777415915b) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - move `getTokensWithFunds` from mobile to common, for use in LLD
+
+- [#10154](https://github.com/LedgerHQ/ledger-live/pull/10154) [`1e5c638`](https://github.com/LedgerHQ/ledger-live/commit/1e5c638dfea57d171cbd562f577eaee5b79fd66b) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add opt in result analytics for transaction checks
+
+- [#10189](https://github.com/LedgerHQ/ledger-live/pull/10189) [`c66b4ac`](https://github.com/LedgerHQ/ledger-live/commit/c66b4ac72c856666f56b0233a4ffa8a302bae860) Thanks [@Wozacosta](https://github.com/Wozacosta)! - feat: sync btc account when selecting it in swap flow
+
+- [#10145](https://github.com/LedgerHQ/ledger-live/pull/10145) [`94f21a7`](https://github.com/LedgerHQ/ledger-live/commit/94f21a7cc31d35f41ae22290b9eec4d600d3360e) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: added useLargeMover to fetch data
+
+- [#10175](https://github.com/LedgerHQ/ledger-live/pull/10175) [`4bc32c4`](https://github.com/LedgerHQ/ledger-live/commit/4bc32c46ee2c3869e97b164a07119c168d58711e) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Remove passing of discreetmode parameter to swap live app to prevent page refreh on LLD when the mode is toggled and for consistency on LLM
+
+### Patch Changes
+
+- Updated dependencies [[`5657584`](https://github.com/LedgerHQ/ledger-live/commit/565758426688c9604c7958183ec5b3d4e35ffbe4)]:
+  - @ledgerhq/coin-evm@2.22.0-next.0
+  - @ledgerhq/native-ui@0.34.1-next.0
+  - @ledgerhq/coin-framework@5.0.2-next.0
+  - @ledgerhq/coin-cosmos@0.14.2-next.0
+  - @ledgerhq/coin-filecoin@1.9.6-next.0
+  - @ledgerhq/coin-multiversx@0.4.6-next.0
+  - @ledgerhq/coin-stacks@0.8.6-next.0
+  - @ledgerhq/live-countervalues@0.5.6-next.0
+  - @ledgerhq/live-countervalues-react@0.2.35-next.0
+  - @ledgerhq/live-nft@0.8.6-next.0
+  - @ledgerhq/live-nft-react@0.9.6-next.0
+  - @ledgerhq/live-wallet@0.10.9-next.0
+
 ## 3.78.0
 
 ### Minor Changes
