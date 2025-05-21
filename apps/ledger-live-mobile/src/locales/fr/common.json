@@ -513,6 +513,10 @@
       "title" : "Solde insuffisant",
       "description" : "Vérifiez que ce compte a un solde suffisant."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "Solde insuffisant pour couvrir les frais",
+      "description" : "Vérifiez que ce compte a un solde suffisant."
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Votre solde disponible (non-staké) est de {{currentBalance}}. C’est insuffisant pour couvrir les frais de réseau afin de déstaker vos {{assetName}}. ",
       "oneCta" : "<cta1>{{cta1Label}}</cta1> des {{assetName}} pour approvisionner votre compte.",
@@ -3565,6 +3569,8 @@
         "contact_support" : "Contacter l’Assistance",
         "ton_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de TON",
         "ton_description" : "Pour échanger des TON, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "ton_tokens_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de tokens Ton",
+        "ton_tokens_description" : "Pour échanger des tokens Ton, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "spl_tokens_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de tokens Solana",
         "spl_tokens_description" : "Pour échanger des tokens Solana, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "near_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de NEAR",
@@ -6074,7 +6080,7 @@
       "started" : {
         "description" : "Vous pouvez gagner des récompenses en déléguant vos SOL à un validateur."
       },
-      "reserveWarning" : "Conservez au minimum {{amount}} SOL dans votre wallet pour couvrir les frais de réseau futurs afin de désactiver et retirer vos cryptos stakées"
+      "reserveWarning" : "Conservez au minimum {{amount}} SOL dans votre compte pour couvrir les frais de réseau futurs afin de désactiver et retirer vos cryptos stakées"
     },
     "token" : {
       "frozenStateWarning" : "Les actifs du compte sont gelés",
@@ -7419,6 +7425,14 @@
     },
     "performance" : "Performance",
     "low" : "Faible",
-    "high" : "Élevée"
+    "high" : "Élevée",
+    "title" : "Mouvements du marché"
+  },
+  "nftEntryPoint" : {
+    "title" : "Vos NFT",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
+    }
   }
 }
