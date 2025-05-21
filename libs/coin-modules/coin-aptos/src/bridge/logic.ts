@@ -26,6 +26,8 @@ import {
   FA_TRANSFER_TYPES,
   APTOS_OBJECT_CORE,
   MIN_COINS_ON_SHARES_POOL_IN_OCTAS,
+  DEFAULT_GAS,
+  DEFAULT_GAS_PRICE,
 } from "../constants";
 import type {
   AptosAccount,

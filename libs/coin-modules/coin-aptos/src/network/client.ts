@@ -1,5 +1,4 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
-
 import {
   AccountData,
   Aptos,
@@ -27,7 +26,7 @@ import BigNumber from "bignumber.js";
 import isUndefined from "lodash/isUndefined";
 import { APTOS_ASSET_ID, DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "../constants";
 import { isTestnet } from "../bridge/logic";
-import type { AptosTransaction, TransactionOptions } from "../types";
+import type { AptosTransaction, TransactionOptions, StakePoolResource } from "../types";
 import { GetAccountTransactionsData, GetAccountTransactionsDataGt } from "./graphql/queries";
 import {
   GetAccountTransactionsDataQuery,
@@ -48,7 +47,8 @@ const getIndexerEndpoint = (currencyId: string) =>
 export class AptosAPI {
   private readonly aptosConfig: AptosConfig;
   private readonly aptosClient: Aptos;
-  private readonly apolloClient: ApolloClient<object>;
+
+  readonly apolloClient: ApolloClient<object>;
 
   constructor(currencyIdOrSettings: AptosSettings | string) {
     if (typeof currencyIdOrSettings === "string") {

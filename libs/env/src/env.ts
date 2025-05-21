@@ -86,6 +86,7 @@ const envDefinitions = {
     parser: stringParser,
     def: "https://aptos.coin.ledger.com",
     desc: "proxy url for aptos API",
+  },
   APTOS_ENABLE_TOKENS: {
     def: false,
     parser: boolParser,

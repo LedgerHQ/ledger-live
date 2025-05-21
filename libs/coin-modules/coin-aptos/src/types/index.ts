@@ -46,11 +46,6 @@ export type AptosAddress = {
   path: string;
 };
 
-export interface TransactionOptions {
-  maxGasAmount: string;
-  gasUnitPrice: string;
-}
-
 export type TransactionErrors = {
   maxGasAmount?: string;
   gasUnitPrice?: string;
@@ -187,3 +182,12 @@ export type AptosPreloadData = {
   validatorsWithMeta: AptosValidatorWithMeta[];
   validators: AptosValidator[];
 };
+
+export interface TransactionOptions {
+  maxGasAmount: string;
+  gasUnitPrice: string;
+}
+
+export interface StakePoolResource {
+  locked_until_secs: string;
+}

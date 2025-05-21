@@ -1,8 +1,8 @@
 import * as blockies from "blockies-ts";
 import BigNumber from "bignumber.js";
-import { AptosAPI } from "../api";
-import { GetCurrentDelegatorBalancesData } from "../api/graphql/queries";
-import { CurrentDelegatorBalance, GetCurrentDelegatorBalancesQuery } from "../api/graphql/types";
+import { AptosAPI } from "../network";
+import { GetCurrentDelegatorBalancesData } from "./graphql/queries";
+import { CurrentDelegatorBalance, GetCurrentDelegatorBalancesQuery } from "./graphql/types";
 import { AptosValidator } from "../types";
 import { formatUnlockTime, isTestnet } from "../bridge/logic";
 import { APTOS_EXPLORER_ACCOUNT_URL } from "../constants";
