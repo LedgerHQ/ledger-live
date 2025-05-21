@@ -1,10 +1,11 @@
 import BigNumber from "bignumber.js";
-import type { CoreTransaction } from "../types";
+import type { SuiTransactionMode, CoreTransaction } from "../types";
 import suiAPI from "../network";
 
 export type CreateExtrinsicArg = {
-  mode: string;
+  mode: SuiTransactionMode;
   amount: BigNumber;
+  coinType: string;
   recipient: string;
   useAllAmount?: boolean | undefined;
 };
