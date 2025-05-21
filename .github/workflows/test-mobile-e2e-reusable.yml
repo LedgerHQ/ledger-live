@@ -29,19 +29,19 @@ on:
           If you want to run only on a branch or specific commit, you can use either the sha or the branch name instead (prefer the first verion for PRs).
         type: string
         required: false
-      login:
-        description: The GitHub username that triggered the workflow
-        type: string
-        required: false
       base_ref:
         description: The base branch to merge the head into when checking out the code
         type: string
         required: false
-      e2e_tests:
-        description: Run E2E tests
+      tests_type:
+        description: Tests type
         required: false
-        type: boolean
-        default: false
+        options:
+          - Mocked
+          - E2E - Android Only
+          - E2E - iOS & Android
+        default: Mocked
+        type: choice
       enable_broadcast:
         description: "Enable transaction broadcast"
         required: false
@@ -81,14 +81,14 @@ permissions:
 env:
   SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:master
   COINAPPS: ${{ github.workspace }}/coin-apps
-  E2E_RUN: ${{ inputs.e2e_tests || github.event_name == 'schedule' }}
+  E2E_RUN: ${{ inputs.tests_type != 'Mocked' || github.event_name == 'schedule' }}
   SHOULD_UPLOAD: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || (github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) }}
 
 jobs:
   detox-tests-ios:
     name: "iOS Detox"
     runs-on: ["${{ inputs.macos-specificity-runner-label || 'general-pool' }}", macOS, ARM64]
-    if: ${{ !cancelled() }}
+    if: ${{ !cancelled() && inputs.tests_type != 'E2E - Android Only' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=8192"
       LANG: en_US.UTF-8
@@ -105,10 +105,10 @@ jobs:
         shardIndex: [1, 2, 3]
         shardTotal: [3, 1]
         exclude:
-          - shardIndex: ${{ (github.event.inputs.e2e_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request') && '2' }}
-          - shardIndex: ${{ (github.event.inputs.e2e_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request') && '3' }}
-          - shardTotal: ${{ (github.event.inputs.e2e_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request') && '3' }}
-          - shardTotal: ${{ github.event.inputs.e2e_tests != 'false' && github.event_name != 'push' && github.event_name != 'pull_request' && '1' }}
+          - shardIndex: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request') && '2' }}
+          - shardIndex: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request') && '3' }}
+          - shardTotal: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request') && '3' }}
+          - shardTotal: ${{ github.event.inputs.tests_type != 'Mocked' && github.event_name != 'push' && github.event_name != 'pull_request' && '1' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -270,7 +270,7 @@ jobs:
   allure-report-ios:
     name: "iOS Detox > Allure Report"
     runs-on: [ledger-live-medium]
-    if: ${{ !cancelled() && needs.detox-tests-ios.outputs.artifact }}
+    if: ${{ !cancelled() && needs.detox-tests-ios.outputs.artifact && inputs.tests_type != 'E2E - Android Only' }}
     needs: [detox-tests-ios]
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
@@ -342,10 +342,10 @@ jobs:
         shardIndex: [1, 2, 3]
         shardTotal: [3, 1]
         exclude:
-          - shardIndex: ${{ (github.event.inputs.e2e_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'merge_group') && '2' }}
-          - shardIndex: ${{ (github.event.inputs.e2e_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'merge_group') && '3' }}
-          - shardTotal: ${{ (github.event.inputs.e2e_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'merge_group') && '3' }}
-          - shardTotal: ${{ github.event.inputs.e2e_tests != 'false' && github.event_name != 'push' && github.event_name != 'pull_request' && github.event_name != 'merge_group' && '1' }}
+          - shardIndex: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'merge_group') && '2' }}
+          - shardIndex: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'merge_group') && '3' }}
+          - shardTotal: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'merge_group') && '3' }}
+          - shardTotal: ${{ github.event.inputs.tests_type != 'Mocked' && github.event_name != 'push' && github.event_name != 'pull_request' && github.event_name != 'merge_group' && '1' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -615,6 +615,7 @@ jobs:
       IOS_REPORT_URL: ${{ needs.allure-report-ios.outputs.report-url }}
       ANDROID_STATUS: ${{ needs.allure-report-android.outputs.finalStatus }}
       ANDROID_REPORT_URL: ${{ needs.allure-report-android.outputs.report-url }}
+      ANDROID_ONLY: ${{ inputs.tests_type == 'E2E - Android Only' }}
     steps:
       - name: format message
         uses: actions/github-script@v7
@@ -674,7 +675,7 @@ jobs:
             ];
 
             const infoFields = []
-              .concat(iOSInfo)
+              .concat(${{ env.ANDROID_ONLY == 'true' }} ? [] : iOSInfo)
               .concat(androidInfo)
               .concat([
               {
@@ -695,7 +696,7 @@ jobs:
 
             const blocks = []
               .concat(header)
-              .concat(iOSResult)
+              .concat(${{ env.ANDROID_ONLY == 'true' }} ? [] : iOSResult)
               .concat(androidResult)
               .concat(infoBlock);
 
@@ -707,7 +708,7 @@ jobs:
               : {
                   attachments: [
                     {
-                      color: process.env.ANDROID_STATUS !== 'success' || process.env.IOS_STATUS !== 'success'
+                      color: process.env.ANDROID_STATUS !== 'success' || (process.env.IOS_STATUS !== 'success' && process.env.ANDROID_ONLY == 'false')
                         ? "#FF333C"
                         : "#33FF39",
                       blocks,
