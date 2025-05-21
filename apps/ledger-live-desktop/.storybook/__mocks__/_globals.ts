@@ -1,5 +1,24 @@
-import { apiProxy } from "./_utils";
+import { mapValues } from "lodash";
+import { setEnv } from "@ledgerhq/live-env";
 import * as electron from "./modules/electron";
+import { apiProxy } from "./_utils";
+import "~/renderer/i18n/init";
+
+Object.assign(
+  process.env,
+  mapValues(
+    {
+      MOCK: false,
+      DEBUG_THEME: false,
+      DEBUG_UPDATE: false,
+      DEBUG_SKELETONS: false,
+      DEBUG_FIRMWARE_UPDATE: false,
+      DISABLE_TRANSACTION_BROADCAST: false,
+    },
+    v => (v ? "true" : ""),
+  ),
+);
+process.env.MOCK && setEnv("MOCK", process.env.MOCK);
 
 defineGlobal({
   __DEV__: true,
@@ -8,13 +27,6 @@ defineGlobal({
   __SENTRY_URL__: null,
   __PRERELEASE__: false,
   __CHANNEL__: "null",
-
-  // Why ???
-  InAppMessage: class {
-    constructor() {
-      return apiProxy("InAppMessage");
-    }
-  },
 
   setImmediate: setTimeout,
 

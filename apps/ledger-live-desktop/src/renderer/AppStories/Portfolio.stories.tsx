@@ -1,12 +1,16 @@
 import Default from "../Default";
 import accounts from "./__mocks__/data/accounts";
 import { MockProviderDecorator } from "./__mocks__/providers/MockAppProviders";
+// import { MockDeviceProvider } from "~/storybook/MockDeviceProvider";
 
 export default {
   component: Default,
   title: "App/Portfolio",
   tags: ["!autodocs"],
-  decorators: [MockProviderDecorator],
+  decorators: [
+    MockProviderDecorator,
+    // MockDeviceProvider,
+  ],
   parameters: {
     state: {
       accounts,

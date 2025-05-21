@@ -38,6 +38,16 @@ const config: StorybookConfig = {
           buffer: "buffer", // Alias 'buffer' imports
 
           fs: resolve(".storybook/__mocks__/modules/fs.ts"),
+          "@ledgerhq/live-common/bridge/index": resolve(".storybook/__mocks__/modules/bridge.ts"),
+          "@ledgerhq/live-common/bridge/useBridgeTransaction": resolve(
+            ".storybook/__mocks__/modules/useBridgeTransaction.ts",
+          ),
+
+          // WIP mock device
+          // "@ledgerhq/live-common/hw/actions/transaction": resolve(
+          //   ".storybook/__mocks__/modules/hw.ts",
+          // ),
+          // "@ledgerhq/live-common/hw/connectApp": resolve(".storybook/__mocks__/modules/hw.ts"),
 
           electron: resolve(".storybook/__mocks__/modules/electron.ts"),
           "electron-store": resolve(".storybook/__mocks__/modules/electron-store.ts"),

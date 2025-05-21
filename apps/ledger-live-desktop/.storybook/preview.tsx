@@ -1,11 +1,9 @@
-import React from "react";
 import type { Preview } from "@storybook/react";
 import { initialize, mswLoader } from "msw-storybook-addon";
 import { appConfig } from "@ledgerhq/live-common/apps/config";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { palettes } from "@ledgerhq/react-ui/styles/index";
 import "./__mocks__/_globals";
-import { palettes } from "../../../libs/ui/packages/react/src/styles";
-import "../src/renderer/i18n/init";
 
 LiveConfig.setConfig(appConfig);
 
