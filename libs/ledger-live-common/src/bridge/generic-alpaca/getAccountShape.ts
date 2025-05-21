@@ -3,6 +3,7 @@ import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHel
 import BigNumber from "bignumber.js";
 import { getAlpacaApi } from "./alpaca";
 import { adaptCoreOperationToLiveOperation } from "./utils";
+import { Operation } from "@ledgerhq/coin-framework/lib/api/types";
 
 export function genericGetAccountShape(network, kind): GetAccountShape {
   return async info => {
@@ -53,6 +54,7 @@ export function genericGetAccountShape(network, kind): GetAccountShape {
       const operations = mergeOps(
         oldOperations,
         newOperations.map(op => adaptCoreOperationToLiveOperation(accountId, op)),
+        // newOperations.map(op => adaptCoreOperationToLiveOperation(accountId, op) as Operation<{ type: "native"; }, never>),
       );
       // console.log({ operations });
 

@@ -16,13 +16,12 @@ import {
   getNextValidSequence,
   lastBlock,
   listOperations,
-  MemoInput,
   getTransactionStatus,
   removeCachedRecipientIsNew,
 } from "../logic";
-import { ListOperationsOptions, XrpAsset } from "../types";
+import { ListOperationsOptions, XrpAsset, XrpMemoKind } from "../types";
 
-export function createApi(config: XrpConfig): Api<XrpAsset, TransactionIntentExtra, XrpSender> {
+export function createApi(config: XrpConfig): Api<XrpAsset, XrpMemoKind, string> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -38,34 +37,31 @@ export function createApi(config: XrpConfig): Api<XrpAsset, TransactionIntentExt
   };
 }
 
-export type TransactionIntentExtra = {
-  destinationTag?: number | null | undefined;
-  memos?: MemoInput[];
-};
-
-export type XrpSender = {
-  address: string;
-  publicKey?: string;
-};
-
 async function craft(
-  transactionIntent: TransactionIntent<XrpAsset, TransactionIntentExtra, XrpSender>,
+  transactionIntent: TransactionIntent<XrpAsset, XrpMemoKind, string>,
   customFees?: bigint,
 ): Promise<string> {
   console.log("IN CRAFT: ", transactionIntent);
-  const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender.address);
+
+  const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
   const estimatedFees = customFees !== undefined ? customFees : (await estimateFees()).fee;
+
+  // Extract specific memos from the array
+  const destinationTagMemo = transactionIntent.memos?.find(m => m.type === "destinationTag");
+  const memoEntries = transactionIntent.memos?.filter(m => m.type === "memo") ?? [];
+
   const tx = await craftTransaction(
-    { address: transactionIntent.sender.address, nextSequenceNumber },
+    { address: transactionIntent.sender, nextSequenceNumber },
     {
       recipient: transactionIntent.recipient,
       amount: transactionIntent.amount,
       fee: estimatedFees,
-      destinationTag: transactionIntent.destinationTag,
-      memos: transactionIntent.memos,
+      destinationTag: destinationTagMemo ? Number(destinationTagMemo.value) : undefined,
+      memos: memoEntries.map(m => ({ type: m.type, data: m.value })),
     },
-    transactionIntent.sender.publicKey,
+    transactionIntent.senderPublicKey,
   );
+
   return tx.serializedTransaction;
 }
 
