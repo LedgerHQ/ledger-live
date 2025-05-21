@@ -56,7 +56,7 @@ interface HederaMirrorTransaction {
   consensus_timestamp: string;
 }
 
-async function getAccountTransactions(
+export async function getAccountTransactions(
   address: string,
   since: string | null,
 ): Promise<HederaMirrorTransaction[]> {
