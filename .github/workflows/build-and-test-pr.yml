@@ -115,6 +115,15 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
     secrets: inherit
 
+  scan-sonar:
+    name: "Sonar Cloud"
+    needs:
+      - test-desktop
+      - test-mobile
+      - test-libraries
+    uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@develop
+    secrets: inherit
+
   # Final Check required
   ok:
     name: "OK"
