@@ -44,6 +44,7 @@ declare global {
   var waitForElementNotVisible: typeof NativeElementHelpers.waitForElementNotVisible;
   var getElementById: typeof NativeElementHelpers.getElementById;
   var getElementsById: typeof NativeElementHelpers.getElementsById;
+  var countElementsById: typeof NativeElementHelpers.countElementsById;
   var getElementByText: typeof NativeElementHelpers.getElementByText;
   var IsIdVisible: typeof NativeElementHelpers.isIdVisible;
   var tapById: typeof NativeElementHelpers.tapById;
