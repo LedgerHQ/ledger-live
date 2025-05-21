@@ -26,7 +26,6 @@ import getDeviceInfo from "./getDeviceInfo";
 import getAddress from "./getAddress";
 import openApp from "./openApp";
 import quitApp from "./quitApp";
-import { LatestFirmwareVersionRequired } from "../errors";
 import { hasDeviceConfigForApp, mustUpgrade } from "../apps";
 import isUpdateAvailable from "./isUpdateAvailable";
 import { LockedDeviceEvent } from "./actions/types";
