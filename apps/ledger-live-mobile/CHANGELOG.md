@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.79.1
+
+### Patch Changes
+
+- [#10301](https://github.com/LedgerHQ/ledger-live/pull/10301) [`d21e78f`](https://github.com/LedgerHQ/ledger-live/commit/d21e78f6745d6104033c7386fbb478d5ac342ee9) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Remove empty text inside validateMessageOnDevice
+
 ## 3.79.1-hotfix.0
 
 ### Patch Changes
