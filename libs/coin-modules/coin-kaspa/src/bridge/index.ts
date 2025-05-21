@@ -5,8 +5,8 @@ import {
   makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import { AccountBridge, CurrencyBridge, DerivationMode } from "@ledgerhq/types-live";
+import getAddressWrapper, { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 
 import type { KaspaAccount, Transaction, TransactionStatus } from "../types";
 import { KaspaSigner } from "../types";
@@ -21,13 +21,16 @@ import { broadcast } from "./broadcast";
 import { initAccount } from "./initAccount";
 import resolver from "../hw-getAddress";
 import { buildSignOperation } from "./signOperation";
+import { Result, runDerivationScheme } from "@ledgerhq/coin-framework/lib/derivation";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export function buildCurrencyBridge(signerContext: SignerContext<KaspaSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
 
   const scanAccounts = makeScanAccounts({
-    getAccountShape: makeGetAccountShape(signerContext),
+    getAccountShape: makeGetAccountShape(),
     getAddressFn: getAddressWrapper(getAddress),
+    buildIterateResult: kaspaIterateResultBuilder(getAddress),
   });
 
   return {
@@ -37,13 +40,47 @@ export function buildCurrencyBridge(signerContext: SignerContext<KaspaSigner>): 
   };
 }
 
+const kaspaIterateResultBuilder = (getAddressFn: GetAddressFn) => () =>
+  Promise.resolve(
+    async ({
+      index,
+      derivationsCache,
+      derivationScheme,
+      derivationMode,
+      currency,
+      deviceId,
+    }: {
+      index: number | string;
+      derivationsCache: Record<string, Result>;
+      derivationScheme: string;
+      derivationMode: DerivationMode;
+      currency: CryptoCurrency;
+      deviceId: string;
+    }): Promise<Result | null> => {
+      const accountPath = derivationScheme.split("/").slice(0, 3).join("/");
+      const freshAddressPath = runDerivationScheme(accountPath, currency, {
+        account: index,
+      });
+      let res = derivationsCache[freshAddressPath];
+      if (!res) {
+        res = await getAddressWrapper(getAddressFn)(deviceId, {
+          currency,
+          path: freshAddressPath,
+          derivationMode,
+        });
+        derivationsCache[freshAddressPath] = res;
+      }
+      return res as Result;
+    },
+  );
+
 export function buildAccountBridge(
   signerContext: SignerContext<KaspaSigner>,
 ): AccountBridge<Transaction, KaspaAccount, TransactionStatus> {
   const getAddress = resolver(signerContext);
 
   const sync = makeSync({
-    getAccountShape: makeGetAccountShape(signerContext),
+    getAccountShape: makeGetAccountShape(),
   });
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
