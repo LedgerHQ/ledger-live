@@ -11,6 +11,7 @@ import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
 import { BehaviorSubject, firstValueFrom, pairwise, startWith, Subscription } from "rxjs";
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
 import { LocalTracer } from "@ledgerhq/logs";
+import { first } from "rxjs/operators";
 
 const isDeviceSessionNotFoundError = (error: unknown): error is { _tag: "DeviceSessionNotFound" } =>
   typeof error === "object" &&
@@ -49,8 +50,16 @@ export class DeviceManagementKitHIDTransport extends Transport {
     const dmk = getDeviceManagementKit();
 
     if (!activeDeviceSession) {
+      const availableDevices = await firstValueFrom(
+        dmk
+          .listenToAvailableDevices({ transport: rnHidTransportIdentifier })
+          .pipe(first(devices => devices.length > 0)),
+      );
       const sessionId = await dmk.connect({
-        device: { id: deviceId, transport: rnHidTransportIdentifier } as DiscoveredDevice,
+        device: {
+          id: availableDevices[0].id,
+          transport: rnHidTransportIdentifier,
+        } as DiscoveredDevice,
         sessionRefresherOptions: { isRefresherDisabled: true },
       });
       const transport = new DeviceManagementKitHIDTransport(dmk, sessionId);
