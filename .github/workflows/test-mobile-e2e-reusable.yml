@@ -245,137 +245,137 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
-#  detox-tests-ios:
-#    name: "iOS Detox"
-#    needs: [build-ios-native, build-ios-js]
-#    runs-on: ["${{ inputs.macos-specificity-runner-label || 'general-pool' }}", macOS, ARM64]
-#    if: ${{ !inputs.speculos_tests && github.event_name != 'schedule' }}
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        shardIndex: [1, 2]
-#        shardTotal: [2]
-#    env:
-#      NODE_OPTIONS: "--max-old-space-size=7168"
-#      LANG: en_US.UTF-8
-#      LANGUAGE: en_US.UTF-8
-#      LC_ALL: en_US.UTF-8
-#      SEED: ${{ vars.SEED_QAA_B2C }}
-#      INPUT_SPECULOS: ${{ inputs.speculos_tests || github.event_name == 'schedule' }}
-#      INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
-#    outputs:
-#      status: ${{ steps.detox.outcome }}
-#      artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
-#    steps:
-#
-#      - uses: actions/checkout@v4
-#        with:
-#          ref: ${{ inputs.ref || github.sha }}
-#          repository: LedgerHQ/ledger-live
-#
-#      - name: setup caches
-#        id: setup-caches
-#        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
-#        with:
-#          skip-pod-cache: "true"
-#          skip-turbo-cache: "false"
-#          skip-pnpm-cache: "false"
-#          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-#          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-#          region: ${{ secrets.AWS_CACHE_REGION }}
-#          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-#      - name: Configure AWS credentials
-#        uses: aws-actions/configure-aws-credentials@v4
-#        id: aws
-#        with:
-#          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
-#          aws-region: ${{ secrets.AWS_CACHE_REGION }}
-#
-#      - uses: nick-fields/retry@v3
-#        name: install dependencies
-#        id: install-dependencies
-#        with:
-#          max_attempts: 2
-#          timeout_minutes: 15
-#          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
-#          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
-#
-#      - name: Detox Post Install
-#        run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
-#
-#      - name: Download Native Build
+  detox-tests-ios:
+    name: "iOS Detox"
+    needs: [build-ios-native, build-ios-js]
+    runs-on: ["${{ inputs.macos-specificity-runner-label || 'general-pool' }}", macOS, ARM64]
+    if: ${{ !inputs.speculos_tests && github.event_name != 'schedule' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2]
+        shardTotal: [2]
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      LANG: en_US.UTF-8
+      LANGUAGE: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
+      SEED: ${{ vars.SEED_QAA_B2C }}
+      INPUT_SPECULOS: ${{ inputs.speculos_tests || github.event_name == 'schedule' }}
+      INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
+    outputs:
+      status: ${{ steps.detox.outcome }}
+      artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
+    steps:
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          repository: LedgerHQ/ledger-live
+
+      - name: setup caches
+        id: setup-caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          skip-pod-cache: "true"
+          skip-turbo-cache: "false"
+          skip-pnpm-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        id: aws
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
+          aws-region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - uses: nick-fields/retry@v3
+        name: install dependencies
+        id: install-dependencies
+        with:
+          max_attempts: 2
+          timeout_minutes: 15
+          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
+          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+
+      - name: Detox Post Install
+        run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
+
+      - name: Download Native Build
+        uses: tespkg/actions-cache/restore@v1
+        with:
+          path: ${{ github.workspace }}${{ env.IOS_NATIVE_PATH }}
+          key: ${{ runner.os }}-poc-detox-native-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js', 'apps/ledger-live-mobile/.env.mock', 'apps/ledger-live-mobile/ios/ledgerlivemobile/AppDelegate.mm') }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ll-gha-s3-cache
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+
+#      - name: Download JS Build
 #        uses: tespkg/actions-cache/restore@v1
 #        with:
-#          path: ${{ github.workspace }}${{ env.IOS_NATIVE_PATH }}
-#          key: ${{ runner.os }}-poc-detox-native-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js', 'apps/ledger-live-mobile/.env.mock', 'apps/ledger-live-mobile/ios/ledgerlivemobile/AppDelegate.mm') }}
+#          path: ${{ github.workspace }}${{ env.IOS_JSBUNDLE_PATH }}
+#          key: poc-detox-js-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js', 'apps/ledger-live-mobile/.env.mock', 'apps/ledger-live-mobile/ios/ledgerlivemobile/AppDelegate.mm') }}
 #          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
 #          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
 #          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
 #          bucket: ll-gha-s3-cache
 #          region: ${{ secrets.AWS_CACHE_REGION }}
 #          use-fallback: false
-#
-##      - name: Download JS Build
-##        uses: tespkg/actions-cache/restore@v1
-##        with:
-##          path: ${{ github.workspace }}${{ env.IOS_JSBUNDLE_PATH }}
-##          key: poc-detox-js-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js', 'apps/ledger-live-mobile/.env.mock', 'apps/ledger-live-mobile/ios/ledgerlivemobile/AppDelegate.mm') }}
-##          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-##          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-##          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-##          bucket: ll-gha-s3-cache
-##          region: ${{ secrets.AWS_CACHE_REGION }}
-##          use-fallback: false
-#
-#      - name: Build dependencies
-#        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
-#        with:
-#          command: pnpm build:llm:deps
-#          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-#          turbo_port: ${{ steps.setup-caches.outputs.port }}
-#          disable_cache: ${{ inputs.disable-turbo-cache || false }}
-#
-#      - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
-#        run: |
-#          pnpm build:dummy-apps
-#        shell: bash
-#
-#      - name: Create iOS simulator
-#        id: simulator
-#        run: xcrun simctl create "iOS Simulator" "iPhone 15"
-#
-#      - name: Setup Speculos image and Coin Apps
-#        if: ${{ env.SPECULOS_RUN == 'true' }}
-#        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
-#        with:
-#          coinapps_path: ${{ env.COINAPPS }}
-#          speculos_tag: ${{ env.SPECULOS_IMAGE_TAG }}
-#          bot_id: ${{ secrets.GH_BOT_APP_ID }}
-#          bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-#
-#      - name: Test iOS app
-#        id: detox
-#        timeout-minutes: 75
-#        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
-#        with:
-#          command: pnpm mobile e2e:ci -- -p ios -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos') ${INPUTS_TEST_FILTER:+--filter} "${{ inputs.test_filter }}" --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-#          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-#          turbo_port: ${{ steps.setup-caches.outputs.port }}
-#          disable_cache: ${{ inputs.disable-turbo-cache || false }}
-#
-#      - name: Delete iOS simulator
-#        if: ${{ always() }}
-#        run: |
-#          xcrun simctl list devices | grep 'iOS Simulator' | awk -F '[()]' '{print $2}' | xargs -I {} sh -c 'echo "Deleting simulator: {}"; xcrun simctl delete {} || echo "Failed to delete: {}"'
 
-#      - name: Upload test artifacts
-#        uses: actions/upload-artifact@v4
-#        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
-#        id: "test-artifacts"
-#        with:
-#          name: "ios-test-artifacts"
-#          path: apps/ledger-live-mobile/artifacts
-#      - run: echo "${{ steps.test-artifacts.outputs.artifact-id }}"
+      - name: Build dependencies
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        with:
+          command: pnpm build:llm:deps
+          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          turbo_port: ${{ steps.setup-caches.outputs.port }}
+          disable_cache: ${{ inputs.disable-turbo-cache || false }}
+
+      - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
+        run: |
+          pnpm build:dummy-apps
+        shell: bash
+
+      - name: Create iOS simulator
+        id: simulator
+        run: xcrun simctl create "iOS Simulator" "iPhone 15"
+
+      - name: Setup Speculos image and Coin Apps
+        if: ${{ env.SPECULOS_RUN == 'true' }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
+        with:
+          coinapps_path: ${{ env.COINAPPS }}
+          speculos_tag: ${{ env.SPECULOS_IMAGE_TAG }}
+          bot_id: ${{ secrets.GH_BOT_APP_ID }}
+          bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
+      - name: Test iOS app
+        id: detox
+        timeout-minutes: 75
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        with:
+          command: pnpm mobile e2e:ci -- -p ios -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos') ${INPUTS_TEST_FILTER:+--filter} "${{ inputs.test_filter }}" --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          turbo_port: ${{ steps.setup-caches.outputs.port }}
+          disable_cache: ${{ inputs.disable-turbo-cache || false }}
+
+      - name: Delete iOS simulator
+        if: ${{ always() }}
+        run: |
+          xcrun simctl list devices | grep 'iOS Simulator' | awk -F '[()]' '{print $2}' | xargs -I {} sh -c 'echo "Deleting simulator: {}"; xcrun simctl delete {} || echo "Failed to delete: {}"'
+
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
+        id: "test-artifacts"
+        with:
+          name: "ios-test-artifacts"
+          path: apps/ledger-live-mobile/artifacts
+      - run: echo "${{ steps.test-artifacts.outputs.artifact-id }}"
 #
 #  allure-report-ios:
 #    name: "iOS Detox > Allure Report"
