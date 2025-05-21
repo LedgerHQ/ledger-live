@@ -6,6 +6,7 @@
       }
     },
     "settings": {
+      "readOnlyModeEnabled": false,
       "hasCompletedOnboarding": true,
       "counterValue": "USD",
       "language": "en",
