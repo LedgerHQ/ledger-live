@@ -22,7 +22,7 @@ import { updateAccount } from "~/actions/accounts";
 import { useTheme } from "styled-components/native";
 import { getFontStyle } from "~/components/LText";
 
-export const MAX_ACCOUNT_NAME_LENGHT = 50;
+export const MAX_ACCOUNT_NAME_LENGTH = 50;
 
 type NavigationProps =
   | StackNavigatorProps<AddAccountsNavigatorParamList, ScreenName.EditAccountName>
@@ -73,7 +73,7 @@ const EditAccountName = ({ navigation, route }: NavigationProps) => {
           value={accountName}
           defaultValue={accountName}
           returnKeyType="done"
-          maxLength={MAX_ACCOUNT_NAME_LENGHT}
+          maxLength={MAX_ACCOUNT_NAME_LENGTH}
           onChangeText={onChangeText}
           onSubmitEditing={onNameEndEditing}
           clearButtonMode="while-editing"

@@ -3319,7 +3319,7 @@
         "utxoWarning": "For privacy reasons, a new address is generated for every transaction. The previous ones do remain valid.",
         "title": "Receive {{currencyTicker}}",
         "onCurrencyName": "On {{currencyName}}",
-        "copyAdress": "Copy address",
+        "copyAddress": "Copy address",
         "addressCopied": "Address copied!",
         "addressVerified": "Address verified",
         "verifyAddress": "Verify your address",

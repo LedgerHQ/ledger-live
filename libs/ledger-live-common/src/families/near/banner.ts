@@ -44,11 +44,11 @@ export function getAccountBannerState(account: NearAccount): AccountBannerState 
   // Find user current worst validator (default validator is ledger)
   let worstValidator = ledgerValidator;
   for (const delegation of delegations) {
-    const validatorAdress = delegation?.validatorId;
-    const validator = validators.find(validator => validator.validatorAddress === validatorAdress);
+    const validatorAddress = delegation?.validatorId;
+    const validator = validators.find(validator => validator.validatorAddress === validatorAddress);
     const isValidRedelegation =
       validator &&
-      validatorAdress !== ledgerValidator.validatorAddress &&
+      validatorAddress !== ledgerValidator.validatorAddress &&
       validator.commission &&
       worstValidator.commission &&
       worstValidator?.commission <= validator?.commission &&

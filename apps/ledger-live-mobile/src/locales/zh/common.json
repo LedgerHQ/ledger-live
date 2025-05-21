@@ -3315,7 +3315,7 @@
         "utxoWarning" : "出于隐私原因，每笔交易都会生成一个新地址。以前的地址仍然有效。",
         "title" : "接收 {{currencyTicker}}",
         "onCurrencyName" : "在 {{currencyName}} 上",
-        "copyAdress" : "复制地址",
+        "copyAddress" : "复制地址",
         "addressCopied" : "地址已复制！",
         "addressVerified" : "地址已核实",
         "verifyAddress" : "核实您的地址",

@@ -3268,7 +3268,7 @@
         "utxoWarning" : "เพื่อเหตุผลด้านความเป็นส่วนตัว จะมีการสร้าง Address ใหม่สำหรับทุกธุรกรรม โดยยังคงสามารถใช้ Address ก่อนหน้านี้ได้",
         "title" : "รับ {{currencyTicker}}",
         "onCurrencyName" : "บน {{currencyName}}",
-        "copyAdress" : "คัดลอก Address",
+        "copyAddress" : "คัดลอก Address",
         "addressCopied" : "คัดลอก Address แล้ว!",
         "addressVerified" : "ตรวจสอบ Address แล้ว",
         "verifyAddress" : "ตรวจสอบ Address ของคุณ",

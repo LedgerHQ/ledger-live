@@ -137,7 +137,7 @@ export function recalculateAccountBalanceHistories<A extends Account = Account>(
 ): A {
   // recalculate balance history cache
   if (prev.balanceHistoryCache === res.balanceHistoryCache) {
-    // we only regenerate if it was not overriden by the implemenetation.
+    // we only regenerate if it was not overridden by the implemenetation.
     res = { ...res, balanceHistoryCache: generateHistoryFromOperations(res) };
   }
 
@@ -150,7 +150,7 @@ export function recalculateAccountBalanceHistories<A extends Account = Account>(
       const old = prevSubAccounts.find(a => a.id === subAccount.id);
 
       if (!old || old.balanceHistoryCache === subAccount.balanceHistoryCache) {
-        // we only regenerate if it was not overriden by the implemenetation.
+        // we only regenerate if it was not overridden by the implemenetation.
         subAccount = {
           ...subAccount,
           balanceHistoryCache: generateHistoryFromOperations(subAccount),

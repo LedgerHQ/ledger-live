@@ -3315,7 +3315,7 @@
         "utxoWarning" : "Gizlilik nedeniyle her işlem için yeni bir adres oluşturulur. Önceki adresler geçerli olmaya devam eder.",
         "title" : "{{currencyTicker}} al",
         "onCurrencyName" : "{{currencyName}} üzerinden",
-        "copyAdress" : "Adresi kopyala",
+        "copyAddress" : "Adresi kopyala",
         "addressCopied" : "Adres kopyalandı!",
         "addressVerified" : "Adres doğrulandı",
         "verifyAddress" : "Adresinizi doğrulayın",

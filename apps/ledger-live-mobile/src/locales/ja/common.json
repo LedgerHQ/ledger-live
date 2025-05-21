@@ -3315,7 +3315,7 @@
         "utxoWarning" : "プライバシー上の理由から、トランザクションごとに新しいアドレスが生成されます。以前のものは引き続き有効です。",
         "title" : "{{currencyTicker}}を受け取る",
         "onCurrencyName" : "（{{currencyName}}で）",
-        "copyAdress" : "アドレスをコピー",
+        "copyAddress" : "アドレスをコピー",
         "addressCopied" : "アドレスをコピーしました！",
         "addressVerified" : "認証済みアドレス",
         "verifyAddress" : "アドレスを認証する",

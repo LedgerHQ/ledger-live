@@ -20,8 +20,8 @@ export const FirebaseFeatureFlagsProvider = ({ children, getFeature }: Props): J
       const actualRemoteValue = getFeature({ key, allowOverride: false });
       if (!isEqual(actualRemoteValue, value)) {
         const { overriddenByEnv, ...pureValue } = value; // eslint-disable-line
-        const overridenValue = { ...pureValue, overridesRemote: true };
-        dispatch(setOverriddenFeatureFlag({ key, value: overridenValue }));
+        const overriddenValue = { ...pureValue, overridesRemote: true };
+        dispatch(setOverriddenFeatureFlag({ key, value: overriddenValue }));
       } else {
         dispatch(setOverriddenFeatureFlag({ key, value: undefined }));
       }

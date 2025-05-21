@@ -30,7 +30,7 @@ export type Feature<T = unknown> = {
   mobile_version?: string;
 
   /**
-   *  Whether the remote value of `enabled` was overriden due to `desktop_version` or `mobile_version`
+   *  Whether the remote value of `enabled` was overridden due to `desktop_version` or `mobile_version`
    */
   enabledOverriddenForCurrentVersion?: boolean;
 
@@ -46,17 +46,17 @@ export type Feature<T = unknown> = {
   languages_blacklisted?: string[];
 
   /**
-   * Whether the remote value of `enabled` was overriden due to `languages_whitelisted` or `languages_blacklisted`
+   * Whether the remote value of `enabled` was overridden due to `languages_whitelisted` or `languages_blacklisted`
    */
   enabledOverriddenForCurrentLanguage?: boolean;
 
   /**
-   * Whether the remote value of this object was overriden locally
+   * Whether the remote value of this object was overridden locally
    */
   overridesRemote?: boolean;
 
   /**
-   *  Whether the remote value of this object was overriden by an environment variable
+   *  Whether the remote value of this object was overridden by an environment variable
    */
   overriddenByEnv?: boolean;
 

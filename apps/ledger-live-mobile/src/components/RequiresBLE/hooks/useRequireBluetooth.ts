@@ -37,7 +37,7 @@ export type UseRequireBluetoothOutput = {
  * then location (if necessary) permissions and services enabled
  *
  * @param requiredFor The usage of bluetooth. Can be "scanning" or "connecting".
- * @param isHookEnabled Whether the the processes to check and request for bluetooth requirements should be enabled or not.
+ * @param isHookEnabled Whether the processes to check and request for bluetooth requirements should be enabled or not.
  *   Useful to disable the hook when the user does not need bluetooth yet.
  * @returns an object containing:
  * - bluetoothRequirementsState: the state of the bluetooth requirements.
@@ -184,7 +184,7 @@ const DEFAULT_DEBOUNCE_MS = 500;
  * then location (if necessary) permissions and services enabled
  *
  * @param requiredFor The usage of bluetooth. Can be "scanning" or "connecting".
- * @param isHookEnabled Whether the the processes to check and request for bluetooth requirements should be enabled or not.
+ * @param isHookEnabled Whether the processes to check and request for bluetooth requirements should be enabled or not.
  *   Useful to disable the hook when the user does not need bluetooth yet.
  * @param debounceTimeMs The debounce time in ms, default to DEFAULT_DEBOUNCE_MS
  * @returns an object containing:

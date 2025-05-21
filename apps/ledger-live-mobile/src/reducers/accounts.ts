@@ -460,7 +460,7 @@ export const nftsSelector = createSelector(accountsSelector, accounts =>
 );
 
 /**
- * Returns the list of all the NFTs from non hidden collections accross all
+ * Returns the list of all the NFTs from non hidden collections across all
  * accounts, ordered by last received.
  *
  * /!\ Use this with a deep equal comparison if possible as it will always

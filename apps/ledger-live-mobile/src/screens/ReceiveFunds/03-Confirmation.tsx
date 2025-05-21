@@ -389,7 +389,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
                 <>
                   <IconsLegacy.CopyMedium size={20} />
                   <Text variant={"body"} fontWeight={"medium"} pl={3}>
-                    {t("transfer.receive.receiveConfirmation.copyAdress")}
+                    {t("transfer.receive.receiveConfirmation.copyAddress")}
                   </Text>
                 </>
               )}

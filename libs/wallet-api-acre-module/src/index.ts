@@ -24,7 +24,7 @@ export class AcreModule extends CustomModule {
    * @param options - Extra parameters
    *
    * @returns Message signed
-   * @throws {@link RpcError} if an error occured on server side
+   * @throws {@link RpcError} if an error occurred on server side
    */
   async messageSign(
     accountId: string,
@@ -54,7 +54,7 @@ export class AcreModule extends CustomModule {
    * @param options - Extra parameters
    *
    * @returns The raw signed transaction
-   * @throws {@link RpcError} if an error occured on server side
+   * @throws {@link RpcError} if an error occurred on server side
    */
   async transactionSign(
     accountId: string,
@@ -82,7 +82,7 @@ export class AcreModule extends CustomModule {
    * @param options - Extra parameters
    *
    * @returns The transaction hash
-   * @throws {@link RpcError} if an error occured on server side
+   * @throws {@link RpcError} if an error occurred on server side
    */
   async transactionSignAndBroadcast(
     accountId: string,

@@ -211,7 +211,7 @@ It is possible to run Ledger Live Mobile on an emulator and connect to a Nano th
   - OR
   - First, build & run Ledger Live Mobile `pnpm mobile ios` or `pnpm mobile android`
   - Then, go to the settings tab, then _debug_ > _connectivity_ > _http transport_ and paste the IP (ex: 192.168.1.14)
-- When prompted to choose a Nano device in Ledger Live Mobile, you will see your Nano available with the adress from above, just select it and it should work normally.
+- When prompted to choose a Nano device in Ledger Live Mobile, you will see your Nano available with the address from above, just select it and it should work normally.
 
 ### Extra Docs 📄
 

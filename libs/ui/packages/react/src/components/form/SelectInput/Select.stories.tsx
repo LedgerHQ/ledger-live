@@ -460,7 +460,7 @@ export const CustomOptions: StoryTemplate<Props<SelectItem>> = args => {
 CustomOptions.parameters = {
   docs: {
     description: {
-      story: "Here the `Option` component is overriden to display side labels (#Left and #Right).",
+      story: "Here the `Option` component is overridden to display side labels (#Left and #Right).",
     },
   },
 };

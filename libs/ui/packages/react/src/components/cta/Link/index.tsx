@@ -13,7 +13,7 @@ export type LinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> &
      */
     Icon?: React.ComponentType<{ size: number; color?: string }>;
     /**
-     * Affects the colors of the text, icon & underline, can be overriden by the `color` prop
+     * Affects the colors of the text, icon & underline, can be overridden by the `color` prop
      */
     type?: "main" | "shade" | "color";
     /**

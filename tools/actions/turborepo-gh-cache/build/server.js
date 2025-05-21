@@ -67342,7 +67342,7 @@ var init_Clients = __esm({
        * ONLY AVAILABLE IN NODE.JS RUNTIME.
        *
        * Downloads an Azure Blob to a local file.
-       * Fails if the the given file path already exits.
+       * Fails if the given file path already exits.
        * Offset and count are optional, pass 0 and undefined respectively to download the entire blob.
        *
        * @param filePath -
@@ -68560,7 +68560,7 @@ var init_Clients = __esm({
        * getPageRangesSegment returns a single segment of page ranges starting from the
        * specified Marker. Use an empty Marker to start enumeration from the beginning.
        * After getting a segment, process it, and then call getPageRangesSegment again
-       * (passing the the previously-returned Marker) to get the next segment.
+       * (passing the previously-returned Marker) to get the next segment.
        * @see https://docs.microsoft.com/rest/api/storageservices/get-page-ranges
        *
        * @param offset - Starting byte position of the page ranges.
@@ -68764,7 +68764,7 @@ var init_Clients = __esm({
        * specified Marker for difference between previous snapshot and the target page blob.
        * Use an empty Marker to start enumeration from the beginning.
        * After getting a segment, process it, and then call getPageRangesDiffSegment again
-       * (passing the the previously-returned Marker) to get the next segment.
+       * (passing the previously-returned Marker) to get the next segment.
        * @see https://docs.microsoft.com/rest/api/storageservices/get-page-ranges
        *
        * @param offset - Starting byte position of the page ranges.
@@ -70128,7 +70128,7 @@ var init_ContainerClient = __esm({
        * listBlobFlatSegment returns a single segment of blobs starting from the
        * specified Marker. Use an empty Marker to start enumeration from the beginning.
        * After getting a segment, process it, and then call listBlobsFlatSegment again
-       * (passing the the previously-returned Marker) to get the next segment.
+       * (passing the previously-returned Marker) to get the next segment.
        * @see https://docs.microsoft.com/rest/api/storageservices/list-blobs
        *
        * @param marker - A string value that identifies the portion of the list to be returned with the next list operation.
@@ -70157,7 +70157,7 @@ var init_ContainerClient = __esm({
        * listBlobHierarchySegment returns a single segment of blobs starting from
        * the specified Marker. Use an empty Marker to start enumeration from the
        * beginning. After getting a segment, process it, and then call listBlobsHierarchicalSegment
-       * again (passing the the previously-returned Marker) to get the next segment.
+       * again (passing the previously-returned Marker) to get the next segment.
        * @see https://docs.microsoft.com/rest/api/storageservices/list-blobs
        *
        * @param delimiter - The character or string used to define the virtual hierarchy

@@ -3315,7 +3315,7 @@
         "utxoWarning" : "개인정보 보호를 위해 모든 거래에 대해 새로운 주소가 생성됩니다. 이전 주소는 여전히 유효합니다.",
         "title" : "{{currencyTicker}} 수령",
         "onCurrencyName" : "{{currencyName}}에서",
-        "copyAdress" : "주소 복사",
+        "copyAddress" : "주소 복사",
         "addressCopied" : "주소 복사됨!",
         "addressVerified" : "주소 인증",
         "verifyAddress" : "주소를 인증하세요",

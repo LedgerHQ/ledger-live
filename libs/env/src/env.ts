@@ -250,7 +250,7 @@ const envDefinitions = {
   BOT_SPEC_DEFAULT_TIMEOUT: {
     def: 30 * 60 * 1000,
     parser: intParser,
-    desc: "define the default value of spec.skipMutationsTimeout (if not overriden by spec)",
+    desc: "define the default value of spec.skipMutationsTimeout (if not overridden by spec)",
   },
   BUY_API_BASE: {
     def: "https://buy.api.live.ledger.com/buy/v1",

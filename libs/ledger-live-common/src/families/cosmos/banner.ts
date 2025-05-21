@@ -45,8 +45,8 @@ export function getAccountBannerState(account: CosmosAccount): AccountBannerStat
   // Find user current worst validator (default validator is ledger)
   let worstValidator = ledgerValidator;
   for (let i = 0; i < validatorAdresses.length; i++) {
-    const validatorAdress = validatorAdresses[i];
-    const validator = validators.find(validator => validator.validatorAddress === validatorAdress);
+    const validatorAddress = validatorAdresses[i];
+    const validator = validators.find(validator => validator.validatorAddress === validatorAddress);
     if (
       validator &&
       worstValidator.commission < validator.commission &&

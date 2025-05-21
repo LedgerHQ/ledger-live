@@ -204,7 +204,7 @@ export const DeviceActionError = ({
 
     // this function returns the translated strings for the error's description and title
     // it gives priority to the translations that exists in the context that is passed as props
-    // if there is no specific translation for the context it uses the the generic error translations
+    // if there is no specific translation for the context it uses the generic error translations
     // it also considers that there might not be a translated description for the error, in which case
     // it returns "null" for the description
     return {

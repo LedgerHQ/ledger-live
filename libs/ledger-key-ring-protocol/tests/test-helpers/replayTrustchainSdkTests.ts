@@ -20,7 +20,7 @@ export async function replayTrustchainSdkTests<Json extends JsonShape>(
       const id = "http(" + httpTransactionIndex + "): ";
       const expected = json.http.transactions[httpTransactionIndex++];
       if (!expected) {
-        throw new Error("unexpected HTTP request has occured: " + request.url.toString());
+        throw new Error("unexpected HTTP request has occurred: " + request.url.toString());
       }
       expect(id + request.method + " " + request.url.toString()).toEqual(
         id + expected.request.method + " " + expected.request.url,

@@ -37,7 +37,7 @@ describe("usePostOnboardingEntryPointVisibleOnWallet", () => {
     expect(result.current).toBe(false);
   });
 
-  it("should be false if the the entry point HAS been dismissed", () => {
+  it("should be false if the entry point HAS been dismissed", () => {
     mockedDismissedSelector.mockReturnValue(true);
     mockedDeviceModelIdSelector.mockReturnValue(DeviceModelId.nanoX);
 

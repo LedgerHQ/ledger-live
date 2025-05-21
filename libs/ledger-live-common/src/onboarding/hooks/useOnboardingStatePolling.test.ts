@@ -256,7 +256,7 @@ describe("useOnboardingStatePolling", () => {
         jest.advanceTimersByTime(pollingPeriodMs + 1);
       });
 
-      // Allowed error occured
+      // Allowed error occurred
       expect(result.current.allowedError).toBeInstanceOf(DisconnectedDevice);
       expect(result.current.fatalError).toBeNull();
       expect(result.current.onboardingState).toEqual(anOnboardingState);
@@ -356,7 +356,7 @@ describe("useOnboardingStatePolling", () => {
         jest.advanceTimersByTime(pollingPeriodMs + 1);
       });
 
-      // Allowed error occured
+      // Allowed error occurred
       expect(result.current.allowedError).toBeInstanceOf(LockedDeviceError);
       expect(result.current.lockedDevice).toBe(true);
       expect(result.current.fatalError).toBeNull();

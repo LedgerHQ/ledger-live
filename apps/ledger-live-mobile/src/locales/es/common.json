@@ -3315,7 +3315,7 @@
         "utxoWarning" : "Por motivos de privacidad, se genera una dirección nueva para cada transacción. Las anteriores siguen siendo válidas.",
         "title" : "Recibir {{currencyTicker}}",
         "onCurrencyName" : "En {{currencyName}}",
-        "copyAdress" : "Copiar dirección",
+        "copyAddress" : "Copiar dirección",
         "addressCopied" : "¡Dirección copiada!",
         "addressVerified" : "Dirección verificada",
         "verifyAddress" : "Verifica tu dirección",

@@ -162,7 +162,7 @@ interface SendReceiveAccountBridge<
   updateTransaction(t: T, patch: Partial<T>): T;
   // prepare the remaining missing part of a transaction typically from network (e.g. fees)
   // and fulfill it in a new transaction object that is returned (async)
-  // It can fails if the the network is down.
+  // It can fails if the network is down.
   // NOTE: because of a dependency to React at the moment, if prepareTransaction doesn't modify the transaction
   // it must return the unmodified input transaction object (reference stability)
   prepareTransaction(account: A, transaction: T): Promise<T>;

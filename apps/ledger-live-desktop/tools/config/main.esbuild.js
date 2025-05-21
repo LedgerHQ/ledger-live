@@ -12,7 +12,7 @@ module.exports = {
   platform: "node",
   format: "cjs",
   // Some modules have different exports signatures depending on the main field. (for instance bignumber.js)
-  // Picking the the main field first is safer.
+  // Picking the main field first is safer.
   // See this comment: https://github.com/webpack/webpack/issues/4742#issuecomment-295115576
   mainFields: ["main", "module"],
   external: [...electronMainExternals],

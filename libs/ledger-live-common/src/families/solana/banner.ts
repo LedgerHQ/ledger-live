@@ -45,12 +45,12 @@ export function getAccountBannerState(account: SolanaAccount): AccountBannerStat
   // Find user current worst validator (default validator is ledger)
   let worstValidator = ledgerValidator;
   for (const delegation of delegations) {
-    const validatorAdress = delegation.delegation?.voteAccAddr;
-    const validator = validators.find(validator => validator.voteAccount === validatorAdress);
+    const validatorAddress = delegation.delegation?.voteAccAddr;
+    const validator = validators.find(validator => validator.voteAccount === validatorAddress);
     const actions = stakeActions(delegation);
     const isValidRedelegation =
       validator &&
-      !LEDGER_VALIDATORS_VOTE_ACCOUNTS.includes(validatorAdress) &&
+      !LEDGER_VALIDATORS_VOTE_ACCOUNTS.includes(validatorAddress) &&
       worstValidator.commission <= validator.commission &&
       actions.includes("deactivate");
     if (isValidRedelegation) {

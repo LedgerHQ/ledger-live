@@ -1,7 +1,7 @@
 import { formatAddress } from "../formatAddress";
 
 describe("formatAddress", () => {
-  it("should format an address when lenght is greater than 11", () => {
+  it("should format an address when length is greater than 11", () => {
     const address = "0x1234567890abcdef";
     expect(formatAddress(address)).toBe("0x12...cdef");
   });
@@ -12,7 +12,7 @@ describe("formatAddress", () => {
     expect(formattedAddress).toBe(address);
   });
 
-  it("should return the address when lenght is less than 11", () => {
+  it("should return the address when length is less than 11", () => {
     const address = "0x12345678";
     expect(formatAddress(address)).toBe(address);
   });

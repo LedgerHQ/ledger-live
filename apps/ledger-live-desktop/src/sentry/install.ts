@@ -7,7 +7,7 @@ import { getOperatingSystemSupportStatus } from "~/support/os";
 
 /* eslint-disable no-continue */
 
-// will be overriden by setShouldSendCallback
+// will be overridden by setShouldSendCallback
 let shouldSendCallback = () => false;
 let productionBuildSampleRate = 1;
 let tracesSampleRate = 0.0002;

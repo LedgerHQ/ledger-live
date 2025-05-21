@@ -3268,7 +3268,7 @@
         "utxoWarning" : "Por motivos de privacidade, um novo endereço é gerado a cada transação. Os anteriores ainda são válidos.",
         "title" : "Receber {{currencyTicker}}",
         "onCurrencyName" : "Em {{currencyName}}",
-        "copyAdress" : "Copiar endereço",
+        "copyAddress" : "Copiar endereço",
         "addressCopied" : "Endereço copiado!",
         "addressVerified" : "Endereço Verificado",
         "verifyAddress" : "Verificar seu endereço",

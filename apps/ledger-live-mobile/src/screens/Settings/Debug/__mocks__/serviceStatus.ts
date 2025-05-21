@@ -478,7 +478,7 @@ const mockedIncidents: Incident[] = [
     impact: "critical",
     incident_updates: [
       {
-        body: "An incident occured",
+        body: "An incident occurred",
         created_at: "2021-02-22T17:58:18.792+02:00",
         display_at: "2021-02-22T17:58:18.792+02:00",
         id: "incident-a-body",
@@ -509,7 +509,7 @@ const mockedIncidents: Incident[] = [
     impact: "critical",
     incident_updates: [
       {
-        body: "An incident occured",
+        body: "An incident occurred",
         created_at: "2021-02-22T17:58:18.792+02:00",
         display_at: "2021-02-22T17:58:18.792+02:00",
         id: "incident-a-body",
@@ -532,7 +532,7 @@ const mockedIncidents: Incident[] = [
     impact: "critical",
     incident_updates: [
       {
-        body: "An incident occured",
+        body: "An incident occurred",
         created_at: "2021-02-22T17:58:18.792+02:00",
         display_at: "2021-02-22T17:58:18.792+02:00",
         id: "incident-a-body",

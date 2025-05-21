@@ -686,7 +686,7 @@
 
 - [#9601](https://github.com/LedgerHQ/ledger-live/pull/9601) [`904287d`](https://github.com/LedgerHQ/ledger-live/commit/904287dcac164c4992a086df20c6e411a1098f30) Thanks [@Couto](https://github.com/Couto)! - Use account with highest balance in Swap deeplink
 
-- [#9665](https://github.com/LedgerHQ/ledger-live/pull/9665) [`776931c`](https://github.com/LedgerHQ/ledger-live/commit/776931c6629fb6076e8f6a8b8bb261226fe5fd78) Thanks [@Canestin](https://github.com/Canestin)! - change validate adress wording
+- [#9665](https://github.com/LedgerHQ/ledger-live/pull/9665) [`776931c`](https://github.com/LedgerHQ/ledger-live/commit/776931c6629fb6076e8f6a8b8bb261226fe5fd78) Thanks [@Canestin](https://github.com/Canestin)! - change validate address wording
 
 - [#9624](https://github.com/LedgerHQ/ledger-live/pull/9624) [`0c54ada`](https://github.com/LedgerHQ/ledger-live/commit/0c54adad30034ce5e8742f03e6e7d73126cc8e56) Thanks [@themooneer](https://github.com/themooneer)! - fix analytic currency name for add account v2
 
@@ -758,7 +758,7 @@
 
 - [#9601](https://github.com/LedgerHQ/ledger-live/pull/9601) [`904287d`](https://github.com/LedgerHQ/ledger-live/commit/904287dcac164c4992a086df20c6e411a1098f30) Thanks [@Couto](https://github.com/Couto)! - Use account with highest balance in Swap deeplink
 
-- [#9665](https://github.com/LedgerHQ/ledger-live/pull/9665) [`776931c`](https://github.com/LedgerHQ/ledger-live/commit/776931c6629fb6076e8f6a8b8bb261226fe5fd78) Thanks [@Canestin](https://github.com/Canestin)! - change validate adress wording
+- [#9665](https://github.com/LedgerHQ/ledger-live/pull/9665) [`776931c`](https://github.com/LedgerHQ/ledger-live/commit/776931c6629fb6076e8f6a8b8bb261226fe5fd78) Thanks [@Canestin](https://github.com/Canestin)! - change validate address wording
 
 - [#9624](https://github.com/LedgerHQ/ledger-live/pull/9624) [`0c54ada`](https://github.com/LedgerHQ/ledger-live/commit/0c54adad30034ce5e8742f03e6e7d73126cc8e56) Thanks [@themooneer](https://github.com/themooneer)! - fix analytic currency name for add account v2
 
@@ -6877,7 +6877,7 @@
 
 - [#4877](https://github.com/LedgerHQ/ledger-live/pull/4877) [`bb247ac329`](https://github.com/LedgerHQ/ledger-live/commit/bb247ac329fb5594a4742e765bdb4ccc0b69112f) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - improve ble pairing deep links
 
-- [#5178](https://github.com/LedgerHQ/ledger-live/pull/5178) [`148e1b58af`](https://github.com/LedgerHQ/ledger-live/commit/148e1b58af080ee51ee36bf0f7dfc6277d047dfc) Thanks [@ak-ledger](https://github.com/ak-ledger)! - Deposit flow: adress verification close button redirect to the QR code page
+- [#5178](https://github.com/LedgerHQ/ledger-live/pull/5178) [`148e1b58af`](https://github.com/LedgerHQ/ledger-live/commit/148e1b58af080ee51ee36bf0f7dfc6277d047dfc) Thanks [@ak-ledger](https://github.com/ak-ledger)! - Deposit flow: address verification close button redirect to the QR code page
 
 - [#4827](https://github.com/LedgerHQ/ledger-live/pull/4827) [`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7) Thanks [@valpinkman](https://github.com/valpinkman)! - Update react to react 18
 
@@ -7038,7 +7038,7 @@
 
 - [#4877](https://github.com/LedgerHQ/ledger-live/pull/4877) [`bb247ac329`](https://github.com/LedgerHQ/ledger-live/commit/bb247ac329fb5594a4742e765bdb4ccc0b69112f) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - improve ble pairing deep links
 
-- [#5178](https://github.com/LedgerHQ/ledger-live/pull/5178) [`148e1b58af`](https://github.com/LedgerHQ/ledger-live/commit/148e1b58af080ee51ee36bf0f7dfc6277d047dfc) Thanks [@ak-ledger](https://github.com/ak-ledger)! - Deposit flow: adress verification close button redirect to the QR code page
+- [#5178](https://github.com/LedgerHQ/ledger-live/pull/5178) [`148e1b58af`](https://github.com/LedgerHQ/ledger-live/commit/148e1b58af080ee51ee36bf0f7dfc6277d047dfc) Thanks [@ak-ledger](https://github.com/ak-ledger)! - Deposit flow: address verification close button redirect to the QR code page
 
 - [#4827](https://github.com/LedgerHQ/ledger-live/pull/4827) [`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7) Thanks [@valpinkman](https://github.com/valpinkman)! - Update react to react 18
 

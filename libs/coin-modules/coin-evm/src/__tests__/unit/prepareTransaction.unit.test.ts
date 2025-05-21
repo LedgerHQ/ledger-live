@@ -42,9 +42,9 @@ describe("EVM Family", () => {
 
   describe("prepareTransaction.ts", () => {
     beforeEach(() => {
-      // These mocks will be overriden in some tests
+      // These mocks will be overridden in some tests
       jest.spyOn(nodeApi, "getGasEstimation").mockImplementation(async () => new BigNumber(21000));
-      // These mocks will be overriden in some tests
+      // These mocks will be overridden in some tests
       jest.spyOn(nodeApi, "getFeeData").mockImplementation(async () => ({
         gasPrice: new BigNumber(1),
         maxFeePerGas: new BigNumber(1),

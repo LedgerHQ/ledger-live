@@ -150,7 +150,7 @@ describe("useFromState", () => {
     });
   });
 
-  test("call hook and set the the most recent amount input after 400ms", () => {
+  test("call hook and set the most recent amount input after 400ms", () => {
     const { result } = renderHook(() => {
       const bridgeTransaction = useBridgeTransaction();
       return useFromState({
