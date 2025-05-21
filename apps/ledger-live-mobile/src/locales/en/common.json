@@ -3569,6 +3569,8 @@
         "contact_support": "Contact customer support",
         "ton_title": "Ledger Nano S™ does not support swapping Ton",
         "ton_description": "To swap Ton, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "ton_tokens_title": "Ledger Nano S™ does not support swapping Ton Tokens",
+        "ton_tokens_description": "To swap Ton Tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
         "spl_tokens_title": "Ledger Nano S™ does not support swapping Solana tokens",
         "spl_tokens_description": "To swap Solana tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
         "near_title": "Ledger Nano S™ does not support swapping Near",

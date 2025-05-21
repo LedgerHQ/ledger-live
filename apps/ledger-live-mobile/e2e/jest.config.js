@@ -40,10 +40,9 @@ module.exports = async () => ({
   },
   setupFilesAfterEnv: ["<rootDir>/e2e/setup.ts"],
   testTimeout: 150000,
-  testMatch: ["<rootDir>/e2e/specs/{*.spec.ts,!(speculos)/**/*.spec.ts}"],
+  testMatch: ["<rootDir>/e2e/specs/**/*.spec.ts"],
   reporters: ["detox/runners/jest/reporter", ["jest-allure2-reporter", jestAllure2ReporterOptions]],
   globalSetup: "<rootDir>/e2e/jest.globalSetup.ts",
-  globalTeardown: "<rootDir>/e2e/jest.globalTeardown.ts",
   testEnvironment: "<rootDir>/e2e/jest.environment.ts",
   testEnvironmentOptions: {
     eventListeners: [

@@ -1,13 +1,11 @@
 import { expect } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
 import CommonPage from "../common.page";
-import { getEnv } from "@ledgerhq/live-env";
 
 export default class AddAccountDrawer extends CommonPage {
   baseLink = "add-account";
   deselectAllButtonId = "add-accounts-deselect-all";
-  accountId = (currency: string, index: number) =>
-    getEnv("MOCK") ? `mock:1:${currency}:MOCK_${currency}_${index}:` : `js:2:${currency}:.*`;
+  accountId = (currency: string, index: number) => `mock:1:${currency}:MOCK_${currency}_${index}:`;
   modalButtonId = "add-accounts-modal-add-button";
   continueButtonId = "add-accounts-continue-button";
   closeAddAccountButtonId = "button-close-add-account";

@@ -479,4 +479,15 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
   );
 };
 
-export default cmd;
+export default function connectAppFactory(
+  {
+    isLdmkConnectAppEnabled,
+  }: {
+    isLdmkConnectAppEnabled: boolean;
+  } = { isLdmkConnectAppEnabled: false },
+) {
+  if (!isLdmkConnectAppEnabled) {
+    return cmd;
+  }
+  throw new Error("LdkmConnectApp is not supported yet");
+}

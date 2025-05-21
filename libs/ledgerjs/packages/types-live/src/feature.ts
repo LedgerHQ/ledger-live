@@ -227,6 +227,7 @@ export type Features = CurrencyFeatures & {
   lldModularDrawer: Feature_LldModularDrawer;
   llNftSupport: DefaultFeature;
   llNftEntryPoint: Feature_LlNftEntryPoint;
+  ldmkConnectApp: DefaultFeature;
 };
 
 /**
