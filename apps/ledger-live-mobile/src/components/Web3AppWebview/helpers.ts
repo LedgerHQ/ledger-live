@@ -38,6 +38,10 @@ import { walletSelector } from "~/reducers/wallet";
 import { CacheMode, WebViewOpenWindowEvent } from "react-native-webview/lib/WebViewTypes";
 import { Linking } from "react-native";
 import { useCacheBustedLiveAppsDB } from "~/screens/Platform/v2/hooks";
+import {
+  useSwapAndroidHardwareBackPress,
+  useSwapNavigationHelper,
+} from "~/screens/Swap/LiveApp/useSwapNavigationHelper";
 
 export function useWebView(
   {
@@ -238,13 +242,16 @@ export function useWebviewState(
   const webviewRef = useRef<WebView>(null);
   const { manifest, inputs } = params;
   const initialURL = useMemo(() => getInitialURL(inputs, manifest), [manifest, inputs]);
-  const [state, setState] = useState<WebviewState>(initialWebviewState);
+  const [currentURI, setURI] = useState(initialURL);
+
+  const [webviewCanGoBack, setWebviewCanGoBack] = useState(false);
+
+  const navigation = useNavigation();
 
   useEffect(() => {
     setURI(initialURL);
   }, [initialURL]);
 
-  const [currentURI, setURI] = useState(initialURL);
   const { theme } = useTheme();
 
   const source = useMemo(
@@ -298,39 +305,61 @@ export function useWebviewState(
     [],
   );
 
-  const onLoad: Required<WebViewProps>["onLoad"] = useCallback(({ nativeEvent }) => {
-    setState({
-      title: nativeEvent.title,
-      url: nativeEvent.url,
-      canGoBack: nativeEvent.canGoBack,
-      canGoForward: nativeEvent.canGoForward,
-      loading: nativeEvent.loading,
-    });
-  }, []);
+  useSwapAndroidHardwareBackPress({
+    webviewRef,
+    canGoBack: webviewCanGoBack,
+  });
 
-  const onLoadStart: Required<WebViewProps>["onLoadStart"] = useCallback(({ nativeEvent }) => {
-    setState({
-      title: nativeEvent.title,
-      url: nativeEvent.url,
-      canGoBack: nativeEvent.canGoBack,
-      canGoForward: nativeEvent.canGoForward,
-      loading: nativeEvent.loading,
-    });
-  }, []);
+  const onWebRouteChange = useSwapNavigationHelper({
+    navigation,
+  });
 
-  const onLoadEnd: Required<WebViewProps>["onLoadEnd"] = useCallback(({ nativeEvent }) => {
-    setState({
-      title: nativeEvent.title,
-      url: nativeEvent.url,
-      canGoBack: nativeEvent.canGoBack,
-      canGoForward: nativeEvent.canGoForward,
-      loading: nativeEvent.loading,
-    });
-  }, []);
+  const onLoad: Required<WebViewProps>["onLoad"] = useCallback(
+    ({ nativeEvent }) => {
+      onStateChange?.({
+        title: nativeEvent.title,
+        url: nativeEvent.url,
+        canGoBack: nativeEvent.canGoBack,
+        canGoForward: nativeEvent.canGoForward,
+        loading: nativeEvent.loading,
+      });
+    },
+    [onStateChange],
+  );
+
+  const onLoadStart: Required<WebViewProps>["onLoadStart"] = useCallback(
+    ({ nativeEvent }) => {
+      onStateChange?.({
+        title: nativeEvent.title,
+        url: nativeEvent.url,
+        canGoBack: nativeEvent.canGoBack,
+        canGoForward: nativeEvent.canGoForward,
+        loading: nativeEvent.loading,
+      });
+    },
+    [onStateChange],
+  );
+
+  const onLoadEnd: Required<WebViewProps>["onLoadEnd"] = useCallback(
+    ({ nativeEvent }) => {
+      onStateChange?.({
+        title: nativeEvent.title,
+        url: nativeEvent.url,
+        canGoBack: nativeEvent.canGoBack,
+        canGoForward: nativeEvent.canGoForward,
+        loading: nativeEvent.loading,
+      });
+    },
+    [onStateChange],
+  );
 
   const onNavigationStateChange: Required<WebViewProps>["onNavigationStateChange"] = useCallback(
     event => {
-      setState({
+      onWebRouteChange(event);
+
+      setWebviewCanGoBack(event.canGoBack);
+
+      onStateChange?.({
         title: event.title,
         url: event.url,
         canGoBack: event.canGoBack,
@@ -338,28 +367,17 @@ export function useWebviewState(
         loading: event.loading,
       });
     },
-    [],
+    [onWebRouteChange, onStateChange],
   );
 
-  useEffect(() => {
-    if (onStateChange) {
-      onStateChange(state);
-    }
-  }, [state, onStateChange]);
-
-  const props: Partial<WebViewProps> = useMemo(
-    () => ({
+  return {
+    webviewProps: {
       onLoad,
       onLoadStart,
       onLoadEnd,
       onNavigationStateChange,
       source,
-    }),
-    [onLoad, onLoadEnd, onLoadStart, onNavigationStateChange, source],
-  );
-
-  return {
-    webviewProps: props,
+    },
     webviewRef,
   };
 }
