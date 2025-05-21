@@ -1,0 +1,53 @@
+name: "[All Platforms] - Scan Sonar - Called"
+
+on:
+  workflow_call:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  scan-sonar:
+    name: "Sonar Cloud"
+    runs-on: [ledger-live-4xlarge]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          install-proto: true
+          skip-turbo-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - name: Run coverage on affected libraries
+        run: |
+          paths="${{ needs.determine-affected.outputs.paths }}"
+          paths="${paths#[}"; paths="${paths%]}"
+          IFS=',' read -r -a paths_array <<< "$paths"
+          for path in "${paths_array[@]}"; do
+            # Check if package.json exists and has a coverage script and jest-sonar dependency
+            if [ -f "$path/coverage/lcov.info" ] && [ -f "$path/coverage/sonar-executionTests-report.xml" ]; then
+              echo "Copying coverage files for $path"
+              cat $path/coverage/lcov.info >> ./lcov.info
+              cat $path/coverage/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
+            else
+              echo "Skipping $path: no coverage reports found."
+            fi
+          done
+        shell: bash
+
+      - name: SonarQubeScan
+        uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.sources=apps,libs
+            -Dsonar.testExecutionReportPaths=sonar-executionTests-report.xml
