@@ -4697,7 +4697,7 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "Atualize a {{deviceName}} para a versão {{version}}",
-    "recoveryPhraseBackupInstructions" : "Certifique-se de que sua frase de recuperação de 24 palavras esteja anotada na folha de recuperação e esteja disponível, como precaução.",
+    "recoveryPhraseBackupInstructions" : "Como precaução, certifique-se de que sua frase de recuperação secreta de 24 palavras está anotada na folha de recuperação e disponível.\n\nConsidere usar o Ledger Recover para fazer backup do acesso à sua carteira e garantir que ela esteja sempre ao seu alcance.",
     "confirmRecoveryPhrase" : "Eu tenho minha frase de recuperação",
     "introDescription1" : "Note que todos os aplicativos em seu dispositivo serão excluídos. Você pode reinstalar seus aplicativos após a atualização do firmware.",
     "introDescription2" : "Isso não afeta seus criptoativos.",

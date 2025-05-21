@@ -179,6 +179,7 @@ export type Features = CurrencyFeatures & {
   ptxCard: DefaultFeature;
   ptxSwapLiveAppMobile: Feature_PtxSwapLiveApp;
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
+  ptxEarnLiveApp: Feature_PtxEarnLiveApp;
   ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
   flexibleContentCards: Feature_FlexibleContentCards;
   llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
@@ -225,6 +226,8 @@ export type Features = CurrencyFeatures & {
   llmMmkvMigration: Feature_LlmMmkvMigration;
   lldModularDrawer: Feature_LldModularDrawer;
   llNftSupport: DefaultFeature;
+  llNftEntryPoint: Feature_LlNftEntryPoint;
+  ldmkConnectApp: DefaultFeature;
 };
 
 /**
@@ -513,6 +516,10 @@ export type Feature_PtxSwapLiveApp = Feature<{
   families?: string[];
 }>;
 
+export type Feature_PtxEarnLiveApp = Feature<{
+  manifest_id: string;
+}>;
+
 export type Feature_FetchAdditionalCoins = Feature<{
   batch: number;
 }>;
@@ -577,6 +584,12 @@ export type Feature_LldLedgerSyncEntryPoints = Feature<{
   accounts: boolean;
   settings: boolean;
   onboarding: boolean;
+}>;
+
+export type Feature_LlNftEntryPoint = Feature<{
+  magiceden: boolean;
+  opensea: boolean;
+  chains: string[];
 }>;
 
 export type Feature_LlCounterValueGranularitiesRates = Feature<{

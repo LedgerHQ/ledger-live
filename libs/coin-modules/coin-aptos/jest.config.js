@@ -11,7 +11,7 @@ module.exports = {
   ],
   coverageReporters: ["json", ["lcov", { file: "aptos-lcov.info", projectRoot: "../" }], "text"],
   testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".integ.test.ts"],
   reporters: [
     "default",
     [

@@ -109,17 +109,15 @@ async function operationsFromHeight(
   // so the only strategy to get ALL operations is to iterate over all of them in descending order
   // until we reach the desired minHeight
   while (state.continueIterations) {
-    const options: ListOperationsOptions = { limit: state.pageSize, order: "desc" };
+    const options: ListOperationsOptions = { limit: state.pageSize, order: "desc", minHeight };
     if (state.apiNextCursor) {
       options.cursor = state.apiNextCursor;
     }
     try {
       const [operations, nextCursor] = await listOperations(address, options);
-      const filteredOperations = operations.filter(op => op.tx.block.height >= state.heightLimit);
-      state.accumulator.push(...filteredOperations);
+      state.accumulator.push(...operations);
       state.apiNextCursor = nextCursor;
-      state.continueIterations =
-        operations.length === filteredOperations.length && nextCursor !== "";
+      state.continueIterations = nextCursor !== "";
     } catch (e: unknown) {
       if (e instanceof LedgerAPI4xx && (e as unknown as { status: number }).status === 429) {
         log("coin:stellar", "(api/operations): TooManyRequests, retrying in 4s");

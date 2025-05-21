@@ -7,17 +7,19 @@ export type ListOperationsOptions = {
   limit?: number;
   cursor?: string;
   order: "asc" | "desc";
+  minHeight: number;
 };
 
 export async function listOperations(
   address: string,
-  { limit, cursor, order }: ListOperationsOptions,
+  { limit, cursor, order, minHeight }: ListOperationsOptions,
 ): Promise<[Operation<StellarAsset>[], string]> {
   // Fake accountId
   const accountId = "";
   const [operations, nextCursor] = await fetchOperations({
     accountId,
     addr: address,
+    minHeight,
     order: order,
     limit,
     cursor: cursor,

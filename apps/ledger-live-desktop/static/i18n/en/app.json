@@ -2072,7 +2072,8 @@
       "latest": "Firmware version {{version}} is available",
       "contactSupport": "Contact support",
       "deprecated": "Device firmware version too old to be updated. Contact Ledger Support for a replacement.",
-      "prepareSeed": "Ensure your 24-word recovery phrase is written down on the Recovery Sheet and is available, as a precaution.",
+      "prepareSeed": "Ensure your 24-word Secret Recovery Phrase is written down on the recovery Sheet and is available, as a precaution.",
+      "prepareSeedRecover": "Consider using Ledger Recover to back up access to your wallet and ensure it's always within reach.",
       "disclaimerTitle": "You are about to install <1>firmware version {{version}}</1>.",
       "cancelUpdate": "Cancel OS update",
       "continueUpdate": "Continue OS update",
@@ -2395,7 +2396,8 @@
         "suggested": "Suggested",
         "unitVByte": "{{unit}}/vbyte",
         "nft": "NFT",
-        "nftQuantity": "Quantity"
+        "nftQuantity": "Quantity",
+        "splExtensionsWarning": "You are interacting with a token that is part of the Token-2022 program, also known as Token Extensions. This token comes with specific risks. <0>Click here</0> to learn more."
       },
       "verification": {
         "streaming": {
@@ -3786,7 +3788,7 @@
       "frozenStateWarning": "Account assets are frozen!",
       "transferWarning": "To verify the recipient address for Solana tokens using a Ledger Nano S™, <0>follow these instructions.</0>",
       "transferFees": {
-        "feesPercentHint": "Token has {{feePercent}}% ({{feeBps}}bps) transfer fee. {{maxFee}} max",
+        "feesHint": "Token transfer fee: {{transferFee}}",
         "notice": "Transfer fee {{fee}}%",
         "tooltipHint": "Percentage of transfer withheld for token creator",
         "transferFeesLabel": "Transfer fees"
@@ -4249,7 +4251,6 @@
       "debugAppsDesc": "Display and allow opening debug tagged platform apps.",
       "debugReactQuery": "Allow debug ReactQuery",
       "debugReactQueryDesc": "Display and allow opening debug ReactQuery console.",
-
       "nfts": {
         "title": "NFTs HiddenCollections",
         "description": "Reset the hidden collections list",
@@ -5896,6 +5897,10 @@
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."
     },
+    "NotEnoughBalanceFees": {
+      "title": "Sorry, insufficient funds to cover fees",
+      "description": "Please make sure the account has enough funds."
+    },
     "NotEnoughBalanceSwap": {
       "title": "Sorry, insufficient balance including network fees. Adjust amount or verify balance.",
       "description": "Please make sure the account has enough funds."
@@ -7078,7 +7083,15 @@
     "assetFlow": {
       "selectTemplate": "Select {{dynamic}}",
       "asset": "asset",
-      "network": "network"
+      "network": "network",
+      "account": "account"
+    }
+  },
+  "nftEntryPoint": {
+    "title": "NFT (Non Fungible Tokens)",
+    "entry": {
+      "magiceden": "Magic Eden",
+      "opensea": "OpenSea"
     }
   }
 }
