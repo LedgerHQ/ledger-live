@@ -3601,6 +3601,15 @@
           "noProviders": "No results found. There are no quotes available with the current preferences."
         }
       },
+      "quotesList": {
+        "title": "Select quote"
+      },
+      "twoStepApproval": {
+        "title": "Complete steps"
+      },
+      "history": {
+        "title": "Swap history"
+      },
       "incompatibility": {
         "explore_compatible_devices": "Explore compatible devices",
         "contact_support": "Contact customer support",
