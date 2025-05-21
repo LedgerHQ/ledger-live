@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.71.0-nightly.1
+
+### Minor Changes
+
+- [#9928](https://github.com/LedgerHQ/ledger-live/pull/9928) [`6253e0e`](https://github.com/LedgerHQ/ledger-live/commit/6253e0e3efcd1a29543cda55c9a5269f97aa770f) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add newConnectApp feature flag
+
 ## 6.71.0-nightly.0
 
 ### Minor Changes

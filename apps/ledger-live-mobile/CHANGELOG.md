@@ -1,5 +1,26 @@
 # live-mobile
 
+## 3.79.0-nightly.5
+
+### Patch Changes
+
+- [#10234](https://github.com/LedgerHQ/ledger-live/pull/10234) [`d624445`](https://github.com/LedgerHQ/ledger-live/commit/d62444551759980c9d63e6b8f6d141d4f5671f2d) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add mobile translations
+
+- Updated dependencies [[`6253e0e`](https://github.com/LedgerHQ/ledger-live/commit/6253e0e3efcd1a29543cda55c9a5269f97aa770f)]:
+  - @ledgerhq/types-live@6.71.0-nightly.1
+  - @ledgerhq/coin-framework@5.1.0-nightly.2
+  - @ledgerhq/coin-cosmos@0.14.2-nightly.2
+  - @ledgerhq/coin-evm@2.21.1-nightly.2
+  - @ledgerhq/coin-filecoin@1.9.6-nightly.2
+  - @ledgerhq/coin-multiversx@0.4.6-nightly.2
+  - @ledgerhq/coin-stacks@0.8.6-nightly.2
+  - @ledgerhq/domain-service@1.2.30-nightly.2
+  - @ledgerhq/live-countervalues@0.5.6-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.35-nightly.2
+  - @ledgerhq/live-nft@0.8.6-nightly.2
+  - @ledgerhq/live-nft-react@0.9.6-nightly.2
+  - @ledgerhq/live-wallet@0.10.9-nightly.2
+
 ## 3.79.0-nightly.4
 
 ### Minor Changes

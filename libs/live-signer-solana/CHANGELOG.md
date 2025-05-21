@@ -1,5 +1,12 @@
 # @ledgerhq/live-signer-solana
 
+## 0.1.1-nightly.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-solana@0.23.0-nightly.2
+
 ## 0.1.1-nightly.0
 
 ### Patch Changes

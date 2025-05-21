@@ -1,5 +1,50 @@
 # @ledgerhq/live-common
 
+## 34.34.0-nightly.5
+
+### Minor Changes
+
+- [#9928](https://github.com/LedgerHQ/ledger-live/pull/9928) [`6253e0e`](https://github.com/LedgerHQ/ledger-live/commit/6253e0e3efcd1a29543cda55c9a5269f97aa770f) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add newConnectApp feature flag
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@5.1.0-nightly.2
+  - @ledgerhq/coin-algorand@0.9.6-nightly.2
+  - @ledgerhq/coin-aptos@2.0.0-nightly.4
+  - @ledgerhq/coin-bitcoin@0.15.6-nightly.2
+  - @ledgerhq/coin-cardano@0.8.6-nightly.2
+  - @ledgerhq/coin-casper@1.7.1-nightly.2
+  - @ledgerhq/coin-celo@1.1.4-nightly.2
+  - @ledgerhq/coin-cosmos@0.14.2-nightly.2
+  - @ledgerhq/coin-evm@2.21.1-nightly.2
+  - @ledgerhq/coin-filecoin@1.9.6-nightly.2
+  - @ledgerhq/coin-hedera@1.6.6-nightly.2
+  - @ledgerhq/coin-icon@0.10.6-nightly.2
+  - @ledgerhq/coin-internet_computer@1.7.6-nightly.2
+  - @ledgerhq/coin-mina@1.1.5-nightly.2
+  - @ledgerhq/coin-multiversx@0.4.6-nightly.2
+  - @ledgerhq/coin-near@0.11.6-nightly.2
+  - @ledgerhq/coin-polkadot@6.0.2-nightly.2
+  - @ledgerhq/coin-solana@0.23.0-nightly.2
+  - @ledgerhq/coin-stacks@0.8.6-nightly.2
+  - @ledgerhq/coin-stellar@5.1.0-nightly.2
+  - @ledgerhq/coin-sui@0.3.3-nightly.2
+  - @ledgerhq/coin-tezos@5.0.2-nightly.2
+  - @ledgerhq/coin-ton@0.10.1-nightly.2
+  - @ledgerhq/coin-tron@4.0.1-nightly.2
+  - @ledgerhq/coin-vechain@2.7.6-nightly.2
+  - @ledgerhq/coin-xrp@6.1.1-nightly.2
+  - @ledgerhq/device-core@0.4.25-nightly.2
+  - @ledgerhq/hw-app-eth@6.45.5-nightly.2
+  - @ledgerhq/live-countervalues@0.5.6-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.35-nightly.2
+  - @ledgerhq/live-nft@0.8.6-nightly.2
+  - @ledgerhq/live-signer-evm@0.4.1-nightly.2
+  - @ledgerhq/live-signer-solana@0.1.1-nightly.1
+  - @ledgerhq/live-wallet@0.10.9-nightly.2
+  - @ledgerhq/hw-app-celo@6.33.3-nightly.2
+
 ## 34.34.0-nightly.4
 
 ### Minor Changes
