@@ -6,8 +6,6 @@ import { getDescription } from "../utils/customJsonReporter";
 import { CLI } from "../utils/cliUtils";
 import { getUserdata } from "../utils/userdata";
 
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
 const accounts = [{ account: Account.ATOM_1, xrayTicket: "B2CQA-2996" }];
 
 for (const account of accounts) {
@@ -37,6 +35,7 @@ for (const account of accounts) {
       },
       async ({ app, userdataFile, electronApp }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+        await app.redux.listenToReduxActions();
 
         await app.layout.goToAccounts();
         await app.accounts.navigateToAccountByName(account.account.accountName);
@@ -45,7 +44,7 @@ for (const account of accounts) {
         const newName = "New account name";
         await app.account.renameAccount(newName);
         await app.account.expectAccountVisibility(newName);
-        await sleep(2000);
+        await app.redux.waitForReduxAction("UPDATE_ACCOUNT");
         await electronApp.close();
         const userData = await getUserdata(userdataFile);
         expect(userData.data.wallet.accountNames[0][1]).toBe(newName);
