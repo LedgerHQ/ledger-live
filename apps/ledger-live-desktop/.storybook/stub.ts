@@ -1,5 +1,7 @@
+import { fn } from "@storybook/test";
+
 export default () => {};
-export const track = () => {};
+
 export const ipcRenderer = () => {};
 
 const currency = {
@@ -19,7 +21,7 @@ const currency = {
   explorerId: "btc",
 };
 
-export const useGroupedCurrenciesByProvider = () => ({
+export const useGroupedCurrenciesByProvider = fn(() => ({
   result: {
     currenciesByProvider: [
       {
@@ -30,6 +32,6 @@ export const useGroupedCurrenciesByProvider = () => ({
     sortedCryptoCurrencies: [currency],
   },
   loadingStatus: "success",
-});
+}));
 
 export const findCryptoCurrencyById = (id: string) => [currency];

@@ -9,6 +9,10 @@ import { mergeConfig } from "vite";
 function getAbsolutePath(value: string): any {
   return dirname(require.resolve(join(value, "package.json")));
 }
+
+const detailedAccountsMockDir =
+  "./src/newArch/features/ModularDrawer/components/SelectAccountFlow/hooks/__mocks__/useDetailedAccounts.mock.tsx";
+
 const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
   addons: [
@@ -26,15 +30,20 @@ const config: StorybookConfig = {
       },
       resolve: {
         alias: {
-          [`~/renderer/analytics/segment`]: resolve(".storybook/stub.ts"),
+          [`~/renderer/analytics/segment`]: resolve(
+            "./src/renderer/analytics/__mocks__/segment.ts",
+          ),
           [`~/renderer/analytics/TrackPage`]: resolve(".storybook/stub.ts"),
           LLD: resolve("./src/newArch"),
+
+          "@ledgerhq/live-common/wallet-api/react": resolve(detailedAccountsMockDir),
+          "@ledgerhq/live-countervalues/portfolio": resolve(detailedAccountsMockDir),
+          "@ledgerhq/live-countervalues-react": resolve(detailedAccountsMockDir),
+          "~/renderer/components/PerCurrencySelectAccount/state": resolve(detailedAccountsMockDir),
+          "~/renderer/reducers/accounts": resolve(detailedAccountsMockDir),
+          "~/renderer/reducers/settings": resolve(detailedAccountsMockDir),
+
           "~": resolve("./src"),
-
-          "../hooks/useDetailedAccounts": resolve(
-            "./src/newArch/features/ModularDrawer/components/SelectAccountFlow/hooks/__mocks__/useDetailedAccounts.mock.tsx",
-          ), // TODO mock dependencies instead
-
           "@ledgerhq/live-common/deposit/index": resolve(".storybook/stub.ts"),
           "@ledgerhq/live-common/currencies/index": resolve(".storybook/stub.ts"),
         },
