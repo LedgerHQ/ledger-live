@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/live-signer-evm": patch
+"@ledgerhq/live-signer-evm": minor
 ---
 
 Fix sending USDT with LNS
