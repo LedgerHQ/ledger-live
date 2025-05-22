@@ -26,6 +26,28 @@ type DrawerParams = {
   onCancel?: () => void;
 };
 
+const defaultDrawerConfiguration: EnhancedModularDrawerConfiguration = {
+  assets: {
+    rightElement: "balance",
+  },
+  networks: {
+    leftElement: "numberOfAccounts",
+  },
+};
+
+function validateAndTransformConfigurationWithZod(
+  config: ModularDrawerConfiguration | EnhancedModularDrawerConfiguration,
+): EnhancedModularDrawerConfiguration {
+  const result = EnhancedModularDrawerConfigurationSchema.safeParse(config);
+
+  if (!result.success) {
+    console.warn("Modulare Drawer invalid configuration received:", result.error);
+    return {};
+  }
+
+  return result.data;
+}
+
 function openAssetAndAccountDrawer(params: DrawerParams): void {
   const {
     assetIds,

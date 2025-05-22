@@ -645,6 +645,9 @@ importers:
       xstate:
         specifier: 4.38.3
         version: 4.38.3
+      zod:
+        specifier: ^3.22.4
+        version: 3.24.2
     devDependencies:
       '@electron/notarize':
         specifier: 2.3.2
