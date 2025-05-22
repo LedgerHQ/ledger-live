@@ -233,10 +233,6 @@ dependencies {
     implementation 'com.google.android.material:material:1.6.0'
     implementation 'com.facebook.soloader:soloader:0.10.4+'
 
-    // implementation 'com.brentvatne.react:react-native-video'
-    implementation project(':react-native-video')
-    implementation "androidx.appcompat:appcompat:1.0.0"
-
     // Needed for LocationHelperModule
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1"

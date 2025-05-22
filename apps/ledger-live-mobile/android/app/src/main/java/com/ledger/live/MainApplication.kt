@@ -3,7 +3,6 @@ package com.ledger.live
 import android.app.Application
 import android.content.res.Configuration
 import com.braze.BrazeActivityLifecycleCallbackListener
-import com.brentvatne.react.ReactVideoPackage
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactHost
@@ -33,7 +32,6 @@ class MainApplication : Application(), ReactApplication {
                   // Packages that cannot be autolinked yet can be added manually here, for example:
                   // add(MyReactNativePackage())
                   add(NativeModulesPackage())
-                  add(ReactVideoPackage())
                   add(BackgroundRunnerPackager())
                 }
 
