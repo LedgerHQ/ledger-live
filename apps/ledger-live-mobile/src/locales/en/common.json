@@ -6326,6 +6326,20 @@
         }
       }
     },
+    "restaking": {
+      "stepperHeader": {
+        "amountSubTitle": "Amount to restake"
+      },
+      "flow": {
+        "steps": {
+          "verification": {
+            "success": {
+              "title": "You have successfully restaken your assets"
+            }
+          }
+        }
+      }
+    },
     "staking": {
       "sectionLabel": "Staking Position(s)",
       "info": "How Staking Works",
@@ -6336,7 +6350,8 @@
       "iStake": "I stake",
       "actions": {
         "unstake": "Unstake",
-        "withdraw": "Withdraw"
+        "withdraw": "Withdraw",
+        "restake": "Restake"
       },
       "drawer": {
         "status": "Status",
