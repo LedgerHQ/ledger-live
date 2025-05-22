@@ -16,12 +16,12 @@ const fetch = (path: string) => {
   });
 };
 
-export interface Account {
+interface HederaMirrorAccount {
   accountId: AccountId;
   balance: BigNumber;
 }
 
-export async function getAccountsForPublicKey(publicKey: string): Promise<Account[]> {
+export async function getAccountsForPublicKey(publicKey: string): Promise<HederaMirrorAccount[]> {
   let r;
   try {
     r = await fetch(`/api/v1/accounts?account.publicKey=${publicKey}&balance=false`);
@@ -30,7 +30,7 @@ export async function getAccountsForPublicKey(publicKey: string): Promise<Accoun
     throw e;
   }
   const rawAccounts = r.data.accounts;
-  const accounts: Account[] = [];
+  const accounts: HederaMirrorAccount[] = [];
 
   for (const raw of rawAccounts) {
     const accountBalance = await getAccountBalance(raw.account);
@@ -44,6 +44,11 @@ export async function getAccountsForPublicKey(publicKey: string): Promise<Accoun
   return accounts;
 }
 
+interface HederaMirrorTransfer {
+  account: string;
+  amount: number;
+}
+
 interface HederaMirrorTransaction {
   transfers: HederaMirrorTransfer[];
   charged_tx_fee: string;
@@ -51,27 +56,41 @@ interface HederaMirrorTransaction {
   consensus_timestamp: string;
 }
 
-interface HederaMirrorTransfer {
-  account: string;
-  amount: number;
+export async function getAccountTransactions(
+  address: string,
+  since: string | null,
+): Promise<HederaMirrorTransaction[]> {
+  const transactions: HederaMirrorTransaction[] = [];
+  const params = new URLSearchParams({
+    "account.id": address,
+    order: "desc",
+    limit: "100",
+  });
+
+  if (since) {
+    params.append("timestamp", `gt:${since}`);
+  }
+
+  let nextUrl = `/api/v1/transactions?${params.toString()}`;
+
+  while (nextUrl) {
+    const res = await fetch(nextUrl);
+    const newTransactions = res.data.transactions as HederaMirrorTransaction[];
+    if (newTransactions.length === 0) break;
+    transactions.push(...newTransactions);
+    nextUrl = res.data.links.next;
+  }
+
+  return transactions;
 }
 
 export async function getOperationsForAccount(
   ledgerAccountId: string,
   address: string,
-  latestOperationTimestamp: string,
+  latestOperationTimestamp: string | null,
 ): Promise<Operation[]> {
+  const rawOperations = await getAccountTransactions(address, latestOperationTimestamp);
   const operations: Operation[] = [];
-  let r = await fetch(
-    `/api/v1/transactions?account.id=${address}&timestamp=gt:${latestOperationTimestamp}`,
-  );
-  const rawOperations = r.data.transactions as HederaMirrorTransaction[];
-
-  while (r.data.links.next) {
-    r = await fetch(r.data.links.next);
-    const newOperations = r.data.transactions as HederaMirrorTransaction[];
-    rawOperations.push(...newOperations);
-  }
 
   for (const raw of rawOperations) {
     const { consensus_timestamp } = raw;
