@@ -327,6 +327,8 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
+      - name: Copy JS build
+        run: cp ${{ github.workspace }}${{ env.IOS_JSBUNDLE_PATH }} ${{ github.workspace }}${{ env.IOS_NATIVE_PATH }}/main.jsbundle
       - name: Build dependencies
         uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
         with:
