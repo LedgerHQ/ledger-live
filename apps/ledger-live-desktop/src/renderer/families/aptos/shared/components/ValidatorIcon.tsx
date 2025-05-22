@@ -1,5 +1,6 @@
 import React from "react";
 import { AptosValidator } from "@ledgerhq/live-common/families/aptos/types";
+import * as blockies from "blockies-ts";
 import { IconContainer } from "~/renderer/components/Delegation/ValidatorRow";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import Image from "~/renderer/components/Image";
@@ -13,7 +14,8 @@ const ValidatorIcon = ({
   validator?: AptosValidator | null;
   validatorId?: string;
 }) => {
-  const address = (validator && validator.address) || validatorId;
+  const address = (validator && validator.address) || validatorId || "";
+  const avatarUrl = address ? blockies.create({ seed: address.toLowerCase() }).toDataURL() : "";
 
   return (
     <IconContainer isSR>
@@ -22,8 +24,8 @@ const ValidatorIcon = ({
       ) : (
         <FirstLetterIcon label={address} />
       )} */}
-      {validator && validator.avatarUrl !== undefined ? (
-        <Image resource={validator.avatarUrl} alt="" width={32} height={32} />
+      {avatarUrl ? (
+        <Image resource={avatarUrl} alt="" width={32} height={32} />
       ) : (
         <FirstLetterIcon label={address} />
       )}

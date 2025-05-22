@@ -5,8 +5,6 @@ import type {
   AptosAccount,
   AptosMappedStakingPosition,
   AptosPreloadData,
-  AptosStakingPosition,
-  AptosStakeWithMeta,
   AptosValidator,
   Transaction,
 } from "./types";
@@ -45,38 +43,6 @@ export function useAptosValidators(currency: CryptoCurrency, search?: string): A
     }
     return output;
   }, [data, search]);
-}
-
-export function useAptosStakesWithMeta(
-  currency: CryptoCurrency,
-  stakingPositions: AptosStakingPosition[] = [],
-): AptosStakeWithMeta[] {
-  const data = useAptosPreloadData(currency);
-
-  if (data === null || data === undefined) {
-    return [];
-  }
-
-  const { validators } = data;
-
-  const validatorByAddress = new Map(validators.map(v => [v.address, v]));
-
-  return stakingPositions.map(stake => {
-    const validatorAddress = stake.validatorId;
-    const validator =
-      validatorAddress === undefined ? undefined : validatorByAddress.get(validatorAddress);
-
-    return {
-      stake,
-      meta: {
-        validator: {
-          img: validator?.avatarUrl,
-          name: validator?.name,
-          url: validator?.wwwUrl,
-        },
-      },
-    };
-  });
 }
 
 export function useAptosMappedStakingPositions(

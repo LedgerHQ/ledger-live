@@ -103,17 +103,6 @@ export type ExtraStakeInfoRaw = {
   amount: string;
 };
 
-export type AptosStakeWithMeta = {
-  stake: AptosStakingPosition;
-  meta: {
-    validator?: {
-      name?: string;
-      img?: string;
-      url?: string;
-    };
-  };
-};
-
 export type AptosResources = {
   stakedBalance: BigNumber;
   availableBalance: BigNumber;

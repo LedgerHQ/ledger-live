@@ -1,4 +1,3 @@
-import * as blockies from "blockies-ts";
 import BigNumber from "bignumber.js";
 import { AptosAPI } from "../network";
 import { GetCurrentDelegatorBalancesData } from "./graphql/queries";
@@ -19,8 +18,6 @@ export async function getValidators(currencyId: string): Promise<AptosValidator[
 
   const list: AptosValidator[] = await Promise.all(
     stakingData.map(async pool => {
-      const poolId = pool.current_pool_balance.staking_pool_address.toLowerCase();
-      const imgSrc = blockies.create({ seed: poolId }).toDataURL();
       const aptosName = pool.staking_pool_metadata.operator_aptos_name;
       const naming =
         Array.isArray(aptosName) && aptosName.length > 0 && aptosName[0].domain_with_suffix
@@ -40,7 +37,6 @@ export async function getValidators(currencyId: string): Promise<AptosValidator[
         address: pool.current_pool_balance.staking_pool_address,
         name: naming,
         shares: pool.current_pool_balance.total_shares,
-        avatarUrl: imgSrc,
         wwwUrl: url,
         nextUnlockTime: nextUnlockTime,
       };
