@@ -94,6 +94,47 @@ jobs:
       - name: Add changed files
         run: |
           git add .
+      - name: commit (from release branch)
+        if: ${{ startsWith(github.ref_name, 'release') }}
+        uses: planetscale/ghcommit-action@v0.2.9
+        with:
+          commit_message: "chore(prerelease): :rocket: release prerelease [${{ env.LLD }}, ${{ env.LLM }}] [skip ci]"
+          repo: ${{ github.repository }}
+          branch: ${{ github.ref_name }}
+        env:
+          LLD: LLD(${{ steps.post-desktop-version.outputs.version }})
+          LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+      - name: commit (from hotfix branch)
+        if: ${{ startsWith(github.ref_name, 'hotfix') }}
+        uses: planetscale/ghcommit-action@v0.2.9
+        with:
+          commit_message: "chore(hotfix): :fire: hotfix prerelease [${{ env.LLD }}, ${{ env.LLM }}] [skip ci]"
+          repo: ${{ github.repository }}
+          branch: ${{ github.ref_name }}
+        env:
+          LLD: LLD(${{ steps.post-desktop-version.outputs.version }})
+          LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+      - name: commit (from ${{ inputs.ref }} branch) workflow dispatch
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        uses: planetscale/ghcommit-action@v0.2.9
+        with:
+          commit_message: "chore(prerelease): :rocket: ${{ inputs.ref }} prerelease [LLD(${{ steps.post-desktop-version.outputs.version }}), LLM(${{ steps.post-mobile-version.outputs.version }})] [skip ci]"
+          repo: ${{ github.repository }}
+          branch: ${{ inputs.ref }}
+        env:
+          LLD: LLD(${{ steps.post-desktop-version.outputs.version }})
+          LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+      - name: authenticate with npm
+        uses: actions/setup-node@v4
+        with:
+          registry-url: "https://registry.npmjs.org"
+      - name: publish prerelease
+        run: pnpm changeset publish --no-git-tag
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
       - uses: actions/github-script@v7
         name: trigger prerelease build for desktop
         if: ${{ steps.desktop-version.outputs.version != steps.post-desktop-version.outputs.version }}
@@ -124,47 +165,6 @@ jobs:
                 ref: "${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref_name }}",
               }
             });
-      - name: commit (from release branch)
-        if: ${{ startsWith(github.ref_name, 'release') }}
-        uses: planetscale/ghcommit-action@v0.2.9
-        with:
-          commit_message: "chore(prerelease): :rocket: release prerelease [${{ env.LLD }}, ${{ env.LLM }}] [skip ci]"
-          repo: ${{ github.repository }}
-          branch: ${{ github.ref_name }}
-        env:
-          LLD: LLD(${{ steps.post-desktop-version.outputs.version }})
-          LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-      - name: commit (from hotfix branch)
-        if: ${{ startsWith(github.ref_name, 'hotfix') }}
-        uses: planetscale/ghcommit-action@v0.2.9
-        with:
-          commit_message: "chore(hotfix): :fire: hotfix prerelease [${{ env.LLD }}, ${{ env.LLM }}]"
-          repo: ${{ github.repository }}
-          branch: ${{ github.ref_name }}
-        env:
-          LLD: LLD(${{ steps.post-desktop-version.outputs.version }})
-          LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-      - name: commit (from ${{ inputs.ref }} branch) workflow dispatch
-        if: ${{ github.event_name == 'workflow_dispatch' }}
-        uses: planetscale/ghcommit-action@v0.2.9
-        with:
-          commit_message: "chore(prerelease): :rocket: ${{ inputs.ref }} prerelease [LLD(${{ steps.post-desktop-version.outputs.version }}), LLM(${{ steps.post-mobile-version.outputs.version }})]"
-          repo: ${{ github.repository }}
-          branch: ${{ inputs.ref }}
-        env:
-          LLD: LLD(${{ steps.post-desktop-version.outputs.version }})
-          LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-      - name: authenticate with npm
-        uses: actions/setup-node@v4
-        with:
-          registry-url: "https://registry.npmjs.org"
-      - name: publish prerelease
-        run: pnpm changeset publish --no-git-tag
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
 
 
   prerelease-fail:
