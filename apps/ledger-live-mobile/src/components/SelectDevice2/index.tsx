@@ -54,6 +54,7 @@ type Props = {
   // Other component using this component needs to stop the BLE scanning before starting
   // to communicate to a device via BLE.
   stopBleScanning?: boolean;
+  connectUsbDevice?: boolean;
   displayServicesWidget?: boolean;
   /**
    * SelectDevice component can sometimes need to override the current header (during the bluetooth pairing flow for ex).
@@ -202,15 +203,15 @@ export default function SelectDevice({
 
         if (!deviceModel) return;
 
+        const newDevice = {
+          deviceName: name,
+          modelId: deviceModel.id,
+          deviceId: id,
+          wired,
+        };
+
         setDevice((maybeDevice: Device | undefined) => {
-          return (
-            maybeDevice || {
-              deviceName: name,
-              modelId: deviceModel.id,
-              deviceId: id,
-              wired,
-            }
-          );
+          return maybeDevice || newDevice;
         });
       }
     });
