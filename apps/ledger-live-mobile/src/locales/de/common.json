@@ -513,6 +513,10 @@
       "title" : "Entschuldigung, Guthaben reicht nicht aus",
       "description" : "Bitte stellen Sie sicher, dass das Konto ausreichend gedeckt ist."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "Leider reicht das Guthaben zur Deckung der Gebühren nicht aus",
+      "description" : "Bitte vergewissere dich, dass das Konto über ausreichende Deckung verfügt."
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Dein verfügbares (nicht gestaketes) Guthaben beläuft sich derzeit auf {{currentBalance}}. Dies reicht nicht aus, um die Netzwerkgebühren für das Beenden des Stakings deiner {{assetName}} zu bezahlen. ",
       "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} auf deinem Konto.",
@@ -7419,6 +7423,14 @@
     },
     "performance" : "Performance",
     "low" : "Niedrig",
-    "high" : "Hoch"
+    "high" : "Hoch",
+    "title" : "Marktbewegungen"
+  },
+  "nftEntryPoint" : {
+    "title" : "Deine NFTs",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
+    }
   }
 }
