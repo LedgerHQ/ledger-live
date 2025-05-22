@@ -38,6 +38,7 @@ for (const account of accounts) {
     test(
       `[${account.account.currency.name}] Receive`,
       {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
         annotation: {
           type: "TMS",
           description: account.xrayTicket,
@@ -94,6 +95,7 @@ test.describe("Receive", () => {
   test(
     `${account.currency.ticker} empty balance Receive displays address activation warning message`,
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: {
         type: "TMS",
         description: "B2CQA-1551",
