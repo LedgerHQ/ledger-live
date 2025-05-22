@@ -1,8 +1,6 @@
-import { MoveStructId } from "@aptos-labs/ts-sdk";
+import type { MoveStructId } from "@aptos-labs/ts-sdk";
 import BigNumber from "bignumber.js";
 
-export const DEFAULT_GAS = new BigNumber(200);
-export const DEFAULT_GAS_PRICE = new BigNumber(100);
 export const ESTIMATE_GAS_MUL = new BigNumber(1.0); // define buffer for gas estimation change here, if needed
 
 export const LOAD_LIMIT = 10;
@@ -48,3 +46,5 @@ export enum DIRECTION {
 }
 
 export const SUPPORTED_TOKEN_TYPES = ["coin", "fungible_asset"];
+export const DEFAULT_GAS = new BigNumber(200);
+export const DEFAULT_GAS_PRICE = new BigNumber(100);
