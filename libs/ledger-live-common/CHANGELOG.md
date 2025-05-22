@@ -1,5 +1,16 @@
 # @ledgerhq/live-common
 
+## 34.35.0-next.1
+
+### Minor Changes
+
+- [#10309](https://github.com/LedgerHQ/ledger-live/pull/10309) [`df883f3`](https://github.com/LedgerHQ/ledger-live/commit/df883f39d687593ef6028fc63cc8b60d5348fb05) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - feat: show ton tokens in swap history
+
+### Patch Changes
+
+- Updated dependencies [[`df883f3`](https://github.com/LedgerHQ/ledger-live/commit/df883f39d687593ef6028fc63cc8b60d5348fb05)]:
+  - @ledgerhq/coin-ton@0.11.0-next.1
+
 ## 34.35.0-next.0
 
 ### Minor Changes
