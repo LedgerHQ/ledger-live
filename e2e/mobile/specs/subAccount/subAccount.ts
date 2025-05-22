@@ -107,10 +107,9 @@ export async function runSendSPLAddressValid(
     });
 
     it(`Send from ${transaction.accountToDebit.accountName} to ${transaction.accountToCredit.accountName} - ${transaction.accountToDebit.currency.name} - valid address input`, async () => {
-      const accountid = app.send.accountId(transaction.accountToDebit);
       await app.send.openViaDeeplink();
       await app.common.performSearch(transaction.accountToDebit.currency.ticker);
-      await app.common.selectAccount(accountid);
+      await app.common.selectAccount(transaction.accountToDebit);
       const addressToCredit = transaction.accountToCredit.ataAddress || "";
       await app.send.setRecipient(addressToCredit, transaction.memoTag);
       await app.send.expectSendRecipientWarning(expectedWarningMessage);
@@ -131,10 +130,9 @@ export async function runSendSPLAddressInvalid(
     });
 
     it(`Send from ${transaction.accountToDebit.accountName} to ${transaction.accountToCredit.accountName} - ${transaction.accountToCredit.currency.name} - ${expectedErrorMessage}`, async () => {
-      const accountid = app.send.accountId(transaction.accountToDebit);
       await app.send.openViaDeeplink();
       await app.common.performSearch(transaction.accountToDebit.currency.ticker);
-      await app.common.selectAccount(accountid);
+      await app.common.selectAccount(transaction.accountToDebit);
       invariant(recipientContractAddress, "Recipient address is not defined");
       await app.send.setRecipient(recipientContractAddress, transaction.memoTag);
       await app.send.expectSendRecipientError(expectedErrorMessage);
