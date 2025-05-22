@@ -26,6 +26,6 @@ export function genericEstimateMaxSpendable(
     const bnFee = BigNumber(fees.value.toString());
     console.log("draft bnFees:", bnFee);
     console.log("draft account.spendableBalance:", account.spendableBalance);
-    return account.spendableBalance.minus(bnFee);
+    return BigNumber.max(0, account.spendableBalance.minus(bnFee));
   };
 }

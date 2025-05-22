@@ -72,7 +72,7 @@ export function genericGetAccountShape(network, kind): GetAccountShape {
       return {
         id: accountId,
         xpub: address,
-        blockHeight: blockInfo.height,
+        blockHeight: initialAccount?.blockHeight || blockInfo.height,
         balance,
         spendableBalance,
         operations,
