@@ -37,6 +37,12 @@ const getPayload = (
         typeArguments: [],
         functionArguments: [transaction.recipient, transaction.amount.toString()],
       };
+    case "restake":
+      return {
+        function: "0x1::delegation_pool::reactivate_stake",
+        typeArguments: [],
+        functionArguments: [transaction.recipient, transaction.amount.toString()],
+      };
     case "withdraw":
       return {
         function: "0x1::delegation_pool::withdraw",

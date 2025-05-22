@@ -3,7 +3,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import type { Transaction, AptosAccount } from "@ledgerhq/live-common/families/aptos/types";
-import { getMaxUnstakableAmount } from "@ledgerhq/live-common/families/aptos/logic";
+import { getDelegationOpMaxAmount } from "@ledgerhq/live-common/families/aptos/logic";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -44,7 +44,7 @@ function UnstakingAmount({ navigation, route }: Props) {
     params: {
       ...route.params,
       transaction,
-      max: getMaxUnstakableAmount(account as AptosAccount, validatorId, "unstake"),
+      max: getDelegationOpMaxAmount(account as AptosAccount, validatorId, "unstake"),
       value: transaction ? transaction.amount : new BigNumber(0),
       nextScreen: ScreenName.AptosUnstakingSelectDevice,
       updateTransaction,

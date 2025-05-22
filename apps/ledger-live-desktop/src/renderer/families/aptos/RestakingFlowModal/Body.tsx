@@ -81,7 +81,7 @@ function Body({
 
     const bridge = getAccountBridge(accountProp, undefined);
     const initTx = bridge.createTransaction(accountProp);
-    const mode = "unstake";
+    const mode = "restake";
     const recipient = validatorAddress;
 
     const maxAmount = getDelegationOpMaxAmount(accountProp, recipient, mode);
@@ -141,7 +141,7 @@ function Body({
   }
 
   const stepperProps = {
-    title: t("aptos.unstake.flow.title"),
+    title: t("aptos.restake.flow.title"),
     device,
     account,
     transaction,
@@ -169,7 +169,7 @@ function Body({
   return (
     <Stepper {...stepperProps}>
       <SyncSkipUnderPriority priority={100} />
-      <Track onUnmount event="CloseModalUnstaking" />
+      <Track onUnmount event="CloseModalRestaking" />
     </Stepper>
   );
 }
