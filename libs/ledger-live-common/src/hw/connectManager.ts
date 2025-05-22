@@ -147,7 +147,7 @@ export default function connectManagerFactory(
   return ({ deviceId, request }: Input): Observable<ConnectManagerEvent> =>
     withDevice(deviceId)(transport => {
       if (!isDmkTransport(transport)) {
-        throw new Error("LdkmConnectManager is not supported without LDMK transport");
+        return cmd(transport, { deviceId, request });
       }
       const { dmk, sessionId } = transport;
       const deviceAction = new PrepareConnectManagerDeviceAction({
