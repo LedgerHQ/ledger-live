@@ -8,6 +8,24 @@ permissions:
   contents: read
 
 jobs:
+  download-desktop-coverage:
+    name: "Download Desktop Coverage"
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Download desktop unit test coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-desktop
+          path: ./coverage-desktop
+  download-mobile-coverage:
+    name: "Download Mobile Coverage"
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Download desktop unit test coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-mobile
+          path: ./coverage-mobile
   scan-sonar:
     name: "Sonar Cloud"
     runs-on: [ledger-live-4xlarge]

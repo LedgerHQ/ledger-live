@@ -115,16 +115,6 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
     secrets: inherit
 
-  download-desktop-coverage:
-        name: "Download Desktop Coverage"
-        needs: test-desktop
-        runs-on: ubuntu-22.04
-        steps:
-          - name: Download desktop unit test coverage
-            uses: actions/download-artifact@v4
-            with:
-              name: desktop-unit-coverage
-              path: ./desktop-coverage
   scan-sonar:
     name: "Sonar Cloud"
     needs:
