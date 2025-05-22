@@ -149,6 +149,11 @@ const swaps = [
     xrayTicket: "B2CQA-3081",
     tag: ["@NanoSP", "@NanoX"],
   },
+  {
+    fromAccount: Account.SOL_GIGA_1,
+    toAccount: Account.BTC_NATIVE_SEGWIT_1,
+    xrayTicket: "B2CQA-3268",
+  },
 ];
 
 for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
