@@ -159,7 +159,6 @@ function App() {
   useAccountsWithFundsListener(accounts, updateIdentify);
   useFetchCurrencyAll();
   useFetchCurrencyFrom();
-  useListenToHidDevices();
   useAutoDismissPostOnboardingEntryPoint();
 
   const getSettingsChanged = useCallback((a: State, b: State) => a.settings !== b.settings, []);
