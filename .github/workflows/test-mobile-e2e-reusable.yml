@@ -592,7 +592,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": `- 🤖 Android: ${process.env.ANDROID_STATUS !== 'success' ? '❌' : '✅'} ${{ needs.allure-report-android.outputs.result || 'No test results' }}`
+                  "text": `- 🤖 Android - ${{ inputs.speculos_device }}: ${process.env.ANDROID_STATUS !== 'success' ? '❌' : '✅'} ${{ needs.allure-report-android.outputs.result || 'No test results' }}`
                 }
               }
             ];
