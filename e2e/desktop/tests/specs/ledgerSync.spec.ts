@@ -100,6 +100,14 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
 
       await app.layout.goToSettings();
       await app.settings.openManageLedgerSync();
+      await app.ledgerSync.manageInstances();
+      await app.ledgerSync.removeCLIMember();
+      await app.speculos.removeMemberFromLedgerSync();
+      await app.ledgerSync.expectMemberRemoval();
+      await app.drawer.closeDrawer();
+
+      await app.layout.goToSettings();
+      await app.settings.openManageLedgerSync();
       await app.ledgerSync.destroyTrustchain();
       await app.ledgerSync.expectBackupDeletion();
       await app.drawer.closeDrawer();

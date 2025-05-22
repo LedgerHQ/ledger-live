@@ -1,6 +1,6 @@
 import React from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { SelectNetwork } from "../../SelectNetwork";
+import { SelectNetwork } from "./SelectNetwork";
 
 export type NetworkSelectionStepProps = {
   networks: CryptoOrTokenCurrency[];

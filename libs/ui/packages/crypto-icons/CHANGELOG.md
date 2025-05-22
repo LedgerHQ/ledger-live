@@ -1,5 +1,21 @@
 # @ledgerhq/icons-ui
 
+## 1.14.0
+
+### Minor Changes
+
+- [#10115](https://github.com/LedgerHQ/ledger-live/pull/10115) [`0c268fb`](https://github.com/LedgerHQ/ledger-live/commit/0c268fbc9d08f98b2b383fde36d77e92b5953675) Thanks [@0xukhezo](https://github.com/0xukhezo)! - Add logo for SIDESHIFT XAI token to ledger. Support for tokens was added to ledger live desktop already
+  Contract address (ethereum):
+  SIDESHIFT XAI - 0x35e78b3982E87ecfD5b3f3265B601c046cDBe232
+
+## 1.14.0-next.0
+
+### Minor Changes
+
+- [#10115](https://github.com/LedgerHQ/ledger-live/pull/10115) [`0c268fb`](https://github.com/LedgerHQ/ledger-live/commit/0c268fbc9d08f98b2b383fde36d77e92b5953675) Thanks [@0xukhezo](https://github.com/0xukhezo)! - Add logo for SIDESHIFT XAI token to ledger. Support for tokens was added to ledger live desktop already
+  Contract address (ethereum):
+  SIDESHIFT XAI - 0x35e78b3982E87ecfD5b3f3265B601c046cDBe232
+
 ## 1.13.0
 
 ### Minor Changes

@@ -1,3 +1,15 @@
+# 2.113.2
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.113.1
+
+We have resolved an issue that was affecting several Ledger Live services for Ledger Nano S users.
+The following functionalities are now fully restored
+- Swapping EVM tokens
+- Topping up the CL Card with EVM
+- Selling EVM tokens
+
 # 2.113.0
 
 This release includes small security improvements, UI tweaks, and minor bug fixes.

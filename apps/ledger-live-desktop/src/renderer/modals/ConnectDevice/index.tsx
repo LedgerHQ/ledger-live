@@ -1,14 +1,9 @@
 import React, { useMemo } from "react";
-import { getEnv } from "@ledgerhq/live-env";
-import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
 import DeviceAction from "~/renderer/components/DeviceAction";
-import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
-
-const appAction = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
+import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
 
 export type Data = {
   onCancel?: (reason: string) => void;
@@ -17,6 +12,7 @@ export type Data = {
 };
 
 export default function ConnectDevice({ appName = "BOLOS" }: Data) {
+  const action = useConnectAppAction();
   const request = useMemo(() => {
     return {
       appName,
@@ -39,7 +35,7 @@ export default function ConnectDevice({ appName = "BOLOS" }: Data) {
           render={() => (
             <Box alignItems={"center"} px={32}>
               <DeviceAction
-                action={appAction}
+                action={action}
                 request={request}
                 onResult={res => {
                   data?.onResult(res);

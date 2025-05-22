@@ -35,16 +35,18 @@ const SendAmountFields = ({ account, transaction, status }: Props) => {
     [account, transaction.subAccountId],
   );
   return (
-    <Flex>
-      {status.errors.fee ? (
-        <Alert type="warning" data-testid="insufficient-funds-warning">
-          <TranslatedError error={status.errors.fee} />
-        </Alert>
-      ) : null}
+    <>
+      <Flex>
+        {status.errors.fee ? (
+          <Alert type="warning" data-testid="insufficient-funds-warning">
+            <TranslatedError error={status.errors.fee} />
+          </Alert>
+        ) : null}
+      </Flex>
       {tokenAccount ? (
         <TokenTransferFeesWarning tokenAccount={tokenAccount} transaction={transaction} />
       ) : null}
-    </Flex>
+    </>
   );
 };
 

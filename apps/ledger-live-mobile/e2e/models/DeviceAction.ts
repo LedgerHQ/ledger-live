@@ -11,7 +11,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { delay } from "../helpers/commonHelpers";
 import { mockDeviceEvent } from "../bridge/server";
-import { DeviceLike } from "../../src/reducers/types";
+import { DeviceLike } from "~/reducers/types";
 
 const mockListAppsResult = (
   appDesc: string,

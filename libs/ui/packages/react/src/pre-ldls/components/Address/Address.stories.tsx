@@ -19,7 +19,7 @@ export const TestAddress: Story = {
     const canvas = within(canvasElement);
 
     const name = canvas.getByText("n4A9...Zgty");
-    const icon = canvas.queryByTestId("address-icon");
+    const icon = canvas.queryByRole("img");
 
     await expect(name).toBeInTheDocument();
     await expect(icon).not.toBeInTheDocument();
@@ -32,7 +32,7 @@ export const TestAddressWithIcon: Story = {
     const canvas = within(canvasElement);
 
     const name = canvas.getByText("n4A9...Zgty");
-    const icon = canvas.getByTestId("address-icon");
+    const icon = canvas.getByRole("img");
 
     await expect(name).toBeInTheDocument();
     await expect(icon).toBeInTheDocument();
