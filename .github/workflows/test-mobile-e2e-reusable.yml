@@ -169,7 +169,7 @@ jobs:
         uses: tespkg/actions-cache/save@v1
         with:
           path: ${{ github.workspace }}${{ env.IOS_NATIVE_PATH }}
-          key: ${{ runner.os }}-poc-detox-native-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js', 'apps/ledger-live-mobile/.env.mock', 'apps/ledger-live-mobile/ios/ledgerlivemobile/AppDelegate.mm') }}
+          key: poc-detox-native-ios
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
@@ -307,7 +307,7 @@ jobs:
         uses: tespkg/actions-cache/restore@v1
         with:
           path: ${{ github.workspace }}${{ env.IOS_NATIVE_PATH }}
-          key: ${{ runner.os }}-poc-detox-native-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js', 'apps/ledger-live-mobile/.env.mock', 'apps/ledger-live-mobile/ios/ledgerlivemobile/AppDelegate.mm') }}
+          key: poc-detox-native-ios
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
