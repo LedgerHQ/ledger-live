@@ -37,6 +37,7 @@ import { parseDeviceInfo } from "../deviceSDK/tasks/getDeviceInfo";
 import { ConnectAppEvent } from "./connectApp";
 
 export class ConnectAppEventMapper {
+  private openAppRequested: boolean = false;
   private permissionRequested: boolean = false;
   private lastSeenDeviceSent: boolean = false;
   private installPlan: InstallPlan | null = null;
@@ -135,7 +136,10 @@ export class ConnectAppEventMapper {
   private handlePendingEvent(intermediateValue: ConnectAppDAIntermediateValue): void {
     switch (intermediateValue.requiredUserInteraction) {
       case UserInteractionRequired.ConfirmOpenApp:
-        this.eventSubject.next({ type: "ask-open-app", appName: this.appName });
+        if (!this.openAppRequested) {
+          this.openAppRequested = true;
+          this.eventSubject.next({ type: "ask-open-app", appName: this.appName });
+        }
         break;
       case UserInteractionRequired.AllowSecureConnection:
         if (!this.permissionRequested) {
@@ -147,6 +151,10 @@ export class ConnectAppEventMapper {
         this.eventSubject.next({ type: "lockedDevice" });
         break;
       case UserInteractionRequired.None:
+        if (this.openAppRequested) {
+          this.openAppRequested = false;
+          this.eventSubject.next({ type: "device-permission-granted" });
+        }
         if (this.permissionRequested) {
           this.permissionRequested = false;
           this.eventSubject.next({ type: "device-permission-granted" });
