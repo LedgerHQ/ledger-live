@@ -21,7 +21,7 @@ const getSwapOperationMap =
       o => operationId.includes(o.hash) || o.id === operationId,
     );
     const optimisticOperation = !operation
-      ? account.pendingOperations.find(o => o.id === operationId)
+      ? account.pendingOperations.find(o => operationId.includes(o.hash) || o.id === operationId)
       : null;
     const op = operation || optimisticOperation;
 
