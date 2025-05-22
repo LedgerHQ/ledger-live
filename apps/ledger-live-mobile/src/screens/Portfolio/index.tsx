@@ -46,6 +46,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import AnimatedContainer from "./AnimatedContainer";
 import storage from "LLM/storage";
 import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
+import { useListenToHidDevices } from "~/hooks/useListenToHidDevices";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
@@ -63,6 +64,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const { isAWalletCardDisplayed } = useDynamicContent();
   const accountListFF = useFeature("llmAccountListUI");
   const isAccountListUIEnabled = accountListFF?.enabled;
+  useListenToHidDevices();
 
   const mmkvMigrationFF = useFeature("llmMmkvMigration");
 

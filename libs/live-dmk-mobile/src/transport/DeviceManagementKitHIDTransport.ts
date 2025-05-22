@@ -19,6 +19,12 @@ const isDeviceSessionNotFoundError = (error: unknown): error is { _tag: "DeviceS
   "_tag" in error &&
   error._tag === "DeviceSessionNotFound";
 
+const isConnectionOpeningError = (error: unknown): error is { _tag: "ConnectionOpeningError" } =>
+  typeof error === "object" &&
+  error !== null &&
+  "_tag" in error &&
+  error._tag === "ConnectionOpeningError";
+
 type DMKTransport = Transport & {
   sessionId: string;
   dmk: DeviceManagementKit;
@@ -45,11 +51,11 @@ export class DeviceManagementKitHIDTransport extends Transport {
     this.listenToDisconnect();
   }
 
-  static async open(deviceId: string) {
-    const activeDeviceSession = activeDeviceSessionSubject.value;
+  private static async openWithoutDeviceId() {
     const dmk = getDeviceManagementKit();
+    let transport: DeviceManagementKitHIDTransport | undefined = undefined;
 
-    if (!activeDeviceSession) {
+    try {
       const availableDevices = await firstValueFrom(
         dmk
           .listenToAvailableDevices({ transport: rnHidTransportIdentifier })
@@ -62,43 +68,69 @@ export class DeviceManagementKitHIDTransport extends Transport {
         } as DiscoveredDevice,
         sessionRefresherOptions: { isRefresherDisabled: true },
       });
-      const transport = new DeviceManagementKitHIDTransport(dmk, sessionId);
+      transport = new DeviceManagementKitHIDTransport(dmk, sessionId);
       activeDeviceSessionSubject.next({
         sessionId,
         transport,
       });
-      return transport;
+    } catch (err) {
+      tracer.trace("[DMKTransportHID] open without device id error", { err });
+      throw err;
     }
+    return transport;
+  }
+
+  static async open(deviceId: string) {
+    const activeDeviceSession = activeDeviceSessionSubject.value;
+    const dmk = getDeviceManagementKit();
 
     let transport: DeviceManagementKitHIDTransport | undefined = undefined;
-
     try {
-      const deviceSessionState = await firstValueFrom(
-        activeDeviceSession.transport.dmk.getDeviceSessionState({
-          sessionId: activeDeviceSession.sessionId,
-        }),
-      );
-
-      const connectedDevice = dmk.getConnectedDevice({
-        sessionId: activeDeviceSession.sessionId,
-      });
-      if (
-        [`usb_${deviceId}`, deviceId].includes(connectedDevice.id) &&
-        connectedDevice.type === "USB" &&
-        deviceSessionState.deviceStatus !== DeviceStatus.NOT_CONNECTED
-      ) {
-        transport = activeDeviceSession.transport;
-      } else {
-        const sessionId = await activeDeviceSession.transport.dmk.connect({
-          device: { id: deviceId, transport: rnHidTransportIdentifier } as DiscoveredDevice,
+      if (!activeDeviceSession) {
+        const sessionId = await dmk.connect({
+          device: {
+            id: deviceId,
+            transport: rnHidTransportIdentifier,
+          } as DiscoveredDevice,
           sessionRefresherOptions: { isRefresherDisabled: true },
         });
         transport = new DeviceManagementKitHIDTransport(dmk, sessionId);
-        activeDeviceSessionSubject.next({ transport, sessionId });
+        activeDeviceSessionSubject.next({
+          sessionId,
+          transport,
+        });
+      } else {
+        const deviceSessionState = await firstValueFrom(
+          activeDeviceSession.transport.dmk.getDeviceSessionState({
+            sessionId: activeDeviceSession.sessionId,
+          }),
+        );
+
+        const connectedDevice = dmk.getConnectedDevice({
+          sessionId: activeDeviceSession.sessionId,
+        });
+        if (
+          [`usb_${deviceId}`, deviceId].includes(connectedDevice.id) &&
+          connectedDevice.type === "USB" &&
+          deviceSessionState.deviceStatus !== DeviceStatus.NOT_CONNECTED
+        ) {
+          transport = activeDeviceSession.transport;
+        } else {
+          const sessionId = await activeDeviceSession.transport.dmk.connect({
+            device: { id: deviceId, transport: rnHidTransportIdentifier } as DiscoveredDevice,
+            sessionRefresherOptions: { isRefresherDisabled: true },
+          });
+          transport = new DeviceManagementKitHIDTransport(dmk, sessionId);
+          activeDeviceSessionSubject.next({ transport, sessionId });
+        }
       }
     } catch (err) {
       tracer.trace("[DMKTransportHID] open error", { err });
-      throw err;
+      if (isConnectionOpeningError(err)) {
+        transport = await DeviceManagementKitHIDTransport.openWithoutDeviceId();
+      } else {
+        throw err;
+      }
     }
 
     return transport;
