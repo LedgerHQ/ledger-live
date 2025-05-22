@@ -39,8 +39,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "axios": "1.7.7",
     "bignumber.js": "^9.1.2",
-    "semver": "^7.3.5",
-    "jest-sonar": "0.2.16"
+    "semver": "^7.3.5"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
