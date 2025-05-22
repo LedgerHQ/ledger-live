@@ -38,6 +38,7 @@ interface ExtraOptions {
 interface RenderReturn {
   store: ReturnType<typeof createStore>;
   user: ReturnType<typeof userEvent.setup>;
+  container: HTMLElement;
 }
 type DeepPartial<T> = T extends Function
   ? T
