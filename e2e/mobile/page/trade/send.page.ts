@@ -1,6 +1,5 @@
 import { expect } from "detox";
 import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export default class SendPage {
   baseLink = "send";
@@ -27,8 +26,6 @@ export default class SendPage {
   summaryWarning = () => getElementById("send-summary-warning");
   summaryContinueButton = () => getElementById("summary-continue-button");
   feeStrategy = (fee: string) => getElementByText(fee);
-  accountId = (account: Account) =>
-    `test-id-account-${account.accountName}${account.tokenType !== undefined ? ` (${account.currency.ticker})` : ""}`;
 
   @Step("Open send via deeplink")
   async openViaDeeplink() {
