@@ -4697,7 +4697,7 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "更新 {{deviceName}} 到版本 {{version}}",
-    "recoveryPhraseBackupInstructions" : "预防起见，请确保将您的 24 词恢复短语写在所提供的恢复表中。",
+    "recoveryPhraseBackupInstructions" : "请确保将您的 24 词秘密恢复短语写在恢复表中并妥善保管，以备不时之需。\n\n建议使用 Ledger Recover 备份您的钱包访问权限，确保其始终触手可及。",
     "confirmRecoveryPhrase" : "我有自己的恢复短语",
     "introDescription1" : "请注意，您设备上的所有应用程序都会被删除。您可以在固件更新后重新安装这些应用程序。",
     "introDescription2" : "该操作不会影响您的加密资产。",

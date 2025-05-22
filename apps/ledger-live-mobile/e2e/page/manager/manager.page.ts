@@ -4,7 +4,6 @@ import { openDeeplink } from "../../helpers/commonHelpers";
 export default class ManagerPage {
   baseLink = "myledger";
   managerTitleId = "manager-title";
-  setupNewDevice = () => getElementById("manager_setup_new_device");
   connectDevice = () => getElementById("manager_connect_device");
   deviceNameId = "manager-device-name";
   deviceName = () => getElementById(this.deviceNameId);
@@ -27,10 +26,6 @@ export default class ManagerPage {
 
   async expectManagerPage() {
     await expect(getElementById(this.managerTitleId)).toBeVisible();
-  }
-
-  async selectSetupNewDevice() {
-    await tapByElement(this.setupNewDevice());
   }
 
   async selectConnectDevice() {

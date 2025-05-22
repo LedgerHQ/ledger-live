@@ -513,6 +513,10 @@
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."
     },
+    "NotEnoughBalanceFees": {
+      "title": "Sorry, insufficient funds to cover fees",
+      "description": "Please make sure the account has enough funds."
+    },
     "NotEnoughBalanceForUnstaking": {
       "message": "Your available (non-staked) balance is currently {{currentBalance}} which is insufficient to pay for the network fees to unstake your {{assetName}}. ",
       "oneCta": "<cta1>{{cta1Label}}</cta1> {{assetName}} into your account.",
@@ -3565,6 +3569,8 @@
         "contact_support": "Contact customer support",
         "ton_title": "Ledger Nano S™ does not support swapping Ton",
         "ton_description": "To swap Ton, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "ton_tokens_title": "Ledger Nano S™ does not support swapping Ton Tokens",
+        "ton_tokens_description": "To swap Ton Tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
         "spl_tokens_title": "Ledger Nano S™ does not support swapping Solana tokens",
         "spl_tokens_description": "To swap Solana tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
         "near_title": "Ledger Nano S™ does not support swapping Near",
@@ -3844,6 +3850,9 @@
           "title": "No address found for this domain"
         }
       }
+    },
+    "spl2022": {
+      "splExtensionsWarning": "You are interacting with a token that is part of the Token-2022 program, also known as Token Extensions. This token comes with specific risks. <0>Click here</0> to learn more."
     },
     "amount": {
       "available": "Total available",
@@ -4695,7 +4704,7 @@
   },
   "FirmwareUpdateReleaseNotes": {
     "introTitle": "Update {{deviceName}} to version {{version}}",
-    "recoveryPhraseBackupInstructions": "Ensure your 24-word recovery phrase is written down on the Recovery sheet and it is available, as a precaution.",
+    "recoveryPhraseBackupInstructions": "Ensure your 24-word Secret Recovery Phrase is written down on the recovery Sheet and is available, as a precaution.\n\nConsider using Ledger Recover to back up access to your wallet and ensure it's always within reach.",
     "confirmRecoveryPhrase": "I have my recovery phrase",
     "introDescription1": "Please note that all the apps on your device will be deleted. You can reinstall your apps after the firmware update.",
     "introDescription2": "This has no impact on your crypto assets.",
@@ -6084,6 +6093,7 @@
       "transferFees": {
         "title": "Transfer fees",
         "feesPercentHint": "Token has {{feePercent}}% ({{feeBps}}bps) transfer fee ({{maxFee}} max)",
+        "feesHint": "Token transfer fee: {{transferFee}}",
         "notice": "Transfer fee {{fee}}%",
         "tooltipHint": "Percentage of transfer withheld for token creator"
       },
@@ -7427,5 +7437,12 @@
     "low": "Low",
     "high": "High",
     "title": "Market Movements"
+  },
+  "nftEntryPoint": {
+    "title": "Your NFTs",
+    "entry": {
+      "magiceden": "Magic Eden",
+      "opensea": "OpenSea"
+    }
   }
 }

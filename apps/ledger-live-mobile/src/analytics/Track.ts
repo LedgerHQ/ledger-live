@@ -1,5 +1,6 @@
-import { useEffect, memo, useCallback } from "react";
+import { useEffect, useRef, memo, useCallback } from "react";
 import { track } from "./segment";
+import isEqual from "lodash/isEqual";
 
 type Props = {
   onMount?: boolean;
@@ -9,29 +10,37 @@ type Props = {
   [key: string]: unknown;
 };
 
-export default memo((props: Props): null => {
-  const { event, onMount, onUnmount, onUpdate } = props;
+const Track = (props: Props): null => {
+  const { onMount, onUnmount, onUpdate } = props;
+  const prevPropsRef = useRef<Props | null>(null);
 
-  const doTrack = useCallback(() => {
+  const trackEvent = useCallback(() => {
     const { event, onMount, onUnmount, onUpdate, ...properties } = props;
     track(event, properties);
   }, [props]);
 
-  useEffect(function mount() {
-    if (typeof event !== "string") {
-      console.warn("analytics Track: invalid event=", event);
-    }
+  useEffect(() => {
+    if (onMount) trackEvent();
 
-    if (onMount) doTrack();
-    return function unmount() {
-      if (onUnmount) doTrack();
+    return () => {
+      if (onUnmount) trackEvent();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (onUpdate) {
-    doTrack();
-  }
+  useEffect(() => {
+    if (!onUpdate) return;
+
+    const prevProps = prevPropsRef.current;
+
+    if (prevProps && !isEqual(prevProps, props)) {
+      trackEvent();
+    }
+
+    prevPropsRef.current = { ...props };
+  }, [onUpdate, props, trackEvent]);
 
   return null;
-});
+};
+
+export default memo(Track);

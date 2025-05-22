@@ -1,6 +1,5 @@
 /* eslint-disable no-var */
 import { globalSetup } from "detox/runners/jest";
-import { Subscription } from "rxjs";
 import { Server, WebSocket } from "ws";
 import { Step } from "jest-allure2-reporter/api";
 import { MessageData, ServerData } from "./bridge/types";
@@ -14,7 +13,6 @@ import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 
 import { ElementHelpers } from "./helpers/elementHelpers";
-import { CLI } from "./utils/cliUtils";
 import expect from "expect";
 
 Object.defineProperty(globalThis, "Step", {
@@ -27,7 +25,6 @@ Object.defineProperty(globalThis, "Step", {
 import { Application } from "./page";
 
 type StepType = typeof Step;
-type CLIType = typeof CLI;
 type expectType = typeof expect;
 type CurrencyType = typeof Currency;
 type DelegateType = typeof Delegate;
@@ -37,17 +34,8 @@ type FeeType = typeof Fee;
 type AppInfosType = typeof AppInfos;
 type SwapType = typeof Swap;
 
-process.on("SIGINT", async () => {
-  if (global.app?.common?.removeSpeculos) {
-    await global.app.common.removeSpeculos();
-  }
-  process.exit(0);
-});
-
 declare global {
   var IS_FAILED: boolean;
-  var speculosDevices: Map<number, string>;
-  var proxySubscriptions: Map<number, { port: number; subscription: Subscription }>;
   var webSocket: {
     wss: Server | undefined;
     ws: WebSocket | undefined;
@@ -57,7 +45,6 @@ declare global {
 
   var app: Application;
   var Step: StepType;
-  var CLI: CLIType;
   var jestExpect: expectType;
   var Currency: CurrencyType;
   var Delegate: DelegateType;
@@ -98,8 +85,6 @@ declare global {
 export default async () => {
   await globalSetup();
   global.IS_FAILED = false;
-  global.speculosDevices = new Map<number, string>();
-  global.proxySubscriptions = new Map<number, { port: number; subscription: Subscription }>();
 
   global.app = new Application();
   global.webSocket = {
@@ -108,7 +93,6 @@ export default async () => {
     messages: {},
     e2eBridgeServer: new Subject<ServerData>(),
   };
-  global.CLI = CLI;
   global.jestExpect = expect;
   global.Currency = Currency;
   global.Delegate = Delegate;

@@ -231,7 +231,7 @@ export async function fetchAllOperations(
     }
 
     operations = operations.concat(
-      await rawOperationsToOperations(rawOperations.records as RawOperation[], addr, accountId),
+      await rawOperationsToOperations(rawOperations.records as RawOperation[], addr, accountId, 0),
     );
 
     while (rawOperations.records.length > 0) {
@@ -242,7 +242,12 @@ export async function fetchAllOperations(
 
       rawOperations = await rawOperations.next();
       operations = operations.concat(
-        await rawOperationsToOperations(rawOperations.records as RawOperation[], addr, accountId),
+        await rawOperationsToOperations(
+          rawOperations.records as RawOperation[],
+          addr,
+          accountId,
+          0,
+        ),
       );
     }
 
@@ -280,12 +285,14 @@ export async function fetchAllOperations(
 export async function fetchOperations({
   accountId,
   addr,
+  minHeight,
   order,
   cursor,
   limit,
 }: {
   accountId: string;
   addr: string;
+  minHeight: number;
   order: "asc" | "desc";
   cursor: string | undefined;
   limit?: number | undefined;
@@ -312,10 +319,14 @@ export async function fetchOperations({
       return noResult;
     }
 
-    return [
-      await rawOperationsToOperations(rawOperations.records as RawOperation[], addr, accountId),
-      rawOperations.records[rawOperations.records.length - 1].paging_token,
-    ];
+    const rawOps = rawOperations.records as RawOperation[];
+    const filteredOps = await rawOperationsToOperations(rawOps, addr, accountId, minHeight);
+
+    // in this context, if we have filtered out operations it means those operations were < minHeight, so we are done
+    const nextCursor =
+      filteredOps.length == rawOps.length ? rawOps[rawOps.length - 1].paging_token : "";
+
+    return [filteredOps, nextCursor];
   } catch (e: unknown) {
     // FIXME: terrible hacks, because Stellar SDK fails to cast network failures to typed errors in react-native...
     // (https://github.com/stellar/js-stellar-sdk/issues/638)

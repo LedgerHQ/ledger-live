@@ -109,7 +109,10 @@ export const VirtualList = <T,>({
   const showCustomLoadingComponent = !!LoadingComponent;
 
   return (
-    <div ref={parentRef} style={{ width: "100%", height: "100%", overflow: "auto" }}>
+    <div
+      ref={parentRef}
+      style={{ width: "100%", height: "100%", overflow: "auto", scrollbarWidth: "none" }}
+    >
       <div
         style={{
           height: `${rowVirtualizer.getTotalSize()}px`,

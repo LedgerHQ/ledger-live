@@ -408,6 +408,13 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  ptxEarnLiveApp: {
+    enabled: true,
+    params: {
+      manifest_id: "earn",
+    },
+  },
+
   ptxSwapLiveAppMobile: {
     enabled: false,
     params: {
@@ -601,6 +608,15 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   llNftSupport: DEFAULT_FEATURE,
+  llNftEntryPoint: {
+    ...DEFAULT_FEATURE,
+    params: {
+      opensea: false,
+      magiceden: false,
+      chains: ["ethereum", "polygon", "base", "arbitrum"],
+    },
+  },
+  ldmkConnectApp: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

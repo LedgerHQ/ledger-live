@@ -10,6 +10,7 @@ import {
   verifyAmountsAndRejectSwap,
   activateExpertMode,
   activateContractData,
+  removeMemberLedgerSync,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { NFTTransaction, Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
@@ -20,6 +21,11 @@ export class SpeculosPage extends AppPage {
   @step("Verify receive address correctness on device")
   async expectValidAddressDevice(account: Account, addressDisplayed: string) {
     await expectValidAddressDevice(account, addressDisplayed);
+  }
+
+  @step("Remove member from Ledger Sync")
+  async removeMemberFromLedgerSync() {
+    await removeMemberLedgerSync();
   }
 
   @step("Activate Ledger Sync")

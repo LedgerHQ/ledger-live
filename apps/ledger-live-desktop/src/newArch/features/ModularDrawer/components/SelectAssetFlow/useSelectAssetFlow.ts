@@ -4,32 +4,7 @@ import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/in
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { LoadingBasedGroupedCurrencies, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { AssetType } from "@ledgerhq/react-ui/pre-ldls";
-
-export enum FlowStep {
-  SELECT_ASSET_TYPE = "SELECT_ASSET_TYPE",
-  SELECT_NETWORK = "SELECT_NETWORK",
-}
-
-export enum NavigationDirection {
-  FORWARD = "FORWARD",
-  BACKWARD = "BACKWARD",
-}
-
-const ANIMATION_COMMON = { transition: { duration: 0.3 } };
-
-export const ANIMATION_VARIANTS = {
-  initial: (direction: NavigationDirection) => ({
-    y: direction === NavigationDirection.FORWARD ? 20 : -20,
-    opacity: 0,
-    ...ANIMATION_COMMON,
-  }),
-  animate: { y: 0, opacity: 1, ...ANIMATION_COMMON },
-  exit: (direction: NavigationDirection) => ({
-    y: direction === NavigationDirection.FORWARD ? -20 : 20,
-    opacity: 0,
-    ...ANIMATION_COMMON,
-  }),
-};
+import { FlowStep, NavigationDirection } from "../Header/navigation";
 
 type UseSelectAssetFlowProps = {
   currencies: CryptoOrTokenCurrency[];

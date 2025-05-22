@@ -1,5 +1,16 @@
 # @ledgerhq/cryptoassets
 
+## 13.18.0-next.0
+
+### Minor Changes
+
+- [#9929](https://github.com/LedgerHQ/ledger-live/pull/9929) [`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47) Thanks [@semeano](https://github.com/semeano)! - Add aptos tokens functionality
+
+### Patch Changes
+
+- Updated dependencies [[`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47)]:
+  - @ledgerhq/live-env@2.9.0-next.0
+
 ## 13.17.0
 
 ### Minor Changes

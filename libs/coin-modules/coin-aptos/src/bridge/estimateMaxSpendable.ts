@@ -1,9 +1,10 @@
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
-import { AptosAPI } from "../api";
+import { AptosAPI } from "../network";
 import { getEstimatedGas } from "./getFeesForTransaction";
-import { DEFAULT_GAS, DEFAULT_GAS_PRICE, getMaxSendBalance } from "./logic";
+import { getMaxSendBalance } from "./logic";
+import { DEFAULT_GAS, DEFAULT_GAS_PRICE } from "../constants";
 import type { Transaction } from "../types";
 
 const estimateMaxSpendable = async ({
@@ -29,7 +30,7 @@ const estimateMaxSpendable = async ({
     gasUnitPrice = BigNumber(estimate.gasUnitPrice);
   }
 
-  return getMaxSendBalance(mainAccount.spendableBalance, maxGasAmount, gasUnitPrice);
+  return getMaxSendBalance(maxGasAmount, gasUnitPrice, mainAccount, transaction);
 };
 
 export default estimateMaxSpendable;

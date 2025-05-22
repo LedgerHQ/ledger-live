@@ -2,12 +2,9 @@ import {
   TransportStatusError,
   UserRefusedDeviceNameChange,
   UserRefusedOnDevice,
-} from "@ledgerhq/errors";
-import {
-  DeviceNotOnboarded,
-  ImageDoesNotExistOnDevice,
   LatestFirmwareVersionRequired,
-} from "@ledgerhq/live-common/errors";
+} from "@ledgerhq/errors";
+import { DeviceNotOnboarded, ImageDoesNotExistOnDevice } from "@ledgerhq/live-common/errors";
 import {
   ExchangeRate,
   ExchangeSwap,

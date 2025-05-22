@@ -4697,7 +4697,7 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "{{deviceName}}을 버전 {{version}}로 업데이트",
-    "recoveryPhraseBackupInstructions" : "만약을 대비하여 24개의 단어 복구 문구를 복구 시트에 반드시 기록해 두고 언제든 사용 가능한 상태로 준비해 두세요.",
+    "recoveryPhraseBackupInstructions" : "만약을 대비하여 24개의 단어 복구 문구를 복구 시트에 기록해 두고 언제든 사용할 수 있도록 안전하게 보관하세요.안전한 액세스 백업 수단인 Ledger Recover를 통해 필요할 때 언제든 지갑 액세스를 복구하세요.",
     "confirmRecoveryPhrase" : "복구 문구가 있습니다",
     "introDescription1" : "장치의 모든 앱이 제거될 것이니 주의하세요. 펌웨어 업데이트 후에 앱을 재설치할 수 있습니다.",
     "introDescription2" : "귀하의 암호화 자산에는 영향을 주지 않습니다.",

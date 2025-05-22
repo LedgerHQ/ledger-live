@@ -16,6 +16,7 @@ import DeviceAction from "../DeviceAction";
 import { useStaxRemoveImageDeviceAction } from "~/hooks/deviceActions";
 import { type CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const analyticsDrawerName = "Choose an image to set as your device lockscreen";
 
@@ -53,6 +54,7 @@ const CustomImageBottomModal: React.FC<Props> = props => {
   } = props;
   const { t } = useTranslation();
   const { pushToast } = useToasts();
+  const llNftSupportEnabled = useFeature("llNftSupport")?.enabled ?? false;
 
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
 
@@ -169,13 +171,15 @@ const CustomImageBottomModal: React.FC<Props> = props => {
             eventProperties={analyticsButtonChoosePhoneGalleryEventProps}
           />
           <Flex mt={6} />
-          <ModalChoice
-            onPress={handleSelectFromNFTGallery}
-            title={t("customImage.drawer.options.selectFromNFTGallery")}
-            iconName={"Ticket"}
-            event="button_clicked"
-            eventProperties={analyticsButtonChooseNFTGalleryEventProps}
-          />
+          {llNftSupportEnabled ? (
+            <ModalChoice
+              onPress={handleSelectFromNFTGallery}
+              title={t("customImage.drawer.options.selectFromNFTGallery")}
+              iconName={"Ticket"}
+              event="button_clicked"
+              eventProperties={analyticsButtonChooseNFTGalleryEventProps}
+            />
+          ) : null}
           {deviceHasImage ? (
             <Button
               mt={6}

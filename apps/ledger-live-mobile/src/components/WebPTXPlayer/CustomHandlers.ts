@@ -16,6 +16,7 @@ import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { WebviewProps } from "../Web3AppWebview/types";
 import Config from "react-native-config";
 import { sendEarnLiveAppReady } from "../../../e2e/bridge/client";
+import BigNumber from "bignumber.js";
 
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
@@ -98,10 +99,21 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
                     });
                   }
                   if (result.operation) {
+                    navigation.pop();
+                    navigation.navigate(ScreenName.SwapPendingOperation, {
+                      swapOperation: {
+                        provider: exchangeParams.provider,
+                        swapId: exchangeParams.swapId!,
+                        status: "pending",
+                        receiverAccountId: exchangeParams.transaction.recipient,
+                        operationId: result.operation.hash,
+                        fromAmount: exchangeParams.transaction.amount,
+                        toAmount: BigNumber(exchangeParams.amountExpectedTo!),
+                      },
+                    });
                     onSuccess(result.operation.hash);
                   }
                   setDevice(undefined);
-                  !result.error && navigation.pop();
                 },
               },
             });

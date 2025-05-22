@@ -1,4 +1,4 @@
-import Solana from "@ledgerhq/hw-app-solana";
+import { LegacySignerSolana } from "@ledgerhq/live-signer-solana";
 import Transport from "@ledgerhq/hw-transport";
 import { Account, AnyMessage } from "@ledgerhq/types-live";
 import { PubKeyDisplayMode } from "@ledgerhq/coin-solana/signer";
@@ -29,20 +29,22 @@ const signOffchainMessageMock = jest.fn(() =>
   }),
 );
 
-jest.mock("@ledgerhq/hw-app-solana", () => {
-  return jest.fn().mockImplementation(() => {
-    return {
-      signOffchainMessage: signOffchainMessageMock,
-      getAppConfiguration: getAppConfigurationMock,
-    };
-  });
+jest.mock("@ledgerhq/live-signer-solana", () => {
+  return {
+    LegacySignerSolana: jest.fn().mockImplementation(() => {
+      return {
+        signMessage: signOffchainMessageMock,
+        getAppConfiguration: getAppConfigurationMock,
+      };
+    }),
+  };
 });
 
 LiveConfig.setConfig(solanaConfig);
 
 describe("Testing setup on Solana", () => {
   describe("Testing message signer", () => {
-    it("should call hardware for off-chain message signature", async () => {
+    it("should call the underlying signer for off-chain message signature", async () => {
       const freshAddressPath = "44'/60'/0'/0/0";
       const freshAddress = "8DpKDisipx6f76cEmuGvCX9TrA3SjeR76HaTRePxHBDe";
       const message = "4c6f6e67204f66662d436861696e2054657374204d6573736167652e";
@@ -52,7 +54,7 @@ describe("Testing setup on Solana", () => {
         { message: message } as AnyMessage,
       );
 
-      expect(Solana).toHaveBeenCalledTimes(1);
+      expect(LegacySignerSolana).toHaveBeenCalledTimes(1);
       expect(signOffchainMessageMock).toHaveBeenCalledTimes(1);
 
       const args = signOffchainMessageMock.mock.calls[0] as unknown[];
