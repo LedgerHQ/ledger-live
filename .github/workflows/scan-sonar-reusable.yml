@@ -26,6 +26,21 @@ jobs:
         with:
           name: coverage-mobile
           path: ./coverage-mobile
+  merge-coverage:
+    name: "Merge Coverage Files"
+    runs-on: ubuntu-22.04
+    needs: [download-desktop-coverage, download-mobile-coverage]
+    steps:
+      - name: Merge lcov files
+        run: |
+          touch ./lcov.info
+          if [ -f coverage-desktop/lcov.info ]; then
+            cat coverage-desktop/lcov.info >> ./lcov.info
+          fi
+          if [ -f coverage-mobile/lcov.info ]; then
+            cat coverage-mobile/lcov.info >> ./lcov.info
+          fi
+          cat ./lcov.info
   scan-sonar:
     name: "Sonar Cloud"
     runs-on: [ledger-live-4xlarge]
