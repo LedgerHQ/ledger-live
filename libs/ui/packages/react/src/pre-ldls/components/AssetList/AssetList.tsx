@@ -20,7 +20,7 @@ export const AssetList = ({
 
   return (
     <VirtualList
-      itemHeight={64}
+      itemHeight={70}
       items={assets}
       onVisibleItemsScrollEnd={onVisibleItemsScrollEnd}
       renderItem={renderAssetItem}

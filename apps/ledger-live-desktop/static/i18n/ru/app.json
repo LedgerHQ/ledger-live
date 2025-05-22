@@ -447,6 +447,8 @@
     "incompatibility" : {
       "ton_title" : "Ledger Nano S™ не поддерживает обмен TON",
       "ton_description" : "Используйте другие совместимые устройства Ledger для обмена TON. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+      "ton_tokens_title" : "Ledger Nano S™ не поддерживает обмен токенов сети Ton",
+      "ton_tokens_description" : "Используйте другие совместимые устройства Ledger для обмена токенов сети Ton. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
       "spl_tokens_title" : "Ledger Nano S™ не поддерживает обмен токенов сети Solana",
       "spl_tokens_description" : "Используйте другие совместимые устройства Ledger для обмена токенов сети Solana. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
       "sui_tokens_title" : "Ledger Nano S™ не поддерживает обмен токенов сети Sui",
@@ -6615,7 +6617,8 @@
       "title" : "выберите актив"
     },
     "selectAccount" : {
-      "title" : "выберите счёт"
+      "title" : "выберите счёт",
+      "addAccount" : "Добавить ещё один счёт"
     }
   },
   "customImage" : {
@@ -7045,6 +7048,14 @@
     "opted_out" : {
       "description" : "У Ledger Nano S ограниченный объём памяти, что не позволяет владельцам аппаратного кошелька использовать актуальные функции и изменения в блокчейне, а также наслаждаться улучшениями безопасности. Перейдите на новое устройство Ledger, и пользуйтесь им ещё долгие годы.",
       "cta" : "Подробнее..."
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "Поиск...",
+    "assetFlow" : {
+      "selectTemplate" : "Выберите {{dynamic}}",
+      "asset" : "актив",
+      "network" : "сеть"
     }
   }
 }

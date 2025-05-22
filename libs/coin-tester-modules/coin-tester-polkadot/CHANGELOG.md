@@ -1,36 +1,22 @@
 # @ledgerhq/coin-tester-polkadot
 
-## 1.1.5-nightly.2
+## 1.1.5
 
 ### Patch Changes
 
-- Updated dependencies [[`6253e0e`](https://github.com/LedgerHQ/ledger-live/commit/6253e0e3efcd1a29543cda55c9a5269f97aa770f)]:
-  - @ledgerhq/types-live@6.71.0-nightly.1
-  - @ledgerhq/coin-framework@5.1.0-nightly.2
-  - @ledgerhq/coin-polkadot@6.0.2-nightly.2
-  - @ledgerhq/coin-tester@0.5.1-nightly.1
+- Updated dependencies [[`f92f49a`](https://github.com/LedgerHQ/ledger-live/commit/f92f49a003767b83b94955e920cfac8cd565c162), [`0f7b53d`](https://github.com/LedgerHQ/ledger-live/commit/0f7b53dc5a3583f11a24f531ed6b2d2361cd4f27)]:
+  - @ledgerhq/cryptoassets@13.17.0
+  - @ledgerhq/coin-polkadot@6.1.0
+  - @ledgerhq/coin-framework@5.0.2
 
-## 1.1.5-nightly.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-framework@5.1.0-nightly.1
-  - @ledgerhq/coin-polkadot@6.0.2-nightly.1
-  - @ledgerhq/hw-app-polkadot@6.34.1-nightly.1
-  - @ledgerhq/coin-tester@0.5.1-nightly.1
-
-## 1.1.5-nightly.0
+## 1.1.5-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47), [`eff3c94`](https://github.com/LedgerHQ/ledger-live/commit/eff3c94c1eded61518097a4544c3f5b25db1e28a)]:
-  - @ledgerhq/cryptoassets@13.17.0-nightly.1
-  - @ledgerhq/coin-framework@5.1.0-nightly.0
-  - @ledgerhq/types-live@6.71.0-nightly.0
-  - @ledgerhq/coin-polkadot@6.0.2-nightly.0
-  - @ledgerhq/hw-app-polkadot@6.34.1-nightly.0
-  - @ledgerhq/coin-tester@0.5.1-nightly.0
+- Updated dependencies [[`f92f49a`](https://github.com/LedgerHQ/ledger-live/commit/f92f49a003767b83b94955e920cfac8cd565c162), [`0f7b53d`](https://github.com/LedgerHQ/ledger-live/commit/0f7b53dc5a3583f11a24f531ed6b2d2361cd4f27)]:
+  - @ledgerhq/cryptoassets@13.17.0-next.0
+  - @ledgerhq/coin-polkadot@6.1.0-next.0
+  - @ledgerhq/coin-framework@5.0.2-next.0
 
 ## 1.1.4
 

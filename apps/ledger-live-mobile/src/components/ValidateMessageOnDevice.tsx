@@ -82,7 +82,7 @@ export default function ValidateOnDevice({ device, message: messageData, account
                 {t("walletconnect.stepVerification.accountName")}
               </LText>
               <LText semiBold>{mainAccountName}</LText>
-            </View>{" "}
+            </View>
           </>
         )}
 

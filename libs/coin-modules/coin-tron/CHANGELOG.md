@@ -1,34 +1,32 @@
 # @ledgerhq/coin-tron
 
-## 4.0.1-nightly.2
+## 4.1.0
+
+### Minor Changes
+
+- [#10161](https://github.com/LedgerHQ/ledger-live/pull/10161) [`8b0e0dd`](https://github.com/LedgerHQ/ledger-live/commit/8b0e0dd3f910389e85cf0b72eea504656464cace) Thanks [@jprudent](https://github.com/jprudent)! - On tron, API has a hard limit on the number of operations to retrieve. The API returns the oldest set of operations it can find according to the minHeight parameter.
+
+- [#10192](https://github.com/LedgerHQ/ledger-live/pull/10192) [`8f4a6ed`](https://github.com/LedgerHQ/ledger-live/commit/8f4a6ed8b5c9a673a2b5fd0e8fa0a9783cecaa34) Thanks [@jprudent](https://github.com/jprudent)! - retry fetching incorrect trc20 ops
 
 ### Patch Changes
 
-- Updated dependencies [[`6253e0e`](https://github.com/LedgerHQ/ledger-live/commit/6253e0e3efcd1a29543cda55c9a5269f97aa770f)]:
-  - @ledgerhq/types-live@6.71.0-nightly.1
-  - @ledgerhq/coin-framework@5.1.0-nightly.2
+- Updated dependencies [[`f92f49a`](https://github.com/LedgerHQ/ledger-live/commit/f92f49a003767b83b94955e920cfac8cd565c162)]:
+  - @ledgerhq/cryptoassets@13.17.0
+  - @ledgerhq/coin-framework@5.0.2
 
-## 4.0.1-nightly.1
+## 4.1.0-next.0
 
-### Patch Changes
+### Minor Changes
 
-- Updated dependencies [[`9081c26`](https://github.com/LedgerHQ/ledger-live/commit/9081c2648490f977469a33762a3c67bb2c2a0be5)]:
-  - @ledgerhq/errors@6.21.0-nightly.0
-  - @ledgerhq/coin-framework@5.1.0-nightly.1
-  - @ledgerhq/devices@8.4.5-nightly.2
-  - @ledgerhq/live-network@2.0.8-nightly.1
+- [#10161](https://github.com/LedgerHQ/ledger-live/pull/10161) [`8b0e0dd`](https://github.com/LedgerHQ/ledger-live/commit/8b0e0dd3f910389e85cf0b72eea504656464cace) Thanks [@jprudent](https://github.com/jprudent)! - On tron, API has a hard limit on the number of operations to retrieve. The API returns the oldest set of operations it can find according to the minHeight parameter.
 
-## 4.0.1-nightly.0
+- [#10192](https://github.com/LedgerHQ/ledger-live/pull/10192) [`8f4a6ed`](https://github.com/LedgerHQ/ledger-live/commit/8f4a6ed8b5c9a673a2b5fd0e8fa0a9783cecaa34) Thanks [@jprudent](https://github.com/jprudent)! - retry fetching incorrect trc20 ops
 
 ### Patch Changes
 
-- Updated dependencies [[`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47), [`eff3c94`](https://github.com/LedgerHQ/ledger-live/commit/eff3c94c1eded61518097a4544c3f5b25db1e28a)]:
-  - @ledgerhq/cryptoassets@13.17.0-nightly.1
-  - @ledgerhq/errors@6.20.0-nightly.1
-  - @ledgerhq/coin-framework@5.1.0-nightly.0
-  - @ledgerhq/types-live@6.71.0-nightly.0
-  - @ledgerhq/devices@8.4.5-nightly.1
-  - @ledgerhq/live-network@2.0.8-nightly.0
+- Updated dependencies [[`f92f49a`](https://github.com/LedgerHQ/ledger-live/commit/f92f49a003767b83b94955e920cfac8cd565c162)]:
+  - @ledgerhq/cryptoassets@13.17.0-next.0
+  - @ledgerhq/coin-framework@5.0.2-next.0
 
 ## 4.0.0
 

@@ -1,38 +1,28 @@
 # @ledgerhq/coin-evm
 
-## 2.21.1-nightly.2
+## 2.22.0
+
+### Minor Changes
+
+- [#10094](https://github.com/LedgerHQ/ledger-live/pull/10094) [`5657584`](https://github.com/LedgerHQ/ledger-live/commit/565758426688c9604c7958183ec5b3d4e35ffbe4) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - Remove NFT tx history for evm
 
 ### Patch Changes
 
-- Updated dependencies []:
-  - @ledgerhq/coin-framework@5.1.0-nightly.2
-  - @ledgerhq/domain-service@1.2.30-nightly.2
-  - @ledgerhq/evm-tools@1.6.3-nightly.0
+- Updated dependencies [[`f92f49a`](https://github.com/LedgerHQ/ledger-live/commit/f92f49a003767b83b94955e920cfac8cd565c162)]:
+  - @ledgerhq/cryptoassets@13.17.0
+  - @ledgerhq/coin-framework@5.0.2
 
-## 2.21.1-nightly.1
+## 2.22.0-next.0
 
-### Patch Changes
+### Minor Changes
 
-- Updated dependencies [[`9081c26`](https://github.com/LedgerHQ/ledger-live/commit/9081c2648490f977469a33762a3c67bb2c2a0be5)]:
-  - @ledgerhq/errors@6.21.0-nightly.0
-  - @ledgerhq/coin-framework@5.1.0-nightly.1
-  - @ledgerhq/domain-service@1.2.30-nightly.1
-  - @ledgerhq/devices@8.4.5-nightly.2
-  - @ledgerhq/live-network@2.0.8-nightly.1
-
-## 2.21.1-nightly.0
+- [#10094](https://github.com/LedgerHQ/ledger-live/pull/10094) [`5657584`](https://github.com/LedgerHQ/ledger-live/commit/565758426688c9604c7958183ec5b3d4e35ffbe4) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - Remove NFT tx history for evm
 
 ### Patch Changes
 
-- Updated dependencies [[`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47)]:
-  - @ledgerhq/cryptoassets@13.17.0-nightly.1
-  - @ledgerhq/errors@6.20.0-nightly.1
-  - @ledgerhq/coin-framework@5.1.0-nightly.0
-  - @ledgerhq/live-env@2.9.0-nightly.0
-  - @ledgerhq/domain-service@1.2.30-nightly.0
-  - @ledgerhq/devices@8.4.5-nightly.1
-  - @ledgerhq/live-network@2.0.8-nightly.0
-  - @ledgerhq/evm-tools@1.6.3-nightly.0
+- Updated dependencies [[`f92f49a`](https://github.com/LedgerHQ/ledger-live/commit/f92f49a003767b83b94955e920cfac8cd565c162)]:
+  - @ledgerhq/cryptoassets@13.17.0-next.0
+  - @ledgerhq/coin-framework@5.0.2-next.0
 
 ## 2.21.0
 

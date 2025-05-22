@@ -2,8 +2,20 @@ import BigNumber from "bignumber.js";
 import { createTransaction, getOperations, paymentInfo } from "./sdk";
 import type { Operation } from "@ledgerhq/types-live";
 import { getAccount } from "./sdk";
+import coinConfig from "../config";
+import { getFullnodeUrl } from "@mysten/sui/client";
 
 describe("getOperations", () => {
+  beforeAll(() => {
+    coinConfig.setCoinConfig(() => ({
+      status: {
+        type: "active",
+      },
+      node: {
+        url: getFullnodeUrl("mainnet"),
+      },
+    }));
+  });
   describe("Account 0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164", () => {
     // https://suiscan.xyz/mainnet/account/0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164/activity
 
