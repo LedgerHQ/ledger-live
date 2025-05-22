@@ -26,13 +26,12 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
-      - name: Run coverage on affected libraries
+      - name: Get Coverage of all affected packages
         run: |
           paths="${{ needs.determine-affected.outputs.paths }}"
           paths="${paths#[}"; paths="${paths%]}"
           IFS=',' read -r -a paths_array <<< "$paths"
           for path in "${paths_array[@]}"; do
-            # Check if package.json exists and has a coverage script and jest-sonar dependency
             if [ -f "$path/coverage/lcov.info" ] && [ -f "$path/coverage/sonar-executionTests-report.xml" ]; then
               echo "Copying coverage files for $path"
               cat $path/coverage/lcov.info >> ./lcov.info
