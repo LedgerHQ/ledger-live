@@ -514,13 +514,13 @@ export const canStake = (account: AptosAccount): boolean => {
 export const canUnstake = (
   stakingPosition: AptosMappedStakingPosition | AptosStakingPosition,
 ): boolean => {
-  return stakingPosition.staked.gte(0);
+  return stakingPosition.staked.gt(0);
 };
 
 export const canWithdraw = (
   stakingPosition: AptosMappedStakingPosition | AptosStakingPosition,
 ): boolean => {
-  return stakingPosition.available.gte(0);
+  return stakingPosition.available.gt(0);
 };
 
 export const getMaxUnstakableAmount = (
