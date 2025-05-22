@@ -1,5 +1,15 @@
 # @ledgerhq/coin-sui
 
+## 0.4.0-nightly.0
+
+### Minor Changes
+
+- [#9961](https://github.com/LedgerHQ/ledger-live/pull/9961) [`dbd7d83`](https://github.com/LedgerHQ/ledger-live/commit/dbd7d83a9e9ffd3336b3e8f572d5e5187ca0aedd) Thanks [@jonezque](https://github.com/jonezque)! - add alpaca methods for Sui
+
+### Patch Changes
+
+- [#10308](https://github.com/LedgerHQ/ledger-live/pull/10308) [`c307c11`](https://github.com/LedgerHQ/ledger-live/commit/c307c11990e0a87945ed8750ede5f1174f96e536) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: lint, remove unused import
+
 ## 0.3.3
 
 ### Patch Changes

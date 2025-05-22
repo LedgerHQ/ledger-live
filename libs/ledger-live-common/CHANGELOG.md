@@ -1,5 +1,23 @@
 # @ledgerhq/live-common
 
+## 34.35.0-nightly.0
+
+### Minor Changes
+
+- [#10282](https://github.com/LedgerHQ/ledger-live/pull/10282) [`04f80e3`](https://github.com/LedgerHQ/ledger-live/commit/04f80e344159cc9729512ad36b502a339e30dfb8) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - upgraded Taquito to v22.0.0 to support new tezos protocol rio
+
+- [#9961](https://github.com/LedgerHQ/ledger-live/pull/9961) [`dbd7d83`](https://github.com/LedgerHQ/ledger-live/commit/dbd7d83a9e9ffd3336b3e8f572d5e5187ca0aedd) Thanks [@jonezque](https://github.com/jonezque)! - add alpaca methods for Sui
+
+- [#10263](https://github.com/LedgerHQ/ledger-live/pull/10263) [`9342c8c`](https://github.com/LedgerHQ/ledger-live/commit/9342c8cbbbc9509b27486cccd48617a440f66c41) Thanks [@Justkant](https://github.com/Justkant)! - chore: update default legacyOCMSMaxVersion
+
+### Patch Changes
+
+- Updated dependencies [[`04f80e3`](https://github.com/LedgerHQ/ledger-live/commit/04f80e344159cc9729512ad36b502a339e30dfb8), [`dbd7d83`](https://github.com/LedgerHQ/ledger-live/commit/dbd7d83a9e9ffd3336b3e8f572d5e5187ca0aedd), [`d8de57e`](https://github.com/LedgerHQ/ledger-live/commit/d8de57e1c166bc06620828043ed2795e19718fe9), [`c307c11`](https://github.com/LedgerHQ/ledger-live/commit/c307c11990e0a87945ed8750ede5f1174f96e536)]:
+  - @ledgerhq/coin-tezos@5.2.0-nightly.0
+  - @ledgerhq/coin-sui@0.4.0-nightly.0
+  - @ledgerhq/coin-solana@0.24.0-nightly.0
+  - @ledgerhq/live-signer-solana@0.1.1-nightly.2
+
 ## 34.34.0
 
 ### Minor Changes

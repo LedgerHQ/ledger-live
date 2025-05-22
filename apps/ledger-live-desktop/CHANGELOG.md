@@ -1,5 +1,20 @@
 # ledger-live-desktop
 
+## 2.115.0-nightly.0
+
+### Minor Changes
+
+- [#10106](https://github.com/LedgerHQ/ledger-live/pull/10106) [`d8de57e`](https://github.com/LedgerHQ/ledger-live/commit/d8de57e1c166bc06620828043ed2795e19718fe9) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - core(lld, llm): warn users while sending SPLs with problematic extensions
+
+- [#10193](https://github.com/LedgerHQ/ledger-live/pull/10193) [`905e5f3`](https://github.com/LedgerHQ/ledger-live/commit/905e5f3d23fc5b449ed82cd2815ff0bbf26e498c) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Creates SelectAccountFlow
+
+### Patch Changes
+
+- Updated dependencies [[`04f80e3`](https://github.com/LedgerHQ/ledger-live/commit/04f80e344159cc9729512ad36b502a339e30dfb8), [`dbd7d83`](https://github.com/LedgerHQ/ledger-live/commit/dbd7d83a9e9ffd3336b3e8f572d5e5187ca0aedd), [`9342c8c`](https://github.com/LedgerHQ/ledger-live/commit/9342c8cbbbc9509b27486cccd48617a440f66c41), [`905e5f3`](https://github.com/LedgerHQ/ledger-live/commit/905e5f3d23fc5b449ed82cd2815ff0bbf26e498c)]:
+  - @ledgerhq/live-common@34.35.0-nightly.0
+  - @ledgerhq/react-ui@0.27.0-nightly.0
+  - @ledgerhq/live-dmk-desktop@0.3.7-nightly.0
+
 ## 2.114.0
 
 ### Minor Changes

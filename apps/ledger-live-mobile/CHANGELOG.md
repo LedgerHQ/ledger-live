@@ -1,5 +1,13 @@
 # live-mobile
 
+## 3.80.0-nightly.0
+
+### Minor Changes
+
+- [#10106](https://github.com/LedgerHQ/ledger-live/pull/10106) [`d8de57e`](https://github.com/LedgerHQ/ledger-live/commit/d8de57e1c166bc06620828043ed2795e19718fe9) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - core(lld, llm): warn users while sending SPLs with problematic extensions
+
+- [#10299](https://github.com/LedgerHQ/ledger-live/pull/10299) [`3e10a1e`](https://github.com/LedgerHQ/ledger-live/commit/3e10a1ec0668c1b1bb827bfa6ae052a14ff6a232) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove empty text inside validateMessageOnDevice
+
 ## 3.79.1
 
 ### Patch Changes

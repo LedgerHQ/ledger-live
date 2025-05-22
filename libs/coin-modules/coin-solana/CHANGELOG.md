@@ -1,5 +1,11 @@
 # @ledgerhq/coin-solana
 
+## 0.24.0-nightly.0
+
+### Minor Changes
+
+- [#10106](https://github.com/LedgerHQ/ledger-live/pull/10106) [`d8de57e`](https://github.com/LedgerHQ/ledger-live/commit/d8de57e1c166bc06620828043ed2795e19718fe9) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - core(lld, llm): warn users while sending SPLs with problematic extensions
+
 ## 0.23.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tezos
 
+## 5.2.0-nightly.0
+
+### Minor Changes
+
+- [#10282](https://github.com/LedgerHQ/ledger-live/pull/10282) [`04f80e3`](https://github.com/LedgerHQ/ledger-live/commit/04f80e344159cc9729512ad36b502a339e30dfb8) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - upgraded Taquito to v22.0.0 to support new tezos protocol rio
+
 ## 5.1.0
 
 ### Minor Changes
