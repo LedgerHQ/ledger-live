@@ -55,9 +55,6 @@ patchedDependencies:
   react-native-image-crop-tools@1.6.4:
     hash: p6wzwon3gzjcspjalwhmuroog4
     path: patches/react-native-image-crop-tools@1.6.4.patch
-  react-native-video@5.2.1:
-    hash: vl2q6vd2d45opudk6juqeyavs4
-    path: patches/react-native-video@5.2.1.patch
   react-native-webview:
     hash: r7bejpcnocn3555cbyefvt6uqm
     path: patches/react-native-webview.patch
@@ -1315,8 +1312,8 @@ importers:
         specifier: 0.3.6
         version: 0.3.6
       react-native-video:
-        specifier: 5.2.1
-        version: 5.2.1(patch_hash=vl2q6vd2d45opudk6juqeyavs4)
+        specifier: 6.14.0
+        version: 6.14.0(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       react-native-webview:
         specifier: 13.13.5
         version: 13.13.5(patch_hash=r7bejpcnocn3555cbyefvt6uqm)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
@@ -21970,9 +21967,6 @@ packages:
     resolution: {integrity: sha512-g7nH6P6dyDioJogAAGprGpCtVImJhpPk/roCzdb3fIh61/s/nPsfR6onyMwkCAR/OlC3yBC0lESvUoQEAssIrw==}
     engines: {node: '>= 0.8'}
 
-  deprecated-react-native-prop-types@2.3.0:
-    resolution: {integrity: sha512-pWD0voFtNYxrVqvBMYf5gq3NA2GCpfodS1yNynTPc93AYA/KEMGeWDqqeUB6R2Z9ZofVhks2aeJXiuQqKNpesA==}
-
   deprecation@2.3.1:
     resolution: {integrity: sha512-xmHIy4F3scKVwMsQ4WnVaS8bHOx0DmVwRywosKhaILI0ywMDWPtBSku2HNxRvF7jtwDRsoEwYQSfbxj8b7RlJQ==}
 
@@ -22353,9 +22347,6 @@ packages:
 
   embla-carousel@8.0.0-rc17:
     resolution: {integrity: sha512-evF49b88VOitvqFtlvhvKVSu96Y8A+QSFdhok87Bfm8R7OYuk95FT+o8+M1GQLi/EhGDUlT193HTVAR0Wt2neQ==}
-
-  eme-encryption-scheme-polyfill@2.1.1:
-    resolution: {integrity: sha512-njD17wcUrbqCj0ArpLu5zWXtaiupHb/2fIUQGdInf83GlI+Q6mmqaPGLdrke4savKAu15J/z1Tg/ivDgl14g0g==}
 
   emittery@0.10.2:
     resolution: {integrity: sha512-aITqOwnLanpHLNXZJENbOgjUBeHocD+xsSJmNrjovKBW5HbSpW3d1pEls7GFQPUWXiwG9+0P4GtHfEqC/4M0Iw==}
@@ -25973,9 +25964,6 @@ packages:
     resolution: {integrity: sha512-iYSchDJ+liQ8iwbSI2QqsQOvqv58eJCEanyJPJi+Khyu8smkcKSFUCbPwzFcL7YVtZ6eONjqRX/38caJ7QjRAQ==}
     engines: {node: '>= 0.6'}
 
-  keymirror@0.1.1:
-    resolution: {integrity: sha512-vIkZAFWoDijgQT/Nvl2AHCMmnegN2ehgTPYuyy2hWQkQSntI0S7ESYqdLkoSe1HyEBFHHkCgSIvVdSEiWwKvCg==}
-
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
 
@@ -29548,8 +29536,11 @@ packages:
   react-native-version-number@0.3.6:
     resolution: {integrity: sha512-TdyXiK90NiwmSbmAUlUBOV6WI1QGoqtvZZzI5zQY4fKl67B3ZrZn/h+Wy/OYIKKFMfePSiyfeIs8LtHGOZ/NgA==}
 
-  react-native-video@5.2.1:
-    resolution: {integrity: sha512-aJlr9MeTuQ0LpZ4n+EC9RvhoKeiPbLtI2Rxy8u7zo/wzGevbRpWHSBj9xZ5YDBXnAVXzuqyNIkGhdw7bfdIBZw==}
+  react-native-video@6.14.0:
+    resolution: {integrity: sha512-a6hUlKr5KPZ3DBvNK95P917Sre1TH4Nvh4dVKLtKud26tHOWgYBDxBB2+vwsbLyy4fDfzQB5gac9QWaRs88Sug==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
 
   react-native-web@0.19.10:
     resolution: {integrity: sha512-IQoHiTQq8egBCVVwmTrYcFLgEFyb4LMZYEktHn4k22JMk9+QTCEz5WTfvr+jdNoeqj/7rtE81xgowKbfGO74qg==}
@@ -30547,10 +30538,6 @@ packages:
 
   sha3@2.1.4:
     resolution: {integrity: sha512-S8cNxbyb0UGUM2VhRD4Poe5N58gJnJsLJ5vC7FYWGUmGhcsj4++WaIOBFVDxlG0W3To6xBuiRh+i0Qp2oNCOtg==}
-
-  shaka-player@2.5.23:
-    resolution: {integrity: sha512-3MC9k0OXJGw8AZ4n/ZNCZS2yDxx+3as5KgH6Tx4Q5TRboTBBCu6dYPI5vp1DxKeyU12MBN1Zcbs7AKzXv2EnCg==}
-    deprecated: Shaka Player < v4.2 is no longer supported.
 
   shallow-clone@3.0.1:
     resolution: {integrity: sha512-/6KqX+GVUdqPuPPd2LxDDxzX6CAbjJehAAOKlNpqqUpAqPM6HeL8f+o3a+JsyGjn2lv0WY8UsTgUJjU9Ok55NA==}
@@ -53225,12 +53212,6 @@ snapshots:
 
   depd@2.0.0: {}
 
-  deprecated-react-native-prop-types@2.3.0:
-    dependencies:
-      '@react-native/normalize-color': 2.1.0
-      invariant: 2.2.4
-      prop-types: 15.8.1
-
   deprecation@2.3.1: {}
 
   dequal@2.0.3: {}
@@ -53818,8 +53799,6 @@ snapshots:
       embla-carousel: 8.0.0-rc17
 
   embla-carousel@8.0.0-rc17: {}
-
-  eme-encryption-scheme-polyfill@2.1.1: {}
 
   emittery@0.10.2: {}
 
@@ -60169,8 +60148,6 @@ snapshots:
     dependencies:
       tsscmp: 1.0.6
 
-  keymirror@0.1.1: {}
-
   keyv@4.5.4:
     dependencies:
       json-buffer: 3.0.1
@@ -61354,7 +61331,7 @@ snapshots:
   metro-source-map@0.81.5:
     dependencies:
       '@babel/traverse': 7.27.0
-      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.27.0'
+      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.27.1'
       '@babel/types': 7.27.0
       flow-enums-runtime: 0.0.6
       invariant: 2.2.4
@@ -64880,12 +64857,10 @@ snapshots:
 
   react-native-version-number@0.3.6: {}
 
-  react-native-video@5.2.1(patch_hash=vl2q6vd2d45opudk6juqeyavs4):
+  react-native-video@6.14.0(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1):
     dependencies:
-      deprecated-react-native-prop-types: 2.3.0
-      keymirror: 0.1.1
-      prop-types: 15.8.1
-      shaka-player: 2.5.23
+      react: 18.3.1
+      react-native: 0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
 
   react-native-web@0.19.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
@@ -66445,10 +66420,6 @@ snapshots:
   sha3@2.1.4:
     dependencies:
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
-
-  shaka-player@2.5.23:
-    dependencies:
-      eme-encryption-scheme-polyfill: 2.1.1
 
   shallow-clone@3.0.1:
     dependencies:
