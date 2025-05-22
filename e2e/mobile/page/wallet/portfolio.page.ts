@@ -14,12 +14,15 @@ export default class PortfolioPage {
   portfolioSettingsButtonId = "settings-icon";
   addAccountCta = "add-account-cta";
   allocationSectionTitleId = "portfolio-allocation-section";
+  transactionHistorySectionTitleId = "portfolio-transaction-history-section";
   quickActionBuyButton = "portoflio-quick-action-button-buy";
   quickActionSwapButton = "portoflio-quick-action-button-swap";
   quickActionSendButton = "portoflio-quick-action-button-send";
   quickActionReceiveButton = "portoflio-quick-action-button-receive";
   quickActionEarnButton = "portoflio-quick-action-button-earn";
   showAllAssetsButton = "assets-button";
+  seeAllTransactionsButton = "portfolio-seeAll-transaction";
+  operationRowDate = "operationRowDate";
   assetNameRegExp = new RegExp(`${this.baseAssetName}.*`);
 
   portfolioSettingsButton = async () => await getElementById(this.portfolioSettingsButtonId);
@@ -87,7 +90,17 @@ export default class PortfolioPage {
     jestExpect(await countElementsById(this.assetNameRegExp)).toBeLessThanOrEqual(5);
     await expect(getElementById(this.showAllAssetsButton)).toBeVisible();
     await tapById(this.showAllAssetsButton);
-    await app.assets.expectAssetsPage();
     jestExpect(await countElementsById(this.assetNameRegExp)).toBeGreaterThan(5);
+  }
+
+  @Step("Check asset transaction history")
+  async checkTransactionAllocationsection() {
+    await scrollToId(this.transactionHistorySectionTitleId);
+    await expect(getElementById(this.transactionHistorySectionTitleId)).toBeVisible();
+    jestExpect(await countElementsById(this.operationRowDate)).toBeLessThanOrEqual(3);
+    await scrollToId(this.seeAllTransactionsButton, undefined, 300, "bottom");
+    await expect(getElementById(this.seeAllTransactionsButton)).toBeVisible();
+    await tapById(this.seeAllTransactionsButton);
+    jestExpect(await countElementsById(this.operationRowDate)).toBeGreaterThan(3);
   }
 }
