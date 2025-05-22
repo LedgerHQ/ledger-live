@@ -43,7 +43,7 @@ export default function StepConfirmation({
           category="Restake Aptos Flow"
           name="Step Confirmed"
           flow="stake"
-          action="unstaking"
+          action="restaking"
           currency="aptos"
         />
         <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
@@ -74,7 +74,7 @@ export default function StepConfirmation({
           category="Restake Aptos Flow"
           name="Step Confirmation Error"
           flow="stake"
-          action="unstaking"
+          action="restaking"
           currency="aptos"
         />
         {signed ? (
