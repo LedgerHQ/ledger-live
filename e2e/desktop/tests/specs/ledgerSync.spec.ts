@@ -52,10 +52,13 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
   });
 
   test(
-    "Synchronize one instance then delete the backup",
+    "Sync instances, rename and delete accounts, delete instance then delete the backup",
     {
       tag: ["@NanoSP", "@NanoX"],
-      annotation: { type: "TMS", description: "B2CQA-2292, B2CQA-2293, B2CQA-2296" },
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2303, B2CQA-2302, B2CQA-2300, B2CQA-2297, B2CQA-2296",
+      },
     },
     async ({ app, page }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
