@@ -23,9 +23,9 @@ const data: TezosApiBaker[] = [
       features: [
         {
           title: "Distributed rewards",
-          content: "Baker doesn't pay network fee rewards"
-        }
-      ]
+          content: "Baker doesn't pay network fee rewards",
+        },
+      ],
     },
     staking: {
       enabled: false,
@@ -34,8 +34,8 @@ const data: TezosApiBaker[] = [
       capacity: 0,
       freeSpace: 0,
       estimatedApy: 0.0967,
-      features: []
-    }
+      features: [],
+    },
   },
   {
     address: "tz1gg5bjopPcr9agjamyu9BbXKLibNc2rbAq",
@@ -47,9 +47,9 @@ const data: TezosApiBaker[] = [
         title: "Contribution",
         content: {
           project: "Tezos on Kubernetes",
-          link: "https://github.com/hodl-dot-farm/tezos-on-gke"
-        }
-      }
+          link: "https://github.com/hodl-dot-farm/tezos-on-gke",
+        },
+      },
     ],
     delegation: {
       enabled: false,
@@ -61,13 +61,13 @@ const data: TezosApiBaker[] = [
       features: [
         {
           title: "Distributed rewards",
-          content: "Baker doesn't pay network fee, denunciation and revelation rewards"
+          content: "Baker doesn't pay network fee, denunciation and revelation rewards",
         },
         {
           title: "Compensated loss",
-          content: "Baker compensates missed baking and attestation rewards"
-        }
-      ]
+          content: "Baker compensates missed baking and attestation rewards",
+        },
+      ],
     },
     staking: {
       enabled: true,
@@ -76,8 +76,8 @@ const data: TezosApiBaker[] = [
       capacity: 363902.963184,
       freeSpace: 293604.290457,
       estimatedApy: 0.0894,
-      features: []
-    }
+      features: [],
+    },
   },
   {
     address: "tz3LV9aGKHDnAZHCtC9SjNtTrKRu678FqSki",
@@ -92,7 +92,7 @@ const data: TezosApiBaker[] = [
       capacity: 7002345.443544,
       freeSpace: 36021.368062,
       estimatedApy: 0.0284,
-      features: []
+      features: [],
     },
     staking: {
       enabled: true,
@@ -101,8 +101,8 @@ const data: TezosApiBaker[] = [
       capacity: 7002345.443544,
       freeSpace: 6837721.800765,
       estimatedApy: 0.0774,
-      features: []
-    }
+      features: [],
+    },
   },
   {
     address: "tz1KwafrdmM8RwxUMxdbbtWyZuKLWSPVxe9u",
@@ -117,7 +117,7 @@ const data: TezosApiBaker[] = [
       capacity: 155364.334245,
       freeSpace: 100030.802123,
       estimatedApy: 0.0284,
-      features: []
+      features: [],
     },
     staking: {
       enabled: true,
@@ -126,8 +126,8 @@ const data: TezosApiBaker[] = [
       capacity: 155364.334245,
       freeSpace: 100143.090362,
       estimatedApy: 0.0851,
-      features: []
-    }
+      features: [],
+    },
   },
   {
     address: "tz1WnfXMPaNTBmH7DBPwqCWs9cPDJdkGBTZ8",
@@ -145,9 +145,9 @@ const data: TezosApiBaker[] = [
       features: [
         {
           title: "Distributed rewards",
-          content: "Baker doesn't pay denunciation rewards"
-        }
-      ]
+          content: "Baker doesn't pay denunciation rewards",
+        },
+      ],
     },
     staking: {
       enabled: true,
@@ -156,9 +156,9 @@ const data: TezosApiBaker[] = [
       capacity: 2074228.47903,
       freeSpace: 1440050.488348,
       estimatedApy: 0.0822,
-      features: []
-    }
-  }
+      features: [],
+    },
+  },
 ];
 
 describe("Tezos Baker", () => {
@@ -197,7 +197,9 @@ describe("Tezos Baker", () => {
       const testBaker = data.find(baker => baker.delegation.freeSpace < 0)!;
       const baker = asBaker(testBaker);
       expect(baker?.name).toBe(testBaker.name);
-      expect(baker?.nominalYield).toBe(`${Math.floor(10000 * testBaker.delegation.estimatedApy) / 100} %`);
+      expect(baker?.nominalYield).toBe(
+        `${Math.floor(10000 * testBaker.delegation.estimatedApy) / 100} %`,
+      );
       expect(baker?.capacityStatus).toBe("full");
     });
 
@@ -205,7 +207,9 @@ describe("Tezos Baker", () => {
       const testBaker = data.find(baker => baker.delegation.freeSpace > 0)!;
       const baker = asBaker(testBaker);
       expect(baker?.name).toBe(testBaker.name);
-      expect(baker?.nominalYield).toBe(`${Math.floor(10000 * testBaker.delegation.estimatedApy) / 100} %`);
+      expect(baker?.nominalYield).toBe(
+        `${Math.floor(10000 * testBaker.delegation.estimatedApy) / 100} %`,
+      );
       expect(baker?.capacityStatus).toBe("normal");
     });
   });

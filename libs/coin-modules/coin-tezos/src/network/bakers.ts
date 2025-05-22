@@ -144,7 +144,7 @@ export async function loadAccountDelegation(
 }
 
 export const asBaker = (data: TezosApiBaker): Baker | undefined => {
-  const { address, name, delegation.freeSpace, delegation.estimatedApy } = data;
+  const { address, name, delegation } = data;
 
   if (
     typeof name === "string" &&
@@ -159,7 +159,7 @@ export const asBaker = (data: TezosApiBaker): Baker | undefined => {
       address,
       logoURL: `https://services.tzkt.io/v1/avatars/${address}`,
       nominalYield: `${Math.floor(10000 * delegation.estimatedApy) / 100} %`,
-      capacityStatus: freeSpace <= 0 ? "full" : "normal",
+      capacityStatus: delegation.freeSpace <= 0 ? "full" : "normal",
     };
   }
 };
