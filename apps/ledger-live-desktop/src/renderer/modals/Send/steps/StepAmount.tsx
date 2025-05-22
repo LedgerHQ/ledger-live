@@ -20,7 +20,7 @@ import AmountField from "../fields/AmountField";
 import { StepProps } from "../types";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { closeAllModal } from "~/renderer/actions/modals";
-import LowGasAlertBuyMore from "~/renderer/families/evm/SendAmountFields/LowGasAlertBuyMore";
+import LowGasAlertBuyMore from "~/renderer/components/LowGasAlertBuyMore";
 
 const StepAmount = (props: StepProps) => {
   const {
