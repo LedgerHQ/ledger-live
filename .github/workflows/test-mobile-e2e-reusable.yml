@@ -83,8 +83,8 @@ env:
   COINAPPS: ${{ github.workspace }}/coin-apps
   SPECULOS_RUN: ${{ inputs.speculos_tests || github.event_name == 'schedule' }}
   SHOULD_UPLOAD: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || (github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) }}
-  IOS_JSBUNDLE_PATH: /apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
-  IOS_NATIVE_PATH: /apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
+  IOS_JSBUNDLE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
+  IOS_NATIVE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
   ANDROID_APK_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-x86_64-detox.apk
   ANDROID_TESTBINARY_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/detox/app-detox-androidTest.apk
   ANDROID_JSBUNDLE_PATH: apps/ledger-live-mobile/main.jsbundle
@@ -168,7 +168,7 @@ jobs:
       - name: Upload Detox Build
         uses: tespkg/actions-cache/save@v1
         with:
-          path: ${{ github.workspace }}${{ env.IOS_NATIVE_PATH }}
+          path: ${{ github.workspace }}/${{ env.IOS_NATIVE_PATH }}
           key: poc-detox-native-ios
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -226,9 +226,6 @@ jobs:
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           turbo_port: ${{ steps.setup-caches.outputs.port }}
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
-
-      - name: Create Directory of build
-        run: mkdir -p ${{ github.workspace }}${{ env.IOS_JSBUNDLE_PATH }}
 
       - name: Build JS Bundle app for Detox test run
         run: pnpm mobile e2e:ci -p ios --bundle
@@ -306,7 +303,7 @@ jobs:
       - name: Download Native Build
         uses: tespkg/actions-cache/restore@v1
         with:
-          path: ${{ github.workspace }}${{ env.IOS_NATIVE_PATH }}
+          path: ${{ env.IOS_NATIVE_PATH }}
           key: poc-detox-native-ios
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -318,7 +315,7 @@ jobs:
       - name: Download JS Build
         uses: tespkg/actions-cache/restore@v1
         with:
-          path: ${{ github.workspace }}${{ env.IOS_JSBUNDLE_PATH }}
+          path: ${{ env.IOS_JSBUNDLE_PATH }}
           key: poc-detox-js
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -328,7 +325,7 @@ jobs:
           use-fallback: false
 
       - name: Copy JS build
-        run: cp ${{ github.workspace }}${{ env.IOS_JSBUNDLE_PATH }} ${{ github.workspace }}${{ env.IOS_NATIVE_PATH }}/main.jsbundle
+        run: cp ${{ env.IOS_JSBUNDLE_PATH }} ${{ env.IOS_NATIVE_PATH }}/main.jsbundle
       - name: Build dependencies
         uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
         with:
