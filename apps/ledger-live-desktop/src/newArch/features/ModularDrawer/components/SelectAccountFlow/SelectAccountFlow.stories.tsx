@@ -1,6 +1,24 @@
 import { SelectAccountFlow } from ".";
+import { useDetailedAccounts } from "./hooks/__mocks__/useDetailedAccounts.mock";
 
 export default {
+  beforeEach: () => {
+    useDetailedAccounts.mockImplementation(() => ({
+      detailedAccounts: [
+        {
+          name: "Bitcoin",
+          id: "1",
+          balance: "0.0000090 BTC",
+          fiatValue: "$100",
+          address: "0x123dr",
+          protocol: "native segwit",
+          cryptoId: "bitcoin",
+          ticker: "BTC",
+        },
+      ],
+      accounts: [],
+    }));
+  },
   component: SelectAccountFlow,
   title: "SelectAccountFlow",
   tags: ["autodocs"],

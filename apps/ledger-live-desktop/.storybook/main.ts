@@ -30,7 +30,10 @@ const config: StorybookConfig = {
           [`~/renderer/analytics/TrackPage`]: resolve(".storybook/stub.ts"),
           LLD: resolve("./src/newArch"),
           "~": resolve("./src"),
-          "../hooks/useDetailedAccounts": resolve(".storybook/stub.ts"), // TODO mock dependencies instead
+
+          "../hooks/useDetailedAccounts": resolve(
+            "./src/newArch/features/ModularDrawer/components/SelectAccountFlow/hooks/__mocks__/useDetailedAccounts.mock.tsx",
+          ), // TODO mock dependencies instead
 
           "@ledgerhq/live-common/deposit/index": resolve(".storybook/stub.ts"),
           "@ledgerhq/live-common/currencies/index": resolve(".storybook/stub.ts"),

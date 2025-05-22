@@ -2,8 +2,6 @@ export default () => {};
 export const track = () => {};
 export const ipcRenderer = () => {};
 
-export const useDetailedAccounts = () => ({ detailedAccounts: [], accounts: [] });
-
 const currency = {
   type: "CryptoCurrency",
   id: "bitcoin",
