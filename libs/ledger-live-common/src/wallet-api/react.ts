@@ -16,7 +16,13 @@ import {
   getAccountIdFromWalletAccountId,
 } from "./converters";
 import { isWalletAPISupportedCurrency } from "./helpers";
-import { WalletAPICurrency, AppManifest, WalletAPIAccount, WalletAPICustomHandlers } from "./types";
+import {
+  WalletAPICurrency,
+  AppManifest,
+  WalletAPIAccount,
+  WalletAPICustomHandlers,
+  ModularDrawerConfiguration,
+} from "./types";
 import { getMainAccount, getParentAccount } from "../account";
 import {
   listCurrencies,
@@ -129,6 +135,7 @@ export interface UiHook {
   "account.request": (params: {
     accounts$?: Observable<WalletAPIAccount[]>;
     currencies: CryptoOrTokenCurrency[];
+    drawerConfiguration?: ModularDrawerConfiguration;
     onSuccess: (account: AccountLike, parentAccount: Account | undefined) => void;
     onCancel: () => void;
   }) => void;
@@ -354,39 +361,43 @@ export function useWalletAPIServer({
   useEffect(() => {
     if (!uiAccountRequest) return;
 
-    server.setHandler("account.request", async ({ accounts$, currencies$ }) => {
-      tracking.requestAccountRequested(manifest);
-      const currencies = await firstValueFrom(currencies$);
+    server.setHandler(
+      "account.request",
+      async ({ accounts$, currencies$, drawerConfiguration }) => {
+        tracking.requestAccountRequested(manifest);
+        const currencies = await firstValueFrom(currencies$);
 
-      return new Promise((resolve, reject) => {
-        // handle no curencies selected case
-        const currencyList = currencies.reduce<CryptoOrTokenCurrency[]>((prev, { id }) => {
-          const currency = findCryptoCurrencyById(id) || findTokenById(id);
-          if (currency) {
-            prev.push(currency);
-          }
-          return prev;
-        }, []);
+        return new Promise((resolve, reject) => {
+          // handle no curencies selected case
+          const currencyList = currencies.reduce<CryptoOrTokenCurrency[]>((prev, { id }) => {
+            const currency = findCryptoCurrencyById(id) || findTokenById(id);
+            if (currency) {
+              prev.push(currency);
+            }
+            return prev;
+          }, []);
 
-        let done = false;
-        uiAccountRequest({
-          accounts$,
-          currencies: currencyList,
-          onSuccess: (account: AccountLike, parentAccount: Account | undefined) => {
-            if (done) return;
-            done = true;
-            tracking.requestAccountSuccess(manifest);
-            resolve(accountToWalletAPIAccount(walletState, account, parentAccount));
-          },
-          onCancel: () => {
-            if (done) return;
-            done = true;
-            tracking.requestAccountFail(manifest);
-            reject(new Error("Canceled by user"));
-          },
+          let done = false;
+          uiAccountRequest({
+            accounts$,
+            currencies: currencyList,
+            drawerConfiguration,
+            onSuccess: (account: AccountLike, parentAccount: Account | undefined) => {
+              if (done) return;
+              done = true;
+              tracking.requestAccountSuccess(manifest);
+              resolve(accountToWalletAPIAccount(walletState, account, parentAccount));
+            },
+            onCancel: () => {
+              if (done) return;
+              done = true;
+              tracking.requestAccountFail(manifest);
+              reject(new Error("Canceled by user"));
+            },
+          });
         });
-      });
-    });
+      },
+    );
   }, [walletState, manifest, server, tracking, uiAccountRequest]);
 
   useEffect(() => {

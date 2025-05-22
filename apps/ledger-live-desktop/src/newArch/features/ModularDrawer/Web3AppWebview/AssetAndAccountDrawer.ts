@@ -1,6 +1,9 @@
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
-import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
+import {
+  WalletAPIAccount,
+  ModularDrawerConfiguration,
+} from "@ledgerhq/live-common/wallet-api/types";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
@@ -16,6 +19,7 @@ type DrawerParams = {
   currencies?: CryptoOrTokenCurrency[];
   accounts$?: Observable<WalletAPIAccount[]>;
   includeTokens?: boolean;
+  drawerConfiguration?: ModularDrawerConfiguration;
   onSuccess?: (account: AccountLike, parentAccount?: Account) => void;
   onCancel?: () => void;
 };
