@@ -225,6 +225,8 @@ describe("Wallet store", () => {
   const exportedState = {
     walletSyncState: { data: {}, version: 42 },
     nonImportedAccountInfos: [],
+    accountNames: [],
+    starredAccountIds: [],
   };
 
   it("allows partial wallet state", () => {
@@ -242,9 +244,43 @@ describe("Wallet store", () => {
     expect(walletSyncStateSelector(result)).toEqual({ data: {}, version: 42 });
   });
 
+  it("can import the wallet state with renamed accounts and starred accounts", () => {
+    const result = handlers.IMPORT_WALLET_SYNC(
+      initialState,
+      importWalletState({
+        ...exportedState,
+        accountNames: [[ETHEREUM_ACCOUNT, "New name"]],
+        starredAccountIds: [ETHEREUM_ACCOUNT],
+      }),
+    );
+    expect(walletSyncStateSelector(result)).toEqual({ data: {}, version: 42 });
+    expect(accountNameSelector(result, { accountId: ETHEREUM_ACCOUNT })).toBe("New name");
+    expect(isStarredAccountSelector(result, { accountId: ETHEREUM_ACCOUNT })).toBe(true);
+  });
+
   it("can export the wallet state", () => {
     const result = handlers.IMPORT_WALLET_SYNC(initialState, importWalletState(exportedState));
     expect(exportWalletState(result)).toEqual(exportedState);
+  });
+
+  it("can export the wallet state with updated values", () => {
+    const result = handlers.IMPORT_WALLET_SYNC(initialState, importWalletState(exportedState));
+    // Check that the exported state includes rename of accounts.
+    const resultRename = handlers.SET_ACCOUNT_NAME(
+      result,
+      setAccountName(ETHEREUM_ACCOUNT, "New name"),
+    );
+    // Check that the exported state includes starred  accounts.
+    const resultStarred = handlers.SET_ACCOUNT_STARRED(
+      resultRename,
+      setAccountStarred(POLKADOT_ACCOUNT, true),
+    );
+
+    expect(exportWalletState(resultStarred)).toEqual({
+      ...exportedState,
+      accountNames: [[ETHEREUM_ACCOUNT, "New name"]],
+      starredAccountIds: [POLKADOT_ACCOUNT],
+    });
   });
 
   it("walletStateExportShouldDiffer", () => {
