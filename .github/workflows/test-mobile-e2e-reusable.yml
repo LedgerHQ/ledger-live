@@ -83,7 +83,7 @@ env:
   COINAPPS: ${{ github.workspace }}/coin-apps
   SPECULOS_RUN: ${{ inputs.speculos_tests || github.event_name == 'schedule' }}
   SHOULD_UPLOAD: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || (github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) }}
-  IOS_JSBUNDLE_PATH: /apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/main.jsbundle
+  IOS_JSBUNDLE_PATH: /apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
   IOS_NATIVE_PATH: /apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
   ANDROID_APK_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-x86_64-detox.apk
   ANDROID_TESTBINARY_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/detox/app-detox-androidTest.apk
