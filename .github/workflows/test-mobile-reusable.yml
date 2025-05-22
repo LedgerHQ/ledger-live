@@ -66,3 +66,10 @@ jobs:
         with:
           name: lint-mobile
           path: ${{ github.workspace }}/apps/ledger-live-mobile/lint-mobile.json
+      - uses: actions/upload-artifact@v4
+      - name: upload coverage
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: coverage-mobile
+          path: ${{ github.workspace }}/apps/ledger-live-mobile/coverage
