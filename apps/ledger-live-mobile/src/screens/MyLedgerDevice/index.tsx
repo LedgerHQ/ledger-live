@@ -17,7 +17,11 @@ import StorageWarningModal from "./Modals/StorageWarningModal";
 import InstallAppDependenciesModal from "./Modals/InstallAppDependenciesModal";
 import UninstallAppDependenciesModal from "./Modals/UninstallAppDependenciesModal";
 import { useLockNavigation } from "~/components/RootNavigator/CustomBlockRouterNavigator";
-import { setHasInstalledAnyApp, setLastSeenDeviceInfo } from "~/actions/settings";
+import {
+  setHasInstalledAnyApp,
+  setLastConnectedDevice,
+  setLastSeenDeviceInfo,
+} from "~/actions/settings";
 import { NavigatorName, ScreenName } from "~/const";
 import FirmwareUpdateScreen from "~/components/FirmwareUpdate";
 import { MyLedgerNavigatorStackParamList } from "~/components/RootNavigator/types/MyLedgerNavigator";
@@ -30,6 +34,9 @@ import {
   AppsInstallUninstallWithDependenciesContextProvider,
 } from "./AppsInstallUninstallWithDependenciesContext";
 import { useAppDataStorage } from "~/hooks/storageProvider/useAppDataStorage";
+import { discoverDevices } from "@ledgerhq/live-common/hw/index";
+import { first, map } from "rxjs/operators";
+import { Device } from "@ledgerhq/types-devices";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MyLedgerNavigatorStackParamList, ScreenName.MyLedgerDevice>
@@ -176,7 +183,32 @@ const Manager = ({ navigation, route }: NavigationProps) => {
   );
 
   const onBackFromNewUpdateUx = useCallback(
-    (updateState: UpdateStep) => {
+    async (updateState: UpdateStep) => {
+      let navParams;
+
+      // Redirection to chose device screen with correct param once the update is finished
+      // If invalid update state => no device param
+      // If usb device => launch discover and nav param is another device as the id changes once fw finish with dmk
+      // Else => nav param is current device
+      if (!["start", "completed"].includes(updateState)) {
+        navParams = {};
+      } else if (device.deviceId.startsWith("usb|")) {
+        const newDevice: Device = await firstValueFrom(
+          discoverDevices(({ id }: { id: string }) => id === "hid").pipe(
+            first(e => e.type === "add"),
+            map(({ name, deviceModel, id, wired }) => ({
+              deviceName: name,
+              modelId: deviceModel?.id,
+              deviceId: id,
+              wired,
+            })),
+          ),
+        );
+        reduxDispatch(setLastConnectedDevice(newDevice));
+        navParams = { device: newDevice };
+      } else {
+        navParams = { device };
+      }
       navigation.navigate(NavigatorName.Main, {
         screen: NavigatorName.MyLedger,
         params: {
@@ -186,7 +218,7 @@ const Manager = ({ navigation, route }: NavigationProps) => {
           // Otherwise navigating back to the chooseDeviceScreen without settings a device
           // so it does not try to automatically connect to the device while it
           // might still be on an unknown state because the fw update was just stopped
-          params: ["start", "completed"].includes(updateState) ? { device } : {},
+          params: navParams,
         },
       });
     },
