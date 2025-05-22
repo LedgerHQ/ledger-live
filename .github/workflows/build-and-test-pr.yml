@@ -121,7 +121,7 @@ jobs:
       - test-desktop
       - test-mobile
       - test-libraries
-    uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@develop
+    uses: ./.github/workflows/scan-sonar-reusable.yml
     secrets: inherit
 
   # Final Check required
