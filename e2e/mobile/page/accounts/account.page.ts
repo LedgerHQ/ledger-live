@@ -16,7 +16,7 @@ export default class AccountPage {
   operationHistorySection = "operations-history-";
   operationHistorySectionRegexp = new RegExp(this.operationHistorySection + ".*");
 
-  accountGraph = (accountId: string) => getElementById(`account-graph-${accountId}`);
+  accountGraph = (accountId: string) => getElementById(this.accountGraphId(accountId));
   accountBalance = (accountId: string) => getElementById(`account-balance-${accountId}`);
   accountSettingsButton = () => getElementById("account-settings-button");
   accountAdvancedLogRow = () => getElementById("account-advanced-log-row");
@@ -30,6 +30,7 @@ export default class AccountPage {
     getElementByIdAndText(this.operationRowRegexp, operationType, 0);
   subAccountId = (account: Account) =>
     `js:2:${account.currency.id}:${account.address}:${account.currency.id}Sub+${account.ataAddress}`;
+  accountGraphId = (accountId: string) => `account-graph-${accountId}`;
 
   @Step("Open accounts list via deeplink")
   async openViaDeeplink() {
@@ -144,7 +145,7 @@ export default class AccountPage {
     await this.scrollToSubAccount(subAccountId);
     await waitForElementById(subAccountId);
     await tapById(subAccountId);
-    await waitForElementById(`account-graph-${this.subAccountId(subAccount)}`);
+    await waitForElementById(this.accountGraphId(this.subAccountId(subAccount)));
   }
 
   @Step("Click on selected last operation")
