@@ -46,7 +46,8 @@
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit",
     "unimported": "pnpm knip --directory ../.. -W libs/live-countervalues",
-    "test": "jest"
+    "test": "jest",
+    "coverage": "jest --coverage"
   },
   "typesVersions": {
     "*": {
