@@ -163,5 +163,5 @@ export function useSwapCustomHandlers(
   return {
     ...walletAPISwapHandlers,
     ...swapCustomHandlers,
-  };
+  } as WalletAPICustomHandlers;
 }
