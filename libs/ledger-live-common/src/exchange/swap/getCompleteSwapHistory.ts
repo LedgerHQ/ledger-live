@@ -17,7 +17,9 @@ const getSwapOperationMap =
       tokenId,
     } = swapOperation;
     // Find operation by matching its hash which is embedded in the operationId
-    const operation = account.operations.find(o => operationId.includes(o.hash));
+    const operation = account.operations.find(
+      o => operationId.includes(o.hash) || o.id === operationId,
+    );
     const optimisticOperation = !operation
       ? account.pendingOperations.find(o => o.id === operationId)
       : null;

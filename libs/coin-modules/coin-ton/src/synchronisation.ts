@@ -18,6 +18,7 @@ import BigNumber from "bignumber.js";
 import flatMap from "lodash/flatMap";
 import {
   fetchAccountInfo,
+  fetchAdjacentTransactions,
   fetchJettonWallets,
   fetchLastBlockNumber,
 } from "./bridge/bridgeHelpers/api";
@@ -30,6 +31,8 @@ import {
 } from "./bridge/bridgeHelpers/txn";
 import { getSyncHash } from "./logic";
 import { TonAccount, TonOperation, TonSubAccount } from "./types";
+
+const jettonTxMessageHashesMap = new Map<string, string>();
 
 export const getAccountShape: GetAccountShape<TonAccount> = async (
   info,
@@ -81,10 +84,26 @@ export const getAccountShape: GetAccountShape<TonAccount> = async (
     }
   }
 
+  // Get origin hash_message for each jetton tranfer
+  for (const tx of newJettonTxs) {
+    const hash = tx.transaction_hash;
+    try {
+      if (!jettonTxMessageHashesMap.has(hash)) {
+        const res = await fetchAdjacentTransactions(hash);
+        const hash_message = res.transactions.at(0)?.in_msg?.hash;
+        if (hash_message) {
+          jettonTxMessageHashesMap.set(hash, hash_message);
+        }
+      }
+    } catch (error) {
+      console.error(`Error processing ton jetton hash ${hash}:`, error);
+    }
+  }
+
   const newOps = flatMap(newTxs.transactions, mapTxToOps(accountId, address, newTxs.address_book));
   const newJettonOps = flatMap(
     newJettonTxs,
-    mapJettonTxToOps(accountId, address, newTxs.address_book),
+    mapJettonTxToOps(accountId, address, newTxs.address_book, jettonTxMessageHashesMap),
   );
   const operations = shouldSyncFromScratch ? newOps : mergeOps(oldOps, newOps);
 
