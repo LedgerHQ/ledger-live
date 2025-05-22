@@ -1879,7 +1879,8 @@
       "palletMethod" : "Método",
       "transferAmount" : "Transferir importe",
       "validatorsCount" : "Validadores ({{number}})",
-      "version" : "Versión"
+      "version" : "Versión",
+      "accountCreationFee" : "Tarifa de creación de cuenta"
     }
   },
   "operationList" : {
@@ -2069,7 +2070,8 @@
       "latest" : "La versión {{version}} del firmware está disponible",
       "contactSupport" : "Ponte en contacto con Soporte",
       "deprecated" : "La versión de firmware del dispositivo es demasiado antigua para poder actualizarla. Contacta al Soporte de Ledger para obtener un reemplazo.",
-      "prepareSeed" : "Como precaución, asegúrate de que la Frase de Recuperación de 24 palabras esté escrita en la Hoja de Recuperación y de tener fácil acceso a ella.",
+      "prepareSeed" : "Como precaución, asegúrate de que la Frase de Recuperación Secreta de 24 palabras esté escrita en la Hoja de Recuperación y de tener fácil acceso a ella.",
+      "prepareSeedRecover" : "Considera la opción de usar Ledger Recover para realizar una copia de respaldo del acceso a tu billetera y asegurarte de que siempre esté a mano.",
       "disclaimerTitle" : "Estás a punto de instalar <1>la versión de firmware {{version}}</1>.",
       "cancelUpdate" : "Cancelar actualización del SO",
       "continueUpdate" : "Continuar con actualización del SO",
@@ -2390,7 +2392,7 @@
         "ethereumPriorityFee" : "Tarifa de prioridad máxima ({{unitName}})",
         "nextBlock" : "Siguiente bloque",
         "suggested" : "Sugerida",
-        "unitPerByte" : "{{unit}} por byte",
+        "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
         "nftQuantity" : "Cantidad"
       },
@@ -2423,8 +2425,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "¿No vas a usar una nota/memo?",
-        "description" : "Tus fondos se perderán si no agregas una etiqueta/memo al enviarlos a un exchange centralizado o una billetera con custodia.",
+        "title" : "¿Necesitas una etiqueta o memo?",
+        "description" : "No incluir una etiqueta o memo cuando envías fondos a un exchange centralizado aumenta las probabilidades de perder tus fondos.",
         "cta.addTag" : "Agregar etiqueta",
         "cta.not.addTag" : "No agregar etiqueta",
         "checkbox.label" : "No mostrar esto de nuevo."
@@ -4834,7 +4836,7 @@
         "description" : "Gestiona, compra y rentabiliza tus cripto y NFTs con seguridad desde Ledger Live",
         "nextButton" : "Comenzar",
         "noDevice" : "¿No tienes un dispositivo?",
-        "buyLink" : "¿No tienes un dispositivo? Compra un Ledger Nano X",
+        "buyLink" : "¿No tienes un dispositivo? Compra un Ledger",
         "byTapping" : "Al tocar “Comenzar”, otorgas tu consentimiento y aceptas nuestros",
         "termsAndConditions" : "Términos y condiciones",
         "and" : "y",
@@ -5419,7 +5421,9 @@
     "stringHash" : "Hash de mensaje",
     "domainHash" : "Hash de dominio",
     "messageHash" : "Hash de mensaje",
-    "message" : "Mensaje"
+    "message" : "Mensaje",
+    "title" : "Continúa en tu Ledger {{wording}}",
+    "description" : "Sigue las instrucciones que aparecen en tu pantalla táctil segura."
   },
   "TransactionConfirm" : {
     "title" : "Confirma la operación en tu dispositivo para finalizarla",
@@ -5541,6 +5545,9 @@
       "memo" : "Etiqueta/memo",
       "memoPlaceholder" : "Opcional",
       "requiredMemoPlaceholder" : "Obligatoria"
+    },
+    "mina" : {
+      "memoPlaceholder" : "Memo opcional"
     }
   },
   "errors" : {
@@ -6571,6 +6578,15 @@
         "swap" : "Permutar",
         "deposit" : "Depositar"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "El texto de un memo no debe superar los 32 caracteres"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Esta transacción conlleva asociada una tarifa de creación de cuenta de {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "La cantidad mínima necesaria para esta transacción es de {{amount}}"
     }
   },
   "cryptoOrg" : {

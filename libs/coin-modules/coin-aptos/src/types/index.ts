@@ -46,11 +46,6 @@ export type AptosAddress = {
   path: string;
 };
 
-export interface TransactionOptions {
-  maxGasAmount: string;
-  gasUnitPrice: string;
-}
-
 export type TransactionErrors = {
   maxGasAmount?: string;
   gasUnitPrice?: string;
@@ -108,22 +103,11 @@ export type ExtraStakeInfoRaw = {
   amount: string;
 };
 
-export type AptosStakeWithMeta = {
-  stake: AptosStakingPosition;
-  meta: {
-    validator?: {
-      name?: string;
-      img?: string;
-      url?: string;
-    };
-  };
-};
-
 export type AptosResources = {
   stakedBalance: BigNumber;
   availableBalance: BigNumber;
   pendingBalance: BigNumber;
-  stakingPositions: AptosStakingPosition[];
+  stakingPositions?: AptosStakingPosition[];
 };
 
 export type AptosResourcesRaw = {
@@ -187,3 +171,12 @@ export type AptosPreloadData = {
   validatorsWithMeta: AptosValidatorWithMeta[];
   validators: AptosValidator[];
 };
+
+export interface TransactionOptions {
+  maxGasAmount: string;
+  gasUnitPrice: string;
+}
+
+export interface StakePoolResource {
+  locked_until_secs: string;
+}

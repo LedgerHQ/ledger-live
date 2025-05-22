@@ -24,6 +24,8 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Axelar unit (Axelar) 1`] = `"12.345.678.900,000000- -AXL"`;
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Babylon unit (Babylon) 1`] = `"12.345.678.900,000000- -BABY"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Banano unit (BANANO) 1`] = `"123.456.789,00000000- -BANANO"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
@@ -183,6 +185,8 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Mantra unit (Mantra) 1`] = `"12.345.678.900,000000- -OM"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Metis unit (METIS) 1`] = `"0,012345678900000000- -METIS"`;
+
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Mina unit (MINA) 1`] = `"12.345.678,900000000- -MINA"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Monero unit (XMR) 1`] = `"12.345,678900000000- -XMR"`;
 
@@ -370,6 +374,8 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Axelar unit (Axelar) 1`] = `"12,345,678,900.000000- -AXL"`;
 
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Babylon unit (Babylon) 1`] = `"12,345,678,900.000000- -BABY"`;
+
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Banano unit (BANANO) 1`] = `"123,456,789.00000000- -BANANO"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Base Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
@@ -529,6 +535,8 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Mantra unit (Mantra) 1`] = `"12,345,678,900.000000- -OM"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Metis unit (METIS) 1`] = `"0.012345678900000000- -METIS"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Mina unit (MINA) 1`] = `"12,345,678.900000000- -MINA"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Monero unit (XMR) 1`] = `"12,345.678900000000- -XMR"`;
 
@@ -716,6 +724,8 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Axelar unit (Axelar) 1`] = `"12.345.678.900,000000- -AXL"`;
 
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Babylon unit (Babylon) 1`] = `"12.345.678.900,000000- -BABY"`;
+
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Banano unit (BANANO) 1`] = `"123.456.789,00000000- -BANANO"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
@@ -875,6 +885,8 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Mantra unit (Mantra) 1`] = `"12.345.678.900,000000- -OM"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Metis unit (METIS) 1`] = `"0,012345678900000000- -METIS"`;
+
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Mina unit (MINA) 1`] = `"12.345.678,900000000- -MINA"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Monero unit (XMR) 1`] = `"12.345,678900000000- -XMR"`;
 
@@ -1062,6 +1074,8 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Axelar unit (Axelar) 1`] = `"12 345 678 900,000000- -AXL"`;
 
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Babylon unit (Babylon) 1`] = `"12 345 678 900,000000- -BABY"`;
+
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Banano unit (BANANO) 1`] = `"123 456 789,00000000- -BANANO"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
@@ -1221,6 +1235,8 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Mantra unit (Mantra) 1`] = `"12 345 678 900,000000- -OM"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Metis unit (METIS) 1`] = `"0,012345678900000000- -METIS"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Mina unit (MINA) 1`] = `"12 345 678,900000000- -MINA"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Monero unit (XMR) 1`] = `"12 345,678900000000- -XMR"`;
 
@@ -1408,6 +1424,8 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Axelar unit (Axelar) 1`] = `"12,345,678,900.000000- -AXL"`;
 
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Babylon unit (Babylon) 1`] = `"12,345,678,900.000000- -BABY"`;
+
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Banano unit (BANANO) 1`] = `"123,456,789.00000000- -BANANO"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Base Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
@@ -1567,6 +1585,8 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Mantra unit (Mantra) 1`] = `"12,345,678,900.000000- -OM"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Metis unit (METIS) 1`] = `"0.012345678900000000- -METIS"`;
+
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Mina unit (MINA) 1`] = `"12,345,678.900000000- -MINA"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Monero unit (XMR) 1`] = `"12,345.678900000000- -XMR"`;
 
@@ -1754,6 +1774,8 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Axelar unit (Axelar) 1`] = `"12,345,678,900.000000- -AXL"`;
 
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Babylon unit (Babylon) 1`] = `"12,345,678,900.000000- -BABY"`;
+
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Banano unit (BANANO) 1`] = `"123,456,789.00000000- -BANANO"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Base Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
@@ -1913,6 +1935,8 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Mantra unit (Mantra) 1`] = `"12,345,678,900.000000- -OM"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Metis unit (METIS) 1`] = `"0.012345678900000000- -METIS"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Mina unit (MINA) 1`] = `"12,345,678.900000000- -MINA"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Monero unit (XMR) 1`] = `"12,345.678900000000- -XMR"`;
 
@@ -2100,6 +2124,8 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Axelar unit (Axelar) 1`] = `"12.345.678.900,000000- -AXL"`;
 
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Babylon unit (Babylon) 1`] = `"12.345.678.900,000000- -BABY"`;
+
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Banano unit (BANANO) 1`] = `"123.456.789,00000000- -BANANO"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
@@ -2259,6 +2285,8 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Mantra unit (Mantra) 1`] = `"12.345.678.900,000000- -OM"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Metis unit (METIS) 1`] = `"0,012345678900000000- -METIS"`;
+
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Mina unit (MINA) 1`] = `"12.345.678,900000000- -MINA"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Monero unit (XMR) 1`] = `"12.345,678900000000- -XMR"`;
 
@@ -2446,6 +2474,8 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Axelar unit (Axelar) 1`] = `"12 345 678 900,000000- -AXL"`;
 
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Babylon unit (Babylon) 1`] = `"12 345 678 900,000000- -BABY"`;
+
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Banano unit (BANANO) 1`] = `"123 456 789,00000000- -BANANO"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
@@ -2605,6 +2635,8 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Mantra unit (Mantra) 1`] = `"12 345 678 900,000000- -OM"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Metis unit (METIS) 1`] = `"0,012345678900000000- -METIS"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Mina unit (MINA) 1`] = `"12 345 678,900000000- -MINA"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Monero unit (XMR) 1`] = `"12 345,678900000000- -XMR"`;
 
@@ -2792,6 +2824,8 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Axelar unit (Axelar) 1`] = `"12.345.678.900,000000- -AXL"`;
 
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Babylon unit (Babylon) 1`] = `"12.345.678.900,000000- -BABY"`;
+
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Banano unit (BANANO) 1`] = `"123.456.789,00000000- -BANANO"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
@@ -2951,6 +2985,8 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Mantra unit (Mantra) 1`] = `"12.345.678.900,000000- -OM"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Metis unit (METIS) 1`] = `"0,012345678900000000- -METIS"`;
+
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Mina unit (MINA) 1`] = `"12.345.678,900000000- -MINA"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Monero unit (XMR) 1`] = `"12.345,678900000000- -XMR"`;
 
@@ -3138,6 +3174,8 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Axelar unit (Axelar) 1`] = `"12,345,678,900.000000- -AXL"`;
 
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Babylon unit (Babylon) 1`] = `"12,345,678,900.000000- -BABY"`;
+
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Banano unit (BANANO) 1`] = `"123,456,789.00000000- -BANANO"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Base Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
@@ -3297,6 +3335,8 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Mantra unit (Mantra) 1`] = `"12,345,678,900.000000- -OM"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Metis unit (METIS) 1`] = `"0.012345678900000000- -METIS"`;
+
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Mina unit (MINA) 1`] = `"12,345,678.900000000- -MINA"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Monero unit (XMR) 1`] = `"12,345.678900000000- -XMR"`;
 
@@ -3484,6 +3524,8 @@ exports[`formatCurrencyUnit with default options should correctly format Avalanc
 
 exports[`formatCurrencyUnit with default options should correctly format Axelar unit (Axelar) 1`] = `"12,345,678,900"`;
 
+exports[`formatCurrencyUnit with default options should correctly format Babylon unit (Babylon) 1`] = `"12,345,678,900"`;
+
 exports[`formatCurrencyUnit with default options should correctly format Banano unit (BANANO) 1`] = `"123,456,789"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Base Sepolia unit (ETH) 1`] = `"0.0123456"`;
@@ -3643,6 +3685,8 @@ exports[`formatCurrencyUnit with default options should correctly format MIX Blo
 exports[`formatCurrencyUnit with default options should correctly format Mantra unit (Mantra) 1`] = `"12,345,678,900"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Metis unit (METIS) 1`] = `"0.0123456"`;
+
+exports[`formatCurrencyUnit with default options should correctly format Mina unit (MINA) 1`] = `"12,345,678"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Monero unit (XMR) 1`] = `"12,345.6"`;
 

@@ -1,4 +1,10 @@
-import { type Api } from "@ledgerhq/coin-framework/api/index";
+import type {
+  Api,
+  FeeEstimation,
+  Operation,
+  Pagination,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type TronConfig } from "../config";
 import {
   broadcast,
@@ -6,21 +12,40 @@ import {
   craftTransaction,
   estimateFees,
   getBalance,
-  listOperations,
+  listOperations as logicListOperations,
   lastBlock,
+  Options,
 } from "../logic";
-import { type TronToken } from "../types";
+import type { TronAsset } from "../types";
 
-export function createApi(config: TronConfig): Api<TronToken> {
+export function createApi(config: TronConfig): Api<TronAsset> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
     broadcast,
     combine,
     craftTransaction,
-    estimateFees,
+    estimateFees: estimate,
     getBalance,
     lastBlock,
     listOperations,
   };
+}
+
+async function estimate(transactionIntent: TransactionIntent<TronAsset>): Promise<FeeEstimation> {
+  const fees = await estimateFees(transactionIntent);
+  return { value: fees };
+}
+
+async function listOperations(
+  address: string,
+  pagination: Pagination,
+): Promise<[Operation<TronAsset>[], string]> {
+  const { minHeight } = pagination;
+  const options: Options = {
+    softLimit: 200,
+    minHeight: minHeight,
+    order: "asc",
+  } as const;
+  return logicListOperations(address, options);
 }

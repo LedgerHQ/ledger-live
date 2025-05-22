@@ -1,4 +1,4 @@
-import type { AppManifest } from "./types";
+import type { AppManifest, DAppTrackingData } from "./types";
 
 /**
  * This signature is to be compatible with track method of `segment.js` file in LLM and LLD
@@ -226,14 +226,14 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
       track("WalletAPI bitcoin family account xpub success", getEventData(manifest));
     },
 
-    dappSendTransactionRequested: (manifest: AppManifest) => {
-      track("dApp SendTransaction requested", getEventData(manifest));
+    dappSendTransactionRequested: (manifest: AppManifest, trackingData: DAppTrackingData) => {
+      track("dApp SendTransaction requested", { ...getEventData(manifest), ...trackingData });
     },
-    dappSendTransactionSuccess: (manifest: AppManifest) => {
-      track("dApp SendTransaction success", getEventData(manifest));
+    dappSendTransactionSuccess: (manifest: AppManifest, trackingData: DAppTrackingData) => {
+      track("dApp SendTransaction success", { ...getEventData(manifest), ...trackingData });
     },
-    dappSendTransactionFail: (manifest: AppManifest) => {
-      track("dApp SendTransaction fail", getEventData(manifest));
+    dappSendTransactionFail: (manifest: AppManifest, trackingData?: DAppTrackingData) => {
+      track("dApp SendTransaction fail", { ...getEventData(manifest), ...(trackingData || {}) });
     },
     dappPersonalSignRequested: (manifest: AppManifest) => {
       track("dApp PersonalSign requested", getEventData(manifest));

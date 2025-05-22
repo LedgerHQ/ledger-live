@@ -6,7 +6,7 @@ import {
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import resolver from "../signer";
 import type { Transaction, TransactionStatus, AptosSigner, AptosAccount } from "../types";
@@ -17,22 +17,11 @@ import createTransaction from "./createTransaction";
 import { getAccountShape } from "./synchronisation";
 import buildSignOperation from "./signOperation";
 import broadcast from "./broadcast";
-import { hydrate, preloadWithAPI } from "../preload";
+import { hydrate, preloadWithValidators } from "../preload";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
-// function makePreload(
-//   getChainAPI: (config: Config) => Promise<ChainAPI>,
-// ): CurrencyBridge["preload"] {
 function makePreload() {
-  // const preload: CurrencyBridge["preload"] = (currency): Promise<AptosPreloadData> => {
-  //   const config: Config = {
-  //     endpoint: endpointByCurrencyId(currency.id),
-  //   };
-  //   const api = () => getChainAPI(config);
-  //   return preloadWithAPI(currency, api);
-  // };
-  // return preload;
-  return (currency: CryptoCurrency) => preloadWithAPI(currency);
+  return (currency: CryptoCurrency) => preloadWithValidators(currency);
 }
 
 function buildCurrencyBridge(signerContext: SignerContext<AptosSigner>): CurrencyBridge {

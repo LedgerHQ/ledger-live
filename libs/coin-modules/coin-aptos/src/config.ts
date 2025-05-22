@@ -1,17 +1,19 @@
-import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import { type AptosSettings } from "@aptos-labs/ts-sdk";
+import buildCoinConfig, {
+  type CoinConfig,
+  type CurrencyConfig,
+} from "@ledgerhq/coin-framework/config";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
-export type AptosCoinConfig = () => CurrencyConfig;
-
-let coinConfig: AptosCoinConfig | undefined;
-
-export const setCoinConfig = (config: AptosCoinConfig): void => {
-  coinConfig = config;
+export type AptosConfig = {
+  aptosSettings: AptosSettings;
 };
 
-export const getCoinConfig = (): ReturnType<AptosCoinConfig> => {
-  if (!coinConfig?.()) {
-    throw new Error("Aptos module config not set");
-  }
+export type AptosCoinConfig = CurrencyConfig & AptosConfig;
 
-  return coinConfig();
-};
+const coinConfig: {
+  setCoinConfig: (config: CoinConfig<AptosCoinConfig>) => void;
+  getCoinConfig: (currency?: CryptoCurrency) => AptosCoinConfig;
+} = buildCoinConfig<AptosCoinConfig>();
+
+export default coinConfig;

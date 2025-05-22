@@ -25,6 +25,7 @@ describe("Testing craftTransaction function", () => {
     const result = await craftTransaction({
       type: "send",
       asset: {
+        type: "token",
         standard: "trc10",
         tokenId: "1002000",
       },
@@ -66,6 +67,7 @@ describe("Testing craftTransaction function", () => {
     const result = await craftTransaction({
       type: "send",
       asset: {
+        type: "token",
         standard: "trc20",
         contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
       },
@@ -105,6 +107,7 @@ describe("Testing craftTransaction function", () => {
     const result = await craftTransaction({
       type: "send",
       asset: {
+        type: "token",
         standard: "trc20",
         contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
       },
@@ -133,6 +136,7 @@ describe("Testing craftTransaction function", () => {
       {
         type: "send",
         asset: {
+          type: "token",
           standard: "trc20",
           contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
         },
@@ -160,6 +164,7 @@ describe("Testing craftTransaction function", () => {
 
     // WHEN
     const result = await craftTransaction({
+      asset: { type: "native" },
       type: "send",
       sender,
       recipient,
@@ -196,6 +201,7 @@ describe("Testing craftTransaction function", () => {
 
     // WHEN
     const result = await craftTransaction({
+      asset: { type: "native" },
       type: "send",
       sender,
       recipient,
@@ -223,6 +229,7 @@ describe("Testing craftTransaction function", () => {
       craftTransaction({
         type: "send",
         asset: {
+          type: "token",
           standard: "trc20",
           contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
         },
@@ -243,6 +250,7 @@ describe("Testing craftTransaction function", () => {
 
     // WHEN
     const result = await craftTransaction({
+      asset: { type: "native" },
       type: "send",
       sender,
       recipient,
@@ -274,6 +282,7 @@ describe("Testing craftTransaction function", () => {
 
     // WHEN
     const result = await craftTransaction({
+      asset: { type: "native" },
       type: "send",
       sender,
       recipient,

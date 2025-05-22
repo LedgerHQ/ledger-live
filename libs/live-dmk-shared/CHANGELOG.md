@@ -1,5 +1,29 @@
 # @ledgerhq/live-dmk
 
+## 0.8.1
+
+### Patch Changes
+
+- [#10055](https://github.com/LedgerHQ/ledger-live/pull/10055) [`486e860`](https://github.com/LedgerHQ/ledger-live/commit/486e860cbad0ca9ba54e231c9d42739e0ccee662) Thanks [@mbertin-ledger](https://github.com/mbertin-ledger)! - DMK fixes for LLM
+
+## 0.8.0
+
+### Minor Changes
+
+- [#9763](https://github.com/LedgerHQ/ledger-live/pull/9763) [`e6f8297`](https://github.com/LedgerHQ/ledger-live/commit/e6f8297515ed689ee7cad902ef0ec07260692463) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Separate live-dmk into smaller packages
+
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#9763](https://github.com/LedgerHQ/ledger-live/pull/9763) [`e6f8297`](https://github.com/LedgerHQ/ledger-live/commit/e6f8297515ed689ee7cad902ef0ec07260692463) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Separate live-dmk into smaller packages
+
+## 0.7.0
+
+### Patch Changes
+
+- [#9664](https://github.com/LedgerHQ/ledger-live/pull/9664) [`61c371a`](https://github.com/LedgerHQ/ledger-live/commit/61c371a6e22750cf341d5667c8b6ddefa9d6af57) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Bump up dmk version and disable dmk refresher
+
 ## 0.6.0
 
 ### Minor Changes

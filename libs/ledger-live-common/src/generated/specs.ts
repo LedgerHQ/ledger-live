@@ -1,9 +1,9 @@
-import celo from "../families/celo/specs";
 import algorand from "@ledgerhq/coin-algorand/specs";
 import aptos from "@ledgerhq/coin-aptos/specs";
 import bitcoin from "@ledgerhq/coin-bitcoin/specs";
 import cardano from "@ledgerhq/coin-cardano/specs";
 import casper from "@ledgerhq/coin-casper/specs";
+import celo from "@ledgerhq/coin-celo/specs";
 import cosmos from "@ledgerhq/coin-cosmos/specs";
 import evm from "@ledgerhq/coin-evm/specs";
 import hedera from "@ledgerhq/coin-hedera/specs";
@@ -21,14 +21,15 @@ import ton from "@ledgerhq/coin-ton/specs";
 import tron from "@ledgerhq/coin-tron/specs";
 import vechain from "@ledgerhq/coin-vechain/specs";
 import xrp from "@ledgerhq/coin-xrp/specs";
+import mina from "@ledgerhq/coin-mina/specs";
 
 export default {
-  celo,
   algorand,
   aptos,
   bitcoin,
   cardano,
   casper,
+  celo,
   cosmos,
   evm,
   hedera,
@@ -46,4 +47,5 @@ export default {
   tron,
   vechain,
   xrp,
+  mina,
 };

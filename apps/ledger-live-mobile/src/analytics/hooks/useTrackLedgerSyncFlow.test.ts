@@ -1,13 +1,14 @@
 import { renderHook } from "@testing-library/react-native";
 import { useTrackLedgerSyncFlow, UseTrackLedgerSyncFlow } from "./useTrackLedgerSyncFlow";
 import { track } from "../segment";
-import { UserRefusedOnDevice, UserRefusedAllowManager } from "@ledgerhq/errors";
+import {
+  UserRefusedOnDevice,
+  UserRefusedAllowManager,
+  LockedDeviceError,
+  CantOpenDevice,
+  TransportError,
+} from "@ledgerhq/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
-
-jest.mock("../segment", () => ({
-  track: jest.fn(),
-  setAnalyticsFeatureFlagMethod: jest.fn(),
-}));
 
 describe("useTrackLedgerSyncFlow", () => {
   const deviceMock = {
@@ -21,6 +22,8 @@ describe("useTrackLedgerSyncFlow", () => {
     allowManagerRequested: null,
     requestOpenApp: null,
     error: null,
+    isLocked: false,
+    inWrongDeviceForAccount: null,
   };
 
   afterEach(() => {
@@ -145,6 +148,119 @@ describe("useTrackLedgerSyncFlow", () => {
       expect.objectContaining({
         deviceType: "Europa",
         connectionType: CONNECTION_TYPES.USB,
+        platform: "LLM",
+        page: "Ledger Sync",
+      }),
+    );
+  });
+
+  it('should track "Device locked" if isLocked is true', () => {
+    const { rerender } = renderHook(
+      (props: UseTrackLedgerSyncFlow) => useTrackLedgerSyncFlow(props),
+      {
+        initialProps: { ...defaultArgs, requestOpenApp: "Ethereum" },
+      },
+    );
+
+    rerender({ ...defaultArgs, requestOpenApp: "Ethereum", isLocked: true });
+
+    expect(track).toHaveBeenCalledWith(
+      "Device locked",
+      expect.objectContaining({
+        deviceType: "Europa",
+        connectionType: CONNECTION_TYPES.BLE,
+        platform: "LLM",
+        page: "Ledger Sync",
+      }),
+    );
+  });
+
+  it('should track "Device locked" if error is LockedDeviceError', () => {
+    const { rerender } = renderHook(
+      (props: UseTrackLedgerSyncFlow) => useTrackLedgerSyncFlow(props),
+      {
+        initialProps: { ...defaultArgs, requestOpenApp: "Ethereum" },
+      },
+    );
+
+    rerender({ ...defaultArgs, requestOpenApp: "Ethereum", error: new LockedDeviceError() });
+
+    expect(track).toHaveBeenCalledWith(
+      "Device locked",
+      expect.objectContaining({
+        deviceType: "Europa",
+        connectionType: CONNECTION_TYPES.BLE,
+        platform: "LLM",
+        page: "Ledger Sync",
+      }),
+    );
+  });
+
+  it('should track "Connection failed" if error is CantOpenDevice', () => {
+    const { rerender } = renderHook(
+      (props: UseTrackLedgerSyncFlow) => useTrackLedgerSyncFlow(props),
+      {
+        initialProps: { ...defaultArgs, requestOpenApp: "Ethereum" },
+      },
+    );
+
+    rerender({ ...defaultArgs, requestOpenApp: "Ethereum", error: new CantOpenDevice() });
+
+    expect(track).toHaveBeenCalledWith(
+      "Connection failed",
+      expect.objectContaining({
+        deviceType: "Europa",
+        connectionType: CONNECTION_TYPES.BLE,
+        platform: "LLM",
+        page: "Ledger Sync",
+      }),
+    );
+  });
+
+  it('should track "Transport error" if error is TransportError', () => {
+    const { rerender } = renderHook(
+      (props: UseTrackLedgerSyncFlow) => useTrackLedgerSyncFlow(props),
+      {
+        initialProps: { ...defaultArgs, requestOpenApp: "Ethereum" },
+      },
+    );
+
+    rerender({
+      ...defaultArgs,
+      requestOpenApp: "Ethereum",
+      error: new TransportError("test", "test"),
+    });
+
+    expect(track).toHaveBeenCalledWith(
+      "Transport error",
+      expect.objectContaining({
+        deviceType: "Europa",
+        connectionType: CONNECTION_TYPES.BLE,
+        platform: "LLM",
+        page: "Ledger Sync",
+      }),
+    );
+  });
+
+  it('should track "Wrong device association" when inWrongDeviceForAccount is provided', () => {
+    const { rerender } = renderHook(
+      (props: UseTrackLedgerSyncFlow) => useTrackLedgerSyncFlow(props),
+      {
+        initialProps: { ...defaultArgs, requestOpenApp: "Ethereum" },
+      },
+    );
+
+    rerender({
+      ...defaultArgs,
+      requestOpenApp: "Ethereum",
+      inWrongDeviceForAccount: { accountName: "Test Account" },
+    });
+
+    expect(track).toHaveBeenCalledWith(
+      "Wrong device association",
+      expect.objectContaining({
+        deviceType: "Europa",
+        connectionType: CONNECTION_TYPES.BLE,
         platform: "LLM",
         page: "Ledger Sync",
       }),

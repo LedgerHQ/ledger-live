@@ -7,7 +7,7 @@ import BigNumber from "bignumber.js";
 import { listOperations, parseAPIValue } from "../logic";
 import { getAccountInfo, getServerInfos } from "../network";
 import { ServerInfoResponse } from "../network/types";
-import { AccountInfo } from "../types";
+import { AccountInfo, XrpAsset } from "../types";
 
 export const getAccountShape: GetAccountShape = async info => {
   const { address, initialAccount, currency, derivationMode } = info;
@@ -69,7 +69,10 @@ async function filterOperations(
   return operations.map(op => adaptCoreOperationToLiveOperation(accountId, op) satisfies Operation);
 }
 
-function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOperation<void>): Operation {
+function adaptCoreOperationToLiveOperation(
+  accountId: string,
+  op: CoreOperation<XrpAsset>,
+): Operation {
   return {
     id: encodeOperationId(accountId, op.tx.hash, op.type),
     hash: op.tx.hash,

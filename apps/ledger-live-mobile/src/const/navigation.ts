@@ -59,9 +59,11 @@ export enum ScreenName {
   DebugNetwork = "DebugNetwork",
   DebugPlayground = "DebugPlayground",
   DebugBluetoothAndLocationServices = "DebugBluetoothAndLocationServices",
+  DebugStorageMigration = "DebugStorageMigration",
   DebugSettings = "DebugSettings",
   DebugSnackbars = "DebugSnackbars",
   DebugTransactionsAlerts = "DebugTransactionsAlerts",
+  DebugSwipe = "DebugSwipe",
   DebugStore = "DebugStore",
   DebugStoryly = "DebugStoryly",
   DebugSwap = "DebugSwap",
@@ -321,6 +323,8 @@ export enum ScreenName {
 
   // ton
   TonEditComment = "TonEditComment",
+  // mina
+  MinaEditMemo = "MinaEditMemo",
 
   // Algorand
   AlgorandEditMemo = "AlgorandEditMemo",

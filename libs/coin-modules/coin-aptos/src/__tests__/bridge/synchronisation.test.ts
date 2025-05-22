@@ -3,7 +3,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { Operation, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
-import { AptosAPI } from "../../api";
+import { AptosAPI } from "../../network";
 import {
   getAccountShape,
   mergeSubAccounts,
@@ -37,11 +37,11 @@ jest.mock("@ledgerhq/coin-framework/account", () => {
 
 const mockedDecodeTokenAccountId = jest.mocked(decodeTokenAccountId);
 
+jest.mock("../../network");
+let mockedAptosAPI: jest.Mocked<any>;
+
 jest.mock("@ledgerhq/coin-framework/bridge/jsHelpers");
 jest.mock("invariant", () => jest.fn());
-
-jest.mock("../../api");
-let mockedAptosAPI: jest.Mocked<any>;
 
 jest.mock("../../bridge/logic");
 
@@ -2313,7 +2313,7 @@ describe("getStake", () => {
     expect(result.aptosResources).toBeDefined();
     expect(result.aptosResources?.stakingPositions).toHaveLength(1);
 
-    const position = result.aptosResources?.stakingPositions[0];
+    const position = result.aptosResources?.stakingPositions?.[0];
     expect(position).toEqual({
       staked: BigNumber(mockDelegatorBalance[0]),
       available: BigNumber(mockDelegatorBalance[1]),

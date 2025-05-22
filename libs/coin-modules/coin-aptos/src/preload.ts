@@ -5,7 +5,7 @@ import { getValidators } from "./network/validators";
 
 export const PRELOAD_MAX_AGE = 15 * 60 * 1000; // 15min
 
-export async function preloadWithAPI(currency: CryptoCurrency): Promise<AptosPreloadData> {
+export async function preloadWithValidators(currency: CryptoCurrency): Promise<AptosPreloadData> {
   const validators: AptosValidator[] = await getValidators(currency.id);
 
   const data: AptosPreloadData = {

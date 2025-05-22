@@ -4,9 +4,7 @@ export default class SettingsGeneralPage {
   passwordSettingsSwitch = () => getElementById("password-settings-switch");
   passwordTextInput = () => getElementById("password-text-input");
   preferredCurrencyButton = () => getElementByText("Preferred currency");
-  confirmButton = () => getElementByText("Confirm");
   enterLanguageMenuButton = () => getElementById("language-button");
-  enterLedgerSync = () => getElementById("wallet-sync-button");
   localizedText = (text: string) => getElementByText(text);
 
   async togglePassword() {
@@ -17,17 +15,8 @@ export default class SettingsGeneralPage {
     await typeTextByElement(this.passwordTextInput(), passwordText);
   }
 
-  async confirm() {
-    await tapByElement(this.confirmButton());
-  }
-
   async navigateToLanguageSelect() {
     await tapByElement(this.enterLanguageMenuButton());
-  }
-
-  @Step("Go to Ledger Sync")
-  async navigateToLedgerSync() {
-    await tapByElement(this.enterLedgerSync());
   }
 
   async selectLanguage(lang: string) {

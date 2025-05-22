@@ -1,24 +1,15 @@
-import React, { useMemo } from "react";
+import React, { ReactElement, useMemo } from "react";
 import { useHistory } from "react-router";
 import * as S from "../styles";
 import { openURL } from "~/renderer/linking";
+import { getSafeStringLinks, isAbsoluteUrl } from "../utils";
 
-function isAbsoluteUrl(url: string): boolean {
-  try {
-    new URL(url);
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
+export function useErrorLinks(error?: Error | null): Record<string, ReactElement> {
+  const safeStringLinks = getSafeStringLinks(error);
 
-export function useErrorLinks(error?: Error | null) {
-  const errorLinks = error && "links" in error && Array.isArray(error.links) && error?.links;
   const history = useHistory();
   return useMemo(() => {
-    if (errorLinks) {
-      const safeStringLinks = errorLinks.filter((link): link is string => typeof link === "string");
-
+    if (safeStringLinks.length > 0) {
       return safeStringLinks.reduce((prev, curr, index) => {
         if (isAbsoluteUrl(curr)) {
           return {
@@ -52,5 +43,5 @@ export function useErrorLinks(error?: Error | null) {
 
     return {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [errorLinks]);
+  }, [safeStringLinks]);
 }

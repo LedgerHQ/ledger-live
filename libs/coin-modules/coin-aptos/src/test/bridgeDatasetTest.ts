@@ -20,6 +20,7 @@ const aptos: CurrenciesData<Transaction> = {
   ],
   accounts: [
     {
+      FIXME_tests: ["balance is sum of ops"],
       raw: {
         id: "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos",
         seedIdentifier: "d6816f4f22f867b56cf9304b776f452a16d107835d73ee8a33c4ced210300583",

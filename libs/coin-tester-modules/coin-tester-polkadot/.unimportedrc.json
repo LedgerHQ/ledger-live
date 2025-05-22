@@ -1,0 +1,8 @@
+{
+  "ignoreUnresolved": [],
+  "ignoreUnused": [
+    "dotenv",
+    "expect"
+  ],
+  "ignoreUnimported": []
+}

@@ -1,4 +1,4 @@
-name: "@Desktop • Test App (external)"
+name: "[EXT-Desktop] - Test (External) - Called"
 
 on:
   workflow_call:
@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   codechecks:
-    name: "Desktop Code Checks"
+    name: "Desktop Code Check (External)"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -60,7 +60,7 @@ jobs:
         shell: bash
 
   unit-tests:
-    name: "Desktop Unit Tests"
+    name: "Desktop Unit Tests (External)"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -86,7 +86,7 @@ jobs:
         run: pnpm desktop test:jest
 
   e2e-tests-linux:
-    name: "Desktop Tests E2E (Ubuntu)"
+    name: "Desktop E2E (External)"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -144,8 +144,9 @@ jobs:
 
   report:
     needs: [codechecks, unit-tests, e2e-tests-linux]
+    name: "Test Desktop (External) > Report"
     runs-on: ubuntu-22.04
-    if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
+    if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' && needs.codechecks.result == 'success' && needs.unit-tests.result == 'success' && needs.e2e-tests-linux.outputs.status == 'success' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -184,136 +185,3 @@ jobs:
         with:
           images: images.json
           no-actor: true
-      - uses: actions/github-script@v7
-        name: prepare status
-        id: status
-        with:
-          script: |
-            const fs = require("fs");
-            const path = require("path");
-
-            const [ owner, repo ] = "${{ github.repository }}".split("/");
-
-            const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRunAttempt, {
-              owner,
-              repo,
-              run_id: "${{ github.run_id }}",
-              attempt_number: "${{ github.run_attempt }}",
-            });
-
-            const findJobUrl = os =>
-              jobs.find(job => job.name == `Live Desktop Tests (${os})`)?.html_url;
-
-            const keys = {
-              linux: {
-                symbol: "🐧",
-                name: "Linux",
-                jobUrl: findJobUrl("Linux")
-              },
-            };
-
-            const typecheck = {
-              pass: ${{ needs.codechecks.result == 'success' }},
-              status: "${{ needs.codechecks.result }}",
-            };
-
-            const unitTests = {
-              pass: ${{ needs.unit-tests.result == 'success' }},
-              status: "${{ needs.unit-tests.result }}",
-            };
-
-            const report = {
-              linux: {
-                pass: ${{ needs.e2e-tests-linux.outputs.status == 'success' }},
-                status: "${{ needs.e2e-tests-linux.outputs.status }}",
-              },
-            };
-
-            let summary = `### TypeCheck
-
-            ${typecheck.pass ? "Typechecks are fine" : "Unfortunately typechecks did not pass"}
-              - ${typecheck.pass ? "✅" : "❌"} **Type checks** ended with status \`${typecheck.status}\`
-
-            ### Unit Tests (Jest)
-            ${unitTests.pass ? "Unit tests are fine" : "Unit tests did not pass"}
-              - ${unitTests.pass ? "✅" : "❌"} **Unit tests** ended with status \`${unitTests.status}\`
-
-            ### Screenshot Tests (Playwright)
-            `
-
-            summary += `|`
-
-            const reportKeys = Object.keys(report);
-
-            reportKeys.forEach((k) => {
-              summary += ` [${keys[k].symbol} ${keys[k].name}](${keys[k].jobUrl}) |`;
-            });
-
-            summary += `
-            |`;
-
-            for (let i = 0; i < reportKeys.length; i++) {
-              summary += ` :--: |`;
-            }
-
-            summary += `
-            |`;
-
-            Object.entries(report).forEach(([os, values]) => {
-              summary += ` ${values.pass ? "✅" : "❌"} (${values.status}) |`;
-            });
-
-            summary += `
-            ${{ steps.comment.outputs.body }}
-            `
-
-            // Store eslint results as annotations
-            let annotations = []
-            try {
-              const lintResult = require("./lint-desktop-external.json");
-              const LEVELS = {
-                0: "notice",
-                1: "warning",
-                2: "failure"
-              };
-              const withErrorOrWarning = lintResult.filter(r => r.errorCount > 0 || r.fatalErrorCount > 0 || r.warningCount > 0);
-              annotations = withErrorOrWarning.flatMap(({ filePath, messages }) =>
-                messages.map((m) => {
-                  const sameLine = m.line === m.endLine;
-                  return {
-                    path: path.relative(process.env.GITHUB_WORKSPACE, filePath),
-                    start_line: m.line,
-                    end_line: m.endLine,
-                    // Annotations only support start_column and end_column on the same line. Omit this parameter if start_line and end_line have different values.
-                    // https://docs.github.com/en/rest/reference/checks#create-a-check-run
-                    start_column: sameLine ? m.column : undefined,
-                    end_column: sameLine ? m.endColumn : undefined,
-                    annotation_level: LEVELS[m.severity],
-                    message: m.message,
-                    title: m.ruleId,
-                  }
-                })
-              );
-            } catch(error) {
-              console.error("Failed processing eslint annotations", error)
-            }
-
-            const output = {
-              summary,
-              annotations,
-              actions: [{
-                // 20 chars max
-                label: "Regen. Screenshots",
-                // 20 chars max
-                identifier: "regen_screenshots",
-                // 40 chars max
-                description: "Will regenerate playwright screenshots",
-              }],
-            };
-
-            fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
-      - uses: actions/upload-artifact@v4
-        name: upload summary
-        with:
-          name: summary.json
-          path: ${{ github.workspace }}/summary.json

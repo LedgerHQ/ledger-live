@@ -41,15 +41,21 @@
         "src/preloader/index.ts",
         "src/renderer/webworkers/workers/*.ts",
         "src/webviewPreloader/dappPreloader.ts",
-        "src/webviewPreloader/index.ts"
+        "src/webviewPreloader/index.ts",
+        "src/newArch/features/ModularDrawer/components/SelectAsset.tsx"
       ],
-      "ignore": ["src/newArch/features/Collectibles/**", "**/types.*"],
+      "ignore": ["src/newArch/features/Collectibles/**", "**/types.*", "src/newArch/features/ModularDrawer/components/SelectAccount.tsx"],
       "ignoreBinaries": ["eslint", "knip", "prettier", "zx", "lint"],
       "ignoreDependencies": ["prop-types", "allure-commandline", "msw", "buffer"]
     },
     "./apps/ledger-live-mobile": {
       "entry": ["index.js", "src/families/**"],
-      "ignore": ["src/**/*.android.*", "src/**/*.ios.*", "src/logic/keyboardVisible.ts"],
+      "ignore": [
+        "src/**/*.android.*",
+        "src/**/*.ios.*",
+        "src/logic/keyboardVisible.ts",
+        "src/newArch/features/LandingPages/screens/LargeMoverLandingPage/**"
+      ],
       "ignoreDependencies": [
         "@react-native-masked-view/masked-view",
         "@react-native/gradle-plugin",

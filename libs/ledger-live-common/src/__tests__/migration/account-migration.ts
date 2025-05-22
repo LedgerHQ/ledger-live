@@ -96,6 +96,7 @@ setSupportedCurrencies([
   "filecoin",
   "linea",
   "ton",
+  "mina",
 ]);
 
 LiveConfig.setConfig(liveConfig);

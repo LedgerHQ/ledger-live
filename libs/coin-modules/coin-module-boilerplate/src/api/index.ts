@@ -1,4 +1,4 @@
-import type { Api, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import type { Api, FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type BoilerplateConfig } from "../config";
 import {
   broadcast,
@@ -11,9 +11,9 @@ import {
   listOperations,
 } from "../common-logic";
 import BigNumber from "bignumber.js";
-import { BoilerplateToken } from "../types";
+import { BoilerplateAsset } from "../types";
 
-export function createApi(config: BoilerplateConfig): Api<BoilerplateToken> {
+export function createApi(config: BoilerplateConfig): Api<BoilerplateAsset> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -27,7 +27,7 @@ export function createApi(config: BoilerplateConfig): Api<BoilerplateToken> {
   };
 }
 
-async function craft(transactionIntent: TransactionIntent<BoilerplateToken>): Promise<string> {
+async function craft(transactionIntent: TransactionIntent<BoilerplateAsset>): Promise<string> {
   const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
   const tx = await craftTransaction(
     { address: transactionIntent.sender, nextSequenceNumber },
@@ -39,7 +39,9 @@ async function craft(transactionIntent: TransactionIntent<BoilerplateToken>): Pr
   return tx.serializedTransaction;
 }
 
-async function estimate(transactionIntent: TransactionIntent<BoilerplateToken>): Promise<bigint> {
+async function estimate(
+  transactionIntent: TransactionIntent<BoilerplateAsset>,
+): Promise<FeeEstimation> {
   const { serializedTransaction } = await craftTransaction(
     { address: transactionIntent.sender },
     {
@@ -47,5 +49,8 @@ async function estimate(transactionIntent: TransactionIntent<BoilerplateToken>):
       amount: new BigNumber(transactionIntent.amount.toString()),
     },
   );
-  return await estimateFees(serializedTransaction);
+
+  const value = await estimateFees(serializedTransaction);
+
+  return { value };
 }

@@ -1,7 +1,13 @@
 import { renderHook } from "tests/testSetup";
 import { useTrackSendFlow, UseTrackSendFlow } from "./useTrackSendFlow";
 import { track } from "../segment";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import {
+  UserRefusedOnDevice,
+  TransportRaceCondition,
+  LockedDeviceError,
+  CantOpenDevice,
+  TransportError,
+} from "@ledgerhq/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
 jest.mock("../segment", () => ({
@@ -21,6 +27,7 @@ describe("useTrackSendFlow", () => {
     error: null,
     inWrongDeviceForAccount: null,
     isTrackingEnabled: true,
+    isLocked: false,
   };
 
   afterEach(() => {
@@ -105,6 +112,99 @@ describe("useTrackSendFlow", () => {
         page: "Send",
       }),
       false,
+    );
+  });
+
+  it("should track 'Transport race condition' when TransportRaceCondition error is thrown", () => {
+    const error = new TransportRaceCondition();
+
+    renderHook((props: UseTrackSendFlow) => useTrackSendFlow(props), {
+      initialProps: { ...defaultArgs, error },
+    });
+
+    expect(track).toHaveBeenCalledWith(
+      "Transport race condition",
+      expect.objectContaining({
+        deviceType: "europa",
+        connectionType: CONNECTION_TYPES.BLE,
+        platform: "LLD",
+        page: "Send",
+      }),
+      true,
+    );
+  });
+
+  it("should track 'Connection failed' when CantOpenDevice error is thrown", () => {
+    const error = new CantOpenDevice();
+
+    renderHook((props: UseTrackSendFlow) => useTrackSendFlow(props), {
+      initialProps: { ...defaultArgs, error },
+    });
+
+    expect(track).toHaveBeenCalledWith(
+      "Connection failed",
+      expect.objectContaining({
+        deviceType: "europa",
+        connectionType: CONNECTION_TYPES.BLE,
+        platform: "LLD",
+        page: "Send",
+      }),
+      true,
+    );
+  });
+
+  it("should track 'Transport error' when TransportError error is thrown", () => {
+    const error = new TransportError("test", "test");
+
+    renderHook((props: UseTrackSendFlow) => useTrackSendFlow(props), {
+      initialProps: { ...defaultArgs, error },
+    });
+
+    expect(track).toHaveBeenCalledWith(
+      "Transport error",
+      expect.objectContaining({
+        deviceType: "europa",
+        connectionType: CONNECTION_TYPES.BLE,
+        platform: "LLD",
+        page: "Send",
+      }),
+      true,
+    );
+  });
+
+  it("should track 'Device locked' when LockedDeviceError error is thrown", () => {
+    const error = new LockedDeviceError();
+
+    renderHook((props: UseTrackSendFlow) => useTrackSendFlow(props), {
+      initialProps: { ...defaultArgs, error },
+    });
+
+    expect(track).toHaveBeenCalledWith(
+      "Device locked",
+      expect.objectContaining({
+        deviceType: "europa",
+        connectionType: CONNECTION_TYPES.BLE,
+        platform: "LLD",
+        page: "Send",
+      }),
+      true,
+    );
+  });
+
+  it("should track 'Device locked' when isLocked is true", () => {
+    renderHook((props: UseTrackSendFlow) => useTrackSendFlow(props), {
+      initialProps: { ...defaultArgs, isLocked: true },
+    });
+
+    expect(track).toHaveBeenCalledWith(
+      "Device locked",
+      expect.objectContaining({
+        deviceType: "europa",
+        connectionType: CONNECTION_TYPES.BLE,
+        platform: "LLD",
+        page: "Send",
+      }),
+      true,
     );
   });
 });

@@ -13,7 +13,6 @@ import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 import { useSettings } from "~/hooks";
 import {
   counterValueCurrencySelector,
-  discreetModeSelector,
   exportSettingsSelector,
   lastSeenDeviceSelector,
 } from "~/reducers/settings";
@@ -33,7 +32,6 @@ export function WebView({ manifest, params, setWebviewState }: Props) {
   const { theme } = useTheme();
   const { language } = useSettings();
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
-  const discreet = useSelector(discreetModeSelector);
   const countryLocale = getCountryLocale();
   const SWAP_API_BASE = useEnv("SWAP_API_BASE");
   const SWAP_USER_IP = useEnv("SWAP_USER_IP");
@@ -63,7 +61,6 @@ export function WebView({ manifest, params, setWebviewState }: Props) {
             countryLocale,
             currencyTicker,
             lastSeenDevice: lastSeenDevice?.modelId,
-            discreetMode: discreet ? "true" : "false",
             OS: Platform.OS,
             platform: "LLM", // need consistent format with LLD, Platform doesn't work
             ...swapParams,

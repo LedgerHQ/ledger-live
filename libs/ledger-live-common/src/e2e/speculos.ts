@@ -619,20 +619,20 @@ export async function signDelegationTransaction(delegatingAccount: Delegate) {
   }
 }
 
-export async function verifyAmountsAndAcceptSwap(swap: Swap) {
+export async function verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
   const events = await pressUntilTextFound(DeviceLabels.ACCEPT);
-  await verifySwapData(swap, events);
+  await verifySwapData(swap, events, amount);
   await pressBoth();
 }
 
-export async function verifyAmountsAndRejectSwap(swap: Swap) {
+export async function verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
   const events = await pressUntilTextFound(DeviceLabels.REJECT);
-  await verifySwapData(swap, events);
+  await verifySwapData(swap, events, amount);
   await pressBoth();
 }
 
-async function verifySwapData(swap: Swap, events: string[]) {
-  const sendAmountScreen = containsSubstringInEvent(swap.amount, events);
+async function verifySwapData(swap: Swap, events: string[], amount: string) {
+  const sendAmountScreen = containsSubstringInEvent(amount, events);
   expect(sendAmountScreen).toBeTruthy();
   verifySwapGetAmountScreen(swap, events);
   verifySwapFeesAmountScreen(swap, events);

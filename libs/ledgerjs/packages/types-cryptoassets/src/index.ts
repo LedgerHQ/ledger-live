@@ -11,6 +11,7 @@ export type CryptoCurrencyId =
   | "atheios"
   | "avalanche_c_chain"
   | "axelar"
+  | "babylon"
   | "banano"
   | "binance_beacon_chain"
   | "bitcoin"
@@ -174,7 +175,8 @@ export type CryptoCurrencyId =
   | "sui"
   | "zenrock"
   | "sonic"
-  | "sonic_blaze";
+  | "sonic_blaze"
+  | "mina";
 
 export type LedgerExplorerId =
   | "btc"

@@ -81,7 +81,21 @@ export function useStake() {
   );
 
   /** @returns Base navigator route params to third party platform app. Returns null if not available for provided account or currency.*/
-  const getRouteParamsForPlatformApp = useCallback(
+  const getRouteParamsForPlatformApp: (
+    account: Account | TokenAccount | AccountLike,
+    walletState: WalletState,
+    parentAccount?: Account,
+  ) =>
+    | {
+        navigator: NavigatorName.NoFundsFlow;
+        screen: ScreenName.PlatformApp | ScreenName.NoFunds;
+        params: Record<string, unknown>;
+      }
+    | {
+        screen: ScreenName.PlatformApp;
+        params: Record<string, unknown>;
+      }
+    | null = useCallback(
     (
       account: Account | TokenAccount | AccountLike,
       walletState: WalletState,
@@ -145,6 +159,7 @@ export function useStake() {
       return {
         screen: ScreenName.PlatformApp,
         params: {
+          ...customPartnerParams,
           platform: manifest.id,
           name: manifest.name,
           accountId: accountIdForManifestVersion,

@@ -1,4 +1,4 @@
-name: "[Release](Hotfix) Prepare for releasing"
+name: "[Release] - Prepare & Publish Hotfix - Manual"
 
 on:
   workflow_dispatch:
@@ -131,7 +131,7 @@ jobs:
           fi
 
   release-final:
-    name: "[Release] Publish packages and apps"
+    name: "Prepare Hotfix > Publish packages and apps"
     needs: prepare-release
     uses: LedgerHQ/ledger-live/.github/workflows/release-final.yml@develop
     with:
@@ -141,3 +141,28 @@ jobs:
       ref: ${{ github.event.inputs.tag_version == 'latest' && 'main' || 'hotfix' }}
       caller: release-prepare-hotfix
     secrets: inherit
+
+  release-fail:
+    name: "Prepare Hotfix > Failure Reporting"
+    needs: release-final
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          method: chat.postMessage
+          payload: |
+            channel: "C08JQKWS9KK"
+            text: "[Alert] Hotfix Preparation failed"
+            blocks: 
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "*Hotfix Preparation failed*"
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"

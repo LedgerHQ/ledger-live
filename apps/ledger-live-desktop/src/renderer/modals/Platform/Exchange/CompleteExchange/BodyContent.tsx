@@ -2,9 +2,7 @@ import React from "react";
 import { Exchange } from "@ledgerhq/live-common/exchange/types";
 import { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { createAction } from "@ledgerhq/live-common/hw/actions/completeExchange";
-import { createAction as txCreateAction } from "@ledgerhq/live-common/hw/actions/transaction";
 import completeExchange from "@ledgerhq/live-common/exchange/platform/completeExchange";
 import { Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import DeviceAction from "~/renderer/components/DeviceAction";
@@ -12,9 +10,9 @@ import BigSpinner from "~/renderer/components/BigSpinner";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { TransactionBroadcastedContent } from "./TransactionBroadcastedContent";
 import { ExchangeMode } from "./Body";
+import { useTransactionAction } from "~/renderer/hooks/useConnectAppAction";
 
 const exchangeAction = createAction(completeExchange);
-const sendAction = txCreateAction(connectApp);
 
 export type BodyContentProps = {
   error?: Error;
@@ -51,6 +49,8 @@ export type BodyContentProps = {
 };
 
 export const BodyContent = (props: BodyContentProps) => {
+  const action = useTransactionAction();
+
   if (props.error) {
     return <ErrorDisplay error={props.error} />;
   }
@@ -76,7 +76,7 @@ export const BodyContent = (props: BodyContentProps) => {
     return (
       <DeviceAction
         key="sign"
-        action={sendAction}
+        action={action}
         request={props.signRequest}
         onResult={result => {
           if ("transactionSignError" in result) {

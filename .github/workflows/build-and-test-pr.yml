@@ -1,8 +1,8 @@
-name: "[PR] Build and Test"
+name: "[All Platforms] - Build and Test - PR"
 on:
   merge_group:
     types: [checks_requested]
-  pull_request:
+  pull_request: ~
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
@@ -16,10 +16,13 @@ permissions:
 
 jobs:
   pre_job:
-    # continue-on-error: true # Uncomment once integration is finished
+    name: "Skip Check"
+    if: ${{!github.event.pull_request.head.repo.fork}}
     runs-on: ubuntu-latest
     outputs:
-      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+      should_skip: ${{ steps.skip_check.outputs.should_skip == 'true' || steps.smartling_check.outputs.should_skip == 'true' }}
+    env:
+      IS_SMARTLING: ${{ startsWith(github.event.pull_request.head.ref, 'smartling-content-updated') == true || startsWith(github.event.pull_request.head.ref, 'smartling-translation-completed') == true}}
     steps:
       - id: skip_check
         uses: fkirc/skip-duplicate-actions@v5
@@ -27,6 +30,13 @@ jobs:
           concurrent_skipping: 'never'
           skip_after_successful_duplicate: 'true'
           do_not_skip: '["pull_request", "workflow_dispatch", "schedule"]'
+      - id: smartling_check
+        if: ${{ env.IS_SMARTLING == 'true' }}
+        run: |
+          echo "should_skip=true" >> $GITHUB_OUTPUT
+          gh pr close ${{ github.event.pull_request.number }} -R LedgerHQ/ledger-live
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   determine-affected:
     name: "Turbo Affected"
@@ -74,7 +84,7 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@develop
     secrets: inherit
     with:
-      use-performance-pool: true
+      macos-specificity-runner-label: "performance-pool"
 
   # Tests
   test-libraries:
@@ -85,7 +95,7 @@ jobs:
     secrets: inherit
 
   test-design-system:
-    name: "Test Design System"
+    name: "Test UI Libs"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'libs/ui') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@develop

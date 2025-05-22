@@ -1,4 +1,4 @@
-name: "@Mobile • Build App (external)"
+name: "[EXT-Mobile] - Build (External) - Called"
 
 on:
   workflow_call:
@@ -20,7 +20,7 @@ permissions:
 
 jobs:
   build-mobile-app-android:
-    name: "Build Ledger Live Mobile (Android)"
+    name: "Android Build"
     runs-on: ubuntu-22.04
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -86,7 +86,7 @@ jobs:
 
   build-mobile-app-ios:
     runs-on: macos-14
-    name: "Build Ledger Live Mobile (Mac OS X)"
+    name: "iOS Build"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -108,106 +108,3 @@ jobs:
           ruby-version: 3.3.0
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
-
-  report:
-    runs-on: ubuntu-22.04
-    needs: [build-mobile-app-android, build-mobile-app-ios]
-    if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
-    steps:
-      - uses: actions/github-script@v7
-        name: get statuses of runs
-        id: status
-        with:
-          script: |
-            const fs = require("fs");
-            const statuses = [
-              "${{ needs.build-mobile-app-android.result }}",
-              "${{ needs.build-mobile-app-ios.result }}",
-            ];
-
-            const [ owner, repo ] = "${{ github.repository }}".split("/");
-
-            const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRunAttempt, {
-              owner,
-              repo,
-              run_id: "${{ github.run_id }}",
-              attempt_number: "${{ github.run_attempt }}",
-            });
-
-            const findJobUrl = os =>
-              jobs.find(job => job.name == `Build Ledger Live Mobile (${os})`)?.html_url;
-
-            const keys = {
-              ios: {
-                symbol: "🍏",
-                name: "iOS",
-                jobUrl: findJobUrl("Mac OS X")
-              },
-              android: {
-                symbol: "🤖",
-                name: "Android",
-                jobUrl: findJobUrl("Android")
-              },
-            };
-
-            const report = {
-              android: {
-                pass: ${{ needs.build-mobile-app-android.result == 'success' }},
-                status: "${{ needs.build-mobile-app-android.result }}",
-              },
-              ios: {
-                pass: ${{ needs.build-mobile-app-ios.result == 'success' }},
-                status: "${{ needs.build-mobile-app-ios.result }}",
-              },
-            };
-            const isFailed = statuses.some(e => e === "failure");
-            const isCancelled = statuses.some(e => e === "cancelled");
-
-            const iosSuccess = report.ios.pass;
-
-            let summary = ``;
-
-            summary += `|`
-
-            const reportKeys = Object.keys(report);
-
-            reportKeys.forEach((k) => {
-              summary += ` [${keys[k].symbol} ${keys[k].name}](${keys[k].jobUrl}) |`;
-            });
-
-            summary += `
-            |`;
-
-            for (let i = 0; i < reportKeys.length; i++) {
-              summary += ` :--: |`;
-            }
-
-            summary += `
-            |`;
-
-            Object.entries(report).forEach(([os, values]) => {
-              summary += ` ${values.pass ? "✅" : "❌"} (${values.status}) |`;
-            });
-
-            summary += `
-
-            [⚙️ Summary](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }})
-            `;
-
-            const output = {
-              summary,
-              actions: iosSuccess ? [] : [{
-                // 20 chars max
-                label: "Regen. Pods",
-                // 20 chars max
-                identifier: "regen_pods",
-                // 40 chars max
-                description: "Will regenerate cocoapods lockfile",
-              }],
-            }
-            fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
-      - uses: actions/upload-artifact@v4
-        name: upload output
-        with:
-          path: ${{ github.workspace }}/summary.json
-          name: summary.json

@@ -2,12 +2,9 @@ import {
   TransportStatusError,
   UserRefusedDeviceNameChange,
   UserRefusedOnDevice,
-} from "@ledgerhq/errors";
-import {
-  DeviceNotOnboarded,
-  ImageDoesNotExistOnDevice,
   LatestFirmwareVersionRequired,
-} from "@ledgerhq/live-common/errors";
+} from "@ledgerhq/errors";
+import { DeviceNotOnboarded, ImageDoesNotExistOnDevice } from "@ledgerhq/live-common/errors";
 import {
   ExchangeRate,
   ExchangeSwap,
@@ -67,6 +64,7 @@ import {
 import { WalletState } from "@ledgerhq/live-wallet/lib/store";
 import { SettingsState } from "~/reducers/types";
 import { Theme } from "~/colors";
+import { useTrackTransactionChecksFlow } from "~/analytics/hooks/useTrackTransactionChecksFlow";
 
 type Status = PartialNullable<{
   appAndVersion: AppAndVersion;
@@ -118,6 +116,8 @@ type Status = PartialNullable<{
   loadingImage: boolean;
   imageLoaded: boolean;
   imageCommitRequested: boolean;
+  transactionChecksOptInTriggered: boolean;
+  transactionChecksOptIn: boolean;
 }>;
 
 type Props<H extends Status, P> = {
@@ -219,6 +219,8 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     installingApp,
     progress,
     listingApps,
+    transactionChecksOptInTriggered,
+    transactionChecksOptIn,
   } = status;
 
   useTrackMyLedgerSectionEvents({
@@ -236,6 +238,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     requestOpenApp,
     inWrongDeviceForAccount,
     error,
+    isLocked,
   });
 
   useTrackSendFlow({
@@ -243,6 +246,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     device: selectedDevice,
     requestOpenApp,
     error,
+    isLocked,
   });
 
   useTrackAddAccountFlow({
@@ -257,7 +261,9 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     location: location === HOOKS_TRACKING_LOCATIONS.ledgerSyncFlow ? location : undefined,
     device: selectedDevice,
     allowManagerRequested,
+    inWrongDeviceForAccount,
     requestOpenApp,
+    isLocked,
     error,
   });
 
@@ -265,7 +271,18 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     location: location === HOOKS_TRACKING_LOCATIONS.swapFlow ? location : undefined,
     device: selectedDevice,
     requestOpenApp,
+    isLocked,
+    inWrongDeviceForAccount,
     error,
+  });
+
+  useTrackTransactionChecksFlow({
+    location,
+    device: selectedDevice,
+    deviceInfo,
+    appAndVersion,
+    transactionChecksOptInTriggered,
+    transactionChecksOptIn,
   });
 
   useEffect(() => {

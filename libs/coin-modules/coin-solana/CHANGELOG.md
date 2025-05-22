@@ -1,5 +1,179 @@
 # @ledgerhq/coin-solana
 
+## 0.22.0
+
+### Minor Changes
+
+- [#10114](https://github.com/LedgerHQ/ledger-live/pull/10114) [`b976361`](https://github.com/LedgerHQ/ledger-live/commit/b97636178a7bc1b6f0d1acbbeccf51d843198a10) Thanks [@Justkant](https://github.com/Justkant)! - fix: solana sign off-chain message
+
+- [#10153](https://github.com/LedgerHQ/ledger-live/pull/10153) [`3c515ee`](https://github.com/LedgerHQ/ledger-live/commit/3c515ee6f582e35d5722e445f0bb9a104e935917) Thanks [@Justkant](https://github.com/Justkant)! - fix: use base58 encoding for Solana signMessage signature
+
+- [#10132](https://github.com/LedgerHQ/ledger-live/pull/10132) [`ce912b3`](https://github.com/LedgerHQ/ledger-live/commit/ce912b35437c1f71d1566fa010c309beeea01b03) Thanks [@qperrot](https://github.com/qperrot)! - Update commande if transaction is updated
+
+- [#9873](https://github.com/LedgerHQ/ledger-live/pull/9873) [`1aa6339`](https://github.com/LedgerHQ/ledger-live/commit/1aa63397067accf265ed978748cd33d83bfa972e) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - support RAW tx for Solana
+
+### Patch Changes
+
+- Updated dependencies [[`a7ba19c`](https://github.com/LedgerHQ/ledger-live/commit/a7ba19cfa5a895572edfcf036a10d2af83efdf38), [`91fe526`](https://github.com/LedgerHQ/ledger-live/commit/91fe526be2710f0fb18b4d035a5d8de630b3d4b5)]:
+  - @ledgerhq/types-live@6.70.0
+  - @ledgerhq/coin-framework@5.0.1
+
+## 0.22.0-next.0
+
+### Minor Changes
+
+- [#10114](https://github.com/LedgerHQ/ledger-live/pull/10114) [`b976361`](https://github.com/LedgerHQ/ledger-live/commit/b97636178a7bc1b6f0d1acbbeccf51d843198a10) Thanks [@Justkant](https://github.com/Justkant)! - fix: solana sign off-chain message
+
+- [#10153](https://github.com/LedgerHQ/ledger-live/pull/10153) [`3c515ee`](https://github.com/LedgerHQ/ledger-live/commit/3c515ee6f582e35d5722e445f0bb9a104e935917) Thanks [@Justkant](https://github.com/Justkant)! - fix: use base58 encoding for Solana signMessage signature
+
+- [#10132](https://github.com/LedgerHQ/ledger-live/pull/10132) [`ce912b3`](https://github.com/LedgerHQ/ledger-live/commit/ce912b35437c1f71d1566fa010c309beeea01b03) Thanks [@qperrot](https://github.com/qperrot)! - Update commande if transaction is updated
+
+- [#9873](https://github.com/LedgerHQ/ledger-live/pull/9873) [`1aa6339`](https://github.com/LedgerHQ/ledger-live/commit/1aa63397067accf265ed978748cd33d83bfa972e) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - support RAW tx for Solana
+
+### Patch Changes
+
+- Updated dependencies [[`a7ba19c`](https://github.com/LedgerHQ/ledger-live/commit/a7ba19cfa5a895572edfcf036a10d2af83efdf38), [`91fe526`](https://github.com/LedgerHQ/ledger-live/commit/91fe526be2710f0fb18b4d035a5d8de630b3d4b5)]:
+  - @ledgerhq/types-live@6.70.0-next.0
+  - @ledgerhq/coin-framework@5.0.1-next.0
+
+## 0.21.1
+
+### Patch Changes
+
+- Updated dependencies [[`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431), [`b599ac4`](https://github.com/LedgerHQ/ledger-live/commit/b599ac4697688459aad15371f9efea58f331dc33), [`1d72da9`](https://github.com/LedgerHQ/ledger-live/commit/1d72da911a56d5b25fb6464e60ac236927823ce4)]:
+  - @ledgerhq/types-cryptoassets@7.23.0
+  - @ledgerhq/cryptoassets@13.16.0
+  - @ledgerhq/types-live@6.69.0
+  - @ledgerhq/coin-framework@5.0.0
+
+## 0.21.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431), [`b599ac4`](https://github.com/LedgerHQ/ledger-live/commit/b599ac4697688459aad15371f9efea58f331dc33), [`1d72da9`](https://github.com/LedgerHQ/ledger-live/commit/1d72da911a56d5b25fb6464e60ac236927823ce4)]:
+  - @ledgerhq/types-cryptoassets@7.23.0-next.0
+  - @ledgerhq/cryptoassets@13.16.0-next.0
+  - @ledgerhq/types-live@6.69.0-next.0
+  - @ledgerhq/coin-framework@5.0.0-next.0
+
+## 0.21.0
+
+### Minor Changes
+
+- [#10052](https://github.com/LedgerHQ/ledger-live/pull/10052) [`56b36fb`](https://github.com/LedgerHQ/ledger-live/commit/56b36fbb104c11431fd3fb33cab6c20c7c483f9d) Thanks [@Justkant](https://github.com/Justkant)! - fix: wrong transaction kind for solana SPL
+
+### Patch Changes
+
+- Updated dependencies [[`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601)]:
+  - @ledgerhq/coin-framework@4.0.0
+
+## 0.21.0-next.1
+
+### Minor Changes
+
+- [#10052](https://github.com/LedgerHQ/ledger-live/pull/10052) [`56b36fb`](https://github.com/LedgerHQ/ledger-live/commit/56b36fbb104c11431fd3fb33cab6c20c7c483f9d) Thanks [@Justkant](https://github.com/Justkant)! - fix: wrong transaction kind for solana SPL
+
+## 0.20.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601)]:
+  - @ledgerhq/coin-framework@4.0.0-next.0
+
+## 0.20.0
+
+### Minor Changes
+
+- [#9787](https://github.com/LedgerHQ/ledger-live/pull/9787) [`c8feffd`](https://github.com/LedgerHQ/ledger-live/commit/c8feffd178a0ea0b0c9da02bbdb1b65df864a2b0) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Add Solana message signer for off-chain hardware message signing
+
+- [#9811](https://github.com/LedgerHQ/ledger-live/pull/9811) [`7456a97`](https://github.com/LedgerHQ/ledger-live/commit/7456a97e358afa5d59e0d394dfa29cb80dee65d1) Thanks [@qperrot](https://github.com/qperrot)! - Add approve and revoke commande and upgarde wallet api versions
+
+### Patch Changes
+
+- Updated dependencies [[`9a208c3`](https://github.com/LedgerHQ/ledger-live/commit/9a208c39aec129b3aff2105991ffc18be05fd3f5), [`9009235`](https://github.com/LedgerHQ/ledger-live/commit/9009235cf52e83c0626acaec0959bfb3837404aa), [`95dbd60`](https://github.com/LedgerHQ/ledger-live/commit/95dbd60c06b02fe6fd50bc2ec0883096858d1f23)]:
+  - @ledgerhq/types-live@6.68.0
+  - @ledgerhq/coin-framework@3.0.1
+
+## 0.20.0-next.0
+
+### Minor Changes
+
+- [#9787](https://github.com/LedgerHQ/ledger-live/pull/9787) [`c8feffd`](https://github.com/LedgerHQ/ledger-live/commit/c8feffd178a0ea0b0c9da02bbdb1b65df864a2b0) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Add Solana message signer for off-chain hardware message signing
+
+- [#9811](https://github.com/LedgerHQ/ledger-live/pull/9811) [`7456a97`](https://github.com/LedgerHQ/ledger-live/commit/7456a97e358afa5d59e0d394dfa29cb80dee65d1) Thanks [@qperrot](https://github.com/qperrot)! - Add approve and revoke commande and upgarde wallet api versions
+
+### Patch Changes
+
+- Updated dependencies [[`9a208c3`](https://github.com/LedgerHQ/ledger-live/commit/9a208c39aec129b3aff2105991ffc18be05fd3f5), [`9009235`](https://github.com/LedgerHQ/ledger-live/commit/9009235cf52e83c0626acaec0959bfb3837404aa), [`95dbd60`](https://github.com/LedgerHQ/ledger-live/commit/95dbd60c06b02fe6fd50bc2ec0883096858d1f23)]:
+  - @ledgerhq/types-live@6.68.0-next.0
+  - @ledgerhq/coin-framework@3.0.1-next.0
+
+## 0.19.0
+
+### Minor Changes
+
+- [#9807](https://github.com/LedgerHQ/ledger-live/pull/9807) [`157f908`](https://github.com/LedgerHQ/ledger-live/commit/157f908759ed2f41fb823e172762931ebba518a5) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-solana): move HTTP calls to `network` folder
+
+### Patch Changes
+
+- Updated dependencies [[`6f61972`](https://github.com/LedgerHQ/ledger-live/commit/6f619728e200270a674ffb13b10375765b55ae4b), [`3f8a531`](https://github.com/LedgerHQ/ledger-live/commit/3f8a53196dfb80d084056e0d896e09869c8ff949), [`8d36e9b`](https://github.com/LedgerHQ/ledger-live/commit/8d36e9b2474a4c600427f357adad04f99a89e13d), [`b580b04`](https://github.com/LedgerHQ/ledger-live/commit/b580b04e02392a706534c2fceba192ae3b6242ef), [`1e56618`](https://github.com/LedgerHQ/ledger-live/commit/1e56618a3c31e7980074072e0aae9422c145f4b3), [`4c6b682`](https://github.com/LedgerHQ/ledger-live/commit/4c6b682b9929334a7be13212a69f2c6a614f372c), [`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81)]:
+  - @ledgerhq/types-live@6.67.0
+  - @ledgerhq/coin-framework@3.0.0
+  - @ledgerhq/cryptoassets@13.15.0
+  - @ledgerhq/types-cryptoassets@7.22.0
+
+## 0.19.0-next.0
+
+### Minor Changes
+
+- [#9807](https://github.com/LedgerHQ/ledger-live/pull/9807) [`157f908`](https://github.com/LedgerHQ/ledger-live/commit/157f908759ed2f41fb823e172762931ebba518a5) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-solana): move HTTP calls to `network` folder
+
+### Patch Changes
+
+- Updated dependencies [[`6f61972`](https://github.com/LedgerHQ/ledger-live/commit/6f619728e200270a674ffb13b10375765b55ae4b), [`3f8a531`](https://github.com/LedgerHQ/ledger-live/commit/3f8a53196dfb80d084056e0d896e09869c8ff949), [`8d36e9b`](https://github.com/LedgerHQ/ledger-live/commit/8d36e9b2474a4c600427f357adad04f99a89e13d), [`b580b04`](https://github.com/LedgerHQ/ledger-live/commit/b580b04e02392a706534c2fceba192ae3b6242ef), [`1e56618`](https://github.com/LedgerHQ/ledger-live/commit/1e56618a3c31e7980074072e0aae9422c145f4b3), [`4c6b682`](https://github.com/LedgerHQ/ledger-live/commit/4c6b682b9929334a7be13212a69f2c6a614f372c), [`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81)]:
+  - @ledgerhq/types-live@6.67.0-next.0
+  - @ledgerhq/coin-framework@3.0.0-next.0
+  - @ledgerhq/cryptoassets@13.15.0-next.0
+  - @ledgerhq/types-cryptoassets@7.22.0-next.0
+
+## 0.18.0
+
+### Minor Changes
+
+- [#9717](https://github.com/LedgerHQ/ledger-live/pull/9717) [`f1f4706`](https://github.com/LedgerHQ/ledger-live/commit/f1f47060490f483a69e32b18ee4edd0c8cb8eabb) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: retry on post requests made to solana
+
+- [#9648](https://github.com/LedgerHQ/ledger-live/pull/9648) [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove SubAccount as it is an alias to TokenAccount
+
+- [#9690](https://github.com/LedgerHQ/ledger-live/pull/9690) [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f) Thanks [@Justkant](https://github.com/Justkant)! - feat: support Solana NFTs
+
+### Patch Changes
+
+- Updated dependencies [[`44ae74c`](https://github.com/LedgerHQ/ledger-live/commit/44ae74c272ba803bed7c9f4fc3351e3ce8a15531), [`71bb6a9`](https://github.com/LedgerHQ/ledger-live/commit/71bb6a9adb4ac83172be5def5b25d2836380df1d), [`8ce7b0a`](https://github.com/LedgerHQ/ledger-live/commit/8ce7b0ab2d1d73ef071102f795e7c868c676b1f4), [`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8), [`1e7d454`](https://github.com/LedgerHQ/ledger-live/commit/1e7d454d99f1f39880f39a120c59020725d26475), [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca), [`32d46cc`](https://github.com/LedgerHQ/ledger-live/commit/32d46cc77debe059ae0bcd848a21065dec7ee091), [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f)]:
+  - @ledgerhq/coin-framework@2.6.0
+  - @ledgerhq/types-live@6.66.0
+  - @ledgerhq/live-env@2.8.0
+  - @ledgerhq/cryptoassets@13.14.1
+  - @ledgerhq/live-network@2.0.7
+
+## 0.18.0-next.0
+
+### Minor Changes
+
+- [#9717](https://github.com/LedgerHQ/ledger-live/pull/9717) [`f1f4706`](https://github.com/LedgerHQ/ledger-live/commit/f1f47060490f483a69e32b18ee4edd0c8cb8eabb) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: retry on post requests made to solana
+
+- [#9648](https://github.com/LedgerHQ/ledger-live/pull/9648) [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove SubAccount as it is an alias to TokenAccount
+
+- [#9690](https://github.com/LedgerHQ/ledger-live/pull/9690) [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f) Thanks [@Justkant](https://github.com/Justkant)! - feat: support Solana NFTs
+
+### Patch Changes
+
+- Updated dependencies [[`44ae74c`](https://github.com/LedgerHQ/ledger-live/commit/44ae74c272ba803bed7c9f4fc3351e3ce8a15531), [`71bb6a9`](https://github.com/LedgerHQ/ledger-live/commit/71bb6a9adb4ac83172be5def5b25d2836380df1d), [`8ce7b0a`](https://github.com/LedgerHQ/ledger-live/commit/8ce7b0ab2d1d73ef071102f795e7c868c676b1f4), [`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8), [`1e7d454`](https://github.com/LedgerHQ/ledger-live/commit/1e7d454d99f1f39880f39a120c59020725d26475), [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca), [`32d46cc`](https://github.com/LedgerHQ/ledger-live/commit/32d46cc77debe059ae0bcd848a21065dec7ee091), [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f)]:
+  - @ledgerhq/coin-framework@2.6.0-next.0
+  - @ledgerhq/types-live@6.66.0-next.0
+  - @ledgerhq/live-env@2.8.0-next.0
+  - @ledgerhq/cryptoassets@13.14.1-next.0
+  - @ledgerhq/live-network@2.0.7-next.0
+
 ## 0.17.0
 
 ### Minor Changes

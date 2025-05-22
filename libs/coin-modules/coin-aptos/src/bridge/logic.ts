@@ -26,6 +26,8 @@ import {
   FA_TRANSFER_TYPES,
   APTOS_OBJECT_CORE,
   MIN_COINS_ON_SHARES_POOL_IN_OCTAS,
+  DEFAULT_GAS,
+  DEFAULT_GAS_PRICE,
 } from "../constants";
 import type {
   AptosAccount,
@@ -42,10 +44,6 @@ import type {
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
-
-export const DEFAULT_GAS = new BigNumber(200);
-export const DEFAULT_GAS_PRICE = new BigNumber(100);
-export const ESTIMATE_GAS_MUL = new BigNumber(1.0); // define buffer for gas estimation change here, if needed
 
 const CLEAN_HEX_REGEXP = /^0x0*|^0+/;
 
@@ -359,58 +357,95 @@ export function getCoinAndAmounts(
   let amount_out = BigNumber(0);
   let type = OP_TYPE.UNKNOWN;
 
-  // collect all events related to the address and calculate the overall amounts
-  tx.events.forEach(event => {
-    if (
-      event.type === "0x1::coin::WithdrawEvent" &&
-      compareAddress(event.guid.account_address, address)
-    ) {
-      coin_id = getResourceAddress(tx, event, "withdraw_events", getEventCoinAddress);
-      amount_out = amount_out.plus(event.data.amount);
-    } else if (
-      event.type === "0x1::coin::DepositEvent" &&
-      compareAddress(event.guid.account_address, address)
-    ) {
-      coin_id = getResourceAddress(tx, event, "deposit_events", getEventCoinAddress);
-      amount_in = amount_in.plus(event.data.amount);
-    } else if (event.type === "0x1::fungible_asset::Withdraw" && checkFAOwner(tx, event, address)) {
-      coin_id = getResourceAddress(tx, event, "withdraw_events", getEventFAAddress);
-      amount_out = amount_out.plus(event.data.amount);
-    } else if (event.type === "0x1::fungible_asset::Deposit" && checkFAOwner(tx, event, address)) {
-      coin_id = getResourceAddress(tx, event, "deposit_events", getEventFAAddress);
-      amount_in = amount_in.plus(event.data.amount);
-    } else if (event.type === "0x1::transaction_fee::FeeStatement" && tx.sender === address) {
-      if (coin_id === null) coin_id = APTOS_ASSET_ID;
-      if (coin_id === APTOS_ASSET_ID) {
-        const fees = BigNumber(tx.gas_unit_price).times(BigNumber(tx.gas_used));
-        amount_out = amount_out.plus(fees);
+  // Check if it is a staking transaction
+  const stakingTx = !!tx.events.find(
+    event =>
+      event.type === "0x1::stake::AddStakeEvent" ||
+      event.type === "0x1::stake::ReactivateStakeEvent" ||
+      event.type === "0x1::stake::UnlockStakeEvent" ||
+      event.type === "0x1::stake::WithdrawStakeEvent" ||
+      event.type === "0x1::delegation_pool::AddStakeEvent" ||
+      event.type === "0x1::delegation_pool::ReactivateStakeEvent" ||
+      event.type === "0x1::delegation_pool::UnlockStakeEvent" ||
+      event.type === "0x1::delegation_pool::WithdrawStakeEvent",
+  );
+
+  // Collect all events related to the address and calculate the overall amounts
+  if (stakingTx) {
+    tx.events.forEach(event => {
+      if (
+        (event.type === "0x1::stake::AddStakeEvent" ||
+          event.type === "0x1::delegation_pool::AddStakeEvent") &&
+        tx.sender === address &&
+        !amount_out.gt(BigNumber(0))
+      ) {
+        coin_id = APTOS_ASSET_ID;
+        type = OP_TYPE.STAKE;
+        amount_out = amount_out.plus(event.data.amount_added);
+      } else if (
+        (event.type === "0x1::stake::ReactivateStakeEvent" ||
+          event.type === "0x1::delegation_pool::ReactivateStakeEvent") &&
+        tx.sender === address &&
+        !amount_out.gt(BigNumber(0))
+      ) {
+        coin_id = APTOS_ASSET_ID;
+        type = OP_TYPE.STAKE;
+        amount_out = amount_out.plus(event.data.amount_added);
+      } else if (
+        (event.type === "0x1::stake::UnlockStakeEvent" ||
+          event.type === "0x1::delegation_pool::UnlockStakeEvent") &&
+        tx.sender === address &&
+        !amount_in.gt(BigNumber(0))
+      ) {
+        coin_id = APTOS_ASSET_ID;
+        type = OP_TYPE.UNSTAKE;
+        amount_in = amount_in.plus(event.data.amount_added);
+      } else if (
+        (event.type === "0x1::stake::WithdrawStakeEvent" ||
+          event.type === "0x1::delegation_pool::WithdrawStakeEvent") &&
+        tx.sender === address &&
+        !amount_in.gt(BigNumber(0))
+      ) {
+        coin_id = APTOS_ASSET_ID;
+        type = OP_TYPE.WITHDRAW;
+        amount_in = amount_in.plus(event.data.amount_added);
       }
-    } else if (
-      (event.type === "0x1::stake::AddStakeEvent" ||
-        event.type === "0x1::delegation_pool::AddStakeEvent") &&
-      tx.sender === address
-    ) {
-      coin_id = APTOS_ASSET_ID;
-      type = OP_TYPE.STAKE;
-      amount_out = amount_out.plus(event.data.amount_added);
-    } else if (
-      (event.type === "0x1::stake::UnlockStakeEvent" ||
-        event.type === "0x1::delegation_pool::UnlockStakeEvent") &&
-      tx.sender === address
-    ) {
-      coin_id = APTOS_ASSET_ID;
-      type = OP_TYPE.UNSTAKE;
-      amount_in = amount_in.plus(event.data.amount_added);
-    } else if (
-      (event.type === "0x1::stake::WithdrawStakeEvent" ||
-        event.type === "0x1::delegation_pool::WithdrawStakeEvent") &&
-      tx.sender === address
-    ) {
-      coin_id = APTOS_ASSET_ID;
-      type = OP_TYPE.WITHDRAW;
-      amount_in = amount_in.plus(event.data.amount_added);
-    }
-  });
+    });
+  } else {
+    tx.events.forEach(event => {
+      if (
+        event.type === "0x1::coin::WithdrawEvent" &&
+        compareAddress(event.guid.account_address, address)
+      ) {
+        coin_id = getResourceAddress(tx, event, "withdraw_events", getEventCoinAddress);
+        amount_out = amount_out.plus(event.data.amount);
+      } else if (
+        event.type === "0x1::coin::DepositEvent" &&
+        compareAddress(event.guid.account_address, address)
+      ) {
+        coin_id = getResourceAddress(tx, event, "deposit_events", getEventCoinAddress);
+        amount_in = amount_in.plus(event.data.amount);
+      } else if (
+        event.type === "0x1::fungible_asset::Withdraw" &&
+        checkFAOwner(tx, event, address)
+      ) {
+        coin_id = getResourceAddress(tx, event, "withdraw_events", getEventFAAddress);
+        amount_out = amount_out.plus(event.data.amount);
+      } else if (
+        event.type === "0x1::fungible_asset::Deposit" &&
+        checkFAOwner(tx, event, address)
+      ) {
+        coin_id = getResourceAddress(tx, event, "deposit_events", getEventFAAddress);
+        amount_in = amount_in.plus(event.data.amount);
+      } else if (event.type === "0x1::transaction_fee::FeeStatement" && tx.sender === address) {
+        if (coin_id === null) coin_id = APTOS_ASSET_ID;
+        if (coin_id === APTOS_ASSET_ID) {
+          const fees = BigNumber(tx.gas_unit_price).times(BigNumber(tx.gas_used));
+          amount_out = amount_out.plus(fees);
+        }
+      }
+    });
+  }
 
   return { coin_id, amount_in, amount_out, type };
 }
@@ -501,7 +536,7 @@ export const getDelegationOpMaxAmount = (
 ): BigNumber => {
   let maxAmount: BigNumber | undefined;
 
-  const stakingPosition = account.aptosResources?.stakingPositions.find(
+  const stakingPosition = (account.aptosResources?.stakingPositions ?? []).find(
     ({ validatorId }) => validatorId === validatorAddress,
   );
 

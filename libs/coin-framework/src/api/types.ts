@@ -7,15 +7,19 @@ export type BlockInfo = {
   time?: Date;
 };
 
-export type Operation<AssetInfo> = {
+type TokenInfoCommon = Record<string, unknown>;
+// TODO add a `token: string` field to the pagination if we really need to support pagination (which is not the case for now)
+export type Asset<TokenInfo extends TokenInfoCommon = never> =
+  | { type: "native" }
+  | (TokenInfo extends never ? TokenInfo : { type: "token" } & TokenInfo);
+
+export type Operation<AssetInfo extends Asset<TokenInfoCommon>> = {
+  id: string;
   type: string;
-  // This operation corresponds to the index-th event triggered bu the original transaction
-  operationIndex: number;
   senders: string[];
   recipients: string[];
   value: bigint;
-  // Asset is not defined when dealing with native currency
-  asset?: AssetInfo;
+  asset: AssetInfo;
   // Field containing dedicated value for each blockchain
   details?: Record<string, unknown>;
   tx: {
@@ -36,18 +40,27 @@ export type Transaction = {
   fee: bigint;
 } & Record<string, unknown>; // Field containing dedicated value for each blockchain
 
-// TODO add a `token: string` field to the pagination if we really need to support pagination (which is not the case for now)
-export type Asset = {
-  native: bigint;
+export type Balance<AssetInfo extends Asset<TokenInfoCommon>> = {
+  value: bigint;
+  asset: AssetInfo;
 };
 
-export type TransactionIntent<AssetInfo, Extra = Record<string, unknown>> = {
+export type TransactionIntent<
+  AssetInfo extends Asset<TokenInfoCommon>,
+  Extra = Record<string, unknown>,
+  Sender extends Record<string, string> | string = string,
+> = {
   type: string;
-  sender: string;
+  sender: Sender;
   recipient: string;
   amount: bigint;
-  asset?: AssetInfo;
+  asset: AssetInfo;
 } & Extra;
+
+export type FeeEstimation<FeeParameters extends Record<string, bigint> = never> = {
+  value: bigint;
+  parameters?: FeeParameters;
+};
 
 // TODO rename start to minHeight
 //       and add a `token: string` field to the pagination if we really need to support pagination
@@ -56,18 +69,25 @@ export type TransactionIntent<AssetInfo, Extra = Record<string, unknown>> = {
 //       limit is unused for now
 //       see design document at https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/5446205788/coin-modules+lama-adapter+APIs+refinements
 export type Pagination = { minHeight: number };
-export type Api<TokenIdentifier> = {
+export type Api<
+  AssetInfo extends Asset<TokenInfoCommon>,
+  TxExtra = Record<string, unknown>,
+  Sender extends Record<string, string> | string = string,
+  FeeParameters extends Record<string, bigint> = never,
+> = {
   broadcast: (tx: string) => Promise<string>;
   combine: (tx: string, signature: string, pubkey?: string) => string;
-  estimateFees: (transactionIntent: TransactionIntent<TokenIdentifier>) => Promise<bigint>;
+  estimateFees: (
+    transactionIntent: TransactionIntent<AssetInfo, TxExtra, Sender>,
+  ) => Promise<FeeEstimation<FeeParameters>>;
   craftTransaction: (
-    transactionIntent: TransactionIntent<TokenIdentifier>,
+    transactionIntent: TransactionIntent<AssetInfo, TxExtra, Sender>,
     customFees?: bigint,
   ) => Promise<string>;
-  getBalance: (address: string) => Promise<Asset | bigint>;
+  getBalance: (address: string) => Promise<Balance<AssetInfo>[]>;
   lastBlock: () => Promise<BlockInfo>;
   listOperations: (
     address: string,
     pagination: Pagination,
-  ) => Promise<[Operation<TokenIdentifier>[], string]>;
+  ) => Promise<[Operation<AssetInfo>[], string]>;
 };

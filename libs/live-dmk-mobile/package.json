@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-dmk-mobile",
-  "version": "0.1.0",
+  "version": "0.4.1",
   "description": "Ledger Device Management Kit transport module for LLD",
   "private": true,
   "license": "Apache-2.0",
@@ -31,14 +31,14 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@ledgerhq/device-management-kit": "0.0.0-rnble-transport-20250401145214",
-    "@ledgerhq/device-transport-kit-react-native-ble": "0.0.0-rnble-transport-20250401145214",
+    "@ledgerhq/device-management-kit": "0.7.0",
+    "@ledgerhq/device-transport-kit-react-native-ble": "1.0.0",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
-    "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-dmk-shared": "workspace:^",
     "@ledgerhq/logs": "^6.12.0",
     "@ledgerhq/types-devices": "workspace:^",
+    "@ledgerhq/devices": "workspace:^",
     "react-native-ble-plx": "3.4.0"
   },
   "devDependencies": {
@@ -50,6 +50,7 @@
     "@vitest/coverage-istanbul": "3.0.7",
     "jsdom": "25.0.1",
     "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "react-native": "0.76.3",
     "rxjs": "^7.8.1",
     "vite": "6.0.9",

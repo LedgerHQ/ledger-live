@@ -2,7 +2,7 @@ import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { AptosAPI } from "../api";
+import { AptosAPI } from "../network";
 import { txsToOps } from "./logic";
 import type { AptosAccount, AptosStakingPosition } from "../types";
 import { Operation, TokenAccount } from "@ledgerhq/types-live";

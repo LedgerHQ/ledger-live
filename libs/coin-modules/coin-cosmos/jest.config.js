@@ -11,7 +11,7 @@ module.exports = {
   ],
   coverageReporters: ["json", ["lcov", { file: "cosmos-lcov.info", projectRoot: "../" }], "text"],
   testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.(integ|integration)\\.test\\.[tj]s"],
   modulePathIgnorePatterns: ["__tests__/fixtures"],
   reporters: [
     "default",
@@ -20,4 +20,5 @@ module.exports = {
       { outputName: "cosmos-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
     ],
   ],
+  setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
 };

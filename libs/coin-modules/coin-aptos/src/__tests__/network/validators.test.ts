@@ -1,6 +1,5 @@
 import { Aptos } from "@aptos-labs/ts-sdk";
 import { ApolloClient } from "@apollo/client";
-import { create } from "blockies-ts";
 import { getValidators } from "../../network/validators";
 import BigNumber from "bignumber.js";
 
@@ -10,14 +9,10 @@ let mockedAptos: jest.Mocked<any>;
 jest.mock("@apollo/client");
 let mockedApolloClient: jest.Mocked<any>;
 
-jest.mock("blockies-ts");
-let mockedBlockiesCreate: jest.Mocked<any>;
-
 describe("getValidators", () => {
   beforeEach(() => {
     mockedAptos = jest.mocked(Aptos);
     mockedApolloClient = jest.mocked(ApolloClient);
-    mockedBlockiesCreate = jest.mocked(create);
   });
 
   afterAll(() => {
@@ -69,7 +64,6 @@ describe("getValidators", () => {
     {
       activeStake: BigNumber(211045219713562),
       address: "0x001232f58b963938486a11f88c1c36d61d82738b1828625a95a1e85b4c8d1282",
-      avatarUrl: "https://avat.ar/url.png",
       commission: BigNumber(9),
       name: "0x001232f58b963938486a11f88c1c36d61d82738b1828625a95a1e85b4c8d1282",
       nextUnlockTime: "32d 5h 26m",
@@ -80,7 +74,6 @@ describe("getValidators", () => {
     {
       activeStake: BigNumber(116781362397133),
       address: "0x05dece2ed08c68f8730527e9b3ebb3536efc3361f4ef37ba0b16a3310db836af",
-      avatarUrl: "https://avat.ar/url.png",
       commission: BigNumber(4.99),
       name: "cryptomolot.apt",
       nextUnlockTime: "32d 5h 26m",
@@ -101,10 +94,6 @@ describe("getValidators", () => {
           current_delegator_balances,
         },
       }),
-    }));
-
-    mockedBlockiesCreate.mockImplementation(() => ({
-      toDataURL: () => "https://avat.ar/url.png",
     }));
 
     jest.useFakeTimers().setSystemTime(new Date("2025-05-15"));
