@@ -47,16 +47,15 @@ jobs:
       - name: Build and Test affected libraries
         id: test-libs
         run: |
-          # Get all affected libraries, excluding specified filters
           pnpm m ls --json --filter="!./apps/**" --filter="!./libs/ui/**" --filter="!./tools/**" --filter="!./e2e/mobile/**" --filter="!./apps/ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" | jq -r '.[].path' | while read -r lib_path; do
             pkg_json="$lib_path/package.json"
             if [ -f "$pkg_json" ]; then
-              if jq -e '.scripts.coverage' "$pkg_json" > /dev/null; then
+              if jq -e '.scripts.coverage' "$pkg_json"; then
                 echo "Running coverage for $lib_path"
-                pnpm --filter "$lib_path" run coverage || exit 1
+                pnpm --filter "$lib_path" run coverage
               else
                 echo "Running test for $lib_path (no coverage script)"
-                pnpm --filter "$lib_path" run test || exit 1
+                pnpm --filter "$lib_path" run test
               fi
             fi
           done
@@ -130,7 +129,6 @@ jobs:
             ${{ github.workspace }}/summary-typecheck.txt
             ${{ github.workspace }}/summary-lint.txt
 
-
   test-docs:
     name: "Libraries Documentation Check"
     runs-on: ubuntu-22.04
@@ -160,7 +158,6 @@ jobs:
           diff=$(git diff --exit-code > /dev/null && echo 0 || echo 1)
           echo "diff=$diff" >> $GITHUB_OUTPUT
           exit $diff
-
 
   report:
     needs: [test-docs, test-libraries, codecheck-libraries]
