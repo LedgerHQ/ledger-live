@@ -1,3 +1,13 @@
+jest.mock("blockies-ts", () => ({
+  create: jest.fn(() => ({
+    toDataURL: () => "data:image/png;base64,fakebase64string",
+  })),
+}));
+
+jest.mock("../../network/validators", () => ({
+  getValidators: jest.fn(() => Promise.resolve([])),
+}));
+
 import BigNumber from "bignumber.js";
 import { createBridges } from "../../bridge";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
@@ -11,7 +21,7 @@ describe("Aptos bridge interface ", () => {
       const cryptoCurrency = getCryptoCurrencyById("aptos");
       const result = bridge.currencyBridge.preload(cryptoCurrency);
       expect(result).toBeInstanceOf(Promise);
-      await expect(result).resolves.toEqual({});
+      await expect(result).resolves.toMatchObject({ validatorsWithMeta: [] });
     });
 
     it("should have a hydrate method that is a function", () => {

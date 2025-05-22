@@ -495,6 +495,25 @@ export enum ScreenName {
   NearWithdrawingConnectDevice = "NearWithdrawingConnectDevice",
   NearWithdrawingValidationError = "NearWithdrawingValidationError",
   NearWithdrawingValidationSuccess = "NearWithdrawingValidationSuccess",
+  // Aptos
+  AptosStakingValidator = "AptosStakingValidator",
+  AptosStakingValidatorSelect = "AptosStakingValidatorSelect",
+  AptosStakingAmount = "AptosStakingAmount",
+  AptosStakingStarted = "AptosStakingStarted",
+  AptosUnstakingAmount = "AptosUnstakingAmount",
+  AptosWithdrawingAmount = "AptosWithdrawingAmount",
+  AptosStakingSelectDevice = "AptosStakingSelectDevice",
+  AptosStakingConnectDevice = "AptosStakingConnectDevice",
+  AptosStakingValidationError = "AptosStakingValidationError",
+  AptosStakingValidationSuccess = "AptosStakingValidationSuccess",
+  AptosUnstakingSelectDevice = "AptosUnstakingSelectDevice",
+  AptosUnstakingConnectDevice = "AptosUnstakingConnectDevice",
+  AptosUnstakingValidationError = "AptosUnstakingValidationError",
+  AptosUnstakingValidationSuccess = "AptosUnstakingValidationSuccess",
+  AptosWithdrawingSelectDevice = "AptosWithdrawingSelectDevice",
+  AptosWithdrawingConnectDevice = "AptosWithdrawingConnectDevice",
+  AptosWithdrawingValidationError = "AptosWithdrawingValidationError",
+  AptosWithdrawingValidationSuccess = "AptosWithdrawingValidationSuccess",
 
   Newsfeed = "Newsfeed",
 
@@ -643,6 +662,10 @@ export enum NavigatorName {
   NearStakingFlow = "NearStakingFlow",
   NearUnstakingFlow = "NearUnstakingFlow",
   NearWithdrawingFlow = "NearWithdrawingFlow",
+  // Aptos
+  AptosStakingFlow = "AptosStakingFlow",
+  AptosUnstakingFlow = "AptosUnstakingFlow",
+  AptosWithdrawingFlow = "AptosWithdrawingFlow",
 
   // Tab
   Main = "Main",

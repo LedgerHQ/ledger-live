@@ -1,5 +1,4 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
-
 import {
   AccountData,
   Aptos,
@@ -19,6 +18,7 @@ import {
   Block,
   AptosSettings,
   MoveFunctionId,
+  MoveStructId,
 } from "@aptos-labs/ts-sdk";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
@@ -26,7 +26,7 @@ import BigNumber from "bignumber.js";
 import isUndefined from "lodash/isUndefined";
 import { APTOS_ASSET_ID, DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "../constants";
 import { isTestnet } from "../bridge/logic";
-import type { AptosTransaction, TransactionOptions } from "../types";
+import type { AptosTransaction, TransactionOptions, StakePoolResource } from "../types";
 import { GetAccountTransactionsData, GetAccountTransactionsDataGt } from "./graphql/queries";
 import {
   GetAccountTransactionsDataQuery,
@@ -47,7 +47,8 @@ const getIndexerEndpoint = (currencyId: string) =>
 export class AptosAPI {
   private readonly aptosConfig: AptosConfig;
   private readonly aptosClient: Aptos;
-  private readonly apolloClient: ApolloClient<object>;
+
+  readonly apolloClient: ApolloClient<object>;
 
   constructor(currencyIdOrSettings: AptosSettings | string) {
     if (typeof currencyIdOrSettings === "string") {
@@ -247,6 +248,37 @@ export class AptosAPI {
         gasPrice: BigInt(gasPrice.toString()),
       },
     };
+  }
+
+  async getNextUnlockTime(stakingPoolAddress: string): Promise<string | undefined> {
+    const resourceType: MoveStructId = "0x1::stake::StakePool";
+    try {
+      const resource = await this.aptosClient.getAccountResource<StakePoolResource>({
+        accountAddress: stakingPoolAddress,
+        resourceType,
+      });
+      return resource.locked_until_secs;
+    } catch (error) {
+      console.error("Failed to fetch StakePool resource:", error);
+    }
+  }
+
+  async getDelegatorBalanceInPool(
+    poolAddress: string,
+    delegatorAddress: string,
+  ): Promise<Array<string>> {
+    try {
+      // Query the delegator balance in the pool
+      return await this.aptosClient.view<[string]>({
+        payload: {
+          function: "0x1::delegation_pool::get_stake",
+          typeArguments: [],
+          functionArguments: [poolAddress, delegatorAddress],
+        },
+      });
+    } catch (_) {
+      return ["0", "0", "0"];
+    }
   }
 
   private async fetchTransactions(address: string, gt?: string) {

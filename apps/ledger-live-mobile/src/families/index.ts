@@ -1,4 +1,5 @@
 export * from "./algorand";
+export * from "./aptos";
 export * from "./bitcoin";
 export * from "./cardano";
 export * from "./celo";
