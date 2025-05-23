@@ -14,12 +14,6 @@ const alpacaized = {
 };
 
 export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
-  if (alpacaized[currency.family]) {
-    console.log("getCurrencyBridge", currency.family);
-    return getAlpacaCurrencyBridge(currency.family, "local");
-  }
-  console.log("getCurrencyBridge2", currency.family);
-
   if (getEnv("MOCK")) {
     const mockBridge = mockBridges[currency.family];
 
@@ -27,6 +21,10 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
     throw new CurrencyNotSupported("no mock implementation available for currency " + currency.id, {
       currencyName: currency.id,
     });
+  }
+
+  if (alpacaized[currency.family]) {
+    return getAlpacaCurrencyBridge(currency.family, "local");
   }
 
   const jsBridge = jsBridges[currency.family];
@@ -61,10 +59,6 @@ export const getAccountBridge = (
 };
 
 export function getAccountBridgeByFamily(family: string, accountId?: string): AccountBridge<any> {
-  if (alpacaized[family]) {
-    return getAlpacaAccountBridge(family, "local");
-  }
-
   if (accountId) {
     const { type } = decodeAccountId(accountId);
 
@@ -74,9 +68,13 @@ export function getAccountBridgeByFamily(family: string, accountId?: string): Ac
     }
   }
 
+  if (alpacaized[family]) {
+    return getAlpacaAccountBridge(family, "local");
+  }
+
   const jsBridge = jsBridges[family];
   if (!jsBridge) {
-    throw new CurrencyNotSupported("currency bridge not found " + family);
+    throw new CurrencyNotSupported("account bridge not found " + family);
   }
   return jsBridge.accountBridge;
 }
