@@ -27,7 +27,7 @@ import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/type
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { Theme } from "../../../../colors";
 
-const tags = ["apdu", "ble-verbose", "error", "ble-frame"];
+const tags = ["apdu", "ble-verbose", "error", "ble-frame", "live-dmk-logger"];
 const logsObservable = new Observable(o =>
   listen(log => {
     if (tags.includes(log.type)) {
