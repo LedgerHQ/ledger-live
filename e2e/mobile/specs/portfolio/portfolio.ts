@@ -13,7 +13,7 @@ export function runPortfolioTransactionsHistoryTest(currency: CurrencyType, tmsL
     tmsLinks.forEach(link => $TmsLink(link));
     it("Transaction history displayed when user added his accounts", async () => {
       await app.portfolio.openViaDeeplink();
-      await app.portfolio.checkTransactionAllocationsection();
+      await app.portfolio.checkTransactionAllocationSection();
     });
   });
 }

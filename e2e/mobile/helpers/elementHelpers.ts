@@ -56,7 +56,7 @@ export const NativeElementHelpers = {
     try {
       await detoxExpect(element(by.id(id)).atIndex(index)).toBeVisible();
       return countElementsById(id, index + 1);
-    } catch (e) {
+    } catch {
       return index;
     }
   },

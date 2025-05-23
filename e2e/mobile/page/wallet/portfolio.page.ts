@@ -94,7 +94,7 @@ export default class PortfolioPage {
   }
 
   @Step("Check asset transaction history")
-  async checkTransactionAllocationsection() {
+  async checkTransactionAllocationSection() {
     await scrollToId(this.transactionHistorySectionTitleId);
     await expect(getElementById(this.transactionHistorySectionTitleId)).toBeVisible();
     jestExpect(await countElementsById(this.operationRowDate)).toBeLessThanOrEqual(3);
