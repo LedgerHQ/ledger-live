@@ -38,8 +38,7 @@
     "@ledgerhq/live-dmk-shared": "workspace:^",
     "@ledgerhq/logs": "^6.12.0",
     "@ledgerhq/types-devices": "workspace:^",
-    "@ledgerhq/devices": "workspace:^",
-    "react-native-ble-plx": "3.4.0"
+    "@ledgerhq/devices": "workspace:^"
   },
   "devDependencies": {
     "@testing-library/dom": "^9.3.4",
@@ -52,6 +51,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-native": "0.77.2",
+    "react-native-ble-plx": "3.5.0",
     "rxjs": "^7.8.1",
     "vite": "6.0.9",
     "vitest": "2.1.9",
@@ -60,6 +60,7 @@
   "peerDependencies": {
     "react": "^18.3.1",
     "react-native": ">0.70",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "react-native-ble-plx": ">3.4.0"
   }
 }
