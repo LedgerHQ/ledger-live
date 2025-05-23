@@ -40,10 +40,6 @@ class BitcoinLikeExplorer implements IExplorer {
     const { data } = await network({
       method: "GET",
       url: `${this.baseUrl}/tx/${txId}/hex`,
-      headers: {
-        "Cache-Control": "no-cache",
-        Pragma: "no-cache",
-      },
     });
     return data.hex;
   }
