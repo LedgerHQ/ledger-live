@@ -118,6 +118,7 @@ class Xpub {
     this.freshAddressIndex = 0;
     const highestBlockFromStorage = this.storage.getHighestBlockHeightAndHash();
     let needReorg = !!highestBlockFromStorage;
+    console.log({ highestBlockFromStorage });
 
     log("bitcoin[xpub]", `[sync] blockStorage=${highestBlockFromStorage?.height}`, {
       highestBlockFromStorage,
@@ -131,6 +132,7 @@ class Xpub {
         `[sync] blockStorage=${highestBlockFromStorage.height}, fromExpl=${highestBlockFromExplorer?.height}`,
         { highestBlockFromExplorer, highestBlockFromStorage },
       );
+      console.log({ highestBlockFromExplorer, highestBlockFromStorage });
       if (highestBlockFromExplorer?.hash === highestBlockFromStorage.hash) {
         needReorg = false;
       }
@@ -341,7 +343,12 @@ class Xpub {
         account,
         index,
       })?.height || -1;
+    console.log({ lastTxBlockheight, syncedBlockHeight: this.syncedBlockHeight });
     lastTxBlockheight = Math.max(lastTxBlockheight, this.syncedBlockHeight);
+    console.log({
+      nowlastTxBlockheight: lastTxBlockheight,
+      syncedBlockHeight: this.syncedBlockHeight,
+    });
     // log("bitcoin[xpub]", `fetchHydrateAndStoreNewTxs ${address}, ${account}, ${index}`);
     let token: string | null = null;
     do {

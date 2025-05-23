@@ -207,6 +207,7 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
     const currentBlock = await walletAccount.xpub.explorer.getCurrentBlock();
 
     const blockHeight = currentBlock?.height || 0;
+    console.log({ currentBlock, blockHeight });
     await wallet.syncAccount(walletAccount, blockHeight);
 
     const balance = await wallet.getAccountBalance(walletAccount);
