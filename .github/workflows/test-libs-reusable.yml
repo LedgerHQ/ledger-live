@@ -47,13 +47,15 @@ jobs:
       - name: Build and Test affected libraries
         id: test-libs
         run: |
-          for lib in $(pnpm list --filter="!./apps/**" --filter="!./libs/ui/**" --filter="!./tools/**" --filter="!./e2e/mobile/**" --filter="!./apps/ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --depth -1 --json | jq -r '.[].name'); do
-            echo "Processing library: $lib"
-            if pnpm run coverage --continue --filter="$lib" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"; then
-              echo "Coverage script executed successfully for $lib."
+          for package_json in $(find ./libs -name "package.json"); do
+            lib=$(dirname "$package_json")
+            echo "Processing library at path: $lib"
+            if [ -f "$package_json" ] && jq -e '.scripts.coverage' "$package_json" > /dev/null; then
+              echo "Running coverage script for $lib"
+              pnpm --prefix "$lib" run coverage --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
             else
-              echo "Coverage script not available for $lib, running test script."
-              pnpm run test --continue --filter="$lib" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" || echo "Test script failed for $lib."
+              echo "Coverage script not defined for $lib, running test script."
+              pnpm --prefix "$lib" run test --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
             fi
           done
         shell: bash
