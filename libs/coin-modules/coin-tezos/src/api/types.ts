@@ -3,7 +3,7 @@ import { Api, Asset, FeeEstimation, TransactionIntent } from "@ledgerhq/coin-fra
 export type TezosAsset = Asset;
 
 export type TezosFeeParameters = { gasLimit: bigint; storageLimit: bigint };
-export type TezosFeeEstimation = FeeEstimation<TezosFeeParameters>;
+export type TezosFeeEstimation = FeeEstimation;
 
 export type TezosSender = { address: string; xpub?: string };
 export type TezosTransactionIntent = TransactionIntent<TezosAsset>;
@@ -16,6 +16,6 @@ export type TezosApi = Api<TezosAsset, never, string> & {
     transactionIntent: TransactionIntent<TezosAsset>,
     // TezosSender,
     // string // assuming memo value is string
-  ) => Promise<FeeEstimation<TezosFeeParameters>>;
+  ) => Promise<FeeEstimation>;
 };
 // export type TezosApi = Api<TezosAsset, Record<string, unknown>, TezosSender, TezosFeeParameters>;
