@@ -62,6 +62,7 @@ jobs:
               fi
             fi
           done
+          ls -la coverage
         shell: bash
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@v4
@@ -79,14 +80,13 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
-          name: outputs-test-libraries
-          path: ${{ github.workspace }}/summary-tests.txt
-      - name: upload coverage
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
           name: coverage-libs
           path: ${{ github.workspace }}/coverage
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: outputs-test-libraries
+          path: ${{ github.workspace }}/summary-tests.txt
 
   codecheck-libraries:
     name: "Libraries Codecheck"
