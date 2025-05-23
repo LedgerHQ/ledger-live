@@ -124,7 +124,7 @@ export const CustomLoaderBuySell: CustomLoaderType = ({ manifest, isLoading }) =
 
   if (showProviderLoadingTransition) {
     return (
-      <Loader style={{ elevation: 2 }}>
+      <Loader testID="custom-buy-sell-loader" style={{ elevation: 2 }}>
         <VisualWrapper>
           <IconContainer bgColor="black">
             <Icon name="LedgerLogo" size={36} color="constant.white" />
