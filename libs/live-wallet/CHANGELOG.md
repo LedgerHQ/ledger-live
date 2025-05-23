@@ -1,5 +1,11 @@
 # @ledgerhq/live-wallet
 
+## 0.10.10-nightly.0
+
+### Patch Changes
+
+- [#10191](https://github.com/LedgerHQ/ledger-live/pull/10191) [`1c9d5f2`](https://github.com/LedgerHQ/ledger-live/commit/1c9d5f28926aaf6ebdcc1ab10e326c94609ae86b) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Fix rename account issue
+
 ## 0.10.9
 
 ### Patch Changes

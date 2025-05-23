@@ -1,5 +1,11 @@
 # @ledgerhq/coin-ton
 
+## 0.11.0-nightly.0
+
+### Minor Changes
+
+- [#10256](https://github.com/LedgerHQ/ledger-live/pull/10256) [`150ac67`](https://github.com/LedgerHQ/ledger-live/commit/150ac67c38c0ce43dd0632a71467f49a81068b94) Thanks [@Canestin](https://github.com/Canestin)! - feat: show ton tokens in swap history
+
 ## 0.10.1
 
 ### Patch Changes

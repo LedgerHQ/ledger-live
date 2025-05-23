@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.80.0-nightly.1
+
+### Minor Changes
+
+- [#10160](https://github.com/LedgerHQ/ledger-live/pull/10160) [`521358e`](https://github.com/LedgerHQ/ledger-live/commit/521358e6627fd4203d0c96266d0bb5714700d554) Thanks [@palra](https://github.com/palra)! - [babylon] add react tests for delegation disable flag in coin configuration
+
+### Patch Changes
+
+- Updated dependencies [[`1c9d5f2`](https://github.com/LedgerHQ/ledger-live/commit/1c9d5f28926aaf6ebdcc1ab10e326c94609ae86b)]:
+  - @ledgerhq/live-wallet@0.10.10-nightly.0
+
 ## 3.80.0-nightly.0
 
 ### Minor Changes

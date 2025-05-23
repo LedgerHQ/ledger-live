@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.27.0-nightly.1
+
+### Minor Changes
+
+- [#10276](https://github.com/LedgerHQ/ledger-live/pull/10276) [`2d531a7`](https://github.com/LedgerHQ/ledger-live/commit/2d531a732ee17389f87c4b31f50464f56147a8f3) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - Ensure that when the search input changes the list auto scrolls to the first item
+
 ## 0.27.0-nightly.0
 
 ### Minor Changes

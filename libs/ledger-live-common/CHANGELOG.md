@@ -1,5 +1,19 @@
 # @ledgerhq/live-common
 
+## 34.35.0-nightly.1
+
+### Minor Changes
+
+- [#10256](https://github.com/LedgerHQ/ledger-live/pull/10256) [`150ac67`](https://github.com/LedgerHQ/ledger-live/commit/150ac67c38c0ce43dd0632a71467f49a81068b94) Thanks [@Canestin](https://github.com/Canestin)! - feat: show ton tokens in swap history
+
+### Patch Changes
+
+- Updated dependencies [[`3ebfb21`](https://github.com/LedgerHQ/ledger-live/commit/3ebfb21cc0861cd69b7f4117b7d1f3c7c6a38acd), [`12af22b`](https://github.com/LedgerHQ/ledger-live/commit/12af22b9690928a409ad81d679575ee3b017a702), [`1c9d5f2`](https://github.com/LedgerHQ/ledger-live/commit/1c9d5f28926aaf6ebdcc1ab10e326c94609ae86b), [`150ac67`](https://github.com/LedgerHQ/ledger-live/commit/150ac67c38c0ce43dd0632a71467f49a81068b94), [`d8a1c05`](https://github.com/LedgerHQ/ledger-live/commit/d8a1c0500253b53a25151c47dd3ae36e21baa8bc)]:
+  - @ledgerhq/coin-hedera@1.6.7-nightly.0
+  - @ledgerhq/coin-aptos@1.10.0-nightly.0
+  - @ledgerhq/live-wallet@0.10.10-nightly.0
+  - @ledgerhq/coin-ton@0.11.0-nightly.0
+
 ## 34.35.0-nightly.0
 
 ### Minor Changes

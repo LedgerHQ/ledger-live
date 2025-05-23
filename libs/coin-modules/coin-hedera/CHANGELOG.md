@@ -1,5 +1,11 @@
 # @ledgerhq/coin-hedera
 
+## 1.6.7-nightly.0
+
+### Patch Changes
+
+- [#10211](https://github.com/LedgerHQ/ledger-live/pull/10211) [`3ebfb21`](https://github.com/LedgerHQ/ledger-live/commit/3ebfb21cc0861cd69b7f4117b7d1f3c7c6a38acd) Thanks [@md-blockydevs](https://github.com/md-blockydevs)! - fix slow "add account" flow with Hedera
+
 ## 1.6.6
 
 ### Patch Changes

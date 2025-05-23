@@ -1,5 +1,22 @@
 # ledger-live-desktop
 
+## 2.115.0-nightly.1
+
+### Minor Changes
+
+- [#10160](https://github.com/LedgerHQ/ledger-live/pull/10160) [`521358e`](https://github.com/LedgerHQ/ledger-live/commit/521358e6627fd4203d0c96266d0bb5714700d554) Thanks [@palra](https://github.com/palra)! - [babylon] add react tests for delegation disable flag in coin configuration
+
+- [#10276](https://github.com/LedgerHQ/ledger-live/pull/10276) [`2d531a7`](https://github.com/LedgerHQ/ledger-live/commit/2d531a732ee17389f87c4b31f50464f56147a8f3) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - Ensure that when the search input changes the list auto scrolls to the first item
+
+### Patch Changes
+
+- Updated dependencies [[`12af22b`](https://github.com/LedgerHQ/ledger-live/commit/12af22b9690928a409ad81d679575ee3b017a702), [`1c9d5f2`](https://github.com/LedgerHQ/ledger-live/commit/1c9d5f28926aaf6ebdcc1ab10e326c94609ae86b), [`2d531a7`](https://github.com/LedgerHQ/ledger-live/commit/2d531a732ee17389f87c4b31f50464f56147a8f3), [`150ac67`](https://github.com/LedgerHQ/ledger-live/commit/150ac67c38c0ce43dd0632a71467f49a81068b94), [`d8a1c05`](https://github.com/LedgerHQ/ledger-live/commit/d8a1c0500253b53a25151c47dd3ae36e21baa8bc)]:
+  - @ledgerhq/coin-aptos@1.10.0-nightly.0
+  - @ledgerhq/live-wallet@0.10.10-nightly.0
+  - @ledgerhq/react-ui@0.27.0-nightly.1
+  - @ledgerhq/live-common@34.35.0-nightly.1
+  - @ledgerhq/live-dmk-desktop@0.3.7-nightly.1
+
 ## 2.115.0-nightly.0
 
 ### Minor Changes
