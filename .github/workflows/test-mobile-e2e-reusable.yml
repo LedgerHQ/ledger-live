@@ -206,7 +206,7 @@ jobs:
       - name: Setup Speculos image and Coin Apps
         if: ${{ env.E2E_RUN == 'true' }}
         id: setup-speculos
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@support/qaa-624-speculos-mac-os
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
         with:
           coinapps_path: ${{ env.COINAPPS }}
           bot_id: ${{ secrets.GH_BOT_APP_ID }}
