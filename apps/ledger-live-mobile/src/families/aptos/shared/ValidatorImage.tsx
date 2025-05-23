@@ -1,4 +1,5 @@
 import { useTheme } from "@react-navigation/native";
+import { Image } from "react-native";
 import React from "react";
 import Circle from "~/components/Circle";
 import FirstLetterIcon from "~/components/FirstLetterIcon";
@@ -8,6 +9,7 @@ type Props = {
   size?: number;
   isLedger?: boolean;
   name?: string;
+  imageStr?: string;
 };
 
 const ValidatorImage = ({ isLedger, size = 64, name }: Props) => {
@@ -17,6 +19,8 @@ const ValidatorImage = ({ isLedger, size = 64, name }: Props) => {
     <Circle crop size={size}>
       {isLedger ? (
         <LedgerLogo size={size * 0.7} color={colors.text} />
+      ) : imageStr ? (
+        <Image resource={imageStr} alt="" width={32} height={32} />
       ) : (
         <FirstLetterIcon label={name ?? "-"} round size={size} fontSize={24} />
       )}
