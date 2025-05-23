@@ -26,6 +26,15 @@ jobs:
         with:
           name: coverage-mobile
           path: ./coverage-mobile
+  download-libs-coverage:
+    name: "Download Libs Coverage"
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Download desktop unit test coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-libs
+          path: ./coverage-libs
   merge-coverage:
     name: "Merge Coverage Files"
     runs-on: ubuntu-22.04
@@ -40,6 +49,10 @@ jobs:
           if [ -d coverage-mobile ]; then
             cat coverage-mobile/lcov.info >> ./lcov.info
             cat coverage-mobile/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
+          fi
+          if [ -d coverage-libs ]; then
+            cat coverage-libs/lcov.info >> ./lcov.info
+            cat coverage-libs/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
           fi
   scan-sonar:
     name: "Sonar Cloud"

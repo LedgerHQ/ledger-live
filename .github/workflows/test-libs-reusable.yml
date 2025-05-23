@@ -47,12 +47,15 @@ jobs:
       - name: Build and Test affected libraries
         id: test-libs
         run: |
+          mkdir -p coverage
           pnpm m ls --json --filter="!./apps/**" --filter="!./libs/ui/**" --filter="!./tools/**" --filter="!./e2e/mobile/**" --filter="!./apps/ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" | jq -r '.[].path' | while read -r lib_path; do
             pkg_json="$lib_path/package.json"
             if [ -f "$pkg_json" ]; then
               if jq -e '.scripts.coverage' "$pkg_json"; then
                 echo "Running coverage for $lib_path"
                 pnpm --filter "$lib_path" run coverage
+                cat "$lib_path/coverage/lcov.info" >> ./coverage/lcov.info
+                cat "$lib_path/coverage/sonar-executionTests-report.xml" >> ./coverage/sonar-executionTests-report.xml
               else
                 echo "Running test for $lib_path (no coverage script)"
                 pnpm --filter "$lib_path" run test
@@ -78,6 +81,12 @@ jobs:
         with:
           name: outputs-test-libraries
           path: ${{ github.workspace }}/summary-tests.txt
+      - name: upload coverage
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: coverage-libs
+          path: ${{ github.workspace }}/coverage
 
   codecheck-libraries:
     name: "Libraries Codecheck"
