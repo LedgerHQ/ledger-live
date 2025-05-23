@@ -164,8 +164,10 @@ export default {
   shortenMetadata,
   submitExtrinsic: async (extrinsic: string, currency?: CryptoCurrency) =>
     sidecarSubmitExtrinsic(extrinsic, currency),
-  verifyValidatorAddresses: async (validators: string[]): Promise<string[]> =>
-    sidecarVerifyValidatorAddresses(validators),
+  verifyValidatorAddresses: async (
+    validators: string[],
+    currency?: CryptoCurrency,
+  ): Promise<string[]> => sidecarVerifyValidatorAddresses(validators, currency),
 };
 
 /**

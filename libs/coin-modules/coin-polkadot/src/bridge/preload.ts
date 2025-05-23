@@ -98,7 +98,7 @@ export const preload = async (currency: CryptoCurrency): Promise<PolkadotPreload
     log("polkadot/preload", "refreshing polkadot validators...");
 
     try {
-      validators = await polkadotAPI.getValidators("all");
+      validators = await polkadotAPI.getValidators("all", currency);
     } catch (error) {
       log("polkadot/preload", "failed to fetch validators", {
         error,

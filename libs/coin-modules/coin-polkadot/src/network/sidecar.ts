@@ -194,8 +194,9 @@ export const getMinimumBondBalance = async (currency?: CryptoCurrency): Promise<
 const fetchValidators = async (
   status: SidecarValidatorsParamStatus = "all",
   addresses?: SidecarValidatorsParamAddresses,
+  currency?: CryptoCurrency,
 ): Promise<SidecarValidators> => {
-  return await node.fetchValidators(status, addresses);
+  return await node.fetchValidators(status, addresses, currency);
 };
 
 /**
@@ -303,8 +304,11 @@ export const isControllerAddress = async (
  *
  * @returns {string[]} - addresses that are not validators
  */
-export const verifyValidatorAddresses = async (validators: string[]): Promise<string[]> => {
-  const existingValidators = await fetchValidators("all", validators);
+export const verifyValidatorAddresses = async (
+  validators: string[],
+  currency?: CryptoCurrency,
+): Promise<string[]> => {
+  const existingValidators = await fetchValidators("all", validators, currency);
   const existingIds = existingValidators.map(v => v.accountId);
   return validators.filter(v => !existingIds.includes(v));
 };
@@ -518,13 +522,14 @@ export const paymentInfo = async (
  */
 export const getValidators = async (
   stashes: SidecarValidatorsParamStatus | SidecarValidatorsParamAddresses = "elected",
+  currency?: CryptoCurrency,
 ): Promise<PolkadotValidator[]> => {
   let validators;
 
   if (Array.isArray(stashes)) {
-    validators = await fetchValidators("all", stashes);
+    validators = await fetchValidators("all", stashes, currency);
   } else {
-    validators = await fetchValidators(stashes);
+    validators = await fetchValidators(stashes, undefined, currency);
   }
 
   return validators.map(v => ({

@@ -3,7 +3,7 @@ import { HttpResponse, http } from "msw";
 import coinConfig from "../config";
 import { getAccount, getRegistry } from "./sidecar";
 import mockServer, { SIDECAR_BASE_URL_TEST } from "./sidecar.mock";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/lib-es/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 jest.mock("./node", () => ({
   fetchConstants: jest.fn(),

@@ -5,11 +5,13 @@ import {
   hasExternalStash,
   hasPendingOperationType,
 } from "@ledgerhq/live-common/families/polkadot/logic";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import IconCoins from "~/renderer/icons/Coins";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useHistory } from "react-router";
+import { useDispatch } from "react-redux";
+import { openModal } from "~/renderer/actions/modals";
 
 type Props = {
   account: PolkadotAccount | TokenAccount;
@@ -17,7 +19,7 @@ type Props = {
   source?: string;
 };
 
-const AccountHeaderManageActions = ({ account, parentAccount }: Props) => {
+const AccountHeaderManageActions = ({ account, parentAccount, source = "Account Page" }: Props) => {
   const { t } = useTranslation();
   const label = useGetStakeLabelLocaleBased();
   const mainAccount = getMainAccount(account, parentAccount);
@@ -25,20 +27,47 @@ const AccountHeaderManageActions = ({ account, parentAccount }: Props) => {
   const hasBondedBalance = polkadotResources.lockedBalance && polkadotResources.lockedBalance.gt(0);
   const hasPendingBondOperation = hasPendingOperationType(mainAccount, "BOND");
   const history = useHistory();
+  const dispatch = useDispatch();
   if (!polkadotResources || parentAccount) return null;
-
+  console.log(mainAccount);
   const onClick = () => {
-    history.push({
-      pathname: "/platform/stakekit",
-      state: {
-        yieldId: "polkadot-dot-validator-staking",
-        accountId: account.id,
-        returnTo:
-          account.type === "TokenAccount"
-            ? `/account/${account.parentId}/${account.id}`
-            : `/account/${account.id}`,
-      },
-    });
+    console.log("tttttt");
+    if (mainAccount.currency.id === "polkadot") {
+      console.log("testttt");
+      history.push({
+        pathname: "/platform/stakekit",
+        state: {
+          yieldId: "polkadot-dot-validator-staking",
+          accountId: account.id,
+          returnTo:
+            account.type === "TokenAccount"
+              ? `/account/${account.parentId}/${account.id}`
+              : `/account/${account.id}`,
+        },
+      });
+    } else if (account.type === "Account") {
+      console.log("polka");
+      if (isAccountEmpty(mainAccount)) {
+        dispatch(
+          openModal("MODAL_NO_FUNDS_STAKE", {
+            account: mainAccount,
+          }),
+        );
+      } else if (hasBondedBalance || hasPendingBondOperation) {
+        dispatch(
+          openModal("MODAL_POLKADOT_MANAGE", {
+            account: mainAccount,
+            source,
+          }),
+        );
+      } else {
+        dispatch(
+          openModal("MODAL_POLKADOT_REWARDS_INFO", {
+            account: mainAccount,
+          }),
+        );
+      }
+    }
   };
 
   const _hasExternalController = hasExternalController(mainAccount);

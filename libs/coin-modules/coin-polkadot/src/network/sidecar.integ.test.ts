@@ -85,7 +85,7 @@ describe("sidecar integration test", () => {
 
   describe("getValidators", () => {
     it.skip("returns expected result", async () => {
-      const result = await getValidators();
+      const result = await getValidators(undefined, getCryptoCurrencyById("polkadot"));
 
       expect(result).toEqual(
         expect.arrayContaining([

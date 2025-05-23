@@ -271,6 +271,7 @@ export const getTransactionStatus: AccountBridge<
           // Fallback with api call
           const notValidators = await polkadotAPI.verifyValidatorAddresses(
             transaction.validators || [],
+            currency,
           );
 
           if (notValidators.length) {

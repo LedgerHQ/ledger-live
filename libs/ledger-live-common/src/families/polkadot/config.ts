@@ -43,7 +43,7 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
         url: "https://polkadot-westend-fullnodes.api.live.ledger.com/",
       },
       indexer: {
-        url: "https://polkadot.coin.ledger.com",
+        url: "https://explorers.api.live.ledger.com/blockchain/dot_westend",
       },
       // staking: {
       //   electionStatusThreshold: getEnv("POLKADOT_ELECTION_STATUS_THRESHOLD"),
