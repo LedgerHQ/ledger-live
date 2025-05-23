@@ -8,7 +8,7 @@ import Animated, {
   useSharedValue,
   withRepeat,
   withTiming,
-  SharedValue,
+  withDelay,
 } from "react-native-reanimated";
 import { getProviderIconUrl } from "@ledgerhq/live-common/icons/providers/providers";
 
@@ -59,43 +59,30 @@ const Circle = styled(SVGCircle)`
   fill: ${p => p.theme.colors.neutral.c100};
 `;
 
-const CreateCircleStyle = (progress: SharedValue<number>, outputRange: number[]) => {
-  return useAnimatedStyle(() => {
-    const opacity = interpolate(
-      progress.value,
-      [0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1],
-      outputRange,
-    );
-
-    return { opacity };
-  });
-};
-
 const AnimatedSvg = Animated.createAnimatedComponent(Svg);
 
-const EllipsisLoader = () => {
+const AnimatedCircle = ({ delay }: { delay: number }) => {
   const progress = useSharedValue(0);
 
   useEffect(() => {
-    progress.value = withRepeat(withTiming(1, { duration: 1500 }), -1, false);
-  }, [progress]);
+    progress.value = withDelay(delay, withRepeat(withTiming(1, { duration: 1500 }), -1, false));
+  }, [delay, progress]);
 
-  const circle1Style = CreateCircleStyle(progress, [0.2, 0.4, 0.4, 0.4, 0.6, 0.6, 0.2, 0.2, 0.2]);
-  const circle2Style = CreateCircleStyle(progress, [0.2, 0.2, 0.6, 0.6, 0.6, 0.6, 0.4, 0.2, 0.2]);
-  const circle3Style = CreateCircleStyle(progress, [0.2, 0.2, 0.2, 0.6, 0.6, 0.6, 0.6, 0.4, 0.2]);
+  const animatedStyle = useAnimatedStyle(() => {
+    const opacity = interpolate(
+      progress.value,
+      [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+      [0.2, 0.4, 0.7, 0.9, 0.7, 0.4, 0.2, 0.2, 0.2, 0.2, 0.2],
+    );
+    return {
+      opacity,
+    };
+  });
 
   return (
-    <Ellipsis>
-      <AnimatedSvg width={8} height={8} viewBox="0 0 8 8" style={circle1Style}>
-        <Circle cx={4} cy={4} r={4} />
-      </AnimatedSvg>
-      <AnimatedSvg width={8} height={8} viewBox="0 0 8 8" style={circle2Style}>
-        <Circle cx={4} cy={4} r={4} />
-      </AnimatedSvg>
-      <AnimatedSvg width={8} height={8} viewBox="0 0 8 8" style={circle3Style}>
-        <Circle cx={4} cy={4} r={4} />
-      </AnimatedSvg>
-    </Ellipsis>
+    <AnimatedSvg width={8} height={8} viewBox="0 0 8 8" style={animatedStyle}>
+      <Circle cx={4} cy={4} r={4} />
+    </AnimatedSvg>
   );
 };
 
@@ -142,7 +129,11 @@ export const CustomLoaderBuySell: CustomLoaderType = ({ manifest, isLoading }) =
           <IconContainer bgColor="black">
             <Icon name="LedgerLogo" size={36} color="constant.white" />
           </IconContainer>
-          <EllipsisLoader />
+          <Ellipsis>
+            <AnimatedCircle delay={0} />
+            <AnimatedCircle delay={100} />
+            <AnimatedCircle delay={200} />
+          </Ellipsis>
           <IconContainer>
             <SvgUri
               width={60}
