@@ -40,6 +40,10 @@ class BitcoinLikeExplorer implements IExplorer {
     const { data } = await network({
       method: "GET",
       url: `${this.baseUrl}/tx/${txId}/hex`,
+      headers: {
+        "Cache-Control": "no-cache",
+        Pragma: "no-cache",
+      },
     });
     return data.hex;
   }
@@ -50,6 +54,11 @@ class BitcoinLikeExplorer implements IExplorer {
     const { data } = await network({
       method: "GET",
       url,
+      // NOTE: we don't want to hit any cache
+      headers: {
+        "Cache-Control": "no-cache",
+        Pragma: "no-cache",
+      },
     });
     console.log({ getCurrentBlock: data });
     return data ? { height: data.height, hash: data.hash, time: data.time } : null;
@@ -70,6 +79,10 @@ class BitcoinLikeExplorer implements IExplorer {
     const { data } = await network({
       method: "GET",
       url: `${this.baseUrl}/fees`,
+      headers: {
+        "Cache-Control": "no-cache",
+        Pragma: "no-cache",
+      },
     });
     return data;
   }
@@ -91,6 +104,10 @@ class BitcoinLikeExplorer implements IExplorer {
       method: "GET",
       url: `${this.baseUrl}/address/${address.address}/txs`,
       params: { verbosity: "Minimal", ...params },
+      headers: {
+        "Cache-Control": "no-cache",
+        Pragma: "no-cache",
+      },
     });
     const txs = data.data;
     const nextPageToken = data.token;
@@ -102,6 +119,10 @@ class BitcoinLikeExplorer implements IExplorer {
       method: "GET",
       url: `${this.baseUrl}/address/${address.address}/txs/pending`,
       params: { verbosity: "Minimal", ...params },
+      headers: {
+        "Cache-Control": "no-cache",
+        Pragma: "no-cache",
+      },
     });
     return data;
   }
