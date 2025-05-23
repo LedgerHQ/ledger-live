@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <uses-sdk
-        android:minSdkVersion="21"
+        android:minSdkVersion="25"
         android:targetSdkVersion="33"
         tools:overrideLibrary="com.ledger.reactnative, ca.jaysoo.extradimensions" />
 
