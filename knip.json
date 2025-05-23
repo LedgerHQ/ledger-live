@@ -99,6 +99,11 @@
     "./libs/live-countervalues-react": {
       "entry": ["src/index.tsx", "src/portfolio.tsx"]
     },
+    "./libs/live-dmk-mobile": {
+      "entry": [
+        "src/index.ts"
+      ]
+    },
     "./libs/live-wallet": {
       "entry": [
         "src/walletsync/index.ts",
