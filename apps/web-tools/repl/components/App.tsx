@@ -181,6 +181,8 @@ const eventObservable = new Observable<LogInput>(o =>
         return o.next({ type: "verbose", text: "socket closed" });
       case "socket-opened":
         return o.next({ type: "verbose", text: log.message });
+      case "live-dmk-logger":
+        return o.next({ type: "verbose", text: log.message });
     }
     console.log(`(unhandled) ${log.type}: ${log.message}`);
   }),
