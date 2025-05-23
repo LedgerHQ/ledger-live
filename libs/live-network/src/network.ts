@@ -225,6 +225,7 @@ export const newImplementation = async <T = unknown, U = unknown>(
  */
 const implementation = <T = any>(arg: AxiosRequestConfig): AxiosPromise<T> => {
   let promise: AxiosPromise;
+  console.log({ arg });
 
   if (arg.method === "GET") {
     if (!("timeout" in arg)) {

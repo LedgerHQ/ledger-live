@@ -40,24 +40,37 @@ class BitcoinLikeExplorer implements IExplorer {
     const { data } = await network({
       method: "GET",
       url: `${this.baseUrl}/tx/${txId}/hex`,
+      headers: {
+        "Cache-Control": "no-cache",
+        Pragma: "no-cache",
+      },
     });
     return data.hex;
   }
 
   async getCurrentBlock(): Promise<Block | null> {
+    // NOTE: in bug, it returns the same value over and over
     const url = `${this.baseUrl}/block/current`;
     const { data } = await network({
       method: "GET",
       url,
+      // NOTE: we don't want to hit any cache
+      headers: {
+        "Cache-Control": "no-cache",
+        Pragma: "no-cache",
+      },
     });
+    console.log({ getCurrentBlock: data });
     return data ? { height: data.height, hash: data.hash, time: data.time } : null;
   }
 
   async getBlockByHeight(height: number): Promise<Block | null> {
+    // NOTE: in bug, it's called with same value over and over
     const { data } = await network({
       method: "GET",
       url: `${this.baseUrl}/block/${height}`,
     });
+    console.log({ getBlockByHeight: data });
     return data[0] ? { height: data[0].height, hash: data[0].hash, time: data[0].time } : null;
   }
 
@@ -66,6 +79,10 @@ class BitcoinLikeExplorer implements IExplorer {
     const { data } = await network({
       method: "GET",
       url: `${this.baseUrl}/fees`,
+      headers: {
+        "Cache-Control": "no-cache",
+        Pragma: "no-cache",
+      },
     });
     return data;
   }
@@ -87,6 +104,10 @@ class BitcoinLikeExplorer implements IExplorer {
       method: "GET",
       url: `${this.baseUrl}/address/${address.address}/txs`,
       params: { verbosity: "Minimal", ...params },
+      headers: {
+        "Cache-Control": "no-cache",
+        Pragma: "no-cache",
+      },
     });
     const txs = data.data;
     const nextPageToken = data.token;
@@ -98,6 +119,10 @@ class BitcoinLikeExplorer implements IExplorer {
       method: "GET",
       url: `${this.baseUrl}/address/${address.address}/txs/pending`,
       params: { verbosity: "Minimal", ...params },
+      headers: {
+        "Cache-Control": "no-cache",
+        Pragma: "no-cache",
+      },
     });
     return data;
   }
@@ -173,6 +198,7 @@ class BitcoinLikeExplorer implements IExplorer {
     const params: ExplorerParams = {
       batch_size: batchSize,
     };
+    console.log({ fromBlockheight, toBlockheight, isPending, token });
     // when isPending = false,
     // we use https://explorers.api.live.ledger.com/blockchain/v4/btc/address/{address}/txs?batch_size={batch_size}&from_height={fromBlockheight}&order=ascending&to_height={toBlockheight} to fetch confirmed txs
     // when isPending = true,
