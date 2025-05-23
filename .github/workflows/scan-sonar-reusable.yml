@@ -31,16 +31,16 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [download-desktop-coverage, download-mobile-coverage]
     steps:
-      - name: Merge lcov files
+      - name: Merge coverage files
         run: |
-          touch ./lcov.info
-          if [ -f coverage-desktop/lcov.info ]; then
+          if [ -d coverage-desktop ]; then
             cat coverage-desktop/lcov.info >> ./lcov.info
+            cat coverage-desktop/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
           fi
-          if [ -f coverage-mobile/lcov.info ]; then
+          if [ -d coverage-mobile ]; then
             cat coverage-mobile/lcov.info >> ./lcov.info
+            cat coverage-mobile/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
           fi
-          cat ./lcov.info
   scan-sonar:
     name: "Sonar Cloud"
     runs-on: [ledger-live-4xlarge]
@@ -59,21 +59,21 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
-      - name: Get Coverage of all affected packages
-        run: |
-          paths="${{ needs.determine-affected.outputs.paths }}"
-          paths="${paths#[}"; paths="${paths%]}"
-          IFS=',' read -r -a paths_array <<< "$paths"
-          for path in "${paths_array[@]}"; do
-            if [ -f "$path/coverage/lcov.info" ] && [ -f "$path/coverage/sonar-executionTests-report.xml" ]; then
-              echo "Copying coverage files for $path"
-              cat $path/coverage/lcov.info >> ./lcov.info
-              cat $path/coverage/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
-            else
-              echo "Skipping $path: no coverage reports found."
-            fi
-          done
-        shell: bash
+      # - name: Get Coverage of all affected packages
+      #   run: |
+      #     paths="${{ needs.determine-affected.outputs.paths }}"
+      #     paths="${paths#[}"; paths="${paths%]}"
+      #     IFS=',' read -r -a paths_array <<< "$paths"
+      #     for path in "${paths_array[@]}"; do
+      #       if [ -f "$path/coverage/lcov.info" ] && [ -f "$path/coverage/sonar-executionTests-report.xml" ]; then
+      #         echo "Copying coverage files for $path"
+      #         cat $path/coverage/lcov.info >> ./lcov.info
+      #         cat $path/coverage/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
+      #       else
+      #         echo "Skipping $path: no coverage reports found."
+      #       fi
+      #     done
+      #   shell: bash
 
       - name: SonarQubeScan
         uses: SonarSource/sonarqube-scan-action@v4
