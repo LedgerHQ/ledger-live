@@ -26,6 +26,7 @@ runs:
       with:
         app_id: ${{ inputs.bot_id }}
         private_key: ${{ inputs.bot_key }}
+        installation_retrieval_mode: user
     - name: Retrieving coin apps
       uses: actions/checkout@v4
       with:
