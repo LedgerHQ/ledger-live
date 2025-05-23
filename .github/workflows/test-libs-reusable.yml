@@ -47,18 +47,31 @@ jobs:
       - name: Build and Test affected libraries
         id: test-libs
         run: |
-          pnpm m ls --json --filter="!./apps/**" --filter="!./libs/ui/**" --filter="!./tools/**" --filter="!./e2e/mobile/**" --filter="!./apps/ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" | jq -r '.[].path' | while read -r lib_path; do
-            pkg_json="$lib_path/package.json"
-            if [ -f "$pkg_json" ]; then
-              if jq -e '.scripts.coverage' "$pkg_json"; then
-                echo "Running coverage for $lib_path"
-                pnpm --filter "$lib_path" run coverage
-              else
-                echo "Running test for $lib_path (no coverage script)"
-                pnpm --filter "$lib_path" run test
+          mkdir -p ${{ github.workspace }}/coverage
+          pnpm build:libs
+          touch ${{ github.workspace }}/coverage/lcov.info
+          touch ${{ github.workspace }}/coverage/sonar-executionTests-report.xml
+          for package_json in $(find ./libs -name "package.json"); do
+            lib=$(dirname "$package_json")
+            echo "Processing library at path: $lib"
+            if [ -f "$package_json" ] && jq -e '.scripts.coverage' "$package_json"; then
+              echo "Running coverage script for $lib"
+              pnpm --prefix "$lib" run coverage
+              ls -la "$lib/coverage"
+              if [ -f "$lib/coverage/lcov.info" ] && [ -f "$lib/coverage/sonar-executionTests-report.xml" ]; then
+                echo "Appending coverage files for $lib"
+                cat "$lib/coverage/lcov.info" >> ${{ github.workspace }}/coverage/lcov.info
+                cat "$lib/coverage/sonar-executionTests-report.xml" >> ${{ github.workspace }}/coverage/sonar-executionTests-report.xml
               fi
+              ls -la ${{ github.workspace }}/coverage
+            elif [ -f "$package_json" ] && jq -e '.scripts.test' "$package_json"; then
+              echo "Coverage script not defined for $lib, running test script."
+              pnpm --prefix "$lib" run test
+            else
+              echo "No coverage or test script found for $lib, skipping."
             fi
           done
+          ls -la ${{ github.workspace }}/coverage
         shell: bash
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@v4
@@ -73,6 +86,11 @@ jobs:
           script: |
             const fs = require("fs");
             fs.writeFileSync("summary-tests.txt", "${{ steps.test-libs.outcome }}", "utf-8");
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: coverage-libs
+          path: ${{ github.workspace }}/coverage
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
