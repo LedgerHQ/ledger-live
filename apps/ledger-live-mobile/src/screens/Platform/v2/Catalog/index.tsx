@@ -1,4 +1,5 @@
 import React from "react";
+import { View } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
@@ -32,7 +33,9 @@ export function Catalog() {
     <TabBarSafeAreaView edges={["top", "bottom", "left", "right"]}>
       {/* TODO: put under the animation header and style  */}
       <TrackScreen category="Platform" name="Catalog" />
-      <DAppDisclaimer disclaimer={disclaimer} />
+      <View>
+        <DAppDisclaimer disclaimer={disclaimer} />
+      </View>
 
       {search.isActive ? (
         <Search title={title} disclaimer={disclaimer} search={search} />

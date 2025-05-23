@@ -69,6 +69,7 @@
     "react": ">=17",
     "react-native": ">=0.64.0",
     "react-native-reanimated": "3.16.7",
+    "react-native-safe-area-context": "5.1.0",
     "react-native-svg": ">=12.1.1",
     "styled-components": "^5.3.3"
   },
@@ -92,7 +93,7 @@
     "@react-native-async-storage/async-storage": "2.1.2",
     "@react-native-community/cli-server-api": "^7.0.3",
     "@react-native-community/datetimepicker": "6.7.5",
-    "@react-native-community/slider": "^4.4.2",
+    "@react-native-community/slider": "4.5.6",
     "@react-native/assets-registry": "0.77.2",
     "@storybook/addon-actions": "^7.6.18",
     "@storybook/addon-controls": "^7.6.18",

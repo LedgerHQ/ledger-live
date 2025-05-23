@@ -65,7 +65,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       <RNWebView
         ref={webviewRef}
         onScroll={onScroll}
-        decelerationRate="normal"
+        decelerationRate={Platform.OS === "ios" ? "normal" : 0.998}
         startInLoadingState={true}
         showsHorizontalScrollIndicator={false}
         allowsBackForwardNavigationGestures={allowsBackForwardNavigationGestures}
