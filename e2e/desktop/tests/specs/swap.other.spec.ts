@@ -630,7 +630,7 @@ test.describe("Swap - Switch You send and You receive currency", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await performSwapUntilQuoteSelectionStep(app, electronApp, swap, swap.amount ?? "0");
-      await app.swap.swithYouSendAndYouReceive(electronApp);
+      await app.swap.switchYouSendAndYouReceive(electronApp);
       await app.swap.checkAssetFrom(electronApp, swap.accountToCredit.currency.ticker);
       await app.swap.checkAssetTo(electronApp, swap.accountToDebit.currency.ticker);
     },
