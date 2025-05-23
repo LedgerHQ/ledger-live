@@ -91,7 +91,7 @@ jobs:
     name: "Test Libraries"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'libs')}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
+    uses: ./.github/workflows/test-libs-reusable.yml@develop
     secrets: inherit
 
   test-design-system:
