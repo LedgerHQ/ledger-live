@@ -29,10 +29,6 @@ on:
           If you want to run only on a branch or specific commit, you can use either the sha or the branch name instead (prefer the first verion for PRs).
         type: string
         required: false
-      login:
-        description: The GitHub username that triggered the workflow
-        type: string
-        required: false
       base_ref:
         description: The base branch to merge the head into when checking out the code
         type: string
@@ -68,6 +64,15 @@ on:
         description: "[iOS] Test Execution ticket ID. Ex: 'B2CQA-2461'"
         required: false
         type: string
+      speculos_device:
+        description: "Device to be used"
+        required: false
+        type: choice
+        options:
+          - nanoS
+          - nanoSP
+          - nanoX
+        default: nanoSP
 
 # Uncomment to have log-level: trace on detox run and build
 # (cf: apps/ledger-live-mobile/detox.config.js)
@@ -83,6 +88,7 @@ env:
   COINAPPS: ${{ github.workspace }}/coin-apps
   E2E_RUN: ${{ inputs.e2e_tests || github.event_name == 'schedule' }}
   SHOULD_UPLOAD: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || (github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) }}
+  SPECULOS_DEVICE: ${{ inputs.speculos_device }}
 
 jobs:
   detox-tests-ios:
@@ -101,7 +107,6 @@ jobs:
       status: ${{ steps.detox.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
     steps:
-
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
@@ -587,7 +592,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": `- 🤖 Android: ${process.env.ANDROID_STATUS !== 'success' ? '❌' : '✅'} ${{ needs.allure-report-android.outputs.result || 'No test results' }}`
+                  "text": `- 🤖 Android - ${{ inputs.speculos_device }}: ${process.env.ANDROID_STATUS !== 'success' ? '❌' : '✅'} ${{ needs.allure-report-android.outputs.result || 'No test results' }}`
                 }
               }
             ];
