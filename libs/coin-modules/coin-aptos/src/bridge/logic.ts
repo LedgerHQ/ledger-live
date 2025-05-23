@@ -499,7 +499,7 @@ export const mapStakingPositions = (
     return {
       ...sp,
       formattedAmount: formatCurrencyUnit(unit, sp.staked, formatConfig),
-      formattedPending: formatCurrencyUnit(unit, sp.pending, formatConfig),
+      formattedPending: formatCurrencyUnit(unit, sp.pendingInactive, formatConfig),
       formattedAvailable: formatCurrencyUnit(unit, sp.available, formatConfig),
       rank,
       validator,
@@ -523,7 +523,13 @@ export const canWithdraw = (
   return stakingPosition.available.gt(0);
 };
 
-export const getMaxUnstakableAmount = (
+export const canRestake = (
+  stakingPosition: AptosMappedStakingPosition | AptosStakingPosition,
+): boolean => {
+  return stakingPosition.pendingInactive.gt(0);
+};
+// TODO: rename this function
+export const getDelegationOpMaxAmount = (
   account: AptosAccount,
   validatorAddress: string,
   mode: string,
@@ -541,6 +547,8 @@ export const getMaxUnstakableAmount = (
     case "withdraw":
       maxAmount = stakingPosition?.available;
       break;
+    case "restake":
+      maxAmount = stakingPosition?.pendingInactive;
   }
 
   if (maxAmount === undefined || maxAmount.lt(0)) {

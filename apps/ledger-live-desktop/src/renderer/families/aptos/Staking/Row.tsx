@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { AptosMappedStakingPosition } from "@ledgerhq/live-common/families/aptos/types";
 import { Account } from "@ledgerhq/types-live";
-import { canUnstake, canWithdraw } from "@ledgerhq/live-common/families/aptos/logic";
+import { canUnstake, canWithdraw, canRestake } from "@ledgerhq/live-common/families/aptos/logic";
 import { TableLine } from "./Header";
 import DropDown, { DropDownItem } from "~/renderer/components/DropDownSelector";
 import Box from "~/renderer/components/Box/Box";
@@ -85,7 +85,10 @@ const ManageDropDownItem = ({
 type Props = {
   account: Account;
   stakingPosition: AptosMappedStakingPosition;
-  onManageAction: (address: string, action: "MODAL_APTOS_UNSTAKE" | "MODAL_APTOS_WITHDRAW") => void;
+  onManageAction: (
+    address: string,
+    action: "MODAL_APTOS_UNSTAKE" | "MODAL_APTOS_WITHDRAW" | "MODAL_APTOS_RESTAKE",
+  ) => void;
   onExternalLink: (address: string) => void;
 };
 
@@ -104,36 +107,30 @@ export function Row({
 }: Props) {
   const unstakingEnabled = canUnstake(stakingPosition);
   const withdawingEnabled = canWithdraw(stakingPosition);
+  const restakingEnabled = canRestake(stakingPosition);
 
   const onSelect = useCallback(
     (action: (typeof dropDownItems)[number]) => {
-      onManageAction(validatorId, action.key as "MODAL_APTOS_UNSTAKE" | "MODAL_APTOS_WITHDRAW");
+      onManageAction(
+        validatorId,
+        action.key as "MODAL_APTOS_UNSTAKE" | "MODAL_APTOS_WITHDRAW" | "MODAL_APTOS_RESTAKE",
+      );
     },
     [onManageAction, validatorId],
   );
 
-  const parsedAmount = parseFloat(formattedAmount);
-  const parsedAvailable = parseFloat(formattedAvailable);
-  const parsedPending = parseFloat(formattedPending);
-
   const dropDownItems = [
-    parsedAmount > 0 && {
+    unstakingEnabled && {
       key: "MODAL_APTOS_UNSTAKE",
       label: <Trans i18nKey="aptos.stake.unstake" />,
-      disabled: !unstakingEnabled,
-      tooltip: !unstakingEnabled ? <Trans i18nKey="aptos.unstake.disabledTooltip" /> : null,
     },
-    parsedAvailable > 0 && {
+    withdawingEnabled && {
       key: "MODAL_APTOS_WITHDRAW",
       label: <Trans i18nKey="aptos.stake.withdraw" />,
-      disabled: !withdawingEnabled,
-      tooltip: !withdawingEnabled ? <Trans i18nKey="aptos.withdraw.disabledTooltip" /> : null,
     },
-    parsedPending > 0 && {
+    restakingEnabled && {
       key: "MODAL_APTOS_RESTAKE",
       label: <Trans i18nKey="aptos.stake.restake" />,
-      disabled: !withdawingEnabled,
-      tooltip: !withdawingEnabled ? <Trans i18nKey="aptos.restake.disabledTooltip" /> : null,
     },
   ].filter(Boolean);
 

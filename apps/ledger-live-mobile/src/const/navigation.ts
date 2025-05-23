@@ -502,6 +502,7 @@ export enum ScreenName {
   AptosStakingStarted = "AptosStakingStarted",
   AptosUnstakingAmount = "AptosUnstakingAmount",
   AptosWithdrawingAmount = "AptosWithdrawingAmount",
+  AptosRestakingAmount = "AptosRestakingAmount",
   AptosStakingSelectDevice = "AptosStakingSelectDevice",
   AptosStakingConnectDevice = "AptosStakingConnectDevice",
   AptosStakingValidationError = "AptosStakingValidationError",
@@ -514,6 +515,10 @@ export enum ScreenName {
   AptosWithdrawingConnectDevice = "AptosWithdrawingConnectDevice",
   AptosWithdrawingValidationError = "AptosWithdrawingValidationError",
   AptosWithdrawingValidationSuccess = "AptosWithdrawingValidationSuccess",
+  AptosRestakingSelectDevice = "AptosRestakingSelectDevice",
+  AptosRestakingConnectDevice = "AptosRestakingConnectDevice",
+  AptosRestakingValidationError = "AptosRestakingValidationError",
+  AptosRestakingValidationSuccess = "AptosRestakingValidationSuccess",
 
   Newsfeed = "Newsfeed",
 
@@ -666,6 +671,7 @@ export enum NavigatorName {
   AptosStakingFlow = "AptosStakingFlow",
   AptosUnstakingFlow = "AptosUnstakingFlow",
   AptosWithdrawingFlow = "AptosWithdrawingFlow",
+  AptosRestakingFlow = "AptosRestakingFlow",
 
   // Tab
   Main = "Main",

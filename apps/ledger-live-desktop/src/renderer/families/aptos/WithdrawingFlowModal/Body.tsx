@@ -9,7 +9,7 @@ import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import { getMaxUnstakableAmount } from "@ledgerhq/live-common/families/aptos/logic";
+import { getDelegationOpMaxAmount } from "@ledgerhq/live-common/families/aptos/logic";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { St, StepId } from "./types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -84,7 +84,7 @@ function Body({
     const mode = "withdraw";
     const recipient = validatorAddress;
 
-    const maxAmount = getMaxUnstakableAmount(accountProp, recipient, mode);
+    const maxAmount = getDelegationOpMaxAmount(accountProp, recipient, mode);
 
     const newTx = {
       mode,
