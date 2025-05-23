@@ -11,7 +11,7 @@ import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
 import { BehaviorSubject, firstValueFrom, pairwise, startWith, Subscription } from "rxjs";
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
 import { LocalTracer } from "@ledgerhq/logs";
-import { first } from "rxjs/operators";
+import { distinctUntilChanged, first, map } from "rxjs/operators";
 
 const isDeviceSessionNotFoundError = (error: unknown): error is { _tag: "DeviceSessionNotFound" } =>
   typeof error === "object" &&
@@ -155,8 +155,21 @@ export class DeviceManagementKitHIDTransport extends Transport {
           const sessionStateObs = dmk.getDeviceSessionState({
             sessionId: connectedDevice.sessionId,
           });
-          sessionStateSubscription = sessionStateObs.subscribe({
-            next: sessionState => {
+
+          sessionStateSubscription = sessionStateObs.pipe(
+            map(sessionState => ({
+              sessionState: sessionState,
+              isConnected: sessionState.deviceStatus !== DeviceStatus.NOT_CONNECTED,
+            })),
+            /**
+             * We're only interested in the device status change between "NOT_CONNECTED" and others,
+             * so we filter out the rest of the events.
+             * If we don't do this, we emit 2 events for each APDU exchange, so it
+             * will cause performance issues.
+             */
+            distinctUntilChanged((prev, curr) => prev.isConnected === curr.isConnected)
+          ).subscribe({
+            next: ({ sessionState}) => {
               const id = dmkToLedgerDeviceIdMap[connectedDevice.modelId];
               if (sessionState.deviceStatus === DeviceStatus.NOT_CONNECTED) {
                 observer.next({
