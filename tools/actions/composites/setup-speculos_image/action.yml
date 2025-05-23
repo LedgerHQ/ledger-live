@@ -22,7 +22,7 @@ runs:
   steps:
     - name: Generate token
       id: generate-token
-      uses: tibdex/github-app-token@v1
+      uses: tibdex/github-app-token@v2
       with:
         app_id: ${{ inputs.bot_id }}
         private_key: ${{ inputs.bot_key }}
