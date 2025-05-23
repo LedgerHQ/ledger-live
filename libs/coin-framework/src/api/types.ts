@@ -88,7 +88,7 @@ export type TransactionValidation = {
   totalSpent: bigint;
 };
 
-export type FeeEstimation<FeeParameters extends Record<string, bigint> = never> = {
+export type FeeEstimation<> = {
   value: bigint;
   // parameters?: FeeParameters;
   parameters?: {
