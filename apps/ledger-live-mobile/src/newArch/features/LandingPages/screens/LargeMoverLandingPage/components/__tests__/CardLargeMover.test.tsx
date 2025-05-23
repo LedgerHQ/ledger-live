@@ -35,6 +35,8 @@ describe("Card", () => {
         range={KeysPriceChange.day}
         setRange={mockSetRange}
         height={100}
+        currencyIdsArray={["BTC", "ETH"]}
+        loading={false}
       />,
     );
     expect(getByText("ETH")).toBeTruthy();
@@ -50,6 +52,8 @@ describe("Card", () => {
         range={KeysPriceChange.day}
         setRange={mockSetRange}
         height={100}
+        currencyIdsArray={["BTC", "ETH"]}
+        loading={false}
       />,
     );
     expect(getByText(/188,350/)).toBeTruthy();
@@ -68,6 +72,8 @@ describe("Card", () => {
         range={KeysPriceChange.day}
         setRange={mockSetRange}
         height={100}
+        currencyIdsArray={["BTC", "ETH"]}
+        loading={false}
       />,
     );
     const tab = getByText("1W");
