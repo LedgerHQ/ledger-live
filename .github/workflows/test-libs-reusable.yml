@@ -46,7 +46,18 @@ jobs:
         run: pnpm i --filter="!./apps/**"
       - name: Build and Test affected libraries
         id: test-libs
-        run: pnpm run test --continue --filter="!./apps/**" --filter="!./libs/ui/**" --filter="!./tools/**" --filter="!./e2e/mobile/**" --filter="!./apps/ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        run: |
+          for package_json in $(find ./libs -name "package.json"); do
+            lib=$(dirname "$package_json")
+            echo "Processing library at path: $lib"
+            if [ -f "$package_json" ] && jq -e '.scripts.coverage' "$package_json" > /dev/null; then
+              echo "Running coverage script for $lib"
+              pnpm --prefix "$lib" run coverage --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+            else
+              echo "Coverage script not defined for $lib, running test script."
+              pnpm --prefix "$lib" run test --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+            fi
+          done
         shell: bash
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@v4
@@ -61,6 +72,11 @@ jobs:
           script: |
             const fs = require("fs");
             fs.writeFileSync("summary-tests.txt", "${{ steps.test-libs.outcome }}", "utf-8");
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: coverage-libs
+          path: ${{ github.workspace }}/coverage
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
@@ -117,7 +133,6 @@ jobs:
             ${{ github.workspace }}/summary-typecheck.txt
             ${{ github.workspace }}/summary-lint.txt
 
-
   test-docs:
     name: "Libraries Documentation Check"
     runs-on: ubuntu-22.04
@@ -147,7 +162,6 @@ jobs:
           diff=$(git diff --exit-code > /dev/null && echo 0 || echo 1)
           echo "diff=$diff" >> $GITHUB_OUTPUT
           exit $diff
-
 
   report:
     needs: [test-docs, test-libraries, codecheck-libraries]
