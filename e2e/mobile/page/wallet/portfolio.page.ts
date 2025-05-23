@@ -3,8 +3,10 @@ import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class PortfolioPage {
   baseLink = "portfolio";
+  baseAssetName = "assetItem-";
   zeroBalance = "$0.00";
   graphCardBalanceId = "graphCard-balance";
+  graphCardChart = "graphCard-chart";
   assetBalanceId = "asset-balance";
   readOnlyItemsId = "PortfolioReadOnlyItems";
   accountsListView = "PortfolioAccountsList";
@@ -12,9 +14,19 @@ export default class PortfolioPage {
   portfolioSettingsButtonId = "settings-icon";
   addAccountCta = "add-account-cta";
   allocationSectionTitleId = "portfolio-allocation-section";
+  transactionHistorySectionTitleId = "portfolio-transaction-history-section";
+  quickActionBuyButton = "portoflio-quick-action-button-buy";
+  quickActionSwapButton = "portoflio-quick-action-button-swap";
+  quickActionSendButton = "portoflio-quick-action-button-send";
+  quickActionReceiveButton = "portoflio-quick-action-button-receive";
+  quickActionEarnButton = "portoflio-quick-action-button-earn";
+  showAllAssetsButton = "assets-button";
+  seeAllTransactionsButton = "portfolio-seeAll-transaction";
+  operationRowDate = "operationRowDate";
+  assetNameRegExp = new RegExp(`${this.baseAssetName}.*`);
 
   portfolioSettingsButton = async () => await getElementById(this.portfolioSettingsButtonId);
-  assetItemId = (currencyName: string) => `assetItem-${currencyName}`;
+  assetItemId = (currencyName: string) => `${this.baseAssetName}${currencyName}`;
 
   @Step("Navigate to Settings")
   async navigateToSettings() {
@@ -55,5 +67,40 @@ export default class PortfolioPage {
   async goToAccounts(currencyName: string) {
     await scrollToId(this.allocationSectionTitleId, this.accountsListView);
     await tapById(this.assetItemId(currencyName));
+  }
+
+  @Step("Check quick action buttons visibility")
+  async checkQuickActionButtonsVisibility() {
+    await expect(getElementById(this.quickActionBuyButton)).toBeVisible();
+    await expect(getElementById(this.quickActionSwapButton)).toBeVisible();
+    await expect(getElementById(this.quickActionSendButton)).toBeVisible();
+    await expect(getElementById(this.quickActionReceiveButton)).toBeVisible();
+    await expect(getElementById(this.quickActionEarnButton)).toBeVisible();
+  }
+
+  @Step("Check chart visibility")
+  async checkChartVisibility() {
+    await expect(getElementById(this.graphCardChart)).toBeVisible();
+  }
+
+  @Step("Check asset allocation section")
+  async checkAssetAllocationSection() {
+    await scrollToId(this.allocationSectionTitleId);
+    await expect(getElementById(this.allocationSectionTitleId)).toBeVisible();
+    jestExpect(await countElementsById(this.assetNameRegExp)).toBeLessThanOrEqual(5);
+    await expect(getElementById(this.showAllAssetsButton)).toBeVisible();
+    await tapById(this.showAllAssetsButton);
+    jestExpect(await countElementsById(this.assetNameRegExp)).toBeGreaterThan(5);
+  }
+
+  @Step("Check asset transaction history")
+  async checkTransactionAllocationSection() {
+    await scrollToId(this.transactionHistorySectionTitleId);
+    await expect(getElementById(this.transactionHistorySectionTitleId)).toBeVisible();
+    jestExpect(await countElementsById(this.operationRowDate)).toBeLessThanOrEqual(3);
+    await scrollToId(this.seeAllTransactionsButton, undefined, 300, "bottom");
+    await expect(getElementById(this.seeAllTransactionsButton)).toBeVisible();
+    await tapById(this.seeAllTransactionsButton);
+    jestExpect(await countElementsById(this.operationRowDate)).toBeGreaterThan(3);
   }
 }
