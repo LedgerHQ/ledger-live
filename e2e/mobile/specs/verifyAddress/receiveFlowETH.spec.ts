@@ -53,7 +53,7 @@ describe("Receive Flow", () => {
   it("Should access to receive after selecting an existing account", async () => {
     await openReceive();
     await app.receive.selectAsset("XRP");
-    await app.receive.selectAccount("XRP 2");
+    await app.common.selectAccount(Account.XRP_2);
     await app.receive.doNotVerifyAddress();
     await app.receive.expectReceivePageIsDisplayed("XRP", "XRP 2");
   });

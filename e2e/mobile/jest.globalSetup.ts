@@ -94,6 +94,7 @@ export default async function setup(): Promise<void> {
   global.getElementById = NativeElementHelpers.getElementById;
   global.getElementsById = NativeElementHelpers.getElementsById;
   global.getElementByText = NativeElementHelpers.getElementByText;
+  global.getElementByIdAndText = NativeElementHelpers.getElementByIdAndText;
   global.IsIdVisible = NativeElementHelpers.isIdVisible;
   global.tapById = NativeElementHelpers.tapById;
   global.tapByText = NativeElementHelpers.tapByText;
