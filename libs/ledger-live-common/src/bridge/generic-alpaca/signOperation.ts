@@ -43,12 +43,15 @@ export const genericSignOperation =
 
         console.log("IN SIGN OPERATION ALPACA: ", transaction);
         const transactionIntent = transactionToIntent(account, transaction);
-        transactionIntent.sender = {
-          ...transactionIntent.sender,
-          publicKey,
-        };
+        transactionIntent.senderPublicKey = publicKey;
         if (transaction["tag"]) {
-          transactionIntent.destinationTag = transaction["tag"];
+          if (!transactionIntent.memos) {
+            transactionIntent.memos = [];
+          }
+          transactionIntent.memos.push({
+            type: "destinationTag",
+            value: String(transaction["tag"]),
+          });
         }
         const unsigned = await getAlpacaApi(network, kind).craftTransaction({
           ...transactionIntent,
