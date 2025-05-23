@@ -318,15 +318,20 @@ export class AptosAPI {
     };
   }
 
-  async getBalances(address: string): Promise<AptosBalance[]> {
+  async getBalances(address: string, contract_address?: string): Promise<AptosBalance[]> {
+    const whereCondition: any = {
+      owner_address: { _eq: address },
+    };
+
+    if (contract_address) {
+      whereCondition.asset_type = { _eq: APTOS_ASSET_ID };
+    }
+
     const response = await this.aptosClient.getCurrentFungibleAssetBalances({
       options: {
         offset: 0,
         limit: 1000,
-        where: {
-          asset_type: { _eq: APTOS_ASSET_ID }, // to return all asset balances (native / token) we should remove this filter
-          owner_address: { _eq: address },
-        },
+        where: whereCondition,
       },
     });
 
