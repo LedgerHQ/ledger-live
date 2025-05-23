@@ -9,6 +9,7 @@ import {
   HEX_PREFIX,
   TransferLog,
   EventLog,
+  VechainSDKTransaction,
 } from "../types";
 import type { Operation } from "@ledgerhq/types-live";
 import {
@@ -17,7 +18,6 @@ import {
   padAddress,
 } from "../common-logic";
 import { TransferEventSignature } from "../contracts/constants";
-import { Transaction } from "thor-devkit";
 import { getEnv } from "@ledgerhq/live-env";
 
 const BASE_URL = getEnv("API_VECHAIN_THOREST");
@@ -120,12 +120,12 @@ export const getTokenOperations = async (
 
 /**
  * Submit a transaction and return the ID
- * @param tx - The transaction to submit
+ * @param transaction - The transaction to submit
  * @returns transaction ID
  */
-export const submit = async (tx: Transaction): Promise<string> => {
+export const submit = async (transaction: VechainSDKTransaction): Promise<string> => {
   const encodedRawTx = {
-    raw: `${HEX_PREFIX}${tx.encode().toString("hex")}`,
+    raw: `${HEX_PREFIX}${Buffer.from(transaction.encoded).toString("hex")}`,
   };
 
   const { data } = await network<{ id: string }>({

@@ -1,12 +1,11 @@
 import { Account } from "@ledgerhq/types-live";
-import { Transaction as VeChainThorTransaction } from "thor-devkit";
 import {
   calculateTransactionInfo,
   isValid,
   calculateClausesVet,
   calculateClausesVtho,
 } from "../common-logic";
-import { Transaction } from "../types";
+import { Transaction, VechainSDKTransactionClause } from "../types";
 import { getBlockRef } from "../network";
 
 /**
@@ -26,7 +25,7 @@ export const prepareTransaction = async (
 
   let blockRef = "";
 
-  let clauses: Array<VeChainThorTransaction.Clause> = [];
+  let clauses: Array<VechainSDKTransactionClause> = [];
   if (transaction.recipient && isValid(transaction.recipient)) {
     blockRef = await getBlockRef();
     if (isTokenAccount) {

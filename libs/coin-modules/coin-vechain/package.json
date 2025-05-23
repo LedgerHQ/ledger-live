@@ -104,7 +104,7 @@
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "rxjs": "^7.8.1",
-    "thor-devkit": "^2.0.6"
+    "@vechain/sdk-core": "1.2.0-rc.3"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.6.0",

@@ -8,7 +8,7 @@ import { generateNonce } from "../common-logic";
 
 import vechainScanAccounts1 from "../datasets/vechain.scanAccounts.1";
 import { AmountRequired, NotEnoughBalance } from "@ledgerhq/errors";
-import VIP180 from "../contracts/abis/VIP180";
+import { VIP180 } from "../contracts/abis/VIP180";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { NotEnoughVTHO } from "../errors";
 import {
@@ -79,10 +79,12 @@ const vechain: CurrenciesData<Transaction> = {
                 {
                   to: "0x0000000000000000000000000000456e65726779",
                   value: 0,
-                  data: VIP180.transfer.encode(
-                    "0xcf130b42ae31c4931298b4b1c0f1d974b8732957",
-                    "9000000000000000000",
-                  ),
+                  data: VIP180.transfer
+                    .encodeData([
+                      "0xcf130b42ae31c4931298b4b1c0f1d974b8732957",
+                      "9000000000000000000",
+                    ])
+                    .toString(),
                 },
               ],
               gasPriceCoef: DEFAULT_GAS_COEFFICIENT,

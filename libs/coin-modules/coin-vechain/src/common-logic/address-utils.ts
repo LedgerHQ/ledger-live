@@ -1,11 +1,11 @@
-import { address } from "thor-devkit";
+import { Address } from "@vechain/sdk-core";
 import hexUtils from "./hex-utils";
 
-export const isValid = (addr: string): boolean => {
-  try {
-    address.toChecksumed(hexUtils.addPrefix(addr));
-    return true;
-  } catch (e) {
-    return false;
-  }
+/**
+ * Validate the address
+ * @param address - the address to validate
+ * @returns true if the address is valid, false otherwise
+ */
+export const isValid = (address: string): boolean => {
+  return Address.isValid(hexUtils.addPrefix(address));
 };

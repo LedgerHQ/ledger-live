@@ -1,12 +1,17 @@
 import BigNumber from "bignumber.js";
-import { DEFAULT_GAS_COEFFICIENT, HEX_PREFIX } from "../types";
 import crypto from "crypto";
-import { Transaction as ThorTransaction } from "thor-devkit";
-import params from "../contracts/abis/params";
+import { params } from "../contracts/abis/params";
 import { BASE_GAS_PRICE_KEY, PARAMS_ADDRESS } from "../contracts/constants";
 import { query } from "../network";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { Transaction, TransactionInfo, Query } from "../types";
+import {
+  Transaction,
+  TransactionInfo,
+  Query,
+  DEFAULT_GAS_COEFFICIENT,
+  HEX_PREFIX,
+  VechainSDKTransaction,
+} from "../types";
 import { isValid } from "./address-utils";
 import { calculateClausesVet, calculateClausesVtho } from "./logic";
 import { ImpossibleToCalculateAmountAndFees } from "../errors";
@@ -29,7 +34,7 @@ export const generateNonce = (): string => {
  * @returns an estimate of the gas usage
  */
 export const estimateGas = async (t: Transaction): Promise<number> => {
-  const intrinsicGas = ThorTransaction.intrinsicGas(t.body.clauses);
+  const intrinsicGas = VechainSDKTransaction.intrinsicGas(t.body.clauses);
 
   const queryData: Query[] = [];
 
@@ -46,13 +51,13 @@ export const estimateGas = async (t: Transaction): Promise<number> => {
 
   const execGas = response.reduce((sum, out) => sum + out.gasUsed, 0);
 
-  return intrinsicGas + (execGas ? execGas + GAS_COEFFICIENT : 0);
+  return Number(intrinsicGas.wei) + (execGas ? execGas + GAS_COEFFICIENT : 0);
 };
 
 const getBaseGasPrice = async (): Promise<string> => {
   const queryData: Query = {
     to: PARAMS_ADDRESS,
-    data: params.get.encode(BASE_GAS_PRICE_KEY),
+    data: params.get.encodeData([BASE_GAS_PRICE_KEY]).toString(),
   };
 
   const response = await query([queryData]);
