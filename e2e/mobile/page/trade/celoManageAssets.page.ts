@@ -1,5 +1,3 @@
-import { expect } from "detox";
-
 export default class CeloManageAssetsPage {
   titleId = "live-app-title";
   celoLockButton = "celo-lock-button";
@@ -24,11 +22,11 @@ export default class CeloManageAssetsPage {
   @Step("Check manage assets page - CELO")
   async checkManagePage() {
     await this.waitForManageAssets();
-    await expect(getElementById(this.celoLockButton)).toBeVisible();
-    await expect(getElementById(this.celoUnlockButton)).toBeVisible();
-    await expect(getElementById(this.celoWithdrawButton)).not.toBeVisible();
-    await expect(getElementById(this.celoVoteButton)).toBeVisible();
-    await expect(getElementById(this.celoActivateVoteButton)).not.toBeVisible();
-    await expect(getElementById(this.celoRevokeButton)).not.toBeVisible();
+    await detoxExpect(getElementById(this.celoLockButton)).toBeVisible();
+    await detoxExpect(getElementById(this.celoUnlockButton)).toBeVisible();
+    await detoxExpect(getElementById(this.celoWithdrawButton)).not.toBeVisible();
+    await detoxExpect(getElementById(this.celoVoteButton)).toBeVisible();
+    await detoxExpect(getElementById(this.celoActivateVoteButton)).not.toBeVisible();
+    await detoxExpect(getElementById(this.celoRevokeButton)).not.toBeVisible();
   }
 }

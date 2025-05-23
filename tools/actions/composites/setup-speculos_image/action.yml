@@ -11,6 +11,10 @@ inputs:
     description: "GitHub Bot ID"
   bot_key:
     description: "GitHub Bot private key"
+outputs:
+  token:
+    description: "GitHub Bot Token"
+    value: ${{ steps.generate-token.outputs.token }}
 
 runs:
   using: composite
@@ -30,5 +34,6 @@ runs:
         token: ${{ steps.generate-token.outputs.token }}
         path: ${{ inputs.coinapps_path }}
     - name: Pull docker image
+      if: ${{ inputs.speculos_tag }}
       run: docker pull ${{ inputs.speculos_tag }}
       shell: bash
