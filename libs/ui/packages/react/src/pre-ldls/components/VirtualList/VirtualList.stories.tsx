@@ -68,6 +68,10 @@ const meta: Meta<typeof VirtualList<{ i: number }>> = {
       description:
         "Function to render each item in the list. Receives the index of the item as an argument and should return a React node.",
     },
+    scrollToTop: {
+      description:
+        "When set to true, the list will scroll to the top. This is useful when the items change and you want to reset the scroll position.",
+    },
   },
   args: {
     itemHeight: 64,
@@ -79,6 +83,7 @@ const meta: Meta<typeof VirtualList<{ i: number }>> = {
     onVisibleItemsScrollEnd: () => {},
     items,
     renderItem: ({ i }: { i: number }) => <h1 tabIndex={i}>Item #{i}</h1>,
+    scrollToTop: false,
   },
 };
 export default meta;

@@ -1,7 +1,8 @@
-import { Hex, Network } from "@aptos-labs/ts-sdk";
+import { Deserializer, Hex, Network, RawTransaction } from "@aptos-labs/ts-sdk";
 import { createApi } from "../../api";
 import { getEnv } from "@ledgerhq/live-env";
-import { AptosSender } from "../../types/assets";
+import type { AptosSender } from "../../types/assets";
+import { DEFAULT_GAS, DEFAULT_GAS_PRICE } from "../../constants";
 
 describe("createApi", () => {
   const api = createApi({
@@ -53,6 +54,29 @@ describe("createApi", () => {
       });
 
       expect(fees.value).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  describe("craftTransaction", () => {
+    it("returns a RawTransaction serialized into an hexadecimal string", async () => {
+      const hex = await api.craftTransaction(
+        {
+          amount: 1n,
+          sender: sender,
+          recipient: recipient.freshAddress,
+          type: "send",
+          asset: { type: "native" },
+        },
+        0n,
+      );
+
+      const rawTx = RawTransaction.deserialize(
+        new Deserializer(Hex.fromHexString(hex).toUint8Array()),
+      );
+
+      expect(rawTx.sender.toString()).toBe(sender.freshAddress);
+      expect(rawTx.gas_unit_price.toString()).toBe(DEFAULT_GAS_PRICE.toString());
+      expect(rawTx.max_gas_amount.toString()).toBe(DEFAULT_GAS.toString());
     });
   });
 });

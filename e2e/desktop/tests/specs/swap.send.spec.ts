@@ -27,110 +27,131 @@ const swaps = [
     fromAccount: Account.ETH_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
     xrayTicket: "B2CQA-2750, B2CQA-3135, B2CQA-620",
+    tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
     fromAccount: Account.BTC_NATIVE_SEGWIT_1,
     toAccount: Account.ETH_1,
     xrayTicket: "B2CQA-2744, B2CQA-2432",
+    tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
     fromAccount: Account.ETH_USDT_1,
     toAccount: Account.ETH_1,
     xrayTicket: "B2CQA-2752, B2CQA-2048",
+    tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
     fromAccount: Account.ETH_1,
     toAccount: Account.SOL_1,
     xrayTicket: "B2CQA-2748",
+    tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
     fromAccount: Account.ETH_1,
     toAccount: Account.ETH_USDT_1,
     xrayTicket: "B2CQA-2749",
+    tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
     fromAccount: Account.BTC_NATIVE_SEGWIT_1,
     toAccount: Account.SOL_1,
     xrayTicket: "B2CQA-2747",
+    tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
     fromAccount: Account.BTC_NATIVE_SEGWIT_1,
     toAccount: Account.ETH_USDT_1,
     xrayTicket: "B2CQA-2746",
+    tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
     fromAccount: Account.ETH_USDT_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
     xrayTicket: "B2CQA-2753",
+    tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
     fromAccount: Account.ETH_USDT_1,
     toAccount: Account.SOL_1,
     xrayTicket: "B2CQA-2751",
+    tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
     fromAccount: Account.SOL_1,
     toAccount: Account.ETH_1,
     xrayTicket: "B2CQA-2775",
+    tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
     fromAccount: Account.SOL_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
     xrayTicket: "B2CQA-2776",
+    tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
     fromAccount: Account.SOL_1,
     toAccount: Account.ETH_USDT_1,
     xrayTicket: "B2CQA-2777",
+    tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
     fromAccount: Account.ETH_USDC_1,
     toAccount: Account.ETH_1,
     xrayTicket: "B2CQA-2830",
+    tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
     fromAccount: Account.ETH_USDC_1,
     toAccount: Account.SOL_1,
     xrayTicket: "B2CQA-2831",
+    tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
     fromAccount: Account.ETH_USDC_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
     xrayTicket: "B2CQA-2832",
+    tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
     fromAccount: Account.ETH_1,
     toAccount: Account.DOT_1,
     xrayTicket: "B2CQA-3017",
+    tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
     fromAccount: Account.XRP_1,
     toAccount: Account.ETH_USDC_1,
     xrayTicket: "B2CQA-3075",
+    tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
     fromAccount: Account.ETH_1,
     toAccount: Account.XRP_1,
     xrayTicket: "B2CQA-3076",
+    tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
     fromAccount: Account.XRP_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
     xrayTicket: "B2CQA-3077",
+    tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
     fromAccount: Account.BTC_NATIVE_SEGWIT_1,
     toAccount: Account.LTC_1,
     xrayTicket: "B2CQA-3078",
+    tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
     fromAccount: Account.APTOS_1,
     toAccount: Account.SOL_1,
     xrayTicket: "B2CQA-3081",
+    tag: ["@NanoSP", "@NanoX"],
   },
 ];
 
-for (const { fromAccount, toAccount, xrayTicket } of swaps) {
+for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
   test.describe("Swap - Accepted (without tx broadcast)", () => {
     setupEnv(true);
 
@@ -168,6 +189,7 @@ for (const { fromAccount, toAccount, xrayTicket } of swaps) {
     test(
       `Swap ${fromAccount.currency.name} to ${toAccount.currency.name}`,
       {
+        tag: tag,
         annotation: {
           type: "TMS",
           description: xrayTicket,

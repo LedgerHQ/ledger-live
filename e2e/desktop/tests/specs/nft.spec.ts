@@ -35,6 +35,7 @@ test.describe.skip("send NFT to ENS address", () => {
   test(
     "Send NFT to ENS address",
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2203",
@@ -90,6 +91,7 @@ test.describe.skip("The user can see his NFT floor price", () => {
   test(
     "User can see his NFT floor price",
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: {
         type: "TMS",
         description: "B2CQA-659",
@@ -138,6 +140,7 @@ for (const account of accounts) {
     test(
       `User displays all the nfts from his ${account.account.currency.name} account`,
       {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
         annotation: {
           type: "TMS",
           description: account.xrayTicket1,
@@ -173,6 +176,7 @@ for (const account of accounts) {
     test(
       `User displays his ${account.account.currency.name} nft collection`,
       {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
         annotation: {
           type: "TMS",
           description: account.xrayTicket2,

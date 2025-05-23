@@ -69,10 +69,13 @@ export const useSearch = ({
   );
 
   useEffect(() => {
-    if (defaultValue && defaultValue.trim().length > 0) {
-      handleSearch(defaultValue);
+    if (defaultValue && defaultValue.trim().length >= 2) {
+      const results = fuse.search(defaultValue).map(result => result.item);
+      setItemsToDisplay(results);
+    } else {
+      setItemsToDisplay(items);
     }
-  }, [defaultValue, handleSearch]);
+  }, [defaultValue, fuse, items, setItemsToDisplay]);
 
   return {
     searchQuery,

@@ -11,6 +11,7 @@ type SelectAssetProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
   source: string;
   flow: string;
+  scrollToTop: boolean;
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
 };
 
@@ -26,6 +27,7 @@ export const SelectAsset = ({
   assetsToDisplay,
   source,
   flow,
+  scrollToTop,
   onAssetSelected,
 }: SelectAssetProps) => {
   const shouldDisplayLoading = !assetTypes || assetTypes.length === 0;
@@ -67,6 +69,7 @@ export const SelectAsset = ({
         }}
       >
         <AssetList
+          scrollToTop={scrollToTop}
           assets={assetsToDisplay}
           onClick={onClick}
           onVisibleItemsScrollEnd={onVisibleItemsScrollEnd}

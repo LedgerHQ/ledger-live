@@ -23,6 +23,7 @@ const meta: Meta<typeof AssetList> = {
       id: "bitcoin",
     })),
     onClick: testFn,
+    scrollToTop: false,
   },
 };
 export default meta;

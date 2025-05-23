@@ -3,22 +3,22 @@ import { ApolloClient, InMemoryCache } from "@apollo/client";
 import {
   AccountData,
   Aptos,
-  AptosApiType,
   AptosConfig,
   Ed25519PublicKey,
   GasEstimation,
   InputEntryFunctionData,
   InputGenerateTransactionOptions,
   MimeType,
-  post,
   RawTransaction,
   SimpleTransaction,
   TransactionResponse,
   UserTransactionResponse,
-  PostRequestOptions,
   Block,
   AptosSettings,
   MoveFunctionId,
+  Hex,
+  postAptosFullNode,
+  PendingTransactionResponse,
 } from "@aptos-labs/ts-sdk";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
@@ -140,16 +140,17 @@ export class AptosAPI {
     });
   }
 
-  async broadcast(signature: string): Promise<string> {
-    const txBytes = Uint8Array.from(Buffer.from(signature, "hex"));
-    const pendingTx = await post<PostRequestOptions, TransactionResponse>({
-      contentType: MimeType.BCS_SIGNED_TRANSACTION,
+  async broadcast(tx: string): Promise<string> {
+    const txBytes = Hex.fromHexString(tx).toUint8Array();
+
+    const pendingTx = await postAptosFullNode<Uint8Array, PendingTransactionResponse>({
       aptosConfig: this.aptosClient.config,
       body: txBytes,
       path: "transactions",
-      type: AptosApiType.FULLNODE,
       originMethod: "",
+      contentType: MimeType.BCS_SIGNED_TRANSACTION,
     });
+
     return pendingTx.data.hash;
   }
 
