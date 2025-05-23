@@ -94,7 +94,7 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
       <TrackScreen name={PAGE_NAME} initialRange={initialRange} currencyIds={currencyIds} />
       <StickyHeader />
       <Flex paddingTop={40}>
-        {loading || loadingChart ? (
+        {loading && loadingChart ? (
           <LoadingIndicator height={height} />
         ) : (
           <Flex>
