@@ -63,12 +63,13 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
 
   return useMemo(
     () => ({
-      "account.request": ({ accounts$, currencies, onSuccess, onCancel }) => {
+      "account.request": ({ accounts$, currencies, drawerConfiguration, onSuccess, onCancel }) => {
         ipcRenderer.send("show-app", {});
 
         modularDrawerVisible
           ? openAssetAndAccountDrawer({
               accounts$,
+              drawerConfiguration,
               currencies,
               onSuccess,
               onCancel,
