@@ -45,7 +45,7 @@ function OptionRow({ data: { validatorId, validator, formattedAvailable } }: Opt
   return (
     <Box key={validatorId} horizontal alignItems="center" justifyContent="space-between">
       <Box horizontal alignItems="center">
-        <ValidatorIcon validator={validator} />
+        <ValidatorIcon validatorAddress={validator?.address} />
         <Text ml={2} ff="Inter|Medium">
           {validatorId}
         </Text>

@@ -1,5 +1,7 @@
 import { getEnv } from "@ledgerhq/live-env";
 
+export * from "./IconGenerator";
+
 export function endpointByCurrencyId(currencyId: string): string {
   const endpoints: Record<string, string> = {
     aptos: getEnv("API_APTOS_PROXY"),

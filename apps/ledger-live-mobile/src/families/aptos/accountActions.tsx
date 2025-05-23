@@ -4,7 +4,7 @@ import { IconsLegacy } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/types-live";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
-import { canStake } from "@ledgerhq/live-common/families/aptos/logic";
+// import { canStake } from "@ledgerhq/live-common/families/aptos/logic";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 import { NavigatorName, ScreenName } from "~/const";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
@@ -18,7 +18,8 @@ const getMainActions = ({
   parentAccount: Account;
   parentRoute: RouteProp<ParamListBase, ScreenName>;
 }): ActionButtonEvent[] => {
-  const stakingDisabled = !canStake(account);
+  // const stakingDisabled = !canStake(account);
+  const stakingDisabled = false;
   const startWithValidator =
     account.aptosResources && (account.aptosResources?.stakingPositions ?? []).length > 0;
   const label = getStakeLabelLocaleBased();
