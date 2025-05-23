@@ -8,7 +8,6 @@ import polkadotAPI from "../network";
 export const getAccountShape: GetAccountShape<PolkadotAccount> = async info => {
   await loadPolkadotCrypto();
   const { address, initialAccount, currency, derivationMode } = info;
-  console.log(address, initialAccount, currency, derivationMode);
   // Retrieve account info
   const {
     blockHeight,
