@@ -1480,6 +1480,9 @@ importers:
       '@types/react-native-vector-icons':
         specifier: 6.4.18
         version: 6.4.18(@types/react@18.2.73)
+      '@types/react-native-video':
+        specifier: 5.0.20
+        version: 5.0.20(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
       '@types/react-redux':
         specifier: 7.1.33
         version: 7.1.33(@types/react@18.2.73)
@@ -18537,6 +18540,14 @@ packages:
 
   '@types/react-native-vector-icons@6.4.18':
     resolution: {integrity: sha512-YGlNWb+k5laTBHd7+uZowB9DpIK3SXUneZqAiKQaj1jnJCZM0x71GDim5JCTMi4IFkhc9m8H/Gm28T5BjyivUw==}
+    peerDependencies:
+      '@types/react': '*'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+
+  '@types/react-native-video@5.0.20':
+    resolution: {integrity: sha512-CdD4T43uEKzTNJ/RylTDViNuGuyOPWQUEuA1Y9GY8T+HiE9cwYw1zQNqk8a7zz9GHamlPfJQ+bYoEE9OWjZ/6g==}
     peerDependencies:
       '@types/react': '*'
     peerDependenciesMeta:
@@ -48365,6 +48376,22 @@ snapshots:
       '@types/react-native': 0.70.19(@types/react@18.2.73)
     optionalDependencies:
       '@types/react': 18.2.73
+
+  '@types/react-native-video@5.0.20(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)':
+    dependencies:
+      react-native: 0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
+    optionalDependencies:
+      '@types/react': 18.2.73
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@babel/preset-env'
+      - '@react-native-community/cli'
+      - bufferutil
+      - metro
+      - metro-transform-worker
+      - react
+      - supports-color
+      - utf-8-validate
 
   '@types/react-native@0.70.19(@types/react@18.2.73)':
     optionalDependencies:
