@@ -1,6 +1,15 @@
 import BigNumber from "bignumber.js";
-import network from "@ledgerhq/live-network/network";
-import { AccountResponse, VetTxsQuery, TokenTxsQuery, Query, QueryResponse } from "../types";
+import network from "@ledgerhq/live-network";
+import {
+  AccountResponse,
+  VetTxsQuery,
+  TokenTxsQuery,
+  Query,
+  QueryResponse,
+  HEX_PREFIX,
+  TransferLog,
+  EventLog,
+} from "../types";
 import type { Operation } from "@ledgerhq/types-live";
 import {
   mapVetTransfersToOperations,
@@ -9,13 +18,12 @@ import {
 } from "../common-logic";
 import { TransferEventSignature } from "../contracts/constants";
 import { Transaction } from "thor-devkit";
-import { HEX_PREFIX } from "../types";
 import { getEnv } from "@ledgerhq/live-env";
 
 const BASE_URL = getEnv("API_VECHAIN_THOREST");
 
 export const getAccount = async (address: string): Promise<AccountResponse> => {
-  const { data } = await network({
+  const { data } = await network<AccountResponse>({
     method: "GET",
     url: `${BASE_URL}/accounts/${address}`,
   });
@@ -24,7 +32,7 @@ export const getAccount = async (address: string): Promise<AccountResponse> => {
 };
 
 export const getLastBlockHeight = async (): Promise<number> => {
-  const { data } = await network({
+  const { data } = await network<{ number: number }>({
     method: "GET",
     url: `${BASE_URL}/blocks/best`,
   });
@@ -53,7 +61,7 @@ export const getOperations = async (
     order: "desc",
   };
 
-  const { data } = await network({
+  const { data } = await network<TransferLog[]>({
     method: "POST",
     url: `${BASE_URL}/logs/transfer`,
     data: JSON.stringify(query),
@@ -100,7 +108,7 @@ export const getTokenOperations = async (
     order: "desc",
   };
 
-  const { data } = await network({
+  const { data } = await network<EventLog[]>({
     method: "POST",
     url: `${BASE_URL}/logs/event`,
     data: JSON.stringify(query),
@@ -120,7 +128,7 @@ export const submit = async (tx: Transaction): Promise<string> => {
     raw: `${HEX_PREFIX}${tx.encode().toString("hex")}`,
   };
 
-  const { data } = await network({
+  const { data } = await network<{ id: string }>({
     method: "POST",
     url: `${BASE_URL}/transactions`,
     data: encodedRawTx,
@@ -138,7 +146,7 @@ export const submit = async (tx: Transaction): Promise<string> => {
  * @returns a result of the query
  */
 export const query = async (queryData: Query[]): Promise<QueryResponse[]> => {
-  const { data } = await network({
+  const { data } = await network<QueryResponse[]>({
     method: "POST",
     url: `${BASE_URL}/accounts/*`,
     data: { clauses: queryData },
@@ -152,7 +160,7 @@ export const query = async (queryData: Query[]): Promise<QueryResponse[]> => {
  * @returns the block ref of head
  */
 export const getBlockRef = async (): Promise<string> => {
-  const { data } = await network({
+  const { data } = await network<{ id: string }>({
     method: "GET",
     url: `${BASE_URL}/blocks/best`,
   });
@@ -166,7 +174,7 @@ export const getBlockRef = async (): Promise<string> => {
  * @return the fee paid in VTHO or 0
  */
 export const getFees = async (transactionID: string): Promise<BigNumber> => {
-  const { data } = await network({
+  const { data } = await network<{ paid: string }>({
     method: "GET",
     url: `${BASE_URL}/transactions/${transactionID}/receipt`,
     params: { id: transactionID },
