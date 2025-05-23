@@ -39,6 +39,47 @@ describe("getBalance", () => {
 
     expect(balance).toBeDefined();
     expect(balance).toMatchObject([{ value: BigInt(10), asset: { type: "native" } }]);
-    expect(mockGetBalances).toHaveBeenCalledWith(accountAddress);
+    expect(mockGetBalances).toHaveBeenCalledWith(accountAddress, undefined);
+  });
+
+  it("should return empty array when no contract_address and no data", async () => {
+    mockGetBalances.mockResolvedValue([]);
+
+    const accountAddress = "0xno_contract_and_no_data";
+    const client = new AptosAPI("aptos");
+    const balance = await getBalance(client, accountAddress);
+
+    expect(balance).toEqual([]);
+    //expect(mockGetBalances).toHaveBeenCalledWith(accountAddress);
+  });
+
+  it("should return balance with 'native' contract_address (APTOS_ASSET_ID)", async () => {
+    mockGetBalances.mockResolvedValue([{ asset_type: APTOS_ASSET_ID, amount: new BigNumber(15) }]);
+
+    const accountAddress = "0xcontract_present";
+    const contractAddress = APTOS_ASSET_ID;
+    const client = new AptosAPI("aptos");
+    const balance = await getBalance(client, accountAddress, contractAddress);
+
+    expect(balance).toBeDefined();
+    expect(balance).toMatchObject([{ value: BigInt(15), asset: { type: "native" } }]);
+    expect(mockGetBalances).toHaveBeenCalledWith(accountAddress, contractAddress);
+  });
+
+  it("should return token balance when contract_address is a token", async () => {
+    const TOKEN_ASSET_ID = "0x1::my_token::Token";
+    mockGetBalances.mockResolvedValue([{ asset_type: TOKEN_ASSET_ID, amount: new BigNumber(25) }]);
+
+    const accountAddress = "0xtoken_holder";
+    const contractAddress = TOKEN_ASSET_ID;
+    const client = new AptosAPI("aptos");
+
+    const balance = await getBalance(client, accountAddress, contractAddress);
+
+    expect(balance).toBeDefined();
+    expect(balance).toMatchObject([
+      { value: BigInt(25), asset: { type: "token", asset_type: TOKEN_ASSET_ID } },
+    ]);
+    expect(mockGetBalances).toHaveBeenCalledWith(accountAddress, contractAddress);
   });
 });

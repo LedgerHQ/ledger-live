@@ -634,7 +634,7 @@ describe("Aptos API", () => {
       const address = "0x42";
 
       const api = new AptosAPI("aptos");
-      const balances = await api.getBalances(address);
+      const balances = await api.getBalances(address, APTOS_ASSET_ID);
 
       expect(mockGetCurrentFungibleAssetBalances).toHaveBeenCalledWith({
         options: {
