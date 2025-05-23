@@ -125,43 +125,70 @@ describe("Aptos API", () => {
     });
 
     it("get coin balance", async () => {
+      const expectedBalance = new BigNumber(1234);
       mockedAptos.mockImplementation(() => ({
-        view: jest.fn().mockReturnValue(["1234"]),
+        getCurrentFungibleAssetBalances: jest.fn().mockResolvedValue([
+          {
+            asset_type: APTOS_ASSET_ID,
+            amount: expectedBalance,
+          },
+        ]),
       }));
 
-      token.tokenType = "coin";
+      token.tokenType = APTOS_ASSET_ID;
       const api = new AptosAPI("aptos");
-      const balance = await api.getBalance("address", token);
+      const balance = await api.getBalances("address", token.tokenType);
 
-      expect(balance).toEqual(new BigNumber(1234));
+      expect(balance).toEqual([
+        {
+          contractAddress: APTOS_ASSET_ID,
+          amount: expectedBalance,
+        },
+      ]);
     });
 
     it("get fungible assets balance", async () => {
+      const expectedBalance = new BigNumber(1234);
+      const assetType = "0x1::fungible_asset::Metadata";
       mockedAptos.mockImplementation(() => ({
-        view: jest.fn().mockReturnValue(["12345"]),
+        getCurrentFungibleAssetBalances: jest.fn().mockResolvedValue([
+          {
+            asset_type: assetType,
+            amount: expectedBalance,
+          },
+        ]),
       }));
 
-      token.tokenType = "fungible_asset";
+      token.tokenType = assetType;
 
       const api = new AptosAPI("aptos");
-      const balance = await api.getBalance("address", token);
+      const balance = await api.getBalances("address", token.tokenType);
 
-      expect(balance).toEqual(new BigNumber(12345));
+      expect(balance).toEqual([
+        {
+          contractAddress: assetType,
+          amount: expectedBalance,
+        },
+      ]);
     });
 
     it("return 0 balace if could not retrieve proper balance of fungible assets", async () => {
+      const expectedBalance = new BigNumber(0);
       mockedAptos.mockImplementation(() => ({
-        view: jest.fn().mockImplementation(() => {
+        getCurrentFungibleAssetBalances: jest.fn().mockImplementation(() => {
           throw new Error("error");
         }),
       }));
 
-      token.tokenType = "fungible_asset";
-
       const api = new AptosAPI("aptos");
-      const balance = await api.getBalance("address", token);
+      const balance = await api.getBalances("address", "0x42");
 
-      expect(balance).toEqual(new BigNumber(0));
+      expect(balance).toEqual([
+        {
+          contractAddress: "",
+          amount: expectedBalance,
+        },
+      ]);
     });
   });
 
@@ -177,6 +204,12 @@ describe("Aptos API", () => {
           block_height: "1",
           block_hash: "83ca6d",
         }),
+        getCurrentFungibleAssetBalances: jest.fn().mockResolvedValue([
+          {
+            asset_type: APTOS_ASSET_ID,
+            amount: new BigNumber(123),
+          },
+        ]),
       }));
 
       mockedNetwork.mockResolvedValue(
@@ -307,6 +340,12 @@ describe("Aptos API", () => {
           block_height: "1",
           block_hash: "83ca6d",
         }),
+        getCurrentFungibleAssetBalances: jest.fn().mockResolvedValue([
+          {
+            asset_type: APTOS_ASSET_ID,
+            amount: new BigNumber(123),
+          },
+        ]),
       }));
 
       mockedNetwork.mockResolvedValue(
@@ -361,6 +400,12 @@ describe("Aptos API", () => {
           block_height: "1",
           block_hash: "83ca6d",
         }),
+        getCurrentFungibleAssetBalances: jest.fn().mockResolvedValue([
+          {
+            asset_type: APTOS_ASSET_ID,
+            amount: new BigNumber(123),
+          },
+        ]),
       }));
 
       mockedNetwork.mockResolvedValue(
@@ -398,8 +443,7 @@ describe("Aptos API", () => {
       }));
 
       const api = new AptosAPI("aptos");
-      const accountInfo = await api.getAccountInfo("APTOS_1_ADDRESS", "1");
-
+      const accountInfo = await api.getAccountInfo(APTOS_ASSET_ID, "1");
       expect(accountInfo.balance).toEqual(new BigNumber(123));
       expect(accountInfo.transactions).toEqual([null]);
       expect(accountInfo.blockHeight).toEqual(999);
@@ -794,12 +838,10 @@ describe("Aptos API", () => {
       const address = "0x42";
 
       const api = new AptosAPI("aptos");
-      const balances = await api.getBalances(address);
+      const balances = await api.getBalances(address, APTOS_ASSET_ID);
 
       expect(mockGetCurrentFungibleAssetBalances).toHaveBeenCalledWith({
         options: {
-          offset: 0,
-          limit: 1000,
           where: {
             asset_type: { _eq: APTOS_ASSET_ID },
             owner_address: { _eq: address },
