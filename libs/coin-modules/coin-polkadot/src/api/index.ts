@@ -18,7 +18,7 @@ import {
 } from "../logic";
 import { PolkadotAsset } from "../types";
 
-export function createApi(config: PolkadotConfig): Api<PolkadotAsset> {
+export function createApi(config: PolkadotConfig): Api<PolkadotAsset, never, never> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {

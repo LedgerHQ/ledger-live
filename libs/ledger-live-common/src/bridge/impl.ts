@@ -6,14 +6,25 @@ import jsBridges from "../generated/bridge/js";
 import mockBridges from "../generated/bridge/mock";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
+import { getAlpacaCurrencyBridge } from "./generic-alpaca/currencyBridge";
+import { getAlpacaAccountBridge } from "./generic-alpaca/accountBridge";
+
+const alpacaized = {
+  xrp: true,
+};
 
 export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   if (getEnv("MOCK")) {
     const mockBridge = mockBridges[currency.family];
+
     if (mockBridge) return mockBridge.currencyBridge;
     throw new CurrencyNotSupported("no mock implementation available for currency " + currency.id, {
       currencyName: currency.id,
     });
+  }
+
+  if (alpacaized[currency.family]) {
+    return getAlpacaCurrencyBridge(currency.family, "local");
   }
 
   const jsBridge = jsBridges[currency.family];
@@ -57,9 +68,13 @@ export function getAccountBridgeByFamily(family: string, accountId?: string): Ac
     }
   }
 
+  if (alpacaized[family]) {
+    return getAlpacaAccountBridge(family, "local");
+  }
+
   const jsBridge = jsBridges[family];
   if (!jsBridge) {
-    throw new CurrencyNotSupported("currency bridge not found " + family);
+    throw new CurrencyNotSupported("account bridge not found " + family);
   }
   return jsBridge.accountBridge;
 }

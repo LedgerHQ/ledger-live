@@ -27,7 +27,9 @@ export function createApi(config: BoilerplateConfig): Api<BoilerplateAsset> {
   };
 }
 
-async function craft(transactionIntent: TransactionIntent<BoilerplateAsset>): Promise<string> {
+async function craft(
+  transactionIntent: TransactionIntent<BoilerplateAsset, never, string>,
+): Promise<string> {
   const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
   const tx = await craftTransaction(
     { address: transactionIntent.sender, nextSequenceNumber },
@@ -40,7 +42,7 @@ async function craft(transactionIntent: TransactionIntent<BoilerplateAsset>): Pr
 }
 
 async function estimate(
-  transactionIntent: TransactionIntent<BoilerplateAsset>,
+  transactionIntent: TransactionIntent<BoilerplateAsset, never, string>,
 ): Promise<FeeEstimation> {
   const { serializedTransaction } = await craftTransaction(
     { address: transactionIntent.sender },
