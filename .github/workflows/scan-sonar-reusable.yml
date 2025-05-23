@@ -38,7 +38,7 @@ jobs:
   merge-coverage:
     name: "Merge Coverage Files"
     runs-on: ubuntu-22.04
-    needs: [download-desktop-coverage, download-mobile-coverage]
+    needs: [download-desktop-coverage, download-mobile-coverage, download-libs-coverage]
     steps:
       - name: Merge coverage files
         run: |
@@ -72,22 +72,6 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-
-      # - name: Get Coverage of all affected packages
-      #   run: |
-      #     paths="${{ needs.determine-affected.outputs.paths }}"
-      #     paths="${paths#[}"; paths="${paths%]}"
-      #     IFS=',' read -r -a paths_array <<< "$paths"
-      #     for path in "${paths_array[@]}"; do
-      #       if [ -f "$path/coverage/lcov.info" ] && [ -f "$path/coverage/sonar-executionTests-report.xml" ]; then
-      #         echo "Copying coverage files for $path"
-      #         cat $path/coverage/lcov.info >> ./lcov.info
-      #         cat $path/coverage/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
-      #       else
-      #         echo "Skipping $path: no coverage reports found."
-      #       fi
-      #     done
-      #   shell: bash
 
       - name: SonarQubeScan
         uses: SonarSource/sonarqube-scan-action@v4
