@@ -105,7 +105,7 @@ export const SelectAccountFlowStory: Story = {
     expect(onAccountSelected).toHaveBeenCalledWith(detailedAccount);
     expect(track).lastCalledWith("account_clicked", {
       currency: "BTC",
-      flow: "flow",
+      flow: "Modular Account Flow",
       page: "Modular Account Selection",
     });
   },
