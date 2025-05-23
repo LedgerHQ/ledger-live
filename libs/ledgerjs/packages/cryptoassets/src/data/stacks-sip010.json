@@ -29,7 +29,7 @@
   [
     "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM",
     "auto-alex-v3",
-    "",
+    "auto-alex-v3",
     "LiALEX",
     "LiALEX",
     8,
@@ -47,7 +47,7 @@
   [
     "SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K",
     "token-aewbtc",
-    "",
+    "aeWBTC",
     "Bridged wBTC",
     "aeWBTC",
     8,
@@ -74,7 +74,7 @@
   [
     "SM26NBC8SFHNW4P1Y4DFH27974P56WN86C92HPEHH",
     "token-lqstx",
-    "",
+    "lqstx",
     "LiSTX",
     "LiSTX",
     6,
@@ -83,7 +83,7 @@
   [
     "SM26NBC8SFHNW4P1Y4DFH27974P56WN86C92HPEHH",
     "token-vlqstx",
-    "",
+    "vlqstx",
     "vLiSTX",
     "vLiSTX",
     6,
@@ -92,7 +92,7 @@
   [
     "SP673Z4BPB4R73359K9HE55F2X91V5BJTN5SXZ5T",
     "token-liabtc",
-    "",
+    "liabtc",
     "LiaBTC",
     "LiaBTC",
     8,
@@ -110,9 +110,18 @@
   [
     "SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG",
     "usdh-token-v1",
-    "susdh",
+    "usdh",
     "Hermetica USDh",
     "USDh",
+    8,
+    false
+  ],
+  [
+    "SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG",
+    "susdh-token-v1",
+    "susdh",
+    "Hermetica sUSDh",
+    "sUSDh",
     8,
     false
   ],
@@ -137,7 +146,7 @@
   [
     "SP14NS8MVBRHXMM96BQY0727AJ59SWPV7RMHC0NCG",
     "pontis-bridge-pBTC",
-    "",
+    "bridge-token",
     "Pontis Bitcoin",
     "pBTC",
     8,
@@ -146,7 +155,7 @@
   [
     "SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR",
     "arkadiko-token",
-    "",
+    "diko",
     "Arkadiko Token",
     "DIKO",
     6,
@@ -155,7 +164,7 @@
   [
     "SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9",
     "brc20-trio",
-    "",
+    "brc20-trio",
     "Bridged TRIO (BRC20)",
     "TRIO",
     8,
@@ -173,7 +182,7 @@
   [
     "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
     "charisma-token",
-    "",
+    "charisma",
     "Charisma",
     "CHA",
     6,
@@ -218,7 +227,7 @@
   [
     "SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE",
     "kangaroo",
-    "",
+    "kangaroo",
     "Kangaroo",
     "ROO",
     6,
