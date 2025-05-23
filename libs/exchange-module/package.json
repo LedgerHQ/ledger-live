@@ -35,7 +35,8 @@
   },
   "dependencies": {
     "@ledgerhq/wallet-api-client": "^1.8.0",
-    "@ledgerhq/wallet-api-core": "^1.20.0"
+    "@ledgerhq/wallet-api-core": "^1.20.0",
+    "bignumber.js": "9.1.2"
   },
   "devDependencies": {
     "@types/node": "^22.10.10"

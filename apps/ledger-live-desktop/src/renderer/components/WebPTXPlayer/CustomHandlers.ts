@@ -17,7 +17,6 @@ import WebviewErrorDrawer from "~/renderer/screens/exchange/Swap2/Form/WebviewEr
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const dispatch = useDispatch();
   const { setDrawer } = React.useContext(context);
-
   const tracking = useMemo(
     () =>
       trackingWrapper(
@@ -85,6 +84,27 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
           },
           "custom.isReady": async () => {
             console.info("Earn Live App Loaded");
+          },
+          "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
+            dispatch(
+              openExchangeDrawer({
+                type: "EXCHANGE_COMPLETE",
+                ...exchangeParams,
+                onResult: operation => {
+                  if (operation && exchangeParams.swapId) {
+                    // return success to swap live app
+                    onSuccess({
+                      operationHash: operation.hash,
+                      swapId: exchangeParams.swapId,
+                    });
+                  }
+                },
+                onCancel: (error: Error) => {
+                  console.error(error);
+                  onCancel(error);
+                },
+              }),
+            );
           },
         },
       }),
