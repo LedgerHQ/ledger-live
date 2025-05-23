@@ -1,24 +1,24 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 
 import {
-  AccountData,
+  type AccountData,
   Aptos,
   AptosConfig,
   Ed25519PublicKey,
-  GasEstimation,
-  InputEntryFunctionData,
-  InputGenerateTransactionOptions,
+  type GasEstimation,
+  type InputEntryFunctionData,
+  type InputGenerateTransactionOptions,
   MimeType,
-  RawTransaction,
-  SimpleTransaction,
-  TransactionResponse,
-  UserTransactionResponse,
-  Block,
-  AptosSettings,
-  MoveFunctionId,
+  type RawTransaction,
+  type SimpleTransaction,
+  type TransactionResponse,
+  type UserTransactionResponse,
+  type Block,
+  type AptosSettings,
+  type MoveFunctionId,
   Hex,
   postAptosFullNode,
-  PendingTransactionResponse,
+  type PendingTransactionResponse,
 } from "@aptos-labs/ts-sdk";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
@@ -26,15 +26,19 @@ import BigNumber from "bignumber.js";
 import isUndefined from "lodash/isUndefined";
 import { APTOS_ASSET_ID, DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "../constants";
 import { isTestnet } from "../bridge/logic";
-import type { AptosTransaction, TransactionOptions } from "../types";
+import type { AptosBalance, AptosTransaction, TransactionOptions } from "../types";
 import { GetAccountTransactionsData, GetAccountTransactionsDataGt } from "./graphql/queries";
-import {
+import type {
   GetAccountTransactionsDataQuery,
   GetAccountTransactionsDataGtQueryVariables,
 } from "./graphql/types";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { BlockInfo, FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
-import { AptosAsset, AptosExtra, AptosFeeParameters, AptosSender } from "../types/assets";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type {
+  BlockInfo,
+  FeeEstimation,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/types";
+import type { AptosAsset, AptosExtra, AptosFeeParameters, AptosSender } from "../types/assets";
 import { log } from "@ledgerhq/logs";
 
 const getApiEndpoint = (currencyId: string) =>
@@ -157,9 +161,9 @@ export class AptosAPI {
   async getBalance(address: string, token: TokenCurrency): Promise<BigNumber> {
     if (token.tokenType === "coin") {
       return await this.getCoinBalance(address, token.contractAddress);
-    } else {
-      return await this.getFABalance(address, token.contractAddress);
     }
+
+    return await this.getFABalance(address, token.contractAddress);
   }
 
   async getLastBlock(): Promise<BlockInfo> {
@@ -312,5 +316,23 @@ export class AptosAPI {
       height: parseInt(block.block_height),
       hash: block.block_hash,
     };
+  }
+
+  async getBalances(address: string): Promise<AptosBalance[]> {
+    const response = await this.aptosClient.getCurrentFungibleAssetBalances({
+      options: {
+        offset: 0,
+        limit: 1000,
+        where: {
+          asset_type: { _eq: APTOS_ASSET_ID }, // to return all asset balances (native / token) we should remove this filter
+          owner_address: { _eq: address },
+        },
+      },
+    });
+
+    return response.map(x => ({
+      asset_type: x.asset_type ?? "-",
+      amount: BigNumber(x.amount),
+    }));
   }
 }
