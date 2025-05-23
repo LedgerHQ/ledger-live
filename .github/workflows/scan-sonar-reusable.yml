@@ -44,6 +44,7 @@ jobs:
   scan-sonar:
     name: "Sonar Cloud"
     runs-on: [ledger-live-4xlarge]
+    needs: [merge-coverage]
     steps:
       - uses: actions/checkout@v4
         with:
