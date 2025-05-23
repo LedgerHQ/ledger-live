@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { Ticker } from "./Ticker";
@@ -19,6 +19,7 @@ import { useTheme } from "styled-components/native";
 import { getCryptoCurrencyById, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { track } from "~/analytics";
 import { PAGE_NAME } from "../const";
+import { ScrollView } from "react-native-gesture-handler";
 
 type CardProps = {
   data: CurrencyData;
@@ -145,6 +146,7 @@ export const Card: React.FC<CardProps> = ({ data, range, setRange, height, chart
         bg="neutral.c20"
         bottom={0}
         borderRadius={20}
+        zIndex={10}
       >
         <Footer currency={currency} />
       </Flex>
