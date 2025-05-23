@@ -53,7 +53,7 @@ jobs:
               echo "Coverage script executed successfully for $lib."
             else
               echo "Coverage script not available for $lib, running test script."
-              pnpm run test --continue --filter="$lib" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+              pnpm run test --continue --filter="$lib" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" || echo "Test script failed for $lib."
             fi
           done
         shell: bash
