@@ -8,7 +8,14 @@ import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { DescriptorEvent, DeviceModel } from "@ledgerhq/types-devices";
 import { HwTransportError } from "@ledgerhq/errors";
 import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
-import { BehaviorSubject, firstValueFrom, pairwise, startWith, Subscription } from "rxjs";
+import {
+  BehaviorSubject,
+  firstValueFrom,
+  Observable,
+  pairwise,
+  startWith,
+  Subscription,
+} from "rxjs";
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
 import { LocalTracer } from "@ledgerhq/logs";
 import { distinctUntilChanged, first, map } from "rxjs/operators";
@@ -114,7 +121,7 @@ export class DeviceManagementKitHIDTransport extends Transport {
           connectedDevice.type === "USB" &&
           deviceSessionState.deviceStatus !== DeviceStatus.NOT_CONNECTED
         ) {
-          transport = activeDeviceSession.transport;
+          transport = activeDeviceSession.transport as DeviceManagementKitHIDTransport;
         } else {
           const sessionId = await activeDeviceSession.transport.dmk.connect({
             device: { id: deviceId, transport: rnHidTransportIdentifier } as DiscoveredDevice,
@@ -156,43 +163,45 @@ export class DeviceManagementKitHIDTransport extends Transport {
             sessionId: connectedDevice.sessionId,
           });
 
-          sessionStateSubscription = sessionStateObs.pipe(
-            map(sessionState => ({
-              sessionState: sessionState,
-              isConnected: sessionState.deviceStatus !== DeviceStatus.NOT_CONNECTED,
-            })),
-            /**
-             * We're only interested in the device status change between "NOT_CONNECTED" and others,
-             * so we filter out the rest of the events.
-             * If we don't do this, we emit 2 events for each APDU exchange, so it
-             * will cause performance issues.
-             */
-            distinctUntilChanged((prev, curr) => prev.isConnected === curr.isConnected)
-          ).subscribe({
-            next: ({ sessionState}) => {
-              const id = dmkToLedgerDeviceIdMap[connectedDevice.modelId];
-              if (sessionState.deviceStatus === DeviceStatus.NOT_CONNECTED) {
-                observer.next({
-                  type: "remove",
-                  descriptor: connectedDevice.id,
-                  device: connectedDevice,
-                });
-              } else {
-                observer.next({
-                  type: "add",
-                  descriptor: connectedDevice.id,
-                  device: connectedDevice,
-                  deviceModel: {
-                    productName: connectedDevice.name,
-                    id,
-                  } as DeviceModel,
-                });
-              }
-            },
-            error: err => {
-              tracer.trace("[DMKTransportHID] [listen] listen error", err);
-            },
-          });
+          sessionStateSubscription = sessionStateObs
+            .pipe(
+              map(sessionState => ({
+                sessionState: sessionState,
+                isConnected: sessionState.deviceStatus !== DeviceStatus.NOT_CONNECTED,
+              })),
+              /**
+               * We're only interested in the device status change between "NOT_CONNECTED" and others,
+               * so we filter out the rest of the events.
+               * If we don't do this, we emit 2 events for each APDU exchange, so it
+               * will cause performance issues.
+               */
+              distinctUntilChanged((prev, curr) => prev.isConnected === curr.isConnected),
+            )
+            .subscribe({
+              next: ({ sessionState }) => {
+                const id = dmkToLedgerDeviceIdMap[connectedDevice.modelId];
+                if (sessionState.deviceStatus === DeviceStatus.NOT_CONNECTED) {
+                  observer.next({
+                    type: "remove",
+                    descriptor: connectedDevice.id,
+                    device: connectedDevice,
+                  });
+                } else {
+                  observer.next({
+                    type: "add",
+                    descriptor: connectedDevice.id,
+                    device: connectedDevice,
+                    deviceModel: {
+                      productName: connectedDevice.name,
+                      id,
+                    } as DeviceModel,
+                  });
+                }
+              },
+              error: err => {
+                tracer.trace("[DMKTransportHID] [listen] listen error", err);
+              },
+            });
         } catch (err) {
           tracer.trace("[DMKTransportHID] [listen] listen getDeviceSessionState error", { err });
           // if a connected device is manually disconnected and connected after the disconnect timeout the device
@@ -259,6 +268,31 @@ export class DeviceManagementKitHIDTransport extends Transport {
     return {
       unsubscribe,
     };
+  }
+
+  async exchangeBulkWithProgress(
+    apdus: Buffer[],
+  ): Promise<Observable<{ currentIndex: number } | { result: Buffer }>> {
+    const activeSessionId = activeDeviceSessionSubject.value?.sessionId;
+    if (!activeSessionId) {
+      throw new Error("No active session found");
+    }
+    console.log("DMKHIDTransport [exchangeBulkWithProgress]", apdus.length);
+    const observable = await this.dmk.exchangeBulkApdus({
+      apdus: apdus.map(apdu => new Uint8Array(apdu)),
+      sessionId: activeSessionId,
+    });
+    return observable.pipe(
+      map(event => {
+        if ("result" in event) {
+          const { data, statusCode } = event.result;
+          const response = Buffer.from([...data, ...statusCode]);
+          return { result: response };
+        } else {
+          return event;
+        }
+      }),
+    );
   }
 
   async exchange(apdu: Buffer, { abortTimeoutMs }: { abortTimeoutMs?: number } = {}) {

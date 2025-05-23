@@ -224,13 +224,50 @@ export function createDeviceSocket(
                 .filter(Boolean);
 
               // we also use a subscription to be able to cancel the bulk if the user unsubscribes
-              bulkSubscription = transport.exchangeBulk(cleanData, {
-                next: () => {
-                  notify(++i);
-                },
-                error: e => reject(e),
-                complete: () => resolve(null),
-              });
+              const t1 = performance.now();
+              console.log("PERF: Bulk exchange started");
+
+              const optimized = true;
+
+              if (optimized && "exchangeBulkWithProgress" in transport) {
+                console.log("PERF: Using exchangeBulkWithProgress");
+                const exchangeBulkWithProgress = (
+                  transport.exchangeBulkWithProgress as (
+                    apdus: Buffer[],
+                  ) => Promise<Observable<{ currentIndex: number } | { result: Buffer }>>
+                ).bind(transport);
+
+                exchangeBulkWithProgress(cleanData).then(obs => {
+                  bulkSubscription = obs.subscribe({
+                    next: event => {
+                      if ("currentIndex" in event) {
+                        notify(event.currentIndex);
+                      }
+                    },
+                    error: e => {
+                      reject(e);
+                    },
+                    complete: () => {
+                      const t2 = performance.now();
+                      console.log("PERF: Bulk exchange took", t2 - t1, "ms");
+                      resolve(null);
+                    },
+                  });
+                });
+              } else {
+                console.log("PERF: Using TS exchangeBulk");
+                bulkSubscription = transport.exchangeBulk(cleanData, {
+                  next: () => {
+                    notify(++i);
+                  },
+                  error: e => reject(e),
+                  complete: () => {
+                    const t2 = performance.now();
+                    console.log("PERF: Bulk exchange took", t2 - t1, "ms");
+                    resolve(null);
+                  },
+                });
+              }
             });
             if (unsubscribed) {
               tracer.trace("unsubscribed before end of bulk");
