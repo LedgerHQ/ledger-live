@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import styled, { Keyframes, keyframes } from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 import { Icon, Text } from "@ledgerhq/react-ui/index";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
@@ -43,40 +43,19 @@ const IconContainer = styled.div<{ bgColor?: string }>`
   background-color: ${p => p.bgColor};
 `;
 
-const circle1Animation = keyframes`
-  0%, 75%, 87.5%, 100% {
+const circleAnimation = keyframes`
+  0%, 60%, 70%, 80%, 90%, 100% {
     opacity: 0.2;
   }
-  12.5%, 25%, 37.5% {
+  10%, 50% {
     opacity: 0.4;
   }
-  50%, 62.5% {
-    opacity: 0.6;
+  20%, 40% {
+    opacity: 0.7;
   }
-`;
-
-const circle2Animation = keyframes`
-  0%, 12.5%, 87.5%, 100% {
-    opacity: 0.2;
-  }
-  25%, 37.5%, 50%, 62.5% {
-    opacity: 0.6;
-  }
-  75% {
-    opacity: 0.4;
-  }
-`;
-
-const circle3Animation = keyframes`
-  0%, 12.5%, 25%, 100% {
-    opacity: 0.2;
-  }
-  37.5%, 50%, 62.5%, 75% {
-    opacity: 0.6;
-  }
-  87.5% {
-    opacity: 0.4;
-  }
+  30% {
+    opacity: 0.9;
+  }  
 `;
 
 const Ellipsis = styled.div`
@@ -84,11 +63,12 @@ const Ellipsis = styled.div`
   gap: 8px;
 `;
 
-const AnimatedSvg = styled.svg<{ animation: Keyframes }>`
+const AnimatedSvg = styled.svg<{ delay: number }>`
   width: 8px;
   height: 8px;
   fill: none;
-  animation: ${({ animation }) => animation} 1.3s infinite;
+  animation: ${circleAnimation} 1.5s infinite;
+  animation-delay: ${({ delay }) => delay}s;
 `;
 
 const Circle = styled.circle`
@@ -97,13 +77,13 @@ const Circle = styled.circle`
 
 const EllipsisLoader = () => (
   <Ellipsis>
-    <AnimatedSvg viewBox="0 0 8 8" animation={circle1Animation}>
+    <AnimatedSvg viewBox="0 0 8 8" delay={0}>
       <Circle cx="4" cy="4" r="4" />
     </AnimatedSvg>
-    <AnimatedSvg viewBox="0 0 8 8" animation={circle2Animation}>
+    <AnimatedSvg viewBox="0 0 8 8" delay={0.1}>
       <Circle cx="4" cy="4" r="4" />
     </AnimatedSvg>
-    <AnimatedSvg viewBox="0 0 8 8" animation={circle3Animation}>
+    <AnimatedSvg viewBox="0 0 8 8" delay={0.2}>
       <Circle cx="4" cy="4" r="4" />
     </AnimatedSvg>
   </Ellipsis>
