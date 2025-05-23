@@ -10,7 +10,6 @@ inputs:
   invert_filter:
     description: "Invert the test filter"
     required: false
-    default: false
   shard_index:
     description: "Shard index for test distribution"
     required: true

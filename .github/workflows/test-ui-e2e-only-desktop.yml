@@ -132,9 +132,9 @@ jobs:
       - name: Run Playwright Tests
         uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
         with:
-          speculos_device: ${{ inputs.speculos_device }}
+          speculos_device: ${{ inputs.speculos_device || 'nanoSP' }}
           test_filter: ${{ inputs.test_filter }}
-          invert_filter: ${{ inputs.invert_filter }}
+          invert_filter: ${{ inputs.invert_filter || false }}
           shard_index: ${{ matrix.shardIndex }}
           shard_total: ${{ matrix.shardTotal }}
         env:
