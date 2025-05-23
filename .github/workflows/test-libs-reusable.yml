@@ -49,11 +49,11 @@ jobs:
         run: |
           for lib in $(pnpm list --filter="!./apps/**" --filter="!./libs/ui/**" --filter="!./tools/**" --filter="!./e2e/mobile/**" --filter="!./apps/ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --depth -1 --json | jq -r '.[].name'); do
             echo "Processing library: $lib"
-            if pnpm run coverage --filter="$lib" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"; then
+            if pnpm run coverage --continue --filter="$lib" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"; then
               echo "Coverage script executed successfully for $lib."
             else
               echo "Coverage script not available for $lib, running test script."
-              pnpm run test --filter="$lib" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+              pnpm run test --continue --filter="$lib" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
             fi
           done
         shell: bash
