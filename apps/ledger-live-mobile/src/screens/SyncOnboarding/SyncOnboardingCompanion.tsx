@@ -7,6 +7,7 @@ import React, {
   useRef,
   useLayoutEffect,
 } from "react";
+import { Image } from "react-native";
 import { Flex, VerticalTimeline, Text, ContinueOnDevice } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
@@ -47,6 +48,10 @@ import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import ExternalLink from "~/components/ExternalLink";
+import SecretRecoveryPhraseImage from "./assets/srp.png";
+import RecoveryKeyImage from "./assets/rk.png";
+import BackgroundBlue from "./assets/BackgroundBlue";
+import BackgroundRed from "./assets/BackgroundRed";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 
@@ -595,17 +600,30 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
           key: CompanionStepKey.Seed,
           title: t("syncOnboarding.seedStep.title"),
           doneTitle: t("syncOnboarding.seedStep.doneTitle"),
+          background:
+            seedPathStatus === "new_seed" ? (
+              <BackgroundBlue />
+            ) : seedPathStatus === "backup_recovery_key" ? (
+              <BackgroundRed />
+            ) : null,
           renderBody: () => (
             <Flex>
               <TrackScreen category={"Set up device: Step 3 Seed Intro"} />
               {seedPathStatus === "new_seed" ? (
                 <Flex pb={1}>
-                  <SubtitleText mb={6}>{t("syncOnboarding.seedStep.newSeedTitle")}</SubtitleText>
-                  <BodyText mb={6}>
-                    {t("syncOnboarding.seedStep.newSeedDescription", {
-                      productName,
-                    })}
-                  </BodyText>
+                  <Flex alignItems="center" justifyContent="center">
+                    <Flex style={{ overflow: "visible", height: 150 }}>
+                      <Image source={SecretRecoveryPhraseImage} height={200} />
+                    </Flex>
+                    <Text variant="h5" fontWeight="semiBold" mb={6}>
+                      {t("syncOnboarding.seedStep.newSeedTitle")}
+                    </Text>
+                    <BodyText mb={8} textAlign="center">
+                      {t("syncOnboarding.seedStep.newSeedDescription", {
+                        productName,
+                      })}
+                    </BodyText>
+                  </Flex>
                   <Stories instanceID={StorylyInstanceID.recoverySeed} vertical keepOriginalOrder />
                   <ContinueOnDeviceWithAnim
                     deviceModelId={device.modelId}
@@ -662,10 +680,17 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                 <BodyText>{t("syncOnboarding.seedStep.recoverSeed")}</BodyText>
               ) : seedPathStatus === "backup_recovery_key" ? (
                 <Flex>
-                  <SubtitleText>
-                    {t("syncOnboarding.seedStep.backupRecoveryKey.title")}
-                  </SubtitleText>
-                  <BodyText mb={6}>{t("syncOnboarding.seedStep.backupRecoveryKey.desc")}</BodyText>
+                  <Flex alignItems="center" justifyContent="center">
+                    <Flex style={{ overflow: "visible", height: 150 }}>
+                      <Image source={RecoveryKeyImage} height={200} />
+                    </Flex>
+                    <Text variant="h5" fontWeight="semiBold" mb={6}>
+                      {t("syncOnboarding.seedStep.backupRecoveryKey.title")}
+                    </Text>
+                    <BodyText mb={6} textAlign="center">
+                      {t("syncOnboarding.seedStep.backupRecoveryKey.desc")}
+                    </BodyText>
+                  </Flex>
                   <ExternalLink text={t("syncOnboarding.seedStep.backupRecoveryKey.cta")} />
                   <ContinueOnDeviceWithAnim
                     deviceModelId={device.modelId}
