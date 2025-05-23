@@ -89,4 +89,25 @@ describe("createApi", () => {
       expect(balances[0].value).toBeGreaterThan(0);
     });
   });
+
+  describe("listOperations", () => {
+    it("returns operations from account", async () => {
+      const block = await api.lastBlock();
+
+      const [operations] = await api.listOperations(sender.freshAddress, {
+        minHeight: block.height,
+      });
+
+      expect(operations).toBeInstanceOf(Array);
+      expect(operations.length).toBeGreaterThanOrEqual(1);
+
+      operations.forEach(operation => {
+        const isSenderOrReceipt =
+          operation.senders.includes(sender.freshAddress) ||
+          operation.recipients.includes(sender.freshAddress);
+        expect(isSenderOrReceipt).toBeTruthy();
+        expect(operation.tx.block).toBeDefined();
+      });
+    });
+  });
 });

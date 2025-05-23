@@ -1,6 +1,6 @@
 import type { Api } from "@ledgerhq/coin-framework/api/index";
 import type { AptosConfig as AptosConfigApi } from "../config";
-import type { Balance, Operation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import type { Balance, Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import coinConfig from "../config";
 import type { AptosAsset, AptosExtra, AptosFeeParameters, AptosSender } from "../types/assets";
 import { AptosAPI } from "../network";
@@ -24,8 +24,7 @@ export function createApi(
       client.estimateFees(transactionIntent),
     getBalance: (address): Promise<Balance<AptosAsset>[]> => getBalance(client, address),
     lastBlock: () => client.getLastBlock(),
-    listOperations: (_address, _pagination): Promise<[Operation<AptosAsset>[], string]> => {
-      throw new Error("Not Implemented");
-    },
+    listOperations: (address: string, pagination: Pagination) =>
+      client.listOperations(address, pagination),
   };
 }
