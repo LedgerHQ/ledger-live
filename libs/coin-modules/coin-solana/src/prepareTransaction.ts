@@ -344,6 +344,7 @@ const deriveTokenTransferCommandDescriptor = async (
       amount: txAmount,
       mintAddress,
       mintDecimals,
+      tokenId: tokenAccount.token.id,
       recipientDescriptor: recipientDescriptor,
       memo: model.uiState.memo,
       tokenProgram: tokenProgram,
