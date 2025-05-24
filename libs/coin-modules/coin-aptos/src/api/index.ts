@@ -6,6 +6,7 @@ import type { AptosAsset, AptosExtra, AptosFeeParameters, AptosSender } from "..
 import { AptosAPI } from "../network";
 import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
+import { getBalance } from "../logic/getBalance";
 
 export function createApi(
   config: AptosConfigApi,
@@ -21,9 +22,7 @@ export function createApi(
       craftTransaction(client, transactionIntent),
     estimateFees: (transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender>) =>
       client.estimateFees(transactionIntent),
-    getBalance: (_address): Promise<Balance<AptosAsset>[]> => {
-      throw new Error("Not Implemented");
-    },
+    getBalance: (address): Promise<Balance<AptosAsset>[]> => getBalance(client, address),
     lastBlock: () => client.getLastBlock(),
     listOperations: (_address, _pagination): Promise<[Operation<AptosAsset>[], string]> => {
       throw new Error("Not Implemented");

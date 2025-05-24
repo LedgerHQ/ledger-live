@@ -15,6 +15,9 @@ import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
 import { LoadingIndicator } from "./components/Loading";
 import { CardType } from "./types";
+import { TrackScreen } from "~/analytics";
+import { PAGE_NAME } from "./const";
+
 type LargeMoverLandingPageProps = StackNavigatorProps<
   LandingPagesNavigatorParamList,
   ScreenName.LargeMoverLandingPage
@@ -72,6 +75,7 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.neutral.c00 }}>
+      <TrackScreen name={PAGE_NAME} initialRange={initialRange} currencyIds={currencyIds} />
       <StickyHeader />
       <Flex paddingTop={40}>
         {loading ? (

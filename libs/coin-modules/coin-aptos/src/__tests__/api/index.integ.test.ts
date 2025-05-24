@@ -12,6 +12,7 @@ describe("createApi", () => {
       indexer: getEnv("APTOS_INDEXER_ENDPOINT"),
     },
   });
+
   const sender: AptosSender = {
     xpub: "0x474dd8fad13de7ebc82e1cb7ec4e5320887a58010fc484ed5bc8c5ed73fcd8b0",
     freshAddress: "0xa0d8abc262e3321f87d745bd5d687e8f3fb14c87d48f840b6b56867df0026ec8",
@@ -77,6 +78,15 @@ describe("createApi", () => {
       expect(rawTx.sender.toString()).toBe(sender.freshAddress);
       expect(rawTx.gas_unit_price.toString()).toBe(DEFAULT_GAS_PRICE.toString());
       expect(rawTx.max_gas_amount.toString()).toBe(DEFAULT_GAS.toString());
+    });
+  });
+
+  describe("getBalance", () => {
+    it("return balances from account", async () => {
+      const balances = await api.getBalance(sender.freshAddress);
+
+      expect(balances.length).toBeGreaterThan(0);
+      expect(balances[0].value).toBeGreaterThan(0);
     });
   });
 });

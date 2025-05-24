@@ -14,6 +14,7 @@ export type Account = {
   protocol?: string;
   cryptoId?: string;
   ticker?: string;
+  parentId?: string;
 };
 
 type AccountItemProps = {
@@ -40,6 +41,11 @@ const Wrapper = styled.div`
   border-radius: var(--radius-s, 8px);
   justify-content: space-between;
   align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
+  min-width: 200px;
+  overflow: hidden;
 
   :hover {
     background-color: var(--colors-surface-transparent-hover);
@@ -50,48 +56,107 @@ const Wrapper = styled.div`
   }
 `;
 
+const ContentContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 0;
+  flex: 1;
+  width: 100%;
+  overflow: hidden;
+`;
+
+const AccountInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+`;
+
+const NameRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: var(--spacing-xxxs);
+  min-width: 0;
+  width: 100%;
+`;
+
+const NameDiv = styled.div`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex: 1;
+  max-width: fit-content;
+`;
+
+const TagWrapper = styled.div`
+  flex-shrink: 0;
+  margin-left: var(--spacing-xxs);
+  display: flex;
+  flex: 1;
+  max-width: fit-content;
+  align-items: center;
+`;
+
+const BalanceContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  flex-shrink: 0;
+  margin-left: var(--spacing-xs);
+`;
+
 export const AccountItem = ({ onClick, account, showIcon = true }: AccountItemProps) => {
-  const { name, balance, fiatValue, protocol, address, ticker, cryptoId } = account;
+  const { name, balance, fiatValue, protocol, address, ticker, cryptoId, parentId } = account;
 
   return (
     <Wrapper onClick={onClick}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              marginBottom: "var(--spacing-xxxs)",
-            }}
-          >
-            <Text
-              variant="largeLineHeight"
-              fontWeight="semiBold"
-              color="var(--colors-content-default-default)"
-              marginRight="var(--spacing-xxs)"
-              fontSize="14px"
-              lineHeight="20px"
-            >
-              {name}
-            </Text>
-            {protocol && <Tag textTransform="capitalize">{protocol}</Tag>}
-          </div>
-          <Address address={address} cryptoId={cryptoId} ticker={ticker} showIcon={showIcon} />
-        </div>
-      </div>
-      <div style={{ display: "flex", flexDirection: "column", textAlign: "right" }}>
-        <Text fontSize="14px">{fiatValue}</Text>
-        <Text fontSize="12px" color="var(--colors-content-subdued-default-default)">
-          {balance}
-        </Text>
-      </div>
+      <ContentContainer>
+        <AccountInfoContainer>
+          <NameRow>
+            <NameDiv>
+              <Text
+                variant="largeLineHeight"
+                fontWeight="semiBold"
+                color="var(--colors-content-default-default)"
+                fontSize="14px"
+                lineHeight="20px"
+                title={name}
+                style={{
+                  display: "block",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {name}
+              </Text>
+            </NameDiv>
+            {protocol && (
+              <TagWrapper>
+                <Tag textTransform="uppercase">{protocol}</Tag>
+              </TagWrapper>
+            )}
+          </NameRow>
+          <Address
+            address={address}
+            cryptoId={cryptoId}
+            ticker={ticker}
+            parentId={parentId}
+            showIcon={showIcon}
+          />
+        </AccountInfoContainer>
+        <BalanceContainer>
+          <Text fontSize="14px">{fiatValue}</Text>
+          <Text fontSize="12px" color="var(--colors-content-subdued-default-default)">
+            {balance}
+          </Text>
+        </BalanceContainer>
+      </ContentContainer>
     </Wrapper>
   );
 };

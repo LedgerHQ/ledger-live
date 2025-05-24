@@ -86,3 +86,8 @@ export type AptosMoveResourceData = {
 export type AptosMoveResource = {
   [key: string]: AptosMoveResourceData;
 };
+
+export type AptosBalance = {
+  asset_type: string;
+  amount: BigNumber;
+};

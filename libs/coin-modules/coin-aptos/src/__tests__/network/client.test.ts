@@ -16,6 +16,7 @@ import { AptosAPI } from "../../network";
 import { AptosAsset, AptosExtra, AptosSender } from "../../types/assets";
 import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { APTOS_ASSET_ID } from "../../constants";
 
 jest.mock("@aptos-labs/ts-sdk");
 jest.mock("@apollo/client");
@@ -619,6 +620,35 @@ describe("Aptos API", () => {
       const fees = await api.estimateFees(transactionIntent);
 
       expect(fees.value.toString()).toEqual("40");
+    });
+  });
+
+  describe("getBalances", () => {
+    it("returns an array of AptosBalances objects", async () => {
+      const assets = [{ asset_type: APTOS_ASSET_ID, amount: 200 }];
+      const mockGetCurrentFungibleAssetBalances = jest.fn().mockResolvedValue(assets);
+      mockedAptos.mockImplementation(() => ({
+        getCurrentFungibleAssetBalances: mockGetCurrentFungibleAssetBalances,
+      }));
+
+      const address = "0x42";
+
+      const api = new AptosAPI("aptos");
+      const balances = await api.getBalances(address);
+
+      expect(mockGetCurrentFungibleAssetBalances).toHaveBeenCalledWith({
+        options: {
+          offset: 0,
+          limit: 1000,
+          where: {
+            asset_type: { _eq: APTOS_ASSET_ID },
+            owner_address: { _eq: address },
+          },
+        },
+      });
+      expect(balances).toHaveLength(1);
+      expect(balances[0].asset_type).toBe(assets[0].asset_type);
+      expect(balances[0].amount).toStrictEqual(BigNumber(assets[0].amount));
     });
   });
 });
