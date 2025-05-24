@@ -28,6 +28,7 @@ import { OperationDrawer } from "./drawer/operation.drawer";
 import { LiveApp } from "./liveApp.page";
 import { OnboardingPage } from "./onboarding.page";
 import { Redux } from "tests/utils/redux";
+import { BuyAndSellPage } from "./buyAndSell.page";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
@@ -59,4 +60,5 @@ export class Application extends PageHolder {
   public operationDrawer = new OperationDrawer(this.page);
   public liveApp = new LiveApp(this.page);
   public redux = new Redux(this.page);
+  public buyAndSell = new BuyAndSellPage(this.page, this.electronApp);
 }
