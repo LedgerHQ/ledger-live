@@ -1,7 +1,11 @@
-import { Page } from "@playwright/test";
+import { Page, ElectronApplication } from "@playwright/test";
 import { step } from "../misc/reporters/step";
+
 export abstract class PageHolder {
-  constructor(protected page: Page) {}
+  constructor(
+    protected page: Page,
+    protected readonly electronApp?: ElectronApplication,
+  ) {}
 }
 
 export abstract class Component extends PageHolder {
