@@ -1,4 +1,5 @@
 import React, { useRef, useCallback } from "react";
+import { AnyEventObject } from "xstate";
 import { useTranslation } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -13,7 +14,7 @@ const RepairFunnelSolution = ({
   sendEvent,
   done,
 }: {
-  sendEvent: (b: string, a?: {} | null) => void;
+  sendEvent: (event: AnyEventObject) => void;
   done: boolean;
 }) => {
   const { t } = useTranslation();
@@ -23,7 +24,7 @@ const RepairFunnelSolution = ({
     openURL(contactSupportUrl);
   };
   const onBack = useCallback(() => {
-    sendEvent("PREVIOUS");
+    sendEvent({ type: "PREVIOUS" });
   }, [sendEvent]);
   const onSelectDevice = useCallback(
     (deviceModel: string) => {
@@ -31,7 +32,8 @@ const RepairFunnelSolution = ({
         // NB click forwarded into the repair button.
         repairRef.current?.click();
       } else {
-        sendEvent("DONE", {
+        sendEvent({
+          type: "DONE",
           deviceModel,
         });
       }
@@ -41,7 +43,8 @@ const RepairFunnelSolution = ({
   const onRepairDeviceClose = useCallback(
     ({ needHelp }: { needHelp?: boolean }) => {
       if (needHelp) {
-        sendEvent("DONE", {
+        sendEvent({
+          type: "DONE",
           deviceModel: "nanoS",
         });
       }

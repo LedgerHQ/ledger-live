@@ -4,6 +4,7 @@
   ],
   "ignorePatterns": [
     "**/node_modules/**",
+    "**/__test-utils__/**",
     "**/*.test.{ts,tsx}"
   ],
   "ignoreUnresolved": [
