@@ -35,16 +35,25 @@ const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
   const unitTo = useAccountUnit(toAccount);
 
   return (
-    <TouchableOpacity key={swapId} onPress={onOpenOperationDetails}>
+    <TouchableOpacity
+      key={swapId}
+      onPress={onOpenOperationDetails}
+      testID={`swap-operation-row-${swapId}`}
+    >
       <View
         style={[styles.root, { backgroundColor: colors.card, borderBottomColor: colors.lightFog }]}
       >
         <SwapStatusIndicator small status={status} />
         <View style={[styles.accountWrapper, { marginLeft: 18 }]}>
-          <LText numberOfLines={1} semiBold style={styles.name}>
+          <LText
+            numberOfLines={1}
+            semiBold
+            style={styles.name}
+            testID={`swap-history-fromAccount-${swapId}`}
+          >
             {fromAccountName}
           </LText>
-          <LText style={styles.amount}>
+          <LText style={styles.amount} testID={`swap-history-fromAmount-${swapId}`}>
             <CurrencyUnitValue showCode unit={unitFrom} value={fromAmount} />
           </LText>
         </View>
@@ -52,10 +61,15 @@ const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
           <Icon name="ArrowRightLight" size={30} color="neutral.c70" />
         </View>
         <View style={[styles.accountWrapper, { alignItems: "flex-end" }]}>
-          <LText numberOfLines={1} semiBold style={styles.name}>
+          <LText
+            numberOfLines={1}
+            semiBold
+            style={styles.name}
+            testID={`swap-history-toAccount-${swapId}`}
+          >
             {toAccountName}
           </LText>
-          <LText style={styles.amount} color="grey">
+          <LText style={styles.amount} color="grey" testID={`swap-history-toAmount-${swapId}`}>
             <CurrencyUnitValue showCode unit={unitTo} value={toAmount} />
           </LText>
         </View>

@@ -24,7 +24,7 @@ export default class PortfolioPage {
   operationRowDate = "operationRowDate";
   assetNameRegExp = new RegExp(`${this.baseAssetName}.*`);
 
-  portfolioSettingsButton = async () => await getElementById(this.portfolioSettingsButtonId);
+  portfolioSettingsButton = async () => getElementById(this.portfolioSettingsButtonId);
   assetItemId = (currencyName: string) => `${this.baseAssetName}${currencyName}`;
 
   @Step("Navigate to Settings")
@@ -91,6 +91,14 @@ export default class PortfolioPage {
     await detoxExpect(getElementById(this.showAllAssetsButton)).toBeVisible();
     await tapById(this.showAllAssetsButton);
     jestExpect(await countElementsById(this.assetNameRegExp)).toBeGreaterThan(5);
+  }
+
+  @Step("Navigate $0 asset Page")
+  async goToSpecificAsset(currencyName: string) {
+    await scrollToId(this.showAllAssetsButton);
+    await tapById(this.showAllAssetsButton);
+    await scrollToId(this.assetItemId(currencyName));
+    await tapById(this.assetItemId(currencyName));
   }
 
   @Step("Check asset transaction history")
