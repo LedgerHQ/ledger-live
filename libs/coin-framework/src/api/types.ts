@@ -94,6 +94,7 @@ export type FeeEstimation<> = {
   parameters?: {
     storageLimit: bigint;
     gasLimit: bigint;
+    gasPrice?: bigint;
   };
 };
 

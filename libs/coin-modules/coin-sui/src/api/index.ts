@@ -25,13 +25,17 @@ export function createApi(config: SuiCoinConfig): Api<SuiAsset> {
   };
 }
 
-async function craft(transactionIntent: TransactionIntent<SuiAsset>): Promise<string> {
+async function craft(
+  transactionIntent: TransactionIntent<SuiAsset, string, string>,
+): Promise<string> {
   const { unsigned } = await craftTransaction(transactionIntent);
 
   return Buffer.from(unsigned).toString("hex");
 }
 
-async function estimate(transactionIntent: TransactionIntent<SuiAsset>): Promise<FeeEstimation> {
+async function estimate(
+  transactionIntent: TransactionIntent<SuiAsset, string, string>,
+): Promise<FeeEstimation> {
   const fees = await estimateFees(transactionIntent);
   return { value: fees };
 }

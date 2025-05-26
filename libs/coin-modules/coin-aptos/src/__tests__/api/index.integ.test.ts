@@ -1,7 +1,6 @@
 import { Deserializer, Hex, Network, RawTransaction } from "@aptos-labs/ts-sdk";
 import { createApi } from "../../api";
 import { getEnv } from "@ledgerhq/live-env";
-import type { AptosSender } from "../../types/assets";
 import { DEFAULT_GAS, DEFAULT_GAS_PRICE } from "../../constants";
 
 describe("createApi", () => {
@@ -13,11 +12,11 @@ describe("createApi", () => {
     },
   });
 
-  const sender: AptosSender = {
+  const sender = {
     xpub: "0xd1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956",
     freshAddress: "0x445fa0013887abd1a0c14acdec6e48090e0ad3fed3e08202aac15ca14f3be26b",
   };
-  const recipient: AptosSender = {
+  const recipient = {
     xpub: "0x64159425ccc6e755b91dc801b93d182af978c4624d9064facaa9b147544db87f",
     freshAddress: "0x24dbf71ba20209753035505c51d4607ed67aa0c81b930d9ef4483ec84b349fcb",
   };
@@ -54,7 +53,8 @@ describe("createApi", () => {
           type: "native",
         },
         type: "send",
-        sender,
+        sender: sender.freshAddress,
+        senderPublicKey: sender.xpub,
         amount,
         recipient: recipient.freshAddress,
       });
@@ -68,7 +68,8 @@ describe("createApi", () => {
       const hex = await api.craftTransaction(
         {
           amount: 1n,
-          sender: sender,
+          sender: sender.freshAddress,
+          senderPublicKey: sender.xpub,
           recipient: recipient.freshAddress,
           type: "send",
           asset: { type: "native" },
