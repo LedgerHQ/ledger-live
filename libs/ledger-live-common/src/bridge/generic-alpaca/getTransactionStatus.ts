@@ -13,7 +13,6 @@ export function genericGetTransactionStatus(
     if (!alpacaApi.validateIntent) {
       throw new Error("validateIntent is not implemented for this network/kind");
     }
-    console.log("Transaction:", transaction);
     const { errors, warnings } = await alpacaApi.validateIntent(
       {
         currencyName: currency.name,

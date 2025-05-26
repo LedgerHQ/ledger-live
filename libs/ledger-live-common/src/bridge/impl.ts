@@ -19,7 +19,6 @@ let currencyBridgeInstance: CurrencyBridge | null = null;
 export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   if (getEnv("MOCK")) {
     const mockBridge = mockBridges[currency.family];
-
     if (mockBridge) return mockBridge.currencyBridge;
     throw new CurrencyNotSupported("no mock implementation available for currency " + currency.id, {
       currencyName: currency.id,

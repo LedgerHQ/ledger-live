@@ -90,10 +90,10 @@ export type TransactionValidation = {
 
 export type FeeEstimation<> = {
   value: bigint;
-  // parameters?: FeeParameters;
   parameters?: {
     storageLimit: bigint;
     gasLimit: bigint;
+    // Optional gas price, only for Aptos (need to improve)
     gasPrice?: bigint;
   };
 };

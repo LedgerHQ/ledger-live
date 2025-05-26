@@ -221,7 +221,6 @@ export const withDevice =
             previousJobId: previousQueuedJob.id,
             currentJobId: jobId,
           });
-          console.log("deviceId: ", deviceId);
           return open(deviceId, options?.openTimeoutMs, tracer.getContext());
         }) // open the transport
         .then(async transport => {

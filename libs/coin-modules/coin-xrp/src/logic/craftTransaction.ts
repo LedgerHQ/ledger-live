@@ -64,8 +64,6 @@ export async function craftTransaction(
     LastLedgerSequence: (await getLedgerIndex()) + LEDGER_OFFSET,
   };
 
-  console.log("IN CRAFTTRANSACTION: ", xrplTransaction);
-
   function memoMapper(memoInput: MemoInput): MemoWrapper {
     const memo: Memo = {};
     if (memoInput.data) {

@@ -13,7 +13,6 @@ export async function craftTransaction(
   const memoEntry = transactionIntent.memos?.find(m => m.type === "memo");
 
   const memo = memoEntry?.value;
-  // const { asset, recipient, sender, amount, memo, expiration } = transactionIntent;
   const recipientAddress = decode58Check(recipient);
   const senderAddress = decode58Check(sender);
 

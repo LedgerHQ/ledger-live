@@ -49,7 +49,6 @@ export const log = (type: LogType, message?: string, data?: LogData) => {
   };
   if (message) obj.message = message;
   if (data) obj.data = data;
-  console.log({ obj });
   dispatch(obj);
 };
 

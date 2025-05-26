@@ -17,15 +17,11 @@ export function genericEstimateMaxSpendable(
       ...transaction,
       amount: mainAccount.spendableBalance,
     };
-    console.log("draftTransaction", draftTransaction);
     const fees = await getAlpacaApi(network, kind).estimateFees(
       transactionToIntent(mainAccount, draftTransaction),
     );
-    console.log("draft fees:", fees);
 
     const bnFee = BigNumber(fees.value.toString());
-    console.log("draft bnFees:", bnFee);
-    console.log("draft account.spendableBalance:", account.spendableBalance);
     return BigNumber.max(0, account.spendableBalance.minus(bnFee));
   };
 }
