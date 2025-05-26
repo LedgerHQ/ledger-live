@@ -5,7 +5,7 @@ import { AptosMappedStakingPosition } from "@ledgerhq/live-common/families/aptos
 import { Account } from "@ledgerhq/types-live";
 import { canUnstake, canWithdraw, canRestake } from "@ledgerhq/live-common/families/aptos/logic";
 import { TableLine } from "./Header";
-import DropDown, { DropDownItem } from "~/renderer/components/DropDownSelector";
+import DropDown, { DropDownItem, DropDownItemType } from "~/renderer/components/DropDownSelector";
 import Box from "~/renderer/components/Box/Box";
 import ChevronRight from "~/renderer/icons/ChevronRight";
 import CheckCircle from "~/renderer/icons/CheckCircle";
@@ -56,12 +56,7 @@ const ManageDropDownItem = ({
   item,
   isActive,
 }: {
-  item: {
-    key: string;
-    label?: React.ReactNode;
-    disabled: boolean;
-    content?: React.ReactNode;
-  };
+  item: DropDownItemType<React.JSX.Element>;
   isActive: boolean;
 }) => {
   return (
@@ -132,7 +127,7 @@ export function Row({
       key: "MODAL_APTOS_RESTAKE",
       label: <Trans i18nKey="aptos.stake.restake" />,
     },
-  ].filter(Boolean);
+  ].filter(Boolean) as DropDownItemType<React.JSX.Element>[];
 
   const onExternalLinkClick = useCallback(
     () => onExternalLink(validatorId),
@@ -143,7 +138,7 @@ export function Row({
     <Wrapper>
       <Column strong clickable onClick={onExternalLinkClick}>
         <Box mr={2}>
-          <ValidatorIcon validator={validator} validatorId={validatorId} />
+          <ValidatorIcon validatorAddress={validator?.address} />
         </Box>
         <Ellipsis>{validatorId}</Ellipsis>
       </Column>

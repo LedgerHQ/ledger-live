@@ -45,7 +45,7 @@ function AptosValidatorRow({ validator, active, onClick, unit, currency }: Props
       validator={{
         address: validator.address,
       }}
-      icon={<ValidatorIcon validator={validator} />}
+      icon={<ValidatorIcon validatorAddress={validator.address} />}
       title={validator.address}
       onExternalLink={onExternalLink}
       unit={unit}

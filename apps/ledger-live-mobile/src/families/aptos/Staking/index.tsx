@@ -214,7 +214,7 @@ function StakingPositions({ account }: Props) {
             event: "StakingActionWithdraw",
           },
           {
-            label: t("aptos.staking.actions.restaking"),
+            label: t("aptos.staking.actions.restake"),
             Icon: (props: IconProps) => (
               <Circle
                 {...props}

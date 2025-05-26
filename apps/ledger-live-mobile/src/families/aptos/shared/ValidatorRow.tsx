@@ -32,20 +32,29 @@ const ValidatorRow = ({
       onPress={onPressT}
     >
       <View style={styles.validator}>
-        <ValidatorImage isLedger={false} size={32} name={validator.address} />
+        <ValidatorImage
+          isLedger={false}
+          size={32}
+          name={validator.address}
+          validatorAddress={validator.address}
+        />
         <View style={styles.validatorBody}>
           <Text numberOfLines={1} fontWeight="semiBold" style={styles.validatorName}>
             {validator.address}
           </Text>
           {validator.commission ? (
             <Text fontWeight="semiBold" numberOfLines={1} style={styles.overdelegated}>
-              <Trans i18nKey="aptos.staking.commission" /> {validator.commission}%
+              <Trans i18nKey="aptos.staking.commission" /> {validator.commission.toNumber()}%
             </Text>
           ) : null}
         </View>
         <Text fontWeight="semiBold" numberOfLines={1} style={[styles.validatorYield]} color="smoke">
           <Text fontWeight="semiBold" numberOfLines={1}>
-            <CurrencyUnitValue showCode unit={unit} value={new BigNumber(validator.tokens)} />
+            <CurrencyUnitValue
+              showCode
+              unit={unit}
+              value={new BigNumber(validator.activeStake.toNumber())}
+            />
           </Text>
         </Text>
       </View>

@@ -465,9 +465,6 @@ importers:
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
-      blockies-ts:
-        specifier: 1.0.0
-        version: 1.0.0
       chart.js:
         specifier: 2.9.4
         version: 2.9.4
@@ -20096,9 +20093,6 @@ packages:
 
   blakejs@1.2.1:
     resolution: {integrity: sha512-QXUSXI3QVc/gJME0dBpXrag1kbzOqCjCX8/b54ntNyW6sjtoqxqRk3LTmXzaJoh71zMsDCjM+47jS7XiwN/+fQ==}
-
-  blockies-ts@1.0.0:
-    resolution: {integrity: sha512-mL9NO/FjYbFjaSDA5tw/qkUwEXrBG1bHSoPhAFG9CAzDaHTwQHzvYByAYUBmnqYciFsJvdxWKGtyOLgaSKoUkA==}
 
   bluebird-lst@1.0.9:
     resolution: {integrity: sha512-7B1Rtx82hjnSD4PGLAjVWeYH3tHAcVUmChh85a3lltKQm6FresXh9ErQo6oAv6CqxttczC3/kEg8SY5NluPuUw==}
@@ -51554,8 +51548,6 @@ snapshots:
       nanoassert: 2.0.0
 
   blakejs@1.2.1: {}
-
-  blockies-ts@1.0.0: {}
 
   bluebird-lst@1.0.9:
     dependencies:

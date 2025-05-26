@@ -69,6 +69,10 @@
       "require": "./lib/types/index.js",
       "default": "./lib-es/types/index.js"
     },
+    "./utils": {
+      "require": "./lib/utils/index.js",
+      "default": "./lib-es/utils/index.js"
+    },
     "./*": {
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
