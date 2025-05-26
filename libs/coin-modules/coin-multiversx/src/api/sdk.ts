@@ -367,4 +367,3 @@ export const broadcastTransaction = async (signedOperation: SignedOperation): Pr
   return await api.submit(signedOperation);
 };
 
-// TODO:  validateIntent
