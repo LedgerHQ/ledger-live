@@ -6333,6 +6333,8 @@
       "stakingEarn": "You can earn Aptos rewards by staking your assets.",
       "totalStake": "Total Stake",
       "commission": "Commission",
+      "comm": "Comm.",
+      "timeToUnlock": "Unlock in",
       "iStake": "I stake",
       "actions": {
         "unstake": "Unstake",
