@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AssetType } from "@ledgerhq/react-ui/pre-ldls";
-import { SearchInputContainer } from "../../Search";
+import { SearchInputContainer } from "../Search";
 import { SelectAsset } from "./SelectAsset";
-import { SearchContainer } from "./StyledComponents";
+import styled from "styled-components";
 
 export type AssetSelectionStepProps = {
   assetTypes: AssetType[];
@@ -68,3 +68,8 @@ export function AssetSelectionStep({
     </>
   );
 }
+
+export const SearchContainer = styled.div`
+  padding: 0 0 16px 0;
+  flex: 0 1 auto;
+`;

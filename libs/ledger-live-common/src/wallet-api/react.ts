@@ -16,13 +16,7 @@ import {
   getAccountIdFromWalletAccountId,
 } from "./converters";
 import { isWalletAPISupportedCurrency } from "./helpers";
-import {
-  WalletAPICurrency,
-  AppManifest,
-  WalletAPIAccount,
-  WalletAPICustomHandlers,
-  ModularDrawerConfiguration,
-} from "./types";
+import { WalletAPICurrency, AppManifest, WalletAPIAccount, WalletAPICustomHandlers } from "./types";
 import { getMainAccount, getParentAccount } from "../account";
 import {
   listCurrencies,

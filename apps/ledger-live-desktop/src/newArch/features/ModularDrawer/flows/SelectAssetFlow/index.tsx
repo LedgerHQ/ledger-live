@@ -1,21 +1,18 @@
 import React, { memo } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useSelectAssetFlow } from "./useSelectAssetFlow";
-import {
-  SelectAssetFlowContainer,
-  SelectorContent,
-  AssetSelectionStep,
-  NetworkSelectionStep,
-} from "./components";
-import { Header } from "../Header";
-import { FlowStep } from "../Header/navigation";
+import { NetworkSelectionStep } from "../../components/NetworkSelectionStep";
+import { AssetSelectionStep } from "../../components/AssetSelectionStep";
+import { Header } from "../../components/Header";
+import { FlowStep } from "../../components/Header/navigation";
 import { useTranslation } from "react-i18next";
+import styled from "styled-components";
 
 export type SelectAssetFlowProps = {
   currencies: CryptoOrTokenCurrency[];
   hideAssetSelection?: void;
-  onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
   selectedAsset?: CryptoOrTokenCurrency;
+  onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
 };
 
 function SelectAssetFlow({ onAssetSelected, currencies }: Readonly<SelectAssetFlowProps>) {
@@ -79,3 +76,28 @@ function SelectAssetFlow({ onAssetSelected, currencies }: Readonly<SelectAssetFl
 }
 
 export default memo(SelectAssetFlow);
+
+export const SelectAssetFlowContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+`;
+
+export const SelectorContent = styled.div`
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  margin: 0 16px;
+  height: 100%;
+`;
+
+export const SearchContainer = styled.div`
+  padding: 0 0 16px 0;
+  flex: 0 1 auto;
+`;

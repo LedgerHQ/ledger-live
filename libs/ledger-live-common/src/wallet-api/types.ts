@@ -83,15 +83,3 @@ export type DAppTrackingData = {
   currency: string;
   network: CryptoCurrency["id"];
 };
-
-export type ModularDrawerConfiguration = {
-  assets?: {
-    filter?: string;
-    leftElement?: string;
-    rightElement?: string;
-  };
-  networks?: {
-    rightElement?: string;
-    leftElement?: string;
-  };
-};

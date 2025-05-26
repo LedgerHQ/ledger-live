@@ -2,7 +2,7 @@ import { useOpenAssetFlow } from "../useOpenAssetFlow";
 import { ModularDrawerLocation } from "../../enums";
 import { renderHook } from "tests/testSetup";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import SelectAssetFlow from "../../components/SelectAssetFlow";
+import SelectAssetFlow from "../../flows/SelectAssetFlow";
 
 jest.mock("~/renderer/drawers/Provider", () => ({
   setDrawer: jest.fn(),

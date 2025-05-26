@@ -8,7 +8,7 @@ import { CardButton } from "@ledgerhq/react-ui/pre-ldls/index";
 import { Icons } from "@ledgerhq/react-ui/index";
 
 import { SelectAccount } from "./SelectAccount";
-import { useDetailedAccounts } from "../hooks/useDetailedAccounts";
+import { useDetailedAccounts } from "../../flows/SelectAccountFlow/hooks/useDetailedAccounts";
 import { AddAccountContainer } from "./StyledComponents";
 
 type Props = {

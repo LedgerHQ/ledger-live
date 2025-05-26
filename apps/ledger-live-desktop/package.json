@@ -157,8 +157,7 @@
     "winston": "3.13.0",
     "winston-transport": "4.7.0",
     "write-file-atomic": "5.0.1",
-    "xstate": "4.38.3",
-    "zod": "^3.22.4"
+    "xstate": "4.38.3"
   },
   "devDependencies": {
     "@electron/notarize": "2.3.2",

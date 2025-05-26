@@ -29,7 +29,6 @@ const BackButton = styled.button`
   top: 20px;
   left: 16px;
   z-index: 1000;
-  pointer-events: all;
   &:hover {
     background-color: ${p => p.theme.colors.palette.neutral.c30};
   }

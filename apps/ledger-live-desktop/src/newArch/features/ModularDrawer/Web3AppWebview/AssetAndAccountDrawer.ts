@@ -8,8 +8,8 @@ import { createModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-a
 import { type CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
-import { SelectAccountFlow } from "../components/SelectAccountFlow";
 import { type WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
+import { SelectAccountFlow } from "../flows/SelectAccountFlow";
 
 type Result = {
   account: AccountLike;
@@ -25,28 +25,6 @@ type DrawerParams = {
   onSuccess?: (account: AccountLike, parentAccount?: Account) => void;
   onCancel?: () => void;
 };
-
-const defaultDrawerConfiguration: EnhancedModularDrawerConfiguration = {
-  assets: {
-    rightElement: "balance",
-  },
-  networks: {
-    leftElement: "numberOfAccounts",
-  },
-};
-
-function validateAndTransformConfigurationWithZod(
-  config: ModularDrawerConfiguration | EnhancedModularDrawerConfiguration,
-): EnhancedModularDrawerConfiguration {
-  const result = EnhancedModularDrawerConfigurationSchema.safeParse(config);
-
-  if (!result.success) {
-    console.warn("Modulare Drawer invalid configuration received:", result.error);
-    return {};
-  }
-
-  return result.data;
-}
 
 function openAssetAndAccountDrawer(params: DrawerParams): void {
   const {

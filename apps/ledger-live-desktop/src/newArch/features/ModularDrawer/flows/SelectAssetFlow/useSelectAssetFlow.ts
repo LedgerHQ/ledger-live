@@ -8,7 +8,7 @@ import {
   LoadingStatus,
 } from "@ledgerhq/live-common/deposit/type";
 import { AssetType } from "@ledgerhq/react-ui/pre-ldls";
-import { FlowStep, NavigationDirection } from "../Header/navigation";
+import { FlowStep, NavigationDirection } from "../../components/Header/navigation";
 
 type UseSelectAssetFlowProps = {
   currencies: CryptoOrTokenCurrency[];
@@ -29,12 +29,11 @@ export function useSelectAssetFlow({ onAssetSelected, currencies }: UseSelectAss
   ) as LoadingBasedGroupedCurrencies;
 
   const { currenciesByProvider, sortedCryptoCurrencies } = result;
-  const [assetsToDisplay, setAssetsToDisplay] =
-    useState<CryptoOrTokenCurrency[]>(sortedCryptoCurrencies);
+  const [assetsToDisplay, setAssetsToDisplay] = useState<CryptoOrTokenCurrency[]>(currencies);
 
   useEffect(() => {
-    setAssetsToDisplay(sortedCryptoCurrencies);
-  }, [sortedCryptoCurrencies]);
+    setAssetsToDisplay(currencies);
+  }, [currencies]);
 
   const assetTypes: AssetType[] = useMemo(
     () =>

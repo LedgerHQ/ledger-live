@@ -4,11 +4,15 @@ import { useTranslation } from "react-i18next";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
-import { SelectAccountFlowContainer, SelectorContent, AccountSelectionStep } from "./components";
+import {
+  SelectAccountFlowContainer,
+  SelectorContent,
+  AccountSelectionStep,
+} from "../../components/AccountSelectionStep";
 import SelectAssetFlow from "../SelectAssetFlow";
-import { Header } from "../Header";
-import { FlowStep, NavigationDirection } from "../Header/navigation";
-import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+import { Header } from "../../components/Header";
+import { FlowStep, NavigationDirection } from "../../components/Header/navigation";
+import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 
 type SelectAccountDrawerProps = {
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
@@ -19,13 +23,7 @@ type SelectAccountDrawerProps = {
 
 export const SelectAccountFlow = memo((props: SelectAccountDrawerProps) => {
   const { t } = useTranslation();
-  const [selectedAsset, setSelectedAsset] = useState<undefined | CryptoOrTokenCurrency>(() => {
-    if (props.currencies.length === 1) {
-      return props.currencies[0];
-    }
-
-    return undefined;
-  });
+  const [selectedAsset, setSelectedAsset] = useState<CryptoOrTokenCurrency>();
 
   if (!selectedAsset) {
     return <SelectAssetFlow onAssetSelected={setSelectedAsset} {...props} />;

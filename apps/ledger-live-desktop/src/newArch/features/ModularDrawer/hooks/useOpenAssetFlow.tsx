@@ -3,7 +3,7 @@ import { openModal } from "~/renderer/actions/modals";
 import { useDispatch } from "react-redux";
 import { useCallback } from "react";
 import { ModularDrawerLocation } from "../enums";
-import SelectAssetFlow from "../components/SelectAssetFlow";
+import SelectAssetFlow from "../flows/SelectAssetFlow";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
