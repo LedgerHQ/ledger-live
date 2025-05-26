@@ -1,4 +1,4 @@
-import { log as liveLogger } from "@ledgerhq/logs";
+import { trace as liveTracer } from "@ledgerhq/logs";
 import {
   LoggerSubscriberService,
   LogLevel,
@@ -16,6 +16,10 @@ export class LedgerLiveLogger implements LoggerSubscriberService {
     if (level !== null && level > this.maxLevel) {
       return;
     }
-    liveLogger("live-dmk-logger", message, { level, ...options });
+    liveTracer({
+      type: "live-dmk-logger",
+      message,
+      data: { level, ...options },
+    });
   }
 }
