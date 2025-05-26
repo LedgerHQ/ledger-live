@@ -9,7 +9,7 @@ export class Provider {
   static readonly CHANGELLY = new Provider("changelly", "Changelly", false, true, true);
   static readonly EXODUS = new Provider("exodus", "Exodus", false, true, true);
   static readonly ONE_INCH = new Provider("oneinch", "1inch", false, false, true);
-  static readonly PARASWAP = new Provider("paraswap", "Paraswap", false, false, true);
+  static readonly VELORA = new Provider("velora", "Velora", false, false, true);
   static readonly MOONPAY = new Provider("moonpay", "MoonPay", true, false, true);
   static readonly THORCHAIN = new Provider("thorswap", "THORChain", false, true, false);
   static readonly UNISWAP = new Provider("uniswap", "Uniswap", false, false, false);
