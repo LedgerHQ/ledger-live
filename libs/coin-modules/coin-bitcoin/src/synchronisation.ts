@@ -207,7 +207,6 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
     const currentBlock = await walletAccount.xpub.explorer.getCurrentBlock();
 
     const blockHeight = currentBlock?.height || 0;
-    console.log({ currentBlock, blockHeight });
     await wallet.syncAccount(walletAccount, blockHeight);
 
     const balance = await wallet.getAccountBalance(walletAccount);
@@ -227,7 +226,6 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
       ?.map(tx => mapTxToOperations(tx, currency.id, accountId, accountAddresses, changeAddresses))
       .flat();
 
-    // TODO: check
     const newUniqueOperations = deduplicateOperations(newOperations);
 
     const _operations = mergeOps(oldOperations, newUniqueOperations);

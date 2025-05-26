@@ -69,16 +69,10 @@ class BitcoinLikeWallet {
 
   async syncAccount(account: Account, currentBlockHeight?: number): Promise<void> {
     account.xpub.currentBlockHeight = currentBlockHeight;
-    log("bitcoin[wallet]", `[syncAccount] currentBlockHeight: ${currentBlockHeight}`, { account });
 
-    console.log({
-      beforeSyncCurrentBlockHeight: currentBlockHeight,
-      syncedBlockHeight: account.xpub.syncedBlockHeight,
-    });
     await account.xpub.sync();
     if (currentBlockHeight) {
       account.xpub.syncedBlockHeight = currentBlockHeight;
-      console.log({ afterSyncCurrentBlockHeight: account.xpub.syncedBlockHeight });
     }
   }
 

@@ -104,17 +104,15 @@ class BitcoinLikeStorage implements IStorage {
       const indexAddress = tx.address;
       const index = `${indexAddress}-${tx.id}`;
 
-      // we reject already seen tx
+      // We reject previously seen transactions, unless they are confirmed
       if (this.txs[this.primaryIndex[index]]) {
         const existing = this.txs[this.primaryIndex[index]];
         if (!existing.block && tx.block) {
-          log("bitcoin[storage]", `appendTxs - FIX ${index}, pending->confirmed`);
+          log("bitcoin[storage]", `appendTxs, replacing with ${index}, pending->confirmed`);
           // Replace pending with confirmed version
           this.txs[this.primaryIndex[index]] = tx;
           return;
         }
-        log("bitcoin[storage]", `appendTxs - rejecting ${index}, already have it`);
-
         return;
       }
 
@@ -197,7 +195,6 @@ class BitcoinLikeStorage implements IStorage {
   // We are a bit ugly because we can't rely undo unspentUTXO
   // So we clean the address and rebuild without the pendings
   removePendingTxs(txsFilter: { account: number; index: number }): void {
-    log("bitcoin[storage]", `removePendingTxs`, { txsFilter });
     const newTxs: TX[] = [];
     const txsToReAdd: TX[] = [];
     this.primaryIndex = {};

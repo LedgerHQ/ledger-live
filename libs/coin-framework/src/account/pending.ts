@@ -9,7 +9,6 @@ export function shouldRetainPendingOperation(account: Account, op: Operation): b
   // FIXME: valueOf to compare dates in typescript
   const delay = new Date().valueOf() - op.date.valueOf();
   const last = account.operations.find(o => o.senders.includes(op.senders[0]));
-  // TODO: check
 
   if (
     last &&
@@ -40,7 +39,6 @@ export function shouldRetainPendingOperation(account: Account, op: Operation): b
  * @returns A new array with `op` prepended and any conflicting op removed
  */
 const appendPendingOp = (ops: Operation[], op: Operation) => {
-  // console.log({ ops, op });
   const filtered: Operation[] = ops.filter(
     o => o.transactionSequenceNumber !== op.transactionSequenceNumber,
   );
@@ -59,7 +57,6 @@ function addInSubAccount(subaccounts: TokenAccount[], op: Operation) {
 }
 
 export const addPendingOperation = (account: Account, operation: Operation): Account => {
-  // console.log({ addPendingOp: operation });
   const accountCopy = { ...account };
   const { subOperations } = operation;
   const { subAccounts } = account;

@@ -2,7 +2,6 @@ import maxBy from "lodash/maxBy";
 import range from "lodash/range";
 import some from "lodash/some";
 import BigNumber from "bignumber.js";
-import { log } from "@ledgerhq/logs";
 import { TX, Address, IStorage } from "./storage/types";
 import { IExplorer } from "./explorer/types";
 import { ICrypto } from "./crypto/types";
@@ -67,8 +66,6 @@ class Xpub {
   async syncAddress(account: number, index: number, needReorg: boolean): Promise<boolean> {
     const address = await this.crypto.getAddress(this.derivationMode, this.xpub, account, index);
 
-    log("bitcoin[xpub]", `[syncAddress] account=${account}, index=${index}`, { address });
-
     this.storage.addAddress(
       `${this.crypto.network.name}-${this.derivationMode}-${this.xpub}-${account}-${index}`,
       address,
@@ -104,7 +101,6 @@ class Xpub {
   }
 
   async syncAccount(account: number, needReorg: boolean): Promise<number> {
-    log("bitcoin[xpub]", `[syncAccount], ${account}, ${needReorg}`);
     let index = 0;
     // eslint-disable-next-line no-await-in-loop
     while (await this.checkAddressesBlock(account, index, needReorg)) {
@@ -118,21 +114,11 @@ class Xpub {
     this.freshAddressIndex = 0;
     const highestBlockFromStorage = this.storage.getHighestBlockHeightAndHash();
     let needReorg = !!highestBlockFromStorage;
-    console.log({ highestBlockFromStorage });
 
-    log("bitcoin[xpub]", `[sync] blockStorage=${highestBlockFromStorage?.height}`, {
-      highestBlockFromStorage,
-    });
     if (highestBlockFromStorage) {
       const highestBlockFromExplorer = await this.explorer.getBlockByHeight(
         highestBlockFromStorage.height,
       );
-      log(
-        "bitcoin[xpub]",
-        `[sync] blockStorage=${highestBlockFromStorage.height}, fromExpl=${highestBlockFromExplorer?.height}`,
-        { highestBlockFromExplorer, highestBlockFromStorage },
-      );
-      console.log({ highestBlockFromExplorer, highestBlockFromStorage });
       if (highestBlockFromExplorer?.hash === highestBlockFromStorage.hash) {
         needReorg = false;
       }
@@ -343,13 +329,7 @@ class Xpub {
         account,
         index,
       })?.height || -1;
-    console.log({ lastTxBlockheight, syncedBlockHeight: this.syncedBlockHeight });
     lastTxBlockheight = Math.max(lastTxBlockheight, this.syncedBlockHeight);
-    console.log({
-      nowlastTxBlockheight: lastTxBlockheight,
-      syncedBlockHeight: this.syncedBlockHeight,
-    });
-    // log("bitcoin[xpub]", `fetchHydrateAndStoreNewTxs ${address}, ${account}, ${index}`);
     let token: string | null = null;
     do {
       if (token) {
@@ -365,13 +345,6 @@ class Xpub {
         txs = result.txs;
         token = result.nextPageToken;
         inserted += this.storage.appendTxs(txs); // insert not pending tx
-        if (txs.length) {
-          log(
-            "bitcoin[xpub]",
-            `fetchHydrateAndStoreNewTxs - appending ${txs.length} txs, inserted=${inserted}`,
-            { txs },
-          );
-        }
       } else {
         // if there is no token it means it's the first page, we need to fetch pending txs and non-pending txs
         const [pendingResult, txsResult]: [
@@ -399,23 +372,9 @@ class Xpub {
         txs = txsResult.txs;
         token = txsResult.nextPageToken;
         inserted += this.storage.appendTxs(txs); // insert not pending tx
-        if (txs.length) {
-          log(
-            "bitcoin[xpub]",
-            `fetchHydrateAndStoreNewTxs - else appending ${txs.length} txs, inserted=${inserted}`,
-            { txs },
-          );
-        }
       }
     } while (token); // loop until no more txs, if there is a token it means there is more txs to fetch
     inserted += this.storage.appendTxs(pendingTxs); // insert pending tx
-    if (pendingTxs.length) {
-      log(
-        "bitcoin[xpub]",
-        `fetchHydrateAndStoreNewTxs - appending pending ${pendingTxs.length} txs, inserted=${inserted}`,
-        { pendingTxs },
-      );
-    }
     return inserted;
   }
 
