@@ -27,6 +27,11 @@ export type Operation<
   recipients: string[];
   value: bigint;
   asset: AssetInfo;
+  /**
+   * Optional memo associated with the operation.
+   * `type` defines the memo format (e.g. "hex", "text", "id").
+   * `value` holds the actual memo payload.
+   */
   memo?: {
     type: MemoKind;
     value: MemoValue;
