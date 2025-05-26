@@ -1,6 +1,7 @@
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 import { swapSetup, waitSwapReady } from "../../bridge/server";
 import { setEnv } from "@ledgerhq/live-env";
+import { performSwapUntilQuoteSelectionStep } from "../../utils/swapUtils";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
