@@ -55,7 +55,7 @@ const getMainActions = ({
       label: <Trans i18nKey={label} />,
       Icon: IconsLegacy.CoinsMedium,
       eventProperties: {
-        currency: "APTOS",
+        currency: "APT",
       },
     },
   ];

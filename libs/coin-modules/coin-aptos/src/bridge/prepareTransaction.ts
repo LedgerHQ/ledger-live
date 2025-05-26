@@ -15,11 +15,15 @@ const prepareTransaction = async (
 ): Promise<Transaction> => {
   if (
     !transaction.recipient ||
+    (transaction.mode === "send" && transaction.amount.gt(account.balance)) ||
+    (transaction.mode === "stake" && transaction.amount.gt(account.balance)) ||
     (transaction.mode === "stake" && transaction.amount.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS)) ||
-    (transaction.mode !== "unstake" && transaction.amount.gt(account.balance)) ||
     (transaction.mode === "unstake" &&
       account.aptosResources &&
-      transaction.amount.gt(account.aptosResources.stakedBalance))
+      transaction.amount.gt(account.aptosResources.stakedBalance)) ||
+    (transaction.mode === "withdraw" &&
+      account.aptosResources &&
+      transaction.amount.gt(account.aptosResources.availableBalance))
   )
     return transaction;
 
