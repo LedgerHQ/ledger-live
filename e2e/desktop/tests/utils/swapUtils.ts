@@ -56,4 +56,6 @@ export async function performSwapUntilDeviceVerificationStep(
   await app.swapDrawer.verifySourceAccount(swap.accountToDebit.currency.name);
   await app.swapDrawer.verifyTargetCurrency(swap.accountToCredit.currency.name);
   await app.swapDrawer.verifyProvider(selectedProvider);
+
+  // use the swap screens in the src folder of the mobile app to put or find ids, then put them in the swap.page.ts, so put the ids from swapdrawper page on lld to the swap.page.ts in lklm
 }
