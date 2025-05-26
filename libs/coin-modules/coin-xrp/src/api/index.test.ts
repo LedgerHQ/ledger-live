@@ -330,6 +330,7 @@ describe("Testing craftTransaction function", () => {
   it("should pass memos when user provides it for crafting a transaction", async () => {
     await api.craftTransaction({
       sender: "foo",
+      // NOTE: before
       // memos: [{ data: "testdata", format: "testformat", type: "testtype" }],
       memos: [
         {

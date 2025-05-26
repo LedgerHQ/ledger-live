@@ -7,8 +7,6 @@ export type TezosFeeEstimation = FeeEstimation;
 
 export type TezosSender = { address: string; xpub?: string };
 export type TezosTransactionIntent = TransactionIntent<TezosAsset>;
-// Record<string, unknown>,
-// TezosSender
 
 // NOTE: extending here WIP
 export type TezosApi = Api<TezosAsset, never, string> & {
@@ -18,4 +16,3 @@ export type TezosApi = Api<TezosAsset, never, string> & {
     // string // assuming memo value is string
   ) => Promise<FeeEstimation>;
 };
-// export type TezosApi = Api<TezosAsset, Record<string, unknown>, TezosSender, TezosFeeParameters>;

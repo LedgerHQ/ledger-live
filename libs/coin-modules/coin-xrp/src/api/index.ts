@@ -41,8 +41,6 @@ async function craft(
   transactionIntent: TransactionIntent<XrpAsset, XrpMemoKind, string>,
   customFees?: bigint,
 ): Promise<string> {
-  console.log("IN CRAFT: ", transactionIntent);
-
   const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
   const estimatedFees = customFees !== undefined ? customFees : (await estimateFees()).fee;
 
