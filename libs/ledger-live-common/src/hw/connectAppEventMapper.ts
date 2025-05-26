@@ -249,7 +249,9 @@ export class ConnectAppEventMapper {
       this.eventSubject.error(
         new LatestFirmwareVersionRequired("LatestFirmwareVersionRequired", {
           current: deviceState.firmwareUpdateContext!.currentFirmware.version,
-          latest: deviceState.firmwareUpdateContext!.availableUpdate!.finalFirmware.version,
+          latest:
+            deviceState.firmwareUpdateContext?.availableUpdate?.finalFirmware.version ||
+            deviceState.firmwareUpdateContext!.currentFirmware.version,
         }),
       );
     } else if (error instanceof DeviceLockedError) {

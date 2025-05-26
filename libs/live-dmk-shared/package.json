@@ -39,7 +39,7 @@
     "xstate": "^5.19.2"
   },
   "devDependencies": {
-    "@ledgerhq/device-management-kit": "0.7.0",
+    "@ledgerhq/device-management-kit": "0.0.0-connect-app-20250526081527",
     "@testing-library/dom": "^9.3.4",
     "@testing-library/jest-dom": "6.6.3",
     "@testing-library/react": "^16.1.0",
@@ -55,7 +55,7 @@
     "ws": "8.18.0"
   },
   "peerDependencies": {
-    "@ledgerhq/device-management-kit": "0.7.0",
+    "@ledgerhq/device-management-kit": "0.0.0-connect-app-20250526081527",
     "react": "^18.3.1",
     "rxjs": "^7.8.1"
   }
