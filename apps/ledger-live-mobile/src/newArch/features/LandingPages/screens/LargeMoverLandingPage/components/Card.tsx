@@ -25,7 +25,6 @@ type CardProps = {
   data: CurrencyData;
   chartData?: MarketCoinDataChart;
   height: number;
-  currencyIdsArray: string[];
   loading: boolean;
   range: KeysPriceChange;
   setRange: (range: KeysPriceChange) => void;

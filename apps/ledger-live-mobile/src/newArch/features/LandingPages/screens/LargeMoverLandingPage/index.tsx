@@ -53,7 +53,9 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
   const currenciesWithId = useMemo(
     () =>
       currencies.map((currency, index) => {
-        const chartDataEntry = chartDataArray.find(c => c.idChartData === currency.id);
+        const chartDataEntry = chartDataArray.find(
+          chartData => chartData.idChartData === currency.id,
+        );
         return {
           id: currency.id,
           data: currency.data,
@@ -75,7 +77,6 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
         chartData={chartDataEntry?.chartData}
         loading={loadingChart}
         height={height}
-        currencyIdsArray={currencyIdsArray}
         range={range}
         setRange={setRange}
       />

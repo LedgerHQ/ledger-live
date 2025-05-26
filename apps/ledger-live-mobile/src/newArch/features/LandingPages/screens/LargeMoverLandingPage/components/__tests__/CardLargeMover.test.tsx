@@ -35,7 +35,6 @@ describe("Card", () => {
         range={KeysPriceChange.day}
         setRange={mockSetRange}
         height={100}
-        currencyIdsArray={["BTC", "ETH"]}
         loading={false}
       />,
     );
@@ -52,7 +51,6 @@ describe("Card", () => {
         range={KeysPriceChange.day}
         setRange={mockSetRange}
         height={100}
-        currencyIdsArray={["BTC", "ETH"]}
         loading={false}
       />,
     );
@@ -72,7 +70,6 @@ describe("Card", () => {
         range={KeysPriceChange.day}
         setRange={mockSetRange}
         height={100}
-        currencyIdsArray={["BTC", "ETH"]}
         loading={false}
       />,
     );
