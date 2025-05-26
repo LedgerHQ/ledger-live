@@ -252,6 +252,62 @@ describe("DmkSignerEth", () => {
             input: expect.objectContaining({
               derivationPath: "path",
               transaction: Uint8Array.from([0x01, 0x02, 0x03, 0x04, 0x05, 0x06]),
+              options: expect.objectContaining({
+                domain: undefined,
+              }),
+            }),
+          }),
+          sessionId: "sessionId",
+        }),
+      );
+      expect(result).toEqual({
+        type: "signer.evm.signed",
+        value: {
+          r: "01",
+          s: "02",
+          v: 3,
+        },
+      });
+    });
+
+    it("should sign the transaction with a domain", async () => {
+      // GIVEN
+      const path = "path";
+      const rawTxHex = "0x010203040506";
+      const domain = "vitalik.eth";
+      dmkMock.executeDeviceAction.mockReturnValue({
+        observable: of({
+          status: DeviceActionStatus.Completed,
+          output: {
+            r: "0x01",
+            s: "0x02",
+            v: 0x03,
+          },
+        }),
+      });
+
+      // WHEN
+      const result = await lastValueFrom(signer.signTransaction(path, rawTxHex, {
+        domains: [
+          {
+            registry: "ens",
+            domain,
+            address: "0x",
+            type: "forward",
+          },
+        ]
+      }));
+
+      // THEN
+      expect(dmkMock.executeDeviceAction).toHaveBeenCalledWith(
+        expect.objectContaining({
+          deviceAction: expect.objectContaining({
+            input: expect.objectContaining({
+              derivationPath: "path",
+              transaction: Uint8Array.from([0x01, 0x02, 0x03, 0x04, 0x05, 0x06]),
+              options: expect.objectContaining({
+                domain,
+              }),
             }),
           }),
           sessionId: "sessionId",

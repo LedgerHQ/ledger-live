@@ -16,10 +16,11 @@ import {
   exportSettingsSelector,
   lastSeenDeviceSelector,
 } from "~/reducers/settings";
-import { useSwapLiveAppCustomHandlers } from "./hooks/useSwapLiveAppCustomHandlers";
 import { DefaultAccountSwapParamList } from "../types";
+import { useDispatch } from "react-redux";
 import { useTranslateToSwapAccount } from "./hooks/useTranslateToSwapAccount";
 import { flattenAccountsSelector } from "~/reducers/accounts";
+import { useSwapCustomHandlers } from "./customHandlers";
 
 type Props = {
   manifest: LiveAppManifest;
@@ -28,7 +29,11 @@ type Props = {
 };
 
 export function WebView({ manifest, params, setWebviewState }: Props) {
-  const customHandlers = useSwapLiveAppCustomHandlers(manifest);
+  // Swap duplicated the Custom Handlers due to different needs compared to the rest of the platform apps,
+  // to avoid complexifying the logic in the shared custom handlers.
+  const accounts = useSelector(flattenAccountsSelector);
+  const dispatch = useDispatch();
+  const customHandlers = useSwapCustomHandlers(manifest, accounts, dispatch);
   const { theme } = useTheme();
   const { language } = useSettings();
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
