@@ -1,5 +1,23 @@
 # live-mobile
 
+## 3.80.0-nightly.2
+
+### Minor Changes
+
+- [#10227](https://github.com/LedgerHQ/ledger-live/pull/10227) [`b93d081`](https://github.com/LedgerHQ/ledger-live/commit/b93d0814b6a6806f341a599e6d3228a0caf7f3d3) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Large Mover Analytics
+
+- [#10329](https://github.com/LedgerHQ/ledger-live/pull/10329) [`0545969`](https://github.com/LedgerHQ/ledger-live/commit/0545969b75adb9ba6f6fc61e78dc18bc23fa6b1b) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Fix E2E tests, remove test code
+
+- [#10328](https://github.com/LedgerHQ/ledger-live/pull/10328) [`ff0a516`](https://github.com/LedgerHQ/ledger-live/commit/ff0a516c54ac1bed9d0da70d2531b7f535afad2e) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: card scollable and buttons clickable on android
+
+### Patch Changes
+
+- [#10264](https://github.com/LedgerHQ/ledger-live/pull/10264) [`52e34fc`](https://github.com/LedgerHQ/ledger-live/commit/52e34fc0ca98917e8ac2846524828f1f0aaf701d) Thanks [@md-blockydevs](https://github.com/md-blockydevs)! - fix "view in explorer" button in unconfirmed Hedera transaction details by adding "extra.transactionId" fallback
+  move getTransactionExplorer from LLD to coin module
+  support custom getTransactionExplorer in ledger-live-mobile
+- Updated dependencies [[`ff0a516`](https://github.com/LedgerHQ/ledger-live/commit/ff0a516c54ac1bed9d0da70d2531b7f535afad2e)]:
+  - @ledgerhq/native-ui@0.35.0-nightly.0
+
 ## 3.80.0-nightly.1
 
 ### Minor Changes

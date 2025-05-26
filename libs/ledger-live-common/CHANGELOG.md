@@ -1,5 +1,18 @@
 # @ledgerhq/live-common
 
+## 34.35.0-nightly.2
+
+### Patch Changes
+
+- [#10264](https://github.com/LedgerHQ/ledger-live/pull/10264) [`52e34fc`](https://github.com/LedgerHQ/ledger-live/commit/52e34fc0ca98917e8ac2846524828f1f0aaf701d) Thanks [@md-blockydevs](https://github.com/md-blockydevs)! - fix "view in explorer" button in unconfirmed Hedera transaction details by adding "extra.transactionId" fallback
+  move getTransactionExplorer from LLD to coin module
+  support custom getTransactionExplorer in ledger-live-mobile
+- Updated dependencies [[`e05503a`](https://github.com/LedgerHQ/ledger-live/commit/e05503a0d9d7b38c5bfc48b6d1b1536bb399117f), [`0adc958`](https://github.com/LedgerHQ/ledger-live/commit/0adc958c24693ce0dffefc01fc1c7734eb9dbe5b), [`52e34fc`](https://github.com/LedgerHQ/ledger-live/commit/52e34fc0ca98917e8ac2846524828f1f0aaf701d)]:
+  - @ledgerhq/ledger-cal-service@0.5.0-nightly.2
+  - @ledgerhq/coin-aptos@1.10.0-nightly.0
+  - @ledgerhq/coin-hedera@1.6.7-nightly.1
+  - @ledgerhq/live-signer-solana@0.1.1-nightly.3
+
 ## 34.35.0-nightly.1
 
 ### Minor Changes

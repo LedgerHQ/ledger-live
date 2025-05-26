@@ -1,5 +1,22 @@
 # ledger-live-desktop
 
+## 2.115.0-nightly.2
+
+### Minor Changes
+
+- [#10293](https://github.com/LedgerHQ/ledger-live/pull/10293) [`e6f6140`](https://github.com/LedgerHQ/ledger-live/commit/e6f614040a209ff66e95d3fd94acefef8f46357d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Aggregation of the accounts selection flow to display corresponding accounts depending on the network and asset. Also fix some UI for account item inside pre ldls lib
+
+### Patch Changes
+
+- [#10264](https://github.com/LedgerHQ/ledger-live/pull/10264) [`52e34fc`](https://github.com/LedgerHQ/ledger-live/commit/52e34fc0ca98917e8ac2846524828f1f0aaf701d) Thanks [@md-blockydevs](https://github.com/md-blockydevs)! - fix "view in explorer" button in unconfirmed Hedera transaction details by adding "extra.transactionId" fallback
+  move getTransactionExplorer from LLD to coin module
+  support custom getTransactionExplorer in ledger-live-mobile
+- Updated dependencies [[`e6f6140`](https://github.com/LedgerHQ/ledger-live/commit/e6f614040a209ff66e95d3fd94acefef8f46357d), [`0adc958`](https://github.com/LedgerHQ/ledger-live/commit/0adc958c24693ce0dffefc01fc1c7734eb9dbe5b), [`52e34fc`](https://github.com/LedgerHQ/ledger-live/commit/52e34fc0ca98917e8ac2846524828f1f0aaf701d)]:
+  - @ledgerhq/react-ui@0.27.0-nightly.2
+  - @ledgerhq/coin-aptos@1.10.0-nightly.0
+  - @ledgerhq/live-common@34.35.0-nightly.2
+  - @ledgerhq/live-dmk-desktop@0.3.7-nightly.2
+
 ## 2.115.0-nightly.1
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.35.0-nightly.0
+
+### Minor Changes
+
+- [#10328](https://github.com/LedgerHQ/ledger-live/pull/10328) [`ff0a516`](https://github.com/LedgerHQ/ledger-live/commit/ff0a516c54ac1bed9d0da70d2531b7f535afad2e) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: card scollable and buttons clickable on android
+
 ## 0.34.1
 
 ### Patch Changes

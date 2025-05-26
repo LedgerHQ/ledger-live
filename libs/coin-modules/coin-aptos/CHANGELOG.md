@@ -4,6 +4,12 @@
 
 ### Minor Changes
 
+- [#10089](https://github.com/LedgerHQ/ledger-live/pull/10089) [`0adc958`](https://github.com/LedgerHQ/ledger-live/commit/0adc958c24693ce0dffefc01fc1c7734eb9dbe5b) Thanks [@pvoliveira](https://github.com/pvoliveira)! - add Aptos Alpaca getBalance method
+
+## 1.10.0-nightly.0
+
+### Minor Changes
+
 - [#10141](https://github.com/LedgerHQ/ledger-live/pull/10141) [`12af22b`](https://github.com/LedgerHQ/ledger-live/commit/12af22b9690928a409ad81d679575ee3b017a702) Thanks [@pvoliveira](https://github.com/pvoliveira)! - add Aptos Alpaca craftTransaction method
 
 - [#10012](https://github.com/LedgerHQ/ledger-live/pull/10012) [`d8a1c05`](https://github.com/LedgerHQ/ledger-live/commit/d8a1c0500253b53a25151c47dd3ae36e21baa8bc) Thanks [@pvoliveira](https://github.com/pvoliveira)! - add Aptos Alpaca combine method
