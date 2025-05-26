@@ -491,13 +491,16 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
     [isOffline],
   );
 
-  const manifestUrl = useMemo(() => `${manifest.url}#${hashString}`, [manifest.url, hashString]);
+  const manifestWithHash = useMemo(
+    () => ({ ...manifest, url: `${manifest.url}#${hashString}` }),
+    [manifest, hashString],
+  );
 
   return (
     <>
       {enablePlatformDevTools && (
         <TopBar
-          manifest={{ ...manifest, url: manifestUrl }}
+          manifest={manifestWithHash}
           webviewAPIRef={webviewAPIRef}
           webviewState={webviewState}
         />
@@ -505,7 +508,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
 
       <SwapWebAppWrapper>
         <Web3AppWebview
-          manifest={{ ...manifest, url: `${manifest.url}#${hashString}` }}
+          manifest={manifestWithHash}
           inputs={{
             theme: themeType,
             lang: locale,
