@@ -284,4 +284,10 @@ export const WebElementHelpers = {
       ),
     );
   },
+
+  async getValueByWebTestId(id: string): Promise<string> {
+    return await retryUntilTimeout(async () =>
+      WebElementHelpers.getWebElementByTestId(id).runScript((el: HTMLInputElement) => el.value),
+    );
+  },
 };
