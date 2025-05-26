@@ -187,6 +187,27 @@ export const WebElementHelpers = {
     return index > 0 ? base.atIndex(index) : base;
   },
 
+  async getWebElementsByCssSelector(selector: string): Promise<string[]> {
+    const texts: string[] = [];
+    let i = 0;
+
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      try {
+        const element = web
+          .element(by.web.cssSelector(selector))
+          .atIndex(i) as unknown as IndexedWebElement;
+        const text = await element.getText();
+        texts.push(text);
+        i++;
+      } catch {
+        break;
+      }
+    }
+
+    return texts.filter(Boolean);
+  },
+
   getWebElementsByIdAndText(id: string, text: string, index = 0): WebElement {
     const base = web.element(
       by.web.xpath(`//span[@data-testid="${id}" and text()="${text}"]`),
