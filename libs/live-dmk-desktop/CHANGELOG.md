@@ -1,5 +1,15 @@
 # @ledgerhq/live-dmk-desktop
 
+## 0.3.7-nightly.3
+
+### Patch Changes
+
+- [#10344](https://github.com/LedgerHQ/ledger-live/pull/10344) [`b2454cd`](https://github.com/LedgerHQ/ledger-live/commit/b2454cde386d45fd69304ba492bb7958bb0eacd4) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Patch logger pkg
+
+- Updated dependencies [[`8bd5c56`](https://github.com/LedgerHQ/ledger-live/commit/8bd5c56f8b9f57557d56ce91d648d8346834e489), [`b2454cd`](https://github.com/LedgerHQ/ledger-live/commit/b2454cde386d45fd69304ba492bb7958bb0eacd4)]:
+  - @ledgerhq/live-common@34.35.0-nightly.3
+  - @ledgerhq/live-dmk-shared@0.8.2-nightly.2
+
 ## 0.3.7-nightly.2
 
 ### Patch Changes

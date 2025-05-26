@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.80.0-nightly.3
+
+### Minor Changes
+
+- [#10302](https://github.com/LedgerHQ/ledger-live/pull/10302) [`8bd5c56`](https://github.com/LedgerHQ/ledger-live/commit/8bd5c56f8b9f57557d56ce91d648d8346834e489) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: loader only for the graph and not for the card when the timeframe is updated
+
+- [#10292](https://github.com/LedgerHQ/ledger-live/pull/10292) [`3100714`](https://github.com/LedgerHQ/ledger-live/commit/3100714186c915818a7a13cfc8e0354361638502) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - create swap custom handlers
+
+### Patch Changes
+
+- Updated dependencies [[`b2454cd`](https://github.com/LedgerHQ/ledger-live/commit/b2454cde386d45fd69304ba492bb7958bb0eacd4)]:
+  - @ledgerhq/live-dmk-mobile@0.4.2-nightly.2
+
 ## 3.80.0-nightly.2
 
 ### Minor Changes

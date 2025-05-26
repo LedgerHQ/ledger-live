@@ -1,5 +1,11 @@
 # @ledgerhq/live-dmk
 
+## 0.8.2-nightly.2
+
+### Patch Changes
+
+- [#10344](https://github.com/LedgerHQ/ledger-live/pull/10344) [`b2454cd`](https://github.com/LedgerHQ/ledger-live/commit/b2454cde386d45fd69304ba492bb7958bb0eacd4) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Patch logger pkg
+
 ## 0.8.2-nightly.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 34.35.0-nightly.3
+
+### Minor Changes
+
+- [#10302](https://github.com/LedgerHQ/ledger-live/pull/10302) [`8bd5c56`](https://github.com/LedgerHQ/ledger-live/commit/8bd5c56f8b9f57557d56ce91d648d8346834e489) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: loader only for the graph and not for the card when the timeframe is updated
+
 ## 34.35.0-nightly.2
 
 ### Patch Changes

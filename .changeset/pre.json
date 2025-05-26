@@ -151,11 +151,14 @@
     "@ledgerhq/live-signer-solana": "0.1.0"
   },
   "changesets": [
+    "blue-pants-pump",
     "blue-roses-explain",
     "calm-pianos-decide",
     "cuddly-bags-sip",
     "cyan-roses-turn",
+    "dull-dolls-bathe",
     "early-ravens-prove",
+    "flat-keys-try",
     "fluffy-terms-cheer",
     "fuzzy-plums-care",
     "gentle-geckos-melt",
@@ -178,7 +181,6 @@
     "new-flies-smell",
     "new-guests-hope",
     "new-shoes-dance",
-    "new-tips-tan",
     "nice-rockets-repeat",
     "nice-spies-worry",
     "orange-peaches-rescue",
