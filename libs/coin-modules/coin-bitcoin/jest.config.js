@@ -10,7 +10,7 @@ module.exports = {
     "!src/datasets/**/*.ts",
     "!src/wallet-btc/__tests__/**/*.ts",
   ],
-  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "./" }], "text"],
+  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   preset: "ts-jest",
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],

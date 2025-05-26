@@ -6,7 +6,7 @@ export default {
   testPathIgnorePatterns: ["packages/*/lib-es", "packages/*/lib"],
   coveragePathIgnorePatterns: ["packages/create-dapp"],
   passWithNoTests: true,
-  coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "json-summary", "text"],
+  coverageReporters: ["json", ["lcov", { projectRoot: "../../../../" }], "json-summary", "text"],
   reporters: [
     "default",
     [

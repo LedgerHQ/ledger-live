@@ -10,7 +10,7 @@ export default {
     "!src/**/__tests__/**",
     "!tests/**",
   ],
-  coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "json-summary", "text"],
+  coverageReporters: ["json", ["lcov", { projectRoot: "../../../../" }], "json-summary", "text"],
   reporters: [
     "default",
     [
