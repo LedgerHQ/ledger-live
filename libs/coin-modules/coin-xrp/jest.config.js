@@ -11,7 +11,7 @@ module.exports = {
     "!src/**/*.spec.ts",
     "!src/test/**/*.ts",
   ],
-  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "./" }], "text"],
+  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   workerThreads: true,
   reporters: [
     "default",

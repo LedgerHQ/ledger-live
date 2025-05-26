@@ -60,7 +60,7 @@ const defaultConfig = {
   ],
   testPathIgnorePatterns,
   testRegex,
-  coverageReporters: ["json", ["lcov", { projectRoot: "./" }], "json-summary", "text"],
+  coverageReporters: ["json", ["lcov", { projectRoot: "../../" }], "json-summary", "text"],
   transform: {
     [`node_modules[\\\\|/].pnpm[\\\\|/](${esmDeps.join("|")}).+\\.jsx?$`]: [
       "@swc/jest",

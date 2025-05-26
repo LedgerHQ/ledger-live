@@ -12,7 +12,7 @@ export default {
   ],
   coverageReporters: [
     "json",
-    ["lcov", { file: "lcov.info", projectRoot: "../" }],
+    ["lcov", { file: "lcov.info", projectRoot: "../../../../" }],
     "json-summary",
     "text",
   ],

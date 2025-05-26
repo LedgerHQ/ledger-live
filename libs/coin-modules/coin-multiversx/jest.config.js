@@ -10,7 +10,7 @@ module.exports = {
     "!src/__tests__/**/*.ts",
     "!src/__snapshots__/",
   ],
-  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "./" }], "text"],
+  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
   reporters: [
