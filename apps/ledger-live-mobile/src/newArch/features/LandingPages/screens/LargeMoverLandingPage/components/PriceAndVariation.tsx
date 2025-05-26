@@ -46,7 +46,7 @@ export const PriceAndVariation: React.FC<PriceAndVariationProps> = ({
         })}
       </Text>
       <Flex flexDirection="row" alignItems="center" marginTop={3}>
-        <Flex justifyContent="center" alignItems="center" marginRight={"8px"}>
+        <Flex justifyContent="center" alignItems="center" marginRight="8px">
           <Delta
             unit={{ ...counterValueCurrency.units[0], code: "" }}
             valueChange={{
