@@ -38,7 +38,7 @@ import type {
   FeeEstimation,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
-import type { AptosAsset, AptosExtra, AptosFeeParameters, AptosSender } from "../types/assets";
+import type { AptosAsset, AptosExtra } from "../types/assets";
 import { log } from "@ledgerhq/logs";
 
 const getApiEndpoint = (currencyId: string) =>
@@ -215,9 +215,9 @@ export class AptosAPI {
   }
 
   async estimateFees(
-    transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender>,
-  ): Promise<FeeEstimation<AptosFeeParameters>> {
-    const publicKeyEd = new Ed25519PublicKey(transactionIntent.sender.xpub);
+    transactionIntent: TransactionIntent<AptosAsset, AptosExtra, string>,
+  ): Promise<FeeEstimation> {
+    const publicKeyEd = new Ed25519PublicKey(transactionIntent?.senderPublicKey ?? "");
     const fn: MoveFunctionId = "0x1::aptos_account::transfer_coins";
 
     const txPayload: InputEntryFunctionData = {
@@ -231,11 +231,7 @@ export class AptosAPI {
       gasUnitPrice: DEFAULT_GAS_PRICE.toString(),
     };
 
-    const tx = await this.generateTransaction(
-      transactionIntent.sender.freshAddress,
-      txPayload,
-      txOptions,
-    );
+    const tx = await this.generateTransaction(transactionIntent.sender, txPayload, txOptions);
 
     const simulation = await this.simulateTransaction(publicKeyEd, tx);
     const completedTx = simulation[0];
@@ -248,6 +244,7 @@ export class AptosAPI {
     return {
       value: BigInt(expectedGas.toString()),
       parameters: {
+        storageLimit: BigInt(0),
         gasLimit: BigInt(gasLimit.toString()),
         gasPrice: BigInt(gasPrice.toString()),
       },

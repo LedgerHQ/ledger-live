@@ -13,7 +13,7 @@ import {
 import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import { AptosAPI } from "../../network";
-import { AptosAsset, AptosExtra, AptosSender } from "../../types/assets";
+import { AptosAsset, AptosExtra } from "../../types/assets";
 import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { APTOS_ASSET_ID } from "../../constants";
@@ -600,19 +600,20 @@ describe("Aptos API", () => {
       }));
 
       const amount = BigInt(100);
-      const sender: AptosSender = {
+      const sender = {
         xpub: "xpub",
         freshAddress: "address1",
       };
       const recipient = "address2";
 
       const api = new AptosAPI("aptos");
-      const transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender> = {
+      const transactionIntent: TransactionIntent<AptosAsset, AptosExtra> = {
         asset: {
           type: "native",
         },
         type: "send",
-        sender,
+        sender: sender.freshAddress,
+        senderPublicKey: sender.xpub,
         amount,
         recipient,
       };

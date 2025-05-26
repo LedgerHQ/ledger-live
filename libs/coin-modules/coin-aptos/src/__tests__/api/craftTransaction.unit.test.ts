@@ -2,7 +2,7 @@ import { Hex, type InputEntryFunctionData, RawTransaction, Deserializer } from "
 import type { TransactionIntent } from "@ledgerhq/coin-framework/lib/api/types";
 import { createApi } from "../../api";
 import type { TransactionOptions } from "../../types";
-import type { AptosAsset, AptosExtra, AptosSender } from "../../types/assets";
+import type { AptosAsset, AptosExtra } from "../../types/assets";
 import { AptosAPI } from "../../network";
 
 jest.mock("../../network");
@@ -45,17 +45,14 @@ describe("returns a valid transaction", () => {
       "generateTransaction",
     );
 
-    const SENDER: AptosSender = {
-      xpub: "public-key",
-      freshAddress: SENDER_ADDR,
-    };
     const api = createApi({
       aptosSettings: {},
     });
 
-    const txArg: TransactionIntent<AptosAsset, AptosExtra, AptosSender> = {
+    const txArg: TransactionIntent<AptosAsset, AptosExtra> = {
       type: "send",
-      sender: SENDER,
+      sender: SENDER_ADDR,
+      senderPublicKey: "public-key",
       recipient: RECIPIENT_ADDR,
       amount: 10n,
       asset: { type: "native" },

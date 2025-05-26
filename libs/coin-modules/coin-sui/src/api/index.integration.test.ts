@@ -25,7 +25,7 @@ describe("Sui Api", () => {
       const amount = BigInt(100_000);
 
       // When
-      const result: FeeEstimation<{ value: bigint }> = await module.estimateFees({
+      const result: FeeEstimation = await module.estimateFees({
         asset: { type: "native" },
         type: "send",
         sender: SENDER,
