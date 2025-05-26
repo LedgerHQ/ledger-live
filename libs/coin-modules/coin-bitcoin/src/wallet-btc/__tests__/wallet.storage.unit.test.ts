@@ -370,7 +370,7 @@ describe("Unit tests for bitcoin storage", () => {
 
     storage.appendTxs([confirmedTx]);
 
-    // ✅ Confirm it's replaced correctly
+    // Confirm it's replaced correctly
     const txs = storage.exportSync().txs;
     const found = txs.filter(tx => tx.id === "duplicate-tx");
 

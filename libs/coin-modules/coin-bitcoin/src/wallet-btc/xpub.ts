@@ -114,7 +114,6 @@ class Xpub {
     this.freshAddressIndex = 0;
     const highestBlockFromStorage = this.storage.getHighestBlockHeightAndHash();
     let needReorg = !!highestBlockFromStorage;
-
     if (highestBlockFromStorage) {
       const highestBlockFromExplorer = await this.explorer.getBlockByHeight(
         highestBlockFromStorage.height,
