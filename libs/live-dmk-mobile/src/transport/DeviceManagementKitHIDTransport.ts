@@ -56,6 +56,9 @@ export class DeviceManagementKitHIDTransport extends Transport {
     let transport: DeviceManagementKitHIDTransport | undefined = undefined;
 
     try {
+      if (activeDeviceSessionSubject.value) {
+        await dmk.disconnect({ sessionId: activeDeviceSessionSubject.value.sessionId });
+      }
       const availableDevices = await firstValueFrom(
         dmk
           .listenToAvailableDevices({ transport: rnHidTransportIdentifier })
@@ -156,43 +159,45 @@ export class DeviceManagementKitHIDTransport extends Transport {
             sessionId: connectedDevice.sessionId,
           });
 
-          sessionStateSubscription = sessionStateObs.pipe(
-            map(sessionState => ({
-              sessionState: sessionState,
-              isConnected: sessionState.deviceStatus !== DeviceStatus.NOT_CONNECTED,
-            })),
-            /**
-             * We're only interested in the device status change between "NOT_CONNECTED" and others,
-             * so we filter out the rest of the events.
-             * If we don't do this, we emit 2 events for each APDU exchange, so it
-             * will cause performance issues.
-             */
-            distinctUntilChanged((prev, curr) => prev.isConnected === curr.isConnected)
-          ).subscribe({
-            next: ({ sessionState}) => {
-              const id = dmkToLedgerDeviceIdMap[connectedDevice.modelId];
-              if (sessionState.deviceStatus === DeviceStatus.NOT_CONNECTED) {
-                observer.next({
-                  type: "remove",
-                  descriptor: connectedDevice.id,
-                  device: connectedDevice,
-                });
-              } else {
-                observer.next({
-                  type: "add",
-                  descriptor: connectedDevice.id,
-                  device: connectedDevice,
-                  deviceModel: {
-                    productName: connectedDevice.name,
-                    id,
-                  } as DeviceModel,
-                });
-              }
-            },
-            error: err => {
-              tracer.trace("[DMKTransportHID] [listen] listen error", err);
-            },
-          });
+          sessionStateSubscription = sessionStateObs
+            .pipe(
+              map(sessionState => ({
+                sessionState: sessionState,
+                isConnected: sessionState.deviceStatus !== DeviceStatus.NOT_CONNECTED,
+              })),
+              /**
+               * We're only interested in the device status change between "NOT_CONNECTED" and others,
+               * so we filter out the rest of the events.
+               * If we don't do this, we emit 2 events for each APDU exchange, so it
+               * will cause performance issues.
+               */
+              distinctUntilChanged((prev, curr) => prev.isConnected === curr.isConnected),
+            )
+            .subscribe({
+              next: ({ sessionState }) => {
+                const id = dmkToLedgerDeviceIdMap[connectedDevice.modelId];
+                if (sessionState.deviceStatus === DeviceStatus.NOT_CONNECTED) {
+                  observer.next({
+                    type: "remove",
+                    descriptor: connectedDevice.id,
+                    device: connectedDevice,
+                  });
+                } else {
+                  observer.next({
+                    type: "add",
+                    descriptor: connectedDevice.id,
+                    device: connectedDevice,
+                    deviceModel: {
+                      productName: connectedDevice.name,
+                      id,
+                    } as DeviceModel,
+                  });
+                }
+              },
+              error: err => {
+                tracer.trace("[DMKTransportHID] [listen] listen error", err);
+              },
+            });
         } catch (err) {
           tracer.trace("[DMKTransportHID] [listen] listen getDeviceSessionState error", { err });
           // if a connected device is manually disconnected and connected after the disconnect timeout the device
