@@ -13,6 +13,9 @@ const alpacaized = {
   xrp: true,
 };
 
+let accountBridgeInstance: AccountBridge<any> | null = null;
+let currencyBridgeInstance: CurrencyBridge | null = null;
+
 export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   if (getEnv("MOCK")) {
     const mockBridge = mockBridges[currency.family];
@@ -24,7 +27,10 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   }
 
   if (alpacaized[currency.family]) {
-    return getAlpacaCurrencyBridge(currency.family, "local");
+    if (!currencyBridgeInstance) {
+      currencyBridgeInstance = getAlpacaCurrencyBridge(currency.family, "local");
+    }
+    return currencyBridgeInstance;
   }
 
   const jsBridge = jsBridges[currency.family];
@@ -69,7 +75,10 @@ export function getAccountBridgeByFamily(family: string, accountId?: string): Ac
   }
 
   if (alpacaized[family]) {
-    return getAlpacaAccountBridge(family, "local");
+    if (!accountBridgeInstance) {
+      accountBridgeInstance = getAlpacaAccountBridge(family, "local");
+    }
+    return accountBridgeInstance;
   }
 
   const jsBridge = jsBridges[family];
