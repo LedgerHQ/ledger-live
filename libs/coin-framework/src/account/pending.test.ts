@@ -5,7 +5,6 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { addPendingOperation, shouldRetainPendingOperation } from "./pending";
 import { emptyHistoryCache } from "./balanceHistoryCache";
 import { getEnv } from "@ledgerhq/live-env";
-// TODO: improve
 
 describe("addPendingOperation", () => {
   it("add the operation to the matching account Id", () => {
