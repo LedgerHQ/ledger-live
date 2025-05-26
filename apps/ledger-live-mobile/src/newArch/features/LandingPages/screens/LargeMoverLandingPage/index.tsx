@@ -74,7 +74,7 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.neutral.c00 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.neutral.c00, paddingTop: 10 }}>
       <TrackScreen name={PAGE_NAME} initialRange={initialRange} currencyIds={currencyIds} />
       <StickyHeader />
       <Flex paddingTop={40}>
