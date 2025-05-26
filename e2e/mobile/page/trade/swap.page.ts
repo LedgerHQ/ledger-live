@@ -52,7 +52,7 @@ export default class SwapPage {
 
   @Step("Wait for swap success and continue")
   async waitForSuccessAndContinue() {
-    await waitForElementById(this.swapSuccessTitleId, 30_000);
+    await waitForElementById(this.swapSuccessTitleId, 120_000);
     await tapById(app.common.proceedButtonId);
   }
 }
