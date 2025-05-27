@@ -8,7 +8,7 @@ import React, {
   useLayoutEffect,
 } from "react";
 import { Image } from "react-native";
-import { Flex, VerticalTimeline, Text, ContinueOnDevice } from "@ledgerhq/native-ui";
+import { Flex, VerticalTimeline, Text, ContinueOnDevice, Link } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import {
@@ -47,7 +47,7 @@ import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
-import ExternalLink from "~/components/ExternalLink";
+import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
 import SecretRecoveryPhraseImage from "./assets/srp.png";
 import RecoveryKeyImage from "./assets/rk.png";
 import BackgroundBlue from "./assets/BackgroundBlue";
@@ -681,7 +681,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
               ) : seedPathStatus === "backup_recovery_key" ? (
                 <Flex>
                   <Flex alignItems="center" justifyContent="center">
-                    <Flex style={{ overflow: "visible", height: 150 }}>
+                    <Flex style={{ overflow: "visible", height: 130 }} mt={3}>
                       <Image source={RecoveryKeyImage} height={200} />
                     </Flex>
                     <Text variant="h5" fontWeight="semiBold" mb={6}>
@@ -691,7 +691,15 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                       {t("syncOnboarding.seedStep.backupRecoveryKey.desc")}
                     </BodyText>
                   </Flex>
-                  <ExternalLink text={t("syncOnboarding.seedStep.backupRecoveryKey.cta")} />
+                  <Flex mb={6} width="100%" justifyContent="center" alignItems="center">
+                    <Link
+                      Icon={ExternalLinkMedium}
+                      onPress={() => {}}
+                      style={{ justifyContent: "flex-start" }}
+                    >
+                      {t("syncOnboarding.seedStep.backupRecoveryKey.cta")}
+                    </Link>
+                  </Flex>
                   <ContinueOnDeviceWithAnim
                     deviceModelId={device.modelId}
                     text={t("syncOnboarding.seedStep.backupRecoveryKey.continueOnDevice", {
