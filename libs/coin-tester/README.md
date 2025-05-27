@@ -83,6 +83,7 @@ pnpm coin:tester:<coin-tester-modules-name> start
 # e.g
 # pnpm coin:tester:evm start
 # pnpm coin:tester:polkadot start
+# pnpm coin:tester:solana start
 ```
 
 ## Troubleshooting
