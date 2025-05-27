@@ -242,6 +242,10 @@ export const TopBar = ({
 
   const isLoading = useDebounce(webviewState.loading, 100);
 
+  if (!enablePlatformDevTools && isInternalApp) {
+    return null;
+  }
+
   return (
     <Container>
       {!isInternalApp ? (
