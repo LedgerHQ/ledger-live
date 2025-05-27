@@ -218,9 +218,9 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
     const pendingInactive = BigNumber(pending_inactive_string);
 
     stakingPositions.push({
-      active: active,
-      inactive: inactive,
-      pendingInactive: pendingInactive,
+      active,
+      inactive,
+      pendingInactive,
       validatorId: stakingPoolAddress,
     });
 
