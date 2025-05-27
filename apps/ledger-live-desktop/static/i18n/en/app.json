@@ -3852,7 +3852,7 @@
     "account": {
       "stakedBalance": "Staked balance",
       "stakedBalanceTooltip": "This amount is currently staked with validators.",
-      "withdrawableBalance": "Withdawable balance",
+      "withdrawableBalance": "Withdrawable balance",
       "withdrawableBalanceTooltip": "This amount has been unstaked and is currently able to be withdrawn.",
       "pendingBalance": "Pending balance",
       "pendingBalanceTooltip": "This amount has been unstaked and is currently pending availability."
@@ -3876,9 +3876,9 @@
       "table": {
         "header": "Staking Position(s)",
         "stake": "Add",
-        "staked": "Staked",
-        "pending": "Pending Release",
-        "available": "Withdrawable",
+        "active": "Staked",
+        "pendingInactive": "Pending Release",
+        "inactive": "Withdrawable",
         "nextUnlock": "Next unlock"
       },
       "nextUnlockIn": "Next unlock in",
@@ -4120,7 +4120,7 @@
     "account": {
       "stakedBalance": "Staked balance",
       "stakedBalanceTooltip": "This amount is currently staked with validators.",
-      "availableBalance": "Withdawable balance",
+      "availableBalance": "Withdrawable balance",
       "availableBalanceTooltip": "This amount has been unstaked and is currently able to be withdrawn.",
       "pendingBalance": "Pending balance",
       "pendingBalanceTooltip": "This amount has been unstaked and is currently pending availability.",

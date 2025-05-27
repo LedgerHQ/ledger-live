@@ -101,7 +101,7 @@ export function Row({
   onExternalLink,
 }: Props) {
   const unstakingEnabled = canUnstake(stakingPosition);
-  const withdawingEnabled = canWithdraw(stakingPosition);
+  const withdrawingEnabled = canWithdraw(stakingPosition);
   const restakingEnabled = canRestake(stakingPosition);
 
   const onSelect = useCallback(
@@ -119,7 +119,7 @@ export function Row({
       key: "MODAL_APTOS_UNSTAKE",
       label: <Trans i18nKey="aptos.stake.unstake" />,
     },
-    withdawingEnabled && {
+    withdrawingEnabled && {
       key: "MODAL_APTOS_WITHDRAW",
       label: <Trans i18nKey="aptos.stake.withdraw" />,
     },
