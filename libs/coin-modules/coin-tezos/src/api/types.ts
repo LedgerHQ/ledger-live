@@ -6,10 +6,16 @@ export type TezosFeeParameters = { gasLimit: bigint; storageLimit: bigint };
 export type TezosFeeEstimation = FeeEstimation<TezosFeeParameters>;
 
 export type TezosSender = { address: string; xpub?: string };
+export type TezosTransactionIntentExtra = { gasLimit?: number; storageLimit?: number };
 export type TezosTransactionIntent = TransactionIntent<
   TezosAsset,
-  Record<string, unknown>,
+  TezosTransactionIntentExtra,
   TezosSender
 >;
 
-export type TezosApi = Api<TezosAsset, Record<string, unknown>, TezosSender, TezosFeeParameters>;
+export type TezosApi = Api<
+  TezosAsset,
+  TezosTransactionIntentExtra,
+  TezosSender,
+  TezosFeeParameters
+>;
