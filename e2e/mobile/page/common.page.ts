@@ -2,6 +2,7 @@ import { expect } from "detox";
 import { deleteSpeculos, launchProxy, launchSpeculos } from "../utils/speculosUtils";
 import { addKnownSpeculos, findFreePort, removeKnownSpeculos } from "../bridge/server";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 const proxyAddress = "localhost";
 
@@ -20,11 +21,20 @@ export default class CommonPage {
   accountItemRegExp = (id = ".*(?<!-name)$") => new RegExp(`${this.accountItemId}${id}`);
   accountItem = (id: string) => getElementById(this.accountItemRegExp(id));
   accountItemName = (accountId: string) => getElementById(`${this.accountItemId + accountId}-name`);
+  accountId = (account: Account) =>
+    `test-id-account-${account.accountName}${account.tokenType !== undefined ? ` (${account.currency.ticker})` : ""}`;
 
   @Step("Perform search")
   async performSearch(text: string) {
     await waitForElementById(this.searchBarId);
     await typeTextByElement(this.searchBar(), text);
+  }
+
+  @Step("Select currency to debit")
+  async selectAccount(account: Account) {
+    const accountId = this.accountId(account);
+    await waitForElementById(accountId);
+    await tapById(accountId);
   }
 
   @Step("Expect search")
