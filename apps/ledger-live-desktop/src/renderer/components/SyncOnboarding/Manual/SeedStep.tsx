@@ -1,6 +1,6 @@
 import React from "react";
-import { Divider, Flex, VerticalTimeline, Text } from "@ledgerhq/react-ui";
-import { useTranslation, Trans } from "react-i18next";
+import { Flex, VerticalTimeline, Text } from "@ledgerhq/react-ui";
+import { useTranslation } from "react-i18next";
 import { StepText } from "./shared";
 import ContinueOnDeviceWithAnim from "./ContinueOnDeviceWithAnim";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -29,29 +29,23 @@ const SeedStep = ({ seedPathStatus, deviceModelId }: Props) => {
     <Flex flexDirection="column">
       {seedPathStatus === "new_seed" ? (
         <Flex flexDirection="column">
-          {/* @ts-expect-error weird props issue with React 18 */}
-          <StepText>
-            {t("syncOnboarding.manual.seedContent.newSeedDescription1", {
-              productName,
-            })}
-          </StepText>
-          {/* @ts-expect-error weird props issue with React 18 */}
-          <StepText mb={6}>
-            <Trans i18nKey="syncOnboarding.manual.seedContent.newSeedDescription2">
-              <Text fontWeight="bold" variant="body" color="neutral.c80">
-                {""}
-              </Text>
-            </Trans>
-          </StepText>
-          {/* @ts-expect-error weird props issue with React 18 */}
-          <StepText mb={6}>{t("syncOnboarding.manual.seedContent.newSeedDescription3")}</StepText>
-          {/* @ts-expect-error weird props issue with React 18 */}
-          <StepText mb={6}>{t("syncOnboarding.manual.seedContent.newSeedDescription4")}</StepText>
-          {/* @ts-expect-error weird props issue with React 18 */}
-          <StepText>{t("syncOnboarding.manual.seedContent.newSeedDescription5")}</StepText>
+          <Flex alignItems="center" justifyContent="center" flexDirection="column">
+            {/* @ts-expect-error weird props issue with React 18 */}
+            <StepText mb={6} fontWeight="semiBold" variant="largeLineHeight" color="neutral.c100">
+              {t("syncOnboarding.manual.seedContent.selectionNewSeedTitle")}
+            </StepText>
+            {/* @ts-expect-error weird props issue with React 18 */}
+            <VerticalTimeline.SubtitleText>
+              {t("syncOnboarding.manual.seedContent.selectionNewSeedSubtitle")}
+            </VerticalTimeline.SubtitleText>
+            {/* @ts-expect-error weird props issue with React 18 */}
+            <StepText mb={6}>
+              {t("syncOnboarding.manual.seedContent.selectionNewSeedDescription")}
+            </StepText>
+          </Flex>
           <ContinueOnDeviceWithAnim
             deviceModelId={deviceModelId}
-            text={t("syncOnboarding.manual.seedContent.newSeedContinueOnDevice", {
+            text={t("syncOnboarding.manual.seedContent.selectionNewSeedContinueOnDevice", {
               productName,
             })}
           />
@@ -59,12 +53,23 @@ const SeedStep = ({ seedPathStatus, deviceModelId }: Props) => {
       ) : seedPathStatus === "choice_restore_direct_or_recover" ? (
         <Flex flexDirection="column">
           {/* @ts-expect-error weird props issue with React 18 */}
+          <StepText mb={6}>{t("syncOnboarding.manual.seedContent.restoreDescription")}</StepText>
+          {/* @ts-expect-error weird props issue with React 18 */}
           <VerticalTimeline.SubtitleText>
             {t("syncOnboarding.manual.seedContent.restoreChoiceSRPTitle")}
           </VerticalTimeline.SubtitleText>
           {/* @ts-expect-error weird props issue with React 18 */}
-          <StepText>{t("syncOnboarding.manual.seedContent.restoreChoiceSRPDescription")}</StepText>
-          <Divider text={t("common.or")} my={6} />
+          <StepText mb={6}>
+            {t("syncOnboarding.manual.seedContent.restoreChoiceSRPDescription")}
+          </StepText>
+          {/* @ts-expect-error weird props issue with React 18 */}
+          <VerticalTimeline.SubtitleText>
+            {t("syncOnboarding.manual.seedContent.restoreChoiceRecoveryKeyTitle")}
+          </VerticalTimeline.SubtitleText>
+          {/* @ts-expect-error weird props issue with React 18 */}
+          <StepText mb={6}>
+            {t("syncOnboarding.manual.seedContent.restoreChoiceRecoveryKeyDescription")}
+          </StepText>
           {/* @ts-expect-error weird props issue with React 18 */}
           <VerticalTimeline.SubtitleText>
             {t("syncOnboarding.manual.seedContent.restoreChoiceRecoverTitle")}
@@ -96,21 +101,19 @@ const SeedStep = ({ seedPathStatus, deviceModelId }: Props) => {
         <Flex flexDirection="column">
           <Flex alignItems="center" justifyContent="center" flexDirection="column">
             {/* @ts-expect-error weird props issue with React 18 */}
-            <StepText mb={6}>
-              <Trans i18nKey="syncOnboarding.manual.seedContent.backupRecoveryKey.title">
-                <Text fontWeight="bold" variant="body" color="neutral.c80">
-                  {""}
-                </Text>
-              </Trans>
+            <StepText mb={6} fontWeight="semiBold" variant="largeLineHeight" color="neutral.c100">
+              {t("syncOnboarding.manual.seedContent.backupRecoveryKeyTitle")}
             </StepText>
             {/* @ts-expect-error weird props issue with React 18 */}
-            <StepText>{t("syncOnboarding.manual.backupRecoveryKey.desc")}</StepText>
+            <StepText mb={6}>
+              {t("syncOnboarding.manual.seedContent.backupRecoveryKeyDescription")}
+            </StepText>
 
-            <Flex flexDirection="column" color={"neutral.c100"}>
+            <Flex flexDirection="column" color="neutral.c100" mb={6}>
               <ExternalLink
                 label={
                   <Text fontWeight="bold" variant="body" color="neutral.c80">
-                    {t("syncOnboarding.manual.backupRecoveryKey.cta")}
+                    {t("syncOnboarding.manual.seedContent.backupRecoveryKeyCta")}
                   </Text>
                 }
                 onClick={() => {}} // TODO: Add link
@@ -121,7 +124,7 @@ const SeedStep = ({ seedPathStatus, deviceModelId }: Props) => {
 
           <ContinueOnDeviceWithAnim
             deviceModelId={deviceModelId}
-            text={t("syncOnboarding.manual.backupRecoveryKey.continueOnDevice", {
+            text={t("syncOnboarding.manual.seedContent.backupRecoveryKeyContinueOnDevice", {
               productName,
             })}
           />
@@ -129,20 +132,16 @@ const SeedStep = ({ seedPathStatus, deviceModelId }: Props) => {
       ) : seedPathStatus === "restore_recovery_key" ? (
         <Flex flexDirection="column">
           {/* @ts-expect-error weird props issue with React 18 */}
-          <StepText mb={6}>
-            <Trans i18nKey="syncOnboarding.manual.seedContent.restoreLedgerRecoveryKey.title">
-              <Text fontWeight="bold" variant="body" color="neutral.c80">
-                {""}
-              </Text>
-            </Trans>
-          </StepText>
+          <VerticalTimeline.SubtitleText>
+            {t("syncOnboarding.manual.seedContent.restoreRecoveryKeyTitle")}
+          </VerticalTimeline.SubtitleText>
           {/* @ts-expect-error weird props issue with React 18 */}
           <StepText>
-            {t("syncOnboarding.manual.seedContent.restoreLedgerRecoveryKey.description")}
+            {t("syncOnboarding.manual.seedContent.restoreRecoveryKeyDescription")}
           </StepText>
           <ContinueOnDeviceWithAnim
             deviceModelId={deviceModelId}
-            text={t("syncOnboarding.manual.seedContent.restoreLedgerRecoveryKey.continueOnDevice", {
+            text={t("syncOnboarding.manual.seedContent.restoreRecoveryKeyContinueOnDevice", {
               productName,
             })}
           />
@@ -150,33 +149,25 @@ const SeedStep = ({ seedPathStatus, deviceModelId }: Props) => {
       ) : (
         <Flex flexDirection="column">
           {/* @ts-expect-error weird props issue with React 18 */}
-          <StepText>
+          <StepText mb={6}>
             {t("syncOnboarding.manual.seedContent.selection", {
               productName,
             })}
           </StepText>
           {/* @ts-expect-error weird props issue with React 18 */}
+          <VerticalTimeline.SubtitleText>
+            {t("syncOnboarding.manual.seedContent.selectionNewLedgerTitle")}
+          </VerticalTimeline.SubtitleText>
+          {/* @ts-expect-error weird props issue with React 18 */}
           <StepText mb={6}>
-            <Trans
-              i18nKey="syncOnboarding.manual.seedContent.selectionNewLedger"
-              values={{ deviceName: productName }}
-            >
-              <Text fontWeight="bold" variant="body" color="neutral.c80">
-                {""}
-              </Text>
-            </Trans>
+            {t("syncOnboarding.manual.seedContent.selectionNewLedgerDescription")}
           </StepText>
           {/* @ts-expect-error weird props issue with React 18 */}
-          <StepText>
-            <Trans
-              i18nKey="syncOnboarding.manual.seedContent.selectionRestore"
-              values={{ deviceName: productName }}
-            >
-              <Text fontWeight="bold" variant="body" color="neutral.c80">
-                {""}
-              </Text>
-            </Trans>
-          </StepText>
+          <VerticalTimeline.SubtitleText>
+            {t("syncOnboarding.manual.seedContent.selectionRestoreTitle")}
+          </VerticalTimeline.SubtitleText>
+          {/* @ts-expect-error weird props issue with React 18 */}
+          <StepText>{t("syncOnboarding.manual.seedContent.selectionRestoreDescription")}</StepText>
           <ContinueOnDeviceWithAnim
             deviceModelId={deviceModelId}
             text={t("syncOnboarding.manual.seedContent.selectionContinueOnDevice", {
