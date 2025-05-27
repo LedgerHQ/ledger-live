@@ -222,7 +222,7 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
     stakingPositions.push({
       staked,
       available,
-      pendingInactive: pending,
+      pending,
       validatorId: stakingPoolAddress,
     });
 

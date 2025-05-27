@@ -117,7 +117,7 @@ export type AptosResourcesRaw = {
   stakingPositions: {
     staked: string;
     available: string;
-    pendingInactive: string;
+    pending: string;
     validatorId: string;
   }[];
 };
@@ -125,7 +125,7 @@ export type AptosResourcesRaw = {
 export type AptosStakingPosition = {
   staked: BigNumber;
   available: BigNumber;
-  pendingInactive: BigNumber;
+  pending: BigNumber;
   validatorId: string;
 };
 
