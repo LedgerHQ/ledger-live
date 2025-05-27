@@ -44,7 +44,8 @@ const ValidatorRow = ({
           </Text>
           {validator.commission ? (
             <Text fontWeight="semiBold" numberOfLines={1} style={styles.overdelegated}>
-              <Trans i18nKey="aptos.staking.commission" /> {validator.commission.toNumber()}%
+              <Trans i18nKey="aptos.staking.comm" /> {validator.commission.toNumber()}%{"; "}
+              <Trans i18nKey="aptos.staking.timeToUnlock" /> {validator.nextUnlockTime}
             </Text>
           ) : null}
         </View>
@@ -86,7 +87,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   overdelegated: {
-    fontSize: 12,
+    fontSize: 10,
   },
   validatorYield: {
     fontSize: 14,

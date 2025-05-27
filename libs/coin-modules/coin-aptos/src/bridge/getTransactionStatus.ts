@@ -37,10 +37,6 @@ const getTransactionStatus = async (
     errors.amount = new AmountRequired();
   }
 
-  if (!t.fees) {
-    errors.fees = new FeeNotLoaded();
-  }
-
   switch (t.mode) {
     case "send":
       if (!t.recipient) {
@@ -103,6 +99,10 @@ const getTransactionStatus = async (
       }
 
       break;
+  }
+
+  if (!t.fees) {
+    errors.fees = new FeeNotLoaded();
   }
 
   const amount = t.useAllAmount

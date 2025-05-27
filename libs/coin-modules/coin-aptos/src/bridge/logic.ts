@@ -408,7 +408,7 @@ export function getCoinAndAmounts(
       ) {
         coin_id = APTOS_ASSET_ID;
         type = OP_TYPE.WITHDRAW;
-        amount_in = amount_in.plus(event.data.amount_added);
+        amount_in = amount_in.plus(event.data.amount_withdrawn);
       }
     });
   } else {
