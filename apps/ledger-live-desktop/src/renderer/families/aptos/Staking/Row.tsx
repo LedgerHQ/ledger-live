@@ -90,7 +90,7 @@ type Props = {
 export function Row({
   stakingPosition: {
     validatorId,
-    staked,
+    active,
     formattedAmount,
     formattedPending,
     formattedAvailable,
@@ -143,7 +143,7 @@ export function Row({
         <Ellipsis>{validatorId}</Ellipsis>
       </Column>
       <Column>
-        {staked.gt(0) ? (
+        {active.gt(0) ? (
           <Box color="positiveGreen" pl={2}>
             <ToolTip content={<Trans i18nKey="aptos.stake.activeTooltip" />}>
               <CheckCircle size={14} />

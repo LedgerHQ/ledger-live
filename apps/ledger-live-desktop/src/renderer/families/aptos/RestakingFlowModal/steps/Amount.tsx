@@ -45,10 +45,10 @@ export default function StepAmount({
   const onChangeValidator = useCallback(
     (validator?: AptosMappedStakingPosition | null) => {
       if (!validator) return;
-      setStaked(validator.staked);
+      setStaked(validator.active);
       updateValidator({
         address: validator.validatorId,
-        amount: validator.staked,
+        amount: validator.active,
       });
     },
     [updateValidator],
