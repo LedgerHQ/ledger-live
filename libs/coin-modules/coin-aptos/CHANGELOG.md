@@ -1,5 +1,28 @@
 # @ledgerhq/coin-aptos
 
+## 2.0.0
+
+### Major Changes
+
+- [#10144](https://github.com/LedgerHQ/ledger-live/pull/10144) [`20ccc74`](https://github.com/LedgerHQ/ledger-live/commit/20ccc74b61e67906071f4a264497e6a9feac5b53) Thanks [@pvoliveira](https://github.com/pvoliveira)! - add initial Alpaca API integration for Aptos
+
+### Minor Changes
+
+- [#9929](https://github.com/LedgerHQ/ledger-live/pull/9929) [`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47) Thanks [@semeano](https://github.com/semeano)! - Add aptos tokens functionality
+
+- [#10031](https://github.com/LedgerHQ/ledger-live/pull/10031) [`15ab9eb`](https://github.com/LedgerHQ/ledger-live/commit/15ab9eba3ff4cf95f983d18c4122a474aa935261) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - Add estimatefees for Aptos alpaca
+
+### Patch Changes
+
+- Updated dependencies [[`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47), [`6253e0e`](https://github.com/LedgerHQ/ledger-live/commit/6253e0e3efcd1a29543cda55c9a5269f97aa770f), [`9081c26`](https://github.com/LedgerHQ/ledger-live/commit/9081c2648490f977469a33762a3c67bb2c2a0be5), [`eff3c94`](https://github.com/LedgerHQ/ledger-live/commit/eff3c94c1eded61518097a4544c3f5b25db1e28a)]:
+  - @ledgerhq/cryptoassets@13.18.0
+  - @ledgerhq/errors@6.21.0
+  - @ledgerhq/coin-framework@5.1.0
+  - @ledgerhq/live-env@2.9.0
+  - @ledgerhq/types-live@6.71.0
+  - @ledgerhq/devices@8.4.5
+  - @ledgerhq/live-network@2.0.8
+
 ## 2.0.0-next.0
 
 ### Major Changes

@@ -1,5 +1,20 @@
 # @ledgerhq/live-signer-evm
 
+## 0.5.0
+
+### Minor Changes
+
+- [#10124](https://github.com/LedgerHQ/ledger-live/pull/10124) [`0104847`](https://github.com/LedgerHQ/ledger-live/commit/0104847fa980dddc56ee31c24de15f31f6b9f33d) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Skip open app in DMK ETH signer
+
+- [#10124](https://github.com/LedgerHQ/ledger-live/pull/10124) [`0104847`](https://github.com/LedgerHQ/ledger-live/commit/0104847fa980dddc56ee31c24de15f31f6b9f33d) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Fix sending USDT with LNS
+
+### Patch Changes
+
+- Updated dependencies [[`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47), [`9081c26`](https://github.com/LedgerHQ/ledger-live/commit/9081c2648490f977469a33762a3c67bb2c2a0be5)]:
+  - @ledgerhq/errors@6.21.0
+  - @ledgerhq/coin-evm@2.22.1
+  - @ledgerhq/hw-app-eth@6.45.5
+
 ## 0.5.0-next.0
 
 ### Minor Changes

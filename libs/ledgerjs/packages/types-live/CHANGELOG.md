@@ -1,5 +1,13 @@
 # @ledgerhq/types-live
 
+## 6.71.0
+
+### Minor Changes
+
+- [#9928](https://github.com/LedgerHQ/ledger-live/pull/9928) [`6253e0e`](https://github.com/LedgerHQ/ledger-live/commit/6253e0e3efcd1a29543cda55c9a5269f97aa770f) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add newConnectApp feature flag
+
+- [#10158](https://github.com/LedgerHQ/ledger-live/pull/10158) [`eff3c94`](https://github.com/LedgerHQ/ledger-live/commit/eff3c94c1eded61518097a4544c3f5b25db1e28a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a NFT entry that redirect to the 3rd party marketplace in EVM accounts
+
 ## 6.71.0-next.0
 
 ### Minor Changes

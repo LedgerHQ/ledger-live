@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-btc
 
+## 10.9.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.5
+
 ## 10.9.1-next.0
 
 ### Patch Changes

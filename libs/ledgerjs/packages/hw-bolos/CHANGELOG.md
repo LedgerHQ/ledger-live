@@ -1,5 +1,12 @@
 # @ledgerhq/hw-bolos
 
+## 6.32.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.5
+
 ## 6.32.1-next.0
 
 ### Patch Changes
