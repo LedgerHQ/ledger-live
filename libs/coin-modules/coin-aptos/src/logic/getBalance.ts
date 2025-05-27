@@ -3,7 +3,7 @@ import type { AptosAsset } from "../types/assets";
 import type { AptosAPI } from "../network";
 import { APTOS_ASSET_ID } from "../constants";
 
-export async function getBalance(
+export async function getBalances(
   aptosClient: AptosAPI,
   address: string,
   contract_address?: string,
@@ -18,20 +18,4 @@ export async function getBalance(
       asset: isNative ? { type: "native" } : { type: "token", asset_type: balance.asset_type },
     };
   });
-
-  /*
-    - Contract address Add to getBalances and when having value should use Contract Address otherwise should not filter by asset type. 
-    
-    - When having balance: if its a type == APTOS_ASSET_ID (and legacy?) or A Token.
-      -- Se for nativo: nao preencher o asset_type
-      -- Se for token: preencher o asset_type com o token_id
-
-    - AptosAsset should extend a new Asset type and 
-      export type AptosAsset = Asset<{ asset_type: string; }>;
-
-
-    - Check for tests: Covering scenarios 
-
-
-  */
 }
