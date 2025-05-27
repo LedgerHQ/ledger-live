@@ -2072,7 +2072,8 @@
       "latest" : "Donanım yazılımının {{version}} sürümü mevcut",
       "contactSupport" : "Destek al",
       "deprecated" : "Cihazın yazılım sürümü güncellenemeyecek kadar eski. Değiştirmek için Ledger Destek ekibiyle iletişime geçin.",
-      "prepareSeed" : "Önlem olarak, 24 kelimelik kurtarma ifadenizi Kurtarma Kağıdına yazdığınızdan ve bu kağıda kolayca ulaşabileceğinizden emin olun.",
+      "prepareSeed" : "Önlem olarak, 24 kelimelik Gizli Kurtarma İfadenizi kurtarma Kâğıdına yazdığınızdan ve bu kâğıda kolayca erişebileceğinizden emin olun.",
+      "prepareSeedRecover" : "Cüzdan erişiminizi yedekleyip cüzdanınıza erişimi asla kaybetmeyeceğinizden emin olmak için Ledger Recover’ı kullanmayı düşünün.",
       "disclaimerTitle" : "<1>Donanım yazılımının {{version}} sürümünü</1> yüklemek üzeresiniz.",
       "cancelUpdate" : "Güncellemeyi iptal et",
       "continueUpdate" : "Güncellemeye devam et",
@@ -2395,7 +2396,8 @@
         "suggested" : "Önerilen",
         "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
-        "nftQuantity" : "Miktar"
+        "nftQuantity" : "Miktar",
+        "splExtensionsWarning" : "Token Uzantıları (Token Extensions) olarak da bilinen Token-2022 programı kapsamındaki bir token’la etkileşime geçiyorsunuz. Bu token’ın belirli riskleri bulunmaktadır. Daha fazla bilgi edinmek için <0>buraya tıklayın</0>."
       },
       "verification" : {
         "streaming" : {
@@ -3770,7 +3772,7 @@
       "frozenStateWarning" : "Hesap varlıkları donduruldu!",
       "transferWarning" : "Ledger Nano S™ kullanarak Solana token'ları için alıcı adresini doğrulamak üzere <0>bu yönergeleri uygulayın.</0>",
       "transferFees" : {
-        "feesPercentHint" : "Bu token için %{{feePercent}} ({{feeBps}} bps) transfer ücreti alınır. Maks. {{maxFee}}",
+        "feesHint" : "Token transfer ücreti: {{transferFee}}",
         "notice" : "Transfer ücreti: %{{fee}}",
         "tooltipHint" : "Token oluşturucu için alıkoyulan transfer yüzdesi",
         "transferFeesLabel" : "Transfer ücretleri"
@@ -5872,6 +5874,10 @@
       "title" : "Üzgünüz, fon miktarı yetersiz",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "Üzgünüz, fon miktarı işlem ücretlerini karşılamıyor",
+      "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
+    },
     "NotEnoughBalanceSwap" : {
       "title" : "Ne yazık ki bakiye, ağ ücretlerini karşılamaya yetmiyor. Tutarı değiştirin veya bakiyeyi doğrulayın.",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
@@ -7054,7 +7060,15 @@
     "assetFlow" : {
       "selectTemplate" : "{{dynamic}} seçin",
       "asset" : "Varlık",
-      "network" : "ağ"
+      "network" : "ağ",
+      "account" : "Hesap"
+    }
+  },
+  "nftEntryPoint" : {
+    "title" : "NFT (Non Fungible Token)",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
     }
   }
 }

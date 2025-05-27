@@ -2072,7 +2072,8 @@
       "latest" : "Version {{version}} du micrologiciel disponible",
       "contactSupport" : "Contacter l’Assistance",
       "deprecated" : "La version du micrologiciel de l’appareil est trop ancienne pour être mise à jour. Contactez l’Assistance Ledger pour le remplacer.",
-      "prepareSeed" : "Assurez-vous par précaution que votre phrase de récupération de 24 mots est accessible et bien écrite sur votre feuille de récupération.",
+      "prepareSeed" : "Assurez-vous par précaution que votre phrase de récupération secrète de 24 mots est accessible et bien écrite sur votre feuille de récupération.",
+      "prepareSeedRecover" : "Vous pouvez également utiliser Ledger Recover comme accès de secours à votre wallet, pour plus de sérénité.",
       "disclaimerTitle" : "Vous êtes sur le point d’installer la <1>version {{version}} du micrologiciel</1>.",
       "cancelUpdate" : "Annuler la mise à jour",
       "continueUpdate" : "Continuer la mise à jour",
@@ -2395,7 +2396,8 @@
         "suggested" : "Suggéré",
         "unitVByte" : "{{unit}}/vByte",
         "nft" : "NFT",
-        "nftQuantity" : "Nombre"
+        "nftQuantity" : "Nombre",
+        "splExtensionsWarning" : "Vous interagissez avec un token faisant partie du programme Token-2022, aussi appelé extension de tokens. Ce token présente des risques spécifiques. <0>Cliquez ici</0> pour en savoir plus."
       },
       "verification" : {
         "streaming" : {
@@ -3770,7 +3772,7 @@
       "frozenStateWarning" : "Les actifs du compte sont gelés",
       "transferWarning" : "Pour vérifier l’adresse du bénéficiaire des tokens Solana avec un Ledger Nano S™, <0>suivez ces instructions</0>.",
       "transferFees" : {
-        "feesPercentHint" : "Le token a des frais de transfert de {{feePercent}}% ({{feeBps}} bps). Max : {{maxFee}}",
+        "feesHint" : "Frais de transfert du token : {{transferFee}}",
         "notice" : "Frais de transfert : {{fee}}%",
         "tooltipHint" : "Pourcentage du transfert prélevé pour le créateur du token.",
         "transferFeesLabel" : "Frais de transfert"
@@ -5872,6 +5874,10 @@
       "title" : "Solde insuffisant",
       "description" : "Vérifiez que ce compte a un solde suffisant."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "Solde insuffisant pour couvrir les frais",
+      "description" : "Vérifiez que ce compte a un solde suffisant."
+    },
     "NotEnoughBalanceSwap" : {
       "title" : "Solde insuffisant, frais de réseau inclus. Modifiez le montant ou vérifiez votre solde.",
       "description" : "Vérifiez que ce compte a un solde suffisant."
@@ -7054,7 +7060,15 @@
     "assetFlow" : {
       "selectTemplate" : "Sélectionner {{dynamic}}",
       "asset" : "un actif",
-      "network" : "un réseau"
+      "network" : "un réseau",
+      "account" : "un compte"
+    }
+  },
+  "nftEntryPoint" : {
+    "title" : "NFT (tokens non fongibles)",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
     }
   }
 }

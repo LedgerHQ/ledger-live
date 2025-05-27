@@ -486,6 +486,21 @@ export async function waitForTimeOut(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+export async function removeMemberLedgerSync() {
+  await waitFor(DeviceLabels.CONNECT_WITH);
+  await pressUntilTextFound(DeviceLabels.MAKE_SURE_TO_USE);
+  await pressUntilTextFound(DeviceLabels.CONNECT_WITH);
+  await pressBoth();
+  await waitFor(DeviceLabels.REMOVE_PHONE_OR_COMPUTER);
+  await pressUntilTextFound(DeviceLabels.AFTER_REMOVING);
+  await pressUntilTextFound(DeviceLabels.REMOVE_PHONE_OR_COMPUTER);
+  await pressBoth();
+  await waitFor(DeviceLabels.TURN_ON_SYNC);
+  await pressUntilTextFound(DeviceLabels.YOUR_CRYPTO_ACCOUNTS);
+  await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
+  await pressBoth();
+}
+
 export async function activateLedgerSync() {
   await waitFor(DeviceLabels.CONNECT_WITH);
   await pressUntilTextFound(DeviceLabels.MAKE_SURE_TO_USE);

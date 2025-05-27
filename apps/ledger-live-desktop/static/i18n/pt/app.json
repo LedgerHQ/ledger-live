@@ -2072,7 +2072,8 @@
       "latest" : "A versão {{version}} do firmware está disponível",
       "contactSupport" : "Falar com o suporte",
       "deprecated" : "A versão do firmware do dispositivo é antiga demais para ser atualizada. Contate o Suporte Ledger para substituir o dispositivo.",
-      "prepareSeed" : "Por precaução, certifique-se de que a sua frase de recuperação de 24 palavras esteja por perto e anotada na folha de recuperação.",
+      "prepareSeed" : "Como precaução, certifique-se de que sua frase de recuperação secreta de 24 palavras está anotada na folha de recuperação e disponível.",
+      "prepareSeedRecover" : "Considere usar o Ledger Recover para fazer backup do acesso à sua carteira e garantir que ela esteja sempre ao seu alcance.",
       "disclaimerTitle" : "Você está prestes a instalar a <1>versão {{version}} do firmware</1>.",
       "cancelUpdate" : "Cancelar a atualização de OS",
       "continueUpdate" : "Continuar a atualização de OS",
@@ -2395,7 +2396,8 @@
         "suggested" : "Sugerido",
         "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
-        "nftQuantity" : "Quantidade"
+        "nftQuantity" : "Quantidade",
+        "splExtensionsWarning" : "Você está interagindo com um token que faz parte do programa Token-2022, também conhecido como Token Extensions. Este token tem riscos específicos. <0>Clique aqui</0> para saber mais."
       },
       "verification" : {
         "streaming" : {
@@ -3770,7 +3772,7 @@
       "frozenStateWarning" : "Os ativos da conta estão congelados!",
       "transferWarning" : "Para verificar o endereço do destinatário para tokens Solana usando uma Ledger Nano S™, <0>siga essas instruções.</0>",
       "transferFees" : {
-        "feesPercentHint" : "O token tem {{feePercent}}% de taxa de transferência ({{feeBps}}bps). {{maxFee}} max",
+        "feesHint" : "Taxa de transferência do token: {{transferFee}}",
         "notice" : "Taxa de transferência {{fee}}%",
         "tooltipHint" : "Porcentagem da transferência retida para o criador do token",
         "transferFeesLabel" : "Taxas de transferência"
@@ -5872,6 +5874,10 @@
       "title" : "Fundos Insuficientes",
       "description" : "Certifique-se de que a conta tem fundos suficientes."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "Fundos insuficientes para cobrir as taxas",
+      "description" : "Certifique-se de que a conta tenha fundos suficientes."
+    },
     "NotEnoughBalanceSwap" : {
       "title" : "Saldo insuficiente incluindo taxas de rede. Ajuste a quantia ou verifique o saldo.",
       "description" : "Certifique-se de que a conta tenha fundos suficientes."
@@ -7054,7 +7060,15 @@
     "assetFlow" : {
       "selectTemplate" : "Selecionar {{dynamic}}",
       "asset" : "ativo",
-      "network" : "rede"
+      "network" : "rede",
+      "account" : "conta"
+    }
+  },
+  "nftEntryPoint" : {
+    "title" : "NFT (Tokens Não Fungíveis)",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
     }
   }
 }

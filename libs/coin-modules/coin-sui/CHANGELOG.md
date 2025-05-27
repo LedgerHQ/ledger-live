@@ -1,5 +1,43 @@
 # @ledgerhq/coin-sui
 
+## 0.4.0
+
+### Minor Changes
+
+- [#9961](https://github.com/LedgerHQ/ledger-live/pull/9961) [`dbd7d83`](https://github.com/LedgerHQ/ledger-live/commit/dbd7d83a9e9ffd3336b3e8f572d5e5187ca0aedd) Thanks [@jonezque](https://github.com/jonezque)! - add alpaca methods for Sui
+
+- [#10308](https://github.com/LedgerHQ/ledger-live/pull/10308) [`c307c11`](https://github.com/LedgerHQ/ledger-live/commit/c307c11990e0a87945ed8750ede5f1174f96e536) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: lint, remove unused import
+
+### Patch Changes
+
+- Updated dependencies [[`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47), [`6253e0e`](https://github.com/LedgerHQ/ledger-live/commit/6253e0e3efcd1a29543cda55c9a5269f97aa770f), [`9081c26`](https://github.com/LedgerHQ/ledger-live/commit/9081c2648490f977469a33762a3c67bb2c2a0be5), [`eff3c94`](https://github.com/LedgerHQ/ledger-live/commit/eff3c94c1eded61518097a4544c3f5b25db1e28a)]:
+  - @ledgerhq/cryptoassets@13.18.0
+  - @ledgerhq/errors@6.21.0
+  - @ledgerhq/coin-framework@5.1.0
+  - @ledgerhq/live-env@2.9.0
+  - @ledgerhq/types-live@6.71.0
+  - @ledgerhq/live-network@2.0.8
+  - @ledgerhq/hw-app-sui@1.1.0
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#9961](https://github.com/LedgerHQ/ledger-live/pull/9961) [`dbd7d83`](https://github.com/LedgerHQ/ledger-live/commit/dbd7d83a9e9ffd3336b3e8f572d5e5187ca0aedd) Thanks [@jonezque](https://github.com/jonezque)! - add alpaca methods for Sui
+
+- [#10308](https://github.com/LedgerHQ/ledger-live/pull/10308) [`c307c11`](https://github.com/LedgerHQ/ledger-live/commit/c307c11990e0a87945ed8750ede5f1174f96e536) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: lint, remove unused import
+
+### Patch Changes
+
+- Updated dependencies [[`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47), [`6253e0e`](https://github.com/LedgerHQ/ledger-live/commit/6253e0e3efcd1a29543cda55c9a5269f97aa770f), [`9081c26`](https://github.com/LedgerHQ/ledger-live/commit/9081c2648490f977469a33762a3c67bb2c2a0be5), [`eff3c94`](https://github.com/LedgerHQ/ledger-live/commit/eff3c94c1eded61518097a4544c3f5b25db1e28a)]:
+  - @ledgerhq/cryptoassets@13.18.0-next.0
+  - @ledgerhq/errors@6.21.0-next.0
+  - @ledgerhq/coin-framework@5.1.0-next.0
+  - @ledgerhq/live-env@2.9.0-next.0
+  - @ledgerhq/types-live@6.71.0-next.0
+  - @ledgerhq/live-network@2.0.8-next.0
+  - @ledgerhq/hw-app-sui@1.1.0
+
 ## 0.3.3
 
 ### Patch Changes

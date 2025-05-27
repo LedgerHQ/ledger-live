@@ -1,10 +1,7 @@
 import { device } from "detox";
-import { closeProxy } from "./bridge/proxy";
 import { getLogs, close as closeBridge } from "./bridge/server";
 import { launchApp, setupEnvironment } from "./helpers/commonHelpers";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
 
-const broadcastOriginalValue = getEnv("DISABLE_TRANSACTION_BROADCAST");
 setupEnvironment();
 
 beforeAll(
@@ -23,8 +20,5 @@ afterAll(async () => {
   if (IS_FAILED && process.env.CI) {
     await allure.attachment("App logs", await getLogs(), "application/json");
   }
-  setEnv("DISABLE_TRANSACTION_BROADCAST", broadcastOriginalValue);
   closeBridge();
-  closeProxy();
-  await app.common.removeSpeculos();
 });

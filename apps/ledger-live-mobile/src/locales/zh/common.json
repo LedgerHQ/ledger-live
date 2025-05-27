@@ -513,6 +513,10 @@
       "title" : "抱歉，资金不足",
       "description" : "请确保该账户资金充足。"
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "抱歉，资金不够支付费用",
+      "description" : "请确保该账户资金充足。"
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "您目前的可用（非质押）余额为 {{currentBalance}}，不足以支付解除质押 {{assetName}} 的网络费用。 ",
       "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} 到您的账户",
@@ -3565,6 +3569,8 @@
         "contact_support" : "联系客服",
         "ton_title" : "Ledger Nano S™ 不支持互换 TON",
         "ton_description" : "要互换 TON，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+        "ton_tokens_title" : "Ledger Nano S™ 不支持互换 Ton 代币",
+        "ton_tokens_description" : "要互换 Ton 代币，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
         "spl_tokens_title" : "Ledger Nano S™ 不支持互换 Solana 代币",
         "spl_tokens_description" : "要互换 Solana 代币，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
         "near_title" : "Ledger Nano S™ 不支持互换 Near",
@@ -3844,6 +3850,9 @@
           "title" : "未找到此网域的地址"
         }
       }
+    },
+    "spl2022" : {
+      "splExtensionsWarning" : "您正在交互的代币属于 Token-2022 程序（亦称代币扩展程序）。该代币具有特定风险。<0>点击此处</0>了解详情。"
     },
     "amount" : {
       "available" : "可用总额",
@@ -4697,7 +4706,7 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "更新 {{deviceName}} 到版本 {{version}}",
-    "recoveryPhraseBackupInstructions" : "预防起见，请确保将您的 24 词恢复短语写在所提供的恢复表中。",
+    "recoveryPhraseBackupInstructions" : "请确保将您的 24 词秘密恢复短语写在恢复表中并妥善保管，以备不时之需。\n\n建议使用 Ledger Recover 备份您的钱包访问权限，确保其始终触手可及。",
     "confirmRecoveryPhrase" : "我有自己的恢复短语",
     "introDescription1" : "请注意，您设备上的所有应用程序都会被删除。您可以在固件更新后重新安装这些应用程序。",
     "introDescription2" : "该操作不会影响您的加密资产。",
@@ -6082,6 +6091,7 @@
       "transferFees" : {
         "title" : "转账费用",
         "feesPercentHint" : "代币转账费用为 {{feePercent}}%（{{feeBps}} 个基点）（最高为 {{maxFee}}）",
+        "feesHint" : "代币转账费用：{{transferFee}}",
         "notice" : "转账费用 {{fee}}%",
         "tooltipHint" : "归属代币创建者的转账百分比"
       },
@@ -7421,5 +7431,12 @@
     "low" : "低",
     "high" : "高",
     "title" : "市场走势"
+  },
+  "nftEntryPoint" : {
+    "title" : "您的 NFT",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
+    }
   }
 }

@@ -50,7 +50,7 @@ export default function ManageInstancesStep({ goToDeleteInstance }: Props) {
         {instances?.map(instance => (
           <TinyCard
             key={instance.id}
-            testId={`walletSync-manage-instance-${instance.id}`}
+            testId={`walletSync-manage-instance-${instance.name}`}
             text={instance.name}
             cta={t("walletSync.manageInstances.remove")}
             onClick={

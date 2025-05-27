@@ -1,5 +1,53 @@
 # @ledgerhq/coin-stellar
 
+## 5.1.0
+
+### Minor Changes
+
+- [#9929](https://github.com/LedgerHQ/ledger-live/pull/9929) [`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47) Thanks [@semeano](https://github.com/semeano)! - Add aptos tokens functionality
+
+- [#10283](https://github.com/LedgerHQ/ledger-live/pull/10283) [`0aa48e8`](https://github.com/LedgerHQ/ledger-live/commit/0aa48e8f52b7f91174f34c7db596ae8d783e7e30) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fix(BACK-8848): [coin-modules][stellar] push down filtering predicate
+
+  - `listOperations` uses N+1 RPC requests instead of just 1, because it fetches block metadata for each transaction
+  - `minHeight` is only applied after doing all this, so when requesting operations on an up to date address we do the
+    N+1 requests for the whole first page (200 txs), then throw out everything
+  - => push down predicate to the inner level so that we do only 1 RPC request
+
+### Patch Changes
+
+- Updated dependencies [[`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47), [`6253e0e`](https://github.com/LedgerHQ/ledger-live/commit/6253e0e3efcd1a29543cda55c9a5269f97aa770f), [`9081c26`](https://github.com/LedgerHQ/ledger-live/commit/9081c2648490f977469a33762a3c67bb2c2a0be5), [`eff3c94`](https://github.com/LedgerHQ/ledger-live/commit/eff3c94c1eded61518097a4544c3f5b25db1e28a)]:
+  - @ledgerhq/cryptoassets@13.18.0
+  - @ledgerhq/errors@6.21.0
+  - @ledgerhq/coin-framework@5.1.0
+  - @ledgerhq/live-env@2.9.0
+  - @ledgerhq/types-live@6.71.0
+  - @ledgerhq/devices@8.4.5
+  - @ledgerhq/live-network@2.0.8
+
+## 5.1.0-next.0
+
+### Minor Changes
+
+- [#9929](https://github.com/LedgerHQ/ledger-live/pull/9929) [`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47) Thanks [@semeano](https://github.com/semeano)! - Add aptos tokens functionality
+
+- [#10283](https://github.com/LedgerHQ/ledger-live/pull/10283) [`0aa48e8`](https://github.com/LedgerHQ/ledger-live/commit/0aa48e8f52b7f91174f34c7db596ae8d783e7e30) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fix(BACK-8848): [coin-modules][stellar] push down filtering predicate
+
+  - `listOperations` uses N+1 RPC requests instead of just 1, because it fetches block metadata for each transaction
+  - `minHeight` is only applied after doing all this, so when requesting operations on an up to date address we do the
+    N+1 requests for the whole first page (200 txs), then throw out everything
+  - => push down predicate to the inner level so that we do only 1 RPC request
+
+### Patch Changes
+
+- Updated dependencies [[`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47), [`6253e0e`](https://github.com/LedgerHQ/ledger-live/commit/6253e0e3efcd1a29543cda55c9a5269f97aa770f), [`9081c26`](https://github.com/LedgerHQ/ledger-live/commit/9081c2648490f977469a33762a3c67bb2c2a0be5), [`eff3c94`](https://github.com/LedgerHQ/ledger-live/commit/eff3c94c1eded61518097a4544c3f5b25db1e28a)]:
+  - @ledgerhq/cryptoassets@13.18.0-next.0
+  - @ledgerhq/errors@6.21.0-next.0
+  - @ledgerhq/coin-framework@5.1.0-next.0
+  - @ledgerhq/live-env@2.9.0-next.0
+  - @ledgerhq/types-live@6.71.0-next.0
+  - @ledgerhq/devices@8.4.5-next.0
+  - @ledgerhq/live-network@2.0.8-next.0
+
 ## 5.0.2
 
 ### Patch Changes

@@ -16,6 +16,13 @@ export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({ signe
     operation,
     rawData: { unsigned, serializedSignature },
   } = signedOperation as unknown as SuiSignedOperation;
-  const hash = await logicBroadcast(unsigned, serializedSignature);
+  const params = {
+    transactionBlock: unsigned,
+    signature: serializedSignature,
+    options: {
+      showEffects: true,
+    },
+  };
+  const hash = await logicBroadcast(params);
   return patchOperationWithHash(operation, hash);
 };

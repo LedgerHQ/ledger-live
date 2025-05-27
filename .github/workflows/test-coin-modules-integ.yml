@@ -90,7 +90,6 @@ jobs:
                 text:
                   type: "mrkdwn"
                   text: "✅️ *Coin modules integration tests success*"
-            blocks: 
               - type: "section"
                 text:
                   type: "mrkdwn"

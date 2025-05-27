@@ -1,7 +1,7 @@
 import { StyleProp, ViewStyle } from "react-native";
 
 type CardWithId = {
-  id: number;
+  idCard: number;
 };
 
 type SwiperComponentProps<T> = {
@@ -9,6 +9,8 @@ type SwiperComponentProps<T> = {
   renderCard: (card: T) => React.ReactNode;
   containerStyle?: StyleProp<ViewStyle>;
   cardContainerStyle?: StyleProp<ViewStyle>;
+  currentIndex: number;
+  onIndexChange: (index: number) => void;
 };
 
 type SwipeValues = { value: number };

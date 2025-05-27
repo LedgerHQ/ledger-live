@@ -2072,7 +2072,8 @@
       "latest" : "Firmware-Version {{version}} ist verfügbar",
       "contactSupport" : "Support kontaktieren",
       "deprecated" : "Die Version der Geräte-Firmware ist für ein Update zu alt. Kontaktiere den Ledger-Support für einen Ersatz.",
-      "prepareSeed" : "Vergewissere dich vorsichtshalber, dass deine 24-Wort-Wiederherstellungsphrase auf dem Wiederherstellungszettel notiert ist und dir vorliegt.",
+      "prepareSeed" : "Vergewissere dich vorsichtshalber, dass deine geheime 24-Wort-Wiederherstellungsphrase auf dem Wiederherstellungszettel notiert ist und dir vorliegt.",
+      "prepareSeedRecover" : "Du solltest dir überlegen, Ledger Recover zu nutzen, um ein Backup für deinen Wallet-Zugang zu erhalten und sicherzustellen, dass du immer darauf zugreifen kannst.",
       "disclaimerTitle" : "Du bist im Begriff, <1>Firmware-Version {{version}}</1> zu installieren.",
       "cancelUpdate" : "Betriebssystem-Update abbrechen",
       "continueUpdate" : "Betriebssystem-Update fortsetzen",
@@ -2395,7 +2396,8 @@
         "suggested" : "Empfohlen",
         "unitVByte" : "{{unit}}/vByte",
         "nft" : "NFT",
-        "nftQuantity" : "Menge"
+        "nftQuantity" : "Menge",
+        "splExtensionsWarning" : "Du interagierst mit einem Token, das Teil des Token-2022-Programms ist (auch bekannt unter der Bezeichnung „Token Extensions“). Dieses Token birgt gewisse Risiken. <0>Klicke hier</0>, um mehr zu erfahren."
       },
       "verification" : {
         "streaming" : {
@@ -3770,7 +3772,7 @@
       "frozenStateWarning" : "Kontovermögenswerte sind gesperrt!",
       "transferWarning" : "Zum Verifizieren der Empfängeradresse für Solana-Token mit einer Ledger Nano S™ <0>befolge diese Anweisungen</0>.",
       "transferFees" : {
-        "feesPercentHint" : "Für das Token fällt eine Überweisungsgebühr in Höhe von {{feePercent}} % ({{feeBps}} bps) an. Max. {{maxFee}}",
+        "feesHint" : "Tokenübertragungsgebühr: {{transferFee}}",
         "notice" : "Überweisungsgebühr {{fee}} %",
         "tooltipHint" : "Prozentualer Anteil der Überweisung, der für den Tokenersteller einbehalten wird",
         "transferFeesLabel" : "Überweisungsgebühren"
@@ -5872,6 +5874,10 @@
       "title" : "Entschuldigung, Guthaben reicht nicht aus",
       "description" : "Bitte stellen Sie sicher, dass das Konto ausreichend gedeckt ist."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "Leider reicht das Guthaben zur Deckung der Gebühren nicht aus",
+      "description" : "Bitte vergewissere dich, dass das Konto über ausreichende Deckung verfügt."
+    },
     "NotEnoughBalanceSwap" : {
       "title" : "Leider ist für den Betrag einschließlich der Netzwerkgebühren nicht genügend Guthaben vorhanden. Bitte Betrag ändern oder Guthaben verifizieren.",
       "description" : "Bitte vergewissere dich, dass das Konto über ausreichende Deckung verfügt."
@@ -7054,7 +7060,15 @@
     "assetFlow" : {
       "selectTemplate" : "{{dynamic}} auswählen",
       "asset" : "Asset",
-      "network" : "Netzwerk"
+      "network" : "Netzwerk",
+      "account" : "Konto"
+    }
+  },
+  "nftEntryPoint" : {
+    "title" : "NFT (Non Fungible Token)",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
     }
   }
 }

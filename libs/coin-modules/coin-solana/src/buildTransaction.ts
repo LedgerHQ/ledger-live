@@ -21,6 +21,7 @@ import {
   VersionedTransaction,
 } from "@solana/web3.js";
 import { ChainAPI } from "./network";
+import { trace } from "@ledgerhq/logs";
 
 export const buildTransactionWithAPI = async (
   address: string,
@@ -67,7 +68,14 @@ async function buildInstructions(
   if (commandDescriptor === undefined) {
     throw new Error("missing command descriptor");
   }
-  if (Object.keys(commandDescriptor.errors).length > 0) {
+  const errorEntries = Object.entries(commandDescriptor.errors);
+  if (errorEntries.length > 0) {
+    trace({
+      type: "solana/buildTransaction",
+      message: "can not build invalid command",
+      data: Object.fromEntries(errorEntries.map(([key, value]) => [key, value.message])),
+      context: { commandKind: commandDescriptor.command.kind },
+    });
     throw new Error("can not build invalid command");
   }
   return buildInstructionsForCommand(api, commandDescriptor.command);

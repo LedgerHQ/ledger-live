@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useMemo } from "react";
 import { Icon, Text } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -55,9 +55,8 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
     fromCurrency?.type === "CryptoCurrency" &&
     getTransactionExplorer(getDefaultExplorerView(fromCurrency), operation.hash);
 
-  const openProvider = useCallback(() => {
-    Linking.openURL(urls.swap.providers[provider as keyof typeof urls.swap.providers].main);
-  }, [provider]);
+  const providerUrl =
+    urls.swap.providers[provider as keyof typeof urls.swap.providers]?.main || undefined;
 
   const fromAccountName = useMaybeAccountName(fromAccount);
   const toAccountName = useMaybeAccountName(toAccount);
@@ -106,12 +105,21 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
           <LText style={styles.label} color="grey">
             <Trans i18nKey={"transfer.swap.operationDetails.provider"} />
           </LText>
-          <TouchableOpacity style={styles.providerLinkContainer} onPress={openProvider}>
-            <Text paddingRight={2} color="primary.c100">
+          {providerUrl ? (
+            <TouchableOpacity
+              style={styles.providerLinkContainer}
+              onPress={() => Linking.openURL(providerUrl)}
+            >
+              <Text paddingRight={2} color="primary.c100">
+                {getProviderName(provider)}
+              </Text>
+              <ExternalLink size={11} color={colors.live} />
+            </TouchableOpacity>
+          ) : (
+            <Text marginBottom={8} color="primary.c100">
               {getProviderName(provider)}
             </Text>
-            <ExternalLink size={11} color={colors.live} />
-          </TouchableOpacity>
+          )}
           <LText style={styles.label} color="grey">
             <Trans i18nKey={"transfer.swap.operationDetails.date"} />
           </LText>

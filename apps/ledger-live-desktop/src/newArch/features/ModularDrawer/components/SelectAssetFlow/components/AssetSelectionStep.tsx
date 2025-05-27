@@ -2,7 +2,7 @@ import React from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AssetType } from "@ledgerhq/react-ui/pre-ldls";
 import { SearchInputContainer } from "../../Search";
-import { SelectAsset } from "../../SelectAsset";
+import { SelectAsset } from "./SelectAsset";
 import { SearchContainer } from "./StyledComponents";
 
 export type AssetSelectionStepProps = {

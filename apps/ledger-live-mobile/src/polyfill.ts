@@ -28,6 +28,7 @@ import "@formatjs/intl-relativetimeformat/locale-data/ko";
 
 // Fix error when adding Solana account
 import "@azure/core-asynciterator-polyfill";
+import { Platform } from "react-native";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 global.Buffer = require("buffer").Buffer;
@@ -55,6 +56,16 @@ Promise.allSettled =
     ));
 
 process.browser = true; // for readable-stream/lib/_stream_writable.js
+
+// // Polyfill for AbortSignal.throwIfAborted on Android
+const isAndroid = Platform.OS === "android";
+if (isAndroid && typeof AbortSignal !== "undefined" && !AbortSignal.prototype.throwIfAborted) {
+  AbortSignal.prototype.throwIfAborted = function () {
+    if (this.aborted) {
+      throw new DOMException("The operation was aborted.", "AbortError");
+    }
+  };
+}
 
 // FIXME shim want to set it to false tho...
 if (__DEV__ && process.env.NODE_ENV !== "test") {

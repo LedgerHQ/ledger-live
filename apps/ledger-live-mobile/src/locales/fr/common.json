@@ -513,6 +513,10 @@
       "title" : "Solde insuffisant",
       "description" : "Vérifiez que ce compte a un solde suffisant."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "Solde insuffisant pour couvrir les frais",
+      "description" : "Vérifiez que ce compte a un solde suffisant."
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Votre solde disponible (non-staké) est de {{currentBalance}}. C’est insuffisant pour couvrir les frais de réseau afin de déstaker vos {{assetName}}. ",
       "oneCta" : "<cta1>{{cta1Label}}</cta1> des {{assetName}} pour approvisionner votre compte.",
@@ -3565,6 +3569,8 @@
         "contact_support" : "Contacter l’Assistance",
         "ton_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de TON",
         "ton_description" : "Pour échanger des TON, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "ton_tokens_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de tokens Ton",
+        "ton_tokens_description" : "Pour échanger des tokens Ton, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "spl_tokens_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de tokens Solana",
         "spl_tokens_description" : "Pour échanger des tokens Solana, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "near_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de NEAR",
@@ -3844,6 +3850,9 @@
           "title" : "Aucune adresse trouvée pour ce domaine"
         }
       }
+    },
+    "spl2022" : {
+      "splExtensionsWarning" : "Vous interagissez avec un token faisant partie du programme Token-2022, aussi appelé extension de tokens. Ce token présente des risques spécifiques. <0>Cliquez ici</0> pour en savoir plus."
     },
     "amount" : {
       "available" : "Total disponible",
@@ -4697,7 +4706,7 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "Mise à jour du {{deviceName}} vers la version {{version}}",
-    "recoveryPhraseBackupInstructions" : "Assurez-vous par précaution que votre phrase de récupération de 24 mots est accessible et bien écrite sur votre feuille de récupération.",
+    "recoveryPhraseBackupInstructions" : "Assurez-vous par précaution que votre phrase de récupération secrète de 24 mots est accessible et bien écrite sur votre feuille de récupération.\n\nVous pouvez également utiliser Ledger Recover comme accès de secours à votre wallet, pour plus de sérénité.",
     "confirmRecoveryPhrase" : "J’ai ma phrase de récupération.",
     "introDescription1" : "Toutes les apps sur votre appareil seront supprimées. Vous pouvez réinstaller vos apps après la mise à jour du micrologiciel.",
     "introDescription2" : "Cela n’a pas d’effet sur vos crypto-actifs.",
@@ -6082,6 +6091,7 @@
       "transferFees" : {
         "title" : "Frais de transfert",
         "feesPercentHint" : "Le token a des frais de transfert de {{feePercent}}% ({{feeBps}} bps). Max : {{maxFee}}",
+        "feesHint" : "Frais de transfert du token : {{transferFee}}",
         "notice" : "Frais de transfert : {{fee}}%",
         "tooltipHint" : "Pourcentage du transfert prélevé pour le créateur du token."
       },
@@ -7421,5 +7431,12 @@
     "low" : "Faible",
     "high" : "Élevée",
     "title" : "Mouvements du marché"
+  },
+  "nftEntryPoint" : {
+    "title" : "Vos NFT",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
+    }
   }
 }

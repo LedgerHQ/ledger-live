@@ -13,7 +13,7 @@
   "license": "MIT",
   "private": true,
   "main": "./.webpack/main.bundle.js",
-  "version": "2.114.0",
+  "version": "2.115.0",
   "scripts": {
     "start:prod": "electron ./.webpack/main.bundle.js",
     "start": "cross-env NODE_ENV=development node ./tools/main.js",
@@ -144,7 +144,7 @@
     "rxjs": "7.8.1",
     "secp256k1": "4.0.3",
     "semver": "7.5.4",
-    "storyly-web": "3.6.7",
+    "storyly-web": "4.5.4",
     "styled-components": "5.3.11",
     "styled-system": "5.1.5",
     "timemachine": "0.3.2",

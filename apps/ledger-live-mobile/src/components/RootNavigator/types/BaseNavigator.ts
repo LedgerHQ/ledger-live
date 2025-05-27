@@ -80,6 +80,7 @@ import type { SwapNavigatorParamList } from "./SwapNavigator";
 import type { UnfreezeNavigatorParamList } from "./UnfreezeNavigator";
 import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLiveAppNavigator";
 import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
+import { WalletTabNavigatorStackParamList } from "./WalletTabNavigator";
 
 export type NavigateInput<
   ParamList extends ParamListBase = ParamListBase,
@@ -324,6 +325,7 @@ export type BaseNavigatorStackParamList = {
     isBeforeOnboarding?: boolean;
   };
   [NavigatorName.LandingPages]: NavigatorScreenParams<LandingPagesNavigatorParamList>;
+  [NavigatorName.WalletTab]: NavigatorScreenParams<WalletTabNavigatorStackParamList>;
   [NavigatorName.DeviceSelection]?: Partial<
     NavigatorScreenParams<DeviceSelectionNavigatorParamsList>
   >;
