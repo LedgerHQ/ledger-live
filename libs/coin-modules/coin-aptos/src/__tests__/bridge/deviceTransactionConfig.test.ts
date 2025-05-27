@@ -1,19 +1,27 @@
-// import getDeviceTransactionConfig, { methodToString } from "../../bridge/deviceTransactionConfig";
+import BigNumber from "bignumber.js";
+import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
+import getDeviceTransactionConfig from "../../bridge/deviceTransactionConfig";
+import { APTOS_PRECISION } from "../../constants";
 
-// describe("deviceTransactionConfig", () => {
-//   test("methodToString", () => {
-//     expect(methodToString(0)).toBe("Coin transfer");
-//     expect(methodToString(1)).toBe("Unknown");
-//   });
+describe("deviceTransactionConfig", () => {
+  test("send", () => {
+    const account = createFixtureAccount();
+    const parentAccount = null;
+    const transaction = createFixtureTransaction({
+      amount: BigNumber(123).shiftedBy(APTOS_PRECISION),
+    });
+    const fields = getDeviceTransactionConfig({
+      account,
+      parentAccount,
+      transaction,
+    });
 
-//   test("getDeviceTransactionConfig", () => {
-//     const fields = getDeviceTransactionConfig();
-//     expect(fields).toMatchObject([
-//       {
-//         type: "text",
-//         label: "Type",
-//         value: "Coin transfer",
-//       },
-//     ]);
-//   });
-// });
+    expect(fields).toMatchObject([
+      {
+        type: "text",
+        label: "Amount",
+        value: "123 APT",
+      },
+    ]);
+  });
+});

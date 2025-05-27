@@ -1,19 +1,18 @@
 import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "../types";
+import { Transaction } from "../types";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/accountId";
 
 function getDeviceTransactionConfig({
   account,
-  transaction,
   parentAccount,
+  transaction,
 }: {
   account: AccountLike;
   parentAccount: Account | null | undefined;
   transaction: Transaction;
-  status: TransactionStatus;
 }): Array<DeviceTransactionField> {
   const { mode } = transaction;
   const fields: DeviceTransactionField[] = [];
