@@ -149,6 +149,11 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
   },
   solanaSub: {
     overridesDerivation: "44'/501'/<account>'",
+    mandatoryEmptyAccountSkip: 1,
+  },
+  solanaBip44Change: {
+    overridesDerivation: "44'/501'/<account>'/0'",
+    mandatoryEmptyAccountSkip: 10,
   },
   hederaBip44: {
     overridesDerivation: "44/3030",
@@ -219,7 +224,7 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   ton: ["ton"],
   ethereum: ["ethM", "ethMM"],
   ethereum_classic: ["ethM", "ethMM", "etcM"],
-  solana: ["solanaMain", "solanaSub"],
+  solana: ["solanaMain", "solanaBip44Change", "solanaSub"],
   solana_devnet: ["solanaMain", "solanaSub"],
   solana_testnet: ["solanaMain", "solanaSub"],
   sui: ["sui"],
