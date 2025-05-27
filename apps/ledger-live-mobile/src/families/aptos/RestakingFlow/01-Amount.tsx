@@ -46,7 +46,7 @@ function RestakingAmount({ navigation, route }: Props) {
       transaction,
       max: getDelegationOpMaxAmount(account as AptosAccount, validatorId, "restake"),
       value: transaction ? transaction.amount : new BigNumber(0),
-      nextScreen: ScreenName.AptosRestakingAmount,
+      nextScreen: ScreenName.AptosRestakingSelectDevice,
       updateTransaction,
       status,
       bridgePending,
