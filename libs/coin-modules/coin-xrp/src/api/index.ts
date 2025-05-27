@@ -33,7 +33,7 @@ export function createApi(config: XrpConfig): Api<XrpAsset, XrpMemoKind, string>
     lastBlock,
     listOperations: operations,
     validateIntent: getTransactionStatus,
-    preSignOperationHook: ({ transaction }) => removeCachedRecipientIsNew(transaction.recipient),
+    preSignOperationHook: (recipient: string) => removeCachedRecipientIsNew(recipient),
   };
 }
 

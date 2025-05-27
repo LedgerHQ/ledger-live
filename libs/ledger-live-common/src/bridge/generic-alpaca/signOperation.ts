@@ -30,7 +30,7 @@ export const genericSignOperation =
     new Observable(o => {
       const alpacaApi = getAlpacaApi(network, kind);
       if (alpacaApi.preSignOperationHook) {
-        alpacaApi.preSignOperationHook({ transaction });
+        alpacaApi.preSignOperationHook(transaction.recipient);
       }
 
       async function main() {
