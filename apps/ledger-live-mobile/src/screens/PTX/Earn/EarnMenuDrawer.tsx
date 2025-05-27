@@ -40,10 +40,10 @@ export function EarnMenuDrawer() {
             link ? (
               <OptionButton
                 key={label}
-                onPress={() => {
-                  Linking.openURL(link);
-                  track(button, tracked);
+                onPress={async () => {
+                  await track(button, tracked);
                   closeDrawer();
+                  await Linking.openURL(link);
                 }}
               >
                 {label}
