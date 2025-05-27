@@ -43,13 +43,16 @@ export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation) {
     [dispatch],
   );
 
-  const openAssetFlow = useCallback(() => {
-    if (isModularDrawerVisible(modularDrawerLocation)) {
-      selectCurrency(openAddAccountFlow);
-    } else {
-      openAddAccountFlow();
-    }
-  }, [isModularDrawerVisible, modularDrawerLocation, openAddAccountFlow]);
+  const openAssetFlow = useCallback(
+    (assetIds?: string[], includeTokens?: boolean, currencies?: CryptoOrTokenCurrency[]) => {
+      if (isModularDrawerVisible(modularDrawerLocation)) {
+        selectCurrency(openAddAccountFlow, assetIds, includeTokens, currencies);
+      } else {
+        openAddAccountFlow();
+      }
+    },
+    [isModularDrawerVisible, modularDrawerLocation, openAddAccountFlow],
+  );
 
   return {
     openAssetFlow,

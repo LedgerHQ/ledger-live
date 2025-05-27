@@ -18,22 +18,32 @@ type UseSelectAssetFlowProps = {
 export function useSelectAssetFlow({ onAssetSelected, currencies }: UseSelectAssetFlowProps) {
   const [currentStep, setCurrentStep] = useState<FlowStep>(FlowStep.SELECT_ASSET_TYPE);
   const [networksToDisplay, setNetworksToDisplay] = useState<CryptoCurrency[]>([]);
-  const [searchedValue, setSearchedValue] = useState<string | undefined>(undefined);
+  const [searchedValue, setSearchedValue] = useState<string>();
   const [navDirection, setNavDirection] = useState<NavigationDirection>(
     NavigationDirection.FORWARD,
   );
-  const [providers, setProviders] = useState<CurrenciesByProviderId | undefined>(undefined);
+  const [providers, setProviders] = useState<CurrenciesByProviderId>();
+
+  const currenciesIdsArray = useMemo(() => currencies.map(currency => currency.id), [currencies]);
 
   const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(
     true,
   ) as LoadingBasedGroupedCurrencies;
 
   const { currenciesByProvider, sortedCryptoCurrencies } = result;
-  const [assetsToDisplay, setAssetsToDisplay] = useState<CryptoOrTokenCurrency[]>(currencies);
+
+  const filteredSortedCryptoCurrencies = useMemo(
+    () => sortedCryptoCurrencies.filter(currency => currenciesIdsArray.includes(currency.id)),
+    [sortedCryptoCurrencies, currenciesIdsArray],
+  );
+
+  const [assetsToDisplay, setAssetsToDisplay] = useState<CryptoOrTokenCurrency[]>(
+    filteredSortedCryptoCurrencies,
+  );
 
   useEffect(() => {
-    setAssetsToDisplay(currencies);
-  }, [currencies]);
+    setAssetsToDisplay(filteredSortedCryptoCurrencies);
+  }, [filteredSortedCryptoCurrencies]);
 
   const assetTypes: AssetType[] = useMemo(
     () =>
@@ -67,9 +77,9 @@ export function useSelectAssetFlow({ onAssetSelected, currencies }: UseSelectAss
         return;
       }
 
-      const networks = currentProvider.currenciesByNetwork.map(elem =>
-        elem.type === "TokenCurrency" ? elem?.parentCurrency?.id : elem.id,
-      );
+      const networks = currentProvider.currenciesByNetwork
+        .filter(currencyByNetwork => currenciesIdsArray.includes(currencyByNetwork.id))
+        .map(elem => (elem.type === "TokenCurrency" ? elem.parentCurrency?.id : elem.id));
 
       const hasMultipleNetworks = networks && networks.length > 1;
 
@@ -85,7 +95,7 @@ export function useSelectAssetFlow({ onAssetSelected, currencies }: UseSelectAss
         onAssetSelected(currency);
       }
     },
-    [getProvider, onAssetSelected],
+    [getProvider, onAssetSelected, currenciesIdsArray],
   );
 
   const handleNetworkSelected = useCallback(
@@ -125,6 +135,15 @@ export function useSelectAssetFlow({ onAssetSelected, currencies }: UseSelectAss
     }
   }, [currentStep]);
 
+  useEffect(() => {
+    if (assetsToDisplay.length === 1) {
+      const asset = assetsToDisplay[0];
+      if (asset) {
+        handleAssetTypeSelected(asset);
+      }
+    }
+  }, [assetsToDisplay, handleAssetTypeSelected, onAssetSelected]);
+
   const isLoading =
     providersLoadingStatus === LoadingStatus.Pending ||
     (currencies?.length === 1 && sortedCryptoCurrencies.length > 0);
@@ -135,7 +154,7 @@ export function useSelectAssetFlow({ onAssetSelected, currencies }: UseSelectAss
     networksToDisplay,
     assetsToDisplay,
     assetTypes,
-    sortedCryptoCurrencies,
+    sortedCryptoCurrencies: filteredSortedCryptoCurrencies,
     defaultSearchValue: searchedValue,
     isLoading,
     isAssetSelection: currentStep === FlowStep.SELECT_ASSET_TYPE,
