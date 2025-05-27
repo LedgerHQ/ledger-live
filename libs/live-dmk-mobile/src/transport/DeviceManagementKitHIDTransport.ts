@@ -37,7 +37,7 @@ export const activeDeviceSessionSubject = new BehaviorSubject<{
   transport: DMKTransport;
 } | null>(null);
 
-const tracer = new LocalTracer("live-dmk", { function: "DeviceManagementKitHIDTransport" });
+export const tracer = new LocalTracer("live-dmk", { function: "DeviceManagementKitHIDTransport" });
 
 export class DeviceManagementKitHIDTransport extends Transport {
   sessionId: string;
