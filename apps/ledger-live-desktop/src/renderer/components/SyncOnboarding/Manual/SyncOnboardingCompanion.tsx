@@ -404,6 +404,14 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         setSeedPathStatus("recover_seed");
         analyticsSeedConfiguration.current = "recover_seed";
         break;
+      case DeviceOnboardingStep.BackupRecoveryKey:
+        setStepKey(StepKey.Seed);
+        setSeedPathStatus("backup_recovery_key");
+        break;
+      case DeviceOnboardingStep.RestoreRecoveryKey:
+        setStepKey(StepKey.Seed);
+        setSeedPathStatus("restore_recovery_key");
+        break;
       case DeviceOnboardingStep.Pin:
         setStepKey(StepKey.Pin);
         break;
