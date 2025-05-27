@@ -55,6 +55,7 @@ export type Transaction = {
   fee: bigint;
 } & Record<string, unknown>; // Field containing dedicated value for each blockchain
 
+// Other coins take differents parameters What do we want to do ?
 export type Account = {
   currencyName: string;
   address: string;

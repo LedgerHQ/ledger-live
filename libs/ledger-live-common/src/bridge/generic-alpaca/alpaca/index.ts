@@ -2,7 +2,7 @@ import { createApi as createXrpApi } from "@ledgerhq/coin-xrp/api/index";
 import { getCurrencyConfiguration } from "../../../config";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { getNetworkAlpacaApi } from "./network/network-alpaca";
-import { Api, BridgeApi } from "@ledgerhq/coin-framework/api/types";
+import { BridgeApi } from "@ledgerhq/coin-framework/api/types";
 import { XrpCoinConfig } from "@ledgerhq/coin-xrp/config";
 
 // NOTE: Using Api<any, any, any> to allow integration with coin-specific APIs like XRP (which use structured sender types).
