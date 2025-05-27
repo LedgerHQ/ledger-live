@@ -122,7 +122,7 @@ export type Api<AssetInfo extends Asset<TokenInfoCommon>, MemoKind = never, Memo
     transactionIntent: TransactionIntent<AssetInfo, MemoKind, MemoValue>,
     customFees?: bigint,
   ) => Promise<string>;
-  validateIntent?: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;
+  // validateIntent?: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;
   getBalance: (address: string) => Promise<Balance<AssetInfo>[]>;
   lastBlock: () => Promise<BlockInfo>;
   listOperations: (
@@ -130,4 +130,12 @@ export type Api<AssetInfo extends Asset<TokenInfoCommon>, MemoKind = never, Memo
     pagination: Pagination,
   ) => Promise<[Operation<AssetInfo>[], string]>;
   preSignOperationHook?: PreSignOperationHook;
+};
+
+export type BridgeApi<
+  AssetInfo extends Asset<TokenInfoCommon>,
+  MemoKind = never,
+  MemoValue = string,
+> = Api<AssetInfo, MemoKind, MemoValue> & {
+  validateIntent: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;
 };
