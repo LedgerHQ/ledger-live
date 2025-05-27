@@ -13,6 +13,7 @@ export type Item = {
   renderBody?: (isDisplayed?: boolean) => ReactNode;
   estimatedTime?: number;
   hasLoader?: boolean;
+  background?: ReactNode;
 };
 
 export type Props = BaseStyledProps & {

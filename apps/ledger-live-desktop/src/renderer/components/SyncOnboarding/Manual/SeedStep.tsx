@@ -6,6 +6,8 @@ import ContinueOnDeviceWithAnim from "./ContinueOnDeviceWithAnim";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getDeviceModel } from "@ledgerhq/devices";
 import ExternalLink from "~/renderer/components/ExternalLink";
+import RecoveryKeyPng from "./assets/recovery-key.png";
+import SecretRecoveryPhrasePng from "./assets/secret-recovery-phrase.png";
 
 export type SeedPathStatus =
   | "choice_new_or_restore"
@@ -30,16 +32,29 @@ const SeedStep = ({ seedPathStatus, deviceModelId }: Props) => {
       {seedPathStatus === "new_seed" ? (
         <Flex flexDirection="column">
           <Flex alignItems="center" justifyContent="center" flexDirection="column">
+            <Flex style={{ width: 220, height: 170, overflow: "visible" }}>
+              <img
+                src={SecretRecoveryPhrasePng}
+                alt="Secret Recovery Phrase"
+                style={{ width: 220, height: 220 }}
+              />
+            </Flex>
             {/* @ts-expect-error weird props issue with React 18 */}
-            <StepText mb={6} fontWeight="semiBold" variant="largeLineHeight" color="neutral.c100">
+            <StepText
+              mb={6}
+              fontWeight="semiBold"
+              variant="largeLineHeight"
+              color="neutral.c100"
+              textAlign="center"
+            >
               {t("syncOnboarding.manual.seedContent.selectionNewSeedTitle")}
             </StepText>
             {/* @ts-expect-error weird props issue with React 18 */}
-            <VerticalTimeline.SubtitleText>
+            <VerticalTimeline.SubtitleText textAlign="center">
               {t("syncOnboarding.manual.seedContent.selectionNewSeedSubtitle")}
             </VerticalTimeline.SubtitleText>
             {/* @ts-expect-error weird props issue with React 18 */}
-            <StepText mb={6}>
+            <StepText mb={6} justifyContent={"center"} textAlign="center">
               {t("syncOnboarding.manual.seedContent.selectionNewSeedDescription")}
             </StepText>
           </Flex>
@@ -100,6 +115,9 @@ const SeedStep = ({ seedPathStatus, deviceModelId }: Props) => {
       ) : seedPathStatus === "backup_recovery_key" ? (
         <Flex flexDirection="column">
           <Flex alignItems="center" justifyContent="center" flexDirection="column">
+            <Flex style={{ width: 220, height: 170, overflow: "visible" }}>
+              <img src={RecoveryKeyPng} alt="Recovery Key" style={{ width: 220, height: 220 }} />
+            </Flex>
             {/* @ts-expect-error weird props issue with React 18 */}
             <StepText mb={6} fontWeight="semiBold" variant="largeLineHeight" color="neutral.c100">
               {t("syncOnboarding.manual.seedContent.backupRecoveryKeyTitle")}
