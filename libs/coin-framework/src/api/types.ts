@@ -110,8 +110,6 @@ export type FeeEstimation = {
 //       see design document at https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/5446205788/coin-modules+lama-adapter+APIs+refinements
 export type Pagination = { minHeight: number };
 
-export type PreSignOperationHook = (recipient: string) => void;
-
 export type Api<AssetInfo extends Asset<TokenInfoCommon>, MemoKind = never, MemoValue = string> = {
   broadcast: (tx: string) => Promise<string>;
   combine: (tx: string, signature: string, pubkey?: string) => string | Promise<string>;
@@ -129,5 +127,4 @@ export type Api<AssetInfo extends Asset<TokenInfoCommon>, MemoKind = never, Memo
     address: string,
     pagination: Pagination,
   ) => Promise<[Operation<AssetInfo>[], string]>;
-  preSignOperationHook?: PreSignOperationHook;
 };
