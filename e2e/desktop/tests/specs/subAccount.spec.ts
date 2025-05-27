@@ -387,7 +387,7 @@ for (const transaction of tokenTransactionInvalid) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.layout.goToAccounts();
-        await app.accounts.navigateToAccountByName(transaction.tx.accountToDebit.accountName);
+        await app.accounts.searchForAccount(transaction.tx.accountToDebit.currency.name);
         await app.account.navigateToTokenInAccount(transaction.tx.accountToDebit);
         await app.account.clickSend();
         await app.send.craftTx(transaction.tx);
