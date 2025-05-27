@@ -67,7 +67,7 @@ function getDeviceTransactionConfig({
         }),
       });
     }
-  } else if (mode === "stake" && account.type === "Account") {
+  } else if ((mode === "stake" || mode === "restake") && account.type === "Account") {
     fields.push({
       type: "text",
       label: "Delegate to",
