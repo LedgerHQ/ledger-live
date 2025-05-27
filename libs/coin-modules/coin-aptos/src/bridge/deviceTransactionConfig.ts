@@ -50,7 +50,7 @@ function getDeviceTransactionConfig({
         value: accountId,
       });
       fields.push({
-        type: "amount",
+        type: "text",
         label: "Amount",
         value: formatCurrencyUnit(getAccountCurrency(account).units[0], transactionAmount, {
           showCode: true,
@@ -59,7 +59,7 @@ function getDeviceTransactionConfig({
       });
     } else if (account.type === "Account") {
       fields.push({
-        type: "amount",
+        type: "text",
         label: "Amount",
         value: formatCurrencyUnit(getAccountCurrency(account).units[0], transaction.amount, {
           showCode: true,
@@ -74,7 +74,7 @@ function getDeviceTransactionConfig({
       value: transaction.recipient,
     });
     fields.push({
-      type: "amount",
+      type: "text",
       label: "Amount",
       value: formatCurrencyUnit(getAccountCurrency(account).units[0], transaction.amount, {
         showCode: true,
@@ -88,7 +88,7 @@ function getDeviceTransactionConfig({
       value: transaction.recipient,
     });
     fields.push({
-      type: "amount",
+      type: "text",
       label: "Amount",
       value: formatCurrencyUnit(getAccountCurrency(account).units[0], transaction.amount, {
         showCode: true,
@@ -97,7 +97,7 @@ function getDeviceTransactionConfig({
     });
   } else if (mode === "withdraw" && account.type === "Account") {
     fields.push({
-      type: "amount",
+      type: "text",
       label: "Amount",
       value: formatCurrencyUnit(getAccountCurrency(account).units[0], transaction.amount, {
         showCode: true,
