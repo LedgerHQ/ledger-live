@@ -81,6 +81,23 @@ const getTransactionStatus = async (
         });
       }
       break;
+    case "restake":
+      if (!stakingPosition) {
+        errors.recipient = new RecipientRequired();
+      } else {
+        if ((t.amount.gt(stakingPosition.pendingInactive) || t.amount.isZero()) && !errors.amount) {
+          errors.amount = new NotEnoughBalance();
+        }
+        if (
+          t.amount.plus(stakingPosition.active).lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS) &&
+          !errors.amount
+        ) {
+          errors.amount = new NotEnoughStakedBalanceLeft("", {
+            minAmountStaked: `${MIN_COINS_ON_SHARES_POOL.toNumber().toString()} APT`,
+          });
+        }
+      }
+      break;
     case "unstake":
       if (!stakingPosition) {
         errors.recipient = new RecipientRequired();
@@ -97,7 +114,6 @@ const getTransactionStatus = async (
           });
         }
       }
-
       break;
   }
 
