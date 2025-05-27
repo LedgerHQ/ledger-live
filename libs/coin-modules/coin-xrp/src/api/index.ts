@@ -1,5 +1,5 @@
 import type {
-  Api,
+  BridgeApi,
   FeeEstimation,
   Operation,
   Pagination,
@@ -21,7 +21,7 @@ import {
 } from "../logic";
 import { ListOperationsOptions, XrpAsset, XrpMemoKind } from "../types";
 
-export function createApi(config: XrpConfig): Api<XrpAsset, XrpMemoKind, string> {
+export function createApi(config: XrpConfig): BridgeApi<XrpAsset, XrpMemoKind, string> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
