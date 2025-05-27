@@ -2,8 +2,8 @@ name: "[CAL] - Import CAL Tokens"
 
 on:
   workflow_dispatch:
-  repository_dispatch:
-    types: [import-cal-tokens]
+  schedule:
+    - cron: "0 2 */2 * *"
 
 jobs:
   import-cal-tokens:
@@ -46,10 +46,18 @@ jobs:
       - name: Import CAL tokens
         run: pnpm import:cal-tokens
 
-      - name: Add changed files
-        run: git add .
+      - name: Check for changes
+        id: changes
+        run: |
+          git add .
+          if git diff --staged --quiet; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
 
       - name: Commit imported tokens
+        if: steps.changes.outputs.changed == 'true'
         uses: planetscale/ghcommit-action@v0.2.9
         with:
           commit_message: "chore(cal): import CAL tokens [skip ci]"
@@ -59,15 +67,18 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
       - name: Push branch
+        if: steps.changes.outputs.changed == 'true'
         run: git push -u origin $CAL_BRANCH
 
       - name: Create PR to develop
+        if: steps.changes.outputs.changed == 'true'
         run: |
           gh pr create --title ":zap: Import CAL tokens" --base develop --head $CAL_BRANCH
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
       - name: Post Slack message to notify PR creation
+        if: steps.changes.outputs.changed == 'true'
         uses: slackapi/slack-github-action@v2.0.0
         with:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
