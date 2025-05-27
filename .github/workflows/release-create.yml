@@ -35,8 +35,6 @@ jobs:
         run: pnpm i
       - name: Build libs
         run: pnpm build:libs
-      - name: import CAL tokens
-        run: pnpm import:cal-tokens
       - name: Push branch
         run: git push -u origin $RELEASE_BRANCH
       - name: Add changed files
