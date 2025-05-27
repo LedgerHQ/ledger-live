@@ -36,6 +36,7 @@ describe("Card", () => {
         setRange={mockSetRange}
         height={100}
         loading={false}
+        currentIndex={0}
       />,
     );
     expect(getByText("ETH")).toBeTruthy();
@@ -52,6 +53,7 @@ describe("Card", () => {
         setRange={mockSetRange}
         height={100}
         loading={false}
+        currentIndex={0}
       />,
     );
     expect(getByText(/188,350/)).toBeTruthy();
@@ -71,6 +73,7 @@ describe("Card", () => {
         setRange={mockSetRange}
         height={100}
         loading={false}
+        currentIndex={0}
       />,
     );
     const tab = getByText("1W");

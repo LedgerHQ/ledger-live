@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { StyleSheet } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
@@ -28,17 +28,19 @@ type CardProps = {
   loading: boolean;
   range: KeysPriceChange;
   setRange: (range: KeysPriceChange) => void;
+  currentIndex: number;
 };
 
 const { width } = getWindowDimensions();
 
 export const Card: React.FC<CardProps> = ({
   data,
-  height,
   loading,
-  chartData,
   range,
   setRange,
+  height,
+  chartData,
+  currentIndex,
 }) => {
   const {
     id,
@@ -74,6 +76,11 @@ export const Card: React.FC<CardProps> = ({
     });
   };
 
+  const scrollRef = useRef<ScrollView>(null);
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ y: 0, animated: true });
+  }, [currentIndex]);
+
   return (
     <Flex
       backgroundColor="neutral.c20"
@@ -86,7 +93,11 @@ export const Card: React.FC<CardProps> = ({
       <Flex alignItems="center" zIndex={10} top={4}>
         <Ticker currencyId={id} />
       </Flex>
-      <ScrollView showsVerticalScrollIndicator={false} onScrollEndDrag={handleScroll}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        onScrollEndDrag={handleScroll}
+        ref={scrollRef}
+      >
         <Svg style={styles.gradientTop}>
           <Defs>
             <LinearGradient id="midGlow" x1="0" y1="0" x2="0" y2="1">
