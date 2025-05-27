@@ -68,6 +68,7 @@ const OptionButton = styled(Button)<{
   justify-content: left;
   max-width: 100%;
   overflow: hidden;
+  height: auto;
   padding: 16px;
   text-overflow: ellipsis;
   white-space: nowrap;
