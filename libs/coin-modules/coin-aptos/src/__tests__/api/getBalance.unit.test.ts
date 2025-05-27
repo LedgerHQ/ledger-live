@@ -1,5 +1,5 @@
 import { AptosAPI } from "../../network";
-import { getBalance } from "../../logic/getBalance";
+import { getBalances } from "../../logic/getBalance";
 import { APTOS_ASSET_ID } from "../../constants";
 import BigNumber from "bignumber.js";
 
@@ -35,7 +35,7 @@ describe("getBalance", () => {
 
     const accountAddress = "0x4be47904b31063d60ac0dfde06e5dc203e647edbe853bae0e666ae5a763c3906";
     const client = new AptosAPI("aptos");
-    const balance = await getBalance(client, accountAddress);
+    const balance = await getBalances(client, accountAddress);
 
     expect(balance).toBeDefined();
     expect(balance).toMatchObject([{ value: BigInt(10), asset: { type: "native" } }]);
@@ -47,7 +47,7 @@ describe("getBalance", () => {
 
     const accountAddress = "0xno_contract_and_no_data";
     const client = new AptosAPI("aptos");
-    const balance = await getBalance(client, accountAddress);
+    const balance = await getBalances(client, accountAddress);
 
     expect(balance).toEqual([]);
     //expect(mockGetBalances).toHaveBeenCalledWith(accountAddress);
@@ -59,7 +59,7 @@ describe("getBalance", () => {
     const accountAddress = "0xcontract_present";
     const contractAddress = APTOS_ASSET_ID;
     const client = new AptosAPI("aptos");
-    const balance = await getBalance(client, accountAddress, contractAddress);
+    const balance = await getBalances(client, accountAddress, contractAddress);
 
     expect(balance).toBeDefined();
     expect(balance).toMatchObject([{ value: BigInt(15), asset: { type: "native" } }]);
@@ -74,7 +74,7 @@ describe("getBalance", () => {
     const contractAddress = TOKEN_ASSET_ID;
     const client = new AptosAPI("aptos");
 
-    const balance = await getBalance(client, accountAddress, contractAddress);
+    const balance = await getBalances(client, accountAddress, contractAddress);
 
     expect(balance).toBeDefined();
     expect(balance).toMatchObject([

@@ -171,6 +171,12 @@ describe("Aptos API", () => {
           block_height: "1",
           block_hash: "83ca6d",
         }),
+        getCurrentFungibleAssetBalances: jest.fn().mockResolvedValue([
+          {
+            asset_type: APTOS_ASSET_ID,
+            amount: new BigNumber(123),
+          },
+        ]),
       }));
 
       mockedNetwork.mockResolvedValue(
@@ -301,6 +307,12 @@ describe("Aptos API", () => {
           block_height: "1",
           block_hash: "83ca6d",
         }),
+        getCurrentFungibleAssetBalances: jest.fn().mockResolvedValue([
+          {
+            asset_type: APTOS_ASSET_ID,
+            amount: new BigNumber(123),
+          },
+        ]),
       }));
 
       mockedNetwork.mockResolvedValue(
@@ -355,6 +367,12 @@ describe("Aptos API", () => {
           block_height: "1",
           block_hash: "83ca6d",
         }),
+        getCurrentFungibleAssetBalances: jest.fn().mockResolvedValue([
+          {
+            asset_type: APTOS_ASSET_ID,
+            amount: new BigNumber(123),
+          },
+        ]),
       }));
 
       mockedNetwork.mockResolvedValue(
@@ -392,8 +410,7 @@ describe("Aptos API", () => {
       }));
 
       const api = new AptosAPI("aptos");
-      const accountInfo = await api.getAccountInfo("APTOS_1_ADDRESS", "1");
-
+      const accountInfo = await api.getAccountInfo(APTOS_ASSET_ID, "1");
       expect(accountInfo.balance).toEqual(new BigNumber(123));
       expect(accountInfo.transactions).toEqual([null]);
       expect(accountInfo.blockHeight).toEqual(999);

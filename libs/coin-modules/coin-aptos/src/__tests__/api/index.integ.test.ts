@@ -83,7 +83,7 @@ describe("createApi", () => {
     });
   });
 
-  describe("getBalance", () => {
+  describe("getBalances", () => {
     it("returned balances should have one native asset", async () => {
       const balances = await api.getBalance(sender.freshAddress);
       const nativeBalance = balances.filter(b => b.asset.type === assetTypeNative);
