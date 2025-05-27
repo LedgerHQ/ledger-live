@@ -20,10 +20,10 @@ const prepareTransaction = async (
     (transaction.mode === "stake" && transaction.amount.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS)) ||
     (transaction.mode === "unstake" &&
       account.aptosResources &&
-      transaction.amount.gt(account.aptosResources.stakedBalance)) ||
+      transaction.amount.gt(account.aptosResources.activeBalance)) ||
     (transaction.mode === "withdraw" &&
       account.aptosResources &&
-      transaction.amount.gt(account.aptosResources.availableBalance))
+      transaction.amount.gt(account.aptosResources.inactiveBalance))
   )
     return transaction;
 

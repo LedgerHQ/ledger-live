@@ -2321,8 +2321,10 @@ describe("getStake", () => {
       validatorId: stakingOperations[0].recipients[0],
     });
 
-    expect(result.aptosResources?.stakedBalance).toEqual(BigNumber(mockDelegatorBalance[0]));
-    expect(result.aptosResources?.availableBalance).toEqual(BigNumber(mockDelegatorBalance[1]));
-    expect(result.aptosResources?.pendingBalance).toEqual(BigNumber(mockDelegatorBalance[2]));
+    expect(result.aptosResources?.activeBalance).toEqual(BigNumber(mockDelegatorBalance[0]));
+    expect(result.aptosResources?.inactiveBalance).toEqual(BigNumber(mockDelegatorBalance[1]));
+    expect(result.aptosResources?.pendingInactiveBalance).toEqual(
+      BigNumber(mockDelegatorBalance[2]),
+    );
   });
 });

@@ -85,12 +85,12 @@ const getTransactionStatus = async (
       if (!stakingPosition) {
         errors.recipient = new RecipientRequired();
       } else {
-        if (t.amount.gt(stakingPosition.staked)) {
+        if (t.amount.gt(stakingPosition.active)) {
           errors.amount = new NotEnoughBalance();
         }
         if (
-          stakingPosition.staked.minus(t.amount).gt(BigNumber(0)) &&
-          stakingPosition.staked.minus(t.amount).lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS)
+          stakingPosition.active.minus(t.amount).gt(BigNumber(0)) &&
+          stakingPosition.active.minus(t.amount).lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS)
         ) {
           errors.amount = new NotEnoughStakedBalanceLeft("", {
             minAmountStaked: `${MIN_COINS_ON_SHARES_POOL.toNumber().toString()} APT`,

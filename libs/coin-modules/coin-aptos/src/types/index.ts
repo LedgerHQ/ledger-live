@@ -104,16 +104,16 @@ export type ExtraStakeInfoRaw = {
 };
 
 export type AptosResources = {
-  stakedBalance: BigNumber;
-  availableBalance: BigNumber;
-  pendingBalance: BigNumber;
+  activeBalance: BigNumber;
+  inactiveBalance: BigNumber;
+  pendingInactiveBalance: BigNumber;
   stakingPositions?: AptosStakingPosition[];
 };
 
 export type AptosResourcesRaw = {
-  stakedBalance: string;
-  availableBalance: string;
-  pendingBalance: string;
+  activeBalance: string;
+  inactiveBalance: string;
+  pendingInactiveBalance: string;
   stakingPositions: {
     staked: string;
     available: string;
@@ -123,9 +123,9 @@ export type AptosResourcesRaw = {
 };
 
 export type AptosStakingPosition = {
-  staked: BigNumber;
-  available: BigNumber;
-  pending: BigNumber;
+  active: BigNumber;
+  inactive: BigNumber;
+  pendingInactive: BigNumber;
   validatorId: string;
 };
 

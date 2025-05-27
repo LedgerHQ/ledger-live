@@ -32,13 +32,13 @@ export const Header = () => (
       <Trans i18nKey="delegation.status" />
     </TableLine>
     <TableLine>
-      <Trans i18nKey="aptos.stake.table.staked" />
+      <Trans i18nKey="aptos.stake.table.active" />
     </TableLine>
     <TableLine>
-      <Trans i18nKey="aptos.stake.table.pending" />
+      <Trans i18nKey="aptos.stake.table.pendingInactive" />
     </TableLine>
     <TableLine>
-      <Trans i18nKey="aptos.stake.table.available" />
+      <Trans i18nKey="aptos.stake.table.inactive" />
     </TableLine>
     <TableLine>
       <Trans i18nKey="aptos.stake.table.nextUnlock" />

@@ -21,7 +21,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
   const [infoName, setInfoName] = useState<InfoName>();
   const info = useMemo(() => getInfo(t), [t]);
   const { spendableBalance, aptosResources } = account;
-  const { stakedBalance, pendingBalance, availableBalance } = aptosResources || {};
+  const { activeBalance, pendingInactiveBalance, inactiveBalance } = aptosResources || {};
   const unit = useAccountUnit(account);
   const onCloseModal = useCallback(() => {
     setInfoName(undefined);
@@ -48,25 +48,25 @@ function AccountBalanceSummaryFooter({ account }: Props) {
         onPress={onPressInfoCreator("available")}
         value={<CurrencyUnitValue unit={unit} value={spendableBalance} disableRounding />}
       />
-      {stakedBalance.gt(0) && (
+      {activeBalance.gt(0) && (
         <InfoItem
           title={t("aptos.info.staked.title")}
           onPress={onPressInfoCreator("staked")}
-          value={<CurrencyUnitValue unit={unit} value={stakedBalance} disableRounding />}
+          value={<CurrencyUnitValue unit={unit} value={activeBalance} disableRounding />}
         />
       )}
-      {pendingBalance.gt(0) && (
+      {pendingInactiveBalance.gt(0) && (
         <InfoItem
           title={t("aptos.info.pending.title")}
           onPress={onPressInfoCreator("pending")}
-          value={<CurrencyUnitValue unit={unit} value={pendingBalance} disableRounding />}
+          value={<CurrencyUnitValue unit={unit} value={pendingInactiveBalance} disableRounding />}
         />
       )}
-      {availableBalance.gt(0) && (
+      {inactiveBalance.gt(0) && (
         <InfoItem
           title={t("aptos.info.withdrawable.title")}
           onPress={onPressInfoCreator("withdrawable")}
-          value={<CurrencyUnitValue unit={unit} value={availableBalance} disableRounding />}
+          value={<CurrencyUnitValue unit={unit} value={inactiveBalance} disableRounding />}
         />
       )}
     </ScrollView>
