@@ -517,6 +517,10 @@
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."
     },
+    "NotEnoughStakedBalanceLeft": {
+      "title": "You need to leave at least {{minAmountStaked}} staked",
+      "description": "Please leave at least {{minAmountStaked}} staked, otherwise you'll have to unstake the full amount."
+    },
     "NotEnoughBalanceFees": {
       "title": "Sorry, insufficient funds to cover fees",
       "description": "Please make sure the account has enough funds."
