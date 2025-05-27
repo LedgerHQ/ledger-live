@@ -1,13 +1,7 @@
 import { AccountBridge, TransactionCommon } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getAlpacaApi } from "./alpaca";
-import { Api, BridgeApi } from "@ledgerhq/coin-framework/api/types";
 
-function isApi(
-  alpacaApi: Api<any, any, any> | BridgeApi<any, any, any>,
-): alpacaApi is BridgeApi<any, any, any> {
-  return (<BridgeApi<any, any, any>>alpacaApi).validateIntent !== undefined;
-}
 // => alpaca validateIntent
 export function genericGetTransactionStatus(
   network,
@@ -16,9 +10,6 @@ export function genericGetTransactionStatus(
   return async (account, transaction: TransactionCommon & { fees: BigNumber }) => {
     const { freshAddress, balance, currency } = account;
     const alpacaApi = getAlpacaApi(network, kind);
-    if (!isApi(alpacaApi)) {
-      throw new Error("validateIntent is not implemented for this network/kind");
-    }
     const { errors, warnings } = await alpacaApi.validateIntent(
       {
         currencyName: currency.name,
