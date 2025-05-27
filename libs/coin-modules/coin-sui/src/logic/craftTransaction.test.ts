@@ -31,6 +31,7 @@ describe("craftTransaction", () => {
       amount: new BigNumber(amount.toString()),
       recipient,
       mode: type,
+      coinType: "0x2::sui::SUI",
     });
     expect(result).toEqual({ unsigned: mockUnsignedTx });
   });
@@ -53,6 +54,7 @@ describe("craftTransaction", () => {
       amount: new BigNumber(amount.toString()),
       recipient,
       mode: type,
+      coinType: "0x2::sui::SUI",
     });
     expect(result).toEqual({ unsigned: mockUnsignedTx });
   });
@@ -75,6 +77,7 @@ describe("craftTransaction", () => {
       amount: new BigNumber(amount.toString()),
       recipient,
       mode: type,
+      coinType: "0x2::sui::SUI",
     });
     expect(result).toEqual({ unsigned: mockUnsignedTx });
   });
@@ -97,6 +100,7 @@ describe("craftTransaction", () => {
       amount: new BigNumber(amount.toString()),
       recipient,
       mode: type,
+      coinType: "0x2::sui::SUI",
     });
     expect(result).toEqual({ unsigned: mockUnsignedTx });
   });
