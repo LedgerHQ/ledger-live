@@ -65,7 +65,7 @@ const buildCombine = networkFamily =>
   };
 
 const buildEstimateFees = networkFamily =>
-  async function estimateFees(intent: TransactionIntent<any, any, any>): Promise<FeeEstimation> {
+  async function estimateFees(intent: TransactionIntent<any>): Promise<FeeEstimation> {
     const { data } = await network<{ fee: string }, unknown>({
       method: "POST",
       url: `${ALPACA_URL}/${networkFamily}/transaction/estimate`,
@@ -156,7 +156,7 @@ const buildLastBlock = networkFamily =>
   };
 
 const buildCraftTransaction = networkFamily =>
-  async function craftTransaction(intent: TransactionIntent<any, any, any>): Promise<string> {
+  async function craftTransaction(intent: TransactionIntent<any>): Promise<string> {
     const { data } = await network<any, unknown>({
       method: "POST",
       url: `${ALPACA_URL}/${networkFamily}/transaction/encode`,
@@ -180,4 +180,4 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     listOperations: buildListOperations(networkFamily),
     lastBlock: buildLastBlock(networkFamily),
     craftTransaction: buildCraftTransaction(networkFamily),
-  }) satisfies Api<any, any, any>; // TODO: Api<any>?
+  }) satisfies Api<any>; // TODO: Api<any>?

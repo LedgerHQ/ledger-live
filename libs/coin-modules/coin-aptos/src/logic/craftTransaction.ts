@@ -8,7 +8,9 @@ import BigNumber from "bignumber.js";
 
 export async function craftTransaction(
   aptosClient: AptosAPI,
-  transactionIntent: TransactionIntent<AptosAsset, AptosExtra, string>,
+  // NOTE: check this one
+  // transactionIntent: TransactionIntent<AptosAsset, AptosExtra, string>,
+  transactionIntent: TransactionIntent<AptosAsset>,
 ): Promise<string> {
   const account = {
     freshAddress: transactionIntent.sender,

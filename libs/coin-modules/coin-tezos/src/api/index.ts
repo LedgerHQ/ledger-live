@@ -19,7 +19,7 @@ import {
 import api from "../network/tzkt";
 import type { TezosOperationMode } from "../types";
 import type { TezosApi, TezosAsset, TezosFeeEstimation } from "./types";
-import { TransactionIntent, MemoNotSupported } from "@ledgerhq/coin-framework/lib-es/api/types";
+import { TransactionIntent } from "@ledgerhq/coin-framework/lib-es/api/types";
 
 export function createApi(config: TezosConfig): TezosApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -50,7 +50,7 @@ async function balance(address: string): Promise<Balance<TezosAsset>[]> {
 }
 
 async function craft(
-  transactionIntent: TransactionIntent<TezosAsset, MemoNotSupported>,
+  transactionIntent: TransactionIntent<TezosAsset>,
   customFees?: bigint,
 ): Promise<string> {
   if (!isTezosTransactionType(transactionIntent.type)) {
@@ -77,7 +77,7 @@ async function craft(
 }
 
 async function estimate(
-  transactionIntent: TransactionIntent<TezosAsset, MemoNotSupported>,
+  transactionIntent: TransactionIntent<TezosAsset>,
 ): Promise<TezosFeeEstimation> {
   const senderAccountInfo = await api.getAccountByAddress(transactionIntent.sender);
   if (senderAccountInfo.type !== "user") throw new Error("unexpected account type");

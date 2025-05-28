@@ -32,7 +32,7 @@ export function adaptCoreOperationToLiveOperation(
 export function transactionToIntent(
   _account: Account,
   transaction: TransactionCommon,
-): TransactionIntent<any, any, any> {
+): TransactionIntent<any> {
   return {
     type: "Payment",
     sender: _account.freshAddress,

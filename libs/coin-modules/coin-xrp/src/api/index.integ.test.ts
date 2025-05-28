@@ -113,10 +113,9 @@ describe("Xrp Api", () => {
         amount: BigInt(10),
         memo: {
           type: "map",
-          memos: new Map([["memo", "testdata"]]),
+          memos: new Map([["memos", ["testdata"]]]),
         },
       });
-
       // Then
       expect(result.length).toEqual(162);
     });
