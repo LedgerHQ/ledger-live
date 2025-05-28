@@ -11,8 +11,8 @@ function getAbsolutePath(value: string): any {
 }
 
 const madDir = "./src/newArch/features/ModularDrawer";
-const detailedAccountsMockDir = `${madDir}/components/SelectAccountFlow/hooks/__mocks__/useDetailedAccounts.mock.ts`;
-const selectAssetFlowHookMockDir = `${madDir}/components/SelectAssetFlow/__mocks__/useSelectAssetFlow.mock.ts`;
+const detailedAccountsMockDir = `${madDir}/__mocks__/accounts.mock.ts`;
+const selectAssetFlowHookMockDir = `${madDir}/__mocks__/useSelectAssetFlow.mock.ts`;
 
 const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],

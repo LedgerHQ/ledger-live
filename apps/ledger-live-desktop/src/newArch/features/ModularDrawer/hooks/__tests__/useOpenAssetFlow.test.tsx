@@ -1,5 +1,5 @@
 import { useOpenAssetFlow } from "../useOpenAssetFlow";
-import { ModularDrawerLocation } from "../../../ModularDrawerV2/enums";
+import { ModularDrawerLocation } from "../../enums";
 import { renderHook } from "tests/testSetup";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import SelectAssetFlow from "../../components/SelectAssetFlow";

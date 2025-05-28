@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { ModularDrawerLocation } from "~/newArch/features/ModularDrawerV2/enums";
+import { ModularDrawerLocation } from "LLD/features/ModularDrawer/enums";
 import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
 import Box from "~/renderer/components/Box";
 import IconPlus from "~/renderer/icons/Plus";

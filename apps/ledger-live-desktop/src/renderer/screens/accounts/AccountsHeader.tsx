@@ -7,7 +7,7 @@ import OptionsButton from "./OptionsButton";
 import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
-import { ModularDrawerLocation } from "~/newArch/features/ModularDrawerV2/enums";
+import { ModularDrawerLocation } from "LLD/features/ModularDrawer/enums";
 
 const AccountsHeader = () => {
   const { t } = useTranslation();
