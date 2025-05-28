@@ -12,6 +12,7 @@ import type { SuiAsset } from "./types";
 import type {
   AlpacaApi,
   FeeEstimation,
+  MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
 
@@ -30,7 +31,7 @@ export function createApi(config: SuiCoinConfig): AlpacaApi<SuiAsset> {
 }
 
 async function craft(
-  transactionIntent: TransactionIntent<SuiAsset, string, string>,
+  transactionIntent: TransactionIntent<SuiAsset, MemoNotSupported>,
 ): Promise<string> {
   const { unsigned } = await craftTransaction(transactionIntent);
 
@@ -38,7 +39,7 @@ async function craft(
 }
 
 async function estimate(
-  transactionIntent: TransactionIntent<SuiAsset, string, string>,
+  transactionIntent: TransactionIntent<SuiAsset, MemoNotSupported>,
 ): Promise<FeeEstimation> {
   const fees = await estimateFees(transactionIntent);
   return { value: fees };

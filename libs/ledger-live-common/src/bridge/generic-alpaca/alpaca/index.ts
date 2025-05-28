@@ -6,7 +6,7 @@ import { Api } from "@ledgerhq/coin-framework/api/types";
 import { XrpCoinConfig } from "@ledgerhq/coin-xrp/config";
 
 // NOTE: Using Api<any, any, any> to allow integration with coin-specific APIs like XRP (which use structured sender types).
-export function getAlpacaApi(network: string, kind: "local" | "remote"): Api<any, any, any> {
+export function getAlpacaApi(network: string, kind: "local" | "remote"): Api<any, any> {
   if (kind === "local") {
     // dynamic import ?
     switch (network) {
@@ -18,5 +18,5 @@ export function getAlpacaApi(network: string, kind: "local" | "remote"): Api<any
       // as unknown as Api<any>; // FIXME: createXrpApi returns a strongly typed Api<XrpSender>, fix Api<any> to allow it
     }
   }
-  return getNetworkAlpacaApi(network) satisfies Partial<Api<any, any, any>> as Api<any, any, any>;
+  return getNetworkAlpacaApi(network) satisfies Partial<Api<any, any>> as Api<any, any>;
 }
