@@ -344,7 +344,7 @@ export class AptosAPI {
     });
 
     return response.map(x => ({
-      asset_type: x.asset_type ?? "-",
+      contractAddress: x.asset_type ?? "-",
       amount: BigNumber(x.amount),
     }));
   }
