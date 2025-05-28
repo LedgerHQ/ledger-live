@@ -155,7 +155,7 @@
     "@ledgerhq/crypto-icons-ui": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/device-core": "workspace:^",
-    "@ledgerhq/device-management-kit": "0.0.0-hid-candidate-20250523130730",
+    "@ledgerhq/device-management-kit": "0.0.0-hid-candidate-2-20250526084932",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-algorand": "workspace:^",
