@@ -16,6 +16,8 @@ jobs:
   import-cal-tokens:
     name: Import CAL Tokens
     runs-on: ubuntu-22.04
+    outputs:
+      changed: ${{ steps.changes.outputs.changed }}
     steps:
       - name: Generate token
         id: generate-token
@@ -60,7 +62,6 @@ jobs:
         id: changes
         run: |
           git stash
-          git fetch origin $CAL_BRANCH          # make sure previous commit is included
           git pull --rebase origin $CAL_BRANCH  # make sure previous commit is included
           git stash pop
           git add .
@@ -90,6 +91,7 @@ jobs:
   test-libraries:
     name: "Test Libraries"
     needs: import-cal-tokens
+    if: needs.import-cal-tokens.outputs.changed == 'true'
     uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
     secrets: inherit
 
@@ -97,6 +99,7 @@ jobs:
     name: "Auto Merge PR"
     needs: [import-cal-tokens, test-libraries]
     runs-on: ubuntu-22.04
+    if: needs.import-cal-tokens.outputs.changed == 'true'
     steps:
       - name: Generate token
         id: generate-token
@@ -112,7 +115,7 @@ jobs:
 
       - name: Merge PR
         run: |
-          gh pr merge $CAL_BRANCH --delete-branch --admin
+          gh pr merge $CAL_BRANCH --delete-branch --admin || "PR does not exist or is already merged"
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
