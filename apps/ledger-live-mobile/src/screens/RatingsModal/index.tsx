@@ -32,7 +32,7 @@ const RatingsModal = () => {
    * Without this default behavior, there are issues on iOS where sometimes the
    * height is stuck at 0.
    */
-  const sharedHeight = useSharedValue<number | null>(null);
+  const sharedHeight = useSharedValue<number | null>(0);
   const onLayout = useCallback(
     ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
       sharedHeight.value = withTiming(layout.height, { duration: 200 });
@@ -46,7 +46,7 @@ const RatingsModal = () => {
        * If it's null the component still renders normally at its full height
        * without its height being derived from an animated value.
        */
-      height: sharedHeight.value ?? undefined,
+      height: sharedHeight.value ?? 0,
     }),
     [],
   );
@@ -54,7 +54,7 @@ const RatingsModal = () => {
   const closeModal = useCallback(() => {
     setRatingsModalOpen(false);
     setStep(ratingsInitialStep);
-    sharedHeight.value = null;
+    sharedHeight.value = 0;
   }, [ratingsInitialStep, setRatingsModalOpen, sharedHeight]);
 
   const handleBackdropClose = useCallback(() => {
