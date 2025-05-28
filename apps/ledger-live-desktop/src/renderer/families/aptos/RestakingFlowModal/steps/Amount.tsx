@@ -79,10 +79,10 @@ export default function StepAmount({
   return (
     <Box flow={1}>
       <TrackPage
-        category="Unstaking Flow"
+        category="Restaking Flow"
         name="Step 1"
         flow="stake"
-        action="unstaking"
+        action="restaking"
         currency="aptos"
       />
       {error && <ErrorBanner error={error} />}
@@ -90,12 +90,12 @@ export default function StepAmount({
         <Text ff="Inter|Medium" fontSize={4}>
           {nextUnlockTime ? (
             <Trans
-              i18nKey={t("aptos.unstake.flow.steps.amount.subtitle", {
+              i18nKey={t("aptos.restake.flow.steps.amount.subtitle", {
                 timeToUnlock: nextUnlockTime,
               })}
             />
           ) : (
-            <Trans i18nKey="aptos.unstake.flow.steps.amount.subtitle2" />
+            <Trans i18nKey="aptos.restake.flow.steps.amount.subtitle2" />
           )}
         </Text>
       </Box>
@@ -106,7 +106,7 @@ export default function StepAmount({
         account={account}
         status={status}
         onChange={onChangeAmount}
-        label={<Trans i18nKey="aptos.unstake.flow.steps.amount.fields.amount" />}
+        label={<Trans i18nKey="aptos.restake.flow.steps.amount.fields.amount" />}
       />
       <Box mb={1} />
     </Box>

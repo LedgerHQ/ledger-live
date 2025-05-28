@@ -68,14 +68,14 @@ const AccountBalanceSummaryFooter: AptosFamily["AccountBalanceSummaryFooter"] = 
     locale,
   };
 
-  const _stakedBalance = aptosResources?.stakedBalance || BigNumber(0);
-  const _availableBalance = aptosResources?.availableBalance || BigNumber(0);
-  const _pendingBalance = aptosResources?.pendingBalance || BigNumber(0);
+  const _activeBalance = aptosResources?.activeBalance || BigNumber(0);
+  const _inactiveBalance = aptosResources?.inactiveBalance || BigNumber(0);
+  const _pendingInactiveBalance = aptosResources?.pendingInactiveBalance || BigNumber(0);
 
   const spendableBalance = formatCurrencyUnit(unit, _spendableBalance, formatConfig);
-  const stakedBalance = formatCurrencyUnit(unit, _stakedBalance, formatConfig);
-  const availableBalance = formatCurrencyUnit(unit, _availableBalance, formatConfig);
-  const pendingBalance = formatCurrencyUnit(unit, _pendingBalance, formatConfig);
+  const activeBalance = formatCurrencyUnit(unit, _activeBalance, formatConfig);
+  const inactiveBalance = formatCurrencyUnit(unit, _inactiveBalance, formatConfig);
+  const pendingInactiveBalance = formatCurrencyUnit(unit, _pendingInactiveBalance, formatConfig);
 
   return (
     <Wrapper>
@@ -92,7 +92,7 @@ const AccountBalanceSummaryFooter: AptosFamily["AccountBalanceSummaryFooter"] = 
           <Discreet>{spendableBalance}</Discreet>
         </AmountValue>
       </BalanceDetail>
-      {_stakedBalance.gt(0) && (
+      {_activeBalance.gt(0) && (
         <BalanceDetail>
           <ToolTip content={<Trans i18nKey="aptos.account.stakedBalanceTooltip" />}>
             <TitleWrapper>
@@ -103,11 +103,11 @@ const AccountBalanceSummaryFooter: AptosFamily["AccountBalanceSummaryFooter"] = 
             </TitleWrapper>
           </ToolTip>
           <AmountValue>
-            <Discreet>{stakedBalance}</Discreet>
+            <Discreet>{activeBalance}</Discreet>
           </AmountValue>
         </BalanceDetail>
       )}
-      {_pendingBalance.gt(0) && (
+      {_pendingInactiveBalance.gt(0) && (
         <BalanceDetail>
           <ToolTip content={<Trans i18nKey="aptos.account.pendingBalanceTooltip" />}>
             <TitleWrapper>
@@ -118,11 +118,11 @@ const AccountBalanceSummaryFooter: AptosFamily["AccountBalanceSummaryFooter"] = 
             </TitleWrapper>
           </ToolTip>
           <AmountValue>
-            <Discreet>{pendingBalance}</Discreet>
+            <Discreet>{pendingInactiveBalance}</Discreet>
           </AmountValue>
         </BalanceDetail>
       )}
-      {_availableBalance.gt(0) && (
+      {_inactiveBalance.gt(0) && (
         <BalanceDetail>
           <ToolTip content={<Trans i18nKey="aptos.account.withdrawableBalanceTooltip" />}>
             <TitleWrapper>
@@ -133,7 +133,7 @@ const AccountBalanceSummaryFooter: AptosFamily["AccountBalanceSummaryFooter"] = 
             </TitleWrapper>
           </ToolTip>
           <AmountValue>
-            <Discreet>{availableBalance}</Discreet>
+            <Discreet>{inactiveBalance}</Discreet>
           </AmountValue>
         </BalanceDetail>
       )}

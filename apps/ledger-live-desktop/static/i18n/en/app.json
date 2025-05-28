@@ -3852,7 +3852,7 @@
     "account": {
       "stakedBalance": "Staked balance",
       "stakedBalanceTooltip": "This amount is currently staked with validators.",
-      "withdrawableBalance": "Withdawable balance",
+      "withdrawableBalance": "Withdrawable balance",
       "withdrawableBalanceTooltip": "This amount has been unstaked and is currently able to be withdrawn.",
       "pendingBalance": "Pending balance",
       "pendingBalanceTooltip": "This amount has been unstaked and is currently pending availability."
@@ -3876,9 +3876,9 @@
       "table": {
         "header": "Staking Position(s)",
         "stake": "Add",
-        "staked": "Staked",
-        "pending": "Pending Release",
-        "available": "Withdrawable",
+        "active": "Staked",
+        "pendingInactive": "Pending Release",
+        "inactive": "Withdrawable",
         "nextUnlock": "Next unlock"
       },
       "nextUnlockIn": "Next unlock in",
@@ -3928,7 +3928,32 @@
       }
     },
     "restake": {
-      "inactiveTooltip": "Restake amount that are pending"
+      "flow": {
+        "title": "Restake",
+        "steps": {
+          "amount": {
+            "title": "Amount",
+            "subtitle": "The restake process will stake your withdrawable balance again.",
+            "warning": "All the available balance will be restaked. The restaked amount will be available for withdrawal after the unstake operation and the unlock time.",
+            "fields": {
+              "validator": "Validator",
+              "amount": "Amount to restake"
+            }
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully restaked your assets.",
+              "description": "<0>{{amount}}</0> were restaked from <0>{{validator}}</0>",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
     },
     "unstake": {
       "disabledTooltip": "There aren't enough staked assets to unstake",
@@ -4095,7 +4120,7 @@
     "account": {
       "stakedBalance": "Staked balance",
       "stakedBalanceTooltip": "This amount is currently staked with validators.",
-      "availableBalance": "Withdawable balance",
+      "availableBalance": "Withdrawable balance",
       "availableBalanceTooltip": "This amount has been unstaked and is currently able to be withdrawn.",
       "pendingBalance": "Pending balance",
       "pendingBalanceTooltip": "This amount has been unstaked and is currently pending availability.",

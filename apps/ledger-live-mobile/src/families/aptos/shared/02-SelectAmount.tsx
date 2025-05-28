@@ -28,6 +28,7 @@ import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpe
 import { AptosStakingFlowParamList } from "../StakingFlow/types";
 import { AptosUnstakingFlowParamList } from "../UnstakingFlow/types";
 import { AptosWithdrawingFlowParamList } from "../WithdrawingFlow/types";
+import { AptosRestakingFlowParamList } from "../RestakingFlow/types";
 import { useSettings } from "~/hooks";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
 import NotEnoughFundFeesAlert from "../../shared/StakingErrors/NotEnoughFundFeesAlert";
@@ -37,7 +38,8 @@ import AmountInput from "~/screens/SendFunds/AmountInput";
 type Props =
   | StackNavigatorProps<AptosStakingFlowParamList, ScreenName.AptosStakingAmount>
   | StackNavigatorProps<AptosUnstakingFlowParamList, ScreenName.AptosUnstakingAmount>
-  | StackNavigatorProps<AptosWithdrawingFlowParamList, ScreenName.AptosWithdrawingAmount>;
+  | StackNavigatorProps<AptosWithdrawingFlowParamList, ScreenName.AptosWithdrawingAmount>
+  | StackNavigatorProps<AptosRestakingFlowParamList, ScreenName.AptosRestakingAmount>;
 
 function StakingAmount({ navigation, route }: Props) {
   const { colors } = useTheme();

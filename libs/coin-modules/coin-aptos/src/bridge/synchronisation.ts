@@ -204,37 +204,35 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
   });
 
   const stakingPositions: AptosStakingPosition[] = [];
-  let stakedBalance = BigNumber(0);
-  let availableBalance = BigNumber(0);
-  let pendingBalance = BigNumber(0);
+  let activeBalance = BigNumber(0);
+  let inactiveBalance = BigNumber(0);
+  let pendingInactiveBalance = BigNumber(0);
 
   const stakingPoolAddresses = getStakingPoolAddresses(stakingOperations);
   for (const stakingPoolAddress of stakingPoolAddresses) {
-    const [active, inactive, pending_inactive] = await aptosClient.getDelegatorBalanceInPool(
-      stakingPoolAddress,
-      address,
-    );
+    const [active_string, inactive_string, pending_inactive_string] =
+      await aptosClient.getDelegatorBalanceInPool(stakingPoolAddress, address);
 
-    const staked = BigNumber(active);
-    const available = BigNumber(inactive);
-    const pending = BigNumber(pending_inactive);
+    const active = BigNumber(active_string);
+    const inactive = BigNumber(inactive_string);
+    const pendingInactive = BigNumber(pending_inactive_string);
 
     stakingPositions.push({
-      staked,
-      available,
-      pending,
+      active,
+      inactive,
+      pendingInactive,
       validatorId: stakingPoolAddress,
     });
 
-    stakedBalance = stakedBalance.plus(staked);
-    availableBalance = availableBalance.plus(available);
-    pendingBalance = pendingBalance.plus(pending);
+    activeBalance = activeBalance.plus(active);
+    inactiveBalance = inactiveBalance.plus(inactive);
+    pendingInactiveBalance = pendingInactiveBalance.plus(pendingInactive);
   }
 
   const aptosResources = initialAccount?.aptosResources || {
-    stakedBalance,
-    availableBalance,
-    pendingBalance,
+    activeBalance,
+    inactiveBalance,
+    pendingInactiveBalance,
     stakingPositions,
   };
 
@@ -243,9 +241,9 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
     id: accountId,
     xpub,
     balance: balance
-      .plus(aptosResources.stakedBalance)
-      .plus(aptosResources.pendingBalance)
-      .plus(aptosResources.availableBalance),
+      .plus(aptosResources.activeBalance)
+      .plus(aptosResources.pendingInactiveBalance)
+      .plus(aptosResources.inactiveBalance),
     spendableBalance: balance,
     operations,
     operationsCount: operations.length,

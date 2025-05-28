@@ -11,20 +11,18 @@ import { accountScreenSelector } from "~/reducers/accounts";
 import SelectAmount from "../shared/02-SelectAmount";
 import { ScreenName } from "~/const";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import type { AptosWithdrawingFlowParamList } from "./types";
+import type { AptosRestakingFlowParamList } from "./types";
 
 type Props = BaseComposite<
-  StackNavigatorProps<AptosWithdrawingFlowParamList, ScreenName.AptosWithdrawingAmount>
+  StackNavigatorProps<AptosRestakingFlowParamList, ScreenName.AptosRestakingAmount>
 >;
 
-function WithdrawingAmount({ navigation, route }: Props) {
+function RestakingAmount({ navigation, route }: Props) {
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account, "account required");
-
   const bridge = getAccountBridge(account, undefined);
   const mainAccount = getMainAccount(account, undefined);
   const { validatorId } = route.params.stakingPosition;
-
   const {
     transaction: bridgeTransaction,
     updateTransaction,
@@ -35,29 +33,26 @@ function WithdrawingAmount({ navigation, route }: Props) {
     return {
       account,
       transaction: bridge.updateTransaction(t, {
-        mode: "withdraw",
+        mode: "restake",
         recipient: validatorId || "",
       }),
     };
   });
-
   const transaction = bridgeTransaction as Transaction;
-
   const newRoute = {
     ...route,
     params: {
       ...route.params,
       transaction,
-      max: getDelegationOpMaxAmount(account as AptosAccount, validatorId, "withdraw"),
+      max: getDelegationOpMaxAmount(account as AptosAccount, validatorId, "restake"),
       value: transaction ? transaction.amount : new BigNumber(0),
-      nextScreen: ScreenName.AptosWithdrawingSelectDevice,
+      nextScreen: ScreenName.AptosRestakingSelectDevice,
       updateTransaction,
       status,
       bridgePending,
     },
   };
-
   return <SelectAmount navigation={navigation} route={newRoute} />;
 }
 
-export default WithdrawingAmount;
+export default RestakingAmount;

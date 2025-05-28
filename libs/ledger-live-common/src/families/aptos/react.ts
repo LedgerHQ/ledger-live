@@ -70,7 +70,7 @@ export function useAptosStakingPositionsQuerySelector(
   const options = useMemo<AptosMappedStakingPosition[]>(
     () =>
       stakingPositions.filter(sp =>
-        transaction.mode === "unstake" ? sp.staked.gt(0) : sp.available.gt(0),
+        transaction.mode === "unstake" ? sp.active.gt(0) : sp.inactive.gt(0),
       ),
     [stakingPositions, transaction],
   );

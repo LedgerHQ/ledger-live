@@ -11,7 +11,7 @@ import type {
   AptosMappedStakingPosition,
   AptosAccount,
 } from "@ledgerhq/live-common/families/aptos/types";
-import { canUnstake, canWithdraw } from "@ledgerhq/live-common/families/aptos/logic";
+import { canUnstake, canWithdraw, canRestake } from "@ledgerhq/live-common/families/aptos/logic";
 import { Account } from "@ledgerhq/types-live";
 import AccountDelegationInfo from "~/components/AccountDelegationInfo";
 import IlluRewards from "~/icons/images/Rewards";
@@ -26,6 +26,7 @@ import Circle from "~/components/Circle";
 import LText from "~/components/LText";
 import UndelegateIcon from "~/icons/Undelegate";
 import ClaimRewardIcon from "~/icons/ClaimReward";
+import RedelegateIcon from "~/icons/Redelegate";
 import StakingPositionRow from "./Row";
 import LabelRight from "./LabelRight";
 import ValidatorImage from "../shared/ValidatorImage";
@@ -94,6 +95,17 @@ function StakingPositions({ account }: Props) {
     onNavigate({
       route: NavigatorName.AptosWithdrawingFlow,
       screen: ScreenName.AptosWithdrawingAmount,
+      params: {
+        accountId: account.id,
+        stakingPosition,
+      },
+    });
+  }, [onNavigate, stakingPosition, account]);
+
+  const onRestake = useCallback(() => {
+    onNavigate({
+      route: NavigatorName.AptosRestakingFlow,
+      screen: ScreenName.AptosRestakingAmount,
       params: {
         accountId: account.id,
         stakingPosition,
@@ -172,6 +184,7 @@ function StakingPositions({ account }: Props) {
   const actions = useMemo<DelegationDrawerActions>(() => {
     const unstakingEnabled = stakingPosition && canUnstake(stakingPosition);
     const withdrawingEnabled = stakingPosition && canWithdraw(stakingPosition);
+    const restakingEnabled = stakingPosition && canRestake(stakingPosition);
 
     return stakingPosition
       ? [
@@ -200,6 +213,20 @@ function StakingPositions({ account }: Props) {
             onPress: onWithdraw,
             event: "StakingActionWithdraw",
           },
+          {
+            label: t("aptos.staking.actions.restake"),
+            Icon: (props: IconProps) => (
+              <Circle
+                {...props}
+                bg={!restakingEnabled ? colors.lightFog : rgba(colors.yellow, 0.2)}
+              >
+                <RedelegateIcon color={!restakingEnabled ? colors.grey : undefined} />
+              </Circle>
+            ),
+            disabled: !restakingEnabled,
+            onPress: onRestake,
+            event: "StakingActionRestake",
+          },
         ]
       : [];
   }, [
@@ -207,6 +234,7 @@ function StakingPositions({ account }: Props) {
     t,
     onUnstake,
     onWithdraw,
+    onRestake,
     colors.lightFog,
     colors.grey,
     colors.yellow,

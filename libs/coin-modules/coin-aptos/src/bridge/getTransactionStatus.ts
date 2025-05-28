@@ -81,23 +81,39 @@ const getTransactionStatus = async (
         });
       }
       break;
-    case "unstake":
+    case "restake":
       if (!stakingPosition) {
         errors.recipient = new RecipientRequired();
       } else {
-        if (t.amount.gt(stakingPosition.staked)) {
+        if ((t.amount.gt(stakingPosition.pendingInactive) || t.amount.isZero()) && !errors.amount) {
           errors.amount = new NotEnoughBalance();
         }
         if (
-          stakingPosition.staked.minus(t.amount).gt(BigNumber(0)) &&
-          stakingPosition.staked.minus(t.amount).lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS)
+          t.amount.plus(stakingPosition.active).lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS) &&
+          !errors.amount
         ) {
           errors.amount = new NotEnoughStakedBalanceLeft("", {
             minAmountStaked: `${MIN_COINS_ON_SHARES_POOL.toNumber().toString()} APT`,
           });
         }
       }
-
+      break;
+    case "unstake":
+      if (!stakingPosition) {
+        errors.recipient = new RecipientRequired();
+      } else {
+        if (t.amount.gt(stakingPosition.active)) {
+          errors.amount = new NotEnoughBalance();
+        }
+        if (
+          stakingPosition.active.minus(t.amount).gt(BigNumber(0)) &&
+          stakingPosition.active.minus(t.amount).lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS)
+        ) {
+          errors.amount = new NotEnoughStakedBalanceLeft("", {
+            minAmountStaked: `${MIN_COINS_ON_SHARES_POOL.toNumber().toString()} APT`,
+          });
+        }
+      }
       break;
   }
 
