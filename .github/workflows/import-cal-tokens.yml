@@ -29,7 +29,7 @@ jobs:
       - name: Checkout develop
         uses: actions/checkout@v4
         with:
-          ref: develop
+          ref: test-cal-import-tokens
           token: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup git user
@@ -91,7 +91,7 @@ jobs:
   test-libraries:
     name: "Test Libraries"
     needs: import-cal-tokens
-    if: needs.import-cal-tokens.outputs.changed == 'true'
+    if: !failure() && needs.import-cal-tokens.outputs.changed == 'true'
     uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
     secrets: inherit
 
@@ -99,7 +99,7 @@ jobs:
     name: "Auto Merge PR"
     needs: [import-cal-tokens, test-libraries]
     runs-on: ubuntu-22.04
-    if: needs.import-cal-tokens.outputs.changed == 'true'
+    if: !failure() && needs.import-cal-tokens.outputs.changed == 'true'
     steps:
       - name: Generate token
         id: generate-token
@@ -115,7 +115,7 @@ jobs:
 
       - name: Merge PR
         run: |
-          gh pr merge $CAL_BRANCH --delete-branch --admin || "PR does not exist or is already merged"
+          gh pr merge $CAL_BRANCH --merge --delete-branch --admin || echo "PR does not exist"
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
