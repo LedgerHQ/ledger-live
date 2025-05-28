@@ -468,7 +468,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
   const onStateChange: WebviewProps["onStateChange"] = state => {
     setWebviewState(state);
 
-    if (!state?.loading && state?.isAppUnavailable && !isOffline) {
+    if (!state?.loading && state?.isAppUnavailable) {
       liveAppUnavailable();
       captureException(
         new UnableToLoadSwapLiveError(
@@ -486,21 +486,11 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [webviewState?.url]);
 
-  const customWebviewStyle = useMemo(
-    () => (isOffline ? { display: "none" } : undefined),
-    [isOffline],
-  );
-
-  const manifestWithHash = useMemo(
-    () => ({ ...manifest, url: `${manifest.url}#${hashString}` }),
-    [manifest, hashString],
-  );
-
   return (
     <>
       {enablePlatformDevTools && (
         <TopBar
-          manifest={manifestWithHash}
+          manifest={{ ...manifest, url: `${manifest.url}#${hashString}` }}
           webviewAPIRef={webviewAPIRef}
           webviewState={webviewState}
         />
@@ -508,7 +498,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
 
       <SwapWebAppWrapper>
         <Web3AppWebview
-          manifest={manifestWithHash}
+          manifest={{ ...manifest, url: `${manifest.url}#${hashString}` }}
           inputs={{
             theme: themeType,
             lang: locale,
@@ -523,7 +513,6 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
           onStateChange={onStateChange}
           ref={webviewAPIRef}
           customHandlers={customHandlers as never}
-          webviewStyle={customWebviewStyle}
         />
       </SwapWebAppWrapper>
     </>
