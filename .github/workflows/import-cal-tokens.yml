@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-22.04
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
-      CAL_BRANCH: "cal/import-tokens"
+      CAL_BRANCH: "feat/import-cal-tokens"
     steps:
       - name: Generate token
         id: generate-token
@@ -33,7 +33,8 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
 
       - name: Create CAL import branch
-        run: git checkout -b $CAL_BRANCH
+        run: |
+          git checkout -b $CAL_BRANCH
 
       - name: Setup caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
@@ -63,7 +64,7 @@ jobs:
         if: steps.changes.outputs.changed == 'true'
         uses: planetscale/ghcommit-action@v0.2.9
         with:
-          commit_message: "chore(cal): import CAL tokens [skip ci]"
+          commit_message: "chore(cal): import CAL tokens"
           repo: ${{ github.repository }}
           branch: ${{ env.CAL_BRANCH }}
         env:
@@ -82,6 +83,7 @@ jobs:
 
   test-libraries:
     name: "Test Libraries"
+    needs: import-cal-tokens
     uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
     secrets: inherit
 
@@ -104,7 +106,7 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
   import-cal-tokens-fail:
-    name: Import CAL Tokens > Failure Reporting
+    name: Failure Reporting
     needs: [import-cal-tokens, test-libraries]
     if: failure()
     runs-on: ubuntu-22.04
@@ -116,7 +118,7 @@ jobs:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           method: chat.postMessage
           payload: |
-            channel: "import-cal-tokens"
+            channel: "C05FKJ7DFAP"
             text: "[Alert] Import CAL Tokens failed"
             blocks: 
               - type: "section"
