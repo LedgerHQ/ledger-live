@@ -2,11 +2,11 @@ import { useModularDrawerVisibility } from "./useModularDrawerVisibility";
 import { openModal } from "~/renderer/actions/modals";
 import { useDispatch } from "react-redux";
 import { useCallback } from "react";
-import { ModularDrawerLocation } from "../../ModularDrawerV2/enums";
+import { ModularDrawerLocation } from "../enums";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
-import ModularDrawerFlowManager from "../../ModularDrawerV2/ModularDrawerFlowManager";
+import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 
 function selectCurrency(
   onAssetSelected: (currency: CryptoOrTokenCurrency) => void,
@@ -15,7 +15,7 @@ function selectCurrency(
   currencies?: CryptoOrTokenCurrency[],
 ): void {
   const filteredCurrencies =
-    currencies ?? listAndFilterCurrencies({ currencies: assetIds, includeTokens: true });
+    currencies ?? listAndFilterCurrencies({ currencies: assetIds, includeTokens });
 
   setDrawer(
     ModularDrawerFlowManager,

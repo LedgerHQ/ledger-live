@@ -1,6 +1,6 @@
 import { renderHook } from "tests/testSetup";
 import { useModularDrawerVisibility } from "../useModularDrawerVisibility";
-import { ModularDrawerLocation } from "../../../ModularDrawerV2/enums";
+import { ModularDrawerLocation } from "../../enums";
 
 describe("useModularDrawerVisibility", () => {
   it("should return false if the feature flag is disabled", () => {

@@ -1,6 +1,6 @@
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useCallback } from "react";
-import { ModularDrawerLocation } from "../../ModularDrawerV2/enums";
+import { ModularDrawerLocation } from "../enums";
 
 export function useModularDrawerVisibility() {
   const featureModularDrawer = useFeature("lldModularDrawer");

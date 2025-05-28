@@ -48,7 +48,7 @@ import {
   useModularDrawerVisibility,
   ModularDrawerLocation,
   openAssetAndAccountDrawer,
-} from "~/newArch/features/ModularDrawerV2";
+} from "LLD/features/ModularDrawer";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 

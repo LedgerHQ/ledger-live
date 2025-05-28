@@ -3,7 +3,7 @@ import { Icons } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 
 export type BackButtonProps = {
-  hidden: boolean;
+  hidden?: boolean;
   onClick: () => void;
 };
 
@@ -29,8 +29,4 @@ const BackButton = styled.button`
   top: 20px;
   left: 16px;
   z-index: 1000;
-  pointer-events: all;
-  &:hover {
-    background-color: ${p => p.theme.colors.palette.neutral.c30};
-  }
 `;
