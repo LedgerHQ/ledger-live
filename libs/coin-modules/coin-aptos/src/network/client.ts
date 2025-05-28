@@ -269,12 +269,9 @@ export class AptosAPI {
 
       const response = await this.aptosClient.getCurrentFungibleAssetBalances({
         options: {
-          offset: 0,
-          limit: 1000,
           where: whereCondition,
         },
       });
-      console.log("getBalances response", response);
       return response.map(x => ({
         asset_type: x.asset_type ?? "-",
         amount: BigNumber(x.amount),

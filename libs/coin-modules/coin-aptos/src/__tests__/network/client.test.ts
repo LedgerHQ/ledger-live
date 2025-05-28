@@ -692,8 +692,6 @@ describe("Aptos API", () => {
 
       expect(mockGetCurrentFungibleAssetBalances).toHaveBeenCalledWith({
         options: {
-          offset: 0,
-          limit: 1000,
           where: {
             asset_type: { _eq: APTOS_ASSET_ID },
             owner_address: { _eq: address },

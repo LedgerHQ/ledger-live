@@ -90,6 +90,7 @@ describe("createApi", () => {
       expect(nativeBalance.length).toBe(1);
       nativeBalance.forEach(balance => {
         expect(balance.value).toBeDefined();
+        expect(balance.value).toBeGreaterThanOrEqual(0n);
       });
     });
 
