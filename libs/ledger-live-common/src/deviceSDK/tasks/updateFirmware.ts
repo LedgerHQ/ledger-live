@@ -36,6 +36,7 @@ import { parseDeviceInfo } from "./getDeviceInfo";
 import {
   DeviceDisconnectedBeforeSendingApdu,
   DeviceDisconnectedWhileSendingError,
+  SendApduEmptyResponseError,
 } from "@ledgerhq/device-management-kit";
 
 export type UpdateFirmwareTaskArgs = {
@@ -78,6 +79,7 @@ const waitForGetVersion = retryOnErrorsCommandWrapper({
   allowedDmkErrors: [
     new DeviceDisconnectedWhileSendingError(),
     new DeviceDisconnectedBeforeSendingApdu(),
+    new SendApduEmptyResponseError(),
   ],
 });
 
