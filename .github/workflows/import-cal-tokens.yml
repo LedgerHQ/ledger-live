@@ -8,7 +8,7 @@ on:
 jobs:
   import-cal-tokens:
     name: Import CAL Tokens
-    runs-on: ledger-live-medium
+    runs-on: ubuntu-22.04
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       CAL_BRANCH: "cal/import-tokens"
@@ -77,18 +77,34 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
-      - name: Auto merge PR
-        if: steps.changes.outputs.changed == 'true'
+  test-libraries:
+    name: "Test Libraries"
+    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
+    secrets: inherit
+
+  auto-merge-pr:
+    name: "Auto Merge PR"
+    needs: [import-cal-tokens, test-libraries]
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
+      - name: Merge PR
         run: |
-          gh pr merge cal/import-tokens --auto --delete-branch
+          gh pr merge cal/import-tokens --delete-branch --admin
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
   import-cal-tokens-fail:
     name: Import CAL Tokens > Failure Reporting
-    needs: import-cal-tokens
+    needs: [import-cal-tokens, test-libraries]
     if: failure()
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: post to a Slack channel
         id: slack
