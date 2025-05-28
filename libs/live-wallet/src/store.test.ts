@@ -225,8 +225,10 @@ describe("Wallet store", () => {
   const exportedState = {
     walletSyncState: { data: {}, version: 42 },
     nonImportedAccountInfos: [],
-    accountNames: [],
-    starredAccountIds: [],
+    accountsData: {
+      accountNames: [],
+      starredAccountIds: [],
+    },
   };
 
   it("allows partial wallet state", () => {
@@ -249,8 +251,10 @@ describe("Wallet store", () => {
       initialState,
       importWalletState({
         ...exportedState,
-        accountNames: [[ETHEREUM_ACCOUNT, "New name"]],
-        starredAccountIds: [ETHEREUM_ACCOUNT],
+        accountsData: {
+          accountNames: [[ETHEREUM_ACCOUNT, "New name"]],
+          starredAccountIds: [ETHEREUM_ACCOUNT],
+        },
       }),
     );
     expect(walletSyncStateSelector(result)).toEqual({ data: {}, version: 42 });
@@ -278,8 +282,10 @@ describe("Wallet store", () => {
 
     expect(exportWalletState(resultStarred)).toEqual({
       ...exportedState,
-      accountNames: [[ETHEREUM_ACCOUNT, "New name"]],
-      starredAccountIds: [POLKADOT_ACCOUNT],
+      accountsData: {
+        accountNames: [[ETHEREUM_ACCOUNT, "New name"]],
+        starredAccountIds: [POLKADOT_ACCOUNT],
+      },
     });
   });
 
