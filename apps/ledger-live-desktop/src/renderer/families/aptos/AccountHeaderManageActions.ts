@@ -1,5 +1,5 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
-import { canStake } from "@ledgerhq/live-common/families/aptos/logic";
+import { canStake } from "@ledgerhq/live-common/families/aptos/staking";
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";

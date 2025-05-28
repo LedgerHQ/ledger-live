@@ -3,8 +3,9 @@ import { AptosAPI } from "../network";
 import { GetCurrentDelegatorBalancesData } from "./graphql/queries";
 import { CurrentDelegatorBalance, GetCurrentDelegatorBalancesQuery } from "./graphql/types";
 import { AptosValidator } from "../types";
-import { formatUnlockTime, isTestnet } from "../bridge/logic";
+import { isTestnet } from "../logic/isTestnet";
 import { APTOS_EXPLORER_ACCOUNT_URL } from "../constants";
+import { formatUnlockTime } from "../logic/staking";
 
 export async function getValidators(currencyId: string): Promise<AptosValidator[]> {
   const api = new AptosAPI(currencyId);

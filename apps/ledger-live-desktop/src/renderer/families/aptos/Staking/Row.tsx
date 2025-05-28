@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { AptosMappedStakingPosition } from "@ledgerhq/live-common/families/aptos/types";
 import { Account } from "@ledgerhq/types-live";
-import { canUnstake, canWithdraw, canRestake } from "@ledgerhq/live-common/families/aptos/logic";
+import { canUnstake, canWithdraw, canRestake } from "@ledgerhq/live-common/families/aptos/staking";
 import { TableLine } from "./Header";
 import DropDown, { DropDownItem, DropDownItemType } from "~/renderer/components/DropDownSelector";
 import Box from "~/renderer/components/Box/Box";

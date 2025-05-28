@@ -10,7 +10,7 @@ import type {
 } from "./types";
 import { useObservable } from "../../observable";
 import { getAccountCurrency } from "../../account";
-import { mapStakingPositions } from "./logic";
+import { mapStakingPositions } from "./staking";
 
 export function useAptosPreloadData(currency: CryptoCurrency): AptosPreloadData | undefined | null {
   return useObservable(getAptosPreloadData(currency), getCurrentAptosPreloadData(currency));
