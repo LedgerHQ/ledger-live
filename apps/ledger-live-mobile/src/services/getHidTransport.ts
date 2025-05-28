@@ -27,5 +27,8 @@ interface CommonTransportConstructor {
   disconnect?: () => Promise<void>;
 }
 
-export const getHIDTransport = (isLDMKEnabled: boolean): CommonTransportConstructor =>
-  isLDMKEnabled ? DeviceManagementKitHIDTransport : HIDTransport;
+export const getHIDTransport = ({
+  isLDMKEnabled,
+}: {
+  isLDMKEnabled: boolean;
+}): CommonTransportConstructor => (isLDMKEnabled ? DeviceManagementKitHIDTransport : HIDTransport);
