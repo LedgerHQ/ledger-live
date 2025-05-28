@@ -71,10 +71,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
-      - name: Push branch
-        if: steps.changes.outputs.changed == 'true'
-        run: git push -u origin $CAL_BRANCH
-
       - name: Create PR to develop
         if: steps.changes.outputs.changed == 'true'
         run: |
@@ -120,7 +116,7 @@ jobs:
           method: chat.postMessage
           payload: |
             channel: "C05FKJ7DFAP"
-            text: ":warning: [Alert] Import CAL Tokens failed"
+            text: "[Alert] Import CAL Tokens failed"
             blocks: 
               - type: "section"
                 text:
