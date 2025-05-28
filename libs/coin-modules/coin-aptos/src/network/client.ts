@@ -157,14 +157,6 @@ export class AptosAPI {
     return pendingTx.data.hash;
   }
 
-  async getBalance(address: string, token: TokenCurrency): Promise<BigNumber> {
-    if (token.tokenType === "coin") {
-      return await this.getCoinBalance(address, token.contractAddress);
-    }
-
-    return await this.getFABalance(address, token.contractAddress);
-  }
-
   async getLastBlock(): Promise<BlockInfo> {
     const { block_height } = await this.aptosClient.getLedgerInfo();
     const block = await this.aptosClient.getBlockByHeight({ blockHeight: Number(block_height) });
@@ -253,6 +245,36 @@ export class AptosAPI {
     };
   }
 
+  async getBalances(address: string, contract_address?: string): Promise<AptosBalance[]> {
+    try {
+      const whereCondition: any = {
+        owner_address: { _eq: address },
+      };
+
+      if (contract_address) {
+        whereCondition.asset_type = { _eq: APTOS_ASSET_ID };
+      }
+
+      const response = await this.aptosClient.getCurrentFungibleAssetBalances({
+        options: {
+          offset: 0,
+          limit: 1000,
+          where: whereCondition,
+        },
+      });
+      console.log("getBalances response", response);
+      return response.map(x => ({
+        asset_type: x.asset_type ?? "-",
+        amount: BigNumber(x.amount),
+      }));
+    } catch (error) {
+      log("error", "getCoinBalance", {
+        error,
+      });
+      return [{ amount: BigNumber(0), asset_type: "" }];
+    }
+  }
+
   private async fetchTransactions(address: string, gt?: string) {
     if (!address) {
       return [];
@@ -315,35 +337,5 @@ export class AptosAPI {
       height: parseInt(block.block_height),
       hash: block.block_hash,
     };
-  }
-
-  async getBalances(address: string, contract_address?: string): Promise<AptosBalance[]> {
-    try {
-      const whereCondition: any = {
-        owner_address: { _eq: address },
-      };
-
-      if (contract_address) {
-        whereCondition.asset_type = { _eq: APTOS_ASSET_ID };
-      }
-
-      const response = await this.aptosClient.getCurrentFungibleAssetBalances({
-        options: {
-          offset: 0,
-          limit: 1000,
-          where: whereCondition,
-        },
-      });
-      console.log("getBalances response", response);
-      return response.map(x => ({
-        asset_type: x.asset_type ?? "-",
-        amount: BigNumber(x.amount),
-      }));
-    } catch (error) {
-      log("error", "getCoinBalance", {
-        error,
-      });
-      return [{ amount: BigNumber(0), asset_type: APTOS_ASSET_ID }];
-    }
   }
 }
