@@ -74,7 +74,7 @@ jobs:
       - name: Create PR to develop
         if: steps.changes.outputs.changed == 'true'
         run: |
-          gh pr create --title ":zap: Import CAL tokens" --base develop --head $CAL_BRANCH
+          gh pr create --title ":zap: Import CAL tokens" --body "Automated import of CAL tokens" --base develop --head $CAL_BRANCH
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
