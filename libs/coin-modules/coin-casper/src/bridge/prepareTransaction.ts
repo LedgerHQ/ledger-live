@@ -11,7 +11,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
   const fees = getEstimatedFees();
 
   const amount = transaction.useAllAmount
-    ? account.spendableBalance.minus(transaction.fees)
+    ? account.spendableBalance.minus(fees)
     : transaction.amount;
 
   // log("debug", "[prepareTransaction] finish fn");
