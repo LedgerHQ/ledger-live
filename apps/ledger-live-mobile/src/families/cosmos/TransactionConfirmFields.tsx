@@ -40,7 +40,9 @@ function CosmosDelegateValidatorsField({ account, transaction }: FieldProps) {
         label={t("ValidateOnDevice.validator")}
         value={
           <View style={styles.lineLabel}>
-            <LText semiBold>{shortAddressPreview(address)}</LText>
+            <LText semiBold style={styles.addressLabel}>
+              {shortAddressPreview(address)}
+            </LText>
             <LText style={styles.validatorLabel} color="grey" testID="device-validation-provider">
               {validator?.name ?? null}
             </LText>
@@ -117,9 +119,16 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   lineLabel: {
-    justifyContent: "flex-end",
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "flex-end",
+    justifyContent: "center",
+  },
+  addressLabel: {
+    textAlign: "right",
   },
   validatorLabel: {
     fontSize: 12,
+    textAlign: "right",
   },
 });

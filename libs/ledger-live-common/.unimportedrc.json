@@ -293,7 +293,8 @@
     "src/wallet-api/utils/appendQueryParamsToManifestURL.ts",
     "src/wallet-api/utils/deriveAccountIdForManifest.ts",
     "src/wallet-api/version.ts",
-    "src/walletConnect/index.ts"
+    "src/walletConnect/index.ts",
+    "src/wallet-api/ModularDrawer/utils.ts"
   ],
   "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [

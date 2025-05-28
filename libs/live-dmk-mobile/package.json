@@ -31,7 +31,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@ledgerhq/device-management-kit": "0.7.0",
+    "@ledgerhq/device-management-kit": "0.0.0-connect-app-20250527074701",
     "@ledgerhq/device-transport-kit-react-native-ble": "1.0.0",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",

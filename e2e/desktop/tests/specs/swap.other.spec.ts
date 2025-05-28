@@ -90,7 +90,7 @@ for (const { fromAccount, toAccount, xrayTicket, provider } of checkProviders) {
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
 
-        await app.swap.selectSpecificprovider(provider.uiName, electronApp);
+        await app.swap.selectSpecificProvider(provider.uiName, electronApp);
         await app.swap.goToProviderLiveApp(electronApp, provider.uiName);
         await app.swap.verifyProviderURL(electronApp, provider.uiName, swap);
         await app.liveApp.verifyLiveAppTitle(provider.uiName.toLowerCase());

@@ -7,7 +7,7 @@ import { LandingPagesNavigatorParamList } from "~/components/RootNavigator/types
 import { NavigatorName, ScreenName } from "~/const";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { StickyHeader } from "./components/StickyHeader";
-import { SafeAreaView } from "react-native";
+import { Platform, SafeAreaView } from "react-native";
 import { useTheme } from "styled-components/native";
 import { getCurrencyIdsFromTickers, rangeMap } from "./utils";
 import { SwiperComponent } from "~/newArch/components/Swiper/components/Swiper";
@@ -47,7 +47,8 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
   const navigation = useNavigation<NavigationProp<WalletTabNavigatorStackParamList>>();
 
   const { colors } = useTheme();
-  const height = getWindowDimensions().height * 0.75;
+  const constHeight = Platform.OS === "ios" ? 0.75 : 0.8;
+  const height = getWindowDimensions().height * constHeight;
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const currenciesWithId = useMemo(
@@ -79,6 +80,7 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
         height={height}
         range={range}
         setRange={setRange}
+        currentIndex={currentIndex}
       />
     );
   };

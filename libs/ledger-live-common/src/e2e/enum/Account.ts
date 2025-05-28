@@ -570,7 +570,7 @@ export class Account {
 
   static readonly SOL_GIGA_1 = new Account(
     Currency.SOL_GIGA,
-    "Solana 1",
+    "GIGACHAD 1",
     "HxoKQ5eu5MkqaAw7DaGVermrJqeNH8XkVnEKEpFuS9id",
     0,
     TokenType.SPL,
@@ -582,7 +582,7 @@ export class Account {
 
   static readonly SOL_GIGA_2 = new Account(
     Currency.SOL_GIGA,
-    "Solana 2",
+    "GIGACHAD 2",
     "6vSQTFcBoPfUKAdo8BQNJqqxU6UcBmd87HQoNSbgTMzH",
     1,
     TokenType.SPL,
@@ -594,7 +594,7 @@ export class Account {
 
   static readonly SOL_GIGA_3 = new Account(
     Currency.SOL_GIGA,
-    "Solana 3",
+    "GIGACHAD 3",
     "H96UPk6G9ktsVFn1bY9DXZjWFjEoayUddfuXu68S8BES",
     2,
     TokenType.SPL,
@@ -606,7 +606,7 @@ export class Account {
 
   static readonly SOL_WIF_1 = new Account(
     Currency.SOL_WIF,
-    "Solana 2",
+    "dogwifhat 1",
     "HxoKQ5eu5MkqaAw7DaGVermrJqeNH8XkVnEKEpFuS9id",
     0,
     TokenType.SPL,
@@ -618,7 +618,7 @@ export class Account {
 
   static readonly SOL_WIF_2 = new Account(
     Currency.SOL_WIF,
-    "Solana 2",
+    "dogwifhat 2",
     "6vSQTFcBoPfUKAdo8BQNJqqxU6UcBmd87HQoNSbgTMzH",
     1,
     TokenType.SPL,

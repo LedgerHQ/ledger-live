@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 
 import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/defaultFeatures";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
@@ -18,6 +18,7 @@ import { DefaultAccountSwapParamList, DetailsSwapParamList } from "../types";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { ScreenName } from "~/const";
+import { useNetInfo } from "@react-native-community/netinfo";
 
 // set the default manifest ID for the production swap live app
 // in case the FF is failing to load the manifest ID
@@ -39,8 +40,8 @@ export function SwapLiveApp({
   const { t } = useTranslation();
   const ptxSwapLiveAppMobile = useFeature("ptxSwapLiveAppMobile");
 
-  const APP_MANIFEST_NOT_FOUND_ERROR = new Error(t("errors.AppManifestNotFoundError.title"));
-  const APP_MANIFEST_UNKNOWN_ERROR = new Error(t("errors.AppManifestUnknownError.title"));
+  const APP_FAILED_TO_LOAD = new Error(t("errors.AppManifestNotFoundError.title"));
+  const APP_MANIFEST_NOT_FOUND_ERROR = new Error(t("errors.AppManifestUnknownError.title"));
 
   const swapLiveAppManifestID =
     (ptxSwapLiveAppMobile?.params?.manifest_id as string) || DEFAULT_MANIFEST_ID;
@@ -55,19 +56,24 @@ export function SwapLiveApp({
 
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const isWebviewError = webviewState?.url.includes("/unknown-error");
+  const { isConnected } = useNetInfo();
 
-  const manifest: LiveAppManifest | undefined = !localManifest ? remoteManifest : localManifest;
-  const defaultParams = isDefaultAccountSwapParamsList(params) ? params : null;
+  const manifest = useMemo<LiveAppManifest | undefined>(
+    () => (!localManifest ? remoteManifest : localManifest),
+    [localManifest, remoteManifest],
+  );
+  const defaultParams = useMemo(
+    () => (isDefaultAccountSwapParamsList(params) ? params : null),
+    [params],
+  );
 
-  if (!manifest || isWebviewError) {
+  if (!manifest || isWebviewError || !isConnected) {
     return (
       <Flex flex={1} justifyContent="center" alignItems="center">
         {remoteLiveAppState.isLoading ? (
           <InfiniteLoader />
         ) : (
-          <GenericErrorView
-            error={isWebviewError ? APP_MANIFEST_UNKNOWN_ERROR : APP_MANIFEST_NOT_FOUND_ERROR}
-          />
+          <GenericErrorView error={!manifest ? APP_MANIFEST_NOT_FOUND_ERROR : APP_FAILED_TO_LOAD} />
         )}
       </Flex>
     );

@@ -25,21 +25,24 @@ import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import isUndefined from "lodash/isUndefined";
 import { APTOS_ASSET_ID, DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "../constants";
-import { isTestnet } from "../bridge/logic";
 import type { AptosBalance, AptosTransaction, TransactionOptions } from "../types";
 import { GetAccountTransactionsData, GetAccountTransactionsDataGt } from "./graphql/queries";
 import type {
   GetAccountTransactionsDataQuery,
   GetAccountTransactionsDataGtQueryVariables,
 } from "./graphql/types";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type {
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import {
   BlockInfo,
   FeeEstimation,
+  Operation,
+  Pagination,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
-import type { AptosAsset, AptosExtra, AptosFeeParameters, AptosSender } from "../types/assets";
+import { AptosAsset, AptosExtra, AptosFeeParameters, AptosSender } from "../types/assets";
 import { log } from "@ledgerhq/logs";
+import { transactionsToOperations } from "../logic/transactionsToOperations";
+import { isTestnet } from "../logic/isTestnet";
 
 const getApiEndpoint = (currencyId: string) =>
   isTestnet(currencyId) ? getEnv("APTOS_TESTNET_API_ENDPOINT") : getEnv("APTOS_API_ENDPOINT");
@@ -252,6 +255,16 @@ export class AptosAPI {
         gasPrice: BigInt(gasPrice.toString()),
       },
     };
+  }
+
+  async listOperations(
+    address: string,
+    pagination: Pagination,
+  ): Promise<[Operation<AptosAsset>[], string]> {
+    const transactions = await this.getAccountInfo(address, pagination.minHeight.toString());
+    const [newOperations, _] = transactionsToOperations(address, transactions.transactions);
+
+    return [newOperations, ""];
   }
 
   private async fetchTransactions(address: string, gt?: string) {

@@ -20,8 +20,8 @@ export const announcementMachine = createMachine(
           src: "loadData",
           onDone: {
             target: "updating",
-            actions: assign((_, { data }) => {
-              const { announcements, seenIds, lastUpdateTime } = data;
+            actions: assign(({ event }) => {
+              const { announcements, seenIds, lastUpdateTime } = event.output;
               const cache = {};
               announcements.forEach(announcement => {
                 cache[announcement.uuid] = announcement;
@@ -56,11 +56,12 @@ export const announcementMachine = createMachine(
       updating: {
         invoke: {
           src: "fetchData",
+          input: ({ context }) => ({ allIds: context.allIds, cache: context.cache }),
           onDone: {
             target: "idle",
             actions: [
-              assign((context: any, { data }: any) => {
-                const { announcements, updateTime } = data;
+              assign(({ context, event }) => {
+                const { announcements, updateTime } = event.output;
                 const cache = {};
                 announcements.forEach(announcement => {
                   cache[announcement.uuid] = announcement;
@@ -80,8 +81,8 @@ export const announcementMachine = createMachine(
           },
           onError: {
             target: "idle",
-            actions: assign((_, { data }) => ({
-              error: data,
+            actions: assign(({ event }) => ({
+              error: event.error as Error,
             })),
           },
         },
@@ -89,14 +90,14 @@ export const announcementMachine = createMachine(
     },
     on: {
       SET_AS_SEEN: {
-        cond: (context: any, event: any) => !context.seenIds.includes(event.seenId),
+        guard: ({ context, event }) => !context.seenIds.includes(event.seenId),
         actions: ["setAsSeen", "saveData", "emitNewAnnouncement"],
       },
     },
   },
   {
     actions: {
-      setAsSeen: assign((context: any, event: any) => ({
+      setAsSeen: assign(({ context, event }) => ({
         seenIds: [...context.seenIds, event.seenId],
       })),
     },

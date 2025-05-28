@@ -66,7 +66,7 @@ const QuickActionButton = ({
       onPress={disabled ? onPressWhenDisabled : onPress}
       visuallyDisabled={disabled}
       variant={variant}
-      isActive={!disabled && isActive}
+      isActive={isActive}
       {...otherProps}
       testID={`${testID}-${text}`}
     >

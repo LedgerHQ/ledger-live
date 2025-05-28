@@ -34,10 +34,12 @@
   "dependencies": {
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/types-devices": "workspace:^"
+    "@ledgerhq/types-devices": "workspace:^",
+    "purify-ts": "^2.1.0",
+    "xstate": "^5.19.2"
   },
   "devDependencies": {
-    "@ledgerhq/device-management-kit": "0.7.0",
+    "@ledgerhq/device-management-kit": "0.0.0-connect-app-20250527074701",
     "@testing-library/dom": "^9.3.4",
     "@testing-library/jest-dom": "6.6.3",
     "@testing-library/react": "^16.1.0",
@@ -53,7 +55,7 @@
     "ws": "8.18.0"
   },
   "peerDependencies": {
-    "@ledgerhq/device-management-kit": "0.7.0",
+    "@ledgerhq/device-management-kit": "0.0.0-connect-app-20250527074701",
     "react": "^18.3.1",
     "rxjs": "^7.8.1"
   }
