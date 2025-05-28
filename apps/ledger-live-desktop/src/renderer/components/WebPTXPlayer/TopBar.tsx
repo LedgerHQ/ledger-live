@@ -247,7 +247,7 @@ export const TopBar = ({
   }
 
   return (
-    <Container>
+    <Container data-testid="buy-sell-nav">
       {!isInternalApp ? (
         <ItemContainer isInteractive onClick={onBackToMatchingURL}>
           <ArrowRight flipped size={16} />
