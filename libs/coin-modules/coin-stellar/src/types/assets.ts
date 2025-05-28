@@ -1,4 +1,4 @@
-import { Asset } from "@ledgerhq/coin-framework/api/types";
+import { Asset, SingleMemo } from "@ledgerhq/coin-framework/api/types";
 
 export type StellarToken = {
   assetIssuer: string;
@@ -7,3 +7,5 @@ export type StellarToken = {
 export type StellarAsset = Asset<StellarToken>;
 
 export type StellarMemoKind = "MEMO_TEXT" | "MEMO_ID" | "MEMO_HASH" | "MEMO_RETURN";
+
+export type StellarMemo = SingleMemo<StellarMemoKind, string>;
