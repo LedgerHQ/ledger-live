@@ -18,7 +18,7 @@ export function createApi(config: AptosConfigApi): AlpacaApi<AptosAsset, AptosEx
     combine: (tx, signature, pubkey): string => combine(tx, signature, pubkey),
     craftTransaction: (transactionIntent, _customFees): Promise<string> =>
       craftTransaction(client, transactionIntent),
-    estimateFees: (transactionIntent: TransactionIntent<AptosAsset, AptosExtra, string>) =>
+    estimateFees: (transactionIntent: TransactionIntent<AptosAsset>) =>
       client.estimateFees(transactionIntent),
     getBalance: (address): Promise<Balance<AptosAsset>[]> => getBalance(client, address),
     lastBlock: () => client.getLastBlock(),

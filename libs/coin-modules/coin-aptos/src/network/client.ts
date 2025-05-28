@@ -214,9 +214,7 @@ export class AptosAPI {
     }
   }
 
-  async estimateFees(
-    transactionIntent: TransactionIntent<AptosAsset, AptosExtra, string>,
-  ): Promise<FeeEstimation> {
+  async estimateFees(transactionIntent: TransactionIntent<AptosAsset>): Promise<FeeEstimation> {
     const publicKeyEd = new Ed25519PublicKey(transactionIntent?.senderPublicKey ?? "");
     const fn: MoveFunctionId = "0x1::aptos_account::transfer_coins";
 

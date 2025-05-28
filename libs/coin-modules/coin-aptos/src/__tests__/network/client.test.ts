@@ -607,7 +607,7 @@ describe("Aptos API", () => {
       const recipient = "address2";
 
       const api = new AptosAPI("aptos");
-      const transactionIntent: TransactionIntent<AptosAsset, AptosExtra> = {
+      const transactionIntent: TransactionIntent<AptosAsset> = {
         asset: {
           type: "native",
         },

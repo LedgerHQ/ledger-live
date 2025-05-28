@@ -33,7 +33,6 @@ export type Operation<
    * Use a `Memo` interface like `StringMemo<"text">`, `MapMemo<Kind, Value>`, or `MyMemo`.
    * Defaults to `MemoNotSupported`.
    */
-  // NOTE: remove optional, check tests breaking
   memo?: MemoType;
 
   /**
@@ -72,7 +71,7 @@ export type Balance<AssetInfo extends Asset<TokenInfoCommon>> = {
   asset: AssetInfo;
 };
 
-interface Memo {
+export interface Memo {
   type: string;
 }
 
@@ -89,7 +88,7 @@ interface SingleMemo<Kind extends string, Value> extends Memo {
 }
 
 // Specialized version, not extending the above
-interface StringMemo<Kind extends string = "text"> extends Memo {
+export interface StringMemo<Kind extends string = "text"> extends Memo {
   type: "string";
   kind: Kind;
   value: string;
@@ -99,33 +98,11 @@ export interface MapMemo<Kind extends string, Value> extends Memo {
   type: "map";
   memos: Map<Kind, Value>;
 }
-// In your memo definitions
 
-interface MyMemo extends Memo {
-  type: "myMemo";
-  foo: string;
-  bar: number;
+export interface TypedMapMemo<KindToValueMap extends Record<string, unknown>> extends Memo {
+  type: "map";
+  memos: Map<keyof KindToValueMap, KindToValueMap[keyof KindToValueMap]>;
 }
-
-/*
-export type TransactionIntent<
-  AssetInfo extends Asset<TokenInfoCommon>,
-  MemoType extends Memo,
-  // MemoKinds = never,
-  // MemoValue = never,
-> = {
-  type: string;
-  sender: string;
-  senderPublicKey?: string;
-  expiration?: number;
-  recipient: string;
-  amount: bigint;
-  asset: AssetInfo;
-  memo: MemoType;
-  // memos: MemoType[];
-  // memos?: { type: MemoKinds; value: MemoValue }[];
-};
-*/
 
 export type TransactionIntent<
   AssetInfo extends Asset<TokenInfoCommon>,
@@ -165,8 +142,6 @@ export type FeeEstimation = {
 //       limit is unused for now
 //       see design document at https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/5446205788/coin-modules+lama-adapter+APIs+refinements
 export type Pagination = { minHeight: number };
-
-export type PreSignOperationHook = (recipient: string) => void;
 
 export type AlpacaApi<
   AssetInfo extends Asset<TokenInfoCommon>,

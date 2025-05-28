@@ -42,15 +42,20 @@ async function craft(
   const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
   const estimatedFees = customFees !== undefined ? customFees : (await estimateFees()).fee;
 
-  // Extract specific memos from the array
   const memosMap =
     transactionIntent.memo?.type === "map" ? transactionIntent.memo.memos : new Map();
 
   const destinationTagValue = memosMap.get("destinationTag");
   const destinationTag =
-    destinationTagValue !== undefined ? Number(destinationTagValue) : undefined;
+    typeof destinationTagValue === "string" ? Number(destinationTagValue) : undefined;
 
-  const memoEntries = memosMap.has("memo") ? [{ type: "memo", data: memosMap.get("memo")! }] : [];
+  const memoStrings = memosMap.get("memos") as string[] | undefined;
+
+  let memoEntries: { type: string; data: string }[] = [];
+
+  if (Array.isArray(memoStrings) && memoStrings.length > 0) {
+    memoEntries = memoStrings.map(value => ({ type: "memo", data: value }));
+  }
 
   const tx = await craftTransaction(
     { address: transactionIntent.sender, nextSequenceNumber },

@@ -328,7 +328,7 @@ describe("Testing craftTransaction function", () => {
       sender: "foo",
       memo: {
         type: "map",
-        memos: new Map([["memo", "testdata"]]),
+        memos: new Map([["memos", ["testdata"]]]),
       },
     } as TransactionIntent<XrpAsset, XrpMapMemo>);
 

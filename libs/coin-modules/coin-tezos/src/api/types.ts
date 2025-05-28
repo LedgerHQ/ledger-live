@@ -13,10 +13,10 @@ export type TezosFeeEstimation = FeeEstimation;
 
 export type TezosSender = { address: string; xpub?: string };
 // No memo support
-export type TezosTransactionIntent = TransactionIntent<TezosAsset, MemoNotSupported>;
+export type TezosTransactionIntent = TransactionIntent<TezosAsset>;
 
 // NOTE: extending here WIP
-export type TezosApi = AlpacaApi<TezosAsset, MemoNotSupported> & {
+export type TezosApi = AlpacaApi<TezosAsset> & {
   estimateFees: (
     transactionIntent: TezosTransactionIntent,
     // TezosSender can be used if needed later

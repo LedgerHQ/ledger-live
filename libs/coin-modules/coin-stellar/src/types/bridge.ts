@@ -9,6 +9,7 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
+import type { StringMemo } from "@ledgerhq/coin-framework/api/types";
 
 export type NetworkInfo = {
   family: "stellar";
@@ -39,6 +40,13 @@ export const StellarMemoType = [
   "MEMO_HASH",
   "MEMO_RETURN",
 ] as const;
+
+// typesafe enum
+type StellarMemoKind = (typeof StellarMemoType)[number];
+// export type StellarMemo = StringMemo<StellarMemoKind>;
+export type StellarMemo =
+  | { type: "NO_MEMO" }
+  | { type: Exclude<StellarMemoKind, "NO_MEMO">; value: string };
 
 export type StellarTransactionMode = "send" | "changeTrust";
 
