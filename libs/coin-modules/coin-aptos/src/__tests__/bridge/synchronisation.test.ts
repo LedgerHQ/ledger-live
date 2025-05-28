@@ -15,7 +15,6 @@ import { createFixtureAccount } from "../../bridge/bridge.fixture";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { txsToOps } from "../../bridge/logic";
 import { AptosAccount } from "../../types";
-import { mock } from "node:test";
 
 jest.mock("@ledgerhq/coin-framework/account", () => {
   const originalModule = jest.requireActual("@ledgerhq/coin-framework/account");
