@@ -24,6 +24,7 @@ export const isAllowedOnboardingStatePollingErrorDmk = (error: unknown): boolean
     return (
       error instanceof SendApduTimeoutError ||
       error instanceof DeviceBusyError ||
+      (typeof error === "object" && "_tag" in error && error._tag === "SendApduEmptyResponseError") ||
       (typeof error === "object" && "_tag" in error && error._tag === "DeviceSessionNotFound")
     );
   }

@@ -31,7 +31,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@ledgerhq/device-management-kit": "0.7.0",
+    "@ledgerhq/device-management-kit": "0.0.0-rn-hid-sync-onboarding-behavior-20250519131533",
     "@ledgerhq/device-transport-kit-web-hid": "1.1.0",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
