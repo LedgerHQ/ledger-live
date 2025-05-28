@@ -126,9 +126,9 @@ export class Application {
       fs.copyFileSync(getUserdataPath(userdata || "skip-onboarding"), userdataPath);
 
     for (const { app, cmd } of cliCommandsOnApp || []) {
-      const proxyPort = await this.common.addSpeculos(app.name);
+      const apiPort = await this.common.addSpeculos(app.name);
       await executeCliCommand(cmd, userdataPath);
-      this.common.removeSpeculos(proxyPort);
+      this.common.removeSpeculos(apiPort);
     }
 
     if (speculosApp) await this.common.addSpeculos(speculosApp.name);
