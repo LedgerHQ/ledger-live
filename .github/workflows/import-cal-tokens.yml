@@ -1,4 +1,4 @@
-name: "[CAL] - Import CAL Tokens"
+name: "[CAL] - Import CAL Tokens - Scheduled"
 
 on:
   workflow_dispatch:
@@ -8,9 +8,10 @@ on:
 jobs:
   import-cal-tokens:
     name: Import CAL Tokens
-    runs-on: ubuntu-24.04
+    runs-on: ledger-live-medium
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
+      CAL_BRANCH: "cal/import-tokens"
     steps:
       - name: Generate token
         id: generate-token
@@ -27,6 +28,9 @@ jobs:
 
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+
+      - name: Create CAL import branch
+        run: git checkout -b $CAL_BRANCH
 
       - name: Setup caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
@@ -58,6 +62,49 @@ jobs:
         with:
           commit_message: "chore(cal): import CAL tokens [skip ci]"
           repo: ${{ github.repository }}
-          branch: develop
+          branch: ${{ env.CAL_BRANCH }}
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+
+      - name: Push branch
+        if: steps.changes.outputs.changed == 'true'
+        run: git push -u origin $CAL_BRANCH
+
+      - name: Create PR to develop
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          gh pr create --title ":zap: Import CAL tokens" --base develop --head $CAL_BRANCH
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+
+      - name: Auto merge PR
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          gh pr merge cal/import-tokens --auto --delete-branch
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+
+  import-cal-tokens-fail:
+    name: Import CAL Tokens > Failure Reporting
+    needs: import-cal-tokens
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          method: chat.postMessage
+          payload: |
+            channel: "import-cal-tokens"
+            text: "[Alert] Import CAL Tokens failed"
+            blocks: 
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "*Import CAL Tokens failed*"
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
