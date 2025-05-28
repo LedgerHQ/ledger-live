@@ -1,7 +1,6 @@
 import Config from "react-native-config";
 import { Observable, timer } from "rxjs";
 import { map, debounce } from "rxjs/operators";
-import HIDTransport from "@ledgerhq/react-native-hid";
 import withStaticURLs from "@ledgerhq/hw-transport-http";
 import { retry } from "@ledgerhq/live-common/promise";
 import { registerTransportModule, type TransportModule } from "@ledgerhq/live-common/hw/index";
@@ -9,6 +8,7 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { DescriptorEvent } from "@ledgerhq/hw-transport";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import getBLETransport from "~/react-native-hw-transport-ble";
+import { getHIDTransport } from "~/services/getHidTransport";
 
 /**
  * Registers transport modules for different connection types (BLE, HID, HTTP Debug).
@@ -17,25 +17,24 @@ import getBLETransport from "~/react-native-hw-transport-ble";
  */
 export const registerTransports = (isLDMKEnabled: boolean) => {
   if (Config.BLE_LOG_LEVEL) getBLETransport({ isLDMKEnabled }).setLogLevel(Config.BLE_LOG_LEVEL);
+  const hidTransport = getHIDTransport(isLDMKEnabled);
 
   // Add support of HID (experimental until we stabilize it)
   registerTransportModule({
     id: "hid",
-    // prettier-ignore
     // eslint-disable-next-line consistent-return
     open: id => {
-    if (id.startsWith("usb|")) {
-      const devicePath = JSON.parse(id.slice(4));
-      return retry(() => HIDTransport.open(devicePath), {
-        maxRetry: 2
-      });
-    }
-  },
+      if (id.startsWith("usb|")) {
+        const devicePath = JSON.parse(id.slice(4));
+        return retry(() => hidTransport.open(devicePath), { maxRetry: 2 });
+      }
+      return null;
+    },
     disconnect: id =>
-      id.startsWith("usb|")
-        ? Promise.resolve() // nothing to do
-        : null,
-    discovery: new Observable<DescriptorEvent<string>>(o => HIDTransport.listen(o)).pipe(
+      id.startsWith("usb|") && hidTransport.disconnect
+        ? hidTransport.disconnect()
+        : Promise.resolve(),
+    discovery: new Observable<DescriptorEvent<string>>(o => hidTransport.listen(o)).pipe(
       map(({ type, descriptor, deviceModel }) => {
         const name = deviceModel?.productName ?? "";
         return {
