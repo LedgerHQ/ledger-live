@@ -1,4 +1,4 @@
-import type { Api, Operation } from "@ledgerhq/coin-framework/api/index";
+import type { AlpacaApi, Operation } from "@ledgerhq/coin-framework/api/index";
 import { xdr } from "@stellar/stellar-sdk";
 import { createApi, envelopeFromAnyXDR } from ".";
 import { StellarAsset, StellarMemoKind } from "../types";
@@ -9,7 +9,7 @@ import { StellarAsset, StellarMemoKind } from "../types";
  * Tests are skipped for the moment due to TooManyRequest errors
  */
 describe.skip("Stellar Api", () => {
-  let module: Api<StellarAsset, StellarMemoKind, string>;
+  let module: AlpacaApi<StellarAsset, StellarMemoKind, string>;
   const ADDRESS = "GBAUZBDXMVV7HII4JWBGFMLVKVJ6OLQAKOCGXM5E2FM4TAZB6C7JO2L7";
 
   beforeAll(() => {

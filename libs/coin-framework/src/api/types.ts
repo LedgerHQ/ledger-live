@@ -113,7 +113,11 @@ export type Pagination = { minHeight: number };
 
 export type PreSignOperationHook = (recipient: string) => void;
 
-export type Api<AssetInfo extends Asset<TokenInfoCommon>, MemoKind = never, MemoValue = string> = {
+export type AlpacaApi<
+  AssetInfo extends Asset<TokenInfoCommon>,
+  MemoKind = never,
+  MemoValue = string,
+> = {
   broadcast: (tx: string) => Promise<string>;
   combine: (tx: string, signature: string, pubkey?: string) => string | Promise<string>;
   estimateFees: (
@@ -133,10 +137,12 @@ export type Api<AssetInfo extends Asset<TokenInfoCommon>, MemoKind = never, Memo
   preSignOperationHook?: PreSignOperationHook;
 };
 
-export type BridgeApi<
+export type BridgeApi = {
+  validateIntent: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;
+};
+
+export type Api<
   AssetInfo extends Asset<TokenInfoCommon>,
   MemoKind = never,
   MemoValue = string,
-> = Api<AssetInfo, MemoKind, MemoValue> & {
-  validateIntent: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;
-};
+> = AlpacaApi<AssetInfo, MemoKind, MemoValue> & BridgeApi;
