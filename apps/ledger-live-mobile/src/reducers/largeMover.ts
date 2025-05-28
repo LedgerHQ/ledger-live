@@ -15,7 +15,7 @@ export const LARGE_MOVER_INITIAL_STATE: LargeMoverState = {
 
 const handlers: ReducerMap<LargeMoverState, LargeMoverState> = {
   [LargeMoverActionTypes.SET_TUTORIAL]: (state, action) => ({
-    tutorial: (action as Action<LargeMoverState>).payload?.tutorial,
+    tutorial: (action as Action<LargeMoverState>).payload.tutorial,
   }),
 };
 
