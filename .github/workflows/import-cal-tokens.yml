@@ -8,13 +8,14 @@ on:
   schedule:
     - cron: "0 2 */2 * *"
 
+env:
+  CAL_BRANCH: "feat/import-cal-tokens"
+  NODE_OPTIONS: "--max-old-space-size=7168"
+
 jobs:
   import-cal-tokens:
     name: Import CAL Tokens
     runs-on: ubuntu-22.04
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-      CAL_BRANCH: "feat/import-cal-tokens"
     steps:
       - name: Generate token
         id: generate-token
@@ -34,8 +35,12 @@ jobs:
 
       - name: Create CAL import branch
         run: |
+          git fetch origin
+          if git show-ref --quiet refs/remotes/origin/$CAL_BRANCH; then
+            git push origin --delete $CAL_BRANCH
+          fi
           git checkout -b $CAL_BRANCH
-          git push -u origin $CAL_BRANCH || echo "Branch already exists"
+          git push -u origin $CAL_BRANCH
 
       - name: Setup caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
@@ -51,7 +56,7 @@ jobs:
       - name: Import CAL tokens
         run: pnpm import:cal-tokens
 
-      - name: Check for changes
+      - name: Check for change
         id: changes
         run: |
           git stash
@@ -100,9 +105,14 @@ jobs:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+
       - name: Merge PR
         run: |
-          gh pr merge feat/import-cal-tokens --delete-branch --admin
+          gh pr merge $CAL_BRANCH --delete-branch --admin
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
