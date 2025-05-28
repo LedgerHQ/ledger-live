@@ -189,6 +189,7 @@ const ModularDrawerFlowManager = ({
             assetsToDisplay={assetsToDisplay}
             sortedCryptoCurrencies={sortedCryptoCurrencies}
             defaultSearchValue={searchedValue}
+            assetsConfiguration={assetConfiguration}
             setAssetsToDisplay={setAssetsToDisplay}
             setSearchedValue={setSearchedValue}
             onAssetSelected={handleAssetSelected}
@@ -198,6 +199,7 @@ const ModularDrawerFlowManager = ({
         return (
           <NetworkSelection
             networks={networksToDisplay}
+            networksConfiguration={networkConfiguration}
             onNetworkSelected={handleNetworkSelected}
           />
         );

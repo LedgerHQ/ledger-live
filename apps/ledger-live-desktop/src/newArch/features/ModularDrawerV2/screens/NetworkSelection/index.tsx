@@ -1,9 +1,11 @@
 import React from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SelectNetwork as NetworksList } from "./components/List";
+import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 
 export type NetworkSelectionStepProps = {
   networks?: CryptoOrTokenCurrency[];
+  networksConfiguration: EnhancedModularDrawerConfiguration["networks"];
   onNetworkSelected: (network: CryptoOrTokenCurrency) => void;
 };
 
