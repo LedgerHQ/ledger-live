@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
 import { useSelector } from "react-redux";
-import { Result, createAction } from "@ledgerhq/live-common/hw/actions/manager";
+import { Result } from "@ledgerhq/live-common/hw/actions/manager";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { useToggleOnboardingEarlyCheck } from "@ledgerhq/live-common/deviceSDK/hooks/useToggleOnboardingEarlyChecks";
 import { OnboardingStep } from "@ledgerhq/live-common/hw/extractOnboardingState";
@@ -15,9 +15,6 @@ import { RecoverState } from "~/renderer/screens/recover/Player";
 import SyncOnboardingCompanion from "./SyncOnboardingCompanion";
 import EarlySecurityChecks from "./EarlySecurityChecks";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import connectManager from "@ledgerhq/live-common/hw/connectManager";
-import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
-import { getEnv } from "@ledgerhq/live-env";
 import ExitChecksDrawer from "./EarlySecurityChecks/ExitChecksDrawer";
 import { renderError } from "../../DeviceAction/rendering";
 import { useTranslation } from "react-i18next";
@@ -27,11 +24,10 @@ import TroubleshootingDrawer from "./TroubleshootingDrawer";
 import LockedDeviceDrawer from "./LockedDeviceDrawer";
 import { LockedDeviceError, UnexpectedBootloader } from "@ledgerhq/errors";
 import { FinalFirmware } from "@ledgerhq/types-live";
+import { useConnectManagerAction } from "~/renderer/hooks/useConnectAppAction";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
-
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectManager);
 
 export type SyncOnboardingScreenProps = {
   /**
@@ -53,6 +49,7 @@ export type SyncOnboardingScreenProps = {
 const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   deviceModelId: strDeviceModelId,
 }) => {
+  const action = useConnectManagerAction();
   const history = useHistory<RecoverState>();
   const { t } = useTranslation();
 

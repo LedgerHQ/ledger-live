@@ -1,5 +1,5 @@
-import React from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { StyleSheet } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { Ticker } from "./Ticker";
@@ -17,18 +17,31 @@ import getWindowDimensions from "~/logic/getWindowDimensions";
 import { Informations } from "./Information";
 import { useTheme } from "styled-components/native";
 import { getCryptoCurrencyById, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import { track } from "~/analytics";
+import { PAGE_NAME } from "../const";
+import { ScrollView } from "react-native-gesture-handler";
 
 type CardProps = {
   data: CurrencyData;
-  chartData: MarketCoinDataChart;
+  chartData?: MarketCoinDataChart;
+  height: number;
+  loading: boolean;
   range: KeysPriceChange;
   setRange: (range: KeysPriceChange) => void;
-  height: number;
+  currentIndex: number;
 };
 
 const { width } = getWindowDimensions();
 
-export const Card: React.FC<CardProps> = ({ data, range, setRange, height, chartData }) => {
+export const Card: React.FC<CardProps> = ({
+  data,
+  loading,
+  range,
+  setRange,
+  height,
+  chartData,
+  currentIndex,
+}) => {
   const {
     id,
     price,
@@ -55,6 +68,19 @@ export const Card: React.FC<CardProps> = ({ data, range, setRange, height, chart
   const currency = getCryptoCurrencyById(id);
   const midColor = getCurrencyColor(currency);
 
+  const handleScroll = () => {
+    track("button_clicked", {
+      button: "Scroll",
+      coin: currency.name,
+      page: PAGE_NAME,
+    });
+  };
+
+  const scrollRef = useRef<ScrollView>(null);
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ y: 0, animated: true });
+  }, [currentIndex]);
+
   return (
     <Flex
       backgroundColor="neutral.c20"
@@ -67,7 +93,11 @@ export const Card: React.FC<CardProps> = ({ data, range, setRange, height, chart
       <Flex alignItems="center" zIndex={10} top={4}>
         <Ticker currencyId={id} />
       </Flex>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        onScrollEndDrag={handleScroll}
+        ref={scrollRef}
+      >
         <Svg style={styles.gradientTop}>
           <Defs>
             <LinearGradient id="midGlow" x1="0" y1="0" x2="0" y2="1">
@@ -90,8 +120,14 @@ export const Card: React.FC<CardProps> = ({ data, range, setRange, height, chart
               range={range}
               currencyId={id}
               width={graphWidth}
+              loading={loading}
             />
-            <TimeFrame setRange={setRange} range={range} width={timeframehWidth} />
+            <TimeFrame
+              setRange={setRange}
+              range={range}
+              width={timeframehWidth}
+              coin={currency.name}
+            />
             <Performance low={low24h} high={high24h} price={price} />
             <Flex pt={8} width="100%" pb={80}>
               <Informations
@@ -130,6 +166,7 @@ export const Card: React.FC<CardProps> = ({ data, range, setRange, height, chart
         bg="neutral.c20"
         bottom={0}
         borderRadius={20}
+        zIndex={10}
       >
         <Footer currency={currency} />
       </Flex>

@@ -40,10 +40,10 @@ export function EarnMenuDrawer() {
             link ? (
               <OptionButton
                 key={label}
-                onPress={() => {
-                  Linking.openURL(link);
-                  track(button, tracked);
+                onPress={async () => {
+                  await track(button, tracked);
                   closeDrawer();
+                  await Linking.openURL(link);
                 }}
               >
                 {label}
@@ -68,6 +68,7 @@ const OptionButton = styled(Button)<{
   justify-content: left;
   max-width: 100%;
   overflow: hidden;
+  height: auto;
   padding: 16px;
   text-overflow: ellipsis;
   white-space: nowrap;

@@ -13,28 +13,19 @@ export const Ticker: React.FC<TickerProps> = ({ currencyId }) => {
 
   return (
     <View style={styles.container}>
-      <Flex alignItems="center">
-        <Flex
-          flexDirection="row"
-          alignItems="center"
-          backgroundColor="opacityDefault.c10"
-          padding={3}
-          borderRadius={40}
-          width={100}
-        >
-          <Flex paddingLeft={2}>
-            <CircleCurrencyIcon currency={currency} size={24} sizeRatio={0.9} />
-          </Flex>
-          <Text
-            color="neutral.c100"
-            textTransform="uppercase"
-            marginLeft={3}
-            fontSize={16}
-            paddingRight={2}
-          >
-            {currency.ticker}
-          </Text>
+      <Flex
+        flexDirection="row"
+        alignItems="center"
+        backgroundColor="opacityDefault.c10"
+        padding={4}
+        borderRadius={40}
+      >
+        <Flex>
+          <CircleCurrencyIcon currency={currency} size={24} sizeRatio={0.9} />
         </Flex>
+        <Text color="neutral.c100" textTransform="uppercase" marginLeft={3} fontSize={16}>
+          {currency.ticker}
+        </Text>
       </Flex>
     </View>
   );

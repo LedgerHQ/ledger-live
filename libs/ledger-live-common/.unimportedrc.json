@@ -293,7 +293,8 @@
     "src/wallet-api/utils/appendQueryParamsToManifestURL.ts",
     "src/wallet-api/utils/deriveAccountIdForManifest.ts",
     "src/wallet-api/version.ts",
-    "src/walletConnect/index.ts"
+    "src/walletConnect/index.ts",
+    "src/wallet-api/ModularDrawer/utils.ts"
   ],
   "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [
@@ -341,6 +342,7 @@
     "src/families/cardano/logic.ts",
     "src/families/cardano/staking.ts",
     "src/families/filecoin/utils.ts",
+    "src/families/hedera/logic.ts",
     "src/families/internet_computer/consts.ts",
     "src/families/internet_computer/utils.ts",
     "src/families/stellar/bridge/logic.ts",
@@ -352,6 +354,8 @@
     "src/index.ts",
     "src/jest.d.ts",
     "src/market/api/index.ts",
+    "src/market/hooks/useLargeMoverChartData.ts",
+    "src/market/hooks/useLargeMoverCurrencies.ts",
     "src/market/hooks/useMarketDataProvider.ts",
     "src/market/hooks/useMarketPerformers.ts",
     "src/market/utils/currencyFormatter.ts",
@@ -362,8 +366,7 @@
     "src/notifications/AnnouncementProvider/helpers.ts",
     "src/reactNativeSvg.d.ts",
     "src/rxjs/operators/throwIf.ts",
-    "src/walletSync/getEnvironmentParams.ts",
-    "src/market/hooks/useLargeMoverDataProvider.ts"
+    "src/walletSync/getEnvironmentParams.ts"
   ],
   "ignoreUnused": [
     "@dfinity/agent",

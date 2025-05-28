@@ -241,3 +241,25 @@ export const orderedVisibleNftsSelector = createSelector(
     return groupByCurrency(visibleNfts);
   },
 );
+
+export const flattenAccountsByCryptoCurrencySelector = createSelector(
+  flattenAccountsSelector,
+  (_: State, currency: string) => currency,
+  (accounts, currency): AccountLike[] => {
+    const filterByCurrency = (a: AccountLike) => {
+      if (a.type === "TokenAccount") {
+        return a.token.id === currency;
+      }
+      return a.currency.id === currency;
+    };
+
+    return currency ? accounts.filter(filterByCurrency) : accounts;
+  },
+);
+
+const emptyArray: AccountLike[] = [];
+export const flattenAccountsByCryptoCurrencyScreenSelector =
+  (currency?: CryptoCurrency | TokenCurrency) => (state: State) => {
+    if (!currency) return emptyArray;
+    return flattenAccountsByCryptoCurrencySelector(state, currency.id);
+  };

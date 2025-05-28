@@ -31,14 +31,14 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@ledgerhq/device-management-kit": "0.7.0",
+    "@ledgerhq/device-management-kit": "0.0.0-connect-app-20250527074701",
     "@ledgerhq/device-transport-kit-react-native-ble": "1.0.0",
+    "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/live-dmk-shared": "workspace:^",
-    "@ledgerhq/logs": "^6.12.0",
+    "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
-    "@ledgerhq/devices": "workspace:^",
     "react-native-ble-plx": "3.4.0"
   },
   "devDependencies": {

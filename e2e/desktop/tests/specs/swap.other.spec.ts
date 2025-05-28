@@ -90,7 +90,7 @@ for (const { fromAccount, toAccount, xrayTicket, provider } of checkProviders) {
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
 
-        await app.swap.selectSpecificprovider(provider.uiName, electronApp);
+        await app.swap.selectSpecificProvider(provider.uiName, electronApp);
         await app.swap.goToProviderLiveApp(electronApp, provider.uiName);
         await app.swap.verifyProviderURL(electronApp, provider.uiName, swap);
         await app.liveApp.verifyLiveAppTitle(provider.uiName.toLowerCase());
@@ -630,7 +630,7 @@ test.describe("Swap - Switch You send and You receive currency", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await performSwapUntilQuoteSelectionStep(app, electronApp, swap, swap.amount ?? "0");
-      await app.swap.swithYouSendAndYouReceive(electronApp);
+      await app.swap.switchYouSendAndYouReceive(electronApp);
       await app.swap.checkAssetFrom(electronApp, swap.accountToCredit.currency.ticker);
       await app.swap.checkAssetTo(electronApp, swap.accountToDebit.currency.ticker);
     },
