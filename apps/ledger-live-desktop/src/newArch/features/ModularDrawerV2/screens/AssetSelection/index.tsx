@@ -3,12 +3,14 @@ import { AssetType } from "@ledgerhq/react-ui/pre-ldls/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SelectAssetList as AssetsList } from "./components/List";
 import { SearchInputContainer } from "./components/SearchInputContainer";
+import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 
 export type AssetSelectionStepProps = {
   assetTypes: AssetType[];
   assetsToDisplay: CryptoOrTokenCurrency[];
   sortedCryptoCurrencies: CryptoOrTokenCurrency[];
   defaultSearchValue?: string;
+  assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
   setAssetsToDisplay: (assets: CryptoOrTokenCurrency[]) => void;
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
   setSearchedValue: (value: string | undefined) => void;
