@@ -149,7 +149,6 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
   },
   solanaSub: {
     overridesDerivation: "44'/501'/<account>'",
-    mandatoryEmptyAccountSkip: 1,
   },
   solanaBip44Change: {
     overridesDerivation: "44'/501'/<account>'/0'",
