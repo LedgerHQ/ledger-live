@@ -2,6 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Search } from "@ledgerhq/react-ui/pre-ldls";
 import { SearchProps, useSearch } from "./useSearch";
+import { Box } from "@ledgerhq/react-ui/index";
 
 export const SearchInputContainer = ({
   setItemsToDisplay,
@@ -23,11 +24,13 @@ export const SearchInputContainer = ({
   });
 
   return (
-    <Search
-      placeholder={t("modularAssetDrawer.searchPlaceholder")}
-      value={searchQuery}
-      onChange={handleSearch}
-      onDebouncedChange={trackSearch}
-    />
+    <Box flex={1} paddingRight="8px" paddingLeft="8px" marginBottom="24px">
+      <Search
+        value={searchQuery}
+        placeholder={t("modularAssetDrawer.searchPlaceholder")}
+        onChange={handleSearch}
+        onDebouncedChange={trackSearch}
+      />
+    </Box>
   );
 };

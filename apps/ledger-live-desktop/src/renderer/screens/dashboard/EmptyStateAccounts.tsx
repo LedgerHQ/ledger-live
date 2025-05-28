@@ -12,7 +12,7 @@ import FakeLink from "~/renderer/components/FakeLink";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
 import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer/enums";
+import { ModularDrawerLocation } from "~/newArch/features/ModularDrawerV2/enums";
 const EmptyStateAccounts = ({ theme }: { theme: DefaultTheme }) => {
   const { push } = useHistory();
   const { t } = useTranslation();

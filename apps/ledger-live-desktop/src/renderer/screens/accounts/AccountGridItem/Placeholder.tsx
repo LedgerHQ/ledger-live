@@ -7,7 +7,7 @@ import Image from "~/renderer/components/Image";
 import lightEmptyAccountTile from "~/renderer/images/light-empty-account-tile.svg";
 import darkEmptyAccountTile from "~/renderer/images/dark-empty-account-tile.svg";
 import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer/enums";
+import { ModularDrawerLocation } from "~/newArch/features/ModularDrawerV2/enums";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 4,

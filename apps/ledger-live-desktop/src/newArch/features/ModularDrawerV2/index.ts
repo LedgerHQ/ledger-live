@@ -1,9 +1,9 @@
 import { useModularDrawerVisibility } from "LLD/features/ModularDrawer/hooks/useModularDrawerVisibility";
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer/enums";
+import { ModularDrawerLocation } from "~/newArch/features/ModularDrawerV2/enums";
 import {
   openAssetAndAccountDrawer,
   openAssetAndAccountDrawerPromise,
-} from "LLD/features/ModularDrawer/Web3AppWebview/AssetAndAccountDrawer";
+} from "LLD/features/ModularDrawerV2/Web3AppWebview/AssetAndAccountDrawer";
 
 export {
   useModularDrawerVisibility,

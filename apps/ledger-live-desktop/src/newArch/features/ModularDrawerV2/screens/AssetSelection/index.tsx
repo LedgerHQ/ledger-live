@@ -1,60 +1,60 @@
 import React, { useEffect, useRef, useState } from "react";
+import { AssetType } from "@ledgerhq/react-ui/pre-ldls/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { AssetType } from "@ledgerhq/react-ui/pre-ldls";
-import { SelectAsset } from "./SelectAsset";
-import { SearchContainer } from "./StyledComponents";
+import { SelectAssetList as AssetsList } from "./components/List";
+import { SearchInputContainer } from "./components/SearchInputContainer";
 
 export type AssetSelectionStepProps = {
   assetTypes: AssetType[];
   assetsToDisplay: CryptoOrTokenCurrency[];
   sortedCryptoCurrencies: CryptoOrTokenCurrency[];
   defaultSearchValue?: string;
-  setSearchedValue?: (value: string | undefined) => void;
   setAssetsToDisplay: (assets: CryptoOrTokenCurrency[]) => void;
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
+  setSearchedValue: (value: string | undefined) => void;
 };
 
-export function AssetSelectionStep({
+const AssetSelection = ({
   assetTypes,
   assetsToDisplay,
   sortedCryptoCurrencies,
   defaultSearchValue,
-  setSearchedValue,
   setAssetsToDisplay,
   onAssetSelected,
-}: Readonly<AssetSelectionStepProps>) {
-  const [shouldScrollToTop, setShouldScrollToTop] = useState(false);
+  setSearchedValue,
+}: Readonly<AssetSelectionStepProps>) => {
+  const [shouldScrollToTop] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    const timeout = timeoutRef.current;
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+      if (timeout) {
+        clearTimeout(timeout);
       }
     };
   }, []);
 
-  const handleSearch = (query: string) => {
-    setSearchedValue?.(query);
-
-    setShouldScrollToTop(true);
-
-    timeoutRef.current = setTimeout(() => {
-      setShouldScrollToTop(false);
-    }, 100);
-  };
-
   return (
     <>
-      <SearchContainer></SearchContainer>
-      <SelectAsset
-        scrollToTop={shouldScrollToTop}
+      <SearchInputContainer
+        setItemsToDisplay={setAssetsToDisplay}
+        setSearchedValue={setSearchedValue}
+        defaultValue={defaultSearchValue}
+        source="Accounts"
+        flow="Modular Asset Flow"
+        items={sortedCryptoCurrencies}
+      />
+      <AssetsList
         assetTypes={assetTypes}
         assetsToDisplay={assetsToDisplay}
         source="Accounts"
         flow="Modular Asset Flow"
+        scrollToTop={shouldScrollToTop}
         onAssetSelected={onAssetSelected}
       />
     </>
   );
-}
+};
+
+export default AssetSelection;
