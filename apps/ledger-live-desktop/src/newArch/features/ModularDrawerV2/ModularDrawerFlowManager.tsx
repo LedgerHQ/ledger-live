@@ -18,6 +18,7 @@ import { Box } from "@ledgerhq/react-ui/index";
 import { NetworkSelection } from "./screens/NetworkSelection";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { Header } from "./components/Header";
+import { getProvider } from "./utils/getProvider";
 
 type Props = {
   currencies: CryptoOrTokenCurrency[];
@@ -76,15 +77,8 @@ const ModularDrawerFlowManager = ({
     [currenciesByProvider],
   );
 
-  const getProvider = useCallback(
-    (currency: CryptoCurrency | TokenCurrency) =>
-      currency &&
-      currenciesByProvider.find(elem =>
-        elem.currenciesByNetwork.some(
-          currencyByNetwork =>
-            (currencyByNetwork as CryptoCurrency | TokenCurrency).id === currency.id,
-        ),
-      ),
+  const findProvider = useCallback(
+    (currency: CryptoCurrency | TokenCurrency) => getProvider(currency, currenciesByProvider),
     [currenciesByProvider],
   );
 
@@ -143,7 +137,7 @@ const ModularDrawerFlowManager = ({
 
   const handleAssetSelected = useCallback(
     (currency: CryptoOrTokenCurrency) => {
-      const currentProvider = getProvider(currency);
+      const currentProvider = findProvider(currency);
       setProviders(currentProvider);
 
       if (!currentProvider) {
@@ -169,7 +163,7 @@ const ModularDrawerFlowManager = ({
         onAssetSelected(currency);
       }
     },
-    [canGoBackToAsset, getProvider, onAssetSelected],
+    [canGoBackToAsset, findProvider, onAssetSelected],
   );
 
   const handleNetworkSelected = (network: CryptoOrTokenCurrency) => {
