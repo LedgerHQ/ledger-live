@@ -18,7 +18,7 @@ import trustchain from "./trustchain";
 import walletSync from "./walletSync";
 import { State } from "./types";
 import { ActionsPayload } from "../actions/types";
-import largeMover from "./LargeMover";
+import largeMover from "./largeMover";
 
 export type AppStore = Store<State>;
 
