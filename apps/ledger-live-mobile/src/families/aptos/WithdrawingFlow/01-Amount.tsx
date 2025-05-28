@@ -3,7 +3,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import type { Transaction, AptosAccount } from "@ledgerhq/live-common/families/aptos/types";
-import { getDelegationOpMaxAmount } from "@ledgerhq/live-common/families/aptos/logic";
+import { getDelegationOpMaxAmount } from "@ledgerhq/live-common/families/aptos/staking";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";

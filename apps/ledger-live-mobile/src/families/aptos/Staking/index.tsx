@@ -11,7 +11,12 @@ import type {
   AptosMappedStakingPosition,
   AptosAccount,
 } from "@ledgerhq/live-common/families/aptos/types";
-import { canUnstake, canWithdraw, canRestake } from "@ledgerhq/live-common/families/aptos/logic";
+import {
+  canStake,
+  canUnstake,
+  canWithdraw,
+  canRestake,
+} from "@ledgerhq/live-common/families/aptos/staking";
 import { Account } from "@ledgerhq/types-live";
 import AccountDelegationInfo from "~/components/AccountDelegationInfo";
 import IlluRewards from "~/icons/images/Rewards";
@@ -155,7 +160,7 @@ function StakingPositions({ account }: Props) {
                 style={[styles.valueText]}
                 color="live"
               >
-                {stakingPosition.staked.gt(0)
+                {stakingPosition.active.gt(0)
                   ? t("aptos.staking.drawer.active")
                   : t("aptos.staking.drawer.inactive")}
               </LText>
@@ -241,8 +246,7 @@ function StakingPositions({ account }: Props) {
     colors.alert,
   ]);
 
-  // const stakingDisabled = stakingPositions.length <= 0 || !canStake(account as AptosAccount);
-  const stakingDisabled = false;
+  const stakingDisabled = stakingPositions.length <= 0 || !canStake(account as AptosAccount);
 
   return (
     <View style={styles.root}>
@@ -253,7 +257,7 @@ function StakingPositions({ account }: Props) {
         ValidatorImage={({ size }) => (
           <ValidatorImage isLedger={false} name={stakingPosition?.validatorId ?? ""} size={size} />
         )}
-        amount={stakingPosition?.staked ?? new BigNumber(0)}
+        amount={stakingPosition?.active ?? new BigNumber(0)}
         data={data}
         actions={actions}
       />

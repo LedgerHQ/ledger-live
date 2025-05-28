@@ -19,7 +19,7 @@ type Props = {
 export default function StakingRow({ stakingPosition, currency, onPress, isLast = false }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { validatorId, formattedAmount, staked } = stakingPosition;
+  const { validatorId, formattedAmount, active } = stakingPosition;
 
   return (
     <TouchableOpacity
@@ -56,7 +56,7 @@ export default function StakingRow({ stakingPosition, currency, onPress, isLast 
           <CounterValue
             currency={currency}
             showCode
-            value={staked}
+            value={active}
             alwaysShowSign={false}
             withPlaceholder
           />
