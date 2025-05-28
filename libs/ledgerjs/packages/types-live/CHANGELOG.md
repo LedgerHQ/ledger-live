@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.71.0-nightly.2
+
+### Patch Changes
+
+- [#10334](https://github.com/LedgerHQ/ledger-live/pull/10334) [`4ddfe60`](https://github.com/LedgerHQ/ledger-live/commit/4ddfe6060ab8e4e5c0bb89da91e08a02d8ca50e6) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Add Account Feature Flag
+
 ## 6.71.0-nightly.1
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.35.0-nightly.1
+
+### Minor Changes
+
+- [#10352](https://github.com/LedgerHQ/ledger-live/pull/10352) [`e604a8b`](https://github.com/LedgerHQ/ledger-live/commit/e604a8b0839d7a5dd4e137092605ea3c253fea49) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: P1 bugs on Large Mover
+
 ## 0.35.0-nightly.0
 
 ### Minor Changes

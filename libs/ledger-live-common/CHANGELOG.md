@@ -1,5 +1,59 @@
 # @ledgerhq/live-common
 
+## 34.35.0-nightly.4
+
+### Minor Changes
+
+- [#10319](https://github.com/LedgerHQ/ledger-live/pull/10319) [`3348393`](https://github.com/LedgerHQ/ledger-live/commit/3348393fc591a810342b3b58b780eb346616bce8) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - Add drawerConfiguration using wallet api
+
+- [#10345](https://github.com/LedgerHQ/ledger-live/pull/10345) [`571d6db`](https://github.com/LedgerHQ/ledger-live/commit/571d6db505b90874a6362ee7ee97d036126463e5) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Migrate xstate from V4 to V5
+
+- [#10345](https://github.com/LedgerHQ/ledger-live/pull/10345) [`2ad2105`](https://github.com/LedgerHQ/ledger-live/commit/2ad21059f1c6d2cef1876cbb27fce2b5619b2cc1) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Use ConnectApp Device Action inside Ledger Live
+
+- [#10345](https://github.com/LedgerHQ/ledger-live/pull/10345) [`33c7e9e`](https://github.com/LedgerHQ/ledger-live/commit/33c7e9ebf078ee91e0c11a16cdcaba2d840125c3) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Use PrepareConnectManager device action inside ledger live
+
+### Patch Changes
+
+- [#10334](https://github.com/LedgerHQ/ledger-live/pull/10334) [`4ddfe60`](https://github.com/LedgerHQ/ledger-live/commit/4ddfe6060ab8e4e5c0bb89da91e08a02d8ca50e6) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Add Account Feature Flag
+
+- Updated dependencies [[`2eec633`](https://github.com/LedgerHQ/ledger-live/commit/2eec63321ea9ec459fc7a0d15634400419e1bca8), [`e602ad0`](https://github.com/LedgerHQ/ledger-live/commit/e602ad0026fd7849ea7ad2a6c320a524657125d4), [`81470e5`](https://github.com/LedgerHQ/ledger-live/commit/81470e507870fae1d93ac6d1c0434ad9795722dd)]:
+  - @ledgerhq/coin-aptos@1.10.0-nightly.1
+  - @ledgerhq/live-dmk-shared@0.9.0-nightly.3
+  - @ledgerhq/coin-framework@5.0.3-nightly.0
+  - @ledgerhq/coin-algorand@0.9.7-nightly.0
+  - @ledgerhq/coin-bitcoin@0.15.7-nightly.0
+  - @ledgerhq/coin-cardano@0.8.7-nightly.0
+  - @ledgerhq/coin-casper@1.7.2-nightly.0
+  - @ledgerhq/coin-celo@1.1.5-nightly.0
+  - @ledgerhq/coin-cosmos@0.14.3-nightly.0
+  - @ledgerhq/coin-evm@2.22.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.7-nightly.0
+  - @ledgerhq/coin-hedera@1.6.7-nightly.2
+  - @ledgerhq/coin-icon@0.10.7-nightly.0
+  - @ledgerhq/coin-internet_computer@1.7.7-nightly.0
+  - @ledgerhq/coin-mina@1.1.6-nightly.0
+  - @ledgerhq/coin-multiversx@0.4.7-nightly.0
+  - @ledgerhq/coin-near@0.11.7-nightly.0
+  - @ledgerhq/coin-polkadot@6.1.1-nightly.0
+  - @ledgerhq/coin-solana@0.24.0-nightly.1
+  - @ledgerhq/coin-stacks@0.8.7-nightly.0
+  - @ledgerhq/coin-stellar@5.0.3-nightly.0
+  - @ledgerhq/coin-sui@0.4.0-nightly.1
+  - @ledgerhq/coin-tezos@5.2.0-nightly.1
+  - @ledgerhq/coin-ton@0.11.0-nightly.1
+  - @ledgerhq/coin-tron@4.1.1-nightly.0
+  - @ledgerhq/coin-vechain@2.7.7-nightly.0
+  - @ledgerhq/coin-xrp@6.1.2-nightly.0
+  - @ledgerhq/device-core@0.4.25-nightly.3
+  - @ledgerhq/hw-app-eth@6.45.5-nightly.3
+  - @ledgerhq/live-countervalues@0.5.7-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.36-nightly.0
+  - @ledgerhq/live-nft@0.8.7-nightly.0
+  - @ledgerhq/live-signer-evm@0.4.3-nightly.0
+  - @ledgerhq/live-signer-solana@0.1.1-nightly.4
+  - @ledgerhq/live-wallet@0.10.10-nightly.1
+  - @ledgerhq/hw-app-celo@6.33.3-nightly.3
+
 ## 34.35.0-nightly.3
 
 ### Minor Changes

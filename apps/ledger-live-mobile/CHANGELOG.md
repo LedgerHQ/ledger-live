@@ -1,5 +1,42 @@
 # live-mobile
 
+## 4.0.0-nightly.4
+
+### Major Changes
+
+- [#10335](https://github.com/LedgerHQ/ledger-live/pull/10335) [`fdbca42`](https://github.com/LedgerHQ/ledger-live/commit/fdbca4295bcedc2137aaf5a2ddccdb577d640ba1) Thanks [@sergiubreban](https://github.com/sergiubreban)! - fix earn modal text cut
+
+### Minor Changes
+
+- [#10352](https://github.com/LedgerHQ/ledger-live/pull/10352) [`e604a8b`](https://github.com/LedgerHQ/ledger-live/commit/e604a8b0839d7a5dd4e137092605ea3c253fea49) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: P1 bugs on Large Mover
+
+- [#10347](https://github.com/LedgerHQ/ledger-live/pull/10347) [`1ae0fab`](https://github.com/LedgerHQ/ledger-live/commit/1ae0fab4da30bae44d5082140fe6cfbad1ff068d) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - fix(swap): handle offline state in swap webview and error cases
+
+- [#10345](https://github.com/LedgerHQ/ledger-live/pull/10345) [`33c7e9e`](https://github.com/LedgerHQ/ledger-live/commit/33c7e9ebf078ee91e0c11a16cdcaba2d840125c3) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Use PrepareConnectManager device action inside ledger live
+
+- [#10340](https://github.com/LedgerHQ/ledger-live/pull/10340) [`78888ca`](https://github.com/LedgerHQ/ledger-live/commit/78888caf6f70b3b8f0f4eadf5b40d4146b576930) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - fix display bug on ATOM delegation
+
+### Patch Changes
+
+- [#10300](https://github.com/LedgerHQ/ledger-live/pull/10300) [`7bd5e86`](https://github.com/LedgerHQ/ledger-live/commit/7bd5e86491c12f60e798f9b82497d7fa399ec147) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - fix tracking of Manage/Earn more on LLM
+
+- Updated dependencies [[`4ddfe60`](https://github.com/LedgerHQ/ledger-live/commit/4ddfe6060ab8e4e5c0bb89da91e08a02d8ca50e6), [`e604a8b`](https://github.com/LedgerHQ/ledger-live/commit/e604a8b0839d7a5dd4e137092605ea3c253fea49)]:
+  - @ledgerhq/types-live@6.71.0-nightly.2
+  - @ledgerhq/native-ui@0.35.0-nightly.1
+  - @ledgerhq/coin-framework@5.0.3-nightly.0
+  - @ledgerhq/coin-cosmos@0.14.3-nightly.0
+  - @ledgerhq/coin-evm@2.22.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.7-nightly.0
+  - @ledgerhq/coin-multiversx@0.4.7-nightly.0
+  - @ledgerhq/coin-stacks@0.8.7-nightly.0
+  - @ledgerhq/domain-service@1.2.30-nightly.3
+  - @ledgerhq/live-countervalues@0.5.7-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.36-nightly.0
+  - @ledgerhq/live-nft@0.8.7-nightly.0
+  - @ledgerhq/live-nft-react@0.9.7-nightly.0
+  - @ledgerhq/live-wallet@0.10.10-nightly.1
+  - @ledgerhq/live-dmk-mobile@0.4.2-nightly.3
+
 ## 3.80.0-nightly.3
 
 ### Minor Changes

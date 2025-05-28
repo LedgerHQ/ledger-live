@@ -1,5 +1,12 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.4.2-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`e602ad0`](https://github.com/LedgerHQ/ledger-live/commit/e602ad0026fd7849ea7ad2a6c320a524657125d4), [`81470e5`](https://github.com/LedgerHQ/ledger-live/commit/81470e507870fae1d93ac6d1c0434ad9795722dd)]:
+  - @ledgerhq/live-dmk-shared@0.9.0-nightly.3
+
 ## 0.4.2-nightly.2
 
 ### Patch Changes

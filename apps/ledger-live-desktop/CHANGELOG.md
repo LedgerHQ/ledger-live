@@ -1,5 +1,36 @@
 # ledger-live-desktop
 
+## 2.115.0-nightly.4
+
+### Minor Changes
+
+- [#10319](https://github.com/LedgerHQ/ledger-live/pull/10319) [`3348393`](https://github.com/LedgerHQ/ledger-live/commit/3348393fc591a810342b3b58b780eb346616bce8) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - Add drawerConfiguration using wallet api
+
+- [#10347](https://github.com/LedgerHQ/ledger-live/pull/10347) [`1ae0fab`](https://github.com/LedgerHQ/ledger-live/commit/1ae0fab4da30bae44d5082140fe6cfbad1ff068d) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - fix(swap): handle offline state in swap webview and error cases
+
+- [#10345](https://github.com/LedgerHQ/ledger-live/pull/10345) [`571d6db`](https://github.com/LedgerHQ/ledger-live/commit/571d6db505b90874a6362ee7ee97d036126463e5) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Migrate xstate from V4 to V5
+
+- [#10345](https://github.com/LedgerHQ/ledger-live/pull/10345) [`33c7e9e`](https://github.com/LedgerHQ/ledger-live/commit/33c7e9ebf078ee91e0c11a16cdcaba2d840125c3) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Use PrepareConnectManager device action inside ledger live
+
+### Patch Changes
+
+- Updated dependencies [[`3348393`](https://github.com/LedgerHQ/ledger-live/commit/3348393fc591a810342b3b58b780eb346616bce8), [`4ddfe60`](https://github.com/LedgerHQ/ledger-live/commit/4ddfe6060ab8e4e5c0bb89da91e08a02d8ca50e6), [`2eec633`](https://github.com/LedgerHQ/ledger-live/commit/2eec63321ea9ec459fc7a0d15634400419e1bca8), [`571d6db`](https://github.com/LedgerHQ/ledger-live/commit/571d6db505b90874a6362ee7ee97d036126463e5), [`2ad2105`](https://github.com/LedgerHQ/ledger-live/commit/2ad21059f1c6d2cef1876cbb27fce2b5619b2cc1), [`33c7e9e`](https://github.com/LedgerHQ/ledger-live/commit/33c7e9ebf078ee91e0c11a16cdcaba2d840125c3)]:
+  - @ledgerhq/live-common@34.35.0-nightly.4
+  - @ledgerhq/types-live@6.71.0-nightly.2
+  - @ledgerhq/coin-aptos@1.10.0-nightly.1
+  - @ledgerhq/live-dmk-desktop@0.3.7-nightly.4
+  - @ledgerhq/coin-framework@5.0.3-nightly.0
+  - @ledgerhq/coin-bitcoin@0.15.7-nightly.0
+  - @ledgerhq/coin-cosmos@0.14.3-nightly.0
+  - @ledgerhq/coin-evm@2.22.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.7-nightly.0
+  - @ledgerhq/domain-service@1.2.30-nightly.3
+  - @ledgerhq/live-countervalues@0.5.7-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.36-nightly.0
+  - @ledgerhq/live-nft@0.8.7-nightly.0
+  - @ledgerhq/live-nft-react@0.9.7-nightly.0
+  - @ledgerhq/live-wallet@0.10.10-nightly.1
+
 ## 2.115.0-nightly.3
 
 ### Patch Changes
