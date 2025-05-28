@@ -62,8 +62,8 @@ export const test = base.extend<TestFixtures>({
   cliCommands: [],
   cliCommandsOnApp: [],
 
-  app: async ({ page }, use) => {
-    const app = new Application(page);
+  app: async ({ page, electronApp }, use) => {
+    const app = new Application(page, electronApp);
     await use(app);
   },
 

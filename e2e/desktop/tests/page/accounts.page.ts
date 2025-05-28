@@ -2,6 +2,8 @@ import { expect } from "@playwright/test";
 import { step } from "../misc/reporters/step";
 import { AppPage } from "./abstractClasses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { TokenType } from "@ledgerhq/live-common/e2e/enum/TokenType";
 
 export class AccountsPage extends AppPage {
   private accountComponent = (accountName: string) =>
@@ -29,6 +31,14 @@ export class AccountsPage extends AppPage {
   @step("Search for $0")
   async searchForAccount(accountName: string) {
     await this.accountSearchInput.fill(accountName);
+  }
+
+  @step("Search for asset")
+  async searchAndSelectAccount(account: Account) {
+    await this.accountSearchInput.fill(account.currency.name);
+    if (account.tokenType === TokenType.ERC20) {
+      await this.tokenRow(account.accountName, account.currency).click();
+    }
   }
 
   @step("Click sync account button for: $0")
