@@ -193,9 +193,7 @@ const Manager = ({ navigation, route }: NavigationProps) => {
                     routes: [
                       {
                         name: ScreenName.MyLedgerChooseDevice,
-                        params: {
-                          device: ["start", "completed"].includes(updateState) ? device : undefined,
-                        },
+                        params: ["start", "completed"].includes(updateState) ? { device } : {},
                       },
                     ],
                   },

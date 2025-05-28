@@ -91,6 +91,7 @@
     "@ledgerhq/coin-stacks": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/device-transport-kit-react-native-hid": "catalog:",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",

@@ -6,6 +6,7 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { RNBleTransportFactory } from "@ledgerhq/device-transport-kit-react-native-ble";
 import { LedgerLiveLogger } from "@ledgerhq/live-dmk-shared";
+import { RNHidTransportFactory } from "@ledgerhq/device-transport-kit-react-native-hid";
 
 let instance: DeviceManagementKit | null = null;
 
@@ -13,6 +14,7 @@ export const getDeviceManagementKit = (): DeviceManagementKit => {
   if (!instance) {
     instance = new DeviceManagementKitBuilder()
       .addTransport(RNBleTransportFactory)
+      .addTransport(RNHidTransportFactory)
       .addLogger(new LedgerLiveLogger(LogLevel.Debug))
       .build();
   }
