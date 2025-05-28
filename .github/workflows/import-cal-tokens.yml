@@ -35,6 +35,7 @@ jobs:
       - name: Create CAL import branch
         run: |
           git checkout -b $CAL_BRANCH
+          git push -u origin $CAL_BRANCH || echo "Branch already exists"
 
       - name: Setup caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
@@ -101,7 +102,7 @@ jobs:
 
       - name: Merge PR
         run: |
-          gh pr merge cal/import-tokens --delete-branch --admin
+          gh pr merge feat/import-cal-tokens --delete-branch --admin
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
@@ -119,12 +120,12 @@ jobs:
           method: chat.postMessage
           payload: |
             channel: "C05FKJ7DFAP"
-            text: "[Alert] Import CAL Tokens failed"
+            text: ":warning: [Alert] Import CAL Tokens failed"
             blocks: 
               - type: "section"
                 text:
                   type: "mrkdwn"
-                  text: "*Import CAL Tokens failed*"
+                  text: "*:warning: [Alert] Import CAL Tokens failed*"
               - type: "section"
                 text:
                   type: "mrkdwn"
