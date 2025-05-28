@@ -1,5 +1,5 @@
 import { handleActions } from "redux-actions";
-import type { Action, ReducerMap } from "redux-actions";
+import type { ReducerMap } from "redux-actions";
 
 export type LargeMoverState = {
   tutorial: boolean;
@@ -13,13 +13,13 @@ export const LARGE_MOVER_INITIAL_STATE: LargeMoverState = {
   tutorial: true,
 };
 
-const handlers: ReducerMap<LargeMoverState, LargeMoverState> = {
+const handlers: ReducerMap<LargeMoverState, boolean> = {
   [LargeMoverActionTypes.SET_TUTORIAL]: (state, action) => ({
-    tutorial: (action as Action<LargeMoverState>).payload.tutorial,
+    tutorial: action.payload,
   }),
 };
 
 export const tutorialSelector = (state: { largeMover: LargeMoverState }) =>
   state.largeMover.tutorial;
 
-export default handleActions<LargeMoverState, LargeMoverState>(handlers, LARGE_MOVER_INITIAL_STATE);
+export default handleActions<LargeMoverState, boolean>(handlers, LARGE_MOVER_INITIAL_STATE);
