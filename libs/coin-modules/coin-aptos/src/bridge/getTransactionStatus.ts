@@ -74,7 +74,11 @@ const getTransactionStatus = async (
         errors.amount = new NotEnoughBalance();
       }
 
-      if (t.amount.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS) && !errors.amount) {
+      if (
+        ((!t.useAllAmount && t.amount.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS)) ||
+          (t.useAllAmount && a.spendableBalance.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS))) &&
+        !errors.amount
+      ) {
         errors.amount = new NotEnoughToStake("", {
           minStake: MIN_COINS_ON_SHARES_POOL,
           currency: a.currency.ticker,
@@ -112,6 +116,15 @@ const getTransactionStatus = async (
           errors.amount = new NotEnoughStakedBalanceLeft("", {
             minAmountStaked: `${MIN_COINS_ON_SHARES_POOL.toNumber().toString()} APT`,
           });
+        }
+      }
+      break;
+    case "withdraw":
+      if (!stakingPosition) {
+        errors.recipient = new RecipientRequired();
+      } else {
+        if (t.amount.gt(stakingPosition.inactive)) {
+          errors.amount = new NotEnoughBalance();
         }
       }
       break;
