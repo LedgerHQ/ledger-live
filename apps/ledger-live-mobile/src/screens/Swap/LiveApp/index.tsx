@@ -39,9 +39,9 @@ export function SwapLiveApp({
   const { params } = route;
   const { t } = useTranslation();
   const ptxSwapLiveAppMobile = useFeature("ptxSwapLiveAppMobile");
-
-  const APP_FAILED_TO_LOAD = new Error(t("errors.AppManifestNotFoundError.title"));
-  const APP_MANIFEST_NOT_FOUND_ERROR = new Error(t("errors.AppManifestUnknownError.title"));
+  const { isConnected } = useNetInfo();
+  const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
+  const isWebviewError = webviewState?.url.includes("/unknown-error");
 
   const swapLiveAppManifestID =
     (ptxSwapLiveAppMobile?.params?.manifest_id as string) || DEFAULT_MANIFEST_ID;
@@ -54,10 +54,6 @@ export function SwapLiveApp({
   );
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
 
-  const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
-  const isWebviewError = webviewState?.url.includes("/unknown-error");
-  const { isConnected } = useNetInfo();
-
   const manifest = useMemo<LiveAppManifest | undefined>(
     () => (!localManifest ? remoteManifest : localManifest),
     [localManifest, remoteManifest],
@@ -67,21 +63,35 @@ export function SwapLiveApp({
     [params],
   );
 
-  if (!manifest || isWebviewError || !isConnected) {
+  const error: Error | null = useMemo(() => {
+    const hasError = !manifest || isWebviewError || !isConnected;
+    if (!hasError) return null;
+
+    const APP_FAILED_TO_LOAD = new Error(t("errors.AppManifestNotFoundError.title"));
+    const APP_MANIFEST_NOT_FOUND_ERROR = new Error(t("errors.AppManifestUnknownError.title"));
+    const APP_MANIFEST_NETWORK_DOWN_ERROR = new Error(t("errors.WebPTXPlayerNetworkFail.title"));
+
+    // in QAA isConnected remains null and is crashing the tests
+    if (isConnected === false) return APP_MANIFEST_NETWORK_DOWN_ERROR;
+    if (isWebviewError) return APP_FAILED_TO_LOAD;
+    if (!manifest) return APP_MANIFEST_NOT_FOUND_ERROR;
+
+    return error as Error;
+  }, [manifest, isWebviewError, isConnected, t]);
+
+  if (error) {
     return (
       <Flex flex={1} justifyContent="center" alignItems="center">
-        {remoteLiveAppState.isLoading ? (
-          <InfiniteLoader />
-        ) : (
-          <GenericErrorView error={!manifest ? APP_MANIFEST_NOT_FOUND_ERROR : APP_FAILED_TO_LOAD} />
-        )}
+        {remoteLiveAppState.isLoading ? <InfiniteLoader /> : <GenericErrorView error={error} />}
       </Flex>
     );
   }
 
   return (
     <Flex flex={1} testID="swap-form-tab">
-      <WebView manifest={manifest} setWebviewState={setWebviewState} params={defaultParams} />
+      {manifest && (
+        <WebView manifest={manifest} setWebviewState={setWebviewState} params={defaultParams} />
+      )}
     </Flex>
   );
 }
