@@ -1,6 +1,9 @@
 name: "[CAL] - Import CAL Tokens - Scheduled"
 
 on:
+  push:
+    branches:
+      - LIVE-18444-new-cal-importer-workflow
   workflow_dispatch:
   schedule:
     - cron: "0 2 */2 * *"
