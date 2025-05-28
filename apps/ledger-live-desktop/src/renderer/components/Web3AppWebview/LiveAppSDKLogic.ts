@@ -17,7 +17,7 @@ import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { WalletState } from "@ledgerhq/live-wallet/store";
-import { openAssetAndAccountDrawerPromise } from "LLD/features/ModularDrawer";
+import { openAssetAndAccountDrawerPromise } from "~/newArch/features/ModularDrawerV2";
 
 const trackingLiveAppSDKLogic = trackingWrapper(track);
 

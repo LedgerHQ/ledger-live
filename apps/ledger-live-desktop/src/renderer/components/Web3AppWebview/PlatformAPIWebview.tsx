@@ -40,7 +40,10 @@ import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-import { ModularDrawerLocation, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
+import {
+  ModularDrawerLocation,
+  useModularDrawerVisibility,
+} from "~/newArch/features/ModularDrawerV2";
 
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
