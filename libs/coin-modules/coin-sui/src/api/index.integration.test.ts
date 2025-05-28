@@ -1,10 +1,10 @@
-import type { Api, FeeEstimation, Operation } from "@ledgerhq/coin-framework/api/index";
+import type { AlpacaApi, FeeEstimation, Operation } from "@ledgerhq/coin-framework/api/index";
 import { createApi } from ".";
 import { SuiAsset } from "./types";
 import { getFullnodeUrl } from "@mysten/sui/client";
 
 describe("Sui Api", () => {
-  let module: Api<SuiAsset>;
+  let module: AlpacaApi<SuiAsset>;
   const SENDER = "0x67b511de2697e4567e41a4477a3abccd4c7c00f4c59b45ab8c72d1544f58ceb8";
   const RECIPIENT = "0xba7080172a6d957b9ed2e3eb643529860be963cf4af896fb84f1cde00f46b561";
 

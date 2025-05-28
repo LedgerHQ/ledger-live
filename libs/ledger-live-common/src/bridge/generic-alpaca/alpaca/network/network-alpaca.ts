@@ -9,7 +9,7 @@ import type {
   TransactionIntent,
   Transaction,
   TransactionValidation,
-  BridgeApi,
+  Api,
 } from "@ledgerhq/coin-framework/api/index";
 import network from "@ledgerhq/live-network";
 
@@ -180,4 +180,4 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     listOperations: buildListOperations(networkFamily),
     lastBlock: buildLastBlock(networkFamily),
     craftTransaction: buildCraftTransaction(networkFamily),
-  }) satisfies BridgeApi<any, any, any>; // TODO: Api<any>?
+  }) satisfies Api<any, any, any>; // TODO: Api<any>?

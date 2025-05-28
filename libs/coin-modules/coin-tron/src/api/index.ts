@@ -1,5 +1,5 @@
 import type {
-  Api,
+  AlpacaApi,
   FeeEstimation,
   Operation,
   Pagination,
@@ -18,7 +18,7 @@ import {
 } from "../logic";
 import type { TronAsset } from "../types";
 
-export function createApi(config: TronConfig): Api<TronAsset> {
+export function createApi(config: TronConfig): AlpacaApi<TronAsset> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
