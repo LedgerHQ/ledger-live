@@ -3,7 +3,6 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import { Transaction } from "../types";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
-import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/accountId";
 
 function getDeviceTransactionConfig({
   account,
@@ -32,26 +31,15 @@ function getDeviceTransactionConfig({
 
   if (mode === "send") {
     if (account.type === "TokenAccount") {
-      const { accountId } = decodeTokenAccountId(account.token.id);
-      const transactionAmount = transaction.useAllAmount ? account.balance : transaction.amount;
-
       fields.push({
         type: "text",
-        label: "APT",
-        value: formatCurrencyUnit(getAccountCurrency(mainAccount).units[0], transaction.amount, {
-          showCode: true,
-          disableRounding: true,
-        }),
-      });
-      fields.push({
-        type: "text",
-        label: "Token Name",
-        value: accountId,
+        label: "Type",
+        value: "Token transfer",
       });
       fields.push({
         type: "text",
         label: "Amount",
-        value: formatCurrencyUnit(getAccountCurrency(account).units[0], transactionAmount, {
+        value: formatCurrencyUnit(getAccountCurrency(account).units[0], transaction.amount, {
           showCode: true,
           disableRounding: true,
         }),
