@@ -35,9 +35,11 @@ export class AccountsPage extends AppPage {
 
   @step("Search for asset")
   async searchAndSelectAccount(account: Account) {
-    await this.accountSearchInput.fill(account.currency.name);
     if (account.tokenType === TokenType.ERC20) {
+      await this.accountSearchInput.fill(account.currency.name);
       await this.tokenRow(account.accountName, account.currency).click();
+    } else {
+      await this.accountComponent(account.accountName).click();
     }
   }
 
