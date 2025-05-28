@@ -7,7 +7,7 @@ import useIsMounted from "@ledgerhq/live-common/hooks/useIsMounted";
 import { DeviceLike } from "../reducers/types";
 import { setLastConnectedDevice } from "../actions/settings";
 import { getHIDTransport } from "~/services/getHidTransport";
-import { useLdmkFeatureEnabled } from "@ledgerhq/live-dmk-mobile";
+import { useDeviceManagementKitEnabled } from "@ledgerhq/live-dmk-mobile";
 
 /**
  * Allows LLM to be aware of USB OTG connections on Android as they happen.
@@ -20,7 +20,7 @@ export const useListenToHidDevices = () => {
   const dispatch = useDispatch();
   const [nonce, setNonce] = useState(0);
   const isMounted = useIsMounted();
-  const isLDMKEnabled = useLdmkFeatureEnabled();
+  const isLDMKEnabled = useDeviceManagementKitEnabled();
 
   // Error and Complete will trigger a new listen.
   const onScheduleNewListen = useCallback(() => {
@@ -35,7 +35,7 @@ export const useListenToHidDevices = () => {
     let sub: Subscription;
     if (isMounted()) {
       sub = new Observable<DescriptorEvent<DeviceLike | string | null>>(o =>
-        getHIDTransport(isLDMKEnabled).listen(o),
+        getHIDTransport({ isLDMKEnabled }).listen(o),
       )
         .pipe(
           map(({ type, descriptor, deviceModel }) =>

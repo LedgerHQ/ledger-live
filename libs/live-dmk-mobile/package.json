@@ -41,7 +41,7 @@
     "@ledgerhq/types-devices": "workspace:^"
   },
   "devDependencies": {
-    "@ledgerhq/device-transport-kit-react-native-hid": "0.0.0-develop-20250415155309",
+    "@ledgerhq/device-transport-kit-react-native-hid": "0.0.0-fix-rn-ble-20250425173318",
     "@testing-library/dom": "^9.3.4",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
@@ -63,6 +63,6 @@
     "react-native": ">0.70",
     "react-native-ble-plx": ">3.4.0",
     "rxjs": "^7.8.1",
-    "@ledgerhq/device-transport-kit-react-native-hid": "0.0.0-develop-20250415155309"
+    "@ledgerhq/device-transport-kit-react-native-hid": "0.0.0-fix-rn-ble-20250425173318"
   }
 }
