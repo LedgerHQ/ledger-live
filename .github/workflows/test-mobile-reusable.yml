@@ -2,6 +2,10 @@ name: "[Mobile] - Code Check - Called"
 
 on:
   workflow_call:
+    outputs:
+      coverage_generated:
+        value: ${{ jobs.codecheck.outputs.coverage_generated }}
+
   workflow_dispatch:
     inputs:
       ref:
@@ -32,6 +36,8 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
     runs-on: ubuntu-22.04
+    outputs:
+      coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -69,6 +75,7 @@ jobs:
       - name: upload coverage
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
+        id: generate_coverage
         with:
           name: coverage-mobile
           path: ${{ github.workspace }}/apps/ledger-live-mobile/coverage
