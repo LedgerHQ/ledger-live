@@ -102,8 +102,7 @@ export const getSubAccountShape = async (
   const aptosClient = new AptosAPI(currency.id);
   const tokenAccountId = encodeTokenAccountId(parentId, token);
   const balances = await aptosClient.getBalances(address, token.contractAddress);
-  const balance =
-    balances?.find(b => b.asset_type === token.contractAddress)?.amount || BigNumber(0);
+  const balance = balances.length > 0 ? balances[0].amount : BigNumber(0);
   const firstOperation = operations
     .sort((a, b) => b.date.getTime() - a.date.getTime())
     .at(operations.length - 1);
