@@ -3,7 +3,7 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { NetworkList } from "@ledgerhq/react-ui/pre-ldls";
 import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { Box, Flex } from "@ledgerhq/react-ui/index";
+import { ListWrapper } from "../../../components/ListWrapper";
 
 type SelectNetworkProps = {
   networks?: CryptoOrTokenCurrency[];
@@ -33,16 +33,9 @@ export const SelectNetwork = ({
   };
 
   return (
-    <Box style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+    <ListWrapper>
       <TrackPage category={source} name={CURRENT_PAGE} flow={flow} />
-      <Flex
-        style={{
-          flex: "1",
-          overflow: "auto",
-        }}
-      >
-        <NetworkList networks={networks} onClick={onClick} />
-      </Flex>
-    </Box>
+      <NetworkList networks={networks} onClick={onClick} />
+    </ListWrapper>
   );
 };

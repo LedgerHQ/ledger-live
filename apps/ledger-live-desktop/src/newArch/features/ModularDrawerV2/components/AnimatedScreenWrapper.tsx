@@ -7,7 +7,6 @@ const TWO_ROWS_HEIGHT = ROW_HEIGHT;
 const INPUT_HEIGHT = 40;
 const SPACING = 16;
 const EXTRA_BOTTOM_MARGIN = TWO_ROWS_HEIGHT + INPUT_HEIGHT + SPACING;
-const TWO_HORIZONTAL_MARGIN = 32;
 
 const AnimatedScreenWrapper = ({
   children,
@@ -29,7 +28,8 @@ const AnimatedScreenWrapper = ({
     }}
     style={{
       position: "absolute",
-      width: `calc(100% - ${TWO_HORIZONTAL_MARGIN}px)`,
+      width: "100%",
+      paddingRight: "32px",
       overflow: "hidden",
       height: `calc(100vh - ${EXTRA_BOTTOM_MARGIN}px)`,
     }}

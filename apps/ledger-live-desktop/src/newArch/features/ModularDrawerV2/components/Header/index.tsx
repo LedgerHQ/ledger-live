@@ -5,11 +5,17 @@ import { Title } from "./Title";
 import { ModularDrawerStep, MODULAR_DRAWER_STEP } from "../../types";
 import { track } from "~/renderer/analytics/segment";
 
-type Props = {
-  step: ModularDrawerStep;
-  hidden?: boolean;
-  onBackClick?: () => void;
-};
+type Props =
+  | {
+      hidden: true | false;
+      onBackClick: () => void;
+      step: ModularDrawerStep;
+    }
+  | {
+      hidden?: undefined;
+      onBackClick?: undefined;
+      step: ModularDrawerStep;
+    };
 
 const TranslationKeyMap: Record<ModularDrawerStep, string> = {
   [MODULAR_DRAWER_STEP.ASSET_SELECTION]: "modularAssetDrawer.selectAsset",
@@ -23,7 +29,7 @@ export const Header = ({ step, hidden, onBackClick }: Props) => {
       step,
       button: "modularDrawer_backButton",
     });
-    onBackClick();
+    onBackClick?.();
   };
 
   return (
