@@ -8,6 +8,8 @@ import { useTheme } from "@react-navigation/native";
 import { saveLargeMoverState } from "~/db";
 import { useDispatch } from "react-redux";
 import { setTutorial } from "~/actions/largeMoverLandingPage";
+import { track, TrackScreen } from "~/analytics";
+import { PAGE_NAME } from "../const";
 
 export const OverlayTutorial = () => {
   const dispatch = useDispatch();
@@ -16,9 +18,14 @@ export const OverlayTutorial = () => {
   const handleCloseOverlay = () => {
     dispatch(setTutorial(false));
     saveLargeMoverState({ tutorial: false });
+    track("large_mover_tutorial", {
+      page: PAGE_NAME,
+      button: "Close tutorial",
+    });
   };
   return (
     <Flex flex={1} position="absolute" top={0} bottom={0} left={0} right={0} zIndex={10}>
+      <TrackScreen name="Large_Mover_Tutorial" />
       <BlurView style={StyleSheet.absoluteFill} blurAmount={2} blurType={dark ? "dark" : "light"} />
 
       <Flex flex={1} justifyContent="space-between" alignItems="center" padding={6}>
