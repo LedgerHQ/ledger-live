@@ -137,3 +137,11 @@ export async function estimateFee(
 export async function broadcastTx(bocBase64: string): Promise<string> {
   return (await send<TonResponseMessage>("/message", { boc: bocBase64 })).message_hash;
 }
+
+export async function fetchAdjacentTransactions(
+  txHash: string,
+  dir: "in" | "out" = "in",
+): Promise<TonTransactionsList> {
+  const url = `/adjacentTransactions?hash=${encodeURIComponent(txHash)}&direction=${dir}`;
+  return await fetch<TonTransactionsList>(url);
+}

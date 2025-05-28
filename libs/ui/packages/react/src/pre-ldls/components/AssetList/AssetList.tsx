@@ -6,10 +6,12 @@ export const AssetList = ({
   assets,
   onClick,
   onVisibleItemsScrollEnd,
+  scrollToTop,
 }: {
   assets: AssetType[];
   onClick: (asset: AssetType) => void;
   onVisibleItemsScrollEnd?: () => void;
+  scrollToTop?: boolean;
 }) => {
   const renderAssetItem = useCallback(
     ({ name, ticker, id }: AssetType) => (
@@ -20,10 +22,11 @@ export const AssetList = ({
 
   return (
     <VirtualList
-      itemHeight={64}
+      itemHeight={70}
       items={assets}
       onVisibleItemsScrollEnd={onVisibleItemsScrollEnd}
       renderItem={renderAssetItem}
+      scrollToTop={scrollToTop}
     />
   );
 };

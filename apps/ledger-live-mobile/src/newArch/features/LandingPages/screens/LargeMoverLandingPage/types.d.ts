@@ -14,10 +14,9 @@ type InformationsProps = {
 };
 
 type CardType = {
+  id: string;
   data?: CurrencyData | undefined;
   chartData?: MarketCoinDataChart | undefined;
-  range: KeysPriceChange;
-  setRange: (range: KeysPriceChange) => void;
 };
 
 export type { InformationsProps, CardType };

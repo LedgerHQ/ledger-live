@@ -13,10 +13,10 @@ import type { Transaction, TransactionStatus, AptosSigner, AptosAccount } from "
 import getTransactionStatus from "./getTransactionStatus";
 import estimateMaxSpendable from "./estimateMaxSpendable";
 import prepareTransaction from "./prepareTransaction";
-import createTransaction from "./createTransaction";
 import { getAccountShape } from "./synchronisation";
 import buildSignOperation from "./signOperation";
 import broadcast from "./broadcast";
+import createTransaction from "../logic/createTransaction";
 import { hydrate, preloadWithValidators } from "../preload";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 

@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AssetType } from "@ledgerhq/react-ui/pre-ldls";
 import { SearchInputContainer } from "../../Search";
-import { SelectAsset } from "../../SelectAsset";
+import { SelectAsset } from "./SelectAsset";
 import { SearchContainer } from "./StyledComponents";
 
 export type AssetSelectionStepProps = {
@@ -24,6 +24,27 @@ export function AssetSelectionStep({
   setAssetsToDisplay,
   onAssetSelected,
 }: Readonly<AssetSelectionStepProps>) {
+  const [shouldScrollToTop, setShouldScrollToTop] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleSearch = (query: string) => {
+    setSearchedValue?.(query);
+
+    setShouldScrollToTop(true);
+
+    timeoutRef.current = setTimeout(() => {
+      setShouldScrollToTop(false);
+    }, 100);
+  };
+
   return (
     <>
       <SearchContainer>
@@ -31,12 +52,13 @@ export function AssetSelectionStep({
           flow="Modular Asset Flow"
           source="Accounts"
           defaultValue={defaultSearchValue}
-          setSearchedValue={setSearchedValue}
+          setSearchedValue={handleSearch}
           items={sortedCryptoCurrencies}
           setItemsToDisplay={setAssetsToDisplay}
         />
       </SearchContainer>
       <SelectAsset
+        scrollToTop={shouldScrollToTop}
         assetTypes={assetTypes}
         assetsToDisplay={assetsToDisplay}
         source="Accounts"

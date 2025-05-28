@@ -32,6 +32,12 @@ export default async function getEstimatedFees({
     }), // Remove fees if present since we are fetching fees
   };
 
-  const fees = await estimateFees(account.freshAddress, t);
+  const fees = await estimateFees({
+    recipient: getAbandonSeedAddress(account.currency.id),
+    sender: account.freshAddress,
+    amount: BigInt(t.amount.toString()),
+    type: "send",
+    asset: { type: "native" },
+  });
   return new BigNumber(fees.toString());
 }

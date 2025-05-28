@@ -1,8 +1,6 @@
-import { MoveStructId } from "@aptos-labs/ts-sdk";
+import type { MoveStructId } from "@aptos-labs/ts-sdk";
 import BigNumber from "bignumber.js";
 
-export const DEFAULT_GAS = new BigNumber(200);
-export const DEFAULT_GAS_PRICE = new BigNumber(100);
 export const ESTIMATE_GAS_MUL = new BigNumber(1.0); // define buffer for gas estimation change here, if needed
 
 export const LOAD_LIMIT = 10;
@@ -66,3 +64,6 @@ export const MIN_COINS_ON_SHARES_POOL_IN_OCTAS =
   MIN_COINS_ON_SHARES_POOL.shiftedBy(APTOS_PRECISION);
 
 export const APTOS_EXPLORER_ACCOUNT_URL = "https://explorer.aptoslabs.com/account";
+
+export const DEFAULT_GAS = new BigNumber(200);
+export const DEFAULT_GAS_PRICE = new BigNumber(100);

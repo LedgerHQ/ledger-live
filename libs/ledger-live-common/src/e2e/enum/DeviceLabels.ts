@@ -49,4 +49,6 @@ export enum DeviceLabels {
   DELEGATE_STAKE = "Delegate stake",
   SETTINGS = "Settings",
   CONTRACT_DATA = "Contract data",
+  REMOVE_PHONE_OR_COMPUTER = "Remove phone or",
+  AFTER_REMOVING = "After removing, you",
 }

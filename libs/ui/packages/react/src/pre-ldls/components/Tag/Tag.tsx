@@ -15,12 +15,24 @@ const Wrapper = styled.div`
   border-radius: var(--radius-xs);
   display: inline-flex;
   background-color: var(--colors-surface-transparent-subdued-default);
+  flex-shrink: 0;
 `;
 
-export const Tag = ({ children }: { children: ReactNode }) => {
+export const Tag = ({
+  textTransform = "none",
+  children,
+}: {
+  textTransform?: string;
+  children: ReactNode;
+}) => {
   return (
     <Wrapper data-testid="tag">
-      <Text color="var(--colors-content-subdued-default-default)" fontSize="10px" lineHeight="16px">
+      <Text
+        color="var(--colors-content-subdued-default-default)"
+        fontSize="10px"
+        lineHeight="16px"
+        textTransform={textTransform}
+      >
         {children}
       </Text>
     </Wrapper>

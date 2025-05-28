@@ -13,20 +13,16 @@ const generateTransaction = jest.fn(() => "tx");
 
 jest.mock("../../network/client", () => {
   return {
-    AptosAPI: function () {
-      return {
-        generateTransaction,
-      };
-    },
+    AptosAPI: () => ({
+      generateTransaction,
+    }),
   };
 });
 
-jest.mock("../../bridge/buildTransaction", () => {
-  return function () {
-    return {
-      sequence_number: "789",
-    };
-  };
+jest.mock("../../logic/buildTransaction", () => {
+  return () => ({
+    sequence_number: "789",
+  });
 });
 
 jest.mock("../../network");

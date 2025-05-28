@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-aptos",
-  "version": "1.9.5",
+  "version": "1.9.6",
   "description": "Ledger Aptos Coin integration",
   "keywords": [
     "Ledger",
@@ -87,7 +87,6 @@
   "dependencies": {
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",

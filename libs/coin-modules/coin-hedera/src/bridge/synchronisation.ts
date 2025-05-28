@@ -36,14 +36,14 @@ export const getAccountShape: GetAccountShape<Account> = async (
   // grab latest operation's consensus timestamp for incremental sync
   const oldOperations = initialAccount?.operations ?? [];
   const latestOperationTimestamp = oldOperations[0]
-    ? Math.floor(oldOperations[0].date.getTime() / 1000)
-    : 0;
+    ? new BigNumber(Math.floor(oldOperations[0].date.getTime() / 1000))
+    : null;
 
   // merge new operations w/ previously synced ones
   const newOperations = await getOperationsForAccount(
     liveAccountId,
     address,
-    new BigNumber(latestOperationTimestamp).toString(),
+    latestOperationTimestamp ? latestOperationTimestamp.toString() : null,
   );
   const operations = mergeOps(oldOperations, newOperations);
 

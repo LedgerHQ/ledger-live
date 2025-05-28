@@ -447,6 +447,8 @@
     "incompatibility" : {
       "ton_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de TON",
       "ton_description" : "Pour échanger des TON, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "ton_tokens_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de tokens Ton",
+      "ton_tokens_description" : "Pour échanger des tokens Ton, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "spl_tokens_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de tokens Solana",
       "spl_tokens_description" : "Pour échanger des tokens Solana, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "sui_tokens_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de tokens Sui",
@@ -6615,7 +6617,8 @@
       "title" : "Choisir un actif"
     },
     "selectAccount" : {
-      "title" : "Choisir un compte"
+      "title" : "Choisir un compte",
+      "addAccount" : "Créer ou ajouter un compte"
     }
   },
   "customImage" : {
@@ -7045,6 +7048,14 @@
     "opted_out" : {
       "description" : "Avec sa mémoire limitée, votre Ledger Nano S vous prive des dernières fonctionnalités, innovations blockchain et améliorations de sécurité. Pour en bénéficier, choisissez un wallet Ledger plus récent.",
       "cta" : "En savoir plus"
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "Rechercher",
+    "assetFlow" : {
+      "selectTemplate" : "Sélectionner {{dynamic}}",
+      "asset" : "un actif",
+      "network" : "un réseau"
     }
   }
 }

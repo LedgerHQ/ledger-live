@@ -65,19 +65,13 @@ export const Informations: React.FC<InformationsProps> = props => {
       <Flex style={styles.row}>
         <InfoCard
           label={t("largeMover.circulatingSupply")}
-          value={formatCounterValue(
-            circulatingSupply ?? 0,
-            counterValueCurrency.ticker,
-            locale,
-            t,
-            {
-              ticker,
-            },
-          )}
+          value={formatCounterValue(circulatingSupply ?? 0, "", locale, t, {
+            ticker,
+          })}
         />
         <InfoCard
           label={t("largeMover.totalSupply")}
-          value={`${formatCounterValue(totalSupply ?? 0, counterValueCurrency.ticker, locale, t, { ticker })} ${ticker}`}
+          value={`${formatCounterValue(totalSupply ?? 0, "", locale, t, { ticker })} ${ticker}`}
         />
       </Flex>
 

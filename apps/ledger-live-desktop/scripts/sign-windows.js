@@ -9,11 +9,11 @@ const info = str => {
 };
 
 async function azureSign(filePath) {
-  const { AZURE_APP_ID, AZURE_SECRET } = process.env;
+  const { AZURE_APP_ID, AZURE_SECRET, AZURE_KEY_NAME } = process.env;
 
-  if (!AZURE_APP_ID || !AZURE_SECRET) {
+  if (!AZURE_APP_ID || !AZURE_SECRET || !AZURE_KEY_NAME) {
     throw new Error(
-      "AZURE_APP_ID and AZURE_SECRET env variables are required for signing Windows builds.",
+      "AZURE_APP_ID, AZURE_SECRET and AZURE_KEY_NAME env variables are required for signing Windows builds.",
     );
   }
 
@@ -34,7 +34,7 @@ async function azureSign(filePath) {
     "-kvs",
     AZURE_SECRET,
     "-kvc",
-    "LL20240521-01",
+    AZURE_KEY_NAME,
     "-v",
     "-tr",
     "http://timestamp.digicert.com",

@@ -32,6 +32,15 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     mainUrl: "https://changelly.com/",
     needsKYC: false,
   },
+  changelly_v2: {
+    type: "CEX",
+    useInExchangeApp: true,
+    displayName: "Changelly",
+    termsOfUseUrl: "https://changelly.com/terms-of-use",
+    supportUrl: "https://support.changelly.com/en/support/home",
+    mainUrl: "https://changelly.com/",
+    needsKYC: false,
+  },
   cic: {
     needsKYC: false,
     displayName: "CIC",

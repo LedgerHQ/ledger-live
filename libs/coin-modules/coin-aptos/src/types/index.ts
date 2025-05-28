@@ -180,3 +180,7 @@ export interface TransactionOptions {
 export interface StakePoolResource {
   locked_until_secs: string;
 }
+export type AptosBalance = {
+  asset_type: string;
+  amount: BigNumber;
+};

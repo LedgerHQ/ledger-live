@@ -1,0 +1,13 @@
+services:
+  agave:
+    image: ghcr.io/zeta-chain/solana-docker:1.18.15
+    container_name: agave
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://127.0.0.1:8899", "-H", "Content-Type: application/json", "-H", "Accept: application/json", "-d", '{ "jsonrpc": "2.0", "id": "healthcheck", "method": "getLatestBlockhash" }']
+        interval: 5s
+        timeout: 10s
+        retries: 12
+    ports:
+      - "8899:8899"
+      - "8900:8900"
+    command: solana-test-validator --reset
