@@ -22,16 +22,14 @@ import { counterValueCurrencySelector } from "~/reducers/settings";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { OverlayTutorial } from "./components/OverlayTutotial";
 import { useSelector, useDispatch } from "react-redux";
-import { tutorialSelector } from "~/reducers/LargeMover";
-import { createAction } from "redux-actions";
-import { LargeMoverActionTypes } from "~/reducers/LargeMover";
+import { tutorialSelector } from "~/reducers/largeMover";
+import { getLargeMoverState } from "~/db";
+import { setTutorial } from "~/actions/largeMoverLandingPage";
 
 type LargeMoverLandingPageProps = StackNavigatorProps<
   LandingPagesNavigatorParamList,
   ScreenName.LargeMoverLandingPage
 >;
-
-export const setTutorial = createAction<boolean>(LargeMoverActionTypes.SET_TUTORIAL);
 
 export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => {
   const { currencyIds, initialRange = "day" } = route.params;
@@ -61,14 +59,14 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
   const showOverlay = useSelector(tutorialSelector);
 
   useEffect(() => {
-    if (showOverlay === undefined) {
-      dispatch(setTutorial(true));
-    }
+    getLargeMoverState().then(state => {
+      if (state && typeof state.tutorial === "boolean") {
+        dispatch(setTutorial(state.tutorial));
+      } else {
+        dispatch(setTutorial(true));
+      }
+    });
   }, [dispatch, showOverlay]);
-
-  const handleCloseOverlay = () => {
-    dispatch(setTutorial(false));
-  };
 
   const currenciesWithId = useMemo(
     () =>
@@ -113,7 +111,7 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
 
   return (
     <>
-      {showOverlay && !loading && <OverlayTutorial handleCloseOverlay={handleCloseOverlay} />}
+      {showOverlay && !loading && <OverlayTutorial />}
       <SafeAreaView style={{ flex: 1, backgroundColor: colors.neutral.c00, paddingTop: 10 }}>
         <TrackScreen name={PAGE_NAME} initialRange={initialRange} currencyIds={currencyIds} />
         <StickyHeader />

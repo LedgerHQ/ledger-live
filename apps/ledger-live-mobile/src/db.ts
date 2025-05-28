@@ -312,3 +312,10 @@ export function useDB<State, Selected>(
     selector,
   });
 }
+
+export async function getLargeMoverState(): Promise<{ tutorial: boolean } | undefined> {
+  return (await storage.get("largeMover")) as { tutorial: boolean } | undefined;
+}
+export async function saveLargeMoverState(state: { tutorial: boolean }): Promise<void> {
+  await storage.save("largeMover", state);
+}
