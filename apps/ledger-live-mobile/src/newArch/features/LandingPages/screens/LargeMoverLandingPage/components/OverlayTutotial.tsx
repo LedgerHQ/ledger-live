@@ -5,18 +5,25 @@ import { PromisableButton } from "@ledgerhq/native-ui/lib/components/cta/Button/
 import { BlurView } from "@react-native-community/blur";
 import { StyleSheet } from "react-native";
 import { useTheme } from "@react-navigation/native";
+import { saveLargeMoverState } from "~/db";
+import { useDispatch } from "react-redux";
+import { setTutorial } from "~/actions/largeMoverLandingPage";
 
-export const OverlayTutorial = ({ handleCloseOverlay }: { handleCloseOverlay: () => void }) => {
+export const OverlayTutorial = () => {
+  const dispatch = useDispatch();
   const { t } = useTranslation();
   const { dark } = useTheme();
-
+  const handleCloseOverlay = () => {
+    dispatch(setTutorial(false));
+    saveLargeMoverState({ tutorial: false });
+  };
   return (
     <Flex flex={1} position="absolute" top={0} bottom={0} left={0} right={0} zIndex={10}>
       <BlurView style={StyleSheet.absoluteFill} blurAmount={2} blurType={dark ? "dark" : "light"} />
 
       <Flex flex={1} justifyContent="space-between" alignItems="center" padding={6}>
         <Flex position="absolute" top={70} right={4}>
-          <Button onPress={() => handleCloseOverlay()}>
+          <Button onPress={handleCloseOverlay}>
             <Icons.Close size="M" color="neutral.c100" />
           </Button>
         </Flex>
@@ -34,11 +41,7 @@ export const OverlayTutorial = ({ handleCloseOverlay }: { handleCloseOverlay: ()
         </Flex>
 
         <Flex width="95%" paddingBottom={6}>
-          <PromisableButton
-            onPress={() => {
-              handleCloseOverlay();
-            }}
-          >
+          <PromisableButton onPress={handleCloseOverlay}>
             {t("largeMover.overlay.button")}
           </PromisableButton>
         </Flex>
