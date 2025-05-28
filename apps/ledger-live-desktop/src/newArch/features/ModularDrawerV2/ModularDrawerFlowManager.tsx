@@ -19,6 +19,7 @@ import { NetworkSelection } from "./screens/NetworkSelection";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { Header } from "./components/Header";
 import { getProvider } from "./utils/getProvider";
+import { getCurrenciesIds } from "./utils/getCurrenciesIds";
 
 type Props = {
   currencies: CryptoOrTokenCurrency[];
@@ -52,7 +53,7 @@ const ModularDrawerFlowManager = ({
 
   const { currenciesByProvider, sortedCryptoCurrencies } = result;
 
-  const currenciesIdsArray = useMemo(() => currencies.map(currency => currency.id), [currencies]);
+  const currenciesIdsArray = useMemo(() => getCurrenciesIds(currencies), [currencies]);
 
   const filteredSortedCryptoCurrencies = useMemo(
     () => sortedCryptoCurrencies.filter(currency => currenciesIdsArray.includes(currency.id)),
@@ -124,17 +125,6 @@ const ModularDrawerFlowManager = ({
     changeNavigationDirection("FORWARD");
   }, [displayAssetSelection, displayNetworkSelection, displayAccountSelection]);
 
-  useEffect(() => {
-    if (assetsToDisplay && assetsToDisplay.length === 1) {
-      setSelectedAsset(assetsToDisplay[0]);
-    }
-    if (hasOnlyOneNetwork && selectedAsset) {
-      setSelectedNetwork(selectedAsset);
-      setCurrentStep("NETWORK_SELECTION");
-      //   onAssetSelected?.(selectedAsset);
-    }
-  }, [assetsToDisplay, hasOnlyOneNetwork, selectedAsset, onAssetSelected]);
-
   const handleAssetSelected = useCallback(
     (currency: CryptoOrTokenCurrency) => {
       const currentProvider = findProvider(currency);
@@ -174,6 +164,16 @@ const ModularDrawerFlowManager = ({
     setCurrentStep("ASSET_SELECTION");
   };
 
+  useEffect(() => {
+    if (assetsToDisplay && assetsToDisplay.length === 1) {
+      handleAssetSelected(assetsToDisplay[0]);
+    }
+    if (hasOnlyOneNetwork && selectedAsset) {
+      setSelectedNetwork(selectedAsset);
+      setCurrentStep("NETWORK_SELECTION");
+    }
+  }, [assetsToDisplay, hasOnlyOneNetwork, selectedAsset, onAssetSelected, handleAssetSelected]);
+
   const renderStepContent = (step: ModularDrawerStep) => {
     switch (step) {
       case "ASSET_SELECTION":
@@ -181,7 +181,7 @@ const ModularDrawerFlowManager = ({
           <AssetSelection
             assetTypes={assetTypes}
             assetsToDisplay={assetsToDisplay}
-            sortedCryptoCurrencies={sortedCryptoCurrencies}
+            sortedCryptoCurrencies={filteredSortedCryptoCurrencies}
             defaultSearchValue={searchedValue}
             assetsConfiguration={assetConfiguration}
             setAssetsToDisplay={setAssetsToDisplay}
