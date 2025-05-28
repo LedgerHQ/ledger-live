@@ -2,8 +2,7 @@ import { Hex, RawTransaction, Deserializer } from "@aptos-labs/ts-sdk";
 import type { TransactionIntent } from "@ledgerhq/coin-framework/lib/api/types";
 import { createApi } from "../../api";
 import type { TransactionOptions } from "../../types";
-import type { AptosAsset, AptosExtra } from "../../types/assets";
-import type { AptosAsset, AptosExtra, AptosSender } from "../../types/assets";
+import type { AptosAsset } from "../../types/assets";
 import { AptosAPI } from "../../network";
 import { APTOS_ASSET_ID } from "../../constants";
 
@@ -51,7 +50,8 @@ describe("craftTransaction", () => {
       aptosSettings: {},
     });
 
-    const txArg: TransactionIntent<AptosAsset, AptosExtra, AptosSender> = {
+    const txArg: TransactionIntent<AptosAsset> = {
+    const txArg: TransactionIntent<AptosAsset> = {
       type: "send",
       sender: SENDER,
       recipient: RECIPIENT_ADDR,

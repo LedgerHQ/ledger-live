@@ -50,7 +50,7 @@ async function balance(address: string): Promise<Balance<TezosAsset>[]> {
 }
 
 async function craft(
-  transactionIntent: TransactionIntent<TezosAsset, never, string>,
+  transactionIntent: TransactionIntent<TezosAsset>,
   customFees?: bigint,
 ): Promise<string> {
   if (!isTezosTransactionType(transactionIntent.type)) {
@@ -77,7 +77,7 @@ async function craft(
 }
 
 async function estimate(
-  transactionIntent: TransactionIntent<TezosAsset, never, string>,
+  transactionIntent: TransactionIntent<TezosAsset>,
 ): Promise<TezosFeeEstimation> {
   const senderAccountInfo = await api.getAccountByAddress(transactionIntent.sender);
   if (senderAccountInfo.type !== "user") throw new Error("unexpected account type");

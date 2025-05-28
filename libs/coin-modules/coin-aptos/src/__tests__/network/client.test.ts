@@ -14,7 +14,7 @@ import {
 import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import { AptosAPI } from "../../network";
-import { AptosAsset, AptosExtra, AptosSender } from "../../types/assets";
+import { AptosAsset } from "../../types/assets";
 import { Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { APTOS_ASSET_ID } from "../../constants";
@@ -619,7 +619,7 @@ describe("Aptos API", () => {
       const recipient = "address2";
 
       const api = new AptosAPI("aptos");
-      const transactionIntent: TransactionIntent<AptosAsset, AptosExtra> = {
+      const transactionIntent: TransactionIntent<AptosAsset> = {
         asset: {
           type: "native",
         },

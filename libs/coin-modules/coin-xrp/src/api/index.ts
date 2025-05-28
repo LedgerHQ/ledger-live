@@ -1,5 +1,5 @@
 import type {
-  BridgeApi,
+  Api,
   FeeEstimation,
   Operation,
   Pagination,
@@ -17,11 +17,10 @@ import {
   lastBlock,
   listOperations,
   getTransactionStatus,
-  removeCachedRecipientIsNew,
 } from "../logic";
-import { ListOperationsOptions, XrpAsset, XrpMemoKind } from "../types";
+import { ListOperationsOptions, XrpAsset, XrpMapMemo } from "../types";
 
-export function createApi(config: XrpConfig): BridgeApi<XrpAsset, XrpMemoKind, string> {
+export function createApi(config: XrpConfig): Api<XrpAsset, XrpMapMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -33,20 +32,30 @@ export function createApi(config: XrpConfig): BridgeApi<XrpAsset, XrpMemoKind, s
     lastBlock,
     listOperations: operations,
     validateIntent: getTransactionStatus,
-    preSignOperationHook: (recipient: string) => removeCachedRecipientIsNew(recipient),
   };
 }
 
 async function craft(
-  transactionIntent: TransactionIntent<XrpAsset, XrpMemoKind, string>,
+  transactionIntent: TransactionIntent<XrpAsset, XrpMapMemo>,
   customFees?: bigint,
 ): Promise<string> {
   const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
   const estimatedFees = customFees !== undefined ? customFees : (await estimateFees()).fee;
 
-  // Extract specific memos from the array
-  const destinationTagMemo = transactionIntent.memos?.find(m => m.type === "destinationTag");
-  const memoEntries = transactionIntent.memos?.filter(m => m.type === "memo") ?? [];
+  const memosMap =
+    transactionIntent.memo?.type === "map" ? transactionIntent.memo.memos : new Map();
+
+  const destinationTagValue = memosMap.get("destinationTag");
+  const destinationTag =
+    typeof destinationTagValue === "string" ? Number(destinationTagValue) : undefined;
+
+  const memoStrings = memosMap.get("memos") as string[] | undefined;
+
+  let memoEntries: { type: string; data: string }[] = [];
+
+  if (Array.isArray(memoStrings) && memoStrings.length > 0) {
+    memoEntries = memoStrings.map(value => ({ type: "memo", data: value }));
+  }
 
   const tx = await craftTransaction(
     { address: transactionIntent.sender, nextSequenceNumber },
@@ -54,8 +63,9 @@ async function craft(
       recipient: transactionIntent.recipient,
       amount: transactionIntent.amount,
       fee: estimatedFees,
-      destinationTag: destinationTagMemo ? Number(destinationTagMemo.value) : undefined,
-      memos: memoEntries.map(m => ({ type: m.type, data: m.value })),
+      destinationTag,
+      // NOTE: double check before/after here
+      memos: memoEntries,
     },
     transactionIntent.senderPublicKey,
   );

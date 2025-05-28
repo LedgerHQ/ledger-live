@@ -19,6 +19,10 @@ describe("Xrp Api", () => {
         sender: SENDER,
         amount,
         recipient: "rKtXXTVno77jhu6tto1MAXjepyuaKaLcqB",
+        memo: {
+          type: "map",
+          memos: new Map(),
+        },
       });
 
       // Then
@@ -107,8 +111,11 @@ describe("Xrp Api", () => {
         sender: SENDER,
         recipient: RECIPIENT,
         amount: BigInt(10),
+        memo: {
+          type: "map",
+          memos: new Map([["memos", ["testdata"]]]),
+        },
       });
-
       // Then
       expect(result.length).toEqual(162);
     });
@@ -120,6 +127,10 @@ describe("Xrp Api", () => {
         sender: SENDER,
         recipient: RECIPIENT,
         amount: BigInt(10),
+        memo: {
+          type: "map",
+          memos: new Map(),
+        },
       });
 
       const decodedTransaction = decode(result) as { Fee: string };
@@ -135,6 +146,10 @@ describe("Xrp Api", () => {
           sender: SENDER,
           recipient: RECIPIENT,
           amount: BigInt(10),
+          memo: {
+            type: "map",
+            memos: new Map(),
+          },
         },
         customFees,
       );

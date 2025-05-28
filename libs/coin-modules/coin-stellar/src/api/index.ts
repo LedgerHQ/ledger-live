@@ -1,5 +1,5 @@
 import type {
-  Api,
+  AlpacaApi,
   FeeEstimation,
   Operation,
   Pagination,
@@ -16,11 +16,11 @@ import {
   listOperations,
 } from "../logic";
 import { ListOperationsOptions } from "../logic/listOperations";
-import { StellarAsset, StellarMemoKind } from "../types";
+import { StellarAsset, StellarMemo } from "../types";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { xdr } from "@stellar/stellar-sdk";
-export function createApi(config: StellarConfig): Api<StellarAsset, StellarMemoKind, string> {
+export function createApi(config: StellarConfig): AlpacaApi<StellarAsset, StellarMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -35,15 +35,17 @@ export function createApi(config: StellarConfig): Api<StellarAsset, StellarMemoK
 }
 
 async function craft(
-  transactionIntent: TransactionIntent<StellarAsset, StellarMemoKind, string>,
+  transactionIntent: TransactionIntent<StellarAsset, StellarMemo>,
   customFees?: bigint,
 ): Promise<string> {
   const fees = customFees !== undefined ? customFees : await estimateFees();
 
-  if (transactionIntent.memos && transactionIntent.memos.length > 1) {
-    throw new Error("Stellar only supports one memo per transaction.");
-  }
-  const memo = transactionIntent.memos?.[0];
+  // if (transactionIntent.memos && transactionIntent.memos.length > 1) {
+  //   throw new Error("Stellar only supports one memo per transaction.");
+  // }
+  // const memo = transactionIntent.memos?.[0];
+  const memo = "memo" in transactionIntent ? transactionIntent.memo : undefined;
+  const hasMemoValue = memo && memo.type !== "NO_MEMO";
 
   const tx = await craftTransaction(
     { address: transactionIntent.sender },
@@ -59,7 +61,7 @@ async function craft(
           }
         : {}),
       memoType: memo?.type,
-      memoValue: memo?.value,
+      ...(hasMemoValue ? { memoValue: (memo as { value: string }).value } : {}),
     },
   );
 

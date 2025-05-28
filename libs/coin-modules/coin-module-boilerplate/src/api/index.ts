@@ -1,4 +1,8 @@
-import type { Api, FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import type {
+  AlpacaApi,
+  FeeEstimation,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type BoilerplateConfig } from "../config";
 import {
   broadcast,
@@ -13,7 +17,7 @@ import {
 import BigNumber from "bignumber.js";
 import { BoilerplateAsset } from "../types";
 
-export function createApi(config: BoilerplateConfig): Api<BoilerplateAsset> {
+export function createApi(config: BoilerplateConfig): AlpacaApi<BoilerplateAsset> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -27,9 +31,7 @@ export function createApi(config: BoilerplateConfig): Api<BoilerplateAsset> {
   };
 }
 
-async function craft(
-  transactionIntent: TransactionIntent<BoilerplateAsset, never, string>,
-): Promise<string> {
+async function craft(transactionIntent: TransactionIntent<BoilerplateAsset>): Promise<string> {
   const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
   const tx = await craftTransaction(
     { address: transactionIntent.sender, nextSequenceNumber },
@@ -42,7 +44,7 @@ async function craft(
 }
 
 async function estimate(
-  transactionIntent: TransactionIntent<BoilerplateAsset, never, string>,
+  transactionIntent: TransactionIntent<BoilerplateAsset>,
 ): Promise<FeeEstimation> {
   const { serializedTransaction } = await craftTransaction(
     { address: transactionIntent.sender },

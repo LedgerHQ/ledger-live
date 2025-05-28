@@ -7,7 +7,7 @@ export async function estimateFees({
   recipient,
   amount,
   sender,
-}: TransactionIntent<SuiAsset, string, string>): Promise<bigint> {
+}: TransactionIntent<SuiAsset>): Promise<bigint> {
   const { gasBudget } = await suiAPI.paymentInfo(sender, {
     recipient,
     amount: BigNumber(amount.toString()),

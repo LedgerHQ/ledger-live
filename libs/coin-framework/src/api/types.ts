@@ -16,35 +16,36 @@ export type Asset<TokenInfo extends TokenInfoCommon = never> =
   | (TokenInfo extends never ? TokenInfo : { type: "token" } & TokenInfo);
 
 export type Operation<
-  AssetInfo extends Asset<TokenInfoCommon>,
-  MemoKind = never,
-  MemoValue = never,
+  AssetInfo extends Asset<TokenInfoCommon> = Asset<TokenInfoCommon>,
+  MemoType extends Memo = MemoNotSupported,
 > = {
   id: string;
   type: string;
+
   senders: string[];
   recipients: string[];
+
   value: bigint;
   asset: AssetInfo;
+
   /**
    * Optional memo associated with the operation.
-   * `type` defines the memo format (e.g. "hex", "text", "id").
-   * `value` holds the actual memo payload.
+   * Use a `Memo` interface like `StringMemo<"text">`, `MapMemo<Kind, Value>`, or `MyMemo`.
+   * Defaults to `MemoNotSupported`.
    */
-  memo?: {
-    type: MemoKind;
-    value: MemoValue;
-  };
-  // Field containing dedicated value for each blockchain
+  memo?: MemoType;
+
+  /**
+   * Arbitrary per-blockchain extra fields.
+   * This can include things like status, error messages, swap info, etc.
+   */
   details?: Record<string, unknown>;
+
   tx: {
-    // One tx can trigger multiple operations, hence multiple operations with the same hash
-    hash: string;
-    // In which block this operation's related tx was included
-    block: BlockInfo;
-    fees: bigint;
-    // see BlockInfo.time comment
-    date: Date;
+    hash: string; // transaction hash
+    block: BlockInfo; // block metadata
+    fees: bigint; // network fees paid
+    date: Date; // tx date (may differ from block time)
   };
 };
 
@@ -70,10 +71,35 @@ export type Balance<AssetInfo extends Asset<TokenInfoCommon>> = {
   asset: AssetInfo;
 };
 
+export interface Memo {
+  type: string;
+}
+
+// generic implementations that cover many coins (in coin-framework)
+export interface MemoNotSupported extends Memo {
+  type: "none";
+}
+
+// Specialized version, not extending the above
+export interface StringMemo<Kind extends string = "text"> extends Memo {
+  type: "string";
+  kind: Kind;
+  value: string;
+}
+
+export interface MapMemo<Kind extends string, Value> extends Memo {
+  type: "map";
+  memos: Map<Kind, Value>;
+}
+
+export interface TypedMapMemo<KindToValueMap extends Record<string, unknown>> extends Memo {
+  type: "map";
+  memos: Map<keyof KindToValueMap, KindToValueMap[keyof KindToValueMap]>;
+}
+
 export type TransactionIntent<
   AssetInfo extends Asset<TokenInfoCommon>,
-  MemoKinds = never,
-  MemoValue = never,
+  MemoType extends Memo = MemoNotSupported,
 > = {
   type: string;
   sender: string;
@@ -82,8 +108,7 @@ export type TransactionIntent<
   recipient: string;
   amount: bigint;
   asset: AssetInfo;
-  memos?: { type: MemoKinds; value: MemoValue }[];
-};
+} & (MemoType extends MemoNotSupported ? Record<string, never> : { memo: MemoType });
 
 export type TransactionValidation = {
   errors: Record<string, Error>;
@@ -111,16 +136,17 @@ export type FeeEstimation = {
 //       see design document at https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/5446205788/coin-modules+lama-adapter+APIs+refinements
 export type Pagination = { minHeight: number };
 
-export type PreSignOperationHook = (recipient: string) => void;
-
-export type Api<AssetInfo extends Asset<TokenInfoCommon>, MemoKind = never, MemoValue = string> = {
+export type AlpacaApi<
+  AssetInfo extends Asset<TokenInfoCommon>,
+  MemoType extends Memo = MemoNotSupported,
+> = {
   broadcast: (tx: string) => Promise<string>;
   combine: (tx: string, signature: string, pubkey?: string) => string | Promise<string>;
   estimateFees: (
-    transactionIntent: TransactionIntent<AssetInfo, MemoKind, MemoValue>,
+    transactionIntent: TransactionIntent<AssetInfo, MemoType>,
   ) => Promise<FeeEstimation>;
   craftTransaction: (
-    transactionIntent: TransactionIntent<AssetInfo, MemoKind, MemoValue>,
+    transactionIntent: TransactionIntent<AssetInfo, MemoType>,
     customFees?: bigint,
   ) => Promise<string>;
   // validateIntent?: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;
@@ -130,13 +156,13 @@ export type Api<AssetInfo extends Asset<TokenInfoCommon>, MemoKind = never, Memo
     address: string,
     pagination: Pagination,
   ) => Promise<[Operation<AssetInfo>[], string]>;
-  preSignOperationHook?: PreSignOperationHook;
 };
 
-export type BridgeApi<
-  AssetInfo extends Asset<TokenInfoCommon>,
-  MemoKind = never,
-  MemoValue = string,
-> = Api<AssetInfo, MemoKind, MemoValue> & {
+export type BridgeApi = {
   validateIntent: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;
 };
+
+export type Api<
+  AssetInfo extends Asset<TokenInfoCommon>,
+  MemoType extends Memo = MemoNotSupported,
+> = AlpacaApi<AssetInfo, MemoType> & BridgeApi;
