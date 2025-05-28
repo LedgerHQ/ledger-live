@@ -33,7 +33,6 @@ export const SelectAccount = ({
 
   const onAccountClick = (accountId: string) => {
     const currencyAccount = accounts.find(({ account }) => account.id === accountId);
-
     if (currencyAccount) {
       onAccountSelected(currencyAccount.account);
       trackAccountClick(currencyAccount.account.currency.ticker);

@@ -24,7 +24,7 @@ type State = {
   isLocked: boolean;
 };
 
-type ManagerState = State & {
+export type ManagerState = State & {
   repairModalOpened:
     | {
         auto: boolean;

@@ -8,11 +8,13 @@ import { SelectAccountFlowContainer, SelectorContent, AccountSelectionStep } fro
 import SelectAssetFlow from "../SelectAssetFlow";
 import { Header } from "../Header";
 import { FlowStep, NavigationDirection } from "../Header/navigation";
+import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 
 type SelectAccountDrawerProps = {
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
   currencies: CryptoOrTokenCurrency[];
   accounts$?: Observable<WalletAPIAccount[]>;
+  drawerConfiguration?: EnhancedModularDrawerConfiguration;
 };
 
 export const SelectAccountFlow = memo((props: SelectAccountDrawerProps) => {
@@ -39,7 +41,12 @@ export const SelectAccountFlow = memo((props: SelectAccountDrawerProps) => {
         showBackButton={props.currencies.length > 1}
       />
       <SelectorContent>
-        <AccountSelectionStep {...props} asset={selectedAsset} source="source" flow="flow" />
+        <AccountSelectionStep
+          {...props}
+          asset={selectedAsset}
+          source="Accounts"
+          flow="Modular Account Flow"
+        />
       </SelectorContent>
     </SelectAccountFlowContainer>
   );

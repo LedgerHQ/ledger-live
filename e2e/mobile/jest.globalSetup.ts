@@ -88,12 +88,14 @@ export default async function setup(): Promise<void> {
   global.Swap = Swap;
 
   // Bind native helpers
+  global.detoxExpect = NativeElementHelpers.expect;
   global.waitForElementById = NativeElementHelpers.waitForElementById;
   global.waitForElementByText = NativeElementHelpers.waitForElementByText;
   global.waitForElementNotVisible = NativeElementHelpers.waitForElementNotVisible;
   global.getElementById = NativeElementHelpers.getElementById;
   global.getElementsById = NativeElementHelpers.getElementsById;
   global.getElementByText = NativeElementHelpers.getElementByText;
+  global.getElementByIdAndText = NativeElementHelpers.getElementByIdAndText;
   global.IsIdVisible = NativeElementHelpers.isIdVisible;
   global.tapById = NativeElementHelpers.tapById;
   global.tapByText = NativeElementHelpers.tapByText;

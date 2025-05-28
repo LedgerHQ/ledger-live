@@ -35,7 +35,8 @@ describe("useSearch", () => {
 
     // Assert
     expect(result.current.searchQuery).toBe("");
-    expect(mockSetItemsToDisplay).not.toHaveBeenCalled();
+    expect(mockSetItemsToDisplay).toHaveBeenCalledTimes(1);
+    expect(mockSetItemsToDisplay).toHaveBeenCalledWith(mockCurrencies);
   });
 
   it("should return all items when search query is less than 2 characters", () => {

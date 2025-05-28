@@ -1,41 +1,48 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 
 import {
-  AccountData,
+  type AccountData,
   Aptos,
-  AptosApiType,
   AptosConfig,
   Ed25519PublicKey,
-  GasEstimation,
-  InputEntryFunctionData,
-  InputGenerateTransactionOptions,
+  type GasEstimation,
+  type InputEntryFunctionData,
+  type InputGenerateTransactionOptions,
   MimeType,
-  post,
-  RawTransaction,
-  SimpleTransaction,
-  TransactionResponse,
-  UserTransactionResponse,
-  PostRequestOptions,
-  Block,
-  AptosSettings,
-  MoveFunctionId,
+  type RawTransaction,
+  type SimpleTransaction,
+  type TransactionResponse,
+  type UserTransactionResponse,
+  type Block,
+  type AptosSettings,
+  type MoveFunctionId,
+  Hex,
+  postAptosFullNode,
+  type PendingTransactionResponse,
 } from "@aptos-labs/ts-sdk";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import isUndefined from "lodash/isUndefined";
 import { APTOS_ASSET_ID, DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "../constants";
-import { isTestnet } from "../bridge/logic";
-import type { AptosTransaction, TransactionOptions } from "../types";
+import type { AptosBalance, AptosTransaction, TransactionOptions } from "../types";
 import { GetAccountTransactionsData, GetAccountTransactionsDataGt } from "./graphql/queries";
-import {
+import type {
   GetAccountTransactionsDataQuery,
   GetAccountTransactionsDataGtQueryVariables,
 } from "./graphql/types";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { BlockInfo, FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import {
+  BlockInfo,
+  FeeEstimation,
+  Operation,
+  Pagination,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/types";
 import { AptosAsset, AptosExtra, AptosFeeParameters, AptosSender } from "../types/assets";
 import { log } from "@ledgerhq/logs";
+import { transactionsToOperations } from "../logic/transactionsToOperations";
+import { isTestnet } from "../logic/isTestnet";
 
 const getApiEndpoint = (currencyId: string) =>
   isTestnet(currencyId) ? getEnv("APTOS_TESTNET_API_ENDPOINT") : getEnv("APTOS_API_ENDPOINT");
@@ -140,25 +147,26 @@ export class AptosAPI {
     });
   }
 
-  async broadcast(signature: string): Promise<string> {
-    const txBytes = Uint8Array.from(Buffer.from(signature, "hex"));
-    const pendingTx = await post<PostRequestOptions, TransactionResponse>({
-      contentType: MimeType.BCS_SIGNED_TRANSACTION,
+  async broadcast(tx: string): Promise<string> {
+    const txBytes = Hex.fromHexString(tx).toUint8Array();
+
+    const pendingTx = await postAptosFullNode<Uint8Array, PendingTransactionResponse>({
       aptosConfig: this.aptosClient.config,
       body: txBytes,
       path: "transactions",
-      type: AptosApiType.FULLNODE,
       originMethod: "",
+      contentType: MimeType.BCS_SIGNED_TRANSACTION,
     });
+
     return pendingTx.data.hash;
   }
 
   async getBalance(address: string, token: TokenCurrency): Promise<BigNumber> {
     if (token.tokenType === "coin") {
       return await this.getCoinBalance(address, token.contractAddress);
-    } else {
-      return await this.getFABalance(address, token.contractAddress);
     }
+
+    return await this.getFABalance(address, token.contractAddress);
   }
 
   async getLastBlock(): Promise<BlockInfo> {
@@ -249,6 +257,16 @@ export class AptosAPI {
     };
   }
 
+  async listOperations(
+    address: string,
+    pagination: Pagination,
+  ): Promise<[Operation<AptosAsset>[], string]> {
+    const transactions = await this.getAccountInfo(address, pagination.minHeight.toString());
+    const [newOperations, _] = transactionsToOperations(address, transactions.transactions);
+
+    return [newOperations, ""];
+  }
+
   private async fetchTransactions(address: string, gt?: string) {
     if (!address) {
       return [];
@@ -311,5 +329,23 @@ export class AptosAPI {
       height: parseInt(block.block_height),
       hash: block.block_hash,
     };
+  }
+
+  async getBalances(address: string): Promise<AptosBalance[]> {
+    const response = await this.aptosClient.getCurrentFungibleAssetBalances({
+      options: {
+        offset: 0,
+        limit: 1000,
+        where: {
+          asset_type: { _eq: APTOS_ASSET_ID }, // to return all asset balances (native / token) we should remove this filter
+          owner_address: { _eq: address },
+        },
+      },
+    });
+
+    return response.map(x => ({
+      asset_type: x.asset_type ?? "-",
+      amount: BigNumber(x.amount),
+    }));
   }
 }

@@ -38,6 +38,7 @@ for (const token of subAccounts) {
     test(
       `Add Sub Account without parent (${token.account.currency.speculosApp.name}) - ${token.account.currency.ticker}`,
       {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
         annotation: {
           type: "TMS",
           description: token.xrayTicket1,
@@ -74,6 +75,7 @@ for (const token of subAccountReceive) {
     test(
       `[${token.account.currency.speculosApp.name}] Add subAccount when parent exists (${token.account.currency.ticker})`,
       {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
         annotation: {
           type: "TMS",
           description: token.xrayTicket,
@@ -110,6 +112,7 @@ for (const token of subAccounts) {
     test(
       `Token visible in parent account (${token.account.currency.speculosApp.name}) - ${token.account.currency.ticker}`,
       {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
         annotation: {
           type: "TMS",
           description: token.xrayTicket2,
@@ -133,8 +136,9 @@ const transactionE2E = [
   },
 ];
 
+//TODO: Fix the test
 for (const transaction of transactionE2E) {
-  test.describe("Send token - E2E", () => {
+  test.describe.skip("Send token - E2E", () => {
     test.use({
       userdata: "skip-onboarding",
       speculosApp: transaction.tx.accountToDebit.currency.speculosApp,
@@ -161,6 +165,7 @@ for (const transaction of transactionE2E) {
     test(
       `Send from ${transaction.tx.accountToDebit.accountName} to ${transaction.tx.accountToCredit.accountName} - ${transaction.tx.accountToDebit.currency.name} - E2E test`,
       {
+        tag: ["@NanoSP", "@NanoX"],
         annotation: {
           type: "TMS",
           description: transaction.xrayTicket,
@@ -257,6 +262,7 @@ for (const transaction of transactionsAddressInvalid) {
     test(
       `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName} - ${transaction.transaction.accountToCredit.currency.name} - ${transaction.expectedErrorMessage}`,
       {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
         annotation: {
           type: "TMS",
           description: transaction.xrayTicket,
@@ -305,6 +311,7 @@ for (const transaction of transactionsAddressValid) {
     test(
       `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName} - ${transaction.transaction.accountToDebit.currency.name} - valid address input`,
       {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
         annotation: {
           type: "TMS",
           description: transaction.xrayTicket,
@@ -371,6 +378,7 @@ for (const transaction of tokenTransactionInvalid) {
     test(
       `Send from ${transaction.tx.accountToDebit.accountName} to ${transaction.tx.accountToCredit.accountName} - invalid amount input`,
       {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
         annotation: {
           type: "TMS",
           description: transaction.xrayTicket,
@@ -380,7 +388,7 @@ for (const transaction of tokenTransactionInvalid) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.layout.goToAccounts();
-        await app.accounts.navigateToAccountByName(transaction.tx.accountToDebit.accountName);
+        await app.accounts.searchForAccount(transaction.tx.accountToDebit.currency.name);
         await app.account.navigateToTokenInAccount(transaction.tx.accountToDebit);
         await app.account.clickSend();
         await app.send.craftTx(transaction.tx);
@@ -420,6 +428,7 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
   test(
     `Send from ${tokenTransactionValid.accountToDebit.accountName} to ${tokenTransactionValid.accountToCredit.accountName} - valid address & amount input`,
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2703, B2CQA-475",

@@ -22,6 +22,7 @@ type Props = {
   onSubAccountPress: (subAccount: TokenAccount) => void;
   onSubAccountLongPress: (tokenAccount: TokenAccount, account?: Account) => void;
   useCounterValue?: boolean;
+  testID: string;
 };
 
 const placeholderProps = {
@@ -35,6 +36,7 @@ function SubAccountRow({
   onSubAccountPress,
   onSubAccountLongPress,
   useCounterValue,
+  testID,
 }: Props) {
   const currency = getAccountCurrency(account);
   const name = useAccountName(account);
@@ -55,6 +57,7 @@ function SubAccountRow({
         }
       }}
       minDurationMs={600}
+      testID={testID}
     >
       <RectButton onPress={() => onSubAccountPress(account)} style={{ alignItems: "center" }}>
         <Flex flexDirection={"row"} alignItems={"center"} py={6}>

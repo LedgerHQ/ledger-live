@@ -13,7 +13,9 @@ import { useTranslation } from "react-i18next";
 
 export type SelectAssetFlowProps = {
   currencies: CryptoOrTokenCurrency[];
+  hideAssetSelection?: void;
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
+  selectedAsset?: CryptoOrTokenCurrency;
 };
 
 function SelectAssetFlow({ onAssetSelected, currencies }: Readonly<SelectAssetFlowProps>) {

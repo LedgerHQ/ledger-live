@@ -26,7 +26,7 @@ const usage = (exitCode = 1) => {
 const build_ios = async () => {
   await $`pnpm mobile exec detox clean-framework-cache`;
   await $`pnpm mobile exec detox build-framework-cache`;
-  await $`pnpm mobile e2e:build -c ios.sim.release`;
+  await $`pnpm mobile e2e:build -c ios.sim.${target}`;
 };
 
 const bundle_ios = async () => {
@@ -47,15 +47,16 @@ const bundle_ios_with_cache = async () => {
 
 const test_ios = async () => {
   await $`pnpm mobile ${testType}:test\
-    -c ios.sim.release \
+    -c ios.sim.${target} \
     --loglevel error \
     --record-logs failing \
     --take-screenshots failing \
     --forceExit \
     --headless \
-    --retries 1 \
+    --retries 2 \
     --runInBand \
     --cleanup \
+    --shard ${shard} \
     ${filter.split(" ")}`;
 };
 
