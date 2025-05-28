@@ -150,7 +150,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
         FIXME_ignoreAccountFields,
         FIXME_ignoreOperationFields,
         FIXME_ignorePreloadFields,
-      } = currencyData; 
+      } = currencyData;
       test("functions are defined", () => {
         expect(typeof bridge.scanAccounts).toBe("function");
         expect(typeof bridge.preload).toBe("function");
