@@ -11,7 +11,6 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
-      CAL_BRANCH: "cal/import-tokens"
     steps:
       - name: Generate token
         id: generate-token
@@ -28,9 +27,6 @@ jobs:
 
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
-
-      - name: Create CAL import branch
-        run: git checkout -b $CAL_BRANCH
 
       - name: Setup caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
@@ -50,7 +46,7 @@ jobs:
         id: changes
         run: |
           git add .
-          if git diff --staged --quiet; then
+          if git diff --cached --quiet; then
             echo "changed=false" >> $GITHUB_OUTPUT
           else
             echo "changed=true" >> $GITHUB_OUTPUT
@@ -62,27 +58,6 @@ jobs:
         with:
           commit_message: "chore(cal): import CAL tokens [skip ci]"
           repo: ${{ github.repository }}
-          branch: ${{ env.CAL_BRANCH }}
+          branch: develop
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-
-      - name: Push branch
-        if: steps.changes.outputs.changed == 'true'
-        run: git push -u origin $CAL_BRANCH
-
-      - name: Create PR to develop
-        if: steps.changes.outputs.changed == 'true'
-        run: |
-          gh pr create --title ":zap: Import CAL tokens" --base develop --head $CAL_BRANCH
-        env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-
-      - name: Post Slack message to notify PR creation
-        if: steps.changes.outputs.changed == 'true'
-        uses: slackapi/slack-github-action@v2.0.0
-        with:
-          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
-          method: chat.postMessage
-          payload: |
-            channel: "C06RTDKT324"
-            text: ":bell: *A new PR for importing CAL tokens has been created*"
