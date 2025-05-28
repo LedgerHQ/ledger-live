@@ -2,6 +2,10 @@ name: "[Libraries] - Test - Called"
 
 on:
   workflow_call:
+    outputs:
+      coverage_generated:
+        value: ${{ jobs.test-libraries.outputs.coverage_generated }}
+
   workflow_dispatch:
     inputs:
       since_branch:
@@ -26,6 +30,8 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
       CI_OS: ubuntu-22.04
+    outputs:
+      coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
 
     runs-on: [ledger-live-4xlarge]
     steps:
@@ -57,13 +63,11 @@ jobs:
             if [ -f "$package_json" ] && jq -e '.scripts.coverage' "$package_json"; then
               echo "Running coverage script for $lib"
               pnpm --prefix "$lib" run coverage
-              ls -la "$lib/coverage"
               if [ -f "$lib/coverage/lcov.info" ] && [ -f "$lib/coverage/sonar-executionTests-report.xml" ]; then
                 echo "Appending coverage files for $lib"
                 cat "$lib/coverage/lcov.info" >> ${{ github.workspace }}/coverage/lcov.info
                 cat "$lib/coverage/sonar-executionTests-report.xml" >> ${{ github.workspace }}/coverage/sonar-executionTests-report.xml
               fi
-              ls -la ${{ github.workspace }}/coverage
             elif [ -f "$package_json" ] && jq -e '.scripts.test' "$package_json"; then
               echo "Coverage script not defined for $lib, running test script."
               pnpm --prefix "$lib" run test
@@ -71,7 +75,6 @@ jobs:
               echo "No coverage or test script found for $lib, skipping."
             fi
           done
-          ls -la ${{ github.workspace }}/coverage
         shell: bash
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@v4
@@ -88,6 +91,7 @@ jobs:
             fs.writeFileSync("summary-tests.txt", "${{ steps.test-libs.outcome }}", "utf-8");
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
+        id: generate_coverage
         with:
           name: coverage-libs
           path: ${{ github.workspace }}/coverage
