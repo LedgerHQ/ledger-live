@@ -8087,8 +8087,8 @@ importers:
         version: link:../ledgerjs/packages/types-devices
     devDependencies:
       '@ledgerhq/device-transport-kit-react-native-hid':
-        specifier: 0.0.0-develop-20250415155309
-        version: 0.0.0-develop-20250415155309(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)
+        specifier: 0.0.0-fix-rn-ble-20250425173318
+        version: 0.0.0-fix-rn-ble-20250425173318(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)
       '@testing-library/dom':
         specifier: ^9.3.4
         version: 9.3.4
@@ -14487,19 +14487,19 @@ packages:
       react-native-ble-plx: 3.4.0
       rxjs: 7.8.2
 
-  '@ledgerhq/device-transport-kit-react-native-hid@0.0.0-develop-20250415155309':
-    resolution: {integrity: sha512-sxeMHRc32GhOOfwudv8ysLdMS0HTzTpQEkZ0ffc9WVIv+8+ywHH6oaAMRU3i58pcHNenik5yQgDjd3awMQ9wgw==}
-    peerDependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-develop-20250415155309
-      react-native: '>0.74.1'
-      rxjs: ^7.8.1
-
   '@ledgerhq/device-transport-kit-react-native-hid@0.0.0-fix-lns-20250901094837':
     resolution: {integrity: sha512-DrLofbLOWbxTWjNfMM7yv30s3GE7WrHHv0GlZ5OqnBLz4u1Fqx+VXvkFymzQtAGF/u190u+cEs47u1KyRVaqSw==}
     peerDependencies:
       '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837
       react-native: '>0.74.1'
       rxjs: 7.8.2
+
+  '@ledgerhq/device-transport-kit-react-native-hid@0.0.0-fix-rn-ble-20250425173318':
+    resolution: {integrity: sha512-KcdAy2o+Lf4xwapMsAxaWE1IOYpduS7hbfHUfC2mzcKuf8pIMXJyFxHJt14Tdrg+0sSQYpap6hyfJitiorQurw==}
+    peerDependencies:
+      '@ledgerhq/device-management-kit': 0.0.0-fix-rn-ble-20250425173318
+      react-native: '>0.74.1'
+      rxjs: ^7.8.1
 
   '@ledgerhq/device-transport-kit-web-hid@0.0.0-fix-lns-20250901094837':
     resolution: {integrity: sha512-DgSa0iZ71QzCiN1y1beGPA571gyVexG0dkgP8CZ1LmDH+Jxe66WdCshhRpI7vFySo1xn4m6nMr6ix25UwFfyTQ==}
@@ -43345,15 +43345,6 @@ snapshots:
       rxjs: 7.8.1
       uuid: 11.0.3
 
-  '@ledgerhq/device-transport-kit-react-native-hid@0.0.0-develop-20250415155309(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)':
-    dependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
-      '@sentry/minimal': 6.19.7
-      purify-ts: 2.1.0
-      react-native: 0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1)
-      rxjs: 7.8.1
-      uuid: 10.0.0
-
   '@ledgerhq/device-transport-kit-react-native-hid@0.0.0-fix-lns-20250901094837(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(rxjs@7.8.1)':
     dependencies:
       '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
@@ -43362,6 +43353,15 @@ snapshots:
       react-native: 0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
       rxjs: 7.8.1
       uuid: 11.0.3
+
+  '@ledgerhq/device-transport-kit-react-native-hid@0.0.0-fix-rn-ble-20250425173318(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)':
+    dependencies:
+      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
+      '@sentry/minimal': 6.19.7
+      purify-ts: 2.1.0
+      react-native: 0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1)
+      rxjs: 7.8.1
+      uuid: 10.0.0
 
   '@ledgerhq/device-transport-kit-web-hid@0.0.0-fix-lns-20250901094837(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))(rxjs@7.8.1)':
     dependencies:
