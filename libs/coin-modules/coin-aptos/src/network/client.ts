@@ -31,7 +31,6 @@ import type {
   GetAccountTransactionsDataQuery,
   GetAccountTransactionsDataGtQueryVariables,
 } from "./graphql/types";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   BlockInfo,
   FeeEstimation,
