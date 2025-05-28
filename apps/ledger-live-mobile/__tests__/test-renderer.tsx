@@ -38,7 +38,7 @@ import { initialState as WALLET_INITIAL_STATE } from "@ledgerhq/live-wallet/stor
 import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
 import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
-import { LARGE_MOVER_INITIAL_STATE } from "~/reducers/LargeMover";
+import { LARGE_MOVER_INITIAL_STATE } from "~/reducers/largeMover";
 
 const initialState = {
   accounts: ACCOUNTS_INITIAL_STATE,
