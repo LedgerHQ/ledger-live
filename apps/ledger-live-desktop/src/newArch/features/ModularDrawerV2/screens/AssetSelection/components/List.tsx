@@ -3,8 +3,9 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AssetList, AssetType } from "@ledgerhq/react-ui/pre-ldls";
 import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { Box, Flex } from "@ledgerhq/react-ui/index";
+import { Flex } from "@ledgerhq/react-ui/index";
 import { Skeleton } from "LLD/components/Skeleton";
+import { ListWrapper } from "../../../components/ListWrapper";
 
 type SelectAssetProps = {
   assetTypes?: AssetType[];
@@ -54,22 +55,14 @@ export const SelectAssetList = ({
   }
 
   return (
-    <Box style={{ height: "100%", width: "100%", display: "flex", flexDirection: "column" }}>
+    <ListWrapper>
       <TrackPage category={source} name={CURRENT_PAGE} flow={flow} />
-      <Flex
-        style={{
-          flex: "1",
-          overflow: "hidden",
-          maxHeight: "100%",
-        }}
-      >
-        <AssetList
-          scrollToTop={scrollToTop}
-          assets={assetsToDisplay}
-          onClick={onClick}
-          onVisibleItemsScrollEnd={onVisibleItemsScrollEnd}
-        />
-      </Flex>
-    </Box>
+      <AssetList
+        scrollToTop={scrollToTop}
+        assets={assetsToDisplay}
+        onClick={onClick}
+        onVisibleItemsScrollEnd={onVisibleItemsScrollEnd}
+      />
+    </ListWrapper>
   );
 };

@@ -20,6 +20,7 @@ import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { Header } from "./components/Header";
 import { getProvider } from "./utils/getProvider";
 import { getCurrenciesIds } from "./utils/getCurrenciesIds";
+import { AccountSelection } from "./screens/AccountSelection";
 
 type Props = {
   currencies: CryptoOrTokenCurrency[];
@@ -118,6 +119,8 @@ const ModularDrawerFlowManager = ({
       setBackButtonDisabled(!canGoBackToAsset);
     } else if (displayAccountSelection) {
       setBackButtonDisabled(!canGoBackToNetwork);
+      setBackButtonDisabled(!canGoBackToAsset);
+      console.log("backButtonDisabled", backButtonDisabled);
     }
   };
 
@@ -125,13 +128,44 @@ const ModularDrawerFlowManager = ({
     changeNavigationDirection("FORWARD");
   }, [displayAssetSelection, displayNetworkSelection, displayAccountSelection]);
 
+  const handleNetworkSelected = useCallback(
+    (network: CryptoOrTokenCurrency) => {
+      if (!providers) return;
+      const correspondingCurrency = providers.currenciesByNetwork.find(elem => {
+        if (elem.type === "TokenCurrency") {
+          return elem.id === network.id || elem.parentCurrency?.id === network.id;
+        } else if (elem.type === "CryptoCurrency") {
+          return elem.id === network.id;
+        }
+        return false;
+      });
+      if (correspondingCurrency && !isSelectAccountFlow) {
+        onAssetSelected(correspondingCurrency);
+      }
+      if (correspondingCurrency && isSelectAccountFlow) {
+        setSelectedAsset(correspondingCurrency);
+        setSelectedNetwork(network);
+        setCurrentStep("ACCOUNT_SELECTION");
+        setBackButtonDisabled(!canGoBackToNetwork);
+      }
+    },
+    [canGoBackToNetwork, isSelectAccountFlow, onAssetSelected, providers],
+  );
+
   const handleAssetSelected = useCallback(
     (currency: CryptoOrTokenCurrency) => {
       const currentProvider = findProvider(currency);
       setProviders(currentProvider);
 
       if (!currentProvider) {
-        onAssetSelected(currency);
+        // Directly select asset and network if no provider/networks
+        setSelectedAsset(currency);
+        setSelectedNetwork(currency);
+        if (isSelectAccountFlow) {
+          setCurrentStep("ACCOUNT_SELECTION");
+        } else {
+          onAssetSelected(currency);
+        }
         return;
       }
 
@@ -150,18 +184,20 @@ const ModularDrawerFlowManager = ({
         setBackButtonDisabled(!canGoBackToAsset);
         setCurrentStep("NETWORK_SELECTION");
       } else {
-        onAssetSelected(currency);
+        setSelectedAsset(currency);
+        setSelectedNetwork(currency);
+        if (isSelectAccountFlow) {
+          setCurrentStep("ACCOUNT_SELECTION");
+        } else {
+          onAssetSelected(currency);
+        }
       }
     },
-    [canGoBackToAsset, findProvider, onAssetSelected],
+    [canGoBackToAsset, findProvider, isSelectAccountFlow, onAssetSelected],
   );
 
-  const handleNetworkSelected = (network: CryptoOrTokenCurrency) => {
-    setCurrentStep("ASSET_SELECTION");
-  };
-
   const handleAccountSelected = (account: AccountLike, parentAccount?: Account) => {
-    setCurrentStep("ASSET_SELECTION");
+    onAccountSelected?.(account, parentAccount);
   };
 
   useEffect(() => {
@@ -198,7 +234,18 @@ const ModularDrawerFlowManager = ({
           />
         );
       case "ACCOUNT_SELECTION":
-        return <FakeScreenAccountSelection />;
+        if (selectedAsset && selectedNetwork) {
+          return (
+            <AccountSelection
+              asset={selectedAsset}
+              accounts$={accounts$}
+              onAccountSelected={handleAccountSelected}
+              source="Accounts"
+              flow="Modular Account Flow"
+            />
+          );
+        }
+        return null;
       default:
         return null;
     }
@@ -221,7 +268,5 @@ const ModularDrawerFlowManager = ({
     </>
   );
 };
-
-const FakeScreenAccountSelection = () => <div>Account Selection</div>;
 
 export default ModularDrawerFlowManager;
