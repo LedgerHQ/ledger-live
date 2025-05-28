@@ -1,5 +1,5 @@
 import { Flex } from "@ledgerhq/native-ui";
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { useLargeMover } from "./hooks/useLargeMover";
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { Card } from "./components/Card";
@@ -15,16 +15,14 @@ import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
 import { LoadingIndicator } from "./components/Loading";
 import { CardType } from "./types";
-import { TrackScreen } from "~/analytics";
+import { track, TrackScreen } from "~/analytics";
 import { PAGE_NAME } from "./const";
 import { useLargeMoverChartData } from "@ledgerhq/live-common/market/hooks/useLargeMoverChartData";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
-import { OverlayTutorial } from "./components/OverlayTutotial";
-import { useSelector, useDispatch } from "react-redux";
+import { OverlayTutorial } from "./components/OverlayTutorial";
+import { useSelector } from "react-redux";
 import { tutorialSelector } from "~/reducers/largeMover";
-import { getLargeMoverState } from "~/db";
-import { setTutorial } from "~/actions/largeMoverLandingPage";
 
 type LargeMoverLandingPageProps = StackNavigatorProps<
   LandingPagesNavigatorParamList,
@@ -54,19 +52,20 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
   const constHeight = Platform.OS === "ios" ? 0.75 : 0.8;
   const height = getWindowDimensions().height * constHeight;
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  const dispatch = useDispatch();
   const showOverlay = useSelector(tutorialSelector);
+  const handleSwipe = (newIndex: number) => {
+    const from = currenciesWithId[currentIndex].data?.name;
+    const to = currenciesWithId[newIndex].data?.name;
 
-  useEffect(() => {
-    getLargeMoverState().then(state => {
-      if (state && typeof state.tutorial === "boolean") {
-        dispatch(setTutorial(state.tutorial));
-      } else {
-        dispatch(setTutorial(true));
-      }
+    track("large_mover_swipe", {
+      page: PAGE_NAME,
+      button: "Swipe",
+      from,
+      to,
     });
-  }, [dispatch, showOverlay]);
+
+    setCurrentIndex(newIndex);
+  };
 
   const currenciesWithId = useMemo(
     () =>
@@ -123,7 +122,7 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
               <SwiperComponent
                 cardContainerStyle={{ justifyContent: "flex-start" }}
                 currentIndex={currentIndex}
-                onIndexChange={setCurrentIndex}
+                onIndexChange={handleSwipe}
                 initialCards={currenciesWithId}
                 renderCard={renderCard}
               />
