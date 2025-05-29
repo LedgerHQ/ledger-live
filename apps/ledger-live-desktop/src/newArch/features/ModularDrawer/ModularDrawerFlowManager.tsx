@@ -58,33 +58,51 @@ const ModularDrawerFlowManager = ({
     searchedValue,
     assetTypes,
     setSearchedValue,
-    handleBack,
     handleNetworkSelected,
     handleAssetSelected,
     handleAccountSelected,
+    goBackToAssetSelection,
+    goBackToNetworkSelection,
   } = useModularDrawerFlowState({
     currenciesByProvider,
     assetsToDisplay,
-    networksToDisplay,
     currenciesIdsArray,
     isSelectAccountFlow,
-    currentStep,
     hasOneNetwork,
-    hasOneCurrency,
     setNetworksToDisplay,
     goToStep,
     onAssetSelected,
     onAccountSelected,
   });
 
-  const backButtonDisabled = useMemo(() => {
-    if (hasOneCurrency) return true;
-    if (currentStep === "NETWORK_SELECTION") return hasOneCurrency;
-    if (currentStep === "ACCOUNT_SELECTION") {
-      return hasOneCurrency && hasOneNetwork && !(selectedAsset && selectedNetwork);
+  const handleBack = useMemo(() => {
+    const canGoBackToAsset = !hasOneCurrency;
+    const canGoBackToNetwork = !hasOneNetwork;
+
+    switch (currentStep) {
+      case "NETWORK_SELECTION": {
+        return canGoBackToAsset ? goBackToAssetSelection : undefined;
+      }
+      case "ACCOUNT_SELECTION": {
+        if (hasOneNetwork || !networksToDisplay || networksToDisplay.length <= 1) {
+          return goBackToAssetSelection;
+        } else if (canGoBackToNetwork) {
+          return goBackToNetworkSelection;
+        }
+        return undefined;
+      }
+      default: {
+        return undefined;
+      }
     }
-    return true;
-  }, [hasOneCurrency, currentStep, hasOneNetwork, selectedAsset, selectedNetwork]);
+  }, [
+    currentStep,
+    goBackToAssetSelection,
+    goBackToNetworkSelection,
+    hasOneCurrency,
+    hasOneNetwork,
+    networksToDisplay,
+  ]);
 
   const renderStepContent = (step: ModularDrawerStep) => {
     switch (step) {
@@ -129,7 +147,7 @@ const ModularDrawerFlowManager = ({
 
   return (
     <>
-      <Header step={currentStep} onBackClick={handleBack} hidden={backButtonDisabled} />
+      <Header step={currentStep} onBackClick={handleBack} />
       <AnimatePresence mode="sync">
         <AnimatedScreenWrapper
           key={currentStep}

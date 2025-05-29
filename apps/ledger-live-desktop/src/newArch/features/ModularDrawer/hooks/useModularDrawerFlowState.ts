@@ -9,39 +9,30 @@ import { ModularDrawerStep } from "../types";
 type Props = {
   currenciesByProvider: CurrenciesByProviderId[];
   assetsToDisplay: CryptoOrTokenCurrency[];
-  networksToDisplay?: CryptoOrTokenCurrency[];
   setNetworksToDisplay: (networks?: CryptoOrTokenCurrency[]) => void;
   currenciesIdsArray: string[];
   goToStep: (nextStep: ModularDrawerStep) => void;
   isSelectAccountFlow?: boolean;
   onAssetSelected?: (asset: CryptoOrTokenCurrency) => void;
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
-  currentStep: string;
   hasOneNetwork: boolean;
-  hasOneCurrency: boolean;
 };
 
 export function useModularDrawerFlowState({
   currenciesByProvider,
   assetsToDisplay,
-  networksToDisplay,
   setNetworksToDisplay,
   currenciesIdsArray,
   goToStep,
   isSelectAccountFlow,
   onAssetSelected,
   onAccountSelected,
-  currentStep,
   hasOneNetwork,
-  hasOneCurrency,
 }: Props) {
   const [selectedAsset, setSelectedAsset] = useState<CryptoOrTokenCurrency>();
   const [selectedNetwork, setSelectedNetwork] = useState<CryptoOrTokenCurrency>();
   const [searchedValue, setSearchedValue] = useState<string>();
   const [providers, setProviders] = useState<CurrenciesByProviderId>();
-
-  const canGoBackToAsset = !hasOneCurrency;
-  const canGoBackToNetwork = !hasOneNetwork;
 
   const assetTypes = useMemo(
     () =>
@@ -86,21 +77,6 @@ export function useModularDrawerFlowState({
     },
     [goToStep],
   );
-
-  const handleBack = () => {
-    if (currentStep === "NETWORK_SELECTION" && canGoBackToAsset) {
-      goBackToAssetSelection();
-      return;
-    }
-    if (currentStep === "ACCOUNT_SELECTION") {
-      if (hasOneNetwork || !networksToDisplay || networksToDisplay.length <= 1) {
-        goBackToAssetSelection();
-      } else if (canGoBackToNetwork) {
-        goBackToNetworkSelection();
-      }
-      return;
-    }
-  };
 
   const handleNetworkSelected = useCallback(
     (network: CryptoOrTokenCurrency) => {
@@ -201,7 +177,6 @@ export function useModularDrawerFlowState({
     goBackToNetworkSelection,
     goToNetworkSelection,
     goToAccountSelection,
-    handleBack,
     handleNetworkSelected,
     handleAssetSelected,
     handleAccountSelected,
