@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -16,9 +16,7 @@ import { LoadingBasedGroupedCurrencies } from "@ledgerhq/live-common/deposit/typ
 
 import { useModularDrawerNavigation } from "./hooks/useModularDrawerNavigation";
 import { useAssetSelection } from "./hooks/useAssetSelection";
-import { useNetworkSelection } from "./hooks/useNetworkSelection";
 import { useModularDrawerFlowState } from "./hooks/useModularDrawerFlowState";
-import { isBackButtonDisabled } from "./utils/backButton";
 
 type Props = {
   currencies: CryptoOrTokenCurrency[];
@@ -47,12 +45,12 @@ const ModularDrawerFlowManager = ({
     currenciesIdsArray,
   } = useAssetSelection(currencies, sortedCryptoCurrencies);
 
-  const { networksToDisplay, setNetworksToDisplay } = useNetworkSelection();
+  const [networksToDisplay, setNetworksToDisplay] = useState<CryptoOrTokenCurrency[]>();
 
   const { currentStep, navigationDirection, goToStep } = useModularDrawerNavigation();
   const isSelectAccountFlow = !!onAccountSelected;
-  const isASingleAsset = currencies.length === 1;
-  const hasOnlyOneNetwork = networksToDisplay?.length === 1;
+  const hasOneCurrency = currencies.length === 1;
+  const hasOneNetwork = networksToDisplay?.length === 1;
 
   const {
     selectedAsset,
@@ -71,21 +69,22 @@ const ModularDrawerFlowManager = ({
     currenciesIdsArray,
     isSelectAccountFlow,
     currentStep,
-    hasOnlyOneNetwork,
-    isASingleAsset,
+    hasOneNetwork,
+    hasOneCurrency,
     setNetworksToDisplay,
     goToStep,
     onAssetSelected,
     onAccountSelected,
   });
 
-  const backButtonDisabled = isBackButtonDisabled({
-    isASingleAsset,
-    currentStep,
-    hasOnlyOneNetwork,
-    selectedAsset,
-    selectedNetwork,
-  });
+  const backButtonDisabled = useMemo(() => {
+    if (hasOneCurrency) return true;
+    if (currentStep === "NETWORK_SELECTION") return hasOneCurrency;
+    if (currentStep === "ACCOUNT_SELECTION") {
+      return hasOneCurrency && hasOneNetwork && !(selectedAsset && selectedNetwork);
+    }
+    return true;
+  }, [hasOneCurrency, currentStep, hasOneNetwork, selectedAsset, selectedNetwork]);
 
   const renderStepContent = (step: ModularDrawerStep) => {
     switch (step) {
