@@ -3,7 +3,7 @@ name: "[CAL] - Import CAL Tokens - Scheduled"
 on:
   push:
     branches:
-      - LIVE-18444-new-cal-importer-workflow
+      - LIVE-18444-new-cal-importer-workfloww
   workflow_dispatch:
   schedule:
     - cron: "0 2 */2 * *"
@@ -63,11 +63,11 @@ jobs:
         run: |
           git add .
           if git diff --cached --quiet; then
-            echo "changed=true" >> $GITHUB_OUTPUT
-          else
             echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
           fi
-      - name: Debuuging changed output X
+      - name: Debuuging changed output
         run: echo "changed=${{ steps.changes.outputs.changed }}"
 
       - name: Commit imported tokens
