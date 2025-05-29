@@ -122,7 +122,7 @@ jobs:
         run: |
           echo "ios-native-key=poc-detox-native-ios-${{ hashFiles('apps/ledger-live-mobile/ios') }}" >> $GITHUB_OUTPUT
           echo "android-native-key=${{ hashFiles('apps/ledger-live-mobile/android') }}" >> $GITHUB_OUTPUT
-          echo "ios-js-key=${{ inputs.ref || github.sha }} >> $GITHUB_OUTPUT
+          echo "ios-js-key=${{ inputs.ref || github.sha }}" >> $GITHUB_OUTPUT
           echo "android-js-key=${{ inputs.ref || github.sha }}" >> $GITHUB_OUTPUT
           echo "android-testbinary-key=${{ hashFiles('apps/ledger-live-mobile/android') }}" >> $GITHUB_OUTPUT
 
