@@ -72,7 +72,7 @@ jobs:
           fi
 
       - name: Commit imported tokens
-        if: steps.changes.outputs.changed == 'true'
+        if: ${{ steps.changes.outputs.changed == 'true' }}
         uses: planetscale/ghcommit-action@v0.2.9
         with:
           commit_message: "chore(cal): import CAL tokens"
@@ -82,7 +82,7 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
       - name: Create PR to develop
-        if: steps.changes.outputs.changed == 'true'
+        if: ${{ steps.changes.outputs.changed == 'true' }}
         run: |
           gh pr create --title ":zap: Import CAL tokens" --body "Automated import of CAL tokens" --base develop --head $CAL_BRANCH
         env:
@@ -91,6 +91,5 @@ jobs:
   test-libraries:
     name: "Test Libraries"
     needs: import-cal-tokens
-    if: !failure() && ${{ needs.import-cal-tokens.outputs.changed }} == 'true'
     uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
     secrets: inherit
