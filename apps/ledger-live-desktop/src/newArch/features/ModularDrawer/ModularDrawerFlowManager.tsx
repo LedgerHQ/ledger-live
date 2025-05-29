@@ -12,7 +12,10 @@ import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/us
 import { NetworkSelection } from "./screens/NetworkSelection";
 import { Header } from "./components/Header";
 import { AccountSelection } from "./screens/AccountSelection";
-import { LoadingBasedGroupedCurrencies } from "@ledgerhq/live-common/deposit/type";
+import {
+  CurrenciesByProviderId,
+  LoadingBasedGroupedCurrencies,
+} from "@ledgerhq/live-common/deposit/type";
 
 import { useModularDrawerNavigation } from "./hooks/useModularDrawerNavigation";
 import { useAssetSelection } from "./hooks/useAssetSelection";
@@ -56,7 +59,6 @@ const ModularDrawerFlowManager = ({
     selectedAsset,
     selectedNetwork,
     searchedValue,
-    assetTypes,
     setSearchedValue,
     handleNetworkSelected,
     handleAssetSelected,
@@ -74,6 +76,16 @@ const ModularDrawerFlowManager = ({
     onAssetSelected,
     onAccountSelected,
   });
+
+  const assetTypes = useMemo(
+    () =>
+      currenciesByProvider.map((provider: CurrenciesByProviderId) => ({
+        id: provider.providerId,
+        name: provider.providerId,
+        ticker: provider.providerId,
+      })),
+    [currenciesByProvider],
+  );
 
   const handleBack = useMemo(() => {
     const canGoBackToAsset = !hasOneCurrency;
