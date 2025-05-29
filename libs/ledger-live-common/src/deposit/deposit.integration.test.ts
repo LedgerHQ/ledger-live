@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
+import "../__tests__/test-helpers/setup";
 import { renderHook, waitFor } from "@testing-library/react";
 import { useGroupedCurrenciesByProvider } from ".";
-import "../__tests__/test-helpers/setup";
 // Explicitly mock the featureFlags module
 
 describe("useGroupedCurrenciesByProvider", () => {
