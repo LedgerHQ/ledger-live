@@ -120,7 +120,7 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
   import-cal-tokens-fail:
-    name: Failure Reporting X
+    name: Failure Reporting
     needs: [import-cal-tokens, test-libraries]
     if: false
     runs-on: ubuntu-22.04
