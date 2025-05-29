@@ -1,7 +1,7 @@
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { getProvider } from "../utils/getProvider";
-import { CryptoOrTokenCurrency, CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { ModularDrawerStep } from "../types";
@@ -33,21 +33,6 @@ export function useModularDrawerFlowState({
   const [selectedNetwork, setSelectedNetwork] = useState<CryptoOrTokenCurrency>();
   const [searchedValue, setSearchedValue] = useState<string>();
   const [providers, setProviders] = useState<CurrenciesByProviderId>();
-
-  const assetTypes = useMemo(
-    () =>
-      currenciesByProvider.map((provider: CurrenciesByProviderId) => ({
-        id: provider.providerId,
-        name: provider.providerId,
-        ticker: provider.providerId,
-      })),
-    [currenciesByProvider],
-  );
-
-  const findProvider = useCallback(
-    (currency: CryptoCurrency | TokenCurrency) => getProvider(currency, currenciesByProvider),
-    [currenciesByProvider],
-  );
 
   const goBackToAssetSelection = useCallback(() => {
     setSelectedAsset(undefined);
@@ -102,7 +87,7 @@ export function useModularDrawerFlowState({
 
   const handleAssetSelected = useCallback(
     (currency: CryptoOrTokenCurrency) => {
-      const currentProvider = findProvider(currency);
+      const currentProvider = getProvider(currency, currenciesByProvider);
       setProviders(currentProvider);
 
       if (!currentProvider) {
@@ -133,8 +118,8 @@ export function useModularDrawerFlowState({
       }
     },
     [
+      currenciesByProvider,
       currenciesIdsArray,
-      findProvider,
       goToAccountSelection,
       goToNetworkSelection,
       isSelectAccountFlow,
@@ -172,7 +157,6 @@ export function useModularDrawerFlowState({
     setSearchedValue,
     providers,
     setProviders,
-    assetTypes,
     goBackToAssetSelection,
     goBackToNetworkSelection,
     goToNetworkSelection,
