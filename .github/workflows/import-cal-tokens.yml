@@ -1,9 +1,6 @@
 name: "[CAL] - Import CAL Tokens - Scheduled"
 
 on:
-  push:
-    branches:
-      - LIVE-18444-new-cal-importer-workflow
   workflow_dispatch:
   schedule:
     - cron: "0 2 */2 * *"
@@ -114,14 +111,14 @@ jobs:
 
       - name: Merge PR
         run: |
-          gh pr merge $CAL_BRANCH --merge --delete-branch --admin || echo "PR does not exist"
+          gh pr merge $CAL_BRANCH --merge --delete-branch --admin
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
   import-cal-tokens-fail:
     name: Failure Reporting
     needs: [import-cal-tokens, test-libraries]
-    if: false
+    if: failure()
     runs-on: ubuntu-22.04
     steps:
       - name: post to a Slack channel
