@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.71.0-nightly.3
+
+### Minor Changes
+
+- [#10351](https://github.com/LedgerHQ/ledger-live/pull/10351) [`f42f353`](https://github.com/LedgerHQ/ledger-live/commit/f42f353a593d0a1cd0a237648765080c85d0eea7) Thanks [@Canestin](https://github.com/Canestin)! - Add Phantom derivation path on Solana
+
 ## 6.71.0-nightly.2
 
 ### Patch Changes
