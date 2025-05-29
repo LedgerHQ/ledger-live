@@ -1,21 +1,14 @@
 import React from "react";
-import { NavigateBackButton } from "./NavigateBackButton";
 import styled from "styled-components";
 import { Title } from "./Title";
 import { ModularDrawerStep, MODULAR_DRAWER_STEP } from "../../types";
 import { track } from "~/renderer/analytics/segment";
+import { Icons } from "@ledgerhq/react-ui/index";
 
-type Props =
-  | {
-      hidden: true | false;
-      onBackClick: () => void;
-      step: ModularDrawerStep;
-    }
-  | {
-      hidden?: undefined;
-      onBackClick?: undefined;
-      step: ModularDrawerStep;
-    };
+type Props = {
+  onBackClick?: () => void;
+  step: ModularDrawerStep;
+};
 
 const TranslationKeyMap: Record<ModularDrawerStep, string> = {
   [MODULAR_DRAWER_STEP.ASSET_SELECTION]: "modularAssetDrawer.selectAsset",
@@ -23,18 +16,24 @@ const TranslationKeyMap: Record<ModularDrawerStep, string> = {
   [MODULAR_DRAWER_STEP.ACCOUNT_SELECTION]: "modularAssetDrawer.selectAccount",
 };
 
-export const Header = ({ step, hidden, onBackClick }: Props) => {
-  const handleBackClick = () => {
-    track("button_clicked", {
-      step,
-      button: "modularDrawer_backButton",
-    });
-    onBackClick?.();
-  };
+export const Header = ({ step, onBackClick }: Props) => {
+  const handleBackClick = onBackClick
+    ? () => {
+        track("button_clicked", {
+          step,
+          button: "modularDrawer_backButton",
+        });
+        onBackClick();
+      }
+    : undefined;
 
   return (
     <HeaderContainer>
-      <NavigateBackButton hidden={hidden} onClick={handleBackClick} />
+      {handleBackClick && (
+        <BackButton onClick={handleBackClick} data-testid="mad-back-button">
+          <Icons.ArrowLeft />
+        </BackButton>
+      )}
       <Title translationKey={TranslationKeyMap[step]} />
     </HeaderContainer>
   );
@@ -46,4 +45,18 @@ const HeaderContainer = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
+`;
+
+const BackButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  position: absolute;
+  top: 20px;
+  left: 16px;
+  z-index: 1000;
 `;
