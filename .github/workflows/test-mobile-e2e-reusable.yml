@@ -325,7 +325,7 @@ jobs:
 
   detox-tests-ios:
     name: "iOS Detox"
-    needs: [build-ios-native, build-ios-js]
+    needs: [build-ios-native, build-ios-js, determine-builds]
     runs-on: ["${{ inputs.macos-specificity-runner-label || 'general-pool' }}", macOS, ARM64]
     if: ${{ !inputs.speculos_tests && github.event_name != 'schedule' && !failure() && !cancelled() }}
     strategy:
@@ -386,7 +386,7 @@ jobs:
         uses: tespkg/actions-cache/restore@v1
         with:
           path: ${{ env.IOS_NATIVE_PATH }}
-          key: ${{ steps.determine-builds.outputs.ios-native-key }}
+          key: ${{ needs.determine-builds.outputs.ios-native-key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
@@ -398,7 +398,7 @@ jobs:
         uses: tespkg/actions-cache/restore@v1
         with:
           path: ${{ env.IOS_JSBUNDLE_PATH }}
-          key: ${{ steps.determine-builds.outputs.ios-js-key }}
+          key: ${{ needs.determine-builds.outputs.ios-js-key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
@@ -631,7 +631,7 @@ jobs:
 
   detox-tests-android:
     name: "Android Detox"
-    needs: [build-android-native, build-android-js]
+    needs: [build-android-native, build-android-js, determine-builds]
     if: ${{ !inputs.speculos_tests && github.event_name != 'schedule' && !failure() && !cancelled() }}
     runs-on: [ledger-live-linux-8CPU-32RAM]
     env:
@@ -686,7 +686,7 @@ jobs:
         uses: tespkg/actions-cache/restore@v1
         with:
           path: ${{ env.ANDROID_APK_PATH }}
-          key: ${{ steps.determine-builds.outputs.android-native-key }}
+          key: ${{ needs.determine-builds.outputs.android-native-key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
@@ -698,7 +698,7 @@ jobs:
         uses: tespkg/actions-cache/restore@v1
         with:
           path: ${{ env.ANDROID_TESTBINARY_PATH }}
-          key: ${{ steps.determine-builds.outputs.android-testbinary-key }}
+          key: ${{ needs.determine-builds.outputs.android-testbinary-key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
@@ -710,7 +710,7 @@ jobs:
         uses: tespkg/actions-cache/restore@v1
         with:
           path: ${{ env.ANDROID_JSBUNDLE_PATH }}
-          key: ${{ steps.determine-builds.outputs.android-js-key }}
+          key: ${{ needs.determine-builds.outputs.android-js-key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
