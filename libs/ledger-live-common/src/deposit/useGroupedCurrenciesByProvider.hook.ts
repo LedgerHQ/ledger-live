@@ -12,16 +12,16 @@ const initialResult: GroupedCurrencies = {
   currenciesByProvider: [],
 };
 
-export const useGroupedCurrenciesByProvider = (
-  withLoading?: boolean,
-): GroupedCurrencies | LoadingBasedGroupedCurrencies => {
+export function useGroupedCurrenciesByProvider(withLoading: true): LoadingBasedGroupedCurrencies;
+export function useGroupedCurrenciesByProvider(withLoading?: false): GroupedCurrencies;
+export function useGroupedCurrenciesByProvider(withLoading = false) {
   const [result, setResult] = useState(initialResult);
 
   const [loadingStatus, setLoadingStatus] = useState<LoadingStatus>(LoadingStatus.Idle);
-  const coinsAndTokensSupported = useMemo(
-    () => (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens()),
-    [],
-  );
+  const coinsAndTokensSupported = useMemo(() => {
+    const result: CryptoOrTokenCurrency[] = [];
+    return result.concat(listSupportedCurrencies()).concat(listSupportedTokens());
+  }, []);
 
   // Get mapped assets filtered by supported & sorted currencies, grouped by provider id
   useEffect(() => {
@@ -37,5 +37,6 @@ export const useGroupedCurrenciesByProvider = (
       loadCurrenciesByProvider(coinsAndTokensSupported).then(setResult);
     }
   }, [coinsAndTokensSupported, withLoading]);
+
   return withLoading ? { result, loadingStatus } : result;
-};
+}

@@ -35,7 +35,7 @@ import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
-import { LoadingBasedGroupedCurrencies, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
+import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 import WarningBannerStatus from "~/components/WarningBannerStatus";
@@ -85,9 +85,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
     [cryptoAccounts],
   );
 
-  const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(
-    true,
-  ) as LoadingBasedGroupedCurrencies;
+  const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(true);
 
   const isAddAccountCtaDisabled = [LoadingStatus.Pending, LoadingStatus.Error].includes(
     providersLoadingStatus,

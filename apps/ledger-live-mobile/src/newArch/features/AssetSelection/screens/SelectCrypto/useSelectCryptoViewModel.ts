@@ -11,7 +11,6 @@ import { track } from "~/analytics";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AssetSelectionNavigationProps, CommonParams } from "../../types";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
-import { LoadingBasedGroupedCurrencies } from "@ledgerhq/live-common/deposit/type";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 import { AnalyticMetadata } from "LLM/hooks/useAnalytics/types";
 import { AnalyticPages } from "LLM/hooks/useAnalytics/enums";
@@ -38,9 +37,7 @@ export default function useSelectCryptoViewModel({
   );
   const navigation = useNavigation<AssetSelectionNavigationProps["navigation"]>();
 
-  const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(
-    true,
-  ) as LoadingBasedGroupedCurrencies;
+  const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(true);
   const { currenciesByProvider, sortedCryptoCurrencies } = result;
 
   const onPressItem = useCallback(
