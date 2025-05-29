@@ -1,4 +1,3 @@
-import { expect } from "detox";
 import { delay, openDeeplink } from "../../helpers/commonHelpers";
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 
@@ -17,7 +16,7 @@ export default class SwapPage {
   @Step("Expect swap page")
   async expectSwapPage() {
     const tab = this.swapFormTab();
-    await expect(tab).toBeVisible();
+    await detoxExpect(tab).toBeVisible();
   }
 
   @Step("Verify the amounts and accept swap")

@@ -24,6 +24,7 @@ export type DerivationMode =
   | "casper_wallet"
   | "solanaMain"
   | "solanaSub"
+  | "solanaBip44Change"
   | "hederaBip44"
   | "cardano"
   | "nearbip44h"

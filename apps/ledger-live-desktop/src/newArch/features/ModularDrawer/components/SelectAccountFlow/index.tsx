@@ -41,7 +41,12 @@ export const SelectAccountFlow = memo((props: SelectAccountDrawerProps) => {
         showBackButton={props.currencies.length > 1}
       />
       <SelectorContent>
-        <AccountSelectionStep {...props} asset={selectedAsset} source="source" flow="flow" />
+        <AccountSelectionStep
+          {...props}
+          asset={selectedAsset}
+          source="Accounts"
+          flow="Modular Account Flow"
+        />
       </SelectorContent>
     </SelectAccountFlowContainer>
   );

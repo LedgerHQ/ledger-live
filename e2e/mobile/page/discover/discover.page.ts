@@ -1,4 +1,4 @@
-import { expect, log } from "detox";
+import { log } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class DiscoverPage {
@@ -43,11 +43,11 @@ export default class DiscoverPage {
 
   @Step("Expect live app title")
   async expectApp(app: string) {
-    await expect(this.liveAppTitle()).toHaveText(this.getAppUrl(app));
+    await detoxExpect(this.liveAppTitle()).toHaveText(this.getAppUrl(app));
   }
 
   @Step("Expect discover page")
   async expectDiscoverPage() {
-    await expect(this.discoverPageHeader()).toBeVisible();
+    await detoxExpect(this.discoverPageHeader()).toBeVisible();
   }
 }

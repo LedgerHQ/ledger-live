@@ -7,7 +7,7 @@ import {
   findLatestAppCandidate,
   SpeculosTransport,
 } from "../load/speculos";
-import { SpeculosDevice } from "@ledgerhq/speculos-transport";
+import { createSpeculosDeviceCI, releaseSpeculosDeviceCI } from "./speculosCI";
 import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -38,6 +38,8 @@ import { NFTTransaction, Transaction } from "./models/Transaction";
 import { Delegate } from "./models/Delegate";
 import { Swap } from "./models/Swap";
 
+const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
+
 export type Spec = {
   currency?: CryptoCurrency;
   appQuery: {
@@ -51,6 +53,10 @@ export type Spec = {
 };
 
 export type Dependency = { name: string; appVersion?: string };
+export type SpeculosDevice = {
+  id: string;
+  port: number;
+};
 
 export function setExchangeDependencies(dependencies: Dependency[]) {
   const map = new Map<string, Dependency>();
@@ -376,9 +382,14 @@ export async function startSpeculos(
     coinapps,
     onSpeculosDeviceCreated,
   };
-
   try {
-    return await createSpeculosDevice(deviceParams);
+    const device = isSpeculosRemote
+      ? await createSpeculosDeviceCI(deviceParams)
+      : await createSpeculosDevice(deviceParams).then(device => {
+          invariant(device.ports.apiPort, "[E2E] Speculos apiPort is not defined");
+          return { id: device.id, port: device.ports.apiPort };
+        });
+    return device;
   } catch (e: unknown) {
     console.error(e);
     log("engine", `test ${testName} failed with ${String(e)}`);
@@ -388,7 +399,9 @@ export async function startSpeculos(
 export async function stopSpeculos(deviceId: string | undefined) {
   if (deviceId) {
     log("engine", `test ${deviceId} finished`);
-    await releaseSpeculosDevice(deviceId);
+    isSpeculosRemote
+      ? await releaseSpeculosDeviceCI(deviceId)
+      : await releaseSpeculosDevice(deviceId);
   }
 }
 
@@ -402,11 +415,12 @@ interface ResponseData {
 
 export async function waitFor(text: string, maxAttempts: number = 10): Promise<string[]> {
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
+  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
   let attempts = 0;
   let textFound: boolean = false;
   while (attempts < maxAttempts && !textFound) {
     const response = await axios.get<ResponseData>(
-      `http://127.0.0.1:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
+      `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
     );
     const responseData = response.data;
     const texts = responseData.events.map(event => event.text);
@@ -423,7 +437,8 @@ export async function waitFor(text: string, maxAttempts: number = 10): Promise<s
 
 export async function pressBoth() {
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
-  await axios.post(`http://127.0.0.1:${speculosApiPort}/button/both`, {
+  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
+  await axios.post(`${speculosAddress}:${speculosApiPort}/button/both`, {
     action: "press-and-release",
   });
 }
@@ -451,22 +466,25 @@ export async function pressUntilTextFound(
 }
 
 async function fetchCurrentScreenTexts(speculosApiPort: number): Promise<string> {
+  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
   const response = await axios.get<ResponseData>(
-    `http://127.0.0.1:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
+    `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
   );
   return response.data.events.map(event => event.text).join("");
 }
 
 async function fetchAllEvents(speculosApiPort: number): Promise<string[]> {
+  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
   const response = await axios.get<ResponseData>(
-    `http://127.0.0.1:${speculosApiPort}/events?stream=false&currentscreenonly=false`,
+    `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=false`,
   );
   return response.data.events.map(event => event.text);
 }
 
 export async function pressRightButton(): Promise<void> {
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
-  await axios.post(`http://127.0.0.1:${speculosApiPort}/button/right`, {
+  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
+  await axios.post(`${speculosAddress}:${speculosApiPort}/button/right`, {
     action: "press-and-release",
   });
 }
@@ -486,9 +504,10 @@ export function containsSubstringInEvent(targetString: string, events: string[])
 }
 
 export async function takeScreenshot(port?: number): Promise<Buffer | undefined> {
+  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
   const speculosApiPort = port ?? getEnv("SPECULOS_API_PORT");
   try {
-    const response = await axios.get(`http://127.0.0.1:${speculosApiPort}/screenshot`, {
+    const response = await axios.get(`${speculosAddress}:${speculosApiPort}/screenshot`, {
       responseType: "arraybuffer",
     });
     return response.data;

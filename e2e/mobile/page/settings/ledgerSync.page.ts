@@ -1,5 +1,4 @@
 import { activateLedgerSync } from "@ledgerhq/live-common/e2e/speculos";
-import { expect } from "detox";
 
 export default class LedgerSyncPage {
   successPage = "walletsync-success";
@@ -19,8 +18,8 @@ export default class LedgerSyncPage {
 
   @Step("Expect Ledger Sync activation page is displayed")
   async expectLedgerSyncPageIsDisplayed() {
-    await expect(this.activationTitle()).toBeVisible();
-    await expect(this.activationDescription()).toBeVisible();
+    await detoxExpect(this.activationTitle()).toBeVisible();
+    await detoxExpect(this.activationDescription()).toBeVisible();
   }
 
   @Step("Tap on the activation button")

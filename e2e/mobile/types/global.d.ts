@@ -39,6 +39,7 @@ declare global {
   var AppInfos: typeof AppInfosType;
   var Swap: typeof SwapType;
 
+  var detoxExpect: typeof NativeElementHelpers.expect;
   var waitForElementById: typeof NativeElementHelpers.waitForElementById;
   var waitForElementByText: typeof NativeElementHelpers.waitForElementByText;
   var waitForElementNotVisible: typeof NativeElementHelpers.waitForElementNotVisible;
