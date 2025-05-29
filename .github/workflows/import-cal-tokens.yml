@@ -63,13 +63,15 @@ jobs:
         run: |
           git stash
           git pull --rebase origin $CAL_BRANCH  # make sure we are up to date
-          git stash pop
+          git stash pop || echo "⚠️ stash pop failed or nothing to restore"
           git add .
           if git diff --cached --quiet; then
             echo "changed=true" >> $GITHUB_OUTPUT
           else
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
+      - name: Debuuging changed output
+        run: echo "changed=${{ steps.changes.outputs.changed }}"
 
       - name: Commit imported tokens
         if: ${{ steps.changes.outputs.changed == 'true' }}
