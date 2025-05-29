@@ -41,12 +41,49 @@ describe("createApi", () => {
   });
 
   describe("estimateFees", () => {
-    it("returns a default value", async () => {
+    it("returns fee for a native asset", async () => {
       const amount = BigInt(100);
 
       const fees = await api.estimateFees({
         asset: {
           type: "native",
+        },
+        type: "send",
+        sender,
+        amount,
+        recipient: recipient.freshAddress,
+      });
+
+      expect(fees.value).toBeGreaterThanOrEqual(0);
+    });
+
+    it("returns fee for a token coin", async () => {
+      const amount = BigInt(100);
+
+      const fees = await api.estimateFees({
+        asset: {
+          type: "token",
+          tokenType: "coin",
+          contractAddress:
+            "0x50788befc1107c0cc4473848a92e5c783c635866ce3c98de71d2eeb7d2a34f85::usdc_coin::USDCoin",
+        },
+        type: "send",
+        sender,
+        amount,
+        recipient: recipient.freshAddress,
+      });
+
+      expect(fees.value).toBeGreaterThanOrEqual(0);
+    });
+
+    it("returns fee for a token FA", async () => {
+      const amount = BigInt(100);
+
+      const fees = await api.estimateFees({
+        asset: {
+          type: "token",
+          tokenType: "fungible_asset",
+          contractAddress: "0x357b0b74bc833e95a115ad22604854d6b0fca151cecd94111770e5d6ffc9dc2b",
         },
         type: "send",
         sender,
