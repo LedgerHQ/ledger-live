@@ -93,7 +93,7 @@ const envDefinitions = {
     desc: "Enable staking for Aptos",
   },
   API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
-    def: "https://algorand.coin.ledger.com",
+    def: "http://algorand.coin.ledger-test.com",
     parser: stringParser,
     desc: "Node API endpoint for algorand",
   },
