@@ -17,8 +17,8 @@ import { LoadingBasedGroupedCurrencies } from "@ledgerhq/live-common/deposit/typ
 import { useModularDrawerNavigation } from "./hooks/useModularDrawerNavigation";
 import { useAssetSelection } from "./hooks/useAssetSelection";
 import { useNetworkSelection } from "./hooks/useNetworkSelection";
-import { useBackButton } from "./hooks/useBackButton";
 import { useModularDrawerFlowState } from "./hooks/useModularDrawerFlowState";
+import { isBackButtonDisabled } from "./utils/backButton";
 
 type Props = {
   currencies: CryptoOrTokenCurrency[];
@@ -79,7 +79,7 @@ const ModularDrawerFlowManager = ({
     onAccountSelected,
   });
 
-  const { backButtonDisabled } = useBackButton({
+  const backButtonDisabled = isBackButtonDisabled({
     isASingleAsset,
     currentStep,
     hasOnlyOneNetwork,
