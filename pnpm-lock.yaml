@@ -330,9 +330,6 @@ importers:
       '@braze/web-sdk':
         specifier: 4.10.2
         version: 4.10.2
-      '@ledgerhq/coin-aptos':
-        specifier: workspace:^
-        version: link:../../libs/coin-modules/coin-aptos
       '@ledgerhq/coin-bitcoin':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-bitcoin
