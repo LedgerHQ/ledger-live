@@ -17,8 +17,8 @@ type Props = {
   onAssetSelected?: (asset: CryptoOrTokenCurrency) => void;
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
   currentStep: string;
-  hasOnlyOneNetwork: boolean;
-  isASingleAsset: boolean;
+  hasOneNetwork: boolean;
+  hasOneCurrency: boolean;
 };
 
 export function useModularDrawerFlowState({
@@ -32,16 +32,16 @@ export function useModularDrawerFlowState({
   onAssetSelected,
   onAccountSelected,
   currentStep,
-  hasOnlyOneNetwork,
-  isASingleAsset,
+  hasOneNetwork,
+  hasOneCurrency,
 }: Props) {
   const [selectedAsset, setSelectedAsset] = useState<CryptoOrTokenCurrency>();
   const [selectedNetwork, setSelectedNetwork] = useState<CryptoOrTokenCurrency>();
   const [searchedValue, setSearchedValue] = useState<string>();
   const [providers, setProviders] = useState<CurrenciesByProviderId>();
 
-  const canGoBackToAsset = !isASingleAsset;
-  const canGoBackToNetwork = !hasOnlyOneNetwork;
+  const canGoBackToAsset = !hasOneCurrency;
+  const canGoBackToNetwork = !hasOneNetwork;
 
   const assetTypes = useMemo(
     () =>
@@ -93,7 +93,7 @@ export function useModularDrawerFlowState({
       return;
     }
     if (currentStep === "ACCOUNT_SELECTION") {
-      if (hasOnlyOneNetwork || !networksToDisplay || networksToDisplay.length <= 1) {
+      if (hasOneNetwork || !networksToDisplay || networksToDisplay.length <= 1) {
         goBackToAssetSelection();
       } else if (canGoBackToNetwork) {
         goBackToNetworkSelection();
@@ -174,13 +174,13 @@ export function useModularDrawerFlowState({
     if (assetsToDisplay && assetsToDisplay.length === 1) {
       handleAssetSelected(assetsToDisplay[0]);
     }
-    if (hasOnlyOneNetwork && selectedAsset) {
+    if (hasOneNetwork && selectedAsset) {
       setSelectedNetwork(selectedAsset);
       goToStep("NETWORK_SELECTION");
     }
   }, [
     assetsToDisplay,
-    hasOnlyOneNetwork,
+    hasOneNetwork,
     selectedAsset,
     onAssetSelected,
     handleAssetSelected,
