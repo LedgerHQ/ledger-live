@@ -62,7 +62,7 @@ jobs:
         id: changes
         run: |
           git stash
-          git pull --rebase origin $CAL_BRANCH  # make sure previous commit is included
+          git pull --rebase origin $CAL_BRANCH  # make sure we are up to date
           git stash pop
           git add .
           if git diff --cached --quiet; then
