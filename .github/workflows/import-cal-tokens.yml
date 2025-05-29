@@ -3,7 +3,7 @@ name: "[CAL] - Import CAL Tokens - Scheduled"
 on:
   push:
     branches:
-      - LIVE-18444-new-cal-importer-workflow
+      - LIVE-18444-new-cal-importer-workflowx
   workflow_dispatch:
   schedule:
     - cron: "0 2 */2 * *"
@@ -72,7 +72,7 @@ jobs:
           fi
 
       - name: Commit imported tokens
-        if: ${{ steps.changes.outputs.changed == 'false' }}
+        if: ${{ steps.changes.outputs.changed == 'true' }}
         uses: planetscale/ghcommit-action@v0.2.9
         with:
           commit_message: "chore(cal): import CAL tokens"
