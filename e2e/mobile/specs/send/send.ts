@@ -56,9 +56,8 @@ export function runSendTest(transaction: TransactionType, tmsLinks: string[]) {
 
       await verifyAppValidationSendInfo(transaction, amountWithCode);
 
-      await app.speculos.signSendTransaction(transaction);
-
       await device.disableSynchronization();
+      await app.speculos.signSendTransaction(transaction);
       await app.common.successViewDetails();
 
       await app.operationDetails.waitForOperationDetails();
@@ -224,9 +223,8 @@ export function runSendENSTest(transaction: TransactionType, tmsLinks: string[])
 
       await verifyAppValidationSendInfo(transaction, amountWithCode);
 
-      await app.speculos.signSendTransaction(transaction);
-
       await device.disableSynchronization();
+      await app.speculos.signSendTransaction(transaction);
       await app.common.successViewDetails();
 
       await app.operationDetails.waitForOperationDetails();
