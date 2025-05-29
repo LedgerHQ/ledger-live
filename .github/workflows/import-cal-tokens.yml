@@ -91,7 +91,7 @@ jobs:
   test-libraries:
     name: "Test Libraries"
     needs: import-cal-tokens
-    if: !failure() && ${{ needs.import-cal-tokens.outputs.changed == 'true' }}
+    if: ${{ !failure() && needs.import-cal-tokens.outputs.changed == 'true' }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
     secrets: inherit
 
@@ -99,7 +99,7 @@ jobs:
     name: "Auto Merge PR"
     needs: [import-cal-tokens, test-libraries]
     runs-on: ubuntu-22.04
-    if: !failure() && ${{ needs.import-cal-tokens.outputs.changed == 'true' }}
+    if: ${{ !failure() && needs.import-cal-tokens.outputs.changed == 'true' }}
     steps:
       - name: Generate token
         id: generate-token
