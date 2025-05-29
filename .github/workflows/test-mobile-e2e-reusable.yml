@@ -168,7 +168,7 @@ jobs:
 
   build-ios-native:
     name: "iOS Build Native"
-    if: ${{ steps.determine-builds.outputs.ios-native-exists != 'true' }}
+    if: ${{ needs.determine-builds.outputs.ios-native-exists != 'true' }}
     needs: [determine-builds]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -258,7 +258,7 @@ jobs:
 
   build-ios-js:
     name: "iOS Build JS"
-    if: ${{ steps.determine-builds.outputs.ios-js-exists != 'true' }}
+    if: ${{ needs.determine-builds.outputs.ios-js-exists != 'true' }}
     needs: [determine-builds]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -494,6 +494,8 @@ jobs:
   build-android-native:
     name: "Android Build Native"
     runs-on: [ledger-live-4xlarge]
+    needs: [determine-builds]
+    if: ${{ needs.determine-builds.outputs.android-native-exists != 'true' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -568,6 +570,8 @@ jobs:
   build-android-js:
     name: "Android Build JS"
     runs-on: [ ledger-live-4xlarge ]
+    if: ${{ needs.determine-builds.outputs.android-js-exists != 'true' }}
+    needs: [determine-builds]
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
