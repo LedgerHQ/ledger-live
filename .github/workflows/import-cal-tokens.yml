@@ -72,7 +72,7 @@ jobs:
           fi
 
       - name: Commit imported tokens
-        if: ${{ steps.changes.outputs.changed == 'true' }}
+        if: ${{ steps.changes.outputs.changed == 'false' }}
         uses: planetscale/ghcommit-action@v0.2.9
         with:
           commit_message: "chore(cal): import CAL tokens"
