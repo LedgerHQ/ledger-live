@@ -544,9 +544,6 @@ jobs:
       - name: Fix emulator directory permissions
         run: sudo chown -R $(whoami):$(id -ng) /usr/local/lib/android/sdk/emulator/
 
-      - name: Gradle cache
-        uses: gradle/actions/setup-gradle@v3
-
       - name: Install dependencies
         run: |
           pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
