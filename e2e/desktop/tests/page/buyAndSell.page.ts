@@ -1,6 +1,6 @@
 import { step } from "../misc/reporters/step";
 import { WebViewAppPage } from "./webViewApp.page";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export type TabName = "Buy" | "Sell";
 
@@ -22,13 +22,13 @@ export class BuyAndSellPage extends WebViewAppPage {
   }
 
   @step("Expect asset selected to be displayed")
-  async verifySelectedAssetIsDisplayed(account: Account) {
+  async verifySelectedAssetIsDisplayed(account: AccountType) {
     await this.verifyElementText(this.cryptoCurrencySelector, account.currency.ticker);
-    await this.verifyElementText(this.cryptoCurrencySelectorLabel, account.accountName);
+    await this.verifyElementText(this.cryptoCurrencySelectorLabel, getParentAccountName(account));
   }
 
   @step("Assert Buy/Sell landing")
-  async verifyBuySellLandingAndCryptoAssetSelector(account: Account, selectedTab: TabName) {
+  async verifyBuySellLandingAndCryptoAssetSelector(account: AccountType, selectedTab: TabName) {
     await this.verifyBuySellScreen();
     await this.verifySelectedTab(selectedTab);
     await this.verifySelectedAssetIsDisplayed(account);

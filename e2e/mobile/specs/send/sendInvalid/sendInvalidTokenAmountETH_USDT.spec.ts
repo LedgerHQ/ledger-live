@@ -1,6 +1,11 @@
 import { runSendInvalidTokenAmountTest } from "../send";
 
-const transaction = new Transaction(Account.ETH_USDT_2, Account.ETH_USDT_1, "1", Fee.FAST);
+const transaction = new Transaction(
+  TokenAccount.ETH_USDT_2,
+  TokenAccount.ETH_USDT_1,
+  "1",
+  Fee.FAST,
+);
 runSendInvalidTokenAmountTest(
   transaction,
   new RegExp(

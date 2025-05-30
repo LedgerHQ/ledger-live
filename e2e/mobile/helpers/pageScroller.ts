@@ -2,7 +2,7 @@ import { element, by, waitFor, device } from "detox";
 import { Direction, NativeElement, NativeMatcher } from "detox/detox";
 
 const MAX_ATTEMPTS_PER_DIRECTION = 10;
-const SCROLL_STALL_THRESHOLD = 2;
+const SCROLL_STALL_THRESHOLD = 7;
 const ANDROID_SCROLL_DELAY = 500;
 
 export class PageScroller {

@@ -1,6 +1,6 @@
 import { Component } from "../page/abstractClasses";
 import { step } from "../misc/reporters/step";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export class Drawer extends Component {
   readonly content = this.page.getByTestId("drawer-content");
@@ -26,7 +26,7 @@ export class Drawer extends Component {
   @step("Select account by name")
   async selectAccountByName(account: Account) {
     await this.getAccountButton(account.currency.name)
-      .locator(`text=${account.accountName}`)
+      .locator(`text=${getParentAccountName(account)}`)
       .click();
   }
 
