@@ -125,25 +125,25 @@ export function getCoinAndAmounts(
         (event.type === "0x1::stake::AddStakeEvent" ||
           event.type === "0x1::delegation_pool::AddStakeEvent") &&
         tx.sender === address &&
-        !amount_out.gt(BigNumber(0))
+        amount_out.isZero()
       ) {
         coin_id = APTOS_ASSET_ID;
         type = OP_TYPE.STAKE;
-        amount_out = amount_out.plus(event.data.amount_added);
+        amount_out = amount_out.plus(event.data.amount || event.data.amount_added);
       } else if (
         (event.type === "0x1::stake::ReactivateStakeEvent" ||
           event.type === "0x1::delegation_pool::ReactivateStakeEvent") &&
         tx.sender === address &&
-        !amount_out.gt(BigNumber(0))
+        amount_out.isZero()
       ) {
         coin_id = APTOS_ASSET_ID;
         type = OP_TYPE.STAKE;
-        amount_out = amount_out.plus(event.data.amount_added);
+        amount_out = amount_out.plus(event.data.amount || event.data.amount_reactivated);
       } else if (
         (event.type === "0x1::stake::UnlockStakeEvent" ||
           event.type === "0x1::delegation_pool::UnlockStakeEvent") &&
         tx.sender === address &&
-        !amount_in.gt(BigNumber(0))
+        amount_in.isZero()
       ) {
         coin_id = APTOS_ASSET_ID;
         type = OP_TYPE.UNSTAKE;
@@ -152,7 +152,7 @@ export function getCoinAndAmounts(
         (event.type === "0x1::stake::WithdrawStakeEvent" ||
           event.type === "0x1::delegation_pool::WithdrawStakeEvent") &&
         tx.sender === address &&
-        !amount_in.gt(BigNumber(0))
+        amount_in.isZero()
       ) {
         coin_id = APTOS_ASSET_ID;
         type = OP_TYPE.WITHDRAW;
