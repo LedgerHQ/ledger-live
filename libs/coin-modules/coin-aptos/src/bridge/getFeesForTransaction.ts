@@ -45,7 +45,7 @@ export const getFee = async (
       const tx = await buildTransaction(account, transaction, aptosClient);
       const [completedTx] = await aptosClient.simulateTransaction(publicKeyEd, tx);
 
-      gasLimit = new BigNumber(completedTx.gas_used).multipliedBy(ESTIMATE_GAS_MUL);
+      gasLimit = new BigNumber(completedTx.gas_used).multipliedBy(ESTIMATE_GAS_MUL).integerValue();
       gasPrice = new BigNumber(completedTx.gas_unit_price);
 
       const expectedGas = gasPrice.multipliedBy(gasLimit);
