@@ -3877,7 +3877,7 @@
         "header": "Staking Position(s)",
         "stake": "Add",
         "active": "Staked",
-        "pendingInactive": "Pending Release",
+        "pendingInactive": "Pending release",
         "inactive": "Withdrawable",
         "nextUnlock": "Next unlock"
       },
@@ -3929,7 +3929,7 @@
     },
     "restake": {
       "flow": {
-        "title": "Restake",
+        "title": "Reactivate stake",
         "steps": {
           "amount": {
             "title": "Amount",
