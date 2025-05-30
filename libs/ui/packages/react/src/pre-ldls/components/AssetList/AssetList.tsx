@@ -7,11 +7,13 @@ export const AssetList = ({
   onClick,
   onVisibleItemsScrollEnd,
   scrollToTop,
+  hasNextPage,
 }: {
   assets: AssetType[];
   onClick: (asset: AssetType) => void;
   onVisibleItemsScrollEnd?: () => void;
   scrollToTop?: boolean;
+  hasNextPage?: boolean;
 }) => {
   const renderAssetItem = useCallback(
     ({ name, ticker, id }: AssetType) => (
@@ -27,6 +29,7 @@ export const AssetList = ({
       onVisibleItemsScrollEnd={onVisibleItemsScrollEnd}
       renderItem={renderAssetItem}
       scrollToTop={scrollToTop}
+      hasNextPage={hasNextPage}
     />
   );
 };

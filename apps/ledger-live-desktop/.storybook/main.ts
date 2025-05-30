@@ -11,8 +11,9 @@ function getAbsolutePath(value: string): any {
 }
 
 const madDir = "./src/newArch/features/ModularDrawer";
-const detailedAccountsMockDir = `${madDir}/components/SelectAccountFlow/hooks/__mocks__/useDetailedAccounts.mock.ts`;
-const selectAssetFlowHookMockDir = `${madDir}/components/SelectAssetFlow/__mocks__/useSelectAssetFlow.mock.ts`;
+const detailedAccountsMockDir = `${madDir}/__mocks__/accounts.mock.ts`;
+const selectAssetFlowHookMockDir = `${madDir}/__mocks__/useSelectAssetFlow.mock.ts`;
+const useGroupedCurrenciesByProvider = `${madDir}/__mocks__/useGroupedCurrenciesByProvider.mock.ts`;
 
 const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
@@ -46,6 +47,10 @@ const config: StorybookConfig = {
 
           "@ledgerhq/live-common/deposit/index": resolve(selectAssetFlowHookMockDir),
           "@ledgerhq/live-common/currencies/index": resolve(selectAssetFlowHookMockDir),
+
+          "@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook": resolve(
+            useGroupedCurrenciesByProvider,
+          ),
 
           "~": resolve("./src"),
         },
