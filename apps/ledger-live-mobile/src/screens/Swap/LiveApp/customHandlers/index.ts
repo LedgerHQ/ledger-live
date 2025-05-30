@@ -165,8 +165,6 @@ export function useSwapCustomHandlers(
             });
           },
           "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
-            console.log("LLM custom.exchange.swap");
-
             navigation.navigate(NavigatorName.PlatformExchange, {
               screen: ScreenName.PlatformCompleteExchange,
               params: {
@@ -209,7 +207,15 @@ export function useSwapCustomHandlers(
         },
       }),
     };
-  }, [accounts, device, manifest, navigation, tracking]);
+  }, [
+    accounts,
+    device,
+    manifest,
+    navigateToSwapPendingOperation,
+    navigation,
+    syncAccountById,
+    tracking,
+  ]);
 
   const swapCustomHandlers = {
     "custom.getFee": getFee(accounts, navigation),
