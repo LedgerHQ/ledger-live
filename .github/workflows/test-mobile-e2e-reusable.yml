@@ -504,7 +504,7 @@ jobs:
 #
   build-android-native:
     name: "Android Build Native"
-    runs-on: [ledger-live-4xlarge]
+    runs-on: [ledger-live-linux-8CPU-32RAM]
     needs: [determine-builds]
     if: ${{ needs.determine-builds.outputs.android_native_exists != 'true' }}
     steps:
@@ -526,24 +526,24 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
-#      - name: setup JDK 17
-#        uses: actions/setup-java@v3
-#        with:
-#          distribution: "zulu"
-#          java-version: "17"
-#          cache: "gradle"
-#
-#      - name: setup Android SDK
-#        uses: android-actions/setup-android@v2.0.10
-#
-#        # https://github.blog/changelog/2023-02-23-hardware-accelerated-android-virtualization-on-actions-windows-and-linux-larger-hosted-runners/
-#      - name: Enable KVM group perms
-#        run: |
-#          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-#          sudo udevadm control --reload-rules
-#          sudo udevadm trigger --name-match=kvm
-#      - name: Fix emulator directory permissions
-#        run: sudo chown -R $(whoami):$(id -ng) /usr/local/lib/android/sdk/emulator/
+      - name: setup JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: "zulu"
+          java-version: "17"
+          cache: "gradle"
+
+      - name: setup Android SDK
+        uses: android-actions/setup-android@v2.0.10
+
+        # https://github.blog/changelog/2023-02-23-hardware-accelerated-android-virtualization-on-actions-windows-and-linux-larger-hosted-runners/
+      - name: Enable KVM group perms
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Fix emulator directory permissions
+        run: sudo chown -R $(whoami):$(id -ng) /usr/local/lib/android/sdk/emulator/
 
       - name: Install dependencies
         run: |
