@@ -2396,7 +2396,8 @@
         "suggested" : "提案済み",
         "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
-        "nftQuantity" : "数量"
+        "nftQuantity" : "数量",
+        "splExtensionsWarning" : "お客様は、トークン拡張としても知られる、Token-2022プログラムの一部であるトークンを扱おうとしています。このトークンには特定のリスクが伴います。詳しくは<0>こちら</0>。"
       },
       "verification" : {
         "streaming" : {
@@ -3771,7 +3772,7 @@
       "frozenStateWarning" : "アカウント資産が凍結されています！",
       "transferWarning" : "Ledger Nano S™を使用してSolanaトークンの受取人アドレスを認証するには、<0>こちらの手順に従ってください。</0>",
       "transferFees" : {
-        "feesPercentHint" : "トークンには{{feePercent}}%（{{feeBps}}bps）の転送手数料がかかります。最大{{maxFee}}",
+        "feesHint" : "トークン転送手数料：{{transferFee}}",
         "notice" : "転送手数料{{fee}}%",
         "tooltipHint" : "トークン作成者のために保留された転送の割合",
         "transferFeesLabel" : "転送手数料"
@@ -5873,6 +5874,10 @@
       "title" : "資金が不足しています。",
       "description" : "アカウントに十分な資金があることを確認してください。"
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "申し訳ございませんが、手数料のための資金が不足しています",
+      "description" : "アカウントに十分な資金があることを確認してください。"
+    },
     "NotEnoughBalanceSwap" : {
       "title" : "申し訳ありません。ネットワーク手数料を含む残高が不足しています。数量を調整するか、残高を確認してください。",
       "description" : "アカウントに十分な資金があることを確認してください。"
@@ -7055,7 +7060,15 @@
     "assetFlow" : {
       "selectTemplate" : "{{dynamic}}を選択",
       "asset" : "資産",
-      "network" : "ネットワーク"
+      "network" : "ネットワーク",
+      "account" : "アカウント"
+    }
+  },
+  "nftEntryPoint" : {
+    "title" : "NFT（非代替性トークン）",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
     }
   }
 }

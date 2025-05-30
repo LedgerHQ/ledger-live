@@ -1,5 +1,19 @@
 # @ledgerhq/swift-bridge-hw-transport-ble
 
+## 1.2.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.5
+
+## 1.2.5-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.5-next.0
+
 ## 1.2.4
 
 ### Patch Changes
