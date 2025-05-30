@@ -12,6 +12,10 @@ import { ModularDrawerLocation } from "LLD/features/ModularDrawer/enums";
 const AccountsHeader = () => {
   const { t } = useTranslation();
   const { openAssetFlow } = useOpenAssetFlow(ModularDrawerLocation.ADD_ACCOUNT);
+
+  const handleAddAccountClick = () => {
+    openAssetFlow(true);
+  };
   return (
     <Box
       horizontal
@@ -24,7 +28,12 @@ const AccountsHeader = () => {
       </Box>
       <Box horizontal flow={2} alignItems="center" justifyContent="flex-end">
         <LedgerSyncEntryPoint entryPoint={EntryPoint.accounts} />
-        <Button small primary onClick={openAssetFlow} data-testid="accounts-add-account-button">
+        <Button
+          small
+          primary
+          onClick={handleAddAccountClick}
+          data-testid="accounts-add-account-button"
+        >
           <Box horizontal flow={1} alignItems="center">
             <IconPlus size={12} />
             <Box>{t("addAccounts.cta.add")}</Box>
