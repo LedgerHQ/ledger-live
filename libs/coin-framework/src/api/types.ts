@@ -97,6 +97,8 @@ export interface TypedMapMemo<KindToValueMap extends Record<string, unknown>> ex
   memos: Map<keyof KindToValueMap, KindToValueMap[keyof KindToValueMap]>;
 }
 
+type MaybeMemo<MemoType extends Memo> = MemoType extends MemoNotSupported ? {} : { memo: MemoType };
+
 export type TransactionIntent<
   AssetInfo extends Asset<TokenInfoCommon>,
   MemoType extends Memo = MemoNotSupported,
@@ -108,7 +110,7 @@ export type TransactionIntent<
   recipient: string;
   amount: bigint;
   asset: AssetInfo;
-} & (MemoType extends MemoNotSupported ? Record<string, never> : { memo: MemoType });
+} & MaybeMemo<MemoType>;
 
 export type TransactionValidation = {
   errors: Record<string, Error>;
