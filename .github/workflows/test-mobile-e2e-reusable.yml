@@ -504,7 +504,7 @@ jobs:
 #
   build-android-native:
     name: "Android Build Native"
-    runs-on: [ledger-live-linux-8CPU-32RAM]
+    runs-on: [ledger-live-4xlarge]
     needs: [determine-builds]
     if: ${{ needs.determine-builds.outputs.android_native_exists != 'true' }}
     steps:
