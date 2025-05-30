@@ -1,7 +1,7 @@
 import { Operation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import * as LogicFunctions from "../logic";
 import { GetTransactionsOptions } from "../network";
-import { NetworkInfo, XrpAsset, XrpMemo, XrpMapMemo, XrpMemoKind } from "../types";
+import { NetworkInfo, XrpAsset, XrpMapMemo } from "../types";
 import { createApi } from "./index";
 
 const mockGetServerInfos = jest.fn().mockResolvedValue({

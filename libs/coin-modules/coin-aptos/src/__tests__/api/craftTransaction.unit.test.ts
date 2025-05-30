@@ -2,7 +2,7 @@ import { Hex, type InputEntryFunctionData, RawTransaction, Deserializer } from "
 import type { TransactionIntent } from "@ledgerhq/coin-framework/lib/api/types";
 import { createApi } from "../../api";
 import type { TransactionOptions } from "../../types";
-import type { AptosAsset, AptosExtra } from "../../types/assets";
+import type { AptosAsset } from "../../types/assets";
 import { AptosAPI } from "../../network";
 
 jest.mock("../../network");

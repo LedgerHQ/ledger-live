@@ -80,13 +80,6 @@ export interface MemoNotSupported extends Memo {
   type: "none";
 }
 
-// Generic single memo (like hex, text, id)
-interface SingleMemo<Kind extends string, Value> extends Memo {
-  type: "single";
-  kind: Kind;
-  value: Value;
-}
-
 // Specialized version, not extending the above
 export interface StringMemo<Kind extends string = "text"> extends Memo {
   type: "string";

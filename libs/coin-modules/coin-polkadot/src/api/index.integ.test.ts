@@ -1,4 +1,4 @@
-import type { AlpacaApi, MemoNotSupported } from "@ledgerhq/coin-framework/api/index";
+import type { AlpacaApi } from "@ledgerhq/coin-framework/api/index";
 import { createApi } from ".";
 import { PolkadotAsset } from "../types";
 
