@@ -2,7 +2,7 @@ import { useOpenAssetFlow } from "../useOpenAssetFlow";
 import { ModularDrawerLocation } from "../../enums";
 import { renderHook } from "tests/testSetup";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import SelectAssetFlow from "../../components/SelectAssetFlow";
+import ModularDrawerFlowManager from "../../ModularDrawerFlowManager";
 
 jest.mock("~/renderer/drawers/Provider", () => ({
   setDrawer: jest.fn(),
@@ -63,7 +63,7 @@ describe("useOpenAssetFlow", () => {
 
     expect(setDrawer).toHaveBeenCalledTimes(1);
     expect(setDrawer).toHaveBeenLastCalledWith(
-      SelectAssetFlow,
+      ModularDrawerFlowManager,
       {
         currencies: [],
         onAssetSelected: expect.any(Function),
