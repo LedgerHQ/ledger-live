@@ -15,7 +15,7 @@ const res = {
       },
       {
         providerId: "ethereum",
-        currenciesByNetwork: [ethereumCurrency, arbitrumCurrency, arbitrumParentCurrency],
+        currenciesByNetwork: [ethereumCurrency, arbitrumCurrency],
       },
       { providerId: "arbitrum", currenciesByNetwork: [arbitrumCurrency] },
     ],
