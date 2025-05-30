@@ -247,7 +247,7 @@ jobs:
         uses: tespkg/actions-cache/save@v1
         with:
           path: ${{ github.workspace }}/${{ env.IOS_NATIVE_PATH }}
-          key: ${{ steps.determine-builds.outputs.ios_native_key }}
+          key: ${{ needs.determine-builds.outputs.ios_native_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
@@ -315,7 +315,7 @@ jobs:
         uses: tespkg/actions-cache/save@v1
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile/main.jsbundle
-          key: ${{ steps.determine-builds.outputs.ios_js_key }}
+          key: ${{ needs.determine-builds.outputs.ios_js_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
@@ -549,7 +549,7 @@ jobs:
         uses: tespkg/actions-cache/save@v1
         with:
           path: ${{ env.ANDROID_APK_PATH }}
-          key: ${{ steps.determine-builds.outputs.android_native_key }}
+          key: ${{ needs.determine-builds.outputs.android_native_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
@@ -561,7 +561,7 @@ jobs:
         uses: tespkg/actions-cache/save@v1
         with:
           path: ${{ env.ANDROID_TESTBINARY_PATH }}
-          key: ${{ steps.determine-builds.outputs.android_testbinary_key }}
+          key: ${{ needs.determine-builds.outputs.android_testbinary_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
@@ -624,7 +624,7 @@ jobs:
         uses: tespkg/actions-cache/save@v1
         with:
           path: ${{ env.ANDROID_JSBUNDLE_PATH }}
-          key: ${{ steps.determine-builds.outputs.android_js_key }}
+          key: ${{ needs.determine-builds.outputs.android_js_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
