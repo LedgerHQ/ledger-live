@@ -129,7 +129,7 @@ export function getCoinAndAmounts(
       ) {
         coin_id = APTOS_ASSET_ID;
         type = OP_TYPE.STAKE;
-        amount_out = amount_out.plus(event.data.amount || event.data.amount_added);
+        amount_out = amount_out.plus(event.data.amount_added);
       } else if (
         (event.type === "0x1::stake::ReactivateStakeEvent" ||
           event.type === "0x1::delegation_pool::ReactivateStakeEvent") &&
@@ -138,7 +138,7 @@ export function getCoinAndAmounts(
       ) {
         coin_id = APTOS_ASSET_ID;
         type = OP_TYPE.STAKE;
-        amount_out = amount_out.plus(event.data.amount || event.data.amount_reactivated);
+        amount_out = amount_out.plus(event.data.amount_reactivated);
       } else if (
         (event.type === "0x1::stake::UnlockStakeEvent" ||
           event.type === "0x1::delegation_pool::UnlockStakeEvent") &&
@@ -147,7 +147,7 @@ export function getCoinAndAmounts(
       ) {
         coin_id = APTOS_ASSET_ID;
         type = OP_TYPE.UNSTAKE;
-        amount_in = amount_in.plus(event.data.amount_added);
+        amount_in = amount_in.plus(event.data.amount_unlocked);
       } else if (
         (event.type === "0x1::stake::WithdrawStakeEvent" ||
           event.type === "0x1::delegation_pool::WithdrawStakeEvent") &&
