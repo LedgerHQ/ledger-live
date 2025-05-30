@@ -1,4 +1,4 @@
-import { Account } from "../enum/Account";
+import { AccountType } from "../enum/Account";
 
 export interface Fiat {
   locale: string;
@@ -6,7 +6,7 @@ export interface Fiat {
 }
 
 export interface BuySell {
-  crypto: Account;
+  crypto: AccountType;
   fiat: Fiat;
   amount: string;
 }

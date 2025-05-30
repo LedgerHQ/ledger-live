@@ -1,7 +1,7 @@
 import { deleteSpeculos, launchProxy, launchSpeculos } from "../utils/speculosUtils";
 import { addKnownSpeculos, findFreePort, removeKnownSpeculos } from "../bridge/server";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 
 const proxyAddress = "localhost";
 
@@ -21,7 +21,7 @@ export default class CommonPage {
   accountItem = (id: string) => getElementById(this.accountItemRegExp(id));
   accountItemName = (accountId: string) => getElementById(`${this.accountItemId + accountId}-name`);
   accountId = (account: Account) =>
-    `test-id-account-${account.accountName}${account.tokenType !== undefined ? ` (${account.currency.ticker})` : ""}`;
+    `test-id-account-${getParentAccountName(account)}${account.tokenType !== undefined ? ` (${account.currency.ticker})` : ""}`;
 
   @Step("Perform search")
   async performSearch(text: string) {

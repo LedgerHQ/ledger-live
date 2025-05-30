@@ -1,7 +1,11 @@
 import { test } from "../fixtures/common";
 import { addTmsLink } from "../utils/allureUtils";
 import { getDescription } from "../utils/customJsonReporter";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import {
+  Account,
+  TokenAccount,
+  getParentAccountName,
+} from "@ledgerhq/live-common/e2e/enum/Account";
 import { CLI } from "../utils/cliUtils";
 import { setupEnv } from "../utils/swapUtils";
 import { BuySell } from "@ledgerhq/live-common/e2e/models/BuySell";
@@ -25,7 +29,7 @@ const assets: Array<{ buy: BuySell; xrayTicket: string }> = [
   },
   {
     buy: {
-      crypto: Account.ETH_USDT_1,
+      crypto: TokenAccount.ETH_USDT_1,
       fiat: { locale: "en-US", currencyTicker: "USD" },
       amount: "140",
     },
@@ -108,7 +112,10 @@ for (const asset of assets) {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.layout.goToAccounts();
-        await app.accounts.searchAndSelectAccount(asset.buy.crypto);
+        await app.accounts.navigateToAccountByName(getParentAccountName(asset.buy.crypto));
+        if (asset.buy.crypto.tokenType) {
+          await app.account.navigateToTokenInAccount(asset.buy.crypto);
+        }
         await app.account.clickBuy();
 
         await app.layout.verifyBuySellSideBarIsSelected();

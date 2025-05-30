@@ -2,8 +2,6 @@ import { expect } from "@playwright/test";
 import { step } from "../misc/reporters/step";
 import { AppPage } from "./abstractClasses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { TokenType } from "@ledgerhq/live-common/e2e/enum/TokenType";
 
 export class AccountsPage extends AppPage {
   private accountComponent = (accountName: string) =>
@@ -21,26 +19,10 @@ export class AccountsPage extends AppPage {
   private accountListNumber = this.page.locator(`[data-testid^="account-component-"]`);
   private syncAccountButton = (accountName: string) =>
     this.accountComponent(accountName).getByTestId("sync-button").locator("div").first();
-  private accountSearchInput = this.page.locator("#accounts-search-input");
 
   @step("Open Account $0")
   async navigateToAccountByName(accountName: string) {
     await this.accountComponent(accountName).click();
-  }
-
-  @step("Search for $0")
-  async searchForAccount(accountName: string) {
-    await this.accountSearchInput.fill(accountName);
-  }
-
-  @step("Search for asset")
-  async searchAndSelectAccount(account: Account) {
-    if (account.tokenType === TokenType.ERC20) {
-      await this.accountSearchInput.fill(account.currency.name);
-      await this.tokenRow(account.accountName, account.currency).click();
-    } else {
-      await this.accountComponent(account.accountName).click();
-    }
   }
 
   @step("Click sync account button for: $0")
