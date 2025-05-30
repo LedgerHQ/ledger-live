@@ -134,7 +134,6 @@ export type AlpacaApi<
     address: string,
     pagination: Pagination,
   ) => Promise<[Operation<AssetInfo>[], string]>;
-  preSignOperationHook?: PreSignOperationHook;
 };
 
 export type BridgeApi = {
