@@ -189,15 +189,15 @@ export default function SelectDevice({
 
         if (!deviceModel) return;
 
+        const newDevice = {
+          deviceName: name,
+          modelId: deviceModel.id,
+          deviceId: id,
+          wired,
+        };
+
         setDevice((maybeDevice: Device | undefined) => {
-          return (
-            maybeDevice || {
-              deviceName: name,
-              modelId: deviceModel.id,
-              deviceId: id,
-              wired,
-            }
-          );
+          return maybeDevice || newDevice;
         });
       }
     });

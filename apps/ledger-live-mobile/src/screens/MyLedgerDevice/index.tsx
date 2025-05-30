@@ -17,7 +17,11 @@ import StorageWarningModal from "./Modals/StorageWarningModal";
 import InstallAppDependenciesModal from "./Modals/InstallAppDependenciesModal";
 import UninstallAppDependenciesModal from "./Modals/UninstallAppDependenciesModal";
 import { useLockNavigation } from "~/components/RootNavigator/CustomBlockRouterNavigator";
-import { setHasInstalledAnyApp, setLastSeenDeviceInfo } from "~/actions/settings";
+import {
+  setHasInstalledAnyApp,
+  setLastConnectedDevice,
+  setLastSeenDeviceInfo,
+} from "~/actions/settings";
 import { NavigatorName, ScreenName } from "~/const";
 import FirmwareUpdateScreen from "~/components/FirmwareUpdate";
 import { MyLedgerNavigatorStackParamList } from "~/components/RootNavigator/types/MyLedgerNavigator";
@@ -30,6 +34,9 @@ import {
   AppsInstallUninstallWithDependenciesContextProvider,
 } from "./AppsInstallUninstallWithDependenciesContext";
 import { useAppDataStorage } from "~/hooks/storageProvider/useAppDataStorage";
+import { discoverDevices } from "@ledgerhq/live-common/hw/index";
+import { first, map } from "rxjs/operators";
+import { Device } from "@ledgerhq/types-devices";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MyLedgerNavigatorStackParamList, ScreenName.MyLedgerDevice>
@@ -176,7 +183,7 @@ const Manager = ({ navigation, route }: NavigationProps) => {
   );
 
   const onBackFromNewUpdateUx = useCallback(
-    (updateState: UpdateStep) => {
+    async (updateState: UpdateStep) => {
       navigation.navigate(NavigatorName.Main, {
         screen: NavigatorName.MyLedger,
         params: {
