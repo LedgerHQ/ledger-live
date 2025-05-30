@@ -1,7 +1,7 @@
 import React from "react";
 import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { AccountList, Account as DetailedAccount } from "@ledgerhq/react-ui/pre-ldls/index";
 import { AccountTuple } from "~/renderer/components/PerCurrencySelectAccount/state";
 import { useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
@@ -39,24 +39,15 @@ export const SelectAccountList = ({
     if (currencyAccount) {
       onAccountSelected(currencyAccount.account);
       trackAccountClick(currencyAccount.account.currency.ticker);
-    } else {
-      let tokenAccount: TokenAccount | undefined;
-      let parentAccount: Account | undefined;
+      return;
+    }
 
-      for (const { account } of accounts) {
-        tokenAccount = account.subAccounts?.find(({ id }) => id === accountId);
-        if (tokenAccount) {
-          parentAccount = accounts.find(
-            ({ account }) => account.id === tokenAccount?.parentId,
-          )?.account;
-          break;
-        }
-      }
-
-      if (tokenAccount && parentAccount) {
-        onAccountSelected(tokenAccount, parentAccount);
-        trackAccountClick(tokenAccount.token.ticker);
-      }
+    const tupleWithSub = accounts.find(
+      ({ subAccount }) => subAccount && subAccount.id === accountId,
+    );
+    if (tupleWithSub?.subAccount) {
+      onAccountSelected(tupleWithSub.subAccount, tupleWithSub.account);
+      trackAccountClick(tupleWithSub.subAccount.token.ticker);
     }
   };
 

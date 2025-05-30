@@ -74,7 +74,7 @@ export function useModularDrawerFlowState({
             return elem.id === network.id;
           }
           return false;
-        }) || network;
+        }) ?? network;
 
       if (!isSelectAccountFlow) {
         onAssetSelected?.(correspondingCurrency);
@@ -110,12 +110,10 @@ export function useModularDrawerFlowState({
           .map(net => findCryptoCurrencyById(net))
           .filter((cur): cur is CryptoCurrency => Boolean(cur));
         goToNetworkSelection(filteredCryptoCurrencies);
+      } else if (isSelectAccountFlow) {
+        goToAccountSelection(currency, currency);
       } else {
-        if (isSelectAccountFlow) {
-          goToAccountSelection(currency, currency);
-        } else {
-          onAssetSelected?.(currency);
-        }
+        onAssetSelected?.(currency);
       }
     },
     [
