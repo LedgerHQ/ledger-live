@@ -59,7 +59,7 @@ jobs:
     name: "Test Desktop"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@support/improve-sonarqube-pr-analysis
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@develop
     secrets: inherit
 
   # LLM
@@ -74,7 +74,7 @@ jobs:
     name: "Test Mobile"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@support/improve-sonarqube-pr-analysis
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@develop
     secrets: inherit
 
   test-mobile-e2e:
@@ -91,7 +91,7 @@ jobs:
     name: "Test Libraries"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'libs') && !github.event.pull_request.head.repo.fork}}
-    uses: ./.github/workflows/test-libs-reusable.yml
+    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
     secrets: inherit
 
   test-design-system:
@@ -121,7 +121,7 @@ jobs:
       - test-desktop
       - test-mobile
       - test-libraries
-    uses: ./.github/workflows/scan-sonar-reusable.yml
+    uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@develop
     secrets: inherit
     with:
       should_download_desktop_coverage: ${{ needs.test-desktop.outputs.coverage_generated }}
