@@ -132,7 +132,7 @@ export function useModularDrawerFlowState({
   };
 
   useEffect(() => {
-    if (assetsToDisplay && assetsToDisplay.length === 1 && !selectedAsset) {
+    if (assetsToDisplay && assetsToDisplay.length === 1 && !selectedAsset && !searchedValue) {
       handleAssetSelected(assetsToDisplay[0]);
     }
     if (hasOneNetwork && selectedAsset) {
@@ -146,6 +146,7 @@ export function useModularDrawerFlowState({
     onAssetSelected,
     handleAssetSelected,
     goToStep,
+    searchedValue,
   ]);
 
   return {
