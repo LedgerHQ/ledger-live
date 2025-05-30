@@ -229,6 +229,8 @@ export type Features = CurrencyFeatures & {
   llNftEntryPoint: Feature_LlNftEntryPoint;
   ldmkConnectApp: DefaultFeature;
   lldNetworkBasedAddAccount: DefaultFeature;
+  llmOfacGeoBlocking: DefaultFeature;
+  lldOfacGeoBlocking: DefaultFeature;
 };
 
 /**

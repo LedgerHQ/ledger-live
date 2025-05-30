@@ -93,6 +93,7 @@ import { registerTransports } from "~/services/registerTransports";
 import { useDeviceManagementKitEnabled } from "@ledgerhq/live-dmk-mobile";
 import { StoragePerformanceOverlay } from "./newArch/storage/screens/PerformanceMonitor";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
+import AppGeoBlocker from "./newArch/features/AppGeoblocker";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -369,7 +370,9 @@ export default class Root extends Component {
                                     <NavBarColorHandler />
                                     <AuthPass>
                                       <AppProviders initialCountervalues={initialCountervalues}>
-                                        <App />
+                                        <AppGeoBlocker>
+                                          <App />
+                                        </AppGeoBlocker>
                                       </AppProviders>
                                     </AuthPass>
                                   </StylesProvider>
