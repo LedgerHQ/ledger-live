@@ -95,10 +95,10 @@ jobs:
     name: "Determine Builds"
     runs-on: ledger-live-medium
     outputs:
-      ios_native_exists: ${{ steps.check-ios-native.outputs.object-exists }}
-      ios_js_exists: ${{ steps.check-ios-js.outputs.object-exists }}
-      android_native_exists: ${{ steps.check-android-native.outputs.object-exists }}
-      android_js_exists: ${{ steps.check-android-js.outputs.object-exists }}
+      ios_native_exists: ${{ steps.check-ios-native.outputs.cache-hit }}
+      ios_js_exists: ${{ steps.check-ios-js.outputs.cache-hit }}
+      android_native_exists: ${{ steps.check-android-native.outputs.cache-hit }}
+      android_js_exists: ${{ steps.check-android-js.outputs.cache-hit }}
       ios_native_key: ${{ steps.cache-keys.outputs.ios_native_key }}
       ios_js_key: ${{ steps.cache-keys.outputs.ios_js_key }}
       android_native_key: ${{ steps.cache-keys.outputs.android_native_key }}
@@ -130,43 +130,55 @@ jobs:
 
       - name: Check if iOS Native Build exists already
         id: check-ios-native
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@support/poc-macOS-sharding
+        uses: tespkg/actions-cache/restore@v1.9.0
         with:
+          key: ${{ needs.determine-builds.outputs.ios_native_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
-          key: ${{ steps.cache-keys.outputs.ios_native_key }}/cache.tzst
-          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          aws-session-token: ${{ env.AWS_SESSION_TOKEN }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+          lookup-only: true
 
       - name: Check if Android Native Build exists already
         id: check-android-native
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@support/poc-macOS-sharding
+        uses: tespkg/actions-cache/restore@v1.9.0
         with:
+          key: ${{ needs.determine-builds.outputs.ios_native_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
-          key: ${{ steps.cache-keys.outputs.android_native_key }}/cache.tzst
-          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          aws-session-token: ${{ env.AWS_SESSION_TOKEN }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+          lookup-only: true
 
       - name: Check if iOS JS Build exists already
         id: check-ios-js
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@support/poc-macOS-sharding
+        uses: tespkg/actions-cache/restore@v1.9.0
         with:
+          key: ${{ needs.determine-builds.outputs.ios_native_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
-          key: ${{ steps.cache-keys.outputs.ios_js_key }}/cache.tzst
-          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          aws-session-token: ${{ env.AWS_SESSION_TOKEN }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+          lookup-only: true
 
       - name: Check if Android JS Build exists already
         id: check-android-js
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@support/poc-macOS-sharding
+        uses: tespkg/actions-cache/restore@v1.9.0
         with:
+          key: ${{ needs.determine-builds.outputs.ios_native_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
-          key: ${{ steps.cache-keys.outputs.android_js_key }}/cache.tzst
-          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          aws-session-token: ${{ env.AWS_SESSION_TOKEN }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+          lookup-only: true
 
   build-ios-native:
     name: "iOS Build Native"
@@ -251,7 +263,7 @@ jobs:
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ll-gha-s3-cache
+          bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
@@ -319,7 +331,7 @@ jobs:
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ll-gha-s3-cache
+          bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
@@ -391,7 +403,7 @@ jobs:
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ll-gha-s3-cache
+          bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
@@ -403,7 +415,7 @@ jobs:
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ll-gha-s3-cache
+          bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
@@ -448,11 +460,6 @@ jobs:
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           turbo_port: ${{ steps.setup-caches.outputs.port }}
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
-
-      - name: Delete iOS simulator
-        if: ${{ always() }}
-        run: |
-          xcrun simctl list devices | grep 'iOS Simulator' | awk -F '[()]' '{print $2}' | xargs -I {} sh -c 'echo "Deleting simulator: {}"; xcrun simctl delete {} || echo "Failed to delete: {}"'
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
@@ -556,7 +563,7 @@ jobs:
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ll-gha-s3-cache
+          bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
@@ -568,7 +575,7 @@ jobs:
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ll-gha-s3-cache
+          bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
@@ -631,7 +638,7 @@ jobs:
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ll-gha-s3-cache
+          bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
@@ -697,7 +704,7 @@ jobs:
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ll-gha-s3-cache
+          bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
@@ -709,7 +716,7 @@ jobs:
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ll-gha-s3-cache
+          bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
@@ -721,7 +728,7 @@ jobs:
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ll-gha-s3-cache
+          bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
@@ -794,7 +801,7 @@ jobs:
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN }}
-          bucket: ll-gha-s3-cache
+          bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
