@@ -17,14 +17,6 @@ export function genericGetTransactionStatus(
         balance: BigInt(balance.toString()),
         currencyUnit: currency.units[0],
       },
-      /*
-        *Transaction = {
-    type: string;
-    recipient: string;
-    amount: bigint;
-    fee: bigint;
-} &
-        */
       {
         type: "PAYMENT", // NOTE: assuming payment by default here
         recipient: transaction.recipient,

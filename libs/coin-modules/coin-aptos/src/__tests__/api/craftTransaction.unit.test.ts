@@ -49,8 +49,6 @@ describe("returns a valid transaction", () => {
       aptosSettings: {},
     });
 
-    // NOTE: double check
-    // const txArg: TransactionIntent<AptosAsset, AptosExtra> = {
     const txArg: TransactionIntent<AptosAsset> = {
       type: "send",
       sender: SENDER_ADDR,

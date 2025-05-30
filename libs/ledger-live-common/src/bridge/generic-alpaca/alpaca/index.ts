@@ -5,7 +5,6 @@ import { getNetworkAlpacaApi } from "./network/network-alpaca";
 import { Api } from "@ledgerhq/coin-framework/api/types";
 import { XrpCoinConfig } from "@ledgerhq/coin-xrp/config";
 
-// NOTE: Using Api<any, any, any> to allow integration with coin-specific APIs like XRP (which use structured sender types).
 export function getAlpacaApi(network: string, kind: "local" | "remote"): Api<any, any> {
   if (kind === "local") {
     // dynamic import ?
