@@ -1,19 +1,12 @@
 import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
 import type { Transaction, TransactionStatus } from "../types";
 
-export type ExtraDeviceTransactionField =
-  | {
-      type: "stacks.memo";
-      label: string;
-      value: string;
-    }
-  | {
-      type: "stacks.extendedAmount";
-      label: string;
-      value: BigNumber;
-    };
+export type ExtraDeviceTransactionField = {
+  type: "stacks.memo";
+  label: string;
+  value: string;
+};
 
 export type DeviceTransactionField = CommonDeviceTransactionField | ExtraDeviceTransactionField;
 
@@ -25,16 +18,6 @@ function getDeviceTransactionConfig(input: {
 }): Array<DeviceTransactionField> {
   const fields: Array<DeviceTransactionField> = [];
 
-  fields.push({
-    type: "stacks.extendedAmount",
-    label: "Amount",
-    value: input.transaction.amount,
-  });
-  fields.push({
-    type: "stacks.extendedAmount",
-    label: "Fees",
-    value: input.transaction.fee ? input.transaction.fee : new BigNumber(0),
-  });
   fields.push({
     type: "address",
     label: "Recipient",
