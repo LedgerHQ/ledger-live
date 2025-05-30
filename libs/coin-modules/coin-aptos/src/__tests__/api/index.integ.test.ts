@@ -12,6 +12,8 @@ describe("createApi", () => {
       indexer: getEnv("APTOS_INDEXER_ENDPOINT"),
     },
   });
+  const assetTypeNative = "native";
+  const assetTypeToken = "token";
 
   const sender: AptosSender = {
     xpub: "0xd1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956",
@@ -81,12 +83,24 @@ describe("createApi", () => {
     });
   });
 
-  describe("getBalance", () => {
-    it("return balances from account", async () => {
+  describe("getBalances", () => {
+    it("returned balances should have one native asset", async () => {
       const balances = await api.getBalance(sender.freshAddress);
+      const nativeBalance = balances.filter(b => b.asset.type === assetTypeNative);
+      expect(nativeBalance.length).toBe(1);
+      nativeBalance.forEach(balance => {
+        expect(balance.value).toBeDefined();
+        expect(balance.value).toBeGreaterThanOrEqual(0n);
+      });
+    });
 
-      expect(balances.length).toBeGreaterThan(0);
-      expect(balances[0].value).toBeGreaterThan(0);
+    it("returned balances should have a token asset", async () => {
+      const balances = await api.getBalance(sender.freshAddress);
+      const nativeBalance = balances.filter(b => b.asset.type === assetTypeToken);
+      expect(nativeBalance.length).toBeGreaterThan(0);
+      nativeBalance.forEach(balance => {
+        expect(balance.value).toBeDefined();
+      });
     });
   });
 

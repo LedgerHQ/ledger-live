@@ -31,7 +31,6 @@ import type {
   GetAccountTransactionsDataQuery,
   GetAccountTransactionsDataGtQueryVariables,
 } from "./graphql/types";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   BlockInfo,
   FeeEstimation,
@@ -82,13 +81,12 @@ export class AptosAPI {
 
   async getAccountInfo(address: string, startAt?: string) {
     const [balance, transactions, blockHeight] = await Promise.all([
-      this.getCoinBalance(address, APTOS_ASSET_ID),
+      this.getBalances(address, APTOS_ASSET_ID),
       this.fetchTransactions(address, startAt),
       this.getHeight(),
     ]);
-
     return {
-      balance,
+      balance: balance[0].amount ?? BigInt(0),
       transactions,
       blockHeight,
     };
@@ -159,14 +157,6 @@ export class AptosAPI {
     });
 
     return pendingTx.data.hash;
-  }
-
-  async getBalance(address: string, token: TokenCurrency): Promise<BigNumber> {
-    if (token.tokenType === "coin") {
-      return await this.getCoinBalance(address, token.contractAddress);
-    }
-
-    return await this.getFABalance(address, token.contractAddress);
   }
 
   async getLastBlock(): Promise<BlockInfo> {
@@ -267,6 +257,33 @@ export class AptosAPI {
     return [newOperations, ""];
   }
 
+  async getBalances(address: string, contract_address?: string): Promise<AptosBalance[]> {
+    try {
+      const whereCondition: any = {
+        owner_address: { _eq: address },
+      };
+
+      if (contract_address) {
+        whereCondition.asset_type = { _eq: APTOS_ASSET_ID };
+      }
+
+      const response = await this.aptosClient.getCurrentFungibleAssetBalances({
+        options: {
+          where: whereCondition,
+        },
+      });
+      return response.map(x => ({
+        asset_type: x.asset_type ?? "-",
+        amount: BigNumber(x.amount),
+      }));
+    } catch (error) {
+      log("error", "getCoinBalance", {
+        error,
+      });
+      return [{ amount: BigNumber(0), asset_type: "" }];
+    }
+  }
+
   private async fetchTransactions(address: string, gt?: string) {
     if (!address) {
       return [];
@@ -329,23 +346,5 @@ export class AptosAPI {
       height: parseInt(block.block_height),
       hash: block.block_hash,
     };
-  }
-
-  async getBalances(address: string): Promise<AptosBalance[]> {
-    const response = await this.aptosClient.getCurrentFungibleAssetBalances({
-      options: {
-        offset: 0,
-        limit: 1000,
-        where: {
-          asset_type: { _eq: APTOS_ASSET_ID }, // to return all asset balances (native / token) we should remove this filter
-          owner_address: { _eq: address },
-        },
-      },
-    });
-
-    return response.map(x => ({
-      asset_type: x.asset_type ?? "-",
-      amount: BigNumber(x.amount),
-    }));
   }
 }
