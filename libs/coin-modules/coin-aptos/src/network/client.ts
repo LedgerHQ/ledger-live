@@ -15,7 +15,6 @@ import {
   type UserTransactionResponse,
   type Block,
   type AptosSettings,
-  type MoveFunctionId,
   Hex,
   postAptosFullNode,
   type PendingTransactionResponse,
@@ -24,7 +23,13 @@ import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import isUndefined from "lodash/isUndefined";
-import { APTOS_ASSET_ID, DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "../constants";
+import {
+  APTOS_ASSET_ID,
+  DEFAULT_GAS,
+  DEFAULT_GAS_PRICE,
+  ESTIMATE_GAS_MUL,
+  SUPPORTED_TOKEN_TYPES,
+} from "../constants";
 import type { AptosBalance, AptosTransaction, TransactionOptions } from "../types";
 import { GetAccountTransactionsData, GetAccountTransactionsDataGt } from "./graphql/queries";
 import type {
@@ -221,13 +226,33 @@ export class AptosAPI {
     transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender>,
   ): Promise<FeeEstimation<AptosFeeParameters>> {
     const publicKeyEd = new Ed25519PublicKey(transactionIntent.sender.xpub);
-    const fn: MoveFunctionId = "0x1::aptos_account::transfer_coins";
 
     const txPayload: InputEntryFunctionData = {
-      function: fn,
+      function: "0x1::aptos_account::transfer_coins",
       typeArguments: [APTOS_ASSET_ID],
       functionArguments: [transactionIntent.recipient, transactionIntent.amount],
     };
+
+    if (transactionIntent.asset.type === "token") {
+      const { tokenType } = transactionIntent.asset;
+
+      if (!SUPPORTED_TOKEN_TYPES.includes(tokenType)) {
+        throw new Error(`Token type ${tokenType} not supported`);
+      }
+
+      if (tokenType === "fungible_asset") {
+        txPayload.function = "0x1::primary_fungible_store::transfer";
+        txPayload.typeArguments = ["0x1::fungible_asset::Metadata"];
+        txPayload.functionArguments = [
+          transactionIntent.asset.contractAddress,
+          transactionIntent.recipient,
+          transactionIntent.amount,
+        ];
+      } else if (tokenType === "coin") {
+        txPayload.function = "0x1::aptos_account::transfer_coins";
+        txPayload.typeArguments = [transactionIntent.asset.contractAddress];
+      }
+    }
 
     const txOptions: TransactionOptions = {
       maxGasAmount: DEFAULT_GAS.toString(),
