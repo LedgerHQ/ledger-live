@@ -104,6 +104,7 @@ export function useModularDrawerFlowState({
         .map(elem => (elem.type === "TokenCurrency" ? elem.parentCurrency?.id : elem.id));
 
       const hasMultipleNetworks = networks && networks.length > 1;
+
       if (hasMultipleNetworks) {
         const filteredCryptoCurrencies = networks
           .map(net => findCryptoCurrencyById(net))

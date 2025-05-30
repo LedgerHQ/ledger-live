@@ -46,7 +46,7 @@ export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation) {
   const openAssetFlow = useCallback(
     (includeTokens: boolean) => {
       if (isModularDrawerVisible(modularDrawerLocation)) {
-        selectCurrency(openAddAccountFlow, undefined, includeTokens, undefined);
+        selectCurrency(openAddAccountFlow, undefined, includeTokens);
       } else {
         openAddAccountFlow();
       }

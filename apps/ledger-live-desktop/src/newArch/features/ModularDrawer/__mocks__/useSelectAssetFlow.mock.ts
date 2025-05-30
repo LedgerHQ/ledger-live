@@ -45,29 +45,31 @@ export const ethereumCurrency: CryptoCurrency = {
   explorerViews: [],
 };
 
+export const arbitrumParentCurrency: CryptoCurrency = {
+  type: "CryptoCurrency",
+  id: "arbitrum",
+  coinType: 60,
+  name: "Arbitrum",
+  managerAppName: "Ethereum",
+  ticker: "ETH",
+  scheme: "arbitrum",
+  color: "#28a0f0",
+  family: "evm",
+  units: [
+    {
+      name: "ETH",
+      code: "ETH",
+      magnitude: 18,
+    },
+  ],
+  explorerViews: [],
+};
+
 export const arbitrumCurrency: TokenCurrency = {
   type: "TokenCurrency",
   id: "arbitrum/erc20/arbitrum",
   contractAddress: "0x912CE59144191C1204E64559FE8253a0e49E6548",
-  parentCurrency: {
-    type: "CryptoCurrency",
-    id: "arbitrum",
-    coinType: 60,
-    name: "Arbitrum",
-    managerAppName: "Ethereum",
-    ticker: "ETH",
-    scheme: "arbitrum",
-    color: "#28a0f0",
-    family: "evm",
-    units: [
-      {
-        name: "ETH",
-        code: "ETH",
-        magnitude: 18,
-      },
-    ],
-    explorerViews: [],
-  },
+  parentCurrency: arbitrumParentCurrency,
   tokenType: "erc20",
   name: "Arbitrum",
   ticker: "ARB",
