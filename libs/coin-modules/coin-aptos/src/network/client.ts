@@ -39,7 +39,7 @@ import {
   Pagination,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
-import { AptosAsset, AptosExtra, AptosFeeParameters, AptosSender } from "../types/assets";
+import { AptosAsset } from "../types/assets";
 import { log } from "@ledgerhq/logs";
 import { transactionsToOperations } from "../logic/transactionsToOperations";
 import { isTestnet } from "../logic/isTestnet";

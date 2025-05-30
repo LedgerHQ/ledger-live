@@ -21,7 +21,7 @@ describe("createApi", () => {
     freshAddress: "0x24dbf71ba20209753035505c51d4607ed67aa0c81b930d9ef4483ec84b349fcb",
   };
 
-  const tokenAccount: AptosSender = {
+  const tokenAccount = {
     xpub: "eacada8192f15185637e475d7783e14486e232d8b9978ffa127383847ffc5318",
     freshAddress: "0xb8922507317d85197d70c2bc1afc949c759fd0a62c8841a4300d1e2b63649bf6",
   };
