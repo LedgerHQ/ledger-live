@@ -3867,6 +3867,11 @@
         "title": "Confirmation"
       }
     },
+    "operationDetails": {
+      "extra": {
+        "stakedAmount": "Staked amount"
+      }
+    },
     "stake": {
       "emptyState": {
         "description": "You can earn Aptos rewards by staking your assets.",
