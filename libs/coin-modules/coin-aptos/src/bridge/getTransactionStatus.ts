@@ -93,6 +93,7 @@ const getTransactionStatus = async (
           errors.amount = new NotEnoughBalance();
         }
         if (
+          !t.useAllAmount &&
           t.amount.plus(stakingPosition.active).lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS) &&
           !errors.amount
         ) {
