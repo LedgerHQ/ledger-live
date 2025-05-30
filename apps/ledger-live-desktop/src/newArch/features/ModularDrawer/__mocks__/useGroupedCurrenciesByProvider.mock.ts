@@ -1,5 +1,10 @@
 import { fn, Mock } from "@storybook/test";
-import { arbitrumCurrency, bitcoinCurrency, ethereumCurrency } from "./useSelectAssetFlow.mock";
+import {
+  arbitrumCurrency,
+  bitcoinCurrency,
+  ethereumCurrency,
+  arbitrumParentCurrency,
+} from "./useSelectAssetFlow.mock";
 
 const res = {
   result: {
@@ -10,7 +15,7 @@ const res = {
       },
       {
         providerId: "ethereum",
-        currenciesByNetwork: [ethereumCurrency, arbitrumCurrency],
+        currenciesByNetwork: [ethereumCurrency, arbitrumCurrency, arbitrumParentCurrency],
       },
       { providerId: "arbitrum", currenciesByNetwork: [arbitrumCurrency] },
     ],

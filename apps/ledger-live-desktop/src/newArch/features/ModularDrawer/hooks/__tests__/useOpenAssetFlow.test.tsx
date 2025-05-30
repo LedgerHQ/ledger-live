@@ -28,7 +28,7 @@ describe("useOpenAssetFlow", () => {
       },
     });
 
-    result.current.openAssetFlow();
+    result.current.openAssetFlow(true);
 
     expect(store.getState().modals.MODAL_ADD_ACCOUNTS).toEqual({
       isOpened: true,
@@ -59,7 +59,7 @@ describe("useOpenAssetFlow", () => {
     );
 
     // Should open the drawer
-    result.current.openAssetFlow();
+    result.current.openAssetFlow(false);
 
     expect(setDrawer).toHaveBeenCalledTimes(1);
     expect(setDrawer).toHaveBeenLastCalledWith(
