@@ -398,7 +398,7 @@ jobs:
       - name: Download JS Build
         uses: tespkg/actions-cache/restore@v1
         with:
-          path: ${{ env.IOS_JSBUNDLE_PATH }}
+          path: apps/ledger-live-mobile/main.jsbundle
           key: ${{ needs.determine-builds.outputs.ios_js_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -408,7 +408,10 @@ jobs:
           use-fallback: false
 
       - name: Copy JS build
-        run: cp ${{ env.IOS_JSBUNDLE_PATH }} ${{ env.IOS_NATIVE_PATH }}/main.jsbundle
+        run: |
+          cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_JSBUNDLE_PATH }} 
+          cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_NATIVE_PATH }}/main.jsbundle
+  
 
       - name: Build dependencies
         uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
