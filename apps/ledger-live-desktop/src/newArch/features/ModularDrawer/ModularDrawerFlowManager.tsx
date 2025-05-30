@@ -88,7 +88,7 @@ const ModularDrawerFlowManager = ({
   );
 
   const handleBack = useMemo(() => {
-    const canGoBackToAsset = !hasOneCurrency;
+    const canGoBackToAsset = !hasOneCurrency && assetsToDisplay.length > 1;
     const canGoBackToNetwork = !hasOneNetwork;
 
     switch (currentStep) {
@@ -108,6 +108,7 @@ const ModularDrawerFlowManager = ({
       }
     }
   }, [
+    assetsToDisplay.length,
     currentStep,
     goBackToAssetSelection,
     goBackToNetworkSelection,
