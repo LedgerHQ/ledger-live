@@ -171,6 +171,5 @@ export type BridgeApi = {
 
 export type Api<
   AssetInfo extends Asset<TokenInfoCommon>,
-  MemoKind = never,
-  MemoValue = string,
-> = AlpacaApi<AssetInfo, MemoKind, MemoValue> & BridgeApi;
+  MemoType extends Memo = MemoNotSupported,
+> = AlpacaApi<AssetInfo, MemoType> & BridgeApi;
