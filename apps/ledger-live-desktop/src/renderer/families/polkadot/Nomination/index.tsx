@@ -45,6 +45,7 @@ import {
 import { TokenAccount } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useHistory } from "react-router";
+import { isAccountEmpty } from "@ledgerhq/coin-framework/account/helpers";
 
 type Props = {
   account: PolkadotAccount | TokenAccount;
@@ -118,15 +119,33 @@ const Nomination = ({ account }: { account: PolkadotAccount }) => {
     };
   }, [unlockings, unlockedBalance]);
   const onEarnRewards = useCallback(() => {
-    history.push({
-      pathname: "/platform/stakekit",
-      state: {
-        yieldId: "polkadot-dot-validator-staking",
-        accountId: account.id,
-        returnTo: `/account/${account.id}`,
-      },
-    });
-  }, [account, history]);
+    if (account.currency.id === "polkadot") {
+      history.push({
+        pathname: "/platform/stakekit",
+        state: {
+          yieldId: "polkadot-dot-validator-staking",
+          accountId: account.id,
+          returnTo: `/account/${account.id}`,
+        },
+      });
+    } else if (account.type === "Account") {
+      console.log("polka");
+      if (isAccountEmpty(account)) {
+        dispatch(
+          openModal("MODAL_NO_FUNDS_STAKE", {
+            account,
+          }),
+        );
+      } else {
+        dispatch(
+          openModal("MODAL_POLKADOT_REWARDS_INFO", {
+            account,
+            source: "Account Page",
+          }),
+        );
+      }
+    }
+  }, [account, dispatch, history]);
   const onNominate = useCallback(() => {
     dispatch(
       openModal("MODAL_POLKADOT_NOMINATE", {
