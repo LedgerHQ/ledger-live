@@ -43,9 +43,9 @@ const ModularDrawerFlowManager = ({
 
   const {
     assetsToDisplay,
-    setAssetsToDisplay,
     filteredSortedCryptoCurrencies,
     currenciesIdsArray,
+    setAssetsToDisplay,
   } = useAssetSelection(currencies, sortedCryptoCurrencies);
 
   const [networksToDisplay, setNetworksToDisplay] = useState<CryptoOrTokenCurrency[]>();
@@ -89,14 +89,17 @@ const ModularDrawerFlowManager = ({
 
   const handleBack = useMemo(() => {
     const canGoBackToAsset = !hasOneCurrency && assetsToDisplay.length > 1;
-    const canGoBackToNetwork = !hasOneNetwork;
+    const canGoBackToNetwork = !hasOneNetwork && networksToDisplay && networksToDisplay.length > 1;
 
     switch (currentStep) {
       case "NETWORK_SELECTION": {
         return canGoBackToAsset ? goBackToAssetSelection : undefined;
       }
       case "ACCOUNT_SELECTION": {
-        if (hasOneNetwork || !networksToDisplay || networksToDisplay.length <= 1) {
+        if (
+          (hasOneNetwork || !networksToDisplay || networksToDisplay.length <= 1) &&
+          !hasOneCurrency
+        ) {
           return goBackToAssetSelection;
         } else if (canGoBackToNetwork) {
           return goBackToNetworkSelection;
