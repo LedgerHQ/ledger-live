@@ -1,5 +1,5 @@
 import type {
-  Api,
+  // Api,
   Account,
   Balance,
   BlockInfo,
@@ -9,6 +9,7 @@ import type {
   TransactionIntent,
   Transaction,
   TransactionValidation,
+  Api,
 } from "@ledgerhq/coin-framework/api/index";
 import network from "@ledgerhq/live-network";
 

@@ -10,9 +10,6 @@ export function genericGetTransactionStatus(
   return async (account, transaction: TransactionCommon & { fees: BigNumber }) => {
     const { freshAddress, balance, currency } = account;
     const alpacaApi = getAlpacaApi(network, kind);
-    if (!alpacaApi.validateIntent) {
-      throw new Error("validateIntent is not implemented for this network/kind");
-    }
     const { errors, warnings } = await alpacaApi.validateIntent(
       {
         currencyName: currency.name,

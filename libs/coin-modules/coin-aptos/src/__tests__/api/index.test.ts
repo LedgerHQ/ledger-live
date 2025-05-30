@@ -1,5 +1,5 @@
 import { Aptos } from "@aptos-labs/ts-sdk";
-import type { Api } from "@ledgerhq/coin-framework/api/types";
+import type { AlpacaApi } from "@ledgerhq/coin-framework/api/types";
 import type { AptosAsset, AptosExtra } from "../../types/assets";
 import type { AptosConfig } from "../../config";
 import { createApi } from "../../api";
@@ -33,7 +33,7 @@ describe("createApi", () => {
   });
 
   it("should return an API object with alpaca api methods", () => {
-    const api: Api<AptosAsset, AptosExtra> = createApi(mockAptosConfig);
+    const api: AlpacaApi<AptosAsset, AptosExtra> = createApi(mockAptosConfig);
 
     // Check that methods are set with what we expect
     expect(api.broadcast).toBeDefined();
@@ -69,7 +69,7 @@ describe("lastBlock", () => {
       }),
     }));
 
-    const api: Api<AptosAsset, AptosExtra> = createApi(mockAptosConfig);
+    const api: AlpacaApi<AptosAsset, AptosExtra> = createApi(mockAptosConfig);
 
     expect(await api.lastBlock()).toStrictEqual({
       height: 123,

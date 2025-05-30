@@ -55,6 +55,7 @@ export type Transaction = {
   fee: bigint;
 } & Record<string, unknown>; // Field containing dedicated value for each blockchain
 
+// Other coins take differents parameters What do we want to do ?
 export type Account = {
   currencyName: string;
   address: string;
@@ -110,7 +111,13 @@ export type FeeEstimation = {
 //       see design document at https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/5446205788/coin-modules+lama-adapter+APIs+refinements
 export type Pagination = { minHeight: number };
 
-export type Api<AssetInfo extends Asset<TokenInfoCommon>, MemoKind = never, MemoValue = string> = {
+export type PreSignOperationHook = (recipient: string) => void;
+
+export type AlpacaApi<
+  AssetInfo extends Asset<TokenInfoCommon>,
+  MemoKind = never,
+  MemoValue = string,
+> = {
   broadcast: (tx: string) => Promise<string>;
   combine: (tx: string, signature: string, pubkey?: string) => string | Promise<string>;
   estimateFees: (
@@ -120,7 +127,7 @@ export type Api<AssetInfo extends Asset<TokenInfoCommon>, MemoKind = never, Memo
     transactionIntent: TransactionIntent<AssetInfo, MemoKind, MemoValue>,
     customFees?: bigint,
   ) => Promise<string>;
-  validateIntent?: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;
+  // validateIntent?: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;
   getBalance: (address: string) => Promise<Balance<AssetInfo>[]>;
   lastBlock: () => Promise<BlockInfo>;
   listOperations: (
@@ -128,3 +135,13 @@ export type Api<AssetInfo extends Asset<TokenInfoCommon>, MemoKind = never, Memo
     pagination: Pagination,
   ) => Promise<[Operation<AssetInfo>[], string]>;
 };
+
+export type BridgeApi = {
+  validateIntent: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;
+};
+
+export type Api<
+  AssetInfo extends Asset<TokenInfoCommon>,
+  MemoKind = never,
+  MemoValue = string,
+> = AlpacaApi<AssetInfo, MemoKind, MemoValue> & BridgeApi;
