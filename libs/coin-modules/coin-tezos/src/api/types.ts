@@ -3,7 +3,6 @@ import {
   Asset,
   FeeEstimation,
   TransactionIntent,
-  MemoNotSupported,
 } from "@ledgerhq/coin-framework/api/types";
 
 export type TezosAsset = Asset;

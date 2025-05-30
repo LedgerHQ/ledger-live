@@ -11,7 +11,7 @@ import { getAlpacaApi } from "./alpaca";
 import { buildOptimisticOperation, transactionToIntent } from "./utils";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { Result } from "@ledgerhq/coin-framework/derivation";
-import { Memo, MapMemo, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { MapMemo, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 
 function isMapMemo(memo: unknown): memo is MapMemo<string, string> {
   return (
@@ -38,8 +38,6 @@ export const genericSignOperation =
     deviceId: DeviceId;
   }): Observable<SignOperationEvent> =>
     new Observable(o => {
-      const alpacaApi = getAlpacaApi(network, kind);
-
       async function main() {
         if (!transaction["fees"]) throw new FeeNotLoaded();
         o.next({ type: "device-signature-requested" });
