@@ -1,7 +1,6 @@
 import { AssetType } from "@ledgerhq/react-ui/pre-ldls/index";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { fn, Mock } from "@storybook/test";
 
 export const bitcoinCurrency: CryptoCurrency = {
   type: "CryptoCurrency",
@@ -45,9 +44,9 @@ export const ethereumCurrency: CryptoCurrency = {
   explorerViews: [],
 };
 
-export const arbitrumParentCurrency: CryptoCurrency = {
-  type: "CryptoCurrency",
-  id: "arbitrum",
+export const arbitrumCurrency = {
+  type: "CryptoCurrency" as const,
+  id: "arbitrum" as const,
   coinType: 60,
   name: "Arbitrum",
   managerAppName: "Ethereum",
@@ -65,11 +64,11 @@ export const arbitrumParentCurrency: CryptoCurrency = {
   explorerViews: [],
 };
 
-export const arbitrumCurrency: TokenCurrency = {
+export const arbitrumToken: TokenCurrency = {
   type: "TokenCurrency",
   id: "arbitrum/erc20/arbitrum",
   contractAddress: "0x912CE59144191C1204E64559FE8253a0e49E6548",
-  parentCurrency: arbitrumParentCurrency,
+  parentCurrency: arbitrumCurrency,
   tokenType: "erc20",
   name: "Arbitrum",
   ticker: "ARB",
@@ -100,28 +99,8 @@ export const ethereumAssetType: AssetType = {
   ticker: "ETH",
 };
 
-const res = {
-  result: {
-    currenciesByProvider: [
-      {
-        providerId: "bitcoin",
-        currenciesByNetwork: [bitcoinCurrency],
-      },
-      {
-        providerId: "ethereum",
-        currenciesByNetwork: [ethereumCurrency, arbitrumCurrency.parentCurrency],
-      },
-      { providerId: "arbitrum", currenciesByNetwork: [arbitrumCurrency] },
-    ],
-    sortedCryptoCurrencies: [bitcoinCurrency, ethereumCurrency, arbitrumCurrency],
-  },
-  loadingStatus: "success",
-};
-
-export const useGroupedCurrenciesByProvider: Mock = fn(() => res);
-
 export const findCryptoCurrencyById = (id: string) =>
-  [bitcoinCurrency, ethereumCurrency, arbitrumCurrency.parentCurrency].find(a => a.id === id);
+  [bitcoinCurrency, ethereumCurrency, arbitrumCurrency].find(a => a.id === id);
 
 export const mockAssetsConfiguration: EnhancedModularDrawerConfiguration["assets"] = {
   filter: "topNetworks",

@@ -135,7 +135,7 @@ export const SelectAccountFor1CurrencyStory: Story = {
     const bitcoinAccount = canvas.getByText(/bitcoin-account-1/i);
     await userEvent.click(bitcoinAccount);
     expect(onAccountSelected).toHaveBeenCalledWith(detailedAccount);
-    expect(track).lastCalledWith("account_clicked", {
+    expect(track).toHaveBeenLastCalledWith("account_clicked", {
       currency: "BTC",
       flow: "Modular Account Flow",
       page: "Modular Account Selection",
