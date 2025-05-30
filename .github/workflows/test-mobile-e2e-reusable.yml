@@ -662,7 +662,7 @@ jobs:
     name: "Android Detox"
     needs: [build-android-native, build-android-js, determine-builds]
     if: ${{ !inputs.speculos_tests && github.event_name != 'schedule' && !failure() && !cancelled() }}
-    runs-on: [ ledger-live-4xlarge ]
+    runs-on: [ ledger-live-linux-8CPU-32RAM ]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
