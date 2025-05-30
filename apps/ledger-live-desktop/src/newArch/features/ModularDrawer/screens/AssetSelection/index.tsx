@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AssetType } from "@ledgerhq/react-ui/pre-ldls/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SelectAssetList as AssetsList } from "./components/List";
@@ -25,17 +25,16 @@ const AssetSelection = ({
   onAssetSelected,
   setSearchedValue,
 }: Readonly<AssetSelectionStepProps>) => {
-  const [shouldScrollToTop] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [shouldScrollToTop, setShouldScrollToTop] = useState(false);
 
   useEffect(() => {
-    const timeout = timeoutRef.current;
-    return () => {
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-    };
-  }, []);
+    if (defaultSearchValue !== undefined && defaultSearchValue.length > 2) {
+      const timeout = setTimeout(() => {
+        setShouldScrollToTop(true);
+      }, 100);
+      return () => clearTimeout(timeout);
+    }
+  }, [defaultSearchValue]);
 
   return (
     <>
@@ -54,6 +53,7 @@ const AssetSelection = ({
         flow="Modular Asset Flow"
         scrollToTop={shouldScrollToTop}
         onAssetSelected={onAssetSelected}
+        onScrolledToTop={() => setShouldScrollToTop(false)}
       />
     </>
   );

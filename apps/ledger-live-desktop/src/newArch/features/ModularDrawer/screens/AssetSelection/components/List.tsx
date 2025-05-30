@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AssetList, AssetType } from "@ledgerhq/react-ui/pre-ldls";
 import { track } from "~/renderer/analytics/segment";
@@ -14,6 +14,7 @@ type SelectAssetProps = {
   flow: string;
   scrollToTop: boolean;
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
+  onScrolledToTop?: () => void; // <-- add this prop
 };
 
 const CURRENT_PAGE = "Modular Asset Selection";
@@ -25,6 +26,7 @@ export const SelectAssetList = ({
   flow,
   scrollToTop,
   onAssetSelected,
+  onScrolledToTop, // <-- add here
 }: SelectAssetProps) => {
   const shouldDisplayLoading = !assetTypes || assetTypes.length === 0;
 
@@ -43,6 +45,12 @@ export const SelectAssetList = ({
   const onVisibleItemsScrollEnd = () => {
     //TODO: Add logic to handle scroll end event on ce we have dedicated API for it
   };
+
+  useEffect(() => {
+    if (scrollToTop && onScrolledToTop) {
+      onScrolledToTop();
+    }
+  }, [scrollToTop, onScrolledToTop]);
 
   if (shouldDisplayLoading) {
     return (
