@@ -108,7 +108,7 @@ export type TransactionIntent<
   recipient: string;
   amount: bigint;
   asset: AssetInfo;
-} & (MemoType extends MemoNotSupported ? {} : { memo: MemoType });
+} & (MemoType extends MemoNotSupported ? Record<string, never> : { memo: MemoType });
 
 export type TransactionValidation = {
   errors: Record<string, Error>;
