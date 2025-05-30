@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.115.0-nightly.6
+
+### Minor Changes
+
+- [#10372](https://github.com/LedgerHQ/ledger-live/pull/10372) [`162f6d3`](https://github.com/LedgerHQ/ledger-live/commit/162f6d30c4acb7db7cf2e8ae138f98de484c7f87) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - refactor(swap): simplify error handling and remove unused state
+
 ## 2.115.0-nightly.5
 
 ### Minor Changes
