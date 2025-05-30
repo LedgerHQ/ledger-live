@@ -229,7 +229,7 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
     pendingInactiveBalance = pendingInactiveBalance.plus(pendingInactive);
   }
 
-  const aptosResources = initialAccount?.aptosResources || {
+  const aptosResources = {
     activeBalance,
     inactiveBalance,
     pendingInactiveBalance,
