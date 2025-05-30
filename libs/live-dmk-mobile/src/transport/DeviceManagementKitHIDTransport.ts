@@ -8,10 +8,18 @@ import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { DescriptorEvent, DeviceModel } from "@ledgerhq/types-devices";
 import { HwTransportError } from "@ledgerhq/errors";
 import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
-import { BehaviorSubject, firstValueFrom, pairwise, startWith, Subscription } from "rxjs";
+import {
+  BehaviorSubject,
+  catchError,
+  firstValueFrom,
+  pairwise,
+  startWith,
+  Subscription,
+  TimeoutError,
+} from "rxjs";
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
 import { LocalTracer } from "@ledgerhq/logs";
-import { distinctUntilChanged, first, map } from "rxjs/operators";
+import { distinctUntilChanged, first, map, retry, timeout } from "rxjs/operators";
 
 const isDeviceSessionNotFoundError = (error: unknown): error is { _tag: "DeviceSessionNotFound" } =>
   typeof error === "object" &&
@@ -56,13 +64,20 @@ export class DeviceManagementKitHIDTransport extends Transport {
     let transport: DeviceManagementKitHIDTransport | undefined = undefined;
 
     try {
-      if (activeDeviceSessionSubject.value) {
-        await dmk.disconnect({ sessionId: activeDeviceSessionSubject.value.sessionId });
-      }
+      tracer.trace("[DMKTransportHID] start to open hid device without id");
       const availableDevices = await firstValueFrom(
-        dmk
-          .listenToAvailableDevices({ transport: rnHidTransportIdentifier })
-          .pipe(first(devices => devices.length > 0)),
+        dmk.listenToAvailableDevices({ transport: rnHidTransportIdentifier }).pipe(
+          first(devices => devices.length > 0),
+          timeout(500),
+          catchError(async err => {
+            if (err instanceof TimeoutError && activeDeviceSessionSubject.value) {
+              await dmk.disconnect({ sessionId: activeDeviceSessionSubject.value.sessionId });
+              activeDeviceSessionSubject.next(null);
+            }
+            throw err;
+          }),
+          retry(1),
+        ),
       );
       const sessionId = await dmk.connect({
         device: {
@@ -71,6 +86,7 @@ export class DeviceManagementKitHIDTransport extends Transport {
         } as DiscoveredDevice,
         sessionRefresherOptions: { isRefresherDisabled: true },
       });
+      tracer.trace("[DMKTransportHID] hid device opened without id", { sessionId });
       transport = new DeviceManagementKitHIDTransport(dmk, sessionId);
       activeDeviceSessionSubject.next({
         sessionId,
@@ -128,10 +144,10 @@ export class DeviceManagementKitHIDTransport extends Transport {
         }
       }
     } catch (err) {
-      tracer.trace("[DMKTransportHID] open error", { err });
       if (isConnectionOpeningError(err)) {
         transport = await DeviceManagementKitHIDTransport.openWithoutDeviceId();
       } else {
+        tracer.trace("[DMKTransportHID] open error", { err });
         throw err;
       }
     }
@@ -199,10 +215,10 @@ export class DeviceManagementKitHIDTransport extends Transport {
               },
             });
         } catch (err) {
-          tracer.trace("[DMKTransportHID] [listen] listen getDeviceSessionState error", { err });
           // if a connected device is manually disconnected and connected after the disconnect timeout the device
           // session not found error block the discovering
           if (!isDeviceSessionNotFoundError(err)) {
+            tracer.trace("[DMKTransportHID] [listen] listen getDeviceSessionState error", { err });
             observer.error(err as HwTransportError);
           }
         }
