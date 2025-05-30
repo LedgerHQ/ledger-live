@@ -145,7 +145,7 @@ jobs:
         id: check-android-native
         uses: tespkg/actions-cache/restore@v1.9.0
         with:
-          key: ${{ steps.cache-keys.outputs.android_native_key }}
+          key: ${{ steps.cache-keys.outputs.android_native_key }}1
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
@@ -504,7 +504,7 @@ jobs:
 #
   build-android-native:
     name: "Android Build Native"
-    runs-on: [ledger-live-4xlarge]
+    runs-on: [ledger-live-linux-8CPU-32RAM]
     needs: [determine-builds]
     if: ${{ needs.determine-builds.outputs.android_native_exists != 'true' }}
     steps:
