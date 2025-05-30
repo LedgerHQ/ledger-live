@@ -1,6 +1,7 @@
 import type { UserTransactionResponse } from "@aptos-labs/ts-sdk";
 import type {
   Account,
+  AccountRaw,
   Operation,
   TransactionCommon,
   TransactionCommonRaw,
@@ -24,6 +25,10 @@ export type AptosOperation = Operation<AptosOperationExtra>;
 export type AptosOperationRaw = Operation<AptosOperationExtraRaw>;
 
 export type AptosAccount = Account & { aptosResources: AptosResources };
+
+export type AptosAccountRaw = AccountRaw & {
+  aptosResources: AptosResourcesRaw;
+};
 
 export type TransactionStatus = TransactionStatusCommon;
 
@@ -107,17 +112,17 @@ export type AptosResources = {
   activeBalance: BigNumber;
   inactiveBalance: BigNumber;
   pendingInactiveBalance: BigNumber;
-  stakingPositions?: AptosStakingPosition[];
+  stakingPositions: AptosStakingPosition[];
 };
 
 export type AptosResourcesRaw = {
   activeBalance: string;
-  inactiveBalance: string;
   pendingInactiveBalance: string;
+  inactiveBalance: string;
   stakingPositions: {
-    staked: string;
-    available: string;
-    pending: string;
+    active: string;
+    pendingInactive: string;
+    inactive: string;
     validatorId: string;
   }[];
 };

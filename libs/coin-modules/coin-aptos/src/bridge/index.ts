@@ -9,6 +9,7 @@ import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper
 import type { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import resolver from "../signer";
+import { assignToAccountRaw, assignFromAccountRaw } from "./serialization";
 import type { Transaction, TransactionStatus, AptosSigner, AptosAccount } from "../types";
 import getTransactionStatus from "./getTransactionStatus";
 import estimateMaxSpendable from "./estimateMaxSpendable";
@@ -61,6 +62,8 @@ function buildAccountBridge(
     receive,
     signOperation,
     broadcast,
+    assignToAccountRaw,
+    assignFromAccountRaw,
   };
 }
 
