@@ -91,6 +91,7 @@ export function Row({
   stakingPosition: {
     validatorId,
     active,
+    pendingInactive,
     formattedAmount,
     formattedPending,
     formattedAvailable,
@@ -143,7 +144,7 @@ export function Row({
         <Ellipsis>{validatorId}</Ellipsis>
       </Column>
       <Column>
-        {active.gt(0) ? (
+        {active.gt(0) || pendingInactive.gt(0) ? (
           <Box color="positiveGreen" pl={2}>
             <ToolTip content={<Trans i18nKey="aptos.stake.activeTooltip" />}>
               <CheckCircle size={14} />
