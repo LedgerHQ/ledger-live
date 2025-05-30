@@ -14,7 +14,7 @@ export function getAlpacaApi(network: string, kind: "local" | "remote"): Api<any
       case "xrp":
         return createXrpApi(
           getCurrencyConfiguration<XrpCoinConfig>(getCryptoCurrencyById("ripple")),
-        );
+        ) as unknown as Api<any, any>;
       // as unknown as Api<any>; // FIXME: createXrpApi returns a strongly typed Api<XrpSender>, fix Api<any> to allow it
     }
   }
