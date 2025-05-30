@@ -33,7 +33,8 @@ describe("createApi", () => {
   });
 
   it("should return an API object with alpaca api methods", () => {
-    const api: AlpacaApi<AptosAsset, AptosExtra> = createApi(mockAptosConfig);
+    // NOTE: check aptos extra
+    const api: AlpacaApi<AptosAsset> = createApi(mockAptosConfig);
 
     // Check that methods are set with what we expect
     expect(api.broadcast).toBeDefined();
@@ -69,7 +70,8 @@ describe("lastBlock", () => {
       }),
     }));
 
-    const api: AlpacaApi<AptosAsset, AptosExtra> = createApi(mockAptosConfig);
+    // NOTE: check aptosextra
+    const api: AlpacaApi<AptosAsset> = createApi(mockAptosConfig);
 
     expect(await api.lastBlock()).toStrictEqual({
       height: 123,
