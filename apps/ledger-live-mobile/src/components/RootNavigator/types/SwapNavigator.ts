@@ -168,19 +168,6 @@ export type SwapNavigatorParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
-  [ScreenName.XrpEditFee]: {
-    accountId: string;
-    parentId?: string;
-    transaction: RippleTransaction;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
-  };
   [ScreenName.StellarEditCustomFees]: {
     accountId: string;
     parentId?: string;
