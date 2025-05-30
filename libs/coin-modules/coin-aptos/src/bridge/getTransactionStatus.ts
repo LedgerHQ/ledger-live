@@ -106,12 +106,13 @@ const getTransactionStatus = async (
       if (!stakingPosition) {
         errors.recipient = new RecipientRequired();
       } else {
-        if (t.amount.gt(stakingPosition.active)) {
+        if (t.amount.gt(stakingPosition.active) && !errors.amount) {
           errors.amount = new NotEnoughBalance();
         }
         if (
-          stakingPosition.active.minus(t.amount).gt(BigNumber(0)) &&
-          stakingPosition.active.minus(t.amount).lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS)
+          !t.useAllAmount &&
+          stakingPosition.active.minus(t.amount).lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS) &&
+          !errors.amount
         ) {
           errors.amount = new NotEnoughStakedBalanceLeft("", {
             minAmountStaked: `${MIN_COINS_ON_SHARES_POOL.toNumber().toString()} APT`,
@@ -123,7 +124,7 @@ const getTransactionStatus = async (
       if (!stakingPosition) {
         errors.recipient = new RecipientRequired();
       } else {
-        if (t.amount.gt(stakingPosition.inactive)) {
+        if (t.amount.gt(stakingPosition.inactive) && !errors.amount) {
           errors.amount = new NotEnoughBalance();
         }
       }
