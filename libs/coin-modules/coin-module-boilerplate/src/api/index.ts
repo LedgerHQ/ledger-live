@@ -31,9 +31,7 @@ export function createApi(config: BoilerplateConfig): AlpacaApi<BoilerplateAsset
   };
 }
 
-async function craft(
-  transactionIntent: TransactionIntent<BoilerplateAsset, never, string>,
-): Promise<string> {
+async function craft(transactionIntent: TransactionIntent<BoilerplateAsset>): Promise<string> {
   const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
   const tx = await craftTransaction(
     { address: transactionIntent.sender, nextSequenceNumber },
@@ -46,7 +44,7 @@ async function craft(
 }
 
 async function estimate(
-  transactionIntent: TransactionIntent<BoilerplateAsset, never, string>,
+  transactionIntent: TransactionIntent<BoilerplateAsset>,
 ): Promise<FeeEstimation> {
   const { serializedTransaction } = await craftTransaction(
     { address: transactionIntent.sender },
