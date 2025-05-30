@@ -8,7 +8,8 @@ import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
 import { getBalance } from "../logic/getBalance";
 
-export function createApi(config: AptosConfigApi): AlpacaApi<AptosAsset, AptosExtra> {
+// NOTE: double check aptos
+export function createApi(config: AptosConfigApi): AlpacaApi<AptosAsset> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   const client = new AptosAPI(config.aptosSettings);

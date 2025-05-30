@@ -18,7 +18,7 @@ import {
   listOperations,
   getTransactionStatus,
 } from "../logic";
-import { ListOperationsOptions, XrpAsset, XrpMemoKind, XrpMapMemo, XrpMemo } from "../types";
+import { ListOperationsOptions, XrpAsset, XrpMapMemo } from "../types";
 
 export function createApi(config: XrpConfig): Api<XrpAsset, XrpMapMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -31,7 +31,7 @@ export function createApi(config: XrpConfig): Api<XrpAsset, XrpMapMemo> {
     getBalance,
     lastBlock,
     listOperations: operations,
-    // validateIntent: getTransactionStatus,
+    validateIntent: getTransactionStatus,
   };
 }
 
