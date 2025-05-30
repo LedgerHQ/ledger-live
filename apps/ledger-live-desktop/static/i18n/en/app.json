@@ -3947,7 +3947,7 @@
             "title": "Confirmation",
             "success": {
               "title": "You have successfully restaked your assets.",
-              "description": "<0>{{amount}}</0> were restaked from <0>{{validator}}</0>",
+              "description": "{{amount}} were restaked from {{validator}}",
               "cta": "View details"
             },
             "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
@@ -3977,7 +3977,7 @@
             "title": "Confirmation",
             "success": {
               "title": "You have successfully unstaked your assets.",
-              "description": "<0>{{amount}}</0> were unstaked from <0>{{validator}}</0>",
+              "description": "{{amount}} were unstaked from {{validator}}",
               "cta": "View details"
             },
             "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
@@ -4004,7 +4004,7 @@
             "title": "Confirmation",
             "success": {
               "title": "You have successfully withdrawn your assets.",
-              "description": "<0>{{amount}}</0> were withdrawn from <0>{{validator}}</0>",
+              "description": "{{amount}} were withdrawn from {{validator}}",
               "cta": "View details"
             },
             "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."

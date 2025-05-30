@@ -50,16 +50,14 @@ export default function StepConfirmation({
         <SuccessDisplay
           title={t("aptos.restake.flow.steps.confirmation.success.title")}
           description={
-            <div>
+            <div style={{ wordBreak: "break-all" }}>
               <Trans
                 i18nKey="aptos.restake.flow.steps.confirmation.success.description"
                 values={{
                   amount,
                   validator: transaction?.recipient,
                 }}
-              >
-                <b></b>
-              </Trans>
+              />
             </div>
           }
         />
