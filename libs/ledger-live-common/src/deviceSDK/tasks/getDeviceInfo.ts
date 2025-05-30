@@ -11,6 +11,7 @@ import { map, switchMap } from "rxjs/operators";
 import { SharedTaskEvent, retryOnErrorsCommandWrapper, sharedLogicTaskWrapper } from "./core";
 import { quitApp } from "../commands/quitApp";
 import { withTransport } from "../transports/core";
+import { SendApduEmptyResponseError } from "@ledgerhq/device-management-kit";
 
 const ManagerAllowedFlag = 0x08;
 const PinValidatedFlag = 0x80;
@@ -42,6 +43,7 @@ export function internalGetDeviceInfoTask({
             return retryOnErrorsCommandWrapper({
               command: getVersion,
               allowedErrors: [{ maxRetries: 3, errorClass: DisconnectedDevice }],
+              allowedDmkErrors: [new SendApduEmptyResponseError()],
             })(transportRef, {});
           }),
           map(value => {
