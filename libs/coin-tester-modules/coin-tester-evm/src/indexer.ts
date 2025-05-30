@@ -602,7 +602,7 @@ const handleBlock = async (
               {
                 from,
                 to,
-                input: null,
+                // input: null,
                 value: ethers.BigNumber.from(action.value).toBigInt().toString(),
                 gas: ethers.BigNumber.from(action.gas).toBigInt().toString(),
                 gas_used: ethers.BigNumber.from(result?.gasUsed || "0")
@@ -632,7 +632,7 @@ const handleBlock = async (
               {
                 from,
                 to,
-                input: null,
+                // input: null,
                 value: ethers.BigNumber.from(action.value).toBigInt().toString(),
                 gas: ethers.BigNumber.from(action.gas).toBigInt().toString(),
                 gas_used: ethers.BigNumber.from(result?.gasUsed || "0")
