@@ -7,7 +7,10 @@ if (process.env.IGNORE_INTEGRATION_TESTS) {
 if (process.env.ONLY_INTEGRATION_TESTS) {
   testRegex = ".integration.(test|spec).[jt]sx?$";
 }
-const reporters = ["default"];
+const reporters = [
+  "default",
+  ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
+];
 if (process.env.CI) {
   reporters.push("github-actions");
 }
@@ -21,9 +24,6 @@ const defaultConfig = {
   },
   testEnvironment: "node",
   coverageDirectory: "./coverage/",
-  coverageReporters: ["json", "lcov", "clover"],
-  reporters,
-  collectCoverage: true,
   coveragePathIgnorePatterns: ["src/__tests__"],
   modulePathIgnorePatterns: ["<rootDir>/benchmark/.*", "<rootDir>/cli/.yalc/.*"],
   testPathIgnorePatterns,
@@ -33,6 +33,12 @@ const defaultConfig = {
 };
 
 module.exports = {
+  collectCoverage: true,
+  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../" }], "text"],
+  reporters: [
+    "default",
+    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
+  ],
   projects: [
     {
       ...defaultConfig,

@@ -10,19 +10,12 @@ module.exports = {
     "!src/__tests__/**/*.ts",
     "!src/__snapshots__/",
   ],
-  coverageReporters: [
-    "json",
-    ["lcov", { file: "multiversx-lcov.info", projectRoot: "../" }],
-    "text",
-  ],
+  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
   reporters: [
     "default",
-    [
-      "jest-sonar",
-      { outputName: "multiversx-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
-    ],
+    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
   setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
 };

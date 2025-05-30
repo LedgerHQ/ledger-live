@@ -8,15 +8,12 @@ module.exports = {
     "!src/**/*.spec.ts",
     "!src/test/**/*.ts",
   ],
-  coverageReporters: ["json", ["lcov", { file: "stellar-lcov.info", projectRoot: "../" }], "text"],
+  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.[tj]s"],
   reporters: [
     "default",
-    [
-      "jest-sonar",
-      { outputName: "stellar-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
-    ],
+    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
   //setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
 };

@@ -10,13 +10,13 @@ export default {
     "!src/**/__tests__/**",
     "!tests/**",
   ],
-  coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "json-summary", "text"],
+  coverageReporters: ["json", ["lcov", { projectRoot: "../../../../" }], "json-summary", "text"],
   reporters: [
     "default",
     [
       "jest-sonar",
       {
-        outputName: "hw-app-cosmos-sonar-executionTests-report.xml",
+        outputName: "sonar-executionTests-report.xml",
         reportedFilePath: "absolute",
       },
     ],
