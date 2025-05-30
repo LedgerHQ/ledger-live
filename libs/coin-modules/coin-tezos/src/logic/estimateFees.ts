@@ -33,13 +33,16 @@ export type EstimatedFees = {
  *
  * @param {Account} account
  * @param {Transaction} transaction
+ * @param parameters estimation parameter overrides
  */
 export async function estimateFees({
   account,
   transaction,
+  parameters,
 }: {
   account: CoreAccountInfo;
   transaction: CoreTransactionInfo;
+  parameters?: { gasLimit?: number; storageLimit?: number };
 }): Promise<EstimatedFees> {
   const encodedPubKey = b58cencode(
     compressPublicKey(Buffer.from(account.xpub || "", "hex"), DerivationType.ED25519),
@@ -81,18 +84,23 @@ export async function estimateFees({
           mutez: true,
           to: transaction.recipient,
           amount: Number(amount),
-          storageLimit: DEFAULT_STORAGE_LIMIT.ORIGINATION, // https://github.com/TezTech/eztz/blob/master/PROTO_003_FEES.md for originating an account
+          gasLimit: parameters?.gasLimit,
+          storageLimit: parameters?.storageLimit ?? DEFAULT_STORAGE_LIMIT.ORIGINATION, // https://github.com/TezTech/eztz/blob/master/PROTO_003_FEES.md for originating an account
         });
         break;
       case "delegate":
         estimate = await tezosToolkit.estimate.setDelegate({
           source: account.address,
           delegate: transaction.recipient,
+          gasLimit: parameters?.gasLimit,
+          storageLimit: parameters?.storageLimit,
         });
         break;
       case "undelegate":
         estimate = await tezosToolkit.estimate.setDelegate({
           source: account.address,
+          gasLimit: parameters?.gasLimit,
+          storageLimit: parameters?.storageLimit,
         });
         break;
       default:

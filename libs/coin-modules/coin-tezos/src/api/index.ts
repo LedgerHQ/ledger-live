@@ -96,6 +96,10 @@ async function estimate(transactionIntent: TezosTransactionIntent): Promise<Tezo
       recipient: transactionIntent.recipient,
       amount: transactionIntent.amount,
     },
+    parameters: {
+      gasLimit: transactionIntent.gasLimit,
+      storageLimit: transactionIntent.storageLimit,
+    },
   });
 
   if (taquitoError !== undefined) {
