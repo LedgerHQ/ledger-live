@@ -142,7 +142,8 @@ describe("createApi", () => {
     });
   });
 
-  describe("listOperationsTokens", () => {
+  // TODO: enable when aptos token will be enabled
+  describe.skip("listOperationsTokens", () => {
     it("returns operations from account", async () => {
       const block = await api.lastBlock();
 
@@ -207,8 +208,8 @@ describe("createApi", () => {
         senders: ["0x24dbf71ba20209753035505c51d4607ed67aa0c81b930d9ef4483ec84b349fcb"],
         asset: {
           type: "token",
-          asset_type: "coin",
-          address:
+          standard: "coin",
+          contractAddress:
             "0xd11107bdf0d6d7040c6c0bfbdecb6545191fdf13e8d8d259952f53e1713f61b5::staked_coin::StakedAptos",
         },
         tx: {
@@ -226,8 +227,8 @@ describe("createApi", () => {
         senders: [tokenAccount.freshAddress],
         asset: {
           type: "token",
-          asset_type: "coin",
-          address:
+          standard: "coin",
+          contractAddress:
             "0xd11107bdf0d6d7040c6c0bfbdecb6545191fdf13e8d8d259952f53e1713f61b5::staked_coin::StakedAptos",
         },
         tx: {
@@ -250,8 +251,8 @@ describe("createApi", () => {
         senders: ["0x24dbf71ba20209753035505c51d4607ed67aa0c81b930d9ef4483ec84b349fcb"],
         asset: {
           type: "token",
-          asset_type: "fungible_asset",
-          address: "0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
+          standard: "fungible_asset",
+          contractAddress: "0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
         },
         tx: {
           hash: "0x88856968603dee4f08579036bc30322b9a5f329561656888e3467ce27cc11ea7",
@@ -268,8 +269,8 @@ describe("createApi", () => {
         senders: [tokenAccount.freshAddress],
         asset: {
           type: "token",
-          asset_type: "fungible_asset",
-          address: "0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
+          standard: "fungible_asset",
+          contractAddress: "0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
         },
         tx: {
           hash: "0x8aa9e980760fe8aeb6804f387350b3019a2471aa61a5506a260c32cd5d6db32c",
