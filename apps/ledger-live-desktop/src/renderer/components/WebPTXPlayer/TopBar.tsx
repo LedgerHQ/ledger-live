@@ -25,8 +25,8 @@ const Container = styled(Box).attrs(() => ({
   alignItems: "center",
 }))`
   padding: 10px 16px;
-  background-color: ${p => p.theme.colors.palette.background.paper};
-  border-bottom: 1px solid ${p => p.theme.colors.palette.text.shade10};
+  background-color: ${p => p.theme.colors?.palette.background.paper};
+  border-bottom: 1px solid ${p => p.theme.colors?.palette.text.shade10};
 `;
 
 const ItemContainer = styled(Tabbable).attrs(p => ({
@@ -63,12 +63,12 @@ const ItemContainer = styled(Tabbable).attrs(p => ({
   }
 
   &:hover {
-    color: ${p => (p.disabled ? "" : p.theme.colors.palette.text.shade100)};
-    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.palette.action.active, 0.05))};
+    color: ${p => (p.disabled ? "" : p.theme.colors?.palette.text.shade100)};
+    background: ${p => (p.disabled ? "" : rgba(p.theme.colors?.palette.action.active, 0.05))};
   }
 
   &:active {
-    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.palette.action.active, 0.1))};
+    background: ${p => (p.disabled ? "" : rgba(p.theme.colors?.palette.action.active, 0.1))};
   }
 `;
 
@@ -83,7 +83,7 @@ export const Separator = styled.div`
   margin-right: 16px;
   height: 15px;
   width: 1px;
-  background: ${p => p.theme.colors.palette.divider};
+  background: ${p => p.theme.colors?.palette.divider};
 `;
 
 const RightContainer = styled(Box).attrs(() => ({
@@ -214,6 +214,10 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
   }, [localStorage, history, isInternalApp, match.url, webviewState.url]);
 
   const isLoading = useDebounce(webviewState.loading, 100);
+
+  if (!enablePlatformDevTools && isInternalApp) {
+    return null;
+  }
 
   return (
     <Container>
