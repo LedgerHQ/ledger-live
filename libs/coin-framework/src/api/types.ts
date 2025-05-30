@@ -97,6 +97,8 @@ export interface TypedMapMemo<KindToValueMap extends Record<string, unknown>> ex
   memos: Map<keyof KindToValueMap, KindToValueMap[keyof KindToValueMap]>;
 }
 
+// FIXME: find better maybeMemo type without disabling the rule
+// eslint-disable-next-line @typescript-eslint/ban-types
 type MaybeMemo<MemoType extends Memo> = MemoType extends MemoNotSupported ? {} : { memo: MemoType };
 
 export type TransactionIntent<
