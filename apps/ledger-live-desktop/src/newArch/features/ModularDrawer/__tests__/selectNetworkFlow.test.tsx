@@ -1,16 +1,10 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
 import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
-import {
-  ethereumCurrency,
-  bitcoinCurrency,
-  arbitrumCurrency,
-} from "../__mocks__/useSelectAssetFlow.mock";
+import { bitcoinCurrency, arbitrumCurrency } from "../__mocks__/useSelectAssetFlow.mock";
 import { useGroupedCurrenciesByProvider } from "../__mocks__/useGroupedCurrenciesByProvider.mock";
+import { mockOnAssetSelected, currencies, mockDomMeasurements } from "./shared";
 
-const mockOnAssetSelected = jest.fn();
-
-const currencies = [ethereumCurrency, bitcoinCurrency, arbitrumCurrency];
 jest.mock("@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook", () => ({
   useGroupedCurrenciesByProvider: () => useGroupedCurrenciesByProvider(),
 }));
@@ -37,27 +31,7 @@ jest.mock("framer-motion", () => {
 });
 
 beforeEach(() => {
-  Object.defineProperty(HTMLElement.prototype, "offsetHeight", {
-    configurable: true,
-    value: 800,
-  });
-  Object.defineProperty(HTMLElement.prototype, "offsetWidth", {
-    configurable: true,
-    value: 800,
-  });
-  HTMLElement.prototype.getBoundingClientRect = function () {
-    return {
-      width: 800,
-      height: 800,
-      top: 0,
-      left: 0,
-      bottom: 800,
-      right: 800,
-      x: 0,
-      y: 0,
-      toJSON: () => {},
-    };
-  };
+  mockDomMeasurements();
 });
 
 describe("ModularDrawerFlowManager - Select Network Flow", () => {

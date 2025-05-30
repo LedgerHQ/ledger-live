@@ -14,7 +14,7 @@ describe("useAssetSelection", () => {
     { id: "ada", name: "Cardano" },
   ] as CryptoOrTokenCurrency[];
 
-  it("returns filtered and sorted currencies by default", () => {
+  it("returns filtered currencies by default", () => {
     const { result } = renderHook(() => useAssetSelection(mockCurrencies, mockSorted));
     expect(result.current.assetsToDisplay).toEqual([
       { id: "eth", name: "Ethereum" },

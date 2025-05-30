@@ -11,7 +11,13 @@ import { track } from "~/renderer/analytics/__mocks__/segment";
 
 const store = createStore(() => ({
   accounts: [],
-  wallet: { accountNames: new Map([["bitcoin1", "bitcoin-account-1"]]) },
+  wallet: {
+    accountNames: new Map([
+      ["bitcoin1", "Bitcoin 1"],
+      ["bitcoin2", "Bitcoin 2"],
+      ["bitcoin3", "Bitcoin 3"],
+    ]),
+  },
   currency: {
     type: "FiatCurrency",
     ticker: "USD",

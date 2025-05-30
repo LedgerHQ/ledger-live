@@ -1,23 +1,15 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrenciesIds } from "../getCurrenciesIds";
-import { MOCK_CURRENCY_BY_PROVIDER_ID } from "./mockData";
+import { res as GroupedCurrencies } from "../../__mocks__/useGroupedCurrenciesByProvider.mock";
 
-const allIdsFromMock = [
-  "ethereum",
-  "zksync",
-  "scroll",
-  "optimism",
-  "linea",
-  "base",
-  "arbitrum",
-  "blast",
-  "boba",
-];
+const MOCK_CURRENCY_BY_PROVIDER_ID = GroupedCurrencies.result.currenciesByProvider;
+
+const allIdsFromMock = ["ethereum", "arbitrum"];
 
 describe("getCurrencyIds", () => {
   it("should return an array of currency IDs", () => {
     const currencies = MOCK_CURRENCY_BY_PROVIDER_ID;
-    const result = getCurrenciesIds(currencies[0].currenciesByNetwork as CryptoOrTokenCurrency[]);
+    const result = getCurrenciesIds(currencies[1].currenciesByNetwork as CryptoOrTokenCurrency[]);
     expect(result).toEqual(allIdsFromMock);
   });
   it("should return an empty array when no currencies are provided", () => {

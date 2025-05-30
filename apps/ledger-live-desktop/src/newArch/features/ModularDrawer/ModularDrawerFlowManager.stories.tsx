@@ -11,6 +11,7 @@ import {
 } from "./__mocks__/useSelectAssetFlow.mock";
 import { expect, fn, userEvent, waitFor, within } from "@storybook/test";
 import { track } from "~/renderer/analytics/__mocks__/segment";
+import { MOCKED_ARB_ACCOUNT } from "./__mocks__/accounts.mock";
 
 const store = createStore(() => ({
   accounts: [],
@@ -101,6 +102,6 @@ export const TestSelectAccountFlow: Story = {
 
     await userEvent.click(arbitrumAccount);
 
-    expect(onAccountSelected).toHaveBeenCalled();
+    expect(onAccountSelected).toHaveBeenCalledWith(MOCKED_ARB_ACCOUNT, undefined);
   },
 };

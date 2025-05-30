@@ -30,6 +30,6 @@ export function useModularDrawerNavigation(initialStep: ModularDrawerStep = "ASS
     currentStep,
     navigationDirection,
     goToStep,
-    setCurrentStep, // for advanced/manual use
+    setCurrentStep,
   };
 }
