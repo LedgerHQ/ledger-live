@@ -32,8 +32,8 @@ const detectType = (address: string, tx: AptosTransaction, value: BigNumber): DI
 export function transactionsToOperations(
   address: string,
   txs: (AptosTransaction | null)[],
-): [Operation<AptosAsset>[], Operation<AptosAsset>[]] {
-  const operations: [Operation<AptosAsset>[], Operation<AptosAsset>[]] = [[], []];
+): Operation<AptosAsset>[] {
+  const operations: Operation<AptosAsset>[] = [];
 
   return txs.reduce((acc, tx) => {
     if (tx === null) {
@@ -82,22 +82,19 @@ export function transactionsToOperations(
 
     if (op.type !== DIRECTION.UNKNOWN && coin_id !== null) {
       if (coin_id === APTOS_ASSET_ID) {
-        acc[0].push(op);
+        acc.push(op);
         return acc;
       }
 
       const token = findTokenByAddressInCurrency(coin_id.toLowerCase(), "aptos");
 
       if (token !== undefined) {
-        acc[1].push(op);
-
-        if (op.type === DIRECTION.OUT) {
-          acc[0].push({
-            ...op,
-            value: op.tx.fees,
-            type: "FEES",
-          });
-        }
+        op.asset = {
+          type: "token",
+          standard: token.tokenType,
+          contractAddress: token.contractAddress,
+        };
+        acc.push(op);
       }
     }
     return acc;

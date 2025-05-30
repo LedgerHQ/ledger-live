@@ -13,6 +13,7 @@ export class AccountPage extends AppPage {
   private stakeBannerButton = this.page.getByTestId("account-stake-banner-button");
   private receiveButton = this.page.getByRole("button", { name: "Receive", exact: true });
   private sendButton = this.page.getByRole("button", { name: "Send" });
+  private buyButton = this.page.getByRole("button", { name: "Buy" });
   private accountName = (name: string) => this.page.locator(`text=${name}`);
   private lastOperation = this.page.locator("text=Latest operations");
   private tokenValue = (tokenName: string, accountName: string) =>
@@ -61,6 +62,11 @@ export class AccountPage extends AppPage {
   @step("Click `Send` button")
   async clickSend() {
     await this.sendButton.click();
+  }
+
+  @step("Click `Buy` button")
+  async clickBuy() {
+    await this.buyButton.click();
   }
 
   @step("Open Swap")
