@@ -9,7 +9,7 @@ import {
 } from "../logic";
 import coinConfig from "../config";
 import { TronConfig } from "../config";
-import { Api, Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { AlpacaApi, Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { createApi } from ".";
 import { TronAsset } from "../types";
 
@@ -49,7 +49,7 @@ describe("createApi", () => {
   });
 
   it("should pass parameters correctly", async () => {
-    const api: Api<TronAsset> = createApi(mockTronConfig);
+    const api: AlpacaApi<TronAsset> = createApi(mockTronConfig);
     const intent: TransactionIntent<TronAsset> = {
       type: "send",
       sender: "sender",

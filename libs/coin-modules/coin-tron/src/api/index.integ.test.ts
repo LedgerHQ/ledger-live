@@ -1,4 +1,4 @@
-import type { Api } from "@ledgerhq/coin-framework/api/index";
+import type { AlpacaApi } from "@ledgerhq/coin-framework/api/index";
 import { randomBytes } from "crypto";
 import dotenv from "dotenv";
 import TronWeb from "tronweb";
@@ -25,7 +25,7 @@ const wallet = {
  * Testnet faucet: https://shasta.tronex.io/
  */
 describe("API", () => {
-  let module: Api<TronAsset>;
+  let module: AlpacaApi<TronAsset>;
   let tronWeb: TronWeb;
 
   beforeAll(() => {
@@ -51,7 +51,7 @@ describe("API", () => {
     const signedTrx = await tronWeb.trx.sign(unsignedTx, wallet.privateKey);
 
     // WHEN
-    const result = module.combine(signedTrx.raw_data_hex, signedTrx.signature![0]);
+    const result = await module.combine(signedTrx.raw_data_hex, signedTrx.signature![0]);
     const txId = await module.broadcast(result);
 
     // THEN
