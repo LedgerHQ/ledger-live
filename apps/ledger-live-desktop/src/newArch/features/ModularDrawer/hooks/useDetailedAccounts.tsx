@@ -49,7 +49,7 @@ export const useDetailedAccounts = (
   const detailedAccounts = useMemo(() => {
     const formattedAccounts = accounts.flatMap(tuple => {
       const account = tuple.account;
-      const protocol = getTagDerivationMode(account.currency, account.derivationMode) || "";
+      const protocol = getTagDerivationMode(account.currency, account.derivationMode) ?? "";
       const currencyAccount = formatDetailedAccount(
         account,
         account.freshAddress,

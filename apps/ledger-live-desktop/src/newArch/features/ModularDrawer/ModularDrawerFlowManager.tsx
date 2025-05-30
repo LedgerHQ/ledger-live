@@ -36,7 +36,7 @@ const ModularDrawerFlowManager = ({
   onAssetSelected,
   onAccountSelected,
 }: Props) => {
-  const { assets: assetConfiguration, networks: networkConfiguration } = drawerConfiguration || {};
+  const { assets: assetConfiguration, networks: networkConfiguration } = drawerConfiguration ?? {};
 
   const { result } = useGroupedCurrenciesByProvider(true) as LoadingBasedGroupedCurrencies;
   const { currenciesByProvider, sortedCryptoCurrencies } = result;
