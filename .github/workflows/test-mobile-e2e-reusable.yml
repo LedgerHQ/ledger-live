@@ -132,7 +132,7 @@ jobs:
         id: check-ios-native
         uses: tespkg/actions-cache/restore@v1.9.0
         with:
-          key: ${{ needs.determine-builds.outputs.ios_native_key }}
+          key: ${{ steps.cache-keys.outputs.ios_native_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
@@ -145,7 +145,7 @@ jobs:
         id: check-android-native
         uses: tespkg/actions-cache/restore@v1.9.0
         with:
-          key: ${{ needs.determine-builds.outputs.ios_native_key }}
+          key: ${{ steps.cache-keys.outputs.ios_native_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
@@ -158,7 +158,7 @@ jobs:
         id: check-ios-js
         uses: tespkg/actions-cache/restore@v1.9.0
         with:
-          key: ${{ needs.determine-builds.outputs.ios_native_key }}
+          key: ${{ steps.cache-keys.outputs.ios_native_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
@@ -171,7 +171,7 @@ jobs:
         id: check-android-js
         uses: tespkg/actions-cache/restore@v1.9.0
         with:
-          key: ${{ needs.determine-builds.outputs.ios_native_key }}
+          key: ${{ steps.cache-keys.outputs.ios_native_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
