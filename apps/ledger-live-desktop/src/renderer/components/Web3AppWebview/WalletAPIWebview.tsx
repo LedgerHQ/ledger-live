@@ -393,6 +393,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       onStateChange,
       hideLoader,
       webviewStyle: customWebviewStyle,
+      onWidgetLoadedChange,
     },
     ref,
   ) => {
@@ -441,6 +442,10 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       serverRef,
       customWebviewStyle,
     );
+
+    useEffect(() => {
+      onWidgetLoadedChange?.(widgetLoaded);
+    }, [onWidgetLoadedChange, widgetLoaded]);
 
     const isDapp = !!manifest.dapp;
     const preloader = isDapp ? "webviewDappPreloader" : "webviewPreloader";

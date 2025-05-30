@@ -396,6 +396,13 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  buySellLoader: {
+    enabled: false,
+    params: {
+      durationMs: 0,
+    },
+  },
+
   buySellShortcut: {
     enabled: false,
   },

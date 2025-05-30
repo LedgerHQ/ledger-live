@@ -24,6 +24,7 @@ import { walletSelector } from "~/reducers/wallet";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { useSettings } from "~/hooks";
+import { CustomLoaderBuySell } from "./BuySell/CustomLoaderBuySell";
 
 export type Props = StackNavigatorProps<
   PtxNavigatorParamList,
@@ -129,6 +130,7 @@ export function PtxScreen({ route, config }: Props) {
         }}
         config={config}
         softExit={softExit === "true"}
+        CustomLoader={CustomLoaderBuySell}
       />
     </>
   ) : (
