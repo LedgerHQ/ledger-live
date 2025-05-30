@@ -1,7 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Observable } from "rxjs";
-import { TokenAccount } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
@@ -14,7 +13,6 @@ import { openModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { sortAccountsByFiatValue } from "../utils/sortAccountsByFiatValue";
-import { getTokenAccountTuples } from "LLD/utils/getTokenAccountTuples";
 import BigNumber from "bignumber.js";
 import { formatDetailedAccount } from "../utils/formatDetailedAccount";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
@@ -43,27 +41,10 @@ export const useDetailedAccounts = (
 
   const isATokenCurrency = useMemo(() => isTokenCurrency(asset), [asset]);
 
-  const getTokenAccounts = useCallback(() => {
-    const tokenAccountTuples = getTokenAccountTuples(asset, nestedAccounts);
-    const isTokenAccountTuple = (tuple: {
-      subAccount?: TokenAccount;
-    }): tuple is { subAccount: TokenAccount } => tuple.subAccount !== undefined;
-    return tokenAccountTuples
-      .filter(isTokenAccountTuple)
-      .sort((a, b) => sortAccountsByBalance(a.subAccount, b.subAccount));
-  }, [asset, nestedAccounts]);
-
-  const getRegularAccounts = useCallback(() => {
+  const accounts = useMemo(() => {
     const accountTuples = getAccountTuplesForCurrency(asset, nestedAccounts, false, accountIds);
     return accountTuples.sort((a, b) => sortAccountsByBalance(a.account, b.account));
   }, [asset, nestedAccounts, accountIds]);
-
-  const accounts = useMemo(() => {
-    if (isATokenCurrency) {
-      return getTokenAccounts();
-    }
-    return getRegularAccounts();
-  }, [isATokenCurrency, getRegularAccounts, getTokenAccounts]);
 
   const detailedAccounts = useMemo(() => {
     const formattedAccounts = accounts.flatMap(tuple => {

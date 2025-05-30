@@ -1,6 +1,6 @@
 import { fn, Mock } from "@storybook/test";
 import BigNumber from "bignumber.js";
-import { bitcoinCurrency } from "./useSelectAssetFlow.mock";
+import { arbitrumCurrency, bitcoinCurrency, ethereumCurrency } from "./useSelectAssetFlow.mock";
 import { Account } from "@ledgerhq/types-live";
 
 export const useGetAccountIds: Mock = fn(() => []);
@@ -15,18 +15,47 @@ export const getBalanceHistoryWithCountervalue: Mock = fn(() => ({
 }));
 export const getPortfolioCount: Mock = fn(() => 0);
 export const useCountervaluesState: Mock = fn(() => {});
-export const getAccountTuplesForCurrency: Mock = fn(() => [
-  {
-    account: {
-      type: "Account",
-      derivationMode: "native_segwit",
-      freshAddress: "bc1qprvchytjcdqfqp4cxwe4gp927sd38687m2pkdr",
-      creationDate: "2024-12-10T09:27:22.000Z",
-      balance: new BigNumber(31918),
-      currency: bitcoinCurrency,
+export const getAccountTuplesForCurrency: Mock = fn(currency =>
+  [
+    {
+      account: {
+        type: "Account",
+        derivationMode: "native_segwit",
+        freshAddress: "bc1qprvchytjcdqfqp4cxwe4gp927sd38687m2pkdr",
+        creationDate: "2024-12-10T09:27:22.000Z",
+        balance: new BigNumber(31918),
+        currency: bitcoinCurrency,
+        id: "bitcoin1",
+      },
     },
-  },
-]);
+    {
+      account: {
+        type: "Account",
+        derivationMode: "",
+        freshAddress: "kjhiuhd3o8aol9o9a39ajdl9jdljdl39jlag9j29j3",
+        creationDate: "2024-12-10T09:27:22.000Z",
+        balance: new BigNumber(34455),
+        currency: ethereumCurrency,
+        id: "ethereum1",
+      },
+    },
+    {
+      account: {
+        type: "Account",
+        derivationMode: "",
+        freshAddress: "s37rhmi7hsm3i73hsm7i3hm83m8h87hsm87h3s8h33",
+        creationDate: "2024-12-10T09:27:22.000Z",
+        balance: new BigNumber(34455),
+        currency: arbitrumCurrency,
+        id: "arbitrum1",
+      },
+    },
+  ].filter(({ account }) =>
+    currency.type === "CryptoCurrency"
+      ? account.currency.id === currency.id
+      : account.currency.id === currency.parentCurrency.id,
+  ),
+);
 export const accountsSelector: Mock = fn(state => state.accounts);
 export const counterValueCurrencySelector: Mock = fn(state => state.currency);
 
