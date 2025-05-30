@@ -7436,7 +7436,12 @@
     "performance": "Performance",
     "low": "Low",
     "high": "High",
-    "title": "Market Movements"
+    "title": "Market Movements",
+    "overlay": {
+      "title": "Move between assets",
+      "action": "Swipe left or right",
+      "button": "Got it!"
+    }
   },
   "nftEntryPoint": {
     "title": "Your NFTs",
