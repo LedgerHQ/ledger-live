@@ -1,6 +1,6 @@
 import { getDeviceManagementKit } from "../hooks";
 import { Observable, Subject } from "rxjs";
-import { afterEach, beforeEach, expect } from "vitest";
+import { beforeEach, expect } from "vitest";
 import {
   ConnectedDevice,
   DeviceSessionState,
@@ -15,7 +15,14 @@ import {
 import type { Subscription as TransportSubscription } from "@ledgerhq/hw-transport";
 
 describe("DeviceManagementKitHIDTransport", () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
+
   describe("open", () => {
+    beforeEach(() => {
+      vi.resetAllMocks();
+    });
     it("should return the active transport", async () => {
       // given
       const staticTransport = DeviceManagementKitHIDTransport;
@@ -41,10 +48,23 @@ describe("DeviceManagementKitHIDTransport", () => {
       // then
       expect(transport).toEqual(activeTransport);
     });
-    it("should connect to an already discovered device", async () => {
+    it("should connect to a new device", async () => {
       // given
       const staticTransport = DeviceManagementKitHIDTransport;
       const dmk = getDeviceManagementKit();
+      vi.spyOn(dmk, "connect").mockResolvedValue("sessionId");
+      vi.spyOn(dmk, "getDeviceSessionState").mockReturnValue(new Observable());
+      // when
+      const transport = await staticTransport.open("deviceId");
+      // then
+      expect(transport.sessionId).toEqual("sessionId");
+    });
+    it("should connect to a dmk connected device", async () => {
+      // given
+      console.log("activeDeviceSessionSubject.getValue", activeDeviceSessionSubject.getValue());
+      const staticTransport = DeviceManagementKitHIDTransport;
+      const dmk = getDeviceManagementKit();
+      vi.spyOn(dmk, "getDeviceSessionState").mockReturnValue(new Observable());
       vi.spyOn(dmk, "connect").mockResolvedValue("sessionId");
       // when
       const transport = await staticTransport.open("deviceId");
@@ -55,16 +75,20 @@ describe("DeviceManagementKitHIDTransport", () => {
       // given
       const staticTransport = DeviceManagementKitHIDTransport;
       const dmk = getDeviceManagementKit();
-      vi.spyOn(dmk, "connect").mockImplementationOnce(() => {
-        throw {
-          _tag: "ConnectionOpeningError",
-        };
+      vi.spyOn(dmk, "connect").mockImplementation(async ({ device: { id } }) => {
+        if (id === "oldDeviceId") {
+          throw {
+            _tag: "ConnectionOpeningError",
+          };
+        }
+        return "sessionId";
       });
       vi.spyOn(dmk, "getDeviceSessionState").mockReturnValue(
         new Observable(subscriber => {
           subscriber.next({ deviceStatus: DeviceStatus.NOT_CONNECTED } as DeviceSessionState);
         }),
       );
+      vi.spyOn(dmk, "getConnectedDevice").mockReturnValue({ id: "deviceId" } as ConnectedDevice);
       vi.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
         sessionId: "oldSession",
         transport: new DeviceManagementKitHIDTransport(dmk, "oldSession"),
@@ -73,18 +97,18 @@ describe("DeviceManagementKitHIDTransport", () => {
       vi.spyOn(dmk, "disconnect").mockResolvedValueOnce();
       vi.spyOn(dmk, "listenToAvailableDevices").mockReturnValue(
         new Observable(subscriber => {
-          subscriber.next([{ id: "deviceId" }] as DiscoveredDevice[]);
+          subscriber.next([{ id: "newDeviceId" }] as DiscoveredDevice[]);
         }),
       );
       // when
-      const transport = await staticTransport.open("deviceId");
+      const transport = await staticTransport.open("oldDeviceId");
       // then
       vi.waitFor(() => {
         expect(dmk.disconnect).toHaveBeenCalled();
         expect(transport.sessionId).toEqual("sessionId");
         expect(dmk.connect).toHaveBeenCalledWith({
           device: {
-            id: "deviceId",
+            id: "newDeviceId",
             transport: "RN_HID",
           },
           sessionRefresherOptions: { isRefresherDisabled: true },
@@ -95,8 +119,8 @@ describe("DeviceManagementKitHIDTransport", () => {
 
   describe("listen", () => {
     let subscription: TransportSubscription | undefined = undefined;
-    afterEach(() => {
-      vi.clearAllMocks();
+    beforeEach(() => {
+      vi.resetAllMocks();
       if (subscription) {
         subscription.unsubscribe();
         subscription = undefined;
@@ -147,19 +171,27 @@ describe("DeviceManagementKitHIDTransport", () => {
       const staticTransport = DeviceManagementKitHIDTransport;
       const observer = new Subject();
       const device = {
+        type: "USB",
+        sessionId: "session",
         id: "id",
         name: "FLEX",
+        modelId: "flex",
         deviceModel: {
           model: "flex",
         },
-      } as DiscoveredDevice;
+      } as ConnectedDevice;
       const dmk = getDeviceManagementKit();
-      vi.spyOn(dmk, "listenToAvailableDevices").mockReturnValue(
+      vi.spyOn(dmk, "listenToAvailableDevices").mockReturnValue(new Observable());
+      vi.spyOn(dmk, "listenToConnectedDevice").mockReturnValue(
         new Observable(subscriber => {
-          subscriber.next([device]);
-          subscriber.next([device]);
-          subscriber.next([]);
-          subscriber.next([]);
+          subscriber.next(device);
+        }),
+      );
+      vi.spyOn(dmk, "getDeviceSessionState").mockReturnValue(
+        new Observable(subscriber => {
+          subscriber.next({ deviceStatus: DeviceStatus.CONNECTED } as DeviceSessionState);
+          subscriber.next({ deviceStatus: DeviceStatus.BUSY } as DeviceSessionState);
+          subscriber.next({ deviceStatus: DeviceStatus.NOT_CONNECTED } as DeviceSessionState);
         }),
       );
       vi.spyOn(observer, "next");
@@ -188,6 +220,7 @@ describe("DeviceManagementKitHIDTransport", () => {
       const staticTransport = DeviceManagementKitHIDTransport;
       const observer = new Subject();
       const dmk = getDeviceManagementKit();
+      vi.spyOn(dmk, "listenToConnectedDevice").mockReturnValue(new Observable());
       vi.spyOn(dmk, "listenToAvailableDevices").mockReturnValue(
         new Observable(subscriber => {
           subscriber.error(new Error("error"));
@@ -200,6 +233,76 @@ describe("DeviceManagementKitHIDTransport", () => {
 
       // then
       expect(observer.error).toHaveBeenCalledWith(new Error("error"));
+    });
+    it("log error if getDeviceSessionState throws", async () => {
+      // given
+      const staticTransport = DeviceManagementKitHIDTransport;
+      const observer = new Subject();
+      const dmk = getDeviceManagementKit();
+      vi.spyOn(dmk, "listenToConnectedDevice").mockReturnValue(
+        new Observable(subscriber => {
+          subscriber.next({ type: "USB" } as ConnectedDevice);
+        }),
+      );
+      vi.spyOn(dmk, "getDeviceSessionState").mockReturnValue(
+        new Observable(subscriber => {
+          subscriber.error(new Error("error"));
+        }),
+      );
+      vi.spyOn(tracer, "trace");
+      vi.spyOn(dmk, "listenToAvailableDevices").mockReturnValue(new Observable());
+
+      // when
+      subscription = staticTransport.listen(observer);
+
+      // then
+      expect(tracer.trace).toHaveBeenCalledWith(expect.anything(), new Error("error"));
+    });
+    it("should emit error if dmk getDeviceSessionState throws", async () => {
+      // given
+      const staticTransport = DeviceManagementKitHIDTransport;
+      const observer = new Subject();
+      const dmk = getDeviceManagementKit();
+      vi.spyOn(dmk, "listenToConnectedDevice").mockReturnValue(
+        new Observable(subscriber => {
+          subscriber.next({ id: "device", type: "USB" } as ConnectedDevice);
+        }),
+      );
+      vi.spyOn(dmk, "getDeviceSessionState").mockImplementation(() => {
+        throw new Error("error");
+      });
+      vi.spyOn(dmk, "listenToAvailableDevices").mockReturnValue(new Observable());
+      vi.spyOn(observer, "error");
+
+      // when
+      subscription = staticTransport.listen(observer);
+
+      // then
+      expect(observer.error).toHaveBeenCalledWith(new Error("error"));
+    });
+    it("should not emit error if dmk getDeviceSessionState throws DeviceSessionNotFound", async () => {
+      // given
+      const staticTransport = DeviceManagementKitHIDTransport;
+      const observer = new Subject();
+      const dmk = getDeviceManagementKit();
+      vi.spyOn(dmk, "listenToConnectedDevice").mockReturnValue(
+        new Observable(subscriber => {
+          subscriber.next({ id: "device", type: "USB" } as ConnectedDevice);
+        }),
+      );
+      vi.spyOn(dmk, "getDeviceSessionState").mockImplementation(() => {
+        throw {
+          _tag: "DeviceSessionNotFound",
+        };
+      });
+      vi.spyOn(dmk, "listenToAvailableDevices").mockReturnValue(new Observable());
+      vi.spyOn(observer, "error");
+
+      // when
+      subscription = staticTransport.listen(observer);
+
+      // then
+      expect(observer.error).not.toHaveBeenCalled();
     });
   });
 
@@ -233,7 +336,7 @@ describe("DeviceManagementKitHIDTransport", () => {
 
   describe("exchange", () => {
     beforeEach(() => {
-      vi.clearAllMocks();
+      vi.resetAllMocks();
     });
     it("should throw an error if no active session", async () => {
       // given
@@ -304,6 +407,7 @@ describe("DeviceManagementKitHIDTransport", () => {
     it("should be called on new transport", () => {
       // given
       const dmk = getDeviceManagementKit();
+      vi.spyOn(dmk, "getDeviceSessionState").mockReturnValue(new Observable());
       vi.spyOn(DeviceManagementKitHIDTransport.prototype, "listenToDisconnect");
       // when
       const transport = new DeviceManagementKitHIDTransport(dmk, "session");
@@ -313,12 +417,12 @@ describe("DeviceManagementKitHIDTransport", () => {
     it("should reset activeDeviceSession if disconnected", () => {
       // given
       const dmk = getDeviceManagementKit();
-      const transport = new DeviceManagementKitHIDTransport(dmk, "session");
       vi.spyOn(dmk, "getDeviceSessionState").mockReturnValue(
         new Observable(subscriber => {
           subscriber.next({ deviceStatus: DeviceStatus.NOT_CONNECTED } as DeviceSessionState);
         }),
       );
+      const transport = new DeviceManagementKitHIDTransport(dmk, "session");
       // when
       vi.spyOn(transport, "emit");
       vi.spyOn(activeDeviceSessionSubject, "next");
@@ -328,15 +432,15 @@ describe("DeviceManagementKitHIDTransport", () => {
         expect(transport.emit).toHaveBeenCalledWith("disconnect");
       });
     });
-    it("should emit disconnect if error", () => {
+    it("should emit disconnect on complete", () => {
       // given
       const dmk = getDeviceManagementKit();
-      const transport = new DeviceManagementKitHIDTransport(dmk, "session");
       vi.spyOn(dmk, "getDeviceSessionState").mockReturnValue(
         new Observable(subscriber => {
-          subscriber.error(new Error("error"));
+          subscriber.complete();
         }),
       );
+      const transport = new DeviceManagementKitHIDTransport(dmk, "sessionId");
       // when
       vi.spyOn(transport, "emit");
       // then
@@ -344,19 +448,21 @@ describe("DeviceManagementKitHIDTransport", () => {
         expect(transport.emit).toHaveBeenCalledWith("disconnect");
       });
     });
-    it("should emit disconnect on complete", () => {
+    it("should emit disconnect on error", () => {
       // given
       const dmk = getDeviceManagementKit();
-      const transport = new DeviceManagementKitHIDTransport(dmk, "session");
       vi.spyOn(dmk, "getDeviceSessionState").mockReturnValue(
         new Observable(subscriber => {
-          subscriber.complete();
+          subscriber.error(new Error("error"));
         }),
       );
+      const transport = new DeviceManagementKitHIDTransport(dmk, "sessionId");
       // when
       vi.spyOn(transport, "emit");
+      vi.spyOn(tracer, "trace");
       // then
       vi.waitFor(() => {
+        expect(tracer.trace).toHaveBeenCalledWith(expect.anything(), new Error("error"));
         expect(transport.emit).toHaveBeenCalledWith("disconnect");
       });
     });
