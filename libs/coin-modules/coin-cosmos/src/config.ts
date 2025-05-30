@@ -194,7 +194,7 @@ export const cosmosConfig: CosmosConfig = {
     type: "object",
     default: {
       lcd: "https://api.diamond.zenrocklabs.io",
-      minGasPrice: 0.1,
+      minGasPrice: 2.5,
       status: {
         type: "active",
       },
