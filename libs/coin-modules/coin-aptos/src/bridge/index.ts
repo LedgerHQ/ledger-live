@@ -7,9 +7,9 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import type { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import resolver from "../signer";
-import type { Transaction, TransactionStatus, AptosSigner } from "../types";
+import type { Transaction, TransactionStatus, AptosSigner, AptosAccount } from "../types";
 import getTransactionStatus from "./getTransactionStatus";
 import estimateMaxSpendable from "./estimateMaxSpendable";
 import prepareTransaction from "./prepareTransaction";
@@ -17,6 +17,12 @@ import { getAccountShape } from "./synchronisation";
 import buildSignOperation from "./signOperation";
 import broadcast from "./broadcast";
 import createTransaction from "../logic/createTransaction";
+import { hydrate, preloadWithValidators } from "../preload";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+
+function makePreload() {
+  return (currency: CryptoCurrency) => preloadWithValidators(currency);
+}
 
 function buildCurrencyBridge(signerContext: SignerContext<AptosSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -27,8 +33,9 @@ function buildCurrencyBridge(signerContext: SignerContext<AptosSigner>): Currenc
   });
 
   return {
-    preload: () => Promise.resolve({}),
-    hydrate: () => {},
+    // preload: makePreload(getQueuedAndCachedAPI),
+    preload: makePreload(),
+    hydrate,
     scanAccounts,
   };
 }
@@ -37,7 +44,7 @@ const sync = makeSync({ getAccountShape });
 
 function buildAccountBridge(
   signerContext: SignerContext<AptosSigner>,
-): AccountBridge<Transaction, Account, TransactionStatus> {
+): AccountBridge<Transaction, AptosAccount, TransactionStatus> {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
