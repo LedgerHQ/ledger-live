@@ -5,7 +5,6 @@ import {
   ethereumCurrency,
   bitcoinCurrency,
   arbitrumCurrency,
-  arbitrumParentCurrency,
 } from "../__mocks__/useSelectAssetFlow.mock";
 import { useGroupedCurrenciesByProvider } from "../__mocks__/useGroupedCurrenciesByProvider.mock";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
@@ -176,7 +175,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
   it("should navigate directly to networkSelection step", () => {
     render(
       <ModularDrawerFlowManager
-        currencies={[ethereumCurrency, arbitrumParentCurrency]}
+        currencies={[ethereumCurrency, arbitrumCurrency]}
         onAccountSelected={mockOnAccountSelected}
       />,
     );
