@@ -6,7 +6,7 @@ import {
   ethereumCurrency,
 } from "./useSelectAssetFlow.mock";
 
-const res = {
+export const res = {
   result: {
     currenciesByProvider: [
       {

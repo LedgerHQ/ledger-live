@@ -16,6 +16,7 @@ import { sortAccountsByFiatValue } from "../utils/sortAccountsByFiatValue";
 import BigNumber from "bignumber.js";
 import { formatDetailedAccount } from "../utils/formatDetailedAccount";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
+import { useDiscreetMode } from "~/renderer/components/Discreet";
 
 export const sortAccountsByBalance = (
   a: { balance: BigNumber } | undefined,
@@ -33,6 +34,7 @@ export const useDetailedAccounts = (
   accounts$?: Observable<WalletAPIAccount[]>,
 ) => {
   const dispatch = useDispatch();
+  const discreet = useDiscreetMode();
   const state = useCountervaluesState();
 
   const accountIds = useGetAccountIds(accounts$);
@@ -55,6 +57,7 @@ export const useDetailedAccounts = (
         account.freshAddress,
         state,
         counterValueCurrency,
+        discreet,
       );
 
       if (isATokenCurrency && tuple.subAccount) {
@@ -64,6 +67,7 @@ export const useDetailedAccounts = (
             account.freshAddress,
             state,
             counterValueCurrency,
+            discreet,
           ),
         ];
       } else {
@@ -72,7 +76,7 @@ export const useDetailedAccounts = (
     });
 
     return sortAccountsByFiatValue(formattedAccounts);
-  }, [accounts, state, counterValueCurrency, isATokenCurrency]);
+  }, [accounts, state, counterValueCurrency, discreet, isATokenCurrency]);
 
   const openAddAccountFlow = useCallback(
     (currency?: CryptoOrTokenCurrency) => {

@@ -58,6 +58,8 @@ export const getAccountTuplesForCurrency: Mock = fn(currency =>
 );
 export const accountsSelector: Mock = fn(state => state.accounts);
 export const counterValueCurrencySelector: Mock = fn(state => state.currency);
+export const discreetModeSelector: Mock = fn(state => state.discreet);
+export const localeSelector: Mock = fn(state => state.locale);
 
 export const Mocked_ETH_Account: Account[] = [
   {
@@ -65,9 +67,9 @@ export const Mocked_ETH_Account: Account[] = [
     id: "js:2:ethereum:0x823ePB4bDa11da33a7F1C907D1171e5995Fe33c7:",
     used: true,
     seedIdentifier: "",
-    derivationMode: "",
+    derivationMode: "ethM",
     index: 2,
-    freshAddress: "",
+    freshAddress: "freshAddress",
     freshAddressPath: "",
     blockHeight: 20372078,
     creationDate: new Date(),
@@ -149,3 +151,31 @@ export const Mocked_ETH_Account: Account[] = [
     nfts: [],
   },
 ];
+
+export const MOCKED_ARB_ACCOUNT = {
+  type: "Account",
+  id: "arbitrum1",
+  balance: new BigNumber(34455),
+  creationDate: "2024-12-10T09:27:22.000Z",
+  currency: {
+    type: "CryptoCurrency",
+    id: "arbitrum",
+    coinType: 60,
+    name: "Arbitrum",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "arbitrum",
+    color: "#28a0f0",
+    family: "evm",
+    units: [
+      {
+        name: "ETH",
+        code: "ETH",
+        magnitude: 18,
+      },
+    ],
+    explorerViews: [],
+  },
+  derivationMode: "",
+  freshAddress: "s37rhmi7hsm3i73hsm7i3hm83m8h87hsm87h3s8h33",
+};

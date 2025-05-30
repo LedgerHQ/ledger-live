@@ -1,20 +1,7 @@
 import { useModularDrawerFlowState } from "../useModularDrawerFlowState";
-import {
-  bitcoinCurrency,
-  ethereumCurrency,
-  findCryptoCurrencyById,
-} from "../../__mocks__/useSelectAssetFlow.mock";
+import { bitcoinCurrency, ethereumCurrency } from "../../__mocks__/useSelectAssetFlow.mock";
 import { renderHook } from "tests/testSetup";
 import { act } from "react-dom/test-utils";
-
-jest.mock("@ledgerhq/cryptoassets/currencies", () => ({
-  ...jest.requireActual("@ledgerhq/cryptoassets/currencies"),
-  findCryptoCurrencyById: jest.fn(() => findCryptoCurrencyById),
-}));
-
-jest.mock("../../utils/getProvider", () => ({
-  getProvider: jest.fn(() => undefined),
-}));
 
 const mockGoToStep = jest.fn();
 const mockSetNetworksToDisplay = jest.fn();

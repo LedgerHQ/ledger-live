@@ -67,14 +67,8 @@ export function useModularDrawerFlowState({
     (network: CryptoOrTokenCurrency) => {
       if (!providers) return;
       const correspondingCurrency =
-        providers.currenciesByNetwork.find(elem => {
-          if (elem.type === "TokenCurrency") {
-            return elem.parentCurrency?.id === network.id || elem.id === network.id;
-          } else if (elem.type === "CryptoCurrency") {
-            return elem.id === network.id;
-          }
-          return false;
-        }) ?? network;
+        providers.currenciesByNetwork.find(elem => isCorrespondingCurrency(elem, network)) ??
+        network;
 
       if (!isSelectAccountFlow) {
         onAssetSelected?.(correspondingCurrency);
@@ -165,4 +159,16 @@ export function useModularDrawerFlowState({
     handleAssetSelected,
     handleAccountSelected,
   };
+}
+
+function isCorrespondingCurrency(
+  elem: CryptoOrTokenCurrency,
+  network: CryptoOrTokenCurrency,
+): boolean {
+  if (elem.type === "TokenCurrency") {
+    return elem.parentCurrency?.id === network.id || elem.id === network.id;
+  } else if (elem.type === "CryptoCurrency") {
+    return elem.id === network.id;
+  }
+  return false;
 }

@@ -9,63 +9,17 @@ import {
 import { useGroupedCurrenciesByProvider } from "../__mocks__/useGroupedCurrenciesByProvider.mock";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { Mocked_ETH_Account } from "../__mocks__/accounts.mock";
+import { mockOnAccountSelected, mockDispatch, currencies, mockDomMeasurements } from "./shared";
+import * as reactRedux from "react-redux";
 
-const mockOnAccountSelected = jest.fn();
+jest.spyOn(reactRedux, "useDispatch").mockReturnValue(mockDispatch);
 
-const mockDispatch = jest.fn();
-jest.mock("react-redux", () => ({
-  ...jest.requireActual("react-redux"),
-  useDispatch: () => mockDispatch,
-}));
-
-const currencies = [ethereumCurrency, bitcoinCurrency, arbitrumCurrency];
 jest.mock("@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook", () => ({
   useGroupedCurrenciesByProvider: () => useGroupedCurrenciesByProvider(),
 }));
 
-jest.mock("framer-motion", () => {
-  return {
-    motion: new Proxy(
-      {},
-      {
-        get: (target, prop) => {
-          const Comp = React.forwardRef((props: unknown, ref: unknown) =>
-            React.createElement(
-              prop as string,
-              Object.assign({}, typeof props === "object" && props !== null ? props : {}, { ref }),
-            ),
-          );
-          Comp.displayName = typeof prop === "string" ? prop : "motionComponent";
-          return Comp;
-        },
-      },
-    ),
-    AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  } as unknown as typeof import("framer-motion");
-});
-
 beforeEach(() => {
-  Object.defineProperty(HTMLElement.prototype, "offsetHeight", {
-    configurable: true,
-    value: 800,
-  });
-  Object.defineProperty(HTMLElement.prototype, "offsetWidth", {
-    configurable: true,
-    value: 800,
-  });
-  HTMLElement.prototype.getBoundingClientRect = function () {
-    return {
-      width: 800,
-      height: 800,
-      top: 0,
-      left: 0,
-      bottom: 800,
-      right: 800,
-      x: 0,
-      y: 0,
-      toJSON: () => {},
-    };
-  };
+  mockDomMeasurements();
 });
 
 describe("ModularDrawerFlowManager - Select Account Flow", () => {
@@ -154,8 +108,8 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
     expect(mockOnAccountSelected).toHaveBeenCalledWith(Mocked_ETH_Account[0], undefined);
   });
 
-  it("should navigate directly to accountSelection step", async () => {
-    const { user } = render(
+  it("should navigate directly to accountSelection step", () => {
+    render(
       <ModularDrawerFlowManager
         currencies={[ethereumCurrency]}
         onAccountSelected={mockOnAccountSelected}
@@ -168,8 +122,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       },
     );
 
-    const account = screen.getByText(/ethereum 3/i);
-    await user.click(account);
+    expect(screen.getByText(/ethereum 3/i));
   });
 
   it("should navigate directly to networkSelection step", () => {

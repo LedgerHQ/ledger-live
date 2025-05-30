@@ -14,7 +14,7 @@ type SelectAssetProps = {
   flow: string;
   scrollToTop: boolean;
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
-  onScrolledToTop?: () => void; // <-- add this prop
+  onScrolledToTop?: () => void;
 };
 
 const CURRENT_PAGE = "Modular Asset Selection";
@@ -26,7 +26,7 @@ export const SelectAssetList = ({
   flow,
   scrollToTop,
   onAssetSelected,
-  onScrolledToTop, // <-- add here
+  onScrolledToTop,
 }: SelectAssetProps) => {
   const shouldDisplayLoading = !assetTypes || assetTypes.length === 0;
 
