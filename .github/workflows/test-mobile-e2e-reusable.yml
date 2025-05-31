@@ -200,7 +200,7 @@ jobs:
         run: pnpm mobile e2e:ci -p ios -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
 
       - name: Build JS Bundle app for Detox test run
-        if: steps.detox-build.outputs.cache-hit == 'true' && inputs.production_firebase == 'false'
+        if: steps.detox-build.outputs.cache-hit == 'true' && inputs.production_firebase != 'true'
         run: pnpm mobile e2e:ci -p ios --bundle
 
       - name: Setup Speculos image and Coin Apps

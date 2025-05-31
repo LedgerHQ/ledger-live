@@ -654,7 +654,7 @@ describe("Aptos API", () => {
         },
       });
       expect(balances).toHaveLength(1);
-      expect(balances[0].asset_type).toBe(assets[0].asset_type);
+      expect(balances[0].contractAddress).toBe(assets[0].asset_type);
       expect(balances[0].amount).toStrictEqual(BigNumber(assets[0].amount));
     });
   });

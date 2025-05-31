@@ -338,6 +338,7 @@
     "src/e2e/enum/Swap.ts",
     "src/e2e/enum/TokenType.ts",
     "src/e2e/enum/TransactionStatus.ts",
+    "src/e2e/models/BuySell.ts",
     "src/exchange/swap/const/blockchain.ts",
     "src/families/cardano/logic.ts",
     "src/families/cardano/staking.ts",

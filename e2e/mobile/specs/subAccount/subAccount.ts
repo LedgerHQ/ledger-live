@@ -1,14 +1,14 @@
 import { verifyAppValidationSendInfo } from "../../models/send";
 import { device } from "detox";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 import { getEnv } from "@ledgerhq/live-env";
 import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
 import invariant from "invariant";
 
-async function navigateToSubAccount(account: Account) {
+async function navigateToSubAccount(account: AccountType) {
   await app.account.openViaDeeplink();
-  await app.account.goToAccountByName(account.accountName);
+  await app.account.goToAccountByName(getParentAccountName(account));
   await app.account.navigateToTokenInAccount(account);
 }
 
@@ -53,7 +53,7 @@ const beforeAllFunction = async (transaction: TransactionType, setAccountToCredi
   await app.portfolio.waitForPortfolioPageToLoad();
 };
 
-export async function runSendSPL(transaction: TransactionType, tmsLinks: string[]) {
+export function runSendSPL(transaction: TransactionType, tmsLinks: string[]) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe("Send SPL tokens from 1 account to another", () => {
     beforeAll(async () => {
@@ -95,7 +95,7 @@ export async function runSendSPL(transaction: TransactionType, tmsLinks: string[
   });
 }
 
-export async function runSendSPLAddressValid(
+export function runSendSPLAddressValid(
   transaction: TransactionType,
   expectedWarningMessage: string,
   tmsLinks: string[],
@@ -110,14 +110,14 @@ export async function runSendSPLAddressValid(
       await app.send.openViaDeeplink();
       await app.common.performSearch(transaction.accountToDebit.currency.ticker);
       await app.common.selectAccount(transaction.accountToDebit);
-      const addressToCredit = transaction.accountToCredit.ataAddress || "";
+      const addressToCredit = transaction.accountToCredit.address || "";
       await app.send.setRecipient(addressToCredit, transaction.memoTag);
       await app.send.expectSendRecipientWarning(expectedWarningMessage);
     });
   });
 }
 
-export async function runSendSPLAddressInvalid(
+export function runSendSPLAddressInvalid(
   transaction: TransactionType,
   recipientContractAddress: string | undefined,
   expectedErrorMessage: string,

@@ -3,6 +3,7 @@ import { Drawer } from "../../component/drawer.component";
 import { expect } from "@playwright/test";
 import { NFTTransaction, Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
+import { getAccountAddress } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export class SendDrawer extends Drawer {
   private addressValue = (address: string) =>
@@ -18,7 +19,7 @@ export class SendDrawer extends Drawer {
 
   @step("Verify that the information of the transaction is visible")
   async expectReceiverInfos(tx: Transaction) {
-    await expect(this.addressValue(tx.accountToCredit.address)).toBeVisible();
+    await expect(this.addressValue(getAccountAddress(tx.accountToCredit))).toBeVisible();
     await expect(this.amountValue).toBeVisible();
     const displayedAmount = await this.amountValue.innerText();
     expect(displayedAmount).toEqual(expect.stringContaining(tx.amount));

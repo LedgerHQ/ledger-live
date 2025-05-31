@@ -8,7 +8,10 @@ import type { $TmsLink as $TmsLinkType, Step as StepType } from "jest-allure2-re
 import { NativeElementHelpers, WebElementHelpers } from "../helpers/elementHelpers";
 import { Currency as CurrencyType } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Delegate as DelegateType } from "@ledgerhq/live-common/e2e/models/Delegate";
-import { Account as AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
+import {
+  Account as AccountType,
+  TokenAccount as TokenAccountType,
+} from "@ledgerhq/live-common/e2e/enum/Account";
 import { Transaction as TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { Fee as FeeType } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { AppInfos as AppInfosType } from "@ledgerhq/live-common/e2e/enum/AppInfos";
@@ -34,6 +37,7 @@ declare global {
   var Currency: typeof CurrencyType;
   var Delegate: typeof DelegateType;
   var Account: typeof AccountType;
+  var TokenAccount: typeof TokenAccountType;
   var Transaction: typeof TransactionType;
   var Fee: typeof FeeType;
   var AppInfos: typeof AppInfosType;

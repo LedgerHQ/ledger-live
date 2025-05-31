@@ -151,4 +151,9 @@ export class Layout extends Component {
       await expect(this.recoverStatusIcon).not.toBeVisible();
     }
   }
+
+  @step("Expect buy/sell sidebar to be selected")
+  async verifyBuySellSideBarIsSelected() {
+    await expect(this.drawerBuycryptoButton).toHaveAttribute("data-active", "true");
+  }
 }

@@ -15,17 +15,24 @@ import test from "@playwright/test";
  }
  ```
  */
-export function step<This, Args extends any[], Return>(message?: string) {
+export function step<This, Args extends unknown[], Return = unknown>(message?: string) {
   return function actualDecorator(
     target: (this: This, ...args: Args) => Promise<Return>,
     context: ClassMethodDecoratorContext<This, (this: This, ...args: Args) => Promise<Return>>,
   ) {
-    function replacementMethod(this: any, ...args: Args) {
-      const name = message
-        ? message.replace(/\$(\d+)/g, (_, index) => args[Number(index)].toString())
-        : `${this.constructor.name}.${context.name as string}`;
+    async function replacementMethod(this: This, ...args: Args): Promise<Return> {
+      const ctorName = (this as any).constructor.name as string;
 
-      return test.step(name, async () => target.call(this, ...args), { box: true });
+      const name = message
+        ? message.replace(/\$(\d+)/g, (_, idx) => String(args[Number(idx)]))
+        : `${ctorName}.${String(context.name)}`;
+
+      try {
+        test.info();
+        return await test.step(name, () => target.call(this, ...args), { box: true });
+      } catch {
+        return await target.call(this, ...args);
+      }
     }
 
     return replacementMethod;

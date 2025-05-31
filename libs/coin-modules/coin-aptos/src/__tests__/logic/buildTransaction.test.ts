@@ -19,12 +19,14 @@ jest.mock("../../logic/normalizeTransactionOptions", () => ({
   })),
 }));
 
-jest.mock("../../constants", () => ({
-  DEFAULT_GAS: 100,
-  DEFAULT_GAS_PRICE: 200,
-  APTOS_ASSET_ID: "0x1::aptos_coin::AptosCoin",
-  SUPPORTED_TOKEN_TYPES: ["coin", "fungible_asset"],
-}));
+jest.mock("../../constants", () => {
+  const originalModules = jest.requireActual("../../constants");
+  return {
+    ...originalModules,
+    DEFAULT_GAS: 100,
+    DEFAULT_GAS_PRICE: 200,
+  };
+});
 
 jest.mock("../../network", () => {
   return {
