@@ -1,5 +1,13 @@
 # @ledgerhq/coin-aptos
 
+## 1.10.0-nightly.3
+
+### Minor Changes
+
+- [#10390](https://github.com/LedgerHQ/ledger-live/pull/10390) [`6612406`](https://github.com/LedgerHQ/ledger-live/commit/6612406fd6c212252f5828dc86c2b0b1e939d6c5) Thanks [@pvoliveira](https://github.com/pvoliveira)! - add Aptos Alpaca craftTransaction tokens support
+
+- [#10386](https://github.com/LedgerHQ/ledger-live/pull/10386) [`c519437`](https://github.com/LedgerHQ/ledger-live/commit/c5194373fc1a90a05c40d644b697f5da2cb150ab) Thanks [@may01](https://github.com/may01)! - Add tokens operations to the operations list for aptos alpaca api
+
 ## 1.10.0-nightly.2
 
 ### Patch Changes

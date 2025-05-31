@@ -1,5 +1,14 @@
 # @ledgerhq/live-common
 
+## 34.35.0-nightly.6
+
+### Patch Changes
+
+- [#10387](https://github.com/LedgerHQ/ledger-live/pull/10387) [`7fe7b52`](https://github.com/LedgerHQ/ledger-live/commit/7fe7b5236268f6ba6756d2ef3f0afc272c0692bf) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Don't enforce minVersion for app dependencies
+
+- Updated dependencies [[`6612406`](https://github.com/LedgerHQ/ledger-live/commit/6612406fd6c212252f5828dc86c2b0b1e939d6c5), [`c519437`](https://github.com/LedgerHQ/ledger-live/commit/c5194373fc1a90a05c40d644b697f5da2cb150ab)]:
+  - @ledgerhq/coin-aptos@1.10.0-nightly.3
+
 ## 34.35.0-nightly.5
 
 ### Patch Changes
