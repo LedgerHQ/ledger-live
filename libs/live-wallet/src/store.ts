@@ -175,8 +175,12 @@ export const importWalletState = (payload: Partial<ExportedWalletState>) => ({
   type: "IMPORT_WALLET_SYNC",
   payload: {
     ...payload,
-    accountNames: new Map(payload?.accountsData?.accountNames ?? []),
-    starredAccountIds: new Set(payload?.accountsData?.starredAccountIds ?? []),
+    ...(payload?.accountsData?.accountNames
+      ? { accountNames: new Map(payload.accountsData.accountNames) }
+      : {}),
+    ...(payload?.accountsData?.starredAccountIds
+      ? { starredAccountIds: new Set(payload.accountsData.starredAccountIds) }
+      : {}),
   },
 });
 
