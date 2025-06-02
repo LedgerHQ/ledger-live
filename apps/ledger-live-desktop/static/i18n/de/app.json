@@ -447,6 +447,8 @@
     "incompatibility" : {
       "ton_title" : "Die Ledger Nano S™ unterstützt das Swappen von Ton nicht",
       "ton_description" : "Zum Swappen von Ton kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
+      "ton_tokens_title" : "Die Ledger Nano S™ unterstützt das Swappen von Ton-Token nicht",
+      "ton_tokens_description" : "Zum Swappen von Ton-Token kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "spl_tokens_title" : "Die Ledger Nano S™ unterstützt das Swappen von Solana-Token nicht",
       "spl_tokens_description" : "Zum Swappen von Solana-Token kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
       "sui_tokens_title" : "Die Ledger Nano S™ unterstützt das Swappen von Sui-Token nicht",
@@ -1242,8 +1244,8 @@
       "title" : "Richte dein {{deviceName}}-Gerät ein",
       "continueOnDevice" : "Diese Aktion für {{productName}} durchführen",
       "pairedContent" : {
-        "title" : "Dieses {{deviceName}}-Gerät ist echt",
-        "description" : "Die Verwendung dieses {{productName}} ist sicher. Du kannst mit dem Einrichten beginnen.",
+        "title" : "{{deviceName}} ist echt",
+        "description" : "Die Nutzung deiner {{productName}} ist sicher. Du kannst nun mit der Einrichtung beginnen.",
         "continueOnDevice" : "Tippe auf dein {{productName}}-Gerät, um mit dem Einrichten zu beginnen"
       },
       "pinContent" : {
@@ -1253,26 +1255,36 @@
         "continueOnDevice" : "Lege die PIN für dein {{productName}}-Gerät fest"
       },
       "seedContent" : {
-        "title" : "Geheime Wiederherstellungsphrase",
+        "title" : "Einrichtung und Backup",
         "titleCompleted" : "Geheime Wiederherstellungsphrase bestätigt",
         "recoverSeed" : "Platzhalter: „Recover“ (Wiederherstellung)",
-        "restoreSeed" : "Schütze deine Vermögenswerte optimal mithilfe einer von einem Ledger-Gerät generierten geheimen Wiederherstellungsphrase.\n\nDu hast keine solche Phrase? Dann kannst du mit deinem {{productName}}-Gerät eine neue Phrase generieren.",
+        "restoreSeed" : "Zum Wiederherstellen befolge die Anweisungen auf deinem Ledger Secure Screen.",
+        "restoreRecoveryKeyTitle" : "Wiederherstellen mit dem Ledger Recovery Key",
+        "restoreRecoveryKeyDescription" : "Zum Wiederherstellen befolge die Anweisungen auf deinem Ledger Secure Screen.",
+        "restoreRecoveryKeyContinueOnDevice" : "Befolge die Anweisungen auf deiner {{productName}}",
         "selection" : "Wähle die zu deinen Anforderungen passende Einrichtungsoption aus:",
-        "selectionNewLedger" : "<0>Set up as a new Ledger</0> (Als neues Ledger-Gerät einrichten) ermöglicht dir die Erstellung einer neuen Wallet. Hierbei wird eine neue geheime Wiederherstellungsphrase generiert.",
-        "selectionRestore" : "<0>Restore</0> (Wiederherstellen) erlaubt dir den Zugriff auf deine bestehenden Vermögenswerte mittels deiner geheimen Wiederherstellungsphrase oder durch Nutzung von Ledger Recover.",
+        "selectionNewLedgerTitle" : "Als neues Ledger-Gerät einrichten",
+        "selectionNewLedgerDescription" : "Hierbei wird eine neue geheime Wiederherstellungsphrase generiert.",
+        "selectionRestoreTitle" : "Zugriff auf Assets wiederherstellen",
+        "selectionRestoreDescription" : "Mit deinem Backup – geheime Wiederherstellungsphrase, Ledger Recover oder Ledger Recovery Key – kannst du eine Wiederherstellung durchführen.",
         "selectionContinueOnDevice" : "Wähle die entsprechende Option auf deinem {{productName}}-Gerät aus",
-        "newSeedDescription1" : "Dein {{productName}}-Gerät generiert für dich eine individuelle 24-Wort-Wiederherstellungsphrase. Sie bildet die einzige Möglichkeit, deine Vermögenswerte wiederherzustellen, falls dein Ledger-Gerät gestohlen wird, verloren geht oder du deine PIN vergisst.",
-        "newSeedDescription2" : "<0>Sicher aufbewahren:</0>\nDeine geheime Wiederherstellungsphrase erlaubt den Zugang zu deinen Vermögenswerten und ist unersetzlich. Wer immer diese Phrase kennt, hat die Kontrolle über dein Vermögen und kann es stehlen. Solltest du die Wiederherstellungsphrase verlieren, kann Ledger dir nicht helfen.",
-        "newSeedDescription3" : "Sei vorsichtig, wenn eine Person oder Software nach deiner geheimen Wiederherstellungsphrase fragt. Dies ist in jedem Fall ein Betrugsversuch („Scam“). ",
-        "newSeedDescription4" : "Der einzige Ort, an dem du deine geheime Wiederherstellungsphrase eingeben darfst, ist dein Ledger-Gerät.",
-        "newSeedDescription5" : "Gib sie nicht weiter. Verliere sie nicht.",
-        "newSeedContinueOnDevice" : "Sieh dir die auf deinem {{productName}}-Gerät generierte geheime Wiederherstellungsphrase an und schreibe sie auf",
+        "selectionNewSeedTitle" : "Geheime Wiederherstellungsphrase",
+        "selectionNewSeedSubtitle" : "Bewahre sie sicher auf:",
+        "selectionNewSeedDescription" : "Deine geheime Wiederherstellungsphrase ermöglicht den Zugriff auf deine Assets und ist unersetzlich. Wer auch immer in Besitz dieser Phrase ist, kann dein gesamtes Guthaben stehlen. Und wenn du sie verlierst, kann auch Ledger sie nicht mehr für dich abrufen.",
+        "selectionNewSeedContinueOnDevice" : "Befolge die Anweisungen auf deiner {{productName}}",
+        "restoreDescription" : "Wähle ein Backup aus, das du wiederherstellen möchtest:",
         "restoreChoiceContinueOnDevice" : "Wähle die entsprechende Option auf deinem {{productName}}-Gerät aus",
-        "restoreChoiceSRPTitle" : "Wiederherstellung mit geheimer Wiederherstellungsphrase",
+        "restoreChoiceSRPTitle" : "Geheime Wiederherstellungsphrase",
         "restoreChoiceSRPDescription" : "Für maximale Sicherheit verwende eine von einem Ledger-Gerät generierte geheime Wiederherstellungsphrase.",
-        "restoreChoiceRecoverTitle" : "Wiederherstellen mit Ledger Recover",
-        "restoreChoiceRecoverDescription" : "Wenn du Ledger Recover abonniert hast, melde sich bei deinem Abonnement an, um die Sicherheitskopie deiner geheimen Wiederherstellungsphrase wiederherzustellen.",
-        "followInstructions" : "Folge den Anweisungen auf deinem {{productName}}-Gerät."
+        "restoreChoiceRecoveryKeyTitle" : "Ledger Recovery Key",
+        "restoreChoiceRecoveryKeyDescription" : "Mit deiner Recovery Key-Karte kannst du den Zugriff auf deine Assets wiederherstellen.",
+        "restoreChoiceRecoverTitle" : "Ledger Recover-Abonnement",
+        "restoreChoiceRecoverDescription" : "Dank deines Abonnements kannst du mit deiner Identität wieder auf deine Assets zugreifen.",
+        "followInstructions" : "Folge den Anweisungen auf deinem {{productName}}-Gerät.",
+        "backupRecoveryKeyTitle" : "Ledger Recovery Key",
+        "backupRecoveryKeyDescription" : "Erstelle eine neue Sicherung auf einer PIN-geschützten Karte mit integriertem Secure Element-Chip. So gelangst du mit nur wenigen Klicks ggf. wieder an dein Guthaben.",
+        "backupRecoveryKeyCta" : "Mehr erfahren oder kaufen",
+        "backupRecoveryKeyContinueOnDevice" : "Befolge die Anweisungen auf deiner {{productName}}"
       },
       "backup" : {
         "title" : "Sicherheitskopie für deine geheime Wiederherstellungsphrase",
@@ -1294,8 +1306,8 @@
       },
       "softwareCheckContent" : {
         "title" : {
-          "active" : "Echtheitsprüfung und \nPrüfung auf Betriebssystem-Update",
-          "completed" : "Dein {{modelName}}-Gerät ist echt und auf dem neusten Stand"
+          "active" : "Ledger-Echtheitsprüfung",
+          "completed" : "Ledger-Echtheitsprüfung"
         },
         "exitWarningDrawer" : {
           "title" : "Echtheitsprüfung und Prüfung auf Betriebssystem-Update abbrechen?",
@@ -1318,12 +1330,12 @@
           }
         },
         "whyPerformChecksLink" : "Weitere Informationen zur Echtheitsprüfung",
-        "startChecksCTA" : "Mein {{modelName}}-Gerät überprüfen",
+        "startChecksCTA" : "{{modelName}} überprüfen",
         "continueCTA" : "Weiter zur Einrichtung",
         "genuineCheck" : {
           "title" : {
-            "active" : "Echtheitsprüfung",
-            "completed" : "Dein {{modelName}}-Gerät ist echt",
+            "active" : "Ledger-Echtheitsprüfung",
+            "completed" : "{{modelName}} ist echt",
             "cancelled" : "Echtheitsprüfung abgelehnt"
           },
           "subtitle" : {
@@ -1334,13 +1346,12 @@
         },
         "firmwareUpdate" : {
           "title" : {
-            "active" : "Prüfung auf Betriebssystem-Update",
-            "completed" : "Das Betriebssystem deines {{modelName}}-Geräts ist auf dem neuesten Stand.",
+            "active" : "Ledger-Betriebssystemprüfung",
+            "completed" : "Das Betriebssystem deines Geräts {{modelName}} ist auf dem neusten Stand",
             "updateAvailable" : "Betriebssystem-Update {{firmwareVersion}} verfügbar"
           },
           "subtitle" : {
-            "active" : "Hiermit wird geprüft, ob das Betriebssystem deines {{modelName}}-Geräts auf dem neuesten Stand ist.",
-            "completed" : "Um die App-Wiederherstellung auf deinem {{modelName}}-Gerät zu starten, wähle unten den Button „Restore apps“ (Apps wiederherstellen) aus.",
+            "active" : "Hiermit wird geprüft, ob das Betriebssystem deiner {{modelName}} auf dem neuesten Stand ist.",
             "updateAvailable" : "Für optimale Sicherheit und Zugriff auf die neuesten Funktionen führe bitte ein Update durch."
           },
           "viewUpdateCTA" : "Betriebssystem-Update für {{modelName}}",
@@ -5871,6 +5882,10 @@
       "title" : "Entschuldigung, Guthaben reicht nicht aus",
       "description" : "Bitte stellen Sie sicher, dass das Konto ausreichend gedeckt ist."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "Leider reicht das Guthaben zur Deckung der Gebühren nicht aus",
+      "description" : "Bitte vergewissere dich, dass das Konto über ausreichende Deckung verfügt."
+    },
     "NotEnoughBalanceSwap" : {
       "title" : "Leider ist für den Betrag einschließlich der Netzwerkgebühren nicht genügend Guthaben vorhanden. Bitte Betrag ändern oder Guthaben verifizieren.",
       "description" : "Bitte vergewissere dich, dass das Konto über ausreichende Deckung verfügt."
@@ -6615,7 +6630,8 @@
       "title" : "Vermögenswert auswählen"
     },
     "selectAccount" : {
-      "title" : "Konto auswählen"
+      "title" : "Konto auswählen",
+      "addAccount" : "Neues oder bestehendes Konto hinzufügen"
     }
   },
   "customImage" : {
@@ -7045,6 +7061,21 @@
     "opted_out" : {
       "description" : "Der begrenzte Speicher deiner Ledger Nano S schränkt deinen Zugang zu aktuellen Funktionen, Blockchain-Änderungen und Sicherheitsverbesserungen ein. Für die längerfristige Nutzung solltest du auf ein neueres Ledger-Gerät aufrüsten.",
       "cta" : "Weitere Informationen"
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "Suche",
+    "assetFlow" : {
+      "selectTemplate" : "{{dynamic}} auswählen",
+      "asset" : "Asset",
+      "network" : "Netzwerk"
+    }
+  },
+  "nftEntryPoint" : {
+    "title" : "NFT (Non Fungible Token)",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
     }
   }
 }
