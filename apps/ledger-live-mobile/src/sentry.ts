@@ -78,8 +78,7 @@ const excludedErrorDescription = [
   "Bad status on response: 503", // cryptoorg node
 ];
 
-const sentryEnabled =
-  Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !(Config.MOCK || Config.DETOX);
+const sentryEnabled = false;
 
 export const navigationIntegration = Sentry.reactNavigationIntegration({
   enableTimeToInitialDisplay: true,
