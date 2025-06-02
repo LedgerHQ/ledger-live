@@ -1,12 +1,10 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
-import { useSelector } from "react-redux";
-import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
-import { TopBar } from "./TopBar";
 import { WebviewState } from "../Web3AppWebview/types";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { TopBar } from "./TopBar";
 import { MemoryRouter } from "react-router";
-import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
+import { render, screen } from "@testing-library/react";
+import { useSelector } from "react-redux";
 
 jest.mock("react-redux", () => ({
   useSelector: jest.fn(),
@@ -81,7 +79,6 @@ describe("TopBar", () => {
 
   it("does not render if isInternalApp is true and dev tools are disabled", () => {
     (useSelector as jest.Mock).mockReturnValue(false);
-    (useInternalAppIds as jest.Mock).mockReturnValue(INTERNAL_APP_IDS);
 
     render(
       <MemoryRouter initialEntries={["/"]}>
@@ -95,7 +92,6 @@ describe("TopBar", () => {
 
   it("renders refresh and dev tools buttons when dev tools are enabled", () => {
     (useSelector as jest.Mock).mockReturnValue(true);
-    (useInternalAppIds as jest.Mock).mockReturnValue([]);
 
     render(
       <MemoryRouter initialEntries={["/"]}>
@@ -108,11 +104,10 @@ describe("TopBar", () => {
 
   it("renders only refresh button when on an external app and dev tools disabled", () => {
     (useSelector as jest.Mock).mockReturnValue(false);
-    (useInternalAppIds as jest.Mock).mockReturnValue([]);
 
     render(
       <MemoryRouter initialEntries={["/"]}>
-        <TopBar {...defaultProps} />
+        <TopBar {...defaultProps} manifest={{ ...mockManifest, id: "" }} />
       </MemoryRouter>,
     );
     expect(screen.getByText("common.backToMatchingURL")).toBeInTheDocument();
