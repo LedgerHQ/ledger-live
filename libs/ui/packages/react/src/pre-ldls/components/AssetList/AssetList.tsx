@@ -16,8 +16,15 @@ export const AssetList = ({
   hasNextPage?: boolean;
 }) => {
   const renderAssetItem = useCallback(
-    ({ name, ticker, id }: AssetType) => (
-      <AssetItem name={name} ticker={ticker} id={id} onClick={onClick} />
+    ({ name, ticker, id, balance, fiatValue }: AssetType) => (
+      <AssetItem
+        name={name}
+        ticker={ticker}
+        id={id}
+        balance={balance}
+        fiatValue={fiatValue}
+        onClick={onClick}
+      />
     ),
     [onClick],
   );

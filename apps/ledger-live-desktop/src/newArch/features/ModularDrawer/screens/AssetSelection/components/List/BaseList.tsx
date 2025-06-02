@@ -1,25 +1,19 @@
 import React, { useCallback, useEffect } from "react";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AssetList, AssetType } from "@ledgerhq/react-ui/pre-ldls";
 import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { Flex } from "@ledgerhq/react-ui/index";
 import { Skeleton } from "LLD/components/Skeleton";
-import { ListWrapper } from "../../../components/ListWrapper";
-
-type SelectAssetProps = {
-  assetTypes?: AssetType[];
-  assetsToDisplay: CryptoOrTokenCurrency[];
-  source: string;
-  flow: string;
-  scrollToTop: boolean;
-  onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
-  onScrolledToTop?: () => void;
-};
+import { ListWrapper } from "LLD/features/ModularDrawer/components/ListWrapper";
+import { SelectAssetProps } from "./types";
 
 const CURRENT_PAGE = "Modular Asset Selection";
 
-export const SelectAssetList = ({
+type BaseProps = SelectAssetProps & {
+  assetTypes?: AssetType[];
+};
+
+export function BaseSelectAssetList({
   assetTypes,
   assetsToDisplay,
   source,
@@ -27,23 +21,21 @@ export const SelectAssetList = ({
   scrollToTop,
   onAssetSelected,
   onScrolledToTop,
-}: SelectAssetProps) => {
+}: BaseProps) {
   const shouldDisplayLoading = !assetTypes || assetTypes.length === 0;
 
   const onClick = useCallback(
     (asset: AssetType) => {
       track("asset_clicked", { asset, page: CURRENT_PAGE, flow });
-
       const selectedAsset = assetsToDisplay.find(({ id }) => id === asset.id);
       if (!selectedAsset) return;
-
       onAssetSelected(selectedAsset);
     },
     [assetsToDisplay, onAssetSelected, flow],
   );
 
   const onVisibleItemsScrollEnd = () => {
-    //TODO: Add logic to handle scroll end event on ce we have dedicated API for it
+    //TODO: Add logic to handle scroll end event once we have dedicated API for it
   };
 
   useEffect(() => {
@@ -67,10 +59,10 @@ export const SelectAssetList = ({
       <TrackPage category={source} name={CURRENT_PAGE} flow={flow} />
       <AssetList
         scrollToTop={scrollToTop}
-        assets={assetsToDisplay}
+        assets={assetTypes}
         onClick={onClick}
         onVisibleItemsScrollEnd={onVisibleItemsScrollEnd}
       />
     </ListWrapper>
   );
-};
+}
