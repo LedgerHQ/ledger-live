@@ -513,6 +513,10 @@
       "title" : "Üzgünüz, fon miktarı yetersiz",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "Üzgünüz, fon miktarı işlem ücretlerini karşılamıyor",
+      "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Kullanılabilir (stake edilmemiş) bakiyeniz şu anda {{currentBalance}} ve {{assetName}} varlığınızın stake'ini durdurmak için gereken ağ ücretini karşılamıyor. ",
       "oneCta" : "Hesabınıza {{assetName}} <cta1>{{cta1Label}}</cta1>.",
@@ -2160,7 +2164,7 @@
     }
   },
   "earlySecurityCheck" : {
-    "title" : "Orijinallik Denetimi ve İşletim Sistemi güncellemesi denetimi",
+    "title" : "Ledger Orijinallik Denetimi",
     "idle" : {
       "learnMore" : "Orijinallik Denetimi hakkında daha fazla bilgi edinin",
       "checkCta" : "{{ productName }} cihazını denetle"
@@ -2196,11 +2200,11 @@
     "genuineCheckStep" : {
       "learnMore" : "Orijinallik Denetimi hakkında daha fazla bilgi edinin",
       "inactive" : {
-        "title" : "Orijinallik Denetimi",
+        "title" : "Ledger Orijinallik Denetimi",
         "description" : "Bu işlem, {{productName}} cihazınızın resmî bir Ledger cihazı olduğundan emin olmanızı sağlar."
       },
       "active" : {
-        "title" : "Orijinallik Denetimi",
+        "title" : "Ledger Orijinallik Denetimi",
         "description" : "Bu işlem, {{productName}} cihazınızın resmî bir Ledger cihazı olduğundan emin olmanızı sağlar."
       },
       "completed" : {
@@ -2208,23 +2212,23 @@
         "description" : ""
       },
       "refused" : {
-        "title" : "Orijinallik Denetimi reddedildi",
+        "title" : "Ledger Orijinallik Denetimi reddedildi",
         "description" : "Ledger Live uygulamasını kullanarak {{productName}} cihazınızın kurulumuna devam edebilmek için Orijinallik Denetimi zorunludur.",
         "cta" : "Denetimi sürdür"
       },
       "error" : {
-        "title" : "Orijinallik Denetimi",
+        "title" : "Ledger Orijinallik Denetimi",
         "description" : "Orijinallik Denetimi, {{productName}} cihazınızın resmî bir Ledger cihazı olduğundan emin olmanızı sağlar."
       }
     },
     "firmwareUpdateCheckStep" : {
       "active" : {
-        "title" : "İşletim Sistemi güncellemesi denetimi",
-        "description" : "Bu işlem, {{productName}} İşletim Sisteminizin güncel olup olmadığını denetler. "
+        "title" : "Ledger OS denetimi",
+        "description" : "Bu, {{productName}} cihazınızın işletim sisteminin güncel olup olmadığını denetler. "
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "{{productName}} işletim sistemi güncel"
+          "title" : "Ledger OS güncel"
         }
       },
       "error" : {
@@ -2238,7 +2242,7 @@
         "skipCta" : "Güncellemeyi atla"
       },
       "inactive" : {
-        "title" : "İşletim Sistemi güncellemesi denetimi",
+        "title" : "Ledger OS denetimi",
         "description" : "Bu işlem, {{productName}} İşletim Sisteminizin güncel olup olmadığını denetler. "
       }
     },
@@ -2251,7 +2255,7 @@
     }
   },
   "syncOnboarding" : {
-    "title" : "{{deviceName}} cihazını kurun",
+    "title" : "{{productName}} cihazınızı hazırlayın",
     "estimatedTimeFormat" : "{{estimatedTime}} dk.",
     "deviceSelection" : {
       "title" : "Kurmak istediğiniz Ledger'ı seçin:",
@@ -2306,7 +2310,7 @@
     },
     "earlySecurityCheckCompletedStep" : {
       "title" : "{{productName}} orijinal",
-      "subtitle" : "Bu {{productName}} cihazını kullanmak güvenlidir. Cihazın kurulumuna geçebilirsiniz.",
+      "subtitle" : "{{productName}} cihazınızı güvenle kullanabilirsiniz. Kuruluma başlayabilirsiniz.",
       "description" : "Kurulumu başlatmak için {{productName}} cihazına dokunun."
     },
     "pinStep" : {
@@ -2316,30 +2320,57 @@
       "continueOnDevice" : "{{productName}} cihazınızda PIN Kodunuzu belirleyin."
     },
     "seedStep" : {
-      "title" : "Gizli Kurtarma İfadesi",
+      "title" : "Kurulum ve yedekleme",
       "doneTitle" : "Gizli Kurtarma İfadesi onaylandı",
       "description" : "Kurtarma ifadeniz, özel anahtarlarınızı yedekleyen 24 kelimeden oluşan gizli bir listedir. {{productName}} cihazınız benzersiz bir kurtarma ifadesi oluşturur. Ledger bunun bir kopyasını saklamaz",
       "choiceRestoreDirectOrRecover" : "Yer tutucu: Doğrudan geri yüklemeyi seçin veya Recover'ı kullanın",
       "recoverSeed" : "Yer tutucu: Recover",
-      "restoreSeed" : "Varlıklarınızın azami düzeyde güvenliği için Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesi kullandığınızdan emin olun. \n\nGizli Kurtarma İfadeniz yok mu? Yeni bir İfade oluşturmak için {{productName}} cihazınızı kullanın.",
       "selection" : "Size en uygun kurulum seçeneğini belirleyin:",
       "selectionNewLedger" : {
         "title" : "Yeni bir Ledger cihazı olarak kurun",
-        "desc" : "Yeni bir cüzdan oluşturmanızı sağlar. Bu işlem yeni bir Gizli Kurtarma İfadesi oluşturur."
+        "desc" : "Bu işlem yeni Gizli Kurtarma İfadenizi oluşturur."
       },
       "selectionRestore" : {
-        "title" : "Geri yükle",
-        "desc" : "Gizli Kurtarma İfadenizle veya Ledger Recover'ı kullanarak mevcut varlıklarınıza yeniden erişmenizi sağlar."
+        "title" : "Varlıklarınıza erişiminizi kurtarın",
+        "desc" : "Bu işlem, yedeklemenizi kullanarak şunları geri yüklemenize olanak tanır: Gizli Kurtarma İfadesi, Ledger Recover veya Ledger Recovery Key."
+      },
+      "backupRecoveryKey" : {
+        "title" : "Ledger Recovery Key",
+        "desc" : "Dâhilî Secure Element (Güvenli Öge) çipi bulunan ve PIN kodu ile korunan bir kartta yeni bir yedekleme oluşturun. Böylece varlıklarınıza sadece birkaç dokunuşla yeniden erişebilirsiniz.",
+        "cta" : "Daha fazla bilgi edinin veya satın alın",
+        "continueOnDevice" : "{{productName}} cihazınızdaki yönergeleri izleyin"
+      },
+      "selectionRestoreChoice" : {
+        "description" : "Geri yükleme işleminde kullanılacak yedeklemeyi seçin:",
+        "continueOnDevice" : "{{productName}} cihazınızda ilgili seçeneği belirleyin.",
+        "secretRecoveryPhrase" : {
+          "title" : "Gizli Kurtarma İfadesi",
+          "description" : "Maksimum güvenlik için bir Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesi kullanın."
+        },
+        "ledgerRecoveryKey" : {
+          "title" : "Ledger Recovery Key",
+          "description" : "Varlıklarınıza yeniden erişebilmek için Recovery Key kartınızı kullanın."
+        },
+        "ledgerRecover" : {
+          "title" : "Ledger Recover aboneliği",
+          "description" : "Varlıklarınıza kimliğinizle yeniden erişebilmek için aboneliğinizi kullanın."
+        }
+      },
+      "restoreSeed" : {
+        "title" : "Gizli Kurtarma İfadesini kullanarak geri yükleyin",
+        "description" : "Geri yükleme işlemi için Ledger cihazınızın Güvenli Ekranındaki yönergeleri izleyin.",
+        "continueOnDevice" : "{{productName}} cihazınızda ilgili seçeneği belirleyin."
+      },
+      "restoreLedgerRecoveryKey" : {
+        "title" : "Ledger Recovery Key ile geri yükleyin",
+        "description" : "Geri yükleme işlemi için Ledger cihazınızın Güvenli Ekranındaki yönergeleri izleyin.",
+        "continueOnDevice" : "{{productName}} cihazınızdaki yönergeleri izleyin."
       },
       "selectionContinueOnDevice" : "{{productName}} cihazınızda ilgili seçeneği belirleyin.",
-      "newSeedDescription" : "Gizli Kurtarma İfadesi hakkında daha fazla bilgi edinmek ister misiniz? Şu videoları izleyin:",
-      "newSeedContinueOnDevice" : "Bunu {{productName}} cihazınızda yapın",
-      "recovery" : "Varlıklarınızın azami düzeyde güvenliği için Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesi kullandığınızdan emin olun. \n\nGizli Kurtarma İfadeniz yok mu? Yeni bir İfade oluşturmak için {{productName}} cihazınızı kullanın.",
-      "restoreChoiceContinueOnDevice" : "{{productName}} cihazınızda ilgili seçeneği belirleyin.",
-      "restoreChoiceSRPTitle" : "Gizli Kurtarma İfadesini kullanarak geri yükleyin",
-      "restoreChoiceSRPDescription" : "Maksimum güvenlik için bir Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesi kullanın. ",
-      "restoreChoiceRecoverTitle" : "Ledger Recover ile geri yükleyin",
-      "restoreChoiceRecoverDescription" : "Ledger Recover'a aboneyseniz, Gizli Kurtarma İfadenizin yedeklemesi ile geri yükleme işlemini başlatmak için aboneliğinize giriş yapın."
+      "newSeedTitle" : "Gizli Kurtarma İfadesi",
+      "newSeedDescription" : "Gizli Kurtarma İfadesi hakkında daha fazla bilgi edinmek için bu videoları izleyin:",
+      "newSeedContinueOnDevice" : "{{productName}} cihazınızdaki yönergeleri izleyin",
+      "recovery" : "Varlıklarınızın azami düzeyde güvenliği için Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesi kullandığınızdan emin olun. \n\nGizli Kurtarma İfadeniz yok mu? Yeni bir İfade oluşturmak için {{productName}} cihazınızı kullanın."
     },
     "backup" : {
       "title" : "Gizli Kurtarma İfadenizin yedeklemesi",
@@ -4864,7 +4895,7 @@
       "poolId" : "Havuz Kimliği",
       "selectPool" : "Havuz seçin",
       "pools" : "Havuzlar",
-      "delegationEarn" : "Varlıklarınızın yetkisini devrederek ADA ödülleri kazanabilirsiniz.",
+      "delegationEarn" : "Varlıklarınızla yetki devrederek ADA ödülleri kazanabilirsiniz.",
       "delegatingFrom" : "Yetkiyi devreden:",
       "delegatingTo" : "Yetkiyi devralan:",
       "info" : "Yetki Devri nasıl çalışır?",
@@ -5024,7 +5055,7 @@
       "flow" : {
         "steps" : {
           "starter" : {
-            "description" : "CELO varlıklarınızın yetkisini bir doğrulayıcıya devrederek ödüller kazanabilirsiniz.",
+            "description" : "CELO varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz.",
             "bullet" : {
               "0" : "Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.",
               "1" : "Ledger cihazınızı kullanarak yetki devredin.",
@@ -5191,12 +5222,12 @@
       }
     },
     "emptyState" : {
-      "description" : "Varlıklarınızın yetkisini devrederek CELO ödülleri kazanabilirsiniz.",
+      "description" : "Varlıklarınızla yetki devrederek CELO ödülleri kazanabilirsiniz.",
       "info" : "Yetki Devri nasıl çalışır?",
       "delegation" : "Ödüller kazanın"
     },
     "earnRewards" : {
-      "description" : "CELO varlıklarınızın yetkisini bir doğrulayıcıya devrederek ödüller kazanabilirsiniz.",
+      "description" : "CELO varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz.",
       "bullet" : {
         "0" : "Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.",
         "1" : "Ledger cihazınızı kullanarak yetki devredin.",
@@ -5232,7 +5263,7 @@
       }
     },
     "delegation" : {
-      "delegationEarn" : "Varlıklarınızın yetkisini devrederek {{ticker}} ödülleri kazanabilirsiniz.",
+      "delegationEarn" : "Varlıklarınızla yetki devrederek {{ticker}} ödülleri kazanabilirsiniz.",
       "info" : "Yetki Devri nasıl çalışır?",
       "claimRewards" : "Ödüllerinizi alın",
       "claimAvailableRewards" : "{{amount}} topla",
@@ -6066,7 +6097,7 @@
         "activating" : "Etkinleştiriliyor",
         "deactivating" : "Devre dışı bırakılıyor"
       },
-      "delegationEarn" : "Varlıklarınızın yetkisini devrederek SOL ödülleri kazanabilirsiniz.",
+      "delegationEarn" : "Varlıklarınızla yetki devrederek SOL ödülleri kazanabilirsiniz.",
       "info" : "Yetki Devri nasıl çalışır?",
       "broadcastSuccessTitle" : "İşlem gönderildi",
       "broadcastSuccessDescription" : "İşlem onaylandığında yetki devrinin durumu güncellenir.",
@@ -7419,6 +7450,7 @@
     },
     "performance" : "Performans",
     "low" : "Düşük",
-    "high" : "Yüksek"
+    "high" : "Yüksek",
+    "title" : "Piyasa Hareketleri"
   }
 }
