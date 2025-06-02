@@ -447,6 +447,8 @@
     "incompatibility" : {
       "ton_title" : "Ledger Nano S™はTonのスワップに対応していません",
       "ton_description" : "Tonをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+      "ton_tokens_title" : "Ledger Nano S™は、Tonトークンのスワップに対応していません",
+      "ton_tokens_description" : "Tonトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
       "spl_tokens_title" : "Ledger Nano S™はSolanaトークンのスワップに対応していません",
       "spl_tokens_description" : "Solanaトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
       "sui_tokens_title" : "Ledger Nano S™は、Suiトークンのスワップに対応していません",
@@ -1242,8 +1244,8 @@
       "title" : "{{deviceName}}をセットアップする",
       "continueOnDevice" : "{{productName}}でこのアクションを実行する",
       "pairedContent" : {
-        "title" : "この{{deviceName}}は正規品です",
-        "description" : "{{productName}}は安全にご使用いただけます。初期設定に進むことができます。",
+        "title" : "{{deviceName}}は正規品です",
+        "description" : "お持ちの{{productName}}は安全にご利用いただけます。セットアップの準備に進めます。",
         "continueOnDevice" : "{{productName}}をタップしてセットアップを開始"
       },
       "pinContent" : {
@@ -1253,26 +1255,36 @@
         "continueOnDevice" : "{{productName}}にPINを設定"
       },
       "seedContent" : {
-        "title" : "シークレットリカバリーフレーズ",
+        "title" : "セットアップとバックアップ",
         "titleCompleted" : "シークレットリカバリーフレーズ確認済み",
         "recoverSeed" : "Placeholder：Recover",
-        "restoreSeed" : "資産のセキュリティを最大限に高めるため、必ずLedgerデバイスで生成したシークレットリカバリーフレーズを使用してください。\n\nシークレットリカバリーフレーズを持っていませんか？{{productName}}を使用して、新しいフレーズを生成してください。",
+        "restoreSeed" : "復元するには、Ledgerのセキュアスクリーンに表示される指示に従ってください。",
+        "restoreRecoveryKeyTitle" : "Ledger Recovery Keyを使用して復元",
+        "restoreRecoveryKeyDescription" : "復元するには、Ledgerのセキュアスクリーンに表示される指示に従ってください。",
+        "restoreRecoveryKeyContinueOnDevice" : "{{productName}}の指示に従う",
         "selection" : "最適な設定オプションを選択してください：",
-        "selectionNewLedger" : "<0>「Set up as a new Ledger（新しいLedgerとして設定）」</0>で新しいウォレットを作成できます。これにより、新しいシークレットリカバリーフレーズが生成されます。",
-        "selectionRestore" : "<0>「Restore（復元）」</0>で、シークレットリカバリーフレーズまたはLedger Recoverを使用して既存の資産へのアクセスを復元できます。",
+        "selectionNewLedgerTitle" : "新しいLedgerとしてセットアップ",
+        "selectionNewLedgerDescription" : "新たにシークレットリカバリーフレーズが生成されます。",
+        "selectionRestoreTitle" : "資産へのアクセスを復元",
+        "selectionRestoreDescription" : "これにより、バックアップ（シークレットリカバリーフレーズ、Ledger Recover、またはLedger Recovery Key）を使用して復元できます。",
         "selectionContinueOnDevice" : "{{productName}}で関連するオプションを選択",
-        "newSeedDescription1" : "{{productName}}は、24単語からなる一意のリストであるシークレットリカバリーフレーズを生成します。これは、Ledgerが盗難や紛失に遭ったり、PINを忘れた場合に資産を復元する唯一の方法です。",
-        "newSeedDescription2" : "<0>安全かつプライベートに保管：</0>\nシークレットリカバリーフレーズにより全資産を管理できます。シークレットリカバリーフレーズは代替不可能です。フレーズを知っている人は誰でも資産を管理し、盗むこともできます。フレーズを紛失された場合、Ledgerはサポートを提供することができません。",
-        "newSeedDescription3" : "シークレットリカバリーフレーズを尋ねる人物やソフトウェアには、注意してください。それらは、詐欺です。 ",
-        "newSeedDescription4" : "シークレットリカバリーフレーズを入力する必要がある唯一の場所は、Ledgerデバイス上のみです。",
-        "newSeedDescription5" : "第三者と共有しないでください。紛失しないでください。",
-        "newSeedContinueOnDevice" : "{{productName}}で生成されたシークレットリカバリーフレーズを表示して書き留める",
+        "selectionNewSeedTitle" : "シークレットリカバリーフレーズ",
+        "selectionNewSeedSubtitle" : "安全かつプライベートに保管",
+        "selectionNewSeedDescription" : "お客様のシークレットリカバリーフレーズは、お客様の資産を管理するものであり、代替不可能です。お客様のフレーズを知っている人は誰でも、お客様の資産をすべて盗むことができます。紛失された場合、Ledgerでも、それを取り戻すことはできません。",
+        "selectionNewSeedContinueOnDevice" : "{{productName}}の指示に従う",
+        "restoreDescription" : "復元で使用するバックアップを選択：",
         "restoreChoiceContinueOnDevice" : "{{productName}}で関連するオプションを選択",
-        "restoreChoiceSRPTitle" : "シークレットリカバリーフレーズを使用して復元する",
+        "restoreChoiceSRPTitle" : "シークレットリカバリーフレーズ",
         "restoreChoiceSRPDescription" : "セキュリティを最大限に高めるには、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを使用してください。",
-        "restoreChoiceRecoverTitle" : "Ledger Recoverを使用して復元する",
-        "restoreChoiceRecoverDescription" : "Ledger Recoverのサブスクリプション契約をしている場合は、サブスクリプションにログインし、シークレットリカバリーフレーズのバックアップを復元します。",
-        "followInstructions" : "{{productName}}に表示される指示に従ってください。"
+        "restoreChoiceRecoveryKeyTitle" : "Ledger Recovery Key",
+        "restoreChoiceRecoveryKeyDescription" : "Recovery Keyカードを使用して、資産へのアクセスを復元します。",
+        "restoreChoiceRecoverTitle" : "Ledger Recoverサブスクリプション",
+        "restoreChoiceRecoverDescription" : "サブスクリプションを使用して、お客様のIDで資産へのアクセスを復元します。",
+        "followInstructions" : "{{productName}}に表示される指示に従ってください。",
+        "backupRecoveryKeyTitle" : "Ledger Recovery Key",
+        "backupRecoveryKeyDescription" : "セキュアエレメントチップを内蔵した、PINコードで保護されたカードに新しいバックアップを作成すると、数回タップするだけで資産へのアクセスを復元できます。",
+        "backupRecoveryKeyCta" : "詳細の確認または購入",
+        "backupRecoveryKeyContinueOnDevice" : "{{productName}}の指示に従う"
       },
       "backup" : {
         "title" : "シークレットリカバリーフレーズのバックアップ",
@@ -1294,8 +1306,8 @@
       },
       "softwareCheckContent" : {
         "title" : {
-          "active" : "正規品チェックと\nOSアップデートチェック",
-          "completed" : "お客様の{{modelName}}は正規品で最新のものです"
+          "active" : "Ledger正規品チェック",
+          "completed" : "Ledger正規品チェック"
         },
         "exitWarningDrawer" : {
           "title" : "正規品チェックとOSアップデートチェックをキャンセルしますか？",
@@ -1318,12 +1330,12 @@
           }
         },
         "whyPerformChecksLink" : "正規品チェックについて詳しく見る",
-        "startChecksCTA" : "私の{{modelName}}をチェック",
+        "startChecksCTA" : "{{modelName}}をチェック",
         "continueCTA" : "セットアップを続行する",
         "genuineCheck" : {
           "title" : {
-            "active" : "正規品チェック",
-            "completed" : "お客様の{{modelName}}は正規品です",
+            "active" : "Ledger正規品チェック",
+            "completed" : "{{modelName}}は正規品です",
             "cancelled" : "正規品チェックが拒否されました"
           },
           "subtitle" : {
@@ -1334,13 +1346,12 @@
         },
         "firmwareUpdate" : {
           "title" : {
-            "active" : "OSアップデートチェック",
-            "completed" : "{{modelName}} OSは最新の状態です。",
+            "active" : "Ledger OSチェック",
+            "completed" : "{{modelName}}のOSは最新です",
             "updateAvailable" : "OSアップデート{{firmwareVersion}}をご利用いただけます"
           },
           "subtitle" : {
-            "active" : "これにより、{{modelName}}のオペレーティングシステムが最新かどうかがチェックされます。",
-            "completed" : "「Restore apps（アプリを復元）」ボタンを選択して{{modelName}}でアプリの復元を開始します。",
+            "active" : "これは、お持ちの{{modelName}}のオペレーティングシステムが最新かどうかを確認します。",
             "updateAvailable" : "最適なセキュリティを確保し、最新機能へアクセスするためにアップデートしてください。"
           },
           "viewUpdateCTA" : "{{modelName}} OSをアップデートする",
@@ -5871,6 +5882,10 @@
       "title" : "資金が不足しています。",
       "description" : "アカウントに十分な資金があることを確認してください。"
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "申し訳ございませんが、手数料のための資金が不足しています",
+      "description" : "アカウントに十分な資金があることを確認してください。"
+    },
     "NotEnoughBalanceSwap" : {
       "title" : "申し訳ありません。ネットワーク手数料を含む残高が不足しています。数量を調整するか、残高を確認してください。",
       "description" : "アカウントに十分な資金があることを確認してください。"
@@ -6615,7 +6630,8 @@
       "title" : "資産を選択"
     },
     "selectAccount" : {
-      "title" : "アカウントを選択"
+      "title" : "アカウントを選択",
+      "addAccount" : "新規または既存のアカウントを追加する"
     }
   },
   "customImage" : {
@@ -7045,6 +7061,21 @@
     "opted_out" : {
       "description" : "Ledger Nano Sの限られたメモリでは、複数の最新機能、ブロックチェーンの変更、セキュリティ強化も制限されます。ぜひ、新しいLedgerデバイスへのアップグレードをご検討ください。",
       "cta" : "詳細はこちら"
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "検索",
+    "assetFlow" : {
+      "selectTemplate" : "{{dynamic}}を選択",
+      "asset" : "資産",
+      "network" : "ネットワーク"
+    }
+  },
+  "nftEntryPoint" : {
+    "title" : "NFT（非代替性トークン）",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
     }
   }
 }
