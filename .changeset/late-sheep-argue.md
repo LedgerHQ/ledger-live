@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-hedera": patch
+"@ledgerhq/coin-hedera": minor
 ---
 
 fix slow "add account" flow with Hedera

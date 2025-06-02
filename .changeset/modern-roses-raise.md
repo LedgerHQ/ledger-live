@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-aptos": patch
+"@ledgerhq/coin-aptos": minor
 ---
 
 Add listOperations to Aptos alpaca
