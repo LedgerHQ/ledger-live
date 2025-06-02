@@ -12,3 +12,12 @@ export const MODULAR_DRAWER_STEP = {
 } as const;
 
 export type ModularDrawerStep = (typeof MODULAR_DRAWER_STEP)[keyof typeof MODULAR_DRAWER_STEP];
+
+export const MODULAR_DRAWER_ADD_ACCOUNT_STEP = {
+  CONNECT_YOUR_DEVICE: "CONNECT_YOUR_DEVICE",
+  SCAN_ACCOUNTS: "SCAN_ACCOUNTS",
+  ADD_ACCOUNTS: "ADD_ACCOUNTS",
+} as const;
+
+export type ModularDrawerAddAccountStep =
+  (typeof MODULAR_DRAWER_ADD_ACCOUNT_STEP)[keyof typeof MODULAR_DRAWER_ADD_ACCOUNT_STEP];
