@@ -21,6 +21,7 @@ import { importBle } from "~/actions/ble";
 import { updateProtectData, updateProtectStatus } from "~/actions/protect";
 import { INITIAL_STATE as settingsState } from "~/reducers/settings";
 import { listCachedCurrencyIds, hydrateCurrency } from "~/bridge/cache";
+import { getEnv } from "@ledgerhq/live-env";
 import { getCryptoCurrencyById, listSupportedFiats } from "@ledgerhq/live-common/currencies/index";
 import { importMarket } from "~/actions/market";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
@@ -86,19 +87,20 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       // hydrate the store with the bridge/cache
       // Promise.allSettled doesn't exist in RN
-      await Promise.all(
-        cachedCurrencyIds
-          .map(id => {
-            const currency = findCryptoCurrencyById?.(id);
-            return currency ? hydrateCurrency(currency) : Promise.reject();
-          })
-          .map(promise =>
-            promise
-              .then((value: unknown) => ({ status: "fulfilled", value }))
-              .catch((reason: unknown) => ({ status: "rejected", reason })),
-          ),
-      );
-
+      if (!getEnv("DISABLE_CAL_HYDRATATION")) {
+        await Promise.all(
+          cachedCurrencyIds
+            .map(id => {
+              const currency = findCryptoCurrencyById?.(id);
+              return currency ? hydrateCurrency(currency) : Promise.reject();
+            })
+            .map(promise =>
+              promise
+                .then((value: unknown) => ({ status: "fulfilled", value }))
+                .catch((reason: unknown) => ({ status: "rejected", reason })),
+            ),
+        );
+      }
       const bitcoin = getCryptoCurrencyById("bitcoin");
       const ethereum = getCryptoCurrencyById("ethereum");
       const possibleIntermediaries = [bitcoin, ethereum];

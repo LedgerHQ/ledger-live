@@ -357,6 +357,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "disable a problematic mechanism of our API",
   },
+  DISABLE_CAL_HYDRATATION: {
+    def: false,
+    parser: boolParser,
+    desc: "disable a bridge cache preload",
+  },
   DISABLE_FW_UPDATE_VERSION_CHECK: {
     def: false,
     parser: boolParser,

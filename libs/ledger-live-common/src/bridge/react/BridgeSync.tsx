@@ -90,7 +90,9 @@ function useHydrate({ accounts, hydrateCurrency }) {
 
       if (!hydrated[currency.id]) {
         hydrated[currency.id] = true;
-        hydrateCurrency(currency);
+        if (!getEnv("DISABLE_CAL_HYDRATATION")) {
+          hydrateCurrency(currency);
+        }
       }
     }
   }, [accounts, hydrateCurrency]);
