@@ -6,11 +6,12 @@ import invariant from "invariant";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
+import { MODULAR_DRAWER_ADD_ACCOUNT_CATEGORY } from "../../types";
 
 interface Props {
-  onConnect: () => void;
-  currency: CryptoOrTokenCurrency;
   analyticsPropertyFlow?: string;
+  currency: CryptoOrTokenCurrency;
+  onConnect: () => void;
 }
 
 export const ConnectYourDevice = ({
@@ -40,9 +41,14 @@ export const ConnectYourDevice = ({
     }),
     [currency],
   );
+
   return (
     <>
-      <TrackPage category="AddAccounts" name="Step2" currencyName={currencyName} />
+      <TrackPage
+        category={MODULAR_DRAWER_ADD_ACCOUNT_CATEGORY}
+        name="ConnectYourDevice"
+        currencyName={currencyName}
+      />
       <DeviceAction
         action={action}
         request={request}

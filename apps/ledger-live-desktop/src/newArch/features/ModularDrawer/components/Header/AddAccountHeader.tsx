@@ -10,10 +10,11 @@ type Props = {
   step: ModularDrawerAddAccountStep;
 };
 
+// TODO probably unnecessary
 const TranslationKeyMap: Record<ModularDrawerAddAccountStep, string> = {
   [MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE]: "modularAssetDrawer.connectYourDevice",
   [MODULAR_DRAWER_ADD_ACCOUNT_STEP.SCAN_ACCOUNTS]: "modularAssetDrawer.scanAccounts",
-  [MODULAR_DRAWER_ADD_ACCOUNT_STEP.ADD_ACCOUNTS]: "modularAssetDrawer.addAccounts",
+  [MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ADDED]: "modularAssetDrawer.addAccounts",
 };
 
 export const AddAccountHeader = ({ step, onBackClick }: Props) => {
