@@ -1,7 +1,8 @@
 import React, { useCallback, useState } from "react";
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import { connect } from "react-redux";
 import type { TokenAccount, Account } from "@ledgerhq/types-live";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, LayoutChangeEvent } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import {
@@ -60,6 +61,23 @@ const TokenContextualModal = ({
     onCloseModal();
     navigation.navigate(NavigatorName.WalletTab);
   }, [onCloseModal, blacklistToken, account, navigation]);
+  const sharedHeight = useSharedValue(0);
+  const onLayout = useCallback(
+    ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
+      sharedHeight.value = withTiming(layout.height, { duration: 200 });
+    },
+    [sharedHeight],
+  );
+  const animatedStyle = useAnimatedStyle(
+    () => ({
+      /**
+       * If it's null the component still renders normally at its full height
+       * without its height being derived from an animated value.
+       */
+      height: sharedHeight.value ?? 0,
+    }),
+    [],
+  );
 
   if (!isOpened || !account) return null;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
@@ -67,6 +85,7 @@ const TokenContextualModal = ({
   const url = explorerView
     ? getAccountContractExplorer(explorerView, account, parentAccount!)
     : null;
+
   return (
     <QueuedDrawer
       isRequestingToBeOpened={isOpened}
@@ -115,20 +134,22 @@ const TokenContextualModal = ({
           </View>
         </View>
       ) : (
-        <>
-          <BottomModalChoice
-            title={t("settings.accounts.hideTokenCTA")}
-            onPress={() => setShowConfirmation(true)}
-            iconName="EyeNone"
-          />
-          {url && (
+        <Animated.ScrollView style={animatedStyle}>
+          <Animated.View onLayout={onLayout}>
             <BottomModalChoice
-              title={t("settings.accounts.showContractCTA")}
-              onPress={() => setShowContract(true)}
-              iconName="News"
+              title={t("settings.accounts.hideTokenCTA")}
+              onPress={() => setShowConfirmation(true)}
+              iconName="EyeNone"
             />
-          )}
-        </>
+            {url && (
+              <BottomModalChoice
+                title={t("settings.accounts.showContractCTA")}
+                onPress={() => setShowContract(true)}
+                iconName="News"
+              />
+            )}
+          </Animated.View>
+        </Animated.ScrollView>
       )}
     </QueuedDrawer>
   );
