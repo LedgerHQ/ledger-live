@@ -9,6 +9,7 @@ import {
   FA_TRANSFER_TYPES,
 } from "../constants";
 import { compareAddress } from "./getCoinAndAmounts";
+import { normalizeAddress } from "./normalizeAddress";
 
 const transferLikeFunctions = (payload: InputEntryFunctionData) =>
   COIN_TRANSFER_TYPES.includes(payload.function) ||
@@ -23,7 +24,7 @@ const addLikeFunctionsToRecipients = (
     payload.functionArguments.length > 0 &&
     typeof payload.functionArguments[0] === "string"
   ) {
-    op.recipients.push(payload.functionArguments[0].toString());
+    op.recipients.push(normalizeAddress(payload.functionArguments[0]));
   }
 };
 
@@ -37,7 +38,7 @@ const addFungibleToRecipients = (
     typeof payload.functionArguments[0] === "object" &&
     typeof payload.functionArguments[1] === "string"
   ) {
-    op.recipients.push(payload.functionArguments[1].toString());
+    op.recipients.push(normalizeAddress(payload.functionArguments[1].toString()));
   }
 };
 
@@ -57,7 +58,7 @@ const addBatchedFunctions = (
   }
   for (const recipient of payload.functionArguments[0]) {
     if (recipient && compareAddress(recipient.toString(), address)) {
-      op.recipients.push(recipient.toString());
+      op.recipients.push(normalizeAddress(recipient.toString()));
     }
   }
 };
