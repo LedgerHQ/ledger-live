@@ -18,6 +18,7 @@ import {
   Hex,
   postAptosFullNode,
   type PendingTransactionResponse,
+  MoveFunctionId,
 } from "@aptos-labs/ts-sdk";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";

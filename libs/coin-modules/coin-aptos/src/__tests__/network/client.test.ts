@@ -677,21 +677,22 @@ describe("Aptos API", () => {
       }));
 
       const amount = BigInt(100);
-      const sender: AptosSender = {
+      const sender = {
         xpub: "xpub",
         freshAddress: "address1",
       };
       const recipient = "address2";
 
       const api = new AptosAPI("aptos");
-      const transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender> = {
+      const transactionIntent: TransactionIntent<AptosAsset> = {
         asset: {
           type: "token",
           standard: "coin",
           contractAddress: "0x111",
         },
         type: "send",
-        sender,
+        sender: sender.freshAddress,
+        senderPublicKey: sender.xpub,
         amount,
         recipient,
       };
@@ -742,21 +743,22 @@ describe("Aptos API", () => {
       }));
 
       const amount = BigInt(100);
-      const sender: AptosSender = {
+      const sender = {
         xpub: "xpub",
         freshAddress: "address1",
       };
       const recipient = "address2";
 
       const api = new AptosAPI("aptos");
-      const transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender> = {
+      const transactionIntent: TransactionIntent<AptosAsset> = {
         asset: {
           type: "token",
           standard: "fungible_asset",
           contractAddress: "0x111",
         },
         type: "send",
-        sender,
+        sender: sender.freshAddress,
+        senderPublicKey: sender.xpub,
         amount,
         recipient,
       };
