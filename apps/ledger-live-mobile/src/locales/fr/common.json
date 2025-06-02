@@ -513,6 +513,10 @@
       "title" : "Solde insuffisant",
       "description" : "Vérifiez que ce compte a un solde suffisant."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "Solde insuffisant pour couvrir les frais",
+      "description" : "Vérifiez que ce compte a un solde suffisant."
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Votre solde disponible (non-staké) est de {{currentBalance}}. C’est insuffisant pour couvrir les frais de réseau afin de déstaker vos {{assetName}}. ",
       "oneCta" : "<cta1>{{cta1Label}}</cta1> des {{assetName}} pour approvisionner votre compte.",
@@ -838,7 +842,7 @@
     },
     "SolanaTokenNonTransferable" : {
       "title" : "Le token n’est pas transférable",
-      "description" : "Ces tokens sont des tokens soulbound et ne peuvent pas être transférés."
+      "description" : "Ces tokens sont des soulbound tokens et ne peuvent pas être transférés."
     },
     "CardanoMinAmountError" : {
       "title" : "Montant minimal pouvant être envoyé : {{amount}} ADA"
@@ -2160,7 +2164,7 @@
     }
   },
   "earlySecurityCheck" : {
-    "title" : "Vérification de l’authenticité et du système d’exploitation",
+    "title" : "Vérification de l’authenticité Ledger",
     "idle" : {
       "learnMore" : "En savoir plus sur la vérification de l’authenticité",
       "checkCta" : "Vérifier le {{ productName }}"
@@ -2196,11 +2200,11 @@
     "genuineCheckStep" : {
       "learnMore" : "En savoir plus sur la vérification de l’authenticité",
       "inactive" : {
-        "title" : "Vérification de l’authenticité",
+        "title" : "Vérification de l’authenticité Ledger",
         "description" : "Ceci permet de confirmer que votre {{productName}} est officiel."
       },
       "active" : {
-        "title" : "Vérification de l’authenticité",
+        "title" : "Vérification de l’authenticité Ledger",
         "description" : "Ceci permet de confirmer que votre {{productName}} est officiel."
       },
       "completed" : {
@@ -2208,23 +2212,23 @@
         "description" : ""
       },
       "refused" : {
-        "title" : "Vérification de l’authenticité refusée",
+        "title" : "Vérification refusée",
         "description" : "La vérification de l’authenticité est obligatoire pour continuer à configurer votre {{productName}} via Ledger Live.",
         "cta" : "Reprendre la vérification"
       },
       "error" : {
-        "title" : "Vérification de l’authenticité",
+        "title" : "Vérification de l’authenticité Ledger",
         "description" : "La vérification de l’authenticité confirme que votre {{productName}} est officiel."
       }
     },
     "firmwareUpdateCheckStep" : {
       "active" : {
-        "title" : "Vérification du système d’exploitation",
-        "description" : "Ceci permet de vérifier que le système d’exploitation de votre {{productName}} est à jour. "
+        "title" : "Vérification de Ledger OS",
+        "description" : "Ceci vérifie si le système d’exploitation de votre {{productName}} est à jour. "
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "Votre {{productName}} est à jour"
+          "title" : "Ledger OS à jour"
         }
       },
       "error" : {
@@ -2238,7 +2242,7 @@
         "skipCta" : "Ignorer la mise à jour"
       },
       "inactive" : {
-        "title" : "Vérification du système d’exploitation",
+        "title" : "Vérification de Ledger OS",
         "description" : "Ceci permet de vérifier que le système d’exploitation de votre {{productName}} est à jour. "
       }
     },
@@ -2251,7 +2255,7 @@
     }
   },
   "syncOnboarding" : {
-    "title" : "Configurez votre {{deviceName}}",
+    "title" : "Prenez votre {{productName}} en main",
     "estimatedTimeFormat" : "{{estimatedTime}} min",
     "deviceSelection" : {
       "title" : "Choisissez l’appareil que vous souhaitez configurer :",
@@ -2306,7 +2310,7 @@
     },
     "earlySecurityCheckCompletedStep" : {
       "title" : "{{productName}} authentique",
-      "subtitle" : "Vous pouvez utiliser ce {{productName}} en toute sécurité. Poursuivez pour le configurer.",
+      "subtitle" : "Votre {{productName}} peut être utilisé en toute sécurité. Vous pouvez procéder à la configuration.",
       "description" : "Appuyez sur {{productName}} pour commencer la configuration."
     },
     "pinStep" : {
@@ -2316,30 +2320,57 @@
       "continueOnDevice" : "Définissez votre code PIN sur votre {{productName}}."
     },
     "seedStep" : {
-      "title" : "Phrase de récupération secrète",
+      "title" : "Configuration et sauvegarde",
       "doneTitle" : "Phrase de récupération secrète confirmée",
       "description" : "Votre phrase de récupération (\"recovery phrase\") est une liste secrète de 24 mots qui sauvegarde vos clés privées. Votre {{productName}} génère une phrase de récupération unique. Ledger ne conserve pas de copie de celle-ci.",
       "choiceRestoreDirectOrRecover" : "Placeholder : Choisissez de restaurer directement ou d’utiliser Ledger Recover",
       "recoverSeed" : "Placeholder : Ledger Recover",
-      "restoreSeed" : "Pour une sécurité optimale de vos actifs, utilisez une phrase de récupération secrète générée par un appareil Ledger.\n\nVous n’en avez pas déjà une ? Générez une nouvelle phrase avec votre {{productName}}.",
       "selection" : "Choisissez votre option de configuration :",
       "selectionNewLedger" : {
         "title" : "Configurer comme un nouveau wallet",
-        "desc" : "Vous créez un nouveau wallet. Cela va générer une nouvelle phrase de récupération secrète."
+        "desc" : "Pour générer votre nouvelle phrase de récupération secrète."
       },
       "selectionRestore" : {
-        "title" : "Restaurer",
-        "desc" : "Vous restaurez l’accès à votre wallet à l’aide de votre phrase de récupération secrète ou via Ledger Recover."
+        "title" : "Restaurer l’accès à vos actifs",
+        "desc" : "Pour restaurer avec votre sauvegarde : phrase de récupération secrète, Ledger Recover ou Ledger Recovery Key."
+      },
+      "backupRecoveryKey" : {
+        "title" : "Ledger Recovery Key",
+        "desc" : "Créez une nouvelle sauvegarde sur une carte protégée par un code PIN et dotée d’une puce Secure Element. Vous pourrez récupérer l’accès à vos actifs en un clin d’œil.",
+        "cta" : "En savoir plus ou acheter",
+        "continueOnDevice" : "Suivez les instructions sur votre {{productName}}"
+      },
+      "selectionRestoreChoice" : {
+        "description" : "Choisissez la sauvegarde à utiliser :",
+        "continueOnDevice" : "Choisissez l’option qui vous convient sur votre {{productName}}.",
+        "secretRecoveryPhrase" : {
+          "title" : "Phrase de récupération secrète",
+          "description" : "Pour une sécurité optimale, utilisez une phrase de récupération secrète générée par un appareil Ledger."
+        },
+        "ledgerRecoveryKey" : {
+          "title" : "Ledger Recovery Key",
+          "description" : "Utilisez votre carte Recovery Key pour restaurer l’accès à vos actifs."
+        },
+        "ledgerRecover" : {
+          "title" : "Abonnement Ledger Recover",
+          "description" : "Utilisez ce service pour restaurer l’accès à vos actifs à l’aide de votre identité."
+        }
+      },
+      "restoreSeed" : {
+        "title" : "Restaurer avec une phrase de récupération secrète",
+        "description" : "Pour restaurer, suivez les instructions affichées sur l’écran sécurisé de votre appareil Ledger.",
+        "continueOnDevice" : "Choisissez l’option qui vous convient sur votre {{productName}}."
+      },
+      "restoreLedgerRecoveryKey" : {
+        "title" : "Restaurer avec une Ledger Recovery Key",
+        "description" : "Pour restaurer, suivez les instructions affichées sur l’écran sécurisé de votre appareil Ledger.",
+        "continueOnDevice" : "Suivez les instructions affichées sur votre {{productName}}."
       },
       "selectionContinueOnDevice" : "Choisissez l’option qui vous convient sur votre {{productName}}.",
-      "newSeedDescription" : "Vous voulez en savoir plus sur la phrase de récupération secrète ? Jetez un œil à ces vidéos :",
-      "newSeedContinueOnDevice" : "Faites-le sur votre {{productName}}",
-      "recovery" : "Pour une sécurité optimale de vos actifs, utilisez une phrase de récupération secrète générée par un appareil Ledger.\n\nVous n’en avez pas déjà une ? Générez une nouvelle phrase avec votre {{productName}}.",
-      "restoreChoiceContinueOnDevice" : "Choisissez l’option qui vous convient sur votre {{productName}}.",
-      "restoreChoiceSRPTitle" : "Restaurer avec une phrase de récupération secrète",
-      "restoreChoiceSRPDescription" : "Pour une sécurité optimale, utilisez une phrase de récupération secrète générée par un appareil Ledger. ",
-      "restoreChoiceRecoverTitle" : "Restaurer avec Ledger Recover",
-      "restoreChoiceRecoverDescription" : "Si vous êtes abonné(e) à Ledger Recover, connectez-vous pour lancer la restauration de la sauvegarde pour votre phrase de récupération secrète."
+      "newSeedTitle" : "Phrase de récupération secrète",
+      "newSeedDescription" : "Regardez ces vidéos pour en savoir plus sur la phrase de récupération secrète :",
+      "newSeedContinueOnDevice" : "Suivez les instructions sur votre {{productName}}",
+      "recovery" : "Pour une sécurité optimale de vos actifs, utilisez une phrase de récupération secrète générée par un appareil Ledger.\n\nVous n’en avez pas déjà une ? Générez une nouvelle phrase avec votre {{productName}}."
     },
     "backup" : {
       "title" : "Sauvegarde pour votre phrase de récupération",
@@ -4946,7 +4977,7 @@
         "description" : "Solde des actifs immobilisés pouvant être utilisés pour voter"
       },
       "withdrawableBalance" : {
-        "title" : "Solde pouvant être retiré",
+        "title" : "Solde disponible au retrait",
         "description" : "CELO dégelés et transférables sur votre solde disponible."
       }
     },
@@ -6074,7 +6105,7 @@
       "started" : {
         "description" : "Vous pouvez gagner des récompenses en déléguant vos SOL à un validateur."
       },
-      "reserveWarning" : "Conservez au minimum {{amount}} SOL dans votre wallet pour couvrir les frais de réseau futurs afin de désactiver et retirer vos cryptos stakées"
+      "reserveWarning" : "Conservez au minimum {{amount}} SOL dans votre compte pour couvrir les frais de réseau futurs afin de désactiver et retirer vos cryptos stakées"
     },
     "token" : {
       "frozenStateWarning" : "Les actifs du compte sont gelés",
@@ -6163,12 +6194,12 @@
         "description" : "Montant des actifs déstakés qui seront bientôt disponibles."
       },
       "withdrawable" : {
-        "title" : "Solde pouvant être retiré",
+        "title" : "Solde disponible au retrait",
         "description" : "Montant des actifs déstakés qui peuvent actuellement être retirés."
       },
       "stakingUnavailable" : {
         "title" : "Staking non disponible",
-        "description" : "Votre compte ne dispose pas d’un solde suffisant d’actifs pouvant être mis en staking, déstakés ou retirés."
+        "description" : "Le solde de votre compte est insuffisant pour effectuer une opération de staking, déstaking ou retrait."
       }
     },
     "unstaking" : {
@@ -7419,6 +7450,7 @@
     },
     "performance" : "Performance",
     "low" : "Faible",
-    "high" : "Élevée"
+    "high" : "Élevée",
+    "title" : "Mouvements du marché"
   }
 }
