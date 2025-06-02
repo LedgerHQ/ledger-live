@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/useGlobalSyncState";
-import { LoadingBasedGroupedCurrencies, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
+import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -49,9 +49,7 @@ export default function useSpecificAccountsListViewModel({ route, specificAccoun
   const globalSyncState = useGlobalSyncState();
   const syncPending = globalSyncState.pending && !isUpToDate;
 
-  const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(
-    true,
-  ) as LoadingBasedGroupedCurrencies;
+  const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(true);
 
   const ticker = getTicker(specificAccounts[0]);
   const currency = getAccountCurrency(specificAccounts[0]);

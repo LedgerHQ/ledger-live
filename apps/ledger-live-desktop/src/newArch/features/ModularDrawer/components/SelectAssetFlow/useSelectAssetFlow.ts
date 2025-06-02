@@ -2,11 +2,7 @@ import { useState, useCallback, useMemo, useEffect } from "react";
 import { CryptoCurrency, CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import {
-  CurrenciesByProviderId,
-  LoadingBasedGroupedCurrencies,
-  LoadingStatus,
-} from "@ledgerhq/live-common/deposit/type";
+import { CurrenciesByProviderId, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { AssetType } from "@ledgerhq/react-ui/pre-ldls";
 import { FlowStep, NavigationDirection } from "../Header/navigation";
 
@@ -24,9 +20,7 @@ export function useSelectAssetFlow({ onAssetSelected, currencies }: UseSelectAss
   );
   const [providers, setProviders] = useState<CurrenciesByProviderId | undefined>(undefined);
 
-  const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(
-    true,
-  ) as LoadingBasedGroupedCurrencies;
+  const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(true);
 
   const { currenciesByProvider, sortedCryptoCurrencies } = result;
   const [assetsToDisplay, setAssetsToDisplay] =

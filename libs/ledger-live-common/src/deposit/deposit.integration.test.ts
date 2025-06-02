@@ -4,7 +4,6 @@
 import "../__tests__/test-helpers/setup";
 import { renderHook, waitFor } from "@testing-library/react";
 import { useGroupedCurrenciesByProvider } from ".";
-import { GroupedCurrencies, LoadingBasedGroupedCurrencies } from "./type";
 // Explicitly mock the featureFlags module
 
 describe("useGroupedCurrenciesByProvider", () => {
@@ -14,9 +13,9 @@ describe("useGroupedCurrenciesByProvider", () => {
   it("should list is starting with Bitcoin", async () => {
     const { result } = renderHook(() => useGroupedCurrenciesByProvider(false));
     await waitFor(() =>
-      expect(
-        (result.current as GroupedCurrencies).sortedCryptoCurrencies.slice(0, 1).map(o => o.id),
-      ).toMatchObject(["bitcoin"]),
+      expect(result.current.sortedCryptoCurrencies.slice(0, 1).map(o => o.id)).toMatchObject([
+        "bitcoin",
+      ]),
     );
   });
 
@@ -25,9 +24,7 @@ describe("useGroupedCurrenciesByProvider", () => {
 
     await waitFor(() =>
       expect(
-        (hookRef.current as LoadingBasedGroupedCurrencies).result.sortedCryptoCurrencies
-          .slice(0, 1)
-          .map(o => o.id),
+        hookRef.current.result.sortedCryptoCurrencies.slice(0, 1).map(o => o.id),
       ).toMatchObject(["bitcoin"]),
     );
   });
