@@ -447,6 +447,8 @@
     "incompatibility" : {
       "ton_title" : "Ledger Nano S™ ไม่รองรับการ Swap Ton",
       "ton_description" : "ในการ Swap Ton ให้ใช้อุปกรณ์ Ledger ที่เข้ากันได้อื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
+      "ton_tokens_title" : "Ledger Nano S™ ไม่สามารถสวอปโทเคน Ton ได้",
+      "ton_tokens_description" : "หากต้องการสวอปโทเคน Ton ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
       "spl_tokens_title" : "Ledger Nano S™ ไม่รองรับการ Swap โทเคน Solana",
       "spl_tokens_description" : "ในการ Swap โทเคน Solana ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่เข้ากันได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
       "sui_tokens_title" : "Ledger Nano S™ ไม่รองรับการ Swap โทเคน Sui",
@@ -1242,8 +1244,8 @@
       "title" : "ตั้งค่า {{deviceName}} ของคุณ",
       "continueOnDevice" : "ดำเนินการนี้บน {{productName}} ของคุณ",
       "pairedContent" : {
-        "title" : "{{deviceName}} นี้เป็นของแท้",
-        "description" : "ปลอดภัยที่จะใช้ {{productName}} นี้ คุณสามารถดำเนินการตั้งค่าได้",
+        "title" : "{{deviceName}} เป็นอุปกรณ์ของแท้",
+        "description" : "{{productName}} ของคุณปลอดภัยสำหรับการใช้งาน คุณสามารถเริ่มการติดตั้งได้เลย",
         "continueOnDevice" : "แตะที่ {{productName}} เพื่อเริ่มตั้งค่า"
       },
       "pinContent" : {
@@ -1253,26 +1255,36 @@
         "continueOnDevice" : "ตั้งค่า PIN ของคุณบน {{productName}}"
       },
       "seedContent" : {
-        "title" : "Secret Recovery Phrase",
+        "title" : "การติดตั้งและสำรองข้อมูล",
         "titleCompleted" : "ยืนยัน Secret Recovery Phrase แล้ว",
         "recoverSeed" : "Placeholder: Recover",
-        "restoreSeed" : "อย่าลืมใช้ Secret Recovery Phrase ซึ่งสร้างโดยอุปกรณ์ Ledger เพื่อความปลอดภัยสูงสุดสำหรับสินทรัพย์ของคุณ..\n\nหากยังไม่มี ใช้ {{productName}} ของคุณเพื่อสร้าง Phrase ใหม่",
+        "restoreSeed" : "ทำตามคำแนะนำที่ปรากฏบนหน้าจอ Secure Screen ของ Ledger เพื่อทำการกู้คืน",
+        "restoreRecoveryKeyTitle" : "กู้คืนโดยใช้ Ledger Recovery Key",
+        "restoreRecoveryKeyDescription" : "ทำตามคำแนะนำที่ปรากฏบนหน้าจอ Secure Screen ของ Ledger เพื่อทำการกู้คืน",
+        "restoreRecoveryKeyContinueOnDevice" : "ทำตามคำแนะนำบน {{productName}} ของคุณ",
         "selection" : "เลือกตัวเลือกการติดตั้งที่เหมาะกับคุณที่สุด:",
-        "selectionNewLedger" : "<0>“ติดตั้งเป็นเครื่อง Ledger ใหม่”</0> ช่วยให้คุณสร้าง Wallet ใหม่ได้ ซึ่งจะเป็นการสร้าง Secret Recovery Phrase ใหม่",
-        "selectionRestore" : "<0>\"กู้คืน\"</0> ช่วยให้คุณสามารถกู้คืนการเข้าถึงสินทรัพย์ที่มีอยู่ของคุณด้วย Secret Recovery Phrase หรือโดยใช้ Ledger Recover",
+        "selectionNewLedgerTitle" : "ติดตั้ง Ledger เครื่องนี้เป็นอุปกรณ์ใหม่",
+        "selectionNewLedgerDescription" : "ซึ่งจะเป็นการสร้าง Secret Recovery Phrase ใหม่",
+        "selectionRestoreTitle" : "กู้คืนการเข้าถึงสินทรัพย์",
+        "selectionRestoreDescription" : "สิ่งเหล่านี้จะทำให้คุณสามารถกู้คืนโดยใช้ข้อมูลที่สำรองไว้ได้ ได้แก่ Secret Recovery Phrase, บริการ Ledger Recover หรือ Ledger Recovery Key",
         "selectionContinueOnDevice" : "เลือกตัวเลือกบน {{productName}} ของคุณ",
-        "newSeedDescription1" : "{{productName}} ของคุณจะสร้าง Secret Recovery Phrase หรือก็คือวลีกู้คืน 24 คำ ซึ่งเป็นวิธีเดียวที่จะกู้คืนสินทรัพย์ของคุณได้ในกรณีที่ Ledger ของคุณถูกขโมย สูญหาย หรือคุณลืม PIN",
-        "newSeedDescription2" : "<0>เก็บรักษาให้ปลอดภัยและเป็นส่วนตัว:</0>\nSecret Recovery Phrase ใช้ควบคุมสินทรัพย์ทั้งหมดของคุณและไม่สามารถแทนที่ได้ ใครก็ตามที่มี Phrase ของคุณจะสามารถควบคุมและขโมยสินทรัพย์ของคุณได้ หากคุณทำ Phrase หาย Ledger ก็ไม่สามารถช่วยคุณได้",
-        "newSeedDescription3" : "พึงระวังบุคคลหรือซอฟต์แวร์ใด ๆ ที่ขอ Secret Recovery Phrase ของคุณ เพราะนั่นคือมิจฉาชีพ ",
-        "newSeedDescription4" : "อุปกรณ์เดียวที่คุณควรป้อน Secret Recovery Phrase คือบนอุปกรณ์ Ledger ของคุณเอง",
-        "newSeedDescription5" : "ห้ามแชร์กับผู้อื่น ห้ามทำหาย",
-        "newSeedContinueOnDevice" : "ดูและเขียน Secret Recovery Phrase ที่สร้างขึ้นบน {{productName}} ของคุณ",
+        "selectionNewSeedTitle" : "Secret Recovery Phrase",
+        "selectionNewSeedSubtitle" : "โปรดเก็บรักษาให้ปลอดภัยและเป็นส่วนตัว",
+        "selectionNewSeedDescription" : "Secret Recovery Phrase ใช้ควบคุมสินทรัพย์ทั้งหมดของคุณและไม่สามารถเปลี่ยนแปลงได้ ใครก็ตามที่มีวลีกู้คืนนี้ของคุณจะสามารถขโมยสินทรัพย์ของคุณได้ หากคุณทำวลีกู้คืนหาย Ledger จะไม่สามารถช่วยคุณกู้คืนกลับมาได้",
+        "selectionNewSeedContinueOnDevice" : "ทำตามคำแนะนำบน {{productName}} ของคุณ",
+        "restoreDescription" : "เลือกวิธีการกู้คืนที่คุณต้องการ:",
         "restoreChoiceContinueOnDevice" : "เลือกตัวเลือกที่เกี่ยวข้องกับ {{productName}} ของคุณ",
-        "restoreChoiceSRPTitle" : "กู้คืนโดยใช้ Secret Recovery Phrase",
+        "restoreChoiceSRPTitle" : "Secret Recovery Phrase",
         "restoreChoiceSRPDescription" : "ใช้ Secret Recovery Phrase ซึ่งสร้างโดยอุปกรณ์ Ledger เพื่อความปลอดภัยสูงสุด",
-        "restoreChoiceRecoverTitle" : "กู้คืนโดยใช้ Ledger Recover",
-        "restoreChoiceRecoverDescription" : "หากคุณสมัครใช้งาน Ledger Recover ให้เข้าสู่ระบบ Subscription ของคุณเพื่อกู้คืนการสำรองข้อมูลของ Secret Recovery Phrase",
-        "followInstructions" : "ทำตามคำแนะนำที่แสดงบน {{productName}} ของคุณ"
+        "restoreChoiceRecoveryKeyTitle" : "Ledger Recovery Key",
+        "restoreChoiceRecoveryKeyDescription" : "ใช้การ์ด Ledger Recovery Key เพื่อกู้คืนการเข้าถึงสินทรัพย์ของคุณ",
+        "restoreChoiceRecoverTitle" : "บริการ Ledger Recover",
+        "restoreChoiceRecoverDescription" : "ใช้บริการนี้เพื่อกู้คืนการเข้าถึงสินทรัพย์ด้วยการยืนยันตัวตนของคุณ",
+        "followInstructions" : "ทำตามคำแนะนำที่แสดงบน {{productName}} ของคุณ",
+        "backupRecoveryKeyTitle" : "Ledger Recovery Key",
+        "backupRecoveryKeyDescription" : "สร้างข้อมูลสำรองใหม่บนการ์ดที่ปกป้องด้วย PIN และมีชิป Secure Element ในตัว เพื่อให้คุณสามารถกู้คืนการเข้าถึงสินทรัพย์ในไม่กี่ขั้นตอน",
+        "backupRecoveryKeyCta" : "ดูข้อมูลหรือซื้อเลย",
+        "backupRecoveryKeyContinueOnDevice" : "ทำตามคำแนะนำบน {{productName}} ของคุณ"
       },
       "backup" : {
         "title" : "การสำรองข้อมูล Secret Recovery Phrase ของคุณ",
@@ -1294,8 +1306,8 @@
       },
       "softwareCheckContent" : {
         "title" : {
-          "active" : "Genuine Check\nและตรวจสอบการอัปเดต OS",
-          "completed" : "{{modelName}} ของคุณเป็นของแท้และได้รับการอัปเดตล่าสุดแล้ว"
+          "active" : "Genuine Check ของ Ledger",
+          "completed" : "Genuine Check ของ Ledger"
         },
         "exitWarningDrawer" : {
           "title" : "ยกเลิก Genuine Check และการอัปเดต OS หรือไม่?",
@@ -1318,12 +1330,12 @@
           }
         },
         "whyPerformChecksLink" : "ดูข้อมูลเพิ่มเติมเกี่ยวกับ Genuine Check",
-        "startChecksCTA" : "ตรวจสอบ {{modelName}} ของฉัน",
+        "startChecksCTA" : "ตรวจสอบ {{modelName}}",
         "continueCTA" : "ดำเนินการติดตั้งต่อ",
         "genuineCheck" : {
           "title" : {
-            "active" : "Genuine Check",
-            "completed" : "{{modelName}} ของคุณเป็นของแท้",
+            "active" : "Genuine Check ของ Ledger",
+            "completed" : "{{modelName}} เป็นอุปกรณ์ของแท้",
             "cancelled" : "Genuine Check ถูกปฏิเสธ"
           },
           "subtitle" : {
@@ -1334,13 +1346,12 @@
         },
         "firmwareUpdate" : {
           "title" : {
-            "active" : "ตรวจสอบการอัปเดต OS",
-            "completed" : "{{modelName}} OS ของคุณได้รับการอัปเดตล่าสุดแล้ว",
+            "active" : "ตรวจสอบ Ledger OS",
+            "completed" : "{{modelName}} OS ได้รับการอัปเดตล่าสุดแล้ว",
             "updateAvailable" : "มีการอัปเดต OS {{firmwareVersion}}"
           },
           "subtitle" : {
-            "active" : "ซึ่งเป็นการตรวจสอบว่าระบบปฏิบัติการ {{modelName}} ของคุณได้รับการอัปเดตล่าสุดแล้วหรือไม่",
-            "completed" : "เพื่อเริ่มใช้การกู้คืนแอปบน {{modelName}} ของคุณ ให้เลือกปุ่ม “กู้คืนแอป” ด้านล่าง",
+            "active" : "เป็นการตรวจสอบว่าระบบปฏิบัติการบน {{modelName}} ของคุณเป็นเวอร์ชันล่าสุดแล้วหรือไม่",
             "updateAvailable" : "อัปเดตเพื่อความปลอดภัยและเข้าถึงฟีเจอร์ล่าสุด"
           },
           "viewUpdateCTA" : "อัปเดต OS สำหรับ {{modelName}}",
@@ -5871,6 +5882,10 @@
       "title" : "ขออภัย เงินทุนไม่พอ",
       "description" : "โปรดตรวจสอบให้แน่ใจว่าบัญชีมีเงินทุนเพียงพอ"
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "ขออภัย เงินทุนไม่เพียงพอสำหรับการชำระค่าธรรมเนียม",
+      "description" : "โปรดตรวจสอบให้แน่ใจว่าบัญชีมีเงินทุนเพียงพอ"
+    },
     "NotEnoughBalanceSwap" : {
       "title" : "ขออภัย ยอดคงเหลือรวมค่าธรรมเนียมเครือข่ายไม่เพียงพอ ปรับจำนวนหรือตรวจสอบยอดคงเหลือ",
       "description" : "โปรดตรวจสอบให้แน่ใจว่าบัญชีมีเงินทุนเพียงพอ"
@@ -6615,7 +6630,8 @@
       "title" : "เลือกสินทรัพย์"
     },
     "selectAccount" : {
-      "title" : "เลือกบัญชี"
+      "title" : "เลือกบัญชี",
+      "addAccount" : "เพิ่มบัญชีใหม่หรือใช้บัญชีที่มีอยู่"
     }
   },
   "customImage" : {
@@ -7045,6 +7061,21 @@
     "opted_out" : {
       "description" : "หน่วยความจำที่จำกัดของ Ledger Nano S ของคุณจะยับยั้งการเข้าถึงฟีเจอร์ล่าสุด การเปลี่ยนแปลงบล็อกเชน และการเพิ่มความปลอดภัยให้กับคุณ เพื่อการใช้งานระยะยาว ควรอัปเกรดเป็นอุปกรณ์ Ledger รุ่นใหม่กว่า",
       "cta" : "เรียนรู้เพิ่มเติม"
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "ค้นหา",
+    "assetFlow" : {
+      "selectTemplate" : "เลือก {{dynamic}}",
+      "asset" : "สินทรัพย์",
+      "network" : "เครือข่าย"
+    }
+  },
+  "nftEntryPoint" : {
+    "title" : "NFT (โทเคนที่ไม่สามารถแลกเปลี่ยนหรือแทนที่กันได้)",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
     }
   }
 }
