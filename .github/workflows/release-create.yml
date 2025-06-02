@@ -33,17 +33,6 @@ jobs:
           install-proto: true
       - name: Push branch
         run: git push -u origin $RELEASE_BRANCH
-      - name: Add changed files
-        run: |
-          git add .
-      - name: commit new tokens
-        uses: planetscale/ghcommit-action@v0.2.9
-        with:
-          commit_message: "chore(prerelease) update cryptoassets [skip ci]"
-          repo: ${{ github.repository }}
-          branch: ${{ env.RELEASE_BRANCH }}
-        env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: Move patch updates to minor
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
