@@ -12,7 +12,7 @@ env:
 jobs:
   import-cal-tokens:
     name: Import CAL Tokens
-    runs-on: ubuntu-22.04
+    runs-on: ledger-live-medium
     outputs:
       changed: ${{ steps.changes.outputs.changed }}
       pr_url: ${{ steps.create-pr.outputs.pr_url }}
@@ -89,7 +89,7 @@ jobs:
   report-pr-creation:
     name: "Slack PR creation Reporting"
     needs: import-cal-tokens
-    runs-on: ubuntu-22.04
+    runs-on: ledger-live-medium
     if: ${{ !failure() && needs.import-cal-tokens.outputs.changed == 'true' }}
     steps:
       - name: post to a Slack channel
@@ -105,7 +105,7 @@ jobs:
     name: Failure Reporting
     needs: import-cal-tokens
     if: failure()
-    runs-on: ubuntu-22.04
+    runs-on: ledger-live-medium
     steps:
       - name: post to a Slack channel
         uses: slackapi/slack-github-action@v2.0.0
@@ -114,13 +114,4 @@ jobs:
           method: chat.postMessage
           payload: |
             channel: "C06RTDKT324"
-            text: "[Alert] Import CAL Tokens failed"
-            blocks:
-              - type: "section"
-                text:
-                  type: "mrkdwn"
-                  text: "*[Alert] Import CAL Tokens failed*"
-              - type: "section"
-                text:
-                  type: "mrkdwn"
-                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
+            text: "[Alert] Import CAL Tokens failed: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"

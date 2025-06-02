@@ -31,10 +31,6 @@ jobs:
         id: setup-caches
         with:
           install-proto: true
-      - name: install dependencies
-        run: pnpm i
-      - name: Build libs
-        run: pnpm build:libs
       - name: Push branch
         run: git push -u origin $RELEASE_BRANCH
       - name: Add changed files
