@@ -1,6 +1,6 @@
-import React from "react";
 import { motion } from "framer-motion";
-import type { ModularDrawerStep, NavigationDirection } from "../types";
+import React from "react";
+import type { NavigationDirection } from "../types";
 
 const ROW_HEIGHT = 64;
 const TWO_ROWS_HEIGHT = ROW_HEIGHT;
@@ -8,13 +8,13 @@ const INPUT_HEIGHT = 40;
 const SPACING = 16;
 const EXTRA_BOTTOM_MARGIN = TWO_ROWS_HEIGHT + INPUT_HEIGHT + SPACING;
 
-const AnimatedScreenWrapper = ({
+const AnimatedScreenWrapper = <K extends string>({
   children,
   screenKey,
   direction,
 }: {
   children: React.ReactNode;
-  screenKey: ModularDrawerStep;
+  screenKey: K;
   direction: NavigationDirection;
 }) => (
   <motion.div
