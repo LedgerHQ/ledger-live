@@ -447,6 +447,8 @@
     "incompatibility" : {
       "ton_title" : "A Ledger Nano S™ não é compatível com a troca de Ton",
       "ton_description" : "Para trocar Ton, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "ton_tokens_title" : "A Ledger Nano S™ não é compatível com trocas de tokens Ton",
+      "ton_tokens_description" : "Para trocar tokens Ton, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "spl_tokens_title" : "A Ledger Nano S™ não é compatível com a troca de tokens Solana",
       "spl_tokens_description" : "Para trocar tokens Solana, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "sui_tokens_title" : "A Ledger Nano S™ não é compatível com a troca de tokens Sui",
@@ -1242,8 +1244,8 @@
       "title" : "Configurar sua {{deviceName}}",
       "continueOnDevice" : "Execute essa ação em sua {{productName}}",
       "pairedContent" : {
-        "title" : "Esta {{deviceName}} é autêntica",
-        "description" : "É seguro usar esta {{productName}}. Você pode seguir com a configuração.",
+        "title" : "A {{deviceName}} é autêntica",
+        "description" : "A sua {{productName}} é segura de usar. A configuração está pronta para ser iniciada.",
         "continueOnDevice" : "Toque em sua {{productName}} para iniciar a configuração"
       },
       "pinContent" : {
@@ -1253,26 +1255,36 @@
         "continueOnDevice" : "Definir PIN em sua {{productName}}"
       },
       "seedContent" : {
-        "title" : "Frase de Recuperação Secreta",
+        "title" : "Configuração e backup",
         "titleCompleted" : "Frase de Recuperação Secreta confirmada",
         "recoverSeed" : "Placeholder: Recover",
-        "restoreSeed" : "Certifique-se de usar uma Frase de Recuperação Secreta gerada por um dispositivo Ledger para garantir segurança máxima sobre seus ativos. \n\n Não possui uma? Use a sua {{productName}} para gerar uma nova Frase.",
+        "restoreSeed" : "Para restaurar, siga as instruções que aparecem na tela segura da sua Ledger.",
+        "restoreRecoveryKeyTitle" : "Restaurar usando Ledger Recovery Key",
+        "restoreRecoveryKeyDescription" : "Para restaurar, siga as instruções que aparecem na tela segura da sua Ledger.",
+        "restoreRecoveryKeyContinueOnDevice" : "Siga as instruções em sua {{productName}}",
         "selection" : "Escolha a opção de configuração que for melhor para você:",
-        "selectionNewLedger" : "<0>“Set up as a new Ledger”</0> (“Configurar como uma nova Ledger”) permite que você crie uma nova carteira. Isso gera uma nova Frase de Recuperação Secreta.",
-        "selectionRestore" : "<0>“Restore”</0> (“Restaurar”) permite restaurar o acesso aos seus ativos com a sua Frase de Recuperação Secreta ou com o Ledger Recover.",
+        "selectionNewLedgerTitle" : "Configurar uma nova Ledger",
+        "selectionNewLedgerDescription" : "Isso gera uma nova Frase de Recuperação Secreta.",
+        "selectionRestoreTitle" : "Recupere o acesso aos ativos",
+        "selectionRestoreDescription" : "Estas opções permitem que você restaure usando seu backup — frase de recuperação secreta, o Ledger Recover ou o Ledger Recovery Key.",
         "selectionContinueOnDevice" : "Escolha a opção relevante em sua {{productName}}",
-        "newSeedDescription1" : "Sua {{productName}} gerará a Frase de Recuperação Secreta—uma lista única de 24 palavras. É a única maneira de recuperar seus ativos se a sua Ledger for roubada, perdida ou se você esquecer seu PIN.",
-        "newSeedDescription2" : "<0>Guarde-a em segredo:</0>\nsua Frase de Recuperação Secreta controla todos os seus ativos e é insubstituível. Qualquer pessoa que tenha sua Frase também pode controlar seus ativos e roubá-los. Se você perder sua Frase, a Ledger não poderá lhe ajudar.",
-        "newSeedDescription3" : "Cuidado com qualquer pessoa ou software que solicite sua Frase de Recuperação Secreta. Isso é um golpe. ",
-        "newSeedDescription4" : "O único lugar em que você deve inserir sua Frase de Recuperação Secreta é no seu dispositivo Ledger.",
-        "newSeedDescription5" : "Não a compartilhe. Não a perca.",
-        "newSeedContinueOnDevice" : "Veja e anote a Frase de Recuperação Secreta gerada em sua {{productName}}",
+        "selectionNewSeedTitle" : "Frase de Recuperação Secreta",
+        "selectionNewSeedSubtitle" : "Guarde-as em segredo e em segurança",
+        "selectionNewSeedDescription" : "Sua frase de recuperação secreta controla seus ativos e é insubstituível. Qualquer pessoa com sua frase pode roubar todos os seus ativos. Se você a perder, a Ledger não poderá recuperá-la para você.",
+        "selectionNewSeedContinueOnDevice" : "Siga as instruções em sua {{productName}}",
+        "restoreDescription" : "Escolha um backup a partir do qual você deseja restaurar:",
         "restoreChoiceContinueOnDevice" : "Escolha uma opção em sua {{productName}}",
-        "restoreChoiceSRPTitle" : "Restaurar usando a Frase de Recuperação Secreta",
+        "restoreChoiceSRPTitle" : "Frase de Recuperação Secreta",
         "restoreChoiceSRPDescription" : "Use uma Frase de Recuperação Secreta gerada por um dispositivo Ledger para ter a segurança máxima.",
-        "restoreChoiceRecoverTitle" : "Restaurar usando o Ledger Recover",
-        "restoreChoiceRecoverDescription" : "Se você se inscreveu no Ledger Recover, entre com os seus dados para restaurar a sua Frase de Recuperação Secreta.",
-        "followInstructions" : "Siga as instruções que aparecem em sua {{productName}}."
+        "restoreChoiceRecoveryKeyTitle" : "Ledger Recovery Key",
+        "restoreChoiceRecoveryKeyDescription" : "Use seu cartão Recovery Key para restaurar o acesso a seus ativos.",
+        "restoreChoiceRecoverTitle" : "Inscrição no Ledger Recover",
+        "restoreChoiceRecoverDescription" : "Use sua inscrição para restaurar o acesso aos seus ativos com sua identidade.",
+        "followInstructions" : "Siga as instruções que aparecem em sua {{productName}}.",
+        "backupRecoveryKeyTitle" : "Ledger Recovery Key",
+        "backupRecoveryKeyDescription" : "Crie um novo backup em um cartão protegido por PIN com um chip de Elemento Seguro incorporado — assim você consegue restaurar o acesso aos seus ativos com apenas alguns toques.",
+        "backupRecoveryKeyCta" : "Saiba mais ou compre",
+        "backupRecoveryKeyContinueOnDevice" : "Siga as instruções em sua {{productName}}"
       },
       "backup" : {
         "title" : "Backup para sua Frase de Recuperação Secreta",
@@ -1294,8 +1306,8 @@
       },
       "softwareCheckContent" : {
         "title" : {
-          "active" : "Verificação de autenticidade e\nde atualização do sistema operacional",
-          "completed" : "A sua {{modelName}} é autêntica e está atualizada"
+          "active" : "Verificação de autenticidade Ledger",
+          "completed" : "Verificação de autenticidade Ledger"
         },
         "exitWarningDrawer" : {
           "title" : "Cancelar a Verificação de Autenticidade e a verificação de atualização do sistema operacional?",
@@ -1318,11 +1330,11 @@
           }
         },
         "whyPerformChecksLink" : "Saiba mais sobre a Verificação de Autenticidade",
-        "startChecksCTA" : "Verificar minha {{modelName}}",
+        "startChecksCTA" : "Verificar {{modelName}}",
         "continueCTA" : "Seguir para configuração",
         "genuineCheck" : {
           "title" : {
-            "active" : "Verificação de Autenticidade",
+            "active" : "Verificação de autenticidade Ledger",
             "completed" : "A {{modelName}} é autêntica",
             "cancelled" : "Verificação de autenticidade recusada"
           },
@@ -1334,13 +1346,12 @@
         },
         "firmwareUpdate" : {
           "title" : {
-            "active" : "Verificação de atualização do sistema operacional",
-            "completed" : "O sistema operacional da sua {{modelName}} está atualizado.",
+            "active" : "Verificação do Ledger OS",
+            "completed" : "O sistema operacional da {{modelName}} está atualizado",
             "updateAvailable" : "Atualização do OS da {{firmwareVersion}} disponível"
           },
           "subtitle" : {
-            "active" : "Isto verifica se o sistema operacional da sua {{modelName}} está atualizado ou não.",
-            "completed" : "Para iniciar a restauração de aplicativos em sua {{modelName}}, selecione o botão “Restaurar aplicativos” abaixo.",
+            "active" : "Esta verificação determina se o sistema operacional da sua {{modelName}} está atualizado.",
             "updateAvailable" : "Atualize para maior segurança e acesso aos recursos mais recentes."
           },
           "viewUpdateCTA" : "Atualizar OS da {{modelName}}",
@@ -5871,6 +5882,10 @@
       "title" : "Fundos Insuficientes",
       "description" : "Certifique-se de que a conta tem fundos suficientes."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "Fundos insuficientes para cobrir as taxas",
+      "description" : "Certifique-se de que a conta tenha fundos suficientes."
+    },
     "NotEnoughBalanceSwap" : {
       "title" : "Saldo insuficiente incluindo taxas de rede. Ajuste a quantia ou verifique o saldo.",
       "description" : "Certifique-se de que a conta tenha fundos suficientes."
@@ -6615,7 +6630,8 @@
       "title" : "escolher ativo"
     },
     "selectAccount" : {
-      "title" : "escolher conta"
+      "title" : "escolher conta",
+      "addAccount" : "Adicionar conta nova ou existente"
     }
   },
   "customImage" : {
@@ -6785,9 +6801,9 @@
     "title" : "Ledger Sync",
     "close" : "Fechar",
     "activate" : {
-      "title" : "Ativar o Ledger Sync para esse computador?",
+      "title" : "Ativar o Ledger Sync neste computador?",
       "description" : "Sincronize automaticamente suas contas cripto em todos os seus telefones e computadores, mesmo ao fazer transição para um novo dispositivo.",
-      "cta" : "Ative o Ledger Sync",
+      "cta" : "Ativar o Ledger Sync",
       "alreadySync" : "Já ativei",
       "learnMore" : "Como o Ledger Sync funciona?"
     },
@@ -7045,6 +7061,21 @@
     "opted_out" : {
       "description" : "A memória limitada da Ledger Nano S restringe seu acesso aos últimos recursos, mudanças em blockchains e aprimoramentos de segurança. Para uso prolongado, atualize para um dispositivo Ledger mais recente.",
       "cta" : "Saiba mais"
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "Buscar",
+    "assetFlow" : {
+      "selectTemplate" : "Selecionar {{dynamic}}",
+      "asset" : "ativo",
+      "network" : "rede"
+    }
+  },
+  "nftEntryPoint" : {
+    "title" : "NFT (Tokens Não Fungíveis)",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
     }
   }
 }
