@@ -10,10 +10,7 @@ import LightBulb from "~/renderer/icons/LightBulb";
 import IconReload from "~/renderer/icons/UpdateCircle";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { useSelector } from "react-redux";
-import {
-  enablePlatformDevToolsSelector,
-  enablePlatformDeviceSwitchSelector,
-} from "~/renderer/reducers/settings";
+import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
 import { WebviewState, WebviewAPI } from "../Web3AppWebview/types";
 import Spinner from "../Spinner";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
@@ -144,8 +141,6 @@ export const TopBar = ({
     webview.openDevTools();
   }, [webviewAPIRef]);
 
-  const enablePlatformDeviceSwitch = useSelector(enablePlatformDeviceSwitchSelector);
-
   const onBackToMatchingURL = useCallback(async () => {
     const manifestId = localStorage.getItem("manifest-id") || "";
 
@@ -255,10 +250,6 @@ export const TopBar = ({
               <Trans i18nKey="common.sync.devTools" />
             </ItemContent>
           </ItemContainer>
-        </>
-      ) : null}
-      {enablePlatformDeviceSwitch ? (
-        <>
           <Separator />
           <ItemContainer isInteractive onClick={() => SetMobileView?.(!mobileView)}>
             <Icons.Desktop size="S" />
