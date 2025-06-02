@@ -38,7 +38,7 @@ export function transactionToIntent(
     sender: _account.freshAddress,
     recipient: transaction.recipient,
     amount: fromBigNumberToBigInt(transaction.amount, BigInt(0)),
-    asset: null, // TODO: check
+    asset: null,
   };
 }
 

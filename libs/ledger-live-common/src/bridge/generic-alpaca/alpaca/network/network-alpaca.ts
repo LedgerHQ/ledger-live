@@ -86,7 +86,6 @@ const buildValidateIntent = networkFamily =>
     account: Account,
     transaction: Transaction,
   ): Promise<TransactionValidation> {
-    // TODO: check returned value
     const { data } = await network<
       {
         errors: Record<string, Error>;
@@ -180,4 +179,4 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     listOperations: buildListOperations(networkFamily),
     lastBlock: buildLastBlock(networkFamily),
     craftTransaction: buildCraftTransaction(networkFamily),
-  }) satisfies Api<any>; // TODO: Api<any>?
+  }) satisfies Api<any>;

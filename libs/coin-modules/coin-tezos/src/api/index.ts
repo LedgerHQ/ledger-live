@@ -92,7 +92,7 @@ async function estimate(
       address: transactionIntent.sender,
       revealed: senderAccountInfo.revealed,
       balance: BigInt(senderAccountInfo.balance),
-      // NOTE: double check, previously we checked for .sender.xpub
+      // NOTE: previously we checked for .sender.xpub
       xpub: transactionIntent.senderPublicKey ?? senderAccountInfo.publicKey,
     },
     transaction: {

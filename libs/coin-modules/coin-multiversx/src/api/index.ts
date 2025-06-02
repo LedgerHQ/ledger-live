@@ -7,7 +7,6 @@ export {
   broadcastTransaction,
   getAccountESDTTokens,
   getAccountDelegations,
-  // TODO: validate Intent
   getESDTOperations,
   hasESDTTokens,
   getAccountNonce,

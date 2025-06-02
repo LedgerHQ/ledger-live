@@ -22,14 +22,14 @@ function isRecipientValid(recipient: string): boolean {
   return isValidClassicAddress(recipient);
 }
 
-// --- 1-Minute Cache Implementation ---
+// --- 10-Seconds Cache Implementation ---
 type CacheEntry = {
   value: boolean;
   expiresAt: number;
 };
 
 const recipientCache = new Map<string, CacheEntry>();
-const TTL = 30 * 1000; // 1 minute
+const TTL = 10 * 1000; // 10 seconds
 
 const recipientIsNew = async (recipient: string): Promise<boolean> => {
   if (!isRecipientValid(recipient)) return false;

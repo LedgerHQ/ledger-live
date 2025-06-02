@@ -14,7 +14,7 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { getServerInfos } from "../network";
 import { cachedRecipientIsNew, parseAPIValue } from ".";
 import { Transaction, TransactionValidation, Account } from "@ledgerhq/coin-framework/api/types";
-// TODO: almost like estimateMaxSpendable
+
 export const getTransactionStatus = async (
   account: Account,
   transaction: Transaction,

@@ -40,10 +40,10 @@ async function craft(
 ): Promise<string> {
   const fees = customFees !== undefined ? customFees : await estimateFees();
 
+  // NOTE: check how many memos, throw if more than one?
   // if (transactionIntent.memos && transactionIntent.memos.length > 1) {
   //   throw new Error("Stellar only supports one memo per transaction.");
   // }
-  // const memo = transactionIntent.memos?.[0];
   const memo = "memo" in transactionIntent ? transactionIntent.memo : undefined;
   const hasMemoValue = memo && memo.type !== "NO_MEMO";
 
@@ -65,7 +65,7 @@ async function craft(
     },
   );
 
-  // Note: the API returns the signature base, not the full XDR
+  // Note: the API returns the signature base, not the full XDR, see BACK-8727 for more context
   return tx.signatureBase;
 }
 

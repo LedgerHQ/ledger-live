@@ -27,6 +27,6 @@ export function getAlpacaAccountBridge(network: string, kind: string): AccountBr
     estimateMaxSpendable: genericEstimateMaxSpendable(network, kind),
     broadcast: genericBroadcast(network, kind),
     signOperation: genericSignOperation(network, kind)(signer.context),
-    getSerializedAddressParameters, // NOTE: check weither should be exposed by coin-xrp api instead?
+    getSerializedAddressParameters, // NOTE: check wether it should be exposed by coin-module's api instead?
   } satisfies Partial<AccountBridge<any>> as AccountBridge<any>;
 }

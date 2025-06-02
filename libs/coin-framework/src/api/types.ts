@@ -63,7 +63,6 @@ export type Account = {
   balance: bigint;
   currencyUnit: Unit;
 };
-// TODO: more descriptive / errors? if entering a wrong field
 
 export type Balance<AssetInfo extends Asset<TokenInfoCommon>> = {
   value: bigint;
@@ -153,7 +152,6 @@ export type AlpacaApi<
     transactionIntent: TransactionIntent<AssetInfo, MemoType>,
     customFees?: bigint,
   ) => Promise<string>;
-  // validateIntent?: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;
   getBalance: (address: string) => Promise<Balance<AssetInfo>[]>;
   lastBlock: () => Promise<BlockInfo>;
   listOperations: (
