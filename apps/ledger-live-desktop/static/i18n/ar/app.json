@@ -447,6 +447,8 @@
     "incompatibility" : {
       "ton_title" : "™Ledger Nano S لا تدعم مبادلة Ton",
       "ton_description" : "لمبادلة Ton، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+      "ton_tokens_title" : "™Ledger Nano S لا تدعم مبادلة رموز Ton",
+      "ton_tokens_description" : "لمبادلة رموز Ton، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "spl_tokens_title" : "™Ledger Nano S لا تدعم مبادلة رموز سولانا (Solana)",
       "spl_tokens_description" : "لمبادلة رموز سولانا (Solana)، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "sui_tokens_title" : "™Ledger Nano S لا تدعم مبادلة رموز Sui",
@@ -1242,8 +1244,8 @@
       "title" : "إعداد جهازك {{deviceName}}",
       "continueOnDevice" : "قم بهذا الإجراء على جهازك {{productName}}",
       "pairedContent" : {
-        "title" : "جهاز {{deviceName}} هذا أصلي",
-        "description" : "من الآمن استخدام جهاز {{productName}} هذا. يمكنك المتابعة إلى إعداده.",
+        "title" : "{{deviceName}} أصلي",
+        "description" : "جهازك {{productName}} آمن للاستخدام. أنت مستعدٌ للبدء في الإعداد.",
         "continueOnDevice" : "انقر على جهازك {{productName}} لبدء الإعداد"
       },
       "pinContent" : {
@@ -1253,26 +1255,36 @@
         "continueOnDevice" : "إعداد كود PIN الخاص بك على جهازك {{productName}}"
       },
       "seedContent" : {
-        "title" : "عبارة الاسترداد السرية",
+        "title" : "الإعداد والنسخ الاحتياطي",
         "titleCompleted" : "تم تأكيد عبارة الاسترداد السرية",
         "recoverSeed" : "Placeholder: استرداد",
-        "restoreSeed" : "تأكد من استخدام عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأقصى درجات الأمان لأصولك..\n\nليس لديك واحد؟ استخدم جهازك {{productName}} لإنشاء عبارة جديدة.",
+        "restoreSeed" : "للاستعادة، اتبع التعليمات التي تظهر على شاشة Ledger الآمنة خاصتك.",
+        "restoreRecoveryKeyTitle" : "الاستعادة باستخدام Ledger Recovery Key",
+        "restoreRecoveryKeyDescription" : "للاستعادة، اتبع التعليمات التي تظهر على شاشة Ledger الآمنة خاصتك.",
+        "restoreRecoveryKeyContinueOnDevice" : "اتبع التعليمات على جهازك {{productName}}",
         "selection" : "اختر خيار الإعداد الأكثر ملائمة لك:",
-        "selectionNewLedger" : "<0>”Set up as a new Ledger (الإعداد كجهاز Ledger جديد)“</0> يتيح لك إنشاء محفظة جديدة. هذا يُنشئ عبارة استرداد سرية جديدة.",
-        "selectionRestore" : "<0>”Restore (استعادة)“</0> يتيح لك استعادة الوصول إلى أصولك الموجودة عن طريق عبارة الاسترداد السرية الخاصة بك، أو باستخدام Ledger Recover.",
+        "selectionNewLedgerTitle" : "الإعداد كجهاز Ledger جديد",
+        "selectionNewLedgerDescription" : "هذا يُنشئ عبارة استرداد سرية جديدة.",
+        "selectionRestoreTitle" : "استعادة الوصول إلى الأصول",
+        "selectionRestoreDescription" : "هذا يتيح لك الاستعادة باستخدام نسخك الاحتياطي — عبارة الاسترداد السرية أو Ledger Recover أو Ledger Recovery Key.",
         "selectionContinueOnDevice" : "اختر الخيار ذي الصلة على جهازك {{productName}}",
-        "newSeedDescription1" : "جهاز {{productName}} سيقوم بإنشاء عبارة الاسترداد السرية—قائمة فريدة من 24 كلمة. إنها الطريقة الوحيدة لاستعادة أصولك في حالة سرقة أو فقد جهازك Ledger أو إذا نسيت كود PIN الخاص بك.",
-        "newSeedDescription2" : "<0>احفظها بأمان وخصوصية:\n</0>عبارة الاسترداد السرية الخاصة بك تتحكم في كل أصولك وغير قابلة للاستبدال. أي شخص لديه عبارتك يتحكم في أصولك أيضاً ويمكنه سرقتها. إذا فقدت عبارتك، ليس بوسع Ledger مساعدتك.",
-        "newSeedDescription3" : "احذر من أي شخص أو أي برنامج يطلب عبارة الاسترداد السرية الخاصة بك. إنه احتيال. ",
-        "newSeedDescription4" : "المكان الوحيد الذي يجب عليك إدخال عبارة الاسترداد السرية الخاصة بك فيه هو جهازك Ledger.",
-        "newSeedDescription5" : "لا تشاركها. لا تفقدها.",
-        "newSeedContinueOnDevice" : "اعرض واكتب عبارة الاسترداد السرية التي تم إنشاؤها على جهازك {{productName}}",
+        "selectionNewSeedTitle" : "عبارة الاسترداد السرية",
+        "selectionNewSeedSubtitle" : "احفظها بأمان وخصوصية",
+        "selectionNewSeedDescription" : "عبارة الاسترداد السرية الخاصة بك تتحكم في أصولك وهي غير قابلة للاستبدال. أي شخص لديه عبارتك يمكنه سرقة كل أصولك. إذا فقدتها، Ledger لا يمكنها استرجاعها من أجلك.",
+        "selectionNewSeedContinueOnDevice" : "اتبع التعليمات على جهازك {{productName}}",
+        "restoreDescription" : "قم باختيار نسخ احتياطي ترغب في الاستعادة منه:",
         "restoreChoiceContinueOnDevice" : "اختر الخيار ذي الصلة على جهازك {{productName}}",
-        "restoreChoiceSRPTitle" : "الاستعادة باستخدام عبارة الاسترداد السرية",
+        "restoreChoiceSRPTitle" : "عبارة الاسترداد السرية",
         "restoreChoiceSRPDescription" : "استخدم عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأقصى درجات الأمان.",
-        "restoreChoiceRecoverTitle" : "الاستعادة باستخدام Ledger Recover",
-        "restoreChoiceRecoverDescription" : "إذا كنت مشتركاً في Ledger Recover، قم بتسجيل الدخول إلى اشتراكك لاستعادة النسخة الاحتياطية لعبارة الاسترداد السرية الخاصة بك.",
-        "followInstructions" : "اتبع التعليمات التي تظهر على جهازك {{productName}}."
+        "restoreChoiceRecoveryKeyTitle" : "Ledger Recovery Key",
+        "restoreChoiceRecoveryKeyDescription" : "استخدم بطاقة Recovery Key خاصتك لاستعادة الوصول إلى أصولك.",
+        "restoreChoiceRecoverTitle" : "اشتراك Ledger Recover",
+        "restoreChoiceRecoverDescription" : "استخدم اشتراكك لاستعادة الوصول إلى أصولك بواسطة هويّتك.",
+        "followInstructions" : "اتبع التعليمات التي تظهر على جهازك {{productName}}.",
+        "backupRecoveryKeyTitle" : "Ledger Recovery Key",
+        "backupRecoveryKeyDescription" : "قم بإنشاء نسخ احتياطي جديد على بطاقة محمية بكود PIN مع شريحة عنصر آمن مدمجة — حتى تتمكن من استعادة الوصول إلى أصولك ببضع نقرات فقط.",
+        "backupRecoveryKeyCta" : "معرفة المزيد أو الشراء",
+        "backupRecoveryKeyContinueOnDevice" : "اتبع التعليمات على جهازك {{productName}}"
       },
       "backup" : {
         "title" : "نسخة احتياطية لعبارة الاسترداد السرية الخاصة بك",
@@ -1294,8 +1306,8 @@
       },
       "softwareCheckContent" : {
         "title" : {
-          "active" : "اختبار الأصالة\nوالتحقق من تحديث نظام التشغيل",
-          "completed" : "جهازك {{modelName}} أصلي ومُحدَّث إلى آخر إصدار"
+          "active" : "اختبار أصالة Ledger",
+          "completed" : "اختبار أصالة Ledger"
         },
         "exitWarningDrawer" : {
           "title" : "إلغاء اختبار الأصالة والتحقق من تحديث نظام التشغيل؟",
@@ -1318,12 +1330,12 @@
           }
         },
         "whyPerformChecksLink" : "تعرّف على المزيد حول اختبار الأصالة",
-        "startChecksCTA" : "التحقق من جهازي {{modelName}}",
+        "startChecksCTA" : "تحقق من {{modelName}}",
         "continueCTA" : "المتابعة إلى الإعداد",
         "genuineCheck" : {
           "title" : {
-            "active" : "اختبار الأصالة",
-            "completed" : "جهازك {{modelName}} أصلي",
+            "active" : "اختبار أصالة Ledger",
+            "completed" : "{{modelName}} أصلي",
             "cancelled" : "اختبار الأصالة تم رفضه"
           },
           "subtitle" : {
@@ -1334,13 +1346,12 @@
         },
         "firmwareUpdate" : {
           "title" : {
-            "active" : "التحقق من تحديث نظام التشغيل",
-            "completed" : "نظام تشغيل جهازك {{modelName}} مُحدَّث إلى آخر إصدار.",
+            "active" : "التحقق من نظام تشغيل Ledger OS",
+            "completed" : "نظام تشغيل {{modelName}} مُحدَّث إلى آخر إصدار",
             "updateAvailable" : "تحديث نظام التشغيل {{firmwareVersion}} متاح"
           },
           "subtitle" : {
-            "active" : "يتحقق هذا مما إذا كان نظام تشغيل جهازك {{modelName}} مُحدَّث إلى آخر إصدار أم لا.",
-            "completed" : "لبدء استعادة التطبيق على جهازك {{modelName}}، اختر زر ”Restore apps (استعادة التطبيقات)“ أدناه.",
+            "active" : "هذا يتحقق مما إذا كان نظام تشغيل جهازك {{modelName}} مُحدَّث إلى آخر إصدار.",
             "updateAvailable" : "قم بالتحديث من أجل الأمان الأمثل والوصول إلى أحدث الميزات."
           },
           "viewUpdateCTA" : "تحديث نظام تشغيل {{modelName}}",
@@ -5871,6 +5882,10 @@
       "title" : "عفواً، الأموال المتوفرة غير كافية",
       "description" : "يرجى التأكد من أن الحساب به أموال كافية."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "عذراً، الأموال غير كافية لتغطية الرسوم",
+      "description" : "يرجى التأكد من أن الحساب به أموال كافية."
+    },
     "NotEnoughBalanceSwap" : {
       "title" : "عذراً، الرصيد غير كافٍ شاملاً رسوم الشبكة. قم بتعديل المبلغ أو تحقق من الرصيد.",
       "description" : "يرجى التأكد من أن الحساب به أموال كافية."
@@ -6615,7 +6630,8 @@
       "title" : "اختر أصل"
     },
     "selectAccount" : {
-      "title" : "اختر حساب"
+      "title" : "اختر حساب",
+      "addAccount" : "إضافة حساب جديد أو قائم"
     }
   },
   "customImage" : {
@@ -7045,6 +7061,21 @@
     "opted_out" : {
       "description" : "الذاكرة المحدودة في ledger Nano S الخاصة بك تُقيد وصولك إلى أحدث الميزات، ومتغيّرات سلاسل الكتل، وتحسينات الأمان. من أجل الاستخدام على المدى الطويل، قم بالترقية إلى جهاز Ledger أحدث.",
       "cta" : "تعرّف على المزيد"
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "بحث",
+    "assetFlow" : {
+      "selectTemplate" : "اختر {{dynamic}}",
+      "asset" : "أصل",
+      "network" : "الشبكة"
+    }
+  },
+  "nftEntryPoint" : {
+    "title" : "الرموز غير القابلة للاستبدال (NFT)",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
     }
   }
 }
