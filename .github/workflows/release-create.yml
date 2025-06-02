@@ -40,14 +40,12 @@ jobs:
         with:
           from_level: patch
           to_level: minor
+      - name: Install dependencies
+        run: pnpm install -D --ignore-scripts
       - name: enter prerelease mode
         run: pnpm changeset pre enter next
       - name: Add changed files
         run: |
-          git stash
-          git fetch origin $RELEASE_BRANCH          # make sure previous commit is included
-          git pull --rebase origin $RELEASE_BRANCH  # make sure previous commit is included
-          git stash pop
           git add .
       - name: commit
         uses: planetscale/ghcommit-action@v0.2.9
