@@ -129,7 +129,8 @@ describe("createApi", () => {
       const hex = await api.craftTransaction(
         {
           amount: 1n,
-          sender: sender,
+          sender: sender.freshAddress,
+          senderPublicKey: sender.xpub,
           recipient: recipient.freshAddress,
           type: "send",
           asset: {
@@ -155,7 +156,8 @@ describe("createApi", () => {
       const hex = await api.craftTransaction(
         {
           amount: 0n,
-          sender: sender,
+          sender: sender.freshAddress,
+          senderPublicKey: sender.xpub,
           recipient: recipient.freshAddress,
           type: "send",
           asset: {
@@ -183,7 +185,8 @@ describe("createApi", () => {
       const hex = await api.craftTransaction(
         {
           amount: 0n,
-          sender: s,
+          sender: s.freshAddress,
+          senderPublicKey: s.xpub,
           recipient: r.freshAddress,
           type: "send",
           asset: {
