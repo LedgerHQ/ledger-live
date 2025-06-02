@@ -88,6 +88,6 @@ export type AptosMoveResource = {
 };
 
 export type AptosBalance = {
-  asset_type: string;
+  contractAddress: string;
   amount: BigNumber;
 };

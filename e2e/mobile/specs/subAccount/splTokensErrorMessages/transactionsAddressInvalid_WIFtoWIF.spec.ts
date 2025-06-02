@@ -1,8 +1,8 @@
 import { runSendSPLAddressInvalid } from "../subAccount";
 
 const transactionE2E = {
-  tx: new Transaction(Account.SOL_WIF_1, Account.SOL_WIF_2, "0.1", undefined),
-  recipient: Account.SOL_WIF_2.currency.contractAddress,
+  tx: new Transaction(TokenAccount.SOL_WIF_1, TokenAccount.SOL_WIF_2, "0.1", undefined),
+  recipient: TokenAccount.SOL_WIF_2.currency.contractAddress,
   expectedErrorMessage: "This is a token address. Input a regular wallet address",
   xrayTicket: ["B2CQA-3085"],
 };

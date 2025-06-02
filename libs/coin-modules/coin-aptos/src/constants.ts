@@ -45,6 +45,10 @@ export enum DIRECTION {
   UNKNOWN = "UNKNOWN",
 }
 
-export const SUPPORTED_TOKEN_TYPES = ["coin", "fungible_asset"];
+export enum TOKEN_TYPE {
+  COIN = "coin",
+  FUNGIBLE_ASSET = "fungible_asset",
+}
+
 export const DEFAULT_GAS = new BigNumber(200);
 export const DEFAULT_GAS_PRICE = new BigNumber(100);

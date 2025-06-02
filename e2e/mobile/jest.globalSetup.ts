@@ -5,7 +5,7 @@ import { $TmsLink, Step } from "jest-allure2-reporter/api";
 import { ServerData } from "../../apps/ledger-live-mobile/e2e/bridge/types";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
@@ -82,6 +82,7 @@ export default async function setup(): Promise<void> {
   global.Currency = Currency;
   global.Delegate = Delegate;
   global.Account = Account;
+  global.TokenAccount = TokenAccount;
   global.Transaction = Transaction;
   global.Fee = Fee;
   global.AppInfos = AppInfos;

@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { step } from "../misc/reporters/step";
 import { AppPage } from "./abstractClasses";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 import invariant from "invariant";
 
 export class AccountPage extends AppPage {
@@ -29,7 +29,7 @@ export class AccountPage extends AppPage {
   private selectSpecificOperation = (operationType: string) =>
     this.page.locator("[data-testid^='operation-row-']").filter({ hasText: operationType });
   private closeModal = this.page.getByTestId("modal-close-button");
-  private accountbutton = (accountName: string) =>
+  private accountButton = (accountName: string) =>
     this.page.getByRole("button", { name: `${accountName}` });
   private tokenRow = (tokenTicker: string) => this.page.getByTestId(`token-row-${tokenTicker}`);
   private addTokenButton = this.page.getByRole("button", { name: "Add token" });
@@ -42,10 +42,12 @@ export class AccountPage extends AppPage {
   private applyButton = this.page.getByTestId("account-settings-apply-button");
 
   @step("Navigate to token")
-  async navigateToToken(SubAccount: Account) {
-    if (SubAccount.currency.name) {
-      await expect(this.tokenValue(SubAccount.currency.name, SubAccount.accountName)).toBeVisible();
-      await this.tokenValue(SubAccount.currency.name, SubAccount.accountName).click();
+  async navigateToToken(account: AccountType) {
+    if (account.currency.name) {
+      await expect(
+        this.tokenValue(account.currency.name, getParentAccountName(account)),
+      ).toBeVisible();
+      await this.tokenValue(account.currency.name, getParentAccountName(account)).click();
     }
   }
 
@@ -141,8 +143,8 @@ export class AccountPage extends AppPage {
   }
 
   @step("Expect token Account to be visible")
-  async expectTokenAccount(Account: Account) {
-    await expect(this.accountbutton(Account.accountName)).toBeVisible();
+  async expectTokenAccount(account: AccountType) {
+    await expect(this.accountButton(account.currency.name)).toBeVisible();
   }
 
   @step("Expect `show more` button to show more operations")
@@ -166,16 +168,16 @@ export class AccountPage extends AppPage {
   }
 
   @step("Expect token to be present")
-  async expectTokenToBePresent(SubAccount: Account) {
-    await expect(this.tokenRow(SubAccount.currency.ticker)).toBeVisible();
-    const tokenInfos = await this.tokenRow(SubAccount.currency.ticker).innerText();
-    expect(tokenInfos).toContain(SubAccount.currency.name);
-    expect(tokenInfos).toContain(SubAccount.currency.ticker);
+  async expectTokenToBePresent(tokenAccount: AccountType) {
+    await expect(this.tokenRow(tokenAccount.currency.ticker)).toBeVisible();
+    const tokenInfos = await this.tokenRow(tokenAccount.currency.ticker).innerText();
+    expect(tokenInfos).toContain(tokenAccount.currency.name);
+    expect(tokenInfos).toContain(tokenAccount.currency.ticker);
   }
 
   @step("Navigate to token in account")
-  async navigateToTokenInAccount(SubAccount: Account) {
-    await this.tokenRow(SubAccount.currency.ticker).click();
+  async navigateToTokenInAccount(tokenAccount: AccountType) {
+    await this.tokenRow(tokenAccount.currency.ticker).click();
   }
 
   @step("Navigate to NFT gallery")
@@ -189,7 +191,7 @@ export class AccountPage extends AppPage {
   }
 
   @step("Expect NFT list to be visible")
-  async checkNftListInAccount(account: Account) {
+  async checkNftListInAccount(account: AccountType) {
     invariant(account.nft && account.nft.length > 0, "No NFT found in account");
 
     for (const nft of account.nft) {

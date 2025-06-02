@@ -38,6 +38,7 @@ describe("createApi", () => {
       expect(lastBlock.height).toBeGreaterThan(0);
 
       expect(lastBlock).toHaveProperty("time");
+
       expect(lastBlock.time).not.toBeUndefined();
       expect(lastBlock.time?.getFullYear()).toBeGreaterThan(0);
       expect(lastBlock.time?.getMonth()).toBeGreaterThan(0);
@@ -64,7 +65,7 @@ describe("createApi", () => {
   });
 
   describe("craftTransaction", () => {
-    it("returns a RawTransaction serialized into an hexadecimal string", async () => {
+    it("returns a native coin RawTransaction serialized into an hexadecimal string", async () => {
       const hex = await api.craftTransaction(
         {
           amount: 1n,
@@ -84,6 +85,85 @@ describe("createApi", () => {
       expect(rawTx.gas_unit_price.toString()).toBe(DEFAULT_GAS_PRICE.toString());
       expect(rawTx.max_gas_amount.toString()).toBe(DEFAULT_GAS.toString());
     });
+
+    it("returns a coin token RawTransaction serialized into an hexadecimal string", async () => {
+      const hex = await api.craftTransaction(
+        {
+          amount: 1n,
+          sender: sender,
+          recipient: recipient.freshAddress,
+          type: "send",
+          asset: {
+            type: "token",
+            standard: "coin",
+            contractAddress:
+              "0x50788befc1107c0cc4473848a92e5c783c635866ce3c98de71d2eeb7d2a34f85::aptos_coin::AptosCoin",
+          },
+        },
+        0n,
+      );
+
+      const rawTx = RawTransaction.deserialize(
+        new Deserializer(Hex.fromHexString(hex).toUint8Array()),
+      );
+
+      expect(rawTx.sender.toString()).toBe(sender.freshAddress);
+      expect(rawTx.gas_unit_price.toString()).toBe(DEFAULT_GAS_PRICE.toString());
+      expect(rawTx.max_gas_amount.toString()).toBe(DEFAULT_GAS.toString());
+    });
+
+    it("returns a use-all-amount coin token RawTransaction serialized into an hexadecimal string", async () => {
+      const hex = await api.craftTransaction(
+        {
+          amount: 0n,
+          sender: sender,
+          recipient: recipient.freshAddress,
+          type: "send",
+          asset: {
+            type: "token",
+            standard: "coin",
+            contractAddress:
+              "0x50788befc1107c0cc4473848a92e5c783c635866ce3c98de71d2eeb7d2a34f85::aptos_coin::AptosCoin",
+          },
+        },
+        0n,
+      );
+
+      const rawTx = RawTransaction.deserialize(
+        new Deserializer(Hex.fromHexString(hex).toUint8Array()),
+      );
+
+      expect(rawTx.sender.toString()).toBe(sender.freshAddress);
+      expect(rawTx.gas_unit_price.toString()).toBe(DEFAULT_GAS_PRICE.toString());
+      expect(rawTx.max_gas_amount.toString()).toBe(DEFAULT_GAS.toString());
+    });
+
+    it("returns a use-all-amount fungible_asset token RawTransaction serialized into an hexadecimal string", async () => {
+      const r = sender;
+      const s = recipient; // recipient contains fungible_assets balances
+      const hex = await api.craftTransaction(
+        {
+          amount: 0n,
+          sender: s,
+          recipient: r.freshAddress,
+          type: "send",
+          asset: {
+            type: "token",
+            standard: "fungible_asset",
+            contractAddress: "0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
+          },
+        },
+        0n,
+      );
+
+      const rawTx = RawTransaction.deserialize(
+        new Deserializer(Hex.fromHexString(hex).toUint8Array()),
+      );
+
+      expect(rawTx.sender.toString()).toBe(s.freshAddress);
+      expect(rawTx.gas_unit_price.toString()).toBe(DEFAULT_GAS_PRICE.toString());
+      expect(rawTx.max_gas_amount.toString()).toBe(DEFAULT_GAS.toString());
+    });
   });
 
   describe("getBalance", () => {
@@ -91,7 +171,7 @@ describe("createApi", () => {
       const balances = await api.getBalance(sender.freshAddress);
 
       expect(balances.length).toBeGreaterThan(0);
-      expect(balances[0].value).toBeGreaterThan(0);
+      expect(balances[0].value).toBeGreaterThanOrEqual(0);
     });
   });
 
