@@ -32,6 +32,8 @@ const AmountCellExtra = ({ operation, currency, unit }: AmountCellExtraProps<Ope
 
 const amountCellExtra = {
   STAKE: AmountCellExtra,
+  UNSTAKE: AmountCellExtra,
+  WITHDRAW: AmountCellExtra,
 };
 
 const OperationDetailsExtra = ({
@@ -43,9 +45,18 @@ const OperationDetailsExtra = ({
   const unit = useAccountUnit(account);
 
   let i18nKey = "";
-  if (type === "STAKE") {
-    i18nKey = "aptos.operationDetails.extra.stakedAmount";
+  switch (type) {
+    case "STAKE":
+      i18nKey = "aptos.operationDetails.extra.stakedAmount";
+      break;
+    case "UNSTAKE":
+      i18nKey = "aptos.operationDetails.extra.unstakedAmount";
+      break;
+    case "WITHDRAW":
+      i18nKey = "aptos.operationDetails.extra.withdrawnAmount";
+      break;
   }
+
   if (!i18nKey || amount.isZero()) {
     return null;
   }
