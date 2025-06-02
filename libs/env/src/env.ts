@@ -358,7 +358,7 @@ const envDefinitions = {
     desc: "disable a problematic mechanism of our API",
   },
   DISABLE_CAL_HYDRATATION: {
-    def: false,
+    def: true,
     parser: boolParser,
     desc: "disable a bridge cache preload",
   },
