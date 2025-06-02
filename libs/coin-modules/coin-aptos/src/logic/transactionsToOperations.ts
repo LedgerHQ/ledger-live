@@ -8,6 +8,7 @@ import { compareAddress, getCoinAndAmounts } from "./getCoinAndAmounts";
 import { calculateAmount } from "./calculateAmount";
 import { processRecipients } from "./processRecipients";
 import { getFunctionAddress } from "./getFunctionAddress";
+import { normalizeAddress } from "./normalizeAddress";
 
 export const convertFunctionPayloadResponseToInputEntryFunctionData = (
   payload: EntryFunctionPayloadResponse,
@@ -83,7 +84,7 @@ export function transactionsToOperations(
     op.tx.fees = BigInt(fees.toString());
 
     op.value = BigInt(value.isNaN() ? 0 : value.toString());
-    op.senders.push(tx.sender);
+    op.senders.push(normalizeAddress(tx.sender));
 
     processRecipients(payload, address, op, function_address);
 
