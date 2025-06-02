@@ -1,9 +1,6 @@
 name: "[CAL] - Import CAL Tokens - Scheduled"
 
 on:
-  push:
-    branches:
-      - LIVE-18444-new-cal-importer-workflow
   workflow_dispatch:
   schedule:
     - cron: "0 8 * * 1"
@@ -104,26 +101,26 @@ jobs:
             channel: "C06RTDKT324"
             text: "[CAL] Import Tokens PR created: <${{ needs.import-cal-tokens.outputs.pr_url }}|View Pull Request>"
 
-  # import-cal-tokens-fail:
-  #   name: Failure Reporting
-  #   needs: import-cal-tokens
-  #   if: failure()
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     - name: post to a Slack channel
-  #       uses: slackapi/slack-github-action@v2.0.0
-  #       with:
-  #         token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
-  #         method: chat.postMessage
-  #         payload: |
-  #           channel: "C06RTDKT324"
-  #           text: "[Alert] Import CAL Tokens failed"
-  #           blocks:
-  #             - type: "section"
-  #               text:
-  #                 type: "mrkdwn"
-  #                 text: "*[Alert] Import CAL Tokens failed*"
-  #             - type: "section"
-  #               text:
-  #                 type: "mrkdwn"
-  #                 text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
+  import-cal-tokens-fail:
+    name: Failure Reporting
+    needs: import-cal-tokens
+    if: failure()
+    runs-on: ubuntu-22.04
+    steps:
+      - name: post to a Slack channel
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          method: chat.postMessage
+          payload: |
+            channel: "C06RTDKT324"
+            text: "[Alert] Import CAL Tokens failed"
+            blocks:
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "*[Alert] Import CAL Tokens failed*"
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
