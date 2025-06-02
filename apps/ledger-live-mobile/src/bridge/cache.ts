@@ -39,5 +39,5 @@ export const bridgeCache = makeBridgeCacheSystem({
   saveData: setCurrencyCache,
   getData: getCurrencyCache,
 });
-export const hydrateCurrency = bridgeCache.hydrateCurrency;
-export const prepareCurrency = bridgeCache.prepareCurrency;
+export const hydrateCurrency = () => {};
+export const prepareCurrency = () => {};

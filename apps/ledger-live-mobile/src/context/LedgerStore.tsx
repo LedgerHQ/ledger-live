@@ -72,7 +72,6 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       ] = await Promise.all([
         retry(getBle, MAX_RETRIES, RETRY_DELAY),
         retry(getSettings, MAX_RETRIES, RETRY_DELAY),
-        retry(listCachedCurrencyIds, MAX_RETRIES, RETRY_DELAY),
         retry(listSupportedFiats, MAX_RETRIES, RETRY_DELAY),
         retry(getAccounts, MAX_RETRIES, RETRY_DELAY),
         retry(getPostOnboardingState, MAX_RETRIES, RETRY_DELAY),
@@ -87,20 +86,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       // hydrate the store with the bridge/cache
       // Promise.allSettled doesn't exist in RN
-      if (!getEnv("DISABLE_CAL_HYDRATATION")) {
-        await Promise.all(
-          cachedCurrencyIds
-            .map(id => {
-              const currency = findCryptoCurrencyById?.(id);
-              return currency ? hydrateCurrency(currency) : Promise.reject();
-            })
-            .map(promise =>
-              promise
-                .then((value: unknown) => ({ status: "fulfilled", value }))
-                .catch((reason: unknown) => ({ status: "rejected", reason })),
-            ),
-        );
-      }
+
       const bitcoin = getCryptoCurrencyById("bitcoin");
       const ethereum = getCryptoCurrencyById("ethereum");
       const possibleIntermediaries = [bitcoin, ethereum];
