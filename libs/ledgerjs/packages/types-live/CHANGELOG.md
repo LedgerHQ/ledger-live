@@ -1,5 +1,13 @@
 # @ledgerhq/types-live
 
+## 6.72.0-next.0
+
+### Minor Changes
+
+- [#10334](https://github.com/LedgerHQ/ledger-live/pull/10334) [`4ddfe60`](https://github.com/LedgerHQ/ledger-live/commit/4ddfe6060ab8e4e5c0bb89da91e08a02d8ca50e6) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Add Account Feature Flag
+
+- [#10351](https://github.com/LedgerHQ/ledger-live/pull/10351) [`f42f353`](https://github.com/LedgerHQ/ledger-live/commit/f42f353a593d0a1cd0a237648765080c85d0eea7) Thanks [@Canestin](https://github.com/Canestin)! - Add Phantom derivation path on Solana
+
 ## 6.71.0
 
 ### Minor Changes

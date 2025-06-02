@@ -1,5 +1,22 @@
 # @ledgerhq/coin-hedera
 
+## 1.7.0-next.0
+
+### Minor Changes
+
+- [#10211](https://github.com/LedgerHQ/ledger-live/pull/10211) [`3ebfb21`](https://github.com/LedgerHQ/ledger-live/commit/3ebfb21cc0861cd69b7f4117b7d1f3c7c6a38acd) Thanks [@md-blockydevs](https://github.com/md-blockydevs)! - fix slow "add account" flow with Hedera
+
+- [#10264](https://github.com/LedgerHQ/ledger-live/pull/10264) [`52e34fc`](https://github.com/LedgerHQ/ledger-live/commit/52e34fc0ca98917e8ac2846524828f1f0aaf701d) Thanks [@md-blockydevs](https://github.com/md-blockydevs)! - fix "view in explorer" button in unconfirmed Hedera transaction details by adding "extra.transactionId" fallback
+  move getTransactionExplorer from LLD to coin module
+  support custom getTransactionExplorer in ledger-live-mobile
+
+### Patch Changes
+
+- Updated dependencies [[`4ddfe60`](https://github.com/LedgerHQ/ledger-live/commit/4ddfe6060ab8e4e5c0bb89da91e08a02d8ca50e6), [`f42f353`](https://github.com/LedgerHQ/ledger-live/commit/f42f353a593d0a1cd0a237648765080c85d0eea7)]:
+  - @ledgerhq/types-live@6.72.0-next.0
+  - @ledgerhq/coin-framework@5.2.0-next.0
+  - @ledgerhq/live-countervalues@0.5.8-next.0
+
 ## 1.6.7
 
 ### Patch Changes

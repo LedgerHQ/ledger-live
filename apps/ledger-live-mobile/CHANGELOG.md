@@ -1,5 +1,62 @@
 # live-mobile
 
+## 4.0.0-next.0
+
+### Major Changes
+
+- [#10335](https://github.com/LedgerHQ/ledger-live/pull/10335) [`fdbca42`](https://github.com/LedgerHQ/ledger-live/commit/fdbca4295bcedc2137aaf5a2ddccdb577d640ba1) Thanks [@sergiubreban](https://github.com/sergiubreban)! - fix earn modal text cut
+
+### Minor Changes
+
+- [#10302](https://github.com/LedgerHQ/ledger-live/pull/10302) [`8bd5c56`](https://github.com/LedgerHQ/ledger-live/commit/8bd5c56f8b9f57557d56ce91d648d8346834e489) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: loader only for the graph and not for the card when the timeframe is updated
+
+- [#10227](https://github.com/LedgerHQ/ledger-live/pull/10227) [`b93d081`](https://github.com/LedgerHQ/ledger-live/commit/b93d0814b6a6806f341a599e6d3228a0caf7f3d3) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Large Mover Analytics
+
+- [#10292](https://github.com/LedgerHQ/ledger-live/pull/10292) [`3100714`](https://github.com/LedgerHQ/ledger-live/commit/3100714186c915818a7a13cfc8e0354361638502) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - create swap custom handlers
+
+- [#10372](https://github.com/LedgerHQ/ledger-live/pull/10372) [`162f6d3`](https://github.com/LedgerHQ/ledger-live/commit/162f6d30c4acb7db7cf2e8ae138f98de484c7f87) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - refactor(swap): simplify error handling and remove unused state
+
+- [#10329](https://github.com/LedgerHQ/ledger-live/pull/10329) [`0545969`](https://github.com/LedgerHQ/ledger-live/commit/0545969b75adb9ba6f6fc61e78dc18bc23fa6b1b) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Fix E2E tests, remove test code
+
+- [#10352](https://github.com/LedgerHQ/ledger-live/pull/10352) [`e604a8b`](https://github.com/LedgerHQ/ledger-live/commit/e604a8b0839d7a5dd4e137092605ea3c253fea49) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: P1 bugs on Large Mover
+
+- [#10347](https://github.com/LedgerHQ/ledger-live/pull/10347) [`1ae0fab`](https://github.com/LedgerHQ/ledger-live/commit/1ae0fab4da30bae44d5082140fe6cfbad1ff068d) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - fix(swap): handle offline state in swap webview and error cases
+
+- [#10405](https://github.com/LedgerHQ/ledger-live/pull/10405) [`04d3ba6`](https://github.com/LedgerHQ/ledger-live/commit/04d3ba6b005a4625ad59b7e3c737909ebf9807e4) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: large mover header deleted
+
+- [#10160](https://github.com/LedgerHQ/ledger-live/pull/10160) [`521358e`](https://github.com/LedgerHQ/ledger-live/commit/521358e6627fd4203d0c96266d0bb5714700d554) Thanks [@palra](https://github.com/palra)! - [babylon] add react tests for delegation disable flag in coin configuration
+
+- [#10328](https://github.com/LedgerHQ/ledger-live/pull/10328) [`ff0a516`](https://github.com/LedgerHQ/ledger-live/commit/ff0a516c54ac1bed9d0da70d2531b7f535afad2e) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: card scollable and buttons clickable on android
+
+- [#10345](https://github.com/LedgerHQ/ledger-live/pull/10345) [`33c7e9e`](https://github.com/LedgerHQ/ledger-live/commit/33c7e9ebf078ee91e0c11a16cdcaba2d840125c3) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Use PrepareConnectManager device action inside ledger live
+
+- [#10300](https://github.com/LedgerHQ/ledger-live/pull/10300) [`7bd5e86`](https://github.com/LedgerHQ/ledger-live/commit/7bd5e86491c12f60e798f9b82497d7fa399ec147) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - fix tracking of Manage/Earn more on LLM
+
+- [#10264](https://github.com/LedgerHQ/ledger-live/pull/10264) [`52e34fc`](https://github.com/LedgerHQ/ledger-live/commit/52e34fc0ca98917e8ac2846524828f1f0aaf701d) Thanks [@md-blockydevs](https://github.com/md-blockydevs)! - fix "view in explorer" button in unconfirmed Hedera transaction details by adding "extra.transactionId" fallback
+  move getTransactionExplorer from LLD to coin module
+  support custom getTransactionExplorer in ledger-live-mobile
+
+- [#10340](https://github.com/LedgerHQ/ledger-live/pull/10340) [`78888ca`](https://github.com/LedgerHQ/ledger-live/commit/78888caf6f70b3b8f0f4eadf5b40d4146b576930) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - fix display bug on ATOM delegation
+
+### Patch Changes
+
+- Updated dependencies [[`b2454cd`](https://github.com/LedgerHQ/ledger-live/commit/b2454cde386d45fd69304ba492bb7958bb0eacd4), [`4ddfe60`](https://github.com/LedgerHQ/ledger-live/commit/4ddfe6060ab8e4e5c0bb89da91e08a02d8ca50e6), [`e604a8b`](https://github.com/LedgerHQ/ledger-live/commit/e604a8b0839d7a5dd4e137092605ea3c253fea49), [`f42f353`](https://github.com/LedgerHQ/ledger-live/commit/f42f353a593d0a1cd0a237648765080c85d0eea7), [`ff0a516`](https://github.com/LedgerHQ/ledger-live/commit/ff0a516c54ac1bed9d0da70d2531b7f535afad2e), [`4c57db2`](https://github.com/LedgerHQ/ledger-live/commit/4c57db229766f4608f66c6dbd294c1f30c4155c6)]:
+  - @ledgerhq/live-dmk-mobile@0.5.0-next.0
+  - @ledgerhq/types-live@6.72.0-next.0
+  - @ledgerhq/native-ui@0.35.0-next.0
+  - @ledgerhq/coin-framework@5.2.0-next.0
+  - @ledgerhq/coin-cosmos@0.15.0-next.0
+  - @ledgerhq/coin-evm@2.22.2-next.0
+  - @ledgerhq/coin-filecoin@1.9.8-next.0
+  - @ledgerhq/coin-multiversx@0.4.8-next.0
+  - @ledgerhq/coin-stacks@0.8.8-next.0
+  - @ledgerhq/domain-service@1.2.31-next.0
+  - @ledgerhq/live-countervalues@0.5.8-next.0
+  - @ledgerhq/live-countervalues-react@0.2.37-next.0
+  - @ledgerhq/live-nft@0.8.8-next.0
+  - @ledgerhq/live-nft-react@0.9.8-next.0
+  - @ledgerhq/live-wallet@0.10.11-next.0
+
 ## 3.80.0
 
 ### Minor Changes

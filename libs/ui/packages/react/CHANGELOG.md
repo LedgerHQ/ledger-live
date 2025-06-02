@@ -1,5 +1,13 @@
 # @ledgerhq/react-ui
 
+## 0.28.0-next.0
+
+### Minor Changes
+
+- [#10276](https://github.com/LedgerHQ/ledger-live/pull/10276) [`2d531a7`](https://github.com/LedgerHQ/ledger-live/commit/2d531a732ee17389f87c4b31f50464f56147a8f3) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - Ensure that when the search input changes the list auto scrolls to the first item
+
+- [#10293](https://github.com/LedgerHQ/ledger-live/pull/10293) [`e6f6140`](https://github.com/LedgerHQ/ledger-live/commit/e6f614040a209ff66e95d3fd94acefef8f46357d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Aggregation of the accounts selection flow to display corresponding accounts depending on the network and asset. Also fix some UI for account item inside pre ldls lib
+
 ## 0.27.0
 
 ### Minor Changes
