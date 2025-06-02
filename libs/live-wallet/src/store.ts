@@ -267,7 +267,9 @@ export const exportWalletState = (state: WalletState): ExportedWalletState => ({
 export const walletStateExportShouldDiffer = (a: WalletState, b: WalletState): boolean => {
   return (
     a.walletSyncState !== b.walletSyncState ||
-    a.nonImportedAccountInfos !== b.nonImportedAccountInfos
+    a.nonImportedAccountInfos !== b.nonImportedAccountInfos ||
+    a.accountNames !== b.accountNames ||
+    a.starredAccountIds !== b.starredAccountIds
   );
 };
 

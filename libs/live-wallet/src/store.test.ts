@@ -262,6 +262,22 @@ describe("Wallet store", () => {
     expect(isStarredAccountSelector(result, { accountId: ETHEREUM_ACCOUNT })).toBe(true);
   });
 
+  it("can import the wallet state with renamed accounts and starred accounts", () => {
+    const result = handlers.IMPORT_WALLET_SYNC(
+      initialState,
+      importWalletState({
+        ...exportedState,
+        accountsData: {
+          accountNames: [[ETHEREUM_ACCOUNT, "New name"]],
+          starredAccountIds: [ETHEREUM_ACCOUNT],
+        },
+      }),
+    );
+    expect(walletSyncStateSelector(result)).toEqual({ data: {}, version: 42 });
+    expect(accountNameSelector(result, { accountId: ETHEREUM_ACCOUNT })).toBe("New name");
+    expect(isStarredAccountSelector(result, { accountId: ETHEREUM_ACCOUNT })).toBe(true);
+  });
+
   it("can export the wallet state", () => {
     const result = handlers.IMPORT_WALLET_SYNC(initialState, importWalletState(exportedState));
     expect(exportWalletState(result)).toEqual(exportedState);
@@ -348,7 +364,6 @@ describe("Wallet store", () => {
         nonImportedAccountInfos: exportedState.nonImportedAccountInfos,
       }),
     );
-    // console.log(stateImport1);
     expect(exportWalletState(stateImport1)).toEqual({
       walletSyncState: exportedState.walletSyncState,
       nonImportedAccountInfos: exportedState.nonImportedAccountInfos,
@@ -376,6 +391,28 @@ describe("Wallet store", () => {
       accountsData: {
         accountNames: [["mock:1:ethereum:eth:", "New name"]],
         starredAccountIds: ["mock:1:ethereum:eth:", "mock:1:ethereum:eth:|0"],
+      },
+    });
+  });
+
+  it("can export the wallet state with updated values", () => {
+    const result = handlers.IMPORT_WALLET_SYNC(initialState, importWalletState(exportedState));
+    // Check that the exported state includes rename of accounts.
+    const resultRename = handlers.SET_ACCOUNT_NAME(
+      result,
+      setAccountName(ETHEREUM_ACCOUNT, "New name"),
+    );
+    // Check that the exported state includes starred  accounts.
+    const resultStarred = handlers.SET_ACCOUNT_STARRED(
+      resultRename,
+      setAccountStarred(POLKADOT_ACCOUNT, true),
+    );
+
+    expect(exportWalletState(resultStarred)).toEqual({
+      ...exportedState,
+      accountsData: {
+        accountNames: [[ETHEREUM_ACCOUNT, "New name"]],
+        starredAccountIds: [POLKADOT_ACCOUNT],
       },
     });
   });
