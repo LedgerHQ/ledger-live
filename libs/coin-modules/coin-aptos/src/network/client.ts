@@ -18,7 +18,6 @@ import {
   Hex,
   postAptosFullNode,
   type PendingTransactionResponse,
-  MoveFunctionId,
 } from "@aptos-labs/ts-sdk";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
@@ -226,7 +225,6 @@ export class AptosAPI {
 
   async estimateFees(transactionIntent: TransactionIntent<AptosAsset>): Promise<FeeEstimation> {
     const publicKeyEd = new Ed25519PublicKey(transactionIntent?.senderPublicKey ?? "");
-    const fn: MoveFunctionId = "0x1::aptos_account::transfer_coins";
 
     const txPayload: InputEntryFunctionData = {
       function: "0x1::aptos_account::transfer_coins",
