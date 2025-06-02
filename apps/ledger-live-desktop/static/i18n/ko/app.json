@@ -447,6 +447,8 @@
     "incompatibility" : {
       "ton_title" : "Ledger Nano S™는 Ton 스왑을 지원하지 않습니다",
       "ton_description" : "Ton을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+      "ton_tokens_title" : "Ledger Nano S™는 Ton 토큰 스왑을 지원하지 않습니다.",
+      "ton_tokens_description" : "Ton 토큰을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
       "spl_tokens_title" : "Ledger Nano S™는 솔라나 토큰 스왑을 지원하지 않습니다.",
       "spl_tokens_description" : "솔라노 토큰을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
       "sui_tokens_title" : "Ledger Nano S™는 Sui 토큰 스왑을 지원하지 않습니다.",
@@ -1242,8 +1244,8 @@
       "title" : "{{deviceName}} 설정하기",
       "continueOnDevice" : "{{productName}}에서 이 동작을 실행합니다",
       "pairedContent" : {
-        "title" : "이 {{deviceName}} 장치는 정품입니다",
-        "description" : "이 {{productName}}를 사용해도 안전합니다. 설정을 진행하시면 됩니다.",
+        "title" : "{{deviceName}}는 정품입니다",
+        "description" : "{{productName}}을(를) 사용해도 안전합니다. 설정을 시작할 준비가 되었습니다.",
         "continueOnDevice" : "설정을 시작하려면 {{productName}}를 탭하세요."
       },
       "pinContent" : {
@@ -1253,26 +1255,36 @@
         "continueOnDevice" : "{{productName}}에 PIN을 설정하세요"
       },
       "seedContent" : {
-        "title" : "비밀 복구 문구",
+        "title" : "설정 및 백업",
         "titleCompleted" : "비밀 복구 문구 확인됨",
         "recoverSeed" : "자리 표시자: 복구",
-        "restoreSeed" : "Ledger 장치에서 생성된 비밀 복구 문구를 사용해 자산에 대한 보안을 극대화하세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요.",
+        "restoreSeed" : "복구하려면 Ledger 보안 화면에 표시되는 안내를 따라주세요.",
+        "restoreRecoveryKeyTitle" : "Ledger 복구 키로 복구",
+        "restoreRecoveryKeyDescription" : "복구하려면 Ledger 보안 화면에 표시되는 안내를 따라주세요.",
+        "restoreRecoveryKeyContinueOnDevice" : "{{productName}}에 표시되는 안내를 따라주세요.",
         "selection" : "가장 적합한 설정 옵션을 선택하세요.",
-        "selectionNewLedger" : "<0>“새 Ledger로 설정”</0>을 통해 새 지갑을 만들 수 있습니다. 이를 통해 새로운 비밀 복구 문구가 생성됩니다.",
-        "selectionRestore" : "<0>“복구”기능을 통해 비밀 복구 문구 또는 Ledger Recover를 사용해 기존 자산에 대한 액세스를 복구할 수 있습니다.",
+        "selectionNewLedgerTitle" : "새 Ledger로 설정",
+        "selectionNewLedgerDescription" : "이를 통해 새로운 비밀 복구 문구가 생성됩니다.",
+        "selectionRestoreTitle" : "자산 액세스 복구",
+        "selectionRestoreDescription" : "안내를 따라 백업(비밀 복구 문구, Ledger Recover 또는 Ledger Recover Key)을 사용하여 복구할 수 있습니다.",
         "selectionContinueOnDevice" : "{{productName}}에서 관련 옵션을 선택하세요",
-        "newSeedDescription1" : "{{productName}}는 24개 단어로 구성된 고유한 목록인 비밀 복구 문구를 생성합니다. 이는 Ledger를 도난당하거나 분실하거나 PIN을 잊어버린 경우 자산을 복구할 수 있는 유일한 방법입니다.",
-        "newSeedDescription2" : "<0>비밀 복구 문구를 안전하게 비공개로 유지하세요.</0>\n이 비밀 문구는 모든 보유 자산을 제어하며 대체가 불가능합니다. 이 문구를 손에 넣은 사람이면 누구나 여러분의 자산을 제어하거나 훔칠 수 있습니다. 이를 분실하면 Ledger가 도와드릴 수 없습니다",
-        "newSeedDescription3" : "비밀 복구 문구를 요구하는 사람이나 소프트웨어를 조심하세요. 그것은 사기입니다. ",
-        "newSeedDescription4" : "비밀 복구 문구를 입력해야 하는 유일한 장소는 Ledger 장치뿐입니다.",
-        "newSeedDescription5" : "타인과 공유하지 마세요. 잃어버리지 마세요.",
-        "newSeedContinueOnDevice" : "{{productName}}에 생성된 비밀 복구 문구를 확인하고 기록해두세요",
+        "selectionNewSeedTitle" : "비밀 복구 문구",
+        "selectionNewSeedSubtitle" : "안전하고 아무도 모르게 관리하세요.",
+        "selectionNewSeedDescription" : "비밀 복구 문구는 모든 보유 자산을 제어하며 대체가 불가능합니다. 이 문구를 손에 넣은 사람이면 누구나 여러분의 자산을 제어하거나 훔칠 수 있습니다. 이 문구를 분실하는 경우 Ledger가 대신 복구해드립니다.",
+        "selectionNewSeedContinueOnDevice" : "{{productName}}에 표시되는 안내를 따라주세요.",
+        "restoreDescription" : "복구에 사용할 백업 수단을 선택하세요.",
         "restoreChoiceContinueOnDevice" : "{{productName}}에서 관련 옵션을 선택하세요",
-        "restoreChoiceSRPTitle" : "비밀 복구 문구를 사용해 복원하세요",
+        "restoreChoiceSRPTitle" : "비밀 복구 문구",
         "restoreChoiceSRPDescription" : "Ledger 장치에서 생성된 비밀 복구 문구를 사용해 보안을 극대화하세요.",
-        "restoreChoiceRecoverTitle" : "Ledger Recover를 이용한 복구",
-        "restoreChoiceRecoverDescription" : "Ledger Recover를 구독하는 경우 구독 서비스에 로그인하여 비밀 복구 문구의 백업을 복구하세요.",
-        "followInstructions" : "{{productName}}에 표시되는 지침을 따르세요."
+        "restoreChoiceRecoveryKeyTitle" : "Ledger Recovery Key",
+        "restoreChoiceRecoveryKeyDescription" : "Recovery Key 카드로 자산 액세스 복구.",
+        "restoreChoiceRecoverTitle" : "Ledger Recover 구독",
+        "restoreChoiceRecoverDescription" : "구독 후 신원 확인만으로 자산 액세스 복구.",
+        "followInstructions" : "{{productName}}에 표시되는 지침을 따르세요.",
+        "backupRecoveryKeyTitle" : "Ledger Recovery Key",
+        "backupRecoveryKeyDescription" : "PIN으로 보호되고 보안 칩이 내장된 카드에 새 백업을 생성하세요. 몇 번의 탭만으로 자산에 대한 액세스를 복구할 수 있습니다.",
+        "backupRecoveryKeyCta" : "자세히 알아보기 또는 구매",
+        "backupRecoveryKeyContinueOnDevice" : "{{productName}}에 표시되는 안내를 따라주세요."
       },
       "backup" : {
         "title" : "비밀 복구 문구 백업",
@@ -1294,8 +1306,8 @@
       },
       "softwareCheckContent" : {
         "title" : {
-          "active" : "정품 확인 및\nOS 업데이트 확인",
-          "completed" : "귀하의 {{modelName}}는 정품이며 최신 상태입니다"
+          "active" : "Ledger 정품 확인",
+          "completed" : "Ledger 정품 확인"
         },
         "exitWarningDrawer" : {
           "title" : "정품 확인 및 OS 업데이트 확인을 취소하시겠어요?",
@@ -1318,12 +1330,12 @@
           }
         },
         "whyPerformChecksLink" : "정품 확인 자세히 알아보기",
-        "startChecksCTA" : "내 {{modelName}} 확인하기",
+        "startChecksCTA" : "{{modelName}} 확인하기",
         "continueCTA" : "설정 계속하기",
         "genuineCheck" : {
           "title" : {
-            "active" : "정품 확인",
-            "completed" : "귀하의 {{modelName}}는 정품입니다",
+            "active" : "Ledger 정품 확인",
+            "completed" : "{{modelName}}는 정품입니다",
             "cancelled" : "정품 확인이 거부되었습니다"
           },
           "subtitle" : {
@@ -1334,13 +1346,12 @@
         },
         "firmwareUpdate" : {
           "title" : {
-            "active" : "OS 업데이트 확인",
-            "completed" : "사용 중인 {{modelName}} OS가 최신 상태입니다. ",
+            "active" : "Ledger OS 확인",
+            "completed" : "{{modelName}} OS는 최신 상태입니다",
             "updateAvailable" : "OS 업데이트 {{firmwareVersion}} 사용 가능"
           },
           "subtitle" : {
-            "active" : "이를 통해 사용 중인 {{modelName}} 운영 시스템이 최신 상태인지 확인합니다.",
-            "completed" : "{{modelName}}에서 앱 복구를 시작하려면, 아래의 “앱 복구” 버튼을 선택하세요.",
+            "active" : "{{modelName}}의 운영 체제가 최신 상태인지 확인합니다.",
             "updateAvailable" : "업데이트하여 최적의 보안과 최신 기능에 대한 액세스를 누리세요."
           },
           "viewUpdateCTA" : "{{modelName}} OS 업데이트",
@@ -5871,6 +5882,10 @@
       "title" : "죄송하지만 자금이 부족합니다",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "죄송하지만, 수수료를 충당할 자금이 부족합니다",
+      "description" : "계정에 자금이 충분한지 확인해 주세요."
+    },
     "NotEnoughBalanceSwap" : {
       "title" : "죄송합니다. 네트워크 수수료를 포함한 잔액이 부족합니다. 금액을 조정하거나 잔액을 확인하세요",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
@@ -6615,7 +6630,8 @@
       "title" : "자산 선택"
     },
     "selectAccount" : {
-      "title" : "계정 선택"
+      "title" : "계정 선택",
+      "addAccount" : "기존 계정이나 신규 계정 추가"
     }
   },
   "customImage" : {
@@ -7045,6 +7061,21 @@
     "opted_out" : {
       "description" : "Ledger Nano S의 제한된 메모리로 인해 최신 기능, 블록체인 변경 사항 및 보안 업데이트에 대한 액세스가 제한됩니다. 장기적으로 사용하려면 최신 Ledger 장치로 업그레이드하세요.",
       "cta" : "자세히 알아보기"
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "검색",
+    "assetFlow" : {
+      "selectTemplate" : "{{dynamic}} 선택",
+      "asset" : "자산",
+      "network" : "네트워크"
+    }
+  },
+  "nftEntryPoint" : {
+    "title" : "NFT(대체 불가능 토큰)",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
     }
   }
 }
