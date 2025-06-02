@@ -6,7 +6,6 @@ import { EntryFunctionPayloadResponse, InputEntryFunctionData } from "@aptos-lab
 import { APTOS_ASSET_ID, DIRECTION } from "../constants";
 import { compareAddress, getCoinAndAmounts } from "./getCoinAndAmounts";
 import { calculateAmount } from "./calculateAmount";
-import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/index";
 import { processRecipients } from "./processRecipients";
 import { getFunctionAddress } from "./getFunctionAddress";
 
@@ -27,6 +26,14 @@ const detectType = (address: string, tx: AptosTransaction, value: BigNumber): DI
   }
 
   return type;
+};
+
+const getTokenStandard = (coin_id: string): string => {
+  const parts = coin_id.split("::");
+  if (parts.length === 3) {
+    return "coin";
+  }
+  return "fungible_asset";
 };
 
 export function transactionsToOperations(
@@ -84,15 +91,11 @@ export function transactionsToOperations(
       if (coin_id === APTOS_ASSET_ID) {
         acc.push(op);
         return acc;
-      }
-
-      const token = findTokenByAddressInCurrency(coin_id.toLowerCase(), "aptos");
-
-      if (token !== undefined) {
+      } else {
         op.asset = {
           type: "token",
-          standard: token.tokenType,
-          contractAddress: token.contractAddress,
+          standard: getTokenStandard(coin_id),
+          contractAddress: coin_id,
         };
         acc.push(op);
       }
