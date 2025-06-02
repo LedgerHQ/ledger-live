@@ -80,15 +80,10 @@ const excludedErrorDescription = [
 
 const sentryEnabled = false;
 
-export const navigationIntegration = Sentry.reactNavigationIntegration({
-  enableTimeToInitialDisplay: true,
-  routeChangeTimeoutMs: 10_000,
-  ignoreEmptyBackNavigationTransactions: false,
-});
-
 const SENTRY_DEBUG = Config.SENTRY_DEBUG === "true" && __DEV__;
 
 if (sentryEnabled) {
+  console.log("SENTRY ENABLED");
   Sentry.init({
     dsn: Config.SENTRY_DSN,
     environment: Config.SENTRY_ENVIRONMENT,
@@ -105,13 +100,6 @@ if (sentryEnabled) {
     enableAppHangTracking: true,
     profilesSampleRate: Config.FORCE_SENTRY ? 1 : 0.0004,
     tracesSampleRate: Config.FORCE_SENTRY ? 1 : 0.0003,
-    integrations: [
-      navigationIntegration,
-      Sentry.reactNativeTracingIntegration({
-        finalTimeoutMs: 100_000,
-        idleTimeoutMs: 10_000,
-      }),
-    ],
     beforeSend(event) {
       if (!getEnabled()) return null;
       // If the error matches excludedErrorName or excludedErrorDescription,

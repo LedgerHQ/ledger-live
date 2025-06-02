@@ -30,7 +30,6 @@ import {
 } from "~/actions/earn";
 import { blockPasswordLock } from "../actions/appstate";
 import { useStorylyContext } from "~/components/StorylyStories/StorylyProvider";
-import { navigationIntegration } from "../sentry";
 import { OptionMetadata } from "~/reducers/types";
 const TRACKING_EVENT = "deeplink_clicked";
 
@@ -698,7 +697,6 @@ export const DeeplinksProvider = ({
       onReady={() => {
         (isReadyRef as Writeable<typeof isReadyRef>).current = true;
         setTimeout(() => SplashScreen.hide(), 300);
-        navigationIntegration.registerNavigationContainer(navigationRef);
       }}
     >
       {children}
