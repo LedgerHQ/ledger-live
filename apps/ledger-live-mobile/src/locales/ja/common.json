@@ -513,6 +513,10 @@
       "title" : "資金が不足しています。",
       "description" : "アカウントに十分な資金があることを確認してください。"
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "申し訳ございませんが、手数料のための資金が不足しています",
+      "description" : "アカウントに十分な資金があることを確認してください。"
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "現在利用可能な（ステーキングされていない）残高は{{currentBalance}}ですが、これは{{assetName}}のステーキングを解除するためのネットワーク手数料を支払うには不十分です。 ",
       "oneCta" : "アカウントに{{assetName}}を<cta1>{{cta1Label}}</cta1>してください。",
@@ -2160,7 +2164,7 @@
     }
   },
   "earlySecurityCheck" : {
-    "title" : "正規品チェックと\nOSアップデートチェック",
+    "title" : "Ledger正規品チェック",
     "idle" : {
       "learnMore" : "正規品チェックの詳細",
       "checkCta" : "{{ productName }}をチェック"
@@ -2196,11 +2200,11 @@
     "genuineCheckStep" : {
       "learnMore" : "正規品チェックについて詳しく見る",
       "inactive" : {
-        "title" : "正規品チェック",
+        "title" : "Ledger正規品チェック",
         "description" : "これにより、お使いの{{productName}}が正規品であることが確認されます。"
       },
       "active" : {
-        "title" : "正規品チェック",
+        "title" : "Ledger正規品チェック",
         "description" : "これにより、お使いの{{productName}}が正規品であることが確認されます。"
       },
       "completed" : {
@@ -2208,23 +2212,23 @@
         "description" : ""
       },
       "refused" : {
-        "title" : "正規品チェックが拒否されました",
+        "title" : "Ledger正規品チェックが拒否されました",
         "description" : "Ledger Liveアプリを使用して{{productName}}の設定を続けるには、正規品チェックが必須です。",
         "cta" : "チェックを再開"
       },
       "error" : {
-        "title" : "正規品チェック",
+        "title" : "Ledger正規品チェック",
         "description" : "正規品チェックにより、お持ちの{{productName}}が正式なLedgerであることが保証されます。"
       }
     },
     "firmwareUpdateCheckStep" : {
       "active" : {
-        "title" : "OSアップデートチェック",
-        "description" : "これにより、{{productName}}のオペレーティングシステムが最新かどうかがチェックされます。 "
+        "title" : "Ledger OSチェック",
+        "description" : "これは、お持ちの{{productName}}のオペレーティングシステムが最新かどうかを確認します。 "
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "{{productName}}のOSは最新です"
+          "title" : "Ledger OSは最新です"
         }
       },
       "error" : {
@@ -2238,7 +2242,7 @@
         "skipCta" : "アップデートをスキップする"
       },
       "inactive" : {
-        "title" : "OSアップデートチェック",
+        "title" : "Ledger OSチェック",
         "description" : "{{productName}}のオペレーティングシステムが最新であることを確認します。 "
       }
     },
@@ -2251,7 +2255,7 @@
     }
   },
   "syncOnboarding" : {
-    "title" : "{{deviceName}}をセットアップ",
+    "title" : "{{productName}}を準備",
     "estimatedTimeFormat" : "{{estimatedTime}}分",
     "deviceSelection" : {
       "title" : "設定したいLedgerを選択：",
@@ -2306,7 +2310,7 @@
     },
     "earlySecurityCheckCompletedStep" : {
       "title" : "{{productName}}は正規品です",
-      "subtitle" : "この{{productName}}は安全にご使用いただけます。セットアップに進むことができます。",
+      "subtitle" : "お持ちの{{productName}}は安全にご利用いただけます。セットアップの準備に進めます。",
       "description" : "{{productName}}をタップしてセットアップを開始します。"
     },
     "pinStep" : {
@@ -2316,30 +2320,57 @@
       "continueOnDevice" : "{{productName}}にPINを設定します。"
     },
     "seedStep" : {
-      "title" : "シークレットリカバリーフレーズ",
+      "title" : "セットアップとバックアップ",
       "doneTitle" : "シークレットリカバリーフレーズ確認済み",
       "description" : "リカバリーフレーズは、秘密鍵をバックアップする24単語からなる秘密のリストです。{{productName}}は唯一無二のリカバリフレーズを生成します。Ledgerはそのコピーを保持しません",
       "choiceRestoreDirectOrRecover" : "Placeholder－直接復元、またはRecoverの使用を選択",
       "recoverSeed" : "Placeholder：Recover",
-      "restoreSeed" : "資産のセキュリティを最大限に高めるために、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを必ず使用してください。 \n\nリカバリーフレーズをお持ちではありませんか？{{productName}}を使用して、新しいフレーズを生成してください。",
       "selection" : "最適な設定オプションを選択してください：",
       "selectionNewLedger" : {
         "title" : "新しいLedgerとしてセットアップ",
-        "desc" : "新しいウォレットを作成できます。これにより、新しいシークレットリカバリーフレーズが生成されます。"
+        "desc" : "これにより、新しいシークレットリカバリーフレーズが生成されます。"
       },
       "selectionRestore" : {
-        "title" : "復元",
-        "desc" : "シークレットリカバリーフレーズまたはLedger Recoverを使用すると既存の資産へのアクセスを回復できます。"
+        "title" : "資産へのアクセスを復元",
+        "desc" : "これにより、バックアップ（シークレットリカバリーフレーズ、Ledger Recover、またはLedger Recovery Key）を使用して復元できます。"
+      },
+      "backupRecoveryKey" : {
+        "title" : "Ledger Recovery Key",
+        "desc" : "セキュアエレメントチップを内蔵した、PINコードで保護されたカードに新しいバックアップを作成すると、数回タップするだけで資産へのアクセスを復元できます。",
+        "cta" : "詳細の確認または購入",
+        "continueOnDevice" : "{{productName}}の指示に従う"
+      },
+      "selectionRestoreChoice" : {
+        "description" : "復元で使用するバックアップを選択：",
+        "continueOnDevice" : "{{productName}}で関連するオプションを選択します。",
+        "secretRecoveryPhrase" : {
+          "title" : "シークレットリカバリーフレーズ",
+          "description" : "セキュリティを最大限に高めるには、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを使用してください。"
+        },
+        "ledgerRecoveryKey" : {
+          "title" : "Ledger Recovery Key",
+          "description" : "Recovery Keyカードを使用して、資産へのアクセスを復元します。"
+        },
+        "ledgerRecover" : {
+          "title" : "Ledger Recoverサブスクリプション",
+          "description" : "サブスクリプションを使用して、お客様のIDで資産へのアクセスを復元します。"
+        }
+      },
+      "restoreSeed" : {
+        "title" : "シークレットリカバリーフレーズを使用して復元する",
+        "description" : "復元するには、Ledgerのセキュアスクリーンに表示される指示に従ってください。",
+        "continueOnDevice" : "{{productName}}で関連するオプションを選択します。"
+      },
+      "restoreLedgerRecoveryKey" : {
+        "title" : "Ledger Recovery Keyを使用して復元",
+        "description" : "復元するには、Ledgerのセキュアスクリーンに表示される指示に従ってください。",
+        "continueOnDevice" : "{{productName}}の指示に従う"
       },
       "selectionContinueOnDevice" : "{{productName}}で関連するオプションを選択します。",
-      "newSeedDescription" : "シークレットリカバリーフレーズの詳細については、次の動画をご覧ください：",
-      "newSeedContinueOnDevice" : "{{productName}}でこれを行う",
-      "recovery" : "資産のセキュリティを最大限に高めるために、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを必ず使用してください。 \n\nリカバリーフレーズをお持ちではありませんか？{{productName}}を使用して、新しいフレーズを生成してください。",
-      "restoreChoiceContinueOnDevice" : "{{productName}}で関連するオプションを選択します。",
-      "restoreChoiceSRPTitle" : "シークレットリカバリーフレーズを使用して復元する",
-      "restoreChoiceSRPDescription" : "セキュリティを最大限に高めるには、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを使用してください。 ",
-      "restoreChoiceRecoverTitle" : "Ledger Recoverを使用して復元する",
-      "restoreChoiceRecoverDescription" : "Ledger Recoverのサブスクリプション契約をされている場合は、サブスクリプションにログインし、シークレットリカバリーフレーズのバックアップ復元プロセスを開始します。"
+      "newSeedTitle" : "シークレットリカバリーフレーズ",
+      "newSeedDescription" : "シークレットリカバリーフレーズについて詳しくは、次の動画をご覧ください。",
+      "newSeedContinueOnDevice" : "{{productName}}の指示に従う",
+      "recovery" : "資産のセキュリティを最大限に高めるために、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを必ず使用してください。 \n\nリカバリーフレーズをお持ちではありませんか？{{productName}}を使用して、新しいフレーズを生成してください。"
     },
     "backup" : {
       "title" : "シークレットリカバリーフレーズのバックアップ",
@@ -7419,6 +7450,7 @@
     },
     "performance" : "パフォーマンス",
     "low" : "低速",
-    "high" : "高速"
+    "high" : "高速",
+    "title" : "市場の動向"
   }
 }
