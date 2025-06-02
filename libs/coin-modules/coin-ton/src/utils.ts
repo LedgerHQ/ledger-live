@@ -180,6 +180,7 @@ export const getTonEstimatedFees = async (
 
   // build body depending the payload type
   let body: TonCell | undefined;
+  let txAmount = tx.amount;
   if (tx.payload) {
     switch (tx.payload.type) {
       case "comment":
@@ -187,6 +188,7 @@ export const getTonEstimatedFees = async (
         break;
       case "jetton-transfer":
         body = buildTokenTransferBody(tx.payload);
+        txAmount = tx.payload.amount;
         break;
     }
   }
@@ -198,7 +200,7 @@ export const getTonEstimatedFees = async (
       internal({
         bounce: tx.bounce,
         to: tx.to,
-        value: tx.amount,
+        value: txAmount,
         body,
       }),
     ],
@@ -212,7 +214,9 @@ export const getTonEstimatedFees = async (
     initCode,
     initData,
   );
-  return BigNumber(fee.fwd_fee + fee.gas_fee + fee.in_fwd_fee + fee.storage_fee);
+  return account.subAccounts
+    ? BigNumber(toNano(TOKEN_TRANSFER_MAX_FEE).toString())
+    : BigNumber(fee.fwd_fee + fee.gas_fee + fee.in_fwd_fee + fee.storage_fee);
 };
 
 /**
