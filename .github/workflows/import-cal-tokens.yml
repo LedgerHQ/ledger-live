@@ -1,9 +1,12 @@
 name: "[CAL] - Import CAL Tokens - Scheduled"
 
 on:
+  push:
+    branches:
+      - LIVE-18444-new-cal-importer-workflow
   workflow_dispatch:
   schedule:
-    - cron: "0 2 */2 * *"
+    - cron: "0 8 * * 1"
 
 env:
   CAL_BRANCH: "feat/import-cal-tokens"
@@ -15,6 +18,7 @@ jobs:
     runs-on: ubuntu-22.04
     outputs:
       changed: ${{ steps.changes.outputs.changed }}
+      pr_url: ${{ steps.create-pr.outputs.pr_url }}
     steps:
       - name: Generate token
         id: generate-token
@@ -63,9 +67,6 @@ jobs:
             echo "changed=false" >> $GITHUB_OUTPUT
           else
             echo "changed=true" >> $GITHUB_OUTPUT
-          fi
-      - name: Debuuging changed output
-        run: echo "changed=${{ steps.changes.outputs.changed }}"
 
       - name: Commit imported tokens
         if: ${{ steps.changes.outputs.changed == 'true' }}
@@ -79,56 +80,42 @@ jobs:
 
       - name: Create PR to develop
         if: ${{ steps.changes.outputs.changed == 'true' }}
+        id: create-pr
         run: |
           gh pr create --title ":zap: Import CAL tokens" --body "Automated import of CAL tokens" --base develop --head $CAL_BRANCH
+          PR_URL=$(gh pr view $CAL_BRANCH --json url -q .url)
+          echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
-  test-libraries:
-    name: "Test Libraries"
+  report-pr-creation:
+    name: "Slack PR creation Reporting"
     needs: import-cal-tokens
-    if: ${{ !failure() && needs.import-cal-tokens.outputs.changed == 'true' }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
-    secrets: inherit
-
-  auto-merge-pr:
-    name: "Auto Merge PR"
-    needs: [import-cal-tokens, test-libraries]
     runs-on: ubuntu-22.04
     if: ${{ !failure() && needs.import-cal-tokens.outputs.changed == 'true' }}
-    steps:
-      - name: Generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          token: ${{ steps.generate-token.outputs.token }}
-
-      - name: Merge PR
-        run: |
-          gh pr merge $CAL_BRANCH --merge --delete-branch --admin
-        env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-
-  import-cal-tokens-fail:
-    name: Failure Reporting
-    needs: [import-cal-tokens, test-libraries]
-    if: failure()
-    runs-on: ubuntu-22.04
     steps:
       - name: post to a Slack channel
-        id: slack
         uses: slackapi/slack-github-action@v2.0.0
         with:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           method: chat.postMessage
           payload: |
-            channel: "C05FKJ7DFAP"
+            channel: "C06RTDKT324"
+            text: "[CAL] Import Tokens PR created: <${{ needs.import-cal-tokens.outputs.pr_url }}|View Pull Request>"
+
+  import-cal-tokens-fail:
+    name: Failure Reporting
+    needs: import-cal-tokens
+    if: failure()
+    runs-on: ubuntu-22.04
+    steps:
+      - name: post to a Slack channel
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          method: chat.postMessage
+          payload: |
+            channel: "C06RTDKT324"
             text: "[Alert] Import CAL Tokens failed"
             blocks: 
               - type: "section"
