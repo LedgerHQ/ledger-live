@@ -144,7 +144,7 @@ export const TopBar = ({
 }: Props) => {
   const walletState = useSelector(walletSelector);
 
-  const { name, icon } = manifest;
+  const { name, icon, id } = manifest;
 
   const {
     shouldDisplayName = true,
@@ -153,6 +153,8 @@ export const TopBar = ({
     shouldDisplayNavigation = !!manifest.dapp,
     shouldDisplaySelectAccount = !!manifest.dapp,
   } = config;
+
+  const isInternalApp = id === "earn";
 
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const dispatch = useDispatch();
@@ -192,6 +194,10 @@ export const TopBar = ({
       getDefaultAccountName(currentAccount));
 
   const isLoading = useDebounce(webviewState.loading, 100);
+
+  if (!enablePlatformDevTools && isInternalApp) {
+    return null;
+  }
 
   return (
     <Container>
