@@ -7,6 +7,7 @@ import { ModularDrawerAddAccountStep } from "./types";
 
 import { AddAccountHeader } from "./components/Header/AddAccountHeader";
 import ConnectYourDevice from "./screens/ConnectYourDevice";
+import ScanAccounts from "./screens/ScanAccounts";
 
 const ANALYTICS_PROPERTY_FLOW = "Modular Add Account Flow";
 
@@ -103,7 +104,7 @@ const ModularDrawerAddAccountFlowManager = ({
   // TODO
   const handleBack = () => {};
 
-  const currentStep = "CONNECT_YOUR_DEVICE";
+  const currentStep = "SCAN_ACCOUNTS";
 
   const renderStepContent = (step: ModularDrawerAddAccountStep) => {
     switch (step) {
@@ -117,10 +118,10 @@ const ModularDrawerAddAccountFlowManager = ({
           />
         );
       case "SCAN_ACCOUNTS":
-        // return <ScanAccounts currency={currency} analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW} />;
-        return null;
-      case "ADD_ACCOUNTS":
-        // return <AddAccounts currency={currency} analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW} />;
+        // TODO should pass this down? analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW}
+        return <ScanAccounts currency={currency} />;
+      case "ACCOUNTS_ADDED":
+        // return <AccountsAdded currency={currency} analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW} />;
         return null;
       default:
         return null;
