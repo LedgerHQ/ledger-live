@@ -1,7 +1,7 @@
 ---
-"@ledgerhq/live-dmk-desktop": patch
-"@ledgerhq/live-dmk-mobile": patch
-"@ledgerhq/live-dmk-shared": patch
+"@ledgerhq/live-dmk-desktop": minor
+"@ledgerhq/live-dmk-mobile": minor
+"@ledgerhq/live-dmk-shared": minor
 ---
 
 Patch logger pkg
