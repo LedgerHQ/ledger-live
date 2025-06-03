@@ -1,5 +1,17 @@
 # @ledgerhq/coin-cosmos
 
+## 0.15.0-nightly.0
+
+### Minor Changes
+
+- [#10392](https://github.com/LedgerHQ/ledger-live/pull/10392) [`4c57db2`](https://github.com/LedgerHQ/ledger-live/commit/4c57db229766f4608f66c6dbd294c1f30c4155c6) Thanks [@qperrot](https://github.com/qperrot)! - Update Zenrock minGasPrice
+
+### Patch Changes
+
+- Updated dependencies [[`1a4e5e5`](https://github.com/LedgerHQ/ledger-live/commit/1a4e5e5913fe5e12d6127b36f3849e4c81e5e50e)]:
+  - @ledgerhq/types-live@6.72.0-nightly.0
+  - @ledgerhq/coin-framework@5.1.1-nightly.0
+
 ## 0.14.3
 
 ### Patch Changes

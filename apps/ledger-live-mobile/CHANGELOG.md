@@ -1,5 +1,28 @@
 # live-mobile
 
+## 3.81.0-nightly.0
+
+### Minor Changes
+
+- [#10405](https://github.com/LedgerHQ/ledger-live/pull/10405) [`04d3ba6`](https://github.com/LedgerHQ/ledger-live/commit/04d3ba6b005a4625ad59b7e3c737909ebf9807e4) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: large mover header deleted
+
+### Patch Changes
+
+- Updated dependencies [[`4c57db2`](https://github.com/LedgerHQ/ledger-live/commit/4c57db229766f4608f66c6dbd294c1f30c4155c6), [`1a4e5e5`](https://github.com/LedgerHQ/ledger-live/commit/1a4e5e5913fe5e12d6127b36f3849e4c81e5e50e)]:
+  - @ledgerhq/coin-cosmos@0.15.0-nightly.0
+  - @ledgerhq/types-live@6.72.0-nightly.0
+  - @ledgerhq/coin-framework@5.1.1-nightly.0
+  - @ledgerhq/coin-evm@2.22.2-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.8-nightly.0
+  - @ledgerhq/coin-multiversx@0.4.8-nightly.0
+  - @ledgerhq/coin-stacks@0.8.8-nightly.0
+  - @ledgerhq/domain-service@1.2.31-nightly.0
+  - @ledgerhq/live-countervalues@0.5.8-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.37-nightly.0
+  - @ledgerhq/live-nft@0.8.8-nightly.0
+  - @ledgerhq/live-nft-react@0.9.8-nightly.0
+  - @ledgerhq/live-wallet@0.10.11-nightly.0
+
 ## 3.80.0
 
 ### Minor Changes

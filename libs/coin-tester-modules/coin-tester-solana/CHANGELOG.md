@@ -1,5 +1,20 @@
 # @ledgerhq/coin-tester-solana
 
+## 1.1.0-nightly.2
+
+### Minor Changes
+
+- [#10385](https://github.com/LedgerHQ/ledger-live/pull/10385) [`1a4e5e5`](https://github.com/LedgerHQ/ledger-live/commit/1a4e5e5913fe5e12d6127b36f3849e4c81e5e50e) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(solana-coin-tester): add SPL scenarios
+
+### Patch Changes
+
+- Updated dependencies [[`1860aa3`](https://github.com/LedgerHQ/ledger-live/commit/1860aa33a013716fbd128089faaf7562de1748c8), [`1a4e5e5`](https://github.com/LedgerHQ/ledger-live/commit/1a4e5e5913fe5e12d6127b36f3849e4c81e5e50e)]:
+  - @ledgerhq/coin-solana@0.25.0-nightly.0
+  - @ledgerhq/coin-tester@0.6.0-nightly.0
+  - @ledgerhq/types-live@6.72.0-nightly.0
+  - @ledgerhq/live-signer-solana@0.2.0-nightly.0
+  - @ledgerhq/coin-framework@5.1.1-nightly.0
+
 ## 1.0.1-nightly.1
 
 ### Patch Changes

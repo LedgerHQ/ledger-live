@@ -1,5 +1,19 @@
 # @ledgerhq/coin-aptos
 
+## 2.1.0-nightly.0
+
+### Minor Changes
+
+- [#10371](https://github.com/LedgerHQ/ledger-live/pull/10371) [`f5abf5d`](https://github.com/LedgerHQ/ledger-live/commit/f5abf5d75b6cdd65b6ec121e82dc757754ded5ed) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - Add token support for aptos alpaca estimatefees
+
+- [#10398](https://github.com/LedgerHQ/ledger-live/pull/10398) [`b691e4f`](https://github.com/LedgerHQ/ledger-live/commit/b691e4fdc2261960cc7ffe319720ea5cf938f3d3) Thanks [@may01](https://github.com/may01)! - Remove filtering tokens by the CAL list for Aptos Alpaca listOperations
+
+### Patch Changes
+
+- Updated dependencies [[`1a4e5e5`](https://github.com/LedgerHQ/ledger-live/commit/1a4e5e5913fe5e12d6127b36f3849e4c81e5e50e)]:
+  - @ledgerhq/types-live@6.72.0-nightly.0
+  - @ledgerhq/coin-framework@5.1.1-nightly.0
+
 ## 2.0.0
 
 ### Major Changes
