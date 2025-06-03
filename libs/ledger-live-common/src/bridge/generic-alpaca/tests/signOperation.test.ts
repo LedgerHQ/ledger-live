@@ -1,4 +1,4 @@
-import { lastValueFrom, of } from "rxjs";
+import { lastValueFrom } from "rxjs";
 import { toArray } from "rxjs/operators";
 import { genericSignOperation } from "../signOperation";
 import { FeeNotLoaded } from "@ledgerhq/errors";
