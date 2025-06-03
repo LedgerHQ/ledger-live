@@ -51,7 +51,7 @@ export const buildOptimisticOperation = (
     hash: "",
     type: "OUT",
     value: transaction.amount,
-    fee: transaction["fees"] ? transaction["fees"] : BigNumber(0),
+    fee: transaction["fees"] ?? BigNumber(0),
     blockHash: null,
     blockHeight: null,
     senders: [account.freshAddress.toString()],
