@@ -1,5 +1,14 @@
 # @ledgerhq/coin-module-boilerplate
 
+## 4.0.5-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@5.2.0-next.1
+  - @ledgerhq/devices@8.4.6-next.0
+  - @ledgerhq/live-network@2.0.9-next.0
+
 ## 4.0.5-next.0
 
 ### Patch Changes

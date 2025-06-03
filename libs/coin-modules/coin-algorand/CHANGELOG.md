@@ -1,5 +1,15 @@
 # @ledgerhq/coin-algorand
 
+## 0.9.8-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@5.2.0-next.1
+  - @ledgerhq/devices@8.4.6-next.0
+  - @ledgerhq/live-network@2.0.9-next.0
+  - @ledgerhq/live-promise@0.1.1-next.0
+
 ## 0.9.8-next.0
 
 ### Patch Changes

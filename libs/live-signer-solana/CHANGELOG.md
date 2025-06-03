@@ -1,5 +1,18 @@
 # @ledgerhq/live-signer-solana
 
+## 0.2.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-solana@0.25.0-next.1
+  - @ledgerhq/devices@8.4.6-next.0
+  - @ledgerhq/hw-transport@6.31.6-next.0
+  - @ledgerhq/hw-app-solana@7.4.2-next.0
+  - @ledgerhq/hw-bolos@6.32.2-next.0
+  - @ledgerhq/ledger-cal-service@0.5.0-next.1
+  - @ledgerhq/ledger-trust-service@0.3.4-next.0
+
 ## 0.2.0-next.0
 
 ### Minor Changes
