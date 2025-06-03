@@ -2185,6 +2185,9 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -2216,9 +2219,6 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@types/invariant':
         specifier: ^2.2.37
         version: 2.2.37
