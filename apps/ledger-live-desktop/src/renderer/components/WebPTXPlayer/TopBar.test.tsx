@@ -10,10 +10,6 @@ jest.mock("react-redux", () => ({
   useSelector: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/live-common/hooks/useInternalAppIds", () => ({
-  useInternalAppIds: jest.fn(),
-}));
-
 jest.mock("react-i18next", () => ({
   useTranslation: () => ({
     t: (key: string) => key,
