@@ -15,24 +15,14 @@ export type XrpMemo = {
 
 export type XrpMemoKind = "destinationTag" | "memo";
 
-// export type XrpMapMemo = {
-//   "destinationTag": string,
-//   "memos": string[]
-// }
-
 export type XrpMemoValueMap = {
   destinationTag: string;
   memos: string[];
 };
 export type XrpMapMemo = TypedMapMemo<XrpMemoValueMap>;
-// MapMemo<XrpMemoKind, string>;
-// export interface MapMemo<Kind, Value> extends Memo {
-//   memos: Map<Kind, Value>;
-// }
-//
-// export type XrpMemoMap extends MapMemo<XrpMemoKind, XrpMemo> {}
-//
+
 type Order = "asc" | "desc";
+
 export type ListOperationsOptions = {
   // pagination:
   limit?: number;

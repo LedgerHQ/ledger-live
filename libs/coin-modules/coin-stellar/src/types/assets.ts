@@ -5,7 +5,3 @@ export type StellarToken = {
   assetCode: string;
 };
 export type StellarAsset = Asset<StellarToken>;
-
-// export type StellarMemoKind = "MEMO_TEXT" | "MEMO_ID" | "MEMO_HASH" | "MEMO_RETURN";
-//
-// export type StellarMemo = SingleMemo<StellarMemoKind, string>;

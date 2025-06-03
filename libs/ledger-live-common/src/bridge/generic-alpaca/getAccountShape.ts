@@ -34,7 +34,7 @@ export function genericGetAccountShape(network, kind): GetAccountShape {
       }
       const oldOperations = initialAccount?.operations || [];
 
-      const blockHeight = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
+      const blockHeight = oldOperations.length ? (oldOperations[0].blockHeight ?? 0) + 1 : 0;
 
       const [newOperations, _] = await getAlpacaApi(network, kind).listOperations(address, {
         minHeight: blockHeight,
