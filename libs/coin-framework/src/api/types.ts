@@ -49,11 +49,26 @@ export type Operation<
   };
 };
 
+/*
+ * export type NetworkInfo = {
+  family: "stellar";
+  fees: BigNumber;
+  baseFee: BigNumber;
+  baseReserve: BigNumber;
+  networkCongestionLevel?: NetworkCongestionLevel | undefined;
+};
+
+*/
+
 export type Transaction = {
   type: string;
   recipient: string;
   amount: bigint;
   fee: bigint;
+  networkInfo?: {
+    baseFee?: bigint;
+    fees?: bigint;
+  };
 } & Record<string, unknown>; // Field containing dedicated value for each blockchain
 
 // Other coins take differents parameters What do we want to do ?
@@ -62,6 +77,42 @@ export type Account = {
   address: string;
   balance: bigint;
   currencyUnit: Unit;
+  pendingOperations: number; // NOTE: can get away with only the number of pending operations?
+  spendableBalance: bigint; // NOTE:: check if we can get rid of this one
+};
+
+/*
+ * export type TokenCurrency = CurrencyCommon & {
+  type: "TokenCurrency";
+  id: string;
+  ledgerSignature?: string;
+  contractAddress: string;
+  // the currency it belongs to. e.g. 'ethereum'
+  parentCurrency: CryptoCurrency;
+  // the type of token in the blockchain it belongs. e.g. 'erc20'
+  tokenType: string;
+};
+
+*/
+
+export type TokenAccount = {
+  type: "TokenAccount";
+  id: string;
+  // id of the parent account this token account belongs to
+  parentId: string;
+  // token: TokenCurrency;
+  balance: bigint;
+  spendableBalance: bigint;
+  creationDate: Date;
+  operationsCount: number;
+  operations: Operation[];
+  pendingOperations: Operation[];
+  // Cache of balance history that allows a performant portfolio calculation.
+  // currently there are no "raw" version of it because no need to at this stage.
+  // could be in future when pagination is needed.
+  // balanceHistoryCache: BalanceHistoryCache;
+  // Swap operations linked to this account
+  // swapHistory: SwapOperation[];
 };
 
 export type Balance<AssetInfo extends Asset<TokenInfoCommon>> = {
