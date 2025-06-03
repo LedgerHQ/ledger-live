@@ -16,10 +16,13 @@ import {
   CurrenciesByProviderId,
   LoadingBasedGroupedCurrencies,
   LoadingStatus,
+  LoadingStatus,
 } from "@ledgerhq/live-common/deposit/type";
 import { useModularDrawerNavigation } from "./hooks/useModularDrawerNavigation";
 import { useAssetSelection } from "./hooks/useAssetSelection";
 import { useModularDrawerFlowState } from "./hooks/useModularDrawerFlowState";
+import SkeletonList from "./components/SkeletonList";
+import { haveOneCommonProvider } from "./utils/haveOneCommonProvider";
 import SkeletonList from "./components/SkeletonList";
 import { haveOneCommonProvider } from "./utils/haveOneCommonProvider";
 
@@ -47,7 +50,12 @@ const ModularDrawerFlowManager = ({
   const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(
     true,
   ) as LoadingBasedGroupedCurrencies;
+  const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(
+    true,
+  ) as LoadingBasedGroupedCurrencies;
   const { currenciesByProvider, sortedCryptoCurrencies } = result;
+
+  const isReadyToBeDisplayed = [LoadingStatus.Success].includes(providersLoadingStatus);
 
   const isReadyToBeDisplayed = [LoadingStatus.Success].includes(providersLoadingStatus);
 
@@ -63,6 +71,10 @@ const ModularDrawerFlowManager = ({
   const { currentStep, navigationDirection, goToStep } = useModularDrawerNavigation();
   const isSelectAccountFlow = !!onAccountSelected;
   const hasOneNetwork = networksToDisplay?.length === 1;
+  const hasOneCurrency = useMemo(() => {
+    if (!isReadyToBeDisplayed) return false;
+    return haveOneCommonProvider(currenciesIdsArray, currenciesByProvider);
+  }, [currenciesIdsArray, currenciesByProvider, isReadyToBeDisplayed]);
   const hasOneCurrency = useMemo(() => {
     if (!isReadyToBeDisplayed) return false;
     return haveOneCommonProvider(currenciesIdsArray, currenciesByProvider);
@@ -102,6 +114,7 @@ const ModularDrawerFlowManager = ({
   );
 
   const handleBack = useMemo(() => {
+    const canGoBackToAsset = !hasOneCurrency;
     const canGoBackToAsset = !hasOneCurrency;
     const canGoBackToNetwork = !hasOneNetwork && networksToDisplay && networksToDisplay.length > 1;
 
@@ -174,6 +187,8 @@ const ModularDrawerFlowManager = ({
               asset={selectedAsset}
               accounts$={accounts$}
               onAccountSelected={handleAccountSelected}
+              flow={flow}
+              source={source}
               flow={flow}
               source={source}
             />
