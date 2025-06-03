@@ -6,6 +6,7 @@ import GradientContainer from "~/components/GradientContainer";
 import { useTheme } from "styled-components/native";
 import { Linking } from "react-native";
 import { urls } from "~/utils/urls";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 
 export default function AppGeoBlocker({ children }: { children: React.ReactNode }) {
   const { colors } = useTheme();
@@ -13,9 +14,9 @@ export default function AppGeoBlocker({ children }: { children: React.ReactNode 
   const { blocked, isLoading } = useOFACGeoBlockCheck({
     geoBlockingFeatureFlagKey: "llmOfacGeoBlocking",
   });
-
+  const localizedUrl = useLocalizedUrl(urls.geoBlock.learnMore);
   const handleLearnMore = () => {
-    Linking.openURL(urls.geoBlock.learnMore);
+    Linking.openURL(localizedUrl);
   };
 
   if (isLoading) return null; // don't show children while loading

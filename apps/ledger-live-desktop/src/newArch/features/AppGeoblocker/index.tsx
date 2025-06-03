@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { useOFACGeoBlockCheck } from "@ledgerhq/live-common/hooks/useOFACGeoBlockCheck";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
 const Container = styled(Box)`
   background-color: ${p => p.theme.colors.opacityDefault.c05};
@@ -30,7 +31,9 @@ export function AppGeoBlocker({ children }: { children: React.ReactNode }) {
     geoBlockingFeatureFlagKey: "lldOfacGeoBlocking",
   });
 
-  const openUrl = () => openURL(urls.geoBlock.learnMore);
+  const localizedLearnMoreUrl = useLocalizedUrl(urls.geoBlock.learnMore);
+
+  const openUrl = () => openURL(localizedLearnMoreUrl);
 
   if (blocked)
     return (

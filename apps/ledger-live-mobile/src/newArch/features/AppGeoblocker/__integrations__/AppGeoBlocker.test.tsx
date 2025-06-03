@@ -3,6 +3,9 @@ import { render, screen } from "@testing-library/react-native";
 
 import AppGeoBlocker from "../index";
 
+jest.mock("LLM/hooks/useLocalizedUrls", () => ({
+  useLocalizedUrl: () => (url: string) => url,
+}));
 jest.mock("@ledgerhq/live-common/hooks/useOFACGeoBlockCheck", () => ({
   useOFACGeoBlockCheck: jest.fn(),
 }));

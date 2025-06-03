@@ -35,7 +35,7 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { AppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
 import { allowDebugReactQuerySelector } from "./reducers/settings";
-import { AppGeoBlocker } from "~/newArch/features/AppGeoblocker";
+import { AppGeoBlocker } from "LLD/features/AppGeoblocker";
 
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
