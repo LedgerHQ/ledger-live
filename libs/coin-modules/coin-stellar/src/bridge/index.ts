@@ -7,7 +7,7 @@ import {
   makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
-import { getTransactionStatus } from "./getTransactionStatus";
+import { getTransactionStatus } from "../logic/getTransactionStatus";
 import type { StellarSigner, Transaction, TransactionStatus } from "../types";
 import { prepareTransaction } from "./prepareTransaction";
 import { createTransaction } from "./createTransaction";

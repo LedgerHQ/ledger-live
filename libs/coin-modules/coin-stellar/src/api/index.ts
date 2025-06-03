@@ -12,6 +12,7 @@ import {
   craftTransaction,
   estimateFees,
   getBalance,
+  getTransactionStatus,
   lastBlock,
   listOperations,
 } from "../logic";
@@ -31,6 +32,7 @@ export function createApi(config: StellarConfig): AlpacaApi<StellarAsset, Stella
     getBalance,
     lastBlock,
     listOperations: operations,
+    validateIntent: getTransactionStatus,
   };
 }
 
