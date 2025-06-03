@@ -10,10 +10,10 @@ import {
   InvalidAddress,
 } from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
-import type { AccountBridge } from "@ledgerhq/types-live";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { isAddressValid, isAccountMultiSign, isMemoValid } from "./logic";
+import { Transaction, TransactionValidation, Account } from "@ledgerhq/coin-framework/api/types";
+import { isAddressValid, isAccountMultiSign, isMemoValid } from "./utils";
 import { BASE_RESERVE, MIN_BALANCE, getRecipientAccount } from "../network";
 import {
   StellarWrongMemoFormat,
@@ -26,13 +26,18 @@ import {
   StellarNotEnoughNativeBalanceToAddTrustline,
   StellarMuxedAccountNotExist,
   StellarSourceHasMultiSign,
-  type Transaction,
+  // type Transaction,
 } from "../types";
 
-export const getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"] = async (
-  account,
-  transaction,
-) => {
+// export const getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"] = async (
+//   account,
+//   transaction,
+// ) => {
+
+export const getTransactionStatus = async (
+  account: Account,
+  transaction: Transaction,
+): Promise<TransactionValidation> => {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
   const useAllAmount = !!transaction.useAllAmount;

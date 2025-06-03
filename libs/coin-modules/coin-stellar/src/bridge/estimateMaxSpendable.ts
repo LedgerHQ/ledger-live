@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/coin-framework/account";
-import { getTransactionStatus } from "./getTransactionStatus";
+import { getTransactionStatus } from "../logic/getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
 import { createTransaction } from "./createTransaction";
 import type { Transaction } from "../types";

@@ -5,3 +5,4 @@ export { estimateFees } from "./estimateFees";
 export { getBalance } from "./getBalance";
 export { lastBlock } from "./lastBlock";
 export { listOperations } from "./listOperations";
+export { getTransactionStatus } from "./getTransactionStatus";
