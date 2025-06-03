@@ -1,10 +1,8 @@
-// import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib-es/currencies/formatCurrencyUnit";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { AptosValidator } from "@ledgerhq/live-common/families/aptos/types";
 import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
-// import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
@@ -28,12 +26,8 @@ function AptosValidatorRow({ validator, active, onClick, unit, currency }: Props
 
   const onExternalLink = useCallback(
     (address: string) => {
-      // if (address === FIGMENT_APTOS_VALIDATOR_ADDRESS) {
-      //   openURL(urls.ledgerValidator);
-      // } else {
       const srURL = explorerView && getAddressExplorer(explorerView, address);
       if (srURL) openURL(srURL);
-      // }
     },
     [explorerView],
   );

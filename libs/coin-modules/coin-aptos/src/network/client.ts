@@ -272,7 +272,7 @@ export class AptosAPI {
       });
       return resource.locked_until_secs;
     } catch (error) {
-      console.error("Failed to fetch StakePool resource:", error);
+      log("error", "Failed to fetch StakePool resource:", { error });
     }
   }
 
@@ -289,7 +289,8 @@ export class AptosAPI {
           functionArguments: [poolAddress, delegatorAddress],
         },
       });
-    } catch (_) {
+    } catch (error) {
+      log("error", "Failed to fetch delegation_pool::get_stake", { error });
       return ["0", "0", "0"];
     }
   }

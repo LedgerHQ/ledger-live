@@ -1,5 +1,15 @@
 import BigNumber from "bignumber.js";
-import { APTOS_ASSET_ID, APTOS_FUNGIBLE_STORE, APTOS_OBJECT_CORE, OP_TYPE } from "../constants";
+import {
+  ADD_STAKE_EVENTS,
+  APTOS_ASSET_ID,
+  APTOS_FUNGIBLE_STORE,
+  APTOS_OBJECT_CORE,
+  OP_TYPE,
+  REACTIVATE_STAKE_EVENTS,
+  STAKING_EVENTS,
+  UNLOCK_STAKE_EVENTS,
+  WITHDRAW_STAKE_EVENTS,
+} from "../constants";
 import {
   AptosFungibleoObjectCoreResourceData,
   AptosFungibleStoreResourceData,
@@ -106,33 +116,17 @@ export function getCoinAndAmounts(
   let type = OP_TYPE.UNKNOWN;
 
   // Check if it is a staking transaction
-  const stakingTx = !!tx.events.find(
-    event =>
-      event.type === "0x1::stake::AddStakeEvent" ||
-      event.type === "0x1::stake::ReactivateStakeEvent" ||
-      event.type === "0x1::stake::UnlockStakeEvent" ||
-      event.type === "0x1::stake::WithdrawStakeEvent" ||
-      event.type === "0x1::delegation_pool::AddStakeEvent" ||
-      event.type === "0x1::delegation_pool::ReactivateStakeEvent" ||
-      event.type === "0x1::delegation_pool::UnlockStakeEvent" ||
-      event.type === "0x1::delegation_pool::WithdrawStakeEvent",
-  );
+  const stakingTx = !!tx.events.find(event => STAKING_EVENTS.includes(event.type));
 
   // Collect all events related to the address and calculate the overall amounts
   if (stakingTx) {
     tx.events.forEach(event => {
-      if (
-        (event.type === "0x1::stake::AddStakeEvent" ||
-          event.type === "0x1::delegation_pool::AddStakeEvent") &&
-        tx.sender === address &&
-        amount_out.isZero()
-      ) {
+      if (ADD_STAKE_EVENTS.includes(event.type) && tx.sender === address && amount_out.isZero()) {
         coin_id = APTOS_ASSET_ID;
         type = OP_TYPE.STAKE;
         amount_out = amount_out.plus(event.data.amount_added);
       } else if (
-        (event.type === "0x1::stake::ReactivateStakeEvent" ||
-          event.type === "0x1::delegation_pool::ReactivateStakeEvent") &&
+        REACTIVATE_STAKE_EVENTS.includes(event.type) &&
         tx.sender === address &&
         amount_out.isZero()
       ) {
@@ -140,8 +134,7 @@ export function getCoinAndAmounts(
         type = OP_TYPE.STAKE;
         amount_out = amount_out.plus(event.data.amount_reactivated);
       } else if (
-        (event.type === "0x1::stake::UnlockStakeEvent" ||
-          event.type === "0x1::delegation_pool::UnlockStakeEvent") &&
+        UNLOCK_STAKE_EVENTS.includes(event.type) &&
         tx.sender === address &&
         amount_in.isZero()
       ) {
@@ -149,8 +142,7 @@ export function getCoinAndAmounts(
         type = OP_TYPE.UNSTAKE;
         amount_in = amount_in.plus(event.data.amount_unlocked);
       } else if (
-        (event.type === "0x1::stake::WithdrawStakeEvent" ||
-          event.type === "0x1::delegation_pool::WithdrawStakeEvent") &&
+        WITHDRAW_STAKE_EVENTS.includes(event.type) &&
         tx.sender === address &&
         amount_in.isZero()
       ) {

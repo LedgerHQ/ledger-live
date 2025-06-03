@@ -37,6 +37,32 @@ export const DELEGATION_POOL_TYPES: MoveStructId[] = [
   "0x1::delegation_pool::withdraw",
 ];
 
+export const ADD_STAKE_EVENTS = [
+  "0x1::stake::AddStakeEvent",
+  "0x1::delegation_pool::AddStakeEvent",
+];
+
+export const REACTIVATE_STAKE_EVENTS = [
+  "0x1::stake::ReactivateStakeEvent",
+  "0x1::delegation_pool::ReactivateStakeEvent",
+];
+
+export const UNLOCK_STAKE_EVENTS = [
+  "0x1::stake::UnlockStakeEvent",
+  "0x1::delegation_pool::UnlockStakeEvent",
+];
+
+export const WITHDRAW_STAKE_EVENTS = [
+  "0x1::stake::WithdrawStakeEvent",
+  "0x1::delegation_pool::WithdrawStakeEvent",
+];
+
+export const STAKING_EVENTS = ADD_STAKE_EVENTS.concat(
+  REACTIVATE_STAKE_EVENTS,
+  UNLOCK_STAKE_EVENTS,
+  WITHDRAW_STAKE_EVENTS,
+);
+
 export const APTOS_ASSET_ID: MoveStructId = "0x1::aptos_coin::AptosCoin";
 
 export const APTOS_COIN_CHANGE: MoveStructId = `0x1::coin::CoinStore<${APTOS_ASSET_ID}>`;
