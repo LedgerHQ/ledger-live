@@ -1,5 +1,14 @@
 # @ledgerhq/coin-evm
 
+## 2.22.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`f42f353`](https://github.com/LedgerHQ/ledger-live/commit/f42f353a593d0a1cd0a237648765080c85d0eea7)]:
+  - @ledgerhq/coin-framework@5.2.0-next.0
+  - @ledgerhq/domain-service@1.2.31-next.0
+  - @ledgerhq/evm-tools@1.6.3
+
 ## 2.22.1
 
 ### Patch Changes

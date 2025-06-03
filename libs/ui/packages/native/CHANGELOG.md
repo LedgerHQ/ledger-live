@@ -1,5 +1,13 @@
 # @ledgerhq/native-ui
 
+## 0.35.0-next.0
+
+### Minor Changes
+
+- [#10352](https://github.com/LedgerHQ/ledger-live/pull/10352) [`e604a8b`](https://github.com/LedgerHQ/ledger-live/commit/e604a8b0839d7a5dd4e137092605ea3c253fea49) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: P1 bugs on Large Mover
+
+- [#10328](https://github.com/LedgerHQ/ledger-live/pull/10328) [`ff0a516`](https://github.com/LedgerHQ/ledger-live/commit/ff0a516c54ac1bed9d0da70d2531b7f535afad2e) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: card scollable and buttons clickable on android
+
 ## 0.34.1
 
 ### Patch Changes
