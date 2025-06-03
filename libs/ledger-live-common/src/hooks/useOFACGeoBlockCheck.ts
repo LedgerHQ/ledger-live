@@ -19,20 +19,9 @@ export const useOFACGeoBlockCheck = ({
   const { data, isLoading } = useQuery({
     queryKey: ["ofac-geo-block", geoBlockingFeatureFlagKey],
     queryFn: async () => {
-      // for dev & QA testing purpose -> To delete when test phases are over
-      const res = await fetch("https://countervalues-service.api.ledger-test.com/", {
-        method: "POST",
-        headers: {
-          "x-ledger-ofac-test": `${!!(platformOfacGeoBlocking as any)?.isOfacRegion}`, // This header is used to simulate the OFAC region for testing purposes
-        },
-      });
+      if (!platformOfacGeoBlocking?.enabled) return false;
+      const res = await fetch(`${baseURL()}/v3/market`);
       return res.status === 451;
-      /**
-       * To be used in production after QA validation
-       * const res = await fetch(`${baseURL()}/v3/market`);
-       * return res.status === 451;
-       * }
-       */
     },
   });
 
