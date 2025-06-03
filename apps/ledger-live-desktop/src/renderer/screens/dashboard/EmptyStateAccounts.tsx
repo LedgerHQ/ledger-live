@@ -22,7 +22,10 @@ const EmptyStateAccounts = ({ theme }: { theme: DefaultTheme }) => {
   const handleInstallApp = useCallback(() => {
     push("/manager");
   }, [push]);
-  const { openAssetFlow } = useOpenAssetFlow(ModularDrawerLocation.ADD_ACCOUNT);
+  const { openAssetFlow } = useOpenAssetFlow(
+    ModularDrawerLocation.ADD_ACCOUNT,
+    "emptyStateAccounts",
+  );
   return (
     <Box
       alignItems="center"

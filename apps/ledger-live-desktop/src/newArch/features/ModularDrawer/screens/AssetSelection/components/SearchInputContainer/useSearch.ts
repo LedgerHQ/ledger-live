@@ -1,8 +1,9 @@
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, useCallback, useMemo, useState } from "react";
 import Fuse from "fuse.js";
 import { getEnv } from "@ledgerhq/live-env";
-import { track } from "~/renderer/analytics/segment";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { useModularDrawerAnalytics } from "LLD/features/ModularDrawer/analytics/useModularDrawerAnalytics";
+import { MODULAR_DRAWER_PAGE_NAME } from "LLD/features/ModularDrawer/analytics/types";
 
 export type SearchProps = {
   setItemsToDisplay: (assets: CryptoOrTokenCurrency[]) => void;
@@ -15,11 +16,11 @@ export type SearchProps = {
 
 export type SearchResult = {
   handleSearch: (queryOrEvent: string | ChangeEvent<HTMLInputElement>) => void;
-  trackSearch: (current: string, previous: string) => void;
-  searchQuery: string;
+  handleDebouncedChange: (current: string, previous: string) => void;
+  displayedValue: string | undefined;
 };
 
-const FUZE_OPTIONS = {
+const FUSE_OPTIONS = {
   includeScore: false,
   threshold: 0.1,
   keys: getEnv("CRYPTO_ASSET_SEARCH_KEYS"),
@@ -29,57 +30,57 @@ const FUZE_OPTIONS = {
 export const useSearch = ({
   setItemsToDisplay,
   setSearchedValue,
-  defaultValue = "",
+  defaultValue,
   items,
   source,
   flow,
 }: SearchProps): SearchResult => {
-  const [searchQuery, setSearchQuery] = useState(defaultValue);
+  const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+  const [displayedValue, setDisplayedValue] = useState(defaultValue);
 
-  const fuse = useMemo(() => new Fuse(items, FUZE_OPTIONS), [items]);
+  const fuse = useMemo(() => new Fuse(items, FUSE_OPTIONS), [items]);
 
-  const trackSearch = useCallback(
+  const handleDebouncedChange = useCallback(
     (current: string, previous: string) => {
-      const query = current.trim();
-      const prevQuery = previous.trim();
+      const query = current;
+      const prevQuery = previous;
 
-      if (query.length < 2 || query === prevQuery) return;
-
-      track("asset_searched", { query, page: source, flow });
-    },
-    [source, flow],
-  );
-
-  const handleSearch = useCallback(
-    (queryOrEvent: string | ChangeEvent<HTMLInputElement>) => {
-      const query = typeof queryOrEvent === "string" ? queryOrEvent : queryOrEvent.target.value;
-
-      setSearchQuery(query);
-      setSearchedValue?.(query);
-
-      if (query.trim().length < 2) {
-        return setItemsToDisplay(items);
+      if (query === prevQuery) {
+        return;
       }
 
-      const results = fuse.search(query).map(result => result.item);
+      if (query.trim() === "" && prevQuery !== "") {
+        setItemsToDisplay(items);
+        return;
+      }
+
+      if (query.length < 2 && prevQuery.length < 2) {
+        return;
+      }
+
+      trackModularDrawerEvent("asset_searched", {
+        flow,
+        source,
+        page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION,
+        searched_value: query,
+      });
+
+      const results =
+        query.trim().length < 2
+          ? items
+          : fuse.search(query).map((result: Fuse.FuseResult<CryptoOrTokenCurrency>) => result.item);
 
       setItemsToDisplay(results);
+      setSearchedValue?.(query);
     },
-    [fuse, items, setItemsToDisplay, setSearchedValue],
+    [trackModularDrawerEvent, flow, source, items, fuse, setItemsToDisplay, setSearchedValue],
   );
 
-  useEffect(() => {
-    if (defaultValue && defaultValue.trim().length >= 2) {
-      const results = fuse.search(defaultValue).map(result => result.item);
-      setItemsToDisplay(results);
-    } else {
-      setItemsToDisplay(items);
-    }
-  }, [defaultValue, fuse, items, setItemsToDisplay]);
+  const handleSearch = useCallback((queryOrEvent: string | ChangeEvent<HTMLInputElement>) => {
+    const query = typeof queryOrEvent === "string" ? queryOrEvent : queryOrEvent.target.value;
 
-  return {
-    searchQuery,
-    handleSearch,
-    trackSearch,
-  };
+    setDisplayedValue(query);
+  }, []);
+
+  return { handleDebouncedChange, handleSearch, displayedValue };
 };

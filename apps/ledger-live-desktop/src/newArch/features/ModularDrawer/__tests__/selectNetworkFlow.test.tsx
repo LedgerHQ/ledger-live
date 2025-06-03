@@ -19,7 +19,12 @@ describe("ModularDrawerFlowManager - Select Network Flow", () => {
   });
   it("should render AssetSelection step with correct props", () => {
     render(
-      <ModularDrawerFlowManager currencies={currencies} onAssetSelected={mockOnAssetSelected} />,
+      <ModularDrawerFlowManager
+        currencies={currencies}
+        onAssetSelected={mockOnAssetSelected}
+        source="sourceTest"
+        flow="flowTest"
+      />,
     );
 
     expect(screen.getByText(/select asset/i)).toBeVisible();
@@ -29,7 +34,12 @@ describe("ModularDrawerFlowManager - Select Network Flow", () => {
 
   it("should call onAssetSelected when an asset is selected", async () => {
     const { user } = render(
-      <ModularDrawerFlowManager currencies={currencies} onAssetSelected={mockOnAssetSelected} />,
+      <ModularDrawerFlowManager
+        currencies={currencies}
+        onAssetSelected={mockOnAssetSelected}
+        source="sourceTest"
+        flow="flowTest"
+      />,
     );
 
     const bitcoinAsset = screen.getByText(/bitcoin/i);
@@ -40,7 +50,12 @@ describe("ModularDrawerFlowManager - Select Network Flow", () => {
 
   it("should navigate to NetworkSelection step after asset selection", async () => {
     const { user } = render(
-      <ModularDrawerFlowManager currencies={currencies} onAssetSelected={mockOnAssetSelected} />,
+      <ModularDrawerFlowManager
+        currencies={currencies}
+        onAssetSelected={mockOnAssetSelected}
+        source="sourceTest"
+        flow="flowTest"
+      />,
     );
 
     const ethereumAsset = screen.getByText(/ethereum/i);
@@ -54,7 +69,12 @@ describe("ModularDrawerFlowManager - Select Network Flow", () => {
 
   it("should call onAssetSelected after network selection", async () => {
     const { user } = render(
-      <ModularDrawerFlowManager currencies={currencies} onAssetSelected={mockOnAssetSelected} />,
+      <ModularDrawerFlowManager
+        currencies={currencies}
+        onAssetSelected={mockOnAssetSelected}
+        source="sourceTest"
+        flow="flowTest"
+      />,
     );
 
     const ethereumAsset = screen.getByText(/ethereum/i);

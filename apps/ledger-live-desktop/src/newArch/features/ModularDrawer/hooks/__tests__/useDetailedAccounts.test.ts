@@ -11,7 +11,7 @@ jest.spyOn(reactRedux, "useDispatch").mockReturnValue(mockDispatch);
 describe("useDetailedAccounts", () => {
   it("should return formatted accounts for a crypto currency", () => {
     const asset = ethereumCurrency;
-    const { result } = renderHook(() => useDetailedAccounts(asset, "flow"), {
+    const { result } = renderHook(() => useDetailedAccounts(asset, "flow", "source"), {
       ...INITIAL_STATE,
       initialState: {
         accounts: Mocked_ETH_Account,
@@ -36,7 +36,7 @@ describe("useDetailedAccounts", () => {
 
   it('should return onAddAccountClick function that dispatches "ADD_ACCOUNT" action', () => {
     const asset = ethereumCurrency;
-    const { result } = renderHook(() => useDetailedAccounts(asset, "flow"), {
+    const { result } = renderHook(() => useDetailedAccounts(asset, "flow", "source"), {
       ...INITIAL_STATE,
       initialState: {
         accounts: Mocked_ETH_Account,
@@ -60,7 +60,7 @@ describe("useDetailedAccounts", () => {
 
   it("should return accounts for a token currency", () => {
     const asset = ethereumCurrency;
-    const { result } = renderHook(() => useDetailedAccounts(asset, "flow"), {
+    const { result } = renderHook(() => useDetailedAccounts(asset, "flow", "source"), {
       ...INITIAL_STATE,
       initialState: {
         accounts: Mocked_ETH_Account,

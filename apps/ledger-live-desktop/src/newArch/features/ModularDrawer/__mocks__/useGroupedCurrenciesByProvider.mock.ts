@@ -17,10 +17,13 @@ export const res = {
         providerId: "ethereum",
         currenciesByNetwork: [ethereumCurrency, arbitrumCurrency],
       },
-      { providerId: "arbitrum", currenciesByNetwork: [arbitrumCurrency] },
+      { providerId: "arbitrum", currenciesByNetwork: [arbitrumToken] },
     ],
     sortedCryptoCurrencies: [bitcoinCurrency, ethereumCurrency, arbitrumToken],
   },
 };
 
-export const useGroupedCurrenciesByProvider: Mock = fn(() => res);
+export const useGroupedCurrenciesByProvider: Mock = fn(() => ({
+  ...res,
+  loadingStatus: "success",
+}));

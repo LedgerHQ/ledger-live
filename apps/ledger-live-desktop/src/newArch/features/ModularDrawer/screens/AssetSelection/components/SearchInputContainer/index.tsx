@@ -4,17 +4,19 @@ import { Search } from "@ledgerhq/react-ui/pre-ldls";
 import { SearchProps, useSearch } from "./useSearch";
 import { Box } from "@ledgerhq/react-ui/index";
 
-export const SearchInputContainer = ({
+type Props = SearchProps;
+
+const SearchInputContainer = ({
   setItemsToDisplay,
   setSearchedValue,
-  defaultValue,
+  defaultValue = "",
   source,
   flow,
   items,
-}: SearchProps) => {
+}: Props) => {
   const { t } = useTranslation();
 
-  const { searchQuery, handleSearch, trackSearch } = useSearch({
+  const { handleDebouncedChange, handleSearch, displayedValue } = useSearch({
     setItemsToDisplay,
     setSearchedValue,
     defaultValue,
@@ -26,11 +28,13 @@ export const SearchInputContainer = ({
   return (
     <Box flex={1} paddingRight="8px" paddingLeft="8px" marginBottom="24px">
       <Search
-        value={searchQuery}
+        value={displayedValue}
         placeholder={t("modularAssetDrawer.searchPlaceholder")}
+        onDebouncedChange={handleDebouncedChange}
         onChange={handleSearch}
-        onDebouncedChange={trackSearch}
       />
     </Box>
   );
 };
+
+export default React.memo(SearchInputContainer);
