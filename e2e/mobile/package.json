@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "lint:fix": "pnpm lint --fix",
-    "test:detox": "export MOCK=0 && pnpm detox test",
+    "test:detox": "pnpm detox test",
     "test:ios": "pnpm test:detox --configuration ios.sim.release",
     "test:android": "pnpm test:detox --configuration android.emu.release",
     "build:ios": "pnpm --filter live-mobile run e2e:build --configuration ios.sim.release",
