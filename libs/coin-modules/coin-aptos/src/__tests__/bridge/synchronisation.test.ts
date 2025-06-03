@@ -55,7 +55,7 @@ describe("getAccountShape", () => {
 
   it("account with xpub", async () => {
     const mockGetAccountInfo = jest.fn().mockImplementation(async () => ({
-      balance: BigInt(0),
+      balance: BigNumber(0),
       transactions: [],
       blockHeight: 0,
     }));
@@ -86,8 +86,8 @@ describe("getAccountShape", () => {
           freshAddress: "address",
           freshAddressPath: "",
           used: true,
-          balance: BigInt(10),
-          spendableBalance: BigInt(10),
+          balance: BigNumber(10),
+          spendableBalance: BigNumber(10),
           creationDate: new Date(),
           blockHeight: 0,
           currency: getCryptoCurrencyById("aptos"),
@@ -109,7 +109,7 @@ describe("getAccountShape", () => {
 
   it("account without xpub", async () => {
     const mockGetAccountInfo = jest.fn().mockImplementation(async () => ({
-      balance: BigInt(0),
+      balance: BigNumber(0),
       transactions: [],
       blockHeight: 0,
     }));
@@ -139,8 +139,8 @@ describe("getAccountShape", () => {
           freshAddress: "address",
           freshAddressPath: "",
           used: true,
-          balance: BigInt(10),
-          spendableBalance: BigInt(10),
+          balance: BigNumber(10),
+          spendableBalance: BigNumber(10),
           creationDate: new Date(),
           blockHeight: 0,
           currency: getCryptoCurrencyById("aptos"),
@@ -162,7 +162,7 @@ describe("getAccountShape", () => {
 
   it("without initialAccount", async () => {
     const mockGetAccountInfo = jest.fn().mockImplementation(async () => ({
-      balance: BigInt(0),
+      balance: BigNumber(0),
       transactions: [],
       blockHeight: 0,
     }));
@@ -195,7 +195,7 @@ describe("getAccountShape", () => {
 
   it("initialAccount with operations", async () => {
     const mockGetAccountInfo = jest.fn().mockImplementation(async () => ({
-      balance: BigInt(0),
+      balance: BigNumber(0),
       transactions: [],
       blockHeight: 0,
     }));
@@ -225,8 +225,8 @@ describe("getAccountShape", () => {
           freshAddress: "address",
           freshAddressPath: "",
           used: true,
-          balance: BigInt(10),
-          spendableBalance: BigInt(10),
+          balance: BigNumber(10),
+          spendableBalance: BigNumber(10),
           creationDate: new Date(),
           blockHeight: 0,
           currency: getCryptoCurrencyById("aptos"),
@@ -248,7 +248,7 @@ describe("getAccountShape", () => {
 
   it("initialAccount with operations with extra", async () => {
     const mockGetAccountInfo = jest.fn().mockImplementation(async () => ({
-      balance: BigInt(0),
+      balance: BigNumber(0),
       transactions: [],
       blockHeight: 0,
     }));
@@ -278,8 +278,8 @@ describe("getAccountShape", () => {
           freshAddress: "address",
           freshAddressPath: "",
           used: true,
-          balance: BigInt(10),
-          spendableBalance: BigInt(10),
+          balance: BigNumber(10),
+          spendableBalance: BigNumber(10),
           creationDate: new Date(),
           blockHeight: 0,
           currency: getCryptoCurrencyById("aptos"),
@@ -301,7 +301,7 @@ describe("getAccountShape", () => {
 
   it("get publicKey from rest", async () => {
     const mockGetAccountInfo = jest.fn().mockImplementation(async () => ({
-      balance: BigInt(0),
+      balance: BigNumber(0),
       transactions: [],
       blockHeight: 0,
     }));
@@ -331,8 +331,8 @@ describe("getAccountShape", () => {
           freshAddress: "address",
           freshAddressPath: "",
           used: true,
-          balance: BigInt(10),
-          spendableBalance: BigInt(10),
+          balance: BigNumber(10),
+          spendableBalance: BigNumber(10),
           creationDate: new Date(),
           blockHeight: 0,
           currency: getCryptoCurrencyById("aptos"),
@@ -2179,9 +2179,9 @@ describe("getStake", () => {
     ] as Operation[];
 
     const mockedGetDelegatorBalanceInPool = jest.fn().mockResolvedValue([
-      BigInt(mockDelegatorBalance[0]), // active
-      BigInt(mockDelegatorBalance[1]), // inactive
-      BigInt(mockDelegatorBalance[2]), // pending_inactive
+      BigNumber(mockDelegatorBalance[0]), // active
+      BigNumber(mockDelegatorBalance[1]), // inactive
+      BigNumber(mockDelegatorBalance[2]), // pending_inactive
     ]);
 
     mockedAptosAPI.mockImplementation(() => ({
@@ -2314,9 +2314,9 @@ describe("getStake", () => {
 
     const position = result.aptosResources?.stakingPositions?.[0];
     expect(position).toEqual({
-      staked: BigNumber(mockDelegatorBalance[0]),
-      available: BigNumber(mockDelegatorBalance[1]),
-      pending: BigNumber(mockDelegatorBalance[2]),
+      active: BigNumber(mockDelegatorBalance[0]),
+      inactive: BigNumber(mockDelegatorBalance[1]),
+      pendingInactive: BigNumber(mockDelegatorBalance[2]),
       validatorId: stakingOperations[0].recipients[0],
     });
 

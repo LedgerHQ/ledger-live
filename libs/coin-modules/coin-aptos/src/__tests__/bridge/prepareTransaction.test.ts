@@ -39,6 +39,7 @@ describe("Aptos prepareTransaction", () => {
         recipient: "",
         useAllAmount: false,
         fees: new BigNumber(0),
+        mode: "send",
       } as Transaction;
     });
 
