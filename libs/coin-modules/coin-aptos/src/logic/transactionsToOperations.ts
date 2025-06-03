@@ -6,9 +6,9 @@ import { EntryFunctionPayloadResponse, InputEntryFunctionData } from "@aptos-lab
 import { APTOS_ASSET_ID, OP_TYPE } from "../constants";
 import { compareAddress, getCoinAndAmounts } from "./getCoinAndAmounts";
 import { calculateAmount } from "./calculateAmount";
-import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/index";
 import { processRecipients } from "./processRecipients";
 import { getFunctionAddress } from "./getFunctionAddress";
+import { normalizeAddress } from "./normalizeAddress";
 
 export const convertFunctionPayloadResponseToInputEntryFunctionData = (
   payload: EntryFunctionPayloadResponse,
@@ -29,11 +29,19 @@ const detectType = (address: string, tx: AptosTransaction, value: BigNumber): OP
   return type;
 };
 
+const getTokenStandard = (coin_id: string): string => {
+  const parts = coin_id.split("::");
+  if (parts.length === 3) {
+    return "coin";
+  }
+  return "fungible_asset";
+};
+
 export function transactionsToOperations(
   address: string,
   txs: (AptosTransaction | null)[],
-): [Operation<AptosAsset>[], Operation<AptosAsset>[]] {
-  const operations: [Operation<AptosAsset>[], Operation<AptosAsset>[]] = [[], []];
+): Operation<AptosAsset>[] {
+  const operations: Operation<AptosAsset>[] = [];
 
   return txs.reduce((acc, tx) => {
     if (tx === null) {
@@ -76,28 +84,21 @@ export function transactionsToOperations(
     op.tx.fees = BigInt(fees.toString());
 
     op.value = BigInt(value.isNaN() ? 0 : value.toString());
-    op.senders.push(tx.sender);
+    op.senders.push(normalizeAddress(tx.sender));
 
     processRecipients(payload, address, op, function_address);
 
     if (op.type !== OP_TYPE.UNKNOWN && coin_id !== null) {
       if (coin_id === APTOS_ASSET_ID) {
-        acc[0].push(op);
+        acc.push(op);
         return acc;
-      }
-
-      const token = findTokenByAddressInCurrency(coin_id.toLowerCase(), "aptos");
-
-      if (token !== undefined) {
-        acc[1].push(op);
-
-        if (op.type === OP_TYPE.OUT) {
-          acc[0].push({
-            ...op,
-            value: op.tx.fees,
-            type: "FEES",
-          });
-        }
+      } else {
+        op.asset = {
+          type: "token",
+          standard: getTokenStandard(coin_id),
+          contractAddress: coin_id,
+        };
+        acc.push(op);
       }
     }
     return acc;

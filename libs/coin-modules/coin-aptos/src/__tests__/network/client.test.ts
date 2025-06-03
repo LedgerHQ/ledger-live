@@ -584,15 +584,20 @@ describe("Aptos API", () => {
   });
 
   describe("estimateFees", () => {
-    it("estimates the fees", async () => {
+    it("estimates the fees for native asset", async () => {
       const gasEstimation = { gas_estimate: 100 };
+      const buildSimple = jest.fn().mockResolvedValue({ rawTransaction: {} });
+
+      const time = new Date("2025-05-29");
+      jest.useFakeTimers().setSystemTime(time);
+
       mockedAptos.mockImplementation(() => ({
         getLedgerInfo: jest.fn().mockResolvedValue({
-          ledger_timestamp: Date.now(),
+          ledger_timestamp: time,
         }),
         transaction: {
           build: {
-            simple: jest.fn().mockResolvedValue({ rawTransaction: {} }),
+            simple: buildSimple,
           },
           simulate: {
             simple: jest.fn().mockResolvedValue([
@@ -626,7 +631,152 @@ describe("Aptos API", () => {
 
       const fees = await api.estimateFees(transactionIntent);
 
+      expect(buildSimple.mock.calls[0][0]).toEqual({
+        sender: "address1",
+        data: {
+          function: "0x1::aptos_account::transfer_coins",
+          typeArguments: ["0x1::aptos_coin::AptosCoin"],
+          functionArguments: ["address2", 100n],
+        },
+        options: {
+          maxGasAmount: 200,
+          gasUnitPrice: 100,
+          expireTimestamp: Number(Math.ceil(+time / 1_000_000 + 2 * 60)),
+        },
+      });
+
       expect(fees.value.toString()).toEqual("40");
+    });
+
+    it("estimates the fees for token coin", async () => {
+      const gasEstimation = { gas_estimate: 100 };
+      const buildSimple = jest.fn().mockResolvedValue({ rawTransaction: {} });
+
+      const time = new Date("2025-05-29");
+      jest.useFakeTimers().setSystemTime(time);
+
+      mockedAptos.mockImplementation(() => ({
+        getLedgerInfo: jest.fn().mockResolvedValue({
+          ledger_timestamp: time,
+        }),
+        transaction: {
+          build: {
+            simple: buildSimple,
+          },
+          simulate: {
+            simple: jest.fn().mockResolvedValue([
+              {
+                gas_used: 10,
+                gas_unit_price: 2,
+              },
+            ]),
+          },
+        },
+        getGasPriceEstimation: jest.fn().mockReturnValue(gasEstimation),
+      }));
+
+      const amount = BigInt(100);
+      const sender: AptosSender = {
+        xpub: "xpub",
+        freshAddress: "address1",
+      };
+      const recipient = "address2";
+
+      const api = new AptosAPI("aptos");
+      const transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender> = {
+        asset: {
+          type: "token",
+          standard: "coin",
+          contractAddress: "0x111",
+        },
+        type: "send",
+        sender,
+        amount,
+        recipient,
+      };
+
+      const fees = await api.estimateFees(transactionIntent);
+
+      expect(buildSimple.mock.calls[0][0]).toEqual({
+        sender: "address1",
+        data: {
+          function: "0x1::aptos_account::transfer_coins",
+          typeArguments: ["0x111"],
+          functionArguments: ["address2", 100n],
+        },
+        options: {
+          maxGasAmount: 200,
+          gasUnitPrice: 100,
+          expireTimestamp: Number(Math.ceil(+time / 1_000_000 + 2 * 60)),
+        },
+      });
+
+      expect(fees.value.toString()).toEqual("20");
+    });
+
+    it("estimates the fees for token FA", async () => {
+      const gasEstimation = { gas_estimate: 100 };
+      const buildSimple = jest.fn().mockResolvedValue({ rawTransaction: {} });
+      const time = new Date("2025-05-29");
+      jest.useFakeTimers().setSystemTime(time);
+
+      mockedAptos.mockImplementation(() => ({
+        getLedgerInfo: jest.fn().mockResolvedValue({
+          ledger_timestamp: time,
+        }),
+        transaction: {
+          build: {
+            simple: buildSimple,
+          },
+          simulate: {
+            simple: jest.fn().mockResolvedValue([
+              {
+                gas_used: 10,
+                gas_unit_price: 3,
+              },
+            ]),
+          },
+        },
+        getGasPriceEstimation: jest.fn().mockReturnValue(gasEstimation),
+      }));
+
+      const amount = BigInt(100);
+      const sender: AptosSender = {
+        xpub: "xpub",
+        freshAddress: "address1",
+      };
+      const recipient = "address2";
+
+      const api = new AptosAPI("aptos");
+      const transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender> = {
+        asset: {
+          type: "token",
+          standard: "fungible_asset",
+          contractAddress: "0x111",
+        },
+        type: "send",
+        sender,
+        amount,
+        recipient,
+      };
+
+      const fees = await api.estimateFees(transactionIntent);
+
+      expect(buildSimple.mock.calls[0][0]).toEqual({
+        sender: "address1",
+        data: {
+          function: "0x1::primary_fungible_store::transfer",
+          typeArguments: ["0x1::fungible_asset::Metadata"],
+          functionArguments: ["0x111", "address2", 100n],
+        },
+        options: {
+          maxGasAmount: 200,
+          gasUnitPrice: 100,
+          expireTimestamp: Number(Math.ceil(+time / 1_000_000 + 2 * 60)),
+        },
+      });
+
+      expect(fees.value.toString()).toEqual("30");
     });
   });
 
@@ -654,7 +804,7 @@ describe("Aptos API", () => {
         },
       });
       expect(balances).toHaveLength(1);
-      expect(balances[0].asset_type).toBe(assets[0].asset_type);
+      expect(balances[0].contractAddress).toBe(assets[0].asset_type);
       expect(balances[0].amount).toStrictEqual(BigNumber(assets[0].amount));
     });
   });

@@ -19,16 +19,10 @@ export class AccountsPage extends AppPage {
   private accountListNumber = this.page.locator(`[data-testid^="account-component-"]`);
   private syncAccountButton = (accountName: string) =>
     this.accountComponent(accountName).getByTestId("sync-button").locator("div").first();
-  private accountSearchInput = this.page.locator("#accounts-search-input");
 
   @step("Open Account $0")
   async navigateToAccountByName(accountName: string) {
     await this.accountComponent(accountName).click();
-  }
-
-  @step("Search for $0")
-  async searchForAccount(accountName: string) {
-    await this.accountSearchInput.fill(accountName);
   }
 
   @step("Click sync account button for: $0")

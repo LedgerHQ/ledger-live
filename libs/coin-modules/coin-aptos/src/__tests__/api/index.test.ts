@@ -76,7 +76,7 @@ describe("lastBlock", () => {
     expect(await api.lastBlock()).toStrictEqual({
       height: 123,
       hash: "123hash",
-      time: new Date(1746021098623892),
+      time: new Date(1746021098623892 / 1_000),
     });
   });
 });

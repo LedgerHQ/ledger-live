@@ -92,5 +92,10 @@ export const MIN_COINS_ON_SHARES_POOL_IN_OCTAS =
 
 export const APTOS_EXPLORER_ACCOUNT_URL = "https://explorer.aptoslabs.com/account";
 
+export enum TOKEN_TYPE {
+  COIN = "coin",
+  FUNGIBLE_ASSET = "fungible_asset",
+}
+
 export const DEFAULT_GAS = new BigNumber(200);
 export const DEFAULT_GAS_PRICE = new BigNumber(100);

@@ -81,7 +81,7 @@ permissions:
 env:
   SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:master
   COINAPPS: ${{ github.workspace }}/coin-apps
-  E2E_RUN: ${{ inputs.tests_type != 'Mocked' || github.event_name == 'schedule' }}
+  E2E_RUN: ${{ inputs.tests_type == 'E2E - Android Only' || inputs.tests_type == 'E2E - iOS & Android' || github.event_name == 'schedule' }}
   SHOULD_UPLOAD: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || (github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) }}
 
 jobs:
@@ -200,7 +200,7 @@ jobs:
         run: pnpm mobile e2e:ci -p ios -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
 
       - name: Build JS Bundle app for Detox test run
-        if: steps.detox-build.outputs.cache-hit == 'true' && inputs.production_firebase == 'false'
+        if: steps.detox-build.outputs.cache-hit == 'true' && inputs.production_firebase != 'true'
         run: pnpm mobile e2e:ci -p ios --bundle
 
       - name: Setup Speculos image and Coin Apps

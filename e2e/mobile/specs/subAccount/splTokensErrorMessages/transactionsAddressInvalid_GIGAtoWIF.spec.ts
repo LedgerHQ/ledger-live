@@ -1,8 +1,8 @@
 import { runSendSPLAddressInvalid } from "../subAccount";
 
 const transactionE2E = {
-  tx: new Transaction(Account.SOL_GIGA_1, Account.SOL_WIF_2, "0.1", undefined),
-  recipient: Account.SOL_WIF_2.ataAddress,
+  tx: new Transaction(TokenAccount.SOL_GIGA_1, TokenAccount.SOL_WIF_2, "0.1", undefined),
+  recipient: TokenAccount.SOL_WIF_2.address,
   expectedErrorMessage: "This associated token account holds another token",
   xrayTicket: ["B2CQA-3083"],
 };
