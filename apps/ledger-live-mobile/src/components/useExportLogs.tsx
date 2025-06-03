@@ -4,12 +4,15 @@ import RNFetchBlob from "rn-fetch-blob";
 import logger from "../logger";
 import logReport from "../log-report";
 import getFullAppVersion from "~/logic/version";
+import { getJSONStringifyReplacer } from "@ledgerhq/logs";
 
 export default function useExportLogs() {
   return useCallback(() => {
     const exportLogs = async () => {
       const logs = logReport.getLogs();
-      const base64 = Buffer.from(JSON.stringify(logs, null, 2)).toString("base64");
+      const base64 = Buffer.from(JSON.stringify(logs, getJSONStringifyReplacer(), 2)).toString(
+        "base64",
+      );
       const version = getFullAppVersion(undefined, undefined, "-");
       const date = new Date().toISOString().split("T")[0];
 
