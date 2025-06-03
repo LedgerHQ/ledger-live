@@ -14,5 +14,5 @@ export const AccountList = ({
     [onClick],
   );
 
-  return <VirtualList items={accounts} itemHeight={68} renderItem={renderAccountItem} />;
+  return <VirtualList items={accounts} itemHeight={70} renderItem={renderAccountItem} />;
 };
