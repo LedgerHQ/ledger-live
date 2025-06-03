@@ -16,6 +16,8 @@ import { CompleteExchangeRequestEvent } from "@ledgerhq/live-common/exchange/pla
 import { RemoveImageEvent } from "@ledgerhq/live-common/hw/customLockScreenRemove";
 import { RenameDeviceEvent } from "@ledgerhq/live-common/hw/renameDevice";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
+import { Server, WebSocket } from "ws";
+
 
 export type ServerData =
   | {
@@ -108,3 +110,13 @@ export const completeExchangeExecMock = (): Observable<CompleteExchangeRequestEv
   mockDeviceEventSubject as Observable<CompleteExchangeRequestEvent>;
 export const renameDeviceExecMock = (): Observable<RenameDeviceEvent> =>
   mockDeviceEventSubject as Observable<RenameDeviceEvent>;
+
+declare global {
+  // eslint-disable-next-line no-var
+  var webSocket: {
+    wss: Server | undefined;
+    ws: WebSocket | undefined;
+    messages: { [id: string]: MessageData };
+    e2eBridgeServer: Subject<ServerData>;
+  };
+}
