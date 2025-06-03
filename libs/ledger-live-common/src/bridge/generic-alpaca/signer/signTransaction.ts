@@ -1,6 +1,6 @@
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { XrpSigner } from "@ledgerhq/coin-xrp/index";
-import { SignTransactionOptions } from ".";
+import { SignTransactionOptions } from "./types";
 
 export const signTransaction = (signerContext: SignerContext<XrpSigner>) => {
   return async (deviceId: string, { path, rawTxHex }: SignTransactionOptions) => {

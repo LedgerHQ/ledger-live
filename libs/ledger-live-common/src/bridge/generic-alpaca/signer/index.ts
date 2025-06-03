@@ -6,11 +6,7 @@ import Xrp from "@ledgerhq/hw-app-xrp";
 import Transport from "@ledgerhq/hw-transport";
 import { signTransaction } from "./signTransaction";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-
-export type SignTransactionOptions = {
-  rawTxHex: string;
-  path: string;
-};
+import { SignTransactionOptions } from "./types";
 
 export type AlpacaSigner = {
   getAddress: GetAddressFn;
