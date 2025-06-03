@@ -64,6 +64,7 @@ export type SignOperationArg0<T extends TransactionCommon, A extends Account> = 
   transaction: T;
   deviceId: DeviceId;
   deviceModelId?: DeviceModelId;
+  certificateSignatureKind?: "prod" | "test";
 };
 
 /**

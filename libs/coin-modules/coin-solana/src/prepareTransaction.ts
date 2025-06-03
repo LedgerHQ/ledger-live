@@ -159,12 +159,14 @@ function decodeInstruction(
 }
 
 function buildTransferTransaction(
+  raw: string,
   lamports: bigint,
   fromPubkey: PublicKey,
   toPubkey: PublicKey,
   estimatedFees: number | null,
 ): Transaction {
   return {
+    raw,
     family: "solana",
     amount: fromBigIntToBigNumber(lamports),
     recipient: String(toPubkey),
@@ -202,6 +204,7 @@ async function toLiveTransaction(
   const estimatedFees = await api.getFeeForMessage(message);
 
   return buildTransferTransaction(
+    serializedTransaction,
     decodedInstruction.lamports,
     decodedInstruction.fromPubkey,
     decodedInstruction.toPubkey,

@@ -1,25 +1,18 @@
 # @ledgerhq/hw-bolos
 
-## 6.32.1-nightly.2
+## 6.32.1
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-transport@6.31.5-nightly.2
+  - @ledgerhq/hw-transport@6.31.5
 
-## 6.32.1-nightly.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.31.5-nightly.1
-
-## 6.32.1-nightly.0
+## 6.32.1-next.0
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-transport@6.31.5-nightly.0
+  - @ledgerhq/hw-transport@6.31.5-next.0
 
 ## 6.32.0
 

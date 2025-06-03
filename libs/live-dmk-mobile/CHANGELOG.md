@@ -1,40 +1,24 @@
 # @ledgerhq/live-dmk-mobile
 
-## 0.4.2-nightly.3
+## 0.4.2
 
 ### Patch Changes
 
-- Updated dependencies [[`e602ad0`](https://github.com/LedgerHQ/ledger-live/commit/e602ad0026fd7849ea7ad2a6c320a524657125d4), [`81470e5`](https://github.com/LedgerHQ/ledger-live/commit/81470e507870fae1d93ac6d1c0434ad9795722dd)]:
-  - @ledgerhq/live-dmk-shared@0.9.0-nightly.3
+- Updated dependencies [[`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47), [`9081c26`](https://github.com/LedgerHQ/ledger-live/commit/9081c2648490f977469a33762a3c67bb2c2a0be5)]:
+  - @ledgerhq/errors@6.21.0
+  - @ledgerhq/devices@8.4.5
+  - @ledgerhq/hw-transport@6.31.5
+  - @ledgerhq/live-dmk-shared@0.8.2
 
-## 0.4.2-nightly.2
-
-### Patch Changes
-
-- [#10344](https://github.com/LedgerHQ/ledger-live/pull/10344) [`b2454cd`](https://github.com/LedgerHQ/ledger-live/commit/b2454cde386d45fd69304ba492bb7958bb0eacd4) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Patch logger pkg
-
-- Updated dependencies [[`b2454cd`](https://github.com/LedgerHQ/ledger-live/commit/b2454cde386d45fd69304ba492bb7958bb0eacd4)]:
-  - @ledgerhq/live-dmk-shared@0.8.2-nightly.2
-
-## 0.4.2-nightly.1
+## 0.4.2-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`9081c26`](https://github.com/LedgerHQ/ledger-live/commit/9081c2648490f977469a33762a3c67bb2c2a0be5)]:
-  - @ledgerhq/errors@6.21.0-nightly.0
-  - @ledgerhq/devices@8.4.5-nightly.2
-  - @ledgerhq/hw-transport@6.31.5-nightly.2
-  - @ledgerhq/live-dmk-shared@0.8.2-nightly.1
-
-## 0.4.2-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47)]:
-  - @ledgerhq/errors@6.20.0-nightly.1
-  - @ledgerhq/devices@8.4.5-nightly.1
-  - @ledgerhq/hw-transport@6.31.5-nightly.1
-  - @ledgerhq/live-dmk-shared@0.8.2-nightly.0
+- Updated dependencies [[`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47), [`9081c26`](https://github.com/LedgerHQ/ledger-live/commit/9081c2648490f977469a33762a3c67bb2c2a0be5)]:
+  - @ledgerhq/errors@6.21.0-next.0
+  - @ledgerhq/devices@8.4.5-next.0
+  - @ledgerhq/hw-transport@6.31.5-next.0
+  - @ledgerhq/live-dmk-shared@0.8.2-next.0
 
 ## 0.4.1
 

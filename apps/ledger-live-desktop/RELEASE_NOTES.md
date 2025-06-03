@@ -1,3 +1,11 @@
+# 2.115.0
+
+### 🐛 Fixes
+
+Resolved issue preventing send of USDT ERC-20 on Ledger Nano-S.
+
+Resolved issue preventing users to add an Avalanche or Ethereum Classic account.
+
 # 2.113.2
 
 This release includes small security improvements, UI tweaks, and minor bug fixes.

@@ -33,9 +33,10 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async info => {
 
   let operations: Operation[] = [];
 
-  const syncHash = initialAccount?.syncHash ?? latestHash(oldOperations);
+  let syncHash = initialAccount?.syncHash ?? latestHash(oldOperations);
   const newOperations = await getOperations(accountId, address, syncHash);
   operations = mergeOps(oldOperations, newOperations);
+  syncHash = latestHash(operations);
 
   const shape = {
     id: accountId,

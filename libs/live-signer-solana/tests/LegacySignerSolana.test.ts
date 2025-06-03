@@ -101,100 +101,112 @@ describe("LegacySignerSolana", () => {
       ).rejects.toThrow(new UpdateYourApp());
     });
 
-    it("signs a transaction with a resolution and a 'tokenAddress' property", async () => {
-      const getCertificate = jest.spyOn(calService, "getCertificate").mockResolvedValue({
-        descriptor: "certificateDescriptor",
-        signature: "certificateSignature",
-      });
-      const loadPKI = jest.spyOn(loadPKIModule, "loadPKI").mockResolvedValue(undefined);
-      jest.spyOn(Solana.prototype, "getAppConfiguration").mockResolvedValue({
-        blindSigningEnabled: false,
-        pubKeyDisplayMode: PubKeyDisplayMode.SHORT,
-        version: "1.8.2",
-      });
-      jest.spyOn(Solana.prototype, "getChallenge").mockResolvedValue("challenge");
-      const getOwnerAddress = jest.spyOn(trustService, "getOwnerAddress").mockResolvedValue({
-        signedDescriptor: "signedDescriptor",
-        tokenAccount: "",
-        contract: "",
-        owner: "",
-      });
-      const provideTrustedName = jest
-        .spyOn(Solana.prototype, "provideTrustedName")
-        .mockResolvedValue(true);
-      const signTransaction = jest.spyOn(Solana.prototype, "signTransaction").mockResolvedValue({
-        signature: Buffer.from("0102", "hex"),
-      });
-
-      expect(
-        await signer.signTransaction("path", Buffer.from("transaction"), {
-          deviceModelId: DeviceModelId.europa,
-          tokenAddress: "tokenAddress",
-        }),
-      ).toEqual({
-        signature: Buffer.from("0102", "hex"),
-      });
-      expect(getCertificate).toHaveBeenCalledWith(DeviceModelId.europa);
-      expect(loadPKI).toHaveBeenCalledWith(
-        expect.anything(),
-        "TRUSTED_NAME",
-        "certificateDescriptor",
-        "certificateSignature",
-      );
-      expect(getOwnerAddress).toHaveBeenCalledWith("tokenAddress", "challenge");
-      expect(provideTrustedName).toHaveBeenCalledWith("signedDescriptor");
-      expect(signTransaction).toHaveBeenCalledWith("path", Buffer.from("transaction"));
-    });
-
-    it("signs a transaction with a resolution and a 'createATA' property", async () => {
-      const getCertificate = jest.spyOn(calService, "getCertificate").mockResolvedValue({
-        descriptor: "certificateDescriptor",
-        signature: "certificateSignature",
-      });
-      const loadPKI = jest.spyOn(loadPKIModule, "loadPKI").mockResolvedValue(undefined);
-      jest.spyOn(Solana.prototype, "getAppConfiguration").mockResolvedValue({
-        blindSigningEnabled: false,
-        pubKeyDisplayMode: PubKeyDisplayMode.SHORT,
-        version: "1.8.2",
-      });
-      jest.spyOn(Solana.prototype, "getChallenge").mockResolvedValue("challenge");
-      const computedTokenAddress = jest
-        .spyOn(trustService, "computedTokenAddress")
-        .mockResolvedValue({
+    it.each([["prod"], ["test"]] as const)(
+      "signs a transaction with a resolution and a 'tokenAddress' property, using the '%s' PKI",
+      async expectedSignatureKind => {
+        const getCertificate = jest.spyOn(calService, "getCertificate").mockResolvedValue({
+          descriptor: "certificateDescriptor",
+          signature: "certificateSignature",
+        });
+        const loadPKI = jest.spyOn(loadPKIModule, "loadPKI").mockResolvedValue(undefined);
+        jest.spyOn(Solana.prototype, "getAppConfiguration").mockResolvedValue({
+          blindSigningEnabled: false,
+          pubKeyDisplayMode: PubKeyDisplayMode.SHORT,
+          version: "1.8.2",
+        });
+        jest.spyOn(Solana.prototype, "getChallenge").mockResolvedValue("challenge");
+        const getOwnerAddress = jest.spyOn(trustService, "getOwnerAddress").mockResolvedValue({
           signedDescriptor: "signedDescriptor",
           tokenAccount: "",
           contract: "",
           owner: "",
         });
-      const provideTrustedName = jest
-        .spyOn(Solana.prototype, "provideTrustedName")
-        .mockResolvedValue(true);
-      const signTransaction = jest.spyOn(Solana.prototype, "signTransaction").mockResolvedValue({
-        signature: Buffer.from("0102", "hex"),
-      });
+        const provideTrustedName = jest
+          .spyOn(Solana.prototype, "provideTrustedName")
+          .mockResolvedValue(true);
+        const signTransaction = jest.spyOn(Solana.prototype, "signTransaction").mockResolvedValue({
+          signature: Buffer.from("0102", "hex"),
+        });
 
-      expect(
-        await signer.signTransaction("path", Buffer.from("transaction"), {
-          deviceModelId: DeviceModelId.europa,
-          createATA: {
-            address: "address",
-            mintAddress: "mintAddress",
-          },
-        }),
-      ).toEqual({
-        signature: Buffer.from("0102", "hex"),
-      });
-      expect(getCertificate).toHaveBeenCalledWith(DeviceModelId.europa);
-      expect(loadPKI).toHaveBeenCalledWith(
-        expect.anything(),
-        "TRUSTED_NAME",
-        "certificateDescriptor",
-        "certificateSignature",
-      );
-      expect(computedTokenAddress).toHaveBeenCalledWith("address", "mintAddress", "challenge");
-      expect(provideTrustedName).toHaveBeenCalledWith("signedDescriptor");
-      expect(signTransaction).toHaveBeenCalledWith("path", Buffer.from("transaction"));
-    });
+        expect(
+          await signer.signTransaction("path", Buffer.from("transaction"), {
+            deviceModelId: DeviceModelId.europa,
+            tokenAddress: "tokenAddress",
+            certificateSignatureKind: expectedSignatureKind,
+          }),
+        ).toEqual({
+          signature: Buffer.from("0102", "hex"),
+        });
+        expect(getCertificate).toHaveBeenCalledWith(DeviceModelId.europa, "latest", {
+          signatureKind: expectedSignatureKind,
+        });
+        expect(loadPKI).toHaveBeenCalledWith(
+          expect.anything(),
+          "TRUSTED_NAME",
+          "certificateDescriptor",
+          "certificateSignature",
+        );
+        expect(getOwnerAddress).toHaveBeenCalledWith("tokenAddress", "challenge");
+        expect(provideTrustedName).toHaveBeenCalledWith("signedDescriptor");
+        expect(signTransaction).toHaveBeenCalledWith("path", Buffer.from("transaction"));
+      },
+    );
+
+    it.each([["prod"], ["test"]] as const)(
+      "signs a transaction with a resolution and a 'createATA' property, using the '%s' PKI",
+      async expectedSignatureKind => {
+        const getCertificate = jest.spyOn(calService, "getCertificate").mockResolvedValue({
+          descriptor: "certificateDescriptor",
+          signature: "certificateSignature",
+        });
+        const loadPKI = jest.spyOn(loadPKIModule, "loadPKI").mockResolvedValue(undefined);
+        jest.spyOn(Solana.prototype, "getAppConfiguration").mockResolvedValue({
+          blindSigningEnabled: false,
+          pubKeyDisplayMode: PubKeyDisplayMode.SHORT,
+          version: "1.8.2",
+        });
+        jest.spyOn(Solana.prototype, "getChallenge").mockResolvedValue("challenge");
+        const computedTokenAddress = jest
+          .spyOn(trustService, "computedTokenAddress")
+          .mockResolvedValue({
+            signedDescriptor: "signedDescriptor",
+            tokenAccount: "",
+            contract: "",
+            owner: "",
+          });
+        const provideTrustedName = jest
+          .spyOn(Solana.prototype, "provideTrustedName")
+          .mockResolvedValue(true);
+        const signTransaction = jest.spyOn(Solana.prototype, "signTransaction").mockResolvedValue({
+          signature: Buffer.from("0102", "hex"),
+        });
+
+        expect(
+          await signer.signTransaction("path", Buffer.from("transaction"), {
+            deviceModelId: DeviceModelId.europa,
+            createATA: {
+              address: "address",
+              mintAddress: "mintAddress",
+            },
+            certificateSignatureKind: expectedSignatureKind,
+          }),
+        ).toEqual({
+          signature: Buffer.from("0102", "hex"),
+        });
+        expect(getCertificate).toHaveBeenCalledWith(DeviceModelId.europa, "latest", {
+          signatureKind: expectedSignatureKind,
+        });
+        expect(loadPKI).toHaveBeenCalledWith(
+          expect.anything(),
+          "TRUSTED_NAME",
+          "certificateDescriptor",
+          "certificateSignature",
+        );
+        expect(computedTokenAddress).toHaveBeenCalledWith("address", "mintAddress", "challenge");
+        expect(provideTrustedName).toHaveBeenCalledWith("signedDescriptor");
+        expect(signTransaction).toHaveBeenCalledWith("path", Buffer.from("transaction"));
+      },
+    );
   });
 
   describe("signMessage", () => {

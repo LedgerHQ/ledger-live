@@ -1,32 +1,18 @@
 # @ledgerhq/live-dmk
 
-## 0.9.0-nightly.3
-
-### Minor Changes
-
-- [#10345](https://github.com/LedgerHQ/ledger-live/pull/10345) [`e602ad0`](https://github.com/LedgerHQ/ledger-live/commit/e602ad0026fd7849ea7ad2a6c320a524657125d4) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Implement ConnectApp device action
-
-- [#10345](https://github.com/LedgerHQ/ledger-live/pull/10345) [`81470e5`](https://github.com/LedgerHQ/ledger-live/commit/81470e507870fae1d93ac6d1c0434ad9795722dd) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Implement PrepareConnectManager device action
-
-## 0.8.2-nightly.2
-
-### Patch Changes
-
-- [#10344](https://github.com/LedgerHQ/ledger-live/pull/10344) [`b2454cd`](https://github.com/LedgerHQ/ledger-live/commit/b2454cde386d45fd69304ba492bb7958bb0eacd4) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Patch logger pkg
-
-## 0.8.2-nightly.1
+## 0.8.2
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-transport@6.31.5-nightly.2
+  - @ledgerhq/hw-transport@6.31.5
 
-## 0.8.2-nightly.0
+## 0.8.2-next.0
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-transport@6.31.5-nightly.1
+  - @ledgerhq/hw-transport@6.31.5-next.0
 
 ## 0.8.1
 

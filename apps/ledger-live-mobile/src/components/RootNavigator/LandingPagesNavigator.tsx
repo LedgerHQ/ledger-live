@@ -31,7 +31,13 @@ export default function LandingPagesNavigator() {
         options={navigationOptions}
       />
       {isLargeMoverFeatureEnabled && (
-        <Stack.Screen name={ScreenName.LargeMoverLandingPage} component={LargeMoverLandingPage} />
+        <Stack.Screen
+          name={ScreenName.LargeMoverLandingPage}
+          component={LargeMoverLandingPage}
+          options={{
+            headerShown: false,
+          }}
+        />
       )}
     </Stack.Navigator>
   );
