@@ -24,7 +24,7 @@ function adaptOp(backendOp: any): Operation<any> {
   };
 }
 
-const ALPACA_URL = "http://0.0.0.0:3000";
+const ALPACA_URL = "https://localhost:3000";
 
 const buildBroadcast = networkFamily =>
   async function broadcast(signedOperation: string): Promise<string> {
