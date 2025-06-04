@@ -63,4 +63,29 @@ describe("estimateFees", () => {
       amount: BigInt("1934589"),
     });
   });
+
+  it.each(accounts)("returns correct value when overriding gas/storage limits", async account => {
+    // Given
+    const transaction = {
+      mode: "send",
+      recipient: "tz1PWFt4Ym6HedY78MgUP2kVDtSampGwprs5",
+      amount: BigInt(1_000_000),
+    } satisfies CoreTransactionInfo;
+
+    const parameters = {
+      gasLimit: 3000,
+      storageLimit: 1000,
+    };
+
+    // When
+    const result = await estimateFees({ account, transaction, parameters });
+    // Then
+    expect(result).toEqual({
+      estimatedFees: BigInt("865"),
+      fees: BigInt("491"),
+      gasLimit: BigInt("2169"),
+      storageLimit: BigInt("277"),
+      amount: BigInt("1000000"),
+    });
+  });
 });
