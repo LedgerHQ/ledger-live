@@ -1,17 +1,18 @@
+import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import React, { useEffect, useMemo } from "react";
-import { prepareCurrency } from "~/renderer/bridge/cache";
-import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
 import invariant from "invariant";
-import TrackPage from "~/renderer/analytics/TrackPage";
-import DeviceAction from "~/renderer/components/DeviceAction";
+import React, { useEffect, useMemo } from "react";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
+import TrackPage from "~/renderer/analytics/TrackPage";
+import { prepareCurrency } from "~/renderer/bridge/cache";
+import DeviceAction from "~/renderer/components/DeviceAction";
+import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
 import { MODULAR_DRAWER_ADD_ACCOUNT_CATEGORY } from "../../types";
 
 interface Props {
   analyticsPropertyFlow?: string;
   currency: CryptoOrTokenCurrency;
-  onConnect: () => void;
+  onConnect: (_: AppResult) => void;
 }
 
 export const ConnectYourDevice = ({
@@ -27,7 +28,6 @@ export const ConnectYourDevice = ({
       prepareCurrency(currency);
     }
   }, [currency]);
-  const action = useConnectAppAction();
 
   const currencyName = currency
     ? currency.type === "TokenCurrency"
@@ -42,6 +42,8 @@ export const ConnectYourDevice = ({
     [currency],
   );
 
+  const action = useConnectAppAction();
+
   return (
     <>
       <TrackPage
@@ -53,6 +55,12 @@ export const ConnectYourDevice = ({
         action={action}
         request={request}
         onResult={onConnect}
+        // onError={e => {
+        //   console.log("ERROR", e);
+        // }}
+        // onSelectDeviceLink={() => {
+        //   console.log("SELECT DEVICE LINK");
+        // }}
         analyticsPropertyFlow={analyticsPropertyFlow}
         // TODO Location == Drawer
         location={HOOKS_TRACKING_LOCATIONS.addAccountModal}

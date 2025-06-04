@@ -11,7 +11,7 @@ export const Title = ({ translationKey }: Props) => {
   const { t } = useTranslation();
   return (
     <Text
-      display="flex"
+      display="block"
       flexDirection="row"
       alignItems="center"
       justifyContent="flex-start"
