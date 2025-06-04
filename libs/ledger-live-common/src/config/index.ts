@@ -7,12 +7,12 @@ export type CurrencyLiveConfigDefinition = Partial<
 >;
 
 const getSharedConfiguration = (): SharedConfig => {
-  const config = LiveConfig.getValueByKey(`config_currency`);
+  const config = LiveConfig.getValueByKey("config_currency");
   if (!config) {
-    throw new Error(`Configuration config_currency not found, please check Firebase Remote Config`);
+    throw new Error("Configuration config_currency not found, please check Firebase Remote Config");
   }
 
-  return config as SharedConfig;
+  return config;
 };
 
 const getCurrencyConfiguration = <T extends CurrencyConfig>(

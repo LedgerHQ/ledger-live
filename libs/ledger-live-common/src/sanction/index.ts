@@ -3,13 +3,13 @@ import axios from "axios";
 import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyConfiguration, getSharedConfiguration } from "../config";
-import { CurrencyConfig } from "@ledgerhq/coin-framework/lib/config";
+import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
 const cache = makeLRUCache(fetchSanctionedAddresses, () => "all_sanctioned_addresses", hours(12));
 
 async function fetchSanctionedAddresses(): Promise<Record<string, string[]>> {
   const { data } = await axios.get(
-    `https://ofac-compliance.pages.dev/all_sanctioned_addresses.json`,
+    "https://ofac-compliance.pages.dev/all_sanctioned_addresses.json",
   );
   return data;
 }

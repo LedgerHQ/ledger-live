@@ -16,6 +16,7 @@ import mockBridges from "../generated/bridge/mock";
 import { RecipientAddressSanctionedError, UserAddressSanctionedError } from "../sanction/errors";
 import { getAlpacaCurrencyBridge } from "./generic-alpaca/currencyBridge";
 import { getAlpacaAccountBridge } from "./generic-alpaca/accountBridge";
+import { TransactionCommon } from "@ledgerhq/types-live";
 
 const alpacaized = {
   xrp: true,
@@ -95,7 +96,9 @@ export function getAccountBridgeByFamily(family: string, accountId?: string): Ac
   return wrapAccountBridge(jsBridge.accountBridge);
 }
 
-function wrapAccountBridge(bridge: AccountBridge<any>): AccountBridge<any> {
+function wrapAccountBridge<T extends TransactionCommon>(
+  bridge: AccountBridge<T>,
+): AccountBridge<T> {
   return {
     ...bridge,
     getTransactionStatus: async (...args) => {
@@ -118,7 +121,7 @@ function mergeResults(
 
 async function commonGetTransactionStatus(
   account: Account,
-  transaction: any,
+  transaction: TransactionCommon,
 ): Promise<Partial<TransactionStatusCommon>> {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
@@ -140,5 +143,5 @@ async function commonGetTransactionStatus(
     // Send log
   }
 
-  return Promise.resolve({ errors, warnings });
+  return { errors, warnings };
 }
