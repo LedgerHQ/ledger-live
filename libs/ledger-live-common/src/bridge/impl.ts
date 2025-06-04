@@ -11,6 +11,7 @@ import { getAlpacaAccountBridge } from "./generic-alpaca/accountBridge";
 
 const alpacaized = {
   xrp: true,
+  stellar: true,
 };
 
 let accountBridgeInstance: AccountBridge<any> | null = null;

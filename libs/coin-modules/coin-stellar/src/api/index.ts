@@ -1,5 +1,5 @@
 import type {
-  AlpacaApi,
+  Api,
   FeeEstimation,
   Operation,
   Pagination,
@@ -21,7 +21,7 @@ import { StellarAsset, StellarMemo } from "../types";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { xdr } from "@stellar/stellar-sdk";
-export function createApi(config: StellarConfig): AlpacaApi<StellarAsset, StellarMemo> {
+export function createApi(config: StellarConfig): Api<StellarAsset, StellarMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
