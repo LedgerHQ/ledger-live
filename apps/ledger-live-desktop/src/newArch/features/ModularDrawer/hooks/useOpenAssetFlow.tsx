@@ -3,10 +3,10 @@ import { openModal } from "~/renderer/actions/modals";
 import { useDispatch } from "react-redux";
 import { useCallback } from "react";
 import { ModularDrawerLocation } from "../enums";
-import SelectAssetFlow from "../components/SelectAssetFlow";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
+import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 
 function selectCurrency(
   onAssetSelected: (currency: CryptoOrTokenCurrency) => void,
@@ -18,7 +18,7 @@ function selectCurrency(
     currencies ?? listAndFilterCurrencies({ currencies: assetIds, includeTokens });
 
   setDrawer(
-    SelectAssetFlow,
+    ModularDrawerFlowManager,
     {
       currencies: filteredCurrencies,
       onAssetSelected,
@@ -43,13 +43,16 @@ export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation) {
     [dispatch],
   );
 
-  const openAssetFlow = useCallback(() => {
-    if (isModularDrawerVisible(modularDrawerLocation)) {
-      selectCurrency(openAddAccountFlow);
-    } else {
-      openAddAccountFlow();
-    }
-  }, [isModularDrawerVisible, modularDrawerLocation, openAddAccountFlow]);
+  const openAssetFlow = useCallback(
+    (includeTokens: boolean) => {
+      if (isModularDrawerVisible(modularDrawerLocation)) {
+        selectCurrency(openAddAccountFlow, undefined, includeTokens);
+      } else {
+        openAddAccountFlow();
+      }
+    },
+    [isModularDrawerVisible, modularDrawerLocation, openAddAccountFlow],
+  );
 
   return {
     openAssetFlow,

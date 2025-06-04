@@ -1,5 +1,5 @@
 ---
-"live-mobile": major
+"live-mobile": minor
 ---
 
 fix earn modal text cut

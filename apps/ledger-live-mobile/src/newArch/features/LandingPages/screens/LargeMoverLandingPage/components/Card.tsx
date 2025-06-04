@@ -16,7 +16,7 @@ import {
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { Informations } from "./Information";
 import { useTheme } from "styled-components/native";
-import { getCryptoCurrencyById, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { track } from "~/analytics";
 import { PAGE_NAME } from "../const";
 import { ScrollView } from "react-native-gesture-handler";
@@ -66,7 +66,6 @@ export const Card: React.FC<CardProps> = ({
   const { colors } = useTheme();
   const middleColor = colors.neutral.c20;
   const currency = getCryptoCurrencyById(id);
-  const midColor = getCurrencyColor(currency);
 
   const handleScroll = () => {
     track("button_clicked", {
@@ -90,24 +89,23 @@ export const Card: React.FC<CardProps> = ({
       overflow="hidden"
       height={height}
     >
+      <Svg style={styles.gradientTop}>
+        <Defs>
+          <LinearGradient id="midGlowTop" x1="0" y1="0" x2="0" y2="1">
+            <Stop offset="0" stopColor={middleColor} stopOpacity="0.9" />
+            <Stop offset="0.5" stopColor={middleColor} stopOpacity="0" />
+          </LinearGradient>
+        </Defs>
+        <Rect x="0" y="0" width={width} height={100} fill="url(#midGlowTop)" />
+      </Svg>
       <Flex alignItems="center" zIndex={10} top={4}>
-        <Ticker currencyId={id} />
+        <Ticker currencyId={id} width={width} />
       </Flex>
       <ScrollView
         showsVerticalScrollIndicator={false}
         onScrollEndDrag={handleScroll}
         ref={scrollRef}
       >
-        <Svg style={styles.gradientTop}>
-          <Defs>
-            <LinearGradient id="midGlow" x1="0" y1="0" x2="0" y2="1">
-              <Stop offset="0" stopColor={midColor} stopOpacity="0" />
-              <Stop offset="0.6" stopColor={midColor} stopOpacity="0.15" />
-              <Stop offset="1" stopColor={midColor} stopOpacity="0" />
-            </LinearGradient>
-          </Defs>
-          <Rect x="0" y="0" width="100%" height="100" fill="url(#midGlow)" />
-        </Svg>
         <Flex padding={4} paddingTop={12}>
           <PriceAndVariation
             price={price}
