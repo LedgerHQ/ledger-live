@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.116.0-nightly.1
+
+### Minor Changes
+
+- [#10389](https://github.com/LedgerHQ/ledger-live/pull/10389) [`9ef8404`](https://github.com/LedgerHQ/ledger-live/commit/9ef840485a4dfefcba29013367d85fcbb590b17c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Rework all the architecture of MAD feature. We can now use it in any flows with webview or any other flows. Also some quick UI fixes in the lib
+
+- [#10350](https://github.com/LedgerHQ/ledger-live/pull/10350) [`28abe9c`](https://github.com/LedgerHQ/ledger-live/commit/28abe9c5e40a4d0cfd2afdde99e804e22ba4c243) Thanks [@qperrot](https://github.com/qperrot)! - Remove XRP custom fees on LLd and LLM
+
+### Patch Changes
+
+- Updated dependencies [[`9ef8404`](https://github.com/LedgerHQ/ledger-live/commit/9ef840485a4dfefcba29013367d85fcbb590b17c)]:
+  - @ledgerhq/react-ui@0.28.0-nightly.0
+
 ## 2.115.2-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,21 @@
 # live-mobile
 
+## 3.81.0-nightly.1
+
+### Minor Changes
+
+- [#10415](https://github.com/LedgerHQ/ledger-live/pull/10415) [`6c65ae0`](https://github.com/LedgerHQ/ledger-live/commit/6c65ae0acdb88244b597000424658384fccd2932) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - The provider name was directly used from the provider object, which could lead to inconsistencies. Now using getProviderName utility function to ensure consistent naming across the application.
+
+- [#10407](https://github.com/LedgerHQ/ledger-live/pull/10407) [`1903539`](https://github.com/LedgerHQ/ledger-live/commit/1903539c5e178d5b89e28727f2fe4deca5576c7c) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: blur on the top of the card and blur on the ticker
+
+- [#10350](https://github.com/LedgerHQ/ledger-live/pull/10350) [`28abe9c`](https://github.com/LedgerHQ/ledger-live/commit/28abe9c5e40a4d0cfd2afdde99e804e22ba4c243) Thanks [@qperrot](https://github.com/qperrot)! - Remove XRP custom fees on LLd and LLM
+
+### Patch Changes
+
+- [#10426](https://github.com/LedgerHQ/ledger-live/pull/10426) [`9097e0e`](https://github.com/LedgerHQ/ledger-live/commit/9097e0e260f95f09c388b54571f2b8ade5b584e5) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Fixes the name of the event and the button attribute for drawer events
+
+- [#10412](https://github.com/LedgerHQ/ledger-live/pull/10412) [`ed356dd`](https://github.com/LedgerHQ/ledger-live/commit/ed356dd3575fd452bba0d9a820e0b306556c22cf) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fix Header text too long on atom claim page
+
 ## 3.81.0-nightly.0
 
 ### Minor Changes
