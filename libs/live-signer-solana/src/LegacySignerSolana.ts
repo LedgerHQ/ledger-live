@@ -13,6 +13,7 @@ import calService from "@ledgerhq/ledger-cal-service";
 import trustService from "@ledgerhq/ledger-trust-service";
 import { loadPKI } from "@ledgerhq/hw-bolos";
 import { LatestFirmwareVersionRequired, UpdateYourApp } from "@ledgerhq/errors";
+import { getEnv } from "@ledgerhq/live-env";
 
 const TRUSTED_NAME_MIN_VERSION = "1.7.1";
 const DYNAMIC_DESCRIPTOR_MIN_VERSION = "1.9.0";
@@ -75,11 +76,16 @@ export class LegacySignerSolana implements SolanaSigner {
       }
 
       if (resolution.deviceModelId !== DeviceModelId.nanoS) {
+        const ref = getEnv("CAL_BRANCH") || undefined;
+        const signatureKind = ref && ref !== "main" ? "test" : undefined;
+        // Somehow we don't need to change to test env when not using the prod signature
+        // const env = ref && ref !== "main" ? "test" : undefined;
+
         const { descriptor, signature } = await calService.getCertificate(
           resolution.deviceModelId,
           "trusted_name",
           "latest",
-          { signatureKind: resolution.certificateSignatureKind },
+          { signatureKind, ref },
         );
 
         try {
@@ -97,6 +103,7 @@ export class LegacySignerSolana implements SolanaSigner {
           const { signedDescriptor } = await trustService.getOwnerAddress(
             resolution.tokenAddress,
             challenge,
+            // env,
           );
 
           if (signedDescriptor) {
@@ -111,6 +118,7 @@ export class LegacySignerSolana implements SolanaSigner {
             resolution.createATA.address,
             resolution.createATA.mintAddress,
             challenge,
+            // env,
           );
 
           if (signedDescriptor) {
@@ -126,11 +134,17 @@ export class LegacySignerSolana implements SolanaSigner {
         );
         if (dynamicDescriptorSupport && resolution.tokenInternalId) {
           const { descriptor: coinMetaDescriptor, signature: coinMetaSignature } =
-            await calService.getCertificate(resolution.deviceModelId, "coin_meta");
+            await calService.getCertificate(resolution.deviceModelId, "coin_meta", "latest", {
+              signatureKind,
+              ref,
+            });
 
           await tryLoadPKI(this.transport, "COIN_META", coinMetaDescriptor, coinMetaSignature);
 
-          const token = await calService.findToken({ id: resolution.tokenInternalId }, {});
+          const token = await calService.findToken(
+            { id: resolution.tokenInternalId },
+            { signatureKind, ref },
+          );
 
           await this.signer.provideTrustedDynamicDescriptor({
             data: Buffer.from(token.descriptor.data, "hex"),

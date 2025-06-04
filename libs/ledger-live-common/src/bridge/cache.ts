@@ -22,7 +22,7 @@ export function makeBridgeCacheSystem({
 
   const lruCaches = {};
 
-  const prepareCurrency = async (currency: CryptoCurrency) => {
+  const prepareCurrency = async (currency: CryptoCurrency, force: boolean = false) => {
     const bridge = getCurrencyBridge(currency);
     const { preloadMaxAge } = {
       ...defaultCacheStrategy,
@@ -30,7 +30,7 @@ export function makeBridgeCacheSystem({
     };
     let cache = lruCaches[currency.id];
 
-    if (!cache) {
+    if (!cache || force) {
       cache = makeLRUCache(
         async () => {
           const preloaded = await bridge.preload(currency);

@@ -8196,6 +8196,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../disable-network-setup
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../env
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-live

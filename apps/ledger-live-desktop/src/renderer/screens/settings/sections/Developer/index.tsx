@@ -8,6 +8,7 @@ import AllowExperimentalAppsToggle from "./AllowExperimentalAppsToggle";
 import AllowDebugAppsToggle from "./AllowDebugAppsToggle";
 import EnablePlatformDevToolsToggle from "./EnablePlatformDevToolsToggle";
 import CatalogProviderInput from "./CatalogProviderInput";
+import CustomCALBranchInput from "./CustomCALBranchInput";
 import CustomLockScreenToggle from "./CustomLockScreenToggle";
 import CustomLockScreenAssets from "./CustomLockScreenAssets";
 import RunLocalAppButton from "./RunLocalAppButton";
@@ -71,6 +72,14 @@ const Default = () => {
       >
         <EnablePlatformDevToolsToggle />
       </Row>
+
+      <Row
+        title={t("settings.developer.customCALBranch")}
+        desc={t("settings.developer.customCALBranchDesc")}
+      >
+        <CustomCALBranchInput />
+      </Row>
+
       <Row
         title={t("settings.developer.analyticsConsole.title")}
         desc={t("settings.developer.analyticsConsole.desc")}

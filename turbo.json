@@ -58,7 +58,8 @@
     "SWAP_DISABLE_APPS_INSTALL",
     "SWAP_USER_IP",
     "SUPPLY_UPLOAD_MAX_RETRIES",
-    "VERBOSE"
+    "VERBOSE",
+    "SPECULOS_API_PORT"
   ],
   "ui": "tui",
   "tasks": {

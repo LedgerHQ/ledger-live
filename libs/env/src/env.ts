@@ -297,6 +297,11 @@ const envDefinitions = {
     def: "https://tracker.berlin.icon.community/api/v1",
     desc: "ICON Berlin Testnet API url",
   },
+  CAL_BRANCH: {
+    def: "",
+    parser: stringParser,
+    desc: "(dev feature) allows to target a different branch of the CAL for testing purposes",
+  },
   COINAPPS: {
     def: "",
     parser: stringParser,

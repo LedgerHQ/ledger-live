@@ -321,5 +321,8 @@ export type DatasetTest<T extends TransactionCommon> = {
  */
 export type BridgeCacheSystem = {
   hydrateCurrency: (currency: CryptoCurrency) => Promise<unknown | null | undefined>;
-  prepareCurrency: (currency: CryptoCurrency) => Promise<unknown | null | undefined>;
+  prepareCurrency: (
+    currency: CryptoCurrency,
+    force?: boolean,
+  ) => Promise<unknown | null | undefined>;
 };
