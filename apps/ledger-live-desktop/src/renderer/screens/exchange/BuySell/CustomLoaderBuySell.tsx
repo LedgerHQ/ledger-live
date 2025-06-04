@@ -63,29 +63,20 @@ const Ellipsis = styled.div`
   gap: 8px;
 `;
 
-const AnimatedSvg = styled.svg<{ delay: number }>`
+const Circle = styled.div<{ delay: number }>`
   width: 8px;
   height: 8px;
-  fill: none;
+  border-radius: 50%;
+  background-color: ${p => p.theme.colors.palette.neutral.c100};
   animation: ${circleAnimation} 1.5s infinite;
   animation-delay: ${({ delay }) => delay}s;
 `;
 
-const Circle = styled.circle`
-  fill: ${p => p.theme.colors.palette.neutral.c100};
-`;
-
 const EllipsisLoader = () => (
   <Ellipsis>
-    <AnimatedSvg viewBox="0 0 8 8" delay={0}>
-      <Circle cx="4" cy="4" r="4" />
-    </AnimatedSvg>
-    <AnimatedSvg viewBox="0 0 8 8" delay={0.1}>
-      <Circle cx="4" cy="4" r="4" />
-    </AnimatedSvg>
-    <AnimatedSvg viewBox="0 0 8 8" delay={0.2}>
-      <Circle cx="4" cy="4" r="4" />
-    </AnimatedSvg>
+    <Circle delay={0} />
+    <Circle delay={0.1} />
+    <Circle delay={0.2} />
   </Ellipsis>
 );
 
