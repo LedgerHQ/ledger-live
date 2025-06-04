@@ -9,7 +9,7 @@ import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { addTmsLink } from "../utils/allureUtils";
 import { getDescription } from "../utils/customJsonReporter";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Swap";
+import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { CLI } from "../utils/cliUtils";
 import {
   setupEnv,

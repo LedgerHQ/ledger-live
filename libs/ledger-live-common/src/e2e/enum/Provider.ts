@@ -15,6 +15,7 @@ export class Provider {
   static readonly UNISWAP = new Provider("uniswap", "Uniswap", false, false, false);
   static readonly LIFI = new Provider("lifi", "LI.FI", false, true, false);
   static readonly CIC = new Provider("cic", "CIC", false, true, true);
+  static readonly COINBASE = new Provider("coinbase", "Coinbase", false, true, true);
 
   static getNameByUiName(uiName: string): string {
     const provider = Object.values(Provider).find(p => p.uiName === uiName);
