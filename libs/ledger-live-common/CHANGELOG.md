@@ -1,5 +1,71 @@
 # @ledgerhq/live-common
 
+## 34.36.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`ebbbd47`](https://github.com/LedgerHQ/ledger-live/commit/ebbbd47efe76d82047a956cb5849be5831f58772)]:
+  - @ledgerhq/logs@6.13.0-next.1
+  - @ledgerhq/coin-framework@5.2.0-next.2
+  - @ledgerhq/coin-aptos@2.1.0-next.2
+  - @ledgerhq/coin-bitcoin@0.15.8-next.2
+  - @ledgerhq/coin-cardano@0.8.8-next.2
+  - @ledgerhq/coin-casper@1.7.3-next.2
+  - @ledgerhq/coin-celo@1.1.6-next.2
+  - @ledgerhq/coin-cosmos@0.15.0-next.2
+  - @ledgerhq/coin-evm@2.22.2-next.2
+  - @ledgerhq/coin-filecoin@1.9.8-next.2
+  - @ledgerhq/coin-icon@0.10.8-next.2
+  - @ledgerhq/coin-internet_computer@1.7.8-next.2
+  - @ledgerhq/coin-mina@1.1.7-next.2
+  - @ledgerhq/coin-multiversx@0.4.8-next.2
+  - @ledgerhq/coin-near@0.11.8-next.2
+  - @ledgerhq/coin-polkadot@6.1.2-next.2
+  - @ledgerhq/coin-solana@0.25.0-next.2
+  - @ledgerhq/coin-stacks@0.8.8-next.2
+  - @ledgerhq/coin-stellar@5.1.1-next.2
+  - @ledgerhq/coin-sui@0.4.1-next.2
+  - @ledgerhq/coin-tezos@5.2.1-next.2
+  - @ledgerhq/coin-ton@0.12.0-next.2
+  - @ledgerhq/coin-tron@4.1.2-next.2
+  - @ledgerhq/coin-xrp@6.1.3-next.2
+  - @ledgerhq/device-core@0.4.26-next.2
+  - @ledgerhq/devices@8.4.6-next.1
+  - @ledgerhq/hw-app-btc@10.9.2-next.1
+  - @ledgerhq/hw-app-eth@6.45.6-next.2
+  - @ledgerhq/hw-app-vet@0.5.5-next.1
+  - @ledgerhq/hw-transport@6.31.6-next.1
+  - @ledgerhq/hw-transport-mocker@6.29.6-next.1
+  - @ledgerhq/live-countervalues@0.5.8-next.2
+  - @ledgerhq/live-countervalues-react@0.2.37-next.2
+  - @ledgerhq/live-dmk-shared@0.9.0-next.2
+  - @ledgerhq/live-network@2.0.9-next.1
+  - @ledgerhq/live-wallet@0.10.11-next.2
+  - @ledgerhq/live-promise@0.1.1-next.1
+  - @ledgerhq/speculos-transport@0.2.2-next.1
+  - @ledgerhq/coin-algorand@0.9.8-next.2
+  - @ledgerhq/coin-hedera@1.7.0-next.2
+  - @ledgerhq/coin-vechain@2.7.8-next.2
+  - @ledgerhq/live-nft@0.8.8-next.2
+  - @ledgerhq/live-signer-evm@0.5.1-next.2
+  - @ledgerhq/live-signer-solana@0.2.0-next.2
+  - @ledgerhq/hw-app-celo@6.33.4-next.2
+  - @ledgerhq/hw-app-algorand@6.31.2-next.1
+  - @ledgerhq/hw-app-aptos@6.34.2-next.1
+  - @ledgerhq/hw-app-cosmos@6.32.2-next.1
+  - @ledgerhq/hw-app-exchange@0.10.2-next.1
+  - @ledgerhq/hw-app-hedera@1.2.2-next.1
+  - @ledgerhq/hw-app-icon@1.3.2-next.1
+  - @ledgerhq/hw-app-multiversx@6.24.2-next.1
+  - @ledgerhq/hw-app-near@6.31.2-next.1
+  - @ledgerhq/hw-app-polkadot@6.34.2-next.1
+  - @ledgerhq/hw-app-str@7.2.2-next.1
+  - @ledgerhq/hw-app-tezos@6.31.2-next.1
+  - @ledgerhq/hw-app-trx@6.31.2-next.1
+  - @ledgerhq/hw-app-xrp@6.31.2-next.1
+  - @ledgerhq/hw-app-sui@1.1.0
+  - @ledgerhq/ledger-cal-service@0.5.0-next.2
+
 ## 34.36.0-next.1
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @ledgerhq/live-network
 
+## 2.0.9-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`ebbbd47`](https://github.com/LedgerHQ/ledger-live/commit/ebbbd47efe76d82047a956cb5849be5831f58772)]:
+  - @ledgerhq/logs@6.13.0-next.1
+  - @ledgerhq/live-promise@0.1.1-next.1
+
 ## 2.0.9-next.0
 
 ### Patch Changes

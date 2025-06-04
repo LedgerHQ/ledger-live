@@ -1,5 +1,15 @@
 # @ledgerhq/coin-hedera
 
+## 1.7.0-next.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@5.2.0-next.2
+  - @ledgerhq/devices@8.4.6-next.1
+  - @ledgerhq/live-countervalues@0.5.8-next.2
+  - @ledgerhq/live-network@2.0.9-next.1
+
 ## 1.7.0-next.1
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # @ledgerhq/coin-tester-solana
 
+## 1.1.0-next.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@5.2.0-next.2
+  - @ledgerhq/coin-solana@0.25.0-next.2
+  - @ledgerhq/live-signer-solana@0.2.0-next.2
+  - @ledgerhq/coin-tester@0.6.0-next.2
+
 ## 1.1.0-next.1
 
 ### Patch Changes

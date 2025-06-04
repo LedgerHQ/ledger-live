@@ -1,5 +1,11 @@
 # @ledgerhq/logs
 
+## 6.13.0-next.1
+
+### Minor Changes
+
+- [#10429](https://github.com/LedgerHQ/ledger-live/pull/10429) [`ebbbd47`](https://github.com/LedgerHQ/ledger-live/commit/ebbbd47efe76d82047a956cb5849be5831f58772) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Json replacer fix
+
 ## 6.13.0-next.0
 
 ### Minor Changes

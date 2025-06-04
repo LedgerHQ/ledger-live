@@ -1,5 +1,15 @@
 # @ledgerhq/coin-tester-polkadot
 
+## 1.1.7-next.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@5.2.0-next.2
+  - @ledgerhq/coin-polkadot@6.1.2-next.2
+  - @ledgerhq/hw-app-polkadot@6.34.2-next.1
+  - @ledgerhq/coin-tester@0.6.0-next.2
+
 ## 1.1.7-next.1
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # @ledgerhq/coin-internet_computer
 
+## 1.7.8-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`ebbbd47`](https://github.com/LedgerHQ/ledger-live/commit/ebbbd47efe76d82047a956cb5849be5831f58772)]:
+  - @ledgerhq/logs@6.13.0-next.1
+  - @ledgerhq/coin-framework@5.2.0-next.2
+  - @ledgerhq/devices@8.4.6-next.1
+  - @ledgerhq/live-network@2.0.9-next.1
+
 ## 1.7.8-next.1
 
 ### Patch Changes

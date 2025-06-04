@@ -1,5 +1,13 @@
 # @ledgerhq/hw-transport-vault
 
+## 1.3.6-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`ebbbd47`](https://github.com/LedgerHQ/ledger-live/commit/ebbbd47efe76d82047a956cb5849be5831f58772)]:
+  - @ledgerhq/logs@6.13.0-next.1
+  - @ledgerhq/hw-transport-http@6.30.6-next.1
+
 ## 1.3.6-next.0
 
 ### Patch Changes
