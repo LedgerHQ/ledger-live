@@ -32,6 +32,7 @@ import {
   StellarSourceHasMultiSign,
   // type Transaction,
 } from "../types";
+import BigNumber from "bignumber.js";
 
 // export const getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"] = async (
 //   account,
@@ -174,10 +175,14 @@ export const getTransactionStatus = async (
 
       if (totalSpent > nativeBalance - baseReserve) {
         errors.amount = new NotEnoughSpendableBalance(undefined, {
-          minimumAmount: formatCurrencyUnit(account.currencyUnit, baseReserve, {
-            disableRounding: true,
-            showCode: true,
-          }),
+          minimumAmount: formatCurrencyUnit(
+            account.currencyUnit,
+            new BigNumber(baseReserve.toString()),
+            {
+              disableRounding: true,
+              showCode: true,
+            },
+          ),
         });
       }
 
@@ -188,7 +193,7 @@ export const getTransactionStatus = async (
       }
     }
 
-    if (!errors.amount && amount.eq(0)) {
+    if (!errors.amount && amount === 0n) {
       errors.amount = new AmountRequired();
     }
   }
@@ -198,8 +203,8 @@ export const getTransactionStatus = async (
   }
 
   if (
-    transaction.memoType &&
-    transaction.memoValue &&
+    typeof transaction.memoType === "string" &&
+    typeof transaction.memoValue === "string" &&
     !isMemoValid(transaction.memoType, transaction.memoValue)
   ) {
     errors.transaction = new StellarWrongMemoFormat();

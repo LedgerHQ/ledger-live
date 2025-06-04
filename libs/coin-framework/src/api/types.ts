@@ -65,6 +65,7 @@ export type Transaction = {
   recipient: string;
   amount: bigint;
   fee: bigint;
+  baseReserve?: bigint; // NOTE: used for changeTrust mode in stellar
   networkInfo?: {
     baseFee?: bigint;
     fees?: bigint;
