@@ -18,12 +18,14 @@
     "**/*.test.{js,jsx,ts,tsx}"
   ],
   "ignoreUnresolved": [
-      "follow-redirects",
-      "form-data",
-      "proxy-from-env"
+    "follow-redirects",
+    "form-data",
+    "proxy-from-env"
   ],
   "ignoreUnimported": [
     "src/datasets/solana.scanAccounts.1.ts",
+    "src/prepareTransactionDup.ts",
+    "src/serializationDup.ts",
     "src/tests/preload.fixtures.ts"
   ],
   "ignoreUnused": []
