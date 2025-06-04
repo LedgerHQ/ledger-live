@@ -116,6 +116,10 @@ jobs:
     secrets: inherit
 
   scan-sonar:
+    needs:
+      - test-desktop
+      - test-mobile
+      - test-libraries
     name: "Sonar Cloud"
     runs-on: [ledger-live-4xlarge]
     steps:
