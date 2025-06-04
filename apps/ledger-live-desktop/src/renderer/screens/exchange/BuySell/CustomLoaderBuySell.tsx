@@ -104,11 +104,13 @@ export const CustomLoaderBuySell: CustomLoaderType = ({ manifest, isLoading }) =
         setExtendedInitialLoading(false);
       }, durationMs);
     }
+  }, [durationMs, extendedInitialLoading, isAppInternal, isEnabled, isLoading]);
 
+  useEffect(() => {
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, [durationMs, extendedInitialLoading, isAppInternal, isEnabled, isLoading]);
+  }, []);
 
   if (!showProviderLoadingTransition) {
     return null;
