@@ -17,6 +17,9 @@ export function genericEstimateMaxSpendable(
       ...transaction,
       amount: mainAccount.spendableBalance,
     };
+    if (account.type === "TokenAccount") {
+      return account.spendableBalance;
+    }
     const fees = await getAlpacaApi(network, kind).estimateFees(
       transactionToIntent(mainAccount, draftTransaction),
     );
