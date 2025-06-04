@@ -2396,7 +2396,8 @@
         "suggested" : "Suggéré",
         "unitVByte" : "{{unit}}/vByte",
         "nft" : "NFT",
-        "nftQuantity" : "Nombre"
+        "nftQuantity" : "Nombre",
+        "splExtensionsWarning" : "Vous interagissez avec un token faisant partie du programme Token-2022, aussi appelé extension de tokens. Ce token présente des risques spécifiques. <0>Cliquez ici</0> pour en savoir plus."
       },
       "verification" : {
         "streaming" : {
@@ -2896,7 +2897,7 @@
     "lockedTooltip" : "Vous devez immobiliser des actifs puis voter pour des groupes de validateurs pour gagner des récompenses.",
     "nonvotingLockedBalance" : "Solde immobilisé non utilisé pour voter",
     "nonvotingLockedTooltip" : "Solde des actifs immobilisés pouvant être utilisés pour voter",
-    "withdrawableBalance" : "Solde pouvant être retiré",
+    "withdrawableBalance" : "Solde disponible au retrait",
     "withdrawableTooltip" : "CELO dégelés et transférables sur votre solde disponible",
     "delegation" : {
       "activeTooltip" : "Un vote actif génère des récompenses",
@@ -3771,7 +3772,7 @@
       "frozenStateWarning" : "Les actifs du compte sont gelés",
       "transferWarning" : "Pour vérifier l’adresse du bénéficiaire des tokens Solana avec un Ledger Nano S™, <0>suivez ces instructions</0>.",
       "transferFees" : {
-        "feesPercentHint" : "Le token a des frais de transfert de {{feePercent}}% ({{feeBps}} bps). Max : {{maxFee}}",
+        "feesHint" : "Frais de transfert du token : {{transferFee}}",
         "notice" : "Frais de transfert : {{fee}}%",
         "tooltipHint" : "Pourcentage du transfert prélevé pour le créateur du token.",
         "transferFeesLabel" : "Frais de transfert"
@@ -3943,7 +3944,7 @@
       "pendingBalance" : "Solde en attente",
       "pendingBalanceTooltip" : "Montant des actifs déstakés qui seront bientôt disponibles.",
       "storageUsageBalance" : "Solde minimum",
-      "storageUsageBalanceTooltip" : "Montant réservé pour le stockage et les transactions. Il constitue le solde minimum que votre compte doit contenir pour rester actif.",
+      "storageUsageBalanceTooltip" : "Montant réservé pour le stockage et les transactions. Il s’agit du solde minimum requis pour que votre compte reste actif.",
       "subHeader" : {
         "cardTitle" : "Propulsé par Figment",
         "moreInfo" : "Plus d’informations",
@@ -4013,7 +4014,7 @@
       }
     },
     "unstake" : {
-      "disabledTooltip" : "Il n’y a pas assez d’actifs stakés à déstaker.",
+      "disabledTooltip" : "Solde d’actifs stakés insuffisant pour déstaker.",
       "flow" : {
         "title" : "Déstaker",
         "steps" : {
@@ -4042,7 +4043,7 @@
       }
     },
     "withdraw" : {
-      "disabledTooltip" : "Il n’y a pas assez d’actifs à retirer.",
+      "disabledTooltip" : "Solde d’actifs insuffisant pour effectuer un retrait.",
       "flow" : {
         "title" : "Retirer",
         "steps" : {
@@ -5873,6 +5874,10 @@
       "title" : "Solde insuffisant",
       "description" : "Vérifiez que ce compte a un solde suffisant."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "Solde insuffisant pour couvrir les frais",
+      "description" : "Vérifiez que ce compte a un solde suffisant."
+    },
     "NotEnoughBalanceSwap" : {
       "title" : "Solde insuffisant, frais de réseau inclus. Modifiez le montant ou vérifiez votre solde.",
       "description" : "Vérifiez que ce compte a un solde suffisant."
@@ -6366,7 +6371,7 @@
     },
     "SolanaTokenNonTransferable" : {
       "title" : "Le token n’est pas transférable",
-      "description" : "Ces tokens sont des tokens soulbound et ne peuvent pas être transférés."
+      "description" : "Ces tokens sont des soulbound tokens et ne peuvent pas être transférés."
     },
     "NotEnoughNftOwned" : {
       "title" : "Nombre de tokens disponibles insuffisant"
@@ -7055,7 +7060,20 @@
     "assetFlow" : {
       "selectTemplate" : "Sélectionner {{dynamic}}",
       "asset" : "un actif",
-      "network" : "un réseau"
+      "network" : "un réseau",
+      "account" : "un compte"
     }
+  },
+  "nftEntryPoint" : {
+    "title" : "NFT (tokens non fongibles)",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
+    }
+  },
+  "geoBlocking" : {
+    "title" : "Région indisponible",
+    "description" : "L’application n’est pas disponible dans ce pays/région.",
+    "learnMore" : "En savoir plus"
   }
 }
