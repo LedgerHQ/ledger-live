@@ -61,6 +61,11 @@ const TokenContextualModal = ({
     onCloseModal();
     navigation.navigate(NavigatorName.WalletTab);
   }, [onCloseModal, blacklistToken, account, navigation]);
+
+  // UPGRADE-RN77:
+  // It should already be animated by the `react-native-modal` but currently `react-native-modal`
+  // is not maintained and its animation dependency too. The internal animation is flaky and not
+  // working properly on Android. So, we are using reanimated to enforce redraw after animation.
   const sharedHeight = useSharedValue(0);
   const onLayout = useCallback(
     ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
@@ -70,10 +75,6 @@ const TokenContextualModal = ({
   );
   const animatedStyle = useAnimatedStyle(
     () => ({
-      /**
-       * If it's null the component still renders normally at its full height
-       * without its height being derived from an animated value.
-       */
       height: sharedHeight.value ?? 0,
     }),
     [],

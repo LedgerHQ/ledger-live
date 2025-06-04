@@ -84,9 +84,9 @@ function Content({ accountId, has32Eth, providers, walletApiAccountId }: Props) 
   );
 
   // UPGRADE-RN77:
-  // Since react-native-modal is not maintained since 2 years and its animation
-  // dependency too. The internal animation is flaky and not working properly on
-  // Android. So, we are using reanimated to enforce redraw after animation.
+  // It should already be animated by the `react-native-modal` but currently `react-native-modal`
+  // is not maintained and its animation dependency too. The internal animation is flaky and not
+  // working properly on Android. So, we are using reanimated to enforce redraw after animation.
   const sharedHeight = useSharedValue<DimensionValue>(0);
   const animatedStyle = useAnimatedStyle(() => ({
     height: sharedHeight.value,

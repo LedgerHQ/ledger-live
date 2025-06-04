@@ -80,8 +80,7 @@ const Modals = () => {
       <FeatureToggle featureId="brazePushNotifications">
         <PushNotificationsModal />
       </FeatureToggle>
-      {activeRatings === "no-nps" && <RatingsModal />}
-      {activeRatings === "nps" && <NpsRatingsModal />}
+      <NpsRatingsModal />
       <DebugAppLevelDrawer />
     </>
   );
