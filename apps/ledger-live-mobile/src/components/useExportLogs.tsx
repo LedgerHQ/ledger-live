@@ -4,7 +4,38 @@ import RNFetchBlob from "rn-fetch-blob";
 import logger from "../logger";
 import logReport from "../log-report";
 import getFullAppVersion from "~/logic/version";
-import { getJSONStringifyReplacer } from "@ledgerhq/logs";
+
+const getJSONStringifyReplacer: () => (key: string, value: unknown) => unknown = () => {
+  const ancestors: unknown[] = [];
+  return function (_: string, value: unknown): unknown {
+    // format Uint8Array values to more readable format
+    if (value instanceof Uint8Array) {
+      const bytesHex = Array.from(value).map(x => x.toString(16).padStart(2, "0"));
+      return {
+        hex: "0x" + bytesHex.join(""),
+        readableHex: bytesHex.join(" "),
+        value: value.toString(),
+      };
+    }
+
+    // format circular references to "[Circular]"
+    // Taken from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cyclic_object_value#circular_references
+    if (typeof value !== "object" || value === null) {
+      return value;
+    }
+    // `this` is the object that value is contained in,
+    // i.e., its direct parent.
+    // @ts-expect-error explained up
+    while (ancestors.length > 0 && ancestors.at(-1) !== (this as unknown)) {
+      ancestors.pop();
+    }
+    if (ancestors.includes(value)) {
+      return "[Circular]";
+    }
+    ancestors.push(value);
+    return value;
+  };
+};
 
 export default function useExportLogs() {
   return useCallback(() => {
