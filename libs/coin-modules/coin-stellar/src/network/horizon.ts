@@ -4,7 +4,14 @@ import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
 import type { CacheRes } from "@ledgerhq/live-network/cache";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
-import type { Account } from "@ledgerhq/types-live";
+// import type { Account } from "@ledgerhq/types-live";
+import {
+  Transaction,
+  TransactionValidation,
+  Account,
+  // TokenAccount,
+} from "@ledgerhq/coin-framework/api/types";
+
 import {
   // @ts-expect-error stellar-sdk ts definition missing?
   AccountRecord,

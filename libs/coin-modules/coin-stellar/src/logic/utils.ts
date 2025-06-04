@@ -1,5 +1,12 @@
 import { BigNumber } from "bignumber.js";
-import type { Account, TokenAccount } from "@ledgerhq/types-live";
+// import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import {
+  // Transaction,
+  TransactionValidation,
+  Account,
+  TokenAccount,
+} from "@ledgerhq/coin-framework/api/types";
+
 import { StrKey } from "@stellar/stellar-sdk";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
 import { fetchSigners } from "../network";
