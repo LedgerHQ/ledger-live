@@ -110,42 +110,38 @@ export const CustomLoaderBuySell: CustomLoaderType = ({ manifest, isLoading }) =
         setExtendedInitialLoading(false);
       }, durationMs);
     }
-  }, [durationMs, extendedInitialLoading, isAppInternal, isEnabled, isLoading]);
 
-  useEffect(() => {
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, []);
+  }, [durationMs, extendedInitialLoading, isAppInternal, isEnabled, isLoading]);
 
   if (!showProviderLoadingTransition) {
     return null;
   }
 
-  if (showProviderLoadingTransition) {
-    return (
-      <Loader testID="custom-buy-sell-loader" style={{ elevation: 2 }}>
-        <VisualWrapper>
-          <IconContainer bgColor="black">
-            <Icon name="LedgerLogo" size={36} color="constant.white" />
-          </IconContainer>
-          <Ellipsis>
-            <AnimatedCircle delay={0} />
-            <AnimatedCircle delay={100} />
-            <AnimatedCircle delay={200} />
-          </Ellipsis>
-          <IconContainer>
-            <SvgUri
-              width={60}
-              height={60}
-              uri={getProviderIconUrl({ name: manifest.id, boxed: true })}
-            />
-          </IconContainer>
-        </VisualWrapper>
-        <Text variant="body" color="opacityDefault.c60" textAlign="center">
-          {t("transfer.exchange.connectingTo", { provider: manifest.name })}
-        </Text>
-      </Loader>
-    );
-  }
+  return (
+    <Loader testID="custom-buy-sell-loader" style={{ elevation: 2 }}>
+      <VisualWrapper>
+        <IconContainer bgColor="black">
+          <Icon name="LedgerLogo" size={36} color="constant.white" />
+        </IconContainer>
+        <Ellipsis>
+          <AnimatedCircle delay={0} />
+          <AnimatedCircle delay={100} />
+          <AnimatedCircle delay={200} />
+        </Ellipsis>
+        <IconContainer>
+          <SvgUri
+            width={60}
+            height={60}
+            uri={getProviderIconUrl({ name: manifest.id, boxed: true })}
+          />
+        </IconContainer>
+      </VisualWrapper>
+      <Text variant="body" color="opacityDefault.c60" textAlign="center">
+        {t("transfer.exchange.connectingTo", { provider: manifest.name })}
+      </Text>
+    </Loader>
+  );
 };

@@ -104,34 +104,30 @@ export const CustomLoaderBuySell: CustomLoaderType = ({ manifest, isLoading }) =
         setExtendedInitialLoading(false);
       }, durationMs);
     }
-  }, [durationMs, extendedInitialLoading, isAppInternal, isEnabled, isLoading]);
 
-  useEffect(() => {
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, []);
+  }, [durationMs, extendedInitialLoading, isAppInternal, isEnabled, isLoading]);
 
   if (!showProviderLoadingTransition) {
     return null;
   }
 
-  if (showProviderLoadingTransition) {
-    return (
-      <Loader data-testid="custom-buy-sell-loader">
-        <VisualWrapper>
-          <IconContainer bgColor="black">
-            <Icon name="LedgerLogo" size={36} color="palette.constant.white" />
-          </IconContainer>
-          <EllipsisLoader />
-          <IconContainer>
-            <ProviderIcon size="XXL" boxed name={manifest.id} />
-          </IconContainer>
-        </VisualWrapper>
-        <Text variant="body" color="palette.opacityDefault.c60" textAlign="center">
-          {t("exchange.connectingTo", { provider: manifest.name })}
-        </Text>
-      </Loader>
-    );
-  }
+  return (
+    <Loader data-testid="custom-buy-sell-loader">
+      <VisualWrapper>
+        <IconContainer bgColor="black">
+          <Icon name="LedgerLogo" size={36} color="palette.constant.white" />
+        </IconContainer>
+        <EllipsisLoader />
+        <IconContainer>
+          <ProviderIcon size="XXL" boxed name={manifest.id} />
+        </IconContainer>
+      </VisualWrapper>
+      <Text variant="body" color="palette.opacityDefault.c60" textAlign="center">
+        {t("exchange.connectingTo", { provider: manifest.name })}
+      </Text>
+    </Loader>
+  );
 };
