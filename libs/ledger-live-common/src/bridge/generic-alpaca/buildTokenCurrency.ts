@@ -3,7 +3,7 @@ import { BaseTokenLikeAsset } from "./buildSubAccounts";
 
 /**
  * Constructs a TokenCurrency object from a token-like asset.
- * This function assumes the asset was previously normalized into the BaseTokenLikeAsset shape (or an extended one).
+ * This function asumes the asset was previously normalized into the BaseTokenLikeAsset shape (or an extended one).
  */
 export function buildTokenCurrency<T extends BaseTokenLikeAsset>({
   asset,

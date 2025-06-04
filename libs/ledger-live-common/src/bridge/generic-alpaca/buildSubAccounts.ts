@@ -49,9 +49,6 @@ const emptyBalanceHistoryCache: BalanceHistoryCache = {
 
 /**
  * Generic builder for Ledger Live TokenAccounts from token-like metadata.
- *
- * This is blockchain-agnostic. For per-chain logic, transform your token data
- * into the BaseTokenLikeAsset format (or its extensions), and call this.
  */
 export function buildSubAccounts<T extends BaseTokenLikeAsset>({
   currency,
