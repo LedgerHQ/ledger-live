@@ -1,9 +1,6 @@
 name: "[All Platforms] - Scan Sonar - Called"
 
 on:
-  push:
-    branches:
-      - test/sonarqube-pr-analysis-improvement
   workflow_call:
     inputs:
       should_download_desktop_coverage:
