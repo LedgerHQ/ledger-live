@@ -7,7 +7,7 @@ import { Api } from "@ledgerhq/coin-framework/api/types";
 import { XrpCoinConfig } from "@ledgerhq/coin-xrp/config";
 import { StellarCoinConfig } from "@ledgerhq/coin-stellar/config";
 
-export function getAlpacaApi(network: string, kind: "local" | "remote"): Api<any, any> {
+export function getAlpacaApi(network, kind): Api<any, any> {
   if (kind === "local") {
     switch (network) {
       case "ripple":
