@@ -1,13 +1,14 @@
+import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AnimatePresence } from "framer-motion";
-import React from "react";
+import React, { useMemo, useState } from "react";
 import AnimatedScreenWrapper from "./components/AnimatedScreenWrapper";
-import { ModularDrawerAddAccountStep } from "./types";
-
 import { AddAccountHeader } from "./components/Header/AddAccountHeader";
 import ConnectYourDevice from "./screens/ConnectYourDevice";
 import ScanAccounts from "./screens/ScanAccounts";
+import { ModularDrawerAddAccountStep } from "./types";
+import { Box, Flex } from "@ledgerhq/react-ui/index";
 
 const ANALYTICS_PROPERTY_FLOW = "Modular Add Account Flow";
 
@@ -68,43 +69,34 @@ const ModularDrawerAddAccountFlowManager = ({
   //   [currenciesByProvider],
   // );
 
-  // const handleBack = useMemo(() => {
-  //   const canGoBackToAsset = !hasOneCurrency && assetsToDisplay.length > 1;
-  //   const canGoBackToNetwork = !hasOneNetwork && networksToDisplay && networksToDisplay.length > 1;
+  const [currentStep, setCurrentStep] =
+    useState<ModularDrawerAddAccountStep>("CONNECT_YOUR_DEVICE");
 
-  //   switch (currentStep) {
-  //     case "NETWORK_SELECTION": {
-  //       return canGoBackToAsset ? goBackToAssetSelection : undefined;
-  //     }
-  //     case "ACCOUNT_SELECTION": {
-  //       if (
-  //         (hasOneNetwork || !networksToDisplay || networksToDisplay.length <= 1) &&
-  //         !hasOneCurrency
-  //       ) {
-  //         return goBackToAssetSelection;
-  //       } else if (canGoBackToNetwork) {
-  //         return goBackToNetworkSelection;
-  //       }
-  //       return undefined;
-  //     }
-  //     default: {
-  //       return undefined;
-  //     }
-  //   }
-  // }, [
-  //   assetsToDisplay.length,
-  //   currentStep,
-  //   goBackToAssetSelection,
-  //   goBackToNetworkSelection,
-  //   hasOneCurrency,
-  //   hasOneNetwork,
-  //   networksToDisplay,
-  // ]);
+  // DEBUG
+  // const [currentStep, setCurrentStep] = useState<ModularDrawerAddAccountStep>("SCAN_ACCOUNTS");
 
-  // TODO
-  const handleBack = () => {};
+  const handleBack = useMemo(() => {
+    switch (currentStep) {
+      case "CONNECT_YOUR_DEVICE": {
+        return undefined;
+      }
+      case "SCAN_ACCOUNTS": {
+        return () => {
+          setCurrentStep("CONNECT_YOUR_DEVICE");
+        };
+      }
+      case "ACCOUNTS_ADDED": {
+        return () => {
+          setCurrentStep("SCAN_ACCOUNTS");
+        };
+      }
+      default: {
+        return undefined;
+      }
+    }
+  }, [currentStep]);
 
-  const currentStep = "SCAN_ACCOUNTS";
+  const [connectAppResult, setConnectAppResult] = useState<AppResult | null>(null);
 
   const renderStepContent = (step: ModularDrawerAddAccountStep) => {
     switch (step) {
@@ -112,14 +104,31 @@ const ModularDrawerAddAccountFlowManager = ({
         return (
           <ConnectYourDevice
             currency={currency}
-            onConnect={() => {}}
+            onConnect={result => {
+              setConnectAppResult(result);
+              setCurrentStep("SCAN_ACCOUNTS");
+            }}
             // TODO review
             analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW}
           />
         );
       case "SCAN_ACCOUNTS":
+        if (!connectAppResult) {
+          throw new Error("Missing connectAppResult");
+        }
+        if (currency.type !== "CryptoCurrency") {
+          throw new Error("ScanAccounts only supports CryptoCurrency");
+        }
         // TODO should pass this down? analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW}
-        return <ScanAccounts currency={currency} />;
+        return (
+          <ScanAccounts
+            currency={currency}
+            deviceId={connectAppResult.device.deviceId}
+            onComplete={() => {
+              throw new Error("Missing implementation of `onComplete`");
+            }}
+          />
+        );
       case "ACCOUNTS_ADDED":
         // return <AccountsAdded currency={currency} analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW} />;
         return null;
@@ -128,21 +137,24 @@ const ModularDrawerAddAccountFlowManager = ({
     }
   };
 
-  const navigationDirection = "FORWARD";
+  // const navigationDirection = "FORWARD";
 
   return (
-    <>
+    <Flex height="100%" data-test-id="wrapper">
       <AddAccountHeader step={currentStep} onBackClick={handleBack} />
-      <AnimatePresence mode="sync">
+      <AnimatePresence mode="sync" data-test-id="animated">
+        {/*
+        TODO review
         <AnimatedScreenWrapper
           key={currentStep}
           screenKey={currentStep}
           direction={navigationDirection}
-        >
+        > */}
+        <Flex flex={1} data-test-id="content" flexDirection="column">
           {renderStepContent(currentStep)}
-        </AnimatedScreenWrapper>
+        </Flex>
       </AnimatePresence>
-    </>
+    </Flex>
   );
 };
 
