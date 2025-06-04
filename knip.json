@@ -51,7 +51,13 @@
         ".storybook/stub.ts"
       ],
       "ignoreBinaries": ["eslint", "knip", "prettier", "zx", "lint"],
-      "ignoreDependencies": ["prop-types", "allure-commandline", "msw", "buffer"]
+      "ignoreDependencies": [
+        "@electron/fuses",
+        "prop-types",
+        "allure-commandline",
+        "msw",
+        "buffer"
+      ]
     },
     "./apps/ledger-live-mobile": {
       "entry": ["index.js", "src/families/**"],
