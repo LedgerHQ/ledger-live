@@ -62,9 +62,9 @@ const fromBitsToOnboardingStep = new Map<number, OnboardingStep>([
   [0xe, OnboardingStep.SetupChoiceRestore],
   [0xf, OnboardingStep.OnboardingEarlyCheck],
   [0x10, OnboardingStep.RestoreRecoveryKey],
-  [RECOVERY_KEY_STEP_BIT_MASK + 0x0, OnboardingStep.BackupRecoveryKey], // default state, after boot, if no backup was pending
+  [RECOVERY_KEY_STEP_BIT_MASK + 0x0, OnboardingStep.Ready], // default state, after boot, if no backup was pending, this is also the state right after the device is seeded (if it was seeded with Recovery Key)
   [RECOVERY_KEY_STEP_BIT_MASK + 0x1, OnboardingStep.Ready], // backup fully refused
-  [RECOVERY_KEY_STEP_BIT_MASK + 0x2, OnboardingStep.BackupRecoveryKey], // backup not started or fully refused // TODO: probably change to BackupRecoveryKey
+  [RECOVERY_KEY_STEP_BIT_MASK + 0x2, OnboardingStep.BackupRecoveryKey], // backup not started or fully refused, this is the state right after the device is seeded (unless it was seeded with Recovery Key)
   [RECOVERY_KEY_STEP_BIT_MASK + 0x3, OnboardingStep.BackupRecoveryKey], // backup process started but not finished
   [RECOVERY_KEY_STEP_BIT_MASK + 0x4, OnboardingStep.BackupRecoveryKey], // backup done on RK and naming not finished
   [RECOVERY_KEY_STEP_BIT_MASK + 0x5, OnboardingStep.Ready], // backup done on RK and backup-process exited
