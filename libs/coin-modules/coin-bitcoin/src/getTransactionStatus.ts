@@ -17,6 +17,8 @@ import cryptoFactory from "./wallet-btc/crypto/factory";
 import { computeDustAmount } from "./wallet-btc/utils";
 import { TaprootNotActivated } from "./errors";
 import { Currency } from "./wallet-btc";
+import { isAddressSanctioned } from "@ledgerhq/live-common/sanction/index";
+import { UserAddressSanctionedError } from "@ledgerhq/live-common/lib/sanction/errors";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,
@@ -91,6 +93,16 @@ export const getTransactionStatus: AccountBridge<
 
   if (txInputs) {
     log("bitcoin", `${txInputs.length} inputs, sum: ${sumOfInputs.toString()}`);
+    const filtered = txInputs
+      .filter(
+        async input =>
+          input.address && (await isAddressSanctioned(account.currency, input.address)),
+      )
+      .map(input => input.address!);
+
+    if (filtered.length > 0) {
+      errors.amount = new UserAddressSanctionedError(filtered);
+    }
   }
 
   if (txOutputs) {

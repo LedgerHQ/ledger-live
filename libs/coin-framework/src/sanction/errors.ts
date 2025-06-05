@@ -14,8 +14,8 @@ export class UserAddressSanctionedError extends Error {
 }
 
 export class UserAddressSanctionedOnReceiveError extends Error {
-  private sanctionedAddress?: string;
-  constructor(sanctionedAddress?: string) {
+  private sanctionedAddress: string | undefined;
+  constructor(sanctionedAddress?: string | undefined) {
     super();
     this.message = this.constructor.name;
     this.name = this.constructor.name;
