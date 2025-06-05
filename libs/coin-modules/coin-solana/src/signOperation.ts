@@ -64,6 +64,7 @@ function getResolution(
         return {
           deviceModelId,
           certificateSignatureKind,
+          tokenInternalId: command.tokenId,
           createATA: {
             address: command.recipientDescriptor.walletAddress,
             mintAddress: command.mintAddress,
@@ -73,6 +74,7 @@ function getResolution(
       return {
         deviceModelId,
         certificateSignatureKind,
+        tokenInternalId: command.tokenId,
         tokenAddress: command.recipientDescriptor.tokenAccAddress,
       };
     }

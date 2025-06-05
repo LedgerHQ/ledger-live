@@ -11,6 +11,7 @@ export type Resolution = {
   deviceModelId?: DeviceModelId | undefined;
   certificateSignatureKind?: "prod" | "test" | undefined;
   tokenAddress?: string;
+  tokenInternalId?: string;
   createATA?: {
     address: string;
     mintAddress: string;
