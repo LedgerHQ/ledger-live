@@ -1,13 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import styled, { keyframes } from "styled-components";
 
 import { Icon, Text } from "@ledgerhq/react-ui/index";
-import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
 import ProviderIcon from "~/renderer/components/ProviderIcon";
 import { CustomLoaderType } from "~/renderer/components/WebPTXPlayer";
+import { useShowProviderLoadingTransition } from "@ledgerhq/live-common/hooks/useShowProviderLoadingTransition";
 
 export const Loader = styled.div`
   display: flex;
@@ -83,34 +81,7 @@ const EllipsisLoader = () => (
 /** Custom loader for transition between Buy/Sell and providers */
 export const CustomLoaderBuySell: CustomLoaderType = ({ manifest, isLoading }) => {
   const { t } = useTranslation();
-  const buySellLoaderFF = useFeature("buySellLoader");
-  const durationMs = buySellLoaderFF?.params?.durationMs ?? 0;
-  const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
-  const isAppInternal = internalAppIds.includes(manifest.id);
-  const isEnabled = buySellLoaderFF?.enabled && !isAppInternal;
-
-  const [extendedInitialLoading, setExtendedInitialLoading] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  const showProviderLoadingTransition = isEnabled && (isLoading || extendedInitialLoading);
-
-  useEffect(() => {
-    if (isEnabled && isLoading && !extendedInitialLoading) {
-      setExtendedInitialLoading(true);
-
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-
-      timeoutRef.current = setTimeout(() => {
-        setExtendedInitialLoading(false);
-      }, durationMs);
-    }
-  }, [durationMs, extendedInitialLoading, isAppInternal, isEnabled, isLoading]);
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, []);
+  const showProviderLoadingTransition = useShowProviderLoadingTransition({ manifest, isLoading });
 
   if (!showProviderLoadingTransition) {
     return null;
