@@ -82,6 +82,9 @@ export const buildSignOperation =
             throw new UserRefusedOnDevice();
         }
 
+        if (!resSignature) {
+          throw new Error("Wrong signature");
+        }
         const signature = Buffer.from(Secp256k1Signature.fromDer(resSignature).toFixedLength());
 
         const txBytes = buildTransaction({
