@@ -9,7 +9,6 @@ import {
   RecipientRequired,
   InvalidAddress,
 } from "@ledgerhq/errors";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import {
   Transaction,

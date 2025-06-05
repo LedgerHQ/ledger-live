@@ -6,8 +6,6 @@ import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
 // import type { Account } from "@ledgerhq/types-live";
 import {
-  Transaction,
-  TransactionValidation,
   Account,
   // TokenAccount,
 } from "@ledgerhq/coin-framework/api/types";
@@ -368,7 +366,7 @@ export async function fetchOperations({
 
 export async function fetchAccountNetworkInfo(account: Account): Promise<NetworkInfo> {
   try {
-    const extendedAccount = await getServer().accounts().accountId(account.freshAddress).call();
+    const extendedAccount = await getServer().accounts().accountId(account.address).call();
     const baseReserve = getReservedBalance(extendedAccount);
     const { recommendedFee, networkCongestionLevel, baseFee } = await fetchBaseFee();
 
@@ -390,13 +388,13 @@ export async function fetchAccountNetworkInfo(account: Account): Promise<Network
 }
 
 export async function fetchSequence(account: Account): Promise<BigNumber> {
-  const extendedAccount = await loadAccount(account.freshAddress);
+  const extendedAccount = await loadAccount(account.address);
   return extendedAccount ? new BigNumber(extendedAccount.sequence) : new BigNumber(0);
 }
 
 export async function fetchSigners(account: Account): Promise<Signer[]> {
   try {
-    const extendedAccount = await getServer().accounts().accountId(account.freshAddress).call();
+    const extendedAccount = await getServer().accounts().accountId(account.address).call();
     return extendedAccount.signers;
   } catch (error) {
     return [];
