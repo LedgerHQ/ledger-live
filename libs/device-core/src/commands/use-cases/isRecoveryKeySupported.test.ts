@@ -40,9 +40,9 @@ test("isHardwareVersionSupported", () => {
   expect(isRecoveryKeySupported("1.6.0", europa)).toBe(true);
   expect(isRecoveryKeySupported("1.6.0-whatever0", europa)).toBe(true);
 
-  expect(isRecoveryKeySupported("1.4.0", europa)).toBe(true);
-  expect(isRecoveryKeySupported("1.4.0-whatever0", europa)).toBe(true);
+  expect(isRecoveryKeySupported("1.3.0", europa)).toBe(true);
+  expect(isRecoveryKeySupported("1.3.0-whatever0", europa)).toBe(true);
 
-  expect(isRecoveryKeySupported("1.3.0", europa)).toBe(false);
-  expect(isRecoveryKeySupported("1.3.0-whatever0", europa)).toBe(false);
+  expect(isRecoveryKeySupported("1.2.0", europa)).toBe(false);
+  expect(isRecoveryKeySupported("1.2.0-whatever0", europa)).toBe(false);
 });
