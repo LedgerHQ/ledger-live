@@ -132,18 +132,10 @@ export function useSwapCustomHandlers(
                     });
                   }
                   if (result.operation) {
-                    navigation.pop();
-                    navigation.navigate(ScreenName.SwapPendingOperation, {
-                      swapOperation: {
-                        provider: exchangeParams.provider,
-                        swapId: exchangeParams.swapId!,
-                        status: "pending",
-                        receiverAccountId: exchangeParams.transaction.recipient,
-                        operationId: result.operation.hash,
-                        fromAmount: exchangeParams.transaction.amount,
-                        toAmount: BigNumber(exchangeParams.amountExpectedTo!),
-                      },
-                    });
+                    const operationHash = result.operation.hash;
+
+                    navigateToSwapPendingOperation(exchangeParams, operationHash);
+
                     onSuccess(result.operation.hash);
                   }
                   setDevice(undefined);
