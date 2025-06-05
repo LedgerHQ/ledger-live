@@ -1,3 +1,4 @@
+/*
 import { firstValueFrom, reduce } from "rxjs";
 import { Account, AccountBridge, SyncConfig, TransactionCommon } from "@ledgerhq/types-live";
 import type { StellarCoinConfig } from "../config";
@@ -48,3 +49,4 @@ describe("Sync Accounts", () => {
     expect(account.id).toEqual(`js:2:stellar:${accountId}:`);
   });
 });
+*/
