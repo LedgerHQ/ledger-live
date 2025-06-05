@@ -7430,7 +7430,12 @@
     "performance" : "Изменение цены",
     "low" : "Мин.",
     "high" : "Макс.",
-    "title" : "Динамика рынка"
+    "title" : "Динамика рынка",
+    "overlay" : {
+      "title" : "Переключение активов",
+      "action" : "Свайпайте влево или вправо",
+      "button" : "Понятно!"
+    }
   },
   "nftEntryPoint" : {
     "title" : "Ваши NFT",
@@ -7438,5 +7443,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Страна не обслуживается",
+    "description" : "Кошелёк Ledger недоступен в этой локации.",
+    "learnMore" : "Подробнее..."
   }
 }
