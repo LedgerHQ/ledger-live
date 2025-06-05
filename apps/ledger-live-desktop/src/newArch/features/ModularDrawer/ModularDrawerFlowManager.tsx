@@ -10,12 +10,11 @@ import { MODULAR_DRAWER_STEP, ModularDrawerStep } from "./types";
 import AssetSelection from "./screens/AssetSelection";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook";
 import { NetworkSelection } from "./screens/NetworkSelection";
-import { Header } from "./components/Header";
+import { Title } from "./components/Title";
 import { AccountSelection } from "./screens/AccountSelection";
 import {
   CurrenciesByProviderId,
   LoadingBasedGroupedCurrencies,
-  LoadingStatus,
   LoadingStatus,
 } from "@ledgerhq/live-common/deposit/type";
 import { useModularDrawerNavigation } from "./hooks/useModularDrawerNavigation";
@@ -23,8 +22,7 @@ import { useAssetSelection } from "./hooks/useAssetSelection";
 import { useModularDrawerFlowState } from "./hooks/useModularDrawerFlowState";
 import SkeletonList from "./components/SkeletonList";
 import { haveOneCommonProvider } from "./utils/haveOneCommonProvider";
-import SkeletonList from "./components/SkeletonList";
-import { haveOneCommonProvider } from "./utils/haveOneCommonProvider";
+import { BackButtonArrow } from "./components/BackButton";
 
 type Props = {
   currencies: CryptoOrTokenCurrency[];
@@ -50,12 +48,7 @@ const ModularDrawerFlowManager = ({
   const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(
     true,
   ) as LoadingBasedGroupedCurrencies;
-  const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(
-    true,
-  ) as LoadingBasedGroupedCurrencies;
   const { currenciesByProvider, sortedCryptoCurrencies } = result;
-
-  const isReadyToBeDisplayed = [LoadingStatus.Success].includes(providersLoadingStatus);
 
   const isReadyToBeDisplayed = [LoadingStatus.Success].includes(providersLoadingStatus);
 
@@ -71,10 +64,6 @@ const ModularDrawerFlowManager = ({
   const { currentStep, navigationDirection, goToStep } = useModularDrawerNavigation();
   const isSelectAccountFlow = !!onAccountSelected;
   const hasOneNetwork = networksToDisplay?.length === 1;
-  const hasOneCurrency = useMemo(() => {
-    if (!isReadyToBeDisplayed) return false;
-    return haveOneCommonProvider(currenciesIdsArray, currenciesByProvider);
-  }, [currenciesIdsArray, currenciesByProvider, isReadyToBeDisplayed]);
   const hasOneCurrency = useMemo(() => {
     if (!isReadyToBeDisplayed) return false;
     return haveOneCommonProvider(currenciesIdsArray, currenciesByProvider);
@@ -114,7 +103,6 @@ const ModularDrawerFlowManager = ({
   );
 
   const handleBack = useMemo(() => {
-    const canGoBackToAsset = !hasOneCurrency;
     const canGoBackToAsset = !hasOneCurrency;
     const canGoBackToNetwork = !hasOneNetwork && networksToDisplay && networksToDisplay.length > 1;
 
@@ -189,8 +177,6 @@ const ModularDrawerFlowManager = ({
               onAccountSelected={handleAccountSelected}
               flow={flow}
               source={source}
-              flow={flow}
-              source={source}
             />
           );
         }
@@ -202,14 +188,21 @@ const ModularDrawerFlowManager = ({
 
   return (
     <>
-      <Header step={currentStep} onBackClick={handleBack} />
-      <AnimatePresence mode="sync">
+      {handleBack && <BackButtonArrow onBackClick={handleBack} />}
+      <AnimatePresence initial={false} custom={navigationDirection} mode="sync">
         <AnimatedScreenWrapper
           key={currentStep}
           screenKey={currentStep}
           direction={navigationDirection}
         >
-          {isReadyToBeDisplayed ? renderStepContent(currentStep) : <SkeletonList />}
+          {isReadyToBeDisplayed ? (
+            <>
+              <Title step={currentStep} />
+              {renderStepContent(currentStep)}
+            </>
+          ) : (
+            <SkeletonList />
+          )}
         </AnimatedScreenWrapper>
       </AnimatePresence>
     </>
