@@ -16,6 +16,10 @@ interface VirtualItem {
  */
 type VirtualListProps<T> = {
   /**
+   * TODO Gap between items in the list.
+   */
+  gap?: number;
+  /**
    * Height of each item in the list.
    * This is used to calculate the total height of the list and the position of each item.
    */
@@ -74,16 +78,17 @@ function easeInOutCubic(t: number) {
 }
 
 export const VirtualList = <T,>({
-  itemHeight,
-  overscan = 5,
-  LoadingComponent,
-  isLoading,
+  gap,
   hasNextPage = false,
-  threshold = 5,
+  isLoading,
+  itemHeight,
   items,
+  LoadingComponent,
   onVisibleItemsScrollEnd,
+  overscan = 5,
   renderItem,
   scrollToTop = false,
+  threshold = 5,
 }: VirtualListProps<T>) => {
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -126,6 +131,7 @@ export const VirtualList = <T,>({
   );
 
   const rowVirtualizer = useVirtualizer({
+    gap,
     count: hasNextPage ? items.length + 1 : items.length,
     overscan,
     getScrollElement: () => parentRef.current,
@@ -166,6 +172,8 @@ export const VirtualList = <T,>({
         style={{
           height: `${rowVirtualizer.getTotalSize()}px`,
           width: "100%",
+          display: "flex",
+          flexDirection: "column",
           position: "relative",
         }}
       >
