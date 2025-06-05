@@ -7430,7 +7430,12 @@
     "performance" : "가격 추이",
     "low" : "낮음",
     "high" : "높음",
-    "title" : "시장 변동성"
+    "title" : "시장 변동성",
+    "overlay" : {
+      "title" : "자산 간 이동",
+      "action" : "왼쪽이나 오른쪽으로 스와이프하세요",
+      "button" : "알겠습니다!"
+    }
   },
   "nftEntryPoint" : {
     "title" : "고객의 NFT",
@@ -7438,5 +7443,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "이용 불가능한 지역",
+    "description" : "Ledger 지갑을 사용할 수 없는 지역입니다.",
+    "learnMore" : "자세히 알아보기"
   }
 }
