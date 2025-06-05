@@ -55,6 +55,13 @@ export const getAccountShape: GetAccountShape<Account> = async (infos, { blackli
 
   // Get the latest block synchronized to know where to start the new sync
   const latestSyncedHeight = shouldSyncFromScratch ? 0 : initialAccount.blockHeight;
+  console.log({
+    latestSyncedHeight,
+    blockHeight,
+    syncHash,
+    shouldSyncFromScratch,
+    initialAccountBlockHeight: initialAccount?.blockHeight,
+  });
 
   const { lastCoinOperations, lastTokenOperations, lastNftOperations, lastInternalOperations } =
     await (async (): ReturnType<ExplorerApi["getLastOperations"]> => {
@@ -87,6 +94,7 @@ export const getAccountShape: GetAccountShape<Account> = async (infos, { blackli
   const subAccounts = shouldSyncFromScratch
     ? newSubAccounts
     : mergeSubAccounts(initialAccount, newSubAccounts); // Merging potential new subAccouns while preserving the references
+  console.log({ newSubAccounts, lastTokenOperations, subAccounts });
   // Trying to confirm pending operations that we are sure of
   // because they were made in the live
   // Useful for integrations without explorers
@@ -190,6 +198,7 @@ export const getSubAccountShape = async (
   const { xpubOrAddress: address } = decodeAccountId(parentId);
   const tokenAccountId = encodeTokenAccountId(parentId, token);
   const balance = await nodeApi.getTokenBalance(currency, address, token.contractAddress);
+  console.log({ balance, tokenAccountId, parentId, token, operations });
 
   return {
     type: "TokenAccount",

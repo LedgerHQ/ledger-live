@@ -136,11 +136,13 @@ export const getLastTokenOperations = async (
     opsByHash[op.hash].push(op);
   }
 
-  return Object.values(opsByHash)
+  const res = Object.values(opsByHash)
     .map(events =>
       events.map((event, index) => etherscanERC20EventToOperations(accountId, event, index)),
     )
     .flat(2);
+  console.log({ lastTokenOps: ops, fromBlock, toBlock, opsByHash, res });
+  return res;
 };
 
 /**

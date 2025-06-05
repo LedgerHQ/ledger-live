@@ -171,6 +171,12 @@ export function findTokenByAddressInCurrency(
   address: string,
   currencyId: string,
 ): TokenCurrency | undefined {
+  console.log({
+    tokensByCurrencyAddress,
+    currencyId,
+    address,
+    keyToLookAt: `${currencyId + ":" + address.toLowerCase()}`,
+  });
   return tokensByCurrencyAddress[currencyId + ":" + address.toLowerCase()];
 }
 

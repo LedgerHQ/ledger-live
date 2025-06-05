@@ -180,6 +180,7 @@ export const getCALHash = (currency: CryptoCurrency): string => {
  */
 export const setCALHash = (currency: CryptoCurrency, hash: string): string => {
   CALHashByChainIdMap.set(currency, hash);
+  console.log(`setting cal hash for ${currency.id} to ${hash}`);
   return CALHashByChainIdMap.get(currency)!;
 };
 
