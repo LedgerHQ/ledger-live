@@ -28,9 +28,14 @@ const AddAccountButton = styled(Box)`
 const Placeholder = () => {
   const { t } = useTranslation();
   const { openAssetFlow } = useOpenAssetFlow(ModularDrawerLocation.ADD_ACCOUNT);
+
+  const handleAddAccountClick = () => {
+    openAssetFlow(true);
+  };
+
   return (
     <Box mb={5}>
-      <AddAccountButton onClick={openAssetFlow} pb={6}>
+      <AddAccountButton onClick={handleAddAccountClick} pb={6}>
         <IconPlus size={16} />
         <Box ml={20} ff="Inter|Regular" fontSize={4}>
           {t("addAccounts.cta.add")}

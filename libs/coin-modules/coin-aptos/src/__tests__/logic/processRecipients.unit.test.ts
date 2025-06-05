@@ -34,7 +34,9 @@ describe("processRecipients", () => {
     };
 
     processRecipients(payload, "0x13", op, "0x1");
-    expect(op.recipients).toContain("0x13");
+    expect(op.recipients).toContain(
+      "0x0000000000000000000000000000000000000000000000000000000000000013",
+    );
   });
 
   it("should add recipient for transfer-like functions from external account", () => {
@@ -45,7 +47,9 @@ describe("processRecipients", () => {
     };
 
     processRecipients(payload, "0x13", op, "0x1");
-    expect(op.recipients).toContain("0x12");
+    expect(op.recipients).toContain(
+      "0x0000000000000000000000000000000000000000000000000000000000000012",
+    );
   });
 
   it("should add recipients for batch transfer functions", () => {
@@ -60,7 +64,9 @@ describe("processRecipients", () => {
 
     op.senders.push("0x11");
     processRecipients(payload, "0x12", op, "0x1");
-    expect(op.recipients).toContain("0x12");
+    expect(op.recipients).toContain(
+      "0x0000000000000000000000000000000000000000000000000000000000000012",
+    );
   });
 
   it("should add function address as recipient for other smart contracts", () => {
@@ -82,6 +88,8 @@ describe("processRecipients", () => {
     };
 
     processRecipients(payload, "0x13", op, "0x1");
-    expect(op.recipients).toContain("0x13");
+    expect(op.recipients).toContain(
+      "0x0000000000000000000000000000000000000000000000000000000000000013",
+    );
   });
 });

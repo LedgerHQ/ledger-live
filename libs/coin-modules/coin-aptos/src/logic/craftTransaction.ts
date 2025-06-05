@@ -1,5 +1,5 @@
 import type { TransactionIntent } from "@ledgerhq/coin-framework/lib/api/types";
-import type { AptosAsset, AptosExtra, AptosSender } from "../types/assets";
+import type { AptosAsset } from "../types/assets";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { AptosAPI } from "../network";
 import buildTransaction, { isTokenType } from "./buildTransaction";
@@ -10,7 +10,7 @@ import type { AptosBalance } from "../types";
 
 export async function craftTransaction(
   aptosClient: AptosAPI,
-  transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender>,
+  transactionIntent: TransactionIntent<AptosAsset>,
 ): Promise<string> {
   const newTx = createTransaction();
   newTx.amount = BigNumber(transactionIntent.amount.toString());
@@ -19,8 +19,8 @@ export async function craftTransaction(
   newTx.useAllAmount = transactionIntent.amount === BigInt(0);
 
   const account = {
-    freshAddress: transactionIntent.sender.freshAddress,
-    xpub: transactionIntent.sender.xpub,
+    freshAddress: transactionIntent.sender,
+    xpub: transactionIntent.senderPublicKey,
     subAccounts: new Array<TokenAccount>(),
   } as Account;
 
@@ -29,7 +29,7 @@ export async function craftTransaction(
   let balance: AptosBalance | undefined;
 
   if (newTx.useAllAmount === true) {
-    const balances = await aptosClient.getBalances(transactionIntent.sender.freshAddress);
+    const balances = await aptosClient.getBalances(transactionIntent.sender);
     balance = balances?.find(
       b => b.contractAddress.toLowerCase() === contractAddress?.toLowerCase(),
     );
@@ -54,9 +54,7 @@ export async function craftTransaction(
   return aptosTx.bcsToHex().toString();
 }
 
-function getContractAddress(
-  txIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender>,
-): string {
+function getContractAddress(txIntent: TransactionIntent<AptosAsset>): string {
   if (txIntent.asset.type === "token" && isTokenType(txIntent.asset.standard)) {
     return txIntent.asset.contractAddress;
   }

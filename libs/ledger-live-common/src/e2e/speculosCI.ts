@@ -90,16 +90,16 @@ function waitForSpeculosReady(url: string, { interval = 2000, timeout = 120_000 
 function createStartPayload(deviceParams: DeviceParams, runId: string) {
   const { model, firmware, appName, appVersion, dependency, dependencies } = deviceParams;
 
-  let additional_args = "";
+  let additional_args = "-p";
 
   if (dependency) {
-    additional_args = `-l ${dependency}:/apps/${conventionalAppSubpath(model, firmware, dependency, appVersion)}`;
+    additional_args = `${additional_args} -l ${dependency}:/apps/${conventionalAppSubpath(model, firmware, dependency, appVersion)}`;
   } else if (dependencies) {
     additional_args = [
       ...new Set(
         dependencies.map(
           dep =>
-            `-l ${dep.name}:/apps/${conventionalAppSubpath(
+            `${additional_args} -l ${dep.name}:/apps/${conventionalAppSubpath(
               model,
               firmware,
               dep.name,

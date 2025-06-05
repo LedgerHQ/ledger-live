@@ -191,7 +191,7 @@ export const test = base.extend<TestFixtures>({
     const logFile = testInfo.outputPath("logs.log");
     page.on("console", msg => {
       const txt = msg.text();
-      if (msg.type() == "error") {
+      if (IS_DEBUG_MODE && msg.type() == "error") {
         console.error(txt);
       }
       if (IS_DEBUG_MODE) {

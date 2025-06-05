@@ -1,5 +1,17 @@
 # @ledgerhq/live-common
 
+## 34.35.1
+
+### Patch Changes
+
+- [#10363](https://github.com/LedgerHQ/ledger-live/pull/10363) [`f23034e`](https://github.com/LedgerHQ/ledger-live/commit/f23034e8375516dfce852835bc97cdb0595c6bb1) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - fix nfts Tx history
+
+## 34.35.1-hotfix.0
+
+### Patch Changes
+
+- [#10363](https://github.com/LedgerHQ/ledger-live/pull/10363) [`f23034e`](https://github.com/LedgerHQ/ledger-live/commit/f23034e8375516dfce852835bc97cdb0595c6bb1) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - fix nfts Tx history
+
 ## 34.35.0
 
 ### Minor Changes

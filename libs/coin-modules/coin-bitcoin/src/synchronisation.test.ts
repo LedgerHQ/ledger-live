@@ -351,4 +351,33 @@ describe("removeReplaced", () => {
     const result = removeReplaced([tx1, tx2, tx3, tx4]);
     expect(result).toEqual([tx2, tx3, tx4]); // ✅ tx1 is removed, but order remains
   });
+  it("should retain only the most confirmed+recent tx among several using same input", () => {
+    const tx1 = {
+      ...baseTx,
+      id: "tx1",
+      hash: "h1",
+      blockHeight: null,
+      date: new Date("2024-01-01"),
+      extra: { inputs: ["inp"] },
+    };
+    const tx2 = {
+      ...baseTx,
+      id: "tx2",
+      hash: "h2",
+      blockHeight: 100,
+      date: new Date("2024-01-02"),
+      extra: { inputs: ["inp"] },
+    };
+    const tx3 = {
+      ...baseTx,
+      id: "tx3",
+      hash: "h3",
+      blockHeight: 105,
+      date: new Date("2024-01-03"),
+      extra: { inputs: ["inp"] },
+    };
+
+    const result = removeReplaced([tx1, tx2, tx3]);
+    expect(result).toEqual([tx3]); // Only latest confirmed remains
+  });
 });
