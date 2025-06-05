@@ -4,7 +4,7 @@ import { step } from "../misc/reporters/step";
 import { ElectronApplication, expect } from "@playwright/test";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Swap";
+import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import fs from "fs/promises";

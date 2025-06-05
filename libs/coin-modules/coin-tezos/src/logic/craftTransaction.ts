@@ -1,4 +1,4 @@
-import { OpKind, type OperationContents } from "@taquito/rpc";
+import { type OperationContents, OpKind } from "@taquito/rpc";
 import { DEFAULT_FEE } from "@taquito/taquito";
 import coinConfig from "../config";
 import { UnsupportedTransactionMode } from "../types/errors";
@@ -115,5 +115,6 @@ export async function rawEncode(contents: OperationContents[]): Promise<string> 
     contents,
   });
 
-  return forgedBytes;
+  // 0x03 is a conventional prefix (aka a watermark) for tezos transactions
+  return Buffer.concat([Buffer.from("03", "hex"), Buffer.from(forgedBytes, "hex")]).toString("hex");
 }

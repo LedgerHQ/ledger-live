@@ -1,4 +1,4 @@
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Swap";
+import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { allure } from "jest-allure2-reporter/api";
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";

@@ -39,6 +39,12 @@ export class PortfolioPage extends AppPage {
     await expect(this.buySellEntryButton).toBeVisible();
   }
 
+  @step("Click on 'Buy/Sell' button")
+  async clickBuySellButton() {
+    await this.checkBuySellButtonVisibility();
+    await this.buySellEntryButton.click();
+  }
+
   @step("Check 'Swap' button visibility")
   async checkSwapButtonVisibility() {
     await expect(this.swapEntryButton).toBeVisible();

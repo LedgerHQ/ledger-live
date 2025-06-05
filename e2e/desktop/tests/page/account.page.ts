@@ -40,6 +40,7 @@ export class AccountPage extends AppPage {
   private accountChart = this.page.getByTestId("chart-container");
   private editName = this.page.locator("#input-edit-name");
   private applyButton = this.page.getByTestId("account-settings-apply-button");
+  private accountHeaderName = this.page.locator("#account-header-name");
 
   @step("Navigate to token")
   async navigateToToken(account: AccountType) {
@@ -206,5 +207,10 @@ export class AccountPage extends AppPage {
   @step("Check account chart is visible")
   async checkAccountChart() {
     await this.accountChart.waitFor({ state: "visible" });
+  }
+
+  @step("Verify account with header name $0 is visible")
+  async verifyAccountHeaderNameIsVisible(headerName: string) {
+    await expect(this.accountHeaderName).toHaveValue(headerName);
   }
 }
