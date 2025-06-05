@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/devices",
-  "version": "8.4.6-next.1",
+  "version": "8.4.6",
   "description": "Ledger devices",
   "keywords": [
     "Ledger"

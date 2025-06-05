@@ -1,5 +1,21 @@
 # @ledgerhq/live-dmk
 
+## 0.9.0
+
+### Minor Changes
+
+- [#10344](https://github.com/LedgerHQ/ledger-live/pull/10344) [`b2454cd`](https://github.com/LedgerHQ/ledger-live/commit/b2454cde386d45fd69304ba492bb7958bb0eacd4) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Patch logger pkg
+
+- [#10345](https://github.com/LedgerHQ/ledger-live/pull/10345) [`e602ad0`](https://github.com/LedgerHQ/ledger-live/commit/e602ad0026fd7849ea7ad2a6c320a524657125d4) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Implement ConnectApp device action
+
+- [#10345](https://github.com/LedgerHQ/ledger-live/pull/10345) [`81470e5`](https://github.com/LedgerHQ/ledger-live/commit/81470e507870fae1d93ac6d1c0434ad9795722dd) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Implement PrepareConnectManager device action
+
+### Patch Changes
+
+- Updated dependencies [[`ebbbd47`](https://github.com/LedgerHQ/ledger-live/commit/ebbbd47efe76d82047a956cb5849be5831f58772), [`f29e4ba`](https://github.com/LedgerHQ/ledger-live/commit/f29e4bae00a4bf470a0c1ca143e505b731543f95)]:
+  - @ledgerhq/logs@6.13.0
+  - @ledgerhq/hw-transport@6.31.6
+
 ## 0.9.0-next.2
 
 ### Patch Changes

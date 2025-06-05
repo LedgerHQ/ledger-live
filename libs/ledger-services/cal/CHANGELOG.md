@@ -1,5 +1,16 @@
 # @ledgerhq/ledger-cal-service
 
+## 0.5.0
+
+### Minor Changes
+
+- [#10314](https://github.com/LedgerHQ/ledger-live/pull/10314) [`e05503a`](https://github.com/LedgerHQ/ledger-live/commit/e05503a0d9d7b38c5bfc48b6d1b1536bb399117f) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: changelly_v2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.0.9
+
 ## 0.5.0-next.2
 
 ### Patch Changes
