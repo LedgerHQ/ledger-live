@@ -1,18 +1,22 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { renderHook } from "@testing-library/react";
 import { LiveAppManifest } from "../platform/types";
 import { INTERNAL_APP_IDS } from "../wallet-api/constants";
-import { useFeature } from "../featureFlags/index";
+import { useFeature } from "../featureFlags";
 import { useInternalAppIds } from "./useInternalAppIds";
 
 import { useShowProviderLoadingTransition } from "./useShowProviderLoadingTransition";
 
-jest.mock("@ledgerhq/live-common/featureFlags/index", () => ({
+jest.mock("../featureFlags", () => ({
   useFeature: jest.fn(),
 }));
-jest.mock("@ledgerhq/live-common/wallet-api/constants", () => ({
+jest.mock("../wallet-api/constants", () => ({
   INTERNAL_APP_IDS: ["internal-app-id-1", "internal-app-id-2"],
 }));
-jest.mock("@ledgerhq/live-common/hooks/useInternalAppIds", () => ({
+jest.mock("./useInternalAppIds", () => ({
   useInternalAppIds: jest.fn(),
 }));
 
