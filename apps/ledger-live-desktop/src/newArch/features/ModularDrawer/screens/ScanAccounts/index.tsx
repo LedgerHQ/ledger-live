@@ -1,34 +1,37 @@
+import * as Icons from "@ledgerhq/icons-ui/react";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
-import { Box, Button, Checkbox, CryptoIcon, Flex, InfiniteLoader, Text } from "@ledgerhq/react-ui";
+import { Box, Button, Flex, Text } from "@ledgerhq/react-ui";
+import {
+  AccountItem,
+  Account as AccountItemAccount,
+} from "@ledgerhq/react-ui/pre-ldls/components/AccountItem/AccountItem";
 import { VirtualList } from "@ledgerhq/react-ui/pre-ldls/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import invariant from "invariant";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { default as React, useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { BehaviorSubject } from "rxjs";
 import * as RX from "rxjs/operators";
+import { formatAddress } from "~/newArch/utils/formatAddress";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { Title } from "../../components/Header/Title";
 import { MODULAR_DRAWER_ADD_ACCOUNT_CATEGORY } from "../../types";
-import { formatAddress } from "~/newArch/utils/formatAddress";
 
 interface Props {
   currency: CryptoCurrency;
   deviceId: string;
-  onComplete: (selected: Account[]) => void;
+  onComplete: (_: Account[]) => void;
+  onLoadingChange: (_: boolean) => void;
 }
 
-interface FormattedAccount extends Pick<Account, "currency" | "id"> {
-  address: string;
-  balance: string;
-  name: string;
-}
-
-const ScanAccounts = ({ currency, onComplete, deviceId }: Props) => {
+const ScanAccounts = ({ currency, deviceId, onComplete, onLoadingChange }: Props) => {
   invariant(currency, "ScanAccounts: currency is required");
+
+  const { t } = useTranslation();
 
   const walletState = useSelector(walletSelector);
 
@@ -38,9 +41,12 @@ const ScanAccounts = ({ currency, onComplete, deviceId }: Props) => {
   const [isScanning, setIsScanning] = useState(true);
   const [isScanning$] = useState(() => new BehaviorSubject(isScanning));
   useEffect(() => {
-    const subscription = isScanning$.subscribe(setIsScanning);
+    const subscription = isScanning$.subscribe(x => {
+      setIsScanning(x);
+      onLoadingChange(x);
+    });
     return () => subscription.unsubscribe();
-  }, [isScanning$]);
+  }, [isScanning$, onLoadingChange]);
 
   useEffect(() => {
     const bridge = getCurrencyBridge(currency);
@@ -78,8 +84,53 @@ const ScanAccounts = ({ currency, onComplete, deviceId }: Props) => {
     };
   }, [currency, deviceId, isScanning$]);
 
+  const currencyName = currency.name;
+
+  const formattedAccounts = useMemo(
+    () =>
+      scannedAccounts.map(
+        (account): AccountItemAccount => ({
+          // TODO review freshAddress
+          address: formatAddress(account.freshAddress),
+          balance: account.balance.toString(),
+          cryptoId: account.currency.id,
+          fiatValue: account.balance.toString(),
+          id: account.id,
+          name: accountNameWithDefaultSelector(walletState, account),
+          ticker: account.currency.ticker,
+        }),
+      ),
+    [scannedAccounts, walletState],
+  );
+  // const formattedAccounts = useMemo(
+  //   () =>
+  //     [
+  //       {
+  //         address: formatAddress("utfdg9023lle21easd13x"),
+  //         balance: "23320.00",
+  //         fiatValue: "$23320.00",
+  //         ticker: "ETH",
+  //         protocol: "1111",
+  //         parentId: "ethereum",
+  //         id: "0",
+  //         name: "XLA",
+  //       },
+  //       {
+  //         address: formatAddress("asdasf12easdasds3k4"),
+  //         balance: "320.00",
+  //         fiatValue: "$19009.00",
+  //         parentId: "bitcoin",
+  //         cryptoId: "bitcoin",
+  //         ticker: "BTC",
+  //         id: "1",
+  //         name: "XLA",
+  //       },
+  //     ] satisfies AccountItemAccount[],
+  //   [],
+  // );
+
   // TODO review
-  const toggle = useCallback((id: string) => {
+  const handleToggle = useCallback((id: string) => {
     setCheckedIds(prev => {
       const next = new Set(prev);
       next.has(id) ? next.delete(id) : next.add(id);
@@ -87,73 +138,28 @@ const ScanAccounts = ({ currency, onComplete, deviceId }: Props) => {
     });
   }, []);
 
+  const handleSelectAll = useCallback(
+    () => setCheckedIds(new Set(formattedAccounts.map(a => a.id))),
+    [formattedAccounts],
+  );
+
+  const handleDeselectAll = useCallback(() => setCheckedIds(new Set()), []);
+
   const handleConfirm = useCallback(
     () => onComplete(scannedAccounts.filter(a => checkedIds.has(a.id))),
     [scannedAccounts, checkedIds, onComplete],
   );
 
-  const currencyName = currency.name;
-
-  const formattedAccounts = useMemo(
-    () =>
-      scannedAccounts.map(
-        (account): FormattedAccount => ({
-          id: account.id,
-          currency: account.currency,
-          // TODO review freshAddress
-          address: formatAddress(account.freshAddress),
-          balance: account.balance.toString(),
-          name: accountNameWithDefaultSelector(walletState, account),
-        }),
-      ),
-    [scannedAccounts, walletState],
-  );
-
-  const renderAccount = (x: FormattedAccount) => (
-    <Flex
-      key={x.id}
-      flex={1}
-      px={6}
-      py={3}
-      alignItems="center"
-      borderBottom="1px solid"
-      borderColor="neutral.c30"
-    >
-      <Box mr={4} flex={1}>
-        <Box>
-          <Text variant="paragraph" fontWeight="medium">
-            {x.name}
-          </Text>
-        </Box>
-        <Flex>
-          <Text
-            display="block"
-            variant="small"
-            color="neutral.c70"
-            // TODO cannot use text-overflow since it doesn't support middle ellipsis
-            textOverflow="ellipsis"
-            maxWidth="79px"
-            overflow="hidden"
-          >
-            {x.address}
-          </Text>
-          <CryptoIcon name={x.currency.ticker} circleIcon />
-        </Flex>
-      </Box>
-
-      <Flex mr={5}>
-        <Text variant="paragraph">
-          {x.balance} {x.currency.ticker}
-        </Text>
-      </Flex>
-
-      <Checkbox
-        // size="S"
-        name={x.id}
-        isChecked={checkedIds.has(x.id)}
-        onChange={() => toggle(x.id)}
-      />
-    </Flex>
+  const renderAccount = (x: AccountItemAccount) => (
+    <AccountItem
+      account={x}
+      // onClick={() => {}}
+      checkbox={{
+        name: "checked",
+        isChecked: checkedIds.has(x.id),
+        onChange: () => handleToggle(x.id),
+      }}
+    />
   );
 
   return (
@@ -163,39 +169,98 @@ const ScanAccounts = ({ currency, onComplete, deviceId }: Props) => {
         name="ScanAccounts"
         currencyName={currencyName}
       />
-      <Title translationKey="modularAssetDrawer.scanAccounts" />
 
-      <Text variant="h4Inter" fontWeight="semiBold" mb={4}>
-        {isScanning
-          ? "Scanning accounts…"
-          : // TODO should use i18n variables for plurals
-            scannedAccounts.length === 0
-            ? "No accounts were found"
-            : `We found ${scannedAccounts.length} account${scannedAccounts.length > 1 ? "s" : ""}`}
-      </Text>
-
-      {/* {isScanning && <Progress indeterminate mb={2} />} */}
-
-      <VirtualList
-        items={formattedAccounts}
-        itemHeight={72}
-        renderItem={renderAccount}
-        hasNextPage={false}
-        onVisibleItemsScrollEnd={() => {}}
+      <Title
+        translationKey={
+          isScanning
+            ? "modularAssetDrawer.scanAccounts.title"
+            : "modularAssetDrawer.addAccounts.title"
+        }
       />
 
-      {isScanning && formattedAccounts.length === 0 && (
-        <Flex alignItems="center" mt={6}>
-          <InfiniteLoader />
+      <Box flex={1}>
+        <Flex alignItems="center" justifyContent="space-between">
+          <Text variant="h5Inter" fontSize="small" fontWeight="regular">
+            {t(
+              isScanning
+                ? "modularAssetDrawer.scanAccounts.status.scanning"
+                : formattedAccounts.length === 0
+                  ? "modularAssetDrawer.scanAccounts.status.noAccounts"
+                  : "modularAssetDrawer.scanAccounts.status.foundAccounts",
+              { count: formattedAccounts.length },
+            )}
+          </Text>
+          {/* TODO unstyled button */}
+          {formattedAccounts.length > 0 ? (
+            formattedAccounts.length === checkedIds.size ? (
+              <Button onClick={handleDeselectAll}>
+                {t("modularAssetDrawer.addAccounts.controls.deselectAll")}
+              </Button>
+            ) : (
+              <Button onClick={handleSelectAll}>
+                {t("modularAssetDrawer.addAccounts.controls.selectAll")}
+              </Button>
+            )
+          ) : null}
         </Flex>
-      )}
 
-      <Flex mt={6} justifyContent="flex-end" columnGap={3}>
+        <VirtualList
+          gap={16}
+          items={formattedAccounts}
+          itemHeight={72}
+          renderItem={renderAccount}
+          // TODO review
+          hasNextPage={false}
+          onVisibleItemsScrollEnd={() => {}}
+        />
+      </Box>
+
+      <Box flex={1}>
+        <Flex alignItems="center" justifyContent="space-between">
+          <Text variant="h5Inter" fontSize="small" fontWeight="regular">
+            {t("modularAssetDrawer.addAccounts.newAccount")}
+          </Text>
+        </Flex>
+
+        <VirtualList
+          gap={16}
+          items={formattedAccounts}
+          itemHeight={72}
+          renderItem={renderAccount}
+          // TODO review
+          hasNextPage={false}
+          onVisibleItemsScrollEnd={() => {}}
+        />
+      </Box>
+
+      <Flex justifyContent="flex-end">
         {isScanning ? (
-          <Button onClick={() => isScanning$.next(false)}>Stop scanning</Button>
+          <Button
+            alignItems="center"
+            flex={1}
+            Icon={<Icons.Pause />}
+            iconPosition="left"
+            onClick={() => isScanning$.next(false)}
+            size="xl"
+            variant="main"
+          >
+            <Text color="neutral.c00" variant="body" fontSize={16} fontWeight="600">
+              {t("modularAssetDrawer.scanAccounts.cta.stopScanning")}
+            </Text>
+          </Button>
         ) : (
-          <Button disabled={checkedIds.size === 0} onClick={handleConfirm}>
-            Confirm
+          <Button
+            alignItems="center"
+            color="neutral.c100"
+            disabled={checkedIds.size === 0}
+            flex={1}
+            onClick={handleConfirm}
+            size="xl"
+            variant="main"
+          >
+            <Text color="neutral.c00" variant="body" fontSize={16} fontWeight="600">
+              {t("modularAssetDrawer.addAccounts.cta.confirm")}
+            </Text>
           </Button>
         )}
       </Flex>

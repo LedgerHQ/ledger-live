@@ -308,6 +308,10 @@ export const buttonSizeStyle: {
     padding: "0 28px",
     height: "48px",
   },
+  xl: {
+    padding: "0 28px",
+    height: "56px",
+  },
 };
 
 Button.Unstyled = ButtonUnstyled;
