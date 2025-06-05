@@ -7430,7 +7430,12 @@
     "performance" : "ประสิทธิภาพ",
     "low" : "ต่ำ",
     "high" : "สูง",
-    "title" : "การเคลื่อนไหวของตลาด"
+    "title" : "การเคลื่อนไหวของตลาด",
+    "overlay" : {
+      "title" : "สลับสินทรัพย์",
+      "action" : "ปัดซ้ายหรือขวา",
+      "button" : "เข้าใจแล้ว!"
+    }
   },
   "nftEntryPoint" : {
     "title" : "NFT ของคุณ",
@@ -7438,5 +7443,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "ไม่พร้อมให้บริการตำแหน่งที่ตั้งนี้",
+    "description" : "Ledger Wallet ไม่สามารถใช้ได้ในพื้นที่นี้",
+    "learnMore" : "เรียนรู้เพิ่มเติม"
   }
 }
