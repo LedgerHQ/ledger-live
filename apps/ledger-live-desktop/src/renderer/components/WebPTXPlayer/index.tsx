@@ -26,8 +26,11 @@ const initialMobileView: MobileView = {
   display: false,
   width: 355,
 };
+interface WebViewWrapperProps {
+  mobileView: MobileView;
+}
 
-export const WebViewWrapper = styled.div`
+export const WebViewWrapper = styled.div<WebViewWrapperProps>`
   flex: 1;
   ${({ mobileView }) =>
     mobileView.display ? `width: ${mobileView.width ?? 355}px;` : "width: 100%;"}
