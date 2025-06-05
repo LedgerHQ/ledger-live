@@ -228,6 +228,7 @@ export type Features = CurrencyFeatures & {
   llNftSupport: DefaultFeature;
   llNftEntryPoint: Feature_LlNftEntryPoint;
   ldmkConnectApp: DefaultFeature;
+  lldNetworkBasedAddAccount: DefaultFeature;
 };
 
 /**

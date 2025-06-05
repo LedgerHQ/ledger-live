@@ -29,8 +29,10 @@ export async function performSwapUntilQuoteSelectionStep(
 
   await app.swap.selectAssetFrom(electronApp, swap.accountToDebit);
   await app.swapDrawer.selectAccountByName(swap.accountToDebit);
+  await app.swap.checkAssetFrom(electronApp, swap.accountToDebit.currency.ticker);
   await app.swap.selectAssetTo(electronApp, swap.accountToCredit.currency.name);
   await app.swapDrawer.selectAccountByName(swap.accountToCredit);
+  await app.swap.checkAssetTo(electronApp, swap.accountToCredit.currency.ticker);
   await app.swap.fillInOriginCurrencyAmount(electronApp, minAmount);
 }
 

@@ -10,4 +10,5 @@ services:
       - "${SPECULOS_API_PORT}:${SPECULOS_API_PORT}"
     build:
       context: /speculos
-    command: --model nanox ./apps/app.elf --seed="${SEED}" --display headless --api-port ${SPECULOS_API_PORT}
+    # --deterministic-rng: control randomness used by some apps for cryptographic purposes
+    command: --deterministic-rng 0 --model nanox ./apps/app.elf --seed="${SEED}" --display headless --api-port ${SPECULOS_API_PORT}

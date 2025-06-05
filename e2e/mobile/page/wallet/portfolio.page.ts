@@ -1,4 +1,3 @@
-import { expect } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class PortfolioPage {
@@ -28,7 +27,7 @@ export default class PortfolioPage {
 
   @Step("Expect Portfolio read only")
   async expectPortfolioReadOnly() {
-    await expect(await this.portfolioSettingsButton()).toBeVisible();
+    await detoxExpect(await this.portfolioSettingsButton()).toBeVisible();
     await waitForElementById(this.readOnlyItemsId);
     jestExpect(await getTextOfElement(this.graphCardBalanceId)).toBe(this.zeroBalance);
     for (let index = 0; index < 4; index++)
@@ -38,6 +37,7 @@ export default class PortfolioPage {
   @Step("Open Portfolio via deeplink")
   async openViaDeeplink() {
     await openDeeplink(this.baseLink);
+    await waitForElementById(this.portfolioSettingsButtonId); // Issue with RN75 : QAA-370
   }
 
   @Step("Click on Add account button in portfolio")
@@ -48,7 +48,7 @@ export default class PortfolioPage {
 
   @Step("Expect Portfolio with accounts")
   async expectPortfolioWithAccounts() {
-    await expect(getElementById(this.accountsListView)).toBeVisible();
+    await detoxExpect(getElementById(this.accountsListView)).toBeVisible();
   }
 
   @Step("Go to asset's accounts from portfolio")

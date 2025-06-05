@@ -36,6 +36,7 @@ export function OperationsHistoryList({
           account={account}
           multipleAccounts={flattenedAccounts.length > 1}
           isLast={section.data.length - 1 === index}
+          testID={`operation-row-${item.id}`}
         />
       );
     },

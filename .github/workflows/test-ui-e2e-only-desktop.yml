@@ -1,5 +1,5 @@
 name: "[Desktop] - E2E Test - Scheduled"
-run-name: "@Desktop • UI e2e • Test App triggered by ${{ inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
+run-name: "@Desktop • UI e2e • Test App triggered by ${{ github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
   schedule:
@@ -8,9 +8,6 @@ on:
     inputs:
       ref:
         description: the branch which triggered this workflow
-        required: false
-      login:
-        description: The GitHub username that triggered the workflow
         required: false
       base_ref:
         description: The base branch to merge the head into when checking out the code
@@ -51,6 +48,15 @@ on:
           - staging
           - testing
         default: testing
+      speculos_device:
+        description: "Device to be used"
+        required: false
+        type: choice
+        options:
+          - nanoS
+          - nanoSP
+          - nanoX
+        default: nanoSP
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
@@ -70,6 +76,7 @@ jobs:
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:master
+      SPECULOS_DEVICE: ${{ inputs.speculos_device }}
     runs-on: [ledger-live-4xlarge-e2e]
     strategy:
       fail-fast: false
@@ -122,16 +129,15 @@ jobs:
           enable_broadcast: ${{ inputs.enable_broadcast }}
           build_type: ${{ inputs.build_type }}
 
-      - name: Run playwright tests [Linux => xvfb-run]
-        id: tests
-        run: |
-          export SPECULOS_IMAGE_TAG=${{ env.SPECULOS_IMAGE_TAG }}
-          export COINAPPS=$PWD/coin-apps
-          export MOCK=0
-          if [ "${{ inputs.invert_filter }}" = true ]; then invert_filter="-invert"; fi
-          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm e2e:desktop test:playwright --max-failures 50 ${INPUTS_TEST_FILTER:+--grep$invert_filter} "${{ inputs.test_filter }}" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      - name: Run Playwright Tests
+        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
+        with:
+          speculos_device: ${{ inputs.speculos_device || 'nanoSP' }}
+          test_filter: ${{ inputs.test_filter }}
+          invert_filter: ${{ inputs.invert_filter || false }}
+          shard_index: ${{ matrix.shardIndex }}
+          shard_total: ${{ matrix.shardTotal }}
         env:
-          INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
           SEED: ${{ secrets.SEED_QAA_B2C }}
           XRAY: ${{ inputs.export_to_xray }}
           TEST_EXECUTION: ${{ inputs.test_execution }}
@@ -352,7 +358,7 @@ jobs:
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": `- 🐧 linux: ${statusEmoji} ${{ needs.report-to-allure.outputs.test_result || 'No test results' }}`
+                        "text": `- 🐧 linux - ${{ inputs.speculos_device }} : ${statusEmoji} ${{ needs.report-to-allure.outputs.test_result || 'No test results' }}`
                       }
                     },
                     {

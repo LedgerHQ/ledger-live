@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import connectManager from "@ledgerhq/live-common/hw/connectManager";
 import startExchange from "@ledgerhq/live-common/exchange/platform/startExchange";
 import {
   AppRequest,
@@ -7,6 +8,12 @@ import {
   AppState,
   createAction as createAppAction,
 } from "@ledgerhq/live-common/hw/actions/app";
+import {
+  ManagerRequest,
+  Result as ManagerResult,
+  ManagerState,
+  createAction as createManagerAction,
+} from "@ledgerhq/live-common/hw/actions/manager";
 import { createAction as createTransactionAction } from "@ledgerhq/live-common/hw/actions/transaction";
 import { createAction as createStartExchangeAction } from "@ledgerhq/live-common/hw/actions/startExchange";
 import { getEnv } from "@ledgerhq/live-env";
@@ -53,6 +60,18 @@ export function useStartExchangeAction() {
       createStartExchangeAction(
         getEnv("MOCK") ? mockedEventEmitter : connectApp({ isLdmkConnectAppEnabled }),
         startExchange,
+      ),
+    [isLdmkConnectAppEnabled],
+  );
+  return action;
+}
+
+export function useConnectManagerAction(): Action<ManagerRequest, ManagerState, ManagerResult> {
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
+  const action = useMemo(
+    () =>
+      createManagerAction(
+        getEnv("MOCK") ? mockedEventEmitter : connectManager({ isLdmkConnectAppEnabled }),
       ),
     [isLdmkConnectAppEnabled],
   );

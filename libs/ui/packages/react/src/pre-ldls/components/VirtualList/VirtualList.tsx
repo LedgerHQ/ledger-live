@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Flex, InfiniteLoader } from "../../../components";
 
@@ -57,6 +57,10 @@ type VirtualListProps<T> = {
    * The array of items which will be rendered
    */
   items: T[];
+  /**
+   * When set to true, the list will scroll to the top
+   */
+  scrollToTop?: boolean;
 };
 
 const DefaultLoadingComponent = () => (
@@ -65,6 +69,10 @@ const DefaultLoadingComponent = () => (
   </Flex>
 );
 
+function easeInOutCubic(t: number) {
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
 export const VirtualList = <T,>({
   itemHeight,
   overscan = 5,
@@ -72,39 +80,80 @@ export const VirtualList = <T,>({
   isLoading,
   hasNextPage = false,
   threshold = 5,
-  onVisibleItemsScrollEnd,
   items,
+  onVisibleItemsScrollEnd,
   renderItem,
+  scrollToTop = false,
 }: VirtualListProps<T>) => {
   const parentRef = useRef<HTMLDivElement>(null);
 
+  const scrollToFn = useCallback(
+    (
+      offset: number,
+      options: { adjustments?: number; behavior?: "auto" | "smooth" },
+      instance: { scrollElement: HTMLElement | null },
+    ) => {
+      const element = instance.scrollElement;
+      if (!element) return;
+
+      const duration = options.behavior === "smooth" ? 100 : 0;
+
+      if (duration === 0) {
+        element.scrollTop = offset;
+        return;
+      }
+
+      const startTime = performance.now();
+      const startTop = element.scrollTop;
+      const distanceToScroll = offset - startTop;
+
+      const scrollStep = (currentTime: number) => {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        const easedProgress = easeInOutCubic(progress);
+
+        element.scrollTop = startTop + distanceToScroll * easedProgress;
+
+        if (progress < 1) {
+          requestAnimationFrame(scrollStep);
+        }
+      };
+
+      requestAnimationFrame(scrollStep);
+    },
+    [],
+  );
+
   const rowVirtualizer = useVirtualizer({
     count: hasNextPage ? items.length + 1 : items.length,
+    overscan,
     getScrollElement: () => parentRef.current,
     estimateSize: () => itemHeight,
-    overscan,
+    scrollToFn,
   });
 
+  const virtualItems = rowVirtualizer.getVirtualItems();
+
   useEffect(() => {
-    const items = rowVirtualizer.getVirtualItems();
-    if (!items.length) return;
-    const lastItem = items[items.length - 1];
+    if (scrollToTop && parentRef.current) {
+      scrollToFn(0, { behavior: "smooth" }, { scrollElement: parentRef.current });
+    }
+  }, [scrollToTop, scrollToFn]);
+
+  useEffect(() => {
+    if (!virtualItems.length) return;
+    const lastItem = virtualItems[virtualItems.length - 1];
 
     if (
-      lastItem.index >= items.length - 1 - threshold &&
+      lastItem.index >= virtualItems.length - 1 - threshold &&
       hasNextPage &&
       !isLoading &&
       onVisibleItemsScrollEnd
     ) {
       onVisibleItemsScrollEnd();
     }
-  }, [
-    hasNextPage,
-    onVisibleItemsScrollEnd,
-    items.length,
-    isLoading,
-    rowVirtualizer.getVirtualItems(),
-  ]);
+  }, [hasNextPage, onVisibleItemsScrollEnd, isLoading, threshold, virtualItems]);
 
   const showCustomLoadingComponent = !!LoadingComponent;
 

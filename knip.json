@@ -44,7 +44,12 @@
         "src/webviewPreloader/index.ts",
         "src/newArch/features/ModularDrawer/components/SelectAsset.tsx"
       ],
-      "ignore": ["src/newArch/features/Collectibles/**", "**/types.*", "src/newArch/features/ModularDrawer/components/SelectAccount.tsx"],
+      "ignore": [
+        "src/newArch/features/Collectibles/**",
+        "**/types.*",
+        "src/newArch/features/ModularDrawer/components/SelectAccount.tsx",
+        ".storybook/stub.ts"
+      ],
       "ignoreBinaries": ["eslint", "knip", "prettier", "zx", "lint"],
       "ignoreDependencies": ["prop-types", "allure-commandline", "msw", "buffer"]
     },

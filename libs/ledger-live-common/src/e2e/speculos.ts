@@ -7,7 +7,7 @@ import {
   findLatestAppCandidate,
   SpeculosTransport,
 } from "../load/speculos";
-import { SpeculosDevice } from "@ledgerhq/speculos-transport";
+import { createSpeculosDeviceCI, releaseSpeculosDeviceCI } from "./speculosCI";
 import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -16,6 +16,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { getCryptoCurrencyById } from "../currencies";
 import { DeviceLabels } from "../e2e/enum/DeviceLabels";
 import { Account } from "./enum/Account";
+import { Device as CryptoWallet } from "./enum/Device";
 import { Currency } from "./enum/Currency";
 import expect from "expect";
 import { sendBTCBasedCoin } from "./families/bitcoin";
@@ -37,6 +38,8 @@ import { NFTTransaction, Transaction } from "./models/Transaction";
 import { Delegate } from "./models/Delegate";
 import { Swap } from "./models/Swap";
 
+const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
+
 export type Spec = {
   currency?: CryptoCurrency;
   appQuery: {
@@ -50,6 +53,10 @@ export type Spec = {
 };
 
 export type Dependency = { name: string; appVersion?: string };
+export type SpeculosDevice = {
+  id: string;
+  port: number;
+};
 
 export function setExchangeDependencies(dependencies: Dependency[]) {
   const map = new Map<string, Dependency>();
@@ -59,6 +66,19 @@ export function setExchangeDependencies(dependencies: Dependency[]) {
     }
   }
   specs["Exchange"].dependencies = Array.from(map.values());
+}
+
+export function getSpeculosModel() {
+  const speculosDevice = process.env.SPECULOS_DEVICE;
+  switch (speculosDevice) {
+    case CryptoWallet.LNS:
+      return DeviceModelId.nanoS;
+    case CryptoWallet.LNX:
+      return DeviceModelId.nanoX;
+    case CryptoWallet.LNSP:
+    default:
+      return DeviceModelId.nanoSP;
+  }
 }
 
 type Specs = {
@@ -75,7 +95,7 @@ export const specs: Specs = {
   Bitcoin: {
     currency: getCryptoCurrencyById("bitcoin"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Bitcoin",
     },
     dependency: "",
@@ -83,21 +103,21 @@ export const specs: Specs = {
   Aptos: {
     currency: getCryptoCurrencyById("aptos"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Aptos",
     },
     dependency: "",
   },
   Exchange: {
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Exchange",
     },
     dependencies: [],
   },
   LedgerSync: {
     appQuery: {
-      model: DeviceModelId.nanoX,
+      model: getSpeculosModel(),
       appName: "Ledger Sync",
     },
     dependency: "",
@@ -105,7 +125,7 @@ export const specs: Specs = {
   Dogecoin: {
     currency: getCryptoCurrencyById("dogecoin"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Dogecoin",
     },
     dependency: "",
@@ -113,7 +133,7 @@ export const specs: Specs = {
   Ethereum: {
     currency: getCryptoCurrencyById("ethereum"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Ethereum",
     },
     dependency: "",
@@ -121,7 +141,7 @@ export const specs: Specs = {
   Ethereum_Holesky: {
     currency: getCryptoCurrencyById("ethereum_holesky"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Ethereum",
     },
     dependency: "",
@@ -129,7 +149,7 @@ export const specs: Specs = {
   Ethereum_Sepolia: {
     currency: getCryptoCurrencyById("ethereum_sepolia"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Ethereum",
     },
     dependency: "",
@@ -137,7 +157,7 @@ export const specs: Specs = {
   Ethereum_Classic: {
     currency: getCryptoCurrencyById("ethereum_classic"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Ethereum Classic",
     },
     dependency: "Ethereum",
@@ -145,7 +165,7 @@ export const specs: Specs = {
   Bitcoin_Testnet: {
     currency: getCryptoCurrencyById("bitcoin_testnet"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Bitcoin Test",
     },
     dependency: "",
@@ -153,7 +173,7 @@ export const specs: Specs = {
   Solana: {
     currency: getCryptoCurrencyById("solana"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Solana",
     },
     dependency: "",
@@ -161,7 +181,7 @@ export const specs: Specs = {
   Cardano: {
     currency: getCryptoCurrencyById("cardano"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "CardanoADA",
     },
     dependency: "",
@@ -169,7 +189,7 @@ export const specs: Specs = {
   Polkadot: {
     currency: getCryptoCurrencyById("polkadot"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Polkadot",
     },
     dependency: "",
@@ -177,7 +197,7 @@ export const specs: Specs = {
   Tron: {
     currency: getCryptoCurrencyById("tron"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Tron",
     },
     dependency: "",
@@ -185,7 +205,7 @@ export const specs: Specs = {
   XRP: {
     currency: getCryptoCurrencyById("ripple"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "XRP",
     },
     dependency: "",
@@ -193,7 +213,7 @@ export const specs: Specs = {
   Stellar: {
     currency: getCryptoCurrencyById("stellar"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Stellar",
     },
     dependency: "",
@@ -201,7 +221,7 @@ export const specs: Specs = {
   Bitcoin_Cash: {
     currency: getCryptoCurrencyById("bitcoin_cash"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Bitcoin Cash",
     },
     dependency: "",
@@ -209,7 +229,7 @@ export const specs: Specs = {
   Algorand: {
     currency: getCryptoCurrencyById("algorand"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Algorand",
     },
     dependency: "",
@@ -217,7 +237,7 @@ export const specs: Specs = {
   Cosmos: {
     currency: getCryptoCurrencyById("cosmos"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Cosmos",
     },
     dependency: "",
@@ -225,7 +245,7 @@ export const specs: Specs = {
   Tezos: {
     currency: getCryptoCurrencyById("tezos"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "TezosWallet",
     },
     dependency: "",
@@ -233,7 +253,7 @@ export const specs: Specs = {
   Polygon: {
     currency: getCryptoCurrencyById("polygon"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Ethereum",
     },
     dependency: "",
@@ -241,7 +261,7 @@ export const specs: Specs = {
   Binance_Smart_Chain: {
     currency: getCryptoCurrencyById("bsc"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Ethereum",
     },
     dependency: "",
@@ -249,7 +269,7 @@ export const specs: Specs = {
   Ton: {
     currency: getCryptoCurrencyById("ton"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "TON",
     },
     dependency: "",
@@ -257,7 +277,7 @@ export const specs: Specs = {
   Near: {
     currency: getCryptoCurrencyById("near"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "NEAR",
     },
     dependency: "",
@@ -265,7 +285,7 @@ export const specs: Specs = {
   Multivers_X: {
     currency: getCryptoCurrencyById("elrond"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "MultiversX",
     },
     dependency: "",
@@ -273,7 +293,7 @@ export const specs: Specs = {
   Osmosis: {
     currency: getCryptoCurrencyById("osmo"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Cosmos",
     },
     dependency: "",
@@ -281,7 +301,7 @@ export const specs: Specs = {
   Injective: {
     currency: getCryptoCurrencyById("injective"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Cosmos",
     },
     dependency: "",
@@ -290,7 +310,7 @@ export const specs: Specs = {
   Celo: {
     currency: getCryptoCurrencyById("celo"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Celo",
     },
     dependency: "",
@@ -298,7 +318,7 @@ export const specs: Specs = {
   Litecoin: {
     currency: getCryptoCurrencyById("litecoin"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Litecoin",
     },
     dependency: "",
@@ -362,9 +382,14 @@ export async function startSpeculos(
     coinapps,
     onSpeculosDeviceCreated,
   };
-
   try {
-    return await createSpeculosDevice(deviceParams);
+    const device = isSpeculosRemote
+      ? await createSpeculosDeviceCI(deviceParams)
+      : await createSpeculosDevice(deviceParams).then(device => {
+          invariant(device.ports.apiPort, "[E2E] Speculos apiPort is not defined");
+          return { id: device.id, port: device.ports.apiPort };
+        });
+    return device;
   } catch (e: unknown) {
     console.error(e);
     log("engine", `test ${testName} failed with ${String(e)}`);
@@ -374,7 +399,9 @@ export async function startSpeculos(
 export async function stopSpeculos(deviceId: string | undefined) {
   if (deviceId) {
     log("engine", `test ${deviceId} finished`);
-    await releaseSpeculosDevice(deviceId);
+    isSpeculosRemote
+      ? await releaseSpeculosDeviceCI(deviceId)
+      : await releaseSpeculosDevice(deviceId);
   }
 }
 
@@ -388,11 +415,12 @@ interface ResponseData {
 
 export async function waitFor(text: string, maxAttempts: number = 10): Promise<string[]> {
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
+  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
   let attempts = 0;
   let textFound: boolean = false;
   while (attempts < maxAttempts && !textFound) {
     const response = await axios.get<ResponseData>(
-      `http://127.0.0.1:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
+      `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
     );
     const responseData = response.data;
     const texts = responseData.events.map(event => event.text);
@@ -409,7 +437,8 @@ export async function waitFor(text: string, maxAttempts: number = 10): Promise<s
 
 export async function pressBoth() {
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
-  await axios.post(`http://127.0.0.1:${speculosApiPort}/button/both`, {
+  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
+  await axios.post(`${speculosAddress}:${speculosApiPort}/button/both`, {
     action: "press-and-release",
   });
 }
@@ -427,7 +456,7 @@ export async function pressUntilTextFound(
       return await fetchAllEvents(speculosApiPort);
     }
 
-    await pressRightButton(speculosApiPort);
+    await pressRightButton();
     await waitForTimeOut(200);
   }
 
@@ -437,21 +466,25 @@ export async function pressUntilTextFound(
 }
 
 async function fetchCurrentScreenTexts(speculosApiPort: number): Promise<string> {
+  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
   const response = await axios.get<ResponseData>(
-    `http://127.0.0.1:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
+    `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
   );
   return response.data.events.map(event => event.text).join("");
 }
 
 async function fetchAllEvents(speculosApiPort: number): Promise<string[]> {
+  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
   const response = await axios.get<ResponseData>(
-    `http://127.0.0.1:${speculosApiPort}/events?stream=false&currentscreenonly=false`,
+    `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=false`,
   );
   return response.data.events.map(event => event.text);
 }
 
-async function pressRightButton(speculosApiPort: number): Promise<void> {
-  await axios.post(`http://127.0.0.1:${speculosApiPort}/button/right`, {
+export async function pressRightButton(): Promise<void> {
+  const speculosApiPort = getEnv("SPECULOS_API_PORT");
+  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
+  await axios.post(`${speculosAddress}:${speculosApiPort}/button/right`, {
     action: "press-and-release",
   });
 }
@@ -471,9 +504,10 @@ export function containsSubstringInEvent(targetString: string, events: string[])
 }
 
 export async function takeScreenshot(port?: number): Promise<Buffer | undefined> {
+  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
   const speculosApiPort = port ?? getEnv("SPECULOS_API_PORT");
   try {
-    const response = await axios.get(`http://127.0.0.1:${speculosApiPort}/screenshot`, {
+    const response = await axios.get(`${speculosAddress}:${speculosApiPort}/screenshot`, {
       responseType: "arraybuffer",
     });
     return response.data;

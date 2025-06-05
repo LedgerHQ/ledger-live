@@ -58,7 +58,11 @@ export class LegacySignerSolana implements SolanaSigner {
       }
 
       if (resolution.deviceModelId !== DeviceModelId.nanoS) {
-        const { descriptor, signature } = await calService.getCertificate(resolution.deviceModelId);
+        const { descriptor, signature } = await calService.getCertificate(
+          resolution.deviceModelId,
+          "latest",
+          { signatureKind: resolution.certificateSignatureKind },
+        );
 
         try {
           await loadPKI(this.transport, "TRUSTED_NAME", descriptor, signature);

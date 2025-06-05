@@ -1,5 +1,9 @@
 import test from "../fixtures/common";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import {
+  Account,
+  TokenAccount,
+  getParentAccountName,
+} from "@ledgerhq/live-common/e2e/enum/Account";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
@@ -26,13 +30,13 @@ const liveDataCommand = (currencyApp: { name: string }, index: number) => (userd
 const checkProviders = [
   {
     fromAccount: Account.ETH_1,
-    toAccount: Account.ETH_USDT_1,
+    toAccount: TokenAccount.ETH_USDT_1,
     xrayTicket: "B2CQA-3120",
     provider: Provider.ONE_INCH,
   },
   {
     fromAccount: Account.ETH_1,
-    toAccount: Account.ETH_USDC_1,
+    toAccount: TokenAccount.ETH_USDC_1,
     xrayTicket: "B2CQA-3119",
     provider: Provider.PARASWAP,
   },
@@ -76,6 +80,7 @@ for (const { fromAccount, toAccount, xrayTicket, provider } of checkProviders) {
     test(
       `Swap test provider redirection (${provider.uiName})`,
       {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
         annotation: {
           type: "TMS",
           description: xrayTicket,
@@ -89,7 +94,7 @@ for (const { fromAccount, toAccount, xrayTicket, provider } of checkProviders) {
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
 
-        await app.swap.selectSpecificprovider(provider.uiName, electronApp);
+        await app.swap.selectSpecificProvider(provider.uiName, electronApp);
         await app.swap.goToProviderLiveApp(electronApp, provider.uiName);
         await app.swap.verifyProviderURL(electronApp, provider.uiName, swap);
         await app.liveApp.verifyLiveAppTitle(provider.uiName.toLowerCase());
@@ -132,6 +137,7 @@ test.describe("Swap - Check Best Offer", () => {
   test(
     `Swap ${fromAccount.currency.name} to ${toAccount.currency.name} - Check "Best Offer"`,
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: { type: "TMS", description: "B2CQA-2327" },
     },
     async ({ app, electronApp }) => {
@@ -181,6 +187,7 @@ test.describe("Swap - Default currency when landing on swap", () => {
   test(
     `Swap ${fromAccount.currency.name} to ${toAccount.currency.name} - Default currency`,
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: { type: "TMS", description: "B2CQA-3079" },
     },
     async ({ app, electronApp }) => {
@@ -195,6 +202,7 @@ test.describe("Swap - Default currency when landing on swap", () => {
   test(
     `Swap ${fromAccount.currency.name} to ${toAccount.currency.name} - Previous set up`,
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: { type: "TMS", description: "B2CQA-3080" },
     },
     async ({ app, electronApp }) => {
@@ -247,6 +255,7 @@ test.describe("Swap - Rejected on device", () => {
   test(
     `Swap ${fromAccount.currency.name} to ${toAccount.currency.name}`,
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: { type: "TMS", description: "B2CQA-2212" },
     },
     async ({ app, electronApp }) => {
@@ -273,7 +282,7 @@ test.describe("Swap - Rejected on device", () => {
 
 test.describe("Swap - Landing page", () => {
   const fromAccount = Account.ETH_1;
-  const toAccount = Account.ETH_USDC_1;
+  const toAccount = TokenAccount.ETH_USDC_1;
 
   setupEnv(true);
 
@@ -306,6 +315,7 @@ test.describe("Swap - Landing page", () => {
   test(
     `Swap landing page`,
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: { type: "TMS", description: "B2CQA-2918" },
     },
     async ({ app, electronApp }) => {
@@ -365,6 +375,7 @@ for (const { swap, xrayTicket, userData, errorMessage } of swapWithDifferentSeed
     test(
       `Swap using a different seed - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`,
       {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app, electronApp }) => {
@@ -422,6 +433,7 @@ for (const { account1, account2, xrayTicket, testTitle } of swapWithoutAccount) 
     test(
       `${testTitle}`,
       {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app, electronApp, speculosApp }) => {
@@ -460,6 +472,7 @@ test.describe("Swap a coin for which you have no account yet", () => {
   test(
     "from Account not present to Account not present",
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: { type: "TMS", description: xrayTicket },
     },
     async ({ app, electronApp }) => {
@@ -490,21 +503,21 @@ const tooLowAmountForQuoteSwaps = [
     quotesVisible: true,
   },
   {
-    swap: new Swap(Account.ETH_USDT_1, Account.BTC_NATIVE_SEGWIT_1, "200"),
+    swap: new Swap(TokenAccount.ETH_USDT_1, Account.BTC_NATIVE_SEGWIT_1, "200"),
     xrayTicket: "B2CQA-3240",
     errorMessage: "Not enough balance",
     ctaBanner: false,
     quotesVisible: true,
   },
   {
-    swap: new Swap(Account.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, "24"),
+    swap: new Swap(TokenAccount.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, "24"),
     xrayTicket: "B2CQA-3241",
     errorMessage: new RegExp(`\\d+(\\.\\d{1,10})? ETH needed for network fees\\.\\s*$`),
     ctaBanner: true,
     quotesVisible: true,
   },
   {
-    swap: new Swap(Account.ETH_USDT_1, Account.BTC_NATIVE_SEGWIT_1, "0.000001"),
+    swap: new Swap(TokenAccount.ETH_USDT_1, Account.BTC_NATIVE_SEGWIT_1, "0.000001"),
     xrayTicket: "B2CQA-3242",
     errorMessage: new RegExp(`Minimum \\d+(\\.\\d{1,10})? USDT needed for quotes\\.\\s*$`),
     ctaBanner: false,
@@ -559,6 +572,7 @@ for (const swap of tooLowAmountForQuoteSwaps) {
     test(
       `Swap too low quote amounts from ${swap.swap.accountToDebit.currency.name} to ${swap.swap.accountToCredit.currency.name} - ${swap.errorMessage}`,
       {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
         annotation: {
           type: "TMS",
           description: swap.xrayTicket,
@@ -610,6 +624,7 @@ test.describe("Swap - Switch You send and You receive currency", () => {
   test(
     "Switch You send and You receive currency",
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2136",
@@ -619,7 +634,7 @@ test.describe("Swap - Switch You send and You receive currency", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await performSwapUntilQuoteSelectionStep(app, electronApp, swap, swap.amount ?? "0");
-      await app.swap.swithYouSendAndYouReceive(electronApp);
+      await app.swap.switchYouSendAndYouReceive(electronApp);
       await app.swap.checkAssetFrom(electronApp, swap.accountToCredit.currency.ticker);
       await app.swap.checkAssetTo(electronApp, swap.accountToDebit.currency.ticker);
     },
@@ -657,6 +672,7 @@ test.describe("Swap flow from different entry point", () => {
   test(
     "Entry Point - Portfolio page",
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2985",
@@ -673,6 +689,7 @@ test.describe("Swap flow from different entry point", () => {
   test(
     "Entry Point - Asset Allocation",
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2986",
@@ -694,6 +711,7 @@ test.describe("Swap flow from different entry point", () => {
   test(
     "Entry Point - Market page - Click on swap for any coin",
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2987",
@@ -720,6 +738,7 @@ test.describe("Swap flow from different entry point", () => {
   test(
     "Entry Point - Market page - More than one account for an asset",
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2988",
@@ -740,6 +759,7 @@ test.describe("Swap flow from different entry point", () => {
   test(
     "Entry Point - Account page",
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2989",
@@ -748,7 +768,9 @@ test.describe("Swap flow from different entry point", () => {
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToAccounts();
-      await app.accounts.navigateToAccountByName(swapEntryPoint.swap.accountToDebit.accountName);
+      await app.accounts.navigateToAccountByName(
+        getParentAccountName(swapEntryPoint.swap.accountToDebit),
+      );
       await app.swap.goAndWaitForSwapToBeReady(() => app.account.navigateToSwap());
       await app.swap.expectSelectedAssetDisplayed(
         swapEntryPoint.swap.accountToDebit.currency.name,
@@ -764,6 +786,7 @@ test.describe("Swap flow from different entry point", () => {
   test(
     "Entry Point - left menu",
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2990, B2CQA-523",
@@ -785,7 +808,7 @@ const swapMax = [
     xrayTicket: "B2CQA-3365",
   },
   {
-    fromAccount: Account.ETH_USDT_1,
+    fromAccount: TokenAccount.ETH_USDT_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
     xrayTicket: "B2CQA-3366",
   },
@@ -829,6 +852,7 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
     test(
       `Swap max amount from ${fromAccount.currency.name} to ${toAccount.currency.name}`,
       {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
         annotation: {
           type: "TMS",
           description: xrayTicket,
@@ -889,6 +913,7 @@ test.describe("Swap history", () => {
   test(
     `User can export all history operations`,
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: { type: "TMS", description: "B2CQA-604" },
     },
     async ({ app }) => {
@@ -909,6 +934,7 @@ test.describe("Swap history", () => {
   test(
     `User should be able to see their swap history from the swap history page`,
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: { type: "TMS", description: "B2CQA-602" },
     },
     async ({ app }) => {
