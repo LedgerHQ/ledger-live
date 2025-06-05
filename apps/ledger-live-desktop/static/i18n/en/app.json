@@ -7093,9 +7093,30 @@
     }
   },
   "modularAssetDrawer": {
-    "addAccounts": "Select the accounts you want to add",
-    "scanAccounts": "Looking for any existing accounts on the Blockchain...",
-    "connectYourDevice": "Connect and unlock your device",
+    "addAccounts": {
+      "title": "Select the accounts you want to add",
+      "controls": {
+        "selectAll": "Select all",
+        "deselectAll": "Deselect all"
+      },
+      "cta": {
+        "confirm": "Confirm"
+      },
+      "newAccount": "New account"
+    },
+    "scanAccounts": {
+      "cta": {
+        "stopScanning": "Stop scanning"
+      },
+      "status": {
+        "foundAccounts_plural": "We found {{count}} accounts",
+        "foundAccounts": "We found {{count}} account",
+        "noAccounts": "No accounts were found",
+        "scanning": "Scanning accounts…"
+      },
+      "title": "Looking for any existing accounts on the Blockchain..."
+    },
+    "connectYourDevice": { "title": "Connect and unlock your device" },
     "searchPlaceholder": "Search",
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",

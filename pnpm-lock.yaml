@@ -405,6 +405,9 @@ importers:
       '@ledgerhq/hw-transport-vault':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-vault
+      '@ledgerhq/icons-ui':
+        specifier: workspace:^
+        version: link:../../libs/ui/packages/icons
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: workspace:^
         version: link:../../libs/ledger-key-ring-protocol
@@ -8792,8 +8795,8 @@ importers:
         specifier: ^0.4.0
         version: 0.4.3(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@ledgerhq/crypto-icons':
-        specifier: 1.1.0
-        version: 1.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(@babel/core@7.27.1)(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1))
+        specifier: 1.1.1
+        version: 1.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(@babel/core@7.24.3)(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1))
       '@ledgerhq/crypto-icons-ui':
         specifier: workspace:^
         version: file:libs/ui/packages/crypto-icons(@types/react@18.2.73)(react@18.3.1)(styled-components@5.3.11(@babel/core@7.27.1)(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1))(styled-system@5.1.5)
@@ -13630,8 +13633,8 @@ packages:
       '@types/react':
         optional: true
 
-  '@ledgerhq/crypto-icons@1.1.0':
-    resolution: {integrity: sha512-PFeSxLxVy6IinAO7rYiBgau/bBUg6fx/e19TF5B18Jmd0v5CrKCIN0AVNNiHgr5hhfN/BOLYpfLS4Yz+BkNFSw==}
+  '@ledgerhq/crypto-icons@1.1.1':
+    resolution: {integrity: sha512-Aw8Pp1dg53wx3vd2jdhBz7RHDk5p00j4hBfllg9bENqdF/iwyVyhNF2bN072yvJE5yIK6yeJLgF7ZK0tH0VWcQ==}
     peerDependencies:
       react: '>=18'
       react-dom: '>=18'
@@ -41006,7 +41009,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.2.73
 
-  '@ledgerhq/crypto-icons@1.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(@babel/core@7.27.1)(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1))':
+  '@ledgerhq/crypto-icons@1.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(@babel/core@7.24.3)(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1))':
     dependencies:
       '@ledgerhq/ui-shared': 0.2.2
       react: 18.3.1
