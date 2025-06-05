@@ -3,7 +3,7 @@ import type { Account } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { craftTransaction } from "../logic";
 import type { Transaction } from "../types";
-import { getAmountValue } from "./logic";
+import { getAmountValue } from "../logic";
 
 /**
  * @param {Account} account

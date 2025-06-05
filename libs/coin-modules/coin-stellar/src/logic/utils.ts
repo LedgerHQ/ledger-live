@@ -1,11 +1,6 @@
 import { BigNumber } from "bignumber.js";
 // import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import {
-  // Transaction,
-  TransactionValidation,
-  Account,
-  TokenAccount,
-} from "@ledgerhq/coin-framework/api/types";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 
 import { StrKey } from "@stellar/stellar-sdk";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
@@ -22,12 +17,16 @@ export function getAmountValue(
   // Asset
   if (transaction.subAccountId) {
     const asset = findSubAccountById(account, transaction.subAccountId) as TokenAccount;
-    return transaction.useAllAmount ? new BigNumber(asset.spendableBalance) : transaction.amount;
+    if (!asset) {
+      throw new Error(`Sub-account with ID ${transaction.subAccountId} not found`);
+    }
+    return transaction.useAllAmount
+      ? new BigNumber(asset.spendableBalance.toString())
+      : transaction.amount;
   }
-
   // Native
   return transaction.useAllAmount && transaction.networkInfo
-    ? BigNumber.max(account.spendableBalance.minus(fees), 0)
+    ? BigNumber.max(new BigNumber(account.spendableBalance.toString()).minus(fees), 0)
     : transaction.amount;
 }
 
