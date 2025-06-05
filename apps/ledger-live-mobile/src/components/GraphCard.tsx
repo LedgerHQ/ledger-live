@@ -193,7 +193,7 @@ function GraphCard({
               onItemHover={onItemHover}
               mapValue={mapGraphValue}
               fill={colors.background.main}
-              testID={"graphCard-chart"}
+              testID="graphCard-chart"
             />
           </Flex>
           <Flex paddingTop={6} background={colors.background.main}>
