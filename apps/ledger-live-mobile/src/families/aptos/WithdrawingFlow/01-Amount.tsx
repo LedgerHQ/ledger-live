@@ -36,7 +36,7 @@ function WithdrawingAmount({ navigation, route }: Props) {
       account,
       transaction: bridge.updateTransaction(t, {
         mode: "withdraw",
-        recipient: validatorId || "",
+        recipient: validatorId ?? "",
       }),
     };
   });

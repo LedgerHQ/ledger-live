@@ -8,7 +8,8 @@ type Props = {
   disabled?: boolean;
   onPress: () => void;
 };
-export default function LabelRight({ onPress, disabled }: Props) {
+
+export default function LabelRight({ onPress, disabled }: Readonly<Props>) {
   const { t } = useTranslation();
   const [disabledModalOpen, setDisabledModalOpen] = useState(false);
   const onClick = useCallback(() => {

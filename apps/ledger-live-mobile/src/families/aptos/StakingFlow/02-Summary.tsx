@@ -4,7 +4,6 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useAptosValidators } from "@ledgerhq/live-common/families/aptos/react";
 import { AptosAccount, AptosValidator } from "@ledgerhq/live-common/families/aptos/types";
-// import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
@@ -207,12 +206,7 @@ export default function StakingSummary({ navigation, route }: Props) {
                     ],
                   }}
                 >
-                  <ValidatorImage
-                    // TODO: set isLedger value properly
-                    // isLedger={chosenValidator.address === FIGMENT_NEAR_VALIDATOR_ADDRESS}
-                    isLedger={false}
-                    name={chosenValidator?.address}
-                  />
+                  <ValidatorImage isLedger={false} name={chosenValidator?.address} />
                 </Animated.View>
                 <ChangeValidator />
               </Circle>
@@ -344,13 +338,13 @@ function SummaryWords({
   amount,
   onChangeValidator,
   onChangeAmount,
-}: {
+}: Readonly<{
   validator?: AptosValidator;
   account: AccountLike;
   amount: BigNumber;
   onChangeValidator: () => void;
   onChangeAmount: () => void;
-}) {
+}>) {
   const unit = useAccountUnit(account);
   const formattedAmount = formatCurrencyUnit(unit, amount, {
     disableRounding: true,
@@ -431,7 +425,7 @@ const Words = ({
   </Text>
 );
 
-const Selectable = ({ name, testID }: { name: string; readOnly?: boolean; testID: string }) => {
+const Selectable = ({ name, testID }: { name: string; testID: string }) => {
   const { colors } = useTheme();
   return (
     <View style={[styles.validatorSelection, { backgroundColor: rgba(colors.primary, 0.2) }]}>

@@ -43,7 +43,7 @@ type Props = {
 type DelegationDrawerProps = React.ComponentProps<typeof DelegationDrawer>;
 type DelegationDrawerActions = DelegationDrawerProps["actions"];
 
-function StakingPositions({ account }: Props) {
+function StakingPositions({ account }: Readonly<Props>) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const mainAccount = getMainAccount(account) as AptosAccount;
@@ -296,7 +296,7 @@ function StakingPositions({ account }: Props) {
   );
 }
 
-export default function AptosStakingPositions(props: Props) {
+export default function AptosStakingPositions(props: Readonly<Props>) {
   const { account } = props as { account: AptosAccount };
   if (!account.aptosResources) return null;
   return <StakingPositions account={account} />;

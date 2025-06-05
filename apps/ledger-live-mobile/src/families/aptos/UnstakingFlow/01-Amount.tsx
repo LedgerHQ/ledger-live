@@ -34,7 +34,7 @@ function UnstakingAmount({ navigation, route }: Props) {
       account,
       transaction: bridge.updateTransaction(t, {
         mode: "unstake",
-        recipient: validatorId || "",
+        recipient: validatorId ?? "",
       }),
     };
   });

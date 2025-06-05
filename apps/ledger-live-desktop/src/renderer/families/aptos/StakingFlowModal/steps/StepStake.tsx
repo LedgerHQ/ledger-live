@@ -17,7 +17,7 @@ export default function StepStake({
   onUpdateTransaction,
   transaction,
   error,
-}: StepProps) {
+}: Readonly<StepProps>) {
   invariant(account && transaction, "account and transaction required");
 
   const updateValidator = ({ address }: { address: string }) => {
@@ -59,27 +59,25 @@ export function StepStakeFooter({
   status,
   bridgePending,
   transaction,
-}: StepProps) {
+}: Readonly<StepProps>) {
   invariant(account, "account required");
 
   const { errors } = status;
   const canNext = !bridgePending && !errors.validators && transaction && transaction.recipient;
 
   return (
-    <>
-      <Box horizontal>
-        <Button mr={1} secondary onClick={onClose}>
-          <Trans i18nKey="common.cancel" />
-        </Button>
-        <Button
-          id="stake-continue-button"
-          disabled={!canNext}
-          primary
-          onClick={() => transitionTo("amount")}
-        >
-          <Trans i18nKey="common.continue" />
-        </Button>
-      </Box>
-    </>
+    <Box horizontal>
+      <Button mr={1} secondary onClick={onClose}>
+        <Trans i18nKey="common.cancel" />
+      </Button>
+      <Button
+        id="stake-continue-button"
+        disabled={!canNext}
+        primary
+        onClick={() => transitionTo("amount")}
+      >
+        <Trans i18nKey="common.continue" />
+      </Button>
+    </Box>
   );
 }

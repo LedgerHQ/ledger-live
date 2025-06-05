@@ -34,7 +34,7 @@ function RestakingAmount({ navigation, route }: Props) {
       account,
       transaction: bridge.updateTransaction(t, {
         mode: "restake",
-        recipient: validatorId || "",
+        recipient: validatorId ?? "",
       }),
     };
   });

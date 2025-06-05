@@ -2,7 +2,6 @@ import React, { useCallback } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { AptosMappedStakingPosition } from "@ledgerhq/live-common/families/aptos/types";
-import { Account } from "@ledgerhq/types-live";
 import { canUnstake, canWithdraw, canRestake } from "@ledgerhq/live-common/families/aptos/staking";
 import { TableLine } from "./Header";
 import DropDown, { DropDownItem, DropDownItemType } from "~/renderer/components/DropDownSelector";
@@ -60,25 +59,22 @@ const ManageDropDownItem = ({
   isActive: boolean;
 }) => {
   return (
-    <>
-      <ToolTip
-        content={item.content}
-        containerStyle={{
-          width: "100%",
-        }}
-      >
-        <DropDownItem disabled={item.disabled} isActive={isActive}>
-          <Box horizontal alignItems="center" justifyContent="center">
-            <Text ff="Inter|SemiBold">{item.label}</Text>
-          </Box>
-        </DropDownItem>
-      </ToolTip>
-    </>
+    <ToolTip
+      content={item.content}
+      containerStyle={{
+        width: "100%",
+      }}
+    >
+      <DropDownItem disabled={item.disabled} isActive={isActive}>
+        <Box horizontal alignItems="center" justifyContent="center">
+          <Text ff="Inter|SemiBold">{item.label}</Text>
+        </Box>
+      </DropDownItem>
+    </ToolTip>
   );
 };
 
 type Props = {
-  account: Account;
   stakingPosition: AptosMappedStakingPosition;
   onManageAction: (
     address: string,
@@ -100,7 +96,7 @@ export function Row({
   stakingPosition,
   onManageAction,
   onExternalLink,
-}: Props) {
+}: Readonly<Props>) {
   const unstakingEnabled = canUnstake(stakingPosition);
   const withdrawingEnabled = canWithdraw(stakingPosition);
   const restakingEnabled = canRestake(stakingPosition);

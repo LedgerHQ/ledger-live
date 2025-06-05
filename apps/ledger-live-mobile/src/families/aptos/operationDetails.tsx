@@ -14,7 +14,7 @@ type Props = {
   operation: Operation;
 };
 
-function OperationDetailsExtra({ account, operation }: Props) {
+function OperationDetailsExtra({ account, operation }: Readonly<Props>) {
   const { t } = useTranslation();
   const discreet = useSelector(discreetModeSelector);
   const { locale } = useSettings();
@@ -33,13 +33,11 @@ function OperationDetailsExtra({ account, operation }: Props) {
   });
 
   return (
-    <>
-      <Section
-        title={t("operationDetails.extra.stakedAmount")}
-        value={formattedAmount}
-        testID="operationDetails-delegatedAmount"
-      />
-    </>
+    <Section
+      title={t("operationDetails.extra.stakedAmount")}
+      value={formattedAmount}
+      testID="operationDetails-delegatedAmount"
+    />
   );
 }
 

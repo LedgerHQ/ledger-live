@@ -27,7 +27,7 @@ export default function AmountField({
   onChange,
   status: { errors, warnings },
   label,
-}: Props) {
+}: Readonly<Props>) {
   const unit = useAccountUnit(account);
   const [currentValidator, setCurrentValidator] = useState(validator);
   const [focused, setFocused] = useState(false);

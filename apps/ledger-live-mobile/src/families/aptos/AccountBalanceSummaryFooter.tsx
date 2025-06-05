@@ -16,7 +16,7 @@ type Props = {
 };
 type InfoName = "available" | "storageUsage" | "staked" | "pending" | "withdrawable";
 
-function AccountBalanceSummaryFooter({ account }: Props) {
+function AccountBalanceSummaryFooter({ account }: Readonly<Props>) {
   const { t } = useTranslation();
   const [infoName, setInfoName] = useState<InfoName>();
   const info = useMemo(() => getInfo(t), [t]);
@@ -73,7 +73,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
   );
 }
 
-export default function AccountBalanceFooter({ account }: Props) {
+export default function AccountBalanceFooter({ account }: Readonly<Props>) {
   if (!account.aptosResources || account.balance.lte(0)) return null;
   return <AccountBalanceSummaryFooter account={account} />;
 }

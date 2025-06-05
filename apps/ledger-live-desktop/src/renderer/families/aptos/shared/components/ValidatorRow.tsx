@@ -21,7 +21,7 @@ type Props = {
   unit: Unit;
 };
 
-function AptosValidatorRow({ validator, active, onClick, unit, currency }: Props) {
+function AptosValidatorRow({ validator, active, onClick, unit, currency }: Readonly<Props>) {
   const explorerView = getDefaultExplorerView(currency);
 
   const onExternalLink = useCallback(

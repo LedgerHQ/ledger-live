@@ -18,7 +18,7 @@ type Props = {
   onChange: (stakingPosition?: AptosMappedStakingPosition | null) => void;
 };
 
-export default function ValidatorField({ account, transaction, onChange }: Props) {
+export default function ValidatorField({ account, transaction, onChange }: Readonly<Props>) {
   const { t } = useTranslation();
   const { options, value } = useAptosStakingPositionsQuerySelector(account, transaction);
 
@@ -41,7 +41,9 @@ type OptionRowProps = {
   data: AptosMappedStakingPosition;
 };
 
-function OptionRow({ data: { validatorId, validator, formattedAvailable } }: OptionRowProps) {
+function OptionRow({
+  data: { validatorId, validator, formattedAvailable },
+}: Readonly<OptionRowProps>) {
   return (
     <Box key={validatorId} horizontal alignItems="center" justifyContent="space-between">
       <Box horizontal alignItems="center">

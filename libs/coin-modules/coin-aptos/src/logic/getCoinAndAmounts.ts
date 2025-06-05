@@ -178,7 +178,7 @@ export function getCoinAndAmounts(
         coin_id = getResourceAddress(tx, event, "deposit_events", getEventFAAddress);
         amount_in = amount_in.plus(event.data.amount);
       } else if (event.type === "0x1::transaction_fee::FeeStatement" && tx.sender === address) {
-        if (coin_id === null) coin_id = APTOS_ASSET_ID;
+        coin_id ??= APTOS_ASSET_ID;
         if (coin_id === APTOS_ASSET_ID) {
           const fees = BigNumber(tx.gas_unit_price).times(BigNumber(tx.gas_used));
           amount_out = amount_out.plus(fees);

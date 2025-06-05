@@ -18,7 +18,7 @@ export default function StepAmount({
   onUpdateTransaction,
   status,
   error,
-}: StepProps) {
+}: Readonly<StepProps>) {
   const [available, setAvailable] = useState(transaction.amount);
   const bridge = getAccountBridge(account);
 
@@ -97,7 +97,7 @@ export function StepAmountFooter({
   onClose,
   status,
   bridgePending,
-}: StepProps) {
+}: Readonly<StepProps>) {
   invariant(account, "account required");
 
   const { t } = useTranslation();

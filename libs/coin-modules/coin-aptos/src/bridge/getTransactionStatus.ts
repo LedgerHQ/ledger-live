@@ -11,19 +11,157 @@ import {
 } from "@ledgerhq/errors";
 import { AccountAddress } from "@aptos-labs/ts-sdk";
 import { BigNumber } from "bignumber.js";
-import type { AptosAccount, Transaction, TransactionStatus } from "../types";
+import type { AptosAccount, AptosStakingPosition, Transaction, TransactionStatus } from "../types";
 import { getTokenAccount } from "./logic";
 import {
   APTOS_DELEGATION_RESERVE_IN_OCTAS,
   MIN_COINS_ON_SHARES_POOL,
   MIN_COINS_ON_SHARES_POOL_IN_OCTAS,
 } from "../constants";
+import { TokenAccount } from "@ledgerhq/types-live";
+
+const checkSendTransaction = (
+  t: Transaction,
+  a: AptosAccount,
+  tokenAccount: TokenAccount | undefined,
+  estimatedFees: BigNumber,
+  errors: Record<string, Error>,
+): Record<string, Error> => {
+  const newErrors = { ...errors };
+
+  if (!t.recipient) {
+    newErrors.recipient = new RecipientRequired();
+  }
+
+  if (!AccountAddress.isValid({ input: t.recipient }).valid && !newErrors.recipient) {
+    newErrors.recipient = new InvalidAddress("", { currencyName: a.currency.name });
+  }
+
+  if (t.recipient === a.freshAddress && !newErrors.recipient) {
+    newErrors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+  }
+
+  if (t.amount.gt(a.balance) && !newErrors.amount) {
+    newErrors.amount = new NotEnoughBalance();
+  }
+
+  if (tokenAccount && t.errors?.maxGasAmount === "GasInsufficientBalance" && !newErrors.amount) {
+    newErrors.amount = new NotEnoughBalanceFees();
+  }
+
+  if (
+    (tokenAccount
+      ? tokenAccount.spendableBalance.isLessThan(t.amount) ||
+        a.spendableBalance.isLessThan(estimatedFees)
+      : a.spendableBalance.isLessThan(t.amount.plus(estimatedFees))) &&
+    !newErrors.amount
+  ) {
+    newErrors.amount = new NotEnoughBalance();
+  }
+
+  return newErrors;
+};
+
+const checkStakeTransaction = (
+  t: Transaction,
+  a: AptosAccount,
+  errors: Record<string, Error>,
+): Record<string, Error> => {
+  const newErrors = { ...errors };
+
+  if (t.amount.gt(a.balance)) {
+    newErrors.amount = new NotEnoughBalance();
+  }
+
+  if (
+    ((!t.useAllAmount && t.amount.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS)) ||
+      (t.useAllAmount && a.spendableBalance.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS))) &&
+    !newErrors.amount
+  ) {
+    newErrors.amount = new NotEnoughToStake("", {
+      minStake: MIN_COINS_ON_SHARES_POOL,
+      currency: a.currency.ticker,
+    });
+  }
+
+  return newErrors;
+};
+
+const checkRestakeTransaction = (
+  t: Transaction,
+  stakingPosition: AptosStakingPosition | undefined,
+  errors: Record<string, Error>,
+): Record<string, Error> => {
+  const newErrors = { ...errors };
+
+  if (!stakingPosition) {
+    newErrors.recipient = new RecipientRequired();
+  } else {
+    if ((t.amount.gt(stakingPosition.pendingInactive) || t.amount.isZero()) && !newErrors.amount) {
+      newErrors.amount = new NotEnoughBalance();
+    }
+    if (
+      !t.useAllAmount &&
+      t.amount.plus(stakingPosition.active).lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS) &&
+      !newErrors.amount
+    ) {
+      newErrors.amount = new NotEnoughStakedBalanceLeft("", {
+        minAmountStaked: `${MIN_COINS_ON_SHARES_POOL.toNumber().toString()} APT`,
+      });
+    }
+  }
+
+  return newErrors;
+};
+
+const checkUnstakeTransaction = (
+  t: Transaction,
+  stakingPosition: AptosStakingPosition | undefined,
+  errors: Record<string, Error>,
+): Record<string, Error> => {
+  const newErrors = { ...errors };
+
+  if (!stakingPosition) {
+    newErrors.recipient = new RecipientRequired();
+  } else {
+    if (t.amount.gt(stakingPosition.active) && !newErrors.amount) {
+      newErrors.amount = new NotEnoughBalance();
+    }
+    if (
+      !t.useAllAmount &&
+      stakingPosition.active.minus(t.amount).lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS) &&
+      !newErrors.amount
+    ) {
+      newErrors.amount = new NotEnoughStakedBalanceLeft("", {
+        minAmountStaked: `${MIN_COINS_ON_SHARES_POOL.toNumber().toString()} APT`,
+      });
+    }
+  }
+
+  return newErrors;
+};
+
+const checkWithdrawTransaction = (
+  t: Transaction,
+  stakingPosition: AptosStakingPosition | undefined,
+  errors: Record<string, Error>,
+) => {
+  const newErrors = { ...errors };
+
+  if (!stakingPosition) {
+    newErrors.recipient = new RecipientRequired();
+  } else if (t.amount.gt(stakingPosition.inactive) && !newErrors.amount) {
+    newErrors.amount = new NotEnoughBalance();
+  }
+
+  return newErrors;
+};
 
 const getTransactionStatus = async (
   a: AptosAccount,
   t: Transaction,
 ): Promise<TransactionStatus> => {
-  const errors: Record<string, Error> = {};
+  let errors: Record<string, Error> = {};
   const warnings = {};
 
   const estimatedFees = t.fees || BigNumber(0);
@@ -39,96 +177,19 @@ const getTransactionStatus = async (
 
   switch (t.mode) {
     case "send":
-      if (!t.recipient) {
-        errors.recipient = new RecipientRequired();
-      }
-
-      if (!AccountAddress.isValid({ input: t.recipient }).valid && !errors.recipient) {
-        errors.recipient = new InvalidAddress("", { currencyName: a.currency.name });
-      }
-
-      if (t.recipient === a.freshAddress && !errors.recipient) {
-        errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
-      }
-
-      if (t.amount.gt(a.balance) && !errors.amount) {
-        errors.amount = new NotEnoughBalance();
-      }
-
-      if (tokenAccount && t.errors?.maxGasAmount === "GasInsufficientBalance" && !errors.amount) {
-        errors.amount = new NotEnoughBalanceFees();
-      }
-
-      if (
-        (tokenAccount
-          ? tokenAccount.spendableBalance.isLessThan(t.amount) ||
-            a.spendableBalance.isLessThan(estimatedFees)
-          : a.spendableBalance.isLessThan(t.amount.plus(estimatedFees))) &&
-        !errors.amount
-      ) {
-        errors.amount = new NotEnoughBalance();
-      }
+      errors = checkSendTransaction(t, a, tokenAccount, estimatedFees, errors);
       break;
     case "stake":
-      if (t.amount.gt(a.balance)) {
-        errors.amount = new NotEnoughBalance();
-      }
-
-      if (
-        ((!t.useAllAmount && t.amount.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS)) ||
-          (t.useAllAmount && a.spendableBalance.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS))) &&
-        !errors.amount
-      ) {
-        errors.amount = new NotEnoughToStake("", {
-          minStake: MIN_COINS_ON_SHARES_POOL,
-          currency: a.currency.ticker,
-        });
-      }
+      errors = checkStakeTransaction(t, a, errors);
       break;
     case "restake":
-      if (!stakingPosition) {
-        errors.recipient = new RecipientRequired();
-      } else {
-        if ((t.amount.gt(stakingPosition.pendingInactive) || t.amount.isZero()) && !errors.amount) {
-          errors.amount = new NotEnoughBalance();
-        }
-        if (
-          !t.useAllAmount &&
-          t.amount.plus(stakingPosition.active).lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS) &&
-          !errors.amount
-        ) {
-          errors.amount = new NotEnoughStakedBalanceLeft("", {
-            minAmountStaked: `${MIN_COINS_ON_SHARES_POOL.toNumber().toString()} APT`,
-          });
-        }
-      }
+      errors = checkRestakeTransaction(t, stakingPosition, errors);
       break;
     case "unstake":
-      if (!stakingPosition) {
-        errors.recipient = new RecipientRequired();
-      } else {
-        if (t.amount.gt(stakingPosition.active) && !errors.amount) {
-          errors.amount = new NotEnoughBalance();
-        }
-        if (
-          !t.useAllAmount &&
-          stakingPosition.active.minus(t.amount).lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS) &&
-          !errors.amount
-        ) {
-          errors.amount = new NotEnoughStakedBalanceLeft("", {
-            minAmountStaked: `${MIN_COINS_ON_SHARES_POOL.toNumber().toString()} APT`,
-          });
-        }
-      }
+      errors = checkUnstakeTransaction(t, stakingPosition, errors);
       break;
     case "withdraw":
-      if (!stakingPosition) {
-        errors.recipient = new RecipientRequired();
-      } else {
-        if (t.amount.gt(stakingPosition.inactive) && !errors.amount) {
-          errors.amount = new NotEnoughBalance();
-        }
-      }
+      errors = checkWithdrawTransaction(t, stakingPosition, errors);
       break;
   }
 
@@ -136,14 +197,17 @@ const getTransactionStatus = async (
     errors.fees = new FeeNotLoaded();
   }
 
+  const maxSpendable =
+    t.mode === "stake"
+      ? a.spendableBalance.minus(estimatedFees).minus(APTOS_DELEGATION_RESERVE_IN_OCTAS)
+      : a.spendableBalance.minus(estimatedFees);
+
   const amount = t.useAllAmount
     ? tokenAccount
       ? tokenAccount.spendableBalance
       : a.spendableBalance.minus(estimatedFees).isLessThan(0)
         ? BigNumber(0)
-        : t.mode === "stake"
-          ? a.spendableBalance.minus(estimatedFees).minus(APTOS_DELEGATION_RESERVE_IN_OCTAS)
-          : a.spendableBalance.minus(estimatedFees)
+        : maxSpendable
     : t.amount;
 
   return Promise.resolve({

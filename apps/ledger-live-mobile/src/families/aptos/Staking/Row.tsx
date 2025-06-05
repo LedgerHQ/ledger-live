@@ -16,7 +16,12 @@ type Props = {
   isLast?: boolean;
 };
 
-export default function StakingRow({ stakingPosition, currency, onPress, isLast = false }: Props) {
+export default function StakingRow({
+  stakingPosition,
+  currency,
+  onPress,
+  isLast = false,
+}: Readonly<Props>) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { validatorId, formattedAmount, active } = stakingPosition;

@@ -75,7 +75,7 @@ function StakingAmount({ navigation, route }: Props) {
     (amount: BigNumber) => {
       if (!amount.isNaN()) {
         setValue(amount);
-        updateTransaction && updateTransaction(oldTx => ({ ...oldTx, amount }));
+        updateTransaction?.(oldTx => ({ ...oldTx, amount }));
       }
     },
     [updateTransaction],

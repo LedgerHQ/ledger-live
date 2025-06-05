@@ -36,7 +36,7 @@ class StakingModal extends PureComponent<Data, State> {
             stepId={stepId}
             onClose={onClose}
             onChangeStepId={this.handleStepChange}
-            params={data || {}}
+            params={data ?? {}}
           />
         )}
       />

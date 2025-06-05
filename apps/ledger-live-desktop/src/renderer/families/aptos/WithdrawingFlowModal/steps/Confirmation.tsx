@@ -23,7 +23,7 @@ export default function StepConfirmation({
   error,
   signed,
   transaction,
-}: StepProps) {
+}: Readonly<StepProps>) {
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
@@ -104,7 +104,7 @@ export function StepConfirmationFooter({
   onClose,
   onRetry,
   optimisticOperation,
-}: StepProps) {
+}: Readonly<StepProps>) {
   const { t } = useTranslation();
 
   const concernedOperation = optimisticOperation

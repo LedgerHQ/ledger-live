@@ -13,7 +13,7 @@ export type Props = {
   account: AptosAccount;
 };
 
-export default function AptosEarnRewardsInfoModal({ account }: Props) {
+export default function AptosEarnRewardsInfoModal({ account }: Readonly<Props>) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 

@@ -32,7 +32,7 @@ function StepConfirmation({
   signed,
   transaction,
   source,
-}: StepProps) {
+}: Readonly<StepProps>) {
   useEffect(() => {
     const voteAccAddress = transaction?.recipient;
     // Blockchain is not retrieving the name yet.
@@ -94,7 +94,7 @@ export function StepConfirmationFooter({
   error,
   onClose,
   optimisticOperation,
-}: StepProps) {
+}: Readonly<StepProps>) {
   const concernedOperation = optimisticOperation
     ? optimisticOperation.subOperations && optimisticOperation.subOperations.length > 0
       ? optimisticOperation.subOperations[0]

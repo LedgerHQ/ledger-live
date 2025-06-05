@@ -20,7 +20,7 @@ export default function StepAmount({
   onUpdateTransaction,
   status,
   error,
-}: StepProps) {
+}: Readonly<StepProps>) {
   const { t } = useTranslation();
 
   const validators = useAptosValidators(account.currency);
@@ -74,7 +74,7 @@ export default function StepAmount({
   const amount = useMemo(() => (validator ? validator.amount : new BigNumber(0)), [validator]);
 
   const validatorData = validators.find(v => v.address === validator.validatorAddress);
-  const nextUnlockTime = validatorData?.nextUnlockTime || undefined;
+  const nextUnlockTime = validatorData?.nextUnlockTime ?? undefined;
 
   return (
     <Box flow={1}>
@@ -120,7 +120,7 @@ export function StepAmountFooter({
   onClose,
   status,
   bridgePending,
-}: StepProps) {
+}: Readonly<StepProps>) {
   const { t } = useTranslation();
   invariant(account, "account required");
   const { errors } = status;

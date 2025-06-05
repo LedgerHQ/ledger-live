@@ -70,89 +70,86 @@ const Staking = ({ account }: { account: AptosAccount }) => {
   const hasStakingPositions = stakingPositions.length > 0;
 
   return (
-    <>
-      <TableContainer mb={6}>
-        <TableHeader
-          title={<Trans i18nKey="aptos.stake.table.header" />}
-          titleProps={{
-            "data-e2e": "title_Staking",
-          }}
-        >
-          {hasStakingPositions ? (
+    <TableContainer mb={6}>
+      <TableHeader
+        title={<Trans i18nKey="aptos.stake.table.header" />}
+        titleProps={{
+          "data-e2e": "title_Staking",
+        }}
+      >
+        {hasStakingPositions ? (
+          <ToolTip
+            content={!stakingEnabled ? <Trans i18nKey="aptos.stake.minSafeWarning" /> : null}
+          >
+            <Button
+              id={"account-stake-button"}
+              mr={2}
+              small
+              primary
+              disabled={!stakingEnabled}
+              onClick={onStake}
+            >
+              <Box horizontal flow={1} alignItems="center">
+                <DelegateIcon size={12} />
+                <Box>
+                  <Trans i18nKey="aptos.stake.table.stake" />
+                </Box>
+              </Box>
+            </Button>
+          </ToolTip>
+        ) : null}
+      </TableHeader>
+      {hasStakingPositions ? (
+        <>
+          <Header />
+          {mappedStakingPositions.map((stakingPosition, index) => (
+            <Row
+              key={`staking-row-${index}`}
+              stakingPosition={stakingPosition}
+              onManageAction={onRedirect}
+              onExternalLink={onExternalLink}
+            />
+          ))}
+        </>
+      ) : (
+        <Wrapper horizontal>
+          <Box
+            style={{
+              maxWidth: "65%",
+            }}
+          >
+            <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={4}>
+              <Trans
+                i18nKey="aptos.stake.emptyState.description"
+                values={{
+                  name: account.currency.name,
+                }}
+              />
+            </Text>
+            <Box mt={2}>
+              <LinkWithExternalIcon
+                label={<Trans i18nKey="aptos.stake.emptyState.info" />}
+                onClick={() => openURL(urls.ledgerValidator)}
+              />
+            </Box>
+          </Box>
+          <Box>
             <ToolTip
               content={!stakingEnabled ? <Trans i18nKey="aptos.stake.minSafeWarning" /> : null}
             >
-              <Button
-                id={"account-stake-button"}
-                mr={2}
-                small
-                primary
-                disabled={!stakingEnabled}
-                onClick={onStake}
-              >
+              <Button primary small disabled={!stakingEnabled} onClick={onEarnRewards}>
                 <Box horizontal flow={1} alignItems="center">
-                  <DelegateIcon size={12} />
+                  <IconChartLine size={12} />
                   <Box>
-                    <Trans i18nKey="aptos.stake.table.stake" />
+                    <Trans i18nKey="aptos.stake.emptyState.earnRewards" />
                   </Box>
                 </Box>
               </Button>
             </ToolTip>
-          ) : null}
-        </TableHeader>
-        {hasStakingPositions ? (
-          <>
-            <Header />
-            {mappedStakingPositions.map((stakingPosition, index) => (
-              <Row
-                key={index}
-                account={account}
-                stakingPosition={stakingPosition}
-                onManageAction={onRedirect}
-                onExternalLink={onExternalLink}
-              />
-            ))}
-          </>
-        ) : (
-          <Wrapper horizontal>
-            <Box
-              style={{
-                maxWidth: "65%",
-              }}
-            >
-              <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={4}>
-                <Trans
-                  i18nKey="aptos.stake.emptyState.description"
-                  values={{
-                    name: account.currency.name,
-                  }}
-                />
-              </Text>
-              <Box mt={2}>
-                <LinkWithExternalIcon
-                  label={<Trans i18nKey="aptos.stake.emptyState.info" />}
-                  onClick={() => openURL(urls.ledgerValidator)}
-                />
-              </Box>
-            </Box>
-            <Box>
-              <ToolTip
-                content={!stakingEnabled ? <Trans i18nKey="aptos.stake.minSafeWarning" /> : null}
-              >
-                <Button primary small disabled={!stakingEnabled} onClick={onEarnRewards}>
-                  <Box horizontal flow={1} alignItems="center">
-                    <IconChartLine size={12} />
-                    <Box>
-                      <Trans i18nKey="aptos.stake.emptyState.earnRewards" />
-                    </Box>
-                  </Box>
-                </Button>
-              </ToolTip>
-            </Box>
-          </Wrapper>
-        )}
-      </TableContainer>
-    </>
+          </Box>
+        </Wrapper>
+      )}
+    </TableContainer>
   );
 };
 
