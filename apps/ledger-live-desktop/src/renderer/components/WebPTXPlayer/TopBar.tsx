@@ -20,6 +20,7 @@ import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds
 import { safeUrl } from "@ledgerhq/live-common/wallet-api/helpers";
 import Switch from "../Switch";
 import { Icons } from "@ledgerhq/react-ui/index";
+import Input from "~/renderer/components/Input";
 
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
@@ -95,13 +96,19 @@ const RightContainer = styled(Box).attrs(() => ({
   ml: "auto",
 }))``;
 
+
+export interface MobileView {
+  display: boolean;
+  width: number;
+}
+
 export type Props = {
   icon?: boolean;
   manifest: LiveAppManifest;
   webviewAPIRef: RefObject<WebviewAPI>;
   webviewState: WebviewState;
-  mobileView: boolean;
-  SetMobileView?: (value: boolean) => void;
+  mobileView: MobileView;
+  setMobileView?: React.Dispatch<React.SetStateAction<MobileView>>;
 };
 
 export const TopBar = ({
@@ -109,7 +116,7 @@ export const TopBar = ({
   webviewAPIRef,
   webviewState,
   mobileView,
-  SetMobileView,
+  setMobileView,
 }: Props) => {
   const { t } = useTranslation();
   const lastMatchingURL = useRef<string | null>(null);
@@ -199,6 +206,14 @@ export const TopBar = ({
     webview.reload();
   }, [webviewAPIRef]);
 
+  const toggleMobileView  = useCallback(async () => {
+    setMobileView?.(prev => ({ ...prev, display: !prev.display }));
+  }, []);
+  
+  const updateMobileWidth = useCallback(async (width: number) => {
+    setMobileView?.(prev => ({ ...prev, width: width > 0 ? width : 355 }));
+  }, []);
+
   useEffect(() => {
     if (isInternalApp) {
       const url = safeUrl(webviewState.url);
@@ -251,13 +266,38 @@ export const TopBar = ({
             </ItemContent>
           </ItemContainer>
           <Separator />
-          <ItemContainer isInteractive onClick={() => SetMobileView?.(!mobileView)}>
+          <ItemContainer
+            isInteractive
+            onClick={toggleMobileView}
+            style={{ marginRight: 0 }}
+          >
             <Icons.Desktop size="S" />
             <ItemContent>
-              <Switch isChecked={mobileView}></Switch>
+              <Switch isChecked={mobileView.display}></Switch>
             </ItemContent>
             <Icons.Mobile size="S" />
           </ItemContainer>
+          {mobileView.display && (
+            <Box
+              style={{ marginRight: 16 }}
+            >
+              <Input
+                small
+                value={mobileView.width || ""}
+                onChange={(e: string) => {
+                  const value = parseInt(e, 10) || 0;
+                  updateMobileWidth?.(value);
+                }}
+                onBlur={() => {
+                  if (!mobileView.width) {
+                    updateMobileWidth?.(355);
+                  }
+                }}
+                style={{ width: 30, textAlign: "center" }}
+                maxLength={4}
+              />
+            </Box>
+          )}
         </>
       ) : null}
       <RightContainer>
