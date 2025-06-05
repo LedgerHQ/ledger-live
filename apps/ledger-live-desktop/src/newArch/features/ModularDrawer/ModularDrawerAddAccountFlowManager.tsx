@@ -69,11 +69,27 @@ const ModularDrawerAddAccountFlowManager = ({
   //   [currenciesByProvider],
   // );
 
-  const [currentStep, setCurrentStep] =
-    useState<ModularDrawerAddAccountStep>("CONNECT_YOUR_DEVICE");
+  // const [currentStep, setCurrentStep] =
+  //   useState<ModularDrawerAddAccountStep>("CONNECT_YOUR_DEVICE");
+  const [currentStep, setCurrentStep] = useState<ModularDrawerAddAccountStep>("SCAN_ACCOUNTS");
 
+  // const [connectAppResult, setConnectAppResult] = useState<AppResult | null>(null);
   // DEBUG
-  // const [currentStep, setCurrentStep] = useState<ModularDrawerAddAccountStep>("SCAN_ACCOUNTS");
+  const [connectAppResult, setConnectAppResult] = useState<AppResult | null>({
+    device: {
+      deviceId: "",
+      modelId: "stax",
+      wired: true,
+    },
+    appAndVersion: {
+      name: "Bitcoin",
+      version: "2.3.0",
+      flags: {
+        type: "Buffer",
+        data: [2],
+      },
+    },
+  });
 
   const handleBack = useMemo(() => {
     switch (currentStep) {
@@ -95,8 +111,6 @@ const ModularDrawerAddAccountFlowManager = ({
       }
     }
   }, [currentStep]);
-
-  const [connectAppResult, setConnectAppResult] = useState<AppResult | null>(null);
 
   const renderStepContent = (step: ModularDrawerAddAccountStep) => {
     switch (step) {
@@ -150,7 +164,14 @@ const ModularDrawerAddAccountFlowManager = ({
           screenKey={currentStep}
           direction={navigationDirection}
         > */}
-        <Flex flex={1} data-test-id="content" flexDirection="column">
+        <Flex
+          data-test-id="content"
+          flex={1}
+          flexDirection="column"
+          paddingBottom={25}
+          paddingTop={15}
+          paddingX={40}
+        >
           {renderStepContent(currentStep)}
         </Flex>
       </AnimatePresence>

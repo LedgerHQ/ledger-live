@@ -27,6 +27,7 @@ const meta: Meta<typeof VirtualList<{ i: number }>> = {
     },
   },
   argTypes: {
+    gap: { description: "Gap between items in the list.", defaultValue: { summary: 0 } },
     itemHeight: {
       description: "Height of each item in the list.",
     },
@@ -74,6 +75,7 @@ const meta: Meta<typeof VirtualList<{ i: number }>> = {
     },
   },
   args: {
+    gap: 0,
     itemHeight: 64,
     LoadingComponent: undefined,
     isLoading: false,

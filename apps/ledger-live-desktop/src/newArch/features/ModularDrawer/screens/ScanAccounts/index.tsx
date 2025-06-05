@@ -1,6 +1,11 @@
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
-import { Box, Button, Checkbox, CryptoIcon, Flex, InfiniteLoader, Text } from "@ledgerhq/react-ui";
+import { Box, Flex } from "@ledgerhq/react-ui";
+import { Checkbox, Button, InfiniteLoader, Text } from "@ledgerhq/react-ui";
+import {
+  AccountItem,
+  Account as AccountItemAccount,
+} from "@ledgerhq/react-ui/pre-ldls/components/AccountItem/AccountItem";
 import { VirtualList } from "@ledgerhq/react-ui/pre-ldls/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
@@ -19,12 +24,6 @@ interface Props {
   currency: CryptoCurrency;
   deviceId: string;
   onComplete: (selected: Account[]) => void;
-}
-
-interface FormattedAccount extends Pick<Account, "currency" | "id"> {
-  address: string;
-  balance: string;
-  name: string;
 }
 
 const ScanAccounts = ({ currency, onComplete, deviceId }: Props) => {
@@ -94,67 +93,90 @@ const ScanAccounts = ({ currency, onComplete, deviceId }: Props) => {
 
   const currencyName = currency.name;
 
-  const formattedAccounts = useMemo(
-    () =>
-      scannedAccounts.map(
-        (account): FormattedAccount => ({
-          id: account.id,
-          currency: account.currency,
-          // TODO review freshAddress
-          address: formatAddress(account.freshAddress),
-          balance: account.balance.toString(),
-          name: accountNameWithDefaultSelector(walletState, account),
-        }),
-      ),
-    [scannedAccounts, walletState],
+  // const formattedAccounts = useMemo(
+  //   () =>
+  //     scannedAccounts.map(
+  //       (account): AccountItemAccount => ({
+  //         id: account.id,
+  //         currency: account.currency,
+  //         // TODO review freshAddress
+  //         address: formatAddress(account.freshAddress),
+  //         balance: account.balance.toString(),
+  //         name: accountNameWithDefaultSelector(walletState, account),
+  //       }),
+  //     ),
+  //   [scannedAccounts, walletState],
+  // );
+  const formattedAccounts = [
+    {
+      address: formatAddress("utfdg9023lle21easd13x"),
+      balance: "23320.00",
+      fiatValue: "$23320.00",
+      ticker: "ETH",
+      protocol: "1111",
+      parentId: "ethereum",
+      id: "0",
+      name: "XLA",
+    },
+    {
+      address: formatAddress("asdasf12easdasds3k4"),
+      balance: "320.00",
+      fiatValue: "$19009.00",
+      parentId: "bitcoin",
+      cryptoId: "bitcoin",
+      ticker: "BTC",
+      id: "1",
+      name: "XLA",
+    },
+  ] satisfies AccountItemAccount[];
+
+  // TODO review whether to extract into a component following NetworkItem
+  const renderAccount = (x: AccountItemAccount) => (
+    <AccountItem
+      account={x}
+      onClick={() => {}}
+      checkbox={{ name: "checked", isChecked: checkedIds.has(x.id), onChange: () => toggle(x.id) }}
+    />
   );
 
-  const renderAccount = (x: FormattedAccount) => (
-    <Flex
-      key={x.id}
-      flex={1}
-      px={6}
-      py={3}
-      alignItems="center"
-      borderBottom="1px solid"
-      borderColor="neutral.c30"
-    >
-      <Box mr={4} flex={1}>
-        <Box>
-          <Text variant="paragraph" fontWeight="medium">
-            {x.name}
-          </Text>
-        </Box>
-        <Flex>
-          <Text
-            display="block"
-            variant="small"
-            color="neutral.c70"
-            // TODO cannot use text-overflow since it doesn't support middle ellipsis
-            textOverflow="ellipsis"
-            maxWidth="79px"
-            overflow="hidden"
-          >
-            {x.address}
-          </Text>
-          <CryptoIcon name={x.currency.ticker} circleIcon />
-        </Flex>
-      </Box>
+  //   <Flex
+  //   key={x.id}
+  //   flex={1}
+  //   borderRadius={12}
+  //   // TODO 16px
+  //   px={3}
+  //   py={3}
+  //   alignItems="center"
+  //   backgroundColor="neutral.c30"
+  // >
+  //   <Box mr={4} flex={1}>
+  //     <Box>
+  //       <Text variant="paragraph" fontWeight="medium">
+  //         {x.name}
+  //       </Text>
+  //     </Box>
+  //     <Flex columnGap={1}>
+  //       <Text color="neutral.c70" display="block" variant="small">
+  //         {x.address}
+  //       </Text>
+  //       {/* TODO 20px in Figma */}
+  //       <CryptoIcon ledgerId={x.currency.id} ticker={x.currency.ticker} size="24px" />
+  //     </Flex>
+  //   </Box>
 
-      <Flex mr={5}>
-        <Text variant="paragraph">
-          {x.balance} {x.currency.ticker}
-        </Text>
-      </Flex>
+  //   <Flex mr={5}>
+  //     <Text variant="paragraph">
+  //       {x.balance} {x.currency.ticker}
+  //     </Text>
+  //   </Flex>
 
-      <Checkbox
-        // size="S"
-        name={x.id}
-        isChecked={checkedIds.has(x.id)}
-        onChange={() => toggle(x.id)}
-      />
-    </Flex>
-  );
+  //   <Checkbox
+  //     // size="S"
+  //     name={x.id}
+  //     isChecked={checkedIds.has(x.id)}
+  //     onChange={() => toggle(x.id)}
+  //   />
+  // </Flex>
 
   return (
     <>
@@ -176,13 +198,17 @@ const ScanAccounts = ({ currency, onComplete, deviceId }: Props) => {
 
       {/* {isScanning && <Progress indeterminate mb={2} />} */}
 
-      <VirtualList
-        items={formattedAccounts}
-        itemHeight={72}
-        renderItem={renderAccount}
-        hasNextPage={false}
-        onVisibleItemsScrollEnd={() => {}}
-      />
+      <Box flex={1}>
+        {/* TODO review whether to extract into a component following NetworkList */}
+        <VirtualList
+          gap={16}
+          items={formattedAccounts}
+          itemHeight={72}
+          renderItem={renderAccount}
+          hasNextPage={false}
+          onVisibleItemsScrollEnd={() => {}}
+        />
+      </Box>
 
       {isScanning && formattedAccounts.length === 0 && (
         <Flex alignItems="center" mt={6}>

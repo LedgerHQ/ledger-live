@@ -1,26 +1,28 @@
 import React from "react";
 import styled from "styled-components";
+import type { CheckboxProps } from "../../../components/form/Checkbox/Checkbox";
+import { Checkbox, Text } from "../../../components";
 import { withTokens } from "../../libs";
-import { Text } from "../../../components";
-import { Tag } from "../Tag/Tag";
 import { Address } from "../Address/Address";
+import { Tag } from "../Tag/Tag";
 
 export type Account = {
-  name: string;
-  id: string;
-  balance: string;
-  fiatValue: string;
   address: string;
-  protocol?: string;
+  balance: string;
   cryptoId?: string;
-  ticker?: string;
+  fiatValue: string;
+  id: string;
+  name: string;
   parentId?: string;
+  protocol?: string;
+  ticker?: string;
 };
 
-type AccountItemProps = {
-  onClick: () => void;
-  showIcon?: boolean;
+export type AccountItemProps = {
+  onClick?: () => void;
   account: Account;
+  checkbox?: CheckboxProps;
+  showIcon?: boolean;
 };
 
 const Wrapper = styled.div`
@@ -36,7 +38,7 @@ const Wrapper = styled.div`
   )}
 
   display: flex;
-  padding: var(--spacing-xs) var(--spacing-xxs);
+  padding: var(--spacing-xs);
   cursor: pointer;
   border-radius: var(--radius-s, 8px);
   justify-content: space-between;
@@ -57,13 +59,14 @@ const Wrapper = styled.div`
 `;
 
 const ContentContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  min-width: 0;
+  display: flex;
   flex: 1;
-  width: 100%;
+  gap: var(--spacing-xs);
+  justify-content: space-between;
+  min-width: 0;
   overflow: hidden;
+  width: 100%;
 `;
 
 const AccountInfoContainer = styled.div`
@@ -105,12 +108,11 @@ const TagWrapper = styled.div`
 const BalanceContainer = styled.div`
   display: flex;
   flex-direction: column;
-  text-align: right;
   flex-shrink: 0;
-  margin-left: var(--spacing-xs);
+  text-align: right;
 `;
 
-export const AccountItem = ({ onClick, account, showIcon = true }: AccountItemProps) => {
+export const AccountItem = ({ onClick, account, checkbox, showIcon = true }: AccountItemProps) => {
   const { name, balance, fiatValue, protocol, address, ticker, cryptoId, parentId } = account;
 
   return (
@@ -156,6 +158,7 @@ export const AccountItem = ({ onClick, account, showIcon = true }: AccountItemPr
             {balance}
           </Text>
         </BalanceContainer>
+        {checkbox && <Checkbox {...checkbox} />}
       </ContentContainer>
     </Wrapper>
   );
