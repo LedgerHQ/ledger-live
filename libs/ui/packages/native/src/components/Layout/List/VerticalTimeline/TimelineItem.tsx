@@ -110,7 +110,7 @@ export default function TimelineItem({
           mt={withExtraMarginOnActiveStep && !isFirstItem && item.status === "active" ? 4 : 0}
           mb={withExtraMarginOnActiveStep && !isLastItem && item.status === "active" ? 4 : 0}
         >
-          {item.background}
+          {item.status === "active" ? item.background : null}
           <Flex flexDirection="row" justifyContent="space-between">
             <Text
               variant="body"

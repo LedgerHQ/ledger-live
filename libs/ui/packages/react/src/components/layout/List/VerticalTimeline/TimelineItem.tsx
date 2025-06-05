@@ -68,7 +68,7 @@ function TimelineItem({ item, isFirstItem, isLastItem, onClick }: Props) {
         mr={4}
       />
       <Container status={item.status} isLastItem={isLastItem} overflow="hidden">
-        {item.background}
+        {item.status === "active" ? item.background : null}
 
         <TextContainer mb={4} flexDirection="column" zIndex={1}>
           <TimelineIndicatorContentHeader height="20px">
