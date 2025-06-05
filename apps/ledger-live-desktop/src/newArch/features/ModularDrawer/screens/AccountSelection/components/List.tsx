@@ -15,8 +15,11 @@ type SelectAccountProps = {
   detailedAccounts: DetailedAccount[];
 };
 
+const TITLE_HEIGHT = 52;
+const ROW_MARGIN = 8;
 const BUTTON_HEIGHT = 66;
-const LIST_HEIGHT = `calc(100% - ${BUTTON_HEIGHT}px)`;
+const MARGIN_BOTTOM = TITLE_HEIGHT + ROW_MARGIN + BUTTON_HEIGHT;
+const LIST_HEIGHT = `calc(100% - ${MARGIN_BOTTOM}px)`;
 
 export const SelectAccountList = ({
   detailedAccounts,
