@@ -1,5 +1,28 @@
 # live-mobile
 
+## 3.81.0-nightly.2
+
+### Minor Changes
+
+- [#10370](https://github.com/LedgerHQ/ledger-live/pull/10370) [`b7d3d59`](https://github.com/LedgerHQ/ledger-live/commit/b7d3d59d299c3d3541d598536651b9047fda4526) Thanks [@themooneer](https://github.com/themooneer)! - IP restriction for LLM and LLD
+
+### Patch Changes
+
+- Updated dependencies [[`b7d3d59`](https://github.com/LedgerHQ/ledger-live/commit/b7d3d59d299c3d3541d598536651b9047fda4526), [`1535307`](https://github.com/LedgerHQ/ledger-live/commit/1535307f78d345d7f652ac2c91c8a67e62fedef2)]:
+  - @ledgerhq/types-live@6.72.0-nightly.1
+  - @ledgerhq/coin-framework@5.2.0-nightly.1
+  - @ledgerhq/coin-cosmos@0.15.0-nightly.1
+  - @ledgerhq/coin-evm@2.22.2-nightly.1
+  - @ledgerhq/coin-filecoin@1.9.8-nightly.1
+  - @ledgerhq/coin-multiversx@0.4.8-nightly.1
+  - @ledgerhq/coin-stacks@0.8.8-nightly.1
+  - @ledgerhq/domain-service@1.2.31-nightly.1
+  - @ledgerhq/live-countervalues@0.5.8-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.37-nightly.1
+  - @ledgerhq/live-nft@0.8.8-nightly.1
+  - @ledgerhq/live-nft-react@0.9.8-nightly.1
+  - @ledgerhq/live-wallet@0.10.11-nightly.1
+
 ## 3.81.0-nightly.1
 
 ### Minor Changes

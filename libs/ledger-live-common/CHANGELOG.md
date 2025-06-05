@@ -1,5 +1,50 @@
 # @ledgerhq/live-common
 
+## 34.36.0-nightly.1
+
+### Minor Changes
+
+- [#10370](https://github.com/LedgerHQ/ledger-live/pull/10370) [`b7d3d59`](https://github.com/LedgerHQ/ledger-live/commit/b7d3d59d299c3d3541d598536651b9047fda4526) Thanks [@themooneer](https://github.com/themooneer)! - IP restriction for LLM and LLD
+
+### Patch Changes
+
+- Updated dependencies [[`2fccd46`](https://github.com/LedgerHQ/ledger-live/commit/2fccd460dc1bae0b0ade388d73c3f3556353714a), [`cefb3de`](https://github.com/LedgerHQ/ledger-live/commit/cefb3de72c4251ee5b9b3dd69563a9b2c2228998), [`1535307`](https://github.com/LedgerHQ/ledger-live/commit/1535307f78d345d7f652ac2c91c8a67e62fedef2)]:
+  - @ledgerhq/coin-tezos@5.3.0-nightly.1
+  - @ledgerhq/coin-tron@4.2.0-nightly.1
+  - @ledgerhq/coin-bitcoin@0.16.0-nightly.1
+  - @ledgerhq/coin-framework@5.2.0-nightly.1
+  - @ledgerhq/coin-algorand@0.9.8-nightly.1
+  - @ledgerhq/coin-aptos@2.1.0-nightly.1
+  - @ledgerhq/coin-cardano@0.8.8-nightly.1
+  - @ledgerhq/coin-casper@1.7.3-nightly.1
+  - @ledgerhq/coin-celo@1.1.6-nightly.1
+  - @ledgerhq/coin-cosmos@0.15.0-nightly.1
+  - @ledgerhq/coin-evm@2.22.2-nightly.1
+  - @ledgerhq/coin-filecoin@1.9.8-nightly.1
+  - @ledgerhq/coin-hedera@1.6.8-nightly.1
+  - @ledgerhq/coin-icon@0.10.8-nightly.1
+  - @ledgerhq/coin-internet_computer@1.7.8-nightly.1
+  - @ledgerhq/coin-mina@1.1.7-nightly.1
+  - @ledgerhq/coin-multiversx@0.4.8-nightly.1
+  - @ledgerhq/coin-near@0.11.8-nightly.1
+  - @ledgerhq/coin-polkadot@6.1.2-nightly.1
+  - @ledgerhq/coin-solana@0.25.0-nightly.1
+  - @ledgerhq/coin-stacks@0.8.8-nightly.1
+  - @ledgerhq/coin-stellar@5.1.1-nightly.1
+  - @ledgerhq/coin-sui@0.4.1-nightly.1
+  - @ledgerhq/coin-ton@0.11.1-nightly.1
+  - @ledgerhq/coin-vechain@2.7.8-nightly.1
+  - @ledgerhq/coin-xrp@6.1.3-nightly.1
+  - @ledgerhq/device-core@0.4.26-nightly.1
+  - @ledgerhq/hw-app-eth@6.45.6-nightly.1
+  - @ledgerhq/live-countervalues@0.5.8-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.37-nightly.1
+  - @ledgerhq/live-nft@0.8.8-nightly.1
+  - @ledgerhq/live-signer-evm@0.5.1-nightly.1
+  - @ledgerhq/live-signer-solana@0.2.0-nightly.1
+  - @ledgerhq/live-wallet@0.10.11-nightly.1
+  - @ledgerhq/hw-app-celo@6.33.4-nightly.1
+
 ## 34.35.2-nightly.0
 
 ### Patch Changes

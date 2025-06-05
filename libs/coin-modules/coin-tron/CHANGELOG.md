@@ -1,5 +1,17 @@
 # @ledgerhq/coin-tron
 
+## 4.2.0-nightly.1
+
+### Minor Changes
+
+- [#10410](https://github.com/LedgerHQ/ledger-live/pull/10410) [`cefb3de`](https://github.com/LedgerHQ/ledger-live/commit/cefb3de72c4251ee5b9b3dd69563a9b2c2228998) Thanks [@qperrot](https://github.com/qperrot)! - fix: Tron new feeEstimation if no Bandwidth
+
+### Patch Changes
+
+- Updated dependencies [[`b7d3d59`](https://github.com/LedgerHQ/ledger-live/commit/b7d3d59d299c3d3541d598536651b9047fda4526), [`1535307`](https://github.com/LedgerHQ/ledger-live/commit/1535307f78d345d7f652ac2c91c8a67e62fedef2)]:
+  - @ledgerhq/types-live@6.72.0-nightly.1
+  - @ledgerhq/coin-framework@5.2.0-nightly.1
+
 ## 4.1.2-nightly.0
 
 ### Patch Changes

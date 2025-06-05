@@ -1,5 +1,17 @@
 # @ledgerhq/coin-tezos
 
+## 5.3.0-nightly.1
+
+### Minor Changes
+
+- [#10427](https://github.com/LedgerHQ/ledger-live/pull/10427) [`2fccd46`](https://github.com/LedgerHQ/ledger-live/commit/2fccd460dc1bae0b0ade388d73c3f3556353714a) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - [coin-modules][tezos] ALPACA tezos craft is missing leading `0x03` byte in raw transaction
+
+### Patch Changes
+
+- Updated dependencies [[`b7d3d59`](https://github.com/LedgerHQ/ledger-live/commit/b7d3d59d299c3d3541d598536651b9047fda4526), [`1535307`](https://github.com/LedgerHQ/ledger-live/commit/1535307f78d345d7f652ac2c91c8a67e62fedef2)]:
+  - @ledgerhq/types-live@6.72.0-nightly.1
+  - @ledgerhq/coin-framework@5.2.0-nightly.1
+
 ## 5.2.1-nightly.0
 
 ### Patch Changes
