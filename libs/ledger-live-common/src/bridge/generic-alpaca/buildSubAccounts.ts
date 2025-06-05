@@ -72,7 +72,7 @@ export function buildSubAccounts<T extends BaseTokenLikeAsset>({
       token: tokenCurrency,
       balance,
       spendableBalance: balance,
-      creationDate: new Date(), // NOTE: For stellar, might want to replace with actual trustline creation time
+      creationDate: new Date(), // TODO: For stellar, use stellar tokens.ts
       operations,
       operationsCount: operations.length,
       pendingOperations: [],
