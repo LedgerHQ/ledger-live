@@ -87,6 +87,7 @@
     "typecheck": "tsc --noEmit",
     "unimported": "pnpm knip --directory ../.. -W libs/ledger-key-ring-protocol",
     "test": "jest",
+    "coverage": "jest --coverage",
     "e2e": "ts-node scripts/e2e.ts"
   }
 }
