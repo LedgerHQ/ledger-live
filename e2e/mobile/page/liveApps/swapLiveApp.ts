@@ -14,7 +14,6 @@ export default class SwapLiveAppPage {
   quoteProviderName = "quote-card-provider-name";
   executeSwapButton = "execute-button";
   deviceActionErrorDescriptionId = "error-description-deviceAction";
-  exchangeButtonId = "exchange-button";
 
   @Step("Wait for swap live app")
   async waitForSwapLiveApp() {
