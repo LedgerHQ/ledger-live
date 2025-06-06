@@ -3,7 +3,7 @@ import { AccountBridge } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { broadcastTx } from "../network/api";
 import { StacksOperation, Transaction } from "../types";
-import { getTxToBroadcast } from "./utils/misc";
+import { getTxToBroadcast } from "./utils/transactions";
 
 export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
   signedOperation: { operation, signature, rawData },

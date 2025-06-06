@@ -9,6 +9,14 @@ export function inferCryptoCurrencyIcon<Icon>(
   if (currency.type === "TokenCurrency") {
     // FIXME DEPRECATED (ongoing hack due to ticker collision)
     if (currency.disableCountervalue) return null;
+
+    // Support for per family token icons to avoid icon collision because of ticker collision
+    // It is backward compatible with the old icons registry
+    const perFamilyTokenId =
+      currency.parentCurrency.id.toUpperCase() + "_" + currency.ticker.toUpperCase();
+    if (iconsRegistry[perFamilyTokenId]) {
+      return iconsRegistry[perFamilyTokenId];
+    }
   } else {
     // we allow the icons to define a CURRENCY_{id} format (check in libs/ui/crypto-icons compiled files, they get uppercased. we will improve in future)
     const maybeIconById = iconsRegistry[`currency_${currency.id}`.toUpperCase()];
