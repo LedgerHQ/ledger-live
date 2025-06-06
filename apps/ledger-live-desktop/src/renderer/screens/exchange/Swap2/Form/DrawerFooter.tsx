@@ -10,6 +10,7 @@ import {
   getSwapProvider,
   AdditionalProviderConfig,
 } from "@ledgerhq/live-common/exchange/providers/swap";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const Terms = styled(Text).attrs({
   ff: "Inter|SemiBold",
@@ -28,17 +29,64 @@ export function DrawerFooter({ provider }: { provider: string }) {
     getProvideData();
   }, [provider]);
 
+  const ptxSwapLiveAppKycWarning = useFeature("ptxSwapLiveAppKycWarning");
   const url = providerData?.termsOfUseUrl;
-  const onLinkClick = useCallback(() => openURL(url!), [url]);
+  const onLinkClick = useCallback((link: string) => openURL(link!), []);
   if (!url) {
     return null;
   }
   const providerName = getProviderName(provider);
-  const acceptTerms =
-    providerName === "Exodus"
-      ? "DeviceAction.swap.exodusAcceptTerms"
-      : "DeviceAction.swap.acceptTerms";
-
+  let acceptTerms: string;
+  let linksComponents: React.JSX.Element[] = [];
+  if (!ptxSwapLiveAppKycWarning?.enabled) {
+    acceptTerms =
+      providerName === "Exodus"
+        ? "DeviceAction.swap.exodusAcceptTerms"
+        : "DeviceAction.swap.acceptTerms";
+  } else {
+    switch (providerName) {
+      case "Exodus":
+        acceptTerms = "DeviceAction.swap.exodusAcceptTerms";
+        linksComponents = [
+          <LinkWithExternalIcon
+            key="termsExternalLink"
+            fontSize={13}
+            color="palette.text.shade60"
+            onClick={() => onLinkClick(url)}
+            style={{
+              textDecoration: "underline",
+            }}
+          />,
+        ];
+        break;
+      case "Changelly":
+        acceptTerms = "DeviceAction.swap.changellyAcceptTerms";
+        linksComponents = providerData.usefulUrls!.map((usefulUrl, idx) => (
+          <LinkWithExternalIcon
+            key={`external-link-${idx}`}
+            fontSize={13}
+            color="palette.text.shade60"
+            onClick={() => onLinkClick(usefulUrl)}
+            style={{ textDecoration: "underline" }}
+          />
+        ));
+        break;
+      default:
+        acceptTerms = "DeviceAction.swap.acceptTerms";
+        linksComponents = [
+          <LinkWithExternalIcon
+            key="termsExternalLink"
+            fontSize={13}
+            color="palette.text.shade60"
+            onClick={() => onLinkClick(url)}
+            style={{
+              textDecoration: "underline",
+            }}
+          />,
+        ];
+        break;
+    }
+  }
   return (
     <Box mt={1} mb={5} mx={3}>
       <Terms>
@@ -47,17 +95,7 @@ export function DrawerFooter({ provider }: { provider: string }) {
           values={{
             provider: providerName,
           }}
-          components={[
-            <LinkWithExternalIcon
-              key="termsExternalLink"
-              fontSize={13}
-              color="palette.text.shade60"
-              onClick={onLinkClick}
-              style={{
-                textDecoration: "underline",
-              }}
-            />,
-          ]}
+          components={linksComponents}
         />
       </Terms>
     </Box>
