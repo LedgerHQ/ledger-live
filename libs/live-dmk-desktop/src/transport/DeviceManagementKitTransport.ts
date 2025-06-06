@@ -148,8 +148,6 @@ export class DeviceManagementKitTransport extends Transport {
   };
 
   async exchange(apdu: Buffer): Promise<Buffer> {
-    tracer.trace(`[exchange] => ${apdu.toString("hex")}`);
-
     const devices = this.dmk.listConnectedDevices();
 
     // If the device is not connected, connect to new session
@@ -171,10 +169,14 @@ export class DeviceManagementKitTransport extends Transport {
       })
       .then((apduResponse: { data: Uint8Array; statusCode: Uint8Array }): Buffer => {
         const response = Buffer.from([...apduResponse.data, ...apduResponse.statusCode]);
+        //Log the exchange for debugging purposes
+        tracer.trace(`[exchange] => ${apdu.toString("hex")}`);
         tracer.trace(`[exchange] <= ${response.toString("hex")}`);
+
         return response;
       })
       .catch(e => {
+        tracer.trace(`[Error][exchange]${apdu.toString("hex")}`, { error: e });
         throw e;
       });
   }
