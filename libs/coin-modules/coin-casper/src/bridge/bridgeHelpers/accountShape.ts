@@ -3,9 +3,9 @@ import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { fetchBalance, fetchNetworkStatus, fetchTxs, fetchAccountStateInfo } from "../../api/index";
+import { fetchBalance, fetchBlockHeight, fetchAccountStateInfo, fetchTxs } from "../../api/index";
 import { mapTxToOps } from "./txn";
-import { NAccountBalance, ITxnHistoryData } from "../../api/types";
+import { ITxnHistoryData } from "../../api/types";
 
 export const getAccountShape: GetAccountShape = async info => {
   const { address, currency, derivationMode } = info;
@@ -22,18 +22,16 @@ export const getAccountShape: GetAccountShape = async info => {
 
   const { purseUref, accountHash } = await fetchAccountStateInfo(address);
 
-  const blockHeight = await fetchNetworkStatus();
+  const blockHeight = await fetchBlockHeight();
 
-  const balance: NAccountBalance = purseUref
-    ? await fetchBalance(purseUref)
-    : { balance_value: "0", api_version: "", merkle_proof: "" };
+  const balance = purseUref ? await fetchBalance(purseUref) : new BigNumber(0);
   const txs: ITxnHistoryData[] = purseUref ? await fetchTxs(address) : [];
 
   return {
     id: accountId,
-    balance: new BigNumber(balance.balance_value),
-    spendableBalance: new BigNumber(balance.balance_value),
+    balance,
+    spendableBalance: balance,
     operations: flatMap(txs, mapTxToOps(accountId, accountHash ?? "")),
-    blockHeight: blockHeight.last_added_block_info.height,
+    blockHeight,
   };
 };
