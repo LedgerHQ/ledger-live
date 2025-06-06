@@ -6,4 +6,4 @@ export { getBalance } from "./getBalance";
 export { lastBlock } from "./lastBlock";
 export { listOperations } from "./listOperations";
 export { getTransactionStatus } from "./getTransactionStatus";
-export { getAssetCodeIssuer } from "./utils";
+export { getAssetCodeIssuer, STELLAR_BURN_ADDRESS } from "./utils";
