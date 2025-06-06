@@ -1,3 +1,4 @@
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { createFixtureOperation } from "../types/bridge.fixture";
 import { broadcast } from "./broadcast";
 
@@ -9,11 +10,15 @@ jest.mock("../network", () => {
   };
 });
 
+const account = {
+  currency: getCryptoCurrencyById("polkadot"),
+};
+
 describe("broadcast", () => {
   it("calls explorer for broadcast operation", async () => {
     // WHEN
     await broadcast({
-      account: {} as any,
+      account: account as any,
       signedOperation: {
         signature: "SIGNATURE",
         operation: createFixtureOperation(),
@@ -31,7 +36,7 @@ describe("broadcast", () => {
 
     // WHEN
     const result = await broadcast({
-      account: {} as any,
+      account: account as any,
       signedOperation: { signature: "SIGNATURE", operation },
     });
 
