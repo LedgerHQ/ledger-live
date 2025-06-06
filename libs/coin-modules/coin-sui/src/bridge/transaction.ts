@@ -14,16 +14,17 @@ import type { Transaction, TransactionRaw } from "../types";
 export const formatTransaction = (transaction: Transaction, account: Account): string => {
   const { mode, amount, recipient, useAllAmount } = transaction;
   return `
-${mode.toUpperCase()} ${useAllAmount
+${mode.toUpperCase()} ${
+    useAllAmount
       ? "MAX"
       : amount.isZero()
         ? ""
         : " " +
-        formatCurrencyUnit(getAccountUnit(account), amount, {
-          showCode: true,
-          disableRounding: true,
-        })
-    }${recipient ? `\nTO ${recipient}` : ""}`;
+          formatCurrencyUnit(getAccountUnit(account), amount, {
+            showCode: true,
+            disableRounding: true,
+          })
+  }${recipient ? `\nTO ${recipient}` : ""}`;
 };
 
 export const fromTransactionRaw = (transaction: TransactionRaw): Transaction => {
