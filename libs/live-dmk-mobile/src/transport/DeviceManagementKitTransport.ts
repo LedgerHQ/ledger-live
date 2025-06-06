@@ -30,7 +30,9 @@ import { HwTransportError } from "@ledgerhq/errors";
 import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
 import { BlePlxManager } from "./BlePlxManager";
 
-export const tracer = new LocalTracer("live-dmk", { function: "DeviceManagementKitTransport" });
+export const tracer = new LocalTracer("live-dmk-tracer", {
+  function: "DeviceManagementKitTransport",
+});
 
 export class DeviceManagementKitTransport extends Transport {
   sessionId: string;
@@ -311,8 +313,6 @@ export class DeviceManagementKitTransport extends Transport {
       throw new Error("No active session found");
     }
 
-    tracer.trace(`[exchange] => ${apdu.toString("hex")}`);
-
     return await this.dmk
       .sendApdu({
         sessionId: activeSessionId,
@@ -321,11 +321,12 @@ export class DeviceManagementKitTransport extends Transport {
       })
       .then((apduResponse: { data: Uint8Array; statusCode: Uint8Array }): Buffer => {
         const response = Buffer.from([...apduResponse.data, ...apduResponse.statusCode]);
+        tracer.trace(`[exchange] => ${apdu.toString("hex")}`);
         tracer.trace(`[exchange] <= ${response.toString("hex")}`);
         return response;
       })
       .catch(error => {
-        tracer.trace("[DMKTransport] [exchange] error", { error });
+        tracer.trace("[Error][exchange] ", { error });
         throw error;
       });
   }
