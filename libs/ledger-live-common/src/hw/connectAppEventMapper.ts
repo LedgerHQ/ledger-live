@@ -13,7 +13,6 @@ import {
   DeviceActionStatus,
   DeviceLockedError,
   DeviceSessionStateType,
-  DeviceStatus,
   UserInteractionRequired,
   OutOfMemoryDAError,
   SecureChannelError,
@@ -96,9 +95,7 @@ export class ConnectAppEventMapper {
       return;
     }
 
-    if (deviceState.deviceStatus === DeviceStatus.NOT_CONNECTED) {
-      this.eventSubject.next({ type: "disconnected", expected: false });
-    } else if (
+    if (
       deviceState.firmwareVersion?.metadata &&
       deviceState.firmwareUpdateContext &&
       !this.lastSeenDeviceSent

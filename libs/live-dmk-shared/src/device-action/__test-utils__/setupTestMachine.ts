@@ -1,11 +1,14 @@
 import {
   GetDeviceMetadataDeviceAction,
   GetDeviceMetadataDAOutput,
+  GetDeviceStatusDeviceAction,
+  GetDeviceStatusDAOutput,
   GoToDashboardDeviceAction,
   InstallOrUpdateAppsDeviceAction,
   InstallOrUpdateAppsDAIntermediateValue,
   InstallOrUpdateAppsDAOutput,
   OpenAppWithDependenciesDeviceAction,
+  OpenAppWithDependenciesDAError,
   OpenAppWithDependenciesDAOutput,
   OpenAppWithDependenciesDAIntermediateValue,
   UnknownDAError,
@@ -44,6 +47,35 @@ export const setupGoToDashboardMock = (error: boolean = false) => {
   }));
 };
 
+export const setupGetDeviceStatusMock = (metadata: GetDeviceStatusDAOutput, error = false) => {
+  (GetDeviceStatusDeviceAction as Mock).mockImplementation(() => ({
+    makeStateMachine: vi.fn().mockImplementation(() =>
+      createMachine({
+        id: "MockGetDeviceStatusDeviceAction",
+        initial: "ready",
+        states: {
+          ready: {
+            after: {
+              0: "done",
+            },
+            entry: assign({
+              intermediateValue: () => ({
+                requiredUserInteraction: UserInteractionRequired.None,
+              }),
+            }),
+          },
+          done: {
+            type: "final",
+          },
+        },
+        output: () => {
+          return error ? Left(new UnknownDAError("GetDeviceStatus failed")) : Right(metadata);
+        },
+      }),
+    ),
+  }));
+};
+
 export const setupGetDeviceMetadataMock = (metadata: GetDeviceMetadataDAOutput, error = false) => {
   (GetDeviceMetadataDeviceAction as Mock).mockImplementation(() => ({
     makeStateMachine: vi.fn().mockImplementation(() =>
@@ -76,7 +108,7 @@ export const setupGetDeviceMetadataMock = (metadata: GetDeviceMetadataDAOutput, 
 export const setupOpenAppWithDependenciesMock = (
   result: OpenAppWithDependenciesDAOutput,
   intermediateValue: OpenAppWithDependenciesDAIntermediateValue,
-  error = false,
+  error: OpenAppWithDependenciesDAError | undefined = undefined,
 ) => {
   (OpenAppWithDependenciesDeviceAction as Mock).mockImplementation(() => ({
     makeStateMachine: vi.fn().mockImplementation(() =>
@@ -97,7 +129,7 @@ export const setupOpenAppWithDependenciesMock = (
           },
         },
         output: () => {
-          return error ? Left(new UnknownDAError("OpenAppWithDependencies failed")) : Right(result);
+          return error ? Left(error) : Right(result);
         },
       }),
     ),
