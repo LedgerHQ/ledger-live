@@ -16,7 +16,6 @@ import BigNumber from "bignumber.js";
 import { AptosAPI } from "../../network";
 import { AptosAsset } from "../../types/assets";
 import { Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { APTOS_ASSET_ID } from "../../constants";
 import { AptosTransaction } from "../../types";
 
@@ -732,33 +731,6 @@ describe("Aptos API", () => {
   });
 
   describe("getBalances", () => {
-    let token: TokenCurrency;
-
-    beforeEach(() => {
-      token = {
-        type: "TokenCurrency",
-        id: "aptos_token",
-        name: "Aptos Token",
-        ticker: "APT",
-        units: [{ name: "APT", code: "APT", magnitude: 6 }],
-        contractAddress: "APTOS_1_ADDRESS",
-        tokenType: "fungible_asset",
-        parentCurrency: {
-          type: "CryptoCurrency",
-          id: "aptos",
-          name: "Aptos",
-          ticker: "APT",
-          units: [{ name: "APT", code: "APT", magnitude: 6 }],
-          color: "#000000",
-          family: "aptos",
-          scheme: "aptos",
-          explorerViews: [],
-          managerAppName: "Aptos",
-          coinType: 637,
-        },
-      };
-    });
-
     it("returns an array of AptosBalances objects", async () => {
       const assets = [{ asset_type: APTOS_ASSET_ID, amount: 200 }];
       const mockGetCurrentFungibleAssetBalances = jest.fn().mockResolvedValue(assets);
