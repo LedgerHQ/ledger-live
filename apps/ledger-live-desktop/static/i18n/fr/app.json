@@ -2897,7 +2897,7 @@
     "lockedTooltip" : "Vous devez immobiliser des actifs puis voter pour des groupes de validateurs pour gagner des récompenses.",
     "nonvotingLockedBalance" : "Solde immobilisé non utilisé pour voter",
     "nonvotingLockedTooltip" : "Solde des actifs immobilisés pouvant être utilisés pour voter",
-    "withdrawableBalance" : "Solde pouvant être retiré",
+    "withdrawableBalance" : "Solde disponible au retrait",
     "withdrawableTooltip" : "CELO dégelés et transférables sur votre solde disponible",
     "delegation" : {
       "activeTooltip" : "Un vote actif génère des récompenses",
@@ -3944,7 +3944,7 @@
       "pendingBalance" : "Solde en attente",
       "pendingBalanceTooltip" : "Montant des actifs déstakés qui seront bientôt disponibles.",
       "storageUsageBalance" : "Solde minimum",
-      "storageUsageBalanceTooltip" : "Montant réservé pour le stockage et les transactions. Il constitue le solde minimum que votre compte doit contenir pour rester actif.",
+      "storageUsageBalanceTooltip" : "Montant réservé pour le stockage et les transactions. Il s’agit du solde minimum requis pour que votre compte reste actif.",
       "subHeader" : {
         "cardTitle" : "Propulsé par Figment",
         "moreInfo" : "Plus d’informations",
@@ -4014,7 +4014,7 @@
       }
     },
     "unstake" : {
-      "disabledTooltip" : "Il n’y a pas assez d’actifs stakés à déstaker.",
+      "disabledTooltip" : "Solde d’actifs stakés insuffisant pour déstaker.",
       "flow" : {
         "title" : "Déstaker",
         "steps" : {
@@ -4043,7 +4043,7 @@
       }
     },
     "withdraw" : {
-      "disabledTooltip" : "Il n’y a pas assez d’actifs à retirer.",
+      "disabledTooltip" : "Solde d’actifs insuffisant pour effectuer un retrait.",
       "flow" : {
         "title" : "Retirer",
         "steps" : {
@@ -6371,7 +6371,7 @@
     },
     "SolanaTokenNonTransferable" : {
       "title" : "Le token n’est pas transférable",
-      "description" : "Ces tokens sont des tokens soulbound et ne peuvent pas être transférés."
+      "description" : "Ces tokens sont des soulbound tokens et ne peuvent pas être transférés."
     },
     "NotEnoughNftOwned" : {
       "title" : "Nombre de tokens disponibles insuffisant"
@@ -6594,6 +6594,19 @@
     },
     "AmountTooSmall" : {
       "title" : "Le montant minimal requis pour cette transaction est {{amount}}"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "Keeping you safe",
+      "description" : "This transaction involves a sanctioned wallet address and cannot be processed.<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForSendError" : {
+      "title" : "This transaction involves a sanctioned wallet address and cannot be processed<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForStakingError" : {
+      "title" : "This transaction involves a sanctioned wallet address<br/> and cannot be processed.<br/>-- {{sanctionedAddress}}<br/>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "This transaction involves a sanctioned wallet address and cannot be processed."
     }
   },
   "cryptoOrg" : {
@@ -7057,12 +7070,9 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "Rechercher",
-    "assetFlow" : {
-      "selectTemplate" : "Sélectionner {{dynamic}}",
-      "asset" : "un actif",
-      "network" : "un réseau",
-      "account" : "un compte"
-    }
+    "selectAsset" : "Sélectionner un actif",
+    "selectNetwork" : "Sélectionner un réseau",
+    "selectAccount" : "Sélectionner un compte"
   },
   "nftEntryPoint" : {
     "title" : "NFT (tokens non fongibles)",
@@ -7070,5 +7080,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Région indisponible",
+    "description" : "L’application n’est pas disponible dans ce pays/région.",
+    "learnMore" : "En savoir plus"
   }
 }
