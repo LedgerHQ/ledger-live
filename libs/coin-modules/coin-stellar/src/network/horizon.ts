@@ -5,6 +5,11 @@ import type { CacheRes } from "@ledgerhq/live-network/cache";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";
+// import {
+//   Account,
+//   // TokenAccount,
+// } from "@ledgerhq/coin-framework/api/types";
+
 import {
   // @ts-expect-error stellar-sdk ts definition missing?
   AccountRecord,
@@ -359,9 +364,9 @@ export async function fetchOperations({
   }
 }
 
-export async function fetchAccountNetworkInfo(account: Account): Promise<NetworkInfo> {
+export async function fetchAccountNetworkInfo(account: string): Promise<NetworkInfo> {
   try {
-    const extendedAccount = await getServer().accounts().accountId(account.freshAddress).call();
+    const extendedAccount = await getServer().accounts().accountId(account).call();
     const baseReserve = getReservedBalance(extendedAccount);
     const { recommendedFee, networkCongestionLevel, baseFee } = await fetchBaseFee();
 
@@ -387,9 +392,9 @@ export async function fetchSequence(account: Account): Promise<BigNumber> {
   return extendedAccount ? new BigNumber(extendedAccount.sequence) : new BigNumber(0);
 }
 
-export async function fetchSigners(account: Account): Promise<Signer[]> {
+export async function fetchSigners(account: string): Promise<Signer[]> {
   try {
-    const extendedAccount = await getServer().accounts().accountId(account.freshAddress).call();
+    const extendedAccount = await getServer().accounts().accountId(account).call();
     return extendedAccount.signers;
   } catch (error) {
     return [];

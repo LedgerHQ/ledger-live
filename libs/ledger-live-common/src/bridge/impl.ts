@@ -20,6 +20,7 @@ import { TransactionCommon } from "@ledgerhq/types-live";
 
 const alpacaized = {
   xrp: true,
+  stellar: true,
 };
 
 let accountBridgeInstance: AccountBridge<any> | null = null;
