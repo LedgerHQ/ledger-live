@@ -197,7 +197,7 @@ export const getTransactionStatus = async (
     }
   }
 
-  if (await isAccountMultiSign(account)) {
+  if (await isAccountMultiSign(account.address)) {
     errors.recipient = new StellarSourceHasMultiSign();
   }
 

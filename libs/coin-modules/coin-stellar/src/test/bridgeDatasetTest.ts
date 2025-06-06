@@ -6,7 +6,7 @@ import {
   NotEnoughBalanceBecauseDestinationNotCreated,
 } from "@ledgerhq/errors";
 import type { Transaction } from "../types/index";
-import transactionTransformer from "../bridge/transaction";
+import transactionTransformer from "../transaction";
 import { StellarWrongMemoFormat } from "../types";
 
 export const dataset: DatasetTest<Transaction> = {

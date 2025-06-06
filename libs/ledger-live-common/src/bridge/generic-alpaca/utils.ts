@@ -86,4 +86,5 @@ export const buildOptimisticOperation = (
       },
     ];
   }
+  return operation;
 };

@@ -1,8 +1,9 @@
-import type { TokenAccount, Account, SwapOperation } from "@ledgerhq/types-live";
+import type { TokenAccount, Account } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { BalanceHistoryCache } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { buildTokenCurrency } from "./buildTokenCurrency";
+import { listTokensForCryptoCurrency } from "../../currencies";
 
 /**
  * A minimal asset format compatible across chains that support tokens
@@ -56,30 +57,38 @@ export function buildSubAccounts<T extends BaseTokenLikeAsset>({
   assets,
   operations = [],
 }: BuildSubAccountsArgs<T>): TokenAccount[] {
-  return assets.map(asset => {
-    const id = `${accountId}+${asset.asset_code}+${asset.asset_issuer}`;
-    const balance = new BigNumber(asset.balance);
+  const allTokens = listTokensForCryptoCurrency(currency);
 
-    const tokenCurrency: TokenCurrency = buildTokenCurrency({
-      asset,
-      parentCurrency: currency,
-    });
+  return assets
+    .map(asset => {
+      const token = allTokens.find(token => token.name === asset.asset_code);
+      if (!token) {
+        return null;
+      }
+      const id = token.id;
+      const balance = new BigNumber(asset.balance);
 
-    const tokenAccount: TokenAccount = {
-      type: "TokenAccount",
-      id,
-      parentId: accountId,
-      token: tokenCurrency,
-      balance,
-      spendableBalance: balance,
-      creationDate: new Date(), // TODO: For stellar, use stellar tokens.ts
-      operations,
-      operationsCount: operations.length,
-      pendingOperations: [],
-      balanceHistoryCache: emptyBalanceHistoryCache,
-      swapHistory: [], // NOTE: Populated later in sync with swap logic if needed
-    };
+      const tokenCurrency: TokenCurrency = buildTokenCurrency({
+        asset,
+        parentCurrency: currency,
+      });
 
-    return tokenAccount;
-  });
+      const tokenAccount: TokenAccount = {
+        type: "TokenAccount",
+        id,
+        parentId: accountId,
+        token: tokenCurrency,
+        balance,
+        spendableBalance: balance,
+        creationDate: new Date(), // TODO: For stellar, use stellar tokens.ts
+        operations,
+        operationsCount: operations.length,
+        pendingOperations: [],
+        balanceHistoryCache: emptyBalanceHistoryCache,
+        swapHistory: [], // NOTE: Populated later in sync with swap logic if needed
+      };
+
+      return tokenAccount;
+    })
+    .filter((account): account is TokenAccount => account !== null);
 }
