@@ -18,6 +18,8 @@ import { track } from "~/renderer/analytics/segment";
 import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { safeUrl } from "@ledgerhq/live-common/wallet-api/helpers";
+import Switch from "../Switch";
+import { Icons } from "@ledgerhq/react-ui/index";
 
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
@@ -98,9 +100,17 @@ export type Props = {
   manifest: LiveAppManifest;
   webviewAPIRef: RefObject<WebviewAPI>;
   webviewState: WebviewState;
+  mobileView: boolean;
+  SetMobileView?: (value: boolean) => void;
 };
 
-export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
+export const TopBar = ({
+  manifest,
+  webviewAPIRef,
+  webviewState,
+  mobileView,
+  SetMobileView,
+}: Props) => {
   const { t } = useTranslation();
   const lastMatchingURL = useRef<string | null>(null);
   const history = useHistory();
@@ -239,6 +249,14 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
             <ItemContent>
               <Trans i18nKey="common.sync.devTools" />
             </ItemContent>
+          </ItemContainer>
+          <Separator />
+          <ItemContainer isInteractive onClick={() => SetMobileView?.(!mobileView)}>
+            <Icons.Desktop size="S" />
+            <ItemContent>
+              <Switch isChecked={mobileView}></Switch>
+            </ItemContent>
+            <Icons.Mobile size="S" />
           </ItemContainer>
         </>
       ) : null}
