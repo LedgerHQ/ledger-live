@@ -47,7 +47,8 @@
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit",
     "unimported": "unimported",
-    "test": "jest"
+    "test": "jest",
+    "coverage": "jest --coverage"
   },
   "typesVersions": {
     "*": {

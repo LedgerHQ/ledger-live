@@ -9,40 +9,37 @@ import {
   NotEnoughSpendableBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import BigNumber from "bignumber.js";
 import { isValidClassicAddress } from "ripple-address-codec";
-import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { getServerInfos } from "../network";
-import { cachedRecipientIsNew, parseAPIValue } from "../logic";
-import { Transaction, TransactionStatus } from "../types";
+import { cachedRecipientIsNew, parseAPIValue } from ".";
+import { Transaction, TransactionValidation, Account } from "@ledgerhq/coin-framework/api/types";
 
-export const getTransactionStatus: AccountBridge<
-  Transaction,
-  Account,
-  TransactionStatus
->["getTransactionStatus"] = async (account, transaction) => {
+export const getTransactionStatus = async (
+  account: Account,
+  transaction: Transaction,
+): Promise<TransactionValidation> => {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
   const serverInfos = await getServerInfos();
   const reserveBaseXRP = parseAPIValue(
     serverInfos.info.validated_ledger.reserve_base_xrp.toString(),
   );
-  const estimatedFees = new BigNumber(transaction.fee || 0);
-  const totalSpent = new BigNumber(transaction.amount).plus(estimatedFees);
-  const amount = new BigNumber(transaction.amount);
+  const estimatedFees = transaction.fee || 0n;
+  const totalSpent = transaction.amount + estimatedFees;
+  const amount = transaction.amount;
 
-  if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
+  if (amount > 0 && estimatedFees * 10n > amount) {
     warnings.feeTooHigh = new FeeTooHigh();
   }
 
   if (!transaction.fee) {
     errors.fee = new FeeNotLoaded();
-  } else if (transaction.fee.eq(0)) {
+  } else if (transaction.fee == 0n) {
     errors.fee = new FeeRequired();
-  } else if (totalSpent.gt(account.balance.minus(reserveBaseXRP))) {
+  } else if (totalSpent > account.balance - BigInt(reserveBaseXRP.toString())) {
     errors.amount = new NotEnoughSpendableBalance("", {
-      minimumAmount: formatCurrencyUnit(account.currency.units[0], reserveBaseXRP, {
+      minimumAmount: formatCurrencyUnit(account.currencyUnit, reserveBaseXRP, {
         disableRounding: true,
         useGrouping: false,
         showCode: true,
@@ -51,10 +48,10 @@ export const getTransactionStatus: AccountBridge<
   } else if (
     transaction.recipient &&
     (await cachedRecipientIsNew(transaction.recipient)) &&
-    transaction.amount.lt(reserveBaseXRP)
+    transaction.amount < BigInt(reserveBaseXRP.toString())
   ) {
     errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
-      minimalAmount: formatCurrencyUnit(account.currency.units[0], reserveBaseXRP, {
+      minimalAmount: formatCurrencyUnit(account.currencyUnit, reserveBaseXRP, {
         disableRounding: true,
         useGrouping: false,
         showCode: true,
@@ -64,15 +61,15 @@ export const getTransactionStatus: AccountBridge<
 
   if (!transaction.recipient) {
     errors.recipient = new RecipientRequired("");
-  } else if (account.freshAddress === transaction.recipient) {
+  } else if (account.address === transaction.recipient) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   } else if (!isValidClassicAddress(transaction.recipient)) {
     errors.recipient = new InvalidAddress("", {
-      currencyName: account.currency.name,
+      currencyName: account.currencyName,
     });
   }
 
-  if (!errors.amount && amount.eq(0)) {
+  if (!errors.amount && amount == 0n) {
     errors.amount = new AmountRequired();
   }
 

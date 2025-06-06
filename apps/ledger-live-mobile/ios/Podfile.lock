@@ -31,8 +31,6 @@ PODS:
     - BrazeKit (= 9.0.0)
   - CocoaAsyncSocket (7.6.5)
   - DoubleConversion (1.1.6)
-  - EXConstants (16.0.2):
-    - ExpoModulesCore
   - EXImageLoader (4.7.0):
     - ExpoModulesCore
     - React-Core
@@ -2085,16 +2083,15 @@ DEPENDENCIES:
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
   - "braze-react-native-sdk (from `../node_modules/@braze/react-native-sdk`)"
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
-  - "EXConstants (from `../../../node_modules/.pnpm/expo-constants@16.0.2_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@types_rproegwlxlnson7miipd77adb4/node_modules/expo-constants/ios`)"
-  - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@4.7.0_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@typ_6lnceoomhdx2gskrzh3nbqbw6q/node_modules/expo-image-loader/ios`)"
-  - "Expo (from `../../../node_modules/.pnpm/expo@51.0.39_@babel+core@7.24.3_expo-modules-autolinking@1.11.2_expo-modules-core@1.12.26_rea_a6krvppzciulhzjjfyufkkkhg4/node_modules/expo`)"
-  - "ExpoAsset (from `../../../node_modules/.pnpm/expo-asset@10.0.10_6swtssrbgxqycpc7eps5a4xxjq/node_modules/expo-asset/ios`)"
-  - "ExpoCamera (from `../../../node_modules/.pnpm/expo-camera@15.0.16_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@types+r_f5ob5xec66l7k42vwrxpwsenf4/node_modules/expo-camera/ios`)"
-  - "ExpoCrypto (from `../../../node_modules/.pnpm/expo-crypto@13.0.2_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@types+re_todxpdtsn6tlsvb5azr7ednmdm/node_modules/expo-crypto/ios`)"
-  - "ExpoFileSystem (from `../../../node_modules/.pnpm/expo-file-system@17.0.1_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@typ_cuhvtwl6c2ijkfb5cuyrmzofaq/node_modules/expo-file-system/ios`)"
-  - "ExpoFont (from `../../../node_modules/.pnpm/expo-font@12.0.10_expo-asset@10.0.10_6swtssrbgxqycpc7eps5a4xxjq__expo-modules-core@1.12.26_re_qg2bfisrdnkkvqenrfscjlqydm/node_modules/expo-font/ios`)"
-  - "ExpoImageManipulator (from `../../../node_modules/.pnpm/expo-image-manipulator@12.0.5_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24._vjbct5shbb5aymg52seyzyxcae/node_modules/expo-image-manipulator/ios`)"
-  - "ExpoKeepAwake (from `../../../node_modules/.pnpm/expo-keep-awake@13.0.2_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@type_asiyjifmzpnjeiinhrzsdrphgq/node_modules/expo-keep-awake/ios`)"
+  - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@4.7.0_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@typ_cmzjqa6sb3bi4cwyw4pdi3oqjy/node_modules/expo-image-loader/ios`)"
+  - "Expo (from `../../../node_modules/.pnpm/expo@51.0.39_@babel+core@7.24.3_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.2_wouhw2xaijyyfr5x53cjj45uv4/node_modules/expo`)"
+  - "ExpoAsset (from `../../../node_modules/.pnpm/expo-asset@10.0.10_q5xqfzs7syje772botugeiahte/node_modules/expo-asset/ios`)"
+  - "ExpoCamera (from `../../../node_modules/.pnpm/expo-camera@15.0.16_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@types+r_r3tussiad7pjc7kiutvxgbbxg4/node_modules/expo-camera/ios`)"
+  - "ExpoCrypto (from `../../../node_modules/.pnpm/expo-crypto@13.0.2_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@types+re_q4gebbqnkapyoh7arhx4m6s4fa/node_modules/expo-crypto/ios`)"
+  - "ExpoFileSystem (from `../../../node_modules/.pnpm/expo-file-system@17.0.1_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@typ_gtfy6flrnb2fwe3kcnsfjvnu44/node_modules/expo-file-system/ios`)"
+  - "ExpoFont (from `../../../node_modules/.pnpm/expo-font@12.0.10_expo-asset@10.0.10_q5xqfzs7syje772botugeiahte__expo-modules-core@1.12.26_re_gmngyiepvxl6sutyzq4l4pr5uy/node_modules/expo-font/ios`)"
+  - "ExpoImageManipulator (from `../../../node_modules/.pnpm/expo-image-manipulator@12.0.5_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24._vjbgjxw2h2hytwqjfrydzrq3ma/node_modules/expo-image-manipulator/ios`)"
+  - "ExpoKeepAwake (from `../../../node_modules/.pnpm/expo-keep-awake@13.0.2_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@type_bs2hb4xb4v3qnz2zcrvkud76ga/node_modules/expo-keep-awake/ios`)"
   - "ExpoModulesCore (from `../../../node_modules/.pnpm/expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@types+react@18.2.73_react@1_wpnpqrz774uzlazihm4t4kzp4m/node_modules/expo-modules-core`)"
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - fmt (from `../node_modules/react-native/third-party-podspecs/fmt.podspec`)
@@ -2246,26 +2243,24 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@braze/react-native-sdk"
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
-  EXConstants:
-    :path: "../../../node_modules/.pnpm/expo-constants@16.0.2_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@types_rproegwlxlnson7miipd77adb4/node_modules/expo-constants/ios"
   EXImageLoader:
-    :path: "../../../node_modules/.pnpm/expo-image-loader@4.7.0_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@typ_6lnceoomhdx2gskrzh3nbqbw6q/node_modules/expo-image-loader/ios"
+    :path: "../../../node_modules/.pnpm/expo-image-loader@4.7.0_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@typ_cmzjqa6sb3bi4cwyw4pdi3oqjy/node_modules/expo-image-loader/ios"
   Expo:
-    :path: "../../../node_modules/.pnpm/expo@51.0.39_@babel+core@7.24.3_expo-modules-autolinking@1.11.2_expo-modules-core@1.12.26_rea_a6krvppzciulhzjjfyufkkkhg4/node_modules/expo"
+    :path: "../../../node_modules/.pnpm/expo@51.0.39_@babel+core@7.24.3_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.2_wouhw2xaijyyfr5x53cjj45uv4/node_modules/expo"
   ExpoAsset:
-    :path: "../../../node_modules/.pnpm/expo-asset@10.0.10_6swtssrbgxqycpc7eps5a4xxjq/node_modules/expo-asset/ios"
+    :path: "../../../node_modules/.pnpm/expo-asset@10.0.10_q5xqfzs7syje772botugeiahte/node_modules/expo-asset/ios"
   ExpoCamera:
-    :path: "../../../node_modules/.pnpm/expo-camera@15.0.16_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@types+r_f5ob5xec66l7k42vwrxpwsenf4/node_modules/expo-camera/ios"
+    :path: "../../../node_modules/.pnpm/expo-camera@15.0.16_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@types+r_r3tussiad7pjc7kiutvxgbbxg4/node_modules/expo-camera/ios"
   ExpoCrypto:
-    :path: "../../../node_modules/.pnpm/expo-crypto@13.0.2_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@types+re_todxpdtsn6tlsvb5azr7ednmdm/node_modules/expo-crypto/ios"
+    :path: "../../../node_modules/.pnpm/expo-crypto@13.0.2_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@types+re_q4gebbqnkapyoh7arhx4m6s4fa/node_modules/expo-crypto/ios"
   ExpoFileSystem:
-    :path: "../../../node_modules/.pnpm/expo-file-system@17.0.1_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@typ_cuhvtwl6c2ijkfb5cuyrmzofaq/node_modules/expo-file-system/ios"
+    :path: "../../../node_modules/.pnpm/expo-file-system@17.0.1_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@typ_gtfy6flrnb2fwe3kcnsfjvnu44/node_modules/expo-file-system/ios"
   ExpoFont:
-    :path: "../../../node_modules/.pnpm/expo-font@12.0.10_expo-asset@10.0.10_6swtssrbgxqycpc7eps5a4xxjq__expo-modules-core@1.12.26_re_qg2bfisrdnkkvqenrfscjlqydm/node_modules/expo-font/ios"
+    :path: "../../../node_modules/.pnpm/expo-font@12.0.10_expo-asset@10.0.10_q5xqfzs7syje772botugeiahte__expo-modules-core@1.12.26_re_gmngyiepvxl6sutyzq4l4pr5uy/node_modules/expo-font/ios"
   ExpoImageManipulator:
-    :path: "../../../node_modules/.pnpm/expo-image-manipulator@12.0.5_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24._vjbct5shbb5aymg52seyzyxcae/node_modules/expo-image-manipulator/ios"
+    :path: "../../../node_modules/.pnpm/expo-image-manipulator@12.0.5_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24._vjbgjxw2h2hytwqjfrydzrq3ma/node_modules/expo-image-manipulator/ios"
   ExpoKeepAwake:
-    :path: "../../../node_modules/.pnpm/expo-keep-awake@13.0.2_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@type_asiyjifmzpnjeiinhrzsdrphgq/node_modules/expo-keep-awake/ios"
+    :path: "../../../node_modules/.pnpm/expo-keep-awake@13.0.2_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@type_bs2hb4xb4v3qnz2zcrvkud76ga/node_modules/expo-keep-awake/ios"
   ExpoModulesCore:
     :path: "../../../node_modules/.pnpm/expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@types+react@18.2.73_react@1_wpnpqrz774uzlazihm4t4kzp4m/node_modules/expo-modules-core"
   FBLazyVector:
@@ -2498,7 +2493,6 @@ SPEC CHECKSUMS:
   BrazeUI: 9e86bd30ca84f66444a5f6d95e438057000f4d0f
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: 76ab83afb40bddeeee456813d9c04f67f78771b5
-  EXConstants: 409690fbfd5afea964e5e9d6c4eb2c2b59222c59
   EXImageLoader: ab589d67d6c5f2c33572afea9917304418566334
   Expo: 8c995afb875c15bf8439af0b20bcb9ed8f90d0bd
   ExpoAsset: 323700f291684f110fb55f0d4022a3362ea9f875

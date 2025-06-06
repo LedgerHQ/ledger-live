@@ -46,6 +46,10 @@ export type CurrencyConfig = {
 
 export type CoinConfig<T extends CurrencyConfig> = (currency?: CryptoCurrency) => T;
 
+export type SharedConfig = {
+  checkBlacklistAddress?: boolean;
+};
+
 function buildCoinConfig<T extends CurrencyConfig>() {
   let coinConfig: CoinConfig<T> | undefined;
 

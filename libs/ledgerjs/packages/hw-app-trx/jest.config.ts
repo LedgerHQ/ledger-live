@@ -10,15 +10,14 @@ export default {
     "!src/**/__tests__/**",
     "!tests/**",
   ],
-  coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "json-summary", "text"],
+  coverageReporters: [
+    "json",
+    ["lcov", { file: "lcov.info", projectRoot: "../../../../" }],
+    "json-summary",
+    "text",
+  ],
   reporters: [
     "default",
-    [
-      "jest-sonar",
-      {
-        outputName: "hw-app-trx-sonar-executionTests-report.xml",
-        reportedFilePath: "absolute",
-      },
-    ],
+    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
 };

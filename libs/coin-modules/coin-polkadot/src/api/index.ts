@@ -1,5 +1,5 @@
 import type {
-  Api,
+  AlpacaApi,
   FeeEstimation,
   Operation,
   Pagination,
@@ -18,7 +18,7 @@ import {
 } from "../logic";
 import { PolkadotAsset } from "../types";
 
-export function createApi(config: PolkadotConfig): Api<PolkadotAsset> {
+export function createApi(config: PolkadotConfig): AlpacaApi<PolkadotAsset> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
