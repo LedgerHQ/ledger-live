@@ -2,98 +2,114 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import BigNumber from "bignumber.js";
 import { faker } from "@faker-js/faker";
 import { createFixtureAccount, createFixtureOperation } from "../types/bridge.fixture";
-
+import { DEFAULT_COIN_TYPE } from "../network/sdk";
 import { getAccountShape } from "./synchronisation";
 
-const mockGetAccount = jest.fn();
+// Mock getTokenById and listTokensForCryptoCurrency
+jest.mock("@ledgerhq/cryptoassets/tokens", () => ({
+  getTokenById: (coinType: string) => ({
+    id: coinType,
+    ticker: "TEST",
+    name: "Test Token",
+    countervalueTicker: "TEST",
+    standard: "SUI-20",
+    tokenType: "sui",
+    parentCurrency: { id: "sui" },
+    contract: "0x123",
+  }),
+  listTokensForCryptoCurrency: () => [{ id: "0x123::sui::TEST" }],
+}));
+
+const mockGetAccountBalances = jest.fn();
 const mockGetOperations = jest.fn();
 jest.mock("../network", () => ({
-  getAccount: () => mockGetAccount(),
+  getAccountBalances: () => mockGetAccountBalances(),
   getOperations: () => mockGetOperations(),
 }));
 
 describe("getAccountShape", () => {
   beforeEach(() => {
-    mockGetAccount.mockClear();
+    mockGetAccountBalances.mockClear();
     mockGetOperations.mockClear();
   });
 
-  it("calls getAccount and getOperations", async () => {
+  it("calls getAccountBalances and getOperations", async () => {
     // GIVEN
     const initialAccount = undefined;
-    const accountInfo = createAccountInfo();
-    mockGetAccount.mockResolvedValue(accountInfo);
+    mockGetAccountBalances.mockResolvedValue([createAccountBalance()]);
     mockGetOperations.mockResolvedValue([]);
 
     // WHEN
     await getAccountShape(
       {
-        index: -1, // not used but mandatory
-        derivationPath: "not used",
+        index: 0,
+        derivationPath: "44'/784'/0'/0'/0'",
         currency: getCryptoCurrencyById("sui"),
         address: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
         initialAccount,
         derivationMode: "sui",
       },
-      { paginationConfig: {} },
+      { blacklistedTokenIds: [], paginationConfig: {} },
     );
 
     // THEN
-    expect(mockGetAccount).toHaveBeenCalledTimes(1);
+    expect(mockGetAccountBalances).toHaveBeenCalledTimes(1);
     expect(mockGetOperations).toHaveBeenCalledTimes(1);
   });
 
-  it("returns an AccountShapeInfo based on getAccount API", async () => {
+  it("returns an AccountShapeInfo based on getAccountBalances API", async () => {
     // GIVEN
     const initialAccount = undefined;
-    const accountInfo = createAccountInfo();
-    mockGetAccount.mockResolvedValue(accountInfo);
+    const accountBalance = createAccountBalance();
+    mockGetAccountBalances.mockResolvedValue([accountBalance]);
     mockGetOperations.mockResolvedValue([]);
 
     // WHEN
     const shape = await getAccountShape(
       {
-        index: -1, // not used but mandatory
-        derivationPath: "not used",
+        index: 0,
+        derivationPath: "44'/784'/0'/0'/0'",
         currency: getCryptoCurrencyById("sui"),
         address: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
         initialAccount,
         derivationMode: "sui",
       },
-      { paginationConfig: {} },
+      { blacklistedTokenIds: [], paginationConfig: {} },
     );
 
     // THEN
     expect(shape).toEqual({
       id: "js:2:sui:0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0:sui",
-      balance: accountInfo.balance,
-      spendableBalance: accountInfo.balance,
-      blockHeight: accountInfo.blockHeight,
+      balance: accountBalance.balance,
+      spendableBalance: accountBalance.balance,
+      blockHeight: 5,
       operations: [],
       operationsCount: 0,
       suiResources: {},
+      subAccounts: [],
     });
   });
 
   it("returns an AccountShapeInfo with operations from initialAccount", async () => {
     // GIVEN
-    const initialOperations = [createFixtureOperation({ id: faker.string.uuid() })];
+    const extra = { coinType: DEFAULT_COIN_TYPE };
+    const initialOperations = [createFixtureOperation({ id: faker.string.uuid(), extra })];
     const initialAccount = createFixtureAccount({ operations: initialOperations });
-    const accountInfo = createAccountInfo();
-    mockGetAccount.mockResolvedValue(accountInfo);
+    const accountBalance = createAccountBalance();
+    mockGetAccountBalances.mockResolvedValue([accountBalance]);
     mockGetOperations.mockResolvedValue([]);
 
     // WHEN
     const shape = await getAccountShape(
       {
-        index: -1, // not used but mandatory
-        derivationPath: "not used",
+        index: 0,
+        derivationPath: "44'/784'/0'/0'/0'",
         currency: getCryptoCurrencyById("sui"),
         address: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
         initialAccount,
         derivationMode: "sui",
       },
-      { paginationConfig: {} },
+      { blacklistedTokenIds: [], paginationConfig: {} },
     );
 
     // THEN
@@ -104,37 +120,66 @@ describe("getAccountShape", () => {
   it("returns an AccountShapeInfo with operations from getOperations API", async () => {
     // GIVEN
     const initialAccount = createFixtureAccount();
-    const accountInfo = createAccountInfo();
-    mockGetAccount.mockResolvedValue(accountInfo);
+    const accountBalance = createAccountBalance();
+    mockGetAccountBalances.mockResolvedValue([accountBalance]);
+    const extra = { coinType: DEFAULT_COIN_TYPE };
     const apiOperations = [
-      createFixtureOperation({ id: faker.string.uuid() }),
-      createFixtureOperation({ id: faker.string.uuid() }),
+      createFixtureOperation({ id: faker.string.uuid(), extra }),
+      createFixtureOperation({ id: faker.string.uuid(), extra }),
     ];
     mockGetOperations.mockResolvedValue(apiOperations);
 
     // WHEN
     const shape = await getAccountShape(
       {
-        index: -1, // not used but mandatory
-        derivationPath: "not used",
+        index: 0,
+        derivationPath: "44'/784'/0'/0'/0'",
         currency: getCryptoCurrencyById("sui"),
         address: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
         initialAccount,
         derivationMode: "sui",
       },
-      { paginationConfig: {} },
+      { blacklistedTokenIds: [], paginationConfig: {} },
     );
 
     // THEN
     expect(shape.operationsCount).toEqual(initialAccount.operations.length + apiOperations.length);
     expect(shape.operations).toEqual(expect.arrayContaining(apiOperations));
   });
+
+  it("handles multiple token balances and creates subAccounts", async () => {
+    // GIVEN
+    const initialAccount = createFixtureAccount();
+    const mainBalance = createAccountBalance({ coinType: DEFAULT_COIN_TYPE });
+    const tokenBalance = createAccountBalance({ coinType: "0x123::sui::TEST" });
+    mockGetAccountBalances.mockResolvedValue([mainBalance, tokenBalance]);
+    mockGetOperations.mockResolvedValue([]);
+
+    // WHEN
+    const shape = await getAccountShape(
+      {
+        index: 0,
+        derivationPath: "44'/784'/0'/0'/0'",
+        currency: getCryptoCurrencyById("sui"),
+        address: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+        initialAccount,
+        derivationMode: "sui",
+      },
+      { blacklistedTokenIds: [], paginationConfig: {} },
+    );
+
+    // THEN
+    expect(shape.balance).toEqual(mainBalance.balance);
+    expect(shape.subAccounts).toBeDefined();
+    expect(Array.isArray(shape.subAccounts)).toBe(true);
+  });
 });
 
-function createAccountInfo() {
+function createAccountBalance(overrides = {}) {
   return {
+    coinType: DEFAULT_COIN_TYPE,
     blockHeight: 10,
     balance: new BigNumber(faker.string.numeric()),
-    spendableBalance: new BigNumber(faker.string.numeric()),
+    ...overrides,
   };
 }
