@@ -10,12 +10,7 @@ import {
   InvalidAddress,
 } from "@ledgerhq/errors";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import {
-  Transaction,
-  TransactionValidation,
-  Account,
-  TokenAccount,
-} from "@ledgerhq/coin-framework/api/types";
+import { Transaction, TransactionValidation, Account } from "@ledgerhq/coin-framework/api/types";
 import { isAddressValid, isAccountMultiSign, isMemoValid } from "./utils";
 import { BASE_RESERVE, MIN_BALANCE, getRecipientAccount } from "../network";
 import {
@@ -41,8 +36,9 @@ import BigNumber from "bignumber.js";
 export const getTransactionStatus = async (
   account: Account,
   transaction: Transaction,
-  asset?: TokenAccount,
+  // asset? : AssetInfo,
 ): Promise<TransactionValidation> => {
+  let asset = account; // FIXME:
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
   const useAllAmount = !!transaction.useAllAmount;
