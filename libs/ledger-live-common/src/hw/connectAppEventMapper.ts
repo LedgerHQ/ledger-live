@@ -11,7 +11,6 @@ import type {
 } from "@ledgerhq/device-management-kit";
 import {
   DeviceActionStatus,
-  DeviceDisconnectedWhileSendingError,
   DeviceLockedError,
   DeviceSessionStateType,
   UserInteractionRequired,
@@ -257,8 +256,6 @@ export class ConnectAppEventMapper {
       this.eventSubject.complete();
     } else if (error instanceof SecureChannelError) {
       this.eventSubject.error(new UserRefusedAllowManager());
-    } else if (error instanceof DeviceDisconnectedWhileSendingError) {
-      this.eventSubject.next({ type: "disconnected", expected: false });
     } else if ("_tag" in error && error._tag === "WebHidSendReportError") {
       this.eventSubject.next({ type: "disconnected", expected: false });
       this.eventSubject.complete();
