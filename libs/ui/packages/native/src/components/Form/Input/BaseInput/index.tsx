@@ -167,7 +167,8 @@ export const InputRenderRightContainer = styled(FlexBox).attrs(() => ({
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const IDENTITY = (_: any): any => _;
 
-function Input<T = string>(props: InputProps<T>, ref?: any): JSX.Element {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function Input<T = string>(props: InputProps<T>, ref?: React.Ref<unknown>): JSX.Element {
   const {
     value,
     onChange,
@@ -193,7 +194,7 @@ function Input<T = string>(props: InputProps<T>, ref?: any): JSX.Element {
     ...textInputProps
   } = props;
 
-  const inputRef = useRef<any>();
+  const inputRef = useRef<TextInput>(null);
   useImperativeHandle(ref, () => inputRef.current, [inputRef]);
 
   const inputValue = useMemo(() => serialize(value), [serialize, value]);
@@ -232,11 +233,11 @@ function Input<T = string>(props: InputProps<T>, ref?: any): JSX.Element {
           editable={!disabled}
           disabled={disabled}
           error={error}
-          onFocus={(e: any) => {
+          onFocus={(e) => {
             setFocus(true);
             onFocus?.(e);
           }}
-          onBlur={(e: any) => {
+          onBlur={(e) => {
             setFocus(false);
             onBlur?.(e);
           }}

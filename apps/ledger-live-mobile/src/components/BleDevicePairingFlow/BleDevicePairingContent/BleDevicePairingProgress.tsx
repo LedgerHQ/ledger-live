@@ -27,7 +27,7 @@ export const BleDevicePairingProgress = ({
               <InfiniteLoader
                 color="primary.c80"
                 size={32}
-                mock={Config.DETOX}
+                mock={!!Config.DETOX}
                 testID="ble-pairing-loading"
               />
             )}

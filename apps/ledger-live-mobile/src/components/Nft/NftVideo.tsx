@@ -1,5 +1,5 @@
 import React from "react";
-import Video, { OnLoadData, VideoProperties } from "react-native-video";
+import Video, { OnLoadData, ReactVideoProps, VideoRef } from "react-native-video";
 import { View, StyleSheet, Animated, StyleProp, ViewStyle, Platform } from "react-native";
 import { ResizeMode } from "react-native-fast-image";
 import { Theme, withTheme } from "../../colors";
@@ -14,7 +14,7 @@ type Props = {
   status: string;
   src: string;
   srcFallback: string;
-  resizeMode?: VideoProperties["resizeMode"] & ResizeMode;
+  resizeMode?: ReactVideoProps["resizeMode"] & ResizeMode;
   colors: Theme["colors"];
   children?: React.ReactNode | null;
   transparency?: boolean;
@@ -28,7 +28,7 @@ class NftVideo extends React.PureComponent<Props> {
 
   opacityAnim = new Animated.Value(0);
 
-  videoRef: Video | null = null;
+  videoRef: VideoRef | null = null;
 
   startAnimation = () => {
     Animated.timing(this.opacityAnim, {
