@@ -1316,8 +1316,8 @@ importers:
         specifier: 4.8.0
         version: 4.8.0(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       react-native-share:
-        specifier: 10.1.0
-        version: 10.1.0
+        specifier: 12.0.11
+        version: 12.0.11
       react-native-splash-screen:
         specifier: 3.2.0
         version: 3.2.0(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))
@@ -30595,8 +30595,8 @@ packages:
       react: '*'
       react-native: '*'
 
-  react-native-share@10.1.0:
-    resolution: {integrity: sha512-fKKvwaZe5s3HW0tcRKyR5AWvAfXvkk0FgTw1nYWYjI4gNqntXbMjRqWZed8Hmd1MvIJS17K/ELPges0tsxbp3g==}
+  react-native-share@12.0.11:
+    resolution: {integrity: sha512-jb9RzHjgFKvl/fVPPAiyxjmMHjnwKhKiZul6ptSUX7w7Rl7ifDYpdY7uJkipevyvwcn5DlzqXBcd8d6DPBeNVg==}
     engines: {node: '>=16'}
 
   react-native-splash-screen@3.2.0:
@@ -67846,7 +67846,7 @@ snapshots:
       react-native: 0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
       warn-once: 0.1.1
 
-  react-native-share@10.1.0: {}
+  react-native-share@12.0.11: {}
 
   react-native-splash-screen@3.2.0(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)):
     dependencies:
