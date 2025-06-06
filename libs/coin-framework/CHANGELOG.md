@@ -1,5 +1,13 @@
 # @ledgerhq/coin-framework
 
+## 5.2.0-nightly.2
+
+### Minor Changes
+
+- [#10422](https://github.com/LedgerHQ/ledger-live/pull/10422) [`18bc0d4`](https://github.com/LedgerHQ/ledger-live/commit/18bc0d4a27696491400df6ce26b915a88b56792f) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Logic implementation for sanctioned addresses
+
+- [#10217](https://github.com/LedgerHQ/ledger-live/pull/10217) [`e04d215`](https://github.com/LedgerHQ/ledger-live/commit/e04d21576919fa21cb3ab6e1c4e8e50fb6c17eca) Thanks [@Wozacosta](https://github.com/Wozacosta)! - feat: update transactionintent generic types + remove xrp bridge and introduce the generic alpaca bridge in LLC
+
 ## 5.2.0-nightly.1
 
 ### Minor Changes

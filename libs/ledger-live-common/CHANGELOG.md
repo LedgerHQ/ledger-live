@@ -1,5 +1,52 @@
 # @ledgerhq/live-common
 
+## 34.36.0-nightly.2
+
+### Minor Changes
+
+- [#10422](https://github.com/LedgerHQ/ledger-live/pull/10422) [`18bc0d4`](https://github.com/LedgerHQ/ledger-live/commit/18bc0d4a27696491400df6ce26b915a88b56792f) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Logic implementation for sanctioned addresses
+
+- [#10217](https://github.com/LedgerHQ/ledger-live/pull/10217) [`e04d215`](https://github.com/LedgerHQ/ledger-live/commit/e04d21576919fa21cb3ab6e1c4e8e50fb6c17eca) Thanks [@Wozacosta](https://github.com/Wozacosta)! - feat: update transactionintent generic types + remove xrp bridge and introduce the generic alpaca bridge in LLC
+
+### Patch Changes
+
+- [#10440](https://github.com/LedgerHQ/ledger-live/pull/10440) [`9c2d746`](https://github.com/LedgerHQ/ledger-live/commit/9c2d746c1621e372badbbbd1030bb72368ace4a1) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: set xrp proper destination tag in generic bridge
+
+- Updated dependencies [[`18bc0d4`](https://github.com/LedgerHQ/ledger-live/commit/18bc0d4a27696491400df6ce26b915a88b56792f), [`e04d215`](https://github.com/LedgerHQ/ledger-live/commit/e04d21576919fa21cb3ab6e1c4e8e50fb6c17eca)]:
+  - @ledgerhq/coin-framework@5.2.0-nightly.2
+  - @ledgerhq/coin-polkadot@6.2.0-nightly.2
+  - @ledgerhq/coin-stellar@5.2.0-nightly.2
+  - @ledgerhq/coin-aptos@2.1.0-nightly.2
+  - @ledgerhq/coin-tezos@5.3.0-nightly.2
+  - @ledgerhq/coin-tron@4.2.0-nightly.2
+  - @ledgerhq/coin-sui@0.5.0-nightly.2
+  - @ledgerhq/coin-xrp@6.2.0-nightly.2
+  - @ledgerhq/hw-app-xrp@6.31.2-nightly.0
+  - @ledgerhq/coin-algorand@0.9.8-nightly.2
+  - @ledgerhq/coin-bitcoin@0.16.0-nightly.2
+  - @ledgerhq/coin-cardano@0.8.8-nightly.2
+  - @ledgerhq/coin-casper@1.7.3-nightly.2
+  - @ledgerhq/coin-celo@1.1.6-nightly.2
+  - @ledgerhq/coin-cosmos@0.15.0-nightly.2
+  - @ledgerhq/coin-evm@2.22.2-nightly.2
+  - @ledgerhq/coin-filecoin@1.9.8-nightly.2
+  - @ledgerhq/coin-hedera@1.6.8-nightly.2
+  - @ledgerhq/coin-icon@0.10.8-nightly.2
+  - @ledgerhq/coin-internet_computer@1.7.8-nightly.2
+  - @ledgerhq/coin-mina@1.1.7-nightly.2
+  - @ledgerhq/coin-multiversx@0.4.8-nightly.2
+  - @ledgerhq/coin-near@0.11.8-nightly.2
+  - @ledgerhq/coin-solana@0.25.0-nightly.2
+  - @ledgerhq/coin-stacks@0.8.8-nightly.2
+  - @ledgerhq/coin-ton@0.11.1-nightly.2
+  - @ledgerhq/coin-vechain@2.7.8-nightly.2
+  - @ledgerhq/live-countervalues@0.5.8-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.37-nightly.2
+  - @ledgerhq/live-nft@0.8.8-nightly.2
+  - @ledgerhq/live-wallet@0.10.11-nightly.2
+  - @ledgerhq/live-signer-evm@0.5.1-nightly.2
+  - @ledgerhq/live-signer-solana@0.2.0-nightly.2
+
 ## 34.36.0-nightly.1
 
 ### Minor Changes

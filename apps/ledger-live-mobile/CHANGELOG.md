@@ -1,5 +1,26 @@
 # live-mobile
 
+## 3.81.0-nightly.3
+
+### Minor Changes
+
+- [#10432](https://github.com/LedgerHQ/ledger-live/pull/10432) [`2422a81`](https://github.com/LedgerHQ/ledger-live/commit/2422a8163cc99d06675c9557a5e940b4bb6bd685) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: the cards are more scrollable and less swipable
+
+### Patch Changes
+
+- Updated dependencies [[`18bc0d4`](https://github.com/LedgerHQ/ledger-live/commit/18bc0d4a27696491400df6ce26b915a88b56792f), [`e04d215`](https://github.com/LedgerHQ/ledger-live/commit/e04d21576919fa21cb3ab6e1c4e8e50fb6c17eca)]:
+  - @ledgerhq/coin-framework@5.2.0-nightly.2
+  - @ledgerhq/coin-cosmos@0.15.0-nightly.2
+  - @ledgerhq/coin-evm@2.22.2-nightly.2
+  - @ledgerhq/coin-filecoin@1.9.8-nightly.2
+  - @ledgerhq/coin-multiversx@0.4.8-nightly.2
+  - @ledgerhq/coin-stacks@0.8.8-nightly.2
+  - @ledgerhq/live-countervalues@0.5.8-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.37-nightly.2
+  - @ledgerhq/live-nft@0.8.8-nightly.2
+  - @ledgerhq/live-nft-react@0.9.8-nightly.2
+  - @ledgerhq/live-wallet@0.10.11-nightly.2
+
 ## 3.81.0-nightly.2
 
 ### Minor Changes
