@@ -6790,7 +6790,7 @@
     },
     "entryPoints" : {
       "accounts" : {
-        "title" : "Активируйте Ledger Sync"
+        "title" : "Активировать Ledger Sync"
       },
       "manager" : {
         "title" : "Ledger Sync",
