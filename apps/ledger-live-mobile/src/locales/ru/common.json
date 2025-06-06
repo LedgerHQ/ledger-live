@@ -7438,5 +7438,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Страна не обслуживается",
+    "description" : "Кошелёк Ledger недоступен в этой локации.",
+    "learnMore" : "Подробнее..."
   }
 }
