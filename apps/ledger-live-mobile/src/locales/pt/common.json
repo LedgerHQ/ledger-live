@@ -3168,7 +3168,7 @@
     "debug" : {
       "title" : "Debug",
       "desc" : "Use por sua própria conta e risco – Ferramentas de desenvolvedor",
-      "featureFlagsTitle" : "Marcadores definidos usados no Ledger Live",
+      "featureFlagsTitle" : "Marcadores de recursos definidos usados no Ledger Live",
       "featureFlagsDesc" : "Valores sobrepostos serão redefinidos se o aplicativo for reexecutado. Apenas strings JSON válidas serão aceitas.",
       "featureFlagsEdit" : "Editar",
       "featureFlagsRestore" : "Restaurar",
@@ -7108,9 +7108,9 @@
     },
     "activation" : {
       "screen" : {
-        "title" : "Ativar o Ledger Sync para esse telefone?",
-        "description" : "Isso sincroniza automaticamente suas contas cripto em todos os seus telefones e computadores, mesmo ao fazer uma transição para um novo dispositivo.",
-        "mainCta" : "Ative o Ledger Sync",
+        "title" : "Ativar o Ledger Sync neste smartphone?",
+        "description" : "Isso vai sincronizar suas contas cripto automaticamente por todos os seus smartphones e computadores, mesmo ao trocar de dispositivo.",
+        "mainCta" : "Ativar o Ledger Sync",
         "secondCta" : "Já ativei",
         "learnMore" : "Como o Ledger Sync funciona?"
       }
@@ -7254,7 +7254,7 @@
         "unbacked" : {
           "title" : "Sincronização não detectada",
           "description" : "Ative o Ledger Sync nesse Ledger Live ou no qual você está sincronizando.",
-          "cta" : "Ative o Ledger Sync"
+          "cta" : "Ativar o Ledger Sync"
         },
         "unbackedOnboarding" : {
           "title" : "Sincronização não detectada",
@@ -7364,7 +7364,7 @@
     }
   },
   "largeMover" : {
-    "performance" : "Performance",
+    "performance" : "Desempenho",
     "low" : "Baixo",
     "high" : "Alto"
   }

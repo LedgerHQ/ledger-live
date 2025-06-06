@@ -1091,7 +1091,7 @@
           },
           "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer.",
           "tooltip" : {
-            "amountWithdrawn" : "Le montant retiré est affiché en {{ tokenName }}. Les {{ tokenName }} sont des tokens ERC-20 que vous gagnez en prêtant vos actifs."
+            "amountWithdrawn" : "Le montant retiré est affiché en {{ tokenName }}. Les {{ tokenName }} sont des tokens ERC20 que vous gagnez en prêtant vos actifs."
           }
         }
       }
@@ -1145,7 +1145,7 @@
     },
     "noEthAccount" : {
       "title" : "Merci de créer un compte ETH",
-      "description" : "<0>{{ asset }} ({{ ticker }})</0> est un token Ethereum ERC-20. Pour prêter des {{ ticker }}, installez l’app Ethereum et créez un compte Ethereum.",
+      "description" : "<0>{{ asset }} ({{ ticker }})</0> est un token Ethereum ERC20. Pour prêter des {{ ticker }}, installez l’app Ethereum et créez un compte Ethereum.",
       "cta" : "Ajouter un compte"
     },
     "emptyAccountDeposit" : {
@@ -1554,7 +1554,7 @@
       }
     },
     "marketPerformanceWidget" : {
-      "title" : "Tendance {{time}}",
+      "title" : "Tendance - {{time}}",
       "buy" : "Acheter",
       "swap" : "Échanger",
       "gainers" : "Hausses",
@@ -2461,7 +2461,7 @@
     "chooseName" : "Choisissez un nom",
     "placeholder" : "Stax de Tony",
     "remainingCharacters" : "{{ remainingCharacters }} caractères restants",
-    "renamed" : "Le nouveau nom de votre {{ productName }} est \n« {{ name }} » "
+    "renamed" : "Le nouveau nom de votre {{ productName }} est \n{{ name }} "
   },
   "removeCustomLockscreen" : {
     "title" : "Retirer l’image de fond d’écran",
@@ -2893,7 +2893,7 @@
     "lockedTooltip" : "Vous devez immobiliser des actifs puis voter pour des groupes de validateurs pour gagner des récompenses.",
     "nonvotingLockedBalance" : "Solde immobilisé non utilisé pour voter",
     "nonvotingLockedTooltip" : "Solde des actifs immobilisés pouvant être utilisés pour voter",
-    "withdrawableBalance" : "Solde pouvant être retiré",
+    "withdrawableBalance" : "Solde disponible au retrait",
     "withdrawableTooltip" : "CELO dégelés et transférables sur votre solde disponible",
     "delegation" : {
       "activeTooltip" : "Un vote actif génère des récompenses",
@@ -3702,7 +3702,7 @@
           },
           "amount" : {
             "title" : "Montant",
-            "reserveWarning" : "Conservez au minimum {{amount}} SOL dans votre wallet pour couvrir les frais de réseau futurs afin de désactiver et retirer vos cryptos stakées"
+            "reserveWarning" : "Conservez au minimum {{amount}} SOL dans votre compte pour couvrir les frais de réseau futurs afin de désactiver et retirer vos cryptos stakées"
           },
           "confirmation" : {
             "success" : {
@@ -3940,7 +3940,7 @@
       "pendingBalance" : "Solde en attente",
       "pendingBalanceTooltip" : "Montant des actifs déstakés qui seront bientôt disponibles.",
       "storageUsageBalance" : "Solde minimum",
-      "storageUsageBalanceTooltip" : "Montant réservé pour le stockage et les transactions. Il constitue le solde minimum que votre compte doit contenir pour rester actif.",
+      "storageUsageBalanceTooltip" : "Montant réservé pour le stockage et les transactions. Il s’agit du solde minimum requis pour que votre compte reste actif.",
       "subHeader" : {
         "cardTitle" : "Propulsé par Figment",
         "moreInfo" : "Plus d’informations",
@@ -4010,7 +4010,7 @@
       }
     },
     "unstake" : {
-      "disabledTooltip" : "Il n’y a pas assez d’actifs stakés à déstaker.",
+      "disabledTooltip" : "Solde d’actifs stakés insuffisant pour déstaker.",
       "flow" : {
         "title" : "Déstaker",
         "steps" : {
@@ -4039,7 +4039,7 @@
       }
     },
     "withdraw" : {
-      "disabledTooltip" : "Il n’y a pas assez d’actifs à retirer.",
+      "disabledTooltip" : "Solde d’actifs insuffisant pour effectuer un retrait.",
       "flow" : {
         "title" : "Retirer",
         "steps" : {
@@ -4424,7 +4424,7 @@
       "firebaseProject" : "Projet Firebase ciblé par ce build :",
       "addLocalApp" : "Ajouter une app locale",
       "addLocalAppDesc" : "Parcourez vos fichiers et ajoutez une app locale avec un manifeste local.",
-      "addLocalAppButton" : "Naviguer",
+      "addLocalAppButton" : "Parcourir",
       "createLocalAppModal" : {
         "title" : {
           "create" : "Créer une app locale",
@@ -6361,7 +6361,7 @@
     },
     "SolanaTokenNonTransferable" : {
       "title" : "Le token n’est pas transférable",
-      "description" : "Ces tokens sont des tokens soulbound et ne peuvent pas être transférés."
+      "description" : "Ces tokens sont des soulbound tokens et ne peuvent pas être transférés."
     },
     "NotEnoughNftOwned" : {
       "title" : "Nombre de tokens disponibles insuffisant"
@@ -6835,7 +6835,7 @@
     },
     "unsecuredError" : {
       "title" : "Connectez l’appareil Ledger que vous avez utilisé pour activer Ledger Sync",
-      "description" : "Si vous n’avez pas le même appareil Ledger, sélectionnez plutôt « Supprimer la synchronisation ».",
+      "description" : "Si vous n’avez pas le même appareil Ledger, sélectionnez plutôt : Supprimer la synchronisation.",
       "cta" : "Connecter un autre appareil Ledger",
       "ctaDelete" : "Supprimer la synchronisation"
     },
@@ -6851,7 +6851,7 @@
     },
     "autoRemoveError" : {
       "title" : "Impossible de retirer cet ordinateur pendant que vous l’utilisez",
-      "description" : "Pour le retirer, utilisez un autre téléphone ou ordinateur sur lequel Ledger Sync est activé. Si vous n’avez pas d’autre appareil, sélectionnez plutôt « Supprimer la synchronisation ».",
+      "description" : "Pour le retirer, utilisez un autre téléphone ou ordinateur sur lequel Ledger Sync est activé. Si vous n’avez pas d’autre appareil, sélectionnez plutôt : Supprimer la synchronisation.",
       "cta" : "Compris",
       "ctaDelete" : "Supprimer la synchronisation"
     },
