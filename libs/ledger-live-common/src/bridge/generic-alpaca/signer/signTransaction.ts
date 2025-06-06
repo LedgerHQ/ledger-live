@@ -18,6 +18,6 @@ export const stellarSignTransaction = (signerContext: SignerContext<StellarSigne
       signer.signTransaction(path, transaction),
     );
 
-    return signedTx;
+    return signedTx.signature.toString("base64"); // It should return a Buffer
   };
 };

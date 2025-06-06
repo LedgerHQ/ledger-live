@@ -7,7 +7,7 @@ import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
 import { buildSubAccounts } from "./buildSubAccounts";
 
 import { StellarBurnAddressError, StellarOperation } from "@ledgerhq/coin-stellar/types";
-import { STELLAR_BURN_ADDRESS } from "@ledgerhq/coin-stellar/bridge/logic";
+import { STELLAR_BURN_ADDRESS } from "@ledgerhq/coin-stellar/logic";
 import { getEnv } from "@ledgerhq/live-env";
 import { Pagination } from "@ledgerhq/coin-framework/lib-es/api/types";
 
