@@ -9,8 +9,22 @@ export type BlockInfo = {
   time?: Date;
 };
 
-type TokenInfoCommon = Record<string, unknown>;
-// TODO add a `token: string` field to the pagination if we really need to support pagination (which is not the case for now)
+export type TokenInfoCommon = {
+  id?: string;
+  contractAddress?: string;
+  assetCode?: string;
+  assetIssuer?: string;
+  tokenType?: string;
+
+  // Token-account-like metadata
+  creationDate?: Date;
+  operations?: Operation[];
+  operationsCount?: number;
+  pendingOperations?: Operation[];
+  // balanceHistoryCache?: BalanceHistoryCache;
+  // swapHistory?: SwapOperation[];
+};
+
 export type Asset<TokenInfo extends TokenInfoCommon = never> =
   | { type: "native" }
   | (TokenInfo extends never ? TokenInfo : { type: "token" } & TokenInfo);
@@ -96,6 +110,7 @@ export type Account = {
 
 */
 
+/*
 export type TokenAccount = {
   type: "TokenAccount";
   id: string;
@@ -115,6 +130,7 @@ export type TokenAccount = {
   // Swap operations linked to this account
   // swapHistory: SwapOperation[];
 };
+*/
 
 export type Balance<AssetInfo extends Asset<TokenInfoCommon>> = {
   value: bigint;
