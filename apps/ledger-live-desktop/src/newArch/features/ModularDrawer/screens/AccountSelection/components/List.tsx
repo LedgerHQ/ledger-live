@@ -1,11 +1,11 @@
 import React from "react";
-import { track } from "~/renderer/analytics/segment";
-import TrackPage from "~/renderer/analytics/TrackPage";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { AccountList, Account as DetailedAccount } from "@ledgerhq/react-ui/pre-ldls/index";
 import { AccountTuple } from "~/renderer/components/PerCurrencySelectAccount/state";
 import { useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
 import { ListWrapper } from "../../../components/ListWrapper";
+import { useModularDrawerAnalytics } from "../../../analytics/useModularDrawerAnalytics";
+import { MODULAR_DRAWER_PAGE_NAME } from "../../../analytics/types";
 
 type SelectAccountProps = {
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
@@ -15,7 +15,6 @@ type SelectAccountProps = {
   detailedAccounts: DetailedAccount[];
 };
 
-const ACCOUNT_PAGE = "Modular Account Selection";
 const BUTTON_HEIGHT = 66;
 const LIST_HEIGHT = `calc(100% - ${BUTTON_HEIGHT}px)`;
 
@@ -26,11 +25,14 @@ export const SelectAccountList = ({
   flow,
   onAccountSelected,
 }: SelectAccountProps) => {
-  const trackAccountClick = (ticker: string) => {
-    track("account_clicked", {
-      currency: ticker,
-      page: "Modular Account Selection",
+  const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+
+  const trackAccountClick = (name: string) => {
+    trackModularDrawerEvent("account_clicked", {
+      currency: name,
+      page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
       flow,
+      source,
     });
   };
 
@@ -38,7 +40,7 @@ export const SelectAccountList = ({
     const currencyAccount = accounts.find(({ account }) => account.id === accountId);
     if (currencyAccount) {
       onAccountSelected(currencyAccount.account);
-      trackAccountClick(currencyAccount.account.currency.ticker);
+      trackAccountClick(currencyAccount.account.currency.name);
       return;
     }
 
@@ -63,7 +65,6 @@ export const SelectAccountList = ({
 
   return (
     <ListWrapper customHeight={LIST_HEIGHT}>
-      <TrackPage category={source} name={ACCOUNT_PAGE} flow={flow} />
       <AccountList accounts={detailedAccountsWithName} onClick={onAccountClick} />
     </ListWrapper>
   );

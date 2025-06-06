@@ -18,6 +18,7 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { openAssetAndAccountDrawerPromise } from "LLD/features/ModularDrawer";
+import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 
 const trackingLiveAppSDKLogic = trackingWrapper(track);
 
@@ -54,6 +55,11 @@ export const requestAccountLogic = async (
     ? await openAssetAndAccountDrawerPromise({
         assetIds: safeCurrencies,
         includeTokens,
+        flow: manifest.name,
+        source:
+          currentRouteNameRef.current === "Platform Catalog"
+            ? "Discover"
+            : currentRouteNameRef.current ?? "Unknown",
       })
     : await selectAccountAndCurrency(safeCurrencies, includeTokens);
 

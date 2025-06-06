@@ -97,6 +97,24 @@ const getMEVAttributes = (state: State) => {
   };
 };
 
+const getMADAttributes = () => {
+  if (!analyticsFeatureFlagMethod) return false;
+  const madFeatureFlag = analyticsFeatureFlagMethod("lldModularDrawer");
+  const rollout_phase = "INC2";
+
+  const isEnabled = madFeatureFlag?.enabled ?? false;
+
+  return {
+    rollout_phase,
+    isEnabled,
+    add_account: madFeatureFlag?.params?.add_account ?? false,
+    earn_flow: madFeatureFlag?.params?.earn_flow ?? false,
+    live_app: madFeatureFlag?.params?.live_app ?? false,
+    receive_flow: madFeatureFlag?.params?.receive_flow ?? false,
+    send_flow: madFeatureFlag?.params?.send_flow ?? false,
+  };
+};
+
 const getPtxAttributes = () => {
   if (!analyticsFeatureFlagMethod) return {};
   const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
@@ -174,6 +192,7 @@ const extraProperties = (store: ReduxStore) => {
   const ledgerSyncAttributes = getLedgerSyncAttributes(state);
   const mevProtectionAttributes = getMEVAttributes(state);
   const marketWidgetAttributes = getMarketWidgetAnalytics(state);
+  const madAttributes = getMADAttributes();
 
   const deviceInfo = device
     ? {
@@ -233,6 +252,7 @@ const extraProperties = (store: ReduxStore) => {
     ...ledgerSyncAttributes,
     ...mevProtectionAttributes,
     ...marketWidgetAttributes,
+    madAttributes,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
   };

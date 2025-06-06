@@ -17,6 +17,8 @@ type Result = {
 };
 
 type DrawerParams = {
+  source: string;
+  flow: string;
   assetIds?: string[];
   currencies?: CryptoOrTokenCurrency[];
   accounts$?: Observable<WalletAPIAccount[]>;
@@ -61,6 +63,8 @@ function openAssetAndAccountDrawer(params: DrawerParams): void {
         handleSuccess({ account, parentAccount });
       },
       drawerConfiguration: modularDrawerConfiguration,
+      source: params.source,
+      flow: params.flow,
     },
     {
       onRequestClose: handleCancel,

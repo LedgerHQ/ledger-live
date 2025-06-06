@@ -18,6 +18,8 @@ const defaultProps = {
   onAssetSelected: mockOnAssetSelected,
   onAccountSelected: mockOnAccountSelected,
   hasOneNetwork: false,
+  hasOneCurrency: false,
+  flow: "selectAsset",
 };
 
 describe("useModularDrawerFlowState", () => {

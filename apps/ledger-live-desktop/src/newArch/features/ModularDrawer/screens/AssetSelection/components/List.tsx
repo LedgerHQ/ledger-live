@@ -1,11 +1,9 @@
 import React, { useCallback, useEffect } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AssetList, AssetType } from "@ledgerhq/react-ui/pre-ldls";
-import { track } from "~/renderer/analytics/segment";
-import TrackPage from "~/renderer/analytics/TrackPage";
-import { Flex } from "@ledgerhq/react-ui/index";
-import { Skeleton } from "LLD/components/Skeleton";
 import { ListWrapper } from "../../../components/ListWrapper";
+import { useModularDrawerAnalytics } from "../../../analytics/useModularDrawerAnalytics";
+import SkeletonList from "../../../components/SkeletonList";
 
 type SelectAssetProps = {
   assetTypes?: AssetType[];
@@ -22,24 +20,35 @@ const CURRENT_PAGE = "Modular Asset Selection";
 export const SelectAssetList = ({
   assetTypes,
   assetsToDisplay,
-  source,
   flow,
   scrollToTop,
+  source,
   onAssetSelected,
   onScrolledToTop,
 }: SelectAssetProps) => {
   const shouldDisplayLoading = !assetTypes || assetTypes.length === 0;
+  const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
   const onClick = useCallback(
     (asset: AssetType) => {
-      track("asset_clicked", { asset, page: CURRENT_PAGE, flow });
-
       const selectedAsset = assetsToDisplay.find(({ id }) => id === asset.id);
       if (!selectedAsset) return;
 
+      trackModularDrawerEvent(
+        "asset_clicked",
+        {
+          asset: selectedAsset.name,
+          page: CURRENT_PAGE,
+          flow,
+          source,
+        },
+        false,
+        true,
+      );
+
       onAssetSelected(selectedAsset);
     },
-    [assetsToDisplay, onAssetSelected, flow],
+    [trackModularDrawerEvent, flow, source, assetsToDisplay, onAssetSelected],
   );
 
   const onVisibleItemsScrollEnd = () => {
@@ -53,18 +62,11 @@ export const SelectAssetList = ({
   }, [scrollToTop, onScrolledToTop]);
 
   if (shouldDisplayLoading) {
-    return (
-      <Flex flexDirection="column" flex="1 1 auto" overflow="hidden" rowGap="8px">
-        {Array.from({ length: 10 }, (_, index) => (
-          <Skeleton key={index} barHeight={64} minHeight={64} />
-        ))}
-      </Flex>
-    );
+    return <SkeletonList />;
   }
 
   return (
     <ListWrapper>
-      <TrackPage category={source} name={CURRENT_PAGE} flow={flow} />
       <AssetList
         scrollToTop={scrollToTop}
         assets={assetsToDisplay}

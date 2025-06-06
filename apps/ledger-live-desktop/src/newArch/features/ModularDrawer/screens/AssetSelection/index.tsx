@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { AssetType } from "@ledgerhq/react-ui/pre-ldls/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SelectAssetList as AssetsList } from "./components/List";
-import { SearchInputContainer } from "./components/SearchInputContainer";
+import SearchInputContainer from "./components/SearchInputContainer";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+import { MODULAR_DRAWER_PAGE_NAME } from "../../analytics/types";
+import TrackDrawerScreen from "../../analytics/TrackDrawerScreen";
 
 export type AssetSelectionStepProps = {
   assetTypes: AssetType[];
@@ -11,6 +13,8 @@ export type AssetSelectionStepProps = {
   sortedCryptoCurrencies: CryptoOrTokenCurrency[];
   defaultSearchValue?: string;
   assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
+  flow: string;
+  source: string;
   setAssetsToDisplay: (assets: CryptoOrTokenCurrency[]) => void;
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
   setSearchedValue: (value: string | undefined) => void;
@@ -21,6 +25,9 @@ const AssetSelection = ({
   assetsToDisplay,
   sortedCryptoCurrencies,
   defaultSearchValue,
+  flow,
+  source,
+  assetsConfiguration,
   setAssetsToDisplay,
   onAssetSelected,
   setSearchedValue,
@@ -38,19 +45,26 @@ const AssetSelection = ({
 
   return (
     <>
+      <TrackDrawerScreen
+        page={MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION}
+        source={source}
+        flow={flow}
+        assetsConfig={assetsConfiguration}
+        formatAssetConfig
+      />
       <SearchInputContainer
         setItemsToDisplay={setAssetsToDisplay}
         setSearchedValue={setSearchedValue}
         defaultValue={defaultSearchValue}
-        source="Accounts"
-        flow="Modular Asset Flow"
+        source={source}
+        flow={flow}
         items={sortedCryptoCurrencies}
       />
       <AssetsList
         assetTypes={assetTypes}
         assetsToDisplay={assetsToDisplay}
-        source="Accounts"
-        flow="Modular Asset Flow"
+        source={source}
+        flow={flow}
         scrollToTop={shouldScrollToTop}
         onAssetSelected={onAssetSelected}
         onScrolledToTop={() => setShouldScrollToTop(false)}
@@ -59,4 +73,4 @@ const AssetSelection = ({
   );
 };
 
-export default AssetSelection;
+export default React.memo(AssetSelection);

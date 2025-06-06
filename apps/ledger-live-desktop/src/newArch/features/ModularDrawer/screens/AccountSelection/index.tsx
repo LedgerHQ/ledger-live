@@ -7,6 +7,8 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { useDetailedAccounts } from "../../hooks/useDetailedAccounts";
 import { Observable } from "rxjs";
+import TrackDrawerScreen from "../../analytics/TrackDrawerScreen";
+import { MODULAR_DRAWER_PAGE_NAME } from "../../analytics/types";
 
 type Props = {
   asset: CryptoOrTokenCurrency;
@@ -20,11 +22,17 @@ export const AccountSelection = ({ asset, source, flow, accounts$, onAccountSele
   const { detailedAccounts, accounts, onAddAccountClick } = useDetailedAccounts(
     asset,
     flow,
+    source,
     accounts$,
   );
 
   return (
     <>
+      <TrackDrawerScreen
+        page={MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION}
+        source={source}
+        flow={flow}
+      />
       <AddAccountContainer>
         <AddAccountButton onAddAccountClick={onAddAccountClick} />
       </AddAccountContainer>
