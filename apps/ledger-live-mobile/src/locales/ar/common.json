@@ -509,9 +509,17 @@
       "title" : "لا يوجد ما يكفي من EGLD لدفع رسوم المعاملة",
       "description" : "يُرجى إرسال بعض EGLD إلى حسابك للدفع مقابل المعاملات."
     },
+    "NotEnoughToStake" : {
+      "title" : "الحد الأدنى للتكديس: {{currency}} {{minStake}}",
+      "description" : "هناك حد أدنى يبلغ {{currency}} {{minStake}} مطلوب للتكديس."
+    },
     "NotEnoughBalance" : {
       "title" : "عفواً، الأموال المتوفرة غير كافية",
       "description" : "يرجى التأكد من أن الحساب به أموال كافية."
+    },
+    "NotEnoughStakedBalanceLeft" : {
+      "title" : "يجب عليك ترك {{minAmountStaked}} مُكدّسةً على الأقل",
+      "description" : "يُرجى ترك {{minAmountStaked}} مُكدّسةً على الأقل، وإلا سيتعين عليك إلغاء تكديس المبلغ بأكمله."
     },
     "NotEnoughBalanceFees" : {
       "title" : "عذراً، الأموال غير كافية لتغطية الرسوم",
@@ -6265,6 +6273,134 @@
       }
     }
   },
+  "aptos" : {
+    "info" : {
+      "available" : {
+        "title" : "Aptos متاح",
+        "description" : "هذا المبلغ يمكن التخلص منه."
+      },
+      "storageUsage" : {
+        "title" : "الحد الأدنى للرصيد",
+        "description" : "هذا المبلغ محجوز للحفظ والمعاملات، وهو الحد الأدنى للرصيد الذي يجب أن يكون في حسابك لكي يظل نشطاً."
+      },
+      "staked" : {
+        "title" : "الرصيد المُكدَّس",
+        "description" : "هذا المبلع مُكدَّس حالياً مع مدققين."
+      },
+      "pending" : {
+        "title" : "الرصيد المُعلَّق",
+        "description" : "هذا المبلغ تمّ إلغاء تكديسه وحالياً بانتظار الإتاحة."
+      },
+      "withdrawable" : {
+        "title" : "الرصيد القابل للسحب",
+        "description" : "هذا المبلغ تم إلغاء تكديسه وحالياً قابل للسحب."
+      },
+      "stakingUnavailable" : {
+        "title" : "التكديس غير متاح",
+        "description" : "ليس هناك رصيد متاح كافٍ في حسابك للتكديس وإلغاء التكديس والسحب."
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "المبلغ المطلوب إلغاء تكديسه"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "لقد ألغيت تكديس أصولك بنجاح"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "المبلغ المراد سحبه"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "لقد قمت بسحب أصولك بنجاح"
+            }
+          }
+        }
+      }
+    },
+    "restaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "المبلغ المطلوب إعادة تكديسه"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "لقد قمت بإعادة تكديس أصولك بنجاح"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "موضع (أو مواضع) التكديس",
+      "info" : "كيف يعمل التكديس",
+      "add" : "إضافة",
+      "stakingEarn" : "يمكنك كسب مكافآت Aptos عن طريق تكديس أصولك.",
+      "totalStake" : "إجمالي التكديس",
+      "commission" : "العمولة",
+      "comm" : "العمولة",
+      "timeToUnlock" : "إلغاء القفل خلال",
+      "iStake" : "أنا أقوم بتكديس",
+      "actions" : {
+        "unstake" : "إلغاء التكديس",
+        "withdraw" : "سحب",
+        "restake" : "إعادة التكديس"
+      },
+      "drawer" : {
+        "status" : "الحالة",
+        "active" : "نشِط",
+        "inactive" : "غير نشِط",
+        "pending" : "مُعلقّ",
+        "available" : "قابل للسحب"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "المبلغ المطلوب تكديسه",
+        "selectDevice" : "اختر جهاز",
+        "connectDevice" : "توصيل الجهاز",
+        "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "قم بتكديس Aptos خاصتك لكسب المكافآت بأمان، مع الاحتفاظ بالسيطرة على أصولك.",
+            "steps" : {
+              "0" : "الأصول المُكدَّسة تظل ملكك.",
+              "1" : "يجب عليك الانتظار ~2 ساعة حتى يكتمل إلغاء التكديس.",
+              "2" : "قم بالتكديس بشكل آمن مع جهازك Ledger."
+            },
+            "warning" : {
+              "description" : "اختر المدقق بحكمة: فقد يتم فقدان جزء من أصولك المُكدسة بشكل لا رجعة فيه إذا لم يتصرف المدقق بشكل لائق."
+            },
+            "cta" : "متابعة"
+          },
+          "amount" : {
+            "assetsRemaining" : "الأصول المتبقية : <0>{{amount}}</0>",
+            "allAssetsUsed" : "جميع الأصول المستخدمة",
+            "minAmount" : "الحد الأدنى للمبلغ : <0>{{min}}</0>",
+            "incorrectAmount" : "الحد الأقصى للمبلغ : <0>{{max}}</0>",
+            "cta" : "متابعة"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "لقد قمت بتكديس أصولك بنجاح",
+              "text" : "سيتم تحديث رصيد حسابك بمجرد أن تؤكد الشبكة المعاملة."
+            }
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "overdelegated" : "تفويض زائد عن الحد",
     "delegationSendWarnDesc" : "سيتم خصم المبلغ المراد إرساله من حسابك المفوض.",
@@ -6665,8 +6801,8 @@
       "7d" : "7 أيام",
       "30d" : "30 يوم",
       "1y" : "1 سنة",
-      "1D_label" : "1 يوم",
       "1H_label" : "1 ساعة",
+      "1D_label" : "1 يوم",
       "1W_label" : "1 أسبوع",
       "1M_label" : "1 شهر",
       "1Y_label" : "1 سنة"
