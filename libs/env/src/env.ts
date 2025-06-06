@@ -214,7 +214,7 @@ const envDefinitions = {
   },
   SUI_ENABLE_TOKENS: {
     parser: boolParser,
-    def: false,
+    def: true,
     desc: "Enable tokens on Sui",
   },
   SOLANA_VALIDATORS_APP_BASE_URL: {
