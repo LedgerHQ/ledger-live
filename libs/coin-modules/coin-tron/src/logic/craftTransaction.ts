@@ -2,22 +2,17 @@ import { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 import BigNumber from "bignumber.js";
 import { craftStandardTransaction, craftTrc20Transaction } from "../network";
 import { decode58Check } from "../network/format";
-import { TronAsset } from "../types";
+import { TronAsset, TronMemo } from "../types";
 import { feesToNumber } from "./utils";
 
-type TransactionIntentExtra = {
-  /** Memo value. */
-  memo?: string;
-
-  /** Expiration in seconds after crafting time. */
-  expiration?: number;
-};
-
 export async function craftTransaction(
-  transactionIntent: TransactionIntent<TronAsset, TransactionIntentExtra>,
+  transactionIntent: TransactionIntent<TronAsset, TronMemo>,
   customFees?: bigint,
 ): Promise<string> {
-  const { asset, recipient, sender, amount, memo, expiration } = transactionIntent;
+  const { asset, recipient, sender, amount, expiration } = transactionIntent;
+  const rawMemo = "memo" in transactionIntent ? transactionIntent.memo : undefined;
+
+  const memo = rawMemo?.type === "string" && rawMemo.kind === "memo" ? rawMemo.value : undefined;
   const recipientAddress = decode58Check(recipient);
   const senderAddress = decode58Check(sender);
 

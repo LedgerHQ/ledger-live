@@ -1,7 +1,9 @@
 import { deviceActionFlow, SpeculosButton } from "@ledgerhq/coin-framework/bot/specs";
 import { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
-import { casperGetCLPublicKey } from "../bridge/bridgeHelpers/addresses";
+
 import type { Transaction } from "../types";
+import { casperAccountHashFromPublicKey } from "../bridge/bridgeHelpers/addresses";
+import { CASPER_NETWORK } from "../consts";
 
 export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [
@@ -22,12 +24,12 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
     {
       title: "Chain ID",
       button: SpeculosButton.RIGHT,
-      expectedValue: () => "casper",
+      expectedValue: () => CASPER_NETWORK,
     },
     {
       title: "Account",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ account }) => casperGetCLPublicKey(account.freshAddress).toHex(true),
+      expectedValue: ({ account }) => casperAccountHashFromPublicKey(account.freshAddress),
     },
     {
       title: "Fee",
@@ -38,7 +40,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
     {
       title: "Target",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction }) => casperGetCLPublicKey(transaction.recipient).toHex(true),
+      expectedValue: ({ transaction }) => casperAccountHashFromPublicKey(transaction.recipient),
     },
     {
       title: "Amount",
