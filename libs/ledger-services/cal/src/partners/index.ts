@@ -11,6 +11,7 @@ export type PartnerType = {
   needsKYC: boolean;
   supportUrl: string;
   termsOfUseUrl: string;
+  usefulUrls?: string[];
   type: "CEX" | "DEX";
   version?: number;
 };

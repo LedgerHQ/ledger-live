@@ -15,6 +15,7 @@ export type AdditionalProviderConfig = SwapProviderConfig & { type: "DEX" | "CEX
   version?: number;
   termsOfUseUrl: string;
   supportUrl: string;
+  usefulUrls?: string[];
   mainUrl: string;
   useInExchangeApp: boolean;
   displayName: string;
@@ -39,6 +40,11 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
     needsKYC: false,
     needsBearerToken: false,
     type: "CEX",
+    usefulUrls: [
+      "https://changelly.com/terms-of-use",
+      "https://changelly.com/aml-kyc",
+      "https://support.changelly.com/en/support/tickets/new",
+    ],
     termsOfUseUrl: "https://changelly.com/terms-of-use",
     supportUrl: "https://support.changelly.com/en/support/home",
     mainUrl: "https://changelly.com/",

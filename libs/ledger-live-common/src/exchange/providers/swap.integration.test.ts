@@ -42,6 +42,11 @@ describe("fetchAndMergeProviderData", () => {
           "3045022100e73339e5071b5d232e8cacecbd7c118c919122a43f8abb8b2062d4bfcd58274e022050b11605d8b7e199f791266146227c43fd11d7645b1d881f705a2f8841d21de5",
           "hex",
         ),
+        usefulUrls: [
+          "https://changelly.com/terms-of-use",
+          "https://changelly.com/aml-kyc",
+          "https://support.changelly.com/en/support/tickets/new",
+        ],
         supportUrl: "https://support.changelly.com/en/support/home",
         termsOfUseUrl: "https://changelly.com/terms-of-use",
         type: "CEX",
