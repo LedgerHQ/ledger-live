@@ -1,33 +1,31 @@
 import { log } from "@ledgerhq/logs";
 
-import {
-  NDeployMessagePutResponse,
-  IndexerResponseRoot,
-  ITxnHistoryData,
-  NAccountBalance,
-  NAccountInfo,
-  NNetworkStatusResponse,
-  NodeResponseRoot,
-  NodeRPCPayload,
-  NStateRootHashResponse,
-} from "./types";
+import { IndexerResponseRoot, ITxnHistoryData, RpcError } from "./types";
 
 import network from "@ledgerhq/live-network";
-import { AccessRights, CLURef, DeployUtil } from "casper-js-sdk";
-import { getEnv } from "@ledgerhq/live-env";
+import { AccountIdentifier, HttpHandler, PublicKey, RpcClient, Transaction } from "casper-js-sdk";
+import { getCoinConfig } from "../config";
+import BigNumber from "bignumber.js";
+import { NodeErrorCodeAccountNotFound, NodeErrorCodeQueryFailed } from "../consts";
 
 const getCasperIndexerURL = (path: string): string => {
-  const baseUrl = getEnv("API_CASPER_INDEXER_ENDPOINT");
+  const baseUrl = getCoinConfig().infra.API_CASPER_INDEXER;
   if (!baseUrl) throw new Error("API base URL not available");
 
-  return `${baseUrl}${path}`;
+  return new URL(path, baseUrl).toString();
 };
 
 const getCasperNodeURL = (): string => {
-  const baseUrl = getEnv("API_CASPER_NODE_ENDPOINT");
+  const baseUrl = getCoinConfig().infra.API_CASPER_NODE_ENDPOINT;
   if (!baseUrl) throw new Error("API base URL not available");
 
   return baseUrl;
+};
+
+export const getCasperNodeRpcClient = (): RpcClient => {
+  const url = getCasperNodeURL();
+  const handler = new HttpHandler(url);
+  return new RpcClient(handler);
 };
 
 const casperIndexerWrapper = async <T>(path: string) => {
@@ -51,74 +49,30 @@ const casperIndexerWrapper = async <T>(path: string) => {
   }
 };
 
-const casperNodeWrapper = async <T>(payload: NodeRPCPayload) => {
-  const url = getCasperNodeURL();
-
-  try {
-    const rawResponse = await network<NodeResponseRoot<T>>({
-      method: "POST",
-      url,
-      data: payload,
-    });
-    log("http", `${url} - ${payload.method}`);
-
-    const { data, status } = rawResponse;
-
-    if (status >= 300) {
-      log("http", `${url} - Status: ${status}`, data);
-      throw new Error(`HTTP error: ${status}`);
-    }
-
-    if (data.error) {
-      const errorMessage = data.error.message + ". " + data.error.data || "Unknown error";
-      log("http", `${payload.method} - ${errorMessage}`);
-      throw new Error(`Casper node error: ${errorMessage}`);
-    }
-
-    if (!data.result) {
-      throw new Error(`Casper node returned no result for method: ${payload.method}`);
-    }
-
-    return data.result;
-  } catch (error) {
-    log("error", `Failed to execute ${payload.method}`, error);
-    throw error instanceof Error
-      ? error
-      : new Error(`Unknown error during Casper node request: ${String(error)}`);
-  }
-};
-
 export const fetchAccountStateInfo = async (
   publicKey: string,
 ): Promise<{
-  purseUref: CLURef | undefined;
+  purseUref: string | undefined;
   accountHash: string | undefined;
 }> => {
+  const client = getCasperNodeRpcClient();
   try {
-    const accountStateInfo = await casperNodeWrapper<NAccountInfo>({
-      jsonrpc: "2.0",
-      method: "state_get_account_info",
-      params: {
-        public_key: publicKey,
-      },
-      id: 1,
-    });
+    const { account } = await client.getAccountInfo(
+      null,
+      new AccountIdentifier(undefined, PublicKey.fromHex(publicKey)),
+    );
 
-    if (!accountStateInfo) {
-      return {
-        purseUref: undefined,
-        accountHash: undefined,
-      };
-    }
+    const accountHash = account.accountHash.toHex();
+    const purseURefString = account.mainPurse.toPrefixedString();
 
-    const accountHash = accountStateInfo.account.account_hash.split("-")[2];
-    const purseURefString = accountStateInfo.account.main_purse.split("-")[1];
-
-    const uRef = new CLURef(Buffer.from(purseURefString, "hex"), AccessRights.READ_ADD_WRITE);
-
-    return { purseUref: uRef, accountHash };
+    return { purseUref: purseURefString, accountHash };
   } catch (error) {
-    if (error instanceof Error && error.message.includes("No such account")) {
+    if (
+      error instanceof Error &&
+      [NodeErrorCodeAccountNotFound, NodeErrorCodeQueryFailed].includes(
+        (error as RpcError).statusCode,
+      )
+    ) {
       return {
         purseUref: undefined,
         accountHash: undefined,
@@ -128,37 +82,27 @@ export const fetchAccountStateInfo = async (
   }
 };
 
-export const fetchBalance = async (purseUref: CLURef): Promise<NAccountBalance> => {
-  const stateRootInfo = await casperNodeWrapper<NStateRootHashResponse>({
-    jsonrpc: "2.0",
-    method: "chain_get_state_root_hash",
-    params: null,
-    id: 1,
-  });
-
-  const accountBalance = await casperNodeWrapper<NAccountBalance>({
-    jsonrpc: "2.0",
-    method: "state_get_balance",
-    params: {
-      purse_uref: purseUref.toFormattedStr(),
-      state_root_hash: stateRootInfo.state_root_hash,
-    },
-    id: 1,
-  });
-
-  return accountBalance;
+export const fetchBalance = async (purseUref: string): Promise<BigNumber> => {
+  const client = getCasperNodeRpcClient();
+  try {
+    const { stateRootHash } = await client.getStateRootHashLatest();
+    const balance = await client.getBalanceByStateRootHash(purseUref, stateRootHash.toHex());
+    return new BigNumber(balance.balanceValue.toString());
+  } catch (error) {
+    log("error", "Failed to fetch balance", error);
+    throw error;
+  }
 };
 
-export const fetchNetworkStatus = async (): Promise<NNetworkStatusResponse> => {
-  const payload: NodeRPCPayload = {
-    id: 1,
-    jsonrpc: "2.0",
-    method: "info_get_status",
-    params: null,
-  };
-  const data = await casperNodeWrapper<NNetworkStatusResponse>(payload);
-
-  return data;
+export const fetchBlockHeight = async (): Promise<number> => {
+  const client = getCasperNodeRpcClient();
+  try {
+    const latestBlock = await client.getLatestBlock();
+    return latestBlock.block.height;
+  } catch (error) {
+    log("error", "Failed to fetch block height", error);
+    throw error;
+  }
 };
 
 export const fetchTxs = async (addr: string): Promise<ITxnHistoryData[]> => {
@@ -167,29 +111,27 @@ export const fetchTxs = async (addr: string): Promise<ITxnHistoryData[]> => {
   const limit = 100;
 
   let response = await casperIndexerWrapper<ITxnHistoryData>(
-    `/accounts/${addr}/ledgerlive-deploys?limit=${limit}&page=${page}`,
+    `accounts/${addr}/ledgerlive-deploys?limit=${limit}&page=${page}`,
   );
   res = res.concat(response.data);
 
   while (response.pageCount > page) {
     page++;
     response = await casperIndexerWrapper<ITxnHistoryData>(
-      `/accounts/${addr}/ledgerlive-deploys?limit=${limit}&page=${page}`,
+      `accounts/${addr}/ledgerlive-deploys?limit=${limit}&page=${page}`,
     );
     res = res.concat(response.data);
   }
   return res;
 };
 
-export const broadcastTx = async (
-  deploy: DeployUtil.Deploy,
-): Promise<NDeployMessagePutResponse> => {
-  const response = await casperNodeWrapper<NDeployMessagePutResponse>({
-    id: 1,
-    jsonrpc: "2.0",
-    method: "account_put_deploy",
-    params: DeployUtil.deployToJson(deploy),
-  });
-
-  return response;
+export const broadcastTx = async (transaction: Transaction): Promise<string> => {
+  const client = getCasperNodeRpcClient();
+  try {
+    const response = await client.putTransaction(transaction);
+    return response.transactionHash.toHex();
+  } catch (error) {
+    log("error", "Failed to broadcast transaction", error);
+    throw error;
+  }
 };

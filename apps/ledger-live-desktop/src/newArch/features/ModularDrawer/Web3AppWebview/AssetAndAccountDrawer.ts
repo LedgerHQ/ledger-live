@@ -1,10 +1,15 @@
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
-import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type {
+  ModularDrawerConfiguration,
+  EnhancedModularDrawerConfiguration,
+} from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+import { createModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/utils";
+import { type CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
-import { SelectAccountFlow } from "../components/SelectAccountFlow";
+import { type WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
+import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 
 type Result = {
   account: AccountLike;
@@ -16,34 +21,46 @@ type DrawerParams = {
   currencies?: CryptoOrTokenCurrency[];
   accounts$?: Observable<WalletAPIAccount[]>;
   includeTokens?: boolean;
+  drawerConfiguration?: ModularDrawerConfiguration | EnhancedModularDrawerConfiguration;
   onSuccess?: (account: AccountLike, parentAccount?: Account) => void;
   onCancel?: () => void;
 };
 
 function openAssetAndAccountDrawer(params: DrawerParams): void {
-  const { assetIds, currencies, accounts$, includeTokens } = params;
+  const {
+    assetIds,
+    currencies,
+    accounts$,
+    includeTokens,
+    drawerConfiguration,
+    onSuccess,
+    onCancel,
+  } = params;
+
+  const modularDrawerConfiguration = createModularDrawerConfiguration(drawerConfiguration);
 
   const handleSuccess = (result: Result): void => {
     setDrawer();
-    params.onSuccess?.(result.account, result.parentAccount);
+    onSuccess?.(result.account, result.parentAccount);
   };
 
   const handleCancel = (): void => {
     setDrawer();
-    params.onCancel?.();
+    onCancel?.();
   };
 
   const filteredCurrencies =
     currencies ?? listAndFilterCurrencies({ currencies: assetIds, includeTokens });
 
   return setDrawer(
-    SelectAccountFlow,
+    ModularDrawerFlowManager,
     {
       currencies: filteredCurrencies,
       accounts$,
       onAccountSelected: (account, parentAccount) => {
         handleSuccess({ account, parentAccount });
       },
+      drawerConfiguration: modularDrawerConfiguration,
     },
     {
       onRequestClose: handleCancel,

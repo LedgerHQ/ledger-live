@@ -89,12 +89,7 @@ export const buildSignOperation =
 
           const forgedBytes = await rawEncode(contents);
 
-          // 0x03 is a conventional prefix (aka a watermark) for tezos transactions
-          const signature = await ledgerSigner.sign(
-            Buffer.concat([Buffer.from("03", "hex"), Buffer.from(forgedBytes, "hex")]).toString(
-              "hex",
-            ),
-          );
+          const signature = await ledgerSigner.sign(forgedBytes);
 
           return {
             type,

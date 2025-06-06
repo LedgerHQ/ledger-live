@@ -1,11 +1,15 @@
 import test from "../fixtures/common";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import {
+  Account,
+  TokenAccount,
+  getParentAccountName,
+} from "@ledgerhq/live-common/e2e/enum/Account";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { addTmsLink } from "../utils/allureUtils";
 import { getDescription } from "../utils/customJsonReporter";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Swap";
+import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { CLI } from "../utils/cliUtils";
 import {
   setupEnv,
@@ -26,16 +30,17 @@ const liveDataCommand = (currencyApp: { name: string }, index: number) => (userd
 const checkProviders = [
   {
     fromAccount: Account.ETH_1,
-    toAccount: Account.ETH_USDT_1,
+    toAccount: TokenAccount.ETH_USDT_1,
     xrayTicket: "B2CQA-3120",
     provider: Provider.ONE_INCH,
   },
-  {
-    fromAccount: Account.ETH_1,
-    toAccount: Account.ETH_USDC_1,
-    xrayTicket: "B2CQA-3119",
-    provider: Provider.PARASWAP,
-  },
+  //ToDo: Enable when Paraswap is migrated to Velora
+  // {
+  //   fromAccount: Account.ETH_1,
+  //   toAccount: TokenAccount.ETH_USDC_1,
+  //   xrayTicket: "B2CQA-3119",
+  //   provider: Provider.PARASWAP,
+  // },
 ];
 
 for (const { fromAccount, toAccount, xrayTicket, provider } of checkProviders) {
@@ -278,7 +283,7 @@ test.describe("Swap - Rejected on device", () => {
 
 test.describe("Swap - Landing page", () => {
   const fromAccount = Account.ETH_1;
-  const toAccount = Account.ETH_USDC_1;
+  const toAccount = TokenAccount.ETH_USDC_1;
 
   setupEnv(true);
 
@@ -499,21 +504,21 @@ const tooLowAmountForQuoteSwaps = [
     quotesVisible: true,
   },
   {
-    swap: new Swap(Account.ETH_USDT_1, Account.BTC_NATIVE_SEGWIT_1, "200"),
+    swap: new Swap(TokenAccount.ETH_USDT_1, Account.BTC_NATIVE_SEGWIT_1, "200"),
     xrayTicket: "B2CQA-3240",
     errorMessage: "Not enough balance",
     ctaBanner: false,
     quotesVisible: true,
   },
   {
-    swap: new Swap(Account.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, "24"),
+    swap: new Swap(TokenAccount.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, "24"),
     xrayTicket: "B2CQA-3241",
     errorMessage: new RegExp(`\\d+(\\.\\d{1,10})? ETH needed for network fees\\.\\s*$`),
     ctaBanner: true,
     quotesVisible: true,
   },
   {
-    swap: new Swap(Account.ETH_USDT_1, Account.BTC_NATIVE_SEGWIT_1, "0.000001"),
+    swap: new Swap(TokenAccount.ETH_USDT_1, Account.BTC_NATIVE_SEGWIT_1, "0.000001"),
     xrayTicket: "B2CQA-3242",
     errorMessage: new RegExp(`Minimum \\d+(\\.\\d{1,10})? USDT needed for quotes\\.\\s*$`),
     ctaBanner: false,
@@ -764,7 +769,9 @@ test.describe("Swap flow from different entry point", () => {
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToAccounts();
-      await app.accounts.navigateToAccountByName(swapEntryPoint.swap.accountToDebit.accountName);
+      await app.accounts.navigateToAccountByName(
+        getParentAccountName(swapEntryPoint.swap.accountToDebit),
+      );
       await app.swap.goAndWaitForSwapToBeReady(() => app.account.navigateToSwap());
       await app.swap.expectSelectedAssetDisplayed(
         swapEntryPoint.swap.accountToDebit.currency.name,
@@ -802,7 +809,7 @@ const swapMax = [
     xrayTicket: "B2CQA-3365",
   },
   {
-    fromAccount: Account.ETH_USDT_1,
+    fromAccount: TokenAccount.ETH_USDT_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
     xrayTicket: "B2CQA-3366",
   },

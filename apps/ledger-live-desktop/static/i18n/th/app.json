@@ -2396,7 +2396,8 @@
         "suggested" : "แนะนำ",
         "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
-        "nftQuantity" : "ปริมาณ"
+        "nftQuantity" : "ปริมาณ",
+        "splExtensionsWarning" : "คุณกำลังโต้ตอบกับโทเคนที่เป็นส่วนหนึ่งของโปรแกรม Token-2022 หรือที่เรียกว่า Token Extensions โทเคนนี้มาพร้อมกับความเสี่ยง <0>คลิกที่นี่</0>เพื่อเรียนรู้เพิ่มเติม"
       },
       "verification" : {
         "streaming" : {
@@ -3771,7 +3772,7 @@
       "frozenStateWarning" : "สินทรัพย์บัญชีถูก Freeze!",
       "transferWarning" : "ในการตรวจสอบ Address ผู้รับสำหรับโทเคน Solana โดยใช้ Ledger Nano S™ ให้<0>ทำตามคำแนะนำต่อไปนี้</0>",
       "transferFees" : {
-        "feesPercentHint" : "โทเคนมีค่าธรรมเนียม {{feePercent}}% ({{feeBps}}bps) แต่ไม่เกิน {{maxFee}}",
+        "feesHint" : "ค่าธรรมเนียมการโอนโทเคน: {{transferFee}}",
         "notice" : "ค่าธรรมเนียมการโอน {{fee}}%",
         "tooltipHint" : "เปอร์เซ็นต์การโอนที่ถูกระงับไว้สำหรับผู้สร้างโทเคน",
         "transferFeesLabel" : "ค่าธรรมเนียมการโอน"
@@ -5873,6 +5874,10 @@
       "title" : "ขออภัย เงินทุนไม่พอ",
       "description" : "โปรดตรวจสอบให้แน่ใจว่าบัญชีมีเงินทุนเพียงพอ"
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "ขออภัย เงินทุนไม่เพียงพอสำหรับการชำระค่าธรรมเนียม",
+      "description" : "โปรดตรวจสอบให้แน่ใจว่าบัญชีมีเงินทุนเพียงพอ"
+    },
     "NotEnoughBalanceSwap" : {
       "title" : "ขออภัย ยอดคงเหลือรวมค่าธรรมเนียมเครือข่ายไม่เพียงพอ ปรับจำนวนหรือตรวจสอบยอดคงเหลือ",
       "description" : "โปรดตรวจสอบให้แน่ใจว่าบัญชีมีเงินทุนเพียงพอ"
@@ -7055,7 +7060,15 @@
     "assetFlow" : {
       "selectTemplate" : "เลือก {{dynamic}}",
       "asset" : "สินทรัพย์",
-      "network" : "เครือข่าย"
+      "network" : "เครือข่าย",
+      "account" : "บัญชี"
+    }
+  },
+  "nftEntryPoint" : {
+    "title" : "NFT (โทเคนที่ไม่สามารถแลกเปลี่ยนหรือแทนที่กันได้)",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
     }
   }
 }

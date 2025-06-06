@@ -132,5 +132,30 @@ describe("Operation.ts", () => {
 
       expect(isOldestPendingOperation(testAccount, 1)).toBe(false);
     });
+
+    it("should throw if a pending operation is missing transactionSequenceNumber", () => {
+      const malformedOp = {
+        ...pendingCoinOperation0,
+        transactionSequenceNumber: undefined,
+      } as Operation;
+
+      const testAccount = {
+        ...account,
+        pendingOperations: [malformedOp],
+      };
+
+      expect(() => isOldestPendingOperation(testAccount, 0)).toThrow(
+        "transactionSequenceNumber required",
+      );
+    });
+
+    it("should still return true when pending operations are out of order", () => {
+      const testAccount = {
+        ...account,
+        pendingOperations: [pendingCoinOperation2, pendingCoinOperation0],
+      };
+
+      expect(isOldestPendingOperation(testAccount, 0)).toBe(true);
+    });
   });
 });

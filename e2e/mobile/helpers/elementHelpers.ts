@@ -24,6 +24,11 @@ function withRN75Delay<T>(fn: () => T) {
 }
 
 export const NativeElementHelpers = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  expect(element: any) {
+    return withRN75Delay(() => detoxExpect(element));
+  },
+
   waitForElementById(id: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
     return waitFor(element(by.id(id)))
       .toBeVisible()
@@ -40,7 +45,7 @@ export const NativeElementHelpers = {
     const el = element(by.id(id));
 
     try {
-      await detoxExpect(el).not.toBeVisible();
+      await NativeElementHelpers.expect(el).not.toBeVisible();
       return true;
     } catch {
       try {
@@ -49,6 +54,15 @@ export const NativeElementHelpers = {
       } catch {
         return false;
       }
+    }
+  },
+
+  async countElementsById(id: string | RegExp, index = 0): Promise<number> {
+    try {
+      await detoxExpect(element(by.id(id)).atIndex(index)).toBeVisible();
+      return countElementsById(id, index + 1);
+    } catch {
+      return index;
     }
   },
 

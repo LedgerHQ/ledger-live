@@ -87,7 +87,6 @@ export type SwapProps = {
 
 export type SwapWebProps = {
   manifest: LiveAppManifest;
-  liveAppUnavailable: () => void;
 };
 
 type TokenParams = {
@@ -97,6 +96,7 @@ type TokenParams = {
 
 const SwapWebAppWrapper = styled.div`
   display: flex;
+  flex-direction: column;
   width: 100%;
   flex: 1;
 `;
@@ -110,7 +110,7 @@ const SWAP_API_BASE = getEnv("SWAP_API_BASE");
 const SWAP_USER_IP = getEnv("SWAP_USER_IP");
 const getSegWitAbandonSeedAddress = (): string => "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs";
 
-const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
+const SwapWebView = ({ manifest }: SwapWebProps) => {
   const {
     colors: {
       palette: { type: themeType },
@@ -469,7 +469,6 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
     setWebviewState(state);
 
     if (!state?.loading && state?.isAppUnavailable && !isOffline) {
-      liveAppUnavailable();
       captureException(
         new UnableToLoadSwapLiveError(
           '"Failed to load swap live app using WebPlatformPlayer in SwapWeb",',
@@ -485,11 +484,6 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [webviewState?.url]);
-
-  const customWebviewStyle = useMemo(
-    () => (isOffline ? { display: "none" } : undefined),
-    [isOffline],
-  );
 
   const manifestWithHash = useMemo(
     () => ({ ...manifest, url: `${manifest.url}#${hashString}` }),
@@ -523,7 +517,6 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
           onStateChange={onStateChange}
           ref={webviewAPIRef}
           customHandlers={customHandlers as never}
-          webviewStyle={customWebviewStyle}
         />
       </SwapWebAppWrapper>
     </>

@@ -64,8 +64,11 @@
     "@ledgerhq/live-signer-solana": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "@solana/spl-token": "0.4.9",
+    "@solana/web3.js": "1.95.4",
     "bignumber.js": "^9",
-    "docker-compose": "^1"
+    "docker-compose": "^1",
+    "msw": "^2"
   },
   "devDependencies": {
     "@types/jest": "^29",

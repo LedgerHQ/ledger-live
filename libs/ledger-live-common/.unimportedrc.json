@@ -166,6 +166,7 @@
     "src/hooks/useLocalizedUrl.ts",
     "src/hooks/useSearch.ts",
     "src/hooks/useTimer.ts",
+    "src/hooks/useOFACGeoBlockCheck.ts",
     "src/hw/actions/app.ts",
     "src/hw/actions/completeExchange.ts",
     "src/hw/actions/customLockScreenFetch.ts",
@@ -293,7 +294,8 @@
     "src/wallet-api/utils/appendQueryParamsToManifestURL.ts",
     "src/wallet-api/utils/deriveAccountIdForManifest.ts",
     "src/wallet-api/version.ts",
-    "src/walletConnect/index.ts"
+    "src/walletConnect/index.ts",
+    "src/wallet-api/ModularDrawer/utils.ts"
   ],
   "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [
@@ -334,9 +336,11 @@
     "src/e2e/enum/DeviceLabels.ts",
     "src/e2e/enum/Fee.ts",
     "src/e2e/enum/Nft.ts",
-    "src/e2e/enum/Swap.ts",
+    "src/e2e/enum/OperationType.ts",
+    "src/e2e/enum/Provider.ts",
     "src/e2e/enum/TokenType.ts",
     "src/e2e/enum/TransactionStatus.ts",
+    "src/e2e/models/BuySell.ts",
     "src/exchange/swap/const/blockchain.ts",
     "src/families/cardano/logic.ts",
     "src/families/cardano/staking.ts",

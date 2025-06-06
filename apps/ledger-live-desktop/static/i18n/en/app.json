@@ -6617,6 +6617,19 @@
     },
     "AmountTooSmall": {
       "title": "Minimum required amount for this transaction is {{amount}}"
+    },
+    "UserAddressSanctionedError": {
+      "title": "Keeping you safe",
+      "description": "This transaction involves a sanctioned wallet address and cannot be processed.<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForSendError": {
+      "title": "This transaction involves a sanctioned wallet address and cannot be processed<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForStakingError": {
+      "title": "This transaction involves a sanctioned wallet address<br/> and cannot be processed.<br/>-- {{sanctionedAddress}}<br/>"
+    },
+    "RecipientAddressSanctionedError": {
+      "title": "This transaction involves a sanctioned wallet address and cannot be processed."
     }
   },
   "cryptoOrg": {
@@ -7080,12 +7093,9 @@
   },
   "modularAssetDrawer": {
     "searchPlaceholder": "Search",
-    "assetFlow": {
-      "selectTemplate": "Select {{dynamic}}",
-      "asset": "asset",
-      "network": "network",
-      "account": "account"
-    }
+    "selectAsset": "Select asset",
+    "selectNetwork": "Select network",
+    "selectAccount": "Select account"
   },
   "nftEntryPoint": {
     "title": "NFT (Non Fungible Tokens)",
@@ -7093,5 +7103,10 @@
       "magiceden": "Magic Eden",
       "opensea": "OpenSea"
     }
+  },
+  "geoBlocking": {
+    "title": "Location unavailable",
+    "description": "Ledger wallet is not available in this location.",
+    "learnMore": "Learn more"
   }
 }

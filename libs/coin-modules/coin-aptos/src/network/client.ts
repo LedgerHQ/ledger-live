@@ -15,7 +15,6 @@ import {
   type UserTransactionResponse,
   type Block,
   type AptosSettings,
-  type MoveFunctionId,
   Hex,
   postAptosFullNode,
   type PendingTransactionResponse,
@@ -24,7 +23,13 @@ import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import isUndefined from "lodash/isUndefined";
-import { APTOS_ASSET_ID, DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "../constants";
+import {
+  APTOS_ASSET_ID,
+  DEFAULT_GAS,
+  DEFAULT_GAS_PRICE,
+  ESTIMATE_GAS_MUL,
+  TOKEN_TYPE,
+} from "../constants";
 import type { AptosBalance, AptosTransaction, TransactionOptions } from "../types";
 import { GetAccountTransactionsData, GetAccountTransactionsDataGt } from "./graphql/queries";
 import type {
@@ -39,10 +44,11 @@ import {
   Pagination,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
-import { AptosAsset, AptosExtra, AptosFeeParameters, AptosSender } from "../types/assets";
+import { AptosAsset } from "../types/assets";
 import { log } from "@ledgerhq/logs";
 import { transactionsToOperations } from "../logic/transactionsToOperations";
 import { isTestnet } from "../logic/isTestnet";
+import { normalizeAddress } from "../logic/normalizeAddress";
 
 const getApiEndpoint = (currencyId: string) =>
   isTestnet(currencyId) ? getEnv("APTOS_TESTNET_API_ENDPOINT") : getEnv("APTOS_API_ENDPOINT");
@@ -175,7 +181,7 @@ export class AptosAPI {
     return {
       height: Number(block.block_height),
       hash: block.block_hash,
-      time: new Date(Number(block.block_timestamp)),
+      time: new Date(Number(block.block_timestamp) / 1_000),
     };
   }
 
@@ -217,28 +223,38 @@ export class AptosAPI {
     }
   }
 
-  async estimateFees(
-    transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender>,
-  ): Promise<FeeEstimation<AptosFeeParameters>> {
-    const publicKeyEd = new Ed25519PublicKey(transactionIntent.sender.xpub);
-    const fn: MoveFunctionId = "0x1::aptos_account::transfer_coins";
+  async estimateFees(transactionIntent: TransactionIntent<AptosAsset>): Promise<FeeEstimation> {
+    const publicKeyEd = new Ed25519PublicKey(transactionIntent?.senderPublicKey ?? "");
 
     const txPayload: InputEntryFunctionData = {
-      function: fn,
+      function: "0x1::aptos_account::transfer_coins",
       typeArguments: [APTOS_ASSET_ID],
       functionArguments: [transactionIntent.recipient, transactionIntent.amount],
     };
+
+    if (transactionIntent.asset.type === "token") {
+      const { standard } = transactionIntent.asset;
+
+      if (standard === TOKEN_TYPE.FUNGIBLE_ASSET) {
+        txPayload.function = "0x1::primary_fungible_store::transfer";
+        txPayload.typeArguments = ["0x1::fungible_asset::Metadata"];
+        txPayload.functionArguments = [
+          transactionIntent.asset.contractAddress,
+          transactionIntent.recipient,
+          transactionIntent.amount,
+        ];
+      } else if (standard === TOKEN_TYPE.COIN) {
+        txPayload.function = "0x1::aptos_account::transfer_coins";
+        txPayload.typeArguments = [transactionIntent.asset.contractAddress];
+      }
+    }
 
     const txOptions: TransactionOptions = {
       maxGasAmount: DEFAULT_GAS.toString(),
       gasUnitPrice: DEFAULT_GAS_PRICE.toString(),
     };
 
-    const tx = await this.generateTransaction(
-      transactionIntent.sender.freshAddress,
-      txPayload,
-      txOptions,
-    );
+    const tx = await this.generateTransaction(transactionIntent.sender, txPayload, txOptions);
 
     const simulation = await this.simulateTransaction(publicKeyEd, tx);
     const completedTx = simulation[0];
@@ -251,6 +267,7 @@ export class AptosAPI {
     return {
       value: BigInt(expectedGas.toString()),
       parameters: {
+        storageLimit: BigInt(0),
         gasLimit: BigInt(gasLimit.toString()),
         gasPrice: BigInt(gasPrice.toString()),
       },
@@ -258,11 +275,12 @@ export class AptosAPI {
   }
 
   async listOperations(
-    address: string,
+    rawAddress: string,
     pagination: Pagination,
   ): Promise<[Operation<AptosAsset>[], string]> {
+    const address = normalizeAddress(rawAddress);
     const transactions = await this.getAccountInfo(address, pagination.minHeight.toString());
-    const [newOperations, _] = transactionsToOperations(address, transactions.transactions);
+    const newOperations = transactionsToOperations(address, transactions.transactions);
 
     return [newOperations, ""];
   }
@@ -344,7 +362,7 @@ export class AptosAPI {
     });
 
     return response.map(x => ({
-      asset_type: x.asset_type ?? "-",
+      contractAddress: x.asset_type ?? "-",
       amount: BigNumber(x.amount),
     }));
   }
