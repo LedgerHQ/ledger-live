@@ -67,7 +67,7 @@ export function isMemoValid(memoType: string, memoValue: string): boolean {
   return true;
 }
 
-export async function isAccountMultiSign(account: Account): Promise<boolean> {
+export async function isAccountMultiSign(account: string): Promise<boolean> {
   const signers = await fetchSigners(account);
   return signers.length > 1;
 }

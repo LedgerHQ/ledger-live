@@ -18,9 +18,10 @@ function buildPaginationParams(
 ): Pagination {
   switch (network) {
     case "stellar":
+      console.log("Get ACCount Stellar");
       return isInitSync
-        ? { limit: getEnv("API_STELLAR_HORIZON_INITIAL_FETCH_MAX_OPERATIONS") }
-        : { pagingToken: lastPagingToken };
+        ? { limit: getEnv("API_STELLAR_HORIZON_INITIAL_FETCH_MAX_OPERATIONS"), minHeight: 0 }
+        : { pagingToken: lastPagingToken, minHeight: 0 };
 
     case "xrp":
     default:
@@ -33,13 +34,14 @@ function buildPaginationParams(
 
 export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
   return async (info, syncConfig) => {
+    console.log("INFO:", info);
     const { address, initialAccount, currency, derivationMode } = info;
 
     // NOTE: Stellar-specific safety mechanism — Ledger's internal burn address should never sync
     if (address === STELLAR_BURN_ADDRESS) {
       throw new StellarBurnAddressError();
     }
-
+    console.log("genericGetAccountShape called with:", address);
     // Generate a stable account ID for tracking account in Ledger Live
     const accountId = encodeAccountId({
       type: "js",
@@ -53,7 +55,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
 
     // NOTE: get all assets (native + tokens), find native XLM balance
     const balanceRes = await getAlpacaApi(network, kind).getBalance(address);
-
+    console.log("Balance response:", balanceRes);
     // NOTE: find native XLM balance among returned balances
     const nativeAsset = balanceRes.find(b => b.asset.type === "native");
     const nativeBalance = BigInt(nativeAsset?.value ?? "0");
@@ -89,7 +91,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     );
 
     // NOTE: Stellar: build token subAccounts (e.g. USDC on Stellar)
-
+    console.log("Building subAccounts with assets:", assetOps);
     const subAccounts =
       buildSubAccounts({
         currency,
@@ -111,6 +113,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         operations: assetOps,
         syncConfig,
       }) ?? [];
+      console.log("SubAccount:", subAccounts);
 
     // NOTE: Stellar: attach inferred subOperations to parent operations
     const operationsWithSubs = mergedOps.map(op => ({
