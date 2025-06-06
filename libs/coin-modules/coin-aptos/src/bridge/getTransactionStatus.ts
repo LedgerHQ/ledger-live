@@ -100,11 +100,7 @@ const checkRestakeTransaction = (
     if ((t.amount.gt(stakingPosition.pendingInactive) || t.amount.isZero()) && !newErrors.amount) {
       newErrors.amount = new NotEnoughBalance();
     }
-    if (
-      !t.useAllAmount &&
-      t.amount.plus(stakingPosition.active).lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS) &&
-      !newErrors.amount
-    ) {
+    if (!t.useAllAmount && t.amount.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS) && !newErrors.amount) {
       newErrors.amount = new NotEnoughStakedBalanceLeft("", {
         minAmountStaked: `${MIN_COINS_ON_SHARES_POOL.toNumber().toString()} APT`,
       });
@@ -128,7 +124,6 @@ const checkUnstakeTransaction = (
       newErrors.amount = new NotEnoughBalance();
     }
     if (
-      !t.useAllAmount &&
       stakingPosition.active.minus(t.amount).lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS) &&
       !newErrors.amount
     ) {

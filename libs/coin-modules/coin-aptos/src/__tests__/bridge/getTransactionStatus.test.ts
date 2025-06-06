@@ -12,8 +12,37 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
+  NotEnoughStakedBalanceLeft,
+  NotEnoughToStake,
   RecipientRequired,
 } from "@ledgerhq/errors";
+import { MIN_COINS_ON_SHARES_POOL } from "../../constants";
+
+const aptosResources = {
+  activeBalance: BigNumber(45988443248),
+  pendingInactiveBalance: BigNumber(67874023),
+  inactiveBalance: BigNumber(567600900),
+  stakingPositions: [
+    {
+      active: BigNumber(123456789),
+      inactive: BigNumber(567567567),
+      pendingInactive: BigNumber(5345),
+      validatorId: "validator-1",
+    },
+    {
+      active: BigNumber(3),
+      inactive: BigNumber(33333),
+      pendingInactive: BigNumber(67868678),
+      validatorId: "validator-2",
+    },
+    {
+      active: BigNumber(45864986459),
+      inactive: BigNumber(0),
+      pendingInactive: BigNumber(0),
+      validatorId: "validator-3",
+    },
+  ],
+};
 
 describe("getTransactionStatus Test", () => {
   it("should return error for AmountRequired", async () => {
@@ -330,5 +359,219 @@ describe("getTransactionStatus Test", () => {
     };
 
     expect(result).toEqual(expected);
+  });
+
+  it("should return not enough balance if trying to stake more than the current balance", async () => {
+    const account = createFixtureAccount({
+      balance: BigNumber(123456),
+      spendableBalance: BigNumber(123456),
+    });
+
+    const transaction = createFixtureTransaction({ mode: "stake", amount: BigNumber(123453336) });
+
+    const result = await getTransactionStatus(account, transaction);
+
+    const expected = {
+      errors: {
+        amount: new NotEnoughBalance(),
+      },
+    };
+
+    expect(result).toMatchObject(expected);
+  });
+
+  it(`should return not enough balance to stake if trying to stake less than ${MIN_COINS_ON_SHARES_POOL} APT`, async () => {
+    const account = createFixtureAccount({
+      balance: BigNumber(123456),
+      spendableBalance: BigNumber(123456),
+    });
+
+    const transaction = createFixtureTransaction({ mode: "stake", amount: BigNumber(5) });
+
+    const result = await getTransactionStatus(account, transaction);
+
+    const expected = {
+      errors: {
+        amount: new NotEnoughToStake(),
+      },
+    };
+
+    expect(result).toMatchObject(expected);
+  });
+
+  it(`should return not enough balance to stake if trying to stake the max balance but it is less than ${MIN_COINS_ON_SHARES_POOL} APT`, async () => {
+    const account = createFixtureAccount({
+      balance: BigNumber(4),
+      spendableBalance: BigNumber(4),
+    });
+
+    const transaction = createFixtureTransaction({ mode: "stake", useAllAmount: true });
+
+    const result = await getTransactionStatus(account, transaction);
+
+    const expected = {
+      errors: {
+        amount: new NotEnoughToStake(),
+      },
+    };
+
+    expect(result).toMatchObject(expected);
+  });
+
+  it("should return an error if there's no staking position to restake", async () => {
+    const account = createFixtureAccount({
+      balance: BigNumber(4),
+      spendableBalance: BigNumber(4),
+    });
+
+    const transaction = createFixtureTransaction({ mode: "restake" });
+
+    const result = await getTransactionStatus(account, transaction);
+
+    const expected = {
+      errors: {
+        recipient: new RecipientRequired(),
+      },
+    };
+
+    expect(result).toMatchObject(expected);
+  });
+
+  it("should return an error if there's not enough pending inactive balance", async () => {
+    const account = createFixtureAccount({
+      balance: BigNumber(4),
+      spendableBalance: BigNumber(4),
+      aptosResources,
+    });
+
+    const transaction = createFixtureTransaction({
+      mode: "restake",
+      recipient: "validator-1",
+      amount: BigNumber(67874022223),
+      fees: BigNumber(1),
+    });
+
+    const result = await getTransactionStatus(account, transaction);
+
+    const expected = {
+      errors: {
+        amount: new NotEnoughBalance(),
+      },
+    };
+
+    expect(result).toMatchObject(expected);
+  });
+
+  it(`should return not enough balance to stake if trying to restake but it is less than ${MIN_COINS_ON_SHARES_POOL} APT`, async () => {
+    const account = createFixtureAccount({
+      balance: BigNumber(4),
+      spendableBalance: BigNumber(4),
+      aptosResources,
+    });
+
+    const transaction = createFixtureTransaction({
+      mode: "restake",
+      recipient: "validator-2",
+      amount: BigNumber(4),
+      fees: BigNumber(1),
+    });
+
+    const result = await getTransactionStatus(account, transaction);
+
+    const expected = {
+      errors: {
+        amount: new NotEnoughStakedBalanceLeft(),
+      },
+    };
+
+    expect(result).toMatchObject(expected);
+  });
+
+  it("should return an error if there's no staking position to unstake", async () => {
+    const account = createFixtureAccount({
+      balance: BigNumber(4),
+      spendableBalance: BigNumber(4),
+    });
+
+    const transaction = createFixtureTransaction({ mode: "unstake" });
+
+    const result = await getTransactionStatus(account, transaction);
+
+    const expected = {
+      errors: {
+        recipient: new RecipientRequired(),
+      },
+    };
+
+    expect(result).toMatchObject(expected);
+  });
+
+  it(`should return not enough staked balance left if the amount left in stake is less than ${MIN_COINS_ON_SHARES_POOL} APT`, async () => {
+    const account = createFixtureAccount({
+      balance: BigNumber(4),
+      spendableBalance: BigNumber(4),
+      aptosResources,
+    });
+
+    const transaction = createFixtureTransaction({
+      mode: "unstake",
+      recipient: "validator-2",
+      amount: BigNumber(2),
+      fees: BigNumber(0.5),
+    });
+
+    const result = await getTransactionStatus(account, transaction);
+
+    const expected = {
+      errors: {
+        amount: new NotEnoughStakedBalanceLeft(),
+      },
+    };
+
+    expect(result).toMatchObject(expected);
+  });
+
+  it("should return an error if there's no staking position to withdraw", async () => {
+    const account = createFixtureAccount({
+      balance: BigNumber(4),
+      spendableBalance: BigNumber(4),
+    });
+
+    const transaction = createFixtureTransaction({ mode: "withdraw" });
+
+    const result = await getTransactionStatus(account, transaction);
+
+    const expected = {
+      errors: {
+        recipient: new RecipientRequired(),
+      },
+    };
+
+    expect(result).toMatchObject(expected);
+  });
+
+  it("should return an error if there's not enough inactive balance to withdraw", async () => {
+    const account = createFixtureAccount({
+      balance: BigNumber(4),
+      spendableBalance: BigNumber(4),
+      aptosResources,
+    });
+
+    const transaction = createFixtureTransaction({
+      mode: "restake",
+      recipient: "validator-1",
+      amount: BigNumber(56756756745),
+      fees: BigNumber(1),
+    });
+
+    const result = await getTransactionStatus(account, transaction);
+
+    const expected = {
+      errors: {
+        amount: new NotEnoughBalance(),
+      },
+    };
+
+    expect(result).toMatchObject(expected);
   });
 });
