@@ -3,7 +3,7 @@ import { Operation } from "@ledgerhq/coin-framework/api/types";
 import { AptosAsset } from "../types/assets";
 import BigNumber from "bignumber.js";
 import { EntryFunctionPayloadResponse, InputEntryFunctionData } from "@aptos-labs/ts-sdk";
-import { APTOS_ASSET_ID, DIRECTION } from "../constants";
+import { APTOS_ASSET_ID, OP_TYPE } from "../constants";
 import { compareAddress, getCoinAndAmounts } from "./getCoinAndAmounts";
 import { calculateAmount } from "./calculateAmount";
 import { processRecipients } from "./processRecipients";
@@ -18,12 +18,12 @@ export const convertFunctionPayloadResponseToInputEntryFunctionData = (
   functionArguments: payload.arguments,
 });
 
-const detectType = (address: string, tx: AptosTransaction, value: BigNumber): DIRECTION => {
-  let type = compareAddress(tx.sender, address) ? DIRECTION.OUT : DIRECTION.IN;
+const detectType = (address: string, tx: AptosTransaction, value: BigNumber): OP_TYPE => {
+  let type = compareAddress(tx.sender, address) ? OP_TYPE.OUT : OP_TYPE.IN;
 
   if (!value) {
     // skip transaction that result no Aptos change
-    type = DIRECTION.UNKNOWN;
+    type = OP_TYPE.UNKNOWN;
   }
 
   return type;
@@ -88,7 +88,7 @@ export function transactionsToOperations(
 
     processRecipients(payload, address, op, function_address);
 
-    if (op.type !== DIRECTION.UNKNOWN && coin_id !== null) {
+    if (op.type !== OP_TYPE.UNKNOWN && coin_id !== null) {
       if (coin_id === APTOS_ASSET_ID) {
         acc.push(op);
         return acc;

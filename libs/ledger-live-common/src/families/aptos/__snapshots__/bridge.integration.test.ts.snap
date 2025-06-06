@@ -3,6 +3,12 @@
 exports[`aptos currency bridge scanAccounts aptos seed 1 1`] = `
 [
   {
+    "aptosResources": {
+      "activeBalance": "0",
+      "inactiveBalance": "0",
+      "pendingInactiveBalance": "0",
+      "stakingPositions": [],
+    },
     "balance": "19949100",
     "currencyId": "aptos",
     "derivationMode": "aptos",
@@ -21,6 +27,12 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 1`] = `
     "xpub": "d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956",
   },
   {
+    "aptosResources": {
+      "activeBalance": "0",
+      "inactiveBalance": "0",
+      "pendingInactiveBalance": "0",
+      "stakingPositions": [],
+    },
     "balance": "20020000",
     "currencyId": "aptos",
     "derivationMode": "aptos",
@@ -39,6 +51,12 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 1`] = `
     "xpub": "6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e",
   },
   {
+    "aptosResources": {
+      "activeBalance": "0",
+      "inactiveBalance": "0",
+      "pendingInactiveBalance": "0",
+      "stakingPositions": [],
+    },
     "balance": "0",
     "currencyId": "aptos",
     "derivationMode": "aptos",

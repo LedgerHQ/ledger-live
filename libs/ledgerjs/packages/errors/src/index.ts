@@ -87,6 +87,7 @@ export const NotEnoughBalance = createCustomErrorClass("NotEnoughBalance");
 export const NotEnoughBalanceFees = createCustomErrorClass("NotEnoughBalanceFees");
 export const NotEnoughBalanceSwap = createCustomErrorClass("NotEnoughBalanceSwap");
 export const NotEnoughBalanceToDelegate = createCustomErrorClass("NotEnoughBalanceToDelegate");
+export const NotEnoughStakedBalanceLeft = createCustomErrorClass("NotEnoughStakedBalanceLeft");
 export const NotEnoughBalanceInParentAccount = createCustomErrorClass(
   "NotEnoughBalanceInParentAccount",
 );
@@ -94,6 +95,7 @@ export const NotEnoughSpendableBalance = createCustomErrorClass("NotEnoughSpenda
 export const NotEnoughBalanceBecauseDestinationNotCreated = createCustomErrorClass(
   "NotEnoughBalanceBecauseDestinationNotCreated",
 );
+export const NotEnoughToStake = createCustomErrorClass("NotEnoughToStake");
 export const NoAccessToCamera = createCustomErrorClass("NoAccessToCamera");
 export const NotEnoughGas = createCustomErrorClass("NotEnoughGas");
 // Error message specifically for the PTX swap flow

@@ -1,19 +1,19 @@
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { AptosAPI } from "../network";
 import { getEstimatedGas } from "./getFeesForTransaction";
 import { getMaxSendBalance } from "./logic";
-import type { Transaction } from "../types";
 import { DEFAULT_GAS, DEFAULT_GAS_PRICE } from "../constants";
+import type { AptosAccount, Transaction } from "../types";
 
 const estimateMaxSpendable = async ({
   account,
   parentAccount,
   transaction,
 }: {
-  account: AccountLike;
-  parentAccount?: Account;
+  account: AccountLike<AptosAccount>;
+  parentAccount?: AptosAccount;
   transaction?: Transaction;
 }): Promise<BigNumber> => {
   const mainAccount = getMainAccount(account, parentAccount);
@@ -30,7 +30,7 @@ const estimateMaxSpendable = async ({
     gasUnitPrice = BigNumber(estimate.gasUnitPrice);
   }
 
-  return getMaxSendBalance(maxGasAmount, gasUnitPrice, mainAccount, transaction);
+  return getMaxSendBalance(mainAccount, transaction, maxGasAmount, gasUnitPrice);
 };
 
 export default estimateMaxSpendable;
