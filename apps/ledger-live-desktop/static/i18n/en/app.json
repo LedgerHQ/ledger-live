@@ -7092,6 +7092,9 @@
     }
   },
   "modularAssetDrawer": {
+    "addAccounts": "Select the accounts you want to add",
+    "scanAccounts": "Looking for any existing accounts on the Blockchain...",
+    "connectYourDevice": "Connect and unlock your device",
     "searchPlaceholder": "Search",
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
