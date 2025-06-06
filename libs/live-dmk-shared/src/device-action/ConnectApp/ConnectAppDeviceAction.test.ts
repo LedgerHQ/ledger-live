@@ -1,9 +1,11 @@
 import type {
   GetDeviceMetadataDAOutput,
   InstallOrUpdateAppsDAIntermediateValue,
+  OpenAppWithDependenciesDAError,
 } from "@ledgerhq/device-management-kit";
 import {
   DeviceActionStatus,
+  DeviceDisconnectedWhileSendingError,
   UnknownDAError,
   UserInteractionRequired,
 } from "@ledgerhq/device-management-kit";
@@ -11,6 +13,7 @@ import {
 import { makeDeviceActionInternalApiMock } from "../__test-utils__/makeInternalApi";
 import {
   setupGetDeviceMetadataMock,
+  setupGetDeviceStatusMock,
   setupInstallOrUpdateAppsMock,
   setupOpenAppWithDependenciesMock,
 } from "../__test-utils__/setupTestMachine";
@@ -24,6 +27,9 @@ vi.mock("@ledgerhq/device-management-kit", async importOriginal => {
   return {
     ...original,
     GetDeviceMetadataDeviceAction: vi.fn(() => ({
+      makeStateMachine: vi.fn(),
+    })),
+    GetDeviceStatusDeviceAction: vi.fn(() => ({
       makeStateMachine: vi.fn(),
     })),
     InstallOrUpdateAppsDeviceAction: vi.fn(() => ({
@@ -246,6 +252,157 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
           onError: reject,
         });
       }));
+
+    it("Connect app without derivation, disconnected while opening app", () =>
+      new Promise<void>((resolve, reject) => {
+        setupGetDeviceMetadataMock(DEVICE_METADATA);
+        setupOpenAppWithDependenciesMock(
+          OPEN_APP_RESULT,
+          INSTALL_INTERMEDIATE_VALUE,
+          new DeviceDisconnectedWhileSendingError() as OpenAppWithDependenciesDAError,
+        );
+        setupGetDeviceStatusMock({ currentApp: "Ethereum", currentAppVersion: "1.0.0" });
+
+        const deviceAction = new ConnectAppDeviceAction({
+          input: {
+            application: { name: "Ethereum" },
+            dependencies: [{ name: "Uniswap" }, { name: "1inch" }],
+            requireLatestFirmware: false,
+            allowMissingApplication: false,
+          },
+        });
+
+        const expectedStates: Array<ConnectAppDAState> = [
+          // GetDeviceMetadata
+          {
+            intermediateValue: {
+              requiredUserInteraction: UserInteractionRequired.None,
+              installPlan: null,
+            },
+            status: DeviceActionStatus.Pending,
+          },
+          {
+            intermediateValue: {
+              requiredUserInteraction: UserInteractionRequired.None,
+              installPlan: null,
+            },
+            status: DeviceActionStatus.Pending,
+          },
+          // OpenAppWithDependencies
+          {
+            intermediateValue: {
+              requiredUserInteraction: UserInteractionRequired.None,
+              installPlan: null,
+            },
+            status: DeviceActionStatus.Pending,
+          },
+          {
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE,
+            status: DeviceActionStatus.Pending,
+          },
+          // Get device status
+          {
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE,
+            status: DeviceActionStatus.Pending,
+          },
+          {
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE,
+            status: DeviceActionStatus.Pending,
+          },
+          // Success
+          {
+            output: {
+              deviceMetadata: DEVICE_METADATA,
+              installResult: INSTALL_RESULT,
+            },
+            status: DeviceActionStatus.Completed,
+          },
+        ];
+
+        testDeviceActionStates(deviceAction, expectedStates, apiMock, {
+          onDone: resolve,
+          onError: reject,
+        });
+      }));
+
+    it("Connect app without derivation, disconnected while opening app", () =>
+      new Promise<void>((resolve, reject) => {
+        setupGetDeviceMetadataMock(DEVICE_METADATA);
+        setupOpenAppWithDependenciesMock(
+          OPEN_APP_RESULT,
+          INSTALL_INTERMEDIATE_VALUE,
+          new DeviceDisconnectedWhileSendingError() as OpenAppWithDependenciesDAError,
+        );
+        setupGetDeviceStatusMock({ currentApp: "Ethereum", currentAppVersion: "1.0.0" });
+
+        const deviceAction = new ConnectAppDeviceAction({
+          input: {
+            application: { name: "Ethereum" },
+            dependencies: [{ name: "Uniswap" }, { name: "1inch" }],
+            requireLatestFirmware: false,
+            allowMissingApplication: false,
+            requiredDerivation: () => Promise.resolve("eth-address"),
+          },
+        });
+
+        const expectedStates: Array<ConnectAppDAState> = [
+          // GetDeviceMetadata
+          {
+            intermediateValue: {
+              requiredUserInteraction: UserInteractionRequired.None,
+              installPlan: null,
+            },
+            status: DeviceActionStatus.Pending,
+          },
+          {
+            intermediateValue: {
+              requiredUserInteraction: UserInteractionRequired.None,
+              installPlan: null,
+            },
+            status: DeviceActionStatus.Pending,
+          },
+          // OpenAppWithDependencies
+          {
+            intermediateValue: {
+              requiredUserInteraction: UserInteractionRequired.None,
+              installPlan: null,
+            },
+            status: DeviceActionStatus.Pending,
+          },
+          {
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE,
+            status: DeviceActionStatus.Pending,
+          },
+          // Get device status
+          {
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE,
+            status: DeviceActionStatus.Pending,
+          },
+          {
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE,
+            status: DeviceActionStatus.Pending,
+          },
+          // GetDerivation
+          {
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE,
+            status: DeviceActionStatus.Pending,
+          },
+          // Success
+          {
+            output: {
+              deviceMetadata: DEVICE_METADATA,
+              installResult: INSTALL_RESULT,
+              derivation: "eth-address",
+            },
+            status: DeviceActionStatus.Completed,
+          },
+        ];
+
+        testDeviceActionStates(deviceAction, expectedStates, apiMock, {
+          onDone: resolve,
+          onError: reject,
+        });
+      }));
   });
 
   describe("error cases", () => {
@@ -349,7 +506,11 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
     it("Open app error", () =>
       new Promise<void>((resolve, reject) => {
         setupGetDeviceMetadataMock(DEVICE_METADATA);
-        setupOpenAppWithDependenciesMock(OPEN_APP_RESULT, INSTALL_INTERMEDIATE_VALUE, true);
+        setupOpenAppWithDependenciesMock(
+          OPEN_APP_RESULT,
+          INSTALL_INTERMEDIATE_VALUE,
+          new UnknownDAError("OpenAppWithDependencies failed"),
+        );
 
         const deviceAction = new ConnectAppDeviceAction({
           input: {
@@ -391,6 +552,144 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
           // Error
           {
             error: new UnknownDAError("OpenAppWithDependencies failed"),
+            status: DeviceActionStatus.Error,
+          },
+        ];
+
+        testDeviceActionStates(deviceAction, expectedStates, apiMock, {
+          onDone: resolve,
+          onError: reject,
+        });
+      }));
+
+    it("Get status error", () =>
+      new Promise<void>((resolve, reject) => {
+        setupGetDeviceMetadataMock(DEVICE_METADATA);
+        setupOpenAppWithDependenciesMock(
+          OPEN_APP_RESULT,
+          INSTALL_INTERMEDIATE_VALUE,
+          new DeviceDisconnectedWhileSendingError() as OpenAppWithDependenciesDAError,
+        );
+        setupGetDeviceStatusMock({ currentApp: "Ethereum", currentAppVersion: "1.0.0" }, true);
+
+        const deviceAction = new ConnectAppDeviceAction({
+          input: {
+            application: { name: "Ethereum" },
+            dependencies: [{ name: "Uniswap" }, { name: "1inch" }],
+            requireLatestFirmware: false,
+            allowMissingApplication: false,
+          },
+        });
+
+        const expectedStates: Array<ConnectAppDAState> = [
+          // GetDeviceMetadata
+          {
+            intermediateValue: {
+              requiredUserInteraction: UserInteractionRequired.None,
+              installPlan: null,
+            },
+            status: DeviceActionStatus.Pending,
+          },
+          {
+            intermediateValue: {
+              requiredUserInteraction: UserInteractionRequired.None,
+              installPlan: null,
+            },
+            status: DeviceActionStatus.Pending,
+          },
+          // OpenAppWithDependencies
+          {
+            intermediateValue: {
+              requiredUserInteraction: UserInteractionRequired.None,
+              installPlan: null,
+            },
+            status: DeviceActionStatus.Pending,
+          },
+          {
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE,
+            status: DeviceActionStatus.Pending,
+          },
+          // GetDeviceStatus
+          {
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE,
+            status: DeviceActionStatus.Pending,
+          },
+          {
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE,
+            status: DeviceActionStatus.Pending,
+          },
+          // Error
+          {
+            error: new DeviceDisconnectedWhileSendingError() as OpenAppWithDependenciesDAError,
+            status: DeviceActionStatus.Error,
+          },
+        ];
+
+        testDeviceActionStates(deviceAction, expectedStates, apiMock, {
+          onDone: resolve,
+          onError: reject,
+        });
+      }));
+
+    it("Get status app not opened", () =>
+      new Promise<void>((resolve, reject) => {
+        setupGetDeviceMetadataMock(DEVICE_METADATA);
+        setupOpenAppWithDependenciesMock(
+          OPEN_APP_RESULT,
+          INSTALL_INTERMEDIATE_VALUE,
+          new DeviceDisconnectedWhileSendingError() as OpenAppWithDependenciesDAError,
+        );
+        setupGetDeviceStatusMock({ currentApp: "BOLOS", currentAppVersion: "1.0.0" });
+
+        const deviceAction = new ConnectAppDeviceAction({
+          input: {
+            application: { name: "Ethereum" },
+            dependencies: [{ name: "Uniswap" }, { name: "1inch" }],
+            requireLatestFirmware: false,
+            allowMissingApplication: false,
+          },
+        });
+
+        const expectedStates: Array<ConnectAppDAState> = [
+          // GetDeviceMetadata
+          {
+            intermediateValue: {
+              requiredUserInteraction: UserInteractionRequired.None,
+              installPlan: null,
+            },
+            status: DeviceActionStatus.Pending,
+          },
+          {
+            intermediateValue: {
+              requiredUserInteraction: UserInteractionRequired.None,
+              installPlan: null,
+            },
+            status: DeviceActionStatus.Pending,
+          },
+          // OpenAppWithDependencies
+          {
+            intermediateValue: {
+              requiredUserInteraction: UserInteractionRequired.None,
+              installPlan: null,
+            },
+            status: DeviceActionStatus.Pending,
+          },
+          {
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE,
+            status: DeviceActionStatus.Pending,
+          },
+          // GetDeviceStatus
+          {
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE,
+            status: DeviceActionStatus.Pending,
+          },
+          {
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE,
+            status: DeviceActionStatus.Pending,
+          },
+          // Error
+          {
+            error: new DeviceDisconnectedWhileSendingError() as OpenAppWithDependenciesDAError,
             status: DeviceActionStatus.Error,
           },
         ];

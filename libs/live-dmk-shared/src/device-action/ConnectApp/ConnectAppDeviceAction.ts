@@ -1,5 +1,5 @@
 import { Left, Right } from "purify-ts";
-import { assign, setup, fromPromise } from "xstate";
+import { and, assign, setup, fromPromise } from "xstate";
 
 import type {
   InternalApi,
@@ -9,7 +9,9 @@ import type {
   InstallOrUpdateAppsDAOutput,
 } from "@ledgerhq/device-management-kit";
 import {
+  DeviceDisconnectedWhileSendingError,
   UserInteractionRequired,
+  GetDeviceStatusDeviceAction,
   GetDeviceMetadataDeviceAction,
   InstallOrUpdateAppsDeviceAction,
   OpenAppWithDependenciesDeviceAction,
@@ -28,6 +30,7 @@ type ConnectAppMachineInternalState = {
   readonly error: ConnectAppDAError | null;
   readonly deviceMetadata: GetDeviceMetadataDAOutput | null;
   readonly installResult: InstallOrUpdateAppsDAOutput | null;
+  readonly currentApp: string | null;
   readonly derivation: ConnectAppDerivation | null;
 };
 
@@ -56,6 +59,12 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
     >;
 
     const unlockTimeout = this.input.unlockTimeout ?? 0;
+
+    const getStatusMachine = new GetDeviceStatusDeviceAction({
+      input: {
+        unlockTimeout,
+      },
+    }).makeStateMachine(internalApi);
 
     const getMetadataMachine = new GetDeviceMetadataDeviceAction({
       input: {
@@ -91,6 +100,7 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
         output: {} as types["output"],
       },
       actors: {
+        getStatus: getStatusMachine,
         getMetadata: getMetadataMachine,
         openApp: openAppMachine,
         installApps: installAppsMachine,
@@ -105,6 +115,12 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
       guards: {
         fromDashboard: ({ context }) => context.input.application.name === "BOLOS",
         requiresDerivation: ({ context }) => context.input.requiredDerivation !== undefined,
+        hasExpectedApp: ({ context }) =>
+          context.intermediateValue.installPlan !== null &&
+          context._internalState.currentApp === context.input.application.name,
+        hasDisconnectedWhileSending: ({ context }) =>
+          context._internalState.error !== null &&
+          context._internalState.error instanceof DeviceDisconnectedWhileSendingError,
         hasError: ({ context }) => context._internalState.error !== null,
       },
       actions: {
@@ -112,6 +128,19 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
           _internalState: _ => ({
             ..._.context._internalState,
             error: _.event["error"], // NOTE: it should never happen, the error is not typed anymore here
+          }),
+        }),
+        ignoreOpenAppDisconnectionError: assign({
+          _internalState: _ => ({
+            ..._.context._internalState,
+            // Ignore error
+            error: null,
+            // Mark the result as successful
+            installResult: {
+              successfullyInstalled: _.context.intermediateValue.installPlan!.installPlan,
+              alreadyInstalled: _.context.intermediateValue.installPlan!.alreadyInstalled,
+              missingApplications: _.context.intermediateValue.installPlan!.missingApplications,
+            },
           }),
         }),
       },
@@ -136,6 +165,7 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
             error: null,
             deviceMetadata: null,
             installResult: null,
+            currentApp: null,
             derivation: null,
           },
         };
@@ -316,6 +346,10 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
         OpenAppCheck: {
           always: [
             {
+              guard: "hasDisconnectedWhileSending",
+              target: "GetStatus",
+            },
+            {
               guard: "hasError",
               target: "Error",
             },
@@ -325,6 +359,54 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
             },
             {
               target: "Success",
+            },
+          ],
+        },
+        GetStatus: {
+          invoke: {
+            id: "getStatus",
+            src: "getStatus",
+            input: _ => ({
+              unlockTimeout: _.context.input.unlockTimeout,
+            }),
+            onSnapshot: {
+              actions: assign({
+                intermediateValue: _ => ({
+                  ..._.context.intermediateValue,
+                  requiredUserInteraction:
+                    _.event.snapshot.context.intermediateValue.requiredUserInteraction,
+                }),
+              }),
+            },
+            onDone: {
+              target: "GetStatusCheck",
+              actions: assign({
+                _internalState: _ =>
+                  _.event.output.caseOf<ConnectAppMachineInternalState>({
+                    Right: data => ({
+                      ..._.context._internalState,
+                      currentApp: data.currentApp,
+                    }),
+                    Left: _error => _.context._internalState,
+                  }),
+              }),
+            },
+          },
+        },
+        GetStatusCheck: {
+          always: [
+            {
+              guard: and(["hasExpectedApp", "requiresDerivation"]),
+              actions: "ignoreOpenAppDisconnectionError",
+              target: "GetDerivation",
+            },
+            {
+              guard: "hasExpectedApp",
+              actions: "ignoreOpenAppDisconnectionError",
+              target: "Success",
+            },
+            {
+              target: "Error",
             },
           ],
         },
