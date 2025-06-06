@@ -16,6 +16,7 @@ export type WebviewProps = {
   currentAccountHistDb?: CurrentAccountHistDB;
   hideLoader?: boolean;
   webviewStyle?: React.CSSProperties;
+  onWidgetLoadedChange?: (loaded: boolean) => void;
 };
 
 export type WebviewState = {

@@ -26,6 +26,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
+import { CustomLoaderBuySell } from "./BuySell/CustomLoaderBuySell";
 
 type ExchangeState = { account?: string } | undefined;
 
@@ -111,6 +112,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
 
             ...Object.fromEntries(searchParams.entries()),
           }}
+          CustomLoader={CustomLoaderBuySell}
         />
       ) : null}
     </Card>
