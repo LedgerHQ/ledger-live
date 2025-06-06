@@ -102,7 +102,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [route.params, updateTransaction, bridge, setTransaction, chosenValidator]);
+  }, [route.params, updateTransaction, setTransaction, chosenValidator]);
 
   const [rotateAnim] = useState(() => new Animated.Value(0));
   useEffect(() => {
