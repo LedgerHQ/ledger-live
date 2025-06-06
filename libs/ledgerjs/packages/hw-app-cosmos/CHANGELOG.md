@@ -1,5 +1,26 @@
 # @ledgerhq/hw-app-cosmos
 
+## 6.32.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.6
+
+## 6.32.2-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.6-next.1
+
+## 6.32.2-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.6-next.0
+
 ## 6.32.1
 
 ### Patch Changes

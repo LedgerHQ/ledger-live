@@ -1,5 +1,36 @@
 # @ledgerhq/coin-tester
 
+## 0.6.0
+
+### Minor Changes
+
+- [#10385](https://github.com/LedgerHQ/ledger-live/pull/10385) [`1a4e5e5`](https://github.com/LedgerHQ/ledger-live/commit/1a4e5e5913fe5e12d6127b36f3849e4c81e5e50e) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(solana-coin-tester): add SPL scenarios
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.6
+
+## 0.6.0-next.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.6-next.1
+
+## 0.6.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.6-next.0
+
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#10385](https://github.com/LedgerHQ/ledger-live/pull/10385) [`1a4e5e5`](https://github.com/LedgerHQ/ledger-live/commit/1a4e5e5913fe5e12d6127b36f3849e4c81e5e50e) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(solana-coin-tester): add SPL scenarios
+
 ## 0.5.1
 
 ### Patch Changes

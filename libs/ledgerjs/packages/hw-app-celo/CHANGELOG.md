@@ -1,5 +1,36 @@
 # @ledgerhq/hw-app-polkadot
 
+## 6.33.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.45.6
+  - @ledgerhq/hw-transport@6.31.6
+
+## 6.33.4-next.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.45.6-next.2
+  - @ledgerhq/hw-transport@6.31.6-next.1
+
+## 6.33.4-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.45.6-next.1
+  - @ledgerhq/hw-transport@6.31.6-next.0
+
+## 6.33.4-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.45.6-next.0
+
 ## 6.33.3
 
 ### Patch Changes

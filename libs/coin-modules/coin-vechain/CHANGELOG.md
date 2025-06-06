@@ -1,5 +1,39 @@
 # @ledgerhq/coin-evm
 
+## 2.7.8
+
+### Patch Changes
+
+- Updated dependencies [[`f42f353`](https://github.com/LedgerHQ/ledger-live/commit/f42f353a593d0a1cd0a237648765080c85d0eea7)]:
+  - @ledgerhq/coin-framework@5.2.0
+  - @ledgerhq/devices@8.4.6
+  - @ledgerhq/live-network@2.0.9
+
+## 2.7.8-next.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@5.2.0-next.2
+  - @ledgerhq/devices@8.4.6-next.1
+  - @ledgerhq/live-network@2.0.9-next.1
+
+## 2.7.8-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@5.2.0-next.1
+  - @ledgerhq/devices@8.4.6-next.0
+  - @ledgerhq/live-network@2.0.9-next.0
+
+## 2.7.8-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`f42f353`](https://github.com/LedgerHQ/ledger-live/commit/f42f353a593d0a1cd0a237648765080c85d0eea7)]:
+  - @ledgerhq/coin-framework@5.2.0-next.0
+
 ## 2.7.7
 
 ### Patch Changes
