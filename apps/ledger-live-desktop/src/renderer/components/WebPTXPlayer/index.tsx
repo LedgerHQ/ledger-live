@@ -33,6 +33,7 @@ interface WebViewWrapperProps {
 export const WebViewWrapper = styled.div<WebViewWrapperProps>`
   flex: 1;
   height: 100%;
+  display: flex;
   ${({ mobileView }) =>
     mobileView.display ? `width: ${mobileView.width ?? 355}px;` : "width: 100%;"}
 `;
