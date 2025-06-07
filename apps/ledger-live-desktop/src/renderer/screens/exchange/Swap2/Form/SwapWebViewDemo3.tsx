@@ -43,6 +43,7 @@ import {
   enablePlatformDevToolsSelector,
   languageSelector,
   lastSeenDeviceSelector,
+  shareAnalyticsSelector,
 } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { captureException } from "~/sentry/renderer";
@@ -125,6 +126,7 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(languageSelector);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
+  const shareAnalytics = useSelector(shareAnalyticsSelector);
   const currentVersion = __APP_VERSION__;
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const devMode = useSelector(developerModeSelector);
@@ -513,6 +515,7 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
             lastSeenDevice: lastSeenDevice?.modelId,
             currentVersion,
             platform: "LLD",
+            shareAnalytics,
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}

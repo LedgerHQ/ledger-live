@@ -12,6 +12,7 @@ import { WebviewState } from "~/components/Web3AppWebview/types";
 import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 import { useSettings } from "~/hooks";
 import {
+  analyticsEnabledSelector,
   counterValueCurrencySelector,
   exportSettingsSelector,
   lastSeenDeviceSelector,
@@ -41,6 +42,7 @@ export function WebView({ manifest, params, setWebviewState }: Props) {
   const SWAP_API_BASE = useEnv("SWAP_API_BASE");
   const SWAP_USER_IP = useEnv("SWAP_USER_IP");
   const exportSettings = useSelector(exportSettingsSelector);
+  const shareAnalytics = useSelector(analyticsEnabledSelector).toString();
   const devMode = exportSettings.developerModeEnabled.toString();
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
 
@@ -68,6 +70,7 @@ export function WebView({ manifest, params, setWebviewState }: Props) {
             lastSeenDevice: lastSeenDevice?.modelId,
             OS: Platform.OS,
             platform: "LLM", // need consistent format with LLD, Platform doesn't work
+            shareAnalytics,
             ...swapParams,
           }}
         />
