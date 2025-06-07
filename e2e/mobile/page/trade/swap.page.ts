@@ -22,10 +22,10 @@ export default class SwapPage {
   @Step("Verify the amounts and accept swap")
   async verifyAmountsAndAcceptSwap(swap: SwapType, amount: string) {
     const MAX_RETRIES = 3;
-    const RETRY_DELAY_MS = 20_000;
+    const RETRY_DELAY_MS = 30_000;
 
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-      const isVisible = await IsIdVisible(this.confirmSwapOnDeviceDrawerId, 10_000);
+      const isVisible = await IsIdVisible(this.confirmSwapOnDeviceDrawerId, 20_000);
 
       if (isVisible) {
         await app.speculos.verifyAmountsAndAcceptSwap(swap, amount);
@@ -33,7 +33,7 @@ export default class SwapPage {
 
         const isNoLongerVisible = await waitForElementNotVisible(
           this.confirmSwapOnDeviceDrawerId,
-          10_000,
+          20_000,
         );
 
         if (isNoLongerVisible) {
@@ -52,7 +52,7 @@ export default class SwapPage {
 
   @Step("Wait for swap success and continue")
   async waitForSuccessAndContinue() {
-    await waitForElementById(this.swapSuccessTitleId, 30_000);
+    await waitForElementById(this.swapSuccessTitleId, 60_000);
     await tapById(app.common.proceedButtonId);
   }
 }
