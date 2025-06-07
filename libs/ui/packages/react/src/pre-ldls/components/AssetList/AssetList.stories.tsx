@@ -25,12 +25,44 @@ const meta: Meta<typeof AssetList> = {
     onClick: testFn,
     scrollToTop: false,
   },
+  parameters: {
+    docs: {
+      description: {
+        component:
+          "AssetList displays a list of crypto assets. It supports virtual scrolling for performance with large datasets. Use it to represent selectable assets in lists.",
+      },
+    },
+  },
 };
 export default meta;
 
 type Story = StoryObj<typeof AssetList>;
 
 export const Default: Story = {};
+
+export const WithFiatValue: Story = {
+  args: {
+    assets: Array.from({ length: 50 }).map((_, i) => ({
+      name: `Bitcoin ${i}`,
+      ticker: "BTC",
+      id: "bitcoin",
+      fiatValue: `$${(40000 + i * 100).toFixed(2)}`,
+      balance: `${(0.1 + i * 0.01).toFixed(2)} BTC`,
+    })),
+  },
+};
+
+export const WithDiscreetModeEnabled: Story = {
+  args: {
+    assets: Array.from({ length: 50 }).map((_, i) => ({
+      name: `Bitcoin ${i}`,
+      ticker: "BTC",
+      id: "bitcoin",
+      fiatValue: `$***`,
+      balance: `*** BTC`,
+    })),
+  },
+};
 
 export const TestAssetClick: Story = {
   play: async ({ canvasElement }) => {

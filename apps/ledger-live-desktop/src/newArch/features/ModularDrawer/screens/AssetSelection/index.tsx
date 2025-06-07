@@ -21,6 +21,7 @@ const AssetSelection = ({
   assetsToDisplay,
   sortedCryptoCurrencies,
   defaultSearchValue,
+  assetsConfiguration,
   setAssetsToDisplay,
   onAssetSelected,
   setSearchedValue,
@@ -49,6 +50,7 @@ const AssetSelection = ({
       <AssetsList
         assetTypes={assetTypes}
         assetsToDisplay={assetsToDisplay}
+        assetsConfiguration={assetsConfiguration}
         source="Accounts"
         flow="Modular Asset Flow"
         scrollToTop={shouldScrollToTop}

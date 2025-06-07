@@ -19,7 +19,7 @@ export function validateAndTransformConfigurationWithZod(
   const result = EnhancedModularDrawerConfigurationSchema.safeParse(config);
 
   if (!result.success) {
-    console.warn("Modulare Drawer invalid configuration received:", result.error);
+    console.warn("Modular Drawer invalid configuration received:", result.error);
     return {};
   }
 

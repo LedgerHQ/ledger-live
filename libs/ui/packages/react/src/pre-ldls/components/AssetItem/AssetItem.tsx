@@ -8,6 +8,8 @@ export type AssetType = {
   name: string;
   ticker: string;
   id: string;
+  fiatValue?: string;
+  balance?: string;
 };
 
 type AssetItemProps = AssetType & {
@@ -50,12 +52,21 @@ const InfoWrapper = styled.div`
   flex: 1;
 `;
 
-export const AssetItem = ({ name, ticker, id, onClick }: AssetItemProps) => {
+const BalanceContainer = styled.div`
+  ${withTokens("spacing-xxxs")}
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--spacing-xxxs);
+`;
+
+export const AssetItem = ({ name, ticker, id, onClick, fiatValue, balance }: AssetItemProps) => {
   return (
     <Wrapper onClick={() => onClick({ name, ticker, id })}>
       <CryptoIcon size="48px" ledgerId={id} ticker={ticker} />
       <InfoWrapper>
         <Text
+          fontSize="14px"
           variant="largeLineHeight"
           fontWeight="semiBold"
           color="var(--colors-content-default-default)"
@@ -69,13 +80,36 @@ export const AssetItem = ({ name, ticker, id, onClick }: AssetItemProps) => {
           {name}
         </Text>
         <Text
+          fontSize="12px"
+          lineHeight="16px"
           variant="bodyLineHeight"
-          fontWeight="semiBold"
+          fontWeight="medium"
           color="var(--colors-content-subdued-default-default)"
         >
           {ticker}
         </Text>
       </InfoWrapper>
+      {fiatValue && balance ? (
+        <BalanceContainer>
+          <Text
+            fontSize="14px"
+            variant="largeLineHeight"
+            fontWeight="semiBold"
+            color="var(--colors-content-default-default)"
+          >
+            {fiatValue}
+          </Text>
+          <Text
+            fontSize="12px"
+            lineHeight="16px"
+            variant="bodyLineHeight"
+            fontWeight="medium"
+            color="var(--colors-content-subdued-default-default)"
+          >
+            {balance}
+          </Text>
+        </BalanceContainer>
+      ) : null}
     </Wrapper>
   );
 };
