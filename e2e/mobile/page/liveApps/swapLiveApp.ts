@@ -136,21 +136,23 @@ export default class SwapLiveAppPage {
       ? `Continue with ${provider}`
       : `Swap with ${provider}`;
 
-    const exchangeButton = getWebElementByTag("button");
-    await detoxExpect(exchangeButton).toExist();
-    jestExpect(await exchangeButton.getText()).toBe(expectedButtonText);
+    const actualButtonText = await getWebElementText(this.executeSwapButton);
+    jestExpect(actualButtonText).toEqual(expectedButtonText);
   }
 
   @Step('Check "Best Offer" corresponds to the best quote')
   async checkBestOffer() {
     const quoteContainers = await this.getAllSwapProviders();
     try {
+      console.log("Get quote containers>>", quoteContainers);
       const quotes = await this.extractQuotesAndFees(quoteContainers);
+      console.log("Get quotes", quotes);
       const bestOffer = quotes.reduce<{ rate: number; fees: number; quote: string } | null>(
         (max, current) =>
           current && (!max || current.rate - current.fees > max.rate - max.fees) ? current : max,
         null,
       );
+      console.log("Get bestOffer", bestOffer);
       jestExpect(bestOffer?.quote).toContain("Best Offer");
     } catch (error) {
       console.error("Error checking Best offer:", error);
@@ -166,17 +168,17 @@ export default class SwapLiveAppPage {
 
   @Step("Extract quotes and fees")
   async extractQuotesAndFees(quoteContainers: string[]) {
+    const quotePattern = /\$(\d+\.\d+)[\s\S]*?Network Fees[\s\S]*?\$(\d+\.\d+)/;
+
     const quotes = quoteContainers
-      .map(quote => {
-        const match = quote.match(/\$(\d+\.\d+).*?Network Fees[^$]*\$(\d+\.\d+)/);
+      .map(q => {
+        const match = q.match(quotePattern);
         if (match) {
-          const rate = parseFloat(match[1]);
-          const fees = parseFloat(match[2]);
-          return { rate, fees, quote };
+          return { rate: parseFloat(match[1]), fees: parseFloat(match[2]), quote: q };
         }
         return undefined;
       })
-      .filter(quote => quote !== undefined);
+      .filter(Boolean) as Array<{ rate: number; fees: number; quote: string }>;
 
     if (quotes.length === 0) {
       throw new Error("No quotes found");

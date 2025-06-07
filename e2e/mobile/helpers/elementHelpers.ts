@@ -174,7 +174,9 @@ export const WebElementHelpers = {
   },
 
   async getWebElementText(id: string, index = 0) {
-    return await getWebElementByTestId(id, index).getText();
+    const elem = WebElementHelpers.getWebElementByTestId(id, index);
+    await detoxExpect(elem).toExist();
+    return await elem.runScript(el => (el.innerText || el.textContent || "").trim());
   },
 
   getWebElementById(id: string, index = 0): WebElement {
@@ -197,7 +199,9 @@ export const WebElementHelpers = {
         const element = web
           .element(by.web.cssSelector(selector))
           .atIndex(i) as unknown as IndexedWebElement;
-        const text = await element.getText();
+        const text: string = await element.runScript((node: HTMLElement) =>
+          (node.innerText || node.textContent || "").trim(),
+        );
         texts.push(text);
         i++;
       } catch {
@@ -223,7 +227,7 @@ export const WebElementHelpers = {
     while (true) {
       try {
         const element = WebElementHelpers.getWebElementByTestId(id, i);
-        const text = await element.getText();
+        const text = await element.runScript(el => (el.innerText || el.textContent || "").trim());
         texts.push(text);
         i++;
       } catch {
@@ -240,7 +244,7 @@ export const WebElementHelpers = {
     while (Date.now() - start < timeout) {
       try {
         const elem = WebElementHelpers.getWebElementByTestId(id);
-        await retryUntilTimeout(() => elem.getText(), 1000, 200);
+        await retryUntilTimeout(() => elem.runScript(el => el.innerText), 1000, 200);
         return elem;
       } catch (e) {
         lastErr = e instanceof Error ? e : new Error(String(e));
