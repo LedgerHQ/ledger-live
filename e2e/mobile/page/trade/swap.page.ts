@@ -1,5 +1,7 @@
+import { getMinimumSwapAmount } from "@ledgerhq/live-common/lib/e2e/swap";
 import { delay, openDeeplink } from "../../helpers/commonHelpers";
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export default class SwapPage {
   baseLink = "swap";
@@ -54,5 +56,10 @@ export default class SwapPage {
   async waitForSuccessAndContinue() {
     await waitForElementById(this.swapSuccessTitleId, 30_000);
     await tapById(app.common.proceedButtonId);
+  }
+
+  @Step("Check minimum amount for swap")
+  async getMinimumAmount(accountFrom: Account, accountTo: Account) {
+    return (await getMinimumSwapAmount(accountFrom, accountTo))?.toString() ?? "";
   }
 }
