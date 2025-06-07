@@ -1,5 +1,14 @@
 # @ledgerhq/coin-mina
 
+## 1.1.7-nightly.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@5.2.0-nightly.3
+  - @ledgerhq/cryptoassets@13.18.1-nightly.0
+  - @ledgerhq/live-network@2.0.9-nightly.0
+
 ## 1.1.7-nightly.2
 
 ### Patch Changes

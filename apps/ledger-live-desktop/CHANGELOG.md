@@ -1,5 +1,33 @@
 # ledger-live-desktop
 
+## 2.116.0-nightly.4
+
+### Minor Changes
+
+- [#10457](https://github.com/LedgerHQ/ledger-live/pull/10457) [`fb242c9`](https://github.com/LedgerHQ/ledger-live/commit/fb242c9ae638207f966246d274fa890015a23851) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Include shareAnalytics flag in both mobile and desktop swap webviews to track user consent for analytics
+
+### Patch Changes
+
+- Updated dependencies [[`8551c28`](https://github.com/LedgerHQ/ledger-live/commit/8551c280f24f7bd4475c6cc12f1b1d92636d9357)]:
+  - @ledgerhq/live-common@34.36.0-nightly.3
+  - @ledgerhq/live-env@2.9.1-nightly.0
+  - @ledgerhq/live-dmk-desktop@0.3.9-nightly.3
+  - @ledgerhq/coin-framework@5.2.0-nightly.3
+  - @ledgerhq/coin-aptos@2.1.0-nightly.3
+  - @ledgerhq/coin-bitcoin@0.16.0-nightly.3
+  - @ledgerhq/coin-cosmos@0.15.0-nightly.3
+  - @ledgerhq/coin-evm@2.22.2-nightly.3
+  - @ledgerhq/coin-filecoin@1.9.8-nightly.3
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.6-nightly.0
+  - @ledgerhq/ledger-key-ring-protocol@0.5.8-nightly.0
+  - @ledgerhq/cryptoassets@13.18.1-nightly.0
+  - @ledgerhq/live-countervalues@0.5.8-nightly.3
+  - @ledgerhq/live-network@2.0.9-nightly.0
+  - @ledgerhq/live-nft@0.8.8-nightly.3
+  - @ledgerhq/live-wallet@0.10.11-nightly.3
+  - @ledgerhq/live-countervalues-react@0.2.37-nightly.3
+  - @ledgerhq/live-nft-react@0.9.8-nightly.3
+
 ## 2.116.0-nightly.3
 
 ### Minor Changes

@@ -1,5 +1,17 @@
 # @ledgerhq/coin-celo
 
+## 1.1.6-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`8551c28`](https://github.com/LedgerHQ/ledger-live/commit/8551c280f24f7bd4475c6cc12f1b1d92636d9357)]:
+  - @ledgerhq/live-env@2.9.1-nightly.0
+  - @ledgerhq/coin-framework@5.2.0-nightly.3
+  - @ledgerhq/coin-evm@2.22.2-nightly.3
+  - @ledgerhq/cryptoassets@13.18.1-nightly.0
+  - @ledgerhq/live-network@2.0.9-nightly.0
+  - @ledgerhq/hw-app-eth@6.45.6-nightly.2
+
 ## 1.1.6-nightly.2
 
 ### Patch Changes

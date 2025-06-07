@@ -1,5 +1,11 @@
 # @ledgerhq/live-env
 
+## 2.9.1-nightly.0
+
+### Patch Changes
+
+- [#10035](https://github.com/LedgerHQ/ledger-live/pull/10035) [`8551c28`](https://github.com/LedgerHQ/ledger-live/commit/8551c280f24f7bd4475c6cc12f1b1d92636d9357) Thanks [@lawRathod](https://github.com/lawRathod)! - Add support for casper 2.0
+
 ## 2.9.0
 
 ### Minor Changes

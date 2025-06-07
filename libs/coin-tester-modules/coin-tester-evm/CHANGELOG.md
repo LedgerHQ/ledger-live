@@ -1,5 +1,15 @@
 # @ledgerhq/coin-tester-evm
 
+## 1.1.8-nightly.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@5.2.0-nightly.3
+  - @ledgerhq/coin-evm@2.22.2-nightly.3
+  - @ledgerhq/cryptoassets@13.18.1-nightly.0
+  - @ledgerhq/live-signer-evm@0.5.1-nightly.3
+
 ## 1.1.8-nightly.2
 
 ### Patch Changes
