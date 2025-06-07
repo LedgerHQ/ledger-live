@@ -12,6 +12,7 @@ import SendAmountFields from "../SendAmountFields";
 import { StepProps } from "../types";
 import LowGasAlertBuyMore from "~/renderer/families/evm/SendAmountFields/LowGasAlertBuyMore";
 import { closeAllModal } from "~/renderer/actions/modals";
+
 const StepAmount = ({
   account,
   parentAccount,

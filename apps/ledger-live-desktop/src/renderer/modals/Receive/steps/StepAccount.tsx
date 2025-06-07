@@ -2,11 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { TokenCurrency, CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  getAccountCurrency,
-  getMainAccount,
-  getReceiveFlowError,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import {
   listTokensForCryptoCurrency,
   listTokenTypesForCryptoCurrency,
@@ -94,9 +90,9 @@ export default function StepAccount({
   onChangeAccount,
   onChangeToken,
   eventType,
+  accountError,
 }: StepProps) {
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
-  const error = account ? getReceiveFlowError(account, parentAccount) : null;
   const tokenTypes = mainAccount ? listTokenTypesForCryptoCurrency(mainAccount.currency) : [];
 
   // Nb in the context of LL-6449 (nft integration) simplified the wording for the warning.
@@ -105,11 +101,13 @@ export default function StepAccount({
       ? mainAccount.currency.name
       : tokenTypes.map(tt => tt.toUpperCase()).join("/");
   const url = supportLinkByTokenType[tokenTypes[0] as keyof typeof supportLinkByTokenType];
+
   return (
     <Box flow={1}>
       <TrackPage category={`Receive Flow${eventType ? ` (${eventType})` : ""}`} name="Step 1" />
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
-      {error ? <ErrorBanner error={error} /> : null}
+      {accountError ? <ErrorBanner error={accountError} /> : null}
+
       {receiveTokenMode && mainAccount ? (
         <TokenParentSelection mainAccount={mainAccount} onChangeAccount={onChangeAccount} />
       ) : (
@@ -157,13 +155,12 @@ export function StepAccountFooter({
   receiveTokenMode,
   token,
   account,
-  parentAccount,
+  accountError,
 }: StepProps) {
-  const error = account ? getReceiveFlowError(account, parentAccount) : null;
   return (
     <Button
       data-testid="modal-continue-button"
-      disabled={!account || (receiveTokenMode && !token) || !!error}
+      disabled={!account || (receiveTokenMode && !token) || accountError}
       primary
       onClick={() => transitionTo("device")}
     >
