@@ -1,6 +1,6 @@
 import { runSwapWithDifferentSeedTest } from "./swap.other";
 
-const transactionE2E = {
+const swapTestConfig = {
   swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1, "0.002"),
   tmsLinks: ["B2CQA-3090"],
   userData: "speculos-x-other-account",
@@ -9,8 +9,8 @@ const transactionE2E = {
 };
 
 runSwapWithDifferentSeedTest(
-  transactionE2E.swap,
-  transactionE2E.userData,
-  transactionE2E.errorMessage,
-  transactionE2E.tmsLinks,
+  swapTestConfig.swap,
+  swapTestConfig.userData,
+  swapTestConfig.errorMessage,
+  swapTestConfig.tmsLinks,
 );

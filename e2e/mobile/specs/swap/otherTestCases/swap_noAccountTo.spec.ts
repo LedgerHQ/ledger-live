@@ -1,16 +1,16 @@
 import { runSwapWithoutAccountTest } from "./swap.other";
 
-const transactionE2E = {
+const noAccountToTestConfig = {
   account1: Account.ETH_1,
   account2: Account.BTC_NATIVE_SEGWIT_1,
-  testTitle: "from Account not present to Account present",
+  testTitle: "from Account present to Account not present",
   tmsLinks: ["B2CQA-3354"],
 };
 
 runSwapWithoutAccountTest(
-  transactionE2E.account1,
-  transactionE2E.account2,
-  transactionE2E.testTitle,
-  transactionE2E.tmsLinks,
+  noAccountToTestConfig.account1,
+  noAccountToTestConfig.account2,
+  noAccountToTestConfig.testTitle,
+  noAccountToTestConfig.tmsLinks,
   "noAccountTo",
 );
