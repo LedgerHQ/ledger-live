@@ -15,7 +15,7 @@ const liveDataCommand = (currencyApp: { name: string }, index: number) => (userd
   });
 
 async function beforeAllFunction(options: ApplicationOptions) {
-  app.init({
+  await app.init({
     userdata: options.userdata,
     speculosApp: options.speculosApp,
     featureFlags: {
@@ -82,6 +82,7 @@ export function runSwapWithoutAccountTest(
       await handleAssetSwap(debitAsset, event === "noAccountTo");
       await app.swapLiveApp.tapToCurrency();
       await handleAssetSwap(creditAsset, event === "noAccountFrom");
+      await app.swapLiveApp.expectSwapLiveApp();
     });
   });
 }
@@ -134,7 +135,7 @@ export function runSwapLandingPageTest(
             cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
           },
           {
-            app: fromAccount.currency.speculosApp,
+            app: toAccount.currency.speculosApp,
             cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
           },
         ],
@@ -149,7 +150,7 @@ export function runSwapLandingPageTest(
       await app.speculos.setExchangeDependencies(swap);
       await performSwapUntilQuoteSelectionStep(swap, minAmount);
       const providerList = await app.swapLiveApp.getProviderList();
-      await app.swapLiveApp.checkQuotesContainerInfos(providerList);
+      await app.swapLiveApp.checkFirstQuoteContainerInfos(providerList);
       await app.swapLiveApp.checkBestOffer();
     });
   });

@@ -20,6 +20,13 @@ export default class SwapLiveAppPage {
     await waitWebElementByTestId(this.getQuotesButton);
   }
 
+  @Step("Expect swap live app page")
+  async expectSwapLiveApp() {
+    await detoxExpect(getWebElementByTestId(this.fromSelector)).toExist();
+    await detoxExpect(getWebElementByTestId(this.toSelector)).toExist();
+    await detoxExpect(getWebElementByTestId(this.getQuotesButton)).toExist();
+  }
+
   @Step("Tap from currency")
   async tapFromCurrency() {
     await tapWebElementByTestId(this.fromSelector);
@@ -85,17 +92,21 @@ export default class SwapLiveAppPage {
   async getProviderList() {
     await detoxExpect(getWebElementByTestId(this.numberOfQuotes)).toExist();
     await detoxExpect(getWebElementByTestId(this.quotesCountDown)).toExist();
+    const numberOfQuotesText: string = await getWebElementText(this.numberOfQuotes);
+    const providerList = await getWebElementsText(this.quoteProviderName);
+    jestExpect(numberOfQuotesText).toEqual(`${providerList.length} quotes found`);
     return await getWebElementsText(this.quoteProviderName);
   }
 
   @Step("Check error message: $0")
   async checkErrorMessage(errorMessage: string) {
     const error = await getTextOfElement(this.deviceActionErrorDescriptionId);
+    console.error("Error message:", error);
     jestExpect(error).toContain(errorMessage);
   }
 
-  @Step("Check quotes container infos")
-  async checkQuotesContainerInfos(providerList: string[]) {
+  @Step("Check first quote container infos")
+  async checkFirstQuoteContainerInfos(providerList: string[]) {
     const provider = Provider.getNameByUiName(providerList[0]);
     const baseProviderLocator = `quote-container-${provider}-`;
 
@@ -123,11 +134,11 @@ export default class SwapLiveAppPage {
       await detoxExpect(getWebElementByTestId(baseProviderLocator + "slippage-heading")).toExist();
       await detoxExpect(getWebElementByTestId(baseProviderLocator + "slippage-value")).toExist();
     }
-    await this.checkExchangeButton(providerList[0]);
+    await this.checkExchangeButtonHasProviderName(providerList[0]);
   }
 
-  @Step("Check exchange button is visible and enabled")
-  async checkExchangeButton(provider: string) {
+  @Step("Check exchange button has provider name")
+  async checkExchangeButtonHasProviderName(provider: string) {
     const expectedButtonText = [
       Provider.ONE_INCH.uiName,
       Provider.PARASWAP.uiName,
@@ -136,9 +147,8 @@ export default class SwapLiveAppPage {
       ? `Continue with ${provider}`
       : `Swap with ${provider}`;
 
-    const exchangeButton = getWebElementByTag("button");
-    await detoxExpect(exchangeButton).toExist();
-    jestExpect(await exchangeButton.getText()).toBe(expectedButtonText);
+    const actualButtonText = await getWebElementText(this.executeSwapButton);
+    jestExpect(actualButtonText).toEqual(expectedButtonText);
   }
 
   @Step('Check "Best Offer" corresponds to the best quote')
@@ -166,17 +176,17 @@ export default class SwapLiveAppPage {
 
   @Step("Extract quotes and fees")
   async extractQuotesAndFees(quoteContainers: string[]) {
+    const quotePattern = /\$(\d+\.\d+)[\s\S]*?Network Fees[\s\S]*?\$(\d+\.\d+)/;
+
     const quotes = quoteContainers
-      .map(quote => {
-        const match = quote.match(/\$(\d+\.\d+).*?Network Fees[^$]*\$(\d+\.\d+)/);
+      .map(q => {
+        const match = q.match(quotePattern);
         if (match) {
-          const rate = parseFloat(match[1]);
-          const fees = parseFloat(match[2]);
-          return { rate, fees, quote };
+          return { rate: parseFloat(match[1]), fees: parseFloat(match[2]), quote: q };
         }
         return undefined;
       })
-      .filter(quote => quote !== undefined);
+      .filter(Boolean) as Array<{ rate: number; fees: number; quote: string }>;
 
     if (quotes.length === 0) {
       throw new Error("No quotes found");

@@ -103,7 +103,7 @@ export default class CommonPage {
     await tapById(this.deviceRowRegex, index);
   }
 
-  @Step("Select a known device")
+  @Step("Tap proceed button")
   async tapProceedButton() {
     await tapById(this.proceedButtonId);
   }
