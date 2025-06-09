@@ -732,6 +732,10 @@ describe("Aptos API", () => {
 
   describe("getBalances", () => {
     it("returns an array of AptosBalances objects", async () => {
+      const expectedAptosBalace: AptosBalance = {
+        contractAddress: APTOS_ASSET_ID,
+        amount: BigNumber(200),
+      };
       const assets = [{ asset_type: APTOS_ASSET_ID, amount: 200 }];
       const mockGetCurrentFungibleAssetBalances = jest.fn().mockResolvedValue(assets);
       mockedAptos.mockImplementation(() => ({
@@ -751,12 +755,10 @@ describe("Aptos API", () => {
           },
         },
       });
-      expect(balances).toHaveLength(1);
-      expect(balances[0].contractAddress).toBe(assets[0].asset_type);
-      expect(balances[0].amount).toStrictEqual(BigNumber(assets[0].amount));
+      expect(balances).toEqual([expectedAptosBalace]);
     });
 
-    it("returns an array of AptosBalances when address and contractAddress are passed", async () => {
+    it("returns an array of AptosBalances when just address ispassed", async () => {
       const expectedAptosBalace: AptosBalance = {
         contractAddress: APTOS_ASSET_ID,
         amount: BigNumber(200),
@@ -766,10 +768,18 @@ describe("Aptos API", () => {
       mockedAptos.mockImplementation(() => ({
         getCurrentFungibleAssetBalances: mockGetCurrentFungibleAssetBalances,
       }));
-
+      const address = "0x42";
       const api = new AptosAPI("aptos");
-      const balance = await api.getBalances("address", "0x42");
 
+      const balance = await api.getBalances(address);
+
+      expect(mockGetCurrentFungibleAssetBalances).toHaveBeenCalledWith({
+        options: {
+          where: {
+            owner_address: { _eq: address },
+          },
+        },
+      });
       expect(balance).toEqual([expectedAptosBalace]);
     });
 

@@ -71,7 +71,7 @@ export const mergeSubAccounts = (
           mergeOps(
             duplicatedAccount[name as keyof TokenAccount] as Operation[],
             newSubAccount[name as keyof TokenAccount] as Operation[],
-          ) || [];
+          ) ?? [];
       }
     }
 
