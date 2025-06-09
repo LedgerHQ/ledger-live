@@ -17,7 +17,7 @@ import { AptosAPI } from "../../network";
 import { AptosAsset } from "../../types/assets";
 import { Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { APTOS_ASSET_ID } from "../../constants";
-import { AptosTransaction } from "../../types";
+import { AptosBalance, AptosTransaction } from "../../types";
 
 jest.mock("@aptos-labs/ts-sdk");
 jest.mock("@apollo/client");
@@ -754,6 +754,23 @@ describe("Aptos API", () => {
       expect(balances).toHaveLength(1);
       expect(balances[0].contractAddress).toBe(assets[0].asset_type);
       expect(balances[0].amount).toStrictEqual(BigNumber(assets[0].amount));
+    });
+
+    it("returns an array of AptosBalances when address and contractAddress are passed", async () => {
+      const expectedAptosBalace: AptosBalance = {
+        contractAddress: APTOS_ASSET_ID,
+        amount: BigNumber(200),
+      };
+      const assets = [{ asset_type: APTOS_ASSET_ID, amount: 200n }];
+      const mockGetCurrentFungibleAssetBalances = jest.fn().mockResolvedValue(assets);
+      mockedAptos.mockImplementation(() => ({
+        getCurrentFungibleAssetBalances: mockGetCurrentFungibleAssetBalances,
+      }));
+
+      const api = new AptosAPI("aptos");
+      const balance = await api.getBalances("address", "0x42");
+
+      expect(balance).toEqual([expectedAptosBalace]);
     });
 
     it("return 0 balace if could not retrieve proper balance of fungible assets", async () => {
