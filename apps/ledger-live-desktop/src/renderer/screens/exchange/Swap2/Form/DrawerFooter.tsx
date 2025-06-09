@@ -1,5 +1,5 @@
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box/Box";
@@ -31,77 +31,37 @@ export function DrawerFooter({ provider }: { provider: string }) {
 
   const ptxSwapLiveAppKycWarning = useFeature("ptxSwapLiveAppKycWarning");
   const url = providerData?.termsOfUseUrl;
-  const onLinkClick = useCallback((link: string) => openURL(link!), []);
   const providerName = getProviderName(provider);
 
-  const { acceptTerms, linksComponents } = useMemo(() => {
-    let acceptTerms: string;
-    let linksComponents: React.JSX.Element[] = [];
-
+  const { acceptTerms, urls } = useMemo(() => {
     if (!ptxSwapLiveAppKycWarning?.enabled) {
-      acceptTerms =
-        providerName === "Exodus"
-          ? "DeviceAction.swap.exodusAcceptTerms"
-          : "DeviceAction.swap.acceptTerms";
-      linksComponents = [
-        <LinkWithExternalIcon
-          key="termsExternalLink"
-          fontSize={13}
-          color="palette.text.shade60"
-          onClick={() => onLinkClick(url!)}
-          style={{
-            textDecoration: "underline",
-          }}
-        />,
-      ];
-    } else {
-      switch (providerName) {
-        case "Exodus":
-          acceptTerms = "DeviceAction.swap.exodusAcceptTerms";
-          linksComponents = [
-            <LinkWithExternalIcon
-              key="termsExternalLink"
-              fontSize={13}
-              color="palette.text.shade60"
-              onClick={() => onLinkClick(url!)}
-              style={{
-                textDecoration: "underline",
-              }}
-            />,
-          ];
-          break;
-        case "Changelly":
-          acceptTerms = "DeviceAction.swap.changellyAcceptTerms";
-          linksComponents =
-            providerData?.usefulUrls?.map((usefulUrl, idx) => (
-              <LinkWithExternalIcon
-                key={`external-link-${idx}`}
-                fontSize={13}
-                color="palette.text.shade60"
-                onClick={() => onLinkClick(usefulUrl)}
-                style={{ textDecoration: "underline" }}
-              />
-            )) ?? [];
-          break;
-        default:
-          acceptTerms = "DeviceAction.swap.acceptTerms";
-          linksComponents = [
-            <LinkWithExternalIcon
-              key="termsExternalLink"
-              fontSize={13}
-              color="palette.text.shade60"
-              onClick={() => onLinkClick(url!)}
-              style={{
-                textDecoration: "underline",
-              }}
-            />,
-          ];
-          break;
-      }
+      return {
+        acceptTerms:
+          providerName === "Exodus"
+            ? "DeviceAction.swap.exodusAcceptTerms"
+            : "DeviceAction.swap.acceptTerms",
+        urls: [url],
+      };
     }
 
-    return { acceptTerms, linksComponents };
-  }, [ptxSwapLiveAppKycWarning?.enabled, providerName, providerData, url, onLinkClick]);
+    switch (providerName) {
+      case "Exodus":
+        return {
+          acceptTerms: "DeviceAction.swap.exodusAcceptTerms",
+          urls: [url],
+        };
+      case "Changelly":
+        return {
+          acceptTerms: "DeviceAction.swap.changellyAcceptTerms",
+          urls: providerData?.usefulUrls,
+        };
+      default:
+        return {
+          acceptTerms: "DeviceAction.swap.acceptTerms",
+          urls: [url],
+        };
+    }
+  }, [providerData?.usefulUrls, providerName, ptxSwapLiveAppKycWarning?.enabled, url]);
 
   if (!url) {
     return null;
@@ -115,7 +75,15 @@ export function DrawerFooter({ provider }: { provider: string }) {
           values={{
             provider: providerName,
           }}
-          components={linksComponents}
+          components={urls?.map((usefulUrl, idx) => (
+            <LinkWithExternalIcon
+              key={`external-link-${idx}`}
+              fontSize={13}
+              color="palette.text.shade60"
+              onClick={() => openURL(usefulUrl!)}
+              style={{ textDecoration: "underline" }}
+            />
+          ))}
         />
       </Terms>
     </Box>
