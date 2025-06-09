@@ -3564,6 +3564,15 @@
           "noProviders" : "結果が見つかりません。現在の設定で利用できる見積もりはありません。"
         }
       },
+      "quotesList" : {
+        "title" : "見積もりを選択"
+      },
+      "twoStepApproval" : {
+        "title" : "手順を完了する"
+      },
+      "history" : {
+        "title" : "スワップ履歴"
+      },
       "incompatibility" : {
         "explore_compatible_devices" : "対応デバイスを探す",
         "contact_support" : "カスタマーサポートに問い合わせる",
@@ -7438,5 +7447,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "利用不可のロケーション",
+    "description" : "このロケーションでは、Ledgerウォレットをご利用いただけません。",
+    "learnMore" : "詳細はこちら"
   }
 }
