@@ -3564,6 +3564,15 @@
           "noProviders" : "لم يتم العثور على نتائج. ليس متاح عروض أسعار بالتفضيلات الحالية."
         }
       },
+      "quotesList" : {
+        "title" : "اختر عرض سعر"
+      },
+      "twoStepApproval" : {
+        "title" : "أكمل الخطوات"
+      },
+      "history" : {
+        "title" : "سجلّ المبادلة"
+      },
       "incompatibility" : {
         "explore_compatible_devices" : "استكشف الأجهزة المتوافقة",
         "contact_support" : "تواصل مع دعم العملاء",
@@ -7438,5 +7447,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "الموقع غير متاح",
+    "description" : "محفظة Ledger غير متاحة في هذا الموقع.",
+    "learnMore" : "تعرّف على المزيد"
   }
 }
