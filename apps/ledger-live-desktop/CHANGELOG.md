@@ -1,5 +1,50 @@
 # ledger-live-desktop
 
+## 2.117.0-next.0
+
+### Minor Changes
+
+- [#10423](https://github.com/LedgerHQ/ledger-live/pull/10423) [`fde276e`](https://github.com/LedgerHQ/ledger-live/commit/fde276e5973df732513bb114c448c78c17cd8df6) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD Analytics + fix side effects + enforce testing
+
+- [#10389](https://github.com/LedgerHQ/ledger-live/pull/10389) [`9ef8404`](https://github.com/LedgerHQ/ledger-live/commit/9ef840485a4dfefcba29013367d85fcbb590b17c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Rework all the architecture of MAD feature. We can now use it in any flows with webview or any other flows. Also some quick UI fixes in the lib
+
+- [#10394](https://github.com/LedgerHQ/ledger-live/pull/10394) [`1a2f8d1`](https://github.com/LedgerHQ/ledger-live/commit/1a2f8d18aea33d7e1fede0365f8a43e0d59a8c55) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Fix rename account
+
+- [#9808](https://github.com/LedgerHQ/ledger-live/pull/9808) [`02da8e9`](https://github.com/LedgerHQ/ledger-live/commit/02da8e9f56e220a74d79156dd63ed2278efbab31) Thanks [@ypholby-ledger](https://github.com/ypholby-ledger)! - Add the LLD resolution tool in Electron within the PTX WebView
+
+- [#10422](https://github.com/LedgerHQ/ledger-live/pull/10422) [`18bc0d4`](https://github.com/LedgerHQ/ledger-live/commit/18bc0d4a27696491400df6ce26b915a88b56792f) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Logic implementation for sanctioned addresses
+
+- [#10350](https://github.com/LedgerHQ/ledger-live/pull/10350) [`28abe9c`](https://github.com/LedgerHQ/ledger-live/commit/28abe9c5e40a4d0cfd2afdde99e804e22ba4c243) Thanks [@qperrot](https://github.com/qperrot)! - Remove XRP custom fees on LLd and LLM
+
+- [#10370](https://github.com/LedgerHQ/ledger-live/pull/10370) [`b7d3d59`](https://github.com/LedgerHQ/ledger-live/commit/b7d3d59d299c3d3541d598536651b9047fda4526) Thanks [@themooneer](https://github.com/themooneer)! - IP restriction for LLM and LLD
+
+- [#10457](https://github.com/LedgerHQ/ledger-live/pull/10457) [`fb242c9`](https://github.com/LedgerHQ/ledger-live/commit/fb242c9ae638207f966246d274fa890015a23851) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Include shareAnalytics flag in both mobile and desktop swap webviews to track user consent for analytics
+
+### Patch Changes
+
+- Updated dependencies [[`9c2d746`](https://github.com/LedgerHQ/ledger-live/commit/9c2d746c1621e372badbbbd1030bb72368ace4a1), [`8551c28`](https://github.com/LedgerHQ/ledger-live/commit/8551c280f24f7bd4475c6cc12f1b1d92636d9357), [`9ef8404`](https://github.com/LedgerHQ/ledger-live/commit/9ef840485a4dfefcba29013367d85fcbb590b17c), [`1a2f8d1`](https://github.com/LedgerHQ/ledger-live/commit/1a2f8d18aea33d7e1fede0365f8a43e0d59a8c55), [`18bc0d4`](https://github.com/LedgerHQ/ledger-live/commit/18bc0d4a27696491400df6ce26b915a88b56792f), [`b7d3d59`](https://github.com/LedgerHQ/ledger-live/commit/b7d3d59d299c3d3541d598536651b9047fda4526), [`e04d215`](https://github.com/LedgerHQ/ledger-live/commit/e04d21576919fa21cb3ab6e1c4e8e50fb6c17eca), [`1535307`](https://github.com/LedgerHQ/ledger-live/commit/1535307f78d345d7f652ac2c91c8a67e62fedef2)]:
+  - @ledgerhq/live-common@34.37.0-next.0
+  - @ledgerhq/live-env@2.10.0-next.0
+  - @ledgerhq/react-ui@0.29.0-next.0
+  - @ledgerhq/live-wallet@0.11.0-next.0
+  - @ledgerhq/coin-framework@5.3.0-next.0
+  - @ledgerhq/types-live@6.73.0-next.0
+  - @ledgerhq/coin-aptos@2.2.0-next.0
+  - @ledgerhq/coin-bitcoin@0.16.0-next.0
+  - @ledgerhq/live-dmk-desktop@0.4.1-next.0
+  - @ledgerhq/coin-cosmos@0.15.1-next.0
+  - @ledgerhq/coin-evm@2.22.3-next.0
+  - @ledgerhq/coin-filecoin@1.9.9-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.7-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.5.9-next.0
+  - @ledgerhq/cryptoassets@13.18.1-next.0
+  - @ledgerhq/live-countervalues@0.5.9-next.0
+  - @ledgerhq/live-network@2.0.10-next.0
+  - @ledgerhq/live-nft@0.8.9-next.0
+  - @ledgerhq/live-countervalues-react@0.2.38-next.0
+  - @ledgerhq/live-nft-react@0.9.9-next.0
+  - @ledgerhq/domain-service@1.2.32-next.0
+
 ## 2.116.0
 
 ### Minor Changes

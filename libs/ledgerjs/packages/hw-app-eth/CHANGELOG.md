@@ -1,5 +1,15 @@
 # @ledgerhq/hw-app-eth
 
+## 6.45.7-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`b7d3d59`](https://github.com/LedgerHQ/ledger-live/commit/b7d3d59d299c3d3541d598536651b9047fda4526)]:
+  - @ledgerhq/types-live@6.73.0-next.0
+  - @ledgerhq/evm-tools@1.6.4-next.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.8-next.0
+  - @ledgerhq/domain-service@1.2.32-next.0
+
 ## 6.45.6
 
 ### Patch Changes

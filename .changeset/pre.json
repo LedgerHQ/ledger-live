@@ -148,5 +148,26 @@
     "@ledgerhq/native-modules-tools": "1.0.3",
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "calm-kings-reflect",
+    "chatty-islands-beg",
+    "cyan-pianos-stare",
+    "dirty-flies-eat",
+    "fair-games-admire",
+    "friendly-books-sing",
+    "hungry-lamps-dress",
+    "kind-planes-raise",
+    "light-planets-brake",
+    "lovely-fireants-flow",
+    "purple-deers-run",
+    "rude-radios-compete",
+    "silver-dolphins-melt",
+    "slimy-pens-exist",
+    "strong-worms-teach",
+    "tame-ravens-travel",
+    "tender-brooms-marry",
+    "thick-donuts-attack",
+    "twenty-olives-design",
+    "wild-ties-drum"
+  ]
 }

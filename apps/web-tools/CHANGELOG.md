@@ -1,5 +1,21 @@
 # web-tools
 
+## 0.19.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`9c2d746`](https://github.com/LedgerHQ/ledger-live/commit/9c2d746c1621e372badbbbd1030bb72368ace4a1), [`8551c28`](https://github.com/LedgerHQ/ledger-live/commit/8551c280f24f7bd4475c6cc12f1b1d92636d9357), [`1a2f8d1`](https://github.com/LedgerHQ/ledger-live/commit/1a2f8d18aea33d7e1fede0365f8a43e0d59a8c55), [`18bc0d4`](https://github.com/LedgerHQ/ledger-live/commit/18bc0d4a27696491400df6ce26b915a88b56792f), [`b7d3d59`](https://github.com/LedgerHQ/ledger-live/commit/b7d3d59d299c3d3541d598536651b9047fda4526), [`e04d215`](https://github.com/LedgerHQ/ledger-live/commit/e04d21576919fa21cb3ab6e1c4e8e50fb6c17eca), [`1535307`](https://github.com/LedgerHQ/ledger-live/commit/1535307f78d345d7f652ac2c91c8a67e62fedef2)]:
+  - @ledgerhq/live-common@34.37.0-next.0
+  - @ledgerhq/live-env@2.10.0-next.0
+  - @ledgerhq/live-wallet@0.11.0-next.0
+  - @ledgerhq/coin-framework@5.3.0-next.0
+  - @ledgerhq/types-live@6.73.0-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.7-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.5.9-next.0
+  - @ledgerhq/cryptoassets@13.18.1-next.0
+  - @ledgerhq/domain-service@1.2.32-next.0
+  - @ledgerhq/hw-app-eth@6.45.7-next.0
+
 ## 0.19.2
 
 ### Patch Changes
