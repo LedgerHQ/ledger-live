@@ -1,7 +1,7 @@
 ---
-"ledger-live-desktop": patch
-"@ledgerhq/live-wallet": patch
-"ledger-live-desktop-e2e-tests": patch
+"ledger-live-desktop": minor
+"@ledgerhq/live-wallet": minor
+"ledger-live-desktop-e2e-tests": minor
 ---
 
 LLD - Fix rename account
