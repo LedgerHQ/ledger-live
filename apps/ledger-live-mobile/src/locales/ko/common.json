@@ -3564,6 +3564,15 @@
           "noProviders" : "결과를 찾을 수 없습니다 현재 설정에 사용할 수 있는 견적이 없습니다."
         }
       },
+      "quotesList" : {
+        "title" : "견적 선택"
+      },
+      "twoStepApproval" : {
+        "title" : "단계 완료하기"
+      },
+      "history" : {
+        "title" : "스왑 내역"
+      },
       "incompatibility" : {
         "explore_compatible_devices" : "호환 가능한 장치 탐색",
         "contact_support" : "고객 지원 문의",
@@ -7438,5 +7447,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "이용 불가능한 지역",
+    "description" : "Ledger 지갑을 사용할 수 없는 지역입니다.",
+    "learnMore" : "자세히 알아보기"
   }
 }
