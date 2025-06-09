@@ -6594,6 +6594,19 @@
     },
     "AmountTooSmall" : {
       "title" : "Der Mindestbetrag für diese Transaktion beläuft sich auf {{amount}}"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "Wir sorgen für deine Sicherheit",
+      "description" : "Diese Transaktion bezieht sich auf eine gesperrte Wallet-Adresse und kann nicht verarbeitet werden.<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForSendError" : {
+      "title" : "Diese Transaktion bezieht sich auf eine gesperrte Wallet-Adresse und kann nicht verarbeitet werden<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForStakingError" : {
+      "title" : "Diese Transaktion bezieht sich auf eine gesperrte Wallet-<br/>Adresse und kann nicht verarbeitet werden.<br/>-- {{sanctionedAddress}}<br/>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "Diese Transaktion bezieht sich auf eine gesperrte Wallet-Adresse und kann nicht verarbeitet werden."
     }
   },
   "cryptoOrg" : {
@@ -7057,12 +7070,9 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "Suche",
-    "assetFlow" : {
-      "selectTemplate" : "{{dynamic}} auswählen",
-      "asset" : "Asset",
-      "network" : "Netzwerk",
-      "account" : "Konto"
-    }
+    "selectAsset" : "Vermögenswert auswählen",
+    "selectNetwork" : "Netzwerk auswählen",
+    "selectAccount" : "Konto auswählen"
   },
   "nftEntryPoint" : {
     "title" : "NFT (Non Fungible Token)",
@@ -7070,5 +7080,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Nicht am Ort verfügbar",
+    "description" : "Eine Ledger-Wallet ist an diesem Standort nicht verfügbar.",
+    "learnMore" : "Weitere Informationen"
   }
 }
