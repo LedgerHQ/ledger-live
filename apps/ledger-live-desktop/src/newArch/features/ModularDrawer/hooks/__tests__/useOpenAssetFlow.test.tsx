@@ -16,7 +16,7 @@ describe("useOpenAssetFlow", () => {
   const modularDrawerLocation = ModularDrawerLocation.ADD_ACCOUNT;
 
   it("should dispatch openModal if the modular drawer is not visible", async () => {
-    const { result, store } = renderHook(() => useOpenAssetFlow(modularDrawerLocation), {
+    const { result, store } = renderHook(() => useOpenAssetFlow(modularDrawerLocation, "test"), {
       initialState: {
         settings: {
           overriddenFeatureFlags: {
@@ -38,7 +38,7 @@ describe("useOpenAssetFlow", () => {
   });
 
   it("should open the modular drawer if it is visible and open the modal once a currency is chosen", () => {
-    const { result, store } = renderHook(() => useOpenAssetFlow(modularDrawerLocation), {
+    const { result, store } = renderHook(() => useOpenAssetFlow(modularDrawerLocation, "test"), {
       initialState: {
         settings: {
           overriddenFeatureFlags: {
@@ -66,7 +66,9 @@ describe("useOpenAssetFlow", () => {
       ModularDrawerFlowManager,
       {
         currencies: [],
+        flow: "add_account",
         onAssetSelected: expect.any(Function),
+        source: "test",
       },
       {
         onRequestClose: expect.any(Function),
