@@ -110,7 +110,7 @@ const WalletSyncManage = ({ currentPage }: Props) => {
         {isLoading ? (
           <InfiniteLoader size={16} />
         ) : (
-          <Text fontSize={13.44}>
+          <Text fontSize={13.44} data-testid="walletSync-manage-instances-label">
             {t("walletSync.manage.instance.label", { count: instances?.length })}
           </Text>
         )}
