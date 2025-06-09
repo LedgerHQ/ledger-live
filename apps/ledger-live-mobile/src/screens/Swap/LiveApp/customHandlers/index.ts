@@ -19,7 +19,7 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { sendSwapLiveAppReady } from "../../../../../e2e/bridge/client";
 import { getFee } from "./getFee";
 import { getTransactionByHash } from "./getTransactionByHash";
-import { saveSwapToHistory } from "./saveSwapToHistory";
+import { saveSwapToHistory, SwapProps } from "./saveSwapToHistory";
 import { Dispatch } from "redux";
 
 export type NavigationType = Omit<NavigationProp<ReactNavigation.RootParamList>, "getState"> & {
@@ -152,7 +152,26 @@ export function useSwapCustomHandlers(
     "custom.getFee": getFee(accounts, navigation),
     "custom.getTransactionByHash": getTransactionByHash(accounts),
     "custom.saveSwapToHistory": saveSwapToHistory(accounts, dispatch),
-    "custom.swapRedirectToHistory": () => null,
+    "custom.swapRedirectToHistory": ({
+      params,
+    }: {
+      params?: { swap: SwapProps; transaction_id: string };
+    }) => {
+      // params are required only on llm for pending operation navigation redirect
+      if (params?.swap.swapId) {
+        navigation.navigate(ScreenName.SwapPendingOperation, {
+          swapOperation: {
+            provider: params.swap.provider,
+            swapId: params.swap.swapId,
+            status: "pending",
+            receiverAccountId: "", // no need of this info
+            operationId: params.transaction_id,
+            fromAmount: BigNumber(params.swap.fromAmount || 0),
+            toAmount: BigNumber(params.swap.toAmount || 0),
+          },
+        });
+      }
+    },
     "custom.isReady": async () => {
       if (Config.DETOX) {
         sendSwapLiveAppReady();
