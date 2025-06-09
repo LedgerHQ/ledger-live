@@ -10,6 +10,7 @@ export type AdditionalProviderConfig = SwapProviderConfig & { type: "DEX" | "CEX
   mainUrl: string;
   useInExchangeApp: boolean;
   displayName: string;
+  usefulUrls?: string[];
 };
 
 export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
@@ -28,6 +29,11 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     useInExchangeApp: true,
     displayName: "Changelly",
     termsOfUseUrl: "https://changelly.com/terms-of-use",
+    usefulUrls: [
+      "https://changelly.com/terms-of-use",
+      "https://changelly.com/aml-kyc",
+      "https://support.changelly.com/en/support/tickets/new",
+    ],
     supportUrl: "https://support.changelly.com/en/support/home",
     mainUrl: "https://changelly.com/",
     needsKYC: false,
@@ -37,6 +43,11 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     useInExchangeApp: true,
     displayName: "Changelly",
     termsOfUseUrl: "https://changelly.com/terms-of-use",
+    usefulUrls: [
+      "https://changelly.com/terms-of-use",
+      "https://changelly.com/aml-kyc",
+      "https://support.changelly.com/en/support/tickets/new",
+    ],
     supportUrl: "https://support.changelly.com/en/support/home",
     mainUrl: "https://changelly.com/",
     needsKYC: false,

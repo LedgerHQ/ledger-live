@@ -422,6 +422,10 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  ptxSwapLiveAppKycWarning: {
+    enabled: false,
+  },
+
   llmAnalyticsOptInPrompt: {
     enabled: false,
     params: {
