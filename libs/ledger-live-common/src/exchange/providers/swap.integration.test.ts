@@ -39,6 +39,7 @@ describe("fetchAndMergeProviderData", () => {
       },
       changelly_v2: {
         displayName: "Changelly",
+        name: "Changelly",
         useInExchangeApp: true,
         publicKey: {
           curve: "secp256k1",
