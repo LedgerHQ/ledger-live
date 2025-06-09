@@ -9,9 +9,9 @@
 "@ledgerhq/coin-xrp": minor
 "@ledgerhq/live-common": minor
 "@ledgerhq/coin-framework": minor
-"@ledgerhq/hw-app-xrp": patch
-"ledger-live-desktop-e2e-tests": patch
-"ledger-live-mobile-e2e-tests": patch
+"@ledgerhq/hw-app-xrp": minor
+"ledger-live-desktop-e2e-tests": minor
+"ledger-live-mobile-e2e-tests": minor
 ---
 
 feat: update transactionintent generic types + remove xrp bridge and introduce the generic alpaca bridge in LLC
