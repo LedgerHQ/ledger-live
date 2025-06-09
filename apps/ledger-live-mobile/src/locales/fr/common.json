@@ -3564,6 +3564,15 @@
           "noProviders" : "Aucun résultat. Il n’y a pas de résultat correspondant à ces préférences."
         }
       },
+      "quotesList" : {
+        "title" : "Choisissez une offre"
+      },
+      "twoStepApproval" : {
+        "title" : "Suivez les étapes"
+      },
+      "history" : {
+        "title" : "Historique des échanges"
+      },
       "incompatibility" : {
         "explore_compatible_devices" : "Voir les appareils compatibles",
         "contact_support" : "Contacter l’Assistance",
@@ -7438,5 +7447,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Région indisponible",
+    "description" : "L’application n’est pas disponible dans ce pays/région.",
+    "learnMore" : "En savoir plus"
   }
 }
