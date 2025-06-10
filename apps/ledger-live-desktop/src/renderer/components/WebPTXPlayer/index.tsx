@@ -8,6 +8,7 @@ import Box from "../Box";
 import { WebviewAPI, WebviewProps, WebviewState } from "../Web3AppWebview/types";
 import { initialWebviewState } from "../Web3AppWebview/helpers";
 import { usePTXCustomHandlers } from "./CustomHandlers";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 export const Container = styled.div`
   display: flex;
@@ -38,9 +39,19 @@ export const WebViewWrapper = styled.div<WebViewWrapperProps>`
     mobileView.display ? `width: ${mobileView.width ?? 355}px;` : "width: 100%;"}
 `;
 
-export default function WebPTXPlayer({ manifest, inputs }: WebviewProps) {
+export type CustomLoaderType = React.ComponentType<{
+  manifest: LiveAppManifest;
+  isLoading: boolean;
+}>;
+
+export default function WebPTXPlayer({
+  manifest,
+  inputs,
+  CustomLoader,
+}: WebviewProps & { CustomLoader?: CustomLoaderType }) {
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
+  const [isWidgetLoaded, setIsWidgetLoaded] = useState(true);
   const [mobileView, setMobileView] = useState<MobileView>(initialMobileView);
 
   const accounts = useSelector(flattenAccountsSelector);
@@ -63,7 +74,9 @@ export default function WebPTXPlayer({ manifest, inputs }: WebviewProps) {
             onStateChange={setWebviewState}
             ref={webviewAPIRef}
             customHandlers={customHandlers}
+            onWidgetLoadedChange={setIsWidgetLoaded}
           />
+          {CustomLoader ? <CustomLoader manifest={manifest} isLoading={!isWidgetLoaded} /> : null}
         </WebViewWrapper>
       </Wrapper>
     </Container>
