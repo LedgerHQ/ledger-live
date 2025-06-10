@@ -5,7 +5,10 @@ import type { Transaction as ICPTransaction } from "@ledgerhq/live-common/famili
 import type { MemoTagInputProps } from "LLM/features/MemoTag/types";
 import { GenericMemoTagInput } from "LLM/features/MemoTag/components/GenericMemoTagInput";
 
-export default (props: MemoTagInputProps<ICPTransaction>) => (
+const MemoTagInput = React.forwardRef<
+  React.ComponentRef<typeof GenericMemoTagInput>,
+  MemoTagInputProps<ICPTransaction>
+>((props, ref) => (
   <GenericMemoTagInput
     {...props}
     textToValue={text => {
@@ -13,5 +16,8 @@ export default (props: MemoTagInputProps<ICPTransaction>) => (
       return value ? String(value) : "";
     }}
     valueToTxPatch={value => tx => ({ ...tx, memo: value || undefined })}
+    ref={ref}
   />
-);
+));
+
+export default MemoTagInput;

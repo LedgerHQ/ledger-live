@@ -47,6 +47,7 @@ import {
   hasProblematicExtension,
 } from "@ledgerhq/live-common/families/solana/token";
 import { urls } from "~/utils/urls";
+import { GenericMemoTagInput } from "~/newArch/features/MemoTag/components/GenericMemoTagInput";
 
 const withoutHiddenError = (error: Error): Error | null =>
   error instanceof RecipientRequired ? null : error;
@@ -64,6 +65,8 @@ export default function SendSelectRecipient({ route }: Props) {
   const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is missing");
+
+  const memoTagRef = useRef<React.ComponentRef<typeof GenericMemoTagInput>>(null);
 
   const mainAccount = getMainAccount(account, parentAccount);
   const currencySettings = useSelector((s: State) =>
@@ -174,10 +177,10 @@ export default function SendSelectRecipient({ route }: Props) {
     MemoTagDrawerState.INITIAL,
   );
 
-  const handleMemoTagDrawerClose = useCallback(
-    () => setMemoTagDrawerState(MemoTagDrawerState.SHOWN),
-    [],
-  );
+  const handleMemoTagDrawerClose = useCallback(() => {
+    setMemoTagDrawerState(MemoTagDrawerState.SHOWN);
+    setTimeout(() => memoTagRef.current?.focus?.(), 500); // Workaround to focus the memo tag input after the drawer is closed.
+  }, []);
 
   const onPressContinue = useCallback(() => {
     if (
@@ -343,7 +346,7 @@ export default function SendSelectRecipient({ route }: Props) {
                 <memoTag.Input
                   testID="memo-tag-input"
                   placeholder={t("send.summary.memo.title")}
-                  autoFocus={memoTagDrawerState === MemoTagDrawerState.SHOWN}
+                  ref={memoTagRef}
                   onChange={memoTag.handleChange}
                 />
                 <Text mt={4} pl={2} color="alert">

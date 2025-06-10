@@ -12,10 +12,16 @@ import { truncateUtf8 } from "LLM/utils/truncateUtf8";
 //  While this string is in fact encoded in 68B in UTF8 which is well above STX limit.
 // `truncateUtf8` will truncate the string correctly, which is 8👍 with 2 characters to spare.
 
-export default (props: MemoTagInputProps<StacksTransaction>) => (
+const MemoTagInput = React.forwardRef<
+  React.ComponentRef<typeof GenericMemoTagInput>,
+  MemoTagInputProps<StacksTransaction>
+>((props, ref) => (
   <GenericMemoTagInput
     {...props}
     textToValue={text => truncateUtf8(text, STACKS_MAX_MEMO_SIZE)}
     valueToTxPatch={value => tx => ({ ...tx, memo: value || undefined })}
+    ref={ref}
   />
-);
+));
+
+export default MemoTagInput;

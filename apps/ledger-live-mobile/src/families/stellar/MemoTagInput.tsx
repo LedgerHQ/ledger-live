@@ -10,7 +10,10 @@ import { AnimatedInputSelect } from "@ledgerhq/native-ui";
 import type { MemoTagInputProps } from "LLM/features/MemoTag/types";
 import { MemoTypeDrawer, MEMO_TYPES } from "./MemoTypeDrawer";
 
-export default ({ onChange, ...inputProps }: MemoTagInputProps<StellarTransaction>) => {
+const MemoTagInput = React.forwardRef<
+  React.ComponentRef<typeof AnimatedInputSelect>,
+  MemoTagInputProps<StellarTransaction>
+>(({ onChange, ...inputProps }, ref) => {
   const { t } = useTranslation();
 
   const [memoType, setMemoType] = useState<MemoType>("NO_MEMO");
@@ -52,6 +55,7 @@ export default ({ onChange, ...inputProps }: MemoTagInputProps<StellarTransactio
           text: t(MEMO_TYPES.get(memoType) ?? "send.summary.memo.type"),
           onPressSelect: () => setIsOpen(true),
         }}
+        ref={ref}
       />
 
       <MemoTypeDrawer
@@ -62,6 +66,8 @@ export default ({ onChange, ...inputProps }: MemoTagInputProps<StellarTransactio
       />
     </>
   );
-};
+});
 
 type MemoType = Parameters<(typeof MEMO_TYPES)["get"]>[0];
+
+export default MemoTagInput;

@@ -4,9 +4,15 @@ import type { Transaction as CosmosTransaction } from "@ledgerhq/live-common/fam
 import type { MemoTagInputProps } from "LLM/features/MemoTag/types";
 import { GenericMemoTagInput } from "LLM/features/MemoTag/components/GenericMemoTagInput";
 
-export default (props: MemoTagInputProps<CosmosTransaction>) => (
+const MemoTagInput = React.forwardRef<
+  React.ComponentRef<typeof GenericMemoTagInput>,
+  MemoTagInputProps<CosmosTransaction>
+>((props, ref) => (
   <GenericMemoTagInput
     {...props}
     valueToTxPatch={value => tx => ({ ...tx, memo: value || undefined })}
+    ref={ref}
   />
-);
+));
+
+export default MemoTagInput;

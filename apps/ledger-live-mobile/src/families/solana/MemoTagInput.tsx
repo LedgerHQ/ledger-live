@@ -7,12 +7,18 @@ import type { MemoTagInputProps } from "LLM/features/MemoTag/types";
 import { GenericMemoTagInput } from "LLM/features/MemoTag/components/GenericMemoTagInput";
 import { truncateUtf8 } from "LLM/utils/truncateUtf8";
 
-export default (props: MemoTagInputProps<SolanaTransaction>) => (
+const MemoTagInput = React.forwardRef<
+  React.ComponentRef<typeof GenericMemoTagInput>,
+  MemoTagInputProps<SolanaTransaction>
+>((props, ref) => (
   <GenericMemoTagInput
     {...props}
     textToValue={text => truncateUtf8(text, MAX_MEMO_LENGTH)}
     valueToTxPatch={value => tx =>
       merge({}, tx, { model: { uiState: { memo: value || undefined } } })
     }
+    ref={ref}
   />
-);
+));
+
+export default MemoTagInput;

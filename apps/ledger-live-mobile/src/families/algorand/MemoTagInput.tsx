@@ -5,10 +5,16 @@ import type { Transaction as AlgorandTransaction } from "@ledgerhq/live-common/f
 import type { MemoTagInputProps } from "LLM/features/MemoTag/types";
 import { GenericMemoTagInput } from "LLM/features/MemoTag/components/GenericMemoTagInput";
 
-export default (props: MemoTagInputProps<AlgorandTransaction>) => (
+const MemoTagInput = React.forwardRef<
+  React.ComponentRef<typeof GenericMemoTagInput>,
+  MemoTagInputProps<AlgorandTransaction>
+>((props, ref) => (
   <GenericMemoTagInput
     {...props}
     maxLength={ALGORAND_MAX_MEMO_SIZE}
     valueToTxPatch={value => tx => ({ ...tx, memo: value || undefined })}
+    ref={ref}
   />
-);
+));
+
+export default MemoTagInput;

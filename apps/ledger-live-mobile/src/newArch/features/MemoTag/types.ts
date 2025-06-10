@@ -6,4 +6,7 @@ export type TxPatch<T extends Transaction> = (tx: T) => T;
 export type MemoTagInputProps<T extends Transaction = Transaction> = Omit<
   AnimatedInputProps,
   "value" | "onChangeText" | "onChange"
-> & { onChange: (update: { patch: TxPatch<T>; value: string; error?: Error }) => void };
+> & {
+  onChange: (update: { patch: TxPatch<T>; value: string; error?: Error }) => void;
+  ref?: React.ForwardedRef<AnimatedInputProps>;
+};

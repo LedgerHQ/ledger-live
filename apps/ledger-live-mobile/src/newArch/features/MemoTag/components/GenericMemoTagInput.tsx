@@ -9,27 +9,28 @@ type Props<T extends Transaction = Transaction> = MemoTagInputProps<T> & {
   valueToTxPatch: (text: string) => TxPatch<T>;
 };
 
-export function GenericMemoTagInput<T extends Transaction>({
-  onChange,
-  valueToTxPatch,
-  textToValue,
-  ...inputProps
-}: Props<T>) {
-  const [value, setValue] = React.useState("");
+type AnimatedInputRef = React.ComponentRef<typeof AnimatedInput>;
 
-  const handleChange = (text: string) => {
-    const value = textToValue?.(text) ?? text;
-    const patch = valueToTxPatch(value);
-    setValue(value);
-    onChange({ value, patch });
-  };
+export const GenericMemoTagInput = React.forwardRef<AnimatedInputRef, Props>(
+  <T extends Transaction>(props: Props<T>, ref: React.ForwardedRef<AnimatedInputRef>) => {
+    const { onChange, valueToTxPatch, textToValue, ...inputProps } = props;
+    const [value, setValue] = React.useState("");
 
-  return (
-    <AnimatedInput
-      {...inputProps}
-      value={value}
-      onChangeText={handleChange}
-      testID="memo-tag-input"
-    />
-  );
-}
+    const handleChange = (text: string) => {
+      const value = textToValue?.(text) ?? text;
+      const patch = valueToTxPatch(value);
+      setValue(value);
+      onChange({ value, patch });
+    };
+
+    return (
+      <AnimatedInput
+        {...inputProps}
+        value={value}
+        onChangeText={handleChange}
+        testID="memo-tag-input"
+        ref={ref}
+      />
+    );
+  },
+);
