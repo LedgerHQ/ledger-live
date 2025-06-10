@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.82.0-next.1
+
+### Minor Changes
+
+- [#10475](https://github.com/LedgerHQ/ledger-live/pull/10475) [`91eee0e`](https://github.com/LedgerHQ/ledger-live/commit/91eee0ee32e5afbb561d444051da9f5df9b1536d) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Improve secure channels error handling
+
 ## 3.82.0-next.0
 
 ### Minor Changes
