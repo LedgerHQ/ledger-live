@@ -1,11 +1,18 @@
 # next.js-example
 
-## 0.1.27-nightly.0
+## 0.1.27
 
 ### Patch Changes
 
-- Updated dependencies [[`9ef8404`](https://github.com/LedgerHQ/ledger-live/commit/9ef840485a4dfefcba29013367d85fcbb590b17c)]:
-  - @ledgerhq/react-ui@0.28.0-nightly.0
+- Updated dependencies [[`2d531a7`](https://github.com/LedgerHQ/ledger-live/commit/2d531a732ee17389f87c4b31f50464f56147a8f3), [`e6f6140`](https://github.com/LedgerHQ/ledger-live/commit/e6f614040a209ff66e95d3fd94acefef8f46357d)]:
+  - @ledgerhq/react-ui@0.28.0
+
+## 0.1.27-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`2d531a7`](https://github.com/LedgerHQ/ledger-live/commit/2d531a732ee17389f87c4b31f50464f56147a8f3), [`e6f6140`](https://github.com/LedgerHQ/ledger-live/commit/e6f614040a209ff66e95d3fd94acefef8f46357d)]:
+  - @ledgerhq/react-ui@0.28.0-next.0
 
 ## 0.1.26
 

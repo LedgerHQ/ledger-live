@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import { Title } from "./Title";
 import { ModularDrawerStep, MODULAR_DRAWER_STEP } from "../../types";
-import { track } from "~/renderer/analytics/segment";
 import { Icons } from "@ledgerhq/react-ui/index";
 
 type Props = {
@@ -17,15 +16,7 @@ const TranslationKeyMap: Record<ModularDrawerStep, string> = {
 };
 
 export const Header = ({ step, onBackClick }: Props) => {
-  const handleBackClick = onBackClick
-    ? () => {
-        track("button_clicked", {
-          step,
-          button: "modularDrawer_backButton",
-        });
-        onBackClick();
-      }
-    : undefined;
+  const handleBackClick = onBackClick ? () => onBackClick() : undefined;
 
   return (
     <HeaderContainer>

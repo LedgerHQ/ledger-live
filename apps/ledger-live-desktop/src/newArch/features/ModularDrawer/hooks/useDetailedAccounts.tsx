@@ -11,12 +11,13 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { openModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { track } from "~/renderer/analytics/segment";
 import { sortAccountsByFiatValue } from "../utils/sortAccountsByFiatValue";
 import BigNumber from "bignumber.js";
 import { formatDetailedAccount } from "../utils/formatDetailedAccount";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
+import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
+import { MODULAR_DRAWER_PAGE_NAME } from "../analytics/types";
 
 export const sortAccountsByBalance = (
   a: { balance: BigNumber } | undefined,
@@ -31,11 +32,13 @@ export const sortAccountsByBalance = (
 export const useDetailedAccounts = (
   asset: CryptoOrTokenCurrency,
   flow: string,
+  source: string,
   accounts$?: Observable<WalletAPIAccount[]>,
 ) => {
   const dispatch = useDispatch();
   const discreet = useDiscreetMode();
   const state = useCountervaluesState();
+  const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
   const accountIds = useGetAccountIds(accounts$);
   const nestedAccounts = useSelector(accountsSelector);
@@ -91,13 +94,14 @@ export const useDetailedAccounts = (
   );
 
   const onAddAccountClick = useCallback(() => {
-    track("button_clicked", {
+    trackModularDrawerEvent("button_clicked", {
       button: "Add a new account",
-      page: "Modular Account Selection",
+      page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
       flow,
+      source,
     });
     openAddAccountFlow(asset);
-  }, [asset, flow, openAddAccountFlow]);
+  }, [asset, flow, openAddAccountFlow, source, trackModularDrawerEvent]);
 
   return { detailedAccounts, accounts, onAddAccountClick };
 };

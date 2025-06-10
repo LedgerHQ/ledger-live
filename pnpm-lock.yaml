@@ -9,6 +9,7 @@ overrides:
   remove-flow-types-loader>flow-remove-types: ^2
   remove-flow-types-loader>loader-utils: '*'
   '@ledgerhq/devices': workspace:*
+  '@ledgerhq/hw-transport': workspace:*
   tslib: 2.6.2
   '@hashgraph/sdk>@hashgraph/cryptography': 1.1.2
   '@hashgraph/sdk>@grpc/grpc-js': 1.6.7
@@ -167,7 +168,7 @@ importers:
         specifier: workspace:^
         version: link:../../libs/hw-ledger-key-ring-protocol
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/hw-transport
       '@ledgerhq/hw-transport-http':
         specifier: workspace:^
@@ -370,7 +371,7 @@ importers:
         specifier: workspace:^
         version: link:../../libs/hw-ledger-key-ring-protocol
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/hw-transport
       '@ledgerhq/hw-transport-http':
         specifier: workspace:^
@@ -944,7 +945,7 @@ importers:
         specifier: workspace:^
         version: link:../../libs/hw-ledger-key-ring-protocol
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/hw-transport
       '@ledgerhq/hw-transport-http':
         specifier: workspace:^
@@ -1641,7 +1642,7 @@ importers:
         specifier: workspace:^
         version: link:../../libs/hw-ledger-key-ring-protocol
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/hw-transport
       '@ledgerhq/hw-transport-http':
         specifier: workspace:^
@@ -1863,7 +1864,7 @@ importers:
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/hw-transport
       '@ledgerhq/hw-transport-node-speculos-http':
         specifier: workspace:^
@@ -4549,7 +4550,7 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
       '@ledgerhq/live-network':
         specifier: workspace:^
@@ -5083,7 +5084,7 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-xrp
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
@@ -5708,7 +5709,7 @@ importers:
         specifier: workspace:^
         version: link:../errors
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       bip32-path:
         specifier: ^0.4.2
@@ -5757,7 +5758,7 @@ importers:
         specifier: workspace:^
         version: link:../errors
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       '@noble/hashes':
         specifier: 1.6.1
@@ -5797,7 +5798,7 @@ importers:
   libs/ledgerjs/packages/hw-app-btc:
     dependencies:
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       '@ledgerhq/logs':
         specifier: workspace:^
@@ -5891,7 +5892,7 @@ importers:
         specifier: workspace:^
         version: link:../hw-app-eth
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       bip32-path:
         specifier: ^0.4.2
@@ -5937,7 +5938,7 @@ importers:
         specifier: workspace:^
         version: link:../errors
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       bip32-path:
         specifier: ^0.4.2
@@ -5995,7 +5996,7 @@ importers:
         specifier: workspace:^
         version: link:../../../evm-tools
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
@@ -6062,7 +6063,7 @@ importers:
         specifier: workspace:^
         version: link:../errors
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       bignumber.js:
         specifier: ^9.1.2
@@ -6114,7 +6115,7 @@ importers:
         specifier: workspace:^
         version: link:../errors
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       bip32-path:
         specifier: ^0.4.2
@@ -6163,7 +6164,7 @@ importers:
         specifier: workspace:^
         version: link:../errors
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       bignumber.js:
         specifier: ^9.1.2
@@ -6215,7 +6216,7 @@ importers:
         specifier: workspace:^
         version: link:../errors
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       bip32-path:
         specifier: ^0.4.2
@@ -6255,7 +6256,7 @@ importers:
   libs/ledgerjs/packages/hw-app-multiversx:
     dependencies:
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       '@multiversx/sdk-core':
         specifier: ^13.7.0
@@ -6304,7 +6305,7 @@ importers:
   libs/ledgerjs/packages/hw-app-near:
     dependencies:
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       near-api-js:
         specifier: ^3.0.2
@@ -6344,7 +6345,7 @@ importers:
         specifier: workspace:^
         version: link:../errors
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       '@zondax/ledger-substrate':
         specifier: ^0.44.2
@@ -6387,7 +6388,7 @@ importers:
         specifier: workspace:^
         version: link:../errors
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       bip32-path:
         specifier: ^0.4.2
@@ -6430,7 +6431,7 @@ importers:
         specifier: workspace:^
         version: link:../errors
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       bip32-path:
         specifier: ^0.4.2
@@ -6501,7 +6502,7 @@ importers:
   libs/ledgerjs/packages/hw-app-tezos:
     dependencies:
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       blake2b:
         specifier: ^2.1.4
@@ -6544,7 +6545,7 @@ importers:
   libs/ledgerjs/packages/hw-app-trx:
     dependencies:
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
@@ -6584,7 +6585,7 @@ importers:
         specifier: workspace:^
         version: link:../errors
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
@@ -6621,7 +6622,7 @@ importers:
   libs/ledgerjs/packages/hw-app-xrp:
     dependencies:
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       bip32-path:
         specifier: 0.4.2
@@ -6735,7 +6736,7 @@ importers:
         specifier: workspace:^
         version: link:../errors
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       '@ledgerhq/logs':
         specifier: workspace:^
@@ -6775,7 +6776,7 @@ importers:
   libs/ledgerjs/packages/hw-transport-mocker:
     dependencies:
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       '@ledgerhq/logs':
         specifier: workspace:^
@@ -6818,7 +6819,7 @@ importers:
         specifier: workspace:^
         version: link:../errors
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       '@ledgerhq/hw-transport-node-hid-noevents':
         specifier: workspace:^
@@ -6870,7 +6871,7 @@ importers:
         specifier: workspace:^
         version: link:../errors
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       '@ledgerhq/logs':
         specifier: workspace:^
@@ -6916,7 +6917,7 @@ importers:
         specifier: workspace:^
         version: link:../errors
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       '@ledgerhq/hw-transport-node-hid-noevents':
         specifier: workspace:^
@@ -6962,7 +6963,7 @@ importers:
         specifier: workspace:^
         version: link:../errors
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       '@ledgerhq/logs':
         specifier: workspace:^
@@ -7002,7 +7003,7 @@ importers:
         specifier: workspace:^
         version: link:../errors
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       '@ledgerhq/logs':
         specifier: workspace:^
@@ -7085,7 +7086,7 @@ importers:
         specifier: workspace:^
         version: link:../errors
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       '@ledgerhq/logs':
         specifier: workspace:^
@@ -7131,7 +7132,7 @@ importers:
         specifier: workspace:^
         version: link:../errors
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       '@ledgerhq/logs':
         specifier: workspace:^
@@ -7174,7 +7175,7 @@ importers:
         specifier: workspace:^
         version: link:../errors
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       '@ledgerhq/logs':
         specifier: workspace:^
@@ -7244,7 +7245,7 @@ importers:
         specifier: workspace:^
         version: link:../errors
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       '@ledgerhq/logs':
         specifier: workspace:^
@@ -7290,7 +7291,7 @@ importers:
         specifier: workspace:^
         version: link:../errors
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
       '@ledgerhq/logs':
         specifier: workspace:^
@@ -7404,7 +7405,7 @@ importers:
   libs/ledgerjs/packages/swift-bridge-hw-transport-ble:
     dependencies:
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../hw-transport
     devDependencies:
       '@types/jest':
@@ -7649,7 +7650,7 @@ importers:
         specifier: 0.0.0-fix-rn-ble-20250425173318
         version: 0.0.0-fix-rn-ble-20250425173318(@ledgerhq/device-management-kit@0.0.0-connect-app-20250527074701(rxjs@7.8.1))(rxjs@7.8.1)
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
       '@ledgerhq/live-common':
         specifier: workspace:^
@@ -7719,7 +7720,7 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
       '@ledgerhq/live-dmk-shared':
         specifier: workspace:^
@@ -7780,7 +7781,7 @@ importers:
   libs/live-dmk-shared:
     dependencies:
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
       '@ledgerhq/logs':
         specifier: workspace:^
@@ -8046,7 +8047,7 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-bolos
       '@ledgerhq/hw-transport':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
       '@ledgerhq/ledger-cal-service':
         specifier: workspace:^
@@ -13479,24 +13480,6 @@ packages:
   '@ledgerhq/hw-transport-u2f@5.36.0-deprecated':
     resolution: {integrity: sha512-T/+mGHIiUK/ZQATad6DMDmobCMZ1mVST952009jKzhaE1Et2Uy2secU+QhRkx3BfEAkvwa0zSRSYCL9d20Iqjg==}
     deprecated: '@ledgerhq/hw-transport-u2f is deprecated. Please use @ledgerhq/hw-transport-webusb or @ledgerhq/hw-transport-webhid. https://github.com/LedgerHQ/ledgerjs/blob/master/docs/migrate_webusb.md'
-
-  '@ledgerhq/hw-transport@5.51.1':
-    resolution: {integrity: sha512-6wDYdbWrw9VwHIcoDnqWBaDFyviyjZWv6H9vz9Vyhe4Qd7TIFmbTl/eWs6hZvtZBza9K8y7zD8ChHwRI4s9tSw==}
-
-  '@ledgerhq/hw-transport@6.27.1':
-    resolution: {integrity: sha512-hnE4/Fq1YzQI4PA1W0H8tCkI99R3UWDb3pJeZd6/Xs4Qw/q1uiQO+vNLC6KIPPhK0IajUfuI/P2jk0qWcMsuAQ==}
-
-  '@ledgerhq/hw-transport@6.28.1':
-    resolution: {integrity: sha512-RaZe+abn0zBIz82cE9tp7Y7aZkHWWbEaE2yJpfxT8AhFz3fx+BU0kLYzuRN9fmA7vKueNJ1MTVUCY+Ex9/CHSQ==}
-
-  '@ledgerhq/hw-transport@6.30.6':
-    resolution: {integrity: sha512-fT0Z4IywiuJuZrZE/+W0blkV5UCotDPFTYKLkKCLzYzuE6javva7D/ajRaIeR+hZ4kTmKF4EqnsmDCXwElez+w==}
-
-  '@ledgerhq/hw-transport@6.31.3':
-    resolution: {integrity: sha512-rFplkHWF5NXtlYwAusqLlMu298NHtRD+2q/jrTYc//uu/xJO9LkDIgKid6IVF2+e1Wj7yX6YQVrU6L0Yu1ntEw==}
-
-  '@ledgerhq/hw-transport@6.31.4':
-    resolution: {integrity: sha512-6c1ir/cXWJm5dCWdq55NPgCJ3UuKuuxRvf//Xs36Bq9BwkV2YaRQhZITAkads83l07NAdR16hkTWqqpwFMaI6A==}
 
   '@ledgerhq/icons-ui@file:libs/ui/packages/icons':
     resolution: {directory: libs/ui/packages/icons, type: directory}
@@ -36933,7 +36916,7 @@ snapshots:
 
   '@blooo/hw-app-acre@1.1.1':
     dependencies:
-      '@ledgerhq/hw-transport': 6.31.3
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@ledgerhq/logs': 6.12.0
       bip32-path: 0.4.2
       bitcoinjs-lib: 5.2.0
@@ -36970,7 +36953,7 @@ snapshots:
 
   '@cardano-foundation/ledgerjs-hw-app-cardano@7.1.2':
     dependencies:
-      '@ledgerhq/hw-transport': 6.31.4
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       base-x: 3.0.9
       bech32: 1.1.4
       int64-buffer: 1.0.1
@@ -37037,7 +37020,7 @@ snapshots:
       '@ledgerhq/domain-service': 1.2.12
       '@ledgerhq/errors': 6.19.1
       '@ledgerhq/evm-tools': 1.3.0
-      '@ledgerhq/hw-transport': 6.31.4
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@ledgerhq/hw-transport-mocker': 6.29.4
       '@ledgerhq/logs': 6.12.0
       '@ledgerhq/types-live': 6.53.1
@@ -37094,7 +37077,7 @@ snapshots:
       '@celo/wallet-remote': 6.0.3
       '@ethereumjs/util': 8.0.5
       '@ledgerhq/errors': 6.19.1
-      '@ledgerhq/hw-transport': 6.31.4
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       debug: 4.3.4
       semver: 7.6.3
     transitivePeerDependencies:
@@ -41210,7 +41193,7 @@ snapshots:
       '@ethersproject/rlp': 5.7.0
       '@ledgerhq/cryptoassets': 6.37.0
       '@ledgerhq/errors': 6.19.1
-      '@ledgerhq/hw-transport': 6.31.4
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@ledgerhq/hw-transport-mocker': 6.29.4
       '@ledgerhq/logs': 6.12.0
       axios: 0.26.1
@@ -41218,55 +41201,16 @@ snapshots:
 
   '@ledgerhq/hw-transport-mocker@6.29.4':
     dependencies:
-      '@ledgerhq/hw-transport': 6.31.4
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@ledgerhq/logs': 6.12.0
       rxjs: 7.8.1
 
   '@ledgerhq/hw-transport-u2f@5.36.0-deprecated':
     dependencies:
       '@ledgerhq/errors': 5.50.0
-      '@ledgerhq/hw-transport': 5.51.1
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@ledgerhq/logs': 5.50.0
       u2f-api: 0.2.7
-
-  '@ledgerhq/hw-transport@5.51.1':
-    dependencies:
-      '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
-      '@ledgerhq/errors': 5.50.0
-      events: 3.3.0
-
-  '@ledgerhq/hw-transport@6.27.1':
-    dependencies:
-      '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
-      '@ledgerhq/errors': 6.19.1
-      events: 3.3.0
-
-  '@ledgerhq/hw-transport@6.28.1':
-    dependencies:
-      '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
-      '@ledgerhq/errors': 6.19.1
-      events: 3.3.0
-
-  '@ledgerhq/hw-transport@6.30.6':
-    dependencies:
-      '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
-      '@ledgerhq/errors': 6.19.1
-      '@ledgerhq/logs': 6.12.0
-      events: 3.3.0
-
-  '@ledgerhq/hw-transport@6.31.3':
-    dependencies:
-      '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
-      '@ledgerhq/errors': 6.19.1
-      '@ledgerhq/logs': 6.12.0
-      events: 3.3.0
-
-  '@ledgerhq/hw-transport@6.31.4':
-    dependencies:
-      '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
-      '@ledgerhq/errors': 6.19.1
-      '@ledgerhq/logs': 6.12.0
-      events: 3.3.0
 
   '@ledgerhq/icons-ui@file:libs/ui/packages/icons(@types/react@18.2.73)(react@18.3.1)(styled-components@5.3.11(@babel/core@7.24.3)(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1))(styled-system@5.1.5)':
     dependencies:
@@ -41311,7 +41255,7 @@ snapshots:
 
   '@ledgerhq/wallet-api-client@1.9.0(@ton/crypto@3.3.0)':
     dependencies:
-      '@ledgerhq/hw-transport': 6.31.4
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@ledgerhq/wallet-api-core': 1.21.0(@ton/crypto@3.3.0)
       bignumber.js: 9.1.2
     transitivePeerDependencies:
@@ -41345,7 +41289,7 @@ snapshots:
 
   '@ledgerhq/wallet-api-simulator@1.2.11(@ton/crypto@3.3.0)(react@18.3.1)':
     dependencies:
-      '@ledgerhq/hw-transport': 6.31.4
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@ledgerhq/wallet-api-client': 1.9.0(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-core': 1.21.0(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-server': 1.10.0(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.1)
@@ -41520,7 +41464,7 @@ snapshots:
 
   '@mysten/ledgerjs-hw-app-sui@0.4.2':
     dependencies:
-      '@ledgerhq/hw-transport': 6.31.4
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       fast-sha256: 1.3.0
 
   '@mysten/sui@1.29.1(typescript@5.4.3)':
@@ -48110,7 +48054,7 @@ snapshots:
 
   '@taquito/ledger-signer@22.0.0':
     dependencies:
-      '@ledgerhq/hw-transport': 6.31.4
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@stablelib/blake2b': 1.0.1
       '@taquito/core': 22.0.0
       '@taquito/taquito': 22.0.0
@@ -48348,7 +48292,7 @@ snapshots:
 
   '@ton-community/ton-ledger@7.2.0(@ton/core@0.60.1(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0))':
     dependencies:
-      '@ledgerhq/hw-transport': 6.31.4
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@ton/core': 0.60.1(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0)
       '@ton/crypto': 3.3.0
       teslabot: 1.5.0
@@ -50199,13 +50143,13 @@ snapshots:
   '@zondax/ledger-casper@2.6.1':
     dependencies:
       '@babel/runtime': 7.24.1
-      '@ledgerhq/hw-transport': 6.31.4
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@types/ledgerhq__hw-transport': 4.21.8
 
   '@zondax/ledger-cosmos-js@3.0.3(@swc/core@1.4.11)(@types/node@22.10.10)(eslint@8.57.0)(lodash@4.17.21)(prettier@3.2.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.1.3)':
     dependencies:
       '@babel/runtime': 7.24.1
-      '@ledgerhq/hw-transport': 6.27.1
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@ledgerhq/hw-transport-u2f': 5.36.0-deprecated
       '@types/node': 22.10.10
       '@vue/cli-plugin-typescript': 5.0.8(@swc/core@1.4.11)(@vue/cli-service@5.0.8(@swc/core@1.4.11)(lodash@4.17.21)(prettier@3.2.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vue-template-compiler@2.7.16)(vue@2.7.16))(eslint@8.57.0)(typescript@5.1.3)(vue-template-compiler@2.7.16)(vue@2.7.16)
@@ -50301,7 +50245,7 @@ snapshots:
       '@babel/runtime': 7.24.1
       '@ledgerhq/cryptoassets': 6.37.0
       '@ledgerhq/hw-app-eth': 6.29.7
-      '@ledgerhq/hw-transport': 6.31.4
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       varint: 6.0.0
 
   '@zondax/ledger-icp@0.7.0':
@@ -50310,15 +50254,15 @@ snapshots:
 
   '@zondax/ledger-js@0.2.2':
     dependencies:
-      '@ledgerhq/hw-transport': 6.28.1
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
 
   '@zondax/ledger-js@0.8.2':
     dependencies:
-      '@ledgerhq/hw-transport': 6.30.6
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
 
   '@zondax/ledger-js@1.2.0':
     dependencies:
-      '@ledgerhq/hw-transport': 6.31.4
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
 
   '@zondax/ledger-mina-js@0.0.2':
     dependencies:
@@ -50327,7 +50271,7 @@ snapshots:
   '@zondax/ledger-stacks@1.0.4':
     dependencies:
       '@babel/runtime': 7.24.1
-      '@ledgerhq/hw-transport': 6.31.4
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@stacks/transactions': 4.3.8
       varuint-bitcoin: 1.1.2
     transitivePeerDependencies:
@@ -50335,7 +50279,7 @@ snapshots:
 
   '@zondax/ledger-substrate@0.44.2':
     dependencies:
-      '@ledgerhq/hw-transport': 6.30.6
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@zondax/ledger-js': 0.8.2
       axios: 1.8.3
 

@@ -1,47 +1,79 @@
 # @ledgerhq/coin-aptos
 
-## 2.1.0-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`8551c28`](https://github.com/LedgerHQ/ledger-live/commit/8551c280f24f7bd4475c6cc12f1b1d92636d9357)]:
-  - @ledgerhq/live-env@2.9.1-nightly.0
-  - @ledgerhq/coin-framework@5.2.0-nightly.3
-  - @ledgerhq/cryptoassets@13.18.1-nightly.0
-  - @ledgerhq/live-network@2.0.9-nightly.0
-
-## 2.1.0-nightly.2
+## 2.1.0
 
 ### Minor Changes
 
-- [#10217](https://github.com/LedgerHQ/ledger-live/pull/10217) [`e04d215`](https://github.com/LedgerHQ/ledger-live/commit/e04d21576919fa21cb3ab6e1c4e8e50fb6c17eca) Thanks [@Wozacosta](https://github.com/Wozacosta)! - feat: update transactionintent generic types + remove xrp bridge and introduce the generic alpaca bridge in LLC
+- [#10390](https://github.com/LedgerHQ/ledger-live/pull/10390) [`6612406`](https://github.com/LedgerHQ/ledger-live/commit/6612406fd6c212252f5828dc86c2b0b1e939d6c5) Thanks [@pvoliveira](https://github.com/pvoliveira)! - add Aptos Alpaca craftTransaction tokens support
 
-### Patch Changes
+- [#10386](https://github.com/LedgerHQ/ledger-live/pull/10386) [`c519437`](https://github.com/LedgerHQ/ledger-live/commit/c5194373fc1a90a05c40d644b697f5da2cb150ab) Thanks [@may01](https://github.com/may01)! - Add tokens operations to the operations list for aptos alpaca api
 
-- Updated dependencies [[`18bc0d4`](https://github.com/LedgerHQ/ledger-live/commit/18bc0d4a27696491400df6ce26b915a88b56792f), [`e04d215`](https://github.com/LedgerHQ/ledger-live/commit/e04d21576919fa21cb3ab6e1c4e8e50fb6c17eca)]:
-  - @ledgerhq/coin-framework@5.2.0-nightly.2
+- [#10141](https://github.com/LedgerHQ/ledger-live/pull/10141) [`12af22b`](https://github.com/LedgerHQ/ledger-live/commit/12af22b9690928a409ad81d679575ee3b017a702) Thanks [@pvoliveira](https://github.com/pvoliveira)! - add Aptos Alpaca craftTransaction method
 
-## 2.1.0-nightly.1
+- [#10228](https://github.com/LedgerHQ/ledger-live/pull/10228) [`2eec633`](https://github.com/LedgerHQ/ledger-live/commit/2eec63321ea9ec459fc7a0d15634400419e1bca8) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - Add listOperations to Aptos alpaca
 
-### Patch Changes
-
-- Updated dependencies [[`b7d3d59`](https://github.com/LedgerHQ/ledger-live/commit/b7d3d59d299c3d3541d598536651b9047fda4526), [`1535307`](https://github.com/LedgerHQ/ledger-live/commit/1535307f78d345d7f652ac2c91c8a67e62fedef2)]:
-  - @ledgerhq/types-live@6.72.0-nightly.1
-  - @ledgerhq/coin-framework@5.2.0-nightly.1
-
-## 2.1.0-nightly.0
-
-### Minor Changes
+- [#10089](https://github.com/LedgerHQ/ledger-live/pull/10089) [`0adc958`](https://github.com/LedgerHQ/ledger-live/commit/0adc958c24693ce0dffefc01fc1c7734eb9dbe5b) Thanks [@pvoliveira](https://github.com/pvoliveira)! - add Aptos Alpaca getBalance method
 
 - [#10371](https://github.com/LedgerHQ/ledger-live/pull/10371) [`f5abf5d`](https://github.com/LedgerHQ/ledger-live/commit/f5abf5d75b6cdd65b6ec121e82dc757754ded5ed) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - Add token support for aptos alpaca estimatefees
+
+- [#10012](https://github.com/LedgerHQ/ledger-live/pull/10012) [`d8a1c05`](https://github.com/LedgerHQ/ledger-live/commit/d8a1c0500253b53a25151c47dd3ae36e21baa8bc) Thanks [@pvoliveira](https://github.com/pvoliveira)! - add Aptos Alpaca combine method
 
 - [#10398](https://github.com/LedgerHQ/ledger-live/pull/10398) [`b691e4f`](https://github.com/LedgerHQ/ledger-live/commit/b691e4fdc2261960cc7ffe319720ea5cf938f3d3) Thanks [@may01](https://github.com/may01)! - Remove filtering tokens by the CAL list for Aptos Alpaca listOperations
 
 ### Patch Changes
 
-- Updated dependencies [[`1a4e5e5`](https://github.com/LedgerHQ/ledger-live/commit/1a4e5e5913fe5e12d6127b36f3849e4c81e5e50e)]:
-  - @ledgerhq/types-live@6.72.0-nightly.0
-  - @ledgerhq/coin-framework@5.1.1-nightly.0
+- Updated dependencies [[`4ddfe60`](https://github.com/LedgerHQ/ledger-live/commit/4ddfe6060ab8e4e5c0bb89da91e08a02d8ca50e6), [`f42f353`](https://github.com/LedgerHQ/ledger-live/commit/f42f353a593d0a1cd0a237648765080c85d0eea7), [`ebbbd47`](https://github.com/LedgerHQ/ledger-live/commit/ebbbd47efe76d82047a956cb5849be5831f58772), [`f29e4ba`](https://github.com/LedgerHQ/ledger-live/commit/f29e4bae00a4bf470a0c1ca143e505b731543f95), [`1a4e5e5`](https://github.com/LedgerHQ/ledger-live/commit/1a4e5e5913fe5e12d6127b36f3849e4c81e5e50e)]:
+  - @ledgerhq/types-live@6.72.0
+  - @ledgerhq/coin-framework@5.2.0
+  - @ledgerhq/logs@6.13.0
+  - @ledgerhq/devices@8.4.6
+  - @ledgerhq/live-network@2.0.9
+
+## 2.1.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`ebbbd47`](https://github.com/LedgerHQ/ledger-live/commit/ebbbd47efe76d82047a956cb5849be5831f58772)]:
+  - @ledgerhq/logs@6.13.0-next.1
+  - @ledgerhq/coin-framework@5.2.0-next.2
+  - @ledgerhq/devices@8.4.6-next.1
+  - @ledgerhq/live-network@2.0.9-next.1
+
+## 2.1.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`f29e4ba`](https://github.com/LedgerHQ/ledger-live/commit/f29e4bae00a4bf470a0c1ca143e505b731543f95)]:
+  - @ledgerhq/logs@6.13.0-next.0
+  - @ledgerhq/coin-framework@5.2.0-next.1
+  - @ledgerhq/devices@8.4.6-next.0
+  - @ledgerhq/live-network@2.0.9-next.0
+
+## 2.1.0-next.0
+
+### Minor Changes
+
+- [#10390](https://github.com/LedgerHQ/ledger-live/pull/10390) [`6612406`](https://github.com/LedgerHQ/ledger-live/commit/6612406fd6c212252f5828dc86c2b0b1e939d6c5) Thanks [@pvoliveira](https://github.com/pvoliveira)! - add Aptos Alpaca craftTransaction tokens support
+
+- [#10386](https://github.com/LedgerHQ/ledger-live/pull/10386) [`c519437`](https://github.com/LedgerHQ/ledger-live/commit/c5194373fc1a90a05c40d644b697f5da2cb150ab) Thanks [@may01](https://github.com/may01)! - Add tokens operations to the operations list for aptos alpaca api
+
+- [#10141](https://github.com/LedgerHQ/ledger-live/pull/10141) [`12af22b`](https://github.com/LedgerHQ/ledger-live/commit/12af22b9690928a409ad81d679575ee3b017a702) Thanks [@pvoliveira](https://github.com/pvoliveira)! - add Aptos Alpaca craftTransaction method
+
+- [#10228](https://github.com/LedgerHQ/ledger-live/pull/10228) [`2eec633`](https://github.com/LedgerHQ/ledger-live/commit/2eec63321ea9ec459fc7a0d15634400419e1bca8) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - Add listOperations to Aptos alpaca
+
+- [#10089](https://github.com/LedgerHQ/ledger-live/pull/10089) [`0adc958`](https://github.com/LedgerHQ/ledger-live/commit/0adc958c24693ce0dffefc01fc1c7734eb9dbe5b) Thanks [@pvoliveira](https://github.com/pvoliveira)! - add Aptos Alpaca getBalance method
+
+- [#10371](https://github.com/LedgerHQ/ledger-live/pull/10371) [`f5abf5d`](https://github.com/LedgerHQ/ledger-live/commit/f5abf5d75b6cdd65b6ec121e82dc757754ded5ed) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - Add token support for aptos alpaca estimatefees
+
+- [#10012](https://github.com/LedgerHQ/ledger-live/pull/10012) [`d8a1c05`](https://github.com/LedgerHQ/ledger-live/commit/d8a1c0500253b53a25151c47dd3ae36e21baa8bc) Thanks [@pvoliveira](https://github.com/pvoliveira)! - add Aptos Alpaca combine method
+
+- [#10398](https://github.com/LedgerHQ/ledger-live/pull/10398) [`b691e4f`](https://github.com/LedgerHQ/ledger-live/commit/b691e4fdc2261960cc7ffe319720ea5cf938f3d3) Thanks [@may01](https://github.com/may01)! - Remove filtering tokens by the CAL list for Aptos Alpaca listOperations
+
+### Patch Changes
+
+- Updated dependencies [[`4ddfe60`](https://github.com/LedgerHQ/ledger-live/commit/4ddfe6060ab8e4e5c0bb89da91e08a02d8ca50e6), [`f42f353`](https://github.com/LedgerHQ/ledger-live/commit/f42f353a593d0a1cd0a237648765080c85d0eea7), [`1a4e5e5`](https://github.com/LedgerHQ/ledger-live/commit/1a4e5e5913fe5e12d6127b36f3849e4c81e5e50e)]:
+  - @ledgerhq/types-live@6.72.0-next.0
+  - @ledgerhq/coin-framework@5.2.0-next.0
 
 ## 2.0.0
 

@@ -2,4 +2,4 @@
 "live-mobile": minor
 ---
 
-feat: Large Mover Analytics
+fix delegation e2e test

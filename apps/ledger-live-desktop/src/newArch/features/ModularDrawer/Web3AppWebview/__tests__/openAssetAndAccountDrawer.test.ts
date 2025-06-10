@@ -31,6 +31,8 @@ describe("openAssetAndAccountDrawer", () => {
     const onSuccess = jest.fn();
     openAssetAndAccountDrawer({
       onSuccess,
+      source: "testSource",
+      flow: "testFlow",
     });
 
     const call = (setDrawer as jest.Mock).mock.calls[0];
@@ -46,6 +48,8 @@ describe("openAssetAndAccountDrawer", () => {
 
     openAssetAndAccountDrawer({
       onCancel,
+      source: "testSource",
+      flow: "testFlow",
     });
 
     const call = (setDrawer as jest.Mock).mock.calls[0];
@@ -73,7 +77,10 @@ describe("openAssetAndAccountDrawerPromise", () => {
   });
 
   it("should resolve with account and parentAccount on success", async () => {
-    const result = await openAssetAndAccountDrawerPromise({});
+    const result = await openAssetAndAccountDrawerPromise({
+      source: "testSource",
+      flow: "testFlow",
+    });
 
     expect(result).toEqual({ account: mockAccount, parentAccount: mockParentAccount });
     expect(setDrawer).toHaveBeenCalled();
@@ -87,6 +94,11 @@ describe("openAssetAndAccountDrawerPromise", () => {
       }
     });
 
-    await expect(openAssetAndAccountDrawerPromise({})).rejects.toThrow("Canceled by user");
+    await expect(
+      openAssetAndAccountDrawerPromise({
+        source: "testSource",
+        flow: "testFlow",
+      }),
+    ).rejects.toThrow("Canceled by user");
   });
 });

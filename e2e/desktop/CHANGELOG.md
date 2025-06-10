@@ -1,46 +1,48 @@
 # ledger-live-desktop-e2e-tests
 
-## 0.0.12-nightly.3
+## 0.0.12
 
 ### Patch Changes
 
-- Updated dependencies [[`8551c28`](https://github.com/LedgerHQ/ledger-live/commit/8551c280f24f7bd4475c6cc12f1b1d92636d9357)]:
-  - @ledgerhq/live-common@34.36.0-nightly.3
-  - @ledgerhq/live-env@2.9.1-nightly.0
-  - @ledgerhq/live-cli@24.18.6-nightly.3
-  - @ledgerhq/ledger-key-ring-protocol@0.5.8-nightly.0
-  - @ledgerhq/live-wallet@0.10.11-nightly.3
+- Updated dependencies [[`8bd5c56`](https://github.com/LedgerHQ/ledger-live/commit/8bd5c56f8b9f57557d56ce91d648d8346834e489), [`3348393`](https://github.com/LedgerHQ/ledger-live/commit/3348393fc591a810342b3b58b780eb346616bce8), [`4ddfe60`](https://github.com/LedgerHQ/ledger-live/commit/4ddfe6060ab8e4e5c0bb89da91e08a02d8ca50e6), [`f42f353`](https://github.com/LedgerHQ/ledger-live/commit/f42f353a593d0a1cd0a237648765080c85d0eea7), [`571d6db`](https://github.com/LedgerHQ/ledger-live/commit/571d6db505b90874a6362ee7ee97d036126463e5), [`2ad2105`](https://github.com/LedgerHQ/ledger-live/commit/2ad21059f1c6d2cef1876cbb27fce2b5619b2cc1), [`33c7e9e`](https://github.com/LedgerHQ/ledger-live/commit/33c7e9ebf078ee91e0c11a16cdcaba2d840125c3), [`150ac67`](https://github.com/LedgerHQ/ledger-live/commit/150ac67c38c0ce43dd0632a71467f49a81068b94), [`7fe7b52`](https://github.com/LedgerHQ/ledger-live/commit/7fe7b5236268f6ba6756d2ef3f0afc272c0692bf), [`52e34fc`](https://github.com/LedgerHQ/ledger-live/commit/52e34fc0ca98917e8ac2846524828f1f0aaf701d), [`1a4e5e5`](https://github.com/LedgerHQ/ledger-live/commit/1a4e5e5913fe5e12d6127b36f3849e4c81e5e50e)]:
+  - @ledgerhq/live-common@34.36.0
+  - @ledgerhq/types-live@6.72.0
+  - @ledgerhq/live-cli@24.18.6
+  - @ledgerhq/live-wallet@0.10.11
+  - @ledgerhq/ledger-key-ring-protocol@0.5.8
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.6
 
-## 0.0.12-nightly.2
-
-### Patch Changes
-
-- [#10217](https://github.com/LedgerHQ/ledger-live/pull/10217) [`e04d215`](https://github.com/LedgerHQ/ledger-live/commit/e04d21576919fa21cb3ab6e1c4e8e50fb6c17eca) Thanks [@Wozacosta](https://github.com/Wozacosta)! - feat: update transactionintent generic types + remove xrp bridge and introduce the generic alpaca bridge in LLC
-
-- Updated dependencies [[`9c2d746`](https://github.com/LedgerHQ/ledger-live/commit/9c2d746c1621e372badbbbd1030bb72368ace4a1), [`18bc0d4`](https://github.com/LedgerHQ/ledger-live/commit/18bc0d4a27696491400df6ce26b915a88b56792f), [`e04d215`](https://github.com/LedgerHQ/ledger-live/commit/e04d21576919fa21cb3ab6e1c4e8e50fb6c17eca)]:
-  - @ledgerhq/live-common@34.36.0-nightly.2
-  - @ledgerhq/live-cli@24.18.6-nightly.2
-  - @ledgerhq/live-wallet@0.10.11-nightly.2
-
-## 0.0.12-nightly.1
+## 0.0.12-next.2
 
 ### Patch Changes
 
-- Updated dependencies [[`b7d3d59`](https://github.com/LedgerHQ/ledger-live/commit/b7d3d59d299c3d3541d598536651b9047fda4526)]:
-  - @ledgerhq/types-live@6.72.0-nightly.1
-  - @ledgerhq/live-common@34.36.0-nightly.1
-  - @ledgerhq/live-cli@24.18.6-nightly.1
-  - @ledgerhq/live-wallet@0.10.11-nightly.1
+- Updated dependencies []:
+  - @ledgerhq/live-cli@24.18.6-next.2
+  - @ledgerhq/ledger-key-ring-protocol@0.5.8-next.1
+  - @ledgerhq/live-common@34.36.0-next.2
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.6-next.1
+  - @ledgerhq/live-wallet@0.10.11-next.2
 
-## 0.0.12-nightly.0
+## 0.0.12-next.1
 
 ### Patch Changes
 
-- Updated dependencies [[`1a4e5e5`](https://github.com/LedgerHQ/ledger-live/commit/1a4e5e5913fe5e12d6127b36f3849e4c81e5e50e)]:
-  - @ledgerhq/types-live@6.72.0-nightly.0
-  - @ledgerhq/live-common@34.35.2-nightly.0
-  - @ledgerhq/live-cli@24.18.6-nightly.0
-  - @ledgerhq/live-wallet@0.10.11-nightly.0
+- Updated dependencies []:
+  - @ledgerhq/live-cli@24.18.6-next.1
+  - @ledgerhq/ledger-key-ring-protocol@0.5.8-next.0
+  - @ledgerhq/live-common@34.36.0-next.1
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.6-next.0
+  - @ledgerhq/live-wallet@0.10.11-next.1
+
+## 0.0.12-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`8bd5c56`](https://github.com/LedgerHQ/ledger-live/commit/8bd5c56f8b9f57557d56ce91d648d8346834e489), [`3348393`](https://github.com/LedgerHQ/ledger-live/commit/3348393fc591a810342b3b58b780eb346616bce8), [`4ddfe60`](https://github.com/LedgerHQ/ledger-live/commit/4ddfe6060ab8e4e5c0bb89da91e08a02d8ca50e6), [`f42f353`](https://github.com/LedgerHQ/ledger-live/commit/f42f353a593d0a1cd0a237648765080c85d0eea7), [`571d6db`](https://github.com/LedgerHQ/ledger-live/commit/571d6db505b90874a6362ee7ee97d036126463e5), [`2ad2105`](https://github.com/LedgerHQ/ledger-live/commit/2ad21059f1c6d2cef1876cbb27fce2b5619b2cc1), [`33c7e9e`](https://github.com/LedgerHQ/ledger-live/commit/33c7e9ebf078ee91e0c11a16cdcaba2d840125c3), [`150ac67`](https://github.com/LedgerHQ/ledger-live/commit/150ac67c38c0ce43dd0632a71467f49a81068b94), [`7fe7b52`](https://github.com/LedgerHQ/ledger-live/commit/7fe7b5236268f6ba6756d2ef3f0afc272c0692bf), [`52e34fc`](https://github.com/LedgerHQ/ledger-live/commit/52e34fc0ca98917e8ac2846524828f1f0aaf701d), [`1a4e5e5`](https://github.com/LedgerHQ/ledger-live/commit/1a4e5e5913fe5e12d6127b36f3849e4c81e5e50e)]:
+  - @ledgerhq/live-common@34.36.0-next.0
+  - @ledgerhq/types-live@6.72.0-next.0
+  - @ledgerhq/live-cli@24.18.6-next.0
+  - @ledgerhq/live-wallet@0.10.11-next.0
 
 ## 0.0.11
 

@@ -5,6 +5,8 @@ import { CryptoOrTokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoass
 import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { ModularDrawerStep } from "../types";
+import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
+import { MODULAR_DRAWER_PAGE_NAME } from "../analytics/types";
 
 type Props = {
   currenciesByProvider: CurrenciesByProviderId[];
@@ -15,7 +17,8 @@ type Props = {
   isSelectAccountFlow?: boolean;
   onAssetSelected?: (asset: CryptoOrTokenCurrency) => void;
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
-  hasOneNetwork: boolean;
+  hasOneCurrency: boolean;
+  flow: string;
 };
 
 export function useModularDrawerFlowState({
@@ -27,8 +30,11 @@ export function useModularDrawerFlowState({
   isSelectAccountFlow,
   onAssetSelected,
   onAccountSelected,
-  hasOneNetwork,
+  hasOneCurrency,
+  flow,
 }: Props) {
+  const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+
   const [selectedAsset, setSelectedAsset] = useState<CryptoOrTokenCurrency>();
   const [selectedNetwork, setSelectedNetwork] = useState<CryptoOrTokenCurrency>();
   const [searchedValue, setSearchedValue] = useState<string>();
@@ -38,8 +44,13 @@ export function useModularDrawerFlowState({
     setSelectedAsset(undefined);
     setSelectedNetwork(undefined);
     setNetworksToDisplay(undefined);
+    trackModularDrawerEvent("button_clicked", {
+      button: "Back",
+      page: MODULAR_DRAWER_PAGE_NAME.MODULAR_NETWORK_SELECTION,
+      flow: flow,
+    });
     goToStep("ASSET_SELECTION");
-  }, [goToStep, setNetworksToDisplay]);
+  }, [flow, goToStep, setNetworksToDisplay, trackModularDrawerEvent]);
 
   const goBackToNetworkSelection = useCallback(() => {
     setSelectedNetwork(undefined);
@@ -125,21 +136,16 @@ export function useModularDrawerFlowState({
   };
 
   useEffect(() => {
-    if (assetsToDisplay && assetsToDisplay.length === 1 && !selectedAsset && !searchedValue) {
+    if (hasOneCurrency && !selectedAsset) {
       handleAssetSelected(assetsToDisplay[0]);
-    }
-    if (hasOneNetwork && selectedAsset) {
-      setSelectedNetwork(selectedAsset);
-      goToStep("NETWORK_SELECTION");
     }
   }, [
     assetsToDisplay,
-    hasOneNetwork,
-    selectedAsset,
-    onAssetSelected,
-    handleAssetSelected,
+    currenciesIdsArray.length,
     goToStep,
-    searchedValue,
+    handleAssetSelected,
+    hasOneCurrency,
+    selectedAsset,
   ]);
 
   return {

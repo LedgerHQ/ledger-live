@@ -51,6 +51,8 @@ const meta: Meta<typeof ModularDrawerFlowManager> = {
     drawerConfiguration: {},
     onAssetSelected,
     onAccountSelected,
+    source: "sourceTest",
+    flow: "Modular Asset Flow",
   },
   decorators: [
     Story => (
@@ -84,13 +86,16 @@ export const TestSelectAccountFlow: Story = {
     await userEvent.click(ethereumAsset);
 
     expect(track).toHaveBeenLastCalledWith("asset_clicked", {
-      asset: {
-        id: "ethereum",
-        name: "Ethereum",
-        ticker: "ETH",
-      },
+      asset: "Ethereum",
       flow: "Modular Asset Flow",
       page: "Modular Asset Selection",
+      source: "sourceTest",
+      asset_component_features: {
+        apy: false,
+        balance: false,
+        filter: false,
+        market_trend: false,
+      },
     });
 
     const arbitrumNetwork = await waitForAnimationExit(/arbitrum/i);

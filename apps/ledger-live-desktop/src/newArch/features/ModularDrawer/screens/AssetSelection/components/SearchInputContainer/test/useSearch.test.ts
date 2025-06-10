@@ -2,9 +2,7 @@ import { renderHook, act } from "tests/testSetup";
 import { useSearch } from "../useSearch";
 import { track } from "~/renderer/analytics/segment";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-
-// Mock timer functions
-jest.useFakeTimers();
+import { jest } from "@jest/globals";
 
 describe("useSearch", () => {
   const mockCurrencies = [
@@ -15,8 +13,10 @@ describe("useSearch", () => {
   ] as CryptoOrTokenCurrency[];
 
   const mockSetItemsToDisplay = jest.fn();
+  const mockSetSearchedValue = jest.fn();
   const defaultProps = {
     setItemsToDisplay: mockSetItemsToDisplay,
+    setSearchedValue: mockSetSearchedValue,
     source: "test",
     flow: "testing",
     items: mockCurrencies,
@@ -27,122 +27,109 @@ describe("useSearch", () => {
     jest.clearAllTimers();
   });
 
-  it("should initialize with empty search query", () => {
-    // Arrange
+  it("should initialize with default value if provided", () => {
+    const { result } = renderHook(() => useSearch({ ...defaultProps, defaultValue: "BTC" }));
 
-    // Act
-    const { result } = renderHook(() => useSearch(defaultProps));
-
-    // Assert
-    expect(result.current.searchQuery).toBe("");
-    expect(mockSetItemsToDisplay).toHaveBeenCalledTimes(1);
-    expect(mockSetItemsToDisplay).toHaveBeenCalledWith(mockCurrencies);
+    expect(result.current.displayedValue).toBe("BTC");
+    expect(mockSetItemsToDisplay).not.toHaveBeenCalled();
   });
 
-  it("should return all items when search query is less than 2 characters", () => {
-    // Arrange
+  it("should not filter list when search query is less than 2 characters", () => {
     const { result } = renderHook(() => useSearch(defaultProps));
 
-    // Act
     act(() => {
       result.current.handleSearch("B");
     });
 
-    // Assert
-    expect(result.current.searchQuery).toBe("B");
-    expect(mockSetItemsToDisplay).toHaveBeenCalledWith(mockCurrencies);
+    expect(result.current.displayedValue).toBe("B");
+    expect(mockSetItemsToDisplay).not.toHaveBeenCalled();
     expect(track).not.toHaveBeenCalled();
   });
 
   it("should filter items based on search query", () => {
-    // Arrange
     const { result } = renderHook(() => useSearch(defaultProps));
 
-    // Act
     act(() => {
       result.current.handleSearch("Bit");
     });
 
-    // Assert
-    expect(result.current.searchQuery).toBe("Bit");
-    expect(mockSetItemsToDisplay).toHaveBeenCalled();
-    // We expect that only Bitcoin would match "Bit" in our mock data
-    // But since Fuse.js is a complex search library and we're mocking it,
-    // we just verify that setItemsToDisplay was called with some results
-    expect(track).not.toHaveBeenCalled(); // Tracking should not be called automatically
+    act(() => {
+      result.current.handleDebouncedChange("Bit", "");
+    });
+
+    expect(result.current.displayedValue).toBe("Bit");
+    expect(mockSetItemsToDisplay).toHaveBeenCalledWith([
+      { name: "Bitcoin", ticker: "BTC", id: "bitcoin", type: "CryptoCurrency" },
+    ]);
+    expect(mockSetSearchedValue).toHaveBeenCalledWith("Bit");
   });
 
-  it("should track search query when manually calling trackSearch", () => {
-    // Arrange
+  it("should reset items when search query is cleared", () => {
+    const { result } = renderHook(() => useSearch(defaultProps));
+
+    act(() => {
+      result.current.handleSearch("Bit");
+    });
+
+    act(() => {
+      result.current.handleDebouncedChange("", "Bit");
+    });
+
+    expect(result.current.displayedValue).toBe("Bit");
+    expect(mockSetItemsToDisplay).toHaveBeenCalledWith(mockCurrencies);
+  });
+
+  it("should track search query when manually calling handleDebouncedChange", () => {
     const { result } = renderHook(() => useSearch(defaultProps));
     const previousQuery = "";
     const currentQuery = "Bit";
 
-    // Act
     act(() => {
       result.current.handleSearch(currentQuery);
-      result.current.trackSearch(currentQuery, previousQuery);
+      result.current.handleDebouncedChange(currentQuery, previousQuery);
     });
 
-    // Assert
     expect(track).toHaveBeenCalledWith("asset_searched", {
-      query: "Bit",
-      page: "test",
+      searched_value: "Bit",
+      source: "test",
+      page: "Asset Selection",
       flow: "testing",
     });
   });
 
   it("should not track search if current and previous queries are the same", () => {
-    // Arrange
     const { result } = renderHook(() => useSearch(defaultProps));
     const sameQuery = "Bit";
 
-    // Act
     act(() => {
-      result.current.trackSearch(sameQuery, sameQuery);
+      result.current.handleDebouncedChange(sameQuery, sameQuery);
     });
 
-    // Assert
     expect(track).not.toHaveBeenCalled();
   });
 
-  it("should not track search if query is empty", () => {
-    // Arrange
+  it("should handle the workflow of typing, filtering, and tracking", () => {
     const { result } = renderHook(() => useSearch(defaultProps));
 
-    // Act
-    act(() => {
-      result.current.trackSearch("", "previous");
-    });
-
-    // Assert
-    expect(track).not.toHaveBeenCalled();
-  });
-
-  it("should handle the workflow of typing, filtering and tracking", () => {
-    // Arrange
-    const { result } = renderHook(() => useSearch(defaultProps));
-
-    // Act - Simulate typing "ET"
     act(() => {
       result.current.handleSearch("ET");
     });
 
-    // Validate immediate filter effect
-    expect(result.current.searchQuery).toBe("ET");
-    expect(mockSetItemsToDisplay).toHaveBeenCalled();
-    expect(track).not.toHaveBeenCalled(); // Not tracked yet
+    expect(result.current.displayedValue).toBe("ET");
+    expect(mockSetItemsToDisplay).not.toHaveBeenCalled();
+    expect(track).not.toHaveBeenCalled();
 
-    // Act - Simulate the debounced callback being triggered
     act(() => {
-      result.current.trackSearch("ET", "");
+      result.current.handleDebouncedChange("ET", "");
     });
 
-    // Assert tracking was called correctly
+    expect(mockSetItemsToDisplay).toHaveBeenCalled();
+
     expect(track).toHaveBeenCalledWith("asset_searched", {
-      query: "ET",
-      page: "test",
+      page: "Asset Selection",
+      searched_value: "ET",
       flow: "testing",
+      source: "test",
     });
   });
 });

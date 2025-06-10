@@ -1,56 +1,88 @@
 # @ledgerhq/live-cli
 
-## 24.18.6-nightly.3
+## 24.18.6
 
 ### Patch Changes
 
-- Updated dependencies [[`8551c28`](https://github.com/LedgerHQ/ledger-live/commit/8551c280f24f7bd4475c6cc12f1b1d92636d9357)]:
-  - @ledgerhq/live-common@34.36.0-nightly.3
-  - @ledgerhq/live-env@2.9.1-nightly.0
-  - @ledgerhq/coin-framework@5.2.0-nightly.3
-  - @ledgerhq/coin-bitcoin@0.16.0-nightly.3
-  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.6-nightly.0
-  - @ledgerhq/ledger-key-ring-protocol@0.5.8-nightly.0
-  - @ledgerhq/cryptoassets@13.18.1-nightly.0
-  - @ledgerhq/live-countervalues@0.5.8-nightly.3
-  - @ledgerhq/live-network@2.0.9-nightly.0
-  - @ledgerhq/live-wallet@0.10.11-nightly.3
-  - @ledgerhq/device-core@0.4.26-nightly.2
+- Updated dependencies [[`8bd5c56`](https://github.com/LedgerHQ/ledger-live/commit/8bd5c56f8b9f57557d56ce91d648d8346834e489), [`3348393`](https://github.com/LedgerHQ/ledger-live/commit/3348393fc591a810342b3b58b780eb346616bce8), [`4ddfe60`](https://github.com/LedgerHQ/ledger-live/commit/4ddfe6060ab8e4e5c0bb89da91e08a02d8ca50e6), [`f42f353`](https://github.com/LedgerHQ/ledger-live/commit/f42f353a593d0a1cd0a237648765080c85d0eea7), [`571d6db`](https://github.com/LedgerHQ/ledger-live/commit/571d6db505b90874a6362ee7ee97d036126463e5), [`ebbbd47`](https://github.com/LedgerHQ/ledger-live/commit/ebbbd47efe76d82047a956cb5849be5831f58772), [`2ad2105`](https://github.com/LedgerHQ/ledger-live/commit/2ad21059f1c6d2cef1876cbb27fce2b5619b2cc1), [`f29e4ba`](https://github.com/LedgerHQ/ledger-live/commit/f29e4bae00a4bf470a0c1ca143e505b731543f95), [`33c7e9e`](https://github.com/LedgerHQ/ledger-live/commit/33c7e9ebf078ee91e0c11a16cdcaba2d840125c3), [`150ac67`](https://github.com/LedgerHQ/ledger-live/commit/150ac67c38c0ce43dd0632a71467f49a81068b94), [`7fe7b52`](https://github.com/LedgerHQ/ledger-live/commit/7fe7b5236268f6ba6756d2ef3f0afc272c0692bf), [`52e34fc`](https://github.com/LedgerHQ/ledger-live/commit/52e34fc0ca98917e8ac2846524828f1f0aaf701d)]:
+  - @ledgerhq/live-common@34.36.0
+  - @ledgerhq/coin-framework@5.2.0
+  - @ledgerhq/logs@6.13.0
+  - @ledgerhq/coin-bitcoin@0.15.8
+  - @ledgerhq/device-core@0.4.26
+  - @ledgerhq/live-countervalues@0.5.8
+  - @ledgerhq/live-wallet@0.10.11
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.6
+  - @ledgerhq/ledger-key-ring-protocol@0.5.8
+  - @ledgerhq/devices@8.4.6
+  - @ledgerhq/hw-app-btc@10.9.2
+  - @ledgerhq/hw-transport@6.31.6
+  - @ledgerhq/hw-transport-http@6.30.6
+  - @ledgerhq/hw-transport-mocker@6.29.6
+  - @ledgerhq/hw-transport-node-hid@6.29.7
+  - @ledgerhq/hw-transport-node-speculos@6.29.6
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.6
+  - @ledgerhq/live-network@2.0.9
 
-## 24.18.6-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`9c2d746`](https://github.com/LedgerHQ/ledger-live/commit/9c2d746c1621e372badbbbd1030bb72368ace4a1), [`18bc0d4`](https://github.com/LedgerHQ/ledger-live/commit/18bc0d4a27696491400df6ce26b915a88b56792f), [`e04d215`](https://github.com/LedgerHQ/ledger-live/commit/e04d21576919fa21cb3ab6e1c4e8e50fb6c17eca)]:
-  - @ledgerhq/live-common@34.36.0-nightly.2
-  - @ledgerhq/coin-framework@5.2.0-nightly.2
-  - @ledgerhq/coin-bitcoin@0.16.0-nightly.2
-  - @ledgerhq/live-countervalues@0.5.8-nightly.2
-  - @ledgerhq/live-wallet@0.10.11-nightly.2
-
-## 24.18.6-nightly.1
+## 24.18.6-next.2
 
 ### Patch Changes
 
-- Updated dependencies [[`b7d3d59`](https://github.com/LedgerHQ/ledger-live/commit/b7d3d59d299c3d3541d598536651b9047fda4526), [`1535307`](https://github.com/LedgerHQ/ledger-live/commit/1535307f78d345d7f652ac2c91c8a67e62fedef2)]:
-  - @ledgerhq/live-common@34.36.0-nightly.1
-  - @ledgerhq/coin-bitcoin@0.16.0-nightly.1
-  - @ledgerhq/coin-framework@5.2.0-nightly.1
-  - @ledgerhq/device-core@0.4.26-nightly.1
-  - @ledgerhq/live-countervalues@0.5.8-nightly.1
-  - @ledgerhq/live-wallet@0.10.11-nightly.1
+- Updated dependencies [[`ebbbd47`](https://github.com/LedgerHQ/ledger-live/commit/ebbbd47efe76d82047a956cb5849be5831f58772)]:
+  - @ledgerhq/logs@6.13.0-next.1
+  - @ledgerhq/coin-framework@5.2.0-next.2
+  - @ledgerhq/coin-bitcoin@0.15.8-next.2
+  - @ledgerhq/device-core@0.4.26-next.2
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.6-next.1
+  - @ledgerhq/ledger-key-ring-protocol@0.5.8-next.1
+  - @ledgerhq/live-common@34.36.0-next.2
+  - @ledgerhq/devices@8.4.6-next.1
+  - @ledgerhq/hw-app-btc@10.9.2-next.1
+  - @ledgerhq/hw-transport@6.31.6-next.1
+  - @ledgerhq/hw-transport-http@6.30.6-next.1
+  - @ledgerhq/hw-transport-mocker@6.29.6-next.1
+  - @ledgerhq/hw-transport-node-hid@6.29.7-next.1
+  - @ledgerhq/hw-transport-node-speculos@6.29.6-next.1
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.6-next.1
+  - @ledgerhq/live-countervalues@0.5.8-next.2
+  - @ledgerhq/live-network@2.0.9-next.1
+  - @ledgerhq/live-wallet@0.10.11-next.2
 
-## 24.18.6-nightly.0
+## 24.18.6-next.1
 
 ### Patch Changes
 
-- Updated dependencies []:
-  - @ledgerhq/live-common@34.35.2-nightly.0
-  - @ledgerhq/coin-framework@5.1.1-nightly.0
-  - @ledgerhq/coin-bitcoin@0.15.8-nightly.0
-  - @ledgerhq/device-core@0.4.26-nightly.0
-  - @ledgerhq/live-countervalues@0.5.8-nightly.0
-  - @ledgerhq/live-wallet@0.10.11-nightly.0
+- Updated dependencies [[`f29e4ba`](https://github.com/LedgerHQ/ledger-live/commit/f29e4bae00a4bf470a0c1ca143e505b731543f95)]:
+  - @ledgerhq/logs@6.13.0-next.0
+  - @ledgerhq/coin-framework@5.2.0-next.1
+  - @ledgerhq/coin-bitcoin@0.15.8-next.1
+  - @ledgerhq/device-core@0.4.26-next.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.6-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.5.8-next.0
+  - @ledgerhq/live-common@34.36.0-next.1
+  - @ledgerhq/devices@8.4.6-next.0
+  - @ledgerhq/hw-app-btc@10.9.2-next.0
+  - @ledgerhq/hw-transport@6.31.6-next.0
+  - @ledgerhq/hw-transport-http@6.30.6-next.0
+  - @ledgerhq/hw-transport-mocker@6.29.6-next.0
+  - @ledgerhq/hw-transport-node-hid@6.29.7-next.0
+  - @ledgerhq/hw-transport-node-speculos@6.29.6-next.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.6-next.0
+  - @ledgerhq/live-countervalues@0.5.8-next.1
+  - @ledgerhq/live-network@2.0.9-next.0
+  - @ledgerhq/live-wallet@0.10.11-next.1
+
+## 24.18.6-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`8bd5c56`](https://github.com/LedgerHQ/ledger-live/commit/8bd5c56f8b9f57557d56ce91d648d8346834e489), [`3348393`](https://github.com/LedgerHQ/ledger-live/commit/3348393fc591a810342b3b58b780eb346616bce8), [`4ddfe60`](https://github.com/LedgerHQ/ledger-live/commit/4ddfe6060ab8e4e5c0bb89da91e08a02d8ca50e6), [`f42f353`](https://github.com/LedgerHQ/ledger-live/commit/f42f353a593d0a1cd0a237648765080c85d0eea7), [`571d6db`](https://github.com/LedgerHQ/ledger-live/commit/571d6db505b90874a6362ee7ee97d036126463e5), [`2ad2105`](https://github.com/LedgerHQ/ledger-live/commit/2ad21059f1c6d2cef1876cbb27fce2b5619b2cc1), [`33c7e9e`](https://github.com/LedgerHQ/ledger-live/commit/33c7e9ebf078ee91e0c11a16cdcaba2d840125c3), [`150ac67`](https://github.com/LedgerHQ/ledger-live/commit/150ac67c38c0ce43dd0632a71467f49a81068b94), [`7fe7b52`](https://github.com/LedgerHQ/ledger-live/commit/7fe7b5236268f6ba6756d2ef3f0afc272c0692bf), [`52e34fc`](https://github.com/LedgerHQ/ledger-live/commit/52e34fc0ca98917e8ac2846524828f1f0aaf701d)]:
+  - @ledgerhq/live-common@34.36.0-next.0
+  - @ledgerhq/coin-framework@5.2.0-next.0
+  - @ledgerhq/coin-bitcoin@0.15.8-next.0
+  - @ledgerhq/device-core@0.4.26-next.0
+  - @ledgerhq/live-countervalues@0.5.8-next.0
+  - @ledgerhq/live-wallet@0.10.11-next.0
 
 ## 24.18.5
 

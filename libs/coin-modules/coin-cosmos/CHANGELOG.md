@@ -1,31 +1,6 @@
 # @ledgerhq/coin-cosmos
 
-## 0.15.0-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`8551c28`](https://github.com/LedgerHQ/ledger-live/commit/8551c280f24f7bd4475c6cc12f1b1d92636d9357)]:
-  - @ledgerhq/live-env@2.9.1-nightly.0
-  - @ledgerhq/coin-framework@5.2.0-nightly.3
-  - @ledgerhq/cryptoassets@13.18.1-nightly.0
-  - @ledgerhq/live-network@2.0.9-nightly.0
-
-## 0.15.0-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`18bc0d4`](https://github.com/LedgerHQ/ledger-live/commit/18bc0d4a27696491400df6ce26b915a88b56792f), [`e04d215`](https://github.com/LedgerHQ/ledger-live/commit/e04d21576919fa21cb3ab6e1c4e8e50fb6c17eca)]:
-  - @ledgerhq/coin-framework@5.2.0-nightly.2
-
-## 0.15.0-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`b7d3d59`](https://github.com/LedgerHQ/ledger-live/commit/b7d3d59d299c3d3541d598536651b9047fda4526), [`1535307`](https://github.com/LedgerHQ/ledger-live/commit/1535307f78d345d7f652ac2c91c8a67e62fedef2)]:
-  - @ledgerhq/types-live@6.72.0-nightly.1
-  - @ledgerhq/coin-framework@5.2.0-nightly.1
-
-## 0.15.0-nightly.0
+## 0.15.0
 
 ### Minor Changes
 
@@ -33,9 +8,44 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`1a4e5e5`](https://github.com/LedgerHQ/ledger-live/commit/1a4e5e5913fe5e12d6127b36f3849e4c81e5e50e)]:
-  - @ledgerhq/types-live@6.72.0-nightly.0
-  - @ledgerhq/coin-framework@5.1.1-nightly.0
+- Updated dependencies [[`4ddfe60`](https://github.com/LedgerHQ/ledger-live/commit/4ddfe6060ab8e4e5c0bb89da91e08a02d8ca50e6), [`f42f353`](https://github.com/LedgerHQ/ledger-live/commit/f42f353a593d0a1cd0a237648765080c85d0eea7), [`ebbbd47`](https://github.com/LedgerHQ/ledger-live/commit/ebbbd47efe76d82047a956cb5849be5831f58772), [`f29e4ba`](https://github.com/LedgerHQ/ledger-live/commit/f29e4bae00a4bf470a0c1ca143e505b731543f95), [`1a4e5e5`](https://github.com/LedgerHQ/ledger-live/commit/1a4e5e5913fe5e12d6127b36f3849e4c81e5e50e)]:
+  - @ledgerhq/types-live@6.72.0
+  - @ledgerhq/coin-framework@5.2.0
+  - @ledgerhq/logs@6.13.0
+  - @ledgerhq/devices@8.4.6
+  - @ledgerhq/live-network@2.0.9
+
+## 0.15.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`ebbbd47`](https://github.com/LedgerHQ/ledger-live/commit/ebbbd47efe76d82047a956cb5849be5831f58772)]:
+  - @ledgerhq/logs@6.13.0-next.1
+  - @ledgerhq/coin-framework@5.2.0-next.2
+  - @ledgerhq/devices@8.4.6-next.1
+  - @ledgerhq/live-network@2.0.9-next.1
+
+## 0.15.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`f29e4ba`](https://github.com/LedgerHQ/ledger-live/commit/f29e4bae00a4bf470a0c1ca143e505b731543f95)]:
+  - @ledgerhq/logs@6.13.0-next.0
+  - @ledgerhq/coin-framework@5.2.0-next.1
+  - @ledgerhq/devices@8.4.6-next.0
+  - @ledgerhq/live-network@2.0.9-next.0
+
+## 0.15.0-next.0
+
+### Minor Changes
+
+- [#10392](https://github.com/LedgerHQ/ledger-live/pull/10392) [`4c57db2`](https://github.com/LedgerHQ/ledger-live/commit/4c57db229766f4608f66c6dbd294c1f30c4155c6) Thanks [@qperrot](https://github.com/qperrot)! - Update Zenrock minGasPrice
+
+### Patch Changes
+
+- Updated dependencies [[`4ddfe60`](https://github.com/LedgerHQ/ledger-live/commit/4ddfe6060ab8e4e5c0bb89da91e08a02d8ca50e6), [`f42f353`](https://github.com/LedgerHQ/ledger-live/commit/f42f353a593d0a1cd0a237648765080c85d0eea7), [`1a4e5e5`](https://github.com/LedgerHQ/ledger-live/commit/1a4e5e5913fe5e12d6127b36f3849e4c81e5e50e)]:
+  - @ledgerhq/types-live@6.72.0-next.0
+  - @ledgerhq/coin-framework@5.2.0-next.0
 
 ## 0.14.3
 
