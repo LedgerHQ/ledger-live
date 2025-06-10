@@ -186,7 +186,15 @@ const Header = ({
       logs
         .slice(0)
         .reverse()
-        .filter(l => l.type === "apdu")
+        .filter(l => l.type === "apdu" || (l.type === "live-dmk-tracer" && l.message.startsWith("[exchange]")))
+        // filter out live-dmk-tracer logs that are not APDUs
+        .map(l => {
+          if (l.type === "live-dmk-tracer") {
+            l.message = l.message.replace(/^\[exchange\] /, ""); // remove `[exchange] ` prefix
+          }
+          return l;
+        })
+        .sort((a, b) => a.index - b.index)
         .reduce<Log[]>((all, l) => {
           const last = all[all.length - 1];
           if (last && last.message === l.message) return all;
