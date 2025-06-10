@@ -7,11 +7,11 @@
 # owner(s) will be requested for a review.
 
 # fdp-ci team
-.github                                                 @ledgerhq/fdp-ci
-.github/workflows/test-ui-e2e-only-desktop.yml          @ledgerhq/fdp-ci  @ledgerhq/qaa
-.github/workflows/test-mobile-e2e-reusable.yml          @ledgerhq/fdp-ci  @ledgerhq/qaa
-.github/workflows/test-design-system-reusable.yml       @ledgerhq/fdp-ci  @ledgerhq/live-hub
-tools                                                   @ledgerhq/fdp-ci
+.github                                                 @ledgerhq/live-ci
+.github/workflows/test-ui-e2e-only-desktop.yml          @ledgerhq/live-ci  @ledgerhq/qaa
+.github/workflows/test-mobile-e2e-reusable.yml          @ledgerhq/live-ci  @ledgerhq/qaa
+.github/workflows/test-design-system-reusable.yml       @ledgerhq/live-ci  @ledgerhq/live-hub
+tools                                                   @ledgerhq/live-ci
 
 # Hub team
 ## by default, hub manage apps and libs related to it & then we overrides many exceptions
@@ -39,7 +39,7 @@ libs/hw-ledger-key-ring-protocol/                        @ledgerhq/live-hub
 .github/workflows/import-cal-tokens.yml                  @ledgerhq/coin-integration
 .github/workflows/test-coin-tester.yml                   @ledgerhq/coin-integration
 .github/workflows/test-coin-modules-integ.yml            @ledgerhq/coin-integration
-.github/workflows/test-bridge-pr.yml                     @ledgerhq/coin-integration @ledgerhq/fdp-ci
+.github/workflows/test-bridge-pr.yml                     @ledgerhq/coin-integration @ledgerhq/live-ci
 .github/workflow-templates/bot-coin**                    @ledgerhq/coin-integration
 **/live-common-set*.ts                                   @ledgerhq/coin-integration
 apps/**/families/                                        @ledgerhq/coin-integration
