@@ -180,6 +180,7 @@ jobs:
       build-ios-native: ${{ needs.determine-builds.outputs.ios_native_exists == 'false' }}
       ios-native-cache-key: ${{ needs.determine-builds.outputs.ios_native_key }}
       ios-js-cache-key: ${{ needs.determine-builds.outputs.ios_js_key }}
+    secrets: inherit
 
   build-android:
     name: "Build Android"
@@ -192,6 +193,7 @@ jobs:
       build-android-native: ${{ needs.determine-builds.outputs.android_native_exists == 'false' }}
       android-native-cache-key: ${{ needs.determine-builds.outputs.android_native_key }}
       android-js-cache-key: ${{ needs.determine-builds.outputs.android_js_key }}
+    secrets: inherit
 
   detox-tests-ios:
     name: "iOS Detox"
