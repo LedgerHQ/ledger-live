@@ -178,7 +178,7 @@ jobs:
           lookup-only: true
 
   build-ios:
-    name: "Test Mobile / Build iOS"
+    name: "Build iOS"
     needs: [ determine-builds ]
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@support/poc-macOS-sharding
     with:
@@ -189,6 +189,16 @@ jobs:
       build-ios-native: ${{ needs.determine-builds.outputs.ios_native_exists == false }}
       ios-native-cache-key: ${{ needs.determine-builds.outputs.ios_native_key }}
       ios-js-cache-key: ${{ needs.determine-builds.outputs.ios_js_key }}
+
+  output:
+    needs: [determine-builds]
+    runs-on:
+      - ubuntu-latest
+    steps:
+      - name: Echo inputs
+        run: |
+          echo "${{ toJson(needs.determine-builds.outputs) }}"
+        shell: bash
 
   detox-tests-ios:
     name: "iOS Detox"
