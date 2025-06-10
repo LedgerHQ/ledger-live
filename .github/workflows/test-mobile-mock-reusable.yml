@@ -363,7 +363,7 @@ jobs:
 
   detox-tests-android:
     name: "Android Detox"
-    needs: [build-android-native, build-android-js, determine-builds]
+    needs: [ build-android, determine-builds ]
     if: ${{ !inputs.speculos_tests && github.event_name != 'schedule' && !failure() && !cancelled() }}
     runs-on: [ ledger-live-linux-8CPU-32RAM ]
     env:
