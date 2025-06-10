@@ -1925,7 +1925,8 @@
       "payoutNetworkFees" : "支出费用",
       "payoutNetworkFeesTooltip" : "该数额不会在您的设备上显示",
       "acceptTerms" : "验证此交易，即表示我接受\n<0>{{provider}} 的使用条款</0>",
-      "exodusAcceptTerms" : "Exodus 依赖第三方来进行互换。\n验证此交易，即表示我接受 <0>Exodus 的使用条款</0>"
+      "exodusAcceptTerms" : "Exodus 依赖第三方来进行互换。\n验证此交易，即表示我接受 <0>Exodus 的使用条款</0>",
+      "changellyAcceptTerms" : "By clicking “Swap with Changelly” you accept Changelly’s <0>Terms of Use</0> and\nits <1>AML/KYC policy</1> Changelly may apply AML/KYC procedures which\ncan, in limited cases, impact the completion of your transaction. Should\nthat happen, you must contact Changelly’s <2>customer support.</2>"
     },
     "swap2" : {
       "amountSent" : "发送数额",
@@ -6594,6 +6595,19 @@
     },
     "AmountTooSmall" : {
       "title" : "此交易的最低数额要求为 {{amount}}"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "保障您的安全",
+      "description" : "此交易涉及受制裁的钱包地址，无法处理。<br/>——{{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForSendError" : {
+      "title" : "此交易涉及受制裁的钱包地址，无法处理<br/>——{{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForStakingError" : {
+      "title" : "此交易涉及受制裁的钱包地址，<br/>无法处理。<br/>——{{sanctionedAddress}}<br/>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "此交易涉及受制裁的钱包地址，无法处理。"
     }
   },
   "cryptoOrg" : {
@@ -7057,12 +7071,9 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "搜索",
-    "assetFlow" : {
-      "selectTemplate" : "选择 {{dynamic}}",
-      "asset" : "资产",
-      "network" : "网络",
-      "account" : "账户"
-    }
+    "selectAsset" : "选择资产",
+    "selectNetwork" : "选择网络",
+    "selectAccount" : "选择账户"
   },
   "nftEntryPoint" : {
     "title" : "NFT（非同质化代币）",
@@ -7070,5 +7081,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "所在地区不可用",
+    "description" : "此地区无法使用 Ledger 钱包。",
+    "learnMore" : "了解更多"
   }
 }
