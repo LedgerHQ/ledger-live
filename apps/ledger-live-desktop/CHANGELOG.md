@@ -1,5 +1,37 @@
 # ledger-live-desktop
 
+## 2.117.0-nightly.0
+
+### Minor Changes
+
+- [#10423](https://github.com/LedgerHQ/ledger-live/pull/10423) [`fde276e`](https://github.com/LedgerHQ/ledger-live/commit/fde276e5973df732513bb114c448c78c17cd8df6) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD Analytics + fix side effects + enforce testing
+
+- [#9808](https://github.com/LedgerHQ/ledger-live/pull/9808) [`02da8e9`](https://github.com/LedgerHQ/ledger-live/commit/02da8e9f56e220a74d79156dd63ed2278efbab31) Thanks [@ypholby-ledger](https://github.com/ypholby-ledger)! - Add the LLD resolution tool in Electron within the PTX WebView
+
+- [#10452](https://github.com/LedgerHQ/ledger-live/pull/10452) [`9ceee03`](https://github.com/LedgerHQ/ledger-live/commit/9ceee03c33c41bb035fe64f9303acd36872536b6) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add kyc warning for changelly on the drawer footer
+
+### Patch Changes
+
+- [#10394](https://github.com/LedgerHQ/ledger-live/pull/10394) [`1a2f8d1`](https://github.com/LedgerHQ/ledger-live/commit/1a2f8d18aea33d7e1fede0365f8a43e0d59a8c55) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Fix rename account
+
+- Updated dependencies [[`1a2f8d1`](https://github.com/LedgerHQ/ledger-live/commit/1a2f8d18aea33d7e1fede0365f8a43e0d59a8c55), [`9ceee03`](https://github.com/LedgerHQ/ledger-live/commit/9ceee03c33c41bb035fe64f9303acd36872536b6)]:
+  - @ledgerhq/live-wallet@0.10.12-nightly.0
+  - @ledgerhq/types-live@6.73.0-nightly.0
+  - @ledgerhq/live-common@34.37.0-nightly.0
+  - @ledgerhq/react-ui@0.29.0-nightly.0
+  - @ledgerhq/coin-framework@5.2.1-nightly.0
+  - @ledgerhq/coin-aptos@2.1.1-nightly.0
+  - @ledgerhq/coin-bitcoin@0.15.9-nightly.0
+  - @ledgerhq/coin-cosmos@0.15.1-nightly.0
+  - @ledgerhq/coin-evm@2.22.3-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.9-nightly.0
+  - @ledgerhq/domain-service@1.2.32-nightly.0
+  - @ledgerhq/live-countervalues@0.5.9-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.38-nightly.0
+  - @ledgerhq/live-nft@0.8.9-nightly.0
+  - @ledgerhq/live-nft-react@0.9.9-nightly.0
+  - @ledgerhq/live-dmk-desktop@0.4.1-nightly.0
+
 ## 2.116.0
 
 ### Minor Changes

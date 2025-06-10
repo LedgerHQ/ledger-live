@@ -1,5 +1,28 @@
 # live-mobile
 
+## 3.82.0-nightly.0
+
+### Minor Changes
+
+- [#10458](https://github.com/LedgerHQ/ledger-live/pull/10458) [`62bed22`](https://github.com/LedgerHQ/ledger-live/commit/62bed2219bda04d00501e3d6877e543eeb2cdd9b) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - fix delegation e2e test
+
+### Patch Changes
+
+- Updated dependencies [[`1a2f8d1`](https://github.com/LedgerHQ/ledger-live/commit/1a2f8d18aea33d7e1fede0365f8a43e0d59a8c55), [`9ceee03`](https://github.com/LedgerHQ/ledger-live/commit/9ceee03c33c41bb035fe64f9303acd36872536b6)]:
+  - @ledgerhq/live-wallet@0.10.12-nightly.0
+  - @ledgerhq/types-live@6.73.0-nightly.0
+  - @ledgerhq/coin-framework@5.2.1-nightly.0
+  - @ledgerhq/coin-cosmos@0.15.1-nightly.0
+  - @ledgerhq/coin-evm@2.22.3-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.9-nightly.0
+  - @ledgerhq/coin-multiversx@0.4.9-nightly.0
+  - @ledgerhq/coin-stacks@0.8.9-nightly.0
+  - @ledgerhq/domain-service@1.2.32-nightly.0
+  - @ledgerhq/live-countervalues@0.5.9-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.38-nightly.0
+  - @ledgerhq/live-nft@0.8.9-nightly.0
+  - @ledgerhq/live-nft-react@0.9.9-nightly.0
+
 ## 3.81.0
 
 ### Minor Changes

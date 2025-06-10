@@ -1,5 +1,11 @@
 # @ledgerhq/ledger-cal-service
 
+## 0.6.0-nightly.0
+
+### Minor Changes
+
+- [#10452](https://github.com/LedgerHQ/ledger-live/pull/10452) [`9ceee03`](https://github.com/LedgerHQ/ledger-live/commit/9ceee03c33c41bb035fe64f9303acd36872536b6) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add kyc warning for changelly on the drawer footer
+
 ## 0.5.0
 
 ### Minor Changes

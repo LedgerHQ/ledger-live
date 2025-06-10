@@ -1,5 +1,51 @@
 # @ledgerhq/live-common
 
+## 34.37.0-nightly.0
+
+### Minor Changes
+
+- [#10452](https://github.com/LedgerHQ/ledger-live/pull/10452) [`9ceee03`](https://github.com/LedgerHQ/ledger-live/commit/9ceee03c33c41bb035fe64f9303acd36872536b6) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add kyc warning for changelly on the drawer footer
+
+### Patch Changes
+
+- Updated dependencies [[`1a2f8d1`](https://github.com/LedgerHQ/ledger-live/commit/1a2f8d18aea33d7e1fede0365f8a43e0d59a8c55), [`9ceee03`](https://github.com/LedgerHQ/ledger-live/commit/9ceee03c33c41bb035fe64f9303acd36872536b6)]:
+  - @ledgerhq/live-wallet@0.10.12-nightly.0
+  - @ledgerhq/ledger-cal-service@0.6.0-nightly.0
+  - @ledgerhq/coin-framework@5.2.1-nightly.0
+  - @ledgerhq/coin-algorand@0.9.9-nightly.0
+  - @ledgerhq/coin-aptos@2.1.1-nightly.0
+  - @ledgerhq/coin-bitcoin@0.15.9-nightly.0
+  - @ledgerhq/coin-cardano@0.8.9-nightly.0
+  - @ledgerhq/coin-casper@1.7.4-nightly.0
+  - @ledgerhq/coin-celo@1.1.7-nightly.0
+  - @ledgerhq/coin-cosmos@0.15.1-nightly.0
+  - @ledgerhq/coin-evm@2.22.3-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.9-nightly.0
+  - @ledgerhq/coin-hedera@1.7.1-nightly.0
+  - @ledgerhq/coin-icon@0.10.9-nightly.0
+  - @ledgerhq/coin-internet_computer@1.7.9-nightly.0
+  - @ledgerhq/coin-mina@1.1.8-nightly.0
+  - @ledgerhq/coin-multiversx@0.4.9-nightly.0
+  - @ledgerhq/coin-near@0.11.9-nightly.0
+  - @ledgerhq/coin-polkadot@6.1.3-nightly.0
+  - @ledgerhq/coin-solana@0.25.1-nightly.0
+  - @ledgerhq/coin-stacks@0.8.9-nightly.0
+  - @ledgerhq/coin-stellar@5.1.2-nightly.0
+  - @ledgerhq/coin-sui@0.4.2-nightly.0
+  - @ledgerhq/coin-tezos@5.2.2-nightly.0
+  - @ledgerhq/coin-ton@0.12.1-nightly.0
+  - @ledgerhq/coin-tron@4.1.3-nightly.0
+  - @ledgerhq/coin-vechain@2.7.9-nightly.0
+  - @ledgerhq/coin-xrp@6.1.4-nightly.0
+  - @ledgerhq/device-core@0.4.27-nightly.0
+  - @ledgerhq/hw-app-eth@6.45.7-nightly.0
+  - @ledgerhq/live-countervalues@0.5.9-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.38-nightly.0
+  - @ledgerhq/live-nft@0.8.9-nightly.0
+  - @ledgerhq/live-signer-evm@0.5.2-nightly.0
+  - @ledgerhq/live-signer-solana@0.2.1-nightly.0
+  - @ledgerhq/hw-app-celo@6.33.5-nightly.0
+
 ## 34.36.0
 
 ### Minor Changes
