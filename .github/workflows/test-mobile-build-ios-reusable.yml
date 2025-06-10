@@ -92,7 +92,7 @@ jobs:
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
-    runs-on: [${{ inputs.macos-specificity-runner-label }}, macOS, ARM64]
+    runs-on: ["${{ inputs.macos-specificity-runner-label }}", macOS, ARM64]
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
