@@ -90,7 +90,7 @@ jobs:
     steps:
       - name: Echo inputs
         run: |
-        echo "Inputs: ${{ toJson(inputs) }}"
+          echo ${{ toJson(inputs) }}
         shell: bash
   build-ios-native:
     name: "iOS Build Native"
