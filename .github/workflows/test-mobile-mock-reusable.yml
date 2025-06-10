@@ -190,8 +190,8 @@ jobs:
       disable-turbo-cache: ${{ inputs.disable-turbo-cache || false }}
       build-android-js: ${{ needs.determine-builds.outputs.android_js_exists == 'false' }}
       build-android-native: ${{ needs.determine-builds.outputs.android_native_exists == 'false' }}
-      ios-native-cache-key: ${{ needs.determine-builds.outputs.android_native_key }}
-      ios-js-cache-key: ${{ needs.determine-builds.outputs.android_js_key }}
+      android-native-cache-key: ${{ needs.determine-builds.outputs.android_native_key }}
+      android-js-cache-key: ${{ needs.determine-builds.outputs.android_js_key }}
 
   detox-tests-ios:
     name: "iOS Detox"
