@@ -26,7 +26,7 @@ import { getCryptoCurrencyById, listSupportedFiats } from "@ledgerhq/live-common
 import { importMarket } from "~/actions/market";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { importWalletState } from "@ledgerhq/live-wallet/store";
-import { setTutorial } from "~/actions/largeMoverLandingPage";
+import { importLargeMoverState } from "~/actions/largeMoverLandingPage";
 
 interface Props {
   onInitFinished: () => void;
@@ -151,7 +151,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       }
 
       if (largeMoverState) {
-        store.dispatch(setTutorial(largeMoverState.tutorial));
+        store.dispatch(importLargeMoverState(largeMoverState));
       }
 
       setInitialCountervalues(initialCountervalues);
