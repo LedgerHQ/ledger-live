@@ -67,10 +67,15 @@ const mockWebviewState: WebviewState = {
 };
 
 describe("TopBar", () => {
+  const mobileView = { display: false, width: 355 };
+  const setMobileView = jest.fn();
+
   const defaultProps = {
     manifest: mockManifest,
     webviewAPIRef: mockWebviewAPIRef,
     webviewState: mockWebviewState,
+    setMobileView,
+    mobileView,
   };
 
   it("does not render if isInternalApp is true and dev tools are disabled", () => {
