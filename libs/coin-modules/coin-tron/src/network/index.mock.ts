@@ -11,7 +11,8 @@ export const TRONGRID_BASE_URL_MOCKED = "https://api.mock.trongrid.io";
 
 const handlers = [
   http.get(`${TRONGRID_BASE_URL_MOCKED}/v1/accounts/:address`, ({ params }) => {
-    const address: string = typeof params.address === "string" ? params.address : params.address[0];
+    const address: string =
+      typeof params.address === "string" ? params.address : params.address?.[0] ?? "";
     const response = (fetchAccountFixture as Record<string, object>)[address];
 
     if (!response) {
@@ -24,7 +25,7 @@ const handlers = [
     `${TRONGRID_BASE_URL_MOCKED}/v1/accounts/:address/transactions`,
     ({ params, request }) => {
       const address: string =
-        typeof params.address === "string" ? params.address : params.address[0];
+        typeof params.address === "string" ? params.address : params.address?.[0] ?? "";
       const response = (fetchTronAccountTxs as Record<string, Record<string, object>>)[address];
 
       const url = new URL(request.url);
@@ -38,7 +39,8 @@ const handlers = [
     },
   ),
   http.get(`${TRONGRID_BASE_URL_MOCKED}/v1/accounts/:address/transactions/trc20`, ({ params }) => {
-    const address: string = typeof params.address === "string" ? params.address : params.address[0];
+    const address: string =
+      typeof params.address === "string" ? params.address : params.address?.[0] ?? "";
     const response = (fetchTronAccountTrc20Txs as Record<string, object>)[address];
 
     if (!response) {

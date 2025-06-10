@@ -1,8 +1,8 @@
 diff --git a/local-cli/testCommand/TestRunnerCommand.js b/local-cli/testCommand/TestRunnerCommand.js
-index afdc985d5a55396fbec0affd0927156348e656d0..1c71bce08e05768ec2f92245316154ecd0f3445f 100644
+index 65e6cd70a6257138afd8270671f0ef1c555a9bbc..f321f60e621d5a487a5571e0bb807932fb7d8f78 100644
 --- a/local-cli/testCommand/TestRunnerCommand.js
 +++ b/local-cli/testCommand/TestRunnerCommand.js
-@@ -35,6 +35,7 @@ class TestRunnerCommand {
+@@ -36,6 +36,7 @@ class TestRunnerCommand {
      this._startCommands = this._prepareStartCommands(commands, cliConfig);
      this._envFwd = {};
      this._terminating = false;
@@ -10,24 +10,25 @@ index afdc985d5a55396fbec0affd0927156348e656d0..1c71bce08e05768ec2f92245316154ec
  
      if (runnerConfig.forwardEnv) {
        this._envFwd = this._buildEnvOverride(cliConfig, deviceConfig);
-@@ -79,6 +80,7 @@ class TestRunnerCommand {
+@@ -85,6 +86,7 @@ class TestRunnerCommand {
          }
  
          if (--runsLeft > 0) {
 +          this._isRetry = true;
            // @ts-ignore
            detox.session.testSessionIndex++; // it is always the primary context, so we can update it
- 
-@@ -204,11 +206,16 @@ class TestRunnerCommand {
+           this._noRetryArgs.forEach(arg => delete this._argv[arg]);
+@@ -210,11 +212,16 @@ class TestRunnerCommand {
      /* istanbul ignore next */
      const { _: specs = [], '--': passthrough = [], $0, ...argv } = this._argv;
      const { _: $0_, ...$0argv } = parser($0);
+-
 +    
 +    // Remove shard arguments for retries
 +    const filteredArgv = this._isRetry
 +      ? _.omit(argv, ['shard'])
 +      : argv;
- 
++    
      return [
        ...$0_,
        ...unparse($0argv),
@@ -37,27 +38,21 @@ index afdc985d5a55396fbec0affd0927156348e656d0..1c71bce08e05768ec2f92245316154ec
      ].map(String);
    }
 diff --git a/src/devices/common/drivers/android/exec/ADB.js b/src/devices/common/drivers/android/exec/ADB.js
-index 434b0d65c89f8086084c8714c98e446c9bf54c3a..3b83753d3a3bd5468b53c4b0555bd278e301dbab 100644
+index ab269f5ba3cb6ec033594a5e05284b95f01a39a6..f38390723a0bb70af36ef4017353c3f9257afe53 100644
 --- a/src/devices/common/drivers/android/exec/ADB.js
 +++ b/src/devices/common/drivers/android/exec/ADB.js
-@@ -8,7 +8,10 @@ const { escape } = require('../../../../../utils/pipeCommands');
+@@ -8,11 +8,13 @@ const { escape } = require('../../../../../utils/pipeCommands');
  const DeviceHandle = require('../tools/DeviceHandle');
  const EmulatorHandle = require('../tools/EmulatorHandle');
  
--const INSTALL_TIMEOUT = 45000;
-+const INSTALL_TIMEOUT = 60000;
-+const {
-+  DETOX_INSTALL_TIMEOUT
-+} = process.env;
++const { DETOX_INSTALL_TIMEOUT = "60000" } = process.env;
++const DETOX_INSTALL_TIMEOUT_NUMBER = parseInt(DETOX_INSTALL_TIMEOUT, 10);
+ const DEFAULT_EXEC_OPTIONS = {
+   retries: 1,
+ };
+ const DEFAULT_INSTALL_OPTIONS = {
+-  timeout: 60000,
++  timeout: Number.isNaN(DETOX_INSTALL_TIMEOUT_NUMBER) ? 60000 : DETOX_INSTALL_TIMEOUT_NUMBER,
+   retries: 3,
+ };
  
- class ADB {
-   constructor() {
-@@ -113,7 +116,7 @@ class ADB {
-     const command = (apiLvl >= 23)
-       ? `install -r -g -t ${apkPath}`
-       : `install -rg ${apkPath}`;
--    const result = await this.adbCmdSpawned(deviceId, command, { timeout: INSTALL_TIMEOUT, retries: 3 });
-+    const result = await this.adbCmdSpawned(deviceId, command, { timeout: DETOX_INSTALL_TIMEOUT || INSTALL_TIMEOUT, retries: 3 });
- 
-     const [failure] = (result.stdout || '').match(/^Failure \[.*\]$/m) || [];
-     if (failure) {
