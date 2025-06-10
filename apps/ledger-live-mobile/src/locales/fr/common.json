@@ -7430,7 +7430,12 @@
     "performance" : "Performance",
     "low" : "Faible",
     "high" : "Élevée",
-    "title" : "Mouvements du marché"
+    "title" : "Mouvements du marché",
+    "overlay" : {
+      "title" : "Passez d’un actif à un autre",
+      "action" : "Balayez l’écran vers la gauche ou vers la droite.",
+      "button" : "Compris"
+    }
   },
   "nftEntryPoint" : {
     "title" : "Vos NFT",
@@ -7438,5 +7443,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Région indisponible",
+    "description" : "L’application n’est pas disponible dans ce pays/région.",
+    "learnMore" : "En savoir plus"
   }
 }
