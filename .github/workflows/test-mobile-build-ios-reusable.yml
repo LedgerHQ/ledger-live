@@ -83,6 +83,15 @@ env:
   cache-bucket: ll-gha-s3-cache
 
 jobs:
+
+  output:
+    runs-on:
+      - ubuntu-latest
+    steps:
+      - name: Echo inputs
+        run: |
+        echo "Inputs: ${{ toJson(inputs) }}"
+        shell: bash
   build-ios-native:
     name: "iOS Build Native"
     if: ${{ inputs.build-ios-native == true }}
