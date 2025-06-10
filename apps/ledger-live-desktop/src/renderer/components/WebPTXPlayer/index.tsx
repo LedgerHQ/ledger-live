@@ -48,10 +48,14 @@ export default function WebPTXPlayer({
   manifest,
   inputs,
   CustomLoader,
-}: WebviewProps & { CustomLoader?: CustomLoaderType }) {
+}: WebviewProps & {
+  CustomLoader?: React.ComponentType<{
+    manifest: LiveAppManifest;
+    isLoading: boolean;
+  }>;
+}) {
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
-  const [isWidgetLoaded, setIsWidgetLoaded] = useState(true);
   const [mobileView, setMobileView] = useState<MobileView>(initialMobileView);
 
   const accounts = useSelector(flattenAccountsSelector);
@@ -74,9 +78,8 @@ export default function WebPTXPlayer({
             onStateChange={setWebviewState}
             ref={webviewAPIRef}
             customHandlers={customHandlers}
-            onWidgetLoadedChange={setIsWidgetLoaded}
+            Loader={CustomLoader}
           />
-          {CustomLoader ? <CustomLoader manifest={manifest} isLoading={!isWidgetLoaded} /> : null}
         </WebViewWrapper>
       </Wrapper>
     </Container>

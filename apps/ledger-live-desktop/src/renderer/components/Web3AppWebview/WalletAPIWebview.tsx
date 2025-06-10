@@ -398,7 +398,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       onStateChange,
       hideLoader,
       webviewStyle: customWebviewStyle,
-      onWidgetLoadedChange,
+      Loader = DefaultLoader,
     },
     ref,
   ) => {
@@ -448,10 +448,6 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       customWebviewStyle,
     );
 
-    useEffect(() => {
-      onWidgetLoadedChange?.(widgetLoaded);
-    }, [onWidgetLoadedChange, widgetLoaded]);
-
     const isDapp = !!manifest.dapp;
     const preloader = isDapp ? "webviewDappPreloader" : "webviewPreloader";
 
@@ -489,14 +485,20 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           {...webviewProps}
           {...webviewPartition}
         />
-        {!widgetLoaded && !hideLoader ? (
-          <Loader>
-            <BigSpinner size={50} />
-          </Loader>
-        ) : null}
+        {!hideLoader ? <Loader manifest={manifest} isLoading={!widgetLoaded} /> : null}
       </>
     );
   },
 );
+
+function DefaultLoader({ isLoading }: { isLoading: boolean }) {
+  if (!isLoading) return null;
+
+  return (
+    <Loader>
+      <BigSpinner size={50} />
+    </Loader>
+  );
+}
 
 WalletAPIWebview.displayName = "WalletAPIWebview";
