@@ -181,17 +181,17 @@ jobs:
       ios-native-cache-key: ${{ needs.determine-builds.outputs.ios_native_key }}
       ios-js-cache-key: ${{ needs.determine-builds.outputs.ios_js_key }}
 
-    build-android:
-      name: "Build Android"
-      needs: [ determine-builds ]
-      uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@support/poc-macOS-sharding
-      with:
-        ref: ${{ inputs.ref || github.sha }}
-        disable-turbo-cache: ${{ inputs.disable-turbo-cache || false }}
-        build-android-js: ${{ needs.determine-builds.outputs.android_js_exists == 'false' }}
-        build-android-native: ${{ needs.determine-builds.outputs.android_native_exists == 'false' }}
-        ios-native-cache-key: ${{ needs.determine-builds.outputs.android_native_key }}
-        ios-js-cache-key: ${{ needs.determine-builds.outputs.android_js_key }}
+  build-android:
+    name: "Build Android"
+    needs: [ determine-builds ]
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@support/poc-macOS-sharding
+    with:
+      ref: ${{ inputs.ref || github.sha }}
+      disable-turbo-cache: ${{ inputs.disable-turbo-cache || false }}
+      build-android-js: ${{ needs.determine-builds.outputs.android_js_exists == 'false' }}
+      build-android-native: ${{ needs.determine-builds.outputs.android_native_exists == 'false' }}
+      ios-native-cache-key: ${{ needs.determine-builds.outputs.android_native_key }}
+      ios-js-cache-key: ${{ needs.determine-builds.outputs.android_js_key }}
 
   detox-tests-ios:
     name: "iOS Detox"
