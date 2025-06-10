@@ -7430,7 +7430,12 @@
     "performance" : "Performans",
     "low" : "Düşük",
     "high" : "Yüksek",
-    "title" : "Piyasa Hareketleri"
+    "title" : "Piyasa Hareketleri",
+    "overlay" : {
+      "title" : "Varlıklar arasında geçiş yapın",
+      "action" : "Sola veya sağa kaydırın",
+      "button" : "Anladım!"
+    }
   },
   "nftEntryPoint" : {
     "title" : "NFT'leriniz",
@@ -7438,5 +7443,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Konum kullanılamıyor",
+    "description" : "Ledger cüzdan bu konumda kullanılamıyor.",
+    "learnMore" : "Daha fazla bilgi"
   }
 }
