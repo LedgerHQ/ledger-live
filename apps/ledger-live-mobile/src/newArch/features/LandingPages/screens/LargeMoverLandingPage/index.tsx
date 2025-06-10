@@ -66,7 +66,6 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
 
     setCurrentIndex(newIndex);
   };
-
   const currenciesWithId = useMemo(
     () =>
       currencies.map((currency, index) => {
@@ -107,7 +106,6 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
       params: { top100: true },
     });
   }
-
   return (
     <>
       {showOverlay && !loading && <OverlayTutorial />}
