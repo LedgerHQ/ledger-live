@@ -1,14 +1,14 @@
 import React from "react";
 import styled from "styled-components";
 import type { CheckboxProps } from "../../../components/form/Checkbox/Checkbox";
-import { Checkbox, Text } from "../../../components";
+import { Checkbox, Icon, Text, Box } from "../../../components";
 import { withTokens } from "../../libs";
 import { Address } from "../Address/Address";
 import { Tag } from "../Tag/Tag";
 
 export type Account = {
   address: string;
-  balance: string;
+  balance?: string;
   cryptoId?: string;
   fiatValue: string;
   id: string;
@@ -18,10 +18,21 @@ export type Account = {
   ticker?: string;
 };
 
+export type RightElementCheckbox = {
+  type: "checkbox";
+  checkbox: CheckboxProps;
+};
+
+export type RightElementArrow = {
+  type: "arrow";
+};
+
+export type RightElement = RightElementCheckbox | RightElementArrow;
+
 export type AccountItemProps = {
   onClick?: () => void;
   account: Account;
-  checkbox?: CheckboxProps;
+  rightElement?: RightElement;
   showIcon?: boolean;
   persistentBackground?: boolean;
 };
@@ -119,7 +130,7 @@ const BalanceContainer = styled.div`
 export const AccountItem = ({
   onClick,
   account,
-  checkbox,
+  rightElement,
   showIcon = true,
   persistentBackground: visibleBackground = false,
 }: AccountItemProps) => {
@@ -164,11 +175,22 @@ export const AccountItem = ({
         </AccountInfoContainer>
         <BalanceContainer>
           <Text fontSize="14px">{fiatValue}</Text>
-          <Text fontSize="12px" color="var(--colors-content-subdued-default-default)">
-            {balance}
-          </Text>
+          {balance && (
+            <Text fontSize="12px" color="var(--colors-content-subdued-default-default)">
+              {balance}
+            </Text>
+          )}
         </BalanceContainer>
-        {checkbox && <Checkbox {...checkbox} />}
+        {rightElement && rightElement.type === "checkbox" && (
+          <Box data-testid="right-element-checkbox">
+            <Checkbox {...rightElement.checkbox} />
+          </Box>
+        )}
+        {rightElement && rightElement.type === "arrow" && (
+          <Box data-testid="right-element-arrow-icon">
+            <Icon name="ChevronRight" size={24} />
+          </Box>
+        )}
       </ContentContainer>
     </Wrapper>
   );

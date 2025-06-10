@@ -109,17 +109,43 @@ export const TestWithCheckbox: Story = {
       name: "Main BTC",
       ticker: "btc",
     },
-    checkbox: {
-      isChecked: false,
-      onChange: () => {},
-      name: "checkbox",
+    rightElement: {
+      type: "checkbox",
+      checkbox: {
+        isChecked: false,
+        onChange: () => {},
+        name: "checkbox",
+      },
     },
   } satisfies AccountItemProps,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const addressIcon = canvas.queryByRole("img");
+    const arrowIcon = canvas.getByTestId("right-element-checkbox");
 
-    await expect(addressIcon).not.toBeInTheDocument();
+    await expect(arrowIcon).toBeInTheDocument();
+  },
+};
+
+export const TestWithArrow: Story = {
+  args: {
+    account: {
+      address: "n4A9...Zgty",
+      cryptoId: "bitcoin",
+      fiatValue: "$5,969.83",
+      id: "12345",
+      name: "Main BTC",
+      ticker: "btc",
+    },
+    rightElement: {
+      type: "arrow",
+    },
+  } satisfies AccountItemProps,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const arrowIcon = canvas.getByTestId("right-element-arrow-icon");
+
+    await expect(arrowIcon).toBeInTheDocument();
   },
 };
