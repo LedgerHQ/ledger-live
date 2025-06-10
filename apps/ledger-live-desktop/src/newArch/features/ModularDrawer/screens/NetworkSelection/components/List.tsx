@@ -28,12 +28,18 @@ export const SelectNetwork = ({
     const network = networks.find(({ id }) => id === networkId);
     if (!network) return;
 
-    trackModularDrawerEvent("network_clicked", {
-      network: network.name,
-      page: MODULAR_DRAWER_PAGE_NAME.MODULAR_NETWORK_SELECTION,
-      flow,
-      source,
-    });
+    trackModularDrawerEvent(
+      "network_clicked",
+      {
+        network: network.name,
+        page: MODULAR_DRAWER_PAGE_NAME.MODULAR_NETWORK_SELECTION,
+        flow,
+        source,
+      },
+      {
+        formatNetworkConfig: true,
+      },
+    );
 
     onNetworkSelected(network);
   };

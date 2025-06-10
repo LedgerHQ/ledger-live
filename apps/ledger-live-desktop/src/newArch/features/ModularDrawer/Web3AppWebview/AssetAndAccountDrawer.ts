@@ -10,6 +10,8 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 import { type WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
+import { track } from "~/renderer/analytics/segment";
+import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 
 type Result = {
   account: AccountLike;
@@ -47,6 +49,11 @@ function openAssetAndAccountDrawer(params: DrawerParams): void {
   };
 
   const handleCancel = (): void => {
+    track("button_clicked", {
+      button: "Close",
+      flow: params.flow,
+      page: currentRouteNameRef.current,
+    });
     setDrawer();
     onCancel?.();
   };
