@@ -88,7 +88,7 @@ export function runSendSPL(transaction: TransactionType, tmsLinks: string[]) {
         const subAccountId = app.account.subAccountId(transaction.accountToCredit);
         await navigateToSubAccount(transaction.accountToCredit);
         await app.account.expectAccountBalanceVisible(subAccountId);
-        await app.account.selectAndClickOnLastOperation(TransactionStatus.RECEIVED);
+        await app.account.scrollToHistoryAndClickOnLastOperation(TransactionStatus.RECEIVED);
         await checkOperationInfos(transaction);
       }
     });
