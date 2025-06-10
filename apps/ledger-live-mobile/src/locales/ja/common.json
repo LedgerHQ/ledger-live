@@ -7430,7 +7430,12 @@
     "performance" : "パフォーマンス",
     "low" : "低速",
     "high" : "高速",
-    "title" : "市場の動向"
+    "title" : "市場の動向",
+    "overlay" : {
+      "title" : "資産間の移動",
+      "action" : "左右にスワイプ",
+      "button" : "了解！"
+    }
   },
   "nftEntryPoint" : {
     "title" : "所有するNFT",
@@ -7438,5 +7443,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "利用不可のロケーション",
+    "description" : "このロケーションでは、Ledgerウォレットをご利用いただけません。",
+    "learnMore" : "詳細はこちら"
   }
 }
