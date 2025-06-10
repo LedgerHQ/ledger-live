@@ -132,6 +132,11 @@ function HeaderRight({ softExit }: { softExit: boolean }) {
   );
 }
 
+export type CustomLoaderType = React.ComponentType<{
+  manifest: LiveAppManifest;
+  isLoading: boolean;
+}>;
+
 type Props = {
   manifest: LiveAppManifest;
   inputs?: Record<string, string | undefined>;
@@ -148,6 +153,7 @@ type Props = {
         btnText: string;
       };
   softExit?: boolean;
+  CustomLoader?: CustomLoaderType;
 };
 
 export const WebPTXPlayer = ({
@@ -160,6 +166,7 @@ export const WebPTXPlayer = ({
     navigator: NavigatorName.Exchange,
   },
   softExit = false,
+  CustomLoader,
 }: Props) => {
   const lastMatchingURL = useRef<string | null>(null);
   const webviewAPIRef = useRef<WebviewAPI>(null);
@@ -290,6 +297,7 @@ export const WebPTXPlayer = ({
         onStateChange={setWebviewState}
         customHandlers={customHandlers}
       />
+      {CustomLoader ? <CustomLoader manifest={manifest} isLoading={webviewState.loading} /> : null}
       {webviewState.loading ? <Loading /> : null}
     </SafeAreaView>
   );
