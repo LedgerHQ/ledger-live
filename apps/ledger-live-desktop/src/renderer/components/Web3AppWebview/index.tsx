@@ -18,7 +18,7 @@ export const Web3AppWebview = forwardRef<WebviewAPI, WebviewProps>(
       webviewStyle,
       onStateChange,
       hideLoader,
-      onWidgetLoadedChange,
+      Loader,
     },
     ref,
   ) => {
@@ -36,7 +36,7 @@ export const Web3AppWebview = forwardRef<WebviewAPI, WebviewProps>(
           ref={ref}
           hideLoader={hideLoader}
           webviewStyle={webviewStyle}
-          onWidgetLoadedChange={onWidgetLoadedChange}
+          Loader={Loader}
         />
       );
     }
