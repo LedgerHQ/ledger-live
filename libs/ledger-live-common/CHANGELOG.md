@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 34.37.0-next.1
+
+### Minor Changes
+
+- [#10455](https://github.com/LedgerHQ/ledger-live/pull/10455) [`4f6ba01`](https://github.com/LedgerHQ/ledger-live/commit/4f6ba015717bd73df4dbb0578e9b64913e4a8f1e) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Improve secure channels error handling
+
 ## 34.37.0-next.0
 
 ### Minor Changes
