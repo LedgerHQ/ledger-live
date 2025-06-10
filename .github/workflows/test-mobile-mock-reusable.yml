@@ -178,14 +178,15 @@ jobs:
           lookup-only: true
 
   build-ios:
+    name: "Test Mobile / Build iOS"
     needs: [ determine-builds ]
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@support/poc-macOS-sharding
     with:
       ref: ${{ inputs.ref || github.sha }}
       macos-specificity-runner-label: ${{ inputs.macos-specificity-runner-label || 'performance-pool' }}
       disable-turbo-cache: ${{ inputs.disable-turbo-cache || false }}
-      build-ios-js: ${{ needs.determine-builds.outputs.ios_js_exists == 'true' }}
-      build-ios-native: ${{ needs.determine-builds.outputs.ios_native_exists != 'true' }}
+      build-ios-js: ${{ needs.determine-builds.outputs.ios_js_exists == false }}
+      build-ios-native: ${{ needs.determine-builds.outputs.ios_native_exists == false }}
       ios-native-cache-key: ${{ needs.determine-builds.outputs.ios_native_key }}
       ios-js-cache-key: ${{ needs.determine-builds.outputs.ios_js_key }}
 
