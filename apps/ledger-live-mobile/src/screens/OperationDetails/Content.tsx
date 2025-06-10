@@ -220,6 +220,7 @@ export default function Content({
           />
           {hasFailed ? (
             <LText
+              testID="operation-details-text-failed"
               style={[
                 styles.confirmation,
                 {
@@ -231,6 +232,7 @@ export default function Content({
             </LText>
           ) : isConfirmed ? (
             <LText
+              testID="operation-details-text-confirmed"
               semiBold
               style={[
                 styles.confirmation,
@@ -244,6 +246,7 @@ export default function Content({
             </LText>
           ) : (
             <LText
+              testID="operation-details-text-notConfirmed"
               style={[
                 styles.confirmation,
                 {

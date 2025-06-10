@@ -18,7 +18,7 @@ async function checkOperationInfos(
 ) {
   await app.operationDetails.waitForOperationDetails();
   await app.operationDetails.checkAccount(transaction.accountToDebit.currency.name);
-  await app.operationDetails.checkRecipient(transaction.accountToCredit.address);
+  await app.operationDetails.checkRecipientAddress(transaction.accountToCredit);
   if (operationType) await app.operationDetails.checkTransactionType(operationType);
 }
 
