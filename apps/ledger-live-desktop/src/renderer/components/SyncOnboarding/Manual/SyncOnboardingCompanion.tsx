@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { DeviceModelInfo, SeedPhraseType } from "@ledgerhq/types-live";
+import { DeviceModelInfo, SeedOriginType, SeedPhraseType } from "@ledgerhq/types-live";
 import {
   OnboardingStep as DeviceOnboardingStep,
   fromSeedPhraseTypeToNbOfSeedWords,
@@ -309,7 +309,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       analyticsSeedPhraseType.current = deviceOnboardingState.seedPhraseType;
   }, [deviceOnboardingState]);
 
-  const analyticsSeedConfiguration = useRef<"new_seed" | "restore_seed" | "recover_seed">();
+  const analyticsSeedConfiguration = useRef<SeedOriginType>();
 
   const analyticsSeedingTracked = useRef(false);
   /**
@@ -426,6 +426,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       case DeviceOnboardingStep.RestoreCharon:
         setStepKey(StepKey.Seed);
         setSeedPathStatus("restore_charon");
+        analyticsSeedConfiguration.current = "restore_charon";
         break;
       case DeviceOnboardingStep.Pin:
         setStepKey(StepKey.Pin);
