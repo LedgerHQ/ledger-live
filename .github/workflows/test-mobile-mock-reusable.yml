@@ -148,7 +148,7 @@ jobs:
           lookup-only: true
 
   build-ios:
-    name: "Build iOS"
+    name: "iOS Build"
     needs: [ determine-builds ]
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@support/poc-macOS-sharding
     with:
@@ -162,7 +162,7 @@ jobs:
     secrets: inherit
 
   build-android:
-    name: "Build Android"
+    name: "Android Build"
     needs: [ determine-builds ]
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@support/poc-macOS-sharding
     with:
@@ -175,7 +175,7 @@ jobs:
     secrets: inherit
 
   detox-tests-ios:
-    name: "iOS Detox"
+    name: "iOS Build / iOS Detox"
     needs: [ build-ios, determine-builds ]
     runs-on: ["${{ inputs.macos-specificity-runner-label }}", macOS, ARM64]
     strategy:
@@ -305,42 +305,9 @@ jobs:
           name: "ios-test-artifacts"
           path: apps/ledger-live-mobile/artifacts
       - run: echo "${{ steps.test-artifacts.outputs.artifact-id }}"
-#
-#  allure-report-ios:
-#    name: "iOS Detox > Allure Report"
-#    runs-on: [ledger-live-medium]
-#    if: ${{ !cancelled() && !inputs.speculos_tests && needs.detox-tests-ios.outputs.artifact }}
-#    needs: [detox-tests-ios]
-#    outputs:
-#      report-url: ${{ steps.upload.outputs.report-url }}
-#      result: ${{ steps.summary.outputs.test_result }}
-#      status: ${{ needs.detox-tests-ios.outputs.status }}
-#    steps:
-#      - name: Download Allure Report
-#        uses: actions/download-artifact@v4
-#        with:
-#          path: ios-test-artifacts
-#          pattern: ios-test-artifacts*
-#          merge-multiple: true
-#      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
-#        if: ${{ !cancelled() && env.SHOULD_UPLOAD == 'true' }}
-#        id: upload
-#        with:
-#          platform: ios-${{ env.SPECULOS_RUN == 'true' && 'speculos' || 'mocked' }}
-#          login: ${{ vars.ALLURE_USERNAME }}
-#          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
-#          path: ios-test-artifacts
-#      - name: Get summary
-#        id: summary
-#        if: ${{ !cancelled() }}
-#        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
-#        with:
-#          allure-results-path: ios-test-artifacts
-#          platform: iOS
-#
 
   detox-tests-android:
-    name: "Android Detox"
+    name: "Android Build / Android Detox"
     needs: [ build-android, determine-builds ]
     runs-on: [ ledger-live-linux-8CPU-32RAM ]
     env:
@@ -364,8 +331,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2]
-        shardTotal: [2]
+        shardIndex: [ 1, 2 ]
+        shardTotal: [ 2 ]
 
     steps:
       - uses: actions/checkout@v4
@@ -557,6 +524,39 @@ jobs:
         id: set-output
         if: ${{ !cancelled() }}
         run: echo "status_${{ matrix.shardIndex }}=${{ steps.detox.outcome }}" >> $GITHUB_OUTPUT
+#
+#  allure-report-ios:
+#    name: "iOS Detox > Allure Report"
+#    runs-on: [ledger-live-medium]
+#    if: ${{ !cancelled() && !inputs.speculos_tests && needs.detox-tests-ios.outputs.artifact }}
+#    needs: [detox-tests-ios]
+#    outputs:
+#      report-url: ${{ steps.upload.outputs.report-url }}
+#      result: ${{ steps.summary.outputs.test_result }}
+#      status: ${{ needs.detox-tests-ios.outputs.status }}
+#    steps:
+#      - name: Download Allure Report
+#        uses: actions/download-artifact@v4
+#        with:
+#          path: ios-test-artifacts
+#          pattern: ios-test-artifacts*
+#          merge-multiple: true
+#      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+#        if: ${{ !cancelled() && env.SHOULD_UPLOAD == 'true' }}
+#        id: upload
+#        with:
+#          platform: ios-${{ env.SPECULOS_RUN == 'true' && 'speculos' || 'mocked' }}
+#          login: ${{ vars.ALLURE_USERNAME }}
+#          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+#          path: ios-test-artifacts
+#      - name: Get summary
+#        id: summary
+#        if: ${{ !cancelled() }}
+#        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+#        with:
+#          allure-results-path: ios-test-artifacts
+#          platform: iOS
+#
 
 #  allure-report-android:
 #    name: "Android Detox > Allure Report"

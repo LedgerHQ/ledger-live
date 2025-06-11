@@ -76,7 +76,7 @@ env:
 jobs:
 
   build-android-native:
-    name: "Determine Builds / Android Build Native"
+    name: "Android Build Native"
     runs-on: [ledger-live-linux-8CPU-32RAM]
     if: ${{ inputs.build-android-native == true }}
     steps:
@@ -168,7 +168,7 @@ jobs:
           use-fallback: false
 
   build-android-js:
-    name: "Determine Builds / Android Build JS"
+    name: "Android Build JS"
     runs-on: [ ledger-live-4xlarge ]
     if: ${{ inputs.build-android-js == true }}
     steps:
