@@ -7,6 +7,11 @@ export interface WebviewTag extends Electron.WebviewTag {
   contentWindow: WebContents;
 }
 
+export type WebviewLoader = React.ComponentType<{
+  manifest: LiveAppManifest;
+  isLoading: boolean;
+}>;
+
 export type WebviewProps = {
   // TODO: technically it's LiveAppManifest | AppManifest depends on `apiVersion`
   manifest: LiveAppManifest;
@@ -16,10 +21,7 @@ export type WebviewProps = {
   currentAccountHistDb?: CurrentAccountHistDB;
   hideLoader?: boolean;
   webviewStyle?: React.CSSProperties;
-  Loader?: React.ComponentType<{
-    manifest: LiveAppManifest;
-    isLoading: boolean;
-  }>;
+  Loader?: WebviewLoader;
 };
 
 export type WebviewState = {
