@@ -4,18 +4,24 @@ import { ModularDrawerEventName, ModularDrawerEventParams } from "./types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { formatAssetsConfig, formatNetworksConfig } from "./utils";
 
+type DrawerConfig = {
+  formatNetworkConfig?: boolean;
+  formatAssetConfig?: boolean;
+  assetsConfig?: EnhancedModularDrawerConfiguration["assets"];
+  networksConfig?: EnhancedModularDrawerConfiguration["networks"];
+};
+
 type TrackModularDrawerEvent = <T extends ModularDrawerEventName>(
   eventName: T,
   params: ModularDrawerEventParams[T],
-  formatNetworkConfig?: boolean,
-  formatAssetConfig?: boolean,
-  assetsConfig?: EnhancedModularDrawerConfiguration["assets"],
-  networksConfig?: EnhancedModularDrawerConfiguration["networks"],
+  drawerConfig?: DrawerConfig,
 ) => void;
 
 export const useModularDrawerAnalytics = () => {
   const trackModularDrawerEvent = useCallback<TrackModularDrawerEvent>(
-    (eventName, params, formatNetworkConfig, formatAssetConfig, assetsConfig, networksConfig) => {
+    (eventName, params, drawerConfig) => {
+      const { formatNetworkConfig, formatAssetConfig, assetsConfig, networksConfig } =
+        drawerConfig || {};
       const analyticsParams = {
         ...params,
         ...(formatAssetConfig && { asset_component_features: formatAssetsConfig(assetsConfig) }),

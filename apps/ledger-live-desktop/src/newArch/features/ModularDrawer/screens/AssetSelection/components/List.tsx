@@ -42,8 +42,9 @@ export const SelectAssetList = ({
           flow,
           source,
         },
-        false,
-        true,
+        {
+          formatAssetConfig: true,
+        },
       );
 
       onAssetSelected(selectedAsset);
