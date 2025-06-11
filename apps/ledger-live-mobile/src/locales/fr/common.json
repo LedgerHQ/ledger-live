@@ -294,6 +294,14 @@
       "title" : "Appareil déconnecté",
       "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer."
     },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "Appareil déconnecté",
+      "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer."
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "Appareil déconnecté",
+      "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer."
+    },
     "CasperInvalidTransferId" : {
       "title" : "L’identifiant de transfert doit être un nombre positif inférieur à {{maxTransferId}}"
     },
@@ -842,7 +850,7 @@
     },
     "SolanaTokenNonTransferable" : {
       "title" : "Le token n’est pas transférable",
-      "description" : "Ces tokens sont des tokens soulbound et ne peuvent pas être transférés."
+      "description" : "Ces tokens sont des soulbound tokens et ne peuvent pas être transférés."
     },
     "CardanoMinAmountError" : {
       "title" : "Montant minimal pouvant être envoyé : {{amount}} ADA"
@@ -1431,7 +1439,7 @@
       },
       "ledgerApps" : {
         "title" : "Apps",
-        "desc" : "Explorez les applications partenaires de Ledger en un seul endroit."
+        "desc" : "Explorez les prestataires tiers de Ledger en un seul endroit."
       },
       "browseWeb3" : {
         "title" : "Explorez le Web3",
@@ -4955,7 +4963,7 @@
         "description" : "Solde des actifs immobilisés pouvant être utilisés pour voter"
       },
       "withdrawableBalance" : {
-        "title" : "Solde pouvant être retiré",
+        "title" : "Solde disponible au retrait",
         "description" : "CELO dégelés et transférables sur votre solde disponible."
       }
     },
@@ -6173,12 +6181,12 @@
         "description" : "Montant des actifs déstakés qui seront bientôt disponibles."
       },
       "withdrawable" : {
-        "title" : "Solde pouvant être retiré",
+        "title" : "Solde disponible au retrait",
         "description" : "Montant des actifs déstakés qui peuvent actuellement être retirés."
       },
       "stakingUnavailable" : {
         "title" : "Staking non disponible",
-        "description" : "Votre compte ne dispose pas d’un solde suffisant d’actifs pouvant être mis en staking, déstakés ou retirés."
+        "description" : "Le solde de votre compte est insuffisant pour effectuer une opération de staking, déstaking ou retrait."
       }
     },
     "unstaking" : {
@@ -7438,5 +7446,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Région indisponible",
+    "description" : "L’application n’est pas disponible dans ce pays/région.",
+    "learnMore" : "En savoir plus"
   }
 }
