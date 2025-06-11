@@ -509,9 +509,17 @@
       "title" : "EGLD insuficientes para pagar las tarifas de transacción",
       "description" : "Envía EGLD a tu cuenta para pagar las transacciones."
     },
+    "NotEnoughToStake" : {
+      "title" : "Cantidad mínima para poner en participación: {{minStake}} {{currency}}",
+      "description" : "Para la puesta en participación se requiere una cantidad mínima de {{minStake}} {{currency}}."
+    },
     "NotEnoughBalance" : {
       "title" : "Fondos insuficientes",
       "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
+    },
+    "NotEnoughStakedBalanceLeft" : {
+      "title" : "Tienes que dejar {{minAmountStaked}} como mínimo puesto en participación",
+      "description" : "Deja al menos {{minAmountStaked}} puesto en participación; de lo contrario, tendrás que cancelar la puesta en participación de la cantidad completa."
     },
     "NotEnoughBalanceFees" : {
       "title" : "Fondos insuficientes para cubrir las tarifas",
@@ -6265,6 +6273,134 @@
       }
     }
   },
+  "aptos" : {
+    "info" : {
+      "available" : {
+        "title" : "Aptos disponibles",
+        "description" : "Este importe está disponible."
+      },
+      "storageUsage" : {
+        "title" : "Saldo mínimo",
+        "description" : "Esta cantidad está reservada para almacenamiento y transacciones, y es el saldo mínimo que debe mantener tu cuenta para permanecer activa."
+      },
+      "staked" : {
+        "title" : "Saldo en participación",
+        "description" : "Esta cantidad está en participación con validadores."
+      },
+      "pending" : {
+        "title" : "Saldo pendiente",
+        "description" : "Esta cantidad se ha quitado de participación y está pendiente de disponibilidad."
+      },
+      "withdrawable" : {
+        "title" : "Saldo retirable",
+        "description" : "Esta cantidad se ha quitado de participación y se puede retirar."
+      },
+      "stakingUnavailable" : {
+        "title" : "Puesta en participación no disponible",
+        "description" : "No tienes en tu cuenta saldo suficiente para poner en participación, quitar de participación y retirar."
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Importe de la cancelación de la puesta en participación"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Has cancelado la puesta en participación de tus activos correctamente"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Importe a retirar"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Has retirado con éxito tus activos"
+            }
+          }
+        }
+      }
+    },
+    "restaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Cantidad que volver a poner en participación"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Has vuelto a poner en participación tus activos correctamente"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "Posiciones en participación",
+      "info" : "Cómo funciona la participación",
+      "add" : "Agregar",
+      "stakingEarn" : "Puedes conseguir recompensas de Aptos al poner tus activos en participación.",
+      "totalStake" : "Participación total",
+      "commission" : "Comisión",
+      "comm" : "Com.",
+      "timeToUnlock" : "Unlock en",
+      "iStake" : "Pongo en participación",
+      "actions" : {
+        "unstake" : "Cancelar la puesta en participación",
+        "withdraw" : "Retirar",
+        "restake" : "Volver a poner en participación"
+      },
+      "drawer" : {
+        "status" : "Estado",
+        "active" : "Activo",
+        "inactive" : "Inactivo",
+        "pending" : "Pendiente",
+        "available" : "Puede retirarse"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "Importe a poner en participación",
+        "selectDevice" : "Seleccionar dispositivo",
+        "connectDevice" : "Conectar dispositivo",
+        "stepRange" : "Paso {{currentStep}} de {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Pon en participación tus Aptos para recibir recompensas de forma segura sin perder el control de tus activos.",
+            "steps" : {
+              "0" : "Los activos puestos en participación siguen siendo tuyos.",
+              "1" : "Deberás esperar aproximadamente 2 horas para que el proceso de cancelar la puesta en participación finalice.",
+              "2" : "Pon en participación de forma segura con tu dispositivo Ledger."
+            },
+            "warning" : {
+              "description" : "Elige tu validador con cuidado: Puedes perder definitivamente parte de tus activos puestos en participación si el validador no se comporta apropiadamente."
+            },
+            "cta" : "Continuar"
+          },
+          "amount" : {
+            "assetsRemaining" : "Activos restantes: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Todos los activos utilizados",
+            "minAmount" : "Cantidad mínima: <0>{{min}}</0>",
+            "incorrectAmount" : "Cantidad máxima: <0>{{max}}</0>",
+            "cta" : "Continuar"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Has puesto en participación tus activos correctamente",
+              "text" : "El saldo de la cuenta se actualizará cuando la red confirme la transacción."
+            }
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "overdelegated" : "Sobredelegado",
     "delegationSendWarnDesc" : "El importe a enviar se deducirá de tu cuenta delegada.",
@@ -6665,8 +6801,8 @@
       "7d" : "7D",
       "30d" : "30D",
       "1y" : "1 A",
-      "1D_label" : "1D",
       "1H_label" : "1H",
+      "1D_label" : "1D",
       "1W_label" : "1S",
       "1M_label" : "1M",
       "1Y_label" : "1A"
@@ -7438,5 +7574,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Ubicación no disponible",
+    "description" : "Las billeteras Ledger no están disponibles en esta ubicación.",
+    "learnMore" : "Más información"
   }
 }
