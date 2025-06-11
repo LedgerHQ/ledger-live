@@ -1925,7 +1925,8 @@
       "payoutNetworkFees" : "Taxas de pagamento",
       "payoutNetworkFeesTooltip" : "Esta quantia não será mostrada no seu dispositivo",
       "acceptTerms" : "Ao validar esta transação, eu aceito\n<0>os termos de uso da {{provider}}</0>",
-      "exodusAcceptTerms" : "A Exodus depende de terceiros para realizar swaps.\nAo validar esta transação, eu aceito os <0>termos de uso da Exodus</0>"
+      "exodusAcceptTerms" : "A Exodus depende de terceiros para realizar swaps.\nAo validar esta transação, eu aceito os <0>termos de uso da Exodus</0>",
+      "changellyAcceptTerms" : "Ao clicar em “Trocar com a Changelly”, você aceita os <0>Termos de Uso</0> da Changelly e\nsua <1>política de AML/KYC</1> A Changelly pode aplicar procedimentos AML/KYC que\npodem, em casos limitados, afetar a conclusão de sua transação. Caso isso\naconteça, você deve entrar em contato com o <2>suporte ao cliente</2> da Changelly."
     },
     "swap2" : {
       "amountSent" : "Quantia a enviar",
@@ -3828,6 +3829,174 @@
           "accruedDelta" : "Acumulado {{delta}}.",
           "interestRateNotSetup" : "A taxa de juros atual é de 0%.",
           "description" : "Tokens que aumentam ou diminuem de valor constantemente, de acordo com sua taxa de juros. Nenhum token novo é criado, o recurso é totalmente cosmético."
+        }
+      }
+    }
+  },
+  "aptos" : {
+    "account" : {
+      "stakedBalance" : "Saldo em staking",
+      "stakedBalanceTooltip" : "Esta quantia está atualmente em staking com validadores.",
+      "withdrawableBalance" : "Saldo disponível para saque",
+      "withdrawableBalanceTooltip" : "Esta quantia foi desaplicada e pode ser sacada no momento.",
+      "pendingBalance" : "Saldo pendente",
+      "pendingBalanceTooltip" : "Esta quantia foi desaplicada e está atualmente com disponibilidade pendente."
+    },
+    "common" : {
+      "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente.",
+      "viewDetails" : "Ver detalhes",
+      "connectDevice" : {
+        "title" : "Dispositivo"
+      },
+      "confirmation" : {
+        "title" : "Confirmação"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "Quantia aplicada",
+        "unstakedAmount" : "Quantia fora de staking",
+        "withdrawnAmount" : "Quantia sacada"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "Você pode ganhar recompensas em Aptos fazendo staking.",
+        "info" : "Como Staking Funciona",
+        "earnRewards" : "Receber recompensas"
+      },
+      "table" : {
+        "header" : "Posições de Staking",
+        "stake" : "Adicionar",
+        "active" : "Em staking",
+        "pendingInactive" : "Liberação pendente",
+        "inactive" : "Disponíveis para saque",
+        "nextUnlock" : "Próximo desbloqueio"
+      },
+      "nextUnlockIn" : "Próximo desbloqueio em",
+      "unstake" : "Desaplicar",
+      "withdraw" : "Sacar",
+      "restake" : "Reaplicar",
+      "activeTooltip" : "Quantias aplicadas geram recompensas",
+      "inactiveTooltip" : "Quantias desaplicadas não geram recompensas",
+      "commission" : "Comissão",
+      "totalStake" : "Total Aplicado",
+      "minSafeWarning" : "Fundos Insuficientes",
+      "flow" : {
+        "title" : "Aplicar",
+        "steps" : {
+          "starter" : {
+            "description" : "Você pode ganhar recompensas fazendo staking de seus ativos Aptos com um validador.",
+            "bullet" : ["Você mantém a propriedade dos ativos em staking.", "Faça staking usando seu dispositivo Ledger", "Ativos estarão disponíveis de 52 a 65 horas após desaplicá-los"],
+            "warning" : {
+              "description" : "Escolha cuidadosamente o seu validador: parte de seus ativos aplicados pode ser irrevogavelmente perdida se o validador não se comportar adequadamente."
+            }
+          },
+          "amount" : {
+            "title" : "Quantia"
+          },
+          "validator" : {
+            "title" : "Validadores",
+            "ledgerByChorusOneTC" : "Termos e Condições da Ledger by Chorus One",
+            "ledgerByFigmentTC" : "Ledger by Figment T&Cs"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmação",
+            "success" : {
+              "title" : "Você fez staking de seus ativos com sucesso",
+              "text" : "O saldo da sua conta será atualizado quando a blockchain confirmar a transação.",
+              "cta" : "Ver detalhes"
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
+        }
+      }
+    },
+    "restake" : {
+      "flow" : {
+        "title" : "Reativar staking",
+        "steps" : {
+          "amount" : {
+            "title" : "Quantia",
+            "subtitle" : "No processo de reaplicação, seu saldo disponível será aplicado em staking.",
+            "warning" : "Todo o saldo disponível será reaplicado. A quantia reaplicada estará disponível para saque após a operação de desaplicação e o tempo de desbloqueio.",
+            "fields" : {
+              "validator" : "Validador",
+              "amount" : "Quantia para reaplicar"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmação",
+            "success" : {
+              "title" : "Você reaplicou seus ativos com sucesso.",
+              "description" : "{{amount}} foram reaplicados em {{validator}}",
+              "cta" : "Ver detalhes"
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "Não há ativos aplicados o suficiente para desaplicar",
+      "flow" : {
+        "title" : "Desaplicar",
+        "steps" : {
+          "amount" : {
+            "title" : "Quantia",
+            "subtitle" : "O processo de desaplicação levará {{timeToUnlock}} para ser finalizado.",
+            "subtitle2" : "O processo de desaplicação pode levar 30 dias para ser finalizado.",
+            "warning" : "Recompensas serão imediatamente depositadas. A quantia não reaplicada estará disponível para saque após o tempo de desbloqueio.",
+            "fields" : {
+              "validator" : "Validador",
+              "amount" : "Quantia a desaplicar"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmação",
+            "success" : {
+              "title" : "Você desaplicou seus ativos com sucesso",
+              "description" : "{{amount}} foram desaplicados de {{validator}}",
+              "cta" : "Ver detalhes"
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "disabledTooltip" : "Não há ativos suficientes para sacar",
+      "flow" : {
+        "title" : "Sacar",
+        "steps" : {
+          "amount" : {
+            "title" : "Quantia",
+            "fields" : {
+              "validator" : "Validador",
+              "amount" : "Quantia a sacar"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmação",
+            "success" : {
+              "title" : "Você sacou seus ativos com sucesso.",
+              "description" : "{{amount}} foram sacados de {{validator}}",
+              "cta" : "Ver detalhes"
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
         }
       }
     }
@@ -5870,9 +6039,17 @@
       "title" : "Desculpe, falha na estimativa de taxas",
       "description" : "A estimativa de taxa falhou na rede. Verifique suas entradas, é provável que a transação vá falhar"
     },
+    "NotEnoughToStake" : {
+      "title" : "Quantia mínima para staking: {{currency}} {{minStake}}",
+      "description" : "Uma quantia mínima de {{currency}} {{minStake}} é necessária para fazer staking."
+    },
     "NotEnoughBalance" : {
       "title" : "Fundos Insuficientes",
       "description" : "Certifique-se de que a conta tem fundos suficientes."
+    },
+    "NotEnoughStakedBalanceLeft" : {
+      "title" : "Você precisa deixar pelo menos {{minAmountStaked}} aplicado",
+      "description" : "Deixe pelo menos {{minAmountStaked}} aplicado, caso contrário, você terá que desaplicar a quantia total."
     },
     "NotEnoughBalanceFees" : {
       "title" : "Fundos insuficientes para cobrir as taxas",
@@ -6594,6 +6771,19 @@
     },
     "AmountTooSmall" : {
       "title" : "A quantia mínima exigida para esta transação é {{amount}}"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "Mantendo você em segurança",
+      "description" : "Esta transação envolve um endereço de carteira sancionado e não pode ser processada.<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForSendError" : {
+      "title" : "Esta transação envolve um endereço de carteira sancionado e não pode ser processada<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForStakingError" : {
+      "title" : "Esta transação envolve um endereço de carteira sancionado<br/>e não pode ser processada.<br/>-- {{sanctionedAddress}}<br/>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "Esta transação envolve um endereço de carteira sancionado e não pode ser processada."
     }
   },
   "cryptoOrg" : {
@@ -7057,12 +7247,9 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "Buscar",
-    "assetFlow" : {
-      "selectTemplate" : "Selecionar {{dynamic}}",
-      "asset" : "ativo",
-      "network" : "rede",
-      "account" : "conta"
-    }
+    "selectAsset" : "Selecionar ativo",
+    "selectNetwork" : "Selecione a rede",
+    "selectAccount" : "Selecionar conta"
   },
   "nftEntryPoint" : {
     "title" : "NFT (Tokens Não Fungíveis)",
@@ -7070,5 +7257,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Local indisponível",
+    "description" : "A carteira Ledger não está disponível neste local.",
+    "learnMore" : "Saiba mais"
   }
 }
