@@ -6594,6 +6594,19 @@
     },
     "AmountTooSmall" : {
       "title" : "Минимальная необходимая сумма для этой транзакции — {{amount}}"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "Ради вашей безопасности",
+      "description" : "Эта транзакция использует адрес кошелька из санкционных списков и не может быть проведена.<br/>— {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForSendError" : {
+      "title" : "Эта транзакция использует адрес кошелька из санкционных списков и не может быть проведена:<br/>{{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForStakingError" : {
+      "title" : "Эта транзакция использует адрес кошелька из санкционных списков<br/>и не может быть проведена:<br/>{{sanctionedAddress}}<br/>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "Эта транзакция использует адрес кошелька из санкционных списков и не может быть проведена."
     }
   },
   "cryptoOrg" : {
@@ -7057,18 +7070,20 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "Поиск...",
-    "assetFlow" : {
-      "selectTemplate" : "Выберите {{dynamic}}",
-      "asset" : "актив",
-      "network" : "сеть",
-      "account" : "счёт"
-    }
+    "selectAsset" : "Выберите криптоактив",
+    "selectNetwork" : "Выберите сеть",
+    "selectAccount" : "Выберите счёт"
   },
   "nftEntryPoint" : {
-    "title" : "NFT (невзаимозаменяемые токены)",
+    "title" : "Ваши NFT",
     "entry" : {
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Страна не обслуживается",
+    "description" : "Кошелёк Ledger недоступен в этой локации.",
+    "learnMore" : "Подробнее..."
   }
 }
