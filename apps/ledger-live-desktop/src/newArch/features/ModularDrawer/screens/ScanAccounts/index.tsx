@@ -1,12 +1,10 @@
-import * as Icons from "@ledgerhq/icons-ui/react";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
-import { Box, Button, Flex, Text } from "@ledgerhq/react-ui";
+import { Box, Button, Flex, Text, Link, Icons } from "@ledgerhq/react-ui";
 import {
   AccountItem,
   Account as AccountItemAccount,
 } from "@ledgerhq/react-ui/pre-ldls/components/AccountItem/AccountItem";
-import { VirtualList } from "@ledgerhq/react-ui/pre-ldls/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import invariant from "invariant";
@@ -151,14 +149,16 @@ const ScanAccounts = ({ currency, deviceId, onComplete, onLoadingChange }: Props
   );
 
   const renderAccount = (x: AccountItemAccount) => (
-    <AccountItem
-      account={x}
-      checkbox={{
-        name: "checked",
-        isChecked: checkedIds.has(x.id),
-        onChange: () => handleToggle(x.id),
-      }}
-    />
+    <Box mb={16}>
+      <AccountItem
+        account={x}
+        checkbox={{
+          name: "checked",
+          isChecked: checkedIds.has(x.id),
+          onChange: () => handleToggle(x.id),
+        }}
+      />
+    </Box>
   );
 
   return (
@@ -178,8 +178,8 @@ const ScanAccounts = ({ currency, deviceId, onComplete, onLoadingChange }: Props
       />
 
       <Box flex={1}>
-        <Flex alignItems="center" justifyContent="space-between">
-          <Text variant="h5Inter" fontSize="small" fontWeight="regular">
+        <Flex alignItems="center" justifyContent="space-between" mb="2">
+          <Text variant="h5Inter" fontSize="small" color="neutral.c80">
             {t(
               isScanning
                 ? "modularAssetDrawer.scanAccounts.status.scanning"
@@ -192,47 +192,34 @@ const ScanAccounts = ({ currency, deviceId, onComplete, onLoadingChange }: Props
           {/* TODO unstyled button */}
           {formattedAccounts.length > 0 ? (
             formattedAccounts.length === checkedIds.size ? (
-              <Button onClick={handleDeselectAll}>
+              <Link size="small" onClick={handleDeselectAll}>
                 {t("modularAssetDrawer.addAccounts.controls.deselectAll")}
-              </Button>
+              </Link>
             ) : (
-              <Button onClick={handleSelectAll}>
+              <Link size="small" onClick={handleSelectAll}>
                 {t("modularAssetDrawer.addAccounts.controls.selectAll")}
-              </Button>
+              </Link>
             )
           ) : null}
         </Flex>
 
-        <VirtualList
-          gap={16}
-          items={formattedAccounts}
-          itemHeight={72}
-          renderItem={renderAccount}
-          // TODO review
-          hasNextPage={false}
-          onVisibleItemsScrollEnd={() => {}}
-        />
+        {formattedAccounts.map(account => {
+          return renderAccount(account);
+        })}
+        {!isScanning && formattedAccounts.length > 0 ? (
+          <Box flex={1}>
+            <Flex alignItems="center" justifyContent="space-between" mb="2">
+              <Text variant="h5Inter" fontSize="small" color="neutral.c80">
+                {t("modularAssetDrawer.addAccounts.newAccount")}
+              </Text>
+            </Flex>
+
+            {formattedAccounts.map(account => {
+              return renderAccount(account);
+            })}
+          </Box>
+        ) : null}
       </Box>
-
-      {!isScanning && formattedAccounts.length > 0 ? (
-        <Box flex={1}>
-          <Flex alignItems="center" justifyContent="space-between">
-            <Text variant="h5Inter" fontSize="small" fontWeight="regular">
-              {t("modularAssetDrawer.addAccounts.newAccount")}
-            </Text>
-          </Flex>
-
-          <VirtualList
-            gap={16}
-            items={formattedAccounts}
-            itemHeight={72}
-            renderItem={renderAccount}
-            // TODO review
-            hasNextPage={false}
-            onVisibleItemsScrollEnd={() => {}}
-          />
-        </Box>
-      ) : null}
 
       <Flex justifyContent="flex-end">
         {isScanning ? (
@@ -245,9 +232,7 @@ const ScanAccounts = ({ currency, deviceId, onComplete, onLoadingChange }: Props
             size="xl"
             variant="main"
           >
-            <Text color="neutral.c00" variant="body" fontSize={16} fontWeight="600">
-              {t("modularAssetDrawer.scanAccounts.cta.stopScanning")}
-            </Text>
+            {t("modularAssetDrawer.scanAccounts.cta.stopScanning")}
           </Button>
         ) : (
           <Button
@@ -259,9 +244,7 @@ const ScanAccounts = ({ currency, deviceId, onComplete, onLoadingChange }: Props
             size="xl"
             variant="main"
           >
-            <Text color="neutral.c00" variant="body" fontSize={16} fontWeight="600">
-              {t("modularAssetDrawer.addAccounts.cta.confirm")}
-            </Text>
+            {t("modularAssetDrawer.addAccounts.cta.confirm")}
           </Button>
         )}
       </Flex>
