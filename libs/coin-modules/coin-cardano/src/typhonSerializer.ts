@@ -146,11 +146,11 @@ const prepareLedgerOutput =
 
 function prepareCertificate(cert: TyphonTypes.Certificate): SignerTxCertificate {
   switch (cert.type) {
-    case CertificateType.STAKE_REGISTRATION:
+    case CertificateType.STAKE_KEY_REGISTRATION:
       return prepareStakeRegistrationCertificate(cert);
     case CertificateType.STAKE_DELEGATION:
       return prepareStakeDelegationCertificate(cert);
-    case CertificateType.STAKE_DE_REGISTRATION:
+    case CertificateType.STAKE_KEY_DE_REGISTRATION:
       return prepareStakeDeRegistrationCertificate(cert);
     case CertificateType.VOTE_DELEGATION:
       return prepareVoteDelegationCertificate(cert);
@@ -160,7 +160,7 @@ function prepareCertificate(cert: TyphonTypes.Certificate): SignerTxCertificate 
 }
 
 function prepareStakeRegistrationCertificate(
-  certificate: TyphonTypes.StakeRegistrationCertificate,
+  certificate: TyphonTypes.StakeKeyRegistrationCertificate,
 ): RegistrationCertificate {
   if (
     certificate.cert.stakeCredential.type === TyphonTypes.HashType.ADDRESS &&
@@ -176,6 +176,7 @@ function prepareStakeRegistrationCertificate(
             index: certificate.cert.stakeCredential.bipPath.index,
           }),
         },
+        deposit: certificate.cert.deposit.toString(),
       },
     };
   } else {
@@ -209,7 +210,7 @@ function prepareStakeDelegationCertificate(
 }
 
 function prepareStakeDeRegistrationCertificate(
-  certificate: TyphonTypes.StakeDeRegistrationCertificate,
+  certificate: TyphonTypes.StakeKeyDeRegistrationCertificate,
 ): DeregistrationCertificate {
   if (
     certificate.cert.stakeCredential.type === TyphonTypes.HashType.ADDRESS &&
@@ -225,6 +226,7 @@ function prepareStakeDeRegistrationCertificate(
             index: certificate.cert.stakeCredential.bipPath.index,
           }),
         },
+        deposit: certificate.cert.deposit.toString(),
       },
     };
   } else {
