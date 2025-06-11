@@ -87,7 +87,7 @@ env:
 jobs:
   detox-tests-ios:
     name: "iOS Detox"
-    runs-on: ["pa4-r102-srv-macrunner15", macOS, ARM64]
+    runs-on: ["new-pool", macOS, ARM64]
     if: ${{ !cancelled() && inputs.tests_type != 'E2E - Android Only' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=8192"
