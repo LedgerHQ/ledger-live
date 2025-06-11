@@ -64,13 +64,14 @@ async function performSwapUntilQuoteSelectionStep(swap: SwapType, minAmount: str
   await app.swapLiveApp.waitForQuotes();
 }
 
-export function runSwapTest(swap: SwapType, tmsLinks: string[]) {
+export function runSwapTest(swap: SwapType, tmsLinks: string[], tags: string[]) {
   describe("Swap - Accepted (without tx broadcast)", () => {
     beforeAll(async () => {
       await beforeAllFunction(swap);
     });
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
     it(`Swap ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`, async () => {
       const minAmount = await app.swapLiveApp.getMinimumAmount(swap);
       await performSwapUntilQuoteSelectionStep(swap, minAmount);

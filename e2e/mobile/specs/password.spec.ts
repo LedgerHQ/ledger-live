@@ -1,5 +1,6 @@
 import { device } from "detox";
 
+const tags: string[] = ["@NanoSP", "@LNS", "@NanoX"];
 describe("Password Lock Screen", () => {
   const nanoApp = AppInfos.ETHEREUM;
   const CORRECT_PASSWORD = "passWORD$123!";
@@ -22,6 +23,7 @@ describe("Password Lock Screen", () => {
   });
 
   $TmsLink("B2CQA-1763");
+  tags.forEach(tag => $Tag(tag));
   it("should ask for the password when lock is toggled", async () => {
     await app.portfolio.navigateToSettings();
     await app.settings.navigateToGeneralSettings();
@@ -34,6 +36,7 @@ describe("Password Lock Screen", () => {
   });
 
   $TmsLink("B2CQA-2343");
+  tags.forEach(tag => $Tag(tag));
   it("should stay locked with incorrect password", async () => {
     await app.passwordEntry.enterPassword("INCORRECT_PASSWORD");
     await app.passwordEntry.login();
@@ -41,6 +44,7 @@ describe("Password Lock Screen", () => {
   });
 
   $TmsLink("B2CQA-1763");
+  tags.forEach(tag => $Tag(tag));
   it("should unlock with correct password", async () => {
     await app.passwordEntry.enterPassword(CORRECT_PASSWORD);
     await app.passwordEntry.login();

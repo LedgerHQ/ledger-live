@@ -17,7 +17,6 @@ import logReport from "../../src/log-report";
 import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
 import { getAllEnvs, setEnv } from "@ledgerhq/live-env";
 import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e/index";
-import { DeviceModelId } from "@ledgerhq/devices";
 import Config from "react-native-config";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
 
@@ -143,8 +142,9 @@ function onMessage(event: WebSocketMessageEvent) {
         break;
       }
       case "addKnownSpeculos": {
-        const address = msg.payload;
-        const model = DeviceModelId.nanoX;
+        const json = JSON.parse(msg.payload);
+        const model = json.model;
+        const address = json.address;
         store.dispatch(
           setLastConnectedDevice({
             deviceId: `httpdebug|ws://${address}`,

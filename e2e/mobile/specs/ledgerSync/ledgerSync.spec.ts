@@ -1,8 +1,10 @@
 import { device } from "detox";
 import { getEnv } from "@ledgerhq/live-env";
 import { getFlags } from "../../bridge/server";
+import { describeIfNotNanoS } from "../../helpers/commonHelpers";
 
 const tmsLinks = ["B2CQA-2292", "B2CQA-2293", "B2CQA-2296"];
+const tags = ["@NanoSP", "@NanoX"];
 
 const ledgerKeyRingProtocolArgs = {
   apiBaseUrl: "",
@@ -52,8 +54,7 @@ async function initializeLedgerSync() {
   await app.ledgerSync.activateLedgerSyncOnSpeculos();
   return output;
 }
-
-describe(`Ledger Sync Accounts`, () => {
+describeIfNotNanoS(`Ledger Sync Accounts`, () => {
   beforeAll(async () => {
     await app.init({
       speculosApp: AppInfos.LS,
@@ -84,6 +85,7 @@ describe(`Ledger Sync Accounts`, () => {
   }
 
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
   it(`Synchronize one instance then delete the backup`, async () => {
     await app.accounts.openViaDeeplink();
     await app.accounts.expectNoAccount();
