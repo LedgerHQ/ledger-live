@@ -893,6 +893,7 @@
     "title" : "ซื้อและขายคริปโต",
     "reset" : "รีเซ็ตโฟลว์",
     "verifyAddress" : "โปรดยืนยัน Address ที่ปรากฏว่าตรงกับที่แสดงบนอุปกรณ์ของคุณหรือไม่",
+    "connectingTo" : "กำลังเชื่อมต่อคุณกับ {{provider}}",
     "buy" : {
       "header" : "ซื้อคริปโตกับพาร์ทเนอร์ของเรา",
       "title" : "เลือกผู้ให้บริการเพื่อซื้อคริปโต",
@@ -6594,6 +6595,19 @@
     },
     "AmountTooSmall" : {
       "title" : "Minimum required amount for this transaction is {{amount}}"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "ปกป้องคุณให้ปลอดภัย",
+      "description" : "ธุรกรรมนี้เกี่ยวข้องกับ Address ของวอลเล็ตที่ถูกคว่ำบาตร และไม่สามารถดำเนินการได้<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForSendError" : {
+      "title" : "ธุรกรรมนี้เกี่ยวข้องกับ Address ของวอลเล็ตที่ถูกคว่ำบาตร และไม่สามารถดำเนินการได้<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForStakingError" : {
+      "title" : "ธุรกรรมนี้เกี่ยวข้องกับ Address ของวอลเล็ตที่ถูกคว่ำบาตร<br/> และไม่สามารถดำเนินการได้<br/>-- {{sanctionedAddress}}<br/>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "ธุรกรรมนี้เกี่ยวข้องกับ Address ของวอลเล็ตที่ถูกคว่ำบาตร และไม่สามารถดำเนินการได้<br/>"
     }
   },
   "cryptoOrg" : {
@@ -7057,12 +7071,9 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "ค้นหา",
-    "assetFlow" : {
-      "selectTemplate" : "เลือก {{dynamic}}",
-      "asset" : "สินทรัพย์",
-      "network" : "เครือข่าย",
-      "account" : "บัญชี"
-    }
+    "selectAsset" : "เลือกสินทรัพย์",
+    "selectNetwork" : "เลือกเครือข่าย",
+    "selectAccount" : "เลือกบัญชี"
   },
   "nftEntryPoint" : {
     "title" : "NFT (โทเคนที่ไม่สามารถแลกเปลี่ยนหรือแทนที่กันได้)",
@@ -7070,5 +7081,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "ไม่พร้อมให้บริการตำแหน่งที่ตั้งนี้",
+    "description" : "Ledger Wallet ไม่สามารถใช้ได้ในพื้นที่นี้",
+    "learnMore" : "เรียนรู้เพิ่มเติม"
   }
 }
