@@ -4,8 +4,8 @@ import styled, { keyframes } from "styled-components";
 
 import { Icon, Text } from "@ledgerhq/react-ui/index";
 import ProviderIcon from "~/renderer/components/ProviderIcon";
-import { CustomLoaderType } from "~/renderer/components/WebPTXPlayer";
 import { useShowProviderLoadingTransition } from "@ledgerhq/live-common/hooks/useShowProviderLoadingTransition";
+import { WebviewLoader } from "~/renderer/components/Web3AppWebview/types";
 
 export const Loader = styled.div`
   display: flex;
@@ -79,7 +79,7 @@ const EllipsisLoader = () => (
 );
 
 /** Custom loader for transition between Buy/Sell and providers */
-export const CustomLoaderBuySell: CustomLoaderType = ({ manifest, isLoading }) => {
+export const CustomLoaderBuySell: WebviewLoader = ({ manifest, isLoading }) => {
   const { t } = useTranslation();
   const showProviderLoadingTransition = useShowProviderLoadingTransition({ manifest, isLoading });
 
