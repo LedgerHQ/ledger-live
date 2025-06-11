@@ -4427,6 +4427,8 @@
       "mockAppUpdateDesc": "Display available app update in My Ledger, it will reinstall the same app version",
       "catalogUrl": "Set the catalog apps provider",
       "catalogUrlDesc": "Enter your custom catalog provider URL",
+      "customCALRef": "Custom CAL reference",
+      "customCALRefDesc": "Specify a custom branch, commit or tag to use for all CAL requests",
       "enablePlatformDevTools": "Enable platform dev tools",
       "enablePlatformDevToolsDesc": "Enable opening platform apps dev tools window",
       "customLockScreen": "Custom lock-screen assets",
