@@ -893,6 +893,7 @@
     "title" : "Compre e venda cripto",
     "reset" : "Redefinir fluxo",
     "verifyAddress" : "Confirme que o endereço exibido corresponde exatamente ao exibido no seu dispositivo",
+    "connectingTo" : "Conectando você a {{provider}}",
     "buy" : {
       "header" : "Compre cripto com provedores externos",
       "title" : "Escolha um provedor para comprar cripto",
@@ -6594,6 +6595,19 @@
     },
     "AmountTooSmall" : {
       "title" : "A quantia mínima exigida para esta transação é {{amount}}"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "Mantendo você em segurança",
+      "description" : "Esta transação envolve um endereço de carteira sancionado e não pode ser processada.<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForSendError" : {
+      "title" : "Esta transação envolve um endereço de carteira sancionado e não pode ser processada<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForStakingError" : {
+      "title" : "Esta transação envolve um endereço de carteira sancionado<br/>e não pode ser processada.<br/>-- {{sanctionedAddress}}<br/>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "Esta transação envolve um endereço de carteira sancionado e não pode ser processada."
     }
   },
   "cryptoOrg" : {
@@ -7057,12 +7071,9 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "Buscar",
-    "assetFlow" : {
-      "selectTemplate" : "Selecionar {{dynamic}}",
-      "asset" : "ativo",
-      "network" : "rede",
-      "account" : "conta"
-    }
+    "selectAsset" : "Selecionar ativo",
+    "selectNetwork" : "Selecione a rede",
+    "selectAccount" : "Selecionar conta"
   },
   "nftEntryPoint" : {
     "title" : "NFT (Tokens Não Fungíveis)",
@@ -7070,5 +7081,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Local indisponível",
+    "description" : "A carteira Ledger não está disponível neste local.",
+    "learnMore" : "Saiba mais"
   }
 }
