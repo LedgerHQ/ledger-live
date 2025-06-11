@@ -41,13 +41,10 @@
         "src/preloader/index.ts",
         "src/renderer/webworkers/workers/*.ts",
         "src/webviewPreloader/dappPreloader.ts",
-        "src/webviewPreloader/index.ts",
-        "src/newArch/features/ModularDrawer/components/SelectAsset.tsx"
+        "src/webviewPreloader/index.ts"
       ],
       "ignore": [
         "src/newArch/features/Collectibles/**",
-        "**/types.*",
-        "src/newArch/features/ModularDrawer/components/SelectAccount.tsx",
         ".storybook/stub.ts"
       ],
       "ignoreBinaries": ["eslint", "knip", "prettier", "zx", "lint"],
@@ -101,9 +98,7 @@
       "entry": ["src/index.tsx", "src/portfolio.tsx"]
     },
     "./libs/live-dmk-mobile": {
-      "entry": [
-        "src/index.ts"
-      ]
+      "entry": ["src/index.ts"]
     },
     "./libs/live-wallet": {
       "entry": [

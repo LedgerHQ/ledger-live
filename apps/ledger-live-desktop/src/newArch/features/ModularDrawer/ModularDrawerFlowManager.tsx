@@ -12,11 +12,7 @@ import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/us
 import { NetworkSelection } from "./screens/NetworkSelection";
 import { Title } from "./components/Title";
 import { AccountSelection } from "./screens/AccountSelection";
-import {
-  CurrenciesByProviderId,
-  LoadingBasedGroupedCurrencies,
-  LoadingStatus,
-} from "@ledgerhq/live-common/deposit/type";
+import { LoadingBasedGroupedCurrencies, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { useModularDrawerNavigation } from "./hooks/useModularDrawerNavigation";
 import { useAssetSelection } from "./hooks/useAssetSelection";
 import { useModularDrawerFlowState } from "./hooks/useModularDrawerFlowState";
@@ -92,16 +88,6 @@ const ModularDrawerFlowManager = ({
     hasOneCurrency,
   });
 
-  const assetTypes = useMemo(
-    () =>
-      currenciesByProvider.map((provider: CurrenciesByProviderId) => ({
-        id: provider.providerId,
-        name: provider.providerId,
-        ticker: provider.providerId,
-      })),
-    [currenciesByProvider],
-  );
-
   const handleBack = useMemo(() => {
     const canGoBackToAsset = !hasOneCurrency;
     const canGoBackToNetwork = !hasOneNetwork && networksToDisplay && networksToDisplay.length > 1;
@@ -144,7 +130,6 @@ const ModularDrawerFlowManager = ({
         if (!hasOneCurrency) {
           return (
             <AssetSelection
-              assetTypes={assetTypes}
               assetsToDisplay={assetsToDisplay}
               sortedCryptoCurrencies={filteredSortedCryptoCurrencies}
               defaultSearchValue={searchedValue}

@@ -12,11 +12,15 @@ export type ModularDrawerConfiguration = {
   };
 };
 
-const filterOptions = ["topNetworks"] as const;
-const assetsLeftElementOptions = ["apy", "priceVariation"] as const;
-const assetsRightElementOptions = ["balance", "marketTrend"] as const;
-const networksLeftElementOptions = ["numberOfAccounts", "numberOfAccountsAndApy"] as const;
-const networksRightElementOptions = ["balance"] as const;
+export const filterOptions = ["topNetworks", "undefined"] as const;
+export const assetsLeftElementOptions = ["apy", "priceVariation", "undefined"] as const;
+export const assetsRightElementOptions = ["balance", "marketTrend", "undefined"] as const;
+export const networksLeftElementOptions = [
+  "numberOfAccounts",
+  "numberOfAccountsAndApy",
+  "undefined",
+] as const;
+export const networksRightElementOptions = ["balance", "undefined"] as const;
 
 export const EnhancedModularDrawerConfigurationSchema = z.object({
   assets: z
