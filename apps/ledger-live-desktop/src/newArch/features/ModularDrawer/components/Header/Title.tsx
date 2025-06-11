@@ -5,10 +5,12 @@ import { useTranslation } from "react-i18next";
 
 type Props = {
   translationKey: string;
+  count?: number;
 };
 
-export const Title = ({ translationKey }: Props) => {
+export const Title = ({ translationKey, count }: Props) => {
   const { t } = useTranslation();
+
   return (
     <Text
       display="block"
@@ -30,7 +32,7 @@ export const Title = ({ translationKey }: Props) => {
           transition={{ duration: 0.15 }}
           data-testid="select-asset-drawer-title-dynamic"
         >
-          {t(translationKey)}
+          {t(translationKey, { count })}
         </motion.span>
       </AnimatePresence>
     </Text>
