@@ -21,6 +21,12 @@ import { StacksNetwork } from "../../network/api.types";
 import { StacksOperation, Transaction } from "../../types";
 import { memoToBufferCV } from "./memoUtils";
 
+const specialConditionCode = [
+  "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.auto-alex-v3::auto-alex-v3",
+  "SM26NBC8SFHNW4P1Y4DFH27974P56WN86C92HPEHH.token-lqstx::lqstx",
+  "SP673Z4BPB4R73359K9HE55F2X91V5BJTN5SXZ5T.token-liabtc::liabtc",
+];
+
 /**
  * Extracts token contract details from a TokenAccount
  * @param {TokenAccount} subAccount - The token subaccount containing token details
@@ -74,12 +80,17 @@ export const createTokenTransferPostConditions = (
   contractName: string,
   assetName: string,
 ): PostCondition[] => {
+  let conditionCode: FungibleConditionCode = FungibleConditionCode.Equal;
+  if (specialConditionCode[`${contractAddress}.${contractName}::${assetName}`]) {
+    conditionCode = FungibleConditionCode.LessEqual;
+  }
+
   return [
     {
       type: StacksMessageType.PostCondition,
       conditionType: PostConditionType.Fungible,
       principal: createStandardPrincipal(senderAddress),
-      conditionCode: FungibleConditionCode.Equal,
+      conditionCode,
       amount: BigInt(amount.toFixed()),
       assetInfo: createAssetInfo(contractAddress, contractName, assetName),
     } as PostCondition,
