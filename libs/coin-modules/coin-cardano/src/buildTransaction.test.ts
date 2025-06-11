@@ -111,4 +111,90 @@ describe("buildTransaction", () => {
       expect(withdrawals.length).toBe(1);
     });
   });
+
+  describe("undelegate transaction", () => {
+    it("should build a undelegate transaction with correct deposit", async () => {
+      const account = getCardanoTestnetAccount({
+        delegation: {
+          status: true,
+          deposit: (3e6).toString(),
+          rewards: new BigNumber(0),
+        },
+      });
+      const txPayloadUndelegate: Transaction = {
+        family: "cardano",
+        recipient: "",
+        amount: new BigNumber(0),
+        mode: "undelegate",
+        poolId: undefined,
+        protocolParams: getProtocolParams(),
+      };
+      const transaction = await buildTransaction(account, txPayloadUndelegate);
+      const deregisterCertificate = transaction
+        .getCertificates()
+        .find(c => c.type === TyphonTypes.CertificateType.STAKE_KEY_DE_REGISTRATION) as
+        | TyphonTypes.StakeKeyDeRegistrationCertificate
+        | undefined;
+
+      expect(deregisterCertificate).toBeDefined();
+      expect(deregisterCertificate!.cert.deposit.toString()).toBe(
+        account.cardanoResources.delegation?.deposit,
+      );
+    });
+  });
+
+  describe("delegate transaction", () => {
+    it("should build delegate transaction with stake key registration", async () => {
+      const account = getCardanoTestnetAccount({
+        delegation: undefined, // stake key not registered
+      });
+      const txPayloadDelegate: Transaction = {
+        family: "cardano",
+        recipient: "",
+        amount: new BigNumber(0),
+        mode: "delegate",
+        poolId: "7df262feae9201d1b2e32d4c825ca91b29fbafb2b8e556f6efb7f549",
+        protocolParams: getProtocolParams(),
+      };
+
+      const transaction = await buildTransaction(account, txPayloadDelegate);
+      const registerCertificate = transaction
+        .getCertificates()
+        .find(c => c.type === TyphonTypes.CertificateType.STAKE_KEY_REGISTRATION) as
+        | TyphonTypes.StakeKeyRegistrationCertificate
+        | undefined;
+
+      expect(registerCertificate).toBeDefined();
+      expect(registerCertificate!.cert.deposit.toString()).toBe(
+        transaction.protocolParams.stakeKeyDeposit.toString(),
+      );
+    });
+
+    it("should build delegate transaction without stake key registration", async () => {
+      const account = getCardanoTestnetAccount({
+        delegation: {
+          status: true, // stake key already registered
+          deposit: (2e6).toString(),
+          rewards: new BigNumber(0),
+        },
+      });
+      const txPayloadDelegate: Transaction = {
+        family: "cardano",
+        recipient: "",
+        amount: new BigNumber(0),
+        mode: "delegate",
+        poolId: "7df262feae9201d1b2e32d4c825ca91b29fbafb2b8e556f6efb7f549",
+        protocolParams: getProtocolParams(),
+      };
+
+      const transaction = await buildTransaction(account, txPayloadDelegate);
+      const registerCertificate = transaction
+        .getCertificates()
+        .find(c => c.type === TyphonTypes.CertificateType.STAKE_KEY_REGISTRATION) as
+        | TyphonTypes.StakeKeyRegistrationCertificate
+        | undefined;
+
+      expect(registerCertificate).toBeUndefined();
+    });
+  });
 });
