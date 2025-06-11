@@ -38,7 +38,7 @@ import {
 } from "~/actions/settings";
 import InstallSetOfApps from "~/components/DeviceAction/InstallSetOfApps";
 import Stories from "~/components/StorylyStories";
-import { TrackScreen, screen } from "~/analytics";
+import { TrackScreen, screen, track } from "~/analytics";
 import ContinueOnStax from "./assets/ContinueOnStax";
 import ContinueOnEuropa from "./assets/ContinueOnEuropa";
 import type { SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
@@ -557,6 +557,14 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     servicesConfig?.params?.protectId,
   ]);
 
+  const handleLearnMoreClick = useCallback(() => {
+    // TODO: Add link
+    track("button_clicked", {
+      button: "Learn More",
+      page: "Charon Start",
+    });
+  }, []);
+
   const companionSteps: Step[] = useMemo(
     () =>
       [
@@ -700,7 +708,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                   <Flex mb={6} width="100%" justifyContent="center" alignItems="center">
                     <Link
                       Icon={ExternalLinkMedium}
-                      onPress={() => {}}
+                      onPress={handleLearnMoreClick}
                       style={{ justifyContent: "flex-start" }}
                     >
                       {t("syncOnboarding.seedStep.backupCharon.cta")}
@@ -798,9 +806,10 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     [
       t,
       productName,
+      seedPathStatus,
       deviceInitialApps?.enabled,
       device,
-      seedPathStatus,
+      handleLearnMoreClick,
       shouldRestoreApps,
       handleInstallAppsComplete,
       deviceOnboardingState?.charonSupported,
