@@ -1925,7 +1925,8 @@
       "payoutNetworkFees" : "رسوم الدفع",
       "payoutNetworkFeesTooltip" : "هذا المبلغ لن يظهر على جهازك",
       "acceptTerms" : "بتأكيد صحة هذه المعاملة، أنا أقبل\n<0>شروط استخدام {{provider}}</0>",
-      "exodusAcceptTerms" : "Exodus تعتمد على أطراف ثالثة لإجراء المبادلات.\nبتأكيد صحة هذه المعاملة، أنا أقبل <0>شروط استخدام Exodus</0>"
+      "exodusAcceptTerms" : "Exodus تعتمد على أطراف ثالثة لإجراء المبادلات.\nبتأكيد صحة هذه المعاملة، أنا أقبل <0>شروط استخدام Exodus</0>",
+      "changellyAcceptTerms" : "By clicking “Swap with Changelly” you accept Changelly’s <0>Terms of Use</0> and\nits <1>AML/KYC policy</1> Changelly may apply AML/KYC procedures which\ncan, in limited cases, impact the completion of your transaction. Should\nthat happen, you must contact Changelly’s <2>customer support.</2>"
     },
     "swap2" : {
       "amountSent" : "المبلغ المطلوب إرساله",
@@ -3828,6 +3829,174 @@
           "accruedDelta" : "المتراكمة {{delta}}.",
           "interestRateNotSetup" : "مُعدل الفائدة الحالي تم تعيينه ليكون %0.",
           "description" : "رموز التوكن التي تنمو أو تنخفض قيمتها باستمرار وفقاً لمعدل فائدتها. لا يتم إنشاء أي رموز توكن جديدة على الإطلاق، الميزة تجميلية بشكل كامل."
+        }
+      }
+    }
+  },
+  "aptos" : {
+    "account" : {
+      "stakedBalance" : "الرصيد المُكدَّس",
+      "stakedBalanceTooltip" : "هذا المبلع مُكدَّس حالياً مع مدققين.",
+      "withdrawableBalance" : "الرصيد القابل للسحب",
+      "withdrawableBalanceTooltip" : "هذا المبلغ تم إلغاء تكديسه وحالياً قابل للسحب.",
+      "pendingBalance" : "الرصيد المُعلَّق",
+      "pendingBalanceTooltip" : "هذا المبلغ تمّ إلغاء تكديسه وحالياً بانتظار الإتاحة."
+    },
+    "common" : {
+      "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى.",
+      "viewDetails" : "عرض التفاصيل",
+      "connectDevice" : {
+        "title" : "الجهاز"
+      },
+      "confirmation" : {
+        "title" : "تأكيد"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "المبلغ المُكدَّس",
+        "unstakedAmount" : "المبلغ غير المُكدّس",
+        "withdrawnAmount" : "المبلغ المسحوب"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "يمكنك كسب مكافآت Aptos عن طريق تكديس أصولك.",
+        "info" : "كيف يعمل التكديس",
+        "earnRewards" : "اكسب مكافآت"
+      },
+      "table" : {
+        "header" : "موضع (أو مواضع) التكديس",
+        "stake" : "إضافة",
+        "active" : "مُكدَّس",
+        "pendingInactive" : "في انتظار الإصدار",
+        "inactive" : "قابل للسحب",
+        "nextUnlock" : "إلغاء القفل القادم"
+      },
+      "nextUnlockIn" : "إلغاء القفل القادم خلال",
+      "unstake" : "إلغاء التكديس",
+      "withdraw" : "سحب",
+      "restake" : "إعادة التكديس",
+      "activeTooltip" : "المبالغ المُكدَّسة تولِّد مكافآت",
+      "inactiveTooltip" : "المبالغ غير المُكدَّسة لا تولِّد مكافآت",
+      "commission" : "العمولة",
+      "totalStake" : "إجمالي التكديس",
+      "minSafeWarning" : "لا توجد أموال كافية",
+      "flow" : {
+        "title" : "تكديس",
+        "steps" : {
+          "starter" : {
+            "description" : "يمكنك كسب المكافآت عن طريق تكديس أصولك Aptos إلى مدقق.",
+            "bullet" : ["أنت تحتفظ بملكية الأصول المُكدَّسة", "قم بالتكديس باستخدام جهازك Ledger", "الأصول ستكون متاحةً بعد 52 - 65 ساعة من إلغاء التكديس"],
+            "warning" : {
+              "description" : "اختر المدقق بحكمة: فقد يتم فقدان جزء من أصولك المُكدسة بشكل لا رجعة فيه إذا لم يتصرف المدقق بشكل لائق."
+            }
+          },
+          "amount" : {
+            "title" : "المبلغ"
+          },
+          "validator" : {
+            "title" : "المدققون",
+            "ledgerByChorusOneTC" : "شروط وأحكام Ledger by Chorus One",
+            "ledgerByFigmentTC" : "شروط وأحكام Ledger by Figment"
+          },
+          "connectDevice" : {
+            "title" : "الجهاز"
+          },
+          "confirmation" : {
+            "title" : "تأكيد",
+            "success" : {
+              "title" : "لقد قمت بتكديس أصولك بنجاح",
+              "text" : "سيتم تحديث رصيد حسابك عندما تقوم سلسلة الكتل بتأكيد المعاملة.",
+              "cta" : "عرض التفاصيل"
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          }
+        }
+      }
+    },
+    "restake" : {
+      "flow" : {
+        "title" : "إعادة تنشيط التكديس",
+        "steps" : {
+          "amount" : {
+            "title" : "المبلغ",
+            "subtitle" : "عملية إعادة التكديس ستعيد تكديس رصيدك القابل للسحب مجدداً.",
+            "warning" : "كل الرصيد المتاح سيُعاد تكديسه. المبلغ المُعاد تكديسه سيكون متاحاً للسحب بعد عملية إلغاء التكديس وزمن إلغاء القفل.",
+            "fields" : {
+              "validator" : "المدقق",
+              "amount" : "المبلغ المطلوب إعادة تكديسه"
+            }
+          },
+          "connectDevice" : {
+            "title" : "الجهاز"
+          },
+          "confirmation" : {
+            "title" : "تأكيد",
+            "success" : {
+              "title" : "لقد قمت بإعادة تكديس أصولك بنجاح.",
+              "description" : "تم إعادة تكديس {{amount}} من {{validator}}",
+              "cta" : "عرض التفاصيل"
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "لا توجد أصول مُكدَّسة كافية لإلغاء تكديسها",
+      "flow" : {
+        "title" : "إلغاء التكديس",
+        "steps" : {
+          "amount" : {
+            "title" : "المبلغ",
+            "subtitle" : "عملية إلغاء التكديس سوف تستغرق {{timeToUnlock}} لتتم.",
+            "subtitle2" : "عملية إلغاء التكديس قد تستغرق ما يصل إلى 30 يوماً لتتم.",
+            "warning" : "سيتم تحصيل المكافآت فوراً. المبلغ غير المُكدَّس سيكون متاحاً للسحب بعد زمن إلغاء القفل.",
+            "fields" : {
+              "validator" : "المدقق",
+              "amount" : "المبلغ المطلوب إلغاء تكديسه"
+            }
+          },
+          "connectDevice" : {
+            "title" : "الجهاز"
+          },
+          "confirmation" : {
+            "title" : "تأكيد",
+            "success" : {
+              "title" : "لقد قمت بإلغاء تكديس أصولك بنجاح",
+              "description" : "تم إلغاء تكديس {{amount}} من {{validator}}",
+              "cta" : "عرض التفاصيل"
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "disabledTooltip" : "لا توجد أصول كافية للسحب",
+      "flow" : {
+        "title" : "سحب",
+        "steps" : {
+          "amount" : {
+            "title" : "المبلغ",
+            "fields" : {
+              "validator" : "المدقق",
+              "amount" : "المبلغ المراد سحبه"
+            }
+          },
+          "connectDevice" : {
+            "title" : "الجهاز"
+          },
+          "confirmation" : {
+            "title" : "تأكيد",
+            "success" : {
+              "title" : "لقد قمت بسحب أصولك بنجاح.",
+              "description" : "تم سحب {{amount}} من {{validator}}",
+              "cta" : "عرض التفاصيل"
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          }
         }
       }
     }
@@ -5870,9 +6039,17 @@
       "title" : "عذراً، فشل تقدير الرسوم",
       "description" : "فشل تقدير الرسوم على الشبكة. تحقق من المُدخلات، من المرجح أن تفشل المعاملة"
     },
+    "NotEnoughToStake" : {
+      "title" : "الحد الأدنى للتكديس: {{currency}} {{minStake}}",
+      "description" : "هناك حد أدنى يبلغ {{currency}} {{minStake}} مطلوب للتكديس."
+    },
     "NotEnoughBalance" : {
       "title" : "عفواً، الأموال المتوفرة غير كافية",
       "description" : "يرجى التأكد من أن الحساب به أموال كافية."
+    },
+    "NotEnoughStakedBalanceLeft" : {
+      "title" : "يجب عليك ترك {{minAmountStaked}} مُكدّسةً على الأقل",
+      "description" : "يُرجى ترك {{minAmountStaked}} مُكدّسةً على الأقل، وإلا سيتعين عليك إلغاء تكديس المبلغ بأكمله."
     },
     "NotEnoughBalanceFees" : {
       "title" : "عذراً، الأموال غير كافية لتغطية الرسوم",
@@ -6594,6 +6771,19 @@
     },
     "AmountTooSmall" : {
       "title" : "الحد الأدنى للمبلغ المطلوب لهذه المعاملة هو {{amount}}"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "إبقاؤك آمناً",
+      "description" : "هذه المعاملة تتضمن عنوان محفظة خاضع لعقوبات ولا يمكن معالجتها.<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForSendError" : {
+      "title" : "هذه المعاملة تتضمن عنوان محفظة خاضع لعقوبات ولا يمكن معالجتها<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForStakingError" : {
+      "title" : "هذه المعاملة تتضمن عنوان محفظة<br/> خاضع لعقوبات ولا يمكن معالجتها.<br/>-- {{sanctionedAddress}}<br/>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "هذه المعاملة تتضمن عنوان محفظة خاضع لعقوبات ولا يمكن معالجتها."
     }
   },
   "cryptoOrg" : {
@@ -7057,12 +7247,9 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "بحث",
-    "assetFlow" : {
-      "selectTemplate" : "اختر {{dynamic}}",
-      "asset" : "أصل",
-      "network" : "الشبكة",
-      "account" : "حساب"
-    }
+    "selectAsset" : "اختر أصل",
+    "selectNetwork" : "اختر الشبكة",
+    "selectAccount" : "اختر حساب"
   },
   "nftEntryPoint" : {
     "title" : "الرموز غير القابلة للاستبدال (NFT)",
@@ -7070,5 +7257,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "الموقع غير متاح",
+    "description" : "محفظة Ledger غير متاحة في هذا الموقع.",
+    "learnMore" : "تعرّف على المزيد"
   }
 }
