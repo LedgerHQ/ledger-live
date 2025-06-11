@@ -18,6 +18,7 @@ let accountBridgeInstance: AccountBridge<any> | null = null;
 let currencyBridgeInstance: CurrencyBridge | null = null;
 
 export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
+  // console.log("getCurrencyBridge", currency.id, currency.family);
   if (getEnv("MOCK")) {
     const mockBridge = mockBridges[currency.family];
     if (mockBridge) return mockBridge.currencyBridge;
@@ -27,10 +28,12 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   }
 
   if (alpacaized[currency.family]) {
-    if (!currencyBridgeInstance) {
-      currencyBridgeInstance = getAlpacaCurrencyBridge(currency.family, "local");
-    }
-    return currencyBridgeInstance;
+    // console.log("getAlpacaCurrencyBridge", currency.family);
+    // if (!currencyBridgeInstance) {
+    //   console.log("Creating new Alpaca currency bridge instance for", currency.family);
+    //   currencyBridgeInstance = getAlpacaCurrencyBridge(currency.family, "local");
+    // }
+    return getAlpacaCurrencyBridge(currency.family, "local");
   }
 
   const jsBridge = jsBridges[currency.family];
@@ -47,6 +50,7 @@ export const getAccountBridge = (
   account: AccountLike,
   parentAccount?: Account | null,
 ): AccountBridge<any> => {
+  // console.log("getAccountBridge", account);
   const mainAccount = getMainAccount(account, parentAccount);
   const { currency } = mainAccount;
   const supportedError = checkAccountSupported(mainAccount);
@@ -65,6 +69,7 @@ export const getAccountBridge = (
 };
 
 export function getAccountBridgeByFamily(family: string, accountId?: string): AccountBridge<any> {
+  // console.log("getAccountBridgeByFamily", family);
   if (accountId) {
     const { type } = decodeAccountId(accountId);
 
@@ -75,10 +80,10 @@ export function getAccountBridgeByFamily(family: string, accountId?: string): Ac
   }
 
   if (alpacaized[family]) {
-    if (!accountBridgeInstance) {
-      accountBridgeInstance = getAlpacaAccountBridge(family, "local");
-    }
-    return accountBridgeInstance;
+    // if (!accountBridgeInstance) {
+    //   accountBridgeInstance = getAlpacaAccountBridge(family, "local");
+    // }
+    return getAlpacaAccountBridge(family, "local");
   }
 
   const jsBridge = jsBridges[family];

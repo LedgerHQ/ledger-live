@@ -42,9 +42,12 @@ export const genericSignOperation =
         if (!transaction["fees"]) throw new FeeNotLoaded();
         o.next({ type: "device-signature-requested" });
 
-        const { publicKey } = (await signerContext(deviceId, signer =>
-          signer.getAddress(account.freshAddressPath),
-        )) as Result;
+        console.log("BEFORE SIGNER CONTEXT: ", account);
+        const { publicKey } = (await signerContext(deviceId, signer => {
+          console.log("SIGNER CONTEXT: ", signer);
+          return signer.getAddress(account.freshAddressPath);
+        })) as Result;
+        console.log("AFTER SIGNER CONTEXT");
 
         const transactionIntent = transactionToIntent(account, transaction);
         transactionIntent.senderPublicKey = publicKey;

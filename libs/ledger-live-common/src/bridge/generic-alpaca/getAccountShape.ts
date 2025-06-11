@@ -42,6 +42,8 @@ function buildPaginationParams(
 
 export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
   return async (info, syncConfig) => {
+    console.log("genericGetAccountShape info ", info);
+    console.log("genericGetAccountShape syncConfig ", syncConfig);
     const { address, initialAccount, currency, derivationMode } = info;
 
     if (address === STELLAR_BURN_ADDRESS) {
@@ -57,30 +59,31 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     });
 
     const blockInfo = await getAlpacaApi(network, kind).lastBlock();
+    console.log("blockInfo", blockInfo);
     const balanceRes = await getAlpacaApi(network, kind).getBalance(address);
-
+    console.log("balanceRes", balanceRes);
     const nativeAsset = balanceRes.find(b => b.asset.type === "native");
     const nativeBalance = BigInt(nativeAsset?.value ?? "0");
     const lockedBalance = BigInt(nativeAsset?.locked ?? "0");
     const spendableBalance = nativeBalance > lockedBalance ? nativeBalance - lockedBalance : 0n;
 
     const oldOps = (initialAccount?.operations || []) as StellarOperation[];
+    console.log("oldOps", oldOps);
     const lastPagingToken = oldOps[0]?.extra?.pagingToken || "";
     const isInitSync = lastPagingToken === "";
 
     const pagination = buildPaginationParams(network, isInitSync, lastPagingToken);
     const [newCoreOps] = await getAlpacaApi(network, kind).listOperations(address, pagination);
-
+    console.log("newCoreOps", newCoreOps);
+    // FIXME: adaptCoreOperationToLiveOperation should not be StellarOperation but generic
     const newOps = newCoreOps.map(op =>
       adaptCoreOperationToLiveOperation(accountId, op),
     ) as StellarOperation[];
     const mergedOps = mergeOps(oldOps, newOps) as StellarOperation[];
+    console.log("mergedOps", mergedOps);
 
-    const assetOps = mergedOps.filter(
-      op =>
-        op.extra?.assetCode && op.extra?.assetIssuer && !["OPT_IN", "OPT_OUT"].includes(op.type),
-    );
-
+    const assetOps = mergedOps.filter(op => op.type === "NONE");
+    console.log("assetOps", assetOps);
     // Instead of building TokenAccounts, we use enriched AssetInfo objects
     const tokenAssets: BaseTokenLikeAsset[] = balanceRes
       .filter(b => b.asset?.type === "token")
@@ -90,18 +93,18 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         balance: b.value.toString(),
         decimals: 7, // Default Stellar token decimals
         creationDate: new Date(), // Optional: replace if available
-        operations: assetOps.filter(
+        operations: newCoreOps.filter(
           op =>
-            op.extra?.assetCode === b.asset.assetCode &&
-            op.extra?.assetIssuer === b.asset.assetIssuer,
+            op.asset?.assetCode === b.asset.assetCode &&
+            op.asset?.assetIssuer === b.asset.assetIssuer,
         ),
       }));
-
+    console.log("tokenAssets", tokenAssets);
     const operationsWithSubs = mergedOps.map(op => ({
       ...op,
       subOperations: inferSubOperations(op.hash, []),
     }));
-
+    console.log("operationsWithSubs", operationsWithSubs);
     return {
       id: accountId,
       xpub: address,
