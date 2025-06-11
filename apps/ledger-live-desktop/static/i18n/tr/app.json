@@ -1925,7 +1925,8 @@
       "payoutNetworkFees" : "Ödeme ücretleri",
       "payoutNetworkFeesTooltip" : "Bu tutar cihazınızda gösterilmeyecektir",
       "acceptTerms" : "Bu işlemi onaylayarak,\n<0>{{provider}} kullanım koşullarını</0> kabul ediyorum.",
-      "exodusAcceptTerms" : "Exodus, takas işlemlerini gerçekleştirmek için üçüncü tarafları kullanır.\nBu işlemi onaylayarak, <0>Exodus'un kullanım koşullarını</0> kabul ediyorum."
+      "exodusAcceptTerms" : "Exodus, takas işlemlerini gerçekleştirmek için üçüncü tarafları kullanır.\nBu işlemi onaylayarak, <0>Exodus'un kullanım koşullarını</0> kabul ediyorum.",
+      "changellyAcceptTerms" : "By clicking “Swap with Changelly” you accept Changelly’s <0>Terms of Use</0> and\nits <1>AML/KYC policy</1> Changelly may apply AML/KYC procedures which\ncan, in limited cases, impact the completion of your transaction. Should\nthat happen, you must contact Changelly’s <2>customer support.</2>"
     },
     "swap2" : {
       "amountSent" : "Gönderilecek tutar",
@@ -3828,6 +3829,174 @@
           "accruedDelta" : "Tahakkuk eden: {{delta}}.",
           "interestRateNotSetup" : "Güncel faiz oranı %0 olarak belirlenmiştir.",
           "description" : "Faiz oranına bağlı olarak değeri sürekli artan veya azalan token'lar. Hiçbir zaman yeni token'lar oluşturulmaz, özellik tamamen gösterim amaçlıdır."
+        }
+      }
+    }
+  },
+  "aptos" : {
+    "account" : {
+      "stakedBalance" : "Stake bakiyesi",
+      "stakedBalanceTooltip" : "Doğrulayıcılarla stake edilmiş olan güncel miktar.",
+      "withdrawableBalance" : "Çekilebilir bakiye",
+      "withdrawableBalanceTooltip" : "Stake’i durdurulmuş ve çekilebilecek olan güncel miktar.",
+      "pendingBalance" : "Bekleyen bakiye",
+      "pendingBalanceTooltip" : "Stake’i durdurulmuş ve müsait olması beklenen güncel miktar."
+    },
+    "common" : {
+      "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin.",
+      "viewDetails" : "Ayrıntıları gör",
+      "connectDevice" : {
+        "title" : "Cihaz"
+      },
+      "confirmation" : {
+        "title" : "Onaylayın"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "Stake edilmiş miktar",
+        "unstakedAmount" : "Staking’i durdurulan tutar",
+        "withdrawnAmount" : "Çekilen tutar"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "Varlıklarınızı stake ederek Aptos ödülleri kazanabilirsiniz.",
+        "info" : "Staking Nasıl Çalışır?",
+        "earnRewards" : "Ödüller kazanın"
+      },
+      "table" : {
+        "header" : "Staking Pozisyonları",
+        "stake" : "Ekle",
+        "active" : "Stake edildi",
+        "pendingInactive" : "Açılmayı bekleyen",
+        "inactive" : "Çekilebilir bakiye",
+        "nextUnlock" : "Bir sonraki kilit açım zamanı:"
+      },
+      "nextUnlockIn" : "Bir sonraki kilit açımına kalan süre:",
+      "unstake" : "Staking'i durdur",
+      "withdraw" : "Çek",
+      "restake" : "Yeniden stake et",
+      "activeTooltip" : "Stake edilen miktarlar ödül kazandırır",
+      "inactiveTooltip" : "Stake’i durdurulan miktarlar ödül kazandırmaz",
+      "commission" : "Komisyon",
+      "totalStake" : "Toplam Stake",
+      "minSafeWarning" : "Yetersiz fon miktarı",
+      "flow" : {
+        "title" : "Stake edin",
+        "steps" : {
+          "starter" : {
+            "description" : "Aptos varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz.",
+            "bullet" : ["Stake ettiğiniz varlıkların mülkiyeti sizde kalır", "Ledger cihazınızı kullanarak stake edin", "Stake'i durdurulan varlıklar 52 ila 65 saat sonra yeniden kullanılabilir"],
+            "warning" : {
+              "description" : "Doğrulayıcınızı dikkatli seçin! Doğrulayıcının yanlış kararlar vermesi hâlinde stake ettiğiniz varlıkların bir kısmını kalıcı olarak kaybedebilirsiniz."
+            }
+          },
+          "amount" : {
+            "title" : "Tutar"
+          },
+          "validator" : {
+            "title" : "Doğrulayıcılar",
+            "ledgerByChorusOneTC" : "Ledger by Chorus One Hüküm ve Koşulları",
+            "ledgerByFigmentTC" : "Ledger by Figment Hüküm ve Koşulları"
+          },
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "success" : {
+              "title" : "Varlıklarınızı başarıyla stake ettiniz",
+              "text" : "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek",
+              "cta" : "Ayrıntıları gör"
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "restake" : {
+      "flow" : {
+        "title" : "Staking’i yeniden etkinleştirin",
+        "steps" : {
+          "amount" : {
+            "title" : "Tutar",
+            "subtitle" : "Yeniden stake etme işlemi kapsamında, çekilebilir bakiyeniz yeniden stake edilecektir.",
+            "warning" : "Kullanılabilir bakiyenin tamamı yeniden stake edilecektir. Yeniden stake edilen tutar, staking’i durdurma işleminden ve kilit açım zamanından sonra çekilebilir.",
+            "fields" : {
+              "validator" : "Doğrulayıcı",
+              "amount" : "Yeniden stake edilecek tutar"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "success" : {
+              "title" : "Varlıklarınızı başarıyla yeniden stake ettiniz.",
+              "description" : "{{validator}} adlı doğrulayıcı ile {{amount}} yeniden stake edildi",
+              "cta" : "Ayrıntıları gör"
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "Stake edilen varlık miktarı stake durdurma için yeterli değil",
+      "flow" : {
+        "title" : "Staking'i durdur",
+        "steps" : {
+          "amount" : {
+            "title" : "Tutar",
+            "subtitle" : "Staking’i durdurma işleminin tamamlanması {{timeToUnlock}} sürecektir.",
+            "subtitle2" : "Staking’i durdurma işleminin tamamlanması 30 gün kadar sürebilir.",
+            "warning" : "Ödüller anında hesaba alınır. Staking’i durdurulan tutar, kilit açım zamanından sonra çekilebilir.",
+            "fields" : {
+              "validator" : "Doğrulayıcı",
+              "amount" : "Staking'i durdurulacak miktar"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "success" : {
+              "title" : "Varlıklarınızı stake etmeyi başarıyla durdurdunuz.",
+              "description" : "{{validator}} adlı doğrulayıcı ile stake edilen {{amount}} durduruldu",
+              "cta" : "Ayrıntıları gör"
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "disabledTooltip" : "Varlık miktarı çekim için yeterli değil",
+      "flow" : {
+        "title" : "Çekim",
+        "steps" : {
+          "amount" : {
+            "title" : "Tutar",
+            "fields" : {
+              "validator" : "Doğrulayıcı",
+              "amount" : "Çekilecek tutar"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "success" : {
+              "title" : "Varlıklarınızı başarıyla çektiniz.",
+              "description" : "{{validator}} adlı doğrulayıcıdan {{amount}} çekildi",
+              "cta" : "Ayrıntıları gör"
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
         }
       }
     }
@@ -5870,9 +6039,17 @@
       "title" : "Üzgünüz, ücret tahmini başarısız oldu",
       "description" : "Ağda ücret hesaplama başarısız oldu. Girilen bilgileri kontrol edin, işlem muhtemelen başarısız olacak"
     },
+    "NotEnoughToStake" : {
+      "title" : "Stake edilmesi gereken asgari tutar: {{minStake}} {{currency}}",
+      "description" : "En az {{minStake}} {{currency}} stake etmeniz gerekir."
+    },
     "NotEnoughBalance" : {
       "title" : "Üzgünüz, fon miktarı yetersiz",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
+    },
+    "NotEnoughStakedBalanceLeft" : {
+      "title" : "Staking'de en az {{minAmountStaked}} bırakmanız gerekir.",
+      "description" : "Tutarın tamamını stake etmeyi durdurmak zorunda kalmamak için staking'de lütfen en az {{minAmountStaked}} bırakın."
     },
     "NotEnoughBalanceFees" : {
       "title" : "Üzgünüz, fon miktarı işlem ücretlerini karşılamıyor",
@@ -6594,6 +6771,19 @@
     },
     "AmountTooSmall" : {
       "title" : "Bu işlem için gerekli minimum tutar: {{amount}}"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "Sizi güvende tutuyoruz",
+      "description" : "Bu işlem, yaptırım uygulanan bir cüzdan adresi içerdiğinden işleme koyulamıyor.<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForSendError" : {
+      "title" : "Bu işlem, yaptırım uygulanan bir cüzdan adresi içerdiğinden işleme koyulamıyor<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForStakingError" : {
+      "title" : "Bu işlem, yaptırım uygulanan bir cüzdan adresi<br/> içerdiğinden işleme koyulamıyor.<br/>-- {{sanctionedAddress}}<br/>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "Bu işlem, yaptırım uygulanan bir cüzdan adresi içerdiğinden işleme koyulamıyor."
     }
   },
   "cryptoOrg" : {
@@ -7057,12 +7247,9 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "Ara",
-    "assetFlow" : {
-      "selectTemplate" : "{{dynamic}} seçin",
-      "asset" : "Varlık",
-      "network" : "ağ",
-      "account" : "Hesap"
-    }
+    "selectAsset" : "Varlık seçin",
+    "selectNetwork" : "Ağ seçin",
+    "selectAccount" : "Hesap seçin"
   },
   "nftEntryPoint" : {
     "title" : "NFT (Non Fungible Token)",
@@ -7070,5 +7257,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Konum kullanılamıyor",
+    "description" : "Ledger cüzdan bu konumda kullanılamıyor.",
+    "learnMore" : "Daha fazla bilgi"
   }
 }
