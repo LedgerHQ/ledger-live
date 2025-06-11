@@ -1,7 +1,4 @@
-import {
-  DisabledTransactionBroadcastError,
-  MissingSwapPayloadParamaters,
-} from "@ledgerhq/errors";
+import { DisabledTransactionBroadcastError, MissingSwapPayloadParamaters } from "@ledgerhq/errors";
 import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { Exchange } from "@ledgerhq/live-common/exchange/types";

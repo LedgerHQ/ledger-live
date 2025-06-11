@@ -313,7 +313,7 @@ export const handlers = ({
               amountExpectedTo,
               magnitudeAwareRate,
               refundAddress,
-              payoutAddress
+              payoutAddress,
             },
             onSuccess: (transactionHash: string) => {
               tracking.completeExchangeSuccess({
