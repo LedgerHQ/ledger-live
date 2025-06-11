@@ -40,7 +40,7 @@ const Ball = styled.div<BallProps>`
   width: ${p => (p.small ? 9 : p.medium ? 14 : 20)}px;
   height: ${p => (p.small ? 9 : p.medium ? 14.5 : 20)}px;
   border-radius: 50%;
-  background: ${p => p.theme.colors.palette.primary.contrastText};
+  background: ${p => p.theme.colors?.palette.primary.contrastText};
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
   transition: 250ms ease-in-out transform;
   transform: translate3d(
