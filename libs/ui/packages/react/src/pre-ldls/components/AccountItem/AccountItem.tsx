@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import type { CheckboxProps } from "../../../components/form/Checkbox/Checkbox";
 import { Checkbox, Text } from "../../../components";
+import type { CheckboxProps } from "../../../components/form/Checkbox/Checkbox";
 import { withTokens } from "../../libs";
 import { Address } from "../Address/Address";
 import { Tag } from "../Tag/Tag";
@@ -26,7 +26,7 @@ export type AccountItemProps = {
   persistentBackground?: boolean;
 };
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ persistentBackground: boolean }>`
   ${withTokens(
     "spacing-xxxs",
     "spacing-xxs",
@@ -51,7 +51,8 @@ const Wrapper = styled.div`
   min-width: 200px;
   overflow: hidden;
 
-  background-color: var(--colors-surface-transparent-subdued-default);
+  background-color: ${p =>
+    p.persistentBackground ? "var(--colors-surface-transparent-subdued-default)" : "transparent"};
 
   :hover {
     background-color: var(--colors-surface-transparent-hover);
@@ -121,12 +122,12 @@ export const AccountItem = ({
   account,
   checkbox,
   showIcon = true,
-  persistentBackground: visibleBackground = false,
+  persistentBackground = false,
 }: AccountItemProps) => {
   const { name, balance, fiatValue, protocol, address, ticker, cryptoId, parentId } = account;
 
   return (
-    <Wrapper onClick={onClick}>
+    <Wrapper onClick={onClick} persistentBackground={persistentBackground}>
       <ContentContainer>
         <AccountInfoContainer>
           <NameRow>
