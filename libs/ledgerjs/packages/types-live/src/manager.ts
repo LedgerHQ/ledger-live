@@ -103,6 +103,8 @@ export enum SeedPhraseType {
   TwentyFour = "24-words",
 }
 
+export type SeedOriginType = "new_seed" | "restore_seed" | "recover_seed" | "restore_charon";
+
 /**
  *
  */

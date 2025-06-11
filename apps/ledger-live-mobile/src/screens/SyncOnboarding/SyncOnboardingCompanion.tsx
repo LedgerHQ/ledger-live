@@ -22,7 +22,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk-mobile";
 
-import { SeedPhraseType, StorylyInstanceID } from "@ledgerhq/types-live";
+import { SeedOriginType, SeedPhraseType, StorylyInstanceID } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { addKnownDevice } from "~/actions/ble";
 import { NavigatorName, ScreenName } from "~/const";
@@ -74,6 +74,7 @@ export type SeedPathStatus =
   | "recover_seed"
   | "backup_charon"
   | "restore_charon";
+
 export type SyncOnboardingCompanionProps = {
   /**
    * A `Device` object
@@ -345,7 +346,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     }
   }, [deviceOnboardingState]);
 
-  const analyticsSeedConfiguration = useRef<"new_seed" | "restore_seed" | "recover_seed">();
+  const analyticsSeedConfiguration = useRef<SeedOriginType>();
 
   const analyticsSeedingTracked = useRef(false);
   /**
@@ -447,6 +448,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       case DeviceOnboardingStep.RestoreCharon:
         setCompanionStepKey(CompanionStepKey.Seed);
         setSeedPathStatus("restore_charon");
+        analyticsSeedConfiguration.current = "restore_charon";
         break;
       case DeviceOnboardingStep.BackupCharon:
         setCompanionStepKey(CompanionStepKey.Seed);
