@@ -48,7 +48,7 @@ import Animated, {
   runOnJS,
 } from "react-native-reanimated";
 import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
-import { isAddressSanctioned } from "@ledgerhq/live-common/sanction/index";
+import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
 import { NeedMemoTagModal } from "./NeedMemoTagModal";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import SanctionedAccountModal from "./SanctionedAccountModal";

@@ -33,7 +33,7 @@ import Config from "react-native-config";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
 import LText from "~/components/LText";
 import TranslatedError from "~/components/TranslatedError";
-import { UserAddressSanctionedError } from "@ledgerhq/live-common/sanction/errors";
+import { UserAddressSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 
 type Props = StackNavigatorProps<
   CosmosDelegationFlowParamList,

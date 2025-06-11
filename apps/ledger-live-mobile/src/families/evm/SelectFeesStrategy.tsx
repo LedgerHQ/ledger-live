@@ -36,7 +36,7 @@ import { Alert, Flex, Text } from "@ledgerhq/native-ui";
 import TranslatedError from "~/components/TranslatedError";
 import { useNavigation } from "@react-navigation/core";
 import { NavigatorName, ScreenName } from "~/const";
-import { UserAddressSanctionedError } from "@ledgerhq/live-common/sanction/errors";
+import { UserAddressSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 
 type Props = {
   gasOptions: GasOptions;
