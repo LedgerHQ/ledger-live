@@ -1965,11 +1965,11 @@ importers:
         specifier: 2.8.5
         version: 2.8.5
       detox:
-        specifier: 20.34.4
-        version: 20.34.4(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))
+        specifier: 20.39.0
+        version: 20.39.0(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))
       detox-allure2-adapter:
         specifier: 1.0.0-alpha.12
-        version: 1.0.0-alpha.12(detox@20.34.4(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))))(jest-allure2-reporter@2.0.0(@jest/reporters@29.7.0)(@jest/types@29.6.3)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))))
+        version: 1.0.0-alpha.12(detox@20.39.0(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))))(jest-allure2-reporter@2.0.0(@jest/reporters@29.7.0)(@jest/types@29.6.3)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))))
       eslint:
         specifier: 8.57.0
         version: 8.57.0
@@ -20722,9 +20722,6 @@ packages:
   check-types@11.2.3:
     resolution: {integrity: sha512-+67P1GkJRaxQD6PKK0Et9DhwQB+vGg3PM5+aavopCpZT1lj9jeqfvpgTLAWErNj8qApkkmXlu/Ug74kmhagkXg==}
 
-  child-process-promise@2.2.1:
-    resolution: {integrity: sha512-Fi4aNdqBsr0mv+jgWxcZ/7rAIC2mgihrptyVI4foh/rrjY/3BNjfP9+oaiFx/fzim+1ZyCNBae0DlyfQhSugog==}
-
   chokidar@3.6.0:
     resolution: {integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==}
     engines: {node: '>= 8.10.0'}
@@ -21445,9 +21442,6 @@ packages:
   cross-sha256@1.2.0:
     resolution: {integrity: sha512-KViLNMDZKV7jwFqjFx+rNhG26amnFYYQ0S+VaFlVvpk8tM+2XbFia/don/SjGHg9WQxnFVi6z64CGPuF3T+nNw==}
 
-  cross-spawn@4.0.2:
-    resolution: {integrity: sha512-yAXz/pA1tD8Gtg2S98Ekf/sewp3Lcp3YoFKJ4Hkp5h5yLWnKVTDU0kwjKJ8NDCYcfTLfyGkzTikst+jWypT1iA==}
-
   cross-spawn@5.1.0:
     resolution: {integrity: sha512-pTgQJ5KC0d2hcY8eyL1IzlBPYjTkyH72XRZPnLyKus2mBfNjQs3klqbJU2VILqZryAZUt9JOb3h/mWMy23/f5A==}
 
@@ -22008,20 +22002,6 @@ packages:
     peerDependencies:
       detox: 20.14.2-smoke.0 || >20.14.5
       jest-allure2-reporter: ^2.0.0-beta.15
-
-  detox-copilot@0.0.27:
-    resolution: {integrity: sha512-H2febTNp0arVx2A8rvM1C2BwDiBEP/2Ya8Hd1mVyV66rR5u8om1gdIypaRGm+plpTLCHhlefe4+7qLtHgVzpng==}
-    deprecated: This package has been renamed to @wix-pilot/core. Please update your dependencies accordingly.
-
-  detox@20.34.4:
-    resolution: {integrity: sha512-URN1KZ1cwX5V1mHLKYgAzTEvDWJHfDOYvo0oOzLSrTP0hanjBJlCZRbTA7SVIMFNvghz7xVipiL/a4FLaofKvQ==}
-    engines: {node: '>=14'}
-    hasBin: true
-    peerDependencies:
-      jest: 29.x.x || 28.x.x || ^27.2.5
-    peerDependenciesMeta:
-      jest:
-        optional: true
 
   detox@20.39.0:
     resolution: {integrity: sha512-EPqtBQ1Yw7KAdQykDur203FVRYh8rhlB4GfcjOzFx0LN8Xfo0kE5ZwmumRWnaQZGRj+XpOj66d4bQnsvFyqlTQ==}
@@ -27590,10 +27570,6 @@ packages:
     resolution: {integrity: sha512-oqk6+05FC0dNVY5NuXuhPEMq+m1b9ZjS9SIhVE9EjwCHZspnmjSO8npbKAEieinR8GeEgbecoQcYIvI/Kwcf6Q==}
     engines: {node: '>=8'}
 
-  node-version@1.2.0:
-    resolution: {integrity: sha512-ma6oU4Sk0qOoKEAymVoTvk8EdXEobdS7m/mAGhDJ8Rouugho48crHBORAmy5BoOcv8wraPM6xumapQp5hl4iIQ==}
-    engines: {node: '>=6.0.0'}
-
   nodemon@3.1.0:
     resolution: {integrity: sha512-xqlktYlDMCepBJd43ZQhjWwMw2obW/JRvkrLxq5RCNcuDDX1DbcPT+qT1IlIIdf+DhnWs90JpTMe+Y5KxOchvA==}
     engines: {node: '>=10'}
@@ -28865,9 +28841,6 @@ packages:
   progress@2.0.3:
     resolution: {integrity: sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==}
     engines: {node: '>=0.4.0'}
-
-  promise-polyfill@6.1.0:
-    resolution: {integrity: sha512-g0LWaH0gFsxovsU7R5LrrhHhWAWiHRnh1GPrhXnPgYsDkIqjRYUYSZEsej/wtleDrz5xVSIDbeKfidztp2XHFQ==}
 
   promise-retry@2.0.1:
     resolution: {integrity: sha512-y+WKFlBR8BGXnsNlIHFGPZmyDf3DFMoLhaflAnyZgV6rG6xu+JwesTo2Q9R6XwYmtmwAFCkAk3e35jEdoeh/3g==}
@@ -49707,6 +49680,12 @@ snapshots:
     optionalDependencies:
       expect: 27.5.1
 
+  '@wix-pilot/detox@1.0.11(@wix-pilot/core@3.3.4(expect@27.5.1))(detox@20.39.0(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))))(expect@27.5.1)':
+    dependencies:
+      '@wix-pilot/core': 3.3.4(expect@27.5.1)
+      detox: 20.39.0(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))
+      expect: 27.5.1
+
   '@wix-pilot/detox@1.0.11(@wix-pilot/core@3.3.4(expect@27.5.1))(detox@20.39.0(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))))(expect@27.5.1)':
     dependencies:
       '@wix-pilot/core': 3.3.4(expect@27.5.1)
@@ -51908,12 +51887,6 @@ snapshots:
 
   check-types@11.2.3: {}
 
-  child-process-promise@2.2.1:
-    dependencies:
-      cross-spawn: 4.0.2
-      node-version: 1.2.0
-      promise-polyfill: 6.1.0
-
   chokidar@3.6.0:
     dependencies:
       anymatch: 3.1.3
@@ -52725,11 +52698,6 @@ snapshots:
     dependencies:
       buffer: 5.7.1
 
-  cross-spawn@4.0.2:
-    dependencies:
-      lru-cache: 4.1.5
-      which: 1.3.1
-
   cross-spawn@5.1.0:
     dependencies:
       lru-cache: 4.1.5
@@ -53357,10 +53325,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  detox-allure2-adapter@1.0.0-alpha.12(detox@20.34.4(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))))(jest-allure2-reporter@2.0.0(@jest/reporters@29.7.0)(@jest/types@29.6.3)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))):
+  detox-allure2-adapter@1.0.0-alpha.12(detox@20.39.0(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))))(jest-allure2-reporter@2.0.0(@jest/reporters@29.7.0)(@jest/types@29.6.3)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))):
     dependencies:
       archiver: 6.0.2
-      detox: 20.34.4(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))
+      detox: 20.39.0(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))
       jest-allure2-reporter: 2.0.0(@jest/reporters@29.7.0)(@jest/types@29.6.3)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))
       tslib: 2.6.2
 
@@ -53371,18 +53339,16 @@ snapshots:
       jest-allure2-reporter: 2.0.0(@jest/reporters@29.7.0)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)))
       tslib: 2.6.2
 
-  detox-copilot@0.0.27: {}
-
-  detox@20.34.4(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))):
+  detox@20.39.0(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))):
     dependencies:
       '@jest/reporters': 29.7.0
+      '@wix-pilot/core': 3.3.4(expect@27.5.1)
+      '@wix-pilot/detox': 1.0.11(@wix-pilot/core@3.3.4(expect@27.5.1))(detox@20.39.0(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))))(expect@27.5.1)
       ajv: 8.17.1
       bunyan: 1.8.15
       bunyan-debug-stream: 3.1.0(bunyan@1.8.15)
       caf: 15.0.1
       chalk: 4.1.2
-      child-process-promise: 2.2.1
-      detox-copilot: 0.0.27
       execa: 5.1.1
       expect: 27.5.1
       find-up: 5.0.0
@@ -53398,10 +53364,11 @@ snapshots:
       multi-sort-stream: 1.0.4
       multipipe: 4.0.0
       node-ipc: 9.2.1
+      promisify-child-process: 4.1.2
       proper-lockfile: 3.2.0
       resolve-from: 5.0.0
       sanitize-filename: 1.6.3
-      semver: 7.5.4
+      semver: 7.7.1
       serialize-error: 8.1.0
       shell-quote: 1.8.2
       signal-exit: 3.0.7
@@ -61438,7 +61405,7 @@ snapshots:
   metro-source-map@0.81.5:
     dependencies:
       '@babel/traverse': 7.27.0
-      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.27.0'
+      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.27.4'
       '@babel/types': 7.27.0
       flow-enums-runtime: 0.0.6
       invariant: 2.2.4
@@ -62541,8 +62508,6 @@ snapshots:
   node-version-matches@2.0.1:
     dependencies:
       semver: 6.3.1
-
-  node-version@1.2.0: {}
 
   nodemon@3.1.0:
     dependencies:
@@ -64127,8 +64092,6 @@ snapshots:
       webpack: 5.94.0(@swc/core@1.4.11)
 
   progress@2.0.3: {}
-
-  promise-polyfill@6.1.0: {}
 
   promise-retry@2.0.1:
     dependencies:
