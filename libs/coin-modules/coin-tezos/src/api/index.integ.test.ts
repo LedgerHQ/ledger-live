@@ -41,7 +41,7 @@ describe("Tezos Api", () => {
       const result = await module.estimateFees({
         asset: { type: "native" },
         type: "send",
-        sender: { address },
+        sender: address,
         recipient: "tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ",
         amount,
       });
@@ -105,7 +105,9 @@ describe("Tezos Api", () => {
 
   describe("craftTransaction", () => {
     async function decode(sbytes: string) {
-      return await localForger.parse(sbytes);
+      // note: strip the conventional prefix (aka watermark) added by rawEncode
+      // output of craftTransaction is "payload to sign = prefix + actual raw transaction"
+      return await localForger.parse(sbytes.slice(2));
     }
 
     it.each(["send", "delegate", "undelegate"])("returns a raw transaction with %s", async type => {
@@ -115,7 +117,7 @@ describe("Tezos Api", () => {
       const encodedTransaction = await module.craftTransaction({
         asset: { type: "native" },
         type,
-        sender: { address },
+        sender: address,
         recipient: recipient,
         amount: amount,
       });
@@ -139,7 +141,7 @@ describe("Tezos Api", () => {
       const encodedTransaction = await module.craftTransaction({
         asset: { type: "native" },
         type: "send",
-        sender: { address },
+        sender: address,
         recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
         amount: BigInt(10),
       });
@@ -156,7 +158,7 @@ describe("Tezos Api", () => {
           {
             asset: { type: "native" },
             type: "send",
-            sender: { address },
+            sender: address,
             recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
             amount: BigInt(10),
           },

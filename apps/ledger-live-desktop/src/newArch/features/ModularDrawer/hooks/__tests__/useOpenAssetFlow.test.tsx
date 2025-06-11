@@ -2,7 +2,7 @@ import { useOpenAssetFlow } from "../useOpenAssetFlow";
 import { ModularDrawerLocation } from "../../enums";
 import { renderHook } from "tests/testSetup";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import SelectAssetFlow from "../../components/SelectAssetFlow";
+import ModularDrawerFlowManager from "../../ModularDrawerFlowManager";
 
 jest.mock("~/renderer/drawers/Provider", () => ({
   setDrawer: jest.fn(),
@@ -16,7 +16,7 @@ describe("useOpenAssetFlow", () => {
   const modularDrawerLocation = ModularDrawerLocation.ADD_ACCOUNT;
 
   it("should dispatch openModal if the modular drawer is not visible", async () => {
-    const { result, store } = renderHook(() => useOpenAssetFlow(modularDrawerLocation), {
+    const { result, store } = renderHook(() => useOpenAssetFlow(modularDrawerLocation, "test"), {
       initialState: {
         settings: {
           overriddenFeatureFlags: {
@@ -28,7 +28,7 @@ describe("useOpenAssetFlow", () => {
       },
     });
 
-    result.current.openAssetFlow();
+    result.current.openAssetFlow(true);
 
     expect(store.getState().modals.MODAL_ADD_ACCOUNTS).toEqual({
       isOpened: true,
@@ -38,7 +38,7 @@ describe("useOpenAssetFlow", () => {
   });
 
   it("should open the modular drawer if it is visible and open the modal once a currency is chosen", () => {
-    const { result, store } = renderHook(() => useOpenAssetFlow(modularDrawerLocation), {
+    const { result, store } = renderHook(() => useOpenAssetFlow(modularDrawerLocation, "test"), {
       initialState: {
         settings: {
           overriddenFeatureFlags: {
@@ -59,14 +59,16 @@ describe("useOpenAssetFlow", () => {
     );
 
     // Should open the drawer
-    result.current.openAssetFlow();
+    result.current.openAssetFlow(false);
 
     expect(setDrawer).toHaveBeenCalledTimes(1);
     expect(setDrawer).toHaveBeenLastCalledWith(
-      SelectAssetFlow,
+      ModularDrawerFlowManager,
       {
         currencies: [],
+        flow: "add_account",
         onAssetSelected: expect.any(Function),
+        source: "test",
       },
       {
         onRequestClose: expect.any(Function),

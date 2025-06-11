@@ -178,6 +178,7 @@ export type Features = CurrencyFeatures & {
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
   ptxCard: DefaultFeature;
   ptxSwapLiveAppMobile: Feature_PtxSwapLiveApp;
+  ptxSwapLiveAppKycWarning: DefaultFeature;
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
   ptxEarnLiveApp: Feature_PtxEarnLiveApp;
   ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
@@ -229,6 +230,8 @@ export type Features = CurrencyFeatures & {
   llNftEntryPoint: Feature_LlNftEntryPoint;
   ldmkConnectApp: DefaultFeature;
   lldNetworkBasedAddAccount: DefaultFeature;
+  llmOfacGeoBlocking: DefaultFeature;
+  lldOfacGeoBlocking: DefaultFeature;
 };
 
 /**

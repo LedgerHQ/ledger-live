@@ -17,6 +17,7 @@
     "@styled-system/variant",
     "css-select",
     "css-tree",
+    "warn-once",
     "react-native",
     "react-native-svg",
     "react-native/Libraries/Utilities/codegenNativeComponent",
