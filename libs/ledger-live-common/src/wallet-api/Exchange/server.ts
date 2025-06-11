@@ -65,6 +65,8 @@ export type CompleteExchangeUiRequest = {
   swapId?: string;
   amountExpectedTo?: number;
   magnitudeAwareRate?: BigNumber;
+  refundAddress?: string;
+  payoutAddress?: string;
 };
 
 type ExchangeStartParamsUiRequest =
@@ -286,11 +288,15 @@ export const handlers = ({
 
         let amountExpectedTo;
         let magnitudeAwareRate;
+        let refundAddress;
+        let payoutAddress;
         if (params.exchangeType === "SWAP") {
           // Get amountExpectedTo and magnitudeAwareRate from binary payload
           const decodePayload = await decodeSwapPayload(params.hexBinaryPayload);
           amountExpectedTo = new BigNumber(decodePayload.amountToWallet.toString());
           magnitudeAwareRate = tx.amount && amountExpectedTo.dividedBy(tx.amount);
+          refundAddress = decodePayload.refundAddress;
+          payoutAddress = decodePayload.payoutAddress;
         }
 
         return new Promise((resolve, reject) =>
@@ -306,6 +312,8 @@ export const handlers = ({
               swapId: params.exchangeType === "SWAP" ? params.swapId : undefined,
               amountExpectedTo,
               magnitudeAwareRate,
+              refundAddress,
+              payoutAddress
             },
             onSuccess: (transactionHash: string) => {
               tracking.completeExchangeSuccess({
