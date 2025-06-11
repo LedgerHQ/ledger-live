@@ -12,6 +12,7 @@ export const signTransaction = (signerContext: SignerContext<XrpSigner>) => {
     return signedTx;
   };
 };
+
 export const stellarSignTransaction = (signerContext: SignerContext<StellarSigner>) => {
   return async (deviceId: string, { path, transaction }: SignTransactionOptions) => {
     const signedTx = await signerContext(deviceId, signer =>

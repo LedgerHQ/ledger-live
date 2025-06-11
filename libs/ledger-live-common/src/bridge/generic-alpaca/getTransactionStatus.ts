@@ -26,6 +26,8 @@ export function genericGetTransactionStatus(
         fee: BigInt(transaction.fees?.toString() ?? "0"),
       },
     );
+    console.log("getTransactionStatus errors", errors);
+    console.log("getTransactionStatus warnings", warnings);
 
     const estimatedFees = transaction.fees || new BigNumber(0);
 

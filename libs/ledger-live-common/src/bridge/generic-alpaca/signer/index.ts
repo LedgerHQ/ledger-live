@@ -31,6 +31,7 @@ export function getSigner(network): AlpacaSigner {
       };
     }
     case "stellar": {
+      console.log("Using local Stellar Signer");
       const createSigner: CreateSigner<Stellar> = (transport: Transport) => {
         return new Stellar(transport);
       };

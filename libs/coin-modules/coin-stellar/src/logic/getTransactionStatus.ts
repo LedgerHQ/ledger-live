@@ -36,9 +36,10 @@ import BigNumber from "bignumber.js";
 export const getTransactionStatus = async (
   account: Account,
   transaction: Transaction,
-  // asset? : AssetInfo,
 ): Promise<TransactionValidation> => {
-  let asset = account; // FIXME:
+  const asset = account; // FIXME:
+  console.log("getTransactionStatus account", account);
+  console.log("getTransactionStatus transaction", transaction);
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
   const useAllAmount = !!transaction.useAllAmount;
@@ -51,9 +52,9 @@ export const getTransactionStatus = async (
     throw new AccountAwaitingSendPendingOperations();
   }
 
-  if (!transaction.fees || !transaction.baseReserve) {
-    errors.fees = new FeeNotLoaded();
-  }
+  // if (!transaction.fee || !transaction.baseReserve) {
+  //   errors.fees = new FeeNotLoaded();
+  // }
 
   const estimatedFees = !transaction.fees ? 0n : transaction.fee;
   const baseReserve = !transaction.baseReserve ? 0n : transaction.baseReserve;
