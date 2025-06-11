@@ -3,7 +3,7 @@ import {
   APTOS_HARDENED_DERIVATION_PATH,
   APTOS_NON_HARDENED_DERIVATION_PATH,
 } from "@ledgerhq/coin-aptos/constants";
-import { accountRawToAccountUserData } from "@ledgerhq/live-wallet/lib/store";
+import { accountRawToAccountUserData } from "@ledgerhq/live-wallet/store";
 import { createDataModel } from "./DataModel";
 import { fromAccountRaw, toAccountRaw } from "./account";
 import { getCurrencyConfiguration } from "./config";

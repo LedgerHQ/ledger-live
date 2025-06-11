@@ -34,7 +34,6 @@ function buildCurrencyBridge(signerContext: SignerContext<AptosSigner>): Currenc
   });
 
   return {
-    // preload: makePreload(getQueuedAndCachedAPI),
     preload: makePreload(),
     hydrate,
     scanAccounts,
