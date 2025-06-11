@@ -8,7 +8,6 @@ import Box from "../Box";
 import { WebviewAPI, WebviewProps, WebviewState } from "../Web3AppWebview/types";
 import { initialWebviewState } from "../Web3AppWebview/helpers";
 import { usePTXCustomHandlers } from "./CustomHandlers";
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 export const Container = styled.div`
   display: flex;
@@ -39,21 +38,7 @@ export const WebViewWrapper = styled.div<WebViewWrapperProps>`
     mobileView.display ? `width: ${mobileView.width ?? 355}px;` : "width: 100%;"}
 `;
 
-export type CustomLoaderType = React.ComponentType<{
-  manifest: LiveAppManifest;
-  isLoading: boolean;
-}>;
-
-export default function WebPTXPlayer({
-  manifest,
-  inputs,
-  CustomLoader,
-}: WebviewProps & {
-  CustomLoader?: React.ComponentType<{
-    manifest: LiveAppManifest;
-    isLoading: boolean;
-  }>;
-}) {
+export default function WebPTXPlayer({ manifest, inputs, Loader }: WebviewProps) {
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const [mobileView, setMobileView] = useState<MobileView>(initialMobileView);
@@ -78,7 +63,7 @@ export default function WebPTXPlayer({
             onStateChange={setWebviewState}
             ref={webviewAPIRef}
             customHandlers={customHandlers}
-            Loader={CustomLoader}
+            Loader={Loader}
           />
         </WebViewWrapper>
       </Wrapper>

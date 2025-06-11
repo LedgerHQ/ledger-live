@@ -112,7 +112,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
 
             ...Object.fromEntries(searchParams.entries()),
           }}
-          CustomLoader={CustomLoaderBuySell}
+          Loader={CustomLoaderBuySell}
         />
       ) : null}
     </Card>
