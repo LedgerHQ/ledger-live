@@ -112,6 +112,7 @@ const getMADAttributes = () => {
     live_app: madFeatureFlag?.params?.live_app ?? false,
     receive_flow: madFeatureFlag?.params?.receive_flow ?? false,
     send_flow: madFeatureFlag?.params?.send_flow ?? false,
+    isModularizationEnabled: madFeatureFlag?.params?.enableModularization ?? false,
   };
 };
 
