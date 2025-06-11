@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Flex, VerticalTimeline, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { StepText } from "./shared";
@@ -8,6 +8,7 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import ExternalLink from "~/renderer/components/ExternalLink";
 import CharonPng from "./assets/charon.png";
 import SecretRecoveryPhrasePng from "./assets/secret-recovery-phrase.png";
+import { track } from "~/renderer/analytics/segment";
 
 export type SeedPathStatus =
   | "choice_new_or_restore"
@@ -27,6 +28,13 @@ export type Props = {
 const SeedStep = ({ seedPathStatus, charonSupported, deviceModelId }: Props) => {
   const { t } = useTranslation();
   const productName = getDeviceModel(deviceModelId).productName;
+  const handleLearnMoreClick = useCallback(() => {
+    // TODO: Add link
+    track("button_clicked", {
+      button: "Learn More",
+      page: "Charon Start",
+    });
+  }, []);
 
   return (
     <Flex flexDirection="column">
@@ -139,7 +147,7 @@ const SeedStep = ({ seedPathStatus, charonSupported, deviceModelId }: Props) => 
                     {t("syncOnboarding.manual.seedContent.backupCharonCta")}
                   </Text>
                 }
-                onClick={() => {}} // TODO: Add link
+                onClick={handleLearnMoreClick}
                 isInternal={false}
               />
             </Flex>
