@@ -1925,7 +1925,8 @@
       "payoutNetworkFees" : "지불금 비용",
       "payoutNetworkFeesTooltip" : "이 금액은 장치에 표시되지 않습니다",
       "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0>{{provider}}의 이용약관</0>을 수락합니다.",
-      "exodusAcceptTerms" : "Exodus는 제 3자를 통해 스왑 서비스를 제공합니다.\n본인은 이 트랜잭션을 확인함으로써 <0>Exodus 이용 약관</0>을 수락합니다."
+      "exodusAcceptTerms" : "Exodus는 제 3자를 통해 스왑 서비스를 제공합니다.\n본인은 이 트랜잭션을 확인함으로써 <0>Exodus 이용 약관</0>을 수락합니다.",
+      "changellyAcceptTerms" : "\"Changelly로 스왑\"을 클릭하면 Changelly의<0>이용 약관</0> 및\n<1>AML/KYC 정책</1>에 동의하는 것으로 간주됩니다. Changelly는 AML/KYC 절차를 적용할 수 있으며,\n이는 제한적으로 트랜잭션 완료에 영향을 미칠 수 있습니다. 이 경우\n, Changelly <2>고객 지원</2>으로 문의해 주세요."
     },
     "swap2" : {
       "amountSent" : "전송 금액",
@@ -3828,6 +3829,174 @@
           "accruedDelta" : "{{delta}}(이)가 발생했습니다.",
           "interestRateNotSetup" : "현재 이자율은 0%로 설정되어 있습니다.",
           "description" : "이자율에 따라 가치가 지속적으로 증가하거나 감소하는 토큰입니다. 새로운 토큰이 생성되지 않으며 이 기능은 전적으로 표시 기능만 있습니다."
+        }
+      }
+    }
+  },
+  "aptos" : {
+    "account" : {
+      "stakedBalance" : "스테이킹 잔액",
+      "stakedBalanceTooltip" : "이 금액은 현재 검증인에게 스테이킹되어 있습니다.",
+      "withdrawableBalance" : "출금 가능 잔액",
+      "withdrawableBalanceTooltip" : "이 금액은 언스테이킹되어 현재 출금이 가능합니다.",
+      "pendingBalance" : "승인 대기 잔액",
+      "pendingBalanceTooltip" : "이 금액은 언스테이킹되어 현재 가용성 여부가 보류 상태입니다."
+    },
+    "common" : {
+      "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요.",
+      "viewDetails" : "세부사항 보기",
+      "connectDevice" : {
+        "title" : "장치"
+      },
+      "confirmation" : {
+        "title" : "확인"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "스테이킹 금액",
+        "unstakedAmount" : "언스테이킹된 금액",
+        "withdrawnAmount" : "출금된 금액"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "자산을 스테이킹하여 Aptos 보상을 받을 수 있습니다.",
+        "info" : "스테이킹 작동 방식",
+        "earnRewards" : "보상 받기"
+      },
+      "table" : {
+        "header" : "스테이킹 포지션",
+        "stake" : "추가",
+        "active" : "스테이킹 완료",
+        "pendingInactive" : "보류 중인 릴리스",
+        "inactive" : "출금 가능",
+        "nextUnlock" : "다음 잠금 해제"
+      },
+      "nextUnlockIn" : "다음 잠금 해제까지 남은 시간",
+      "unstake" : "언스테이킹",
+      "withdraw" : "출금",
+      "restake" : "리스테이킹",
+      "activeTooltip" : "스테이킹된 금액은 보상을 생성합니다",
+      "inactiveTooltip" : "언스테이킹된 금액은 보상을 생성하지 않습니다",
+      "commission" : "커미션",
+      "totalStake" : "총 스테이킹",
+      "minSafeWarning" : "자금이 부족합니다",
+      "flow" : {
+        "title" : "스테이킹",
+        "steps" : {
+          "starter" : {
+            "description" : "Aptos 암호화폐를 검증인에게 스테이킹하여 보상을 받을 수 있습니다.",
+            "bullet" : ["스테이킹된 자산의 소유권은 귀하에게 있습니다", "Ledger 장치를 사용한 스테이킹", "자산은 언스테이킹 후 52~65시간 후에 이용 가능합니다"],
+            "warning" : {
+              "description" : "검증인을 현명하게 선택하세요. 검증인이 부적절하게 행동하는 경우 일부 스테이킹된 자산이 영구 손실될 수 있습니다."
+            }
+          },
+          "amount" : {
+            "title" : "금액"
+          },
+          "validator" : {
+            "title" : "검증인",
+            "ledgerByChorusOneTC" : "Ledger by Chorus One 이용약관",
+            "ledgerByFigmentTC" : "Ledger by Figment 이용약관"
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "자산을 성공적으로 스테이킹했습니다.",
+              "text" : "블록체인이 트랜잭션 검증을 완료하면 계정 잔액이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "restake" : {
+      "flow" : {
+        "title" : "스테이킹 재활성화",
+        "steps" : {
+          "amount" : {
+            "title" : "금액",
+            "subtitle" : "리스테이킹 진행 시 인출 가능 잔액이 다시 스테이킹됩니다.",
+            "warning" : "가용 잔액이 모두 리스테이킹되며, 리스테이킹된 금액은 언스테이킹 작업과 잠금 해제 시간 이후 인출 가능합니다.",
+            "fields" : {
+              "validator" : "검증인",
+              "amount" : "리스테이킹 금액"
+            }
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "자산 리스테이킹이 성공적으로 완료되었습니다.",
+              "description" : "{{amount}}가 {{validator}}을(를) 통해 재스테이킹되었습니다",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "스테이킹된 자산이 충분하지 않아 언스테이킹이 불가능합니다.",
+      "flow" : {
+        "title" : "언스테이킹",
+        "steps" : {
+          "amount" : {
+            "title" : "금액",
+            "subtitle" : "언스테이킹 프로세스는 완료까지 {{timeToUnlock}}시간이 소요됩니다.",
+            "subtitle2" : "언스테이킹 프로세스는 완료까지 최대 30일이 소요됩니다.",
+            "warning" : "보상은 즉시 현금화할 수 있습니다. 언스테이킹된 금액은 잠금 해제 기간이 지난 후 인출이 가능합니다.",
+            "fields" : {
+              "validator" : "검증인",
+              "amount" : "언스테이킹할 금액"
+            }
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "자산을 성공적으로 언스테이킹했습니다.",
+              "description" : "{{amount}}가 {{validator}}을(를) 통해 언스테이킹되었습니다",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "disabledTooltip" : "출금할 자산이 충분하지 않습니다.",
+      "flow" : {
+        "title" : "출금",
+        "steps" : {
+          "amount" : {
+            "title" : "금액",
+            "fields" : {
+              "validator" : "검증인",
+              "amount" : "출금 금액"
+            }
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "자산을 성공적으로 출금했습니다.",
+              "description" : "{{amount}}가 {{validator}}에 의해 인출되었습니다",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
         }
       }
     }
@@ -5870,9 +6039,17 @@
       "title" : "죄송합니다, 수수료 추정에 실패했습니다",
       "description" : "네트워크 수수료 추정 실패. 입력값을 확인하세요. 거래에 실패할 수 있습니다"
     },
+    "NotEnoughToStake" : {
+      "title" : "최소 스테이킹 금액: {{minStake}} {{currency}}",
+      "description" : "스테이킹에는 최소 {{minStake}} {{currency}}이/가 필요합니다."
+    },
     "NotEnoughBalance" : {
       "title" : "죄송하지만 자금이 부족합니다",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
+    },
+    "NotEnoughStakedBalanceLeft" : {
+      "title" : "최소 {{minAmountStaked}} 스테이킹을 유지해야 합니다.",
+      "description" : "최소 {{minAmountStaked}} 스테이킹을 유지해야 합니다. 그렇지 않으면 전액을 언스테이킹해야 합니다."
     },
     "NotEnoughBalanceFees" : {
       "title" : "죄송하지만, 수수료를 충당할 자금이 부족합니다",
@@ -6594,6 +6771,19 @@
     },
     "AmountTooSmall" : {
       "title" : "이 트랜잭션에 필요한 최소 금액은 {{amount}}입니다"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "안전한 관리",
+      "description" : "이 트랜잭션에는 규제 대상인 지갑 주소가 포함되어 있어 처리가 불가능합니다.<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForSendError" : {
+      "title" : "이 트랜잭션에는 규제 대상인 지갑 주소가 포함되어 있어 처리가 불가능합니다.<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForStakingError" : {
+      "title" : "이 트랜잭션에는 규제 대상인 지갑 주소가 포함되어 있어<br/> 처리가 불가능합니다.<br/>-- {{sanctionedAddress}}<br/>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "이 트랜잭션에는 규제 대상인 지갑 주소가 포함되어 있어 처리가 불가능합니다."
     }
   },
   "cryptoOrg" : {
@@ -7057,12 +7247,9 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "검색",
-    "assetFlow" : {
-      "selectTemplate" : "{{dynamic}} 선택",
-      "asset" : "자산",
-      "network" : "네트워크",
-      "account" : "계정"
-    }
+    "selectAsset" : "자산 선택",
+    "selectNetwork" : "네트워크 선택",
+    "selectAccount" : "계정 선택"
   },
   "nftEntryPoint" : {
     "title" : "NFT(대체 불가능 토큰)",
@@ -7070,5 +7257,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "이용 불가능한 지역",
+    "description" : "Ledger 지갑을 사용할 수 없는 지역입니다.",
+    "learnMore" : "자세히 알아보기"
   }
 }
