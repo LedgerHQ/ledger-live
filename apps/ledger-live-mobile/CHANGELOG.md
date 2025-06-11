@@ -1,5 +1,21 @@
 # live-mobile
 
+## 3.82.0-nightly.1
+
+### Minor Changes
+
+- [#10483](https://github.com/LedgerHQ/ledger-live/pull/10483) [`644311c`](https://github.com/LedgerHQ/ledger-live/commit/644311c469227b79144f70acdf85134a7225b6e9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update fastlane to fix broken build on CI
+
+- [#10229](https://github.com/LedgerHQ/ledger-live/pull/10229) [`bf4b791`](https://github.com/LedgerHQ/ledger-live/commit/bf4b7919e5e66605ea3e77562626db5d26898246) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Upgrade React Native from 0.75 to 0.77
+
+### Patch Changes
+
+- Updated dependencies [[`e72e65d`](https://github.com/LedgerHQ/ledger-live/commit/e72e65d6794b960b3f4abf78205a8c82cc4c22e5), [`bf4b791`](https://github.com/LedgerHQ/ledger-live/commit/bf4b7919e5e66605ea3e77562626db5d26898246)]:
+  - @ledgerhq/live-dmk-mobile@0.6.0-nightly.0
+  - @ledgerhq/react-native-hw-transport-ble@6.35.0-nightly.0
+  - @ledgerhq/native-ui@0.36.0-nightly.0
+  - @ledgerhq/icons-ui@0.11.0-nightly.0
+
 ## 3.82.0-nightly.0
 
 ### Minor Changes

@@ -1,5 +1,16 @@
 # web-tools
 
+## 0.20.0-nightly.1
+
+### Minor Changes
+
+- [#10459](https://github.com/LedgerHQ/ledger-live/pull/10459) [`e72e65d`](https://github.com/LedgerHQ/ledger-live/commit/e72e65d6794b960b3f4abf78205a8c82cc4c22e5) Thanks [@mbertin-ledger](https://github.com/mbertin-ledger)! - Fix exchange logs to export apdus
+
+### Patch Changes
+
+- Updated dependencies [[`bf4b791`](https://github.com/LedgerHQ/ledger-live/commit/bf4b7919e5e66605ea3e77562626db5d26898246)]:
+  - @ledgerhq/live-common@34.37.0-nightly.1
+
 ## 0.19.3-nightly.0
 
 ### Patch Changes

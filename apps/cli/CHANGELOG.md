@@ -1,5 +1,16 @@
 # @ledgerhq/live-cli
 
+## 24.19.0-nightly.1
+
+### Minor Changes
+
+- [#10229](https://github.com/LedgerHQ/ledger-live/pull/10229) [`bf4b791`](https://github.com/LedgerHQ/ledger-live/commit/bf4b7919e5e66605ea3e77562626db5d26898246) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Upgrade React Native from 0.75 to 0.77
+
+### Patch Changes
+
+- Updated dependencies [[`bf4b791`](https://github.com/LedgerHQ/ledger-live/commit/bf4b7919e5e66605ea3e77562626db5d26898246)]:
+  - @ledgerhq/live-common@34.37.0-nightly.1
+
 ## 24.18.7-nightly.0
 
 ### Patch Changes

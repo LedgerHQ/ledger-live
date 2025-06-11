@@ -1,5 +1,11 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.6.0-nightly.0
+
+### Minor Changes
+
+- [#10459](https://github.com/LedgerHQ/ledger-live/pull/10459) [`e72e65d`](https://github.com/LedgerHQ/ledger-live/commit/e72e65d6794b960b3f4abf78205a8c82cc4c22e5) Thanks [@mbertin-ledger](https://github.com/mbertin-ledger)! - Fix exchange logs to export apdus
+
 ## 0.5.0
 
 ### Minor Changes
