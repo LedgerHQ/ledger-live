@@ -85,7 +85,7 @@ env:
 jobs:
 
   build-ios-native:
-    name: "Determine Builds / iOS Build Native"
+    name: "iOS Build Native"
     if: ${{ inputs.build-ios-native == true }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -166,7 +166,7 @@ jobs:
           use-fallback: false
 
   build-ios-js:
-    name: "Determine Builds / iOS Build JS"
+    name: "iOS Build JS"
     if: ${{ inputs.build-ios-js == true }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
