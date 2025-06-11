@@ -19,6 +19,7 @@ import { useModularDrawerFlowState } from "./hooks/useModularDrawerFlowState";
 import SkeletonList from "./components/SkeletonList";
 import { haveOneCommonProvider } from "./utils/haveOneCommonProvider";
 import { BackButtonArrow } from "./components/BackButton";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   currencies: CryptoOrTokenCurrency[];
@@ -30,6 +31,17 @@ type Props = {
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
 };
 
+const assetConfigurationDisabled: EnhancedModularDrawerConfiguration["assets"] = {
+  rightElement: "undefined",
+  leftElement: "undefined",
+  filter: "undefined",
+};
+
+const networkConfigurationDisabled: EnhancedModularDrawerConfiguration["networks"] = {
+  rightElement: "undefined",
+  leftElement: "undefined",
+};
+
 const ModularDrawerFlowManager = ({
   currencies,
   drawerConfiguration,
@@ -39,7 +51,14 @@ const ModularDrawerFlowManager = ({
   onAssetSelected,
   onAccountSelected,
 }: Props) => {
-  const { assets: assetConfiguration, networks: networkConfiguration } = drawerConfiguration ?? {};
+  const featureModularDrawer = useFeature("lldModularDrawer");
+  const modularizationEnabled = featureModularDrawer?.params?.enableModularization ?? false;
+  const assetConfiguration = modularizationEnabled
+    ? drawerConfiguration?.assets
+    : assetConfigurationDisabled;
+  const networkConfiguration = modularizationEnabled
+    ? drawerConfiguration?.networks
+    : networkConfigurationDisabled;
 
   const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(
     true,

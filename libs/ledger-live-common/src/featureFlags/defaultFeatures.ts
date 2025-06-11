@@ -609,6 +609,7 @@ export const DEFAULT_FEATURES: Features = {
       live_app: true,
       receive_flow: true,
       send_flow: true,
+      enableModularization: false,
     },
   },
   llNftSupport: DEFAULT_FEATURE,
