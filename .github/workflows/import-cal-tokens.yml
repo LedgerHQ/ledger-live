@@ -5,14 +5,13 @@ on:
   schedule:
     - cron: "0 8 * * 1"
 
-env:
-  CAL_BRANCH: "feat/import-cal-tokens"
-  NODE_OPTIONS: "--max-old-space-size=7168"
-
 jobs:
   import-cal-tokens:
     name: Import CAL Tokens
     runs-on: ledger-live-medium
+    env:
+      CAL_BRANCH: "feat/import-cal-tokens"
+      NODE_OPTIONS: "--max-old-space-size=8192"
     outputs:
       changed: ${{ steps.changes.outputs.changed }}
       pr_url: ${{ steps.create-pr.outputs.pr_url }}

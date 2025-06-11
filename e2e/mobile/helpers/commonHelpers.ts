@@ -30,6 +30,14 @@ export function isAndroid() {
   return device.getPlatform() === "android";
 }
 
+export function isIos() {
+  return device.getPlatform() === "ios";
+}
+
+export function isSpeculosRemote() {
+  return process.env.REMOTE_SPECULOS === "true";
+}
+
 export async function launchApp() {
   const port = await findFreePort();
   closeBridge();
