@@ -154,10 +154,13 @@ const ScanAccounts = ({ currency, deviceId, onComplete, onLoadingChange }: Props
     <AccountItem
       account={x}
       // onClick={() => {}}
-      checkbox={{
-        name: "checked",
-        isChecked: checkedIds.has(x.id),
-        onChange: () => handleToggle(x.id),
+      rightElement={{
+        type: "checkbox",
+        checkbox: {
+          name: "checked",
+          isChecked: checkedIds.has(x.id),
+          onChange: () => handleToggle(x.id),
+        },
       }}
     />
   );

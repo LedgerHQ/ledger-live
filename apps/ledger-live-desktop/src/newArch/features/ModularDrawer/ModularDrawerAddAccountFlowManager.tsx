@@ -10,6 +10,7 @@ import { AddAccountHeader } from "./components/Header/AddAccountHeader";
 import ConnectYourDevice from "./screens/ConnectYourDevice";
 import ScanAccounts from "./screens/ScanAccounts";
 import { ModularDrawerAddAccountStep } from "./types";
+import AccountsAdded from "./screens/AccountsAdded";
 
 const ANALYTICS_PROPERTY_FLOW = "Modular Add Account Flow";
 
@@ -66,9 +67,7 @@ const ModularDrawerAddAccountFlowManager = ({
         };
       }
       case "ACCOUNTS_ADDED": {
-        return () => {
-          setCurrentStep("SCAN_ACCOUNTS");
-        };
+        return undefined;
       }
       default: {
         return undefined;
@@ -105,12 +104,12 @@ const ModularDrawerAddAccountFlowManager = ({
             onLoadingChange={x => setIsLoading(x)}
             onComplete={accounts => {
               setSelectedAccounts(accounts);
+              setCurrentStep("ACCOUNTS_ADDED");
             }}
           />
         );
       case "ACCOUNTS_ADDED":
-        // return <AccountsAdded currency={currency} analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW} />;
-        return null;
+        return <AccountsAdded accounts={selectedAccounts} />;
       default:
         return null;
     }
