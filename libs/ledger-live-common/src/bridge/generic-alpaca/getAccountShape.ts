@@ -3,21 +3,15 @@ import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHel
 import BigNumber from "bignumber.js";
 import { getAlpacaApi } from "./alpaca";
 import { adaptCoreOperationToLiveOperation } from "./utils";
+import { BaseTokenLikeAsset } from "./types";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
-
-type BaseTokenLikeAsset = {
-  asset_code: string;
-  asset_issuer: string;
-  balance: string;
-  decimals: number;
-  creationDate: Date;
-  operations: any[]; // or `Operation[]` if you can import it cleanly
-};
 
 import { StellarBurnAddressError, StellarOperation } from "@ledgerhq/coin-stellar/types";
 import { STELLAR_BURN_ADDRESS } from "@ledgerhq/coin-stellar/logic";
 import { getEnv } from "@ledgerhq/live-env";
 import { Pagination } from "@ledgerhq/coin-framework/lib-es/api/types";
+import { Operation } from "@ledgerhq/types-live";
+// import { buildTokenAccounts } from "./buildSubAccounts";
 
 function buildPaginationParams(
   network: string,
@@ -100,12 +94,49 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         ),
       }));
     console.log("tokenAssets", tokenAssets);
-    const operationsWithSubs = mergedOps.map(op => ({
-      ...op,
-      subOperations: inferSubOperations(op.hash, []),
-    }));
+
+    // TODO: make this more generic
+    // const tokenAccounts = buildTokenAccounts(
+    //   tokenAssets,
+    //   accountId,
+    //   currency,
+    //   "stellar",
+    //   asset => `${currency.id}/token/${asset.asset_issuer}/${asset.asset_code}`,
+    // );
+    // console.log({ TOKENACCOUNTS: tokenAccounts });
+    // const operationsWithSubs1 = mergedOps.map(op => ({
+    //   ...op,
+    //   subOperations: inferSubOperations(op.hash, []),
+    // }));
+    //
+    const operationsWithSubs = mergedOps.map(op => {
+      const subOperations: Operation[] = [];
+
+      for (const asset of tokenAssets) {
+        for (const subOp of asset.operations) {
+          if (subOp.tx.hash === op.hash) {
+            const operation = adaptCoreOperationToLiveOperation(accountId, subOp as any);
+            subOperations.push(operation);
+          }
+        }
+      }
+      if (subOperations.length > 0) {
+        console.log("FOUND HERE");
+        debugger;
+      }
+
+      return {
+        ...op,
+        // extra: {
+        //   ...op.extra,
+        subOperations,
+        // },
+      };
+    });
+
+    debugger;
     console.log("operationsWithSubs", operationsWithSubs);
-    return {
+    const res = {
       id: accountId,
       xpub: address,
       blockHeight: blockInfo.height,
@@ -115,5 +146,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       operationsCount: operationsWithSubs.length,
       tokenAssets,
     };
+    console.log({ ACCOUNTSHAPERESULT: res });
+    return res;
   };
 }
