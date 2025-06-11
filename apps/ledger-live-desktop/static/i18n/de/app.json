@@ -1925,7 +1925,8 @@
       "payoutNetworkFees" : "Auszahlungsgebühren",
       "payoutNetworkFeesTooltip" : "Dieser Betrag wird nicht auf Ihrem Gerät angezeigt",
       "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von {{provider}}</0> zu.",
-      "exodusAcceptTerms" : "Exodus greift bei der Abwicklung von Swaps auf Drittanbieter zurück.\nDurch Validieren dieser Transaktion stimme ich den <0>Nutzungsbedingungen von Exodus</0> zu."
+      "exodusAcceptTerms" : "Exodus greift bei der Abwicklung von Swaps auf Drittanbieter zurück.\nDurch Validieren dieser Transaktion stimme ich den <0>Nutzungsbedingungen von Exodus</0> zu.",
+      "changellyAcceptTerms" : "Durch Klicken auf „Mit Changelly swappen“ stimmst du den <0>Nutzungsbedingungen</0> von Changelly sowie \nder <1>AML-/KYC-Richtlinie</1> zu. Changelly ist zur Anwendung von AML-/KYC-Verfahren berechtigt, \ndie in seltenen Fällen den Abschluss deiner Transaktion beeinträchtigen können. In einem solchen Fall\n musst du dich mit dem <2>Kundenservice</2> von Changelly in Verbindung setzen."
     },
     "swap2" : {
       "amountSent" : "Zu sendender Betrag",
@@ -3828,6 +3829,174 @@
           "accruedDelta" : "{{delta}} aufgelaufen.",
           "interestRateNotSetup" : "Der aktuelle Zinssatz ist eingerichtet auf 0 %.",
           "description" : "Token, deren Wert sich je nach Zinssatz stetig erhöht oder verringert. Es werden nie neue Token erstellt, die Funktion ist rein optischer Natur."
+        }
+      }
+    }
+  },
+  "aptos" : {
+    "account" : {
+      "stakedBalance" : "Kontostand gestaked",
+      "stakedBalanceTooltip" : "Dieser Betrag ist derzeit mit Validatoren gestaked.",
+      "withdrawableBalance" : "Auszahlbares Guthaben",
+      "withdrawableBalanceTooltip" : "Dieser Betrag wird nicht mehr gestaked und kann derzeit abgehoben werden.",
+      "pendingBalance" : "Ausstehender Saldo",
+      "pendingBalanceTooltip" : "Dieser Betrag wird nicht mehr gestaked, steht aber derzeit noch nicht zur Verfügung."
+    },
+    "common" : {
+      "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf.",
+      "viewDetails" : "Details anzeigen",
+      "connectDevice" : {
+        "title" : "Gerät"
+      },
+      "confirmation" : {
+        "title" : "Bestätigung"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "Betrag gestaked",
+        "unstakedAmount" : "Unstaking-Betrag",
+        "withdrawnAmount" : "Abgehobener Betrag"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "Du kannst Aptos-Prämien verdienen, indem du deine Assets stakest.",
+        "info" : "So funktioniert Staking",
+        "earnRewards" : "Rewards verdienen"
+      },
+      "table" : {
+        "header" : "Position(en) gestaked",
+        "stake" : "Hinzufügen",
+        "active" : "Gestaked",
+        "pendingInactive" : "Freigabe ausstehend",
+        "inactive" : "Auszahlbar",
+        "nextUnlock" : "Nächste Freischaltung"
+      },
+      "nextUnlockIn" : "Nächste Freischaltung in",
+      "unstake" : "Unstake",
+      "withdraw" : "Abheben",
+      "restake" : "Restake",
+      "activeTooltip" : "Beträge, die gestaked wurden, generieren Belohnungen",
+      "inactiveTooltip" : "Beträge, die nicht mehr gestaked werden, generieren keine Belohnungen",
+      "commission" : "Provision",
+      "totalStake" : "Staking-Gesamtbetrag",
+      "minSafeWarning" : "Zu niedriges Guthaben",
+      "flow" : {
+        "title" : "Staken",
+        "steps" : {
+          "starter" : {
+            "description" : "Du kannst durch Staking deiner Aptos-Assets bei einem Validator Prämien verdienen.",
+            "bullet" : ["Du behältst das Eigentum an den gestaketen Vermögenswerten.", "Staking mit deinem Ledger-Gerät", "Vermögenswerte sind 52 — 65 Stunden nach dem Aufheben des Staking-Prozesses verfügbar."],
+            "warning" : {
+              "description" : "Wähle deinen Validator mit Bedacht: Ein Teil deiner gestaketen Vermögenswerte kann unwiderruflich verloren gehen, wenn sich der Validator nicht angemessen verhält."
+            }
+          },
+          "amount" : {
+            "title" : "Betrag"
+          },
+          "validator" : {
+            "title" : "Validatoren",
+            "ledgerByChorusOneTC" : "AGB zu Ledger by Chorus One",
+            "ledgerByFigmentTC" : "Ledger laut Figment AGBs"
+          },
+          "connectDevice" : {
+            "title" : "Gerät"
+          },
+          "confirmation" : {
+            "title" : "Bestätigung",
+            "success" : {
+              "title" : "Du hast deine Vermögenswerte erfolgreich gestaket",
+              "text" : "Dein Kontostand wird aktualisiert, wenn die Blockchain die Transaktion bestätigt.",
+              "cta" : "Details anzeigen"
+            },
+            "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf."
+          }
+        }
+      }
+    },
+    "restake" : {
+      "flow" : {
+        "title" : "Stake reaktivieren",
+        "steps" : {
+          "amount" : {
+            "title" : "Betrag",
+            "subtitle" : "Beim Restaking wird dein abhebbares Guthaben erneut gestaket.",
+            "warning" : "Dabei wird das gesamte verfügbare Guthaben erneut gestaket. Der Restaking-Betrag kann nach einem Unstaking und dem Verstreichen der Entsperrfrist wieder abgehoben werden.",
+            "fields" : {
+              "validator" : "Validator",
+              "amount" : "Restaking-Betrag"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Gerät"
+          },
+          "confirmation" : {
+            "title" : "Bestätigung",
+            "success" : {
+              "title" : "Du hast deine Assets erfolgreich erneut gestaket.",
+              "description" : "{{amount}} wurden von {{validator}} erneut gestaket",
+              "cta" : "Details anzeigen"
+            },
+            "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "Es gibt nicht genug Vermögenswerte, die gestaked sind, um den Staking-Prozess aufzuheben.",
+      "flow" : {
+        "title" : "Unstake",
+        "steps" : {
+          "amount" : {
+            "title" : "Betrag",
+            "subtitle" : "Bis zum Abschluss des Unstakings dauert es {{timeToUnlock}}.",
+            "subtitle2" : "Es kann bis zu 30 Tage dauern, bis das Unstaking vollständig abgeschlossen ist.",
+            "warning" : "Prämien werden sofort eingelöst. Der dem Staking entzogene Betrag steht nach Ablauf der Entsperrfrist zur Auszahlung bereit.",
+            "fields" : {
+              "validator" : "Validator",
+              "amount" : "Aufzuhebender Staking-Betrag"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Gerät"
+          },
+          "confirmation" : {
+            "title" : "Bestätigung",
+            "success" : {
+              "title" : "Du hast das Staking deiner Vermögenswerte erfolgreich aufgehoben.",
+              "description" : "{{amount}} werden von {{validator}} nicht mehr gestaket",
+              "cta" : "Details anzeigen"
+            },
+            "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "disabledTooltip" : "Es gibt nicht genügend Vermögenswerte zum Abheben",
+      "flow" : {
+        "title" : "Abheben",
+        "steps" : {
+          "amount" : {
+            "title" : "Betrag",
+            "fields" : {
+              "validator" : "Validator",
+              "amount" : "Abzuhebender Betrag"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Gerät"
+          },
+          "confirmation" : {
+            "title" : "Bestätigung",
+            "success" : {
+              "title" : "Du hast deine Assets erfolgreich zurückgezogen.",
+              "description" : "{{amount}} wurden bei {{validator}} abgehoben",
+              "cta" : "Details anzeigen"
+            },
+            "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf."
+          }
         }
       }
     }
@@ -5870,9 +6039,17 @@
       "title" : "Sorry, Gebührenschätzung fehlgeschlagen",
       "description" : "Gebührenschätzung im Netzwerk fehlgeschlagen. Prüfe die Eingabe; die Transaktion schlägt höchstwahrscheinlich fehl"
     },
+    "NotEnoughToStake" : {
+      "title" : "Mindestbetrag für das Staking: {{minStake}} {{currency}}",
+      "description" : "Für das Staking ist ein Mindestbetrag von {{minStake}} {{currency}} erforderlich."
+    },
     "NotEnoughBalance" : {
       "title" : "Entschuldigung, Guthaben reicht nicht aus",
       "description" : "Bitte stellen Sie sicher, dass das Konto ausreichend gedeckt ist."
+    },
+    "NotEnoughStakedBalanceLeft" : {
+      "title" : "Du musst mindestens {{minAmountStaked}} im Stake belassen",
+      "description" : "Bitte belasse mindestens {{minAmountStaked}} im Stake, da andernfalls der gesamte Betrag daraus entfernt wird."
     },
     "NotEnoughBalanceFees" : {
       "title" : "Leider reicht das Guthaben zur Deckung der Gebühren nicht aus",
@@ -6594,6 +6771,19 @@
     },
     "AmountTooSmall" : {
       "title" : "Der Mindestbetrag für diese Transaktion beläuft sich auf {{amount}}"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "Wir sorgen für deine Sicherheit",
+      "description" : "Diese Transaktion bezieht sich auf eine gesperrte Wallet-Adresse und kann nicht verarbeitet werden.<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForSendError" : {
+      "title" : "Diese Transaktion bezieht sich auf eine gesperrte Wallet-Adresse und kann nicht verarbeitet werden<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForStakingError" : {
+      "title" : "Diese Transaktion bezieht sich auf eine gesperrte Wallet-<br/>Adresse und kann nicht verarbeitet werden.<br/>-- {{sanctionedAddress}}<br/>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "Diese Transaktion bezieht sich auf eine gesperrte Wallet-Adresse und kann nicht verarbeitet werden."
     }
   },
   "cryptoOrg" : {
@@ -7057,12 +7247,9 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "Suche",
-    "assetFlow" : {
-      "selectTemplate" : "{{dynamic}} auswählen",
-      "asset" : "Asset",
-      "network" : "Netzwerk",
-      "account" : "Konto"
-    }
+    "selectAsset" : "Vermögenswert auswählen",
+    "selectNetwork" : "Netzwerk auswählen",
+    "selectAccount" : "Konto auswählen"
   },
   "nftEntryPoint" : {
     "title" : "NFT (Non Fungible Token)",
@@ -7070,5 +7257,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Nicht am Ort verfügbar",
+    "description" : "Eine Ledger-Wallet ist an diesem Standort nicht verfügbar.",
+    "learnMore" : "Weitere Informationen"
   }
 }
