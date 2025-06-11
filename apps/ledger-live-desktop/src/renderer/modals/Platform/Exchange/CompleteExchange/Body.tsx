@@ -127,10 +127,10 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   useEffect(() => {
     if (data.exchangeType === ExchangeType.SWAP) {
       const missingParams = [];
-      if (refundAddress) {
+      if (!refundAddress) {
         missingParams.push("refundAddress");
       }
-      if (payoutAddress) {
+      if (!payoutAddress) {
         missingParams.push("payoutAddress");
       }
       if (missingParams.length > 0) {
