@@ -153,7 +153,6 @@ const ScanAccounts = ({ currency, deviceId, onComplete, onLoadingChange }: Props
   const renderAccount = (x: AccountItemAccount) => (
     <AccountItem
       account={x}
-      // onClick={() => {}}
       checkbox={{
         name: "checked",
         isChecked: checkedIds.has(x.id),
@@ -215,23 +214,25 @@ const ScanAccounts = ({ currency, deviceId, onComplete, onLoadingChange }: Props
         />
       </Box>
 
-      <Box flex={1}>
-        <Flex alignItems="center" justifyContent="space-between">
-          <Text variant="h5Inter" fontSize="small" fontWeight="regular">
-            {t("modularAssetDrawer.addAccounts.newAccount")}
-          </Text>
-        </Flex>
+      {!isScanning && formattedAccounts.length > 0 ? (
+        <Box flex={1}>
+          <Flex alignItems="center" justifyContent="space-between">
+            <Text variant="h5Inter" fontSize="small" fontWeight="regular">
+              {t("modularAssetDrawer.addAccounts.newAccount")}
+            </Text>
+          </Flex>
 
-        <VirtualList
-          gap={16}
-          items={formattedAccounts}
-          itemHeight={72}
-          renderItem={renderAccount}
-          // TODO review
-          hasNextPage={false}
-          onVisibleItemsScrollEnd={() => {}}
-        />
-      </Box>
+          <VirtualList
+            gap={16}
+            items={formattedAccounts}
+            itemHeight={72}
+            renderItem={renderAccount}
+            // TODO review
+            hasNextPage={false}
+            onVisibleItemsScrollEnd={() => {}}
+          />
+        </Box>
+      ) : null}
 
       <Flex justifyContent="flex-end">
         {isScanning ? (
