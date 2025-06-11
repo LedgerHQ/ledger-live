@@ -8120,7 +8120,7 @@ importers:
         version: link:../coin-framework
       '@ledgerhq/compressjs':
         specifier: github:LedgerHQ/compressjs#d9e8e4d994923e0ea76a32b97289bcccfe71b82e
-        version: https://codeload.github.com/LedgerHQ/compressjs/tar.gz/d9e8e4d994923e0ea76a32b97289bcccfe71b82e
+        version: git+https://git@github.com:LedgerHQ/compressjs.git#d9e8e4d994923e0ea76a32b97289bcccfe71b82e
       '@ledgerhq/cryptoassets':
         specifier: workspace:*
         version: link:../ledgerjs/packages/cryptoassets
@@ -13608,8 +13608,8 @@ packages:
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
-  '@ledgerhq/compressjs@https://codeload.github.com/LedgerHQ/compressjs/tar.gz/d9e8e4d994923e0ea76a32b97289bcccfe71b82e':
-    resolution: {tarball: https://codeload.github.com/LedgerHQ/compressjs/tar.gz/d9e8e4d994923e0ea76a32b97289bcccfe71b82e}
+  '@ledgerhq/compressjs@git+https://git@github.com:LedgerHQ/compressjs.git#d9e8e4d994923e0ea76a32b97289bcccfe71b82e':
+    resolution: {commit: d9e8e4d994923e0ea76a32b97289bcccfe71b82e, repo: git@github.com:LedgerHQ/compressjs.git, type: git}
     version: 1.3.1
     hasBin: true
 
@@ -17067,7 +17067,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      webpack: '*'
+      webpack: '5'
     peerDependenciesMeta:
       react:
         optional: true
@@ -19543,7 +19543,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -22692,7 +22692,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: '*'
+      jest: ^27.0.0
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
@@ -29215,7 +29215,7 @@ packages:
     resolution: {integrity: sha512-kBGxI+MIZGBf4wZhNCWwHkMcVP+kbpmrLWH/SkO0qCKc7D7eSPcxQbfpsmsCo8v2KCBYjuGSou+xTqK44D/jMg==}
     engines: {npm: ^3.0.0}
     peerDependencies:
-      prop-types: '*'
+      prop-types: ^15.6.1
       react: '>=15.0.0'
     peerDependenciesMeta:
       prop-types:
@@ -29239,8 +29239,8 @@ packages:
   react-native-animatable@1.4.0:
     resolution: {integrity: sha512-DZwaDVWm2NBvBxf7I0wXKXLKb/TxDnkV53sWhCvei1pRyTX3MVFpkvdYBknNBqPrxYuAIlPxEp7gJOidIauUkw==}
     peerDependencies:
-      react: '*'
-      react-native: '*'
+      react: 18.2.0
+      react-native: 0.72.6
     peerDependenciesMeta:
       react:
         optional: true
@@ -40981,7 +40981,7 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@ledgerhq/compressjs@https://codeload.github.com/LedgerHQ/compressjs/tar.gz/d9e8e4d994923e0ea76a32b97289bcccfe71b82e':
+  '@ledgerhq/compressjs@git+https://git@github.com:LedgerHQ/compressjs.git#d9e8e4d994923e0ea76a32b97289bcccfe71b82e':
     dependencies:
       commander: 2.20.3
 
