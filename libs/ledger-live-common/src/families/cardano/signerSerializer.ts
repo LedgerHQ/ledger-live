@@ -121,9 +121,10 @@ function prepareCertificate(cert: SignerTxCertificate): Certificate {
   switch (cert.type) {
     case "REGISTRATION":
       return {
-        type: CertificateType.STAKE_REGISTRATION,
+        type: CertificateType.STAKE_REGISTRATION_CONWAY,
         params: {
           stakeCredential,
+          deposit: cert.params.deposit,
         },
       };
     case "DELEGATION":
@@ -136,9 +137,10 @@ function prepareCertificate(cert: SignerTxCertificate): Certificate {
       };
     case "DEREGISTRATION":
       return {
-        type: CertificateType.STAKE_DEREGISTRATION,
+        type: CertificateType.STAKE_DEREGISTRATION_CONWAY,
         params: {
           stakeCredential,
+          deposit: cert.params.deposit,
         },
       };
     case "VOTE_DELEGATION_ABSTAIN":

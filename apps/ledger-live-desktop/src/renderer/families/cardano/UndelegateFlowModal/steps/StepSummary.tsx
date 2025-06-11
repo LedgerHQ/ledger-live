@@ -33,10 +33,10 @@ function StepSummary(props: StepProps) {
   const notEnoughFundsError = error && error instanceof CardanoNotEnoughFunds;
 
   const accountUnit = useMaybeAccountUnit(account);
-  if (!account || !transaction) return null;
+  if (!account || !transaction || !account.cardanoResources.delegation) return null;
 
   const feesCurrency = getAccountCurrency(account);
-  const stakeKeyDeposit = account.cardanoResources?.protocolParams.stakeKeyDeposit;
+  const stakeKeyDeposit = account.cardanoResources.delegation.deposit;
 
   return (
     <Box flow={4} mx={40}>

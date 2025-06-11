@@ -20,6 +20,7 @@ import type {
   CardanoAccount,
   CardanoDelegation,
   TransactionStatus,
+  Transaction,
 } from "@ledgerhq/live-common/families/cardano/types";
 import { Box, Text } from "@ledgerhq/native-ui";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -190,6 +191,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
             chosenPool={chosenPool ?? undefined}
             account={account}
             status={status}
+            transaction={transaction}
           />
         </View>
       </View>
@@ -336,6 +338,7 @@ function SummaryWords({
   isFetchingPoolDetails,
   onChangePool,
   status,
+  transaction,
 }: {
   chosenPool?: StakePool;
   account: AccountLike;
@@ -343,6 +346,7 @@ function SummaryWords({
   isFetchingPoolDetails: boolean;
   onChangePool: () => void;
   status: TransactionStatus;
+  transaction: Transaction;
 }) {
   const unit = useAccountUnit(account);
   const { t } = useTranslation();
@@ -574,9 +578,7 @@ function SummaryWords({
               <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={[styles.valueText]}>
                 {formatCurrencyUnit(
                   unit,
-                  new BigNumber(
-                    (account as CardanoAccount).cardanoResources.protocolParams.stakeKeyDeposit,
-                  ),
+                  new BigNumber(transaction.protocolParams?.stakeKeyDeposit ?? "0"),
                   formatConfig,
                 )}
               </LText>
