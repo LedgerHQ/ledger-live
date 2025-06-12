@@ -29,9 +29,15 @@ export const genericSignOperation =
     deviceId: DeviceId;
   }): Observable<SignOperationEvent> =>
     new Observable(o => {
+      let cancelled = false;
+
       async function main() {
         if (!transaction["fees"]) throw new FeeNotLoaded();
         o.next({ type: "device-signature-requested" });
+
+        if (cancelled) {
+          return;
+        }
 
         const { publicKey } = (await signerContext(deviceId, signer =>
           signer.getAddress(account.freshAddressPath),
@@ -85,4 +91,8 @@ export const genericSignOperation =
         () => o.complete(),
         e => o.error(e),
       );
+
+      return () => {
+        cancelled = true;
+      };
     });
