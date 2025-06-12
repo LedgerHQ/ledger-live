@@ -3369,7 +3369,8 @@
       "description" : "암호화폐를 안전하게 현금으로 매도하세요."
     },
     "exchange" : {
-      "title" : "구매 / 판매"
+      "title" : "구매 / 판매",
+      "connectingTo" : "{{provider}}에 연결"
     },
     "stake" : {
       "title" : "스테이킹",
@@ -7438,5 +7439,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "이용 불가능한 지역",
+    "description" : "Ledger 지갑을 사용할 수 없는 지역입니다.",
+    "learnMore" : "자세히 알아보기"
   }
 }
