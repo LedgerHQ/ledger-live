@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.82.0-next.2
+
+### Minor Changes
+
+- [#10512](https://github.com/LedgerHQ/ledger-live/pull/10512) [`5cb0ca0`](https://github.com/LedgerHQ/ledger-live/commit/5cb0ca0c74edb015e26fef1281ef4885fa6176e9) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Revert sanctioned address feature
+
 ## 3.82.0-next.1
 
 ### Minor Changes
