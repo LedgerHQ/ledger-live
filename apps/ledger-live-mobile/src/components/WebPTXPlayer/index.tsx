@@ -132,7 +132,7 @@ function HeaderRight({ softExit }: { softExit: boolean }) {
   );
 }
 
-export type CustomLoaderType = React.ComponentType<{
+export type InterstitialType = React.ComponentType<{
   manifest: LiveAppManifest;
   isLoading: boolean;
 }>;
@@ -153,7 +153,7 @@ type Props = {
         btnText: string;
       };
   softExit?: boolean;
-  CustomLoader?: CustomLoaderType;
+  Interstitial?: InterstitialType;
 };
 
 export const WebPTXPlayer = ({
@@ -166,7 +166,7 @@ export const WebPTXPlayer = ({
     navigator: NavigatorName.Exchange,
   },
   softExit = false,
-  CustomLoader,
+  Interstitial,
 }: Props) => {
   const lastMatchingURL = useRef<string | null>(null);
   const webviewAPIRef = useRef<WebviewAPI>(null);
@@ -298,11 +298,15 @@ export const WebPTXPlayer = ({
         inputs={inputs}
         onStateChange={setWebviewState}
         customHandlers={customHandlers}
+        Loader={PTXLoader}
       />
-      {CustomLoader ? <CustomLoader manifest={manifest} isLoading={webviewState.loading} /> : null}
-      {webviewState.loading ? <Loading /> : null}
+      {Interstitial && <Interstitial manifest={manifest} isLoading={webviewState.loading} />}
     </SafeAreaView>
   );
+};
+
+const PTXLoader = () => {
+  return <Loading />;
 };
 
 const styles = StyleSheet.create({

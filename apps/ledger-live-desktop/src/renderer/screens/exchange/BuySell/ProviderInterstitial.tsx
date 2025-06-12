@@ -79,7 +79,7 @@ const EllipsisLoader = () => (
 );
 
 /** Custom loader for transition between Buy/Sell and providers */
-export const CustomLoaderBuySell: WebviewLoader = ({ manifest, isLoading }) => {
+export const ProviderInterstitial: WebviewLoader = ({ manifest, isLoading }) => {
   const { t } = useTranslation();
   const showProviderLoadingTransition = useShowProviderLoadingTransition({ manifest, isLoading });
 
