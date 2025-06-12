@@ -141,6 +141,25 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     setTimeout(() => setStepKey(nextStepKey(StepKey.Apps)), READY_REDIRECT_DELAY_MS);
   }, []);
 
+  const [isPollingOn, setIsPollingOn] = useState<boolean>(true);
+
+  const [desyncOverlayDelay, setDesyncOverlayDelay] = useState<number>(DESYNC_OVERLAY_DELAY_MS);
+  const [isDesyncOverlayOpen, setIsDesyncOverlayOpen] = useState<boolean>(false);
+  const [desyncTimeout, setDesyncTimeout] = useState<number>(DESYNC_TIMEOUT_MS);
+
+  const {
+    onboardingState: deviceOnboardingState,
+    allowedError,
+    fatalError,
+    lockedDevice,
+  } = useOnboardingStatePolling({
+    getOnboardingStatePolling,
+    device: device || null,
+    pollingPeriodMs: POLLING_PERIOD_MS,
+    stopPolling: !isPollingOn,
+    allowedErrorChecks: [isAllowedOnboardingStatePollingErrorDmk],
+  });
+
   const defaultSteps: Step[] = useMemo(
     () => [
       {
@@ -204,7 +223,11 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
               category={`Set up ${productName}: Step 3 Seed Intro`}
               flow={analyticsFlowName}
             />
-            <SeedStep seedPathStatus={seedPathStatus} deviceModelId={device.modelId} />
+            <SeedStep
+              seedPathStatus={seedPathStatus}
+              charonSupported={deviceOnboardingState?.charonSupported}
+              deviceModelId={device.modelId}
+            />
           </>
         ),
       },
@@ -237,10 +260,11 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     [
       t,
       deviceName,
+      seedPathStatus,
       hasAppLoader,
       productName,
       device,
-      seedPathStatus,
+      deviceOnboardingState?.charonSupported,
       shouldRestoreApps,
       deviceToRestore,
       handleInstallRecommendedApplicationComplete,
@@ -248,24 +272,6 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   );
 
   const [steps, setSteps] = useState<Step[]>(defaultSteps);
-  const [isPollingOn, setIsPollingOn] = useState<boolean>(true);
-
-  const [desyncOverlayDelay, setDesyncOverlayDelay] = useState<number>(DESYNC_OVERLAY_DELAY_MS);
-  const [isDesyncOverlayOpen, setIsDesyncOverlayOpen] = useState<boolean>(false);
-  const [desyncTimeout, setDesyncTimeout] = useState<number>(DESYNC_TIMEOUT_MS);
-
-  const {
-    onboardingState: deviceOnboardingState,
-    allowedError,
-    fatalError,
-    lockedDevice,
-  } = useOnboardingStatePolling({
-    getOnboardingStatePolling,
-    device: device || null,
-    pollingPeriodMs: POLLING_PERIOD_MS,
-    stopPolling: !isPollingOn,
-    allowedErrorChecks: [isAllowedOnboardingStatePollingErrorDmk],
-  });
 
   const handleDeviceReady = useCallback(() => {
     history.push("/onboarding/sync/completion");

@@ -36,6 +36,7 @@ describe("useOnboardingStatePolling", () => {
       seedPhraseType: SeedPhraseType.TwentyFour,
       currentSeedWordIndex: 0,
       currentOnboardingStep: OnboardingStep.NewDevice,
+      charonSupported: false,
     };
 
     aSecondOnboardingState = {

@@ -643,12 +643,18 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                     )}
                   </BodyText>
 
-                  <SubtitleText mt={6}>
-                    {t("syncOnboarding.seedStep.selectionRestoreChoice.ledgerCharon.title")}
-                  </SubtitleText>
-                  <BodyText>
-                    {t("syncOnboarding.seedStep.selectionRestoreChoice.ledgerCharon.description")}
-                  </BodyText>
+                  {deviceOnboardingState?.charonSupported && (
+                    <>
+                      <SubtitleText mt={6}>
+                        {t("syncOnboarding.seedStep.selectionRestoreChoice.ledgerCharon.title")}
+                      </SubtitleText>
+                      <BodyText>
+                        {t(
+                          "syncOnboarding.seedStep.selectionRestoreChoice.ledgerCharon.description",
+                        )}
+                      </BodyText>
+                    </>
+                  )}
 
                   <SubtitleText mt={6}>
                     {t("syncOnboarding.seedStep.selectionRestoreChoice.ledgerRecover.title")}
@@ -793,6 +799,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       seedPathStatus,
       shouldRestoreApps,
       handleInstallAppsComplete,
+      deviceOnboardingState?.charonSupported,
       initialAppsToInstall,
       companionStepKey,
     ],
