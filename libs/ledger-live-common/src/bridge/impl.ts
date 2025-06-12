@@ -1,4 +1,7 @@
-import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
+import {
+  isAddressSanctioned,
+  isCheckSanctionedAddressEnabled,
+} from "@ledgerhq/coin-framework/sanction/index";
 import { CurrencyNotSupported } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -107,8 +110,7 @@ function wrapAccountBridge<T extends TransactionCommon>(
     getTransactionStatus: async (...args) => {
       const blockchainSpecific = await bridge.getTransactionStatus(...args);
       const common = await commonGetTransactionStatus(...args);
-      const merged = mergeResults(blockchainSpecific, common);
-      return merged;
+      return mergeResults(blockchainSpecific, common);
     },
   };
 }
@@ -128,6 +130,10 @@ async function commonGetTransactionStatus(
 ): Promise<Partial<TransactionStatusCommon>> {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
+
+  if (!isCheckSanctionedAddressEnabled(account.currency)) {
+    return { errors, warnings };
+  }
 
   let recipientIsBlacklisted = false;
   if (transaction.recipient && transaction.recipient !== "") {

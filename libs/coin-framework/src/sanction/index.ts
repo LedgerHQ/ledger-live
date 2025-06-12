@@ -19,7 +19,7 @@ export async function isAddressSanctioned(
   currency: CryptoCurrency,
   address: string,
 ): Promise<boolean> {
-  if (!isCheckBlacklistAddressEnabled(currency)) {
+  if (!isCheckSanctionedAddressEnabled(currency)) {
     return false;
   }
 
@@ -38,21 +38,16 @@ export async function isAddressSanctioned(
   return addresses.includes(address);
 }
 
-function isCheckBlacklistAddressEnabled(currency: CryptoCurrency): boolean {
-  const checkBlacklistAddress = false;
+export function isCheckSanctionedAddressEnabled(currency: CryptoCurrency): boolean {
   const currencyConfig = LiveConfig.getValueByKey(`config_currency_${currency.id}`);
-  if (currencyConfig && "checkBlacklistAddress" in currencyConfig) {
-    return currencyConfig.checkBlacklistAddress === true;
+  if (currencyConfig && "checkSanctionedAddress" in currencyConfig) {
+    return currencyConfig.checkSanctionedAddress === true;
   } else {
     const sharedConfiguration = LiveConfig.getValueByKey("config_currency");
-    if (!sharedConfiguration) {
-      throw new Error(
-        "Shared config for currency not found, please check it exists on Firebase > RemoteConfig",
-      );
-    } else if ("checkBlacklistAddress" in sharedConfiguration) {
-      return sharedConfiguration.checkBlacklistAddress === true;
+    if (sharedConfiguration && "checkSanctionedAddress" in sharedConfiguration) {
+      return sharedConfiguration.checkSanctionedAddress === true;
     }
   }
 
-  return checkBlacklistAddress;
+  return false;
 }
