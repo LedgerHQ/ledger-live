@@ -20,7 +20,6 @@ export const ConnectYourDevice = ({
 }: Readonly<Props>) => {
   invariant(currency, "No crypto asset given");
 
-  // preload currency ahead of time
   useEffect(() => {
     if (currency && currency.type === "CryptoCurrency") {
       prepareCurrency(currency);

@@ -1,19 +1,12 @@
+import { Icons } from "@ledgerhq/react-ui/index";
 import React from "react";
 import styled from "styled-components";
-import { Title } from "./Title";
-import { ModularDrawerAddAccountStep, MODULAR_DRAWER_ADD_ACCOUNT_STEP } from "../../types";
 import { track } from "~/renderer/analytics/segment";
-import { Icons } from "@ledgerhq/react-ui/index";
+import { ModularDrawerAddAccountStep } from "../../types";
 
 type Props = {
   onBackClick?: () => void;
   step: ModularDrawerAddAccountStep;
-};
-
-const TranslationKeyMap: Record<ModularDrawerAddAccountStep, string> = {
-  [MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE]: "modularAssetDrawer.connectYourDevice",
-  [MODULAR_DRAWER_ADD_ACCOUNT_STEP.SCAN_ACCOUNTS]: "modularAssetDrawer.scanAccounts",
-  [MODULAR_DRAWER_ADD_ACCOUNT_STEP.ADD_ACCOUNTS]: "modularAssetDrawer.addAccounts",
 };
 
 export const AddAccountHeader = ({ step, onBackClick }: Props) => {
@@ -34,7 +27,6 @@ export const AddAccountHeader = ({ step, onBackClick }: Props) => {
           <Icons.ArrowLeft />
         </BackButton>
       )}
-      <Title translationKey={TranslationKeyMap[step]} />
     </HeaderContainer>
   );
 };

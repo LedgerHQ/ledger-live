@@ -35,12 +35,7 @@ function selectCurrency(
   );
 }
 
-<<<<<<< HEAD
 export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, source: string) {
-  const dispatch = useDispatch();
-=======
-export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation) {
->>>>>>> 00153fa9e0 (feat: kick off 'add account flow', add ConnectYourDevice screen)
   const { isModularDrawerVisible } = useModularDrawerVisibility();
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
