@@ -28,6 +28,10 @@ function selectCurrency(
       onAssetSelected,
       source,
       flow,
+      drawerConfiguration: {
+        assets: { leftElement: "undefined", rightElement: "undefined" },
+        networks: { leftElement: "undefined", rightElement: "undefined" },
+      },
     },
     {
       onRequestClose: onClose,

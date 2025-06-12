@@ -115,34 +115,7 @@ const ScanAccounts = ({ currency, deviceId, onComplete }: Props) => {
       ),
     [counterValueCurrency.ticker, discreet, locale, scannedAccounts, walletState],
   );
-  // const formattedAccounts = useMemo(
-  //   () =>
-  //     [
-  //       {
-  //         address: formatAddress("utfdg9023lle21easd13x"),
-  //         balance: "23320.00",
-  //         fiatValue: "$23320.00",
-  //         ticker: "ETH",
-  //         protocol: "1111",
-  //         parentId: "ethereum",
-  //         id: "0",
-  //         name: "XLA",
-  //       },
-  //       {
-  //         address: formatAddress("asdasf12easdasds3k4"),
-  //         balance: "320.00",
-  //         fiatValue: "$19009.00",
-  //         parentId: "bitcoin",
-  //         cryptoId: "bitcoin",
-  //         ticker: "BTC",
-  //         id: "1",
-  //         name: "XLA",
-  //       },
-  //     ] satisfies AccountItemAccount[],
-  //   [],
-  // );
 
-  // TODO review
   const handleToggle = useCallback((id: string) => {
     setCheckedIds(prev => {
       const next = new Set(prev);
@@ -208,7 +181,6 @@ const ScanAccounts = ({ currency, deviceId, onComplete }: Props) => {
               { count: formattedAccounts.length },
             )}
           </Text>
-          {/* TODO unstyled button */}
           {formattedAccounts.length > 0 ? (
             formattedAccounts.length === checkedIds.size ? (
               <Link size="small" onClick={handleDeselectAll}>
