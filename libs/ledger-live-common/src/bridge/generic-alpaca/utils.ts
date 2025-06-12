@@ -47,8 +47,6 @@ export const buildOptimisticOperation = (
   transaction: TransactionCommon,
   nextSequenceNumber?: number,
 ): Operation => {
-  console.log(`build Optimistic Operation, sequence = ${nextSequenceNumber}`);
-
   return {
     id: encodeOperationId(account.id, "", "OUT"),
     hash: "",

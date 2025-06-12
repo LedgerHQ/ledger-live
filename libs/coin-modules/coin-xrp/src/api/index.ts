@@ -27,7 +27,7 @@ export function createApi(config: XrpConfig): Api<XrpAsset, XrpMapMemo> {
     broadcast,
     combine,
     craftTransaction: craft,
-    craftTransactionReturnSequence: craftTransactionReturnSequence,
+    craftTransactionReturnSequence,
     estimateFees: estimate,
     getBalance,
     lastBlock,
@@ -35,7 +35,11 @@ export function createApi(config: XrpConfig): Api<XrpAsset, XrpMapMemo> {
     validateIntent: getTransactionStatus,
   };
 }
-async function craftTransactionReturnSequence(
+
+/* ------------------------------------------------------------------------- *
+ * Private helper – builds tx, returns {serialized, sequence} once for both  *
+ * ------------------------------------------------------------------------- */
+async function _craftCore(
   transactionIntent: TransactionIntent<XrpAsset, XrpMapMemo>,
   customFees?: bigint,
 ): Promise<{ serialized: string; sequence: number }> {
@@ -73,42 +77,18 @@ async function craftTransactionReturnSequence(
   return { serialized: tx.serializedTransaction, sequence: nextSequenceNumber };
 }
 
+async function craftTransactionReturnSequence(
+  transactionIntent: TransactionIntent<XrpAsset, XrpMapMemo>,
+  customFees?: bigint,
+): Promise<{ serialized: string; sequence: number }> {
+  return _craftCore(transactionIntent, customFees);
+}
+
 async function craft(
   transactionIntent: TransactionIntent<XrpAsset, XrpMapMemo>,
   customFees?: bigint,
 ): Promise<string> {
-  const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
-  const estimatedFees = customFees !== undefined ? customFees : (await estimateFees()).fee;
-
-  const memosMap =
-    transactionIntent.memo?.type === "map" ? transactionIntent.memo.memos : new Map();
-
-  const destinationTagValue = memosMap.get("destinationTag");
-  const destinationTag =
-    typeof destinationTagValue === "string" ? Number(destinationTagValue) : undefined;
-
-  const memoStrings = memosMap.get("memos") as string[] | undefined;
-
-  let memoEntries: { type: string; data: string }[] = [];
-
-  if (Array.isArray(memoStrings) && memoStrings.length > 0) {
-    memoEntries = memoStrings.map(value => ({ type: "memo", data: value }));
-  }
-
-  const tx = await craftTransaction(
-    { address: transactionIntent.sender, nextSequenceNumber },
-    {
-      recipient: transactionIntent.recipient,
-      amount: transactionIntent.amount,
-      fee: estimatedFees,
-      destinationTag,
-      // NOTE: double check before/after here
-      memos: memoEntries,
-    },
-    transactionIntent.senderPublicKey,
-  );
-
-  return tx.serializedTransaction;
+  return (await _craftCore(transactionIntent, customFees)).serialized;
 }
 
 async function estimate(): Promise<FeeEstimation> {

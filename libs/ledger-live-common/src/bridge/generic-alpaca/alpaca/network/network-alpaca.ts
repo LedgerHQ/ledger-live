@@ -169,6 +169,24 @@ const buildCraftTransaction = networkFamily =>
     return data.rawTransaction;
   };
 
+const buildCraftTransactionReturnSequence = networkFamily =>
+  async function craftTransaction(
+    intent: TransactionIntent<any>,
+  ): Promise<{ serialized: string; sequence: number }> {
+    const { data } = await network<any, unknown>({
+      method: "POST",
+      url: `${ALPACA_URL}/${networkFamily}/transaction/encode`,
+      data: {
+        intent: {
+          ...intent,
+          amount: intent.amount.toString(10),
+        },
+      },
+    });
+    // TODO: return proper values
+    return data;
+  };
+
 export const getNetworkAlpacaApi = (networkFamily: string) =>
   ({
     broadcast: buildBroadcast(networkFamily),
@@ -179,4 +197,5 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     listOperations: buildListOperations(networkFamily),
     lastBlock: buildLastBlock(networkFamily),
     craftTransaction: buildCraftTransaction(networkFamily),
+    craftTransactionReturnSequence: buildCraftTransactionReturnSequence(networkFamily),
   }) satisfies Api<any>;

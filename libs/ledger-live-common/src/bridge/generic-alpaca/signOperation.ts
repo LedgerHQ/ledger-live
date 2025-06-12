@@ -50,26 +50,13 @@ export const genericSignOperation =
           txWithMemo.memo.memos.set("destinationTag", txMemo);
         }
 
-        // const { xrplTransaction, serializedTransaction } = await getAlpacaApi(
-        //   network,
-        //   kind,
-        // ).craftTransaction({
-        //   ...txWithMemo,
-        // });
-
-        const alpacaApi = getAlpacaApi(network, kind);
-        if (!alpacaApi || typeof alpacaApi.craftTransactionReturnSequence !== "function") {
-          throw new Error("Alpaca API or its method is undefined");
-        }
-        const res = await alpacaApi.craftTransactionReturnSequence({
+        const { serialized: unsigned, sequence } = await getAlpacaApi(
+          network,
+          kind,
+        ).craftTransactionReturnSequence({
           ...txWithMemo,
         });
-        // const res = await getAlpacaApi(network, kind).craftTransactionReturnSequence({
-        //   ...txWithMemo,
-        // });
-        // const { serialized: unsigned, sequence }
-        const unsigned = res.serialized;
-        const sequence = res.sequence;
+
         const transactionSignature: string = await signerContext(deviceId, signer =>
           signer.signTransaction(account.freshAddressPath, unsigned),
         );
@@ -82,9 +69,6 @@ export const genericSignOperation =
         );
 
         const operation = buildOptimisticOperation(account, transaction, sequence);
-        console.log({ operationSigned: operation });
-        // NOTE: we set the transactionSequenceNumber before on the operation
-        // now that we create it in craftTransaction, we might need to return it back from craftTransaction also
         o.next({
           type: "signed",
           signedOperation: {
