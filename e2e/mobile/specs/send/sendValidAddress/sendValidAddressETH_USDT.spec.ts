@@ -9,5 +9,6 @@ const transaction = new Transaction(
 runSendValidAddressTest(
   transaction,
   ["B2CQA-2703", "B2CQA-475"],
+  ["@NanoSP", "@LNS", "@NanoX"],
   transaction.accountToDebit.currency.name,
 );

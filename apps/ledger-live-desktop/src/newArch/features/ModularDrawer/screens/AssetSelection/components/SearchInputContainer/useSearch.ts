@@ -58,12 +58,18 @@ export const useSearch = ({
         return;
       }
 
-      trackModularDrawerEvent("asset_searched", {
-        flow,
-        source,
-        page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION,
-        searched_value: query,
-      });
+      trackModularDrawerEvent(
+        "asset_searched",
+        {
+          flow,
+          source,
+          page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION,
+          searched_value: query,
+        },
+        {
+          formatAssetConfig: true,
+        },
+      );
 
       const results =
         query.trim().length < 2

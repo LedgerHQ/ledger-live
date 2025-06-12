@@ -22,6 +22,8 @@ import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeat
 import { getFeature } from "./featureFlags";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
+import CountervaluesProvider from "~/renderer/components/CountervaluesProvider";
+import { initialCountervaluesMock } from "./mocks/countervalues.mock";
 
 config.disabled = true;
 
@@ -103,6 +105,43 @@ function EnhancedProviders({ children }: { children: React.ReactNode }): JSX.Ele
       </DrawerProvider>
     </I18nextProvider>
   );
+}
+
+/**
+ * Renders a UI component with the necessary context providers and sets up user events for testing and mocking counter values.
+ * This should be merged with the main render function to avoid duplication.
+ * But for now, it is kept separate to maintain the mocking of counter values and avoid breaking changes.
+ *
+ * @param {JSX.Element} ui - The React component to be rendered.
+ * @param {ExtraOptions} [options={}] - Additional options for rendering, such as initial state, store, etc.
+ *
+ * @returns {RenderReturn} The rendered component with the provided context providers and user events.
+ */
+function renderWithMockedCounterValuesProvider(
+  ui: JSX.Element,
+  options: ExtraOptions = {},
+): RenderReturn {
+  const {
+    initialState = {},
+    store = createStore({ state: initialState as State, dbMiddleware }),
+    userEventOptions = {},
+    ...renderOptions
+  } = options;
+
+  return {
+    store,
+    user: userEvent.setup(userEventOptions),
+    ...rtlRender(ui, {
+      wrapper: ({ children }) => (
+        <Providers store={store}>
+          <CountervaluesProvider initialState={initialCountervaluesMock}>
+            {children}
+          </CountervaluesProvider>
+        </Providers>
+      ),
+      ...renderOptions,
+    }),
+  };
 }
 
 /**
@@ -199,4 +238,10 @@ function renderHookWithLiveAppProvider<Result, Props>(
 }
 
 export * from "@testing-library/react";
-export { userEvent, render, renderHook, renderHookWithLiveAppProvider };
+export {
+  userEvent,
+  render,
+  renderHook,
+  renderHookWithLiveAppProvider,
+  renderWithMockedCounterValuesProvider,
+};

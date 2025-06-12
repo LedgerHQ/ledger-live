@@ -1,3 +1,4 @@
+const tags: string[] = ["@NanoSP", "@LNS", "@NanoX"];
 describe("Market page for user with no device", () => {
   const nanoApp = AppInfos.ETHEREUM;
   const asset = "Ethereum (ETH)";
@@ -20,6 +21,7 @@ describe("Market page for user with no device", () => {
   });
 
   $TmsLink("B2CQA-1880");
+  tags.forEach(tag => $Tag(tag));
   it("should find the researched crypto", async () => {
     await app.walletTabNavigator.navigateToMarket();
     await app.market.searchAsset("eth");
@@ -27,6 +29,7 @@ describe("Market page for user with no device", () => {
   });
 
   $TmsLink("B2CQA-1879");
+  tags.forEach(tag => $Tag(tag));
   it("should filter starred asset in the list", async () => {
     await app.market.openAssetPage(asset);
     await app.market.starFavoriteCoin();

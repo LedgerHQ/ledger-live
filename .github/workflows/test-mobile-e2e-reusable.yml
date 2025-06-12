@@ -68,6 +68,15 @@ on:
         description: "🍏 Test Execution. Ex: 'B2CQA-2462'"
         required: false
         type: string
+      speculos_device:
+        description: "Device to be used"
+        required: false
+        type: choice
+        options:
+          - nanoS
+          - nanoSP
+          - nanoX
+        default: nanoSP
 
 # Uncomment to have log-level: trace on detox run and build
 # (cf: apps/ledger-live-mobile/detox.config.js)
@@ -83,6 +92,7 @@ env:
   COINAPPS: ${{ github.workspace }}/coin-apps
   E2E_RUN: ${{ inputs.tests_type == 'E2E - Android Only' || inputs.tests_type == 'E2E - iOS & Android' || github.event_name == 'schedule' }}
   SHOULD_UPLOAD: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || (github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) }}
+  SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoSP' }}"
 
 jobs:
   detox-tests-ios:
@@ -655,7 +665,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": `- 🤖 Android: ${process.env.ANDROID_STATUS !== 'success' ? '❌' : '✅'} ${{ needs.allure-report-android.outputs.result || 'No test results' }}`
+                  "text": `- 🤖 Android - ${{ inputs.speculos_device }}: ${process.env.ANDROID_STATUS !== 'success' ? '❌' : '✅'} ${{ needs.allure-report-android.outputs.result || 'No test results' }}`
                 }
               }
             ];

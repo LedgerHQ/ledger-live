@@ -1,6 +1,10 @@
 import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
 
-export function runVerifyAddressTest(account: AccountType, tmsLinks: string[]) {
+export function runVerifyAddressTest(
+  account: AccountType,
+  tmsLinks: string[],
+  tags: string[] = ["@NanoSP", "@LNS", "@NanoX"],
+) {
   describe("Verify Address", () => {
     beforeAll(async () => {
       await app.init({
@@ -20,6 +24,7 @@ export function runVerifyAddressTest(account: AccountType, tmsLinks: string[]) {
     });
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
     it(`Verify address on ${account.currency.name}`, async () => {
       await app.account.openViaDeeplink();
       await app.account.goToAccountByName(account.accountName);

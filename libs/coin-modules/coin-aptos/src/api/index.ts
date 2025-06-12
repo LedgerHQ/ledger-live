@@ -6,7 +6,7 @@ import type { AptosAsset } from "../types/assets";
 import { AptosAPI } from "../network";
 import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
-import { getBalance } from "../logic/getBalance";
+import { getBalances } from "../logic/getBalances";
 
 export function createApi(config: AptosConfigApi): AlpacaApi<AptosAsset> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -20,7 +20,7 @@ export function createApi(config: AptosConfigApi): AlpacaApi<AptosAsset> {
       craftTransaction(client, transactionIntent),
     estimateFees: (transactionIntent: TransactionIntent<AptosAsset>) =>
       client.estimateFees(transactionIntent),
-    getBalance: (address): Promise<Balance<AptosAsset>[]> => getBalance(client, address),
+    getBalance: (address): Promise<Balance<AptosAsset>[]> => getBalances(client, address),
     lastBlock: () => client.getLastBlock(),
     listOperations: (address: string, pagination: Pagination) =>
       client.listOperations(address, pagination),

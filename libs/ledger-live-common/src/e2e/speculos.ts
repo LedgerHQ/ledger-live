@@ -569,6 +569,9 @@ export async function expectValidAddressDevice(account: Account, addressDisplaye
     case Currency.ATOM:
       deviceLabels = [DeviceLabels.ADDRESS, DeviceLabels.CAPS_APPROVE, DeviceLabels.CAPS_REJECT];
       break;
+    case Currency.BTC:
+      deviceLabels = [DeviceLabels.ADDRESS, DeviceLabels.CONFIRM, DeviceLabels.CANCEL];
+      break;
     default:
       deviceLabels = [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT];
       break;

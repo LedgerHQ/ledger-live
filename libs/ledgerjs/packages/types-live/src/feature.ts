@@ -615,6 +615,7 @@ export type Feature_LldModularDrawer = Feature<{
   live_app: boolean;
   receive_flow: boolean;
   send_flow: boolean;
+  enableModularization: boolean;
 }>;
 
 export type Feature_CounterValue = DefaultFeature;

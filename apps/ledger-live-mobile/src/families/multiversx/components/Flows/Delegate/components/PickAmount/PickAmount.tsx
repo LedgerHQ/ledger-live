@@ -45,6 +45,7 @@ const PickAmount = (props: PickAmountPropsType) => {
    */
 
   const getMaxSpendable = useCallback(() => {
+    const bridge = getAccountBridge(account);
     const fetchMaxSpendable = async () => {
       const amount = await bridge.estimateMaxSpendable({
         account,
@@ -58,7 +59,7 @@ const PickAmount = (props: PickAmountPropsType) => {
     };
 
     fetchMaxSpendable();
-  }, [bridge, account, transaction]);
+  }, [account, transaction]);
 
   /*
    * Handle the ration selection callback.

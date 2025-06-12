@@ -136,7 +136,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
         }),
       );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [route.params, updateTransaction, bridge, setTransaction, chosenPool]);
+  }, [route.params, updateTransaction, setTransaction, chosenPool]);
 
   const onChangePool = useCallback(() => {
     navigation.navigate(ScreenName.CardanoDelegationPoolSelect, {

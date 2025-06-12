@@ -347,7 +347,7 @@ jobs:
                       "type": "header",
                       "text": {
                         "type": "plain_text",
-                        "text": ":ledger-logo: Ledger Live Desktop E2E tests results on ${{ github.ref_name }}",
+                        "text": ":ledger-logo: Ledger Live Desktop E2E tests results on ${{ github.ref_name }} - ${{ inputs.speculos_device || 'nanoSP' }}",
                         "emoji": true
                       }
                     },
@@ -358,7 +358,7 @@ jobs:
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": `- 🐧 linux - ${{ inputs.speculos_device }} : ${statusEmoji} ${{ needs.report-to-allure.outputs.test_result || 'No test results' }}`
+                        "text": `- 🐧 linux : ${statusEmoji} ${{ needs.report-to-allure.outputs.test_result || 'No test results' }}`
                       }
                     },
                     {
