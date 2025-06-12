@@ -121,11 +121,6 @@ const History = () => {
   );
 
   const exportSwapHistory = async () => {
-    console.log("exportSwapHistory", sections);
-    console.log(
-      "accounts",
-      accounts.filter(a => a.swapHistory.length > 0),
-    );
     try {
       const mapped = mappedSwapOperationsToCSV(sections);
 
@@ -141,14 +136,12 @@ const History = () => {
         url: `data:text/csv;base64,${base64}`,
       };
 
-      console.log(options);
       await Share.open(options);
     } catch (err) {
       // `failOnCancel: false` is not enough to prevent throwing on cancel apparently ¯\_(ツ)_/¯
       if ((err as { error?: { code?: string } })?.error?.code !== "ECANCELLED500") {
         logger.critical(err as Error);
       }
-      console.error(err);
     }
   };
 
