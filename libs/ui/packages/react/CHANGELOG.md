@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.29.0-nightly.2
+
+### Minor Changes
+
+- [#10406](https://github.com/LedgerHQ/ledger-live/pull/10406) [`3f02d18`](https://github.com/LedgerHQ/ledger-live/commit/3f02d1856cb30eee4c79e3b9f83df2ff3a56775d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - Add balance for each asset on asset selection list
+
 ## 0.29.0-nightly.1
 
 ### Minor Changes

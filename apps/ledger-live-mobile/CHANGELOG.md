@@ -1,5 +1,28 @@
 # live-mobile
 
+## 3.82.0-nightly.2
+
+### Minor Changes
+
+- [#10496](https://github.com/LedgerHQ/ledger-live/pull/10496) [`f5ab99e`](https://github.com/LedgerHQ/ledger-live/commit/f5ab99e942398e4b889ee08c3a016db036cf64c1) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - bugfix: fix e2e test on Cardano and MultiverseX for delegate
+
+### Patch Changes
+
+- Updated dependencies [[`4d9aaf5`](https://github.com/LedgerHQ/ledger-live/commit/4d9aaf583060a22cd1343b23d9b5c1ee3c02abb4), [`e9739d1`](https://github.com/LedgerHQ/ledger-live/commit/e9739d19946376dd7a8a5f10471594f267f3a95f)]:
+  - @ledgerhq/coin-framework@5.3.0-nightly.1
+  - @ledgerhq/types-live@6.73.0-nightly.1
+  - @ledgerhq/coin-cosmos@0.15.1-nightly.1
+  - @ledgerhq/coin-evm@2.22.3-nightly.1
+  - @ledgerhq/coin-filecoin@1.9.9-nightly.1
+  - @ledgerhq/coin-multiversx@0.4.9-nightly.1
+  - @ledgerhq/coin-stacks@0.8.9-nightly.1
+  - @ledgerhq/live-countervalues@0.5.9-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.38-nightly.1
+  - @ledgerhq/live-nft@0.8.9-nightly.1
+  - @ledgerhq/live-nft-react@0.9.9-nightly.1
+  - @ledgerhq/live-wallet@0.10.12-nightly.1
+  - @ledgerhq/domain-service@1.2.32-nightly.1
+
 ## 3.82.0-nightly.1
 
 ### Minor Changes

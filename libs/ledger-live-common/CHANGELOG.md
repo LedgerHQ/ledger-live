@@ -1,5 +1,56 @@
 # @ledgerhq/live-common
 
+## 34.37.0-nightly.2
+
+### Minor Changes
+
+- [#10406](https://github.com/LedgerHQ/ledger-live/pull/10406) [`3f02d18`](https://github.com/LedgerHQ/ledger-live/commit/3f02d1856cb30eee4c79e3b9f83df2ff3a56775d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - Add balance for each asset on asset selection list
+
+- [#10494](https://github.com/LedgerHQ/ledger-live/pull/10494) [`b380c65`](https://github.com/LedgerHQ/ledger-live/commit/b380c654babdeb515957407d57ab4dbf90a355e2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(ledger-live-common) typo in countervalue marker URL
+
+- [#10425](https://github.com/LedgerHQ/ledger-live/pull/10425) [`4d9aaf5`](https://github.com/LedgerHQ/ledger-live/commit/4d9aaf583060a22cd1343b23d9b5c1ee3c02abb4) Thanks [@qperrot](https://github.com/qperrot)! - Feature: handle black listed address on swap
+
+- [#10502](https://github.com/LedgerHQ/ledger-live/pull/10502) [`e9739d1`](https://github.com/LedgerHQ/ledger-live/commit/e9739d19946376dd7a8a5f10471594f267f3a95f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add enableModularization param to lldModularDrawer to be able to control the modularization
+
+### Patch Changes
+
+- Updated dependencies [[`d41d1f4`](https://github.com/LedgerHQ/ledger-live/commit/d41d1f459b112aca36e8224f6bcf4a6bc5734216), [`4d9aaf5`](https://github.com/LedgerHQ/ledger-live/commit/4d9aaf583060a22cd1343b23d9b5c1ee3c02abb4)]:
+  - @ledgerhq/coin-aptos@2.2.0-nightly.1
+  - @ledgerhq/coin-framework@5.3.0-nightly.1
+  - @ledgerhq/coin-algorand@0.9.9-nightly.1
+  - @ledgerhq/coin-bitcoin@0.15.9-nightly.1
+  - @ledgerhq/coin-cardano@0.8.9-nightly.1
+  - @ledgerhq/coin-casper@1.7.4-nightly.1
+  - @ledgerhq/coin-celo@1.1.7-nightly.1
+  - @ledgerhq/coin-cosmos@0.15.1-nightly.1
+  - @ledgerhq/coin-evm@2.22.3-nightly.1
+  - @ledgerhq/coin-filecoin@1.9.9-nightly.1
+  - @ledgerhq/coin-hedera@1.7.1-nightly.1
+  - @ledgerhq/coin-icon@0.10.9-nightly.1
+  - @ledgerhq/coin-internet_computer@1.7.9-nightly.1
+  - @ledgerhq/coin-mina@1.1.8-nightly.1
+  - @ledgerhq/coin-multiversx@0.4.9-nightly.1
+  - @ledgerhq/coin-near@0.11.9-nightly.1
+  - @ledgerhq/coin-polkadot@6.1.3-nightly.1
+  - @ledgerhq/coin-solana@0.25.1-nightly.1
+  - @ledgerhq/coin-stacks@0.8.9-nightly.1
+  - @ledgerhq/coin-stellar@5.1.2-nightly.1
+  - @ledgerhq/coin-sui@0.4.2-nightly.1
+  - @ledgerhq/coin-tezos@5.2.2-nightly.1
+  - @ledgerhq/coin-ton@0.12.1-nightly.1
+  - @ledgerhq/coin-tron@4.2.0-nightly.2
+  - @ledgerhq/coin-vechain@2.7.9-nightly.1
+  - @ledgerhq/coin-xrp@6.1.4-nightly.1
+  - @ledgerhq/live-countervalues@0.5.9-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.38-nightly.1
+  - @ledgerhq/live-nft@0.8.9-nightly.1
+  - @ledgerhq/live-wallet@0.10.12-nightly.1
+  - @ledgerhq/device-core@0.4.27-nightly.1
+  - @ledgerhq/hw-app-eth@6.45.7-nightly.1
+  - @ledgerhq/live-signer-evm@0.5.2-nightly.1
+  - @ledgerhq/live-signer-solana@0.2.1-nightly.1
+  - @ledgerhq/hw-app-celo@6.33.5-nightly.1
+
 ## 34.37.0-nightly.1
 
 ### Minor Changes

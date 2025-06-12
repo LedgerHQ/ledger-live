@@ -1,5 +1,41 @@
 # ledger-live-desktop
 
+## 2.117.0-nightly.2
+
+### Minor Changes
+
+- [#10406](https://github.com/LedgerHQ/ledger-live/pull/10406) [`3f02d18`](https://github.com/LedgerHQ/ledger-live/commit/3f02d1856cb30eee4c79e3b9f83df2ff3a56775d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - Add balance for each asset on asset selection list
+
+- [#10382](https://github.com/LedgerHQ/ledger-live/pull/10382) [`44ac57c`](https://github.com/LedgerHQ/ledger-live/commit/44ac57c65089991925ae057fae0cddebdb09ec4b) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Remove Navbar from Earn, Card, and Buy live apps for cleaner layout
+
+- [#10487](https://github.com/LedgerHQ/ledger-live/pull/10487) [`1b82b0e`](https://github.com/LedgerHQ/ledger-live/commit/1b82b0eb0463e9dad37605def0b10be59b3043e3) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix missing analytics for MAD
+
+- [#10438](https://github.com/LedgerHQ/ledger-live/pull/10438) [`e2e798a`](https://github.com/LedgerHQ/ledger-live/commit/e2e798ab6fba21de8d22d13fa6e44d2fd30a938d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - Polish transition animations
+
+- [#10425](https://github.com/LedgerHQ/ledger-live/pull/10425) [`4d9aaf5`](https://github.com/LedgerHQ/ledger-live/commit/4d9aaf583060a22cd1343b23d9b5c1ee3c02abb4) Thanks [@qperrot](https://github.com/qperrot)! - Feature: handle black listed address on swap
+
+- [#10502](https://github.com/LedgerHQ/ledger-live/pull/10502) [`e9739d1`](https://github.com/LedgerHQ/ledger-live/commit/e9739d19946376dd7a8a5f10471594f267f3a95f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add enableModularization param to lldModularDrawer to be able to control the modularization
+
+### Patch Changes
+
+- Updated dependencies [[`3f02d18`](https://github.com/LedgerHQ/ledger-live/commit/3f02d1856cb30eee4c79e3b9f83df2ff3a56775d), [`b380c65`](https://github.com/LedgerHQ/ledger-live/commit/b380c654babdeb515957407d57ab4dbf90a355e2), [`d41d1f4`](https://github.com/LedgerHQ/ledger-live/commit/d41d1f459b112aca36e8224f6bcf4a6bc5734216), [`4d9aaf5`](https://github.com/LedgerHQ/ledger-live/commit/4d9aaf583060a22cd1343b23d9b5c1ee3c02abb4), [`e9739d1`](https://github.com/LedgerHQ/ledger-live/commit/e9739d19946376dd7a8a5f10471594f267f3a95f)]:
+  - @ledgerhq/live-common@34.37.0-nightly.2
+  - @ledgerhq/react-ui@0.29.0-nightly.2
+  - @ledgerhq/coin-aptos@2.2.0-nightly.1
+  - @ledgerhq/coin-framework@5.3.0-nightly.1
+  - @ledgerhq/types-live@6.73.0-nightly.1
+  - @ledgerhq/live-dmk-desktop@0.5.0-nightly.2
+  - @ledgerhq/coin-bitcoin@0.15.9-nightly.1
+  - @ledgerhq/coin-cosmos@0.15.1-nightly.1
+  - @ledgerhq/coin-evm@2.22.3-nightly.1
+  - @ledgerhq/coin-filecoin@1.9.9-nightly.1
+  - @ledgerhq/live-countervalues@0.5.9-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.38-nightly.1
+  - @ledgerhq/live-nft@0.8.9-nightly.1
+  - @ledgerhq/live-nft-react@0.9.9-nightly.1
+  - @ledgerhq/live-wallet@0.10.12-nightly.1
+  - @ledgerhq/domain-service@1.2.32-nightly.1
+
 ## 2.117.0-nightly.1
 
 ### Patch Changes

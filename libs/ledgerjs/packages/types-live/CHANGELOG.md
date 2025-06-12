@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.73.0-nightly.1
+
+### Minor Changes
+
+- [#10502](https://github.com/LedgerHQ/ledger-live/pull/10502) [`e9739d1`](https://github.com/LedgerHQ/ledger-live/commit/e9739d19946376dd7a8a5f10471594f267f3a95f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add enableModularization param to lldModularDrawer to be able to control the modularization
+
 ## 6.73.0-nightly.0
 
 ### Minor Changes

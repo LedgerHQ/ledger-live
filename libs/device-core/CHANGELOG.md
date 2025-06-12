@@ -1,5 +1,12 @@
 # @ledgerhq/device-core
 
+## 0.4.27-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`e9739d1`](https://github.com/LedgerHQ/ledger-live/commit/e9739d19946376dd7a8a5f10471594f267f3a95f)]:
+  - @ledgerhq/types-live@6.73.0-nightly.1
+
 ## 0.4.27-nightly.0
 
 ### Patch Changes
