@@ -31,7 +31,14 @@ export const genericSignOperation =
   }): Observable<SignOperationEvent> =>
     new Observable(o => {
       let cancelled = false;
+      let inProgress = false;
       async function main() {
+        log("xrp-debug", "🟢 signOperation main() started");
+        if (inProgress || cancelled) {
+          log("xrp-debug", "🔁 Aborted: Already in progress or cancelled");
+          return;
+        }
+        inProgress = true;
         if (!transaction["fees"]) throw new FeeNotLoaded();
         try {
           /////
@@ -43,7 +50,7 @@ export const genericSignOperation =
           const signedInfo = await signerContext(deviceId, async signer => {
             const derivationPath = account.freshAddressPath;
 
-            const { publicKey } = (await signer.getAddress(derivationPath, {})) as Result;
+            const { publicKey } = (await signer.getAddress(derivationPath)) as Result;
 
             /* Build TransactionIntent (+ memo for destinationTag if any) */
             const intent = transactionToIntent(account, transaction);
@@ -111,6 +118,7 @@ export const genericSignOperation =
 
           throw e;
         }
+        log("xrp-debug", "✅ signOperation main() completed");
       }
 
       main().then(
