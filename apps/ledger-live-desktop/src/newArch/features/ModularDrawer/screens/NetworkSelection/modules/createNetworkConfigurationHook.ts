@@ -3,6 +3,7 @@ import { Network } from "@ledgerhq/react-ui/pre-ldls/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { composeHooks } from "LLD/utils/composeHooks";
 import { useLeftAccountsModule } from "./useLeftAccountsModule";
+import { useRightBalanceModule } from "../../AssetSelection/modules/useRightBalanceModule";
 
 type Props = {
   networksConfig: EnhancedModularDrawerConfiguration["networks"];
@@ -19,14 +20,28 @@ const getLeftElement = (leftElement: string) => {
   }
 };
 
+const getRightElement = (rightElement: string) => {
+  switch (rightElement) {
+    case "balance":
+      return useRightBalanceModule;
+    case "marketTrend":
+    case "undefined":
+    default:
+      return undefined;
+  }
+};
+
 const createNetworkConfigurationHook = ({
   networksConfig,
 }: Props): ((assets: CryptoOrTokenCurrency[]) => (CryptoOrTokenCurrency & Network)[]) => {
-  const { leftElement = "undefined" } = networksConfig ?? {};
+  const { leftElement = "undefined", rightElement = "undefined" } = networksConfig ?? {};
 
   const leftHook = getLeftElement(leftElement);
+  const rightHook = getRightElement(rightElement);
 
-  const hooks = [leftHook].filter(Boolean) as Array<(assets: CryptoOrTokenCurrency[]) => Network[]>;
+  const hooks = [rightHook, leftHook].filter(Boolean) as Array<
+    (assets: CryptoOrTokenCurrency[]) => Network[]
+  >;
 
   return composeHooks<CryptoOrTokenCurrency, Network>(...hooks);
 };
