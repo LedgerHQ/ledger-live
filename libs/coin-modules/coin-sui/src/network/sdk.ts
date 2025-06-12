@@ -326,6 +326,7 @@ export const loadOperations = async ({
     if (order === "descending" && operations.length >= TRANSACTIONS_LIMIT) {
       return operations;
     }
+
     const { data, nextCursor, hasNextPage } = await queryTransactions({
       ...params,
       order,
