@@ -66,6 +66,7 @@ const RecoverRestore = () => {
             seedPhraseType: SeedPhraseType.TwentyFour,
             currentOnboardingStep: OnboardingStep.NewDevice,
             currentSeedWordIndex: 0,
+            charonSupported: false,
           });
         } else {
           setError(error);

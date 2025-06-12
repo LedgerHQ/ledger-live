@@ -225,7 +225,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
             />
             <SeedStep
               seedPathStatus={seedPathStatus}
-              charonSupported={deviceOnboardingState?.charonSupported}
+              charonSupported={Boolean(deviceOnboardingState?.charonSupported)}
               deviceModelId={device.modelId}
             />
           </>
