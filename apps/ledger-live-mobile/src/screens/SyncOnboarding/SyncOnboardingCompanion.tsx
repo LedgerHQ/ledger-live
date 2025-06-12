@@ -747,7 +747,9 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                       {t("syncOnboarding.seedStep.selectionRestore.title")}
                     </Text>
                     <Text color="neutral.c80">
-                      {t("syncOnboarding.seedStep.selectionRestore.desc")}
+                      {deviceOnboardingState?.charonSupported
+                        ? t("syncOnboarding.seedStep.selectionRestore.descWithCharon")
+                        : t("syncOnboarding.seedStep.selectionRestore.desc")}
                     </Text>
                   </Flex>
                   <ContinueOnDeviceWithAnim

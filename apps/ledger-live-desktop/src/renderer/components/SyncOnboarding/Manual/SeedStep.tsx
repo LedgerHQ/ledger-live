@@ -188,7 +188,11 @@ const SeedStep = ({ seedPathStatus, charonSupported, deviceModelId }: Props) => 
             {t("syncOnboarding.manual.seedContent.selectionRestoreTitle")}
           </VerticalTimeline.SubtitleText>
           {/* @ts-expect-error weird props issue with React 18 */}
-          <StepText>{t("syncOnboarding.manual.seedContent.selectionRestoreDescription")}</StepText>
+          <StepText>
+            {charonSupported
+              ? t("syncOnboarding.manual.seedContent.selectionRestoreDescriptionWithCharon")
+              : t("syncOnboarding.manual.seedContent.selectionRestoreDescription")}
+          </StepText>
           <ContinueOnDeviceWithAnim
             deviceModelId={deviceModelId}
             text={t("syncOnboarding.manual.seedContent.selectionContinueOnDevice", {
