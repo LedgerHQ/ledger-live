@@ -16,15 +16,13 @@ export const AssetList = ({
   hasNextPage?: boolean;
 }) => {
   const renderAssetItem = useCallback(
-    ({ name, ticker, id }: AssetType) => (
-      <AssetItem name={name} ticker={ticker} id={id} onClick={onClick} />
-    ),
+    (props: AssetType) => <AssetItem {...props} onClick={onClick} />,
     [onClick],
   );
 
   return (
     <VirtualList
-      itemHeight={70}
+      itemHeight={64}
       items={assets}
       onVisibleItemsScrollEnd={onVisibleItemsScrollEnd}
       renderItem={renderAssetItem}

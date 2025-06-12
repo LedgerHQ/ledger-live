@@ -3,6 +3,7 @@ import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { exec } from "child_process";
 import { device, log } from "detox";
 import { allure } from "jest-allure2-reporter/api";
+import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
 
 const BASE_DEEPLINK = "ledgerlive://";
 
@@ -25,6 +26,11 @@ export async function delay(ms: number) {
 export async function openDeeplink(path?: string) {
   await device.openURL({ url: BASE_DEEPLINK + path });
 }
+
+export const describeIfNotNanoS = (...args: Parameters<typeof describe>) =>
+  process.env.SPECULOS_DEVICE !== Device.LNS
+    ? describe(...args)
+    : describe.skip("[not avilable on LNS] " + args[0], args[1]);
 
 export function isAndroid() {
   return device.getPlatform() === "android";
