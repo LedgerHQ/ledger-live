@@ -57,6 +57,7 @@ export const buildOptimisticOperation = (
     blockHeight: null,
     senders: [account.freshAddress.toString()],
     recipients: [transaction.recipient],
+    transactionSequenceNumber: sequenceNumber ?? 0,
     accountId: account.id,
     date: new Date(),
     extra: {},
