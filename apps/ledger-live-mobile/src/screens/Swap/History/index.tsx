@@ -3,6 +3,7 @@ import getCompleteSwapHistory from "@ledgerhq/live-common/exchange/swap/getCompl
 import { isSwapOperationPending } from "@ledgerhq/live-common/exchange/swap/index";
 import { MappedSwapOperation, SwapHistorySection } from "@ledgerhq/live-common/exchange/swap/types";
 import updateAccountSwapStatus from "@ledgerhq/live-common/exchange/swap/updateAccountSwapStatus";
+import { getParentAccount } from "@ledgerhq/live-common/account/index";
 import type { Account } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -46,7 +47,18 @@ const History = () => {
   const syncAccounts = useSyncAllAccounts();
 
   useEffect(() => {
-    setSections(getCompleteSwapHistory(accounts));
+    const history = getCompleteSwapHistory(accounts);
+
+    // fix token account parent
+    history.forEach(section => {
+      section.data.forEach(item => {
+        if (item.toAccount.type === "TokenAccount" && !!item.toParentAccount) {
+          item.toParentAccount = getParentAccount(item.toAccount, accounts);
+        }
+      });
+    });
+
+    setSections(history);
   }, [accounts, setSections]);
 
   const refreshSwapHistory = useCallback(() => {
@@ -109,25 +121,34 @@ const History = () => {
   );
 
   const exportSwapHistory = async () => {
-    const mapped = await mappedSwapOperationsToCSV(sections);
-    const base64 = Buffer.from(mapped).toString("base64");
-    const options = {
-      title: t("transfer.swap.history.exportButton"),
-      message: t("transfer.swap.history.exportButton"),
-      failOnCancel: false,
-      saveToFiles: true,
-      type: "text/csv",
-      filename: t("transfer.swap.history.exportFilename"),
-      url: `data:text/csv;base64,${base64}`,
-    };
-
+    console.log("exportSwapHistory", sections);
+    console.log(
+      "accounts",
+      accounts.filter(a => a.swapHistory.length > 0),
+    );
     try {
+      const mapped = mappedSwapOperationsToCSV(sections);
+
+      // console.log(mapped);
+      const base64 = Buffer.from(mapped).toString("base64");
+      const options = {
+        title: t("transfer.swap.history.exportButton"),
+        message: t("transfer.swap.history.exportButton"),
+        failOnCancel: false,
+        saveToFiles: true,
+        type: "text/csv",
+        filename: t("transfer.swap.history.exportFilename"),
+        url: `data:text/csv;base64,${base64}`,
+      };
+
+      console.log(options);
       await Share.open(options);
     } catch (err) {
       // `failOnCancel: false` is not enough to prevent throwing on cancel apparently ¯\_(ツ)_/¯
       if ((err as { error?: { code?: string } })?.error?.code !== "ECANCELLED500") {
         logger.critical(err as Error);
       }
+      console.error(err);
     }
   };
 
@@ -152,7 +173,7 @@ const History = () => {
           sections.length ? (
             <Button
               type="tertiary"
-              title={t("transfer.swap.history.exportButton")}
+              title={t("transfer.swap.history.exportButton2")}
               containerStyle={styles.button}
               IconLeft={DownloadFileIcon}
               onPress={exportSwapHistory}
