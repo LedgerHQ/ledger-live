@@ -232,6 +232,30 @@ export type Features = CurrencyFeatures & {
   lldNetworkBasedAddAccount: DefaultFeature;
   llmOfacGeoBlocking: DefaultFeature;
   lldOfacGeoBlocking: DefaultFeature;
+  llmDatadog: {
+    enabled: boolean;
+    params: Partial<{
+      batchProcessingLevel: "MEDIUM" | "HIGH" | "LOW";
+      batchSize: "LARGE" | "MEDIUM" | "SMALL";
+      bundleLogsWithRum: boolean;
+      bundleLogsWithTraces: boolean;
+      longTaskThresholdMs: number | false;
+      nativeInteractionTracking: boolean;
+      nativeLongTaskThresholdMs: number | false;
+      nativeViewTracking: boolean;
+      resourceTracingSamplingRate: number;
+      serviceName: string;
+      sessionSamplingRate: number;
+      trackBackgroundEvents: boolean;
+      trackFrustrations: boolean;
+      trackErrors: boolean;
+      trackResources: boolean;
+      trackInteractions: boolean;
+      trackWatchdogTerminations: boolean;
+      uploadFrequency: "AVERAGE" | "FREQUENT" | "RARE";
+      vitalsUpdateFrequency: "AVERAGE" | "FREQUENT" | "RARE" | "NEVER";
+    }>;
+  };
 };
 
 /**

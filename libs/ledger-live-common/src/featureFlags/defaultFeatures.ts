@@ -625,6 +625,30 @@ export const DEFAULT_FEATURES: Features = {
   lldNetworkBasedAddAccount: DEFAULT_FEATURE,
   llmOfacGeoBlocking: DEFAULT_FEATURE,
   lldOfacGeoBlocking: DEFAULT_FEATURE,
+  llmDatadog: {
+    ...DEFAULT_FEATURE,
+    params: {
+      batchProcessingLevel: "MEDIUM",
+      batchSize: "MEDIUM",
+      bundleLogsWithRum: true,
+      bundleLogsWithTraces: true,
+      longTaskThresholdMs: 0,
+      nativeInteractionTracking: false,
+      nativeLongTaskThresholdMs: 0,
+      nativeViewTracking: false,
+      resourceTracingSamplingRate: 0,
+      serviceName: "Ledger Live Mobile (default)",
+      sessionSamplingRate: 0,
+      trackBackgroundEvents: false,
+      trackFrustrations: true,
+      trackErrors: false,
+      trackResources: false,
+      trackInteractions: false,
+      trackWatchdogTerminations: false,
+      uploadFrequency: "AVERAGE",
+      vitalsUpdateFrequency: "AVERAGE",
+    },
+  },
 };
 
 // Firebase SDK treat JSON values as strings
