@@ -149,12 +149,14 @@ export const createAction = (
     });
     const { device, opened, inWrongDeviceForAccount, error } = appState;
     const [state, setState] = useState(initialState);
+    log("xrp-debug-transaction", "in createActionUseHook");
     useEffect(() => {
       if (!device || !opened || inWrongDeviceForAccount || error) {
         setState(initialState);
         return;
       }
 
+      log("xrp-debug-transaction", "in useEffect of createActionUseHook");
       const bridge = isACRE
         ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (ACREBridge.accountBridge as unknown as AccountBridge<any>)
