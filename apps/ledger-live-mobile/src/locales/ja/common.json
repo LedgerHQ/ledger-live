@@ -294,6 +294,14 @@
       "title" : "デバイスが切断されました",
       "description" : "Ledger Liveはデバイスに接続できませんでした。もう一度お試しください。"
     },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "デバイスが切断されました",
+      "description" : "Ledger Liveはデバイスに接続できませんでした。もう一度お試しください。"
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "デバイスが切断されました",
+      "description" : "Ledger Liveはデバイスに接続できませんでした。もう一度お試しください。"
+    },
     "CasperInvalidTransferId" : {
       "title" : "送金IDは、{{maxTransferId}}より小さい正数である必要があります"
     },
@@ -7438,5 +7446,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "利用不可のロケーション",
+    "description" : "このロケーションでは、Ledgerウォレットをご利用いただけません。",
+    "learnMore" : "詳細はこちら"
   }
 }
