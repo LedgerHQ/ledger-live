@@ -18,6 +18,9 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { Title } from "../../components/Header/Title";
 import { MODULAR_DRAWER_ADD_ACCOUNT_CATEGORY } from "../../types";
+import { useTheme } from "styled-components";
+import { counterValueFormatter } from "LLD/utils/counterValueFormatter";
+import { counterValueCurrencySelector, discreetModeSelector, localeSelector } from "~/renderer/reducers/settings";
 
 interface Props {
   currency: CryptoCurrency;
@@ -30,8 +33,12 @@ const ScanAccounts = ({ currency, deviceId, onComplete, onLoadingChange }: Props
   invariant(currency, "ScanAccounts: currency is required");
 
   const { t } = useTranslation();
+  const { colors } = useTheme();
 
   const walletState = useSelector(walletSelector);
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const locale = useSelector(localeSelector);
+  const discreet = useSelector(discreetModeSelector);
 
   const [scannedAccounts, setScannedAccounts] = useState<Account[]>([]);
   const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set());
@@ -90,15 +97,20 @@ const ScanAccounts = ({ currency, deviceId, onComplete, onLoadingChange }: Props
         (account): AccountItemAccount => ({
           // TODO review freshAddress
           address: formatAddress(account.freshAddress),
-          balance: account.balance.toString(),
           cryptoId: account.currency.id,
-          fiatValue: account.balance.toString(),
+          fiatValue: counterValueFormatter({
+            currency: counterValueCurrency.ticker,
+            value: account.balance.toNumber(),
+            locale,
+            allowZeroValue: true,
+            discreetMode: discreet,
+          }),
           id: account.id,
           name: accountNameWithDefaultSelector(walletState, account),
           ticker: account.currency.ticker,
         }),
       ),
-    [scannedAccounts, walletState],
+    [counterValueCurrency.ticker, discreet, locale, scannedAccounts, walletState],
   );
   // const formattedAccounts = useMemo(
   //   () =>
@@ -157,6 +169,7 @@ const ScanAccounts = ({ currency, deviceId, onComplete, onLoadingChange }: Props
           isChecked: checkedIds.has(x.id),
           onChange: () => handleToggle(x.id),
         }}
+        backgroundColor={colors.opacityDefault.c05}
       />
     </Box>
   );
