@@ -1925,7 +1925,8 @@
       "payoutNetworkFees" : "支出费用",
       "payoutNetworkFeesTooltip" : "该数额不会在您的设备上显示",
       "acceptTerms" : "验证此交易，即表示我接受\n<0>{{provider}} 的使用条款</0>",
-      "exodusAcceptTerms" : "Exodus 依赖第三方来进行互换。\n验证此交易，即表示我接受 <0>Exodus 的使用条款</0>"
+      "exodusAcceptTerms" : "Exodus 依赖第三方来进行互换。\n验证此交易，即表示我接受 <0>Exodus 的使用条款</0>",
+      "changellyAcceptTerms" : "点击“使用 Changelly 互换”即表示您接受 Changelly 的<0>使用条款</0>及其\n<1>反洗钱 (AML)/客户身份核实 (KYC) 政策</1>。Changelly 可能会采用 AML/KYC 程序，\n这可能在少数情况下影响您完成交易。如果发生这种情况，\n您需要联系 Changelly <2>客服</2>。"
     },
     "swap2" : {
       "amountSent" : "发送数额",
@@ -2396,7 +2397,8 @@
         "suggested" : "建议",
         "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
-        "nftQuantity" : "数量"
+        "nftQuantity" : "数量",
+        "splExtensionsWarning" : "您正在交互的代币属于 Token-2022 程序（亦称代币扩展程序）。该代币具有特定风险。<0>点击此处</0>了解详情。"
       },
       "verification" : {
         "streaming" : {
@@ -3771,7 +3773,7 @@
       "frozenStateWarning" : "账户资产已冻结！",
       "transferWarning" : "要使用 Ledger Nano S™ 验证 Solana 代币的接收人地址，<0>请按照以下说明操作。</0>",
       "transferFees" : {
-        "feesPercentHint" : "代币转账费用为 {{feePercent}}%（{{feeBps}} 个基点）。最高为 {{maxFee}}",
+        "feesHint" : "代币转账费用：{{transferFee}}",
         "notice" : "转账费用 {{fee}}%",
         "tooltipHint" : "归属代币创建者的转账百分比",
         "transferFeesLabel" : "转账费用"
@@ -5873,6 +5875,10 @@
       "title" : "抱歉，资金不足",
       "description" : "请确保该账户资金充足。"
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "抱歉，资金不够支付费用",
+      "description" : "请确保该账户资金充足。"
+    },
     "NotEnoughBalanceSwap" : {
       "title" : "抱歉，余额不足（包括网络费用）。请调整数额或核对余额。",
       "description" : "请确保该账户资金充足。"
@@ -7055,7 +7061,15 @@
     "assetFlow" : {
       "selectTemplate" : "选择 {{dynamic}}",
       "asset" : "资产",
-      "network" : "网络"
+      "network" : "网络",
+      "account" : "账户"
+    }
+  },
+  "nftEntryPoint" : {
+    "title" : "NFT（非同质化代币）",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
     }
   }
 }
