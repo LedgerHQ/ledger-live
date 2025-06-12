@@ -4,12 +4,16 @@ import { withTokens } from "../../libs";
 import { Text } from "../../../components";
 import { CryptoIcon } from "../CryptoIcon/CryptoIcon";
 
-export type Network = { name: string; id: string; ticker: string };
+export type Network = {
+  name: string;
+  id: string;
+  ticker: string;
+  leftElement?: React.ReactNode;
+  rightElement?: React.ReactNode;
+};
 
 type NetworkItemProps = Network & {
   onClick: () => void;
-  leftElement?: React.ReactNode;
-  rightElement?: React.ReactNode;
 };
 
 const Wrapper = styled.div`
