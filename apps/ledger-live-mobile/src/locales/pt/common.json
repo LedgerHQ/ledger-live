@@ -294,6 +294,14 @@
       "title" : "Dispositivo desconectado",
       "description" : "O Ledger Live não conseguiu se conectar ao seu dispositivo. Tente novamente."
     },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "Dispositivo desconectado",
+      "description" : "O Ledger Live não conseguiu se conectar ao seu dispositivo. Tente novamente."
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "Dispositivo desconectado",
+      "description" : "O Ledger Live não conseguiu se conectar ao seu dispositivo. Tente novamente."
+    },
     "CasperInvalidTransferId" : {
       "title" : "A ID de transferência deve ser um número positivo menor que {{maxTransferId}}"
     },
@@ -7438,5 +7446,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Local indisponível",
+    "description" : "A carteira Ledger não está disponível neste local.",
+    "learnMore" : "Saiba mais"
   }
 }
