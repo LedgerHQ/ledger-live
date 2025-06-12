@@ -1078,10 +1078,13 @@
       "title": "Minimum required amount for this transaction is {{amount}}"
     },
     "UserAddressSanctionedError": {
-      "title": "This transaction involves a sanctioned wallet address and cannot be processed.\n--{{sanctionedAddress}}\n<link0>Learn more</link0>"
+      "title": "This transaction involves a sanctioned wallet address and cannot be processed.\n-- {{sanctionedAddresses}}\n<link0>Learn more</link0>"
     },
     "RecipientAddressSanctionedError": {
       "title": "This transaction involves a sanctioned wallet address and cannot be processed. <link0>Learn more</link0>"
+    },
+    "UserUtxoAddressSanctionedError": {
+      "title": "This transaction involves a sanctioned UTXO address and cannot be processed.\n-- {{sanctionedAddresses}}\n<link0>Learn more</link0>"
     }
   },
   "crash": {

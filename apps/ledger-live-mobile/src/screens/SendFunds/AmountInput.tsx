@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   wrapper: {
-    flexBasis: 115,
+    flexBasis: 155,
     flexShrink: 0.5,
     flexDirection: "column",
     justifyContent: "center",

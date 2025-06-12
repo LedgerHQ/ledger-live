@@ -133,13 +133,13 @@ async function commonGetTransactionStatus(
   if (transaction.recipient && transaction.recipient !== "") {
     recipientIsBlacklisted = await isAddressSanctioned(account.currency, transaction.recipient);
     if (recipientIsBlacklisted) {
-      errors.recipient = new RecipientAddressSanctionedError();
+      errors.recipient = new RecipientAddressSanctionedError(transaction.recipient);
     }
   }
 
   const userIsBlacklisted = await isAddressSanctioned(account.currency, account.freshAddress);
   if (userIsBlacklisted) {
-    errors.amount = new UserAddressSanctionedError();
+    errors.amount = new UserAddressSanctionedError(account.freshAddress);
   }
 
   if (userIsBlacklisted || recipientIsBlacklisted) {
