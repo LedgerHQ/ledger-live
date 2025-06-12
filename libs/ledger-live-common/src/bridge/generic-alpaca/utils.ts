@@ -45,6 +45,7 @@ export function transactionToIntent(
 export const buildOptimisticOperation = (
   account: Account,
   transaction: TransactionCommon,
+  sequenceNumber?: number,
 ): Operation => {
   return {
     id: encodeOperationId(account.id, "", "OUT"),

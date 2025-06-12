@@ -13,6 +13,7 @@ import {
   craftTransaction,
   estimateFees,
   getBalance,
+  getAccountInfo,
   getNextValidSequence,
   lastBlock,
   listOperations,
@@ -32,6 +33,7 @@ export function createApi(config: XrpConfig): Api<XrpAsset, XrpMapMemo> {
     lastBlock,
     listOperations: operations,
     validateIntent: getTransactionStatus,
+    getAccountInfo,
   };
 }
 

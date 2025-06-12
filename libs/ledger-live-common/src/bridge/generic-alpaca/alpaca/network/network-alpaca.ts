@@ -9,6 +9,7 @@ import type {
   TransactionIntent,
   Transaction,
   TransactionValidation,
+  AccountInfo,
   Api,
 } from "@ledgerhq/coin-framework/api/index";
 import network from "@ledgerhq/live-network";
@@ -126,6 +127,16 @@ const buildGetBalance = (networkFamily: string) =>
     ];
   };
 
+const buildGetAccountInfo = (networkFamily: string) =>
+  async function getBalance(address: string): Promise<AccountInfo> {
+    const { data } = await network<AccountInfo, unknown>({
+      method: "GET",
+      url: `${ALPACA_URL}/${networkFamily}/account/${address}/info`,
+    });
+
+    return data;
+  };
+
 const buildListOperations = networkFamily =>
   async function listOperations(
     address: string,
@@ -176,6 +187,7 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     validateIntent: buildValidateIntent(networkFamily),
     estimateFees: buildEstimateFees(networkFamily),
     getBalance: buildGetBalance(networkFamily),
+    getAccountInfo: buildGetAccountInfo(networkFamily),
     listOperations: buildListOperations(networkFamily),
     lastBlock: buildLastBlock(networkFamily),
     craftTransaction: buildCraftTransaction(networkFamily),

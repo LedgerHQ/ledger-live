@@ -50,6 +50,11 @@ export const genericSignOperation =
           txWithMemo.memo.memos.set("destinationTag", txMemo);
         }
 
+        const accountInfo = await getAlpacaApi(network, kind).getAccountInfo(
+          transactionIntent.sender,
+        );
+        const sequenceNumber = accountInfo.sequence;
+
         const unsigned = await getAlpacaApi(network, kind).craftTransaction({
           ...txWithMemo,
         });
@@ -64,7 +69,7 @@ export const genericSignOperation =
           publicKey,
         );
 
-        const operation = buildOptimisticOperation(account, transaction);
+        const operation = buildOptimisticOperation(account, transaction, sequenceNumber);
         // NOTE: we set the transactionSequenceNumber before on the operation
         // now that we create it in craftTransaction, we might need to return it back from craftTransaction also
         o.next({

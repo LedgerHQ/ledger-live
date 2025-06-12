@@ -139,6 +139,13 @@ export type FeeEstimation = {
 //       see design document at https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/5446205788/coin-modules+lama-adapter+APIs+refinements
 export type Pagination = { minHeight: number };
 
+export type AccountInfo = {
+  isNewAccount: boolean;
+  balance: string;
+  ownerCount: number;
+  sequence: number;
+};
+
 export type AlpacaApi<
   AssetInfo extends Asset<TokenInfoCommon>,
   MemoType extends Memo = MemoNotSupported,
@@ -162,6 +169,8 @@ export type AlpacaApi<
 
 export type BridgeApi = {
   validateIntent: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;
+  // TODO: make it available on alpacaApi
+  getAccountInfo: (address: string) => Promise<AccountInfo>;
 };
 
 export type Api<
