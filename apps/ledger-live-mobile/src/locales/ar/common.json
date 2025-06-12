@@ -294,6 +294,14 @@
       "title" : "الجهاز غير متصل",
       "description" : "Ledger Live غير قادر على الاتصال بجهازك. يُرجى إعادة المحاولة."
     },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "الجهاز غير متصل",
+      "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى إعادة المحاولة."
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "الجهاز غير متصل",
+      "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى إعادة المحاولة."
+    },
     "CasperInvalidTransferId" : {
       "title" : "مُعرّف التحويل يجب أن يكون رقماً موجباً أصغر من {{maxTransferId}}"
     },
@@ -7438,5 +7446,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "الموقع غير متاح",
+    "description" : "محفظة Ledger غير متاحة في هذا الموقع.",
+    "learnMore" : "تعرّف على المزيد"
   }
 }
