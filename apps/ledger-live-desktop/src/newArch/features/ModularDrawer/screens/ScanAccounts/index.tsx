@@ -167,8 +167,9 @@ const ScanAccounts = ({ currency, deviceId, onComplete, onLoadingChange }: Props
         checkbox={{
           name: "checked",
           isChecked: checkedIds.has(x.id),
-          onChange: () => handleToggle(x.id),
+          onChange: () => {},
         }}
+        onClick={() => handleToggle(x.id)}
         backgroundColor={colors.opacityDefault.c05}
       />
     </Box>
