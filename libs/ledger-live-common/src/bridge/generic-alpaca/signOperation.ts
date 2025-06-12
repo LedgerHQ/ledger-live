@@ -33,34 +33,40 @@ export const genericSignOperation =
         if (!transaction["fees"]) throw new FeeNotLoaded();
         o.next({ type: "device-signature-requested" });
 
-        const { publicKey } = (await signerContext(deviceId, signer =>
-          signer.getAddress(account.freshAddressPath),
-        )) as Result;
+        const {
+          unsigned,
+          signature: transactionSignature,
+          publicKey,
+          sequenceNumber,
+        } = await signerContext(deviceId, async signer => {
+          const { publicKey } = (await signerContext(deviceId, signer =>
+            signer.getAddress(account.freshAddressPath),
+          )) as Result;
 
-        const transactionIntent = transactionToIntent(account, transaction);
-        transactionIntent.senderPublicKey = publicKey;
-        // NOTE: is setting the memo here instead of transactionToIntent sensible?
-        const txWithMemo = transactionIntent as TransactionIntent<any, MapMemo<string, string>>;
-        if (transaction["tag"]) {
-          const txMemo = String(transaction["tag"]);
-          txWithMemo.memo = {
-            type: "map",
-            memos: new Map(),
-          };
-          txWithMemo.memo.memos.set("destinationTag", txMemo);
-        }
+          const transactionIntent = transactionToIntent(account, transaction);
+          transactionIntent.senderPublicKey = publicKey;
+          // NOTE: is setting the memo here instead of transactionToIntent sensible?
+          const txWithMemo = transactionIntent as TransactionIntent<any, MapMemo<string, string>>;
+          if (transaction["tag"]) {
+            const txMemo = String(transaction["tag"]);
+            txWithMemo.memo = {
+              type: "map",
+              memos: new Map(),
+            };
+            txWithMemo.memo.memos.set("destinationTag", txMemo);
+          }
 
-        const accountInfo = await getAlpacaApi(network, kind).getAccountInfo(
-          transactionIntent.sender,
-        );
-        const sequenceNumber = accountInfo.sequence;
+          const accountInfo = await getAlpacaApi(network, kind).getAccountInfo(
+            transactionIntent.sender,
+          );
+          const sequenceNumber = accountInfo.sequence;
 
-        const unsigned = await getAlpacaApi(network, kind).craftTransaction({
-          ...txWithMemo,
+          const unsigned = await getAlpacaApi(network, kind).craftTransaction({
+            ...txWithMemo,
+          });
+          const signature = signer.signTransaction(account.freshAddressPath, unsigned);
+          return { unsigned, signature, publicKey, sequenceNumber };
         });
-        const transactionSignature: string = await signerContext(deviceId, signer =>
-          signer.signTransaction(account.freshAddressPath, unsigned),
-        );
         o.next({ type: "device-signature-granted" });
 
         const signed = await getAlpacaApi(network, kind).combine(
