@@ -34,7 +34,7 @@ export default function SelectDevice({
   ScreenName.SelectDevice
 >) {
   const { currency } = route.params;
-  const { onResult, device, action, isFocused, onClose, setDevice } =
+  const { onResult, device, action, isFocused, onClose, selectDevice, registerDeviceSelection } =
     useSelectDeviceViewModel(route);
   const { colors } = useTheme();
   const analyticsPropertyFlow = route.params?.analyticsPropertyFlow;
@@ -71,10 +71,10 @@ export default function SelectDevice({
         },
       ]}
     >
-      <SkipSelectDevice route={route} onResult={setDevice} />
+      <SkipSelectDevice route={route} onResult={selectDevice} />
       <Flex px={16} py={8} flex={1}>
         <DeviceSelector
-          onSelect={setDevice}
+          onSelect={selectDevice}
           stopBleScanning={!!device || !isFocused}
           requestToSetHeaderOptions={requestToSetHeaderOptions}
         />
@@ -85,8 +85,9 @@ export default function SelectDevice({
         onResult={onResult}
         onClose={onClose}
         request={{ currency }}
-        onSelectDeviceLink={() => setDevice(null)}
+        onSelectDeviceLink={() => selectDevice(null)}
         analyticsPropertyFlow={analyticsPropertyFlow || "add account"}
+        registerDeviceSelection={registerDeviceSelection}
       />
     </SafeAreaView>
   );
