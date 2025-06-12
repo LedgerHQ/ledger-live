@@ -9,10 +9,13 @@ const cache = getEnv("MOCK")
   : () => fetchSanctionedAddresses();
 
 async function fetchSanctionedAddresses(): Promise<Record<string, string[]>> {
-  const { data } = await axios.get(
-    "https://ofac-compliance.pages.dev/all_sanctioned_addresses.json",
-  );
-  return data;
+  try {
+    const { data } = await axios.get(getEnv("SANCTIONED_ADDRESSES_URL"));
+    return data;
+  } catch (_) {
+    // We dont want if call fails for some reason to stop the workflow, user must be able to make transaction
+    return {};
+  }
 }
 
 export async function isAddressSanctioned(

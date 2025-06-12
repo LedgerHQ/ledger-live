@@ -903,6 +903,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "Enable logs for drawers",
   },
+  SANCTIONED_ADDRESSES_URL: {
+    def: "https://ofac-compliance.pages.dev/all_sanctioned_addresses.json",
+    parser: stringParser,
+    desc: "List of sanctioned addresses",
+  },
 };
 
 export const getDefinition = (name: string): EnvDef<any> => {
