@@ -10,7 +10,7 @@ const cache = getEnv("MOCK")
 
 async function fetchSanctionedAddresses(): Promise<Record<string, string[]>> {
   const { data } = await axios.get(
-    `https://ofac-compliance.pages.dev/all_sanctioned_addresses.json`,
+    "https://ofac-compliance.pages.dev/all_sanctioned_addresses.json",
   );
   return data;
 }
@@ -24,8 +24,9 @@ export async function isAddressSanctioned(
   }
 
   // Only for testing, should be deleted after
-  const temporarySanctionedAddress: string[] | undefined =
-    LiveConfig.getValueByKey(`tmp_sanctioned_addresses`);
+  const temporarySanctionedAddress: string[] | undefined = LiveConfig.getValueByKey(
+    "tmp_sanctioned_addresses",
+  );
 
   const data: Record<string, string[]> = await cache();
   const addresses = data[currency.ticker] || [];
@@ -43,7 +44,7 @@ function isCheckBlacklistAddressEnabled(currency: CryptoCurrency): boolean {
   if (currencyConfig && "checkBlacklistAddress" in currencyConfig) {
     return currencyConfig.checkBlacklistAddress === true;
   } else {
-    const sharedConfiguration = LiveConfig.getValueByKey(`config_currency`);
+    const sharedConfiguration = LiveConfig.getValueByKey("config_currency");
     if (!sharedConfiguration) {
       throw new Error(
         "Shared config for currency not found, please check it exists on Firebase > RemoteConfig",

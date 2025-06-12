@@ -247,7 +247,7 @@ function SendSummary({ navigation, route }: Props) {
             bridgePending ||
             !!transactionError ||
             (!!error &&
-              (error instanceof NotEnoughGas || error instanceof UserAddressSanctionedError))
+              [NotEnoughGas, UserAddressSanctionedError].some(type => error instanceof type))
           }
           pending={bridgePending}
         />

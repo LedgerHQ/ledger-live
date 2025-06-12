@@ -259,7 +259,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
           containerStyle={styles.continueButton}
           onPress={onContinue}
           disabled={bridgePending || !!bridgeError || hasErrors}
-          pending={false}
+          pending={bridgePending}
           testID="cosmos-summary-continue-button"
         />
       </View>
