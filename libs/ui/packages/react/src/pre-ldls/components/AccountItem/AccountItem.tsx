@@ -33,6 +33,7 @@ const Wrapper = styled.div<{ backgroundColor?: string }>`
     "spacing-xs",
     "margin-s",
     "radius-s",
+    "radius-m",
     "colors-content-default-default",
     "colors-surface-transparent-hover",
     "colors-surface-transparent-pressed",
@@ -43,7 +44,7 @@ const Wrapper = styled.div<{ backgroundColor?: string }>`
   display: flex;
   padding: var(--margin-s);
   cursor: pointer;
-  border-radius: var(--radius-s, 12px);
+  border-radius: var(--radius-m);
   justify-content: space-between;
   align-items: center;
   width: 100%;
@@ -164,7 +165,9 @@ export const AccountItem = ({
           />
         </AccountInfoContainer>
         <BalanceContainer>
-          <Text fontSize="16px" fontWeight="semiBold">{fiatValue}</Text>
+          <Text fontSize="16px" fontWeight="semiBold">
+            {fiatValue}
+          </Text>
           <Text fontSize="12px" color="var(--colors-content-subdued-default-default)">
             {balance}
           </Text>

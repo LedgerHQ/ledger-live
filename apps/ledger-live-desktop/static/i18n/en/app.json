@@ -259,11 +259,11 @@
   },
   "time": {
     "minute": "Minute",
-    "minute_plural": "Minutes",
+    "minute_other": "Minutes",
     "minute_short": "min",
     "second_short": "sec",
     "hour": "Hour",
-    "hour_plural": "Hours",
+    "hour_other": "Hours",
     "range": {
       "day": "1D",
       "week": "1W",
@@ -575,7 +575,7 @@
       "date": "Date",
       "from": "From",
       "fromAddress": "Origin address",
-      "fromAddress_plural": "Origin addresses",
+      "fromAddress_other": "Origin addresses",
       "to": "To",
       "toProvider": "Provider address",
       "initialAmount": "Initial amount",
@@ -1782,14 +1782,14 @@
     "fullNodeReadyInfo": "Accounts will be added using your Bitcoin full node.",
     "fullNodeConfigure": "Configure node",
     "tokensTip": "{{token}} ({{ticker}}) is an {{tokenType}} token. You can receive tokens directly on a/an {{currency}} account.",
-    "accountToImportSubtitle_plural": "Add existing accounts",
+    "accountToImportSubtitle_other": "Add existing accounts",
     "selectAll": "Select all ({{count}})",
     "unselectAll": "Deselect all ({{count}})",
     "noAccountToImport": "No existing {{currencyName}} accounts to add",
     "success": "Account added successfully",
-    "success_plural": "Accounts added successfully",
+    "success_other": "Accounts added successfully",
     "successDescription": "Add other accounts or return to Portfolio",
-    "successDescription_plural": "Add other accounts or return to Portfolio",
+    "successDescription_other": "Add other accounts or return to Portfolio",
     "createNewAccount": {
       "noOperationOnLastAccount": "Can't add a new account before you've received assets on your <1><0>{{accountName}}</0></1> account",
       "noAccountToCreate": "No <1><0>{{currencyName}}</0></1> account was found to be created",
@@ -1802,7 +1802,7 @@
     "cta": {
       "addMore": "Add more",
       "add": "Add account",
-      "add_plural": "Add accounts",
+      "add_other": "Add accounts",
       "addAccountName": "Add {{currencyName}} account",
       "receive": "Receive"
     },
@@ -1900,9 +1900,9 @@
     "unlockDeviceAfterFirmwareUpdateStep2": "Unlock {{productName}} with your PIN to complete the update.",
     "quitApp": "Quit the application on your device",
     "appNotInstalledTitle": "Missing required app",
-    "appNotInstalledTitle_plural": "Missing required apps",
+    "appNotInstalledTitle_other": "Missing required apps",
     "appNotInstalled": "The {{appName}} app is required to complete this action. Please go to My Ledger and install it on your device",
-    "appNotInstalled_plural": "The {{appName}} apps are required to complete this action. Please go to My Ledger and install them on your device",
+    "appNotInstalled_other": "The {{appName}} apps are required to complete this action. Please go to My Ledger and install them on your device",
     "openManager": "Open My Ledger",
     "openOnboarding": "Setup device",
     "outdated": "App version outdated",
@@ -1989,14 +1989,14 @@
       },
       "installSuccess": {
         "title": "App installed successfully. You can now add your {{app}} accounts",
-        "title_plural": "Apps installed successfully. You can now add your accounts",
+        "title_other": "Apps installed successfully. You can now add your accounts",
         "manageAccount": "Manage my accounts"
       },
       "updatable": {
         "title": "Update available",
-        "title_plural": "Updates available",
+        "title_other": "Updates available",
         "progressTitle": "{{number}} App update",
-        "progressTitle_plural": "{{number}} App updates",
+        "progressTitle_other": "{{number}} App updates",
         "progressWarning": "Do not quit My Ledger during update.",
         "progress": "Updating all..."
       },
@@ -4106,7 +4106,7 @@
     "duration": "Duration",
     "durationJustStarted": "Just started",
     "durationDays": "{{count}} day",
-    "durationDays_plural": "{{count}} days",
+    "durationDays_other": "{{count}} days",
     "howItWorks": "How delegation works",
     "delegationEarn": "You can now earn {{name}} staking rewards by delegating your account.",
     "earnRewards": "Earn rewards",
@@ -4730,7 +4730,7 @@
     "ctaSuccess": "Done",
     "noAccounts": "No accounts to export",
     "selectedAccounts": "Accounts to be included",
-    "selectedAccounts_plural": "Accounts to be included ({{count}})",
+    "selectedAccounts_other": "Accounts to be included ({{count}})",
     "disclaimer": "The countervalues in the export is provided for information purposes only. Do not rely on such data for accounting, tax, regulation or legal purposes, as they only represent an estimation of the price of the assets at the time of transactions and export, under the valuation methods provided by our service provider, Kaiko"
   },
   "language": {
@@ -4768,7 +4768,7 @@
   "informationCenter": {
     "tooltip": "Information center",
     "ongoingIncidentsTooltip": "There is {{count}} ongoing incident",
-    "ongoingIncidentsTooltip_plural": "There are {{count}} ongoing incidents",
+    "ongoingIncidentsTooltip_other": "There are {{count}} ongoing incidents",
     "tabs": {
       "announcements": "News",
       "announcementsUnseen": "News ({{unseenCount}})",
@@ -7109,8 +7109,8 @@
         "stopScanning": "Stop scanning"
       },
       "status": {
-        "foundAccounts_plural": "We found {{count}} accounts",
         "foundAccounts": "We found {{count}} account",
+        "foundAccounts_other": "We found {{count}} accounts",
         "noAccounts": "No accounts were found",
         "scanning": "Scanning accounts…"
       },
