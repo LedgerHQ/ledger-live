@@ -5,6 +5,7 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Text } from "@ledgerhq/react-ui/index";
 import { getAccountTuplesForCurrency } from "~/renderer/components/PerCurrencySelectAccount/state";
 import { useTranslation } from "react-i18next";
+import { Network } from "@ledgerhq/react-ui/pre-ldls/index";
 
 const createAccountsCount = ({ label }: { label: string }) => (
   <Text fontSize="12px" fontWeight="500" color="var(--colors-content-subdued-default-default)">
@@ -12,22 +13,33 @@ const createAccountsCount = ({ label }: { label: string }) => (
   </Text>
 );
 
+type NetworkWithCount = Network & {
+  count: number;
+};
+
 export const useLeftAccountsModule = (assets: CryptoOrTokenCurrency[]) => {
   const { t } = useTranslation();
   const nestedAccounts = useSelector(accountsSelector);
 
-  return assets.map(asset => {
-    const { length } = getAccountTuplesForCurrency(asset, nestedAccounts, false);
+  const networksWithCount: NetworkWithCount[] = assets
+    .map(asset => {
+      const { length } = getAccountTuplesForCurrency(asset, nestedAccounts, false);
 
-    if (length === 0) {
-      return asset;
-    }
+      if (length === 0) {
+        return { ...asset, count: 0 };
+      }
 
-    const label = t("modularAssetDrawer.accountCount", { count: length });
+      const label = t("modularAssetDrawer.accountCount", { count: length });
 
-    return {
-      ...asset,
-      leftElement: createAccountsCount({ label }),
-    };
-  });
+      return {
+        ...asset,
+        leftElement: createAccountsCount({ label }),
+        count: length,
+      };
+    })
+    .sort((a, b) => {
+      return b.count - a.count;
+    });
+
+  return networksWithCount;
 };

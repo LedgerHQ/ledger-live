@@ -1,5 +1,5 @@
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { AssetType } from "@ledgerhq/react-ui/pre-ldls/index";
+import { Network } from "@ledgerhq/react-ui/pre-ldls/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { composeHooks } from "LLD/utils/composeHooks";
 import { useLeftAccountsModule } from "./useLeftAccountsModule";
@@ -21,16 +21,14 @@ const getLeftElement = (leftElement: string) => {
 
 const createNetworkConfigurationHook = ({
   networksConfig,
-}: Props): ((assets: CryptoOrTokenCurrency[]) => (CryptoOrTokenCurrency & AssetType)[]) => {
+}: Props): ((assets: CryptoOrTokenCurrency[]) => (CryptoOrTokenCurrency & Network)[]) => {
   const { leftElement = "undefined" } = networksConfig ?? {};
 
   const leftHook = getLeftElement(leftElement);
 
-  const hooks = [leftHook].filter(Boolean) as Array<
-    (assets: CryptoOrTokenCurrency[]) => AssetType[]
-  >;
+  const hooks = [leftHook].filter(Boolean) as Array<(assets: CryptoOrTokenCurrency[]) => Network[]>;
 
-  return composeHooks<CryptoOrTokenCurrency, AssetType>(...hooks);
+  return composeHooks<CryptoOrTokenCurrency, Network>(...hooks);
 };
 
 export default createNetworkConfigurationHook;
