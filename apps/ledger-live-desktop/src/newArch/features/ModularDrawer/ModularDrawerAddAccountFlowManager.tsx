@@ -29,11 +29,8 @@ const ModularDrawerAddAccountFlowManager = ({
 }: Props) => {
   // const { assets: assetConfiguration, networks: networkConfiguration } = drawerConfiguration ?? {};
 
-  const [isLoading, setIsLoading] = useState(false);
-
-  // const [currentStep, setCurrentStep] =
-  //   useState<ModularDrawerAddAccountStep>("CONNECT_YOUR_DEVICE");
-  const [currentStep, setCurrentStep] = useState<ModularDrawerAddAccountStep>("SCAN_ACCOUNTS");
+  const [currentStep, setCurrentStep] =
+    useState<ModularDrawerAddAccountStep>("CONNECT_YOUR_DEVICE");
 
   const [selectedAccounts, setSelectedAccounts] = useState<Account[]>([]);
 
@@ -102,7 +99,6 @@ const ModularDrawerAddAccountFlowManager = ({
           <ScanAccounts
             currency={currency}
             deviceId={connectAppResult.device.deviceId}
-            onLoadingChange={x => setIsLoading(x)}
             onComplete={accounts => {
               setSelectedAccounts(accounts);
             }}
@@ -118,7 +114,6 @@ const ModularDrawerAddAccountFlowManager = ({
 
   return (
     <Flex height="100%" data-test-id="wrapper">
-      {isLoading && <LoadingOverlay theme="dark" />}
       <Flex position="absolute" zIndex={1} height="100%" width="100%" bottom={0} top={0}>
         <AddAccountHeader step={currentStep} onBackClick={handleBack} />
         <AnimatePresence mode="sync" data-test-id="animated">

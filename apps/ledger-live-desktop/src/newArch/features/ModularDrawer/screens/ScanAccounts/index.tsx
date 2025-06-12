@@ -20,16 +20,20 @@ import { Title } from "../../components/Header/Title";
 import { MODULAR_DRAWER_ADD_ACCOUNT_CATEGORY } from "../../types";
 import { useTheme } from "styled-components";
 import { counterValueFormatter } from "LLD/utils/counterValueFormatter";
-import { counterValueCurrencySelector, discreetModeSelector, localeSelector } from "~/renderer/reducers/settings";
+import {
+  counterValueCurrencySelector,
+  discreetModeSelector,
+  localeSelector,
+} from "~/renderer/reducers/settings";
+import { LoadingOverlay } from "LLD/components/LoadingOverlay";
 
 interface Props {
   currency: CryptoCurrency;
   deviceId: string;
   onComplete: (_: Account[]) => void;
-  onLoadingChange: (_: boolean) => void;
 }
 
-const ScanAccounts = ({ currency, deviceId, onComplete, onLoadingChange }: Props) => {
+const ScanAccounts = ({ currency, deviceId, onComplete }: Props) => {
   invariant(currency, "ScanAccounts: currency is required");
 
   const { t } = useTranslation();
@@ -48,10 +52,9 @@ const ScanAccounts = ({ currency, deviceId, onComplete, onLoadingChange }: Props
   useEffect(() => {
     const subscription = isScanning$.subscribe(x => {
       setIsScanning(x);
-      onLoadingChange(x);
     });
     return () => subscription.unsubscribe();
-  }, [isScanning$, onLoadingChange]);
+  }, [isScanning$]);
 
   useEffect(() => {
     const bridge = getCurrencyBridge(currency);
@@ -182,6 +185,8 @@ const ScanAccounts = ({ currency, deviceId, onComplete, onLoadingChange }: Props
         name="ScanAccounts"
         currencyName={currencyName}
       />
+
+      {isScanning ? <LoadingOverlay theme="dark" /> : null}
 
       <Title
         translationKey={

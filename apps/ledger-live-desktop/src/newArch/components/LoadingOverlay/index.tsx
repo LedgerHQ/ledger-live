@@ -9,7 +9,7 @@ export const LoadingOverlay = ({ theme }: { theme: "light" | "dark" }) => {
   const backgroundColor = theme === "light" ? "rgba(255, 255, 255, 1)" : "rgba(28, 29, 31, 1)";
 
   return (
-    <Box position="absolute" height="100%" width="100%" bottom={0}>
+    <Box position="absolute" zIndex={-10} height="100%" width="100%" left={0} bottom={0}>
       <Box
         position="absolute"
         zIndex={1}
