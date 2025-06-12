@@ -80,6 +80,7 @@ export type OnboardingState = {
 
   currentOnboardingStep: OnboardingStep;
   currentSeedWordIndex: number;
+  charonSupported: boolean;
 };
 
 /**
@@ -140,5 +141,6 @@ export const extractOnboardingState = (
     seedPhraseType,
     currentOnboardingStep,
     currentSeedWordIndex,
+    charonSupported: charonState !== undefined,
   };
 };

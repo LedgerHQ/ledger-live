@@ -21,9 +21,10 @@ export type SeedPathStatus =
 export type Props = {
   seedPathStatus: SeedPathStatus;
   deviceModelId: DeviceModelId;
+  charonSupported: boolean;
 };
 
-const SeedStep = ({ seedPathStatus, deviceModelId }: Props) => {
+const SeedStep = ({ seedPathStatus, charonSupported, deviceModelId }: Props) => {
   const { t } = useTranslation();
   const productName = getDeviceModel(deviceModelId).productName;
 
@@ -77,14 +78,18 @@ const SeedStep = ({ seedPathStatus, deviceModelId }: Props) => {
           <StepText mb={6}>
             {t("syncOnboarding.manual.seedContent.restoreChoiceSRPDescription")}
           </StepText>
-          {/* @ts-expect-error weird props issue with React 18 */}
-          <VerticalTimeline.SubtitleText>
-            {t("syncOnboarding.manual.seedContent.restoreChoiceCharonTitle")}
-          </VerticalTimeline.SubtitleText>
-          {/* @ts-expect-error weird props issue with React 18 */}
-          <StepText mb={6}>
-            {t("syncOnboarding.manual.seedContent.restoreChoiceCharonDescription")}
-          </StepText>
+          {charonSupported && (
+            <>
+              {/* @ts-expect-error weird props issue with React 18 */}
+              <VerticalTimeline.SubtitleText>
+                {t("syncOnboarding.manual.seedContent.restoreChoiceCharonTitle")}
+              </VerticalTimeline.SubtitleText>
+              {/* @ts-expect-error weird props issue with React 18 */}
+              <StepText mb={6}>
+                {t("syncOnboarding.manual.seedContent.restoreChoiceCharonDescription")}
+              </StepText>
+            </>
+          )}
           {/* @ts-expect-error weird props issue with React 18 */}
           <VerticalTimeline.SubtitleText>
             {t("syncOnboarding.manual.seedContent.restoreChoiceRecoverTitle")}

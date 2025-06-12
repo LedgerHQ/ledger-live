@@ -317,12 +317,14 @@ describe("@hw/extractOnboardingState", () => {
           flagsBytes = Buffer.from([0, 0, 0, 0xb]);
         });
 
-        it("should return an onboarding step that is set at the charon screen", () => {
-          const charonState = Buffer.from([0x0]);
-          const onboardingState = extractOnboardingState(flagsBytes, charonState);
+        describe("and the device was seeded with charon", () => {
+          it("should return an onboarding step that is set at the charon screen", () => {
+            const charonState = Buffer.from([0x0]);
+            const onboardingState = extractOnboardingState(flagsBytes, charonState);
 
-          expect(onboardingState).not.toBeNull();
-          expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.BackupCharon);
+            expect(onboardingState).not.toBeNull();
+            expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.Ready);
+          });
         });
 
         describe("and the user refuse to backup the charon", () => {
@@ -366,7 +368,7 @@ describe("@hw/extractOnboardingState", () => {
         });
       });
 
-      describe("and charon backup is not started or fully refused", () => {
+      describe("and charon backup is not started and not fully refused", () => {
         beforeEach(() => {
           flagsBytes = Buffer.from([0, 0, 0, 0xb]);
         });
@@ -376,7 +378,7 @@ describe("@hw/extractOnboardingState", () => {
           const onboardingState = extractOnboardingState(flagsBytes, charonState);
 
           expect(onboardingState).not.toBeNull();
-          expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.Ready);
+          expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.BackupCharon);
         });
       });
 
@@ -406,6 +408,26 @@ describe("@hw/extractOnboardingState", () => {
           expect(onboardingState).not.toBeNull();
           expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.RestoreCharon);
         });
+      });
+    });
+
+    describe("When charon flags are provided", () => {
+      it("should return charonSupported=true", () => {
+        const onboardingState = extractOnboardingState(
+          Buffer.from([0, 0, 0, 0]),
+          Buffer.from([0x0]),
+        );
+
+        expect(onboardingState).not.toBeNull();
+        expect(onboardingState?.charonSupported).toBe(true);
+      });
+    });
+    describe("When charon flags are not provided", () => {
+      it("should return charonSupported=false", () => {
+        const onboardingState = extractOnboardingState(Buffer.from([0, 0, 0, 0]));
+
+        expect(onboardingState).not.toBeNull();
+        expect(onboardingState?.charonSupported).toBe(false);
       });
     });
   });

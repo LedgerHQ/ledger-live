@@ -56,6 +56,7 @@ describe("getOnboardingStatePolling", () => {
       seedPhraseType: SeedPhraseType.TwentyFour,
       currentSeedWordIndex: 0,
       currentOnboardingStep: OnboardingStep.NewDevice,
+      charonSupported: false,
     };
   });
 
