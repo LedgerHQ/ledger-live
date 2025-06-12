@@ -2340,7 +2340,8 @@
       },
       "selectionRestore": {
         "title": "Restore access to your assets",
-        "desc": "This lets you restore using your backup — Secret Recovery Phrase, Ledger Recover, or Ledger Charon."
+        "desc": "This lets you restore using your backup — Secret Recovery Phrase or Ledger Recover.",
+        "descWithCharon": "This lets you restore using your backup — Secret Recovery Phrase, Ledger Recover, or Ledger Charon."
       },
       "backupCharon": {
         "title": "Ledger Charon",
