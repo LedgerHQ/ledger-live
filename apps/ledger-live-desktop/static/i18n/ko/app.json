@@ -1925,7 +1925,8 @@
       "payoutNetworkFees" : "지불금 비용",
       "payoutNetworkFeesTooltip" : "이 금액은 장치에 표시되지 않습니다",
       "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0>{{provider}}의 이용약관</0>을 수락합니다.",
-      "exodusAcceptTerms" : "Exodus는 제 3자를 통해 스왑 서비스를 제공합니다.\n본인은 이 트랜잭션을 확인함으로써 <0>Exodus 이용 약관</0>을 수락합니다."
+      "exodusAcceptTerms" : "Exodus는 제 3자를 통해 스왑 서비스를 제공합니다.\n본인은 이 트랜잭션을 확인함으로써 <0>Exodus 이용 약관</0>을 수락합니다.",
+      "changellyAcceptTerms" : "\"Changelly로 스왑\"을 클릭하면 Changelly의<0>이용 약관</0> 및\n<1>AML/KYC 정책</1>에 동의하는 것으로 간주됩니다. Changelly는 AML/KYC 절차를 적용할 수 있으며,\n이는 제한적으로 트랜잭션 완료에 영향을 미칠 수 있습니다. 이 경우\n, Changelly <2>고객 지원</2>으로 문의해 주세요."
     },
     "swap2" : {
       "amountSent" : "전송 금액",
@@ -2396,7 +2397,8 @@
         "suggested" : "추천",
         "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
-        "nftQuantity" : "수량"
+        "nftQuantity" : "수량",
+        "splExtensionsWarning" : "현재 사용 중인 토큰은 토큰 확장 프로그램(Token Extensions)으로도 알려진 토큰-2022 프로그램의 일부입니다. 이 토큰은 몇 가지 리스크가 수반됩니다. <0>여기</0>를 클릭하여 자세히 알아보세요."
       },
       "verification" : {
         "streaming" : {
@@ -3771,7 +3773,7 @@
       "frozenStateWarning" : "계정 자산이 동결되었습니다!",
       "transferWarning" : "Ledger Nano S™를 사용해 솔라나 토큰의 수령인 주소를 확인하려면 <0>다음 지침을 따르세요.</0>",
       "transferFees" : {
-        "feesPercentHint" : "토큰에는 {{feePercent}}%({{feeBps}}bps)의 전송 수수료가 부과됩니다. 최대 {{maxFee}}",
+        "feesHint" : "토큰 이체 수수료: {{transferFee}}",
         "notice" : "전송 수수료 {{fee}}%",
         "tooltipHint" : "토큰 생성자의 전송 보류 비율",
         "transferFeesLabel" : "전송 수수료"
@@ -5873,6 +5875,10 @@
       "title" : "죄송하지만 자금이 부족합니다",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "죄송하지만, 수수료를 충당할 자금이 부족합니다",
+      "description" : "계정에 자금이 충분한지 확인해 주세요."
+    },
     "NotEnoughBalanceSwap" : {
       "title" : "죄송합니다. 네트워크 수수료를 포함한 잔액이 부족합니다. 금액을 조정하거나 잔액을 확인하세요",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
@@ -7055,7 +7061,15 @@
     "assetFlow" : {
       "selectTemplate" : "{{dynamic}} 선택",
       "asset" : "자산",
-      "network" : "네트워크"
+      "network" : "네트워크",
+      "account" : "계정"
+    }
+  },
+  "nftEntryPoint" : {
+    "title" : "NFT(대체 불가능 토큰)",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
     }
   }
 }
