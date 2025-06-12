@@ -25,8 +25,6 @@ import { CompleteExchangeStep, convertTransportError } from "../error";
 import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "../platform/types";
 import { convertToAppExchangePartnerKey, getSwapProvider } from "../providers";
 import { CEXProviderConfig } from "../providers/swap";
-import { isAddressSanctioned } from "../../sanction";
-import { RecipientAddressSanctionedError } from "../../sanction/errors";
 
 const COMPLETE_EXCHANGE_LOG = "SWAP-CompleteExchange";
 
@@ -66,19 +64,6 @@ const completeExchange = (
         const payoutCurrency = getAccountCurrency(toAccount);
         const refundCurrency = getAccountCurrency(fromAccount);
         const mainRefundCurrency = getAccountCurrency(refundAccount);
-
-        const isPayoutSanctioned = await isAddressSanctioned(
-          payoutAccount.currency,
-          payoutAccount.freshAddress,
-        );
-        const isRefundSanctioned = await isAddressSanctioned(
-          refundAccount.currency,
-          refundAccount.freshAddress,
-        );
-
-        if (isPayoutSanctioned || isRefundSanctioned) {
-          throw new RecipientAddressSanctionedError();
-        }
         if (mainPayoutCurrency.type !== "CryptoCurrency")
           throw new Error("This should be a cryptocurrency");
         if (mainRefundCurrency.type !== "CryptoCurrency")
