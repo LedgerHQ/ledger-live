@@ -919,6 +919,12 @@ importers:
       '@braze/react-native-sdk':
         specifier: 13.2.0
         version: 13.2.0
+      '@datadog/mobile-react-native':
+        specifier: 2.8.2
+        version: 2.8.2(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
+      '@datadog/mobile-react-navigation':
+        specifier: 2.8.2
+        version: 2.8.2(@datadog/mobile-react-native@2.8.2(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       '@formatjs/intl-locale':
         specifier: 3.4.5
         version: 3.4.5
@@ -11602,6 +11608,19 @@ packages:
 
   '@dabh/diagnostics@2.0.3':
     resolution: {integrity: sha512-hrlQOIi7hAfzsMqlGSFyVucrx38O+j6wiGOf//H2ecvIEqYN4ADBSS2iLMh5UFyDunCNniUIPk/q3riFv45xRA==}
+
+  '@datadog/mobile-react-native@2.8.2':
+    resolution: {integrity: sha512-co8dCCTWCXpSUbbcXTPWbaV4sHT++NalM5BvNjtjNkKuTKdmWD9+vPa0lwk6yodIEkJyOIrRzhvVzfezh4OPlQ==}
+    peerDependencies:
+      react: '>=16.13.1'
+      react-native: '>=0.63.4 <1.0'
+
+  '@datadog/mobile-react-navigation@2.8.2':
+    resolution: {integrity: sha512-/Kr/dlvdKodDz++y4MwYCv04DKPq+MvHyz5hGCWnuSX+5a2spHKIcWLDNxgHsDzQAsjE8i1Z8+IAeRzWKuAPxw==}
+    peerDependencies:
+      '@datadog/mobile-react-native': ^2.0.1
+      react: '>=16.13.1'
+      react-native: '>=0.63.4 <1.0'
 
   '@develar/schema-utils@2.6.5':
     resolution: {integrity: sha512-0cp4PsWQ/9avqTVMCtZ+GirikIA36ikvjtHweU4/j8yLtgObI0+JUPhYFScgwlteveGB1rt3Cm8UhN04XayDig==}
@@ -37683,6 +37702,18 @@ snapshots:
       colorspace: 1.1.4
       enabled: 2.0.0
       kuler: 2.0.0
+
+  '@datadog/mobile-react-native@2.8.2(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      big-integer: 1.6.52
+      react: 18.3.1
+      react-native: 0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
+
+  '@datadog/mobile-react-navigation@2.8.2(@datadog/mobile-react-native@2.8.2(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@datadog/mobile-react-native': 2.8.2(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
+      react: 18.3.1
+      react-native: 0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
 
   '@develar/schema-utils@2.6.5':
     dependencies:
