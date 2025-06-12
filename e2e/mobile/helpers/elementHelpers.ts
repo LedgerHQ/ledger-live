@@ -1,6 +1,6 @@
 import { Direction, NativeElement, WebElement } from "detox/detox";
 import { by, element, expect as detoxExpect, waitFor, web } from "detox";
-import { delay, isAndroid } from "./commonHelpers";
+import { delay } from "./commonHelpers";
 import { retryUntilTimeout } from "../utils/retry";
 import { PageScroller } from "./pageScroller";
 
@@ -11,22 +11,11 @@ interface IndexedWebElement extends WebElement {
 const scroller = new PageScroller();
 
 const DEFAULT_TIMEOUT = 60000;
-const RN75_DELAY = 200; // React Native 75 workaround: QAA-370
-
-function sync_delay(ms: number) {
-  const done = new Int32Array(new SharedArrayBuffer(4));
-  Atomics.wait(done, 0, 0, ms); // Wait for the specified duration
-}
-
-function withRN75Delay<T>(fn: () => T) {
-  if (!isAndroid()) sync_delay(RN75_DELAY);
-  return fn();
-}
 
 export const NativeElementHelpers = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   expect(element: any) {
-    return withRN75Delay(() => detoxExpect(element));
+    return detoxExpect(element);
   },
 
   waitForElementById(id: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
@@ -67,19 +56,19 @@ export const NativeElementHelpers = {
   },
 
   getElementsById(id: string | RegExp) {
-    return withRN75Delay(() => element(by.id(id)));
+    return element(by.id(id));
   },
 
   getElementById(id: string | RegExp, index = 0) {
-    return withRN75Delay(() => element(by.id(id)).atIndex(index));
+    return element(by.id(id)).atIndex(index);
   },
 
   getElementByText(text: string | RegExp, index = 0) {
-    return withRN75Delay(() => element(by.text(text)).atIndex(index));
+    return element(by.text(text)).atIndex(index);
   },
 
   getElementByIdAndText(id: string | RegExp, text: string | RegExp, index = 0) {
-    return withRN75Delay(() => element(by.id(id).and(by.text(text))).atIndex(index));
+    return element(by.id(id).and(by.text(text))).atIndex(index);
   },
 
   async isIdVisible(id: string | RegExp, timeout: number = 1_000): Promise<boolean> {
