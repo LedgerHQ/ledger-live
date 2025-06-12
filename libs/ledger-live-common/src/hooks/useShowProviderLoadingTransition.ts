@@ -12,16 +12,14 @@ export function useShowProviderLoadingTransition({
   manifest: LiveAppManifest;
   isLoading: boolean;
 }) {
+  const isEnabled = useProviderInterstitalEnabled({ manifest });
+  const [extendedInitialLoading, setExtendedInitialLoading] = useState(false);
+
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const buySellLoaderFF = useFeature("buySellLoader");
   const durationMs = buySellLoaderFF?.params?.durationMs ?? 0;
   const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
   const isAppInternal = internalAppIds.includes(manifest.id);
-  const isEnabled = buySellLoaderFF?.enabled && !isAppInternal;
-
-  const [extendedInitialLoading, setExtendedInitialLoading] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  const showProviderLoadingTransition = isEnabled && (isLoading || extendedInitialLoading);
 
   useEffect(() => {
     if (isEnabled && isLoading && !extendedInitialLoading) {
@@ -41,5 +39,19 @@ export function useShowProviderLoadingTransition({
     };
   }, []);
 
-  return showProviderLoadingTransition;
+  return isEnabled && (isLoading || extendedInitialLoading);
+}
+
+export function useProviderInterstitalEnabled({ manifest }: { manifest?: LiveAppManifest }) {
+  const buySellLoaderFF = useFeature("buySellLoader");
+  const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
+
+  if (!manifest) {
+    return false;
+  }
+
+  const isAppInternal = internalAppIds.includes(manifest.id);
+  const isEnabled = buySellLoaderFF?.enabled && !isAppInternal;
+
+  return isEnabled;
 }

@@ -14,7 +14,7 @@ import { getProviderIconUrl } from "@ledgerhq/live-common/icons/providers/provid
 
 import { Icon, Text, Flex } from "@ledgerhq/native-ui";
 import { useShowProviderLoadingTransition } from "@ledgerhq/live-common/hooks/useShowProviderLoadingTransition";
-import { CustomLoaderType } from "~/components/WebPTXPlayer";
+import { InterstitialType } from "~/components/WebPTXPlayer";
 
 export const Loader = styled(Flex)`
   gap: 28px;
@@ -85,7 +85,7 @@ const AnimatedCircle = ({ delay }: { delay: number }) => {
 };
 
 /** Custom loader for transition between Buy/Sell and providers */
-export const CustomLoaderBuySell: CustomLoaderType = ({ manifest, isLoading }) => {
+export const ProviderInterstitial: InterstitialType = ({ manifest, isLoading }) => {
   const { t } = useTranslation();
   const showProviderLoadingTransition = useShowProviderLoadingTransition({ manifest, isLoading });
 
