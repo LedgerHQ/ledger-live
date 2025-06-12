@@ -229,4 +229,7 @@ export const urls = {
     blobsLimit: "https://support.ledger.com/article/17830974229661-zd",
     txnMempoolConflict: "https://support.ledger.com/article/14593285242525-zd",
   },
+  geoBlock: {
+    learnMore: "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
+  },
 };

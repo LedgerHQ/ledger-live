@@ -30,6 +30,7 @@ const Wrapper = styled.div`
   cursor: pointer;
   border-radius: var(--radius-s, 8px);
   align-items: center;
+  overflow: hidden;
 
   :hover {
     background-color: var(--colors-surface-transparent-hover);
@@ -45,6 +46,8 @@ const InfoWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   margin-left: var(--margin-s);
+  overflow: hidden;
+  flex: 1;
 `;
 
 export const AssetItem = ({ name, ticker, id, onClick }: AssetItemProps) => {
@@ -56,6 +59,12 @@ export const AssetItem = ({ name, ticker, id, onClick }: AssetItemProps) => {
           variant="largeLineHeight"
           fontWeight="semiBold"
           color="var(--colors-content-default-default)"
+          style={{
+            display: "block",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
         >
           {name}
         </Text>

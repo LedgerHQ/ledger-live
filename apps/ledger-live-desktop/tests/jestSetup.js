@@ -3,6 +3,16 @@ import "@testing-library/jest-dom";
 import { server } from "./server";
 import { ALLOWED_UNHANDLED_REQUESTS } from "./handlers";
 
+jest.mock("framer-motion", () => {
+  const originalModule = jest.requireActual("framer-motion");
+  const overridenModule = jest.requireActual("./mocks/framerMotion.tsx");
+
+  return {
+    ...originalModule,
+    ...overridenModule,
+  };
+});
+
 global.setImmediate = global.setImmediate || ((fn, ...args) => global.setTimeout(fn, 0, ...args));
 
 class ResizeObserver {

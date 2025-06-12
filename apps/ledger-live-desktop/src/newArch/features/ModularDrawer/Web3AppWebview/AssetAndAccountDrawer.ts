@@ -8,8 +8,8 @@ import { createModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-a
 import { type CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
-import { SelectAccountFlow } from "../components/SelectAccountFlow";
 import { type WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
+import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 
 type Result = {
   account: AccountLike;
@@ -17,6 +17,8 @@ type Result = {
 };
 
 type DrawerParams = {
+  source: string;
+  flow: string;
   assetIds?: string[];
   currencies?: CryptoOrTokenCurrency[];
   accounts$?: Observable<WalletAPIAccount[]>;
@@ -53,7 +55,7 @@ function openAssetAndAccountDrawer(params: DrawerParams): void {
     currencies ?? listAndFilterCurrencies({ currencies: assetIds, includeTokens });
 
   return setDrawer(
-    SelectAccountFlow,
+    ModularDrawerFlowManager,
     {
       currencies: filteredCurrencies,
       accounts$,
@@ -61,6 +63,8 @@ function openAssetAndAccountDrawer(params: DrawerParams): void {
         handleSuccess({ account, parentAccount });
       },
       drawerConfiguration: modularDrawerConfiguration,
+      source: params.source,
+      flow: params.flow,
     },
     {
       onRequestClose: handleCancel,

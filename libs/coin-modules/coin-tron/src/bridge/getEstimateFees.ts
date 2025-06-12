@@ -10,7 +10,7 @@ import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 // see : https://developers.tron.network/docs/bandwith#section-bandwidth-points-consumption
 // 1. cost around 200 Bandwidth, if not enough check Free Bandwidth
 // 2. If not enough, will cost some TRX
-// 3. normal transfert cost around 0.002 TRX
+// 3. normal transfert cost around 0.270 TRX
 const getFeesFromBandwidth = (account: Account, transaction: Transaction): BigNumber => {
   const { freeUsed, freeLimit, gainedUsed, gainedLimit } = extractBandwidthInfo(
     transaction.networkInfo,
@@ -19,7 +19,7 @@ const getFeesFromBandwidth = (account: Account, transaction: Transaction): BigNu
   const estimatedBandwidthCost = getEstimatedBlockSize(account, transaction);
 
   if (available.lt(estimatedBandwidthCost)) {
-    return STANDARD_FEES_NATIVE; // cost is around 0.002 TRX
+    return STANDARD_FEES_NATIVE; // cost is around 0.270 TRX
   }
 
   return new BigNumber(0); // no fee

@@ -4,6 +4,7 @@ import { AppPage } from "./abstractClasses";
 
 export abstract class WebViewAppPage extends AppPage {
   private _webviewPage?: Page;
+  protected defaultWebViewTimeout = 60_000;
 
   @step("Wait for WebView to be available")
   protected async getWebView(): Promise<Page> {
@@ -19,10 +20,15 @@ export abstract class WebViewAppPage extends AppPage {
     if (all.length > 1) {
       webview = all[1];
     } else {
-      webview = await this.electronApp.waitForEvent("window");
+      webview = await this.electronApp.waitForEvent("window", {
+        timeout: this.defaultWebViewTimeout,
+      });
     }
 
-    await webview.waitForLoadState();
+    await webview.waitForLoadState("domcontentloaded", {
+      timeout: this.defaultWebViewTimeout,
+    });
+    webview.setDefaultTimeout(this.defaultWebViewTimeout);
     this._webviewPage = webview;
     return webview;
   }
@@ -31,6 +37,12 @@ export abstract class WebViewAppPage extends AppPage {
   protected async verifyElementIsVisible(testId: string) {
     const webview = await this.getWebView();
     await expect(webview.getByTestId(testId)).toBeVisible();
+  }
+
+  @step("Verify element is not visible in WebView")
+  protected async verifyElementIsNotVisible(testId: string) {
+    const webview = await this.getWebView();
+    await expect(webview.getByTestId(testId)).not.toBeVisible();
   }
 
   @step("Verify text is displayed in WebView element")
@@ -43,5 +55,43 @@ export abstract class WebViewAppPage extends AppPage {
   protected async verifyElementIsSelected(testId: string) {
     const webview = await this.getWebView();
     await expect(webview.getByTestId(testId)).toHaveAttribute("data-active", "true");
+  }
+
+  @step("Set value in WebView element")
+  protected async setValue(testId: string, value: string) {
+    const webview = await this.getWebView();
+    const input = webview.getByTestId(testId);
+    await input.click();
+    await input.fill(value);
+  }
+
+  @step("Verify element is not enabled in WebView")
+  protected async verifyElementIsNotEnabled(testId: string) {
+    const webview = await this.getWebView();
+    await expect(webview.getByTestId(testId)).not.toBeEnabled();
+  }
+
+  @step("Verify element is enabled in WebView")
+  protected async verifyElementIsEnabled(testId: string) {
+    const webview = await this.getWebView();
+    await expect(webview.getByTestId(testId)).toBeEnabled();
+  }
+
+  @step("Click element in WebView")
+  protected async clickElement(testId: string) {
+    const webview = await this.getWebView();
+    await webview.getByTestId(testId).click();
+  }
+
+  @step("Get WebView URL")
+  protected async getUrl() {
+    const webview = await this.getWebView();
+    return webview.url();
+  }
+
+  @step("Get element in WebView by testId: $0")
+  protected async getWebViewElementByTestId(testId: string) {
+    const webview = await this.getWebView();
+    return webview.getByTestId(testId);
   }
 }

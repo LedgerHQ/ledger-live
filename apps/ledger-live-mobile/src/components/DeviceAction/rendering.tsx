@@ -13,7 +13,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
-import { getNoticeType } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { getNoticeType, getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -255,7 +255,7 @@ export function renderConfirmSwap({
   walletState: WalletState;
   settingsState: SettingsState;
 }) {
-  const providerName = provider;
+  const providerName = getProviderName(provider);
   const noticeType = getNoticeType(provider);
   const alertProperties = noticeType.learnMore ? { learnMoreUrl: urls.swap.learnMore } : {};
   const fromAccountName = accountNameWithDefaultSelector(walletState, exchange.fromAccount);

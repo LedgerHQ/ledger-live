@@ -39,7 +39,7 @@ export async function launchApp() {
       wsPort: port,
       detoxURLBlacklistRegex:
         '\\(".*sdk.*.braze.*",".*.googleapis.com/.*",".*clients3.google.com.*",".*tron.coin.ledger.com/wallet/getBrokerage.*"\\)',
-      mock: getEnv("MOCK") ? getEnv("MOCK") : "0",
+      mock: "0",
       disable_broadcast: getEnv("DISABLE_TRANSACTION_BROADCAST") ? 1 : 0,
       IS_TEST: true,
     },
@@ -56,20 +56,13 @@ export async function launchApp() {
 
 export function setupEnvironment() {
   setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
+  setEnv("MOCK", "");
+  process.env.MOCK = "";
+  setEnv("DETOX", "1");
 
-  if (process.env.MOCK == "0") {
-    setEnv("MOCK", "");
-    process.env.MOCK = "";
-    setEnv("DETOX", "1");
-  } else if (process.env.MOCK == "1") {
-    setEnv("MOCK", "1");
-  }
-
-  if (process.env.DISABLE_TRANSACTION_BROADCAST == "0") {
-    setEnv("DISABLE_TRANSACTION_BROADCAST", false);
-  } else if (getEnv("MOCK") != "1") {
-    setEnv("DISABLE_TRANSACTION_BROADCAST", true);
-  }
+  const disableBroadcastEnv = process.env.DISABLE_TRANSACTION_BROADCAST;
+  const shouldBroadcast = disableBroadcastEnv === "0";
+  setEnv("DISABLE_TRANSACTION_BROADCAST", !shouldBroadcast);
 }
 
 export const logMemoryUsage = async (): Promise<void> => {

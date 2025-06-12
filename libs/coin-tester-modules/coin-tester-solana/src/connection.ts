@@ -1,4 +1,11 @@
-import { Connection, Keypair, PublicKey } from "@solana/web3.js";
+import {
+  Authorized,
+  Connection,
+  Keypair,
+  PublicKey,
+  StakeProgram,
+  VoteAccountInfo,
+} from "@solana/web3.js";
 import { createAssociatedTokenAccountIdempotent, mintTo } from "@solana/spl-token";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SolanaTokenProgram } from "@ledgerhq/coin-solana/types";
@@ -16,6 +23,8 @@ export const PAYER = Keypair.fromSecretKey(
     207,
   ]),
 );
+export const STAKE_ACCOUNT = Keypair.generate();
+export let VOTE_ACCOUNT: VoteAccountInfo | null = null;
 
 export async function createSplAccount(
   address: string,
@@ -44,5 +53,27 @@ export async function createSplAccount(
     undefined,
     programId,
   );
+  await connection.confirmTransaction({ signature, ...latest });
+}
+
+export async function initVoteAccount() {
+  const voteAccounts = await connection.getVoteAccounts();
+  VOTE_ACCOUNT = voteAccounts.current[0];
+}
+
+export async function initStakeAccount(address: string, amount: number) {
+  const authority = new PublicKey(address);
+  const transaction = StakeProgram.createAccount({
+    fromPubkey: PAYER.publicKey,
+    stakePubkey: STAKE_ACCOUNT.publicKey,
+    authorized: new Authorized(authority, authority),
+    lamports: amount,
+  });
+  const latest = await connection.getLatestBlockhash();
+  transaction.feePayer = PAYER.publicKey;
+  transaction.recentBlockhash = latest.blockhash;
+  transaction.lastValidBlockHeight = latest.lastValidBlockHeight;
+  transaction.sign(PAYER, STAKE_ACCOUNT);
+  const signature = await connection.sendRawTransaction(transaction.serialize());
   await connection.confirmTransaction({ signature, ...latest });
 }

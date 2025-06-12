@@ -10,17 +10,14 @@ module.exports = {
     "!src/datasets/**/*.ts",
     "!src/wallet-btc/__tests__/**/*.ts",
   ],
-  coverageReporters: ["json", ["lcov", { file: "bitcoin-lcov.info", projectRoot: "../" }], "text"],
+  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   preset: "ts-jest",
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
   modulePathIgnorePatterns: ["__tests__/fixtures"],
   reporters: [
     "default",
-    [
-      "jest-sonar",
-      { outputName: "bitcoin-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
-    ],
+    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
   // setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
 };

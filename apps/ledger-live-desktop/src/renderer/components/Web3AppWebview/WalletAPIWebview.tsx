@@ -73,6 +73,11 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
               currencies,
               onSuccess,
               onCancel,
+              flow: manifest.name,
+              source:
+                currentRouteNameRef.current === "Platform Catalog"
+                  ? "Discover"
+                  : currentRouteNameRef.current ?? "Unknown",
             })
           : setDrawer(
               SelectAccountAndCurrencyDrawer,

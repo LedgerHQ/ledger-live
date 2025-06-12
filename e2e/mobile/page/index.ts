@@ -31,7 +31,6 @@ import { isObservable, lastValueFrom, Observable } from "rxjs";
 import path from "path";
 import fs from "fs";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
-import { getEnv } from "@ledgerhq/live-env";
 import { log } from "detox";
 import { AppInfosType } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { setupEnvironment } from "../helpers/commonHelpers";
@@ -122,8 +121,7 @@ export class Application {
     const userdataSpeculos = `temp-userdata-${Date.now()}`;
     const userdataPath = getUserdataPath(userdataSpeculos);
 
-    if (!getEnv("MOCK"))
-      fs.copyFileSync(getUserdataPath(userdata || "skip-onboarding"), userdataPath);
+    fs.copyFileSync(getUserdataPath(userdata || "skip-onboarding"), userdataPath);
 
     for (const { app, cmd } of cliCommandsOnApp || []) {
       const apiPort = await this.common.addSpeculos(app.name);
@@ -136,10 +134,8 @@ export class Application {
       await executeCliCommand(cmd, userdataPath);
     }
 
-    if (!getEnv("MOCK")) {
-      await loadConfig(userdataSpeculos, true);
-      fs.existsSync(userdataPath) && fs.unlinkSync(userdataPath);
-    } else userdata && (await loadConfig(userdata, true));
+    await loadConfig(userdataSpeculos, true);
+    fs.existsSync(userdataPath) && fs.unlinkSync(userdataPath);
 
     featureFlags && (await setFeatureFlags(featureFlags));
   }
