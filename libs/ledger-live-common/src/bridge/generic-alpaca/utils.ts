@@ -45,7 +45,10 @@ export function transactionToIntent(
 export const buildOptimisticOperation = (
   account: Account,
   transaction: TransactionCommon,
+  nextSequenceNumber?: number,
 ): Operation => {
+  console.log(`build Optimistic Operation, sequence = ${nextSequenceNumber}`);
+
   return {
     id: encodeOperationId(account.id, "", "OUT"),
     hash: "",
@@ -56,6 +59,7 @@ export const buildOptimisticOperation = (
     blockHeight: null,
     senders: [account.freshAddress.toString()],
     recipients: [transaction.recipient],
+    transactionSequenceNumber: nextSequenceNumber ?? 0,
     accountId: account.id,
     date: new Date(),
     extra: {},

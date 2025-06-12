@@ -152,6 +152,10 @@ export type AlpacaApi<
     transactionIntent: TransactionIntent<AssetInfo, MemoType>,
     customFees?: bigint,
   ) => Promise<string>;
+  craftTransactionReturnSequence?: (
+    transactionIntent: TransactionIntent<AssetInfo, MemoType>,
+    customFees?: bigint,
+  ) => Promise<{ serialized: string; sequence: number }>;
   getBalance: (address: string) => Promise<Balance<AssetInfo>[]>;
   lastBlock: () => Promise<BlockInfo>;
   listOperations: (
