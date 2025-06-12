@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.82.0-next.3
+
+### Minor Changes
+
+- [#10521](https://github.com/LedgerHQ/ledger-live/pull/10521) [`cdd05f4`](https://github.com/LedgerHQ/ledger-live/commit/cdd05f47e934aa4d29161cd2af04b30705d908b5) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Ensure token accounts have correct parent accounts in swap history sections
+
 ## 3.82.0-next.2
 
 ### Minor Changes
