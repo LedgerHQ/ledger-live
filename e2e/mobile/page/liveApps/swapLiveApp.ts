@@ -92,8 +92,8 @@ export default class SwapLiveAppPage {
   async getProviderList() {
     await detoxExpect(getWebElementByTestId(this.numberOfQuotes)).toExist();
     await detoxExpect(getWebElementByTestId(this.quotesCountDown)).toExist();
-    const numberOfQuotesText: string = await getWebElementText(this.numberOfQuotes);
     const providerList = await getWebElementsText(this.quoteProviderName);
+    const numberOfQuotesText: string = await getWebElementText(this.numberOfQuotes);
     jestExpect(numberOfQuotesText).toEqual(`${providerList.length} quotes found`);
     return await getWebElementsText(this.quoteProviderName);
   }
