@@ -8,7 +8,9 @@ import { getDescription } from "../utils/customJsonReporter";
 import { CLI } from "../utils/cliUtils";
 import invariant from "invariant";
 
-test.describe("send NFT to ENS address", () => {
+// 🚨 Skipping all NFT tests due to deactivation in production
+
+test.describe.skip("send NFT to ENS address", () => {
   const originalValue = process.env.DISABLE_TRANSACTION_BROADCAST;
 
   test.beforeAll(async () => {
@@ -69,7 +71,7 @@ test.describe("send NFT to ENS address", () => {
   });
 });
 
-test.describe("The user can see his NFT floor price", () => {
+test.describe.skip("The user can see his NFT floor price", () => {
   const account = Account.ETH_1;
   test.use({
     userdata: "skip-onboarding",
@@ -119,7 +121,7 @@ const accounts = [
 ];
 
 for (const account of accounts) {
-  test.describe("The user displays all the nfts from his account", () => {
+  test.describe.skip("The user displays all the nfts from his account", () => {
     test.use({
       userdata: "skip-onboarding",
       cliCommands: [
@@ -155,7 +157,7 @@ for (const account of accounts) {
 }
 
 for (const account of accounts) {
-  test.describe("The user displays his nft collection", () => {
+  test.describe.skip("The user displays his nft collection", () => {
     test.use({
       userdata: "skip-onboarding",
       cliCommands: [
