@@ -53,6 +53,7 @@ describe("genericSignOperation", () => {
 
     (getAlpacaApi as jest.Mock).mockReturnValue({
       craftTransaction: jest.fn().mockResolvedValue(unsignedTx),
+      getAccountInfo: jest.fn().mockResolvedValue(pubKey),
       combine: jest.fn().mockResolvedValue(signedTx),
     });
 
