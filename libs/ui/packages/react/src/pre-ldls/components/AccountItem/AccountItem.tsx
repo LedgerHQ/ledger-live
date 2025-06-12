@@ -23,14 +23,15 @@ export type AccountItemProps = {
   account: Account;
   checkbox?: CheckboxProps;
   showIcon?: boolean;
-  persistentBackground?: boolean;
+  backgroundColor?: string;
 };
 
-const Wrapper = styled.div<{ persistentBackground: boolean }>`
+const Wrapper = styled.div<{ backgroundColor?: string }>`
   ${withTokens(
     "spacing-xxxs",
     "spacing-xxs",
     "spacing-xs",
+    "margin-s",
     "radius-s",
     "colors-content-default-default",
     "colors-surface-transparent-hover",
@@ -40,9 +41,9 @@ const Wrapper = styled.div<{ persistentBackground: boolean }>`
   )}
 
   display: flex;
-  padding: var(--spacing-xs);
+  padding: var(--margin-s);
   cursor: pointer;
-  border-radius: var(--radius-s, 8px);
+  border-radius: var(--radius-s, 12px);
   justify-content: space-between;
   align-items: center;
   width: 100%;
@@ -51,8 +52,7 @@ const Wrapper = styled.div<{ persistentBackground: boolean }>`
   min-width: 200px;
   overflow: hidden;
 
-  background-color: ${p =>
-    p.persistentBackground ? "var(--colors-surface-transparent-subdued-default)" : "transparent"};
+  background-color: ${p => (p.backgroundColor ? p.backgroundColor : "transparent")};
 
   :hover {
     background-color: var(--colors-surface-transparent-hover);
@@ -122,12 +122,12 @@ export const AccountItem = ({
   account,
   checkbox,
   showIcon = true,
-  persistentBackground = false,
+  backgroundColor,
 }: AccountItemProps) => {
   const { name, balance, fiatValue, protocol, address, ticker, cryptoId, parentId } = account;
 
   return (
-    <Wrapper onClick={onClick} persistentBackground={persistentBackground}>
+    <Wrapper onClick={onClick} backgroundColor={backgroundColor}>
       <ContentContainer>
         <AccountInfoContainer>
           <NameRow>
@@ -164,12 +164,12 @@ export const AccountItem = ({
           />
         </AccountInfoContainer>
         <BalanceContainer>
-          <Text fontSize="14px">{fiatValue}</Text>
+          <Text fontSize="16px" fontWeight="semiBold">{fiatValue}</Text>
           <Text fontSize="12px" color="var(--colors-content-subdued-default-default)">
             {balance}
           </Text>
         </BalanceContainer>
-        {checkbox && <Checkbox {...checkbox} />}
+        {checkbox && <Checkbox {...checkbox} size={20} />}
       </ContentContainer>
     </Wrapper>
   );
