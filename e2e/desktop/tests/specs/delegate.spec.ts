@@ -53,6 +53,14 @@ const e2eDelegationAccountsWithoutBroadcast = [
     delegate: new Delegate(Account.MULTIVERS_X_1, "1", "Ledger by Figment"),
     xrayTicket: "B2CQA-3020",
   },
+  {
+    delegate: new Delegate(
+      Account.APTOS_1,
+      "11",
+      "0xa651c7c52d64a2014379902bbc92439d196499bcc36d94ff0395aa45837c66db",
+    ),
+    xrayTicket: "XXXXX-XXXX",
+  },
 ];
 
 const validators = [
@@ -199,11 +207,15 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
 
         await app.layout.goToAccounts();
         await app.accounts.navigateToAccountByName(account.delegate.account.accountName);
+        await app.layout.syncAccounts(); // REVIEW: account is empty. I had to force sync in order to show the balance and "Earn" button. This could be related with some other issue.
 
         await app.account.startStakingFlowFromMainStakeButton();
         await app.delegate.continue();
 
-        if (account.delegate.account.currency.name == Currency.ADA.name) {
+        if (
+          account.delegate.account.currency.name == Currency.ADA.name ||
+          account.delegate.account.currency.name == Currency.APT.name
+        ) {
           await app.delegate.openSearchProviderModal();
           await app.delegate.inputProvider(account.delegate.provider);
           await app.delegate.selectProviderByName(account.delegate.provider);

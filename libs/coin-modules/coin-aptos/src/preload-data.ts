@@ -18,7 +18,7 @@ const dataUpdatesByCurrency = new Map([
 ]);
 
 export function setAptosPreloadData(data: AptosPreloadData, currency: CryptoCurrency): void {
-  dataByCurrency.set(currency.id, data);
+  dataByCurrency.set(currency.id, data ?? initialData);
   const subject = dataUpdatesByCurrency.get(currency.id);
   if (subject === undefined) {
     throw new Error(`unsupported currency ${currency.id}`);
