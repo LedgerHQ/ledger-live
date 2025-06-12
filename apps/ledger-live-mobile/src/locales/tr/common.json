@@ -3369,7 +3369,8 @@
       "description" : "Güvenli bir şekilde nakit karşılığında kripto satın."
     },
     "exchange" : {
-      "title" : "Satın Al / Sat"
+      "title" : "Satın Al / Sat",
+      "connectingTo" : "{{provider}} sağlayıcısına bağlanıyorsunuz"
     },
     "stake" : {
       "title" : "Stake et",
@@ -7438,5 +7439,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Konum kullanılamıyor",
+    "description" : "Ledger cüzdan bu konumda kullanılamıyor.",
+    "learnMore" : "Daha fazla bilgi"
   }
 }
