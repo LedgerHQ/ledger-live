@@ -12,6 +12,7 @@ import { type WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 import { track } from "~/renderer/analytics/segment";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { CloseButton } from "../components/CloseButton";
 
 type Result = {
   account: AccountLike;
@@ -74,6 +75,7 @@ function openAssetAndAccountDrawer(params: DrawerParams): void {
       flow: params.flow,
     },
     {
+      closeButtonComponent: CloseButton,
       onRequestClose: handleCancel,
     },
   );
