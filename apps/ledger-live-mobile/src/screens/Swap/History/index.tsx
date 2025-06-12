@@ -124,7 +124,6 @@ const History = () => {
     try {
       const mapped = mappedSwapOperationsToCSV(sections);
 
-      // console.log(mapped);
       const base64 = Buffer.from(mapped).toString("base64");
       const options = {
         title: t("transfer.swap.history.exportButton"),
@@ -166,7 +165,7 @@ const History = () => {
           sections.length ? (
             <Button
               type="tertiary"
-              title={t("transfer.swap.history.exportButton2")}
+              title={t("transfer.swap.history.exportButton")}
               containerStyle={styles.button}
               IconLeft={DownloadFileIcon}
               onPress={exportSwapHistory}
