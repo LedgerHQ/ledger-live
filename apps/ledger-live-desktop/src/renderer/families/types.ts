@@ -20,11 +20,17 @@ import {
   TokenAccount,
   TransactionCommon,
   MessageProperties,
+  AccountLike,
 } from "@ledgerhq/types-live";
 // FIXME: ideally we need to have <A,T,TS> parametric version of StepProps
 import { StepProps as SendStepProps } from "../modals/Send/types";
 import { StepProps as ReceiveStepProps } from "../modals/Receive/Body";
 import { StepProps as AddAccountsStepProps } from "../modals/AddAccounts";
+
+export type AddressCellProps<O extends Operation> = {
+  operation: O;
+  currency: CryptoCurrency;
+};
 
 export type AmountCellExtraProps<O extends Operation> = {
   operation: O;
@@ -56,6 +62,12 @@ export type AmountTooltipProps<O extends Operation> = {
   amount: BigNumber;
 };
 
+export type OperationDetailsPostAccountSectionProps<A extends Account, O extends Operation> = {
+  operation: O;
+  account: A;
+  type: OperationType;
+};
+
 export type OperationDetailsExtraProps<A extends Account, O extends Operation> = {
   operation: O;
   account: A;
@@ -83,6 +95,11 @@ export type LLDCoinFamily<
   O extends Operation,
 > = {
   operationDetails?: {
+    /**
+     * Replace address cell
+     */
+    addressCell?: Partial<Record<OperationType, React.ComponentType<AddressCellProps<O>>>>;
+
     /**
      * Cell amount before the amount cell in operation row
      */
@@ -116,9 +133,21 @@ export type LLDCoinFamily<
     getURLFeesInfo?: (_: { op: O; currencyId: string }) => string | null | undefined;
 
     /**
+     * Add custom component after the Account section in operation details drawer
+     */
+    OperationDetailsPostAccountSection?: React.ComponentType<
+      OperationDetailsPostAccountSectionProps<A, O>
+    >;
+
+    /**
      * Add extra info
      */
     OperationDetailsExtra?: React.ComponentType<OperationDetailsExtraProps<A, O>>;
+
+    /**
+     * Add custom component at the end in operation details drawer
+     */
+    OperationDetailsPostAlert?: React.ComponentType<OperationDetailsExtraProps<A, O>>;
   };
 
   accountActions?: {
@@ -242,6 +271,11 @@ export type LLDCoinFamily<
   };
 
   /**
+   * Allow to disable "Continue" button on Recipient step in Send modal
+   */
+  sendRecipientCanNext?: (status: TS) => boolean;
+
+  /**
    *  One time modal that is trigger only one time on a account that never send
    */
   sendWarning?: {
@@ -280,6 +314,11 @@ export type LLDCoinFamily<
   };
 
   /**
+   * Allow to add component below the token select on Account step in Receive modal
+   */
+  StepReceiveAccountCustomAlert?: React.ComponentType<ReceiveStepProps & { account: AccountLike }>;
+
+  /**
    * Change Receive funds with this component (example: Hedera)
    */
   StepReceiveFunds?: React.ComponentType<ReceiveStepProps>;
@@ -293,6 +332,11 @@ export type LLDCoinFamily<
    * Replace Networkfees row on Summary Step
    */
   StepSummaryNetworkFeesRow?: React.ComponentType<SummaryNetworkFeesRowProps>;
+
+  /**
+   * Allow to add specific component in Send modal below the recipient address
+   */
+  StepRecipientCustomAlert?: React.ComponentType<{ status: TS }>;
 
   /**
    * Allow to add specific component in Send modal at the end of Summary Step
