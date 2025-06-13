@@ -1,3 +1,5 @@
+import { getAccountAddress, Account } from "@ledgerhq/live-common/lib/e2e/enum/Account";
+
 export default class OperationDetailsPage {
   titleId = "operationDetails-title";
   recipientId = "operationDetails-recipient0";
@@ -11,6 +13,7 @@ export default class OperationDetailsPage {
     STAKE: "Staked",
     LOCK: "Locked",
   };
+  operationDetailsConfirmed = "operation-details-text-confirmed";
 
   title = () => getElementById(this.titleId);
   account = () => getElementById("operationDetails-account");
@@ -29,9 +32,17 @@ export default class OperationDetailsPage {
   }
 
   @Step("Check recipient details")
-  async checkRecipient(recipient: string) {
+  async checkRecipientAddress(recipient: Account) {
     await scrollToId(this.recipientId);
-    await detoxExpect(getElementById(this.recipientId)).toHaveText(recipient);
+    const recipientElement = getElementById(this.recipientId);
+
+    let expected: string;
+    if (await IsIdVisible(this.operationDetailsConfirmed)) {
+      expected = getAccountAddress(recipient);
+    } else {
+      expected = recipient.address;
+    }
+    await detoxExpect(recipientElement).toHaveText(expected);
   }
 
   @Step("Check delegated provider")
@@ -55,12 +66,12 @@ export default class OperationDetailsPage {
   @Step("Check Fees")
   async checkFees(fees: string) {
     await scrollToId(this.feesId);
-    await detoxExpect(await getElementById(this.feesId)).toHaveText(fees);
+    await detoxExpect(getElementById(this.feesId)).toHaveText(fees);
   }
 
   @Step("Check transaction type")
   async checkTransactionType(type: keyof typeof this.operationsType) {
-    await detoxExpect(await getElementById(this.titleId)).toHaveText(this.operationsType[type]);
+    await detoxExpect(getElementById(this.titleId)).toHaveText(this.operationsType[type]);
   }
 
   @Step("Check that transaction details are displayed")

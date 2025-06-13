@@ -98,6 +98,7 @@ export function runSendInvalidAddressTest(
 export function runSendValidAddressTest(
   transaction: TransactionType,
   tmsLinks: string[],
+  testName: string,
   tags: string[] = ["@NanoSP", "@LNS", "@NanoX"],
   accountName?: string,
   expectedWarningMessage?: string,
@@ -109,7 +110,7 @@ export function runSendValidAddressTest(
       await beforeAllFunction(transaction);
     });
 
-    it(`Send from ${transaction.accountToDebit.accountName} ${accountName || ""} to ${transaction.accountToCredit.accountName} - valid address & amount input`, async () => {
+    it(`Send from ${transaction.accountToDebit.accountName} ${accountName || ""} to ${transaction.accountToCredit.accountName} (${testName})`, async () => {
       await navigateToSendScreen(accountName || transaction.accountToDebit.accountName);
       await app.send.setRecipient(transaction.accountToCredit.address, transaction.memoTag);
       await app.send.expectSendRecipientSuccess(expectedWarningMessage);

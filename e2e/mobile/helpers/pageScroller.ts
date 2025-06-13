@@ -1,5 +1,6 @@
-import { element, by, waitFor, device } from "detox";
+import { element, by, waitFor } from "detox";
 import { Direction, NativeElement, NativeMatcher } from "detox/detox";
+import { delay, isAndroid } from "./commonHelpers";
 
 const MAX_ATTEMPTS_PER_DIRECTION = 10;
 const SCROLL_STALL_THRESHOLD = 7;
@@ -28,6 +29,7 @@ export class PageScroller {
       await this.scrollOnce(scrollContainer, direction, pixels);
 
       if (await this.isVisible(matcher, timeout)) {
+        await this.waitForScrollToSettle();
         return;
       }
 
@@ -60,7 +62,7 @@ export class PageScroller {
     if (scrollViewId) {
       return element(by.id(scrollViewId));
     }
-    const type = device.getPlatform() === "android" ? "android.widget.ScrollView" : "RCTScrollView";
+    const type = isAndroid() ? "android.widget.ScrollView" : "RCTScrollView";
     return element(by.type(type)).atIndex(0);
   }
 
@@ -105,5 +107,9 @@ export class PageScroller {
       topReached,
       resetStall: false,
     };
+  }
+
+  async waitForScrollToSettle(): Promise<void> {
+    await delay(1_000);
   }
 }

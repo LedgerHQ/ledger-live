@@ -2,6 +2,15 @@ import React from "react";
 import type { Preview } from "@storybook/react";
 import { palettes, StyleProvider } from "../../../libs/ui/packages/react/src/styles";
 import "../src/renderer/i18n/init";
+import { Buffer } from "buffer";
+
+declare global {
+  interface Window {
+    Buffer: typeof Buffer;
+  }
+}
+
+window.Buffer = Buffer;
 
 export const decorators = [
   (Story, { globals }) => {

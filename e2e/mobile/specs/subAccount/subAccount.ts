@@ -18,7 +18,7 @@ async function checkOperationInfos(
 ) {
   await app.operationDetails.waitForOperationDetails();
   await app.operationDetails.checkAccount(transaction.accountToDebit.currency.name);
-  await app.operationDetails.checkRecipient(transaction.accountToCredit.address);
+  await app.operationDetails.checkRecipientAddress(transaction.accountToCredit);
   if (operationType) await app.operationDetails.checkTransactionType(operationType);
 }
 
@@ -88,7 +88,7 @@ export function runSendSPL(transaction: TransactionType, tmsLinks: string[]) {
         const subAccountId = app.account.subAccountId(transaction.accountToCredit);
         await navigateToSubAccount(transaction.accountToCredit);
         await app.account.expectAccountBalanceVisible(subAccountId);
-        await app.account.selectAndClickOnLastOperation(TransactionStatus.RECEIVED);
+        await app.account.scrollToHistoryAndClickOnLastOperation(TransactionStatus.RECEIVED);
         await checkOperationInfos(transaction);
       }
     });
