@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 import { useTheme } from "styled-components/native";
 import { ScopeProvider } from "jotai-scope";
 import { Web3AppWebview } from "~/components/Web3AppWebview";
-import { WebviewState } from "~/components/Web3AppWebview/types";
+import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 import { useSettings } from "~/hooks";
 import {
@@ -22,6 +22,7 @@ import { useDispatch } from "react-redux";
 import { useTranslateToSwapAccount } from "./hooks/useTranslateToSwapAccount";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useSwapCustomHandlers } from "./customHandlers";
+import { useSwapHeaderNavigation } from "./useSwapHeaderNavigation";
 
 type Props = {
   manifest: LiveAppManifest;
@@ -32,6 +33,7 @@ type Props = {
 export function WebView({ manifest, params, setWebviewState }: Props) {
   // Swap duplicated the Custom Handlers due to different needs compared to the rest of the platform apps,
   // to avoid complexifying the logic in the shared custom handlers.
+  const webviewRef = useRef<WebviewAPI>(null);
   const accounts = useSelector(flattenAccountsSelector);
   const dispatch = useDispatch();
   const customHandlers = useSwapCustomHandlers(manifest, accounts, dispatch);
@@ -50,11 +52,14 @@ export function WebView({ manifest, params, setWebviewState }: Props) {
   const stableCurrentAccounts = useRef(currentAccounts).current; // only consider accounts available upon initial WebView load
   const swapParams = useTranslateToSwapAccount(params, stableCurrentAccounts);
 
+  useSwapHeaderNavigation(webviewRef);
+
   // ScopeProvider required to prevent conflicts between Swap's Webview instance and deeplink instances
   return (
     <ScopeProvider atoms={[currentAccountAtom]}>
       <Flex flex={1}>
         <Web3AppWebview
+          ref={webviewRef}
           manifest={manifest}
           customHandlers={customHandlers}
           onStateChange={setWebviewState}
