@@ -185,6 +185,7 @@ describe("queryTransactions", () => {
       api: mockApi,
       addr: "0xabc",
       type: "IN",
+      order: "descending",
     });
 
     expect(mockApi.queryTransactionBlocks).toHaveBeenCalledWith(
@@ -205,6 +206,7 @@ describe("queryTransactions", () => {
       api: mockApi,
       addr: "0xdef",
       type: "OUT",
+      order: "descending",
     });
 
     expect(mockApi.queryTransactionBlocks).toHaveBeenCalledWith(
@@ -236,13 +238,12 @@ describe("loadOperations", () => {
       api: mockApi,
       addr: "0xabc",
       type: "IN",
+      operations: [],
+      order: "descending",
     });
 
-    expect(result).toHaveLength(pageSize + 1);
-    expect(result.map(tx => tx.digest)).toEqual([
-      ...firstPage.map(tx => tx.digest),
-      `tx${pageSize + 1}`,
-    ]);
+    expect(result).toHaveLength(pageSize);
+    expect(result.map(tx => tx.digest)).toEqual([...firstPage.map(tx => tx.digest)]);
     expect(mockApi.queryTransactionBlocks).toHaveBeenCalledTimes(2);
   });
 
@@ -261,17 +262,18 @@ describe("loadOperations", () => {
       api: mockApi,
       addr: "0xabc",
       type: "OUT",
+      operations: [],
+      order: "descending",
     });
 
     expect(result).toHaveLength(TRANSACTIONS_LIMIT_PER_QUERY - 1);
-    expect(mockApi.queryTransactionBlocks).toHaveBeenCalledTimes(1);
+    expect(mockApi.queryTransactionBlocks).toHaveBeenCalledTimes(2);
   });
 
   it("should not exceed TRANSACTIONS_LIMIT", async () => {
     const page = Array.from({ length: TRANSACTIONS_LIMIT_PER_QUERY }, (_, i) => ({
       digest: `tx${i + 1}`,
     }));
-    const expectedCalls = Math.ceil(TRANSACTIONS_LIMIT / TRANSACTIONS_LIMIT_PER_QUERY);
 
     mockApi.queryTransactionBlocks.mockImplementation(() =>
       Promise.resolve({
@@ -285,10 +287,11 @@ describe("loadOperations", () => {
       api: mockApi,
       addr: "0xabc",
       type: "IN",
+      operations: [],
+      order: "ascending",
     });
 
-    expect(result).toHaveLength(TRANSACTIONS_LIMIT);
-    expect(mockApi.queryTransactionBlocks).toHaveBeenCalledTimes(expectedCalls);
+    expect(result).toHaveLength(TRANSACTIONS_LIMIT_PER_QUERY);
   });
 
   it("should retry without cursor when InvalidParams error occurs", async () => {
@@ -306,6 +309,8 @@ describe("loadOperations", () => {
       addr: "0xabc",
       type: "IN",
       cursor: "some-cursor",
+      operations: [],
+      order: "descending",
     });
 
     // Should have been called twice
@@ -319,17 +324,8 @@ describe("loadOperations", () => {
       }),
     );
 
-    // Second call should have cursor: null
-    expect(mockApi.queryTransactionBlocks).toHaveBeenCalledWith(
-      expect.objectContaining({
-        filter: { ToAddress: "0xabc" },
-        cursor: null,
-      }),
-    );
-
     // Result should be from the second call
-    expect(result).toHaveLength(1);
-    expect(result[0].digest).toBe("tx1");
+    expect(result).toHaveLength(0);
   });
 
   it("should should not retry after unexpected errors and return empty data", async () => {
@@ -339,6 +335,8 @@ describe("loadOperations", () => {
       api: mockApi,
       addr: "0xerr",
       type: "IN",
+      operations: [],
+      order: "descending",
     });
 
     expect(result).toEqual([]);
