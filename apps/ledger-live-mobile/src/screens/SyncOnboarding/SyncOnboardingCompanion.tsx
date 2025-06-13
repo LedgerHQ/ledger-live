@@ -12,6 +12,7 @@ import { Flex, VerticalTimeline, Text, ContinueOnDevice, Link } from "@ledgerhq/
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import {
+  CharonStatus,
   OnboardingStep as DeviceOnboardingStep,
   fromSeedPhraseTypeToNbOfSeedWords,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
@@ -38,7 +39,7 @@ import {
 } from "~/actions/settings";
 import InstallSetOfApps from "~/components/DeviceAction/InstallSetOfApps";
 import Stories from "~/components/StorylyStories";
-import { TrackScreen, screen, track } from "~/analytics";
+import { TrackScreen, screen, useTrack } from "~/analytics";
 import ContinueOnStax from "./assets/ContinueOnStax";
 import ContinueOnEuropa from "./assets/ContinueOnEuropa";
 import type { SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
@@ -557,13 +558,14 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     servicesConfig?.params?.protectId,
   ]);
 
+  const track = useTrack();
   const handleLearnMoreClick = useCallback(() => {
     // TODO: Add link
     track("button_clicked", {
       button: "Learn More",
       page: "Charon Start",
     });
-  }, []);
+  }, [track]);
 
   const companionSteps: Step[] = useMemo(
     () =>
@@ -694,6 +696,12 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                 <BodyText>{t("syncOnboarding.seedStep.recoverSeed")}</BodyText>
               ) : seedPathStatus === "backup_charon" ? (
                 <Flex>
+                  {deviceOnboardingState?.charonStatus === CharonStatus.Rejected ? (
+                    <TrackScreen category="Set up device: Step 3 Charon Start" />
+                  ) : null}
+                  {deviceOnboardingState?.charonStatus === CharonStatus.Ready ? (
+                    <TrackScreen category="Set up device: Step 3 Charon Backup Success" />
+                  ) : null}
                   <Flex alignItems="center" justifyContent="center">
                     <Flex style={{ overflow: "visible", height: 100 }} mt={3}>
                       <Image resizeMode="contain" source={CharonImage} style={{ height: 170 }} />
@@ -809,10 +817,11 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       seedPathStatus,
       deviceInitialApps?.enabled,
       device,
+      deviceOnboardingState?.charonSupported,
+      deviceOnboardingState?.charonStatus,
       handleLearnMoreClick,
       shouldRestoreApps,
       handleInstallAppsComplete,
-      deviceOnboardingState?.charonSupported,
       initialAppsToInstall,
       companionStepKey,
     ],
