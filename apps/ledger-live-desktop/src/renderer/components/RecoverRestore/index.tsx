@@ -67,6 +67,7 @@ const RecoverRestore = () => {
             currentOnboardingStep: OnboardingStep.NewDevice,
             currentSeedWordIndex: 0,
             charonSupported: false,
+            charonStatus: null,
           });
         } else {
           setError(error);
