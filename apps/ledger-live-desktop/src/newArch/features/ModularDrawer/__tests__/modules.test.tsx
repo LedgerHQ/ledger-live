@@ -114,4 +114,24 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
     const usdBalance = screen.queryByText(/\$2,773.41/i);
     expect(usdBalance).toBeNull();
   });
+
+  it("should display number of accounts for network with numberOfAccounts flag", async () => {
+    const { user } = renderWithMockedCounterValuesProvider(
+      <ModularDrawerFlowManager
+        currencies={currencies}
+        onAssetSelected={mockOnAssetSelected}
+        source="sourceTest"
+        flow="flowTest"
+        drawerConfiguration={{ networks: { leftElement: "numberOfAccounts" } }}
+      />,
+      mockedInitialState,
+    );
+
+    const ethereum = screen.getByText(/ethereum/i);
+
+    await user.click(ethereum);
+
+    const accountCount = screen.getByText(/1 account/i);
+    expect(accountCount).toBeVisible();
+  });
 });

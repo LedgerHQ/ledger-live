@@ -1,6 +1,6 @@
 import React from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { SelectNetwork as NetworksList } from "./components/List";
+import { SelectNetwork as NetworksList } from "./components";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import TrackDrawerScreen from "../../analytics/TrackDrawerScreen";
 import { MODULAR_DRAWER_PAGE_NAME } from "../../analytics/types";
@@ -34,6 +34,7 @@ export function NetworkSelection({
         onNetworkSelected={onNetworkSelected}
         flow={flow}
         source={source}
+        networksConfig={networksConfiguration}
       />
     </>
   );

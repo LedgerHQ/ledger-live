@@ -7096,7 +7096,9 @@
     "searchPlaceholder": "Search",
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
-    "selectAccount": "Select account"
+    "selectAccount": "Select account",
+    "accountCount_one": "{{count}} account",
+    "accountCount_other": "{{count}} accounts"
   },
   "nftEntryPoint": {
     "title": "NFT (Non Fungible Tokens)",
