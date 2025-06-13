@@ -5,7 +5,7 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import { AnimatePresence } from "framer-motion";
 import React, { useMemo, useState } from "react";
-import { LoadingOverlay } from "~/newArch/components/LoadingOverlay";
+import AnimatedScreenWrapper from "./components/AnimatedScreenWrapper";
 import { AddAccountHeader } from "./components/Header/AddAccountHeader";
 import ConnectYourDevice from "./screens/ConnectYourDevice";
 import ScanAccounts from "./screens/ScanAccounts";
@@ -16,41 +16,23 @@ const ANALYTICS_PROPERTY_FLOW = "Modular Add Account Flow";
 type Props = {
   currency: CryptoOrTokenCurrency;
   drawerConfiguration?: EnhancedModularDrawerConfiguration;
-  // TODO review callbacks
-  // onAssetSelected?: (currency: CryptoOrTokenCurrency) => void;
-  // onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
+  onConnect?: (result: AppResult) => void;
+  onScannedAccounts?: (accounts: Account[]) => void;
 };
 
 const ModularDrawerAddAccountFlowManager = ({
   currency,
+  onConnect,
+  onScannedAccounts,
   // drawerConfiguration,
-  // onAssetSelected,
-  // onAccountSelected,
 }: Props) => {
   // const { assets: assetConfiguration, networks: networkConfiguration } = drawerConfiguration ?? {};
 
   const [currentStep, setCurrentStep] =
     useState<ModularDrawerAddAccountStep>("CONNECT_YOUR_DEVICE");
 
+  const [connectAppResult, setConnectAppResult] = useState<AppResult | null>(null);
   const [selectedAccounts, setSelectedAccounts] = useState<Account[]>([]);
-
-  // const [connectAppResult, setConnectAppResult] = useState<AppResult | null>(null);
-  // DEBUG
-  const [connectAppResult, setConnectAppResult] = useState<AppResult | null>({
-    device: {
-      deviceId: "",
-      modelId: "stax",
-      wired: true,
-    },
-    appAndVersion: {
-      name: "Bitcoin",
-      version: "2.3.0",
-      flags: {
-        type: "Buffer",
-        data: [2],
-      },
-    },
-  });
 
   const handleBack = useMemo(() => {
     switch (currentStep) {
@@ -82,6 +64,7 @@ const ModularDrawerAddAccountFlowManager = ({
             onConnect={result => {
               setConnectAppResult(result);
               setCurrentStep("SCAN_ACCOUNTS");
+              onConnect?.(result);
             }}
             // TODO review
             analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW}
@@ -101,6 +84,8 @@ const ModularDrawerAddAccountFlowManager = ({
             deviceId={connectAppResult.device.deviceId}
             onComplete={accounts => {
               setSelectedAccounts(accounts);
+              onScannedAccounts?.(accounts);
+              setCurrentStep("ACCOUNTS_ADDED");
             }}
           />
         );
@@ -112,29 +97,29 @@ const ModularDrawerAddAccountFlowManager = ({
     }
   };
 
+  const navigationDirection = "FORWARD";
   return (
     <Flex height="100%" data-test-id="wrapper">
       <Flex position="absolute" zIndex={1} height="100%" width="100%" bottom={0} top={0}>
         <AddAccountHeader step={currentStep} onBackClick={handleBack} />
         <AnimatePresence mode="sync" data-test-id="animated">
-          {/*
-        TODO review
-        <AnimatedScreenWrapper
-          key={currentStep}
-          screenKey={currentStep}
-          direction={navigationDirection}
-        > */}
-          <Flex
-            data-test-id="content"
-            flex={1}
-            flexDirection="column"
-            paddingBottom={40}
-            paddingTop={76}
-            paddingX={40}
-            rowGap={24}
+          <AnimatedScreenWrapper
+            key={currentStep}
+            screenKey={currentStep}
+            direction={navigationDirection}
           >
-            {renderStepContent(currentStep)}
-          </Flex>
+            <Flex
+              data-test-id="content"
+              flex={1}
+              flexDirection="column"
+              paddingBottom={40}
+              paddingTop={76}
+              paddingX={40}
+              rowGap={24}
+            >
+              {renderStepContent(currentStep)}
+            </Flex>
+          </AnimatedScreenWrapper>
         </AnimatePresence>
       </Flex>
     </Flex>

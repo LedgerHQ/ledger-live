@@ -1,6 +1,6 @@
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
-import { Box, Button, Flex, Text, Link, Icons } from "@ledgerhq/react-ui";
+import { Box, Button, Flex, Icons, Link, Text } from "@ledgerhq/react-ui";
 import {
   AccountItem,
   Account as AccountItemAccount,
@@ -8,24 +8,24 @@ import {
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import invariant from "invariant";
+import { LoadingOverlay } from "LLD/components/LoadingOverlay";
+import { counterValueFormatter } from "LLD/utils/counterValueFormatter";
 import { default as React, useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { BehaviorSubject } from "rxjs";
 import * as RX from "rxjs/operators";
+import { useTheme } from "styled-components";
 import { formatAddress } from "~/newArch/utils/formatAddress";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { walletSelector } from "~/renderer/reducers/wallet";
-import { Title } from "../../components/Header/Title";
-import { MODULAR_DRAWER_ADD_ACCOUNT_CATEGORY } from "../../types";
-import { useTheme } from "styled-components";
-import { counterValueFormatter } from "LLD/utils/counterValueFormatter";
 import {
   counterValueCurrencySelector,
   discreetModeSelector,
   localeSelector,
 } from "~/renderer/reducers/settings";
-import { LoadingOverlay } from "LLD/components/LoadingOverlay";
+import { walletSelector } from "~/renderer/reducers/wallet";
+import { Title } from "../../components/Header/Title";
+import { MODULAR_DRAWER_ADD_ACCOUNT_CATEGORY } from "../../types";
 
 interface Props {
   currency: CryptoCurrency;
@@ -73,7 +73,6 @@ const ScanAccounts = ({ currency, deviceId, onComplete }: Props) => {
         RX.takeUntil(isScanning$.pipe(RX.filter(x => !x))),
         RX.filter(x => x.type === "discovered"),
         RX.map(x => x.account),
-        RX.tap(x => console.log("SCAN ACCOUNT EVENT", { x })),
       )
       .subscribe({
         next: x => {
@@ -84,7 +83,7 @@ const ScanAccounts = ({ currency, deviceId, onComplete }: Props) => {
           setScannedAccounts(prev => [...prev, x]);
         },
         complete: () => isScanning$.next(false),
-        error: () => isScanning$.next(false), // TODO could surface the error UI-wise
+        error: () => isScanning$.next(false),
       });
     return () => {
       setScannedAccounts([]);
