@@ -49,22 +49,6 @@ const beforeAllFunction = async (swap: SwapType) => {
   await readyPromise;
 };
 
-async function performSwapUntilQuoteSelectionStep(swap: SwapType, minAmount: string) {
-  await app.swapLiveApp.waitForSwapLiveApp();
-
-  await app.swapLiveApp.tapFromCurrency();
-  await app.common.performSearch(swap.accountToDebit.currency.name);
-  await app.stake.selectCurrency(swap.accountToDebit.currency.id);
-  await app.common.selectFirstAccount();
-  await app.swapLiveApp.tapToCurrency();
-  await app.common.performSearch(swap.accountToCredit.currency.name);
-  await app.stake.selectCurrency(swap.accountToCredit.currency.id);
-  await app.common.selectFirstAccount();
-  await app.swapLiveApp.inputAmount(minAmount);
-  await app.swapLiveApp.tapGetQuotesButton();
-  await app.swapLiveApp.waitForQuotes();
-}
-
 export function runSwapTest(swap: SwapType, tmsLinks: string[], tags: string[]) {
   describe("Swap - Accepted (without tx broadcast)", () => {
     beforeAll(async () => {
