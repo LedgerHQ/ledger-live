@@ -25,8 +25,8 @@ import { CompleteExchangeStep, convertTransportError } from "../error";
 import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "../platform/types";
 import { convertToAppExchangePartnerKey, getSwapProvider } from "../providers";
 import { CEXProviderConfig } from "../providers/swap";
-import { isAddressSanctioned } from "../../sanction";
-import { RecipientAddressSanctionedError } from "../../sanction/errors";
+import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
+import { RecipientAddressSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 
 const COMPLETE_EXCHANGE_LOG = "SWAP-CompleteExchange";
 

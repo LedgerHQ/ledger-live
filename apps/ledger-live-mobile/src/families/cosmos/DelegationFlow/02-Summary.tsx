@@ -31,6 +31,9 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CosmosDelegationFlowParamList } from "./types";
 import Config from "react-native-config";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
+import LText from "~/components/LText";
+import TranslatedError from "~/components/TranslatedError";
+import { UserAddressSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 
 type Props = StackNavigatorProps<
   CosmosDelegationFlowParamList,
@@ -244,6 +247,11 @@ export default function DelegationSummary({ navigation, route }: Props) {
         </View>
       </View>
       <View style={styles.footer}>
+        {status.errors.amount && status.errors.amount instanceof UserAddressSanctionedError ? (
+          <LText color="alert">
+            <TranslatedError error={status.errors.amount} />
+          </LText>
+        ) : null}
         <Button
           event="SummaryContinue"
           type="primary"
