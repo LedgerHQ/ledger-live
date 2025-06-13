@@ -18,8 +18,7 @@ import {
 } from "../logic";
 import api from "../network/tzkt";
 import type { TezosOperationMode } from "../types";
-import type { TezosApi, TezosAsset, TezosFeeEstimation } from "./types";
-import { TransactionIntent } from "@ledgerhq/coin-framework/lib-es/api/types";
+import type { TezosApi, TezosAsset, TezosFeeEstimation, TezosTransactionIntent } from "./types";
 
 export function createApi(config: TezosConfig): TezosApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -50,7 +49,7 @@ async function balance(address: string): Promise<Balance<TezosAsset>[]> {
 }
 
 async function craft(
-  transactionIntent: TransactionIntent<TezosAsset>,
+  transactionIntent: TezosTransactionIntent,
   customFees?: bigint,
 ): Promise<string> {
   if (!isTezosTransactionType(transactionIntent.type)) {
@@ -65,7 +64,7 @@ async function craft(
   }));
 
   const { contents } = await craftTransaction(
-    { address: transactionIntent.sender },
+    { address: transactionIntent.sender.address },
     {
       type: transactionIntent.type,
       recipient: transactionIntent.recipient,
@@ -76,10 +75,8 @@ async function craft(
   return rawEncode(contents);
 }
 
-async function estimate(
-  transactionIntent: TransactionIntent<TezosAsset>,
-): Promise<TezosFeeEstimation> {
-  const senderAccountInfo = await api.getAccountByAddress(transactionIntent.sender);
+async function estimate(transactionIntent: TezosTransactionIntent): Promise<TezosFeeEstimation> {
+  const senderAccountInfo = await api.getAccountByAddress(transactionIntent.sender.address);
   if (senderAccountInfo.type !== "user") throw new Error("unexpected account type");
 
   const {
@@ -89,11 +86,10 @@ async function estimate(
     taquitoError,
   } = await estimateFees({
     account: {
-      address: transactionIntent.sender,
+      address: transactionIntent.sender.address,
       revealed: senderAccountInfo.revealed,
       balance: BigInt(senderAccountInfo.balance),
-      // NOTE: previously we checked for .sender.xpub
-      xpub: transactionIntent.senderPublicKey ?? senderAccountInfo.publicKey,
+      xpub: transactionIntent.sender.xpub ?? senderAccountInfo.publicKey,
     },
     transaction: {
       mode: transactionIntent.type as TezosOperationMode,
