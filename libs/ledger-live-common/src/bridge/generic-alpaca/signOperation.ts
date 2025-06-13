@@ -41,14 +41,24 @@ export const genericSignOperation =
         transactionIntent.senderPublicKey = publicKey;
         // NOTE: is setting the memo here instead of transactionToIntent sensible?
         const txWithMemo = transactionIntent as TransactionIntent<any, MapMemo<string, string>>;
+
+        txWithMemo.memo = {
+          type: "map",
+          memos: new Map(),
+        };
+
         if (transaction["tag"]) {
           const txMemo = String(transaction["tag"]);
-          txWithMemo.memo = {
-            type: "map",
-            memos: new Map(),
-          };
           txWithMemo.memo.memos.set("destinationTag", txMemo);
         }
+        // if (transaction["tag"]) {
+        //   const txMemo = String(transaction["tag"]);
+        //   txWithMemo.memo = {
+        //     type: "map",
+        //     memos: new Map(),
+        //   };
+        //   txWithMemo.memo.memos.set("destinationTag", txMemo);
+        // }
 
         const unsigned = await getAlpacaApi(network, kind).craftTransaction({
           ...txWithMemo,
