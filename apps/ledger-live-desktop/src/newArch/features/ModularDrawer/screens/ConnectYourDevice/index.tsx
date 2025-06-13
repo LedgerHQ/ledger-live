@@ -20,26 +20,25 @@ export const ConnectYourDevice = ({
   onConnect,
   analyticsPropertyFlow,
 }: Readonly<Props>) => {
-  invariant(currency, "No crypto asset given");
-
   // preload currency ahead of time
   useEffect(() => {
-    if (currency && currency.type === "CryptoCurrency") {
+    if (currency.type === "CryptoCurrency") {
       prepareCurrency(currency);
     }
   }, [currency]);
 
-  const currencyName = currency
-    ? currency.type === "TokenCurrency"
-      ? currency.parentCurrency.name
-      : currency.name
-    : undefined;
+  const cryptoCurrency = useMemo(
+    () => (currency.type === "TokenCurrency" ? currency.parentCurrency : currency),
+    [currency],
+  );
+
+  const currencyName = cryptoCurrency.name;
 
   const request = useMemo(
     () => ({
-      currency: currency.type === "TokenCurrency" ? currency.parentCurrency : currency,
+      currency: cryptoCurrency,
     }),
-    [currency],
+    [cryptoCurrency],
   );
 
   const action = useConnectAppAction();

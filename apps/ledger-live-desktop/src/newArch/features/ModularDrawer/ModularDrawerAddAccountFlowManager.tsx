@@ -20,11 +20,7 @@ type Props = {
   onScannedAccounts?: (accounts: Account[]) => void;
 };
 
-const ModularDrawerAddAccountFlowManager = ({
-  currency,
-  onConnect,
-  onScannedAccounts,
-}: Props) => {
+const ModularDrawerAddAccountFlowManager = ({ currency, onConnect, onScannedAccounts }: Props) => {
   const [currentStep, setCurrentStep] =
     useState<ModularDrawerAddAccountStep>("CONNECT_YOUR_DEVICE");
 
@@ -101,11 +97,11 @@ const ModularDrawerAddAccountFlowManager = ({
       <Flex position="absolute" zIndex={1} height="100%" width="100%" bottom={0} top={0}>
         <AddAccountHeader step={currentStep} onBackClick={handleBack} />
         <AnimatePresence mode="sync" data-test-id="animated">
-          <AnimatedScreenWrapper
+          {/* <AnimatedScreenWrapper
             key={currentStep}
             screenKey={currentStep}
             direction={navigationDirection}
-          >
+          > */}
             <Flex
               data-test-id="content"
               flex={1}
@@ -117,7 +113,7 @@ const ModularDrawerAddAccountFlowManager = ({
             >
               {renderStepContent(currentStep)}
             </Flex>
-          </AnimatedScreenWrapper>
+          {/* </AnimatedScreenWrapper> */}
         </AnimatePresence>
       </Flex>
     </Flex>

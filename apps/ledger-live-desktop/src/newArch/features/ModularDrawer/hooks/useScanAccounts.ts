@@ -2,7 +2,7 @@ import { Account } from "@ledgerhq/types-live";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { counterValueFormatter } from "LLD/utils/counterValueFormatter";
 import {
-    blacklistedTokenIdsSelector,
+  blacklistedTokenIdsSelector,
   counterValueCurrencySelector,
   discreetModeSelector,
   localeSelector,
