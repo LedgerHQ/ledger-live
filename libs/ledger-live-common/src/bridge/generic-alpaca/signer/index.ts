@@ -22,10 +22,11 @@ export function getSigner(network): AlpacaSigner {
       const createSigner: CreateSigner<Xrp> = (transport: Transport) => {
         return new Xrp(transport);
       };
+      const signerContext = executeWithSigner(createSigner);
       return {
-        getAddress: xrpGetAddress(executeWithSigner(createSigner)),
-        signTransaction: signTransaction(executeWithSigner(createSigner)),
-        context: executeWithSigner(createSigner),
+        getAddress: xrpGetAddress(signerContext),
+        signTransaction: signTransaction(signerContext),
+        context: signerContext, // executeWithSigner(createSigner),
       };
     }
   }
