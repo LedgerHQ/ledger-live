@@ -8,7 +8,7 @@ export default createNodeMiddleware(app, {
     },
     defaults: {
       request: {
-        retries: 3,
+        retries: 4,
       },
     },
   }),
