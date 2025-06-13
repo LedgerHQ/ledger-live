@@ -95,7 +95,7 @@ export default class SwapLiveAppPage {
     const providerList = await getWebElementsText(this.quoteProviderName);
     const numberOfQuotesText: string = await getWebElementText(this.numberOfQuotes);
     jestExpect(numberOfQuotesText).toEqual(`${providerList.length} quotes found`);
-    return await getWebElementsText(this.quoteProviderName);
+    return providerList;
   }
 
   @Step("Check error message: $0")
@@ -106,9 +106,9 @@ export default class SwapLiveAppPage {
 
   @Step("Check first quote container infos")
   async checkFirstQuoteContainerInfos(providerList: string[]) {
-    const provider = Provider.getNameByUiName(providerList[0]);
+    const provider: string = Provider.getNameByUiName(providerList[0]);
     const baseProviderLocator = `quote-container-${provider}-`;
-
+    await waitWebElementByTestId(baseProviderLocator + "amount-label");
     await tapWebElementByTestId(baseProviderLocator + "amount-label");
 
     await detoxExpect(getWebElementByTestId(baseProviderLocator + "amount-label")).toExist();
@@ -126,7 +126,7 @@ export default class SwapLiveAppPage {
     await detoxExpect(getWebElementByTestId(baseProviderLocator + "rate-fiat-value")).toExist();
     if (
       provider === Provider.ONE_INCH.name ||
-      provider === Provider.PARASWAP.name ||
+      provider === Provider.VELORA.name ||
       provider === Provider.UNISWAP.name ||
       provider === Provider.LIFI.name
     ) {
@@ -140,7 +140,7 @@ export default class SwapLiveAppPage {
   async checkExchangeButtonHasProviderName(provider: string) {
     const expectedButtonText = [
       Provider.ONE_INCH.uiName,
-      Provider.PARASWAP.uiName,
+      Provider.VELORA.uiName,
       Provider.MOONPAY.uiName,
     ].includes(provider)
       ? `Continue with ${provider}`
