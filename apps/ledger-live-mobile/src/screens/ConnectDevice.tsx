@@ -50,6 +50,7 @@ import type { AptosStakingFlowParamList } from "~/families/aptos/StakingFlow/typ
 import type { AptosRestakingFlowParamList } from "~/families/aptos/RestakingFlow/types";
 import type { AptosUnstakingFlowParamList } from "~/families/aptos/UnstakingFlow/types";
 import type { AptosWithdrawingFlowParamList } from "~/families/aptos/WithdrawingFlow/types";
+import type { HederaAssociateTokenFlowParamList } from "~/families/hedera/AssociateTokenFlow/types";
 import { SolanaDelegationFlowParamList } from "~/families/solana/DelegationFlow/types";
 import { StellarAddAssetFlowParamList } from "~/families/stellar/AddAssetFlow/types";
 import { TezosDelegationFlowParamList } from "~/families/tezos/DelegationFlow/types";
@@ -115,7 +116,11 @@ type Props =
   | StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.DelegationConnectDevice>
   | StackNavigatorProps<StellarAddAssetFlowParamList, ScreenName.StellarAddAssetConnectDevice>
   | StackNavigatorProps<TezosDelegationFlowParamList, ScreenName.DelegationConnectDevice>
-  | StackNavigatorProps<TronVoteFlowParamList, ScreenName.VoteConnectDevice>;
+  | StackNavigatorProps<TronVoteFlowParamList, ScreenName.VoteConnectDevice>
+  | StackNavigatorProps<
+      HederaAssociateTokenFlowParamList,
+      ScreenName.HederaAssociateTokenConnectDevice
+    >;
 
 export const navigateToSelectDevice = (navigation: Props["navigation"], route: Props["route"]) =>
   // Assumes that it will always navigate to a "SelectDevice"
