@@ -8,6 +8,8 @@ import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { useModularDrawerVisibility } from "./useModularDrawerVisibility";
+import { useDispatch } from "react-redux";
+import { openModal } from "~/renderer/actions/modals";
 
 function selectCurrency(
   onAssetSelected: (currency: CryptoOrTokenCurrency) => void,
@@ -42,6 +44,7 @@ function selectCurrency(
 export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, source: string) {
   const { isModularDrawerVisible } = useModularDrawerVisibility();
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+  const dispatch = useDispatch();
 
   const handleClose = useCallback(() => {
     setDrawer();
@@ -58,6 +61,7 @@ export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, s
         currency,
       });
     }
+    console.log("openAddAccountFlow called", currency);
     // TODO else?
   }, []);
 
@@ -74,10 +78,17 @@ export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, s
           handleClose,
         );
       } else {
-        openAddAccountFlow();
+        dispatch(openModal("MODAL_ADD_ACCOUNTS", undefined));
       }
     },
-    [handleClose, isModularDrawerVisible, modularDrawerLocation, openAddAccountFlow, source],
+    [
+      dispatch,
+      handleClose,
+      isModularDrawerVisible,
+      modularDrawerLocation,
+      openAddAccountFlow,
+      source,
+    ],
   );
 
   return {
