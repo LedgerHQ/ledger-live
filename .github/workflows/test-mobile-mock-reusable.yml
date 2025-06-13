@@ -356,20 +356,10 @@ jobs:
       - name: Download Native Build
         uses: tespkg/actions-cache/restore@v1
         with:
-          path: ${{ env.ANDROID_APK_PATH }}
+          path: |
+            ${{ env.ANDROID_APK_PATH }}
+            ${{ env.ANDROID_TESTBINARY_PATH }}
           key: ${{ needs.determine-builds.outputs.android_native_key }}
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ${{ env.cache-bucket }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
-
-      - name: Download Native Test binary
-        uses: tespkg/actions-cache/restore@v1
-        with:
-          path: ${{ env.ANDROID_TESTBINARY_PATH }}
-          key: ${{ needs.determine-builds.outputs.android_native_key }}-testbinary
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
