@@ -81,7 +81,16 @@ export type OnboardingState = {
   currentOnboardingStep: OnboardingStep;
   currentSeedWordIndex: number;
   charonSupported: boolean;
+  charonStatus: CharonStatus | null;
 };
+
+export enum CharonStatus {
+  Rejected = 1,
+  Choice,
+  Running,
+  Naming,
+  Ready,
+}
 
 /**
  * Extracts the onboarding state of the device
@@ -142,12 +151,15 @@ export const extractOnboardingState = (
     }
   }
 
+  const charonSupported = charonState !== undefined && charonState.length > 0;
+
   return {
     isOnboarded,
     isInRecoveryMode,
     seedPhraseType,
     currentOnboardingStep,
     currentSeedWordIndex,
-    charonSupported: charonState !== undefined,
+    charonSupported,
+    charonStatus: charonSupported ? ((charonState[0] & 0x0f) as CharonStatus) : null,
   };
 };
