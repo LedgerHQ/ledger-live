@@ -8,8 +8,8 @@ export async function sendAptos() {
 }
 
 export async function delegateAptos(delegatingAccount: Delegate) {
-  await waitFor(DeviceLabels.PLEASE_REVIEW);
-  const events = await pressUntilTextFound(DeviceLabels.CAPS_APPROVE);
+  await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+  const events = await pressUntilTextFound(DeviceLabels.APPROVE);
   const isAmountCorrect = containsSubstringInEvent(delegatingAccount.amount, events);
   expect(isAmountCorrect).toBeTruthy();
   await pressBoth();
