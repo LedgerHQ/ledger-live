@@ -35,13 +35,13 @@ const feature_stake_programs_json: Feature_StakePrograms = {
 
 describe("stakeProgramsToEarnParam", () => {
   it("should return `undefined` when there are no redirects", () => {
-    const result = stakeProgramsToEarnParam(feature_stake_programs_empty_json);
-    expect(result).toEqual(undefined);
+    const { stakeProgramsParam } = stakeProgramsToEarnParam(feature_stake_programs_empty_json);
+    expect(stakeProgramsParam).toEqual(undefined);
   });
 
   it("should return a record of stake earn params", () => {
-    const result = stakeProgramsToEarnParam(feature_stake_programs_json);
-    expect(result).toEqual({
+    const { stakeProgramsParam } = stakeProgramsToEarnParam(feature_stake_programs_json);
+    expect(stakeProgramsParam).toEqual({
       "ethereum/erc20/usd__coin": "kiln-widget",
       "ethereum/erc20/usd_tether__erc20_": "earn",
       tron: "stakekit",
