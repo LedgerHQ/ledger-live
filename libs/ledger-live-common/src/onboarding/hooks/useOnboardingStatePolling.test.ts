@@ -37,6 +37,7 @@ describe("useOnboardingStatePolling", () => {
       currentSeedWordIndex: 0,
       currentOnboardingStep: OnboardingStep.NewDevice,
       charonSupported: false,
+      charonStatus: null,
     };
 
     aSecondOnboardingState = {
