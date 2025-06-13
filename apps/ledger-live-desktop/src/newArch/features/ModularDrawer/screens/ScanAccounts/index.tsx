@@ -37,8 +37,6 @@ const ScanAccounts = ({ currency, deviceId, onComplete }: Props) => {
     currency,
     deviceId,
     onComplete,
-    existingAccounts: [],
-    blacklistedTokenIds: [],
   });
 
   const renderAccount = (x: AccountItemAccount) => (

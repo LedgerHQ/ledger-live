@@ -55,14 +55,10 @@ export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, s
     });
   }, [modularDrawerLocation, trackModularDrawerEvent]);
 
-  const openAddAccountFlow = useCallback((currency?: CryptoOrTokenCurrency) => {
-    if (currency) {
-      setDrawer(ModularDrawerAddAccountFlowManager, {
-        currency,
-      });
-    }
-    console.log("openAddAccountFlow called", currency);
-    // TODO else?
+  const openAddAccountFlow = useCallback((currency: CryptoOrTokenCurrency) => {
+    setDrawer(ModularDrawerAddAccountFlowManager, {
+      currency,
+    });
   }, []);
 
   const openAssetFlow = useCallback(
