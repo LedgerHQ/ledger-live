@@ -15,14 +15,15 @@ export type AlpacaSigner = {
   context: SignerContext<any>;
 };
 
+const createSigner: CreateSigner<Xrp> = (transport: Transport) => {
+  return new Xrp(transport);
+};
+const signerContext = executeWithSigner(createSigner);
+
 export function getSigner(network): AlpacaSigner {
   switch (network) {
     case "ripple":
     case "xrp": {
-      const createSigner: CreateSigner<Xrp> = (transport: Transport) => {
-        return new Xrp(transport);
-      };
-      const signerContext = executeWithSigner(createSigner);
       return {
         getAddress: xrpGetAddress(signerContext),
         signTransaction: signTransaction(signerContext),
