@@ -92,7 +92,7 @@ export const Card: React.FC<CardProps> = ({
       <Svg style={styles.gradientTop}>
         <Defs>
           <LinearGradient id="midGlowTop" x1="0" y1="0" x2="0" y2="1">
-            <Stop offset="0" stopColor={middleColor} stopOpacity="0.9" />
+            <Stop offset="0" stopColor={middleColor} stopOpacity="0.5" />
             <Stop offset="0.5" stopColor={middleColor} stopOpacity="0" />
           </LinearGradient>
         </Defs>
@@ -182,9 +182,9 @@ const styles = StyleSheet.create({
   },
   gradientTop: {
     position: "absolute",
-    top: -15,
+    top: -5,
     width: width,
     height: 100,
-    zIndex: 1,
+    zIndex: 11,
   },
 });
