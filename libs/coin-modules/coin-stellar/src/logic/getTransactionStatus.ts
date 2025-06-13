@@ -9,11 +9,9 @@ import {
   RecipientRequired,
   InvalidAddress,
 } from "@ledgerhq/errors";
-import { BigNumber } from "bignumber.js";
-import type { AccountBridge } from "@ledgerhq/types-live";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { isAddressValid, isAccountMultiSign, isMemoValid } from "./logic";
+import { Transaction, TransactionValidation, Account } from "@ledgerhq/coin-framework/api/types";
+import { isAddressValid, isAccountMultiSign, isMemoValid } from "./utils";
 import { BASE_RESERVE, MIN_BALANCE, getRecipientAccount } from "../network";
 import {
   StellarWrongMemoFormat,
@@ -26,13 +24,22 @@ import {
   StellarNotEnoughNativeBalanceToAddTrustline,
   StellarMuxedAccountNotExist,
   StellarSourceHasMultiSign,
-  type Transaction,
+  // type Transaction,
 } from "../types";
+import BigNumber from "bignumber.js";
 
-export const getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"] = async (
-  account,
-  transaction,
-) => {
+// export const getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"] = async (
+//   account,
+//   transaction,
+// ) => {
+
+export const getTransactionStatus = async (
+  account: Account,
+  transaction: Transaction,
+): Promise<TransactionValidation> => {
+  const asset = account; // FIXME:
+  console.log("getTransactionStatus account", account);
+  console.log("getTransactionStatus transaction", transaction);
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
   const useAllAmount = !!transaction.useAllAmount;
@@ -41,35 +48,35 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
     minimalAmount: `${MIN_BALANCE} XLM`,
   });
 
-  if (account.pendingOperations.length > 0) {
+  if (account.pendingOperations > 0) {
     throw new AccountAwaitingSendPendingOperations();
   }
 
-  if (!transaction.fees || !transaction.baseReserve) {
-    errors.fees = new FeeNotLoaded();
-  }
+  // if (!transaction.fee || !transaction.baseReserve) {
+  //   errors.fees = new FeeNotLoaded();
+  // }
 
-  const estimatedFees = !transaction.fees ? new BigNumber(0) : transaction.fees;
-  const baseReserve = !transaction.baseReserve ? new BigNumber(0) : transaction.baseReserve;
+  const estimatedFees = !transaction.fees ? 0n : transaction.fee;
+  const baseReserve = !transaction.baseReserve ? 0n : transaction.baseReserve;
   const isAssetPayment =
     transaction.subAccountId && transaction.assetCode && transaction.assetIssuer;
   const nativeBalance = account.balance;
-  const nativeAmountAvailable = account.spendableBalance.minus(estimatedFees);
+  const nativeAmountAvailable = account.spendableBalance - estimatedFees;
 
-  let amount = new BigNumber(0);
-  let maxAmount = new BigNumber(0);
-  let totalSpent = new BigNumber(0);
+  let amount = 0n;
+  let maxAmount = 0n;
+  let totalSpent = 0n;
 
   // Enough native balance to cover transaction (with required reserve + fees)
-  if (!errors.amount && nativeAmountAvailable.lt(0)) {
+  if (!errors.amount && nativeAmountAvailable < 0) {
     errors.amount = new StellarNotEnoughNativeBalance();
   }
 
   // Entered fee is smaller than base fee
-  if (estimatedFees.lt(transaction.networkInfo?.baseFee || 0)) {
+  if (estimatedFees < (transaction.networkInfo?.baseFee || 0n)) {
     errors.transaction = new StellarFeeSmallerThanBase();
     // Entered fee is smaller than recommended
-  } else if (estimatedFees.lt(transaction.networkInfo?.fees || 0)) {
+  } else if (estimatedFees < (transaction.networkInfo?.fees || 0n)) {
     warnings.transaction = new StellarFeeSmallerThanRecommended();
   }
 
@@ -82,7 +89,7 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
     }
 
     // Has enough native balance to add new trustline
-    if (nativeAmountAvailable.minus(BASE_RESERVE).lt(0)) {
+    if (nativeAmountAvailable - BigInt(BASE_RESERVE) < 0n) {
       errors.amount = new StellarNotEnoughNativeBalanceToAddTrustline();
     }
   } else {
@@ -92,9 +99,9 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
       errors.recipient = new RecipientRequired("");
     } else if (!isAddressValid(transaction.recipient)) {
       errors.recipient = new InvalidAddress("", {
-        currencyName: account.currency.name,
+        currencyName: account.currencyName,
       });
-    } else if (account.freshAddress === transaction.recipient) {
+    } else if (account.address === transaction.recipient) {
       errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
     }
 
@@ -117,9 +124,10 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
 
     // Asset payment
     if (isAssetPayment) {
-      const asset = findSubAccountById(account, transaction.subAccountId || "");
+      // NOTE: previously, fetched with coin-framework's findSubAccountById, move logic in generic-bridge
+      // const asset = findSubAccountById(account, transaction.subAccountId || "");
 
-      if (asset === null) {
+      if (!asset === null) {
         // This is unlikely
         throw new StellarAssetNotFound();
       }
@@ -136,59 +144,63 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
         });
       }
 
-      const assetBalance = asset?.balance || new BigNumber(0);
+      const assetBalance = asset?.balance || 0n;
 
       maxAmount = asset?.spendableBalance || assetBalance;
       amount = useAllAmount ? maxAmount : transaction.amount;
       totalSpent = amount;
 
-      if (!errors.amount && amount.gt(assetBalance)) {
+      if (!errors.amount && amount > assetBalance) {
         errors.amount = new NotEnoughBalance();
       }
     } else {
       // Native payment
       maxAmount = nativeAmountAvailable;
-      amount = useAllAmount ? maxAmount : transaction.amount || 0;
+      amount = useAllAmount ? maxAmount : transaction.amount ?? 0n;
 
-      if (amount.gt(maxAmount)) {
+      if (amount > maxAmount) {
         errors.amount = new NotEnoughBalance();
       }
 
-      totalSpent = useAllAmount ? nativeAmountAvailable : transaction.amount.plus(estimatedFees);
+      totalSpent = useAllAmount ? nativeAmountAvailable : transaction.amount + estimatedFees;
 
       // Need to send at least 1 XLM to create an account
-      if (!errors.recipient && !recipientAccount?.id && !errors.amount && amount.lt(10000000)) {
+      if (!errors.recipient && !recipientAccount?.id && !errors.amount && amount < 10000000n) {
         errors.amount = destinationNotExistMessage;
       }
 
-      if (totalSpent.gt(nativeBalance.minus(baseReserve))) {
+      if (totalSpent > nativeBalance - baseReserve) {
         errors.amount = new NotEnoughSpendableBalance(undefined, {
-          minimumAmount: formatCurrencyUnit(account.currency.units[0], baseReserve, {
-            disableRounding: true,
-            showCode: true,
-          }),
+          minimumAmount: formatCurrencyUnit(
+            account.currencyUnit,
+            new BigNumber(baseReserve.toString()),
+            {
+              disableRounding: true,
+              showCode: true,
+            },
+          ),
         });
       }
 
-      if (!errors.recipient && !errors.amount && (amount.lt(0) || totalSpent.gt(nativeBalance))) {
+      if (!errors.recipient && !errors.amount && (amount < 0n || totalSpent > nativeBalance)) {
         errors.amount = new NotEnoughBalance();
-        totalSpent = new BigNumber(0);
-        amount = new BigNumber(0);
+        totalSpent = 0n;
+        amount = 0n;
       }
     }
 
-    if (!errors.amount && amount.eq(0)) {
+    if (!errors.amount && amount === 0n) {
       errors.amount = new AmountRequired();
     }
   }
 
-  if (await isAccountMultiSign(account)) {
+  if (await isAccountMultiSign(account.address)) {
     errors.recipient = new StellarSourceHasMultiSign();
   }
 
   if (
-    transaction.memoType &&
-    transaction.memoValue &&
+    typeof transaction.memoType === "string" &&
+    typeof transaction.memoValue === "string" &&
     !isMemoValid(transaction.memoType, transaction.memoValue)
   ) {
     errors.transaction = new StellarWrongMemoFormat();

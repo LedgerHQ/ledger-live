@@ -17,11 +17,16 @@ export function genericEstimateMaxSpendable(
       ...transaction,
       amount: mainAccount.spendableBalance,
     };
+    if (account.type === "TokenAccount") {
+      return account.spendableBalance;
+    }
     const fees = await getAlpacaApi(network, kind).estimateFees(
       transactionToIntent(mainAccount, draftTransaction),
     );
-
+    console.log("fees", fees);
+    console.log("spendableBalance", account.spendableBalance.toString());
     const bnFee = BigNumber(fees.value.toString());
+    console.log("spendableBalance final", account.spendableBalance.toString());
     return BigNumber.max(0, account.spendableBalance.minus(bnFee));
   };
 }

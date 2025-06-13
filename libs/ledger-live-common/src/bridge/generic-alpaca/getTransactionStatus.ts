@@ -8,7 +8,7 @@ export function genericGetTransactionStatus(
   kind,
 ): AccountBridge<any>["getTransactionStatus"] {
   return async (account, transaction: TransactionCommon & { fees: BigNumber }) => {
-    const { freshAddress, balance, currency } = account;
+    const { freshAddress, balance, currency, pendingOperations, spendableBalance } = account;
     const alpacaApi = getAlpacaApi(network, kind);
     const { errors, warnings } = await alpacaApi.validateIntent(
       {
@@ -16,6 +16,8 @@ export function genericGetTransactionStatus(
         address: freshAddress,
         balance: BigInt(balance.toString()),
         currencyUnit: currency.units[0],
+        pendingOperations: pendingOperations.length,
+        spendableBalance: BigInt(spendableBalance.toString()),
       },
       {
         type: "PAYMENT", // NOTE: assuming payment by default here
@@ -24,6 +26,8 @@ export function genericGetTransactionStatus(
         fee: BigInt(transaction.fees?.toString() ?? "0"),
       },
     );
+    console.log("getTransactionStatus errors", errors);
+    console.log("getTransactionStatus warnings", warnings);
 
     const estimatedFees = transaction.fees || new BigNumber(0);
 
