@@ -28,6 +28,7 @@ describe("getTransactionStatus", () => {
       infra: {
         API_KADENA_ENDPOINT,
         API_KADENA_PACT_ENDPOINT,
+        API_KEY_KADENA_ENDPOINT: "",
       },
     }));
     const fetchChainBalancesMock = jest.mocked(fetchChainBalances);

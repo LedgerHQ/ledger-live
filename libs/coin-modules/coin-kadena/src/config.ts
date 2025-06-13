@@ -3,6 +3,7 @@ import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 export type KadenaCoinConfig = () => CurrencyConfig & {
   infra: {
     API_KADENA_ENDPOINT: string;
+    API_KEY_KADENA_ENDPOINT: string;
     API_KADENA_PACT_ENDPOINT: string;
   };
 };

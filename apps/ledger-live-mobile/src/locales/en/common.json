@@ -1078,7 +1078,7 @@
       "title": "Minimum required amount for this transaction is {{amount}}"
     },
     "KadenaCrossChainTransfer": {
-      "title": "Completion is required for this transaction involving an account in a different chain."
+      "title": "As this is a cross-chain transfer, the transaction may take several minutes to complete."
     }
   },
   "crash": {

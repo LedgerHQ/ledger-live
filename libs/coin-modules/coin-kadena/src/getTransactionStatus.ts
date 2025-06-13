@@ -30,7 +30,7 @@ export const validateRecipient = (account: Account, tx: Transaction): Array<Vali
         currencyName: account.currency.name,
       });
     }
-    if (account.freshAddress === tx.recipient) {
+    if (account.freshAddress === tx.recipient && tx.senderChainId === tx.receiverChainId) {
       errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource("", {
         currencyName: account.currency.name,
       });

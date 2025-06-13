@@ -3,11 +3,11 @@
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
     "downlevelIteration": true,
     "lib": ["es2020", "dom"],
-    "outDir": "lib"
+    "outDir": "lib",
+    "module": "CommonJS",
+    "moduleResolution": "Node"
   },
   "include": ["src/**/*"]
 }

@@ -71,23 +71,17 @@ import type {
   TransactionStatusRaw as internet_computerTransactionStatusRaw,
 } from "@ledgerhq/coin-internet_computer/types/index";
 import type {
-  Transaction as minaTransaction,
-  TransactionRaw as minaTransactionRaw,
-  TransactionStatus as minaTransactionStatus,
-  TransactionStatusRaw as minaTransactionStatusRaw,
-} from "@ledgerhq/coin-mina/types/index";
-import type {
-  Transaction as multiversxTransaction,
-  TransactionRaw as multiversxTransactionRaw,
-  TransactionStatus as multiversxTransactionStatus,
-  TransactionStatusRaw as multiversxTransactionStatusRaw,
-} from "@ledgerhq/coin-multiversx/types";
-import type {
   Transaction as kadenaTransaction,
   TransactionRaw as kadenaTransactionRaw,
   TransactionStatus as kadenaTransactionStatus,
   TransactionStatusRaw as kadenaTransactionStatusRaw,
 } from "@ledgerhq/coin-kadena/types";
+import type {
+  Transaction as minaTransaction,
+  TransactionRaw as minaTransactionRaw,
+  TransactionStatus as minaTransactionStatus,
+  TransactionStatusRaw as minaTransactionStatusRaw,
+} from "@ledgerhq/coin-mina/types/index";
 import type {
   Transaction as multiversxTransaction,
   TransactionRaw as multiversxTransactionRaw,
@@ -174,9 +168,8 @@ export type Transaction =
   | hederaTransaction
   | iconTransaction
   | internet_computerTransaction
-  | minaTransaction
-  | multiversxTransaction
   | kadenaTransaction
+  | minaTransaction
   | multiversxTransaction
   | nearTransaction
   | polkadotTransaction
@@ -203,9 +196,8 @@ export type TransactionRaw =
   | hederaTransactionRaw
   | iconTransactionRaw
   | internet_computerTransactionRaw
-  | minaTransactionRaw
-  | multiversxTransactionRaw
   | kadenaTransactionRaw
+  | minaTransactionRaw
   | multiversxTransactionRaw
   | nearTransactionRaw
   | polkadotTransactionRaw
@@ -232,9 +224,8 @@ export type TransactionStatus =
   | hederaTransactionStatus
   | iconTransactionStatus
   | internet_computerTransactionStatus
-  | minaTransactionStatus
-  | multiversxTransactionStatus
   | kadenaTransactionStatus
+  | minaTransactionStatus
   | multiversxTransactionStatus
   | nearTransactionStatus
   | polkadotTransactionStatus
@@ -261,9 +252,8 @@ export type TransactionStatusRaw =
   | hederaTransactionStatusRaw
   | iconTransactionStatusRaw
   | internet_computerTransactionStatusRaw
-  | minaTransactionStatusRaw
-  | multiversxTransactionStatusRaw
   | kadenaTransactionStatusRaw
+  | minaTransactionStatusRaw
   | multiversxTransactionStatusRaw
   | nearTransactionStatusRaw
   | polkadotTransactionStatusRaw

@@ -1884,8 +1884,7 @@
       "version": "Version",
       "accountCreationFee": "Account Creation Fee",
       "senderChainId": "Sender Chain ID",
-      "receiverChainId": "Receiver Chain ID",
-      "finishCrossChainTransfer": "Finish Kadena Cross Chain Transfer"
+      "receiverChainId": "Receiver Chain ID"
     }
   },
   "operationList": {
@@ -2404,7 +2403,7 @@
         "splExtensionsWarning": "You are interacting with a token that is part of the Token-2022 program, also known as Token Extensions. This token comes with specific risks. <0>Click here</0> to learn more.",
         "senderChainId": "Sender Chain ID",
         "receiverChainId": "Receiver Chain ID",
-        "transferCrossChainWarning": "Completion is required for this transaction involving an account in a different chain."
+        "transferCrossChainWarning": "As this is a cross-chain transfer, the transaction may take several minutes to complete."
       },
       "verification": {
         "streaming": {
@@ -6643,7 +6642,7 @@
       "title": "This transaction involves a sanctioned wallet address and cannot be processed."
     },
     "KadenaCrossChainTransfer": {
-      "title": "Completion is required for this transaction involving an account in a different chain."
+      "title": "As this is a cross-chain transfer, the transaction may take several minutes to complete."
     }
   },
   "cryptoOrg": {

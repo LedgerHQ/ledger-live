@@ -1,7 +1,7 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { Account, Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { ChainAccount } from "../../api/types";
+import { Block, ChainAccount, Transfer } from "../../api/types";
 import { Transaction } from "../../types";
 
 // Define the mock base URL for the Kadena API
@@ -25,7 +25,7 @@ export const operation: Operation = {
 
 export const rawData = {
   pact_command: {
-    cmd: '{"payload":{"exec":{"code":"(coin.transfer \\"k:77b021744ab3c003e8e4d0f38a598f0e39fe9a7fe61360754dc7321b112ab375\\" \\"k:8ae62e33629660c10e3faf0fe83b675ff5186116bd29a29fe71179480bf4ae76\\" 0.25)","data":{}}},"nonce":"kjs:nonce:1724949787853","signers":[{"pubKey":"77b021744ab3c003e8e4d0f38a598f0e39fe9a7fe61360754dc7321b112ab375","scheme":"ED25519","clist":[{"name":"coin.GAS","args":[]},{"name":"coin.TRANSFER","args":["k:77b021744ab3c003e8e4d0f38a598f0e39fe9a7fe61360754dc7321b112ab375","k:8ae62e33629660c10e3faf0fe83b675ff5186116bd29a29fe71179480bf4ae76",{"decimal":"0.25"}]}]}],"meta":{"gasLimit":2300,"gasPrice":0.000001,"sender":"k:77b021744ab3c003e8e4d0f38a598f0e39fe9a7fe61360754dc7321b112ab375","ttl":1200,"creationTime":1724949787,"chainId":"0"},"networkId":"testnet04"}',
+    cmd: '{"payload":{"exec":{"code":"(coin.transfer \\"k:77b021744ab3c003e8e4d0f38a598f0e39fe9a7fe61360754dc7321b112ab375\\" \\"k:8ae62e33629660c10e3faf0fe83b675ff5186116bd29a29fe71179480bf4ae76\\" 0.25)","data":{}}},"nonce":"kjs:nonce:1724949787853","signers":[{"pubKey":"77b021744ab3c003e8e4d0f38a598f0e39fe9a7fe61360754dc7321b112ab375","scheme":"ED25519","clist":[{"name":"coin.GAS","args":[]},{"name":"coin.TRANSFER","args":["k:77b021744ab3c003e8e4d0f38a598f0e39fe9a7fe61360754dc7321b112ab375","k:8ae62e33629660c10e3faf0fe83b675ff5186116bd29a29fe71179480bf4ae76",{"decimal":"0.25"}]}]}],"meta":{"gasLimit":2300,"gasPrice":0.000001,"sender":"k:77b021744ab3c003e8e4d0f38a598f0e39fe9a7fe61360754dc7321b112ab375","ttl":1200,"creationTime":1724949787,"chainId":"0"},"networkId":"mainnet01"}',
     hash: "KO2yCnx3VuKWHqvRRsa8TumzjTjsE57ENV8bOFxMLRE",
     sigs: [
       {
@@ -65,3 +65,69 @@ export const transaction = {
 } as Transaction;
 
 export const coinDetailsForAccount: ChainAccount[] = [{ chainId: "0", balance: 45.759916781498 }];
+
+export const mockTransfer = {
+  moduleName: "coin",
+  requestKey: "req1",
+  block: {
+    creationTime: new Date().toISOString(),
+    height: 1,
+    hash: "blockhash",
+    chainId: 0,
+  },
+  amount: 10,
+  senderAccount: "senderAccount",
+  receiverAccount: "receiverAccount",
+  crossChainTransfer: null,
+  transaction: {
+    result: { badResult: null, goodResult: "ok", gas: 1 },
+    cmd: {
+      signers: [
+        {
+          clist: [
+            {
+              name: "coin.TRANSFER",
+              args: JSON.stringify(["senderAccount", "receiverAccount", { decimal: "10" }, "0"]),
+            },
+          ],
+        },
+      ],
+    },
+  },
+} as Transfer;
+
+export const crossChainTransferIn = {
+  ...mockTransfer,
+  senderAccount: "",
+  crossChainTransfer: {
+    amount: 10,
+    senderAccount: "senderAccount",
+    receiverAccount: "",
+    receiverChainId: 0,
+    block: {
+      chainId: 1,
+    } as unknown as Block,
+  } as unknown as Transfer,
+  requestKey: "req2",
+} as Transfer;
+
+export const finishedCrossChainTransferOut = {
+  ...mockTransfer,
+  receiverAccount: "",
+  crossChainTransfer: {
+    amount: 10,
+    senderAccount: "",
+    receiverAccount: "receiverAccount",
+    block: {
+      chainId: 1,
+    } as unknown as Block,
+  } as unknown as Transfer,
+  requestKey: "req3",
+} as Transfer;
+
+export const unFinishedCrossChainTransferOut = {
+  ...mockTransfer,
+  receiverAccount: "",
+  crossChainTransfer: null,
+  requestKey: "req4",
+} as Transfer;

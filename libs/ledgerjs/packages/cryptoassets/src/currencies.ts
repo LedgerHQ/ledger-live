@@ -4291,8 +4291,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://explorer.chainweb.com/testnet/txdetail/$hash",
-        address: "https://explorer.chainweb.com/testnet/account/$address?token=coin",
+        tx: "https://explorer.chainweb.com/mainnet/txdetail/$hash",
+        address: "https://explorer.chainweb.com/mainnet/account/$address?token=coin",
       },
     ],
   },

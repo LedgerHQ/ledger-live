@@ -1,5 +1,6 @@
 import { fetchAccountBalance, getKadenaPactURL } from "../../api/network";
 import { setCoinConfig } from "../../config";
+import { KDA_NETWORK } from "../../constants";
 import { API_KADENA_ENDPOINT, API_KADENA_PACT_ENDPOINT } from "../fixtures/common.fixtures";
 
 describe("network", () => {
@@ -11,6 +12,7 @@ describe("network", () => {
       infra: {
         API_KADENA_ENDPOINT,
         API_KADENA_PACT_ENDPOINT,
+        API_KEY_KADENA_ENDPOINT: "",
       },
     }));
   });
@@ -24,6 +26,6 @@ describe("network", () => {
 
   test("get kadena pact url", () => {
     const url = getKadenaPactURL("0");
-    expect(url).toBe(`${API_KADENA_PACT_ENDPOINT}/chainweb/0.0/testnet04/chain/0/pact`);
+    expect(url).toBe(`${API_KADENA_PACT_ENDPOINT}/chainweb/0.0/${KDA_NETWORK}/chain/0/pact`);
   });
 });

@@ -50,9 +50,8 @@ export interface Event {
 
 export interface Transaction {
   result: {
-    badResult: string;
-    goodResult: string;
-    events: Connection<Event>;
+    badResult: string | null;
+    goodResult: string | null;
     gas: number;
   };
   cmd: {
@@ -82,6 +81,10 @@ export interface Transfer {
 
 export interface GetTransfers {
   transfers: Connection<Transfer>;
+}
+
+export interface GetEvents {
+  events: Connection<Event>;
 }
 
 export interface ErrorResponse {

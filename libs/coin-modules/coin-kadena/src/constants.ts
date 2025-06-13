@@ -4,10 +4,9 @@ import BigNumber from "bignumber.js";
 export const KDA_DECIMALS = 12;
 export const KDA_FEES_BASE = "1.0e-6";
 export const KDA_FEES = BigNumber(KDA_FEES_BASE).times(10 ** KDA_DECIMALS);
-export const KDA_GAS_LIMIT_TRANSFER = BigNumber(2300); // '2300' is the GasLimit indicated for most of the transaction so it should be more than enought
+export const KDA_GAS_LIMIT_TRANSFER = BigNumber(2300); // '2300' is the GasLimit indicated for most of the transaction so it should be more than enough
 
-export const KDA_NETWORK = "testnet04";
+export const KDA_NETWORK = "mainnet01"; // testnet04 is the network id for the testnet
 export const KDA_CHAINWEB_VER = "0.0";
 
-export const KADENA_CROSS_CHAIN_TRANSFER_FINISHER_URL =
-  "https://tools.kadena.io/transactions/cross-chain-transfer-finisher";
+export const KADENA_CROSS_CHAIN_TRANSFER_EVENT_NAME = "coin.TRANSFER_XCHAIN";

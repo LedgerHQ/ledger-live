@@ -7,8 +7,10 @@ import { KadenaOperation } from "../types";
 import {
   ChainAccount,
   ErrorResponse,
+  Event,
   GetAccountBalanceResponse,
   GetChainAccountResponse,
+  GetEvents,
   GetTransfers,
   GraphQLResponse,
   LastBlockHeight,
@@ -28,11 +30,16 @@ export const getKadenaPactURL = (chainId: string): string => {
 };
 
 const send = async <T>(path: string, data: string) => {
+  const currencyConfig = getCoinConfig();
+
   const { data: dataResponse } = await network<GraphQLResponse<T>>({
     method: "POST",
     url: path,
     data: { query: data },
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": currencyConfig.infra.API_KEY_KADENA_ENDPOINT,
+    },
   });
 
   if (dataResponse.errors?.length) {
@@ -45,7 +52,7 @@ const send = async <T>(path: string, data: string) => {
 };
 
 export const fetchAccountBalance = async (address: string) => {
-  const query = `{
+  const query = `query Query {
       fungibleAccount(
         accountName: "${address}"
       ) {
@@ -59,7 +66,7 @@ export const fetchAccountBalance = async (address: string) => {
 };
 
 export const fetchChainBalances = async (address: string): Promise<ChainAccount[]> => {
-  const query = `{
+  const query = `query Query {
       fungibleAccount(
         accountName: "${address}"
       ) {
@@ -76,7 +83,7 @@ export const fetchChainBalances = async (address: string): Promise<ChainAccount[
 };
 
 export const fetchBlockHeight = async (): Promise<number | undefined> => {
-  const query = `{
+  const query = `query Query {
     lastBlockHeight
   }`;
   const res = await send<LastBlockHeight>(getKadenaURL(), query);
@@ -95,7 +102,7 @@ export const fetchTransactions = async (
   let cursor: string | undefined;
 
   while (isFirstFetch || (hasNext && cursor)) {
-    const query: string = `{
+    const query: string = `query Query {
         transfers(accountName: "${address}"${hasNext ? `, after: "${cursor}"` : ""}){
           edges {
             node {
@@ -125,14 +132,6 @@ export const fetchTransactions = async (
                     badResult,
                     goodResult,
                     gas,
-                    events {
-                      edges {
-                        node {
-                          name
-                          parameters
-                        }
-                      }
-                    }
                   }
                 }
                 cmd {
@@ -170,11 +169,28 @@ export const fetchTransactions = async (
     }
 
     isFirstFetch = false;
-    hasNext = res.transfers.pageInfo.hasNextPage;
-    cursor = hasNext ? res.transfers.pageInfo.endCursor : undefined;
+    hasNext = res.transfers.pageInfo?.hasNextPage ?? false;
+    cursor = hasNext ? res.transfers.pageInfo?.endCursor : undefined;
   }
 
   return result;
+};
+
+export const fetchEvents = async (eventName: string, requestKey: string): Promise<Event[]> => {
+  const query = `query Query {
+    events(qualifiedEventName: "${eventName}", requestKey: "${requestKey}") {
+      edges {
+        node {
+          name
+          parameters
+        }
+      }
+    }
+}`;
+  const res = await send<GetEvents>(getKadenaURL(), query);
+  const events = res.events.edges.map(({ node }) => node);
+
+  return events;
 };
 
 export const broadcastTransaction = async (cmd: PactCommandObject, op: KadenaOperation) => {
