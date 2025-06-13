@@ -52,10 +52,6 @@ export const genericSignOperation =
 
             const { publicKey } = (await signer.getAddress(derivationPath)) as Result;
 
-            /* Build TransactionIntent (+ memo for destinationTag if any) */
-            const intent = transactionToIntent(account, transaction);
-            intent.senderPublicKey = publicKey;
-
             const transactionIntent = transactionToIntent(account, transaction);
             transactionIntent.senderPublicKey = publicKey;
             // NOTE: is setting the memo here instead of transactionToIntent sensible?
