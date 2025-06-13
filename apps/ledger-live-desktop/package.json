@@ -87,7 +87,7 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@sentry/electron": "5.2.0",
+    "@sentry/electron": "6.8.0",
     "@sentry/node": "8.16.0",
     "@tanstack/react-query": "5.28.9",
     "@tanstack/react-query-devtools": "5.28.14",
@@ -102,9 +102,9 @@
     "chart.js": "2.9.4",
     "color": "4.2.3",
     "dotenv": "16.4.5",
-    "electron-context-menu": "3.6.1",
-    "electron-store": "8.2.0",
-    "electron-updater": "6.1.8",
+    "electron-context-menu": "4.1.0",
+    "electron-store": "10.0.1",
+    "electron-updater": "6.6.2",
     "firebase": "9.23.0",
     "focus-trap": "6.9.4",
     "framer-motion": "11.3.28",
@@ -161,7 +161,7 @@
     "xstate": "^5.19.2"
   },
   "devDependencies": {
-    "@electron/notarize": "2.3.2",
+    "@electron/notarize": "3.0.1",
     "@jest/globals": "29.7.0",
     "@ledgerhq/esbuild-utils": "workspace:*",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
@@ -216,9 +216,9 @@
     "chalk": "4.1.2",
     "cross-env": "7.0.3",
     "debug": "4.3.4",
-    "electron": "32.0.2",
-    "electron-builder": "24.13.3",
-    "electron-devtools-installer": "3.2.1",
+    "electron": "36.4.0",
+    "electron-builder": "26.0.12",
+    "electron-devtools-installer": "4.0.0",
     "eslint-plugin-jest": "27.9.0",
     "eslint-plugin-react": "7.34.1",
     "eslint-plugin-react-hooks": "4.6.0",
@@ -239,7 +239,7 @@
     "ts-node": "10.9.2",
     "typescript": "5.4.3",
     "vite": "4.5.6",
-    "vite-plugin-electron": "0.4.9",
+    "vite-plugin-electron": "0.28.4",
     "yargs": "17.7.2"
   }
 }

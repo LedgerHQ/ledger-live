@@ -252,25 +252,17 @@ ipcMain.on("ready-to-show", () => {
   }
 });
 async function installExtensions() {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const installer = require("electron-devtools-installer");
-  const forceDownload = true; // process.env.UPGRADE_EXTENSIONS
-  const extensions = ["REACT_DEVELOPER_TOOLS", "REDUX_DEVTOOLS"];
-  await Promise.all(
-    extensions.map(name =>
-      installer.default(installer[name], {
-        forceDownload,
-        loadExtensionOptions: {
-          allowFileAccess: true,
-        },
-      }),
-    ),
-  ).catch(console.error);
-  //Hack to load React devtools extension without a reload due to this issue: https://github.com/MarshallOfSound/electron-devtools-installer/issues/244
-  return session.defaultSession.getAllExtensions().map(e => {
-    if (e.name === "React Developer Tools") {
-      session.defaultSession.loadExtension(e.path);
-    }
+  // https://github.com/MarshallOfSound/electron-devtools-installer#usage
+  const {
+    default: installExtension,
+    REACT_DEVELOPER_TOOLS,
+    REDUX_DEVTOOLS,
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+  } = require("electron-devtools-installer");
+  app.whenReady().then(() => {
+    installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS])
+      .then(([redux, react]) => console.log(`Added Extensions:  ${redux.name}, ${react.name}`))
+      .catch((err) => console.error("An error occurred loading devtool extensions: ", err));
   });
 }
 function clearSessionCache(session: Electron.Session): Promise<void> {
