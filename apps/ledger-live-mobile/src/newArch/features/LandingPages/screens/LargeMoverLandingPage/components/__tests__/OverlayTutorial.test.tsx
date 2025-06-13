@@ -10,8 +10,8 @@ import {
 } from "~/components/RootNavigator/types/LandingPagesNavigator";
 import { RouteProp } from "@react-navigation/core";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { INITIAL_STATE } from "~/reducers/settings";
 import { mockCurrencyData } from "../../fixtures/currency";
+import { INITIAL_STATE } from "~/reducers/settings";
 
 jest.mock("~/newArch/components/Swiper/components/Swiper", () => ({
   SwiperComponent: function MockSwiperComponent(props: React.PropsWithChildren<object>) {
@@ -25,10 +25,6 @@ jest.mock("~/newArch/components/Swiper/components/Swiper", () => ({
 }));
 
 jest.mock("~/logic/getWindowDimensions", () => () => ({ height: 1000 }));
-jest.mock("~/analytics", () => ({
-  track: jest.fn(),
-  TrackScreen: () => null,
-}));
 
 jest.mock("../../hooks/useLargeMover", () => ({
   useLargeMover: () => ({
@@ -91,20 +87,19 @@ const mockNavigation = {
   ScreenName.LargeMoverLandingPage
 >;
 
-describe("LargeMoverLandingPage", () => {
+describe("OverlayTutorial", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it("The overlay is visible when tutorial is true", () => {
-    const { store, getByTestId } = render(
+  it("The overlay is visible when tutorial is true", async () => {
+    const { store, getByTestId, user, getByRole } = render(
       <LargeMoverLandingPage route={mockRoute} navigation={mockNavigation} />,
       {
         overrideInitialState: (state: State) => ({
           ...state,
           settings: {
             ...INITIAL_STATE,
-            overriddenFeatureFlags: {},
           },
           largeMover: {
             tutorial: true,
@@ -116,26 +111,8 @@ describe("LargeMoverLandingPage", () => {
     expect(getByTestId("overlay-tutorial")).toBeTruthy();
 
     expect(store.getState().largeMover.tutorial).toBe(true);
-  });
 
-  it("The button 'Got it!' closes the overlay", async () => {
-    const { store, user, getByRole } = render(
-      <LargeMoverLandingPage route={mockRoute} navigation={mockNavigation} />,
-      {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...INITIAL_STATE,
-
-            overriddenFeatureFlags: {},
-          },
-          largeMover: {
-            tutorial: true,
-          },
-        }),
-      },
-    );
-    await user.press(getByRole("button", { name: "Got it!" }));
+    await user.press(getByRole("button", { name: /Got it!/i }));
     expect(store.getState().largeMover.tutorial).toBe(false);
   });
 });
