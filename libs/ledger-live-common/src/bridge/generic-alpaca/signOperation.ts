@@ -29,9 +29,15 @@ export const genericSignOperation =
     deviceId: DeviceId;
   }): Observable<SignOperationEvent> =>
     new Observable(o => {
+      let cancelled = false;
+
       async function main() {
         if (!transaction["fees"]) throw new FeeNotLoaded();
         o.next({ type: "device-signature-requested" });
+
+        if (cancelled) {
+          return;
+        }
 
         const { publicKey } = (await signerContext(deviceId, signer =>
           signer.getAddress(account.freshAddressPath),
@@ -50,6 +56,11 @@ export const genericSignOperation =
           txWithMemo.memo.memos.set("destinationTag", txMemo);
         }
 
+        const accountInfo = await getAlpacaApi(network, kind).getAccountInfo(
+          transactionIntent.sender,
+        );
+        const sequenceNumber = accountInfo.sequence;
+
         const unsigned = await getAlpacaApi(network, kind).craftTransaction({
           ...txWithMemo,
         });
@@ -64,7 +75,7 @@ export const genericSignOperation =
           publicKey,
         );
 
-        const operation = buildOptimisticOperation(account, transaction);
+        const operation = buildOptimisticOperation(account, transaction, sequenceNumber);
         // NOTE: we set the transactionSequenceNumber before on the operation
         // now that we create it in craftTransaction, we might need to return it back from craftTransaction also
         o.next({
@@ -80,4 +91,8 @@ export const genericSignOperation =
         () => o.complete(),
         e => o.error(e),
       );
+
+      return () => {
+        cancelled = true;
+      };
     });

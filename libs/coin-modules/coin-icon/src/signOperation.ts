@@ -80,6 +80,8 @@ export const buildSignOperation =
           throw new FeeNotLoaded();
         }
 
+        if (cancelled) return;
+
         const transactionToSign = {
           ...transaction,
           amount: calculateAmount({
@@ -104,7 +106,6 @@ export const buildSignOperation =
 
         const signed = addSignature(unsigned, res.signedRawTxBase64);
 
-        if (cancelled) return;
         o.next({ type: "device-signature-granted" });
 
         if (!signed.signature) {

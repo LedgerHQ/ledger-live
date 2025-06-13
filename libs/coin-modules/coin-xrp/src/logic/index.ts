@@ -4,6 +4,7 @@ export { craftTransaction } from "./craftTransaction";
 export type { MemoInput } from "./craftTransaction";
 export { estimateFees } from "./estimateFees";
 export { getBalance } from "./getBalance";
+export { getAccountInfo } from "./getAccountInfo";
 export { lastBlock } from "./lastBlock";
 export { listOperations } from "./listOperations";
 export { getTransactionStatus } from "./getTransactionStatus";
