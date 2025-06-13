@@ -100,6 +100,7 @@ const ScanAccounts = ({ currency, deviceId, onComplete }: Props) => {
         (account): AccountItemAccount => ({
           // TODO review freshAddress
           address: formatAddress(account.freshAddress),
+          balance: account.balance.toString(),
           cryptoId: account.currency.id,
           fiatValue: counterValueFormatter({
             currency: counterValueCurrency.ticker,
