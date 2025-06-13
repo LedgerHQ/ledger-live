@@ -147,20 +147,10 @@ jobs:
       - name: Upload Detox Native Build
         uses: tespkg/actions-cache/save@v1
         with:
-          path: ${{ env.ANDROID_APK_PATH }}
+          path: |
+            ${{ env.ANDROID_APK_PATH }}
+            ${{ env.ANDROID_TESTBINARY_PATH }}
           key: ${{ inputs.android-native-cache-key }}
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ${{ env.cache-bucket }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
-
-      - name: Upload Detox Testbinary Build
-        uses: tespkg/actions-cache/save@v1
-        with:
-          path: ${{ env.ANDROID_TESTBINARY_PATH }}
-          key: ${{ inputs.android-native-cache-key }}-testbinary
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
