@@ -72,34 +72,34 @@ const ScanAccounts = ({ currency, deviceId, onComplete }: Props) => {
         }
       />
 
-      <Box flex={1}>
-        <Flex alignItems="center" justifyContent="space-between" mb="2">
-          <Text variant="h5Inter" fontSize="small" color="neutral.c80">
-            {t(
-              isScanning
-                ? "modularAssetDrawer.scanAccounts.status.scanning"
-                : formattedAccounts.length === 0
-                  ? "modularAssetDrawer.scanAccounts.status.noAccounts"
-                  : "modularAssetDrawer.scanAccounts.status.foundAccounts",
-              { count: formattedAccounts.length },
-            )}
-          </Text>
-          {formattedAccounts.length > 0 ? (
-            formattedAccounts.length === checkedIds.size ? (
-              <Link size="small" onClick={handleDeselectAll}>
-                {t("modularAssetDrawer.addAccounts.controls.deselectAll")}
-              </Link>
-            ) : (
-              <Link size="small" onClick={handleSelectAll}>
-                {t("modularAssetDrawer.addAccounts.controls.selectAll")}
-              </Link>
-            )
-          ) : null}
-        </Flex>
+      <Flex flex={1} flexDirection="column" overflow="auto">
+        <Box>
+          <Flex alignItems="center" justifyContent="space-between" mb="2">
+            <Text variant="h5Inter" fontSize="small" color="neutral.c80">
+              {t(
+                isScanning
+                  ? "modularAssetDrawer.scanAccounts.status.scanning"
+                  : formattedAccounts.length === 0
+                    ? "modularAssetDrawer.scanAccounts.status.noAccounts"
+                    : "modularAssetDrawer.scanAccounts.status.foundAccounts",
+                { count: formattedAccounts.length },
+              )}
+            </Text>
+            {formattedAccounts.length > 0 ? (
+              formattedAccounts.length === checkedIds.size ? (
+                <Link size="small" onClick={handleDeselectAll}>
+                  {t("modularAssetDrawer.addAccounts.controls.deselectAll")}
+                </Link>
+              ) : (
+                <Link size="small" onClick={handleSelectAll}>
+                  {t("modularAssetDrawer.addAccounts.controls.selectAll")}
+                </Link>
+              )
+            ) : null}
+          </Flex>
+        </Box>
+        <Box>{formattedAccounts.map(renderAccount)}</Box>
 
-        {formattedAccounts.map(account => {
-          return renderAccount(account);
-        })}
         {!isScanning && formattedAccounts.length > 0 ? (
           <Box flex={1}>
             <Flex alignItems="center" justifyContent="space-between" mb="2">
@@ -108,12 +108,10 @@ const ScanAccounts = ({ currency, deviceId, onComplete }: Props) => {
               </Text>
             </Flex>
 
-            {formattedAccounts.map(account => {
-              return renderAccount(account);
-            })}
+            {formattedAccounts.map(renderAccount)}
           </Box>
         ) : null}
-      </Box>
+      </Flex>
 
       <Flex justifyContent="flex-end">
         {isScanning ? (

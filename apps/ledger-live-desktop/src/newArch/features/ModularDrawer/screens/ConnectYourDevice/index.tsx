@@ -1,6 +1,5 @@
 import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import invariant from "invariant";
 import React, { useEffect, useMemo } from "react";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import TrackPage from "~/renderer/analytics/TrackPage";

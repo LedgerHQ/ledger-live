@@ -3,13 +3,16 @@ import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet
 import { Flex } from "@ledgerhq/react-ui/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import React, { useMemo, useState } from "react";
-import AnimatedScreenWrapper from "./components/AnimatedScreenWrapper";
 import { AddAccountHeader } from "./components/Header/AddAccountHeader";
 import ConnectYourDevice from "./screens/ConnectYourDevice";
 import ScanAccounts from "./screens/ScanAccounts";
-import { ModularDrawerAddAccountStep } from "./types";
+import {
+  MODULAR_DRAWER_ADD_ACCOUNT_STEP,
+  ModularDrawerAddAccountStep,
+  NavigationDirection,
+} from "./types";
 
 const ANALYTICS_PROPERTY_FLOW = "Modular Add Account Flow";
 
@@ -21,8 +24,9 @@ type Props = {
 };
 
 const ModularDrawerAddAccountFlowManager = ({ currency, onConnect, onScannedAccounts }: Props) => {
-  const [currentStep, setCurrentStep] =
-    useState<ModularDrawerAddAccountStep>("CONNECT_YOUR_DEVICE");
+  const [currentStep, setCurrentStep] = useState<ModularDrawerAddAccountStep>(
+    MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE,
+  );
 
   const [connectAppResult, setConnectAppResult] = useState<AppResult | null>(null);
   const [selectedAccounts, setSelectedAccounts] = useState<Account[]>([]);
@@ -90,33 +94,52 @@ const ModularDrawerAddAccountFlowManager = ({ currency, onConnect, onScannedAcco
     }
   };
 
-  const navigationDirection = "FORWARD";
+  const navigationDirection: NavigationDirection = "FORWARD";
 
   return (
-    <Flex height="100%" data-test-id="wrapper">
-      <Flex position="absolute" zIndex={1} height="100%" width="100%" bottom={0} top={0}>
+    <AnimatePresence mode="sync" data-test-id="animated">
+      <motion.div
+        custom={navigationDirection}
+        variants={{
+          enter: (direction: NavigationDirection) => ({
+            x: direction === "FORWARD" ? 100 : -100,
+            opacity: 0,
+          }),
+          center: { x: 0, opacity: 1 },
+          exit: (direction: NavigationDirection) => ({
+            x: direction === "FORWARD" ? -100 : 100,
+            opacity: 0,
+          }),
+        }}
+        initial="enter"
+        animate="center"
+        exit="exit"
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        style={{
+          position: "absolute",
+          display: "flex",
+          bottom: 0,
+          top: 0,
+          width: "100%",
+          height: "100%",
+          scrollbarWidth: "none",
+        }}
+      >
         <AddAccountHeader step={currentStep} onBackClick={handleBack} />
-        <AnimatePresence mode="sync" data-test-id="animated">
-          {/* <AnimatedScreenWrapper
-            key={currentStep}
-            screenKey={currentStep}
-            direction={navigationDirection}
-          > */}
-            <Flex
-              data-test-id="content"
-              flex={1}
-              flexDirection="column"
-              paddingBottom={40}
-              paddingTop={76}
-              paddingX={40}
-              rowGap={24}
-            >
-              {renderStepContent(currentStep)}
-            </Flex>
-          {/* </AnimatedScreenWrapper> */}
-        </AnimatePresence>
-      </Flex>
-    </Flex>
+
+        <Flex
+          data-test-id="content"
+          flex={1}
+          flexDirection="column"
+          paddingBottom={40}
+          paddingTop={76}
+          paddingX={40}
+          rowGap={24}
+        >
+          {renderStepContent(currentStep)}
+        </Flex>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 
