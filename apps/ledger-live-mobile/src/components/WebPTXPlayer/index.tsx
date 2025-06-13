@@ -1,12 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  StyleSheet,
-  SafeAreaView,
-  BackHandler,
-  Platform,
-  View,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, BackHandler, Platform, View, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
@@ -22,6 +15,7 @@ import storage from "LLM/storage";
 import { useNavigation } from "@react-navigation/native";
 
 import { useTheme } from "styled-components/native";
+import SafeAreaView from "~/components/SafeAreaView";
 
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
@@ -265,7 +259,7 @@ export const WebPTXPlayer = ({
   useEffect(() => {
     if (!disableHeader) {
       navigation.setOptions({
-        headerRight: () => <HeaderRight softExit={softExit} />,
+        headerRight: () => (isInternalApp ? null : <HeaderRight softExit={softExit} />),
         headerLeft: () =>
           isInternalApp ? null : (
             <BackToInternalDomain
@@ -276,15 +270,15 @@ export const WebPTXPlayer = ({
             />
           ),
         headerTitle: () => null,
+        headerShown: !isInternalApp,
       });
     }
   }, [config, disableHeader, isInternalApp, manifest, navigation, webviewState?.url, softExit]);
 
   const accounts = useSelector(flattenAccountsSelector);
   const customHandlers = usePTXCustomHandlers(manifest, accounts);
-
   return (
-    <SafeAreaView style={[styles.root]}>
+    <SafeAreaView edges={isInternalApp ? ["left", "right", "top"] : ["left", "right"]} isFlex>
       <Web3AppWebview
         ref={webviewAPIRef}
         manifest={manifest}
@@ -298,9 +292,6 @@ export const WebPTXPlayer = ({
 };
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
   headerLeft: {
     display: "flex",
     flexDirection: "row",
