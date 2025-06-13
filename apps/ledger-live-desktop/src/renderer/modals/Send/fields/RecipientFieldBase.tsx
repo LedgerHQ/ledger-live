@@ -6,6 +6,7 @@ import { TFunction } from "i18next";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import RecipientAddress, { OnChangeExtra } from "~/renderer/components/RecipientAddress";
+import { getLLDCoinFamily } from "~/renderer/families";
 
 type Props = {
   account: Account;
@@ -35,6 +36,9 @@ const RecipientFieldBase = ({
   const { recipient: recipientError } = status.errors;
   const { recipient: recipientWarning } = status.warnings;
 
+  const specific = getLLDCoinFamily(account.currency.family);
+  const StepRecipientCustomAlert = specific?.StepRecipientCustomAlert;
+
   return (
     <Box flow={1}>
       <Label>
@@ -52,6 +56,7 @@ const RecipientFieldBase = ({
         id={"send-recipient-input"}
         data-testid="send-recipient-input"
       />
+      {StepRecipientCustomAlert && <StepRecipientCustomAlert status={status} />}
     </Box>
   );
 };

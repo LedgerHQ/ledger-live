@@ -6664,10 +6664,54 @@
     "currentAddress": {
       "messageIfVirtual": "Your {{name}} address cannot be confirmed on your Ledger device. Use at your own risk."
     },
+    "receive": {
+      "warnings": {
+        "associationPrerequisite": {
+          "text": "In order to receive HTS tokens, your account needs to be associated. If you did not already associate your account with the HTS token that you want to receive, <0>click here</0> to start the token association flow.",
+          "learnMore": "Learn more"
+        },
+        "associationRequired": {
+          "text": "By clicking Continue you will associate the selected token to your Hedera account.",
+          "learnMore": "Learn more"
+        }
+      }
+    },
+    "receiveWithAssociation": {
+      "steps": {
+        "associationConfirmation": {
+          "breadcrumbTitle": "Associate",
+          "title": "Associate Token",
+          "pending": {
+            "title": "Broadcasting transaction..."
+          },
+          "success": {
+            "title": "Transaction sent",
+            "description": "You will be able to receive this token once the Associate Token transaction has been confirmed",
+            "cta": "View details"
+          },
+          "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+        }
+      }
+    },
     "send": {
       "memo": {
         "label": "Memo (optional)",
         "characterCount": "{{memoLength}} / {{memoMaxLength}}"
+      },
+      "warnings": {
+        "missingAssociation": {
+          "learnMore": "Learn more"
+        },
+        "unverifiedAssociation": {
+          "learnMore": "Learn more"
+        }
+      }
+    },
+    "operationDetails": {
+      "postAccountSection": "Associated token",
+      "postAlert": {
+        "text": "Once this transaction has been confirmed you will be able to receive your token. <0>Click here</0> to start the receive flow.",
+        "learnMore": "Learn more"
       }
     }
   },
