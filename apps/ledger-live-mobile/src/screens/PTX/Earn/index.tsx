@@ -52,7 +52,7 @@ function Earn({ route }: Props) {
   const countryLocale = getCountryLocale();
 
   const stakePrograms = useFeature("stakePrograms");
-  const stakeProgramsParam = useMemo(
+  const { stakeProgramsParam, stakeCurrenciesParam } = useMemo(
     () => stakeProgramsToEarnParam(stakePrograms),
     [stakePrograms],
   );
@@ -76,6 +76,7 @@ function Earn({ route }: Props) {
           currencyTicker,
           discreetMode: discreet ? "true" : "false",
           stakeProgramsParam: stakeProgramsParam ? JSON.stringify(stakeProgramsParam) : undefined,
+          stakeCurrenciesParam: stakeCurrenciesParam ? JSON.stringify(stakeCurrenciesParam) : undefined,
           OS: Platform.OS,
           ...params,
           ...Object.fromEntries(searchParams.entries()),
