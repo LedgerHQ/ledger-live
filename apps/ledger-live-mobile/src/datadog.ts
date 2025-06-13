@@ -2,13 +2,16 @@ import Config from "react-native-config";
 import { TrackingConsent, DatadogProvider } from "@datadog/mobile-react-native";
 import { PartialInitializationConfiguration } from "@datadog/mobile-react-native/lib/typescript/DdSdkReactNativeConfiguration";
 
-const isDatadogEnabled = Config.DATADOG_CLIENT_TOKEN && Config.DATADOG_APPLICATION_ID;
+const clientToken =
+  process.env[`${process.env.DATADOG_CLIENT_TOKEN_VAR}`] || Config.DATADOG_CLIENT_TOKEN || "";
+const applicationId =
+  process.env[`${process.env.DATADOG_APPLICATION_ID_VAR}`] || Config.DATADOG_APPLICATION_ID || "";
+
+const isDatadogEnabled = clientToken && applicationId;
 
 const baseConfig: PartialInitializationConfiguration = {
-  clientToken:
-    process.env[`${process.env.DATADOG_CLIENT_TOKEN_VAR}`] || Config.DATADOG_CLIENT_TOKEN || "",
-  applicationId:
-    process.env[`${process.env.DATADOG_APPLICATION_ID_VAR}`] || Config.DATADOG_APPLICATION_ID || "",
+  clientToken,
+  applicationId,
   env: Config.DATADOG_ENV || "",
   site: Config.DATADOG_SITE || "",
   serviceName: Config.APP_NAME || "",
