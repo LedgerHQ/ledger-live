@@ -86,10 +86,10 @@ jobs:
       - name: Determine cache keys
         id: cache-keys
         run: |
-          echo "ios_native_key=poc-detox-native-ios-${{ hashFiles('apps/ledger-live-mobile/ios') }}" >> $GITHUB_OUTPUT
-          echo "android_native_key=poc-detox-native-android-${{ hashFiles('apps/ledger-live-mobile/android') }}" >> $GITHUB_OUTPUT
-          echo "ios_js_key=poc-detox-js-ios-${{ inputs.ref || github.sha }}" >> $GITHUB_OUTPUT
-          echo "android_js_key=poc-detox-js-android-${{ inputs.ref || github.sha }}" >> $GITHUB_OUTPUT
+          echo "ios_native_key=${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios" >> $GITHUB_OUTPUT
+          echo "android_native_key=${{ hashFiles('apps/ledger-live-mobile/android') }}-detox-native-android" >> $GITHUB_OUTPUT
+          echo "ios_js_key=${{ inputs.ref || github.sha }}-detox-js-ios" >> $GITHUB_OUTPUT
+          echo "android_js_key=${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
 
       - name: Check if iOS Native Build exists already
         id: check-ios-native
