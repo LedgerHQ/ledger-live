@@ -101,7 +101,6 @@ export default class SwapLiveAppPage {
   @Step("Check error message: $0")
   async checkErrorMessage(errorMessage: string) {
     const error = await getTextOfElement(this.deviceActionErrorDescriptionId);
-    console.error("Error message:", error);
     jestExpect(error).toContain(errorMessage);
   }
 
