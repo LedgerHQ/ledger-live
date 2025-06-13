@@ -67,7 +67,7 @@ export function runSendTest(
 
       await app.operationDetails.waitForOperationDetails();
       await app.operationDetails.checkAccount(transaction.accountToDebit.accountName);
-      await app.operationDetails.checkRecipient(addressToCredit);
+      await app.operationDetails.checkRecipientAddress(transaction.accountToCredit);
       await app.operationDetails.checkTransactionType("OUT");
     });
   });
@@ -253,7 +253,7 @@ export function runSendENSTest(
 
       await app.operationDetails.waitForOperationDetails();
       await app.operationDetails.checkAccount(transaction.accountToDebit.accountName);
-      await app.operationDetails.checkRecipient(transaction.accountToCredit.address);
+      await app.operationDetails.checkRecipientAddress(transaction.accountToCredit);
       await app.operationDetails.checkTransactionType("OUT");
     });
   });
