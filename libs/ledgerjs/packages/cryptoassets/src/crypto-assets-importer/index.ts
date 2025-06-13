@@ -6,6 +6,7 @@ import { importEIP712, importEIP712v2 } from "./importers/eip712";
 import { importESDTTokens } from "./importers/esdt";
 import { importEVMTokens } from "./importers/evm";
 import { importFilecoinERC20Tokens } from "./importers/filecoin";
+import { importHederaTokens } from "./importers/hedera";
 import { importSPLTokens } from "./importers/spl";
 import { importStellarTokens } from "./importers/stellar";
 import { importTonJettonTokens } from "./importers/ton";
@@ -30,6 +31,7 @@ const importTokens = async () => {
     importAsaTokens(outputFolder),
     importCardanoNativeTokens(outputFolder),
     importESDTTokens(outputFolder),
+    importHederaTokens(outputFolder),
     importSPLTokens(outputFolder),
     importStellarTokens(outputFolder),
     importTRC10Tokens(outputFolder),
