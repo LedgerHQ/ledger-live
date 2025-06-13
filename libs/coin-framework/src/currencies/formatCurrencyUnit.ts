@@ -3,7 +3,6 @@ import { prefixFormat, suffixFormat } from "./localeUtility";
 import { toLocaleString } from "./BigNumberToLocaleString";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 
-const nonBreakableSpace = " ";
 const defaultFormatOptions = {
   locale: "en-EN",
   // show the currency code
@@ -123,7 +122,7 @@ function formatCurrencyUnitFragment(
           minimumFractionDigits,
           useGrouping,
         }),
-    separator: nonBreakableSpace,
+    separator: " ",
   };
   const frags: FormatFragment[] = [];
   let nonSepIndex = -1;
