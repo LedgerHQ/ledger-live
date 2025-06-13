@@ -53,7 +53,7 @@ describe("utils", () => {
   let estimatedFees = new BigNumber("150200").multipliedBy(2); // 0.001502 ℏ (as of 2023-03-14)
 
   beforeAll(async () => {
-    estimatedFees = await getEstimatedFees(account);
+    estimatedFees = await getEstimatedFees(account, "CryptoTransfer");
   });
 
   test("calculateAmount transaction.useAllAmount = true", async () => {

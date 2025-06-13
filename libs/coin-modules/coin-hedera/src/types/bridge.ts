@@ -1,4 +1,5 @@
 import type {
+  Operation,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -31,3 +32,7 @@ export type HederaOperationExtra = {
   consensusTimestamp?: string;
   transactionId?: string;
 };
+
+export type HederaOperationType = "CryptoTransfer" | "TokenTransfer";
+
+export type HederaOperation = Operation<HederaOperationExtra>;

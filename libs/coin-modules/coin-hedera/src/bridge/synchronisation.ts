@@ -1,19 +1,16 @@
-import invariant from "invariant";
-import {
-  getDerivationScheme,
-  Result,
-  runDerivationScheme,
-} from "@ledgerhq/coin-framework/derivation";
 import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
+import type { Result } from "@ledgerhq/coin-framework/derivation";
+import { getDerivationScheme, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
 import type { Account } from "@ledgerhq/types-live";
-import { getAccountsForPublicKey, getOperationsForAccount } from "../api/mirror";
-import {
+import type {
   GetAccountShape,
   IterateResultBuilder,
-  mergeOps,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account";
-import { getAccountBalance } from "../api/network";
+import { getAccount, getAccountsForPublicKey } from "../api/mirror";
+import { getOperationsForAccount } from "../api/utils";
 
 export const getAccountShape: GetAccountShape<Account> = async (
   info: any,
@@ -31,7 +28,8 @@ export const getAccountShape: GetAccountShape<Account> = async (
   });
 
   // get current account balance
-  const accountBalance = await getAccountBalance(address);
+  const mirrorAccount = await getAccount(address);
+  const accountBalance = new BigNumber(mirrorAccount.balance.balance);
 
   // grab latest operation's consensus timestamp for incremental sync
   const oldOperations = initialAccount?.operations ?? [];
@@ -45,13 +43,13 @@ export const getAccountShape: GetAccountShape<Account> = async (
     address,
     latestOperationTimestamp ? latestOperationTimestamp.toString() : null,
   );
-  const operations = mergeOps(oldOperations, newOperations);
+  const operations = mergeOps(oldOperations, newOperations.coinOperations);
 
   return {
     id: liveAccountId,
     freshAddress: address,
-    balance: accountBalance.balance,
-    spendableBalance: accountBalance.balance,
+    balance: accountBalance,
+    spendableBalance: accountBalance,
     operations,
     // NOTE: there are no "blocks" in hedera
     // Set a value just so that operations are considered confirmed according to isConfirmedOperation
@@ -60,8 +58,8 @@ export const getAccountShape: GetAccountShape<Account> = async (
 };
 
 export const buildIterateResult: IterateResultBuilder = async ({ result: rootResult }) => {
-  const accounts = await getAccountsForPublicKey(rootResult.publicKey);
-  const addresses = accounts.map(a => a.accountId.toString());
+  const mirrorAccounts = await getAccountsForPublicKey(rootResult.publicKey);
+  const addresses = mirrorAccounts.map(a => a.account);
 
   return async ({ currency, derivationMode, index }) => {
     const derivationScheme = getDerivationScheme({
