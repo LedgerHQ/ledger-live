@@ -24,8 +24,10 @@ import {
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
+import { useProviderInterstitalEnabled } from "@ledgerhq/live-common/hooks/useShowProviderLoadingTransition";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
+import { ProviderInterstitial } from "./BuySell/ProviderInterstitial";
 
 type ExchangeState = { account?: string } | undefined;
 
@@ -48,6 +50,10 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
   const themeType = useTheme().colors.palette.type;
   const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
   const walletState = useSelector(walletSelector);
+
+  const providerInterstitialEnabled = useProviderInterstitalEnabled({
+    manifest,
+  });
 
   /**
    * Pass correct account ID
@@ -111,6 +117,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
 
             ...Object.fromEntries(searchParams.entries()),
           }}
+          Loader={providerInterstitialEnabled ? ProviderInterstitial : undefined}
         />
       ) : null}
     </Card>
