@@ -26,6 +26,7 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DeveloperSettings]: undefined;
   [ScreenName.DeveloperCustomManifest]: undefined;
   [ScreenName.ExchangeDeveloperMode]: undefined;
+  [ScreenName.CustomCALRefInput]: undefined;
   [ScreenName.DebugSettings]: undefined;
   [ScreenName.DebugFeatureFlags]: undefined;
   [ScreenName.DebugInformation]: undefined;

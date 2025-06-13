@@ -1,6 +1,7 @@
 import network from "@ledgerhq/live-network";
 import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
 import { DEFAULT_OPTION, getCALDomain, type ServiceOption } from "./common";
+import { getEnv } from "@ledgerhq/live-env";
 
 const OUTPUT_FILTER =
   "id,name,network,network_family,network_type,exchange_app_config_serialized,live_signature,ticker,decimals,blockchain_name,chain_id,contract_address,descriptor,descriptor_exchange_app,units,symbol";
@@ -73,7 +74,11 @@ export const findCachedToken = makeLRUCache(
 
 export async function findToken(
   filter: { id: string } | { blockchain: string; ticker: string },
-  { env = "prod", signatureKind = "prod", ref = undefined }: ServiceOption = DEFAULT_OPTION,
+  {
+    env = "prod",
+    signatureKind = "prod",
+    ref = getEnv("CAL_REF") || undefined,
+  }: ServiceOption = DEFAULT_OPTION,
 ): Promise<TokenData> {
   let params: TokenRequest = {
     output: OUTPUT_FILTER,

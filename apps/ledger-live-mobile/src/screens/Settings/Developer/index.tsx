@@ -35,6 +35,11 @@ export default function DeveloperSettings({
         title={t("settings.experimental.developerFeatures.platformManifest.title")}
         onPress={() => navigation.navigate(ScreenName.DeveloperCustomManifest)}
       />
+      <SettingsRow
+        title={t("settings.developer.customCALRef.title")}
+        desc={t("settings.developer.customCALRef.description")}
+        onPress={() => navigation.navigate(ScreenName.CustomCALRefInput)}
+      />
     </ScrollView>
   );
 }

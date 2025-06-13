@@ -43,6 +43,8 @@ export const fetchTokensFromCALService = async <T extends Array<keyof CALService
   etag?: string | null,
   next?: { cursor: string; tokens: Pick<CALServiceOutput, T[number]>[] },
 ): Promise<{ tokens: Pick<CALServiceOutput, T[number]>[]; hash: string | undefined }> => {
+  const ref = getEnv("CAL_REF") || undefined;
+
   try {
     const { data, headers } = await axios.get<Pick<CALServiceOutput, T[number]>[]>(
       `${getEnv("CAL_SERVICE_URL")}/v1/tokens`,
@@ -53,6 +55,7 @@ export const fetchTokensFromCALService = async <T extends Array<keyof CALService
           standard: chainDetails.standard,
           blockchain_name: chainDetails.blockchain_name,
           output: output.join(),
+          ref,
         },
         headers: etag
           ? {
