@@ -1,4 +1,5 @@
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
 import {
   Builder,
   SendMode,
@@ -118,7 +119,7 @@ export function buildTonTransaction(
   const tonTransaction: TonTransaction = {
     to: TonAddress.parse(to),
     seqno,
-    amount: finalAmount,
+    amount: subAccount ? fromBigNumberToBigInt(transaction.fees) : finalAmount, // In JettonTransfer case, the amount property is used to pass the fees.
     bounce: TonAddress.isFriendly(to) ? TonAddress.parseFriendly(to).isBounceable : true,
     timeout: getTransferExpirationTime(),
     sendMode:
@@ -180,6 +181,7 @@ export const getTonEstimatedFees = async (
 
   // build body depending the payload type
   let body: TonCell | undefined;
+  let txAmount = tx.amount;
   if (tx.payload) {
     switch (tx.payload.type) {
       case "comment":
@@ -187,6 +189,7 @@ export const getTonEstimatedFees = async (
         break;
       case "jetton-transfer":
         body = buildTokenTransferBody(tx.payload);
+        txAmount = tx.payload.amount;
         break;
     }
   }
@@ -198,7 +201,7 @@ export const getTonEstimatedFees = async (
       internal({
         bounce: tx.bounce,
         to: tx.to,
-        value: tx.amount,
+        value: txAmount,
         body,
       }),
     ],
