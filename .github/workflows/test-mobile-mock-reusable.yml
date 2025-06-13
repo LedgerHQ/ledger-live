@@ -42,11 +42,6 @@ on:
         type: boolean
         default: false
 
-# Uncomment to have log-level: trace on detox run and build
-# (cf: apps/ledger-live-mobile/detox.config.js)
-# env:
-#   DEBUG_DETOX: true
-
 permissions:
   id-token: write
   contents: read
@@ -259,7 +254,6 @@ jobs:
         run: |
           cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_JSBUNDLE_PATH }} 
           cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_NATIVE_PATH }}/main.jsbundle
-  
 
       - name: Build dependencies
         uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
@@ -302,9 +296,8 @@ jobs:
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         id: "test-artifacts"
         with:
-          name: "ios-test-artifacts"
+          name: "ios-test-artifacts-${{ matrix.shardIndex }}"
           path: apps/ledger-live-mobile/artifacts
-      - run: echo "${{ steps.test-artifacts.outputs.artifact-id }}"
 
   detox-tests-android:
     name: "Android Build / Android Detox"
@@ -623,15 +616,13 @@ jobs:
 #        with:
 #          script: |
 #            const fs = require("fs");
-#            const text = "Ledger Live Mobile E2E tests finished";
+#            const text = "Ledger Live Mobile Mock tests finished";
 #            const header = [
 #              {
 #                "type": "header",
 #                "text": {
 #                  "type": "plain_text",
-#                  "text": process.env.SPECULOS_RUN == 'false'
-#                    ? "Ledger Live Mobile Mocked Tests on ${{ github.ref_name }}"
-#                    : ":ledger-logo: Ledger Live Mobile E2E Speculos tests results on ${{ github.ref_name }}",
+#                  "text": "Ledger Live Mobile Mocked Tests on ${{ github.ref_name }}",
 #                  "emoji": true
 #                }
 #              },
