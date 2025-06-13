@@ -6065,6 +6065,10 @@
       "title": "Something went wrong",
       "description": "This receiving account does not belong to the device you have connected. Please change and retry"
     },
+    "MissingSwapPayloadParamaters": {
+      "title": "Something went wrong",
+      "description": "Missing swap parameter from selected partner. Please retry or contact Ledger Support if in doubt"
+    },
     "WrongDeviceForAccountRefund": {
       "title": "Something went wrong",
       "description": "This sending account does not belong to the device you have connected. Please change and retry"
