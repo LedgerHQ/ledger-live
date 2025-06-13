@@ -22,7 +22,16 @@ export const OverlayTutorial = () => {
     });
   };
   return (
-    <Flex flex={1} position="absolute" top={0} bottom={0} left={0} right={0} zIndex={10}>
+    <Flex
+      flex={1}
+      position="absolute"
+      top={0}
+      bottom={0}
+      left={0}
+      right={0}
+      zIndex={10}
+      testID="overlay-tutorial"
+    >
       <TrackScreen name="Large_Mover_Tutorial" />
       <BlurView style={StyleSheet.absoluteFill} blurAmount={2} blurType={dark ? "dark" : "light"} />
 
@@ -39,7 +48,11 @@ export const OverlayTutorial = () => {
           </Text>
         </Flex>
         <Flex width="95%" paddingBottom={6}>
-          <PromisableButton onPress={handleCloseOverlay}>
+          <PromisableButton
+            onPress={handleCloseOverlay}
+            testID="close-overlay-button"
+            accessibilityRole="button"
+          >
             {t("largeMover.overlay.button")}
           </PromisableButton>
         </Flex>
