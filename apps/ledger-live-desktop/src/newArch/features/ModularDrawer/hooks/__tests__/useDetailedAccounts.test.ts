@@ -23,7 +23,7 @@ describe("useDetailedAccounts", () => {
       {
         id: "js:2:ethereum:0x823ePB4bDa11da33a7F1C907D1171e5995Fe33c7:",
         name: "Ethereum",
-        balance: "1 ETH",
+        balance: "1 ETH",
         fiatValue: "$0.00",
         ticker: "ETH",
         protocol: "legacy",
