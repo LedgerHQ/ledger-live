@@ -44,7 +44,7 @@ jobs:
         with:
           install-proto: true
       - name: install dependencies
-        run: pnpm i -D
+        run: pnpm i -D -F "ledger-live" --ignore-scripts
       - name: Move patch updates to minor for release branch
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
