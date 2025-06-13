@@ -65,17 +65,22 @@ const canSwipeHorizontal = (value: number, velocity: number, threshold: number) 
   return canSwipe(value, velocity, threshold);
 };
 
+function isHorizontalAngle(angle: number): boolean {
+  "worklet";
+  return (angle > -40 && angle < 40) || angle > 140 || angle < -140;
+}
+
 function createGesture(swipeX: SwipeValues, swipeY: SwipeValues, handleSwipeComplete: () => void) {
   return Gesture.Pan()
     .onUpdate(event => {
-      const angle = Math.abs(Math.atan2(event.translationY, event.translationX) * (180 / Math.PI));
-      if (angle < 40) {
+      const angle = Math.atan2(event.translationY, event.translationX) * (180 / Math.PI);
+      if (isHorizontalAngle(angle)) {
         swipeX.value = event.translationX;
         swipeY.value = event.translationY;
       }
     })
     .onEnd(event => {
-      const angle = Math.abs(Math.atan2(event.translationY, event.translationX) * (180 / Math.PI));
+      const angle = Math.atan2(event.translationY, event.translationX) * (180 / Math.PI);
 
       const params: GestureParams = {
         swipeX,
@@ -85,7 +90,7 @@ function createGesture(swipeX: SwipeValues, swipeY: SwipeValues, handleSwipeComp
       };
 
       if (
-        angle < 40 &&
+        isHorizontalAngle(angle) &&
         canSwipeHorizontal(params.swipeX.value, params.velocityX, SWIPE_CONFIG.THRESHOLD_X)
       ) {
         handleGesture(SwipeDirection.Horizontal, params);
