@@ -12,6 +12,7 @@ import { Flex, VerticalTimeline, Text, ContinueOnDevice, Link } from "@ledgerhq/
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import {
+  CharonStatus,
   OnboardingStep as DeviceOnboardingStep,
   fromSeedPhraseTypeToNbOfSeedWords,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
@@ -556,6 +557,16 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     servicesConfig?.enabled,
     servicesConfig?.params?.protectId,
   ]);
+
+  useEffect(() => {
+    if (seedPathStatus === "backup_charon" && deviceOnboardingState?.charonSupported) {
+      if (deviceOnboardingState.charonStatus === CharonStatus.Rejected) {
+        track("Set up device: Step 3 Charon Start");
+      } else if (deviceOnboardingState.charonStatus === CharonStatus.Ready) {
+        track("Set up device: Step 3 Charon Backup Success");
+      }
+    }
+  }, [deviceOnboardingState?.charonStatus, deviceOnboardingState?.charonSupported, seedPathStatus]);
 
   const handleLearnMoreClick = useCallback(() => {
     // TODO: Add link
