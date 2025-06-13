@@ -27,6 +27,7 @@ export function createApi(config: XrpConfig): Api<XrpAsset, XrpMapMemo> {
     broadcast,
     combine,
     craftTransaction: craft,
+    craftTransactionReturnSequence,
     estimateFees: estimate,
     getBalance,
     lastBlock,
@@ -35,10 +36,13 @@ export function createApi(config: XrpConfig): Api<XrpAsset, XrpMapMemo> {
   };
 }
 
-async function craft(
+/* ------------------------------------------------------------------------- *
+ * Private helper – builds tx, returns {serialized, sequence} once for both  *
+ * ------------------------------------------------------------------------- */
+async function _craftCore(
   transactionIntent: TransactionIntent<XrpAsset, XrpMapMemo>,
   customFees?: bigint,
-): Promise<string> {
+): Promise<{ serialized: string; sequence: number }> {
   const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
   const estimatedFees = customFees !== undefined ? customFees : (await estimateFees()).fee;
 
@@ -70,7 +74,21 @@ async function craft(
     transactionIntent.senderPublicKey,
   );
 
-  return tx.serializedTransaction;
+  return { serialized: tx.serializedTransaction, sequence: nextSequenceNumber };
+}
+
+async function craftTransactionReturnSequence(
+  transactionIntent: TransactionIntent<XrpAsset, XrpMapMemo>,
+  customFees?: bigint,
+): Promise<{ serialized: string; sequence: number }> {
+  return _craftCore(transactionIntent, customFees);
+}
+
+async function craft(
+  transactionIntent: TransactionIntent<XrpAsset, XrpMapMemo>,
+  customFees?: bigint,
+): Promise<string> {
+  return (await _craftCore(transactionIntent, customFees)).serialized;
 }
 
 async function estimate(): Promise<FeeEstimation> {

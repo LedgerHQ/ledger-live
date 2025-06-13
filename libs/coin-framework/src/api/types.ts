@@ -160,11 +160,18 @@ export type AlpacaApi<
   ) => Promise<[Operation<AssetInfo>[], string]>;
 };
 
-export type BridgeApi = {
+export type BridgeApi<
+  AssetInfo extends Asset<TokenInfoCommon>,
+  MemoType extends Memo = MemoNotSupported,
+> = {
   validateIntent: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;
+  craftTransactionReturnSequence: (
+    transactionIntent: TransactionIntent<AssetInfo, MemoType>,
+    customFees?: bigint,
+  ) => Promise<{ serialized: string; sequence: number }>;
 };
 
 export type Api<
   AssetInfo extends Asset<TokenInfoCommon>,
   MemoType extends Memo = MemoNotSupported,
-> = AlpacaApi<AssetInfo, MemoType> & BridgeApi;
+> = AlpacaApi<AssetInfo, MemoType> & BridgeApi<AssetInfo, MemoType>;
