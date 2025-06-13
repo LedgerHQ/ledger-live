@@ -4,9 +4,7 @@ import { AddAccountButton } from "./components/AddAccountButton";
 import { SelectAccountList } from "./components/List";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { useDetailedAccounts } from "../../hooks/useDetailedAccounts";
-import { Observable } from "rxjs";
 import TrackDrawerScreen from "../../analytics/TrackDrawerScreen";
 import { MODULAR_DRAWER_PAGE_NAME } from "../../analytics/types";
 
@@ -14,16 +12,14 @@ type Props = {
   asset: CryptoOrTokenCurrency;
   source: string;
   flow: string;
-  accounts$?: Observable<WalletAPIAccount[]>;
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
 };
 
-export const AccountSelection = ({ asset, source, flow, accounts$, onAccountSelected }: Props) => {
+export const AccountSelection = ({ asset, source, flow, onAccountSelected }: Props) => {
   const { detailedAccounts, accounts, onAddAccountClick } = useDetailedAccounts(
     asset,
     flow,
     source,
-    accounts$,
   );
 
   const BottomComponent = (

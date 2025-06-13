@@ -12,8 +12,10 @@ import {
   type TronAccount,
 } from "@ledgerhq/coin-tron/index";
 import { isAccountEmpty as isVechainAccountEmpty } from "@ledgerhq/coin-vechain/index";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { isAccountDelegating } from "../families/tezos/staking";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { makeEmptyTokenAccount } from ".";
 
 // TODO: remove this export and prefer import from root file.
 export {
@@ -105,3 +107,38 @@ export const getVotesCount = (
       return 0;
   }
 };
+
+type AccountTuple = {
+  account: Account;
+  subAccount: TokenAccount | null;
+};
+
+export function getAccountTuplesForCurrency(
+  currency: CryptoCurrency | TokenCurrency,
+  allAccounts: Account[],
+  hideEmpty?: boolean,
+): AccountTuple[] {
+  if (currency.type === "TokenCurrency") {
+    return allAccounts
+      .filter(account => account.currency.id === currency.parentCurrency.id)
+      .map(account => ({
+        account,
+        subAccount:
+          (account.subAccounts &&
+            account.subAccounts.find(
+              (subAcc: TokenAccount) =>
+                subAcc.type === "TokenAccount" && subAcc.token.id === currency.id,
+            )) ||
+          makeEmptyTokenAccount(account, currency),
+      }))
+      .filter(a => (hideEmpty ? a.subAccount?.balance.gt(0) : true));
+  }
+
+  return allAccounts
+    .filter(account => account.currency.id === currency.id)
+    .map(account => ({
+      account,
+      subAccount: null,
+    }))
+    .filter(a => (hideEmpty ? a.account?.balance.gt(0) : true));
+}

@@ -1,7 +1,6 @@
 import { SWAP_DATA_CDN } from "@ledgerhq/ledger-cal-service";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
-import { getAccountCurrency, makeEmptyTokenAccount } from "../../../account";
+import { AccountLike } from "@ledgerhq/types-live";
+import { getAccountCurrency } from "../../../account";
 import { getSwapProvider } from "../../providers/swap";
 
 export const FILTER = {
@@ -10,41 +9,6 @@ export const FILTER = {
   float: "float",
   fixed: "fixed",
 } as const;
-
-export type AccountTuple = {
-  account: Account | null | undefined;
-  subAccount: TokenAccount | null | undefined;
-};
-
-export function getAccountTuplesForCurrency(
-  currency: CryptoCurrency | TokenCurrency,
-  allAccounts: Account[],
-  hideEmpty?: boolean,
-): AccountTuple[] {
-  if (currency.type === "TokenCurrency") {
-    return allAccounts
-      .filter(account => account.currency.id === currency.parentCurrency.id)
-      .map(account => ({
-        account,
-        subAccount:
-          (account.subAccounts &&
-            account.subAccounts.find(
-              (subAcc: TokenAccount) =>
-                subAcc.type === "TokenAccount" && subAcc.token.id === currency.id,
-            )) ||
-          makeEmptyTokenAccount(account, currency),
-      }))
-      .filter(a => (hideEmpty ? a.subAccount?.balance.gt(0) : true));
-  }
-
-  return allAccounts
-    .filter(account => account.currency.id === currency.id)
-    .map(account => ({
-      account,
-      subAccount: null,
-    }))
-    .filter(a => (hideEmpty ? a.account?.balance.gt(0) : true));
-}
 
 export const getAvailableAccountsById = (
   id: string,

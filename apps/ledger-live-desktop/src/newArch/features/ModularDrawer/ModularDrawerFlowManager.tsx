@@ -45,7 +45,6 @@ const networkConfigurationDisabled: EnhancedModularDrawerConfiguration["networks
 const ModularDrawerFlowManager = ({
   currencies,
   drawerConfiguration,
-  accounts$,
   flow,
   source,
   onAssetSelected,
@@ -177,7 +176,6 @@ const ModularDrawerFlowManager = ({
           return (
             <AccountSelection
               asset={selectedAsset}
-              accounts$={accounts$}
               onAccountSelected={handleAccountSelected}
               flow={flow}
               source={source}
