@@ -14,9 +14,44 @@ import { genericEstimateMaxSpendable } from "./estimateMaxSpendable";
 import { createTransaction } from "./createTransaction";
 import { genericBroadcast } from "./broadcast";
 import { genericSignOperation } from "./signOperation";
+import { log } from "@ledgerhq/logs";
+
+/*
+ * signer context
+ *   executeWithSigner(createSigner),
+
+ *
+ *
+ *
+ * export function buildAccountBridge(
+  signerContext: SignerContext<NearSigner>,
+): AccountBridge<Transaction, NearAccount, TransactionStatus> {
+  const getAddress = resolver(signerContext);
+
+  const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
+  const signOperation = buildSignOperation(signerContext);
+
+  return {
+    estimateMaxSpendable,
+    createTransaction,
+    updateTransaction,
+    getTransactionStatus,
+    prepareTransaction,
+    sync,
+    receive,
+    signOperation,
+    broadcast,
+    assignToAccountRaw,
+    assignFromAccountRaw,
+    getSerializedAddressParameters,
+  };
+}
+
+*/
 
 export function getAlpacaAccountBridge(network: string, kind: string): AccountBridge<any> {
   const signer = getSigner(network);
+  log("xrp-debug", `getting alpaca account bridge for ${network}`);
   return {
     sync: makeSync({ getAccountShape: genericGetAccountShape(network, kind) }),
     receive: makeAccountBridgeReceive(getAddressWrapper(signer.getAddress)),

@@ -156,7 +156,15 @@ export const createAction = (
         return;
       }
 
-      log("xrp-debug-transaction", "in useEffect of createActionUseHook");
+      log("xrp-debug-transaction", "in useEffect of createActionUseHook", {
+        device,
+        mainAccount,
+        transaction,
+        opened,
+        inWrongDeviceForAccount,
+        error,
+        isACRE,
+      });
       const bridge = isACRE
         ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (ACREBridge.accountBridge as unknown as AccountBridge<any>)

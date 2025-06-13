@@ -17,6 +17,7 @@ import { RecipientAddressSanctionedError, UserAddressSanctionedError } from "../
 import { getAlpacaCurrencyBridge } from "./generic-alpaca/currencyBridge";
 import { getAlpacaAccountBridge } from "./generic-alpaca/accountBridge";
 import { TransactionCommon } from "@ledgerhq/types-live";
+import { log } from "@ledgerhq/logs";
 
 const alpacaized = {
   xrp: true,
@@ -85,7 +86,10 @@ export function getAccountBridgeByFamily(family: string, accountId?: string): Ac
 
   if (alpacaized[family]) {
     if (!bridgeCache[family]) {
+      log("xrp-debug", "no cache, creating new accountbridge instance");
       bridgeCache[family] = getAlpacaAccountBridge(family, "local");
+    } else {
+      log("xrp-debug", "cached bridge instance found for family");
     }
     return bridgeCache[family];
     // if (!accountBridgeInstance) {
