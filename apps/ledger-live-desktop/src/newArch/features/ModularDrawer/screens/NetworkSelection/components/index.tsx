@@ -6,6 +6,7 @@ import { useModularDrawerAnalytics } from "../../../analytics/useModularDrawerAn
 import { MODULAR_DRAWER_PAGE_NAME } from "../../../analytics/types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import createNetworkConfigurationHook from "../modules/createNetworkConfigurationHook";
+import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 
 type SelectNetworkProps = {
   networks?: CryptoOrTokenCurrency[];
@@ -13,6 +14,8 @@ type SelectNetworkProps = {
   flow: string;
   onNetworkSelected: (network: CryptoOrTokenCurrency) => void;
   networksConfig: EnhancedModularDrawerConfiguration["networks"];
+  currenciesByProvider: CurrenciesByProviderId[];
+  selectedAsset: CryptoOrTokenCurrency;
 };
 
 export const SelectNetwork = ({
@@ -21,6 +24,8 @@ export const SelectNetwork = ({
   source,
   flow,
   networksConfig,
+  currenciesByProvider,
+  selectedAsset,
 }: SelectNetworkProps) => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
@@ -30,6 +35,8 @@ export const SelectNetwork = ({
 
   const transformNetworks = createNetworkConfigurationHook({
     networksConfig,
+    currenciesByProvider,
+    selectedAsset,
   });
 
   const formattedNetworks = transformNetworks(networks);
