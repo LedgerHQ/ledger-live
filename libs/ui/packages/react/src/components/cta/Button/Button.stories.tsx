@@ -1,27 +1,40 @@
-import React, { Fragment } from "react";
-import Button, { ButtonExpandProps, ButtonProps, ButtonVariants, IconPosition } from "./index";
-import Text from "../../asorted/Text";
 import { PlusMedium, WalletAddMedium } from "@ledgerhq/icons-ui/reactLegacy";
+import React, { Fragment } from "react";
+import { AssertExhaustive } from "src/helpers.types";
 import { InvertTheme } from "../../../styles/InvertTheme";
+import Text from "../../asorted/Text";
+import { StoryTemplate } from "../../helpers";
 import Flex from "../../layout/Flex";
 import Grid from "../../layout/Grid";
-import { StoryTemplate } from "../../helpers";
+import Button, { ButtonExpandProps, ButtonProps } from "./index";
 
-const iconPositions: IconPosition[] = ["left", "right"];
-const buttonVariants: ButtonVariants[] = ["main", "shade", "color", "error"];
+const ICON_POSITIONS = ["left", "right"] as const;
+const _assertExhaustiveIconPositions: AssertExhaustive<
+  (typeof ICON_POSITIONS)[number],
+  NonNullable<ButtonProps["iconPosition"]>
+> = true;
+
+const BUTTON_VARIANTS = ["main", "neutral", "shade", "color", "error"] as const;
+const _assertExhaustiveButtonVariants: AssertExhaustive<
+  (typeof BUTTON_VARIANTS)[number],
+  NonNullable<ButtonProps["variant"]>
+> = true;
+
+const SIZES = [undefined, "xs", "small", "medium", "large", "xl"] as const;
+const _assertExhaustiveSizes: AssertExhaustive<(typeof SIZES)[number], ButtonProps["size"]> = true;
 
 export default {
   title: "cta/Button",
   component: Button,
   argTypes: {
     variant: {
-      options: [undefined, ...buttonVariants],
+      options: [undefined, ...BUTTON_VARIANTS],
       control: {
         type: "radio",
       },
     },
     size: {
-      options: [undefined, "small", "medium", "large"],
+      options: SIZES,
       control: { type: "radio" },
     },
     fontSize: {
@@ -34,7 +47,7 @@ export default {
       type: "text",
     },
     iconPosition: {
-      options: iconPositions,
+      options: ICON_POSITIONS,
       control: {
         type: "radio",
       },
@@ -52,13 +65,13 @@ export const Overview = ((args: ButtonProps) => {
   const templateProps = { Icon: PlusMedium, children: "Try me", onClick: () => {} };
   const propsArr = [
     { ...templateProps, Icon: undefined },
-    { ...templateProps, iconPosition: iconPositions[0] },
-    { ...templateProps, iconPosition: iconPositions[1] },
+    { ...templateProps, iconPosition: ICON_POSITIONS[0] },
+    { ...templateProps, iconPosition: ICON_POSITIONS[1] },
     { ...templateProps, children: "" },
   ];
   return (
     <Grid columns="none" gridTemplateColumns="max-content repeat(4, 1fr)" columnGap={8} rowGap={8}>
-      {buttonVariants.flatMap((buttonType, i) =>
+      {BUTTON_VARIANTS.flatMap((buttonType, i) =>
         [false, true].map((outline, j) => (
           <Fragment key={`${i}:${j}`}>
             <Text variant="small" color="neutral.c70">

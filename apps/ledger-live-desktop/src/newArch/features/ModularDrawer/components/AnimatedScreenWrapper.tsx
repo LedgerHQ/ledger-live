@@ -1,16 +1,16 @@
-import React from "react";
 import { motion } from "framer-motion";
-import type { ModularDrawerStep, NavigationDirection } from "../types";
+import React from "react";
+import type { NavigationDirection } from "../types";
 
 const TOP_BAR = 62;
 
-const AnimatedScreenWrapper = ({
+const AnimatedScreenWrapper = <K extends string>({
   children,
   screenKey,
   direction,
 }: {
   children: React.ReactNode;
-  screenKey: ModularDrawerStep;
+  screenKey: K;
   direction: NavigationDirection;
 }) => {
   const variants = {

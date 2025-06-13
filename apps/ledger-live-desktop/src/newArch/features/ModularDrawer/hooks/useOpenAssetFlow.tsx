@@ -1,14 +1,15 @@
-import { useModularDrawerVisibility } from "./useModularDrawerVisibility";
-import { openModal } from "~/renderer/actions/modals";
-import { useDispatch } from "react-redux";
-import { useCallback } from "react";
-import { ModularDrawerLocation } from "../enums";
-import { setDrawer } from "~/renderer/drawers/Provider";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { useCallback } from "react";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import { ModularDrawerLocation } from "../enums";
+import ModularDrawerAddAccountFlowManager from "../ModularDrawerAddAccountFlowManager";
 import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { useModularDrawerVisibility } from "./useModularDrawerVisibility";
+import { useDispatch } from "react-redux";
+import { openModal } from "~/renderer/actions/modals";
 
 function selectCurrency(
   onAssetSelected: (currency: CryptoOrTokenCurrency) => void,
@@ -29,6 +30,10 @@ function selectCurrency(
       onAssetSelected,
       source,
       flow,
+      drawerConfiguration: {
+        assets: { leftElement: "undefined", rightElement: "undefined" },
+        networks: { leftElement: "undefined", rightElement: "undefined" },
+      },
     },
     {
       onRequestClose: onClose,
@@ -37,9 +42,9 @@ function selectCurrency(
 }
 
 export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, source: string) {
-  const dispatch = useDispatch();
   const { isModularDrawerVisible } = useModularDrawerVisibility();
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+  const dispatch = useDispatch();
 
   const handleClose = useCallback(() => {
     setDrawer();
@@ -50,15 +55,11 @@ export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, s
     });
   }, [modularDrawerLocation, trackModularDrawerEvent]);
 
-  const openAddAccountFlow = useCallback(
-    (currency?: CryptoOrTokenCurrency) => {
-      dispatch(openModal("MODAL_ADD_ACCOUNTS", currency ? { currency } : undefined));
-      if (currency) {
-        setDrawer();
-      }
-    },
-    [dispatch],
-  );
+  const openAddAccountFlow = useCallback((currency: CryptoOrTokenCurrency) => {
+    setDrawer(ModularDrawerAddAccountFlowManager, {
+      currency,
+    });
+  }, []);
 
   const openAssetFlow = useCallback(
     (includeTokens: boolean) => {
@@ -73,10 +74,17 @@ export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, s
           handleClose,
         );
       } else {
-        openAddAccountFlow();
+        dispatch(openModal("MODAL_ADD_ACCOUNTS", undefined));
       }
     },
-    [handleClose, isModularDrawerVisible, modularDrawerLocation, openAddAccountFlow, source],
+    [
+      dispatch,
+      handleClose,
+      isModularDrawerVisible,
+      modularDrawerLocation,
+      openAddAccountFlow,
+      source,
+    ],
   );
 
   return {
