@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { PromisableButton } from "@ledgerhq/native-ui/lib/components/cta/Button/index";
 import { BlurView } from "@react-native-community/blur";
 import { StyleSheet } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { useDispatch } from "react-redux";
 import { track, TrackScreen } from "~/analytics";
 import { PAGE_NAME } from "../const";
@@ -13,7 +13,7 @@ import { setTutorial } from "~/actions/largeMoverLandingPage";
 export const OverlayTutorial = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const { dark } = useTheme();
+  const { theme } = useTheme();
   const handleCloseOverlay = () => {
     dispatch(setTutorial(false));
     track("large_mover_tutorial", {
@@ -22,9 +22,18 @@ export const OverlayTutorial = () => {
     });
   };
   return (
-    <Flex flex={1} position="absolute" top={0} bottom={0} left={0} right={0} zIndex={10}>
+    <Flex
+      flex={1}
+      position="absolute"
+      top={0}
+      bottom={0}
+      left={0}
+      right={0}
+      zIndex={10}
+      testID="overlay-tutorial"
+    >
       <TrackScreen name="Large_Mover_Tutorial" />
-      <BlurView style={StyleSheet.absoluteFill} blurAmount={2} blurType={dark ? "dark" : "light"} />
+      <BlurView style={StyleSheet.absoluteFill} blurAmount={2} blurType={theme} />
 
       <Flex flex={1} justifyContent="space-between" alignItems="center" padding={6}>
         <Flex flex={1} justifyContent="center" alignItems="center">
@@ -39,7 +48,11 @@ export const OverlayTutorial = () => {
           </Text>
         </Flex>
         <Flex width="95%" paddingBottom={6}>
-          <PromisableButton onPress={handleCloseOverlay}>
+          <PromisableButton
+            onPress={handleCloseOverlay}
+            testID="close-overlay-button"
+            accessibilityRole="button"
+          >
             {t("largeMover.overlay.button")}
           </PromisableButton>
         </Flex>

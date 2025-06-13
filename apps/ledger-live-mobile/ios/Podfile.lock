@@ -2685,6 +2685,7 @@ SPEC CHECKSUMS:
   React-microtasksnativemodule: 219f08edd8d580020751fa388e1167c59ab8c160
   react-native-biometrics: 43ed5b828646a7862dbc7945556446be00798e7d
   react-native-ble-plx: c6900b8744e65d440d427b5dbdf43b3fd47c5cc6
+  react-native-blur: 83afb101cb91da465c4ae996b283904ed0683aec
   react-native-config: ea75335a7cca1d3326de1da384227e580a7c082e
   react-native-fast-crypto: 6b448866f5310cf203714a21147ef67f735bea8e
   react-native-fast-pbkdf2: 329e89b9929a51ed4d9ba88bf355a266f13d9d93
