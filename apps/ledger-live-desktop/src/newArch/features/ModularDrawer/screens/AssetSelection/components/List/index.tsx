@@ -57,12 +57,13 @@ export const SelectAssetList = ({
         },
         {
           formatAssetConfig: true,
+          assetsConfig: assetsConfiguration,
         },
       );
 
       onAssetSelected(selectedAsset);
     },
-    [assetsToDisplay, flow, source, trackModularDrawerEvent, onAssetSelected],
+    [assetsToDisplay, trackModularDrawerEvent, flow, source, assetsConfiguration, onAssetSelected],
   );
 
   const onVisibleItemsScrollEnd = () => {
