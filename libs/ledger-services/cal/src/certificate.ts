@@ -13,6 +13,9 @@ const DeviceModel = {
 } as const;
 export type Device = keyof typeof DeviceModel;
 
+type PublicKeyId = "domain_metadata_key" | "token_metadata_key";
+type PublicKeyUsage = "trusted_name" | "coin_meta";
+
 type CertificateResponse = {
   id: string;
   certificate_version: {
@@ -26,7 +29,7 @@ type CertificateResponse = {
     minor: number;
     patch: number;
   };
-  public_key_usage: "trusted_name";
+  public_key_usage: PublicKeyUsage;
   descriptor: {
     data: string;
     signatures: {
@@ -39,20 +42,30 @@ export type CertificateInfo = {
   descriptor: string;
   signature: string;
 };
+
+function publicKeyIdOf(usage: PublicKeyUsage): PublicKeyId {
+  switch (usage) {
+    case "trusted_name":
+      return "domain_metadata_key";
+    case "coin_meta":
+      return "token_metadata_key";
+  }
+}
 /**
  * Retrieve PKI certificate
  * @param device
  */
 export async function getCertificate(
   device: Device,
+  usage: PublicKeyUsage,
   version: string | "latest" = "latest",
   { env = "prod", signatureKind = "prod", ref = undefined }: ServiceOption = DEFAULT_OPTION,
 ): Promise<CertificateInfo> {
   let params: Record<string, string | boolean | number | undefined> = {
     output: "id,target_device,not_valid_after,public_key_usage,certificate_version,descriptor",
     target_device: DeviceModel[device],
-    public_key_usage: "trusted_name",
-    public_key_id: "domain_metadata_key",
+    public_key_usage: usage,
+    public_key_id: publicKeyIdOf(usage),
     ref,
   };
   if (version === "latest") {
