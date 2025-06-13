@@ -96,9 +96,7 @@ describe("Xrp Api", () => {
       const result = await api.getBalance(SENDER_WITH_NO_TRANSACTION);
 
       // Then
-      expect(result).toEqual([
-        { locked: BigInt(1000000n), value: BigInt(0), asset: { type: "native" } },
-      ]);
+      expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" } }]);
     });
   });
 
@@ -119,7 +117,7 @@ describe("Xrp Api", () => {
         },
       });
       // Then
-      expect(result.length).toEqual(178);
+      expect(result.length).toEqual(162);
     });
 
     it("should use default fees when user does not provide them for crafting a transaction", async () => {

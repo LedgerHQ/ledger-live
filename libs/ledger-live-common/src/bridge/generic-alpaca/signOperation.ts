@@ -13,6 +13,15 @@ import { FeeNotLoaded } from "@ledgerhq/errors";
 import { Result } from "@ledgerhq/coin-framework/derivation";
 import { MapMemo, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 
+function isMapMemo(memo: unknown): memo is MapMemo<string, string> {
+  return (
+    typeof memo === "object" &&
+    memo !== null &&
+    "type" in memo &&
+    (memo as any).type === "map" &&
+    (memo as any).memos instanceof Map
+  );
+}
 /**
  * Sign Transaction with Ledger hardware
  */
@@ -41,17 +50,12 @@ export const genericSignOperation =
         transactionIntent.senderPublicKey = publicKey;
         // NOTE: is setting the memo here instead of transactionToIntent sensible?
         const txWithMemo = transactionIntent as TransactionIntent<any, MapMemo<string, string>>;
-        if (transaction["tag"]) {
-          const txMemo = String(transaction["tag"]);
-          txWithMemo.memo = {
-            type: "map",
-            memos: new Map(),
-          };
-          txWithMemo.memo.memos.set("destinationTag", txMemo);
+        if (isMapMemo(txWithMemo.memo)) {
+          txWithMemo.memo.memos.set("destinationTag", String(transaction["tag"]));
         }
 
         const unsigned = await getAlpacaApi(network, kind).craftTransaction({
-          ...txWithMemo,
+          ...transactionIntent,
         });
         const transactionSignature: string = await signerContext(deviceId, signer =>
           signer.signTransaction(account.freshAddressPath, unsigned),
