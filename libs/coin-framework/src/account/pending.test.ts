@@ -218,7 +218,7 @@ describe("shouldRetainPendingOperation", () => {
   });
 });
 
-export function createAccount(id: string): Account {
+function createAccount(id: string): Account {
   const currency = listCryptoCurrencies(true)[0];
 
   return {
@@ -262,7 +262,7 @@ function createTokenAccount(id: string): TokenAccount {
   };
 }
 
-export function createOperation(
+function createOperation(
   accountId: string,
   sender?: string[],
   sequenceNumber?: number,
