@@ -201,10 +201,6 @@ jobs:
           turbo_port: ${{ steps.setup-caches.outputs.port }}
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
 
-      - name: Create iOS simulator
-        id: simulator
-        run: xcrun simctl create "iOS Simulator" "iPhone 15"
-
       - name: Build iOS app for Detox test run
         if: steps.detox-build.outputs.cache-hit != 'true' || inputs.production_firebase == 'true'
         run: pnpm mobile e2e:ci -p ios -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
@@ -253,11 +249,6 @@ jobs:
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           turbo_port: ${{ steps.setup-caches.outputs.port }}
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
-
-      - name: Delete iOS simulator
-        if: ${{ always() }}
-        run: |
-          xcrun simctl list devices | grep 'iOS Simulator' | awk -F '[()]' '{print $2}' | xargs -I {} sh -c 'echo "Deleting simulator: {}"; xcrun simctl delete {} || echo "Failed to delete: {}"'
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
