@@ -354,9 +354,6 @@ importers:
       '@braze/web-sdk':
         specifier: 4.10.2
         version: 4.10.2
-      '@ledgerhq/coin-aptos':
-        specifier: workspace:^
-        version: link:../../libs/coin-modules/coin-aptos
       '@ledgerhq/coin-bitcoin':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-bitcoin
@@ -2209,6 +2206,9 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -2240,9 +2240,6 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@types/invariant':
         specifier: ^2.2.37
         version: 2.2.37
@@ -9994,10 +9991,6 @@ packages:
 
   '@babel/generator@7.27.5':
     resolution: {integrity: sha512-ZGhA37l0e/g2s1Cnzdix0O3aLYm66eF8aufiVteOgnwxgnRP8GoyMj7VWsgWnQbVKXyge7hqrFh2K2TQM6t1Hw==}
-    engines: {node: '>=6.9.0'}
-
-  '@babel/helper-annotate-as-pure@7.25.9':
-    resolution: {integrity: sha512-gv7320KBUFJz1RnylIg5WWYPRXKZ884AGkYpgpWW02TH66Dl+HaC1t1CKd0z3R4b6hdYEcmrNZHUmfCP+1u3/g==}
     engines: {node: '>=6.9.0'}
 
   '@babel/helper-annotate-as-pure@7.27.3':
@@ -34944,10 +34937,6 @@ snapshots:
       '@jridgewell/trace-mapping': 0.3.25
       jsesc: 3.0.2
 
-  '@babel/helper-annotate-as-pure@7.25.9':
-    dependencies:
-      '@babel/types': 7.27.0
-
   '@babel/helper-annotate-as-pure@7.27.3':
     dependencies:
       '@babel/types': 7.27.6
@@ -34978,7 +34967,7 @@ snapshots:
 
   '@babel/helper-create-class-features-plugin@7.25.9':
     dependencies:
-      '@babel/helper-annotate-as-pure': 7.25.9
+      '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-member-expression-to-functions': 7.25.9
       '@babel/helper-optimise-call-expression': 7.25.9
       '@babel/helper-replace-supers': 7.25.9
@@ -34991,7 +34980,7 @@ snapshots:
   '@babel/helper-create-class-features-plugin@7.25.9(@babel/core@7.27.1)':
     dependencies:
       '@babel/core': 7.27.1
-      '@babel/helper-annotate-as-pure': 7.25.9
+      '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-member-expression-to-functions': 7.25.9
       '@babel/helper-optimise-call-expression': 7.25.9
       '@babel/helper-replace-supers': 7.25.9(@babel/core@7.27.1)
@@ -35028,14 +35017,14 @@ snapshots:
 
   '@babel/helper-create-regexp-features-plugin@7.25.9':
     dependencies:
-      '@babel/helper-annotate-as-pure': 7.25.9
+      '@babel/helper-annotate-as-pure': 7.27.3
       regexpu-core: 6.2.0
       semver: 6.3.1
 
   '@babel/helper-create-regexp-features-plugin@7.25.9(@babel/core@7.27.1)':
     dependencies:
       '@babel/core': 7.27.1
-      '@babel/helper-annotate-as-pure': 7.25.9
+      '@babel/helper-annotate-as-pure': 7.27.3
       regexpu-core: 6.2.0
       semver: 6.3.1
 
@@ -35169,7 +35158,7 @@ snapshots:
 
   '@babel/helper-remap-async-to-generator@7.25.9':
     dependencies:
-      '@babel/helper-annotate-as-pure': 7.25.9
+      '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-wrap-function': 7.25.9
       '@babel/traverse': 7.27.0
     transitivePeerDependencies:
@@ -35178,7 +35167,7 @@ snapshots:
   '@babel/helper-remap-async-to-generator@7.25.9(@babel/core@7.27.1)':
     dependencies:
       '@babel/core': 7.27.1
-      '@babel/helper-annotate-as-pure': 7.25.9
+      '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-wrap-function': 7.25.9
       '@babel/traverse': 7.27.0
     transitivePeerDependencies:
@@ -35440,7 +35429,7 @@ snapshots:
   '@babel/plugin-proposal-private-property-in-object@7.21.11(@babel/core@7.27.1)':
     dependencies:
       '@babel/core': 7.27.1
-      '@babel/helper-annotate-as-pure': 7.25.9
+      '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-create-class-features-plugin': 7.25.9(@babel/core@7.27.1)
       '@babel/helper-plugin-utils': 7.26.5
       '@babel/plugin-syntax-private-property-in-object': 7.14.5(@babel/core@7.27.1)
@@ -35765,7 +35754,7 @@ snapshots:
 
   '@babel/plugin-transform-classes@7.25.9':
     dependencies:
-      '@babel/helper-annotate-as-pure': 7.25.9
+      '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-compilation-targets': 7.26.5
       '@babel/helper-plugin-utils': 7.26.5
       '@babel/helper-replace-supers': 7.25.9
@@ -35777,7 +35766,7 @@ snapshots:
   '@babel/plugin-transform-classes@7.25.9(@babel/core@7.27.1)':
     dependencies:
       '@babel/core': 7.27.1
-      '@babel/helper-annotate-as-pure': 7.25.9
+      '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-compilation-targets': 7.26.5
       '@babel/helper-plugin-utils': 7.26.5
       '@babel/helper-replace-supers': 7.25.9(@babel/core@7.27.1)
@@ -36165,7 +36154,7 @@ snapshots:
 
   '@babel/plugin-transform-private-property-in-object@7.25.9':
     dependencies:
-      '@babel/helper-annotate-as-pure': 7.25.9
+      '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-create-class-features-plugin': 7.25.9
       '@babel/helper-plugin-utils': 7.26.5
     transitivePeerDependencies:
@@ -36174,7 +36163,7 @@ snapshots:
   '@babel/plugin-transform-private-property-in-object@7.25.9(@babel/core@7.27.1)':
     dependencies:
       '@babel/core': 7.27.1
-      '@babel/helper-annotate-as-pure': 7.25.9
+      '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-create-class-features-plugin': 7.25.9(@babel/core@7.27.1)
       '@babel/helper-plugin-utils': 7.26.5
     transitivePeerDependencies:
@@ -36265,7 +36254,7 @@ snapshots:
 
   '@babel/plugin-transform-react-jsx@7.25.9':
     dependencies:
-      '@babel/helper-annotate-as-pure': 7.25.9
+      '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-module-imports': 7.25.9
       '@babel/helper-plugin-utils': 7.26.5
       '@babel/plugin-syntax-jsx': 7.25.9
@@ -36276,7 +36265,7 @@ snapshots:
   '@babel/plugin-transform-react-jsx@7.25.9(@babel/core@7.27.1)':
     dependencies:
       '@babel/core': 7.27.1
-      '@babel/helper-annotate-as-pure': 7.25.9
+      '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-module-imports': 7.25.9
       '@babel/helper-plugin-utils': 7.26.5
       '@babel/plugin-syntax-jsx': 7.25.9(@babel/core@7.27.1)
@@ -36409,7 +36398,7 @@ snapshots:
 
   '@babel/plugin-transform-typescript@7.25.9':
     dependencies:
-      '@babel/helper-annotate-as-pure': 7.25.9
+      '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-create-class-features-plugin': 7.25.9
       '@babel/helper-plugin-utils': 7.26.5
       '@babel/helper-skip-transparent-expression-wrappers': 7.25.9
@@ -36420,7 +36409,7 @@ snapshots:
   '@babel/plugin-transform-typescript@7.25.9(@babel/core@7.27.1)':
     dependencies:
       '@babel/core': 7.27.1
-      '@babel/helper-annotate-as-pure': 7.25.9
+      '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-create-class-features-plugin': 7.25.9(@babel/core@7.27.1)
       '@babel/helper-plugin-utils': 7.26.5
       '@babel/helper-skip-transparent-expression-wrappers': 7.25.9
@@ -50818,7 +50807,7 @@ snapshots:
 
   babel-plugin-styled-components@2.1.4(@babel/core@7.27.1)(styled-components@5.3.11(@babel/core@7.27.1)(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1)):
     dependencies:
-      '@babel/helper-annotate-as-pure': 7.25.9
+      '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-module-imports': 7.24.3
       '@babel/plugin-syntax-jsx': 7.24.1(@babel/core@7.27.1)
       lodash: 4.17.21
@@ -50829,7 +50818,7 @@ snapshots:
 
   babel-plugin-styled-components@2.1.4(@babel/core@7.27.1)(styled-components@5.3.11(@babel/core@7.27.1)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)):
     dependencies:
-      '@babel/helper-annotate-as-pure': 7.25.9
+      '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-module-imports': 7.24.3
       '@babel/plugin-syntax-jsx': 7.24.1(@babel/core@7.27.1)
       lodash: 4.17.21
@@ -50840,7 +50829,7 @@ snapshots:
 
   babel-plugin-styled-components@2.1.4(@babel/core@7.27.1)(styled-components@5.3.11(@babel/core@7.27.1)(react-is@18.3.1)(react@18.3.1)):
     dependencies:
-      '@babel/helper-annotate-as-pure': 7.25.9
+      '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-module-imports': 7.24.3
       '@babel/plugin-syntax-jsx': 7.24.1(@babel/core@7.27.1)
       lodash: 4.17.21
@@ -50851,7 +50840,7 @@ snapshots:
 
   babel-plugin-styled-components@2.1.4(styled-components@5.3.11(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1)):
     dependencies:
-      '@babel/helper-annotate-as-pure': 7.25.9
+      '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-module-imports': 7.24.3
       '@babel/plugin-syntax-jsx': 7.24.1
       lodash: 4.17.21
@@ -50862,7 +50851,7 @@ snapshots:
 
   babel-plugin-styled-components@2.1.4(styled-components@5.3.11(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)):
     dependencies:
-      '@babel/helper-annotate-as-pure': 7.25.9
+      '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-module-imports': 7.24.3
       '@babel/plugin-syntax-jsx': 7.24.1
       lodash: 4.17.21
