@@ -6,7 +6,7 @@ import {
   session,
   webContents,
   shell,
-  BrowserWindow,
+  type BrowserWindow,
   dialog,
   protocol,
 } from "electron";
@@ -22,8 +22,13 @@ import { getSentryEnabled, setUserId } from "./internal-lifecycle";
 import db from "./db";
 import debounce from "lodash/debounce";
 import sentry from "~/sentry/main";
-import { SettingsState } from "~/renderer/reducers/settings";
-import { User } from "~/renderer/storage";
+import type { SettingsState } from "~/renderer/reducers/settings";
+import type { User } from "~/renderer/storage";
+import {
+  installExtension,
+  REDUX_DEVTOOLS,
+  REACT_DEVELOPER_TOOLS,
+} from "electron-devtools-installer";
 
 Store.initRenderer();
 
@@ -253,16 +258,14 @@ ipcMain.on("ready-to-show", () => {
 });
 async function installExtensions() {
   // https://github.com/MarshallOfSound/electron-devtools-installer#usage
-  const {
-    default: installExtension,
-    REACT_DEVELOPER_TOOLS,
-    REDUX_DEVTOOLS,
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-  } = require("electron-devtools-installer");
   app.whenReady().then(() => {
-    installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS])
+    installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS], {
+      loadExtensionOptions: {
+        allowFileAccess: true,
+      },
+    })
       .then(([redux, react]) => console.log(`Added Extensions:  ${redux.name}, ${react.name}`))
-      .catch((err) => console.error("An error occurred loading devtool extensions: ", err));
+      .catch(err => console.error("An error occurred loading devtool extensions: ", err));
   });
 }
 function clearSessionCache(session: Electron.Session): Promise<void> {
