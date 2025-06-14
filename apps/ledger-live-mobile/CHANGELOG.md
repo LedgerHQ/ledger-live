@@ -1,5 +1,37 @@
 # live-mobile
 
+## 3.82.0-nightly.3
+
+### Minor Changes
+
+- [#10533](https://github.com/LedgerHQ/ledger-live/pull/10533) [`19adc4b`](https://github.com/LedgerHQ/ledger-live/commit/19adc4b41cdffad059bdcff7ba0245e616a404eb) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix button Sell greyed out
+
+### Patch Changes
+
+- Updated dependencies [[`b5e3217`](https://github.com/LedgerHQ/ledger-live/commit/b5e321789d3a6f9cb1916067790590640db0876f)]:
+  - @ledgerhq/errors@6.22.0-nightly.0
+  - @ledgerhq/coin-framework@5.3.0-nightly.2
+  - @ledgerhq/coin-cosmos@0.15.1-nightly.2
+  - @ledgerhq/coin-evm@2.22.3-nightly.2
+  - @ledgerhq/coin-filecoin@1.9.9-nightly.2
+  - @ledgerhq/coin-multiversx@0.4.9-nightly.2
+  - @ledgerhq/coin-stacks@0.8.9-nightly.2
+  - @ledgerhq/domain-service@1.2.32-nightly.2
+  - @ledgerhq/ledger-key-ring-protocol@0.5.9-nightly.0
+  - @ledgerhq/devices@8.4.7-nightly.0
+  - @ledgerhq/hw-transport@6.31.7-nightly.0
+  - @ledgerhq/hw-transport-http@6.30.7-nightly.0
+  - @ledgerhq/react-native-hid@6.32.7-nightly.0
+  - @ledgerhq/react-native-hw-transport-ble@6.35.0-nightly.1
+  - @ledgerhq/live-dmk-mobile@0.6.0-nightly.1
+  - @ledgerhq/live-network@2.0.10-nightly.0
+  - @ledgerhq/live-countervalues@0.5.9-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.38-nightly.2
+  - @ledgerhq/live-nft@0.8.9-nightly.2
+  - @ledgerhq/live-nft-react@0.9.9-nightly.2
+  - @ledgerhq/live-wallet@0.10.12-nightly.2
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.7-nightly.0
+
 ## 3.82.0-nightly.2
 
 ### Minor Changes

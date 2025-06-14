@@ -1,5 +1,46 @@
 # ledger-live-desktop
 
+## 2.117.0-nightly.3
+
+### Minor Changes
+
+- [#10525](https://github.com/LedgerHQ/ledger-live/pull/10525) [`b91e70b`](https://github.com/LedgerHQ/ledger-live/commit/b91e70b54e59f1b7bcba3c0dc829f171779754c2) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - change easing params for the transition animation and align backButton with the rest of the drawer content
+
+- [#10528](https://github.com/LedgerHQ/ledger-live/pull/10528) [`f2beeb0`](https://github.com/LedgerHQ/ledger-live/commit/f2beeb041debcc36ca828e2a52a77170e20f108b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - Add custom last row component to the virtual list. Move add account button at the bottom of the select account lit
+
+- [#10513](https://github.com/LedgerHQ/ledger-live/pull/10513) [`23c0b8a`](https://github.com/LedgerHQ/ledger-live/commit/23c0b8ac0932e762123cbb6b6243ca4f7e5a01e0) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - LLD MAD account count for network list
+
+- [#10493](https://github.com/LedgerHQ/ledger-live/pull/10493) [`b5e3217`](https://github.com/LedgerHQ/ledger-live/commit/b5e321789d3a6f9cb1916067790590640db0876f) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: catching missing address to better understand swap errors
+
+### Patch Changes
+
+- Updated dependencies [[`f2beeb0`](https://github.com/LedgerHQ/ledger-live/commit/f2beeb041debcc36ca828e2a52a77170e20f108b), [`23c0b8a`](https://github.com/LedgerHQ/ledger-live/commit/23c0b8ac0932e762123cbb6b6243ca4f7e5a01e0), [`ed51f4d`](https://github.com/LedgerHQ/ledger-live/commit/ed51f4df898fbb357f18f8466ad63327cb0b51b6), [`b5e3217`](https://github.com/LedgerHQ/ledger-live/commit/b5e321789d3a6f9cb1916067790590640db0876f)]:
+  - @ledgerhq/react-ui@0.29.0-nightly.3
+  - @ledgerhq/live-common@34.37.0-nightly.3
+  - @ledgerhq/errors@6.22.0-nightly.0
+  - @ledgerhq/live-dmk-desktop@0.5.0-nightly.3
+  - @ledgerhq/coin-framework@5.3.0-nightly.2
+  - @ledgerhq/coin-aptos@2.2.0-nightly.2
+  - @ledgerhq/coin-bitcoin@0.15.9-nightly.2
+  - @ledgerhq/coin-cosmos@0.15.1-nightly.2
+  - @ledgerhq/coin-evm@2.22.3-nightly.2
+  - @ledgerhq/coin-filecoin@1.9.9-nightly.2
+  - @ledgerhq/domain-service@1.2.32-nightly.2
+  - @ledgerhq/ledger-key-ring-protocol@0.5.9-nightly.0
+  - @ledgerhq/devices@8.4.7-nightly.0
+  - @ledgerhq/hw-transport@6.31.7-nightly.0
+  - @ledgerhq/hw-transport-http@6.30.7-nightly.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.31.8-nightly.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.7-nightly.0
+  - @ledgerhq/hw-transport-vault@1.3.7-nightly.0
+  - @ledgerhq/live-network@2.0.10-nightly.0
+  - @ledgerhq/live-countervalues@0.5.9-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.38-nightly.2
+  - @ledgerhq/live-nft@0.8.9-nightly.2
+  - @ledgerhq/live-nft-react@0.9.9-nightly.2
+  - @ledgerhq/live-wallet@0.10.12-nightly.2
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.7-nightly.0
+
 ## 2.117.0-nightly.2
 
 ### Minor Changes

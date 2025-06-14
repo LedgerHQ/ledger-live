@@ -1,5 +1,13 @@
 # @ledgerhq/react-ui
 
+## 0.29.0-nightly.3
+
+### Minor Changes
+
+- [#10528](https://github.com/LedgerHQ/ledger-live/pull/10528) [`f2beeb0`](https://github.com/LedgerHQ/ledger-live/commit/f2beeb041debcc36ca828e2a52a77170e20f108b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - Add custom last row component to the virtual list. Move add account button at the bottom of the select account lit
+
+- [#10513](https://github.com/LedgerHQ/ledger-live/pull/10513) [`23c0b8a`](https://github.com/LedgerHQ/ledger-live/commit/23c0b8ac0932e762123cbb6b6243ca4f7e5a01e0) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - LLD MAD account count for network list
+
 ## 0.29.0-nightly.2
 
 ### Minor Changes
