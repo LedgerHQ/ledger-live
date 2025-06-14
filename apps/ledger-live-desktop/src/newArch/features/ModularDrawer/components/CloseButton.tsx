@@ -5,38 +5,38 @@ import { AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion";
 
 type Props = {
-  onBackClick?: () => void;
+  onRequestClose: (mouseEvent: React.MouseEvent<Element, MouseEvent>) => void;
 };
 
-export const BackButtonArrow = ({ onBackClick }: Props) => {
-  const handleBackClick = onBackClick ? () => onBackClick() : undefined;
-
+export const CloseButton = ({ onRequestClose }: Props) => {
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode="sync">
       <motion.div
         key="mad-back-button"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1, transition: { duration: 0.3, ease: "easeIn" } }}
         exit={{ opacity: 0, transition: { duration: 0.3, ease: "easeIn" } }}
       >
-        <BackButton onClick={handleBackClick} data-testid="mad-back-button">
-          <Icons.ArrowLeft />
-        </BackButton>
+        <CloseIconWrapper onClick={onRequestClose} data-testid="mad-close-button">
+          <Icons.Close size="XS" />
+        </CloseIconWrapper>
       </motion.div>
     </AnimatePresence>
   );
 };
 
-const BackButton = styled.button`
-  background: none;
-  border: none;
+const CloseIconWrapper = styled.div`
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
+  width: 32px;
+  height: 32px;
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 16px;
+  right: 24px;
   z-index: 1000;
+  background-color: red;
+  border-radius: 1000px;
+  background-color: ${p => p.theme.colors.palette.opacityDefault.c05};
 `;

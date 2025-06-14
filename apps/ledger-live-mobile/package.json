@@ -118,6 +118,7 @@
     "@react-native-firebase/app": "22.2.0",
     "@react-native-firebase/messaging": "22.2.0",
     "@react-native-firebase/remote-config": "22.2.0",
+    "@react-native-community/blur": "4.4.1",
     "@react-native-masked-view/masked-view": "0.2.9",
     "@react-native/assets-registry": "0.77.2",
     "@react-native/gradle-plugin": "0.77.2",

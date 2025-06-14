@@ -104,7 +104,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         type: "ledger",
         explorerId: "eth",
       },
-      showNfts: true,
+      showNfts: false,
     },
   },
   config_currency_sonic: {
@@ -266,7 +266,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         type: "ledger",
         explorerId: "matic",
       },
-      showNfts: true,
+      showNfts: false,
     },
   },
   config_currency_reosc: {

@@ -9,6 +9,7 @@ import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers"
 import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { CloseButton } from "../components/CloseButton";
 
 function selectCurrency(
   onAssetSelected: (currency: CryptoOrTokenCurrency) => void,
@@ -32,6 +33,7 @@ function selectCurrency(
     },
     {
       onRequestClose: onClose,
+      closeButtonComponent: CloseButton,
     },
   );
 }

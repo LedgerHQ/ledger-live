@@ -77,7 +77,7 @@ export async function verifyStakeOperationDetailsInfo(
     await app.operationDetails.checkProvider(provider);
   }
   if (currenciesForRecipientAsProvider.includes(currency)) {
-    await app.operationDetails.checkRecipient(provider);
+    await app.operationDetails.checkRecipientAsProvider(provider);
   }
   if (currenciesForSender.includes(currency)) {
     await app.operationDetails.checkSender(delegation.account.address);

@@ -31,6 +31,7 @@ import {
   saveMarketState,
   saveTrustchainState,
   saveWalletExportState,
+  saveLargeMoverState,
 } from "./db";
 import {
   exportSelector as settingsExportSelector,
@@ -94,6 +95,7 @@ import { useDeviceManagementKitEnabled } from "@ledgerhq/live-dmk-mobile";
 import { StoragePerformanceOverlay } from "./newArch/storage/screens/PerformanceMonitor";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import AppGeoBlocker from "LLM/features/AppGeoblocker";
+import { exportLargeMoverSelector } from "./reducers/largeMover";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -250,6 +252,13 @@ function App() {
     throttle: 500,
     getChangesStats: (a, b) => walletStateExportShouldDiffer(a.wallet, b.wallet),
     lense: walletExportSelector,
+  });
+
+  useDBSaveEffect({
+    save: saveLargeMoverState,
+    throttle: 500,
+    getChangesStats: (a, b) => a.largeMover !== b.largeMover,
+    lense: exportLargeMoverSelector,
   });
 
   return (

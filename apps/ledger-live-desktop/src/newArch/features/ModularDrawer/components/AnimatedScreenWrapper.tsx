@@ -33,7 +33,7 @@ const AnimatedScreenWrapper = ({
       initial="enter"
       animate="center"
       exit="exit"
-      transition={{ duration: 0.3, ease: "easeInOut" }}
+      transition={{ duration: 0.3, ease: [0.3, 0, 0.3, 1] }}
       style={{
         position: "absolute",
         width: "100%",

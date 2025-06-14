@@ -13,13 +13,11 @@ type SelectAccountProps = {
   source: string;
   flow: string;
   detailedAccounts: DetailedAccount[];
+  bottomComponent: React.ReactNode;
 };
 
 const TITLE_HEIGHT = 52;
-const ROW_MARGIN = 8;
-const BUTTON_HEIGHT = 66;
-const MARGIN_BOTTOM = TITLE_HEIGHT + ROW_MARGIN + BUTTON_HEIGHT;
-const LIST_HEIGHT = `calc(100% - ${MARGIN_BOTTOM}px)`;
+const LIST_HEIGHT = `calc(100% - ${TITLE_HEIGHT}px)`;
 
 export const SelectAccountList = ({
   detailedAccounts,
@@ -27,6 +25,7 @@ export const SelectAccountList = ({
   source,
   flow,
   onAccountSelected,
+  bottomComponent,
 }: SelectAccountProps) => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
@@ -68,7 +67,11 @@ export const SelectAccountList = ({
 
   return (
     <ListWrapper customHeight={LIST_HEIGHT}>
-      <AccountList accounts={detailedAccountsWithName} onClick={onAccountClick} />
+      <AccountList
+        bottomComponent={bottomComponent}
+        accounts={detailedAccountsWithName}
+        onClick={onAccountClick}
+      />
     </ListWrapper>
   );
 };

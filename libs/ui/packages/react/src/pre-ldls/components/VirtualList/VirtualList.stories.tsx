@@ -103,6 +103,26 @@ export const Default: Story = {
   },
 };
 
+export const WithCustomLastRow: Story = {
+  render: args => {
+    const items = Array.from({ length: 5 }, (_, i) => i + 1);
+
+    return (
+      <VirtualList
+        {...args}
+        items={items}
+        renderItem={item => (
+          <div style={{ height: 50, backgroundColor: "lightgreen", border: "1px solid black" }}>
+            Item {item}
+          </div>
+        )}
+        bottomComponent={
+          <div style={{ height: 50, backgroundColor: "lightcoral" }}>End of List</div>
+        }
+      />
+    );
+  },
+};
 export const WithPagination: Story = {
   render: args => {
     const [items, setItems] = useState(Array.from({ length: 50 }, (_, i) => i));

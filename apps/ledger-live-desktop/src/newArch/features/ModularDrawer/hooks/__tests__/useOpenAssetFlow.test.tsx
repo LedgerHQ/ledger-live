@@ -71,6 +71,7 @@ describe("useOpenAssetFlow", () => {
         source: "test",
       },
       {
+        closeButtonComponent: expect.any(Function),
         onRequestClose: expect.any(Function),
       },
     );

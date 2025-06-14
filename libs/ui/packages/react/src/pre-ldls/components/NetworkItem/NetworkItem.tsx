@@ -4,7 +4,13 @@ import { withTokens } from "../../libs";
 import { Text } from "../../../components";
 import { CryptoIcon } from "../CryptoIcon/CryptoIcon";
 
-export type Network = { name: string; id: string; ticker: string };
+export type Network = {
+  name: string;
+  id: string;
+  ticker: string;
+  leftElement?: React.ReactNode;
+  rightElement?: React.ReactNode;
+};
 
 type NetworkItemProps = Network & {
   onClick: () => void;
@@ -16,6 +22,7 @@ const Wrapper = styled.div`
     "margin-s",
     "radius-s",
     "colors-content-default-default",
+    "colors-content-subdued-default-default", // used by leftElement child
     "colors-surface-transparent-hover",
     "colors-surface-transparent-pressed",
   )}
@@ -39,9 +46,23 @@ const InfoWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   margin-left: var(--margin-s);
+  flex: 1;
 `;
 
-export const NetworkItem = ({ name, onClick, id, ticker }: NetworkItemProps) => {
+const LeftElementWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+`;
+
+export const NetworkItem = ({
+  name,
+  onClick,
+  id,
+  ticker,
+  leftElement,
+  rightElement,
+}: NetworkItemProps) => {
   return (
     <Wrapper onClick={onClick}>
       <CryptoIcon size="48px" ledgerId={id} ticker={ticker} />
@@ -53,7 +74,9 @@ export const NetworkItem = ({ name, onClick, id, ticker }: NetworkItemProps) => 
         >
           {name}
         </Text>
+        <LeftElementWrapper>{leftElement}</LeftElementWrapper>
       </InfoWrapper>
+      {rightElement}
     </Wrapper>
   );
 };

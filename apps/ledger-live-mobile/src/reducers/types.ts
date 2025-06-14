@@ -371,6 +371,11 @@ export type WalletSyncState = {
   activateDrawerStep: Steps;
 };
 
+// === LARGEMOVER STATE ===
+
+export type LargeMoverState = {
+  tutorial: boolean;
+};
 // === ROOT STATE ===
 
 export type State = {
@@ -391,4 +396,5 @@ export type State = {
   wallet: WalletState;
   trustchain: TrustchainStore;
   walletSync: WalletSyncState;
+  largeMover: LargeMoverState;
 };

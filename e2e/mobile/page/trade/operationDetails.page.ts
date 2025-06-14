@@ -45,6 +45,13 @@ export default class OperationDetailsPage {
     await detoxExpect(recipientElement).toHaveText(expected);
   }
 
+  @Step("Check recipient as provider")
+  async checkRecipientAsProvider(recipientAddress: string) {
+    await scrollToId(this.recipientId);
+    const recipientElement = getElementById(this.recipientId);
+    await detoxExpect(recipientElement).toHaveText(recipientAddress);
+  }
+
   @Step("Check delegated provider")
   async checkProvider(provider: string) {
     await scrollToId(this.providerId);
