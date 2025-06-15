@@ -10,4 +10,5 @@ runSwapLandingPageTest(
   swapTestConfig.fromAccount,
   swapTestConfig.toAccount,
   swapTestConfig.tmsLinks,
+  ["@NanoSP", "@LNS", "@NanoX"],
 );

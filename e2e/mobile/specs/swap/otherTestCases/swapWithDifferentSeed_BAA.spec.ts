@@ -13,4 +13,5 @@ runSwapWithDifferentSeedTest(
   swapTestConfig.userData,
   swapTestConfig.errorMessage,
   swapTestConfig.tmsLinks,
+  ["@NanoSP", "@LNS", "@NanoX"],
 );

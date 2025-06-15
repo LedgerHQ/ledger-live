@@ -13,4 +13,5 @@ runSwapWithoutAccountTest(
   noAccountFromAndToTestConfig.testTitle,
   noAccountFromAndToTestConfig.tmsLinks,
   "noAccountFromAndTo",
+  ["@NanoSP", "@LNS", "@NanoX"],
 );
