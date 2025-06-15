@@ -41,6 +41,7 @@ export function runSwapWithoutAccountTest(
   testTitle: string,
   tmsLinks: string[],
   event: "noAccountTo" | "noAccountFrom" | "noAccountFromAndTo",
+  tags: string[],
 ) {
   const handleAssetSwap = async (asset: Account, hasAccount: boolean) => {
     await app.common.performSearch(asset.currency.name);
@@ -74,6 +75,7 @@ export function runSwapWithoutAccountTest(
     });
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
     it(`${testTitle} - LLM`, async () => {
       const debitAsset = event === "noAccountFrom" ? asset2 : asset1;
       const creditAsset = event === "noAccountFrom" ? asset1 : asset2;
@@ -92,6 +94,7 @@ export function runSwapWithDifferentSeedTest(
   userData: string,
   errorMessage: string,
   tmsLinks: string[],
+  tags: string[],
 ) {
   describe("Swap - Using different seed", () => {
     setupEnv(true);
@@ -105,6 +108,7 @@ export function runSwapWithDifferentSeedTest(
     });
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
     it(`Swap using a different seed - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name} - LLM`, async () => {
       const minAmount = await app.swap.getMinimumAmount(swap.accountToDebit, swap.accountToCredit);
       await performSwapUntilQuoteSelectionStep(swap, minAmount);
@@ -121,6 +125,7 @@ export function runSwapLandingPageTest(
   fromAccount: Account,
   toAccount: Account,
   tmsLinks: string[],
+  tags: string[],
 ) {
   setupEnv(true);
 
@@ -143,6 +148,7 @@ export function runSwapLandingPageTest(
     });
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
     test("Swap landing page - LLM", async () => {
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
       const swap = new Swap(fromAccount, toAccount, minAmount);
