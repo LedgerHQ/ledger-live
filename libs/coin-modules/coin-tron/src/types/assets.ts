@@ -1,5 +1,4 @@
-import { Asset, StringMemo } from "@ledgerhq/coin-framework/api/types";
-import { MemoNotSupported } from "@ledgerhq/coin-framework/lib-es/api/types";
+import { Asset } from "@ledgerhq/coin-framework/api/types";
 
 export type TronToken = Trc10Token | Trc20Token;
 export type TronAsset = Asset<TronToken>;
@@ -34,6 +33,3 @@ export type Trc20Token = {
   standard: "trc20";
   contractAddress: string;
 };
-
-// Since memo is not always present and depends on transaction type (e.g. not allowed for TRC20):
-export type TronMemo = MemoNotSupported | StringMemo<"memo">;
