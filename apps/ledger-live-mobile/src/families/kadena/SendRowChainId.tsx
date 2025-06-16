@@ -118,9 +118,6 @@ export default function SendRowChainID({ account, navigation, route }: Props) {
   );
 }
 const styles = StyleSheet.create({
-  commentContainer: {
-    flexDirection: "row",
-  },
   tagText: {
     fontSize: 14,
   },
@@ -128,8 +125,5 @@ const styles = StyleSheet.create({
     textDecorationStyle: "solid",
     textDecorationLine: "underline",
     marginLeft: 8,
-  },
-  comment: {
-    marginBottom: 10,
   },
 });

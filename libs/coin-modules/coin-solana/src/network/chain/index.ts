@@ -1,4 +1,6 @@
-import ky from "ky";
+import { NetworkError } from "@ledgerhq/errors";
+import { getEnv } from "@ledgerhq/live-env";
+import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import {
   TOKEN_2022_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
@@ -6,22 +8,24 @@ import {
   getMinimumBalanceForRentExemptAccount,
 } from "@solana/spl-token";
 import {
+  BlockhashWithExpiryBlockHeight,
+  Commitment,
+  ComputeBudgetProgram,
   Connection,
   FetchMiddleware,
+  GetLatestBlockhashConfig,
   PublicKey,
+  SendTransactionError,
   SignaturesForAddressOptions,
   StakeProgram,
   TransactionInstruction,
-  ComputeBudgetProgram,
-  VersionedTransaction,
   TransactionMessage,
-  SendTransactionError,
-  BlockhashWithExpiryBlockHeight,
-  Commitment,
-  GetLatestBlockhashConfig,
+  VersionedMessage,
+  VersionedTransaction,
 } from "@solana/web3.js";
-import { Awaited } from "../../logic";
+import ky from "ky";
 import { getTokenAccountProgramId } from "../../helpers/token";
+import { Awaited } from "../../logic";
 import { SolanaTokenProgram } from "../../types";
 
 export const LATEST_BLOCKHASH_MOCK = "EEbZs6DmDyDjucyYbo3LwVJU7pQYuVopYcYTSEZXskW3";

@@ -32,7 +32,7 @@ const OperationDetailsExtra = ({
           <OpDetailsData
             style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}
           >
-            <Trans i18nKey="send.steps.details.transferCrossChainWarning" />
+            <Trans i18nKey="errors.KadenaCrossChainTransfer.title" />
           </OpDetailsData>
         </OpDetailsSection>
       ) : null}

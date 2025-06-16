@@ -48,7 +48,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       },
     },
     {
-      title: "ign Transaction?",
+      title: "Sign Transaction?",
       button: SpeculosButton.RIGHT,
     },
     {

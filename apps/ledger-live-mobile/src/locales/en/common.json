@@ -2638,8 +2638,7 @@
       "stakedAmount": "Staked amount",
       "accountCreationFee": "Account Creation Fee",
       "senderChainId": "Sender Chain ID",
-      "receiverChainId": "Receiver Chain ID",
-      "completeCrossChainTransfer": "Complete transaction"
+      "receiverChainId": "Receiver Chain ID"
     },
     "multipleAddresses": "Why multiple addresses?",
     "tokenName": "Token Name",
