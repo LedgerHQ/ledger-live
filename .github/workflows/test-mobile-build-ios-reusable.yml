@@ -37,6 +37,10 @@ on:
         required: false
         type: string
         default: "detox-ios-js-cache"
+    outputs:
+      js-bundle-size:
+        description: The JS bundle size of the built app
+        value: ${{ jobs.build-ios-js.outputs.js-bundle-size }}
 
   workflow_dispatch:
     inputs:
@@ -174,6 +178,8 @@ jobs:
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
     runs-on: [ ledger-live-4xlarge ]
+    outputs:
+      js-bundle-size: ${{ steps.output-js-bundle-size.outputs.size }}
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -221,7 +227,8 @@ jobs:
         run: pnpm mobile e2e:ci -p ios --bundle
 
       - name: Output bundle size for analysis
-        run: ls -l ${{ github.workspace }}/apps/ledger-live-mobile/main.jsbundle  | cut -d " " -f5
+        id: output-js-bundle-size
+        run: echo size=`ls -l ${{ github.workspace }}/apps/ledger-live-mobile/main.jsbundle  | cut -d " " -f5` >> $GITHUB_OUTPUT
 
       - name: Upload Detox JS Build
         uses: tespkg/actions-cache/save@v1
