@@ -18,6 +18,15 @@ const onNetworkSelected = fn();
 
 const store = createStore(() => ({
   accounts: [ETH_ACCOUNT, ARB_ACCOUNT],
+  //   wallet: {
+  //   accountNames: new Map([
+  //     ["bitcoin1", "bitcoin-account-1"],
+  //     ["ethereum1", "ethereum-account-1"],
+  //     ["arbitrum1", "arbitrum-account-1"],
+  //   ]),
+  // },
+  // discreet: false,
+  // locale: "en-US",
   currency: {
     type: "FiatCurrency",
     ticker: "USD",

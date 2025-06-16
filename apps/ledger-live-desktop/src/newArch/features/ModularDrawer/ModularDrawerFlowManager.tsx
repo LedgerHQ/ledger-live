@@ -28,7 +28,7 @@ import {
 import { addTestnetCurrencies } from "LLD/utils/testnetCurrencies";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 
-type Props = {
+export type ModularDrawerFlowManagerProps = {
   currencies: CryptoOrTokenCurrency[];
   drawerConfiguration?: EnhancedModularDrawerConfiguration;
   accounts$?: Observable<WalletAPIAccount[]>;
@@ -57,7 +57,7 @@ const ModularDrawerFlowManager = ({
   source,
   onAssetSelected,
   onAccountSelected,
-}: Props) => {
+}: ModularDrawerFlowManagerProps) => {
   const devMode = useEnv("MANAGER_DEV_MODE");
   const featureModularDrawer = useFeature("lldModularDrawer");
   const modularizationEnabled = featureModularDrawer?.params?.enableModularization ?? false;

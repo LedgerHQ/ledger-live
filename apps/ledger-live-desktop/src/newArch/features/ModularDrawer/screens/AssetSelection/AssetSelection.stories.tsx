@@ -10,7 +10,7 @@ import {
 import { fn } from "@storybook/test";
 import { Provider } from "react-redux";
 import { legacy_createStore as createStore } from "redux";
-import { MOCKED_ARB_ACCOUNT } from "../../__mocks__/accounts.mock";
+import { ARB_ACCOUNT } from "../../__mocks__/accounts.mock";
 
 const assetsToDisplay = [ethereumCurrency, arbitrumCurrency, bitcoinCurrency];
 const sortedCryptoCurrencies = [bitcoinCurrency, ethereumCurrency, arbitrumCurrency];
@@ -19,7 +19,7 @@ const setAssetsToDisplay = fn();
 const setSearchedValue = fn();
 
 const defaultStore = {
-  accounts: [MOCKED_ARB_ACCOUNT],
+  accounts: [ARB_ACCOUNT],
   wallet: {
     accountNames: new Map([
       ["bitcoin1", "bitcoin-account-1"],
