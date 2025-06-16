@@ -3193,6 +3193,12 @@
         "placeholder" : "Info des Börsenanbieters im CAL-Format",
         "currentSetting" : "Aktuelle Einstellung",
         "error" : "Ungültiger CAL-Wert"
+      },
+      "customCALRef" : {
+        "title" : "Benutzerdefinierte CAL-Referenz",
+        "description" : "Gib einen individuellen Branch, Commit oder Tag an, der für alle CAL-Anfragen verwendet werden sollen.",
+        "enable" : "Benutzerdefinierte CAL-Referenz aktivieren",
+        "disable" : "Benutzerdefinierte CAL-Referenz deaktivieren"
       }
     },
     "debug" : {
@@ -7438,5 +7444,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Nicht am Ort verfügbar",
+    "description" : "Eine Ledger-Wallet ist an diesem Standort nicht verfügbar.",
+    "learnMore" : "Weitere Informationen"
   }
 }
