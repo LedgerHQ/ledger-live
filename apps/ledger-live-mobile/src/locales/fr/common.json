@@ -2747,7 +2747,7 @@
         "title" : "Retirer ce compte du Portefeuille",
         "desc" : "Les données enregistrées seront effacées.",
         "confirmationTitle" : "Êtes-vous sûr(e) ?",
-        "confirmationDesc" : "Cela n’a pas d’effet sur vos crypto-actifs. Vous pourrez de nouveau ajouter vos comptes existants.",
+        "confirmationDesc" : "Cela n’a pas d’effet sur vos crypto-actifs. Vous pourrez de nouveau ajouter vos comptes.",
         "confirmationWarn" : "L’historique de vos transactions de swap en lien avec ce compte sera effacé."
       },
       "archive" : {
@@ -3193,6 +3193,12 @@
         "placeholder" : "Infos prestataire Exchange (CAL)",
         "currentSetting" : "Configuration actuelle",
         "error" : "Valeur CAL non valide"
+      },
+      "customCALRef" : {
+        "title" : "Référence CAL personnalisée",
+        "description" : "Définissez une branche, un commit ou un tag personnalisé à utiliser pour toutes les requêtes CAL.",
+        "enable" : "Activer la réf. CAL personnalisée",
+        "disable" : "Désactiver la réf. CAL personnalisée"
       }
     },
     "debug" : {
@@ -4105,7 +4111,7 @@
     "added_plural" : "{{count}} comptes ajoutés à votre portefeuille",
     "sections" : {
       "importable" : {
-        "title" : "Ajouter un compte existant"
+        "title" : "Ajouter un compte"
       },
       "creatable" : {
         "title" : "Ajouter un nouveau compte"
@@ -4164,7 +4170,7 @@
       "title" : "Sélectionnez le compte à ajouter",
       "ctaStopScan" : "Arrêter le balayage",
       "confirm" : "Confirmer",
-      "scanningTitle" : "Recherche des comptes existant déjà sur la blockchain...",
+      "scanningTitle" : "Recherche des comptes déjà présents sur la blockchain...",
       "whichAddressType" : "Apprenez à choisir un type d’adresse",
       "sections" : {
         "importable" : {
@@ -7438,5 +7444,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Région indisponible",
+    "description" : "L’application n’est pas disponible dans ce pays/région.",
+    "learnMore" : "En savoir plus"
   }
 }
