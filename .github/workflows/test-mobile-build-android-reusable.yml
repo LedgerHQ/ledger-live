@@ -217,6 +217,7 @@ jobs:
       - name: Test
         run: |
           ls -l ${{ env.ANDROID_JSBUNDLE_PATH }}
+          ls -lh ${{ env.ANDROID_JSBUNDLE_PATH }}
           ls -s ${{ env.ANDROID_JSBUNDLE_PATH }}
           stat ${{ env.ANDROID_JSBUNDLE_PATH }}
 
