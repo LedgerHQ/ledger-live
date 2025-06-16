@@ -214,17 +214,9 @@ jobs:
       - name: Build JS Bundle app for Detox test run
         run: pnpm mobile e2e:ci -p android --bundle
 
-      - name: Test
-        run: |
-          ls -l ${{ env.ANDROID_JSBUNDLE_PATH }}
-          ls -lh ${{ env.ANDROID_JSBUNDLE_PATH }}
-          ls -s ${{ env.ANDROID_JSBUNDLE_PATH }}
-          stat ${{ env.ANDROID_JSBUNDLE_PATH }}
-
       - name: Output bundle size for analysis
         id: output-js-bundle-size
         run: |
-          ls -l ${{ env.ANDROID_JSBUNDLE_PATH }}  | cut -d " " -f5
           echo size=`ls -l ${{ env.ANDROID_JSBUNDLE_PATH }}  | cut -d " " -f5` >> $GITHUB_OUTPUT
 
       - name: Upload Detox JS Build
