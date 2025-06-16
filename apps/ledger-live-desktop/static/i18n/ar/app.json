@@ -1925,7 +1925,8 @@
       "payoutNetworkFees" : "رسوم الدفع",
       "payoutNetworkFeesTooltip" : "هذا المبلغ لن يظهر على جهازك",
       "acceptTerms" : "بتأكيد صحة هذه المعاملة، أنا أقبل\n<0>شروط استخدام {{provider}}</0>",
-      "exodusAcceptTerms" : "Exodus تعتمد على أطراف ثالثة لإجراء المبادلات.\nبتأكيد صحة هذه المعاملة، أنا أقبل <0>شروط استخدام Exodus</0>"
+      "exodusAcceptTerms" : "Exodus تعتمد على أطراف ثالثة لإجراء المبادلات.\nبتأكيد صحة هذه المعاملة، أنا أقبل <0>شروط استخدام Exodus</0>",
+      "changellyAcceptTerms" : "بالنقر على ”Swap with Changelly (المبادلة بواسطة Changelly)“ أنت تقبل <0>شروط استخدام</0> Changelly و\n<1>سياسة مكافحة غسل الأموال/KYC (اعرف عميلك)</1> الخاصة بها. Changelly قد تطبق إجراءات مكافحة غسل الأموال/KYC (اعرف عميلك) والتي\nيمكن، في حالات محدودة، أن تؤثر على إتمام معاملتك. إذا\nحدث هذا، يجب عليك التواصل مع <2>دعم عملاء</2> Changelly."
     },
     "swap2" : {
       "amountSent" : "المبلغ المطلوب إرساله",
@@ -6594,6 +6595,19 @@
     },
     "AmountTooSmall" : {
       "title" : "الحد الأدنى للمبلغ المطلوب لهذه المعاملة هو {{amount}}"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "إبقاؤك آمناً",
+      "description" : "هذه المعاملة تتضمن عنوان محفظة خاضع لعقوبات ولا يمكن معالجتها.<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForSendError" : {
+      "title" : "هذه المعاملة تتضمن عنوان محفظة خاضع لعقوبات ولا يمكن معالجتها<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForStakingError" : {
+      "title" : "هذه المعاملة تتضمن عنوان محفظة<br/> خاضع لعقوبات ولا يمكن معالجتها.<br/>-- {{sanctionedAddress}}<br/>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "هذه المعاملة تتضمن عنوان محفظة خاضع لعقوبات ولا يمكن معالجتها."
     }
   },
   "cryptoOrg" : {
@@ -7056,13 +7070,13 @@
     }
   },
   "modularAssetDrawer" : {
+    "addAccounts" : "اختر الحسابات التي ترغب في إضافتها",
+    "scanAccounts" : "جارٍ البحث عن أي حسابات قائمة على سلسلة الكتل (blockchain)...",
+    "connectYourDevice" : "قم بتوصيل جهازك وإلغاء قفله",
     "searchPlaceholder" : "بحث",
-    "assetFlow" : {
-      "selectTemplate" : "اختر {{dynamic}}",
-      "asset" : "أصل",
-      "network" : "الشبكة",
-      "account" : "حساب"
-    }
+    "selectAsset" : "اختر أصل",
+    "selectNetwork" : "اختر الشبكة",
+    "selectAccount" : "اختر حساب"
   },
   "nftEntryPoint" : {
     "title" : "الرموز غير القابلة للاستبدال (NFT)",
@@ -7070,5 +7084,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "الموقع غير متاح",
+    "description" : "محفظة Ledger غير متاحة في هذا الموقع.",
+    "learnMore" : "تعرّف على المزيد"
   }
 }
