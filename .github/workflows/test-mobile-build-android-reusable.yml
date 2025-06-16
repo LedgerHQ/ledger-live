@@ -215,7 +215,9 @@ jobs:
         run: pnpm mobile e2e:ci -p android --bundle
 
       - name: Test
-        run: ls -l ${{ env.ANDROID_JSBUNDLE_PATH }}
+        run: |
+          ls -l ${{ env.ANDROID_JSBUNDLE_PATH }}
+          stat ${{ env.ANDROID_JSBUNDLE_PATH }}
 
       - name: Output bundle size for analysis
         id: output-js-bundle-size
