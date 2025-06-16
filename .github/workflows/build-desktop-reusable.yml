@@ -1,4 +1,4 @@
-name: "[Mobile] - Mock Test - Called"
+name: "[Mobile] - Mock Test - Called -GP"
 on:
   workflow_dispatch:
     inputs:
@@ -27,4 +27,4 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@support/mac-debug
     secrets: inherit
     with:
-      macos-specificity-runner-label: "performance-pool"
+      macos-specificity-runner-label: "general-pool"
