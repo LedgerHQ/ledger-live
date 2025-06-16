@@ -3,9 +3,13 @@ import { Network } from "@ledgerhq/react-ui/pre-ldls/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { composeHooks } from "LLD/utils/composeHooks";
 import { useLeftAccountsModule } from "./useLeftAccountsModule";
+import { useRightBalanceModule } from "./useRightBalanceModule";
+import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 
 type Props = {
   networksConfig: EnhancedModularDrawerConfiguration["networks"];
+  currenciesByProvider: CurrenciesByProviderId[];
+  selectedAssetId: string;
 };
 
 const getLeftElement = (leftElement: string) => {
@@ -19,16 +23,43 @@ const getLeftElement = (leftElement: string) => {
   }
 };
 
+const getRightElement = (rightElement: string) => {
+  switch (rightElement) {
+    case "balance":
+      return useRightBalanceModule;
+    case "undefined":
+    default:
+      return undefined;
+  }
+};
+
 const createNetworkConfigurationHook = ({
   networksConfig,
+  selectedAssetId,
+  currenciesByProvider,
 }: Props): ((assets: CryptoOrTokenCurrency[]) => (CryptoOrTokenCurrency & Network)[]) => {
-  const { leftElement = "undefined" } = networksConfig ?? {};
+  const { leftElement = "undefined", rightElement = "undefined" } = networksConfig ?? {};
 
   const leftHook = getLeftElement(leftElement);
+  const rightHook = getRightElement(rightElement);
 
-  const hooks = [leftHook].filter(Boolean) as Array<(assets: CryptoOrTokenCurrency[]) => Network[]>;
+  const hooks = [rightHook, leftHook].filter(Boolean) as Array<
+    (
+      assets: CryptoOrTokenCurrency[],
+      selectedAssetId?: string,
+      currenciesByProvider?: CurrenciesByProviderId[],
+    ) => Network[]
+  >;
 
-  return composeHooks<CryptoOrTokenCurrency, Network>(...hooks);
+  return (assets: CryptoOrTokenCurrency[]) => {
+    const composedHook = composeHooks<CryptoOrTokenCurrency, Network>(
+      ...hooks.map(
+        hook => (assets: CryptoOrTokenCurrency[]) =>
+          hook(assets, selectedAssetId, currenciesByProvider),
+      ),
+    );
+    return composedHook(assets);
+  };
 };
 
 export default createNetworkConfigurationHook;
