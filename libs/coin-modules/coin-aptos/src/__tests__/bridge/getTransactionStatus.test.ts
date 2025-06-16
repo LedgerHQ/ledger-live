@@ -13,7 +13,9 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   NotEnoughStakedBalanceLeft,
+  NotEnoughToRestake,
   NotEnoughToStake,
+  NotEnoughToUnstake,
   RecipientRequired,
 } from "@ledgerhq/errors";
 import { MIN_COINS_ON_SHARES_POOL } from "../../constants";
@@ -462,7 +464,7 @@ describe("getTransactionStatus Test", () => {
     expect(result).toMatchObject(expected);
   });
 
-  it(`should return not enough balance to stake if trying to restake but it is less than ${MIN_COINS_ON_SHARES_POOL} APT`, async () => {
+  it(`should return not enough amount if trying to restake but it is less than ${MIN_COINS_ON_SHARES_POOL} APT`, async () => {
     const account = createFixtureAccount({
       balance: BigNumber(4),
       spendableBalance: BigNumber(4),
@@ -480,7 +482,7 @@ describe("getTransactionStatus Test", () => {
 
     const expected = {
       errors: {
-        amount: new NotEnoughStakedBalanceLeft(),
+        amount: new NotEnoughToRestake(),
       },
     };
 
@@ -506,7 +508,7 @@ describe("getTransactionStatus Test", () => {
     expect(result).toMatchObject(expected);
   });
 
-  it(`should return not enough staked balance left if the amount left in stake is less than ${MIN_COINS_ON_SHARES_POOL} APT`, async () => {
+  it(`should return not enough to unstake if the amount to unstake is less than ${MIN_COINS_ON_SHARES_POOL} APT`, async () => {
     const account = createFixtureAccount({
       balance: BigNumber(4),
       spendableBalance: BigNumber(4),
@@ -524,7 +526,7 @@ describe("getTransactionStatus Test", () => {
 
     const expected = {
       errors: {
-        amount: new NotEnoughStakedBalanceLeft(),
+        amount: new NotEnoughToUnstake(),
       },
     };
 

@@ -2202,7 +2202,7 @@ describe("getStake", () => {
     mockedAptosAPI.mockImplementation(() => ({
       getAccountInfo: mockGetAccountInfo,
       getDelegatorBalanceInPool: mockedGetDelegatorBalanceInPool,
-      getBalance: mockGetBalance,
+      getBalances: mockGetBalance,
     }));
 
     jest.mocked(mergeOps).mockReturnValue(operations);
