@@ -1925,7 +1925,8 @@
       "payoutNetworkFees" : "Taxas de pagamento",
       "payoutNetworkFeesTooltip" : "Esta quantia não será mostrada no seu dispositivo",
       "acceptTerms" : "Ao validar esta transação, eu aceito\n<0>os termos de uso da {{provider}}</0>",
-      "exodusAcceptTerms" : "A Exodus depende de terceiros para realizar swaps.\nAo validar esta transação, eu aceito os <0>termos de uso da Exodus</0>"
+      "exodusAcceptTerms" : "A Exodus depende de terceiros para realizar swaps.\nAo validar esta transação, eu aceito os <0>termos de uso da Exodus</0>",
+      "changellyAcceptTerms" : "Ao clicar em “Trocar com a Changelly”, você aceita os <0>Termos de Uso</0> da Changelly e\nsua <1>política de AML/KYC</1> A Changelly pode aplicar procedimentos AML/KYC que\npodem, em casos limitados, afetar a conclusão de sua transação. Caso isso\naconteça, você deve entrar em contato com o <2>suporte ao cliente</2> da Changelly."
     },
     "swap2" : {
       "amountSent" : "Quantia a enviar",
@@ -6594,6 +6595,19 @@
     },
     "AmountTooSmall" : {
       "title" : "A quantia mínima exigida para esta transação é {{amount}}"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "Mantendo você em segurança",
+      "description" : "Esta transação envolve um endereço de carteira sancionado e não pode ser processada.<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForSendError" : {
+      "title" : "Esta transação envolve um endereço de carteira sancionado e não pode ser processada<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForStakingError" : {
+      "title" : "Esta transação envolve um endereço de carteira sancionado<br/>e não pode ser processada.<br/>-- {{sanctionedAddress}}<br/>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "Esta transação envolve um endereço de carteira sancionado e não pode ser processada."
     }
   },
   "cryptoOrg" : {
@@ -7056,13 +7070,13 @@
     }
   },
   "modularAssetDrawer" : {
+    "addAccounts" : "Selecione as contas que você deseja adicionar",
+    "scanAccounts" : "Procurando por contas existentes na blockchain...",
+    "connectYourDevice" : "Conecte e desbloqueie seu dispositivo",
     "searchPlaceholder" : "Buscar",
-    "assetFlow" : {
-      "selectTemplate" : "Selecionar {{dynamic}}",
-      "asset" : "ativo",
-      "network" : "rede",
-      "account" : "conta"
-    }
+    "selectAsset" : "Selecionar ativo",
+    "selectNetwork" : "Selecione a rede",
+    "selectAccount" : "Selecionar conta"
   },
   "nftEntryPoint" : {
     "title" : "NFT (Tokens Não Fungíveis)",
@@ -7070,5 +7084,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Local indisponível",
+    "description" : "A carteira Ledger não está disponível neste local.",
+    "learnMore" : "Saiba mais"
   }
 }
