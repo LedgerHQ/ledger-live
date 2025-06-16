@@ -3193,6 +3193,12 @@
         "placeholder" : "Info. do provedor de Exchange em formato CAL",
         "currentSetting" : "Configuração Atual",
         "error" : "Valor de CAL inválido"
+      },
+      "customCALRef" : {
+        "title" : "Referência CAL personalizada",
+        "description" : "Especificar um branch, commit ou tag personalizado a ser usado para todas as solicitações CAL",
+        "enable" : "Habilitar referência CAL personalizada",
+        "disable" : "Desabilitar referência CAL personalizada"
       }
     },
     "debug" : {
@@ -7438,5 +7444,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Local indisponível",
+    "description" : "A carteira Ledger não está disponível neste local.",
+    "learnMore" : "Saiba mais"
   }
 }
