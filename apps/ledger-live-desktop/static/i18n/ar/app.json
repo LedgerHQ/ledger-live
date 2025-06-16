@@ -7057,12 +7057,9 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "بحث",
-    "assetFlow" : {
-      "selectTemplate" : "اختر {{dynamic}}",
-      "asset" : "أصل",
-      "network" : "الشبكة",
-      "account" : "حساب"
-    }
+    "selectAsset" : "اختر أصل",
+    "selectNetwork" : "اختر الشبكة",
+    "selectAccount" : "اختر حساب"
   },
   "nftEntryPoint" : {
     "title" : "الرموز غير القابلة للاستبدال (NFT)",
@@ -7070,5 +7067,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "الموقع غير متاح",
+    "description" : "محفظة Ledger غير متاحة في هذا الموقع.",
+    "learnMore" : "تعرّف على المزيد"
   }
 }
