@@ -208,6 +208,9 @@ jobs:
       - name: Build JS Bundle app for Detox test run
         run: pnpm mobile e2e:ci -p android --bundle
 
+      - name: Output bundle size for analysis
+        run: ls -l ${{ env.ANDROID_JSBUNDLE_PATH }}  | cut -d " " -f7
+
       - name: Upload Detox JS Build
         uses: tespkg/actions-cache/save@v1
         with:
