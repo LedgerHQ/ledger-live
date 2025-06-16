@@ -1,9 +1,9 @@
 ---
-"@ledgerhq/coin-bitcoin": major
-"@ledgerhq/coin-cardano": major
-"ledger-live-desktop": major
-"live-mobile": major
-"@ledgerhq/live-common": major
+"@ledgerhq/coin-bitcoin": minor
+"@ledgerhq/coin-cardano": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
+"@ledgerhq/live-common": minor
 "@ledgerhq/coin-framework": minor
 ---
 

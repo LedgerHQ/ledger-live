@@ -457,7 +457,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
           </Button>
         </Flex>
       </Flex>
-      {isUserAddressSanctioned === true ? (
+      {isUserAddressSanctioned ? (
         <SanctionedAccountModal
           userAddress={account.type === "Account" ? account.freshAddress : ""}
           onClose={onClose}

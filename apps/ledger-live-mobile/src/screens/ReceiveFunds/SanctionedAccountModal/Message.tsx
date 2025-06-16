@@ -4,6 +4,7 @@ import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import { track } from "~/analytics";
 import { Linking } from "react-native";
 import { urls } from "~/utils/urls";
+import { useLocalizedUrl } from "~/newArch/hooks/useLocalizedUrls";
 
 type Props = {
   onClose: () => void;
@@ -19,6 +20,7 @@ const Message = ({ userAddress, onClose }: Props) => {
     });
     onClose();
   }, [onClose]);
+  const learnMoreUrl = useLocalizedUrl(urls.errors["UserAddressSanctionedError"]);
   return (
     <Flex flex={1} justifyContent="center" mt={3}>
       <Text variant="h4" fontWeight="semiBold" color="neutral.c100" lineHeight="31.2px">
@@ -41,7 +43,7 @@ const Message = ({ userAddress, onClose }: Props) => {
             Link: (
               <Text
                 style={{ textDecorationLine: "underline" }}
-                onPress={() => Linking.openURL(urls.errors["UserAddressSanctionedError"])}
+                onPress={() => Linking.openURL(learnMoreUrl)}
               ></Text>
             ),
           }}

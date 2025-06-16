@@ -83,7 +83,7 @@ export type StepProps = {
   onClose: () => void;
   currencyName: string | undefined | null;
   isFromPostOnboardingEntryPoint?: boolean;
-  accountError?: Error | undefined;
+  accountError?: Error;
 };
 export type St = Step<StepId, StepProps>;
 const createSteps = (): Array<St> => [
@@ -157,12 +157,8 @@ const Body = ({
       if (addressBlacklisted && account.type === "Account") {
         setAccountError(new UserAddressSanctionedOnReceiveError(account.freshAddress));
       } else {
-        const error = account ? getReceiveFlowError(account, parentAccount) : null;
-        if (error) {
-          setAccountError(error);
-        } else {
-          setAccountError(undefined);
-        }
+        const error = account ? getReceiveFlowError(account, parentAccount) : undefined;
+        setAccountError(error);
       }
     },
     [setParentAccount, setAccount],
@@ -228,12 +224,8 @@ const Body = ({
       if (addressBlacklisted && account.type === "Account") {
         setAccountError(new UserAddressSanctionedOnReceiveError(account.freshAddress));
       } else {
-        const error = account ? getReceiveFlowError(account, parentAccount) : null;
-        if (error) {
-          setAccountError(error);
-        } else {
-          setAccountError(undefined);
-        }
+        const error = account ? getReceiveFlowError(account, parentAccount) : undefined;
+        setAccountError(error);
       }
     }
 
