@@ -1925,7 +1925,8 @@
       "payoutNetworkFees" : "Auszahlungsgebühren",
       "payoutNetworkFeesTooltip" : "Dieser Betrag wird nicht auf Ihrem Gerät angezeigt",
       "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von {{provider}}</0> zu.",
-      "exodusAcceptTerms" : "Exodus greift bei der Abwicklung von Swaps auf Drittanbieter zurück.\nDurch Validieren dieser Transaktion stimme ich den <0>Nutzungsbedingungen von Exodus</0> zu."
+      "exodusAcceptTerms" : "Exodus greift bei der Abwicklung von Swaps auf Drittanbieter zurück.\nDurch Validieren dieser Transaktion stimme ich den <0>Nutzungsbedingungen von Exodus</0> zu.",
+      "changellyAcceptTerms" : "Durch Klicken auf „Mit Changelly swappen“ stimmst du den <0>Nutzungsbedingungen</0> von Changelly sowie \nder <1>AML-/KYC-Richtlinie</1> zu. Changelly ist zur Anwendung von AML-/KYC-Verfahren berechtigt, \ndie in seltenen Fällen den Abschluss deiner Transaktion beeinträchtigen können. In einem solchen Fall\n musst du dich mit dem <2>Kundenservice</2> von Changelly in Verbindung setzen."
     },
     "swap2" : {
       "amountSent" : "Zu sendender Betrag",
@@ -4405,6 +4406,8 @@
       "mockAppUpdateDesc" : "Zeigt das verfügbare App-Update unter „My Ledger“ an. Dieselbe App-Version wird erneut installiert.",
       "catalogUrl" : "Anbieter Katalog-Apps festlegen",
       "catalogUrlDesc" : "Geben Sie die benutzerdefinierte URL Ihres Kataloganbieters ein",
+      "customCALRef" : "Benutzerdefinierte CAL-Referenz",
+      "customCALRefDesc" : "Gib einen individuellen Branch, Commit oder Tag an, der für alle CAL-Anfragen verwendet werden sollen.",
       "enablePlatformDevTools" : "Plattform-Entwicklungswerkzeuge aktivieren",
       "enablePlatformDevToolsDesc" : "Aktivieren Sie das Öffnen des Entwicklerwerkzeug-Fensters für Plattform-Apps",
       "customLockScreen" : "Individuelle Sperrbildschirm-Elemente",
@@ -6594,6 +6597,19 @@
     },
     "AmountTooSmall" : {
       "title" : "Der Mindestbetrag für diese Transaktion beläuft sich auf {{amount}}"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "Wir sorgen für deine Sicherheit",
+      "description" : "Diese Transaktion bezieht sich auf eine gesperrte Wallet-Adresse und kann nicht verarbeitet werden.<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForSendError" : {
+      "title" : "Diese Transaktion bezieht sich auf eine gesperrte Wallet-Adresse und kann nicht verarbeitet werden<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForStakingError" : {
+      "title" : "Diese Transaktion bezieht sich auf eine gesperrte Wallet-<br/>Adresse und kann nicht verarbeitet werden.<br/>-- {{sanctionedAddress}}<br/>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "Diese Transaktion bezieht sich auf eine gesperrte Wallet-Adresse und kann nicht verarbeitet werden."
     }
   },
   "cryptoOrg" : {
@@ -7057,12 +7073,9 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "Suche",
-    "assetFlow" : {
-      "selectTemplate" : "{{dynamic}} auswählen",
-      "asset" : "Asset",
-      "network" : "Netzwerk",
-      "account" : "Konto"
-    }
+    "selectAsset" : "Vermögenswert auswählen",
+    "selectNetwork" : "Netzwerk auswählen",
+    "selectAccount" : "Konto auswählen"
   },
   "nftEntryPoint" : {
     "title" : "NFT (Non Fungible Token)",
@@ -7070,5 +7083,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Nicht am Ort verfügbar",
+    "description" : "Eine Ledger-Wallet ist an diesem Standort nicht verfügbar.",
+    "learnMore" : "Weitere Informationen"
   }
 }
