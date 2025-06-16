@@ -3564,6 +3564,15 @@
           "noProviders" : "Nenhum resultado encontrado. Não há cotações disponíveis com as preferências atuais."
         }
       },
+      "quotesList" : {
+        "title" : "Selecionar cotação"
+      },
+      "twoStepApproval" : {
+        "title" : "Complete as etapas"
+      },
+      "history" : {
+        "title" : "Histórico de trocas"
+      },
       "incompatibility" : {
         "explore_compatible_devices" : "Conheça os dispositivos compatíveis",
         "contact_support" : "Entre em contato com o suporte",
@@ -7430,7 +7439,12 @@
     "performance" : "Desempenho",
     "low" : "Baixo",
     "high" : "Alto",
-    "title" : "Movimentações de Mercado"
+    "title" : "Movimentações de Mercado",
+    "overlay" : {
+      "title" : "Passe de um ativo para o outro",
+      "action" : "Deslize para a esquerda ou direita",
+      "button" : "Entendi!"
+    }
   },
   "nftEntryPoint" : {
     "title" : "Seus NFTs",
@@ -7438,5 +7452,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Local indisponível",
+    "description" : "A carteira Ledger não está disponível neste local.",
+    "learnMore" : "Saiba mais"
   }
 }
