@@ -2747,7 +2747,7 @@
         "title" : "Retirer ce compte du Portefeuille",
         "desc" : "Les données enregistrées seront effacées.",
         "confirmationTitle" : "Êtes-vous sûr(e) ?",
-        "confirmationDesc" : "Cela n’a pas d’effet sur vos crypto-actifs. Vous pourrez de nouveau ajouter vos comptes existants.",
+        "confirmationDesc" : "Cela n’a pas d’effet sur vos crypto-actifs. Vous pourrez de nouveau ajouter vos comptes.",
         "confirmationWarn" : "L’historique de vos transactions de swap en lien avec ce compte sera effacé."
       },
       "archive" : {
@@ -3564,6 +3564,15 @@
           "noProviders" : "Aucun résultat. Il n’y a pas de résultat correspondant à ces préférences."
         }
       },
+      "quotesList" : {
+        "title" : "Choisissez une offre"
+      },
+      "twoStepApproval" : {
+        "title" : "Suivez les étapes"
+      },
+      "history" : {
+        "title" : "Historique des échanges"
+      },
       "incompatibility" : {
         "explore_compatible_devices" : "Voir les appareils compatibles",
         "contact_support" : "Contacter l’Assistance",
@@ -4105,7 +4114,7 @@
     "added_plural" : "{{count}} comptes ajoutés à votre portefeuille",
     "sections" : {
       "importable" : {
-        "title" : "Ajouter un compte existant"
+        "title" : "Ajouter un compte"
       },
       "creatable" : {
         "title" : "Ajouter un nouveau compte"
@@ -4164,7 +4173,7 @@
       "title" : "Sélectionnez le compte à ajouter",
       "ctaStopScan" : "Arrêter le balayage",
       "confirm" : "Confirmer",
-      "scanningTitle" : "Recherche des comptes existant déjà sur la blockchain...",
+      "scanningTitle" : "Recherche des comptes déjà présents sur la blockchain...",
       "whichAddressType" : "Apprenez à choisir un type d’adresse",
       "sections" : {
         "importable" : {
@@ -7430,7 +7439,12 @@
     "performance" : "Performance",
     "low" : "Faible",
     "high" : "Élevée",
-    "title" : "Mouvements du marché"
+    "title" : "Mouvements du marché",
+    "overlay" : {
+      "title" : "Passez d’un actif à un autre",
+      "action" : "Balayez l’écran vers la gauche ou vers la droite.",
+      "button" : "Compris"
+    }
   },
   "nftEntryPoint" : {
     "title" : "Vos NFT",
@@ -7438,5 +7452,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Région indisponible",
+    "description" : "L’application n’est pas disponible dans ce pays/région.",
+    "learnMore" : "En savoir plus"
   }
 }
