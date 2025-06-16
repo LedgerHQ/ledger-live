@@ -1,5 +1,4 @@
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { Observable } from "rxjs";
 import type {
   ModularDrawerConfiguration,
   EnhancedModularDrawerConfiguration,
@@ -8,7 +7,6 @@ import { createModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-a
 import { type CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
-import { type WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 import { track } from "~/renderer/analytics/segment";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
@@ -24,7 +22,6 @@ type DrawerParams = {
   flow: string;
   assetIds?: string[];
   currencies?: CryptoOrTokenCurrency[];
-  accounts$?: Observable<WalletAPIAccount[]>;
   includeTokens?: boolean;
   drawerConfiguration?: ModularDrawerConfiguration | EnhancedModularDrawerConfiguration;
   onSuccess?: (account: AccountLike, parentAccount?: Account) => void;
@@ -32,15 +29,7 @@ type DrawerParams = {
 };
 
 function openAssetAndAccountDrawer(params: DrawerParams): void {
-  const {
-    assetIds,
-    currencies,
-    accounts$,
-    includeTokens,
-    drawerConfiguration,
-    onSuccess,
-    onCancel,
-  } = params;
+  const { assetIds, currencies, includeTokens, drawerConfiguration, onSuccess, onCancel } = params;
 
   const modularDrawerConfiguration = createModularDrawerConfiguration(drawerConfiguration);
 
@@ -66,7 +55,6 @@ function openAssetAndAccountDrawer(params: DrawerParams): void {
     ModularDrawerFlowManager,
     {
       currencies: filteredCurrencies,
-      accounts$,
       onAccountSelected: (account, parentAccount) => {
         handleSuccess({ account, parentAccount });
       },

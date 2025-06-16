@@ -68,7 +68,6 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
 
         modularDrawerVisible
           ? openAssetAndAccountDrawer({
-              accounts$,
               drawerConfiguration,
               currencies,
               onSuccess,
