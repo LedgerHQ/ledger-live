@@ -120,12 +120,9 @@ export const extractOnboardingState = (
 
   const currentSeedWordIndex = flagsBytes[2] & currentSeedWordIndexMask;
 
-  // If the device is in the welcomescreen1 or ready state and the charon step is set,
+  // If the device is in the ready state and the charon step is set,
   // we need to update the onboarding step, to override the default state
-  if (
-    [OnboardingStep.Ready, OnboardingStep.WelcomeScreen1].includes(currentOnboardingStep) &&
-    charonState !== undefined
-  ) {
+  if ([OnboardingStep.Ready].includes(currentOnboardingStep) && charonState !== undefined) {
     currentOnboardingStep = fromBitsToOnboardingStep.get(charonState[0] + CHARON_STEP_BIT_MASK);
 
     if (!currentOnboardingStep) {
