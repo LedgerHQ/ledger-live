@@ -59,7 +59,7 @@ const e2eDelegationAccountsWithoutBroadcast = [
       "11",
       "0xa651c7c52d64a2014379902bbc92439d196499bcc36d94ff0395aa45837c66db",
     ),
-    xrayTicket: "XXXXX-XXXX",
+    xrayTicket: "B2CQA-3564",
   },
 ];
 
