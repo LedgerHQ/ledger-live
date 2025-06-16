@@ -1,5 +1,48 @@
 # @ledgerhq/live-common
 
+## 34.37.0-next.3
+
+### Minor Changes
+
+- [#10551](https://github.com/LedgerHQ/ledger-live/pull/10551) [`99385c9`](https://github.com/LedgerHQ/ledger-live/commit/99385c9a7ecac9328ffa29c039e8c0cf2317c431) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: revert generic bridge xrp
+
+### Patch Changes
+
+- Updated dependencies [[`99385c9`](https://github.com/LedgerHQ/ledger-live/commit/99385c9a7ecac9328ffa29c039e8c0cf2317c431)]:
+  - @ledgerhq/hw-app-xrp@6.32.0-next.1
+  - @ledgerhq/coin-stellar@5.2.0-next.1
+  - @ledgerhq/coin-aptos@2.2.0-next.1
+  - @ledgerhq/coin-tezos@5.3.0-next.1
+  - @ledgerhq/coin-tron@4.2.0-next.1
+  - @ledgerhq/coin-sui@0.5.0-next.1
+  - @ledgerhq/coin-xrp@6.2.0-next.1
+  - @ledgerhq/coin-framework@5.3.0-next.1
+  - @ledgerhq/coin-algorand@0.9.9-next.1
+  - @ledgerhq/coin-bitcoin@0.16.0-next.1
+  - @ledgerhq/coin-cardano@0.8.9-next.1
+  - @ledgerhq/coin-casper@2.0.0-next.1
+  - @ledgerhq/coin-celo@1.1.7-next.1
+  - @ledgerhq/coin-cosmos@0.15.1-next.1
+  - @ledgerhq/coin-evm@2.22.3-next.1
+  - @ledgerhq/coin-filecoin@1.9.9-next.1
+  - @ledgerhq/coin-hedera@1.7.1-next.1
+  - @ledgerhq/coin-icon@0.10.9-next.1
+  - @ledgerhq/coin-internet_computer@1.7.9-next.1
+  - @ledgerhq/coin-mina@1.1.8-next.1
+  - @ledgerhq/coin-multiversx@0.4.9-next.1
+  - @ledgerhq/coin-near@0.11.9-next.1
+  - @ledgerhq/coin-polkadot@6.2.0-next.1
+  - @ledgerhq/coin-solana@0.25.1-next.1
+  - @ledgerhq/coin-stacks@0.8.9-next.1
+  - @ledgerhq/coin-ton@0.12.1-next.1
+  - @ledgerhq/coin-vechain@2.7.9-next.1
+  - @ledgerhq/live-countervalues@0.5.9-next.1
+  - @ledgerhq/live-countervalues-react@0.2.38-next.1
+  - @ledgerhq/live-nft@0.8.9-next.1
+  - @ledgerhq/live-wallet@0.11.0-next.1
+  - @ledgerhq/live-signer-evm@0.5.2-next.1
+  - @ledgerhq/live-signer-solana@0.2.1-next.1
+
 ## 34.37.0-next.2
 
 ### Minor Changes
