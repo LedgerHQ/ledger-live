@@ -146,7 +146,7 @@ jobs:
   build-ios:
     name: "iOS Build"
     needs: [ determine-builds ]
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@support/poc-macOS-sharding
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@support/mac-debug
     with:
       ref: ${{ inputs.ref || github.sha }}
       macos-specificity-runner-label: ${{ inputs.macos-specificity-runner-label }}
