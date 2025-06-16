@@ -3564,6 +3564,15 @@
           "noProviders" : "Keine Ergebnisse gefunden. Mit den aktuellen Einstellungen sind keine Angebote verfügbar."
         }
       },
+      "quotesList" : {
+        "title" : "Angebot auswählen"
+      },
+      "twoStepApproval" : {
+        "title" : "Schritte erledigen"
+      },
+      "history" : {
+        "title" : "Swap-Verlauf"
+      },
       "incompatibility" : {
         "explore_compatible_devices" : "Kompatible Geräte entdecken",
         "contact_support" : "Kundensupport kontaktieren",
@@ -7430,7 +7439,12 @@
     "performance" : "Performance",
     "low" : "Niedrig",
     "high" : "Hoch",
-    "title" : "Marktbewegungen"
+    "title" : "Marktbewegungen",
+    "overlay" : {
+      "title" : "Zwischen Assets wechseln",
+      "action" : "Nach links oder rechts wischen",
+      "button" : "Verstanden!"
+    }
   },
   "nftEntryPoint" : {
     "title" : "Deine NFTs",
@@ -7438,5 +7452,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Nicht am Ort verfügbar",
+    "description" : "Eine Ledger-Wallet ist an diesem Standort nicht verfügbar.",
+    "learnMore" : "Weitere Informationen"
   }
 }
