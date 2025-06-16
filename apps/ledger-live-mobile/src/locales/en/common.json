@@ -3369,7 +3369,8 @@
       "description": "Sell crypto securely for cash."
     },
     "exchange": {
-      "title": "Buy / Sell"
+      "title": "Buy / Sell",
+      "connectingTo": "Connecting you to {{provider}}"
     },
     "stake": {
       "title": "Stake",
