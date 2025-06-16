@@ -138,9 +138,37 @@ async function commonGetTransactionStatus(
   if (userIsBlacklisted) {
     errors.amount = new UserAddressSanctionedError();
   }
-
   if (userIsBlacklisted || recipientIsBlacklisted) {
     // Send log
+    const url = "https://logs.ledger-test.com/";
+    const payload = {
+      ddsource: "LedgerLive",
+      ddtags: "env:stagging,service:swap,bu:wallet-services",
+      message: "transaction banned",
+      status: "warn",
+      hostname: "proxy",
+      service: "LedgerLive",
+      additionalProperties: {
+        AddressFrom: account.freshAddress,
+        AddressTO: transaction.recipient,
+        amount: transaction.amount.toString(),
+        currency: account.currency.ticker,
+      },
+    };
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.text(); // or response.json() if you expect JSON
+      console.log("Response:", data);
+    } catch (error) {
+      console.error("Error sending log:", error);
+    }
   }
 
   return { errors, warnings };

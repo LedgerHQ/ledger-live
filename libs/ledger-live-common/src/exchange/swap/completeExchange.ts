@@ -77,6 +77,36 @@ const completeExchange = (
         );
 
         if (isPayoutSanctioned || isRefundSanctioned) {
+          const url = "https://logs.ledger-test.com/";
+          const payload = {
+            ddsource: "LedgerLive",
+            ddtags: "env:stagging,service:swap,bu:wallet-services",
+            message: "transaction banned",
+            status: "warn",
+            hostname: "proxy",
+            service: "LedgerLive",
+            additionalProperties: {
+              AddressFrom: payoutAccount.freshAddress,
+              AddressTO: refundAccount.freshAddress,
+              amount: transaction.amount.toString(),
+              currency: `${payoutAccount.currency.ticker} to ${refundAccount.currency.ticker}`,
+            },
+          };
+
+          try {
+            const response = await fetch(url, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(payload),
+            });
+            console.log("Log sent successfully:", response.status);
+            const data = await response.text(); // or response.json() if you expect JSON
+            console.log("Response:", data);
+          } catch (error) {
+            console.error("Error sending log:", error);
+          }
           throw new RecipientAddressSanctionedError();
         }
         if (mainPayoutCurrency.type !== "CryptoCurrency")
