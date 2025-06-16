@@ -1925,7 +1925,8 @@
       "payoutNetworkFees" : "Tarifas de pago",
       "payoutNetworkFeesTooltip" : "Este importe no se mostrará en el dispositivo",
       "acceptTerms" : "Al validar esta transacción, acepto\nlos <0>términos de uso de {{provider}}</0>",
-      "exodusAcceptTerms" : "Exodus depende de terceros para realizar las permutas.\nAl validar esta transacción, acepto los <0>términos de uso de Exodus</0>"
+      "exodusAcceptTerms" : "Exodus depende de terceros para realizar las permutas.\nAl validar esta transacción, acepto los <0>términos de uso de Exodus</0>",
+      "changellyAcceptTerms" : "Al hacer clic en “Permutar con Changelly”, aceptas los <0>Términos de uso</0> de Changelly y\nsu <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que,\nen determinados casos, pueden afectar a la finalización de tu transacción. En caso\nde darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly."
     },
     "swap2" : {
       "amountSent" : "Importe a enviar",
@@ -4405,6 +4406,8 @@
       "mockAppUpdateDesc" : "Mostrar actualización de la aplicación disponible en Mi Ledger, se volverá a instalar la misma versión de la aplicación",
       "catalogUrl" : "Definir el proveedor del catálogo de aplicaciones",
       "catalogUrlDesc" : "Introduce la URL del proveedor del catálogo personalizado",
+      "customCALRef" : "Referencia CAL personalizada",
+      "customCALRefDesc" : "Especifica una rama, commit o etiqueta personalizados para usarlos con todas las solicitudes CAL",
       "enablePlatformDevTools" : "Habilitar herramientas de desarrollador de plataforma",
       "enablePlatformDevToolsDesc" : "Habilitar ventana de herramientas de desarrollador de aplicaciones de plataforma",
       "customLockScreen" : "Activos de la pantalla de bloqueo personalizada",
@@ -6594,6 +6597,19 @@
     },
     "AmountTooSmall" : {
       "title" : "La cantidad mínima necesaria para esta transacción es de {{amount}}"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "Queremos garantizar tu seguridad",
+      "description" : "Esta transacción incluye una dirección de billetera sancionada y no se puede procesar.<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForSendError" : {
+      "title" : "Esta transacción incluye una dirección de billetera sancionada y no se puede procesar<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForStakingError" : {
+      "title" : "Esta transacción incluye una dirección de billetera sancionada<br/> y no se puede procesar.<br/>-- {{sanctionedAddress}}<br/>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "Esta transacción incluye una dirección de billetera sancionada y no se puede procesar."
     }
   },
   "cryptoOrg" : {
@@ -7057,12 +7073,9 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "Buscar",
-    "assetFlow" : {
-      "selectTemplate" : "Selecciona {{dynamic}}",
-      "asset" : "activo",
-      "network" : "red",
-      "account" : "Cuenta"
-    }
+    "selectAsset" : "Seleccionar activo",
+    "selectNetwork" : "Seleccionar red",
+    "selectAccount" : "Seleccionar cuenta"
   },
   "nftEntryPoint" : {
     "title" : "NFT (Tokens no fungibles)",
@@ -7070,5 +7083,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Ubicación no disponible",
+    "description" : "Las billeteras Ledger no están disponibles en esta ubicación.",
+    "learnMore" : "Más información"
   }
 }
