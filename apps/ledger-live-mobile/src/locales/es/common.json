@@ -3369,7 +3369,8 @@
       "description" : "Vende criptomonedas de forma segura a cambio de dinero en efectivo."
     },
     "exchange" : {
-      "title" : "Comprar / Vender"
+      "title" : "Comprar / Vender",
+      "connectingTo" : "Conectándote a {{provider}}"
     },
     "stake" : {
       "title" : "Poner en participación",
@@ -7438,5 +7439,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Ubicación no disponible",
+    "description" : "Las billeteras Ledger no están disponibles en esta ubicación.",
+    "learnMore" : "Más información"
   }
 }
