@@ -12,7 +12,6 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
-  NotEnoughStakedBalanceLeft,
   NotEnoughToRestake,
   NotEnoughToStake,
   NotEnoughToUnstake,
