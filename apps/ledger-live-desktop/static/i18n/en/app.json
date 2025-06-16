@@ -3898,6 +3898,7 @@
       "commission": "Commission",
       "totalStake": "Total Stake",
       "minSafeWarning": "Not enough funds",
+      "reserveWarning": "Please ensure you reserve at least {{amount}} APT in your wallet to cover future network fees to deactivate and withdraw your stake",
       "flow": {
         "title": "Stake",
         "steps": {
@@ -6077,6 +6078,10 @@
     "NotEnoughStakedBalanceLeft": {
       "title": "You need to leave at least {{minAmountStaked}} staked",
       "description": "Please leave at least {{minAmountStaked}} staked, otherwise you'll have to unstake the full amount."
+    },
+    "NotEnoughToRestake": {
+      "title": "You need to restake at least {{minAmountToRestake}}",
+      "description": "Please restake at least {{minAmountToRestake}}."
     },
     "NotEnoughBalanceFees": {
       "title": "Sorry, insufficient funds to cover fees",

@@ -38,22 +38,30 @@ export const DELEGATION_POOL_TYPES: MoveStructId[] = [
 ];
 
 export const ADD_STAKE_EVENTS = [
+  "0x1::stake::AddStake",
   "0x1::stake::AddStakeEvent",
+  "0x1::delegation_pool::AddStake",
   "0x1::delegation_pool::AddStakeEvent",
 ];
 
 export const REACTIVATE_STAKE_EVENTS = [
+  "0x1::stake::ReactivateStake",
   "0x1::stake::ReactivateStakeEvent",
+  "0x1::delegation_pool::ReactivateStake",
   "0x1::delegation_pool::ReactivateStakeEvent",
 ];
 
 export const UNLOCK_STAKE_EVENTS = [
+  "0x1::stake::UnlockStake",
   "0x1::stake::UnlockStakeEvent",
+  "0x1::delegation_pool::UnlockStake",
   "0x1::delegation_pool::UnlockStakeEvent",
 ];
 
 export const WITHDRAW_STAKE_EVENTS = [
+  "0x1::stake::WithdrawStake",
   "0x1::stake::WithdrawStakeEvent",
+  "0x1::delegation_pool::WithdrawStake",
   "0x1::delegation_pool::WithdrawStakeEvent",
 ];
 
@@ -83,7 +91,9 @@ export enum OP_TYPE {
 export const SUPPORTED_TOKEN_TYPES = ["coin", "fungible_asset"];
 
 export const APTOS_PRECISION = 8;
-export const APTOS_DELEGATION_RESERVE = BigNumber(0.01);
+export const APTOS_DELEGATION_RESERVE = BigNumber(0.05);
+export const APTOS_MINIMUM_RESTAKE = BigNumber(0.1);
+export const APTOS_MINIMUM_RESTAKE_IN_OCTAS = APTOS_MINIMUM_RESTAKE.shiftedBy(APTOS_PRECISION);
 export const MIN_COINS_ON_SHARES_POOL = BigNumber(11);
 export const APTOS_DELEGATION_RESERVE_IN_OCTAS =
   APTOS_DELEGATION_RESERVE.shiftedBy(APTOS_PRECISION);

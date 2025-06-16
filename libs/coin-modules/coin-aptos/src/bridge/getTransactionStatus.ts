@@ -2,6 +2,7 @@ import {
   NotEnoughBalance,
   NotEnoughToStake,
   NotEnoughStakedBalanceLeft,
+  NotEnoughToRestake,
   RecipientRequired,
   InvalidAddress,
   FeeNotLoaded,
@@ -15,6 +16,7 @@ import type { AptosAccount, AptosStakingPosition, Transaction, TransactionStatus
 import { getTokenAccount } from "./logic";
 import {
   APTOS_DELEGATION_RESERVE_IN_OCTAS,
+  APTOS_MINIMUM_RESTAKE_IN_OCTAS,
   MIN_COINS_ON_SHARES_POOL,
   MIN_COINS_ON_SHARES_POOL_IN_OCTAS,
 } from "../constants";
@@ -75,7 +77,10 @@ const checkStakeTransaction = (
 
   if (
     ((!t.useAllAmount && t.amount.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS)) ||
-      (t.useAllAmount && a.spendableBalance.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS))) &&
+      (t.useAllAmount &&
+        a.spendableBalance
+          .minus(APTOS_DELEGATION_RESERVE_IN_OCTAS)
+          .lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS))) &&
     !newErrors.amount
   ) {
     newErrors.amount = new NotEnoughToStake("", {
@@ -100,8 +105,12 @@ const checkRestakeTransaction = (
     if ((t.amount.gt(stakingPosition.pendingInactive) || t.amount.isZero()) && !newErrors.amount) {
       newErrors.amount = new NotEnoughBalance();
     }
-    if (!t.useAllAmount && t.amount.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS) && !newErrors.amount) {
-      newErrors.amount = new NotEnoughStakedBalanceLeft("", {
+    if (
+      !t.useAllAmount &&
+      t.amount.minus(APTOS_DELEGATION_RESERVE_IN_OCTAS).lt(APTOS_MINIMUM_RESTAKE_IN_OCTAS) &&
+      !newErrors.amount
+    ) {
+      newErrors.amount = new NotEnoughToRestake("", {
         minAmountStaked: `${MIN_COINS_ON_SHARES_POOL.toNumber().toString()} APT`,
       });
     }
@@ -124,7 +133,11 @@ const checkUnstakeTransaction = (
       newErrors.amount = new NotEnoughBalance();
     }
     if (
-      stakingPosition.active.minus(t.amount).lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS) &&
+      !t.useAllAmount &&
+      stakingPosition.active
+        .minus(t.amount)
+        .minus(APTOS_DELEGATION_RESERVE_IN_OCTAS)
+        .lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS) &&
       !newErrors.amount
     ) {
       newErrors.amount = new NotEnoughStakedBalanceLeft("", {

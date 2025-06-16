@@ -124,7 +124,7 @@ export function getCoinAndAmounts(
       if (ADD_STAKE_EVENTS.includes(event.type) && tx.sender === address && amount_out.isZero()) {
         coin_id = APTOS_ASSET_ID;
         type = OP_TYPE.STAKE;
-        amount_out = amount_out.plus(event.data.amount_added);
+        amount_out = amount_out.plus(event.data.amount_added || event.data.amount);
       } else if (
         REACTIVATE_STAKE_EVENTS.includes(event.type) &&
         tx.sender === address &&
@@ -132,7 +132,7 @@ export function getCoinAndAmounts(
       ) {
         coin_id = APTOS_ASSET_ID;
         type = OP_TYPE.STAKE;
-        amount_out = amount_out.plus(event.data.amount_reactivated);
+        amount_out = amount_out.plus(event.data.amount_reactivated || event.data.amount);
       } else if (
         UNLOCK_STAKE_EVENTS.includes(event.type) &&
         tx.sender === address &&
@@ -140,7 +140,7 @@ export function getCoinAndAmounts(
       ) {
         coin_id = APTOS_ASSET_ID;
         type = OP_TYPE.UNSTAKE;
-        amount_in = amount_in.plus(event.data.amount_unlocked);
+        amount_in = amount_in.plus(event.data.amount_unlocked || event.data.amount);
       } else if (
         WITHDRAW_STAKE_EVENTS.includes(event.type) &&
         tx.sender === address &&
@@ -148,7 +148,7 @@ export function getCoinAndAmounts(
       ) {
         coin_id = APTOS_ASSET_ID;
         type = OP_TYPE.WITHDRAW;
-        amount_in = amount_in.plus(event.data.amount_withdrawn);
+        amount_in = amount_in.plus(event.data.amount_withdrawn || event.data.amount);
       }
     });
   } else {

@@ -10,6 +10,8 @@ import SpendableBanner from "~/renderer/components/SpendableBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import AmountField from "~/renderer/modals/Send/fields/AmountField";
 import { StepProps } from "../types";
+import Alert from "~/renderer/components/Alert";
+import { APTOS_DELEGATION_RESERVE } from "@ledgerhq/live-common/families/aptos/constants";
 
 const StepAmount = ({
   t,
@@ -54,6 +56,14 @@ const StepAmount = ({
             bridgePending={bridgePending}
             t={t}
           />
+          <Alert type="warning" small>
+            <Trans
+              i18nKey="aptos.stake.reserveWarning"
+              values={{
+                amount: APTOS_DELEGATION_RESERVE,
+              }}
+            />
+          </Alert>
         </Fragment>
       )}
     </Box>
