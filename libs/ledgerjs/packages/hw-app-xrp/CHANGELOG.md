@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-xrp
 
+## 6.32.0-next.1
+
+### Minor Changes
+
+- [#10551](https://github.com/LedgerHQ/ledger-live/pull/10551) [`99385c9`](https://github.com/LedgerHQ/ledger-live/commit/99385c9a7ecac9328ffa29c039e8c0cf2317c431) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: revert generic bridge xrp
+
 ## 6.32.0-next.0
 
 ### Minor Changes
