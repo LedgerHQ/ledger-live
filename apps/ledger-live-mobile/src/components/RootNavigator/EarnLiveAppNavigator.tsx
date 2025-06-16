@@ -99,9 +99,22 @@ const Earn = (props: NavigationProps) => {
           }
           break;
         }
+        case "go-back": {
+          if (navigation.canGoBack()) {
+            navigation.goBack();
+          } else if (navigation.getParent()?.canGoBack()) {
+            navigation.getParent()?.goBack();
+          } else {
+            // Fallback to main earn screen
+            navigation.navigate(NavigatorName.Earn, {
+              screen: ScreenName.Earn,
+              params: props.route.params,
+            });
+          }
+          break;
+        }
         default: {
-          // eslint-disable-next-line no-console
-          console.log(`EarnLiveAppNavigator: No route for action "${paramAction}"`);
+          console.warn(`EarnLiveAppNavigator: No route for action "${paramAction}"`);
         }
       }
     }
@@ -119,6 +132,7 @@ const Earn = (props: NavigationProps) => {
           ...props.route,
           params: {
             platform: "earn",
+            ...props.route.params,
           },
         }}
       />
