@@ -366,6 +366,11 @@ describe("EVM Family", () => {
             ).toEqual([
               {
                 type: "text",
+                label: "Type",
+                value: "Transfer",
+              },
+              {
+                type: "text",
                 label: "Amount",
                 value: `USDC 0.000001`,
               },
