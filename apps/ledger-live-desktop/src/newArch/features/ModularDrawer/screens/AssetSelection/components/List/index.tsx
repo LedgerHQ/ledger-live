@@ -6,6 +6,7 @@ import { ListWrapper } from "LLD/features/ModularDrawer/components/ListWrapper";
 import SkeletonList from "LLD/features/ModularDrawer/components/SkeletonList";
 import createAssetConfigurationHook from "../../modules/createAssetConfigurationHook";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 
 export type SelectAssetProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
@@ -13,6 +14,7 @@ export type SelectAssetProps = {
   flow: string;
   scrollToTop: boolean;
   assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
+  currenciesByProvider: CurrenciesByProviderId[];
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
   onScrolledToTop?: () => void;
 };
@@ -30,11 +32,13 @@ export const SelectAssetList = ({
   flow,
   scrollToTop,
   assetsConfiguration,
+  currenciesByProvider,
   onAssetSelected,
   onScrolledToTop,
 }: SelectAssetProps) => {
   const transformAssets = createAssetConfigurationHook({
     assetsConfiguration,
+    currenciesByProvider,
   });
 
   const formattedAssets = transformAssets(assetsToDisplay);

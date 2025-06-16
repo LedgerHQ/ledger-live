@@ -1,7 +1,13 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
 import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
-import { bitcoinCurrency, arbitrumCurrency } from "../__mocks__/useSelectAssetFlow.mock";
+import {
+  bitcoinCurrency,
+  arbitrumCurrency,
+  baseCurrency,
+  injectiveCurrency,
+  scrollCurrency,
+} from "../__mocks__/useSelectAssetFlow.mock";
 import { useGroupedCurrenciesByProvider } from "../__mocks__/useGroupedCurrenciesByProvider.mock";
 import { mockOnAssetSelected, currencies, mockDomMeasurements } from "./shared";
 
@@ -84,5 +90,42 @@ describe("ModularDrawerFlowManager - Select Network Flow", () => {
     await user.click(arbitrumNetwork);
 
     expect(mockOnAssetSelected).toHaveBeenCalledWith(arbitrumCurrency);
+  });
+
+  // This test is to ensure that we display the provider currency if the currency is not in the sortedCryptoCurrencies then display the network currencies it refers to the setAssetsToDisplay in the useMemo done inside ModularDrawerFlowManager.tsx
+  it("should display the provider currency if the currency is not in the sortedCryptoCurrencies then display the network currencies", async () => {
+    const mixedCurrencies = [
+      baseCurrency,
+      arbitrumCurrency,
+      scrollCurrency,
+      injectiveCurrency,
+      bitcoinCurrency,
+    ];
+    const { user } = render(
+      <ModularDrawerFlowManager
+        currencies={mixedCurrencies}
+        onAssetSelected={mockOnAssetSelected}
+        source="sourceTest"
+        flow="flowTest"
+      />,
+    );
+
+    expect(screen.queryByText(/base/i)).toBeNull();
+    expect(screen.queryByText(/scroll/i)).toBeNull();
+    expect(screen.getByText(/injective/i)).toBeVisible();
+    expect(screen.getByText(/bitcoin/i)).toBeVisible();
+    expect(screen.getByText(/ethereum/i)).toBeVisible();
+
+    await user.click(screen.getByText(/ethereum/i));
+
+    expect(screen.getByText(/select network/i)).toBeVisible();
+
+    expect(screen.queryByText(/ethereum/i)).toBeNull();
+    expect(screen.queryByText(/injective/i)).toBeNull();
+    expect(screen.queryByText(/bitcoin/i)).toBeNull();
+
+    expect(screen.getByText(/arbitrum/i)).toBeVisible();
+    expect(screen.getByText(/base/i)).toBeVisible();
+    expect(screen.getByText(/scroll/i)).toBeVisible();
   });
 });

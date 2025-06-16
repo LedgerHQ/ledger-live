@@ -7,10 +7,12 @@ import { AccountLike, Account } from "@ledgerhq/types-live";
 import { ModularDrawerStep } from "../types";
 import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
 import { MODULAR_DRAWER_PAGE_NAME } from "../analytics/types";
+import { getTokenOrCryptoCurrencyById } from "@ledgerhq/live-common/deposit/helper";
+import uniqWith from "lodash/uniqWith";
 
 type Props = {
   currenciesByProvider: CurrenciesByProviderId[];
-  assetsToDisplay: CryptoOrTokenCurrency[];
+  sortedCryptoCurrencies: CryptoOrTokenCurrency[];
   setNetworksToDisplay: (networks?: CryptoOrTokenCurrency[]) => void;
   currenciesIdsArray: string[];
   goToStep: (nextStep: ModularDrawerStep) => void;
@@ -23,7 +25,7 @@ type Props = {
 
 export function useModularDrawerFlowState({
   currenciesByProvider,
-  assetsToDisplay,
+  sortedCryptoCurrencies,
   setNetworksToDisplay,
   currenciesIdsArray,
   goToStep,
@@ -60,7 +62,7 @@ export function useModularDrawerFlowState({
   const goToNetworkSelection = useCallback(
     (asset: CryptoOrTokenCurrency, filteredCryptoCurrencies: CryptoOrTokenCurrency[]) => {
       setSelectedAsset(asset);
-      setNetworksToDisplay(filteredCryptoCurrencies);
+      setNetworksToDisplay(uniqWith(filteredCryptoCurrencies, (a, b) => a.id === b.id));
       goToStep("NETWORK_SELECTION");
     },
     [goToStep, setNetworksToDisplay],
@@ -138,15 +140,21 @@ export function useModularDrawerFlowState({
 
   useEffect(() => {
     if (hasOneCurrency && !selectedAsset) {
-      handleAssetSelected(assetsToDisplay[0]);
+      const currencyIdToFind = currenciesIdsArray[0];
+      const currency = getTokenOrCryptoCurrencyById(currencyIdToFind);
+
+      if (currency) {
+        handleAssetSelected(currency);
+      }
     }
   }, [
-    assetsToDisplay,
+    sortedCryptoCurrencies,
     currenciesIdsArray.length,
     goToStep,
     handleAssetSelected,
     hasOneCurrency,
     selectedAsset,
+    currenciesIdsArray,
   ]);
 
   return {

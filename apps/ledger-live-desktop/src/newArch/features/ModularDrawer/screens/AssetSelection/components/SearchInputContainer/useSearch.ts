@@ -44,6 +44,7 @@ export const useSearch = ({
     (current: string, previous: string) => {
       const query = current;
       const prevQuery = previous;
+      setSearchedValue?.(query);
 
       if (query === prevQuery) {
         return;
@@ -77,7 +78,6 @@ export const useSearch = ({
           : fuse.search(query).map((result: Fuse.FuseResult<CryptoOrTokenCurrency>) => result.item);
 
       setItemsToDisplay(results);
-      setSearchedValue?.(query);
     },
     [trackModularDrawerEvent, flow, source, items, fuse, setItemsToDisplay, setSearchedValue],
   );

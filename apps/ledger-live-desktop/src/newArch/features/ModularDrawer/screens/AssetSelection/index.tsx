@@ -5,6 +5,7 @@ import SearchInputContainer from "./components/SearchInputContainer";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { MODULAR_DRAWER_PAGE_NAME } from "../../analytics/types";
 import TrackDrawerScreen from "../../analytics/TrackDrawerScreen";
+import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 
 export type AssetSelectionStepProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
@@ -13,6 +14,7 @@ export type AssetSelectionStepProps = {
   assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
   flow: string;
   source: string;
+  currenciesByProvider: CurrenciesByProviderId[];
   setAssetsToDisplay: (assets: CryptoOrTokenCurrency[]) => void;
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
   setSearchedValue: (value: string | undefined) => void;
@@ -25,6 +27,7 @@ const AssetSelection = ({
   flow,
   source,
   assetsConfiguration,
+  currenciesByProvider,
   setAssetsToDisplay,
   onAssetSelected,
   setSearchedValue,
@@ -62,6 +65,7 @@ const AssetSelection = ({
         source={source}
         flow={flow}
         assetsConfiguration={assetsConfiguration}
+        currenciesByProvider={currenciesByProvider}
         scrollToTop={shouldScrollToTop}
         onAssetSelected={onAssetSelected}
         onScrolledToTop={() => setShouldScrollToTop(false)}
