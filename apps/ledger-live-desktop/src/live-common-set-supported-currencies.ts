@@ -107,4 +107,5 @@ setSupportedCurrencies([
   "sonic_blaze",
   "mina",
   "babylon",
+  "kadena",
 ]);

@@ -549,6 +549,10 @@ export enum ScreenName {
   AddAccountsWarning = "AddAccountsWarning",
   NoAssociatedAccounts = "NoAssociatedAccounts",
   LargeMoverLandingPage = "LargeMoverLandingPage",
+
+  // Kadena
+  KadenaEditSenderChainId = "KadenaEditSenderChainId",
+  KadenaEditReceiverChainId = "KadenaEditReceiverChainId",
 }
 
 export enum NavigatorName {

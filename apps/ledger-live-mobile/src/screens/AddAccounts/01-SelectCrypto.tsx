@@ -116,6 +116,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const sonicBlaze = useFeature("currencySonicBlaze");
   const sui = useFeature("currencySui");
   const babylon = useFeature("currencyBabylon");
+  const kadena = useFeature("currencyKadena");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -178,6 +179,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       sui,
       mina,
       babylon,
+      kadena,
     }),
     [
       aptos,
@@ -239,6 +241,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       sui,
       mina,
       babylon,
+      kadena,
     ],
   );
 

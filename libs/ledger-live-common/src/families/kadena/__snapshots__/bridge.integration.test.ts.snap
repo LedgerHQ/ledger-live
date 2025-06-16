@@ -1,0 +1,317 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`kadena currency bridge scanAccounts kadena seed 1 1`] = `
+[
+  {
+    "balance": "2629048000000",
+    "currencyId": "kadena",
+    "derivationMode": "",
+    "freshAddress": "k:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e",
+    "freshAddressPath": "44'/626'/0'/0/0",
+    "id": "js:2:kadena:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e:",
+    "index": 0,
+    "operationsCount": 7,
+    "pendingOperations": [],
+    "seedIdentifier": "15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e",
+    "spendableBalance": "2629048000000",
+    "swapHistory": [],
+    "syncHash": undefined,
+    "used": true,
+    "xpub": "15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e",
+  },
+  {
+    "balance": "202088000000.00002",
+    "currencyId": "kadena",
+    "derivationMode": "",
+    "freshAddress": "k:ced7b6fcaf2421b294f431965374d43e3b97352131609162d6c78325ad609015",
+    "freshAddressPath": "44'/626'/1'/0/0",
+    "id": "js:2:kadena:ced7b6fcaf2421b294f431965374d43e3b97352131609162d6c78325ad609015:",
+    "index": 1,
+    "operationsCount": 3,
+    "pendingOperations": [],
+    "seedIdentifier": "15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e",
+    "spendableBalance": "202088000000.00002",
+    "swapHistory": [],
+    "syncHash": undefined,
+    "used": true,
+    "xpub": "ced7b6fcaf2421b294f431965374d43e3b97352131609162d6c78325ad609015",
+  },
+  {
+    "balance": "207700000000",
+    "currencyId": "kadena",
+    "derivationMode": "",
+    "freshAddress": "k:5ff480618154d676aafb4637f75b0f4de9b4be64b54544333713e04f73875701",
+    "freshAddressPath": "44'/626'/2'/0/0",
+    "id": "js:2:kadena:5ff480618154d676aafb4637f75b0f4de9b4be64b54544333713e04f73875701:",
+    "index": 2,
+    "operationsCount": 1,
+    "pendingOperations": [],
+    "seedIdentifier": "15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e",
+    "spendableBalance": "207700000000",
+    "swapHistory": [],
+    "syncHash": undefined,
+    "used": true,
+    "xpub": "5ff480618154d676aafb4637f75b0f4de9b4be64b54544333713e04f73875701",
+  },
+  {
+    "balance": "0",
+    "currencyId": "kadena",
+    "derivationMode": "",
+    "freshAddress": "k:65b3bdbf288431917ab8b0d91eafbddf4367d46e24a6186a3c7b75c0cb3bf8a3",
+    "freshAddressPath": "44'/626'/3'/0/0",
+    "id": "js:2:kadena:65b3bdbf288431917ab8b0d91eafbddf4367d46e24a6186a3c7b75c0cb3bf8a3:",
+    "index": 3,
+    "operationsCount": 0,
+    "pendingOperations": [],
+    "seedIdentifier": "15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e",
+    "spendableBalance": "0",
+    "swapHistory": [],
+    "syncHash": undefined,
+    "used": false,
+    "xpub": "65b3bdbf288431917ab8b0d91eafbddf4367d46e24a6186a3c7b75c0cb3bf8a3",
+  },
+]
+`;
+
+exports[`kadena currency bridge scanAccounts kadena seed 1 2`] = `
+[
+  [
+    {
+      "accountId": "js:2:kadena:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e:",
+      "blockHash": "MoX_CJm8F9yBE6KtxcmSzLmWibD-bFmtb4EgcLxjCr8",
+      "blockHeight": 5882575,
+      "extra": {
+        "receiverChainId": 0,
+        "senderChainId": 0,
+      },
+      "fee": "212000000",
+      "hasFailed": false,
+      "hash": "0kq_vwMgGaJxnI3_BV03kD_f-wNxvoMjH_TGvPE22VM",
+      "id": "js:2:kadena:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e:-0kq_vwMgGaJxnI3_BV03kD_f-wNxvoMjH_TGvPE22VM-OUT",
+      "recipients": [
+        "k:ced7b6fcaf2421b294f431965374d43e3b97352131609162d6c78325ad609015",
+      ],
+      "senders": [
+        "k:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e",
+      ],
+      "type": "OUT",
+      "value": "210000000000",
+    },
+    {
+      "accountId": "js:2:kadena:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e:",
+      "blockHash": "iAE5KNiEaH4biyZsYgyi4NvhFtqAcqo4TyeJ4EBsPxc",
+      "blockHeight": 5882545,
+      "extra": {
+        "receiverChainId": 0,
+        "senderChainId": 0,
+      },
+      "fee": "212000000",
+      "hasFailed": false,
+      "hash": "16jGFZXEYo7c6VwKzZ9yxl9d1-F--KzxgaqPZKcDzf0",
+      "id": "js:2:kadena:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e:-16jGFZXEYo7c6VwKzZ9yxl9d1-F--KzxgaqPZKcDzf0-IN",
+      "recipients": [
+        "k:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e",
+      ],
+      "senders": [
+        "k:77b021744ab3c003e8e4d0f38a598f0e39fe9a7fe61360754dc7321b112ab375",
+      ],
+      "type": "IN",
+      "value": "39834000000",
+    },
+    {
+      "accountId": "js:2:kadena:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e:",
+      "blockHash": "mBpxmKV2nZSQ7j6Vofxm-N6ot4ORf-GQRSB3BVXLKIc",
+      "blockHeight": 5882576,
+      "extra": {
+        "receiverChainId": 1,
+        "senderChainId": 0,
+      },
+      "fee": "287000000",
+      "hasFailed": false,
+      "hash": "PKIEqLFtmNmY-k-g9NjI7kXQSkOzJY3uiJeZ213eBUY",
+      "id": "js:2:kadena:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e:-PKIEqLFtmNmY-k-g9NjI7kXQSkOzJY3uiJeZ213eBUY-OUT",
+      "recipients": [
+        "k:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e",
+      ],
+      "senders": [
+        "k:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e",
+      ],
+      "type": "OUT",
+      "value": "100000000000",
+    },
+    {
+      "accountId": "js:2:kadena:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e:",
+      "blockHash": "K7XbBNN3fn2gX96z33gRIN95AyJ0xdFW9iLXRTXtKK8",
+      "blockHeight": 5882574,
+      "extra": {
+        "receiverChainId": 1,
+        "senderChainId": 0,
+      },
+      "fee": "287000000",
+      "hasFailed": false,
+      "hash": "QCBmhPlm_xzFMIV-mo5-EOjpBOZntq34G5WDib5lQig",
+      "id": "js:2:kadena:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e:-QCBmhPlm_xzFMIV-mo5-EOjpBOZntq34G5WDib5lQig-OUT",
+      "recipients": [
+        "k:ced7b6fcaf2421b294f431965374d43e3b97352131609162d6c78325ad609015",
+      ],
+      "senders": [
+        "k:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e",
+      ],
+      "type": "OUT",
+      "value": "200000000000",
+    },
+    {
+      "accountId": "js:2:kadena:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e:",
+      "blockHash": "jGHnWQ_Fbc6hIJ_RjGLMUN2mcW8-_ngyXdPpqvhsKnY",
+      "blockHeight": 5882561,
+      "extra": {
+        "receiverChainId": 1,
+        "senderChainId": 0,
+      },
+      "fee": "270000000",
+      "hasFailed": false,
+      "hash": "QzdkBrVM2__dXgQAcuusL2liCnefCogfqab4QqHhUKU",
+      "id": "js:2:kadena:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e:-QzdkBrVM2__dXgQAcuusL2liCnefCogfqab4QqHhUKU-IN",
+      "recipients": [
+        "k:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e",
+      ],
+      "senders": [
+        "k:8ae62e33629660c10e3faf0fe83b675ff5186116bd29a29fe71179480bf4ae76",
+      ],
+      "type": "IN",
+      "value": "2000000000000",
+    },
+    {
+      "accountId": "js:2:kadena:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e:",
+      "blockHash": "5GhNsGNSM-NoVajw6pRXMZhlsa7Ea_LEGoEt9tSw6yQ",
+      "blockHeight": 5882563,
+      "extra": {
+        "receiverChainId": 0,
+        "senderChainId": 0,
+      },
+      "fee": "236000000",
+      "hasFailed": false,
+      "hash": "sBu2vE5CtUYcfGslJZps0tdV97pZkr7vFLf-EYS2ebQ",
+      "id": "js:2:kadena:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e:-sBu2vE5CtUYcfGslJZps0tdV97pZkr7vFLf-EYS2ebQ-IN",
+      "recipients": [
+        "k:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e",
+      ],
+      "senders": [
+        "k:8ae62e33629660c10e3faf0fe83b675ff5186116bd29a29fe71179480bf4ae76",
+      ],
+      "type": "IN",
+      "value": "1000000000000",
+    },
+    {
+      "accountId": "js:2:kadena:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e:",
+      "blockHash": "KoSqPVeG_tqs_OWK7ZLdq2dgAvaWkHmqirTc7g1vB0w",
+      "blockHeight": 5882585,
+      "extra": {
+        "receiverChainId": 1,
+        "senderChainId": 0,
+      },
+      "fee": "281000000",
+      "hasFailed": false,
+      "hash": "tdbeOANnp9ZukfgNCOS0yg0Z1NhgJD4WPLYIIzfW2Yc",
+      "id": "js:2:kadena:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e:-tdbeOANnp9ZukfgNCOS0yg0Z1NhgJD4WPLYIIzfW2Yc-IN",
+      "recipients": [
+        "k:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e",
+      ],
+      "senders": [
+        "k:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e",
+      ],
+      "type": "IN",
+      "value": "100000000000",
+    },
+  ],
+  [
+    {
+      "accountId": "js:2:kadena:ced7b6fcaf2421b294f431965374d43e3b97352131609162d6c78325ad609015:",
+      "blockHash": "MoX_CJm8F9yBE6KtxcmSzLmWibD-bFmtb4EgcLxjCr8",
+      "blockHeight": 5882575,
+      "extra": {
+        "receiverChainId": 0,
+        "senderChainId": 0,
+      },
+      "fee": "212000000",
+      "hasFailed": false,
+      "hash": "0kq_vwMgGaJxnI3_BV03kD_f-wNxvoMjH_TGvPE22VM",
+      "id": "js:2:kadena:ced7b6fcaf2421b294f431965374d43e3b97352131609162d6c78325ad609015:-0kq_vwMgGaJxnI3_BV03kD_f-wNxvoMjH_TGvPE22VM-IN",
+      "recipients": [
+        "k:ced7b6fcaf2421b294f431965374d43e3b97352131609162d6c78325ad609015",
+      ],
+      "senders": [
+        "k:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e",
+      ],
+      "type": "IN",
+      "value": "210000000000",
+    },
+    {
+      "accountId": "js:2:kadena:ced7b6fcaf2421b294f431965374d43e3b97352131609162d6c78325ad609015:",
+      "blockHash": "q9poUe_cAOc6UE9rLipgMWK3vmor3na_28iWCLJFF2A",
+      "blockHeight": 5882584,
+      "extra": {
+        "receiverChainId": 1,
+        "senderChainId": 0,
+      },
+      "fee": "270000000",
+      "hasFailed": false,
+      "hash": "bCcfzt41UCjFBdW7gjxQnU7xkCk6VreWoitZ0qYAbEw",
+      "id": "js:2:kadena:ced7b6fcaf2421b294f431965374d43e3b97352131609162d6c78325ad609015:-bCcfzt41UCjFBdW7gjxQnU7xkCk6VreWoitZ0qYAbEw-IN",
+      "recipients": [
+        "k:ced7b6fcaf2421b294f431965374d43e3b97352131609162d6c78325ad609015",
+      ],
+      "senders": [
+        "k:15daab7d9ba9f8a465ffc4bfb33e68ca5e9f51ef0bab387284963129fe04ec3e",
+      ],
+      "type": "IN",
+      "value": "200000000000",
+    },
+    {
+      "accountId": "js:2:kadena:ced7b6fcaf2421b294f431965374d43e3b97352131609162d6c78325ad609015:",
+      "blockHash": "NGFwbOmrvv1O1dKhYJ2V-zF4xsx1Ysbma5HKk4m6e1A",
+      "blockHeight": 5911484,
+      "extra": {
+        "receiverChainId": 0,
+        "senderChainId": 0,
+      },
+      "fee": "212000000",
+      "hasFailed": false,
+      "hash": "Lc8aLccWWbR7MTKnjrZWWt75l576-JHe5NfT9IXM3vc",
+      "id": "js:2:kadena:ced7b6fcaf2421b294f431965374d43e3b97352131609162d6c78325ad609015:-Lc8aLccWWbR7MTKnjrZWWt75l576-JHe5NfT9IXM3vc-OUT",
+      "recipients": [
+        "k:5ff480618154d676aafb4637f75b0f4de9b4be64b54544333713e04f73875701",
+      ],
+      "senders": [
+        "k:ced7b6fcaf2421b294f431965374d43e3b97352131609162d6c78325ad609015",
+      ],
+      "type": "OUT",
+      "value": "207700000000",
+    },
+  ],
+  [
+    {
+      "accountId": "js:2:kadena:5ff480618154d676aafb4637f75b0f4de9b4be64b54544333713e04f73875701:",
+      "blockHash": "NGFwbOmrvv1O1dKhYJ2V-zF4xsx1Ysbma5HKk4m6e1A",
+      "blockHeight": 5911484,
+      "extra": {
+        "receiverChainId": 0,
+        "senderChainId": 0,
+      },
+      "fee": "212000000",
+      "hasFailed": false,
+      "hash": "Lc8aLccWWbR7MTKnjrZWWt75l576-JHe5NfT9IXM3vc",
+      "id": "js:2:kadena:5ff480618154d676aafb4637f75b0f4de9b4be64b54544333713e04f73875701:-Lc8aLccWWbR7MTKnjrZWWt75l576-JHe5NfT9IXM3vc-IN",
+      "recipients": [
+        "k:5ff480618154d676aafb4637f75b0f4de9b4be64b54544333713e04f73875701",
+      ],
+      "senders": [
+        "k:ced7b6fcaf2421b294f431965374d43e3b97352131609162d6c78325ad609015",
+      ],
+      "type": "IN",
+      "value": "207700000000",
+    },
+  ],
+  [],
+]
+`;

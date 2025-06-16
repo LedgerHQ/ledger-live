@@ -92,6 +92,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencySui: DEFAULT_FEATURE,
   currencyMina: DEFAULT_FEATURE,
   currencyBabylon: DEFAULT_FEATURE,
+  currencyKadena: DEFAULT_FEATURE,
 };
 
 /**
