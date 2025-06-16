@@ -7057,12 +7057,9 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "Buscar",
-    "assetFlow" : {
-      "selectTemplate" : "Selecciona {{dynamic}}",
-      "asset" : "activo",
-      "network" : "red",
-      "account" : "Cuenta"
-    }
+    "selectAsset" : "Seleccionar activo",
+    "selectNetwork" : "Seleccionar red",
+    "selectAccount" : "Seleccionar cuenta"
   },
   "nftEntryPoint" : {
     "title" : "NFT (Tokens no fungibles)",
@@ -7070,5 +7067,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Ubicación no disponible",
+    "description" : "Las billeteras Ledger no están disponibles en esta ubicación.",
+    "learnMore" : "Más información"
   }
 }
