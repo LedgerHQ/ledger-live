@@ -3193,6 +3193,12 @@
         "placeholder" : "معلومات مُزوّد التداول بصيغة CAL",
         "currentSetting" : "الإعداد الحالي",
         "error" : "قيمة CAL غير صالحة"
+      },
+      "customCALRef" : {
+        "title" : "مرجع CAL مخصص",
+        "description" : "حدّد فرع مخصص أو تضمين أو علامة للاستخدام gكل طلبات CAL",
+        "enable" : "تمكين مرجع CAL مخصص",
+        "disable" : "تعطيل مرجع CAL مخصص"
       }
     },
     "debug" : {
@@ -7438,5 +7444,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "الموقع غير متاح",
+    "description" : "محفظة Ledger غير متاحة في هذا الموقع.",
+    "learnMore" : "تعرّف على المزيد"
   }
 }
