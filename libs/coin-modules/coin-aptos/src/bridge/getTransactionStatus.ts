@@ -3,6 +3,7 @@ import {
   NotEnoughToStake,
   NotEnoughStakedBalanceLeft,
   NotEnoughToRestake,
+  NotEnoughToUnstake,
   RecipientRequired,
   InvalidAddress,
   FeeNotLoaded,
@@ -111,7 +112,7 @@ const checkRestakeTransaction = (
       !newErrors.amount
     ) {
       newErrors.amount = new NotEnoughToRestake("", {
-        minAmountStaked: `${MIN_COINS_ON_SHARES_POOL.toNumber().toString()} APT`,
+        minAmount: `${MIN_COINS_ON_SHARES_POOL.toNumber().toString()} APT`,
       });
     }
   }
@@ -132,12 +133,14 @@ const checkUnstakeTransaction = (
     if (t.amount.gt(stakingPosition.active) && !newErrors.amount) {
       newErrors.amount = new NotEnoughBalance();
     }
+    if (!t.useAllAmount && t.amount.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS) && !newErrors.amount) {
+      newErrors.amount = new NotEnoughToUnstake("", {
+        minAmount: `${MIN_COINS_ON_SHARES_POOL.toNumber().toString()} APT`,
+      });
+    }
     if (
       !t.useAllAmount &&
-      stakingPosition.active
-        .minus(t.amount)
-        .minus(APTOS_DELEGATION_RESERVE_IN_OCTAS)
-        .lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS) &&
+      stakingPosition.active.minus(t.amount).lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS) &&
       !newErrors.amount
     ) {
       newErrors.amount = new NotEnoughStakedBalanceLeft("", {

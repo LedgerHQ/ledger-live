@@ -6080,8 +6080,12 @@
       "description": "Please leave at least {{minAmountStaked}} staked, otherwise you'll have to unstake the full amount."
     },
     "NotEnoughToRestake": {
-      "title": "You need to restake at least {{minAmountToRestake}}",
-      "description": "Please restake at least {{minAmountToRestake}}."
+      "title": "You need to restake at least {{minAmount}}",
+      "description": "Please restake at least {{minAmount}}."
+    },
+    "NotEnoughToUnstake": {
+      "title": "You need to unstake at least {{minAmount}}",
+      "description": "Please unstake at least {{minAmount}}."
     },
     "NotEnoughBalanceFees": {
       "title": "Sorry, insufficient funds to cover fees",

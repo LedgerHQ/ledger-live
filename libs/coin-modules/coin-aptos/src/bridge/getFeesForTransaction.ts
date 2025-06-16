@@ -56,6 +56,7 @@ export const getFee = async (
         } else if (
           !completedTx.vm_status.includes("INSUFFICIENT_BALANCE") &&
           !completedTx.vm_status.includes("EDELEGATOR_ACTIVE_BALANCE_TOO_LOW") &&
+          !completedTx.vm_status.includes("EDELEGATOR_PENDING_INACTIVE_BALANCE_TOO_LOW") &&
           !completedTx.vm_status.includes("0x203ed") // 0x203ed -> PROLOGUE_ECANT_PAY_GAS_DEPOSIT equivalent to INSUFFICIENT_BALANCE_FOR_TRANSACTION_FEE
         ) {
           // INSUFFICIENT_BALANCE and EDELEGATOR_ACTIVE_BALANCE_TOO_LOW will be processed by getTransactionStatus

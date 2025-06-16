@@ -89,6 +89,7 @@ export const NotEnoughBalanceSwap = createCustomErrorClass("NotEnoughBalanceSwap
 export const NotEnoughBalanceToDelegate = createCustomErrorClass("NotEnoughBalanceToDelegate");
 export const NotEnoughStakedBalanceLeft = createCustomErrorClass("NotEnoughStakedBalanceLeft");
 export const NotEnoughToRestake = createCustomErrorClass("NotEnoughToRestake");
+export const NotEnoughToUnstake = createCustomErrorClass("NotEnoughToUnstake");
 export const NotEnoughBalanceInParentAccount = createCustomErrorClass(
   "NotEnoughBalanceInParentAccount",
 );
