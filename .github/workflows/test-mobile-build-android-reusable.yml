@@ -32,6 +32,10 @@ on:
         required: false
         type: string
         default: "detox-ios-js-cache"
+    outputs:
+      js-bundle-size:
+        description: The JS bundle size of the built app
+        value: ${{ jobs.build-android-js.outputs.js-bundle-size }}
 
   workflow_dispatch:
     inputs:
@@ -162,6 +166,8 @@ jobs:
     name: "Android Build JS"
     runs-on: [ ledger-live-4xlarge ]
     if: ${{ inputs.build-android-js == true }}
+    outputs:
+        js-bundle-size: ${{ steps.output-js-bundle-size.outputs.size }}
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -208,8 +214,12 @@ jobs:
       - name: Build JS Bundle app for Detox test run
         run: pnpm mobile e2e:ci -p android --bundle
 
+      - name: Test
+        run: ls -l ${{ env.ANDROID_JSBUNDLE_PATH }}
+
       - name: Output bundle size for analysis
-        run: ls -l ${{ env.ANDROID_JSBUNDLE_PATH }}  | cut -d " " -f7
+        id: output-js-bundle-size
+        run: echo size=`ls -l ${{ env.ANDROID_JSBUNDLE_PATH }}  | cut -d " " -f7` >> $GITHUB_OUTPUT
 
       - name: Upload Detox JS Build
         uses: tespkg/actions-cache/save@v1
