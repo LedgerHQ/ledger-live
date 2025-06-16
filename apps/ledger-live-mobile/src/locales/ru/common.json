@@ -1579,7 +1579,7 @@
       "devicePairing" : {
         "title" : "Уже есть секретная фраза восстановления?",
         "label" : "Добавление устройства",
-        "subTitle" : "Подключить устройство Nano",
+        "subTitle" : "Подключить Ledger",
         "desc" : "Уже активировали устройство? Добавьте его в приложение."
       },
       "newDevice" : {
@@ -1935,12 +1935,12 @@
         "cta" : "Подключить Ledger Nano"
       },
       "nanoS" : {
-        "title" : "Подключение Nano",
+        "title" : "Подключить Ledger",
         "desc" : "Вы синхронизируете Ledger Nano с этим смартфоном впервые. Необходимо создать пару.",
         "cta" : "Подключить Ledger Nano"
       },
       "nanoSP" : {
-        "title" : "Подключение Nano",
+        "title" : "Подключить Ledger",
         "desc" : "Вы синхронизируете Ledger Nano с этим смартфоном впервые. Необходимо создать пару.",
         "cta" : "Подключить Ledger Nano"
       },
@@ -3563,6 +3563,15 @@
         "providers" : {
           "noProviders" : "Ничего не найдено. По текущему фильтру нет подходящих курсов."
         }
+      },
+      "quotesList" : {
+        "title" : "Выберите курс"
+      },
+      "twoStepApproval" : {
+        "title" : "Выполните действия"
+      },
+      "history" : {
+        "title" : "История обменов"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "Совместимые устройства",
@@ -7430,7 +7439,12 @@
     "performance" : "Изменение цены",
     "low" : "Мин.",
     "high" : "Макс.",
-    "title" : "Динамика рынка"
+    "title" : "Динамика рынка",
+    "overlay" : {
+      "title" : "Переключение активов",
+      "action" : "Свайпайте влево или вправо",
+      "button" : "Понятно!"
+    }
   },
   "nftEntryPoint" : {
     "title" : "Ваши NFT",
@@ -7438,5 +7452,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Страна не обслуживается",
+    "description" : "Кошелёк Ledger недоступен в этой локации.",
+    "learnMore" : "Подробнее..."
   }
 }
