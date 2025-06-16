@@ -14,7 +14,7 @@ jobs:
     name: "Test Mobile Mocked"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@support/poc-macOS-sharding
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@support/mac-debug
     secrets: inherit
     with:
       macos-specificity-runner-label: "performance-pool"
