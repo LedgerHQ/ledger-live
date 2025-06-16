@@ -24,7 +24,7 @@ jobs:
 
   test-mobile-e2e:
     name: "Test Mobile Mocked"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@support/poc-macOS-sharding
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@support/mac-debug
     secrets: inherit
     with:
       macos-specificity-runner-label: "performance-pool"
