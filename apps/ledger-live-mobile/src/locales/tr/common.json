@@ -3564,6 +3564,15 @@
           "noProviders" : "Sonuç bulunamadı. Mevcut tercihlere uyan teklif yok."
         }
       },
+      "quotesList" : {
+        "title" : "Teklif seçin"
+      },
+      "twoStepApproval" : {
+        "title" : "Adımları tamamlayın"
+      },
+      "history" : {
+        "title" : "Takas geçmişi"
+      },
       "incompatibility" : {
         "explore_compatible_devices" : "Uyumlu cihazları keşfedin",
         "contact_support" : "Müşteri destek ekibiyle iletişime geç",
@@ -7430,7 +7439,12 @@
     "performance" : "Performans",
     "low" : "Düşük",
     "high" : "Yüksek",
-    "title" : "Piyasa Hareketleri"
+    "title" : "Piyasa Hareketleri",
+    "overlay" : {
+      "title" : "Varlıklar arasında geçiş yapın",
+      "action" : "Sola veya sağa kaydırın",
+      "button" : "Anladım!"
+    }
   },
   "nftEntryPoint" : {
     "title" : "NFT'leriniz",
@@ -7438,5 +7452,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Konum kullanılamıyor",
+    "description" : "Ledger cüzdan bu konumda kullanılamıyor.",
+    "learnMore" : "Daha fazla bilgi"
   }
 }
