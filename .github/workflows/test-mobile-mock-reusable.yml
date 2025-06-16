@@ -198,6 +198,7 @@ jobs:
           with:
             name: mobile.metafile.json
             path: mobile.metafile.json
+            overwrite: true
 
 
   detox-tests-ios:
