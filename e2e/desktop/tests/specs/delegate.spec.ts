@@ -45,14 +45,14 @@ const e2eDelegationAccounts = [
 ];
 
 const e2eDelegationAccountsWithoutBroadcast = [
-  // {
-  //   delegate: new Delegate(Account.ADA_1, "0.01", "Ledger by Figment 3"),
-  //   xrayTicket: "B2CQA-3023",
-  // },
-  // {
-  //   delegate: new Delegate(Account.MULTIVERS_X_1, "1", "Ledger by Figment"),
-  //   xrayTicket: "B2CQA-3020",
-  // },
+  {
+    delegate: new Delegate(Account.ADA_1, "0.01", "Ledger by Figment 3"),
+    xrayTicket: "B2CQA-3023",
+  },
+  {
+    delegate: new Delegate(Account.MULTIVERS_X_1, "1", "Ledger by Figment"),
+    xrayTicket: "B2CQA-3020",
+  },
   {
     delegate: new Delegate(
       Account.APTOS_1,
@@ -105,78 +105,78 @@ const liveApps = [
   },
 ];
 
-// for (const account of e2eDelegationAccounts) {
-//   test.describe("Delegate", () => {
-//     test.use({
-//       userdata: "skip-onboarding",
-//       speculosApp: account.delegate.account.currency.speculosApp,
-//       cliCommands: [
-//         (appjsonPath: string) => {
-//           return CLI.liveData({
-//             currency: account.delegate.account.currency.ticker,
-//             index: account.delegate.account.index,
-//             add: true,
-//             appjson: appjsonPath,
-//           });
-//         },
-//       ],
-//     });
+for (const account of e2eDelegationAccounts) {
+  test.describe("Delegate", () => {
+    test.use({
+      userdata: "skip-onboarding",
+      speculosApp: account.delegate.account.currency.speculosApp,
+      cliCommands: [
+        (appjsonPath: string) => {
+          return CLI.liveData({
+            currency: account.delegate.account.currency.ticker,
+            index: account.delegate.account.index,
+            add: true,
+            appjson: appjsonPath,
+          });
+        },
+      ],
+    });
 
-//     test(
-//       `[${account.delegate.account.currency.name}] Delegate`,
-//       {
-//         tag: ["@NanoSP", "@LNS", "@NanoX"],
-//         annotation: { type: "TMS", description: account.xrayTicket },
-//       },
-//       async ({ app }) => {
-//         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+    test(
+      `[${account.delegate.account.currency.name}] Delegate`,
+      {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        annotation: { type: "TMS", description: account.xrayTicket },
+      },
+      async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-//         await app.layout.goToAccounts();
-//         await app.accounts.navigateToAccountByName(account.delegate.account.accountName);
+        await app.layout.goToAccounts();
+        await app.accounts.navigateToAccountByName(account.delegate.account.accountName);
 
-//         if (account.delegate.account.currency.name == Currency.INJ.name) {
-//           await app.speculos.activateExpertMode();
-//         }
+        if (account.delegate.account.currency.name == Currency.INJ.name) {
+          await app.speculos.activateExpertMode();
+        }
 
-//         await app.account.startStakingFlowFromMainStakeButton();
-//         await app.delegate.verifyFirstProviderName(account.delegate.provider);
-//         if (account.delegate.account.currency.name == Currency.SOL.name) {
-//           await app.delegate.verifyContinueDisabled();
-//           await app.delegate.selectProviderByName(account.delegate.provider);
-//           await app.delegate.verifyProviderTC(account.delegate.provider);
-//           await app.delegate.verifyProvider(1);
-//         }
-//         await app.delegate.continue();
-//         await app.delegate.fillAmount(account.delegate.amount);
-//         await app.delegate.continue();
+        await app.account.startStakingFlowFromMainStakeButton();
+        await app.delegate.verifyFirstProviderName(account.delegate.provider);
+        if (account.delegate.account.currency.name == Currency.SOL.name) {
+          await app.delegate.verifyContinueDisabled();
+          await app.delegate.selectProviderByName(account.delegate.provider);
+          await app.delegate.verifyProviderTC(account.delegate.provider);
+          await app.delegate.verifyProvider(1);
+        }
+        await app.delegate.continue();
+        await app.delegate.fillAmount(account.delegate.amount);
+        await app.delegate.continue();
 
-//         await app.speculos.signDelegationTransaction(account.delegate);
-//         await app.delegate.verifySuccessMessage();
-//         await app.delegate.clickViewDetailsButton();
+        await app.speculos.signDelegationTransaction(account.delegate);
+        await app.delegate.verifySuccessMessage();
+        await app.delegate.clickViewDetailsButton();
 
-//         await app.drawer.waitForDrawerToBeVisible();
-//         await app.delegateDrawer.verifyTxTypeIsVisible();
+        await app.drawer.waitForDrawerToBeVisible();
+        await app.delegateDrawer.verifyTxTypeIsVisible();
 
-//         const transactionType =
-//           account.delegate.account.currency.name === Currency.NEAR.name ? "Staked" : "Delegated";
-//         await app.delegateDrawer.verifyTxTypeIs(transactionType);
+        const transactionType =
+          account.delegate.account.currency.name === Currency.NEAR.name ? "Staked" : "Delegated";
+        await app.delegateDrawer.verifyTxTypeIs(transactionType);
 
-//         await app.delegateDrawer.providerIsVisible(account.delegate);
-//         await app.delegateDrawer.amountValueIsVisible(account.delegate.account.currency.ticker);
-//         await app.delegateDrawer.operationTypeIsCorrect(transactionType);
-//         await app.drawer.closeDrawer();
+        await app.delegateDrawer.providerIsVisible(account.delegate);
+        await app.delegateDrawer.amountValueIsVisible(account.delegate.account.currency.ticker);
+        await app.delegateDrawer.operationTypeIsCorrect(transactionType);
+        await app.drawer.closeDrawer();
 
-//         if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-//           await app.layout.syncAccounts();
-//           await app.account.clickOnLastOperationAndReturnStatus();
-//           await app.delegateDrawer.expectDelegationInfos(account.delegate);
-//           await app.delegateDrawer.verifyTxTypeIs(transactionType);
-//           await app.delegateDrawer.operationTypeIsCorrect(transactionType);
-//         }
-//       },
-//     );
-//   });
-// }
+        if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+          await app.layout.syncAccounts();
+          await app.account.clickOnLastOperationAndReturnStatus();
+          await app.delegateDrawer.expectDelegationInfos(account.delegate);
+          await app.delegateDrawer.verifyTxTypeIs(transactionType);
+          await app.delegateDrawer.operationTypeIsCorrect(transactionType);
+        }
+      },
+    );
+  });
+}
 
 for (const account of e2eDelegationAccountsWithoutBroadcast) {
   test.describe("Delegate without Broadcasting", () => {
@@ -252,251 +252,251 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
   });
 }
 
-// test.describe("e2e delegation - Tezos", () => {
-//   const account = new Delegate(Account.XTZ_1, "N/A", "Ledger by Kiln");
-//   setupEnv(true);
-//   test.use({
-//     userdata: "skip-onboarding",
-//     speculosApp: account.account.currency.speculosApp,
-//     cliCommands: [
-//       (appjsonPath: string) => {
-//         return CLI.liveData({
-//           currency: account.account.currency.ticker,
-//           index: account.account.index,
-//           add: true,
-//           appjson: appjsonPath,
-//         });
-//       },
-//     ],
-//   });
+test.describe("e2e delegation - Tezos", () => {
+  const account = new Delegate(Account.XTZ_1, "N/A", "Ledger by Kiln");
+  setupEnv(true);
+  test.use({
+    userdata: "skip-onboarding",
+    speculosApp: account.account.currency.speculosApp,
+    cliCommands: [
+      (appjsonPath: string) => {
+        return CLI.liveData({
+          currency: account.account.currency.ticker,
+          index: account.account.index,
+          add: true,
+          appjson: appjsonPath,
+        });
+      },
+    ],
+  });
 
-//   test(
-//     "Tezos Delegation",
-//     {
-//       tag: ["@NanoSP", "@LNS", "@NanoX"],
-//       annotation: {
-//         type: "TMS",
-//         description: "B2CQA-3041",
-//       },
-//     },
-//     async ({ app }) => {
-//       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-//       await app.layout.goToAccounts();
-//       await app.accounts.navigateToAccountByName(account.account.accountName);
-//       await app.account.startStakingFlowFromMainStakeButton();
-//       await app.delegate.clickDelegateToEarnRewardsButton();
-//       await app.delegate.verifyTezosDelegateInfos(account.provider);
-//       await app.delegate.continue();
-//       await app.speculos.signDelegationTransaction(account);
-//       await app.delegate.verifySuccessMessage();
-//       await app.delegate.clickViewDetailsButton();
-//       await app.drawer.waitForDrawerToBeVisible();
-//       await app.delegateDrawer.verifyTxTypeIsVisible();
-//       await app.delegateDrawer.verifyTxTypeIs("Delegated");
-//       await app.delegateDrawer.providerIsVisible(account);
-//       await app.delegateDrawer.operationTypeIsCorrect("Delegated");
-//       await app.drawer.closeDrawer();
-//     },
-//   );
-// });
+  test(
+    "Tezos Delegation",
+    {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-3041",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await app.layout.goToAccounts();
+      await app.accounts.navigateToAccountByName(account.account.accountName);
+      await app.account.startStakingFlowFromMainStakeButton();
+      await app.delegate.clickDelegateToEarnRewardsButton();
+      await app.delegate.verifyTezosDelegateInfos(account.provider);
+      await app.delegate.continue();
+      await app.speculos.signDelegationTransaction(account);
+      await app.delegate.verifySuccessMessage();
+      await app.delegate.clickViewDetailsButton();
+      await app.drawer.waitForDrawerToBeVisible();
+      await app.delegateDrawer.verifyTxTypeIsVisible();
+      await app.delegateDrawer.verifyTxTypeIs("Delegated");
+      await app.delegateDrawer.providerIsVisible(account);
+      await app.delegateDrawer.operationTypeIsCorrect("Delegated");
+      await app.drawer.closeDrawer();
+    },
+  );
+});
 
-// test.describe("e2e delegation - Celo", () => {
-//   const account = new Delegate(Account.CELO_1, "0.001", "N/A");
-//   test.use({
-//     userdata: "skip-onboarding",
-//     speculosApp: account.account.currency.speculosApp,
-//     cliCommands: [
-//       (appjsonPath: string) => {
-//         return CLI.liveData({
-//           currency: account.account.currency.ticker,
-//           index: account.account.index,
-//           add: true,
-//           appjson: appjsonPath,
-//         });
-//       },
-//     ],
-//   });
+test.describe("e2e delegation - Celo", () => {
+  const account = new Delegate(Account.CELO_1, "0.001", "N/A");
+  test.use({
+    userdata: "skip-onboarding",
+    speculosApp: account.account.currency.speculosApp,
+    cliCommands: [
+      (appjsonPath: string) => {
+        return CLI.liveData({
+          currency: account.account.currency.ticker,
+          index: account.account.index,
+          add: true,
+          appjson: appjsonPath,
+        });
+      },
+    ],
+  });
 
-//   test(
-//     "Celo Delegation",
-//     {
-//       tag: ["@NanoSP", "@LNS", "@NanoX"],
-//       annotation: {
-//         type: "TMS",
-//         description: "B2CQA-3042",
-//       },
-//     },
-//     async ({ app }) => {
-//       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-//       await app.layout.goToAccounts();
-//       await app.accounts.navigateToAccountByName(account.account.accountName);
-//       await app.speculos.activateContractData();
-//       await app.account.startStakingFlowFromMainStakeButton();
-//       await app.delegate.checkCeloManageAssetModal();
-//       await app.delegate.clickCeloLockButton();
-//       await app.delegate.fillAmount(account.amount);
-//       await app.delegate.verifyLockInfoCeloWarning();
-//       await app.delegate.continue();
-//       await app.speculos.signDelegationTransaction(account);
-//       await app.delegate.verifySuccessMessage();
-//       await app.delegate.clickViewDetailsButton();
-//       await app.drawer.waitForDrawerToBeVisible();
-//       await app.delegateDrawer.verifyTxTypeIsVisible();
-//       await app.delegateDrawer.verifyTxTypeIs("Locked");
-//       await app.delegateDrawer.providerIsVisible(account);
-//       await app.delegateDrawer.operationTypeIsCorrect("Locked");
-//       await app.drawer.closeDrawer();
-//     },
-//   );
-// });
+  test(
+    "Celo Delegation",
+    {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-3042",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await app.layout.goToAccounts();
+      await app.accounts.navigateToAccountByName(account.account.accountName);
+      await app.speculos.activateContractData();
+      await app.account.startStakingFlowFromMainStakeButton();
+      await app.delegate.checkCeloManageAssetModal();
+      await app.delegate.clickCeloLockButton();
+      await app.delegate.fillAmount(account.amount);
+      await app.delegate.verifyLockInfoCeloWarning();
+      await app.delegate.continue();
+      await app.speculos.signDelegationTransaction(account);
+      await app.delegate.verifySuccessMessage();
+      await app.delegate.clickViewDetailsButton();
+      await app.drawer.waitForDrawerToBeVisible();
+      await app.delegateDrawer.verifyTxTypeIsVisible();
+      await app.delegateDrawer.verifyTxTypeIs("Locked");
+      await app.delegateDrawer.providerIsVisible(account);
+      await app.delegateDrawer.operationTypeIsCorrect("Locked");
+      await app.drawer.closeDrawer();
+    },
+  );
+});
 
-// for (const validator of validators) {
-//   test.describe("Select a validator", () => {
-//     test.use({
-//       userdata: "skip-onboarding",
-//       speculosApp: validator.delegate.account.currency.speculosApp,
-//       cliCommands: [
-//         (appjsonPath: string) => {
-//           return CLI.liveData({
-//             currency: validator.delegate.account.currency.ticker,
-//             index: validator.delegate.account.index,
-//             add: true,
-//             appjson: appjsonPath,
-//           });
-//         },
-//       ],
-//     });
+for (const validator of validators) {
+  test.describe("Select a validator", () => {
+    test.use({
+      userdata: "skip-onboarding",
+      speculosApp: validator.delegate.account.currency.speculosApp,
+      cliCommands: [
+        (appjsonPath: string) => {
+          return CLI.liveData({
+            currency: validator.delegate.account.currency.ticker,
+            index: validator.delegate.account.index,
+            add: true,
+            appjson: appjsonPath,
+          });
+        },
+      ],
+    });
 
-//     test(
-//       `[${validator.delegate.account.currency.name}] - Select validator`,
-//       {
-//         tag: ["@NanoSP", "@LNS", "@NanoX"],
-//         annotation: { type: "TMS", description: validator.xrayTicket },
-//       },
-//       async ({ app }) => {
-//         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+    test(
+      `[${validator.delegate.account.currency.name}] - Select validator`,
+      {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        annotation: { type: "TMS", description: validator.xrayTicket },
+      },
+      async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-//         await app.layout.goToAccounts();
-//         await app.accounts.navigateToAccountByName(validator.delegate.account.accountName);
+        await app.layout.goToAccounts();
+        await app.accounts.navigateToAccountByName(validator.delegate.account.accountName);
 
-//         await app.account.startStakingFlowFromMainStakeButton();
-//         await app.delegate.continue();
+        await app.account.startStakingFlowFromMainStakeButton();
+        await app.delegate.continue();
 
-//         await app.delegate.verifyFirstProviderName(validator.delegate.provider);
-//         if (validator.delegate.account.currency.name == Currency.SOL.name) {
-//           await app.delegate.verifyContinueDisabled();
-//           await app.delegate.selectProviderByName(validator.delegate.provider);
-//           await app.delegate.verifyProviderTC(validator.delegate.provider);
-//         } else await app.delegate.verifyContinueEnabled();
-//         await app.delegate.verifyProvider(1);
-//         await app.delegate.openSearchProviderModal();
-//         await app.delegate.checkValidatorListIsVisible();
-//         await app.delegate.selectProviderOnRow(2);
-//         await app.delegate.closeProviderList(2);
-//       },
-//     );
-//   });
-// }
+        await app.delegate.verifyFirstProviderName(validator.delegate.provider);
+        if (validator.delegate.account.currency.name == Currency.SOL.name) {
+          await app.delegate.verifyContinueDisabled();
+          await app.delegate.selectProviderByName(validator.delegate.provider);
+          await app.delegate.verifyProviderTC(validator.delegate.provider);
+        } else await app.delegate.verifyContinueEnabled();
+        await app.delegate.verifyProvider(1);
+        await app.delegate.openSearchProviderModal();
+        await app.delegate.checkValidatorListIsVisible();
+        await app.delegate.selectProviderOnRow(2);
+        await app.delegate.closeProviderList(2);
+      },
+    );
+  });
+}
 
-// test.describe("Staking flow from different entry point", () => {
-//   const delegateAccount = new Delegate(Account.ATOM_1, "0.001", "Ledger");
-//   test.use({
-//     userdata: "skip-onboarding",
-//     speculosApp: delegateAccount.account.currency.speculosApp,
-//     cliCommands: [
-//       (appjsonPath: string) => {
-//         return CLI.liveData({
-//           currency: delegateAccount.account.currency.ticker,
-//           index: delegateAccount.account.index,
-//           add: true,
-//           appjson: appjsonPath,
-//         });
-//       },
-//     ],
-//   });
+test.describe("Staking flow from different entry point", () => {
+  const delegateAccount = new Delegate(Account.ATOM_1, "0.001", "Ledger");
+  test.use({
+    userdata: "skip-onboarding",
+    speculosApp: delegateAccount.account.currency.speculosApp,
+    cliCommands: [
+      (appjsonPath: string) => {
+        return CLI.liveData({
+          currency: delegateAccount.account.currency.ticker,
+          index: delegateAccount.account.index,
+          add: true,
+          appjson: appjsonPath,
+        });
+      },
+    ],
+  });
 
-//   test(
-//     "Staking flow from portfolio entry point",
-//     {
-//       tag: ["@NanoSP", "@LNS", "@NanoX"],
-//       annotation: {
-//         type: "TMS",
-//         description: "B2CQA-2769",
-//       },
-//     },
-//     async ({ app }) => {
-//       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+  test(
+    "Staking flow from portfolio entry point",
+    {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2769",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-//       await app.layout.goToPortfolio();
-//       await app.portfolio.startStakeFlow();
+      await app.layout.goToPortfolio();
+      await app.portfolio.startStakeFlow();
 
-//       await app.assetDrawer.selectAsset(delegateAccount.account.currency);
-//       await app.assetDrawer.selectAccountByIndex(delegateAccount.account);
+      await app.assetDrawer.selectAsset(delegateAccount.account.currency);
+      await app.assetDrawer.selectAccountByIndex(delegateAccount.account);
 
-//       await app.delegate.verifyFirstProviderName(delegateAccount.provider);
-//       await app.delegate.continue();
-//     },
-//   );
+      await app.delegate.verifyFirstProviderName(delegateAccount.provider);
+      await app.delegate.continue();
+    },
+  );
 
-//   test(
-//     "Staking flow from market entry point",
-//     {
-//       tag: ["@NanoSP", "@LNS", "@NanoX"],
-//       annotation: {
-//         type: "TMS",
-//         description: "B2CQA-2771",
-//       },
-//     },
-//     async ({ app }) => {
-//       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+  test(
+    "Staking flow from market entry point",
+    {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2771",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-//       await app.layout.goToMarket();
-//       await app.market.search(delegateAccount.account.currency.name);
-//       await app.market.stakeButtonClick(delegateAccount.account.currency.ticker);
+      await app.layout.goToMarket();
+      await app.market.search(delegateAccount.account.currency.name);
+      await app.market.stakeButtonClick(delegateAccount.account.currency.ticker);
 
-//       await app.assetDrawer.selectAccountByIndex(delegateAccount.account);
+      await app.assetDrawer.selectAccountByIndex(delegateAccount.account);
 
-//       await app.delegate.verifyFirstProviderName(delegateAccount.provider);
-//       await app.delegate.continue();
-//     },
-//   );
-// });
+      await app.delegate.verifyFirstProviderName(delegateAccount.provider);
+      await app.delegate.continue();
+    },
+  );
+});
 
-// for (const currency of liveApps) {
-//   test.describe("LiveApp delegate", () => {
-//     test.use({
-//       userdata: "skip-onboarding",
-//       speculosApp: currency.delegate.account.currency.speculosApp,
-//       cliCommands: [
-//         (appjsonPath: string) => {
-//           return CLI.liveData({
-//             currency: currency.delegate.account.currency.ticker,
-//             index: currency.delegate.account.index,
-//             add: true,
-//             appjson: appjsonPath,
-//           });
-//         },
-//       ],
-//     });
+for (const currency of liveApps) {
+  test.describe("LiveApp delegate", () => {
+    test.use({
+      userdata: "skip-onboarding",
+      speculosApp: currency.delegate.account.currency.speculosApp,
+      cliCommands: [
+        (appjsonPath: string) => {
+          return CLI.liveData({
+            currency: currency.delegate.account.currency.ticker,
+            index: currency.delegate.account.index,
+            add: true,
+            appjson: appjsonPath,
+          });
+        },
+      ],
+    });
 
-//     test(
-//       `[${currency.delegate.account.currency.name}] - Select validator`,
-//       {
-//         tag: ["@NanoSP", "@LNS", "@NanoX"],
-//         annotation: { type: "TMS", description: currency.xrayTicket },
-//       },
-//       async ({ app }) => {
-//         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+    test(
+      `[${currency.delegate.account.currency.name}] - Select validator`,
+      {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        annotation: { type: "TMS", description: currency.xrayTicket },
+      },
+      async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-//         await app.layout.goToAccounts();
-//         await app.accounts.navigateToAccountByName(currency.delegate.account.accountName);
+        await app.layout.goToAccounts();
+        await app.accounts.navigateToAccountByName(currency.delegate.account.accountName);
 
-//         await app.account.startStakingFlowFromMainStakeButton();
-//         if (currency.delegate.account.currency.name == Currency.ETH.name) {
-//           await app.delegate.chooseStakeProvider(currency.delegate.provider);
-//         }
-//         await app.liveApp.verifyLiveAppTitle(currency.delegate.provider);
-//       },
-//     );
-//   });
-// }
+        await app.account.startStakingFlowFromMainStakeButton();
+        if (currency.delegate.account.currency.name == Currency.ETH.name) {
+          await app.delegate.chooseStakeProvider(currency.delegate.provider);
+        }
+        await app.liveApp.verifyLiveAppTitle(currency.delegate.provider);
+      },
+    );
+  });
+}
