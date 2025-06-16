@@ -221,7 +221,7 @@ jobs:
         run: pnpm mobile e2e:ci -p ios --bundle
 
       - name: Output bundle size for analysis
-        run: ls -l ${{ github.workspace }}/apps/ledger-live-mobile/main.jsbundle  | cut -d " " -f7
+        run: ls -l ${{ github.workspace }}/apps/ledger-live-mobile/main.jsbundle  | cut -d " " -f5
 
       - name: Upload Detox JS Build
         uses: tespkg/actions-cache/save@v1

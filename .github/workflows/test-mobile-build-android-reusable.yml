@@ -219,7 +219,9 @@ jobs:
 
       - name: Output bundle size for analysis
         id: output-js-bundle-size
-        run: echo size=`ls -l ${{ env.ANDROID_JSBUNDLE_PATH }}  | cut -d " " -f7` >> $GITHUB_OUTPUT
+        run: |
+          ls -l ${{ env.ANDROID_JSBUNDLE_PATH }}  | cut -d " " -f5
+          echo size=`ls -l ${{ env.ANDROID_JSBUNDLE_PATH }}  | cut -d " " -f5` >> $GITHUB_OUTPUT
 
       - name: Upload Detox JS Build
         uses: tespkg/actions-cache/save@v1
