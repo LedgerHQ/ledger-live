@@ -169,75 +169,75 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
-  build-ios-js:
-    name: "iOS Build JS"
-    if: ${{ inputs.build-ios-js == true }}
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-      LANG: en_US.UTF-8
-      LANGUAGE: en_US.UTF-8
-      LC_ALL: en_US.UTF-8
-    runs-on: [ ledger-live-4xlarge ]
-    outputs:
-      js-bundle-size: ${{ steps.output-js-bundle-size.outputs.size }}
-    steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        id: aws
-        with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
-          aws-region: ${{ secrets.AWS_CACHE_REGION }}
-
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.ref || github.sha }}
-          repository: LedgerHQ/ledger-live
-          persist-credentials: false
-
-      - name: setup caches
-        id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
-        with:
-          skip-pod-cache: "true"
-          skip-turbo-cache: "false"
-          skip-pnpm-cache: "false"
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-
-      - uses: nick-fields/retry@v3
-        name: install dependencies
-        id: install-dependencies
-        with:
-          max_attempts: 2
-          timeout_minutes: 15
-          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
-          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
-
-      - name: Build dependencies
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
-        with:
-          command: pnpm build:llm:deps
-          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          turbo_port: ${{ steps.setup-caches.outputs.port }}
-          disable_cache: ${{ inputs.disable-turbo-cache || false }}
-
-      - name: Build JS Bundle app for Detox test run
-        run: pnpm mobile e2e:ci -p ios --bundle
-
-      - name: Output bundle size for analysis
-        id: output-js-bundle-size
-        run: echo size=`ls -l ${{ github.workspace }}/apps/ledger-live-mobile/main.jsbundle  | cut -d " " -f5` >> $GITHUB_OUTPUT
-
-      - name: Upload Detox JS Build
-        uses: tespkg/actions-cache/save@v1
-        with:
-          path: ${{ github.workspace }}/apps/ledger-live-mobile/main.jsbundle
-          key: ${{ inputs.ios-js-cache-key }}
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ${{ env.cache-bucket }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
+#  build-ios-js:
+#    name: "iOS Build JS"
+#    if: ${{ inputs.build-ios-js == true }}
+#    env:
+#      NODE_OPTIONS: "--max-old-space-size=7168"
+#      LANG: en_US.UTF-8
+#      LANGUAGE: en_US.UTF-8
+#      LC_ALL: en_US.UTF-8
+#    runs-on: [ ledger-live-4xlarge ]
+#    outputs:
+#      js-bundle-size: ${{ steps.output-js-bundle-size.outputs.size }}
+#    steps:
+#      - name: Configure AWS credentials
+#        uses: aws-actions/configure-aws-credentials@v4
+#        id: aws
+#        with:
+#          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
+#          aws-region: ${{ secrets.AWS_CACHE_REGION }}
+#
+#      - uses: actions/checkout@v4
+#        with:
+#          ref: ${{ inputs.ref || github.sha }}
+#          repository: LedgerHQ/ledger-live
+#          persist-credentials: false
+#
+#      - name: setup caches
+#        id: setup-caches
+#        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+#        with:
+#          skip-pod-cache: "true"
+#          skip-turbo-cache: "false"
+#          skip-pnpm-cache: "false"
+#          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+#          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+#          region: ${{ secrets.AWS_CACHE_REGION }}
+#          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+#
+#      - uses: nick-fields/retry@v3
+#        name: install dependencies
+#        id: install-dependencies
+#        with:
+#          max_attempts: 2
+#          timeout_minutes: 15
+#          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+#          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+#
+#      - name: Build dependencies
+#        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+#        with:
+#          command: pnpm build:llm:deps
+#          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+#          turbo_port: ${{ steps.setup-caches.outputs.port }}
+#          disable_cache: ${{ inputs.disable-turbo-cache || false }}
+#
+#      - name: Build JS Bundle app for Detox test run
+#        run: pnpm mobile e2e:ci -p ios --bundle
+#
+#      - name: Output bundle size for analysis
+#        id: output-js-bundle-size
+#        run: echo size=`ls -l ${{ github.workspace }}/apps/ledger-live-mobile/main.jsbundle  | cut -d " " -f5` >> $GITHUB_OUTPUT
+#
+#      - name: Upload Detox JS Build
+#        uses: tespkg/actions-cache/save@v1
+#        with:
+#          path: ${{ github.workspace }}/apps/ledger-live-mobile/main.jsbundle
+#          key: ${{ inputs.ios-js-cache-key }}
+#          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+#          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+#          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+#          bucket: ${{ env.cache-bucket }}
+#          region: ${{ secrets.AWS_CACHE_REGION }}
+#          use-fallback: false
