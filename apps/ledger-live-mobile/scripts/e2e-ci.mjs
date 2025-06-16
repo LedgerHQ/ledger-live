@@ -30,11 +30,11 @@ const build_ios = async () => {
 };
 
 const bundle_ios = async () => {
-  await $`pnpm mobile bundle:ios --dev false --minify false`;
+  await $`pnpm mobile bundle:ios --dev false --minify true`;
 };
 
 const bundle_android = async () => {
-  await $`pnpm mobile bundle:android --dev false --minify false`;
+  await $`pnpm mobile bundle:android --dev false --minify true`;
 };
 
 const bundle_ios_with_cache = async () => {
