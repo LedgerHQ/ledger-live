@@ -689,11 +689,9 @@ export const DeeplinksProvider = ({
   if (!isReady) {
     return null;
   }
-
   return (
     <NavigationContainer
       theme={themes[resolvedTheme]}
-      linking={linking}
       ref={navigationRef}
       onReady={() => {
         (isReadyRef as Writeable<typeof isReadyRef>).current = true;
