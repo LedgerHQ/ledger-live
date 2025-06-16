@@ -4,6 +4,21 @@ import {
 } from "@ledgerhq/hw-transport-mocker";
 import Solana from "../src/Solana";
 
+test("provideTrustedDynamicDescriptor", async () => {
+  const transport = await openTransportReplayer(
+    RecordStore.fromString(`
+        => e02200000711220803334455
+        <= 9000
+    `)
+  );
+  const solana = new Solana(transport);
+  expect(await solana.provideTrustedDynamicDescriptor({
+      data: Buffer.from("1122", "hex"),
+      signature: Buffer.from("334455", "hex"),
+    }),
+  ).toEqual(true);
+})
+
 test("getAppConfiguration", async () => {
   const transport = await openTransportReplayer(
     RecordStore.fromString(`
