@@ -1,12 +1,9 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Observable } from "rxjs";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
-import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
-import { getAccountTuplesForCurrency } from "~/renderer/components/PerCurrencySelectAccount/state";
+import { getAccountTuplesForCurrency } from "../utils/getAccountTuplesForCurrency";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { openModal } from "~/renderer/actions/modals";
@@ -29,27 +26,21 @@ export const sortAccountsByBalance = (
   return 0;
 };
 
-export const useDetailedAccounts = (
-  asset: CryptoOrTokenCurrency,
-  flow: string,
-  source: string,
-  accounts$?: Observable<WalletAPIAccount[]>,
-) => {
+export const useDetailedAccounts = (asset: CryptoOrTokenCurrency, flow: string, source: string) => {
   const dispatch = useDispatch();
   const discreet = useDiscreetMode();
   const state = useCountervaluesState();
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
-  const accountIds = useGetAccountIds(accounts$);
   const nestedAccounts = useSelector(accountsSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
   const isATokenCurrency = useMemo(() => isTokenCurrency(asset), [asset]);
 
   const accounts = useMemo(() => {
-    const accountTuples = getAccountTuplesForCurrency(asset, nestedAccounts, false, accountIds);
+    const accountTuples = getAccountTuplesForCurrency(asset, nestedAccounts);
     return accountTuples.sort((a, b) => sortAccountsByBalance(a.account, b.account));
-  }, [asset, nestedAccounts, accountIds]);
+  }, [asset, nestedAccounts]);
 
   const detailedAccounts = useMemo(() => {
     const formattedAccounts = accounts.flatMap(tuple => {

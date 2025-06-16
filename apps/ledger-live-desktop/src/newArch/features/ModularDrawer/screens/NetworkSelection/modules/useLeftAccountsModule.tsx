@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Text } from "@ledgerhq/react-ui/index";
-import { getAccountTuplesForCurrency } from "~/renderer/components/PerCurrencySelectAccount/state";
+import { getAccountTuplesForCurrency } from "../../../utils/getAccountTuplesForCurrency";
 import { useTranslation } from "react-i18next";
 import { Network } from "@ledgerhq/react-ui/pre-ldls/index";
 
@@ -23,7 +23,7 @@ export const useLeftAccountsModule = (assets: CryptoOrTokenCurrency[]) => {
 
   const networksWithCount: NetworkWithCount[] = assets
     .map(asset => {
-      const { length } = getAccountTuplesForCurrency(asset, nestedAccounts, false);
+      const { length } = getAccountTuplesForCurrency(asset, nestedAccounts);
 
       if (length === 0) {
         return { ...asset, count: 0 };
