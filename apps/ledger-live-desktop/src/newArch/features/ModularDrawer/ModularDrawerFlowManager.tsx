@@ -26,7 +26,7 @@ import {
   extractProviderCurrencies,
 } from "./utils/currencyUtils";
 
-type Props = {
+export type ModularDrawerFlowManagerProps = {
   currencies: CryptoOrTokenCurrency[];
   drawerConfiguration?: EnhancedModularDrawerConfiguration;
   accounts$?: Observable<WalletAPIAccount[]>;
@@ -55,7 +55,7 @@ const ModularDrawerFlowManager = ({
   source,
   onAssetSelected,
   onAccountSelected,
-}: Props) => {
+}: ModularDrawerFlowManagerProps) => {
   const featureModularDrawer = useFeature("lldModularDrawer");
   const modularizationEnabled = featureModularDrawer?.params?.enableModularization ?? false;
   const assetConfiguration = modularizationEnabled
