@@ -75,7 +75,7 @@ import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 import StakeFlowNavigator from "./StakeFlowNavigator";
 import { RecoverPlayer } from "~/screens/Protect/Player";
 import { RedirectToOnboardingRecoverFlowScreen } from "~/screens/Protect/RedirectToOnboardingRecoverFlow";
-import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
+import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import {
   NavigationHeaderCloseButton,
   NavigationHeaderCloseButtonAdvanced,
@@ -96,6 +96,7 @@ import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
 import AssetSelectionNavigator from "LLM/features/AssetSelection/Navigator";
 import AssetsListNavigator from "LLM/features/Assets/Navigator";
 import FeesNavigator from "./FeesNavigator";
+import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -537,7 +538,19 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.Earn}
           component={EarnLiveAppNavigator}
-          options={{ headerShown: false }}
+          options={props => {
+            const stakeLabel = getStakeLabelLocaleBased();
+            const intent = props.route?.params?.params?.intent;
+
+            return intent === "deposit" || intent === "withdraw"
+              ? {
+                  headerShown: true,
+                  closable: false,
+                  headerTitle: t(stakeLabel),
+                  headerRight: () => null,
+                }
+              : { headerShown: false };
+          }}
         />
         <Stack.Screen
           name={NavigatorName.NoFundsFlow}
