@@ -25,6 +25,8 @@ export const Close = ({ onPress }: { onPress: ButtonAction }) => {
 
 type LabelProps = {
   label: string;
+  hasSecondaryText?: boolean;
+  isCentered?: boolean;
 };
 
 export const Tag = ({ label }: LabelProps) => {
@@ -47,12 +49,40 @@ export const Tag = ({ label }: LabelProps) => {
   );
 };
 
-export const Title = ({ label }: LabelProps) => {
+export const Title = ({ label, hasSecondaryText, isCentered }: LabelProps) => {
   const { colors } = useTheme();
 
   return (
-    <Text variant="body" fontWeight="medium" color={colors.neutral.c80} lineHeight={"18px"}>
-      {label}
+    <Text
+      variant="large"
+      fontWeight="medium"
+      textAlign={isCentered ? "center" : "start"}
+      color={!hasSecondaryText ? colors.neutral.c80 : colors.neutral.c100}
+      lineHeight={"18px"}
+    >
+      {label.replace(/\\n/g, "\n")}
+    </Text>
+  );
+};
+
+export const SecondaryText = ({
+  label,
+  isCentered,
+}: {
+  label: string;
+  isCentered: boolean | undefined;
+}) => {
+  const { colors } = useTheme();
+
+  return (
+    <Text
+      variant="body"
+      fontWeight="medium"
+      color={colors.neutral.c70}
+      textAlign={isCentered ? "center" : "start"}
+      lineHeight={"16px"}
+    >
+      {label.replace(/\\n/g, "\n")}
     </Text>
   );
 };

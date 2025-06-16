@@ -1,0 +1,259 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`aptos currency bridge scanAccounts aptos seed 1 1`] = `
+[
+  {
+    "balance": "19949100",
+    "currencyId": "aptos",
+    "derivationMode": "aptos",
+    "freshAddress": "0x445fa0013887abd1a0c14acdec6e48090e0ad3fed3e08202aac15ca14f3be26b",
+    "freshAddressPath": "44'/637'/0'/0'/0'",
+    "id": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos",
+    "index": 0,
+    "operationsCount": 7,
+    "pendingOperations": [],
+    "seedIdentifier": "d6816f4f22f867b56cf9304b776f452a16d107835d73ee8a33c4ced210300583",
+    "spendableBalance": "19949100",
+    "subAccounts": [],
+    "swapHistory": [],
+    "syncHash": undefined,
+    "used": true,
+    "xpub": "d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956",
+  },
+  {
+    "balance": "20020000",
+    "currencyId": "aptos",
+    "derivationMode": "aptos",
+    "freshAddress": "0xd20fa44192f94ba086ab16bfdf57e43ff118ada69b4c66fa9b9a9223cbc068c1",
+    "freshAddressPath": "44'/637'/1'/0'/0'",
+    "id": "js:2:aptos:6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e:aptos",
+    "index": 1,
+    "operationsCount": 2,
+    "pendingOperations": [],
+    "seedIdentifier": "d6816f4f22f867b56cf9304b776f452a16d107835d73ee8a33c4ced210300583",
+    "spendableBalance": "20020000",
+    "subAccounts": [],
+    "swapHistory": [],
+    "syncHash": undefined,
+    "used": true,
+    "xpub": "6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e",
+  },
+  {
+    "balance": "0",
+    "currencyId": "aptos",
+    "derivationMode": "aptos",
+    "freshAddress": "0xf4bf78be42e07959793c98c7e8345bb948bf10b8e6baac5e368eab66d09a9671",
+    "freshAddressPath": "44'/637'/2'/0'/0'",
+    "id": "js:2:aptos:8ffc0c2e141ead220f05b30fa01ce9a3783c5a157219f922b02ec194308b1b45:aptos",
+    "index": 2,
+    "operationsCount": 0,
+    "pendingOperations": [],
+    "seedIdentifier": "d6816f4f22f867b56cf9304b776f452a16d107835d73ee8a33c4ced210300583",
+    "spendableBalance": "0",
+    "subAccounts": [],
+    "swapHistory": [],
+    "syncHash": undefined,
+    "used": false,
+    "xpub": "8ffc0c2e141ead220f05b30fa01ce9a3783c5a157219f922b02ec194308b1b45",
+  },
+]
+`;
+
+exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
+[
+  [
+    {
+      "accountId": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos",
+      "blockHash": "0x4c000b55c435dc0d1040d26a7ee782fb7e151748d41ea9126ebe6bbbf2e95111",
+      "blockHeight": 266342014,
+      "extra": {
+        "version": "2066042051",
+      },
+      "fee": "900",
+      "hasFailed": false,
+      "hash": "0x1e85342da3a81f9c3a30c585677d3e50101d5731dcaf31cc157a3c694e6aece8",
+      "id": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos-0x1e85342da3a81f9c3a30c585677d3e50101d5731dcaf31cc157a3c694e6aece8-IN",
+      "recipients": [
+        "0x445fa0013887abd1a0c14acdec6e48090e0ad3fed3e08202aac15ca14f3be26b",
+      ],
+      "senders": [
+        "0xa0d8abc262e3321f87d745bd5d687e8f3fb14c87d48f840b6b56867df0026ec8",
+      ],
+      "transactionSequenceNumber": 10,
+      "type": "IN",
+      "value": "100000",
+    },
+    {
+      "accountId": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos",
+      "blockHash": "0x46de657932759f16ffcda6ef6ace41996f263287e538d3e0f5cbf85994695247",
+      "blockHeight": 266316843,
+      "extra": {
+        "version": "2065700142",
+      },
+      "fee": "900",
+      "hasFailed": false,
+      "hash": "0x3c586d8c15c76848fbd3c84ddfbf11a1a07c92734da4dd8d530c9f23a0e7744c",
+      "id": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos-0x3c586d8c15c76848fbd3c84ddfbf11a1a07c92734da4dd8d530c9f23a0e7744c-IN",
+      "recipients": [
+        "0x445fa0013887abd1a0c14acdec6e48090e0ad3fed3e08202aac15ca14f3be26b",
+      ],
+      "senders": [
+        "0xa0d8abc262e3321f87d745bd5d687e8f3fb14c87d48f840b6b56867df0026ec8",
+      ],
+      "transactionSequenceNumber": 9,
+      "type": "IN",
+      "value": "20000",
+    },
+    {
+      "accountId": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos",
+      "blockHash": "0xc546b75fd87fb75a2f328bebffade4ccf3345844eec4d2b6cf82e042fe9a7661",
+      "blockHeight": 266313878,
+      "extra": {
+        "version": "2065659252",
+      },
+      "fee": "99900",
+      "hasFailed": false,
+      "hash": "0x5f2c2f597ab912dff9fe413b503036edbcc5488c03a4606f11eef868ed68258e",
+      "id": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos-0x5f2c2f597ab912dff9fe413b503036edbcc5488c03a4606f11eef868ed68258e-IN",
+      "recipients": [
+        "0x445fa0013887abd1a0c14acdec6e48090e0ad3fed3e08202aac15ca14f3be26b",
+      ],
+      "senders": [
+        "0xa0d8abc262e3321f87d745bd5d687e8f3fb14c87d48f840b6b56867df0026ec8",
+      ],
+      "transactionSequenceNumber": 7,
+      "type": "IN",
+      "value": "20000",
+    },
+    {
+      "accountId": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos",
+      "blockHash": "0xf9429d651797c3c3254773407bccf9c0e4c5009104d360b97e08286429b7c79a",
+      "blockHeight": 302070324,
+      "extra": {
+        "version": "2463183347",
+      },
+      "fee": "30100",
+      "hasFailed": true,
+      "hash": "0x93b7213cb4facc242726d80cf7a14ec1c9c10daa7d2dccc4ad47958c2f88ee0e",
+      "id": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos-0x93b7213cb4facc242726d80cf7a14ec1c9c10daa7d2dccc4ad47958c2f88ee0e-OUT",
+      "recipients": [
+        "0xd20fa44192f94ba086ab16bfdf57e43ff118ada69b4c66fa9b9a9223cbc068c1",
+      ],
+      "senders": [
+        "0x445fa0013887abd1a0c14acdec6e48090e0ad3fed3e08202aac15ca14f3be26b",
+      ],
+      "transactionSequenceNumber": 1,
+      "type": "OUT",
+      "value": "30100",
+    },
+    {
+      "accountId": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos",
+      "blockHash": "0x1bbe17059abba7dc500aca2eb174c217e71f3dcd7486cd4b27dc6136cce8a60a",
+      "blockHeight": 266315762,
+      "extra": {
+        "version": "2065684418",
+      },
+      "fee": "900",
+      "hasFailed": false,
+      "hash": "0xb74e3ab13f7a00faeb51c0e251602f53d387a64ac9fea7c76a8be3d0bf6f7a19",
+      "id": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos-0xb74e3ab13f7a00faeb51c0e251602f53d387a64ac9fea7c76a8be3d0bf6f7a19-IN",
+      "recipients": [
+        "0x445fa0013887abd1a0c14acdec6e48090e0ad3fed3e08202aac15ca14f3be26b",
+      ],
+      "senders": [
+        "0xa0d8abc262e3321f87d745bd5d687e8f3fb14c87d48f840b6b56867df0026ec8",
+      ],
+      "transactionSequenceNumber": 8,
+      "type": "IN",
+      "value": "10000",
+    },
+    {
+      "accountId": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos",
+      "blockHash": "0xd9ffa9abc5a6aae3f342e353a55ab115d50d582a400e909f37cd48063487de5f",
+      "blockHeight": 302074007,
+      "extra": {
+        "version": "2463213242",
+      },
+      "fee": "1100",
+      "hasFailed": false,
+      "hash": "0xf8c8a486c8e0c0c530f92ea5b26220829e8f8e24f8b0d9f35b57dbd804d36daf",
+      "id": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos-0xf8c8a486c8e0c0c530f92ea5b26220829e8f8e24f8b0d9f35b57dbd804d36daf-IN",
+      "recipients": [
+        "0x445fa0013887abd1a0c14acdec6e48090e0ad3fed3e08202aac15ca14f3be26b",
+      ],
+      "senders": [
+        "0xa0d8abc262e3321f87d745bd5d687e8f3fb14c87d48f840b6b56867df0026ec8",
+      ],
+      "transactionSequenceNumber": 86,
+      "type": "IN",
+      "value": "20000000",
+    },
+    {
+      "accountId": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos",
+      "blockHash": "0xf37ce698cf2e6d9e4a0048cd6d09fb3f19f417ab8251a3cc1f19b8d0e503538f",
+      "blockHeight": 266342506,
+      "extra": {
+        "version": "2066048548",
+      },
+      "fee": "99900",
+      "hasFailed": false,
+      "hash": "0xf980601fe40ad1dab0cc68fe08d2bc95c73e2a21c6d257475e0879394638058e",
+      "id": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos-0xf980601fe40ad1dab0cc68fe08d2bc95c73e2a21c6d257475e0879394638058e-OUT",
+      "recipients": [
+        "0xd20fa44192f94ba086ab16bfdf57e43ff118ada69b4c66fa9b9a9223cbc068c1",
+      ],
+      "senders": [
+        "0x445fa0013887abd1a0c14acdec6e48090e0ad3fed3e08202aac15ca14f3be26b",
+      ],
+      "transactionSequenceNumber": 0,
+      "type": "OUT",
+      "value": "119900",
+    },
+  ],
+  [
+    {
+      "accountId": "js:2:aptos:6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e:aptos",
+      "blockHash": "0x27db591a136924b48d10e6e152a3e856a5c38b332654767da252851adbb454b2",
+      "blockHeight": 302074528,
+      "extra": {
+        "version": "2463216946",
+      },
+      "fee": "1100",
+      "hasFailed": false,
+      "hash": "0x40d445cdfc3ab007a9a7c809a5f12d9488c6137ba691a3ab5ade1ff619cab61f",
+      "id": "js:2:aptos:6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e:aptos-0x40d445cdfc3ab007a9a7c809a5f12d9488c6137ba691a3ab5ade1ff619cab61f-IN",
+      "recipients": [
+        "0xd20fa44192f94ba086ab16bfdf57e43ff118ada69b4c66fa9b9a9223cbc068c1",
+      ],
+      "senders": [
+        "0xa0d8abc262e3321f87d745bd5d687e8f3fb14c87d48f840b6b56867df0026ec8",
+      ],
+      "transactionSequenceNumber": 87,
+      "type": "IN",
+      "value": "20000000",
+    },
+    {
+      "accountId": "js:2:aptos:6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e:aptos",
+      "blockHash": "0xf37ce698cf2e6d9e4a0048cd6d09fb3f19f417ab8251a3cc1f19b8d0e503538f",
+      "blockHeight": 266342506,
+      "extra": {
+        "version": "2066048548",
+      },
+      "fee": "99900",
+      "hasFailed": false,
+      "hash": "0xf980601fe40ad1dab0cc68fe08d2bc95c73e2a21c6d257475e0879394638058e",
+      "id": "js:2:aptos:6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e:aptos-0xf980601fe40ad1dab0cc68fe08d2bc95c73e2a21c6d257475e0879394638058e-IN",
+      "recipients": [
+        "0xd20fa44192f94ba086ab16bfdf57e43ff118ada69b4c66fa9b9a9223cbc068c1",
+      ],
+      "senders": [
+        "0x445fa0013887abd1a0c14acdec6e48090e0ad3fed3e08202aac15ca14f3be26b",
+      ],
+      "transactionSequenceNumber": 0,
+      "type": "IN",
+      "value": "20000",
+    },
+  ],
+  [],
+]
+`;

@@ -9,7 +9,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { extractTokenId } from "@ledgerhq/live-common/families/algorand/tokens";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { SubAccount } from "@ledgerhq/types-live";
+import type { TokenAccount } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import { AlgorandAccount } from "@ledgerhq/live-common/families/algorand/types";
 import { ScreenName } from "~/const";
@@ -125,7 +125,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
           <Row
             item={item}
             disabled={(subAccounts || []).some(
-              (sub: SubAccount) =>
+              (sub: TokenAccount) =>
                 sub.type === "TokenAccount" && sub.token && sub.token.id === item.id,
             )}
             onPress={() => onNext(item.id)}

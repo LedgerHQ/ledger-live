@@ -1,3 +1,4 @@
+import Braze from "@braze/react-native-sdk";
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -7,8 +8,9 @@ import {
   setDynamicContentLearnCards,
   setDynamicContentCategoriesCards,
   setDynamicContentMobileCards,
+  setIsDynamicContentLoading,
+  setDynamicContentLandingPageStickyCtaCards,
 } from "../actions/dynamicContent";
-import { useBrazeContentCard } from "./brazeContentCard";
 import {
   filterByPage,
   filterByType,
@@ -18,6 +20,7 @@ import {
   mapAsNotificationContentCard,
   mapAsLearnContentCard,
   mapAsCategoryContentCard,
+  mapAsLandingPageStickyCtaContentCard,
   getMobileContentCards,
   compareCards,
 } from "./utils";
@@ -28,13 +31,21 @@ import { clearDismissedContentCards } from "~/actions/settings";
 
 export const useDynamicContentLogic = () => {
   const dispatch = useDispatch();
-  const { Braze, refreshDynamicContent } = useBrazeContentCard();
+  const refreshDynamicContent = useCallback(() => Braze.requestContentCardsRefresh(), []);
   const dismissedContentCards = useSelector(dismissedContentCardsSelector) || {};
   const dismissedContentCardsIds = Object.keys(dismissedContentCards);
 
   const fetchData = useCallback(async () => {
+    dispatch(setIsDynamicContentLoading(true));
+
     // Fetch data from Braze
-    const contentCards: BrazeContentCard[] = await Braze.getContentCards();
+    let contentCards: BrazeContentCard[] = [];
+    try {
+      contentCards = await Braze.getContentCards();
+    } catch (error) {
+      console.error("Error fetching dynamic content", error);
+    }
+
     const filteredContentCards = filterCardsThatHaveBeenDismissed(
       contentCards,
       dismissedContentCardsIds,
@@ -64,13 +75,22 @@ export const useDynamicContentLogic = () => {
       .map(card => mapAsCategoryContentCard(card))
       .sort(compareCards);
 
+    const landingPageStickyCtaCards = filterByPage(
+      mobileContentCards,
+      ContentCardLocation.LandingPageStickyCta,
+    )
+      .map(card => mapAsLandingPageStickyCtaContentCard(card))
+      .sort(compareCards);
+
     dispatch(setDynamicContentCategoriesCards(categoriesCards));
     dispatch(setDynamicContentMobileCards(mobileContentCards));
     dispatch(setDynamicContentWalletCards(walletCards));
     dispatch(setDynamicContentAssetsCards(assetCards));
     dispatch(setDynamicContentNotificationCards(notificationCards));
     dispatch(setDynamicContentLearnCards(learnCards));
-  }, [Braze, dismissedContentCardsIds, dispatch]);
+    dispatch(setDynamicContentLandingPageStickyCtaCards(landingPageStickyCtaCards));
+    dispatch(setIsDynamicContentLoading(false));
+  }, [dismissedContentCardsIds, dispatch]);
 
   const clearOldDismissedContentCards = () => {
     const oldCampaignIds = getOldCampaignIds(dismissedContentCards || {});

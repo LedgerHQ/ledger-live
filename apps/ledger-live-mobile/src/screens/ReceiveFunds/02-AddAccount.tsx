@@ -29,7 +29,7 @@ import {
 } from "~/components/RootNavigator/types/helpers";
 import { RootStackParamList } from "~/components/RootNavigator/types/RootNavigator";
 import Animation from "~/components/Animation";
-import lottie from "./assets/lottie.json";
+import lottie from "~/animations/lottie.json";
 import GradientContainer from "~/components/GradientContainer";
 import { useTheme } from "styled-components/native";
 import { walletSelector } from "~/reducers/wallet";

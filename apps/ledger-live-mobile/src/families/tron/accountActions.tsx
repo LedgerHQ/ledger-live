@@ -4,9 +4,9 @@ import type { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import { NavigatorName, ScreenName } from "~/const";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/index";
-import { TRX } from "@ledgerhq/native-ui/assets/cryptoIcons";
 import { TokenAccount } from "@ledgerhq/types-live";
-
+import { IconsLegacy } from "@ledgerhq/native-ui";
+import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 const getMainActions = ({
   account,
   parentAccount,
@@ -15,6 +15,7 @@ const getMainActions = ({
   parentAccount: TronAccount | null | undefined;
 }): ActionButtonEvent[] => {
   const mainAccount = getMainAccount(account, parentAccount);
+  const label = getStakeLabelLocaleBased();
   const navigationParams: NavigationParamsType = isAccountEmpty(mainAccount)
     ? [
         NavigatorName.NoFundsFlow,
@@ -42,13 +43,14 @@ const getMainActions = ({
     {
       id: "stake",
       navigationParams,
-      label: <Trans i18nKey="account.stake" />,
-      Icon: () => <TRX />,
+      label: <Trans i18nKey={label} />,
+      Icon: IconsLegacy.CoinsMedium,
       event: "button_clicked",
       eventProperties: {
         button: "stake",
         currency: "TRX",
         page: "Account Page",
+        isRedirectConfig: false,
       },
     },
   ];

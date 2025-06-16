@@ -1,5 +1,6 @@
 import React, { createContext, useMemo, useCallback, useContext, ReactElement } from "react";
 import differenceBy from "lodash/differenceBy";
+import { fromPromise } from "xstate";
 import { useMachine } from "@xstate/react";
 import type { Announcement, AnnouncementsUserSettings, State, AnnouncementsApi } from "./types";
 import { localizeAnnouncements, filterAnnouncements } from "./logic";
@@ -55,7 +56,8 @@ export const AnnouncementProvider = ({
   fetchApi = defaultFetchApi,
 }: Props): ReactElement => {
   const fetchData = useCallback(
-    async ({ allIds, cache }) => {
+    async (arg0: { input: { allIds: string[]; cache: Record<string, Announcement> } }) => {
+      const { allIds, cache } = arg0.input;
       const rawAnnouncements = await fetchApi.fetchAnnouncements();
       const localizedAnnouncements = localizeAnnouncements(rawAnnouncements, context);
       const announcements = filterAnnouncements(localizedAnnouncements, context);
@@ -80,9 +82,9 @@ export const AnnouncementProvider = ({
     [context, onNewAnnouncement, fetchApi],
   );
   const emitNewAnnouncement = useCallback(
-    ({ cache }, { seenId }) => {
+    ({ context }) => {
       if (onAnnouncementRead) {
-        onAnnouncementRead(cache[seenId]);
+        onAnnouncementRead(context.cache[context.seenId]);
       }
     },
     [onAnnouncementRead],
@@ -96,7 +98,7 @@ export const AnnouncementProvider = ({
     };
   }, [handleLoad]);
   const saveData = useCallback(
-    context => {
+    ({ context }) => {
       const { cache, lastUpdateTime, seenIds, allIds } = context;
       const announcements = allIds.map((id: string) => cache[id]);
       handleSave({
@@ -107,19 +109,21 @@ export const AnnouncementProvider = ({
     },
     [handleSave],
   );
-  const [state, send] = useMachine(announcementMachine as unknown as any, {
-    actions: {
-      saveData,
-      emitNewAnnouncement: emitNewAnnouncement as any,
-    },
-    services: {
-      loadData,
-      fetchData,
-    },
-    delays: {
-      AUTO_UPDATE_DELAY: autoUpdateDelay,
-    },
-  });
+  const [state, send] = useMachine(
+    announcementMachine.provide({
+      actions: {
+        saveData,
+        emitNewAnnouncement,
+      },
+      actors: {
+        loadData: fromPromise(loadData),
+        fetchData: fromPromise(fetchData),
+      },
+      delays: {
+        AUTO_UPDATE_DELAY: autoUpdateDelay,
+      },
+    }),
+  );
   const api = useMemo(
     () => ({
       updateCache: async () => {

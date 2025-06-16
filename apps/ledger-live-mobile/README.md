@@ -20,7 +20,7 @@ We also share core business logic with Ledger Live mobile through [@ledgerhq/liv
 ## Pre-requisites
 
 - Node LTS version
-- Pnpm
+- PNPM
 - [React Native (without Expo)](https://reactnative.dev/docs/environment-setup)
 
 ### iOS
@@ -82,6 +82,27 @@ Produces a development .ipa signed with the developer's current certificates (ca
 
 Produces a development .apk that can be installed on Android phones. Not eligible for Google PlayStore
 
+## Watch deps
+
+In another terminal and in parallel to `pnpm dev:llm`, you can watch different libs from the monorepo
+
+```bash
+# watch common
+pnpm watch:common
+
+# watch ljs
+pnpm watch:ljs
+
+# watch coin integrations
+pnpm watch:coin
+
+# watch specific lib
+pnpm turbo run watch --filter="./libs/ledgerjs/packages/hw-app-btc"
+
+# watch specific coin integration
+pnpm turbo run watch --filter="./libs/coin-modules/coin-bitcoin"
+```
+
 ## Environment variables
 
 Optional environment variables you can put in `.env`, `.env.production` or `.env.staging` for debug, release, or staging release builds respectively.
@@ -139,6 +160,24 @@ List of Flipper's plugins that will help you to debug efficiently the applicatio
 - Logs
 - React DevTools
 - Redux Debugger
+
+#### Reactotron ⚛️
+
+Reactotron is a development tool that helps you debug React and React Native applications.
+In this repo, we integrate the following plugins/features such as:
+
+- Logging (errors, logs),
+- Redux,
+- Network monitoring,
+- Storybook.
+
+To use Reactotron in your project, follow these steps:
+
+1. Download the desktop app from [here](https://github.com/infinitered/reactotron/releases?q=reactotron-app&expanded=true)
+
+2. Open it
+
+3. Run the LLM dev mode `pnpm dev:llm`
 
 ### End to end testing
 

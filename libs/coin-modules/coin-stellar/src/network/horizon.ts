@@ -4,25 +4,20 @@ import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
 import type { CacheRes } from "@ledgerhq/live-network/cache";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
-import type { Account, Operation } from "@ledgerhq/types-live";
+import type { Account } from "@ledgerhq/types-live";
 import {
   // @ts-expect-error stellar-sdk ts definition missing?
   AccountRecord,
   BASE_FEE,
   Horizon,
+  MuxedAccount,
   NetworkError,
   Networks,
   NotFoundError,
   Transaction as StellarSdkTransaction,
   StrKey,
-  MuxedAccount,
 } from "@stellar/stellar-sdk";
 import { BigNumber } from "bignumber.js";
-import {
-  getAccountSpendableBalance,
-  getReservedBalance,
-  rawOperationsToOperations,
-} from "../bridge/logic";
 import coinConfig from "../config";
 import {
   type BalanceAsset,
@@ -30,20 +25,33 @@ import {
   type RawOperation,
   type Signer,
   NetworkCongestionLevel,
+  StellarOperation,
 } from "../types";
+import {
+  getAccountSpendableBalance,
+  getReservedBalance,
+  rawOperationsToOperations,
+} from "./serialization";
+import { patchHermesTypedArraysIfNeeded, unpatchHermesTypedArrays } from "../polyfill";
 
 const FALLBACK_BASE_FEE = 100;
 const TRESHOLD_LOW = 0.5;
 const TRESHOLD_MEDIUM = 0.75;
 const FETCH_LIMIT = 100;
 const currency = getCryptoCurrencyById("stellar");
-let server: Horizon.Server | undefined;
-const getServer = () => {
-  if (!server) {
-    server = new Horizon.Server(coinConfig.getCoinConfig().explorer.url);
+
+// Horizon client instance is cached to avoid costly rebuild at every request
+// Watch out: cache key is the URL, coin module can be instantiated several times with different URLs
+const servers = new Map<string, Horizon.Server>();
+function getServer(): Horizon.Server {
+  const url = coinConfig.getCoinConfig().explorer.url;
+  let server = servers.get(url);
+  if (server === undefined) {
+    server = new Horizon.Server(url);
+    servers.set(url, server);
   }
   return server;
-};
+}
 
 // Constants
 export const BASE_RESERVE = 0.5;
@@ -63,6 +71,14 @@ Horizon.AxiosClient.interceptors.request.use(config => {
   return config;
 });
 
+// This function allows to fix the URL, because the url returned by the Stellar SDK is not the correct one.
+// It replaces the host of the URL returned with the host of the explorer.
+function useConfigHost(url: string): string {
+  const u = new URL(url);
+  u.host = new URL(coinConfig.getCoinConfig().explorer.url).host;
+  return u.toString();
+}
+
 Horizon.AxiosClient.interceptors.response.use(response => {
   if (coinConfig.getCoinConfig().enableNetworkLogs) {
     const { url, method } = response.config;
@@ -72,13 +88,17 @@ Horizon.AxiosClient.interceptors.response.use(response => {
   // FIXME: workaround for the Stellar SDK not using the correct URL: the "next" URL
   // included in server responses points to the node itself instead of our reverse proxy...
   // (https://github.com/stellar/js-stellar-sdk/issues/637)
+
   const next_href = response?.data?._links?.next?.href;
 
   if (next_href) {
-    const next = new URL(next_href);
-    next.host = new URL(coinConfig.getCoinConfig().explorer.url).host;
-    response.data._links.next.href = next.toString();
+    response.data._links.next.href = useConfigHost(next_href);
   }
+
+  response?.data?._embedded?.records?.forEach((r: any) => {
+    const href = r.transaction?._links?.ledger?.href;
+    if (href) r.transaction._links.ledger.href = useConfigHost(href);
+  });
 
   return response;
 });
@@ -170,37 +190,36 @@ export async function fetchAccount(addr: string): Promise<{
 }
 
 /**
- * Fetch all operations for a single account from indexer
+ * Fetch operations for a single account from indexer
  *
  * @param {string} accountId
  * @param {string} addr
  * @param {string} order - "desc" or "asc" order of returned records
  * @param {string} cursor - point to start fetching records
+ * @param {number} maxOperations - maximum number of operations to return, stops fetching after reaching this threshold
  *
  * @return {Operation[]}
  */
-export async function fetchOperations({
-  accountId,
-  addr,
-  order,
-  cursor,
-}: {
-  accountId: string;
-  addr: string;
-  order: "asc" | "desc";
-  cursor: string;
-}): Promise<Operation[]> {
+export async function fetchAllOperations(
+  accountId: string,
+  addr: string,
+  order: "asc" | "desc",
+  cursor: string = "",
+  maxOperations?: number,
+): Promise<StellarOperation[]> {
   if (!addr) {
     return [];
   }
 
-  let operations: Operation[] = [];
+  const limit = coinConfig.getCoinConfig().explorer.fetchLimit ?? FETCH_LIMIT;
+  let operations: StellarOperation[] = [];
+  let fetchedOpsCount = limit;
 
   try {
     let rawOperations = await getServer()
       .operations()
       .forAccount(addr)
-      .limit(coinConfig.getCoinConfig().explorer.fetchLimit ?? FETCH_LIMIT)
+      .limit(limit)
       .order(order)
       .cursor(cursor)
       .includeFailed(true)
@@ -212,13 +231,23 @@ export async function fetchOperations({
     }
 
     operations = operations.concat(
-      await rawOperationsToOperations(rawOperations.records as RawOperation[], addr, accountId),
+      await rawOperationsToOperations(rawOperations.records as RawOperation[], addr, accountId, 0),
     );
 
     while (rawOperations.records.length > 0) {
+      if (maxOperations && fetchedOpsCount >= maxOperations) {
+        break;
+      }
+      fetchedOpsCount += limit;
+
       rawOperations = await rawOperations.next();
       operations = operations.concat(
-        await rawOperationsToOperations(rawOperations.records as RawOperation[], addr, accountId),
+        await rawOperationsToOperations(
+          rawOperations.records as RawOperation[],
+          addr,
+          accountId,
+          0,
+        ),
       );
     }
 
@@ -236,6 +265,84 @@ export async function fetchOperations({
       throw new LedgerAPI4xx();
     }
 
+    if (errorMsg.match(/status code 5[0-9]{2}/)) {
+      throw new LedgerAPI5xx();
+    }
+
+    if (
+      e instanceof NetworkError ||
+      errorMsg.match(/ECONNRESET|ECONNREFUSED|ENOTFOUND|EPIPE|ETIMEDOUT/) ||
+      errorMsg.match(/undefined is not an object/)
+    ) {
+      throw new NetworkDown();
+    }
+
+    throw e;
+  }
+}
+
+// https://developers.stellar.org/docs/data/horizon/api-reference/get-operations-by-account-id
+export async function fetchOperations({
+  accountId,
+  addr,
+  minHeight,
+  order,
+  cursor,
+  limit,
+}: {
+  accountId: string;
+  addr: string;
+  minHeight: number;
+  order: "asc" | "desc";
+  cursor: string | undefined;
+  limit?: number | undefined;
+}): Promise<[StellarOperation[], string]> {
+  const noResult: [StellarOperation[], string] = [[], ""];
+  if (!addr) {
+    return noResult;
+  }
+
+  const defaultFetchLimit = coinConfig.getCoinConfig().explorer.fetchLimit ?? FETCH_LIMIT;
+
+  try {
+    const rawOperations = await getServer()
+      .operations()
+      .forAccount(addr)
+      .limit(limit ?? defaultFetchLimit)
+      .order(order)
+      .cursor(cursor ?? "")
+      .includeFailed(true)
+      .join("transactions")
+      .call();
+
+    if (!rawOperations || !rawOperations.records.length) {
+      return noResult;
+    }
+
+    const rawOps = rawOperations.records as RawOperation[];
+    const filteredOps = await rawOperationsToOperations(rawOps, addr, accountId, minHeight);
+
+    // in this context, if we have filtered out operations it means those operations were < minHeight, so we are done
+    const nextCursor =
+      filteredOps.length == rawOps.length ? rawOps[rawOps.length - 1].paging_token : "";
+
+    return [filteredOps, nextCursor];
+  } catch (e: unknown) {
+    // FIXME: terrible hacks, because Stellar SDK fails to cast network failures to typed errors in react-native...
+    // (https://github.com/stellar/js-stellar-sdk/issues/638)
+    // update 2025-04-01: in case of NetworkError, the error.response fields are undefined. Hence we cannot rely on status code
+    // the only way to check is the errror message, which may break at some point
+    const errorMsg = e ? String(e) : "";
+
+    if (e instanceof NotFoundError || errorMsg.match(/status code 404/)) {
+      return noResult;
+    }
+    if (errorMsg.match(/too many requests/i)) {
+      throw new LedgerAPI4xx("status code 4xx", { status: 429, url: undefined, method: "GET" });
+    }
+    if (errorMsg.match(/status code 4[0-9]{2}/)) {
+      throw new LedgerAPI4xx();
+    }
     if (errorMsg.match(/status code 5[0-9]{2}/)) {
       throw new LedgerAPI5xx();
     }
@@ -290,7 +397,10 @@ export async function fetchSigners(account: Account): Promise<Signer[]> {
 }
 
 export async function broadcastTransaction(signedTransaction: string): Promise<string> {
+  patchHermesTypedArraysIfNeeded();
   const transaction = new StellarSdkTransaction(signedTransaction, Networks.PUBLIC);
+  // Immediately restore
+  unpatchHermesTypedArrays();
   const res = await getServer().submitTransaction(transaction, {
     skipMemoRequiredCheck: true,
   });

@@ -296,7 +296,8 @@ export function useSelectAccount({
   currentAccountHistDb?: CurrentAccountHistDB;
 }) {
   const currencies = useManifestCurrencies(manifest);
-  const { setCurrentAccountHist, currentAccount } = useDappCurrentAccount(currentAccountHistDb);
+  const { setCurrentAccountHist, setCurrentAccount, currentAccount } =
+    useDappCurrentAccount(currentAccountHistDb);
 
   const onSelectAccount = useCallback(() => {
     setDrawer(
@@ -306,6 +307,7 @@ export function useSelectAccount({
         onAccountSelected: account => {
           setDrawer();
           setCurrentAccountHist(manifest.id, account);
+          setCurrentAccount(account);
         },
       },
       {
@@ -314,7 +316,7 @@ export function useSelectAccount({
         },
       },
     );
-  }, [currencies, manifest.id, setCurrentAccountHist]);
+  }, [currencies, manifest.id, setCurrentAccount, setCurrentAccountHist]);
 
   return { onSelectAccount, currentAccount };
 }

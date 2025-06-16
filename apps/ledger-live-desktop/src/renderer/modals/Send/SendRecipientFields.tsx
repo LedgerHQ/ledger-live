@@ -12,9 +12,19 @@ type Props = {
   autoFocus?: boolean;
 };
 
-export const getFields = (account: Account): string[] => {
+export const getFields = (account: Account, isLldMemoTagEnabled?: boolean): string[] => {
   const module = getLLDCoinFamily(account.currency.family)?.sendRecipientFields;
-  return module?.fields || [];
+  if (!isLldMemoTagEnabled) {
+    return module?.fields || [];
+  }
+  switch (account.currency.family) {
+    case "internet_computer":
+      return ["transaction"];
+    case "casper":
+      return ["sender"];
+    default:
+      return module?.fields || [];
+  }
 };
 
 const RecipientRelatedField = (props: Props) => {

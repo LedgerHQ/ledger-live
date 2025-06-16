@@ -1,17 +1,17 @@
 import { knownDevices } from "../../models/devices";
 import DeviceAction from "../../models/DeviceAction";
-import { Application } from "../../page";
-
-let app: Application;
-let deviceAction: DeviceAction;
-
-const testedCurrency = "bitcoin";
-const expectedBalance = "1.19576\u00a0BTC";
-const knownDevice = knownDevices.nanoX;
 
 describe("Add account from modal", () => {
+  let deviceAction: DeviceAction;
+  const testedCurrency = "Bitcoin";
+  const expectedBalance = "1.19576\u00a0BTC";
+  const knownDevice = knownDevices.nanoX;
+
   beforeAll(async () => {
-    app = await Application.init("onboardingcompleted", [knownDevice]);
+    await app.init({
+      userdata: "skip-onboarding",
+      knownDevices: [knownDevice],
+    });
     deviceAction = new DeviceAction(knownDevice);
 
     await app.portfolio.waitForPortfolioPageToLoad();
@@ -25,18 +25,19 @@ describe("Add account from modal", () => {
 
   $TmsLink("B2CQA-101");
   it("add Bitcoin accounts", async () => {
-    await app.addAccount.selectCurrency(testedCurrency);
+    await app.receive.selectCurrency(testedCurrency);
     await deviceAction.selectMockDevice();
     await deviceAction.openApp();
-    await app.addAccount.startAccountsDiscovery();
-    await app.addAccount.expectAccountDiscovery(testedCurrency, 1);
+    await app.addAccount.waitAccountsDiscovery();
+    await app.addAccount.expectAccountDiscovery(testedCurrency, testedCurrency.toLowerCase(), 0);
     await app.addAccount.finishAccountsDiscovery();
-    await app.addAccount.tapSuccessCta();
+    await app.addAccount.tapCloseAddAccountCta();
   });
 
   $TmsLink("B2CQA-101");
   it("displays Bitcoin accounts page summary", async () => {
-    await app.account.waitForAccountPageToLoad(testedCurrency);
-    await app.account.expectAccountBalance(expectedBalance);
+    await app.portfolio.goToAccounts(testedCurrency);
+    await app.assetAccountsPage.waitForAccountPageToLoad(testedCurrency);
+    await app.assetAccountsPage.expectAccountsBalance(expectedBalance);
   });
 });

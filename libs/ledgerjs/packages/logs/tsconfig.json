@@ -2,7 +2,8 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "lib",
-    "lib": ["DOM", "ES2016"]
+    "lib": ["DOM", "ES2016"],
+    "module": "NodeNext"
   },
   "include": ["src/**/*"]
 }

@@ -1,3 +1,8 @@
+import BigNumber from "bignumber.js";
+import { APTOS_NON_HARDENED_DERIVATION_PATH_REGEX } from "./families/aptos/consts";
+import { getCurrencyConfiguration } from "./config";
+import { findCryptoCurrencyById } from "./currencies";
+
 /**
  * Interface for the end user.
  * @memberof DataModel
@@ -34,9 +39,38 @@ export type DataSchema<R, M> = {
 export function createDataModel<R, M>(schema: DataSchema<R, M>): DataModel<R, M> {
   const { migrations, encode, decode } = schema;
   const version = migrations.length;
-
   function decodeModel(raw) {
     let { data } = raw;
+    const { currencyId, freshAddressPath } = data;
+    const currency = findCryptoCurrencyById(currencyId);
+    // Set 'change' and 'address_index' levels to be hardened for Aptos derivation path
+    if (
+      currencyId === "aptos" &&
+      freshAddressPath.match(APTOS_NON_HARDENED_DERIVATION_PATH_REGEX)
+    ) {
+      data.freshAddressPath = freshAddressPath
+        .split("/")
+        .map(value => (value.endsWith("'") ? value : value + "'"))
+        .join("/");
+    }
+
+    if (currencyId == "crypto_org" && !data.cosmosResources) {
+      data.cosmosResources = {
+        delegations: [],
+        redelegations: [],
+        unbondings: [],
+        delegatedBalance: new BigNumber(0),
+        pendingRewardsBalance: new BigNumber(0),
+        unbondingBalance: new BigNumber(0),
+        withdrawAddress: data.freshAddress,
+        sequence: 0,
+      };
+    }
+    if (currency && currency.family == "evm" && !getCurrencyConfiguration(currency).showNfts) {
+      if (Array.isArray(data.operations)) {
+        data.operations = data.operations.filter(tx => !("nftOperations" in tx));
+      }
+    }
 
     for (let i = raw.version; i < version; i++) {
       data = migrations[i](data);

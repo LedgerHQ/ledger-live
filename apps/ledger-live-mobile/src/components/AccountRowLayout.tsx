@@ -14,6 +14,7 @@ type Props = {
   currencyUnit?: Unit;
   countervalueChange?: ValueChange;
   name: string;
+  id: string;
   parentAccountName?: string;
   tag?: string | null | boolean;
   onPress?: TouchableOpacityProps["onPress"];
@@ -29,6 +30,7 @@ const AccountRowLayout = ({
   currency,
   currencyUnit,
   name,
+  id,
   parentAccountName,
   onPress,
   topLink,
@@ -39,7 +41,7 @@ const AccountRowLayout = ({
   const { colors, space } = useTheme();
 
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={onPress} testID={`account-row-${id}`}>
       {topLink && (
         <Flex
           width="1px"
@@ -60,6 +62,7 @@ const AccountRowLayout = ({
                 numberOfLines={1}
                 flexGrow={0}
                 flexShrink={1}
+                testID={`account-row-name-${name}`}
               >
                 {name}
               </Text>

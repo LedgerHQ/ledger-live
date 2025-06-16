@@ -8,7 +8,7 @@ import {
   getFeature as getFeatureFlag,
 } from "@ledgerhq/live-common/featureFlags/index";
 import type { FirebaseFeatureFlagsProviderProps } from "@ledgerhq/live-common/featureFlags/index";
-import { FeatureId, Feature, Features } from "@ledgerhq/types-live";
+import { FeatureId, Feature } from "@ledgerhq/types-live";
 import { overriddenFeatureFlagsSelector } from "~/reducers/settings";
 import { setOverriddenFeatureFlag, setOverriddenFeatureFlags } from "~/actions/settings";
 import { setAnalyticsFeatureFlagMethod } from "~/analytics/segment";
@@ -70,8 +70,7 @@ export const FirebaseFeatureFlagsProvider = ({
   }, [dispatch]);
 
   const wrappedGetFeature = useCallback(
-    <T extends FeatureId>(key: T): Features[T] =>
-      getFeature({ key, appLanguage: language, localOverrides }),
+    <T extends FeatureId>(key: T) => getFeature({ key, appLanguage: language, localOverrides }),
     [localOverrides, language, getFeature],
   );
 

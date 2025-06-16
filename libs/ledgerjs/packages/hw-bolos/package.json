@@ -1,0 +1,54 @@
+{
+  "name": "@ledgerhq/hw-bolos",
+  "version": "6.32.2",
+  "description": "List of commands for Ledger Hardware Wallet OS",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "Nano",
+    "BOLOS"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-bolos",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/index.js",
+  "module": "lib-es/index.js",
+  "types": "lib/index.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/hw-transport": "workspace:*"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
+    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest",
+    "coverage": "jest --coverage",
+    "test-integ": "jest --config=jest.integ.config.ts --runInBand",
+    "unimported": "unimported"
+  },
+  "devDependencies": {
+    "@ledgerhq/hw-transport-mocker": "workspace:*",
+    "@ledgerhq/hw-transport-node-hid-singleton": "workspace:^",
+    "@types/jest": "^29.5.10",
+    "@types/node": "^22.10.10",
+    "documentation": "14.0.2",
+    "jest": "^29.7.0",
+    "rimraf": "^4.4.1",
+    "ts-jest": "^29.1.1",
+    "ts-node": "^10.4.0"
+  }
+}

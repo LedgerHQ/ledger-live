@@ -30,7 +30,7 @@ export const WalletSyncRouter = forwardRef<BackRef, Props>(({ currentPage }, ref
     case Flow.LedgerSyncActivated:
       return <WalletSyncManage currentPage={currentPage} />;
     case Flow.Synchronize:
-      return <SynchronizeWallet ref={ref} />;
+      return <SynchronizeWallet ref={ref} currentPage={currentPage} />;
     case Flow.ManageBackup:
       return <WalletSyncManageBackup ref={ref} />;
     case Flow.ManageInstances:

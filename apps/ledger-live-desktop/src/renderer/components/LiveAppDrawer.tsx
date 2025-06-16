@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -17,20 +17,23 @@ import LiveAppDisclaimer from "./WebPlatformPlayer/LiveAppDisclaimer";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import {
-  createAction,
   StartExchangeErrorResult,
   StartExchangeSuccessResult,
 } from "@ledgerhq/live-common/hw/actions/startExchange";
-import startExchange from "@ledgerhq/live-common/exchange/platform/startExchange";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 
 import CompleteExchange, {
   Data as CompleteExchangeData,
   isCompleteExchangeData,
 } from "~/renderer/modals/Platform/Exchange/CompleteExchange/Body";
 import { ExchangeType } from "@ledgerhq/live-common/wallet-api/Exchange/server";
-import { Exchange } from "@ledgerhq/live-common/exchange/types";
-import { renderLoading } from "./DeviceAction/rendering";
+import { getIncompatibleCurrencyKeys } from "@ledgerhq/live-common/exchange/swap/index";
+import { Exchange, isExchangeSwap } from "@ledgerhq/live-common/exchange/types";
+import { HardwareUpdate, renderLoading } from "./DeviceAction/rendering";
+import { createCustomErrorClass } from "@ledgerhq/errors";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
+import { HOOKS_TRACKING_LOCATIONS } from "../analytics/hooks/variables";
+import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { useStartExchangeAction } from "../hooks/useConnectAppAction";
 
 const Divider = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
@@ -60,10 +63,13 @@ export function isStartExchangeData(data: unknown): data is StartExchangeData {
   return "exchangeType" in data;
 }
 
+const DrawerClosedError = createCustomErrorClass("DrawerClosedError");
+
 export const LiveAppDrawer = () => {
   const [dismissDisclaimerChecked, setDismissDisclaimerChecked] = useState<boolean>(false);
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const device = useSelector(getCurrentDevice);
 
   // @ts-expect-error how to type payload?
   const {
@@ -92,6 +98,12 @@ export const LiveAppDrawer = () => {
     }
   }, [dismissDisclaimerChecked, dispatch, payload]);
 
+  const onCloseExchangeComplete = useCallback(() => {
+    dispatch(closePlatformAppDrawer());
+  }, [dispatch]);
+
+  const action = useStartExchangeAction();
+
   const drawerContent = useMemo(() => {
     if (!payload) {
       return null;
@@ -99,7 +111,6 @@ export const LiveAppDrawer = () => {
 
     const { type, manifest, data } = payload;
 
-    const action = createAction(connectApp, startExchange);
     switch (type) {
       case "DAPP_INFO":
         return manifest ? (
@@ -156,42 +167,73 @@ export const LiveAppDrawer = () => {
             </Box>
           </>
         );
-      case "EXCHANGE_START":
-        return data && isStartExchangeData(data) ? (
-          <DeviceAction
-            action={action}
-            request={data}
-            Result={() => renderLoading()}
-            onResult={result => {
-              if ("startExchangeResult" in result) {
-                data.onResult(result.startExchangeResult);
-              }
-              if ("startExchangeError" in result) {
-                data.onCancel?.(result.startExchangeError);
-                dispatch(closePlatformAppDrawer());
-              }
-            }}
-          />
-        ) : null;
+      case "EXCHANGE_START": {
+        if (data && isStartExchangeData(data)) {
+          if (device?.modelId === "nanoS" && data.exchange && isExchangeSwap(data.exchange)) {
+            if (data.provider && ["thorswap", "lifi"].includes(data.provider)) {
+              return (
+                <HardwareUpdate
+                  i18nKeyTitle="swap.wrongDevice.title"
+                  i18nKeyDescription="swap.wrongDevice.description"
+                  i18nKeyValues={{ provider: getProviderName(data.provider) }}
+                />
+              );
+            }
+            const keys = getIncompatibleCurrencyKeys(data.exchange);
+            if (keys) {
+              return (
+                <HardwareUpdate i18nKeyTitle={keys.title} i18nKeyDescription={keys.description} />
+              );
+            }
+          }
+          return (
+            <DeviceAction
+              action={action}
+              request={data}
+              Result={() => renderLoading()}
+              location={HOOKS_TRACKING_LOCATIONS.exchange}
+              onResult={result => {
+                if ("startExchangeResult" in result) {
+                  data.onResult(result.startExchangeResult);
+                }
+                if ("startExchangeError" in result) {
+                  data.onCancel?.(result.startExchangeError);
+                  dispatch(closePlatformAppDrawer());
+                }
+              }}
+            />
+          );
+        }
+        return null;
+      }
       case "EXCHANGE_COMPLETE":
         return data && isCompleteExchangeData(data) ? (
-          <CompleteExchange
-            data={data}
-            onClose={() => {
-              dispatch(closePlatformAppDrawer());
-            }}
-          />
+          <CompleteExchange data={data} onClose={onCloseExchangeComplete} />
         ) : null;
       default:
         return null;
     }
-  }, [payload, t, dismissDisclaimerChecked, onContinue, dispatch]);
+  }, [
+    payload,
+    t,
+    dismissDisclaimerChecked,
+    onContinue,
+    onCloseExchangeComplete,
+    device?.modelId,
+    action,
+    dispatch,
+  ]);
 
   return (
     <SideDrawer
       title={payload ? t(payload.title) : ""}
       isOpen={isOpen}
       onRequestClose={() => {
+        payload?.data?.onCancel?.({
+          error: new DrawerClosedError("User closed the drawer"),
+          name: "DrawerClosedError",
+          message: "User closed the drawer",
+        });
         dispatch(closePlatformAppDrawer());
       }}
       direction="left"

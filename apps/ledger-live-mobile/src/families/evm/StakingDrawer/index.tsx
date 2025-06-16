@@ -1,9 +1,10 @@
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, ChipTabs, Flex, Icons, ScrollListContainer, Text } from "@ledgerhq/native-ui";
 import { EthStakingProvider, EthStakingProviderCategory } from "@ledgerhq/types-live";
-import React, { useEffect, useMemo, useState } from "react";
+import Animated, { useSharedValue, useAnimatedStyle } from "react-native-reanimated";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Linking, TouchableOpacity } from "react-native";
+import { DimensionValue, LayoutChangeEvent, Linking, TouchableOpacity } from "react-native";
 import { useTheme } from "styled-components/native";
 import { Track, track } from "~/analytics";
 import QueuedDrawer from "~/components/QueuedDrawer";
@@ -37,6 +38,7 @@ export function EvmStakingDrawer() {
   return !ethStakingProviders || drawer.id !== "EvmStakingDrawer" ? null : (
     <Content
       accountId={drawer.props.accountId}
+      walletApiAccountId={drawer.props.walletApiAccountId}
       has32Eth={drawer.props.has32Eth ?? false}
       providers={ethStakingProviders?.params?.listProvider ?? []}
       singleProviderRedirectMode={drawer.props.singleProviderRedirectMode ?? true}
@@ -48,11 +50,12 @@ interface Props {
   accountId: string;
   has32Eth: boolean;
   providers: EthStakingProvider[];
+  walletApiAccountId: string;
   /** @deprecated redirect functionality no longer being considered in latest version of the modal */
   singleProviderRedirectMode: boolean;
 }
 
-function Content({ accountId, has32Eth, providers }: Props) {
+function Content({ accountId, has32Eth, providers, walletApiAccountId }: Props) {
   const { isOpen, onModalHide, onClose } = useRootDrawerContext();
 
   const { t } = useTranslation();
@@ -80,10 +83,29 @@ function Content({ accountId, has32Eth, providers }: Props) {
     [has32Eth, filteredProviders, selected],
   );
 
+  // UPGRADE-RN77:
+  // It should already be animated by the `react-native-modal` but currently `react-native-modal`
+  // is not maintained and its animation dependency too. The internal animation is flaky and not
+  // working properly on Android. So, we are using reanimated to enforce redraw after animation.
+  const sharedHeight = useSharedValue<DimensionValue>(0);
+  const animatedStyle = useAnimatedStyle(() => ({
+    height: sharedHeight.value,
+    rowGap: 24,
+    display: "flex",
+  }));
+  const onLayout = useCallback(
+    (_: LayoutChangeEvent) => {
+      if (!Number.isNaN(sharedHeight.value) && sharedHeight.value === 0) {
+        sharedHeight.value = "100%";
+      }
+    },
+    [sharedHeight],
+  );
+
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} onModalHide={onModalHide}>
       <Track onMount event="ETH Stake Modal" />
-      <Flex height="100%" rowGap={24}>
+      <Animated.View style={animatedStyle} onLayout={onLayout}>
         <Flex rowGap={16} alignItems="center">
           <Text variant="h3Inter" textAlign="center" fontWeight="semiBold" fontSize={24}>
             {t("stake.ethereum.title")}
@@ -118,6 +140,7 @@ function Content({ accountId, has32Eth, providers }: Props) {
           <EvmStakingDrawerBody
             onClose={onClose}
             accountId={accountId}
+            walletApiAccountId={walletApiAccountId}
             providers={listProvidersSorted}
           />
         </ScrollListContainer>
@@ -166,7 +189,7 @@ function Content({ accountId, has32Eth, providers }: Props) {
             </Flex>
           </TouchableOpacity>
         </Box>
-      </Flex>
+      </Animated.View>
     </QueuedDrawer>
   );
 }

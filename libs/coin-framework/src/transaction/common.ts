@@ -3,6 +3,7 @@ export type CommonDeviceTransactionField =
   | {
       type: "amount";
       label: string;
+      value?: string;
     }
   | {
       type: "address";

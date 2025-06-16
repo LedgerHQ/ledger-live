@@ -2,7 +2,7 @@ import React, { useRef, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { View, TouchableWithoutFeedback } from "react-native";
-import { IconsLegacy } from "@ledgerhq/native-ui";
+import { IconsLegacy, Flex } from "@ledgerhq/native-ui";
 import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import Config from "react-native-config";
 import { ScreenName } from "~/const";
@@ -18,6 +18,8 @@ import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/type
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { openDebugMenu } from "~/actions/appstate";
 import { isDebugMenuVisible } from "~/reducers/appstate";
+import LedgerSyncEntryPoint from "LLM/features/LedgerSyncEntryPoint";
+import { EntryPoint } from "LLM/features/LedgerSyncEntryPoint/types";
 
 export default function Settings({
   navigation,
@@ -53,6 +55,9 @@ export default function Settings({
   return (
     <SettingsNavigationScrollView>
       <TrackScreen category="Settings" />
+      <Flex mx={6}>
+        <LedgerSyncEntryPoint entryPoint={EntryPoint.settings} page="Settings" />
+      </Flex>
       <SettingsCard
         title={t("settings.display.title")}
         desc={t("settings.display.desc")}

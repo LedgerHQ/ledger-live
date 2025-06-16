@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
 import { flattenAccountsByCryptoCurrencyScreenSelector } from "~/reducers/accounts";
 import { NavigatorName, ScreenName } from "~/const";
@@ -19,8 +19,11 @@ import { useNavigation } from "@react-navigation/core";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { walletSelector } from "~/reducers/wallet";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 
-type SubAccountEnhanced = SubAccount & {
+type SubAccountEnhanced = TokenAccount & {
   parentAccount: Account;
   triggerCreateAccount: boolean;
 };
@@ -39,9 +42,11 @@ function ReceiveSelectAccount({
   ScreenName.ReceiveSelectAccount
 >) {
   const currency = route?.params?.currency;
+
   const { t } = useTranslation();
   const navigationAccount = useNavigation<NavigationProps["navigation"]>();
   const insets = useSafeAreaInsets();
+  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
   const accounts = useSelector(
     currency && currency.type === "CryptoCurrency"
       ? flattenAccountsByCryptoCurrencyScreenSelector(currency)
@@ -123,20 +128,35 @@ function ReceiveSelectAccount({
       button: "Create a new account",
       page: "Select account to deposit to",
     });
-    if (currency && currency.type === "TokenCurrency") {
-      navigationAccount.navigate(NavigatorName.AddAccounts, {
-        screen: undefined,
+
+    if (llmNetworkBasedAddAccountFlow?.enabled) {
+      navigationAccount.navigate(NavigatorName.DeviceSelection, {
+        screen: ScreenName.SelectDevice,
         params: {
-          token: currency,
+          currency:
+            currency.type === "TokenCurrency"
+              ? currency.parentCurrency
+              : (currency as CryptoCurrency),
+          context: AddAccountContexts.AddAccounts,
+          inline: true,
         },
       });
     } else {
-      navigationAccount.navigate(NavigatorName.AddAccounts, {
-        screen: undefined,
-        currency,
-      });
+      if (currency && currency.type === "TokenCurrency") {
+        navigationAccount.navigate(NavigatorName.AddAccounts, {
+          screen: undefined,
+          params: {
+            token: currency,
+          },
+        });
+      } else {
+        navigationAccount.navigate(NavigatorName.AddAccounts, {
+          screen: undefined,
+          currency,
+        });
+      }
     }
-  }, [currency, navigationAccount]);
+  }, [currency, navigationAccount, llmNetworkBasedAddAccountFlow?.enabled]);
 
   const keyExtractor = useCallback((item: AccountLikeEnhanced) => item?.id, []);
 
@@ -175,7 +195,9 @@ function ReceiveSelectAccount({
           onPress={createNewAccount}
           testID="button-create-account"
         >
-          {t("transfer.receive.selectAccount.cta")}
+          {llmNetworkBasedAddAccountFlow?.enabled
+            ? t("addAccounts.addNewOrExisting")
+            : t("transfer.receive.selectAccount.cta")}
         </Button>
       </Flex>
     </>

@@ -1,5 +1,66 @@
 # @ledgerhq/hw-app-cosmos
 
+## 6.32.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.6
+
+## 6.32.2-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.6-next.1
+
+## 6.32.2-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.6-next.0
+
+## 6.32.1
+
+### Patch Changes
+
+- Updated dependencies [[`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47), [`9081c26`](https://github.com/LedgerHQ/ledger-live/commit/9081c2648490f977469a33762a3c67bb2c2a0be5)]:
+  - @ledgerhq/errors@6.21.0
+  - @ledgerhq/hw-transport@6.31.5
+
+## 6.32.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47), [`9081c26`](https://github.com/LedgerHQ/ledger-live/commit/9081c2648490f977469a33762a3c67bb2c2a0be5)]:
+  - @ledgerhq/errors@6.21.0-next.0
+  - @ledgerhq/hw-transport@6.31.5-next.0
+
+## 6.32.0
+
+### Minor Changes
+
+- [#9648](https://github.com/LedgerHQ/ledger-live/pull/9648) [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove SubAccount as it is an alias to TokenAccount
+
+## 6.32.0-next.0
+
+### Minor Changes
+
+- [#9648](https://github.com/LedgerHQ/ledger-live/pull/9648) [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove SubAccount as it is an alias to TokenAccount
+
+## 6.31.0
+
+### Minor Changes
+
+- [#9298](https://github.com/LedgerHQ/ledger-live/pull/9298) [`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1) Thanks [@Canestin](https://github.com/Canestin)! - config coin-integration env for sonarqube
+
+## 6.31.0-next.0
+
+### Minor Changes
+
+- [#9298](https://github.com/LedgerHQ/ledger-live/pull/9298) [`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1) Thanks [@Canestin](https://github.com/Canestin)! - config coin-integration env for sonarqube
+
 ## 6.30.4
 
 ### Patch Changes

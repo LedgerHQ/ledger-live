@@ -1,10 +1,10 @@
+import { NetworkDown } from "@ledgerhq/errors";
 import {
   Memo,
   Operation as StellarSdkOperation,
   Transaction as StellarSdkTransaction,
   xdr,
 } from "@stellar/stellar-sdk";
-import { NetworkDown } from "@ledgerhq/errors";
 import { getRecipientAccount, loadAccount } from "../network";
 import { StellarAssetRequired, StellarMuxedAccountNotExist } from "../types";
 import {
@@ -19,7 +19,7 @@ export async function craftTransaction(
     address: string;
   },
   transaction: {
-    mode: string;
+    type: string;
     recipient: string;
     amount: bigint;
     fee: bigint;
@@ -28,9 +28,8 @@ export async function craftTransaction(
     memoType?: string | null | undefined;
     memoValue?: string | null | undefined;
   },
-): Promise<{ transaction: StellarSdkTransaction; xdr: string }> {
-  const { amount, recipient, fee, memoType, memoValue, mode, assetCode, assetIssuer } = transaction;
-
+): Promise<{ transaction: StellarSdkTransaction; xdr: string; signatureBase: string }> {
+  const { amount, recipient, fee, memoType, memoValue, type, assetCode, assetIssuer } = transaction;
   const source = await loadAccount(account.address);
 
   if (!source) {
@@ -40,7 +39,7 @@ export async function craftTransaction(
   const transactionBuilder = buildTransactionBuilder(source, fee);
   let operation: xdr.Operation<StellarSdkOperation.ChangeTrust> | null = null;
 
-  if (mode === "changeTrust") {
+  if (type === "changeTrust") {
     if (!assetCode || !assetIssuer) {
       throw new StellarAssetRequired("");
     }
@@ -79,6 +78,7 @@ export async function craftTransaction(
   return {
     transaction: craftedTransaction,
     xdr: craftedTransaction.toXDR(),
+    signatureBase: craftedTransaction.signatureBase().toString("base64"),
   };
 }
 

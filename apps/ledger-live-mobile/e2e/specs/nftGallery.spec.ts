@@ -1,13 +1,9 @@
-import { tapByElement } from "../helpers";
-import { Application } from "../page";
-
-let app: Application;
-const accountCurrency = "ethereum";
-
 // To-Do Fix NFT not available in account
 describe.skip("NFT Gallery screen", () => {
+  const accountCurrency = "ethereum";
+
   beforeAll(async () => {
-    app = await Application.init("1Account1NFTNotSpam");
+    await app.init({ userdata: "1Account1NFTNotSpam" });
 
     await app.portfolio.waitForPortfolioPageToLoad();
     await app.nftGallery.openViaDeeplink();

@@ -1,129 +1,116 @@
-import React, { useEffect } from "react";
-import Text from "../../Text";
+import React, { useState, useEffect } from "react";
+import { Pressable, LayoutChangeEvent } from "react-native";
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
+import styled from "styled-components/native";
 import Flex from "../../Layout/Flex";
-import styled, { useTheme } from "styled-components/native";
-import { TouchableOpacity } from "react-native";
-import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
+import Text from "../../Text";
+import Box from "../../Layout/Box";
 
-const StyledTouchableOpacity = styled(TouchableOpacity)<{ width: number }>`
-  width: ${(p) => p.width}px;
+const Container = styled(Flex)`
+  height: 100%;
+  justify-content: space-between;
+  flex-direction: row;
+  position: relative;
+`;
+
+const AnimatedBackground = styled(Animated.View)<{ $radius: number }>`
+  position: absolute;
+  height: 100%;
+  border-radius: ${({ $radius }) => $radius}px;
+  background-color: ${({ theme }) => theme.colors.opacityDefault.c05};
+`;
+
+const Tab = styled(Flex)<{ $radius: number }>`
   flex: 1;
-  height: 100%;
-`;
-
-const StyledFlex = styled(Flex)<{ isSelected: boolean }>`
-  height: 100%;
-  justify-content: center;
+  padding: 4px;
+  border-radius: ${({ $radius }) => $radius}px;
   align-items: center;
+  justify-content: center;
 `;
 
-const StyledText = styled(Text)<{ isSelected: boolean }>`
-  line-height: 14.52px;
-  overflow: visible;
-  text-align: center;
-  font-size: 12px;
-  color: ${(p) =>
-    p.isSelected ? p.theme.colors.constant.black : p.theme.colors.opacityDefault.c50};
-`;
-
-interface OptionButtonProps<T> {
-  option: T;
-  selectedOption: T;
-  handleSelectOption: (option: T) => void;
-  label: string;
-  width: number;
-}
-
-const OptionButton = <T,>({
-  option,
-  selectedOption,
-  handleSelectOption,
-  label,
-  width,
-}: OptionButtonProps<T>) => {
-  const isSelected = selectedOption === option;
-
-  return (
-    <StyledTouchableOpacity width={width} onPress={() => handleSelectOption(option)}>
-      <StyledFlex isSelected={isSelected}>
-        <StyledText fontWeight="semiBold" isSelected={isSelected} numberOfLines={1}>
-          {label}
-        </StyledText>
-      </StyledFlex>
-    </StyledTouchableOpacity>
-  );
+type TabSelectorProps<T extends string> = {
+  labels: { id: T; value: string }[];
+  initialTab?: T extends infer K ? K : never;
+  onToggle: (value: T) => void;
+  filledVariant?: boolean;
 };
 
-interface TabSelectorProps<T extends string | number> {
-  options: T[];
-  selectedOption: T;
-  handleSelectOption: (option: T) => void;
-  labels: { [key in T]: string };
-}
-
-export default function TabSelector<T extends string | number>({
-  options,
-  selectedOption,
-  handleSelectOption,
+export default function TabSelector<T extends string>({
   labels,
+  initialTab,
+  onToggle,
+  filledVariant = false,
 }: TabSelectorProps<T>): JSX.Element {
-  const { colors } = useTheme();
-
-  const longuestLabel =
-    labels[options[0]].length > labels[options[1]].length ? options[0] : options[1];
-
-  const widthFactor = 8;
-  const margin = 20;
-  const width = labels[longuestLabel].length * widthFactor + margin;
-  const semiWidth = width / 2;
-  const translateX = useSharedValue(-semiWidth);
+  const [containerWidth, setContainerWidth] = useState(0);
+  const initialIndex = initialTab ? labels.findIndex((l) => l.id === initialTab) : 0;
+  const translateX = useSharedValue(0);
+  const [selectedIndex, setSelectedIndex] = useState(initialIndex);
 
   useEffect(() => {
-    translateX.value = withSpring(selectedOption === options[0] ? -semiWidth : semiWidth, {
-      damping: 30,
-      stiffness: 80,
-    });
-  }, [selectedOption, translateX, options]);
+    if (containerWidth > 0) {
+      translateX.value = (containerWidth / labels.length) * initialIndex;
+    }
+  }, [containerWidth, labels.length, initialIndex]);
+
+  const handlePress = (id: T, index: number) => {
+    setSelectedIndex(index);
+    translateX.value = (containerWidth / labels.length) * index;
+    if (selectedIndex !== index) onToggle(id);
+  };
+
+  const handleLayout = (event: LayoutChangeEvent) => {
+    const { width } = event.nativeEvent.layout;
+    setContainerWidth(width);
+  };
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [{ translateX: translateX.value }],
+      transform: [{ translateX: withTiming(translateX.value, { duration: 250 }) }],
+      width: containerWidth / labels.length,
     };
   });
 
+  const boxStyles = filledVariant
+    ? {
+        bg: "neutral.c30",
+      }
+    : {
+        p: 2,
+        border: 1,
+        borderColor: "opacityDefault.c10",
+      };
+  const tabRadius = filledVariant ? 12 : 8;
+
   return (
-    <Flex
-      flexDirection={"row"}
-      justifyContent={"center"}
-      alignItems={"center"}
-      width={width * 2 + 4}
-      height={"35px"}
-      borderRadius={"40px"}
-      bg={colors.opacityDefault.c05}
-      position={"relative"}
+    <Box
+      height="100%"
+      width="100%"
+      borderRadius={12}
+      bg={boxStyles.bg}
+      p={boxStyles.p}
+      border={boxStyles.border}
+      borderColor={boxStyles.borderColor}
     >
-      <Animated.View
-        style={[
-          {
-            position: "absolute",
-            width: width - 2,
-            height: "90%",
-            backgroundColor: colors.primary.c80,
-            borderRadius: 40,
-          },
-          animatedStyle,
-        ]}
-      />
-      {options.map((option) => (
-        <OptionButton
-          width={width}
-          key={option}
-          option={option}
-          selectedOption={selectedOption}
-          handleSelectOption={handleSelectOption}
-          label={labels[option]}
-        />
-      ))}
-    </Flex>
+      <Container onLayout={handleLayout}>
+        <AnimatedBackground style={animatedStyle} $radius={tabRadius} />
+        {labels.map((label, index) => (
+          <Pressable
+            hitSlop={6}
+            key={label.id}
+            onPress={() => handlePress(label.id, index)}
+            style={({ pressed }: { pressed: boolean }) => ({
+              opacity: pressed && selectedIndex !== index ? 0.5 : 1,
+              flex: 1,
+            })}
+          >
+            <Tab $radius={tabRadius}>
+              <Text fontSize={14} fontWeight="semiBold" flexShrink={1} numberOfLines={1}>
+                {label.value}
+              </Text>
+            </Tab>
+          </Pressable>
+        ))}
+      </Container>
+    </Box>
   );
 }

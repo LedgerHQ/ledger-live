@@ -23,7 +23,10 @@ import {
   isInvalidRecipient,
   makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import {
+  getSerializedAddressParameters,
+  updateTransaction,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { isAccountDelegating } from "../staking";
 
 const isAccountBalanceSignificant = (a: AccountLike): boolean => a.balance.gt(100);
@@ -195,7 +198,7 @@ const prepareTransaction = async (a, t) => {
 
 const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
-  updateTransaction: defaultUpdateTransaction,
+  updateTransaction,
   getTransactionStatus,
   estimateMaxSpendable,
   prepareTransaction,
@@ -203,6 +206,7 @@ const accountBridge: AccountBridge<Transaction> = {
   receive,
   signOperation,
   broadcast,
+  getSerializedAddressParameters,
 };
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve({}),

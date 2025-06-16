@@ -15,7 +15,7 @@ export const useMarketPerformers = ({
   refreshRate,
 }: MarketPerformersParams): UseQueryResult<MarketItemPerformer[], Error> =>
   useQuery({
-    queryKey: [QUERY_KEY.MarketPerformers, counterCurrency, range, sort],
+    queryKey: [QUERY_KEY.MarketPerformers, counterCurrency, range, sort, limit],
     queryFn: () => fetchMarketPerformers({ counterCurrency, range, limit, top, sort, supported }),
     refetchInterval: REFETCH_TIME_ONE_MINUTE * Number(refreshRate),
     staleTime: REFETCH_TIME_ONE_MINUTE * Number(refreshRate),

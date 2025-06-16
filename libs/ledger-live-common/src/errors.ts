@@ -7,10 +7,6 @@ export const GetAppAndVersionUnsupportedFormat = createCustomErrorClass(
   "GetAppAndVersionUnsupportedFormat",
 );
 
-export const LatestFirmwareVersionRequired = createCustomErrorClass(
-  "LatestFirmwareVersionRequired",
-);
-
 export const FeeEstimationFailed = createCustomErrorClass("FeeEstimationFailed");
 export const TransactionRefusedOnDevice = createCustomErrorClass("TransactionRefusedOnDevice");
 
@@ -122,13 +118,18 @@ export const EConnResetError = createCustomErrorClass("EConnReset");
 export { ClaimRewardsFeesWarning } from "@ledgerhq/errors";
 export * from "@ledgerhq/coin-framework/errors";
 export * from "@ledgerhq/coin-algorand/errors";
+export * from "@ledgerhq/coin-aptos/errors";
 export * from "@ledgerhq/coin-bitcoin/errors";
 export * from "@ledgerhq/coin-cardano/errors";
 export * from "@ledgerhq/coin-cosmos/errors";
 export * from "@ledgerhq/coin-evm/errors";
 export * from "@ledgerhq/coin-hedera/errors";
+export * from "@ledgerhq/coin-celo/errors";
+export * from "@ledgerhq/coin-filecoin/errors";
 export * from "@ledgerhq/coin-near/errors";
 export * from "@ledgerhq/coin-polkadot/errors";
 export * from "@ledgerhq/coin-solana/errors";
+export * from "@ledgerhq/coin-stacks/errors";
 export * from "@ledgerhq/coin-stellar/errors";
 export * from "@ledgerhq/coin-tezos/errors";
+export * from "@ledgerhq/coin-vechain/errors";

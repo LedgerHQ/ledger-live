@@ -2,7 +2,7 @@ import React from "react";
 
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { AnimatedInput } from "@ledgerhq/native-ui";
-import { MemoTagInputProps, TxPatch } from "../types";
+import type { MemoTagInputProps, TxPatch } from "../types";
 
 type Props<T extends Transaction = Transaction> = MemoTagInputProps<T> & {
   textToValue?: (text: string) => string;
@@ -24,5 +24,12 @@ export function GenericMemoTagInput<T extends Transaction>({
     onChange({ value, patch });
   };
 
-  return <AnimatedInput {...inputProps} value={value} onChangeText={handleChange} />;
+  return (
+    <AnimatedInput
+      {...inputProps}
+      value={value}
+      onChangeText={handleChange}
+      testID="memo-tag-input"
+    />
+  );
 }

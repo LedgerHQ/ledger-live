@@ -16,7 +16,7 @@ export type UpdateStatus =
   | "error";
 const UPDATE_CHECK_IGNORE = Boolean(process.env.UPDATE_CHECK_IGNORE);
 const UPDATE_CHECK_FEED =
-  process.env.UPDATE_CHECK_FEED || "http://resources.live.ledger.app/public_resources/signatures";
+  process.env.UPDATE_CHECK_FEED || "https://resources.live.ledger.app/public_resources/signatures";
 const sendStatus = (status: UpdateStatus, payload?: unknown) => {
   const win = getMainWindow();
   if (win) {

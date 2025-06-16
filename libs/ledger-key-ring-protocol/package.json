@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ledger-key-ring-protocol",
-  "version": "0.5.0",
+  "version": "0.5.8",
   "description": "Ledger Key Ring Protocol layer",
   "keywords": [
     "Ledger"
@@ -78,14 +78,16 @@
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
+    "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit",
     "unimported": "pnpm knip --directory ../.. -W libs/ledger-key-ring-protocol",
     "test": "jest",
+    "coverage": "jest --coverage",
     "e2e": "ts-node scripts/e2e.ts"
   }
 }

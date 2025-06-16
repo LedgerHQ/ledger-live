@@ -1,4 +1,6 @@
+import { CurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { listItemHeight } from "../components/Table";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export const REFETCH_TIME_ONE_MINUTE = 60 * 1000;
 
@@ -23,4 +25,33 @@ export function formatPrice(price: number): number {
 
 export function formatPercentage(percentage: number, decimals = 2): number {
   return parseFloat(percentage.toFixed(decimals));
+}
+
+export function isAvailableOnBuy(
+  currency: CurrencyData | null | undefined,
+  isCurrencyAvailable: (
+    currencyId: CryptoCurrency["id"] | string,
+    mode: "onRamp" | "offRamp",
+  ) => boolean,
+) {
+  if (!currency) return false;
+  return (
+    (!!currency.internalCurrency &&
+      !!currency.internalCurrency?.id &&
+      isCurrencyAvailable(currency.internalCurrency.id, "onRamp")) ||
+    currency?.ledgerIds.some(lrId => isCurrencyAvailable(lrId, "onRamp")) ||
+    false
+  );
+}
+
+export function isAvailableOnSwap(
+  currency: CurrencyData | null | undefined,
+  currenciesForSwapAllSet: Set<string>,
+) {
+  if (!currency) return false;
+  return (
+    (!!currency.internalCurrency && currenciesForSwapAllSet.has(currency.internalCurrency.id)) ||
+    currency?.ledgerIds.some(lrId => currenciesForSwapAllSet.has(lrId)) ||
+    false
+  );
 }

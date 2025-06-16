@@ -17,8 +17,10 @@ import EmptyAccountCard from "../../Account/EmptyAccountCard";
 import CurrencyBackgroundGradient from "~/components/CurrencyBackgroundGradient";
 import Header from "../Header";
 import { hasOrderedNanoSelector } from "~/reducers/settings";
-import BuyDeviceBanner, { IMAGE_PROPS_BIG_NANO } from "~/components/BuyDeviceBanner";
-import SetupDeviceBanner from "~/components/SetupDeviceBanner";
+import BuyDeviceBanner, {
+  IMAGE_PROPS_BUY_DEVICE_FLEX,
+} from "LLM/features/Reborn/components/BuyDeviceBanner";
+import SetupDeviceBanner from "LLM/features/Reborn/components/SetupDeviceBanner";
 import { FabAssetActions } from "~/components/FabActions/actionsList/asset";
 import { TrackScreen } from "~/analytics";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -75,16 +77,13 @@ const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
         </Flex>
       </SectionContainer>,
       <AssetMarketSection currency={currency} key="AssetMarketSection" />,
-      <SectionContainer mx={6} key="BuyDeviceBanner">
+      <SectionContainer key="BuyDeviceBanner">
         {hasOrderedNano ? (
           <SetupDeviceBanner screen="Assets" />
         ) : (
           <BuyDeviceBanner
-            style={{
-              marginTop: 40,
-              paddingTop: 13.5,
-              paddingBottom: 13.5,
-            }}
+            {...IMAGE_PROPS_BUY_DEVICE_FLEX}
+            image="buyFlex"
             buttonLabel={t("buyDevice.bannerButtonTitle")}
             buttonSize="small"
             event="button_clicked"
@@ -94,7 +93,6 @@ const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
               currency: currency.name,
             }}
             screen="Account"
-            {...IMAGE_PROPS_BIG_NANO}
           />
         )}
       </SectionContainer>,

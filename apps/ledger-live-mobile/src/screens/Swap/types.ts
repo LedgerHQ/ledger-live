@@ -1,12 +1,12 @@
-import { Account } from "@ledgerhq/types-live";
 import { ExchangeRate, MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
-import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Account } from "@ledgerhq/types-live";
 import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { StackScreenProps } from "@react-navigation/stack";
+import { BaseComposite } from "~/components/RootNavigator/types/helpers";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { ScreenName } from "~/const";
-import { BaseComposite } from "~/components/RootNavigator/types/helpers";
 
 export type SwapFormParamList = MaterialTopTabScreenProps<
   SwapFormNavParamList,
@@ -73,4 +73,5 @@ export type DefaultAccountSwapParamList = {
 export type SwapFormNavParamList = {
   SwapForm: DetailsSwapParamList | DefaultAccountSwapParamList | undefined;
   SwapHistory: undefined;
+  SwapPendingOperation: undefined;
 };

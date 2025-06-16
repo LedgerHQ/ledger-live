@@ -1,8 +1,9 @@
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
-  defaultUpdateTransaction,
+  getSerializedAddressParameters,
   makeAccountBridgeReceive,
   makeScanAccounts,
+  updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 
@@ -17,7 +18,7 @@ import prepareTransaction from "../prepareTransaction";
 import { buildSignOperation } from "../signOperation";
 import { TonSigner } from "../signer";
 import { getAccountShape, sync } from "../synchronisation";
-import type { Transaction } from "../types";
+import type { TonAccount, Transaction } from "../types";
 
 export function buildCurrencyBridge(signerContext: SignerContext<TonSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -36,7 +37,7 @@ export function buildCurrencyBridge(signerContext: SignerContext<TonSigner>): Cu
 
 export function buildAccountBridge(
   signerContext: SignerContext<TonSigner>,
-): AccountBridge<Transaction> {
+): AccountBridge<Transaction, TonAccount> {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -45,13 +46,14 @@ export function buildAccountBridge(
   return {
     estimateMaxSpendable,
     createTransaction,
-    updateTransaction: defaultUpdateTransaction,
+    updateTransaction,
     getTransactionStatus,
     prepareTransaction,
     sync,
     receive,
     signOperation,
     broadcast,
+    getSerializedAddressParameters,
   };
 }
 

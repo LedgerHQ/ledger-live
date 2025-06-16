@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { fetchAccountNetworkInfo } from "../network";
 import { getAssetCodeIssuer } from "./logic";
 import type { Transaction } from "../types";
@@ -20,7 +20,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
     transaction.fees !== fees ||
     transaction.baseReserve !== baseReserve
   ) {
-    return defaultUpdateTransaction(transaction, {
+    return updateTransaction(transaction, {
       networkInfo,
       fees,
       baseReserve,
@@ -29,7 +29,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
     });
   }
 
-  return defaultUpdateTransaction(transaction, { assetCode, assetIssuer });
+  return updateTransaction(transaction, { assetCode, assetIssuer });
 };
 
 export default prepareTransaction;

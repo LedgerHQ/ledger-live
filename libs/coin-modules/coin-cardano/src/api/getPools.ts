@@ -24,12 +24,12 @@ export async function fetchPoolDetails(
   currency: CryptoCurrency,
   poolIds: Array<string>,
 ): Promise<APIGetPoolsDetail> {
-  const res = await network({
+  const { data } = await network<APIGetPoolsDetail>({
     method: "GET",
     url: isTestnet(currency)
       ? `${CARDANO_TESTNET_API_ENDPOINT}/v1/pool/detail`
       : `${CARDANO_API_ENDPOINT}/v1/pool/detail`,
     params: { poolIds },
   });
-  return res && (res.data as APIGetPoolsDetail);
+  return data;
 }

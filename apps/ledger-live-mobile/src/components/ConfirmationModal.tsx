@@ -1,11 +1,12 @@
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
-import { View, StyleSheet, Image } from "react-native";
+import { View, StyleSheet, Image, StyleProp, ViewStyle } from "react-native";
 import { rgba, Theme, withTheme } from "../colors";
 import QueuedDrawer from "./QueuedDrawer";
 import LText from "./LText";
 import Button, { BaseButtonProps } from "./Button";
 import type { Props as BottomModalProps } from "./QueuedDrawer";
+import { CtaConfig } from "./NavigationHeaderCloseButton";
 
 type Props = {
   isOpened: boolean;
@@ -24,6 +25,11 @@ type Props = {
   colors: Theme["colors"];
   preventBackdropClick?: boolean;
   iconMarginBottom?: number;
+  testID?: string;
+  customTitleStyle?: StyleProp<ViewStyle>;
+  customDescriptionStyle?: StyleProp<ViewStyle>;
+  cancelCTAConfig?: Partial<CtaConfig>;
+  confirmCTAConfig?: Partial<CtaConfig>;
 };
 
 class ConfirmationModal extends PureComponent<Props> {
@@ -47,6 +53,10 @@ class ConfirmationModal extends PureComponent<Props> {
       hideRejectButton,
       colors,
       iconMarginBottom,
+      customTitleStyle,
+      customDescriptionStyle,
+      confirmCTAConfig,
+      cancelCTAConfig,
       ...rest
     } = this.props;
     const iColor = iconColor || colors.live;
@@ -76,12 +86,12 @@ class ConfirmationModal extends PureComponent<Props> {
           </View>
         )}
         {confirmationTitle && (
-          <LText secondary semiBold style={styles.confirmationTitle}>
+          <LText secondary semiBold style={[styles.confirmationTitle, customTitleStyle]}>
             {confirmationTitle}
           </LText>
         )}
         {confirmationDesc && (
-          <LText style={styles.confirmationDesc} color="smoke">
+          <LText style={[styles.confirmationDesc, customDescriptionStyle]} color="smoke">
             {confirmationDesc}
           </LText>
         )}
@@ -90,18 +100,22 @@ class ConfirmationModal extends PureComponent<Props> {
             <Button
               event="ConfirmationModalCancel"
               containerStyle={styles.confirmationButton}
-              type="secondary"
+              type={cancelCTAConfig?.type ?? "secondary"}
               title={rejectButtonText || <Trans i18nKey="common.cancel" />}
+              testID="confirmation-modal-cancel-button"
               onPress={onClose}
+              outline={cancelCTAConfig?.outline}
             />
           )}
 
           <Button
             event="ConfirmationModalConfirm"
             containerStyle={[styles.confirmationButton, styles.confirmationLastButton]}
-            type={alert ? "alert" : "primary"}
+            type={alert ? "alert" : confirmCTAConfig?.type ?? "primary"}
             title={confirmButtonText || <Trans i18nKey="common.confirm" />}
+            testID="confirmation-modal-confirm-button"
             onPress={onConfirm}
+            outline={confirmCTAConfig?.outline}
           />
         </View>
       </QueuedDrawer>

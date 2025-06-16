@@ -1,18 +1,9 @@
-import {
-  getElementById,
-  getElementByText,
-  tapByElement,
-  tapByText,
-  scrollToText,
-  typeTextByElement,
-} from "../../helpers";
 import { expect } from "detox";
 
 export default class SettingsGeneralPage {
   passwordSettingsSwitch = () => getElementById("password-settings-switch");
   passwordTextInput = () => getElementById("password-text-input");
   preferredCurrencyButton = () => getElementByText("Preferred currency");
-  confirmButton = () => getElementByText("Confirm");
   enterLanguageMenuButton = () => getElementById("language-button");
   localizedText = (text: string) => getElementByText(text);
 
@@ -22,10 +13,6 @@ export default class SettingsGeneralPage {
 
   async enterNewPassword(passwordText: string) {
     await typeTextByElement(this.passwordTextInput(), passwordText);
-  }
-
-  async confirm() {
-    await tapByElement(this.confirmButton());
   }
 
   async navigateToLanguageSelect() {

@@ -76,7 +76,12 @@ module.exports = {
     "react/jsx-key": "warn", // TODO: delete to make it an error when we are ready
     "react/prop-types": "off",
     "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
-    "react-hooks/exhaustive-deps": "error", // Checks effect dependencies
+    "react-hooks/exhaustive-deps": [
+      "error", // Checks effect dependencies
+      {
+        additionalHooks: "useInViewContext",
+      },
+    ],
     "jsx-a11y/no-autofocus": "off",
     "jsx-a11y/anchor-is-valid": [
       "error",

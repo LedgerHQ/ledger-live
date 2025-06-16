@@ -2,10 +2,14 @@ import { useHistory, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { State } from "~/renderer/reducers";
 import { accountSelector } from "~/renderer/reducers/accounts";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useNftGalleryFilter, isThresholdValid } from "@ledgerhq/live-nft-react";
+import { nftsByCollections } from "@ledgerhq/live-nft";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { openModal } from "~/renderer/actions/modals";
 import { useOnScreen } from "LLD/hooks/useOnScreen";
-import { useNftCollections } from "~/renderer/hooks/nfts/useNftCollections";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { ChainsEnum } from "LLD/features/Collectibles/types/enum/Chains";
+import { useNftCollectionsStatus } from "~/renderer/hooks/nfts/useNftCollectionsStatus";
 
 const defaultNumberOfVisibleNfts = 10;
 
@@ -14,6 +18,9 @@ const useNftGalleryModel = () => {
   const history = useHistory();
   const { id } = useParams<{ id: string }>();
 
+  const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
+  const threshold = nftsFromSimplehashFeature?.params?.threshold;
+
   const listFooterRef = useRef<HTMLDivElement>(null);
   const [maxVisibleNFTs, setMaxVisibleNFTs] = useState(defaultNumberOfVisibleNfts);
 
@@ -21,9 +28,29 @@ const useNftGalleryModel = () => {
     account: accountSelector(state, { accountId: id }),
   }));
 
-  const { fetchNextPage, hasNextPage, collections, allNfts } = useNftCollections({
-    account,
+  const { hiddenNftCollections } = useNftCollectionsStatus();
+
+  const INITIAL_INCREMENT = nftsFromSimplehashFeature?.enabled ? 50 : 5;
+
+  const { nfts, fetchNextPage, hasNextPage } = useNftGalleryFilter({
+    nftsOwned: account?.nfts || [],
+    addresses: account?.freshAddress || "",
+    chains: [account?.currency.id ?? ChainsEnum.ETHEREUM],
+    threshold: isThresholdValid(threshold) ? Number(threshold) : 75,
+    enabled: nftsFromSimplehashFeature?.enabled || false,
+    staleTime: nftsFromSimplehashFeature?.params?.staleTime,
   });
+
+  const allNfts = useMemo(
+    () => (nftsFromSimplehashFeature?.enabled ? nfts : account?.nfts || []),
+    [account?.nfts, nfts, nftsFromSimplehashFeature?.enabled],
+  );
+
+  const collections = useMemo(() => {
+    return Object.entries(nftsByCollections(allNfts)).filter(
+      ([contract]) => !hiddenNftCollections.includes(`${account?.id}|${contract}`),
+    );
+  }, [account?.id, allNfts, hiddenNftCollections]);
 
   useEffect(() => {
     if (collections.length < 1) {
@@ -45,11 +72,11 @@ const useNftGalleryModel = () => {
   );
 
   const updateMaxVisibleNtfs = useCallback(() => {
-    setMaxVisibleNFTs(prevMaxVisibleNFTs => prevMaxVisibleNFTs + 5);
+    setMaxVisibleNFTs(prevMaxVisibleNFTs => prevMaxVisibleNFTs + INITIAL_INCREMENT);
     if (hasNextPage) {
       fetchNextPage();
     }
-  }, [hasNextPage, fetchNextPage]);
+  }, [hasNextPage, INITIAL_INCREMENT, fetchNextPage]);
 
   useOnScreen({
     enabled: maxVisibleNFTs < allNfts?.length,
@@ -72,6 +99,7 @@ const useNftGalleryModel = () => {
 
   return {
     account,
+    hiddenNftCollections,
     nftsByCollection,
     listFooterRef,
     collections,

@@ -6,6 +6,9 @@ const jestAllure2ReporterOptions = {
       issue: "https://ledgerhq.atlassian.net/browse/{{name}}",
       tms: "https://ledgerhq.atlassian.net/browse/{{name}}",
     },
+    labels: {
+      host: process.env.RUNNER_NAME,
+    },
   },
   overwrite: false,
   environment: async ({ $ }) => {
@@ -18,6 +21,8 @@ const jestAllure2ReporterOptions = {
     };
   },
 };
+
+const transformIncludePatterns = ["ky"];
 
 module.exports = async () => ({
   rootDir: "..",
@@ -35,11 +40,10 @@ module.exports = async () => ({
   },
   setupFilesAfterEnv: ["<rootDir>/e2e/setup.ts"],
   testTimeout: 150000,
-  testMatch: ["<rootDir>/e2e/specs/{*.spec.ts,!(speculos)/**/*.spec.ts}"],
+  testMatch: ["<rootDir>/e2e/specs/**/*.spec.ts"],
   reporters: ["detox/runners/jest/reporter", ["jest-allure2-reporter", jestAllure2ReporterOptions]],
-  globalSetup: "detox/runners/jest/globalSetup",
-  globalTeardown: "<rootDir>/e2e/jest.globalTeardown.ts",
-  testEnvironment: "detox/runners/jest/testEnvironment",
+  globalSetup: "<rootDir>/e2e/jest.globalSetup.ts",
+  testEnvironment: "<rootDir>/e2e/jest.environment.ts",
   testEnvironmentOptions: {
     eventListeners: [
       "jest-metadata/environment-listener",
@@ -47,5 +51,7 @@ module.exports = async () => ({
       "detox-allure2-adapter",
     ],
   },
+  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${transformIncludePatterns.join("|")}))`],
   verbose: true,
+  resetModules: true,
 });

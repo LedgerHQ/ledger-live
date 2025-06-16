@@ -22,6 +22,8 @@ import { CurrentAccountHistDB, safeGetRefValue } from "@ledgerhq/live-common/wal
 import Wallet from "~/renderer/icons/Wallet";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import CryptoCurrencyIcon from "../CryptoCurrencyIcon";
+import { walletSelector } from "~/renderer/reducers/wallet";
+import { accountNameSelector } from "@ledgerhq/live-wallet/store";
 
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
@@ -29,8 +31,8 @@ const Container = styled(Box).attrs(() => ({
   alignItems: "center",
 }))`
   padding: 10px 16px;
-  background-color: ${p => p.theme.colors.palette.background.paper};
-  border-bottom: 1px solid ${p => p.theme.colors.palette.text.shade10};
+  background-color: ${p => p.theme.colors?.palette.background.paper};
+  border-bottom: 1px solid ${p => p.theme.colors?.palette.text.shade10};
 `;
 
 const TitleContainer = styled(Box).attrs(() => ({
@@ -41,7 +43,7 @@ const TitleContainer = styled(Box).attrs(() => ({
 }))`
   margin-right: 16px;
   color: ${p =>
-    p.theme.colors.palette.type === "dark" ? p.theme.colors.white : p.theme.colors.black};
+    p.theme.colors?.palette.type === "dark" ? p.theme.colors.white : p.theme.colors?.black};
 
   > * + * {
     margin-left: 8px;
@@ -91,12 +93,12 @@ const ItemContainer = styled(Tabbable).attrs<ItemContainerProps>(p => ({
   }
 
   &:hover {
-    color: ${p => (p.disabled ? "" : p.theme.colors.palette.text.shade100)};
-    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.palette.action.active, 0.05))};
+    color: ${p => (p.disabled ? "" : p.theme.colors?.palette.text.shade100)};
+    background: ${p => (p.disabled ? "" : rgba(p.theme.colors?.palette.action.active, 0.05))};
   }
 
   &:active {
-    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.palette.action.active, 0.1))};
+    background: ${p => (p.disabled ? "" : rgba(p.theme.colors?.palette.action.active, 0.1))};
   }
 `;
 
@@ -111,7 +113,7 @@ export const Separator = styled.div`
   margin-right: 16px;
   height: 15px;
   width: 1px;
-  background: ${p => p.theme.colors.palette.divider};
+  background: ${p => p.theme.colors?.palette.divider};
 `;
 
 export type TopBarConfig = {
@@ -140,7 +142,9 @@ export const TopBar = ({
   webviewAPIRef,
   webviewState,
 }: Props) => {
-  const { name, icon } = manifest;
+  const walletState = useSelector(walletSelector);
+
+  const { name, icon, id } = manifest;
 
   const {
     shouldDisplayName = true,
@@ -149,6 +153,8 @@ export const TopBar = ({
     shouldDisplayNavigation = !!manifest.dapp,
     shouldDisplaySelectAccount = !!manifest.dapp,
   } = config;
+
+  const isInternalApp = id === "earn";
 
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const dispatch = useDispatch();
@@ -182,8 +188,16 @@ export const TopBar = ({
   }, [webviewAPIRef]);
 
   const { onSelectAccount, currentAccount } = useSelectAccount({ manifest, currentAccountHistDb });
+  const currentAccountName =
+    currentAccount &&
+    (accountNameSelector(walletState, { accountId: currentAccount.id }) ||
+      getDefaultAccountName(currentAccount));
 
   const isLoading = useDebounce(webviewState.loading, 100);
+
+  if (!enablePlatformDevTools && isInternalApp) {
+    return null;
+  }
 
   return (
     <Container>
@@ -252,7 +266,7 @@ export const TopBar = ({
                     currency={getAccountCurrency(currentAccount)}
                     size={16}
                   />
-                  <ItemContent>{getDefaultAccountName(currentAccount)}</ItemContent>
+                  <ItemContent>{currentAccountName}</ItemContent>
                 </>
               )}
             </ItemContainer>

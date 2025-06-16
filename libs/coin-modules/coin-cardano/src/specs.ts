@@ -9,7 +9,7 @@ import invariant from "invariant";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { mergeTokens } from "./logic";
 import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { acceptTransaction } from "./speculos-deviceActions";
 import { CARDANO_MAX_SUPPLY } from "./constants";
 
@@ -35,6 +35,7 @@ const cardano: AppSpec<Transaction> = {
   mutations: [
     {
       name: "move ~10% token",
+      feature: "tokens",
       maxRun: 1,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gte(minSpendableRequiredForTokenTx), "balance is too low");
@@ -44,7 +45,7 @@ const cardano: AppSpec<Transaction> = {
 
         const subAccount = account.subAccounts?.find(subAccount =>
           subAccount.balance.gt(1),
-        ) as SubAccount;
+        ) as TokenAccount;
         invariant(subAccount, "No token account with balance");
 
         const updates = [
@@ -77,6 +78,7 @@ const cardano: AppSpec<Transaction> = {
     {
       testDestination: genericTestDestination,
       name: "move ~50%",
+      feature: "send",
       maxRun: 1,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minBalanceRequired), "balance is too low");
@@ -125,6 +127,7 @@ const cardano: AppSpec<Transaction> = {
     },
     {
       name: "send max",
+      feature: "sendMax",
       maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
@@ -163,6 +166,7 @@ const cardano: AppSpec<Transaction> = {
     },
     {
       name: "delegate to pool",
+      feature: "staking",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
         invariant(maxSpendable.gte(minBalanceRequiredForDelegate), "balance is too low");
@@ -195,6 +199,7 @@ const cardano: AppSpec<Transaction> = {
     },
     {
       name: "redelegate to pool",
+      feature: "staking",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
         invariant(maxSpendable.gte(minBalanceRequiredForDelegate), "balance is too low");
@@ -225,6 +230,7 @@ const cardano: AppSpec<Transaction> = {
     },
     {
       name: "undelegate",
+      feature: "staking",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
         invariant(maxSpendable.gte(minBalanceRequiredForDelegate), "balance is too low");

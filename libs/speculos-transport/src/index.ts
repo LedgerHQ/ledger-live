@@ -24,13 +24,13 @@ export type SpeculosDeviceInternal =
       buttonPort: number;
       automationPort: number;
       transport: SpeculosTransportWebsocket;
-      destroy: () => void;
+      destroy: () => Promise<unknown>;
     }
   | {
       process: ChildProcessWithoutNullStreams;
       apiPort: string | undefined;
       transport: SpeculosTransportHttp;
-      destroy: () => void;
+      destroy: () => Promise<unknown>;
     };
 
 // FIXME we need to figure out a better system, using a filesystem file?
@@ -49,7 +49,7 @@ export const modelMap: Record<string, DeviceModelId> = {
   blue: DeviceModelId.blue,
 };
 
-const reverseModelMap: Record<string, string> = {};
+export const reverseModelMap: Record<string, string> = {};
 for (const k in modelMap) {
   reverseModelMap[modelMap[k]] = k;
 }
@@ -105,7 +105,7 @@ const getPorts = (idCounter: number, isSpeculosWebsocket?: boolean) => {
   }
 };
 
-function conventionalAppSubpath(
+export function conventionalAppSubpath(
   model: DeviceModelId,
   firmware: string,
   appName: string,
@@ -119,24 +119,26 @@ interface Dependency {
   appVersion?: string;
 }
 
+export type DeviceParams = {
+  model: DeviceModelId;
+  firmware: string;
+  appName: string;
+  appVersion: string;
+  dependency?: string;
+  dependencies?: Dependency[];
+  seed: string;
+  // Root folder from which you need to lookup app binaries
+  coinapps: string;
+  // if you want to force a specific app path
+  overridesAppPath?: string;
+  onSpeculosDeviceCreated?: (device: SpeculosDevice) => Promise<void>;
+};
+
 /**
  * instanciate a speculos device that runs through docker
  */
 export async function createSpeculosDevice(
-  arg: {
-    model: DeviceModelId;
-    firmware: string;
-    appName: string;
-    appVersion: string;
-    dependency?: string;
-    dependencies?: Dependency[];
-    seed: string;
-    // Root folder from which you need to lookup app binaries
-    coinapps: string;
-    // if you want to force a specific app path
-    overridesAppPath?: string;
-    onSpeculosDeviceCreated?: (device: SpeculosDevice) => Promise<void>;
-  },
+  arg: DeviceParams,
   maxRetry = 3,
 ): Promise<SpeculosDevice> {
   const {
@@ -205,6 +207,7 @@ export async function createSpeculosDevice(
     ...(sdk ? ["--sdk", sdk] : []),
     "--display",
     "headless",
+    ...(getEnv("PLAYWRIGHT_RUN") || getEnv("DETOX") ? ["-p"] : []), // to use the production PKI
     ...(process.env.CI ? ["--vnc-password", "live", "--vnc-port", "41000"] : []),
     ...(isSpeculosWebsocket
       ? [
@@ -235,11 +238,11 @@ export async function createSpeculosDevice(
   });
   let destroyed = false;
 
-  const destroy = () => {
-    if (destroyed) return;
+  const destroy = async () => {
+    if (destroyed) return Promise.resolve();
     destroyed = true;
-    new Promise((resolve, reject) => {
-      if (!data[speculosID]) return;
+    return new Promise((resolve, reject) => {
+      if (!data[speculosID]) return resolve(undefined);
       delete data[speculosID];
       exec(`docker rm -f ${speculosID}`, (error, stdout, stderr) => {
         if (error) {
@@ -259,7 +262,7 @@ export async function createSpeculosDevice(
     }
   });
   let latestStderr: string | undefined;
-  p.stderr.on("data", data => {
+  p.stderr.on("data", async data => {
     if (!data) return;
     latestStderr = data;
 
@@ -269,23 +272,23 @@ export async function createSpeculosDevice(
 
     if (/using\s(?:SDK|API_LEVEL)/.test(data)) {
       setTimeout(() => resolveReady(true), 500);
-    } else if (data.includes("is already in use by container")) {
+    } else if (data.includes("is already in use by")) {
       rejectReady(
         new Error("speculos already in use! Try `ledger-live cleanSpeculos` or check logs"),
       );
     } else if (data.includes("address already in use")) {
       if (maxRetry > 0) {
         log("speculos", "retrying speculos connection");
-        destroy();
+        await destroy();
         resolveReady(false);
       }
     }
   });
-  p.on("close", () => {
+  p.on("close", async () => {
     log("speculos", `${speculosID} closed`);
 
     if (!destroyed) {
-      destroy();
+      await destroy();
       rejectReady(new Error(`speculos process failure. ${latestStderr || ""}`));
     }
   });

@@ -125,14 +125,14 @@ export const loadInfosForUniswap = async (
     return {};
   }
 
+  const uniqueTokens = Array.from(new Set(commandsAndTokens.flatMap(([, tokens]) => tokens)));
   const tokenDescriptorsPromises = Promise.all(
-    commandsAndTokens.flatMap(([, tokens]) =>
-      tokens.map(async token => {
-        const erc20SignaturesBlob = await findERC20SignaturesInfo(userConfig || {}, chainId);
-        return byContractAddressAndChainId(token, chainId, erc20SignaturesBlob)?.data;
-      }),
-    ),
+    uniqueTokens.map(async token => {
+      const erc20SignaturesBlob = await findERC20SignaturesInfo(userConfig || {}, chainId);
+      return byContractAddressAndChainId(token, chainId, erc20SignaturesBlob)?.data;
+    }),
   );
+
   const tokenDescriptors = await tokenDescriptorsPromises.then(descriptors =>
     descriptors.filter((descriptor): descriptor is Buffer => !!descriptor),
   );

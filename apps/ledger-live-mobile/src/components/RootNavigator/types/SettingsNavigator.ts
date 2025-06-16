@@ -2,6 +2,7 @@ import type { Device } from "@ledgerhq/types-devices";
 import { ScreenName } from "~/const";
 import { FilterByDeviceModelId } from "../../BleDevicePairingFlow/BleDevicesScanning";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { InitialRange } from "./LandingPagesNavigator";
 
 export type SettingsNavigatorStackParamList = {
   [ScreenName.SettingsScreen]: undefined;
@@ -24,6 +25,7 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.ExperimentalSettings]: undefined;
   [ScreenName.DeveloperSettings]: undefined;
   [ScreenName.DeveloperCustomManifest]: undefined;
+  [ScreenName.ExchangeDeveloperMode]: undefined;
   [ScreenName.DebugSettings]: undefined;
   [ScreenName.DebugFeatureFlags]: undefined;
   [ScreenName.DebugInformation]: undefined;
@@ -37,7 +39,11 @@ export type SettingsNavigatorStackParamList = {
     | undefined;
   [ScreenName.DebugConnectivity]: undefined;
   [ScreenName.DebugGenerators]: undefined;
-  [ScreenName.DebugMockGenerateAccounts]: undefined;
+  [ScreenName.DebugMockGenerateAccounts]:
+    | {
+        withNft?: boolean;
+      }
+    | undefined;
   [ScreenName.DebugExport]: undefined;
   [ScreenName.DebugNetwork]: undefined;
   [ScreenName.DebugCommandSender]: {
@@ -63,6 +69,7 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugLottie]: undefined;
   [ScreenName.DebugPlayground]: undefined;
   [ScreenName.DebugBluetoothAndLocationServices]: undefined;
+  [ScreenName.DebugStorageMigration]: undefined;
   [ScreenName.DebugTermsOfUse]: undefined;
   [ScreenName.DebugVideos]: undefined;
   [ScreenName.DebugInstallSetOfApps]: undefined;
@@ -80,4 +87,9 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugQueuedDrawerScreen0]: undefined;
   [ScreenName.DebugQueuedDrawerScreen1]: undefined;
   [ScreenName.DebugQueuedDrawerScreen2]: undefined;
+  [ScreenName.LargeMoverLandingPage]: {
+    currencyIds: string;
+    initialRange?: InitialRange;
+  };
+  [ScreenName.DebugSwipe]: undefined;
 };

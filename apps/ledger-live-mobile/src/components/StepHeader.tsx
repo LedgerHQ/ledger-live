@@ -7,12 +7,13 @@ type Props = {
   title: React.ReactNode;
   subtitle?: React.ReactNode;
   testID?: string;
+  adjustFontSize?: boolean;
 };
 
-export default function StepHeader({ title, subtitle, testID }: Props) {
+export default function StepHeader({ title, subtitle, testID, adjustFontSize }: Props) {
   return (
     <TouchableWithoutFeedback onPress={scrollToTop}>
-      <Flex flexDirection={"column"} justifyContent={"center"} flex={1} py={3} testID={testID}>
+      <Flex flexDirection={"column"} justifyContent={"center"} flex={1} py={3}>
         {subtitle && (
           <Text
             variant={"small"}
@@ -30,6 +31,8 @@ export default function StepHeader({ title, subtitle, testID }: Props) {
           numberOfLines={1}
           textAlign={"center"}
           color={"neutral.c100"}
+          testID={testID}
+          adjustsFontSizeToFit={adjustFontSize}
         >
           {title}
         </Text>

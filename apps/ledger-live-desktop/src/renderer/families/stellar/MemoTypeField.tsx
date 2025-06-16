@@ -28,6 +28,7 @@ const MemoTypeField = ({
       onChange(
         bridge.updateTransaction(transaction, {
           memoType: memoType.value,
+          memoValue: memoType.value === "NO_MEMO" ? "" : transaction.memoValue,
         }),
       );
     },

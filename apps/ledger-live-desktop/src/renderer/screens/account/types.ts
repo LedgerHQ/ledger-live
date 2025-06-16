@@ -15,7 +15,7 @@ export type StakeAccountBannerParams = {
     redelegate: boolean;
     delegate: boolean;
   };
-  elrond?: {
+  multiversx?: {
     redelegate: boolean;
     delegate: boolean;
   };

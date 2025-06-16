@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import { formatShort } from "@ledgerhq/live-common/currencies/index";
 import { CryptoCurrency, Currency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
-import Chart from "~/renderer/components/Chart";
+import Chart, { GraphTrackingScreenName } from "~/renderer/components/Chart";
 import Box, { Card } from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { useCurrencyPortfolio, usePortfolio } from "~/renderer/actions/portfolio";
@@ -128,6 +128,7 @@ export default function BalanceSummary({
                   : renderTickYCryptoValue
             }
             renderTooltip={renderTooltip}
+            screenName={GraphTrackingScreenName.Asset}
           />
         )}
       </Box>

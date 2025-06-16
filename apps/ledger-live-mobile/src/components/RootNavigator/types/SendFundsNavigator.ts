@@ -22,10 +22,6 @@ import {
   CosmosAccount,
   Transaction as CosmosTransaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import {
-  CryptoOrgAccount,
-  Transaction as CryptoOrgTransaction,
-} from "@ledgerhq/live-common/families/crypto_org/types";
 import { Transaction as HederaTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import {
   SolanaAccount,
@@ -33,6 +29,7 @@ import {
 } from "@ledgerhq/live-common/families/solana/types";
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/xrp/types";
 import type { Transaction as ICPTransaction } from "@ledgerhq/live-common/families/internet_computer/types";
+import type { Transaction as MinaTransaction } from "@ledgerhq/live-common/families/mina/types";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/families/stacks/types";
 import type { Transaction as CasperTransaction } from "@ledgerhq/live-common/families/casper/types";
@@ -208,19 +205,6 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
-  [ScreenName.XrpEditFee]: {
-    accountId: string;
-    parentId?: string;
-    transaction: RippleTransaction;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
-  };
   [ScreenName.StellarEditCustomFees]: {
     accountId: string;
     parentId?: string;
@@ -239,20 +223,6 @@ export type SendFundsNavigatorStackParamList = {
     parentId?: string;
     account: CosmosAccount;
     transaction: CosmosTransaction;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
-  };
-  [ScreenName.CryptoOrgEditMemo]: {
-    accountId: string;
-    parentId?: string;
-    account: CryptoOrgAccount;
-    transaction: CryptoOrgTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
@@ -323,7 +293,14 @@ export type SendFundsNavigatorStackParamList = {
     account: Account;
     parentId?: string;
     transaction: ICPTransaction;
-    currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SignTransactionSummary;
+    currentNavigation: ScreenName.SignTransactionSummary;
+  };
+  [ScreenName.MinaEditMemo]: {
+    accountId: string;
+    account: Account;
+    parentId?: string;
+    transaction: MinaTransaction;
+    currentNavigation: ScreenName.SignTransactionSummary;
   };
   [ScreenName.StacksEditMemo]: {
     accountId: string;

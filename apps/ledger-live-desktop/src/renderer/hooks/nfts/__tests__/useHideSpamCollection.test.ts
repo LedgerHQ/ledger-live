@@ -1,8 +1,10 @@
-import { hideNftCollection } from "~/renderer/actions/settings";
+import { updateNftStatus } from "~/renderer/actions/settings";
 import { useHideSpamCollection } from "../useHideSpamCollection";
-import { renderHook } from "tests/testUtils";
+import { renderHook } from "tests/testSetup";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { useDispatch } from "react-redux";
+import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
+import { NftStatus } from "@ledgerhq/live-nft/types";
 
 jest.mock("react-redux", () => ({
   ...jest.requireActual("react-redux"),
@@ -17,31 +19,40 @@ describe("useHideSpamCollection", () => {
     mockDispatch.mockClear();
   });
 
-  it("should dispatch hideNftCollection action if collection is not whitelisted", () => {
+  it("should dispatch updateNftStatus action if collection is not already marked with a status", () => {
     const { result } = renderHook(() => useHideSpamCollection(), {
       initialState: {
         settings: {
           ...INITIAL_STATE,
-          whitelistedNftCollections: ["collectionA", "collectionB"],
-          hiddenNftCollections: [],
+          nftCollectionsStatusByNetwork: {},
         },
       },
     });
-    result.current.hideSpamCollection("collectionC");
+    result.current.hideSpamCollection("collectionC", SupportedBlockchain.Ethereum);
 
-    expect(mockDispatch).toHaveBeenCalledWith(hideNftCollection("collectionC"));
+    expect(mockDispatch).toHaveBeenCalledWith(
+      updateNftStatus(SupportedBlockchain.Ethereum, "collectionC", NftStatus.spam),
+    );
   });
 
-  it("should not dispatch hideNftCollection action if collection is whitelisted", () => {
+  it("should not dispatch hideNftCollection action if collection is already marked with a status", () => {
     const { result } = renderHook(() => useHideSpamCollection(), {
       initialState: {
         settings: {
-          hiddenNftCollections: [],
-          whitelistedNftCollections: ["collectionA", "collectionB"],
+          nftCollectionsStatusByNetwork: {
+            [SupportedBlockchain.Ethereum]: {
+              collectionA: NftStatus.spam,
+            },
+            [SupportedBlockchain.Avalanche]: {
+              collectionB: NftStatus.spam,
+            },
+          },
         },
       },
     });
-    result.current.hideSpamCollection("collectionA");
+
+    result.current.hideSpamCollection("collectionA", SupportedBlockchain.Ethereum);
+    result.current.hideSpamCollection("collectionB", SupportedBlockchain.Avalanche);
 
     expect(mockDispatch).not.toHaveBeenCalled();
   });

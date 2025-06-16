@@ -1,0 +1,85 @@
+name: "[Web] - Build  - Called"
+
+on:
+  workflow_call:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: |
+          If you run this manually, and want to run on a PR, the correct ref should be refs/pull/{PR_NUMBER}/merge to
+          have the "normal" scenario involving checking out a merge commit between your branch and the base branch.
+          If you want to run only on a branch or specific commit, you can use either the sha or the branch name instead (prefer the first verion for PRs).
+        required: false
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-web-tools:
+    name: "Web Tools Build"
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          install-proto: true
+          skip-turbo-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+      - name: Install dependencies
+        run: pnpm i -F "web-tools..." -F "ledger-live"
+      - name: build web-tools
+        run: pnpm turbo run build --filter="@ledgerhq/web-tools" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+
+  report:
+    needs: build-web-tools
+    name: "Web Tools Build > Report"
+    if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: outputs-*
+          merge-multiple: true
+          path: outputs
+      - uses: actions/github-script@v6
+        name: build summary
+        with:
+          script: |
+            const fs = require("fs");
+            const statuses = {
+              tool: {
+                pass: ${{ needs.build-web-tools.result == 'success' }},
+                status: "${{ needs.build-web-tools.result }}",
+              }
+            };
+
+            const summary = `### Common Tools
+
+            ${statuses.tool.pass ? "Common Tools are fine" : "Common Tools build failed"}
+              - ${statuses.tool.pass ? "✅" : "❌"} **Common Tools* build* ended with status \`${statuses.tool.status}\`
+            `;
+
+            const actions = [];
+
+            const output = {
+              summary,
+              actions
+            };
+
+            fs.writeFileSync("summary-web-tools.json", JSON.stringify(output), "utf-8");
+      - uses: actions/upload-artifact@v4
+        name: Upload output
+        with:
+          path: ${{ github.workspace }}/summary-web-tools.json
+          name: summary-web-tools.json

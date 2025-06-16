@@ -2,6 +2,7 @@ import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { RecoverRestorePage } from "../../page/recover.restore.page";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { Layout } from "../../component/layout.component";
 
 test.use({
   userdata: "skip-onboarding",
@@ -9,6 +10,11 @@ test.use({
 });
 
 test.describe.parallel("Recover @smoke", () => {
+  test("Warning status icon not show", async ({ page }) => {
+    const layout = new Layout(page);
+    await layout.expectRecoverStatusIconToBeVisible(false);
+  });
+
   test("Restore page with no device", async ({ page }) => {
     const recoverPage = new RecoverRestorePage(page);
     await recoverPage.useDeepLink();

@@ -2,7 +2,7 @@ import URL from "url";
 import { log } from "@ledgerhq/logs";
 import network from "@ledgerhq/live-network";
 import coinConfig from "../config";
-import { APIAccount, APIBlock, APIOperation } from "./types";
+import { APIAccount, APIBlock, APIOperation, AccountsGetOperationsOptions } from "./types";
 
 const getExplorerUrl = () => coinConfig.getCoinConfig().explorer.url;
 
@@ -33,13 +33,15 @@ const api = {
     });
     return data;
   },
+  // https://api.tzkt.io/#operation/Accounts_GetOperations
   async getAccountOperations(
     address: string,
-    query: {
-      lastId?: number;
-      sort?: number;
-    },
+    query: AccountsGetOperationsOptions,
   ): Promise<APIOperation[]> {
+    // Remove undefined from query
+    Object.entries(query).forEach(
+      ([key, value]) => value === undefined && delete query[key as keyof typeof query],
+    );
     const { data } = await network<APIOperation[]>({
       url: URL.format({
         pathname: `${getExplorerUrl()}/v1/accounts/${address}/operations`,
@@ -50,6 +52,7 @@ const api = {
   },
 };
 
+// TODO this has same purpose as api/listOperations
 export const fetchAllTransactions = async (
   address: string,
   lastId?: number,
@@ -57,7 +60,11 @@ export const fetchAllTransactions = async (
   let ops: APIOperation[] = [];
   let maxIteration = coinConfig.getCoinConfig().explorer.maxTxQuery;
   do {
-    const newOps = await api.getAccountOperations(address, { lastId, sort: 0 });
+    const newOps = await api.getAccountOperations(address, {
+      lastId,
+      sort: "Ascending",
+      "level.ge": 0,
+    });
     if (newOps.length === 0) return ops;
     ops = ops.concat(newOps);
     const last = ops[ops.length - 1];

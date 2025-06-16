@@ -1,5 +1,6 @@
 import {
-  defaultUpdateTransaction,
+  getSerializedAddressParameters,
+  updateTransaction,
   GetAccountShape,
   makeAccountBridgeReceive,
   makeScanAccounts,
@@ -19,7 +20,7 @@ import { createTransaction } from "../createTransaction";
 import { buildSignOperation } from "../signOperation";
 import { endpointByCurrencyId } from "../utils";
 import { broadcastWithAPI } from "../broadcast";
-import { ChainAPI, Config } from "../api";
+import { ChainAPI, Config } from "../network";
 import { SolanaSigner } from "../signer";
 import resolver from "../hw-getAddress";
 import {
@@ -27,7 +28,10 @@ import {
   assignToAccountRaw,
   fromOperationExtraRaw,
   toOperationExtraRaw,
+  assignFromTokenAccountRaw,
+  assignToTokenAccountRaw,
 } from "../serialization";
+import nftResolvers from "../nftResolvers";
 
 function makePrepare(getChainAPI: (config: Config) => Promise<ChainAPI>) {
   const prepareTransaction: AccountBridge<
@@ -164,7 +168,7 @@ export function makeBridges({
 
   const accountBridge: AccountBridge<Transaction, SolanaAccount, TransactionStatus> = {
     createTransaction,
-    updateTransaction: defaultUpdateTransaction,
+    updateTransaction,
     estimateMaxSpendable: makeEstimateMaxSpendable(getQueuedAndCachedAPI),
     getTransactionStatus,
     sync,
@@ -176,6 +180,9 @@ export function makeBridges({
     assignToAccountRaw,
     toOperationExtraRaw,
     fromOperationExtraRaw,
+    getSerializedAddressParameters,
+    assignFromTokenAccountRaw,
+    assignToTokenAccountRaw,
   };
 
   const currencyBridge: CurrencyBridge = {
@@ -183,6 +190,7 @@ export function makeBridges({
     hydrate,
     scanAccounts: scan,
     getPreloadStrategy,
+    nftResolvers,
   };
 
   return {

@@ -156,7 +156,7 @@ const SelectFeeStrategy = ({
                 showCode={!suffixPerByte}
                 suffix={
                   suffixPerByte
-                    ? ` ${t("send.steps.details.unitPerByte", {
+                    ? ` ${t("send.steps.details.unitVByte", {
                         unit: s.unit ? s.unit.code : feesUnit.code,
                       })}`
                     : ""

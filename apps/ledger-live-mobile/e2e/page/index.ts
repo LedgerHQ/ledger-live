@@ -1,7 +1,6 @@
-import AccountPage from "./accounts/account.page";
+import AssetAccountsPage from "./accounts/assetAccounts.page";
 import AccountsPage from "./accounts/accounts.page";
 import AddAccountDrawer from "./accounts/addAccount.drawer";
-import BuyDevicePage from "./discover/buyDevice.page";
 import CommonPage from "./common.page";
 import CryptoDrawer from "./liveApps/cryptoDrawer";
 import CustomLockscreenPage from "./stax/customLockscreen.page";
@@ -22,47 +21,166 @@ import SettingsGeneralPage from "./settings/settingsGeneral.page";
 import SettingsPage from "./settings/settings.page";
 import StakePage from "./trade/stake.page";
 import SwapPage from "./trade/swap.page";
-import TransfertMenuDrawer from "./wallet/transferMenu.drawer";
+import TransferMenuDrawer from "./wallet/transferMenu.drawer";
 import WalletTabNavigatorPage from "./wallet/walletTabNavigator.page";
 
 import type { Account } from "@ledgerhq/types-live";
 import { DeviceLike } from "~/reducers/types";
 import { loadAccounts, loadBleState, loadConfig } from "../bridge/server";
+import { initTestAccounts } from "../models/currencies";
+import { setupEnvironment } from "../helpers/commonHelpers";
+
+setupEnvironment();
+
+type ApplicationOptions = {
+  userdata?: string;
+  knownDevices?: DeviceLike[];
+  testedCurrencies?: string[];
+};
+
+const lazyInit = <T>(PageClass: new () => T) => {
+  let instance: T | null = null;
+  return () => {
+    if (!instance) instance = new PageClass();
+    return instance;
+  };
+};
 
 export class Application {
-  public account = new AccountPage();
-  public accounts = new AccountsPage();
-  public addAccount = new AddAccountDrawer();
-  public buyDevice = new BuyDevicePage();
-  public common = new CommonPage();
-  public cryptoDrawer = new CryptoDrawer();
-  public customLockscreen = new CustomLockscreenPage();
-  public discover = new DiscoverPage();
-  public dummyWalletApp = new DummyWalletApp();
-  public walletAPIReceive = new WalletAPIReceivePage();
-  public manager = new ManagerPage();
-  public market = new MarketPage();
-  public nftGallery = new NftGalleryPage();
-  public nftViewer = new NftViewerPage();
-  public onboarding = new OnboardingStepsPage();
-  public operationDetails = new OperationDetailsPage();
-  public passwordEntry = new PasswordEntryPage();
-  public portfolio = new PortfolioPage();
-  public receive = new ReceivePage();
-  public send = new SendPage();
-  public settings = new SettingsPage();
-  public settingsGeneral = new SettingsGeneralPage();
-  public stake = new StakePage();
-  public swap = new SwapPage();
-  public transfertMenu = new TransfertMenuDrawer();
-  public walletTabNavigator = new WalletTabNavigatorPage();
+  public testAccounts: Account[] = [];
+  private assetAccountsPageInstance = lazyInit(AssetAccountsPage);
+  private accountsPageInstance = lazyInit(AccountsPage);
+  private addAccountDrawerInstance = lazyInit(AddAccountDrawer);
+  private commonPageInstance = lazyInit(CommonPage);
+  private cryptoDrawerInstance = lazyInit(CryptoDrawer);
+  private customLockscreenPageInstance = lazyInit(CustomLockscreenPage);
+  private discoverPageInstance = lazyInit(DiscoverPage);
+  private dummyWalletAppInstance = lazyInit(DummyWalletApp);
+  private walletAPIReceivePageInstance = lazyInit(WalletAPIReceivePage);
+  private managerPageInstance = lazyInit(ManagerPage);
+  private marketPageInstance = lazyInit(MarketPage);
+  private nftGalleryPageInstance = lazyInit(NftGalleryPage);
+  private nftViewerPageInstance = lazyInit(NftViewerPage);
+  private onboardingPageInstance = lazyInit(OnboardingStepsPage);
+  private operationDetailsPageInstance = lazyInit(OperationDetailsPage);
+  private passwordEntryPageInstance = lazyInit(PasswordEntryPage);
+  private portfolioPageInstance = lazyInit(PortfolioPage);
+  private receivePageInstance = lazyInit(ReceivePage);
+  private sendPageInstance = lazyInit(SendPage);
+  private settingsPageInstance = lazyInit(SettingsPage);
+  private settingsGeneralPageInstance = lazyInit(SettingsGeneralPage);
+  private stakePageInstance = lazyInit(StakePage);
+  private swapPageInstance = lazyInit(SwapPage);
+  private transferMenuDrawerInstance = lazyInit(TransferMenuDrawer);
+  private walletTabNavigatorPageInstance = lazyInit(WalletTabNavigatorPage);
 
-  static async init(userdata?: string, knownDevices?: DeviceLike[], testAccounts?: Account[]) {
-    const app = new Application();
-    if (userdata) await loadConfig(userdata, true);
-    if (knownDevices) await loadBleState({ knownDevices: knownDevices });
-    if (testAccounts) await loadAccounts(testAccounts);
+  public async init({ userdata, knownDevices, testedCurrencies }: ApplicationOptions) {
+    userdata && (await loadConfig(userdata, true));
 
-    return app;
+    knownDevices && (await loadBleState({ knownDevices }));
+    if (testedCurrencies) {
+      this.testAccounts = initTestAccounts(testedCurrencies);
+      await loadAccounts(this.testAccounts);
+    }
+  }
+
+  public get assetAccountsPage() {
+    return this.assetAccountsPageInstance();
+  }
+
+  public get accounts() {
+    return this.accountsPageInstance();
+  }
+
+  public get addAccount() {
+    return this.addAccountDrawerInstance();
+  }
+
+  public get common() {
+    return this.commonPageInstance();
+  }
+
+  public get cryptoDrawer() {
+    return this.cryptoDrawerInstance();
+  }
+
+  public get customLockscreen() {
+    return this.customLockscreenPageInstance();
+  }
+
+  public get discover() {
+    return this.discoverPageInstance();
+  }
+
+  public get dummyWalletApp() {
+    return this.dummyWalletAppInstance();
+  }
+
+  public get walletAPIReceive() {
+    return this.walletAPIReceivePageInstance();
+  }
+
+  public get manager() {
+    return this.managerPageInstance();
+  }
+
+  public get market() {
+    return this.marketPageInstance();
+  }
+
+  public get nftGallery() {
+    return this.nftGalleryPageInstance();
+  }
+
+  public get nftViewer() {
+    return this.nftViewerPageInstance();
+  }
+
+  public get onboarding() {
+    return this.onboardingPageInstance();
+  }
+
+  public get operationDetails() {
+    return this.operationDetailsPageInstance();
+  }
+
+  public get passwordEntry() {
+    return this.passwordEntryPageInstance();
+  }
+
+  public get portfolio() {
+    return this.portfolioPageInstance();
+  }
+
+  public get receive() {
+    return this.receivePageInstance();
+  }
+
+  public get send() {
+    return this.sendPageInstance();
+  }
+
+  public get settings() {
+    return this.settingsPageInstance();
+  }
+
+  public get settingsGeneral() {
+    return this.settingsGeneralPageInstance();
+  }
+
+  public get stake() {
+    return this.stakePageInstance();
+  }
+
+  public get swap() {
+    return this.swapPageInstance();
+  }
+
+  public get transferMenu() {
+    return this.transferMenuDrawerInstance();
+  }
+
+  public get walletTabNavigator() {
+    return this.walletTabNavigatorPageInstance();
   }
 }

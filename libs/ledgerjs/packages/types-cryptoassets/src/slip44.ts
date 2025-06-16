@@ -4,6 +4,7 @@ export enum CoinType {
   AION = 425,
   AKA = 200625,
   ALGO = 283,
+  APTOS = 637,
   ATOM = 118,
   ARK = 111,
   ATH = 1620,
@@ -54,6 +55,7 @@ export enum CoinType {
   LBRY = 140,
   LITECOIN = 2,
   LISK = 134,
+  MINA = 12586,
   MIX = 76,
   MONERO = 128,
   MUSICOIN = 184,
@@ -98,4 +100,5 @@ export enum CoinType {
   ZCOIN = 136,
   ZEN = 121,
   ZILLIQA = 313,
+  SUI = 784,
 }

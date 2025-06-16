@@ -12,7 +12,10 @@ import type {
   Transaction,
 } from "@ledgerhq/coin-cosmos/types/index";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import {
+  getSerializedAddressParameters,
+  updateTransaction,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import {
   AmountRequired,
@@ -117,7 +120,7 @@ const prepareTransaction = async (a: CosmosAccount, t: Transaction): Promise<Tra
 const accountBridge: AccountBridge<Transaction> = {
   estimateMaxSpendable,
   createTransaction,
-  updateTransaction: defaultUpdateTransaction,
+  updateTransaction,
   getTransactionStatus,
   prepareTransaction,
   sync,
@@ -126,6 +129,7 @@ const accountBridge: AccountBridge<Transaction> = {
   broadcast,
   assignFromAccountRaw,
   assignToAccountRaw,
+  getSerializedAddressParameters,
 };
 const currencyBridge: CurrencyBridge = {
   scanAccounts,

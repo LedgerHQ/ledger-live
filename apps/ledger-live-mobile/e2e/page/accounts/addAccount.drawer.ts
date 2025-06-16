@@ -1,50 +1,73 @@
 import { expect } from "detox";
-import { getElementById, openDeeplink, tapById, waitForElementById } from "../../helpers";
-import { capitalize } from "../../models/currencies";
+import { openDeeplink } from "../../helpers/commonHelpers";
+import CommonPage from "../common.page";
 
-const baseLink = "add-account";
-
-export default class AddAccountDrawer {
-  accountCardId = (id: string) => getElementById(`account-card-${id}`);
+export default class AddAccountDrawer extends CommonPage {
+  baseLink = "add-account";
+  deselectAllButtonId = "add-accounts-deselect-all";
   accountId = (currency: string, index: number) => `mock:1:${currency}:MOCK_${currency}_${index}:`;
-  accountTitleId = (accountName: string) => getElementById(`test-id-account-${accountName}`);
   modalButtonId = "add-accounts-modal-add-button";
-  currencyRow = (currencyId: string) => `currency-row-${currencyId}`;
   continueButtonId = "add-accounts-continue-button";
-  succesCtaId = "add-accounts-success-cta";
+  closeAddAccountButtonId = "button-close-add-account";
+  addFundsButtonId = "button-add-funds";
+  actionDrawerReceiveButtonId = "action-drawer-receive-button";
 
+  @Step("Open add account via deeplink")
   async openViaDeeplink() {
-    await openDeeplink(baseLink);
+    await openDeeplink(this.baseLink);
   }
 
+  @Step("Click on 'Import with your Ledger' button")
   async importWithYourLedger() {
     await waitForElementById(this.modalButtonId);
     await tapById(this.modalButtonId);
   }
 
-  async selectCurrency(currencyId: string) {
-    const id = this.currencyRow(currencyId);
-    await waitForElementById(id);
-    await tapById(id);
+  @Step("Wait for accounts discovery")
+  async waitAccountsDiscovery() {
+    await waitForElementById(this.continueButtonId, 240000);
   }
 
-  async startAccountsDiscovery() {
-    await waitForElementById(this.continueButtonId);
-  }
-
-  async expectAccountDiscovery(currency: string, index: number) {
-    const accountName = `${capitalize(currency)} ${index + 1}`;
-    await expect(this.accountCardId(this.accountId(currency, index))).toBeVisible();
-    await expect(this.accountTitleId(accountName)).toHaveText(accountName);
-  }
-
+  @Step("Finish account discovery")
   async finishAccountsDiscovery() {
-    await waitForElementById(this.continueButtonId);
     await tapById(this.continueButtonId);
   }
 
-  async tapSuccessCta() {
-    await waitForElementById(this.succesCtaId);
-    await tapById(this.succesCtaId);
+  @Step("Expect account discovered")
+  async expectAccountDiscovery(currencyName: string, currencyId: string, index = 0) {
+    const accountName = `${currencyName} ${index + 1}`;
+    await expect(this.accountItem(this.accountId(currencyId, index))).toBeVisible();
+    const accountId = (await getIdByRegexp(this.accountItemRegExp(), index)).replace(
+      this.accountItemId,
+      "",
+    );
+    await expect(this.accountItemName(accountId)).toHaveText(accountName);
+    return accountId;
+  }
+
+  @Step("Close add account success screen")
+  async tapCloseAddAccountCta() {
+    await waitForElementById(this.closeAddAccountButtonId);
+    await tapById(this.closeAddAccountButtonId);
+  }
+
+  @Step("Add only discovered account at index")
+  async addAccountAtIndex(currencyName: string, currencyId: string, index: number) {
+    await this.waitAccountsDiscovery();
+    const accountId = await this.expectAccountDiscovery(currencyName, currencyId, index);
+    await tapById(this.deselectAllButtonId);
+    await tapById(this.accountItemRegExp(accountId));
+    await this.finishAccountsDiscovery();
+    return accountId;
+  }
+
+  @Step("Click on 'Add funds to my account' button")
+  async tapAddFunds() {
+    await tapById(this.addFundsButtonId);
+  }
+
+  @Step("Click on 'Receive' in action drawer")
+  async tapReceiveinActionDrawer() {
+    await tapById(this.actionDrawerReceiveButtonId);
   }
 }

@@ -58,6 +58,7 @@ const Actions = ({
           size="large"
           onPress={onPressSync}
           accessibilityRole="button"
+          testID="walletsync-activation-button"
         >
           {t("walletSync.activation.screen.mainCta")}
         </Button>

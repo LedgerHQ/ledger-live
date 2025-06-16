@@ -1,6 +1,5 @@
 import React, { ReactNode } from "react";
-import { getAccountSpendableBalance } from "@ledgerhq/live-common/account/index";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { getAccountCurrency, getParentAccount } from "@ledgerhq/live-common/account/helpers";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { AccountLike, Account, DerivationMode } from "@ledgerhq/types-live";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
@@ -14,6 +13,8 @@ import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 import { useMaybeAccountName } from "~/reducers/wallet";
 import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
+import { useSelector } from "react-redux";
+import { accountsSelector } from "~/reducers/accounts";
 
 export type Props = CardProps & {
   account?: AccountLike | null;
@@ -39,9 +40,13 @@ const AccountCard = ({
   ...props
 }: Props) => {
   const { colors } = useTheme();
+  const accounts = useSelector(accountsSelector);
+
   const accountNameFromStore = useMaybeAccountName(account);
   const accountName = overridesName || accountNameFromStore;
-  const parentName = useMaybeAccountName(parentAccount);
+  const parentName = useMaybeAccountName(
+    parentAccount || (account ? getParentAccount(account, accounts) : undefined),
+  );
   const unit = useMaybeAccountUnit(account);
   if (!account || !unit) return null;
   const currency = getAccountCurrency(account);
@@ -53,7 +58,7 @@ const AccountCard = ({
     getTagDerivationMode(currency, account.derivationMode as DerivationMode);
   const name =
     account.type === "TokenAccount"
-      ? parentAccount
+      ? parentName
         ? `${parentName} (${currency.ticker})`
         : currency.ticker
       : accountName;
@@ -99,13 +104,17 @@ const AccountCard = ({
         </Flex>
         <Flex marginLeft={3} alignItems="flex-end">
           <Text variant="large" fontWeight="semiBold" color="neutral.c100" mb={2}>
-            <CounterValue currency={currency} value={account.balance} showCode />
+            <CounterValue
+              currency={currency}
+              value={useFullBalance ? account.balance : account.spendableBalance}
+              showCode
+            />
           </Text>
           <Text variant="body" fontWeight="medium" color="neutral.c70">
             <CurrencyUnitValue
               showCode
               unit={unit}
-              value={useFullBalance ? account.balance : getAccountSpendableBalance(account)}
+              value={useFullBalance ? account.balance : account.spendableBalance}
             />
           </Text>
         </Flex>

@@ -67,7 +67,7 @@ export function serializeTransaction(
     return Buffer.concat([
       transaction.version,
       transaction.nVersionGroupId || Buffer.alloc(0),
-      Buffer.from([0xb4, 0xd0, 0xd6, 0xc2]), // Zcash Consensus Branch ID: 0xC2D6D0B4 refer to https://z.cash/upgrade/nu5/
+      transaction.consensusBranchId || Buffer.from([0x00, 0x00, 0x00, 0x00]),
       transaction.locktime || Buffer.from([0x00, 0x00, 0x00, 0x00]),
       transaction.nExpiryHeight || Buffer.from([0x00, 0x00, 0x00, 0x00]),
       useWitness ? Buffer.from("0001", "hex") : Buffer.alloc(0),

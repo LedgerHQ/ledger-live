@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { types as TyphonTypes, address as TyphonAddress } from "@stricahq/typhonjs";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 
 import { CardanoAccount, Transaction } from "./types";
 import { buildTransaction } from "./buildTransaction";
@@ -21,7 +21,7 @@ export const prepareTransaction: AccountBridge<
 
   if (!transaction.protocolParams) {
     const networkInfo = await fetchNetworkInfo(account.currency);
-    transaction = defaultUpdateTransaction(transaction, {
+    transaction = updateTransaction(transaction, {
       protocolParams: networkInfo.protocolParams,
     });
   }
@@ -46,5 +46,5 @@ export const prepareTransaction: AccountBridge<
     patch = { fees: new BigNumber(0), amount: transaction.amount };
   }
 
-  return defaultUpdateTransaction(transaction, patch);
+  return updateTransaction(transaction, patch);
 };

@@ -55,42 +55,50 @@ export function currencyFormatter(
 export const format = (
   currency: MarketItemResponse,
   cryptoCurrenciesList: (CryptoCurrency | TokenCurrency)[],
-): CurrencyData => ({
-  id: currency.id,
-  name: currency.name,
-  image: currency.image,
-  internalCurrency: cryptoCurrenciesList.find(
-    ({ ticker }) => ticker.toLowerCase() === currency.ticker,
-  ),
-  marketcap: currency.marketCap,
-  marketcapRank: currency.marketCapRank,
-  totalVolume: currency.totalVolume,
-  high24h: currency.high24h,
-  low24h: currency.low24h,
-  ticker: currency.ticker,
-  price: currency.price,
-  priceChangePercentage: {
-    [KeysPriceChange.hour]: currency.priceChangePercentage1h,
-    [KeysPriceChange.day]: currency.priceChangePercentage24h,
-    [KeysPriceChange.week]: currency.priceChangePercentage7d,
-    [KeysPriceChange.month]: currency.priceChangePercentage30d,
-    [KeysPriceChange.year]: currency.priceChangePercentage1y,
-  },
-  marketCapChangePercentage24h: currency.marketCapChangePercentage24h,
-  circulatingSupply: currency.circulatingSupply,
-  totalSupply: currency.totalSupply,
-  maxSupply: currency.maxSupply,
-  ath: currency.allTimeHigh,
-  athDate: new Date(currency.allTimeHighDate),
-  atl: currency.allTimeLow,
-  atlDate: new Date(currency.allTimeLowDate),
-  sparklineIn7d: currency.sparkline
-    ? sparklineAsSvgData(distributedCopy(currency.sparkline, 6 * 7)) // keep 6 points per day
-    : undefined,
-  chartData: {},
-});
+): CurrencyData => {
+  const ledgerIdsSet = new Set(currency.ledgerIds.map(id => id.toLowerCase()));
+
+  const internalCurrency = cryptoCurrenciesList.find(({ id }) =>
+    ledgerIdsSet.has(id.toLowerCase()),
+  );
+
+  return {
+    id: currency.id,
+    ledgerIds: currency.ledgerIds,
+    name: currency.name,
+    image: currency.image,
+    internalCurrency,
+    marketcap: currency.marketCap,
+    marketcapRank: currency.marketCapRank,
+    totalVolume: currency.totalVolume,
+    high24h: currency.high24h,
+    low24h: currency.low24h,
+    ticker: currency.ticker,
+    price: currency.price,
+    priceChangePercentage: {
+      [KeysPriceChange.hour]: currency.priceChangePercentage1h,
+      [KeysPriceChange.day]: currency.priceChangePercentage24h,
+      [KeysPriceChange.week]: currency.priceChangePercentage7d,
+      [KeysPriceChange.month]: currency.priceChangePercentage30d,
+      [KeysPriceChange.year]: currency.priceChangePercentage1y,
+    },
+    marketCapChangePercentage24h: currency.marketCapChangePercentage24h,
+    circulatingSupply: currency.circulatingSupply,
+    totalSupply: currency.totalSupply,
+    maxSupply: currency.maxSupply,
+    ath: currency.allTimeHigh,
+    athDate: new Date(currency.allTimeHighDate),
+    atl: currency.allTimeLow,
+    atlDate: new Date(currency.allTimeLowDate),
+    sparklineIn7d: currency.sparkline
+      ? sparklineAsSvgData(distributedCopy(currency.sparkline, 6 * 7)) // keep 6 points per day
+      : undefined,
+    chartData: {},
+  };
+};
 
 export const formatPerformer = (currency: MarketItemResponse): MarketItemPerformer => ({
+  id: currency.id,
   ledgerIds: currency.ledgerIds,
   name: currency.name,
   image: currency.image,

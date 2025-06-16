@@ -19,18 +19,18 @@ import { useIsNewsfeedAvailable } from "~/hooks/newsfeed/useIsNewsfeedAvailable"
 
 const images = {
   light: {
-    learnImg: require("~/images/illustration/Light/_063.png"),
-    appsImg: require("~/images/illustration/Light/_086.png"),
-    earnImg: require("~/images/illustration/Light/_088.png"),
-    mintImg: require("~/images/illustration/Light/_087.png"),
-    referralImg: require("~/images/illustration/Light/_ReferralProgram.png"),
+    learnImg: require("~/images/illustration/Light/_063.webp"),
+    appsImg: require("~/images/illustration/Light/_086.webp"),
+    earnImg: require("~/images/illustration/Light/_088.webp"),
+    mintImg: require("~/images/illustration/Light/_087.webp"),
+    referralImg: require("~/images/illustration/Light/_ReferralProgram.webp"),
   },
   dark: {
-    learnImg: require("~/images/illustration/Dark/_063.png"),
-    appsImg: require("~/images/illustration/Dark/_086.png"),
-    earnImg: require("~/images/illustration/Dark/_088.png"),
-    mintImg: require("~/images/illustration/Dark/_087.png"),
-    referralImg: require("~/images/illustration/Dark/_ReferralProgram.png"),
+    learnImg: require("~/images/illustration/Dark/_063.webp"),
+    appsImg: require("~/images/illustration/Dark/_086.webp"),
+    earnImg: require("~/images/illustration/Dark/_088.webp"),
+    mintImg: require("~/images/illustration/Dark/_087.webp"),
+    referralImg: require("~/images/illustration/Dark/_ReferralProgram.webp"),
   },
 };
 

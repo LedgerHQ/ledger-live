@@ -1,6 +1,5 @@
 import { isStuckOperation } from "@ledgerhq/live-common/operation";
-import { InfiniteLoader } from "@ledgerhq/react-ui";
-import { WarningSolidMedium } from "@ledgerhq/react-ui/assets/icons";
+import { InfiniteLoader, IconsLegacy } from "@ledgerhq/react-ui";
 import { Operation } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
 import React from "react";
@@ -31,7 +30,7 @@ const PendingLoadingIcon = ({ displayWarning }: { displayWarning: boolean }): JS
   if (displayWarning) {
     return (
       <Box style={{ verticalAlign: "sub", display: "inline" }}>
-        <WarningSolidMedium size={12} color={"#FFBD42"} />
+        <IconsLegacy.WarningSolidMedium size={12} color={"#FFBD42"} />
       </Box>
     );
   }
@@ -49,7 +48,13 @@ const DateCell = ({ t, family, operation, compact, text, editable }: Props): JSX
 
   return (
     <Cell compact={compact}>
-      <Box ff="Inter|SemiBold" fontSize={3} color="palette.text.shade80" style={ellipsis}>
+      <Box
+        ff="Inter|SemiBold"
+        fontSize={3}
+        color="palette.text.shade80"
+        style={ellipsis}
+        data-testid={`operation-status-${operation.id}`}
+      >
         {text ||
           t(operation.hasFailed ? "operationDetails.failed" : `operation.type.${operation.type}`)}
       </Box>

@@ -1,18 +1,9 @@
-import {
-  clearTextByElement,
-  getElementById,
-  openDeeplink,
-  tapByElement,
-  tapByText,
-  typeTextByElement,
-} from "../../helpers";
 import { expect } from "detox";
-
-const baseLink = "swap";
+import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class SwapPage {
+  baseLink = "swap";
   swapFormTab = () => getElementById("swap-form-tab");
-  swapHistoryTab = () => getElementById("swap-history-tab");
   swapSourceSelector = () => getElementById("swap-source-selector");
   swapDestinationSelector = () => getElementById("swap-destination-selector");
   swapSourceInputTextbox = () => getElementById("swap-source-amount-textbox");
@@ -24,19 +15,11 @@ export default class SwapPage {
   termsCloseButton = () => getElementById("terms-close-button");
 
   async openViaDeeplink() {
-    await openDeeplink(baseLink);
+    await openDeeplink(this.baseLink);
   }
 
   async expectSwapPage() {
     await expect(this.swapFormTab()).toBeVisible();
-  }
-
-  async navigateToSwapForm() {
-    await tapByElement(this.swapFormTab());
-  }
-
-  async navigateToSwapHistory() {
-    await tapByElement(this.swapHistoryTab());
   }
 
   async openSourceAccountSelector() {
@@ -62,10 +45,6 @@ export default class SwapPage {
 
   async chooseProvider(providerName: string) {
     await tapByText(providerName);
-  }
-
-  async sendMax() {
-    await tapByElement(this.sendMaxToggle());
   }
 
   async startExchange() {

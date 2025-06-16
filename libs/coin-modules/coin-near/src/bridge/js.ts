@@ -1,6 +1,7 @@
 import {
+  getSerializedAddressParameters,
   makeAccountBridgeReceive,
-  defaultUpdateTransaction,
+  updateTransaction,
   makeScanAccounts,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
@@ -47,7 +48,7 @@ export function buildAccountBridge(
   return {
     estimateMaxSpendable,
     createTransaction,
-    updateTransaction: defaultUpdateTransaction,
+    updateTransaction,
     getTransactionStatus,
     prepareTransaction,
     sync,
@@ -56,6 +57,7 @@ export function buildAccountBridge(
     broadcast,
     assignToAccountRaw,
     assignFromAccountRaw,
+    getSerializedAddressParameters,
   };
 }
 

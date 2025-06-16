@@ -496,6 +496,26 @@ describe("EVM Family", () => {
 
         expect(await LEDGER_API.broadcastTransaction(currency, "0xSigneTx")).toEqual("0xHash");
       });
+
+      it("should include mevProtected=true in the request parameters when specified", async () => {
+        const mockRequest = jest.spyOn(axios, "request").mockImplementationOnce(async () => ({
+          data: {
+            result: "0xHash",
+          },
+        }));
+
+        await LEDGER_API.broadcastTransaction(currency, "0xSignedTx", { mevProtected: true });
+
+        expect(mockRequest).toHaveBeenCalledWith(
+          expect.objectContaining({
+            params: expect.objectContaining({
+              mevProtected: true,
+            }),
+          }),
+        );
+
+        mockRequest.mockRestore();
+      });
     });
 
     describe("getBlockByHeight", () => {

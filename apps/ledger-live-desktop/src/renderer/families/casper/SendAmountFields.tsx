@@ -7,6 +7,7 @@ import LabelInfoTooltip from "~/renderer/components/LabelInfoTooltip";
 
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/casper/types";
 import { Account } from "@ledgerhq/types-live";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   account: Account;
@@ -18,6 +19,10 @@ type Props = {
 };
 
 const Root = (props: Props) => {
+  const lldMemoTag = useFeature("lldMemoTag");
+
+  if (lldMemoTag?.enabled) return null;
+
   return (
     <Box flow={1}>
       <Box mb={10}>
@@ -29,6 +34,7 @@ const Root = (props: Props) => {
           </LabelInfoTooltip>
         </Label>
       </Box>
+
       <Box mb={15} horizontal grow alignItems="center" justifyContent="space-between">
         <Box grow={1}>
           <TransferIdField

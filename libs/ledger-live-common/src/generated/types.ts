@@ -5,6 +5,12 @@ import type {
   TransactionStatusRaw as algorandTransactionStatusRaw,
 } from "@ledgerhq/coin-algorand/types";
 import type {
+  Transaction as aptosTransaction,
+  TransactionRaw as aptosTransactionRaw,
+  TransactionStatus as aptosTransactionStatus,
+  TransactionStatusRaw as aptosTransactionStatusRaw,
+} from "@ledgerhq/coin-aptos/types/index";
+import type {
   Transaction as bitcoinTransaction,
   TransactionRaw as bitcoinTransactionRaw,
   TransactionStatus as bitcoinTransactionStatus,
@@ -21,31 +27,19 @@ import type {
   TransactionRaw as casperTransactionRaw,
   TransactionStatus as casperTransactionStatus,
   TransactionStatusRaw as casperTransactionStatusRaw,
-} from "../families/casper/types";
+} from "@ledgerhq/coin-casper/types/index";
 import type {
   Transaction as celoTransaction,
   TransactionRaw as celoTransactionRaw,
   TransactionStatus as celoTransactionStatus,
   TransactionStatusRaw as celoTransactionStatusRaw,
-} from "../families/celo/types";
+} from "@ledgerhq/coin-celo/types/index";
 import type {
   Transaction as cosmosTransaction,
   TransactionRaw as cosmosTransactionRaw,
   TransactionStatus as cosmosTransactionStatus,
   TransactionStatusRaw as cosmosTransactionStatusRaw,
 } from "@ledgerhq/coin-cosmos/types/index";
-import type {
-  Transaction as crypto_orgTransaction,
-  TransactionRaw as crypto_orgTransactionRaw,
-  TransactionStatus as crypto_orgTransactionStatus,
-  TransactionStatusRaw as crypto_orgTransactionStatusRaw,
-} from "../families/crypto_org/types";
-import type {
-  Transaction as elrondTransaction,
-  TransactionRaw as elrondTransactionRaw,
-  TransactionStatus as elrondTransactionStatus,
-  TransactionStatusRaw as elrondTransactionStatusRaw,
-} from "@ledgerhq/coin-elrond/types";
 import type {
   Transaction as evmTransaction,
   TransactionRaw as evmTransactionRaw,
@@ -57,7 +51,7 @@ import type {
   TransactionRaw as filecoinTransactionRaw,
   TransactionStatus as filecoinTransactionStatus,
   TransactionStatusRaw as filecoinTransactionStatusRaw,
-} from "../families/filecoin/types";
+} from "@ledgerhq/coin-filecoin/types/index";
 import type {
   Transaction as hederaTransaction,
   TransactionRaw as hederaTransactionRaw,
@@ -75,7 +69,19 @@ import type {
   TransactionRaw as internet_computerTransactionRaw,
   TransactionStatus as internet_computerTransactionStatus,
   TransactionStatusRaw as internet_computerTransactionStatusRaw,
-} from "../families/internet_computer/types";
+} from "@ledgerhq/coin-internet_computer/types/index";
+import type {
+  Transaction as minaTransaction,
+  TransactionRaw as minaTransactionRaw,
+  TransactionStatus as minaTransactionStatus,
+  TransactionStatusRaw as minaTransactionStatusRaw,
+} from "@ledgerhq/coin-mina/types/index";
+import type {
+  Transaction as multiversxTransaction,
+  TransactionRaw as multiversxTransactionRaw,
+  TransactionStatus as multiversxTransactionStatus,
+  TransactionStatusRaw as multiversxTransactionStatusRaw,
+} from "@ledgerhq/coin-multiversx/types";
 import type {
   Transaction as nearTransaction,
   TransactionRaw as nearTransactionRaw,
@@ -99,13 +105,19 @@ import type {
   TransactionRaw as stacksTransactionRaw,
   TransactionStatus as stacksTransactionStatus,
   TransactionStatusRaw as stacksTransactionStatusRaw,
-} from "../families/stacks/types";
+} from "@ledgerhq/coin-stacks/types/index";
 import type {
   Transaction as stellarTransaction,
   TransactionRaw as stellarTransactionRaw,
   TransactionStatus as stellarTransactionStatus,
   TransactionStatusRaw as stellarTransactionStatusRaw,
 } from "@ledgerhq/coin-stellar/types/index";
+import type {
+  Transaction as suiTransaction,
+  TransactionRaw as suiTransactionRaw,
+  TransactionStatus as suiTransactionStatus,
+  TransactionStatusRaw as suiTransactionStatusRaw,
+} from "@ledgerhq/coin-sui/types/index";
 import type {
   Transaction as tezosTransaction,
   TransactionRaw as tezosTransactionRaw,
@@ -129,7 +141,7 @@ import type {
   TransactionRaw as vechainTransactionRaw,
   TransactionStatus as vechainTransactionStatus,
   TransactionStatusRaw as vechainTransactionStatusRaw,
-} from "../families/vechain/types";
+} from "@ledgerhq/coin-vechain/types/index";
 import type {
   Transaction as xrpTransaction,
   TransactionRaw as xrpTransactionRaw,
@@ -139,23 +151,25 @@ import type {
 
 export type Transaction =
   | algorandTransaction
+  | aptosTransaction
   | bitcoinTransaction
   | cardanoTransaction
   | casperTransaction
   | celoTransaction
   | cosmosTransaction
-  | crypto_orgTransaction
-  | elrondTransaction
   | evmTransaction
   | filecoinTransaction
   | hederaTransaction
   | iconTransaction
   | internet_computerTransaction
+  | minaTransaction
+  | multiversxTransaction
   | nearTransaction
   | polkadotTransaction
   | solanaTransaction
   | stacksTransaction
   | stellarTransaction
+  | suiTransaction
   | tezosTransaction
   | tonTransaction
   | tronTransaction
@@ -164,23 +178,25 @@ export type Transaction =
 
 export type TransactionRaw =
   | algorandTransactionRaw
+  | aptosTransactionRaw
   | bitcoinTransactionRaw
   | cardanoTransactionRaw
   | casperTransactionRaw
   | celoTransactionRaw
   | cosmosTransactionRaw
-  | crypto_orgTransactionRaw
-  | elrondTransactionRaw
   | evmTransactionRaw
   | filecoinTransactionRaw
   | hederaTransactionRaw
   | iconTransactionRaw
   | internet_computerTransactionRaw
+  | minaTransactionRaw
+  | multiversxTransactionRaw
   | nearTransactionRaw
   | polkadotTransactionRaw
   | solanaTransactionRaw
   | stacksTransactionRaw
   | stellarTransactionRaw
+  | suiTransactionRaw
   | tezosTransactionRaw
   | tonTransactionRaw
   | tronTransactionRaw
@@ -189,23 +205,25 @@ export type TransactionRaw =
 
 export type TransactionStatus =
   | algorandTransactionStatus
+  | aptosTransactionStatus
   | bitcoinTransactionStatus
   | cardanoTransactionStatus
   | casperTransactionStatus
   | celoTransactionStatus
   | cosmosTransactionStatus
-  | crypto_orgTransactionStatus
-  | elrondTransactionStatus
   | evmTransactionStatus
   | filecoinTransactionStatus
   | hederaTransactionStatus
   | iconTransactionStatus
   | internet_computerTransactionStatus
+  | minaTransactionStatus
+  | multiversxTransactionStatus
   | nearTransactionStatus
   | polkadotTransactionStatus
   | solanaTransactionStatus
   | stacksTransactionStatus
   | stellarTransactionStatus
+  | suiTransactionStatus
   | tezosTransactionStatus
   | tonTransactionStatus
   | tronTransactionStatus
@@ -214,23 +232,25 @@ export type TransactionStatus =
 
 export type TransactionStatusRaw =
   | algorandTransactionStatusRaw
+  | aptosTransactionStatusRaw
   | bitcoinTransactionStatusRaw
   | cardanoTransactionStatusRaw
   | casperTransactionStatusRaw
   | celoTransactionStatusRaw
   | cosmosTransactionStatusRaw
-  | crypto_orgTransactionStatusRaw
-  | elrondTransactionStatusRaw
   | evmTransactionStatusRaw
   | filecoinTransactionStatusRaw
   | hederaTransactionStatusRaw
   | iconTransactionStatusRaw
   | internet_computerTransactionStatusRaw
+  | minaTransactionStatusRaw
+  | multiversxTransactionStatusRaw
   | nearTransactionStatusRaw
   | polkadotTransactionStatusRaw
   | solanaTransactionStatusRaw
   | stacksTransactionStatusRaw
   | stellarTransactionStatusRaw
+  | suiTransactionStatusRaw
   | tezosTransactionStatusRaw
   | tonTransactionStatusRaw
   | tronTransactionStatusRaw

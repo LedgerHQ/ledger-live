@@ -1,5 +1,6 @@
 import React from "react";
 import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
+import { Trans } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -23,10 +24,21 @@ import {
   memoTagBoxVisibilitySelector,
 } from "~/renderer/reducers/UI";
 import MemoTagSendInfo from "LLD/features/MemoTag/components/MemoTagSendInfo";
-import { Flex, Text } from "@ledgerhq/react-ui";
+import { Flex, Link, Text } from "@ledgerhq/react-ui";
 import CheckBox from "~/renderer/components/CheckBox";
-import { alwaysShowMemoTagInfoSelector } from "~/renderer/reducers/application";
-import { toggleShouldDisplayMemoTagInfo } from "~/renderer/actions/application";
+import { alwaysShowMemoTagInfoSelector } from "~/renderer/reducers/settings";
+import { toggleShouldDisplayMemoTagInfo } from "~/renderer/actions/settings";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { getMemoTagValueByTransactionFamily } from "LLD/features/MemoTag/utils";
+import {
+  getTokenExtensions,
+  hasProblematicExtension,
+} from "@ledgerhq/live-common/families/solana/token";
+import Alert from "~/renderer/components/Alert";
+import { openURL } from "~/renderer/linking";
+import { urls } from "~/config/urls";
+
+const openSplTokenExtensionsArticle = () => openURL(urls.solana.splTokenExtensions);
 
 const StepRecipient = ({
   t,
@@ -48,10 +60,13 @@ const StepRecipient = ({
 }: StepProps) => {
   const isMemoTagBoxVisibile = useSelector(memoTagBoxVisibilitySelector);
   const forceAutoFocusOnMemoField = useSelector(forceAutoFocusOnMemoFieldSelector);
+  const lldMemoTag = useFeature("lldMemoTag");
 
   if (!status || !account) return null;
 
   const mainAccount = getMainAccount(account, parentAccount);
+  const extensions = getTokenExtensions(account);
+
   // check if there is a stuck transaction. If so, display a warning panel with "speed up or cancel" button
   const stuckAccountAndOperation = getStuckAccountAndOperation(account, parentAccount);
 
@@ -63,7 +78,7 @@ const StepRecipient = ({
         currencyName={currencyName}
         isNFTSend={isNFTSend}
       />
-      {isMemoTagBoxVisibile ? (
+      {isMemoTagBoxVisibile && lldMemoTag?.enabled ? (
         <MemoTagSendInfo />
       ) : (
         <>
@@ -85,6 +100,7 @@ const StepRecipient = ({
             <Box flow={1}>
               <Label>{t("send.steps.details.selectAccountDebit")}</Label>
               <SelectAccount
+                id="account-debit-placeholder"
                 withSubAccounts
                 enforceHideEmptySubAccounts
                 autoFocus={!openedFromAccount && !forceAutoFocusOnMemoField}
@@ -93,6 +109,13 @@ const StepRecipient = ({
               />
             </Box>
           )}
+          {extensions && hasProblematicExtension(extensions) ? (
+            <Alert data-testid="spl-2022-problematic-extension" type="warning" small={true}>
+              <Trans i18nKey="send.steps.details.splExtensionsWarning">
+                <Link type="color" onClick={openSplTokenExtensionsArticle} />
+              </Trans>
+            </Alert>
+          ) : null}
           {stuckAccountAndOperation ? (
             <EditOperationPanel
               operation={stuckAccountAndOperation.operation}
@@ -140,18 +163,23 @@ export const StepRecipientFooter = ({
   transaction,
 }: StepProps) => {
   const dispatch = useDispatch();
+  const lldMemoTag = useFeature("lldMemoTag");
   const { errors } = status;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const isTerminated = mainAccount && mainAccount.currency.terminated;
-  const fields = ["recipient"].concat(mainAccount ? getFields(mainAccount) : []);
+  const fields = ["recipient"].concat(
+    mainAccount ? getFields(mainAccount, lldMemoTag?.enabled) : [],
+  );
   const hasFieldError = Object.keys(errors).some(name => fields.includes(name));
   const canNext = !bridgePending && !hasFieldError && !isTerminated;
   const isMemoTagBoxVisibile = useSelector(memoTagBoxVisibilitySelector);
   const alwaysShowMemoTagInfo = useSelector(alwaysShowMemoTagInfoSelector);
 
   const handleOnNext = async () => {
+    const memoTagValue = getMemoTagValueByTransactionFamily(transaction as Transaction);
     if (
-      !transaction?.memo &&
+      lldMemoTag?.enabled &&
+      !memoTagValue &&
       MEMO_TAG_COINS.includes(transaction?.family as string) &&
       alwaysShowMemoTagInfo
     ) {
@@ -187,7 +215,7 @@ export const StepRecipientFooter = ({
     dispatch(toggleShouldDisplayMemoTagInfo(!alwaysShowMemoTagInfo));
   };
 
-  return isMemoTagBoxVisibile ? (
+  return isMemoTagBoxVisibile && lldMemoTag?.enabled ? (
     <Flex justifyContent="space-between" width="100%">
       <Flex alignItems="center">
         <CheckBox isChecked={!alwaysShowMemoTagInfo} onChange={handleOnCheckboxChange} />
@@ -203,7 +231,7 @@ export const StepRecipientFooter = ({
           {t("send.info.needMemoTag.checkbox.label")}
         </Text>
       </Flex>
-      <Flex>
+      <Flex columnGap={2}>
         <Button secondary onClick={handleOnRefuseAddTag}>
           {t("send.info.needMemoTag.cta.not.addTag")}
         </Button>

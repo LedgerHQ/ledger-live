@@ -5,7 +5,7 @@ import { FeatureId } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import FeatureFlagEdit from "./FeatureFlagEdit";
 import styled, { DefaultTheme, StyledComponent } from "styled-components";
-import { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex";
+import { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex/index";
 import { useTranslation } from "react-i18next";
 
 type Props = {

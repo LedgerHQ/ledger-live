@@ -6,13 +6,13 @@ import { cardanoConfig } from "../families/cardano/config";
 import { casperConfig } from "../families/casper/config";
 import { celoConfig } from "../families/celo/config";
 import { cosmosConfig } from "../families/cosmos/config";
-import { cryptoOrgConfig } from "../families/crypto_org/config";
-import { elrondConfig } from "../families/elrond/config";
+import { multiversxConfig } from "../families/multiversx/config";
 import { evmConfig } from "../families/evm/config";
 import { fileCoinConfig } from "../families/filecoin/config";
 import { hederaConfig } from "../families/hedera/config";
 import { internetComputerConfig } from "../families/internet_computer/config";
 import { nearConfig } from "../families/near/config";
+import { minaConfig } from "../families/mina/config";
 import { polkadotConfig } from "../families/polkadot/config";
 import { xrpConfig } from "../families/xrp/config";
 import { solanaConfig } from "../families/solana/config";
@@ -23,6 +23,7 @@ import { tonConfig } from "../families/ton/config";
 import { tronConfig } from "../families/tron/config";
 import { vechainConfig } from "../families/vechain/config";
 import { iconConfig } from "../families/icon/config";
+import { suiConfig } from "../families/sui/config";
 
 const countervaluesConfig: ConfigSchema = {
   config_countervalues_refreshRate: {
@@ -32,6 +33,13 @@ const countervaluesConfig: ConfigSchema = {
   config_countervalues_marketCapBatchingAfterRank: {
     type: "number",
     default: 20,
+  },
+};
+
+const sharedCurrencyConfig: ConfigSchema = {
+  config_currency: {
+    type: "object",
+    default: {},
   },
 };
 
@@ -48,13 +56,13 @@ export const liveConfig: ConfigSchema = {
   ...casperConfig,
   ...celoConfig,
   ...cosmosConfig,
-  ...cryptoOrgConfig,
-  ...elrondConfig,
+  ...multiversxConfig,
   ...evmConfig,
   ...fileCoinConfig,
   ...hederaConfig,
   ...internetComputerConfig,
   ...nearConfig,
+  ...minaConfig,
   ...polkadotConfig,
   ...xrpConfig,
   ...solanaConfig,
@@ -65,4 +73,6 @@ export const liveConfig: ConfigSchema = {
   ...vechainConfig,
   ...iconConfig,
   ...tonConfig,
+  ...suiConfig,
+  ...sharedCurrencyConfig,
 };

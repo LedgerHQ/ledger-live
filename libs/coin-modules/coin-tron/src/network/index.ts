@@ -1,23 +1,16 @@
-import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network";
+import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
-import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import compact from "lodash/compact";
 import drop from "lodash/drop";
-import get from "lodash/get";
 import sumBy from "lodash/sumBy";
 import take from "lodash/take";
+import { stringify } from "querystring";
 import TronWeb from "tronweb";
-import { TronTransactionExpired } from "../types/errors";
-import { getCoinConfig } from "../config";
-import {
-  abiEncodeTrc20Transfer,
-  defaultTronResources,
-  extractBandwidthInfo,
-  hexToAscii,
-} from "../logic/utils";
+import coinConfig from "../config";
 import type {
   FreezeTransactionData,
   LegacyUnfreezeTransactionData,
@@ -28,15 +21,14 @@ import type {
   SuperRepresentative,
   SuperRepresentativeData,
   Transaction,
-  TronResource,
-  TronResources,
-  TronTransactionInfo,
   TrongridTxInfo,
+  TronResource,
+  TronTransactionInfo,
   UnDelegateResourceTransactionData,
   UnFreezeTransactionData,
-  UnFrozenInfo,
   WithdrawExpireUnfreezeTransactionData,
 } from "../types";
+import { TronTransactionExpired } from "../types/errors";
 import {
   decode58Check,
   encode58Check,
@@ -44,6 +36,8 @@ import {
   formatTrongridTxResponse,
 } from "./format";
 import {
+  AccountTronAPI,
+  Block,
   isMalformedTransactionTronAPI,
   isTransactionTronAPI,
   MalformedTransactionTronAPI,
@@ -51,11 +45,11 @@ import {
   TransactionTronAPI,
   Trc20API,
 } from "./types";
-import { stringify } from "querystring";
+import { abiEncodeTrc20Transfer, hexToAscii } from "./utils";
 
-const getBaseApiUrl = () => getCoinConfig().explorer.url;
+const getBaseApiUrl = () => coinConfig.getCoinConfig().explorer.url;
 
-async function post<T, U extends object = any>(endPoint: string, body: T): Promise<U> {
+export async function post<T, U extends object = any>(endPoint: string, body: T): Promise<U> {
   const { data } = await network<U, T>({
     method: "POST",
     url: `${getBaseApiUrl()}${endPoint}`,
@@ -204,73 +198,166 @@ export async function getDelegatedResource(
   return new BigNumber(amount);
 }
 
+export const DEFAULT_TRC20_FEES_LIMIT = 50000000;
+
+export async function craftTrc20Transaction(
+  tokenAddress: string,
+  recipientAddress: string,
+  senderAddress: string,
+  amount: BigNumber,
+  customFees?: number,
+  expiration?: number,
+): Promise<SendTransactionDataSuccess> {
+  const txData: SmartContractTransactionData = {
+    function_selector: "transfer(address,uint256)",
+    fee_limit: customFees ? customFees : DEFAULT_TRC20_FEES_LIMIT,
+    call_value: 0,
+    contract_address: decode58Check(tokenAddress),
+    parameter: abiEncodeTrc20Transfer(recipientAddress, new BigNumber(amount.toString())),
+    owner_address: senderAddress,
+  };
+  const url = `/wallet/triggersmartcontract`;
+  const { transaction: preparedTransaction } = await post(url, txData);
+  return await extendExpiration(preparedTransaction, expiration);
+}
+
+export async function craftStandardTransaction(
+  tokenAddress: string | undefined,
+  recipientAddress: string,
+  senderAddress: string,
+  amount: BigNumber,
+  isTransferAsset: boolean,
+  memo?: string,
+  expiration?: number,
+): Promise<SendTransactionDataSuccess> {
+  const url = isTransferAsset ? `/wallet/transferasset` : `/wallet/createtransaction`;
+  const txData: SendTransactionData = {
+    to_address: recipientAddress,
+    owner_address: senderAddress,
+    amount: Number(amount),
+    asset_name: tokenAddress && Buffer.from(tokenAddress).toString("hex"),
+    extra_data: memo && Buffer.from(memo).toString("hex"),
+  };
+  const preparedTransaction = await post(url, txData);
+  return await extendExpiration(preparedTransaction, expiration);
+}
+
+const getTokenInfo = (subAccount: TokenAccount | null | undefined): string[] | undefined[] => {
+  const tokenInfo =
+    subAccount && subAccount.type === "TokenAccount"
+      ? drop(subAccount.token.id.split("/"), 1)
+      : [undefined, undefined];
+  return tokenInfo;
+};
+
 // Send trx or trc10/trc20 tokens
 export const createTronTransaction = async (
   account: Account,
   transaction: Transaction,
-  subAccount: SubAccount | null | undefined,
+  subAccount: TokenAccount | null | undefined,
 ): Promise<SendTransactionDataSuccess> => {
-  const [tokenType, tokenId] =
-    subAccount && subAccount.type === "TokenAccount"
-      ? drop(subAccount.token.id.split("/"), 1)
-      : [undefined, undefined];
+  const [tokenType, tokenId] = getTokenInfo(subAccount);
 
+  const decodeRecipient = decode58Check(transaction.recipient);
+  const decodeSender = decode58Check(account.freshAddress);
   // trc20
   if (tokenType === "trc20" && tokenId) {
     const tokenContractAddress = (subAccount as TokenAccount).token.contractAddress;
-    const txData: SmartContractTransactionData = {
-      function_selector: "transfer(address,uint256)",
-      fee_limit: 50000000,
-      call_value: 0,
-      contract_address: decode58Check(tokenContractAddress),
-      parameter: abiEncodeTrc20Transfer(decode58Check(transaction.recipient), transaction.amount),
-      owner_address: decode58Check(account.freshAddress),
-    };
-    const url = `/wallet/triggersmartcontract`;
-    const { transaction: preparedTransaction } = await post(url, txData);
-    return extendTronTxExpirationTimeBy10mn(preparedTransaction);
+    return craftTrc20Transaction(
+      tokenContractAddress,
+      decodeRecipient,
+      decodeSender,
+      transaction.amount,
+    );
   } else {
-    // trx/trc10
-    const txData: SendTransactionData = {
-      to_address: decode58Check(transaction.recipient),
-      owner_address: decode58Check(account.freshAddress),
-      amount: transaction.amount.toNumber(),
-      asset_name: tokenId && Buffer.from(tokenId).toString("hex"),
-    };
-    const url = subAccount ? `/wallet/transferasset` : `/wallet/createtransaction`;
-    const preparedTransaction = await post(url, txData);
-    // for the ledger Vault we need to increase the expiration
-    return extendTronTxExpirationTimeBy10mn(preparedTransaction);
+    const isTransferAsset = subAccount ? true : false;
+    return craftStandardTransaction(
+      tokenId,
+      decodeRecipient,
+      decodeSender,
+      transaction.amount,
+      isTransferAsset,
+    );
   }
 };
 
-function extendTronTxExpirationTimeBy10mn(
+/** Default expiration of 10 minutes (in seconds) after crafting time. */
+export const DEFAULT_EXPIRATION = 600;
+
+async function extendExpiration(
   preparedTransaction: any,
+  expiration?: number,
 ): Promise<SendTransactionDataSuccess> {
-  const VAULT_EXPIRATION_TIME = 600;
   const HttpProvider = TronWeb.providers.HttpProvider;
   const fullNode = new HttpProvider(getBaseApiUrl());
   const solidityNode = new HttpProvider(getBaseApiUrl());
   const eventServer = new HttpProvider(getBaseApiUrl());
   const tronWeb = new TronWeb(fullNode, solidityNode, eventServer);
-  //FIXME: test it and rewrite it
   return tronWeb.transactionBuilder.extendExpiration(
     preparedTransaction,
-    VAULT_EXPIRATION_TIME,
+    expiration ?? DEFAULT_EXPIRATION,
   ) as unknown as Promise<SendTransactionDataSuccess>;
 }
 
-export const broadcastTron = async (trxTransaction: SendTransactionDataSuccess) => {
-  const result = await post(`/wallet/broadcasttransaction`, trxTransaction);
+type BroadcastSuccessResponseTronAPI = { result: true; txid: string };
+type BroadcastErrorResponseTronAPI = {
+  result?: boolean;
+  txid: string;
+  code: string;
+  message: string;
+};
+type BroadcastResponseTronAPI = BroadcastSuccessResponseTronAPI | BroadcastErrorResponseTronAPI;
+/**
+ * @see https://github.com/tronprotocol/java-tron/blob/develop/framework/src/main/java/org/tron/core/services/http/BroadcastServlet.java
+ * @param trxTransaction
+ * @returns Transaction ID
+ */
+export const broadcastTron = async (
+  trxTransaction: SendTransactionDataSuccess & { signature: string[] },
+): Promise<string> => {
+  const result: BroadcastResponseTronAPI = await post(
+    "/wallet/broadcasttransaction",
+    trxTransaction,
+  );
 
-  if (result.code === "TRANSACTION_EXPIRATION_ERROR") {
-    throw new TronTransactionExpired();
+  if (result.result !== true) {
+    if (result.code === "TRANSACTION_EXPIRATION_ERROR") {
+      throw new TronTransactionExpired();
+    } else {
+      throw new Error(`${result.code}: ${result.message}`);
+    }
   }
 
-  return result;
+  return result.txid;
 };
 
-export async function fetchTronAccount(addr: string) {
+type TronGridBroadcastResponse = {
+  result: boolean;
+  code: string;
+  txid: string;
+  message: string;
+  transaction: {
+    raw_data: Record<string, unknown>;
+    signature: string[];
+  };
+};
+export const broadcastHexTron = async (rawTransaction: string): Promise<string> => {
+  const result = await post<{ transaction: string }, TronGridBroadcastResponse>(
+    `/wallet/broadcasthex`,
+    { transaction: rawTransaction },
+  );
+
+  if (!result.result) {
+    throw Error(`Broadcast failed due to ${result.code}`);
+  }
+
+  return result.txid;
+};
+
+/**
+ * {@link https://github.com/tronprotocol/java-tron/blob/develop/framework/src/main/java/org/tron/core/services/http/GetAccountServlet.java | Tron Framework}
+ */
+export async function fetchTronAccount(addr: string): Promise<AccountTronAPI[]> {
   try {
     const data = await fetch(`/v1/accounts/${addr}`);
     return data.data;
@@ -279,13 +366,36 @@ export async function fetchTronAccount(addr: string) {
   }
 }
 
-export async function fetchCurrentBlockHeight() {
+export async function getLastBlock(): Promise<Block> {
   const data = await fetch(`/wallet/getnowblock`);
-  return data.block_header.raw_data.number;
+  return toBlock(data);
+}
+
+export async function getBlock(blockNumber: number): Promise<Block> {
+  const data = await fetch(`/wallet/getblock?id_or_num=${encodeURIComponent(blockNumber)}`);
+  const ret = toBlock(data);
+  if (!ret.height) {
+    ret.height = blockNumber;
+  }
+  return ret;
+}
+
+function toBlock(data: any): Block {
+  // some old blocks doesn't have a timestamp
+  const timestamp = data.block_header.raw_data.timestamp;
+  const ret: Block = {
+    height: data.block_header.raw_data.number,
+    hash: data.blockID,
+  };
+  if (timestamp) {
+    ret.time = new Date(timestamp);
+  }
+  return ret;
 }
 
 // For the moment, fetching transaction info is the only way to get fees from a transaction
-async function fetchTronTxDetail(txId: string): Promise<TronTransactionInfo> {
+// Export for test purpose only
+export async function fetchTronTxDetail(txId: string): Promise<TronTransactionInfo> {
   const { fee, blockNumber, withdraw_amount, unfreeze_amount } = await fetch(
     `/wallet/gettransactioninfobyid?value=${encodeURIComponent(txId)}`,
   );
@@ -307,7 +417,6 @@ async function getAllTransactions<T>(
 ) {
   let all: Array<T> = [];
   let url: string | undefined = initialUrl;
-
   while (url && shouldFetchMoreTxs(all)) {
     const { nextUrl, results } = await getTxs(url);
     url = nextUrl;
@@ -331,7 +440,6 @@ const getTransactions =
       await fetchWithBaseUrl<
         TransactionResponseTronAPI<TransactionTronAPI | MalformedTransactionTronAPI>
       >(url);
-
     const nextUrl = transactions.meta.links?.next?.replace(
       /https:\/\/api(\.[a-z]*)?.trongrid.io/,
       getBaseApiUrl(),
@@ -370,23 +478,45 @@ const getTrc20 = async (
   };
 };
 
+export type FetchTxsStopPredicate = (
+  txs: Array<TransactionTronAPI | Trc20API | MalformedTransactionTronAPI>,
+) => boolean;
+
+export type FetchParams = {
+  /** The maximum number of transactions to fetch per call. */
+  limitPerCall: number;
+  /** Hint about the number of transactions to be fetched in total (hint to optimize `limitPerCall`) */
+  hintGlobalLimit?: number;
+  minTimestamp: number;
+  order: "asc" | "desc";
+};
+
+export const defaultFetchParams: FetchParams = {
+  limitPerCall: 100,
+  minTimestamp: 0,
+  order: "desc",
+} as const;
+
 export async function fetchTronAccountTxs(
   addr: string,
-  shouldFetchMoreTxs: (
-    txs: Array<TransactionTronAPI | Trc20API | MalformedTransactionTronAPI>,
-  ) => boolean,
+  shouldFetchMoreTxs: FetchTxsStopPredicate,
   cacheTransactionInfoById: Record<string, TronTransactionInfo>,
+  params: FetchParams,
 ): Promise<TrongridTxInfo[]> {
-  const entireTxs = (
+  const adjustedLimitPerCall = params.hintGlobalLimit
+    ? Math.min(params.limitPerCall, params.hintGlobalLimit)
+    : params.limitPerCall;
+  const queryParams = `limit=${adjustedLimitPerCall}&min_timestamp=${params.minTimestamp}&order_by=block_timestamp,${params.order}`;
+  const nativeTxs = (
     await getAllTransactions<
       (TransactionTronAPI & { detail?: TronTransactionInfo }) | MalformedTransactionTronAPI
     >(
-      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions?limit=100`,
+      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions?${queryParams}`,
       shouldFetchMoreTxs,
       getTransactions(cacheTransactionInfoById),
     )
   )
-    .filter((tx): tx is TransactionTronAPI => isTransactionTronAPI(tx))
+    .filter(isTransactionTronAPI)
     .filter(tx => {
       // custom smart contract tx has internal txs
       const hasInternalTxs =
@@ -405,15 +535,80 @@ export async function fetchTronAccountTxs(
     .map(tx => formatTrongridTxResponse(tx));
 
   // we need to fetch and filter trc20 transactions from another endpoint
-  const entireTrc20Txs = (
+  // doc https://developers.tron.network/reference/get-trc20-transaction-info-by-account-address
+
+  const callTrc20Endpoint = async () =>
     await getAllTransactions<Trc20API>(
-      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions/trc20?get_detail=true`,
+      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions/trc20?${queryParams}&get_detail=true`,
       shouldFetchMoreTxs,
       getTrc20,
-    )
-  ).map(tx => formatTrongridTrc20TxResponse(tx));
+    );
 
-  const txInfos: TrongridTxInfo[] = compact(entireTxs.concat(entireTrc20Txs)).sort(
+  type Acc = {
+    txs: Trc20API[];
+    invalids: number[];
+  };
+
+  function isValid(tx: Trc20API): boolean {
+    const ret = tx?.detail?.ret;
+    return Array.isArray(ret) && ret.length > 0;
+  }
+
+  function getInvalidTxIndexes(txs: Trc20API[]): number[] {
+    const invalids: number[] = [];
+    for (let i = 0; i < txs.length; i++) {
+      if (!isValid(txs[i])) {
+        invalids.push(i);
+      }
+    }
+    txs.filter(tx => !isValid(tx)).map((tx, index) => index);
+    return invalids;
+  }
+
+  function assert(predicate: boolean, message: string) {
+    if (!predicate) {
+      throw new Error(message);
+    }
+  }
+
+  // Merge the two results
+  function mergeAccs(acc1: Acc, acc2: Acc): Acc {
+    assert(acc1.txs.length == acc2.txs.length, "accs should have the same length");
+    const accRet: Acc = { txs: acc1.txs, invalids: [] };
+    acc1.invalids.forEach(invalidIndex => {
+      acc2.invalids.includes(invalidIndex)
+        ? accRet.invalids.push(invalidIndex)
+        : (accRet.txs[invalidIndex] = acc2.txs[invalidIndex]);
+    });
+    return accRet;
+  }
+
+  // see LIVE-18992 for an explanation to why we need this
+  async function getTrc20TxsWithRetry(acc: Acc | null, times: number): Promise<Trc20API[]> {
+    assert(
+      times > 0,
+      "getTrc20TxsWithRetry: couldn't fetch trc20 transactions after several attempts",
+    );
+    const ret = await callTrc20Endpoint();
+    const thisAcc: Acc = {
+      txs: ret,
+      invalids: getInvalidTxIndexes(ret),
+    };
+    const newAcc = acc ? mergeAccs(acc, thisAcc) : thisAcc;
+    if (newAcc.invalids.length == 0) {
+      return newAcc.txs;
+    } else {
+      log(
+        "coin-tron",
+        `getTrc20TxsWithRetry: got ${newAcc.invalids.length} invalid trc20 transactions, retrying...`,
+      );
+      return await getTrc20TxsWithRetry(newAcc, times - 1);
+    }
+  }
+
+  const trc20Txs = (await getTrc20TxsWithRetry(null, 3)).map(formatTrongridTrc20TxResponse);
+
+  const txInfos: TrongridTxInfo[] = compact(nativeTxs.concat(trc20Txs)).sort(
     (a, b) => b.date.getTime() - a.date.getTime(),
   );
   return txInfos;
@@ -581,154 +776,6 @@ export const voteTronSuperRepresentatives = async (
   };
   return await post(`/wallet/votewitnessaccount`, payload);
 };
-
-export async function getTronResources(
-  acc?: Record<string, any>,
-  txs?: TrongridTxInfo[],
-  cacheTransactionInfoById: Record<string, TronTransactionInfo> = {},
-): Promise<TronResources> {
-  if (!acc) {
-    return defaultTronResources;
-  }
-
-  const delegatedFrozenBandwidth = get(acc, "delegated_frozenV2_balance_for_bandwidth", undefined);
-  const delegatedFrozenEnergy = get(
-    acc,
-    "account_resource.delegated_frozenV2_balance_for_energy",
-    undefined,
-  );
-
-  const frozenBalances: { type?: string; amount?: number }[] = get(acc, "frozenV2", undefined);
-
-  const legacyFrozenBandwidth = get(acc, "frozen[0]", undefined);
-  const legacyFrozenEnergy = get(acc, "account_resource.frozen_balance_for_energy", undefined);
-
-  const legacyFrozen = {
-    bandwidth: legacyFrozenBandwidth
-      ? {
-          amount: new BigNumber(legacyFrozenBandwidth.frozen_balance),
-          expiredAt: new Date(legacyFrozenBandwidth.expire_time),
-        }
-      : undefined,
-    energy: legacyFrozenEnergy
-      ? {
-          amount: new BigNumber(legacyFrozenEnergy.frozen_balance),
-          expiredAt: new Date(legacyFrozenEnergy.expire_time),
-        }
-      : undefined,
-  };
-
-  const { frozenEnergy, frozenBandwidth } = frozenBalances.reduce(
-    (accum, cur) => {
-      const amount = new BigNumber(cur?.amount ?? 0);
-      if (cur.type === "ENERGY") {
-        accum.frozenEnergy = accum.frozenEnergy.plus(amount);
-      } else if (cur.type === undefined) {
-        accum.frozenBandwidth = accum.frozenBandwidth.plus(amount);
-      }
-      return accum;
-    },
-    {
-      frozenEnergy: new BigNumber(0),
-      frozenBandwidth: new BigNumber(0),
-    },
-  );
-
-  const unFrozenBalances: {
-    type: string;
-    unfreeze_amount: number;
-    unfreeze_expire_time: number;
-  }[] = get(acc, "unfrozenV2", undefined);
-
-  const unFrozen: { bandwidth: UnFrozenInfo[]; energy: UnFrozenInfo[] } = unFrozenBalances
-    ? unFrozenBalances.reduce(
-        (accum, cur) => {
-          if (cur && cur.type === "ENERGY") {
-            accum.energy.push({
-              amount: new BigNumber(cur.unfreeze_amount),
-              expireTime: new Date(cur.unfreeze_expire_time),
-            });
-          } else if (cur) {
-            accum.bandwidth.push({
-              amount: new BigNumber(cur.unfreeze_amount),
-              expireTime: new Date(cur.unfreeze_expire_time),
-            });
-          }
-          return accum;
-        },
-        { bandwidth: [] as UnFrozenInfo[], energy: [] as UnFrozenInfo[] },
-      )
-    : { bandwidth: [], energy: [] };
-
-  const encodedAddress = encode58Check(acc.address);
-  const tronNetworkInfo = await getTronAccountNetwork(encodedAddress);
-  const unwithdrawnReward = await getUnwithdrawnReward(encodedAddress);
-  const energy = tronNetworkInfo.energyLimit.minus(tronNetworkInfo.energyUsed);
-  const bandwidth = extractBandwidthInfo(tronNetworkInfo);
-
-  const frozen = {
-    bandwidth: frozenBandwidth.isGreaterThan(0)
-      ? {
-          amount: frozenBandwidth,
-        }
-      : undefined,
-    energy: frozenEnergy.isGreaterThan(0)
-      ? {
-          amount: frozenEnergy,
-        }
-      : undefined,
-  };
-  const delegatedFrozen = {
-    bandwidth: delegatedFrozenBandwidth
-      ? {
-          amount: new BigNumber(delegatedFrozenBandwidth),
-        }
-      : undefined,
-    energy: delegatedFrozenEnergy
-      ? {
-          amount: new BigNumber(delegatedFrozenEnergy),
-        }
-      : undefined,
-  };
-  const tronPower = new BigNumber(get(frozen, "bandwidth.amount", 0))
-    .plus(get(frozen, "energy.amount", 0))
-    .plus(get(delegatedFrozen, "bandwidth.amount", 0))
-    .plus(get(delegatedFrozen, "energy.amount", 0))
-    .plus(get(legacyFrozen, "energy.amount", 0))
-    .plus(get(legacyFrozen, "bandwidth.amount", 0))
-    .dividedBy(1000000)
-    .integerValue(BigNumber.ROUND_FLOOR)
-    .toNumber();
-  const votes = get(acc, "votes", []).map((v: any) => ({
-    address: v.vote_address,
-    voteCount: v.vote_count,
-  }));
-  const lastWithdrawnRewardDate = acc.latest_withdraw_time
-    ? new Date(acc.latest_withdraw_time)
-    : undefined;
-
-  // TODO: rely on the account object when trongrid will provide this info.
-  const getLastVotedDate = (txs: TrongridTxInfo[]): Date | null | undefined => {
-    const lastOp = txs.find(({ type }) => type === "VoteWitnessContract");
-    return lastOp ? lastOp.date : null;
-  };
-  const lastVotedDate = txs ? getLastVotedDate(txs) : undefined;
-
-  return {
-    energy,
-    bandwidth,
-    frozen,
-    unFrozen,
-    delegatedFrozen,
-    legacyFrozen,
-    votes,
-    tronPower,
-    unwithdrawnReward,
-    lastWithdrawnRewardDate,
-    lastVotedDate,
-    cacheTransactionInfoById,
-  };
-}
 
 export const getUnwithdrawnReward = async (addr: string): Promise<BigNumber> => {
   try {

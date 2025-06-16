@@ -1,10 +1,11 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
 import styled from "styled-components";
-import { openModal } from "~/renderer/actions/modals";
+import { ModularDrawerLocation } from "LLD/features/ModularDrawer/enums";
+import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
 import Box from "~/renderer/components/Box";
 import IconPlus from "~/renderer/icons/Plus";
+import { MAD_SOURCE_PAGES } from "LLD/features/ModularDrawer/analytics/types";
 
 const AddAccountButton = styled(Box)`
   border: 1px dashed rgba(153, 153, 153, 0.3);
@@ -26,14 +27,18 @@ const AddAccountButton = styled(Box)`
   }
 `;
 const Placeholder = () => {
-  const dispatch = useDispatch();
   const { t } = useTranslation();
-  const openAddAccounts = useCallback(() => {
-    dispatch(openModal("MODAL_ADD_ACCOUNTS", undefined));
-  }, [dispatch]);
+  const { openAssetFlow } = useOpenAssetFlow(
+    ModularDrawerLocation.ADD_ACCOUNT,
+    MAD_SOURCE_PAGES.ACCOUNTS_PAGE,
+  );
+  const handleAddAccountClick = () => {
+    openAssetFlow(true);
+  };
+
   return (
     <Box mb={5}>
-      <AddAccountButton onClick={openAddAccounts} pb={6}>
+      <AddAccountButton onClick={handleAddAccountClick} pb={6}>
         <IconPlus size={16} />
         <Box ml={20} ff="Inter|Regular" fontSize={4}>
           {t("addAccounts.cta.add")}

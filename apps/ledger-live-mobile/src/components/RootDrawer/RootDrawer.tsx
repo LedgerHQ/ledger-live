@@ -1,17 +1,19 @@
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import storage from "LLM/storage";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useEffect, useState } from "react";
 import { NavigatorName } from "~/const";
 import { RootDrawerProvider, useRootDrawerContext } from "~/context/RootDrawerContext";
 import { EvmStakingDrawer } from "~/families/evm/StakingDrawer";
-import { EvmStakingDrawer as EvmStakingDrawer_deprecated } from "~/families/evm/StakingDrawer_deprecated";
 import { PTXServicesAppleWarning } from "./InitialDrawers/PTXServicesAppleWarning";
 import { InitialDrawerID, RootDrawerProps } from "./types";
 
 export async function getInitialDrawersToShow(initialDrawers: InitialDrawerID[]) {
-  const initialDrawersToShow = await AsyncStorage.multiGet(initialDrawers);
+  const initialDrawersToShow = await storage.get<InitialDrawerID>(initialDrawers);
+
+  if (initialDrawersToShow == null || !Array.isArray(initialDrawersToShow)) {
+    return [];
+  }
 
   // if we have a value then the drawer should not be shown
   return initialDrawersToShow
@@ -29,20 +31,11 @@ export async function getInitialDrawersToShow(initialDrawers: InitialDrawerID[])
     .filter((drawer): drawer is InitialDrawerID => !!drawer);
 }
 
-function StakeModalVersionWrapper() {
-  const ethStakingModalWithFilters = useFeature("ethStakingModalWithFilters");
-  return ethStakingModalWithFilters?.enabled ? (
-    <EvmStakingDrawer />
-  ) : (
-    <EvmStakingDrawer_deprecated />
-  );
-}
-
 export function RootDrawerSelector() {
   const { drawer } = useRootDrawerContext();
   switch (drawer.id) {
     case "EvmStakingDrawer":
-      return <StakeModalVersionWrapper />;
+      return <EvmStakingDrawer />;
     case InitialDrawerID.PTXServicesAppleDrawerKey:
       return <PTXServicesAppleWarning />;
     default:

@@ -11,10 +11,7 @@ import {
 } from "../CustomImage/FramedLottie";
 import { useTranslation } from "react-i18next";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useTheme } from "styled-components/native";
-import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
-import AnimatedLottieView from "lottie-react-native";
 
 const ImageLoadingGeneric: React.FC<{
   title: string;
@@ -76,23 +73,6 @@ export const RenderImageLoadRequested = ({
   wording?: string;
 }) => {
   const { t } = useTranslation();
-  const { colors } = useTheme();
-  const theme = colors.type as "dark" | "light";
-  const framedPictureConfig = useMemo(
-    () => getFramedPictureConfig("transfer", deviceModelId, colors.type as "light" | "dark"),
-    [deviceModelId, colors.type],
-  );
-  const lottieStyle = useMemo(
-    () => ({
-      width: framedPictureConfig.frameWidth / 3,
-      height: framedPictureConfig.frameHeight / 3,
-    }),
-    [framedPictureConfig],
-  );
-  const lottieSource = useMemo(
-    () => getDeviceAnimation({ theme, key: "allowCustomLockScreen", device }),
-    [theme, device],
-  );
   const title = useMemo(
     () =>
       wording ??
@@ -101,23 +81,10 @@ export const RenderImageLoadRequested = ({
       }),
     [device.deviceName, device.modelId, t, wording],
   );
-  if (deviceModelId === DeviceModelId.europa) {
-    return (
-      <>
-        <Text textAlign="center" variant="h4" fontWeight="semiBold" mb={8} alignSelf="stretch">
-          {title}
-        </Text>
-        <Flex flexDirection="column" justifyContent="center" alignItems="center" flex={1}>
-          <AnimatedLottieView autoPlay loop style={lottieStyle} source={lottieSource} />
-        </Flex>
-      </>
-    );
-  }
   return (
     <ImageLoadingGeneric
       fullScreen={fullScreen}
       title={title}
-      lottieSource={lottieSource}
       progress={0}
       deviceModelId={deviceModelId}
     />
@@ -148,12 +115,6 @@ export const RenderLoadingImage = ({
   );
 };
 
-/** hardcoded values to not have the image overflowing the "confirm button" in the lottie */
-const maxProgressWithConfirmButton: Record<CLSSupportedDeviceModelId, number> = {
-  [DeviceModelId.stax]: 0.89,
-  [DeviceModelId.europa]: 0.85, // TODO: TBD
-};
-
 export const RenderImageCommitRequested = ({
   device,
   deviceModelId,
@@ -167,7 +128,13 @@ export const RenderImageCommitRequested = ({
 }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const theme = colors.type as "dark" | "light";
+
+  const framedPictureConfig = getFramedPictureConfig(
+    "transfer",
+    deviceModelId,
+    colors.type as "light" | "dark",
+  );
+
   return (
     <ImageLoadingGeneric
       fullScreen={fullScreen}
@@ -177,23 +144,25 @@ export const RenderImageCommitRequested = ({
           productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
         })
       }
-      lottieSource={
-        deviceModelId === DeviceModelId.stax
-          ? getDeviceAnimation({ theme, key: "confirmCustomLockScreen", device })
-          : undefined
-      }
-      progress={maxProgressWithConfirmButton[deviceModelId]}
+      progress={1}
       deviceModelId={deviceModelId}
     >
       <Flex
         flex={1}
         style={{
           position: "absolute",
-          bottom: -48,
-          left: 58,
-          width: 448,
+          top: framedPictureConfig.innerTop + framedPictureConfig.innerHeight - 75 + 2,
+          left:
+            framedPictureConfig.frameWidth -
+            framedPictureConfig.innerRight -
+            framedPictureConfig.innerWidth,
+          width: framedPictureConfig.innerWidth,
           height: 75,
+          borderBottomRightRadius: framedPictureConfig.borderRightRadius,
+          borderBottomLeftRadius: framedPictureConfig.borderLeftRadius,
+          overflow: "hidden",
         }}
+        bg={colors.success.c70}
       >
         <Flex flexDirection="row" flex={2}>
           <Flex

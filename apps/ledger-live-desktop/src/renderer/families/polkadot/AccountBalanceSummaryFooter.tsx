@@ -14,7 +14,7 @@ import InfoCircle from "~/renderer/icons/InfoCircle";
 import TriangleWarning from "~/renderer/icons/TriangleWarning";
 import ToolTip from "~/renderer/components/Tooltip";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const Wrapper = styled(Box).attrs(() => ({
@@ -60,7 +60,7 @@ const AmountValue = styled(Text).attrs<{
   warning?: boolean;
 }>``;
 type Props = {
-  account: PolkadotAccount | SubAccount;
+  account: PolkadotAccount | TokenAccount;
 };
 const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();

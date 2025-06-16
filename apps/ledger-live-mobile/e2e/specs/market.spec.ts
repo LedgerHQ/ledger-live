@@ -1,11 +1,8 @@
-import { Application } from "../page";
-
-let app: Application;
-const asset = "Ethereum (ETH)";
-
 describe("Market page for user with no device", () => {
+  const asset = "Ethereum (ETH)";
+
   beforeAll(async () => {
-    app = await Application.init("1accountEth");
+    await app.init({ userdata: "1accountEth" });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 

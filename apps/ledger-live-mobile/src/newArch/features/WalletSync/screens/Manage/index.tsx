@@ -23,6 +23,7 @@ import { TrustchainNotFound } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { useCustomTimeOut } from "../../hooks/useCustomTimeOut";
 import { useDispatch } from "react-redux";
 import { blockPasswordLock } from "~/actions/appstate";
+import { isNoTrustchainError } from "../../utils/errors";
 
 const WalletSyncManage = () => {
   const { t } = useTranslation();
@@ -100,7 +101,7 @@ const WalletSyncManage = () => {
   );
 
   const getTopContent = () => {
-    if (error) {
+    if (error && !isNoTrustchainError(error)) {
       if (isLedgerSyncError) {
         return <AlertLedgerSyncDown />;
       }

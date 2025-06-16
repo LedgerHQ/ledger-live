@@ -5,6 +5,13 @@ import { TFunction } from "i18next";
 import { ModalBody } from "~/renderer/components/Modal";
 import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import Breadcrumb from "./Breadcrumb";
+import { useTrackAddAccountModal } from "~/renderer/analytics/hooks/useTrackAddAccountModal";
+import { useSelector } from "react-redux";
+import { trackingEnabledSelector } from "~/renderer/reducers/settings";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
+import { LedgerError } from "../DeviceAction";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
+
 export type BasicStepProps = {
   t: TFunction;
   transitionTo: (a: string) => void;
@@ -20,6 +27,7 @@ export type Step<T, StepProps> = {
   noScroll?: boolean;
   hideFooter?: boolean;
 };
+
 type OwnProps<T, StepProps> = {
   title?: React.ReactNode;
   stepId: T;
@@ -34,6 +42,7 @@ type OwnProps<T, StepProps> = {
   children?: React.ReactNode;
   params?: unknown;
   hideCloseButton?: boolean;
+  err?: LedgerError | null;
   // Additional props are passed to the step components…
   [key: string]: unknown;
 };
@@ -50,6 +59,7 @@ const Stepper = <T, StepProps>({
   errorSteps,
   children,
   hideCloseButton,
+  err,
   ...props
 }: Props<T, StepProps>) => {
   const deviceBlocked = useDeviceBlocked();
@@ -62,6 +72,13 @@ const Stepper = <T, StepProps>({
     },
     [onStepChange, steps],
   );
+  useTrackAddAccountModal({
+    location: HOOKS_TRACKING_LOCATIONS.addAccountModal,
+    device: useSelector(getCurrentDevice),
+    error: err,
+    isTrackingEnabled: useSelector(trackingEnabledSelector),
+  });
+
   const { step, visibleSteps, indexVisible } = useMemo(() => {
     const stepIndex = steps.findIndex(s => s.id === stepId);
     const step = steps[stepIndex];

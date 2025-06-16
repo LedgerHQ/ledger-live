@@ -1,20 +1,21 @@
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
-import { useTranslation } from "react-i18next";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 import { AlgorandFamily } from "./types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 
 const AccountHeaderActions: AlgorandFamily["accountHeaderManageActions"] = ({
   account,
   parentAccount,
 }) => {
-  const { t } = useTranslation();
   const dispatch = useDispatch();
   const balance = account.balance;
   const unit = useAccountUnit(account);
   const minRewardsBalance = 10 ** unit.magnitude;
+
+  const label = useGetStakeLabelLocaleBased();
 
   const onClick = useCallback(() => {
     dispatch(openModal("MODAL_ALGORAND_EARN_REWARDS_INFO", { account }));
@@ -27,7 +28,7 @@ const AccountHeaderActions: AlgorandFamily["accountHeaderManageActions"] = ({
       key: "algorand",
       onClick: onClick,
       icon: IconCoins,
-      label: t("account.stake"),
+      label,
       event: "button_clicked2",
       eventProperties: {
         button: "stake",

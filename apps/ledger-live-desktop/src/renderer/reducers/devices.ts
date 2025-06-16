@@ -4,6 +4,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Handlers } from "./types";
 import { SettingsState } from "./settings";
+import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculos";
 
 export type DevicesState = {
   /**
@@ -69,30 +70,39 @@ export function getCurrentDevice(state: { devices: DevicesState; settings: Setti
     };
   }
 
-  if (
-    getEnv("DEVICE_PROXY_URL") ||
-    getEnv("SPECULOS_API_PORT") ||
-    (getEnv("MOCK") && !getEnv("MOCK_NO_BYPASS"))
-  ) {
-    // bypass the listen devices (we should remove modelId here by instead get it at open time if needed)
-    return {
-      deviceId: "",
-      wired: true,
-      modelId: DeviceModelId.nanoS,
-    };
+  const envConditions = [
+    { condition: getEnv("DEVICE_PROXY_URL"), modelId: DeviceModelId.nanoS },
+    { condition: getEnv("MOCK") && !getEnv("MOCK_NO_BYPASS"), modelId: DeviceModelId.nanoS },
+    { condition: getEnv("SPECULOS_API_PORT"), modelId: getSpeculosModel() },
+  ];
+
+  for (const { condition, modelId } of envConditions) {
+    if (condition) {
+      return {
+        deviceId: "",
+        wired: true,
+        modelId,
+      };
+    }
   }
   return state.devices.currentDevice;
 }
+
 export function getDevices(state: { devices: DevicesState }) {
-  if (getEnv("DEVICE_PROXY_URL") || getEnv("SPECULOS_API_PORT")) {
-    // bypass the listen devices
-    return [
-      {
-        deviceId: "",
-        wired: true,
-        modelId: DeviceModelId.nanoS,
-      },
-    ];
+  const envConditions = [
+    { condition: getEnv("DEVICE_PROXY_URL"), modelId: DeviceModelId.nanoS },
+    { condition: getEnv("SPECULOS_API_PORT"), modelId: getSpeculosModel() },
+  ];
+  for (const { condition, modelId } of envConditions) {
+    if (condition) {
+      return [
+        {
+          deviceId: "",
+          wired: true,
+          modelId,
+        },
+      ];
+    }
   }
   return state.devices.devices;
 }

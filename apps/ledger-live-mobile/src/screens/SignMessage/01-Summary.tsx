@@ -1,7 +1,6 @@
 import { getMessageProperties } from "@ledgerhq/coin-evm/logic";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { MessageProperties } from "@ledgerhq/types-live";
-import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
@@ -18,6 +17,8 @@ import { ScreenName } from "~/const";
 import WalletIcon from "~/icons/Wallet";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { useAccountName } from "~/reducers/wallet";
+import CopyButton from "./Components/CopyButton";
+import { useTheme } from "styled-components/native";
 
 const MessageProperty = memo(({ label, value }: MessageProperties[0]) => {
   const { colors } = useTheme();
@@ -33,7 +34,7 @@ const MessageProperty = memo(({ label, value }: MessageProperties[0]) => {
         style={[
           styles.messagePropertyValue,
           {
-            color: colors.grey,
+            color: colors.neutral.c70,
           },
         ]}
       >
@@ -46,7 +47,7 @@ const MessageProperty = memo(({ label, value }: MessageProperties[0]) => {
                 style={[
                   styles.messagePropertyValue,
                   {
-                    color: colors.grey,
+                    color: colors.neutral.c70,
                   },
                 ]}
                 key={i}
@@ -105,22 +106,15 @@ function SignSummary({
   useEffect(() => {
     if (messageData.standard === "EIP712") {
       getMessageProperties(messageData).then(setMessageFields);
-    } else if (isACREWithdraw) {
-      setMessageFields(
-        Object.entries(messageData.message).map(([label, value]) => ({
-          label,
-          value,
-        })),
-      );
     }
-  }, [isACREWithdraw, mainAccount, mainAccount.currency, messageData, setMessageFields]);
+  }, [mainAccount, mainAccount.currency, messageData, setMessageFields]);
 
   return (
     <SafeAreaView
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >
@@ -131,7 +125,7 @@ function SignSummary({
             style={[
               styles.iconContainer,
               {
-                backgroundColor: colors.lightLive,
+                backgroundColor: colors.opacityPurple.c10,
               },
             ]}
           >
@@ -155,20 +149,22 @@ function SignSummary({
           style={[
             styles.separator,
             {
-              backgroundColor: colors.separator,
+              backgroundColor: colors.neutral.c80,
             },
           ]}
         />
         <ScrollView style={styles.scrollContainer}>
-          {messageData.standard === "EIP712" || isACREWithdraw ? (
-            <MessagePropertiesComp properties={messageFields} />
-          ) : (
-            <View style={styles.messageContainer}>
-              <MessageProperty label={"message"} value={messageData.message || ""} />
-            </View>
-          )}
+          {!isACREWithdraw ? (
+            messageData.standard === "EIP712" ? (
+              <MessagePropertiesComp properties={messageFields} />
+            ) : (
+              <View style={styles.messageContainer}>
+                <MessageProperty label={"message"} value={messageData.message ?? ""} />
+              </View>
+            )
+          ) : null}
 
-          {messageData.standard === "EIP712" || isACREWithdraw ? (
+          {messageData.standard === "EIP712" ? (
             <>
               {messageFields ? (
                 <View>
@@ -182,7 +178,7 @@ function SignSummary({
                       style={[
                         styles.advancedMessageArea,
                         {
-                          backgroundColor: colors.pillActiveBackground,
+                          backgroundColor: colors.opacityPurple.c10,
                         },
                       ]}
                     >
@@ -196,6 +192,7 @@ function SignSummary({
             </>
           ) : null}
         </ScrollView>
+        {showAdvanced && <CopyButton text={messageData.message.toString()} />}
       </View>
       <View style={styles.footer}>
         <Button
@@ -223,6 +220,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     flexDirection: "row",
     alignItems: "center",
+    paddingHorizontal: 20,
   },
   headerContainer: {
     flexDirection: "row",
@@ -244,8 +242,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flex: 1,
-    paddingHorizontal: 16,
-    paddingBottom: 16,
+    padding: 16,
   },
   from: {
     opacity: 0.5,
@@ -272,6 +269,7 @@ const styles = StyleSheet.create({
     fontSize: 9,
     fontFamily: "Courier New",
     padding: 20,
+    paddingBottom: 80,
   },
   message: {
     opacity: 0.5,

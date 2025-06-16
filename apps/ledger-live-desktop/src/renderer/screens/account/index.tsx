@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { compose } from "redux";
-import { connect, useSelector } from "react-redux";
+import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
 import { TFunction } from "i18next";
 import { Redirect } from "react-router";
@@ -18,10 +18,7 @@ import {
   setCountervalueFirst,
   useFilterTokenOperationsZeroAmount,
 } from "~/renderer/actions/settings";
-import {
-  countervalueFirstSelector,
-  hiddenNftCollectionsSelector,
-} from "~/renderer/reducers/settings";
+import { countervalueFirstSelector } from "~/renderer/reducers/settings";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import OperationsList from "~/renderer/components/OperationsList";
@@ -31,6 +28,7 @@ import NftCollections from "LLD/features/Collectibles/Nfts/Collections";
 import OrdinalsAccount from "LLD/features/Collectibles/Ordinals/screens/Account";
 import BalanceSummary from "./BalanceSummary";
 import AccountHeader from "./AccountHeader";
+import AccountWarningBanner from "./AccountWarningBanner";
 import AccountHeaderActions, { AccountHeaderSettingsButton } from "./AccountHeaderActions";
 import EmptyStateAccount from "./EmptyStateAccount";
 import TokensList from "./TokensList";
@@ -38,13 +36,11 @@ import { AccountStakeBanner } from "~/renderer/screens/account/AccountStakeBanne
 import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import { State } from "~/renderer/reducers";
 import { getLLDCoinFamily } from "~/renderer/families";
-import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
-import TopBanner from "~/renderer/components/TopBanner";
-import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
-import { urls } from "~/config/urls";
-import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isBitcoinBasedAccount, isBitcoinAccount } from "@ledgerhq/live-common/account/typeGuards";
+import { useNftCollectionsStatus } from "~/renderer/hooks/nfts/useNftCollectionsStatus";
+import { useNftSupportFeature } from "~/renderer/hooks/nfts/useNftSupportFeature";
+import NftEntryPoint from "LLD/features/NftEntryPoint";
 
 type Params = {
   id: string;
@@ -107,7 +103,9 @@ const AccountPage = ({
   const AccountSubHeader = specific?.AccountSubHeader;
   const bgColor = useTheme().colors.palette.background.paper;
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
-  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
+  const { hiddenNftCollections } = useNftCollectionsStatus(true);
+
+  const { nftSupportEnabled } = useNftSupportFeature();
 
   const nftReworked = useFeature("lldNftsGalleryNewArch");
   const isNftReworkedEnabled = nftReworked?.enabled;
@@ -130,16 +128,6 @@ const AccountPage = ({
   );
 
   const currency = mainAccount?.currency;
-
-  let currencyConfig: CurrencyConfig | undefined = undefined;
-
-  try {
-    currencyConfig = getCurrencyConfiguration(currency!);
-  } catch (err) {
-    console.warn(err);
-  }
-
-  const localizedContactSupportURL = useLocalizedUrl(urls.contactSupportWebview);
 
   if (!account || !mainAccount || !currency) {
     return <Redirect to="/accounts" />;
@@ -182,21 +170,7 @@ const AccountPage = ({
       >
         <AccountHeaderActions account={account} parentAccount={parentAccount} />
       </Box>
-      {currencyConfig?.status.type === "will_be_deprecated" && (
-        <TopBanner
-          status="warning"
-          content={{
-            message: t("account.willBeDeprecatedBanner.title", {
-              currencyName: currency.name,
-              deprecatedDate: currencyConfig.status.deprecated_date,
-            }),
-          }}
-          link={{
-            text: t("account.willBeDeprecatedBanner.contactSupport"),
-            href: localizedContactSupportURL,
-          }}
-        />
-      )}
+      <AccountWarningBanner currency={currency} />
       {AccountSubHeader ? (
         <AccountSubHeader account={account} parentAccount={parentAccount} />
       ) : null}
@@ -216,13 +190,16 @@ const AccountPage = ({
           {AccountBodyHeader ? (
             <AccountBodyHeader account={account} parentAccount={parentAccount} />
           ) : null}
-          {account.type === "Account" && isNFTActive(account.currency) ? (
+          {nftSupportEnabled && account.type === "Account" && isNFTActive(account.currency) ? (
             isNftReworkedEnabled ? (
               <NftCollections account={account} />
             ) : (
               <Collections account={account} />
             )
           ) : null}
+
+          {account.type === "Account" && <NftEntryPoint account={account} />}
+
           {displayOrdinals ? <OrdinalsAccount account={account} /> : null}
           {account.type === "Account" ? <TokensList account={account} /> : null}
           <OperationsList
@@ -230,7 +207,6 @@ const AccountPage = ({
             parentAccount={parentAccount}
             title={t("account.lastOperations")}
             filterOperation={filterOperations}
-            t={t}
           />
         </>
       ) : (

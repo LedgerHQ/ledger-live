@@ -1,3 +1,4 @@
+import { CosmosAccount } from "./types";
 interface CosmosEventMessage {
   type: string;
   [key: string]: any;
@@ -18,3 +19,10 @@ export const getMainMessage = (messages: CosmosEventMessage[]): CosmosEventMessa
     .sort((a, b) => messagePriorities.indexOf(a.type) - messagePriorities.indexOf(b.type));
   return sortedTypes[0];
 };
+
+export function isAccountEmpty({
+  cosmosResources,
+  balance,
+}: Pick<CosmosAccount, "cosmosResources" | "balance">) {
+  return cosmosResources.sequence === 0 && balance.isZero();
+}

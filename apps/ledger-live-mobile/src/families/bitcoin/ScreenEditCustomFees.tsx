@@ -54,7 +54,7 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
     setSatPerByte && setSatPerByte(BigNumber(ownSatPerByte || 0));
     const bridge = getAccountBridge(account, parentAccount);
     const { currentNavigation } = route.params;
-    // @ts-expect-error ask your mom about it
+    // @ts-expect-error: Type mismatch due to dynamic navigation params
     navigation.navigate(currentNavigation, {
       ...route.params,
       accountId: account.id,

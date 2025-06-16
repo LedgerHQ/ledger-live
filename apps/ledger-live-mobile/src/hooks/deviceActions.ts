@@ -17,9 +17,9 @@ import customLockScreenLoad from "@ledgerhq/live-common/hw/customLockScreenLoad"
 import installLanguage from "@ledgerhq/live-common/hw/installLanguage";
 import customLockScreenFetch from "@ledgerhq/live-common/hw/customLockScreenFetch";
 import customLockScreenRemove from "@ledgerhq/live-common/hw/customLockScreenRemove";
-import connectManager from "@ledgerhq/live-common/hw/connectManager";
+import connectManagerFactory from "@ledgerhq/live-common/hw/connectManager";
 import initSwap from "@ledgerhq/live-common/exchange/swap/initSwap";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import connectAppFactory from "@ledgerhq/live-common/hw/connectApp";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import startExchange from "@ledgerhq/live-common/exchange/platform/startExchange";
 import completeExchange from "@ledgerhq/live-common/exchange/platform/completeExchange";
@@ -35,38 +35,66 @@ import {
   staxRemoveImageExecMock,
   renameDeviceExecMock,
 } from "../../e2e/bridge/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 export function useAppDeviceAction() {
   const envMock = useEnv("MOCK");
   const deviceProxy = useEnv("DEVICE_PROXY_URL");
   const mock = envMock && !deviceProxy;
-  return useMemo(() => appCreateAction(mock ? connectAppExecMock : connectApp), [mock]);
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
+  return useMemo(
+    () =>
+      appCreateAction(mock ? connectAppExecMock : connectAppFactory({ isLdmkConnectAppEnabled })),
+    [isLdmkConnectAppEnabled, mock],
+  );
 }
 
 export function useTransactionDeviceAction() {
   const mock = useEnv("MOCK");
-  return useMemo(() => transactionCreateAction(mock ? connectAppExecMock : connectApp), [mock]);
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
+  return useMemo(
+    () =>
+      transactionCreateAction(
+        mock ? connectAppExecMock : connectAppFactory({ isLdmkConnectAppEnabled }),
+      ),
+    [isLdmkConnectAppEnabled, mock],
+  );
 }
 
 export function useInitSwapDeviceAction() {
   const mock = useEnv("MOCK");
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
   return useMemo(
     () =>
       mock
         ? initSwapCreateAction(connectAppExecMock, initSwapExecMock)
-        : initSwapCreateAction(connectApp, initSwap),
-    [mock],
+        : initSwapCreateAction(connectAppFactory({ isLdmkConnectAppEnabled }), initSwap),
+    [isLdmkConnectAppEnabled, mock],
   );
 }
 
 export function useManagerDeviceAction() {
   const mock = useEnv("MOCK");
-  return useMemo(() => managerCreateAction(mock ? connectManagerExecMock : connectManager), [mock]);
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
+  return useMemo(
+    () =>
+      managerCreateAction(
+        mock ? connectManagerExecMock : connectManagerFactory({ isLdmkConnectAppEnabled }),
+      ),
+    [isLdmkConnectAppEnabled, mock],
+  );
 }
 
 export function useSignMessageDeviceAction() {
   const mock = useEnv("MOCK");
-  return useMemo(() => signMessageCreateAction(mock ? connectAppExecMock : connectApp), [mock]);
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
+  return useMemo(
+    () =>
+      signMessageCreateAction(
+        mock ? connectAppExecMock : connectAppFactory({ isLdmkConnectAppEnabled }),
+      ),
+    [isLdmkConnectAppEnabled, mock],
+  );
 }
 
 export function useInstallLanguageDeviceAction() {
@@ -103,12 +131,13 @@ export function useStaxRemoveImageDeviceAction() {
 
 export function useStartExchangeDeviceAction() {
   const mock = useEnv("MOCK");
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
   return useMemo(
     () =>
       mock
         ? startExchangeCreateAction(connectAppExecMock, startExchangeExecMock)
-        : startExchangeCreateAction(connectApp, startExchange),
-    [mock],
+        : startExchangeCreateAction(connectAppFactory({ isLdmkConnectAppEnabled }), startExchange),
+    [isLdmkConnectAppEnabled, mock],
   );
 }
 

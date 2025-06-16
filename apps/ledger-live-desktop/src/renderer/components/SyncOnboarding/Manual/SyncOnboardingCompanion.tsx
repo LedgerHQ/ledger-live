@@ -20,12 +20,13 @@ import {
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useCustomPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
-import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
+import { lastSeenDeviceSelector, trackingEnabledSelector } from "~/renderer/reducers/settings";
 import { DesyncOverlay } from "./DesyncOverlay";
 import SeedStep, { SeedPathStatus } from "./SeedStep";
 import { analyticsFlowName, StepText } from "./shared";
 import OnboardingAppInstallStep from "../../OnboardingAppInstall";
 import { getOnboardingStatePolling } from "@ledgerhq/live-common/hw/getOnboardingStatePolling";
+import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk-desktop";
 import ContinueOnDeviceWithAnim from "./ContinueOnDeviceWithAnim";
 import { RecoverState } from "~/renderer/screens/recover/Player";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -35,7 +36,8 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import LockedDeviceDrawer from "./LockedDeviceDrawer";
 import { LockedDeviceError } from "@ledgerhq/errors";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
-import BackupStep from "./BackupStep";
+import { useTrackOnboardingFlow } from "~/renderer/analytics/hooks/useTrackOnboardingFlow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
 const READY_REDIRECT_DELAY_MS = 2000;
 const POLLING_PERIOD_MS = 1000;
@@ -116,9 +118,14 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   const lastCompanionStepKey = useRef<StepKey>();
   const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
 
+  useTrackOnboardingFlow({
+    location: HOOKS_TRACKING_LOCATIONS.onboardingFlow,
+    device: device,
+    isTrackingEnabled: useSelector(trackingEnabledSelector),
+    seedPathStatus: seedPathStatus,
+  });
+
   const servicesConfig = useFeature("protectServicesDesktop");
-  const recoverUpsellRedirection = useFeature("recoverUpsellRedirection");
-  const hasBackupStep = !recoverUpsellRedirection?.enabled;
 
   const recoverRestoreStaxPath = useCustomPath(servicesConfig, "restore", "lld-onboarding-24");
 
@@ -192,22 +199,6 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
           </>
         ),
       },
-      ...(hasBackupStep
-        ? [
-            {
-              key: StepKey.Backup,
-              status: "inactive" as StepStatus,
-              title: t("syncOnboarding.manual.backup.title"),
-              titleCompleted: t("syncOnboarding.manual.backup.title"),
-              renderBody: () => (
-                <BackupStep
-                  device={device}
-                  onPressKeepManualBackup={() => setStepKey(StepKey.Apps)}
-                />
-              ),
-            },
-          ]
-        : []),
       {
         key: StepKey.Apps,
         status: "inactive",
@@ -237,7 +228,6 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     [
       t,
       deviceName,
-      hasBackupStep,
       hasAppLoader,
       productName,
       device,
@@ -265,6 +255,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     device: device || null,
     pollingPeriodMs: POLLING_PERIOD_MS,
     stopPolling: !isPollingOn,
+    allowedErrorChecks: [isAllowedOnboardingStatePollingErrorDmk],
   });
 
   const handleDeviceReady = useCallback(() => {
@@ -359,24 +350,16 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     // When the device is seeded, there are 2 cases before triggering the application install step:
     // - the user came to the sync onboarding with an non-seeded device and did a full onboarding: onboarding flag `Ready`
     // - the user came to the sync onboarding with an already seeded device: onboarding flag `WelcomeScreen1`
-    if (deviceOnboardingState?.isOnboarded && !seededDeviceHandled.current) {
-      if (deviceOnboardingState?.currentOnboardingStep === DeviceOnboardingStep.Ready) {
-        // device was just seeded
-        setStepKey(hasBackupStep ? StepKey.Backup : StepKey.Apps);
-        seededDeviceHandled.current = true;
-        return;
-      } else if (
-        deviceOnboardingState?.currentOnboardingStep === DeviceOnboardingStep.WelcomeScreen1
-      ) {
-        // device was already seeded, switch to the apps step
-        if (hasBackupStep) {
-          __DEV__ ? setStepKey(StepKey.Backup) : setStepKey(StepKey.Apps); // for ease of testing in dev mode without having to reset the device
-        } else {
-          setStepKey(StepKey.Apps);
-        }
-        seededDeviceHandled.current = true;
-        return;
-      }
+    if (
+      deviceOnboardingState?.isOnboarded &&
+      !seededDeviceHandled.current &&
+      [DeviceOnboardingStep.Ready, DeviceOnboardingStep.WelcomeScreen1].includes(
+        deviceOnboardingState.currentOnboardingStep,
+      )
+    ) {
+      setStepKey(StepKey.Apps);
+      seededDeviceHandled.current = true;
+      return;
     }
 
     // case DeviceOnboardingStep.SafetyWarning not handled so the previous step (new seed, restore, recover) is kept
@@ -427,7 +410,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       default:
         break;
     }
-  }, [deviceOnboardingState, hasBackupStep, notifySyncOnboardingShouldReset]);
+  }, [deviceOnboardingState, notifySyncOnboardingShouldReset]);
 
   // When the user gets close to the seed generation step, sets the lost synchronization delay
   // and timers to a higher value. It avoids having a warning message while the connection is lost

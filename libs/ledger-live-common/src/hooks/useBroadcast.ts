@@ -1,6 +1,12 @@
 import { useCallback } from "react";
 import { log } from "@ledgerhq/logs";
-import type { SignedOperation, Operation, AccountLike, Account } from "@ledgerhq/types-live";
+import type {
+  SignedOperation,
+  Operation,
+  AccountLike,
+  Account,
+  BroadcastConfig,
+} from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
 import { formatOperation, getMainAccount } from "../account/index";
 import { getAccountBridge } from "../bridge/index";
@@ -9,9 +15,10 @@ import { execAndWaitAtLeast } from "../promise";
 type SignTransactionArgs = {
   account?: AccountLike | null;
   parentAccount?: Account | null;
+  broadcastConfig?: BroadcastConfig;
 };
 
-export const useBroadcast = ({ account, parentAccount }: SignTransactionArgs) => {
+export const useBroadcast = ({ account, parentAccount, broadcastConfig }: SignTransactionArgs) => {
   const broadcast = useCallback(
     async (signedOperation: SignedOperation): Promise<Operation> => {
       if (!account) throw new Error("account not present");
@@ -26,6 +33,7 @@ export const useBroadcast = ({ account, parentAccount }: SignTransactionArgs) =>
         const operation = await bridge.broadcast({
           account: mainAccount,
           signedOperation,
+          broadcastConfig,
         });
         log(
           "transaction-summary",
@@ -34,7 +42,7 @@ export const useBroadcast = ({ account, parentAccount }: SignTransactionArgs) =>
         return operation;
       });
     },
-    [account, parentAccount],
+    [account, parentAccount, broadcastConfig],
   );
 
   return broadcast;

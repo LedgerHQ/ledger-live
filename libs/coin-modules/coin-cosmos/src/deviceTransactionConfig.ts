@@ -47,7 +47,7 @@ const getSendFields = ({
 
   if (!amount.isZero()) {
     fields.push({
-      type: "text",
+      type: "amount",
       label: "Amount",
       value: formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
         showCode: true,

@@ -61,6 +61,9 @@ export const InvalidAddressBecauseDestinationIsAlsoSource = createCustomErrorCla
   "InvalidAddressBecauseDestinationIsAlsoSource",
 );
 export const LatestMCUInstalledError = createCustomErrorClass("LatestMCUInstalledError");
+export const LatestFirmwareVersionRequired = createCustomErrorClass(
+  "LatestFirmwareVersionRequired",
+);
 export const UnknownMCU = createCustomErrorClass("UnknownMCU");
 export const LedgerAPIError = createCustomErrorClass("LedgerAPIError");
 export const LedgerAPIErrorWithMessage = createCustomErrorClass("LedgerAPIErrorWithMessage");
@@ -81,6 +84,7 @@ export const NetworkDown = createCustomErrorClass("NetworkDown");
 export const NetworkError = createCustomErrorClass("NetworkError");
 export const NoAddressesFound = createCustomErrorClass("NoAddressesFound");
 export const NotEnoughBalance = createCustomErrorClass("NotEnoughBalance");
+export const NotEnoughBalanceFees = createCustomErrorClass("NotEnoughBalanceFees");
 export const NotEnoughBalanceSwap = createCustomErrorClass("NotEnoughBalanceSwap");
 export const NotEnoughBalanceToDelegate = createCustomErrorClass("NotEnoughBalanceToDelegate");
 export const NotEnoughBalanceInParentAccount = createCustomErrorClass(
@@ -146,6 +150,7 @@ export const WebsocketConnectionError = createCustomErrorClass("WebsocketConnect
 export const WebsocketConnectionFailed = createCustomErrorClass("WebsocketConnectionFailed");
 export const WrongDeviceForAccount = createCustomErrorClass("WrongDeviceForAccount");
 export const WrongDeviceForAccountPayout = createCustomErrorClass("WrongDeviceForAccountPayout");
+export const MissingSwapPayloadParamaters = createCustomErrorClass("MissingSwapPayloadParamaters");
 export const WrongDeviceForAccountRefund = createCustomErrorClass("WrongDeviceForAccountRefund");
 export const WrongAppForCurrency = createCustomErrorClass("WrongAppForCurrency");
 
@@ -375,6 +380,14 @@ export class LockedDeviceError extends TransportStatusError {
     }
     this.name = "LockedDeviceError";
     Object.setPrototypeOf(this, LockedDeviceError.prototype);
+  }
+}
+
+export class DeviceMangementKitError extends Error {
+  constructor(name: string, message: string) {
+    super(message);
+    this.name = name;
+    Object.setPrototypeOf(this, DeviceMangementKitError.prototype);
   }
 }
 

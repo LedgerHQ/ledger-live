@@ -47,11 +47,13 @@ const testAppManifest = {
 const mockUiStartExchange = jest.fn();
 const mockUiCompleteExchange = jest.fn();
 const mockUiError = jest.fn();
+const mockIsReady = jest.fn();
 
 const mockUiHooks = {
   "custom.exchange.start": mockUiStartExchange,
   "custom.exchange.complete": mockUiCompleteExchange,
   "custom.exchange.error": mockUiError,
+  "custom.isReady": mockIsReady,
 };
 
 // Mock converter id to send back the id received in params.
@@ -119,6 +121,7 @@ describe("handlers", () => {
       const params: ExchangeStartSellParams = {
         exchangeType: "SELL",
         provider: "TestSellProvider",
+        fromAccountId: accounts[0].id,
       };
       const { request, context, walletHandlers } = prepareSellRequest(params);
 

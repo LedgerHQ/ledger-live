@@ -13,6 +13,8 @@ export enum ScreenName {
   AdvancedLogs = "AdvancedLogs",
   Asset = "Asset",
   Assets = "Assets",
+  AccountsList = "AccountsList",
+  AssetsList = "AssetsList",
   BenchmarkQRStream = "BenchmarkQRStream",
   BitcoinEditCustomFees = "BitcoinEditCustomFees",
   ClaimRewardsConnectDevice = "ClaimRewardsConnectDevice",
@@ -57,9 +59,11 @@ export enum ScreenName {
   DebugNetwork = "DebugNetwork",
   DebugPlayground = "DebugPlayground",
   DebugBluetoothAndLocationServices = "DebugBluetoothAndLocationServices",
+  DebugStorageMigration = "DebugStorageMigration",
   DebugSettings = "DebugSettings",
   DebugSnackbars = "DebugSnackbars",
   DebugTransactionsAlerts = "DebugTransactionsAlerts",
+  DebugSwipe = "DebugSwipe",
   DebugStore = "DebugStore",
   DebugStoryly = "DebugStoryly",
   DebugSwap = "DebugSwap",
@@ -80,6 +84,7 @@ export enum ScreenName {
   Card = "Card",
   Exchange = "Exchange",
   ExchangeBuy = "ExchangeBuy",
+  ExchangeDeveloperMode = "ExchangeDeveloperMode",
   ExchangeHistory = "ExchangeHistory",
   ExchangeSelectAccount = "ExchangeSelectAccount",
   ExchangeSelectCurrency = "ExchangeSelectCurrency",
@@ -127,7 +132,6 @@ export enum ScreenName {
   RegionSettings = "RegionSettings",
   RepairDevice = "RepairDevice",
   Resources = "Resources",
-  XrpEditFee = "XrpEditFee",
   XrpEditTag = "XrpEditTag",
   ScanAccounts = "ScanAccounts",
   ScanRecipient = "ScanRecipient",
@@ -158,6 +162,7 @@ export enum ScreenName {
   SwapFormSelectAccount = "SwapFormSelectAccount",
   SwapFormSelectCrypto = "SwapFormSelectCrypto",
   SwapFormSelectProviderRate = "SwapFormSelectProviderRate",
+  SwapLiveApp = "SwapLiveApp",
   SwapHistory = "SwapHistory",
   SwapOperationDetails = "SwapOperationDetails",
   SwapPendingOperation = "PendingOperation",
@@ -182,6 +187,8 @@ export enum ScreenName {
   VoteValidation = "VoteValidation",
   VoteValidationError = "VoteValidationError",
   VoteValidationSuccess = "VoteValidationSuccess",
+  FeeHomePage = "FeeHomePage",
+  FeeCustomFeePage = "FeeCustomFeePage",
 
   // celo
   CeloRegistrationValidationSuccess = "CeloRegistrationValidationSuccess",
@@ -256,32 +263,32 @@ export enum ScreenName {
   CosmosClaimRewardsValidationError = "CosmosClaimRewardsValidationError",
   CosmosClaimRewardsValidationSuccess = "CosmosClaimRewardsValidationSuccess",
 
-  // elrond
-  ElrondDelegationStarted = "ElrondDelegationStarted",
-  ElrondDelegationValidator = "ElrondDelegationValidator",
-  ElrondDelegationValidatorList = "ElrondDelegationValidatorList",
-  ElrondDelegationAmount = "ElrondDelegationAmount",
-  ElrondDelegationSelectDevice = "ElrondDelegationSelectDevice",
-  ElrondDelegationConnectDevice = "ElrondDelegationConnectDevice",
-  ElrondDelegationValidationError = "ElrondDelegationValidationError",
-  ElrondDelegationValidationSuccess = "ElrondDelegationValidationSuccess",
-  ElrondUndelegationAmount = "ElrondUndelegationAmount",
-  ElrondUndelegationSelectDevice = "ElrondUndelegationSelectDevice",
-  ElrondUndelegationConnectDevice = "ElrondUndelegationConnectDevice",
-  ElrondUndelegationValidationError = "ElrondUndelegationValidationError",
-  ElrondUndelegationValidationSuccess = "ElrondUndelegationValidationSuccess",
-  ElrondClaimRewardsValidator = "ElrondClaimRewardsValidator",
-  ElrondClaimRewardsMethod = "ElrondClaimRewardsMethod",
-  ElrondClaimRewardsSelectDevice = "ElrondClaimRewardsSelectDevice",
-  ElrondClaimRewardsConnectDevice = "ElrondClaimRewardsConnectDevice",
-  ElrondClaimRewardsValidation = "ElrondClaimRewardsValidation",
-  ElrondClaimRewardsValidationError = "ElrondClaimRewardsValidationError",
-  ElrondClaimRewardsValidationSuccess = "ElrondClaimRewardsValidationSuccess",
-  ElrondWithdrawFunds = "ElrondWithdrawFunds",
-  ElrondWithdrawSelectDevice = "ElrondWithdrawSelectDevice",
-  ElrondWithdrawConnectDevice = "ElrondWithdrawConnectDevice",
-  ElrondWithdrawValidationError = "ElrondWithdrawValidationError",
-  ElrondWithdrawValidationSuccess = "ElrondWithdrawValidationSuccess",
+  // multiversx
+  MultiversXDelegationStarted = "MultiversXDelegationStarted",
+  MultiversXDelegationValidator = "MultiversXDelegationValidator",
+  MultiversXDelegationValidatorList = "MultiversXDelegationValidatorList",
+  MultiversXDelegationAmount = "MultiversXDelegationAmount",
+  MultiversXDelegationSelectDevice = "MultiversXDelegationSelectDevice",
+  MultiversXDelegationConnectDevice = "MultiversXDelegationConnectDevice",
+  MultiversXDelegationValidationError = "MultiversXDelegationValidationError",
+  MultiversXDelegationValidationSuccess = "MultiversXDelegationValidationSuccess",
+  MultiversXUndelegationAmount = "MultiversXUndelegationAmount",
+  MultiversXUndelegationSelectDevice = "MultiversXUndelegationSelectDevice",
+  MultiversXUndelegationConnectDevice = "MultiversXUndelegationConnectDevice",
+  MultiversXUndelegationValidationError = "MultiversXUndelegationValidationError",
+  MultiversXUndelegationValidationSuccess = "MultiversXUndelegationValidationSuccess",
+  MultiversXClaimRewardsValidator = "MultiversXClaimRewardsValidator",
+  MultiversXClaimRewardsMethod = "MultiversXClaimRewardsMethod",
+  MultiversXClaimRewardsSelectDevice = "MultiversXClaimRewardsSelectDevice",
+  MultiversXClaimRewardsConnectDevice = "MultiversXClaimRewardsConnectDevice",
+  MultiversXClaimRewardsValidation = "MultiversXClaimRewardsValidation",
+  MultiversXClaimRewardsValidationError = "MultiversXClaimRewardsValidationError",
+  MultiversXClaimRewardsValidationSuccess = "MultiversXClaimRewardsValidationSuccess",
+  MultiversXWithdrawFunds = "MultiversXWithdrawFunds",
+  MultiversXWithdrawSelectDevice = "MultiversXWithdrawSelectDevice",
+  MultiversXWithdrawConnectDevice = "MultiversXWithdrawConnectDevice",
+  MultiversXWithdrawValidationError = "MultiversXWithdrawValidationError",
+  MultiversXWithdrawValidationSuccess = "MultiversXWithdrawValidationSuccess",
 
   // Osmosis
   OsmosisDelegationStarted = "OsmosisDelegationStarted",
@@ -315,9 +322,8 @@ export enum ScreenName {
 
   // ton
   TonEditComment = "TonEditComment",
-
-  // crypto_org
-  CryptoOrgEditMemo = "CryptoOrgEditMemo",
+  // mina
+  MinaEditMemo = "MinaEditMemo",
 
   // Algorand
   AlgorandEditMemo = "AlgorandEditMemo",
@@ -525,6 +531,7 @@ export enum ScreenName {
   LedgerSyncDeepLinkHandler = "LedgerSyncDeepLinkHandler",
 
   MockedAddAssetButton = "MockedAddAssetButton",
+  MockedWalletScreen = "MockedWalletScreen",
   GenericLandingPage = "GenericLandingPage",
 
   // Web3Hub
@@ -532,6 +539,16 @@ export enum ScreenName {
   Web3HubSearch = "Web3HubSearch",
   Web3HubTabs = "Web3HubTabs",
   Web3HubApp = "Web3HubApp",
+
+  // Add Accountv2 / Receive shared screens
+  ConnectDevice = "ConnectDevice",
+  SelectNetwork = "SelectNetwork",
+  SelectDevice = "SelectDevice",
+  SelectAccounts = "SelectAccounts",
+  ScanDeviceAccounts = "ScanDeviceAccounts",
+  AddAccountsWarning = "AddAccountsWarning",
+  NoAssociatedAccounts = "NoAssociatedAccounts",
+  LargeMoverLandingPage = "LargeMoverLandingPage",
 }
 
 export enum NavigatorName {
@@ -553,10 +570,10 @@ export enum NavigatorName {
   CosmosDelegationFlow = "CosmosDelegationFlow",
   CosmosRedelegationFlow = "CosmosRedelegationFlow",
   CosmosUndelegationFlow = "CosmosUndelegationFlow",
-  ElrondClaimRewardsFlow = "ElrondClaimRewardsFlow",
-  ElrondDelegationFlow = "ElrondDelegationFlow",
-  ElrondWithdrawFlow = "ElrondWithdrawFlow",
-  ElrondUndelegationFlow = "ElrondUndelegationFlow",
+  MultiversXClaimRewardsFlow = "MultiversXClaimRewardsFlow",
+  MultiversXDelegationFlow = "MultiversXDelegationFlow",
+  MultiversXWithdrawFlow = "MultiversXWithdrawFlow",
+  MultiversXUndelegationFlow = "MultiversXUndelegationFlow",
   OsmosisClaimRewardsFlow = "OsmosisClaimRewardsFlow",
   OsmosisDelegationFlow = "OsmosisDelegationFlow",
   OsmosisRedelegationFlow = "OsmosisRedelegationFlow",
@@ -581,6 +598,7 @@ export enum NavigatorName {
   SignMessage = "SignMessage",
   Swap = "SwapNavigator",
   Earn = "EarnNavigator",
+  Fees = "FeesNavigator",
   TezosDelegationFlow = "TezosDelegationFlow",
   TronVoteFlow = "TronVoteFlow",
   Unfreeze = "Unfreeze",
@@ -644,10 +662,15 @@ export enum NavigatorName {
   AnalyticsOptInPrompt = "AnalyticsOptInPrompt",
   WalletSyncActivationInit = "WalletSyncActivationInit",
   LandingPages = "LandingPages",
+  largemoverLandingpage = "largemoverLandingpage",
 
   // Web3Hub
   Web3Hub = "Web3Hub",
   Web3HubTab = "Web3HubTab",
 
   WalletSync = "WalletSync",
+  AssetSelection = "AssetSelection",
+  DeviceSelection = "DeviceSelection",
+  Assets = "Assets",
+  SwapHistory = "SwapHistory",
 }

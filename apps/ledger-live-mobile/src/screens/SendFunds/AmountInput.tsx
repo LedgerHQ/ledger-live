@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useSendAmount } from "@ledgerhq/live-countervalues-react";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { track } from "~/analytics";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import LText from "~/components/LText/index";
@@ -12,6 +12,9 @@ import CounterValuesSeparator from "./CounterValuesSeparator";
 import CurrencyInput from "~/components/CurrencyInput";
 import TranslatedError from "~/components/TranslatedError";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { TransferFeeCalculated } from "@ledgerhq/live-common/families/solana/types";
+import Alert from "~/components/Alert";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib/currencies/formatCurrencyUnit";
 
 type Props = {
   account: AccountLike;
@@ -22,6 +25,7 @@ type Props = {
   editable?: boolean;
   testID?: string;
   fiatTestID?: string;
+  transferFeeCalculated?: TransferFeeCalculated;
 };
 export default function AmountInput({
   onChange,
@@ -32,6 +36,7 @@ export default function AmountInput({
   editable,
   testID,
   fiatTestID,
+  transferFeeCalculated,
 }: Props) {
   const { t } = useTranslation();
   const fiatCurrency = useSelector(counterValueCurrencySelector);
@@ -58,6 +63,15 @@ export default function AmountInput({
     track("SendAmountFiatFocused");
   }, []);
   const isCrypto = active === "crypto";
+  const transferFee = formatCurrencyUnit(
+    cryptoUnit,
+    new BigNumber(transferFeeCalculated?.transferFee ?? 0),
+    {
+      disableRounding: true,
+      alwaysShowSign: false,
+      showCode: true,
+    },
+  );
   return (
     <View style={styles.container}>
       <View style={styles.wrapper}>
@@ -81,6 +95,7 @@ export default function AmountInput({
           style={[error ? styles.error : styles.warning]}
           color={error ? "alert" : "orange"}
           numberOfLines={2}
+          testID="send-amount-error"
         >
           <TranslatedError error={error || warning} />
         </LText>
@@ -108,6 +123,11 @@ export default function AmountInput({
           }
         />
       </View>
+      {transferFeeCalculated ? (
+        <Alert testID="solana-token-transfer-fees-hint" type="primary">
+          <Trans i18nKey="solana.token.transferFees.feesHint" values={{ transferFee }} />
+        </Alert>
+      ) : null}
     </View>
   );
 }

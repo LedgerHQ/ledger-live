@@ -11,4 +11,5 @@ export { default as Carousel } from "./Carousel";
 export * from "./Tabs";
 export * from "./Loader";
 export { default as ProgressBar } from "./ProgressBar";
+export { default as ProgressPoint } from "./ProgressPoint";
 export * as Transitions from "./transitions";

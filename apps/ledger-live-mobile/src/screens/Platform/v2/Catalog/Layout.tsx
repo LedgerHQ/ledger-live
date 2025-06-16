@@ -2,7 +2,7 @@ import { Flex, ScrollContainer, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import { StyleSheet } from "react-native";
 import Animated, {
-  Extrapolate,
+  Extrapolation,
   interpolate,
   useAnimatedScrollHandler,
   useAnimatedStyle,
@@ -48,7 +48,7 @@ export function Layout({
   const opacityStyle = useAnimatedStyle(() => {
     const opacity = isTitleVisible
       ? 1
-      : interpolate(scrollY.value, [0, 76], [0, 1], Extrapolate.CLAMP);
+      : interpolate(scrollY.value, [0, 76], [0, 1], Extrapolation.CLAMP);
 
     return {
       opacity,

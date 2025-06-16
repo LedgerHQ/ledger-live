@@ -1,50 +1,49 @@
-import { ExchangeRate, SwapDataType } from "@ledgerhq/live-common/exchange/swap/types";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as EvmTransaction, GasOptions } from "@ledgerhq/coin-evm/types/index";
+import { ExchangeRate, SwapDataType } from "@ledgerhq/live-common/exchange/swap/types";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
-import type {
-  DetailsSwapParamList,
-  DefaultAccountSwapParamList,
-  SwapSelectCurrency,
-  SwapPendingOperation,
-  SwapOperation,
-} from "../../../screens/Swap/types";
-import type {
-  CardanoAccount,
-  Transaction as CardanoTransaction,
-} from "@ledgerhq/live-common/families/cardano/types";
-import type {
-  Transaction as BitcoinTransaction,
-  TransactionStatus as BitcoinTransactionStatus,
-} from "@ledgerhq/live-common/families/bitcoin/types";
 import type {
   AlgorandAccount,
   AlgorandTransaction,
   TransactionStatus as AlgorandTransactionStatus,
 } from "@ledgerhq/live-common/families/algorand/types";
+import type {
+  Transaction as BitcoinTransaction,
+  TransactionStatus as BitcoinTransactionStatus,
+} from "@ledgerhq/live-common/families/bitcoin/types";
+import type {
+  CardanoAccount,
+  Transaction as CardanoTransaction,
+} from "@ledgerhq/live-common/families/cardano/types";
+import type { Transaction as CasperTransaction } from "@ledgerhq/live-common/families/casper/types";
 import {
   CosmosAccount,
   Transaction as CosmosTransaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import {
-  CryptoOrgAccount,
-  Transaction as CryptoOrgTransaction,
-} from "@ledgerhq/live-common/families/crypto_org/types";
+import { Transaction as HederaTransaction } from "@ledgerhq/live-common/families/hedera/types";
+import type { Transaction as ICPTransaction } from "@ledgerhq/live-common/families/internet_computer/types";
 import {
   SolanaAccount,
   Transaction as SolanaTransaction,
 } from "@ledgerhq/live-common/families/solana/types";
-import { Transaction as HederaTransaction } from "@ledgerhq/live-common/families/hedera/types";
-import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/xrp/types";
-import type { Transaction as ICPTransaction } from "@ledgerhq/live-common/families/internet_computer/types";
-import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
+import type { Transaction as MinaTransaction } from "@ledgerhq/live-common/families/mina/types";
 import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/families/stacks/types";
-import type { Transaction as CasperTransaction } from "@ledgerhq/live-common/families/casper/types";
+import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import type { Transaction as TonTransaction } from "@ledgerhq/live-common/families/ton/types";
-import BigNumber from "bignumber.js";
+import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/xrp/types";
 import { Account, Operation } from "@ledgerhq/types-live";
-import { ScreenName } from "~/const";
+import { NavigatorScreenParams } from "@react-navigation/core";
+import BigNumber from "bignumber.js";
+import { AssetSelectionNavigatorParamsList } from "LLM/features/AssetSelection/types";
+import { NavigatorName, ScreenName } from "~/const";
+import type {
+  DefaultAccountSwapParamList,
+  DetailsSwapParamList,
+  SwapOperation,
+  SwapPendingOperation,
+  SwapSelectCurrency,
+} from "../../../screens/Swap/types";
 
 type Target = "from" | "to";
 
@@ -86,6 +85,7 @@ export type SwapNavigatorParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
+  [ScreenName.SwapHistory]: undefined;
   [ScreenName.SwapPendingOperation]: SwapPendingOperation;
   [ScreenName.SwapOperationDetails]: {
     swapOperation: SwapOperation;
@@ -168,19 +168,6 @@ export type SwapNavigatorParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
-  [ScreenName.XrpEditFee]: {
-    accountId: string;
-    parentId?: string;
-    transaction: RippleTransaction;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
-  };
   [ScreenName.StellarEditCustomFees]: {
     accountId: string;
     parentId?: string;
@@ -199,20 +186,6 @@ export type SwapNavigatorParamList = {
     parentId?: string;
     account: CosmosAccount;
     transaction: CosmosTransaction;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
-  };
-  [ScreenName.CryptoOrgEditMemo]: {
-    accountId: string;
-    parentId?: string;
-    account: CryptoOrgAccount;
-    transaction: CryptoOrgTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
@@ -283,7 +256,14 @@ export type SwapNavigatorParamList = {
     account: Account;
     parentId?: string;
     transaction: ICPTransaction;
-    currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SignTransactionSummary;
+    currentNavigation: ScreenName.SignTransactionSummary;
+  };
+  [ScreenName.MinaEditMemo]: {
+    accountId: string;
+    account: Account;
+    parentId?: string;
+    transaction: MinaTransaction;
+    currentNavigation: ScreenName.SignTransactionSummary;
   };
 
   [ScreenName.StacksEditMemo]: {
@@ -329,4 +309,7 @@ export type SwapNavigatorParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
+  [NavigatorName.AssetSelection]?: Partial<
+    NavigatorScreenParams<AssetSelectionNavigatorParamsList>
+  >;
 };

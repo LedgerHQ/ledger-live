@@ -10,4 +10,5 @@ export default {
   infinityPassPart02Light: require("./infinityPassLight/infinityPassPart02.mp4"),
   customLockScreenBannerLight: require("./customLockScreenBanner/customLockScreenBannerLight.mp4"),
   customLockScreenBannerDark: require("./customLockScreenBanner/customLockScreenBannerDark.mp4"),
+  flex: require("./flex/BasicFlex.mp4"),
 };

@@ -1,4 +1,4 @@
-name: Tag Stale PRs and Issues
+name: "[CI] - Stale Issues and PRs - Scheduled"
 on:
   schedule:
     - cron: "20 4 * * *"

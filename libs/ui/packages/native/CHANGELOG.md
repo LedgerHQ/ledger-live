@@ -1,5 +1,273 @@
 # @ledgerhq/native-ui
 
+## 0.35.0
+
+### Minor Changes
+
+- [#10352](https://github.com/LedgerHQ/ledger-live/pull/10352) [`e604a8b`](https://github.com/LedgerHQ/ledger-live/commit/e604a8b0839d7a5dd4e137092605ea3c253fea49) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: P1 bugs on Large Mover
+
+- [#10328](https://github.com/LedgerHQ/ledger-live/pull/10328) [`ff0a516`](https://github.com/LedgerHQ/ledger-live/commit/ff0a516c54ac1bed9d0da70d2531b7f535afad2e) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: card scollable and buttons clickable on android
+
+## 0.35.0-next.0
+
+### Minor Changes
+
+- [#10352](https://github.com/LedgerHQ/ledger-live/pull/10352) [`e604a8b`](https://github.com/LedgerHQ/ledger-live/commit/e604a8b0839d7a5dd4e137092605ea3c253fea49) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: P1 bugs on Large Mover
+
+- [#10328](https://github.com/LedgerHQ/ledger-live/pull/10328) [`ff0a516`](https://github.com/LedgerHQ/ledger-live/commit/ff0a516c54ac1bed9d0da70d2531b7f535afad2e) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: card scollable and buttons clickable on android
+
+## 0.34.1
+
+### Patch Changes
+
+- Updated dependencies [[`0c268fb`](https://github.com/LedgerHQ/ledger-live/commit/0c268fbc9d08f98b2b383fde36d77e92b5953675)]:
+  - @ledgerhq/crypto-icons-ui@1.14.0
+
+## 0.34.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`0c268fb`](https://github.com/LedgerHQ/ledger-live/commit/0c268fbc9d08f98b2b383fde36d77e92b5953675)]:
+  - @ledgerhq/crypto-icons-ui@1.14.0-next.0
+
+## 0.34.0
+
+### Minor Changes
+
+- [#10071](https://github.com/LedgerHQ/ledger-live/pull/10071) [`2ff4c03`](https://github.com/LedgerHQ/ledger-live/commit/2ff4c03ca7d8232563141b9531b1359087e57c59) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Generic Card for Large Mover
+
+## 0.34.0-next.0
+
+### Minor Changes
+
+- [#10071](https://github.com/LedgerHQ/ledger-live/pull/10071) [`2ff4c03`](https://github.com/LedgerHQ/ledger-live/commit/2ff4c03ca7d8232563141b9531b1359087e57c59) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Generic Card for Large Mover
+
+## 0.33.1
+
+### Patch Changes
+
+- Updated dependencies [[`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431), [`a4b6b29`](https://github.com/LedgerHQ/ledger-live/commit/a4b6b29df7ef74129345278cf07942619b36435b)]:
+  - @ledgerhq/crypto-icons-ui@1.13.0
+  - @ledgerhq/icons-ui@0.10.0
+
+## 0.33.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431), [`a4b6b29`](https://github.com/LedgerHQ/ledger-live/commit/a4b6b29df7ef74129345278cf07942619b36435b)]:
+  - @ledgerhq/crypto-icons-ui@1.13.0-next.0
+  - @ledgerhq/icons-ui@0.10.0-next.0
+
+## 0.33.0
+
+### Minor Changes
+
+- [#9870](https://github.com/LedgerHQ/ledger-live/pull/9870) [`088b402`](https://github.com/LedgerHQ/ledger-live/commit/088b4025b6244565e581a61129854d294befc6c6) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Feat: Large Mover TimeFrame Component
+
+- [#9950](https://github.com/LedgerHQ/ledger-live/pull/9950) [`7d28d6d`](https://github.com/LedgerHQ/ledger-live/commit/7d28d6d7dbf5cbc2aad1ae46c8c4e5f226971384) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Large Mover Footer Component
+
+## 0.33.0-next.0
+
+### Minor Changes
+
+- [#9870](https://github.com/LedgerHQ/ledger-live/pull/9870) [`088b402`](https://github.com/LedgerHQ/ledger-live/commit/088b4025b6244565e581a61129854d294befc6c6) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Feat: Large Mover TimeFrame Component
+
+- [#9950](https://github.com/LedgerHQ/ledger-live/pull/9950) [`7d28d6d`](https://github.com/LedgerHQ/ledger-live/commit/7d28d6d7dbf5cbc2aad1ae46c8c4e5f226971384) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Large Mover Footer Component
+
+## 0.32.0
+
+### Minor Changes
+
+- [#9889](https://github.com/LedgerHQ/ledger-live/pull/9889) [`8b417e4`](https://github.com/LedgerHQ/ledger-live/commit/8b417e453bc28395b88864faee37c8839ee49bc8) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Feat: Large Mover Performance Component
+
+### Patch Changes
+
+- Updated dependencies [[`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81)]:
+  - @ledgerhq/crypto-icons-ui@1.12.0
+
+## 0.32.0-next.0
+
+### Minor Changes
+
+- [#9889](https://github.com/LedgerHQ/ledger-live/pull/9889) [`8b417e4`](https://github.com/LedgerHQ/ledger-live/commit/8b417e453bc28395b88864faee37c8839ee49bc8) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Feat: Large Mover Performance Component
+
+### Patch Changes
+
+- Updated dependencies [[`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81)]:
+  - @ledgerhq/crypto-icons-ui@1.12.0-next.0
+
+## 0.31.1
+
+### Patch Changes
+
+- Updated dependencies [[`eea82e7`](https://github.com/LedgerHQ/ledger-live/commit/eea82e7993c27eacdbaba2f5418df64c75db3f2d), [`a656e47`](https://github.com/LedgerHQ/ledger-live/commit/a656e47c1dc3ac8b578debf9cf80eab370c7086f)]:
+  - @ledgerhq/icons-ui@0.9.0
+  - @ledgerhq/crypto-icons-ui@1.11.0
+
+## 0.31.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`eea82e7`](https://github.com/LedgerHQ/ledger-live/commit/eea82e7993c27eacdbaba2f5418df64c75db3f2d), [`a656e47`](https://github.com/LedgerHQ/ledger-live/commit/a656e47c1dc3ac8b578debf9cf80eab370c7086f)]:
+  - @ledgerhq/icons-ui@0.9.0-next.0
+  - @ledgerhq/crypto-icons-ui@1.11.0-next.0
+
+## 0.31.0
+
+### Minor Changes
+
+- [#9505](https://github.com/LedgerHQ/ledger-live/pull/9505) [`be1b3ad`](https://github.com/LedgerHQ/ledger-live/commit/be1b3ad53fa400d24165873e9b0103a8c3063e39) Thanks [@thesan](https://github.com/thesan)! - Add the banner component to use for the LNS upsell campaign
+
+- [#9506](https://github.com/LedgerHQ/ledger-live/pull/9506) [`4599711`](https://github.com/LedgerHQ/ledger-live/commit/459971108e07785b4eabecca4d2185d50ddecc58) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Bigger line height to display thai properly
+
+## 0.31.0-next.0
+
+### Minor Changes
+
+- [#9505](https://github.com/LedgerHQ/ledger-live/pull/9505) [`be1b3ad`](https://github.com/LedgerHQ/ledger-live/commit/be1b3ad53fa400d24165873e9b0103a8c3063e39) Thanks [@thesan](https://github.com/thesan)! - Add the banner component to use for the LNS upsell campaign
+
+- [#9506](https://github.com/LedgerHQ/ledger-live/pull/9506) [`4599711`](https://github.com/LedgerHQ/ledger-live/commit/459971108e07785b4eabecca4d2185d50ddecc58) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Bigger line height to display thai properly
+
+## 0.30.0
+
+### Minor Changes
+
+- [#9477](https://github.com/LedgerHQ/ledger-live/pull/9477) [`a9bc76f`](https://github.com/LedgerHQ/ledger-live/commit/a9bc76f64ce80ed60b943f1daaa088fd410f856c) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fix Thai high prio UI issues
+
+### Patch Changes
+
+- Updated dependencies [[`3ed81b0`](https://github.com/LedgerHQ/ledger-live/commit/3ed81b059f9d8755b58a966bd6647dd34a840378)]:
+  - @ledgerhq/crypto-icons-ui@1.10.0
+
+## 0.30.0-next.0
+
+### Minor Changes
+
+- [#9477](https://github.com/LedgerHQ/ledger-live/pull/9477) [`a9bc76f`](https://github.com/LedgerHQ/ledger-live/commit/a9bc76f64ce80ed60b943f1daaa088fd410f856c) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fix Thai high prio UI issues
+
+### Patch Changes
+
+- Updated dependencies [[`3ed81b0`](https://github.com/LedgerHQ/ledger-live/commit/3ed81b059f9d8755b58a966bd6647dd34a840378)]:
+  - @ledgerhq/crypto-icons-ui@1.10.0-next.0
+
+## 0.29.1
+
+### Patch Changes
+
+- Updated dependencies [[`0a59343`](https://github.com/LedgerHQ/ledger-live/commit/0a59343b591dab4e886c21cb47f7339231997331)]:
+  - @ledgerhq/crypto-icons-ui@1.9.0
+
+## 0.29.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`0a59343`](https://github.com/LedgerHQ/ledger-live/commit/0a59343b591dab4e886c21cb47f7339231997331)]:
+  - @ledgerhq/crypto-icons-ui@1.9.0-next.0
+
+## 0.29.0
+
+### Minor Changes
+
+- [#9135](https://github.com/LedgerHQ/ledger-live/pull/9135) [`653356d`](https://github.com/LedgerHQ/ledger-live/commit/653356d8a4205069a17e41ce9f0212749d35afdd) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Force the initial tab to display for tabSelector. Store the value of the last tab for portfolioAssets accountsList
+
+## 0.29.0-next.0
+
+### Minor Changes
+
+- [#9135](https://github.com/LedgerHQ/ledger-live/pull/9135) [`653356d`](https://github.com/LedgerHQ/ledger-live/commit/653356d8a4205069a17e41ce9f0212749d35afdd) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Force the initial tab to display for tabSelector. Store the value of the last tab for portfolioAssets accountsList
+
+## 0.28.0
+
+### Minor Changes
+
+- [#8962](https://github.com/LedgerHQ/ledger-live/pull/8962) [`4958893`](https://github.com/LedgerHQ/ledger-live/commit/49588934da0f23c668d4244999d0c1842cf4a632) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix tab selector to use a key instead of a string
+
+## 0.28.0-next.0
+
+### Minor Changes
+
+- [#8962](https://github.com/LedgerHQ/ledger-live/pull/8962) [`4958893`](https://github.com/LedgerHQ/ledger-live/commit/49588934da0f23c668d4244999d0c1842cf4a632) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix tab selector to use a key instead of a string
+
+## 0.27.1
+
+### Patch Changes
+
+- Updated dependencies [[`d98a964`](https://github.com/LedgerHQ/ledger-live/commit/d98a96476c3d44eab1575f6c7c58ec03b5daf890), [`c2d24cd`](https://github.com/LedgerHQ/ledger-live/commit/c2d24cd0299ea04e39306279b6f833696bc4f4fb)]:
+  - @ledgerhq/crypto-icons-ui@1.8.0
+
+## 0.27.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`d98a964`](https://github.com/LedgerHQ/ledger-live/commit/d98a96476c3d44eab1575f6c7c58ec03b5daf890), [`c2d24cd`](https://github.com/LedgerHQ/ledger-live/commit/c2d24cd0299ea04e39306279b6f833696bc4f4fb)]:
+  - @ledgerhq/crypto-icons-ui@1.8.0-next.0
+
+## 0.27.0
+
+### Minor Changes
+
+- [#8663](https://github.com/LedgerHQ/ledger-live/pull/8663) [`8223e21`](https://github.com/LedgerHQ/ledger-live/commit/8223e21e5828a7735daf0a6684c1e4cab9dec892) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Create a new tabSelector component inside native ui. Rename the existing one in DrawerTabSelector since it's used only in a drawer. Integration of the new assets/accounts lists in wallet screen
+
+### Patch Changes
+
+- Updated dependencies [[`1fa754d`](https://github.com/LedgerHQ/ledger-live/commit/1fa754deed730bb3dd8d05cb4e83e8c8d1b33ad1)]:
+  - @ledgerhq/crypto-icons-ui@1.7.0
+
+## 0.27.0-next.0
+
+### Minor Changes
+
+- [#8663](https://github.com/LedgerHQ/ledger-live/pull/8663) [`8223e21`](https://github.com/LedgerHQ/ledger-live/commit/8223e21e5828a7735daf0a6684c1e4cab9dec892) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Create a new tabSelector component inside native ui. Rename the existing one in DrawerTabSelector since it's used only in a drawer. Integration of the new assets/accounts lists in wallet screen
+
+### Patch Changes
+
+- Updated dependencies [[`1fa754d`](https://github.com/LedgerHQ/ledger-live/commit/1fa754deed730bb3dd8d05cb4e83e8c8d1b33ad1)]:
+  - @ledgerhq/crypto-icons-ui@1.7.0-next.0
+
+## 0.26.1
+
+### Patch Changes
+
+- Updated dependencies [[`be83cab`](https://github.com/LedgerHQ/ledger-live/commit/be83cabecda649b52cb23be0d1f4ec822629b112)]:
+  - @ledgerhq/ui-shared@0.3.0
+
+## 0.26.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`be83cab`](https://github.com/LedgerHQ/ledger-live/commit/be83cabecda649b52cb23be0d1f4ec822629b112)]:
+  - @ledgerhq/ui-shared@0.3.0-next.0
+
+## 0.26.0
+
+### Minor Changes
+
+- [#8322](https://github.com/LedgerHQ/ledger-live/pull/8322) [`a86b032`](https://github.com/LedgerHQ/ledger-live/commit/a86b0327e6b42f44119a645edc999cb08731c7e7) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade react-native-reanimated to 3.16.1
+
+## 0.26.0-next.0
+
+### Minor Changes
+
+- [#8322](https://github.com/LedgerHQ/ledger-live/pull/8322) [`a86b032`](https://github.com/LedgerHQ/ledger-live/commit/a86b0327e6b42f44119a645edc999cb08731c7e7) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade react-native-reanimated to 3.16.1
+
+## 0.25.3
+
+### Patch Changes
+
+- [#8167](https://github.com/LedgerHQ/ledger-live/pull/8167) [`9834c5e`](https://github.com/LedgerHQ/ledger-live/commit/9834c5ead567dea37b9ba7e85470dead48fe4844) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add new AnimatedInputSelect in DS
+
+- Updated dependencies [[`2013b0f`](https://github.com/LedgerHQ/ledger-live/commit/2013b0f23d7f5bccff58dfd93fd45333194b8ae0), [`63e5392`](https://github.com/LedgerHQ/ledger-live/commit/63e5392a108f1bec7cfc9c413db1550e7b5c9a25)]:
+  - @ledgerhq/crypto-icons-ui@1.6.0
+
+## 0.25.3-next.0
+
+### Patch Changes
+
+- [#8167](https://github.com/LedgerHQ/ledger-live/pull/8167) [`9834c5e`](https://github.com/LedgerHQ/ledger-live/commit/9834c5ead567dea37b9ba7e85470dead48fe4844) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add new AnimatedInputSelect in DS
+
+- Updated dependencies [[`2013b0f`](https://github.com/LedgerHQ/ledger-live/commit/2013b0f23d7f5bccff58dfd93fd45333194b8ae0), [`63e5392`](https://github.com/LedgerHQ/ledger-live/commit/63e5392a108f1bec7cfc9c413db1550e7b5c9a25)]:
+  - @ledgerhq/crypto-icons-ui@1.6.0-next.0
+
 ## 0.25.2
 
 ### Patch Changes

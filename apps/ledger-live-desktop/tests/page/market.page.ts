@@ -29,8 +29,9 @@ export class MarketPage extends AppPage {
   @step("Switch market range for $0")
   async switchMarketRange(range: string) {
     await this.marketRangeSelect.click();
-    // TODO: For some reason need to hack selects like that
-    await this.page.click(`text=${range}`);
+    await this.page.click(`#react-select-3-listbox >> text=${range}`);
+    // NOTE: this.page.click(`text=${range}`);
+    // won't work on 7th row if the coin starts with d (e.g. "dogecoin")
   }
 
   @step("Toggle star filter")
@@ -40,7 +41,7 @@ export class MarketPage extends AppPage {
 
   @step("Open coin page for $0")
   async openCoinPage(ticker: string) {
-    await this.coinRow(ticker).click();
+    await this.coinRow(ticker.toLowerCase()).click();
     await this.coinPageContainer.waitFor({ state: "attached" });
     await this.loadingPlaceholder.first().waitFor({ state: "detached" });
   }
@@ -68,22 +69,10 @@ export class MarketPage extends AppPage {
     await this.swapButton("btc").waitFor({ state: "attached" }); // swap buttons are displayed few seconds after
   }
 
-  @step("Wait for search bar to be empty")
-  async waitForSearchBarToBeEmpty() {
-    await this.page.waitForFunction(async () => {
-      return (await this.searchInput?.inputValue()) === "";
-    });
-  }
-
   @step("Start stake flow for $0")
   async startStakeFlowByTicker(ticker: string) {
     await this.stakeButton(ticker).click();
     await this.page.getByText("choose account").waitFor({ state: "visible" });
     await this.page.getByText("Add account").waitFor({ state: "visible" });
-  }
-
-  @step("Click on stake button for $0")
-  async stakeButtonClick(ticker: string) {
-    await this.stakeButton(ticker.toLowerCase()).click();
   }
 }

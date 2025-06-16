@@ -17,6 +17,7 @@ export interface Input {
   output_hash: string;
   output_index: number;
   sequence: number;
+  block_height?: number | null;
 }
 
 export interface Output {
@@ -50,6 +51,7 @@ export interface IStorage {
   getLastUnconfirmedTx(): TX | undefined;
   getHighestBlockHeightAndHash(): Block | null;
   getTx(address: string, txId: string): TX | undefined;
+  getTxs(): TX[];
   getUniquesAddresses(addressesFilter: { account?: number; index?: number }): Address[];
   removeTxs(txsFilter: { account: number; index: number }): void;
   removePendingTxs(txsFilter: { account: number; index: number }): void;

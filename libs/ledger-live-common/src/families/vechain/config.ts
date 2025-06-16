@@ -1,12 +1,15 @@
-import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
+import { CurrencyLiveConfigDefinition } from "../../config";
 
-export const vechainConfig: Record<string, ConfigInfo> = {
+const vechainConfig: CurrencyLiveConfigDefinition = {
   config_currency_vechain: {
     type: "object",
     default: {
-      status: {
-        type: "active",
+      status: { type: "active" },
+      infra: {
+        API_VECHAIN_THOREST: "https://vechain.coin.ledger.com",
       },
     },
   },
 };
+
+export { vechainConfig };

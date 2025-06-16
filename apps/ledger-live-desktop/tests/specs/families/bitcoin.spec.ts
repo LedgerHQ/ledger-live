@@ -18,7 +18,7 @@ test("Send flow", async ({ page }) => {
   const sendModal = new SendModal(page);
 
   await test.step("can open send modal and use a qr code from camera", async () => {
-    await layout.openSendModal();
+    await layout.openSendModalFromSideBar();
     await sendModal.container.waitFor({ state: "visible" });
     const sendButtonLoader = sendModal.container
       .locator("id=send-recipient-continue-button")

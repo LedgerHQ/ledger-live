@@ -5,13 +5,12 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { AppResult, createAction } from "@ledgerhq/live-common/hw/actions/app";
+import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { urls } from "~/config/urls";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import Modal from "~/renderer/components/Modal";
 import ModalBody from "~/renderer/components/Modal/ModalBody";
 import Box from "~/renderer/components/Box";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { useSelector } from "react-redux";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Text from "~/renderer/components/Text";
@@ -20,13 +19,13 @@ import { Trans, useTranslation } from "react-i18next";
 import ReadOnlyAddressField from "~/renderer/components/ReadOnlyAddressField";
 import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
 import useTheme from "~/renderer/hooks/useTheme";
-import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import Button from "~/renderer/components/Button";
 import Alert from "~/renderer/components/Alert";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Receive2NoDevice from "~/renderer/components/Receive2NoDevice";
 import { firstValueFrom } from "rxjs";
 import { useAccountName } from "~/renderer/reducers/wallet";
+import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
 
 export const Separator = styled.div`
   &::after {
@@ -36,7 +35,6 @@ export const Separator = styled.div`
     padding: 0 15px;
   }
 `;
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 const Receive1ShareAddress = ({ name, address }: { name: string; address: string }) => {
   return (
     <>
@@ -154,6 +152,7 @@ export type DataProp = {
   onResult: (c: AccountLike, b: Account | undefined | null, a: AppResult | boolean) => void;
   verifyAddress?: boolean;
   onCancel?: (error: Error) => void;
+  onClose?: () => void;
   flow?: string;
 };
 type Props = {
@@ -173,6 +172,7 @@ const Root = ({ data, onClose, skipDevice, flow }: Props) => {
   const { account, parentAccount, onResult, verifyAddress } = data;
   const mainAccount = getMainAccount(account, parentAccount);
   const tokenCurrency = account.type === "TokenAccount" ? account.token : undefined;
+  const action = useConnectAppAction();
   const handleResult = useCallback(
     (res: AppResult) => {
       if (!verifyAddress) {
@@ -298,13 +298,13 @@ const BuyCryptoModal = ({
     />
   );
 };
-const BuyCrypto = ({ flow }: { flow?: string }) => {
+const BuyCrypto = ({ flow, onClose }: { flow?: string; onClose?: () => void }) => {
   const render = useCallback(
     ({ data, onClose }: { data: DataProp; onClose: () => void }) => (
       <BuyCryptoModal data={data} onClose={onClose} flow={flow} />
     ),
     [flow],
   );
-  return <Modal name="MODAL_EXCHANGE_CRYPTO_DEVICE" centered render={render} />;
+  return <Modal name="MODAL_EXCHANGE_CRYPTO_DEVICE" centered render={render} onClose={onClose} />;
 };
 export default BuyCrypto;

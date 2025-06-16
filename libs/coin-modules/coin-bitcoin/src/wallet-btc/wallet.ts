@@ -125,7 +125,8 @@ class BitcoinLikeWallet {
             excludeUtxo.hash === utxo.output_hash && excludeUtxo.outputIndex === utxo.output_index,
         )
       ) {
-        // we can use either non pending utxo or change utxo
+        // we can use non-pending utxos or change utxo (whether pending or not)
+        // NOTE: check ledger-live-common/src/families/bitcoin/docs/RBF.md for more details
         if (changeAddresses.includes(utxo.address) || utxo.block_height !== null) {
           usableUtxoCount++;
           balance = balance.plus(utxo.value);
@@ -215,6 +216,7 @@ class BitcoinLikeWallet {
       onDeviceSignatureGranted,
       onDeviceStreaming,
     } = params;
+    const blockHeight = fromAccount.xpub.currentBlockHeight;
     let length = txInfo.outputs.reduce((sum, output) => {
       return sum + 8 + output.script.length + 1;
     }, 1);
@@ -251,6 +253,7 @@ class BitcoinLikeWallet {
       number,
       string | null | undefined,
       number | null | undefined,
+      number | null | undefined, // NOTE: blockheight
     ][];
     const inputs: Inputs = txInfo.inputs.map(i => {
       log("hw", `splitTransaction`, {
@@ -264,6 +267,7 @@ class BitcoinLikeWallet {
         i.output_index,
         null,
         i.sequence,
+        i.block_height,
       ];
     });
 
@@ -273,6 +277,7 @@ class BitcoinLikeWallet {
       inputs,
       associatedKeysets,
       outputScriptHex,
+      blockHeight,
       ...(params.lockTime && { lockTime: params.lockTime }),
       ...(params.sigHashType && { sigHashType: params.sigHashType }),
       ...(params.segwit && { segwit: params.segwit }),
@@ -287,6 +292,7 @@ class BitcoinLikeWallet {
       inputs,
       associatedKeysets,
       outputScriptHex,
+      blockHeight,
       ...(params.lockTime && { lockTime: params.lockTime }),
       ...(params.sigHashType && { sigHashType: params.sigHashType }),
       ...(params.segwit && { segwit: params.segwit }),

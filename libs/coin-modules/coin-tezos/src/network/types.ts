@@ -39,23 +39,54 @@ type CommonOperationType = {
 /**
  * Source: https://api.tzkt.io/#operation/Accounts_GetOperations
  */
+export type APITransactionType = CommonOperationType & {
+  type: "transaction";
+  amount: number;
+  initiator: { address: string } | undefined | null;
+  sender: { address: string } | undefined | null;
+  target: { address: string } | undefined | null;
+  counter: number;
+};
+export function isAPITransactionType(op: APIOperation): op is APITransactionType {
+  return op.type === "transaction";
+}
+
+export type APIDelegationType = CommonOperationType & {
+  type: "delegation";
+  amount: number;
+  sender: { address: string } | undefined | null;
+  counter: number;
+  prevDelegate: { address: string } | undefined | null;
+  newDelegate: { address: string } | undefined | null;
+};
+export function isAPIDelegationType(op: APIOperation): op is APIDelegationType {
+  return op.type === "delegation";
+}
+
+export type APIRevealType = CommonOperationType & {
+  type: "reveal";
+  sender: { address: string } | undefined | null;
+  counter: number;
+};
+export function isAPIRevealType(op: APIOperation): op is APIRevealType {
+  return op.type === "reveal";
+}
+
+// https://api.tzkt.io/#operation/Accounts_GetOperations
+export type AccountsGetOperationsOptions = {
+  lastId?: number; // used as a pagination cursor to fetch more transactions
+  limit?: number;
+  sort?: "Descending" | "Ascending";
+  // the minimum height of the block the operation is in
+  "level.ge": number;
+};
+
 export type APIOperation =
-  | (CommonOperationType & {
-      type: "transaction";
-      amount: number;
-      initiator: { address: string } | undefined | null;
-      sender: { address: string } | undefined | null;
-      target: { address: string } | undefined | null;
-      counter: number;
-    })
+  | APITransactionType
   | (CommonOperationType & {
       type: "reveal";
     })
-  | (CommonOperationType & {
-      type: "delegation";
-      prevDelegate: { address: string } | undefined | null;
-      newDelegate: { address: string } | undefined | null;
-    })
+  | APIDelegationType
   | (CommonOperationType & {
       type: "activation";
       balance: number;

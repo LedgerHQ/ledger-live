@@ -29,6 +29,7 @@ const FabAssetActionsComponent: React.FC<Props> = ({ currency, accounts, default
               numColumns={2}
               id="asset_two_columns"
               key="asset_two_columns"
+              testID="asset-quick-action-button"
             />
           ) : (
             <QuickActionList
@@ -36,6 +37,7 @@ const FabAssetActionsComponent: React.FC<Props> = ({ currency, accounts, default
               numColumns={3}
               id="asset_three_columns"
               key="asset_three_columns"
+              testID="asset-quick-action-button"
             />
           )}
         </>

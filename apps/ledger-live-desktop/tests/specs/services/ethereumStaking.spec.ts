@@ -25,6 +25,7 @@ test.use({
       enabled: true,
       params: {
         list: ["ethereum", "solana", "tezos", "polkadot", "tron", "cosmos", "osmo", "celo", "near"],
+        redirects: {},
       },
     },
     portfolioExchangeBanner: {
@@ -39,6 +40,8 @@ test.use({
             liveAppId: "kiln",
             supportLink: "https://www.kiln.fi",
             icon: "Kiln:provider",
+            rewardsStrategy: "auto-compounded",
+            min: "32",
             queryParams: {
               focus: "pooled",
             },
@@ -48,6 +51,7 @@ test.use({
             liveAppId: "kiln",
             supportLink: "https://www.kiln.fi",
             icon: "Kiln:provider",
+            rewardsStrategy: "validator",
             queryParams: {
               focus: "dedicated",
             },
@@ -115,16 +119,16 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   });
 
   await test.step("choose ethereum account", async () => {
-    await drawer.selectAccount("Ethereum", 1);
+    await drawer.selectAccount("Ethereum", 0);
     await expect.soft(page).toHaveScreenshot("choose-stake-provider-modal-from-portfolio-page.png");
   });
 
-  await test.step("choose Kiln", async () => {
+  await test.step("choose Kiln - trigger analytics", async () => {
     const analyticsPromise = analytics.waitForTracking({
       event: "button_clicked2",
       properties: {
         button: "kiln",
-        path: "account/mock:1:ethereum:true_ethereum_1:",
+        path: "account/mock:1:ethereum:true_ethereum_0:",
         modal: "stake",
         flow: "stake",
         value: "/platform/kiln",
@@ -132,7 +136,10 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
     });
     await delegate.chooseStakeProvider("kiln");
     await analyticsPromise;
-    await liveAppWebview.waitForCorrectTextInWebview("Ethereum 2");
+  });
+
+  await test.step("wait for Kiln dapp to load", async () => {
+    await liveAppWebview.waitForCorrectTextInWebview("Ethereum 1");
     const dappURL = await liveAppWebview.getLiveAppDappURL();
     expect(await liveAppWebview.getLiveAppTitle()).toBe("Kiln");
     expect(dappURL).toContain("?focus=dedicated");
@@ -151,7 +158,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
     await assetPage.startStakeFlow();
     await drawer.waitForDrawerToBeVisible();
     await expect.soft(page).toHaveScreenshot("stake-drawer-opened-from-asset-page.png");
-    await drawer.close();
+    await drawer.closeDrawer();
   });
 
   await test.step("start stake flow via Account page", async () => {
@@ -181,7 +188,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
     await expect
       .soft(page)
       .toHaveScreenshot("stake-drawer-opened-from-market-page.png", maskPartOfItemsInMarket);
-    await drawer.close();
+    await drawer.closeDrawer();
   });
 
   await test.step("Go back to Market page and start stake from ETH coin detail page", async () => {
@@ -191,22 +198,23 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
     await marketCoinPage.startStakeFlow();
     await drawer.waitForDrawerToBeVisible();
     await expect.soft(page).toHaveScreenshot("stake-drawer-opened-from-market-coin-page.png");
-    await drawer.selectAccount("Ethereum", 1);
+    await drawer.selectAccount("Ethereum", 0);
     const analyticsPromise = analytics.waitForTracking({
       event: "button_clicked2",
       properties: {
         button: "kiln_pooling",
-        path: "account/mock:1:ethereum:true_ethereum_0:",
+        path: "market/ethereum",
         modal: "stake",
         flow: "stake",
         value: "/platform/kiln",
       },
     });
     await delegate.chooseStakeProvider("kiln_pooling");
-    await analyticsPromise;
     const dappURL = await liveAppWebview.getLiveAppDappURL();
-    await liveAppWebview.waitForCorrectTextInWebview("Ethereum 1");
+    await liveAppWebview.waitForCorrectTextInWebview("Ethereum 2");
     expect(dappURL).toContain("?focus=pooled");
     expect(await liveAppWebview.getLiveAppTitle()).toBe("Kiln");
+
+    await analyticsPromise;
   });
 });

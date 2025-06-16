@@ -5,6 +5,7 @@ import { HashRouter as Router } from "react-router-dom";
 import { NftMetadataProvider } from "@ledgerhq/live-nft-react";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { getFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-desktop";
 import "./global.css";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/shift-away.css";
@@ -34,6 +35,7 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { AppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
 import { allowDebugReactQuerySelector } from "./reducers/settings";
+import { AppGeoBlocker } from "LLD/features/AppGeoblocker";
 
 const webAuthnModule = require("./build/Release/webauthn_module.node");
 
@@ -94,30 +96,34 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
             <ConnectEnvsToSentry />
             <UpdaterProvider>
               <AppDataStorageProvider>
-                <CountervaluesMarketcap>
-                  <CountervaluesProvider initialState={initialCountervalues}>
-                    <ToastProvider>
-                      <AnnouncementProviderWrapper>
-                        <Router>
-                          <PostOnboardingProviderWrapped>
-                            <PlatformAppProviderWrapper>
-                              <DrawerProvider>
-                                <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
-                                  <StorylyProvider>
-                                    <QueryClientProvider client={queryClient}>
-                                      <Default />
-                                      <ReactQueryDevtoolsProvider />
-                                    </QueryClientProvider>
-                                  </StorylyProvider>
-                                </NftMetadataProvider>
-                              </DrawerProvider>
-                            </PlatformAppProviderWrapper>
-                          </PostOnboardingProviderWrapped>
-                        </Router>
-                      </AnnouncementProviderWrapper>
-                    </ToastProvider>
-                  </CountervaluesProvider>
-                </CountervaluesMarketcap>
+                <DeviceManagementKitProvider>
+                  <CountervaluesMarketcap>
+                    <CountervaluesProvider initialState={initialCountervalues}>
+                      <ToastProvider>
+                        <AnnouncementProviderWrapper>
+                          <Router>
+                            <PostOnboardingProviderWrapped>
+                              <PlatformAppProviderWrapper>
+                                <DrawerProvider>
+                                  <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
+                                    <StorylyProvider>
+                                      <QueryClientProvider client={queryClient}>
+                                        <AppGeoBlocker>
+                                          <Default />
+                                          <ReactQueryDevtoolsProvider />
+                                        </AppGeoBlocker>
+                                      </QueryClientProvider>
+                                    </StorylyProvider>
+                                  </NftMetadataProvider>
+                                </DrawerProvider>
+                              </PlatformAppProviderWrapper>
+                            </PostOnboardingProviderWrapped>
+                          </Router>
+                        </AnnouncementProviderWrapper>
+                      </ToastProvider>
+                    </CountervaluesProvider>
+                  </CountervaluesMarketcap>
+                </DeviceManagementKitProvider>
               </AppDataStorageProvider>
             </UpdaterProvider>
           </FirebaseFeatureFlagsProvider>

@@ -18,6 +18,7 @@ export type ExchangeStartFundParams = {
 export type ExchangeStartSellParams = {
   exchangeType: "SELL";
   provider: string;
+  fromAccountId: string;
 };
 
 export type ExchangeStartSwapParams = {
@@ -39,7 +40,7 @@ export type ExchangeCompleteBaseParams = {
   rawTransaction: RawTransaction;
   hexBinaryPayload: string;
   hexSignature: string;
-  feeStrategy: "SLOW" | "MEDIUM" | "FAST" | "CUSTOM";
+  feeStrategy: "slow" | "medium" | "fast" | "custom";
   tokenCurrency?: string;
 };
 

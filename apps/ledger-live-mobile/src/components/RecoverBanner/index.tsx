@@ -1,5 +1,5 @@
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { Flex, Icon, ProgressLoader, Text } from "@ledgerhq/native-ui";
+import { Flex, Icon, ProgressLoader, Text, Icons } from "@ledgerhq/native-ui";
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useCustomURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
@@ -8,8 +8,20 @@ import { RecoverBannerType } from "./types";
 import { GestureResponderEvent, Linking } from "react-native";
 import { getStoreValue, setStoreValue } from "~/store";
 
+enum LedgerRecoverSubscriptionStateEnum {
+  BACKUP_DEVICE_CONNECTION = "BACKUP_DEVICE_CONNECTION",
+  BACKUP_DONE = "BACKUP_DONE",
+  BACKUP_VERIFY_IDENTITY = "BACKUP_VERIFY_IDENTITY",
+  NO_SUBSCRIPTION = "NO_SUBSCRIPTION",
+  STARGATE_SUBSCRIBE = "STARGATE_SUBSCRIBE",
+}
+
+const maxStepNumber = Object.keys(LedgerRecoverSubscriptionStateEnum).length;
+
 function RecoverBanner() {
-  const [storageData, setStorageData] = useState<string>();
+  const [storageData, setStorageData] = useState<LedgerRecoverSubscriptionStateEnum>(
+    LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION,
+  );
   const [displayBannerData, setDisplayBannerData] = useState<boolean>();
   const [stepNumber, setStepNumber] = useState<number>(0);
 
@@ -19,11 +31,10 @@ function RecoverBanner() {
 
   const bannerIsEnabled = recoverServices?.params?.bannerSubscriptionNotification;
   const protectID = recoverServices?.params?.protectId ?? "protect-prod";
-  const maxStepNumber = 5;
 
-  const recoverUnfinishedOnboardingPath = useCustomURI(
+  const recoverResumeActivatePath = useCustomURI(
     recoverServices,
-    "activate",
+    "resumeActivate",
     "llm-banner-unfinished-onboarding",
     "recover-launch",
   );
@@ -31,7 +42,7 @@ function RecoverBanner() {
   const getStorageSubscriptionState = useCallback(async () => {
     const storage = await getStoreValue("SUBSCRIPTION_STATE", protectID);
     const displayBanner = await getStoreValue("DISPLAY_BANNER", protectID);
-    setStorageData(storage as string);
+    setStorageData(storage as LedgerRecoverSubscriptionStateEnum);
     setDisplayBannerData(displayBanner === "true");
   }, [protectID]);
 
@@ -39,22 +50,22 @@ function RecoverBanner() {
     let recoverBannerWording: RecoverBannerType;
 
     switch (storageData) {
-      case "NO_SUBSCRIPTION":
+      case LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION:
         setStepNumber(1);
         return undefined;
-      case "STARGATE_SUBSCRIBE":
+      case LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE:
         setStepNumber(2);
         recoverBannerWording = t("portfolio.recoverBanner.subscribeDone", { returnObjects: true });
         break;
-      case "BACKUP_VERIFY_IDENTITY":
+      case LedgerRecoverSubscriptionStateEnum.BACKUP_VERIFY_IDENTITY:
         setStepNumber(3);
         recoverBannerWording = t("portfolio.recoverBanner.verifyIdentity", { returnObjects: true });
         break;
-      case "BACKUP_DEVICE_CONNECTION":
+      case LedgerRecoverSubscriptionStateEnum.BACKUP_DEVICE_CONNECTION:
         setStepNumber(4);
         recoverBannerWording = t("portfolio.recoverBanner.connectDevice", { returnObjects: true });
         break;
-      case "BACKUP_DONE":
+      case LedgerRecoverSubscriptionStateEnum.BACKUP_DONE:
         setStepNumber(5);
         return undefined;
       default:
@@ -66,9 +77,9 @@ function RecoverBanner() {
   }, [storageData, t]);
 
   const onRedirectRecover = () => {
-    if (recoverUnfinishedOnboardingPath)
-      Linking.canOpenURL(recoverUnfinishedOnboardingPath).then(() =>
-        Linking.openURL(recoverUnfinishedOnboardingPath),
+    if (recoverResumeActivatePath)
+      Linking.canOpenURL(recoverResumeActivatePath).then(() =>
+        Linking.openURL(recoverResumeActivatePath),
       );
   };
 
@@ -85,8 +96,10 @@ function RecoverBanner() {
 
   if (!bannerIsEnabled || !recoverBannerSelected || !displayBannerData) return null;
 
+  const isWarning = stepNumber > 2;
+
   return (
-    <Flex justifyContent="center" position="relative">
+    <Flex justifyContent="center" position="relative" mt={3}>
       <Flex
         position="relative"
         columnGap={12}
@@ -101,26 +114,23 @@ function RecoverBanner() {
         p={4}
       >
         <Flex alignItems="center" justifyContent="center" width={40}>
-          <ProgressLoader progress={stepNumber / maxStepNumber} radius={20}>
-            <Text display="block" flex={1} textAlign="center" fontSize={2}>
-              {`${stepNumber}/${maxStepNumber - 1}`}
-            </Text>
+          <ProgressLoader
+            progress={stepNumber / maxStepNumber}
+            radius={20}
+            mainColor={isWarning ? colors.palette.warning.c40 : undefined}
+          >
+            {isWarning ? (
+              <Icons.WarningFill color="palette.warning.c40" size="S" />
+            ) : (
+              <Text display="block" flex={1} textAlign="center" fontSize={2}>
+                {`${stepNumber}/${maxStepNumber - 1}`}
+              </Text>
+            )}
           </ProgressLoader>
         </Flex>
         <Flex flex={1} flexDirection="column" overflow="hidden">
           <Text variant="body" fontWeight="bold" width="100%" overflow="hidden">
             {recoverBannerSelected.title}
-          </Text>
-          <Text
-            variant="paragraph"
-            fontWeight="medium"
-            width="100%"
-            overflow="hidden"
-            color={colors.neutral.c80}
-            numberOfLines={1}
-            pb={1}
-          >
-            {recoverBannerSelected.description}
           </Text>
         </Flex>
         <Flex

@@ -33,6 +33,7 @@ type Props = {
   learnMoreUrl?: string;
   learnMoreIsInternal?: boolean;
   learnMoreIcon?: IconType;
+  testID?: string;
 };
 
 const alertPropsByType: Record<
@@ -139,6 +140,7 @@ export default function Alert(props: Props) {
     learnMoreIsInternal = false,
     learnMoreIcon,
     learnMoreTransValues,
+    testID,
   } = props;
 
   const dismissedBanners = useSelector(dismissedBannersSelector);
@@ -164,10 +166,14 @@ export default function Alert(props: Props) {
 
   return !isDismissed ? (
     <BaseAlert {...alertProps}>
-      <Container>
-        {title && <BaseAlert.BodyText>{title}</BaseAlert.BodyText>}
+      <Container testID={testID}>
+        {title && <BaseAlert.BodyText testID={`${testID}-title`}>{title}</BaseAlert.BodyText>}
         {description && (
-          <BaseAlert.BodyText mt={title ? 2 : undefined} mb={hasLearnMore ? 2 : undefined}>
+          <BaseAlert.BodyText
+            testID={`${testID}-description`}
+            mt={title ? 2 : undefined}
+            mb={hasLearnMore ? 2 : undefined}
+          >
             {description}
           </BaseAlert.BodyText>
         )}

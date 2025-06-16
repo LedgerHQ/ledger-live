@@ -39,10 +39,10 @@ import type { CosmosDelegationFlowParamList } from "~/families/cosmos/Delegation
 import type { CosmosRedelegationFlowParamList } from "~/families/cosmos/RedelegationFlow/types";
 import type { CosmosUndelegationFlowParamList } from "~/families/cosmos/UndelegationFlow/types";
 import type { CosmosClaimRewardsFlowParamList } from "~/families/cosmos/ClaimRewardsFlow/types";
-import type { ElrondDelegationFlowParamList } from "~/families/elrond/components/Flows/Delegate/types";
-import type { ElrondUndelegationFlowParamList } from "~/families/elrond/components/Flows/Undelegate/types";
-import type { ElrondClaimRewardsFlowParamList } from "~/families/elrond/components/Flows/Claim/types";
-import type { ElrondWithdrawFlowParamList } from "~/families/elrond/components/Flows/Withdraw/types";
+import type { MultiversXDelegationFlowParamList } from "~/families/multiversx/components/Flows/Delegate/types";
+import type { MultiversXUndelegationFlowParamList } from "~/families/multiversx/components/Flows/Undelegate/types";
+import type { MultiversXClaimRewardsFlowParamList } from "~/families/multiversx/components/Flows/Claim/types";
+import type { MultiversXWithdrawFlowParamList } from "~/families/multiversx/components/Flows/Withdraw/types";
 import type { NearStakingFlowParamList } from "~/families/near/StakingFlow/types";
 import type { NearUnstakingFlowParamList } from "~/families/near/UnstakingFlow/types";
 import type { NearWithdrawingFlowParamList } from "~/families/near/WithdrawingFlow/types";
@@ -52,6 +52,7 @@ import { TezosDelegationFlowParamList } from "~/families/tezos/DelegationFlow/ty
 import { TronVoteFlowParamList } from "~/families/tron/VoteFlow/types";
 import { useTransactionDeviceAction } from "~/hooks/deviceActions";
 import { SignedOperation } from "@ledgerhq/types-live";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
 type Props =
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendConnectDevice>
@@ -87,10 +88,19 @@ type Props =
   | StackNavigatorProps<CosmosRedelegationFlowParamList, ScreenName.CosmosRedelegationConnectDevice>
   | StackNavigatorProps<CosmosUndelegationFlowParamList, ScreenName.CosmosUndelegationConnectDevice>
   | StackNavigatorProps<CosmosClaimRewardsFlowParamList, ScreenName.CosmosClaimRewardsConnectDevice>
-  | StackNavigatorProps<ElrondDelegationFlowParamList, ScreenName.ElrondDelegationConnectDevice>
-  | StackNavigatorProps<ElrondUndelegationFlowParamList, ScreenName.ElrondUndelegationConnectDevice>
-  | StackNavigatorProps<ElrondClaimRewardsFlowParamList, ScreenName.ElrondClaimRewardsConnectDevice>
-  | StackNavigatorProps<ElrondWithdrawFlowParamList, ScreenName.ElrondWithdrawConnectDevice>
+  | StackNavigatorProps<
+      MultiversXDelegationFlowParamList,
+      ScreenName.MultiversXDelegationConnectDevice
+    >
+  | StackNavigatorProps<
+      MultiversXUndelegationFlowParamList,
+      ScreenName.MultiversXUndelegationConnectDevice
+    >
+  | StackNavigatorProps<
+      MultiversXClaimRewardsFlowParamList,
+      ScreenName.MultiversXClaimRewardsConnectDevice
+    >
+  | StackNavigatorProps<MultiversXWithdrawFlowParamList, ScreenName.MultiversXWithdrawConnectDevice>
   | StackNavigatorProps<NearStakingFlowParamList, ScreenName.NearStakingConnectDevice>
   | StackNavigatorProps<NearUnstakingFlowParamList, ScreenName.NearUnstakingConnectDevice>
   | StackNavigatorProps<NearWithdrawingFlowParamList, ScreenName.NearWithdrawingConnectDevice>
@@ -171,6 +181,9 @@ export default function ConnectDevice({ route, navigation }: Props) {
             onSelectDeviceLink={() => navigateToSelectDevice(navigation, route)}
             {...extraProps}
             analyticsPropertyFlow={analyticsPropertyFlow}
+            location={
+              analyticsPropertyFlow === "send" ? HOOKS_TRACKING_LOCATIONS.sendFlow : undefined
+            }
           />
         </SafeAreaView>
       ) : null, // prevent rerendering caused by optimistic update (i.e. exclude account related deps)

@@ -15,6 +15,7 @@ import {
   DISCOVER_STORE_KEY,
   BROWSE_SEARCH_OPTIONS,
   WC_ID,
+  LEDGER_SHOP_ID,
 } from "@ledgerhq/live-common/wallet-api/constants";
 import { DiscoverDB, AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -23,9 +24,10 @@ import { useSearch } from "@ledgerhq/live-common/hooks/useSearch";
 import { useDB } from "../../../db";
 import { NavigatorName, ScreenName } from "~/const";
 import { useBanner } from "~/components/banners/hooks";
-import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
+import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "../../../reducers/settings";
 import { NavigationProps } from "./types";
 import { useManifests } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 
 export function useCatalog(initialCategory?: Categories["selected"] | null) {
   const recentlyUsedDB = useRecentlyUsedDB();
@@ -103,11 +105,14 @@ export type Disclaimer = DisclaimerRaw & {
 
 function useDisclaimer(appendRecentlyUsed: (manifest: AppManifest) => void): Disclaimer {
   const isReadOnly = useSelector(readOnlyModeEnabledSelector);
+  const hasOrderedNano = useSelector(hasOrderedNanoSelector);
+
   const [isDismissed, dismiss] = useBanner(DAPP_DISCLAIMER_ID);
 
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const route = useRoute<NavigationProps["route"]>();
   const { platform, ...params } = route.params ?? {};
+  const { navigateToRebornFlow } = useRebornFlow();
 
   const [manifest, setManifest] = useState<AppManifest>();
   const [isChecked, setIsChecked] = useState(false);
@@ -123,13 +128,21 @@ function useDisclaimer(appendRecentlyUsed: (manifest: AppManifest) => void): Dis
         });
         return;
       }
+
+      const isLedgerShopApp = manifest.id === LEDGER_SHOP_ID;
+
+      if (isReadOnly && !hasOrderedNano && !isLedgerShopApp) {
+        navigateToRebornFlow();
+        return;
+      }
+
       navigation.navigate(ScreenName.PlatformApp, {
         ...params,
         platform: manifest.id,
         name: manifest.name,
       });
     },
-    [navigation, params],
+    [hasOrderedNano, isReadOnly, navigateToRebornFlow, navigation, params],
   );
 
   const toggleCheck = useCallback(() => {

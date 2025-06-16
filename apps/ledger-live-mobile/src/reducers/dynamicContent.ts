@@ -10,6 +10,7 @@ import {
   DynamicContentSetNotificationCardsPayload,
   DynamicContentSetCategoriesCardsPayload,
   DynamicContentSetMobileCardsPayload,
+  DynamicContentSetLandingStickyCtaCardsPayload,
 } from "../actions/types";
 
 export const INITIAL_STATE: DynamicContentState = {
@@ -17,8 +18,10 @@ export const INITIAL_STATE: DynamicContentState = {
   walletCards: [],
   learnCards: [],
   notificationCards: [],
+  landingPageStickyCtaCards: [],
   categoriesCards: [],
   mobileCards: [],
+  isLoading: true,
 };
 
 const handlers: ReducerMap<DynamicContentState, DynamicContentPayload> = {
@@ -42,9 +45,18 @@ const handlers: ReducerMap<DynamicContentState, DynamicContentPayload> = {
     ...state,
     categoriesCards: (action as Action<DynamicContentSetCategoriesCardsPayload>).payload,
   }),
+  [DynamicContentActionTypes.DYNAMIC_CONTENT_SET_LANDING_STICKY_CTA_CARDS]: (state, action) => ({
+    ...state,
+    landingPageStickyCtaCards: (action as Action<DynamicContentSetLandingStickyCtaCardsPayload>)
+      .payload,
+  }),
   [DynamicContentActionTypes.DYNAMIC_CONTENT_SET_MOBILE_CARDS]: (state, action) => ({
     ...state,
     mobileCards: (action as Action<DynamicContentSetMobileCardsPayload>).payload,
+  }),
+  [DynamicContentActionTypes.DYNAMIC_CONTENT_IS_LOADING]: (state, action) => ({
+    ...state,
+    isLoading: (action as unknown as Action<boolean>).payload,
   }),
 };
 
@@ -59,6 +71,12 @@ export const notificationsCardsSelector = (s: State) => s.dynamicContent.notific
 
 export const categoriesCardsSelector = (s: State) => s.dynamicContent.categoriesCards;
 
+export const landingPageStickyCtaCardsSelector = (s: State) =>
+  s.dynamicContent.landingPageStickyCtaCards;
+
 export const mobileCardsSelector = (s: State) => s.dynamicContent.mobileCards;
+
+export const isDynamicContentLoadingSelector: (s: State) => boolean = (s: State) =>
+  s.dynamicContent.isLoading;
 
 export default handleActions<DynamicContentState, DynamicContentPayload>(handlers, INITIAL_STATE);

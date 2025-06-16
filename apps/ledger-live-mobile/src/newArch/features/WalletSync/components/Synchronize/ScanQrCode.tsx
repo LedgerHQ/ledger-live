@@ -6,6 +6,7 @@ import BottomContainer from "./BottomContainer";
 import { CameraView, BarcodeScanningResult } from "expo-camera";
 import ScanTargetSvg from "./ScanTargetSvg";
 import RequiresCameraPermissions from "~/components/RequiresCameraPermissions";
+import CameraPermissionContext from "~/components/RequiresCameraPermissions/CameraPermissionContext";
 
 type Props = {
   onQrCodeScanned: (data: string) => void;
@@ -35,8 +36,15 @@ const ScanQrCode = ({ onQrCodeScanned }: Props) => {
     {
       description: (
         <Text variant="body" flex={1} fontSize={14} color={colors.opacityDefault.c70}>
+          {t("walletSync.synchronize.qrCode.scan.explanation.steps.step2")}
+        </Text>
+      ),
+    },
+    {
+      description: (
+        <Text variant="body" flex={1} fontSize={14} color={colors.opacityDefault.c70}>
           <Trans
-            i18nKey="walletSync.synchronize.qrCode.scan.explanation.steps.step2"
+            i18nKey="walletSync.synchronize.qrCode.scan.explanation.steps.step3"
             components={[
               <Italic key={0} color={colors.opacityDefault.c70} />,
               <Text key={1} flex={1} color={colors.opacityDefault.c30} />,
@@ -48,7 +56,7 @@ const ScanQrCode = ({ onQrCodeScanned }: Props) => {
     {
       description: (
         <Text variant="body" flex={1} fontSize={14} color={colors.opacityDefault.c70}>
-          {t("walletSync.synchronize.qrCode.scan.explanation.steps.step3")}
+          {t("walletSync.synchronize.qrCode.scan.explanation.steps.step4")}
         </Text>
       ),
     },
@@ -72,17 +80,24 @@ const ScanQrCode = ({ onQrCodeScanned }: Props) => {
           justifyContent={"center"}
           alignItems={"center"}
         >
-          <CameraView
-            style={{
-              backgroundColor: colors.neutral.c50,
-              width: 280,
-              height: 280,
-            }}
-            barcodeScannerSettings={{
-              barcodeTypes: ["qr"],
-            }}
-            onBarcodeScanned={onBarCodeScanned}
-          />
+          <CameraPermissionContext.Consumer>
+            {({ permissionGranted }) =>
+              permissionGranted ? (
+                <CameraView
+                  active={permissionGranted ?? false}
+                  style={{
+                    backgroundColor: colors.neutral.c50,
+                    width: 280,
+                    height: 280,
+                  }}
+                  barcodeScannerSettings={{
+                    barcodeTypes: ["qr"],
+                  }}
+                  onBarcodeScanned={onBarCodeScanned}
+                />
+              ) : null
+            }
+          </CameraPermissionContext.Consumer>
           <ScanTargetSvg style={{ position: "absolute" }} />
         </Flex>
         <Flex flexDirection={"row"} alignItems={"center"} columnGap={8}>

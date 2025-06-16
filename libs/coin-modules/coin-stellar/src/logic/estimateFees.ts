@@ -5,6 +5,6 @@ import { fetchBaseFee } from "../network";
  * @see {@link https://developers.stellar.org/docs/learn/fundamentals/fees-resource-limits-metering#inclusion-fee}
  */
 export async function estimateFees(): Promise<bigint> {
-  const fees = await fetchBaseFee();
-  return BigInt(fees.recommendedFee);
+  const baseFee = await fetchBaseFee();
+  return BigInt(baseFee.recommendedFee);
 }

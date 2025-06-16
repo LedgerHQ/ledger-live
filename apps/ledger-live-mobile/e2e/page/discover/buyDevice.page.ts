@@ -1,9 +1,8 @@
-import { web, by } from "detox";
-import { getElementById, isAndroid, tapByElement } from "../../helpers";
-
-const expectedUrl = "https://shop.ledger.com/";
+import { isAndroid } from "../../helpers/commonHelpers";
 
 export default class BuyDevicePage {
+  expectedUrl = "https://shop.ledger.com/";
+
   buyNanoButton = () => getElementById("getDevice-buy-button");
 
   async buyNano() {
@@ -13,8 +12,8 @@ export default class BuyDevicePage {
   async expectBuyNanoWebPage() {
     // Webview testing is flaky on Android
     if (!isAndroid()) {
-      const url = await web.element(by.web.id("__next")).getCurrentUrl();
-      expect(url).toContain(expectedUrl);
+      const url = await getWebElementById("__next").getCurrentUrl();
+      jestExpect(url).toContain(this.expectedUrl);
     } else {
       console.warn("Skipping webview check on Android");
     }

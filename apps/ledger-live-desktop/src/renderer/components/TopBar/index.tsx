@@ -22,6 +22,8 @@ import { NotificationIndicator } from "~/renderer/components/TopBar/Notification
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { LiveAppDrawer } from "~/renderer/components/LiveAppDrawer";
 import { IconsLegacy } from "@ledgerhq/react-ui";
+import { track } from "~/renderer/analytics/segment";
+
 const Container = styled(Box).attrs(() => ({}))`
   height: ${p => p.theme.sizes.topBarHeight}px;
   box-sizing: content-box;
@@ -55,10 +57,13 @@ const TopBar = () => {
   const isNftReworkedEnabled = nftReworked?.enabled;
   const [helpSideBarVisible, setHelpSideBarVisible] = useState(false);
   const handleLock = useCallback(() => dispatch(lock()), [dispatch]);
-  const handleDiscreet = useCallback(
-    () => dispatch(setDiscreetMode(!discreetMode)),
-    [discreetMode, dispatch],
-  );
+  const handleDiscreet = useCallback(() => {
+    dispatch(setDiscreetMode(!discreetMode));
+    track("button_clicked", {
+      button: "Discreet mode",
+      toggle: !discreetMode ? "ON" : "OFF",
+    });
+  }, [discreetMode, dispatch]);
   const navigateToSettings = useCallback(() => {
     const url = "/settings";
     if (location.pathname !== url) {

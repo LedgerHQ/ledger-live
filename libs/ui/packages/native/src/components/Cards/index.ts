@@ -3,3 +3,4 @@ export { default as SideImageCard } from "./SideImageCard";
 export { default as NotificationCard } from "./NotificationCard";
 export { default as InformativeCard } from "./InformativeCard";
 export { default as BannerCard } from "./BannerCard";
+export { default as NewBannerCard } from "./NewBannerCard";

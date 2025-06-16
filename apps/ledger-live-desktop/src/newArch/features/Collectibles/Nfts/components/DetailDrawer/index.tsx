@@ -21,17 +21,14 @@ const NftDetailDrawer = ({ account, tokenId, isOpened, setIsOpened }: NftsDetail
     originalUri,
     useFallback,
     mediaType,
-    doNotOpenDrawer,
     setUseFallback,
     onNFTSend,
-  } = useNftDetailDrawer(account, tokenId);
+  } = useNftDetailDrawer(account, tokenId, setIsOpened);
 
   const { isPanAndZoomOpen, openCollectiblesPanAndZoom, closeCollectiblesPanAndZoom } =
     useCollectibles();
 
   const handleRequestClose = useCallback(() => setIsOpened(false), [setIsOpened]);
-
-  if (doNotOpenDrawer) return null;
 
   return (
     <DetailDrawer
@@ -59,7 +56,7 @@ const NftDetailDrawer = ({ account, tokenId, isOpened, setIsOpened }: NftsDetail
           protoNft={protoNft}
           metadata={metadata as NFTMetadata}
           account={account}
-          onNFTSend={onNFTSend}
+          onNFTSend={account.currency.id !== "solana" ? onNFTSend : undefined}
         />
       </DetailDrawer.Actions>
     </DetailDrawer>

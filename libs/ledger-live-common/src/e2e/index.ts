@@ -8,7 +8,8 @@ export const getAllFeatureFlags = (
   const res: Partial<{ [key in FeatureId]: Feature }> = {};
   Object.keys(DEFAULT_FEATURES).forEach(k => {
     const key = k as keyof typeof DEFAULT_FEATURES;
-    res[key] = getFeature({ key, appLanguage });
+    const value = getFeature({ key, appLanguage });
+    if (value !== null) res[key] = value;
   });
   return res;
 };

@@ -1,4 +1,4 @@
-import { DisabledTransactionBroadcastError } from "@ledgerhq/errors";
+import { DisabledTransactionBroadcastError, MissingSwapPayloadParamaters } from "@ledgerhq/errors";
 import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { Exchange } from "@ledgerhq/live-common/exchange/types";
@@ -6,16 +6,24 @@ import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { ExchangeType } from "@ledgerhq/live-common/wallet-api/react";
 import { getEnv } from "@ledgerhq/live-env";
-import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
+import { CryptoOrTokenCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
+import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-import { useIsSwapLiveFlagEnabled } from "~/renderer/screens/exchange/Swap2/hooks/useIsSwapLiveFlagEnabled";
+
 import { useRedirectToSwapHistory } from "~/renderer/screens/exchange/Swap2/utils";
 import { BodyContent } from "./BodyContent";
+
+export enum ExchangeModeEnum {
+  Sell = "sell",
+  Swap = "swap",
+}
+
+export type ExchangeMode = "sell" | "swap";
 
 export type Data = {
   provider: string;
@@ -30,14 +38,9 @@ export type Data = {
   swapId?: string;
   amountExpectedTo?: number;
   magnitudeAwareRate?: BigNumber;
+  refundAddress?: string;
+  payoutAddress?: string;
 };
-
-export enum ExchangeModeEnum {
-  Sell = "sell",
-  Swap = "swap",
-}
-
-export type ExchangeMode = "sell" | "swap";
 
 type ResultsState = {
   mode: ExchangeMode;
@@ -66,11 +69,20 @@ const Root = styled.div`
 
 const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined }) => {
   const dispatch = useDispatch();
-  const { onResult, onCancel, swapId, magnitudeAwareRate, ...exchangeParams } = data;
+  const {
+    onResult,
+    onCancel,
+    swapId,
+    magnitudeAwareRate,
+    refundAddress,
+    payoutAddress,
+    ...exchangeParams
+  } = data;
   const { exchange, provider, transaction: transactionParams } = exchangeParams;
   const { fromAccount: account, fromParentAccount: parentAccount } = exchange;
   // toAccount exists only in swap mode
   const toAccount = "toAccount" in exchange ? exchange.toAccount : undefined;
+  const toCurrency = "toCurrency" in exchange ? exchange.toCurrency : undefined;
 
   const broadcastRef = useRef(false);
   const redirectToHistory = useRedirectToSwapHistory();
@@ -87,36 +99,46 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const tokenCurrency: TokenCurrency | undefined =
     account.type === "TokenAccount" ? account.token : undefined;
 
-  const getCurrencyByAccount = useCallback((account: AccountLike) => {
-    switch (account.type) {
-      case "Account":
-        return account.currency;
-      case "TokenAccount":
-        return account.token;
-      default:
-        return null;
-    }
-  }, []);
-
   const sourceCurrency = useMemo(() => {
     if ("fromAccount" in exchange) {
-      return getCurrencyByAccount(exchange.fromAccount);
+      return exchange.fromCurrency;
     }
     return null;
-  }, [exchange, getCurrencyByAccount]);
+  }, [exchange]);
 
   const targetCurrency = useMemo(() => {
-    if (toAccount) {
-      return getCurrencyByAccount(toAccount);
+    if (toCurrency) {
+      return toCurrency;
     }
     return null;
-  }, [toAccount, getCurrencyByAccount]);
+  }, [toCurrency]);
 
-  const broadcast = useBroadcast({ account, parentAccount });
+  const mevProtected = useSelector(mevProtectionSelector);
+  const broadcastConfig = useMemo(() => ({ mevProtected }), [mevProtected]);
+  const broadcast = useBroadcast({ account, parentAccount, broadcastConfig });
   const [transaction, setTransaction] = useState<Transaction>();
   const [signedOperation, setSignedOperation] = useState<SignedOperation>();
   const [error, setError] = useState<Error>();
   const [result, setResult] = useState<ResultsState>();
+
+  useEffect(() => {
+    if (data.exchangeType === ExchangeType.SWAP) {
+      const missingParams = [];
+      if (!refundAddress) {
+        missingParams.push("refundAddress");
+      }
+      if (!payoutAddress) {
+        missingParams.push("payoutAddress");
+      }
+      if (missingParams.length > 0) {
+        // error message is only for DataDog not displayed to the user
+        const err = new MissingSwapPayloadParamaters(
+          `Partner payload issue - missing ${missingParams.join(" and ")}`,
+        );
+        setError(err);
+      }
+    }
+  }, [refundAddress, payoutAddress, data.exchangeType]);
 
   const signRequest = useMemo(
     () =>
@@ -155,7 +177,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   );
 
   const getResultByTransactionType = (
-    isSwapTransaction: "" | CryptoCurrency | TokenCurrency | null | undefined,
+    isSwapTransaction: "" | CryptoOrTokenCurrency | null | undefined,
   ) => {
     return isSwapTransaction
       ? {
@@ -195,7 +217,6 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const handleSellTransaction = (operation: Operation, result: ResultsState) => {
     handleTransactionResult(result, operation);
   };
-  const isDemo3Enabled = useIsSwapLiveFlagEnabled("ptxSwapLiveAppDemoThree");
 
   const onBroadcastSuccess = useCallback(
     (operation: Operation) => {
@@ -209,7 +230,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
       const result = getResultByTransactionType(isSwapTransaction);
 
       if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-        if (!isSwapTransaction || (isSwapTransaction && !isDemo3Enabled)) {
+        if (!isSwapTransaction) {
           const error = new DisabledTransactionBroadcastError();
           setError(error);
           onCancel(error);

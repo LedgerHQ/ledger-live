@@ -187,10 +187,11 @@ platform :ios do
 
       if (options[:ci])
         sh(
-          <<-SHELL
-          echo "IOS_BUILD_NUMBER=#{build_number+1}" >> $env:GITHUB_ENV
-          SHELL
-        )
+            <<-SHELL
+              temp_ios_build_number_assignment="IOS_BUILD_NUMBER=#{build_number+1}"
+              echo $temp_ios_build_number_assignment | tee -a $GITHUB_ENV
+            SHELL
+          )
       end
     end
 
@@ -481,7 +482,8 @@ platform :android do
           "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
           "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASS"],
         },
-        project_dir: 'android/'
+        project_dir: 'android/',
+        flags: ' -Dorg.gradle.workers.max=3 -Dorg.gradle.jvmargs="-Xmx3g -XX:MaxMetaspaceSize=1g"'
       )
     end
   end

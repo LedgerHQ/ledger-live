@@ -4,33 +4,49 @@ import { step } from "tests/misc/reporters/step";
 
 export class delegateModal extends Modal {
   private titleProvider = this.page.getByTestId("modal-provider-title");
-  private delegateContinueButton = this.page.getByText("Continue");
   private rowProvider = this.page.getByTestId("modal-provider-row");
   private searchOpenButton = this.page.getByText("Show all");
-  private searchCloseButton = this.page.getByText("Show less");
-  private validatorList = this.page.getByTestId("validator-list");
   private inputSearchField = this.page.getByPlaceholder("Search by name or address...");
   private stakeProviderContainer = (stakeProviderID: string) =>
     this.page.getByTestId(`stake-provider-container-${stakeProviderID}`);
-  private detailsButton = this.page.getByRole("button", { name: "View details" });
+  readonly spendableBanner = this.page.getByTestId("modal-spendable-banner");
+  readonly cryptoAmountField = this.page.getByTestId("modal-amount-field");
 
-  @step("Get title provider")
-  async getTitleProvider() {
-    await this.titleProvider.waitFor();
-    return await this.titleProvider.textContent();
+  @step("Get title provider on row $0")
+  async getTitleProvider(row: number): Promise<string> {
+    await this.titleProvider.nth(row - 1).waitFor();
+    const titleProvider = await this.titleProvider.nth(row - 1).textContent();
+    expect(titleProvider).not.toBeNull();
+    return titleProvider!;
   }
 
-  @step("Verify provider is $0")
-  async verifyProvider(provider: string) {
-    const providerName = await this.getTitleProvider();
-    if (providerName) {
-      expect(providerName).toBe(provider);
-    }
+  @step("Get spendable banner value")
+  async getSpendableBannerValue() {
+    const amountValue = await this.spendableBanner.textContent();
+    return parseInt(amountValue!.replace(/[^0-9.]/g, ""));
   }
 
-  @step("Click on continue button - delegate")
-  async continueDelegate() {
-    await this.delegateContinueButton.click();
+  @step("Get crypto amount")
+  async getCryptoAmount() {
+    const valueAmount = await this.cryptoAmountField.inputValue();
+    return parseInt(valueAmount);
+  }
+
+  @step("Select provider on row $0")
+  async selectProviderOnRow(row: number) {
+    await this.selectProviderByName(await this.getTitleProvider(row));
+  }
+
+  @step("Select provider $0")
+  async selectProviderByName(name: string) {
+    const providerRow = this.rowProvider.filter({ hasText: name }).first();
+    await providerRow.click({ position: { x: 10, y: 10 } }); // Prevent click on the title as it is a redirection
+    await this.verifyContinueEnabled();
+  }
+
+  @step("Verify continue button is enabled")
+  async verifyContinueEnabled() {
+    await expect(this.continueButton).toBeEnabled();
   }
 
   @step("Click on search provider button")
@@ -40,40 +56,12 @@ export class delegateModal extends Modal {
 
   @step("Input provider is $0")
   async inputProvider(provider: string) {
-    await this.inputSearchField.fill(provider);
-  }
-
-  @step("check selected provider is different from the previous one")
-  async selectProvider(providerIndex: number) {
-    const selectedfProvider = await this.titleProvider.nth(providerIndex).textContent();
-    await this.rowProvider.nth(providerIndex).click();
-    await this.searchCloseButton.click();
-    if (selectedfProvider) {
-      expect(await this.getTitleProvider()).toContain(selectedfProvider);
-    }
+    const providerTicker = provider.split(" - ")[0];
+    await this.inputSearchField.fill(providerTicker);
   }
 
   @step("Click on chosen stake provider $0")
   async chooseStakeProvider(stakeProvider: string) {
     await this.stakeProviderContainer(stakeProvider).click();
-  }
-
-  @step("Click on view details button")
-  async clickViewDetailsButton() {
-    await this.detailsButton.click();
-  }
-
-  @step("check validator list is visible")
-  async checkValidatorListIsVisible() {
-    await expect(this.validatorList).toBeVisible();
-  }
-
-  @step("Fill amount")
-  async fillAmount(amount: string) {
-    if (amount == "send max") {
-      await this.toggleMaxAmount();
-    } else {
-      await this.cryptoAmountField.fill(amount);
-    }
   }
 }

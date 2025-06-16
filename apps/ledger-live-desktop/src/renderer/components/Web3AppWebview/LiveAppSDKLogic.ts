@@ -17,6 +17,8 @@ import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { WalletState } from "@ledgerhq/live-wallet/store";
+import { openAssetAndAccountDrawerPromise } from "LLD/features/ModularDrawer";
+import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 
 const trackingLiveAppSDKLogic = trackingWrapper(track);
 
@@ -25,6 +27,7 @@ type WebPlatformContext = {
   dispatch: Dispatch;
   accounts: AccountLike[];
   tracking: typeof trackingLiveAppSDKLogic;
+  mevProtected: boolean;
 };
 
 export type RequestAccountParams = {
@@ -34,8 +37,9 @@ export type RequestAccountParams = {
 };
 export const requestAccountLogic = async (
   walletState: WalletState,
-  { manifest }: Omit<WebPlatformContext, "accounts" | "dispatch" | "tracking">,
+  { manifest }: Omit<WebPlatformContext, "accounts" | "dispatch" | "tracking" | "mevProtected">,
   { currencies, includeTokens }: RequestAccountParams,
+  modularDrawerVisible?: boolean,
 ) => {
   trackingLiveAppSDKLogic.platformRequestAccountRequested(manifest);
 
@@ -47,13 +51,23 @@ export const requestAccountLogic = async (
    */
   const safeCurrencies = currencies?.filter(c => typeof c === "string") ?? undefined;
 
-  const { account, parentAccount } = await selectAccountAndCurrency(safeCurrencies, includeTokens);
+  const { account, parentAccount } = modularDrawerVisible
+    ? await openAssetAndAccountDrawerPromise({
+        assetIds: safeCurrencies,
+        includeTokens,
+        flow: manifest.name,
+        source:
+          currentRouteNameRef.current === "Platform Catalog"
+            ? "Discover"
+            : currentRouteNameRef.current ?? "Unknown",
+      })
+    : await selectAccountAndCurrency(safeCurrencies, includeTokens);
 
   return serializePlatformAccount(accountToPlatformAccount(walletState, account, parentAccount));
 };
 
 export const broadcastTransactionLogic = (
-  { manifest, dispatch, accounts, tracking }: WebPlatformContext,
+  { manifest, dispatch, accounts, tracking, mevProtected }: WebPlatformContext,
   accountId: string,
   signedTransaction: RawPlatformSignedTransaction,
   pushToast: (data: ToastData) => void,
@@ -79,6 +93,7 @@ export const broadcastTransactionLogic = (
           optimisticOperation = await bridge.broadcast({
             account: mainAccount,
             signedOperation,
+            broadcastConfig: { mevProtected },
           });
           tracking.platformBroadcastSuccess(manifest);
         } catch (error) {

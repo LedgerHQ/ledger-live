@@ -1,0 +1,107 @@
+{
+  "4146643e26cd3e2fa71bf946563a8226a4e5170128": {
+    "freeNetUsed": 335,
+    "freeNetLimit": 600,
+    "assetNetUsed": [
+      {
+        "key": "1004801",
+        "value": 0
+      },
+      {
+        "key": "1004536",
+        "value": 0
+      },
+      {
+        "key": "1004952",
+        "value": 0
+      },
+      {
+        "key": "1004210",
+        "value": 0
+      },
+      {
+        "key": "1004917",
+        "value": 0
+      },
+      {
+        "key": "1003606",
+        "value": 0
+      },
+      {
+        "key": "1004031",
+        "value": 0
+      }
+    ],
+    "assetNetLimit": [
+      {
+        "key": "1004801",
+        "value": 0
+      },
+      {
+        "key": "1004536",
+        "value": 0
+      },
+      {
+        "key": "1004952",
+        "value": 0
+      },
+      {
+        "key": "1004210",
+        "value": 0
+      },
+      {
+        "key": "1004917",
+        "value": 0
+      },
+      {
+        "key": "1003606",
+        "value": 0
+      },
+      {
+        "key": "1004031",
+        "value": 0
+      }
+    ],
+    "TotalNetLimit": 43200000000,
+    "TotalNetWeight": 27907349371,
+    "TotalEnergyLimit": 180000000000,
+    "TotalEnergyWeight": 16307687034
+  },
+  "416e3b44b96104b26f84057974a1f0c9880f7c9b13": {
+    "freeNetLimit": 600,
+    "assetNetUsed": [
+      {
+        "key": "1002000",
+        "value": 0
+      },
+      {
+        "key": "1005065",
+        "value": 0
+      },
+      {
+        "key": "1004031",
+        "value": 0
+      }
+    ],
+    "assetNetLimit": [
+      {
+        "key": "1002000",
+        "value": 0
+      },
+      {
+        "key": "1005065",
+        "value": 0
+      },
+      {
+        "key": "1004031",
+        "value": 0
+      }
+    ],
+    "TotalNetLimit": 43200000000,
+    "TotalNetWeight": 27908390830,
+    "tronPowerLimit": 403,
+    "EnergyLimit": 4448,
+    "TotalEnergyLimit": 180000000000,
+    "TotalEnergyWeight": 16307698552
+  }
+}

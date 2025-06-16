@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState, useMemo, useRef } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
@@ -15,12 +15,22 @@ import {
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import addToSwapHistory from "@ledgerhq/live-common/exchange/swap/addToSwapHistory";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { AccountLike, DeviceInfo, Operation, SignedOperation } from "@ledgerhq/types-live";
+import {
+  AccountLike,
+  DeviceInfo,
+  getCurrencyForAccount,
+  Operation,
+  SignedOperation,
+} from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { postSwapAccepted, postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
+import {
+  getIncompatibleCurrencyKeys,
+  postSwapAccepted,
+  postSwapCancelled,
+} from "@ledgerhq/live-common/exchange/swap/index";
 import { InstalledItem } from "@ledgerhq/live-common/apps/types";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
-import { renderLoading } from "~/components/DeviceAction/rendering";
+import { HardwareUpdate, renderLoading } from "~/components/DeviceAction/rendering";
 import { updateAccountWithUpdater } from "~/actions/accounts";
 import DeviceAction from "~/components/DeviceAction";
 import QueuedDrawer from "~/components/QueuedDrawer";
@@ -31,6 +41,10 @@ import { ScreenName } from "~/const";
 import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { useInitSwapDeviceAction, useTransactionDeviceAction } from "~/hooks/deviceActions";
 import { BigNumber } from "bignumber.js";
+import { mevProtectionSelector } from "~/reducers/settings";
+import { DeviceModelId } from "@ledgerhq/devices";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
 export type DeviceMeta = {
   result: { installed: InstalledItem[] } | null | undefined;
@@ -63,26 +77,33 @@ export function Confirmation({
   const provider = exchangeRate.current.provider;
 
   const {
-    from: { account: fromAccount, parentAccount: fromParentAccount },
-    to: { account: toAccount, parentAccount: toParentAccount },
+    from: { account: fromAccount, parentAccount: fromParentAccount, currency: fromCurrency },
+    to: { account: toAccount, parentAccount: toParentAccount, currency: toCurrency },
   } = swapTx.current.swap;
 
   const exchange = useMemo<ExchangeSwap>(
     () => ({
       fromAccount: fromAccount as AccountLike,
       fromParentAccount,
+      fromCurrency:
+        fromCurrency ??
+        (getCurrencyForAccount(fromAccount as AccountLike) as CryptoOrTokenCurrency),
       toAccount: toAccount as AccountLike,
       toParentAccount,
+      toCurrency:
+        toCurrency ?? (getCurrencyForAccount(toAccount as AccountLike) as CryptoOrTokenCurrency),
     }),
-    [fromAccount, fromParentAccount, toAccount, toParentAccount],
+    [fromAccount, fromParentAccount, fromCurrency, toAccount, toParentAccount, toCurrency],
   );
 
   const [swapData, setSwapData] = useState<InitSwapResult | null>(null);
   const [signedOperation, setSignedOperation] = useState<SignedOperation | null>(null);
+  const mevProtected = useSelector(mevProtectionSelector);
   const dispatch = useDispatch();
   const broadcast = useBroadcast({
     account: fromAccount,
     parentAccount: fromParentAccount,
+    broadcastConfig: { mevProtected },
   });
   const tokenCurrency =
     fromAccount && fromAccount.type === "TokenAccount" ? fromAccount.token : null;
@@ -202,6 +223,27 @@ export function Confirmation({
 
   const { t } = useTranslation();
 
+  const keys = getIncompatibleCurrencyKeys(exchange);
+
+  if (deviceMeta?.device?.modelId === DeviceModelId.nanoS && keys) {
+    return (
+      <QueuedDrawer isRequestingToBeOpened={isOpen} preventBackdropClick onClose={onCancel}>
+        <ModalBottomAction
+          footer={
+            <View style={styles.footerContainer}>
+              <HardwareUpdate
+                t={t}
+                device={deviceMeta.device}
+                i18nKeyTitle={keys.title}
+                i18nKeyDescription={keys.description}
+              />
+            </View>
+          }
+        />
+      </QueuedDrawer>
+    );
+  }
+
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} preventBackdropClick onClose={onCancel}>
       <SyncSkipUnderPriority priority={100} />
@@ -236,6 +278,7 @@ export function Confirmation({
                 }}
                 onError={error => onError({ error })}
                 analyticsPropertyFlow="swap"
+                location={HOOKS_TRACKING_LOCATIONS.swapFlow}
               />
             ) : (
               <DeviceAction
@@ -260,6 +303,7 @@ export function Confirmation({
                 }}
                 onError={error => onError({ error })}
                 analyticsPropertyFlow="swap"
+                location={HOOKS_TRACKING_LOCATIONS.swapFlow}
               />
             )}
           </View>

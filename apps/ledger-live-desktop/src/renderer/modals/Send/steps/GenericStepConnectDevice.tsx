@@ -1,19 +1,18 @@
 import React, { useMemo } from "react";
 import { Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import StepProgress from "~/renderer/components/StepProgress";
-import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { getEnv } from "@ledgerhq/live-env";
-import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import { closeModal } from "~/renderer/actions/modals";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
+import { mevProtectionSelector } from "~/renderer/reducers/settings";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
+import { useTransactionAction } from "~/renderer/hooks/useConnectAppAction";
+
 const Result = (
   props:
     | {
@@ -55,10 +54,13 @@ export default function StepConnectDevice({
   onConfirmationHandler?: Function;
   onFailHandler?: Function;
 }) {
+  const mevProtected = useSelector(mevProtectionSelector);
   const dispatch = useDispatch();
+  const broadcastConfig = useMemo(() => ({ mevProtected }), [mevProtected]);
   const broadcast = useBroadcast({
     account,
     parentAccount,
+    broadcastConfig,
   });
   const tokenCurrency = (account && account.type === "TokenAccount" && account.token) || undefined;
   const request = useMemo(
@@ -71,6 +73,7 @@ export default function StepConnectDevice({
     }),
     [account, parentAccount, status, tokenCurrency, transaction],
   );
+  const action = useTransactionAction();
   if (!transaction || !account) return null;
 
   return (
@@ -115,6 +118,7 @@ export default function StepConnectDevice({
         }
       }}
       analyticsPropertyFlow="send"
+      location={HOOKS_TRACKING_LOCATIONS.sendModal}
     />
   );
 }

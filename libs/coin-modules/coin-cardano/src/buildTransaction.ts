@@ -1,18 +1,18 @@
 import {
   Transaction as TyphonTransaction,
+  address as TyphonAddress,
   types as TyphonTypes,
   utils as TyphonUtils,
 } from "@stricahq/typhonjs";
 import BigNumber from "bignumber.js";
 import type { TokenAccount } from "@ledgerhq/types-live";
-import { RewardAddress } from "@stricahq/typhonjs/dist/address";
 import {
   getAccountStakeCredential,
   getBaseAddress,
   getTTL,
   mergeTokens,
-  isTestnet,
   isProtocolParamsValid,
+  isTestnet,
 } from "./logic";
 import { decodeTokenAssetId, decodeTokenCurrencyId, getTokenAssetId } from "./buildSubAccounts";
 import { getNetworkParameters } from "./networks";
@@ -45,11 +45,16 @@ function getTyphonInputFromUtxo(utxo: CardanoOutput): TyphonTypes.Input {
 }
 
 function getRewardWithdrawalCertificate(account: CardanoAccount): TyphonTypes.Withdrawal | null {
-  if (!account.cardanoResources.delegation?.rewards.gt(0)) {
+  if (
+    !account.cardanoResources.delegation ||
+    !account.cardanoResources.delegation.dRepHex ||
+    account.cardanoResources.delegation.rewards.isZero()
+  ) {
     return null;
   }
 
-  const stakeCredential = getAccountStakeCredential(account.xpub as string, account.index);
+  if (!account.xpub) throw new Error("Account xpub is missing");
+  const stakeCredential = getAccountStakeCredential(account.xpub, account.index);
   const stakeKeyHashCredential: TyphonTypes.HashCredential = {
     hash: Buffer.from(stakeCredential.key, "hex"),
     type: TyphonTypes.HashType.ADDRESS,
@@ -59,7 +64,7 @@ function getRewardWithdrawalCertificate(account: CardanoAccount): TyphonTypes.Wi
   const networkId = isTestnet(account.currency)
     ? TyphonTypes.NetworkId.TESTNET
     : TyphonTypes.NetworkId.MAINNET;
-  const rewardAddress = new RewardAddress(networkId, stakeKeyHashCredential);
+  const rewardAddress = new TyphonAddress.RewardAddress(networkId, stakeKeyHashCredential);
   const rewardsWithdrawalCertificate: TyphonTypes.Withdrawal = {
     rewardAccount: rewardAddress,
     amount: account.cardanoResources.delegation.rewards,
@@ -264,16 +269,20 @@ const buildDelegateTransaction = async ({
 
   if (!cardanoResources.delegation || !cardanoResources.delegation.status) {
     const stakeRegistrationCert: TyphonTypes.StakeRegistrationCertificate = {
-      certType: TyphonTypes.CertificateType.STAKE_REGISTRATION,
-      stakeCredential: stakeKeyHashCredential,
+      type: TyphonTypes.CertificateType.STAKE_REGISTRATION,
+      cert: {
+        stakeCredential: stakeKeyHashCredential,
+      },
     };
     typhonTx.addCertificate(stakeRegistrationCert);
   }
 
   const delegationCert: TyphonTypes.StakeDelegationCertificate = {
-    certType: TyphonTypes.CertificateType.STAKE_DELEGATION,
-    stakeCredential: stakeKeyHashCredential,
-    poolHash: transaction.poolId as string,
+    type: TyphonTypes.CertificateType.STAKE_DELEGATION,
+    cert: {
+      stakeCredential: stakeKeyHashCredential,
+      poolHash: transaction.poolId as string,
+    },
   };
   typhonTx.addCertificate(delegationCert);
 
@@ -332,8 +341,10 @@ const buildUndelegateTransaction = async ({
   if (rewardsWithdrawalCertificate) typhonTx.addWithdrawal(rewardsWithdrawalCertificate);
 
   const stakeKeyDeRegistrationCertificate: TyphonTypes.StakeDeRegistrationCertificate = {
-    certType: TyphonTypes.CertificateType.STAKE_DE_REGISTRATION,
-    stakeCredential: stakeKeyHashCredential,
+    type: TyphonTypes.CertificateType.STAKE_DE_REGISTRATION,
+    cert: {
+      stakeCredential: stakeKeyHashCredential,
+    },
   };
   typhonTx.addCertificate(stakeKeyDeRegistrationCertificate);
 
@@ -392,10 +403,35 @@ export const buildTransaction = async (
       maxTxSize: Number(protocolParams.maxTxSize),
       maxValueSize: Number(protocolParams.maxValueSize),
       utxoCostPerByte: new BigNumber(protocolParams.utxoCostPerByte),
+      minFeeRefScriptCostPerByte: new BigNumber(protocolParams.minFeeRefScriptCostPerByte),
     },
   });
   const ttl = getTTL(account.currency.id);
   typhonTx.setTTL(ttl);
+
+  // add ABSTAIN vote certificate when account has rewards but not the vote delegation
+  if (
+    account.cardanoResources.delegation &&
+    account.cardanoResources.delegation.rewards.gt(0) &&
+    !account.cardanoResources.delegation.dRepHex
+  ) {
+    const stakeCred = getAccountStakeCredential(account.xpub as string, account.index);
+    const stakeCredential: TyphonTypes.HashCredential = {
+      hash: Buffer.from(stakeCred.key, "hex"),
+      type: TyphonTypes.HashType.ADDRESS,
+      bipPath: stakeCred.path,
+    };
+    const abstainDRep: TyphonTypes.DRep = {
+      type: TyphonTypes.DRepType.ABSTAIN,
+      key: undefined,
+    };
+
+    const voteCertificate: TyphonTypes.VoteDelegationCertificate = {
+      type: TyphonTypes.CertificateType.VOTE_DELEGATION,
+      cert: { stakeCredential, dRep: abstainDRep },
+    };
+    typhonTx.addCertificate(voteCertificate);
+  }
 
   const metadata: Array<TyphonTypes.Metadata> = [];
   if (transaction.memo) {

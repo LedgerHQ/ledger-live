@@ -32,7 +32,7 @@ export const IDS = [
   "ethereum/erc20/binance_usd",
   "near",
   "injective",
-  "elrond",
+  "elrond", // NOTE: legacy 'multiversx' name, kept for compatibility
   "tezos",
   "celo",
   "osmo",
@@ -40,6 +40,10 @@ export const IDS = [
   "persistence",
   "onomy",
   "mantra",
+  "crypto_org",
+  "xion",
+  "zenrock",
+  "babylon",
 ];
 
 export const CURRENCIES_LIST: CryptoCurrency[] = [
@@ -361,14 +365,15 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
   },
   {
     type: "CryptoCurrency",
+    // id: "multiversx",
     id: "elrond",
     coinType: 508,
     name: "MultiversX",
     managerAppName: "MultiversX",
     ticker: "EGLD",
-    scheme: "elrond",
+    scheme: "multiversx",
     color: "#23F7DD",
-    family: "elrond",
+    family: "multiversx",
     blockAvgTime: 6,
     deviceTicker: "EGLD",
     units: [
@@ -380,11 +385,11 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
     ],
     explorerViews: [
       {
-        tx: "https://explorer.elrond.com/transactions/$hash",
-        address: "https://explorer.elrond.com/accounts/$address",
+        tx: "https://explorer.multiversx.com/transactions/$hash",
+        address: "https://explorer.multiversx.com/accounts/$address",
       },
     ],
-    keywords: ["elrond"],
+    keywords: ["multiversx"],
   },
   {
     type: "CryptoCurrency",
@@ -532,6 +537,122 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
       {
         tx: "https://www.mintscan.io/mantra/txs/$hash",
         address: "https://www.mintscan.io/mantra/validators/$address",
+      },
+    ],
+  },
+  {
+    type: "CryptoCurrency",
+    id: "crypto_org",
+    coinType: 394,
+    name: "Cronos POS Chain",
+    managerAppName: "Cronos POS Chain",
+    ticker: "CRO",
+    scheme: "crypto_org",
+    color: "#0e1c37",
+    family: "cosmos",
+    units: [
+      {
+        name: "CRO",
+        code: "CRO",
+        magnitude: 8,
+      },
+      {
+        name: "Micro-CRO",
+        code: "baseCRO",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/crypto-org/tx/$hash",
+        address: "https://www.mintscan.io/crypto-org/validators/$address",
+      },
+    ],
+  },
+  {
+    type: "CryptoCurrency",
+    id: "xion",
+    coinType: 118,
+    name: "Xion",
+    managerAppName: "Cosmos",
+    ticker: "XION",
+    scheme: "xion",
+    color: "#000000",
+    family: "cosmos",
+    units: [
+      {
+        name: "Xion",
+        code: "XION",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-XION",
+        code: "uxion",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/xion/txs/$hash",
+        address: "https://www.mintscan.io/xion/validators/$address",
+      },
+    ],
+  },
+  {
+    type: "CryptoCurrency",
+    id: "zenrock",
+    coinType: 118,
+    name: "Zenrock",
+    managerAppName: "Cosmos",
+    ticker: "ROCK",
+    scheme: "zenrock",
+    color: "#000000",
+    family: "cosmos",
+    units: [
+      {
+        name: "Zenrock",
+        code: "ROCK",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-Zenrock",
+        code: "urock",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://explorer.diamond.zenrocklabs.io/transactions/$hash",
+        address: "https://explorer.diamond.zenrocklabs.io/validators/$address",
+      },
+    ],
+  },
+  {
+    type: "CryptoCurrency",
+    id: "babylon",
+    coinType: 118,
+    name: "Babylon",
+    managerAppName: "Cosmos",
+    ticker: "BABY",
+    scheme: "babylon",
+    color: "#CE6533",
+    family: "cosmos",
+    units: [
+      {
+        name: "Babylon",
+        code: "BABY",
+        magnitude: 6,
+      },
+      {
+        name: "micro BBN",
+        code: "ubbn",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/babylon/txs/$hash",
+        address: "https://www.mintscan.io/babylon/validators/$address",
       },
     ],
   },

@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { NFTS_QUERY_KEY } from "../../queryKeys";
 import { useNftFloorPrice } from "../useNftFloorPrice";
 import BigNumber from "bignumber.js";
-import { NFTs } from "@ledgerhq/coin-framework/mocks/fixtures/nfts";
+import { NFTs } from "@ledgerhq/coin-framework/mocks/fixtures/nftsSamples";
 import { encodeNftId } from "@ledgerhq/coin-framework/lib/nft/nftId";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";

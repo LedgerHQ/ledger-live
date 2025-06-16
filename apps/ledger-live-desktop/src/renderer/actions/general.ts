@@ -28,6 +28,7 @@ import { useMarketPerformanceTrackingPairs } from "./marketperformance";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { walletSelector } from "../reducers/wallet";
 import { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 // provide redux states via custom hook wrapper
 
@@ -129,6 +130,18 @@ export function useCalculateCountervaluesUserSettings(): CountervaluesSettings {
     [extraSessionTrackingPairs, trackingPairsForTopCoins, trPairs],
   );
 
+  const granularitiesRatesConfig = useFeature("llCounterValueGranularitiesRates");
+  const granularitiesRates = useMemo(
+    () =>
+      granularitiesRatesConfig?.enabled
+        ? {
+            daily: Number(granularitiesRatesConfig.params?.daily),
+            hourly: Number(granularitiesRatesConfig.params?.hourly),
+          }
+        : undefined,
+    [granularitiesRatesConfig],
+  );
+
   return useMemo(
     () => ({
       trackingPairs,
@@ -137,7 +150,8 @@ export function useCalculateCountervaluesUserSettings(): CountervaluesSettings {
       marketCapBatchingAfterRank: LiveConfig.getValueByKey(
         "config_countervalues_marketCapBatchingAfterRank",
       ),
+      granularitiesRates,
     }),
-    [trackingPairs],
+    [granularitiesRates, trackingPairs],
   );
 }

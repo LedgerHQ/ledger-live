@@ -2,6 +2,12 @@
 import "zx/globals";
 import rimraf from "rimraf";
 
+$.verbose = true; // everything works like in v7
+
+if (os.platform() === "win32") {
+  usePowerShell();
+}
+
 cd(path.join(__dirname, ".."));
 
 if (!process.env.CI) {

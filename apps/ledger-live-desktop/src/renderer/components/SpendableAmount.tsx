@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Account, AccountLike, TransactionCommon } from "@ledgerhq/types-live";
-import { useDebounce } from "@ledgerhq/live-common//hooks/useDebounce";
+import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import BigNumber from "bignumber.js";

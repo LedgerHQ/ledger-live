@@ -9,6 +9,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { firstValueFrom, from } from "rxjs";
 import { Languages } from "~/config/languages";
+import { CONNECTION_TYPES } from "~/renderer/analytics/hooks/variables";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { languageSelector } from "~/renderer/reducers/settings";
 import ChangeDeviceLanguagePromptDrawer from "~/renderer/screens/settings/sections/General/ChangeDeviceLanguagePromptDrawer";
@@ -66,10 +67,21 @@ export const useChangeLanguagePrompt = ({ device }: UseChangeLanguagePromptParam
             currentLanguage,
             analyticsContext: "Page SyncOnboarding",
             onClose: () => setDisableLanguagePrompt(true),
+            analyticsPayload: {
+              deviceType: device?.modelId,
+              connectionType: device?.wired ? CONNECTION_TYPES.USB : CONNECTION_TYPES.BLE,
+            },
           },
           {},
         );
       }
     }
-  }, [availableDeviceLanguages, deviceModelInfo, disableLanguagePrompt, loaded, currentLanguage]);
+  }, [
+    availableDeviceLanguages,
+    deviceModelInfo,
+    disableLanguagePrompt,
+    loaded,
+    currentLanguage,
+    device,
+  ]);
 };

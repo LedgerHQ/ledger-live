@@ -1,22 +1,17 @@
-import { Server, WebSocket } from "ws";
+import { Server } from "ws";
 import path from "path";
 import fs from "fs";
 import net from "net";
 import merge from "lodash/merge";
-import { toAccountRaw } from "@ledgerhq/live-common/account/index";
+
 import { NavigatorName } from "../../src/const";
-import { Subject } from "rxjs";
 import { BleState, DeviceLike } from "../../src/reducers/types";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
 import { DeviceUSB, nanoSP_USB, nanoS_USB, nanoX_USB } from "../models/devices";
 import { MessageData, MockDeviceEvent, ServerData } from "./types";
 import { getDeviceModel } from "@ledgerhq/devices";
+import { log as detoxLog } from "detox";
 
-export const e2eBridgeServer = new Subject<ServerData>();
-
-let wss: Server;
-let webSocket: WebSocket;
-const lastMessages: { [id: string]: MessageData } = {}; // Store the last messages not sent
 let clientResponse: (data: string) => void;
 const RESPONSE_TIMEOUT = 10000;
 
@@ -51,19 +46,24 @@ function uniqueId(): string {
   return timestamp + randomString; // Concatenate timestamp and random string
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-export function init(port = 8099, onConnection = () => {}) {
-  wss = new Server({ port });
+export function init(port = 8099, onConnection?: () => void) {
+  webSocket.wss = new Server({ port });
+  webSocket.messages = {};
   log(`Start listening on localhost:${port}`);
 
-  wss.on("connection", ws => {
+  webSocket.wss.on("connection", ws => {
     log(`Client connected`);
-    onConnection();
-    webSocket = ws;
+    onConnection && onConnection();
+    webSocket.ws?.close();
+    webSocket.ws = ws;
     ws.on("message", onMessage);
-    if (Object.keys(lastMessages).length !== 0) {
+    ws.on("close", () => {
+      log("Client disconnected");
+      webSocket.ws = undefined;
+    });
+    if (Object.keys(webSocket.messages).length !== 0) {
       log(`Sending unsent messages`);
-      Object.values(lastMessages).forEach(message => {
+      Object.values(webSocket.messages).forEach(message => {
         postMessage(message);
       });
     }
@@ -71,8 +71,23 @@ export function init(port = 8099, onConnection = () => {}) {
 }
 
 export function close() {
-  webSocket?.close();
-  wss?.close();
+  if (webSocket.ws) {
+    webSocket.ws.removeAllListeners();
+    webSocket.ws.close();
+    webSocket.ws = undefined;
+  }
+
+  if (webSocket.wss) {
+    webSocket.wss.clients.forEach(client => {
+      client.removeAllListeners();
+      client.terminate();
+    });
+
+    webSocket.wss.close(() => {
+      webSocket.wss = undefined;
+    });
+  }
+  webSocket.messages = {};
 }
 
 export async function loadConfig(fileName: string, agreed: true = true): Promise<void> {
@@ -85,12 +100,12 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
   const { data } = JSON.parse(f.toString());
 
   const defaultSettings = { shareAnalytics: true, hasSeenAnalyticsOptInPrompt: true };
-  const settings = merge(defaultSettings, data.settings);
+  const settings = merge(defaultSettings, data.settings || {});
   await postMessage({ type: "importSettings", id: uniqueId(), payload: settings });
 
   navigate(NavigatorName.Base);
 
-  if (data.accounts.length) {
+  if (data.accounts?.length) {
     await postMessage({ type: "importAccounts", id: uniqueId(), payload: data.accounts });
   }
 }
@@ -113,6 +128,8 @@ export async function loadAccountsRaw(
 }
 
 export async function loadAccounts(accounts: Account[]) {
+  delete require.cache[require.resolve("@ledgerhq/live-common/account/index")]; // Clear cache
+  const toAccountRaw = require("@ledgerhq/live-common/account/index").toAccountRaw;
   await postMessage({
     type: "importAccounts",
     id: uniqueId(),
@@ -164,14 +181,6 @@ export async function addDevicesUSB(
   return devicesArray;
 }
 
-export async function setInstalledApps(apps: string[] = []) {
-  await postMessage({
-    type: "setGlobals",
-    id: uniqueId(),
-    payload: { _listInstalledApps_mock_result: apps },
-  });
-}
-
 export async function open() {
   await postMessage({ type: "open", id: uniqueId() });
 }
@@ -180,35 +189,19 @@ export async function getLogs() {
   return fetchData({ type: "getLogs", id: uniqueId() });
 }
 
-export async function getFlags() {
-  return fetchData({ type: "getFlags", id: uniqueId() });
-}
-
-export async function getEnvs() {
-  return fetchData({ type: "getEnvs", id: uniqueId() });
-}
-
-function fetchData(message: MessageData): Promise<string> {
+function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Promise<string> {
   return new Promise<string>(resolve => {
     postMessage(message);
     const timeoutId = setTimeout(() => {
       console.warn(`Timeout while waiting for ${message.type}`);
       resolve("");
-    }, RESPONSE_TIMEOUT);
+    }, timeout);
 
     clientResponse = (data: string) => {
       clearTimeout(timeoutId);
       resolve(data);
     };
   });
-}
-
-export async function addKnownSpeculos(proxyAddress: string) {
-  await postMessage({ type: "addKnownSpeculos", id: uniqueId(), payload: proxyAddress });
-}
-
-export async function removeKnownSpeculos(id: string) {
-  await postMessage({ type: "removeKnownSpeculos", id: uniqueId(), payload: id });
 }
 
 function onMessage(messageStr: string) {
@@ -218,29 +211,22 @@ function onMessage(messageStr: string) {
   switch (msg.type) {
     case "ACK":
       log(`${msg.id}`);
-      delete lastMessages[msg.id];
+      delete webSocket.messages[msg.id];
       break;
     case "walletAPIResponse":
-      e2eBridgeServer.next(msg);
+      webSocket.e2eBridgeServer.next(msg);
       break;
     case "appLogs": {
       clientResponse(msg.payload);
       break;
     }
-    case "appFlags":
-      clientResponse(msg.payload);
-      break;
-    case "appEnvs":
-      clientResponse(msg.payload);
-      break;
     default:
       break;
   }
 }
 
 function log(message: string) {
-  // eslint-disable-next-line no-console
-  console.log(`[E2E Bridge Server]: ${message}`);
+  detoxLog.info(`[E2E Bridge Server]: ${message}`);
 }
 
 async function acceptTerms() {
@@ -250,9 +236,9 @@ async function acceptTerms() {
 async function postMessage(message: MessageData) {
   log(`Message sending ${message.type}: ${message.id}`);
   try {
-    lastMessages[message.id] = message;
-    if (webSocket) {
-      webSocket.send(JSON.stringify(message));
+    webSocket.messages[message.id] = message;
+    if (webSocket.ws) {
+      webSocket.ws.send(JSON.stringify(message));
     } else {
       log("WebSocket connection is not open. Message not sent.");
     }

@@ -2,11 +2,13 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, SafeAreaView, BackHandler, Platform } from "react-native";
 import { useSelector } from "react-redux";
+import { ScopeProvider } from "jotai-scope";
 
 import { useNavigation } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { CurrentAccountHistDB, safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
+import { currentAccountAtom } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 
 import { Web3AppWebview } from "../Web3AppWebview";
@@ -49,13 +51,15 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     return false;
   }, [webviewState.canGoBack, webviewAPIRef]);
 
-  // eslint-disable-next-line consistent-return
   useEffect(() => {
     if (Platform.OS === "android") {
-      BackHandler.addEventListener("hardwareBackPress", handleHardwareBackPress);
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        handleHardwareBackPress,
+      );
 
       return () => {
-        BackHandler.removeEventListener("hardwareBackPress", handleHardwareBackPress);
+        subscription.remove();
       };
     }
   }, [handleHardwareBackPress]);
@@ -94,31 +98,33 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   }, [customACREHandlers, customPTXHandlers]);
 
   return (
-    <SafeAreaView style={[styles.root]}>
-      <Web3AppWebview
-        ref={webviewAPIRef}
-        manifest={manifest}
-        currentAccountHistDb={currentAccountHistDb}
-        inputs={inputs}
-        onStateChange={setWebviewState}
-        customHandlers={customHandlers}
-      />
-      <BottomBar
-        manifest={manifest}
-        currentAccountHistDb={currentAccountHistDb}
-        webviewAPIRef={webviewAPIRef}
-        webviewState={webviewState}
-      />
-      <InfoPanel
-        name={manifest.name}
-        icon={manifest.icon}
-        url={manifest.homepageUrl}
-        uri={webviewState.url.toString()}
-        description={manifest.content.description}
-        isOpened={isInfoPanelOpened}
-        setIsOpened={setIsInfoPanelOpened}
-      />
-    </SafeAreaView>
+    <ScopeProvider atoms={[currentAccountAtom]}>
+      <SafeAreaView style={[styles.root]}>
+        <Web3AppWebview
+          ref={webviewAPIRef}
+          manifest={manifest}
+          currentAccountHistDb={currentAccountHistDb}
+          inputs={inputs}
+          onStateChange={setWebviewState}
+          customHandlers={customHandlers}
+        />
+        <BottomBar
+          manifest={manifest}
+          currentAccountHistDb={currentAccountHistDb}
+          webviewAPIRef={webviewAPIRef}
+          webviewState={webviewState}
+        />
+        <InfoPanel
+          name={manifest.name}
+          icon={manifest.icon}
+          url={manifest.homepageUrl}
+          uri={webviewState.url.toString()}
+          description={manifest.content.description}
+          isOpened={isInfoPanelOpened}
+          setIsOpened={setIsInfoPanelOpened}
+        />
+      </SafeAreaView>
+    </ScopeProvider>
   );
 };
 

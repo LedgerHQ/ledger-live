@@ -13,6 +13,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import {
   setActionCards,
+  setDesktopCards,
   setNotificationsCards,
   setPortfolioCards,
 } from "../actions/dynamicContent";
@@ -22,8 +23,13 @@ import {
   trackingEnabledSelector,
   dismissedContentCardsSelector,
   anonymousBrazeIdSelector,
+  anonymousUserNotificationsSelector,
 } from "../reducers/settings";
-import { clearDismissedContentCards, setAnonymousBrazeId } from "../actions/settings";
+import {
+  clearDismissedContentCards,
+  setAnonymousBrazeId,
+  updateAnonymousUserNotifications,
+} from "../actions/settings";
 import { getEnv } from "@ledgerhq/live-env";
 import { getOldCampaignIds, generateAnonymousId } from "@ledgerhq/live-common/braze/anonymousUsers";
 
@@ -63,6 +69,8 @@ export const mapAsPortfolioContentCard = (card: ClassicCard): PortfolioContentCa
   id: String(card.id),
   title: card.extras?.title,
   description: card.extras?.description,
+  cta: card.extras?.cta,
+  tag: card.extras?.tag,
   location: LocationContentCard.Portfolio,
   image: card.extras?.image,
   url: card.extras?.url,
@@ -88,6 +96,7 @@ export async function useBraze() {
   const dispatch = useDispatch();
   const devMode = useSelector(developerModeSelector);
   const contentCardsDissmissed = useSelector(dismissedContentCardsSelector);
+  const anonymousUserNotifications = useSelector(anonymousUserNotificationsSelector);
   const isTrackedUser = useSelector(trackingEnabledSelector);
   const anonymousBrazeId = useRef(useSelector(anonymousBrazeIdSelector));
 
@@ -102,12 +111,37 @@ export async function useBraze() {
       dispatch(setAnonymousBrazeId(anonymousBrazeId.current));
     }
 
+    /**
+     * If the user is opt-out from analytics, we need to purge expired notifications persisted in the store/offline storage
+     */
+    if (!isTrackedUser) {
+      const expiredAnonymousUserNotifications = getOldCampaignIds(anonymousUserNotifications);
+      if (expiredAnonymousUserNotifications.length) {
+        const validAnonymousUserNotificationsOnly = Object.keys(anonymousUserNotifications).reduce(
+          (validNotifications: Record<string, number>, key: string) => {
+            if (!expiredAnonymousUserNotifications.includes(key)) {
+              validNotifications[key] = anonymousUserNotifications[key];
+            }
+            return validNotifications;
+          },
+          {},
+        );
+        dispatch(
+          updateAnonymousUserNotifications({
+            notifications: validAnonymousUserNotificationsOnly,
+            purgeState: true,
+          }),
+        );
+      }
+    }
+
     braze.initialize(brazeConfig.apiKey, {
       baseUrl: brazeConfig.endpoint,
       allowUserSuppliedJavascript: true,
       enableHtmlInAppMessages: true,
       enableLogging: __DEV__,
       sessionTimeoutInSeconds: devMode ? 1 : 1800,
+      appVersion: isTrackedUser ? __APP_VERSION__ : undefined,
     });
 
     // If it's playwright, we don't want to fetch content cards
@@ -141,6 +175,7 @@ export async function useBraze() {
         .map(card => mapAsNotificationContentCard(card as ClassicCard))
         .sort(compareCards);
 
+      dispatch(setDesktopCards(filteredDesktopCards));
       dispatch(setPortfolioCards(portfolioCards));
       dispatch(setActionCards(actionCards));
       dispatch(setNotificationsCards(notificationsCards));
@@ -148,7 +183,14 @@ export async function useBraze() {
 
     braze.automaticallyShowInAppMessages();
     braze.openSession();
-  }, [dispatch, devMode, isTrackedUser, contentCardsDissmissed, anonymousBrazeId]);
+  }, [
+    dispatch,
+    devMode,
+    isTrackedUser,
+    contentCardsDissmissed,
+    anonymousBrazeId,
+    anonymousUserNotifications,
+  ]);
 
   useEffect(() => {
     initBraze();

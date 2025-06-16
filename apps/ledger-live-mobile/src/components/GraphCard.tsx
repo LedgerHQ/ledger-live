@@ -3,7 +3,7 @@ import { Flex, Text, GraphTabs } from "@ledgerhq/native-ui";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { Portfolio } from "@ledgerhq/types-live";
 import styled, { useTheme } from "styled-components/native";
-import Animated, { Extrapolate, interpolate, useAnimatedStyle } from "react-native-reanimated";
+import Animated, { Extrapolation, interpolate, useAnimatedStyle } from "react-native-reanimated";
 import { useSelector } from "react-redux";
 import Delta from "./Delta";
 import { TransactionsPendingConfirmationWarningAllAccounts } from "./TransactionsPendingConfirmationWarning";
@@ -17,6 +17,7 @@ import { track } from "~/analytics";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import EmptyGraph from "~/icons/EmptyGraph";
 import { Item } from "./Graph/types";
+import { GestureResponderEvent } from "@shopify/react-native-performance";
 
 const { width } = getWindowDimensions();
 
@@ -27,6 +28,7 @@ type Props = {
   useCounterValue?: boolean;
   currentPositionY: Animated.SharedValue<number>;
   graphCardEndPosition: number;
+  onTouchEndGraph?: (event: GestureResponderEvent) => void;
 };
 
 const Placeholder = styled(Flex).attrs({
@@ -50,6 +52,7 @@ function GraphCard({
   areAccountsEmpty,
   currentPositionY,
   graphCardEndPosition,
+  onTouchEndGraph,
 }: Props) {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
@@ -86,7 +89,7 @@ function GraphCard({
       currentPositionY.value,
       [graphCardEndPosition + 30, graphCardEndPosition + 50],
       [1, 0],
-      Extrapolate.CLAMP,
+      Extrapolation.CLAMP,
     );
 
     return {
@@ -180,16 +183,19 @@ function GraphCard({
         <EmptyGraph />
       ) : (
         <>
-          <Graph
-            isInteractive={isAvailable}
-            height={110}
-            width={width + 1}
-            color={colors.primary.c80}
-            data={balanceHistory}
-            onItemHover={onItemHover}
-            mapValue={mapGraphValue}
-            fill={colors.background.main}
-          />
+          <Flex onTouchEnd={onTouchEndGraph}>
+            <Graph
+              isInteractive={isAvailable}
+              height={110}
+              width={width + 1}
+              color={colors.primary.c80}
+              data={balanceHistory}
+              onItemHover={onItemHover}
+              mapValue={mapGraphValue}
+              fill={colors.background.main}
+              testID="graphCard-chart"
+            />
+          </Flex>
           <Flex paddingTop={6} background={colors.background.main}>
             <GraphTabs
               activeIndex={activeRangeIndex}

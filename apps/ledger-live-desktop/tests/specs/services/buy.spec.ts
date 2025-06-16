@@ -130,7 +130,7 @@ test("Buy / Sell @smoke", async ({ page }) => {
     await layout.goToSettings();
     await settingsPage.changeLanguage("English", "Français");
     await settingsPage.changeTheme();
-    await layout.goToBuyCrypto();
+    await layout.goToBuySellCrypto();
 
     expect(await liveAppWebview.waitForCorrectTextInWebview("theme: light")).toBe(true);
     expect(await liveAppWebview.waitForCorrectTextInWebview("lang: fr")).toBe(true);

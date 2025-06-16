@@ -36,12 +36,13 @@ export class ExchangeModule extends CustomModule {
    *
    * @returns - A transaction ID used to complete the exchange process
    */
-  async startSell({ provider }: Omit<ExchangeStartSellParams, "exchangeType">) {
+  async startSell({ provider, fromAccountId }: Omit<ExchangeStartSellParams, "exchangeType">) {
     const result = await this.request<ExchangeStartSellParams, ExchangeStartResult>(
       "custom.exchange.start",
       {
         exchangeType: "SELL",
         provider,
+        fromAccountId,
       },
     );
 

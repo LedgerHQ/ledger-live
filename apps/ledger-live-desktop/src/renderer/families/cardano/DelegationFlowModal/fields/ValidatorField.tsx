@@ -1,24 +1,26 @@
-import React, { useState, useCallback, useEffect } from "react";
-import styled from "styled-components";
-import Box from "~/renderer/components/Box";
-import Text from "~/renderer/components/Text";
-import ScrollLoadingList from "../ScrollLoadingList";
-import { Trans } from "react-i18next";
-import { TFunction } from "i18next";
-import IconAngleDown from "~/renderer/icons/AngleDown";
-import ValidatorRow from "./ValidatorRow";
-import { Account } from "@ledgerhq/types-live";
-import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { useCardanoFamilyPools } from "@ledgerhq/live-common/families/cardano/react";
 import {
+  DEFAULT_SELECTED_POOL_ID,
   LEDGER_POOL_IDS,
   StakePool,
   fetchPoolDetails,
 } from "@ledgerhq/live-common/families/cardano/staking";
-import { useCardanoFamilyPools } from "@ledgerhq/live-common/families/cardano/react";
-import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
 import { CardanoDelegation } from "@ledgerhq/live-common/families/cardano/types";
+import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { Account } from "@ledgerhq/types-live";
+import { TFunction } from "i18next";
+import React, { useCallback, useEffect, useState } from "react";
+import { Trans } from "react-i18next";
+import styled from "styled-components";
 import BigSpinner from "~/renderer/components/BigSpinner";
+import Box from "~/renderer/components/Box";
+import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
+import Text from "~/renderer/components/Text";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import IconAngleDown from "~/renderer/icons/AngleDown";
+import ScrollLoadingList from "../ScrollLoadingList";
+import ValidatorRow from "./ValidatorRow";
 
 type Props = {
   t: TFunction;
@@ -29,43 +31,74 @@ type Props = {
   selectedPoolId: string;
 };
 
+export function concatUserAndLedgerPoolIds(
+  userLastUsedPool: string | undefined,
+  ledgerPoolIds: string[],
+): string[] {
+  return userLastUsedPool ? [userLastUsedPool, ...ledgerPoolIds] : [...ledgerPoolIds];
+}
+
+export function putUserPoolAtFirstPositionInPools(
+  pools: StakePool[],
+  firstPoolId: string,
+): StakePool[] {
+  const index = pools.findIndex(pool => pool.poolId === firstPoolId);
+  if (index === -1) {
+    return pools;
+  }
+
+  const pool = { ...pools[index] };
+  return [pool, ...pools.filter((_, i) => i !== index)];
+}
+
+export async function fetchAndSortPools(
+  currency: CryptoCurrency,
+  poolIds: string[],
+  userLastUsedPoolId: string,
+) {
+  const response = await fetchPoolDetails(currency, poolIds);
+  const sortedPools = putUserPoolAtFirstPositionInPools(response.pools, userLastUsedPoolId);
+  return sortedPools;
+}
+
 const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId }: Props) => {
-  const [ledgerPools, setLedgerPools] = useState<Array<StakePool>>([]);
   const unit = useAccountUnit(account);
-
-  const [showAll, setShowAll] = useState(
-    LEDGER_POOL_IDS.length === 0 ||
-      (LEDGER_POOL_IDS.length === 1 && delegation?.poolId === LEDGER_POOL_IDS[0]),
-  );
-
-  const [ledgerPoolsLoading, setLedgerPoolsLoading] = useState(false);
+  const [showAll, setShowAll] = useState(false);
+  const [userAndLedgerPools, setUserAndLedgerPools] = useState<Array<StakePool>>([]);
+  const [userAndLedgerPoolsLoading, setUserAndLedgerPoolsLoading] = useState(false);
+  const [currentSelectedPool, setCurrentSelectedPool] = useState<StakePool | undefined>(undefined);
   const { pools, searchQuery, setSearchQuery, onScrollEndReached, isSearching, isPaginating } =
     useCardanoFamilyPools(account.currency);
 
-  const poolIdsToFilterFromAllPools = [...LEDGER_POOL_IDS];
-  if (delegation?.poolId) {
-    poolIdsToFilterFromAllPools.push(delegation?.poolId);
-  }
+  const userAndLedgerPoolIds = concatUserAndLedgerPoolIds(delegation?.poolId, LEDGER_POOL_IDS);
 
   useEffect(() => {
-    if (LEDGER_POOL_IDS.length) {
-      setLedgerPoolsLoading(true);
-      fetchPoolDetails(account.currency, LEDGER_POOL_IDS)
-        .then((apiRes: { pools: Array<StakePool> }) => {
-          const filteredLedgerPools = apiRes.pools.filter(
-            pool => pool.poolId !== delegation?.poolId,
-          );
-          if (filteredLedgerPools.length) {
-            setLedgerPools(filteredLedgerPools);
-            onChangeValidator(filteredLedgerPools[0]);
-          }
-        })
-        .finally(() => {
-          setLedgerPoolsLoading(false);
-        });
-    }
+    setUserAndLedgerPoolsLoading(true);
+    fetchAndSortPools(account.currency, userAndLedgerPoolIds, DEFAULT_SELECTED_POOL_ID).then(
+      (sortedPools: StakePool[]) => {
+        setUserAndLedgerPools(sortedPools);
+        onChangeValidator(sortedPools[0]);
+        setUserAndLedgerPoolsLoading(false);
+      },
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    const selectedPool =
+      pools.find(p => p.poolId === selectedPoolId) ||
+      userAndLedgerPools.find(pool => pool.poolId === selectedPoolId);
+
+    if (selectedPool) {
+      setCurrentSelectedPool(selectedPool);
+      if (pools.some(p => p.poolId === selectedPoolId)) {
+        onChangeValidator(selectedPool);
+      }
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedPoolId]);
+
   const onSearch = useCallback(
     (evt: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(evt.target.value),
     [setSearchQuery],
@@ -77,7 +110,10 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
         key={validatorIdx + validator.poolId}
         pool={validator}
         unit={unit}
-        active={selectedPoolId === validator.poolId || validator.poolId === delegation?.poolId}
+        active={
+          selectedPoolId === validator.poolId ||
+          (validator.poolId === delegation?.poolId && validator.poolId === selectedPoolId)
+        }
         onClick={onChangeValidator}
       />
     );
@@ -88,7 +124,9 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
       {showAll && <ValidatorSearchInput noMargin={true} search={searchQuery} onSearch={onSearch} />}
       <ValidatorsFieldContainer>
         <Box p={1} data-testid="validator-list">
-          {(showAll && isSearching) || (!showAll && ledgerPoolsLoading) ? (
+          {(showAll && isSearching) ||
+          (!showAll && userAndLedgerPoolsLoading) ||
+          (!showAll && !pools.length) ? (
             <Box flex={1} py={3} alignItems="center" justifyContent="center">
               <BigSpinner size={35} />
             </Box>
@@ -96,8 +134,11 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
             <ScrollLoadingList
               data={
                 showAll
-                  ? pools.filter(p => !poolIdsToFilterFromAllPools.includes(p.poolId))
-                  : ledgerPools
+                  ? [
+                      ...userAndLedgerPools,
+                      ...pools.filter(p => p && !userAndLedgerPoolIds.includes(p.poolId)),
+                    ]
+                  : [currentSelectedPool ?? userAndLedgerPools[0]]
               }
               style={{
                 flex: showAll ? "1 0 256px" : "1 0 64px",
@@ -112,7 +153,7 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
             />
           )}
         </Box>
-        {LEDGER_POOL_IDS.length ? (
+        {userAndLedgerPoolIds.length > 1 ? (
           <SeeAllButton expanded={showAll} onClick={() => setShowAll(shown => !shown)}>
             <Text color="wallet" ff="Inter|SemiBold" fontSize={4}>
               <Trans i18nKey={showAll ? "distribution.showLess" : "distribution.showAll"} />

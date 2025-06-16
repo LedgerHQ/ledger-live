@@ -24,7 +24,7 @@ interface BaseProps extends BaseStyledProps, BordersProps {
 }
 
 export interface ButtonProps extends BaseProps, React.RefAttributes<HTMLButtonElement> {
-  Icon?: React.ComponentType<{ size: number; color?: string }>;
+  Icon?: React.ReactElement | React.ComponentType<{ size: number; color?: string }>;
   children?: React.ReactNode;
   onClick?: (event: React.SyntheticEvent<HTMLButtonElement>) => void;
   iconSize?: number;
@@ -236,7 +236,11 @@ const Button = (
   ref?: React.ForwardedRef<HTMLButtonElement>,
 ): React.ReactElement => {
   const iconNodeSize = iconSize || fontSizes[props.fontSize ?? 4];
-  const IconNode = useMemo(() => Icon && <Icon size={iconNodeSize} />, [iconNodeSize, Icon]);
+  const IconNode = useMemo(() => {
+    if (!Icon) return null;
+    if (typeof Icon === "object") return Icon;
+    return <Icon size={iconNodeSize} />;
+  }, [iconNodeSize, Icon]);
 
   return (
     <Base {...props} ref={ref} iconButton={!(Icon == null) && !children} onClick={onClick}>

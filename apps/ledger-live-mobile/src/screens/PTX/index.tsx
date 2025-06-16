@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import storage from "LLM/storage";
 import semver from "semver";
 import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
@@ -8,6 +8,7 @@ import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { useTheme } from "styled-components/native";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
@@ -24,6 +25,8 @@ import { walletSelector } from "~/reducers/wallet";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { useSettings } from "~/hooks";
+import { ProviderInterstitial } from "./BuySell/ProviderInterstitial";
+import { useProviderInterstitalEnabled } from "@ledgerhq/live-common/hooks/useShowProviderLoadingTransition";
 
 export type Props = StackNavigatorProps<
   PtxNavigatorParamList,
@@ -62,6 +65,10 @@ export function PtxScreen({ route, config }: Props) {
   const walletState = useSelector(walletSelector);
   const discreetMode = useSelector(discreetModeSelector);
 
+  const providerInterstitialEnabled = useProviderInterstitalEnabled({
+    manifest,
+  });
+
   /**
    * Pass correct account ID
    * Due to Platform SDK account ID not being equivalent to Wallet API account ID
@@ -82,6 +89,9 @@ export function PtxScreen({ route, config }: Props) {
         params.account = accountToWalletAPIAccount(walletState, account, parentAccount).id;
       }
     }
+
+    if (params?.goToURL) params.goToURL = decodeURIComponent(params.goToURL);
+
     return params;
   }, [walletState, accounts, manifest?.apiVersion, params]);
 
@@ -94,15 +104,14 @@ export function PtxScreen({ route, config }: Props) {
     () => {
       (async () => {
         if (manifest?.id && internalAppIds.includes(manifest.id)) {
-          await AsyncStorage.removeItem("last-screen");
-          await AsyncStorage.removeItem("manifest-id");
-          await AsyncStorage.removeItem("flow-name");
+          await storage.delete(["last-screen", "manifest-id", "flow-name"]);
         }
       })();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
+  const { softExit, ...searchInput } = Object.fromEntries(searchParams.entries());
 
   return manifest ? (
     <>
@@ -123,9 +132,11 @@ export function PtxScreen({ route, config }: Props) {
             providerTestId: localManifest?.providerTestId,
           }),
           ...customParams,
-          ...Object.fromEntries(searchParams.entries()),
+          ...searchInput,
         }}
         config={config}
+        softExit={softExit === "true"}
+        Interstitial={providerInterstitialEnabled ? ProviderInterstitial : undefined}
       />
     </>
   ) : (

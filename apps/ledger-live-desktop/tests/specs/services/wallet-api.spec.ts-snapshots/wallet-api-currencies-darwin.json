@@ -145,6 +145,24 @@
   },
   {
     "type": "CryptoCurrency",
+    "id": "solana_testnet",
+    "ticker": "SOL",
+    "name": "Solana testnet",
+    "family": "solana",
+    "color": "#000",
+    "decimals": 9
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "solana_devnet",
+    "ticker": "SOL",
+    "name": "Solana devnet",
+    "family": "solana",
+    "color": "#000",
+    "decimals": 9
+  },
+  {
+    "type": "CryptoCurrency",
     "id": "ripple",
     "ticker": "XRP",
     "name": "XRP",
@@ -211,7 +229,7 @@
     "id": "crypto_org",
     "ticker": "CRO",
     "name": "Cronos POS Chain",
-    "family": "crypto_org",
+    "family": "cosmos",
     "color": "#0e1c37",
     "decimals": 8
   },
@@ -220,7 +238,7 @@
     "id": "crypto_org_croeseid",
     "ticker": "CRO",
     "name": "Cronos POS Chain Croeseid",
-    "family": "crypto_org",
+    "family": "cosmos",
     "color": "#0e1c37",
     "decimals": 8
   },
@@ -469,6 +487,24 @@
   },
   {
     "type": "CryptoCurrency",
+    "id": "aptos",
+    "ticker": "APT",
+    "name": "Aptos",
+    "family": "aptos",
+    "color": "#231F20",
+    "decimals": 8
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "aptos_testnet",
+    "ticker": "APT",
+    "name": "Aptos (Testnet)",
+    "family": "aptos",
+    "color": "#FFCD29",
+    "decimals": 8
+  },
+  {
+    "type": "CryptoCurrency",
     "id": "optimism",
     "ticker": "ETH",
     "name": "OP Mainnet",
@@ -507,7 +543,7 @@
     "type": "CryptoCurrency",
     "id": "rsk",
     "ticker": "RBTC",
-    "name": "RSK",
+    "name": "Rootstock",
     "family": "ethereum",
     "color": "#FF931E",
     "decimals": 18
@@ -807,6 +843,60 @@
     "name": "Mantra",
     "family": "cosmos",
     "color": "#ffb386",
+    "decimals": 6
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "xion",
+    "ticker": "XION",
+    "name": "Xion",
+    "family": "cosmos",
+    "color": "#000000",
+    "decimals": 6
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "sui",
+    "ticker": "SUI",
+    "name": "Sui",
+    "family": "sui",
+    "color": "#000",
+    "decimals": 9
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "zenrock",
+    "ticker": "ROCK",
+    "name": "Zenrock",
+    "family": "cosmos",
+    "color": "#080c44",
+    "decimals": 6
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "sonic",
+    "ticker": "S",
+    "name": "Sonic",
+    "family": "ethereum",
+    "color": "#FFFFFF",
+    "decimals": 18
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "sonic_blaze",
+    "ticker": "S",
+    "name": "Sonic Blaze",
+    "family": "ethereum",
+    "color": "#FFFFFF",
+    "decimals": 18
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "babylon",
+    "ticker": "BABY",
+    "name": "Babylon",
+    "family": "cosmos",
+    "color": "#CE6533",
     "decimals": 6
   }
 ]

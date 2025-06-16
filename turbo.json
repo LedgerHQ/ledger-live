@@ -1,5 +1,6 @@
 {
   "$schema": "https://turborepo.org/schema.json",
+  "daemon": false,
   "globalDependencies": ["turbo.json"],
   "globalEnv": [
     "ANDROID_HOME",
@@ -18,10 +19,12 @@
     "APP_NAME",
     "AZURE_APP_ID",
     "AZURE_SECRET",
+    "AZURE_KEY_NAME",
     "BRAZE_ANDROID_API_KEY",
     "BRAZE_API_KEY",
     "BRAZE_CUSTOM_ENDPOINT",
     "BRAZE_IOS_API_KEY",
+    "BYPASS_CORS",
     "CI_KEYCHAIN_NAME",
     "CI_KEYCHAIN_PASSWORD",
     "DEV_TOOLS",
@@ -47,7 +50,13 @@
     "SENTRY_AUTH_TOKEN",
     "SENTRY_ENVIRONMENT",
     "SENTRY_PROJECT",
+    "SENTRY_DISABLE_AUTO_UPLOAD",
+    "SENTRY_ALLOW_FAILURE",
+    "SENTRY_DSN",
     "SHORT_BUNDLE_ID",
+    "SWAP_API_BASE",
+    "SWAP_DISABLE_APPS_INSTALL",
+    "SWAP_USER_IP",
     "SUPPLY_UPLOAD_MAX_RETRIES",
     "VERBOSE"
   ],
@@ -110,7 +119,13 @@
     },
     "watch": {
       "cache": false,
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "persistent": true
+    },
+    "watch:es": {
+      "cache": false,
+      "dependsOn": ["^build"],
+      "persistent": true
     },
     "coverage": {
       "cache": false
@@ -175,6 +190,12 @@
       "outputs": [],
       "dependsOn": ["build"],
       "env": ["CI_OS"]
+    },
+    "live-mobile#e2e:ci": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": [],
+      "outputs": ["artifacts/**"]
     }
   }
 }

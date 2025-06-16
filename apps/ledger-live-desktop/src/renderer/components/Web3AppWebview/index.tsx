@@ -18,6 +18,7 @@ export const Web3AppWebview = forwardRef<WebviewAPI, WebviewProps>(
       webviewStyle,
       onStateChange,
       hideLoader,
+      Loader,
     },
     ref,
   ) => {
@@ -26,6 +27,7 @@ export const Web3AppWebview = forwardRef<WebviewAPI, WebviewProps>(
     if (semver.satisfies(WALLET_API_VERSION, manifest.apiVersion)) {
       return (
         <WalletAPIWebview
+          key={manifest.id}
           manifest={manifest}
           currentAccountHistDb={currentAccountHistDb}
           inputs={inputs}
@@ -34,12 +36,14 @@ export const Web3AppWebview = forwardRef<WebviewAPI, WebviewProps>(
           ref={ref}
           hideLoader={hideLoader}
           webviewStyle={webviewStyle}
+          Loader={Loader}
         />
       );
     }
 
     return (
       <PlatformAPIWebview
+        key={manifest.id}
         manifest={manifest}
         currentAccountHistDb={currentAccountHistDb}
         inputs={inputs}

@@ -15,6 +15,7 @@ export const Web3AppWebview = forwardRef<WebviewAPI, WebviewProps>(
       onStateChange,
       allowsBackForwardNavigationGestures,
       onScroll,
+      Loader,
     },
     ref,
   ) => {
@@ -29,6 +30,7 @@ export const Web3AppWebview = forwardRef<WebviewAPI, WebviewProps>(
           customHandlers={customHandlers}
           onStateChange={onStateChange}
           allowsBackForwardNavigationGestures={allowsBackForwardNavigationGestures}
+          Loader={Loader}
         />
       );
     }

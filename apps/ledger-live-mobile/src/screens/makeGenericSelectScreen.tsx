@@ -90,6 +90,7 @@ export default function makeGenericSelectScreen<Item extends { value: string; la
             renderItem={this.renderItem}
             keyExtractor={keyExtractor}
             contentContainerStyle={styles.root}
+            scrollIndicatorInsets={{ right: 1 }}
           />
         </Box>
       );

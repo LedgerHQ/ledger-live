@@ -1,6 +1,4 @@
 import { randomUUID } from "crypto";
-import { web, by } from "detox";
-import { e2eBridgeServer } from "../bridge/server";
 import { first, filter, map } from "rxjs/operators";
 import { startDummyServer, stopDummyServer as stopDummyServer } from "@ledgerhq/test-utils";
 import { firstValueFrom } from "rxjs";
@@ -32,7 +30,7 @@ export async function stopServer() {
 }
 
 export async function send(params: Record<string, unknown>) {
-  const webview = web.element(by.web.id("root"));
+  const webview = getWebElementById("root");
   const id = randomUUID();
   const json = JSON.stringify({
     id,
@@ -45,7 +43,7 @@ export async function send(params: Record<string, unknown>) {
     }`);
 
   const response = firstValueFrom(
-    e2eBridgeServer.pipe(
+    webSocket.e2eBridgeServer.pipe(
       filter(
         (msg): msg is { type: "walletAPIResponse"; id: string; payload: Record<string, unknown> } =>
           msg.type === "walletAPIResponse",

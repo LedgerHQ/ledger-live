@@ -117,7 +117,8 @@ function cosmosLikeMutations(minimalTransactionAmount: BigNumber): MutationSpec<
   return [
     {
       name: "send some",
-      maxRun: 2,
+      feature: "send",
+      maxRun: 1,
       testDestination: genericTestDestination,
       test: ({ account, accountBeforeTransaction, operation }) => {
         expect(account.balance.toString()).toBe(
@@ -148,6 +149,7 @@ function cosmosLikeMutations(minimalTransactionAmount: BigNumber): MutationSpec<
     },
     {
       name: "send max",
+      feature: "sendMax",
       maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
@@ -172,6 +174,7 @@ function cosmosLikeMutations(minimalTransactionAmount: BigNumber): MutationSpec<
     },
     {
       name: "delegate new validators",
+      feature: "staking",
       maxRun: 1,
       transaction: ({ account, bridge, siblings }) => {
         expectSiblingsHaveSpendablePartGreaterThan(siblings, 0.5);
@@ -240,7 +243,8 @@ function cosmosLikeMutations(minimalTransactionAmount: BigNumber): MutationSpec<
     },
     {
       name: "undelegate",
-      maxRun: 5,
+      feature: "staking",
+      maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
         invariant(canUndelegate(account as CosmosAccount), "can undelegate");
         const { cosmosResources } = account as CosmosAccount;
@@ -305,6 +309,7 @@ function cosmosLikeMutations(minimalTransactionAmount: BigNumber): MutationSpec<
     },
     {
       name: "redelegate",
+      feature: "staking",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
         const { cosmosResources } = account as CosmosAccount;
@@ -381,6 +386,7 @@ function cosmosLikeMutations(minimalTransactionAmount: BigNumber): MutationSpec<
     },
     {
       name: "claim rewards",
+      feature: "staking",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
         const { cosmosResources } = account as CosmosAccount;
@@ -441,7 +447,7 @@ const generateGenericCosmosTest = (
     currency: getCryptoCurrencyById(currencyId),
     appQuery: {
       model: DeviceModelId.nanoS,
-      appName: "Cosmos",
+      appName: currencyId == "crypto_org" ? "Cronos POS Chain" : "Cosmos",
     },
     genericDeviceAction: acceptTransaction,
     testTimeout: 2 * 60 * 1000,
@@ -599,6 +605,43 @@ const mantra = {
   }),
 };
 
+const cryptoOrgMinimalTransactionAmount = new BigNumber(1000000);
+const cryptoOrg = {
+  ...generateGenericCosmosTest("crypto_org", false, {
+    minViableAmount: cryptoOrgMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(cryptoOrgMinimalTransactionAmount),
+    testTimeout: 8 * 60 * 1000,
+    skipOperationHistory: true,
+  }),
+};
+
+const xionMinimalTransactionAmount = new BigNumber(20000);
+const xion = {
+  ...generateGenericCosmosTest("xion", false, {
+    minViableAmount: xionMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(xionMinimalTransactionAmount),
+    skipOperationHistory: true,
+  }),
+};
+
+const zenrockMinimalTransactionAmount = new BigNumber(20000);
+const zenrock = {
+  ...generateGenericCosmosTest("zenrock", false, {
+    minViableAmount: zenrockMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(zenrockMinimalTransactionAmount),
+    skipOperationHistory: true,
+  }),
+};
+
+const babylonMinimalTransactionAmount = new BigNumber(20000); // TODO: check amount
+const babylon = {
+  ...generateGenericCosmosTest("babylon", false, {
+    minViableAmount: babylonMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(babylonMinimalTransactionAmount),
+    skipOperationHistory: true,
+  }),
+};
+
 export default {
   axelar,
   cosmos,
@@ -615,4 +658,8 @@ export default {
   coreum,
   injective,
   mantra,
+  cryptoOrg,
+  xion,
+  zenrock,
+  babylon,
 };

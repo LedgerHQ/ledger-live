@@ -1,0 +1,54 @@
+name: "Run Playwright Tests"
+description: "Run Playwright tests with xvfb-run and custom filters"
+inputs:
+  speculos_device:
+    description: "Device to be used (nanoS, nanoSP, nanoX)"
+    required: true
+  test_filter:
+    description: "Filter test pattern to execute specific test suites"
+    required: false
+  invert_filter:
+    description: "Invert the test filter"
+    required: false
+  shard_index:
+    description: "Shard index for test distribution"
+    required: true
+  shard_total:
+    description: "Total number of shards"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up environment variables
+      run: |
+        export SPECULOS_IMAGE_TAG=${{ env.SPECULOS_IMAGE_TAG }}
+        export COINAPPS=$PWD/coin-apps
+        export MOCK=0
+
+        case "${{ inputs.speculos_device }}" in
+          nanoS)    device_tag='@LNS' ;;
+          nanoSP)   device_tag='@nanoSP' ;;
+          nanoX)    device_tag='@nanoX' ;;
+          *)        echo "Unknown SPECULOS_DEVICE: ${SPECULOS_DEVICE}"; exit 1 ;;
+        esac
+
+        grep_filter="$device_tag"
+        if [ -n "${{ inputs.test_filter }}" ]; then
+          grep_filter="(${grep_filter}|${{ inputs.test_filter }})"
+        fi
+
+        if [ "${{ inputs.invert_filter }}" = true ]; then
+          grep_option="--grep-invert"
+        else
+          grep_option="--grep"
+        fi
+
+        echo "Running tests with filter: $grep_option \"$grep_filter\""
+
+        xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" \
+          -- pnpm e2e:desktop test:playwright \
+          --max-failures 50 \
+          $grep_option "$grep_filter" \
+          --shard=${{ inputs.shard_index }}/${{ inputs.shard_total }}
+      shell: bash

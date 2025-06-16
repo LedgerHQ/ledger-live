@@ -1,3 +1,4 @@
+import { step } from "tests/misc/reporters/step";
 import { Modal } from "../../component/modal.component";
 
 export class PasswordlockModal extends Modal {
@@ -7,7 +8,10 @@ export class PasswordlockModal extends Modal {
   private confirmPasswordInput = this.page.getByTestId("confirm-password-input");
   private currentPasswordInput = this.page.getByTestId("current-password-input");
   private disablePasswordInput = this.page.getByTestId("disable-password-input");
+  readonly saveButton = this.page.getByTestId("modal-save-button");
+  private cancelButton = this.page.getByTestId("modal-cancel-button");
 
+  @step("Toggle password lock")
   async toggle() {
     await this.switchButton.click();
   }
@@ -32,5 +36,10 @@ export class PasswordlockModal extends Modal {
     await this.newPasswordInput.fill(newPassword);
     await this.confirmPasswordInput.fill(confirmPassword);
     await this.saveButton.click();
+  }
+
+  @step("Click Cancel button")
+  async clickCancel() {
+    await this.cancelButton.click();
   }
 }

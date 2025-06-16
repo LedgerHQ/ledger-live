@@ -19,6 +19,15 @@ module.exports = (path, options) => {
         "@firebase/util",
         "firebase",
         "uuid",
+        "rpc-websockets",
+        "@solana/codecs",
+        "@solana/codecs-core",
+        "@solana/errors",
+        "@solana/codecs-data-structures",
+        "@solana/codecs-numbers",
+        "@solana/codecs-strings",
+        "@solana/options",
+        "@aptos-labs/aptos-client",
       ]);
 
       if (pkgNamesToTarget.has(pkg.name)) {

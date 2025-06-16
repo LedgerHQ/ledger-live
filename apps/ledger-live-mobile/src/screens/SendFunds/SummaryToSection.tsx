@@ -23,13 +23,14 @@ const DefaultRecipientTemplate = memo(({ transaction }: Pick<Props, "transaction
 
   return (
     <>
-      <LText numberOfLines={2} style={styles.domainRowText}>
+      <LText numberOfLines={2} style={styles.domainRowText} testID="send-summary-recipient-ens">
         {recipientDomain?.domain}
       </LText>
       <LText
         numberOfLines={2}
         style={recipientDomain ? styles.domainRowText : styles.summaryRowText}
         color={recipientDomain ? "neutral.c70" : "neutral.c100"}
+        testID="send-summary-recipient"
       >
         {recipient}
       </LText>
@@ -49,13 +50,14 @@ const RecipientWithResolutionTemplate = memo(({ transaction }: Pick<Props, "tran
 
   return (
     <>
-      <LText numberOfLines={2} style={styles.domainRowText}>
+      <LText numberOfLines={2} style={styles.domainRowText} testID="send-summary-recipient-ens">
         {recipientDomain?.domain}
       </LText>
       <LText
         numberOfLines={2}
         style={recipientDomain ? styles.domainRowText : styles.summaryRowText}
         color={recipientDomain ? "neutral.c70" : "neutral.c100"}
+        testID="send-summary-recipient"
       >
         {recipient}
       </LText>

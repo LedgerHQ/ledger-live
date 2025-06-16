@@ -31,6 +31,9 @@ const styles = StyleSheet.create({
   dataRowValue: {
     fontSize: 14,
     flexGrow: 1,
+    alignItems: "flex-end",
+  },
+  valueText: {
     textAlign: "right",
   },
   text: {
@@ -77,10 +80,12 @@ export function TextValueField({
   label,
   numberOfLines,
   value,
+  testID,
 }: {
   label: React.ReactNode;
   numberOfLines?: number;
   value: React.ReactNode;
+  testID?: string;
 }) {
   const { colors } = useTheme();
   return (
@@ -95,9 +100,11 @@ export function TextValueField({
       <LText numberOfLines={numberOfLines} style={styles.dataRowLabel} color="grey">
         {label}
       </LText>
-      <LText numberOfLines={numberOfLines} style={styles.dataRowValue}>
-        {value}
-      </LText>
+      <View style={styles.dataRowValue}>
+        <LText numberOfLines={numberOfLines} testID={testID} style={styles.valueText}>
+          {value}
+        </LText>
+      </View>
     </View>
   );
 }
@@ -177,12 +184,13 @@ type Props = {
   label: React.ReactNode;
   value: BigNumber;
   unit: Unit;
+  testID?: string;
 };
 
-export const DataRowUnitValue = ({ label, value, unit }: Props) => {
+export const DataRowUnitValue = ({ label, value, unit, testID }: Props) => {
   return (
     <DataRow label={label}>
-      <LText semiBold style={styles.dataRowValue}>
+      <LText semiBold style={styles.dataRowValue} testID={testID}>
         <CurrencyUnitValue unit={unit} value={value} disableRounding />
       </LText>
     </DataRow>

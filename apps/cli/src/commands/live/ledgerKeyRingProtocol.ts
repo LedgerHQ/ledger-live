@@ -112,7 +112,7 @@ export default {
       desc: "api base url for Ledger Key Ring Protocol",
     },
   ],
-  job: ({
+  job: async ({
     device,
     initMemberCredentials,
     getKeyRingTree,
@@ -131,9 +131,9 @@ export default {
     name = "CLI",
     apiBaseUrl = getEnv("TRUSTCHAIN_API_STAGING"),
   }: LedgerKeyRingProtocolJobOpts) => {
-    if (!applicationId) return "applicationId is required";
-    if (!name) return "name is required";
-    if (!apiBaseUrl) return "apiBaseUrl is required";
+    if (!applicationId) return Promise.reject("applicationId is required");
+    if (!name) return Promise.reject("name is required");
+    if (!apiBaseUrl) return Promise.reject("apiBaseUrl is required");
 
     const context = {
       applicationId,
@@ -147,17 +147,19 @@ export default {
     }
 
     if (getKeyRingTree) {
-      if (!pubKey || !privateKey) return "pubKey and privateKey are required";
+      if (!pubKey || !privateKey) {
+        return Promise.reject("pubKey and privateKey are required");
+      }
       return sdk
         .getOrCreateTrustchain(device || "", { pubkey: pubKey, privatekey: privateKey })
         .then(result => result.trustchain);
     }
 
     if (getMembers || restoreKeyRingTree || destroyKeyRingTree) {
-      if (!pubKey || !privateKey) return "pubKey and privateKey are required";
-      if (!rootId) return "pubKey and privateKey are required";
-      if (!walletSyncEncryptionKey) return "walletSyncEncryptionKey is required";
-      if (!applicationPath) return "applicationPath is required";
+      if (!pubKey || !privateKey) return Promise.reject("pubKey and privateKey are required");
+      if (!rootId) return Promise.reject("rootId is required");
+      if (!walletSyncEncryptionKey) return Promise.reject("walletSyncEncryptionKey is required");
+      if (!applicationPath) return Promise.reject("applicationPath is required");
 
       const sdkMethod = getMembers
         ? "getMembers"
@@ -171,10 +173,10 @@ export default {
     }
 
     if (encryptUserData || decryptUserData) {
-      if (!rootId) return "rootId is required";
-      if (!walletSyncEncryptionKey) return "walletSyncEncryptionKey is required";
-      if (!applicationPath) return "applicationPath is required";
-      if (!message) return "message is required";
+      if (!rootId) return Promise.reject("rootId is required");
+      if (!walletSyncEncryptionKey) return Promise.reject("walletSyncEncryptionKey is required");
+      if (!applicationPath) return Promise.reject("applicationPath is required");
+      if (!message) return Promise.reject("message is required");
 
       if (encryptUserData) {
         return sdk
@@ -192,6 +194,6 @@ export default {
         .then(array => new TextDecoder().decode(array));
     }
 
-    return "command does not exist";
+    return Promise.reject("command does not exist");
   },
 };

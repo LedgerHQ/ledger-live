@@ -10,7 +10,6 @@ import {
   DangerouslyOverrideStatePayload,
   SettingsDismissBannerPayload,
   SettingsHideEmptyTokenAccountsPayload,
-  SettingsHideNftCollectionPayload,
   SettingsImportDesktopPayload,
   SettingsImportPayload,
   SettingsSetHasInstalledAnyAppPayload,
@@ -41,7 +40,6 @@ import {
   SettingsSetSwapSelectableCurrenciesPayload,
   SettingsSetThemePayload,
   SettingsShowTokenPayload,
-  SettingsUnhideNftCollectionPayload,
   SettingsUpdateCurrencyPayload,
   SettingsActionTypes,
   SettingsSetWalletTabNavigatorLastVisitedTabPayload,
@@ -71,8 +69,10 @@ import {
   SettingsRemoveStarredMarketcoinsPayload,
   SettingsSetFromLedgerSyncOnboardingPayload,
   SettingsSetHasBeenRedirectedToPostOnboardingPayload,
-  SettingsWhitelistNftCollectionPayload,
-  SettingsUnwhitelistNftCollectionPayload,
+  SettingsSetMevProtectionPayload,
+  SettingsUpdateNftCollectionStatus,
+  SettingsSetSelectedTabPortfolioAssetsPayload,
+  SettingsSetIsRebornPayload,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
 
@@ -143,20 +143,10 @@ export const blacklistToken = createAction<SettingsBlacklistTokenPayload>(
   SettingsActionTypes.BLACKLIST_TOKEN,
 );
 export const showToken = createAction<SettingsShowTokenPayload>(SettingsActionTypes.SHOW_TOKEN);
-export const hideNftCollection = createAction<SettingsHideNftCollectionPayload>(
-  SettingsActionTypes.HIDE_NFT_COLLECTION,
+export const updateNftStatus = createAction<SettingsUpdateNftCollectionStatus>(
+  SettingsActionTypes.UPDATE_NFT_COLLECTION_STATUS,
 );
-export const unhideNftCollection = createAction<SettingsUnhideNftCollectionPayload>(
-  SettingsActionTypes.UNHIDE_NFT_COLLECTION,
-);
-
-export const whitelistNftCollection = createAction<SettingsWhitelistNftCollectionPayload>(
-  SettingsActionTypes.WHITELIST_NFT_COLLECTION,
-);
-
-export const unwhitelistNftCollection = createAction<SettingsUnwhitelistNftCollectionPayload>(
-  SettingsActionTypes.UNWHITELIST_NFT_COLLECTION,
-);
+export const resetNftStatus = createAction(SettingsActionTypes.RESET_NFT_COLLECTION_STATUS);
 
 export const dismissBanner = createAction<SettingsDismissBannerPayload>(
   SettingsActionTypes.SETTINGS_DISMISS_BANNER,
@@ -230,6 +220,9 @@ export const setSensitiveAnalytics = createAction<SettingsSetSensitiveAnalyticsP
 );
 export const setOnboardingHasDevice = createAction<SettingsSetOnboardingHasDevicePayload>(
   SettingsActionTypes.SET_ONBOARDING_HAS_DEVICE,
+);
+export const setIsReborn = createAction<SettingsSetIsRebornPayload>(
+  SettingsActionTypes.SET_IS_REBORN,
 );
 export const setOnboardingType = createAction<SettingsSetOnboardingTypePayload>(
   SettingsActionTypes.SET_ONBOARDING_TYPE,
@@ -314,6 +307,15 @@ export const addStarredMarketCoins = createAction<SettingsAddStarredMarketcoinsP
 export const removeStarredMarketCoins = createAction<SettingsRemoveStarredMarketcoinsPayload>(
   SettingsActionTypes.REMOVE_STARRED_MARKET_COINS,
 );
+
+export const setMevProtection = createAction<SettingsSetMevProtectionPayload>(
+  SettingsActionTypes.SET_MEV_PROTECTION,
+);
+
+export const setSelectedTabPortfolioAssets =
+  createAction<SettingsSetSelectedTabPortfolioAssetsPayload>(
+    SettingsActionTypes.SET_SELECTED_TAB_PORTFOLIO_ASSETS,
+  );
 
 type PortfolioRangeOption = {
   key: PortfolioRange;

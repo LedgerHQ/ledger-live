@@ -7,6 +7,7 @@ const CardContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  width: 100%;
 `;
 
 const Header = styled.img`

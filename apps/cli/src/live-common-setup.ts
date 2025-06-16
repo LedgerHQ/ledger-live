@@ -1,10 +1,6 @@
 export * from "./live-common-setup-base";
-import React from "react";
 import invariant from "invariant";
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
-import Transport from "@ledgerhq/hw-transport";
-import { NotEnoughBalance } from "@ledgerhq/errors";
-import { log } from "@ledgerhq/logs";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import createTransportHttp from "@ledgerhq/hw-transport-http";
@@ -15,20 +11,12 @@ import {
   disconnect,
 } from "@ledgerhq/live-common/hw/index";
 import { retry } from "@ledgerhq/live-common/promise";
-import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { closeAllSpeculosDevices } from "@ledgerhq/live-common/load/speculos";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 import SpeculosHttpTransport, {
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/hw-transport-node-speculos-http";
-
-checkLibs({
-  NotEnoughBalance,
-  React,
-  log,
-  Transport,
-});
 
 let idCounter = 0;
 const mockTransports: Record<string, any> = {};
@@ -64,8 +52,16 @@ registerTransportModule({
   disconnect: () => Promise.resolve(),
 });
 
-if (process.env.DEVICE_PROXY_URL) {
-  const Tr = createTransportHttp(process.env.DEVICE_PROXY_URL.split("|"));
+const {
+  SPECULOS_API_PORT,
+  SPECULOS_APDU_PORT,
+  SPECULOS_BUTTON_PORT,
+  SPECULOS_HOST,
+  DEVICE_PROXY_URL,
+} = process.env;
+
+if (DEVICE_PROXY_URL) {
+  const Tr = createTransportHttp(DEVICE_PROXY_URL.split("|"));
   registerTransportModule({
     id: "http",
     open: () =>
@@ -77,8 +73,6 @@ if (process.env.DEVICE_PROXY_URL) {
     disconnect: () => Promise.resolve(),
   });
 }
-
-const { SPECULOS_API_PORT, SPECULOS_APDU_PORT, SPECULOS_BUTTON_PORT, SPECULOS_HOST } = process.env;
 
 if (SPECULOS_API_PORT) {
   registerSpeculosTransport(parseInt(SPECULOS_API_PORT, 10));
@@ -146,7 +140,7 @@ export function registerSpeculosTransport(apiPort: number) {
 
 LiveConfig.setConfig(liveConfig);
 
-if (!process.env.CI && !SPECULOS_API_PORT) {
+if (!process.env.CI && !SPECULOS_API_PORT && !DEVICE_PROXY_URL) {
   init();
 }
 

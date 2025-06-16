@@ -3,6 +3,7 @@ import { createStackNavigator, TransitionPresets } from "@react-navigation/stack
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 import DebugBenchmarkQRStream from "~/screens/Settings/Debug/Broken/BenchmarkQRStream";
 import DebugBLE from "~/screens/Settings/Debug/Connectivity/BLE";
@@ -53,7 +54,10 @@ import RegionSettings from "~/screens/Settings/General/Region";
 import CurrenciesList from "~/screens/Settings/CryptoAssets/Currencies/CurrenciesList";
 import CurrencySettings from "~/screens/Settings/CryptoAssets/Currencies/CurrencySettings";
 import ExperimentalSettings from "~/screens/Settings/Experimental";
-import DeveloperSettings, { DeveloperCustomManifest } from "~/screens/Settings/Developer";
+import DeveloperSettings, {
+  DeveloperCustomManifest,
+  ExchangeDeveloperMode,
+} from "~/screens/Settings/Developer";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import Button from "../Button";
 import HelpButton from "~/screens/Settings/HelpButton";
@@ -72,6 +76,9 @@ import {
   TestScreenWithDrawerForcingToBeOpened,
   TestScreenWithDrawerRequestingToBeOpened,
 } from "LLM/components/QueuedDrawer/TestScreens";
+import { LargeMoverLandingPage } from "LLM/features/LandingPages/screens/LargeMoverLandingPage";
+import SwiperScreenDebug from "~/screens/Settings/Debug/Features/SwiperScreenDebug";
+import { DebugStorageMigration } from "~/screens/Settings/Debug/Debugging/StorageMigration";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
@@ -81,7 +88,7 @@ export default function SettingsNavigator() {
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
 
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
-
+  const isLargeMoverFeatureEnabled = useFeature("largemoverLandingpage")?.enabled;
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen
@@ -194,6 +201,16 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.ExchangeDeveloperMode}
+        component={ExchangeDeveloperMode}
+        options={{
+          title: t("settings.developer.exchangeDeveloperMode.title"),
+          headerTitleStyle: {
+            width: "80%",
+          },
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.DebugSettings}
         component={DebugSettings}
         options={{
@@ -287,6 +304,13 @@ export default function SettingsNavigator() {
         component={DebugBluetoothAndLocationServices}
         options={{
           title: "Bluetooth and location services",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugStorageMigration}
+        component={DebugStorageMigration}
+        options={{
+          title: "Storage migration",
         }}
       />
       <Stack.Screen
@@ -487,6 +511,22 @@ export default function SettingsNavigator() {
         component={TestScreenWithDrawerForcingToBeOpened}
         options={{
           title: "QueuedDrawers (Auto force open)",
+        }}
+      />
+      {isLargeMoverFeatureEnabled && (
+        <Stack.Screen
+          name={ScreenName.LargeMoverLandingPage}
+          component={LargeMoverLandingPage}
+          options={{
+            headerShown: false,
+          }}
+        />
+      )}
+      <Stack.Screen
+        name={ScreenName.DebugSwipe}
+        component={SwiperScreenDebug}
+        options={{
+          title: "Swiper Screen Debug",
         }}
       />
     </Stack.Navigator>

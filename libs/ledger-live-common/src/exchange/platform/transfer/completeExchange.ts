@@ -4,12 +4,11 @@ import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
 
 import { delay } from "../../../promise";
 import {
-  isExchangeTypeNg,
-  ExchangeTypes,
   createExchange,
+  ExchangeTypes,
+  isExchangeTypeNg,
   PayloadSignatureComputedFormat,
 } from "@ledgerhq/hw-app-exchange";
-import perFamily from "../../../generated/exchange";
 import { getAccountCurrency, getMainAccount } from "../../../account";
 import { getAccountBridge } from "../../../bridge";
 import { TransactionRefusedOnDevice } from "../../../errors";
@@ -104,10 +103,11 @@ const completeExchange = (
         await exchange.checkTransactionSignature(goodSign);
         if (unsubscribed) return;
 
-        const payoutAddressParameters = await perFamily[
-          mainPayoutCurrency.family
-        ].getSerializedAddressParameters(mainAccount.freshAddressPath, mainAccount.derivationMode);
+        const payoutAddressParameters = accountBridge.getSerializedAddressParameters(mainAccount);
         if (unsubscribed) return;
+        if (!payoutAddressParameters) {
+          throw new Error(`Family not supported: ${mainPayoutCurrency.family}`);
+        }
 
         const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
           await getCurrencyExchangeConfig(payoutCurrency);
@@ -121,7 +121,7 @@ const completeExchange = (
           await exchange.validatePayoutOrAsset(
             payoutAddressConfig,
             payoutAddressConfigSignature,
-            payoutAddressParameters.addressParameters,
+            payoutAddressParameters,
           );
         } catch (e) {
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {

@@ -4,7 +4,6 @@
     "composite": false,
     "incremental": false,
     "declaration": true,
-    "target": "ES6"
   },
   "exclude": [
     "node_modules",

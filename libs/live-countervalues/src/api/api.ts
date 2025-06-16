@@ -10,8 +10,11 @@ const baseURL = () => getEnv("LEDGER_COUNTERVALUES_API");
 
 const LATEST_CHUNK = 50;
 
+const DAILY_RATE_MS = 14 * 24 * 60 * 60 * 1000;
+const HOURLY_RATE_MS = 2 * 24 * 60 * 60 * 1000;
+
 const api: CounterValuesAPI = {
-  fetchHistorical: async (granularity, { from, to, startDate }) => {
+  fetchHistorical: async (granularity, { from, to, startDate }, granularitiesRates) => {
     const format = formatPerGranularity[granularity];
     const now = new Date();
     if (now < startDate) {
@@ -25,13 +28,29 @@ const api: CounterValuesAPI = {
       return Promise.resolve({});
     }
 
+    const granularity_ms = granularitiesRates
+      ? granularitiesRates[granularity]
+      : granularity === "daily"
+        ? DAILY_RATE_MS
+        : HOURLY_RATE_MS;
+
+    const start_date_ms_since_epoch = startDate.getTime();
+    const end_date_ms_since_epoch = now.getTime();
+
+    const corrected_start_date = format(
+      new Date(Math.floor(start_date_ms_since_epoch / granularity_ms) * granularity_ms),
+    );
+    const corrected_end_date = format(
+      new Date(Math.ceil(end_date_ms_since_epoch / granularity_ms) * granularity_ms),
+    );
+
     const url = URL.format({
       pathname: `${baseURL()}/v3/historical/${granularity}/simple`,
       query: {
         from: inferCurrencyAPIID(from),
         to: inferCurrencyAPIID(to),
-        start,
-        end,
+        start: corrected_start_date,
+        end: corrected_end_date,
       },
     });
     const { data } = await network<Record<string, number>>({ method: "GET", url });

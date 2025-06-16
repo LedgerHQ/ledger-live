@@ -1,11 +1,11 @@
 import path from "path";
-import axios, { AxiosError } from "axios";
+import chalk from "chalk";
 import fs from "fs/promises";
-import { v2 as compose } from "docker-compose";
+import * as compose from "docker-compose";
+import axios, { AxiosError } from "axios";
+import { SignOperationEvent } from "@ledgerhq/types-live";
 import SpeculosTransportHttp from "@ledgerhq/hw-transport-node-speculos-http";
 import { ENV } from "../types";
-import chalk from "chalk";
-import { SignOperationEvent } from "@ledgerhq/types-live";
 
 const { SPECULOS_API_PORT } = process.env as ENV;
 const cwd = path.join(__dirname);
@@ -67,7 +67,7 @@ export async function spawnSpeculos(nanoAppEndpoint: `/${string}`): Promise<{
   async function checkSpeculosLogs(): Promise<SpeculosTransportHttp> {
     const { out } = await compose.logs("speculos", { cwd, env: process.env });
 
-    if (out.includes("Running on all addresses (0.0.0.0)")) {
+    if (out.includes("Serving Flask app")) {
       console.log(chalk.bgYellowBright.black(" -  SPECULOS READY ✅  - "));
       return SpeculosTransportHttp.open({
         apiPort: SPECULOS_API_PORT,
@@ -116,6 +116,7 @@ export async function killSpeculos() {
     cwd,
     log: Boolean(process.env.DEBUG),
     env: process.env,
+    commandOptions: ["--remove-orphans"],
   });
 }
 

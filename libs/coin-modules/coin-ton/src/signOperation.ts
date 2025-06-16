@@ -8,7 +8,7 @@ import { Observable } from "rxjs";
 import { fetchAccountInfo } from "./bridge/bridgeHelpers/api";
 import { TOKEN_TRANSFER_MAX_FEE } from "./constants";
 import type { TonSigner } from "./signer";
-import type { TonCell, TonOperation, Transaction } from "./types";
+import type { TonAccount, TonCell, TonOperation, Transaction } from "./types";
 import { buildTonTransaction, getLedgerTonPath } from "./utils";
 
 const packTransaction = (account: Account, needsInit: boolean, signature: TonCell): string => {
@@ -30,13 +30,15 @@ const packTransaction = (account: Account, needsInit: boolean, signature: TonCel
  * Sign Transaction with Ledger hardware
  */
 export const buildSignOperation =
-  (signerContext: SignerContext<TonSigner>): AccountBridge<Transaction>["signOperation"] =>
+  (
+    signerContext: SignerContext<TonSigner>,
+  ): AccountBridge<Transaction, TonAccount>["signOperation"] =>
   ({
     account,
     transaction,
     deviceId,
   }: {
-    account: Account;
+    account: TonAccount;
     transaction: Transaction;
     deviceId: DeviceId;
   }): Observable<SignOperationEvent> =>
@@ -87,7 +89,7 @@ export const buildSignOperation =
     });
 
 export const buildOptimisticOperation = (
-  account: Account,
+  account: TonAccount,
   transaction: Transaction,
 ): TonOperation => {
   const { recipient, amount, fees, comment, useAllAmount, subAccountId } = transaction;

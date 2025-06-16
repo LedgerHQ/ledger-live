@@ -14,7 +14,7 @@ export type OptionProps = {
 };
 
 export const Option = ({ label, description, onClick, testId, disabled }: OptionProps) => (
-  <TouchableOpacity onPress={onClick} data-testid={testId} disabled={disabled}>
+  <TouchableOpacity onPress={onClick} testID={testId} disabled={disabled}>
     <Container flexDirection="row" alignItems="center" justifyContent="center" disabled={disabled}>
       <Flex paddingY={24} width={304}>
         <Text fontWeight="semiBold" variant="large" color="neutral.c100">

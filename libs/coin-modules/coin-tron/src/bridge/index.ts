@@ -1,6 +1,7 @@
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
-  defaultUpdateTransaction,
+  getSerializedAddressParameters,
+  updateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
@@ -23,7 +24,7 @@ import {
 } from "./serialization";
 import { buildSignOperation } from "./signOperation";
 import { getAccountShape, sync } from "./synchronization";
-import { setCoinConfig, TronCoinConfig } from "../config";
+import tronCoinConfig, { type TronCoinConfig } from "../config";
 
 function buildCurrencyBridge(signerContext: SignerContext<TronSigner>): CurrencyBridge {
   const getAddress = signerGetAddress(signerContext);
@@ -51,7 +52,7 @@ function buildAccountBridge(
   return {
     estimateMaxSpendable,
     createTransaction,
-    updateTransaction: defaultUpdateTransaction,
+    updateTransaction,
     getTransactionStatus,
     prepareTransaction,
     sync,
@@ -62,6 +63,7 @@ function buildAccountBridge(
     assignToAccountRaw,
     fromOperationExtraRaw,
     toOperationExtraRaw,
+    getSerializedAddressParameters,
   };
 }
 
@@ -69,7 +71,7 @@ export function createBridges(
   signerContext: SignerContext<TronSigner>,
   coinConfig: CoinConfig<TronCoinConfig>,
 ) {
-  setCoinConfig(coinConfig);
+  tronCoinConfig.setCoinConfig(coinConfig);
 
   return {
     currencyBridge: buildCurrencyBridge(signerContext),

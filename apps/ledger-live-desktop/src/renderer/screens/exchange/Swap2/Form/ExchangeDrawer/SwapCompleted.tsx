@@ -24,12 +24,16 @@ const Pill = styled(Text)`
   border-radius: 4px;
   background: ${p => p.theme.colors.palette.text.shade10};
   padding: 3px 6px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 `;
 const SwapIdWrapper = styled(Box).attrs(p => ({
   ff: "Inter",
   color: p.color || "palette.text.shade80",
   fontSize: 4,
   relative: true,
+  maxWidth: "100%",
 }))`
   padding-top: 24px;
 
@@ -79,7 +83,7 @@ const SwapCompleted = ({
       flow: "swap",
       button: "FeedbackForm",
     });
-    openURL("https://ledger.typeform.com/to/FIHc3fk2");
+    openURL("https://form.typeform.com/to/FIHc3fk2#source=desktop");
   };
 
   const SwapPill = ({ swapId }: { swapId: string }) => (
@@ -148,7 +152,7 @@ const SwapCompleted = ({
             provider: getProviderName(provider),
           }}
         >
-          <FakeLink onClick={openProviderSupport}>
+          <FakeLink onClick={openProviderSupport} style={{ alignItems: "baseline" }}>
             <span
               style={{
                 marginRight: 4,

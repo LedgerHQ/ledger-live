@@ -1,0 +1,14 @@
+{
+  "entry": [
+    "src/index.ts"
+  ],
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/__test-utils__/**",
+    "**/*.test.{ts,tsx}"
+  ],
+  "ignoreUnresolved": [
+    "@ledgerhq/device-management-kit"
+  ],
+  "ignoreUnimported": []
+}

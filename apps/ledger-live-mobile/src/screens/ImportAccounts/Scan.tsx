@@ -12,7 +12,7 @@ import type { Theme } from "../../colors";
 import type { ImportAccountsNavigatorParamList } from "~/components/RootNavigator/types/ImportAccountsNavigator";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScannedNewImportQrCode } from "@ledgerhq/ledger-key-ring-protocol/errors";
-import { AnalyticsPage } from "~/newArch/features/WalletSync/hooks/useLedgerSyncAnalytics";
+import { AnalyticsPage } from "LLM/features/WalletSync/hooks/useLedgerSyncAnalytics";
 
 type NavigationProps = StackNavigatorProps<
   ImportAccountsNavigatorParamList,
@@ -102,11 +102,11 @@ class Scan extends PureComponent<
   };
 
   render() {
-    const { progress, error } = this.state;
+    const { error, progress } = this.state;
     return (
       <View style={styles.root}>
         <TrackScreen category="Account Import Sync" />
-        <Scanner onResult={this.onBarCodeRead} progress={progress} liveQrCode />
+        <Scanner onResult={this.onBarCodeRead} liveQRCode progress={progress} />
         <GenericErrorBottomModal error={error} onClose={this.onCloseError} />
       </View>
     );

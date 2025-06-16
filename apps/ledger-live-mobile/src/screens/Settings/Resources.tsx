@@ -14,10 +14,15 @@ import SettingsNavigationScrollView from "./SettingsNavigationScrollView";
 import SettingsCard from "~/components/SettingsCard";
 import { urls } from "~/utils/urls";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 
 const Resources = () => {
   const { t } = useTranslation();
   const chatbotSupportFeature = useFeature("llmChatbotSupport");
+
+  const gettingStartedUrl = useLocalizedUrl(urls.resources.gettingStarted);
+  const helpCenterUrl = useLocalizedUrl(urls.resources.helpCenter);
+  const ledgerAcademyUrl = useLocalizedUrl(urls.resources.ledgerAcademy);
 
   return (
     <SettingsNavigationScrollView>
@@ -25,7 +30,7 @@ const Resources = () => {
         title={t("help.gettingStarted.title")}
         desc={t("help.gettingStarted.desc")}
         Icon={NanoSFoldedMedium}
-        onClick={() => Linking.openURL(urls.resources.gettingStarted)}
+        onClick={() => Linking.openURL(gettingStartedUrl)}
       />
       {chatbotSupportFeature?.enabled ? (
         <SettingsCard
@@ -39,14 +44,14 @@ const Resources = () => {
           title={t("help.helpCenter.title")}
           desc={t("help.helpCenter.desc")}
           Icon={LifeRingMedium}
-          onClick={() => Linking.openURL(urls.resources.helpCenter)}
+          onClick={() => Linking.openURL(helpCenterUrl)}
         />
       )}
       <SettingsCard
         title={t("help.ledgerAcademy.title")}
         desc={t("help.ledgerAcademy.desc")}
         Icon={NewsMedium}
-        onClick={() => Linking.openURL(urls.resources.ledgerAcademy)}
+        onClick={() => Linking.openURL(ledgerAcademyUrl)}
       />
       <SettingsCard
         title={t("help.facebook.title")}

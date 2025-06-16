@@ -1,18 +1,19 @@
 import DeviceAction from "../../models/DeviceAction";
 import { knownDevices } from "../../models/devices";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { Application } from "../../page";
-
-let app: Application;
-let deviceAction: DeviceAction;
-let first = true;
-const knownDevice = knownDevices.nanoX;
 
 $TmsLink("B2CQA-651");
 $TmsLink("B2CQA-1854");
 describe("Receive different currency", () => {
+  let deviceAction: DeviceAction;
+  let first = true;
+  const knownDevice = knownDevices.nanoX;
+
   beforeAll(async () => {
-    app = await Application.init("onboardingcompleted", [knownDevice]);
+    await app.init({
+      userdata: "skip-onboarding",
+      knownDevices: [knownDevice],
+    });
     deviceAction = new DeviceAction(knownDevice);
 
     await app.portfolio.waitForPortfolioPageToLoad();
@@ -37,11 +38,13 @@ describe("Receive different currency", () => {
 
     await app.receive.openViaDeeplink();
     await app.common.performSearch(currencyName);
-    await app.receive.selectCurrency(currencyName);
+    await app.receive.selectCurrency(currency.id);
     if (network) await app.receive.selectNetwork(network);
     first && (await deviceAction.selectMockDevice(), (first = false));
     await deviceAction.openApp();
-    await app.receive.selectAccount(`${currencyName} 2`);
+    await app.addAccount.addAccountAtIndex(currency.name, currency.id, 1);
+    await app.addAccount.tapAddFunds();
+    await app.addAccount.tapReceiveinActionDrawer();
     await app.receive.doNotVerifyAddress();
     await app.receive.expectReceivePageIsDisplayed(currency.ticker, `${currencyName} 2`);
   });

@@ -25,6 +25,10 @@ type Props = {
   children: React.ReactNode;
   x: ScaleContinuousNumeric<number, number> | ScaleTime<number, number>;
   y: ScaleContinuousNumeric<number, number> | ScaleTime<number, number>;
+  /** Represents the offset to apply to the y-coordinates. Default to 0.  */
+  yOffset?: number;
+  /** Represents the offset to apply to the x-coordinates. Default to 0.  */
+  xOffset?: number;
 };
 const bisectDate = array.bisector((d: { date?: Date | null | number }) => d.date).left;
 export default class BarInteraction extends Component<
@@ -41,7 +45,7 @@ export default class BarInteraction extends Component<
     barOffsetY: 0,
   };
   collectHovered = (xPos: number) => {
-    const { data, onItemHover, mapValue, x, y } = this.props;
+    const { data, onItemHover, mapValue, x, y, xOffset = 0, yOffset = 0 } = this.props;
     const x0 = Math.round(xPos);
     const hoveredDate = x.invert(x0);
     const i = bisectDate(data, hoveredDate, 1);
@@ -52,10 +56,11 @@ export default class BarInteraction extends Component<
     const d = Math.abs(x0 - xLeft) < Math.abs(x0 - xRight) ? d0 : d1;
     if (onItemHover) onItemHover(d);
     const value = mapValue(d);
-    return {
-      barOffsetX: x(d.date!),
-      barOffsetY: y(value),
+    const result = {
+      barOffsetX: x(d.date!) + xOffset,
+      barOffsetY: y(value) + yOffset,
     };
+    return result;
   };
   onHandlerStateChange = (
     e: HandlerStateChangeEvent<PanGestureHandlerEventPayload | LongPressGestureHandlerEventPayload>,

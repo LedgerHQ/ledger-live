@@ -16,7 +16,7 @@ test("Layout @smoke", async ({ page }) => {
   const settingsPage = new SettingsPage(page);
 
   await test.step("can open send modal", async () => {
-    await layout.openSendModal();
+    await layout.openSendModalFromSideBar();
     await sendModal.container.waitFor({ state: "visible" });
     const sendButtonLoader = sendModal.container
       .locator("id=send-recipient-continue-button")
@@ -27,7 +27,7 @@ test("Layout @smoke", async ({ page }) => {
   });
 
   await test.step("can open receive modal", async () => {
-    await layout.openReceiveModal();
+    await layout.openReceiveModalFromSideBar();
     await receiveModal.container.waitFor({ state: "visible" });
     await expect.soft(sendModal.container).toHaveScreenshot("receive-modal.png");
     await receiveModal.close();
@@ -52,7 +52,7 @@ test("Layout @smoke", async ({ page }) => {
     await settingsPage.experimentalTab.click();
     await settingsPage.enableDevMode();
     await layout.goToPortfolio();
-    await layout.drawerExperimentalButton.click();
+    await layout.goToExperimentalFeatures();
     await expect.soft(page).toHaveScreenshot("experimental-features.png");
   });
 
@@ -72,14 +72,14 @@ test("Layout @smoke", async ({ page }) => {
   });
 
   await test.step("can collapse the main sidebar", async () => {
-    await layout.drawerCollapseButton.click();
+    await layout.closeSideBar();
     await expect.soft(page).toHaveScreenshot("collapse-sidebar.png", {
       mask: [page.locator("canvas"), layout.marketPerformanceWidget],
     });
   });
 
   await test.step("can display the help modal", async () => {
-    await layout.topbarHelpButton.click();
+    await layout.openHelp();
     await expect.soft(drawer.content).toHaveScreenshot("help-drawer.png");
   });
 });

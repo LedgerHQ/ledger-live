@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Config from "react-native-config";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import storage from "LLM/storage";
 import { concatMap } from "rxjs/operators";
 import { setEnvUnsafe, isEnvDefault, changes } from "@ledgerhq/live-env";
 import type { EnvName } from "@ledgerhq/live-env";
@@ -152,8 +152,9 @@ const storageKey = "experimentalFlags";
 
 export const getStorageEnv = async () => {
   try {
-    const maybeData = await AsyncStorage.getItem(storageKey);
-    return maybeData ? JSON.parse(maybeData) : {};
+    const maybeData = await storage.get<Record<string, unknown>>(storageKey);
+    if (!maybeData || Array.isArray(maybeData)) return {};
+    return maybeData;
   } catch (error) {
     logger.critical(error as Error);
     return {};
@@ -164,7 +165,7 @@ export const setStorageEnvs = async (key: EnvName, val: string) => {
   try {
     const envs = await getStorageEnv();
     envs[key] = val;
-    await AsyncStorage.setItem(storageKey, JSON.stringify(envs));
+    await storage.save(storageKey, envs);
   } catch (error) {
     logger.critical(error as Error);
   }
@@ -178,7 +179,6 @@ export const enabledExperimentalFeatures = (): string[] =>
 (async () => {
   const envs = await getStorageEnv();
 
-  /* eslint-disable guard-for-in */
   for (const k in envs) {
     setEnvUnsafe(k as EnvName, envs[k]);
   }
@@ -186,7 +186,6 @@ export const enabledExperimentalFeatures = (): string[] =>
   for (const k in Config) {
     setEnvUnsafe(k as EnvName, Config[k]);
   }
-  /* eslint-enable guard-for-in */
 
   const saveEnvs = async (name: EnvName, value: string) => {
     if (

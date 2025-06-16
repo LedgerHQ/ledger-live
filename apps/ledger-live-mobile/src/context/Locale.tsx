@@ -3,7 +3,7 @@ import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
 import type { TFunction } from "react-i18next";
 import { getTimeZone } from "react-native-localize";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import storage from "LLM/storage";
 import { I18nManager } from "react-native";
 import RNRestart from "react-native-restart";
 
@@ -11,6 +11,7 @@ import { DEFAULT_LANGUAGE_LOCALE, getDefaultLanguageLocale, locales } from "../l
 import { setLanguage } from "~/actions/settings";
 import { useDispatch } from "react-redux";
 import { useSettings } from "~/hooks";
+import { useSupportedLocales } from "~/hooks/languages/useSupportedLocales";
 
 try {
   if ("__setDefaultTimeZone" in Intl.DateTimeFormat) {
@@ -42,7 +43,19 @@ type Props = {
   children: React.ReactNode;
 };
 
-const SUPPORTED_LANGUAGES = ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko", "pt"] as const;
+const SUPPORTED_LANGUAGES = [
+  "en",
+  "fr",
+  "es",
+  "ru",
+  "zh",
+  "de",
+  "tr",
+  "ja",
+  "ko",
+  "pt",
+  "th",
+] as const;
 
 export type SupportedLanguages = (typeof SUPPORTED_LANGUAGES)[number];
 
@@ -63,8 +76,9 @@ function getLocaleState(i18n: typeof i18next): LocaleState {
 const LocaleContext = React.createContext(getLocaleState(i18next));
 export default function LocaleProvider({ children }: Props) {
   const { language } = useSettings();
+  const supportedLocales = useSupportedLocales();
   const dispatch = useDispatch();
-  const currentLanguage = SUPPORTED_LANGUAGES.includes(language as SupportedLanguages)
+  const currentLanguage = supportedLocales.includes(language as SupportedLanguages)
     ? language
     : DEFAULT_LANGUAGE_LOCALE;
 
@@ -101,11 +115,11 @@ export function useLocale() {
 const lastAskedLanguageAvailable = "2022-09-23";
 // To reset os language proposition, change this date !
 export async function hasAnsweredLanguageAvailable() {
-  const memory = await AsyncStorage.getItem("hasAnsweredLanguageAvailable");
+  const memory = await storage.getString("hasAnsweredLanguageAvailable");
   return memory === lastAskedLanguageAvailable;
 }
 export async function answerLanguageAvailable() {
-  return AsyncStorage.setItem("hasAnsweredLanguageAvailable", lastAskedLanguageAvailable);
+  return storage.saveString("hasAnsweredLanguageAvailable", lastAskedLanguageAvailable);
 }
 export const useLanguageAvailableChecked = () => {
   const [checked, setChecked] = useState(true);

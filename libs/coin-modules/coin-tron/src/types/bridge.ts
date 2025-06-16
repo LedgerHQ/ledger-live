@@ -77,6 +77,8 @@ export type TrongridTxInfo = {
   date: Date;
   type: TrongridTxType;
   tokenId?: string;
+  tokenAddress?: string;
+  tokenType?: string;
   from: string;
   to?: string;
   value?: BigNumber;
@@ -125,6 +127,7 @@ export type SendTransactionData = {
   owner_address: string;
   amount: number;
   asset_name: string | null | undefined;
+  extra_data: string | null | undefined;
 };
 export type SmartContractFunction = "transfer(address,uint256)";
 export type SmartContractTransactionData = {
@@ -299,6 +302,9 @@ export type TronTransactionInfo = {
   unfreeze_amount?: number;
 };
 export type TronTransactionInfoRaw = [number, number, number?, number?];
+export function isTronAccount(account: Account): account is TronAccount {
+  return "tronResources" in account;
+}
 export type TronAccount = Account & { tronResources: TronResources };
 export type TronAccountRaw = AccountRaw & { tronResources: TronResourcesRaw };
 export type TransactionStatus = TransactionStatusCommon;

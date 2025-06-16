@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`zenrock currency bridge scanAccounts zenrock seed 1 1`] = `
+[
+  {
+    "balance": "0",
+    "currencyId": "zenrock",
+    "derivationMode": "",
+    "freshAddress": "zen1gyauvl44q2apn3u3aujm36q8zrj74vry04vkrc",
+    "freshAddressPath": "44'/118'/0'/0/0",
+    "id": "js:2:zenrock:zen1gyauvl44q2apn3u3aujm36q8zrj74vry04vkrc:",
+    "index": 0,
+    "pendingOperations": [],
+    "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
+    "spendableBalance": "0",
+    "swapHistory": [],
+    "syncHash": undefined,
+    "used": false,
+    "xpub": "zen1gyauvl44q2apn3u3aujm36q8zrj74vry04vkrc",
+  },
+]
+`;
+
+exports[`zenrock currency bridge scanAccounts zenrock seed 1 2`] = `
+[
+  [],
+]
+`;

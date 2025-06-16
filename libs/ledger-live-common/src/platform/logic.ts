@@ -1,11 +1,18 @@
-import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountLike,
+  AnyMessage,
+  getCurrencyForAccount,
+  Operation,
+  SignedOperation,
+} from "@ledgerhq/types-live";
 import { accountToPlatformAccount, getPlatformTransactionSignFlowInfos } from "./converters";
 import { RawPlatformTransaction, RawPlatformSignedTransaction } from "./rawTypes";
 import {
   deserializePlatformTransaction,
   deserializePlatformSignedTransaction,
 } from "./serializers";
-import type { TrackFunction } from "./tracking";
+import type { TrackingAPI } from "./tracking";
 import { LiveAppManifest, TranslatableString } from "./types";
 import { isTokenAccount, getMainAccount, isAccount } from "../account/index";
 import { getAccountBridge } from "../bridge/index";
@@ -22,7 +29,7 @@ export function translateContent(content: string | TranslatableString, locale = 
 export type WebPlatformContext = {
   manifest: LiveAppManifest;
   accounts: AccountLike[];
-  tracking: Record<string, TrackFunction>;
+  tracking: TrackingAPI;
 };
 
 function getParentAccount(account: AccountLike, fromAccounts: AccountLike[]): Account | undefined {
@@ -195,6 +202,8 @@ export function completeExchangeLogic(
     fromParentAccount,
     toAccount,
     toParentAccount,
+    fromCurrency: getCurrencyForAccount(fromAccount),
+    toCurrency: toAccount ? getCurrencyForAccount(toAccount) : undefined,
   };
 
   const accountBridge = getAccountBridge(fromAccount, fromParentAccount);

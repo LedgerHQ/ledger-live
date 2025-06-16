@@ -30,6 +30,7 @@ export type GetOnboardingStatePollingArgs = {
   pollingPeriodMs: number;
   transportAbortTimeoutMs?: number;
   safeGuardTimeoutMs?: number;
+  allowedErrorChecks?: ((error: unknown) => boolean)[];
 };
 
 /**
@@ -52,6 +53,7 @@ export const getOnboardingStatePolling = ({
   pollingPeriodMs,
   transportAbortTimeoutMs = pollingPeriodMs - 100,
   safeGuardTimeoutMs = pollingPeriodMs * 10, // Nb Empirical value
+  allowedErrorChecks = [],
 }: GetOnboardingStatePollingArgs): GetOnboardingStatePollingResult => {
   const getOnboardingStateOnce = (): Observable<OnboardingStatePollingResult> => {
     return withDevice(deviceId, { openTimeoutMs: transportAbortTimeoutMs })(t =>
@@ -60,7 +62,10 @@ export const getOnboardingStatePolling = ({
       timeout(safeGuardTimeoutMs), // Throws a TimeoutError
       first(),
       catchError((error: unknown) => {
-        if (isAllowedOnboardingStatePollingError(error)) {
+        if (
+          isAllowedOnboardingStatePollingError(error) ||
+          allowedErrorChecks?.some(fn => fn(error))
+        ) {
           // Pushes the error to the next step to be processed (no retry from the beginning)
           return of(error as Error);
         }

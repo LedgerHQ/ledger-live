@@ -1,6 +1,6 @@
 import { handleActions } from "redux-actions";
 import { getParsedSystemLocale } from "~/helpers/systemLocale";
-import { LanguageIds } from "~/config/languages";
+import { LanguageIdsNotFeatureFlagged } from "~/config/languages";
 import { LangAndRegion } from "~/renderer/reducers/settings";
 import { Handlers } from "./types";
 export type ApplicationState = {
@@ -12,10 +12,9 @@ export type ApplicationState = {
   debug: {
     alwaysShowSkeletons: boolean;
   };
-  alwaysShowMemoTagInfo: boolean;
 };
 const { language, region } = getParsedSystemLocale();
-const osLangSupported = LanguageIds.includes(language);
+const osLangSupported = LanguageIdsNotFeatureFlagged.includes(language);
 const state: ApplicationState = {
   osDarkMode: window.matchMedia("(prefers-color-scheme: dark)").matches,
   osLanguage: {
@@ -27,7 +26,6 @@ const state: ApplicationState = {
   debug: {
     alwaysShowSkeletons: false,
   },
-  alwaysShowMemoTagInfo: true,
 };
 
 type HandlersPayloads = {
@@ -62,9 +60,6 @@ export const osLangAndRegionSelector = (state: { application: ApplicationState }
   state.application.osLanguage;
 export const isNavigationLocked = (state: { application: ApplicationState }) =>
   state.application.navigationLocked;
-export const alwaysShowMemoTagInfoSelector = (state: { application: ApplicationState }) =>
-  state.application.alwaysShowMemoTagInfo;
-
 // Exporting reducer
 
 export default handleActions<ApplicationState, HandlersPayloads[keyof HandlersPayloads]>(

@@ -1,0 +1,59 @@
+name: "Setup Ledger Live Desktop e2e Tests"
+description: "Composite job to setup the CI for Ledger Live Desktop e2e tests"
+inputs:
+  skip_builds:
+    description: "skip the steps to build the desktop and dummy-live-app"
+    required: false
+  build_type:
+    description: "whether to use the ':testing' suffix for the build command"
+    required: false
+    default: "testing"
+  install_node_gyp:
+    description: "install node-gyp"
+    required: false
+  turborepo-server-port:
+    description: "turborepo server port"
+    required: false
+  turbo-server-token:
+    description: "custom token for local s3 server"
+    required: false
+    default: "yolo"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install node-gyp globally
+      if: ${{ inputs.install_node_gyp }}
+      run: |
+        pnpm add -g node-gyp@3.8.0
+      shell: bash
+    - name: Install App dependencies
+      env:
+        LANG: en_US.UTF-8
+      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live-desktop-e2e-tests" --unsafe-perm
+      shell: bash
+    - name: Install playwright dependencies
+      run: pnpm e2e:desktop test:playwright:setup
+      shell: bash
+    - name: Build dependencies
+      if: inputs.turborepo-server-port != ''
+      run: |
+        pnpm build:lld:deps --api="http://127.0.0.1:${{ inputs.turborepo-server-port }}" --token="${{ inputs.turbo-server-token }}" --team="foo"
+      shell: bash
+    - name: Build dependencies
+      if: inputs.turborepo-server-port == ''
+      run: |
+        pnpm build:lld:deps
+      shell: bash
+    - name: Build LLD app for testing
+      env:
+        GOMEMLIMIT: 5GiB
+      if: ${{ !inputs.skip_builds }}
+      run: |
+        pnpm desktop build:${{ inputs.build_type || 'testing' }}
+      shell: bash
+    - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
+      if: ${{ !inputs.skip_builds }}
+      run: |
+        pnpm build:dummy-apps
+      shell: bash

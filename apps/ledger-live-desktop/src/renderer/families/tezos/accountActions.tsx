@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { useDelegation } from "@ledgerhq/live-common/families/tezos/react";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { openModal } from "~/renderer/actions/modals";
 import {
   SendActionDefault,
@@ -9,7 +9,7 @@ import {
 } from "~/renderer/screens/account/AccountActionsDefault";
 import { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
 type Props = {
-  account: TezosAccount | SubAccount;
+  account: TezosAccount | TokenAccount;
   parentAccount: TezosAccount | undefined | null;
   onClick: () => void;
 };

@@ -31,6 +31,7 @@ export async function getDelegationInfo(
     res && {
       status: res.status,
       poolId: res.poolInfo?.poolId,
+      dRepHex: res.dRepInfo?.hex,
       ticker: res.poolInfo?.ticker,
       name: res.poolInfo?.name,
       rewards: new BigNumber(res.rewardsAvailable),

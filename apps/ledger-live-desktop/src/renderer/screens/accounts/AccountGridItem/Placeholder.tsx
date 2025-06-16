@@ -1,13 +1,15 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
 import styled from "styled-components";
-import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import Image from "~/renderer/components/Image";
 import lightEmptyAccountTile from "~/renderer/images/light-empty-account-tile.svg";
 import darkEmptyAccountTile from "~/renderer/images/dark-empty-account-tile.svg";
+import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
+import { ModularDrawerLocation } from "LLD/features/ModularDrawer/enums";
+import { MAD_SOURCE_PAGES } from "LLD/features/ModularDrawer/analytics/types";
+
 const Wrapper = styled(Box).attrs(() => ({
   p: 4,
   flex: 1,
@@ -18,11 +20,11 @@ const Wrapper = styled(Box).attrs(() => ({
   height: 215px;
 `;
 const Placeholder = () => {
-  const dispatch = useDispatch();
   const { t } = useTranslation();
-  const openAddAccounts = useCallback(() => {
-    dispatch(openModal("MODAL_ADD_ACCOUNTS", undefined));
-  }, [dispatch]);
+  const { openAssetFlow } = useOpenAssetFlow(
+    ModularDrawerLocation.ADD_ACCOUNT,
+    MAD_SOURCE_PAGES.ACCOUNTS_PAGE,
+  );
   return (
     <Box mb={5}>
       <Wrapper data-e2e="dashboard_AccountPlaceOrder">
@@ -49,7 +51,7 @@ const Placeholder = () => {
         >
           {t("dashboard.emptyAccountTile.desc")}
         </Box>
-        <Button primary onClick={openAddAccounts}>
+        <Button primary onClick={openAssetFlow}>
           {t("dashboard.emptyAccountTile.createAccount")}
         </Button>
       </Wrapper>

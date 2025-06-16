@@ -50,6 +50,7 @@ export const UNISWAP_COMMANDS: Record<`0x${string}`, UniswapSupportedCommand> = 
   "0x02": "PERMIT2_PERMIT_BATCH",
   "0x03": "PERMIT2_TRANSFER_FROM_BATCH",
   "0x06": "PAY_PORTION",
+  "0x04": "SWEEP",
 };
 
 export const SWAP_COMMANDS: Partial<UniswapSupportedCommand>[] = [

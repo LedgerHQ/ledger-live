@@ -1,17 +1,33 @@
-import { handleActions } from "redux-actions";
 import type { Action, ReducerMap } from "redux-actions";
+import { handleActions } from "redux-actions";
 import { createSelector } from "reselect";
+import {
+  EarnActionTypes,
+  EarnPayload,
+  EarnSetInfoModalPayload,
+  EarnSetMenuModalPayload,
+  EarnSetProtocolInfoModalPayload,
+} from "../actions/types";
 import type { EarnState, State } from "./types";
-import { EarnActionTypes, EarnPayload, EarnSetInfoModalPayload } from "../actions/types";
 
 export const INITIAL_STATE: EarnState = {
   infoModal: {},
+  menuModal: undefined,
+  protocolInfoModal: undefined,
 };
 
 const handlers: ReducerMap<EarnState, EarnPayload> = {
-  [EarnActionTypes.EARN_INFO_MODAL]: (state, action: Action<EarnSetInfoModalPayload>) => ({
+  [EarnActionTypes.EARN_INFO_MODAL]: (state, action): EarnState => ({
     ...state,
-    infoModal: action.payload || {},
+    infoModal: (action as Action<EarnSetInfoModalPayload>).payload ?? {},
+  }),
+  [EarnActionTypes.EARN_MENU_MODAL]: (state, action): EarnState => ({
+    ...state,
+    menuModal: (action as Action<EarnSetMenuModalPayload>).payload,
+  }),
+  [EarnActionTypes.EARN_PROTOCOL_INFO_MODAL]: (state, action): EarnState => ({
+    ...state,
+    protocolInfoModal: (action as Action<EarnSetProtocolInfoModalPayload>).payload,
   }),
 };
 
@@ -19,9 +35,19 @@ const storeSelector = (state: State): EarnState => state.earn;
 
 export const exportSelector = storeSelector;
 
-export default handleActions<EarnState, EarnPayload>(handlers, INITIAL_STATE);
-
 export const earnInfoModalSelector = createSelector(
   storeSelector,
   (state: EarnState) => state.infoModal,
 );
+
+export const earnMenuModalSelector = createSelector(
+  storeSelector,
+  (state: EarnState) => state.menuModal,
+);
+
+export const earnProtocolInfoModalSelector = createSelector(
+  storeSelector,
+  (state: EarnState) => state.protocolInfoModal,
+);
+
+export default handleActions<EarnState, EarnPayload>(handlers, INITIAL_STATE);

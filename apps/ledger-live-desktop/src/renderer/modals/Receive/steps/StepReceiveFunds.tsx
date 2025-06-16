@@ -41,8 +41,8 @@ import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { UTXOAddressAlert } from "~/renderer/components/UTXOAddressAlert";
 import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
-import MemoTagInfo from "~/newArch/features/MemoTag/components/MemoTagInfo";
-import { MEMO_TAG_COINS } from "~/newArch/features/MemoTag/constants";
+import MemoTagInfo from "LLD/features/MemoTag/components/MemoTagInfo";
+import { MEMO_TAG_COINS } from "LLD/features/MemoTag/constants";
 
 const Separator = styled.div`
   border-top: 1px solid #99999933;
@@ -192,6 +192,8 @@ const StepReceiveFunds = (props: StepProps) => {
     receiveStakingFlowConfig?.params?.[receivedCurrencyId]?.enabled;
   const isDirectStakingEnabledForAccount =
     !!receivedCurrencyId && receiveStakingFlowConfig?.params?.[receivedCurrencyId]?.direct;
+  const isSPLToken =
+    account && account.type === "TokenAccount" && account.token.parentCurrency.family === "solana";
 
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   invariant(account && mainAccount, "No account given");
@@ -247,7 +249,8 @@ const StepReceiveFunds = (props: StepProps) => {
       !receiveNFTMode &&
       !receiveTokenMode &&
       isStakingEnabledForAccount &&
-      !isFromPostOnboardingEntryPoint
+      !isFromPostOnboardingEntryPoint &&
+      !isSPLToken
     ) {
       track("button_clicked2", {
         button: "continue",
@@ -290,6 +293,7 @@ const StepReceiveFunds = (props: StepProps) => {
     onClose,
     transitionTo,
     completeAction,
+    isSPLToken,
   ]);
 
   // when address need verification we trigger it on device

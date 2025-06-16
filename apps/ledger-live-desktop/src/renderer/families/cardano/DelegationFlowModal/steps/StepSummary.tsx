@@ -46,7 +46,13 @@ function StepSummary(props: StepProps) {
               <Ellipsis mt={2}>
                 <Box horizontal alignItems="center">
                   <CardanoLedgerPoolIcon validator={selectedPool} />
-                  <Text ff="Inter" color="palette.text.shade100" fontSize={4} ml={2}>
+                  <Text
+                    ff="Inter"
+                    color="palette.text.shade100"
+                    fontSize={4}
+                    ml={2}
+                    data-testid="validator-name-label"
+                  >
                     {`${selectedPool.name} [${selectedPool.ticker}]`}
                   </Text>
                 </Box>
@@ -107,6 +113,7 @@ function StepSummary(props: StepProps) {
           </Text>
           <Box>
             <FormattedVal
+              data-testid="fees-amount-step-summary"
               color={feeTooHigh ? "warning" : "palette.text.shade80"}
               disableRounding
               unit={feesUnit}

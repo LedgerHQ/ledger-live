@@ -1,14 +1,13 @@
-import { getElementById, openDeeplink } from "../../helpers";
 import { expect } from "detox";
-
-const baseLink = "custom-image";
+import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class CustomLockscreenPage {
+  baseLink = "custom-image";
   welcomeCustomImageTitle = () => getElementById("custom-image-welcome-title");
   welcomeChoosePictureButton = () => getElementById("custom-image-choose-picture-button");
 
   async openViaDeeplink() {
-    await openDeeplink(baseLink);
+    await openDeeplink(this.baseLink);
   }
 
   async expectCustomLockscreenPage() {

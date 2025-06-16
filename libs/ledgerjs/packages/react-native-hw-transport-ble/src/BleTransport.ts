@@ -1,9 +1,9 @@
 import { v4 as uuid } from "uuid";
-import Transport from "@ledgerhq/hw-transport";
 import type {
-  Subscription as TransportSubscription,
   Observer as TransportObserver,
+  Subscription as TransportSubscription,
 } from "@ledgerhq/hw-transport";
+import Transport from "@ledgerhq/hw-transport";
 // ---------------------------------------------------------------------------------------------
 // Since this is a react-native library and metro bundler does not support
 // package exports yet (see: https://github.com/facebook/metro/issues/670)
@@ -15,64 +15,62 @@ import type {
 import { sendAPDU } from "@ledgerhq/devices/lib/ble/sendAPDU";
 import { receiveAPDU } from "@ledgerhq/devices/lib/ble/receiveAPDU";
 import {
-  BleManager,
-  ConnectionPriority,
-  BleErrorCode,
-  LogLevel,
-  DeviceId,
-  Device,
-  Characteristic,
   BleError,
+  BleErrorCode,
+  Characteristic,
+  ConnectionPriority,
+  Device,
+  DeviceId,
   Subscription,
 } from "react-native-ble-plx";
+import type { DeviceModel } from "@ledgerhq/devices";
 import {
   BluetoothInfos,
   DeviceModelId,
   getBluetoothServiceUuids,
   getInfosForServiceUuid,
 } from "@ledgerhq/devices";
-import type { DeviceModel } from "@ledgerhq/devices";
-import { trace, LocalTracer, TraceContext } from "@ledgerhq/logs";
+import { LocalTracer, trace, TraceContext } from "@ledgerhq/logs";
 import {
-  Observable,
   defer,
-  merge,
-  from,
-  of,
-  throwError,
-  Observer,
   firstValueFrom,
-  TimeoutError,
+  from,
+  merge,
+  Observable,
+  Observer,
+  of,
   SchedulerLike,
+  throwError,
+  TimeoutError,
 } from "rxjs";
 import {
-  share,
-  ignoreElements,
-  first,
-  map,
-  tap,
   catchError,
-  timeout,
   finalize,
+  first,
+  ignoreElements,
+  map,
+  share,
+  tap,
+  timeout,
 } from "rxjs/operators";
 import {
   CantOpenDevice,
-  TransportError,
   DisconnectedDeviceDuringOperation,
+  HwTransportError,
   PairingFailed,
   PeerRemovedPairing,
-  HwTransportError,
+  TransportError,
   TransportExchangeTimeoutError,
 } from "@ledgerhq/errors";
 import { monitorCharacteristic } from "./monitorCharacteristic";
-import { awaitsBleOn } from "./awaitsBleOn";
 import {
   decoratePromiseErrors,
-  remapError,
-  mapBleErrorToHwTransportError,
   IOBleErrorRemap,
+  mapBleErrorToHwTransportError,
+  remapError,
 } from "./remapErrors";
 import { ReconnectionConfig } from "./types";
+import { BlePlxManager } from "./BlePlxManager";
 
 const LOG_TYPE = "ble-verbose";
 
@@ -120,22 +118,6 @@ let connectOptions: Record<string, unknown> = {
   connectionPriority: 1,
 };
 
-/**
- * Returns the instance of the Bluetooth Low Energy Manager. It initializes it only
- * when it's first needed, preventing the permission prompt happening prematurely.
- * Important: Do NOT access the _bleManager variable directly.
- * Use this function instead.
- * @returns {BleManager} - The instance of the BleManager.
- */
-let _bleManager: BleManager | null = null;
-const bleManagerInstance = (): BleManager => {
-  if (!_bleManager) {
-    _bleManager = new BleManager();
-  }
-
-  return _bleManager;
-};
-
 const clearDisconnectTimeout = (deviceId: string, context?: TraceContext): void => {
   const cachedTransport = transportsCache[deviceId];
   if (cachedTransport && cachedTransport.disconnectTimeout) {
@@ -177,20 +159,17 @@ async function open(
     }
 
     tracer.trace(`Trying to open device: ${deviceOrId}`);
-    await awaitsBleOn(bleManagerInstance());
+    await BlePlxManager.waitOn();
 
     // Returns a list of known devices by their identifiers
-    const devices = await bleManagerInstance().devices([deviceOrId]);
-    tracer.trace(`Found ${devices.length} already known device(s) with given id`, { deviceOrId });
-    [device] = devices;
+    device = await BlePlxManager.getKnownDevice(deviceOrId);
 
     if (!device) {
+      tracer.trace(`Found already known device with given id`, { deviceOrId });
       // Returns a list of the peripherals currently connected to the system
       // which have discovered services, connected to system doesn't mean
       // connected to our app, we check that below.
-      const connectedDevices = await bleManagerInstance().connectedDevices(
-        getBluetoothServiceUuids(),
-      );
+      const connectedDevices = await BlePlxManager.getConnectedDevices();
       const connectedDevicesFiltered = connectedDevices.filter(d => d.id === deviceOrId);
       tracer.trace(
         `No known device with given id. Found ${connectedDevicesFiltered.length} devices from already connected devices`,
@@ -208,7 +187,7 @@ async function open(
 
       // Nb ConnectionOptions dropped since it's not used internally by ble-plx.
       try {
-        device = await bleManagerInstance().connectToDevice(deviceOrId, {
+        device = await BlePlxManager.connect(deviceOrId, {
           ...connectOptions,
           timeout: timeoutMs,
         });
@@ -217,7 +196,7 @@ async function open(
         if (e.errorCode === BleErrorCode.DeviceMTUChangeFailed) {
           // If the MTU update did not work, we try to connect without requesting for a specific MTU
           connectOptions = {};
-          device = await bleManagerInstance().connectToDevice(deviceOrId, { timeout: timeoutMs });
+          device = await BlePlxManager.connect(deviceOrId, { timeout: timeoutMs });
         } else {
           throw e;
         }
@@ -457,7 +436,7 @@ export default class BleTransport extends Transport {
   /**
    *
    */
-  static isSupported = (): Promise<boolean> => Promise.resolve(typeof BleManager === "function");
+  static isSupported = (): Promise<boolean> => Promise.resolve(typeof BlePlxManager === "function");
 
   /**
    *
@@ -466,21 +445,15 @@ export default class BleTransport extends Transport {
     throw new Error("not implemented");
   };
 
-  /**
-   * Exposed method from the ble-plx library
-   * Sets new log level for native module's logging mechanism.
-   * @param string logLevel New log level to be set.
-   */
-  static setLogLevel = (logLevel: string): void => {
-    if (Object.values<string>(LogLevel).includes(logLevel)) {
-      bleManagerInstance().setLogLevel(logLevel as LogLevel);
-    } else {
-      throw new Error(`${logLevel} is not a valid LogLevel`);
-    }
-  };
+  // /**
+  //  * Exposed method from the ble-plx library
+  //  * Sets new log level for native module's logging mechanism.
+  //  * @param string logLevel New log level to be set.
+  //  */
+  static setLogLevel = BlePlxManager.setLogLevel;
 
   /**
-   * Listen to state changes on the bleManagerInstance and notify the
+   * Listen to state changes on the BlePlxManagerInstance and notify the
    * specified observer.
    * @param observer
    * @returns TransportSubscription
@@ -498,16 +471,25 @@ export default class BleTransport extends Transport {
       });
     };
 
-    bleManagerInstance().onStateChange(emitFromState, true);
+    BlePlxManager.onStateChange(emitFromState, true);
 
     return {
       unsubscribe: () => {},
     };
   }
 
+  static safeRemove = (sub: Subscription, tracer: LocalTracer) => {
+    try {
+      sub.remove();
+    } catch (error) {
+      tracer.trace("Error removing state subscription", { error });
+    }
+  };
+
   /**
    * Scan for bluetooth Ledger devices
    * @param observer Device is partial in order to avoid the live-common/this dep
+   * @param context
    * @returns TransportSubscription
    */
   static listen(
@@ -519,49 +501,55 @@ export default class BleTransport extends Transport {
 
     let unsubscribed: boolean;
 
-    const stateSub = bleManagerInstance().onStateChange(async state => {
+    const stateSub = BlePlxManager.onStateChange(async state => {
       if (state === "PoweredOn") {
-        stateSub.remove();
-        const devices = await bleManagerInstance().connectedDevices(getBluetoothServiceUuids());
+        BleTransport.safeRemove(stateSub, tracer);
+        const devices = await BlePlxManager.getConnectedDevices().catch(err => {
+          // Handle possible connection errors
+          tracer.trace("Error while fetching connected devices", { err });
+          return [];
+        });
         if (unsubscribed) return;
         if (devices.length) {
           tracer.trace("Disconnecting from all devices", { deviceCount: devices.length });
 
-          await Promise.all(devices.map(d => BleTransport.disconnectDevice(d.id)));
+          try {
+            await Promise.all(devices.map(d => BleTransport.disconnectDevice(d.id)));
+          } catch (error) {
+            tracer.trace("Error disconnecting some devices", { error });
+          }
         }
 
         if (unsubscribed) return;
-        bleManagerInstance().startDeviceScan(
-          getBluetoothServiceUuids(),
-          null,
-          (bleError: BleError | null, scannedDevice: Device | null) => {
-            if (bleError) {
-              observer.error(mapBleErrorToHwTransportError(bleError));
-              unsubscribe();
-              return;
-            }
+        await BlePlxManager.startScan((bleError: BleError | null, scannedDevice: Device | null) => {
+          if (bleError) {
+            tracer.trace("Listening startDeviceScan error", { scannedDevice, bleError });
+            observer.error(mapBleErrorToHwTransportError(bleError));
+            unsubscribe();
+            return;
+          }
 
-            const res = retrieveInfos(scannedDevice);
-            const deviceModel = res && res.deviceModel;
+          const res = retrieveInfos(scannedDevice);
+          const deviceModel = res && res.deviceModel;
 
-            if (scannedDevice) {
-              observer.next({
-                type: "add",
-                descriptor: scannedDevice,
-                deviceModel,
-              });
-            }
-          },
-        );
+          if (scannedDevice) {
+            observer.next({
+              type: "add",
+              descriptor: scannedDevice,
+              deviceModel,
+            });
+          }
+        });
       }
     }, true);
 
     const unsubscribe = () => {
+      if (unsubscribed) return;
       unsubscribed = true;
-      bleManagerInstance().stopDeviceScan();
-      stateSub.remove();
-
-      tracer.trace("Done listening");
+      BlePlxManager.stopScan().then(() => {
+        BleTransport.safeRemove(stateSub, tracer);
+        tracer.trace("Done listening");
+      });
     };
 
     return {
@@ -598,14 +586,12 @@ export default class BleTransport extends Transport {
     const tracer = new LocalTracer(LOG_TYPE, context);
     tracer.trace(`Trying to disconnect device ${id}`);
 
-    await bleManagerInstance()
-      .cancelDeviceConnection(id)
-      .catch(error => {
-        // Only log, ignore if disconnect did not work
-        tracer
-          .withType("ble-error")
-          .trace(`Error while trying to cancel device connection`, { error });
-      });
+    await BlePlxManager.disconnectDevice(id).catch(error => {
+      // Only log, ignore if disconnect did not work
+      tracer
+        .withType("ble-error")
+        .trace(`Error while trying to cancel device connection`, { error });
+    });
     tracer.trace(`Device ${id} disconnected`);
   };
 
@@ -711,7 +697,7 @@ export default class BleTransport extends Transport {
               );
 
               // No concurrent exchange should happen at the same time, so all pending operations are part of the same exchange
-              this.cancelPendingOperations();
+              await this.cancelPendingOperations();
 
               throw new TransportExchangeTimeoutError("Exchange aborted due to timeout");
             }
@@ -750,11 +736,11 @@ export default class BleTransport extends Transport {
    * but this error should be ignored. (In `exchange` our observable is unsubscribed before `cancelPendingOperations`
    * is called so the error is ignored)
    */
-  private cancelPendingOperations() {
+  private async cancelPendingOperations() {
     for (const transactionId of this.currentTransactionIds) {
       try {
         this.tracer.trace("Cancelling operation", { transactionId });
-        bleManagerInstance().cancelTransaction(transactionId);
+        await BlePlxManager.cancelTransaction(transactionId);
       } catch (error) {
         this.tracer.trace("Error while cancelling operation", { transactionId, error });
       }

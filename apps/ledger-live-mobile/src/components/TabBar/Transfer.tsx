@@ -77,7 +77,7 @@ const BackdropPressable = Animated.createAnimatedComponent(styled(Pressable)`
   background-color: rgba(0, 0, 0, 0.7);
 `);
 
-const DURATION_MS = Config.MOCK ? 50 : 400;
+const DURATION_MS = Config.DETOX ? 50 : 400;
 const Y_AMPLITUDE = 90;
 
 const animParams = { duration: DURATION_MS };
@@ -199,7 +199,7 @@ export function TransferTabIcon() {
     screenHeight -
     bottomInset -
     topInset -
-    (isExperimental || Config.MOCK ? ExperimentalHeaderHeight : 0);
+    (isExperimental || Config.DETOX ? ExperimentalHeaderHeight : 0);
 
   return (
     <>
@@ -213,8 +213,8 @@ export function TransferTabIcon() {
               maxHeight: drawerHeight,
               paddingBottom: bottomInset + 16 + MAIN_BUTTON_SIZE + MAIN_BUTTON_BOTTOM,
             },
-            Config.MOCK ? {} : opacityStyle,
-            Config.MOCK ? {} : translateYStyle,
+            Config.DETOX ? {} : opacityStyle,
+            Config.DETOX ? {} : translateYStyle,
           ]}
         >
           <TransferDrawer onClose={closeModal} />

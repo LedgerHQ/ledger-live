@@ -1,6 +1,8 @@
+import { Balance } from "@ledgerhq/coin-framework/api/types";
 import { fetchAccount } from "../network";
+import { StellarAsset } from "../types";
 
-export async function getBalance(addr: string): Promise<bigint> {
+export async function getBalance(addr: string): Promise<Balance<StellarAsset>[]> {
   const { balance } = await fetchAccount(addr);
-  return BigInt(balance.toString());
+  return [{ value: BigInt(balance.toString()), asset: { type: "native" } }];
 }

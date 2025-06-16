@@ -1,6 +1,6 @@
 import styled, { DefaultTheme, StyledComponent } from "styled-components";
 import { Box } from "@ledgerhq/react-ui";
-import { BoxProps } from "@ledgerhq/react-ui/components/layout/Box";
+import { BoxProps } from "@ledgerhq/react-ui/components/layout/Box/index";
 
 type Props = {
   lightSource: string;

@@ -147,6 +147,7 @@ export async function loadCountervalues(
   state: CounterValuesState,
   settings: CountervaluesSettings,
   batchStrategySolver?: BatchStrategySolver,
+  granularitiesRates?: Record<RateGranularity, number>,
 ): Promise<CounterValuesState> {
   const data = { ...state.data };
   const cache = { ...state.cache };
@@ -240,7 +241,7 @@ export async function loadCountervalues(
   const [histo, latest] = await Promise.all([
     promiseAllBatched(10, histoToFetch, ([granularity, pair, key]) =>
       api
-        .fetchHistorical(granularity, pair)
+        .fetchHistorical(granularity, pair, granularitiesRates)
         .then(rates => {
           // Update status infos
           const id = pairId(pair);

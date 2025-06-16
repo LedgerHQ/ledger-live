@@ -8,10 +8,16 @@ const {
   BOT_FILTER_FAMILIES,
   BOT_DISABLED_CURRENCIES,
   BOT_DISABLED_FAMILIES,
+  BOT_FILTER_FEATURES,
 } = process.env;
 
 const arg: Partial<{
-  filter: Partial<{ currencies: string[]; families: string[]; mutation: string }>;
+  filter: Partial<{
+    currencies: string[];
+    families: string[];
+    mutation: string;
+    features: string[];
+  }>;
   disabled: Partial<{ currencies: string[]; families: string[] }>;
 }> = {};
 
@@ -32,6 +38,10 @@ if (BOT_DISABLED_CURRENCIES) {
 
 if (BOT_DISABLED_FAMILIES) {
   arg.disabled.families = BOT_DISABLED_FAMILIES.split(",");
+}
+
+if (BOT_FILTER_FEATURES) {
+  arg.filter.features = BOT_FILTER_FEATURES.split(",");
 }
 
 bot(arg);

@@ -1,6 +1,6 @@
 import { getEnv } from "@ledgerhq/live-env";
 import { getTestProviderInfo, type ExchangeProviderNameAndSignature } from ".";
-import { findCurrencyData, getProvidersCDNData, getProvidersData } from "../../cal";
+import calService, { SWAP_DATA_CDN } from "@ledgerhq/ledger-cal-service";
 import { isIntegrationTestEnv } from "../swap/utils/isIntegrationTestEnv";
 
 export type SwapProviderConfig = {
@@ -8,85 +8,20 @@ export type SwapProviderConfig = {
   needsBearerToken?: boolean;
 };
 
-type CEXProviderConfig = ExchangeProviderNameAndSignature & SwapProviderConfig & { type: "CEX" };
-type DEXProviderConfig = SwapProviderConfig & { type: "DEX" };
+export type CEXProviderConfig = ExchangeProviderNameAndSignature &
+  SwapProviderConfig & { type: "CEX" };
+export type DEXProviderConfig = SwapProviderConfig & { type: "DEX" };
 export type AdditionalProviderConfig = SwapProviderConfig & { type: "DEX" | "CEX" } & {
   version?: number;
   termsOfUseUrl: string;
   supportUrl: string;
+  usefulUrls?: string[];
   mainUrl: string;
+  useInExchangeApp: boolean;
   displayName: string;
 };
 
 export type ProviderConfig = CEXProviderConfig | DEXProviderConfig;
-
-export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
-  changelly: {
-    needsKYC: false,
-    needsBearerToken: false,
-    type: "CEX",
-    displayName: "Changelly",
-    termsOfUseUrl: "https://changelly.com/terms-of-use",
-    supportUrl: "https://support.changelly.com/en/support/home",
-    mainUrl: "https://changelly.com/",
-  },
-  exodus: {
-    type: "CEX",
-    displayName: "Exodus",
-    needsBearerToken: false,
-    termsOfUseUrl: "https://www.exodus.com/legal/exodus-tos-20240219-v29.pdf",
-    supportUrl: "https://www.exodus.com/contact-support/",
-    mainUrl: "https://www.exodus.com/",
-    needsKYC: false,
-    version: 2,
-  },
-  cic: {
-    needsKYC: false,
-    needsBearerToken: false,
-    displayName: "CIC",
-    type: "CEX",
-    termsOfUseUrl: "https://criptointercambio.com/terms-of-use",
-    supportUrl: "https://criptointercambio.com/en/about",
-    mainUrl: "https://criptointercambio.com/",
-  },
-  moonpay: {
-    needsKYC: true,
-    needsBearerToken: false,
-    displayName: "MoonPay",
-    type: "CEX",
-    version: 2,
-    termsOfUseUrl: "https://www.moonpay.com/legal/terms_of_use_row",
-    supportUrl: "https://support.moonpay.com/",
-    mainUrl: "https://www.moonpay.com/",
-  },
-  oneinch: {
-    type: "DEX",
-    needsKYC: false,
-    displayName: "1inch",
-    needsBearerToken: false,
-    termsOfUseUrl: "https://1inch.io/assets/1inch_network_terms_of_use.pdf",
-    supportUrl: "https://help.1inch.io/en/",
-    mainUrl: "https://1inch.io/",
-  },
-  paraswap: {
-    type: "DEX",
-    needsKYC: false,
-    displayName: "Paraswap",
-    needsBearerToken: false,
-    termsOfUseUrl: "https://files.paraswap.io/tos_v4.pdf",
-    supportUrl: "https://help.paraswap.io/en/",
-    mainUrl: "https://www.paraswap.io/",
-  },
-  thorswap: {
-    type: "CEX",
-    needsBearerToken: false,
-    displayName: "THORChain",
-    termsOfUseUrl: "https://docs.thorswap.finance/thorswap/resources/terms-of-service",
-    supportUrl: "mailto:support@thorswap.finance",
-    mainUrl: "https://www.thorswap.finance/",
-    needsKYC: false,
-  },
-};
 
 const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<AdditionalProviderConfig>> = {
   changelly: {
@@ -105,9 +40,40 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
     needsKYC: false,
     needsBearerToken: false,
     type: "CEX",
+    usefulUrls: [
+      "https://changelly.com/terms-of-use",
+      "https://changelly.com/aml-kyc",
+      "https://support.changelly.com/en/support/tickets/new",
+    ],
     termsOfUseUrl: "https://changelly.com/terms-of-use",
     supportUrl: "https://support.changelly.com/en/support/home",
     mainUrl: "https://changelly.com/",
+  },
+  changelly_v2: {
+    name: "Changelly",
+    publicKey: {
+      curve: "secp256k1",
+      data: Buffer.from(
+        "0480d7c0d3a9183597395f58dda05999328da6f18fabd5cda0aff8e8e3fc633436a2dbf48ecb23d40df7c3c7d3e774b77b4b5df0e9f7e08cf1cdf2dba788eb085b",
+        "hex",
+      ),
+    },
+    signature: Buffer.from(
+      "3045022100c2db00da651cfcc84702f75ab5f131a3f037592080ea750a6f665a8cb36797c802200e594938cdf2c836b34717f57487002a0588f2088f64f00a6c4d320fd37db6fa",
+      "hex",
+    ),
+    needsKYC: false,
+    needsBearerToken: false,
+    type: "CEX",
+    usefulUrls: [
+      "https://changelly.com/terms-of-use",
+      "https://changelly.com/aml-kyc",
+      "https://support.changelly.com/en/support/tickets/new",
+    ],
+    termsOfUseUrl: "https://changelly.com/terms-of-use",
+    supportUrl: "https://support.changelly.com/en/support/home",
+    mainUrl: "https://changelly.com/",
+    version: 2,
   },
   exodus: {
     name: "exodus",
@@ -207,6 +173,41 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
       "hex",
     ),
   },
+  lifi: {
+    type: "CEX",
+    name: "lifi",
+    needsBearerToken: false,
+    termsOfUseUrl: "https://li.fi/legal/terms-and-conditions/",
+    supportUrl: "https://discord.gg/jumperexchange",
+    mainUrl: "https://li.fi/",
+    needsKYC: false,
+    version: 2,
+    publicKey: {
+      curve: "secp256k1",
+      data: Buffer.from(
+        "04e5f4fa0f28dec3b1f52934f29bd91ab862b003a531d67ba3864e3ba4303be8e815a619ee6f78e8079acf46f0d0d8fc664be2f343d1c9a20c4d2420f51a56ccea",
+        "hex",
+      ),
+    },
+    signature: Buffer.from(
+      "3044022041344dba7353fe94a4d24a20285b5afaa8fa9a022a62e1042d059b0f1d37cbc302200a3ed5d661df0c44d78c439939c4c49868936c7357da3807a19104bcfb323d24",
+      "hex",
+    ),
+  },
+};
+
+export const dexProvidersContractAddress: { [key: string]: string } = {
+  "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD": "Uniswap",
+};
+
+export const termsOfUse: { [key: string]: string } = {
+  paraswap: "https://paraswap.io/tos",
+  "1inch": "https://1inch.io/assets/1inch_network_terms_of_use.pdf",
+  Uniswap: "https://uniswap.org/terms-of-service",
+};
+
+export const privacyPolicy: { [key: string]: string } = {
+  Uniswap: "https://uniswap.org/privacy-policy",
 };
 
 type CurrencyData = {
@@ -221,9 +222,13 @@ export const getSwapProvider = async (
   providerName: string,
 ): Promise<ProviderConfig & AdditionalProviderConfig> => {
   const testProviderInfo = getTestProviderInfo();
-  if (getEnv("MOCK_EXCHANGE_TEST_CONFIG") && testProviderInfo) {
+  const ledgerSignatureEnv = getEnv("MOCK_EXCHANGE_TEST_CONFIG") ? "test" : "prod";
+  const partnerSignatureEnv = getEnv("MOCK_EXCHANGE_TEST_PARTNER") ? "test" : "prod";
+
+  if (ledgerSignatureEnv === "test" && testProviderInfo) {
     return {
       needsKYC: false,
+      useInExchangeApp: true,
       needsBearerToken: false,
       type: "CEX",
       termsOfUseUrl: "https://example.com",
@@ -234,7 +239,7 @@ export const getSwapProvider = async (
     };
   }
 
-  const res = await fetchAndMergeProviderData();
+  const res = await fetchAndMergeProviderData({ ledgerSignatureEnv, partnerSignatureEnv });
 
   if (!res[providerName.toLowerCase()]) {
     throw new Error(`Unknown partner ${providerName}`);
@@ -250,17 +255,17 @@ export const getSwapProvider = async (
  * @deprecated Use cal module `findCurrencyData` method.
  */
 export const findExchangeCurrencyData = async (currencyId: string): Promise<CurrencyData> =>
-  findCurrencyData(currencyId);
+  calService.findCurrencyData(currencyId);
 
-export const fetchAndMergeProviderData = async () => {
+export const fetchAndMergeProviderData = async env => {
   if (providerDataCache) {
     return providerDataCache;
   }
 
   try {
     const [providersData, providersExtraData] = await Promise.all([
-      getProvidersData("swap"),
-      getProvidersCDNData(),
+      calService.getProvidersData({ type: "swap", ...env }),
+      calService.getProvidersCDNData(),
     ]);
     const finalProvidersData = mergeProviderData(providersData, providersExtraData);
     providerDataCache = finalProvidersData;
@@ -286,8 +291,10 @@ function mergeProviderData(baseData, additionalData) {
 }
 
 export const getAvailableProviders = async (): Promise<string[]> => {
+  const ledgerSignatureEnv = getEnv("MOCK_EXCHANGE_TEST_CONFIG") ? "test" : "prod";
+  const partnerSignatureEnv = getEnv("MOCK_EXCHANGE_TEST_PARTNER") ? "test" : "prod";
   if (isIntegrationTestEnv()) {
     return Object.keys(DEFAULT_SWAP_PROVIDERS).filter(p => p !== "changelly");
   }
-  return Object.keys(await fetchAndMergeProviderData());
+  return Object.keys(await fetchAndMergeProviderData({ ledgerSignatureEnv, partnerSignatureEnv }));
 };

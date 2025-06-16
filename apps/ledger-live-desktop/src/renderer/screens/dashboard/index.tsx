@@ -9,7 +9,6 @@ import {
   counterValueCurrencySelector,
   hasInstalledAppsSelector,
   selectedTimeRangeSelector,
-  hiddenNftCollectionsSelector,
 } from "~/renderer/reducers/settings";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
@@ -29,14 +28,15 @@ import PostOnboardingHubBanner from "~/renderer/components/PostOnboardingHub/Pos
 import FeaturedButtons from "~/renderer/screens/dashboard/FeaturedButtons";
 import { ABTestingVariants, AccountLike, Operation } from "@ledgerhq/types-live";
 import ActionContentCards from "~/renderer/screens/dashboard/ActionContentCards";
-import MarketPerformanceWidget from "~/renderer/screens/dashboard/MarketPerformanceWidget";
+import MarketPerformanceWidget from "LLD/features/MarketPerformanceWidget";
 import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperformance";
 import { Grid } from "@ledgerhq/react-ui";
 import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
 import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
-import Carousel from "~/renderer/components/Carousel";
+import PortfolioContentCards from "LLD/features/DynamicContent/components/PortfolioContentCards";
+import { LNSUpsellBanner, useLNSUpsellBannerState } from "LLD/features/LNSUpsell";
 import useActionCards from "~/renderer/hooks/useActionCards";
-import { useAutoRedirectToPostOnboarding } from "~/renderer/hooks/useAutoRedirectToPostOnboarding";
+import { useNftCollectionsStatus } from "~/renderer/hooks/nfts/useNftCollectionsStatus";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -63,11 +63,8 @@ export default function DashboardPage() {
     [accounts],
   );
   const isPostOnboardingBannerVisible = usePostOnboardingEntryPointVisibleOnWallet();
-
-  useAutoRedirectToPostOnboarding();
-
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
-  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
+  const { hiddenNftCollections } = useNftCollectionsStatus(true);
   const filterOperations = useCallback(
     (operation: Operation, account: AccountLike) => {
       // Remove operations linked to address poisoning
@@ -84,10 +81,13 @@ export default function DashboardPage() {
 
   const { enabled: marketPerformanceEnabled, variant: marketPerformanceVariant } =
     useMarketPerformanceFeatureFlag();
-  const isActionCardsCampainRunning = useActionCards().length > 0;
+  const { actionCards } = useActionCards();
+  const isActionCardsCampainRunning = actionCards.length > 0;
 
   const { isFeatureFlagsAnalyticsPrefDisplayed, analyticsOptInPromptProps } =
     useDisplayOnPortfolioAnalytics();
+
+  const isLNSUpsellBannerShown = useLNSUpsellBannerState("portfolio").isShown;
 
   return (
     <>
@@ -102,8 +102,10 @@ export default function DashboardPage() {
           <RecoverBanner>
             {isActionCardsCampainRunning && lldActionCarousel?.enabled ? (
               <ActionContentCards variant={ABTestingVariants.variantA} />
+            ) : isLNSUpsellBannerShown ? (
+              <LNSUpsellBanner location="portfolio" />
             ) : (
-              <Carousel />
+              <PortfolioContentCards />
             )}
           </RecoverBanner>
         )}
@@ -144,7 +146,6 @@ export default function DashboardPage() {
             <AssetDistribution />
             {totalOperations > 0 && (
               <OperationsList
-                t={t}
                 accounts={accounts}
                 title={t("dashboard.recentActivity")}
                 withAccount

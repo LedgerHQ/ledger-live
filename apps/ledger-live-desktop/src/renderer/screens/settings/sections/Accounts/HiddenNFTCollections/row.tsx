@@ -15,15 +15,19 @@ import { Flex, Icons } from "@ledgerhq/react-ui";
 import IconCross from "~/renderer/icons/Cross";
 import styled from "styled-components";
 import { splitAddress } from "./helpers";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 
 export const HiddenNftCollectionRow = ({
   contractAddress,
   accountId,
   onUnhide,
+  network,
 }: {
   contractAddress: string;
   accountId: string;
   onUnhide: () => void;
+  network: string;
 }) => {
   const { t } = useTranslation();
   const account = useSelector((state: State) => accountSelector(state, { accountId }));
@@ -74,10 +78,12 @@ export const HiddenNftCollectionRow = ({
           </Text>
 
           <StyledFlex alignItems="center" onClick={onCopy}>
-            <Text ff="Inter|Medium" fontSize={3} mr={2}>
-              {splitAddress(contractAddress, 8)}
-            </Text>
-
+            <Flex alignItems="center" mr={2}>
+              <Text ff="Inter|Medium" fontSize={3} mr={2}>
+                {splitAddress(contractAddress, 8)}
+              </Text>
+              <CryptoCurrencyIcon currency={getCryptoCurrencyById(network)} size={12} />
+            </Flex>
             {!copyFeedback ? (
               <Icons.Copy size="XS" />
             ) : (

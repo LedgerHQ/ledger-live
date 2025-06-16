@@ -211,6 +211,11 @@ export const getLastERC1155Operations = async (
     throw new EtherscanLikeExplorerUsedIncorrectly();
   }
 
+  // Blockscout has no ERC1155 support yet
+  if (explorer.type === "blockscout") {
+    return [];
+  }
+
   const ops = await fetchWithRetries<EtherscanERC1155Event[]>({
     method: "GET",
     url: `${explorer.uri}?module=account&action=token1155tx&address=${address}`,
@@ -257,6 +262,11 @@ export const getLastNftOperations = async (
   fromBlock: number,
   toBlock?: number,
 ): Promise<Operation[]> => {
+  const config = getCoinConfig(currency).info;
+  if (!config.showNfts) {
+    return [];
+  }
+
   const erc721Ops = await getLastERC721Operations(currency, address, accountId, fromBlock, toBlock);
   const erc1155Ops = await getLastERC1155Operations(
     currency,

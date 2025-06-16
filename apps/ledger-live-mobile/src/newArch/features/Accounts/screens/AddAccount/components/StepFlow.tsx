@@ -14,8 +14,8 @@ import { useSyncWithQrCode } from "LLM/features/WalletSync/hooks/useSyncWithQrCo
 import { SpecificError } from "LLM/features/WalletSync/components/Error/SpecificError";
 import { ErrorReason } from "LLM/features/WalletSync/hooks/useSpecificError";
 import { useCurrentStep } from "LLM/features/WalletSync/hooks/useCurrentStep";
-import ScannedInvalidQrCode from "~/newArch/features/WalletSync/screens/Synchronize/ScannedInvalidQrCode";
-import ScannedOldImportQrCode from "~/newArch/features/WalletSync/screens/Synchronize/ScannedOldImportQrCode";
+import ScannedInvalidQrCode from "LLM/features/WalletSync/screens/Synchronize/ScannedInvalidQrCode";
+import ScannedOldImportQrCode from "LLM/features/WalletSync/screens/Synchronize/ScannedOldImportQrCode";
 import { useSelector } from "react-redux";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 

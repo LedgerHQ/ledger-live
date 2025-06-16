@@ -12,6 +12,7 @@ export type LedgerSyncJobOpts = Partial<{
   pull: boolean;
   pubKey: string;
   privateKey: string;
+  deleteData: boolean;
   rootId: string;
   walletSyncEncryptionKey: string;
   applicationPath: string;
@@ -35,6 +36,11 @@ export default {
       name: "pull",
       type: Boolean,
       desc: "Get or create a Ledger Key Ring Protocol Tree",
+    },
+    {
+      name: "deleteData",
+      type: Boolean,
+      desc: "Delete a Ledger Key Ring Protocol Tree",
     },
     {
       name: "pubKey",
@@ -101,6 +107,7 @@ export default {
     pull,
     pubKey,
     privateKey,
+    deleteData,
     rootId,
     walletSyncEncryptionKey,
     applicationPath,
@@ -125,6 +132,8 @@ export default {
       name,
       apiBaseUrl,
     };
+
+    let latestUpdateEvent: UpdateEvent<LiveData> | null = null;
     const ledgerKeyRingProtocolSDK = getSdk(false, context, withDevice);
 
     const cloudSyncSDK = new CloudSyncSDK({
@@ -134,7 +143,8 @@ export default {
       trustchainSdk: ledgerKeyRingProtocolSDK,
       getCurrentVersion: () => version || 1,
       saveNewUpdate: async (event: UpdateEvent<LiveData>) => {
-        console.log(event);
+        console.log("The event is", event);
+        latestUpdateEvent = event;
       },
     });
 
@@ -154,7 +164,14 @@ export default {
           { rootId, walletSyncEncryptionKey, applicationPath },
           { pubkey: pubKey, privatekey: privateKey },
         )
-        .then(result => JSON.stringify(result, null, 2));
+        .then(result => JSON.stringify({ result, updateEvent: latestUpdateEvent }, null, 2));
+    }
+
+    if (deleteData) {
+      return cloudSyncSDK.destroy(
+        { rootId, walletSyncEncryptionKey, applicationPath },
+        { pubkey: pubKey, privatekey: privateKey },
+      );
     }
 
     return "command does not exist";

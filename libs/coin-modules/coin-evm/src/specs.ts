@@ -149,7 +149,7 @@ const testCoinBalance: MutationSpec<EvmTransaction>["test"] = ({
   // Klaytn is not providing the right gasPrice either at the moment
   // and their explorers are using the transaction gasPrice
   // instead of the effectiveGasPrice from the receipt
-  const underValuedFeesCurrencies = ["optimism", "base", "base_sepolia"];
+  const underValuedFeesCurrencies = ["optimism", "base", "base_sepolia", "blast", "blast_sepolia"];
   const overValuedFeesCurrencies = ["arbitrum", "arbitrum_sepolia", "klaytn"];
   const currenciesWithFlakyBehaviour = [...underValuedFeesCurrencies, ...overValuedFeesCurrencies];
 
@@ -225,7 +225,8 @@ const evmBasicMutations: ({
 }) => MutationSpec<EvmTransaction>[] = ({ maxAccount }) => [
   {
     name: "move 50%",
-    maxRun: 2,
+    feature: "send",
+    maxRun: 1,
     testDestination: testCoinDestination,
     transaction: ({ account, siblings, bridge, maxSpendable }): TransactionRes<EvmTransaction> => {
       const sibling = pickSiblings(siblings, maxAccount);
@@ -266,6 +267,7 @@ const evmBasicMutations: ({
   },
   {
     name: "send max",
+    feature: "sendMax",
     maxRun: 1,
     testDestination: testCoinDestination,
     transaction: ({ account, siblings, bridge }): TransactionRes<EvmTransaction> => {
@@ -311,6 +313,7 @@ const evmBasicMutations: ({
 
 const moveErc20Mutation: MutationSpec<EvmTransaction> = {
   name: "move some ERC20 like (ERC20, BEP20, etc...)",
+  feature: "tokens",
   maxRun: 1,
   testDestination: testTokenDestination,
   transaction: ({ account, siblings, bridge }): TransactionRes<EvmTransaction> => {
@@ -367,6 +370,9 @@ const getAppQuery = (currencyId: CryptoCurrency["id"]): AppSpec<EvmTransaction>[
       return { model: DeviceModelId.nanoS, appName: "Binance Smart Chain" };
     case "ethereum_classic":
       return { model: DeviceModelId.nanoS, appName: "Ethereum Classic" };
+    case "sonic":
+    case "sonic_blaze":
+      return { model: DeviceModelId.nanoS, appName: "Ethereum" };
     default:
       return {
         model: DeviceModelId.nanoS,

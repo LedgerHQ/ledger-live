@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Linking } from "react-native";
 import HorizontalCard from "../../contentCards/cards/horizontal";
 import {
@@ -25,6 +25,7 @@ import { ContentCardsType } from "../types";
 import Grid from "~/contentCards/layouts/grid";
 import VerticalCard from "~/contentCards/cards/vertical";
 import HeroCard from "~/contentCards/cards/hero";
+import LogContentCardWrapper from "LLM/features/DynamicContent/components/LogContentCardWrapper";
 
 // TODO : Better type to remove any (maybe use AnyContentCard)
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -67,15 +68,7 @@ type LayoutProps = {
 };
 
 const Layout = ({ category, cards }: LayoutProps) => {
-  const { logClickCard, dismissCard, trackContentCardEvent, logImpressionCard } =
-    useDynamicContent();
-
-  useEffect(() => {
-    logImpressionCard(category.id);
-    for (const card of cards) {
-      logImpressionCard(card.id);
-    }
-  }, [cards, category.id, logImpressionCard]);
+  const { logClickCard, dismissCard, trackContentCardEvent } = useDynamicContent();
 
   const onCardCick = (card: AnyContentCard) => {
     trackContentCardEvent("contentcard_clicked", {
@@ -108,7 +101,10 @@ const Layout = ({ category, cards }: LayoutProps) => {
   };
 
   const contentCardsType = contentCardsTypes[category.cardsType];
-  const cardsMapped = cards.map(card => contentCardsType.mappingFunction(card));
+  const cardsMapped = cards
+    .map(card => contentCardsType.mappingFunction(card))
+    .filter(card => card);
+
   const cardsSorted = (cardsMapped as AnyContentCard[]).sort(compareCards);
 
   const items = cardsSorted.map(card =>
@@ -142,11 +138,19 @@ const Layout = ({ category, cards }: LayoutProps) => {
           }}
         />
       );
+
     case ContentCardsLayout.grid:
       return <Grid items={items} styles={{ widthFactor: cardsSorted[0].gridWidthFactor }} />;
+
     case ContentCardsLayout.unique:
-    default:
-      return <Flex mx={6}>{items[0].component(items[0].props)}</Flex>;
+    default: {
+      const item = items[0];
+      return (
+        <LogContentCardWrapper id={item.props.metadata.id}>
+          <Flex mx={6}>{item.component(item.props)}</Flex>
+        </LogContentCardWrapper>
+      );
+    }
   }
 };
 

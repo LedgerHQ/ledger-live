@@ -30,6 +30,7 @@ export function WalletSyncManageKeyDeletionSuccess({ navigation }: Props) {
       secondaryButton={{
         label: t("walletSync.success.close"),
         onPress: close,
+        testID: "walletsync-deletion-success-close",
       }}
       analyticsPage={AnalyticsPage.DeleteBackupSuccess}
     />

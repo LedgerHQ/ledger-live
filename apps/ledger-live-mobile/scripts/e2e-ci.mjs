@@ -2,14 +2,23 @@
 import { basename } from "path";
 
 let platform, test, build, bundle;
-let speculos = "";
+let testType = "mock";
 let cache = true;
+let shard = "";
+let target = "release";
+let filter = "";
+
+$.verbose = true; // everything works like in v7
+
+if (os.platform() === "win32") {
+  usePowerShell();
+}
 
 const usage = (exitCode = 1) => {
   console.log(
     `Usage: ${basename(
       __filename,
-    )} -p --platform <ios|android> [-h --help]  [-t --test] [-b --build] [--bundle] [--cache | --no-cache] [--speculos]`,
+    )} -p --platform <ios|android> [-h --help]  [-t --test] [-b --build] [--bundle] [--cache | --no-cache] [--testType] [--shard] [--production]`,
   );
   process.exit(exitCode);
 };
@@ -17,7 +26,7 @@ const usage = (exitCode = 1) => {
 const build_ios = async () => {
   await $`pnpm mobile exec detox clean-framework-cache`;
   await $`pnpm mobile exec detox build-framework-cache`;
-  await $`pnpm mobile e2e:build -c ios.sim.release`;
+  await $`pnpm mobile e2e:build -c ios.sim.${target}`;
 };
 
 const bundle_ios = async () => {
@@ -37,31 +46,38 @@ const bundle_ios_with_cache = async () => {
 };
 
 const test_ios = async () => {
-  await $`pnpm mobile e2e:test${speculos} \
-    -c ios.sim.release \
+  await $`pnpm mobile ${testType}:test\
+    -c ios.sim.${target} \
     --loglevel error \
-    --record-logs all \
-    --take-screenshots all \
+    --record-logs failing \
+    --record-videos failing \
+    --take-screenshots failing \
     --forceExit \
     --headless \
-    --retries 1 \
-    --cleanup`;
+    --retries 2 \
+    --runInBand \
+    --cleanup \
+    --shard ${shard} \
+    ${filter.split(" ")}`;
 };
 
 const build_android = async () => {
-  await $`pnpm mobile e2e:build -c android.emu.release`;
+  await $`pnpm mobile e2e:build -c android.emu.${target}`;
 };
 
 const test_android = async () => {
-  await $`pnpm mobile e2e:test${speculos} \\
-    -c android.emu.release \\
+  await $`pnpm mobile ${testType}:test \\
+    -c android.emu.${target} \\
     --loglevel error \\
-    --record-logs all \\
-    --take-screenshots all \\
+    --record-logs failing \\
+    --take-screenshots failing \\
     --forceExit \\
     --headless \\
     --retries 1 \\
-    --cleanup`;
+    --runInBand \\
+    --cleanup \\
+    --shard ${shard} \\
+    ${filter.split(" ")}`;
 };
 
 const getTasksFrom = {
@@ -107,8 +123,17 @@ for (const argName in argv) {
       break;
     case "_":
       break;
-    case "speculos":
-      speculos = ":speculos";
+    case "e2e":
+      testType = "e2e";
+      break;
+    case "shard":
+      shard = argv[argName];
+      break;
+    case "production":
+      target = "prerelease";
+      break;
+    case "filter":
+      filter = argv[argName];
       break;
     default:
       usage(42);

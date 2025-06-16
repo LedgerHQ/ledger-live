@@ -1,10 +1,12 @@
-import { ChainAPI } from "./api";
+import { ChainAPI } from "./network";
 import { buildTransactionWithAPI } from "./buildTransaction";
 import createTransaction from "./createTransaction";
 import { Transaction, TransactionModel } from "./types";
-import { assertUnreachable } from "./utils";
+import { LEDGER_VALIDATOR_DEFAULT, assertUnreachable } from "./utils";
 import { VersionedTransaction as OnChainTransaction } from "@solana/web3.js";
 import { log } from "@ledgerhq/logs";
+import { getStakeAccountAddressWithSeed } from "./network/chain/web3";
+import { PARSED_PROGRAMS } from "./network/chain/program/constants";
 
 const DEFAULT_TX_FEE = 5000;
 
@@ -13,7 +15,7 @@ export async function estimateTxFee(
   address: string,
   kind: TransactionModel["kind"],
 ) {
-  const tx = createDummyTx(address, kind);
+  const tx = await createDummyTx(address, kind);
   const [onChainTx] = await buildTransactionWithAPI(address, tx, api);
 
   let fee = await api.getFeeForMessage(onChainTx.message);
@@ -48,9 +50,14 @@ const createDummyTx = (address: string, kind: TransactionModel["kind"]) => {
       return createDummyStakeUndelegateTx(address);
     case "stake.withdraw":
       return createDummyStakeWithdrawTx(address);
+    case "token.transfer":
+      return createDummyTokenTransferTx(address);
+    case "token.approve":
+      return createDummyTokenApproveTx(address);
+    case "token.revoke":
+      return createDummyTokenRevokeTx(address);
     case "stake.split":
     case "token.createATA":
-    case "token.transfer":
       throw new Error(`not implemented for <${kind}>`);
     default:
       return assertUnreachable(kind);
@@ -76,7 +83,7 @@ const createDummyTransferTx = (address: string): Transaction => {
   };
 };
 
-const createDummyStakeCreateAccountTx = (address: string): Transaction => {
+const createDummyStakeCreateAccountTx = async (address: string): Promise<Transaction> => {
   return {
     ...createTransaction({} as any),
     model: {
@@ -87,12 +94,12 @@ const createDummyStakeCreateAccountTx = (address: string): Transaction => {
           kind: "stake.createAccount",
           amount: 0,
           delegate: {
-            voteAccAddress: randomAddresses[0],
+            voteAccAddress: LEDGER_VALIDATOR_DEFAULT.voteAccount,
           },
           fromAccAddress: address,
           seed: "",
-          stakeAccAddress: randomAddresses[1],
-          stakeAccRentExemptAmount: 0,
+          stakeAccAddress: await getStakeAccountAddressWithSeed({ fromAddress: address, seed: "" }),
+          stakeAccRentExemptAmount: 2282880,
         },
         ...commandDescriptorCommons,
       },
@@ -149,7 +156,80 @@ const createDummyStakeWithdrawTx = (address: string): Transaction => {
           amount: 0,
           authorizedAccAddr: address,
           stakeAccAddr: randomAddresses[0],
-          toAccAddr: randomAddresses[1],
+          toAccAddr: address,
+        },
+        ...commandDescriptorCommons,
+      },
+    },
+  };
+};
+
+const createDummyTokenTransferTx = (address: string): Transaction => {
+  return {
+    ...createTransaction({} as any),
+    model: {
+      kind: "token.transfer",
+      uiState: {} as any,
+      commandDescriptor: {
+        command: {
+          kind: "token.transfer",
+          amount: 0,
+          mintAddress: randomAddresses[0],
+          mintDecimals: 0,
+          ownerAddress: address,
+          ownerAssociatedTokenAccountAddress: randomAddresses[1],
+          recipientDescriptor: {
+            walletAddress: randomAddresses[1],
+            tokenAccAddress: randomAddresses[2],
+            shouldCreateAsAssociatedTokenAccount: true,
+          },
+          tokenProgram: PARSED_PROGRAMS.SPL_TOKEN,
+        },
+        ...commandDescriptorCommons,
+      },
+    },
+  };
+};
+
+const createDummyTokenApproveTx = (address: string): Transaction => {
+  return {
+    ...createTransaction({} as any),
+    model: {
+      kind: "token.approve",
+      uiState: {} as any,
+      commandDescriptor: {
+        command: {
+          kind: "token.approve",
+          account: randomAddresses[0],
+          mintAddress: randomAddresses[1],
+          recipientDescriptor: {
+            walletAddress: randomAddresses[1],
+            tokenAccAddress: randomAddresses[2],
+            shouldCreateAsAssociatedTokenAccount: true,
+          },
+          owner: address,
+          amount: 0,
+          decimals: 0,
+          tokenProgram: PARSED_PROGRAMS.SPL_TOKEN,
+        },
+        ...commandDescriptorCommons,
+      },
+    },
+  };
+};
+
+const createDummyTokenRevokeTx = (address: string): Transaction => {
+  return {
+    ...createTransaction({} as any),
+    model: {
+      kind: "token.revoke",
+      uiState: {} as any,
+      commandDescriptor: {
+        command: {
+          kind: "token.revoke",
+          account: randomAddresses[0],
+          owner: address,
+          tokenProgram: PARSED_PROGRAMS.SPL_TOKEN,
         },
         ...commandDescriptorCommons,
       },
@@ -195,9 +275,9 @@ async function waitNextBlockhash(api: ChainAPI, currentBlockhash: string) {
     log("info", `sleeping for ${sleepTimeMS} ms, waiting for a new blockhash`);
     await sleep(sleepTimeMS);
     const blockhash = await api.getLatestBlockhash();
-    if (blockhash !== currentBlockhash) {
+    if (blockhash.blockhash !== currentBlockhash) {
       log("info", "got a new blockhash");
-      return blockhash;
+      return blockhash.blockhash;
     }
     log("info", "got same blockhash");
   }

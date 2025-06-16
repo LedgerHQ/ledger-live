@@ -1,5 +1,93 @@
 # @ledgerhq/live-env
 
+## 2.9.0
+
+### Minor Changes
+
+- [#9929](https://github.com/LedgerHQ/ledger-live/pull/9929) [`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47) Thanks [@semeano](https://github.com/semeano)! - Add aptos tokens functionality
+
+## 2.9.0-next.0
+
+### Minor Changes
+
+- [#9929](https://github.com/LedgerHQ/ledger-live/pull/9929) [`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47) Thanks [@semeano](https://github.com/semeano)! - Add aptos tokens functionality
+
+## 2.8.0
+
+### Minor Changes
+
+- [#9551](https://github.com/LedgerHQ/ledger-live/pull/9551) [`32d46cc`](https://github.com/LedgerHQ/ledger-live/commit/32d46cc77debe059ae0bcd848a21065dec7ee091) Thanks [@themooneer](https://github.com/themooneer)! - support Solana as NFT currency
+
+- [#9690](https://github.com/LedgerHQ/ledger-live/pull/9690) [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f) Thanks [@Justkant](https://github.com/Justkant)! - feat: support Solana NFTs
+
+## 2.8.0-next.0
+
+### Minor Changes
+
+- [#9551](https://github.com/LedgerHQ/ledger-live/pull/9551) [`32d46cc`](https://github.com/LedgerHQ/ledger-live/commit/32d46cc77debe059ae0bcd848a21065dec7ee091) Thanks [@themooneer](https://github.com/themooneer)! - support Solana as NFT currency
+
+- [#9690](https://github.com/LedgerHQ/ledger-live/pull/9690) [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f) Thanks [@Justkant](https://github.com/Justkant)! - feat: support Solana NFTs
+
+## 2.7.0
+
+### Minor Changes
+
+- [#9584](https://github.com/LedgerHQ/ledger-live/pull/9584) [`32f2a0c`](https://github.com/LedgerHQ/ledger-live/commit/32f2a0cf073e5c1a5d65cbe44e69660f8f510dd7) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - perf: set a limit on the number of operations retrieved during the initial synchronization of the Stellar account to improve sync performance.
+
+## 2.7.0-next.0
+
+### Minor Changes
+
+- [#9584](https://github.com/LedgerHQ/ledger-live/pull/9584) [`32f2a0c`](https://github.com/LedgerHQ/ledger-live/commit/32f2a0cf073e5c1a5d65cbe44e69660f8f510dd7) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - perf: set a limit on the number of operations retrieved during the initial synchronization of the Stellar account to improve sync performance.
+
+## 2.6.0
+
+### Minor Changes
+
+- [#8757](https://github.com/LedgerHQ/ledger-live/pull/8757) [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e) Thanks [@Wozacosta](https://github.com/Wozacosta)! - chore: Rebranding from 'Elrond' to 'MultiversX'
+
+- [#9402](https://github.com/LedgerHQ/ledger-live/pull/9402) [`bdfa413`](https://github.com/LedgerHQ/ledger-live/commit/bdfa4139fcbceabfd05a57e69b05e9ccf10efbe1) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update Staging NFT Metadata service url + Rename env variable
+
+## 2.6.0-next.0
+
+### Minor Changes
+
+- [#8757](https://github.com/LedgerHQ/ledger-live/pull/8757) [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e) Thanks [@Wozacosta](https://github.com/Wozacosta)! - chore: Rebranding from 'Elrond' to 'MultiversX'
+
+- [#9402](https://github.com/LedgerHQ/ledger-live/pull/9402) [`bdfa413`](https://github.com/LedgerHQ/ledger-live/commit/bdfa4139fcbceabfd05a57e69b05e9ccf10efbe1) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update Staging NFT Metadata service url + Rename env variable
+
+## 2.5.0
+
+### Minor Changes
+
+- [#8396](https://github.com/LedgerHQ/ledger-live/pull/8396) [`d98a964`](https://github.com/LedgerHQ/ledger-live/commit/d98a96476c3d44eab1575f6c7c58ec03b5daf890) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Support for Aptos blockchain
+
+## 2.5.0-next.0
+
+### Minor Changes
+
+- [#8396](https://github.com/LedgerHQ/ledger-live/pull/8396) [`d98a964`](https://github.com/LedgerHQ/ledger-live/commit/d98a96476c3d44eab1575f6c7c58ec03b5daf890) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Support for Aptos blockchain
+
+## 2.4.1
+
+### Patch Changes
+
+- [#7926](https://github.com/LedgerHQ/ledger-live/pull/7926) [`5c13c7b`](https://github.com/LedgerHQ/ledger-live/commit/5c13c7bf743333f09cbfee720d275dfae7e157d2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add new EVMs to NFT support
+
+- [#8184](https://github.com/LedgerHQ/ledger-live/pull/8184) [`95fbec9`](https://github.com/LedgerHQ/ledger-live/commit/95fbec9fdff75cd6d4ac23e189e876efffc81906) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Revert some NFTs support waiting for new API support
+
+- [#8175](https://github.com/LedgerHQ/ledger-live/pull/8175) [`b93a421`](https://github.com/LedgerHQ/ledger-live/commit/b93a421866519b80fdd8a029caea97323eceae93) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove helper `applyEIP155` now that `hw-app-eth` is fixed and returns a valid `v` in all possible cases. Adding a env var `EVM_FORCE_LEGACY_TRANSACTIONS` to force transaction type 0, making this change QA compatible.
+
+## 2.4.1-next.0
+
+### Patch Changes
+
+- [#7926](https://github.com/LedgerHQ/ledger-live/pull/7926) [`5c13c7b`](https://github.com/LedgerHQ/ledger-live/commit/5c13c7bf743333f09cbfee720d275dfae7e157d2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add new EVMs to NFT support
+
+- [#8184](https://github.com/LedgerHQ/ledger-live/pull/8184) [`95fbec9`](https://github.com/LedgerHQ/ledger-live/commit/95fbec9fdff75cd6d4ac23e189e876efffc81906) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Revert some NFTs support waiting for new API support
+
+- [#8175](https://github.com/LedgerHQ/ledger-live/pull/8175) [`b93a421`](https://github.com/LedgerHQ/ledger-live/commit/b93a421866519b80fdd8a029caea97323eceae93) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove helper `applyEIP155` now that `hw-app-eth` is fixed and returns a valid `v` in all possible cases. Adding a env var `EVM_FORCE_LEGACY_TRANSACTIONS` to force transaction type 0, making this change QA compatible.
+
 ## 2.4.0
 
 ### Minor Changes

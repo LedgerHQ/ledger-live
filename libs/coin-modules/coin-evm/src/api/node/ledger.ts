@@ -254,10 +254,12 @@ export const getFeeData: NodeApi["getFeeData"] = async (currency, transaction) =
 
 /**
  * Broadcast a serialized transaction and returns its hash
+ * @param broadcastConfig.mevProtected - Optional flag indicating whether the transaction should be protected against MEV attacks.
  */
 export const broadcastTransaction: NodeApi["broadcastTransaction"] = async (
   currency,
   signedTxHex,
+  broadcastConfig,
 ) => {
   const config = getCoinConfig(currency).info;
   const { node } = config || /* istanbul ignore next */ {};
@@ -271,8 +273,10 @@ export const broadcastTransaction: NodeApi["broadcastTransaction"] = async (
     method: "POST",
     url: `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/tx/send`,
     data: { tx: signedTxHex },
+    params: {
+      mevProtected: Boolean(broadcastConfig?.mevProtected),
+    },
   });
-
   return hash;
 };
 

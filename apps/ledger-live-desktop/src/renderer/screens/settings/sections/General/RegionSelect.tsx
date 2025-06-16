@@ -6,7 +6,7 @@ import { languageSelector, localeSelector } from "~/renderer/reducers/settings";
 import Select from "~/renderer/components/Select";
 import Track from "~/renderer/analytics/Track";
 import regionsByKey from "./regions.json";
-import { DEFAULT_LANGUAGE } from "~/config/languages";
+import { DEFAULT_LANGUAGE, OFAC_LOCALES } from "~/config/languages";
 
 type RegionSelectOption = {
   value: string;
@@ -16,7 +16,8 @@ type RegionSelectOption = {
   label: string;
 };
 const getRegionOption = (regionLocale: string, languageLocale: string | Intl.Locale) => {
-  const [language, region = ""] = regionLocale.split("-");
+  const regionLocaleWithoutOFAC = OFAC_LOCALES.includes(regionLocale) ? "en-US" : regionLocale;
+  const [language, region = ""] = regionLocaleWithoutOFAC.split("-");
   const languageDisplayName = new window.Intl.DisplayNames([languageLocale], {
     type: "language",
   }).of(language);
@@ -27,8 +28,8 @@ const getRegionOption = (regionLocale: string, languageLocale: string | Intl.Loc
   const labelSuffix = regionDisplayName ? ` (${upperFirst(languageDisplayName)})` : "";
   const label = `${labelPrefix}${labelSuffix}`;
   return {
-    value: regionLocale,
-    locale: regionLocale,
+    value: regionLocaleWithoutOFAC,
+    locale: regionLocaleWithoutOFAC,
     language,
     region,
     label,
@@ -36,6 +37,7 @@ const getRegionOption = (regionLocale: string, languageLocale: string | Intl.Loc
 };
 const getRegionsOptions = (languageLocale: string) =>
   Object.keys(regionsByKey)
+    .filter(regionLocale => !OFAC_LOCALES.includes(regionLocale))
     .map(regionLocale => getRegionOption(regionLocale, languageLocale))
     .sort((a, b) => a.label.localeCompare(b.label));
 const RegionSelect = () => {

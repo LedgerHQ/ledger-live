@@ -7,13 +7,38 @@ import {
   findLatestAppCandidate,
   SpeculosTransport,
 } from "../load/speculos";
-import { SpeculosDevice } from "@ledgerhq/speculos-transport";
+import { createSpeculosDeviceCI, releaseSpeculosDeviceCI } from "./speculosCI";
 import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import axios from "axios";
 import { getEnv } from "@ledgerhq/live-env";
 import { getCryptoCurrencyById } from "../currencies";
+import { DeviceLabels } from "../e2e/enum/DeviceLabels";
+import { Account } from "./enum/Account";
+import { Device as CryptoWallet } from "./enum/Device";
+import { Currency } from "./enum/Currency";
+import expect from "expect";
+import { sendBTCBasedCoin } from "./families/bitcoin";
+import { sendEVM, sendEvmNFT } from ".//families/evm";
+import { sendPolkadot } from "./families/polkadot";
+import { sendAlgorand } from "./families/algorand";
+import { sendTron } from "./families/tron";
+import { sendStellar } from "./families/stellar";
+import { sendCardano, delegateCardano } from "./families/cardano";
+import { sendXRP } from "./families/xrp";
+import { sendAptos } from "./families/aptos";
+import { delegateNear } from "./families/near";
+import { delegateCosmos, sendCosmos } from "./families/cosmos";
+import { delegateSolana, sendSolana } from "./families/solana";
+import { delegateTezos } from "./families/tezos";
+import { delegateCelo } from "./families/celo";
+import { delegateMultiversX } from "./families/multiversX";
+import { NFTTransaction, Transaction } from "./models/Transaction";
+import { Delegate } from "./models/Delegate";
+import { Swap } from "./models/Swap";
+
+const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 
 export type Spec = {
   currency?: CryptoCurrency;
@@ -28,6 +53,10 @@ export type Spec = {
 };
 
 export type Dependency = { name: string; appVersion?: string };
+export type SpeculosDevice = {
+  id: string;
+  port: number;
+};
 
 export function setExchangeDependencies(dependencies: Dependency[]) {
   const map = new Map<string, Dependency>();
@@ -37,6 +66,19 @@ export function setExchangeDependencies(dependencies: Dependency[]) {
     }
   }
   specs["Exchange"].dependencies = Array.from(map.values());
+}
+
+export function getSpeculosModel() {
+  const speculosDevice = process.env.SPECULOS_DEVICE;
+  switch (speculosDevice) {
+    case CryptoWallet.LNS:
+      return DeviceModelId.nanoS;
+    case CryptoWallet.LNX:
+      return DeviceModelId.nanoX;
+    case CryptoWallet.LNSP:
+    default:
+      return DeviceModelId.nanoSP;
+  }
 }
 
 type Specs = {
@@ -53,21 +95,29 @@ export const specs: Specs = {
   Bitcoin: {
     currency: getCryptoCurrencyById("bitcoin"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Bitcoin",
+    },
+    dependency: "",
+  },
+  Aptos: {
+    currency: getCryptoCurrencyById("aptos"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Aptos",
     },
     dependency: "",
   },
   Exchange: {
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Exchange",
     },
     dependencies: [],
   },
   LedgerSync: {
     appQuery: {
-      model: DeviceModelId.nanoX,
+      model: getSpeculosModel(),
       appName: "Ledger Sync",
     },
     dependency: "",
@@ -75,7 +125,7 @@ export const specs: Specs = {
   Dogecoin: {
     currency: getCryptoCurrencyById("dogecoin"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Dogecoin",
     },
     dependency: "",
@@ -83,7 +133,7 @@ export const specs: Specs = {
   Ethereum: {
     currency: getCryptoCurrencyById("ethereum"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Ethereum",
     },
     dependency: "",
@@ -91,7 +141,7 @@ export const specs: Specs = {
   Ethereum_Holesky: {
     currency: getCryptoCurrencyById("ethereum_holesky"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Ethereum",
     },
     dependency: "",
@@ -99,7 +149,7 @@ export const specs: Specs = {
   Ethereum_Sepolia: {
     currency: getCryptoCurrencyById("ethereum_sepolia"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Ethereum",
     },
     dependency: "",
@@ -107,7 +157,7 @@ export const specs: Specs = {
   Ethereum_Classic: {
     currency: getCryptoCurrencyById("ethereum_classic"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Ethereum Classic",
     },
     dependency: "Ethereum",
@@ -115,7 +165,7 @@ export const specs: Specs = {
   Bitcoin_Testnet: {
     currency: getCryptoCurrencyById("bitcoin_testnet"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Bitcoin Test",
     },
     dependency: "",
@@ -123,7 +173,7 @@ export const specs: Specs = {
   Solana: {
     currency: getCryptoCurrencyById("solana"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Solana",
     },
     dependency: "",
@@ -131,7 +181,7 @@ export const specs: Specs = {
   Cardano: {
     currency: getCryptoCurrencyById("cardano"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "CardanoADA",
     },
     dependency: "",
@@ -139,7 +189,7 @@ export const specs: Specs = {
   Polkadot: {
     currency: getCryptoCurrencyById("polkadot"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Polkadot",
     },
     dependency: "",
@@ -147,15 +197,15 @@ export const specs: Specs = {
   Tron: {
     currency: getCryptoCurrencyById("tron"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Tron",
     },
     dependency: "",
   },
-  Ripple: {
+  XRP: {
     currency: getCryptoCurrencyById("ripple"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "XRP",
     },
     dependency: "",
@@ -163,7 +213,7 @@ export const specs: Specs = {
   Stellar: {
     currency: getCryptoCurrencyById("stellar"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Stellar",
     },
     dependency: "",
@@ -171,7 +221,7 @@ export const specs: Specs = {
   Bitcoin_Cash: {
     currency: getCryptoCurrencyById("bitcoin_cash"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Bitcoin Cash",
     },
     dependency: "",
@@ -179,7 +229,7 @@ export const specs: Specs = {
   Algorand: {
     currency: getCryptoCurrencyById("algorand"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Algorand",
     },
     dependency: "",
@@ -187,7 +237,7 @@ export const specs: Specs = {
   Cosmos: {
     currency: getCryptoCurrencyById("cosmos"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Cosmos",
     },
     dependency: "",
@@ -195,7 +245,7 @@ export const specs: Specs = {
   Tezos: {
     currency: getCryptoCurrencyById("tezos"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "TezosWallet",
     },
     dependency: "",
@@ -203,23 +253,23 @@ export const specs: Specs = {
   Polygon: {
     currency: getCryptoCurrencyById("polygon"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
-      appName: "Polygon",
+      model: getSpeculosModel(),
+      appName: "Ethereum",
     },
     dependency: "",
   },
   Binance_Smart_Chain: {
     currency: getCryptoCurrencyById("bsc"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
-      appName: "Binance Smart Chain",
+      model: getSpeculosModel(),
+      appName: "Ethereum",
     },
     dependency: "",
   },
   Ton: {
     currency: getCryptoCurrencyById("ton"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "TON",
     },
     dependency: "",
@@ -227,15 +277,15 @@ export const specs: Specs = {
   Near: {
     currency: getCryptoCurrencyById("near"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "NEAR",
     },
     dependency: "",
   },
-  Multiverse_X: {
+  Multivers_X: {
     currency: getCryptoCurrencyById("elrond"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "MultiversX",
     },
     dependency: "",
@@ -243,8 +293,33 @@ export const specs: Specs = {
   Osmosis: {
     currency: getCryptoCurrencyById("osmo"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Cosmos",
+    },
+    dependency: "",
+  },
+  Injective: {
+    currency: getCryptoCurrencyById("injective"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Cosmos",
+    },
+    dependency: "",
+  },
+
+  Celo: {
+    currency: getCryptoCurrencyById("celo"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Celo",
+    },
+    dependency: "",
+  },
+  Litecoin: {
+    currency: getCryptoCurrencyById("litecoin"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Litecoin",
     },
     dependency: "",
   },
@@ -273,7 +348,11 @@ export async function startSpeculos(
   const { model } = appQuery;
   const { dependencies } = spec;
   const newAppQuery = dependencies?.map(dep => {
-    return findLatestAppCandidate(appCandidates, { model, appName: dep.name });
+    return findLatestAppCandidate(appCandidates, {
+      model,
+      appName: dep.name,
+      firmware: appCandidate?.firmware,
+    });
   });
   const appVersionMap = new Map(newAppQuery?.map(app => [app?.appName, app?.appVersion]));
   dependencies?.forEach(dependency => {
@@ -303,20 +382,26 @@ export async function startSpeculos(
     coinapps,
     onSpeculosDeviceCreated,
   };
-
   try {
-    return await createSpeculosDevice(deviceParams);
+    const device = isSpeculosRemote
+      ? await createSpeculosDeviceCI(deviceParams)
+      : await createSpeculosDevice(deviceParams).then(device => {
+          invariant(device.ports.apiPort, "[E2E] Speculos apiPort is not defined");
+          return { id: device.id, port: device.ports.apiPort };
+        });
+    return device;
   } catch (e: unknown) {
-    if (process.env.CI) console.error(e);
     console.error(e);
     log("engine", `test ${testName} failed with ${String(e)}`);
   }
 }
 
-export async function stopSpeculos(device: Device | undefined) {
-  if (device) {
-    log("engine", `test ${device.id} finished`);
-    await releaseSpeculosDevice(device.id);
+export async function stopSpeculos(deviceId: string | undefined) {
+  if (deviceId) {
+    log("engine", `test ${deviceId} finished`);
+    isSpeculosRemote
+      ? await releaseSpeculosDeviceCI(deviceId)
+      : await releaseSpeculosDevice(deviceId);
   }
 }
 
@@ -330,16 +415,17 @@ interface ResponseData {
 
 export async function waitFor(text: string, maxAttempts: number = 10): Promise<string[]> {
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
+  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
   let attempts = 0;
   let textFound: boolean = false;
   while (attempts < maxAttempts && !textFound) {
     const response = await axios.get<ResponseData>(
-      `http://127.0.0.1:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
+      `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
     );
     const responseData = response.data;
     const texts = responseData.events.map(event => event.text);
 
-    if (texts[0].includes(text)) {
+    if (texts?.[0]?.includes(text)) {
       textFound = true;
       return texts;
     }
@@ -351,7 +437,8 @@ export async function waitFor(text: string, maxAttempts: number = 10): Promise<s
 
 export async function pressBoth() {
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
-  await axios.post(`http://127.0.0.1:${speculosApiPort}/button/both`, {
+  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
+  await axios.post(`${speculosAddress}:${speculosApiPort}/button/both`, {
     action: "press-and-release",
   });
 }
@@ -369,7 +456,7 @@ export async function pressUntilTextFound(
       return await fetchAllEvents(speculosApiPort);
     }
 
-    await pressRightButton(speculosApiPort);
+    await pressRightButton();
     await waitForTimeOut(200);
   }
 
@@ -379,21 +466,25 @@ export async function pressUntilTextFound(
 }
 
 async function fetchCurrentScreenTexts(speculosApiPort: number): Promise<string> {
+  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
   const response = await axios.get<ResponseData>(
-    `http://127.0.0.1:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
+    `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
   );
   return response.data.events.map(event => event.text).join("");
 }
 
 async function fetchAllEvents(speculosApiPort: number): Promise<string[]> {
+  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
   const response = await axios.get<ResponseData>(
-    `http://127.0.0.1:${speculosApiPort}/events?stream=false&currentscreenonly=false`,
+    `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=false`,
   );
   return response.data.events.map(event => event.text);
 }
 
-async function pressRightButton(speculosApiPort: number): Promise<void> {
-  await axios.post(`http://127.0.0.1:${speculosApiPort}/button/right`, {
+export async function pressRightButton(): Promise<void> {
+  const speculosApiPort = getEnv("SPECULOS_API_PORT");
+  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
+  await axios.post(`${speculosAddress}:${speculosApiPort}/button/right`, {
     action: "press-and-release",
   });
 }
@@ -412,19 +503,214 @@ export function containsSubstringInEvent(targetString: string, events: string[])
   return result;
 }
 
-export async function takeScreenshot() {
-  const speculosApiPort = getEnv("SPECULOS_API_PORT");
+export async function takeScreenshot(port?: number): Promise<Buffer | undefined> {
+  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
+  const speculosApiPort = port ?? getEnv("SPECULOS_API_PORT");
   try {
-    const response = await axios.get(`http://127.0.0.1:${speculosApiPort}/screenshot`, {
+    const response = await axios.get(`${speculosAddress}:${speculosApiPort}/screenshot`, {
       responseType: "arraybuffer",
     });
     return response.data;
   } catch (error) {
     console.error("Error downloading speculos screenshot:", error);
-    throw error;
   }
 }
 
 export async function waitForTimeOut(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+export async function removeMemberLedgerSync() {
+  await waitFor(DeviceLabels.CONNECT_WITH);
+  await pressUntilTextFound(DeviceLabels.MAKE_SURE_TO_USE);
+  await pressUntilTextFound(DeviceLabels.CONNECT_WITH);
+  await pressBoth();
+  await waitFor(DeviceLabels.REMOVE_PHONE_OR_COMPUTER);
+  await pressUntilTextFound(DeviceLabels.AFTER_REMOVING);
+  await pressUntilTextFound(DeviceLabels.REMOVE_PHONE_OR_COMPUTER);
+  await pressBoth();
+  await waitFor(DeviceLabels.TURN_ON_SYNC);
+  await pressUntilTextFound(DeviceLabels.YOUR_CRYPTO_ACCOUNTS);
+  await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
+  await pressBoth();
+}
+
+export async function activateLedgerSync() {
+  await waitFor(DeviceLabels.CONNECT_WITH);
+  await pressUntilTextFound(DeviceLabels.MAKE_SURE_TO_USE);
+  await pressUntilTextFound(DeviceLabels.CONNECT_WITH);
+  await pressBoth();
+  await waitFor(DeviceLabels.TURN_ON_SYNC);
+  await pressUntilTextFound(DeviceLabels.YOUR_CRYPTO_ACCOUNTS);
+  await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
+  await pressBoth();
+}
+
+export async function activateExpertMode() {
+  await pressUntilTextFound(DeviceLabels.EXPERT_MODE);
+  await pressBoth();
+}
+
+export async function activateContractData() {
+  await pressUntilTextFound(DeviceLabels.SETTINGS);
+  await pressBoth();
+  await waitFor(DeviceLabels.CONTRACT_DATA);
+  await pressBoth();
+}
+
+export async function expectValidAddressDevice(account: Account, addressDisplayed: string) {
+  let deviceLabels: string[];
+
+  switch (account.currency) {
+    case Currency.SOL:
+      deviceLabels = [DeviceLabels.PUBKEY, DeviceLabels.APPROVE, DeviceLabels.REJECT];
+      break;
+    case Currency.DOT:
+    case Currency.ATOM:
+      deviceLabels = [DeviceLabels.ADDRESS, DeviceLabels.CAPS_APPROVE, DeviceLabels.CAPS_REJECT];
+      break;
+    case Currency.BTC:
+      deviceLabels = [DeviceLabels.ADDRESS, DeviceLabels.CONFIRM, DeviceLabels.CANCEL];
+      break;
+    default:
+      deviceLabels = [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT];
+      break;
+  }
+
+  await waitFor(deviceLabels[0]);
+  const events = await pressUntilTextFound(deviceLabels[1]);
+  const isAddressCorrect = containsSubstringInEvent(addressDisplayed, events);
+  expect(isAddressCorrect).toBeTruthy();
+  await pressBoth();
+}
+
+export async function signSendTransaction(tx: Transaction) {
+  const currencyName = tx.accountToDebit.currency;
+  switch (currencyName) {
+    case Currency.sepETH:
+    case Currency.POL:
+    case Currency.ETH:
+      await sendEVM(tx);
+      break;
+    case Currency.DOGE:
+    case Currency.BCH:
+      await sendBTCBasedCoin(tx);
+      break;
+    case Currency.DOT:
+      await sendPolkadot(tx);
+      break;
+    case Currency.ALGO:
+      await sendAlgorand(tx);
+      break;
+    case Currency.SOL:
+    case Currency.SOL_GIGA:
+      await sendSolana(tx);
+      break;
+    case Currency.TRX:
+      await sendTron(tx);
+      break;
+    case Currency.XLM:
+      await sendStellar(tx);
+      break;
+    case Currency.ATOM:
+      await sendCosmos(tx);
+      break;
+    case Currency.ADA:
+      await sendCardano(tx);
+      break;
+    case Currency.XRP:
+      await sendXRP(tx);
+      break;
+    case Currency.APT:
+      await sendAptos();
+      break;
+    default:
+      throw new Error(`Unsupported currency: ${currencyName.ticker}`);
+  }
+}
+
+export async function signSendNFTTransaction(tx: NFTTransaction) {
+  const currencyName = tx.accountToDebit.currency;
+  switch (currencyName) {
+    case Currency.ETH:
+      await sendEvmNFT(tx);
+      break;
+    default:
+      throw new Error(`Unsupported currency: ${currencyName.ticker}`);
+  }
+}
+
+export async function signDelegationTransaction(delegatingAccount: Delegate) {
+  const currencyName = delegatingAccount.account.currency.name;
+  switch (currencyName) {
+    case Account.SOL_1.currency.name:
+      await delegateSolana();
+      break;
+    case Account.NEAR_1.currency.name:
+      await delegateNear(delegatingAccount);
+      break;
+    case Account.ATOM_1.currency.name:
+    case Account.INJ_1.currency.name:
+    case Account.OSMO_1.currency.name:
+      await delegateCosmos(delegatingAccount);
+      break;
+    case Account.MULTIVERS_X_1.currency.name:
+      await delegateMultiversX();
+      break;
+    case Account.ADA_1.currency.name:
+      await delegateCardano();
+      break;
+    case Account.XTZ_1.currency.name:
+      await delegateTezos();
+      break;
+    case Account.CELO_1.currency.name:
+      await delegateCelo(delegatingAccount);
+      break;
+    default:
+      throw new Error(`Unsupported currency: ${currencyName}`);
+  }
+}
+
+export async function verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
+  const events = await pressUntilTextFound(DeviceLabels.ACCEPT);
+  await verifySwapData(swap, events, amount);
+  await pressBoth();
+}
+
+export async function verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
+  const events = await pressUntilTextFound(DeviceLabels.REJECT);
+  await verifySwapData(swap, events, amount);
+  await pressBoth();
+}
+
+async function verifySwapData(swap: Swap, events: string[], amount: string) {
+  const sendAmountScreen = containsSubstringInEvent(amount, events);
+  expect(sendAmountScreen).toBeTruthy();
+  verifySwapGetAmountScreen(swap, events);
+  verifySwapFeesAmountScreen(swap, events);
+}
+
+function verifySwapGetAmountScreen(swap: Swap, events: string[]) {
+  const parsedAmountToReceive = extractNumberFromString(swap.amountToReceive);
+  swap.amountToReceive =
+    parsedAmountToReceive.length < 19
+      ? parsedAmountToReceive
+      : parsedAmountToReceive.substring(0, 18);
+
+  const receivedGetAmount = containsSubstringInEvent(`${swap.amountToReceive}`, events);
+  expect(receivedGetAmount).toBeTruthy();
+}
+
+function verifySwapFeesAmountScreen(swap: Swap, events: string[]) {
+  const parsedFeesAmount = extractNumberFromString(swap.feesAmount);
+  swap.feesAmount =
+    parsedFeesAmount.length < 19 ? parsedFeesAmount : parsedFeesAmount.substring(0, 18);
+
+  const receivedFeesAmount = containsSubstringInEvent(swap.feesAmount, events);
+  expect(receivedFeesAmount).toBeTruthy();
+}
+
+const extractNumberFromString = (input: string | undefined): string => {
+  const match = input?.match(/[\d.]+/);
+  return match ? match[0] : "";
+};

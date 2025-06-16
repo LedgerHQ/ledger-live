@@ -7,8 +7,13 @@ import styled, { useTheme } from "styled-components/native";
 import { useDispatch } from "react-redux";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { Image, ImageProps } from "react-native";
-import { completeOnboarding, setReadOnlyMode } from "~/actions/settings";
-
+import {
+  completeOnboarding,
+  setIsReborn,
+  setOnboardingHasDevice,
+  setReadOnlyMode,
+} from "~/actions/settings";
+import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import { NavigatorName, ScreenName } from "~/const";
 import { screen, track } from "~/analytics";
 
@@ -22,10 +27,10 @@ import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/typ
 import Config from "react-native-config";
 
 const slidesImages = [
-  require("../../../../assets/images/onboarding/stories/slide1.png"),
-  require("../../../../assets/images/onboarding/stories/slide2.png"),
-  require("../../../../assets/images/onboarding/stories/slide3.png"),
-  require("../../../../assets/images/onboarding/stories/slide4.png"),
+  require("../../../../assets/images/onboarding/stories/slide1.webp"),
+  require("../../../../assets/images/onboarding/stories/slide2.webp"),
+  require("../../../../assets/images/onboarding/stories/slide3.webp"),
+  require("../../../../assets/images/onboarding/stories/slide4.webp"),
 ];
 
 const StyledSafeAreaView = styled(SafeAreaView)`
@@ -55,6 +60,7 @@ const Item = ({
   const navigation = useNavigation<NavigationProp>();
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const { navigateToRebornFlow, rebornFeatureFlagEnabled } = useRebornFlow(true);
 
   const screenName = useMemo(() => `Reborn Story Step ${currentIndex}`, [currentIndex]);
 
@@ -70,10 +76,8 @@ const Item = ({
 
   const buyLedger = useCallback(() => {
     onClick("Buy a Ledger");
-    navigation.navigate(NavigatorName.BuyDevice, {
-      screen: undefined,
-    } as never);
-  }, [navigation, onClick]);
+    navigateToRebornFlow();
+  }, [navigateToRebornFlow, onClick]);
 
   const exploreLedger = useCallback(() => {
     dispatch(completeOnboarding());
@@ -88,13 +92,14 @@ const Item = ({
 
   const pressExplore = useCallback(() => {
     exploreLedger();
+    dispatch(setIsReborn(true));
+    dispatch(setOnboardingHasDevice(false));
     onClick("Explore without a device");
-  }, [exploreLedger, onClick]);
+  }, [dispatch, exploreLedger, onClick]);
 
   const pressBuy = useCallback(() => {
     buyLedger();
-    onClick("Buy a Ledger");
-  }, [buyLedger, onClick]);
+  }, [buyLedger]);
 
   return (
     <Flex flex={1} backgroundColor={`background.main`}>
@@ -116,7 +121,7 @@ const Item = ({
       </Svg>
       <Text
         variant="h4"
-        style={{ fontSize: 40, lineHeight: 45 }}
+        style={{ fontSize: 40, lineHeight: 54 }}
         mx={7}
         mt={3}
         mb={10}
@@ -137,9 +142,11 @@ const Item = ({
           >
             {t("onboarding.discoverLive.exploreWithoutADevice")}
           </Button>
-          <Button onPress={pressBuy} type={"shade"} outline={true}>
-            {t("onboarding.discoverLive.buyALedgerNow")}
-          </Button>
+          {!rebornFeatureFlagEnabled && (
+            <Button onPress={pressBuy} type={"shade"} outline={true}>
+              {t("onboarding.discoverLive.buyALedgerNow")}
+            </Button>
+          )}
         </Box>
       )}
     </Flex>
@@ -179,7 +186,7 @@ function DiscoverLiveInfo() {
   return (
     <StyledSafeAreaView>
       <Carousel
-        autoDelay={Config.MOCK ? 0 : 6000}
+        autoDelay={Config.DETOX ? 0 : 6000}
         scrollOnSidePress={true}
         restartAfterEnd={false}
         IndicatorComponent={StoriesIndicator}

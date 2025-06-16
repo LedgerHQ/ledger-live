@@ -12,7 +12,7 @@ const styles: React.CSSProperties = {
   hyphens: "auto",
 };
 
-const TitleComponent: React.FC<HeaderTextProps> = ({ isLoading, text }) => (
+const TitleComponent: React.FC<HeaderTextProps> = ({ isLoading, text, id }) => (
   <Text
     ff="Inter|SemiBold"
     fontSize={7}
@@ -20,6 +20,7 @@ const TitleComponent: React.FC<HeaderTextProps> = ({ isLoading, text }) => (
     color="palette.text.shade100"
     style={styles}
     uppercase
+    data-testid={id}
   >
     <Skeleton show={isLoading} width={100} barHeight={10} minHeight={24}>
       {text}

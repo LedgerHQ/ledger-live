@@ -2,7 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { Observable, Subscription } from "rxjs";
 import { NativeModules, Platform } from "react-native";
 import Config from "react-native-config";
-import TransportBLE from "../../../react-native-hw-transport-ble";
+import getBLETransport from "~/react-native-hw-transport-ble";
+import { useDeviceManagementKitEnabled } from "@ledgerhq/live-dmk-mobile";
 
 const { BluetoothHelperModule } = NativeModules;
 
@@ -92,13 +93,15 @@ export function useEnableBluetooth(
 ) {
   const [observedTransportState, setObservedTransportState] = useState<string>("Unknown");
 
+  const isLDMKEnabled = useDeviceManagementKitEnabled();
+
   const promptBluetoothCallback = usePromptEnableBluetoothCallback();
 
   // Exposes a check and request enabling bluetooth services again (if needed)
   const checkAndRequestAgain = useCallback(async () => {
     // Early return when mocking, because when running LLM in an iOS simulator
     // prompting the user to enable bluetooth services will randomly crash the app
-    if (!isHookEnabled || Config.MOCK) return;
+    if (!isHookEnabled || Config.MOCK || Config.DETOX) return;
 
     // We actually can't do anything with the result, as on iOS it will always be BLE_UNKNOWN_STATE
     await promptBluetoothCallback();
@@ -119,7 +122,7 @@ export function useEnableBluetooth(
     let sub: null | Subscription;
 
     if (isHookEnabled) {
-      sub = new Observable(TransportBLE.observeState).subscribe({
+      sub = new Observable(getBLETransport({ isLDMKEnabled }).observeState).subscribe({
         next: ({ type }: { type: string }) => setObservedTransportState(type),
       });
     }
@@ -128,7 +131,7 @@ export function useEnableBluetooth(
         sub.unsubscribe();
       }
     };
-  }, [isHookEnabled]);
+  }, [isHookEnabled, isLDMKEnabled]);
 
   let bluetoothServicesState: BluetoothServicesState = "disabled";
 

@@ -1,6 +1,6 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
@@ -14,7 +14,7 @@ import { openURL } from "~/renderer/linking";
 import { ModalsData } from "../modals";
 
 export type Props = {
-  account: CeloAccount | SubAccount;
+  account: CeloAccount | TokenAccount;
   parentAccount: CeloAccount | undefined | null;
 };
 const CeloEarnRewardsInfoModal = ({ account, parentAccount }: Props) => {

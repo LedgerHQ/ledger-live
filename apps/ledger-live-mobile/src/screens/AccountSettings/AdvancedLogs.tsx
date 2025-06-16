@@ -26,7 +26,7 @@ export default function AdvancedLogs({ route }: NavigationProps) {
   const { t } = useTranslation();
   const usefulData = {
     xpub: (isAccount(account) && account?.xpub) || undefined,
-    index: (isAccount(account) && account?.index) || undefined,
+    index: isAccount(account) && "index" in account ? account.index : undefined,
     freshAddressPath: (isAccount(account) && account?.freshAddressPath) || undefined,
     id: account?.id || undefined,
     blockHeight: (isAccount(account) && account?.blockHeight) || undefined,
@@ -69,7 +69,7 @@ export default function AdvancedLogs({ route }: NavigationProps) {
             time: readableDate,
           })}
         </LText>
-        <LText selectable monospace style={styles.mono}>
+        <LText selectable monospace style={styles.mono} testID="account-advanced-logs">
           {JSON.stringify(usefulData, null, 2)}
         </LText>
       </View>

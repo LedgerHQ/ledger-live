@@ -26,9 +26,11 @@ export class OnboardingPage extends AppPage {
   private quizAnswerTopButton = this.page.getByTestId("v3-quiz-answer-0");
   private quizAnswerBottomButton = this.page.getByTestId("v3-quiz-answer-1");
   readonly roleAnimation = this.page.locator("[role=animation]");
+  private onbordingWelcomeTitle = this.page.getByTestId("onbording-welcome-title");
 
   async waitForLaunch() {
     await this.getStartedButton.waitFor({ state: "visible" });
+    await this.onbordingWelcomeTitle.waitFor({ state: "visible" });
   }
 
   async waitForPedagogyModal() {

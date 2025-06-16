@@ -1,5 +1,327 @@
 # @ledgerhq/device-react
 
+## 0.2.32
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.26
+
+## 0.2.32-next.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.26-next.2
+
+## 0.2.32-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.26-next.1
+
+## 0.2.32-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.26-next.0
+
+## 0.2.31
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.25
+
+## 0.2.31-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.25-next.0
+
+## 0.2.30
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.24
+
+## 0.2.30-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.24-next.0
+
+## 0.2.29
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.23
+
+## 0.2.29-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.23-next.0
+
+## 0.2.28
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.22
+
+## 0.2.28-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.22-next.0
+
+## 0.2.27
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.21
+
+## 0.2.27-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.21-next.0
+
+## 0.2.26
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.20
+
+## 0.2.26-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.20-next.0
+
+## 0.2.25
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.19
+
+## 0.2.25-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.19-next.0
+
+## 0.2.24
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.18
+
+## 0.2.24-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.18-next.0
+
+## 0.2.23
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.17
+
+## 0.2.23-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.17-next.0
+
+## 0.2.22
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.16
+
+## 0.2.22-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.16-next.0
+
+## 0.2.21
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.15
+
+## 0.2.21-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.15-next.0
+
+## 0.2.20
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.14
+
+## 0.2.20-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.14-next.0
+
+## 0.2.19
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.13
+
+## 0.2.19-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.13-next.0
+
+## 0.2.18
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.12
+
+## 0.2.18-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.12-next.0
+
+## 0.2.17
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.11
+
+## 0.2.17-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.11-next.0
+
+## 0.2.16
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.10
+
+## 0.2.16-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.10-next.1
+
+## 0.2.16-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.10-next.0
+
+## 0.2.15
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.9
+
+## 0.2.15-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.9-next.1
+
+## 0.2.15-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.9-next.0
+
+## 0.2.14
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.8
+
+## 0.2.14-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.8-next.0
+
+## 0.2.13
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.7
+
+## 0.2.13-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.7-next.0
+
+## 0.2.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.6
+
+## 0.2.12-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.4.6-next.0
+
 ## 0.2.11
 
 ### Patch Changes

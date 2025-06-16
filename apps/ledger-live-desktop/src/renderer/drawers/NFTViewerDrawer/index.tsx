@@ -1,13 +1,15 @@
-import React, { useMemo, useCallback, useState, useEffect, memo } from "react";
-import { useNftMetadata, useNftCollectionMetadata } from "@ledgerhq/live-nft-react";
-import { getFloorPrice } from "@ledgerhq/live-nft/api/metadataservice";
+import React, { useMemo, useCallback, useState, memo } from "react";
+import {
+  useNftMetadata,
+  useNftCollectionMetadata,
+  useNftFloorPrice,
+} from "@ledgerhq/live-nft-react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import { space, layout, position, PositionProps, LayoutProps, SpaceProps } from "styled-system";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { Account, FloorPrice, NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { Account, NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
@@ -25,6 +27,8 @@ import { openModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
 import { State } from "~/renderer/reducers";
+import FeatureToggle from "@ledgerhq/live-common/featureFlags/FeatureToggle";
+
 const NFTViewerDrawerContainer = styled.div`
   flex: 1;
   overflow-y: hidden;
@@ -184,20 +188,12 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
   );
   const currency = useMemo(() => getCryptoCurrencyById(protoNft.currencyId), [protoNft.currencyId]);
   const name = (metadata && "nftName" in metadata && metadata.nftName) || protoNft.tokenId;
-  const [floorPriceLoading, setFloorPriceLoading] = useState(false);
-  const [ticker, setTicker] = useState("");
-  const [floorPrice, setFloorPrice] = useState<number | null>(null);
-  useEffect(() => {
-    setFloorPriceLoading(true);
-    getFloorPrice(protoNft, currency)
-      .then((result: FloorPrice | null) => {
-        if (result) {
-          setTicker(result.ticker);
-          setFloorPrice(result.value);
-        }
-      })
-      .finally(() => setFloorPriceLoading(false));
-  }, [protoNft, currency]);
+
+  const { isLoading: floorPriceLoading, data } = useNftFloorPrice(protoNft, currency);
+
+  const ticker = data?.ticker || "";
+  const floorPrice = data?.value.toString() || null;
+
   const onNFTSend = useCallback(() => {
     setDrawer();
     dispatch(
@@ -208,6 +204,7 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
       }),
     );
   }, [dispatch, nftId, account]);
+
   const [isPanAndZoomOpen, setPanAndZoomOpen] = useState(false);
   const openNftPanAndZoom: React.MouseEventHandler<HTMLDivElement> = useCallback(() => {
     setPanAndZoomOpen(true);
@@ -239,6 +236,7 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
               </Skeleton>
             </Text>
             <Text
+              data-testid="nft-name-sendDrawer"
               ff="Inter|SemiBold"
               fontSize={7}
               lineHeight="29px"
@@ -278,6 +276,7 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
           </Skeleton>
           <NFTActions>
             <Button
+              data-testid="nft-send-button-sendDrawer"
               style={{
                 flex: 1,
                 justifyContent: "center",
@@ -364,7 +363,13 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
                   skeleton={floorPriceLoading}
                   title={t("NFT.viewer.attributes.floorPrice")}
                   value={
-                    <Text mb={1} lineHeight="15.73px" fontSize={4} color="palette.text.shade60">
+                    <Text
+                      mb={1}
+                      data-testid="nft-floor-price"
+                      lineHeight="15.73px"
+                      fontSize={4}
+                      color="palette.text.shade60"
+                    >
                       {floorPrice} {ticker}
                     </Text>
                   }

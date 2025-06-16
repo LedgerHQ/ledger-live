@@ -43,6 +43,7 @@ const RecipientRow = ({
           <LText
             style={[styles.warningBox]}
             color={error ? "alert" : warning ? "orange" : "darkBlue"}
+            testID="send-recipient-error"
           >
             <TranslatedError error={error || warning} />
           </LText>

@@ -1,4 +1,3 @@
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useSelector } from "react-redux";
 import { shouldRedirectToPostOnboardingOrRecoverUpsell } from "@ledgerhq/live-common/postOnboarding/logic/shouldRedirectToPostOnboardingOrRecoverUpsell";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -17,12 +16,10 @@ export function useShouldRedirect(): {
 } {
   const hasBeenUpsoldRecover = useSelector(hasBeenUpsoldRecoverSelector);
   const hasRedirectedToPostOnboarding = useSelector(hasBeenRedirectedToPostOnboardingSelector);
-  const recoverUpsellRedirection = useFeature("recoverUpsellRedirection");
   const lastOnboardedDevice = useSelector(lastOnboardedDeviceSelector);
   return shouldRedirectToPostOnboardingOrRecoverUpsell({
     hasBeenUpsoldRecover,
     hasRedirectedToPostOnboarding,
-    upsellForTouchScreenDevices: Boolean(recoverUpsellRedirection?.enabled),
     lastConnectedDevice: lastOnboardedDevice,
     supportedDeviceModels: [
       DeviceModelId.nanoSP,

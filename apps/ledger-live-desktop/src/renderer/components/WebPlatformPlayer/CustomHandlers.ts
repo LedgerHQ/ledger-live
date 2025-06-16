@@ -62,6 +62,7 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
             ipcRenderer.send("show-app", {});
             dispatch(
               openModal("MODAL_SIGN_MESSAGE", {
+                isACRE: true,
                 account,
                 message,
                 useApp: options?.hwAppId,

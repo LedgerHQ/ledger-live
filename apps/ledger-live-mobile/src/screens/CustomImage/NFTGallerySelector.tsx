@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
@@ -13,8 +13,10 @@ import { NavigatorName, ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
 import { TrackScreen } from "~/analytics";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { getThreshold, useNftGalleryFilter, useNftQueriesSources } from "@ledgerhq/live-nft-react";
 import { getEnv } from "@ledgerhq/live-env";
-import { useNftCollections } from "~/hooks/nfts/useNftCollections";
+import { State } from "~/reducers/types";
 
 const NB_COLUMNS = 2;
 
@@ -27,30 +29,39 @@ const keyExtractor = (item: ProtoNFT) => item.id;
 const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
   const { params } = route;
   const { device, deviceModelId } = params;
-
   const SUPPORTED_NFT_CURRENCIES = getEnv("NFT_CURRENCIES");
 
-  const nftsOrdered = useSelector(orderedVisibleNftsSelector, isEqual);
+  const llmSolanaNftsFeature = useFeature("llmSolanaNfts");
 
-  const accounts = useSelector(accountsSelector);
-
-  const addresses = useMemo(
-    () =>
-      [
-        ...new Set(
-          accounts.map(account => account.freshAddress).filter(addr => addr.startsWith("0x")),
-        ),
-      ].join(","),
-    [accounts],
+  const nftsOrdered = useSelector(
+    (state: State) =>
+      orderedVisibleNftsSelector(state, Boolean(nftsFromSimplehashFeature?.enabled)),
+    isEqual,
   );
 
-  const { allNfts, isLoading } = useNftCollections({
-    nftsOwned: nftsOrdered,
-    addresses: addresses,
-    chains: SUPPORTED_NFT_CURRENCIES,
+  const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
+
+  const threshold = nftsFromSimplehashFeature?.params?.threshold;
+  const nftsFromSimplehashEnabled = nftsFromSimplehashFeature?.enabled;
+  const accounts = useSelector(accountsSelector);
+
+  const { addresses, chains } = useNftQueriesSources({
+    accounts,
+    supportedCurrencies: SUPPORTED_NFT_CURRENCIES,
+    config: { featureFlagEnabled: llmSolanaNftsFeature?.enabled },
   });
 
-  const hasNfts = allNfts.length > 0;
+  const { nfts: filteredNfts, isLoading } = useNftGalleryFilter({
+    nftsOwned: nftsOrdered || [],
+    addresses,
+    chains,
+    threshold: getThreshold(threshold),
+    enabled: nftsFromSimplehashEnabled || false,
+    staleTime: nftsFromSimplehashFeature?.params?.staleTime,
+  });
+
+  const nfts = nftsFromSimplehashEnabled ? filteredNfts : nftsOrdered;
+  const hasNfts = nfts.length > 0;
 
   const handlePress = useCallback(
     (nft: ProtoNFT) => {
@@ -68,7 +79,7 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
 
   const renderItem = useCallback(
     ({ item, index }: { item: ProtoNFT; index: number }) => {
-      const incompleteLastRowFirstIndex = allNfts.length - (allNfts.length % NB_COLUMNS) - 1;
+      const incompleteLastRowFirstIndex = nfts.length - (nfts.length % NB_COLUMNS) - 1;
       const isOnIncompleteLastRow = index > incompleteLastRowFirstIndex;
       return (
         <Flex
@@ -79,7 +90,7 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
         </Flex>
       );
     },
-    [handlePress, allNfts.length],
+    [handlePress, nfts.length],
   );
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
@@ -91,7 +102,7 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
           <FlatList
             key={NB_COLUMNS}
             numColumns={NB_COLUMNS}
-            data={allNfts}
+            data={nfts}
             renderItem={renderItem}
             keyExtractor={keyExtractor}
             initialNumToRender={6}

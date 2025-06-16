@@ -10,7 +10,6 @@ import {
   hasExternalStash,
   hasPendingOperationType,
   isElectionOpen,
-  isStash,
 } from "@ledgerhq/live-common/families/polkadot/logic";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
@@ -22,13 +21,14 @@ import NominateIcon from "~/icons/Vote";
 import ChillIcon from "~/icons/VoteNay";
 import { NavigatorName, ScreenName } from "~/const";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
+import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 
 const getMainActions = (args: {
   account: PolkadotAccount;
   parentAccount?: Account;
   parentRoute?: RouteProp<ParamListBase, ScreenName>;
 }): ActionButtonEvent[] | null => {
-  const { account, parentAccount, parentRoute } = args;
+  const { account, parentAccount } = args;
   invariant(account.polkadotResources, "polkadot resources required");
   const accountId = account.id;
   const { lockedBalance } = account.polkadotResources || {};
@@ -36,6 +36,7 @@ const getMainActions = (args: {
   const hasBondedBalance = lockedBalance && lockedBalance.gt(0);
   const hasPendingBondOperation = hasPendingOperationType(account, "BOND");
   const nominationEnabled = !electionOpen && canNominate(account);
+  const label = getStakeLabelLocaleBased();
 
   const earnRewardsEnabled = !electionOpen && !hasBondedBalance && !hasPendingBondOperation;
 
@@ -43,49 +44,35 @@ const getMainActions = (args: {
     return null;
   }
 
-  const getNavigationParams = (): NavigationParamsType => {
-    if (!earnRewardsEnabled && !nominationEnabled) {
-      return [
-        NavigatorName.NoFundsFlow,
-        {
-          screen: ScreenName.NoFunds,
-          params: {
-            account,
-            parentAccount,
+  const navigationParams: NavigationParamsType =
+    !earnRewardsEnabled && !nominationEnabled
+      ? [
+          NavigatorName.NoFundsFlow,
+          {
+            screen: ScreenName.NoFunds,
+            params: {
+              account,
+              parentAccount,
+            },
           },
-        },
-      ];
-    }
-    if (isStash(account)) {
-      return [
-        NavigatorName.PolkadotNominateFlow,
-        {
-          screen: ScreenName.PolkadotNominateSelectValidators,
-          params: {
-            accountId,
-            source: parentRoute,
+        ]
+      : [
+          ScreenName.PlatformApp,
+          {
+            params: {
+              platform: "stakekit",
+              name: "StakeKit",
+              accountId,
+              yieldId: "polkadot-dot-validator-staking",
+            },
           },
-        },
-      ];
-    }
-    return [
-      NavigatorName.PolkadotBondFlow,
-      {
-        screen: ScreenName.PolkadotBondStarted,
-        params: {
-          accountId,
-        },
-      },
-    ];
-  };
-
-  const navigationParams = getNavigationParams();
+        ];
 
   return [
     {
       id: "stake",
       navigationParams,
-      label: <Trans i18nKey="account.stake" />,
+      label: <Trans i18nKey={label} />,
       Icon: IconsLegacy.CoinsMedium,
       eventProperties: {
         currency: "DOT",

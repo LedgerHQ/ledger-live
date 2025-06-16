@@ -231,6 +231,7 @@ export default function Content({
             </LText>
           ) : isConfirmed ? (
             <LText
+              testID="operation-details-text-confirmed"
               semiBold
               style={[
                 styles.confirmation,
@@ -359,6 +360,7 @@ export default function Content({
 
       <Section
         title={t("operationDetails.date")}
+        testID="operationDetails-date"
         value={<FormatDate withHoursMinutes date={operation.date} />}
       />
 
@@ -379,7 +381,7 @@ export default function Content({
         >
           {operation.fee ? (
             <View style={styles.feeValueContainer}>
-              <LText style={sectionStyles.value} semiBold>
+              <LText style={sectionStyles.value} semiBold testID="operationDetails-fees">
                 <CurrencyUnitValue showCode unit={feeUnit} value={operation.fee} />
               </LText>
               <LText style={styles.feeCounterValue} color="smoke" semiBold>
@@ -404,11 +406,19 @@ export default function Content({
         </Section>
       ) : null}
 
-      <Section title={t("operationDetails.identifier")} value={operation.hash} />
+      <Section
+        title={t("operationDetails.identifier")}
+        value={operation.hash}
+        testID="operationDetails-identifier"
+      />
 
       {uniqueSenders.length > 0 && (
         <View style={sectionStyles.wrapper}>
-          <DataList data={uniqueSenders} title={<Trans i18nKey="operationDetails.from" />} />
+          <DataList
+            testID="operationDetails-sender"
+            data={uniqueSenders}
+            title={<Trans i18nKey="operationDetails.from" />}
+          />
         </View>
       )}
 
@@ -417,6 +427,7 @@ export default function Content({
           <DataList
             data={uniqueRecipients}
             title={<Trans i18nKey="operationDetails.to" />}
+            testID="operationDetails-recipient"
             rightComp={
               uniqueRecipients.length > 1 ? (
                 <View

@@ -12,7 +12,10 @@ import {
 import type { Transaction } from "@ledgerhq/coin-xrp/types";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import {
+  getSerializedAddressParameters,
+  updateTransaction,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import {
   scanAccounts,
@@ -133,7 +136,7 @@ const prepareTransaction = async (a, t) => {
 
 const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
-  updateTransaction: defaultUpdateTransaction,
+  updateTransaction,
   getTransactionStatus,
   estimateMaxSpendable,
   prepareTransaction,
@@ -141,6 +144,7 @@ const accountBridge: AccountBridge<Transaction> = {
   receive,
   signOperation,
   broadcast,
+  getSerializedAddressParameters,
 };
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve({}),

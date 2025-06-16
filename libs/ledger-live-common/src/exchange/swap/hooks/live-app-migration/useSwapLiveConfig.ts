@@ -1,38 +1,15 @@
-import { Feature_PtxSwapCoreExperiment } from "@ledgerhq/types-live/lib/feature";
 import { useFeature } from "../../../../featureFlags";
 
-// check if the variant is valid for core rollout experiment
-export type CoreExperimentParams = NonNullable<Feature_PtxSwapCoreExperiment["params"]>;
-export type ValidVariant = CoreExperimentParams["variant"];
-
-// used to enable the Swap Live App globally
+/**
+ * This hook is used to retrieve the configuration for the Swap Live App.
+ * The `ptxSwapLiveApp` feature flag is always true, but it is used
+ * to obtain the manifest ID that loads the URL for the live app in production,
+ * stg, or ppr environments.
+ *
+ * @returns The feature flag configuration for `ptxSwapLiveApp`.
+ */
 export function useSwapLiveConfig() {
-  const demoThree = useFeature("ptxSwapLiveAppDemoThree");
-  const demoOne = useFeature("ptxSwapLiveAppDemoOne");
-  const demoZero = useFeature("ptxSwapLiveAppDemoZero");
-  const coreExperiment = useFeature("ptxSwapCoreExperiment");
+  const config = useFeature("ptxSwapLiveApp");
 
-  // const validVariants: readonly ValidVariant[] = ["Demo0", "Demo3", "Demo3Thorswap"] as const;
-
-  if (demoZero?.enabled) {
-    return demoZero;
-  }
-
-  if (demoThree?.enabled) {
-    return demoThree;
-  }
-
-  if (coreExperiment?.enabled) {
-    const variant = coreExperiment?.params?.variant;
-    if (!variant || !(variant satisfies ValidVariant)) {
-      return null;
-    }
-    return coreExperiment;
-  }
-
-  if (demoOne?.enabled) {
-    return demoOne;
-  }
-
-  return null;
+  return config;
 }

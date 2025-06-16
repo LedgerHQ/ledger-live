@@ -1,6 +1,6 @@
 import { getTokenById } from "@ledgerhq/cryptoassets";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Account, SubAccount } from "@ledgerhq/types-live";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "../../../currencies";
 import { genAccount } from "../../../mock/account";
@@ -106,7 +106,7 @@ describe("swap/utils/getAccountTuplesForCurrency", () => {
       expect(results).toHaveLength(ethAccounts.length);
       results.forEach((result, index) => {
         expect(result.account).toEqual(ethAccounts[index]);
-        expect((result.subAccount as SubAccount & { token: TokenCurrency }).token).toEqual(
+        expect((result.subAccount as TokenAccount & { token: TokenCurrency }).token).toEqual(
           aaveToken,
         );
       });
@@ -126,7 +126,7 @@ describe("swap/utils/getAccountTuplesForCurrency", () => {
       expect(results).toHaveLength(ethAccounts.length);
       results.forEach((result, index) => {
         expect(result.account).toEqual(ethAccounts[index]);
-        expect((result.subAccount as SubAccount & { token: TokenCurrency }).token).toEqual(
+        expect((result.subAccount as TokenAccount & { token: TokenCurrency }).token).toEqual(
           aaveToken,
         );
       });

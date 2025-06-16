@@ -3,7 +3,7 @@
  */
 
 import React from "react";
-import { render, screen, fireEvent } from "tests/testUtils";
+import { render, screen, fireEvent } from "tests/testSetup";
 import MemoTagField from "../components/MemoTagField";
 
 describe("MemoTagField", () => {
@@ -47,5 +47,15 @@ describe("MemoTagField", () => {
   it("should render with error", () => {
     render(<MemoTagField error={new Error("Error message")} />);
     expect(screen.getByTestId("input-error")).toBeInTheDocument();
+  });
+
+  it("should render with custom placeholder", () => {
+    render(<MemoTagField placeholder="Custom Placeholder" />);
+    expect(screen.getByPlaceholderText("Custom Placeholder")).toBeInTheDocument();
+  });
+
+  it("should render with custom label", () => {
+    render(<MemoTagField label="Custom Label" />);
+    expect(screen.getByText("Custom Label")).toBeInTheDocument();
   });
 });

@@ -1,18 +1,8 @@
-import {
-  currencyParam,
-  getElementById,
-  getElementByText,
-  getTextOfElement,
-  openDeeplink,
-  tapById,
-  waitForElementById,
-} from "../../helpers";
 import { by, element, expect } from "detox";
-import jestExpect from "expect";
-
-const baseLink = "receive";
+import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 
 export default class ReceivePage {
+  baseLink = "receive";
   noVerifyAddressButton = "button-DontVerify-my-address";
   noVerifyValidateButton = "button-confirm-dont-verify";
   accountAddress = "receive-fresh-address";
@@ -24,9 +14,6 @@ export default class ReceivePage {
   currencyNameId = (t: string) => `big-currency-name-${t}`;
   currencySubtitleId = (t: string) => `big-currency-subtitle-${t}`;
   buttonCreateAccountId = "button-create-account";
-  buttonCreateAccount = () => getElementById(this.buttonCreateAccountId);
-  buttonContinueId = "add-accounts-continue-button";
-  buttonContinue = () => getElementById(this.buttonContinueId);
   step1HeaderTitle = () => getElementById("receive-header-step1-title");
   step2HeaderTitleId = "receive-header-step2-title";
   step2HeaderTitle = () => getElementById(this.step2HeaderTitleId);
@@ -37,11 +24,11 @@ export default class ReceivePage {
   step2Networks = () => getElementById("receive-header-step2-networks");
 
   async openViaDeeplink() {
-    await openDeeplink(baseLink);
+    await openDeeplink(this.baseLink);
   }
 
   async receiveViaDeeplink(currencyLong?: string) {
-    const link = currencyLong ? baseLink + currencyParam + currencyLong : baseLink;
+    const link = currencyLong ? this.baseLink + currencyParam + currencyLong : this.baseLink;
     await openDeeplink(link);
   }
 
@@ -62,6 +49,7 @@ export default class ReceivePage {
     await expect(this.step2Accounts()).toBeVisible();
   }
 
+  @Step("Select currency in receive list")
   async selectCurrency(currencyName: string) {
     const id = this.currencyNameId(currencyName.toLowerCase());
     await tapById(id);
@@ -83,6 +71,7 @@ export default class ReceivePage {
     await tapById(CurrencyRowId);
   }
 
+  @Step("Accept to verify address")
   async selectVerifyAddress() {
     await waitForElementById(this.buttonVerifyAddressId);
     await tapById(this.buttonVerifyAddressId);
@@ -120,11 +109,6 @@ export default class ReceivePage {
     return tapById(this.buttonCreateAccountId);
   }
 
-  async continueCreateAccount() {
-    await waitForElementById(this.buttonContinueId);
-    return tapById(this.buttonContinueId);
-  }
-
   async expectAccountIsCreated(accountName: string) {
     await waitForElementById(this.step2HeaderTitleId);
     await expect(this.step2HeaderTitle()).toBeVisible();
@@ -141,6 +125,7 @@ export default class ReceivePage {
     return tapById(this.noVerifyValidateButton);
   }
 
+  @Step("Expect account receive page is displayed")
   async expectReceivePageIsDisplayed(tickerName: string, accountName: string) {
     const receiveTitleTickerId = this.titleReceiveConfirmationPageId(tickerName);
     const accountNameId = this.accountNameReceiveId(accountName);
@@ -150,6 +135,7 @@ export default class ReceivePage {
     await expect(getElementById(accountNameId)).toBeVisible();
   }
 
+  @Step("Refuse to verify address")
   async doNotVerifyAddress() {
     await this.selectDontVerifyAddress();
     await this.selectReconfirmDontVerify();

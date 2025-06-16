@@ -255,6 +255,9 @@ export type CosmosMappedValidator = {
 export type CosmosSearchFilter = (
   query: string,
 ) => (delegation: CosmosMappedDelegation | CosmosMappedValidator) => boolean;
+export function isCosmosAccount(account: Account): account is CosmosAccount {
+  return "cosmosResources" in account;
+}
 export type CosmosAccount = Account & { cosmosResources: CosmosResources };
 export type CosmosAccountRaw = AccountRaw & {
   cosmosResources: CosmosResourcesRaw;

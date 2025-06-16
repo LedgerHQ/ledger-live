@@ -1,5 +1,17 @@
 # esbuild-utils
 
+## 1.1.0
+
+### Minor Changes
+
+- [#8748](https://github.com/LedgerHQ/ledger-live/pull/8748) [`03c5920`](https://github.com/LedgerHQ/ledger-live/commit/03c59200a4f32a182b8d7f9f3ac5670f0c3d30eb) Thanks [@thesan](https://github.com/thesan)! - Enable ASAR integrity check on MacOS and Windows
+
+## 1.1.0-next.0
+
+### Minor Changes
+
+- [#8748](https://github.com/LedgerHQ/ledger-live/pull/8748) [`03c5920`](https://github.com/LedgerHQ/ledger-live/commit/03c59200a4f32a182b8d7f9f3ac5670f0c3d30eb) Thanks [@thesan](https://github.com/thesan)! - Enable ASAR integrity check on MacOS and Windows
+
 ## 1.0.1
 
 ### Patch Changes

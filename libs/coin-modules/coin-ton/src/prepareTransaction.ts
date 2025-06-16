@@ -1,12 +1,11 @@
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { Account, AccountBridge } from "@ledgerhq/types-live";
+import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { AccountBridge } from "@ledgerhq/types-live";
 import { fetchAccountInfo } from "./bridge/bridgeHelpers/api";
-import type { Transaction } from "./types";
-import { buildTonTransaction, getTonEstimatedFees } from "./utils";
+import type { TonAccount, Transaction } from "./types";
+import { buildTonTransaction, findSubAccountById, getTonEstimatedFees } from "./utils";
 
-const prepareTransaction: AccountBridge<Transaction, Account>["prepareTransaction"] = async (
-  account: Account,
+const prepareTransaction: AccountBridge<Transaction, TonAccount>["prepareTransaction"] = async (
+  account: TonAccount,
   transaction: Transaction,
 ): Promise<Transaction> => {
   const accountInfo = await fetchAccountInfo(account.freshAddress);
@@ -23,7 +22,7 @@ const prepareTransaction: AccountBridge<Transaction, Account>["prepareTransactio
     amount = transaction.amount;
   }
 
-  return defaultUpdateTransaction(transaction, { fees, amount });
+  return updateTransaction(transaction, { fees, amount });
 };
 
 export default prepareTransaction;

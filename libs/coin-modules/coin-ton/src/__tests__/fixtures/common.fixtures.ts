@@ -1,5 +1,4 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import {
   TonAccountInfo,
@@ -9,7 +8,7 @@ import {
   TonResponseWalletInfo,
   TonTransactionsList,
 } from "../../bridge/bridgeHelpers/api.types";
-import type { Transaction } from "../../types";
+import type { TonAccount, TonSubAccount, Transaction } from "../../types";
 
 export const mockAddress = "UQDzd8aeBOU-jqYw_ZSuZjceI5p-F4b7HMprAsUJAtRPbMol";
 export const mockAccountId =
@@ -20,9 +19,17 @@ export const tokenAccount = {
   type: "TokenAccount",
   spendableBalance: new BigNumber("5000000"),
   token: {
-    contractAddress: "0:A2CC9B938389950125001F6B8AF280CACA23BE045714AD69387DD546588D667E",
+    contractAddress: "contractAddress",
+    units: [
+      {
+        code: "NOT",
+        magnitude: 9,
+        name: "Notcoin",
+      },
+    ],
   },
-} as TokenAccount;
+  jettonWallet: "0:A2CC9B938389950125001F6B8AF280CACA23BE045714AD69387DD546588D667E",
+} as TonSubAccount;
 
 export const account = {
   id: mockAccountId,
@@ -35,22 +42,21 @@ export const account = {
   balance: new BigNumber("1000000000"),
   seedIdentifier: "seedIdentifier",
   subAccounts: [tokenAccount],
-} as Account;
+} as TonAccount;
 
-export const transaction = {
-  mode: "send",
+export const transaction: Transaction = {
   recipient: "UQCOvQLYvTcbi5tL9MaDNzuVl3-J3vATimNm9yO5XPafLfV4",
   amount: new BigNumber("1000000"),
   useAllAmount: false,
   comment: { isEncrypted: false, text: "" },
-  payload: "",
   family: "ton",
-} as unknown as Transaction;
+  fees: new BigNumber(1000),
+};
 
-export const jettonTransaction = {
+export const jettonTransaction: Transaction = {
   ...transaction,
   subAccountId: "subAccountId",
-} as Transaction;
+};
 
 export const fees = {
   in_fwd_fee: 10000,

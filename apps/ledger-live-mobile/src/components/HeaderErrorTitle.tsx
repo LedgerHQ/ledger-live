@@ -23,7 +23,7 @@ function HeaderErrorTitle({ error, withDescription }: Props) {
         </LText>
       </View>
       {withDescription ? (
-        <LText secondary style={styles.description} color="alert" numberOfLines={2}>
+        <LText secondary style={styles.description} color="alert" numberOfLines={3}>
           <TranslatedError error={error} field="description" />
         </LText>
       ) : null}

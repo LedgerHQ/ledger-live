@@ -1,9 +1,12 @@
 packages:
   - "apps/*"
+  - "e2e/*"
   - "libs/*"
   - "tests/*"
   - "libs/coin-modules/*"
+  - "libs/coin-tester-modules/*"
   - "libs/ledgerjs/**"
+  - "libs/ledger-services/**"
   - "libs/ui/packages/*"
   - "libs/ui/examples/*"
   - "libs/ledger-live-common/tools"

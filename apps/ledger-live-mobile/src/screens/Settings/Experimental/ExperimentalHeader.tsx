@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import Animated, {
-  Extrapolate,
+  Extrapolation,
   interpolate,
   useAnimatedReaction,
   useAnimatedStyle,
@@ -66,7 +66,7 @@ function ExperimentalHeader() {
 
   // Animated style updating the height depending on the opening animation state
   const heightStyle = useAnimatedStyle(() => ({
-    height: interpolate(openState.value, [0, 1], [0, HEIGHT + top], Extrapolate.CLAMP),
+    height: interpolate(openState.value, [0, 1], [0, HEIGHT + top], Extrapolation.CLAMP),
   }));
 
   const onPressMock = useCallback(() => {

@@ -28,6 +28,8 @@ const moduleNameMapper = {
   "@polkadot/x-ws": "<rootDir>/__mocks__/x-ws.js",
 };
 
+const transformIncludePatterns = ["ky"];
+
 const commonConfig = {
   testEnvironment: "jsdom",
   globals: {
@@ -62,6 +64,7 @@ const commonConfig = {
   testEnvironmentOptions: {
     customExportConditions: [""],
   },
+  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${transformIncludePatterns.join("|")}))`],
 };
 
 module.exports = {
@@ -70,15 +73,13 @@ module.exports = {
     "!src/**/*.test.{ts,tsx}",
     "!src/**/*.spec.{ts,tsx}",
     "!src/**/__integration__/**",
+    "!src/**/__integrations__/**",
     "!src/**/__tests__/**",
   ],
   coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "json-summary"],
   reporters: [
     "default",
-    [
-      "jest-sonar",
-      { outputName: "lld-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
-    ],
+    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
   silent: false,
   verbose: true,

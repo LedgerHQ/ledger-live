@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { LocationContentCard, NotificationContentCard, Platform } from "~/types/dynamicContent";
 import { notificationsContentCardSelector } from "~/renderer/reducers/dynamicContent";
-import { setNotificationsCards } from "~/renderer/actions/dynamicContent";
 import { track } from "../analytics/segment";
 import { trackingEnabledSelector } from "../reducers/settings";
 
@@ -22,7 +21,7 @@ export function useNotifications() {
           card.extras?.location === LocationContentCard.NotificationCenter,
       );
     setCachedNotifications(cards);
-  }, []);
+  }, [dispatch, notificationsCards]);
 
   function startOfDayTime(date: Date): number {
     const startOfDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -62,25 +61,6 @@ export function useNotifications() {
       }));
   };
 
-  const logNotificationImpression = useCallback(
-    (cardId: string) => {
-      const currentCard = cachedNotifications.find(card => card.id === cardId);
-
-      isTrackedUser && braze.logContentCardImpressions(currentCard ? [currentCard] : []);
-
-      const cards = (notificationsCards ?? []).map(n => {
-        if (n.id === cardId) {
-          return { ...n, viewed: true };
-        } else {
-          return n;
-        }
-      });
-
-      dispatch(setNotificationsCards(cards));
-    },
-    [notificationsCards, cachedNotifications, dispatch, isTrackedUser],
-  );
-
   const onClickNotif = useCallback(
     (card: NotificationContentCard) => {
       const currentCard = cachedNotifications.find(c => c.id === card.id);
@@ -110,7 +90,6 @@ export function useNotifications() {
     braze,
     cachedNotifications,
     notificationsCards,
-    logNotificationImpression,
     onClickNotif,
   };
 }

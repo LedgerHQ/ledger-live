@@ -66,8 +66,8 @@ const AppCard = ({ manifest, onPress }: Props) => {
   );
 
   const description = useMemo(
-    () => translateContent(manifest.content.shortDescription, locale),
-    [locale, manifest.content.shortDescription],
+    () => translateContent(manifest.content?.shortDescription, locale),
+    [locale, manifest.content?.shortDescription],
   );
 
   return (

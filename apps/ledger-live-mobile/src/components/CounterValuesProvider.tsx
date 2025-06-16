@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { AppState, AppStateStatus } from "react-native";
-import { useNetInfo } from "@react-native-community/netinfo";
 import { Countervalues, useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { useUserSettings } from "~/actions/general";
@@ -28,7 +27,6 @@ function CountervaluesManager({ children }: { children: React.ReactNode }) {
 function usePollingManager() {
   const { start, stop } = useCountervaluesPolling();
   const appState = useRef(AppState.currentState ?? "");
-  const { isInternetReachable } = useNetInfo();
   const [isActive, setIsActive] = useState<boolean>(!!appState.current);
   useEffect(() => {
     function handleChange(nextAppState: AppStateStatus) {
@@ -44,11 +42,11 @@ function usePollingManager() {
     };
   }, []);
   useEffect(() => {
-    if (!isInternetReachable || !isActive) {
+    if (!isActive) {
       stop();
       return;
     }
 
     start();
-  }, [isInternetReachable, isActive, start, stop]);
+  }, [isActive, start, stop]);
 }

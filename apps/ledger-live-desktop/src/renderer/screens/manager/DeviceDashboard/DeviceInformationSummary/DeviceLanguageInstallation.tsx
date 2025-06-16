@@ -97,7 +97,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
       <Text alignSelf="center" variant="h5Inter" mb={12}>
         {t("deviceLocalization.deviceLanguage")}
       </Text>
-      <Flex px={12} flex={1}>
+      <Flex px={12} flex={1} overflowY="scroll" height="100%">
         {availableLanguages?.length ? (
           installing ? (
             <ChangeDeviceLanguageAction

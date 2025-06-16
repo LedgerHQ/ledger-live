@@ -2,10 +2,16 @@ import React from "react";
 import { Box, Flex } from "@ledgerhq/native-ui";
 
 import styled from "styled-components/native";
-import Animated, { Extrapolate, interpolate, useAnimatedStyle } from "react-native-reanimated";
+import Animated, {
+  Extrapolation,
+  interpolate,
+  useAnimatedStyle,
+  SharedValue,
+} from "react-native-reanimated";
 
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import CurrencyGradient from "./CurrencyGradient";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const windowsWidth = getWindowDimensions().width;
 
@@ -18,7 +24,7 @@ function CurrencyHeaderLayout({
   leftElement,
   currencyColor,
 }: {
-  currentPositionY: Animated.SharedValue<number>;
+  currentPositionY: SharedValue<number>;
   graphCardEndPosition: number;
   rightElement?: React.ReactNode;
   centerAfterScrollElement?: React.ReactNode;
@@ -26,6 +32,8 @@ function CurrencyHeaderLayout({
   leftElement?: React.ReactNode;
   currencyColor: string;
 }) {
+  const insets = useSafeAreaInsets();
+  const headerHeight = insets.top + 50;
   const BeforeScrollAnimation = useAnimatedStyle(() => {
     const opacity =
       currentPositionY.value === 0
@@ -34,7 +42,7 @@ function CurrencyHeaderLayout({
             currentPositionY.value,
             [graphCardEndPosition - 40, graphCardEndPosition],
             [1, 0],
-            Extrapolate.CLAMP,
+            Extrapolation.CLAMP,
           );
 
     return {
@@ -47,7 +55,7 @@ function CurrencyHeaderLayout({
       currentPositionY.value,
       [graphCardEndPosition + 50, graphCardEndPosition + 70],
       [0, 1],
-      Extrapolate.CLAMP,
+      Extrapolation.CLAMP,
     );
 
     return {
@@ -60,7 +68,7 @@ function CurrencyHeaderLayout({
       currentPositionY.value,
       [graphCardEndPosition - 40, graphCardEndPosition - 20],
       [0, 1],
-      Extrapolate.CLAMP,
+      Extrapolation.CLAMP,
     );
 
     return {
@@ -76,15 +84,15 @@ function CurrencyHeaderLayout({
       py={4}
       justifyContent="space-between"
       width={windowsWidth}
-      height={92}
-      pt={44}
+      height={headerHeight}
+      pt={insets.top}
     >
       <Animated.View
         style={[
           {
             position: "absolute",
             width: windowsWidth,
-            height: 92,
+            height: headerHeight,
             overflow: "hidden",
           },
           BackgroundOpacity,

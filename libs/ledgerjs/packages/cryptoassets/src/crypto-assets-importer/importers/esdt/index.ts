@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import { fetchTokensFromCALService } from "../../fetch";
 
-type ElrondESDTToken = [
+type MultiversXESDTToken = [
   string, // ticker
   string, // identifier
   number, // decimals
@@ -13,6 +13,7 @@ type ElrondESDTToken = [
 export const importESDTTokens = async (outputDir: string) => {
   try {
     console.log("importing esdt tokens...");
+    // const { tokens, hash } = await fetchTokensFromCALService({ blockchain_name: "multiversx" }, [
     const { tokens, hash } = await fetchTokensFromCALService({ blockchain_name: "elrond" }, [
       "ticker",
       "id",
@@ -20,7 +21,7 @@ export const importESDTTokens = async (outputDir: string) => {
       "live_signature",
       "name",
     ]);
-    const esdtTokens: ElrondESDTToken[] = tokens.map(token => {
+    const esdtTokens: MultiversXESDTToken[] = tokens.map(token => {
       // This shouldn't be necessary, we should consumme the ID directly
       // but for now, I'll keep this to maintain a compatibility layer
       // with the content of the CDN (which should be removed soon)
@@ -30,7 +31,7 @@ export const importESDTTokens = async (outputDir: string) => {
     });
 
     const filePath = path.join(outputDir, "esdt");
-    const estTypeStringified = `export type ElrondESDTToken = [
+    const estTypeStringified = `export type MultiversXESDTToken = [
   string, // ticker
   string, // identifier
   number, // decimals
@@ -51,7 +52,7 @@ import tokens from "./esdt.json";
 
 ${hash ? `export { default as hash } from "./esdt-hash.json";` : ""}
 
-export default tokens as ElrondESDTToken[];
+export default tokens as MultiversXESDTToken[];
 `,
     );
 

@@ -10,9 +10,6 @@ import {
 } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import { FramedImageWithContext, ImageSourceContext } from "~/components/CustomImage/FramedPicture";
-import confirmLockscreen from "~/animations/stax/customimage/confirmLockscreen.json";
-import allowConnection from "~/animations/stax/customimage/allowConnection.json";
-import { FramedLottieWithContext } from "~/components/CustomImage/FramedLottie";
 import {
   RenderImageCommitRequested,
   RenderImageLoadRequested,
@@ -73,19 +70,6 @@ export default function DebugCustomImageGraphics() {
       {showAllAssets ? (
         <NavigationScrollView>
           <Flex style={styles.root}>
-            <Text mb={3}>lottie: allowConnection</Text>
-            <FramedLottieWithContext
-              loadingProgress={0}
-              lottieSource={allowConnection}
-              deviceModelId={deviceModelId}
-            />
-            <Divider />
-            <Text mb={3}>lottie: confirmLockscreen</Text>
-            <FramedLottieWithContext
-              loadingProgress={0.89}
-              lottieSource={confirmLockscreen}
-              deviceModelId={deviceModelId}
-            />
             <Divider />
             <Text>FramedImage component, transferConfig</Text>
             <Text mb={3}>progress={Math.round(progress * 100) / 100}</Text>

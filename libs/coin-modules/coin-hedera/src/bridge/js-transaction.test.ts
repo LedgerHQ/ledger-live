@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import { defaultUpdateTransaction as updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import type { Transaction } from "../types";
 import { createBridges } from ".";
 

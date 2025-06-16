@@ -94,9 +94,9 @@ type ErrorContainerInnerProps = {
 };
 
 export const ErrorContainer = styled(Box)<ErrorContainerInnerProps & BoxProps>`
+  padding: 0 15px;
   margin-top: 0px;
   font-size: 12px;
-  width: 100%;
   transition: all 0.4s ease-in-out;
   will-change: max-height;
   max-height: ${(p: ErrorContainerInnerProps) => (p.hasError ? 60 : 0)}px;
@@ -246,57 +246,60 @@ const Input = function Input(
     [onBlur],
   );
   return (
-    <Container
-      onClick={handleClick}
-      isFocus={isFocus}
-      shrink
-      {...containerProps}
-      disabled={disabled}
-      small={small}
-      error={error}
-      warning={warning}
-      editInPlace={editInPlace}
-    >
-      {!loading || isFocus ? <RenderLeftWrapper>{renderLeft}</RenderLeftWrapper> : null}
-      <BaseContainer px={3} grow shrink>
-        <Base
-          {...props}
-          placeholder={loading ? "" : props.placeholder}
-          value={loading ? "" : value}
-          // small={small}
-          disabled={disabled}
-          ref={inputRef}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-        />
+    <Box shrink>
+      <Container
+        onClick={handleClick}
+        isFocus={isFocus}
+        shrink
+        {...containerProps}
+        disabled={disabled}
+        small={small}
+        error={error}
+        warning={warning}
+        editInPlace={editInPlace}
+      >
+        {!loading || isFocus ? <RenderLeftWrapper>{renderLeft}</RenderLeftWrapper> : null}
+        <BaseContainer px={3} grow shrink>
+          <Base
+            {...props}
+            placeholder={loading ? "" : props.placeholder}
+            value={loading ? "" : value}
+            // small={small}
+            disabled={disabled}
+            ref={inputRef}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+          />
 
-        <ErrorContainer hasError={!hideErrorMessage && (error || warning)}>
-          {!hideErrorMessage ? (
-            error ? (
-              typeof error === "boolean" ? null : (
-                <ErrorDisplay id="input-error" data-testid="input-error">
-                  <TranslatedError error={error} />
-                </ErrorDisplay>
-              )
-            ) : warning ? (
-              typeof warning === "boolean" ? null : (
-                <WarningDisplay id="input-warning">
-                  <TranslatedError error={warning} />
-                </WarningDisplay>
-              )
-            ) : null
+          {loading && !isFocus ? (
+            <LoadingDisplay>
+              <BigSpinner size={16} />
+            </LoadingDisplay>
           ) : null}
-        </ErrorContainer>
-        {loading && !isFocus ? (
-          <LoadingDisplay>
-            <BigSpinner size={16} />
-          </LoadingDisplay>
+        </BaseContainer>
+        {renderRight ? <RenderRightWrapper>{renderRight}</RenderRightWrapper> : null}
+      </Container>
+
+      <ErrorContainer hasError={!hideErrorMessage && (error || warning)}>
+        {!hideErrorMessage ? (
+          error ? (
+            typeof error === "boolean" ? null : (
+              <ErrorDisplay id="input-error" data-testid="input-error">
+                <TranslatedError error={error} />
+              </ErrorDisplay>
+            )
+          ) : warning ? (
+            typeof warning === "boolean" ? null : (
+              <WarningDisplay id="input-warning">
+                <TranslatedError error={warning} />
+              </WarningDisplay>
+            )
+          ) : null
         ) : null}
-      </BaseContainer>
-      {renderRight ? <RenderRightWrapper>{renderRight}</RenderRightWrapper> : null}
-    </Container>
+      </ErrorContainer>
+    </Box>
   );
 };
 export default React.forwardRef(Input) as typeof Input;

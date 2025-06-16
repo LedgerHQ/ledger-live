@@ -1,68 +1,70 @@
-import React, { useEffect, useState } from "react";
-import { Platform, ScrollView } from "react-native";
-import { useSelector } from "react-redux";
-import styled from "styled-components/native";
+import { getDeviceModel } from "@ledgerhq/devices";
 import {
   BluetoothRequired,
   LockedDeviceError,
   PeerRemovedPairing,
   WrongDeviceForAccount,
 } from "@ledgerhq/errors";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { getDeviceModel } from "@ledgerhq/devices";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
-import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
-import { getProviderName, getNoticeType } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import {
-  InfiniteLoader,
-  Text,
-  Flex,
-  Tag,
-  IconsLegacy,
-  BoxedIcon,
-  Log,
-  Icons,
-} from "@ledgerhq/native-ui";
-import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
-import BigNumber from "bignumber.js";
-import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
-import {
-  getMainAccount,
   getAccountCurrency,
   getFeesCurrency,
   getFeesUnit,
+  getMainAccount,
 } from "@ledgerhq/live-common/account/index";
-import { TFunction } from "react-i18next";
-import type { DeviceModelInfo } from "@ledgerhq/types-live";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { ParamListBase } from "@react-navigation/native";
-import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
-import ProviderIcon from "../ProviderIcon";
-import { currencySettingsForAccountSelector, lastSeenDeviceSelector } from "~/reducers/settings";
-import { urls } from "~/utils/urls";
-import Alert from "../Alert";
-import { lighten, Theme } from "../../colors";
-import Button from "../Button";
-import DeviceActionProgress from "../DeviceActionProgress";
-import { NavigatorName, ScreenName } from "~/const";
-import Animation from "../Animation";
-import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
-import GenericErrorView from "../GenericErrorView";
-import Circle from "../Circle";
-import { MANAGER_TABS } from "~/const/manager";
-import ExternalLink from "../ExternalLink";
-import { TrackScreen, track } from "~/analytics";
-import CurrencyUnitValue from "../CurrencyUnitValue";
-import TermsFooter, { TermsProviders } from "../TermsFooter";
-import CurrencyIcon from "../CurrencyIcon";
-import ModalLock from "../ModalLock";
-import Config from "react-native-config";
-import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
-import { SettingsState } from "~/reducers/types";
-import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
+import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
+import { getNoticeType, getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
+import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
+import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
+import {
+  BoxedIcon,
+  Flex,
+  Icons,
+  IconsLegacy,
+  InfiniteLoader,
+  Log,
+  Tag,
+  Text,
+} from "@ledgerhq/native-ui";
+import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import type { DeviceModelInfo } from "@ledgerhq/types-live";
+import { ParamListBase, T } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import BigNumber from "bignumber.js";
+import React, { useEffect, useState } from "react";
+import { TFunction } from "react-i18next";
+import { Image, Linking, Platform, ScrollView } from "react-native";
+import Config from "react-native-config";
+import { useSelector } from "react-redux";
+import styled from "styled-components/native";
+import { TrackScreen, track } from "~/analytics";
+import { NavigatorName, ScreenName } from "~/const";
+import { MANAGER_TABS } from "~/const/manager";
+import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
+import { currencySettingsForAccountSelector, lastSeenDeviceSelector } from "~/reducers/settings";
+import { SettingsState } from "~/reducers/types";
+import { urls } from "~/utils/urls";
+import { Theme, lighten } from "../../colors";
+import Alert from "../Alert";
+import Animation from "../Animation";
+import Button from "../Button";
+import Circle from "../Circle";
+import CurrencyIcon from "../CurrencyIcon";
+import CurrencyUnitValue from "../CurrencyUnitValue";
+import DeviceActionProgress from "../DeviceActionProgress";
+import ExternalLink from "../ExternalLink";
+import GenericErrorView from "../GenericErrorView";
+import ModalLock from "../ModalLock";
+import ProviderIcon from "../ProviderIcon";
+import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
+import TermsFooter, { TermsProviders } from "../TermsFooter";
+import { isDmkError, isiOSPeerRemovedPairingError } from "@ledgerhq/live-dmk-mobile";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -76,6 +78,7 @@ const AnimationContainer = styled(Flex).attrs({
   alignItems: "center",
   justifyContent: "center",
   height: "150px",
+  m: 6,
 })``;
 
 const ActionContainer = styled(Flex).attrs({
@@ -142,7 +145,7 @@ export function renderRequestQuitApp({
     <Wrapper>
       <AnimationContainer>
         <Animation
-          source={getDeviceAnimation({ device, key: "quitApp", theme })}
+          source={getDeviceAnimation({ modelId: device.modelId, key: "quitApp", theme })}
           style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
@@ -203,7 +206,7 @@ export function renderVerifyAddress({
     <Wrapper>
       <AnimationContainer>
         <Animation
-          source={getDeviceAnimation({ device, key: "verify", theme })}
+          source={getDeviceAnimation({ modelId: device.modelId, key: "verify", theme })}
           style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
@@ -234,8 +237,8 @@ export function renderConfirmSwap({
   t,
   device,
   theme,
+  provider,
   transaction,
-  exchangeRate,
   exchange,
   amountExpectedTo,
   estimatedFees,
@@ -244,6 +247,7 @@ export function renderConfirmSwap({
 }: RawProps & {
   device: Device;
   transaction: Transaction;
+  provider: string;
   exchangeRate: ExchangeRate;
   exchange: ExchangeSwap;
   amountExpectedTo?: string | null;
@@ -251,8 +255,8 @@ export function renderConfirmSwap({
   walletState: WalletState;
   settingsState: SettingsState;
 }) {
-  const providerName = getProviderName(exchangeRate.provider);
-  const noticeType = getNoticeType(exchangeRate.provider);
+  const providerName = getProviderName(provider);
+  const noticeType = getNoticeType(provider);
   const alertProperties = noticeType.learnMore ? { learnMoreUrl: urls.swap.learnMore } : {};
   const fromAccountName = accountNameWithDefaultSelector(walletState, exchange.fromAccount);
   const toAccountName = accountNameWithDefaultSelector(walletState, exchange.toAccount);
@@ -265,7 +269,7 @@ export function renderConfirmSwap({
   }).unit;
 
   return (
-    <ScrollView>
+    <ScrollView testID="confirm-swap-on-device">
       <Wrapper width="100%">
         <Alert type="primary" {...alertProperties}>
           {t(`DeviceAction.confirmSwap.alert.${noticeType.message}`, {
@@ -274,7 +278,7 @@ export function renderConfirmSwap({
         </Alert>
         <AnimationContainer marginTop="16px">
           <Animation
-            source={getDeviceAnimation({ device, key: "sign", theme })}
+            source={getDeviceAnimation({ modelId: device.modelId, key: "sign", theme })}
             style={getDeviceAnimationStyles(device.modelId)}
           />
         </AnimationContainer>
@@ -296,7 +300,7 @@ export function renderConfirmSwap({
             <Text>
               <CurrencyUnitValue
                 unit={unitTo}
-                value={amountExpectedTo ? new BigNumber(amountExpectedTo) : exchangeRate.toAmount}
+                value={amountExpectedTo ? new BigNumber(amountExpectedTo) : null}
                 disableRounding
                 showCode
               />
@@ -306,7 +310,7 @@ export function renderConfirmSwap({
           <FieldItem title={t("DeviceAction.swap2.provider")}>
             <Flex flexDirection="row" alignItems="center">
               <Flex paddingRight={2}>
-                <ProviderIcon size="XXS" name={exchangeRate.provider} />
+                <ProviderIcon size="XXS" name={provider} />
               </Flex>
 
               <Text>{providerName}</Text>
@@ -341,7 +345,7 @@ export function renderConfirmSwap({
           </FieldItem>
         </Flex>
 
-        <TermsFooter provider={exchangeRate.provider as TermsProviders} />
+        <TermsFooter provider={provider as TermsProviders} />
       </Wrapper>
     </ScrollView>
   );
@@ -385,7 +389,7 @@ export function renderAllowManager({
       </Flex>
       <AnimationContainer>
         <Animation
-          source={getDeviceAnimation({ device, key: "allowManager", theme })}
+          source={getDeviceAnimation({ modelId: device.modelId, key: "allowManager", theme })}
           style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
@@ -424,7 +428,7 @@ export function renderAllowLanguageInstallation({
       </Text>
       <AnimationContainer my={8}>
         <Animation
-          source={getDeviceAnimation({ device, key, theme })}
+          source={getDeviceAnimation({ modelId: device.modelId, key, theme })}
           style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
@@ -450,7 +454,7 @@ export const renderAllowRemoveCustomLockscreen = ({
       </Text>
       <AnimationContainer>
         <Animation
-          source={getDeviceAnimation({ device, key, theme })}
+          source={getDeviceAnimation({ modelId: device.modelId, key, theme })}
           style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
@@ -487,7 +491,7 @@ const AllowOpeningApp = ({
       <AnimationContainer>
         <Animation
           source={getDeviceAnimation({
-            device,
+            modelId: device.modelId,
             key: "openApp",
             theme,
           })}
@@ -658,7 +662,10 @@ export function renderError({
   // TODO Once we have the aligned Error renderings, the CTA list should be determined
   // by the error class, not patched like here.
   let showRetryIfAvailable = true;
-  if ((error as unknown) instanceof PeerRemovedPairing) {
+  if (
+    (error as unknown) instanceof PeerRemovedPairing ||
+    (isDmkError(error) && isiOSPeerRemovedPairingError(error))
+  ) {
     showRetryIfAvailable = false;
   }
 
@@ -842,7 +849,7 @@ export function renderConnectYourDevice({
       <AnimationContainer>
         <Animation
           source={getDeviceAnimation({
-            device,
+            modelId: device.modelId,
             key: isLocked || unresponsive ? "enterPinCode" : "plugAndPinCode",
             theme,
           })}
@@ -883,28 +890,53 @@ export function renderLoading({
   return (
     <Wrapper>
       <SpinnerContainer>
-        <InfiniteLoader mock={Config.MOCK} />
+        <InfiniteLoader mock={!!Config.DETOX} testID="device-action-loading" />
       </SpinnerContainer>
-      <CenteredText testID="device-action-loading">
-        {description ?? t("DeviceAction.loading")}
-      </CenteredText>
+      <CenteredText>{description ?? t("DeviceAction.loading")}</CenteredText>
       {lockModal ? <ModalLock /> : null}
     </Wrapper>
   );
 }
 
 export function renderExchange({
+  swapRequest,
   exchangeType,
   t,
   device,
   theme,
 }: RawProps & {
+  swapRequest: {
+    provider: string;
+    selectedDevice: Device;
+    transaction: Transaction;
+    exchangeRate: ExchangeRate;
+    exchange: ExchangeSwap;
+    colors: T["colors"];
+    theme: typeof theme;
+    amountExpectedTo?: string;
+    estimatedFees?: string;
+    walletState: WalletState;
+    settingsState: SettingsState;
+  };
   exchangeType: number;
   device: Device;
 }) {
   switch (exchangeType) {
     case 0x00: // swap
-      return <div>{"Confirm swap on your device"}</div>;
+      return renderConfirmSwap({
+        t,
+        provider: swapRequest.provider,
+        device: swapRequest.selectedDevice,
+        colors: swapRequest.colors,
+        theme: swapRequest.theme,
+        transaction: swapRequest?.transaction,
+        exchangeRate: swapRequest?.exchangeRate,
+        exchange: swapRequest?.exchange,
+        amountExpectedTo: swapRequest.amountExpectedTo,
+        estimatedFees: swapRequest.estimatedFees,
+        walletState: swapRequest.walletState,
+        settingsState: swapRequest.settingsState,
+      });
     case 0x01: // sell
     case 0x02: // fund
       return renderSecureTransferDeviceConfirmation({
@@ -914,7 +946,7 @@ export function renderExchange({
         theme,
       });
     default:
-      return <CenteredText>{"Confirm exchange on your device"}</CenteredText>;
+      return <CenteredText>{t("DeviceAction.confirmExchangeOnDevice")}</CenteredText>;
   }
 }
 
@@ -931,7 +963,7 @@ export function renderSecureTransferDeviceConfirmation({
     <Wrapper>
       <AnimationContainer>
         <Animation
-          source={getDeviceAnimation({ device, key: "sign", theme })}
+          source={getDeviceAnimation({ modelId: device.modelId, key: "sign", theme })}
           style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
@@ -1081,5 +1113,59 @@ export const AutoRepair = ({
       <DeviceActionProgress progress={progress} />
       <DescriptionText>{t("FirmwareUpdate.pleaseWaitUpdate")}</DescriptionText>
     </Wrapper>
+  );
+};
+
+const HARDWARE_UPDATE_ASSETS: Partial<Record<DeviceModelId, number>> = {
+  nanoS: require("../../../assets/images/swap/nanoSBackdropFilter.webp"),
+};
+
+export const HardwareUpdate = ({
+  t,
+  device,
+  i18nKeyTitle,
+  i18nKeyDescription,
+}: {
+  t: RawProps["t"];
+  device: Device;
+  i18nKeyTitle: string;
+  i18nKeyDescription: string;
+}) => {
+  const openUrl = (url: string) => Linking.openURL(url);
+
+  return (
+    <Flex flex={1} justifyContent="center" minHeight="160px">
+      <AnimationContainer height="200px">
+        <Image
+          source={HARDWARE_UPDATE_ASSETS[device.modelId]}
+          style={{ height: 200, width: 200 }}
+          resizeMode={"contain"}
+        />
+      </AnimationContainer>
+      <Text variant="h4" fontWeight="semiBold">
+        {t(i18nKeyTitle)}
+      </Text>
+      <Text pt={4} color="neutral.c70" variant={"body"} lineHeight={"150%"} fontWeight={"medium"}>
+        {t(i18nKeyDescription)}
+      </Text>
+      <Button
+        type="main"
+        outline={false}
+        onPress={() => openUrl("https://shop.ledger.com/pages/hardware-wallet")}
+        mt={8}
+        alignSelf="stretch"
+      >
+        {t("transfer.swap2.incompatibility.explore_compatible_devices")}
+      </Button>
+      <Button
+        type="shade"
+        outline
+        onPress={() => openUrl("https://support.ledger.com")}
+        mt={4}
+        alignSelf="stretch"
+      >
+        {t("transfer.swap2.incompatibility.contact_support")}
+      </Button>
+    </Flex>
   );
 };

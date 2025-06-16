@@ -20,6 +20,7 @@ import { clearBridgeCache } from "../bridge/cache";
 import { flushAll } from "../components/DBSave";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { walletSelector } from "~/reducers/wallet";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const extraSessionTrackingPairsChanges: BehaviorSubject<TrackingPair[]> = new BehaviorSubject<
   TrackingPair[]
@@ -101,6 +102,19 @@ export function useCleanCache() {
 }
 export function useUserSettings() {
   const trackingPairs = useTrackingPairs();
+
+  const granularitiesRatesConfig = useFeature("llCounterValueGranularitiesRates");
+  const granularitiesRates = useMemo(
+    () =>
+      granularitiesRatesConfig?.enabled
+        ? {
+            daily: Number(granularitiesRatesConfig.params?.daily),
+            hourly: Number(granularitiesRatesConfig.params?.hourly),
+          }
+        : undefined,
+    [granularitiesRatesConfig],
+  );
+
   return useMemo(
     () => ({
       trackingPairs,
@@ -109,8 +123,9 @@ export function useUserSettings() {
       marketCapBatchingAfterRank: LiveConfig.getValueByKey(
         "config_countervalues_marketCapBatchingAfterRank",
       ),
+      granularitiesRates,
     }),
-    [trackingPairs],
+    [granularitiesRates, trackingPairs],
   );
 }
 export function addExtraSessionTrackingPair(trackingPair: TrackingPair) {

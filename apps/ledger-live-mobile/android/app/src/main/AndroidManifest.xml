@@ -8,17 +8,17 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
+    <!-- Android >= 12 -->
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="neverForLocation" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <!-- Android < 12 -->
     <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" tools:node="replace" android:maxSdkVersion="30"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" tools:node="replace" android:maxSdkVersion="28"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" tools:node="replace"/> 
 
     <uses-permission-sdk-23 android:name="android.permission.ACCESS_COARSE_LOCATION" tools:node="remove"/>
-    <uses-permission-sdk-23 android:name="android.permission.ACCESS_FINE_LOCATION" tools:node="remove"/> 
-    
-    <!-- Bluetooth permissions: Android API >= 31 (Android 12)-->
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"/>
+    <uses-permission-sdk-23 android:name="android.permission.ACCESS_FINE_LOCATION" tools:node="remove"/>
 
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />

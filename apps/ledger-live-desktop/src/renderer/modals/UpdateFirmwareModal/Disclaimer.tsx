@@ -1,4 +1,4 @@
-import { Flex, Alert, Divider, Button } from "@ledgerhq/react-ui";
+import { Flex, Alert, Divider, Button, Text } from "@ledgerhq/react-ui";
 import { FirmwareUpdateContext } from "@ledgerhq/types-live";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -24,7 +24,13 @@ export default function Disclaimer({ firmware, onContinue }: Props) {
         my={12}
       >
         <TrackPage category="Manager" name="DisclaimerModal" />
-        <Alert type="info" title={t("manager.firmware.prepareSeed")} />
+        <Alert
+          type="info"
+          title={t("manager.firmware.prepareSeed")}
+          renderContent={({ ...props }) => (
+            <Text {...props}>{t("manager.firmware.prepareSeedRecover")}</Text>
+          )}
+        />
         {firmware && firmware.osu ? (
           <div style={{ overflow: "scroll", flex: 1, marginTop: "16px" }}>
             <Notes>

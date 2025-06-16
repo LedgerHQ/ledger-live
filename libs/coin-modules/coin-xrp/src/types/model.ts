@@ -1,3 +1,5 @@
+import { TypedMapMemo } from "@ledgerhq/coin-framework/api/types";
+
 export type AccountInfo = {
   isNewAccount: boolean;
   balance: string;
@@ -5,24 +7,27 @@ export type AccountInfo = {
   sequence: number;
 };
 
-export type XrpOperation = {
-  hash: string;
-  address: string;
-  type: string;
-  simpleType: "IN" | "OUT";
-  value: bigint;
-  fee: bigint;
-  blockHeight: number;
-  senders: string[];
-  recipients: string[];
-  date: Date;
-  transactionSequenceNumber: number;
-  details?: {
-    destinationTag?: number;
-    memos?: {
-      data?: string;
-      format?: string;
-      type?: string;
-    };
-  };
+export type XrpMemo = {
+  data?: string;
+  format?: string;
+  type?: string;
+};
+
+export type XrpMemoKind = "destinationTag" | "memo";
+
+export type XrpMemoValueMap = {
+  destinationTag: string;
+  memos: string[];
+};
+export type XrpMapMemo = TypedMapMemo<XrpMemoValueMap>;
+
+type Order = "asc" | "desc";
+
+export type ListOperationsOptions = {
+  // pagination:
+  limit?: number;
+  token?: string;
+  order?: Order;
+  // filters:
+  minHeight?: number;
 };

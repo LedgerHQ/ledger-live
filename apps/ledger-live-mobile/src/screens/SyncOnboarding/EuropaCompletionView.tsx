@@ -1,28 +1,37 @@
 import Animation from "~/components/Animation";
-import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Dimensions, Image } from "react-native";
-import { useTheme } from "styled-components/native";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex } from "@ledgerhq/native-ui";
+import OnboardingSuccessAnimation from "~/animations/onboardingSuccess.json";
 
 type Props = {
   device: Device;
   onAnimationFinish: () => void;
 };
 
-const EuropaCompletionView: React.FC<Props> = ({ device, onAnimationFinish }) => {
-  const {
-    colors: { type },
-  } = useTheme();
-  const theme = type as "dark" | "light";
+const redirectDelay = 2500;
+
+const EuropaCompletionView: React.FC<Props> = ({ onAnimationFinish }) => {
   const { height: screenHeight, width: screenWidth } = Dimensions.get("screen");
+
+  const delayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    delayRef.current = setTimeout(onAnimationFinish, redirectDelay);
+
+    return () => {
+      if (delayRef.current) {
+        clearTimeout(delayRef.current);
+        delayRef.current = null;
+      }
+    };
+  }, [onAnimationFinish]);
 
   return (
     <Flex height="100%" width="100%">
       <Animation
-        source={getDeviceAnimation({ device, key: "onboardingSucceed", theme })}
-        onAnimationFinish={onAnimationFinish}
+        source={OnboardingSuccessAnimation}
         loop={false}
         style={{
           position: "absolute",
@@ -37,7 +46,7 @@ const EuropaCompletionView: React.FC<Props> = ({ device, onAnimationFinish }) =>
       />
       <Flex flex={1} alignItems="center" justifyContent="center">
         <Image
-          source={require("./assets/europa-success.png")}
+          source={require("./assets/europa-success.webp")}
           style={{ zIndex: 1, width: 275 }}
           resizeMode="contain"
         />

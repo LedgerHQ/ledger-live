@@ -1,5 +1,64 @@
 # @ledgerhq/hw-app-near
 
+## 6.31.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.6
+
+## 6.31.2-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.6-next.1
+
+## 6.31.2-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.6-next.0
+
+## 6.31.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.5
+
+## 6.31.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.5-next.0
+
+## 6.31.0
+
+### Minor Changes
+
+- [#9648](https://github.com/LedgerHQ/ledger-live/pull/9648) [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove SubAccount as it is an alias to TokenAccount
+
+## 6.31.0-next.0
+
+### Minor Changes
+
+- [#9648](https://github.com/LedgerHQ/ledger-live/pull/9648) [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove SubAccount as it is an alias to TokenAccount
+
+## 6.30.0
+
+### Minor Changes
+
+- [#9298](https://github.com/LedgerHQ/ledger-live/pull/9298) [`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1) Thanks [@Canestin](https://github.com/Canestin)! - config coin-integration env for sonarqube
+
+## 6.30.0-next.0
+
+### Minor Changes
+
+- [#9298](https://github.com/LedgerHQ/ledger-live/pull/9298) [`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1) Thanks [@Canestin](https://github.com/Canestin)! - config coin-integration env for sonarqube
+
 ## 6.29.4
 
 ### Patch Changes

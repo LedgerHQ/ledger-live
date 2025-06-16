@@ -1,23 +1,10 @@
-import { getElementById, openDeeplink, waitForElementById, tapByElement } from "../../helpers";
+import CommonPage from "../common.page";
 
-const baseLink = "accounts";
-
-export default class AccountsPage {
-  accountTitleId = (coin: string) => `accounts-title-${coin}`;
-  addAccountButton = () => getElementById("add-account-button");
+export default class AccountsPage extends CommonPage {
+  baseLink = "accounts";
   listTitle = "accounts-list-title";
 
-  async openViaDeeplink() {
-    await openDeeplink(baseLink);
-  }
   async waitForAccountsPageToLoad() {
     await waitForElementById(this.listTitle);
-  }
-  async waitForAccountsCoinPageToLoad(coin: string) {
-    await waitForElementById(this.accountTitleId(coin));
-  }
-
-  async addAccount() {
-    await tapByElement(this.addAccountButton());
   }
 }

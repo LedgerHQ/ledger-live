@@ -57,6 +57,8 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
 
   const mock = useEnv("MOCK");
 
+  const aptos = useFeature("currencyAptos");
+  const aptosTestnet = useFeature("currencyAptosTestnet");
   const axelar = useFeature("currencyAxelar");
   const stargaze = useFeature("currencyStargaze");
   const secretNetwork = useFeature("currencySecretNetwork");
@@ -83,6 +85,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const velasEvm = useFeature("currencyVelasEvm");
   const syscoin = useFeature("currencySyscoin");
   const internetComputer = useFeature("currencyInternetComputer");
+  const mina = useFeature("currencyMina");
   const telosEvm = useFeature("currencyTelosEvm");
   const coreum = useFeature("currencyCoreum");
   const polygonZkEvm = useFeature("currencyPolygonZkEvm");
@@ -107,9 +110,17 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const zksync = useFeature("currencyZkSync");
   const zksyncSepolia = useFeature("currencyZkSyncSepolia");
   const mantra = useFeature("currencyMantra");
+  const xion = useFeature("currencyXion");
+  const zenrock = useFeature("currencyZenrock");
+  const sonic = useFeature("currencySonic");
+  const sonicBlaze = useFeature("currencySonicBlaze");
+  const sui = useFeature("currencySui");
+  const babylon = useFeature("currencyBabylon");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
+      aptos,
+      aptos_testnet: aptosTestnet,
       axelar,
       stargaze,
       umee,
@@ -160,8 +171,17 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       zksync,
       zksync_sepolia: zksyncSepolia,
       mantra,
+      xion,
+      zenrock,
+      sonic,
+      sonic_blaze: sonicBlaze,
+      sui,
+      mina,
+      babylon,
     }),
     [
+      aptos,
+      aptosTestnet,
       axelar,
       stargaze,
       umee,
@@ -212,6 +232,13 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       zksync,
       zksyncSepolia,
       mantra,
+      xion,
+      zenrock,
+      sonic,
+      sonicBlaze,
+      sui,
+      mina,
+      babylon,
     ],
   );
 

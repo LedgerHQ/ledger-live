@@ -40,7 +40,7 @@ function CardanoPoolRow({ pool, active, onClick, unit, currency }: Props) {
         address: pool.poolId,
       }}
       icon={<LedgerPoolIcon validator={pool} />}
-      title={`${pool.ticker} - ${pool.name}` || pool.poolId}
+      title={pool.name || pool.poolId}
       onExternalLink={onExternalLink}
       unit={unit}
       sideInfo={

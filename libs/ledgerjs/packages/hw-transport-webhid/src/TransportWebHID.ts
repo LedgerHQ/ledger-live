@@ -212,8 +212,19 @@ export default class TransportWebHID extends Transport {
       let acc;
 
       while (!(result = framing.getReducedResult(acc))) {
-        const buffer = await this.read();
-        acc = framing.reduceResponse(acc, buffer);
+        try {
+          const buffer = await this.read();
+          acc = framing.reduceResponse(acc, buffer);
+        } catch (e) {
+          if (e instanceof TransportError && e.id === "InvalidChannel") {
+            // this can happen if the device is connected
+            // on a different channel (like another app)
+            // in this case we just filter out the event
+            continue;
+          }
+
+          throw e;
+        }
       }
 
       log("apdu", "<= " + result.toString("hex"));

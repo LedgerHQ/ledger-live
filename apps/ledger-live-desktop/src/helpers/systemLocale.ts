@@ -15,7 +15,15 @@ const parse = memoize(navLang => {
  * We don't use window.navigator.language directly as it doesn't always actually
  * follow the system language, it's unreliable. cf. https://stackoverflow.com/a/3335420
  * */
-export const getSystemLocale = () => {
+export const getAppLocale = () => {
   return new URLSearchParams(window.location.search).get("appLocale") || window.navigator.language;
 };
-export const getParsedSystemLocale = () => parse(getSystemLocale());
+
+export const getSystemLocale = () => {
+  return (
+    new URLSearchParams(window.location.search).get("systemLocale") || window.navigator.language
+  );
+};
+
+export const getParsedSystemDeviceLocale = () => parse(getSystemLocale());
+export const getParsedSystemLocale = () => parse(getAppLocale());

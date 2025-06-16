@@ -8,19 +8,15 @@ import { useInitMemberCredentials } from "../../hooks/useInitMemberCredentials";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Linking } from "react-native";
 
-type Props = { onSyncMethodPress: () => void };
+type Props = { onSyncMethodPress: () => void; navigateToChooseSyncMethod: () => void };
 
-const Activation: React.FC<Props> = ({ onSyncMethodPress }) => {
+const Activation: React.FC<Props> = ({ onSyncMethodPress, navigateToChooseSyncMethod }) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const walletSyncFF = useFeature("llmWalletSync");
   const learnMoreLink = walletSyncFF?.params?.learnMoreLink;
 
   useInitMemberCredentials();
-
-  const onPressSyncAccounts = () => onSyncMethodPress();
-
-  const onPressHasAlreadyCreatedAKey = () => onSyncMethodPress();
 
   const onPressLearnMore = () => {
     if (learnMoreLink) {
@@ -32,7 +28,12 @@ const Activation: React.FC<Props> = ({ onSyncMethodPress }) => {
     <Flex flexDirection="column" justifyContent="center" alignItems="center" rowGap={24}>
       <IconsHeader />
       <Flex justifyContent="center" alignItems="center" flexDirection="column" rowGap={16}>
-        <Text variant="h4" textAlign="center" lineHeight="32.4px">
+        <Text
+          variant="h4"
+          textAlign="center"
+          lineHeight="32.4px"
+          testID="walletsync-activation-title"
+        >
           {t("walletSync.activation.screen.title")}
         </Text>
         <Text
@@ -42,13 +43,14 @@ const Activation: React.FC<Props> = ({ onSyncMethodPress }) => {
           alignSelf={"center"}
           maxWidth={330}
           numberOfLines={3}
+          testID="walletsync-activation-description"
         >
           {t("walletSync.activation.screen.description")}
         </Text>
       </Flex>
       <Actions
-        onPressHasAlreadyCreatedAKey={onPressHasAlreadyCreatedAKey}
-        onPressSyncAccounts={onPressSyncAccounts}
+        onPressHasAlreadyCreatedAKey={navigateToChooseSyncMethod}
+        onPressSyncAccounts={onSyncMethodPress}
         onPressLearnMore={onPressLearnMore}
       />
     </Flex>

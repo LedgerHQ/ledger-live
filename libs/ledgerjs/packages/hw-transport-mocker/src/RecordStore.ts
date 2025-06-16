@@ -82,6 +82,11 @@ export class RecordStore {
   isEmpty = (): boolean => this.queue.length === 0;
 
   /**
+   * Clear store history
+   */
+  clearStore = () => (this.queue = []);
+
+  /**
    * Record an APDU (used by createTransportRecorder)
    * @param {Buffer} apdu input
    * @param {Buffer} out response

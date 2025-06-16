@@ -16,6 +16,8 @@ export type CALServiceOutput = {
   type: string;
   id: string;
   blockchain_name: string;
+  network: string;
+  network_family: string;
   chain_id: number;
   contract_address: string;
   token_identifier: string;

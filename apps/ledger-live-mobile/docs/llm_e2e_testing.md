@@ -41,7 +41,7 @@ Most of the setup is taken care of in the React Native docs, but you will have t
 
 - XCode and XCode command line tools - run `xcode-select -v` and `xcrun --version` to make sure these are working
 - Latest `ruby` is installed with brew, make sure `$PATH` is updated - `which ruby` points to `/opt/homebrew/opt/ruby/bin/ruby`, not `usr/bin/ruby`.
-- An iPhone simulator for iPhone 14 - open Xcode > Window > Devices and Simulators > Simulators > Add a new device from the '+' sign in the bottom right corner.
+- An iPhone simulator for iPhone 15 named 'iOS Simulator' - open Xcode > Window > Devices and Simulators > Simulators > Add a new device from the '+' sign in the bottom right corner.
 - `applesimutils` is installed via npm.
 
 ### Tips for Android setup
@@ -49,8 +49,8 @@ Most of the setup is taken care of in the React Native docs, but you will have t
 The Android toolkit can be more complex than the iOS one. Once you've done the React Native and Detox setup steps, follow the Detox [Android Environment Setup guide](https://wix.github.io/Detox/docs/guide/android-dev-env) for further steps. The main things to make sure of are:
 
 - Java version 17 installed. Check with `java -version`
-- Android 12L (API Level 32) is installed.
-- An Android Virtual Device (AVD) named 'Pixel 6 Pro API 32'
+- Android 15 (API Level 35) is installed.
+- An Android Virtual Device (AVD) for Pixel 7 Pro named 'Android_Emulator'
 - Android SDK Build Tools, SDK Platform Tools, SDK Command Line Tools, Android Emulator, CMake 3.10.2 and NDK 21.4.7075529 are installed. You can do this through Android Studio > Tools > SDK Tools, or via the [command line](https://wix.github.io/Detox/docs/guide/android-dev-env#heres-how-to-install-them-using-the-command-line).
 - Your shell profile (for example `~/.zshrc`) should have environmental variables setup something like this:
 
@@ -109,7 +109,7 @@ Verify you have an emulator [installed](https://developer.android.com/studio/run
 
 ### iOS Tests
 
-Make sure you have the correct iPhone simulator that is listed in `detox.config.js` installed (currently 'iPhone 13'). You can check if you do with `applesimutils --list`. Also make sure you have an iOS version installed for simulators by going to Xcode > Preferences > Components. You can try whichever version you like, but iOS 13.0 is known to work locally.
+Make sure you have the correct iPhone simulator that is listed in `detox.config.js` installed (currently 'iPhone 15'). You can check if you do with `applesimutils --list`. Also make sure you have an iOS version installed for simulators by going to Xcode > Preferences > Components. You can try whichever version you like, but iOS 17.4 is known to work locally.
 
 - Build the apps
   - Debug: `pnpm mobile e2e:build -c ios.sim.debug`

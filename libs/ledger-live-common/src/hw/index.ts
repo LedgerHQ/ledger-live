@@ -59,6 +59,10 @@ export const unregisterTransportModule = (moduleId: string): void => {
   );
 };
 
+export const unregisterAllTransportModules = (): void => {
+  modules.length = 0;
+};
+
 export const discoverDevices = (
   accept: (module: TransportModule) => boolean = () => true,
 ): Discovery => {

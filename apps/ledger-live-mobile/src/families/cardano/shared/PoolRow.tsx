@@ -18,6 +18,7 @@ const PoolRow = ({ onPress, pool }: { onPress: (v: StakePool) => void; pool: Sta
         poolName: pool.name || pool.poolId,
       }}
       onPress={onPressT}
+      testID={`provider-row-${pool.ticker}`}
     >
       <View style={styles.pool}>
         <PoolImage size={32} name={pool.name ?? pool.poolId} />

@@ -46,6 +46,7 @@ const getExtra = (
 ): PolkadotOperationExtra => {
   const extra: PolkadotOperationExtra = {
     palletMethod: MODE_TO_PALLET_METHOD[transaction.mode],
+    index: 0,
   };
 
   if (transaction.mode == "send" && transaction.useAllAmount) {

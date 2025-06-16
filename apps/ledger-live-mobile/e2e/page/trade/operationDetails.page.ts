@@ -1,8 +1,8 @@
-import { getElementById } from "../../helpers";
 import { expect } from "detox";
 
 export default class OperationDetailsPage {
-  title = () => getElementById("operationDetails-title");
+  titleId = "operationDetails-title";
+  title = () => getElementById(this.titleId);
   account = () => getElementById("operationDetails-account");
   amount = () => getElementById("operationDetails-amount");
 
@@ -10,6 +10,7 @@ export default class OperationDetailsPage {
     await expect(this.title()).toBeVisible();
   }
 
+  @Step("Check account details")
   async checkAccount(account: string) {
     await expect(this.account()).toHaveText(account);
   }

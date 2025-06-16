@@ -2,7 +2,6 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import get from "lodash/get";
-import { getOperationTypefromMode } from "../logic/utils";
 import {
   Transaction,
   TronAccount,
@@ -10,6 +9,7 @@ import {
   TronResource,
   TrongridExtraTxInfo,
 } from "../types";
+import { getOperationTypefromMode } from "./utils";
 
 const getValue = (
   account: TronAccount,

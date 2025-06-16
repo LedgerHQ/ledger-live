@@ -132,8 +132,7 @@ export const findLatestAppCandidate = (
   if (apps.length === 0) {
     return null;
   }
-
-  apps = apps.sort((a, b) => semver.rcompare(a.appVersion, b.appVersion));
+  apps = apps.sort((a, b) => semver.compare(b.appVersion, a.appVersion));
   return apps[0];
 };
 

@@ -11,4 +11,6 @@ export default class MockTransport extends Transport {
   exchange(_apdu: Buffer): Promise<Buffer> {
     return Promise.resolve(this.preRecordResponse);
   }
+
+  setNewResponse = (buffer: Buffer) => (this.preRecordResponse = buffer);
 }

@@ -30,7 +30,7 @@ export default function useSelectAccountModalViewModel({
   const currencies = useManifestCurrencies(manifest);
   const sortedCurrencies = useCurrenciesByMarketcap(currencies);
 
-  const { setCurrentAccountHist } = useDappCurrentAccount(currentAccountHistDb);
+  const { setCurrentAccountHist, setCurrentAccount } = useDappCurrentAccount(currentAccountHistDb);
 
   const onPressCurrencyItem = useCallback((currency: CryptoCurrency) => {
     setSelectedCurrency(currency);
@@ -48,9 +48,10 @@ export default function useSelectAccountModalViewModel({
   const setSelectedAccount = useCallback(
     (account: AccountLike) => {
       setCurrentAccountHist(manifest.id, account);
+      setCurrentAccount(account);
       onClose();
     },
-    [manifest.id, onClose, setCurrentAccountHist],
+    [manifest.id, onClose, setCurrentAccount, setCurrentAccountHist],
   );
 
   const navigation = useNavigation<AppProps["navigation"]>();

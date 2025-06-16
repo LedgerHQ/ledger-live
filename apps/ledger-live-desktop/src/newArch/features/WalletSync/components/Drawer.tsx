@@ -14,6 +14,7 @@ import {
 } from "LLD/features/WalletSync/hooks/useLedgerSyncAnalytics";
 import { BackRef, WalletSyncRouter } from "LLD/features/WalletSync/screens/router";
 import { STEPS_WITH_BACK } from "LLD/features/WalletSync/hooks/useFlows";
+import { useTheme } from "styled-components";
 
 /**
  *
@@ -33,6 +34,7 @@ interface WalletSyncDrawerProps {
 const WalletSyncDrawer: React.FC<WalletSyncDrawerProps> = ({ currentPage, onClose, onBack }) => {
   const childRef = useRef<BackRef>(null);
   const dispatch = useDispatch();
+  const { colors } = useTheme();
 
   const isOpen = useSelector(walletSyncDrawerVisibilitySelector);
   const currentStep = useSelector(walletSyncStepSelector);
@@ -70,6 +72,9 @@ const WalletSyncDrawer: React.FC<WalletSyncDrawerProps> = ({ currentPage, onClos
       onRequestBack={hasBack ? handleBack : undefined}
       direction="left"
       forceDisableFocusTrap
+      style={{
+        background: colors.background.card,
+      }}
     >
       <WalletSyncRouter currentPage={currentPage} ref={childRef} />
     </SideDrawer>

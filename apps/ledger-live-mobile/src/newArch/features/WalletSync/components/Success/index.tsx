@@ -10,11 +10,13 @@ type Props = {
   mainButton?: {
     label: string;
     onPress: () => void;
+    testID?: string;
   };
 
   secondaryButton?: {
     label: string;
     onPress: () => void;
+    testID?: string;
   };
   analyticsPage: string;
 };
@@ -32,7 +34,13 @@ export function Success({ title, desc, mainButton, secondaryButton, analyticsPag
         flex={1}
         px={2}
       >
-        <Flex flexDirection="column" alignItems="center" justifyContent="center" rowGap={16}>
+        <Flex
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          rowGap={16}
+          testID="walletsync-success"
+        >
           <Container borderRadius={50}>
             <Icons.CheckmarkCircleFill size={"L"} color={colors.success.c60} />
           </Container>
@@ -45,12 +53,17 @@ export function Success({ title, desc, mainButton, secondaryButton, analyticsPag
         </Flex>
         <Flex flexDirection="column" rowGap={10} mb={8} width={"100%"} px={"16px"}>
           {mainButton && (
-            <Button type="main" onPress={mainButton.onPress}>
+            <Button type="main" onPress={mainButton.onPress} testID={mainButton.testID}>
               {mainButton.label}
             </Button>
           )}
           {secondaryButton && (
-            <Button type="main" outline onPress={secondaryButton.onPress}>
+            <Button
+              type="main"
+              outline
+              onPress={secondaryButton.onPress}
+              testID={secondaryButton.testID}
+            >
               {secondaryButton.label}
             </Button>
           )}

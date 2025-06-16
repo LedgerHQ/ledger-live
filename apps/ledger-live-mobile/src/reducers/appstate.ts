@@ -1,12 +1,9 @@
 import { handleActions } from "redux-actions";
 import type { Action, ReducerMap } from "redux-actions";
-import { createSelector } from "reselect";
-import { NetworkDown } from "@ledgerhq/errors";
 import type { AppState, State } from "./types";
 
 import type {
   AppStateAddBackgroundEventPayload,
-  AppStateIsConnectedPayload,
   AppStateBlockPasswordLockPayload,
   AppStatePayload,
   AppStateSetHasConnectedDevicePayload,
@@ -34,11 +31,6 @@ const handlers: ReducerMap<AppState, AppStatePayload> = {
   [AppStateActionTypes.DEBUG_MENU_VISIBLE]: state => ({
     ...state,
     debugMenuVisible: true,
-  }),
-
-  [AppStateActionTypes.SYNC_IS_CONNECTED]: (state, action) => ({
-    ...state,
-    isConnected: (action as Action<AppStateIsConnectedPayload>).payload,
   }),
 
   [AppStateActionTypes.HAS_CONNECTED_DEVICE]: (state, action) => ({
@@ -98,7 +90,6 @@ const handlers: ReducerMap<AppState, AppStatePayload> = {
 // Selectors
 
 export const isDebugMenuVisible = (state: State) => state.appstate.debugMenuVisible;
-export const isConnectedSelector = (state: State) => state.appstate.isConnected;
 export const isModalLockedSelector = (state: State) => state.appstate.modalLock;
 export const hasConnectedDeviceSelector = (state: State) => state.appstate.hasConnectedDevice;
 
@@ -108,13 +99,6 @@ export const nextBackgroundEventSelector = (state: State) => state.appstate.back
 
 export const isMainNavigatorVisibleSelector = (state: State) =>
   state.appstate.isMainNavigatorVisible;
-
-const globalNetworkDown = new NetworkDown();
-
-export const networkErrorSelector = createSelector(
-  isConnectedSelector,
-  (isConnected: boolean | null) => (!isConnected ? globalNetworkDown : null),
-);
 
 export const isPasswordLockBlocked = (state: State) => state.appstate.isPasswordLockBlocked;
 

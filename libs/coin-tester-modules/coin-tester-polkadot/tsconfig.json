@@ -1,0 +1,18 @@
+{
+    "extends": "../../../tsconfig.base",
+    "compilerOptions": {
+      "lib": ["es2020", "dom"],
+      "outDir": "lib",
+      "declaration": true,
+      "declarationMap": true,
+      "downlevelIteration": true,
+      "sourceMap": true,
+      "exactOptionalPropertyTypes": true,
+      "module": "ESNext",
+      "moduleResolution": "bundler",
+      "composite": true,
+      "resolveJsonModule": true
+    },
+    "include": ["src/**/*", "src/**/*.json"]
+  }
+  

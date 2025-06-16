@@ -2,8 +2,8 @@ import { useCallback } from "react";
 import { Linking, Platform } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { add, isBefore, parseISO } from "date-fns";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import messaging from "@react-native-firebase/messaging";
+import storage from "LLM/storage";
+import { getMessaging, AuthorizationStatus } from "@react-native-firebase/messaging";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { accountsWithPositiveBalanceCountSelector } from "~/reducers/accounts";
 import {
@@ -31,6 +31,7 @@ import {
 import { setNeverClickedOnAllowNotificationsButton, setNotifications } from "~/actions/settings";
 import { NotificationsSettings } from "~/reducers/types";
 import Braze from "@braze/react-native-sdk";
+import { getIsNotifEnabled } from "./getNotifPermissions";
 
 export type EventTrigger = {
   timeout: NodeJS.Timeout;
@@ -67,24 +68,16 @@ export type NotificationCategory = {
 const pushNotificationsDataOfUserAsyncStorageKey = "pushNotificationsDataOfUser";
 
 async function getPushNotificationsDataOfUserFromStorage() {
-  const dataOfUser = await AsyncStorage.getItem(pushNotificationsDataOfUserAsyncStorageKey);
-  if (!dataOfUser) return null;
+  const dataOfUser = await storage.get<DataOfUser>(pushNotificationsDataOfUserAsyncStorageKey);
 
-  return JSON.parse(dataOfUser);
+  if (!dataOfUser || Array.isArray(dataOfUser)) return null;
+
+  return dataOfUser;
 }
 
 async function setPushNotificationsDataOfUserInStorage(dataOfUser: DataOfUser) {
-  await AsyncStorage.setItem(
-    pushNotificationsDataOfUserAsyncStorageKey,
-    JSON.stringify(dataOfUser),
-  );
+  await storage.save(pushNotificationsDataOfUserAsyncStorageKey, dataOfUser);
 }
-
-const getIsNotifEnabled = async () => {
-  const authStatus = await messaging().hasPermission();
-
-  return authStatus === messaging.AuthorizationStatus.AUTHORIZED;
-};
 
 const useNotifications = () => {
   const pushNotificationsFeature = useFeature("brazePushNotifications");
@@ -115,13 +108,13 @@ const useNotifications = () => {
         Linking.openSettings();
       }
     } else {
-      const permission = await messaging().hasPermission();
+      const permission = await getMessaging().hasPermission();
 
-      if (permission === messaging.AuthorizationStatus.DENIED) {
+      if (permission === AuthorizationStatus.DENIED) {
         Linking.openSettings();
       } else if (
-        permission === messaging.AuthorizationStatus.NOT_DETERMINED ||
-        permission === messaging.AuthorizationStatus.PROVISIONAL
+        permission === AuthorizationStatus.NOT_DETERMINED ||
+        permission === AuthorizationStatus.PROVISIONAL
       ) {
         Braze.requestPushPermission();
       }
@@ -194,7 +187,12 @@ const useNotifications = () => {
       pushNotificationsDataOfUser.appFirstStartDate &&
       isBefore(
         Date.now(),
-        add(pushNotificationsDataOfUser.appFirstStartDate, minimumDurationSinceAppFirstStart),
+        add(
+          pushNotificationsDataOfUser.appFirstStartDate
+            ? new Date(pushNotificationsDataOfUser.appFirstStartDate)
+            : new Date(),
+          minimumDurationSinceAppFirstStart,
+        ),
       )
     ) {
       return false;
@@ -280,7 +278,7 @@ const useNotifications = () => {
     getPushNotificationsDataOfUserFromStorage().then(dataOfUser => {
       updatePushNotificationsDataOfUserInStateAndStore({
         ...dataOfUser,
-        appFirstStartDate: dataOfUser?.appFirstStartDate || Date.now(),
+        appFirstStartDate: dataOfUser?.appFirstStartDate ?? new Date(Date.now()),
         numberOfAppStarts: (dataOfUser?.numberOfAppStarts ?? 0) + 1,
       });
     });

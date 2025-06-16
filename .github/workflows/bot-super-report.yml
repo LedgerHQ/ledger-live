@@ -1,4 +1,4 @@
-name: "Bot Super Report"
+name: "[Coin] - Bot Super Report - Scheduled"
 on:
   schedule:
     - cron: "0 14 * * 5"
@@ -12,9 +12,11 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-      - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
         with:
+          install-proto: true
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}

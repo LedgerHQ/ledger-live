@@ -62,15 +62,30 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Rosetta API for ICP",
   },
-  API_CASPER_INDEXER_ENDPOINT: {
+  APTOS_API_ENDPOINT: {
+    def: "https://apt.coin.ledger.com/node/v1",
     parser: stringParser,
-    def: "https://casper.coin.ledger.com/indexer",
-    desc: "Casper API url indexer",
+    desc: "API enpoint for Aptos",
   },
-  API_CASPER_NODE_ENDPOINT: {
+  APTOS_TESTNET_API_ENDPOINT: {
+    def: "https://apt.coin.ledger-stg.com/node/v1",
     parser: stringParser,
-    def: "https://casper.coin.ledger.com/node/",
-    desc: "Casper API url node",
+    desc: "API enpoint for Aptos",
+  },
+  APTOS_INDEXER_ENDPOINT: {
+    def: "https://apt.coin.ledger.com/node/v1/graphql",
+    parser: stringParser,
+    desc: "Indexer endpoint for Aptos",
+  },
+  APTOS_TESTNET_INDEXER_ENDPOINT: {
+    def: "https://apt.coin.ledger-stg.com/node/v1/graphql",
+    parser: stringParser,
+    desc: "Indexer endpoint for Aptos",
+  },
+  APTOS_ENABLE_TOKENS: {
+    def: false,
+    parser: boolParser,
+    desc: "Enable tokens on Aptos",
   },
   API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://algorand.coin.ledger.com",
@@ -122,15 +137,15 @@ const envDefinitions = {
     def: "https://polkadot-fullnodes.api.live.ledger.com",
     desc: "Polkadot Node",
   },
-  ELROND_API_ENDPOINT: {
+  MULTIVERSX_API_ENDPOINT: {
     parser: stringParser,
     def: "https://elrond.coin.ledger.com",
-    desc: "Elrond API url",
+    desc: "MultiversX API url",
   },
-  ELROND_DELEGATION_API_ENDPOINT: {
+  MULTIVERSX_DELEGATION_API_ENDPOINT: {
     parser: stringParser,
     def: "https://delegations-elrond.coin.ledger.com",
-    desc: "Elrond DELEGATION API url",
+    desc: "MultiversX DELEGATION API url",
   },
   API_STELLAR_HORIZON: {
     parser: stringParser,
@@ -141,6 +156,11 @@ const envDefinitions = {
     parser: intParser,
     def: 100,
     desc: "Limit of operation that Horizon will fetch per page",
+  },
+  API_STELLAR_HORIZON_INITIAL_FETCH_MAX_OPERATIONS: {
+    parser: intParser,
+    def: 1000,
+    desc: "Limit of operation that Horizon will fetch on initial sync",
   },
   API_STELLAR_HORIZON_STATIC_FEE: {
     def: false,
@@ -176,6 +196,11 @@ const envDefinitions = {
     parser: stringParser,
     def: "https://solana.coin.ledger.com",
     desc: "proxy url for solana API",
+  },
+  API_SUI_NODE_PROXY: {
+    parser: stringParser,
+    def: "https://sui.coin.ledger.com",
+    desc: "reverse proxy url for sui node",
   },
   SOLANA_VALIDATORS_APP_BASE_URL: {
     parser: stringParser,
@@ -326,6 +351,11 @@ const envDefinitions = {
     def: false,
     parser: boolParser,
     desc: "disable the version check for firmware update eligibility",
+  },
+  DETOX: {
+    def: "",
+    parser: stringParser,
+    desc: "switch the app into a DETOX mode for test purpose. Avoid falsy values.",
   },
   EIP1559_MINIMUM_FEES_GATE: {
     def: true,
@@ -521,6 +551,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "mock the cryptoassets config and test partner (in the context of app-exchange)",
   },
+  MOCK_EXCHANGE_TEST_PARTNER: {
+    def: false,
+    parser: boolParser,
+    desc: "change CAL partner context to test",
+  },
   MOCK_REMOTE_LIVE_MANIFEST: {
     def: "",
     parser: stringParser,
@@ -537,11 +572,11 @@ const envDefinitions = {
     desc: "if defined, avoids bypass of the currentDevice in the store.",
   },
   NFT_CURRENCIES: {
-    def: ["avalanche_c_chain", "bsc", "ethereum", "polygon"],
+    def: ["avalanche_c_chain", "bsc", "ethereum", "polygon", "solana"],
     parser: stringArrayParser,
     desc: "set the currencies where NFT is active",
   },
-  NFT_ETH_METADATA_SERVICE: {
+  NFT_METADATA_SERVICE: {
     def: "https://nft.api.live.ledger.com",
     parser: stringParser,
     desc: "service uri used to get the metadata of an nft",
@@ -807,6 +842,11 @@ const envDefinitions = {
     def: false,
     parser: boolParser,
     desc: "Show a performance overlay on the app UI",
+  },
+  STORAGE_PERFORMANCE_OVERLAY: {
+    def: false,
+    parser: boolParser,
+    desc: "Show a performance overlay on the app storage",
   },
   ETHEREUM_STUCK_TRANSACTION_TIMEOUT: {
     def: 5 * 60 * 1000,

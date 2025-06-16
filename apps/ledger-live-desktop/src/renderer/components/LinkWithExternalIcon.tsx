@@ -40,6 +40,7 @@ type Props = {
   style?: React.CSSProperties;
   fontSize?: number;
   color?: string;
+  id?: string;
 }; // can add more dynamic options if needed
 export function LinkWithExternalIcon({
   onClick,
@@ -48,9 +49,16 @@ export function LinkWithExternalIcon({
   style,
   fontSize,
   color = "wallet",
+  id,
 }: Props) {
   return (
-    <Wrapper onClick={onClick} style={style} fontSize={fontSize || 4} color={color}>
+    <Wrapper
+      onClick={onClick}
+      style={style}
+      fontSize={fontSize || 4}
+      color={color}
+      data-testid={id}
+    >
       {label || children}
     </Wrapper>
   );

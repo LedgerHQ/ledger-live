@@ -1,7 +1,11 @@
-name: "Test Desktop"
+name: "[Desktop] - Test - Called"
 
 on:
   workflow_call:
+    outputs:
+      coverage_generated:
+        value: ${{ jobs.unit-tests.outputs.coverage_generated }}
+
   workflow_dispatch:
     inputs:
       ref:
@@ -30,7 +34,7 @@ permissions:
 
 jobs:
   codechecks:
-    name: "LLD Code Checks"
+    name: "Desktop Code Check"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -40,11 +44,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
-      - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
-        id: toolchain
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
         with:
-          install-dotnet: true
+          install-proto: true
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -54,9 +58,9 @@ jobs:
         id: setup-test-desktop
         with:
           skip_builds: true
-          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
+          turborepo-server-port: ${{ steps.setup-caches.outputs.port }}
       - name: lint
-        run: pnpm desktop lint:ci -p ${{ steps.toolchain.outputs.port }} -t "${{ secrets.TURBOREPO_SERVER_TOKEN }}"
+        run: pnpm desktop lint:ci -p ${{ steps.setup-caches.outputs.port }} -t "${{ secrets.TURBOREPO_SERVER_TOKEN }}"
       - name: prettier
         run: pnpm desktop prettier:check
       - name: typecheck
@@ -74,18 +78,21 @@ jobs:
   unit-tests:
     name: "Desktop Unit Tests"
     env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
+      NODE_OPTIONS: "--max-old-space-size=7168 --no-network-family-autoselection"
       FORCE_COLOR: 3
       CI_OS: ubuntu-22.04
     runs-on: ubuntu-22.04
+    outputs:
+      coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
-      - name: Setup the toolchain
-        id: toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
         with:
+          install-proto: true
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -95,12 +102,19 @@ jobs:
         id: setup-test-desktop
         with:
           skip_builds: true
-          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
+          turborepo-server-port: ${{ steps.setup-caches.outputs.port }}
       - name: Run unit tests
         run: pnpm desktop test:jest:coverage
+      - name: Upload unit test coverage
+        id: generate_coverage
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-desktop
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/coverage
 
   e2e-tests-linux:
-    name: "Desktop Tests E2E (Ubuntu)"
+    name: "Ubuntu E2E"
     outputs:
       status: ${{ steps.tests.outcome }}
     env:
@@ -132,6 +146,13 @@ jobs:
           skip_ruby: true
           install_playwright: true
           turborepo-server-port: ${{ steps.caches.outputs.port }}
+      - name: Install CLI dependencies
+        env:
+          LANG: en_US.UTF-8
+        run: pnpm i --filter="live-cli*..."
+        shell: bash
+      - name: Build CLI
+        run: pnpm build:cli --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
@@ -169,7 +190,9 @@ jobs:
         with:
           name: allure-results-linux
           path: apps/ledger-live-desktop/allure-results
+
   report:
+    name: "Test Desktop > Report"
     needs: [codechecks, unit-tests, e2e-tests-linux]
     runs-on: ubuntu-22.04
     if: ${{ !cancelled() }}
@@ -225,14 +248,11 @@ jobs:
               attempt_number: "${{ github.run_attempt }}",
             });
 
-            const findJobUrl = os =>
-              jobs.find(job => job.name == `Live Desktop Tests (${os})`)?.html_url;
-
             const keys = {
               linux: {
                 symbol: "🐧",
                 name: "Linux",
-                jobUrl: findJobUrl("Linux")
+                jobUrl: jobs.find(job => job.name == `Ubuntu E2E`)?.html_url
               },
             };
 
@@ -415,20 +435,22 @@ jobs:
           path: ${{ github.workspace }}/summary-test-desktop.json
 
   allure-report:
-    name: "Allure Reports Export on Server"
+    name: "Ubuntu E2E > Allure Report"
     needs: e2e-tests-linux
     runs-on: [ledger-live-medium]
     if: ${{ !cancelled() && github.ref_name == 'develop' }}
     steps:
-      - name: checkout
-        uses: actions/checkout@v4
+      - name: Download Allure Report
+        uses: actions/download-artifact@v4
         with:
-          ref: ${{ ((github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request') && (inputs.ref || github.ref_name)) || github.sha }}
+          path: allure-results-linux
+          pattern: allure-results-linux*
+          merge-multiple: true
       - name: Send Results and Generate Allure Report - Linux
         uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         if: ${{ !cancelled() }}
         with:
-          platform: linux
+          platform: linux-mocked
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: allure-results-linux

@@ -1,33 +1,26 @@
-import { fetchAndMergeProviderData, findExchangeCurrencyData } from "./swap";
-
-describe("findExchangeCurrencyData", () => {
-  it("returns all data in expected format", async () => {
-    // When
-    const currencies = await findExchangeCurrencyData("arbitrum");
-
-    // Then
-    expect(currencies).toEqual({
-      config: "0345544808457468657265756d0d0345544812000000000000a4b1",
-      id: "arbitrum",
-      signature:
-        "30450221008ca557e4acc2fa290a6a44c2b0eb5232712ba69b23df93645a320bcff9789fd9022017e6e05582806a9d4b7b2aaaedbcc3471bd26e10ad686e4f313fc0b1068b5d64",
-    });
-  });
-});
+import { fetchAndMergeProviderData } from "./swap";
 
 describe("fetchAndMergeProviderData", () => {
   it("returns all data in expected format", async () => {
     // When
-    const providers = await fetchAndMergeProviderData();
+    const providers = await fetchAndMergeProviderData({
+      ledgerSignatureEnv: "prod",
+      partnerSignatureEnv: "prod",
+    });
 
     // Then
     expect(providers).toEqual({
       changelly: {
-        continuesInProviderLiveApp: false,
         displayName: "Changelly",
+        useInExchangeApp: true,
         mainUrl: "https://changelly.com/",
         name: "Changelly",
         needsKYC: false,
+        usefulUrls: [
+          "https://changelly.com/terms-of-use",
+          "https://changelly.com/aml-kyc",
+          "https://support.changelly.com/en/support/tickets/new",
+        ],
         publicKey: {
           curve: "secp256k1",
           data: Buffer.from(
@@ -43,6 +36,33 @@ describe("fetchAndMergeProviderData", () => {
         termsOfUseUrl: "https://changelly.com/terms-of-use",
         type: "CEX",
         version: 1,
+      },
+      changelly_v2: {
+        displayName: "Changelly",
+        name: "Changelly",
+        useInExchangeApp: true,
+        publicKey: {
+          curve: "secp256k1",
+          data: Buffer.from(
+            "0480d7c0d3a9183597395f58dda05999328da6f18fabd5cda0aff8e8e3fc633436a2dbf48ecb23d40df7c3c7d3e774b77b4b5df0e9f7e08cf1cdf2dba788eb085b",
+            "hex",
+          ),
+        },
+        signature: Buffer.from(
+          "3045022100c2db00da651cfcc84702f75ab5f131a3f037592080ea750a6f665a8cb36797c802200e594938cdf2c836b34717f57487002a0588f2088f64f00a6c4d320fd37db6fa",
+          "hex",
+        ),
+        needsKYC: false,
+        type: "CEX",
+        usefulUrls: [
+          "https://changelly.com/terms-of-use",
+          "https://changelly.com/aml-kyc",
+          "https://support.changelly.com/en/support/tickets/new",
+        ],
+        termsOfUseUrl: "https://changelly.com/terms-of-use",
+        supportUrl: "https://support.changelly.com/en/support/home",
+        mainUrl: "https://changelly.com/",
+        version: 2,
       },
       changenow: {
         name: "ChangeNOW",
@@ -60,9 +80,9 @@ describe("fetchAndMergeProviderData", () => {
         version: 1,
       },
       cic: {
-        continuesInProviderLiveApp: false,
         displayName: "CIC",
         mainUrl: "https://criptointercambio.com/",
+        useInExchangeApp: true,
         name: "CIC",
         needsKYC: false,
         publicKey: {
@@ -82,8 +102,8 @@ describe("fetchAndMergeProviderData", () => {
         version: 1,
       },
       exodus: {
-        continuesInProviderLiveApp: false,
         displayName: "Exodus",
+        useInExchangeApp: true,
         mainUrl: "https://www.exodus.com/",
         name: "Exodus",
         needsKYC: false,
@@ -118,9 +138,31 @@ describe("fetchAndMergeProviderData", () => {
         ),
         version: 1,
       },
+      lifi: {
+        type: "CEX",
+        displayName: "LI.FI",
+        name: "LI.FI",
+        useInExchangeApp: true,
+        termsOfUseUrl: "https://li.fi/legal/terms-and-conditions/",
+        supportUrl: "https://discord.gg/jumperexchange",
+        mainUrl: "https://li.fi/",
+        needsKYC: false,
+        version: 2,
+        publicKey: {
+          curve: "secp256k1",
+          data: Buffer.from(
+            "04e5f4fa0f28dec3b1f52934f29bd91ab862b003a531d67ba3864e3ba4303be8e815a619ee6f78e8079acf46f0d0d8fc664be2f343d1c9a20c4d2420f51a56ccea",
+            "hex",
+          ),
+        },
+        signature: Buffer.from(
+          "3044022041344dba7353fe94a4d24a20285b5afaa8fa9a022a62e1042d059b0f1d37cbc302200a3ed5d661df0c44d78c439939c4c49868936c7357da3807a19104bcfb323d24",
+          "hex",
+        ),
+      },
       moonpay: {
-        continuesInProviderLiveApp: true,
         displayName: "MoonPay",
+        useInExchangeApp: true,
         mainUrl: "https://www.moonpay.com/",
         name: "MoonPay",
         needsKYC: true,
@@ -141,8 +183,8 @@ describe("fetchAndMergeProviderData", () => {
         version: 2,
       },
       oneinch: {
-        continuesInProviderLiveApp: true,
         displayName: "1inch",
+        useInExchangeApp: false,
         mainUrl: "https://1inch.io/",
         needsKYC: false,
         supportUrl: "https://help.1inch.io/en/",
@@ -150,34 +192,19 @@ describe("fetchAndMergeProviderData", () => {
         type: "DEX",
       },
       paraswap: {
-        continuesInProviderLiveApp: true,
         displayName: "Paraswap",
         mainUrl: "https://www.paraswap.io/",
+        useInExchangeApp: false,
         needsKYC: false,
         supportUrl: "https://help.paraswap.io/en/",
         termsOfUseUrl: "https://files.paraswap.io/tos_v4.pdf",
         type: "DEX",
       },
-      ssaitest: {
-        name: "ssaitest",
-        publicKey: {
-          curve: "secp256k1",
-          data: Buffer.from(
-            "0414d746bc20fa933d07c342d2eb0545236be68794f7a55f4b6fac0789c25c553b0a7f78011c7e79d679f9c23ff4412e15b899925079bfeb169768b4b2447b8084",
-            "hex",
-          ),
-        },
-        signature: Buffer.from(
-          "3045022100eef022406ef785114590ef28b03d598025af977a703b2e0287921fa17543e08c022057ca2e6af31f9864bb54634a42bad223d2dccf920e73ed867d59eb6759b5652d",
-          "hex",
-        ),
-        version: 1,
-      },
       thorswap: {
-        continuesInProviderLiveApp: false,
         displayName: "THORChain",
         mainUrl: "https://www.thorswap.finance/",
         name: "THORSwap",
+        useInExchangeApp: true,
         needsKYC: false,
         publicKey: {
           curve: "secp256r1",
@@ -192,8 +219,18 @@ describe("fetchAndMergeProviderData", () => {
         ),
         supportUrl: "https://ledgerhelp.swapkit.dev/",
         termsOfUseUrl: "https://docs.thorswap.finance/thorswap/resources/terms-of-service",
-        type: "CEX",
+        type: "DEX",
         version: 2,
+      },
+      uniswap: {
+        displayName: "Uniswap",
+        useInExchangeApp: false,
+        mainUrl: "https://uniswap.org/",
+        needsKYC: false,
+        supportUrl: "https://support.uniswap.org/hc/en-us/requests/new",
+        termsOfUseUrl:
+          "https://support.uniswap.org/hc/en-us/articles/30935100859661-Uniswap-Labs-Terms-of-Service",
+        type: "DEX",
       },
       wyre: {
         name: "Wyre",

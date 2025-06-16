@@ -1,5 +1,5 @@
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { AnimatedInputProps } from "@ledgerhq/native-ui/components/Form/Input/AnimatedInput";
+import type { AnimatedInputProps } from "@ledgerhq/native-ui/components/Form/Input/AnimatedInput/index";
 
 export type TxPatch<T extends Transaction> = (tx: T) => T;
 

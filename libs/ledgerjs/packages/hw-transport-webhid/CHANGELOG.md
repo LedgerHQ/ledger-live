@@ -1,5 +1,62 @@
 # @ledgerhq/hw-transport-webhid
 
+## 6.30.2
+
+### Patch Changes
+
+- Updated dependencies [[`ebbbd47`](https://github.com/LedgerHQ/ledger-live/commit/ebbbd47efe76d82047a956cb5849be5831f58772), [`f29e4ba`](https://github.com/LedgerHQ/ledger-live/commit/f29e4bae00a4bf470a0c1ca143e505b731543f95)]:
+  - @ledgerhq/logs@6.13.0
+  - @ledgerhq/devices@8.4.6
+  - @ledgerhq/hw-transport@6.31.6
+
+## 6.30.2-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`ebbbd47`](https://github.com/LedgerHQ/ledger-live/commit/ebbbd47efe76d82047a956cb5849be5831f58772)]:
+  - @ledgerhq/logs@6.13.0-next.1
+  - @ledgerhq/devices@8.4.6-next.1
+  - @ledgerhq/hw-transport@6.31.6-next.1
+
+## 6.30.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`f29e4ba`](https://github.com/LedgerHQ/ledger-live/commit/f29e4bae00a4bf470a0c1ca143e505b731543f95)]:
+  - @ledgerhq/logs@6.13.0-next.0
+  - @ledgerhq/devices@8.4.6-next.0
+  - @ledgerhq/hw-transport@6.31.6-next.0
+
+## 6.30.1
+
+### Patch Changes
+
+- Updated dependencies [[`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47), [`9081c26`](https://github.com/LedgerHQ/ledger-live/commit/9081c2648490f977469a33762a3c67bb2c2a0be5)]:
+  - @ledgerhq/errors@6.21.0
+  - @ledgerhq/devices@8.4.5
+  - @ledgerhq/hw-transport@6.31.5
+
+## 6.30.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47), [`9081c26`](https://github.com/LedgerHQ/ledger-live/commit/9081c2648490f977469a33762a3c67bb2c2a0be5)]:
+  - @ledgerhq/errors@6.21.0-next.0
+  - @ledgerhq/devices@8.4.5-next.0
+  - @ledgerhq/hw-transport@6.31.5-next.0
+
+## 6.30.0
+
+### Minor Changes
+
+- [#8502](https://github.com/LedgerHQ/ledger-live/pull/8502) [`e857228`](https://github.com/LedgerHQ/ledger-live/commit/e85722807a58ead3fcb8b06bf5bcf33cea393483) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Fix invalid channel when using multiple apps
+
+## 6.30.0-next.0
+
+### Minor Changes
+
+- [#8502](https://github.com/LedgerHQ/ledger-live/pull/8502) [`e857228`](https://github.com/LedgerHQ/ledger-live/commit/e85722807a58ead3fcb8b06bf5bcf33cea393483) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Fix invalid channel when using multiple apps
+
 ## 6.29.4
 
 ### Patch Changes

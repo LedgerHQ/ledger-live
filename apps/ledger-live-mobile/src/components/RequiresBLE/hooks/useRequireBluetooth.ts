@@ -74,6 +74,7 @@ export const useRequireBluetooth = ({
   const isAndroidLocationPermissionHookEnabled =
     isHookEnabled &&
     Platform.OS === "android" &&
+    Platform.Version <= 30 &&
     requiredFor === "scanning" &&
     androidHasBluetoothPermissions === "granted" &&
     bluetoothServicesState === "enabled";
@@ -91,6 +92,7 @@ export const useRequireBluetooth = ({
   const isAndroidEnableLocationHookEnabled =
     isHookEnabled &&
     Platform.OS === "android" &&
+    Platform.Version <= 30 &&
     requiredFor === "scanning" &&
     androidHasBluetoothPermissions === "granted" &&
     bluetoothServicesState === "enabled" &&

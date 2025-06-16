@@ -6,7 +6,9 @@ import {
 } from "@ledgerhq/types-cryptoassets";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { AccountLike } from "@ledgerhq/types-live";
-import type { ScreenName } from "~/const";
+import { NavigatorScreenParams } from "@react-navigation/native";
+import type { NavigatorName, ScreenName } from "~/const";
+import { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
 
 export type ReceiveFundsStackParamList = {
   [ScreenName.ReceiveSelectCrypto]:
@@ -76,4 +78,7 @@ export type ReceiveFundsStackParamList = {
     onSuccess?: (_?: string) => void;
     onError?: () => void;
   };
+  [NavigatorName.DeviceSelection]?: Partial<
+    NavigatorScreenParams<DeviceSelectionNavigatorParamsList>
+  >;
 };

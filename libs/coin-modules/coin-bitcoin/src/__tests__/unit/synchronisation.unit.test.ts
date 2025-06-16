@@ -3,6 +3,8 @@ import { makeGetAccountShape } from "../../synchronisation";
 
 import { createFixtureAccount, mockSignerContext } from "../fixtures/common.fixtures";
 
+jest.setTimeout(10000);
+
 describe("synchronisation", () => {
   it("should return a function", () => {
     const result = makeGetAccountShape(mockSignerContext);

@@ -1,3 +1,6 @@
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/lib/account/index";
+import { toNano } from "@ton/core";
 import BigNumber from "bignumber.js";
 import { TOKEN_TRANSFER_MAX_FEE } from "../../constants";
 import getDeviceTransactionConfig from "../../deviceTransactionConfig";
@@ -89,13 +92,27 @@ describe("deviceTransactionConfig", () => {
           },
           {
             type: "text",
-            label: "Jetton units",
-            value: jettonTransaction.amount.toString(),
+            label: "Jetton amount",
+            value: formatCurrencyUnit(
+              getAccountCurrency(account.subAccounts[0]).units[0],
+              jettonTransaction.amount,
+              {
+                showCode: true,
+                disableRounding: true,
+              },
+            ),
           },
           {
             type: "text",
             label: "Amount",
-            value: TOKEN_TRANSFER_MAX_FEE,
+            value: formatCurrencyUnit(
+              getAccountCurrency(account).units[0],
+              BigNumber(toNano(TOKEN_TRANSFER_MAX_FEE).toString()),
+              {
+                showCode: true,
+                disableRounding: true,
+              },
+            ),
           },
         ]);
       }

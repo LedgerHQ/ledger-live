@@ -28,6 +28,8 @@ export async function buildOptimisticOperation(
     transactionSequenceNumber: transactionSequenceNumber?.plus(1).toNumber(),
     extra: {
       ledgerOpType: type,
+      blockTime: new Date(),
+      index: "0",
     },
   };
 

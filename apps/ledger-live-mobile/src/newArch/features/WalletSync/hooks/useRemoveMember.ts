@@ -5,7 +5,7 @@ import {
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useTrustchainSdk } from "./useTrustchainSdk";
-import { TrustchainNotAllowed } from "@ledgerhq/ledger-key-ring-protocol/errors";
+import { TrustchainEjected, TrustchainNotAllowed } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { TrustchainMember, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useCallback } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -44,7 +44,7 @@ export function useRemoveMember({ device, member }: Props): DrawerProps {
         if (!member) return;
         if (!device) return;
         if (!trustchain || !memberCredentials) {
-          throw new Error("trustchain or memberCredentials is not set");
+          throw new TrustchainEjected("trustchain or memberCredentials is not set");
         }
         const newTrustchain = await sdk.removeMember(
           device.deviceId,

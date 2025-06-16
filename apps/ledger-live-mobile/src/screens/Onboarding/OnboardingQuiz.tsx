@@ -9,9 +9,9 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 
-import quizImage1 from "~/images/illustration/Light/_056.png";
-import quizImage2 from "~/images/illustration/Light/_021.png";
-import quizImage3 from "~/images/illustration/Light/_055.png";
+import quizImage1 from "~/images/illustration/Light/_056.webp";
+import quizImage2 from "~/images/illustration/Light/_021.webp";
+import quizImage3 from "~/images/illustration/Light/_055.webp";
 
 import OnboardingQuizItem from "./OnboardingQuizItem";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";

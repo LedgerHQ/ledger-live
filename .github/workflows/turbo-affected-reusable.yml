@@ -1,4 +1,4 @@
-name: Turbo Affected
+name: "[All Platforms] - Determine Affected - Called"
 
 on:
   workflow_call:
@@ -35,13 +35,12 @@ jobs:
       packages: ${{ steps.affected.outputs.packages }}
       paths: ${{ steps.affected.outputs.paths }}
     steps:
-      - name: Checkout feature branch
+      - name: Checkout head branch
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Fetch develop branch
+  
+      - name: Fetch base branch
         run: |
-          git fetch origin develop:develop --depth=1
+          git fetch origin ${{ inputs.base_branch }}:${{ inputs.base_branch }} --depth=1
 
       - uses: actions/github-script@v7
         id: clean-refs
@@ -59,4 +58,4 @@ jobs:
       - uses: LedgerHQ/ledger-live/tools/actions/turbo-affected@develop
         id: affected
         with:
-          ref: ${{ format('origin/{0}', inputs.base_branch) }}
+          ref: ${{ format('origin/{0}', env.base_branch) }}

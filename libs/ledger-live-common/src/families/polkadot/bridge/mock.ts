@@ -13,6 +13,7 @@ import {
   isInvalidRecipient,
 } from "../../../bridge/mockHelpers";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import { getSerializedAddressParameters } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { assignToAccountRaw, assignFromAccountRaw } from "@ledgerhq/coin-polkadot/serialization";
 import { hydrate } from "@ledgerhq/coin-polkadot/preload";
 
@@ -98,6 +99,7 @@ const accountBridge: AccountBridge<Transaction> = {
   assignFromAccountRaw,
   signOperation,
   broadcast,
+  getSerializedAddressParameters,
 };
 
 const preload = () => {

@@ -5,7 +5,8 @@ export type Language =
   | "brazilian"
   | "german"
   | "russian"
-  | "turkish";
+  | "turkish"
+  | "thai";
 
 export type LanguagePackage = {
   language: Language;
@@ -35,6 +36,7 @@ export const languageIds: { [key in Language]: number } = {
   german: 0x04,
   russian: 0x05,
   turkish: 0x06,
+  thai: 0x07,
 };
 
 export const idsToLanguage: {
@@ -47,4 +49,5 @@ export const idsToLanguage: {
   0x04: "german",
   0x05: "russian",
   0x06: "turkish",
+  0x07: "thai",
 };

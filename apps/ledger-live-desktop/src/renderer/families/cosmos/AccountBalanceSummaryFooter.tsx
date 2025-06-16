@@ -12,9 +12,10 @@ import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
-import { CosmosAPI } from "@ledgerhq/coin-cosmos/api/Cosmos";
-import { SubAccount } from "@ledgerhq/types-live";
+import { CosmosAPI } from "@ledgerhq/coin-cosmos/network/Cosmos";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -52,7 +53,7 @@ const AmountValue = styled(Text).attrs(() => ({
 }))``;
 
 type Props = {
-  account: CosmosAccount | SubAccount;
+  account: CosmosAccount | TokenAccount;
 };
 
 const usdcUnit: Unit = {
@@ -100,6 +101,10 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
 
   const isDyDx = account.currency.id === "dydx";
 
+  const coinConfig = getCurrencyConfiguration(account.currency);
+  const disableDelegation =
+    "disableDelegation" in coinConfig && coinConfig.disableDelegation === true;
+
   return (
     <Wrapper>
       <BalanceDetail>
@@ -115,19 +120,21 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
           <Discreet>{spendableBalance}</Discreet>
         </AmountValue>
       </BalanceDetail>
-      <BalanceDetail>
-        <ToolTip content={<Trans i18nKey="account.delegatedTooltip" />}>
-          <TitleWrapper>
-            <Title>
-              <Trans i18nKey="account.delegatedAssets" />
-            </Title>
-            <InfoCircle size={13} />
-          </TitleWrapper>
-        </ToolTip>
-        <AmountValue>
-          <Discreet>{delegatedBalance}</Discreet>
-        </AmountValue>
-      </BalanceDetail>
+      {!disableDelegation && (
+        <BalanceDetail>
+          <ToolTip content={<Trans i18nKey="account.delegatedTooltip" />}>
+            <TitleWrapper>
+              <Title>
+                <Trans i18nKey="account.delegatedAssets" />
+              </Title>
+              <InfoCircle size={13} />
+            </TitleWrapper>
+          </ToolTip>
+          <AmountValue>
+            <Discreet>{delegatedBalance}</Discreet>
+          </AmountValue>
+        </BalanceDetail>
+      )}
       {/* FIXME: this is a hack to display USDC claimableRewards for dYdX until ibc tokens are properly handle in LL */}
       {isDyDx && (
         <BalanceDetail>
@@ -144,7 +151,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
           </AmountValue>
         </BalanceDetail>
       )}
-      {_unbondingBalance.gt(0) && (
+      {!disableDelegation && _unbondingBalance.gt(0) && (
         <BalanceDetail>
           <ToolTip
             content={

@@ -16,7 +16,10 @@ import {
   sync,
   isInvalidRecipient,
 } from "../../../bridge/mockHelpers";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import {
+  getSerializedAddressParameters,
+  updateTransaction,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { assignToAccountRaw, assignFromAccountRaw } from "@ledgerhq/coin-algorand/serialization";
 import { initAccount } from "@ledgerhq/coin-algorand/initAccount";
@@ -94,7 +97,7 @@ const prepareTransaction = async (a, t) => {
 const accountBridge: AccountBridge<AlgorandTransaction, any> = {
   estimateMaxSpendable,
   createTransaction,
-  updateTransaction: defaultUpdateTransaction,
+  updateTransaction,
   getTransactionStatus,
   prepareTransaction,
   sync,
@@ -104,6 +107,7 @@ const accountBridge: AccountBridge<AlgorandTransaction, any> = {
   initAccount,
   signOperation,
   broadcast,
+  getSerializedAddressParameters,
 };
 const currencyBridge: CurrencyBridge = {
   scanAccounts,

@@ -7,13 +7,14 @@ import type {
   Transaction,
   NetworkInfo,
   UtxoStrategy,
+  BtcOperation,
 } from "./types";
 import { $Shape } from "utility-types";
 import type { TX, Input as WalletInput, Output as WalletOutput } from "./wallet-btc";
 import { BigNumber } from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import type { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import type { Account, OperationType } from "@ledgerhq/types-live";
 
 // correspond ~ to min relay fees but determined empirically for a tx to be accepted by network
 const minFees: Partial<Record<CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo", number>> = {
@@ -163,14 +164,41 @@ export const perCoinLogic: Partial<
   },
 };
 
+/**
+ * Derives a transaction sequence number (nonce) from a list of account inputs.
+ *
+ * This is used to compute the `transactionSequenceNumber` for Bitcoin-like UTXO transactions.
+ *
+ * - Only inputs that belong to the current account are considered (`accountInputs`)
+ * - If an input is missing a `sequence`, it is assumed to be `0xfffffffe` (the default used by Bitcoin Core)
+ *   - See: https://bitcoin.stackexchange.com/questions/48384/why-bitcoin-core-creates-time-locked-transactions-by-default
+ *   - See: https://learnmeabitcoin.com/technical/transaction/input/sequence/
+ * - The sequence number returned is the **minimum** among all inputs (most conservative RBF/locktime signal)
+ *
+ * ### Rationale:
+ * - In Bitcoin, `nSequence = 0xffffffff` disables both RBF and locktime
+ * - `nSequence < 0xffffffff` enables locktime, and may signal RBF (if any input does, the whole tx is replaceable per BIP 125)
+ * - Using the minimum allows accurate inference of RBF/locktime behavior based on account-controlled inputs
+ * - If no inputs are present (e.g., receive-only or watch-only tx), returns `undefined`
+ *
+ * @param accountInputs - The list of transaction inputs owned by the user's account
+ * @returns The derived transaction sequence number, or `undefined` if no relevant inputs
+ */
+export function inferTransactionSequenceNumberFromInputs(
+  accountInputs: Array<{ sequence?: number }>,
+): number | undefined {
+  if (accountInputs.length === 0) return undefined;
+  return Math.min(...accountInputs.map(input => input.sequence ?? 0xfffffffe));
+}
+
 export const mapTxToOperations = (
   tx: TX,
   currencyId: CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo",
   accountId: string,
   accountAddresses: Set<string>,
   changeAddresses: Set<string>,
-): $Shape<Operation[]> => {
-  const operations: Operation[] = [];
+): $Shape<BtcOperation[]> => {
+  const operations: BtcOperation[] = [];
   const txId = tx.id;
   const fee = new BigNumber(tx.fees ?? 0);
   const blockHeight = tx.block?.height;
@@ -184,8 +212,10 @@ export const mapTxToOperations = (
   const accountInputs: WalletInput[] = [];
   const accountOutputs: WalletOutput[] = [];
   const syncReplaceAddress = perCoinLogic[currencyId]?.syncReplaceAddress;
+  const inputs = new Set<`${string}-${number}`>(); // txid-outputIndex
 
   for (const input of tx.inputs) {
+    inputs.add(`${input.output_hash}-${input.output_index}`);
     if (input.address) {
       senders.add(syncReplaceAddress ? syncReplaceAddress(input.address) : input.address);
 
@@ -199,9 +229,7 @@ export const mapTxToOperations = (
     }
   }
 
-  // All inputs of a same transaction have the same sequence
-  const transactionSequenceNumber =
-    (accountInputs.length > 0 && accountInputs[0].sequence) || undefined;
+  const transactionSequenceNumber = inferTransactionSequenceNumberFromInputs(accountInputs);
 
   const hasSpentNothing = value.eq(0);
 
@@ -303,7 +331,7 @@ export const mapTxToOperations = (
         accountId,
         date,
         hasFailed,
-        extra: {},
+        extra: { inputs: Array.from(inputs) },
       });
     }
   }

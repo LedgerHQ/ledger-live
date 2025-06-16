@@ -63,7 +63,7 @@ export const defaultImplementationConfig: PollingImplementationConfig = {
   pollingFrequency: 2000,
   initialWaitTime: 5000,
   reconnectWaitTime: 5000,
-  connectionTimeout: getEnv("MOCK") ? 60000 : 20000,
+  connectionTimeout: getEnv("DETOX") ? 60000 : 20000,
 };
 type Implementation = <EmittedEvent, GenericRequestType>(
   params: PollingImplementationParams<GenericRequestType, EmittedEvent>,

@@ -78,6 +78,7 @@ const Step0Welcome: React.FC<
         isOpened={modalOpened}
         onClose={closeModal}
         deviceModelId={deviceModelId}
+        referral={route?.params?.referral}
       />
     </SafeAreaView>
   );

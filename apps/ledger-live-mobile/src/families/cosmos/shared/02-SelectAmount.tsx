@@ -153,6 +153,7 @@ function DelegationAmount({ navigation, route }: Props) {
                 onChange={setValue}
                 inputStyle={styles.inputStyle}
                 hasError={isAmountOutOfRange || isNotEnoughBalance}
+                testID="cosmos-delegation-amount-input"
               />
               <View style={styles.ratioButtonContainer}>
                 {ratioButtons.map(({ label, value: v }) => (
@@ -176,7 +177,7 @@ function DelegationAmount({ navigation, route }: Props) {
                     <LText
                       style={[styles.ratioLabel]}
                       color={value.eq(v) ? colors.neutral.c100 : colors.neutral.c60}
-                      testID={"delegate-ratio-" + label}
+                      testID={"cosmos-delegate-ratio-" + label}
                     >
                       {label}
                     </LText>

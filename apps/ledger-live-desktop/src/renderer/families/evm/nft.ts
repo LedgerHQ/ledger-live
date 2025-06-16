@@ -13,13 +13,36 @@ export const injectNftIntoTransaction = (
   transaction: EvmTransaction,
   nftProperties: Partial<NftProperties>,
   standard?: NFTStandard,
-): EvmTransaction => ({
-  ...transaction,
-  mode: (standard ? standard.toLowerCase() : transaction.mode) as Lowercase<NFTStandard>,
-  nft: {
-    collectionName: transaction.nft?.collectionName ?? "",
-    contract: nftProperties?.contract ?? transaction.nft?.contract ?? "",
-    tokenId: nftProperties?.tokenId ?? transaction.nft?.tokenId ?? "",
-    quantity: nftProperties?.quantity ?? transaction.nft?.quantity ?? new BigNumber(NaN),
-  },
-});
+): EvmTransaction => {
+  if (!standard) {
+    if (transaction.mode === "send") {
+      throw new Error("Expected an NFT transaction but received a Send mode transactions");
+    }
+
+    return {
+      ...transaction,
+      mode: transaction.mode,
+      nft: {
+        collectionName: transaction.nft?.collectionName ?? "",
+        contract: nftProperties?.contract ?? transaction.nft?.contract ?? "",
+        tokenId: nftProperties?.tokenId ?? transaction.nft?.tokenId ?? "",
+        quantity: nftProperties?.quantity ?? transaction.nft?.quantity ?? new BigNumber(NaN),
+      },
+    };
+  }
+
+  if (standard === "SPL") {
+    throw new Error("Expected an ERC721 or ERC1155 standard but received an SPL standard");
+  }
+
+  return {
+    ...transaction,
+    mode: <Lowercase<typeof standard>>standard.toLowerCase(),
+    nft: {
+      collectionName: transaction.nft?.collectionName ?? "",
+      contract: nftProperties?.contract ?? transaction.nft?.contract ?? "",
+      tokenId: nftProperties?.tokenId ?? transaction.nft?.tokenId ?? "",
+      quantity: nftProperties?.quantity ?? transaction.nft?.quantity ?? new BigNumber(NaN),
+    },
+  };
+};

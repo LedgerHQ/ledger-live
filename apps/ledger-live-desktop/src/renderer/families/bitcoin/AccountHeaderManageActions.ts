@@ -1,13 +1,15 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 
-import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router";
 import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/lib/types";
 import { TokenAccount } from "@ledgerhq/types-live";
 import IconCoins from "~/renderer/icons/Coins";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
+import { useStake } from "LLD/hooks/useStake";
+import { useSelector } from "react-redux";
+import { walletSelector } from "~/renderer/reducers/wallet";
 
 type Props = {
   account: BitcoinAccount | TokenAccount;
@@ -15,35 +17,42 @@ type Props = {
 };
 
 const AccountHeaderActions = ({ account, parentAccount }: Props) => {
-  const stakeProgramsFeatureFlag = useFeature("stakePrograms");
-  const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
-  const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
-  const availableOnStake = stakeProgramsEnabled && listFlag.includes("bitcoin");
   const history = useHistory();
-  const { t } = useTranslation();
+  const { getCanStakeCurrency, getRouteToPlatformApp } = useStake();
+  const availableOnStake = getCanStakeCurrency("bitcoin") || getCanStakeCurrency("bitcoin_testnet");
+  const walletState = useSelector(walletSelector);
+  const label = useGetStakeLabelLocaleBased();
   const mainAccount = getMainAccount(account, parentAccount);
   const {
     bitcoinResources,
     currency: { id: currencyId },
   } = mainAccount;
-  if (!bitcoinResources || parentAccount || currencyId !== "bitcoin") return null;
+  if (
+    !bitcoinResources ||
+    parentAccount ||
+    (currencyId !== "bitcoin" && currencyId !== "bitcoin_testnet")
+  )
+    return null;
+
+  const routeToPlatformApp = getRouteToPlatformApp(account, walletState, parentAccount);
+
+  const trackingProperties = {
+    ...stakeDefaultTrack,
+    delegation: "stake",
+    page: "Page Account",
+    button: "delegate",
+    provider: routeToPlatformApp?.state.appId,
+    currency: mainAccount.currency.ticker,
+  };
 
   const stakeOnClick = () => {
-    const value = "/platform/acre";
+    track("button_clicked2", trackingProperties);
 
-    track("button_clicked2", {
-      ...stakeDefaultTrack,
-      delegation: "stake",
-      page: "Page Account",
-      button: "delegate",
-      provider: "Acre",
-      currency: "BTC",
-    });
     history.push({
-      pathname: value,
+      pathname: routeToPlatformApp?.pathname,
       state: {
-        accountId: account.id,
         returnTo: `/account/${account.id}`,
+        ...routeToPlatformApp?.state,
       },
     });
   };
@@ -53,7 +62,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
         {
           key: "Stake",
           icon: IconCoins,
-          label: t("accounts.contextMenu.yield"),
+          label,
           event: "button_clicked2",
           eventProperties: {
             button: "stake",

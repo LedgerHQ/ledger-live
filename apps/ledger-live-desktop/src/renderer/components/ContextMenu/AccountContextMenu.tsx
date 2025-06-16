@@ -18,8 +18,11 @@ import { isCurrencySupported } from "~/renderer/screens/exchange/config";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { ContextMenuItemType } from "./ContextMenuWrapper";
 import { IconsLegacy } from "@ledgerhq/react-ui";
-import { accountStarredSelector } from "~/renderer/reducers/wallet";
+import { accountStarredSelector, walletSelector } from "~/renderer/reducers/wallet";
 import { State } from "~/renderer/reducers";
+import { useStake } from "LLD/hooks/useStake";
+import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
+import IconCoins from "~/renderer/icons/Coins";
 
 type Props = {
   account: AccountLike;
@@ -44,6 +47,10 @@ export default function AccountContextMenu({
   const isStarred = useSelector((state: State) =>
     accountStarredSelector(state, { accountId: account.id }),
   );
+
+  const { getCanStakeCurrency, getRouteToPlatformApp } = useStake();
+  const stakeLabel = useGetStakeLabelLocaleBased();
+  const walletState = useSelector(walletSelector);
 
   const menuItems = useMemo(() => {
     const currency = getAccountCurrency(account);
@@ -120,8 +127,25 @@ export default function AccountContextMenu({
             state: {
               defaultCurrency: currency,
               defaultAccount: account,
+              defaultAmountFrom: "0",
               defaultParentAccount: parentAccount,
               from: history.location.pathname,
+            },
+          });
+        },
+      });
+    }
+    const routeToStake = getRouteToPlatformApp(account, walletState, parentAccount);
+    if (getCanStakeCurrency(currency.id) && routeToStake) {
+      items.push({
+        label: stakeLabel,
+        Icon: IconCoins,
+        callback: () => {
+          setTrackingSource("account context menu");
+          history.push({
+            pathname: routeToStake.pathname,
+            state: {
+              ...routeToStake.state,
             },
           });
         },
@@ -167,11 +191,15 @@ export default function AccountContextMenu({
     account,
     parentAccount,
     swapSelectableCurrencies,
+    getRouteToPlatformApp,
+    walletState,
+    getCanStakeCurrency,
     withStar,
     dispatch,
     history,
-    refreshAccountsOrdering,
+    stakeLabel,
     isStarred,
+    refreshAccountsOrdering,
   ]);
   const currency = getAccountCurrency(account);
   return (

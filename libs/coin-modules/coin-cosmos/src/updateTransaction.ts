@@ -1,4 +1,4 @@
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { updateTransaction as defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { Transaction } from "./types";
 

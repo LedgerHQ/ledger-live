@@ -1,5 +1,5 @@
 import { AccountBridge } from "@ledgerhq/types-live";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { updateTransaction as defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { Transaction } from "./types";
 
 export const updateTransaction: AccountBridge<Transaction>["updateTransaction"] = (tx, patch) => {

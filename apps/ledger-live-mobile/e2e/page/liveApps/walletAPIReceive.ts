@@ -1,5 +1,3 @@
-import { tapByText } from "../../helpers";
-
 export default class WalletAPIReceive {
   continueWithoutDevice() {
     return tapByText("Continue without my device");

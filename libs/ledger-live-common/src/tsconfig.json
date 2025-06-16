@@ -7,7 +7,6 @@
     "noImplicitThis": false,
     "downlevelIteration": true,
     "isolatedModules": false,
-    "module": "commonjs",
     "jsx": "react",
     "lib": ["es2020", "dom"],
     "rootDir": ".",

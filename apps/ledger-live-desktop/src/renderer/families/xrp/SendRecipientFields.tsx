@@ -8,9 +8,10 @@ type Props = {
   onChange: (a: Transaction) => void;
   transaction: Transaction;
   account: Account;
+  autoFocus?: boolean;
 };
 const uint32maxPlus1 = BigNumber(2).pow(32);
-const TagField = ({ onChange, account, transaction }: Props) => {
+const TagField = ({ onChange, account, transaction, autoFocus }: Props) => {
   const onChangeTag = useCallback(
     (str: string) => {
       const bridge = getAccountBridge(account);
@@ -31,7 +32,13 @@ const TagField = ({ onChange, account, transaction }: Props) => {
     },
     [onChange, account, transaction],
   );
-  return <MemoTagField value={String(transaction.tag || "")} onChange={onChangeTag} />;
+  return (
+    <MemoTagField
+      value={String(transaction.tag || "")}
+      onChange={onChangeTag}
+      autoFocus={autoFocus}
+    />
+  );
 };
 export default {
   component: TagField,

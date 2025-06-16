@@ -2,12 +2,10 @@ import React from "react";
 import { Route } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components";
 import Box from "~/renderer/components/Box";
-import SwapForm from "./Form";
 import SwapHistory from "./History";
 import SwapNavbar from "./Navbar";
 
 import { SwapApp } from "./App";
-import { useIsSwapLiveFlagEnabled } from "./hooks/useIsSwapLiveFlagEnabled";
 const Body = styled(Box)`
   flex: 1;
 `;
@@ -48,16 +46,12 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const Swap2 = () => {
-  const isDemo3Enabled = useIsSwapLiveFlagEnabled("ptxSwapLiveAppDemoThree");
-
-  const SwapPage = isDemo3Enabled ? SwapApp : SwapForm;
-
   return (
     <Body>
       <GlobalStyle />
       <SwapNavbar />
       <Main>
-        <Route path="/swap" component={SwapPage} exact />
+        <Route path="/swap" component={SwapApp} exact />
         <Route path="/swap/history" component={SwapHistory} exact />
       </Main>
     </Body>

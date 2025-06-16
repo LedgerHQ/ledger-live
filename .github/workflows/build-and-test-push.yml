@@ -1,4 +1,4 @@
-name: "[Push] Build and Test"
+name: "[All Platforms] - Build and Test - Push"
 on:
   push:
     branches:
@@ -47,13 +47,13 @@ jobs:
     secrets: inherit
 
   test-design-system:
-    name: "Test Design System"
+    name: "Test UI Libs"
     uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@develop
     secrets: inherit
 
-  test-web-tools:
-    name: "Test Web Tools"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-web-tools-reusable.yml@develop
+  build-web-tools:
+    name: "Build Web Tools"
+    uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@develop
     secrets: inherit
 
   test-cli:
@@ -72,7 +72,7 @@ jobs:
       - test-mobile-e2e
       - test-libraries
       - test-design-system
-      - test-web-tools
+      - build-web-tools
       - test-cli
     runs-on: ubuntu-22.04
     if: always() && !cancelled()

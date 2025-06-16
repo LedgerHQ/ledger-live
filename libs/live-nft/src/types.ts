@@ -10,6 +10,13 @@ export type NFTResourceQueued = {
   updatedAt?: undefined;
 };
 
+type NFTOperation = {
+  contract: string;
+  currencyId: string;
+};
+
+export type NFTOperations = Record<string, NFTOperation>;
+
 export type NFTResourceLoading = {
   status: "loading";
   metadata?: null;
@@ -79,3 +86,10 @@ export type Batch = {
   resolvers: Array<BatchElement["resolve"]>;
   rejecters: Array<BatchElement["reject"]>;
 };
+
+export enum NftStatus {
+  spam = "spam",
+  notSpam = "notSpam",
+  blacklisted = "blacklisted",
+  whitelisted = "whitelisted",
+}

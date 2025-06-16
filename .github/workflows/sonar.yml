@@ -1,14 +1,8 @@
-name: "[Code Quality Check] Sonar Scan"
+name: "[All Platforms] - SonarQube Scan - Scheduled"
 
 on:
-  workflow_dispatch:
-    inputs:
-        ref:
-          description: "Which (branch or tag) you want to perform a sonar scan ?"
-          required: false
-          default: develop
   schedule:
-    - cron: "9 19 * * 1-5" # every working day at 7pm we will do a daily scan on develop
+    - cron: "0 2 * * 1-5" # every working day at 2am we will do a daily scan on develop
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -39,8 +33,9 @@ jobs:
         env:
           LANG: en_US.UTF-8
         run: |
-          pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --unsafe-perm
           pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+          pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+
       - name: Build dependencies
         run: |
           pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
@@ -58,7 +53,8 @@ jobs:
         run: |
           cat apps/ledger-live-desktop/coverage/lld-sonar-executionTests-report.xml > ./lld-sonar-executionTests-report.xml
           cat apps/ledger-live-mobile/coverage/llm-sonar-executionTests-report.xml > ./llm-sonar-executionTests-report.xml
-      - uses: sonarsource/sonarqube-scan-action@master
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarcloud-github-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
