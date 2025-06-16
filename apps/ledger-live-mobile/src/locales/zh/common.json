@@ -3369,7 +3369,8 @@
       "description" : "安全出售加密货币以换取现金。"
     },
     "exchange" : {
-      "title" : "买入 / 卖出"
+      "title" : "买入 / 卖出",
+      "connectingTo" : "正在连接到 {{provider}}"
     },
     "stake" : {
       "title" : "权益质押",
@@ -7438,5 +7439,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "所在地区不可用",
+    "description" : "此地区无法使用 Ledger 钱包。",
+    "learnMore" : "了解更多"
   }
 }
