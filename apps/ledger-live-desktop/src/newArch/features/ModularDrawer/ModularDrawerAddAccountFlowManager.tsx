@@ -20,16 +20,16 @@ type Props = {
   currency: CryptoOrTokenCurrency;
   drawerConfiguration?: EnhancedModularDrawerConfiguration;
   onConnect?: (result: AppResult) => void;
-  onScannedAccounts?: (accounts: Account[]) => void;
 };
 
-const ModularDrawerAddAccountFlowManager = ({ currency, onConnect, onScannedAccounts }: Props) => {
+const ModularDrawerAddAccountFlowManager = ({ currency, onConnect }: Props) => {
   const [currentStep, setCurrentStep] = useState<ModularDrawerAddAccountStep>(
     MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE,
   );
 
   const [connectAppResult, setConnectAppResult] = useState<AppResult | null>(null);
-  const [selectedAccounts, setSelectedAccounts] = useState<Account[]>([]);
+
+  const cryptoCurrency = currency.type === "CryptoCurrency" ? currency : currency.parentCurrency;
 
   const handleBack = useMemo(() => {
     switch (currentStep) {
@@ -57,7 +57,7 @@ const ModularDrawerAddAccountFlowManager = ({ currency, onConnect, onScannedAcco
       case "CONNECT_YOUR_DEVICE":
         return (
           <ConnectYourDevice
-            currency={currency}
+            currency={cryptoCurrency}
             onConnect={result => {
               setConnectAppResult(result);
               setCurrentStep("SCAN_ACCOUNTS");
@@ -71,17 +71,12 @@ const ModularDrawerAddAccountFlowManager = ({ currency, onConnect, onScannedAcco
         if (!connectAppResult) {
           throw new Error("Missing connectAppResult");
         }
-        if (currency.type !== "CryptoCurrency") {
-          throw new Error("ScanAccounts only supports CryptoCurrency");
-        }
         // TODO should pass this down? analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW}
         return (
           <ScanAccounts
-            currency={currency}
+            currency={cryptoCurrency}
             deviceId={connectAppResult.device.deviceId}
-            onComplete={accounts => {
-              setSelectedAccounts(accounts);
-              onScannedAccounts?.(accounts);
+            onComplete={() => {
               setCurrentStep("ACCOUNTS_ADDED");
             }}
           />

@@ -1,16 +1,16 @@
 import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { prepareCurrency } from "~/renderer/bridge/cache";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
 import { MODULAR_DRAWER_ADD_ACCOUNT_CATEGORY } from "../../types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 interface Props {
   analyticsPropertyFlow?: string;
-  currency: CryptoOrTokenCurrency;
+  currency: CryptoCurrency;
   onConnect: (_: AppResult) => void;
 }
 
@@ -21,24 +21,8 @@ export const ConnectYourDevice = ({
 }: Readonly<Props>) => {
   // preload currency ahead of time
   useEffect(() => {
-    if (currency.type === "CryptoCurrency") {
-      prepareCurrency(currency);
-    }
+    prepareCurrency(currency);
   }, [currency]);
-
-  const cryptoCurrency = useMemo(
-    () => (currency.type === "TokenCurrency" ? currency.parentCurrency : currency),
-    [currency],
-  );
-
-  const currencyName = cryptoCurrency.name;
-
-  const request = useMemo(
-    () => ({
-      currency: cryptoCurrency,
-    }),
-    [cryptoCurrency],
-  );
 
   const action = useConnectAppAction();
 
@@ -47,11 +31,11 @@ export const ConnectYourDevice = ({
       <TrackPage
         category={MODULAR_DRAWER_ADD_ACCOUNT_CATEGORY}
         name="ConnectYourDevice"
-        currencyName={currencyName}
+        currencyName={currency.name}
       />
       <DeviceAction
         action={action}
-        request={request}
+        request={{ currency }}
         onResult={onConnect}
         // onError={e => {
         //   console.log("ERROR", e);
