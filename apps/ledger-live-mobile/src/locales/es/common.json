@@ -3193,6 +3193,12 @@
         "placeholder" : "Información del proveedor del exchange en formato CAL",
         "currentSetting" : "Ajuste actual",
         "error" : "Valor de CAL no válido"
+      },
+      "customCALRef" : {
+        "title" : "Referencia CAL personalizada",
+        "description" : "Especifica una rama, commit o etiqueta personalizados para usarlos con todas las solicitudes CAL",
+        "enable" : "Activar referencia CAL personalizada",
+        "disable" : "Desactivar referencia CAL personalizada"
       }
     },
     "debug" : {
@@ -7438,5 +7444,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Ubicación no disponible",
+    "description" : "Las billeteras Ledger no están disponibles en esta ubicación.",
+    "learnMore" : "Más información"
   }
 }
