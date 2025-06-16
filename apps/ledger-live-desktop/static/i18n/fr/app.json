@@ -710,7 +710,7 @@
         },
         "accounts" : {
           "title" : "Comptes",
-          "existing" : "Comptes existants à rechercher",
+          "existing" : "Comptes à rechercher",
           "toScan" : "Comptes à rechercher",
           "toScanDescription" : "Comptes à rechercher pour chaque type d’adresse",
           "toScanTooltip" : "Augmentez seulement si vous avez plus de 10 comptes BTC. La recherche initiale sera plus lente. "
@@ -1782,10 +1782,10 @@
     "fullNodeReadyInfo" : "Les comptes seront ajoutés en utilisant votre nœud Bitcoin.",
     "fullNodeConfigure" : "Configurer le nœud",
     "tokensTip" : "{{token}} ({{ticker}}) est un token {{tokenType}}.\n Vous pouvez recevoir ces tokens directement sur un compte {{currency}}.",
-    "accountToImportSubtitle_plural" : "Ajouter des comptes existants",
+    "accountToImportSubtitle_plural" : "Ajouter des comptes",
     "selectAll" : "Sélectionner tout ({{count}})",
     "unselectAll" : "Désélectionner tout ({{count}})",
-    "noAccountToImport" : "Aucun compte {{currencyName}} existant à ajouter",
+    "noAccountToImport" : "Aucun compte {{currencyName}} à ajouter",
     "success" : "Compte bien ajouté",
     "success_plural" : "Comptes bien ajoutés",
     "successDescription" : "Ajoutez davantage de comptes ou retournez au Portefeuille.",
@@ -1808,7 +1808,7 @@
     },
     "sections" : {
       "importable" : {
-        "title" : "Ajouter un compte existant"
+        "title" : "Ajouter un compte"
       },
       "creatable" : {
         "title" : "Ajouter un nouveau compte"
@@ -1925,7 +1925,8 @@
       "payoutNetworkFees" : "Frais de réception",
       "payoutNetworkFeesTooltip" : "Ce montant n’apparaîtra pas sur votre appareil.",
       "acceptTerms" : "En validant cette transaction, j’accepte\n<0>les Conditions d’utilisation de {{provider}}</0>.",
-      "exodusAcceptTerms" : "Pour traiter les échanges, Exodus fait appel à des tiers.\nEn validant cette transaction, j’accepte <0>les Conditions d’utilisation d’Exodus</0>."
+      "exodusAcceptTerms" : "Pour traiter les échanges, Exodus fait appel à des tiers.\nEn validant cette transaction, j’accepte <0>les Conditions d’utilisation d’Exodus</0>.",
+      "changellyAcceptTerms" : "En cliquant sur Échanger avec Changelly, vous acceptez les <0>Conditions d’utilisation</0>\nde Changelly et sa <1>Politique LCB-FT/KYC</1>. Changelly peut mettre en place\ndes procédures LCB-FT/KYC qui, dans certains cas,\npeuvent avoir un impact sur l’aboutissement de votre transaction. Le cas échéant, vous devez contacter l’<2>assistance clientèle</2> de Changelly."
     },
     "swap2" : {
       "amountSent" : "Montant à envoyer",
@@ -4405,6 +4406,8 @@
       "mockAppUpdateDesc" : "Permet d’afficher « Mises à jour d’apps disponibles » dans My Ledger, pour réinstaller la même version d’une app.",
       "catalogUrl" : "Définir le fournisseur du Catalogue d’apps",
       "catalogUrlDesc" : "Saisissez l’URL de votre fournisseur du Catalogue personnalisé.",
+      "customCALRef" : "Référence CAL personnalisée",
+      "customCALRefDesc" : "Définissez une branche, un commit ou un tag personnalisé à utiliser pour toutes les requêtes CAL.",
       "enablePlatformDevTools" : "Activer les Outils de développement Platform",
       "enablePlatformDevToolsDesc" : "Autorisez la fenêtre Outils de développement Platform.",
       "customLockScreen" : "Composants de l’écran de verrouillage personnalisé",
@@ -4587,7 +4590,7 @@
     },
     "removeAccountModal" : {
       "title" : "Supprimer le compte",
-      "desc" : "Cela n’a pas d’effet sur vos crypto-actifs. Vous pourrez de nouveau ajouter vos comptes existants.",
+      "desc" : "Cela n’a pas d’effet sur vos crypto-actifs. Vous pourrez de nouveau ajouter vos comptes.",
       "delete" : "Retirer du Portefeuille",
       "warning" : "L’historique de vos transactions d’échange en lien avec ce compte sera effacé."
     },
@@ -6594,6 +6597,19 @@
     },
     "AmountTooSmall" : {
       "title" : "Le montant minimal requis pour cette transaction est {{amount}}"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "Restez en sécurité",
+      "description" : "Cette transaction implique une adresse de wallet faisant l’objet de sanctions et ne peut pas être traitée.<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForSendError" : {
+      "title" : "Cette transaction implique une adresse de wallet faisant l’objet de sanctions et ne peut pas être traitée.<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForStakingError" : {
+      "title" : "Cette transaction implique une adresse de wallet faisant l’objet de sanctions<br/> et ne peut pas être traitée.<br/>-- {{sanctionedAddress}}<br/>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "Cette transaction implique une adresse de wallet faisant l’objet de sanctions et ne peut pas être traitée."
     }
   },
   "cryptoOrg" : {
@@ -7057,12 +7073,9 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "Rechercher",
-    "assetFlow" : {
-      "selectTemplate" : "Sélectionner {{dynamic}}",
-      "asset" : "un actif",
-      "network" : "un réseau",
-      "account" : "un compte"
-    }
+    "selectAsset" : "Sélectionner un actif",
+    "selectNetwork" : "Sélectionner un réseau",
+    "selectAccount" : "Sélectionner un compte"
   },
   "nftEntryPoint" : {
     "title" : "NFT (tokens non fongibles)",
@@ -7070,5 +7083,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Région indisponible",
+    "description" : "L’application n’est pas disponible dans ce pays/région.",
+    "learnMore" : "En savoir plus"
   }
 }
