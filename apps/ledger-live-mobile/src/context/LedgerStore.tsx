@@ -14,6 +14,7 @@ import {
   getMarketState,
   getTrustchainState,
   getWalletExportState,
+  getLargeMoverState,
 } from "../db";
 import { importSettings, setSupportedCounterValues } from "~/actions/settings";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
@@ -25,6 +26,7 @@ import { getCryptoCurrencyById, listSupportedFiats } from "@ledgerhq/live-common
 import { importMarket } from "~/actions/market";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { importWalletState } from "@ledgerhq/live-wallet/store";
+import { importLargeMoverState } from "~/actions/largeMoverLandingPage";
 
 interface Props {
   onInitFinished: () => void;
@@ -68,6 +70,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         walletStore,
         protect,
         initialCountervalues,
+        largeMoverState,
       ] = await Promise.all([
         retry(getBle, MAX_RETRIES, RETRY_DELAY),
         retry(getSettings, MAX_RETRIES, RETRY_DELAY),
@@ -80,6 +83,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         retry(getWalletExportState, MAX_RETRIES, RETRY_DELAY),
         retry(getProtect, MAX_RETRIES, RETRY_DELAY),
         retry(getCountervalues, MAX_RETRIES, RETRY_DELAY),
+        retry(getLargeMoverState, MAX_RETRIES, RETRY_DELAY),
       ]);
 
       store.dispatch(importBle(bleData));
@@ -144,6 +148,10 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       if (protect) {
         store.dispatch(updateProtectData(protect.data));
         store.dispatch(updateProtectStatus(protect.protectStatus));
+      }
+
+      if (largeMoverState) {
+        store.dispatch(importLargeMoverState(largeMoverState));
       }
 
       setInitialCountervalues(initialCountervalues);

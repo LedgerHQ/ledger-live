@@ -1,7 +1,7 @@
 import "tsconfig-paths/register";
 import { globalSetup } from "detox/runners/jest";
 import { Subject, Subscription } from "rxjs";
-import { $TmsLink, Step } from "jest-allure2-reporter/api";
+import { $TmsLink, Step, $Tag } from "jest-allure2-reporter/api";
 import { ServerData } from "../../apps/ledger-live-mobile/e2e/bridge/types";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
@@ -19,6 +19,7 @@ import { log } from "detox";
 
 global.Step = Step;
 global.$TmsLink = $TmsLink;
+global.$Tag = $Tag;
 
 // Import Application after Step globals to avoid premature loading
 import { Application } from "./page";

@@ -1,16 +1,18 @@
 import React, { useCallback, useEffect } from "react";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AssetList, AssetType } from "@ledgerhq/react-ui/pre-ldls";
-import { ListWrapper } from "../../../components/ListWrapper";
-import { useModularDrawerAnalytics } from "../../../analytics/useModularDrawerAnalytics";
-import SkeletonList from "../../../components/SkeletonList";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { useModularDrawerAnalytics } from "LLD/features/ModularDrawer/analytics/useModularDrawerAnalytics";
+import { ListWrapper } from "LLD/features/ModularDrawer/components/ListWrapper";
+import SkeletonList from "LLD/features/ModularDrawer/components/SkeletonList";
+import createAssetConfigurationHook from "../../modules/createAssetConfigurationHook";
+import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 
-type SelectAssetProps = {
-  assetTypes?: AssetType[];
+export type SelectAssetProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
   source: string;
   flow: string;
   scrollToTop: boolean;
+  assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
   onScrolledToTop?: () => void;
 };
@@ -18,15 +20,21 @@ type SelectAssetProps = {
 const CURRENT_PAGE = "Modular Asset Selection";
 
 export const SelectAssetList = ({
-  assetTypes,
   assetsToDisplay,
+  source,
   flow,
   scrollToTop,
-  source,
+  assetsConfiguration,
   onAssetSelected,
   onScrolledToTop,
 }: SelectAssetProps) => {
-  const shouldDisplayLoading = !assetTypes || assetTypes.length === 0;
+  const transformAssets = createAssetConfigurationHook({
+    assetsConfiguration,
+  });
+
+  const formattedAssets = transformAssets(assetsToDisplay);
+
+  const shouldDisplayLoading = !formattedAssets || formattedAssets.length === 0;
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
   const onClick = useCallback(
@@ -49,11 +57,11 @@ export const SelectAssetList = ({
 
       onAssetSelected(selectedAsset);
     },
-    [trackModularDrawerEvent, flow, source, assetsToDisplay, onAssetSelected],
+    [assetsToDisplay, flow, source, trackModularDrawerEvent, onAssetSelected],
   );
 
   const onVisibleItemsScrollEnd = () => {
-    //TODO: Add logic to handle scroll end event on ce we have dedicated API for it
+    //TODO: Add logic to handle scroll end event once we have dedicated API for it
   };
 
   useEffect(() => {
@@ -70,7 +78,7 @@ export const SelectAssetList = ({
     <ListWrapper>
       <AssetList
         scrollToTop={scrollToTop}
-        assets={assetsToDisplay}
+        assets={formattedAssets}
         onClick={onClick}
         onVisibleItemsScrollEnd={onVisibleItemsScrollEnd}
       />

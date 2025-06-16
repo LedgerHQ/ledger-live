@@ -1,6 +1,10 @@
 import { CurrencyType } from "@ledgerhq/live-common/e2e/enum/Currency";
 
-export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[]) {
+export function runAddAccountTest(
+  currency: CurrencyType,
+  tmsLinks: string[],
+  tags: string[] = ["@NanoSP", "@LNS", "@NanoX"],
+) {
   describe("Add accounts - Network Based", () => {
     beforeAll(async () => {
       await app.init({
@@ -11,6 +15,7 @@ export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[]) {
     });
 
     tmsLinks.forEach(link => $TmsLink(link));
+    tags.forEach(tag => $Tag(tag));
     it(`Perform a Network Based add account - ${currency.name}`, async () => {
       await app.portfolio.addAccount();
       await app.addAccount.importWithYourLedger();

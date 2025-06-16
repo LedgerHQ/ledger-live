@@ -71,7 +71,7 @@ export const mergeSubAccounts = (
           mergeOps(
             duplicatedAccount[name as keyof TokenAccount] as Operation[],
             newSubAccount[name as keyof TokenAccount] as Operation[],
-          ) || [];
+          ) ?? [];
       }
     }
 
@@ -101,7 +101,8 @@ export const getSubAccountShape = async (
 ): Promise<TokenAccount> => {
   const aptosClient = new AptosAPI(currency.id);
   const tokenAccountId = encodeTokenAccountId(parentId, token);
-  const balance = await aptosClient.getBalance(address, token);
+  const balances = await aptosClient.getBalances(address, token.contractAddress);
+  const balance = balances.length > 0 ? balances[0].amount : BigNumber(0);
   const firstOperation = operations
     .sort((a, b) => b.date.getTime() - a.date.getTime())
     .at(operations.length - 1);

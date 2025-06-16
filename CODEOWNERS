@@ -56,6 +56,8 @@ libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/coin-integrat
 libs/ledgerjs/packages/types-cryptoassets/               @ledgerhq/coin-integration
 libs/live-config/                                        @ledgerhq/coin-integration
 libs/live-network/                                       @ledgerhq/coin-integration
+tools/actions/composites/run-coin-tester/                @ledgerhq/coin-integration
+tools/actions/composites/setup-coin-tester-env/          @ledgerhq/coin-integration
 
 # Shared with partners
 ## Blockchain support
@@ -108,25 +110,25 @@ libs/ledgerjs/packages/hw-app-exchange/                              					@ledge
 libs/live-services/cal/src/partners/                                 					@ledgerhq/ptx
 
 
-# Wallet API team
-**/PlatformAppProviderWrapper.tsx                        @ledgerhq/wallet-api
-**/Web3AppWebview/                                       @ledgerhq/wallet-api
-**/WebPlatformPlayer/                                    @ledgerhq/wallet-api
-apps/ledger-live-desktop/src/renderer/screens/platform/  @ledgerhq/wallet-api
-apps/ledger-live-desktop/src/webviewPreloader/           @ledgerhq/wallet-api
-apps/ledger-live-mobile/src/screens/Discover/            @ledgerhq/wallet-api
-apps/ledger-live-mobile/src/screens/Platform/            @ledgerhq/wallet-api
-libs/ledger-live-common/src/platform/                    @ledgerhq/wallet-api
-libs/ledger-live-common/src/wallet-api/                  @ledgerhq/wallet-api
-**/platformAdapter.ts                                    @ledgerhq/wallet-api
-**/walletApiAdapter.ts                                   @ledgerhq/wallet-api
-**/liveapp-sdk.spec.ts                                   @ledgerhq/wallet-api
-**/confirmTransaction.spec.ts                            @ledgerhq/wallet-api
-**/wallet-api.spec.ts                                    @ledgerhq/wallet-api
-**/wallet-api.spec.ts-snapshots/                         @ledgerhq/wallet-api
-**/dapp.spec.ts                                          @ledgerhq/wallet-api
-libs/test-utils/                                         @ledgerhq/wallet-api
-apps/ledger-live-mobile/src/newArch/features/Web3Hub/    @ledgerhq/wallet-api
+# Wallet API team > coin-integration
+**/PlatformAppProviderWrapper.tsx                        @ledgerhq/coin-integration
+**/Web3AppWebview/                                       @ledgerhq/coin-integration
+**/WebPlatformPlayer/                                    @ledgerhq/coin-integration
+apps/ledger-live-desktop/src/renderer/screens/platform/  @ledgerhq/coin-integration
+apps/ledger-live-desktop/src/webviewPreloader/           @ledgerhq/coin-integration
+apps/ledger-live-mobile/src/screens/Discover/            @ledgerhq/coin-integration
+apps/ledger-live-mobile/src/screens/Platform/            @ledgerhq/coin-integration
+libs/ledger-live-common/src/platform/                    @ledgerhq/coin-integration
+libs/ledger-live-common/src/wallet-api/                  @ledgerhq/coin-integration
+**/platformAdapter.ts                                    @ledgerhq/coin-integration
+**/walletApiAdapter.ts                                   @ledgerhq/coin-integration
+**/liveapp-sdk.spec.ts                                   @ledgerhq/coin-integration
+**/confirmTransaction.spec.ts                            @ledgerhq/coin-integration
+**/wallet-api.spec.ts                                    @ledgerhq/coin-integration
+**/wallet-api.spec.ts-snapshots/                         @ledgerhq/coin-integration
+**/dapp.spec.ts                                          @ledgerhq/coin-integration
+libs/test-utils/                                         @ledgerhq/coin-integration
+apps/ledger-live-mobile/src/newArch/features/Web3Hub/    @ledgerhq/coin-integration
 
 # Devices team
 apps/cli/src/commands/devices                                      @ledgerhq/live-devices

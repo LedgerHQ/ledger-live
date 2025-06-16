@@ -20,7 +20,7 @@ export const useOFACGeoBlockCheck = ({
     queryKey: ["ofac-geo-block", geoBlockingFeatureFlagKey],
     queryFn: async () => {
       if (!platformOfacGeoBlocking?.enabled) return false;
-      const res = await fetch(`${baseURL()}/v3/market`);
+      const res = await fetch(`${baseURL()}/v3/markets`);
       return res.status === 451;
     },
   });

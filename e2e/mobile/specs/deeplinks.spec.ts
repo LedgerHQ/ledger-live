@@ -1,4 +1,6 @@
 $TmsLink("B2CQA-1837");
+const tags: string[] = ["@NanoSP", "@LNS", "@NanoX"];
+tags.forEach(tag => $Tag(tag));
 describe("DeepLinks Tests", () => {
   const nanoApp = AppInfos.ETHEREUM;
   const ethereumLong = "ethereum";

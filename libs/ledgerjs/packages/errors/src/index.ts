@@ -153,6 +153,7 @@ export const WebsocketConnectionError = createCustomErrorClass("WebsocketConnect
 export const WebsocketConnectionFailed = createCustomErrorClass("WebsocketConnectionFailed");
 export const WrongDeviceForAccount = createCustomErrorClass("WrongDeviceForAccount");
 export const WrongDeviceForAccountPayout = createCustomErrorClass("WrongDeviceForAccountPayout");
+export const MissingSwapPayloadParamaters = createCustomErrorClass("MissingSwapPayloadParamaters");
 export const WrongDeviceForAccountRefund = createCustomErrorClass("WrongDeviceForAccountRefund");
 export const WrongAppForCurrency = createCustomErrorClass("WrongAppForCurrency");
 

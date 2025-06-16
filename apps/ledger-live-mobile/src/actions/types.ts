@@ -32,6 +32,7 @@ import type {
   ProtectState,
   NftState,
   MarketState,
+  LargeMoverState,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
 import { HandlersPayloads } from "@ledgerhq/live-wallet/store";
@@ -556,6 +557,16 @@ export type MarketPayload =
   | MarketSetMarketRequestParamsPayload
   | MarketSetCurrentPagePayload
   | MarketImportPayload;
+
+// === LARGE MOVER ACTIONS ===
+export enum LargeMoverActionTypes {
+  SET_TUTORIAL = "LARGE_MOVER/SET_TUTORIAL",
+  LARGE_MOVER_IMPORT = "LARGE_MOVER/IMPORT",
+}
+export type LargeMoverPayload = LargeMoverTutorialPayload | LargeMoverImportPayload;
+
+export type LargeMoverImportPayload = Partial<LargeMoverState>;
+export type LargeMoverTutorialPayload = LargeMoverState["tutorial"];
 
 // === WALLETSYNC ACTIONS ===
 export enum WalletSyncActionTypes {
