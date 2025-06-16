@@ -3193,6 +3193,12 @@
         "placeholder" : "Exchange sağlayıcısının CAL formatındaki bilgileri",
         "currentSetting" : "Mevcut Ayar",
         "error" : "Geçersiz CAL değeri"
+      },
+      "customCALRef" : {
+        "title" : "Özel CAL referansı",
+        "description" : "Tüm CAL talepleri için kullanılacak özel bir dal, commit işlemi (Github) veya etiket belirtin",
+        "enable" : "Özel CAL referansını etkinleştirin",
+        "disable" : "Özel CAL referansını devre dışı bırakın"
       }
     },
     "debug" : {
@@ -7438,5 +7444,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Konum kullanılamıyor",
+    "description" : "Ledger cüzdan bu konumda kullanılamıyor.",
+    "learnMore" : "Daha fazla bilgi"
   }
 }
