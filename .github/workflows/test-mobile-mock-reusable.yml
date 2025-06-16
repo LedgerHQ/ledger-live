@@ -184,8 +184,8 @@ jobs:
         - name: Create mobile metafile
           run: |
             echo "{
-                \"main.ios.jsbundle\" : { \"size\": ${{ needs.build-ios.outputs.js-bundle-size }}1},
-                \"main.android.jsbundle\" : { \"size\": ${{ needs.build-android.outputs.js-bundle-size }}1}
+                \"main.ios.jsbundle\" : { \"size\": ${{ needs.build-ios.outputs.js-bundle-size }}},
+                \"main.android.jsbundle\" : { \"size\": ${{ needs.build-android.outputs.js-bundle-size }}}
             }" > mobile.metafile.json
         - uses: LedgerHQ/ledger-live/tools/actions/build-checks@develop
           with:
