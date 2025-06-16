@@ -893,6 +893,7 @@
     "title" : "暗号資産を購入・売却する",
     "reset" : "フローをリセット",
     "verifyAddress" : "デバイスに表示されているアドレスと、完全に一致しているか確認してください。",
+    "connectingTo" : "{{provider}}に接続中",
     "buy" : {
       "header" : "パートナーから暗号資産を購入する",
       "title" : "暗号資産を購入するプロバイダーを選択する",
@@ -1925,7 +1926,8 @@
       "payoutNetworkFees" : "ペイアウト手数料",
       "payoutNetworkFeesTooltip" : "これはデバイスには表示されません。",
       "acceptTerms" : "このトランザクションを検証することにより、私は\n<0>{{provider}}の利用規約</0>に同意します",
-      "exodusAcceptTerms" : "Exodusは、スワップの実行をサードパーティに依存しています。\nこのトランザクションを承認することにより、私は<0>Exodusの利用規約</0>に同意します"
+      "exodusAcceptTerms" : "Exodusは、スワップの実行をサードパーティに依存しています。\nこのトランザクションを承認することにより、私は<0>Exodusの利用規約</0>に同意します",
+      "changellyAcceptTerms" : "「Swap with Changelly（Changellyでスワップ）」をクリックすると、Changellyの<0>利用規約</0>およびその\n<1>AML/KYC</1>ポリシーに同意したことになります。ChangellyはAML/KYC（本人確認手続き）を適用する場合があり、\n稀にトランザクションの完了に影響する可能性があります。そのような場合は、\nChangellyの<2>カスタマーサポート</2>に連絡する必要があります。"
     },
     "swap2" : {
       "amountSent" : "送付額",
@@ -6594,6 +6596,19 @@
     },
     "AmountTooSmall" : {
       "title" : "このトランザクションに最低限必要な金額は、{{amount}}です"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "お客様の安全を維持",
+      "description" : "このトランザクションには制裁ウォレットアドレスが関係しており、処理できません。<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForSendError" : {
+      "title" : "このトランザクションには制裁ウォレットアドレスが関係しており、処理できません<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForStakingError" : {
+      "title" : "このトランザクションには制裁ウォレットアドレスが関係しており、<br/>処理できません。<br/>-- {{sanctionedAddress}}<br/>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "このトランザクションには制裁ウォレットアドレスが関係しており、処理できません。"
     }
   },
   "cryptoOrg" : {
@@ -7057,12 +7072,9 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "検索",
-    "assetFlow" : {
-      "selectTemplate" : "{{dynamic}}を選択",
-      "asset" : "資産",
-      "network" : "ネットワーク",
-      "account" : "アカウント"
-    }
+    "selectAsset" : "暗号資産を選択",
+    "selectNetwork" : "ネットワークを選択",
+    "selectAccount" : "アカウントを選択"
   },
   "nftEntryPoint" : {
     "title" : "NFT（非代替性トークン）",
@@ -7070,5 +7082,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "利用不可のロケーション",
+    "description" : "このロケーションでは、Ledgerウォレットをご利用いただけません。",
+    "learnMore" : "詳細はこちら"
   }
 }
