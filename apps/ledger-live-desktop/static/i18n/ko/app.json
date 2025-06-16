@@ -1925,7 +1925,8 @@
       "payoutNetworkFees" : "지불금 비용",
       "payoutNetworkFeesTooltip" : "이 금액은 장치에 표시되지 않습니다",
       "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0>{{provider}}의 이용약관</0>을 수락합니다.",
-      "exodusAcceptTerms" : "Exodus는 제 3자를 통해 스왑 서비스를 제공합니다.\n본인은 이 트랜잭션을 확인함으로써 <0>Exodus 이용 약관</0>을 수락합니다."
+      "exodusAcceptTerms" : "Exodus는 제 3자를 통해 스왑 서비스를 제공합니다.\n본인은 이 트랜잭션을 확인함으로써 <0>Exodus 이용 약관</0>을 수락합니다.",
+      "changellyAcceptTerms" : "\"Changelly로 스왑\"을 클릭하면 Changelly의<0>이용 약관</0> 및\n<1>AML/KYC 정책</1>에 동의하는 것으로 간주됩니다. Changelly는 AML/KYC 절차를 적용할 수 있으며,\n이는 제한적으로 트랜잭션 완료에 영향을 미칠 수 있습니다. 이 경우\n, Changelly <2>고객 지원</2>으로 문의해 주세요."
     },
     "swap2" : {
       "amountSent" : "전송 금액",
@@ -6594,6 +6595,19 @@
     },
     "AmountTooSmall" : {
       "title" : "이 트랜잭션에 필요한 최소 금액은 {{amount}}입니다"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "안전한 관리",
+      "description" : "이 트랜잭션에는 규제 대상인 지갑 주소가 포함되어 있어 처리가 불가능합니다.<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForSendError" : {
+      "title" : "이 트랜잭션에는 규제 대상인 지갑 주소가 포함되어 있어 처리가 불가능합니다.<br/>-- {{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForStakingError" : {
+      "title" : "이 트랜잭션에는 규제 대상인 지갑 주소가 포함되어 있어<br/> 처리가 불가능합니다.<br/>-- {{sanctionedAddress}}<br/>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "이 트랜잭션에는 규제 대상인 지갑 주소가 포함되어 있어 처리가 불가능합니다."
     }
   },
   "cryptoOrg" : {
@@ -7056,13 +7070,13 @@
     }
   },
   "modularAssetDrawer" : {
+    "addAccounts" : "추가하려는 계정을 선택하세요",
+    "scanAccounts" : "블록체인상의 기존 계정을 찾고 있습니다...",
+    "connectYourDevice" : "장치를 연결하고 잠금을 해제하세요",
     "searchPlaceholder" : "검색",
-    "assetFlow" : {
-      "selectTemplate" : "{{dynamic}} 선택",
-      "asset" : "자산",
-      "network" : "네트워크",
-      "account" : "계정"
-    }
+    "selectAsset" : "자산 선택",
+    "selectNetwork" : "네트워크 선택",
+    "selectAccount" : "계정 선택"
   },
   "nftEntryPoint" : {
     "title" : "NFT(대체 불가능 토큰)",
@@ -7070,5 +7084,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "이용 불가능한 지역",
+    "description" : "Ledger 지갑을 사용할 수 없는 지역입니다.",
+    "learnMore" : "자세히 알아보기"
   }
 }
