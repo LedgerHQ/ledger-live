@@ -3564,6 +3564,15 @@
           "noProviders" : "لم يتم العثور على نتائج. ليس متاح عروض أسعار بالتفضيلات الحالية."
         }
       },
+      "quotesList" : {
+        "title" : "اختر عرض سعر"
+      },
+      "twoStepApproval" : {
+        "title" : "أكمل الخطوات"
+      },
+      "history" : {
+        "title" : "سجلّ المبادلة"
+      },
       "incompatibility" : {
         "explore_compatible_devices" : "استكشف الأجهزة المتوافقة",
         "contact_support" : "تواصل مع دعم العملاء",
@@ -7430,7 +7439,12 @@
     "performance" : "الأداء",
     "low" : "منخفض",
     "high" : "مرتفع",
-    "title" : "تحركات السوق"
+    "title" : "تحركات السوق",
+    "overlay" : {
+      "title" : "تحرك بين الأصول",
+      "action" : "مرّر لليسار أو اليمين",
+      "button" : "فهمت ذلك!"
+    }
   },
   "nftEntryPoint" : {
     "title" : "رموزك غير القابلة للاستبدال (NFTs)",
@@ -7438,5 +7452,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "الموقع غير متاح",
+    "description" : "محفظة Ledger غير متاحة في هذا الموقع.",
+    "learnMore" : "تعرّف على المزيد"
   }
 }
