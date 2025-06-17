@@ -20,6 +20,10 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { WebviewAPI, WebviewState, WebviewTag } from "./types";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
+import { useModularDrawerVisibility } from "LLD/features/ModularDrawer/hooks/useModularDrawerVisibility";
+import { ModularDrawerLocation, openAssetAndAccountDrawer } from "LLD/features/ModularDrawer";
+import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { AccountLike } from "@ledgerhq/types-live";
 
 export const initialWebviewState: WebviewState = {
   url: "",
@@ -295,28 +299,50 @@ export function useSelectAccount({
   manifest: LiveAppManifest;
   currentAccountHistDb?: CurrentAccountHistDB;
 }) {
+  const { isModularDrawerVisible } = useModularDrawerVisibility();
+
+  const modularDrawerVisible = isModularDrawerVisible(ModularDrawerLocation.LIVE_APP);
+
   const currencies = useManifestCurrencies(manifest);
   const { setCurrentAccountHist, setCurrentAccount, currentAccount } =
     useDappCurrentAccount(currentAccountHistDb);
 
+  const onSuccess = useCallback(
+    (account: AccountLike) => {
+      setDrawer();
+      setCurrentAccountHist(manifest.id, account);
+      setCurrentAccount(account);
+    },
+    [manifest.id, setCurrentAccountHist, setCurrentAccount],
+  );
+
+  const onCancel = useCallback(() => {
+    setDrawer();
+  }, []);
+
   const onSelectAccount = useCallback(() => {
-    setDrawer(
-      SelectAccountAndCurrencyDrawer,
-      {
-        currencies: currencies,
-        onAccountSelected: account => {
-          setDrawer();
-          setCurrentAccountHist(manifest.id, account);
-          setCurrentAccount(account);
-        },
-      },
-      {
-        onRequestClose: () => {
-          setDrawer();
-        },
-      },
-    );
-  }, [currencies, manifest.id, setCurrentAccount, setCurrentAccountHist]);
+    modularDrawerVisible
+      ? openAssetAndAccountDrawer({
+          currencies,
+          onSuccess,
+          onCancel,
+          flow: manifest.name,
+          source:
+            currentRouteNameRef.current === "Platform Catalog"
+              ? "Discover"
+              : currentRouteNameRef.current ?? "Unknown",
+        })
+      : setDrawer(
+          SelectAccountAndCurrencyDrawer,
+          {
+            currencies: currencies,
+            onAccountSelected: onSuccess,
+          },
+          {
+            onRequestClose: onCancel,
+          },
+        );
+  }, [currencies, manifest.name, modularDrawerVisible, onCancel, onSuccess]);
 
   return { onSelectAccount, currentAccount };
 }

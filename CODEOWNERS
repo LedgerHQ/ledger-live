@@ -56,6 +56,8 @@ libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/coin-integrat
 libs/ledgerjs/packages/types-cryptoassets/               @ledgerhq/coin-integration
 libs/live-config/                                        @ledgerhq/coin-integration
 libs/live-network/                                       @ledgerhq/coin-integration
+tools/actions/composites/run-coin-tester/                @ledgerhq/coin-integration
+tools/actions/composites/setup-coin-tester-env/          @ledgerhq/coin-integration
 
 # Shared with partners
 ## Blockchain support
