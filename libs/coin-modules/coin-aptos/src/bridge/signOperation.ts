@@ -16,6 +16,21 @@ export const getAddress = (a: Account) => ({
   derivationPath: a.freshAddressPath,
 });
 
+const getOperationType = (transaction: Transaction): OperationType => {
+  switch (transaction.mode) {
+    case "stake":
+      return "STAKE";
+    case "restake":
+      return "STAKE";
+    case "unstake":
+      return "UNSTAKE";
+    case "withdraw":
+      return "WITHDRAW";
+    default:
+      return "OUT";
+  }
+};
+
 const buildSignOperation =
   (
     signerContext: SignerContext<AptosSigner>,
@@ -35,7 +50,7 @@ const buildSignOperation =
 
         const accountId = account.id;
         const hash = "";
-        const type: OperationType = "OUT";
+        const type: OperationType = getOperationType(transaction);
         const fee = transaction.fees || new BigNumber(0);
         const extra = {};
         const senders: string[] = [];
