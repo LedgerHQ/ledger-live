@@ -3,7 +3,7 @@ import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import { BroadcastTransactionRequest, TransactionResponse, TxStatus, Transaction } from "../types";
 import { GetAccountShape, AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { fetchBalances, fetchBlockHeight, fetchTxs } from "../api/api";
+import { fetchBalances, fetchBlockHeight, fetchTxsWithPages } from "../api/api";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import flatMap from "lodash/flatMap";
@@ -127,7 +127,7 @@ export const getAccountShape: GetAccountShape = async info => {
   const [blockHeight, balance, rawTxs, tokenAccounts] = await Promise.all([
     fetchBlockHeight(),
     fetchBalances(address),
-    fetchTxs(address, lastHeight),
+    fetchTxsWithPages(address, lastHeight),
     buildTokenAccounts(address, lastHeight, accountId, info.initialAccount),
   ]);
 
