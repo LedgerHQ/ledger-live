@@ -1076,6 +1076,15 @@
     },
     "AmountTooSmall" : {
       "title" : "Le montant minimal requis pour cette transaction est {{amount}}"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "Cette transaction implique une adresse de wallet faisant l’objet de sanctions et ne peut pas être traitée.\n-- {{sanctionedAddresses}}\n<link0>En savoir plus</link0>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "Cette transaction implique une adresse de wallet faisant l’objet de sanctions et ne peut pas être traitée. <link0>En savoir plus</link0>"
+    },
+    "UserUtxoAddressSanctionedError" : {
+      "title" : "Cette transaction implique une adresse UTXO faisant l’objet de sanctions et ne peut pas être traitée.\n-- {{sanctionedAddresses}}\n<link0>En savoir plus</link0>"
     }
   },
   "crash" : {
@@ -2747,7 +2756,7 @@
         "title" : "Retirer ce compte du Portefeuille",
         "desc" : "Les données enregistrées seront effacées.",
         "confirmationTitle" : "Êtes-vous sûr(e) ?",
-        "confirmationDesc" : "Cela n’a pas d’effet sur vos crypto-actifs. Vous pourrez de nouveau ajouter vos comptes existants.",
+        "confirmationDesc" : "Cela n’a pas d’effet sur vos crypto-actifs. Vous pourrez de nouveau ajouter vos comptes.",
         "confirmationWarn" : "L’historique de vos transactions de swap en lien avec ce compte sera effacé."
       },
       "archive" : {
@@ -3358,7 +3367,13 @@
         "verify" : "Vous n’avez pas vérifié votre adresse {{accountType}}. Vérifiez vos adresses sur votre appareil pour une sécurité optimale."
       },
       "noResultsFound" : "Aucun crypto-actif trouvé",
-      "noResultsDesc" : "Veuillez vérifier l’orthographe et réessayer."
+      "noResultsDesc" : "Veuillez vérifier l’orthographe et réessayer.",
+      "sanctionedAddress" : {
+        "title" : "Restez en sécurité",
+        "description" : "Cette transaction implique une adresse de wallet faisant l’objet de sanctions et ne peut pas être traitée.\n--{{sanctionedAddress}}\n<Link>{{learnMore}}</Link>",
+        "close" : "Fermer",
+        "learnMore" : "En savoir plus"
+      }
     },
     "buy" : {
       "title" : "Acheter",
@@ -4105,7 +4120,7 @@
     "added_plural" : "{{count}} comptes ajoutés à votre portefeuille",
     "sections" : {
       "importable" : {
-        "title" : "Ajouter un compte existant"
+        "title" : "Ajouter un compte"
       },
       "creatable" : {
         "title" : "Ajouter un nouveau compte"
@@ -4164,7 +4179,7 @@
       "title" : "Sélectionnez le compte à ajouter",
       "ctaStopScan" : "Arrêter le balayage",
       "confirm" : "Confirmer",
-      "scanningTitle" : "Recherche des comptes existant déjà sur la blockchain...",
+      "scanningTitle" : "Recherche des comptes déjà présents sur la blockchain...",
       "whichAddressType" : "Apprenez à choisir un type d’adresse",
       "sections" : {
         "importable" : {
@@ -7438,5 +7453,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Région indisponible",
+    "description" : "L’application n’est pas disponible dans ce pays/région.",
+    "learnMore" : "En savoir plus"
   }
 }
