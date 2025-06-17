@@ -219,10 +219,7 @@ export function useScanAccounts({ currency, deviceId, onComplete }: UseScanAccou
   useEffect(() => {
     if (latestScannedAccount) {
       const hasAlreadyBeenScanned = scannedAccounts.some(a => latestScannedAccount.id === a.id);
-      const hasAlreadyBeenImported = existingAccounts.some(a => latestScannedAccount.id === a.id);
       const isNewAccount = isAccountEmpty(latestScannedAccount);
-
-      if (hasAlreadyBeenImported) return;
 
       if (!isNewAccount) {
         setOnlyNewAccounts(false);
@@ -246,7 +243,10 @@ export function useScanAccounts({ currency, deviceId, onComplete }: UseScanAccou
   useEffect(() => {
     if (!cantCreateAccount && !scanning) {
       if (alreadyEmptyAccount && !hasImportableAccounts) {
-        console.log("Redirect to Warning Screen (to handle already empty account)");
+        console.log(
+          "Redirect to Warning Screen (to handle already empty account)",
+          alreadyEmptyAccountName,
+        );
       } else if (!scannedAccounts.length && CustomNoAssociatedAccounts) {
         console.log("Redirect to Warning Screen (to handle hedera error for example)");
       }

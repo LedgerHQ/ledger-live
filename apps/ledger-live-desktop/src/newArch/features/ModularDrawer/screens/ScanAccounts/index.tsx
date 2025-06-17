@@ -19,6 +19,7 @@ interface Props {
   currency: CryptoCurrency;
   deviceId: string;
   onComplete: (_: Account[]) => void;
+  analyticsPropertyFlow?: string;
 }
 
 const ScanAccounts = ({ currency, deviceId, onComplete }: Props) => {

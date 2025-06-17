@@ -2,7 +2,6 @@ import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { Flex } from "@ledgerhq/react-ui/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account } from "@ledgerhq/types-live";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useMemo, useState } from "react";
 import { AddAccountHeader } from "./components/Header/AddAccountHeader";
@@ -63,7 +62,6 @@ const ModularDrawerAddAccountFlowManager = ({ currency, onConnect }: Props) => {
               setCurrentStep("SCAN_ACCOUNTS");
               onConnect?.(result);
             }}
-            // TODO review
             analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW}
           />
         );
@@ -71,7 +69,6 @@ const ModularDrawerAddAccountFlowManager = ({ currency, onConnect }: Props) => {
         if (!connectAppResult) {
           throw new Error("Missing connectAppResult");
         }
-        // TODO should pass this down? analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW}
         return (
           <ScanAccounts
             currency={cryptoCurrency}
@@ -79,6 +76,7 @@ const ModularDrawerAddAccountFlowManager = ({ currency, onConnect }: Props) => {
             onComplete={() => {
               setCurrentStep("ACCOUNTS_ADDED");
             }}
+            analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW}
           />
         );
       case "ACCOUNTS_ADDED":

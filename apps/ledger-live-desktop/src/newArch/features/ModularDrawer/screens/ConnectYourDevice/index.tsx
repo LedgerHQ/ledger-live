@@ -19,7 +19,6 @@ export const ConnectYourDevice = ({
   onConnect,
   analyticsPropertyFlow,
 }: Readonly<Props>) => {
-  // preload currency ahead of time
   useEffect(() => {
     prepareCurrency(currency);
   }, [currency]);
@@ -44,7 +43,6 @@ export const ConnectYourDevice = ({
         //   console.log("SELECT DEVICE LINK");
         // }}
         analyticsPropertyFlow={analyticsPropertyFlow}
-        // TODO Location == Drawer
         location={HOOKS_TRACKING_LOCATIONS.addAccountModal}
       />
     </>
