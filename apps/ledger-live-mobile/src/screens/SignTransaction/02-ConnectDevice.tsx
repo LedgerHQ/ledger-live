@@ -40,14 +40,14 @@ function ConnectDevice({ navigation, route }: SignTransactionConnectDeviceProps)
   // NOTE: here B
   log("xrp-connectdevice", "In connect device");
   useEffect(() => {
-    log("xrp-connectdevice-main", "route transaction changed", { tx: route.params.transaction });
+    log("xrp-connectdevice-2", "route transaction changed", { tx: route.params.transaction });
   }, [route.params.transaction]);
   const { transaction, status } = useBridgeTransaction(() => ({
     account: mainAccount,
     transaction: route.params.transaction,
   }));
   useEffect(() => {
-    log("xrp-connectdevice-main", "transaction changed", { transaction });
+    log("xrp-connectdevice-2", "transaction changed", { transaction });
   }, [transaction]);
   const tokenCurrency = account.type === "TokenAccount" ? account.token : undefined;
   const handleTx = useCallback(

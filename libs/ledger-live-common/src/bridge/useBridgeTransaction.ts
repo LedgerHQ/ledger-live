@@ -262,6 +262,11 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
 
             statusIsPending.current = false; // status is now synced with transaction
 
+            log("xrp-useBridgeTransaction", "pushing prepared transaction", {
+              transaction,
+              preparedTransaction,
+              status,
+            });
             dispatch({
               type: "onStatus",
               status,
@@ -275,9 +280,9 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
               type: "onStatusError",
               error: e,
             });
-            log("useBridgeTransaction", "prepareTransaction failed " + String(e));
+            log("xrp-useBridgeTransaction", "prepareTransaction failed " + String(e));
             // After X seconds of hanging in this error case, we try again
-            log("useBridgeTransaction", "retrying prepareTransaction...");
+            log("xrp-useBridgeTransaction", "retrying prepareTransaction...");
             errorTimeout = setTimeout(() => {
               // $FlowFixMe (mobile)
               errorDelay.current *= ERROR_RETRY_DELAY_MULTIPLIER; // increase delay
