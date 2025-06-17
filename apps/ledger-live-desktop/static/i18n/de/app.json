@@ -7057,12 +7057,9 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "Suche",
-    "assetFlow" : {
-      "selectTemplate" : "{{dynamic}} auswählen",
-      "asset" : "Asset",
-      "network" : "Netzwerk",
-      "account" : "Konto"
-    }
+    "selectAsset" : "Vermögenswert auswählen",
+    "selectNetwork" : "Netzwerk auswählen",
+    "selectAccount" : "Konto auswählen"
   },
   "nftEntryPoint" : {
     "title" : "NFT (Non Fungible Token)",
@@ -7070,5 +7067,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Nicht am Ort verfügbar",
+    "description" : "Eine Ledger-Wallet ist an diesem Standort nicht verfügbar.",
+    "learnMore" : "Weitere Informationen"
   }
 }
