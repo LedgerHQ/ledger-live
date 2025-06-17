@@ -90,8 +90,13 @@ export const fetchBlockHeight = async (): Promise<NetworkStatusResponse> => {
   return data as NetworkStatusResponse; // TODO Validate if the response fits this interface
 };
 
-export const fetchTxs = async (addr: string): Promise<TransactionResponse[]> => {
-  const response = await fetch<TransactionsResponse>(`/addresses/${addr}/transactions`);
+export const fetchTxs = async (
+  addr: string,
+  lastHeight: number,
+): Promise<TransactionResponse[]> => {
+  const response = await fetch<TransactionsResponse>(
+    `/addresses/${addr}/transactions?from_height=${lastHeight}`,
+  );
   return response.txs; // TODO Validate if the response fits this interface
 };
 
@@ -117,9 +122,12 @@ export const fetchERC20TokenBalance = async (
   return "0";
 };
 
-export const fetchERC20Transactions = async (ethAddr: string): Promise<ERC20Transfer[]> => {
+export const fetchERC20Transactions = async (
+  ethAddr: string,
+  lastHeight: number,
+): Promise<ERC20Transfer[]> => {
   const res = await fetch<FetchERC20TransactionsResponse>(
-    `/addresses/${ethAddr}/transactions/erc20`,
+    `/addresses/${ethAddr}/transactions/erc20?${lastHeight}`,
   );
   return res.txs.sort((a, b) => b.timestamp - a.timestamp);
 };
