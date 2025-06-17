@@ -459,24 +459,25 @@ export const StepSummaryFooter = (props: StepProps) => {
     [],
   );
 
-  const onNext = async () => {
-    if (!account || account.type !== "Account") {
-      transitionTo("device");
-      return;
-    }
+  const onNext = () => {
+    transitionTo("device");
+    // if (!account || account.type !== "Account") {
+    //   transitionTo("device");
+    //   return;
+    // }
 
-    const addresses = collectAddressesInvolvedInTransaction(account, status, transaction);
-    const sanctionedAddresses = await areAddressesSanctioned(account.currency, addresses);
-    const isTransactionSafe = sanctionedAddresses.length === 0;
+    // const addresses = collectAddressesInvolvedInTransaction(account, status, transaction);
+    // const sanctionedAddresses = await areAddressesSanctioned(account.currency, addresses);
+    // const isTransactionSafe = sanctionedAddresses.length === 0;
 
-    setTransactionSafety({
-      safe: isTransactionSafe,
-      addresses: [...sanctionedAddresses],
-    });
+    // setTransactionSafety({
+    //   safe: isTransactionSafe,
+    //   addresses: [...sanctionedAddresses],
+    // });
 
-    if (isTransactionSafe) {
-      transitionTo("device");
-    }
+    // if (isTransactionSafe) {
+    //   transitionTo("device");
+    // }
   };
 
   if (!account) {

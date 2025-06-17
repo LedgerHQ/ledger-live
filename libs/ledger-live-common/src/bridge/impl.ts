@@ -107,14 +107,37 @@ function wrapAccountBridge<T extends TransactionCommon>(
 ): AccountBridge<T> {
   return {
     ...bridge,
-    getTransactionStatus: async (...args) => {
-      const blockchainSpecific = await bridge.getTransactionStatus(...args);
-      const common = await commonGetTransactionStatus(...args);
-      return mergeResults(blockchainSpecific, common);
+    broadcast: async (...args) => {
+      const account = args[0].account;
+      if (account.type === "Account") {
+        if (!isCheckSanctionedAddressEnabled(account.currency)) {
+          return bridge.broadcast(...args);
+        }
+
+        const sanctionedAddresses: string[] = [];
+        if (await isAddressSanctioned(account.currency, account.freshAddress)) {
+          sanctionedAddresses.push(account.freshAddress);
+        }
+
+        const recipients = args[0].signedOperation.operation.recipients;
+        for (const recipient of recipients) {
+          const recipientSanctioned = await isAddressSanctioned(account.currency, recipient);
+          if (recipientSanctioned) {
+            sanctionedAddresses.push(recipient);
+          }
+        }
+
+        if (sanctionedAddresses.length > 0) {
+          throw new UserAddressSanctionedError(...sanctionedAddresses);
+        }
+      }
+
+      return await bridge.broadcast(...args);
     },
   };
 }
 
+/* Unused function - commented out to prevent reachability
 function mergeResults(
   blockchainSpecific: TransactionStatusCommon,
   common: Partial<TransactionStatusCommon>,
@@ -123,7 +146,9 @@ function mergeResults(
   const warnings = { ...blockchainSpecific.warnings, ...common.warnings };
   return { ...blockchainSpecific, errors, warnings };
 }
+*/
 
+/* Unused function - commented out to prevent reachability
 async function commonGetTransactionStatus(
   account: Account,
   transaction: TransactionCommon,
@@ -154,3 +179,4 @@ async function commonGetTransactionStatus(
 
   return { errors, warnings };
 }
+*/
