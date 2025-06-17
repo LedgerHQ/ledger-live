@@ -58,7 +58,8 @@ export function useModularDrawerFlowState({
   }, [goToStep]);
 
   const goToNetworkSelection = useCallback(
-    (filteredCryptoCurrencies: CryptoOrTokenCurrency[]) => {
+    (asset: CryptoOrTokenCurrency, filteredCryptoCurrencies: CryptoOrTokenCurrency[]) => {
+      setSelectedAsset(asset);
       setNetworksToDisplay(filteredCryptoCurrencies);
       goToStep("NETWORK_SELECTION");
     },
@@ -114,7 +115,7 @@ export function useModularDrawerFlowState({
         const filteredCryptoCurrencies = networks
           .map(net => findCryptoCurrencyById(net))
           .filter((cur): cur is CryptoCurrency => Boolean(cur));
-        goToNetworkSelection(filteredCryptoCurrencies);
+        goToNetworkSelection(currency, filteredCryptoCurrencies);
       } else if (isSelectAccountFlow) {
         goToAccountSelection(currency, currency);
       } else {

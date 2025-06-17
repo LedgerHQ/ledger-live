@@ -893,6 +893,7 @@
     "title": "Buy and sell crypto",
     "reset": "Reset flow",
     "verifyAddress": "Please confirm the address displayed exactly matches the one shown on your device",
+    "connectingTo": "Connecting you to {{provider}}",
     "buy": {
       "header": "Buy crypto with our partners",
       "title": "Choose a provider to buy crypto",
@@ -6065,6 +6066,10 @@
       "title": "Something went wrong",
       "description": "This receiving account does not belong to the device you have connected. Please change and retry"
     },
+    "MissingSwapPayloadParamaters": {
+      "title": "Something went wrong",
+      "description": "Missing swap parameter from selected partner. Please retry or contact Ledger Support if in doubt"
+    },
     "WrongDeviceForAccountRefund": {
       "title": "Something went wrong",
       "description": "This sending account does not belong to the device you have connected. Please change and retry"
@@ -7120,7 +7125,9 @@
     "searchPlaceholder": "Search",
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
-    "selectAccount": "Select account"
+    "selectAccount": "Select account",
+    "accountCount_one": "{{count}} account",
+    "accountCount_other": "{{count}} accounts"
   },
   "nftEntryPoint": {
     "title": "NFT (Non Fungible Tokens)",

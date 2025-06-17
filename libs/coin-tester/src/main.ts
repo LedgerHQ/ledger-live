@@ -143,7 +143,9 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
             transaction,
             deviceId: "",
             deviceModelId: DeviceModelId.nanoX,
-            certificateSignatureKind: "test",
+            // TODO: use "test" once test signatures from the CAL
+            // are all compatible with Speculos public key
+            certificateSignatureKind: "prod",
           })
           .pipe(
             map(e => {

@@ -16,6 +16,7 @@ interface AvailableSizes {
   M: SizeData;
   L: SizeData;
   XL: SizeData;
+  XXL: SizeData;
 }
 
 export default {
@@ -72,7 +73,7 @@ IconGrid.args = {
 
 IconGrid.argTypes = {
   size: {
-    options: ["XS", "S", "M", "L", "XL"],
+    options: ["XS", "S", "M", "L", "XL", "XXL"],
     control: {
       type: "select",
     },

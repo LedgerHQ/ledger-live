@@ -22,6 +22,7 @@ interface AvailableSizes {
   M: SizeData;
   L: SizeData;
   XL: SizeData;
+  XXL: SizeData;
 }
 
 interface IconProps {
@@ -86,7 +87,7 @@ IconGridStory.args = {
 
 IconGridStory.argTypes = {
   size: {
-    options: ["XS", "S", "M", "L", "XL"],
+    options: ["XS", "S", "M", "L", "XL", "XXL"],
     control: {
       type: "select",
     },

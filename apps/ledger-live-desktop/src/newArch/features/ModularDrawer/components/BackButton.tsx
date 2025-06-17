@@ -37,6 +37,6 @@ const BackButton = styled.button`
   padding: 0;
   position: absolute;
   top: 20px;
-  left: 16px;
+  left: 20px;
   z-index: 1000;
 `;

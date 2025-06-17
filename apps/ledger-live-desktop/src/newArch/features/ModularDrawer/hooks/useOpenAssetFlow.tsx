@@ -10,6 +10,7 @@ import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { useModularDrawerVisibility } from "./useModularDrawerVisibility";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
+import { CloseButton } from "../components/CloseButton";
 
 function selectCurrency(
   onAssetSelected: (currency: CryptoOrTokenCurrency) => void,
@@ -37,6 +38,7 @@ function selectCurrency(
     },
     {
       onRequestClose: onClose,
+      closeButtonComponent: CloseButton,
     },
   );
 }
