@@ -11,10 +11,10 @@ import { setCoinConfig } from "../../config";
 import getTransactionStatus from "../../getTransactionStatus";
 import {
   account,
+  ADDRESS_1,
   API_KADENA_ENDPOINT,
   API_KADENA_PACT_ENDPOINT,
   transaction as baseTransaction,
-  mockAddress,
 } from "../fixtures/common.fixtures";
 
 jest.mock("../../api/network");
@@ -63,7 +63,7 @@ describe("getTransactionStatus", () => {
     it("should detect the recipient and the sender are the same and have an error", async () => {
       const transaction = {
         ...baseTransaction,
-        recipient: mockAddress,
+        recipient: ADDRESS_1,
       };
       const res = await getTransactionStatus(account, transaction);
       expect(res.errors).toEqual(

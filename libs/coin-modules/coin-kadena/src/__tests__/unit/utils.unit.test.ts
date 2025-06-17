@@ -9,7 +9,7 @@ import {
   kdaToBaseUnit,
   validateAddress,
 } from "../../utils";
-import { mockAddress } from "../fixtures/common.fixtures";
+import { ADDRESS_1 } from "../fixtures/common.fixtures";
 
 describe("Kadena utils", () => {
   describe("isNoErrorReturnCode", () => {
@@ -43,7 +43,7 @@ describe("Kadena utils", () => {
     ];
     const validAddr = [
       "k:1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-      mockAddress,
+      ADDRESS_1,
     ];
     test("Check invalid addresses", () => {
       invalidAddr.forEach(addr => expect(validateAddress(addr)).toBe(false));

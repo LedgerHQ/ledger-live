@@ -1,4 +1,5 @@
 import type { Transaction as EvmTransaction, GasOptions } from "@ledgerhq/coin-evm/types/index";
+import { Result } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import type { TransactionBroadcastError } from "@ledgerhq/live-common/errors/transactionBroadcastErrors";
 import type {
   AlgorandAccount,
@@ -21,17 +22,11 @@ import {
 import { Transaction as HederaTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import type { Transaction as ICPTransaction } from "@ledgerhq/live-common/families/internet_computer/types";
 import { Transaction as KadenaTransaction } from "@ledgerhq/live-common/families/kadena/types";
+import type { Transaction as MinaTransaction } from "@ledgerhq/live-common/families/mina/types";
 import {
   SolanaAccount,
   Transaction as SolanaTransaction,
 } from "@ledgerhq/live-common/families/solana/types";
-import {
-  KadenaAccount,
-  Transaction as KadenaTransaction,
-} from "@ledgerhq/live-common/families/kadena/types";
-import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/xrp/types";
-import type { Transaction as ICPTransaction } from "@ledgerhq/live-common/families/internet_computer/types";
-import type { Transaction as MinaTransaction } from "@ledgerhq/live-common/families/mina/types";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import type { Transaction as TonTransaction } from "@ledgerhq/live-common/families/ton/types";
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/xrp/types";
@@ -42,6 +37,8 @@ import type { Operation } from "@ledgerhq/types-live";
 import { Account, AccountLike, ProtoNFT } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { ScreenName } from "~/const";
+
+import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/families/stacks/types";
 
 export type SendFundsNavigatorStackParamList = {
   [ScreenName.SendCoin]:

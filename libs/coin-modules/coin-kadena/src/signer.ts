@@ -2,7 +2,7 @@ import {
   BuildTransactionResult,
   TransferCrossChainTxParams,
   TransferTxParams,
-} from "./hw-app-kda/Kadena";
+} from "./ledger-kadena-js/Kadena";
 
 export interface KadenaAddress {
   pubkey: Buffer;

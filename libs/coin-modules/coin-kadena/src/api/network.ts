@@ -2,7 +2,7 @@ import { createClient } from "@kadena/client";
 import network from "@ledgerhq/live-network";
 import { getCoinConfig } from "../config";
 import { KDA_CHAINWEB_VER, KDA_NETWORK } from "../constants";
-import { PactCommandObject } from "../hw-app-kda/Kadena";
+import { PactCommandObject } from "../ledger-kadena-js/Kadena";
 import { KadenaOperation } from "../types";
 import {
   ChainAccount,

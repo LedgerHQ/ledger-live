@@ -11,7 +11,7 @@ import invariant from "invariant";
 import { Observable } from "rxjs";
 import { fetchChainBalances } from "./api/network";
 import { KDA_FEES_BASE, KDA_GAS_LIMIT_TRANSFER, KDA_NETWORK } from "./constants";
-import { TransferCrossChainTxParams, TransferTxParams } from "./hw-app-kda/Kadena";
+import { TransferCrossChainTxParams, TransferTxParams } from "./ledger-kadena-js/Kadena";
 import { KadenaSignature, KadenaSigner } from "./signer";
 import { KadenaAccount, KadenaOperation, Transaction } from "./types";
 import { findChainById, getPath, kdaToBaseUnit } from "./utils";

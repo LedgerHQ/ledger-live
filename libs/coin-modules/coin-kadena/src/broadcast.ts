@@ -1,7 +1,7 @@
 import { BroadcastFnSignature } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { broadcastTransaction } from "./api/network";
-import { PactCommandObject } from "./hw-app-kda/Kadena";
+import { PactCommandObject } from "./ledger-kadena-js/Kadena";
 import { KadenaOperation } from "./types";
 
 export const broadcast: BroadcastFnSignature = async ({
