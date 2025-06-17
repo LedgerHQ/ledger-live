@@ -75,10 +75,10 @@ function StakingAmount({ navigation, route }: Props) {
     (amount: BigNumber) => {
       if (!amount.isNaN()) {
         setValue(amount);
-        updateTransaction?.(oldTx => ({ ...oldTx, amount }));
+        updateTransaction?.(oldTx => ({ ...oldTx, amount, useAllAmount: amount.eq(max) }));
       }
     },
-    [updateTransaction],
+    [updateTransaction, max],
   );
   const [ratioButtons] = useState(
     [0.25, 0.5, 0.75, 1].map(ratio => ({

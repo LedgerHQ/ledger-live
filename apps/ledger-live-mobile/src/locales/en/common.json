@@ -6314,6 +6314,13 @@
         "description": "Not enough available balance in your account to stake, unstake, and withdraw."
       }
     },
+    "operationDetails": {
+      "extra": {
+        "stakedAmount": "Staked amount",
+        "unstakedAmount": "Unstaked amount",
+        "withdrawnAmount": "Withdrawn amount"
+      }
+    },
     "unstaking": {
       "stepperHeader": {
         "amountSubTitle": "Amount to unstake"
