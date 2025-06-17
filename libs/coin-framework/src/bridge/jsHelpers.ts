@@ -567,6 +567,8 @@ export function makeAccountBridgeReceive<A extends Account = Account>(
  */
 export function updateTransaction<T extends TransactionCommon>(t: T, patch: Partial<T>): T {
   const patched = { ...t, ...patch };
+  const isEq = isEqual(t, patched);
+  log("xrp-jshelpers", "isEqual", { isEq, t, patched, patch });
   return isEqual(t, patched) ? t : patched;
 }
 
