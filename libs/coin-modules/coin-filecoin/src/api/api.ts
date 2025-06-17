@@ -21,6 +21,7 @@ import {
 import { FilecoinFeeEstimationFailed } from "../errors";
 
 const getFilecoinURL = (path?: string): string => {
+const fromHeightQueryParam = "from_height";
   const baseUrl = getEnv("API_FILECOIN_ENDPOINT");
   if (!baseUrl) throw new Error("API base URL not available");
 
@@ -96,6 +97,7 @@ export const fetchTxs = async (
 ): Promise<TransactionResponse[]> => {
   const response = await fetch<TransactionsResponse>(
     `/addresses/${addr}/transactions?from_height=${lastHeight}`,
+    `/addresses/${addr}/transactions?${fromHeightQueryParam}=${lastHeight}`,
   );
   return response.txs; // TODO Validate if the response fits this interface
 };
@@ -128,6 +130,7 @@ export const fetchERC20Transactions = async (
 ): Promise<ERC20Transfer[]> => {
   const res = await fetch<FetchERC20TransactionsResponse>(
     `/addresses/${ethAddr}/transactions/erc20?${lastHeight}`,
+    `/addresses/${ethAddr}/transactions/erc20?${fromHeightQueryParam}=${lastHeight}`,
   );
   return res.txs.sort((a, b) => b.timestamp - a.timestamp);
 };
