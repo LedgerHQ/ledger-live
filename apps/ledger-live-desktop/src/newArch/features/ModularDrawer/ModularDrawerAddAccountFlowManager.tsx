@@ -92,8 +92,9 @@ const ModularDrawerAddAccountFlowManager = ({ currency, onConnect }: Props) => {
   const navigationDirection: NavigationDirection = "FORWARD";
 
   return (
-    <AnimatePresence mode="sync" data-test-id="animated">
+    <AnimatePresence initial={false} mode="sync" data-test-id="animated">
       <motion.div
+        key={currentStep}
         custom={navigationDirection}
         variants={{
           enter: (direction: NavigationDirection) => ({
