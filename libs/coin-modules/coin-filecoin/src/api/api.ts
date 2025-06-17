@@ -20,6 +20,7 @@ import {
 } from "../types";
 import { FilecoinFeeEstimationFailed } from "../errors";
 
+const txsPerPageLimit = 1000;
 const currentVersion = "/v2";
 const fromHeightQueryParam = "from_height";
 
@@ -96,12 +97,33 @@ export const fetchBlockHeight = async (): Promise<NetworkStatusResponse> => {
 export const fetchTxs = async (
   addr: string,
   lastHeight: number,
-): Promise<TransactionResponse[]> => {
+  offset: number,
+  limit: number,
+): Promise<TransactionsResponse> => {
   const response = await fetch<TransactionsResponse>(
     currentVersion,
-    `/addresses/${addr}/transactions?${fromHeightQueryParam}=${lastHeight}`,
+    `/addresses/${addr}/transactions?${fromHeightQueryParam}=${lastHeight}&offset=${offset}&limit=${limit}`,
   );
-  return response.txs; // TODO Validate if the response fits this interface
+  return response; // TODO Validate if the response fits this interface
+};
+
+export const fetchTxsWithPages = async (
+  addr: string,
+  lastHeight: number,
+): Promise<TransactionResponse[]> => {
+  let result: TransactionResponse[] = [];
+  let offset = 0;
+  let txsLen = txsPerPageLimit;
+
+  while (txsLen === txsPerPageLimit) {
+    const { txs } = await fetchTxs(addr, lastHeight, offset, txsPerPageLimit);
+    result = [...result, ...txs];
+
+    txsLen = txs.length;
+    offset += txsLen;
+  }
+
+  return result;
 };
 
 export const broadcastTx = async (
@@ -134,10 +156,31 @@ export const fetchERC20TokenBalance = async (
 export const fetchERC20Transactions = async (
   ethAddr: string,
   lastHeight: number,
-): Promise<ERC20Transfer[]> => {
+  offset: number,
+  limit: number,
+): Promise<FetchERC20TransactionsResponse> => {
   const res = await fetch<FetchERC20TransactionsResponse>(
     currentVersion,
-    `/addresses/${ethAddr}/transactions/erc20?${fromHeightQueryParam}=${lastHeight}`,
+    `/addresses/${ethAddr}/transactions/erc20?${fromHeightQueryParam}=${lastHeight}&offset=${offset}&limit=${limit}`,
   );
-  return res.txs.sort((a, b) => b.timestamp - a.timestamp);
+  return res;
+};
+
+export const fetchERC20TransactionsWithPages = async (
+  addr: string,
+  lastHeight: number,
+): Promise<ERC20Transfer[]> => {
+  let result: ERC20Transfer[] = [];
+  let offset = 0;
+  let txsLen = txsPerPageLimit;
+
+  while (txsLen === txsPerPageLimit) {
+    const { txs } = await fetchERC20Transactions(addr, lastHeight, offset, txsPerPageLimit);
+    result = [...result, ...txs];
+
+    txsLen = txs.length;
+    offset += txsLen;
+  }
+
+  return result.sort((a, b) => b.timestamp - a.timestamp);
 };

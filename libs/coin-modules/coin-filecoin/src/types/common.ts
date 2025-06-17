@@ -21,8 +21,14 @@ export interface EstimatedFeesResponse {
   nonce: number;
 }
 
+export interface Metadata {
+  limit: number;
+  offset: number;
+}
+
 export interface TransactionsResponse {
   txs: TransactionResponse[];
+  metadata: Metadata;
 }
 
 export interface TransactionResponse {
