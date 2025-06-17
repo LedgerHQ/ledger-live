@@ -3193,6 +3193,12 @@
         "placeholder" : "CAL形式のExchangeプロバイダー情報",
         "currentSetting" : "現在の設定",
         "error" : "CAL値が無効です"
+      },
+      "customCALRef" : {
+        "title" : "カスタムCAL参照",
+        "description" : "すべてのCALリクエストに使用するカスタムブランチ、コミット、またはタグを指定する",
+        "enable" : "カスタムCAL参照を有効にする",
+        "disable" : "カスタムCAL参照を無効にする"
       }
     },
     "debug" : {
@@ -3369,7 +3375,8 @@
       "description" : "暗号資産を安全に売却する。"
     },
     "exchange" : {
-      "title" : "購入/売却"
+      "title" : "購入/売却",
+      "connectingTo" : "{{provider}}に接続中"
     },
     "stake" : {
       "title" : "ステーキング",
@@ -7430,7 +7437,12 @@
     "performance" : "パフォーマンス",
     "low" : "低速",
     "high" : "高速",
-    "title" : "市場の動向"
+    "title" : "市場の動向",
+    "overlay" : {
+      "title" : "資産間の移動",
+      "action" : "左右にスワイプ",
+      "button" : "了解！"
+    }
   },
   "nftEntryPoint" : {
     "title" : "所有するNFT",
@@ -7438,5 +7450,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "利用不可のロケーション",
+    "description" : "このロケーションでは、Ledgerウォレットをご利用いただけません。",
+    "learnMore" : "詳細はこちら"
   }
 }
