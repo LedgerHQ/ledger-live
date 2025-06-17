@@ -14,6 +14,7 @@ import uniqBy from "lodash/unionBy";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { log } from "@ledgerhq/logs";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
+import type { Transaction as TransactionType } from "../types";
 import type { CreateExtrinsicArg } from "../logic/craftTransaction";
 import { ensureAddressFormat } from "../utils";
 import coinConfig from "../config";
@@ -27,11 +28,14 @@ export const TRANSACTIONS_LIMIT_PER_QUERY = 50;
 export const TRANSACTIONS_LIMIT = 300;
 const BLOCK_HEIGHT = 5; // sui has no block height metainfo, we use it simulate proper icon statuses in apps
 
+export const DEFAULT_COIN_TYPE = "0x2::sui::SUI";
+
 /**
  * Connects to Sui Api
  */
-async function withApi<T>(execute: AsyncApiFunction<T>) {
+export async function withApi<T>(execute: AsyncApiFunction<T>) {
   const url = coinConfig.getCoinConfig().node.url;
+
   if (!apiMap[url]) {
     apiMap[url] = new SuiClient({ url });
   }
@@ -46,6 +50,15 @@ export const getBalanceCached = makeLRUCache(
   minutes(1),
 );
 
+export const getAllBalancesCached = makeLRUCache(
+  ({ api, owner }: { api: SuiClient; owner: string }) =>
+    api.getAllBalances({
+      owner,
+    }),
+  (params: { api: SuiClient; owner: string }) => params.owner,
+  minutes(1),
+);
+
 /**
  * Get account balance
  */
@@ -56,6 +69,19 @@ export const getAccount = async (addr: string) =>
       blockHeight: BLOCK_HEIGHT * 2,
       balance: BigNumber(balance.totalBalance),
     };
+  });
+
+/**
+ * Get account balance (native and tokens)
+ */
+export const getAccountBalances = async (addr: string) =>
+  withApi(async api => {
+    const balances = await getAllBalancesCached({ api, owner: addr });
+    return balances.map(({ coinType, totalBalance }) => ({
+      coinType,
+      blockHeight: BLOCK_HEIGHT * 2,
+      balance: BigNumber(totalBalance),
+    }));
   });
 
 /**
@@ -102,6 +128,7 @@ export const getOperationRecipients = (transaction?: TransactionBlockData): stri
 export const getOperationAmount = (
   address: string,
   transaction: SuiTransactionBlockResponse,
+  coinType: string,
 ): BigNumber => {
   let amount = new BigNumber(0);
   if (!transaction?.balanceChanges) return amount;
@@ -112,9 +139,9 @@ export const getOperationAmount = (
       balanceChange.owner.AddressOwner === address
     ) {
       if (balanceChange.amount[0] === "-") {
-        amount = amount.minus(balanceChange.amount);
+        amount = balanceChange.coinType === coinType ? amount.minus(balanceChange.amount) : amount;
       } else {
-        amount = amount.plus(balanceChange.amount);
+        amount = balanceChange.coinType === coinType ? amount.plus(balanceChange.amount) : amount;
       }
     }
   }
@@ -142,6 +169,22 @@ export const getOperationDate = (transaction: SuiTransactionBlockResponse): Date
 };
 
 /**
+ * Extract operation coin type from transaction
+ */
+export const getOperationCoinType = (transaction: SuiTransactionBlockResponse): string => {
+  if (!transaction.balanceChanges) {
+    return DEFAULT_COIN_TYPE;
+  }
+  const tokenBalanceChanges = transaction.balanceChanges.filter(
+    ({ coinType }) => coinType !== DEFAULT_COIN_TYPE,
+  );
+  if (tokenBalanceChanges.length > 0) {
+    return tokenBalanceChanges[0].coinType;
+  }
+  return DEFAULT_COIN_TYPE;
+};
+
+/**
  * Map the Sui history transaction to a Ledger Live Operation
  */
 export function transactionToOperation(
@@ -150,26 +193,32 @@ export function transactionToOperation(
   transaction: SuiTransactionBlockResponse,
 ): Operation {
   const type = getOperationType(address, transaction.transaction?.data);
+
+  const coinType = getOperationCoinType(transaction);
   const hash = transaction.digest;
+
   return {
     id: encodeOperationId(accountId, hash, type),
     accountId,
     blockHash: hash,
     blockHeight: BLOCK_HEIGHT,
     date: getOperationDate(transaction),
-    extra: {},
+    extra: {
+      coinType,
+    },
     fee: getOperationFee(transaction),
     hasFailed: transaction.effects?.status.status != "success",
     hash,
     recipients: getOperationRecipients(transaction.transaction?.data),
     senders: getOperationSenders(transaction.transaction?.data),
     type,
-    value: getOperationAmount(address, transaction),
+    value: getOperationAmount(address, transaction, coinType),
   };
 }
 
 function transactionToOp(address: string, transaction: SuiTransactionBlockResponse): Op<SuiAsset> {
   const type = getOperationType(address, transaction.transaction?.data);
+  const coinType = getOperationCoinType(transaction);
   const hash = transaction.digest;
   return {
     id: hash,
@@ -186,7 +235,7 @@ function transactionToOp(address: string, transaction: SuiTransactionBlockRespon
     recipients: getOperationRecipients(transaction.transaction?.data),
     senders: getOperationSenders(transaction.transaction?.data),
     type,
-    value: BigInt(getOperationAmount(address, transaction).toString()),
+    value: BigInt(getOperationAmount(address, transaction, coinType).toString()),
   };
 }
 
@@ -238,23 +287,58 @@ const getTotalGasUsed = (effects?: TransactionEffects | null): bigint => {
   );
 };
 
-export const paymentInfo = async (
-  sender: string,
-  { amount, recipient }: { amount: BigNumber; recipient: string },
-) =>
+const FALLBACK_GAS_BUDGET = {
+  SUI_TRANSFER: "3976000",
+  TOKEN_TRANSFER: "4461792",
+};
+
+export const paymentInfo = async (sender: string, fakeTransaction: TransactionType) =>
   withApi(async api => {
     const tx = new Transaction();
     tx.setSender(ensureAddressFormat(sender));
-    const [coin] = tx.splitCoins(tx.gas, [amount.toNumber()]);
-    tx.transferObjects([coin], recipient);
-    const txb = await tx.build({ client: api });
-    const dryRunTxResponse = await api.dryRunTransactionBlock({ transactionBlock: txb });
-    const fees = getTotalGasUsed(dryRunTxResponse.effects);
-    return {
-      gasBudget: dryRunTxResponse.input.gasData.budget,
-      totalGasUsed: fees,
-      fees,
-    };
+    const coinObjectId = await getCoinObjectId(sender, fakeTransaction);
+
+    const [coin] = tx.splitCoins(coinObjectId ?? tx.gas, [fakeTransaction.amount.toNumber()]);
+    tx.transferObjects([coin], fakeTransaction.recipient);
+
+    try {
+      const txb = await tx.build({ client: api });
+      const dryRunTxResponse = await api.dryRunTransactionBlock({ transactionBlock: txb });
+      const fees = getTotalGasUsed(dryRunTxResponse.effects);
+
+      return {
+        gasBudget: dryRunTxResponse.input.gasData.budget,
+        totalGasUsed: fees,
+        fees,
+      };
+    } catch (error) {
+      console.warn("Fee estimation failed:", error);
+      // If dry run fails return a reasonable default gas budget as fallback
+      return {
+        gasBudget: coinObjectId
+          ? FALLBACK_GAS_BUDGET.TOKEN_TRANSFER
+          : FALLBACK_GAS_BUDGET.SUI_TRANSFER,
+        totalGasUsed: BigInt(1000000),
+        fees: BigInt(1000000),
+      };
+    }
+  });
+
+export const getCoinObjectId = async (
+  address: string,
+  transaction: CreateExtrinsicArg | TransactionType,
+) =>
+  withApi(async api => {
+    let coinObjectId = null;
+
+    if (transaction.coinType !== DEFAULT_COIN_TYPE) {
+      const tokenInfo = await api.getCoins({
+        owner: address,
+        coinType: transaction.coinType,
+      });
+      coinObjectId = tokenInfo.data[0].coinObjectId;
+    }
+    return coinObjectId;
   });
 
 export const createTransaction = async (address: string, transaction: CreateExtrinsicArg) =>
@@ -262,7 +346,9 @@ export const createTransaction = async (address: string, transaction: CreateExtr
     const tx = new Transaction();
     tx.setSender(ensureAddressFormat(address));
 
-    const [coin] = tx.splitCoins(tx.gas, [transaction.amount.toNumber()]);
+    const coinObjectId = await getCoinObjectId(address, transaction);
+
+    const [coin] = tx.splitCoins(coinObjectId ?? tx.gas, [transaction.amount.toNumber()]);
     tx.transferObjects([coin], transaction.recipient);
 
     return tx.build({ client: api });

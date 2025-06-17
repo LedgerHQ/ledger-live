@@ -202,6 +202,11 @@ const envDefinitions = {
     def: "https://sui.coin.ledger.com",
     desc: "reverse proxy url for sui node",
   },
+  SUI_ENABLE_TOKENS: {
+    parser: boolParser,
+    def: true,
+    desc: "Enable tokens on Sui",
+  },
   SOLANA_VALIDATORS_APP_BASE_URL: {
     parser: stringParser,
     def: "https://earn.api.live.ledger.com/v0/network/solana/validator-details",
