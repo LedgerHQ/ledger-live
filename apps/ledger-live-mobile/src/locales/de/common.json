@@ -3193,6 +3193,12 @@
         "placeholder" : "Info des Börsenanbieters im CAL-Format",
         "currentSetting" : "Aktuelle Einstellung",
         "error" : "Ungültiger CAL-Wert"
+      },
+      "customCALRef" : {
+        "title" : "Benutzerdefinierte CAL-Referenz",
+        "description" : "Gib einen individuellen Branch, Commit oder Tag an, der für alle CAL-Anfragen verwendet werden sollen.",
+        "enable" : "Benutzerdefinierte CAL-Referenz aktivieren",
+        "disable" : "Benutzerdefinierte CAL-Referenz deaktivieren"
       }
     },
     "debug" : {
@@ -3369,7 +3375,8 @@
       "description" : "Verkaufen Sie Kryptos sicher gegen Bargeld."
     },
     "exchange" : {
-      "title" : "Kaufen & Verkaufen"
+      "title" : "Kaufen & Verkaufen",
+      "connectingTo" : "Du wirst mit {{provider}} verbunden"
     },
     "stake" : {
       "title" : "Staken",
@@ -7430,7 +7437,12 @@
     "performance" : "Performance",
     "low" : "Niedrig",
     "high" : "Hoch",
-    "title" : "Marktbewegungen"
+    "title" : "Marktbewegungen",
+    "overlay" : {
+      "title" : "Zwischen Assets wechseln",
+      "action" : "Nach links oder rechts wischen",
+      "button" : "Verstanden!"
+    }
   },
   "nftEntryPoint" : {
     "title" : "Deine NFTs",
@@ -7438,5 +7450,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Nicht am Ort verfügbar",
+    "description" : "Eine Ledger-Wallet ist an diesem Standort nicht verfügbar.",
+    "learnMore" : "Weitere Informationen"
   }
 }
