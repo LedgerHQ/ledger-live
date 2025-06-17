@@ -1076,6 +1076,15 @@
     },
     "AmountTooSmall" : {
       "title" : "이 트랜잭션에 필요한 최소 금액은 {{amount}}입니다"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "이 트랜잭션에는 제재 대상 지갑 주소가 포함되어 있어 처리할 수 없습니다.\n-- {{sanctionedAddresses}}\n<link0>자세히 알아보기</link0>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "이 트랜잭션에는 제재 대상 지갑 주소가 포함되어 있어 처리할 수 없습니다.\n <link0>자세히 알아보기</link0>"
+    },
+    "UserUtxoAddressSanctionedError" : {
+      "title" : "이 트랜잭션에는 제재 대상 UTXO 주소가 포함되어 있어 처리할 수 없습니다.\n-- {{sanctionedAddresses}}\n<link0>자세히 알아보기</link0>"
     }
   },
   "crash" : {
@@ -3358,7 +3367,13 @@
         "verify" : "{{accountType}}의 주소가 확인되지 않았습니다. 귀하의 장치 보안 유지를 위해 주소를 인증하세요."
       },
       "noResultsFound" : "암호화폐가 없습니다",
-      "noResultsDesc" : "철자를 확인하고 재시도하세요"
+      "noResultsDesc" : "철자를 확인하고 재시도하세요",
+      "sanctionedAddress" : {
+        "title" : "안전한 관리",
+        "description" : "이 트랜잭션에는 제재 대상 지갑 주소가 포함되어 있어 처리할 수 없습니다.\n--{{sanctionedAddress}}\n<Link>{{learnMore}}</Link>",
+        "close" : "닫기",
+        "learnMore" : "자세히 알아보기"
+      }
     },
     "buy" : {
       "title" : "구매",
@@ -7438,5 +7453,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "이용 불가능한 지역",
+    "description" : "Ledger 지갑을 사용할 수 없는 지역입니다.",
+    "learnMore" : "자세히 알아보기"
   }
 }
