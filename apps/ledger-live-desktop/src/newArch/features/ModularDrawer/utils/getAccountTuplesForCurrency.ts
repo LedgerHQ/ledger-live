@@ -12,23 +12,18 @@ export function getAccountTuplesForCurrency(
   allAccounts: Account[],
 ): AccountTuple[] {
   const isToken = currency.type === "TokenCurrency";
+  const targetCurrencyId = isToken ? currency.parentCurrency.id : currency.id;
 
   return allAccounts
-    .filter(account => {
-      if (isToken) return account.currency.id === currency.parentCurrency.id;
-
-      return account.currency.id === currency.id;
-    })
+    .filter(account => account.currency.id === targetCurrencyId)
     .map(account => {
-      if (isToken) {
-        const subAccount =
-          account.subAccounts?.find(
-            (subAcc: TokenAccount) =>
+      const subAccount = isToken
+        ? account.subAccounts?.find(
+            (subAcc): subAcc is TokenAccount =>
               subAcc.type === "TokenAccount" && subAcc.token.id === currency.id,
-          ) || makeEmptyTokenAccount(account, currency);
+          ) || makeEmptyTokenAccount(account, currency)
+        : null;
 
-        return { account, subAccount };
-      }
-      return { account, subAccount: null };
+      return { account, subAccount };
     });
 }
