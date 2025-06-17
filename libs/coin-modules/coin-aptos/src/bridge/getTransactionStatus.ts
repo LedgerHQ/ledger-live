@@ -1,7 +1,8 @@
 import {
   NotEnoughBalance,
   NotEnoughToStake,
-  NotEnoughStakedBalanceLeft,
+  UnstakeNotEnoughStakedBalanceLeft,
+  RestakeNotEnoughStakedBalanceLeft,
   NotEnoughToRestake,
   NotEnoughToUnstake,
   RecipientRequired,
@@ -17,7 +18,9 @@ import type { AptosAccount, AptosStakingPosition, Transaction, TransactionStatus
 import { getTokenAccount } from "./logic";
 import {
   APTOS_DELEGATION_RESERVE_IN_OCTAS,
+  APTOS_MINIMUM_RESTAKE,
   APTOS_MINIMUM_RESTAKE_IN_OCTAS,
+  APTOS_PRECISION,
   MIN_COINS_ON_SHARES_POOL,
   MIN_COINS_ON_SHARES_POOL_IN_OCTAS,
 } from "../constants";
@@ -67,25 +70,33 @@ const checkSendTransaction = (
 
 const checkStakeTransaction = (
   t: Transaction,
+  stakingPosition: AptosStakingPosition | undefined,
   a: AptosAccount,
   errors: Record<string, Error>,
 ): Record<string, Error> => {
   const newErrors = { ...errors };
 
-  if (t.amount.gt(a.balance)) {
+  if (t.amount.gt(a.spendableBalance)) {
     newErrors.amount = new NotEnoughBalance();
   }
 
   if (
-    ((!t.useAllAmount && t.amount.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS)) ||
-      (t.useAllAmount &&
-        a.spendableBalance
-          .minus(APTOS_DELEGATION_RESERVE_IN_OCTAS)
-          .lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS))) &&
+    (((!stakingPosition || stakingPosition?.active.isZero()) &&
+      ((!t.useAllAmount && t.amount.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS)) ||
+        (t.useAllAmount &&
+          a.spendableBalance
+            .minus(APTOS_DELEGATION_RESERVE_IN_OCTAS)
+            .lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS)))) ||
+      (stakingPosition &&
+        !stakingPosition.active.isZero() &&
+        t.amount.lt(APTOS_MINIMUM_RESTAKE_IN_OCTAS))) &&
     !newErrors.amount
   ) {
     newErrors.amount = new NotEnoughToStake("", {
-      minStake: MIN_COINS_ON_SHARES_POOL,
+      minStake:
+        stakingPosition && !stakingPosition.active.isZero()
+          ? APTOS_MINIMUM_RESTAKE
+          : MIN_COINS_ON_SHARES_POOL,
       currency: a.currency.ticker,
     });
   }
@@ -106,13 +117,19 @@ const checkRestakeTransaction = (
     if ((t.amount.gt(stakingPosition.pendingInactive) || t.amount.isZero()) && !newErrors.amount) {
       newErrors.amount = new NotEnoughBalance();
     }
-    if (
-      !t.useAllAmount &&
-      t.amount.minus(APTOS_DELEGATION_RESERVE_IN_OCTAS).lt(APTOS_MINIMUM_RESTAKE_IN_OCTAS) &&
-      !newErrors.amount
-    ) {
+    if (!t.useAllAmount && t.amount.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS) && !newErrors.amount) {
       newErrors.amount = new NotEnoughToRestake("", {
         minAmount: `${MIN_COINS_ON_SHARES_POOL.toNumber().toString()} APT`,
+      });
+    }
+    if (
+      !t.useAllAmount &&
+      stakingPosition.pendingInactive.minus(t.amount).lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS) &&
+      !newErrors.amount
+    ) {
+      newErrors.amount = new RestakeNotEnoughStakedBalanceLeft("", {
+        maxAmount: `${stakingPosition.pendingInactive.minus(MIN_COINS_ON_SHARES_POOL_IN_OCTAS).shiftedBy(-APTOS_PRECISION).toNumber().toString()} APT`,
+        totalAmount: `${stakingPosition.pendingInactive.shiftedBy(-APTOS_PRECISION).toNumber().toString()} APT`,
       });
     }
   }
@@ -143,8 +160,9 @@ const checkUnstakeTransaction = (
       stakingPosition.active.minus(t.amount).lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS) &&
       !newErrors.amount
     ) {
-      newErrors.amount = new NotEnoughStakedBalanceLeft("", {
-        minAmountStaked: `${MIN_COINS_ON_SHARES_POOL.toNumber().toString()} APT`,
+      newErrors.amount = new UnstakeNotEnoughStakedBalanceLeft("", {
+        maxAmount: `${stakingPosition.active.minus(MIN_COINS_ON_SHARES_POOL_IN_OCTAS).shiftedBy(-APTOS_PRECISION).toNumber().toString()} APT`,
+        totalAmount: `${stakingPosition.active.shiftedBy(-APTOS_PRECISION).toNumber().toString()} APT`,
       });
     }
   }
@@ -191,7 +209,7 @@ const getTransactionStatus = async (
       errors = checkSendTransaction(t, a, tokenAccount, estimatedFees, errors);
       break;
     case "stake":
-      errors = checkStakeTransaction(t, a, errors);
+      errors = checkStakeTransaction(t, stakingPosition, a, errors);
       break;
     case "restake":
       errors = checkRestakeTransaction(t, stakingPosition, errors);

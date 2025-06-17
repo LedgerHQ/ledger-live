@@ -510,24 +510,28 @@
       "description": "Please send some EGLD to your account to pay for transactions."
     },
     "NotEnoughToStake": {
-      "title": "Minimum amount to stake: {{minStake}} {{currency}}",
-      "description": "A minimum amount of {{minStake}} {{currency}} is necessary to stake."
+      "title": "You need at least {{minStake}} {{currency}} to activate your stake",
+      "description": "You need at least {{minStake}} {{currency}} to activate your stake"
     },
     "NotEnoughBalance": {
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."
     },
-    "NotEnoughStakedBalanceLeft": {
-      "title": "You need to leave at least {{minAmountStaked}} staked",
-      "description": "Please leave at least {{minAmountStaked}} staked, otherwise you'll have to unstake the full amount."
+    "UnstakeNotEnoughStakedBalanceLeft": {
+      "title": "If you unstake more than {{maxAmount}}, your total stake of {{totalAmount}} will be unstaked",
+      "description": "If you unstake more than {{maxAmount}}, your total stake of {{totalAmount}} will be unstaked"
+    },
+    "RestakeNotEnoughStakedBalanceLeft": {
+      "title": "If you restake more than {{maxAmount}}, your total stake of {{totalAmount}} will be restaked",
+      "description": "If you restake more than {{maxAmount}}, your total stake of {{totalAmount}} will be restaked"
     },
     "NotEnoughToRestake": {
-      "title": "You need to restake at least {{minAmount}}",
-      "description": "Please restake at least {{minAmount}}."
+      "title": "You can't restake less than {{minAmount}}",
+      "description": "You can't restake less than {{minAmount}}."
     },
     "NotEnoughToUnstake": {
-      "title": "You need to unstake at least {{minAmount}}",
-      "description": "Please unstake at least {{minAmount}}."
+      "title": "You can't unstake less than {{minAmount}}",
+      "description": "You can't unstake less than {{minAmount}}."
     },
     "NotEnoughBalanceFees": {
       "title": "Sorry, insufficient funds to cover fees",

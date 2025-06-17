@@ -91,12 +91,12 @@ export enum OP_TYPE {
 export const SUPPORTED_TOKEN_TYPES = ["coin", "fungible_asset"];
 
 export const APTOS_PRECISION = 8;
-export const APTOS_DELEGATION_RESERVE = BigNumber(0.05);
-export const APTOS_MINIMUM_RESTAKE = BigNumber(0.1);
+export const APTOS_MINIMUM_RESTAKE = BigNumber(1);
 export const APTOS_MINIMUM_RESTAKE_IN_OCTAS = APTOS_MINIMUM_RESTAKE.shiftedBy(APTOS_PRECISION);
-export const MIN_COINS_ON_SHARES_POOL = BigNumber(11);
+export const APTOS_DELEGATION_RESERVE = BigNumber(0.05);
 export const APTOS_DELEGATION_RESERVE_IN_OCTAS =
   APTOS_DELEGATION_RESERVE.shiftedBy(APTOS_PRECISION);
+export const MIN_COINS_ON_SHARES_POOL = BigNumber(11);
 export const MIN_COINS_ON_SHARES_POOL_IN_OCTAS =
   MIN_COINS_ON_SHARES_POOL.shiftedBy(APTOS_PRECISION);
 

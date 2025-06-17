@@ -23,7 +23,7 @@ type Props = {
 
 const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props) => {
   const [search, setSearch] = useState("");
-  const [showAll, setShowAll] = useState(false);
+  const [showAll, setShowAll] = useState(true);
   const unit = useAccountUnit(account);
   const validators = useAptosValidators(account.currency, search);
 
