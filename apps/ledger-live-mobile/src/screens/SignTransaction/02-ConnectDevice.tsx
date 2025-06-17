@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import React, { memo, useCallback, useMemo } from "react";
+import React, { memo, useCallback, useEffect, useMemo } from "react";
 import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -40,12 +40,15 @@ function ConnectDevice({ navigation, route }: SignTransactionConnectDeviceProps)
   // NOTE: here B
   log("xrp-connectdevice", "In connect device");
   useEffect(() => {
-    log("xrp-connectdevice", "transaction changed", { tx: route.params.transaction });
+    log("xrp-connectdevice-main", "route transaction changed", { tx: route.params.transaction });
   }, [route.params.transaction]);
   const { transaction, status } = useBridgeTransaction(() => ({
     account: mainAccount,
     transaction: route.params.transaction,
   }));
+  useEffect(() => {
+    log("xrp-connectdevice-main", "transaction changed", { transaction });
+  }, [transaction]);
   const tokenCurrency = account.type === "TokenAccount" ? account.token : undefined;
   const handleTx = useCallback(
     (result: TransactionResult) => {

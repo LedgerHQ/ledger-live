@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
@@ -53,6 +53,7 @@ import { TronVoteFlowParamList } from "~/families/tron/VoteFlow/types";
 import { useTransactionDeviceAction } from "~/hooks/deviceActions";
 import { SignedOperation } from "@ledgerhq/types-live";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
+import { log } from "@ledgerhq/logs";
 
 type Props =
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendConnectDevice>
@@ -127,10 +128,16 @@ export default function ConnectDevice({ route, navigation }: Props) {
   invariant(account, "account is required");
   const { appName, onSuccess, onError, analyticsPropertyFlow } = route.params;
   const mainAccount = getMainAccount(account, parentAccount);
+  useEffect(() => {
+    log("xrp-connectdevice-main", "route transaction changed", { tx: route.params.transaction });
+  }, [route.params.transaction]);
   const { transaction, status } = useBridgeTransaction(() => ({
     account: mainAccount,
     transaction: route.params.transaction,
   }));
+  useEffect(() => {
+    log("xrp-connectdevice-main", "transaction changed", { transaction });
+  }, [transaction]);
   const tokenCurrency = account.type === "TokenAccount" ? account.token : undefined;
   const handleTx = useSignedTxHandler({
     account,

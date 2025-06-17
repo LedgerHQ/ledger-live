@@ -36,6 +36,7 @@ import {
   renameDeviceExecMock,
 } from "../../e2e/bridge/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { log } from "@ledgerhq/logs";
 
 export function useAppDeviceAction() {
   const envMock = useEnv("MOCK");
@@ -52,6 +53,8 @@ export function useAppDeviceAction() {
 export function useTransactionDeviceAction() {
   const mock = useEnv("MOCK");
   const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
+  log("xrp-deviceaction", "in useTransactionDeviceAction");
+  // NOTE: here
   return useMemo(
     () =>
       transactionCreateAction(
