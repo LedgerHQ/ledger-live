@@ -893,6 +893,7 @@
     "title" : "买卖加密货币",
     "reset" : "重置流程",
     "verifyAddress" : "请确认显示的地址与您设备上显示的地址完全匹配",
+    "connectingTo" : "正在连接到 {{provider}}",
     "buy" : {
       "header" : "通过我们的合作伙伴买入加密货币",
       "title" : "选择一个供应方来买入加密货币",
@@ -1925,7 +1926,8 @@
       "payoutNetworkFees" : "支出费用",
       "payoutNetworkFeesTooltip" : "该数额不会在您的设备上显示",
       "acceptTerms" : "验证此交易，即表示我接受\n<0>{{provider}} 的使用条款</0>",
-      "exodusAcceptTerms" : "Exodus 依赖第三方来进行互换。\n验证此交易，即表示我接受 <0>Exodus 的使用条款</0>"
+      "exodusAcceptTerms" : "Exodus 依赖第三方来进行互换。\n验证此交易，即表示我接受 <0>Exodus 的使用条款</0>",
+      "changellyAcceptTerms" : "点击“使用 Changelly 互换”即表示您接受 Changelly 的<0>使用条款</0>及其\n<1>反洗钱 (AML)/客户身份核实 (KYC) 政策</1>。Changelly 可能会采用 AML/KYC 程序，\n这可能在少数情况下影响您完成交易。如果发生这种情况，\n您需要联系 Changelly <2>客服</2>。"
     },
     "swap2" : {
       "amountSent" : "发送数额",
@@ -4405,6 +4407,8 @@
       "mockAppUpdateDesc" : "在“我的 Ledger”中显示可用的应用程序更新，它将重新安装相同版本的应用程序",
       "catalogUrl" : "设置目录应用程序提供商",
       "catalogUrlDesc" : "输入您的自定义目录提供方网址",
+      "customCALRef" : "自定义 CAL 引用",
+      "customCALRefDesc" : "指定用于所有 CAL 请求的自定义分支、提交或标签",
       "enablePlatformDevTools" : "启用平台开发工具",
       "enablePlatformDevToolsDesc" : "启用打开平台应用程序开发工具的窗口",
       "customLockScreen" : "自定义锁屏素材资源",
@@ -6041,6 +6045,10 @@
       "title" : "出错了",
       "description" : "此接收账户不属于您已连接的设备。请更改并重试"
     },
+    "MissingSwapPayloadParamaters" : {
+      "title" : "出错了",
+      "description" : "所选的提供商缺少互换参数。请重试，如有疑问，请联系 Ledger 客服。"
+    },
     "WrongDeviceForAccountRefund" : {
       "title" : "出错了",
       "description" : "此发送账户不属于您已连接的设备。请更改并重试"
@@ -6594,6 +6602,19 @@
     },
     "AmountTooSmall" : {
       "title" : "此交易的最低数额要求为 {{amount}}"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "保障您的安全",
+      "description" : "此交易涉及受制裁的钱包地址，无法处理。<br/>——{{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForSendError" : {
+      "title" : "此交易涉及受制裁的钱包地址，无法处理<br/>——{{sanctionedAddress}}"
+    },
+    "UserAddressSanctionedForStakingError" : {
+      "title" : "此交易涉及受制裁的钱包地址，<br/>无法处理。<br/>——{{sanctionedAddress}}<br/>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "此交易涉及受制裁的钱包地址，无法处理。"
     }
   },
   "cryptoOrg" : {
@@ -7057,12 +7078,11 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "搜索",
-    "assetFlow" : {
-      "selectTemplate" : "选择 {{dynamic}}",
-      "asset" : "资产",
-      "network" : "网络",
-      "account" : "账户"
-    }
+    "selectAsset" : "选择资产",
+    "selectNetwork" : "选择网络",
+    "selectAccount" : "选择账户",
+    "accountCount_one" : "{{count}} 个账户",
+    "accountCount_other" : "{{count}} 个账户"
   },
   "nftEntryPoint" : {
     "title" : "NFT（非同质化代币）",
@@ -7070,5 +7090,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "所在地区不可用",
+    "description" : "此地区无法使用 Ledger 钱包。",
+    "learnMore" : "了解更多"
   }
 }
