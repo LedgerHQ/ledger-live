@@ -149,12 +149,53 @@ export const createAction = (
     });
     const { device, opened, inWrongDeviceForAccount, error } = appState;
     const [state, setState] = useState(initialState);
+    log("xrp-debug-transaction", "in createActionUseHook");
+
+    useEffect(() => {
+      log("xrp-use-effect", "device modified");
+    }, [device]);
+
+    useEffect(() => {
+      log("xrp-use-effect", "mainAccount modified");
+    }, [mainAccount]);
+
+    useEffect(() => {
+      log("xrp-use-effect", "transaction modified");
+    }, [transaction]);
+
+    useEffect(() => {
+      log("xrp-use-effect", "opened modified");
+    }, [opened]);
+
+    useEffect(() => {
+      log("xrp-use-effect", "inWrongDeviceForAccount modified");
+    }, [inWrongDeviceForAccount]);
+
+    useEffect(() => {
+      log("xrp-use-effect", "error modified");
+    }, [error]);
+
+    useEffect(() => {
+      log("xrp-use-effect", "isACRE modified");
+    }, [isACRE]);
+
     useEffect(() => {
       if (!device || !opened || inWrongDeviceForAccount || error) {
         setState(initialState);
         return;
       }
 
+      log("xrp-debug-transaction", "in useEffect of createActionUseHook", {
+        device,
+        deviceId: device.deviceId,
+        mainAccount,
+        transaction,
+        opened,
+        inWrongDeviceForAccount,
+        error,
+        isACRE,
+      });
+      // UNIQUE,
       const bridge = isACRE
         ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (ACREBridge.accountBridge as unknown as AccountBridge<any>)
