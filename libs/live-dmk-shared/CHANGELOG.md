@@ -1,5 +1,12 @@
 # @ledgerhq/live-dmk
 
+## 0.9.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.7-next.0
+
 ## 0.9.0
 
 ### Minor Changes

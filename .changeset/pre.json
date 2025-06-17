@@ -148,5 +148,34 @@
     "@ledgerhq/native-modules-tools": "1.0.3",
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "brave-colts-join",
+    "clean-camels-study",
+    "cold-hairs-film",
+    "cyan-waves-fetch",
+    "dirty-crews-approve",
+    "dull-ads-run",
+    "dull-tables-rule",
+    "eleven-boats-shake",
+    "five-dogs-knock",
+    "five-hornets-rhyme",
+    "fluffy-parrots-promise",
+    "late-glasses-attack",
+    "metal-onions-roll",
+    "old-zoos-shout",
+    "perfect-crews-repeat",
+    "purple-llamas-itch",
+    "quiet-chairs-develop",
+    "rare-trainers-boil",
+    "rich-news-boil",
+    "rotten-gifts-push",
+    "shaggy-walls-cheat",
+    "silver-geckos-attack",
+    "stale-radios-yawn",
+    "tame-adults-sin",
+    "tender-ducks-itch",
+    "tricky-taxis-film",
+    "weak-swans-swim",
+    "witty-wombats-roll"
+  ]
 }

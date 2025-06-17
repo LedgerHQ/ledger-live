@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.19.0-next.0
+
+### Minor Changes
+
+- [#10557](https://github.com/LedgerHQ/ledger-live/pull/10557) [`5739a67`](https://github.com/LedgerHQ/ledger-live/commit/5739a67975dfc2509d5abd4ff13ea36af010f93e) Thanks [@Canestin](https://github.com/Canestin)! - Update CAL tokens
+
 ## 13.18.1
 
 ### Patch Changes
