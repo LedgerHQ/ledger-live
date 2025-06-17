@@ -90,7 +90,7 @@ describe("LegacySignerSolana", () => {
       jest.spyOn(Solana.prototype, "getAppConfiguration").mockResolvedValue({
         blindSigningEnabled: false,
         pubKeyDisplayMode: PubKeyDisplayMode.SHORT,
-        version: "1.6.2",
+        version: "1.7.1",
       });
 
       await expect(
