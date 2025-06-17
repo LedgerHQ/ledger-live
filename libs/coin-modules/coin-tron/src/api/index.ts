@@ -1,5 +1,5 @@
 import type {
-  AlpacaApi,
+  Api,
   FeeEstimation,
   Operation,
   Pagination,
@@ -16,9 +16,9 @@ import {
   lastBlock,
   Options,
 } from "../logic";
-import type { TronAsset, TronMemo } from "../types";
+import type { TronAsset } from "../types";
 
-export function createApi(config: TronConfig): AlpacaApi<TronAsset, TronMemo> {
+export function createApi(config: TronConfig): Api<TronAsset> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -32,9 +32,7 @@ export function createApi(config: TronConfig): AlpacaApi<TronAsset, TronMemo> {
   };
 }
 
-async function estimate(
-  transactionIntent: TransactionIntent<TronAsset, TronMemo>,
-): Promise<FeeEstimation> {
+async function estimate(transactionIntent: TransactionIntent<TronAsset>): Promise<FeeEstimation> {
   const fees = await estimateFees(transactionIntent);
   return { value: fees };
 }

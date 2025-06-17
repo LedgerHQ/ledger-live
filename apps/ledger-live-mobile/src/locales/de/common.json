@@ -7438,5 +7438,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Nicht am Ort verfügbar",
+    "description" : "Eine Ledger-Wallet ist an diesem Standort nicht verfügbar.",
+    "learnMore" : "Weitere Informationen"
   }
 }

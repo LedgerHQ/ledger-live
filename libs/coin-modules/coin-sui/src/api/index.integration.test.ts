@@ -1,9 +1,10 @@
-import type { AlpacaApi, FeeEstimation, Operation } from "@ledgerhq/coin-framework/api/index";
+import type { Api, FeeEstimation, Operation } from "@ledgerhq/coin-framework/api/index";
 import { createApi } from ".";
 import { SuiAsset } from "./types";
 import { getEnv } from "@ledgerhq/live-env";
 
 describe("Sui Api", () => {
+<<<<<<< fix/sui-operation-syncing-int
   let module: AlpacaApi<SuiAsset>;
   const RECIPIENT = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
   const SENDER = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
@@ -13,6 +14,11 @@ describe("Sui Api", () => {
   const IN_OPERATIONS_COUNT = 2;
   const OUT_OPERATIONS_COUNT = 3;
   const TOTAL_OPERATIONS_COUNT = IN_OPERATIONS_COUNT + OUT_OPERATIONS_COUNT;
+=======
+  let module: Api<SuiAsset>;
+  const SENDER = "0x67b511de2697e4567e41a4477a3abccd4c7c00f4c59b45ab8c72d1544f58ceb8";
+  const RECIPIENT = "0xba7080172a6d957b9ed2e3eb643529860be963cf4af896fb84f1cde00f46b561";
+>>>>>>> develop
 
   beforeAll(() => {
     module = createApi({
@@ -31,7 +37,7 @@ describe("Sui Api", () => {
       const amount = BigInt(100_000);
 
       // When
-      const result: FeeEstimation = await module.estimateFees({
+      const result: FeeEstimation<{ value: bigint }> = await module.estimateFees({
         asset: { type: "native" },
         type: "send",
         sender: SENDER,

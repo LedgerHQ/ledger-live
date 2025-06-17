@@ -45,17 +45,19 @@ If ledger returns error `6808` - enable blind signature in settings (not needed 
     *   [getAddress](#getaddress)
         *   [Parameters](#parameters-1)
         *   [Examples](#examples-1)
-    *   [signTransaction](#signtransaction)
+    *   [provideTrustedDynamicDescriptor](#providetrusteddynamicdescriptor)
         *   [Parameters](#parameters-2)
+    *   [signTransaction](#signtransaction)
+        *   [Parameters](#parameters-3)
         *   [Examples](#examples-2)
     *   [signOffchainMessage](#signoffchainmessage)
-        *   [Parameters](#parameters-3)
+        *   [Parameters](#parameters-4)
         *   [Examples](#examples-3)
     *   [getAppConfiguration](#getappconfiguration)
         *   [Examples](#examples-4)
     *   [getChallenge](#getchallenge)
     *   [provideTrustedName](#providetrustedname)
-        *   [Parameters](#parameters-4)
+        *   [Parameters](#parameters-5)
 
 ### Solana
 
@@ -92,6 +94,16 @@ solana.getAddress("44'/501'/0'").then(r => r.address)
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{address: [Buffer](https://nodejs.org/api/buffer.html)}>** an object with the address field
+
+#### provideTrustedDynamicDescriptor
+
+Provides trusted dynamic and signed coin metadata
+
+##### Parameters
+
+*   `data` **DescriptorInput** An object containing the descriptor and its signature from the CAL
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>**&#x20;
 
 #### signTransaction
 

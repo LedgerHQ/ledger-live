@@ -38,7 +38,7 @@ export const WebViewWrapper = styled.div<WebViewWrapperProps>`
     mobileView.display ? `width: ${mobileView.width ?? 355}px;` : "width: 100%;"}
 `;
 
-export default function WebPTXPlayer({ manifest, inputs }: WebviewProps) {
+export default function WebPTXPlayer({ manifest, inputs, Loader }: WebviewProps) {
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const [mobileView, setMobileView] = useState<MobileView>(initialMobileView);
@@ -63,6 +63,7 @@ export default function WebPTXPlayer({ manifest, inputs }: WebviewProps) {
             onStateChange={setWebviewState}
             ref={webviewAPIRef}
             customHandlers={customHandlers}
+            Loader={Loader}
           />
         </WebViewWrapper>
       </Wrapper>

@@ -1,5 +1,19 @@
 # @ledgerhq/cryptoassets
 
+## 13.18.1
+
+### Patch Changes
+
+- Updated dependencies [[`8551c28`](https://github.com/LedgerHQ/ledger-live/commit/8551c280f24f7bd4475c6cc12f1b1d92636d9357)]:
+  - @ledgerhq/live-env@2.10.0
+
+## 13.18.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`8551c28`](https://github.com/LedgerHQ/ledger-live/commit/8551c280f24f7bd4475c6cc12f1b1d92636d9357)]:
+  - @ledgerhq/live-env@2.10.0-next.0
+
 ## 13.18.0
 
 ### Minor Changes
