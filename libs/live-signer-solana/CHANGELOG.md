@@ -1,5 +1,18 @@
 # @ledgerhq/live-signer-solana
 
+## 0.3.0-nightly.3
+
+### Minor Changes
+
+- [#10225](https://github.com/LedgerHQ/ledger-live/pull/10225) [`e65c386`](https://github.com/LedgerHQ/ledger-live/commit/e65c386cfb3e53e3ee9f501dc08971a93eb5cf81) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - core(coin-solana,hw-app-solana): support SPL tokens dynamically
+
+### Patch Changes
+
+- Updated dependencies [[`e65c386`](https://github.com/LedgerHQ/ledger-live/commit/e65c386cfb3e53e3ee9f501dc08971a93eb5cf81)]:
+  - @ledgerhq/ledger-cal-service@1.0.0-nightly.2
+  - @ledgerhq/hw-app-solana@7.5.0-nightly.1
+  - @ledgerhq/coin-solana@0.26.0-nightly.3
+
 ## 0.2.1-nightly.2
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.73.0-nightly.2
+
+### Minor Changes
+
+- [#10305](https://github.com/LedgerHQ/ledger-live/pull/10305) [`98eb2eb`](https://github.com/LedgerHQ/ledger-live/commit/98eb2ebce8e12742a68b8f54ba625d63c4958087) Thanks [@mwiercinska](https://github.com/mwiercinska)! - Add custom Buy/Sell loader
+
 ## 6.73.0-nightly.1
 
 ### Minor Changes

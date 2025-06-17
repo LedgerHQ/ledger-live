@@ -1,5 +1,55 @@
 # @ledgerhq/live-common
 
+## 34.37.0-nightly.4
+
+### Minor Changes
+
+- [#10518](https://github.com/LedgerHQ/ledger-live/pull/10518) [`3bef817`](https://github.com/LedgerHQ/ledger-live/commit/3bef817da07c47d40b9357711f5022118c899f26) Thanks [@qperrot](https://github.com/qperrot)! - Revert feature handle black listed address on swap
+
+- [#10305](https://github.com/LedgerHQ/ledger-live/pull/10305) [`98eb2eb`](https://github.com/LedgerHQ/ledger-live/commit/98eb2ebce8e12742a68b8f54ba625d63c4958087) Thanks [@mwiercinska](https://github.com/mwiercinska)! - Add custom Buy/Sell loader
+
+### Patch Changes
+
+- Updated dependencies [[`e65c386`](https://github.com/LedgerHQ/ledger-live/commit/e65c386cfb3e53e3ee9f501dc08971a93eb5cf81), [`5739a67`](https://github.com/LedgerHQ/ledger-live/commit/5739a67975dfc2509d5abd4ff13ea36af010f93e)]:
+  - @ledgerhq/ledger-cal-service@1.0.0-nightly.2
+  - @ledgerhq/coin-solana@0.26.0-nightly.3
+  - @ledgerhq/live-signer-solana@0.3.0-nightly.3
+  - @ledgerhq/cryptoassets@13.19.0-nightly.1
+  - @ledgerhq/coin-vechain@2.7.9-nightly.3
+  - @ledgerhq/coin-framework@5.3.0-nightly.3
+  - @ledgerhq/coin-algorand@0.9.9-nightly.3
+  - @ledgerhq/coin-aptos@2.2.0-nightly.3
+  - @ledgerhq/coin-bitcoin@0.15.9-nightly.3
+  - @ledgerhq/coin-cardano@0.8.9-nightly.3
+  - @ledgerhq/coin-casper@1.7.4-nightly.3
+  - @ledgerhq/coin-celo@1.1.7-nightly.3
+  - @ledgerhq/coin-cosmos@0.15.1-nightly.3
+  - @ledgerhq/coin-evm@2.22.3-nightly.3
+  - @ledgerhq/coin-filecoin@1.9.9-nightly.3
+  - @ledgerhq/coin-hedera@1.7.1-nightly.3
+  - @ledgerhq/coin-icon@0.10.9-nightly.3
+  - @ledgerhq/coin-internet_computer@1.7.9-nightly.3
+  - @ledgerhq/coin-mina@1.1.8-nightly.3
+  - @ledgerhq/coin-multiversx@0.4.9-nightly.3
+  - @ledgerhq/coin-near@0.11.9-nightly.3
+  - @ledgerhq/coin-polkadot@6.1.3-nightly.3
+  - @ledgerhq/coin-stacks@0.8.9-nightly.3
+  - @ledgerhq/coin-stellar@5.1.2-nightly.3
+  - @ledgerhq/coin-sui@0.4.2-nightly.3
+  - @ledgerhq/coin-tezos@5.2.2-nightly.3
+  - @ledgerhq/coin-ton@0.12.1-nightly.3
+  - @ledgerhq/coin-tron@4.2.0-nightly.4
+  - @ledgerhq/coin-xrp@6.1.4-nightly.3
+  - @ledgerhq/device-core@0.4.27-nightly.3
+  - @ledgerhq/hw-app-eth@6.45.7-nightly.3
+  - @ledgerhq/live-countervalues@0.5.9-nightly.3
+  - @ledgerhq/live-countervalues-react@0.2.38-nightly.3
+  - @ledgerhq/live-nft@0.8.9-nightly.3
+  - @ledgerhq/live-signer-evm@0.5.2-nightly.3
+  - @ledgerhq/live-wallet@0.10.12-nightly.3
+  - @ledgerhq/hw-app-vet@0.5.6-nightly.1
+  - @ledgerhq/hw-app-celo@6.33.5-nightly.3
+
 ## 34.37.0-nightly.3
 
 ### Minor Changes

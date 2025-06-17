@@ -1,5 +1,30 @@
 # live-mobile
 
+## 3.82.0-nightly.4
+
+### Minor Changes
+
+- [#10522](https://github.com/LedgerHQ/ledger-live/pull/10522) [`9ca8039`](https://github.com/LedgerHQ/ledger-live/commit/9ca803936e628a3dacbb4ba14cf7688f167031eb) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - retain memo tag input focus on drawer dismiss
+
+- [#10305](https://github.com/LedgerHQ/ledger-live/pull/10305) [`98eb2eb`](https://github.com/LedgerHQ/ledger-live/commit/98eb2ebce8e12742a68b8f54ba625d63c4958087) Thanks [@mwiercinska](https://github.com/mwiercinska)! - Add custom Buy/Sell loader
+
+### Patch Changes
+
+- Updated dependencies [[`98eb2eb`](https://github.com/LedgerHQ/ledger-live/commit/98eb2ebce8e12742a68b8f54ba625d63c4958087)]:
+  - @ledgerhq/types-live@6.73.0-nightly.2
+  - @ledgerhq/coin-framework@5.3.0-nightly.3
+  - @ledgerhq/coin-cosmos@0.15.1-nightly.3
+  - @ledgerhq/coin-evm@2.22.3-nightly.3
+  - @ledgerhq/coin-filecoin@1.9.9-nightly.3
+  - @ledgerhq/coin-multiversx@0.4.9-nightly.3
+  - @ledgerhq/coin-stacks@0.8.9-nightly.3
+  - @ledgerhq/domain-service@1.2.32-nightly.3
+  - @ledgerhq/live-countervalues@0.5.9-nightly.3
+  - @ledgerhq/live-countervalues-react@0.2.38-nightly.3
+  - @ledgerhq/live-nft@0.8.9-nightly.3
+  - @ledgerhq/live-nft-react@0.9.9-nightly.3
+  - @ledgerhq/live-wallet@0.10.12-nightly.3
+
 ## 3.82.0-nightly.3
 
 ### Minor Changes

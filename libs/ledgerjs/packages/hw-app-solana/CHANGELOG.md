@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-solana
 
+## 7.5.0-nightly.1
+
+### Minor Changes
+
+- [#10225](https://github.com/LedgerHQ/ledger-live/pull/10225) [`e65c386`](https://github.com/LedgerHQ/ledger-live/commit/e65c386cfb3e53e3ee9f501dc08971a93eb5cf81) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - core(coin-solana,hw-app-solana): support SPL tokens dynamically
+
 ## 7.4.3-nightly.0
 
 ### Patch Changes
