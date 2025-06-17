@@ -21,6 +21,7 @@ import type {
 } from "~/components/RootNavigator/types/helpers";
 import { useTransactionDeviceAction } from "~/hooks/deviceActions";
 import logger from "~/logger";
+import { log } from "@ledgerhq/logs";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 export type SignTransactionConnectDeviceProps = StackNavigatorProps<
@@ -29,12 +30,18 @@ export type SignTransactionConnectDeviceProps = StackNavigatorProps<
 >;
 
 function ConnectDevice({ navigation, route }: SignTransactionConnectDeviceProps) {
+  // NOTE here D
   const action = useTransactionDeviceAction();
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
   const { appName, dependencies, onSuccess } = route.params;
   const mainAccount = getMainAccount(account, parentAccount);
+  // NOTE: here B
+  log("xrp-connectdevice", "In connect device");
+  useEffect(() => {
+    log("xrp-connectdevice", "transaction changed", { tx: route.params.transaction });
+  }, [route.params.transaction]);
   const { transaction, status } = useBridgeTransaction(() => ({
     account: mainAccount,
     transaction: route.params.transaction,

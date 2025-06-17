@@ -154,10 +154,12 @@ const reducer = <T extends Transaction = Transaction>(
     }
 
     case "setTransaction":
+      log("xrp-usebridge", "setTransaction");
       if (state.transaction === action.transaction) return state;
       return { ...state, transaction: action.transaction };
 
     case "updateTransaction": {
+      log("xrp-usebridge", "updateTransaction");
       if (!state.transaction) return state;
       const transaction = action.updater(state.transaction);
       if (state.transaction === transaction) return state;
