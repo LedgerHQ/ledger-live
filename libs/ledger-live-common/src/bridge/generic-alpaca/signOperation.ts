@@ -97,6 +97,7 @@ export const genericSignOperation =
           );
 
           const operation = buildOptimisticOperation(account, transaction, signedInfo.sequence);
+          log("xrp-debug", "✅ signOperation main() operation built", { operation, transaction });
           o.next({
             type: "signed",
             signedOperation: {
