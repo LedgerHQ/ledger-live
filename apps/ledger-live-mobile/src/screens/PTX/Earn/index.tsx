@@ -62,6 +62,8 @@ function Earn({ route }: Props) {
     [stakePrograms],
   );
 
+  const stakeCurrenciesParam = useMemo(() => stakePrograms?.params?.list, [stakePrograms]);
+
   if (!remoteLiveAppState.isLoading && !manifest) {
     // We want to track occurrences of this error in Sentry
     console.error(appManifestNotFoundError);
@@ -83,6 +85,9 @@ function Earn({ route }: Props) {
           currencyTicker,
           discreetMode: discreet ? "true" : "false",
           stakeProgramsParam: stakeProgramsParam ? JSON.stringify(stakeProgramsParam) : undefined,
+          stakeCurrenciesParam: stakeCurrenciesParam?.length
+            ? JSON.stringify(stakeCurrenciesParam)
+            : undefined,
           OS: Platform.OS,
           ...params,
           ...Object.fromEntries(searchParams.entries()),
