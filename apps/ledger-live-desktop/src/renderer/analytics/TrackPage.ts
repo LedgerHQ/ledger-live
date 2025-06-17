@@ -1,4 +1,4 @@
-import { memo, useEffect } from "react";
+import React, { memo, useEffect } from "react";
 import { trackPage } from "./segment";
 import { currentRouteNameRef } from "./screenRefs";
 

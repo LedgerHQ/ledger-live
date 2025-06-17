@@ -7080,12 +7080,9 @@
   },
   "modularAssetDrawer": {
     "searchPlaceholder": "Search",
-    "assetFlow": {
-      "selectTemplate": "Select {{dynamic}}",
-      "asset": "asset",
-      "network": "network",
-      "account": "account"
-    }
+    "selectAsset": "Select asset",
+    "selectNetwork": "Select network",
+    "selectAccount": "Select account"
   },
   "nftEntryPoint": {
     "title": "NFT (Non Fungible Tokens)",
@@ -7093,5 +7090,10 @@
       "magiceden": "Magic Eden",
       "opensea": "OpenSea"
     }
+  },
+  "geoBlocking": {
+    "title": "Location unavailable",
+    "description": "Ledger wallet is not available in this location.",
+    "learnMore": "Learn more"
   }
 }

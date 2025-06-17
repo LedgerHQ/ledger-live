@@ -1,8 +1,7 @@
 /* eslint-disable no-var */
 import { globalSetup } from "detox/runners/jest";
-import { Server, WebSocket } from "ws";
 import { Step } from "jest-allure2-reporter/api";
-import { MessageData, ServerData } from "./bridge/types";
+import { ServerData } from "./bridge/types";
 import { Subject } from "rxjs";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
@@ -36,13 +35,6 @@ type SwapType = typeof Swap;
 
 declare global {
   var IS_FAILED: boolean;
-  var webSocket: {
-    wss: Server | undefined;
-    ws: WebSocket | undefined;
-    messages: { [id: string]: MessageData };
-    e2eBridgeServer: Subject<ServerData>;
-  };
-
   var app: Application;
   var Step: StepType;
   var jestExpect: expectType;

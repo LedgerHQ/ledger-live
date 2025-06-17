@@ -1,72 +1,53 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
-import { motion, AnimatePresence } from "framer-motion";
-import { Text } from "@ledgerhq/react-ui";
-import { NavigateBackButton } from "./NavigateBackButton";
-import { ANIMATION_VARIANTS, NavigationDirection } from "./navigation";
 import styled from "styled-components";
+import { Title } from "./Title";
+import { ModularDrawerStep, MODULAR_DRAWER_STEP } from "../../types";
+import { Icons } from "@ledgerhq/react-ui/index";
 
-export type HeaderProps = {
-  navDirection: NavigationDirection;
-  navKey: string;
-  onBackClick: () => void;
-  showBackButton?: boolean;
-  title: string;
+type Props = {
+  onBackClick?: () => void;
+  step: ModularDrawerStep;
 };
 
-export function Header({
-  navDirection,
-  navKey,
-  onBackClick,
-  showBackButton = true,
-  title,
-}: Readonly<HeaderProps>) {
-  const { t } = useTranslation();
+const TranslationKeyMap: Record<ModularDrawerStep, string> = {
+  [MODULAR_DRAWER_STEP.ASSET_SELECTION]: "modularAssetDrawer.selectAsset",
+  [MODULAR_DRAWER_STEP.NETWORK_SELECTION]: "modularAssetDrawer.selectNetwork",
+  [MODULAR_DRAWER_STEP.ACCOUNT_SELECTION]: "modularAssetDrawer.selectAccount",
+};
 
-  const titleTemplate = t("modularAssetDrawer.assetFlow.selectTemplate", {
-    dynamic: "{{dynamic}}",
-  });
-
-  const [beforeDynamic, afterDynamic] = titleTemplate.split("{{dynamic}}");
+export const Header = ({ step, onBackClick }: Props) => {
+  const handleBackClick = onBackClick ? () => onBackClick() : undefined;
 
   return (
     <HeaderContainer>
-      <NavigateBackButton hidden={!showBackButton} onClick={onBackClick} />
-      <Text
-        display="flex"
-        flexDirection="row"
-        alignItems="center"
-        justifyContent="flex-start"
-        columnGap={1}
-        fontSize={24}
-        fontWeight="semiBold"
-        color="palette.text.shade100"
-        data-testid="select-asset-drawer-title"
-      >
-        {beforeDynamic}
-        <AnimatePresence mode="wait" custom={navDirection}>
-          <motion.span
-            key={navKey}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            variants={ANIMATION_VARIANTS}
-            custom={navDirection}
-            data-testid="select-asset-drawer-title-dynamic"
-          >
-            {title}
-          </motion.span>
-        </AnimatePresence>
-        {afterDynamic}
-      </Text>
+      {handleBackClick && (
+        <BackButton onClick={handleBackClick} data-testid="mad-back-button">
+          <Icons.ArrowLeft />
+        </BackButton>
+      )}
+      <Title translationKey={TranslationKeyMap[step]} />
     </HeaderContainer>
   );
-}
+};
 
 const HeaderContainer = styled.div`
-  padding: 54px 0 16px 24px;
+  padding: 0px 0 16px 24px;
   flex: 0 1 auto;
   width: 100%;
   display: flex;
   align-items: center;
+`;
+
+const BackButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  position: absolute;
+  top: 20px;
+  left: 16px;
+  z-index: 1000;
 `;

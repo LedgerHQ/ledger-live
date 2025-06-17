@@ -15,6 +15,8 @@ export default class OperationDetailsPage {
   title = () => getElementById(this.titleId);
   account = () => getElementById("operationDetails-account");
   amount = () => getElementById("operationDetails-amount");
+  operation = () => getElementById("operationDetails-identifier");
+  date = () => getElementById("operationDetails-date");
 
   @Step("Wait for operation details")
   async waitForOperationDetails() {
@@ -59,5 +61,14 @@ export default class OperationDetailsPage {
   @Step("Check transaction type")
   async checkTransactionType(type: keyof typeof this.operationsType) {
     await detoxExpect(await getElementById(this.titleId)).toHaveText(this.operationsType[type]);
+  }
+
+  @Step("Check that transaction details are displayed")
+  async checkTransactionDetailsVisibility() {
+    await this.waitForOperationDetails();
+    await detoxExpect(this.account()).toBeVisible();
+    await detoxExpect(this.amount()).toBeVisible();
+    await detoxExpect(this.operation()).toBeVisible();
+    await detoxExpect(this.date()).toBeVisible();
   }
 }

@@ -9,7 +9,7 @@ import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { addTmsLink } from "../utils/allureUtils";
 import { getDescription } from "../utils/customJsonReporter";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Swap";
+import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { CLI } from "../utils/cliUtils";
 import {
   setupEnv,
@@ -34,12 +34,13 @@ const checkProviders = [
     xrayTicket: "B2CQA-3120",
     provider: Provider.ONE_INCH,
   },
-  {
-    fromAccount: Account.ETH_1,
-    toAccount: TokenAccount.ETH_USDC_1,
-    xrayTicket: "B2CQA-3119",
-    provider: Provider.PARASWAP,
-  },
+  //ToDo: Enable when Paraswap is migrated to Velora
+  // {
+  //   fromAccount: Account.ETH_1,
+  //   toAccount: TokenAccount.ETH_USDC_1,
+  //   xrayTicket: "B2CQA-3119",
+  //   provider: Provider.PARASWAP,
+  // },
 ];
 
 for (const { fromAccount, toAccount, xrayTicket, provider } of checkProviders) {

@@ -105,7 +105,9 @@ describe("Tezos Api", () => {
 
   describe("craftTransaction", () => {
     async function decode(sbytes: string) {
-      return await localForger.parse(sbytes);
+      // note: strip the conventional prefix (aka watermark) added by rawEncode
+      // output of craftTransaction is "payload to sign = prefix + actual raw transaction"
+      return await localForger.parse(sbytes.slice(2));
     }
 
     it.each(["send", "delegate", "undelegate"])("returns a raw transaction with %s", async type => {
