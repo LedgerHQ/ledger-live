@@ -65,7 +65,9 @@ const Earn = () => {
             OS: "web",
             routerState: JSON.stringify(router.location.state ?? {}),
             stakeProgramsParam: stakeProgramsParam ? JSON.stringify(stakeProgramsParam) : undefined,
-            stakeCurrenciesParam: stakeCurrenciesParam ? JSON.stringify(stakeCurrenciesParam) : undefined,
+            stakeCurrenciesParam: stakeCurrenciesParam
+              ? JSON.stringify(stakeCurrenciesParam)
+              : undefined,
           }}
         />
       ) : null}

@@ -76,7 +76,9 @@ function Earn({ route }: Props) {
           currencyTicker,
           discreetMode: discreet ? "true" : "false",
           stakeProgramsParam: stakeProgramsParam ? JSON.stringify(stakeProgramsParam) : undefined,
-          stakeCurrenciesParam: stakeCurrenciesParam ? JSON.stringify(stakeCurrenciesParam) : undefined,
+          stakeCurrenciesParam: stakeCurrenciesParam
+            ? JSON.stringify(stakeCurrenciesParam)
+            : undefined,
           OS: Platform.OS,
           ...params,
           ...Object.fromEntries(searchParams.entries()),
