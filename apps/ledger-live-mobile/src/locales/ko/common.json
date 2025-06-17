@@ -3193,6 +3193,12 @@
         "placeholder" : "CAL 형식의 거래소 공급자 정보",
         "currentSetting" : "현재 설정",
         "error" : "유효하지 않은 CAL 값"
+      },
+      "customCALRef" : {
+        "title" : "사용자 지정 CAL 참조",
+        "description" : "모든 CAL 요청에 사용할 사용자 지정 브랜치, 커밋 또는 태그를 지정하세요",
+        "enable" : "사용자 지정 CAL 참조 활성화",
+        "disable" : "사용자 지정 CAL 참조 비활성화"
       }
     },
     "debug" : {
@@ -3369,7 +3375,8 @@
       "description" : "암호화폐를 안전하게 현금으로 매도하세요."
     },
     "exchange" : {
-      "title" : "구매 / 판매"
+      "title" : "구매 / 판매",
+      "connectingTo" : "{{provider}}에 연결"
     },
     "stake" : {
       "title" : "스테이킹",
@@ -7430,7 +7437,12 @@
     "performance" : "가격 추이",
     "low" : "낮음",
     "high" : "높음",
-    "title" : "시장 변동성"
+    "title" : "시장 변동성",
+    "overlay" : {
+      "title" : "자산 간 이동",
+      "action" : "왼쪽이나 오른쪽으로 스와이프하세요",
+      "button" : "알겠습니다!"
+    }
   },
   "nftEntryPoint" : {
     "title" : "고객의 NFT",
@@ -7438,5 +7450,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "이용 불가능한 지역",
+    "description" : "Ledger 지갑을 사용할 수 없는 지역입니다.",
+    "learnMore" : "자세히 알아보기"
   }
 }
