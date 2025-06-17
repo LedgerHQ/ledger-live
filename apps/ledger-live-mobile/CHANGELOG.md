@@ -1,5 +1,52 @@
 # live-mobile
 
+## 3.82.0
+
+### Minor Changes
+
+- [#10426](https://github.com/LedgerHQ/ledger-live/pull/10426) [`9097e0e`](https://github.com/LedgerHQ/ledger-live/commit/9097e0e260f95f09c388b54571f2b8ade5b584e5) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Fixes the name of the event and the button attribute for drawer events
+
+- [#10432](https://github.com/LedgerHQ/ledger-live/pull/10432) [`2422a81`](https://github.com/LedgerHQ/ledger-live/commit/2422a8163cc99d06675c9557a5e940b4bb6bd685) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: the cards are more scrollable and less swipable
+
+- [#10415](https://github.com/LedgerHQ/ledger-live/pull/10415) [`6c65ae0`](https://github.com/LedgerHQ/ledger-live/commit/6c65ae0acdb88244b597000424658384fccd2932) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - The provider name was directly used from the provider object, which could lead to inconsistencies. Now using getProviderName utility function to ensure consistent naming across the application.
+
+- [#10512](https://github.com/LedgerHQ/ledger-live/pull/10512) [`5cb0ca0`](https://github.com/LedgerHQ/ledger-live/commit/5cb0ca0c74edb015e26fef1281ef4885fa6176e9) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Revert sanctioned address feature
+
+- [#10458](https://github.com/LedgerHQ/ledger-live/pull/10458) [`62bed22`](https://github.com/LedgerHQ/ledger-live/commit/62bed2219bda04d00501e3d6877e543eeb2cdd9b) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - fix delegation e2e test
+
+- [#10412](https://github.com/LedgerHQ/ledger-live/pull/10412) [`ed356dd`](https://github.com/LedgerHQ/ledger-live/commit/ed356dd3575fd452bba0d9a820e0b306556c22cf) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fix Header text too long on atom claim page
+
+- [#10475](https://github.com/LedgerHQ/ledger-live/pull/10475) [`91eee0e`](https://github.com/LedgerHQ/ledger-live/commit/91eee0ee32e5afbb561d444051da9f5df9b1536d) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Improve secure channels error handling
+
+- [#10350](https://github.com/LedgerHQ/ledger-live/pull/10350) [`28abe9c`](https://github.com/LedgerHQ/ledger-live/commit/28abe9c5e40a4d0cfd2afdde99e804e22ba4c243) Thanks [@qperrot](https://github.com/qperrot)! - Remove XRP custom fees on LLd and LLM
+
+- [#10370](https://github.com/LedgerHQ/ledger-live/pull/10370) [`b7d3d59`](https://github.com/LedgerHQ/ledger-live/commit/b7d3d59d299c3d3541d598536651b9047fda4526) Thanks [@themooneer](https://github.com/themooneer)! - IP restriction for LLM and LLD
+
+- [#10521](https://github.com/LedgerHQ/ledger-live/pull/10521) [`cdd05f4`](https://github.com/LedgerHQ/ledger-live/commit/cdd05f47e934aa4d29161cd2af04b30705d908b5) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Ensure token accounts have correct parent accounts in swap history sections
+
+- [#10457](https://github.com/LedgerHQ/ledger-live/pull/10457) [`fb242c9`](https://github.com/LedgerHQ/ledger-live/commit/fb242c9ae638207f966246d274fa890015a23851) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Include shareAnalytics flag in both mobile and desktop swap webviews to track user consent for analytics
+
+### Patch Changes
+
+- Updated dependencies [[`8551c28`](https://github.com/LedgerHQ/ledger-live/commit/8551c280f24f7bd4475c6cc12f1b1d92636d9357), [`1a2f8d1`](https://github.com/LedgerHQ/ledger-live/commit/1a2f8d18aea33d7e1fede0365f8a43e0d59a8c55), [`18bc0d4`](https://github.com/LedgerHQ/ledger-live/commit/18bc0d4a27696491400df6ce26b915a88b56792f), [`99385c9`](https://github.com/LedgerHQ/ledger-live/commit/99385c9a7ecac9328ffa29c039e8c0cf2317c431), [`b7d3d59`](https://github.com/LedgerHQ/ledger-live/commit/b7d3d59d299c3d3541d598536651b9047fda4526), [`e04d215`](https://github.com/LedgerHQ/ledger-live/commit/e04d21576919fa21cb3ab6e1c4e8e50fb6c17eca), [`1535307`](https://github.com/LedgerHQ/ledger-live/commit/1535307f78d345d7f652ac2c91c8a67e62fedef2)]:
+  - @ledgerhq/live-env@2.10.0
+  - @ledgerhq/live-wallet@0.11.0
+  - @ledgerhq/coin-framework@5.3.0
+  - @ledgerhq/types-live@6.73.0
+  - @ledgerhq/coin-cosmos@0.15.1
+  - @ledgerhq/coin-evm@2.22.3
+  - @ledgerhq/coin-filecoin@1.9.9
+  - @ledgerhq/coin-multiversx@0.4.9
+  - @ledgerhq/coin-stacks@0.8.9
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.7
+  - @ledgerhq/ledger-key-ring-protocol@0.5.9
+  - @ledgerhq/live-countervalues@0.5.9
+  - @ledgerhq/live-network@2.0.10
+  - @ledgerhq/live-nft@0.8.9
+  - @ledgerhq/live-countervalues-react@0.2.38
+  - @ledgerhq/live-nft-react@0.9.9
+  - @ledgerhq/domain-service@1.2.32
+
 ## 3.82.0-next.4
 
 ### Patch Changes

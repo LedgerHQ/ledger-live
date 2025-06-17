@@ -1,5 +1,13 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.1.0
+
+### Minor Changes
+
+- [#10551](https://github.com/LedgerHQ/ledger-live/pull/10551) [`99385c9`](https://github.com/LedgerHQ/ledger-live/commit/99385c9a7ecac9328ffa29c039e8c0cf2317c431) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: revert generic bridge xrp
+
+- [#10217](https://github.com/LedgerHQ/ledger-live/pull/10217) [`e04d215`](https://github.com/LedgerHQ/ledger-live/commit/e04d21576919fa21cb3ab6e1c4e8e50fb6c17eca) Thanks [@Wozacosta](https://github.com/Wozacosta)! - feat: update transactionintent generic types + remove xrp bridge and introduce the generic alpaca bridge in LLC
+
 ## 0.1.0-next.1
 
 ### Minor Changes
