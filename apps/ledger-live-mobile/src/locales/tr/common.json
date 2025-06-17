@@ -1076,6 +1076,15 @@
     },
     "AmountTooSmall" : {
       "title" : "Bu işlem için gerekli minimum tutar: {{amount}}"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "Bu işlem, yaptırım uygulanan bir cüzdan adresi içerdiğinden işleme koyulamıyor.\n-- {{sanctionedAddresses}}\n<link0>Daha fazla bilgi edinin</link0>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "Bu işlem, yaptırım uygulanan bir cüzdan adresi içerdiğinden işleme koyulamıyor. <link0>Daha fazla bilgi </link0>"
+    },
+    "UserUtxoAddressSanctionedError" : {
+      "title" : "Bu işlem, yaptırım uygulanan bir UTXO adresi içerdiğinden işleme koyulamıyor.\n-- {{sanctionedAddresses}}\n<link0>Daha fazla bilgi edinin</link0>"
     }
   },
   "crash" : {
@@ -3358,7 +3367,13 @@
         "verify" : "{{accountType}} hesabının adresi doğrulanmadı. Güvende kalmak için cihazınızdaki adresleri doğrulayın."
       },
       "noResultsFound" : "Kripto varlık bulunamadı",
-      "noResultsDesc" : "Lütfen doğru yazdığınızdan emin olun ve tekrar deneyin"
+      "noResultsDesc" : "Lütfen doğru yazdığınızdan emin olun ve tekrar deneyin",
+      "sanctionedAddress" : {
+        "title" : "Sizi güvende tutuyoruz",
+        "description" : "Bu işlem, yaptırım uygulanan bir cüzdan adresi içerdiğinden işleme koyulamıyor.\n--{{sanctionedAddress}}\n<Link>{{learnMore}}</Link>",
+        "close" : "Kapat",
+        "learnMore" : "Daha Fazla Bilgi"
+      }
     },
     "buy" : {
       "title" : "Satın Al",
@@ -7438,5 +7453,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Konum kullanılamıyor",
+    "description" : "Ledger cüzdan bu konumda kullanılamıyor.",
+    "learnMore" : "Daha fazla bilgi"
   }
 }
