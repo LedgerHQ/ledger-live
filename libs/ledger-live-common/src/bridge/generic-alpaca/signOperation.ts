@@ -50,9 +50,13 @@ export const genericSignOperation =
           txWithMemo.memo.memos.set("destinationTag", txMemo);
         }
 
-        const unsigned = await getAlpacaApi(network, kind).craftTransaction({
+        const { serialized: unsigned, sequence } = await getAlpacaApi(
+          network,
+          kind,
+        ).craftTransactionReturnSequence({
           ...txWithMemo,
         });
+
         const transactionSignature: string = await signerContext(deviceId, signer =>
           signer.signTransaction(account.freshAddressPath, unsigned),
         );
@@ -64,9 +68,7 @@ export const genericSignOperation =
           publicKey,
         );
 
-        const operation = buildOptimisticOperation(account, transaction);
-        // NOTE: we set the transactionSequenceNumber before on the operation
-        // now that we create it in craftTransaction, we might need to return it back from craftTransaction also
+        const operation = buildOptimisticOperation(account, transaction, sequence);
         o.next({
           type: "signed",
           signedOperation: {
