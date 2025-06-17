@@ -3193,6 +3193,12 @@
         "placeholder" : "Información del proveedor del exchange en formato CAL",
         "currentSetting" : "Ajuste actual",
         "error" : "Valor de CAL no válido"
+      },
+      "customCALRef" : {
+        "title" : "Referencia CAL personalizada",
+        "description" : "Especifica una rama, commit o etiqueta personalizados para usarlos con todas las solicitudes CAL",
+        "enable" : "Activar referencia CAL personalizada",
+        "disable" : "Desactivar referencia CAL personalizada"
       }
     },
     "debug" : {
@@ -3369,7 +3375,8 @@
       "description" : "Vende criptomonedas de forma segura a cambio de dinero en efectivo."
     },
     "exchange" : {
-      "title" : "Comprar / Vender"
+      "title" : "Comprar / Vender",
+      "connectingTo" : "Conectándote a {{provider}}"
     },
     "stake" : {
       "title" : "Poner en participación",
@@ -7430,7 +7437,12 @@
     "performance" : "Rendimiento",
     "low" : "Baja",
     "high" : "Alta",
-    "title" : "Movimientos del mercado"
+    "title" : "Movimientos del mercado",
+    "overlay" : {
+      "title" : "Muévete de un activo a otro",
+      "action" : "Desliza a la izquierda o a la derecha",
+      "button" : "¡Entendido!"
+    }
   },
   "nftEntryPoint" : {
     "title" : "Tus NFTs",
@@ -7438,5 +7450,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Ubicación no disponible",
+    "description" : "Las billeteras Ledger no están disponibles en esta ubicación.",
+    "learnMore" : "Más información"
   }
 }
