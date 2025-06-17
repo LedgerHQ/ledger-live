@@ -4,6 +4,10 @@ import { transactionToIntent } from "./utils";
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 
+function bnEq(a: BigNumber | null | undefined, b: BigNumber | null | undefined): boolean {
+  return !a && !b ? true : !a || !b ? false : a.eq(b);
+}
+
 export function genericPrepareTransaction(
   network,
   kind,
@@ -15,7 +19,8 @@ export function genericPrepareTransaction(
     const bnFee = BigNumber(fees.value.toString());
 
     log("xrp-preparetx", "setting fees on tx", { transaction });
-    if (transaction.fees !== bnFee) {
+    // if (transaction.fees !== bnFee) {
+    if (!bnEq(transaction.fees, bnFee)) {
       try {
         log("xrp-preparetx", "changing tx", { txfees: transaction.fees, fees: bnFee });
       } catch (e) {
