@@ -36,12 +36,6 @@ export const ConnectYourDevice = ({
         action={action}
         request={{ currency }}
         onResult={onConnect}
-        // onError={e => {
-        //   console.log("ERROR", e);
-        // }}
-        // onSelectDeviceLink={() => {
-        //   console.log("SELECT DEVICE LINK");
-        // }}
         analyticsPropertyFlow={analyticsPropertyFlow}
         location={HOOKS_TRACKING_LOCATIONS.addAccountModal}
       />

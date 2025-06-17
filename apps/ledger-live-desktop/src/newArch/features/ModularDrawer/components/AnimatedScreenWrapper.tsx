@@ -4,13 +4,13 @@ import type { NavigationDirection } from "../types";
 
 const TOP_BAR = 62;
 
-const AnimatedScreenWrapper = <K extends string>({
+const AnimatedScreenWrapper = ({
   children,
   screenKey,
   direction,
 }: {
   children: React.ReactNode;
-  screenKey: K;
+  screenKey: string;
   direction: NavigationDirection;
 }) => {
   const variants = {

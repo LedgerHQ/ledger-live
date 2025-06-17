@@ -33,5 +33,3 @@ export const LoadingOverlay = ({ theme }: { theme: "light" | "dark" }) => {
     </Box>
   );
 };
-
-// ---

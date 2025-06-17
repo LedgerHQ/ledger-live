@@ -31,7 +31,6 @@ export const AddAccountHeader = ({ step, onBackClick }: Props) => {
   );
 };
 
-// TODO review utility
 const HeaderContainer = styled.div``;
 
 const BackButton = styled.button`

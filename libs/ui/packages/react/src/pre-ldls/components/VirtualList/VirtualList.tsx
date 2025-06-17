@@ -16,7 +16,7 @@ interface VirtualItem {
  */
 type VirtualListProps<T> = {
   /**
-   * TODO Gap between items in the list.
+   * Gap between items in the list.
    */
   gap?: number;
   /**
