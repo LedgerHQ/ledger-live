@@ -1,5 +1,4 @@
 import { useCallback, useContext, useMemo } from "react";
-import { ParamListBase, RouteProp } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { liveAppContext as remoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LiveAppRegistry } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/types";
@@ -171,7 +170,7 @@ export function useStake() {
         accountId: accountIdForManifestVersion,
       })?.toString();
 
-      if (manifest.id === "earn") {
+      if (manifest.id === "earn" || manifest.id === "earn-stg") {
         // Earn live app uses a different navigator
         return {
           screen: NavigatorName.Earn,
