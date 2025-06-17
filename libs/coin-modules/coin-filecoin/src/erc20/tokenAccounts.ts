@@ -1,6 +1,6 @@
 import cbor from "@zondax/cbor";
 import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
-import { fetchERC20TokenBalance, fetchERC20Transactions } from "../api";
+import { fetchERC20TokenBalance, fetchERC20TransactionsWithPages } from "../api";
 import invariant from "invariant";
 import { ERC20Transfer, TxStatus } from "../types";
 import { emptyHistoryCache, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
@@ -88,7 +88,7 @@ export async function buildTokenAccounts(
   initialAccount?: Account,
 ): Promise<TokenAccount[]> {
   try {
-    const transfers = await fetchERC20Transactions(filAddr, lastHeight);
+    const transfers = await fetchERC20TransactionsWithPages(filAddr, lastHeight);
     const transfersUntangled: { [addr: string]: ERC20Transfer[] } = transfers.reduce(
       (prev: { [addr: string]: ERC20Transfer[] }, curr: ERC20Transfer) => {
         curr.contract_address = curr.contract_address.toLowerCase();
