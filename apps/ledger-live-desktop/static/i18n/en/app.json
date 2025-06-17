@@ -6620,7 +6620,8 @@
       "title": "Minimum required amount for this transaction is {{amount}}"
     },
     "UserAddressSanctionedError": {
-      "title": "This transaction involves a sanctioned wallet address<br/> and cannot be processed.<br/>-- {{sanctionedAddresses}}<br/>"
+      "title": "Keeping you safe",
+      "description": "This transaction involves a sanctioned wallet address and cannot be processed.<br/>-- {{sanctionedAddresses}}<br/>"
     },
     "UserUtxoAddressSanctionedError": {
       "title": "This transaction involves a sanctioned UTXO input address<br/> and cannot be processed.<br/>-- {{sanctionedAddresses}}<br/>"

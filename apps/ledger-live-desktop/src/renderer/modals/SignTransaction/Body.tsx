@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import Stepper from "~/renderer/components/Stepper";
+import Stepper, { TransactionSafety } from "~/renderer/components/Stepper";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { closeModal, openModal } from "~/renderer/actions/modals";
@@ -15,7 +15,7 @@ import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import StepConnectDevice from "./steps/StepConnectDevice";
 import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
-import { St, StepId } from "./types";
+import { St, StepId, StepProps } from "./types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import logger from "~/renderer/logger";
 import Text from "~/renderer/components/Text";
@@ -62,7 +62,16 @@ function useSteps(canEditFees = false): St[] {
         label: t("send.steps.reviewSummary.title"),
         component: StepSummary,
         footer: StepSummaryFooter,
-        onBack: canEditFees ? ({ transitionTo }) => transitionTo("amount") : null,
+        onBack: (props: StepProps) => {
+          if (canEditFees) {
+            props.setTransactionSafety({
+              safe: true,
+              addresses: [],
+            });
+
+            props.transitionTo("amount");
+          }
+        },
         backButtonComponent: canEditFees ? (
           <Text ff="Inter|Bold" fontSize={4} color="palette.primary.main">
             {t("common.adjustFees")}
@@ -221,6 +230,11 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
 
   const error = transactionError || bridgeError || getStatusError(status, "errors");
   const warning = getStatusError(status, "warnings");
+  const [transactionSafety, setTransactionSafety] = useState<TransactionSafety>({
+    safe: true,
+    addresses: [],
+  });
+
   const stepperProps = {
     title,
     stepId,
@@ -252,6 +266,8 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
     onTransactionSigned: handleTransactionSigned,
     onTransactionError: handleTransactionError,
     updateTransaction,
+    transactionSafety,
+    setTransactionSafety,
   };
   if (!status) return null;
   return (

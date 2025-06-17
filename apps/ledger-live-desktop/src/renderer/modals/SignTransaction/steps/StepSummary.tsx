@@ -1,6 +1,6 @@
 // FIXME: this is a duplicate of apps/ledger-live-desktop/src/renderer/modals/Send/steps/StepSummary.tsx
 
-import React from "react";
+import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import {
@@ -28,6 +28,10 @@ import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivation
 import { getLLDCoinFamily } from "~/renderer/families";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { isAddressSanctioned } from "@ledgerhq/coin-framework/lib-es/sanction/index";
+import ErrorBanner from "~/renderer/components/ErrorBanner";
+import { UserAddressSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 
 const FromToWrapper = styled.div``;
 const Circle = styled.div`
@@ -56,7 +60,7 @@ const Separator = styled.div`
 const WARN_FROM_UTXO_COUNT = 50;
 
 const StepSummary = (props: StepProps) => {
-  const { account, parentAccount, transaction, status } = props;
+  const { account, parentAccount, transaction, status, transactionSafety } = props;
   const accountName = useMaybeAccountName(account);
 
   const mainAccount = account && getMainAccount(account, parentAccount);
@@ -82,6 +86,17 @@ const StepSummary = (props: StepProps) => {
   const SpecificSummaryNetworkFeesRow = specific?.StepSummaryNetworkFeesRow;
 
   const memo = "memo" in transaction ? transaction.memo : undefined;
+
+  if (!transactionSafety.safe) {
+    return (
+      <Box flow={4} mx={40}>
+        <TrackPage category="Sign Flow" name="Step Summary" />
+        <ErrorBanner
+          error={new UserAddressSanctionedError(...transactionSafety.addresses)}
+        ></ErrorBanner>
+      </Box>
+    );
+  }
 
   return (
     <Box flow={4} mx={40}>
@@ -298,10 +313,63 @@ const StepSummary = (props: StepProps) => {
 };
 
 export const StepSummaryFooter = (props: StepProps) => {
-  const { account, status, bridgePending, transitionTo } = props;
+  const {
+    account,
+    status,
+    bridgePending,
+    transitionTo,
+    transaction,
+    transactionSafety,
+    setTransactionSafety,
+  } = props;
+
+  const areAddressesSanctioned = useCallback(
+    async (
+      currency: CryptoCurrency,
+      senderAddress: string,
+      transaction: Transaction | null | undefined,
+    ) => {
+      const sanctionedAddresses = [];
+
+      const userSanctioned = await isAddressSanctioned(currency, senderAddress);
+      if (userSanctioned) {
+        sanctionedAddresses.push(senderAddress);
+      }
+
+      let recipientSanctioned = false;
+      if (transaction && transaction.recipient && transaction.recipient !== "") {
+        recipientSanctioned = await isAddressSanctioned(currency, transaction.recipient);
+        if (recipientSanctioned) {
+          sanctionedAddresses.push(transaction.recipient);
+        }
+      }
+
+      return {
+        recipientSanctioned: recipientSanctioned,
+        userSanctioned: userSanctioned,
+        sanctionedAddresses: sanctionedAddresses,
+      };
+    },
+    [],
+  );
 
   const onNext = async () => {
-    transitionTo("device");
+    if (account?.type !== "Account") {
+      transitionTo("device");
+      return;
+    }
+
+    const { recipientSanctioned, userSanctioned, sanctionedAddresses } =
+      await areAddressesSanctioned(account.currency, account.freshAddress, transaction);
+
+    setTransactionSafety({
+      safe: !recipientSanctioned && !userSanctioned,
+      addresses: [...sanctionedAddresses],
+    });
+
+    if (!recipientSanctioned && !userSanctioned) {
+      transitionTo("device");
+    }
   };
 
   if (!account) {
@@ -309,7 +377,7 @@ export const StepSummaryFooter = (props: StepProps) => {
   }
 
   const { errors } = status;
-  const canNext = !bridgePending && !Object.keys(errors).length;
+  const canNext = !bridgePending && !Object.keys(errors).length && transactionSafety.safe;
 
   return (
     <>

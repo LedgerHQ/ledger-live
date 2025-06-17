@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import {
@@ -31,6 +31,14 @@ import MemoIcon from "~/renderer/icons/MemoIcon";
 import { Flex } from "@ledgerhq/react-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getMemoTagValueByTransactionFamily } from "LLD/features/MemoTag/utils";
+import { isAddressSanctioned } from "@ledgerhq/coin-framework/lib-es/sanction/index";
+import ErrorBanner from "~/renderer/components/ErrorBanner";
+import { UserAddressSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CardanoAccount, CardanoOutput } from "@ledgerhq/coin-cardano/types";
+import { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/coin-bitcoin/types";
+import { TransactionStatus } from "@ledgerhq/coin-algorand/lib-es/types";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 
 const FromToWrapper = styled.div``;
 const Circle = styled.div`
@@ -60,8 +68,17 @@ const Separator = styled.div`
 const WARN_FROM_UTXO_COUNT = 50;
 
 const StepSummary = (props: StepProps) => {
-  const { account, parentAccount, transaction, status, currencyName, isNFTSend, transitionTo } =
-    props;
+  const {
+    account,
+    parentAccount,
+    transaction,
+    status,
+    currencyName,
+    isNFTSend,
+    transitionTo,
+    transactionSafety,
+  } = props;
+  //const [propsState, setPropsState] = useState(props);
   const mainAccount = account && getMainAccount(account, parentAccount);
   const unit = useMaybeAccountUnit(account);
   const accountName = useMaybeAccountName(account);
@@ -96,6 +113,22 @@ const StepSummary = (props: StepProps) => {
   const handleOnEditMemo = () => {
     transitionTo("recipient");
   };
+
+  if (!transactionSafety.safe) {
+    return (
+      <Box flow={4} mx={40}>
+        <TrackPage
+          category="Send Flow"
+          name="Step Summary"
+          currencyName={currencyName}
+          isNFTSend={isNFTSend}
+        />
+        <ErrorBanner
+          error={new UserAddressSanctionedError(...transactionSafety.addresses)}
+        ></ErrorBanner>
+      </Box>
+    );
+  }
 
   return (
     <Box flow={4} mx={40}>
@@ -371,10 +404,79 @@ const StepSummary = (props: StepProps) => {
 };
 
 export const StepSummaryFooter = (props: StepProps) => {
-  const { account, status, bridgePending, transitionTo } = props;
+  const {
+    account,
+    status,
+    bridgePending,
+    transitionTo,
+    transaction,
+    transactionSafety,
+    setTransactionSafety,
+  } = props;
+
+  const collectAddressesInvolvedInTransaction = useCallback(
+    (account: Account, status: TransactionStatus, transaction: Transaction | null | undefined) => {
+      const addresses = [];
+
+      switch (account.currency.family) {
+        case "bitcoin":
+          addresses.push(
+            (status as BitcoinTransactionStatus).txInputs?.map(input => input.address),
+          );
+          break;
+        case "cardano":
+          addresses.push(
+            (account as CardanoAccount).cardanoResources.utxos.map(
+              (input: CardanoOutput) => input.address,
+            ),
+          );
+          break;
+        default:
+          addresses.push(account.freshAddress);
+      }
+
+      if (transaction && transaction.recipient && transaction.recipient !== "") {
+        addresses.push(transaction.recipient);
+      }
+
+      return addresses;
+    },
+    [],
+  );
+
+  const areAddressesSanctioned = useCallback(
+    async (currency: CryptoCurrency, addresses: string[]) => {
+      const sanctionedAddresses = [];
+      for (const address of addresses) {
+        const isSanctioned = await isAddressSanctioned(currency, address);
+        if (isSanctioned) {
+          sanctionedAddresses.push(address);
+        }
+      }
+
+      return sanctionedAddresses;
+    },
+    [],
+  );
 
   const onNext = async () => {
-    transitionTo("device");
+    if (!account || account.type !== "Account") {
+      transitionTo("device");
+      return;
+    }
+
+    const addresses = collectAddressesInvolvedInTransaction(account, status, transaction);
+    const sanctionedAddresses = await areAddressesSanctioned(account.currency, addresses);
+    const isTransactionSafe = sanctionedAddresses.length === 0;
+
+    setTransactionSafety({
+      safe: isTransactionSafe,
+      addresses: [...sanctionedAddresses],
+    });
+
+    if (isTransactionSafe) {
+      transitionTo("device");
+    }
   };
 
   if (!account) {
@@ -382,7 +484,7 @@ export const StepSummaryFooter = (props: StepProps) => {
   }
 
   const { errors } = status;
-  const canNext = !bridgePending && !Object.keys(errors).length;
+  const canNext = !bridgePending && !Object.keys(errors).length && transactionSafety.safe;
 
   return (
     <>

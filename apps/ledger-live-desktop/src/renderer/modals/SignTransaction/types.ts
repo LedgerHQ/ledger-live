@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { Step } from "~/renderer/components/Stepper";
+import { Step, TransactionSafety } from "~/renderer/components/Stepper";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 export type StepId = "amount" | "summary" | "device" | "confirmation" | "warning";
 export type StepProps = {
@@ -36,5 +36,7 @@ export type StepProps = {
   manifestName?: string;
   isACRE?: boolean;
   location?: HOOKS_TRACKING_LOCATIONS;
+  transactionSafety: TransactionSafety;
+  setTransactionSafety: (transactionSafety: TransactionSafety) => void;
 };
 export type St = Step<StepId, StepProps>;

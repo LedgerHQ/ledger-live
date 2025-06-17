@@ -16,7 +16,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { Account, AccountLike, NFT, Operation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import logger from "~/renderer/logger";
-import Stepper from "~/renderer/components/Stepper";
+import Stepper, { TransactionSafety } from "~/renderer/components/Stepper";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { closeModal, openModal } from "~/renderer/actions/modals";
@@ -31,7 +31,7 @@ import StepConnectDevice from "./steps/StepConnectDevice";
 import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import StepWarning, { StepWarningFooter } from "./steps/StepWarning";
-import { St, StepId } from "./types";
+import { St, StepId, StepProps } from "./types";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 
@@ -97,9 +97,16 @@ const createSteps = (disableBacks: string[] = [], shouldSkipAmount = false): St[
       label: <Trans i18nKey="send.steps.summary.title" />,
       component: StepSummary,
       footer: StepSummaryFooter,
-      onBack: !disableBacks.includes("transaction")
-        ? ({ transitionTo }) => transitionTo("amount")
-        : null,
+      onBack: (props: StepProps) => {
+        if (!disableBacks.includes("transaction")) {
+          props.setTransactionSafety({
+            safe: true,
+            addresses: [],
+          });
+
+          props.transitionTo("amount");
+        }
+      },
     },
     {
       id: "device",
@@ -307,6 +314,11 @@ const Body = ({
     errorSteps.push(0);
   }
   const error = transactionError || bridgeError;
+  const [transactionSafety, setTransactionSafety] = useState<TransactionSafety>({
+    safe: true,
+    addresses: [],
+  });
+
   const stepperProps = {
     title:
       stepId === "warning"
@@ -353,6 +365,8 @@ const Body = ({
     onChangeQuantities: handleChangeQuantities,
     onChangeNFT: handleChangeNFT,
     shouldSkipAmount,
+    transactionSafety,
+    setTransactionSafety,
   };
 
   if (!status) {

@@ -12,6 +12,11 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { LedgerError } from "../DeviceAction";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
+export type TransactionSafety = {
+  safe: boolean;
+  addresses: string[];
+};
+
 export type BasicStepProps = {
   t: TFunction;
   transitionTo: (a: string) => void;

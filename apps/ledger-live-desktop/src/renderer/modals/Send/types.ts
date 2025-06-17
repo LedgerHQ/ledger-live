@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { Account, AccountLike, NFT, Operation, ProtoNFT } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { Step } from "~/renderer/components/Stepper";
+import { Step, TransactionSafety } from "~/renderer/components/Stepper";
 export type StepId = "warning" | "recipient" | "amount" | "summary" | "device" | "confirmation";
 export type StepProps = {
   t: TFunction;
@@ -41,5 +41,7 @@ export type StepProps = {
   onChangeQuantities: (a: string) => void;
   onChangeNFT: (a: ProtoNFT | NFT) => void;
   shouldSkipAmount: boolean;
+  transactionSafety: TransactionSafety;
+  setTransactionSafety: (transactionSafety: TransactionSafety) => void;
 };
 export type St = Step<StepId, StepProps>;

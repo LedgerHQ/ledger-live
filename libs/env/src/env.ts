@@ -904,7 +904,7 @@ const envDefinitions = {
     desc: "Enable logs for drawers",
   },
   SANCTIONED_ADDRESSES_URL: {
-    def: "https://ofac-compliance.pages.dev/all_sanctioned_addresses.json",
+    def: "https://compliance.ledger.com",
     parser: stringParser,
     desc: "List of sanctioned addresses",
   },

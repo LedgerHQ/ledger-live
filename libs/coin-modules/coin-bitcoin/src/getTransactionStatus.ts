@@ -93,20 +93,6 @@ export const getTransactionStatus: AccountBridge<
 
   if (txInputs) {
     log("bitcoin", `${txInputs.length} inputs, sum: ${sumOfInputs.toString()}`);
-    const sanctionedAddresses: Set<string> = new Set<string>();
-    for (const input of txInputs) {
-      if (input.address === undefined || input.address === null) {
-        continue;
-      }
-
-      if (await isAddressSanctioned(account.currency, input.address)) {
-        sanctionedAddresses.add(input.address);
-      }
-    }
-
-    if (sanctionedAddresses.size > 0) {
-      errors.amount = new UserUtxoAddressSanctionedError(...sanctionedAddresses);
-    }
   }
 
   if (txOutputs) {
