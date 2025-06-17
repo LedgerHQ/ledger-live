@@ -3193,6 +3193,12 @@
         "placeholder" : "Exchange sağlayıcısının CAL formatındaki bilgileri",
         "currentSetting" : "Mevcut Ayar",
         "error" : "Geçersiz CAL değeri"
+      },
+      "customCALRef" : {
+        "title" : "Özel CAL referansı",
+        "description" : "Tüm CAL talepleri için kullanılacak özel bir dal, commit işlemi (Github) veya etiket belirtin",
+        "enable" : "Özel CAL referansını etkinleştirin",
+        "disable" : "Özel CAL referansını devre dışı bırakın"
       }
     },
     "debug" : {
@@ -3369,7 +3375,8 @@
       "description" : "Güvenli bir şekilde nakit karşılığında kripto satın."
     },
     "exchange" : {
-      "title" : "Satın Al / Sat"
+      "title" : "Satın Al / Sat",
+      "connectingTo" : "{{provider}} sağlayıcısına bağlanıyorsunuz"
     },
     "stake" : {
       "title" : "Stake et",
@@ -7430,7 +7437,12 @@
     "performance" : "Performans",
     "low" : "Düşük",
     "high" : "Yüksek",
-    "title" : "Piyasa Hareketleri"
+    "title" : "Piyasa Hareketleri",
+    "overlay" : {
+      "title" : "Varlıklar arasında geçiş yapın",
+      "action" : "Sola veya sağa kaydırın",
+      "button" : "Anladım!"
+    }
   },
   "nftEntryPoint" : {
     "title" : "NFT'leriniz",
@@ -7438,5 +7450,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Konum kullanılamıyor",
+    "description" : "Ledger cüzdan bu konumda kullanılamıyor.",
+    "learnMore" : "Daha fazla bilgi"
   }
 }
