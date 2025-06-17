@@ -1076,6 +1076,15 @@
     },
     "AmountTooSmall" : {
       "title" : "このトランザクションに最低限必要な金額は、{{amount}}です"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "このトランザクションには制裁ウォレットアドレスが関係しており、処理できません。\n-- {{sanctionedAddresses}}\n<link0>さらに詳しく</link0>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "このトランザクションには制裁ウォレットアドレスが関係しており、処理できません。 <link0>詳細はこちら</link0>"
+    },
+    "UserUtxoAddressSanctionedError" : {
+      "title" : "このトランザクションには制裁UTXOアドレスが関係しており、処理できません。\n-- {{sanctionedAddresses}}\n<link0>さらに詳しく</link0>"
     }
   },
   "crash" : {
@@ -3358,7 +3367,13 @@
         "verify" : "{{accountType}}のアドレスが認証されませんでした。安全のため、デバイス上でアドレスを認証してください。"
       },
       "noResultsFound" : "暗号資産が見つかりません",
-      "noResultsDesc" : "スペルを確認してから、もう一度お試しください。"
+      "noResultsDesc" : "スペルを確認してから、もう一度お試しください。",
+      "sanctionedAddress" : {
+        "title" : "お客様の安全を維持",
+        "description" : "このトランザクションには制裁ウォレットアドレスが関係しており、処理できません。\n--{{sanctionedAddress}}\n<Link>{{learnMore}}</Link>",
+        "close" : "閉じる",
+        "learnMore" : "詳細はこちら"
+      }
     },
     "buy" : {
       "title" : "購入",
@@ -7438,5 +7453,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "利用不可のロケーション",
+    "description" : "このロケーションでは、Ledgerウォレットをご利用いただけません。",
+    "learnMore" : "詳細はこちら"
   }
 }
