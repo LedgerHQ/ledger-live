@@ -2,6 +2,7 @@ import { Account, AccountBridge, TransactionCommon } from "@ledgerhq/types-live"
 import { getAlpacaApi } from "./alpaca";
 import { transactionToIntent } from "./utils";
 import BigNumber from "bignumber.js";
+import { log } from "@ledgerhq/logs";
 
 export function genericPrepareTransaction(
   network,
@@ -13,7 +14,13 @@ export function genericPrepareTransaction(
     );
     const bnFee = BigNumber(fees.value.toString());
 
+    log("xrp-preparetx", "setting fees on tx", { transaction });
     if (transaction.fees !== bnFee) {
+      try {
+        log("xrp-preparetx", "changing tx", { txfees: transaction.fees, fees: bnFee });
+      } catch (e) {
+        console.error("error logging fees");
+      }
       return { ...transaction, fees: bnFee };
     }
 
