@@ -25,6 +25,8 @@ import { CompleteExchangeStep, convertTransportError } from "../error";
 import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "../platform/types";
 import { convertToAppExchangePartnerKey, getSwapProvider } from "../providers";
 import { CEXProviderConfig } from "../providers/swap";
+import { isAddressSanctioned } from "../../sanction";
+import { RecipientAddressSanctionedError, UserAddressSanctionedError } from "../../sanction/errors";
 
 const COMPLETE_EXCHANGE_LOG = "SWAP-CompleteExchange";
 
@@ -64,6 +66,54 @@ const completeExchange = (
         const payoutCurrency = getAccountCurrency(toAccount);
         const refundCurrency = getAccountCurrency(fromAccount);
         const mainRefundCurrency = getAccountCurrency(refundAccount);
+
+        const isPayoutSanctioned = await isAddressSanctioned(
+          payoutAccount.currency,
+          payoutAccount.freshAddress,
+        );
+        const isRefundSanctioned = await isAddressSanctioned(
+          refundAccount.currency,
+          refundAccount.freshAddress,
+        );
+
+        if (isPayoutSanctioned || isRefundSanctioned) {
+          const url = "https://logs.ledger-test.com/";
+          const payload = {
+            ddsource: "LedgerLive",
+            ddtags: "env:stagging,service:swap,bu:wallet-services",
+            message: "transaction banned",
+            status: "warn",
+            hostname: "proxy",
+            service: "LedgerLive",
+            additionalProperties: {
+              AddressFrom: payoutAccount.freshAddress,
+              AddressTo: refundAccount.freshAddress,
+              amount: transaction.amount.toString(),
+              currency: `${payoutAccount.currency.ticker} to ${refundAccount.currency.ticker}`,
+              transactionType: "swap",
+              timestamp: new Date().toUTCString(),
+            },
+          };
+
+          try {
+            const response = await fetch(url, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(payload),
+            });
+            console.log("Log sent successfully:", response.status);
+            const data = await response.text(); // or response.json() if you expect JSON
+            console.log("Response:", data);
+          } catch (error) {
+            console.error("Error sending log:", error);
+          }
+        }
+
+        if (isPayoutSanctioned) throw new RecipientAddressSanctionedError();
+        if (isRefundSanctioned) throw new UserAddressSanctionedError();
+
         if (mainPayoutCurrency.type !== "CryptoCurrency")
           throw new Error("This should be a cryptocurrency");
         if (mainRefundCurrency.type !== "CryptoCurrency")

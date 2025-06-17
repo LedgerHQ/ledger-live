@@ -1,4 +1,4 @@
-import ky from "ky";
+const ky = require("ky");
 import {
   TOKEN_2022_PROGRAM_ID,
   TOKEN_PROGRAM_ID,

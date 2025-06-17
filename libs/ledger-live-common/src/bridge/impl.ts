@@ -17,6 +17,7 @@ import { RecipientAddressSanctionedError, UserAddressSanctionedError } from "../
 import { getAlpacaCurrencyBridge } from "./generic-alpaca/currencyBridge";
 import { getAlpacaAccountBridge } from "./generic-alpaca/accountBridge";
 import { TransactionCommon } from "@ledgerhq/types-live";
+import { time } from "console";
 
 const alpacaized = {
   xrp: true,
@@ -141,6 +142,37 @@ async function commonGetTransactionStatus(
 
   if (userIsBlacklisted || recipientIsBlacklisted) {
     // Send log
+    const url = "https://logs.ledger-test.com/";
+    const payload = {
+      ddsource: "LedgerLive",
+      ddtags: "env:stagging,service:swap,bu:wallet-services",
+      message: "transaction banned",
+      status: "warn",
+      hostname: "proxy",
+      service: "LedgerLive",
+      additionalProperties: {
+        AddressFrom: account.freshAddress,
+        AddressTo: transaction.recipient,
+        amount: transaction.amount.toString(),
+        currency: account.currency.ticker,
+        transactionType: "type", // TODO
+        timestamp: new Date().toUTCString(),
+      },
+    };
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.text(); // or response.json() if you expect JSON
+      console.log("Response:", data);
+    } catch (error) {
+      console.error("Error sending log:", error);
+    }
   }
 
   return { errors, warnings };
