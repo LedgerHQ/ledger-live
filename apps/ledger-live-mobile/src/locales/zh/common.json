@@ -1076,6 +1076,15 @@
     },
     "AmountTooSmall" : {
       "title" : "此交易的最低数额要求为 {{amount}}"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "此交易涉及受制裁的钱包地址，无法处理。\n——{{sanctionedAddresses}}\n<link0>了解更多</link0>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "此交易涉及受制裁的钱包地址，无法处理。<link0>了解更多</link0>"
+    },
+    "UserUtxoAddressSanctionedError" : {
+      "title" : "此交易涉及受制裁的 UTXO 地址，无法处理。\n——{{sanctionedAddresses}}\n<link0>了解更多</link0>"
     }
   },
   "crash" : {
@@ -3358,7 +3367,13 @@
         "verify" : "{{accountType}} 的地址未经验证。请在设备上验证地址，以确保安全。"
       },
       "noResultsFound" : "未找到加密资产",
-      "noResultsDesc" : "请检查拼写后重试。"
+      "noResultsDesc" : "请检查拼写后重试。",
+      "sanctionedAddress" : {
+        "title" : "保障您的安全",
+        "description" : "此交易涉及受制裁的钱包地址，无法处理。\n——{{sanctionedAddress}}\n<Link>{{learnMore}}</Link>",
+        "close" : "关闭",
+        "learnMore" : "了解更多"
+      }
     },
     "buy" : {
       "title" : "买入",
@@ -7438,5 +7453,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "所在地区不可用",
+    "description" : "此地区无法使用 Ledger 钱包。",
+    "learnMore" : "了解更多"
   }
 }
