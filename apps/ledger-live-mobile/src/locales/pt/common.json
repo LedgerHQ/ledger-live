@@ -3193,6 +3193,12 @@
         "placeholder" : "Info. do provedor de Exchange em formato CAL",
         "currentSetting" : "Configuração Atual",
         "error" : "Valor de CAL inválido"
+      },
+      "customCALRef" : {
+        "title" : "Referência CAL personalizada",
+        "description" : "Especificar um branch, commit ou tag personalizado a ser usado para todas as solicitações CAL",
+        "enable" : "Habilitar referência CAL personalizada",
+        "disable" : "Desabilitar referência CAL personalizada"
       }
     },
     "debug" : {
@@ -3369,7 +3375,8 @@
       "description" : "Venda cripto por fiat em segurança."
     },
     "exchange" : {
-      "title" : "Comprar / Vender"
+      "title" : "Comprar / Vender",
+      "connectingTo" : "Conectando você a {{provider}}"
     },
     "stake" : {
       "title" : "Aplicar",
@@ -7430,7 +7437,12 @@
     "performance" : "Desempenho",
     "low" : "Baixo",
     "high" : "Alto",
-    "title" : "Movimentações de Mercado"
+    "title" : "Movimentações de Mercado",
+    "overlay" : {
+      "title" : "Passe de um ativo para o outro",
+      "action" : "Deslize para a esquerda ou direita",
+      "button" : "Entendi!"
+    }
   },
   "nftEntryPoint" : {
     "title" : "Seus NFTs",
@@ -7438,5 +7450,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Local indisponível",
+    "description" : "A carteira Ledger não está disponível neste local.",
+    "learnMore" : "Saiba mais"
   }
 }
