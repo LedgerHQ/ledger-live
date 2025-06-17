@@ -1076,6 +1076,15 @@
     },
     "AmountTooSmall" : {
       "title" : "La cantidad mínima necesaria para esta transacción es de {{amount}}"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "Esta transacción incluye una dirección de billetera sancionada y no se puede procesar.\n-- {{sanctionedAddresses}}\n<link0>Más información</link0>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "Esta transacción incluye una dirección de billetera sancionada y no se puede procesar. <link0>Más información</link0>"
+    },
+    "UserUtxoAddressSanctionedError" : {
+      "title" : "Esta transacción incluye una dirección de UTXO sancionada y no se puede procesar.\n-- {{sanctionedAddresses}}\n<link0>Más información</link0>"
     }
   },
   "crash" : {
@@ -3358,7 +3367,13 @@
         "verify" : "No se ha verificado la dirección de {{accountType}}. Verifica las direcciones en el dispositivo para mayor seguridad."
       },
       "noResultsFound" : "No se encontraron activos cripto",
-      "noResultsDesc" : "Verifica la ortografía e inténtalo de nuevo"
+      "noResultsDesc" : "Verifica la ortografía e inténtalo de nuevo",
+      "sanctionedAddress" : {
+        "title" : "Queremos garantizar tu seguridad",
+        "description" : "Esta transacción incluye una dirección de billetera sancionada y no se puede procesar.\n--{{sanctionedAddress}}\n<Link>{{learnMore}}</Link>",
+        "close" : "Cerrar",
+        "learnMore" : "Más información"
+      }
     },
     "buy" : {
       "title" : "Comprar",
@@ -7438,5 +7453,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Ubicación no disponible",
+    "description" : "Las billeteras Ledger no están disponibles en esta ubicación.",
+    "learnMore" : "Más información"
   }
 }
