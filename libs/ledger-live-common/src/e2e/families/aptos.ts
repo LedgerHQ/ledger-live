@@ -1,3 +1,4 @@
+import expect from "expect";
 import { pressBoth, pressUntilTextFound, waitFor, containsSubstringInEvent } from "../speculos";
 import { DeviceLabels } from "../enum/DeviceLabels";
 import { Delegate } from "../models/Delegate";
