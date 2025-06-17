@@ -12,19 +12,16 @@ import { convertAddressFilToEth } from "../network";
 import { ethers } from "ethers";
 import contractABI from "./ERC20.json";
 import { RecipientRequired } from "@ledgerhq/errors";
-import { Unit } from "@ledgerhq/types-cryptoassets";
 import { AccountType } from "../bridge/utils";
-import { valueFromUnit } from "../common-logic/utils";
 
 export const erc20TxnToOperation = (
   tx: ERC20Transfer,
   address: string,
   accountId: string,
-  unit: Unit,
 ): Operation[] => {
   try {
     const { to, from, timestamp, tx_hash, tx_cid, amount, height, status } = tx;
-    const value = valueFromUnit(new BigNumber(amount), unit);
+    const value = new BigNumber(amount);
 
     const isSending = address.toLowerCase() === from.toLowerCase();
     const isReceiving = address.toLowerCase() === to.toLowerCase();
@@ -41,7 +38,7 @@ export const erc20TxnToOperation = (
         id: encodeOperationId(accountId, hash, "OUT"),
         hash,
         type: "OUT",
-        value: value,
+        value,
         fee,
         blockHeight: height,
         blockHash: "",
@@ -111,11 +108,11 @@ export async function buildTokenAccounts(
       }
 
       const balance = await fetchERC20TokenBalance(filAddr, cAddr);
-      const bnBalance = new BigNumber(balance.toString());
+      const bnBalance = new BigNumber(balance);
       const tokenAccountId = encodeTokenAccountId(parentAccountId, token);
 
       const operations = txns
-        .flatMap(txn => erc20TxnToOperation(txn, filAddr, tokenAccountId, token.units[0]))
+        .flatMap(txn => erc20TxnToOperation(txn, filAddr, tokenAccountId))
         .flat()
         .sort((a, b) => b.date.getTime() - a.date.getTime());
 
