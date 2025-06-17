@@ -1076,6 +1076,15 @@
     },
     "AmountTooSmall" : {
       "title" : "الحد الأدنى للمبلغ المطلوب لهذه المعاملة هو {{amount}}"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "هذه المعاملة تتضمن عنوان محفظة خاضع لعقوبات ولا يمكن معالجتها.\n-- {{sanctionedAddresses}}\n<link0>تعرّف على المزيد</link0>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "هذه المعاملة تتضمن عنوان محفظة خاضع لعقوبات ولا يمكن معالجتها. <link0>تعرّف على المزيد </link0>"
+    },
+    "UserUtxoAddressSanctionedError" : {
+      "title" : "هذه المعاملة تتضمن عنوان UTXO ( إخراج معاملات غير منفقة) خاضع لعقوبات ولا يمكن معالجتها.\n-- {{sanctionedAddresses}}\n<link0>تعرّف على المزيد</link0>"
     }
   },
   "crash" : {
@@ -3358,7 +3367,13 @@
         "verify" : "لم يتم التحقق من عنوان {{accountType}}. تحقق من العناوين على جهازك لتظل آمناً."
       },
       "noResultsFound" : "لم يتم العثور على أي أصول مشفرة",
-      "noResultsDesc" : "من فضلك تأكد من التهجئة وحاول مرة أخرى"
+      "noResultsDesc" : "من فضلك تأكد من التهجئة وحاول مرة أخرى",
+      "sanctionedAddress" : {
+        "title" : "إبقاؤك آمناً",
+        "description" : "هذه المعاملة تتضمن عنوان محفظة خاضع لعقوبات ولا يمكن معالجتها.\n--{{sanctionedAddress}}\n<Link>{{learnMore}}</Link>",
+        "close" : "إغلاق",
+        "learnMore" : "تعرّف على المزيد"
+      }
     },
     "buy" : {
       "title" : "شراء",
@@ -7438,5 +7453,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "الموقع غير متاح",
+    "description" : "محفظة Ledger غير متاحة في هذا الموقع.",
+    "learnMore" : "تعرّف على المزيد"
   }
 }
