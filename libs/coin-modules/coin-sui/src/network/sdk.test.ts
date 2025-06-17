@@ -10,7 +10,6 @@ import {
   loadOperations,
   queryTransactions,
   TRANSACTIONS_LIMIT_PER_QUERY,
-  TRANSACTIONS_LIMIT,
 } from "./sdk";
 
 import { BigNumber } from "bignumber.js";
