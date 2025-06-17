@@ -6,7 +6,7 @@ import type { AptosAsset, AptosExtra, AptosFeeParameters, AptosSender } from "..
 import { AptosAPI } from "../network";
 import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
-import { getBalance } from "../logic/getBalance";
+import { getBalances } from "../logic/getBalances";
 
 export function createApi(
   config: AptosConfigApi,
@@ -22,7 +22,7 @@ export function createApi(
       craftTransaction(client, transactionIntent),
     estimateFees: (transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender>) =>
       client.estimateFees(transactionIntent),
-    getBalance: (address): Promise<Balance<AptosAsset>[]> => getBalance(client, address),
+    getBalance: (address): Promise<Balance<AptosAsset>[]> => getBalances(client, address),
     lastBlock: () => client.getLastBlock(),
     listOperations: (address: string, pagination: Pagination) =>
       client.listOperations(address, pagination),

@@ -798,10 +798,15 @@ describe("getAccountShape", () => {
       blockHeight: 316278241,
     }));
 
-    const mockGetBalance = jest.fn().mockImplementation(() => BigNumber(5000000));
+    const TOKEN_CONTRACT_ADDRESS = "0xd111::staked_coin::StakedAptos";
+
+    const mockGetBalances = jest
+      .fn()
+      .mockResolvedValue([{ contractAddress: TOKEN_CONTRACT_ADDRESS, amount: BigNumber(1234567) }]);
+
     mockedAptosAPI.mockImplementation(() => ({
+      getBalances: mockGetBalances,
       getAccountInfo: mockGetAccountInfo,
-      getBalance: mockGetBalance,
     }));
 
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
@@ -1312,9 +1317,14 @@ describe("getSubAccountShape", () => {
   ] as Operation[];
 
   it("returns the correct information", async () => {
-    const mockGetBalance = jest.fn().mockImplementation(() => BigNumber(1234567));
+    const TOKEN_CONTRACT_ADDRESS = "0xd111::staked_coin::StakedAptos";
+
+    const mockGetBalances = jest
+      .fn()
+      .mockResolvedValue([{ contractAddress: TOKEN_CONTRACT_ADDRESS, amount: BigNumber(1234567) }]);
+
     mockedAptosAPI.mockImplementation(() => ({
-      getBalance: mockGetBalance,
+      getBalances: mockGetBalances,
     }));
 
     const subAccount = await getSubAccountShape(currency, address, parentId, token, operations);
@@ -1421,9 +1431,14 @@ describe("getSubAccounts", () => {
   ] as Operation[];
 
   it("returns the correct information", async () => {
-    const mockGetBalance = jest.fn().mockImplementation(() => BigNumber(1234567));
+    const TOKEN_CONTRACT_ADDRESS = "0xd111::staked_coin::StakedAptos";
+
+    const mockGetBalances = jest
+      .fn()
+      .mockResolvedValue([{ contractAddress: TOKEN_CONTRACT_ADDRESS, amount: BigNumber(1234567) }]);
+
     mockedAptosAPI.mockImplementation(() => ({
-      getBalance: mockGetBalance,
+      getBalances: mockGetBalances,
     }));
 
     mockedDecodeTokenAccountId.mockReturnValue({

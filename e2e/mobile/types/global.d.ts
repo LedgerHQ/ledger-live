@@ -4,7 +4,11 @@ import type { Server, WebSocket } from "ws";
 import type { Application } from "../page";
 import type { MessageData, ServerData } from "../bridge/types";
 import type expect from "expect";
-import type { $TmsLink as $TmsLinkType, Step as StepType } from "jest-allure2-reporter/api";
+import type {
+  $TmsLink as $TmsLinkType,
+  Step as StepType,
+  $Tag as $TagType,
+} from "jest-allure2-reporter/api";
 import { NativeElementHelpers, WebElementHelpers } from "../helpers/elementHelpers";
 import { Currency as CurrencyType } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Delegate as DelegateType } from "@ledgerhq/live-common/e2e/models/Delegate";
@@ -32,6 +36,7 @@ declare global {
   var app: Application;
   var Step: typeof StepType;
   var $TmsLink: typeof $TmsLinkType;
+  var $Tag: typeof $TagType;
   var CLI: typeof CLIType;
   var jestExpect: typeof expect;
   var Currency: typeof CurrencyType;

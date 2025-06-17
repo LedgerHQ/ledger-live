@@ -16,6 +16,7 @@
     "src/components/Table/stories.helper.tsx",
     "src/components/helpers.ts",
     "src/components/navigation/Aside/stories.helper.tsx",
+    "src/pre-ldls/components/sharedStoryBook.tsx",
     "src/pre-ldls/types.ts"
   ],
   "ignoreUnresolved": [

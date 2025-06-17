@@ -296,6 +296,12 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       searched_value: "bitcoin",
       flow: "flowTest",
       source: "sourceTest",
+      asset_component_features: {
+        apy: false,
+        balance: false,
+        filter: false,
+        market_trend: false,
+      },
     });
 
     expect(screen.getByText(/bitcoin/i)).toBeVisible();

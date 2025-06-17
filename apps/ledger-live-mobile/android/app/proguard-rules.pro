@@ -26,3 +26,7 @@
     boolean isLimitAdTrackingEnabled();
 }
 -keep public class com.android.installreferrer.** { *; }
+
+-keep class com.brentvatne.** { *; }
+-keep class com.yqritc.** { *; }
+-keep class com.google.android.exoplayer2.** { *; }

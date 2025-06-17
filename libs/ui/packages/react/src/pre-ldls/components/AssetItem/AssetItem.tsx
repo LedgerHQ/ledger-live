@@ -8,6 +8,8 @@ export type AssetType = {
   name: string;
   ticker: string;
   id: string;
+  leftElement?: React.ReactNode;
+  rightElement?: React.ReactNode;
 };
 
 type AssetItemProps = AssetType & {
@@ -50,12 +52,26 @@ const InfoWrapper = styled.div`
   flex: 1;
 `;
 
-export const AssetItem = ({ name, ticker, id, onClick }: AssetItemProps) => {
+const LeftElementWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+`;
+
+export const AssetItem = ({
+  name,
+  ticker,
+  id,
+  onClick,
+  leftElement,
+  rightElement,
+}: AssetItemProps) => {
   return (
     <Wrapper onClick={() => onClick({ name, ticker, id })}>
       <CryptoIcon size="48px" ledgerId={id} ticker={ticker} />
       <InfoWrapper>
         <Text
+          fontSize="14px"
           variant="largeLineHeight"
           fontWeight="semiBold"
           color="var(--colors-content-default-default)"
@@ -68,14 +84,20 @@ export const AssetItem = ({ name, ticker, id, onClick }: AssetItemProps) => {
         >
           {name}
         </Text>
-        <Text
-          variant="bodyLineHeight"
-          fontWeight="semiBold"
-          color="var(--colors-content-subdued-default-default)"
-        >
-          {ticker}
-        </Text>
+        <LeftElementWrapper>
+          <Text
+            fontSize="12px"
+            lineHeight="16px"
+            variant="bodyLineHeight"
+            fontWeight="medium"
+            color="var(--colors-content-subdued-default-default)"
+          >
+            {ticker}
+          </Text>
+          {leftElement}
+        </LeftElementWrapper>
       </InfoWrapper>
+      {rightElement}
     </Wrapper>
   );
 };

@@ -10,7 +10,7 @@ module.exports = {
   ],
   plugins: [
     "@babel/plugin-transform-named-capturing-groups-regex",
-    "@babel/plugin-proposal-export-namespace-from",
+    "@babel/plugin-transform-export-namespace-from",
     "@babel/plugin-transform-class-static-block",
     "@babel/plugin-transform-flow-strip-types",
     ["@babel/plugin-transform-private-methods", { loose: true }],

@@ -13,7 +13,7 @@ module.exports = {
       options: {
         modulesToTranspile: ["react-native-reanimated"],
         babelPlugins: [
-          "@babel/plugin-proposal-export-namespace-from",
+          "@babel/plugin-transform-export-namespace-from",
           "react-native-reanimated/plugin",
         ],
       },

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { AssetType } from "@ledgerhq/react-ui/pre-ldls/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SelectAssetList as AssetsList } from "./components/List";
 import SearchInputContainer from "./components/SearchInputContainer";
@@ -8,7 +7,6 @@ import { MODULAR_DRAWER_PAGE_NAME } from "../../analytics/types";
 import TrackDrawerScreen from "../../analytics/TrackDrawerScreen";
 
 export type AssetSelectionStepProps = {
-  assetTypes: AssetType[];
   assetsToDisplay: CryptoOrTokenCurrency[];
   sortedCryptoCurrencies: CryptoOrTokenCurrency[];
   defaultSearchValue?: string;
@@ -21,7 +19,6 @@ export type AssetSelectionStepProps = {
 };
 
 const AssetSelection = ({
-  assetTypes,
   assetsToDisplay,
   sortedCryptoCurrencies,
   defaultSearchValue,
@@ -61,10 +58,10 @@ const AssetSelection = ({
         items={sortedCryptoCurrencies}
       />
       <AssetsList
-        assetTypes={assetTypes}
         assetsToDisplay={assetsToDisplay}
         source={source}
         flow={flow}
+        assetsConfiguration={assetsConfiguration}
         scrollToTop={shouldScrollToTop}
         onAssetSelected={onAssetSelected}
         onScrolledToTop={() => setShouldScrollToTop(false)}

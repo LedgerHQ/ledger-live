@@ -6,8 +6,13 @@ type Props = {
   customHeight?: string;
 };
 
+const TITLE_HEIGHT = 52;
+const ROW_MARGIN = 8;
+const MARGIN_BOTTOM = TITLE_HEIGHT + ROW_MARGIN;
+const LIST_HEIGHT = `calc(100% - ${MARGIN_BOTTOM}px)`;
+
 export const ListWrapper = ({ children, customHeight }: Props) => (
-  <Box style={{ height: customHeight ?? "100%", width: "100%", display: "flex" }}>
+  <Box style={{ height: customHeight ?? LIST_HEIGHT, width: "100%", display: "flex" }}>
     <Flex
       style={{
         flex: "1",

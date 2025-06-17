@@ -2,11 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import type { ModularDrawerStep, NavigationDirection } from "../types";
 
-const ROW_HEIGHT = 64;
-const TWO_ROWS_HEIGHT = ROW_HEIGHT;
-const INPUT_HEIGHT = 40;
-const SPACING = 16;
-const EXTRA_BOTTOM_MARGIN = TWO_ROWS_HEIGHT + INPUT_HEIGHT + SPACING;
+const TOP_BAR = 62;
 
 const AnimatedScreenWrapper = ({
   children,
@@ -16,28 +12,41 @@ const AnimatedScreenWrapper = ({
   children: React.ReactNode;
   screenKey: ModularDrawerStep;
   direction: NavigationDirection;
-}) => (
-  <motion.div
-    key={screenKey}
-    initial={{ x: direction === "FORWARD" ? 100 : -100, opacity: 0 }}
-    animate={{ x: 0, opacity: 1, transition: { duration: 0.3, ease: "easeOut" } }}
-    exit={{
+}) => {
+  const variants = {
+    enter: (direction: NavigationDirection) => ({
+      x: direction === "FORWARD" ? 100 : -100,
+      opacity: 0,
+    }),
+    center: { x: 0, opacity: 1 },
+    exit: (direction: NavigationDirection) => ({
       x: direction === "FORWARD" ? -100 : 100,
       opacity: 0,
-      transition: { duration: 0.3, ease: "easeIn" },
-    }}
-    style={{
-      position: "absolute",
-      width: "100%",
-      overflow: "hidden",
-      height: `calc(100% - ${EXTRA_BOTTOM_MARGIN}px)`,
-      scrollbarWidth: "none",
-      paddingLeft: "16px",
-      paddingRight: "16px",
-    }}
-  >
-    {children}
-  </motion.div>
-);
+    }),
+  };
+
+  return (
+    <motion.div
+      key={screenKey}
+      custom={direction}
+      variants={variants}
+      initial="enter"
+      animate="center"
+      exit="exit"
+      transition={{ duration: 0.3, ease: [0.3, 0, 0.3, 1] }}
+      style={{
+        position: "absolute",
+        width: "100%",
+        overflow: "hidden",
+        height: `calc(100% - ${TOP_BAR}px)`,
+        scrollbarWidth: "none",
+        paddingLeft: "16px",
+        paddingRight: "16px",
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+};
 
 export default AnimatedScreenWrapper;
