@@ -1076,6 +1076,15 @@
     },
     "AmountTooSmall" : {
       "title" : "จำนวนขั้นต่ำที่กำหนดสำหรับธุรกรรมนี้คือ {{amount}}"
+    },
+    "UserAddressSanctionedError" : {
+      "title" : "ธุรกรรมนี้เกี่ยวข้องกับ Address ของวอลเล็ตที่ถูกคว่ำบาตร และไม่สามารถดำเนินการได้\n-- {{sanctionedAddresses}}\n<link0>เรียนรู้เพิ่มเติม</link0>"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "ธุรกรรมนี้เกี่ยวข้องกับ Address ของวอลเล็ตที่ถูกคว่ำบาตร และไม่สามารถดำเนินการได้<br/> <link0>เรียนรู้เพิ่มเติม </link0>"
+    },
+    "UserUtxoAddressSanctionedError" : {
+      "title" : "ธุรกรรมนี้เกี่ยวข้องกับ Address ของ UTXO ที่ถูกคว่ำบาตรและไม่สามารถดำเนินการได้\n-- {{sanctionedAddresses}}\n<link0>เรียนรู้เพิ่มเติม</link0>"
     }
   },
   "crash" : {
@@ -1288,7 +1297,7 @@
       },
       "vote" : {
         "title" : "โหวตด้วย Ledger ของคุณ",
-        "description" : "โหวตได้โดยตรงจากวอลเล็ทของคุณ"
+        "description" : "โหวตได้โดยตรงจากวอลเล็ตของคุณ"
       },
       "lending" : {
         "title" : "ให้ยืมคริปโต",
@@ -1503,7 +1512,7 @@
         "subtitle" : "เลือกว่า Ledger ของคุณเป็นอุปกรณ์เครื่องใหม่หรือได้รับการรีเซ็ตมาก่อน"
       },
       "accessWallet" : {
-        "title" : "เข้าถึงวอลเล็ทของคุณ",
+        "title" : "เข้าถึงวอลเล็ตของคุณ",
         "subtitle" : "เลือกว่าติดตั้ง Ledger ของคุณแล้วหรือไม่"
       },
       "buyNano" : {
@@ -3358,7 +3367,13 @@
         "verify" : "Address {{accountType}} ไม่ได้รับการตรวจสอบ ตรวจสอบ Address บนอุปกรณ์ของคุณเพื่อใช้งานอย่างปลอดภัย"
       },
       "noResultsFound" : "ไม่พบสินทรัพย์คริปโต",
-      "noResultsDesc" : "โปรดตรวจสอบการสะกดและลองอีกครั้ง"
+      "noResultsDesc" : "โปรดตรวจสอบการสะกดและลองอีกครั้ง",
+      "sanctionedAddress" : {
+        "title" : "ปกป้องคุณให้ปลอดภัย",
+        "description" : "ธุรกรรมนี้เกี่ยวข้องกับ Address ของวอลเล็ตที่ถูกคว่ำบาตร และไม่สามารถดำเนินการได้\n--{{sanctionedAddress}}\n<Link>{{learnMore}}</Link>",
+        "close" : "ปิด",
+        "learnMore" : "เรียนรู้เพิ่มเติม"
+      }
     },
     "buy" : {
       "title" : "ซื้อ",
@@ -3782,11 +3797,11 @@
     },
     "walletConnect" : {
       "title" : "WalletConnect",
-      "description" : "เชื่อมต่อวอลเล็ทของคุณกับ DApps"
+      "description" : "เชื่อมต่อวอลเล็ตของคุณกับ DApps"
     },
     "recover" : {
       "title" : "Ledger Recover",
-      "description" : "กู้คืนวอลเล็ทได้ง่าย ๆ",
+      "description" : "กู้คืนวอลเล็ตได้ง่าย ๆ",
       "tag" : "ฟรี 1 เดือน"
     }
   },
@@ -4149,7 +4164,7 @@
       },
       "segwit" : {
         "title" : "Segwit",
-        "desc" : "ค่าธรรมเนียมต่อธุรกรรมสูงกว่า Native Segwit รองรับ Lightning รองรับโดยวอลเล็ทส่วนใหญ่"
+        "desc" : "ค่าธรรมเนียมต่อธุรกรรมสูงกว่า Native Segwit รองรับ Lightning รองรับโดยวอลเล็ตส่วนใหญ่"
       },
       "legacy" : {
         "title" : "Legacy",
@@ -7438,5 +7453,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "ไม่พร้อมให้บริการตำแหน่งที่ตั้งนี้",
+    "description" : "Ledger Wallet ไม่สามารถใช้ได้ในพื้นที่นี้",
+    "learnMore" : "เรียนรู้เพิ่มเติม"
   }
 }
