@@ -3193,6 +3193,12 @@
         "placeholder" : "CAL 格式的兑换提供商信息",
         "currentSetting" : "当前设置",
         "error" : "CAL 值无效"
+      },
+      "customCALRef" : {
+        "title" : "自定义 CAL 引用",
+        "description" : "指定用于所有 CAL 请求的自定义分支、提交或标签",
+        "enable" : "启用自定义 CAL 引用",
+        "disable" : "禁用自定义 CAL 引用"
       }
     },
     "debug" : {
@@ -3369,7 +3375,8 @@
       "description" : "安全出售加密货币以换取现金。"
     },
     "exchange" : {
-      "title" : "买入 / 卖出"
+      "title" : "买入 / 卖出",
+      "connectingTo" : "正在连接到 {{provider}}"
     },
     "stake" : {
       "title" : "权益质押",
@@ -7430,7 +7437,12 @@
     "performance" : "表现",
     "low" : "低",
     "high" : "高",
-    "title" : "市场走势"
+    "title" : "市场走势",
+    "overlay" : {
+      "title" : "在资产之间切换",
+      "action" : "向左或向右滑动",
+      "button" : "知道了！"
+    }
   },
   "nftEntryPoint" : {
     "title" : "您的 NFT",
@@ -7438,5 +7450,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "所在地区不可用",
+    "description" : "此地区无法使用 Ledger 钱包。",
+    "learnMore" : "了解更多"
   }
 }
