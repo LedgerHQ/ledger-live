@@ -186,7 +186,11 @@ export const getTxToBroadcast = (
 };
 
 export const getAccountShape: GetAccountShape = async info => {
-  const { address, currency, derivationMode } = info;
+  const { address, currency, derivationMode, initialAccount } = info;
+
+  const blockSafeDelta = 1200;
+  let lastHeight = (initialAccount?.blockHeight ?? 0) - blockSafeDelta;
+  if (lastHeight < 0) lastHeight = 0;
 
   const accountId = encodeAccountId({
     type: "js",
@@ -196,10 +200,12 @@ export const getAccountShape: GetAccountShape = async info => {
     derivationMode,
   });
 
-  const blockHeight = await fetchBlockHeight();
-  const balance = await fetchBalances(address);
-  const rawTxs = await fetchTxs(address);
-  const tokenAccounts = await buildTokenAccounts(address, accountId, info.initialAccount);
+  const [blockHeight, balance, rawTxs, tokenAccounts] = await Promise.all([
+    fetchBlockHeight(),
+    fetchBalances(address),
+    fetchTxs(address, lastHeight),
+    buildTokenAccounts(address, lastHeight, accountId, info.initialAccount),
+  ]);
 
   const result: Partial<Account> = {
     id: accountId,

@@ -83,11 +83,12 @@ export const erc20TxnToOperation = (
 
 export async function buildTokenAccounts(
   filAddr: string,
+  lastHeight: number,
   parentAccountId: string,
   initialAccount?: Account,
 ): Promise<TokenAccount[]> {
   try {
-    const transfers = await fetchERC20Transactions(filAddr);
+    const transfers = await fetchERC20Transactions(filAddr, lastHeight);
     const transfersUntangled: { [addr: string]: ERC20Transfer[] } = transfers.reduce(
       (prev: { [addr: string]: ERC20Transfer[] }, curr: ERC20Transfer) => {
         curr.contract_address = curr.contract_address.toLowerCase();
