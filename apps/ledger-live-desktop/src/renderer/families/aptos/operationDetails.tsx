@@ -101,7 +101,29 @@ const OperationDetailsExtra = ({
   );
 };
 
+const WithdrawAmountCell = ({ operation, currency, unit }: AmountCellExtraProps<Operation>) => {
+  const amount = operation.fee.negated();
+
+  return !amount.isZero() ? (
+    <>
+      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"palette.text.shade80"} />
+      <CounterValue
+        color="palette.text.shade60"
+        fontSize={3}
+        date={operation.date}
+        currency={currency}
+        value={amount}
+      />
+    </>
+  ) : null;
+};
+
+const amountCell = {
+  WITHDRAW: WithdrawAmountCell,
+};
+
 export default {
+  amountCell,
   amountCellExtra,
   OperationDetailsExtra,
 };
