@@ -3,7 +3,7 @@ import { createTransaction, getOperations, paymentInfo } from "./sdk";
 import type { Operation } from "@ledgerhq/types-live";
 import { getAccount } from "./sdk";
 import coinConfig from "../config";
-import { getFullnodeUrl } from "@mysten/sui/client";
+import { getEnv } from "@ledgerhq/live-env";
 
 describe("getOperations", () => {
   beforeAll(() => {
@@ -12,16 +12,16 @@ describe("getOperations", () => {
         type: "active",
       },
       node: {
-        url: getFullnodeUrl("mainnet"),
+        url: getEnv("API_SUI_NODE_PROXY"),
       },
     }));
   });
   describe("Account 0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164", () => {
     // https://suiscan.xyz/mainnet/account/0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164/activity
 
-    // 2 as of 23/03/2025
-    const IN_OPERATIONS_COUNT = 1;
-    const OUT_OPERATIONS_COUNT = 1;
+    // 5 as of 14/05/2025
+    const IN_OPERATIONS_COUNT = 2;
+    const OUT_OPERATIONS_COUNT = 3;
     const TOTAL_OPERATIONS_COUNT = IN_OPERATIONS_COUNT + OUT_OPERATIONS_COUNT;
 
     let operations: Operation[];
@@ -43,9 +43,9 @@ describe("getOperations", () => {
 
       it("should return the first operation at index 0 and the last at the end", async () => {
         const oldestTxHash = "rkTA5Tn9dgrWPnHgj2WK7rVnk5t9jC3ViPcHU9dewDg";
-        const newestTxHash = "CnVCqFLDv9iJc3DPU2WGpJdZUjqFPhyEVJ5BAigEj9VW";
-        expect(operations[operations.length - TOTAL_OPERATIONS_COUNT].hash).toEqual(newestTxHash);
-        expect(operations[operations.length - 1].hash).toEqual(oldestTxHash);
+        const newestTxHash = "2jXqsRSZNHZm4uEfpFxJE7A7RoZxWPZeANfBP4qGWkPR";
+        expect(operations[operations.length - TOTAL_OPERATIONS_COUNT]?.hash).toEqual(newestTxHash);
+        expect(operations[operations.length - 1]?.hash).toEqual(oldestTxHash);
       });
     });
 
