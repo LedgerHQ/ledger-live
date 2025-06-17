@@ -229,6 +229,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
   const bridgePending = transaction !== statusOnTransaction;
   // when transaction changes, prepare the transaction
   useEffect(() => {
+    log("xrp-useBridgeTransaction", "1- IN USE EFFECT");
     let ignore = false;
     let errorTimeout: NodeJS.Timeout | null;
     // If bridge is not pending, transaction change is due to
@@ -236,6 +237,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
     if (!bridgePending) return;
 
     if (mainAccount && transaction) {
+      log("xrp-useBridgeTransaction", "2- WE HAVE MAINACCOUNT & TX");
       // We don't debounce first status refresh, but any subsequent to avoid multiple calls
       // First call is immediate
       const debounce = statusIsPending.current ? delay(DEBOUNCE_STATUS_DELAY) : null;
