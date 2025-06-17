@@ -26,7 +26,7 @@ export interface TransactionsResponse {
 }
 
 export interface TransactionResponse {
-  amount: number;
+  amount: string;
   to: string;
   from: string;
   status: string;
@@ -34,7 +34,7 @@ export interface TransactionResponse {
   hash: string;
   timestamp: number;
   height: number;
-  fee?: number;
+  fee?: string;
 }
 
 export interface BalanceResponse {
