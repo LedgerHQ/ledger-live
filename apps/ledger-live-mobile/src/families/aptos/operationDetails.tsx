@@ -14,16 +14,15 @@ import LText from "~/components/LText";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import CounterValue from "~/components/CounterValue";
 
-type Props = {
-  account: Account;
-  operation: Operation;
-  currency: Currency;
-  unit: Unit;
-};
-
 const STAKING_OP_TYPES = ["STAKE", "UNSTAKE", "WITHDRAW"];
 
-function OperationDetailsExtra({ account, operation }: Readonly<Props>) {
+function OperationDetailsExtra({
+  account,
+  operation,
+}: Readonly<{
+  account: Account;
+  operation: Operation;
+}>) {
   const { t } = useTranslation();
   const discreet = useSelector(discreetModeSelector);
   const { locale } = useSettings();
@@ -61,12 +60,15 @@ function OperationDetailsExtra({ account, operation }: Readonly<Props>) {
 }
 
 const AmountCell = ({
-  amount,
-  unit,
-  currency,
   operation,
-}: Omit<Props, "account"> & {
+  amount,
+  currency,
+  unit,
+}: {
+  operation: Operation;
   amount: BigNumber;
+  currency: Currency;
+  unit: Unit;
 }) =>
   !amount.isZero() ? (
     <>
@@ -87,7 +89,15 @@ const AmountCell = ({
     </>
   ) : null;
 
-const StakingAmountCell = ({ operation, currency, unit }: Props) => {
+const StakingAmountCell = ({
+  operation,
+  currency,
+  unit,
+}: {
+  operation: Operation;
+  currency: Currency;
+  unit: Unit;
+}) => {
   const amount = operation.value || new BigNumber(0);
   return <AmountCell amount={amount} operation={operation} currency={currency} unit={unit} />;
 };
