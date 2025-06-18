@@ -518,7 +518,7 @@ export function useDappLogic({
                   : currentAccount.currency.id;
 
               trackingData = {
-                type: transactionType === "Approve" ? "approve" : "transfer",
+                type: transactionType || "transfer",
                 currency: token ? token.name : accountCurrencyName,
                 network: token ? token.parentCurrency.id : accountNetwork,
               };

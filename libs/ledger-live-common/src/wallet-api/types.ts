@@ -4,6 +4,12 @@ import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-c
 import type { CustomHandlers as WalletAPICustomHandlers } from "@ledgerhq/wallet-api-server";
 import type { Transaction } from "../generated/types";
 import { LiveAppManifest } from "../platform/types";
+import {
+  DAPP_SELECTORS,
+  ERC721_CLEAR_SIGNED_SELECTORS,
+  ERC1155_CLEAR_SIGNED_SELECTORS,
+  ERC20_CLEAR_SIGNED_SELECTORS,
+} from "@ledgerhq/evm-tools/lib/selectors/index";
 
 export type { WalletAPITransaction, WalletAPICustomHandlers };
 
@@ -79,7 +85,11 @@ export type RecentlyUsedIdDb = {
 export type CurrentAccountHistIDb = Record<string, string>;
 
 export type DAppTrackingData = {
-  type: "approve" | "transfer";
+  type:
+    | keyof typeof ERC20_CLEAR_SIGNED_SELECTORS
+    | keyof typeof ERC721_CLEAR_SIGNED_SELECTORS
+    | keyof typeof ERC1155_CLEAR_SIGNED_SELECTORS
+    | (typeof DAPP_SELECTORS)[keyof typeof DAPP_SELECTORS];
   currency: string;
   network: CryptoCurrency["id"];
 };
