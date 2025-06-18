@@ -69,6 +69,10 @@ describe("useOpenAssetFlow", () => {
       ModularDrawerFlowManager,
       {
         currencies: [],
+        drawerConfiguration: {
+          assets: { leftElement: "undefined", rightElement: "undefined" },
+          networks: { leftElement: "undefined", rightElement: "undefined" },
+        },
         flow: "add_account",
         onAssetSelected: expect.any(Function),
         source: "test",
@@ -82,7 +86,7 @@ describe("useOpenAssetFlow", () => {
     expect(store.getState().modals.MODAL_ADD_ACCOUNTS?.isOpened).toBeFalsy();
 
     // Select currency in the drawer
-    const mockCurrency = { id: "btc" };
+    const mockCurrency = { id: "btc", type: "CryptoCurrency" };
     selectAsset(mockCurrency);
 
     expect(setDrawer).toHaveBeenCalledTimes(2);
