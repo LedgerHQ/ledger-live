@@ -115,15 +115,84 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
+          repository: LedgerHQ/ledger-live
 
-      - name: Restore pnpm cache
-        uses: actions/cache@v3
+      - name: setup caches
+        id: setup-caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
-          path: ~/.pnpm-store
-          key: ${{ needs.setup.outputs.cache-key }}
+          skip-pod-cache: "true"
+          skip-turbo-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        id: aws
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
+          aws-region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - uses: nick-fields/retry@v3
+        name: install dependencies
+        id: install-dependencies
+        with:
+          max_attempts: 2
+          timeout_minutes: 15
+          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="@ledgerhq/dummy-*-app..."  --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm
+          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="@ledgerhq/dummy-*-app..." --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm
+
+      - name: Flake alert - ArgumentError
+        uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@develop
+        if: failure() && steps.install-dependencies.outputs.error == 'ArgumentError - pathname contains null byte'
+        with:
+          live_bot_token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
+          halt_runner: true
+
+      - name: Flake alert - Reruns
+        uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@develop
+        if: success() && steps.install-dependencies.outputs.total_attempts == 2
+        with:
+          live_bot_token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
+          custom_message: "${{ steps.install-dependencies.outputs.total_attempts }} attempts happened on install dependencies and it was eventually successful :face_with_raised_eyebrow:"
+
+      - name: cache detox build
+        uses: tespkg/actions-cache@v1
+        if: steps.aws.conclusion == 'success'
+        id: detox-build
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
+          key: ${{ runner.os }}-detox-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js', 'apps/ledger-live-mobile/.env.mock', 'apps/ledger-live-mobile/ios/ledgerlivemobile/AppDelegate.mm') }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ll-gha-s3-cache
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+
+      - name: Build dependencies
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        with:
+          command: pnpm build:llm:deps
+          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          turbo_port: ${{ steps.setup-caches.outputs.port }}
+          disable_cache: ${{ inputs.disable-turbo-cache || false }}
+
+      - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
+        run: |
+          pnpm build:dummy-apps
+        shell: bash
+
+      - name: Build CLI
+        if: ${{ env.E2E_RUN == 'true' }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        with:
+          command: pnpm build:cli
+          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          turbo_port: ${{ steps.setup-caches.outputs.port }}
+          disable_cache: ${{ inputs.disable-turbo-cache || false }}
 
       - name: Build ${{ matrix.platform }}
         run: |
@@ -220,80 +289,80 @@ jobs:
   ################################################################################
   # 5) Allure Reports
   ################################################################################
-#  allure-ios:
-#    name: Allure Report iOS
-#    needs: ios-e2e
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Download iOS artifacts
-#        uses: actions/download-artifact@v4
-#        with:
-#          name: ios-test-artifacts-*
-#      - name: Generate & upload Allure iOS
-#        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
-#        if: ${{ env.SHOULD_UPLOAD }}
-#        with:
-#          platform: ios
-#          login: ${{ vars.ALLURE_USERNAME }}
-#          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
-#          path: e2e/mobile/artifacts
-#
-#  allure-android:
-#    name: Allure Report Android
-#    needs: android-e2e
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Download Android artifacts
-#        uses: actions/download-artifact@v4
-#        with:
-#          name: android-test-artifacts-*
-#      - name: Generate & upload Allure Android
-#        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
-#        if: ${{ env.SHOULD_UPLOAD }}
-#        with:
-#          platform: android
-#          login: ${{ vars.ALLURE_USERNAME }}
-#          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
-#          path: e2e/mobile/artifacts
+  #  allure-ios:
+  #    name: Allure Report iOS
+  #    needs: ios-e2e
+  #    runs-on: ubuntu-latest
+  #    steps:
+  #      - name: Download iOS artifacts
+  #        uses: actions/download-artifact@v4
+  #        with:
+  #          name: ios-test-artifacts-*
+  #      - name: Generate & upload Allure iOS
+  #        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+  #        if: ${{ env.SHOULD_UPLOAD }}
+  #        with:
+  #          platform: ios
+  #          login: ${{ vars.ALLURE_USERNAME }}
+  #          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+  #          path: e2e/mobile/artifacts
+  #
+  #  allure-android:
+  #    name: Allure Report Android
+  #    needs: android-e2e
+  #    runs-on: ubuntu-latest
+  #    steps:
+  #      - name: Download Android artifacts
+  #        uses: actions/download-artifact@v4
+  #        with:
+  #          name: android-test-artifacts-*
+  #      - name: Generate & upload Allure Android
+  #        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+  #        if: ${{ env.SHOULD_UPLOAD }}
+  #        with:
+  #          platform: android
+  #          login: ${{ vars.ALLURE_USERNAME }}
+  #          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+  #          path: e2e/mobile/artifacts
 
   ################################################################################
   # 6) Xray Import
   ################################################################################
-#  xray:
-#    name: Import to Xray
-#    runs-on: ubuntu-latest
-#    needs: [ allure-ios, allure-android ]
-#    if: ${{ inputs.export_to_xray }}
-#    strategy:
-#      matrix:
-#        platform: [ ios, android ]
-#    steps:
-#      - name: Download Allure results
-#        uses: actions/download-artifact@v4
-#        with:
-#          path: artifacts-${{ matrix.platform }}
-#          pattern: "*-test-artifacts-*"
-#          merge-multiple: true
-#      - name: Format Xray payload
-#        run: e2e/mobile/xray.formater.sh artifacts-${{ matrix.platform }} ${{ matrix.platform }} ${{ matrix.platform == 'ios' && inputs.test_execution_ios || inputs.test_execution_android }}
-#      - name: Upload Xray JSON
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: xray-${{ matrix.platform }}
-#          path: artifacts-${{ matrix.platform }}/xray_report.json
-#      - name: Authenticate to Xray
-#        id: auth
-#        run: |
-#          token=$(curl -s -X POST "$XRAY_API_URL/authenticate" \
-#            -H "Content-Type: application/json" \
-#            -d "{\"client_id\":\"${{ secrets.XRAY_CLIENT_ID }}\",\"client_secret\":\"${{ secrets.XRAY_CLIENT_SECRET }}\"}")
-#          echo "xray_token=$token" >> $GITHUB_OUTPUT
-#      - name: Publish to Xray
-#        run: |
-#          curl -s -X POST "$XRAY_API_URL/import/execution" \
-#            -H "Content-Type: application/json" \
-#            -H "Authorization: Bearer ${{ steps.auth.outputs.xray_token }}" \
-#            --data @artifacts-${{ matrix.platform }}/xray_report.json
+  #  xray:
+  #    name: Import to Xray
+  #    runs-on: ubuntu-latest
+  #    needs: [ allure-ios, allure-android ]
+  #    if: ${{ inputs.export_to_xray }}
+  #    strategy:
+  #      matrix:
+  #        platform: [ ios, android ]
+  #    steps:
+  #      - name: Download Allure results
+  #        uses: actions/download-artifact@v4
+  #        with:
+  #          path: artifacts-${{ matrix.platform }}
+  #          pattern: "*-test-artifacts-*"
+  #          merge-multiple: true
+  #      - name: Format Xray payload
+  #        run: e2e/mobile/xray.formater.sh artifacts-${{ matrix.platform }} ${{ matrix.platform }} ${{ matrix.platform == 'ios' && inputs.test_execution_ios || inputs.test_execution_android }}
+  #      - name: Upload Xray JSON
+  #        uses: actions/upload-artifact@v4
+  #        with:
+  #          name: xray-${{ matrix.platform }}
+  #          path: artifacts-${{ matrix.platform }}/xray_report.json
+  #      - name: Authenticate to Xray
+  #        id: auth
+  #        run: |
+  #          token=$(curl -s -X POST "$XRAY_API_URL/authenticate" \
+  #            -H "Content-Type: application/json" \
+  #            -d "{\"client_id\":\"${{ secrets.XRAY_CLIENT_ID }}\",\"client_secret\":\"${{ secrets.XRAY_CLIENT_SECRET }}\"}")
+  #          echo "xray_token=$token" >> $GITHUB_OUTPUT
+  #      - name: Publish to Xray
+  #        run: |
+  #          curl -s -X POST "$XRAY_API_URL/import/execution" \
+  #            -H "Content-Type: application/json" \
+  #            -H "Authorization: Bearer ${{ steps.auth.outputs.xray_token }}" \
+  #            --data @artifacts-${{ matrix.platform }}/xray_report.json
 
   ################################################################################
   # 7) Slack Notification
