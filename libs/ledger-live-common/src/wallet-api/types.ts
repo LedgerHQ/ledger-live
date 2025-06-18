@@ -8,7 +8,6 @@ import {
   ERC1155_CLEAR_SIGNED_SELECTORS,
   ERC20_CLEAR_SIGNED_SELECTORS,
   ERC721_CLEAR_SIGNED_SELECTORS,
-  DAPP_SELECTORS,
 } from "@ledgerhq/hw-app-eth";
 
 export type { WalletAPITransaction, WalletAPICustomHandlers };
@@ -88,8 +87,7 @@ export type DAppTrackingData = {
   type:
     | keyof typeof ERC20_CLEAR_SIGNED_SELECTORS
     | keyof typeof ERC721_CLEAR_SIGNED_SELECTORS
-    | keyof typeof ERC1155_CLEAR_SIGNED_SELECTORS
-    | (typeof DAPP_SELECTORS)[keyof typeof DAPP_SELECTORS];
+    | keyof typeof ERC1155_CLEAR_SIGNED_SELECTORS;
   currency: string;
   network: CryptoCurrency["id"];
 };
