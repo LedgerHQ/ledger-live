@@ -200,7 +200,6 @@ jobs:
             path: mobile.metafile.json
             overwrite: true
 
-
   detox-tests-ios:
     name: "iOS Build / iOS Detox"
     needs: [ build-ios, determine-builds ]
@@ -301,10 +300,6 @@ jobs:
         run: |
           pnpm build:dummy-apps
         shell: bash
-
-      - name: Create iOS simulator
-        id: simulator
-        run: xcrun simctl create "iOS Simulator" "iPhone 15"
 
       - name: Setup Speculos image and Coin Apps
         if: ${{ env.SPECULOS_RUN == 'true' }}
