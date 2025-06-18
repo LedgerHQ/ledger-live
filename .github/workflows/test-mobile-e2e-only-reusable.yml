@@ -185,6 +185,15 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
 
+      - name: Restore pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ needs.setup.outputs.cache-key }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
       - name: Build ${{ matrix.platform }}
         run: |
           if [ "${{ matrix.platform }}" = "ios" ]; then
