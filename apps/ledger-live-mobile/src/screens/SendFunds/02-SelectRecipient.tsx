@@ -343,7 +343,10 @@ export default function SendSelectRecipient({ route }: Props) {
                 <memoTag.Input
                   testID="memo-tag-input"
                   placeholder={t("send.summary.memo.title")}
-                  autoFocus={memoTagDrawerState === MemoTagDrawerState.SHOWN}
+                  autoFocus={[MemoTagDrawerState.SHOWING, MemoTagDrawerState.SHOWN].includes(
+                    // Ensure the input is focused when the drawer is shown
+                    memoTagDrawerState,
+                  )}
                   onChange={memoTag.handleChange}
                 />
                 <Text mt={4} pl={2} color="alert">

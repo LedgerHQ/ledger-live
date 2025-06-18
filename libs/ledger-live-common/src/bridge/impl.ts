@@ -1,29 +1,19 @@
-import { isAddressSanctioned } from "../sanction";
 import { CurrencyNotSupported } from "@ledgerhq/errors";
-import { getEnv } from "@ledgerhq/live-env";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  Account,
-  AccountBridge,
-  AccountLike,
-  CurrencyBridge,
-  TransactionStatusCommon,
-} from "@ledgerhq/types-live";
 import { decodeAccountId, getMainAccount } from "../account";
+import { getEnv } from "@ledgerhq/live-env";
 import { checkAccountSupported } from "../account/index";
 import jsBridges from "../generated/bridge/js";
 import mockBridges from "../generated/bridge/mock";
-import { RecipientAddressSanctionedError, UserAddressSanctionedError } from "../sanction/errors";
-import { getAlpacaCurrencyBridge } from "./generic-alpaca/currencyBridge";
-import { getAlpacaAccountBridge } from "./generic-alpaca/accountBridge";
-import { TransactionCommon } from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { Account, AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
+import { getAlpacaAccountBridge } from "./generic-alpaca/accountBridge";
+import { getAlpacaCurrencyBridge } from "./generic-alpaca/currencyBridge";
 
 const alpacaized = {
   xrp: true,
 };
 
-// let accountBridgeInstance: AccountBridge<any> | null = null;
 const bridgeCache: Record<string, AccountBridge<any>> = {};
 let currencyBridgeInstance: CurrencyBridge | null = null;
 
@@ -92,65 +82,10 @@ export function getAccountBridgeByFamily(family: string, accountId?: string): Ac
       log("xrp-debug", "cached bridge instance found for family");
     }
     return bridgeCache[family];
-    // if (!accountBridgeInstance) {
-    //   accountBridgeInstance = getAlpacaAccountBridge(family, "local");
-    // }
-    // return accountBridgeInstance;
   }
-
   const jsBridge = jsBridges[family];
   if (!jsBridge) {
-    throw new CurrencyNotSupported("account currency bridge not found " + family);
+    throw new CurrencyNotSupported("currency bridge not found " + family);
   }
-  return wrapAccountBridge(jsBridge.accountBridge);
-}
-
-function wrapAccountBridge<T extends TransactionCommon>(
-  bridge: AccountBridge<T>,
-): AccountBridge<T> {
-  return {
-    ...bridge,
-    getTransactionStatus: async (...args) => {
-      const blockchainSpecific = await bridge.getTransactionStatus(...args);
-      const common = await commonGetTransactionStatus(...args);
-      const merged = mergeResults(blockchainSpecific, common);
-      return merged;
-    },
-  };
-}
-
-function mergeResults(
-  blockchainSpecific: TransactionStatusCommon,
-  common: Partial<TransactionStatusCommon>,
-): TransactionStatusCommon {
-  const errors = { ...blockchainSpecific.errors, ...common.errors };
-  const warnings = { ...blockchainSpecific.warnings, ...common.warnings };
-  return { ...blockchainSpecific, errors, warnings };
-}
-
-async function commonGetTransactionStatus(
-  account: Account,
-  transaction: TransactionCommon,
-): Promise<Partial<TransactionStatusCommon>> {
-  const errors: Record<string, Error> = {};
-  const warnings: Record<string, Error> = {};
-
-  let recipientIsBlacklisted = false;
-  if (transaction.recipient && transaction.recipient !== "") {
-    recipientIsBlacklisted = await isAddressSanctioned(account.currency, transaction.recipient);
-    if (recipientIsBlacklisted) {
-      errors.recipient = new RecipientAddressSanctionedError();
-    }
-  }
-
-  const userIsBlacklisted = await isAddressSanctioned(account.currency, account.freshAddress);
-  if (userIsBlacklisted) {
-    errors.amount = new UserAddressSanctionedError();
-  }
-
-  if (userIsBlacklisted || recipientIsBlacklisted) {
-    // Send log
-  }
-
-  return { errors, warnings };
+  return jsBridge.accountBridge;
 }

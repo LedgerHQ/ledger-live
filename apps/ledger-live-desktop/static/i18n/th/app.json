@@ -7057,12 +7057,9 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "ค้นหา",
-    "assetFlow" : {
-      "selectTemplate" : "เลือก {{dynamic}}",
-      "asset" : "สินทรัพย์",
-      "network" : "เครือข่าย",
-      "account" : "บัญชี"
-    }
+    "selectAsset" : "เลือกสินทรัพย์",
+    "selectNetwork" : "เลือกเครือข่าย",
+    "selectAccount" : "เลือกบัญชี"
   },
   "nftEntryPoint" : {
     "title" : "NFT (โทเคนที่ไม่สามารถแลกเปลี่ยนหรือแทนที่กันได้)",
@@ -7070,5 +7067,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "ไม่พร้อมให้บริการตำแหน่งที่ตั้งนี้",
+    "description" : "Ledger Wallet ไม่สามารถใช้ได้ในพื้นที่นี้",
+    "learnMore" : "เรียนรู้เพิ่มเติม"
   }
 }

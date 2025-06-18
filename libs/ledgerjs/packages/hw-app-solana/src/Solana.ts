@@ -3,6 +3,7 @@ import Transport from "@ledgerhq/hw-transport";
 import { StatusCodes } from "@ledgerhq/errors";
 
 import BIPPath from "bip32-path";
+import { DescriptorInput, buildDescriptor } from "./descriptor";
 
 const P1_NON_CONFIRM = 0x00;
 const P1_CONFIRM = 0x01;
@@ -22,6 +23,7 @@ const INS = {
   SIGN_OFFCHAIN: 0x07,
   GET_CHALLENGE: 0x20,
   PROVIDE_TRUSTED_NAME: 0x21,
+  PROVIDE_TRUSTED_DYNAMIC_DESCRIPTOR: 0x22,
 };
 
 enum EXTRA_STATUS_CODES {
@@ -56,6 +58,7 @@ export default class Solana {
         "getAppConfiguration",
         "getChallenge",
         "provideTrustedName",
+        "provideTrustedDynamicDescriptor",
       ],
       scrambleKey,
     );
@@ -93,6 +96,21 @@ export default class Solana {
     return {
       address: addressBuffer,
     };
+  }
+
+  /**
+   * Provides trusted dynamic and signed coin metadata
+   *
+   * @param data An object containing the descriptor and its signature from the CAL
+   */
+  async provideTrustedDynamicDescriptor(data: DescriptorInput): Promise<boolean> {
+    await this.sendToDevice(
+      INS.PROVIDE_TRUSTED_DYNAMIC_DESCRIPTOR,
+      P1_NON_CONFIRM,
+      buildDescriptor(data),
+    );
+
+    return true;
   }
 
   /**

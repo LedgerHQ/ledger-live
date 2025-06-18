@@ -26,6 +26,12 @@ export const AccountSelection = ({ asset, source, flow, accounts$, onAccountSele
     accounts$,
   );
 
+  const BottomComponent = (
+    <AddAccountContainer>
+      <AddAccountButton onAddAccountClick={onAddAccountClick} />
+    </AddAccountContainer>
+  );
+
   return (
     <>
       <TrackDrawerScreen
@@ -33,15 +39,13 @@ export const AccountSelection = ({ asset, source, flow, accounts$, onAccountSele
         source={source}
         flow={flow}
       />
-      <AddAccountContainer>
-        <AddAccountButton onAddAccountClick={onAddAccountClick} />
-      </AddAccountContainer>
       <SelectAccountList
         source={source}
         flow={flow}
         accounts={accounts}
         detailedAccounts={detailedAccounts}
         onAccountSelected={onAccountSelected}
+        bottomComponent={BottomComponent}
       />
     </>
   );
@@ -49,8 +53,8 @@ export const AccountSelection = ({ asset, source, flow, accounts$, onAccountSele
 
 export const AddAccountContainer = styled.div`
   display: flex;
-  padding: 0 0 16px 0;
+  padding: 0 8px;
   flex: 0 1 auto;
-  margin-left: 8px;
-  margin-right: 8px;
+  margin-bottom: 16px;
+  margin-top: 16px;
 `;

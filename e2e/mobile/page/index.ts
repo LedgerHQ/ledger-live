@@ -39,7 +39,7 @@ setupEnvironment();
 
 type CliCommand = (userdataPath?: string) => Observable<unknown> | Promise<unknown> | string;
 
-type ApplicationOptions = {
+export type ApplicationOptions = {
   speculosApp?: AppInfosType;
   cliCommands?: CliCommand[];
   cliCommandsOnApp?: {

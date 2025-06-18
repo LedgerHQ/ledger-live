@@ -57,7 +57,7 @@ describe("useModularDrawerFlowState", () => {
     const { result } = renderHook(() => useModularDrawerFlowState(defaultProps));
     const filtered = [bitcoinCurrency];
     act(() => {
-      result.current.goToNetworkSelection(filtered);
+      result.current.goToNetworkSelection(bitcoinCurrency, filtered);
     });
     expect(mockSetNetworksToDisplay).toHaveBeenCalledWith(filtered);
     expect(mockGoToStep).toHaveBeenCalledWith("NETWORK_SELECTION");

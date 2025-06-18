@@ -167,9 +167,11 @@ const ModularDrawerFlowManager = ({
           <NetworkSelection
             networks={networksToDisplay}
             networksConfiguration={networkConfiguration}
+            currenciesByProvider={currenciesByProvider}
             flow={flow}
             source={source}
             onNetworkSelected={handleNetworkSelected}
+            selectedAssetId={selectedAsset?.id}
           />
         );
       case MODULAR_DRAWER_STEP.ACCOUNT_SELECTION:

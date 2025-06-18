@@ -142,9 +142,7 @@ function onMessage(event: WebSocketMessageEvent) {
         break;
       }
       case "addKnownSpeculos": {
-        const json = JSON.parse(msg.payload);
-        const model = json.model;
-        const address = json.address;
+        const { address, model } = JSON.parse(msg.payload);
         store.dispatch(
           setLastConnectedDevice({
             deviceId: `httpdebug|ws://${address}`,

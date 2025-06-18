@@ -114,4 +114,45 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
     const usdBalance = screen.queryByText(/\$2,773.41/i);
     expect(usdBalance).toBeNull();
   });
+
+  it("should display number of accounts for network with numberOfAccounts flag", async () => {
+    const { user } = renderWithMockedCounterValuesProvider(
+      <ModularDrawerFlowManager
+        currencies={currencies}
+        onAssetSelected={mockOnAssetSelected}
+        source="sourceTest"
+        flow="flowTest"
+        drawerConfiguration={{ networks: { leftElement: "numberOfAccounts" } }}
+      />,
+      mockedInitialState,
+    );
+
+    const ethereum = screen.getByText(/ethereum/i);
+
+    await user.click(ethereum);
+
+    const accountCount = screen.getByText(/1 account/i);
+    expect(accountCount).toBeVisible();
+  });
+
+  it("should display the total balance of an asset a specific network", async () => {
+    const { user } = renderWithMockedCounterValuesProvider(
+      <ModularDrawerFlowManager
+        currencies={currencies}
+        onAssetSelected={mockOnAssetSelected}
+        source="sourceTest"
+        flow="flowTest"
+        drawerConfiguration={{ networks: { rightElement: "balance" } }}
+      />,
+      mockedInitialState,
+    );
+
+    await user.click(screen.getByText(/ethereum/i));
+    expect(screen.getByText(/select network/i)).toBeVisible();
+
+    const ethereumBalance = screen.getByText(/1 eth/i);
+    expect(ethereumBalance).toBeVisible();
+    const usdBalance = screen.getByText(/\$2,761.27/i);
+    expect(usdBalance).toBeVisible();
+  });
 });
