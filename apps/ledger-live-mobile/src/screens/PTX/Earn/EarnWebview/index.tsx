@@ -24,8 +24,6 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 type Props = {
   manifest: LiveAppManifest;
   inputs?: Record<string, string | undefined>;
-  disableHeader?: boolean;
-  softExit?: boolean;
 };
 /** Subset of WebPTXPlayer functionality required for Earn live app. */
 export const EarnWebview = ({ manifest, inputs }: Props) => {
@@ -53,11 +51,19 @@ export const EarnWebview = ({ manifest, inputs }: Props) => {
         handleHardwareBackPress,
       );
 
+      const url = safeUrl(webviewState.url);
+      const isInitialWebviewStep = url?.searchParams.get("view") === "amount";
+      const isFinalWebviewStep = url?.searchParams.get("view") === "confirmation";
+      if (isInitialWebviewStep || isFinalWebviewStep) {
+        // re-enable the default Android back behavior for initial and final steps to avoid form re-submission.
+        subscription.remove();
+      }
+
       return () => {
         subscription.remove();
       };
     }
-  }, [handleHardwareBackPress]);
+  }, [handleHardwareBackPress, navigation, webviewState.url]);
 
   useEffect(() => {
     const backHandler = (e: { preventDefault: () => void }) => {
@@ -70,8 +76,9 @@ export const EarnWebview = ({ manifest, inputs }: Props) => {
 
     const url = safeUrl(webviewState.url);
     const isInitialWebviewStep = url?.searchParams.get("view") === "amount";
+    const isFinalWebviewStep = url?.searchParams.get("view") === "confirmation";
 
-    if (isInitialWebviewStep) {
+    if (isInitialWebviewStep || isFinalWebviewStep) {
       navigation.removeListener("beforeRemove", backHandler);
     } else {
       navigation.addListener("beforeRemove", backHandler);
