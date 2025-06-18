@@ -2,6 +2,9 @@ name: "[Mobile] E2E Only"
 run-name: "@Mobile • E2E • Test App triggered by ${{ github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
+  push:
+    branches:
+      - refactoring/QAA-648-create-e2e-only-pipeline-script
   schedule:
     - cron: "0 3 * * 1-5"
   workflow_dispatch:
