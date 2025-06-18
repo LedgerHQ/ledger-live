@@ -66,8 +66,10 @@ export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, s
           currency,
         });
       } else {
+        const cryptoCurrency =
+          currency.type === "CryptoCurrency" ? currency : currency.parentCurrency;
         setDrawer();
-        dispatch(openModal("MODAL_ADD_ACCOUNTS", { currency }));
+        dispatch(openModal("MODAL_ADD_ACCOUNTS", { currency: cryptoCurrency }));
       }
     },
     [dispatch, featureNetworkBasedAddAccount?.enabled],
@@ -101,5 +103,6 @@ export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, s
 
   return {
     openAssetFlow,
+    openAddAccountFlow,
   };
 }

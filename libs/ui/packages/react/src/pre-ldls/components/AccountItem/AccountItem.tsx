@@ -8,7 +8,7 @@ import { Tag } from "../Tag/Tag";
 
 export type Account = {
   address: string;
-  balance: string;
+  balance?: string;
   cryptoId?: string;
   fiatValue: string;
   id: string;
@@ -168,9 +168,11 @@ export const AccountItem = ({
           <Text fontSize="16px" fontWeight="semiBold">
             {fiatValue}
           </Text>
-          <Text fontSize="12px" color="var(--colors-content-subdued-default-default)">
-            {balance}
-          </Text>
+          {balance ? (
+            <Text fontSize="12px" color="var(--colors-content-subdued-default-default)">
+              {balance}
+            </Text>
+          ) : null}
         </BalanceContainer>
         {checkbox && <Checkbox {...checkbox} size={20} />}
       </ContentContainer>

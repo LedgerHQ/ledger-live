@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from "@ledgerhq/react-ui";
 import React from "react";
 import { useTheme } from "styled-components";
-import { LoadingOverlay } from "~/newArch/components/LoadingOverlay";
+import { LoadingOverlay } from "LLD/components/LoadingOverlay";
 
 type Loading = {
   title: string;

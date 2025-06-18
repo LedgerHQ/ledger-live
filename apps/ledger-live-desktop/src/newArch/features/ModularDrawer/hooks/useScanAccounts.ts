@@ -4,7 +4,7 @@ import { Account as AccountItemAccount } from "@ledgerhq/react-ui/pre-ldls/compo
 import { Account } from "@ledgerhq/types-live";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { formatAddress } from "~/newArch/utils/formatAddress";
+import { formatAddress } from "LLD/utils/formatAddress";
 import {
   blacklistedTokenIdsSelector,
   counterValueCurrencySelector,
@@ -16,8 +16,9 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { addAccountsAction, groupAddAccounts } from "@ledgerhq/live-wallet/addAccounts";
 import { Subscription } from "rxjs";
-import { getBalanceAndFiatValue } from "~/newArch/utils/getBalanceAndFiatValue";
+import { getBalanceAndFiatValue } from "LLD/utils/getBalanceAndFiatValue";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
+import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 
 export type UseScanAccountsProps = {
   currency: CryptoCurrency;
@@ -102,24 +103,25 @@ export function useScanAccounts({ currency, deviceId, onComplete }: UseScanAccou
 
   const formatAccount = useCallback(
     (account: Account): AccountItemAccount => {
-      const { balance, fiatValue } = getBalanceAndFiatValue(
-        account,
-        state,
-        counterValueCurrency,
-        discreet,
-      );
+      const { fiatValue } = getBalanceAndFiatValue(account, state, counterValueCurrency, discreet);
+      const protocol =
+        account.type === "Account" &&
+        account?.derivationMode !== undefined &&
+        account?.derivationMode !== null &&
+        currency.type === "CryptoCurrency" &&
+        getTagDerivationMode(currency, account.derivationMode);
+
       return {
         address: formatAddress(account.freshAddress),
-        balance,
         cryptoId: account.currency.id,
         fiatValue,
-        protocol: account.derivationMode,
+        protocol: protocol || "",
         id: account.id,
         name: accountNameWithDefaultSelector(walletState, account),
         ticker: account.currency.ticker,
       };
     },
-    [counterValueCurrency, discreet, state, walletState],
+    [counterValueCurrency, currency, discreet, state, walletState],
   );
 
   const handleConfirm = useCallback(() => {
@@ -219,6 +221,7 @@ export function useScanAccounts({ currency, deviceId, onComplete }: UseScanAccou
   useEffect(() => {
     if (latestScannedAccount) {
       const hasAlreadyBeenScanned = scannedAccounts.some(a => latestScannedAccount.id === a.id);
+      const hasAlreadyBeenImported = existingAccounts.some(a => latestScannedAccount.id === a.id);
       const isNewAccount = isAccountEmpty(latestScannedAccount);
 
       if (!isNewAccount) {
@@ -227,29 +230,33 @@ export function useScanAccounts({ currency, deviceId, onComplete }: UseScanAccou
 
       if (!hasAlreadyBeenScanned) {
         setScannedAccounts([...scannedAccounts, latestScannedAccount]);
-        setSelectedIds(
-          onlyNewAccounts
-            ? selectedIds.length > 0
-              ? selectedIds
-              : [latestScannedAccount.id]
-            : !isNewAccount
-              ? Array.from(new Set([...selectedIds, latestScannedAccount.id]))
-              : selectedIds,
-        );
+        if (!hasAlreadyBeenImported) {
+          setSelectedIds(
+            onlyNewAccounts
+              ? selectedIds.length > 0
+                ? selectedIds
+                : [latestScannedAccount.id]
+              : !isNewAccount
+                ? Array.from(new Set([...selectedIds, latestScannedAccount.id]))
+                : selectedIds,
+          );
+        }
       }
     }
   }, [existingAccounts, latestScannedAccount, onlyNewAccounts, scannedAccounts, selectedIds]);
 
   useEffect(() => {
-    if (!cantCreateAccount && !scanning) {
-      if (alreadyEmptyAccount && !hasImportableAccounts) {
-        console.log(
-          "Redirect to Warning Screen (to handle already empty account)",
-          alreadyEmptyAccountName,
-        );
-      } else if (!scannedAccounts.length && CustomNoAssociatedAccounts) {
-        console.log("Redirect to Warning Screen (to handle hedera error for example)");
-      }
+    if (!scanning && alreadyEmptyAccount && !hasImportableAccounts) {
+      console.log(
+        "Redirect to Warning Screen (to handle already empty account)",
+        alreadyEmptyAccountName,
+      );
+    } else if (
+      !scanning &&
+      (!creatableAccounts.length || !importableAccounts.length) &&
+      CustomNoAssociatedAccounts
+    ) {
+      console.log("Redirect to Warning Screen (to handle hedera error for example)");
     }
   }, [
     hasImportableAccounts,
@@ -260,6 +267,8 @@ export function useScanAccounts({ currency, deviceId, onComplete }: UseScanAccou
     currency,
     CustomNoAssociatedAccounts,
     scannedAccounts,
+    creatableAccounts.length,
+    importableAccounts.length,
   ]);
 
   return {

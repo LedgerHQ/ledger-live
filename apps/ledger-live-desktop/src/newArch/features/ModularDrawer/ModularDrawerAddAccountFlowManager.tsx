@@ -2,9 +2,8 @@ import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { Flex } from "@ledgerhq/react-ui/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import React, { useMemo, useState } from "react";
-import { AddAccountHeader } from "./components/Header/AddAccountHeader";
 import ConnectYourDevice from "./screens/ConnectYourDevice";
 import ScanAccounts from "./screens/ScanAccounts";
 import {
@@ -12,6 +11,8 @@ import {
   ModularDrawerAddAccountStep,
   NavigationDirection,
 } from "./types";
+import AnimatedScreenWrapper from "./components/AnimatedScreenWrapper";
+import { BackButtonArrow } from "./components/BackButton";
 
 const ANALYTICS_PROPERTY_FLOW = "Modular Add Account Flow";
 
@@ -90,49 +91,26 @@ const ModularDrawerAddAccountFlowManager = ({ currency, onConnect }: Props) => {
   const navigationDirection: NavigationDirection = "FORWARD";
 
   return (
-    <AnimatePresence initial={false} mode="sync" data-test-id="animated">
-      <motion.div
+    <AnimatePresence initial={false} mode="sync" data-test-id="add-account-animated">
+      {handleBack && <BackButtonArrow onBackClick={handleBack} />}
+      <AnimatedScreenWrapper
         key={currentStep}
-        custom={navigationDirection}
-        variants={{
-          enter: (direction: NavigationDirection) => ({
-            x: direction === "FORWARD" ? 100 : -100,
-            opacity: 0,
-          }),
-          center: { x: 0, opacity: 1 },
-          exit: (direction: NavigationDirection) => ({
-            x: direction === "FORWARD" ? -100 : 100,
-            opacity: 0,
-          }),
-        }}
-        initial="enter"
-        animate="center"
-        exit="exit"
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-        style={{
-          position: "absolute",
-          display: "flex",
-          bottom: 0,
-          top: 0,
-          width: "100%",
-          height: "100%",
-          scrollbarWidth: "none",
-        }}
+        screenKey={currentStep}
+        direction={navigationDirection}
       >
-        <AddAccountHeader step={currentStep} onBackClick={handleBack} />
-
         <Flex
           data-test-id="content"
           flex={1}
           flexDirection="column"
+          height="100%"
+          width="100%"
           paddingBottom={40}
-          paddingTop={76}
-          paddingX={40}
+          paddingX={24}
           rowGap={24}
         >
           {renderStepContent(currentStep)}
         </Flex>
-      </motion.div>
+      </AnimatedScreenWrapper>
     </AnimatePresence>
   );
 };
