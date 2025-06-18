@@ -1,4 +1,5 @@
 name: "[Mobile] E2E Only"
+run-name: "@Mobile • E2E • Test App triggered by ${{ github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
   schedule:
@@ -53,6 +54,10 @@ on:
           - nanoS
           - nanoSP
           - nanoX
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
