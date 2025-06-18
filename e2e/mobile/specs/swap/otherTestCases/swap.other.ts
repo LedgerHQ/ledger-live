@@ -280,17 +280,12 @@ export function runSwapHistoryOperationsTest(
   tags.forEach(tag => $Tag(tag));
   it(`Swap history operations - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name} - LLM`, async () => {
     console.log("test started");
-    await new Promise(resolve => setTimeout(resolve, 60000));
-    // tap on the swap history button in the swap live app
-
-    // await app.swapLiveApp.openHistory();
-    // await app.swapLiveApp.checkHistoryOperation(swapId, swap, provider);
-    // await app.swapLiveApp.checkHistoryOperationDetails(swapId, swap, provider);
-    // await app.swapLiveApp.checkHistoryOperationDetailsActions(swapId, swap, provider);
-
-    // await app.layout.goToSwap();
+    // await new Promise(resolve => setTimeout(resolve, 600000));
     // await app.swap.goToSwapHistory();
+    await app.swap.goToSwapHistory();
+
     // await app.swap.checkSwapOperation(swapHistory.swapId, swapHistory.provider, swapHistory.swap);
+    await app.swap.checkSwapOperation(swapId, provider, swap);
     // await app.swap.openSelectedOperation(swapHistory.swapId);
     // await app.operationDrawer.expectSwapDrawerInfos(
     //   swapHistory.swapId,

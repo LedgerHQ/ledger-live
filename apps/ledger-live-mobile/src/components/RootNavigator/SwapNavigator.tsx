@@ -116,7 +116,7 @@ export default function SwapNavigator(
 
           headerRight: () => (
             <Flex flexDirection="row" p={6} columnGap={16}>
-              <Touchable touchableTestID="NavigationHeaderSwapHistory" onPress={goToSwapHistory}>
+              <Touchable testID="NavigationHeaderSwapHistory" onPress={goToSwapHistory}>
                 <Icons.Clock color={"neutral.c100"} />
               </Touchable>
               <Touchable
