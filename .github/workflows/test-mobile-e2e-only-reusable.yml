@@ -88,16 +88,16 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
 
-      - name: setup caches
-        id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
-        with:
-          skip-pod-cache: "true"
-          skip-turbo-cache: "false"
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+#      - name: setup caches
+#        id: setup-caches
+#        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+#        with:
+#          skip-pod-cache: "true"
+#          skip-turbo-cache: "false"
+#          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+#          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+#          region: ${{ secrets.AWS_CACHE_REGION }}
+#          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
