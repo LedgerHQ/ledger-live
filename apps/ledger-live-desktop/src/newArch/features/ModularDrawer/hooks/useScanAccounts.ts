@@ -19,7 +19,6 @@ import { Subscription } from "rxjs";
 import { getBalanceAndFiatValue } from "LLD/utils/getBalanceAndFiatValue";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 
 export type UseScanAccountsProps = {
   currency: CryptoCurrency;
@@ -100,13 +99,11 @@ export function useScanAccounts({ currency, deviceId, onComplete }: UseScanAccou
       }
     }
   }, []);
+  const state = useCountervaluesState();
 
   const formatAccount = useCallback(
     (account: Account): AccountItemAccount => {
-      const fiatValue = formatCurrencyUnit(counterValueCurrency.units[0], account.balance, {
-        discreet,
-        showCode: true,
-      });
+      const { fiatValue } = getBalanceAndFiatValue(account, state, counterValueCurrency, discreet);
       const protocol =
         account.type === "Account" &&
         account?.derivationMode !== undefined &&
@@ -124,7 +121,7 @@ export function useScanAccounts({ currency, deviceId, onComplete }: UseScanAccou
         ticker: account.currency.ticker,
       };
     },
-    [counterValueCurrency, currency, discreet, walletState],
+    [counterValueCurrency, currency, discreet, state, walletState],
   );
 
   const handleConfirm = useCallback(() => {
