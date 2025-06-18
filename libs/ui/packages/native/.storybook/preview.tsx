@@ -1,8 +1,8 @@
 import React from "react";
-// import { withBackgrounds } from "@storybook/addon-ondevice-backgrounds";
+
 import { palettes } from "@ledgerhq/ui-shared";
-import CenterView, { FontProvider, Main } from "../storybook/stories/CenterView";
-import { StyleProvider } from "../src/styles/StyleProvider";
+import CenterView from "../storybook/stories/CenterView";
+import type { Preview } from "@storybook/react";
 
 export const decorators = [
   // withBackgrounds,
@@ -41,3 +41,10 @@ export const parameters = {
       a[1].kind === b[1].kind ? 0 : a[1].id.localeCompare(b[1].id, undefined, { numeric: true }),
   },
 };
+
+const preview: Preview = {
+  decorators,
+  parameters,
+};
+
+export default preview;
