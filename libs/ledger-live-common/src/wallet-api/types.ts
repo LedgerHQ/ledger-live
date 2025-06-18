@@ -5,11 +5,11 @@ import type { CustomHandlers as WalletAPICustomHandlers } from "@ledgerhq/wallet
 import type { Transaction } from "../generated/types";
 import { LiveAppManifest } from "../platform/types";
 import {
-  DAPP_SELECTORS,
-  ERC721_CLEAR_SIGNED_SELECTORS,
   ERC1155_CLEAR_SIGNED_SELECTORS,
   ERC20_CLEAR_SIGNED_SELECTORS,
-} from "@ledgerhq/evm-tools/lib/selectors/index";
+  ERC721_CLEAR_SIGNED_SELECTORS,
+  DAPP_SELECTORS,
+} from "@ledgerhq/hw-app-eth";
 
 export type { WalletAPITransaction, WalletAPICustomHandlers };
 
