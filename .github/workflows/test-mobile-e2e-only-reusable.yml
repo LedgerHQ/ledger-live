@@ -86,35 +86,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
-
-      - name: Install dependencies
-        id: install-deps
-        run: pnpm install --frozen-lockfile
-
-      - name: Cache pnpm store
-        id: cache-deps
-        uses: actions/cache@v3
-        with:
-          path: ~/.pnpm-store
-          key: pnpm-${{ hashFiles('pnpm-lock.yaml') }}
-
-      - name: Set cache-key output
-        run: echo "cache-key=${{ steps.cache-deps.outputs.cache-key }}" >> $GITHUB_OUTPUT
-
-  ################################################################################
-  # 2) Build iOS & Android in parallel
-  ################################################################################
-  build:
-    name: Build Apps
-    needs: setup
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        platform: [ ios, android ]
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
 
       - name: setup caches
@@ -193,6 +164,25 @@ jobs:
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           turbo_port: ${{ steps.setup-caches.outputs.port }}
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
+
+      - name: Set cache-key output
+        run: echo "cache-key=${{ steps.cache-deps.outputs.cache-key }}" >> $GITHUB_OUTPUT
+
+  ################################################################################
+  # 2) Build iOS & Android in parallel
+  ################################################################################
+  build:
+    name: Build Apps
+    needs: setup
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [ ios, android ]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          repository: LedgerHQ/ledger-live
 
       - name: Build ${{ matrix.platform }}
         run: |
