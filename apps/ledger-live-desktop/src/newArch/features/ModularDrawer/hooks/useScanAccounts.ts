@@ -1,6 +1,6 @@
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
-import { Account as AccountItemAccount } from "@ledgerhq/react-ui/pre-ldls/components/AccountItem/AccountItem";
+import { Account as AccountItem } from "@ledgerhq/react-ui/pre-ldls/components/AccountItem/AccountItem";
 import { Account } from "@ledgerhq/types-live";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -102,7 +102,7 @@ export function useScanAccounts({ currency, deviceId, onComplete }: UseScanAccou
   const state = useCountervaluesState();
 
   const formatAccount = useCallback(
-    (account: Account): AccountItemAccount => {
+    (account: Account): AccountItem => {
       const { fiatValue } = getBalanceAndFiatValue(account, state, counterValueCurrency, discreet);
       const protocol =
         account.type === "Account" &&
@@ -231,15 +231,15 @@ export function useScanAccounts({ currency, deviceId, onComplete }: UseScanAccou
       if (!hasAlreadyBeenScanned) {
         setScannedAccounts([...scannedAccounts, latestScannedAccount]);
         if (!hasAlreadyBeenImported) {
-          setSelectedIds(
-            onlyNewAccounts
-              ? selectedIds.length > 0
-                ? selectedIds
-                : [latestScannedAccount.id]
-              : !isNewAccount
-                ? Array.from(new Set([...selectedIds, latestScannedAccount.id]))
-                : selectedIds,
-          );
+          const newAccountsSelected =
+            selectedIds.length > 0 ? selectedIds : [latestScannedAccount.id];
+          const existingAccountsSelected = !isNewAccount
+            ? Array.from(new Set([...selectedIds, latestScannedAccount.id]))
+            : selectedIds;
+          const selectedAccountIds = onlyNewAccounts
+            ? newAccountsSelected
+            : existingAccountsSelected;
+          setSelectedIds(selectedAccountIds);
         }
       }
     }

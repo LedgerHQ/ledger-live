@@ -7104,7 +7104,7 @@
         "foundAccounts_zero": "No account was found",
         "foundAccounts": "We found {{count}} account",
         "foundAccounts_other": "We found {{count}} accounts",
-        "scanning": "Scanning accounts…"
+        "scanning": "Scanning accounts..."
       },
       "title": "Looking for any existing accounts on the Blockchain..."
     },

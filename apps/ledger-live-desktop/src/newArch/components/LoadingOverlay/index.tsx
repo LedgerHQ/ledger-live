@@ -1,6 +1,6 @@
+import React from "react";
 import { getEnv } from "@ledgerhq/live-env";
 import { Box } from "@ledgerhq/react-ui";
-import { default as React } from "react";
 import Lottie from "react-lottie";
 import animation from "~/renderer/animations/common/loader.json";
 
