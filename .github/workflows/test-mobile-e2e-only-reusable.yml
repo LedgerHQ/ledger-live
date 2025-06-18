@@ -175,7 +175,7 @@ jobs:
   build:
     name: Build Apps
     needs: setup
-    runs-on: ubuntu-latest
+    runs-on: [ledger-live-linux-8CPU-32RAM]
     strategy:
       matrix:
         platform: [ ios, android ]
@@ -189,7 +189,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.pnpm-store
-          key: ${{ needs.setup.outputs.cache-key }}
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
