@@ -120,9 +120,19 @@ export const extractOnboardingState = (
 
   const currentSeedWordIndex = flagsBytes[2] & currentSeedWordIndexMask;
 
-  // If the device is in the ready state and the charon step is set,
-  // we need to update the onboarding step, to override the default state
-  if ([OnboardingStep.Ready].includes(currentOnboardingStep) && charonState !== undefined) {
+  /*
+   * Once the device is seeded, there are some additional states for backing up with Charon (for devices that support it)
+   * There are 2 scenarios:
+   *  - After the seeding of the device, the user goes through the safety warnings screens (step SafetyWarning), and then, compatible devices will display the backup screens.
+   *    Then, the value of "currentOnboardingStep" is "Ready", and the additional information about the status of the backup is in the "charonState" buffer.
+   *  - If the device is rebooted while the backup screens are displayed on the device, it will still display the backup screens when it is turned back on.
+   *    Then, the value of "currentOnboardingStep" is "WelcomeScreen1", and the additional information about the status of the backup is in the "charonState" buffer.
+   */
+  if (
+    isOnboarded &&
+    [OnboardingStep.Ready, OnboardingStep.WelcomeScreen1].includes(currentOnboardingStep) &&
+    charonState !== undefined
+  ) {
     currentOnboardingStep = fromBitsToOnboardingStep.get(charonState[0] + CHARON_STEP_BIT_MASK);
 
     if (!currentOnboardingStep) {
