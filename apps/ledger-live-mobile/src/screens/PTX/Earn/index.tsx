@@ -74,7 +74,6 @@ function Earn({ route }: Props) {
       <TrackScreen category="EarnDashboard" name="Earn" />
       <EarnWebview
         manifest={manifest}
-        disableHeader
         inputs={{
           theme,
           lang: language,

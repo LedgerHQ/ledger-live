@@ -126,6 +126,7 @@ const Earn = (props: NavigationProps) => {
 
   return (
     <>
+      {/* EarnScreen contains the EarnWebview */}
       <EarnScreen
         navigation={props.navigation}
         route={{
