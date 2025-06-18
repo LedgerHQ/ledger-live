@@ -154,7 +154,6 @@ jobs:
           path: |
             ${{ env.ANDROID_APK_PATH }}
             ${{ env.ANDROID_TESTBINARY_PATH }}
-          endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
           key: ${{ inputs.android-native-cache-key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -223,7 +222,6 @@ jobs:
       - name: Upload Detox JS Build
         uses: tespkg/actions-cache/save@v1
         with:
-          endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
           path: ${{ env.ANDROID_JSBUNDLE_PATH }}
           key: ${{ inputs.android-js-cache-key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
