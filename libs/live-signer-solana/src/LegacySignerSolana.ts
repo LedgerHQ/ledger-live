@@ -14,7 +14,7 @@ import trustService from "@ledgerhq/ledger-trust-service";
 import { loadPKI } from "@ledgerhq/hw-bolos";
 import { LatestFirmwareVersionRequired, UpdateYourApp } from "@ledgerhq/errors";
 
-const TRUSTED_NAME_MIN_VERSION = "1.7.1";
+const TRUSTED_NAME_MIN_VERSION = "1.8.1";
 const DYNAMIC_DESCRIPTOR_MIN_VERSION = "1.9.0";
 const MANAGER_APP_NAME = "Solana";
 

@@ -13,6 +13,7 @@ export const supportedBuyCurrenciesIds = [
   "ethereum/erc20/makerdao",
   "ethereum/erc20/uniswap",
   "ethereum/erc20/link_chainlink",
+  "solana",
 ];
 export const supportedSellCurrenciesIds = ["bitcoin"];
 export const isCurrencySupported = (

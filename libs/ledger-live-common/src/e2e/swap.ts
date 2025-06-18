@@ -3,7 +3,7 @@ import axios from "axios";
 
 export async function getMinimumSwapAmount(AccountFrom: Account, AccountTo: Account) {
   try {
-    const { data } = await axios({
+    const requestConfig = {
       method: "GET",
       url: `https://swap-stg.ledger-test.com/v5/quote`,
       params: {
@@ -24,16 +24,21 @@ export async function getMinimumSwapAmount(AccountFrom: Account, AccountTo: Acco
       headers: {
         accept: "application/json",
       },
-    });
+    };
 
-    const minimumAmounts = data.map((item: any) => {
-      return parseFloat(item.parameter.minAmount);
-    });
+    const { data } = await axios(requestConfig);
+
+    const minimumAmounts = data
+      .filter((item: any) => item.parameter?.minAmount !== undefined)
+      .map((item: any) => parseFloat(item.parameter.minAmount));
 
     const validMinimumAmounts = minimumAmounts.filter((amount: number) => !isNaN(amount));
 
-    const maxMinAmount = Math.max(...validMinimumAmounts);
-    return maxMinAmount;
+    if (validMinimumAmounts.length === 0) {
+      throw new Error("No valid minimum amounts returned from swap quote API.");
+    }
+
+    return Math.max(...validMinimumAmounts);
   } catch (error) {
     console.error(error);
   }

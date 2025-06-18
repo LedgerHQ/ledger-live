@@ -7057,12 +7057,9 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "Ara",
-    "assetFlow" : {
-      "selectTemplate" : "{{dynamic}} seçin",
-      "asset" : "Varlık",
-      "network" : "ağ",
-      "account" : "Hesap"
-    }
+    "selectAsset" : "Varlık seçin",
+    "selectNetwork" : "Ağ seçin",
+    "selectAccount" : "Hesap seçin"
   },
   "nftEntryPoint" : {
     "title" : "NFT (Non Fungible Token)",
@@ -7070,5 +7067,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Konum kullanılamıyor",
+    "description" : "Ledger cüzdan bu konumda kullanılamıyor.",
+    "learnMore" : "Daha fazla bilgi"
   }
 }

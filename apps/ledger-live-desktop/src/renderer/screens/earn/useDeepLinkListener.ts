@@ -41,15 +41,23 @@ export const useDeepLinkListener = () => {
           const id = getAccountIdFromWalletAccountId(accountId);
           const account = accounts.find(acc => acc.id === id);
           if (account) {
-            dispatch(
-              openModal("MODAL_START_STAKE", {
-                account,
-                parentAccount: isTokenAccount(account)
-                  ? getParentAccount(account, accounts)
-                  : undefined,
-                source: "Earn Dashboard",
-              }),
-            );
+            if (account.spendableBalance.isZero()) {
+              dispatch(
+                openModal("MODAL_NO_FUNDS_STAKE", {
+                  account,
+                }),
+              );
+            } else {
+              dispatch(
+                openModal("MODAL_START_STAKE", {
+                  account,
+                  parentAccount: isTokenAccount(account)
+                    ? getParentAccount(account, accounts)
+                    : undefined,
+                  source: "Earn Dashboard",
+                }),
+              );
+            }
           } else {
             logger.warn("not account found in earn dashboard deeplink");
           }

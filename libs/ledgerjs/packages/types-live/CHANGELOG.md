@@ -1,5 +1,17 @@
 # @ledgerhq/types-live
 
+## 6.73.0
+
+### Minor Changes
+
+- [#10370](https://github.com/LedgerHQ/ledger-live/pull/10370) [`b7d3d59`](https://github.com/LedgerHQ/ledger-live/commit/b7d3d59d299c3d3541d598536651b9047fda4526) Thanks [@themooneer](https://github.com/themooneer)! - IP restriction for LLM and LLD
+
+## 6.73.0-next.0
+
+### Minor Changes
+
+- [#10370](https://github.com/LedgerHQ/ledger-live/pull/10370) [`b7d3d59`](https://github.com/LedgerHQ/ledger-live/commit/b7d3d59d299c3d3541d598536651b9047fda4526) Thanks [@themooneer](https://github.com/themooneer)! - IP restriction for LLM and LLD
+
 ## 6.72.0
 
 ### Minor Changes

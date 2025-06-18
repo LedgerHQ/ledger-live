@@ -1,5 +1,32 @@
 # @ledgerhq/coin-mina
 
+## 1.1.8
+
+### Patch Changes
+
+- Updated dependencies [[`18bc0d4`](https://github.com/LedgerHQ/ledger-live/commit/18bc0d4a27696491400df6ce26b915a88b56792f), [`99385c9`](https://github.com/LedgerHQ/ledger-live/commit/99385c9a7ecac9328ffa29c039e8c0cf2317c431), [`b7d3d59`](https://github.com/LedgerHQ/ledger-live/commit/b7d3d59d299c3d3541d598536651b9047fda4526), [`e04d215`](https://github.com/LedgerHQ/ledger-live/commit/e04d21576919fa21cb3ab6e1c4e8e50fb6c17eca), [`1535307`](https://github.com/LedgerHQ/ledger-live/commit/1535307f78d345d7f652ac2c91c8a67e62fedef2)]:
+  - @ledgerhq/coin-framework@5.3.0
+  - @ledgerhq/types-live@6.73.0
+  - @ledgerhq/cryptoassets@13.18.1
+  - @ledgerhq/live-network@2.0.10
+
+## 1.1.8-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`99385c9`](https://github.com/LedgerHQ/ledger-live/commit/99385c9a7ecac9328ffa29c039e8c0cf2317c431)]:
+  - @ledgerhq/coin-framework@5.3.0-next.1
+
+## 1.1.8-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`18bc0d4`](https://github.com/LedgerHQ/ledger-live/commit/18bc0d4a27696491400df6ce26b915a88b56792f), [`b7d3d59`](https://github.com/LedgerHQ/ledger-live/commit/b7d3d59d299c3d3541d598536651b9047fda4526), [`e04d215`](https://github.com/LedgerHQ/ledger-live/commit/e04d21576919fa21cb3ab6e1c4e8e50fb6c17eca), [`1535307`](https://github.com/LedgerHQ/ledger-live/commit/1535307f78d345d7f652ac2c91c8a67e62fedef2)]:
+  - @ledgerhq/coin-framework@5.3.0-next.0
+  - @ledgerhq/types-live@6.73.0-next.0
+  - @ledgerhq/cryptoassets@13.18.1-next.0
+  - @ledgerhq/live-network@2.0.10-next.0
+
 ## 1.1.7
 
 ### Patch Changes
