@@ -37,6 +37,7 @@ export const Informations: React.FC<InformationsProps> = props => {
 
       <Flex style={styles.row}>
         <InfoCard
+          left
           label={t("largeMover.marketCap")}
           value={formatCounterValue(marketCap ?? 0, counterValueCurrency.ticker, locale, t)}
         />
@@ -48,6 +49,7 @@ export const Informations: React.FC<InformationsProps> = props => {
 
       <Flex style={styles.row}>
         <InfoCard
+          left
           label={t("largeMover.fdv")}
           value={formatCounterValue(fdv ?? 0, counterValueCurrency.ticker, locale, t)}
         />
@@ -64,6 +66,7 @@ export const Informations: React.FC<InformationsProps> = props => {
       </Flex>
       <Flex style={styles.row}>
         <InfoCard
+          left
           label={t("largeMover.circulatingSupply")}
           value={formatCounterValue(circulatingSupply ?? 0, "", locale, t, {
             ticker,
@@ -75,7 +78,7 @@ export const Informations: React.FC<InformationsProps> = props => {
         />
       </Flex>
 
-      <Flex paddingBottom={6}>
+      <Flex paddingBottom={4}>
         <AthAtlBlock
           label="largeMover.ath"
           value={allTimeHigh}
@@ -108,37 +111,12 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: "bold",
     fontSize: 14,
-    paddingBottom: 16,
+    paddingBottom: 12,
   },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingBottom: 16,
-  },
-  container: {
-    flexDirection: "column",
-    padding: 16,
-    borderRadius: 16,
-    width: "48%",
-  },
-  bigContainer: {
-    flexDirection: "column",
-    padding: 12,
-    borderRadius: 16,
-  },
-  rowInside: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingBottom: 2,
-  },
-  name: {
-    fontSize: 15,
-    paddingBottom: 6,
-  },
-  value: {
-    fontSize: 15,
-    fontWeight: "bold",
-    textTransform: "uppercase",
+    paddingBottom: 12,
   },
   date: {
     fontSize: 12,
