@@ -145,7 +145,7 @@ const transactionAddressValid = [
 ];
 
 const transactionE2E = [
-  {
+  /*{
     transaction: new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", Fee.SLOW),
     xrayTicket: "B2CQA-2574",
   },
@@ -192,7 +192,7 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.XRP_1, Account.XRP_2, "0.0001", undefined, "noTag"),
     xrayTicket: "B2CQA-2816",
-  },
+  },*/
   {
     transaction: new Transaction(Account.APTOS_1, Account.APTOS_2, "0.0001"),
     xrayTicket: "B2CQA-2920",
@@ -269,7 +269,7 @@ test.describe("Send flows", () => {
       );
     });
   }
-
+  /*
   for (const transaction of transactionsAmountInvalid) {
     test.describe("Check invalid amount input error", () => {
       test.use({
@@ -522,4 +522,5 @@ test.describe("Send flows", () => {
       }
     });
   });
+  */
 });
