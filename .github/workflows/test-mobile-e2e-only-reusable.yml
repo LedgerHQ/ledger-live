@@ -79,7 +79,7 @@ env:
 jobs:
   setup:
     name: Setup & Cache
-    runs-on: [ ledger-live-linux-8CPU-32RAM ]
+    runs-on: [ledger-live-linux-8CPU-32RAM]
     outputs:
       cache-key: ${{ steps.cache-deps.outputs.cache-key }}
     steps:
@@ -122,13 +122,19 @@ jobs:
           echo "Cache key hash: ${{ hashFiles('pnpm-lock.yaml') }}"
 
       - name: Save pnpm cache
-        if: steps.install-dependencies.outcome == 'success' # Only save if install succeeds
-        uses: actions/cache@v3
+        if: steps.install-dependencies.outcome == 'success'
+        uses: tespkg/actions-cache@v1
         with:
           path: ~/.pnpm-store
           key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ll-gha-s3-cache
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: true
 
       - name: Flake alert - ArgumentError
         uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@develop
@@ -153,7 +159,7 @@ jobs:
           key: ${{ runner.os }}-detox-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js', 'apps/ledger-live-mobile/.env.mock', 'apps/ledger-live-mobile/ios/ledgerlivemobile/AppDelegate.mm') }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
           bucket: ll-gha-s3-cache
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
@@ -189,7 +195,7 @@ jobs:
   build:
     name: Build Apps
     needs: setup
-    runs-on: [ ledger-live-linux-8CPU-32RAM ]
+    runs-on: [ledger-live-linux-8CPU-32RAM]
     strategy:
       matrix:
         platform: [ ios, android ]
@@ -200,13 +206,19 @@ jobs:
           repository: LedgerHQ/ledger-live
 
       - name: Restore pnpm cache
-        uses: actions/cache@v3
+        uses: tespkg/actions-cache@v1
         with:
           path: ~/.pnpm-store
           key: ${{ needs.setup.outputs.cache-key || runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}-
             ${{ runner.os }}-pnpm-
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ll-gha-s3-cache
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: true
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
