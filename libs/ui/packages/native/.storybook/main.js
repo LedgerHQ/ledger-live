@@ -1,5 +1,6 @@
 module.exports = {
   stories: [
+    "../src/pre-ldls/**/*.stories.@(js|jsx|ts|tsx)",
     "../storybook/stories/**/*.stories.mdx",
     "../storybook/stories/**/*.stories.@(js|jsx|ts|tsx)",
   ],
@@ -8,7 +9,7 @@ module.exports = {
     "@storybook/addon-ondevice-actions",
     // "@storybook/addon-ondevice-backgrounds",
     "@storybook/addon-ondevice-notes",
-    "@storybook/blocks"
+    "@storybook/blocks",
   ],
   typescript: {
     reactDocgen: false, // FIXME: this is disabled for now due to incompatibilities with TS 5. re-enable when upgrading storybook.
