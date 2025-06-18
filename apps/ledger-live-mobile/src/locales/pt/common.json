@@ -7438,5 +7438,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Local indisponível",
+    "description" : "A carteira Ledger não está disponível neste local.",
+    "learnMore" : "Saiba mais"
   }
 }

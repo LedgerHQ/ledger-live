@@ -1,5 +1,28 @@
 # @ledgerhq/live-signer-evm
 
+## 0.5.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@2.22.3
+  - @ledgerhq/hw-app-eth@6.45.7
+
+## 0.5.2-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@2.22.3-next.1
+
+## 0.5.2-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@2.22.3-next.0
+  - @ledgerhq/hw-app-eth@6.45.7-next.0
+
 ## 0.5.1
 
 ### Patch Changes

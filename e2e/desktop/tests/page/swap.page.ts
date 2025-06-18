@@ -84,7 +84,7 @@ export class SwapPage extends AppPage {
     await expect(webview.getByTestId(baseProviderLocator + "rate-fiat-value")).toBeVisible();
     if (
       provider === Provider.ONE_INCH.name ||
-      provider === Provider.PARASWAP.name ||
+      provider === Provider.VELORA.name ||
       provider === Provider.UNISWAP.name ||
       provider === Provider.LIFI.name
     ) {
@@ -226,7 +226,7 @@ export class SwapPage extends AppPage {
 
     const buttonText = [
       Provider.ONE_INCH.uiName,
-      Provider.PARASWAP.uiName,
+      Provider.VELORA.uiName,
       Provider.MOONPAY.uiName,
     ].includes(provider)
       ? `Continue with ${provider}`
@@ -398,7 +398,7 @@ export class SwapPage extends AppPage {
         ]);
         break;
       }
-      case Provider.PARASWAP.uiName: {
+      case Provider.VELORA.uiName: {
         const debitContractAddress = swap.accountToDebit.currency.contractAddress;
         const creditContractAddress = swap.accountToCredit.currency.contractAddress;
 

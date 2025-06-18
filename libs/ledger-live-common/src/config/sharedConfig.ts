@@ -36,13 +36,6 @@ const countervaluesConfig: ConfigSchema = {
   },
 };
 
-const sharedCurrencyConfig: ConfigSchema = {
-  config_currency: {
-    type: "object",
-    default: {},
-  },
-};
-
 const liveCommonConfig: ConfigSchema = {
   ...appConfig,
 };
@@ -74,5 +67,4 @@ export const liveConfig: ConfigSchema = {
   ...iconConfig,
   ...tonConfig,
   ...suiConfig,
-  ...sharedCurrencyConfig,
 };

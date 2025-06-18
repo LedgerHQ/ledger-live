@@ -1,5 +1,17 @@
 # @ledgerhq/react-ui
 
+## 0.29.0
+
+### Minor Changes
+
+- [#10389](https://github.com/LedgerHQ/ledger-live/pull/10389) [`9ef8404`](https://github.com/LedgerHQ/ledger-live/commit/9ef840485a4dfefcba29013367d85fcbb590b17c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Rework all the architecture of MAD feature. We can now use it in any flows with webview or any other flows. Also some quick UI fixes in the lib
+
+## 0.29.0-next.0
+
+### Minor Changes
+
+- [#10389](https://github.com/LedgerHQ/ledger-live/pull/10389) [`9ef8404`](https://github.com/LedgerHQ/ledger-live/commit/9ef840485a4dfefcba29013367d85fcbb590b17c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Rework all the architecture of MAD feature. We can now use it in any flows with webview or any other flows. Also some quick UI fixes in the lib
+
 ## 0.28.0
 
 ### Minor Changes
