@@ -145,7 +145,7 @@ const transactionAddressValid = [
 ];
 
 const transactionE2E = [
-  /*{
+  {
     transaction: new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", Fee.SLOW),
     xrayTicket: "B2CQA-2574",
   },
@@ -192,7 +192,7 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.XRP_1, Account.XRP_2, "0.0001", undefined, "noTag"),
     xrayTicket: "B2CQA-2816",
-  },*/
+  },
   {
     transaction: new Transaction(Account.APTOS_1, Account.APTOS_2, "0.0001"),
     xrayTicket: "B2CQA-2920",
@@ -209,20 +209,27 @@ test.describe("Send flows", () => {
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [
           (appjsonPath: string) => {
-            return CLI.liveData({
+            const result = CLI.liveData({
               currency: transaction.transaction.accountToCredit.currency.id,
               index: transaction.transaction.accountToCredit.index,
               add: true,
               appjson: appjsonPath,
             });
+            console.log("⚠️ Attempted to add credit account (APTOS_2):", result);
+
+            return result;
           },
           (appjsonPath: string) => {
-            return CLI.liveData({
+            const result = CLI.liveData({
               currency: transaction.transaction.accountToDebit.currency.id,
               index: transaction.transaction.accountToDebit.index,
               add: true,
               appjson: appjsonPath,
             });
+
+            console.log("⚠️ Attempted to add credit account (APTOS_1):", result);
+
+            return result;
           },
         ],
       });
@@ -269,7 +276,6 @@ test.describe("Send flows", () => {
       );
     });
   }
-  /*
   for (const transaction of transactionsAmountInvalid) {
     test.describe("Check invalid amount input error", () => {
       test.use({
@@ -522,5 +528,4 @@ test.describe("Send flows", () => {
       }
     });
   });
-  */
 });
