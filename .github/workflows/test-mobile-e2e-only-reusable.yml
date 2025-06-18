@@ -220,108 +220,108 @@ jobs:
   ################################################################################
   # 5) Allure Reports
   ################################################################################
-  allure-ios:
-    name: Allure Report iOS
-    needs: ios-e2e
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download iOS artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: ios-test-artifacts-*
-      - name: Generate & upload Allure iOS
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
-        if: ${{ env.SHOULD_UPLOAD }}
-        with:
-          platform: ios
-          login: ${{ vars.ALLURE_USERNAME }}
-          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
-          path: e2e/mobile/artifacts
-
-  allure-android:
-    name: Allure Report Android
-    needs: android-e2e
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download Android artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: android-test-artifacts-*
-      - name: Generate & upload Allure Android
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
-        if: ${{ env.SHOULD_UPLOAD }}
-        with:
-          platform: android
-          login: ${{ vars.ALLURE_USERNAME }}
-          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
-          path: e2e/mobile/artifacts
+#  allure-ios:
+#    name: Allure Report iOS
+#    needs: ios-e2e
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Download iOS artifacts
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: ios-test-artifacts-*
+#      - name: Generate & upload Allure iOS
+#        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+#        if: ${{ env.SHOULD_UPLOAD }}
+#        with:
+#          platform: ios
+#          login: ${{ vars.ALLURE_USERNAME }}
+#          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+#          path: e2e/mobile/artifacts
+#
+#  allure-android:
+#    name: Allure Report Android
+#    needs: android-e2e
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Download Android artifacts
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: android-test-artifacts-*
+#      - name: Generate & upload Allure Android
+#        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+#        if: ${{ env.SHOULD_UPLOAD }}
+#        with:
+#          platform: android
+#          login: ${{ vars.ALLURE_USERNAME }}
+#          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+#          path: e2e/mobile/artifacts
 
   ################################################################################
   # 6) Xray Import
   ################################################################################
-  xray:
-    name: Import to Xray
-    runs-on: ubuntu-latest
-    needs: [ allure-ios, allure-android ]
-    if: ${{ inputs.export_to_xray }}
-    strategy:
-      matrix:
-        platform: [ ios, android ]
-    steps:
-      - name: Download Allure results
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts-${{ matrix.platform }}
-          pattern: "*-test-artifacts-*"
-          merge-multiple: true
-      - name: Format Xray payload
-        run: e2e/mobile/xray.formater.sh artifacts-${{ matrix.platform }} ${{ matrix.platform }} ${{ matrix.platform == 'ios' && inputs.test_execution_ios || inputs.test_execution_android }}
-      - name: Upload Xray JSON
-        uses: actions/upload-artifact@v4
-        with:
-          name: xray-${{ matrix.platform }}
-          path: artifacts-${{ matrix.platform }}/xray_report.json
-      - name: Authenticate to Xray
-        id: auth
-        run: |
-          token=$(curl -s -X POST "$XRAY_API_URL/authenticate" \
-            -H "Content-Type: application/json" \
-            -d "{\"client_id\":\"${{ secrets.XRAY_CLIENT_ID }}\",\"client_secret\":\"${{ secrets.XRAY_CLIENT_SECRET }}\"}")
-          echo "xray_token=$token" >> $GITHUB_OUTPUT
-      - name: Publish to Xray
-        run: |
-          curl -s -X POST "$XRAY_API_URL/import/execution" \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer ${{ steps.auth.outputs.xray_token }}" \
-            --data @artifacts-${{ matrix.platform }}/xray_report.json
+#  xray:
+#    name: Import to Xray
+#    runs-on: ubuntu-latest
+#    needs: [ allure-ios, allure-android ]
+#    if: ${{ inputs.export_to_xray }}
+#    strategy:
+#      matrix:
+#        platform: [ ios, android ]
+#    steps:
+#      - name: Download Allure results
+#        uses: actions/download-artifact@v4
+#        with:
+#          path: artifacts-${{ matrix.platform }}
+#          pattern: "*-test-artifacts-*"
+#          merge-multiple: true
+#      - name: Format Xray payload
+#        run: e2e/mobile/xray.formater.sh artifacts-${{ matrix.platform }} ${{ matrix.platform }} ${{ matrix.platform == 'ios' && inputs.test_execution_ios || inputs.test_execution_android }}
+#      - name: Upload Xray JSON
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: xray-${{ matrix.platform }}
+#          path: artifacts-${{ matrix.platform }}/xray_report.json
+#      - name: Authenticate to Xray
+#        id: auth
+#        run: |
+#          token=$(curl -s -X POST "$XRAY_API_URL/authenticate" \
+#            -H "Content-Type: application/json" \
+#            -d "{\"client_id\":\"${{ secrets.XRAY_CLIENT_ID }}\",\"client_secret\":\"${{ secrets.XRAY_CLIENT_SECRET }}\"}")
+#          echo "xray_token=$token" >> $GITHUB_OUTPUT
+#      - name: Publish to Xray
+#        run: |
+#          curl -s -X POST "$XRAY_API_URL/import/execution" \
+#            -H "Content-Type: application/json" \
+#            -H "Authorization: Bearer ${{ steps.auth.outputs.xray_token }}" \
+#            --data @artifacts-${{ matrix.platform }}/xray_report.json
 
   ################################################################################
   # 7) Slack Notification
   ################################################################################
-  slack:
-    name: Notify Slack
-    needs: [ allure-ios, allure-android ]
-    runs-on: ubuntu-latest
-    if: ${{ env.SHOULD_UPLOAD }}
-    steps:
-      - name: Build Slack payload
-        uses: actions/github-script@v7
-        id: slack-msg
-        with:
-          script: |
-            const iosStatus  = '${{ needs.allure-ios.outputs.result }}'  || 'no-results';
-            const androidStatus = '${{ needs.allure-android.outputs.result }}' || 'no-results';
-            const blocks = [
-              { type: "header", text: { type: "plain_text", text: `Mobile E2E on ${{ github.ref_name }}` } },
-              { type: "section", text: { type: "mrkdwn", text: `:apple: iOS: ${iosStatus}` } },
-              { type: "section", text: { type: "mrkdwn", text: `:robot_face: Android: ${androidStatus}` } },
-              { type: "context", elements: [{ type: "mrkdwn", text:`<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View workflow>` }] }
-            ];
-            return JSON.stringify({ attachments:[{ color:"#36a64f", blocks }] });
-      - name: Post to Slack
-        uses: slackapi/slack-github-action@v1.23.0
-        with:
-          channel-id: "CTMQ0S5SB"
-          payload: ${{ steps.slack-msg.outputs.result }}
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+#  slack:
+#    name: Notify Slack
+#    needs: [ allure-ios, allure-android ]
+#    runs-on: ubuntu-latest
+#    if: ${{ env.SHOULD_UPLOAD }}
+#    steps:
+#      - name: Build Slack payload
+#        uses: actions/github-script@v7
+#        id: slack-msg
+#        with:
+#          script: |
+#            const iosStatus  = '${{ needs.allure-ios.outputs.result }}'  || 'no-results';
+#            const androidStatus = '${{ needs.allure-android.outputs.result }}' || 'no-results';
+#            const blocks = [
+#              { type: "header", text: { type: "plain_text", text: `Mobile E2E on ${{ github.ref_name }}` } },
+#              { type: "section", text: { type: "mrkdwn", text: `:apple: iOS: ${iosStatus}` } },
+#              { type: "section", text: { type: "mrkdwn", text: `:robot_face: Android: ${androidStatus}` } },
+#              { type: "context", elements: [{ type: "mrkdwn", text:`<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View workflow>` }] }
+#            ];
+#            return JSON.stringify({ attachments:[{ color:"#36a64f", blocks }] });
+#      - name: Post to Slack
+#        uses: slackapi/slack-github-action@v1.23.0
+#        with:
+#          channel-id: "CTMQ0S5SB"
+#          payload: ${{ steps.slack-msg.outputs.result }}
+#        env:
+#          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
