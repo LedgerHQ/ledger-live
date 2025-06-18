@@ -134,7 +134,7 @@ jobs:
           sessionToken: ${{ env.AWS_SESSION_TOKEN }}
           bucket: ll-gha-s3-cache
           region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: true
+          use-fallback: false
 
       - name: Flake alert - ArgumentError
         uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@develop
@@ -218,7 +218,7 @@ jobs:
           sessionToken: ${{ env.AWS_SESSION_TOKEN }}
           bucket: ll-gha-s3-cache
           region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: true
+          use-fallback: false
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
