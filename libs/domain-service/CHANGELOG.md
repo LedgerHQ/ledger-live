@@ -1,32 +1,18 @@
 # @ledgerhq/domain-service
 
-## 1.2.32-nightly.3
+## 1.2.32
 
 ### Patch Changes
 
-- Updated dependencies [[`98eb2eb`](https://github.com/LedgerHQ/ledger-live/commit/98eb2ebce8e12742a68b8f54ba625d63c4958087)]:
-  - @ledgerhq/types-live@6.73.0-nightly.2
+- Updated dependencies [[`b7d3d59`](https://github.com/LedgerHQ/ledger-live/commit/b7d3d59d299c3d3541d598536651b9047fda4526)]:
+  - @ledgerhq/types-live@6.73.0
 
-## 1.2.32-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`b5e3217`](https://github.com/LedgerHQ/ledger-live/commit/b5e321789d3a6f9cb1916067790590640db0876f)]:
-  - @ledgerhq/errors@6.22.0-nightly.0
-
-## 1.2.32-nightly.1
+## 1.2.32-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`e9739d1`](https://github.com/LedgerHQ/ledger-live/commit/e9739d19946376dd7a8a5f10471594f267f3a95f)]:
-  - @ledgerhq/types-live@6.73.0-nightly.1
-
-## 1.2.32-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`9ceee03`](https://github.com/LedgerHQ/ledger-live/commit/9ceee03c33c41bb035fe64f9303acd36872536b6)]:
-  - @ledgerhq/types-live@6.73.0-nightly.0
+- Updated dependencies [[`b7d3d59`](https://github.com/LedgerHQ/ledger-live/commit/b7d3d59d299c3d3541d598536651b9047fda4526)]:
+  - @ledgerhq/types-live@6.73.0-next.0
 
 ## 1.2.31
 

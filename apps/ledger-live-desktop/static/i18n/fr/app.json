@@ -710,7 +710,7 @@
         },
         "accounts" : {
           "title" : "Comptes",
-          "existing" : "Comptes existants à rechercher",
+          "existing" : "Comptes à rechercher",
           "toScan" : "Comptes à rechercher",
           "toScanDescription" : "Comptes à rechercher pour chaque type d’adresse",
           "toScanTooltip" : "Augmentez seulement si vous avez plus de 10 comptes BTC. La recherche initiale sera plus lente. "
@@ -1782,10 +1782,10 @@
     "fullNodeReadyInfo" : "Les comptes seront ajoutés en utilisant votre nœud Bitcoin.",
     "fullNodeConfigure" : "Configurer le nœud",
     "tokensTip" : "{{token}} ({{ticker}}) est un token {{tokenType}}.\n Vous pouvez recevoir ces tokens directement sur un compte {{currency}}.",
-    "accountToImportSubtitle_plural" : "Ajouter des comptes existants",
+    "accountToImportSubtitle_plural" : "Ajouter des comptes",
     "selectAll" : "Sélectionner tout ({{count}})",
     "unselectAll" : "Désélectionner tout ({{count}})",
-    "noAccountToImport" : "Aucun compte {{currencyName}} existant à ajouter",
+    "noAccountToImport" : "Aucun compte {{currencyName}} à ajouter",
     "success" : "Compte bien ajouté",
     "success_plural" : "Comptes bien ajoutés",
     "successDescription" : "Ajoutez davantage de comptes ou retournez au Portefeuille.",
@@ -1808,7 +1808,7 @@
     },
     "sections" : {
       "importable" : {
-        "title" : "Ajouter un compte existant"
+        "title" : "Ajouter un compte"
       },
       "creatable" : {
         "title" : "Ajouter un nouveau compte"
@@ -4587,7 +4587,7 @@
     },
     "removeAccountModal" : {
       "title" : "Supprimer le compte",
-      "desc" : "Cela n’a pas d’effet sur vos crypto-actifs. Vous pourrez de nouveau ajouter vos comptes existants.",
+      "desc" : "Cela n’a pas d’effet sur vos crypto-actifs. Vous pourrez de nouveau ajouter vos comptes.",
       "delete" : "Retirer du Portefeuille",
       "warning" : "L’historique de vos transactions d’échange en lien avec ce compte sera effacé."
     },
@@ -7057,12 +7057,9 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "Rechercher",
-    "assetFlow" : {
-      "selectTemplate" : "Sélectionner {{dynamic}}",
-      "asset" : "un actif",
-      "network" : "un réseau",
-      "account" : "un compte"
-    }
+    "selectAsset" : "Sélectionner un actif",
+    "selectNetwork" : "Sélectionner un réseau",
+    "selectAccount" : "Sélectionner un compte"
   },
   "nftEntryPoint" : {
     "title" : "NFT (tokens non fongibles)",
@@ -7070,5 +7067,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Région indisponible",
+    "description" : "L’application n’est pas disponible dans ce pays/région.",
+    "learnMore" : "En savoir plus"
   }
 }

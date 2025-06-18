@@ -1,36 +1,18 @@
 # webpack.js-example
 
-## 0.2.0-nightly.3
+## 0.1.28
 
 ### Patch Changes
 
-- Updated dependencies [[`f2beeb0`](https://github.com/LedgerHQ/ledger-live/commit/f2beeb041debcc36ca828e2a52a77170e20f108b), [`23c0b8a`](https://github.com/LedgerHQ/ledger-live/commit/23c0b8ac0932e762123cbb6b6243ca4f7e5a01e0)]:
-  - @ledgerhq/react-ui@0.29.0-nightly.3
+- Updated dependencies [[`9ef8404`](https://github.com/LedgerHQ/ledger-live/commit/9ef840485a4dfefcba29013367d85fcbb590b17c)]:
+  - @ledgerhq/react-ui@0.29.0
 
-## 0.2.0-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`3f02d18`](https://github.com/LedgerHQ/ledger-live/commit/3f02d1856cb30eee4c79e3b9f83df2ff3a56775d)]:
-  - @ledgerhq/react-ui@0.29.0-nightly.2
-
-## 0.2.0-nightly.1
-
-### Minor Changes
-
-- [#10229](https://github.com/LedgerHQ/ledger-live/pull/10229) [`bf4b791`](https://github.com/LedgerHQ/ledger-live/commit/bf4b7919e5e66605ea3e77562626db5d26898246) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Upgrade React Native from 0.75 to 0.77
+## 0.1.28-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`bf4b791`](https://github.com/LedgerHQ/ledger-live/commit/bf4b7919e5e66605ea3e77562626db5d26898246)]:
-  - @ledgerhq/react-ui@0.29.0-nightly.1
-
-## 0.1.28-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`9ceee03`](https://github.com/LedgerHQ/ledger-live/commit/9ceee03c33c41bb035fe64f9303acd36872536b6)]:
-  - @ledgerhq/react-ui@0.29.0-nightly.0
+- Updated dependencies [[`9ef8404`](https://github.com/LedgerHQ/ledger-live/commit/9ef840485a4dfefcba29013367d85fcbb590b17c)]:
+  - @ledgerhq/react-ui@0.29.0-next.0
 
 ## 0.1.27
 

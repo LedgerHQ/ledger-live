@@ -1288,7 +1288,7 @@
       },
       "vote" : {
         "title" : "โหวตด้วย Ledger ของคุณ",
-        "description" : "โหวตได้โดยตรงจากวอลเล็ทของคุณ"
+        "description" : "โหวตได้โดยตรงจากวอลเล็ตของคุณ"
       },
       "lending" : {
         "title" : "ให้ยืมคริปโต",
@@ -1503,7 +1503,7 @@
         "subtitle" : "เลือกว่า Ledger ของคุณเป็นอุปกรณ์เครื่องใหม่หรือได้รับการรีเซ็ตมาก่อน"
       },
       "accessWallet" : {
-        "title" : "เข้าถึงวอลเล็ทของคุณ",
+        "title" : "เข้าถึงวอลเล็ตของคุณ",
         "subtitle" : "เลือกว่าติดตั้ง Ledger ของคุณแล้วหรือไม่"
       },
       "buyNano" : {
@@ -3782,11 +3782,11 @@
     },
     "walletConnect" : {
       "title" : "WalletConnect",
-      "description" : "เชื่อมต่อวอลเล็ทของคุณกับ DApps"
+      "description" : "เชื่อมต่อวอลเล็ตของคุณกับ DApps"
     },
     "recover" : {
       "title" : "Ledger Recover",
-      "description" : "กู้คืนวอลเล็ทได้ง่าย ๆ",
+      "description" : "กู้คืนวอลเล็ตได้ง่าย ๆ",
       "tag" : "ฟรี 1 เดือน"
     }
   },
@@ -4149,7 +4149,7 @@
       },
       "segwit" : {
         "title" : "Segwit",
-        "desc" : "ค่าธรรมเนียมต่อธุรกรรมสูงกว่า Native Segwit รองรับ Lightning รองรับโดยวอลเล็ทส่วนใหญ่"
+        "desc" : "ค่าธรรมเนียมต่อธุรกรรมสูงกว่า Native Segwit รองรับ Lightning รองรับโดยวอลเล็ตส่วนใหญ่"
       },
       "legacy" : {
         "title" : "Legacy",
@@ -7438,5 +7438,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "ไม่พร้อมให้บริการตำแหน่งที่ตั้งนี้",
+    "description" : "Ledger Wallet ไม่สามารถใช้ได้ในพื้นที่นี้",
+    "learnMore" : "เรียนรู้เพิ่มเติม"
   }
 }

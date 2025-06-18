@@ -7057,12 +7057,9 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "検索",
-    "assetFlow" : {
-      "selectTemplate" : "{{dynamic}}を選択",
-      "asset" : "資産",
-      "network" : "ネットワーク",
-      "account" : "アカウント"
-    }
+    "selectAsset" : "暗号資産を選択",
+    "selectNetwork" : "ネットワークを選択",
+    "selectAccount" : "アカウントを選択"
   },
   "nftEntryPoint" : {
     "title" : "NFT（非代替性トークン）",
@@ -7070,5 +7067,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "利用不可のロケーション",
+    "description" : "このロケーションでは、Ledgerウォレットをご利用いただけません。",
+    "learnMore" : "詳細はこちら"
   }
 }

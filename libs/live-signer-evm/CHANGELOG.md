@@ -1,37 +1,27 @@
 # @ledgerhq/live-signer-evm
 
-## 0.5.2-nightly.3
+## 0.5.2
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/coin-evm@2.22.3-nightly.3
-  - @ledgerhq/hw-app-eth@6.45.7-nightly.3
+  - @ledgerhq/coin-evm@2.22.3
+  - @ledgerhq/hw-app-eth@6.45.7
 
-## 0.5.2-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`b5e3217`](https://github.com/LedgerHQ/ledger-live/commit/b5e321789d3a6f9cb1916067790590640db0876f)]:
-  - @ledgerhq/errors@6.22.0-nightly.0
-  - @ledgerhq/coin-evm@2.22.3-nightly.2
-  - @ledgerhq/hw-app-eth@6.45.7-nightly.2
-
-## 0.5.2-nightly.1
+## 0.5.2-next.1
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/coin-evm@2.22.3-nightly.1
-  - @ledgerhq/hw-app-eth@6.45.7-nightly.1
+  - @ledgerhq/coin-evm@2.22.3-next.1
 
-## 0.5.2-nightly.0
+## 0.5.2-next.0
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/coin-evm@2.22.3-nightly.0
-  - @ledgerhq/hw-app-eth@6.45.7-nightly.0
+  - @ledgerhq/coin-evm@2.22.3-next.0
+  - @ledgerhq/hw-app-eth@6.45.7-next.0
 
 ## 0.5.1
 

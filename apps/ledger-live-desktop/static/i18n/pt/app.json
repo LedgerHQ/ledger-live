@@ -7057,12 +7057,9 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "Buscar",
-    "assetFlow" : {
-      "selectTemplate" : "Selecionar {{dynamic}}",
-      "asset" : "ativo",
-      "network" : "rede",
-      "account" : "conta"
-    }
+    "selectAsset" : "Selecionar ativo",
+    "selectNetwork" : "Selecione a rede",
+    "selectAccount" : "Selecionar conta"
   },
   "nftEntryPoint" : {
     "title" : "NFT (Tokens Não Fungíveis)",
@@ -7070,5 +7067,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Local indisponível",
+    "description" : "A carteira Ledger não está disponível neste local.",
+    "learnMore" : "Saiba mais"
   }
 }
