@@ -234,7 +234,6 @@ jobs:
       - name: Upload Detox JS Build
         uses: tespkg/actions-cache/save@v1
         with:
-          endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
           path: ${{ github.workspace }}/apps/ledger-live-mobile/main.jsbundle
           key: ${{ inputs.ios-js-cache-key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
