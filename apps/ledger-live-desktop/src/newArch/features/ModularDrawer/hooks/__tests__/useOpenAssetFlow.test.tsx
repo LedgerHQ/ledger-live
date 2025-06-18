@@ -37,11 +37,14 @@ describe("useOpenAssetFlow", () => {
     expect(setDrawer).not.toHaveBeenCalled();
   });
 
-  it("should open the modular drawer if it is visible and open the modal once a currency is chosen", () => {
+  it("should open the modular drawer if it is visible and open the legacy modal once a currency is chosen and the lldNetworkBasedAddAccount flag is off", () => {
     const { result, store } = renderHook(() => useOpenAssetFlow(modularDrawerLocation, "test"), {
       initialState: {
         settings: {
           overriddenFeatureFlags: {
+            lldNetworkBasedAddAccount: {
+              enabled: false,
+            },
             lldModularDrawer: {
               enabled: true,
               params: {

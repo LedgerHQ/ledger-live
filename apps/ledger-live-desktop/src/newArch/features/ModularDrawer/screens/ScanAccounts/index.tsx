@@ -81,7 +81,7 @@ const ScanAccounts = ({ currency, deviceId, onComplete }: Props) => {
         }
       />
       <Flex flex={1} flexDirection="column" overflow="auto">
-        {importableAccounts.length > 0 && creatableAccounts.length === 0 ? (
+        {importableAccounts.length > 0 ? (
           <ImportableAccountsList
             scanning={scanning}
             importableAccounts={importableAccounts}

@@ -30,9 +30,7 @@ export const ImportableAccountsList = ({
             {t(
               scanning
                 ? "modularAssetDrawer.scanAccounts.status.scanning"
-                : importableAccounts.length
-                  ? "modularAssetDrawer.scanAccounts.status.noAccounts"
-                  : "modularAssetDrawer.scanAccounts.status.foundAccounts",
+                : "modularAssetDrawer.scanAccounts.status.foundAccounts",
               { count: importableAccounts.length },
             )}
           </Text>
