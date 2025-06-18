@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { setupEnv } from "../../../utils/swapUtils";
 import { swapSetup, waitSwapReady } from "../../../bridge/server";
@@ -8,6 +9,7 @@ import {
 } from "../../../utils/swapUtils";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { ApplicationOptions } from "page";
+import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 
 const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
   CLI.liveData({
@@ -256,3 +258,52 @@ export function runUserRefusesTransactionTest(
     await app.swapLiveApp.checkErrorMessage("User refused");
   });
 }
+
+export function runSwapHistoryOperationsTest(
+  swap: SwapType,
+  provider: Provider,
+  swapId: string,
+  tmsLinks: string[],
+  tags: string[],
+) {
+  setupEnv(true);
+
+  beforeAll(async () => {
+    await app.speculos.setExchangeDependencies(swap);
+    await beforeAllFunction({
+      userdata: "speculos-tests-app",
+      speculosApp: AppInfos.EXCHANGE,
+    });
+  });
+
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
+  it(`Swap history operations - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name} - LLM`, async () => {
+    console.log("test started");
+    await new Promise(resolve => setTimeout(resolve, 60000));
+    // tap on the swap history button in the swap live app
+
+    // await app.swapLiveApp.openHistory();
+    // await app.swapLiveApp.checkHistoryOperation(swapId, swap, provider);
+    // await app.swapLiveApp.checkHistoryOperationDetails(swapId, swap, provider);
+    // await app.swapLiveApp.checkHistoryOperationDetailsActions(swapId, swap, provider);
+
+    // await app.layout.goToSwap();
+    // await app.swap.goToSwapHistory();
+    // await app.swap.checkSwapOperation(swapHistory.swapId, swapHistory.provider, swapHistory.swap);
+    // await app.swap.openSelectedOperation(swapHistory.swapId);
+    // await app.operationDrawer.expectSwapDrawerInfos(
+    //   swapHistory.swapId,
+    //   swapHistory.swap,
+    //   swapHistory.provider,
+    // );
+  });
+}
+
+export function runExportSwapHistoryOperationsTest(
+  swap: SwapType,
+  provider: Provider,
+  swapId: string,
+  tmsLinks: string[],
+  tags: string[],
+) {}

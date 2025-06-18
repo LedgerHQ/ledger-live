@@ -1,7 +1,5 @@
-import { getMinimumSwapAmount } from "@ledgerhq/live-common/lib/e2e/swap";
 import { delay, isIos, isSpeculosRemote, openDeeplink } from "../../helpers/commonHelpers";
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export default class SwapPage {
   baseLink = "swap";
