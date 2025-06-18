@@ -79,7 +79,7 @@ env:
 jobs:
   setup:
     name: Setup & Cache
-    runs-on: ubuntu-latest
+    runs-on: [ledger-live-linux-8CPU-32RAM]
     outputs:
       cache-key: ${{ steps.cache-deps.outputs.cache-key }}
     steps:
