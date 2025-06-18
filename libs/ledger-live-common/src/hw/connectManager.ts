@@ -7,7 +7,7 @@ import {
   LockedDeviceError,
 } from "@ledgerhq/errors";
 import { isCharonSupported } from "@ledgerhq/device-core";
-import { getDeviceModel, identifyTargetId } from "@ledgerhq/devices";
+import { identifyTargetId } from "@ledgerhq/devices";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import type Transport from "@ledgerhq/hw-transport";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
@@ -24,7 +24,6 @@ import { LockedDeviceEvent } from "./actions/types";
 import { ManagerRequest } from "./actions/manager";
 import { PrepareConnectManagerEventMapper } from "./connectManagerEventMapper";
 import { extractOnboardingState, OnboardingStep } from "./extractOnboardingState";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 
 export type Input = {
   deviceId: string;
