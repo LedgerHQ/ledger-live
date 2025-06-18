@@ -1,5 +1,17 @@
 # @ledgerhq/coin-solana
 
+## 0.26.0-nightly.0
+
+### Minor Changes
+
+- [#10315](https://github.com/LedgerHQ/ledger-live/pull/10315) [`0c5070b`](https://github.com/LedgerHQ/ledger-live/commit/0c5070ba6effeacbcb6a009d86738c39a9a831d2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-solana): warn correctly on not enough gas
+
+### Patch Changes
+
+- Updated dependencies [[`7a1b8c8`](https://github.com/LedgerHQ/ledger-live/commit/7a1b8c8e59383efb02676cfe647c5889a31372bc)]:
+  - @ledgerhq/types-live@6.74.0-nightly.0
+  - @ledgerhq/coin-framework@5.3.1-nightly.0
+
 ## 0.25.1
 
 ### Patch Changes

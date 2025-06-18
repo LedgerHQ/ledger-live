@@ -1,5 +1,32 @@
 # ledger-live-desktop
 
+## 2.118.0-nightly.0
+
+### Minor Changes
+
+- [#10538](https://github.com/LedgerHQ/ledger-live/pull/10538) [`9081767`](https://github.com/LedgerHQ/ledger-live/commit/90817673567a2d7df7ec2503951b4331e54e1476) Thanks [@sergiubreban](https://github.com/sergiubreban)! - fix earn entrypoints
+
+- [#10315](https://github.com/LedgerHQ/ledger-live/pull/10315) [`0c5070b`](https://github.com/LedgerHQ/ledger-live/commit/0c5070ba6effeacbcb6a009d86738c39a9a831d2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-solana): warn correctly on not enough gas
+
+### Patch Changes
+
+- Updated dependencies [[`9081767`](https://github.com/LedgerHQ/ledger-live/commit/90817673567a2d7df7ec2503951b4331e54e1476), [`7a1b8c8`](https://github.com/LedgerHQ/ledger-live/commit/7a1b8c8e59383efb02676cfe647c5889a31372bc)]:
+  - @ledgerhq/live-common@34.38.0-nightly.0
+  - @ledgerhq/types-live@6.74.0-nightly.0
+  - @ledgerhq/live-dmk-desktop@0.4.2-nightly.0
+  - @ledgerhq/coin-framework@5.3.1-nightly.0
+  - @ledgerhq/coin-aptos@2.2.1-nightly.0
+  - @ledgerhq/coin-bitcoin@0.16.1-nightly.0
+  - @ledgerhq/coin-cosmos@0.15.2-nightly.0
+  - @ledgerhq/coin-evm@2.22.4-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.10-nightly.0
+  - @ledgerhq/domain-service@1.2.33-nightly.0
+  - @ledgerhq/live-countervalues@0.5.10-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.39-nightly.0
+  - @ledgerhq/live-nft@0.8.10-nightly.0
+  - @ledgerhq/live-nft-react@0.9.10-nightly.0
+  - @ledgerhq/live-wallet@0.11.1-nightly.0
+
 ## 2.117.0
 
 ### Minor Changes

@@ -1,5 +1,16 @@
 # @ledgerhq/live-signer-solana
 
+## 0.3.0-nightly.0
+
+### Minor Changes
+
+- [#10576](https://github.com/LedgerHQ/ledger-live/pull/10576) [`fa8e7c5`](https://github.com/LedgerHQ/ledger-live/commit/fa8e7c547d5c996fbcbe8a0351b250d13074a4d2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(live-signer-solana): bump app Solana min trusted version
+
+### Patch Changes
+
+- Updated dependencies [[`0c5070b`](https://github.com/LedgerHQ/ledger-live/commit/0c5070ba6effeacbcb6a009d86738c39a9a831d2)]:
+  - @ledgerhq/coin-solana@0.26.0-nightly.0
+
 ## 0.2.1
 
 ### Patch Changes

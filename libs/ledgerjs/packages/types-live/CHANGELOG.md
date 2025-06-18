@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.74.0-nightly.0
+
+### Minor Changes
+
+- [#10529](https://github.com/LedgerHQ/ledger-live/pull/10529) [`7a1b8c8`](https://github.com/LedgerHQ/ledger-live/commit/7a1b8c8e59383efb02676cfe647c5889a31372bc) Thanks [@themooneer](https://github.com/themooneer)! - chore: setup Datadog SDK for LLM
+
 ## 6.73.0
 
 ### Minor Changes
