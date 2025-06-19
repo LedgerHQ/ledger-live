@@ -20,13 +20,6 @@ const errors: Record<string, string> = {
   OperatingSystemOutdated: "https://support.ledger.com/article/8083692639901-zd",
   UserAddressSanctionedError:
     "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
-  UserUtxoAddressSanctionedError:
-    "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
-  UserAddressSanctionedOnReceiveError:
-    "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
-  RecipientAddressSanctionedError:
-    "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
-  AddressesSanctionedError: "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
 };
 
 export const urls = {
@@ -211,6 +204,9 @@ export const urls = {
     learnMore: "https://support.ledger.com/article/4409603715217-zd",
   },
   geoBlock: {
+    learnMore: "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
+  },
+  sanctionCompliance: {
     learnMore: "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
   },
 };

@@ -1,9 +1,14 @@
 export class AddressesSanctionedError extends Error {
   private addresses: string[];
-  constructor(message: string, ...addresses: string[]) {
-    super(message);
+  constructor(...addresses: string[]) {
+    super();
+    this.message = this.constructor.name;
     this.name = this.constructor.name;
     this.addresses = [...addresses];
+  }
+
+  public getAddresses() {
+    return this.addresses;
   }
 }
 

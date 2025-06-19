@@ -79,22 +79,6 @@ const TechnicalErrorSection = ({ error, onSaveLogs }: Props) => {
             {t("errors.TransactionBroadcastError.technicalErrorTitle")}
           </Text>
           <Text color="neutral.c70">{error.message}</Text>
-          {error instanceof TransactionBroadcastError &&
-            (error as TransactionBroadcastError).thrownFrom &&
-            urls.errors[(error as TransactionBroadcastError).thrownFrom!.name] && (
-              <>
-                <div>
-                  <Text ff="Inter|SemiBold">
-                    <ExternalLink
-                      label={t("common.learnMore")}
-                      onClick={() =>
-                        openURL(urls.errors[(error as TransactionBroadcastError).thrownFrom!.name])
-                      }
-                    />
-                  </Text>
-                </div>
-              </>
-            )}
         </StyledText>
       </Box>
       <Flex columnGap={2} alignSelf="start">

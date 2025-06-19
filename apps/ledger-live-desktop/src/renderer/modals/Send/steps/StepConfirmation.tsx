@@ -18,6 +18,7 @@ import NodeError from "./Confirmation/NodeError";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { AccountLike } from "@ledgerhq/types-live";
 import { createTransactionBroadcastError } from "@ledgerhq/live-common/errors/transactionBroadcastErrors";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -90,10 +91,14 @@ function StepConfirmation({
         />
         {signed ? (
           <NodeError
-            error={createTransactionBroadcastError(error, urls, {
-              coin: ticker,
-              network: String(mainAccount?.currency.name),
-            })}
+            error={
+              error instanceof AddressesSanctionedError
+                ? error
+                : createTransactionBroadcastError(error, urls, {
+                    coin: ticker,
+                    network: String(mainAccount?.currency.name),
+                  })
+            }
           />
         ) : (
           <ErrorDisplay error={error} withExportLogs />

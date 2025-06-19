@@ -2,9 +2,14 @@ import React from "react";
 import { Flex, Text, Icons } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
+import ExternalLink from "~/renderer/components/ExternalLink";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+import { openURL } from "~/renderer/linking";
+import { urls } from "~/config/urls";
 
 type Props = {
   onGetHelp: () => void;
+  error?: Error;
 };
 
 const Container = styled(Flex)`
@@ -41,7 +46,7 @@ const StyledText = styled(Text)`
   padding-right: 6px;
 `;
 
-const HelpSection = ({ onGetHelp }: Props) => {
+const HelpSection = ({ onGetHelp, error }: Props) => {
   const { t } = useTranslation();
   return (
     <Container
@@ -57,7 +62,16 @@ const HelpSection = ({ onGetHelp }: Props) => {
       <Flex flexShrink={1}>
         <StyledText variant="bodyLineHeight" fontSize={13} flex={1} color="neutral.c70">
           <Text color="neutral.c100">{t("errors.TransactionBroadcastError.helpCenterTitle")}</Text>
-          <Text color="neutral.c70">{t("errors.TransactionBroadcastError.helpCenterDesc")}</Text>
+          {error && error instanceof AddressesSanctionedError ? (
+            <Text ff="Inter|SemiBold">
+              <ExternalLink
+                label={t("common.learnMore")}
+                onClick={() => openURL(urls.sanctionCompliance.learnMore)}
+              />
+            </Text>
+          ) : (
+            <Text color="neutral.c70">{t("errors.TransactionBroadcastError.helpCenterDesc")}</Text>
+          )}
         </StyledText>
       </Flex>
       <InteractFlex onClick={onGetHelp} flexShrink={0} flexGrow={0} alignSelf={"start"}>

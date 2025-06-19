@@ -130,13 +130,7 @@ function wrapAccountBridge<T extends TransactionCommon>(
             transactionType: operation.type,
             sanctionedAddresses: sanctionedAddresses.join(", "),
           });
-
-          throw new AddressesSanctionedError(
-            translate("errors.AddressesSanctionedError.description", {
-              sanctionedAddresses: sanctionedAddresses.join("\n"),
-            }),
-            ...sanctionedAddresses,
-          );
+          throw new AddressesSanctionedError(...sanctionedAddresses);
         }
       }
 

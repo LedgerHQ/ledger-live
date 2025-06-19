@@ -12,6 +12,7 @@ import TechnicalErrorSection from "./TechnicalErrorSection";
 import HelpSection from "./HelpSection";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import { ErrorBody } from "~/renderer/components/ErrorBody";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 
 type Props = {
   error: TransactionBroadcastError;
@@ -59,10 +60,14 @@ const NodeError: React.FC<Props> = ({ error }) => {
           }
           description={
             <Text variant="bodyLineHeight" fontSize={14} textAlign="center" color="neutral.c70">
-              {t("errors.TransactionBroadcastError.description", {
-                networkName,
-                currencyName,
-              })}
+              {error instanceof AddressesSanctionedError
+                ? t("errors.AddressesSanctionedError.description", {
+                    sanctionedAddresses: error.getAddresses().join("\n"),
+                  })
+                : t("errors.TransactionBroadcastError.description", {
+                    networkName,
+                    currencyName,
+                  })}
             </Text>
           }
           top={
@@ -86,7 +91,7 @@ const NodeError: React.FC<Props> = ({ error }) => {
         </InteractFlex>
         {isShowMore && (
           <Flex flexDirection="column" flex={2} maxWidth="100%">
-            <HelpSection onGetHelp={onGetHelp} />
+            <HelpSection onGetHelp={onGetHelp} error={error} />
             <TechnicalErrorSection error={error} onSaveLogs={onSaveLogs} />
           </Flex>
         )}
