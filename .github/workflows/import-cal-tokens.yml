@@ -1,9 +1,6 @@
 name: "[CAL] - Import CAL Tokens - Scheduled"
 
 on:
-  push:
-    branches:
-      - fix/cal-token-workflow
   workflow_dispatch:
   schedule:
     - cron: "0 8 * * 1"
@@ -115,5 +112,5 @@ jobs:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           method: chat.postMessage
           payload: |
-            channel: "C0923RT2S4V"
+            channel: "C06RTDKT324"
             text: "[Alert] Import CAL Tokens failed: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
