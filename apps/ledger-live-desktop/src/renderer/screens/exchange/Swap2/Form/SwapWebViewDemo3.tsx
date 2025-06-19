@@ -41,9 +41,9 @@ import {
   counterValueCurrencySelector,
   developerModeSelector,
   enablePlatformDevToolsSelector,
+  hasSeenAnalyticsOptInPromptSelector,
   languageSelector,
   lastSeenDeviceSelector,
-  sharePersonalizedRecommendationsSelector,
   shareAnalyticsSelector,
 } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
@@ -129,9 +129,7 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
 
   const shareAnalytics = useSelector(shareAnalyticsSelector);
-  const hasSeenAnalyticsOptInPrompt = useSelector(
-    sharePersonalizedRecommendationsSelector,
-  ).toString();
+  const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector).toString();
 
   const currentVersion = __APP_VERSION__;
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);

@@ -15,8 +15,8 @@ import {
   analyticsEnabledSelector,
   counterValueCurrencySelector,
   exportSettingsSelector,
+  hasSeenAnalyticsOptInPromptSelector,
   lastSeenDeviceSelector,
-  personalizedRecommendationsEnabledSelector,
 } from "~/reducers/settings";
 import { DefaultAccountSwapParamList } from "../types";
 import { useDispatch } from "react-redux";
@@ -45,9 +45,7 @@ export function WebView({ manifest, params, setWebviewState }: Props) {
   const exportSettings = useSelector(exportSettingsSelector);
 
   const shareAnalytics = useSelector(analyticsEnabledSelector).toString();
-  const hasSeenAnalyticsOptInPrompt = useSelector(
-    personalizedRecommendationsEnabledSelector,
-  ).toString();
+  const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector).toString();
 
   const devMode = exportSettings.developerModeEnabled.toString();
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
