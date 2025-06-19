@@ -71,12 +71,15 @@ export class PageScroller {
     direction: Direction,
     pixels: number,
   ): Promise<void> {
-    if (direction === "bottom") {
-      return scrollContainer.swipe("up", "fast");
-    } else if (direction === "down") {
-      return scrollContainer.scroll(pixels, direction, NaN, 0.8);
-    } else {
-      return scrollContainer.swipe("down", "fast");
+    switch (direction) {
+      case "down":
+        return scrollContainer.scroll(pixels, "down", NaN, 0.8);
+      case "up":
+        return scrollContainer.scroll(pixels, "up", NaN, 0.8);
+      case "bottom":
+        return scrollContainer.swipe("up", "fast");
+      default:
+        throw new Error(`Unsupported scroll direction: ${direction}`);
     }
   }
 
@@ -92,11 +95,24 @@ export class PageScroller {
     resetStall: boolean;
   } {
     if (stallCount >= SCROLL_STALL_THRESHOLD) {
-      const flipped = currentDirection === "down" ? "up" : "down";
+      let flipped: Direction;
+
+      if (currentDirection === "down") {
+        flipped = "up";
+        bottomReached = true;
+      } else if (currentDirection === "up") {
+        flipped = "bottom";
+        topReached = true;
+      } else if (currentDirection === "bottom") {
+        flipped = "up";
+      } else {
+        flipped = "down";
+      }
+
       return {
         nextDirection: flipped,
-        bottomReached: currentDirection === "down" ? true : bottomReached,
-        topReached: currentDirection === "up" ? true : topReached,
+        bottomReached,
+        topReached,
         resetStall: true,
       };
     }

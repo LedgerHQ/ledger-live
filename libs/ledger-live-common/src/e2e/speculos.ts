@@ -430,7 +430,7 @@ export async function waitFor(text: string, maxAttempts: number = 10): Promise<s
       return texts;
     }
     attempts++;
-    await waitForTimeOut(isSpeculosRemote ? 2000 : 500);
+    await waitForTimeOut(500);
   }
   return [];
 }

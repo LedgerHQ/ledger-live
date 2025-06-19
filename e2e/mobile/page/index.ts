@@ -111,6 +111,7 @@ export class Application {
   private walletTabNavigatorPageInstance = lazyInit(WalletTabNavigatorPage);
   private celoManageAssetsPageInstance = lazyInit(CeloManageAssetsPage);
 
+  @Step("Account initialization")
   public async init({
     speculosApp,
     cliCommands,
@@ -125,7 +126,7 @@ export class Application {
 
     for (const { app, cmd } of cliCommandsOnApp || []) {
       const apiPort = await this.common.addSpeculos(app.name);
-      await waitForSpeculosIfNeeded(10_000);
+      await waitForSpeculosIfNeeded(20_000);
       await executeCliCommand(cmd, userdataPath);
       this.common.removeSpeculos(apiPort);
     }

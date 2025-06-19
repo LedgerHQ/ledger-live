@@ -48,9 +48,9 @@ const bundle_ios_with_cache = async () => {
 const test_ios = async () => {
   await $`pnpm mobile ${testType}:test\
     -c ios.sim.${target} \
+    --config detox.config.lowres.js \
     --loglevel error \
     --record-logs failing \
-    --record-videos failing \
     --take-screenshots failing \
     --forceExit \
     --headless \
@@ -68,6 +68,7 @@ const build_android = async () => {
 const test_android = async () => {
   await $`pnpm mobile ${testType}:test \\
     -c android.emu.${target} \\
+    --config detox.config.lowres.js \\
     --loglevel error \\
     --record-logs failing \\
     --record-videos failing \\
