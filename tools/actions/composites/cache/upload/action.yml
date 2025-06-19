@@ -35,7 +35,7 @@ runs:
       shell: bash
       run: |
         echo "Compressing files in ${{ inputs.path }}"
-        tar --posix --delay-directory-restore --use-compress-program zstdmt -cf /tmp/cache.tzst ${{ inputs.path }}
+        gtar --posix --delay-directory-restore --use-compress-program zstdmt -cf /tmp/cache.tzst ${{ inputs.path }}
 
     - name: Uploading to S3
       shell: bash
