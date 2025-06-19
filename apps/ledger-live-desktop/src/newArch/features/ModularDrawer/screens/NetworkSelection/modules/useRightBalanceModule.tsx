@@ -43,11 +43,15 @@ const createBalanceItem = (asset: { fiatValue?: string; balance?: string }) => (
   </BalanceContainer>
 );
 
-export const useRightBalanceModule = (
-  networks: CryptoOrTokenCurrency[],
-  selectedAssetId: string,
-  currenciesByProvider: CurrenciesByProviderId[],
-) => {
+export const useRightBalanceModule = ({
+  assets,
+  selectedAssetId,
+  currenciesByProvider,
+}: {
+  assets: CryptoOrTokenCurrency[];
+  selectedAssetId: string;
+  currenciesByProvider: CurrenciesByProviderId[];
+}) => {
   const allAccounts = useSelector(accountsSelector);
   const flattenedAccounts = useMemo(() => flattenAccounts(allAccounts), [allAccounts]);
   const discreet = useSelector(discreetModeSelector);
@@ -61,13 +65,13 @@ export const useRightBalanceModule = (
     );
 
     if (!providerOfSelectedAsset) {
-      return networks.map(network => ({
+      return assets.map(network => ({
         ...network,
         rightElement: createBalanceItem({}),
       }));
     }
 
-    const networkAssetPairs = networks.map(network => ({
+    const networkAssetPairs = assets.map(network => ({
       network,
       asset: providerOfSelectedAsset.currenciesByNetwork.find(currency => {
         return currency.type === "TokenCurrency"
@@ -122,7 +126,7 @@ export const useRightBalanceModule = (
       })
       .map(({ balanceData, ...network }) => network);
   }, [
-    networks,
+    assets,
     selectedAssetId,
     currenciesByProvider,
     flattenedAccounts,

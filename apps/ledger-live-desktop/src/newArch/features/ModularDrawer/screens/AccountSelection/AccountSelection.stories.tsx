@@ -120,7 +120,6 @@ export const NoAccounts: Story = {
 export const SelectAccountFor1CurrencyStory: Story = {
   args: {
     asset: bitcoinCurrency,
-
     onAccountSelected,
   },
   play: async ({ canvasElement }) => {
