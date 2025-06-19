@@ -5,6 +5,8 @@ import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet
 import TrackDrawerScreen from "../../analytics/TrackDrawerScreen";
 import { MODULAR_DRAWER_PAGE_NAME } from "../../analytics/types";
 import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
+import { Observable } from "rxjs";
+import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 
 export type NetworkSelectionStepProps = {
   networks?: CryptoOrTokenCurrency[];
@@ -14,6 +16,7 @@ export type NetworkSelectionStepProps = {
   currenciesByProvider: CurrenciesByProviderId[];
   onNetworkSelected: (network: CryptoOrTokenCurrency) => void;
   selectedAssetId?: string;
+  accounts$?: Observable<WalletAPIAccount[]>;
 };
 
 export function NetworkSelection({
@@ -24,6 +27,7 @@ export function NetworkSelection({
   networksConfiguration,
   currenciesByProvider,
   selectedAssetId,
+  accounts$,
 }: Readonly<NetworkSelectionStepProps>) {
   return (
     <>
@@ -42,6 +46,7 @@ export function NetworkSelection({
         networksConfig={networksConfiguration}
         currenciesByProvider={currenciesByProvider}
         selectedAssetId={selectedAssetId}
+        accounts$={accounts$}
       />
     </>
   );

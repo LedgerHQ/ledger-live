@@ -43,11 +43,15 @@ const createBalanceItem = (asset: { fiatValue?: string; balance?: string }) => (
   </BalanceContainer>
 );
 
-export const useRightBalanceModule = (
-  networks: CryptoOrTokenCurrency[],
-  selectedAssetId: string,
-  currenciesByProvider: CurrenciesByProviderId[],
-) => {
+export const useRightBalanceModule = ({
+  assets: networks,
+  selectedAssetId,
+  currenciesByProvider,
+}: {
+  assets: CryptoOrTokenCurrency[];
+  selectedAssetId: string;
+  currenciesByProvider: CurrenciesByProviderId[];
+}) => {
   const allAccounts = useSelector(accountsSelector);
   const flattenedAccounts = useMemo(() => flattenAccounts(allAccounts), [allAccounts]);
   const discreet = useSelector(discreetModeSelector);

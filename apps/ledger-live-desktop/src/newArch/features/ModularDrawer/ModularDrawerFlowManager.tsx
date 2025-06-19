@@ -172,6 +172,7 @@ const ModularDrawerFlowManager = ({
             source={source}
             onNetworkSelected={handleNetworkSelected}
             selectedAssetId={selectedAsset?.id}
+            accounts$={accounts$}
           />
         );
       case MODULAR_DRAWER_STEP.ACCOUNT_SELECTION:
