@@ -1,9 +1,9 @@
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, Icons } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/core";
 import { createStackNavigator } from "@react-navigation/stack";
 import React, { useCallback, useEffect, useMemo } from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import SwapHistory from "~/screens/Swap/History";
 import Touchable from "../Touchable";
 
@@ -28,6 +28,7 @@ import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import { StackNavigatorNavigation, StackNavigatorProps } from "./types/helpers";
 import { SwapFormNavigatorParamList } from "./types/SwapFormNavigator";
 import { SwapNavigatorParamList } from "./types/SwapNavigator";
+import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 
 // Constants for tracking sources
 const TRACKING_SOURCES = {
@@ -107,34 +108,18 @@ export default function SwapNavigator(
         }
       : {
           ...(noNanoBuyNanoWallScreenOptions as { options: object }).options,
-          title: "",
-          headerLeft: () => (
-            <Text pl={4} fontWeight="semiBold" variant="h4">
-              <Trans i18nKey="transfer.swap2.form.title" />
-            </Text>
-          ),
+          headerTitle: t("transfer.swap2.form.title"),
+          headerLeft: () => <NavigationHeaderBackButton />,
 
           headerRight: () => (
-            <Flex flexDirection="row" p={6} columnGap={16}>
+            <Flex p={6}>
               <Touchable touchableTestID="NavigationHeaderSwapHistory" onPress={goToSwapHistory}>
                 <Icons.Clock color={"neutral.c100"} />
-              </Touchable>
-              <Touchable
-                touchableTestID="NavigationHeaderClose"
-                onPress={() => navigation.goBack()}
-              >
-                <Icons.Close color={"neutral.c100"} />
               </Touchable>
             </Flex>
           ),
         };
-  }, [
-    goToSwapHistory,
-    navigation,
-    noNanoBuyNanoWallScreenOptions,
-    ptxSwapLiveAppMobile?.enabled,
-    t,
-  ]);
+  }, [goToSwapHistory, noNanoBuyNanoWallScreenOptions, ptxSwapLiveAppMobile?.enabled, t]);
 
   return (
     <Stack.Navigator screenOptions={{ ...stackNavigationConfig, headerShown: true }}>
@@ -198,10 +183,18 @@ export default function SwapNavigator(
       <Stack.Screen
         name={ScreenName.SwapOperationDetails}
         component={OperationDetails}
-        options={({ route }) => ({
-          headerTitle: t("transfer.swap.title"),
-          headerLeft: route.params?.fromPendingOperation ? () => null : undefined,
-        })}
+        options={({ route }) =>
+          ptxSwapLiveAppMobile?.enabled
+            ? {
+                headerTitle: t("transfer.swap2.history.title"),
+                headerLeft: () => <NavigationHeaderBackButton />,
+                headerRight: () => null,
+              }
+            : {
+                headerTitle: t("transfer.swap.title"),
+                headerLeft: route.params?.fromPendingOperation ? () => null : undefined,
+              }
+        }
       />
 
       {ptxSwapLiveAppMobile?.enabled ? (
@@ -209,7 +202,7 @@ export default function SwapNavigator(
           name={ScreenName.SwapHistory}
           component={SwapHistory}
           options={{
-            title: t("transfer.swap.history.tab"),
+            headerTitle: t("transfer.swap2.history.title"),
             headerRight: () => null,
           }}
         />

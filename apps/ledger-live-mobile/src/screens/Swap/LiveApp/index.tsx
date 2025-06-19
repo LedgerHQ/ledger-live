@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 
 import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/defaultFeatures";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
@@ -12,13 +12,17 @@ import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import GenericErrorView from "~/components/GenericErrorView";
 import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
-import { WebviewState } from "~/components/Web3AppWebview/types";
+import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { WebView } from "./WebView";
 import { DefaultAccountSwapParamList, DetailsSwapParamList } from "../types";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { ScreenName } from "~/const";
 import { useNetInfo } from "@react-native-community/netinfo";
+import { useSwapNavigationHelper } from "./navigationHandlers/useSwapNavigationHelper";
+import { useNavigation } from "@react-navigation/native";
+import { useSwapAndroidHardwareBackPress } from "./navigationHandlers/useSwapAndroidHardwareBackPress";
+import { useSwapHeaderNavigation } from "./navigationHandlers/useSwapHeaderNavigation";
 
 // set the default manifest ID for the production swap live app
 // in case the FF is failing to load the manifest ID
@@ -43,6 +47,9 @@ export function SwapLiveApp({
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const isWebviewError = webviewState?.url.includes("/unknown-error");
 
+  const webviewRef = useRef<WebviewAPI>(null);
+  const navigation = useNavigation();
+
   const swapLiveAppManifestID =
     (ptxSwapLiveAppMobile?.params?.manifest_id as string) || DEFAULT_MANIFEST_ID;
 
@@ -61,6 +68,26 @@ export function SwapLiveApp({
   const defaultParams = useMemo(
     () => (isDefaultAccountSwapParamsList(params) ? params : null),
     [params],
+  );
+
+  useSwapHeaderNavigation(webviewRef);
+
+  useSwapAndroidHardwareBackPress({
+    webviewRef,
+    canGoBack: webviewState.canGoBack,
+  });
+
+  const onWebRouteChange = useSwapNavigationHelper({
+    navigation,
+  });
+
+  const handleWebviewState = useCallback(
+    (webviewState: WebviewState) => {
+      onWebRouteChange({ url: webviewState.url, canGoBack: webviewState.canGoBack });
+
+      setWebviewState(webviewState);
+    },
+    [onWebRouteChange],
   );
 
   const error: Error | null = useMemo(() => {
@@ -90,7 +117,12 @@ export function SwapLiveApp({
   return (
     <Flex flex={1} testID="swap-form-tab">
       {manifest && (
-        <WebView manifest={manifest} setWebviewState={setWebviewState} params={defaultParams} />
+        <WebView
+          ref={webviewRef}
+          manifest={manifest}
+          setWebviewState={handleWebviewState}
+          params={defaultParams}
+        />
       )}
     </Flex>
   );
