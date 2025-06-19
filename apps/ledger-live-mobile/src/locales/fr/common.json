@@ -294,6 +294,14 @@
       "title" : "Appareil déconnecté",
       "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer."
     },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "Appareil déconnecté",
+      "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer."
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "Appareil déconnecté",
+      "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer."
+    },
     "CasperInvalidTransferId" : {
       "title" : "L’identifiant de transfert doit être un nombre positif inférieur à {{maxTransferId}}"
     },
@@ -2201,11 +2209,11 @@
       "learnMore" : "En savoir plus sur la vérification de l’authenticité",
       "inactive" : {
         "title" : "Vérification de l’authenticité",
-        "description" : "Ceci permet de confirmer que votre {{productName}} est officiel."
+        "description" : "Cela permet de confirmer que votre {{productName}} est officiel."
       },
       "active" : {
         "title" : "Vérification de l’authenticité",
-        "description" : "Ceci permet de confirmer que votre {{productName}} est officiel."
+        "description" : "Cela permet de confirmer que votre {{productName}} est officiel."
       },
       "completed" : {
         "title" : "{{productName}} authentique",
@@ -2224,7 +2232,7 @@
     "firmwareUpdateCheckStep" : {
       "active" : {
         "title" : "Vérification du système d’exploitation",
-        "description" : "Ceci permet de vérifier que le système d’exploitation de votre {{productName}} est à jour. "
+        "description" : "Cela permet de vérifier que le système d’exploitation de votre {{productName}} est à jour. "
       },
       "completed" : {
         "noUpdateAvailable" : {
@@ -2243,7 +2251,7 @@
       },
       "inactive" : {
         "title" : "Vérification du système d’exploitation",
-        "description" : "Ceci permet de vérifier que le système d’exploitation de votre {{productName}} est à jour. "
+        "description" : "Cela permet de vérifier que le système d’exploitation de votre {{productName}} est à jour. "
       }
     },
     "firmwareUpdateAvailableDrawer" : {
@@ -3369,7 +3377,8 @@
       "description" : "Vendez des cryptos en toute sécurité"
     },
     "exchange" : {
-      "title" : "Acheter / Vendre"
+      "title" : "Acheter / Vendre",
+      "connectingTo" : "Connexion à {{provider}}"
     },
     "stake" : {
       "title" : "Staker",
@@ -7430,7 +7439,12 @@
     "performance" : "Performance",
     "low" : "Faible",
     "high" : "Élevée",
-    "title" : "Mouvements du marché"
+    "title" : "Mouvements du marché",
+    "overlay" : {
+      "title" : "Passez d’un actif à un autre",
+      "action" : "Balayez l’écran vers la gauche ou vers la droite.",
+      "button" : "Compris"
+    }
   },
   "nftEntryPoint" : {
     "title" : "Vos NFT",
