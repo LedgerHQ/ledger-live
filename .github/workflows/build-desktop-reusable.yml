@@ -64,8 +64,8 @@ jobs:
       ref: ${{ inputs.ref || github.sha }}
       macos-specificity-runner-label: ${{ inputs.macos-specificity-runner-label }}
       disable-turbo-cache: ${{ inputs.disable-turbo-cache || false }}
-      build-ios-js: true
-      build-ios-native: false
+      build-ios-js: false
+      build-ios-native: true
       ios-native-cache-key: networking-test-1
       ios-js-cache-key: networking-test-2
     secrets: inherit
