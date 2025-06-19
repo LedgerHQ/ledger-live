@@ -74,7 +74,6 @@ const cmd = (transport: Transport, { request }: Input): Observable<ConnectManage
               deviceInfo.seFlags,
               deviceInfo.charonState,
             );
-            console.log("onboardingState", onboardingState);
             if (onboardingState.currentOnboardingStep === OnboardingStep.BackupCharon) {
               throw new DeviceNotOnboarded();
             }
