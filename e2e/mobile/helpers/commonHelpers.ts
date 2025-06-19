@@ -97,3 +97,9 @@ export const logMemoryUsage = async (): Promise<void> => {
     },
   );
 };
+
+export const normalizeText = (text: string) =>
+  text
+    .replace(/\s+/g, " ")
+    .replace(/\u202F/g, " ")
+    .trim();

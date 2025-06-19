@@ -279,20 +279,10 @@ export function runSwapHistoryOperationsTest(
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   it(`Swap history operations - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name} - LLM`, async () => {
-    console.log("test started");
-    // await app.swap.goToSwapHistory();
     await app.swap.goToSwapHistory();
-
-    // await app.swap.checkSwapOperation(swapHistory.swapId, swapHistory.provider, swapHistory.swap);
-    await app.swap.checkSwapOperation(swapId, provider, swap);
-    // await new Promise(resolve => setTimeout(resolve, 600000)); // Wait for the swap history to load
-    // await app.swap.openSelectedOperation(swapHistory.swapId);
+    await app.swap.checkSwapOperation(swapId, swap);
     await app.swap.openSelectedOperation(swapId);
-    // await app.operationDrawer.expectSwapDrawerInfos(
-    //   swapHistory.swapId,
-    //   swapHistory.swap,
-    //   swapHistory.provider,
-    // );
+    await app.swap.expectSwapDrawerInfos(swapId, swap, provider);
   });
 }
 
@@ -302,4 +292,24 @@ export function runExportSwapHistoryOperationsTest(
   swapId: string,
   tmsLinks: string[],
   tags: string[],
-) {}
+) {
+  setupEnv(true);
+
+  beforeAll(async () => {
+    await app.speculos.setExchangeDependencies(swap);
+    await beforeAllFunction({
+      userdata: "speculos-tests-app",
+      speculosApp: AppInfos.EXCHANGE,
+    });
+  });
+
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
+  it(`Export swap history operations - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name} - LLM`, async () => {
+    // await app.swap.goToSwapHistory();
+    // await app.swap.checkSwapOperation(swapId, swap);
+    // await app.swap.openSelectedOperation(swapId);
+    // await app.swap.expectSwapDrawerInfos(swapId, swap, provider);
+    // await app.swap.exportSwapOperation(swapId);
+  });
+}

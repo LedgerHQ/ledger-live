@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
 import { delay, isIos, isSpeculosRemote, openDeeplink } from "../../helpers/commonHelpers";
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { normalizeText } from "../../helpers/commonHelpers";
 
 export default class SwapPage {
   baseLink = "swap";
@@ -24,31 +25,28 @@ export default class SwapPage {
     baseToAmount: "swap-history-toAmount-",
   }
   historyButton = "NavigationHeaderSwapHistory";
-  
+  swapStatus = "swap-status";
+
   operationDetails = {
-    fromAccount: "swap-operationDetails-fromAccount",
-    toAccount: "swap-operationDetails-toAccount",
-    fromAmount: "swap-operationDetails-fromAmount",
-    toAmount: "swap-operationDetails-toAmount",
-    provider: "swap-operationDetails-provider",
-    providerLink: "swap-operationDetails-provider-link",
-    swapId: "swap-operationDetails-swapId",
-    date: "swap-operationDetails-date",
-    whatIsThisButton: "operationDetailsWhatIsThis-button",
-    viewInExplorerButton: "operationDetailsViewInExplorer-button",
+    fromAccount: "swap-operation-details-fromAccount",
+    toAccount: "swap-operation-details-toAccount",
+    fromAmount: "swap-operation-details-fromAmount",
+    toAmount: "swap-operation-details-toAmount",
+    provider: "swap-operation-details-provider",
+    providerLink: "swap-operation-details-provider-link",
+    swapId: "swap-operation-details-swapId",
+    date: "swap-operation-details-date",
+    viewInExplorerButton: "operation-detail-view-in-explorer-button",
   }
 
   swapFormTab = () => getElementById("swap-form-tab");
-  swapOperationDetailsTab = () => getWebElementById("swap-operation-details-tab");
-  operationRows = () => getElementById(this.operationRow.rowBaseId);
-  
-  selectSpecificOperation = (swapId: string) => getElementById(`${this.operationRow.rowBaseId}${swapId}`);
+  operationRows = () => getElementById(this.operationRow.rowRegexp);
+  getSpecificOperation = (swapId: string) => getElementById(`${this.operationRow.rowBaseId}${swapId}`);
 
-  selectSpecificOperationAccountFrom = (swapId: string) => getElementById(`${this.operationRow.baseFromAccount}${swapId}`);
-  selectSpecificOperationAccountTo = (swapId: string) => getElementById(`${this.operationRow.baseToAccount}${swapId}`);
-
-  selectSpecificOperationAmountFrom = (swapId: string) => getElementById(`${this.operationRow.baseFromAccount}${swapId}`);
-  selectSpecificOperationAmountTo = (swapId: string) => getElementById(`${this.operationRow.baseToAccount}${swapId}`);
+  specificOperationAccountFromId = (swapId: string) => `${this.operationRow.baseFromAccount}${swapId}`;
+  specificOperationAccountToId = (swapId: string) => `${this.operationRow.baseToAccount}${swapId}`;
+  specificOperationAmountFromId = (swapId: string) => `${this.operationRow.baseFromAmount}${swapId}`;
+  specificOperationAmountToId = (swapId: string) => `${this.operationRow.baseToAmount}${swapId}`;
 
   @Step("Open swap via deeplink")
   async openViaDeeplink() {
@@ -60,75 +58,45 @@ export default class SwapPage {
     const tab = this.swapFormTab();
     await detoxExpect(tab).toBeVisible();
   }
-// =========================================
+
   @Step("Go to swap history")
   async goToSwapHistory() {
     await tapById(this.historyButton);
   }
 
   @Step("Check swap operation row details")
-  async checkSwapOperation(swapId: string, provider: Provider, swap: SwapType) {
-
-    // rebuild and test again (either with getWebElementById or getElementById)
+  async checkSwapOperation(swapId: string, swap: SwapType) {
     await detoxExpect(this.operationRows()).toBeVisible();
-    await detoxExpect( this.selectSpecificOperation(swapId)).toBeVisible();
-
-    // check values in the swap operation row
-    await detoxExpect(this.selectSpecificOperationAccountFrom(swapId)).toHaveText(swap.accountToDebit.accountName);
-    await detoxExpect(this.selectSpecificOperationAccountTo(swapId)).toHaveText(swap.accountToCredit.accountName);
-    await detoxExpect(this.selectSpecificOperationAmountFrom(swapId)).toHaveText(swap.amount);
-    await detoxExpect(this.selectSpecificOperationAmountTo(swapId)).toBeVisible();
-
-    // check the values in swap operation details page
-    // check account from
-    await detoxExpect(getElementById(this.operationDetails.fromAccount)).toHaveText(swap.accountToDebit.accountName);
-    // check account to
-    await detoxExpect(getElementById(this.operationDetails.toAccount)).toHaveText(swap.accountToCredit.accountName);
-    // check amount from
-    await detoxExpect(getElementById(this.operationDetails.fromAmount)).toHaveText(swap.amount);
-    // check amount to
-    await detoxExpect(getElementById(this.operationDetails.toAmount)).toBeVisible();
-    // check provider
-    await detoxExpect(getElementById(this.operationDetails.provider)).toHaveText(getProviderName(provider.name));
-    // check swapId
-    await detoxExpect(getElementById(this.operationDetails.swapId)).toHaveText(swapId);
-    // check date exists
-    await detoxExpect(getElementById(this.operationDetails.date)).toBeVisible();
-    
-    // check external links
-    await detoxExpect(getElementById(this.operationDetails.providerLink)).toBeVisible();
-    await detoxExpect(getElementById(this.operationDetails.viewInExplorerButton)).toBeVisible();
+    await detoxExpect( this.getSpecificOperation(swapId)).toBeVisible();
+    jestExpect(await getTextOfElement(this.specificOperationAccountFromId(swapId))).toEqual(swap.accountToDebit.accountName);
+    jestExpect(await getTextOfElement(this.specificOperationAccountToId(swapId))).toEqual(swap.accountToCredit.accountName);
+    const amountText = await getTextOfElement(this.specificOperationAmountFromId(swapId));
+    jestExpect(normalizeText(amountText)).toEqual(normalizeText(`${swap.amount} ${swap.accountToDebit.currency.ticker}`));
+    await detoxExpect(getElementById(this.specificOperationAmountToId(swapId))).toBeVisible();
   }
 
   @Step("Open selected operation by swapId: $0")
   async openSelectedOperation(swapId: string) {
-    await this.selectSpecificOperation(swapId).tap();
+    await tapByElement(this.getSpecificOperation(swapId));
   }
 
   @Step("Verify swap operation details")
   async expectSwapDrawerInfos(swapId: string, swap: SwapType, provider: Provider) {
-    // await this.waitForDrawerToBeVisible();
-    waitForElementById("swap-operation-details-tab");
+    jestExpect(normalizeText(await getTextOfElement(this.swapStatus))).toMatch(/pending|finished/);
+    await detoxExpect(getElementByText("Swap ID")).toBeVisible();
+    jestExpect(normalizeText(await getTextOfElement(this.operationDetails.swapId))).toEqual(swapId);
+    jestExpect(normalizeText(await getTextOfElement(this.operationDetails.providerLink))).toEqual(normalizeText(provider.uiName));
+    jestExpect(normalizeText(await getTextOfElement(this.operationDetails.date))).toMatch(/^(0?[1-9]|1[0-2])\/(0?[1-9]|[12][0-9]|3[01])\/\d{4}$/);
+    jestExpect(normalizeText(await getTextOfElement(this.operationDetails.fromAccount))).toEqual(normalizeText(swap.accountToDebit.accountName));
+    jestExpect(normalizeText(await getTextOfElement(this.operationDetails.fromAmount))).toEqual(normalizeText(`${swap.amount} ${swap.accountToDebit.currency.ticker}`));
 
-    // expect(await this.swapDrawerTitle.textContent()).toMatch("Swap");
-    jestExpect(await swapOperationDetailsTab.getT).toMatch("Swap ID");
+    await scrollToId(this.operationDetails.toAmount);
+    jestExpect(normalizeText(await getTextOfElement(this.operationDetails.toAccount))).toEqual(normalizeText(swap.accountToCredit.accountName));
+    await detoxExpect(getElementById(this.operationDetails.toAmount)).toBeVisible();
 
-    await expect(this.swapIdLabel).toBeVisible();
-    expect(await this.swapIdValue.textContent()).toMatch(swapId);
-    await expect(this.swapStatus).toBeVisible();
-    expect(await this.swapStatus.textContent()).toMatch(/pending|finished/);
-    expect(await this.dateValue.textContent()).toMatch(
-      /^(0?[1-9]|1[0-2])\/(0?[1-9]|[12][0-9]|3[01])\/\d{4}$/,
-    );
-    expect(await this.swapFromAccount.textContent()).toMatch(swap.accountToDebit.accountName);
-    expect(await this.swapAmountSent.textContent()).toContain(swap.amount);
-    expect(await this.swapToAccount.textContent()).toMatch(swap.accountToCredit.accountName);
-    await expect(this.swapAmountReceived).toBeVisible();
-
-    expect(await this.swapProviderLink.textContent()).toContain(provider.uiName);
-    await expect(this.swapOperationDetailsLink).toBeVisible();
+    await detoxExpect(getElementById(this.operationDetails.viewInExplorerButton)).toBeVisible();
   }
-// =========================================
+
   @Step("Verify the amounts and accept swap")
   async verifyAmountsAndAcceptSwap(swap: SwapType, amount: string) {
     await waitForElementById(this.confirmSwapOnDeviceDrawerId);
