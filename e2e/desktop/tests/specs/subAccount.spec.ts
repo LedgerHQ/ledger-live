@@ -384,7 +384,10 @@ const tokenTransactionInvalid = [
       undefined,
       "noTag",
     ),
-    expectedWarningMessage: new RegExp("Sorry, insufficient funds"),
+    expectedWarningMessage: new RegExp(
+      "You need \\d+\\.\\d+ SOL in your account to pay for transaction fees on the Solana" +
+        " network\\. Buy SOL or deposit more into your account\\. Learn more",
+    ),
     xrayTicket: "B2CQA-3058",
   },
 ];

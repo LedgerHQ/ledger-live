@@ -66,13 +66,10 @@ function Graph({
   const area = d3shape
     .area<Item>()
     .x(d => x(d.date!))
-    .y0(d => yExtractor(d as unknown as Item))
-    .y1(
-      d =>
-        yExtractor(d as unknown as Item) +
-        Math.min((maxY - minY) / verticalRangeRatio, height + 20),
-    )
+    .y0(() => height)
+    .y1(d => yExtractor(d))
     .curve(curve)(data);
+
   const line = d3shape
     .line<Item>()
     .x(d => x(d.date!))

@@ -6,12 +6,14 @@ export const InfoCard = ({
   label,
   value,
   bg = "neutral.c30",
+  left = false,
 }: {
   label: string;
   value: React.ReactNode;
   bg?: string;
+  left?: boolean;
 }) => (
-  <Flex style={styles.container} bg={bg}>
+  <Flex style={[styles.container, left && { marginRight: 12 }]} bg={bg}>
     <Text style={styles.name} color="neutral.c70">
       {label}
     </Text>
@@ -22,9 +24,9 @@ export const InfoCard = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
-    padding: 16,
+    padding: 12,
     borderRadius: 16,
-    width: "48%",
+    flex: 1,
   },
   name: {
     fontSize: 14,
