@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
 import { arbitrumCurrency, ethereumCurrency } from "./useSelectAssetFlow.mock";
 
-export const useGetAccountIds: Mock = fn(() => []);
+export const useGetAccountIds: Mock = fn(() => undefined);
 export const getBalanceHistoryWithCountervalue: Mock = fn(() => ({
   history: [
     {

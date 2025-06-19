@@ -1,6 +1,9 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Observable } from "rxjs";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
+import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { getAccountTuplesForCurrency } from "../utils/getAccountTuplesForCurrency";
@@ -26,21 +29,27 @@ export const sortAccountsByBalance = (
   return 0;
 };
 
-export const useDetailedAccounts = (asset: CryptoOrTokenCurrency, flow: string, source: string) => {
+export const useDetailedAccounts = (
+  asset: CryptoOrTokenCurrency,
+  flow: string,
+  source: string,
+  accounts$?: Observable<WalletAPIAccount[]>,
+) => {
   const dispatch = useDispatch();
   const discreet = useDiscreetMode();
   const state = useCountervaluesState();
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
+  const accountIds = useGetAccountIds(accounts$);
   const nestedAccounts = useSelector(accountsSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
   const isATokenCurrency = useMemo(() => isTokenCurrency(asset), [asset]);
 
   const accounts = useMemo(() => {
-    const accountTuples = getAccountTuplesForCurrency(asset, nestedAccounts);
+    const accountTuples = getAccountTuplesForCurrency(asset, nestedAccounts, accountIds);
     return accountTuples.sort((a, b) => sortAccountsByBalance(a.account, b.account));
-  }, [asset, nestedAccounts]);
+  }, [asset, nestedAccounts, accountIds]);
 
   const detailedAccounts = useMemo(() => {
     const formattedAccounts = accounts.flatMap(tuple => {

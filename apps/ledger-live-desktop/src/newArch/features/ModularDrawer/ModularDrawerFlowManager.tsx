@@ -1,7 +1,9 @@
 import React, { useMemo, useState } from "react";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike, Account } from "@ledgerhq/types-live";
+import { Observable } from "rxjs";
 import { AnimatePresence } from "framer-motion";
 import AnimatedScreenWrapper from "./components/AnimatedScreenWrapper";
 import { MODULAR_DRAWER_STEP, ModularDrawerStep } from "./types";
@@ -22,6 +24,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 type Props = {
   currencies: CryptoOrTokenCurrency[];
   drawerConfiguration?: EnhancedModularDrawerConfiguration;
+  accounts$?: Observable<WalletAPIAccount[]>;
   source: string;
   flow: string;
   onAssetSelected?: (currency: CryptoOrTokenCurrency) => void;
@@ -42,6 +45,7 @@ const networkConfigurationDisabled: EnhancedModularDrawerConfiguration["networks
 const ModularDrawerFlowManager = ({
   currencies,
   drawerConfiguration,
+  accounts$,
   flow,
   source,
   onAssetSelected,
@@ -175,6 +179,7 @@ const ModularDrawerFlowManager = ({
           return (
             <AccountSelection
               asset={selectedAsset}
+              accounts$={accounts$}
               onAccountSelected={handleAccountSelected}
               flow={flow}
               source={source}

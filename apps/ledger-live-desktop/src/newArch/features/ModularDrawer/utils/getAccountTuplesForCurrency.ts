@@ -10,12 +10,17 @@ export type AccountTuple = {
 export function getAccountTuplesForCurrency(
   currency: CryptoCurrency | TokenCurrency,
   allAccounts: Account[],
+  accountIds?: Map<string, boolean>,
 ): AccountTuple[] {
   const isToken = currency.type === "TokenCurrency";
   const targetCurrencyId = isToken ? currency.parentCurrency.id : currency.id;
 
   return allAccounts
-    .filter(account => account.currency.id === targetCurrencyId)
+    .filter(
+      account =>
+        account.currency.id === targetCurrencyId &&
+        (isToken ? true : accountIds ? accountIds.has(account.id) : true),
+    )
     .map(account => {
       const subAccount = isToken
         ? account.subAccounts?.find(
