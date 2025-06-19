@@ -294,6 +294,14 @@
       "title" : "Gerät nicht verbunden",
       "description" : "Ledger Live konnte keine Verbindung zu Ihrem Gerät herstellen. Bitte versuchen Sie es noch einmal."
     },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "Gerät nicht verbunden",
+      "description" : "Ledger Live konnte keine Verbindung mit deinem Gerät herstellen. Bitte versuche es noch einmal."
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "Gerät nicht verbunden",
+      "description" : "Ledger Live konnte keine Verbindung mit deinem Gerät herstellen. Bitte versuche es noch einmal."
+    },
     "CasperInvalidTransferId" : {
       "title" : "Die Transaktions-ID muss eine positive Zahl sein, die kleiner als {{maxTransferId}} ist"
     },
@@ -3369,7 +3377,8 @@
       "description" : "Verkaufen Sie Kryptos sicher gegen Bargeld."
     },
     "exchange" : {
-      "title" : "Kaufen & Verkaufen"
+      "title" : "Kaufen & Verkaufen",
+      "connectingTo" : "Du wirst mit {{provider}} verbunden"
     },
     "stake" : {
       "title" : "Staken",
@@ -7430,7 +7439,12 @@
     "performance" : "Performance",
     "low" : "Niedrig",
     "high" : "Hoch",
-    "title" : "Marktbewegungen"
+    "title" : "Marktbewegungen",
+    "overlay" : {
+      "title" : "Zwischen Assets wechseln",
+      "action" : "Nach links oder rechts wischen",
+      "button" : "Verstanden!"
+    }
   },
   "nftEntryPoint" : {
     "title" : "Deine NFTs",
