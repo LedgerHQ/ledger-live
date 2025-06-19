@@ -158,7 +158,7 @@ jobs:
         run: pnpm mobile e2e:ci -p ios -b
 
       - name: Upload Detox Build
-        uses: tespkg/actions-cache/save@v1
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@support/poc-macOS-sharding
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
           path: ${{ github.workspace }}/${{ env.IOS_NATIVE_PATH }}
