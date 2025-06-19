@@ -39,7 +39,7 @@
     "xstate": "^5.19.2"
   },
   "devDependencies": {
-    "@ledgerhq/device-management-kit": "0.0.0-io-revamp-20250618083854",
+    "@ledgerhq/device-management-kit": "0.0.0-io-revamp-20250619140814.0.0-io-revamp-20250620144613",
     "@testing-library/dom": "^9.3.4",
     "@testing-library/jest-dom": "6.6.3",
     "@testing-library/react": "^16.1.0",
@@ -55,7 +55,7 @@
     "ws": "8.18.0"
   },
   "peerDependencies": {
-    "@ledgerhq/device-management-kit": "0.0.0-io-revamp-20250618083854",
+    "@ledgerhq/device-management-kit": "0.0.0-io-revamp-20250619140814.0.0-io-revamp-20250620144613",
     "react": "^18.3.1",
     "rxjs": "^7.8.1"
   }

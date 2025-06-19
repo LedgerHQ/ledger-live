@@ -31,8 +31,8 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@ledgerhq/device-management-kit": "0.0.0-io-revamp-20250618083854",
-    "@ledgerhq/device-transport-kit-web-hid": "0.0.0-io-revamp-20250618083854",
+    "@ledgerhq/device-management-kit": "0.0.0-io-revamp-20250619140814.0.0-io-revamp-20250620144613",
+    "@ledgerhq/device-transport-kit-web-hid": "0.0.0-io-revamp-20250619140814.0.0-io-revamp-20250620144613",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-dmk-shared": "workspace:^",
