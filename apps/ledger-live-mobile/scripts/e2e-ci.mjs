@@ -70,10 +70,11 @@ const test_android = async () => {
     -c android.emu.${target} \\
     --loglevel error \\
     --record-logs failing \\
+    --record-videos failing \\
     --take-screenshots failing \\
     --forceExit \\
     --headless \\
-    --retries 1 \\
+    --retries 2 \\
     --runInBand \\
     --cleanup \\
     --shard ${shard} \\

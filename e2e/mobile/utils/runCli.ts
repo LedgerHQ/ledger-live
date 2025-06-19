@@ -11,6 +11,15 @@ function sleep(ms: number): Promise<void> {
 }
 
 /**
+ * Extracts flag values from a CLI-style `+`-separated string.
+ */
+function extractFlagValue(command: string, flag: string): string | undefined {
+  const parts = command.split("+");
+  const idx = parts.findIndex(p => p === `--${flag}`);
+  return idx !== -1 && idx + 1 < parts.length ? parts[idx + 1] : undefined;
+}
+
+/**
  * Executes a command in the CLI with given arguments.
  * @param {string} command - The command and its arguments as a single string.
  * @returns {Promise<string>} - Resolves with the output of the command or rejects on failure.
@@ -35,7 +44,17 @@ export function runCliCommand(command: string): Promise<string> {
       if (code === 0) {
         resolve(output);
       } else {
-        reject(new Error(`CLI command failed with exit code ${code}: ${errorOutput}`));
+        const currency = extractFlagValue(command, "currency");
+        const index = extractFlagValue(command, "index");
+
+        const errorDetails = [
+          `❌ Failed to setup account.`,
+          currency ? `💱 Currency: ${currency}` : `💱 Currency not specified`,
+          index ? `🔢 Index: ${index}` : `🔢 Index not specified`,
+          errorOutput ? `🧾 CLI Error: ${errorOutput.trim()}` : "",
+        ].join("\n");
+
+        reject(new Error(errorDetails));
       }
     });
 
@@ -64,13 +83,15 @@ export async function runCliCommandWithRetry(
       return await runCliCommand(command);
     } catch (err: any) {
       lastError = err;
-      const willRetry = attempt < retries && /status code 503/.test(err.message);
+      const willRetry = attempt < retries;
 
       if (!willRetry) {
         throw err;
       }
 
-      console.warn(`CLI attempt ${attempt} failed with 503 – retrying in ${delayMs}ms…`);
+      console.warn(
+        `⚠️ CLI attempt ${attempt} failed while trying to setup test account – retrying in ${delayMs}ms…`,
+      );
       await sleep(delayMs);
     }
   }

@@ -11,7 +11,7 @@ import { createSpeculosDeviceCI, releaseSpeculosDeviceCI } from "./speculosCI";
 import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { getEnv } from "@ledgerhq/live-env";
 import { getCryptoCurrencyById } from "../currencies";
 import { DeviceLabels } from "../e2e/enum/DeviceLabels";
@@ -430,7 +430,7 @@ export async function waitFor(text: string, maxAttempts: number = 10): Promise<s
       return texts;
     }
     attempts++;
-    await waitForTimeOut(500);
+    await waitForTimeOut(isSpeculosRemote ? 2000 : 500);
   }
   return [];
 }
@@ -503,17 +503,34 @@ export function containsSubstringInEvent(targetString: string, events: string[])
   return result;
 }
 
-export async function takeScreenshot(port?: number): Promise<Buffer | undefined> {
+export async function takeScreenshot(port?: number, retries = 3): Promise<Buffer | undefined> {
   const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
   const speculosApiPort = port ?? getEnv("SPECULOS_API_PORT");
-  try {
-    const response = await axios.get(`${speculosAddress}:${speculosApiPort}/screenshot`, {
-      responseType: "arraybuffer",
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error downloading speculos screenshot:", error);
+  const url = `${speculosAddress}:${speculosApiPort}/screenshot`;
+
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const response = await axios.get(url, { responseType: "arraybuffer" });
+      return response.data;
+    } catch (error: unknown) {
+      const err = error as AxiosError;
+      const status = err.response?.status;
+      const message = err.message;
+
+      console.error(
+        `⚠️ Failed to download screenshot (attempt ${attempt}/${retries}): ${status || "No Status"} - ${message}`,
+      );
+
+      if (attempt === retries) {
+        console.error(`❌ Error downloading speculos screenshot after ${attempt} attempts: ${url}`);
+        break;
+      }
+
+      await new Promise(res => setTimeout(res, isSpeculosRemote ? 2000 : 500));
+    }
   }
+
+  return undefined;
 }
 
 export async function waitForTimeOut(ms: number) {
