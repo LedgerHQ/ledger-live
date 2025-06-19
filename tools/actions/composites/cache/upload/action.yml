@@ -36,8 +36,11 @@ runs:
       run: |
         echo "Compressing files in ${{ inputs.path }}"
         tar -I zstd -xf /tmp/cache.tzst -C ${{ inputs.path }} .
+
     - name: Uploading to S3
       shell: bash
       run: |
         echo "Uploading files to S3 bucket ${{ inputs.bucket }}"
+        aws configure set default.s3.max_concurrent_requests 128
+        aws configure set default.s3.multipart_chunksize 8MB
         aws s3 cp /tmp/cache.tzst s3://${{ inputs.bucket }}/${{ inputs.key }}/cache.tzst --endpoint-url ${{ inputs.endpoint }} --region ${{ inputs.region }} --access-key ${{ inputs.accessKey }} --secret-key ${{ inputs.secretKey }} --session-token ${{ inputs.sessionToken }}
