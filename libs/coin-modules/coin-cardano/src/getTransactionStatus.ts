@@ -155,14 +155,7 @@ async function getSendTransactionStatus(
     );
   }
 
-  const sanctionedAddresses = await findSanctionedUtxoAddresses(
-    account.currency,
-    account.cardanoResources.utxos,
-  );
-
-  if (sanctionedAddresses.size > 0) {
-    errors.amount = new UserUtxoAddressSanctionedError(...sanctionedAddresses);
-  } else if (!amount.gt(0)) {
+  if (!amount.gt(0)) {
     errors.amount = useAllAmount ? new CardanoNotEnoughFunds() : new AmountRequired();
   } else if (!isTokenTx && amount.lt(minTransactionAmount)) {
     errors.amount = new CardanoMinAmountError("", {
@@ -224,25 +217,16 @@ async function getDelegateTransactionStatus(
     }
   }
 
-  const sanctionedAddresses = await findSanctionedUtxoAddresses(
-    account.currency,
-    account.cardanoResources.utxos,
+  const stakeKeyRegisterDeposit = new BigNumber(
+    account.cardanoResources.protocolParams.stakeKeyDeposit,
   );
-
-  if (sanctionedAddresses.size > 0) {
-    errors.amount = new UserUtxoAddressSanctionedError(...sanctionedAddresses);
-  } else {
-    const stakeKeyRegisterDeposit = new BigNumber(
-      account.cardanoResources.protocolParams.stakeKeyDeposit,
-    );
-    if (
-      !account.cardanoResources.delegation?.status &&
-      account.spendableBalance.isLessThan(stakeKeyRegisterDeposit)
-    ) {
-      errors.amount = new CardanoStakeKeyDepositError("", {
-        depositAmount: stakeKeyRegisterDeposit.div(1e6).toString(),
-      });
-    }
+  if (
+    !account.cardanoResources.delegation?.status &&
+    account.spendableBalance.isLessThan(stakeKeyRegisterDeposit)
+  ) {
+    errors.amount = new CardanoStakeKeyDepositError("", {
+      depositAmount: stakeKeyRegisterDeposit.div(1e6).toString(),
+    });
   }
 
   return Promise.resolve({
@@ -293,18 +277,4 @@ async function getUndelegateTransactionStatus(
     amount: new BigNumber(0),
     totalSpent: estimatedFees,
   });
-}
-
-async function findSanctionedUtxoAddresses(
-  currency: CryptoCurrency,
-  utxos: CardanoOutput[],
-): Promise<Set<string>> {
-  const sanctionedAddresses = new Set<string>();
-  for (const input of utxos) {
-    if (await isAddressSanctioned(currency, input.address)) {
-      sanctionedAddresses.add(input.address);
-    }
-  }
-
-  return sanctionedAddresses;
 }

@@ -16,6 +16,7 @@ import { getAlpacaCurrencyBridge } from "./generic-alpaca/currencyBridge";
 import { getAlpacaAccountBridge } from "./generic-alpaca/accountBridge";
 import { TransactionCommon } from "@ledgerhq/types-live";
 import { t as translate } from "i18next";
+import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
 
 const alpacaized = {
   xrp: true,
@@ -108,8 +109,13 @@ function wrapAccountBridge<T extends TransactionCommon>(
         }
 
         const sanctionedAddresses: string[] = [];
-        if (await isAddressSanctioned(account.currency, account.freshAddress)) {
-          sanctionedAddresses.push(account.freshAddress);
+        const signedOperation = args[0].signedOperation;
+
+        for (const sender of signedOperation.operation.senders) {
+          const senderIsSanctioned = await isAddressSanctioned(account.currency, sender);
+          if (senderIsSanctioned) {
+            sanctionedAddresses.push(sender);
+          }
         }
 
         const operation = args[0].signedOperation.operation;
@@ -138,47 +144,3 @@ function wrapAccountBridge<T extends TransactionCommon>(
     },
   };
 }
-
-/* Unused function - commented out to prevent reachability
-function mergeResults(
-  blockchainSpecific: TransactionStatusCommon,
-  common: Partial<TransactionStatusCommon>,
-): TransactionStatusCommon {
-  const errors = { ...blockchainSpecific.errors, ...common.errors };
-  const warnings = { ...blockchainSpecific.warnings, ...common.warnings };
-  return { ...blockchainSpecific, errors, warnings };
-}
-*/
-
-/* Unused function - commented out to prevent reachability
-async function commonGetTransactionStatus(
-  account: Account,
-  transaction: TransactionCommon,
-): Promise<Partial<TransactionStatusCommon>> {
-  const errors: Record<string, Error> = {};
-  const warnings: Record<string, Error> = {};
-
-  if (!isCheckSanctionedAddressEnabled(account.currency)) {
-    return { errors, warnings };
-  }
-
-  let recipientIsBlacklisted = false;
-  if (transaction.recipient && transaction.recipient !== "") {
-    recipientIsBlacklisted = await isAddressSanctioned(account.currency, transaction.recipient);
-    if (recipientIsBlacklisted) {
-      //errors.recipient = new RecipientAddressSanctionedError(transaction.recipient);
-    }
-  }
-
-  const userIsBlacklisted = await isAddressSanctioned(account.currency, account.freshAddress);
-  if (userIsBlacklisted) {
-    //errors.amount = new UserAddressSanctionedError(account.freshAddress);
-  }
-
-  if (userIsBlacklisted || recipientIsBlacklisted) {
-    // Send log
-  }
-
-  return { errors, warnings };
-}
-*/
