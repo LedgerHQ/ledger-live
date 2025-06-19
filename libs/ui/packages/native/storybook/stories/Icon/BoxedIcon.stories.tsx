@@ -1,5 +1,5 @@
 import React from "react";
-import { ComponentStory } from "@storybook/react-native";
+import { StoryFn } from "@storybook/react";
 
 import Flex from "../../../src/components/Layout/Flex";
 import Box from "../../../src/components/Layout/Box";
@@ -18,9 +18,7 @@ export default {
   },
 };
 
-export const BoxedIconStory: ComponentStory<typeof BoxedIcon> = (
-  args: typeof BoxedIconStoryArgs,
-) => {
+export const BoxedIconStory: StoryFn<typeof BoxedIcon> = (args: typeof BoxedIconStoryArgs) => {
   const variant = args.variant;
   return (
     <Flex flexDirection="column" alignItems="center">

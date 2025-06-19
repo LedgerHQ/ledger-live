@@ -1,4 +1,6 @@
-module.exports = {
+import type { StorybookConfig } from "@storybook/react-native";
+
+const main: StorybookConfig = {
   stories: [
     "../src/pre-ldls/**/*.stories.@(js|jsx|ts|tsx)",
     "../storybook/stories/**/*.stories.mdx",
@@ -7,11 +9,9 @@ module.exports = {
   addons: [
     "@storybook/addon-ondevice-controls",
     "@storybook/addon-ondevice-actions",
-    // "@storybook/addon-ondevice-backgrounds",
     "@storybook/addon-ondevice-notes",
     "@storybook/blocks",
   ],
-  typescript: {
-    reactDocgen: false, // FIXME: this is disabled for now due to incompatibilities with TS 5. re-enable when upgrading storybook.
-  },
 };
+
+export default main;
