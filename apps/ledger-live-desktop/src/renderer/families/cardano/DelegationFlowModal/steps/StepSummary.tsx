@@ -27,13 +27,13 @@ function StepSummary(props: StepProps) {
   const { account, transaction, status, selectedPool } = props;
 
   const feesUnit = useMaybeAccountUnit(account);
-  if (!account || !transaction) return null;
+  if (!account || !transaction || !transaction.protocolParams) return null;
 
   const { estimatedFees, warnings } = status;
   const { feeTooHigh } = warnings;
   const feesCurrency = getAccountCurrency(account);
   const showDeposit = !account.cardanoResources?.delegation?.status;
-  const stakeKeyDeposit = account.cardanoResources?.protocolParams.stakeKeyDeposit;
+  const stakeKeyDeposit = transaction.protocolParams.stakeKeyDeposit;
   return (
     <Box flow={4} mx={40}>
       <FromToWrapper>
