@@ -19,6 +19,7 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCu
 import { counterValueFormatter } from "LLD/utils/counterValueFormatter";
 import { getTokenOrCryptoCurrencyById } from "@ledgerhq/live-common/deposit/helper";
 import orderBy from "lodash/orderBy";
+import { ProviderBalanceAsset, ProviderBalanceResultsMap } from "./types";
 
 const BalanceContainer = styled.div`
   display: flex;
@@ -87,7 +88,7 @@ const formatProviderResult = (
   counterValueCurrency: Currency,
   locale: string,
   discreet: boolean,
-) => {
+): ProviderBalanceAsset => {
   const mainCurrencyUnit = providerCurrency.units?.[0];
   const balanceDisplay = mainCurrencyUnit
     ? formatCurrencyUnit(mainCurrencyUnit, totalBalance, { showCode: true, discreet })
@@ -164,17 +165,7 @@ export const useRightBalanceModule = (
     }
 
     const assetsToDisplaySet = new Set(assets.map(asset => asset.id));
-    const providerResultsMap = new Map<
-      string,
-      {
-        id: string;
-        name: string;
-        ticker: string;
-        balance: string;
-        fiatValue: string;
-        sortValue: number;
-      }
-    >();
+    const providerResultsMap: ProviderBalanceResultsMap = new Map();
 
     for (const [_providerId, { currencies, mainCurrency }] of providerCurrenciesMap) {
       if (!assetsToDisplaySet.has(mainCurrency.id)) continue;

@@ -59,10 +59,18 @@ const mockedInitialState = {
 const mockCurrencies = [ethereumCurrency, bitcoinCurrency, arbitrumCurrency];
 
 describe("ModularDrawerFlowManager - Modules configuration", () => {
-  it("should display balance on the right at assetSelection step by default", () => {
+  // This is tempory as in the future balance will be displayed by default for all assets but right now it's not the case
+  it("shouldn't display balance on the right at assetSelection by default", async () => {
+    const mixedCurrencies = [
+      baseCurrency,
+      arbitrumCurrency,
+      scrollCurrency,
+      ethereumCurrency,
+      bitcoinCurrency,
+    ];
     renderWithMockedCounterValuesProvider(
       <ModularDrawerFlowManager
-        currencies={mockCurrencies}
+        currencies={mixedCurrencies}
         onAssetSelected={mockOnAssetSelected}
         source="sourceTest"
         flow="flowTest"
@@ -70,12 +78,12 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
       mockedInitialState,
     );
 
-    const ethereum = screen.getByText(/ethereum/i);
-    expect(ethereum).toBeVisible();
-    const ethereumBalance = screen.getByText(/23.4663 eth/i);
-    expect(ethereumBalance).toBeVisible();
-    const usdBalance = screen.getByText(/\$65,081.79/i);
-    expect(usdBalance).toBeVisible();
+    expect(screen.queryByText(/base/i)).toBeNull();
+    expect(screen.queryByText(/scroll/i)).toBeNull();
+    expect(screen.getByText(/ethereum/i)).toBeVisible();
+
+    expect(screen.queryByText(/\$95,622,923.34/i)).toBeNull();
+    expect(screen.queryByText(/34,478.4 eth/i)).toBeNull();
   });
 
   it("should display balance on the right at assetSelection step", () => {
@@ -195,6 +203,7 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
       <ModularDrawerFlowManager
         currencies={mixedCurrencies}
         onAssetSelected={mockOnAssetSelected}
+        drawerConfiguration={{ assets: { rightElement: "balance" } }}
         source="sourceTest"
         flow="flowTest"
       />,
@@ -225,6 +234,7 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
       <ModularDrawerFlowManager
         currencies={mixedCurrencies}
         onAssetSelected={mockOnAssetSelected}
+        drawerConfiguration={{ assets: { rightElement: "balance" } }}
         source="sourceTest"
         flow="flowTest"
       />,

@@ -10,6 +10,10 @@ type Props = {
   currenciesByProvider: CurrenciesByProviderId[];
 };
 
+type CreateAssetConfigurationHook = (
+  props: Props,
+) => (assets: CryptoOrTokenCurrency[]) => (CryptoOrTokenCurrency & AssetType)[];
+
 const getRightElement = (rightElement: string) => {
   switch (rightElement) {
     case "balance":
@@ -31,11 +35,11 @@ const getLeftElement = (leftElement: string) => {
   }
 };
 
-const createAssetConfigurationHook = ({
+const createAssetConfigurationHook: CreateAssetConfigurationHook = ({
   assetsConfiguration,
   currenciesByProvider,
-}: Props): ((assets: CryptoOrTokenCurrency[]) => (CryptoOrTokenCurrency & AssetType)[]) => {
-  const { rightElement = "balance", leftElement = "undefined" } = assetsConfiguration ?? {};
+}) => {
+  const { rightElement = "undefined", leftElement = "undefined" } = assetsConfiguration ?? {};
 
   const rightHook = getRightElement(rightElement);
   const leftHook = getLeftElement(leftElement);

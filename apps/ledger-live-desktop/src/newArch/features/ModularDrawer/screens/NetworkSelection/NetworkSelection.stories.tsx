@@ -34,9 +34,7 @@ const store = createStore(() => ({
     ],
   },
   application: { debug: {} },
-};
-
-const store = createStore(() => defaultStore);
+}));
 
 const meta: Meta<typeof NetworkSelection> = {
   title: "ModularDrawer/NetworkSelection",

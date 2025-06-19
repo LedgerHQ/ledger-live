@@ -72,11 +72,8 @@ export const searchByNameOrTicker = (list: MappedAsset[], nameOrTicker: string) 
   );
 
 export const getTokenOrCryptoCurrencyById = (id: string): CryptoOrTokenCurrency => {
-  const currencyHasId = hasCryptoCurrencyId(id);
-  if (currencyHasId) {
-    const currency = getCryptoCurrencyById(id);
-    return currency;
+  if (hasCryptoCurrencyId(id)) {
+    return getCryptoCurrencyById(id);
   }
-  const token = getTokenById(id);
-  return token;
+  return getTokenById(id);
 };
