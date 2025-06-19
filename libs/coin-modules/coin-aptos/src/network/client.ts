@@ -43,7 +43,7 @@ import {
   Pagination,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
-import { AptosAsset } from "../types/assets";
+import { AptosAsset, AptosExtra, AptosFeeParameters, AptosSender } from "../types/assets";
 import { log } from "@ledgerhq/logs";
 import { transactionsToOperations } from "../logic/transactionsToOperations";
 import { isTestnet } from "../logic/isTestnet";
@@ -175,8 +175,48 @@ export class AptosAPI {
     };
   }
 
-  async estimateFees(transactionIntent: TransactionIntent<AptosAsset>): Promise<FeeEstimation> {
-    const publicKeyEd = new Ed25519PublicKey(transactionIntent?.senderPublicKey ?? "");
+  async getCoinBalance(address: string, contract_address: string): Promise<BigNumber> {
+    try {
+      const [balanceStr] = await this.aptosClient.view<[string]>({
+        payload: {
+          function: "0x1::coin::balance",
+          typeArguments: [contract_address],
+          functionArguments: [address],
+        },
+      });
+      const balance = parseInt(balanceStr, 10);
+      return new BigNumber(balance);
+    } catch (error) {
+      log("error", "getCoinBalance", {
+        error,
+      });
+      return new BigNumber(0);
+    }
+  }
+
+  async getFABalance(address: string, contract_address: string): Promise<BigNumber> {
+    try {
+      const [balanceStr] = await this.aptosClient.view<[string]>({
+        payload: {
+          function: "0x1::primary_fungible_store::balance",
+          typeArguments: ["0x1::object::ObjectCore"],
+          functionArguments: [address, contract_address],
+        },
+      });
+      const balance = parseInt(balanceStr, 10);
+      return new BigNumber(balance);
+    } catch (error) {
+      log("error", "getFABalance", {
+        error,
+      });
+      return new BigNumber(0);
+    }
+  }
+
+  async estimateFees(
+    transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender>,
+  ): Promise<FeeEstimation<AptosFeeParameters>> {
+    const publicKeyEd = new Ed25519PublicKey(transactionIntent.sender.xpub);
 
     const txPayload: InputEntryFunctionData = {
       function: "0x1::aptos_account::transfer_coins",
@@ -206,7 +246,11 @@ export class AptosAPI {
       gasUnitPrice: DEFAULT_GAS_PRICE.toString(),
     };
 
-    const tx = await this.generateTransaction(transactionIntent.sender, txPayload, txOptions);
+    const tx = await this.generateTransaction(
+      transactionIntent.sender.freshAddress,
+      txPayload,
+      txOptions,
+    );
 
     const simulation = await this.simulateTransaction(publicKeyEd, tx);
     const completedTx = simulation[0];
@@ -219,7 +263,6 @@ export class AptosAPI {
     return {
       value: BigInt(expectedGas.toString()),
       parameters: {
-        storageLimit: BigInt(0),
         gasLimit: BigInt(gasLimit.toString()),
         gasPrice: BigInt(gasPrice.toString()),
       },
