@@ -1,9 +1,11 @@
 import { AccountBridge } from "@ledgerhq/types-live";
 import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import type { SuiAccount, Transaction } from "../types";
-import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+import type { SuiTransactionMode, SuiAccount, Transaction } from "../types";
 import getFeesForTransaction from "./getFeesForTransaction";
 import BigNumber from "bignumber.js";
+import { DEFAULT_COIN_TYPE } from "../network/sdk";
+import { calculateAmount } from "./utils";
 
 /**
  * Calculate fees for the current transaction
@@ -18,9 +20,9 @@ export const prepareTransaction: AccountBridge<
   SuiAccount
 >["prepareTransaction"] = async (account, transaction) => {
   let amount = transaction.amount;
-  const spendable = await estimateMaxSpendable({ account, transaction });
+
   if (transaction.useAllAmount) {
-    amount = spendable;
+    amount = calculateAmount({ account, transaction });
   }
 
   let fees: BigNumber;
@@ -33,9 +35,20 @@ export const prepareTransaction: AccountBridge<
     fees = BigNumber(0);
   }
 
+  let mode: SuiTransactionMode = "send";
+  let coinType = DEFAULT_COIN_TYPE;
+  if (transaction?.subAccountId) {
+    mode = "token.send";
+    coinType =
+      findSubAccountById(account, transaction.subAccountId)?.token.contractAddress ||
+      DEFAULT_COIN_TYPE;
+  }
+
   const patch: Partial<Transaction> = {
     amount,
     fees,
+    mode,
+    coinType,
   };
 
   return updateTransaction(transaction, patch);
