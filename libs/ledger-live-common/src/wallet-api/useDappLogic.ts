@@ -518,7 +518,7 @@ export function useDappLogic({
                   : currentAccount.currency.id;
 
               trackingData = {
-                type: transactionType || "transfer",
+                type: transactionType || "Transfer",
                 currency: token ? token.name : accountCurrencyName,
                 network: token ? token.parentCurrency.id : accountNetwork,
               };

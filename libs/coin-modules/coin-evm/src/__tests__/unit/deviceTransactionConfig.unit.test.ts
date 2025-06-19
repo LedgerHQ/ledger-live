@@ -367,7 +367,7 @@ describe("EVM Family", () => {
               {
                 type: "text",
                 label: "Type",
-                value: "transfer",
+                value: "Transfer",
               },
               {
                 type: "text",
@@ -403,7 +403,7 @@ describe("EVM Family", () => {
                 status,
               }),
             ).toEqual([
-              { type: "text", label: "Type", value: "approve" },
+              { type: "text", label: "Type", value: "Approve" },
               {
                 type: "text",
                 label: "Amount",
@@ -438,7 +438,7 @@ describe("EVM Family", () => {
                 status,
               }),
             ).toEqual([
-              { type: "text", label: "Type", value: "approve" },
+              { type: "text", label: "Type", value: "Approve" },
               {
                 type: "text",
                 label: "Amount",

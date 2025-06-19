@@ -32,7 +32,7 @@ const handleERC20Fields = (
       ) as [string, ethers.BigNumber];
 
       return [
-        { type: "text", label: "Type", value: "transfer" },
+        { type: "text", label: "Type", value: "Transfer" },
         {
           type: "text",
           label: "Amount",
@@ -63,7 +63,7 @@ const handleERC20Fields = (
 
       const valueAsBN = new BigNumber(value.toString());
       return [
-        { type: "text", label: "Type", value: "approve" },
+        { type: "text", label: "Type", value: "Approve" },
         {
           type: "text",
           label: "Amount",
