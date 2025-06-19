@@ -210,19 +210,8 @@ function postMessage(message: MessageData) {
   log(`Message sending ${message.type}: ${message.id}`);
   try {
     webSocket.messages[message.id] = message;
-
     if (webSocket.ws) {
       webSocket.ws.send(JSON.stringify(message));
-
-      // Set timeout for acknowledgment cleanup
-      setTimeout(() => {
-        if (webSocket.messages[message.id]) {
-          log(
-            `⚠️ Message ${message.type} (${message.id}) not acknowledged after 18000ms. Removing from queue.`,
-          );
-          delete webSocket.messages[message.id];
-        }
-      }, 18000);
     } else {
       log("WebSocket connection is not open. Message not sent.");
     }

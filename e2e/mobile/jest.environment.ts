@@ -6,6 +6,7 @@ import { logMemoryUsage } from "./helpers/commonHelpers";
 const DetoxEnvironment = require("detox/runners/jest/testEnvironment");
 
 class TestEnvironment extends DetoxEnvironment {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(config: any, context: any) {
     super(config, context);
 
