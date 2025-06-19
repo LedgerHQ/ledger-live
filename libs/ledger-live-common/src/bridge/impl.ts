@@ -5,24 +5,16 @@ import {
 import { CurrencyNotSupported } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  Account,
-  AccountBridge,
-  AccountLike,
-  CurrencyBridge,
-  TransactionStatusCommon,
-} from "@ledgerhq/types-live";
+import { Account, AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
 import { decodeAccountId, getMainAccount } from "../account";
 import { checkAccountSupported } from "../account/index";
 import jsBridges from "../generated/bridge/js";
 import mockBridges from "../generated/bridge/mock";
-import {
-  RecipientAddressSanctionedError,
-  UserAddressSanctionedError,
-} from "@ledgerhq/coin-framework/sanction/errors";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 import { getAlpacaCurrencyBridge } from "./generic-alpaca/currencyBridge";
 import { getAlpacaAccountBridge } from "./generic-alpaca/accountBridge";
 import { TransactionCommon } from "@ledgerhq/types-live";
+import { t as translate } from "i18next";
 
 const alpacaized = {
   xrp: true,
@@ -128,7 +120,12 @@ function wrapAccountBridge<T extends TransactionCommon>(
         }
 
         if (sanctionedAddresses.length > 0) {
-          throw new UserAddressSanctionedError(...sanctionedAddresses);
+          throw new AddressesSanctionedError(
+            translate("errors.AddressesSanctionedError.description", {
+              sanctionedAddresses: sanctionedAddresses.join("\n"),
+            }),
+            ...sanctionedAddresses,
+          );
         }
       }
 

@@ -5262,6 +5262,9 @@ importers:
       fuse.js:
         specifier: ^6.6.2
         version: 6.6.2
+      i18next:
+        specifier: 23.10.1
+        version: 23.10.1
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -56973,7 +56976,7 @@ snapshots:
 
   i18next@23.10.1:
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.27.1
 
   icon-sdk-js@1.5.2:
     dependencies:

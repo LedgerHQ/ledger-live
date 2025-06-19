@@ -1,3 +1,12 @@
+export class AddressesSanctionedError extends Error {
+  private addresses: string[];
+  constructor(message: string, ...addresses: string[]) {
+    super(message);
+    this.name = this.constructor.name;
+    this.addresses = [...addresses];
+  }
+}
+
 export class UserAddressSanctionedError extends Error {
   private sanctionedAddresses: string[];
   private links = ["https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions"]; // needed for mobile

@@ -26,6 +26,7 @@ const errors: Record<string, string> = {
     "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
   RecipientAddressSanctionedError:
     "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
+  AddressesSanctionedError: "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
 };
 
 export const urls = {
