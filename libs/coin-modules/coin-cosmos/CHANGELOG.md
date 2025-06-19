@@ -1,5 +1,11 @@
 # @ledgerhq/coin-cosmos
 
+## 0.15.2-nightly.1
+
+### Patch Changes
+
+- [#10584](https://github.com/LedgerHQ/ledger-live/pull/10584) [`d6ca34f`](https://github.com/LedgerHQ/ledger-live/commit/d6ca34f5b11087c8755adc79eb6a4ee28bfdb164) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update osmo lcd
+
 ## 0.15.2-nightly.0
 
 ### Patch Changes

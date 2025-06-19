@@ -1,5 +1,13 @@
 # ledger-live-desktop-e2e-tests
 
+## 0.1.1-nightly.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.38.0-nightly.1
+  - @ledgerhq/live-cli@24.18.8-nightly.1
+
 ## 0.1.1-nightly.0
 
 ### Patch Changes

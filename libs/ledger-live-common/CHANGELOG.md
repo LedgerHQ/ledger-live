@@ -1,5 +1,13 @@
 # @ledgerhq/live-common
 
+## 34.38.0-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`d6ca34f`](https://github.com/LedgerHQ/ledger-live/commit/d6ca34f5b11087c8755adc79eb6a4ee28bfdb164), [`a3754d6`](https://github.com/LedgerHQ/ledger-live/commit/a3754d6bcea67f712c190e794894029fd6efd4ea)]:
+  - @ledgerhq/coin-cosmos@0.15.2-nightly.1
+  - @ledgerhq/coin-ton@0.13.0-nightly.1
+
 ## 34.38.0-nightly.0
 
 ### Minor Changes

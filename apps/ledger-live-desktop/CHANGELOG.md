@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.118.0-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`d6ca34f`](https://github.com/LedgerHQ/ledger-live/commit/d6ca34f5b11087c8755adc79eb6a4ee28bfdb164)]:
+  - @ledgerhq/coin-cosmos@0.15.2-nightly.1
+  - @ledgerhq/live-common@34.38.0-nightly.1
+  - @ledgerhq/live-dmk-desktop@0.4.2-nightly.1
+
 ## 2.118.0-nightly.0
 
 ### Minor Changes

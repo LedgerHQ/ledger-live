@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.83.0-nightly.1
+
+### Minor Changes
+
+- [#10565](https://github.com/LedgerHQ/ledger-live/pull/10565) [`313e6a8`](https://github.com/LedgerHQ/ledger-live/commit/313e6a8032563550d99c5290e29795279adf28a0) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix gradient in graph
+
+- [#10547](https://github.com/LedgerHQ/ledger-live/pull/10547) [`e051077`](https://github.com/LedgerHQ/ledger-live/commit/e051077309c02bf06a2aa0fa9b25a117d20959aa) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: QA fixes large mover
+
+### Patch Changes
+
+- Updated dependencies [[`d6ca34f`](https://github.com/LedgerHQ/ledger-live/commit/d6ca34f5b11087c8755adc79eb6a4ee28bfdb164)]:
+  - @ledgerhq/coin-cosmos@0.15.2-nightly.1
+
 ## 3.83.0-nightly.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/coin-ton
 
+## 0.13.0-nightly.1
+
+### Minor Changes
+
+- [#10400](https://github.com/LedgerHQ/ledger-live/pull/10400) [`a3754d6`](https://github.com/LedgerHQ/ledger-live/commit/a3754d6bcea67f712c190e794894029fd6efd4ea) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Change EstimateFees for swap TON Token
+
 ## 0.12.2-nightly.0
 
 ### Patch Changes
