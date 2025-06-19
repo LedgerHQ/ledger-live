@@ -294,6 +294,14 @@
       "title" : "Устройство отключено",
       "description" : "Ledger Live не удалось подключиться к устройству. Повторите попытку."
     },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "Устройство отключено",
+      "description" : "Ledger Live не смогло подключиться к устройству. Повторите попытку."
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "Устройство отключено",
+      "description" : "Ledger Live не смогло подключиться к устройству. Повторите попытку."
+    },
     "CasperInvalidTransferId" : {
       "title" : "ID перевода должен быть положительным числом до {{maxTransferId}}"
     },
@@ -3369,7 +3377,8 @@
       "description" : "Безопасно продавайте криптовалюту за фиат."
     },
     "exchange" : {
-      "title" : "Покупка/Продажа"
+      "title" : "Покупка/Продажа",
+      "connectingTo" : "Подключаем вас к {{provider}}"
     },
     "stake" : {
       "title" : "Стейкинг",
@@ -7430,7 +7439,12 @@
     "performance" : "Изменение цены",
     "low" : "Мин.",
     "high" : "Макс.",
-    "title" : "Динамика рынка"
+    "title" : "Динамика рынка",
+    "overlay" : {
+      "title" : "Переключение активов",
+      "action" : "Свайпайте влево или вправо",
+      "button" : "Понятно!"
+    }
   },
   "nftEntryPoint" : {
     "title" : "Ваши NFT",
