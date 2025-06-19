@@ -59,7 +59,6 @@ jobs:
 
   build-ios:
     name: "iOS Build"
-    needs: [ determine-builds ]
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@support/poc-macOS-sharding
     with:
       ref: ${{ inputs.ref || github.sha }}
