@@ -217,3 +217,59 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
     );
   });
 }
+
+const swapsWithBlacklistedAddress = [
+  {
+    fromAccount: Account.blacklisted_ETH_1,
+    toAccount: Account.BTC_NATIVE_SEGWIT_1,
+    xrayTicket: "B2CQA-XXXX",
+    tag: ["@NanoSP", "@LNS", "@NanoX"],
+  },
+];
+
+for (const { fromAccount, toAccount, xrayTicket, tag } of swapsWithBlacklistedAddress) {
+  test.describe(`Swap - Error due to blacklisted address - ${fromAccount}`, () => {
+    test.use({
+      userdata: "skip-onboarding",
+      speculosApp: app,
+
+      cliCommandsOnApp: [
+        [
+          {
+            app: fromAccount.currency.speculosApp,
+            cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+          },
+          {
+            app: toAccount.currency.speculosApp,
+            cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+          },
+        ],
+        { scope: "test" },
+      ],
+    });
+
+    test(
+      `Swap ${fromAccount.currency.name} to ${toAccount.currency.name} - Blacklisted Address Error`,
+      {
+        tag: tag,
+        annotation: {
+          type: "TMS",
+          description: xrayTicket,
+        },
+      },
+      async ({ app, electronApp }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+        const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
+        const swap = new Swap(fromAccount, toAccount, minAmount);
+
+        await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
+
+        // Verify technical error details
+        // await app.swapDrawer.expectTechnicalErrorDetails(
+        //   "Technical error: This transaction involves a sanctioned wallet address and cannot be processed."
+        // );
+      },
+    );
+  });
+}
