@@ -294,6 +294,14 @@
       "title" : "장치 연결 해제됨",
       "description" : "Ledger Live를 장치에 연결할 수 없습니다. 다시 시도해 주세요."
     },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "장치 연결 해제됨",
+      "description" : "Ledger Live를 장치에 연결할 수 없습니다. 다시 시도해 주세요."
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "장치 연결 해제됨",
+      "description" : "Ledger Live를 장치에 연결할 수 없습니다. 다시 시도해 주세요."
+    },
     "CasperInvalidTransferId" : {
       "title" : "전송 ID는 {{maxTransferId}}보다 작은 양수여야 합니다"
     },
@@ -3369,7 +3377,8 @@
       "description" : "암호화폐를 안전하게 현금으로 매도하세요."
     },
     "exchange" : {
-      "title" : "구매 / 판매"
+      "title" : "구매 / 판매",
+      "connectingTo" : "{{provider}}에 연결"
     },
     "stake" : {
       "title" : "스테이킹",
@@ -7430,7 +7439,12 @@
     "performance" : "가격 추이",
     "low" : "낮음",
     "high" : "높음",
-    "title" : "시장 변동성"
+    "title" : "시장 변동성",
+    "overlay" : {
+      "title" : "자산 간 이동",
+      "action" : "왼쪽이나 오른쪽으로 스와이프하세요",
+      "button" : "알겠습니다!"
+    }
   },
   "nftEntryPoint" : {
     "title" : "고객의 NFT",
