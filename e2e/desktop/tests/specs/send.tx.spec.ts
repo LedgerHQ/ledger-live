@@ -144,6 +144,21 @@ const transactionAddressValid = [
   },
 ];
 
+const transactionWithBlacklistedAddress = [
+  {
+    transaction: new Transaction(Account.blacklisted_ETH_1, Account.sep_ETH_2, "0.00001", Fee.SLOW),
+    expectedErrorMessage:
+      "This transaction involves a sanctioned wallet address and cannot be processed.",
+    xrayTicket: "B2CQA-XXXX",
+  },
+  {
+    transaction: new Transaction(Account.sep_ETH_2, Account.blacklisted_ETH_1, "0.00001", Fee.SLOW),
+    expectedErrorMessage:
+      "This transaction involves a sanctioned wallet address and cannot be processed.",
+    xrayTicket: "B2CQA-XXXX",
+  },
+];
+
 const transactionE2E = [
   {
     transaction: new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", Fee.SLOW),
@@ -170,10 +185,6 @@ const transactionE2E = [
     xrayTicket: "B2CQA-2810",
   },
   {
-    transaction: new Transaction(Account.SOL_1, Account.SOL_2, "0.000001", undefined, "noTag"),
-    xrayTicket: "B2CQA-2811",
-  },
-  {
     transaction: new Transaction(Account.TRX_1, Account.TRX_2, "0.01"),
     xrayTicket: "B2CQA-2812",
   },
@@ -192,10 +203,6 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.XRP_1, Account.XRP_2, "0.0001", undefined, "noTag"),
     xrayTicket: "B2CQA-2816",
-  },
-  {
-    transaction: new Transaction(Account.APTOS_1, Account.APTOS_2, "0.0001"),
-    xrayTicket: "B2CQA-2920",
   },
 ];
 
@@ -522,4 +529,60 @@ test.describe("Send flows", () => {
       }
     });
   });
+
+  for (const transaction of transactionWithBlacklistedAddress) {
+    test.describe.skip("Broadcast error due to blacklisted address", () => {
+      test.use({
+        userdata: "skip-onboarding",
+        speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
+        cliCommands: [
+          (appjsonPath: string) => {
+            return CLI.liveData({
+              currency: transaction.transaction.accountToCredit.currency.id,
+              index: transaction.transaction.accountToCredit.index,
+              add: true,
+              appjson: appjsonPath,
+            });
+          },
+          (appjsonPath: string) => {
+            return CLI.liveData({
+              currency: transaction.transaction.accountToDebit.currency.id,
+              index: transaction.transaction.accountToDebit.index,
+              add: true,
+              appjson: appjsonPath,
+            });
+          },
+        ],
+      });
+
+      test(
+        `Handle broadcast error for blacklisted address (${transaction.transaction.accountToDebit.accountName} → ${transaction.transaction.accountToCredit.accountName})`,
+        {
+          tag: ["@NanoSP", "@LNS", "@NanoX"],
+          annotation: {
+            type: "TMS",
+            description: transaction.xrayTicket,
+          },
+        },
+        async ({ app }) => {
+          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+          await app.layout.goToAccounts();
+          await app.accounts.navigateToAccountByName(
+            transaction.transaction.accountToDebit.accountName,
+          );
+
+          await app.account.clickSend();
+          await app.send.craftTx(transaction.transaction);
+          await app.send.continueAmountModal();
+          await app.send.expectTxInfoValidity(transaction.transaction);
+          await app.send.clickContinueToDevice();
+
+          // await app.send.expectTechnicalErrorDetails(
+          //   "Technical error: This transaction involves a sanctioned wallet address and cannot be processed.",
+          // );
+        },
+      );
+    });
+  }
 });

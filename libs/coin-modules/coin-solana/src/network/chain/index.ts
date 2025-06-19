@@ -1,4 +1,3 @@
-const ky = require("ky");
 import {
   TOKEN_2022_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
@@ -129,19 +128,6 @@ const remapErrorsWithRetry = <P extends Promise<T>, T>(callback: () => P, times 
   };
 };
 
-/*
-NOTE: https://github.com/sindresorhus/ky?tab=readme-ov-file#retry
-defaults values are set here https://github.com/sindresorhus/ky/blob/b49cd03d8673ea522a29bae4ef6b4672cf23201b/source/utils/normalize.ts#L14
-*/
-const kyNoTimeout = ky.create({
-  timeout: false,
-  retry: {
-    limit: 3,
-    statusCodes: [408, 413, 429, 500, 502, 503, 504],
-    methods: ["get", "post", "put", "head", "delete", "options", "trace"],
-  },
-});
-
 export function getChainAPI(
   config: Config,
   logger?: (url: string, options: any) => void,
@@ -159,7 +145,6 @@ export function getChainAPI(
     if (!_connection) {
       _connection = new Connection(config.endpoint, {
         ...(fetchMiddleware ? { fetchMiddleware } : {}),
-        fetch: kyNoTimeout as typeof fetch, // Type cast for jest test having an issue with the type
         commitment: "confirmed",
         confirmTransactionInitialTimeout: getEnv("SOLANA_TX_CONFIRMATION_TIMEOUT") || 0,
       });

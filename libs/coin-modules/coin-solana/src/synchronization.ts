@@ -49,7 +49,7 @@ import coinConfig from "./config";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { getStakeAccounts } from "./network/chain/stake-activation/rpc";
 import { tryParseAsMintAccount } from "./network/chain/account";
-import ky from "ky";
+import axios from "axios";
 import { isSignaturesForAddressResponse } from "./utils";
 
 export async function getAccount(
@@ -103,8 +103,8 @@ export async function getTokenAccountsTransactions(
     descriptors: Array<TransactionDescriptor>;
   }>
 > {
-  const signatures = await ky
-    .post(api.config.endpoint, {
+  const signatures = (
+    await axios.post(api.config.endpoint, {
       json: accounts.map(({ associatedTokenAccount, knownTokenAccount }) => ({
         jsonrpc: "2.0",
         method: "getSignaturesForAddress",
@@ -119,7 +119,7 @@ export async function getTokenAccountsTransactions(
         id: `${associatedTokenAccount.info.mint.toBase58()}_${associatedTokenAccount.onChainAcc.pubkey.toBase58()}_${Date.now()}`,
       })),
     })
-    .json();
+  ).data;
   const signaturesJSON = Array.isArray(signatures)
     ? signatures.filter(isSignaturesForAddressResponse)
     : [];

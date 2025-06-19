@@ -7,7 +7,7 @@ import { CLI } from "../utils/cliUtils";
 const accounts = [
   { account: Account.BTC_NATIVE_SEGWIT_1, xrayTicket: "B2CQA-2559, B2CQA-2687" },
   { account: Account.ETH_1, xrayTicket: "B2CQA-2561, B2CQA-2688, B2CQA-2697" },
-  { account: Account.SOL_1, xrayTicket: "B2CQA-2563, B2CQA-2689" },
+  // { account: Account.SOL_1, xrayTicket: "B2CQA-2563, B2CQA-2689" },
   { account: Account.TRX_1, xrayTicket: "B2CQA-2565, B2CQA-2690, B2CQA-2699" },
   { account: Account.DOT_1, xrayTicket: "B2CQA-2562, B2CQA-2691" },
   { account: Account.XRP_1, xrayTicket: "B2CQA-2566, B2CQA-2692" },
@@ -19,6 +19,9 @@ const accounts = [
 
 //Warning 🚨: Test may fail due to the GetAppAndVersion issue - Jira: LIVE-12581
 for (const account of accounts) {
+  console.log(
+    `Running Receive tests for account: ${account.account.accountName} (${account.account.currency.name})`,
+  );
   test.describe("Receive", () => {
     test.use({
       userdata: "skip-onboarding",

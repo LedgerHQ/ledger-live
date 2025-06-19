@@ -59,7 +59,7 @@ export async function listAppCandidates(cwd: string): Promise<AppCandidate[]> {
   for (const modelName of models) {
     const model = modelMap[modelName.toLowerCase()];
     const p1 = path.join(cwd, modelName);
-    const firmwares = await fsp.readdir(p1);
+    const firmwares = (await fsp.readdir(p1)).filter(f => !f.includes(".DS_Store"));
     firmwares.sort((a, b) => semver.compare(hackBadSemver(a), hackBadSemver(b)));
     firmwares.reverse();
 

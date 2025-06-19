@@ -497,6 +497,12 @@ export class Account {
     "0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad",
     1,
   );
+  static readonly blacklisted_ETH_1 = new Account(
+    Currency.sepETH,
+    "Ethereum blacklisted 1",
+    "0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf",
+    1,
+  );
 
   static readonly EMPTY = new Account(Currency.BTC, "Empty", "", 0);
 }
