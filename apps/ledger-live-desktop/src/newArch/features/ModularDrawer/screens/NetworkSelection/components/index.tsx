@@ -9,6 +9,7 @@ import createNetworkConfigurationHook from "../modules/createNetworkConfiguratio
 import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 import { Observable } from "rxjs";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
+import orderBy from "lodash/orderBy";
 
 type SelectNetworkProps = {
   networks?: CryptoOrTokenCurrency[];
@@ -44,7 +45,9 @@ export const SelectNetwork = ({
     accounts$,
   });
 
-  const formattedNetworks = transformNetworks(networks);
+  const orderedNetworks = orderBy(networks, ["name"]);
+
+  const formattedNetworks = transformNetworks(orderedNetworks);
 
   const onClick = (networkId: string) => {
     const network = networks.find(({ id }) => id === networkId);

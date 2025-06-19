@@ -6,10 +6,17 @@ import {
   bitcoinCurrency,
   arbitrumCurrency,
   usdcToken,
+  baseCurrency,
+  scrollCurrency,
 } from "../__mocks__/useSelectAssetFlow.mock";
 import { useGroupedCurrenciesByProvider } from "../__mocks__/useGroupedCurrenciesByProvider.mock";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
-import { ETH_ACCOUNT, ETH_ACCOUNT_WITH_USDC } from "../__mocks__/accounts.mock";
+import {
+  ARB_ACCOUNT,
+  BASE_ACCOUNT,
+  ETH_ACCOUNT,
+  ETH_ACCOUNT_WITH_USDC,
+} from "../__mocks__/accounts.mock";
 import { mockOnAccountSelected, mockDispatch, currencies, mockDomMeasurements } from "./shared";
 import * as reactRedux from "react-redux";
 import { track, trackPage } from "~/renderer/analytics/segment";
@@ -20,6 +27,13 @@ jest.spyOn(reactRedux, "useDispatch").mockReturnValue(mockDispatch);
 jest.mock("@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook", () => ({
   useGroupedCurrenciesByProvider: () => useGroupedCurrenciesByProvider(),
 }));
+
+if (typeof global.clearImmediate === "undefined") {
+  global.clearImmediate = clearTimeout as never;
+}
+if (typeof global.setImmediate === "undefined") {
+  global.setImmediate = setTimeout as never;
+}
 
 const MAD_BACK_BUTTON_TEST_ID = "mad-back-button";
 
@@ -386,5 +400,30 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
 
     await user.click(screen.getByText(/usdc/i));
     expect(screen.getByText(/select account/i)).toBeVisible();
+  });
+
+  it("should navigate to base account selection step", async () => {
+    const { user } = render(
+      <ModularDrawerFlowManager
+        currencies={[baseCurrency, scrollCurrency, bitcoinCurrency]}
+        onAccountSelected={mockOnAccountSelected}
+        source="sourceTest"
+        flow="flowTest"
+      />,
+      {
+        ...INITIAL_STATE,
+        initialState: {
+          accounts: [BASE_ACCOUNT, ARB_ACCOUNT],
+        },
+      },
+    );
+
+    await user.click(screen.getByText(/ethereum/i));
+    expect(screen.getByText(/select network/i)).toBeVisible();
+
+    await user.click(screen.getByText(/base/i));
+    expect(screen.getByText(/select account/i)).toBeVisible();
+
+    expect(screen.getByText(/base 2/i)).toBeVisible();
   });
 });

@@ -9,14 +9,16 @@ import {
   localeSelector,
 } from "~/renderer/reducers/settings";
 import { getBalanceAndFiatValueByAssets } from "../../../utils/getBalanceAndFiatValueByAssets";
-import { groupAccountsByAsset } from "../../../utils/groupAccountsByAsset";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { groupAccountsByAsset, GroupedAccount } from "../../../utils/groupAccountsByAsset";
+import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import styled from "styled-components";
 import { Text } from "@ledgerhq/react-ui/index";
 import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 import BigNumber from "bignumber.js";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib-es/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { counterValueFormatter } from "LLD/utils/counterValueFormatter";
+import { getTokenOrCryptoCurrencyById } from "@ledgerhq/live-common/deposit/helper";
+import orderBy from "lodash/orderBy";
 
 const BalanceContainer = styled.div`
   display: flex;
@@ -46,6 +48,70 @@ const createBalanceItem = (asset: { fiatValue?: string; balance?: string }) => (
     </Text>
   </BalanceContainer>
 );
+
+const getProviderCurrency = (
+  mainCurrency: CryptoOrTokenCurrency,
+  currencies: CryptoOrTokenCurrency[],
+) => {
+  try {
+    return getTokenOrCryptoCurrencyById(mainCurrency.id);
+  } catch {
+    return getTokenOrCryptoCurrencyById(currencies[0].id);
+  }
+};
+
+const calculateProviderTotals = (
+  currencies: CryptoOrTokenCurrency[],
+  groupedAccountsByAsset: Record<string, GroupedAccount>,
+) => {
+  let totalBalance = new BigNumber(0);
+  let totalFiatValue = new BigNumber(0);
+  let hasAccounts = false;
+
+  for (const currency of currencies) {
+    const assetGroup = groupedAccountsByAsset[currency.id];
+    if (assetGroup?.accounts.length > 0) {
+      totalBalance = totalBalance.plus(assetGroup.totalBalance);
+      totalFiatValue = totalFiatValue.plus(assetGroup.totalFiatValue);
+      hasAccounts = true;
+    }
+  }
+
+  return { totalBalance, totalFiatValue, hasAccounts };
+};
+
+const formatProviderResult = (
+  providerCurrency: CryptoOrTokenCurrency,
+  totalBalance: BigNumber,
+  totalFiatValue: BigNumber,
+  counterValueCurrency: Currency,
+  locale: string,
+  discreet: boolean,
+) => {
+  const mainCurrencyUnit = providerCurrency.units?.[0];
+  const balanceDisplay = mainCurrencyUnit
+    ? formatCurrencyUnit(mainCurrencyUnit, totalBalance, { showCode: true, discreet })
+    : `${totalBalance.toFixed()} ${providerCurrency.ticker ?? providerCurrency.symbol}`;
+
+  const formattedFiatValue = counterValueFormatter({
+    currency: counterValueCurrency.ticker,
+    value: totalFiatValue.toNumber(),
+    locale,
+    allowZeroValue: true,
+    discreetMode: discreet,
+  });
+
+  const sortValue = discreet ? 0 : totalFiatValue.toNumber();
+
+  return {
+    id: providerCurrency.id,
+    name: providerCurrency.name,
+    ticker: providerCurrency.ticker ?? providerCurrency.symbol ?? providerCurrency.name,
+    balance: balanceDisplay,
+    fiatValue: formattedFiatValue,
+    sortValue,
+  };
+};
 
 export const useRightBalanceModule = (
   assets: CryptoOrTokenCurrency[],
@@ -98,66 +164,60 @@ export const useRightBalanceModule = (
     }
 
     const assetsToDisplaySet = new Set(assets.map(asset => asset.id));
-
-    const results: Array<{
-      id: string;
-      name: string;
-      ticker: string;
-      balance: string;
-      fiatValue: string;
-      sortValue: number;
-    }> = [];
-
-    for (const [_providerId, { mainCurrency, currencies }] of providerCurrenciesMap) {
-      const hasRelevantCurrency = currencies.some(currency => assetsToDisplaySet.has(currency.id));
-      if (!hasRelevantCurrency) continue;
-
-      let totalBalance = new BigNumber(0);
-      let totalFiatValue = new BigNumber(0);
-      let hasAccounts = false;
-
-      for (const currency of currencies) {
-        const assetGroup = groupedAccountsByAsset[currency.id];
-        if (assetGroup?.accounts.length > 0) {
-          totalBalance = totalBalance.plus(assetGroup.totalBalance);
-          totalFiatValue = totalFiatValue.plus(assetGroup.totalFiatValue);
-          hasAccounts = true;
-        }
+    const providerResultsMap = new Map<
+      string,
+      {
+        id: string;
+        name: string;
+        ticker: string;
+        balance: string;
+        fiatValue: string;
+        sortValue: number;
       }
+    >();
+
+    for (const [_providerId, { currencies, mainCurrency }] of providerCurrenciesMap) {
+      if (!assetsToDisplaySet.has(mainCurrency.id)) continue;
+
+      const providerCurrency = getProviderCurrency(mainCurrency, currencies);
+      const { totalBalance, totalFiatValue, hasAccounts } = calculateProviderTotals(
+        currencies,
+        groupedAccountsByAsset,
+      );
 
       if (!hasAccounts) continue;
 
-      const mainCurrencyUnit = mainCurrency.units?.[0];
-      const balanceDisplay = mainCurrencyUnit
-        ? formatCurrencyUnit(mainCurrencyUnit, totalBalance, { showCode: true, discreet })
-        : `${totalBalance.toFixed()} ${mainCurrency.ticker ?? mainCurrency.symbol}`;
-
-      const formattedFiatValue = counterValueFormatter({
-        currency: counterValueCurrency.ticker,
-        value: totalFiatValue.toNumber(),
+      const result = formatProviderResult(
+        providerCurrency,
+        totalBalance,
+        totalFiatValue,
+        counterValueCurrency,
         locale,
-        allowZeroValue: true,
-        discreetMode: discreet,
-      });
+        discreet,
+      );
 
-      const sortValue = discreet ? 0 : totalFiatValue.toNumber();
-
-      results.push({
-        id: mainCurrency.id,
-        name: mainCurrency.name,
-        ticker: mainCurrency.ticker ?? mainCurrency.symbol ?? mainCurrency.name,
-        balance: balanceDisplay,
-        fiatValue: formattedFiatValue,
-        sortValue,
-      });
+      providerResultsMap.set(mainCurrency.id, result);
     }
 
-    results.sort((a, b) => b.sortValue - a.sortValue);
-
-    return results.map(({ sortValue, ...result }) => ({
-      ...result,
-      rightElement: createBalanceItem(result),
-    }));
+    return orderBy(
+      assets.map(asset => {
+        const providerResult = providerResultsMap.get(asset.id);
+        if (providerResult) {
+          return {
+            ...asset,
+            rightElement: createBalanceItem(providerResult),
+            sortValue: providerResult.sortValue,
+          };
+        }
+        return {
+          ...asset,
+          rightElement: createBalanceItem({}),
+          sortValue: -1,
+        };
+      }),
+      ["sortValue"],
+      ["desc"],
+    ).map(({ sortValue, ...asset }) => asset);
   }, [
     providerCurrenciesMap,
     assets,

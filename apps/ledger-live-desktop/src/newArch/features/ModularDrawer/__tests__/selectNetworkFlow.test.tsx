@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "tests/testSetup";
+import { render, screen, waitFor } from "tests/testSetup";
 import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 import {
   bitcoinCurrency,
@@ -127,5 +127,44 @@ describe("ModularDrawerFlowManager - Select Network Flow", () => {
     expect(screen.getByText(/arbitrum/i)).toBeVisible();
     expect(screen.getByText(/base/i)).toBeVisible();
     expect(screen.getByText(/scroll/i)).toBeVisible();
+  });
+
+  it("should handle the search in the assetsSelection screen when I have no provider currencies but only provided currencies", async () => {
+    const mixedCurrencies = [
+      baseCurrency,
+      arbitrumCurrency,
+      scrollCurrency,
+      injectiveCurrency,
+      bitcoinCurrency,
+    ];
+    const { user } = render(
+      <ModularDrawerFlowManager
+        currencies={mixedCurrencies}
+        onAssetSelected={mockOnAssetSelected}
+        source="sourceTest"
+        flow="flowTest"
+      />,
+    );
+
+    expect(screen.queryByText(/base/i)).toBeNull();
+    expect(screen.queryByText(/scroll/i)).toBeNull();
+    expect(screen.getByText(/injective/i)).toBeVisible();
+    expect(screen.getByText(/bitcoin/i)).toBeVisible();
+    expect(screen.getByText(/ethereum/i)).toBeVisible();
+
+    const input = screen.getByRole("textbox");
+    await user.type(input, "ethereum");
+
+    await waitFor(() => {
+      expect(screen.queryByText(/bitcoin/i)).not.toBeInTheDocument();
+    });
+
+    await user.clear(screen.getByRole("textbox"));
+
+    await waitFor(() => {
+      expect(screen.queryByText(/bitcoin/i)).toBeVisible();
+    });
+    expect(screen.getByText(/injective/i)).toBeVisible();
+    expect(screen.getByText(/ethereum/i)).toBeVisible();
   });
 });

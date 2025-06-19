@@ -76,6 +76,10 @@ const handlers = [
           mockRates[currency] = 2761.27;
         } else if (currency.startsWith("ethereum/erc20/")) {
           mockRates[currency] = 1.0;
+        } else if (currency === "scroll") {
+          mockRates[currency] = 2761.27;
+        } else if (currency === "base") {
+          mockRates[currency] = 2761.27;
         } else {
           mockRates[currency] = 1.0;
         }

@@ -12,12 +12,12 @@ type Props = {
 
 const getRightElement = (rightElement: string) => {
   switch (rightElement) {
+    case "balance":
+      return useRightBalanceModule;
     case "marketTrend":
     case "undefined":
-      return undefined;
-    case "balance":
     default:
-      return useRightBalanceModule;
+      return undefined;
   }
 };
 

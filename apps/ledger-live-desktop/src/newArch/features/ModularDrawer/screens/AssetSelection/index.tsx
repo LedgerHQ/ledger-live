@@ -9,6 +9,7 @@ import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 
 export type AssetSelectionStepProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
+  originalAssetsToDisplay: CryptoOrTokenCurrency[];
   sortedCryptoCurrencies: CryptoOrTokenCurrency[];
   defaultSearchValue?: string;
   assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
@@ -22,6 +23,7 @@ export type AssetSelectionStepProps = {
 
 const AssetSelection = ({
   assetsToDisplay,
+  originalAssetsToDisplay,
   sortedCryptoCurrencies,
   defaultSearchValue,
   flow,
@@ -59,6 +61,8 @@ const AssetSelection = ({
         source={source}
         flow={flow}
         items={sortedCryptoCurrencies}
+        assetsToDisplay={assetsToDisplay}
+        originalAssets={originalAssetsToDisplay}
       />
       <AssetsList
         assetsToDisplay={assetsToDisplay}

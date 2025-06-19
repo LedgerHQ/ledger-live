@@ -21,6 +21,7 @@ import { haveOneCommonProvider } from "./utils/haveOneCommonProvider";
 import { BackButtonArrow } from "./components/BackButton";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getTokenOrCryptoCurrencyById } from "@ledgerhq/live-common/deposit/helper";
+import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
 
 type Props = {
   currencies: CryptoOrTokenCurrency[];
@@ -66,13 +67,6 @@ const ModularDrawerFlowManager = ({
   ) as LoadingBasedGroupedCurrencies;
 
   const { currenciesByProvider, sortedCryptoCurrencies } = useMemo(() => {
-    if (!result) {
-      return {
-        currenciesByProvider: [],
-        sortedCryptoCurrencies: [],
-      };
-    }
-
     return {
       currenciesByProvider: result.currenciesByProvider ?? [],
       sortedCryptoCurrencies: result.sortedCryptoCurrencies ?? [],
@@ -90,6 +84,9 @@ const ModularDrawerFlowManager = ({
   } = useAssetSelection(currencies, sortedCryptoCurrencies);
 
   const [networksToDisplay, setNetworksToDisplay] = useState<CryptoOrTokenCurrency[]>();
+  const [originalAssetsToDisplay, setOriginalAssetsToDisplay] = useState<CryptoOrTokenCurrency[]>(
+    [],
+  );
 
   const { currentStep, navigationDirection, goToStep } = useModularDrawerNavigation();
   const isSelectAccountFlow = !!onAccountSelected;
@@ -159,18 +156,36 @@ const ModularDrawerFlowManager = ({
       return currenciesByProvider;
     }
 
-    const filtered = [];
+    const providerIdToCoveringProviders = new Map<string, Set<string>>();
 
     for (const provider of currenciesByProvider) {
-      const hasRelevantCurrencies = provider.currenciesByNetwork.some(currency =>
-        currencyIdsSet.has(currency.id),
-      );
+      for (const currency of provider.currenciesByNetwork) {
+        if (!providerIdToCoveringProviders.has(currency.id)) {
+          providerIdToCoveringProviders.set(currency.id, new Set());
+        }
+        providerIdToCoveringProviders.get(currency.id)!.add(provider.providerId);
+      }
+    }
 
-      if (!hasRelevantCurrencies) continue;
+    const filtered: typeof currenciesByProvider = [];
 
+    for (const provider of currenciesByProvider) {
       const filteredCurrencies = provider.currenciesByNetwork.filter(currency =>
         currencyIdsSet.has(currency.id),
       );
+
+      if (filteredCurrencies.length === 0) continue;
+
+      const providerHasOwnCurrency = provider.currenciesByNetwork.some(
+        currency => currency.id === provider.providerId,
+      );
+
+      if (!providerHasOwnCurrency) {
+        const coveringProviders = providerIdToCoveringProviders.get(provider.providerId);
+        const isProviderIdCoveredElsewhere = coveringProviders && coveringProviders.size > 1;
+
+        if (isProviderIdCoveredElsewhere) continue;
+      }
 
       if (filteredCurrencies.length === provider.currenciesByNetwork.length) {
         filtered.push(provider);
@@ -182,24 +197,46 @@ const ModularDrawerFlowManager = ({
       }
     }
 
+    const safeCurrencyLookup = (id: string): CryptoOrTokenCurrency | null => {
+      try {
+        return getTokenOrCryptoCurrencyById(id);
+      } catch {
+        return null;
+      }
+    };
+
+    const isProviderToken = (currency: CryptoOrTokenCurrency, providerId: string): boolean => {
+      return (
+        isTokenCurrency(currency) && currency.id.toLowerCase().includes(providerId.toLowerCase())
+      );
+    };
+
     // This is a trick to ensure that we display the provider currency in the assetsSelection screen if we only have the provided currencies.
     // For some currencies the providerId is not corresponding to any ledgerId so we will fallback to the first currency of the provider
     // This will limit the issue related to mapping services until the API
-    const allProviderCurrencies = filtered
-      .map(provider => {
-        try {
-          return getTokenOrCryptoCurrencyById(provider.providerId);
-        } catch (error) {
-          try {
-            return getTokenOrCryptoCurrencyById(provider.currenciesByNetwork[0].id);
-          } catch (error) {
-            return null;
-          }
-        }
-      })
-      .filter(currency => currency !== null);
+    const getProviderCurrency = (provider: (typeof filtered)[0]): CryptoOrTokenCurrency | null => {
+      const providerToken = provider.currenciesByNetwork.find(currency => {
+        const currencyObj = safeCurrencyLookup(currency.id);
+        return currencyObj && isProviderToken(currencyObj, provider.providerId);
+      });
+
+      if (providerToken) {
+        return safeCurrencyLookup(providerToken.id);
+      }
+
+      return (
+        safeCurrencyLookup(provider.providerId) ??
+        safeCurrencyLookup(provider.currenciesByNetwork[0]?.id)
+      );
+    };
+
+    const allProviderCurrencies = filtered.flatMap(provider => {
+      const currency = getProviderCurrency(provider);
+      return currency ? [currency] : [];
+    });
 
     setAssetsToDisplay(allProviderCurrencies);
+    setOriginalAssetsToDisplay(allProviderCurrencies);
 
     return filtered;
   }, [currenciesByProvider, currencyIdsSet, setAssetsToDisplay]);
@@ -215,6 +252,7 @@ const ModularDrawerFlowManager = ({
           return (
             <AssetSelection
               assetsToDisplay={assetsToDisplay}
+              originalAssetsToDisplay={originalAssetsToDisplay}
               sortedCryptoCurrencies={filteredSortedCryptoCurrencies}
               defaultSearchValue={searchedValue}
               assetsConfiguration={assetConfiguration}

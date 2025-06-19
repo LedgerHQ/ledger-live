@@ -8,10 +8,20 @@ import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { useGroupedCurrenciesByProvider } from "../__mocks__/useGroupedCurrenciesByProvider.mock";
 import {
   arbitrumCurrency,
+  baseCurrency,
   bitcoinCurrency,
   ethereumCurrency,
+  scrollCurrency,
 } from "../__mocks__/useSelectAssetFlow.mock";
-import { ARB_ACCOUNT, BTC_ACCOUNT, ETH_ACCOUNT, ETH_ACCOUNT_2 } from "../__mocks__/accounts.mock";
+import {
+  ARB_ACCOUNT,
+  BASE_ACCOUNT,
+  BTC_ACCOUNT,
+  ETH_ACCOUNT,
+  ETH_ACCOUNT_2,
+  SCROLL_ACCOUNT,
+} from "../__mocks__/accounts.mock";
+import BigNumber from "bignumber.js";
 
 jest.mock("@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook", () => ({
   useGroupedCurrenciesByProvider: () => useGroupedCurrenciesByProvider(),
@@ -24,7 +34,14 @@ beforeEach(async () => {
 
 const mockedInitialState = {
   initialState: {
-    accounts: [ETH_ACCOUNT, ETH_ACCOUNT_2, BTC_ACCOUNT, ARB_ACCOUNT],
+    accounts: [
+      ETH_ACCOUNT,
+      ETH_ACCOUNT_2,
+      BTC_ACCOUNT,
+      ARB_ACCOUNT,
+      BASE_ACCOUNT,
+      { ...SCROLL_ACCOUNT, balance: new BigNumber(34455).multipliedBy(10 ** 18) },
+    ],
     settings: {
       ...INITIAL_STATE,
       overriddenFeatureFlags: {
@@ -169,5 +186,56 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
     expect(arbitrumBalance).toBeVisible();
     const usdAbrBalance = screen.getByText(/\$0.00/i);
     expect(usdAbrBalance).toBeVisible();
+  });
+
+  // this is logically failing because we are not able to retrieve the wanted data consistantly because it depends on the providerId that can be wrongly set in mapping services
+  it.failing("render the eth balance of scroll base and arbitrum as ethereum", async () => {
+    const mixedCurrencies = [baseCurrency, arbitrumCurrency, scrollCurrency, bitcoinCurrency];
+    renderWithMockedCounterValuesProvider(
+      <ModularDrawerFlowManager
+        currencies={mixedCurrencies}
+        onAssetSelected={mockOnAssetSelected}
+        source="sourceTest"
+        flow="flowTest"
+      />,
+      mockedInitialState,
+    );
+
+    expect(screen.queryByText(/base/i)).toBeNull();
+    expect(screen.queryByText(/scroll/i)).toBeNull();
+    expect(screen.getByText(/ethereum/i)).toBeVisible();
+
+    expect(screen.getByText(/\$95,557,841.55/i)).toBeVisible();
+    expect(
+      screen.getByText((content, _element) => {
+        return Boolean(content && /34,?455[\s\u00A0]*ETH/i.test(content));
+      }),
+    ).toBeVisible();
+  });
+
+  it("render the eth balance of ethereum scroll base and arbitrum as ethereum", async () => {
+    const mixedCurrencies = [
+      baseCurrency,
+      arbitrumCurrency,
+      scrollCurrency,
+      ethereumCurrency,
+      bitcoinCurrency,
+    ];
+    renderWithMockedCounterValuesProvider(
+      <ModularDrawerFlowManager
+        currencies={mixedCurrencies}
+        onAssetSelected={mockOnAssetSelected}
+        source="sourceTest"
+        flow="flowTest"
+      />,
+      mockedInitialState,
+    );
+
+    expect(screen.queryByText(/base/i)).toBeNull();
+    expect(screen.queryByText(/scroll/i)).toBeNull();
+    expect(screen.getByText(/ethereum/i)).toBeVisible();
+
+    expect(screen.getByText(/\$95,622,923.34/i)).toBeVisible();
+    expect(screen.getByText(/34,478.4 eth/i)).toBeVisible();
   });
 });

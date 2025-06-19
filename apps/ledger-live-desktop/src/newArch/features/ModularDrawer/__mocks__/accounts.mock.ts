@@ -1,6 +1,12 @@
 import { fn, Mock } from "@storybook/test";
 import BigNumber from "bignumber.js";
-import { arbitrumCurrency, bitcoinCurrency, ethereumCurrency } from "./useSelectAssetFlow.mock";
+import {
+  arbitrumCurrency,
+  baseCurrency,
+  bitcoinCurrency,
+  ethereumCurrency,
+  scrollCurrency,
+} from "./useSelectAssetFlow.mock";
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 
 export const useGetAccountIds: Mock = fn(() => undefined);
@@ -46,4 +52,12 @@ export const ARB_ACCOUNT = genAccount("arbitrum-1", {
 export const ETH_ACCOUNT_WITH_USDC = genAccount("ethereum-usdc", {
   currency: ethereumCurrency,
   tokenIds: ["ethereum/erc20/usdc"],
+});
+export const BASE_ACCOUNT = genAccount("base-1", {
+  currency: baseCurrency,
+  operationsSize: 100,
+});
+export const SCROLL_ACCOUNT = genAccount("scroll-1", {
+  currency: scrollCurrency,
+  operationsSize: 100,
 });

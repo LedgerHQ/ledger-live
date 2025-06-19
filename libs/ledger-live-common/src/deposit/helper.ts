@@ -71,7 +71,7 @@ export const searchByNameOrTicker = (list: MappedAsset[], nameOrTicker: string) 
       elem.ticker.toLowerCase().includes(nameOrTicker.toLowerCase()),
   );
 
-export const getTokenOrCryptoCurrencyById = (id: string) => {
+export const getTokenOrCryptoCurrencyById = (id: string): CryptoOrTokenCurrency => {
   const currencyHasId = hasCryptoCurrencyId(id);
   if (currencyHasId) {
     const currency = getCryptoCurrencyById(id);
