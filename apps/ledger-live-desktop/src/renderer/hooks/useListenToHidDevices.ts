@@ -10,6 +10,7 @@ import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/device
 export const useListenToHidDevices = () => {
   const dispatch = useDispatch();
   const ldmkFeatureFlag = useFeature("ldmkTransport");
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
 
   const deviceManagementKit = useDeviceManagementKit();
 
@@ -45,8 +46,12 @@ export const useListenToHidDevices = () => {
       });
     }
 
+    const dmkListen = isLdmkConnectAppEnabled
+      ? DeviceManagementKitTransport.listen
+      : DeviceManagementKitTransport.listenLegacyConnectApp;
+
     function syncDevicesWithDmk() {
-      sub = new Observable(DeviceManagementKitTransport.listen).subscribe({
+      sub = new Observable(dmkListen).subscribe({
         next: ({ descriptor, device, deviceModel, type }) => {
           if (device) {
             const deviceId = descriptor || "";
@@ -84,7 +89,7 @@ export const useListenToHidDevices = () => {
       clearTimeout?.(timeoutSyncDevices);
       sub?.unsubscribe?.();
     };
-  }, [dispatch, deviceManagementKit, ldmkFeatureFlag?.enabled]);
+  }, [dispatch, deviceManagementKit, ldmkFeatureFlag?.enabled, isLdmkConnectAppEnabled]);
 
   return null;
 };
