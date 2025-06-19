@@ -65,7 +65,6 @@ export async function reportSanctionedTransaction(properties: {
   transactionType: OperationType | "SWAP";
   sanctionedAddresses: string;
 }): Promise<void> {
-  console.warn("Reporting sanctioned transaction:", properties); // TODO: remove this line
   const url = "https://logs.ledger-test.com/";
   const payload = {
     ddsource: "LedgerLive",
