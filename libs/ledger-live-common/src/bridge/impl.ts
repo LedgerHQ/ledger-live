@@ -1,6 +1,7 @@
 import {
   isAddressSanctioned,
   isCheckSanctionedAddressEnabled,
+  reportSanctionedTransaction,
 } from "@ledgerhq/coin-framework/sanction/index";
 import { CurrencyNotSupported } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
@@ -111,7 +112,8 @@ function wrapAccountBridge<T extends TransactionCommon>(
           sanctionedAddresses.push(account.freshAddress);
         }
 
-        const recipients = args[0].signedOperation.operation.recipients;
+        const operation = args[0].signedOperation.operation;
+        const recipients = operation.recipients;
         for (const recipient of recipients) {
           const recipientSanctioned = await isAddressSanctioned(account.currency, recipient);
           if (recipientSanctioned) {
@@ -120,6 +122,15 @@ function wrapAccountBridge<T extends TransactionCommon>(
         }
 
         if (sanctionedAddresses.length > 0) {
+          reportSanctionedTransaction({
+            addressFrom: account.freshAddress,
+            addressTo: operation.recipients.join(", "),
+            amount: operation.value.toString(),
+            currency: account.currency.ticker,
+            transactionType: operation.type,
+            sanctionedAddresses: sanctionedAddresses.join(", "),
+          });
+
           throw new AddressesSanctionedError(
             translate("errors.AddressesSanctionedError.description", {
               sanctionedAddresses: sanctionedAddresses.join("\n"),

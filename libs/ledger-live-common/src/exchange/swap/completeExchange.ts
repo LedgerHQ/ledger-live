@@ -25,8 +25,11 @@ import { CompleteExchangeStep, convertTransportError } from "../error";
 import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "../platform/types";
 import { convertToAppExchangePartnerKey, getSwapProvider } from "../providers";
 import { CEXProviderConfig } from "../providers/swap";
-import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
-import { RecipientAddressSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+import {
+  isAddressSanctioned,
+  reportSanctionedTransaction,
+} from "@ledgerhq/coin-framework/sanction/index";
+import { UserAddressSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 
 const COMPLETE_EXCHANGE_LOG = "SWAP-CompleteExchange";
 
@@ -67,17 +70,23 @@ const completeExchange = (
         const refundCurrency = getAccountCurrency(fromAccount);
         const mainRefundCurrency = getAccountCurrency(refundAccount);
 
-        const isPayoutSanctioned = await isAddressSanctioned(
-          payoutAccount.currency,
-          payoutAccount.freshAddress,
-        );
-        const isRefundSanctioned = await isAddressSanctioned(
-          refundAccount.currency,
-          refundAccount.freshAddress,
-        );
+        const sanctionedAddresses: string[] = [];
+        for (const acc of [refundAccount, payoutAccount]) {
+          const isSanctioned = await isAddressSanctioned(acc.currency, acc.freshAddress);
+          if (isSanctioned) sanctionedAddresses.push(acc.freshAddress);
+        }
 
-        if (isPayoutSanctioned || isRefundSanctioned) {
-          throw new RecipientAddressSanctionedError();
+        if (sanctionedAddresses.length > 0) {
+          reportSanctionedTransaction({
+            addressFrom: refundAccount.freshAddress,
+            addressTo: payoutAccount.freshAddress,
+            amount: transaction.amount.toString(),
+            currency: `${refundAccount.currency.ticker} to ${payoutAccount.currency.ticker}`,
+            sanctionedAddresses: sanctionedAddresses.join(", "),
+            transactionType: "SWAP",
+          });
+
+          throw new UserAddressSanctionedError(...sanctionedAddresses);
         }
         if (mainPayoutCurrency.type !== "CryptoCurrency")
           throw new Error("This should be a cryptocurrency");
