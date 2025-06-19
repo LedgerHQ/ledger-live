@@ -294,6 +294,14 @@
       "title" : "Dispositivo desconectado",
       "description" : "Ledger Live no se pudo conectar a tu dispositivo. Inténtalo de nuevo."
     },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "Dispositivo desconectado",
+      "description" : "Ledger Live no se pudo conectar a tu dispositivo. Inténtalo de nuevo."
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "Dispositivo desconectado",
+      "description" : "Ledger Live no se pudo conectar a tu dispositivo. Inténtalo de nuevo."
+    },
     "CasperInvalidTransferId" : {
       "title" : "El ID de transferencia debe ser un número positivo menor que {{maxTransferId}}"
     },
@@ -3369,7 +3377,8 @@
       "description" : "Vende criptomonedas de forma segura a cambio de dinero en efectivo."
     },
     "exchange" : {
-      "title" : "Comprar / Vender"
+      "title" : "Comprar / Vender",
+      "connectingTo" : "Conectándote a {{provider}}"
     },
     "stake" : {
       "title" : "Poner en participación",
@@ -7430,7 +7439,12 @@
     "performance" : "Rendimiento",
     "low" : "Baja",
     "high" : "Alta",
-    "title" : "Movimientos del mercado"
+    "title" : "Movimientos del mercado",
+    "overlay" : {
+      "title" : "Muévete de un activo a otro",
+      "action" : "Desliza a la izquierda o a la derecha",
+      "button" : "¡Entendido!"
+    }
   },
   "nftEntryPoint" : {
     "title" : "Tus NFTs",
