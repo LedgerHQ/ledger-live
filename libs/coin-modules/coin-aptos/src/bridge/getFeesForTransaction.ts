@@ -38,14 +38,14 @@ export const getFee = async (
     maxGasAmount: gasLimit.toString(),
     gasUnitPrice: gasPrice.toString(),
   };
+
   if (account.xpub) {
     try {
       const publicKeyEd = new Ed25519PublicKey(account.xpub as string);
       const tx = await buildTransaction(account, transaction, aptosClient);
-      const simulation = await aptosClient.simulateTransaction(publicKeyEd, tx);
-      const completedTx = simulation[0];
+      const [completedTx] = await aptosClient.simulateTransaction(publicKeyEd, tx);
 
-      gasLimit = new BigNumber(completedTx.gas_used).multipliedBy(ESTIMATE_GAS_MUL);
+      gasLimit = new BigNumber(completedTx.gas_used).multipliedBy(ESTIMATE_GAS_MUL).integerValue();
       gasPrice = new BigNumber(completedTx.gas_unit_price);
 
       const expectedGas = gasPrice.multipliedBy(gasLimit);
@@ -55,9 +55,11 @@ export const getFee = async (
           res.errors.maxGasAmount = "GasInsufficientBalance";
         } else if (
           !completedTx.vm_status.includes("INSUFFICIENT_BALANCE") &&
+          !completedTx.vm_status.includes("EDELEGATOR_ACTIVE_BALANCE_TOO_LOW") &&
+          !completedTx.vm_status.includes("EDELEGATOR_PENDING_INACTIVE_BALANCE_TOO_LOW") &&
           !completedTx.vm_status.includes("0x203ed") // 0x203ed -> PROLOGUE_ECANT_PAY_GAS_DEPOSIT equivalent to INSUFFICIENT_BALANCE_FOR_TRANSACTION_FEE
         ) {
-          // INSUFFICIENT_BALANCE will be processed by getTransactionStatus
+          // INSUFFICIENT_BALANCE and EDELEGATOR_ACTIVE_BALANCE_TOO_LOW will be processed by getTransactionStatus
           throw Error(`Simulation failed with following error: ${completedTx.vm_status}`);
         }
       }
@@ -70,6 +72,7 @@ export const getFee = async (
       throw error;
     }
   }
+
   return res;
 };
 

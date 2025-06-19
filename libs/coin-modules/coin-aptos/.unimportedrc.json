@@ -6,12 +6,7 @@
     "src/network/index.ts",
     "src/signer/index.ts"
   ],
-  "ignoreUnused": [
-    "@ledgerhq/devices",
-    "@ledgerhq/types-cryptoassets",
-    "expect",
-    "invariant"
-  ],
+  "ignoreUnused": ["@ledgerhq/devices", "@ledgerhq/types-cryptoassets", "expect", "invariant"],
   "ignoreUnimported": [
     "src/bridge/bridge.fixture.ts",
     "src/bridge/deviceTransactionConfig.ts",
@@ -23,6 +18,8 @@
     "src/test/cli.ts",
     "src/test/index.ts",
     "src/test/speculos-deviceActions.ts",
-    "src/types/assets.ts"
+    "src/types/assets.ts",
+    "src/utils/IconGenerator.ts",
+    "src/utils/index.ts"
   ]
 }

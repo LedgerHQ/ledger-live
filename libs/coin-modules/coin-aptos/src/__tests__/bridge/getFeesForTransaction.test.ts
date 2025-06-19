@@ -66,9 +66,9 @@ describe("getFeesForTransaction Test", () => {
         const result = await getFeesForTransaction.getFee(account, transaction, aptosClient);
 
         const expected = {
-          fees: new BigNumber(20604),
+          fees: new BigNumber(22644),
           estimate: {
-            maxGasAmount: "202",
+            maxGasAmount: "222",
             gasUnitPrice: "102",
           },
           errors: {},
@@ -100,9 +100,9 @@ describe("getFeesForTransaction Test", () => {
         const result = await getFeesForTransaction.getFee(account, transaction, aptosClient);
 
         const expected = {
-          fees: new BigNumber(20604),
+          fees: new BigNumber(22644),
           estimate: {
-            maxGasAmount: "202",
+            maxGasAmount: "222",
             gasUnitPrice: "102",
           },
           errors: {},
@@ -210,9 +210,9 @@ describe("getFeesForTransaction Test", () => {
           errors: {},
           estimate: {
             gasUnitPrice: "102",
-            maxGasAmount: "9",
+            maxGasAmount: "10",
           },
-          fees: new BigNumber("918"),
+          fees: new BigNumber(1020),
         };
 
         expect(result).toEqual(expected);
@@ -260,9 +260,9 @@ describe("getFeesForTransaction Test", () => {
           errors: {},
           estimate: {
             gasUnitPrice: "102",
-            maxGasAmount: "202",
+            maxGasAmount: "222",
           },
-          fees: new BigNumber("20604"),
+          fees: new BigNumber(22644),
         };
 
         expect(result1).toEqual(expected);
@@ -312,9 +312,9 @@ describe("getFeesForTransaction Test", () => {
         errors: {},
         estimate: {
           gasUnitPrice: "102",
-          maxGasAmount: "202",
+          maxGasAmount: "222",
         },
-        fees: new BigNumber("20604"),
+        fees: new BigNumber(22644),
       };
 
       expect(result1).toEqual(expected);

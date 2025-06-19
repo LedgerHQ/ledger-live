@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import { EntryFunctionPayloadResponse } from "@aptos-labs/ts-sdk";
 import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import {
@@ -6,11 +7,10 @@ import {
   findSubAccountById,
   isTokenAccount,
 } from "@ledgerhq/coin-framework/account/index";
-import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { APTOS_ASSET_ID, DIRECTION } from "../constants";
-import type { AptosTransaction, Transaction } from "../types";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
+import { APTOS_ASSET_ID, OP_TYPE, DEFAULT_GAS, DEFAULT_GAS_PRICE } from "../constants";
+import type { AptosTransaction, Transaction } from "../types";
 import { convertFunctionPayloadResponseToInputEntryFunctionData } from "../logic/transactionsToOperations";
 import { compareAddress, getCoinAndAmounts } from "../logic/getCoinAndAmounts";
 import { calculateAmount } from "../logic/calculateAmount";
@@ -18,13 +18,16 @@ import { processRecipients } from "../logic/processRecipients";
 import { getFunctionAddress } from "../logic/getFunctionAddress";
 
 export const getMaxSendBalance = (
-  gas: BigNumber,
-  gasPrice: BigNumber,
   account: Account,
   transaction?: Transaction,
+  gas?: BigNumber,
+  gasPrice?: BigNumber,
 ): BigNumber => {
   const tokenAccount = findSubAccountById(account, transaction?.subAccountId ?? "");
   const fromTokenAccount = tokenAccount && isTokenAccount(tokenAccount);
+
+  gas = gas ?? BigNumber(DEFAULT_GAS);
+  gasPrice = gasPrice ?? BigNumber(DEFAULT_GAS_PRICE);
 
   const totalGas = gas.multipliedBy(gasPrice);
 
@@ -59,10 +62,11 @@ export const txsToOps = (
   info: { address: string },
   id: string,
   txs: (AptosTransaction | null)[],
-): [Operation[], Operation[]] => {
+): [Operation[], Operation[], Operation[]] => {
   const { address } = info;
   const ops: Operation[] = [];
   const opsTokens: Operation[] = [];
+  const opsStaking: Operation[] = [];
 
   txs.forEach(tx => {
     if (tx !== null) {
@@ -79,9 +83,14 @@ export const txsToOps = (
         return; // skip transaction without functions in payload
       }
 
-      const { coin_id, amount_in, amount_out } = getCoinAndAmounts(tx, address);
+      const { coin_id, amount_in, amount_out, type } = getCoinAndAmounts(tx, address);
       op.value = calculateAmount(tx.sender, address, amount_in, amount_out);
-      op.type = compareAddress(tx.sender, address) ? DIRECTION.OUT : DIRECTION.IN;
+      op.type =
+        type !== OP_TYPE.UNKNOWN
+          ? type
+          : compareAddress(tx.sender, address)
+            ? OP_TYPE.OUT
+            : OP_TYPE.IN;
       op.senders.push(tx.sender);
       op.hasFailed = !tx.success;
       op.id = encodeOperationId(op.accountId, tx.hash, op.type);
@@ -90,10 +99,17 @@ export const txsToOps = (
 
       if (op.value.isZero()) {
         // skip transaction that result no Aptos change
-        op.type = DIRECTION.UNKNOWN;
+        op.type = OP_TYPE.UNKNOWN;
       }
 
-      if (op.type !== DIRECTION.UNKNOWN && coin_id !== null) {
+      if (
+        op.type === OP_TYPE.STAKE ||
+        op.type === OP_TYPE.UNSTAKE ||
+        op.type === OP_TYPE.WITHDRAW
+      ) {
+        ops.push(op);
+        opsStaking.push(op);
+      } else if (op.type !== OP_TYPE.UNKNOWN && coin_id !== null) {
         if (coin_id === APTOS_ASSET_ID) {
           ops.push(op);
         } else {
@@ -102,7 +118,7 @@ export const txsToOps = (
             op.accountId = encodeTokenAccountId(id, token);
             opsTokens.push(op);
 
-            if (op.type === DIRECTION.OUT) {
+            if (op.type === OP_TYPE.OUT) {
               ops.push({
                 ...op,
                 accountId: decodeTokenAccountId(op.accountId).accountId,
@@ -116,7 +132,7 @@ export const txsToOps = (
     }
   });
 
-  return [ops, opsTokens];
+  return [ops, opsTokens, opsStaking];
 };
 
 export function getTokenAccount(
