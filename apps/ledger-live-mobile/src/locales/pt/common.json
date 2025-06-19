@@ -294,6 +294,14 @@
       "title" : "Dispositivo desconectado",
       "description" : "O Ledger Live não conseguiu se conectar ao seu dispositivo. Tente novamente."
     },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "Dispositivo desconectado",
+      "description" : "O Ledger Live não conseguiu se conectar ao seu dispositivo. Tente novamente."
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "Dispositivo desconectado",
+      "description" : "O Ledger Live não conseguiu se conectar ao seu dispositivo. Tente novamente."
+    },
     "CasperInvalidTransferId" : {
       "title" : "A ID de transferência deve ser um número positivo menor que {{maxTransferId}}"
     },
@@ -3369,7 +3377,8 @@
       "description" : "Venda cripto por fiat em segurança."
     },
     "exchange" : {
-      "title" : "Comprar / Vender"
+      "title" : "Comprar / Vender",
+      "connectingTo" : "Conectando você a {{provider}}"
     },
     "stake" : {
       "title" : "Aplicar",
@@ -7430,7 +7439,12 @@
     "performance" : "Desempenho",
     "low" : "Baixo",
     "high" : "Alto",
-    "title" : "Movimentações de Mercado"
+    "title" : "Movimentações de Mercado",
+    "overlay" : {
+      "title" : "Passe de um ativo para o outro",
+      "action" : "Deslize para a esquerda ou direita",
+      "button" : "Entendi!"
+    }
   },
   "nftEntryPoint" : {
     "title" : "Seus NFTs",
