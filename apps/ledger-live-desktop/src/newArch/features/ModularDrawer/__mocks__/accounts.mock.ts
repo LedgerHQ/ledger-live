@@ -1,7 +1,13 @@
 import { fn, Mock } from "@storybook/test";
 import BigNumber from "bignumber.js";
-import { Account } from "@ledgerhq/types-live";
-import { arbitrumCurrency, ethereumCurrency } from "./useSelectAssetFlow.mock";
+import {
+  arbitrumCurrency,
+  baseCurrency,
+  bitcoinCurrency,
+  ethereumCurrency,
+  scrollCurrency,
+} from "./useSelectAssetFlow.mock";
+import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 
 export const useGetAccountIds: Mock = fn(() => undefined);
 export const getBalanceHistoryWithCountervalue: Mock = fn(() => ({
@@ -20,46 +26,6 @@ export const counterValueCurrencySelector: Mock = fn(state => state.currency);
 export const discreetModeSelector: Mock = fn(state => state.discreet);
 export const localeSelector: Mock = fn(state => state.locale);
 
-export const Mocked_ETH_Account: Account[] = [
-  {
-    type: "Account",
-    id: "js:2:ethereum:0x823ePB4bDa11da33a7F1C907D1171e5995Fe33c7:",
-    used: true,
-    seedIdentifier: "",
-    derivationMode: "ethM",
-    index: 2,
-    freshAddress: "freshAddress",
-    freshAddressPath: "",
-    blockHeight: 20372078,
-    creationDate: new Date(),
-    balance: new BigNumber(1).multipliedBy(1e18),
-    spendableBalance: new BigNumber(1).multipliedBy(1e18),
-    operations: [],
-    operationsCount: 0,
-    pendingOperations: [],
-    currency: ethereumCurrency,
-    lastSyncDate: new Date(),
-    swapHistory: [],
-    syncHash: "",
-    balanceHistoryCache: {
-      HOUR: {
-        balances: [],
-        latestDate: 1721768400000,
-      },
-      DAY: {
-        balances: [],
-        latestDate: 1721685600000,
-      },
-      WEEK: {
-        balances: [],
-        latestDate: 1721512800000,
-      },
-    },
-    subAccounts: [],
-    nfts: [],
-  },
-];
-
 export const MOCKED_ARB_ACCOUNT = {
   type: "Account",
   id: "arbitrum1",
@@ -69,3 +35,29 @@ export const MOCKED_ARB_ACCOUNT = {
   derivationMode: "",
   freshAddress: "s37rhmi7hsm3i73hsm7i3hm83m8h87hsm87h3s8h33",
 };
+
+export const ETH_ACCOUNT = genAccount("ethereum-1", {
+  currency: ethereumCurrency,
+});
+export const ETH_ACCOUNT_2 = genAccount("ethereum-2", {
+  currency: ethereumCurrency,
+});
+export const BTC_ACCOUNT = genAccount("bitcoin-1", {
+  currency: bitcoinCurrency,
+});
+export const ARB_ACCOUNT = genAccount("arbitrum-1", {
+  currency: arbitrumCurrency,
+  tokenIds: ["arbitrum/erc20/arbitrum"],
+});
+export const ETH_ACCOUNT_WITH_USDC = genAccount("ethereum-usdc", {
+  currency: ethereumCurrency,
+  tokenIds: ["ethereum/erc20/usdc"],
+});
+export const BASE_ACCOUNT = genAccount("base-1", {
+  currency: baseCurrency,
+  operationsSize: 100,
+});
+export const SCROLL_ACCOUNT = genAccount("scroll-1", {
+  currency: scrollCurrency,
+  operationsSize: 100,
+});

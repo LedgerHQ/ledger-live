@@ -106,25 +106,33 @@ export const useRightBalanceModule = ({
       };
     });
 
-    return networksWithBalanceData
-      .sort((a, b) => {
-        const parseFiatValue = (value?: string) => {
-          if (!value || discreet) return -1;
-          return parseFloat(value.replace(/[^0-9.-]+/g, "")) || -1;
-        };
+    const sortedNetworks = [...networksWithBalanceData].sort((a, b) => {
+      const parseFiatValue = (value?: string) => {
+        if (!value || discreet) return -1;
+        return parseFloat(value.replace(/[^0-9.-]+/g, "")) || -1;
+      };
 
-        const getFiatValue = (data: (typeof networksWithBalanceData)[0]) => {
-          const fiatValue =
-            data.balanceData && "fiatValue" in data.balanceData
-              ? String(data.balanceData.fiatValue)
-              : undefined;
+      const getFiatValue = (data: (typeof networksWithBalanceData)[0]) => {
+        const fiatValue =
+          data.balanceData && "fiatValue" in data.balanceData
+            ? String(data.balanceData.fiatValue)
+            : undefined;
 
-          return parseFiatValue(fiatValue);
-        };
+        return parseFiatValue(fiatValue);
+      };
 
-        return getFiatValue(b) - getFiatValue(a);
-      })
-      .map(({ balanceData, ...network }) => network);
+      const aHasBalance =
+        a.balanceData && ("balance" in a.balanceData || "fiatValue" in a.balanceData);
+      const bHasBalance =
+        b.balanceData && ("balance" in b.balanceData || "fiatValue" in b.balanceData);
+
+      if (aHasBalance && !bHasBalance) return -1;
+      if (!aHasBalance && bHasBalance) return 1;
+
+      return getFiatValue(b) - getFiatValue(a);
+    });
+
+    return sortedNetworks.map(({ balanceData, ...network }) => network);
   }, [
     networks,
     selectedAssetId,

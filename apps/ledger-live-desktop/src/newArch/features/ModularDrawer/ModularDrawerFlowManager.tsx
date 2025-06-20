@@ -20,6 +20,11 @@ import SkeletonList from "./components/SkeletonList";
 import { haveOneCommonProvider } from "./utils/haveOneCommonProvider";
 import { BackButtonArrow } from "./components/BackButton";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import {
+  buildProviderCoverageMap,
+  filterProvidersByIds,
+  extractProviderCurrencies,
+} from "./utils/currencyUtils";
 
 type Props = {
   currencies: CryptoOrTokenCurrency[];
@@ -63,7 +68,13 @@ const ModularDrawerFlowManager = ({
   const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(
     true,
   ) as LoadingBasedGroupedCurrencies;
-  const { currenciesByProvider, sortedCryptoCurrencies } = result;
+
+  const { currenciesByProvider, sortedCryptoCurrencies } = useMemo(() => {
+    return {
+      currenciesByProvider: result.currenciesByProvider ?? [],
+      sortedCryptoCurrencies: result.sortedCryptoCurrencies ?? [],
+    };
+  }, [result]);
 
   const isReadyToBeDisplayed = [LoadingStatus.Success].includes(providersLoadingStatus);
 
@@ -71,10 +82,14 @@ const ModularDrawerFlowManager = ({
     assetsToDisplay,
     filteredSortedCryptoCurrencies,
     currenciesIdsArray,
+    currencyIdsSet,
     setAssetsToDisplay,
   } = useAssetSelection(currencies, sortedCryptoCurrencies);
 
   const [networksToDisplay, setNetworksToDisplay] = useState<CryptoOrTokenCurrency[]>();
+  const [originalAssetsToDisplay, setOriginalAssetsToDisplay] = useState<CryptoOrTokenCurrency[]>(
+    [],
+  );
 
   const { currentStep, navigationDirection, goToStep } = useModularDrawerNavigation();
   const isSelectAccountFlow = !!onAccountSelected;
@@ -96,7 +111,7 @@ const ModularDrawerFlowManager = ({
     goBackToNetworkSelection,
   } = useModularDrawerFlowState({
     currenciesByProvider,
-    assetsToDisplay,
+    sortedCryptoCurrencies,
     currenciesIdsArray,
     isSelectAccountFlow,
     setNetworksToDisplay,
@@ -139,6 +154,25 @@ const ModularDrawerFlowManager = ({
     networksToDisplay,
   ]);
 
+  const filteredCurrenciesByProvider = useMemo(() => {
+    if (currencyIdsSet.size === 0) {
+      return currenciesByProvider;
+    }
+
+    const providerCoverageMap = buildProviderCoverageMap(currenciesByProvider);
+    const filtered = filterProvidersByIds(
+      currenciesByProvider,
+      currencyIdsSet,
+      providerCoverageMap,
+    );
+    const allProviderCurrencies = extractProviderCurrencies(filtered);
+
+    setAssetsToDisplay(allProviderCurrencies);
+    setOriginalAssetsToDisplay(allProviderCurrencies);
+
+    return filtered;
+  }, [currenciesByProvider, currencyIdsSet, setAssetsToDisplay]);
+
   const renderStepContent = (step: ModularDrawerStep) => {
     // TODO: We should find a better way to handle that. THe issue is that we always display AssetSelection screen
     // but in some cases we don't want to trigger analytics events as it may have been dismissed automatically depending on the flow.
@@ -150,14 +184,16 @@ const ModularDrawerFlowManager = ({
           return (
             <AssetSelection
               assetsToDisplay={assetsToDisplay}
+              originalAssetsToDisplay={originalAssetsToDisplay}
               sortedCryptoCurrencies={filteredSortedCryptoCurrencies}
               defaultSearchValue={searchedValue}
               assetsConfiguration={assetConfiguration}
-              flow={flow}
-              source={source}
+              currenciesByProvider={filteredCurrenciesByProvider}
               setAssetsToDisplay={setAssetsToDisplay}
               setSearchedValue={setSearchedValue}
               onAssetSelected={handleAssetSelected}
+              flow={flow}
+              source={source}
             />
           );
         }
@@ -167,7 +203,7 @@ const ModularDrawerFlowManager = ({
           <NetworkSelection
             networks={networksToDisplay}
             networksConfiguration={networkConfiguration}
-            currenciesByProvider={currenciesByProvider}
+            currenciesByProvider={filteredCurrenciesByProvider}
             flow={flow}
             source={source}
             onNetworkSelected={handleNetworkSelected}

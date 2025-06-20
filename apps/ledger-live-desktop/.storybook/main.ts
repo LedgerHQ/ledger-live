@@ -29,9 +29,18 @@ const config: StorybookConfig = {
     return mergeConfig(config, {
       define: {
         __DEV__: true,
+        global: "globalThis",
+        require: `(function(id) {
+          if (id === 'https') {
+            return { Agent: function() { return {}; } };
+          }
+          throw new Error('Module not found: ' + id);
+        })`,
       },
       resolve: {
+        ...config.resolve,
         alias: {
+          ...config.resolve?.alias,
           [`~/renderer/analytics/segment`]: resolve(
             "./src/renderer/analytics/__mocks__/segment.ts",
           ),
@@ -52,11 +61,13 @@ const config: StorybookConfig = {
           ),
 
           "~": resolve("./src"),
+          https: false,
         },
       },
       server: { port: 4400 },
       optimizeDeps: {
         include: ["buffer"],
+        exclude: ["@ledgerhq/live-network"],
       },
     });
   },
