@@ -173,6 +173,7 @@ export default function SendSelectRecipient({ route }: Props) {
   const [memoTagDrawerState, setMemoTagDrawerState] = useState<MemoTagDrawerState>(
     MemoTagDrawerState.INITIAL,
   );
+  const [focusMemoInput, setFocusMemoInput] = useState(false);
 
   const handleMemoTagDrawerClose = useCallback(
     () => setMemoTagDrawerState(MemoTagDrawerState.SHOWN),
@@ -343,10 +344,7 @@ export default function SendSelectRecipient({ route }: Props) {
                 <memoTag.Input
                   testID="memo-tag-input"
                   placeholder={t("send.summary.memo.title")}
-                  autoFocus={[MemoTagDrawerState.SHOWING, MemoTagDrawerState.SHOWN].includes(
-                    // Ensure the input is focused when the drawer is shown
-                    memoTagDrawerState,
-                  )}
+                  autoFocus={focusMemoInput}
                   onChange={memoTag.handleChange}
                 />
                 <Text mt={4} pl={2} color="alert">
@@ -394,6 +392,9 @@ export default function SendSelectRecipient({ route }: Props) {
       <MemoTagDrawer
         open={memoTagDrawerState === MemoTagDrawerState.SHOWING}
         onClose={handleMemoTagDrawerClose}
+        onModalHide={
+          () => requestAnimationFrame(() => setFocusMemoInput(true)) // Focus memo input after drawer finishes animating
+        }
         onNext={onPressContinue}
       />
 
