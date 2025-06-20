@@ -1,13 +1,17 @@
 import invariant from "invariant";
 import { log } from "@ledgerhq/logs";
 import {
-  listAppCandidates,
   createSpeculosDevice,
-  releaseSpeculosDevice,
   findLatestAppCandidate,
+  listAppCandidates,
+  releaseSpeculosDevice,
   SpeculosTransport,
 } from "../load/speculos";
-import { createSpeculosDeviceCI, releaseSpeculosDeviceCI } from "./speculosCI";
+import {
+  createSpeculosDeviceCI,
+  releaseSpeculosDeviceCI,
+  waitForSpeculosReady,
+} from "./speculosCI";
 import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -25,7 +29,7 @@ import { sendPolkadot } from "./families/polkadot";
 import { sendAlgorand } from "./families/algorand";
 import { sendTron } from "./families/tron";
 import { sendStellar } from "./families/stellar";
-import { sendCardano, delegateCardano } from "./families/cardano";
+import { delegateCardano, sendCardano } from "./families/cardano";
 import { sendXRP } from "./families/xrp";
 import { sendAptos } from "./families/aptos";
 import { delegateNear } from "./families/near";
@@ -37,6 +41,7 @@ import { delegateMultiversX } from "./families/multiversX";
 import { NFTTransaction, Transaction } from "./models/Transaction";
 import { Delegate } from "./models/Delegate";
 import { Swap } from "./models/Swap";
+import { getSpeculosAddress, runId } from "../../lib/e2e/speculosCI";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 
@@ -383,13 +388,12 @@ export async function startSpeculos(
     onSpeculosDeviceCreated,
   };
   try {
-    const device = isSpeculosRemote
+    return isSpeculosRemote
       ? await createSpeculosDeviceCI(deviceParams)
       : await createSpeculosDevice(deviceParams).then(device => {
           invariant(device.ports.apiPort, "[E2E] Speculos apiPort is not defined");
           return { id: device.id, port: device.ports.apiPort };
         });
-    return device;
   } catch (e: unknown) {
     console.error(e);
     log("engine", `test ${testName} failed with ${String(e)}`);
@@ -504,32 +508,36 @@ export function containsSubstringInEvent(targetString: string, events: string[])
 }
 
 export async function takeScreenshot(port?: number, retries = 3): Promise<Buffer | undefined> {
-  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
-  const speculosApiPort = port ?? getEnv("SPECULOS_API_PORT");
-  const url = `${speculosAddress}:${speculosApiPort}/screenshot`;
+  const isSpeculosReady = await waitForSpeculosReady(getSpeculosAddress(runId));
+  if (isSpeculosReady) {
+    const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
+    const speculosApiPort = port ?? getEnv("SPECULOS_API_PORT");
+    const url = `${speculosAddress}:${speculosApiPort}/screenshot`;
 
-  for (let attempt = 1; attempt <= retries; attempt++) {
-    try {
-      const response = await axios.get(url, { responseType: "arraybuffer" });
-      return response.data;
-    } catch (error: unknown) {
-      const err = error as AxiosError;
-      const status = err.response?.status;
-      const message = err.message;
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      try {
+        const response = await axios.get(url, { responseType: "arraybuffer" });
+        return response.data;
+      } catch (error: unknown) {
+        const err = error as AxiosError;
+        const status = err.response?.status;
+        const message = err.message;
 
-      console.error(
-        `⚠️ Failed to download screenshot (attempt ${attempt}/${retries}): ${status || "No Status"} - ${message}`,
-      );
+        console.error(
+          `⚠️ Failed to download screenshot (attempt ${attempt}/${retries}): ${status || "No Status"} - ${message}`,
+        );
 
-      if (attempt === retries) {
-        console.error(`❌ Error downloading speculos screenshot after ${attempt} attempts: ${url}`);
-        break;
+        if (attempt === retries) {
+          console.error(
+            `❌ Error downloading speculos screenshot after ${attempt} attempts: ${url}`,
+          );
+          break;
+        }
+
+        await new Promise(res => setTimeout(res, isSpeculosRemote ? 2000 : 500));
       }
-
-      await new Promise(res => setTimeout(res, isSpeculosRemote ? 2000 : 500));
     }
   }
-
   return undefined;
 }
 
