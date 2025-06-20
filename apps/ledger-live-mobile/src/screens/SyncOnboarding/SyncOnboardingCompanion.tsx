@@ -696,8 +696,11 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                 <BodyText>{t("syncOnboarding.seedStep.recoverSeed")}</BodyText>
               ) : seedPathStatus === "backup_charon" ? (
                 <Flex>
-                  {deviceOnboardingState?.charonStatus === CharonStatus.Rejected ? (
+                  {deviceOnboardingState?.charonStatus === CharonStatus.Choice ? (
                     <TrackScreen category="Set up device: Step 3 Charon Start" />
+                  ) : null}
+                  {deviceOnboardingState?.charonStatus === CharonStatus.Rejected ? (
+                    <TrackScreen category="Set up device: Step 3 Charon Backup Rejected" />
                   ) : null}
                   {deviceOnboardingState?.charonStatus === CharonStatus.Ready ? (
                     <TrackScreen category="Set up device: Step 3 Charon Backup Success" />
