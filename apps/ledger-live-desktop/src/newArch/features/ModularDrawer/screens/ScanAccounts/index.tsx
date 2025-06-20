@@ -53,10 +53,13 @@ const ScanAccounts = ({ currency, deviceId, onComplete }: Props) => {
       <Box mb={16} key={account.id}>
         <AccountItem
           account={accountFormatted}
-          checkbox={{
-            name: "checked",
-            isChecked: selectedIds.includes(accountFormatted.id),
-            onChange: () => {},
+          rightElement={{
+            type: "checkbox",
+            checkbox: {
+              name: "checked",
+              isChecked: selectedIds.includes(accountFormatted.id),
+              onChange: () => {},
+            },
           }}
           onClick={() => handleToggle(accountFormatted.id)}
           backgroundColor={colors.opacityDefault.c05}
