@@ -13,6 +13,8 @@ import {
 } from "./types";
 import AnimatedScreenWrapper from "./components/AnimatedScreenWrapper";
 import { BackButtonArrow } from "./components/BackButton";
+import { Account } from "@ledgerhq/types-live";
+import AccountsAdded from "./screens/AccountsAdded";
 
 const ANALYTICS_PROPERTY_FLOW = "Modular Add Account Flow";
 
@@ -28,6 +30,7 @@ const ModularDrawerAddAccountFlowManager = ({ currency, onConnect }: Props) => {
   );
 
   const [connectAppResult, setConnectAppResult] = useState<AppResult | null>(null);
+  const [selectedAccounts, setSelectedAccounts] = useState<Account[]>([]);
 
   const cryptoCurrency = currency.type === "CryptoCurrency" ? currency : currency.parentCurrency;
 
@@ -42,9 +45,7 @@ const ModularDrawerAddAccountFlowManager = ({ currency, onConnect }: Props) => {
         };
       }
       case "ACCOUNTS_ADDED": {
-        return () => {
-          setCurrentStep("SCAN_ACCOUNTS");
-        };
+        return undefined;
       }
       default: {
         return undefined;
@@ -74,15 +75,15 @@ const ModularDrawerAddAccountFlowManager = ({ currency, onConnect }: Props) => {
           <ScanAccounts
             currency={cryptoCurrency}
             deviceId={connectAppResult.device.deviceId}
-            onComplete={() => {
+            onComplete={accounts => {
+              setSelectedAccounts(accounts);
               setCurrentStep("ACCOUNTS_ADDED");
             }}
             analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW}
           />
         );
       case "ACCOUNTS_ADDED":
-        // return <AccountsAdded currency={currency} analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW} />;
-        return null;
+        return <AccountsAdded accounts={selectedAccounts} />;
       default:
         return null;
     }
