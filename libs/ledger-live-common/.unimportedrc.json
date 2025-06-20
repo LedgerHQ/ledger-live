@@ -367,6 +367,8 @@
     "src/market/utils/queryKeys.ts",
     "src/market/utils/timers.ts",
     "src/market/utils/types.ts",
+    "src/modularDrawer/enums.ts",
+    "src/modularDrawer/useModularDrawerVisibility.ts",
     "src/notifications/AnnouncementProvider/helpers.ts",
     "src/reactNativeSvg.d.ts",
     "src/rxjs/operators/throwIf.ts",

@@ -20,8 +20,11 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { WebviewAPI, WebviewState, WebviewTag } from "./types";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
-import { useModularDrawerVisibility } from "LLD/features/ModularDrawer/hooks/useModularDrawerVisibility";
-import { ModularDrawerLocation, openAssetAndAccountDrawer } from "LLD/features/ModularDrawer";
+import {
+  ModularDrawerLocation,
+  openAssetAndAccountDrawer,
+  useModularDrawerVisibility,
+} from "LLD/features/ModularDrawer";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { AccountLike } from "@ledgerhq/types-live";
 
@@ -299,7 +302,9 @@ export function useSelectAccount({
   manifest: LiveAppManifest;
   currentAccountHistDb?: CurrentAccountHistDB;
 }) {
-  const { isModularDrawerVisible } = useModularDrawerVisibility();
+  const { isModularDrawerVisible } = useModularDrawerVisibility({
+    modularDrawerFeatureFlagKey: "lldModularDrawer",
+  });
 
   const modularDrawerVisible = isModularDrawerVisible(ModularDrawerLocation.LIVE_APP);
 

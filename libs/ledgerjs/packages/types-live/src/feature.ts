@@ -226,7 +226,8 @@ export type Features = CurrencyFeatures & {
   llmSolanaNfts: DefaultFeature;
   largemoverLandingpage: DefaultFeature;
   llmMmkvMigration: Feature_LlmMmkvMigration;
-  lldModularDrawer: Feature_LldModularDrawer;
+  lldModularDrawer: Feature_ModularDrawer;
+  llmModularDrawer: Feature_ModularDrawer;
   llNftSupport: DefaultFeature;
   llNftEntryPoint: Feature_LlNftEntryPoint;
   ldmkConnectApp: DefaultFeature;
@@ -638,7 +639,7 @@ export type Feature_LlmMmkvMigration = Feature<{
   shouldRollback: boolean | null;
 }>;
 
-export type Feature_LldModularDrawer = Feature<{
+type Feature_ModularDrawer = Feature<{
   add_account: boolean;
   earn_flow: boolean;
   live_app: boolean;
