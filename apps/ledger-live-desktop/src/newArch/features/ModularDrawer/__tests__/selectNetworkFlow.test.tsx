@@ -167,4 +167,24 @@ describe("ModularDrawerFlowManager - Select Network Flow", () => {
     expect(screen.getByText(/injective/i)).toBeVisible();
     expect(screen.getByText(/ethereum/i)).toBeVisible();
   });
+
+  it("should display the empty state when there are no assets", async () => {
+    const { user } = render(
+      <ModularDrawerFlowManager
+        currencies={currencies}
+        onAssetSelected={mockOnAssetSelected}
+        source="sourceTest"
+        flow="flowTest"
+      />,
+    );
+
+    const input = screen.getByRole("textbox");
+    await user.type(input, "whatCurrencyAmI");
+
+    await waitFor(() => {
+      expect(screen.queryByText(/bitcoin/i)).not.toBeInTheDocument();
+    });
+
+    expect(screen.getByText(/no assets found/i)).toBeVisible();
+  });
 });

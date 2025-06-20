@@ -7096,6 +7096,7 @@
   },
   "modularAssetDrawer": {
     "searchPlaceholder": "Search",
+    "emptyAssetList": "No assets found",
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
     "selectAccount": "Select account",

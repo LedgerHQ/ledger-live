@@ -184,6 +184,7 @@ const ModularDrawerFlowManager = ({
           return (
             <AssetSelection
               assetsToDisplay={assetsToDisplay}
+              providersLoadingStatus={providersLoadingStatus}
               originalAssetsToDisplay={originalAssetsToDisplay}
               sortedCryptoCurrencies={filteredSortedCryptoCurrencies}
               defaultSearchValue={searchedValue}

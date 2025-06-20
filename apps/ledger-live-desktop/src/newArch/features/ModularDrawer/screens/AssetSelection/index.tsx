@@ -5,12 +5,13 @@ import SearchInputContainer from "./components/SearchInputContainer";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { MODULAR_DRAWER_PAGE_NAME } from "../../analytics/types";
 import TrackDrawerScreen from "../../analytics/TrackDrawerScreen";
-import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
+import { CurrenciesByProviderId, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 
 export type AssetSelectionStepProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
   originalAssetsToDisplay: CryptoOrTokenCurrency[];
   sortedCryptoCurrencies: CryptoOrTokenCurrency[];
+  providersLoadingStatus: LoadingStatus;
   defaultSearchValue?: string;
   assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
   flow: string;
@@ -26,6 +27,7 @@ const AssetSelection = ({
   originalAssetsToDisplay,
   sortedCryptoCurrencies,
   defaultSearchValue,
+  providersLoadingStatus,
   flow,
   source,
   assetsConfiguration,
@@ -66,6 +68,7 @@ const AssetSelection = ({
       />
       <AssetsList
         assetsToDisplay={assetsToDisplay}
+        providersLoadingStatus={providersLoadingStatus}
         source={source}
         flow={flow}
         assetsConfiguration={assetsConfiguration}
