@@ -893,6 +893,7 @@
     "title" : "买卖加密货币",
     "reset" : "重置流程",
     "verifyAddress" : "请确认显示的地址与您设备上显示的地址完全匹配",
+    "connectingTo" : "正在连接到 {{provider}}",
     "buy" : {
       "header" : "通过我们的合作伙伴买入加密货币",
       "title" : "选择一个供应方来买入加密货币",
@@ -1925,7 +1926,8 @@
       "payoutNetworkFees" : "支出费用",
       "payoutNetworkFeesTooltip" : "该数额不会在您的设备上显示",
       "acceptTerms" : "验证此交易，即表示我接受\n<0>{{provider}} 的使用条款</0>",
-      "exodusAcceptTerms" : "Exodus 依赖第三方来进行互换。\n验证此交易，即表示我接受 <0>Exodus 的使用条款</0>"
+      "exodusAcceptTerms" : "Exodus 依赖第三方来进行互换。\n验证此交易，即表示我接受 <0>Exodus 的使用条款</0>",
+      "changellyAcceptTerms" : "点击“使用 Changelly 互换”即表示您接受 Changelly 的<0>使用条款</0>及其\n<1>反洗钱 (AML)/客户身份核实 (KYC) 政策</1>。Changelly 可能会采用 AML/KYC 程序，\n这可能在少数情况下影响您完成交易。如果发生这种情况，\n您需要联系 Changelly <2>客服</2>。"
     },
     "swap2" : {
       "amountSent" : "发送数额",
@@ -6041,6 +6043,10 @@
       "title" : "出错了",
       "description" : "此接收账户不属于您已连接的设备。请更改并重试"
     },
+    "MissingSwapPayloadParamaters" : {
+      "title" : "出错了",
+      "description" : "所选的提供商缺少互换参数。请重试，如有疑问，请联系 Ledger 客服。"
+    },
     "WrongDeviceForAccountRefund" : {
       "title" : "出错了",
       "description" : "此发送账户不属于您已连接的设备。请更改并重试"
@@ -7059,7 +7065,9 @@
     "searchPlaceholder" : "搜索",
     "selectAsset" : "选择资产",
     "selectNetwork" : "选择网络",
-    "selectAccount" : "选择账户"
+    "selectAccount" : "选择账户",
+    "accountCount_one" : "{{count}} 个账户",
+    "accountCount_other" : "{{count}} 个账户"
   },
   "nftEntryPoint" : {
     "title" : "NFT（非同质化代币）",

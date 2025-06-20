@@ -4,6 +4,7 @@ import { dark, light, ModeColors, spacing, SpacingScale } from "./design-tokens"
 
 // Add temporarily missing and override incorrect tokens here
 const overrideOther = {
+  "radius-m": "12px", // missing from tokens
   "radius-s": "8px", // missing from tokens
   "radius-xs": "4px", // missing from tokens
   "border-width-default": "1px", // missing from tokens

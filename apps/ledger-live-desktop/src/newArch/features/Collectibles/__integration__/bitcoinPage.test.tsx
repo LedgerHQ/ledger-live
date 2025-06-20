@@ -18,7 +18,8 @@ jest.mock("~/renderer/linking", () => ({
   openURL: jest.fn(),
 }));
 
-describe("displayBitcoinPage", () => {
+// Feature will be removed as we don't have provider for it so useless tests
+describe.skip("displayBitcoinPage", () => {
   it("should display Bitcoin page with rare sats and inscriptions", async () => {
     const { user } = render(<BitcoinPage />, {
       initialState: {

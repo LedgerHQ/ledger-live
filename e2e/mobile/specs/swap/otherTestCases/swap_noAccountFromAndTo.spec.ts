@@ -5,6 +5,7 @@ const noAccountFromAndToTestConfig = {
   account2: Account.BSC_1,
   testTitle: "from Account not present to Account not present",
   tmsLinks: ["B2CQA-3355"],
+  tags: ["@NanoSP", "@LNS", "@NanoX"],
 };
 
 runSwapWithoutAccountTest(
@@ -13,5 +14,5 @@ runSwapWithoutAccountTest(
   noAccountFromAndToTestConfig.testTitle,
   noAccountFromAndToTestConfig.tmsLinks,
   "noAccountFromAndTo",
-  ["@NanoSP", "@LNS", "@NanoX"],
+  noAccountFromAndToTestConfig.tags,
 );

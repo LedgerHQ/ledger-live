@@ -2,8 +2,12 @@ import { fn, Mock } from "@storybook/test";
 import {
   arbitrumCurrency,
   arbitrumToken,
+  baseCurrency,
   bitcoinCurrency,
   ethereumCurrency,
+  injectiveCurrency,
+  scrollCurrency,
+  usdcToken,
 } from "./useSelectAssetFlow.mock";
 
 export const res = {
@@ -15,11 +19,20 @@ export const res = {
       },
       {
         providerId: "ethereum",
-        currenciesByNetwork: [ethereumCurrency, arbitrumCurrency],
+        currenciesByNetwork: [ethereumCurrency, arbitrumCurrency, baseCurrency, scrollCurrency],
       },
       { providerId: "arbitrum", currenciesByNetwork: [arbitrumToken] },
+      { providerId: "usd-coin", currenciesByNetwork: [usdcToken] },
+      { providerId: "injective-protocol", currenciesByNetwork: [injectiveCurrency] },
     ],
-    sortedCryptoCurrencies: [bitcoinCurrency, ethereumCurrency, arbitrumToken],
+    sortedCryptoCurrencies: [
+      bitcoinCurrency,
+      ethereumCurrency,
+      arbitrumToken,
+      baseCurrency,
+      scrollCurrency,
+      injectiveCurrency,
+    ],
   },
 };
 
