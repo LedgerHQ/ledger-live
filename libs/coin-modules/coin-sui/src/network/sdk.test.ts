@@ -125,9 +125,7 @@ beforeEach(() => {
 describe("SDK Functions", () => {
   test("getOperationType should return IN for incoming tx", () => {
     const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
-    expect(
-      getOperationType(address, mockTransaction.transaction?.data as TransactionBlockData),
-    ).toBe("IN");
+    expect(getOperationType(address, mockTransaction as SuiTransactionBlockResponse)).toBe("IN");
   });
 
   test("getOperationSenders should return sender address", () => {

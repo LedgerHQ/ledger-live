@@ -14,13 +14,17 @@ import { SuiSignedOperation, Transaction } from "../types";
 export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({ signedOperation }) => {
   const {
     operation,
-    rawData: { unsigned, serializedSignature },
+    signature,
+    rawData: { unsigned },
   } = signedOperation as unknown as SuiSignedOperation;
   const params = {
     transactionBlock: unsigned,
-    signature: serializedSignature,
+    signature,
     options: {
+      showInput: true,
+      showBalanceChanges: true,
       showEffects: true,
+      showEvents: true,
     },
   };
   const hash = await logicBroadcast(params);

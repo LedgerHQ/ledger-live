@@ -4,6 +4,8 @@ import {
   ExecuteTransactionBlockParams,
   TransactionEffects,
   QueryTransactionBlocksParams,
+  SuiTransaction,
+  SuiTransactionBlockKind,
 } from "@mysten/sui/client";
 import { TransactionBlockData, SuiTransactionBlockResponse, SuiCallArg } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
@@ -18,10 +20,12 @@ import type { CreateExtrinsicArg } from "../logic/craftTransaction";
 import { ensureAddressFormat } from "../utils";
 import coinConfig from "../config";
 import { SuiAsset } from "../api/types";
-
-type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
+import type { SuiValidator } from "../types";
+import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
+import { getCurrentSuiPreloadData } from "../bridge/preload";
 
 const apiMap: Record<string, SuiClient> = {};
+type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
 
 export const TRANSACTIONS_LIMIT_PER_QUERY = 50;
 export const TRANSACTIONS_LIMIT = 300;
@@ -30,11 +34,9 @@ const BLOCK_HEIGHT = 5; // sui has no block height metainfo, we use it simulate 
 /**
  * Connects to Sui Api
  */
-async function withApi<T>(execute: AsyncApiFunction<T>) {
+export async function withApi<T>(execute: AsyncApiFunction<T>) {
   const url = coinConfig.getCoinConfig().node.url;
-  if (!apiMap[url]) {
-    apiMap[url] = new SuiClient({ url });
-  }
+  apiMap[url] ??= new SuiClient({ url });
 
   const result = await execute(apiMap[url]);
   return result;
@@ -45,6 +47,34 @@ export const getBalanceCached = makeLRUCache(
   (params: { api: SuiClient; owner: string }) => params.owner,
   minutes(1),
 );
+
+function isStaking(block?: SuiTransactionBlockKind): block is {
+  inputs: SuiCallArg[];
+  kind: "ProgrammableTransaction";
+  transactions: SuiTransaction[];
+} {
+  if (!block) return false;
+  if (block.kind === "ProgrammableTransaction") {
+    const move = block.transactions.find(item => "MoveCall" in item) as any;
+    return move?.MoveCall.function === "request_add_stake";
+  }
+  return false;
+}
+
+function isUnstaking(block?: SuiTransactionBlockKind): block is {
+  inputs: SuiCallArg[];
+  kind: "ProgrammableTransaction";
+  transactions: SuiTransaction[];
+} {
+  if (!block) return false;
+  if (block.kind === "ProgrammableTransaction") {
+    const move = block.transactions.find(
+      item => "MoveCall" in item && item["MoveCall"].function === "request_withdraw_stake",
+    ) as any;
+    return Boolean(move);
+  }
+  return false;
+}
 
 /**
  * Get account balance
@@ -68,8 +98,20 @@ export function isSender(addr: string, transaction?: TransactionBlockData): bool
 /**
  * Map transaction to an Operation Type
  */
-export function getOperationType(addr: string, transaction?: TransactionBlockData): OperationType {
-  return isSender(addr, transaction) ? "OUT" : "IN";
+export function getOperationType(
+  addr: string,
+  { transaction }: SuiTransactionBlockResponse,
+): OperationType {
+  if (!isSender(addr, transaction?.data)) {
+    return "IN";
+  }
+  if (isStaking(transaction?.data.transaction)) {
+    return "DELEGATE";
+  }
+  if (isUnstaking(transaction?.data.transaction)) {
+    return "UNDELEGATE";
+  }
+  return "OUT";
 }
 
 /**
@@ -83,14 +125,17 @@ export const getOperationSenders = (transaction?: TransactionBlockData): string[
  * Extract recipients from transaction
  */
 export const getOperationRecipients = (transaction?: TransactionBlockData): string[] => {
-  if (transaction?.transaction.kind === "ProgrammableTransaction") {
-    if (!transaction?.transaction?.inputs) return [];
+  if (!transaction) return [];
+
+  if (transaction.transaction.kind === "ProgrammableTransaction") {
+    if (!transaction.transaction.inputs) return [];
     const recipients: string[] = [];
     transaction.transaction.inputs.forEach((input: SuiCallArg) => {
       if ("valueType" in input && input.valueType === "address") {
         recipients.push(String(input.value));
       }
     });
+    if (isUnstaking(transaction.transaction) || isStaking(transaction.transaction)) return [];
     return recipients;
   }
   return [];
@@ -105,6 +150,14 @@ export const getOperationAmount = (
 ): BigNumber => {
   let amount = new BigNumber(0);
   if (!transaction?.balanceChanges) return amount;
+  if (
+    isStaking(transaction.transaction?.data.transaction) ||
+    isUnstaking(transaction.transaction?.data.transaction)
+  ) {
+    const balanceChange = transaction.balanceChanges[0];
+    return amount.minus(balanceChange?.amount || 0);
+  }
+
   for (const balanceChange of transaction.balanceChanges) {
     if (
       typeof balanceChange.owner !== "string" &&
@@ -134,12 +187,50 @@ export const getOperationFee = (transaction: SuiTransactionBlockResponse): BigNu
   return computationCost.plus(storageCost).minus(storageRebate);
 };
 
+export const getOperationExtra = (digest: string): Promise<Record<string, string>> =>
+  withApi(async api => {
+    const response = await api.getTransactionBlock({
+      digest,
+      options: {
+        showInput: true,
+        showBalanceChanges: true,
+        showEffects: true,
+        showEvents: true,
+      },
+    });
+    const tx = response.transaction?.data?.transaction;
+    if (isStaking(tx)) {
+      const inputs = tx.inputs;
+      const pure = inputs.filter(x => x.type === "pure") as { valueType: string; value: string }[];
+      const amount = pure.find(x => x.valueType === "u64")?.value as string;
+      const address = pure.find(x => x.valueType === "address")?.value as string;
+      const name = getCurrentSuiPreloadData().validators.find(x => x.suiAddress === address)?.name;
+      return { amount, address, name: name || "" };
+    }
+
+    if (isUnstaking(response.transaction?.data?.transaction)) {
+      const { principal_amount: amount, validator_address: address } = response.events?.find(
+        e => e.type === "0x3::validator::UnstakingRequestEvent",
+      )?.parsedJson as Record<string, string>;
+      const name = getCurrentSuiPreloadData().validators.find(x => x.suiAddress === address)?.name;
+
+      return { amount, address, name: name || "" };
+    }
+
+    return {};
+  });
+
 /**
  * Extract date from transaction
  */
 export const getOperationDate = (transaction: SuiTransactionBlockResponse): Date => {
   return new Date(parseInt(transaction.timestampMs!));
 };
+
+export const getStakes = (owner: string) =>
+  withApi(async api => {
+    return api.getStakes({ owner });
+  });
 
 /**
  * Map the Sui history transaction to a Ledger Live Operation
@@ -149,8 +240,9 @@ export function transactionToOperation(
   address: string,
   transaction: SuiTransactionBlockResponse,
 ): Operation {
-  const type = getOperationType(address, transaction.transaction?.data);
+  const type = getOperationType(address, transaction);
   const hash = transaction.digest;
+
   return {
     id: encodeOperationId(accountId, hash, type),
     accountId,
@@ -169,7 +261,7 @@ export function transactionToOperation(
 }
 
 function transactionToOp(address: string, transaction: SuiTransactionBlockResponse): Op<SuiAsset> {
-  const type = getOperationType(address, transaction.transaction?.data);
+  const type = getOperationType(address, transaction);
   const hash = transaction.digest;
   return {
     id: hash,
@@ -244,12 +336,15 @@ export const paymentInfo = async (
 ) =>
   withApi(async api => {
     const tx = new Transaction();
+    const ONE_SUI = 100_000_000;
+    const _amount = amount.gt(0) ? amount.toNumber() : ONE_SUI;
     tx.setSender(ensureAddressFormat(sender));
-    const [coin] = tx.splitCoins(tx.gas, [amount.toNumber()]);
+    const [coin] = tx.splitCoins(tx.gas, [_amount]);
     tx.transferObjects([coin], recipient);
     const txb = await tx.build({ client: api });
     const dryRunTxResponse = await api.dryRunTransactionBlock({ transactionBlock: txb });
     const fees = getTotalGasUsed(dryRunTxResponse.effects);
+
     return {
       gasBudget: dryRunTxResponse.input.gasData.budget,
       totalGasUsed: fees,
@@ -261,9 +356,49 @@ export const createTransaction = async (address: string, transaction: CreateExtr
   withApi(async api => {
     const tx = new Transaction();
     tx.setSender(ensureAddressFormat(address));
+    const { mode, amount } = transaction;
+    switch (mode) {
+      case "delegate": {
+        const coins = tx.splitCoins(tx.gas, [amount.toNumber()]);
+        tx.moveCall({
+          target: "0x3::sui_system::request_add_stake",
+          arguments: [
+            tx.object(SUI_SYSTEM_STATE_OBJECT_ID),
+            coins,
+            tx.pure.address(transaction.recipient),
+          ],
+        });
+        break;
+      }
+      case "undelegate": {
+        if (transaction.useAllAmount) {
+          tx.moveCall({
+            target: "0x3::sui_system::request_withdraw_stake",
+            arguments: [tx.object(SUI_SYSTEM_STATE_OBJECT_ID), tx.object(transaction.stakedSuiId!)],
+          });
+        } else {
+          const res = tx.moveCall({
+            target: "0x3::staking_pool::split",
+            arguments: [tx.object(transaction.stakedSuiId!), tx.pure.u64(amount.toString())],
+          });
 
-    const [coin] = tx.splitCoins(tx.gas, [transaction.amount.toNumber()]);
-    tx.transferObjects([coin], transaction.recipient);
+          tx.moveCall({
+            target: "0x3::sui_system::request_withdraw_stake",
+            arguments: [tx.object(SUI_SYSTEM_STATE_OBJECT_ID), res],
+          });
+        }
+        break;
+      }
+      default: {
+        const coins = tx.splitCoins(tx.gas, [transaction.amount.toNumber()]);
+        const [coin] = coins;
+        tx.transferObjects([coin], transaction.recipient);
+      }
+    }
+
+    if (transaction.fees && transaction.fees.gt(0)) {
+      tx.setGasBudgetIfNotSet(BigInt(transaction.fees.toString() + "0")); // set max budget, doesn't mean that whole budget will be used for tx
+    }
 
     return tx.build({ client: api });
   });
@@ -341,8 +476,26 @@ export const queryTransactions = async (params: {
     options: {
       showInput: true,
       showBalanceChanges: true,
-      showEffects: true, // To get transaction status and gas fee details
+      showEffects: true,
+      showEvents: true,
     },
     limit: TRANSACTIONS_LIMIT_PER_QUERY,
   });
 };
+
+export const getValidators = (): Promise<SuiValidator[]> =>
+  withApi(async api => {
+    const [{ activeValidators }, { apys }] = await Promise.all([
+      api.getLatestSuiSystemState(),
+      api.getValidatorsApy(),
+    ]);
+    const hash = apys.reduce(
+      (acc, item) => {
+        acc[item.address] = item.apy;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
+
+    return activeValidators.map(item => ({ ...item, apy: hash[item.suiAddress] }));
+  });
