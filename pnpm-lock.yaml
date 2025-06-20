@@ -8837,8 +8837,8 @@ importers:
         specifier: ^0.4.0
         version: 0.4.3(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@ledgerhq/crypto-icons':
-        specifier: 1.1.0
-        version: 1.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(@babel/core@7.27.1)(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1))
+        specifier: 1.1.1
+        version: 1.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(@babel/core@7.27.1)(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1))
       '@ledgerhq/crypto-icons-ui':
         specifier: workspace:^
         version: file:libs/ui/packages/crypto-icons(@types/react@18.2.73)(react@18.3.1)(styled-components@5.3.11(@babel/core@7.27.1)(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1))(styled-system@5.1.5)
@@ -13702,8 +13702,8 @@ packages:
       '@types/react':
         optional: true
 
-  '@ledgerhq/crypto-icons@1.1.0':
-    resolution: {integrity: sha512-PFeSxLxVy6IinAO7rYiBgau/bBUg6fx/e19TF5B18Jmd0v5CrKCIN0AVNNiHgr5hhfN/BOLYpfLS4Yz+BkNFSw==}
+  '@ledgerhq/crypto-icons@1.1.1':
+    resolution: {integrity: sha512-Aw8Pp1dg53wx3vd2jdhBz7RHDk5p00j4hBfllg9bENqdF/iwyVyhNF2bN072yvJE5yIK6yeJLgF7ZK0tH0VWcQ==}
     peerDependencies:
       react: '>=18'
       react-dom: '>=18'
@@ -41159,7 +41159,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.2.73
 
-  '@ledgerhq/crypto-icons@1.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(@babel/core@7.27.1)(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1))':
+  '@ledgerhq/crypto-icons@1.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(@babel/core@7.27.1)(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1))':
     dependencies:
       '@ledgerhq/ui-shared': 0.2.2
       react: 18.3.1
@@ -46612,7 +46612,7 @@ snapshots:
       '@babel/core': 7.27.1
       '@babel/preset-env': 7.27.1(@babel/core@7.27.1)
       '@babel/types': 7.27.6
-      '@storybook/csf': 0.1.13
+      '@storybook/csf': 0.1.3
       '@storybook/csf-tools': 7.6.20
       '@storybook/node-logger': 7.6.20
       '@storybook/types': 7.6.20
@@ -46797,7 +46797,7 @@ snapshots:
       '@babel/parser': 7.27.5
       '@babel/traverse': 7.27.0
       '@babel/types': 7.27.6
-      '@storybook/csf': 0.1.13
+      '@storybook/csf': 0.1.3
       '@storybook/types': 7.6.20
       fs-extra: 11.2.0
       recast: 0.23.6
@@ -64439,7 +64439,7 @@ snapshots:
 
   react-dev-utils@12.0.1(eslint@8.57.0)(typescript@5.4.3)(webpack@5.94.0):
     dependencies:
-      '@babel/code-frame': 7.26.2
+      '@babel/code-frame': 7.27.1
       address: 1.2.2
       browserslist: 4.24.2
       chalk: 4.1.2
