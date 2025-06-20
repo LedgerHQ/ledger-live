@@ -32,9 +32,7 @@ const BLOCK_HEIGHT = 5; // sui has no block height metainfo, we use it simulate 
  */
 async function withApi<T>(execute: AsyncApiFunction<T>) {
   const url = coinConfig.getCoinConfig().node.url;
-  if (!apiMap[url]) {
-    apiMap[url] = new SuiClient({ url });
-  }
+  apiMap[url] ??= new SuiClient({ url });
 
   const result = await execute(apiMap[url]);
   return result;
@@ -338,7 +336,7 @@ export const loadOperations = async ({
       return operations;
     }
 
-    loadOperations({ ...params, cursor: nextCursor, operations, order });
+    await loadOperations({ ...params, cursor: nextCursor, operations, order });
   } catch (error: any) {
     if (error.type === "InvalidParams") {
       log("coin:sui", "(network/sdk): loadOperations failed with cursor, retrying without it", {
