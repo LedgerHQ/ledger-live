@@ -7,6 +7,7 @@ import {
 import { getAccount, getOperations } from "../network";
 import { SuiAccount } from "../types";
 import { type Operation } from "@ledgerhq/types-live";
+import { getStakes } from "../network/sdk";
 
 /**
  * Get the shape of the account including its operations and balance.
@@ -32,9 +33,10 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async info => {
   const { blockHeight, balance } = await getAccount(address);
 
   let operations: Operation[] = [];
+  const stakes = await getStakes(address);
 
   let syncHash = initialAccount?.syncHash ?? latestHash(oldOperations);
-  const newOperations = await getOperations(accountId, address, syncHash);
+  const newOperations = await getOperations(accountId, address);
   operations = mergeOps(oldOperations, newOperations);
   syncHash = latestHash(operations);
 
@@ -45,7 +47,9 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async info => {
     spendableBalance: balance,
     operationsCount: operations.length,
     blockHeight,
-    suiResources: {},
+    suiResources: {
+      stakes,
+    },
   };
   return { ...shape, operations };
 };
