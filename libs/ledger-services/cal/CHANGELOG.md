@@ -1,5 +1,35 @@
 # @ledgerhq/ledger-cal-service
 
+## 1.0.0
+
+### Major Changes
+
+- [#10225](https://github.com/LedgerHQ/ledger-live/pull/10225) [`e65c386`](https://github.com/LedgerHQ/ledger-live/commit/e65c386cfb3e53e3ee9f501dc08971a93eb5cf81) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - core(coin-solana,hw-app-solana): support SPL tokens dynamically
+
+### Minor Changes
+
+- [#10452](https://github.com/LedgerHQ/ledger-live/pull/10452) [`9ceee03`](https://github.com/LedgerHQ/ledger-live/commit/9ceee03c33c41bb035fe64f9303acd36872536b6) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add kyc warning for changelly on the drawer footer
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.0.11
+
+## 1.0.0-next.0
+
+### Major Changes
+
+- [#10225](https://github.com/LedgerHQ/ledger-live/pull/10225) [`e65c386`](https://github.com/LedgerHQ/ledger-live/commit/e65c386cfb3e53e3ee9f501dc08971a93eb5cf81) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - core(coin-solana,hw-app-solana): support SPL tokens dynamically
+
+### Minor Changes
+
+- [#10452](https://github.com/LedgerHQ/ledger-live/pull/10452) [`9ceee03`](https://github.com/LedgerHQ/ledger-live/commit/9ceee03c33c41bb035fe64f9303acd36872536b6) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add kyc warning for changelly on the drawer footer
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.0.11-next.0
+
 ## 0.5.1
 
 ### Patch Changes
