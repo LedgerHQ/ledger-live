@@ -33,6 +33,16 @@ export function createApi(config: StellarConfig): Api<StellarAsset, StellarMemo>
     lastBlock,
     listOperations: operations,
     validateIntent: getTransactionStatus,
+    getAccountInfo: async (address: string) => {
+      const balance = await getBalance(address);
+      return {
+        isNewAccount: false, //
+        balance: balance.map(b => b.value).join(","),
+        ownerCount: 0,
+        sequence: 0,
+        // Add other account details as needed
+      };
+    },
   };
 }
 
