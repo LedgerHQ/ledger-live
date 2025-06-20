@@ -893,6 +893,7 @@
     "title": "Buy and sell crypto",
     "reset": "Reset flow",
     "verifyAddress": "Please confirm the address displayed exactly matches the one shown on your device",
+    "connectingTo": "Connecting you to {{provider}}",
     "buy": {
       "header": "Buy crypto with our partners",
       "title": "Choose a provider to buy crypto",
@@ -1925,7 +1926,8 @@
       "payoutNetworkFees": "Payout fees",
       "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
       "acceptTerms": "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>",
-      "exodusAcceptTerms": "Exodus relies on third parties to conduct swaps.\nBy validating this transaction, I accept <0>Exodus's terms of use</0>"
+      "exodusAcceptTerms": "Exodus relies on third parties to conduct swaps.\nBy validating this transaction, I accept <0>Exodus's terms of use</0>",
+      "changellyAcceptTerms": "By clicking “Swap with Changelly” you accept Changelly’s <0>Terms of Use</0> and\nits <1>AML/KYC policy</1> Changelly may apply AML/KYC procedures which\ncan, in limited cases, impact the completion of your transaction. Should\nthat happen, you must contact Changelly’s <2>customer support.</2>"
     },
     "swap2": {
       "amountSent": "Amount to send",
@@ -6064,6 +6066,10 @@
       "title": "Something went wrong",
       "description": "This receiving account does not belong to the device you have connected. Please change and retry"
     },
+    "MissingSwapPayloadParamaters": {
+      "title": "Something went wrong",
+      "description": "Missing swap parameter from selected partner. Please retry or contact Ledger Support if in doubt"
+    },
     "WrongDeviceForAccountRefund": {
       "title": "Something went wrong",
       "description": "This sending account does not belong to the device you have connected. Please change and retry"
@@ -7082,7 +7088,9 @@
     "searchPlaceholder": "Search",
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
-    "selectAccount": "Select account"
+    "selectAccount": "Select account",
+    "accountCount_one": "{{count}} account",
+    "accountCount_other": "{{count}} accounts"
   },
   "nftEntryPoint": {
     "title": "NFT (Non Fungible Tokens)",

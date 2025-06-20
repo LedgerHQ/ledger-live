@@ -231,6 +231,7 @@ export default function Content({
             </LText>
           ) : isConfirmed ? (
             <LText
+              testID="operation-details-text-confirmed"
               semiBold
               style={[
                 styles.confirmation,

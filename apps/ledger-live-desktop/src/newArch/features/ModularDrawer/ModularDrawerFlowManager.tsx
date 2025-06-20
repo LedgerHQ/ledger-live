@@ -10,18 +10,16 @@ import { MODULAR_DRAWER_STEP, ModularDrawerStep } from "./types";
 import AssetSelection from "./screens/AssetSelection";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook";
 import { NetworkSelection } from "./screens/NetworkSelection";
-import { Header } from "./components/Header";
+import { Title } from "./components/Title";
 import { AccountSelection } from "./screens/AccountSelection";
-import {
-  CurrenciesByProviderId,
-  LoadingBasedGroupedCurrencies,
-  LoadingStatus,
-} from "@ledgerhq/live-common/deposit/type";
+import { LoadingBasedGroupedCurrencies, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { useModularDrawerNavigation } from "./hooks/useModularDrawerNavigation";
 import { useAssetSelection } from "./hooks/useAssetSelection";
 import { useModularDrawerFlowState } from "./hooks/useModularDrawerFlowState";
 import SkeletonList from "./components/SkeletonList";
 import { haveOneCommonProvider } from "./utils/haveOneCommonProvider";
+import { BackButtonArrow } from "./components/BackButton";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   currencies: CryptoOrTokenCurrency[];
@@ -33,6 +31,17 @@ type Props = {
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
 };
 
+const assetConfigurationDisabled: EnhancedModularDrawerConfiguration["assets"] = {
+  rightElement: "undefined",
+  leftElement: "undefined",
+  filter: "undefined",
+};
+
+const networkConfigurationDisabled: EnhancedModularDrawerConfiguration["networks"] = {
+  rightElement: "undefined",
+  leftElement: "undefined",
+};
+
 const ModularDrawerFlowManager = ({
   currencies,
   drawerConfiguration,
@@ -42,7 +51,14 @@ const ModularDrawerFlowManager = ({
   onAssetSelected,
   onAccountSelected,
 }: Props) => {
-  const { assets: assetConfiguration, networks: networkConfiguration } = drawerConfiguration ?? {};
+  const featureModularDrawer = useFeature("lldModularDrawer");
+  const modularizationEnabled = featureModularDrawer?.params?.enableModularization ?? false;
+  const assetConfiguration = modularizationEnabled
+    ? drawerConfiguration?.assets
+    : assetConfigurationDisabled;
+  const networkConfiguration = modularizationEnabled
+    ? drawerConfiguration?.networks
+    : networkConfigurationDisabled;
 
   const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(
     true,
@@ -91,16 +107,6 @@ const ModularDrawerFlowManager = ({
     hasOneCurrency,
   });
 
-  const assetTypes = useMemo(
-    () =>
-      currenciesByProvider.map((provider: CurrenciesByProviderId) => ({
-        id: provider.providerId,
-        name: provider.providerId,
-        ticker: provider.providerId,
-      })),
-    [currenciesByProvider],
-  );
-
   const handleBack = useMemo(() => {
     const canGoBackToAsset = !hasOneCurrency;
     const canGoBackToNetwork = !hasOneNetwork && networksToDisplay && networksToDisplay.length > 1;
@@ -143,7 +149,6 @@ const ModularDrawerFlowManager = ({
         if (!hasOneCurrency) {
           return (
             <AssetSelection
-              assetTypes={assetTypes}
               assetsToDisplay={assetsToDisplay}
               sortedCryptoCurrencies={filteredSortedCryptoCurrencies}
               defaultSearchValue={searchedValue}
@@ -162,9 +167,11 @@ const ModularDrawerFlowManager = ({
           <NetworkSelection
             networks={networksToDisplay}
             networksConfiguration={networkConfiguration}
+            currenciesByProvider={currenciesByProvider}
             flow={flow}
             source={source}
             onNetworkSelected={handleNetworkSelected}
+            selectedAssetId={selectedAsset?.id}
           />
         );
       case MODULAR_DRAWER_STEP.ACCOUNT_SELECTION:
@@ -187,14 +194,21 @@ const ModularDrawerFlowManager = ({
 
   return (
     <>
-      <Header step={currentStep} onBackClick={handleBack} />
-      <AnimatePresence mode="sync">
+      {handleBack && <BackButtonArrow onBackClick={handleBack} />}
+      <AnimatePresence initial={false} custom={navigationDirection} mode="sync">
         <AnimatedScreenWrapper
           key={currentStep}
           screenKey={currentStep}
           direction={navigationDirection}
         >
-          {isReadyToBeDisplayed ? renderStepContent(currentStep) : <SkeletonList />}
+          {isReadyToBeDisplayed ? (
+            <>
+              <Title step={currentStep} />
+              {renderStepContent(currentStep)}
+            </>
+          ) : (
+            <SkeletonList />
+          )}
         </AnimatedScreenWrapper>
       </AnimatePresence>
     </>

@@ -61,6 +61,10 @@ type VirtualListProps<T> = {
    * When set to true, the list will scroll to the top
    */
   scrollToTop?: boolean;
+  /**
+   * React component or node to display at the bottom of the list, after all items.
+   */
+  bottomComponent?: React.ReactNode;
 };
 
 const DefaultLoadingComponent = () => (
@@ -84,6 +88,7 @@ export const VirtualList = <T,>({
   onVisibleItemsScrollEnd,
   renderItem,
   scrollToTop = false,
+  bottomComponent,
 }: VirtualListProps<T>) => {
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -186,6 +191,18 @@ export const VirtualList = <T,>({
             {renderItem(items[virtualRow.index])}
           </div>
         ))}
+        {bottomComponent && (
+          <div
+            style={{
+              position: "absolute",
+              top: `${rowVirtualizer.getTotalSize()}px`,
+              left: 0,
+              width: "100%",
+            }}
+          >
+            {bottomComponent}
+          </div>
+        )}
       </div>
       {isLoading && (showCustomLoadingComponent ? LoadingComponent : <DefaultLoadingComponent />)}
     </div>

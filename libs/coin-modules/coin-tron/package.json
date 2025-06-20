@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tron",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "description": "Ledger Tron Coin integration",
   "keywords": [
     "Ledger",
@@ -104,7 +104,7 @@
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "rxjs": "^7.8.1",
-    "tronweb": "^5.3.2"
+    "tronweb": "5.3.2"
   },
   "devDependencies": {
     "@agrozyme/types-tronweb": "^5.3.2",

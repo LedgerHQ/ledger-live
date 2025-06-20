@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "34.37.0",
+  "version": "34.38.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -228,7 +228,7 @@
     "fuse.js": "^6.6.2",
     "invariant": "^2.2.2",
     "isomorphic-ws": "^4.0.1",
-    "jotai": "^2.10.1",
+    "jotai": "2.12.4",
     "json-rpc-2.0": "^0.2.19",
     "lodash": "^4.17.21",
     "minimatch": "^5.1.0",
@@ -264,7 +264,7 @@
     "@tanstack/react-query": "^5.28.9",
     "@testing-library/react": "^14.1.2",
     "@types/bs58": "^4.0.1",
-    "@types/cbor": "^6.0.0",
+    "@types/cbor": "6.0.0",
     "@types/invariant": "^2.2.36",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.179",
@@ -290,8 +290,8 @@
     "nock": "^13.0.5",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "react-native": "0.74.5",
-    "react-native-svg": "13.14.0",
+    "react-native": "0.77.2",
+    "react-native-svg": "15.11.2",
     "react-redux": "^7.2.9",
     "react-test-renderer": "^18.2.0",
     "redux-actions": "2.6.5",

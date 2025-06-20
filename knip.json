@@ -41,13 +41,10 @@
         "src/preloader/index.ts",
         "src/renderer/webworkers/workers/*.ts",
         "src/webviewPreloader/dappPreloader.ts",
-        "src/webviewPreloader/index.ts",
-        "src/newArch/features/ModularDrawer/components/SelectAsset.tsx"
+        "src/webviewPreloader/index.ts"
       ],
       "ignore": [
         "src/newArch/features/Collectibles/**",
-        "**/types.*",
-        "src/newArch/features/ModularDrawer/components/SelectAccount.tsx",
         ".storybook/stub.ts"
       ],
       "ignoreBinaries": ["eslint", "knip", "prettier", "zx", "lint"],
@@ -65,6 +62,7 @@
         "@react-native-masked-view/masked-view",
         "@react-native/gradle-plugin",
         "@react-native/metro-config",
+        "@react-native/assets-registry",
         "asyncstorage-down",
         "buffer",
         "expo-crypto",
@@ -99,6 +97,9 @@
     "./libs/live-countervalues-react": {
       "entry": ["src/index.tsx", "src/portfolio.tsx"]
     },
+    "./libs/live-dmk-mobile": {
+      "entry": ["src/index.ts"]
+    },
     "./libs/live-wallet": {
       "entry": [
         "src/walletsync/index.ts",
@@ -118,6 +119,21 @@
       "entry": ["src/index.ts"],
       "ignoreDependencies": ["@ledgerhq/logs", "@ledgerhq/live-env"]
     },
-    "./libs/promise": { "entry": ["src/index.ts"] }
+    "./libs/promise": { "entry": ["src/index.ts"] },
+    "./libs/ui/packages/native": {
+      "entry": [
+        "src/assets/cryptoIcons.ts",
+        "src/assets/icons.ts",
+        "src/index.ts",
+        "src/styles/index.ts",
+        "src/styles/InvertTheme.tsx",
+        "src/icons/Close.tsx",
+        "src/icons/Info.tsx",
+        "storybook/stories/index.ts",
+        "App.tsx",
+        "index.js"
+      ],
+      "ignore": [".storybook*/*", "storybook/constants/*"]
+    }
   }
 }

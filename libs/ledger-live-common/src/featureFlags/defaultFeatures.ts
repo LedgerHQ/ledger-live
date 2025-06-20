@@ -396,6 +396,13 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  buySellLoader: {
+    enabled: false,
+    params: {
+      durationMs: 0,
+    },
+  },
+
   buySellShortcut: {
     enabled: false,
   },
@@ -420,6 +427,10 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       manifest_id: "swap-live-app-demo-3",
     },
+  },
+
+  ptxSwapLiveAppKycWarning: {
+    enabled: false,
   },
 
   llmAnalyticsOptInPrompt: {
@@ -605,6 +616,7 @@ export const DEFAULT_FEATURES: Features = {
       live_app: true,
       receive_flow: true,
       send_flow: true,
+      enableModularization: false,
     },
   },
   llNftSupport: DEFAULT_FEATURE,

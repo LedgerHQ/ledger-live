@@ -58,7 +58,7 @@ async function githubApiRequest<T = unknown>({
   }
 }
 
-function waitForSpeculosReady(url: string, { interval = 2000, timeout = 120_000 } = {}) {
+function waitForSpeculosReady(url: string, { interval = 2000, timeout = 300_000 } = {}) {
   return new Promise((resolve, reject) => {
     const startTime = Date.now();
 

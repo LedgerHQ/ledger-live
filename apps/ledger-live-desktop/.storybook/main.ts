@@ -56,6 +56,9 @@ const config: StorybookConfig = {
         },
       },
       server: { port: 4400 },
+      optimizeDeps: {
+        include: ["buffer"],
+      },
     });
   },
 };

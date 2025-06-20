@@ -94,6 +94,12 @@ describe("useSearch", () => {
       source: "test",
       page: "Asset Selection",
       flow: "testing",
+      asset_component_features: {
+        apy: false,
+        balance: false,
+        filter: false,
+        market_trend: false,
+      },
     });
   });
 
@@ -130,6 +136,12 @@ describe("useSearch", () => {
       searched_value: "ET",
       flow: "testing",
       source: "test",
+      asset_component_features: {
+        apy: false,
+        balance: false,
+        filter: false,
+        market_trend: false,
+      },
     });
   });
 });

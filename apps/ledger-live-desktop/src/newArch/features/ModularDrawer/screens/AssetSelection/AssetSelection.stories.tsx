@@ -5,12 +5,12 @@ import {
   arbitrumCurrency,
   bitcoinCurrency,
   ethereumCurrency,
-  bitcoinAssetType,
-  ethereumAssetType,
-  arbitrumAssetType,
   mockAssetsConfiguration,
 } from "../../__mocks__/useSelectAssetFlow.mock";
 import { fn } from "@storybook/test";
+import { Provider } from "react-redux";
+import { legacy_createStore as createStore } from "redux";
+import { MOCKED_ARB_ACCOUNT } from "../../__mocks__/accounts.mock";
 
 const assetsToDisplay = [ethereumCurrency, arbitrumCurrency, bitcoinCurrency];
 const sortedCryptoCurrencies = [bitcoinCurrency, ethereumCurrency, arbitrumCurrency];
@@ -18,23 +18,55 @@ const onAssetSelected = fn();
 const setAssetsToDisplay = fn();
 const setSearchedValue = fn();
 
+const defaultStore = {
+  accounts: [MOCKED_ARB_ACCOUNT],
+  wallet: {
+    accountNames: new Map([
+      ["bitcoin1", "bitcoin-account-1"],
+      ["ethereum1", "ethereum-account-1"],
+      ["arbitrum1", "arbitrum-account-1"],
+    ]),
+  },
+  discreet: false,
+  locale: "en-US",
+  currency: {
+    type: "FiatCurrency",
+    ticker: "USD",
+    name: "US Dollar",
+    symbol: "$",
+    units: [
+      {
+        code: "$",
+        name: "US Dollar",
+        magnitude: 2,
+        showAllDigits: true,
+        prefixCode: true,
+      },
+    ],
+  },
+  application: { debug: {} },
+};
+
+const store = createStore(() => defaultStore);
+
 const meta: Meta<typeof AssetSelection> = {
   title: "ModularDrawer/AssetSelection",
   component: AssetSelection,
   args: {
-    assetTypes: [bitcoinAssetType, ethereumAssetType, arbitrumAssetType],
     assetsToDisplay,
     sortedCryptoCurrencies,
-    assetsConfiguration: mockAssetsConfiguration,
+    assetsConfiguration: {},
     setAssetsToDisplay: setAssetsToDisplay,
     onAssetSelected: onAssetSelected,
     setSearchedValue: setSearchedValue,
   },
   decorators: [
     Story => (
-      <div style={{ width: "100%", height: "100%" }}>
-        <Story />
-      </div>
+      <Provider store={store}>
+        <div style={{ width: "100%", height: "100%" }}>
+          <Story />
+        </div>
+      </Provider>
     ),
   ],
 };
@@ -49,6 +81,38 @@ export const WithDefaultSearchValue: Story = {
   args: {
     defaultSearchValue: "eth",
   },
+};
+
+export const WithBalance: Story = {
+  args: {
+    assetsConfiguration: {
+      ...mockAssetsConfiguration,
+    },
+  },
+};
+
+export const WithDiscreetModeEnabled: Story = {
+  args: {
+    assetsConfiguration: {
+      ...mockAssetsConfiguration,
+    },
+  },
+  decorators: [
+    Story => {
+      const discreetModeStore = createStore(() => ({
+        ...defaultStore,
+        discreet: true,
+      }));
+
+      return (
+        <Provider store={discreetModeStore}>
+          <div style={{ width: "100%", height: "100%" }}>
+            <Story />
+          </div>
+        </Provider>
+      );
+    },
+  ],
 };
 
 export const EmptyAssets: Story = {

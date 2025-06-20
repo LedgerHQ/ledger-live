@@ -151,6 +151,7 @@ export type Features = CurrencyFeatures & {
   buyDeviceFromLive: Feature_BuyDeviceFromLive;
   mockFeature: Feature_MockFeature;
   buySellUi: Feature_BuySellUiManifest;
+  buySellLoader: Feature_BuySellLoader;
   buySellShortcut: DefaultFeature;
   referralProgramDesktopSidebar: Feature_ReferralProgramDesktopSidebar;
   disableNftSend: Feature_DisableNftSend;
@@ -178,6 +179,7 @@ export type Features = CurrencyFeatures & {
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
   ptxCard: DefaultFeature;
   ptxSwapLiveAppMobile: Feature_PtxSwapLiveApp;
+  ptxSwapLiveAppKycWarning: DefaultFeature;
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
   ptxEarnLiveApp: Feature_PtxEarnLiveApp;
   ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
@@ -566,6 +568,10 @@ export type Feature_BuySellUiManifest = Feature<{
   manifestId: string; // id of the app to use for the Buy/Sell UI, e.g. "buy-sell-ui"
 }>;
 
+export type Feature_BuySellLoader = Feature<{
+  durationMs: number;
+}>;
+
 export type Feature_LldWalletSync = Feature<{
   environment: WalletSyncEnvironment;
   watchConfig: WalletSyncWatchConfig;
@@ -614,6 +620,7 @@ export type Feature_LldModularDrawer = Feature<{
   live_app: boolean;
   receive_flow: boolean;
   send_flow: boolean;
+  enableModularization: boolean;
 }>;
 
 export type Feature_CounterValue = DefaultFeature;
