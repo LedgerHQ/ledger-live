@@ -206,7 +206,11 @@ describe("Testing craftTransaction function", () => {
       sender,
       recipient,
       amount,
-      memo: "this is a test",
+      memo: {
+        type: "string",
+        kind: "memo",
+        value: "this is a test",
+      },
     });
 
     const decodeResult = await decodeTransaction(result);
@@ -236,7 +240,11 @@ describe("Testing craftTransaction function", () => {
         sender,
         recipient,
         amount,
-        memo: "test",
+        memo: {
+          type: "string",
+          kind: "memo",
+          value: "test",
+        },
       }),
     ).rejects.toThrow("Memo cannot be used with smart contract transactions");
   });
