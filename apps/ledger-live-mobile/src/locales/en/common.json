@@ -7455,5 +7455,10 @@
     "title": "Location unavailable",
     "description": "Ledger wallet is not available in this location.",
     "learnMore": "Learn more"
+  },
+  "versionBlocking": {
+    "title": "App version outdated",
+    "description": "Please update your Ledger Live app to the latest version.",
+    "openStore": "Update app"
   }
 }
