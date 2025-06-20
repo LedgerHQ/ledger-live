@@ -1,4 +1,4 @@
-import { ComponentStory } from "@storybook/react-native";
+import { StoryFn } from "@storybook/react";
 import React from "react";
 import Text from "../../../src/components/Text";
 import { textVariants } from "../../../src/styles/theme";
@@ -22,7 +22,7 @@ export default {
   },
 };
 
-export const Default: ComponentStory<typeof Text> = (args: typeof DefaultArgs) => (
+export const Default: StoryFn<typeof Text> = (args: typeof DefaultArgs) => (
   <Text {...args}>{args.label}</Text>
 );
 const DefaultArgs = {

@@ -2,7 +2,7 @@ import React from "react";
 import { action } from "@storybook/addon-actions";
 import Button, { PromisableButton } from "../../../../src/components/cta/Button";
 import Info from "../../../../src/icons/Info";
-import { ComponentMeta, ComponentStory } from "@storybook/react-native";
+import { Meta, StoryFn } from "@storybook/react";
 import { IconType } from "src/components/Icon/type";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -28,9 +28,9 @@ export default {
       control: { type: "select" },
     },
   },
-} as ComponentMeta<typeof Button>;
+} as Meta<typeof Button>;
 
-export const Regular: ComponentStory<typeof Button> = (args: typeof RegularArgs) => (
+export const Regular: StoryFn<typeof Button> = (args: typeof RegularArgs) => (
   <Button
     {...args}
     Icon={args.Icon === "Info" ? (Info as IconType) : undefined}
@@ -53,7 +53,7 @@ const RegularArgs = {
 };
 Regular.args = RegularArgs;
 
-export const Promisable: ComponentStory<typeof Button> = (args: any) => (
+export const Promisable: StoryFn<typeof Button> = (args: any) => (
   <PromisableButton
     {...args}
     Icon={args.Icon === "Info" ? Info : undefined}

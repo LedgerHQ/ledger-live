@@ -3,7 +3,7 @@ import { FlatList } from "react-native";
 import styled from "styled-components/native";
 import * as Icons from "@ledgerhq/icons-ui/native";
 import { useTheme } from "styled-components/native";
-import { ComponentStory } from "@storybook/react-native";
+import { StoryFn } from "@storybook/react";
 import Text from "../../../src/components/Text";
 
 export default {
@@ -74,7 +74,7 @@ export interface IconGridProps {
   color?: string;
 }
 
-export const IconGridStory: ComponentStory<IconGridProps> = (args: IconGridProps) => (
+export const IconGridStory: StoryFn<IconGridProps> = (args: IconGridProps) => (
   <IconGrid {...args} />
 );
 

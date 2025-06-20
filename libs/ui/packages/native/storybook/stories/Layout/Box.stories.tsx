@@ -1,5 +1,5 @@
 import React from "react";
-import { ComponentStory } from "@storybook/react-native";
+import { StoryFn } from "@storybook/react";
 import Box from "../../../src/components/Layout/Box";
 import Text from "../../../src/components/Text";
 
@@ -8,7 +8,7 @@ export default {
   component: Box,
 };
 
-export const BoxStory: ComponentStory<typeof Box> = (args: typeof BoxStoryArgs) => {
+export const BoxStory: StoryFn<typeof Box> = (args: typeof BoxStoryArgs) => {
   const { p, m, background } = args;
 
   return (
@@ -30,7 +30,7 @@ const BoxStoryArgs = {
 };
 BoxStory.args = BoxStoryArgs;
 
-export const BoxStoryTwo: ComponentStory<typeof Box> = (args: typeof BoxStoryTwoArgs) => {
+export const BoxStoryTwo: StoryFn<typeof Box> = (args: typeof BoxStoryTwoArgs) => {
   const { p, m, background } = args;
 
   return (

@@ -1,16 +1,14 @@
 import React from "react";
 import { action } from "@storybook/addon-actions";
 import { Text, ProgressLoader } from "../../../src/components";
-import { ComponentStory } from "@storybook/react-native";
+import { StoryFn } from "@storybook/react";
 
 export default {
   title: "Loader/ProgressLoader",
   component: ProgressLoader,
 };
 
-export const LoaderSample: ComponentStory<typeof ProgressLoader> = (
-  args: typeof LoaderSampleArgs,
-) => {
+export const LoaderSample: StoryFn<typeof ProgressLoader> = (args: typeof LoaderSampleArgs) => {
   return (
     <ProgressLoader
       progress={args.progress}
