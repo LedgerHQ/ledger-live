@@ -1085,6 +1085,10 @@
     },
     "UserUtxoAddressSanctionedError": {
       "title": "This transaction involves a sanctioned UTXO address and cannot be processed.\n-- {{sanctionedAddresses}}\n<link0>Learn more</link0>"
+    },
+    "AddressesSanctionedError": {
+      "title": "Keep you safe",
+      "description": "This transaction involves a sanctioned wallet address and cannot be processed.\n-- {{addresses}}"
     }
   },
   "crash": {
