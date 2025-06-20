@@ -20,7 +20,7 @@ import StepWarning, { StepWarningFooter } from "./steps/StepWarning";
 import StepReceiveFunds from "./steps/StepReceiveFunds";
 import StepReceiveStakingFlow, { StepReceiveStakingFooter } from "./steps/StepReceiveStakingFlow";
 import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
-import { UserAddressSanctionedOnReceiveError } from "@ledgerhq/coin-framework/sanction/errors";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 import { getReceiveFlowError } from "@ledgerhq/live-common/account/index";
 
 async function checkAddressBlacklisted(account: AccountLike | null | undefined): Promise<boolean> {
@@ -155,7 +155,7 @@ const Body = ({
 
       const addressBlacklisted = await checkAddressBlacklisted(account);
       if (addressBlacklisted && account.type === "Account") {
-        setAccountError(new UserAddressSanctionedOnReceiveError(account.freshAddress));
+        setAccountError(new AddressesSanctionedError(account.freshAddress));
       } else {
         const error = account ? getReceiveFlowError(account, parentAccount) : undefined;
         setAccountError(error);
@@ -222,7 +222,7 @@ const Body = ({
     async function computeAccountError() {
       const addressBlacklisted = await checkAddressBlacklisted(account);
       if (addressBlacklisted && account.type === "Account") {
-        setAccountError(new UserAddressSanctionedOnReceiveError(account.freshAddress));
+        setAccountError(new AddressesSanctionedError(account.freshAddress));
       } else {
         const error = account ? getReceiveFlowError(account, parentAccount) : undefined;
         setAccountError(error);
