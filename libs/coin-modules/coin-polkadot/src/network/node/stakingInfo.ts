@@ -1,3 +1,4 @@
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { IUnlocking, SidecarStakingInfo } from "../types";
 import getApiPromise from "./apiPromise";
 
@@ -13,10 +14,12 @@ import "@polkadot/api-augment";
  *
  * @returns {SidecarStakingInfo}
  */
-export const fetchStakingInfo = async (addr: string): Promise<SidecarStakingInfo> => {
-  const api = await getApiPromise();
+export const fetchStakingInfo = async (
+  addr: string,
+  currency?: CryptoCurrency,
+): Promise<SidecarStakingInfo> => {
+  const api = await getApiPromise(currency);
   const hash = await api.rpc.chain.getFinalizedHead();
-
   const historicApi = await api.at(hash);
 
   const controllerOption = await historicApi.query.staking.bonded(addr); // Option<AccountId> representing the controller
