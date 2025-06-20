@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.36.0-nightly.1
+
+### Minor Changes
+
+- [#10590](https://github.com/LedgerHQ/ledger-live/pull/10590) [`752fc6b`](https://github.com/LedgerHQ/ledger-live/commit/752fc6b72fac537563bc6d21b45ce412875f6b7b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Upgrade Storybook React native to v7
+
 ## 0.36.0-nightly.0
 
 ### Minor Changes
