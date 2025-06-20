@@ -84,6 +84,7 @@ const StepRecipient = ({
         <>
           {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
           {error ? <ErrorBanner error={error} /> : null}
+          {status.errors.sender ? <ErrorBanner error={status.errors.sender} /> : null}
           {isNFTSend ? (
             <Box flow={1}>
               <Label>{t("send.steps.recipient.nftRecipient")}</Label>
@@ -171,7 +172,7 @@ export const StepRecipientFooter = ({
     mainAccount ? getFields(mainAccount, lldMemoTag?.enabled) : [],
   );
   const hasFieldError = Object.keys(errors).some(name => fields.includes(name));
-  const canNext = !bridgePending && !hasFieldError && !isTerminated;
+  const canNext = !bridgePending && !hasFieldError && !isTerminated && !status.errors.sender;
   const isMemoTagBoxVisibile = useSelector(memoTagBoxVisibilitySelector);
   const alwaysShowMemoTagInfo = useSelector(alwaysShowMemoTagInfoSelector);
 
