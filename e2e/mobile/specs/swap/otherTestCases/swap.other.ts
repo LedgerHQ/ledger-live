@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { setupEnv } from "../../../utils/swapUtils";
 import { swapSetup, waitSwapReady } from "../../../bridge/server";
@@ -266,23 +265,25 @@ export function runSwapHistoryOperationsTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  setupEnv(true);
+  describe("Swap history", () => {
+    setupEnv(true);
 
-  beforeAll(async () => {
-    await app.speculos.setExchangeDependencies(swap);
-    await beforeAllFunction({
-      userdata: "speculos-tests-app",
-      speculosApp: AppInfos.EXCHANGE,
+    beforeAll(async () => {
+      await app.speculos.setExchangeDependencies(swap);
+      await beforeAllFunction({
+        userdata: "speculos-tests-app",
+        speculosApp: AppInfos.EXCHANGE,
+      });
     });
-  });
 
-  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
-  tags.forEach(tag => $Tag(tag));
-  it(`Swap history operations - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name} - LLM`, async () => {
-    await app.swap.goToSwapHistory();
-    await app.swap.checkSwapOperation(swapId, swap);
-    await app.swap.openSelectedOperation(swapId);
-    await app.swap.expectSwapDrawerInfos(swapId, swap, provider);
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
+    it(`Swap history operations - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name} - LLM`, async () => {
+      await app.swap.goToSwapHistory();
+      await app.swap.checkSwapOperation(swapId, swap);
+      await app.swap.openSelectedOperation(swapId);
+      await app.swap.expectSwapDrawerInfos(swapId, swap, provider);
+    });
   });
 }
 
@@ -293,23 +294,23 @@ export function runExportSwapHistoryOperationsTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  setupEnv(true);
+  describe("Swap history", () => {
+    setupEnv(true);
 
-  beforeAll(async () => {
-    await app.speculos.setExchangeDependencies(swap);
-    await beforeAllFunction({
-      userdata: "speculos-tests-app",
-      speculosApp: AppInfos.EXCHANGE,
+    beforeAll(async () => {
+      await app.speculos.setExchangeDependencies(swap);
+      await beforeAllFunction({
+        userdata: "speculos-tests-app",
+        speculosApp: AppInfos.EXCHANGE,
+      });
     });
-  });
 
-  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
-  tags.forEach(tag => $Tag(tag));
-  it(`Export swap history operations - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name} - LLM`, async () => {
-    // await app.swap.goToSwapHistory();
-    // await app.swap.checkSwapOperation(swapId, swap);
-    // await app.swap.openSelectedOperation(swapId);
-    // await app.swap.expectSwapDrawerInfos(swapId, swap, provider);
-    // await app.swap.exportSwapOperation(swapId);
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
+    it(`Export swap history operations - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name} - LLM`, async () => {
+      await app.swap.goToSwapHistory();
+      await app.swap.clickExportOperations();
+      await app.swap.checkExportedFileContents(swap, provider, swapId);
+    });
   });
 }

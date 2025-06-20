@@ -14,7 +14,11 @@ import { CLI } from "./utils/cliUtils";
 import expect from "expect";
 import fs from "fs";
 import path from "path";
-import { NativeElementHelpers, WebElementHelpers } from "./helpers/elementHelpers";
+import {
+  NativeElementHelpers,
+  WebElementHelpers,
+  SystemElementHelpers,
+} from "./helpers/elementHelpers";
 import { log } from "detox";
 
 global.Step = Step;
@@ -123,4 +127,8 @@ export default async function setup(): Promise<void> {
   global.waitWebElementByTestId = WebElementHelpers.waitWebElementByTestId;
   global.tapWebElementByTestId = WebElementHelpers.tapWebElementByTestId;
   global.typeTextByWebTestId = WebElementHelpers.typeTextByWebTestId;
+
+  // bind system helpers
+  global.tapSystemElementByLabel = SystemElementHelpers.tapSystemElementByLabel;
+  global.tapSystemElementByType = SystemElementHelpers.tapSystemElementByType;
 }

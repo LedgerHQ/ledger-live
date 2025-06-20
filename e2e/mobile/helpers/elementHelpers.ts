@@ -1,6 +1,6 @@
 import { Direction, NativeElement, WebElement } from "detox/detox";
-import { by, element, expect as detoxExpect, waitFor, web } from "detox";
-import { delay, isAndroid } from "./commonHelpers";
+import { by, element, expect as detoxExpect, waitFor, web, system } from "detox";
+import { delay, isAndroid, isIos } from "./commonHelpers";
 import { retryUntilTimeout } from "../utils/retry";
 import { PageScroller } from "./pageScroller";
 
@@ -283,5 +283,25 @@ export const WebElementHelpers = {
         [text],
       ),
     );
+  },
+};
+
+export const SystemElementHelpers = {
+  async tapSystemElementByLabel(label: string): Promise<void> {
+    if (isIos()) {
+      await system.element(by.system.label(label)).tap();
+    } else {
+      // Android — maybe no system dialog or handled differently
+    }
+  },
+
+  async tapSystemElementByType(type: string): Promise<void> {
+    // await system.element(by.system.type(type)).tap();
+    // await element(by.type(type)).tap();
+    if (device.getPlatform() === "ios") {
+      await element(by.type(type)).tap();
+    } else {
+      // Android — maybe no system dialog or handled differently
+    }
   },
 };

@@ -1,9 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable prettier/prettier */
 import { delay, isIos, isSpeculosRemote, openDeeplink } from "../../helpers/commonHelpers";
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { normalizeText } from "../../helpers/commonHelpers";
+import fs from "fs/promises";
+import * as path from "path";
+import { FileUtils } from "utils/fileUtils";
 
 export default class SwapPage {
   baseLink = "swap";
@@ -23,9 +24,10 @@ export default class SwapPage {
     baseToAccount: "swap-history-toAccount-",
     baseFromAmount: "swap-history-fromAmount-",
     baseToAmount: "swap-history-toAmount-",
-  }
-  historyButton = "NavigationHeaderSwapHistory";
+  };
+  historyButton = "navigation-header-swap-history";
   swapStatus = "swap-status";
+  exportOperationsButton = "export-swap-operations-link";
 
   operationDetails = {
     fromAccount: "swap-operation-details-fromAccount",
@@ -37,15 +39,18 @@ export default class SwapPage {
     swapId: "swap-operation-details-swapId",
     date: "swap-operation-details-date",
     viewInExplorerButton: "operation-detail-view-in-explorer-button",
-  }
+  };
 
   swapFormTab = () => getElementById("swap-form-tab");
   operationRows = () => getElementById(this.operationRow.rowRegexp);
-  getSpecificOperation = (swapId: string) => getElementById(`${this.operationRow.rowBaseId}${swapId}`);
+  getSpecificOperation = (swapId: string) =>
+    getElementById(`${this.operationRow.rowBaseId}${swapId}`);
 
-  specificOperationAccountFromId = (swapId: string) => `${this.operationRow.baseFromAccount}${swapId}`;
+  specificOperationAccountFromId = (swapId: string) =>
+    `${this.operationRow.baseFromAccount}${swapId}`;
   specificOperationAccountToId = (swapId: string) => `${this.operationRow.baseToAccount}${swapId}`;
-  specificOperationAmountFromId = (swapId: string) => `${this.operationRow.baseFromAmount}${swapId}`;
+  specificOperationAmountFromId = (swapId: string) =>
+    `${this.operationRow.baseFromAmount}${swapId}`;
   specificOperationAmountToId = (swapId: string) => `${this.operationRow.baseToAmount}${swapId}`;
 
   @Step("Open swap via deeplink")
@@ -67,11 +72,17 @@ export default class SwapPage {
   @Step("Check swap operation row details")
   async checkSwapOperation(swapId: string, swap: SwapType) {
     await detoxExpect(this.operationRows()).toBeVisible();
-    await detoxExpect( this.getSpecificOperation(swapId)).toBeVisible();
-    jestExpect(await getTextOfElement(this.specificOperationAccountFromId(swapId))).toEqual(swap.accountToDebit.accountName);
-    jestExpect(await getTextOfElement(this.specificOperationAccountToId(swapId))).toEqual(swap.accountToCredit.accountName);
+    await detoxExpect(this.getSpecificOperation(swapId)).toBeVisible();
+    jestExpect(await getTextOfElement(this.specificOperationAccountFromId(swapId))).toEqual(
+      swap.accountToDebit.accountName,
+    );
+    jestExpect(await getTextOfElement(this.specificOperationAccountToId(swapId))).toEqual(
+      swap.accountToCredit.accountName,
+    );
     const amountText = await getTextOfElement(this.specificOperationAmountFromId(swapId));
-    jestExpect(normalizeText(amountText)).toEqual(normalizeText(`${swap.amount} ${swap.accountToDebit.currency.ticker}`));
+    jestExpect(normalizeText(amountText)).toEqual(
+      normalizeText(`${swap.amount} ${swap.accountToDebit.currency.ticker}`),
+    );
     await detoxExpect(getElementById(this.specificOperationAmountToId(swapId))).toBeVisible();
   }
 
@@ -82,19 +93,58 @@ export default class SwapPage {
 
   @Step("Verify swap operation details")
   async expectSwapDrawerInfos(swapId: string, swap: SwapType, provider: Provider) {
-    jestExpect(normalizeText(await getTextOfElement(this.swapStatus))).toMatch(/pending|finished/);
+    jestExpect(normalizeText(await getTextOfElement(this.swapStatus))).toMatch(/Pending|Finished/);
     await detoxExpect(getElementByText("Swap ID")).toBeVisible();
     jestExpect(normalizeText(await getTextOfElement(this.operationDetails.swapId))).toEqual(swapId);
-    jestExpect(normalizeText(await getTextOfElement(this.operationDetails.providerLink))).toEqual(normalizeText(provider.uiName));
-    jestExpect(normalizeText(await getTextOfElement(this.operationDetails.date))).toMatch(/^(0?[1-9]|1[0-2])\/(0?[1-9]|[12][0-9]|3[01])\/\d{4}$/);
-    jestExpect(normalizeText(await getTextOfElement(this.operationDetails.fromAccount))).toEqual(normalizeText(swap.accountToDebit.accountName));
-    jestExpect(normalizeText(await getTextOfElement(this.operationDetails.fromAmount))).toEqual(normalizeText(`${swap.amount} ${swap.accountToDebit.currency.ticker}`));
+    jestExpect(normalizeText(await getTextOfElement(this.operationDetails.providerLink))).toEqual(
+      normalizeText(provider.uiName),
+    );
+    jestExpect(normalizeText(await getTextOfElement(this.operationDetails.date))).toMatch(
+      /^(0?[1-9]|1[0-2])\/(0?[1-9]|[12][0-9]|3[01])\/\d{4}$/,
+    );
+    jestExpect(normalizeText(await getTextOfElement(this.operationDetails.fromAccount))).toEqual(
+      normalizeText(swap.accountToDebit.accountName),
+    );
+    jestExpect(normalizeText(await getTextOfElement(this.operationDetails.fromAmount))).toEqual(
+      normalizeText(`${swap.amount} ${swap.accountToDebit.currency.ticker}`),
+    );
 
     await scrollToId(this.operationDetails.toAmount);
-    jestExpect(normalizeText(await getTextOfElement(this.operationDetails.toAccount))).toEqual(normalizeText(swap.accountToCredit.accountName));
+    jestExpect(normalizeText(await getTextOfElement(this.operationDetails.toAccount))).toEqual(
+      normalizeText(swap.accountToCredit.accountName),
+    );
     await detoxExpect(getElementById(this.operationDetails.toAmount)).toBeVisible();
 
     await detoxExpect(getElementById(this.operationDetails.viewInExplorerButton)).toBeVisible();
+  }
+
+  @Step("Click on export operations")
+  async clickExportOperations() {
+    await tapById(this.exportOperationsButton);
+
+    const originalFilePath = path.resolve("./ledgerlive-swap-history.csv");
+    const targetFilePath = path.resolve(__dirname, "../../artifacts/ledgerlive-swap-history.csv");
+    const fileExists = await FileUtils.waitForFileToExist(originalFilePath, 5000);
+    jestExpect(fileExists).toBeTruthy();
+    const targetDir = path.dirname(targetFilePath);
+    await fs.mkdir(targetDir, { recursive: true });
+    await fs.rename(originalFilePath, targetFilePath);
+  }
+
+  @Step("Check contents of exported operations file")
+  async checkExportedFileContents(swap: SwapType, provider: Provider, id: string) {
+    const targetFilePath = path.resolve(__dirname, "../../artifacts/ledgerlive-swap-history.csv");
+    const fileContents = await fs.readFile(targetFilePath, "utf-8");
+
+    jestExpect(fileContents).toContain(provider.name);
+    jestExpect(fileContents).toContain(id);
+    jestExpect(fileContents).toContain(swap.accountToDebit.currency.ticker);
+    jestExpect(fileContents).toContain(swap.accountToCredit.currency.ticker);
+    jestExpect(fileContents).toContain(swap.amount);
+    jestExpect(fileContents).toContain(swap.accountToDebit.accountName);
+    jestExpect(fileContents).toContain(swap.accountToDebit.address);
+    jestExpect(fileContents).toContain(swap.accountToCredit.accountName);
+    jestExpect(fileContents).toContain(swap.accountToCredit.address);
   }
 
   @Step("Verify the amounts and accept swap")

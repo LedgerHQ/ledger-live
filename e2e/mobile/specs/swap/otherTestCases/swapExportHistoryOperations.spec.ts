@@ -6,6 +6,7 @@ const swapHistoryTestConfig = {
   provider: Provider.CHANGELLY,
   swapId: "fmwnt4mc0tiz75kz",
   tmsLinks: ["B2CQA-604"],
+  tags: ["@NanoSP", "@LNS", "@NanoX"],
 };
 
 runExportSwapHistoryOperationsTest(
@@ -13,5 +14,5 @@ runExportSwapHistoryOperationsTest(
   swapHistoryTestConfig.provider,
   swapHistoryTestConfig.swapId,
   swapHistoryTestConfig.tmsLinks,
-  ["@NanoSP", "@LNS", "@NanoX"],
+  swapHistoryTestConfig.tags,
 );
