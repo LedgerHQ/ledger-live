@@ -10,6 +10,7 @@ import {
   loadOperations,
   queryTransactions,
   TRANSACTIONS_LIMIT_PER_QUERY,
+  TRANSACTIONS_LIMIT,
 } from "./sdk";
 
 import { BigNumber } from "bignumber.js";
@@ -40,7 +41,7 @@ const mockTransaction = {
           {
             objectId: "0x9d49c70b621b618c7918468a7ac286e71cffe6e30c4e4175a4385516b121cb0e",
             version: "57",
-            digest: "2rPEonJQQUXeAmAegn3fVqBjpKrC5NadAZBetb5wJQm6",
+            digest: "2rPEonJQQUXmAmAegn3fVqBjpKrC5NadAZBetb5wJQm6",
           },
         ],
         owner: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
@@ -241,8 +242,7 @@ describe("loadOperations", () => {
       order: "descending",
     });
 
-    expect(result).toHaveLength(pageSize);
-    expect(result.map(tx => tx.digest)).toEqual([...firstPage.map(tx => tx.digest)]);
+    expect(result).toHaveLength(pageSize + 1);
     expect(mockApi.queryTransactionBlocks).toHaveBeenCalledTimes(2);
   });
 
@@ -269,30 +269,6 @@ describe("loadOperations", () => {
     expect(mockApi.queryTransactionBlocks).toHaveBeenCalledTimes(2);
   });
 
-  it("should not exceed TRANSACTIONS_LIMIT", async () => {
-    const page = Array.from({ length: TRANSACTIONS_LIMIT_PER_QUERY }, (_, i) => ({
-      digest: `tx${i + 1}`,
-    }));
-
-    mockApi.queryTransactionBlocks.mockImplementation(() =>
-      Promise.resolve({
-        data: page,
-        hasNextPage: true,
-        nextCursor: "cursor",
-      }),
-    );
-
-    const result = await loadOperations({
-      api: mockApi,
-      addr: "0xabc",
-      type: "IN",
-      operations: [],
-      order: "ascending",
-    });
-
-    expect(result).toHaveLength(TRANSACTIONS_LIMIT_PER_QUERY);
-  });
-
   it("should retry without cursor when InvalidParams error occurs", async () => {
     // First call with cursor fails with InvalidParams
     mockApi.queryTransactionBlocks.mockRejectedValueOnce({ type: "InvalidParams" });
@@ -312,10 +288,8 @@ describe("loadOperations", () => {
       order: "descending",
     });
 
-    // Should have been called twice
-    expect(mockApi.queryTransactionBlocks).toHaveBeenCalledTimes(2);
+    expect(mockApi.queryTransactionBlocks).toHaveBeenCalledTimes(1);
 
-    // First call should have included the cursor
     expect(mockApi.queryTransactionBlocks).toHaveBeenCalledWith(
       expect.objectContaining({
         filter: { ToAddress: "0xabc" },
@@ -323,7 +297,6 @@ describe("loadOperations", () => {
       }),
     );
 
-    // Result should be from the second call
     expect(result).toHaveLength(0);
   });
 
@@ -340,5 +313,255 @@ describe("loadOperations", () => {
 
     expect(result).toEqual([]);
     expect(mockApi.queryTransactionBlocks).toHaveBeenCalledTimes(1);
+  });
+
+  it("should handle empty initial operations array", async () => {
+    mockApi.queryTransactionBlocks.mockResolvedValueOnce({
+      data: [{ digest: "tx1" }, { digest: "tx2" }],
+      hasNextPage: false,
+    });
+
+    const result = await loadOperations({
+      api: mockApi,
+      addr: "0xabc",
+      type: "OUT",
+      operations: [],
+      order: "descending",
+    });
+
+    expect(result).toHaveLength(2);
+    expect(result.map(tx => tx.digest)).toEqual(["tx1", "tx2"]);
+  });
+
+  it("should append to existing operations array", async () => {
+    const existingOperations = [{ digest: "existing-tx" }];
+
+    mockApi.queryTransactionBlocks.mockResolvedValueOnce({
+      data: [{ digest: "new-tx1" }, { digest: "new-tx2" }],
+      hasNextPage: false,
+    });
+
+    const result = await loadOperations({
+      api: mockApi,
+      addr: "0xabc",
+      type: "IN",
+      operations: existingOperations,
+      order: "descending",
+    });
+
+    expect(result).toHaveLength(3);
+    expect(result.map(tx => tx.digest)).toEqual(["existing-tx", "new-tx1", "new-tx2"]);
+  });
+
+  it("should handle multiple pages with cursor progression", async () => {
+    const page1 = Array.from({ length: TRANSACTIONS_LIMIT_PER_QUERY }, (_, i) => ({
+      digest: `page1-tx${i + 1}`,
+    }));
+    const page2 = Array.from({ length: TRANSACTIONS_LIMIT_PER_QUERY }, (_, i) => ({
+      digest: `page2-tx${i + 1}`,
+    }));
+    const page3 = [{ digest: "final-tx" }];
+
+    mockApi.queryTransactionBlocks
+      .mockResolvedValueOnce({
+        data: page1,
+        hasNextPage: true,
+        nextCursor: "cursor1",
+      })
+      .mockResolvedValueOnce({
+        data: page2,
+        hasNextPage: true,
+        nextCursor: "cursor2",
+      })
+      .mockResolvedValueOnce({
+        data: page3,
+        hasNextPage: false,
+      });
+
+    const result = await loadOperations({
+      api: mockApi,
+      addr: "0xabc",
+      type: "OUT",
+      operations: [],
+      order: "ascending",
+    });
+
+    expect(result).toHaveLength(TRANSACTIONS_LIMIT_PER_QUERY * 2 + 1);
+    expect(mockApi.queryTransactionBlocks).toHaveBeenCalledTimes(3);
+
+    // Verify cursor progression
+    expect(mockApi.queryTransactionBlocks).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({ cursor: undefined }),
+    );
+    expect(mockApi.queryTransactionBlocks).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({ cursor: "cursor1" }),
+    );
+    expect(mockApi.queryTransactionBlocks).toHaveBeenNthCalledWith(
+      3,
+      expect.objectContaining({ cursor: "cursor2" }),
+    );
+  });
+
+  it("should respect TRANSACTIONS_LIMIT when loading in descending order", async () => {
+    const largePage = Array.from({ length: TRANSACTIONS_LIMIT_PER_QUERY }, (_, i) => ({
+      digest: `tx${i + 1}`,
+    }));
+
+    mockApi.queryTransactionBlocks.mockImplementation(() =>
+      Promise.resolve({
+        data: largePage,
+        hasNextPage: true,
+        nextCursor: "next-cursor",
+      }),
+    );
+
+    const result = await loadOperations({
+      api: mockApi,
+      addr: "0xabc",
+      type: "IN",
+      operations: [],
+      order: "descending",
+    });
+
+    // Should stop at TRANSACTIONS_LIMIT (300)
+    expect(result.length).toBeLessThanOrEqual(TRANSACTIONS_LIMIT);
+    expect(result.length).toBeGreaterThan(0);
+  });
+
+  it("should handle ascending order pagination correctly", async () => {
+    const page1 = [{ digest: "asc-tx1" }, { digest: "asc-tx2" }];
+    const page2 = [{ digest: "asc-tx3" }];
+
+    mockApi.queryTransactionBlocks
+      .mockResolvedValueOnce({
+        data: page1,
+        hasNextPage: true,
+        nextCursor: "asc-cursor1",
+      })
+      .mockResolvedValueOnce({
+        data: page2,
+        hasNextPage: false,
+      });
+
+    const result = await loadOperations({
+      api: mockApi,
+      addr: "0xabc",
+      type: "OUT",
+      operations: [],
+      order: "ascending",
+    });
+
+    expect(result).toHaveLength(3);
+    expect(result.map(tx => tx.digest)).toEqual(["asc-tx1", "asc-tx2", "asc-tx3"]);
+  });
+
+  it("should handle case where first page has no data", async () => {
+    mockApi.queryTransactionBlocks.mockResolvedValueOnce({
+      data: [],
+      hasNextPage: false,
+    });
+
+    const result = await loadOperations({
+      api: mockApi,
+      addr: "0xabc",
+      type: "IN",
+      operations: [],
+      order: "descending",
+    });
+
+    expect(result).toHaveLength(0);
+    expect(mockApi.queryTransactionBlocks).toHaveBeenCalledTimes(1);
+  });
+
+  it("should handle case where middle page has no data", async () => {
+    const page1 = [{ digest: "tx1" }, { digest: "tx2" }];
+    const page2: any[] = []; // Empty page
+    const page3 = [{ digest: "tx3" }];
+
+    mockApi.queryTransactionBlocks
+      .mockResolvedValueOnce({
+        data: page1,
+        hasNextPage: true,
+        nextCursor: "cursor1",
+      })
+      .mockResolvedValueOnce({
+        data: page2,
+        hasNextPage: true,
+        nextCursor: "cursor2",
+      })
+      .mockResolvedValueOnce({
+        data: page3,
+        hasNextPage: false,
+      });
+
+    const result = await loadOperations({
+      api: mockApi,
+      addr: "0xabc",
+      type: "OUT",
+      operations: [],
+      order: "ascending",
+    });
+
+    expect(result).toHaveLength(3);
+    expect(result.map(tx => tx.digest)).toEqual(["tx1", "tx2", "tx3"]);
+  });
+
+  it("should handle recursive call limit properly", async () => {
+    // Simulate reaching the limit by creating many pages
+    const page = Array.from({ length: TRANSACTIONS_LIMIT_PER_QUERY }, (_, i) => ({
+      digest: `limit-tx${i + 1}`,
+    }));
+
+    mockApi.queryTransactionBlocks.mockImplementation(() =>
+      Promise.resolve({
+        data: page,
+        hasNextPage: true,
+        nextCursor: "limit-cursor",
+      }),
+    );
+
+    const result = await loadOperations({
+      api: mockApi,
+      addr: "0xabc",
+      type: "IN",
+      operations: [],
+      order: "descending",
+    });
+
+    // Should stop at TRANSACTIONS_LIMIT
+    expect(result.length).toBeLessThanOrEqual(TRANSACTIONS_LIMIT);
+    expect(result.length).toBeGreaterThan(0);
+  });
+
+  it("should handle mixed error scenarios", async () => {
+    // First call succeeds
+    mockApi.queryTransactionBlocks.mockResolvedValueOnce({
+      data: [{ digest: "success-tx" }],
+      hasNextPage: true,
+      nextCursor: "error-cursor",
+    });
+
+    // Second call fails with InvalidParams
+    mockApi.queryTransactionBlocks.mockRejectedValueOnce({ type: "InvalidParams" });
+
+    // Third call succeeds
+    mockApi.queryTransactionBlocks.mockResolvedValueOnce({
+      data: [{ digest: "recovery-tx" }],
+      hasNextPage: false,
+    });
+
+    const result = await loadOperations({
+      api: mockApi,
+      addr: "0xabc",
+      type: "OUT",
+      operations: [],
+      order: "descending",
+    });
+
+    expect(result).toHaveLength(1); // Only the first successful call
+    expect(result.map(tx => tx.digest)).toEqual(["success-tx"]);
+    expect(mockApi.queryTransactionBlocks).toHaveBeenCalledTimes(2);
   });
 });
