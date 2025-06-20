@@ -6,7 +6,7 @@ import { performSwapUntilQuoteSelectionStep } from "../../utils/swapUtils";
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
 const beforeAllFunction = async (swap: SwapType) => {
-  app.speculos.setExchangeDependencies(swap);
+  await app.speculos.setExchangeDependencies(swap);
   await app.init({
     speculosApp: AppInfos.EXCHANGE,
     featureFlags: {
@@ -58,7 +58,10 @@ export function runSwapTest(swap: SwapType, tmsLinks: string[], tags: string[]) 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`Swap ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`, async () => {
-      const minAmount = await app.swapLiveApp.getMinimumAmount(swap);
+      const minAmount = await app.swapLiveApp.getMinimumAmount(
+        swap.accountToDebit,
+        swap.accountToCredit,
+      );
       await performSwapUntilQuoteSelectionStep(swap, minAmount);
       await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.tapExecuteSwap();

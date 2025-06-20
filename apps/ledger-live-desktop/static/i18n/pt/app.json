@@ -893,6 +893,7 @@
     "title" : "Compre e venda cripto",
     "reset" : "Redefinir fluxo",
     "verifyAddress" : "Confirme que o endereço exibido corresponde exatamente ao exibido no seu dispositivo",
+    "connectingTo" : "Conectando você a {{provider}}",
     "buy" : {
       "header" : "Compre cripto com provedores externos",
       "title" : "Escolha um provedor para comprar cripto",
@@ -1925,7 +1926,8 @@
       "payoutNetworkFees" : "Taxas de pagamento",
       "payoutNetworkFeesTooltip" : "Esta quantia não será mostrada no seu dispositivo",
       "acceptTerms" : "Ao validar esta transação, eu aceito\n<0>os termos de uso da {{provider}}</0>",
-      "exodusAcceptTerms" : "A Exodus depende de terceiros para realizar swaps.\nAo validar esta transação, eu aceito os <0>termos de uso da Exodus</0>"
+      "exodusAcceptTerms" : "A Exodus depende de terceiros para realizar swaps.\nAo validar esta transação, eu aceito os <0>termos de uso da Exodus</0>",
+      "changellyAcceptTerms" : "Ao clicar em “Trocar com a Changelly”, você aceita os <0>Termos de Uso</0> da Changelly e\nsua <1>política de AML/KYC</1> A Changelly pode aplicar procedimentos AML/KYC que\npodem, em casos limitados, afetar a conclusão de sua transação. Caso isso\naconteça, você deve entrar em contato com o <2>suporte ao cliente</2> da Changelly."
     },
     "swap2" : {
       "amountSent" : "Quantia a enviar",
@@ -6041,6 +6043,10 @@
       "title" : "Algo deu errado",
       "description" : "Esta conta de recebimento não pertence ao dispositivo que você conectou. Mude e tente novamente"
     },
+    "MissingSwapPayloadParamaters" : {
+      "title" : "Algo deu errado",
+      "description" : "Parâmetro de troca do parceiro selecionado ausente. Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    },
     "WrongDeviceForAccountRefund" : {
       "title" : "Algo deu errado",
       "description" : "Esta conta de envio não pertence ao dispositivo que você conectou. Mude e tente novamente"
@@ -7059,7 +7065,9 @@
     "searchPlaceholder" : "Buscar",
     "selectAsset" : "Selecionar ativo",
     "selectNetwork" : "Selecione a rede",
-    "selectAccount" : "Selecionar conta"
+    "selectAccount" : "Selecionar conta",
+    "accountCount_one" : "{{count}} conta",
+    "accountCount_other" : "{{count}} contas"
   },
   "nftEntryPoint" : {
     "title" : "NFT (Tokens Não Fungíveis)",

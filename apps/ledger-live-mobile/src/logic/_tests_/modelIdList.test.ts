@@ -12,6 +12,7 @@ const DEVICE_INFO: DeviceInfo = {
   providerName: null,
   managerAllowed: false,
   pinValidated: true,
+  seFlags: Buffer.alloc(0),
 };
 
 const nanoS = {

@@ -14,7 +14,7 @@ import { track } from "~/renderer/analytics/__mocks__/segment";
 import { MOCKED_ARB_ACCOUNT } from "./__mocks__/accounts.mock";
 
 const store = createStore(() => ({
-  accounts: [],
+  accounts: [MOCKED_ARB_ACCOUNT],
   wallet: {
     accountNames: new Map([
       ["bitcoin1", "bitcoin-account-1"],
