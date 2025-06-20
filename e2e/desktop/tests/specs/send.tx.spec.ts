@@ -209,20 +209,27 @@ test.describe("Send flows", () => {
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [
           (appjsonPath: string) => {
-            return CLI.liveData({
+            const result = CLI.liveData({
               currency: transaction.transaction.accountToCredit.currency.id,
               index: transaction.transaction.accountToCredit.index,
               add: true,
               appjson: appjsonPath,
             });
+            console.log("⚠️ Attempted to add credit account (APTOS_2):", result);
+
+            return result;
           },
           (appjsonPath: string) => {
-            return CLI.liveData({
+            const result = CLI.liveData({
               currency: transaction.transaction.accountToDebit.currency.id,
               index: transaction.transaction.accountToDebit.index,
               add: true,
               appjson: appjsonPath,
             });
+
+            console.log("⚠️ Attempted to add credit account (APTOS_1):", result);
+
+            return result;
           },
         ],
       });
@@ -269,7 +276,6 @@ test.describe("Send flows", () => {
       );
     });
   }
-
   for (const transaction of transactionsAmountInvalid) {
     test.describe("Check invalid amount input error", () => {
       test.use({
