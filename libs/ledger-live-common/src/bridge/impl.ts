@@ -1,22 +1,25 @@
 import {
   isAddressSanctioned,
   isCheckSanctionedAddressEnabled,
-  reportSanctionedTransaction,
 } from "@ledgerhq/coin-framework/sanction/index";
 import { CurrencyNotSupported } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account, AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountBridge,
+  AccountLike,
+  CurrencyBridge,
+  TransactionStatusCommon,
+} from "@ledgerhq/types-live";
 import { decodeAccountId, getMainAccount } from "../account";
 import { checkAccountSupported } from "../account/index";
 import jsBridges from "../generated/bridge/js";
 import mockBridges from "../generated/bridge/mock";
-import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 import { getAlpacaCurrencyBridge } from "./generic-alpaca/currencyBridge";
 import { getAlpacaAccountBridge } from "./generic-alpaca/accountBridge";
 import { TransactionCommon } from "@ledgerhq/types-live";
-import { t as translate } from "i18next";
-import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 
 const alpacaized = {
   xrp: true,
@@ -101,46 +104,48 @@ function wrapAccountBridge<T extends TransactionCommon>(
 ): AccountBridge<T> {
   return {
     ...bridge,
-    broadcast: async (...args) => {
-      const account = args[0].account;
-      if (account.type === "Account") {
-        if (!isCheckSanctionedAddressEnabled(account.currency)) {
-          return bridge.broadcast(...args);
-        }
+    getTransactionStatus: async (...args) => {
+      const blockchainTransactionStatus = await bridge.getTransactionStatus(...args);
 
-        const sanctionedAddresses: string[] = [];
-        const signedOperation = args[0].signedOperation;
-
-        for (const sender of signedOperation.operation.senders) {
-          const senderIsSanctioned = await isAddressSanctioned(account.currency, sender);
-          if (senderIsSanctioned) {
-            sanctionedAddresses.push(sender);
-          }
-        }
-
-        const operation = args[0].signedOperation.operation;
-        const recipients = operation.recipients;
-        for (const recipient of recipients) {
-          const recipientSanctioned = await isAddressSanctioned(account.currency, recipient);
-          if (recipientSanctioned) {
-            sanctionedAddresses.push(recipient);
-          }
-        }
-
-        if (sanctionedAddresses.length > 0) {
-          reportSanctionedTransaction({
-            addressFrom: account.freshAddress,
-            addressTo: operation.recipients.join(", "),
-            amount: operation.value.toString(),
-            currency: account.currency.ticker,
-            transactionType: operation.type,
-            sanctionedAddresses: sanctionedAddresses.join(", "),
-          });
-          throw new AddressesSanctionedError(...sanctionedAddresses);
-        }
+      const account = args[0];
+      if (!isCheckSanctionedAddressEnabled(account.currency)) {
+        return blockchainTransactionStatus;
       }
 
-      return await bridge.broadcast(...args);
+      const commonTransactionStatus = await commonGetTransactionStatus(...args);
+      return mergeResults(blockchainTransactionStatus, commonTransactionStatus);
     },
   };
+}
+
+function mergeResults(
+  blockchainTransactionStatus: TransactionStatusCommon,
+  commonTransactionStatus: Partial<TransactionStatusCommon>,
+): TransactionStatusCommon {
+  const errors = { ...blockchainTransactionStatus.errors, ...commonTransactionStatus.errors };
+  const warnings = { ...blockchainTransactionStatus.warnings, ...commonTransactionStatus.warnings };
+  return { ...blockchainTransactionStatus, errors, warnings };
+}
+
+async function commonGetTransactionStatus(
+  account: Account,
+  transaction: TransactionCommon,
+): Promise<Partial<TransactionStatusCommon>> {
+  const errors: Record<string, Error> = {};
+  const warnings: Record<string, Error> = {};
+
+  let isRecipientSanctioned = false;
+  if (transaction.recipient && transaction.recipient !== "") {
+    isRecipientSanctioned = await isAddressSanctioned(account.currency, transaction.recipient);
+    if (isRecipientSanctioned) {
+      errors.recipient = new AddressesSanctionedError(transaction.recipient);
+    }
+  }
+
+  const isSenderSanctioned = await isAddressSanctioned(account.currency, account.freshAddress);
+  if (isSenderSanctioned) {
+    errors.sender = new AddressesSanctionedError(account.freshAddress);
+  }
+
+  return { errors, warnings };
 }

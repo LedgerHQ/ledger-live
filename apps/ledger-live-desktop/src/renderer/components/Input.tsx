@@ -7,6 +7,7 @@ import Box from "~/renderer/components/Box";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import BigSpinner from "~/renderer/components/BigSpinner";
 import { BoxProps } from "./Box/Box";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 
 export type InputError = Error | boolean | null | undefined;
 
@@ -287,7 +288,10 @@ const Input = function Input(
           error ? (
             typeof error === "boolean" ? null : (
               <ErrorDisplay id="input-error" data-testid="input-error">
-                <TranslatedError error={error} />
+                <TranslatedError
+                  error={error}
+                  field={error instanceof AddressesSanctionedError ? "description" : "title"}
+                />
               </ErrorDisplay>
             )
           ) : warning ? (

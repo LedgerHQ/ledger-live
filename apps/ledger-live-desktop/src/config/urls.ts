@@ -20,6 +20,7 @@ const errors: Record<string, string> = {
   OperatingSystemOutdated: "https://support.ledger.com/article/8083692639901-zd",
   UserAddressSanctionedError:
     "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
+  AddressesSanctionedError: "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
 };
 
 export const urls = {

@@ -6635,7 +6635,7 @@
     },
     "AddressesSanctionedError": {
       "title": "Keeping you safe",
-      "description": "This transaction involves a sanctioned wallet address and cannot be processed.\n-- {{sanctionedAddresses}}"
+      "description": "This transaction involves a sanctioned wallet address and cannot be processed.\n-- {{addresses}}"
     }
   },
   "cryptoOrg": {
