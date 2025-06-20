@@ -43,10 +43,7 @@
         "src/webviewPreloader/dappPreloader.ts",
         "src/webviewPreloader/index.ts"
       ],
-      "ignore": [
-        "src/newArch/features/Collectibles/**",
-        ".storybook/stub.ts"
-      ],
+      "ignore": ["src/newArch/features/Collectibles/**", ".storybook/stub.ts"],
       "ignoreBinaries": ["eslint", "knip", "prettier", "zx", "lint"],
       "ignoreDependencies": ["prop-types", "allure-commandline", "msw", "buffer"]
     },
@@ -131,6 +128,8 @@
         "src/icons/Info.tsx",
         "storybook/stories/index.ts",
         "App.tsx",
+        "src/pre-ldls/index.ts",
+        "src/pre-ldls/components/index.ts",
         "index.js"
       ],
       "ignore": [".storybook*/*", "storybook/constants/*"]

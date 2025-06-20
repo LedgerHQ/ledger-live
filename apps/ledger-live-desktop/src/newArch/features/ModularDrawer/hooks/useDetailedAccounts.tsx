@@ -6,7 +6,7 @@ import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
-import { getAccountTuplesForCurrency } from "~/renderer/components/PerCurrencySelectAccount/state";
+import { getAccountTuplesForCurrency } from "../utils/getAccountTuplesForCurrency";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { openModal } from "~/renderer/actions/modals";
@@ -47,7 +47,7 @@ export const useDetailedAccounts = (
   const isATokenCurrency = useMemo(() => isTokenCurrency(asset), [asset]);
 
   const accounts = useMemo(() => {
-    const accountTuples = getAccountTuplesForCurrency(asset, nestedAccounts, false, accountIds);
+    const accountTuples = getAccountTuplesForCurrency(asset, nestedAccounts, accountIds);
     return accountTuples.sort((a, b) => sortAccountsByBalance(a.account, b.account));
   }, [asset, nestedAccounts, accountIds]);
 
