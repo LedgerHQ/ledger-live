@@ -467,7 +467,6 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
   );
 
   const onSwapWebviewError = (error?: SwapLiveError) => {
-    console.error("onSwapWebviewError", error);
     logger.critical(error);
     setDrawer(WebviewErrorDrawer, error);
   };
