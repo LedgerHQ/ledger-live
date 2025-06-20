@@ -79,6 +79,7 @@ import {
 import { LargeMoverLandingPage } from "LLM/features/LandingPages/screens/LargeMoverLandingPage";
 import SwiperScreenDebug from "~/screens/Settings/Debug/Features/SwiperScreenDebug";
 import { DebugStorageMigration } from "~/screens/Settings/Debug/Debugging/StorageMigration";
+import CustomCALRefInput from "~/screens/Settings/Developer/CustomCALRefInput";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
@@ -208,6 +209,13 @@ export default function SettingsNavigator() {
           headerTitleStyle: {
             width: "80%",
           },
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.CustomCALRefInput}
+        component={CustomCALRefInput}
+        options={{
+          title: t("settings.developer.customCALRef.title"),
         }}
       />
       <Stack.Screen
