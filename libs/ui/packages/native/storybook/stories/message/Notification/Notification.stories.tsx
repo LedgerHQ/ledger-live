@@ -1,6 +1,6 @@
 import React from "react";
 import { action } from "@storybook/addon-actions";
-import { ComponentStory } from "@storybook/react-native";
+import { StoryFn } from "@storybook/react";
 import { IconsLegacy } from "../../../../src/assets";
 import Notification from "../../../../src/components/message/Notification";
 import FlexBox from "../../../../src/components/Layout/Flex";
@@ -10,7 +10,7 @@ export default {
   component: Notification,
 };
 
-export const NotificationSample: ComponentStory<typeof Notification> = (
+export const NotificationSample: StoryFn<typeof Notification> = (
   args: typeof NotificationSampleArgs,
 ) => (
   <FlexBox p={20} width={"100%"}>
@@ -37,7 +37,7 @@ NotificationSample.argTypes = {
   },
 };
 
-export const NotificationNews: ComponentStory<typeof Notification> = (
+export const NotificationNews: StoryFn<typeof Notification> = (
   args: typeof NotificationNewsArgs,
 ) => (
   <FlexBox p={20} width={"100%"}>
