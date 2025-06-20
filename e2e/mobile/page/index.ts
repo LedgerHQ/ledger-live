@@ -33,7 +33,16 @@ import fs from "fs";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
 import { log } from "detox";
 import { AppInfosType } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { setupEnvironment, waitForSpeculosIfNeeded } from "../helpers/commonHelpers";
+import {
+  isSpeculosRemote,
+  setupEnvironment,
+  waitForSpeculosIfNeeded,
+} from "../helpers/commonHelpers";
+import {
+  getSpeculosAddress,
+  runId,
+  waitForSpeculosReady,
+} from "@ledgerhq/live-common/e2e/speculosCI";
 
 setupEnvironment();
 
@@ -126,12 +135,20 @@ export class Application {
 
     for (const { app, cmd } of cliCommandsOnApp || []) {
       const apiPort = await this.common.addSpeculos(app.name);
+      if (isSpeculosRemote()) {
+        await waitForSpeculosReady(getSpeculosAddress(runId));
+      }
       await waitForSpeculosIfNeeded(20_000);
       await executeCliCommand(cmd, userdataPath);
       this.common.removeSpeculos(apiPort);
     }
 
-    if (speculosApp) await this.common.addSpeculos(speculosApp.name);
+    if (speculosApp) {
+      await this.common.addSpeculos(speculosApp.name);
+      if (isSpeculosRemote()) {
+        await waitForSpeculosReady(getSpeculosAddress(runId));
+      }
+    }
     for (const cmd of cliCommands || []) {
       await executeCliCommand(cmd, userdataPath);
       await waitForSpeculosIfNeeded(5_000);
