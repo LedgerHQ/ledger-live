@@ -41,7 +41,6 @@ const config: StorybookConfig = {
           "@ledgerhq/live-common/wallet-api/react": resolve(detailedAccountsMockDir),
           "@ledgerhq/live-countervalues/portfolio": resolve(detailedAccountsMockDir),
           "@ledgerhq/live-countervalues-react": resolve(detailedAccountsMockDir),
-          "~/renderer/components/PerCurrencySelectAccount/state": resolve(detailedAccountsMockDir),
           "~/renderer/reducers/accounts": resolve(detailedAccountsMockDir),
           "~/renderer/reducers/settings": resolve(detailedAccountsMockDir),
 

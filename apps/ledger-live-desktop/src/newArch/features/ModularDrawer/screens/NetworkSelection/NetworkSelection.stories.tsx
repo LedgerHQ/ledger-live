@@ -6,9 +6,9 @@ import {
   ethereumCurrency,
   mockNetworksConfiguration,
 } from "../../__mocks__/useSelectAssetFlow.mock";
-import { fn } from "@storybook/test";
 import { legacy_createStore as createStore } from "redux";
 import { Provider } from "react-redux";
+import { fn } from "@storybook/test";
 import { res } from "../../__mocks__/useGroupedCurrenciesByProvider.mock";
 import { Mocked_ETH_Account, MOCKED_ARB_ACCOUNT } from "../../__mocks__/accounts.mock";
 
@@ -16,8 +16,17 @@ const networks = [ethereumCurrency, arbitrumCurrency];
 
 const onNetworkSelected = fn();
 
-const store = createStore(() => ({
+const defaultStore = {
   accounts: [...Mocked_ETH_Account, MOCKED_ARB_ACCOUNT],
+  wallet: {
+    accountNames: new Map([
+      ["bitcoin1", "bitcoin-account-1"],
+      ["ethereum1", "ethereum-account-1"],
+      ["arbitrum1", "arbitrum-account-1"],
+    ]),
+  },
+  discreet: false,
+  locale: "en-US",
   currency: {
     type: "FiatCurrency",
     ticker: "USD",
@@ -34,7 +43,9 @@ const store = createStore(() => ({
     ],
   },
   application: { debug: {} },
-}));
+};
+
+const store = createStore(() => defaultStore);
 
 const meta: Meta<typeof NetworkSelection> = {
   title: "ModularDrawer/NetworkSelection",

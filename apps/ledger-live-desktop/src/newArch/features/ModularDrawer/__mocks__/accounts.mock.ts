@@ -1,9 +1,9 @@
 import { fn, Mock } from "@storybook/test";
 import BigNumber from "bignumber.js";
-import { arbitrumCurrency, bitcoinCurrency, ethereumCurrency } from "./useSelectAssetFlow.mock";
 import { Account } from "@ledgerhq/types-live";
+import { arbitrumCurrency, ethereumCurrency } from "./useSelectAssetFlow.mock";
 
-export const useGetAccountIds: Mock = fn(() => []);
+export const useGetAccountIds: Mock = fn(() => undefined);
 export const getBalanceHistoryWithCountervalue: Mock = fn(() => ({
   history: [
     {
@@ -15,47 +15,6 @@ export const getBalanceHistoryWithCountervalue: Mock = fn(() => ({
 }));
 export const getPortfolioCount: Mock = fn(() => 0);
 export const useCountervaluesState: Mock = fn(() => {});
-export const getAccountTuplesForCurrency: Mock = fn(currency =>
-  [
-    {
-      account: {
-        type: "Account",
-        derivationMode: "native_segwit",
-        freshAddress: "bc1qprvchytjcdqfqp4cxwe4gp927sd38687m2pkdr",
-        creationDate: "2024-12-10T09:27:22.000Z",
-        balance: new BigNumber(31918),
-        currency: bitcoinCurrency,
-        id: "bitcoin1",
-      },
-    },
-    {
-      account: {
-        type: "Account",
-        derivationMode: "",
-        freshAddress: "kjhiuhd3o8aol9o9a39ajdl9jdljdl39jlag9j29j3",
-        creationDate: "2024-12-10T09:27:22.000Z",
-        balance: new BigNumber(34455),
-        currency: ethereumCurrency,
-        id: "ethereum1",
-      },
-    },
-    {
-      account: {
-        type: "Account",
-        derivationMode: "",
-        freshAddress: "s37rhmi7hsm3i73hsm7i3hm83m8h87hsm87h3s8h33",
-        creationDate: "2024-12-10T09:27:22.000Z",
-        balance: new BigNumber(34455),
-        currency: arbitrumCurrency,
-        id: "arbitrum1",
-      },
-    },
-  ].filter(({ account }) =>
-    currency.type === "CryptoCurrency"
-      ? account.currency.id === currency.id
-      : account.currency.id === currency.parentCurrency.id,
-  ),
-);
 export const accountsSelector: Mock = fn(state => state.accounts);
 export const counterValueCurrencySelector: Mock = fn(state => state.currency);
 export const discreetModeSelector: Mock = fn(state => state.discreet);
@@ -78,58 +37,7 @@ export const Mocked_ETH_Account: Account[] = [
     operations: [],
     operationsCount: 0,
     pendingOperations: [],
-    currency: {
-      type: "CryptoCurrency",
-      id: "ethereum",
-      coinType: 60,
-      name: "Ethereum",
-      managerAppName: "Ethereum",
-      ticker: "ETH",
-      scheme: "ethereum",
-      color: "#0ebdcd",
-      symbol: "Ξ",
-      family: "evm",
-      blockAvgTime: 15,
-      units: [
-        {
-          name: "ether",
-          code: "ETH",
-          magnitude: 18,
-        },
-        {
-          name: "Gwei",
-          code: "Gwei",
-          magnitude: 9,
-        },
-        {
-          name: "Mwei",
-          code: "Mwei",
-          magnitude: 6,
-        },
-        {
-          name: "Kwei",
-          code: "Kwei",
-          magnitude: 3,
-        },
-        {
-          name: "wei",
-          code: "wei",
-          magnitude: 0,
-        },
-      ],
-      ethereumLikeInfo: {
-        chainId: 1,
-      },
-      explorerViews: [
-        {
-          tx: "https://etherscan.io/tx/$hash",
-          address: "https://etherscan.io/address/$address",
-          token: "https://etherscan.io/token/$contractAddress?a=$address",
-        },
-      ],
-      keywords: ["eth", "ethereum"],
-      explorerId: "eth",
-    },
+    currency: ethereumCurrency,
     lastSyncDate: new Date(),
     swapHistory: [],
     syncHash: "",
@@ -157,25 +65,7 @@ export const MOCKED_ARB_ACCOUNT = {
   id: "arbitrum1",
   balance: new BigNumber(34455),
   creationDate: "2024-12-10T09:27:22.000Z",
-  currency: {
-    type: "CryptoCurrency",
-    id: "arbitrum",
-    coinType: 60,
-    name: "Arbitrum",
-    managerAppName: "Ethereum",
-    ticker: "ETH",
-    scheme: "arbitrum",
-    color: "#28a0f0",
-    family: "evm",
-    units: [
-      {
-        name: "ETH",
-        code: "ETH",
-        magnitude: 18,
-      },
-    ],
-    explorerViews: [],
-  },
+  currency: arbitrumCurrency,
   derivationMode: "",
   freshAddress: "s37rhmi7hsm3i73hsm7i3hm83m8h87hsm87h3s8h33",
 };
