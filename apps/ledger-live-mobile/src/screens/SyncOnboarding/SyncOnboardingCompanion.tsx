@@ -12,6 +12,7 @@ import { Flex, VerticalTimeline, Text, ContinueOnDevice, Link } from "@ledgerhq/
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import {
+  CharonStatus,
   OnboardingStep as DeviceOnboardingStep,
   fromSeedPhraseTypeToNbOfSeedWords,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
@@ -22,7 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk-mobile";
 
-import { SeedPhraseType, StorylyInstanceID } from "@ledgerhq/types-live";
+import { SeedOriginType, SeedPhraseType, StorylyInstanceID } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { addKnownDevice } from "~/actions/ble";
 import { NavigatorName, ScreenName } from "~/const";
@@ -38,7 +39,7 @@ import {
 } from "~/actions/settings";
 import InstallSetOfApps from "~/components/DeviceAction/InstallSetOfApps";
 import Stories from "~/components/StorylyStories";
-import { TrackScreen, screen } from "~/analytics";
+import { TrackScreen, screen, useTrack } from "~/analytics";
 import ContinueOnStax from "./assets/ContinueOnStax";
 import ContinueOnEuropa from "./assets/ContinueOnEuropa";
 import type { SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
@@ -74,6 +75,7 @@ export type SeedPathStatus =
   | "recover_seed"
   | "backup_charon"
   | "restore_charon";
+
 export type SyncOnboardingCompanionProps = {
   /**
    * A `Device` object
@@ -345,7 +347,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     }
   }, [deviceOnboardingState]);
 
-  const analyticsSeedConfiguration = useRef<"new_seed" | "restore_seed" | "recover_seed">();
+  const analyticsSeedConfiguration = useRef<SeedOriginType>();
 
   const analyticsSeedingTracked = useRef(false);
   /**
@@ -447,6 +449,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       case DeviceOnboardingStep.RestoreCharon:
         setCompanionStepKey(CompanionStepKey.Seed);
         setSeedPathStatus("restore_charon");
+        analyticsSeedConfiguration.current = "restore_charon";
         break;
       case DeviceOnboardingStep.BackupCharon:
         setCompanionStepKey(CompanionStepKey.Seed);
@@ -554,6 +557,15 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     servicesConfig?.enabled,
     servicesConfig?.params?.protectId,
   ]);
+
+  const track = useTrack();
+  const handleLearnMoreClick = useCallback(() => {
+    // TODO: Add link
+    track("button_clicked", {
+      button: "Learn More",
+      page: "Charon Start",
+    });
+  }, [track]);
 
   const companionSteps: Step[] = useMemo(
     () =>
@@ -684,6 +696,12 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                 <BodyText>{t("syncOnboarding.seedStep.recoverSeed")}</BodyText>
               ) : seedPathStatus === "backup_charon" ? (
                 <Flex>
+                  {deviceOnboardingState?.charonStatus === CharonStatus.Rejected ? (
+                    <TrackScreen category="Set up device: Step 3 Charon Start" />
+                  ) : null}
+                  {deviceOnboardingState?.charonStatus === CharonStatus.Ready ? (
+                    <TrackScreen category="Set up device: Step 3 Charon Backup Success" />
+                  ) : null}
                   <Flex alignItems="center" justifyContent="center">
                     <Flex style={{ overflow: "visible", height: 100 }} mt={3}>
                       <Image resizeMode="contain" source={CharonImage} style={{ height: 170 }} />
@@ -698,7 +716,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                   <Flex mb={6} width="100%" justifyContent="center" alignItems="center">
                     <Link
                       Icon={ExternalLinkMedium}
-                      onPress={() => {}}
+                      onPress={handleLearnMoreClick}
                       style={{ justifyContent: "flex-start" }}
                     >
                       {t("syncOnboarding.seedStep.backupCharon.cta")}
@@ -796,12 +814,14 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     [
       t,
       productName,
+      seedPathStatus,
       deviceInitialApps?.enabled,
       device,
-      seedPathStatus,
+      deviceOnboardingState?.charonSupported,
+      deviceOnboardingState?.charonStatus,
+      handleLearnMoreClick,
       shouldRestoreApps,
       handleInstallAppsComplete,
-      deviceOnboardingState?.charonSupported,
       initialAppsToInstall,
       companionStepKey,
     ],

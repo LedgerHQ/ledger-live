@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import { Flex, VerticalTimeline, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { StepText } from "./shared";
@@ -8,6 +8,8 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import ExternalLink from "~/renderer/components/ExternalLink";
 import CharonPng from "./assets/charon.png";
 import SecretRecoveryPhrasePng from "./assets/secret-recovery-phrase.png";
+import { trackPage, useTrack } from "~/renderer/analytics/segment";
+import { CharonStatus } from "@ledgerhq/live-common/hw/extractOnboardingState";
 
 export type SeedPathStatus =
   | "choice_new_or_restore"
@@ -22,11 +24,37 @@ export type Props = {
   seedPathStatus: SeedPathStatus;
   deviceModelId: DeviceModelId;
   charonSupported: boolean;
+  charonStatus: CharonStatus | null;
 };
 
-const SeedStep = ({ seedPathStatus, charonSupported, deviceModelId }: Props) => {
+const SeedStep = ({ seedPathStatus, deviceModelId, charonSupported, charonStatus }: Props) => {
   const { t } = useTranslation();
+  const track = useTrack();
   const productName = getDeviceModel(deviceModelId).productName;
+
+  const handleLearnMoreClick = useCallback(() => {
+    // TODO: Add link
+    track("button_clicked", {
+      button: "Learn More",
+      page: "Charon Start",
+    });
+  }, [track]);
+
+  useEffect(() => {
+    if (seedPathStatus == "backup_charon" && charonSupported) {
+      if (charonStatus === CharonStatus.Rejected) {
+        trackPage(`Set up ${productName}: Step 3 Charon Start`, undefined, null, true, true);
+      } else if (charonStatus === CharonStatus.Ready) {
+        trackPage(
+          `Set up ${productName}: Step 3 Charon Backup Success`,
+          undefined,
+          null,
+          true,
+          true,
+        );
+      }
+    }
+  }, [seedPathStatus, charonSupported, charonStatus, track, productName]);
 
   return (
     <Flex flexDirection="column">
@@ -139,7 +167,7 @@ const SeedStep = ({ seedPathStatus, charonSupported, deviceModelId }: Props) => 
                     {t("syncOnboarding.manual.seedContent.backupCharonCta")}
                   </Text>
                 }
-                onClick={() => {}} // TODO: Add link
+                onClick={handleLearnMoreClick}
                 isInternal={false}
               />
             </Flex>

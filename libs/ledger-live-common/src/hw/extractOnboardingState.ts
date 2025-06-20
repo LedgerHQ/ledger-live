@@ -81,7 +81,24 @@ export type OnboardingState = {
   currentOnboardingStep: OnboardingStep;
   currentSeedWordIndex: number;
   charonSupported: boolean;
+  charonStatus: CharonStatus | null;
 };
+
+export enum CharonStatus {
+  Rejected = 1,
+  Choice,
+  Running,
+  Naming,
+  Ready,
+}
+
+export const fromBitsToCharonStatusMap = new Map<number, CharonStatus>([
+  [0x1, CharonStatus.Rejected],
+  [0x2, CharonStatus.Choice],
+  [0x3, CharonStatus.Running],
+  [0x4, CharonStatus.Naming],
+  [0x5, CharonStatus.Ready],
+]);
 
 /**
  * Extracts the onboarding state of the device
@@ -142,12 +159,19 @@ export const extractOnboardingState = (
     }
   }
 
+  const charonSupported = charonState !== undefined && charonState.length > 0;
+  const charonStatus =
+    charonSupported && fromBitsToCharonStatusMap.has(charonState[0])
+      ? fromBitsToCharonStatusMap.get(charonState[0])!
+      : null;
+
   return {
     isOnboarded,
     isInRecoveryMode,
     seedPhraseType,
     currentOnboardingStep,
     currentSeedWordIndex,
-    charonSupported: charonState !== undefined,
+    charonSupported,
+    charonStatus,
   };
 };

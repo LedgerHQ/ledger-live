@@ -1,5 +1,5 @@
 import { DeviceExtractOnboardingStateError } from "@ledgerhq/errors";
-import { extractOnboardingState, OnboardingStep } from "./extractOnboardingState";
+import { CharonStatus, extractOnboardingState, OnboardingStep } from "./extractOnboardingState";
 
 describe("@hw/extractOnboardingState", () => {
   describe("extractOnboardingState", () => {
@@ -33,6 +33,7 @@ describe("@hw/extractOnboardingState", () => {
 
             expect(onboardingState).not.toBeNull();
             expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.Ready);
+            expect(onboardingState?.charonStatus).toBeNull();
           });
         });
 
@@ -43,6 +44,7 @@ describe("@hw/extractOnboardingState", () => {
 
             expect(onboardingState).not.toBeNull();
             expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.Ready);
+            expect(onboardingState?.charonStatus).toBe(CharonStatus.Rejected);
           });
 
           describe("and charon backup process started but not finished", () => {
@@ -52,6 +54,7 @@ describe("@hw/extractOnboardingState", () => {
 
               expect(onboardingState).not.toBeNull();
               expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.BackupCharon);
+              expect(onboardingState?.charonStatus).toBe(CharonStatus.Running);
             });
 
             describe("and the charon backup is done and naming not finished", () => {
@@ -61,6 +64,7 @@ describe("@hw/extractOnboardingState", () => {
 
                 expect(onboardingState).not.toBeNull();
                 expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.BackupCharon);
+                expect(onboardingState?.charonStatus).toBe(CharonStatus.Naming);
               });
 
               describe("and the charon backup is done and backup-process exited", () => {
@@ -70,6 +74,7 @@ describe("@hw/extractOnboardingState", () => {
 
                   expect(onboardingState).not.toBeNull();
                   expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.Ready);
+                  expect(onboardingState?.charonStatus).toBe(CharonStatus.Ready);
                 });
               });
             });
@@ -83,6 +88,7 @@ describe("@hw/extractOnboardingState", () => {
 
             expect(onboardingState).not.toBeNull();
             expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.BackupCharon);
+            expect(onboardingState?.charonStatus).toBe(CharonStatus.Choice);
           });
         });
       });
