@@ -1,5 +1,5 @@
 import type {
-  AlpacaApi,
+  Api,
   FeeEstimation,
   Operation,
   Pagination,
@@ -12,6 +12,7 @@ import {
   craftTransaction,
   estimateFees,
   getBalance,
+  getTransactionStatus,
   lastBlock,
   listOperations,
 } from "../logic";
@@ -20,7 +21,7 @@ import { StellarAsset, StellarMemo } from "../types";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { xdr } from "@stellar/stellar-sdk";
-export function createApi(config: StellarConfig): AlpacaApi<StellarAsset, StellarMemo> {
+export function createApi(config: StellarConfig): Api<StellarAsset, StellarMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -31,6 +32,17 @@ export function createApi(config: StellarConfig): AlpacaApi<StellarAsset, Stella
     getBalance,
     lastBlock,
     listOperations: operations,
+    validateIntent: getTransactionStatus,
+    getAccountInfo: async (address: string) => {
+      const balance = await getBalance(address);
+      return {
+        isNewAccount: false, //
+        balance: balance.map(b => b.value).join(","),
+        ownerCount: 0,
+        sequence: 0,
+        // Add other account details as needed
+      };
+    },
   };
 }
 

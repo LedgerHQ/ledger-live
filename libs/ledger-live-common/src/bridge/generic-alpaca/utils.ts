@@ -47,7 +47,7 @@ export const buildOptimisticOperation = (
   transaction: TransactionCommon,
   sequenceNumber?: number,
 ): Operation => {
-  return {
+  const operation: Operation = {
     id: encodeOperationId(account.id, "", "OUT"),
     hash: "",
     type: "OUT",
@@ -62,4 +62,31 @@ export const buildOptimisticOperation = (
     date: new Date(),
     extra: {},
   };
+
+  const { subAccountId } = transaction;
+  const { subAccounts } = account;
+
+  const tokenAccount = !subAccountId
+    ? null
+    : subAccounts && subAccounts.find(ta => ta.id === subAccountId);
+
+  if (tokenAccount && subAccountId) {
+    operation.subOperations = [
+      {
+        id: `${subAccountId}--OUT`,
+        hash: "",
+        type: "OUT",
+        value: transaction.useAllAmount ? tokenAccount.balance : transaction.amount,
+        fee: new BigNumber(0),
+        blockHash: null,
+        blockHeight: null,
+        senders: [account.freshAddress],
+        recipients: [transaction.recipient],
+        accountId: subAccountId,
+        date: new Date(),
+        extra: {},
+      },
+    ];
+  }
+  return operation;
 };

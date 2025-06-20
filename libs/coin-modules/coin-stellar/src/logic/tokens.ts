@@ -9,7 +9,8 @@ import type { BalanceAsset, StellarOperation } from "../types";
 
 export const getAssetIdFromTokenId = (tokenId: string): string => tokenId.split("/")[2];
 
-const getAssetIdFromAsset = (asset: BalanceAsset) => `${asset.asset_code}:${asset.asset_issuer}`;
+export const getAssetIdFromAsset = (asset: BalanceAsset) =>
+  `${asset.asset_code}:${asset.asset_issuer}`;
 
 function buildStellarTokenAccount({
   parentAccountId,

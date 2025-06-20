@@ -3,60 +3,150 @@ import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHel
 import BigNumber from "bignumber.js";
 import { getAlpacaApi } from "./alpaca";
 import { adaptCoreOperationToLiveOperation } from "./utils";
+import { BaseTokenLikeAsset } from "./types";
+import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
 
-export function genericGetAccountShape(network, kind): GetAccountShape {
-  return async info => {
-    try {
-      const { address, initialAccount, currency, derivationMode } = info;
-      const accountId = encodeAccountId({
-        type: "js",
-        version: "2",
-        currencyId: currency.id,
-        xpubOrAddress: address,
-        derivationMode,
-      });
+import { StellarBurnAddressError, StellarOperation } from "@ledgerhq/coin-stellar/types";
+import { STELLAR_BURN_ADDRESS } from "@ledgerhq/coin-stellar/logic";
+import { getEnv } from "@ledgerhq/live-env";
+import { Pagination } from "@ledgerhq/coin-framework/lib-es/api/types";
+import { Operation } from "@ledgerhq/types-live";
+// import { buildTokenAccounts } from "./buildSubAccounts";
 
-      const blockInfo = await getAlpacaApi(network, kind).lastBlock();
+function buildPaginationParams(
+  network: string,
+  isInitSync: boolean,
+  lastPagingToken: string,
+): Pagination {
+  switch (network) {
+    case "stellar":
+      console.log("Get ACCount Stellar");
+      return isInitSync
+        ? { limit: getEnv("API_STELLAR_HORIZON_INITIAL_FETCH_MAX_OPERATIONS"), minHeight: 0 }
+        : { pagingToken: lastPagingToken, minHeight: 0 };
 
-      const balanceRes = await getAlpacaApi(network, kind).getBalance(address);
-      // FIXME: fix type Balance -> check "native" balance
-      // is balance[0] always the native ?
-      const balance = BigNumber(balanceRes[0].value.toString());
+    case "xrp":
+    default:
+      // fallback to minHeight if pagingToken is not available
+      return {
+        minHeight: isInitSync ? 0 : parseInt(lastPagingToken || "0", 10),
+      };
+  }
+}
 
-      let spendableBalance: BigNumber;
-      if (balanceRes[0]?.locked) {
-        spendableBalance = BigNumber.max(
-          balance.minus(BigNumber(balanceRes[0].locked.toString())),
-          BigNumber(0),
-        );
-      } else {
-        spendableBalance = initialAccount?.spendableBalance || balance;
+export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
+  return async (info, syncConfig) => {
+    console.log("genericGetAccountShape info ", info);
+    console.log("genericGetAccountShape syncConfig ", syncConfig);
+    const { address, initialAccount, currency, derivationMode } = info;
+
+    if (address === STELLAR_BURN_ADDRESS) {
+      throw new StellarBurnAddressError();
+    }
+
+    const accountId = encodeAccountId({
+      type: "js",
+      version: "2",
+      currencyId: currency.id,
+      xpubOrAddress: address,
+      derivationMode,
+    });
+
+    const blockInfo = await getAlpacaApi(network, kind).lastBlock();
+    console.log("blockInfo", blockInfo);
+    const balanceRes = await getAlpacaApi(network, kind).getBalance(address);
+    console.log("balanceRes", balanceRes);
+    const nativeAsset = balanceRes.find(b => b.asset.type === "native");
+    const nativeBalance = BigInt(nativeAsset?.value ?? "0");
+    const lockedBalance = BigInt(nativeAsset?.locked ?? "0");
+    const spendableBalance = nativeBalance > lockedBalance ? nativeBalance - lockedBalance : 0n;
+
+    const oldOps = (initialAccount?.operations || []) as StellarOperation[];
+    console.log("oldOps", oldOps);
+    const lastPagingToken = oldOps[0]?.extra?.pagingToken || "";
+    const isInitSync = lastPagingToken === "";
+
+    const pagination = buildPaginationParams(network, isInitSync, lastPagingToken);
+    const [newCoreOps] = await getAlpacaApi(network, kind).listOperations(address, pagination);
+    console.log("newCoreOps", newCoreOps);
+    // FIXME: adaptCoreOperationToLiveOperation should not be StellarOperation but generic
+    const newOps = newCoreOps.map(op =>
+      adaptCoreOperationToLiveOperation(accountId, op),
+    ) as StellarOperation[];
+    const mergedOps = mergeOps(oldOps, newOps) as StellarOperation[];
+    console.log("mergedOps", mergedOps);
+
+    const assetOps = mergedOps.filter(op => op.type === "NONE");
+    console.log("assetOps", assetOps);
+    // Instead of building TokenAccounts, we use enriched AssetInfo objects
+    const tokenAssets: BaseTokenLikeAsset[] = balanceRes
+      .filter(b => b.asset?.type === "token")
+      .map(b => ({
+        asset_code: b.asset.assetCode,
+        asset_issuer: b.asset.assetIssuer,
+        balance: b.value.toString(),
+        decimals: 7, // Default Stellar token decimals
+        creationDate: new Date(), // Optional: replace if available
+        operations: newCoreOps.filter(
+          op =>
+            op.asset?.assetCode === b.asset.assetCode &&
+            op.asset?.assetIssuer === b.asset.assetIssuer,
+        ),
+      }));
+    console.log("tokenAssets", tokenAssets);
+
+    // TODO: make this more generic
+    // const tokenAccounts = buildTokenAccounts(
+    //   tokenAssets,
+    //   accountId,
+    //   currency,
+    //   "stellar",
+    //   asset => `${currency.id}/token/${asset.asset_issuer}/${asset.asset_code}`,
+    // );
+    // console.log({ TOKENACCOUNTS: tokenAccounts });
+    // const operationsWithSubs1 = mergedOps.map(op => ({
+    //   ...op,
+    //   subOperations: inferSubOperations(op.hash, []),
+    // }));
+    //
+    const operationsWithSubs = mergedOps.map(op => {
+      const subOperations: Operation[] = [];
+
+      for (const asset of tokenAssets) {
+        for (const subOp of asset.operations) {
+          if (subOp.tx.hash === op.hash) {
+            const operation = adaptCoreOperationToLiveOperation(accountId, subOp as any);
+            subOperations.push(operation);
+          }
+        }
       }
-      const oldOperations = initialAccount?.operations || [];
-
-      const blockHeight = oldOperations.length ? (oldOperations[0].blockHeight ?? 0) + 1 : 0;
-
-      const [newOperations, _] = await getAlpacaApi(network, kind).listOperations(address, {
-        minHeight: blockHeight,
-      });
-
-      const operations = mergeOps(
-        oldOperations,
-        newOperations.map(op => adaptCoreOperationToLiveOperation(accountId, op)),
-      );
+      if (subOperations.length > 0) {
+        console.log("FOUND HERE");
+        debugger;
+      }
 
       return {
-        id: accountId,
-        xpub: address,
-        blockHeight: blockInfo.height || initialAccount?.blockHeight,
-        balance,
-        spendableBalance,
-        operations,
-        operationsCount: operations.length,
+        ...op,
+        // extra: {
+        //   ...op.extra,
+        subOperations,
+        // },
       };
-    } catch (e) {
-      console.error("Error in getAccountShape", e);
-      throw e;
-    }
+    });
+
+    debugger;
+    console.log("operationsWithSubs", operationsWithSubs);
+    const res = {
+      id: accountId,
+      xpub: address,
+      blockHeight: blockInfo.height,
+      balance: new BigNumber(nativeBalance.toString()),
+      spendableBalance: new BigNumber(spendableBalance.toString()),
+      operations: operationsWithSubs,
+      operationsCount: operationsWithSubs.length,
+      tokenAssets,
+    };
+    console.log({ ACCOUNTSHAPERESULT: res });
+    return res;
   };
 }
