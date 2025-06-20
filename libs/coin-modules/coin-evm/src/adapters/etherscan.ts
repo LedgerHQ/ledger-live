@@ -83,6 +83,7 @@ export const etherscanERC20EventToOperations = (
 ): Operation[] => {
   const { currencyId, xpubOrAddress: address } = decodeAccountId(accountId);
   const tokenCurrency = findTokenByAddressInCurrency(event.contractAddress, currencyId);
+  console.log({ event, tokenCurrency });
   if (!tokenCurrency) return [];
 
   const tokenAccountId = encodeTokenAccountId(accountId, tokenCurrency);
