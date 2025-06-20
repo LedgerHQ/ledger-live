@@ -185,7 +185,7 @@ export const AccountItem = ({
         </BalanceContainer>
         {rightElement && rightElement.type === "checkbox" && (
           <Box data-testid="right-element-checkbox">
-            <Checkbox {...rightElement.checkbox} />
+            <Checkbox {...rightElement.checkbox} size={20} />
           </Box>
         )}
         {rightElement && rightElement.type === "arrow" && (
