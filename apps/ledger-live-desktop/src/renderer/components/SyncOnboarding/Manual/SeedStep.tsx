@@ -42,16 +42,30 @@ const SeedStep = ({ seedPathStatus, deviceModelId, charonSupported, charonStatus
 
   useEffect(() => {
     if (seedPathStatus == "backup_charon" && charonSupported) {
-      if (charonStatus === CharonStatus.Rejected) {
-        trackPage(`Set up ${productName}: Step 3 Charon Start`, undefined, null, true, true);
-      } else if (charonStatus === CharonStatus.Ready) {
-        trackPage(
-          `Set up ${productName}: Step 3 Charon Backup Success`,
-          undefined,
-          null,
-          true,
-          true,
-        );
+      switch (charonStatus) {
+        case CharonStatus.Choice:
+          trackPage(`Set up ${productName}: Step 3 Charon Start`, undefined, null, true, true);
+          return;
+        case CharonStatus.Rejected:
+          trackPage(
+            `Set up ${productName}: Step 3 Charon Backup Rejected`,
+            undefined,
+            null,
+            true,
+            true,
+          );
+          return;
+        case CharonStatus.Ready:
+          trackPage(
+            `Set up ${productName}: Step 3 Charon Backup Success`,
+            undefined,
+            null,
+            true,
+            true,
+          );
+          return;
+        default:
+          return;
       }
     }
   }, [seedPathStatus, charonSupported, charonStatus, track, productName]);
