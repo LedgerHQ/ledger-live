@@ -1,5 +1,5 @@
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/lib/e2e/swap";
-import { delay, isIos, isSpeculosRemote, openDeeplink } from "../../helpers/commonHelpers";
+import { addDelayBeforeInteractingWithDevice, openDeeplink } from "../../helpers/commonHelpers";
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
@@ -26,7 +26,7 @@ export default class SwapPage {
   async verifyAmountsAndAcceptSwap(swap: SwapType, amount: string) {
     await waitForElementById(this.confirmSwapOnDeviceDrawerId);
     await app.speculos.verifyAmountsAndAcceptSwap(swap, amount);
-    await this.delayDeviceActionLoadingCheck();
+    await addDelayBeforeInteractingWithDevice(45_000, 20_000);
     await waitForElementNotVisible(this.deviceActionLoading);
   }
 
@@ -34,10 +34,6 @@ export default class SwapPage {
   async waitForSuccessAndContinue() {
     await waitForElementById(this.swapSuccessTitleId);
     await tapById(app.common.proceedButtonId);
-  }
-  async delayDeviceActionLoadingCheck() {
-    //ISSUE: LIVE-19300
-    await delay(isSpeculosRemote() && isIos() ? 45_000 : 20_000);
   }
 
   @Step("Check minimum amount for swap")
