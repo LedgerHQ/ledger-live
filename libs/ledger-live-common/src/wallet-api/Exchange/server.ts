@@ -412,6 +412,8 @@ export const handlers = ({
         ? toParentAccount.freshAddress
         : (toAccount as Account).freshAddress;
 
+      console.log("exchangeStartParams", exchangeStartParams);
+
       // Step 1: Open the drawer and open exchange app
       const startSwapResponse: ExchangeStartResult = await new Promise((resolve, reject) =>
         uiExchangeStart({
@@ -513,6 +515,8 @@ export const handlers = ({
       const decodePayload = await decodeSwapPayload(binaryPayload);
       const amountExpectedTo = new BigNumber(decodePayload.amountToWallet.toString());
       const magnitudeAwareRate = tx.amount && amountExpectedTo.dividedBy(tx.amount);
+      const refundAddress = decodePayload.refundAddress;
+      const payoutAddress = decodePayload.payoutAddress;
 
       // tx.amount should be BigNumber
       tx.amount = new BigNumber(tx.amount);
@@ -537,6 +541,8 @@ export const handlers = ({
             swapId: swapId,
             amountExpectedTo: amountExpectedTo.toNumber(),
             magnitudeAwareRate,
+            refundAddress,
+            payoutAddress,
           },
           onSuccess: ({ operationHash, swapId }: { operationHash: string; swapId: string }) => {
             tracking.completeExchangeSuccess({
