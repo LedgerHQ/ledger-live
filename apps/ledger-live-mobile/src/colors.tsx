@@ -24,7 +24,7 @@ export const lighten = (c: string, a: number) => color(c).lighten(a).toString();
 export function withTheme<P>(Component: React.ComponentType<P>) {
   return (
     props: Omit<P, "colors"> & {
-      colors?: Partial<Theme["colors"] | DefaultTheme["colors"]>;
+      colors?: Partial<CustomTheme["colors"] | DefaultTheme["colors"]>;
     },
   ) => {
     const { colors } = useTheme();
@@ -41,6 +41,11 @@ export const lightTheme = {
     text: "rgb(28, 28, 30)",
     border: "rgb(199, 199, 204)",
     notification: "rgb(255, 69, 58)",
+    onPrimary: "#FFFFFF",
+    onBackground: "rgb(28, 28, 30)",
+    onCard: "rgb(28, 28, 30)",
+    onBorder: "rgb(28, 28, 30)",
+    onNotification: "#FFFFFF",
     contrastBackground: "#142533",
     contrastBackgroundText: "#ffffff",
     /* MAIN */
@@ -97,6 +102,11 @@ export const darkTheme = {
     text: "#FFFFFF",
     border: "rgba(255, 255, 255, 0.1)",
     notification: "rgb(255, 69, 58)",
+    onPrimary: "#000000",
+    onBackground: "#FFFFFF",
+    onCard: "#FFFFFF",
+    onBorder: "#FFFFFF",
+    onNotification: "#000000",
     contrastBackground: "#223544",
     contrastBackgroundText: "#ffffff",
     /* MAIN */
@@ -144,9 +154,4 @@ export const darkTheme = {
   },
 };
 
-export type Theme = typeof lightTheme;
-
-declare module "@react-navigation/native" {
-  export type T = typeof lightTheme;
-  export function useTheme(): T;
-}
+export type CustomTheme = typeof lightTheme;

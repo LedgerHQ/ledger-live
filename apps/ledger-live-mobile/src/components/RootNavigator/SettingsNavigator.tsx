@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { createStackNavigator, TransitionPresets } from "@react-navigation/stack";
+import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
@@ -468,7 +468,7 @@ export default function SettingsNavigator() {
         name={ScreenName.OnboardingLanguage}
         component={OnboardingStepLanguage}
         options={{
-          ...TransitionPresets.ModalTransition,
+          presentation: "modal",
           headerShown: true,
           headerTitle: t("onboarding.stepLanguage.title"),
         }}

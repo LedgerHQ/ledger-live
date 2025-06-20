@@ -8,6 +8,7 @@ import {
   NavigationContainer,
   NavigationState,
   PartialState,
+  Theme,
 } from "@react-navigation/native";
 import Config from "react-native-config";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
@@ -21,7 +22,7 @@ import { ScreenName, NavigatorName } from "~/const";
 import { setWallectConnectUri } from "~/actions/walletconnect";
 import { useGeneralTermsAccepted } from "~/logic/terms";
 import { Writeable } from "~/types/helpers";
-import { lightTheme, darkTheme, Theme } from "../colors";
+import { lightTheme, darkTheme } from "../colors";
 import { track } from "~/analytics";
 import {
   makeSetEarnInfoModalAction,
@@ -214,7 +215,7 @@ const linkingOptions = () => ({
           },
 
           [NavigatorName.Settings]: {
-            initialRouteName: [ScreenName.SettingsScreen],
+            initialRouteName: ScreenName.SettingsScreen,
             screens: {
               /**
                * ie: "ledgerlive://settings/experimental" -> will redirect to the experimental settings panel
@@ -402,7 +403,6 @@ export const DeeplinksProvider = ({
                         },
                       }),
                       [NavigatorName.Main]: {
-                        initialRouteName: ScreenName.Portfolio,
                         screens: {
                           /**
                            * ie: "ledgerlive://portfolio" -> will redirect to the portfolio

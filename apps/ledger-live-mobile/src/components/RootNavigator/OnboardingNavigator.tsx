@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  createStackNavigator,
-  CardStyleInterpolators,
-  TransitionPresets,
-  StackNavigationOptions,
-} from "@react-navigation/stack";
+import { createStackNavigator, StackNavigationOptions } from "@react-navigation/stack";
 import { Flex } from "@ledgerhq/native-ui";
 import { Theme } from "@ledgerhq/native-ui/styles/theme";
 
@@ -30,7 +25,6 @@ import OnboardingPreQuizModal from "~/screens/Onboarding/steps/setupDevice/drawe
 import OnboardingQuiz from "~/screens/Onboarding/OnboardingQuiz";
 import OnboardingQuizFinal from "~/screens/Onboarding/OnboardingQuizFinal";
 import NavigationHeader from "../NavigationHeader";
-import NavigationOverlay from "../NavigationOverlay";
 import NavigationModalContainer from "../NavigationModalContainer";
 import OnboardingSetupDeviceInformation from "~/screens/Onboarding/steps/setupDevice/drawers/SecurePinCode";
 import OnboardingSetupDeviceRecoveryPhrase from "~/screens/Onboarding/steps/setupDevice/drawers/SecureRecoveryPhrase";
@@ -85,14 +79,11 @@ function OnboardingPreQuizModalNavigator(
 
 const modalOptions: Partial<StackNavigationOptions> = {
   presentation: "transparentModal",
-  cardOverlayEnabled: true,
-  cardOverlay: () => <NavigationOverlay />,
   headerShown: false,
-  ...TransitionPresets.ModalTransition,
 };
 
 const infoModalOptions = ({ theme }: { theme: Theme }): Partial<StackNavigationOptions> => ({
-  ...TransitionPresets.ModalTransition,
+  presentation: "modal",
   headerStyle: {
     backgroundColor: theme.colors.background.drawer,
   },
@@ -217,7 +208,7 @@ export default function OnboardingNavigator() {
         name={ScreenName.OnboardingInfoModal}
         component={OnboardingInfoModal}
         options={{
-          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+          presentation: "modal",
         }}
       />
 
