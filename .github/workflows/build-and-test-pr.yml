@@ -78,10 +78,10 @@ jobs:
     secrets: inherit
 
   test-mobile-e2e:
-    name: "Test Mobile E2E"
+    name: "Test Mobile Mocked"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@support/poc-macOS-sharding
     secrets: inherit
     with:
       macos-specificity-runner-label: "performance-pool"
