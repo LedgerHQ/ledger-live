@@ -62,9 +62,13 @@ export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, s
   const openAddAccountFlow = useCallback(
     (currency: CryptoOrTokenCurrency) => {
       if (featureNetworkBasedAddAccount?.enabled) {
-        setDrawer(ModularDrawerAddAccountFlowManager, {
-          currency,
-        });
+        setDrawer(
+          ModularDrawerAddAccountFlowManager,
+          {
+            currency,
+          },
+          { closeButtonComponent: CloseButton },
+        );
       } else {
         const cryptoCurrency =
           currency.type === "CryptoCurrency" ? currency : currency.parentCurrency;
