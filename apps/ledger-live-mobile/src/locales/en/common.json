@@ -294,6 +294,14 @@
       "title": "Device disconnected",
       "description": "Ledger Live could not connect to your device. Please try it again."
     },
+    "DeviceDisconnectedWhileSendingError": {
+      "title": "Device disconnected",
+      "description": "Ledger Live could not connect to your device. Please try again."
+    },
+    "DeviceDisconnectedBeforeSendingApdu": {
+      "title": "Device disconnected",
+      "description": "Ledger Live could not connect to your device. Please try again."
+    },
     "CasperInvalidTransferId": {
       "title": "Transfer ID should be a positive number smaller than {{maxTransferId}}"
     },

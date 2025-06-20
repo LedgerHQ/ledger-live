@@ -51,7 +51,7 @@ const Activation: React.FC<Props> = ({ onSyncMethodPress, navigateToChooseSyncMe
       <Actions
         onPressHasAlreadyCreatedAKey={navigateToChooseSyncMethod}
         onPressSyncAccounts={onSyncMethodPress}
-        onPressLearnMore={onPressLearnMore}
+        onPressLearnMore={learnMoreLink ? onPressLearnMore : undefined}
       />
     </Flex>
   );

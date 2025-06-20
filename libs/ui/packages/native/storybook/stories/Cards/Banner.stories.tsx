@@ -1,5 +1,5 @@
 import React from "react";
-import type { ComponentMeta, ComponentStory } from "@storybook/react-native";
+import type { Meta, StoryFn } from "@storybook/react";
 import BannerCard from "../../../src/components/Cards/BannerCard";
 import Flex from "../../../src/components/Layout/Flex";
 import { descriptionBannerCard } from "./descriptionsCards";
@@ -15,11 +15,9 @@ export default {
       },
     },
   },
-} as ComponentMeta<typeof BannerCard>;
+} as Meta<typeof BannerCard>;
 
-export const BannerCardStory: ComponentStory<typeof BannerCard> = (
-  args: typeof BannerCardStoryArgs,
-) => {
+export const BannerCardStory: StoryFn<typeof BannerCard> = (args: typeof BannerCardStoryArgs) => {
   return (
     <Flex backgroundColor="primary.c70" alignItems="center" justifyContent="center" p="70px">
       <Flex width={args.width}>
