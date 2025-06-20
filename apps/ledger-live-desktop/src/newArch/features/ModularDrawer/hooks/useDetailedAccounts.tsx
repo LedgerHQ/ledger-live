@@ -17,8 +17,7 @@ import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
 import { MODULAR_DRAWER_PAGE_NAME } from "../analytics/types";
 import { useOpenAssetFlow } from "./useOpenAssetFlow";
-import { ModularDrawerLocation } from "../enums";
-
+import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 export const sortAccountsByBalance = (
   a: { balance: BigNumber } | undefined,
   b: { balance: BigNumber } | undefined,
