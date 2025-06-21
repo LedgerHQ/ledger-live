@@ -98,7 +98,7 @@ env:
 jobs:
   detox-tests-ios:
     name: "iOS Detox"
-    runs-on: ["${{ inputs.macos-specificity-runner-label || 'general-pool' }}", macOS, ARM64]
+    runs-on: [ "${{ inputs.macos-specificity-runner-label || 'general-pool' }}", macOS, ARM64 ]
     if: ${{ !cancelled() && inputs.tests_type != 'E2E - Android Only' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=8192"
@@ -113,8 +113,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3]
-        shardTotal: [3, 1]
+        shardIndex: [ 1, 2, 3 ]
+        shardTotal: [ 3, 1 ]
         exclude:
           - shardIndex: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request') && '2' }}
           - shardIndex: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request') && '3' }}
@@ -126,12 +126,14 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
 
-      - name: Boot iOS Simulator in Parallel
+      - name: Boot iOS Simulator in Background
         run: |
-          UDID=$(xcrun simctl list devices available | grep -B1 "iOS Simulator" | head -n1 | awk -F '[()]' '{print $2}')
-          echo "Booting simulator with UDID: $UDID"
-          xcrun simctl boot "$UDID" || true
-          xcrun simctl bootstatus "$UDID" --timeout 180
+          (
+            UDID=$(xcrun simctl list devices available | grep -B1 "iOS Simulator" | head -n1 | awk -F '[()]' '{print $2}')
+            echo "Booting simulator with UDID: $UDID"
+            xcrun simctl boot "$UDID" || true
+            xcrun simctl bootstatus "$UDID"
+          ) &
         shell: bash
 
       - name: setup caches
@@ -279,9 +281,9 @@ jobs:
 
   allure-report-ios:
     name: "iOS Detox > Allure Report"
-    runs-on: [ledger-live-medium]
+    runs-on: [ ledger-live-medium ]
     if: ${{ !cancelled() && needs.detox-tests-ios.outputs.artifact && inputs.tests_type != 'E2E - Android Only' }}
-    needs: [detox-tests-ios]
+    needs: [ detox-tests-ios ]
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
       result: ${{ steps.summary.outputs.test_result }}
@@ -327,7 +329,7 @@ jobs:
 
   detox-tests-android:
     name: "Android Detox"
-    runs-on: [ledger-live-linux-8CPU-32RAM]
+    runs-on: [ ledger-live-linux-8CPU-32RAM ]
     if: ${{ !cancelled() && inputs.tests_type != 'E2E - iOS Only' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -350,8 +352,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3]
-        shardTotal: [3, 1]
+        shardIndex: [ 1, 2, 3 ]
+        shardTotal: [ 3, 1 ]
         exclude:
           - shardIndex: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'merge_group') && '2' }}
           - shardIndex: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'merge_group') && '3' }}
@@ -504,13 +506,13 @@ jobs:
 
   allure-report-android:
     name: "Android Detox > Allure Report"
-    runs-on: [ledger-live-medium]
+    runs-on: [ ledger-live-medium ]
     if: ${{ !cancelled() && needs.detox-tests-android.outputs.artifact }}
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
       result: ${{ steps.summary.outputs.test_result }}
       finalStatus: ${{ steps.aggregate.outputs.finalStatus }}
-    needs: [detox-tests-android]
+    needs: [ detox-tests-android ]
     steps:
       - name: Download Allure Report
         uses: actions/download-artifact@v4
