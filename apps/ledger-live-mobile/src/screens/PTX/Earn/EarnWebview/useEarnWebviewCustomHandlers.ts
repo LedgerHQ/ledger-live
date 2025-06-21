@@ -6,6 +6,7 @@ import { useMemo } from "react";
 import { track } from "~/analytics";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
 import { WebviewProps } from "~/components/Web3AppWebview/types";
+import Config from "react-native-config";
 
 import { sendEarnLiveAppReady } from "../../../../../e2e/bridge/client";
 
@@ -36,7 +37,9 @@ export function useEarnCustomHandlers(manifest: WebviewProps["manifest"], accoun
           "custom.exchange.complete": () => {},
           "custom.exchange.error": () => {},
           "custom.isReady": async () => {
-            sendEarnLiveAppReady();
+            if (Config.DETOX) {
+              sendEarnLiveAppReady();
+            }
           },
         },
       })["custom.isReady"],
