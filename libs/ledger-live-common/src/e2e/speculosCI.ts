@@ -12,7 +12,9 @@ const GIT_API_URL = "https://api.github.com/repos/LedgerHQ/actions/actions/";
 const START_WORKFLOW_ID = "workflows/161487603/dispatches";
 const STOP_WORKFLOW_ID = "workflows/161487604/dispatches";
 const GITHUB_REF = "main";
-const getSpeculosAddress = (runId: string) => `https://${runId}.speculos.aws.stg.ldg-tech.com`;
+export let runId: string = "";
+export const getSpeculosAddress = (runId: string) =>
+  `https://${runId}.speculos.aws.stg.ldg-tech.com`;
 const speculosPort = 443;
 
 function uniqueId(): string {
@@ -58,14 +60,21 @@ async function githubApiRequest<T = unknown>({
   }
 }
 
-function waitForSpeculosReady(url: string, { interval = 2000, timeout = 300_000 } = {}) {
+export function waitForSpeculosReady(
+  url: string,
+  { interval = 2000, timeout = 300_000 } = {},
+): Promise<boolean> {
   return new Promise((resolve, reject) => {
     const startTime = Date.now();
 
     function check() {
       https
-        .get(url, res => {
+        .get(url, { agent: false }, res => {
+          res.resume();
+
           if (res.statusCode && res.statusCode >= 200 && res.statusCode < 400) {
+            // eslint-disable-next-line no-console
+            console.log(`✅ Speculos is ready at ${url} (status: ${res.statusCode})`);
             process.env.SPECULOS_ADDRESS = url;
             resolve(true);
           } else {
@@ -76,9 +85,12 @@ function waitForSpeculosReady(url: string, { interval = 2000, timeout = 300_000 
     }
 
     function retry() {
-      if (Date.now() - startTime >= timeout) {
-        reject(new Error(`Timeout: ${url} did not become available within ${timeout}ms`));
+      const elapsed = Date.now() - startTime;
+      if (elapsed >= timeout) {
+        reject(new Error(`❌ Timeout: ${url} did not become available within ${timeout}ms`));
       } else {
+        // eslint-disable-next-line no-console
+        console.log(`🔁 Waiting for Speculos at ${url} (${elapsed}ms elapsed)`);
         setTimeout(check, interval);
       }
     }
@@ -129,21 +141,47 @@ function createStartPayload(deviceParams: DeviceParams, runId: string) {
 export async function createSpeculosDeviceCI(
   deviceParams: DeviceParams,
 ): Promise<SpeculosDevice | undefined> {
+  const start = Date.now();
+
   try {
-    const runId = uniqueId();
-    console.warn("Creating remote speculos:", runId);
+    // eslint-disable-next-line no-console
+    console.log(
+      "🟡 Starting remote Speculos creation for:",
+      deviceParams,
+      ">>>",
+      START_WORKFLOW_ID,
+    );
+
+    runId = uniqueId();
+    console.warn("🔧 Creating remote Speculos:", runId);
+
     const data = createStartPayload(deviceParams, runId);
+    // eslint-disable-next-line no-console
+    console.log("📦 Payload for Speculos creation:", data);
+
     await githubApiRequest({ urlSuffix: START_WORKFLOW_ID, data });
+    // eslint-disable-next-line no-console
+    console.log("⏳ Waiting for Speculos to be ready...");
     await waitForSpeculosReady(getSpeculosAddress(runId));
+    // eslint-disable-next-line no-console
+    console.log("✅ Speculos is ready at:", getSpeculosAddress(runId));
+
+    const end = Date.now();
+    const durationSec = ((end - start) / 1000).toFixed(2);
+    // eslint-disable-next-line no-console
+    console.log(`✅ Remote Speculos created successfully in ${durationSec}s`);
 
     return {
       id: runId,
       port: speculosPort,
     };
   } catch (e: unknown) {
-    console.error(e);
+    const end = Date.now();
+    const durationSec = ((end - start) / 1000).toFixed(2);
+
+    console.error("❌ Speculos creation failed:", e);
     console.warn(
-      `Creating remote speculos ${deviceParams.appName}:${deviceParams.appVersion} failed with ${String(e)}`,
+      `⚠️ Creating remote speculos ${deviceParams.appName}:${deviceParams.appVersion} failed after ${durationSec}s with error: ${String(e)}`,
     );
   }
 }

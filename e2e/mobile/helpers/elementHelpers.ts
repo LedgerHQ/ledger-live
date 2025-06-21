@@ -10,8 +10,8 @@ interface IndexedWebElement extends WebElement {
 
 const scroller = new PageScroller();
 
-const DEFAULT_TIMEOUT = 60000;
-const RN75_DELAY = 200; // React Native 75 workaround: QAA-370
+const DEFAULT_TIMEOUT = 60_000;
+const RN75_DELAY = 2_00; // React Native 75 workaround: QAA-370
 
 function sync_delay(ms: number) {
   const done = new Int32Array(new SharedArrayBuffer(4));

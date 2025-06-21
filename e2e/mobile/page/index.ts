@@ -111,6 +111,7 @@ export class Application {
   private walletTabNavigatorPageInstance = lazyInit(WalletTabNavigatorPage);
   private celoManageAssetsPageInstance = lazyInit(CeloManageAssetsPage);
 
+  @Step("Account initialization")
   public async init({
     speculosApp,
     cliCommands,
