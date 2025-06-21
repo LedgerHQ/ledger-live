@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.75.0-nightly.0
+
+### Minor Changes
+
+- [#10591](https://github.com/LedgerHQ/ledger-live/pull/10591) [`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add ledger charon support
+
 ## 6.74.0
 
 ### Minor Changes

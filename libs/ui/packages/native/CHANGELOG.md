@@ -1,5 +1,16 @@
 # @ledgerhq/native-ui
 
+## 0.37.0-nightly.0
+
+### Minor Changes
+
+- [#10591](https://github.com/LedgerHQ/ledger-live/pull/10591) [`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add ledger charon support
+
+### Patch Changes
+
+- Updated dependencies [[`efdcdc1`](https://github.com/LedgerHQ/ledger-live/commit/efdcdc14d395a31670d94bd32f301e10794a70d8)]:
+  - @ledgerhq/icons-ui@0.11.1-nightly.0
+
 ## 0.36.0
 
 ### Minor Changes

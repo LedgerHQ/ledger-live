@@ -1,5 +1,14 @@
 # @ledgerhq/react-ui
 
+## 0.30.1-nightly.0
+
+### Patch Changes
+
+- [#10433](https://github.com/LedgerHQ/ledger-live/pull/10433) [`efdcdc1`](https://github.com/LedgerHQ/ledger-live/commit/efdcdc14d395a31670d94bd32f301e10794a70d8) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - MAD arch rework of add account
+
+- Updated dependencies [[`efdcdc1`](https://github.com/LedgerHQ/ledger-live/commit/efdcdc14d395a31670d94bd32f301e10794a70d8)]:
+  - @ledgerhq/icons-ui@0.11.1-nightly.0
+
 ## 0.30.0
 
 ### Minor Changes

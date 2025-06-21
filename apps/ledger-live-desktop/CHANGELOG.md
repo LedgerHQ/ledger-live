@@ -1,5 +1,45 @@
 # ledger-live-desktop
 
+## 2.119.0-nightly.0
+
+### Minor Changes
+
+- [#10632](https://github.com/LedgerHQ/ledger-live/pull/10632) [`9aa6bf4`](https://github.com/LedgerHQ/ledger-live/commit/9aa6bf4e064f314503081c9b4e62a782167a0184) Thanks [@LucasWerey](https://github.com/LucasWerey)! - use custom close button for add account mad
+
+- [#10631](https://github.com/LedgerHQ/ledger-live/pull/10631) [`9573acc`](https://github.com/LedgerHQ/ledger-live/commit/9573acce17172264ba2ec8206bdf12e4b33c047f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - Add user feedback when the asset list is empty
+
+- [#10549](https://github.com/LedgerHQ/ledger-live/pull/10549) [`90f84a4`](https://github.com/LedgerHQ/ledger-live/commit/90f84a4169cd518a9db4794447e84ee823a01518) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add new tracking code
+
+- [#10626](https://github.com/LedgerHQ/ledger-live/pull/10626) [`5567fd2`](https://github.com/LedgerHQ/ledger-live/commit/5567fd28322fae56ff6a6d46d58a373253ec44de) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add where user clicked swap from
+
+- [#10628](https://github.com/LedgerHQ/ledger-live/pull/10628) [`368772e`](https://github.com/LedgerHQ/ledger-live/commit/368772e84e8281e896bf838479f909227e095135) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add new tracking event
+
+- [#10620](https://github.com/LedgerHQ/ledger-live/pull/10620) [`0d6b5c8`](https://github.com/LedgerHQ/ledger-live/commit/0d6b5c8070f3c69521437f7a807d82a0760f940a) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - MAD create simple account by currency getter
+
+- [#10572](https://github.com/LedgerHQ/ledger-live/pull/10572) [`b31657b`](https://github.com/LedgerHQ/ledger-live/commit/b31657bde1253628d1f99785288442b5f5d9d605) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Change how we group assets by provider in LLC. Optimize MAD perf, add tests, fix some issues
+
+### Patch Changes
+
+- [#10433](https://github.com/LedgerHQ/ledger-live/pull/10433) [`efdcdc1`](https://github.com/LedgerHQ/ledger-live/commit/efdcdc14d395a31670d94bd32f301e10794a70d8) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - MAD arch rework of add account
+
+- Updated dependencies [[`90c1393`](https://github.com/LedgerHQ/ledger-live/commit/90c1393713a6164264c615586493fa1eb260a2de), [`b31657b`](https://github.com/LedgerHQ/ledger-live/commit/b31657bde1253628d1f99785288442b5f5d9d605), [`efdcdc1`](https://github.com/LedgerHQ/ledger-live/commit/efdcdc14d395a31670d94bd32f301e10794a70d8), [`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc)]:
+  - @ledgerhq/live-common@34.39.0-nightly.0
+  - @ledgerhq/react-ui@0.30.1-nightly.0
+  - @ledgerhq/types-live@6.75.0-nightly.0
+  - @ledgerhq/live-dmk-desktop@0.5.1-nightly.0
+  - @ledgerhq/coin-framework@5.4.1-nightly.0
+  - @ledgerhq/coin-aptos@2.3.1-nightly.0
+  - @ledgerhq/coin-bitcoin@0.16.2-nightly.0
+  - @ledgerhq/coin-cosmos@0.15.3-nightly.0
+  - @ledgerhq/coin-evm@2.22.5-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.11-nightly.0
+  - @ledgerhq/domain-service@1.2.34-nightly.0
+  - @ledgerhq/live-countervalues@0.5.11-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.40-nightly.0
+  - @ledgerhq/live-nft@0.8.11-nightly.0
+  - @ledgerhq/live-nft-react@0.9.11-nightly.0
+  - @ledgerhq/live-wallet@0.11.2-nightly.0
+
 ## 2.118.0
 
 ### Minor Changes

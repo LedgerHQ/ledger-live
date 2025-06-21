@@ -1,5 +1,16 @@
 # @ledgerhq/device-core
 
+## 0.5.0-nightly.0
+
+### Minor Changes
+
+- [#10591](https://github.com/LedgerHQ/ledger-live/pull/10591) [`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add ledger charon support
+
+### Patch Changes
+
+- Updated dependencies [[`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc)]:
+  - @ledgerhq/types-live@6.75.0-nightly.0
+
 ## 0.4.28
 
 ### Patch Changes
