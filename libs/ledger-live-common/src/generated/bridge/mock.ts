@@ -11,7 +11,6 @@ import solana from "../../families/solana/bridge/mock";
 import stellar from "../../families/stellar/bridge/mock";
 import tezos from "../../families/tezos/bridge/mock";
 import tron from "../../families/tron/bridge/mock";
-import xrp from "../../families/xrp/bridge/mock";
 
 export default {
   algorand,
@@ -27,5 +26,4 @@ export default {
   stellar,
   tezos,
   tron,
-  xrp,
 };

@@ -1,7 +1,7 @@
 import type { Api, Operation } from "@ledgerhq/coin-framework/api/index";
 import { xdr } from "@stellar/stellar-sdk";
 import { createApi, envelopeFromAnyXDR } from ".";
-import { StellarAsset } from "../types";
+import { StellarAsset, StellarMemoKind } from "../types";
 
 /**
  * Testnet scan: https://testnet.lumenscan.io/
@@ -9,7 +9,7 @@ import { StellarAsset } from "../types";
  * Tests are skipped for the moment due to TooManyRequest errors
  */
 describe.skip("Stellar Api", () => {
-  let module: Api<StellarAsset>;
+  let module: Api<StellarAsset, StellarMemoKind, string>;
   const ADDRESS = "GBAUZBDXMVV7HII4JWBGFMLVKVJ6OLQAKOCGXM5E2FM4TAZB6C7JO2L7";
 
   beforeAll(() => {
@@ -161,8 +161,12 @@ describe.skip("Stellar Api", () => {
         sender: ADDRESS,
         recipient: RECIPIENT,
         amount: AMOUNT,
-        memoType: "MEMO_TEXT",
-        memoValue: "test",
+        memos: [
+          {
+            type: "MEMO_TEXT",
+            value: "test",
+          },
+        ],
       });
       expect(readMemo(transactionXdr)).toEqual(xdr.Memo.memoText(Buffer.from("test", "ascii")));
     });

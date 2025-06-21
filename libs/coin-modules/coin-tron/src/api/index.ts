@@ -32,7 +32,9 @@ export function createApi(config: TronConfig): Api<TronAsset> {
   };
 }
 
-async function estimate(transactionIntent: TransactionIntent<TronAsset>): Promise<FeeEstimation> {
+async function estimate(
+  transactionIntent: TransactionIntent<TronAsset, string, string>,
+): Promise<FeeEstimation> {
   const fees = await estimateFees(transactionIntent);
   return { value: fees };
 }

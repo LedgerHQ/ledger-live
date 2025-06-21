@@ -15,6 +15,7 @@ export const validateTag = (tag: BigNumber) => {
 
 export const getNextValidSequence = async (address: string) => {
   const accInfo = await getAccountInfo(address, true);
+  console.log("getNextValidSequence:", accInfo);
   return accInfo.sequence;
 };
 

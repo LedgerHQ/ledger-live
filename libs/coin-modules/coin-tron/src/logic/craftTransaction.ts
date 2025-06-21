@@ -5,19 +5,15 @@ import { decode58Check } from "../network/format";
 import { TronAsset } from "../types";
 import { feesToNumber } from "./utils";
 
-type TransactionIntentExtra = {
-  /** Memo value. */
-  memo?: string;
-
-  /** Expiration in seconds after crafting time. */
-  expiration?: number;
-};
-
 export async function craftTransaction(
-  transactionIntent: TransactionIntent<TronAsset, TransactionIntentExtra>,
+  transactionIntent: TransactionIntent<TronAsset, string, string>,
   customFees?: bigint,
 ): Promise<string> {
-  const { asset, recipient, sender, amount, memo, expiration } = transactionIntent;
+  const { asset, recipient, sender, amount, expiration } = transactionIntent;
+  const memoEntry = transactionIntent.memos?.find(m => m.type === "memo");
+
+  const memo = memoEntry?.value;
+  // const { asset, recipient, sender, amount, memo, expiration } = transactionIntent;
   const recipientAddress = decode58Check(recipient);
   const senderAddress = decode58Check(sender);
 

@@ -11,6 +11,8 @@ export type XrpMemo = {
   type?: string;
 };
 
+export type XrpMemoKind = "destinationTag" | "memo";
+
 type Order = "asc" | "desc";
 export type ListOperationsOptions = {
   // pagination:

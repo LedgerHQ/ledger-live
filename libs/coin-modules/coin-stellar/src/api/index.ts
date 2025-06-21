@@ -16,11 +16,11 @@ import {
   listOperations,
 } from "../logic";
 import { ListOperationsOptions } from "../logic/listOperations";
-import { StellarAsset } from "../types";
+import { StellarAsset, StellarMemoKind } from "../types";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { xdr } from "@stellar/stellar-sdk";
-export function createApi(config: StellarConfig): Api<StellarAsset> {
+export function createApi(config: StellarConfig): Api<StellarAsset, StellarMemoKind, string> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -34,17 +34,17 @@ export function createApi(config: StellarConfig): Api<StellarAsset> {
   };
 }
 
-type TransactionIntentExtra = {
-  memoType?: string | null | undefined;
-  memoValue?: string | null | undefined;
-};
-
 async function craft(
-  transactionIntent: TransactionIntent<StellarAsset>,
+  transactionIntent: TransactionIntent<StellarAsset, StellarMemoKind, string>,
   customFees?: bigint,
 ): Promise<string> {
   const fees = customFees !== undefined ? customFees : await estimateFees();
-  const extra = transactionIntent as TransactionIntentExtra;
+
+  if (transactionIntent.memos && transactionIntent.memos.length > 1) {
+    throw new Error("Stellar only supports one memo per transaction.");
+  }
+  const memo = transactionIntent.memos?.[0];
+
   const tx = await craftTransaction(
     { address: transactionIntent.sender },
     {
@@ -58,11 +58,12 @@ async function craft(
             assetIssuer: transactionIntent.asset.assetIssuer,
           }
         : {}),
-      memoType: extra.memoType,
-      memoValue: extra.memoValue,
+      memoType: memo?.type,
+      memoValue: memo?.value,
     },
   );
-  // note: API does not return the  transaction envelope but the signature payload instead, see BACK-8727 for more context
+
+  // Note: the API returns the signature base, not the full XDR
   return tx.signatureBase;
 }
 
