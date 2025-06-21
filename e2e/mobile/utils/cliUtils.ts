@@ -208,7 +208,7 @@ export const CLI = {
 
     return runCliCommandWithRetry(
       cliOpts.join("+"),
-      3,
+      5,
       isSpeculosRemote() && isIos() ? 5_000 : 1_000,
     );
   },

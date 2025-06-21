@@ -1,5 +1,11 @@
 import { spawn } from "child_process";
 import path from "path";
+import { isIos, isSpeculosRemote } from "../helpers/commonHelpers";
+import {
+  getSpeculosAddress,
+  runId,
+  waitForSpeculosReady,
+} from "@ledgerhq/live-common/e2e/speculosCI";
 
 const scriptPath = path.resolve(__dirname, "../../../apps/cli/bin/index.js");
 
@@ -77,6 +83,18 @@ export async function runCliCommandWithRetry(
   delayMs = 1000,
 ): Promise<string> {
   let lastError: Error | null = null;
+
+  const currency = extractFlagValue(command, "currency");
+
+  if (!currency) {
+    throw new Error(
+      "🚫 CLI command missing required --currency flag for Speculos readiness check.",
+    );
+  }
+
+  if (isSpeculosRemote() && isIos()) {
+    await waitForSpeculosReady(getSpeculosAddress(runId));
+  }
 
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {

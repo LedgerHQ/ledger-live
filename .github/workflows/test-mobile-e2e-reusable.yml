@@ -126,6 +126,14 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
 
+      - name: Boot iOS Simulator in Parallel
+        run: |
+          UDID=$(xcrun simctl list devices available | grep -B1 "iOS Simulator" | head -n1 | awk -F '[()]' '{print $2}')
+          echo "Booting simulator with UDID: $UDID"
+          xcrun simctl boot "$UDID" || true
+          xcrun simctl bootstatus "$UDID" --timeout 180
+        shell: bash
+
       - name: setup caches
         id: setup-caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
