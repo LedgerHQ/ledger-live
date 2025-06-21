@@ -81,6 +81,7 @@ export const parseDeviceInfo = (firmwareInfo: FirmwareInfo): DeviceInfo => {
     bootloaderVersion,
     hardwareVersion,
     languageId,
+    charonState,
   } = firmwareInfo;
 
   const isOSU = rawVersion.includes("-osu");
@@ -130,6 +131,8 @@ export const parseDeviceInfo = (firmwareInfo: FirmwareInfo): DeviceInfo => {
     bootloaderVersion,
     hardwareVersion,
     languageId,
+    seFlags: flags,
+    charonState: charonState,
   };
 
   return deviceInfo;

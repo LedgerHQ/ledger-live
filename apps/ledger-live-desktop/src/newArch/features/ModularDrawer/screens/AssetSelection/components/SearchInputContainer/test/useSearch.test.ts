@@ -12,11 +12,18 @@ describe("useSearch", () => {
     { name: "Tether", ticker: "USDT", id: "tether", type: "TokenCurrency" },
   ] as CryptoOrTokenCurrency[];
 
+  const mockAssetsToDisplay = [
+    { name: "Bitcoin", ticker: "BTC", id: "bitcoin", type: "CryptoCurrency" },
+    { name: "Ethereum", ticker: "ETH", id: "ethereum", type: "CryptoCurrency" },
+  ] as CryptoOrTokenCurrency[];
+
   const mockSetItemsToDisplay = jest.fn();
   const mockSetSearchedValue = jest.fn();
   const defaultProps = {
     setItemsToDisplay: mockSetItemsToDisplay,
     setSearchedValue: mockSetSearchedValue,
+    assetsToDisplay: mockAssetsToDisplay,
+    originalAssets: mockAssetsToDisplay,
     source: "test",
     flow: "testing",
     items: mockCurrencies,
@@ -46,7 +53,7 @@ describe("useSearch", () => {
     expect(track).not.toHaveBeenCalled();
   });
 
-  it("should filter items based on search query", () => {
+  it("should filter items based on search query from originalAssets", () => {
     const { result } = renderHook(() => useSearch(defaultProps));
 
     act(() => {
@@ -64,7 +71,7 @@ describe("useSearch", () => {
     expect(mockSetSearchedValue).toHaveBeenCalledWith("Bit");
   });
 
-  it("should reset items when search query is cleared", () => {
+  it("should reset items to originalAssets when search query is cleared", () => {
     const { result } = renderHook(() => useSearch(defaultProps));
 
     act(() => {
@@ -76,7 +83,7 @@ describe("useSearch", () => {
     });
 
     expect(result.current.displayedValue).toBe("Bit");
-    expect(mockSetItemsToDisplay).toHaveBeenCalledWith(mockCurrencies);
+    expect(mockSetItemsToDisplay).toHaveBeenCalledWith(mockAssetsToDisplay);
   });
 
   it("should track search query when manually calling handleDebouncedChange", () => {

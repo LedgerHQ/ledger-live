@@ -136,7 +136,7 @@ const OnboardingAppInstallDebugScreen = () => {
           />
         </Flex>
       )}
-      <Flex py={12} flex={1} data-testid="install-set-of-apps-container">
+      <Flex py={12} flex={1} data-testid="install-set-of-apps-container" zIndex={0}>
         <VerticalTimeline key={componentKey} flex={1} steps={steps} />
       </Flex>
     </Flex>

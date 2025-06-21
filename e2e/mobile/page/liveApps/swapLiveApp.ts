@@ -1,7 +1,7 @@
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { allure } from "jest-allure2-reporter/api";
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
-import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export default class SwapLiveAppPage {
   fromSelector = "from-account-coin-selector";
@@ -14,6 +14,10 @@ export default class SwapLiveAppPage {
   quoteProviderName = "quote-card-provider-name";
   executeSwapButton = "execute-button";
   deviceActionErrorDescriptionId = "error-description-deviceAction";
+  fromAccountErrorId = "from-account-error";
+  showDetailslink = "show-details-link";
+  quotesContainerErrorIcon = "quotes-container-error-icon";
+  insufficientFundsBuyButton = "insufficient-funds-buy-button";
 
   @Step("Wait for swap live app")
   async waitForSwapLiveApp() {
@@ -52,6 +56,11 @@ export default class SwapLiveAppPage {
     await waitWebElementByTestId(this.numberOfQuotes);
   }
 
+  @Step("verify quotes are displayed")
+  async checkQuotes() {
+    await detoxExpect(getWebElementByTestId(this.numberOfQuotes)).toExist();
+  }
+
   @Step("Select available provider")
   async selectExchange() {
     let index = 0;
@@ -82,10 +91,8 @@ export default class SwapLiveAppPage {
   }
 
   @Step("Get minimum amount for swap")
-  async getMinimumAmount(swap: SwapType) {
-    return (
-      (await getMinimumSwapAmount(swap.accountToDebit, swap.accountToCredit))?.toString() ?? ""
-    );
+  async getMinimumAmount(fromAccount: Account, toAccount: Account) {
+    return (await getMinimumSwapAmount(fromAccount, toAccount))?.toString() ?? "";
   }
 
   @Step("Get provider list")
@@ -136,7 +143,7 @@ export default class SwapLiveAppPage {
     await this.checkExchangeButtonHasProviderName(providerList[0]);
   }
 
-  @Step("Check exchange button has provider name")
+  @Step("Check exchange button has provider name: $0")
   async checkExchangeButtonHasProviderName(provider: string) {
     const expectedButtonText = [
       Provider.ONE_INCH.uiName,
@@ -191,5 +198,25 @@ export default class SwapLiveAppPage {
       throw new Error("No quotes found");
     }
     return quotes;
+  }
+
+  @Step("Verify swap amount error message match: $0")
+  async verifySwapAmountErrorMessageIsCorrect(expectedMessage: string | RegExp) {
+    await waitWebElementByTestId(this.fromAccountErrorId);
+    const errorText: string = await getWebElementText(this.fromAccountErrorId);
+    if (typeof expectedMessage === "string") {
+      jestExpect(errorText).toContain(expectedMessage);
+    } else if (expectedMessage instanceof RegExp) {
+      jestExpect(errorText).toMatch(expectedMessage);
+    }
+  }
+
+  @Step("Verify swap CTA banner displayed")
+  async checkCtaBanner() {
+    await waitWebElementByTestId(this.showDetailslink);
+    const showDetailsLink = getWebElementByTestId(this.showDetailslink);
+    await showDetailsLink.runScript("(el) => el.click()");
+    await detoxExpect(getWebElementByTestId(this.quotesContainerErrorIcon)).toExist();
+    await detoxExpect(getWebElementByTestId(this.insufficientFundsBuyButton)).toExist();
   }
 }

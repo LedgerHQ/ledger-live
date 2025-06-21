@@ -9,7 +9,7 @@ const handlers = [
     const start = url.searchParams.get("start");
     const end = url.searchParams.get("end");
 
-    if (from === "ethereum" && to === "USD") {
+    if (from && to === "USD") {
       return new Response(
         JSON.stringify({
           from,
@@ -37,7 +37,7 @@ const handlers = [
     const start = url.searchParams.get("start");
     const end = url.searchParams.get("end");
 
-    if (from === "ethereum" && to === "USD") {
+    if (from && to === "USD") {
       return new Response(
         JSON.stringify({
           from,
@@ -63,13 +63,29 @@ const handlers = [
     const to = url.searchParams.get("to");
     const froms = url.searchParams.get("froms");
 
-    if (to === "USD" && froms === "ethereum") {
-      return new Response(
-        JSON.stringify({
-          ethereum: 2761.27,
-        }),
-        { status: 200 },
-      );
+    if (to === "USD") {
+      const currencies = froms?.split(",") || [];
+      const mockRates: Record<string, number> = {};
+
+      currencies.forEach(currency => {
+        if (currency === "ethereum") {
+          mockRates[currency] = 2761.27;
+        } else if (currency === "bitcoin") {
+          mockRates[currency] = 43000;
+        } else if (currency === "arbitrum") {
+          mockRates[currency] = 2761.27;
+        } else if (currency.startsWith("ethereum/erc20/")) {
+          mockRates[currency] = 1.0;
+        } else if (currency === "scroll") {
+          mockRates[currency] = 2761.27;
+        } else if (currency === "base") {
+          mockRates[currency] = 2761.27;
+        } else {
+          mockRates[currency] = 1.0;
+        }
+      });
+
+      return new Response(JSON.stringify(mockRates), { status: 200 });
     }
 
     console.warn(

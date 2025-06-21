@@ -6,6 +6,7 @@ const swapTestConfig = {
   userData: "speculos-x-other-account",
   errorMessage:
     "This receiving account does not belong to the device you have connected. Please change and retry",
+  tags: ["@NanoSP", "@LNS", "@NanoX"],
 };
 
 runSwapWithDifferentSeedTest(
@@ -13,5 +14,5 @@ runSwapWithDifferentSeedTest(
   swapTestConfig.userData,
   swapTestConfig.errorMessage,
   swapTestConfig.tmsLinks,
-  ["@NanoSP", "@LNS", "@NanoX"],
+  swapTestConfig.tags,
 );

@@ -3,19 +3,25 @@ import { useRightBalanceModule } from "./useRightBalanceModule";
 import { AssetType } from "@ledgerhq/react-ui/pre-ldls/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { composeHooks } from "LLD/utils/composeHooks";
+import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 
 type Props = {
   assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
+  currenciesByProvider: CurrenciesByProviderId[];
 };
+
+type CreateAssetConfigurationHook = (
+  props: Props,
+) => (assets: CryptoOrTokenCurrency[]) => (CryptoOrTokenCurrency & AssetType)[];
 
 const getRightElement = (rightElement: string) => {
   switch (rightElement) {
+    case "balance":
+      return useRightBalanceModule;
     case "marketTrend":
     case "undefined":
-      return undefined;
-    case "balance":
     default:
-      return useRightBalanceModule;
+      return undefined;
   }
 };
 
@@ -29,19 +35,28 @@ const getLeftElement = (leftElement: string) => {
   }
 };
 
-const createAssetConfigurationHook = ({
+const createAssetConfigurationHook: CreateAssetConfigurationHook = ({
   assetsConfiguration,
-}: Props): ((assets: CryptoOrTokenCurrency[]) => (CryptoOrTokenCurrency & AssetType)[]) => {
-  const { rightElement = "balance", leftElement = "undefined" } = assetsConfiguration ?? {};
+  currenciesByProvider,
+}) => {
+  const { rightElement = "undefined", leftElement = "undefined" } = assetsConfiguration ?? {};
 
   const rightHook = getRightElement(rightElement);
   const leftHook = getLeftElement(leftElement);
 
   const hooks = [rightHook, leftHook].filter(Boolean) as Array<
-    (assets: CryptoOrTokenCurrency[]) => AssetType[]
+    (
+      assets: CryptoOrTokenCurrency[],
+      currenciesByProvider?: CurrenciesByProviderId[],
+    ) => AssetType[]
   >;
 
-  return composeHooks<CryptoOrTokenCurrency, AssetType>(...hooks);
+  return (assets: CryptoOrTokenCurrency[]) => {
+    const composedHook = composeHooks<CryptoOrTokenCurrency, AssetType>(
+      ...hooks.map(hook => (assets: CryptoOrTokenCurrency[]) => hook(assets, currenciesByProvider)),
+    );
+    return composedHook(assets);
+  };
 };
 
 export default createAssetConfigurationHook;

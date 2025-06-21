@@ -258,12 +258,12 @@
     "mbUnit" : "{{size}} Mo"
   },
   "time" : {
-    "minute" : "Minute",
-    "minute_plural" : "Minutes",
+    "minute" : "minute",
+    "minute_plural" : "minutes",
     "minute_short" : "min",
     "second_short" : "s",
-    "hour" : "Heure",
-    "hour_plural" : "Heures",
+    "hour" : "heure",
+    "hour_plural" : "heures",
     "range" : {
       "day" : "1J",
       "week" : "1S",
@@ -893,6 +893,7 @@
     "title" : "Acheter et vendre des cryptos",
     "reset" : "Réinitialiser",
     "verifyAddress" : "Merci de confirmer que l’adresse affichée est identique à celle sur votre appareil",
+    "connectingTo" : "Connexion à {{provider}}",
     "buy" : {
       "header" : "Acheter des cryptos avec nos prestataires tiers",
       "title" : "Choisir un prestataire pour acheter des cryptos",
@@ -1329,7 +1330,7 @@
             "cancelled" : "Vérification de l’authenticité refusée"
           },
           "subtitle" : {
-            "active" : "Ceci permet de confirmer que votre {{modelName}} est officiel.",
+            "active" : "Cela permet de confirmer que votre {{modelName}} est officiel.",
             "cancelled" : "Cette vérification est obligatoire pour continuer à configurer votre {{modelName}} via Ledger Live."
           },
           "resumeCTA" : "Reprendre la vérification"
@@ -1341,7 +1342,7 @@
             "updateAvailable" : "Mise à jour {{firmwareVersion}} disponible"
           },
           "subtitle" : {
-            "active" : "Ceci permet de vérifier que le système d’exploitation de votre {{modelName}} est à jour.",
+            "active" : "Cela permet de vérifier que le système d’exploitation de votre {{modelName}} est à jour.",
             "completed" : "Pour lancer la restauration des apps sur votre {{modelName}}, cliquez sur Restaurer les apps.",
             "updateAvailable" : "Mettez à jour le système d’exploitation pour une sécurité optimale et pour accéder aux fonctionnalités les plus récentes."
           },
@@ -1925,7 +1926,8 @@
       "payoutNetworkFees" : "Frais de réception",
       "payoutNetworkFeesTooltip" : "Ce montant n’apparaîtra pas sur votre appareil.",
       "acceptTerms" : "En validant cette transaction, j’accepte\n<0>les Conditions d’utilisation de {{provider}}</0>.",
-      "exodusAcceptTerms" : "Pour traiter les échanges, Exodus fait appel à des tiers.\nEn validant cette transaction, j’accepte <0>les Conditions d’utilisation d’Exodus</0>."
+      "exodusAcceptTerms" : "Pour traiter les échanges, Exodus fait appel à des tiers.\nEn validant cette transaction, j’accepte <0>les Conditions d’utilisation d’Exodus</0>.",
+      "changellyAcceptTerms" : "En cliquant sur Échanger avec Changelly, vous acceptez les <0>Conditions d’utilisation</0>\nde Changelly et sa <1>Politique LCB-FT/KYC</1>. Changelly peut mettre en place\ndes procédures LCB-FT/KYC qui, dans certains cas,\npeuvent avoir un impact sur l’aboutissement de votre transaction. Le cas échéant, vous devez contacter l’<2>assistance clientèle</2> de Changelly."
     },
     "swap2" : {
       "amountSent" : "Montant à envoyer",
@@ -6041,6 +6043,10 @@
       "title" : "Une erreur est survenue",
       "description" : "Ce compte bénéficiaire n’appartient pas à l’appareil Ledger que vous avez connecté. Veuillez le changer et réessayer."
     },
+    "MissingSwapPayloadParamaters" : {
+      "title" : "Une erreur est survenue",
+      "description" : "Paramètre d’échange manquant chez le prestataire sélectionné. Veuillez réessayer ou contacter l’Assistance Ledger."
+    },
     "WrongDeviceForAccountRefund" : {
       "title" : "Une erreur est survenue",
       "description" : "Ce compte émetteur n’appartient pas à l’appareil Ledger que vous avez connecté. Veuillez le changer et réessayer."
@@ -7059,7 +7065,9 @@
     "searchPlaceholder" : "Rechercher",
     "selectAsset" : "Sélectionner un actif",
     "selectNetwork" : "Sélectionner un réseau",
-    "selectAccount" : "Sélectionner un compte"
+    "selectAccount" : "Sélectionner un compte",
+    "accountCount_one" : "{{count}} compte",
+    "accountCount_other" : "{{count}} comptes"
   },
   "nftEntryPoint" : {
     "title" : "NFT (tokens non fongibles)",

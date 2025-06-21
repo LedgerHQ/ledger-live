@@ -29,9 +29,18 @@ const config: StorybookConfig = {
     return mergeConfig(config, {
       define: {
         __DEV__: true,
+        global: "globalThis",
+        require: `(function(id) {
+          if (id === 'https') {
+            return { Agent: function() { return {}; } };
+          }
+          throw new Error('Module not found: ' + id);
+        })`,
       },
       resolve: {
+        ...config.resolve,
         alias: {
+          ...config.resolve?.alias,
           [`~/renderer/analytics/segment`]: resolve(
             "./src/renderer/analytics/__mocks__/segment.ts",
           ),
@@ -41,7 +50,6 @@ const config: StorybookConfig = {
           "@ledgerhq/live-common/wallet-api/react": resolve(detailedAccountsMockDir),
           "@ledgerhq/live-countervalues/portfolio": resolve(detailedAccountsMockDir),
           "@ledgerhq/live-countervalues-react": resolve(detailedAccountsMockDir),
-          "~/renderer/components/PerCurrencySelectAccount/state": resolve(detailedAccountsMockDir),
           "~/renderer/reducers/accounts": resolve(detailedAccountsMockDir),
           "~/renderer/reducers/settings": resolve(detailedAccountsMockDir),
 
@@ -53,11 +61,13 @@ const config: StorybookConfig = {
           ),
 
           "~": resolve("./src"),
+          https: false,
         },
       },
       server: { port: 4400 },
       optimizeDeps: {
         include: ["buffer"],
+        exclude: ["@ledgerhq/live-network"],
       },
     });
   },

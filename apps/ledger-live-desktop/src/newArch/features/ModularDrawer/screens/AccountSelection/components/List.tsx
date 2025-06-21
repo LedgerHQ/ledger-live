@@ -1,7 +1,7 @@
 import React from "react";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { AccountList, Account as DetailedAccount } from "@ledgerhq/react-ui/pre-ldls/index";
-import { AccountTuple } from "~/renderer/components/PerCurrencySelectAccount/state";
+import { AccountTuple } from "../../../utils/getAccountTuplesForCurrency";
 import { useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
 import { ListWrapper } from "../../../components/ListWrapper";
 import { useModularDrawerAnalytics } from "../../../analytics/useModularDrawerAnalytics";

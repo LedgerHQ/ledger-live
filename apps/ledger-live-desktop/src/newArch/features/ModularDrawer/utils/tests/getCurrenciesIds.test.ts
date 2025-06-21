@@ -4,7 +4,7 @@ import { res as GroupedCurrencies } from "../../__mocks__/useGroupedCurrenciesBy
 
 const MOCK_CURRENCY_BY_PROVIDER_ID = GroupedCurrencies.result.currenciesByProvider;
 
-const allIdsFromMock = ["ethereum", "arbitrum"];
+const allIdsFromMock = ["ethereum", "arbitrum", "base", "scroll"];
 
 describe("getCurrencyIds", () => {
   it("should return an array of currency IDs", () => {

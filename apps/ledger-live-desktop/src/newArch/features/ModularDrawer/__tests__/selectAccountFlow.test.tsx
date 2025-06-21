@@ -5,19 +5,35 @@ import {
   ethereumCurrency,
   bitcoinCurrency,
   arbitrumCurrency,
+  usdcToken,
+  baseCurrency,
+  scrollCurrency,
 } from "../__mocks__/useSelectAssetFlow.mock";
 import { useGroupedCurrenciesByProvider } from "../__mocks__/useGroupedCurrenciesByProvider.mock";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
-import { Mocked_ETH_Account } from "../__mocks__/accounts.mock";
+import {
+  ARB_ACCOUNT,
+  BASE_ACCOUNT,
+  ETH_ACCOUNT,
+  ETH_ACCOUNT_WITH_USDC,
+} from "../__mocks__/accounts.mock";
 import { mockOnAccountSelected, mockDispatch, currencies, mockDomMeasurements } from "./shared";
 import * as reactRedux from "react-redux";
 import { track, trackPage } from "~/renderer/analytics/segment";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 jest.spyOn(reactRedux, "useDispatch").mockReturnValue(mockDispatch);
 
 jest.mock("@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook", () => ({
   useGroupedCurrenciesByProvider: () => useGroupedCurrenciesByProvider(),
 }));
+
+if (typeof global.clearImmediate === "undefined") {
+  global.clearImmediate = clearTimeout as never;
+}
+if (typeof global.setImmediate === "undefined") {
+  global.setImmediate = setTimeout as never;
+}
 
 const MAD_BACK_BUTTON_TEST_ID = "mad-back-button";
 
@@ -74,7 +90,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       {
         ...INITIAL_STATE,
         initialState: {
-          accounts: Mocked_ETH_Account,
+          accounts: [ETH_ACCOUNT],
         },
       },
     );
@@ -87,7 +103,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
 
     expect(screen.getByText(/select account/i)).toBeVisible();
     expect(screen.getByText(/add new or existing account/i)).toBeVisible();
-    expect(screen.getByText(/ethereum 3/i)).toBeVisible();
+    expect(screen.getByText(/ethereum 2/i)).toBeVisible();
     expect(screen.getByText(/1 eth/i)).toBeVisible();
   });
 
@@ -102,7 +118,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       {
         ...INITIAL_STATE,
         initialState: {
-          accounts: Mocked_ETH_Account,
+          accounts: [ETH_ACCOUNT],
         },
       },
     );
@@ -113,10 +129,10 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
     const ethereumNetwork = screen.getByText(/ethereum/i);
     await user.click(ethereumNetwork);
 
-    const account = screen.getByText(/ethereum 3/i);
+    const account = screen.getByText(/ethereum 2/i);
     await user.click(account);
 
-    expect(mockOnAccountSelected).toHaveBeenCalledWith(Mocked_ETH_Account[0], undefined);
+    expect(mockOnAccountSelected).toHaveBeenCalledWith(ETH_ACCOUNT, undefined);
   });
 
   it("should navigate directly to accountSelection step", () => {
@@ -130,12 +146,12 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       {
         ...INITIAL_STATE,
         initialState: {
-          accounts: Mocked_ETH_Account,
+          accounts: [ETH_ACCOUNT],
         },
       },
     );
 
-    expect(screen.getByText(/ethereum 3/i));
+    expect(screen.getByText(/ethereum 2/i));
   });
 
   it("should navigate directly to networkSelection step", () => {
@@ -169,6 +185,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
   });
 
   it("should trigger add account with corresponding currency", async () => {
+    const bitcoinCurrencyResult = getCryptoCurrencyById("bitcoin");
     const { user } = render(
       <ModularDrawerFlowManager
         currencies={[bitcoinCurrency]}
@@ -184,7 +201,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
     expect(mockDispatch).toHaveBeenCalledWith({
       payload: {
         data: {
-          currency: bitcoinCurrency,
+          currency: bitcoinCurrencyResult,
         },
         name: "MODAL_ADD_ACCOUNTS",
       },
@@ -227,7 +244,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       {
         ...INITIAL_STATE,
         initialState: {
-          accounts: Mocked_ETH_Account,
+          accounts: [ETH_ACCOUNT],
         },
       },
     );
@@ -363,5 +380,50 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
 
     await user.click(screen.getByText(/bitcoin/i));
     expect(screen.getByText(/select account/i)).toBeVisible();
+  });
+
+  it("should navigate to usdc account selection step", async () => {
+    const { user } = render(
+      <ModularDrawerFlowManager
+        currencies={[usdcToken]}
+        onAccountSelected={mockOnAccountSelected}
+        source="sourceTest"
+        flow="flowTest"
+      />,
+      {
+        ...INITIAL_STATE,
+        initialState: {
+          accounts: [ETH_ACCOUNT_WITH_USDC],
+        },
+      },
+    );
+
+    await user.click(screen.getByText(/usdc/i));
+    expect(screen.getByText(/select account/i)).toBeVisible();
+  });
+
+  it("should navigate to base account selection step", async () => {
+    const { user } = render(
+      <ModularDrawerFlowManager
+        currencies={[baseCurrency, scrollCurrency, bitcoinCurrency]}
+        onAccountSelected={mockOnAccountSelected}
+        source="sourceTest"
+        flow="flowTest"
+      />,
+      {
+        ...INITIAL_STATE,
+        initialState: {
+          accounts: [BASE_ACCOUNT, ARB_ACCOUNT],
+        },
+      },
+    );
+
+    await user.click(screen.getByText(/ethereum/i));
+    expect(screen.getByText(/select network/i)).toBeVisible();
+
+    await user.click(screen.getByText(/base/i));
+    expect(screen.getByText(/select account/i)).toBeVisible();
+
+    expect(screen.getByText(/base 2/i)).toBeVisible();
   });
 });

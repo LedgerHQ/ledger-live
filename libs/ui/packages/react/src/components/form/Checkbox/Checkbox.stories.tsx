@@ -34,6 +34,12 @@ export default {
       control: { type: "text" },
     },
     name: { control: false },
+    size: {
+      type: "number",
+      description: "Size of the checkbox",
+      required: false,
+      control: { type: "number" },
+    },
   },
 };
 

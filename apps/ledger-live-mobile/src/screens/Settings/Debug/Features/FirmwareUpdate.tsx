@@ -10,7 +10,7 @@ import { UpdateFirmwareTaskError } from "@ledgerhq/live-common/deviceSDK/tasks/u
 import { GetLatestFirmwareTaskError } from "@ledgerhq/live-common/deviceSDK/tasks/getLatestFirmware";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { FirmwareUpdateContext } from "@ledgerhq/types-live";
+import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 
 import { FirmwareUpdate } from "../../../FirmwareUpdate";
 
@@ -56,7 +56,7 @@ const mockFirmwareUpdateContext: FirmwareUpdateContext = {
   shouldFlashMCU: true,
 };
 
-const mockDeviceInfo = {
+const mockDeviceInfo: DeviceInfo = {
   bootloaderVersion: undefined,
   hardwareVersion: undefined,
   hasDevFirmware: true,
@@ -76,6 +76,7 @@ const mockDeviceInfo = {
   seVersion: "2.0.2-il0",
   targetId: 857735172,
   version: "2.0.2-il0",
+  seFlags: Buffer.alloc(0),
 };
 
 const mockDevice: Device = {

@@ -17,6 +17,7 @@ jest.mock("react-i18next", () => ({
     t: (key: string) => key,
   }),
   Trans: ({ i18nKey }: { i18nKey: string }) => <span>{i18nKey}</span>,
+  withTranslation: () => (Component: React.ComponentType<unknown>) => Component,
 }));
 
 const mockManifest: LiveAppManifest | undefined = {

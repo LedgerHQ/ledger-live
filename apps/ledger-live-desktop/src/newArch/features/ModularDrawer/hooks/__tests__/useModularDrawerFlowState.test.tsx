@@ -11,6 +11,7 @@ const mockOnAccountSelected = jest.fn();
 const defaultProps = {
   currenciesByProvider: [],
   assetsToDisplay: [ethereumCurrency, bitcoinCurrency],
+  sortedCryptoCurrencies: [bitcoinCurrency, ethereumCurrency],
   setNetworksToDisplay: mockSetNetworksToDisplay,
   currenciesIdsArray: ["bitcoin", "ethereum"],
   goToStep: mockGoToStep,

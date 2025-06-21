@@ -3,6 +3,7 @@ import getDeviceInfo from "../../hw/getDeviceInfo";
 import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
 import { fetchNextFirmware } from "../../hw/installFinalFirmware";
 import { firstValueFrom } from "rxjs";
+import { DeviceInfo } from "@ledgerhq/types-live";
 jest.setTimeout(20000);
 
 /*
@@ -24,7 +25,7 @@ test("1.2.0", async () => {
 });
 */
 test("1.3.1", async () => {
-  const deviceInfo = {
+  const deviceInfo: DeviceInfo = {
     version: "1.3.1",
     mcuVersion: "1.1",
     majMin: "1.3",
@@ -34,6 +35,7 @@ test("1.3.1", async () => {
     isBootloader: false,
     managerAllowed: true,
     pinValidated: true,
+    seFlags: Buffer.alloc(0),
   };
   const res = await getLatestFirmwareForDeviceUseCase(deviceInfo);
   expect(res).toMatchObject({
@@ -42,7 +44,7 @@ test("1.3.1", async () => {
   });
 });
 test("1.4.2", async () => {
-  const deviceInfo = {
+  const deviceInfo: DeviceInfo = {
     version: "1.4.2",
     isBootloader: false,
     isOSU: false,
@@ -52,6 +54,7 @@ test("1.4.2", async () => {
     providerName: null,
     majMin: "1.4",
     targetId: 823132163,
+    seFlags: Buffer.alloc(0),
   };
   const res = await getLatestFirmwareForDeviceUseCase(deviceInfo);
   expect(res).toMatchObject({
@@ -88,6 +91,7 @@ test("nano x 1.1.6", async () => {
     pinValidated: true,
     providerName: null,
     targetId: 855638020,
+    seFlags: Buffer.alloc(0),
   };
   const res = await getLatestFirmwareForDeviceUseCase(deviceInfo);
   expect(res).toBe(null);
@@ -112,7 +116,7 @@ test("nano x 1.2.4-1", async () => {
 });
 */
 test("nanoS das", async () => {
-  const deviceInfo = {
+  const deviceInfo: DeviceInfo = {
     isBootloader: false,
     isOSU: false,
     majMin: "1.4",
@@ -122,6 +126,7 @@ test("nanoS das", async () => {
     providerName: "das",
     targetId: 823132163,
     version: "1.4.2-das",
+    seFlags: Buffer.alloc(0),
   };
   const res = await getLatestFirmwareForDeviceUseCase(deviceInfo);
   expect(res).toBe(null);

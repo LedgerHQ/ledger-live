@@ -23,6 +23,7 @@ import { useDispatch } from "react-redux";
 import { useTranslateToSwapAccount } from "./hooks/useTranslateToSwapAccount";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useSwapCustomHandlers } from "./customHandlers";
+import { currentRouteNameRef } from "~/analytics/screenRefs";
 
 type Props = {
   manifest: LiveAppManifest;
@@ -63,6 +64,7 @@ export function WebView({ manifest, params, setWebviewState }: Props) {
           customHandlers={customHandlers}
           onStateChange={setWebviewState}
           inputs={{
+            source: currentRouteNameRef.current || "",
             swapApiBase: SWAP_API_BASE,
             swapUserIp: SWAP_USER_IP,
             devMode,
