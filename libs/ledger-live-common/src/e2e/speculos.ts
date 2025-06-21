@@ -9,7 +9,9 @@ import {
 } from "../load/speculos";
 import {
   createSpeculosDeviceCI,
+  getSpeculosAddress,
   releaseSpeculosDeviceCI,
+  runId,
   waitForSpeculosReady,
 } from "./speculosCI";
 import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
@@ -41,7 +43,6 @@ import { delegateMultiversX } from "./families/multiversX";
 import { NFTTransaction, Transaction } from "./models/Transaction";
 import { Delegate } from "./models/Delegate";
 import { Swap } from "./models/Swap";
-import { getSpeculosAddress, runId } from "../../lib/e2e/speculosCI";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 
