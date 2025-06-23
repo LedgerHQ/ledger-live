@@ -10,6 +10,7 @@ import CharonPng from "./assets/charon.png";
 import SecretRecoveryPhrasePng from "./assets/secret-recovery-phrase.png";
 import { trackPage, useTrack } from "~/renderer/analytics/segment";
 import { CharonStatus } from "@ledgerhq/live-common/hw/extractOnboardingState";
+import { openURL } from "~/renderer/linking";
 
 export type SeedPathStatus =
   | "choice_new_or_restore"
@@ -27,17 +28,19 @@ export type Props = {
   charonStatus: CharonStatus | null;
 };
 
+const CHARON_LEARN_MORE_URL = "https://shop.ledger.com/products/ledger-recovery-key";
+
 const SeedStep = ({ seedPathStatus, deviceModelId, charonSupported, charonStatus }: Props) => {
   const { t } = useTranslation();
   const track = useTrack();
   const productName = getDeviceModel(deviceModelId).productName;
 
   const handleLearnMoreClick = useCallback(() => {
-    // TODO: Add link
     track("button_clicked", {
       button: "Learn More",
       page: "Charon Start",
     });
+    openURL(CHARON_LEARN_MORE_URL);
   }, [track]);
 
   useEffect(() => {

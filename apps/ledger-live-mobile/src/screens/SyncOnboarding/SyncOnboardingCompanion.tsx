@@ -7,7 +7,7 @@ import React, {
   useRef,
   useLayoutEffect,
 } from "react";
-import { Image } from "react-native";
+import { Image, Linking } from "react-native";
 import { Flex, VerticalTimeline, Text, ContinueOnDevice, Link } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
@@ -124,6 +124,8 @@ const fromSeedPhraseTypeToAnalyticsPropertyString = new Map<SeedPhraseType, stri
   [SeedPhraseType.Eighteen, "Eighteen"],
   [SeedPhraseType.Twelve, "Twelve"],
 ]);
+
+const CHARON_LEARN_MORE_URL = "https://shop.ledger.com/products/ledger-recovery-key";
 
 // Because of https://github.com/typescript-eslint/typescript-eslint/issues/1197
 enum CompanionStepKey {
@@ -560,11 +562,11 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
 
   const track = useTrack();
   const handleLearnMoreClick = useCallback(() => {
-    // TODO: Add link
     track("button_clicked", {
       button: "Learn More",
       page: "Charon Start",
     });
+    Linking.openURL(CHARON_LEARN_MORE_URL);
   }, [track]);
 
   const companionSteps: Step[] = useMemo(
