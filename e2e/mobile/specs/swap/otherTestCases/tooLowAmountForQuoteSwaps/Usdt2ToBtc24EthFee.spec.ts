@@ -5,7 +5,7 @@ const transactionE2E = {
   tmsLinks: ["B2CQA-3241"],
   errorMessage: new RegExp(/\d+(\.\d{1,10})? ETH needed for network fees\.[\s\S]*Learn More/),
   ctaBanner: true,
-  quotesVisible: true,
+  quotesVisible: false,
   tags: ["@NanoSP", "@LNS", "@NanoX"],
 };
 
