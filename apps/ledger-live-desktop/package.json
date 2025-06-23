@@ -216,6 +216,7 @@
     "chalk": "4.1.2",
     "cross-env": "7.0.3",
     "debug": "4.3.4",
+    "dmg-builder": "26.0.12",
     "electron": "36.4.0",
     "electron-builder": "26.0.12",
     "electron-devtools-installer": "4.0.0",
