@@ -1,4 +1,5 @@
-import { Unit } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 
 export type BlockInfo = {
   height: number;
@@ -15,6 +16,11 @@ export type TokenInfoCommon = {
   assetCode?: string;
   assetIssuer?: string;
   tokenType?: string;
+  // Stellar specific
+  blockTime?: Date;
+  index?: string;
+  ledgerOpType?: string;
+  pagingToken?: string | undefined;
 
   // Token-account-like metadata
   creationDate?: Date;
@@ -214,6 +220,7 @@ export type AccountInfo = {
   balance: string;
   ownerCount: number;
   sequence: number;
+  assets?: BalanceAsset[]; // Optional, depending on the API
 };
 
 export type AlpacaApi<
@@ -236,11 +243,48 @@ export type AlpacaApi<
     pagination: Pagination,
   ) => Promise<[Operation<AssetInfo>[], string]>;
 };
+/*
+ * export function buildSubAccounts({
+  currency,
+  accountId,
+  assets,
+  syncConfig,
+  operations,
+}: {
+  currency: CryptoCurrency;
+  accountId: string;
+  assets: BalanceAsset[];
+  syncConfig: SyncConfig;
+  operations: StellarOperation[];
+}): TokenAccount[] | undefined {
+  */
+
+// NOTE: taken from coin-stellar/bridge/types
+export type BalanceAsset = {
+  balance: string;
+  limit: string;
+  buying_liabilities: string;
+  selling_liabilities: string;
+  last_modified_ledger: number;
+  is_authorized: boolean;
+  is_authorized_to_maintain_liabilities: boolean;
+  asset_type: string;
+  asset_code: string;
+  asset_issuer: string;
+  liquidity_pool_id?: string;
+};
 
 export type BridgeApi = {
   validateIntent: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;
   // TODO: make it available on alpacaApi
   getAccountInfo: (address: string) => Promise<AccountInfo>;
+  // buildSubAccounts: (
+  //   currency: CryptoCurrency,
+  //   accountId: string,
+  //   assets: BalanceAsset[],
+  //   syncConfig: SyncConfig,
+  //   operations: Operation,
+  // ) => TokenAccount[] | undefined;
 };
 
 export type Api<

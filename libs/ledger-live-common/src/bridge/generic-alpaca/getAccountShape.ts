@@ -11,6 +11,7 @@ import { STELLAR_BURN_ADDRESS } from "@ledgerhq/coin-stellar/logic";
 import { getEnv } from "@ledgerhq/live-env";
 import { Pagination } from "@ledgerhq/coin-framework/lib-es/api/types";
 import { Operation } from "@ledgerhq/types-live";
+import { buildSubAccounts } from "./buildSubAccounts";
 // import { buildTokenAccounts } from "./buildSubAccounts";
 
 function buildPaginationParams(
@@ -76,8 +77,23 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const mergedOps = mergeOps(oldOps, newOps) as StellarOperation[];
     console.log("mergedOps", mergedOps);
 
+    // NOTE: was it really what was done before, also, what's the use of this
+    // const assetOps = mergedOps.filter(op => op.type === "NONE");
     const assetOps = mergedOps.filter(op => op.type === "NONE");
-    console.log("assetOps", assetOps);
+    // NOTE: trying out original way
+    const assetOperations: StellarOperation[] = [];
+
+    // NOTE: why this old logic doesn't work
+    mergedOps.forEach(operation => {
+      if (
+        operation?.extra?.assetCode &&
+        operation?.extra?.assetIssuer &&
+        !["OPT_IN", "OPT_OUT"].includes(operation.type)
+      ) {
+        assetOperations.push(operation);
+      }
+    });
+    console.log({ assetOps, assetOperations });
     // Instead of building TokenAccounts, we use enriched AssetInfo objects
     const tokenAssets: BaseTokenLikeAsset[] = balanceRes
       .filter(b => b.asset?.type === "token")
@@ -93,6 +109,25 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
             op.asset?.assetIssuer === b.asset.assetIssuer,
         ),
       }));
+
+    const accountInfo = await getAlpacaApi(network, kind).getAccountInfo(address);
+    console.log({ accountInfo });
+    const subAccounts =
+      buildSubAccounts({
+        currency,
+        accountId,
+        assets: accountInfo.assets ?? [],
+        syncConfig,
+        operations: assetOps,
+      }) || [];
+
+    // const subAcounts = buildSubAccounts({
+    //   currency,
+    //   accountId,
+    //   assets: accountInfo.assets,
+    //   syncConfig,
+    //   operations: assetOperations,
+    // });
     console.log("tokenAssets", tokenAssets);
 
     // TODO: make this more generic
@@ -110,20 +145,22 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // }));
     //
     const operationsWithSubs = mergedOps.map(op => {
-      const subOperations: Operation[] = [];
-
-      for (const asset of tokenAssets) {
-        for (const subOp of asset.operations) {
-          if (subOp.tx.hash === op.hash) {
-            const operation = adaptCoreOperationToLiveOperation(accountId, subOp as any);
-            subOperations.push(operation);
-          }
-        }
-      }
-      if (subOperations.length > 0) {
-        console.log("FOUND HERE");
-        debugger;
-      }
+      // const subOperations: Operation[] = [];
+      const subOperations = inferSubOperations(op.hash, subAccounts);
+      console.log({ subAccounts, subOperations });
+      //
+      // for (const asset of tokenAssets) {
+      //   for (const subOp of asset.operations) {
+      //     if (subOp.tx.hash === op.hash) {
+      //       const operation = adaptCoreOperationToLiveOperation(accountId, subOp as any);
+      //       subOperations.push(operation);
+      //     }
+      //   }
+      // }
+      // if (subOperations.length > 0) {
+      //   console.log("FOUND HERE");
+      //   debugger;
+      // }
 
       return {
         ...op,
@@ -143,8 +180,10 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       balance: new BigNumber(nativeBalance.toString()),
       spendableBalance: new BigNumber(spendableBalance.toString()),
       operations: operationsWithSubs,
+      subAccounts,
+      // operations: inferSubOperations(operationsWithSubs),
       operationsCount: operationsWithSubs.length,
-      tokenAssets,
+      // tokenAssets,
     };
     console.log({ ACCOUNTSHAPERESULT: res });
     return res;

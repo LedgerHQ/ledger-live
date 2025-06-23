@@ -7,4 +7,5 @@ export type BaseTokenLikeAsset = {
   decimals: number;
   creationDate: Date;
   operations: Operation[];
+  // pendingOperations: Operation[];
 };

@@ -4,15 +4,37 @@ import {
   Operation as CoreOperation,
   Asset,
   TransactionIntent,
+  TokenInfoCommon,
 } from "@ledgerhq/coin-framework/api/types";
 import BigNumber from "bignumber.js";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
 
 export function adaptCoreOperationToLiveOperation(
   accountId: string,
-  op: CoreOperation<Asset>,
+  op: CoreOperation<Asset<TokenInfoCommon>>,
 ): Operation {
-  return {
+  // NOTE: missing extra.
+  // extra.assetCode
+  // extra.assetIssue
+  // NOTE: should use this, but typescript fights against it
+  // if (op.asset?.type === "token") {
+  //   res.extra.assetCode = op.asset.assetCode;
+  // // if (op.asset && op.asset.assetCode) {
+  //
+  // }
+
+  const extra: { assetCode?: string; assetIssuer?: string; ledgerOpType?: string | undefined } = {};
+
+  if (op.details?.ledgerOpType !== undefined) {
+    extra.ledgerOpType = op.details.ledgerOpType as string;
+  }
+
+  if (op.asset?.type === "token") {
+    extra.assetCode = op.asset.assetCode;
+    extra.assetIssuer = op.asset.assetIssuer;
+  }
+
+  const res = {
     id: encodeOperationId(accountId, op.tx.hash, op.type),
     hash: op.tx.hash,
     accountId,
@@ -25,8 +47,14 @@ export function adaptCoreOperationToLiveOperation(
     recipients: op.recipients,
     date: op.tx.date,
     transactionSequenceNumber: op.details?.sequence as number,
-    extra: {},
+    extra,
   };
+
+  if (op.tx.hash === "82a5f702a19b22d645b0d306e13d6854be16ce1c4f2e271f5c35561d0a5e5015") {
+    console.log({ adaptCoreOperationCore: op, res });
+    debugger;
+  }
+  return res;
 }
 
 export function transactionToIntent(
