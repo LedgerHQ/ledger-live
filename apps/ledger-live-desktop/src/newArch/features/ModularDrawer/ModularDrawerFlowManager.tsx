@@ -25,6 +25,8 @@ import {
   filterProvidersByIds,
   extractProviderCurrencies,
 } from "./utils/currencyUtils";
+import { addTestnetCurrencies } from "LLD/utils/testnetCurrencies";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 
 type Props = {
   currencies: CryptoOrTokenCurrency[];
@@ -56,6 +58,7 @@ const ModularDrawerFlowManager = ({
   onAssetSelected,
   onAccountSelected,
 }: Props) => {
+  const devMode = useEnv("MANAGER_DEV_MODE");
   const featureModularDrawer = useFeature("lldModularDrawer");
   const modularizationEnabled = featureModularDrawer?.params?.enableModularization ?? false;
   const assetConfiguration = modularizationEnabled
@@ -166,12 +169,15 @@ const ModularDrawerFlowManager = ({
       providerCoverageMap,
     );
     const allProviderCurrencies = extractProviderCurrencies(filtered);
+    const currenciesEnhanced = devMode
+      ? addTestnetCurrencies(allProviderCurrencies)
+      : allProviderCurrencies;
 
-    setAssetsToDisplay(allProviderCurrencies);
-    setOriginalAssetsToDisplay(allProviderCurrencies);
+    setAssetsToDisplay(currenciesEnhanced);
+    setOriginalAssetsToDisplay(currenciesEnhanced);
 
     return filtered;
-  }, [currenciesByProvider, currencyIdsSet, setAssetsToDisplay]);
+  }, [currenciesByProvider, currencyIdsSet, setAssetsToDisplay, devMode]);
 
   const renderStepContent = (step: ModularDrawerStep) => {
     // TODO: We should find a better way to handle that. THe issue is that we always display AssetSelection screen
