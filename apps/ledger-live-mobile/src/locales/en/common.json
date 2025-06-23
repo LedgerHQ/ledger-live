@@ -3229,6 +3229,12 @@
         "placeholder": "Exchange provider's info in CAL format",
         "currentSetting": "Current Setting",
         "error": "Invalid CAL value"
+      },
+      "customCALRef": {
+        "title": "Custom CAL reference",
+        "description": "Specify a custom branch, commit or tag to use for all CAL requests",
+        "enable": "Enable custom CAL reference",
+        "disable": "Disable custom CAL reference"
       }
     },
     "debug": {
