@@ -92,7 +92,7 @@ export class AptosAPI {
       this.getHeight(),
     ]);
     return {
-      balance: balance[0].amount ?? BigNumber(0),
+      balance: balance[0]?.amount ?? BigNumber(0),
       transactions,
       blockHeight,
     };
