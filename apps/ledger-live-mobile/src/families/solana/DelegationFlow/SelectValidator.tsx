@@ -202,7 +202,15 @@ const ValidatorRow = ({
             {validator.name || validator.voteAccount}
           </Text>
           <Text fontWeight="semiBold" numberOfLines={1} style={styles.overdelegated}>
-            <Trans i18nKey="solana.delegation.commission" /> {validator.commission} %
+            {validator.apy ? (
+              <>
+                <Trans i18nKey="solana.delegation.netApy" /> {(validator.apy * 100).toFixed(2)} %
+              </>
+            ) : (
+              <>
+                <Trans i18nKey="solana.delegation.commission" /> {validator.commission} %{" "}
+              </>
+            )}
           </Text>
         </View>
         <Text fontWeight="semiBold" numberOfLines={1} style={[styles.validatorYield]} color="smoke">

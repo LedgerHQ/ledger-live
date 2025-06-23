@@ -19,9 +19,10 @@ export const LEDGER_VALIDATOR_BY_FIGMENT: ValidatorsAppValidator = {
   avatarUrl:
     "https://s3.amazonaws.com/keybase_processed_uploads/3c47b62f3d28ecfd821536f69be82905_360_360.jpg",
   wwwUrl: "https://www.ledger.com/staking",
-  activeStake: 9079057178046828,
+  activeStake: 8860644178046828,
   commission: 7,
   totalScore: 6,
+  apy: 0.078107,
 };
 
 export const LEDGER_VALIDATOR_BY_CHORUS_ONE: ValidatorsAppValidator = {
@@ -30,9 +31,10 @@ export const LEDGER_VALIDATOR_BY_CHORUS_ONE: ValidatorsAppValidator = {
   avatarUrl:
     "https://s3.amazonaws.com/keybase_processed_uploads/3c47b62f3d28ecfd821536f69be82905_360_360.jpg",
   wwwUrl: "https://www.ledger.com/staking",
-  activeStake: 10001001000098,
+  activeStake: 110738001000098,
   commission: 7,
   totalScore: 7,
+  apy: 0.07228,
 };
 
 export const LEDGER_VALIDATOR_DEFAULT = LEDGER_VALIDATOR_BY_FIGMENT;
