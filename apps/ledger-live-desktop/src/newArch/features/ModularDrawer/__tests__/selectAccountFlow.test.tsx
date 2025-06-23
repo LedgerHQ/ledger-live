@@ -21,8 +21,7 @@ import { mockOnAccountSelected, mockDispatch, currencies, mockDomMeasurements } 
 import * as reactRedux from "react-redux";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-
-jest.spyOn(reactRedux, "useDispatch").mockReturnValue(mockDispatch);
+import ModalsLayer from "~/renderer/ModalsLayer";
 
 jest.mock("@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook", () => ({
   useGroupedCurrenciesByProvider: () => useGroupedCurrenciesByProvider(),
@@ -185,6 +184,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
   });
 
   it("should trigger add account with corresponding currency", async () => {
+    const useDispatchSpy = jest.spyOn(reactRedux, "useDispatch").mockReturnValue(mockDispatch);
     const bitcoinCurrencyResult = getCryptoCurrencyById("bitcoin");
     const { user } = render(
       <ModularDrawerFlowManager
@@ -207,6 +207,8 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       },
       type: "MODAL_OPEN",
     });
+
+    useDispatchSpy.mockRestore();
   });
 
   it("should go back to AssetSelection step when clicking on back button", async () => {
@@ -425,5 +427,36 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
     expect(screen.getByText(/select account/i)).toBeVisible();
 
     expect(screen.getByText(/base 2/i)).toBeVisible();
+  });
+
+  it("should keep the MAD opened during add account flow", async () => {
+    const { user } = render(
+      <>
+        <div id="modals" />
+        <ModularDrawerFlowManager
+          currencies={[baseCurrency, scrollCurrency, bitcoinCurrency]}
+          onAccountSelected={mockOnAccountSelected}
+          source="sourceTest"
+          flow="flowTest"
+        />
+        <ModalsLayer />
+      </>,
+      {
+        ...INITIAL_STATE,
+        initialState: {
+          accounts: [BASE_ACCOUNT, ARB_ACCOUNT],
+        },
+      },
+    );
+
+    await user.click(screen.getByText(/ethereum/i));
+    expect(screen.getByText(/select network/i)).toBeVisible();
+
+    await user.click(screen.getByText(/base/i));
+    expect(screen.getByText(/select account/i)).toBeVisible();
+
+    await user.click(screen.getByText(/add new or existing account/i));
+    expect(screen.getByText(/base 2/i)).toBeVisible();
+    expect(screen.getByText(/add accounts/i)).toBeVisible();
   });
 });

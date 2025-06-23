@@ -90,7 +90,7 @@ export const useDetailedAccounts = (
       flow,
       source,
     });
-    openAddAccountFlow(asset);
+    openAddAccountFlow(asset, false);
   }, [asset, flow, openAddAccountFlow, source, trackModularDrawerEvent]);
 
   return { detailedAccounts, accounts, onAddAccountClick };
