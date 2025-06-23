@@ -5187,6 +5187,9 @@ importers:
       '@ledgerhq/wallet-api-server':
         specifier: ^1.10.0
         version: 1.10.0(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.1)
+      '@stellar/stellar-sdk':
+        specifier: ^11.3.0
+        version: 11.3.0
       '@stricahq/typhonjs':
         specifier: ^3.0.0
         version: 3.0.0
@@ -7747,7 +7750,7 @@ importers:
         version: 0.0.0-connect-app-20250609094118(rxjs@7.8.1)
       '@ledgerhq/device-transport-kit-react-native-ble':
         specifier: 1.0.0
-        version: 1.0.0(@ledgerhq/device-management-kit@0.0.0-connect-app-20250527074701(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)
+        version: 1.0.0(@ledgerhq/device-management-kit@0.0.0-connect-app-20250609094118(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -41113,7 +41116,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-transport-kit-react-native-ble@1.0.0(@ledgerhq/device-management-kit@0.0.0-connect-app-20250527074701(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)':
+  '@ledgerhq/device-transport-kit-react-native-ble@1.0.0(@ledgerhq/device-management-kit@0.0.0-connect-app-20250609094118(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)':
     dependencies:
       '@ledgerhq/device-management-kit': 0.0.0-connect-app-20250609094118(rxjs@7.8.1)
       '@sentry/minimal': 6.19.7
@@ -45915,7 +45918,7 @@ snapshots:
   '@stellar/stellar-sdk@11.3.0':
     dependencies:
       '@stellar/stellar-base': 11.0.1
-      axios: 1.8.3
+      axios: 1.8.4
       bignumber.js: 9.1.2
       eventsource: 2.0.2
       randombytes: 2.1.0

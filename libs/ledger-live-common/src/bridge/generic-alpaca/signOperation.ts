@@ -49,7 +49,19 @@ export const genericSignOperation =
             };
             txWithMemo.memo.memos.set("destinationTag", txMemo);
           }
-
+          const txWithAsset = transactionIntent as TransactionIntent<any>;
+          if (transaction["asset"]) {
+            txWithAsset.asset = {
+              type: "token",
+              assetCode: transactionIntent.asset.assetCode,
+              assetIssuer: transactionIntent.asset.assetIssuer,
+            };
+            // txWithMemo.asset.set("destinationTag", txMemo);
+          } else {
+            txWithAsset.asset = {
+              type: "native",
+            };
+          }
           /* Craft unsigned blob via Alpaca */
           const unsigned: string = await getAlpacaApi(network, kind).craftTransaction(
             transactionIntent,

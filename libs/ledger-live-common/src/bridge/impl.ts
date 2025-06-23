@@ -16,7 +16,7 @@ const alpacaized = {
 
 // let accountBridgeInstance: AccountBridge<any> | null = null;
 const bridgeCache: Record<string, AccountBridge<any>> = {};
-let currencyBridgeInstance: CurrencyBridge | null = null;
+const currencyBridgeCache: Record<string, CurrencyBridge> = {};
 
 export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   // console.log("getCurrencyBridge", currency.id, currency.family);
@@ -29,12 +29,10 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   }
 
   if (alpacaized[currency.family]) {
-    // console.log("getAlpacaCurrencyBridge", currency.family);
-    // if (!currencyBridgeInstance) {
-    //   console.log("Creating new Alpaca currency bridge instance for", currency.family);
-    //   currencyBridgeInstance = getAlpacaCurrencyBridge(currency.family, "local");
-    // }
-    return getAlpacaCurrencyBridge(currency.family, "local");
+    if (!currencyBridgeCache[currency.family]) {
+      currencyBridgeCache[currency.family] = getAlpacaCurrencyBridge(currency.family, "local");
+    }
+    return currencyBridgeCache[currency.family];
   }
 
   const jsBridge = jsBridges[currency.family];
@@ -51,7 +49,6 @@ export const getAccountBridge = (
   account: AccountLike,
   parentAccount?: Account | null,
 ): AccountBridge<any> => {
-  // console.log("getAccountBridge", account);
   const mainAccount = getMainAccount(account, parentAccount);
   const { currency } = mainAccount;
   const supportedError = checkAccountSupported(mainAccount);
@@ -70,7 +67,6 @@ export const getAccountBridge = (
 };
 
 export function getAccountBridgeByFamily(family: string, accountId?: string): AccountBridge<any> {
-  // console.log("getAccountBridgeByFamily", family);
   if (accountId) {
     const { type } = decodeAccountId(accountId);
 

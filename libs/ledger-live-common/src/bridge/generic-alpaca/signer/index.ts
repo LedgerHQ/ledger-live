@@ -9,6 +9,7 @@ import Transport from "@ledgerhq/hw-transport";
 import { signTransaction, stellarSignTransaction } from "./signTransaction";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { SignTransactionOptions } from "./types";
+import { StrKey } from "@stellar/stellar-sdk";
 
 export type AlpacaSigner = {
   getAddress: GetAddressFn;
@@ -17,28 +18,56 @@ export type AlpacaSigner = {
   context: SignerContext<any>;
 };
 
+const createSignerXrp: CreateSigner<Xrp> = (transport: Transport) => {
+  return new Xrp(transport);
+};
+const signerContextXrp = executeWithSigner(createSignerXrp);
+
+const createSignerStellar: CreateSigner<Stellar> = (transport: Transport) => {
+  const stellar = new Stellar(transport);
+  const originalSignTransaction = stellar.signTransaction;
+  // Return the original Stellar instance with overridden methods
+  return Object.assign(stellar, {
+    signTransaction: async (path: string, transaction: string) => {
+      const unsignedPayload: Buffer = Buffer.from(transaction, "base64");
+      const { signature } = await originalSignTransaction(path, unsignedPayload);
+      return signature.toString("base64");
+    },
+    getAddress: async (path: string, verify?: boolean) => {
+      const { rawPublicKey } = await stellar.getPublicKey(path, verify);
+      const publicKey = StrKey.encodeEd25519PublicKey(rawPublicKey);
+      return {
+        path,
+        address: publicKey,
+        publicKey: publicKey,
+      };
+    },
+  });
+};
+
+const signerContextStellar = executeWithSigner(createSignerStellar);
+
 export function getSigner(network): AlpacaSigner {
   switch (network) {
     case "ripple":
     case "xrp": {
-      const createSigner: CreateSigner<Xrp> = (transport: Transport) => {
-        return new Xrp(transport);
-      };
+      // const createSigner: CreateSigner<Xrp> = (transport: Transport) => {
+      //   return new Xrp(transport);
+      // };
       return {
-        getAddress: xrpGetAddress(executeWithSigner(createSigner)),
-        signTransaction: signTransaction(executeWithSigner(createSigner)),
-        context: executeWithSigner(createSigner),
+        getAddress: xrpGetAddress(signerContextXrp),
+        signTransaction: signTransaction(signerContextXrp),
+        context: signerContextXrp,
       };
     }
     case "stellar": {
-      console.log("Using local Stellar Signer");
-      const createSigner: CreateSigner<Stellar> = (transport: Transport) => {
-        return new Stellar(transport);
-      };
+      // const createSigner: CreateSigner<Stellar> = (transport: Transport) => {
+      //   return new Stellar(transport);
+      // };
       return {
-        getAddress: stellarGetAddress(executeWithSigner(createSigner)),
-        signTransaction: stellarSignTransaction(executeWithSigner(createSigner)),
-        context: executeWithSigner(createSigner),
+        getAddress: stellarGetAddress(signerContextStellar),
+        signTransaction: stellarSignTransaction(signerContextStellar),
+        context: signerContextStellar,
       };
     }
   }

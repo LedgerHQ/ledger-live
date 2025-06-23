@@ -21,6 +21,7 @@ import { StellarAsset, StellarMemo } from "../types";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { xdr } from "@stellar/stellar-sdk";
+import { fetchSequence } from "../network";
 export function createApi(config: StellarConfig): Api<StellarAsset, StellarMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
@@ -35,11 +36,12 @@ export function createApi(config: StellarConfig): Api<StellarAsset, StellarMemo>
     validateIntent: getTransactionStatus,
     getAccountInfo: async (address: string) => {
       const balance = await getBalance(address);
+      const sequence = await fetchSequence(address);
       return {
-        isNewAccount: false, //
+        isNewAccount: false,
         balance: balance.map(b => b.value).join(","),
         ownerCount: 0,
-        sequence: 0,
+        sequence: sequence.plus(1).toNumber(),
         // Add other account details as needed
       };
     },

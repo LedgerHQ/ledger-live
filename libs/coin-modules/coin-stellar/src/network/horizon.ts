@@ -4,7 +4,7 @@ import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
 import type { CacheRes } from "@ledgerhq/live-network/cache";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
-import type { Account } from "@ledgerhq/types-live";
+// import type { Account } from "@ledgerhq/types-live";
 // import {
 //   Account,
 //   // TokenAccount,
@@ -387,8 +387,8 @@ export async function fetchAccountNetworkInfo(account: string): Promise<NetworkI
   }
 }
 
-export async function fetchSequence(account: Account): Promise<BigNumber> {
-  const extendedAccount = await loadAccount(account.freshAddress);
+export async function fetchSequence(address: string): Promise<BigNumber> {
+  const extendedAccount = await loadAccount(address);
   return extendedAccount ? new BigNumber(extendedAccount.sequence) : new BigNumber(0);
 }
 
@@ -430,6 +430,9 @@ export async function getLastBlock(): Promise<{
   time: Date;
 }> {
   const ledger = await getServer().ledgers().order("desc").limit(1).call();
+  // console.log("getLastBlock ledger:", ledger.records[0]);
+  // const account = await fetchAccount("GA2S6CABCO4OBFX7PQSK6WQ3ZSX3WYF52TVBXQFLJAEPKKRFUXVFJUSD");
+  // console.log("getLastBlock account:", account.blockHeight);
   return {
     height: ledger.records[0].sequence,
     hash: ledger.records[0].hash,
