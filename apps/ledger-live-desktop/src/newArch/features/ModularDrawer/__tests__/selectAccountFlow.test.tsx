@@ -28,12 +28,13 @@ jest.mock("@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook", (
   useGroupedCurrenciesByProvider: () => useGroupedCurrenciesByProvider(),
 }));
 
-if (typeof global.clearImmediate === "undefined") {
-  global.clearImmediate = clearTimeout as never;
-}
-if (typeof global.setImmediate === "undefined") {
-  global.setImmediate = setTimeout as never;
-}
+// Mock fetch to prevent actual network requests
+global.fetch = jest.fn().mockResolvedValue({
+  ok: true,
+  status: 200,
+  json: () => Promise.resolve({}),
+  text: () => Promise.resolve(""),
+});
 
 const MAD_BACK_BUTTON_TEST_ID = "mad-back-button";
 
