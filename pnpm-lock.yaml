@@ -905,8 +905,8 @@ importers:
         specifier: 4.5.6
         version: 4.5.6
       vite-plugin-electron:
-        specifier: 0.28.4
-        version: 0.28.4
+        specifier: 0.4.9
+        version: 0.4.9
       yargs:
         specifier: 17.7.2
         version: 17.7.2
@@ -32935,13 +32935,11 @@ packages:
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
 
-  vite-plugin-electron@0.28.4:
-    resolution: {integrity: sha512-OcWQQZk1ygkG4g/nj6cQ0zMu5q9yPcxEtDNcY8xagWqjQ3PxZbWuf1VyElZSo16GqPa71vBzoz+XAukia/TgNQ==}
-    peerDependencies:
-      vite-plugin-electron-renderer: '*'
-    peerDependenciesMeta:
-      vite-plugin-electron-renderer:
-        optional: true
+  vite-plugin-electron@0.4.9:
+    resolution: {integrity: sha512-LYKBd2/hncUqe99AG7D4PDzdU7qP0R7W1ijvO4IHTKwARhlWii2tsPa2dr+6Yi/+NBazlKK2OBSzc8lRNl+ctQ==}
+
+  vite-plugin-optimizer@1.4.3:
+    resolution: {integrity: sha512-m1AFakemDxSNIwxsTYykBFuQxkKJLI8207RNAg33N5km2aE29cP+Jt41xbfdrALOU2VKYWGFlBz64GMbIser4A==}
 
   vite@4.5.5:
     resolution: {integrity: sha512-ifW3Lb2sMdX+WU91s3R0FyQlAyLxOzCSCP37ujw0+r5POeHPwe6udWVIElKQq8gk3t7b8rkmvqC6IHBpCff4GQ==}
@@ -70237,7 +70235,11 @@ snapshots:
       - supports-color
       - terser
 
-  vite-plugin-electron@0.28.4: {}
+  vite-plugin-electron@0.4.9:
+    dependencies:
+      vite-plugin-optimizer: 1.4.3
+
+  vite-plugin-optimizer@1.4.3: {}
 
   vite@4.5.5(@types/node@22.10.10):
     dependencies:
