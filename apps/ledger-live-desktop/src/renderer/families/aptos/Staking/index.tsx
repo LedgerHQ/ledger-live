@@ -21,6 +21,7 @@ import TableContainer, { TableHeader } from "~/renderer/components/TableContaine
 import { AptosAccount } from "@ledgerhq/live-common/families/aptos/types";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { DelegateModalName } from "../modals";
+import { getEnv } from "@ledgerhq/live-env";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
@@ -31,6 +32,8 @@ const Wrapper = styled(Box).attrs(() => ({
 `;
 
 const Staking = ({ account }: { account: AptosAccount }) => {
+  if (!getEnv("APTOS_ENABLE_STAKING")) return null;
+
   const dispatch = useDispatch();
 
   const stakingPositions = account.aptosResources?.stakingPositions || [];

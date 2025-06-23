@@ -87,6 +87,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "Enable tokens on Aptos",
   },
+  APTOS_ENABLE_STAKING: {
+    def: false,
+    parser: boolParser,
+    desc: "Enable staking for Aptos",
+  },
   API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://algorand.coin.ledger.com",
     parser: stringParser,

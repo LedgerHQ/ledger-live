@@ -14,6 +14,7 @@ import {
 } from "@ledgerhq/coin-framework/account/index";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import BigNumber from "bignumber.js";
+import { getEnv } from "@ledgerhq/live-env";
 
 /**
  * List of properties of a sub account that can be updated when 2 "identical" accounts are found
@@ -209,25 +210,27 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
   let inactiveBalance = BigNumber(0);
   let pendingInactiveBalance = BigNumber(0);
 
-  const stakingPoolAddresses = getStakingPoolAddresses(stakingOperations);
-  for (const stakingPoolAddress of stakingPoolAddresses) {
-    const [active_string, inactive_string, pending_inactive_string] =
-      await aptosClient.getDelegatorBalanceInPool(stakingPoolAddress, address);
+  if (getEnv("APTOS_ENABLE_STAKING")) {
+    const stakingPoolAddresses = getStakingPoolAddresses(stakingOperations);
+    for (const stakingPoolAddress of stakingPoolAddresses) {
+      const [active_string, inactive_string, pending_inactive_string] =
+        await aptosClient.getDelegatorBalanceInPool(stakingPoolAddress, address);
 
-    const active = BigNumber(active_string);
-    const inactive = BigNumber(inactive_string);
-    const pendingInactive = BigNumber(pending_inactive_string);
+      const active = BigNumber(active_string);
+      const inactive = BigNumber(inactive_string);
+      const pendingInactive = BigNumber(pending_inactive_string);
 
-    stakingPositions.push({
-      active,
-      inactive,
-      pendingInactive,
-      validatorId: stakingPoolAddress,
-    });
+      stakingPositions.push({
+        active,
+        inactive,
+        pendingInactive,
+        validatorId: stakingPoolAddress,
+      });
 
-    activeBalance = activeBalance.plus(active);
-    inactiveBalance = inactiveBalance.plus(inactive);
-    pendingInactiveBalance = pendingInactiveBalance.plus(pendingInactive);
+      activeBalance = activeBalance.plus(active);
+      inactiveBalance = inactiveBalance.plus(inactive);
+      pendingInactiveBalance = pendingInactiveBalance.plus(pendingInactive);
+    }
   }
 
   const aptosResources = {

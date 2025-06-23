@@ -12,6 +12,7 @@ import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { AptosFamily } from "./types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { getEnv } from "@ledgerhq/live-env";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -53,6 +54,8 @@ const AmountValue = styled(Text).attrs(() => ({
 `;
 
 const AccountBalanceSummaryFooter: AptosFamily["AccountBalanceSummaryFooter"] = ({ account }) => {
+  if (!getEnv("APTOS_ENABLE_STAKING")) return null;
+
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
@@ -140,4 +143,5 @@ const AccountBalanceSummaryFooter: AptosFamily["AccountBalanceSummaryFooter"] = 
     </Wrapper>
   );
 };
+
 export default AccountBalanceSummaryFooter;
