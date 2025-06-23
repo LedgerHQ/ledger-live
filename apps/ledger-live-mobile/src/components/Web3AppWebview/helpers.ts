@@ -159,8 +159,11 @@ export function useWebView(
           if (Config.MOCK && msg.type === "e2eTest") {
             sendWalletAPIResponse(msg.payload);
           } else if (msg.type === "dapp") {
+            console.warn(`Received dapp message: ${msg.method}`, msg);
             onDappMessage(msg);
           } else {
+            console.warn(`Not a dapp message: ${msg.type}`, msg);
+            // If it's not a dapp message, we assume it's a wallet-api message?
             onMessageRaw(e.nativeEvent.data);
           }
         } catch {

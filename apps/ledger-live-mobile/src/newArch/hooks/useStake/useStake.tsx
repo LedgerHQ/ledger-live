@@ -114,7 +114,7 @@ export function useStake() {
     ) => {
       const walletApiAccount = accountToWalletAPIAccount(walletState, account, parentAccount);
       const parentWalletApiAccountId = parentAccount
-        ? accountToWalletAPIAccount(walletState, parentAccount)
+        ? accountToWalletAPIAccount(walletState, parentAccount)?.id
         : null;
 
       if (getAccountSpendableBalance(account).isZero()) {
