@@ -54,6 +54,7 @@ const config: StorybookConfig = {
           "~/renderer/reducers/settings": resolve(detailedAccountsMockDir),
 
           "@ledgerhq/live-common/deposit/index": resolve(selectAssetFlowHookMockDir),
+          "@ledgerhq/live-common/deposit/helper": resolve(selectAssetFlowHookMockDir),
           "@ledgerhq/live-common/currencies/index": resolve(selectAssetFlowHookMockDir),
 
           "@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook": resolve(
