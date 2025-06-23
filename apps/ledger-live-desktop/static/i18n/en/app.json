@@ -7127,7 +7127,15 @@
     "selectNetwork": "Select network",
     "selectAccount": "Select account",
     "accountCount_one": "{{count}} account",
-    "accountCount_other": "{{count}} accounts"
+    "accountCount_other": "{{count}} accounts",
+    "accountsAdded": {
+      "title": "Account added to your portfolio",
+      "title_other": "{{count}} Accounts added to your portfolio",
+      "cta": {
+        "addFunds": "Add funds to my account",
+        "close": "Close"
+      }
+    }
   },
   "nftEntryPoint": {
     "title": "NFT (Non Fungible Tokens)",

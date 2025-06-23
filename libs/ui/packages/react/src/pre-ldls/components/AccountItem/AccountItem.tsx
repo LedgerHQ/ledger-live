@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import { Checkbox, Text } from "../../../components";
 import type { CheckboxProps } from "../../../components/form/Checkbox/Checkbox";
+import { Checkbox, Icon, Text, Box } from "../../../components";
 import { withTokens } from "../../libs";
 import { Address } from "../Address/Address";
 import { Tag } from "../Tag/Tag";
@@ -18,10 +18,21 @@ export type Account = {
   ticker?: string;
 };
 
+export type RightElementCheckbox = {
+  type: "checkbox";
+  checkbox: CheckboxProps;
+};
+
+export type RightElementArrow = {
+  type: "arrow";
+};
+
+export type RightElement = RightElementCheckbox | RightElementArrow;
+
 export type AccountItemProps = {
   onClick?: () => void;
   account: Account;
-  checkbox?: CheckboxProps;
+  rightElement?: RightElement;
   showIcon?: boolean;
   backgroundColor?: string;
 };
@@ -121,7 +132,7 @@ const BalanceContainer = styled.div`
 export const AccountItem = ({
   onClick,
   account,
-  checkbox,
+  rightElement,
   showIcon = true,
   backgroundColor,
 }: AccountItemProps) => {
@@ -165,16 +176,23 @@ export const AccountItem = ({
           />
         </AccountInfoContainer>
         <BalanceContainer>
-          <Text fontSize="16px" fontWeight="semiBold">
-            {fiatValue}
-          </Text>
-          {balance ? (
+          <Text fontSize="14px">{fiatValue}</Text>
+          {balance && (
             <Text fontSize="12px" color="var(--colors-content-subdued-default-default)">
               {balance}
             </Text>
-          ) : null}
+          )}
         </BalanceContainer>
-        {checkbox && <Checkbox {...checkbox} size={20} />}
+        {rightElement && rightElement.type === "checkbox" && (
+          <Box data-testid="right-element-checkbox">
+            <Checkbox {...rightElement.checkbox} size={20} />
+          </Box>
+        )}
+        {rightElement && rightElement.type === "arrow" && (
+          <Box data-testid="right-element-arrow-icon">
+            <Icon name="ChevronRight" size={24} />
+          </Box>
+        )}
       </ContentContainer>
     </Wrapper>
   );
