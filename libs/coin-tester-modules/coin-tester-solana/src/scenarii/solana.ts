@@ -40,7 +40,7 @@ type SolanaScenarioTransaction = ScenarioTransaction<SolanaTransaction, SolanaAc
 
 // Note this config runs with NanoX
 // https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-tester/docker-compose.yml
-export const defaultNanoApp = { firmware: "2.4.2", version: "1.9.1" } as const;
+export const defaultNanoApp = { firmware: "2.4.2", version: "1.9.2" } as const;
 
 function makeScenarioTransactions(address: string): SolanaScenarioTransaction[] {
   if (!VOTE_ACCOUNT) {
