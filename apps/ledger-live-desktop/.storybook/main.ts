@@ -61,6 +61,8 @@ const config: StorybookConfig = {
             useGroupedCurrenciesByProvider,
           ),
 
+          "../ModularDrawerAddAccountFlowManager": resolve(".storybook/stub.ts"), // TODO: This is a temporary patch to get storybook to work. This should be replaced by appropriate mocks of ModularDrawerAddAccountFlowManager's dependencies. Ticket LIVE-19799
+
           "~": resolve("./src"),
           https: false,
         },
