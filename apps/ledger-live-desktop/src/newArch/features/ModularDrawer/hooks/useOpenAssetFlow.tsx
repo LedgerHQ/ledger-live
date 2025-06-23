@@ -60,7 +60,7 @@ export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, s
   }, [modularDrawerLocation, trackModularDrawerEvent]);
 
   const openAddAccountFlow = useCallback(
-    (currency: CryptoOrTokenCurrency) => {
+    (currency: CryptoOrTokenCurrency, autoCloseDrawer: boolean = true) => {
       if (featureNetworkBasedAddAccount?.enabled) {
         setDrawer(
           ModularDrawerAddAccountFlowManager,
@@ -72,7 +72,7 @@ export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, s
       } else {
         const cryptoCurrency =
           currency.type === "CryptoCurrency" ? currency : currency.parentCurrency;
-        setDrawer();
+        autoCloseDrawer && setDrawer();
         dispatch(openModal("MODAL_ADD_ACCOUNTS", { currency: cryptoCurrency }));
       }
     },
