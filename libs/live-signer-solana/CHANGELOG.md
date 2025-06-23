@@ -1,5 +1,70 @@
 # @ledgerhq/live-signer-solana
 
+## 0.3.0
+
+### Minor Changes
+
+- [#10225](https://github.com/LedgerHQ/ledger-live/pull/10225) [`e65c386`](https://github.com/LedgerHQ/ledger-live/commit/e65c386cfb3e53e3ee9f501dc08971a93eb5cf81) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - core(coin-solana,hw-app-solana): support SPL tokens dynamically
+
+- [#10576](https://github.com/LedgerHQ/ledger-live/pull/10576) [`fa8e7c5`](https://github.com/LedgerHQ/ledger-live/commit/fa8e7c547d5c996fbcbe8a0351b250d13074a4d2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(live-signer-solana): bump app Solana min trusted version
+
+### Patch Changes
+
+- Updated dependencies [[`e65c386`](https://github.com/LedgerHQ/ledger-live/commit/e65c386cfb3e53e3ee9f501dc08971a93eb5cf81), [`9ceee03`](https://github.com/LedgerHQ/ledger-live/commit/9ceee03c33c41bb035fe64f9303acd36872536b6), [`b5e3217`](https://github.com/LedgerHQ/ledger-live/commit/b5e321789d3a6f9cb1916067790590640db0876f)]:
+  - @ledgerhq/ledger-cal-service@1.0.0
+  - @ledgerhq/hw-app-solana@7.5.0
+  - @ledgerhq/coin-solana@0.26.0
+  - @ledgerhq/errors@6.22.0
+  - @ledgerhq/devices@8.4.7
+  - @ledgerhq/hw-transport@6.31.7
+  - @ledgerhq/hw-bolos@6.32.3
+  - @ledgerhq/ledger-trust-service@0.3.6
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#10225](https://github.com/LedgerHQ/ledger-live/pull/10225) [`e65c386`](https://github.com/LedgerHQ/ledger-live/commit/e65c386cfb3e53e3ee9f501dc08971a93eb5cf81) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - core(coin-solana,hw-app-solana): support SPL tokens dynamically
+
+- [#10576](https://github.com/LedgerHQ/ledger-live/pull/10576) [`fa8e7c5`](https://github.com/LedgerHQ/ledger-live/commit/fa8e7c547d5c996fbcbe8a0351b250d13074a4d2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(live-signer-solana): bump app Solana min trusted version
+
+### Patch Changes
+
+- Updated dependencies [[`e65c386`](https://github.com/LedgerHQ/ledger-live/commit/e65c386cfb3e53e3ee9f501dc08971a93eb5cf81), [`9ceee03`](https://github.com/LedgerHQ/ledger-live/commit/9ceee03c33c41bb035fe64f9303acd36872536b6), [`b5e3217`](https://github.com/LedgerHQ/ledger-live/commit/b5e321789d3a6f9cb1916067790590640db0876f)]:
+  - @ledgerhq/ledger-cal-service@1.0.0-next.0
+  - @ledgerhq/hw-app-solana@7.5.0-next.0
+  - @ledgerhq/coin-solana@0.26.0-next.0
+  - @ledgerhq/errors@6.22.0-next.0
+  - @ledgerhq/devices@8.4.7-next.0
+  - @ledgerhq/hw-transport@6.31.7-next.0
+  - @ledgerhq/hw-bolos@6.32.3-next.0
+  - @ledgerhq/ledger-trust-service@0.3.6-next.0
+
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-solana@0.25.1
+  - @ledgerhq/ledger-cal-service@0.5.1
+  - @ledgerhq/ledger-trust-service@0.3.5
+
+## 0.2.1-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-solana@0.25.1-next.1
+
+## 0.2.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-solana@0.25.1-next.0
+  - @ledgerhq/ledger-cal-service@0.5.1-next.0
+  - @ledgerhq/ledger-trust-service@0.3.5-next.0
+
 ## 0.2.0
 
 ### Minor Changes

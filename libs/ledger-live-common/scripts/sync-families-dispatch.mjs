@@ -52,10 +52,6 @@ const familiesWPackage = [
   "mina",
 ];
 
-const alpacaized = {
-  xrp: true,
-};
-
 cd(path.join(__dirname, "..", "src"));
 await rimraf("generated");
 await fs.promises.mkdir("generated");
@@ -115,12 +111,8 @@ function genCoinFrameworkTarget(targetFile) {
 
     switch (targetFile) {
       case "bridge/js.ts":
-        if (alpacaized[family]) {
-          break;
-        } else {
-          imports += `import { bridge as ${family} } from "../../families/${family}/setup";\n`;
-          exprts += `\n  ${family},`;
-        }
+        imports += `import { bridge as ${family} } from "../../families/${family}/setup";\n`;
+        exprts += `\n  ${family},`;
         break;
       case "cli-transaction.ts":
         imports += `import { cliTools as ${family} } from "../families/${family}/setup";\n`;

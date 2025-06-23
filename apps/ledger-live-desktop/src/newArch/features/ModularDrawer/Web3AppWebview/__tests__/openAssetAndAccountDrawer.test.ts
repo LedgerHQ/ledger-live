@@ -5,6 +5,14 @@ import {
   openAssetAndAccountDrawerPromise,
 } from "../AssetAndAccountDrawer";
 
+jest.mock("../../ModularDrawerFlowManager", () => {
+  return ({ children }: { children: React.ReactNode }) => children;
+});
+
+jest.mock("../../components/CloseButton", () => ({
+  CloseButton: () => null,
+}));
+
 jest.mock("~/renderer/drawers/Provider", () => ({
   setDrawer: jest.fn(),
 }));

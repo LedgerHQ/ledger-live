@@ -15,6 +15,7 @@ import {
   analyticsEnabledSelector,
   counterValueCurrencySelector,
   exportSettingsSelector,
+  hasSeenAnalyticsOptInPromptSelector,
   lastSeenDeviceSelector,
 } from "~/reducers/settings";
 import { DefaultAccountSwapParamList } from "../types";
@@ -22,6 +23,7 @@ import { useDispatch } from "react-redux";
 import { useTranslateToSwapAccount } from "./hooks/useTranslateToSwapAccount";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useSwapCustomHandlers } from "./customHandlers";
+import { currentRouteNameRef } from "~/analytics/screenRefs";
 
 type Props = {
   manifest: LiveAppManifest;
@@ -42,7 +44,10 @@ export function WebView({ manifest, params, setWebviewState }: Props) {
   const SWAP_API_BASE = useEnv("SWAP_API_BASE");
   const SWAP_USER_IP = useEnv("SWAP_USER_IP");
   const exportSettings = useSelector(exportSettingsSelector);
+
   const shareAnalytics = useSelector(analyticsEnabledSelector).toString();
+  const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector).toString();
+
   const devMode = exportSettings.developerModeEnabled.toString();
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
 
@@ -59,6 +64,7 @@ export function WebView({ manifest, params, setWebviewState }: Props) {
           customHandlers={customHandlers}
           onStateChange={setWebviewState}
           inputs={{
+            source: currentRouteNameRef.current || "",
             swapApiBase: SWAP_API_BASE,
             swapUserIp: SWAP_USER_IP,
             devMode,
@@ -71,6 +77,7 @@ export function WebView({ manifest, params, setWebviewState }: Props) {
             OS: Platform.OS,
             platform: "LLM", // need consistent format with LLD, Platform doesn't work
             shareAnalytics,
+            hasSeenAnalyticsOptInPrompt,
             ...swapParams,
           }}
         />

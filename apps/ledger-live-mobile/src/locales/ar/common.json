@@ -3369,7 +3369,8 @@
       "description" : "بيع الأصول المشفرة بأمان مقابل العملات النقدية."
     },
     "exchange" : {
-      "title" : "شراء / بيع"
+      "title" : "شراء / بيع",
+      "connectingTo" : "جارٍ توصيلك بـ {{provider}}"
     },
     "stake" : {
       "title" : "تكديس",
@@ -7430,7 +7431,12 @@
     "performance" : "الأداء",
     "low" : "منخفض",
     "high" : "مرتفع",
-    "title" : "تحركات السوق"
+    "title" : "تحركات السوق",
+    "overlay" : {
+      "title" : "تحرك بين الأصول",
+      "action" : "مرّر لليسار أو اليمين",
+      "button" : "فهمت ذلك!"
+    }
   },
   "nftEntryPoint" : {
     "title" : "رموزك غير القابلة للاستبدال (NFTs)",
@@ -7438,5 +7444,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "الموقع غير متاح",
+    "description" : "محفظة Ledger غير متاحة في هذا الموقع.",
+    "learnMore" : "تعرّف على المزيد"
   }
 }

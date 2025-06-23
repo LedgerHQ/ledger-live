@@ -50,6 +50,7 @@ const InfoWrapper = styled.div`
   margin-left: var(--margin-s);
   overflow: hidden;
   flex: 1;
+  gap: 4px;
 `;
 
 const LeftElementWrapper = styled.div`

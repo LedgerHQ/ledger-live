@@ -1,5 +1,5 @@
 import React from "react";
-import type { ComponentMeta, ComponentStory } from "@storybook/react-native";
+import type { Meta, StoryFn } from "@storybook/react";
 import NotificationCard from "../../../src/components/Cards/NotificationCard";
 import Flex from "../../../src/components/Layout/Flex";
 import { descriptionNotificationCard } from "./descriptionsCards";
@@ -14,9 +14,9 @@ export default {
       },
     },
   },
-} as ComponentMeta<typeof NotificationCard>;
+} as Meta<typeof NotificationCard>;
 
-export const NotificationCardStory: ComponentStory<typeof NotificationCard> = (
+export const NotificationCardStory: StoryFn<typeof NotificationCard> = (
   args: typeof NotificationCardStoryArgs,
 ) => {
   return (

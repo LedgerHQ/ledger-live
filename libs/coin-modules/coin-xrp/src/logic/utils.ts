@@ -22,15 +22,6 @@ function isRecipientValid(recipient: string): boolean {
   return isValidClassicAddress(recipient);
 }
 
-// --- 10-Seconds Cache Implementation ---
-type CacheEntry = {
-  value: boolean;
-  expiresAt: number;
-};
-
-const recipientCache = new Map<string, CacheEntry>();
-const TTL = 10 * 1000; // 10 seconds
-
 const recipientIsNew = async (recipient: string): Promise<boolean> => {
   if (!isRecipientValid(recipient)) return false;
 
@@ -38,19 +29,12 @@ const recipientIsNew = async (recipient: string): Promise<boolean> => {
   return info.isNewAccount;
 };
 
-export const cachedRecipientIsNew = async (recipient: string): Promise<boolean> => {
-  const now = Date.now();
-  const cached = recipientCache.get(recipient);
-
-  if (cached && now < cached.expiresAt) {
-    return cached.value;
-  }
-
-  const isNew = await recipientIsNew(recipient);
-  recipientCache.set(recipient, {
-    value: isNew,
-    expiresAt: now + TTL,
-  });
-
-  return isNew;
+const cacheRecipientsNew: Record<string, boolean> = {};
+export const cachedRecipientIsNew = async (recipient: string) => {
+  if (recipient in cacheRecipientsNew) return cacheRecipientsNew[recipient];
+  cacheRecipientsNew[recipient] = await recipientIsNew(recipient);
+  return cacheRecipientsNew[recipient];
+};
+export const removeCachedRecipientIsNew = (recipient: string) => {
+  delete cacheRecipientsNew[recipient];
 };

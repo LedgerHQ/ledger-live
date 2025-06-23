@@ -1,19 +1,19 @@
-import React, { useState, useMemo } from "react";
+import ChevronBottom from "@ledgerhq/icons-ui/reactLegacy/ChevronBottomMedium";
+import React, { useMemo, useState } from "react";
 import styled, { css, StyledProps } from "styled-components";
-import baseStyled, { BaseStyledProps } from "../../styled";
-import { fontSize, border, BordersProps, compose } from "styled-system";
+import { border, BordersProps, compose, fontSize } from "styled-system";
+import { rgba } from "../../../styles/helpers";
 import fontFamily from "../../../styles/styled/fontFamily";
 import { fontSizes } from "../../../styles/theme";
-import { rgba } from "../../../styles/helpers";
-import ChevronBottom from "@ledgerhq/icons-ui/reactLegacy/ChevronBottomMedium";
+import baseStyled, { BaseStyledProps } from "../../styled";
 
-export type ButtonVariants = "main" | "shade" | "error" | "color" | "neutral";
-export type IconPosition = "right" | "left";
+type ButtonVariants = "main" | "shade" | "error" | "color" | "neutral";
+type IconPosition = "right" | "left";
 interface BaseProps extends BaseStyledProps, BordersProps {
   ff?: string;
   color?: string;
   backgroundColor?: string;
-  size?: "xs" | "small" | "medium" | "large";
+  size?: "xs" | "small" | "medium" | "large" | "xl";
   fontSize?: number;
   variant?: ButtonVariants;
   outline?: boolean;
@@ -307,6 +307,10 @@ export const buttonSizeStyle: {
   large: {
     padding: "0 28px",
     height: "48px",
+  },
+  xl: {
+    padding: "0 28px",
+    height: "56px",
   },
 };
 

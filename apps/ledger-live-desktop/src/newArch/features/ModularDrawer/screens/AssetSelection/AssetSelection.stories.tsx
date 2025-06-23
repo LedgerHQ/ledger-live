@@ -54,11 +54,15 @@ const meta: Meta<typeof AssetSelection> = {
   component: AssetSelection,
   args: {
     assetsToDisplay,
+    originalAssetsToDisplay: assetsToDisplay,
     sortedCryptoCurrencies,
     assetsConfiguration: {},
+    currenciesByProvider: [],
     setAssetsToDisplay: setAssetsToDisplay,
     onAssetSelected: onAssetSelected,
     setSearchedValue: setSearchedValue,
+    flow: "test",
+    source: "storybook",
   },
   decorators: [
     Story => (
@@ -118,6 +122,7 @@ export const WithDiscreetModeEnabled: Story = {
 export const EmptyAssets: Story = {
   args: {
     assetsToDisplay: [],
+    originalAssetsToDisplay: [],
     sortedCryptoCurrencies: [],
   },
 };

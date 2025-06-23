@@ -129,7 +129,7 @@ export function useStake() {
       })?.toString();
 
       return {
-        pathname: `/platform/${manifest.id}`,
+        pathname: manifest.id === "earn" ? "/earn" : `/platform/${manifest.id}`,
         state: {
           ...customPartnerParams,
           appId: manifest.id,

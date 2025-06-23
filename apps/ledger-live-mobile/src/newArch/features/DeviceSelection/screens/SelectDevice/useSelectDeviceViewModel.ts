@@ -1,5 +1,5 @@
 import { RouteProp, useNavigation } from "@react-navigation/core";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useIsFocused } from "@react-navigation/native";
 import { prepareCurrency } from "~/bridge/cache";
@@ -20,6 +20,17 @@ export default function useSelectDeviceViewModel(
   const [device, setDevice] = useState<Device | null>(null);
   const action = useAppDeviceAction();
   const isFocused = useIsFocused();
+
+  const onDeviceUpdated = useRef<() => void>();
+
+  const registerDeviceSelection = useCallback((handler: () => void) => {
+    onDeviceUpdated.current = handler;
+  }, []);
+
+  const selectDevice = useCallback((device: Device | null) => {
+    setDevice(device);
+    onDeviceUpdated.current?.();
+  }, []);
 
   const onClose = useCallback(() => {
     setDevice(null);
@@ -61,6 +72,7 @@ export default function useSelectDeviceViewModel(
     action,
     isFocused,
     onClose,
-    setDevice,
+    selectDevice,
+    registerDeviceSelection,
   };
 }

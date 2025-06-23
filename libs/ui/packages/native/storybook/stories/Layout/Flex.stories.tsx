@@ -1,5 +1,5 @@
 import React from "react";
-import { ComponentStory } from "@storybook/react-native";
+import { StoryFn } from "@storybook/react";
 import Flex from "../../../src/components/Layout/Flex";
 import Text from "../../../src/components/Text";
 
@@ -30,7 +30,7 @@ export default {
   },
 };
 
-export const FlexStory: ComponentStory<typeof Flex> = (args: typeof FlexStoryArgs) => {
+export const FlexStory: StoryFn<typeof Flex> = (args: typeof FlexStoryArgs) => {
   const {
     alignItems,
     flexDirection,
@@ -78,7 +78,7 @@ const FlexStoryArgs = {
 };
 FlexStory.args = FlexStoryArgs;
 
-export const FlexStoryTwo: ComponentStory<typeof Flex> = (args: typeof FlexStoryTwoArgs) => {
+export const FlexStoryTwo: StoryFn<typeof Flex> = (args: typeof FlexStoryTwoArgs) => {
   const {
     alignItems,
     flexDirection,

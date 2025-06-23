@@ -36,6 +36,12 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
   );
 
   return useMemo<WalletAPICustomHandlers>(() => {
+    const ptxCustomHandlers = {
+      "custom.close": () => {
+        navigation.popToTop();
+      },
+    };
+
     return {
       ...exchangeHandlers({
         accounts,
@@ -121,6 +127,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
           },
         },
       }),
+      ...ptxCustomHandlers,
     };
   }, [accounts, device, manifest, navigation, tracking]);
 }

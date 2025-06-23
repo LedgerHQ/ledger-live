@@ -893,6 +893,7 @@
     "title" : "Kripto satın al ve sat",
     "reset" : "Başa dön",
     "verifyAddress" : "Görüntülenen adres ile cihazınızda gösterilen adresin tam olarak eşleştiğinden lütfen emin olun",
+    "connectingTo" : "{{provider}} sağlayıcısına bağlanıyorsunuz",
     "buy" : {
       "header" : "Ortaklarımız üzerinden kripto satın alın",
       "title" : "Kripto satın almak için bir sağlayıcı seçin",
@@ -1925,7 +1926,8 @@
       "payoutNetworkFees" : "Ödeme ücretleri",
       "payoutNetworkFeesTooltip" : "Bu tutar cihazınızda gösterilmeyecektir",
       "acceptTerms" : "Bu işlemi onaylayarak,\n<0>{{provider}} kullanım koşullarını</0> kabul ediyorum.",
-      "exodusAcceptTerms" : "Exodus, takas işlemlerini gerçekleştirmek için üçüncü tarafları kullanır.\nBu işlemi onaylayarak, <0>Exodus'un kullanım koşullarını</0> kabul ediyorum."
+      "exodusAcceptTerms" : "Exodus, takas işlemlerini gerçekleştirmek için üçüncü tarafları kullanır.\nBu işlemi onaylayarak, <0>Exodus'un kullanım koşullarını</0> kabul ediyorum.",
+      "changellyAcceptTerms" : "“Changelly ile Takas Edin” seçeneğine tıkladığınızda Changelly'nin <0>Kullanım Koşulları</0>'nı\nve <1>Kara Paranın Aklanmasının Önlenmesi/KYC politikasını</1> kabul etmiş olursunuz. Changelly, işleminizin tamamlanmasını\nbazı durumlarda etkileyebilecek olan, Kara Paranın Aklanmasının Önlenmesi/KYC prosedürleri uygulayabilir. \nBöyle bir durumda Changelly'nin <2>müşteri destek</2> ekibi ile iletişime geçmeniz gerekir."
     },
     "swap2" : {
       "amountSent" : "Gönderilecek tutar",
@@ -6041,6 +6043,10 @@
       "title" : "Bir hata oluştu",
       "description" : "Bu alıcı hesabı, bağladığınız cihaza ait değil. Lütfen değiştirin ve tekrar deneyin."
     },
+    "MissingSwapPayloadParamaters" : {
+      "title" : "Bir hata oluştu",
+      "description" : "Seçili sağlayıcının takas parametresi eksik. Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
     "WrongDeviceForAccountRefund" : {
       "title" : "Bir hata oluştu",
       "description" : "Bu gönderici hesabı, bağladığınız cihaza ait değil. Lütfen değiştirin ve tekrar deneyin."
@@ -7057,12 +7063,11 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "Ara",
-    "assetFlow" : {
-      "selectTemplate" : "{{dynamic}} seçin",
-      "asset" : "Varlık",
-      "network" : "ağ",
-      "account" : "Hesap"
-    }
+    "selectAsset" : "Varlık seçin",
+    "selectNetwork" : "Ağ seçin",
+    "selectAccount" : "Hesap seçin",
+    "accountCount_one" : "{{count}} hesap",
+    "accountCount_other" : "{{count}} hesap"
   },
   "nftEntryPoint" : {
     "title" : "NFT (Non Fungible Token)",
@@ -7070,5 +7075,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Konum kullanılamıyor",
+    "description" : "Ledger cüzdan bu konumda kullanılamıyor.",
+    "learnMore" : "Daha fazla bilgi"
   }
 }

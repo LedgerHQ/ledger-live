@@ -25,7 +25,7 @@ describe("Testing buildTransaction", () => {
       (_serializedTransaction: Uint8Array) => expectedSolanaTransaction,
     );
 
-    const rawTransaction = transaction("test");
+    const rawTransaction = transaction({ raw: "test" });
     const [solanaTransaction, recentBlockhash, addSignatureCallback] =
       await buildTransactionWithAPI(
         ADDRESS,

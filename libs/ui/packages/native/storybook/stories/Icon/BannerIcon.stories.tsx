@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react-native";
+import type { Meta, StoryObj } from "@storybook/react";
 import * as Icons from "@ledgerhq/icons-ui/native";
 import BannerIcon from "../../../src/components/Icon/BannerIcon";
 

@@ -6,6 +6,10 @@ import { useModularDrawerAnalytics } from "../../../analytics/useModularDrawerAn
 import { MODULAR_DRAWER_PAGE_NAME } from "../../../analytics/types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import createNetworkConfigurationHook from "../modules/createNetworkConfigurationHook";
+import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
+import { Observable } from "rxjs";
+import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
+import orderBy from "lodash/orderBy";
 
 type SelectNetworkProps = {
   networks?: CryptoOrTokenCurrency[];
@@ -13,6 +17,9 @@ type SelectNetworkProps = {
   flow: string;
   onNetworkSelected: (network: CryptoOrTokenCurrency) => void;
   networksConfig: EnhancedModularDrawerConfiguration["networks"];
+  currenciesByProvider: CurrenciesByProviderId[];
+  selectedAssetId?: string;
+  accounts$?: Observable<WalletAPIAccount[]>;
 };
 
 export const SelectNetwork = ({
@@ -21,18 +28,26 @@ export const SelectNetwork = ({
   source,
   flow,
   networksConfig,
+  currenciesByProvider,
+  selectedAssetId,
+  accounts$,
 }: SelectNetworkProps) => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
-  if (!networks || networks.length === 0) {
+  if (!networks || networks.length === 0 || !selectedAssetId) {
     return null;
   }
 
   const transformNetworks = createNetworkConfigurationHook({
     networksConfig,
+    currenciesByProvider,
+    selectedAssetId,
+    accounts$,
   });
 
-  const formattedNetworks = transformNetworks(networks);
+  const orderedNetworks = orderBy(networks, ["name"]);
+
+  const formattedNetworks = transformNetworks(orderedNetworks);
 
   const onClick = (networkId: string) => {
     const network = networks.find(({ id }) => id === networkId);
@@ -48,6 +63,7 @@ export const SelectNetwork = ({
       },
       {
         formatNetworkConfig: true,
+        networksConfig,
       },
     );
 

@@ -20,6 +20,7 @@ import { bridge as tezos } from "../../families/tezos/setup";
 import { bridge as ton } from "../../families/ton/setup";
 import { bridge as tron } from "../../families/tron/setup";
 import { bridge as vechain } from "../../families/vechain/setup";
+import { bridge as xrp } from "../../families/xrp/setup";
 import { bridge as sui } from "../../families/sui/setup";
 import { bridge as mina } from "../../families/mina/setup";
 
@@ -46,6 +47,7 @@ export default {
   ton,
   tron,
   vechain,
+  xrp,
   sui,
   mina,
 };

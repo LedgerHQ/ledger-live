@@ -546,7 +546,8 @@ platform :android do
     prepare_android_internal
     build(
       type: "Release",
-      ci: true
+      ci: true,
+      apk_and_aab: true
     )
     upload(
       nightly: true,

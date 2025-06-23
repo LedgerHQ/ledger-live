@@ -3,6 +3,8 @@ import { FirmwareInfoEntity } from "../entities/FirmwareInfoEntity";
 import { isDeviceLocalizationSupported } from "./isDeviceLocalizationSupported";
 import { isHardwareVersionSupported } from "./isHardwareVersionSupported";
 import { isBootloaderVersionSupported } from "./isBootloaderVersionSupported";
+import { isRecoverSupported } from "./isRecoverSupported";
+import { isCharonSupported } from "./isCharonSupported";
 
 export function parseGetVersionResponse(response: Buffer): FirmwareInfoEntity {
   const data = response.slice(0, response.length - 2);
@@ -36,6 +38,8 @@ export function parseGetVersionResponse(response: Buffer): FirmwareInfoEntity {
   let mcuTargetId: number | undefined;
   let seTargetId: number | undefined;
   let languageId: number | undefined;
+  let recoverState: Buffer | undefined;
+  let charonState: Buffer | undefined;
 
   const isBootloader = (targetId & 4026531840) !== 805306368;
 
@@ -100,6 +104,19 @@ export function parseGetVersionResponse(response: Buffer): FirmwareInfoEntity {
       if (isDeviceLocalizationSupported(seVersion, deviceModel?.id)) {
         const languageIdLength = data[i++];
         languageId = data.slice(i, i + languageIdLength).readUIntBE(0, 1);
+        i += languageIdLength;
+      }
+
+      if (isRecoverSupported(seVersion, deviceModel?.id)) {
+        const recoverStateLength = data[i++];
+        recoverState = Buffer.from(data.slice(i, i + recoverStateLength));
+        i += recoverStateLength;
+      }
+
+      if (isCharonSupported(seVersion, deviceModel?.id)) {
+        const charonStateLength = data[i++];
+        charonState = Buffer.from(data.slice(i, i + charonStateLength));
+        i += charonStateLength;
       }
     }
   }
@@ -117,5 +134,7 @@ export function parseGetVersionResponse(response: Buffer): FirmwareInfoEntity {
     bootloaderVersion,
     hardwareVersion,
     languageId,
+    recoverState,
+    charonState,
   };
 }

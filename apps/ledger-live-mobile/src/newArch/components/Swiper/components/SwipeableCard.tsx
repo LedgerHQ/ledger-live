@@ -10,7 +10,7 @@ import Animated, {
 const { width } = Dimensions.get("window");
 const SPRING_CONFIG = {
   damping: 30,
-  stiffness: 200,
+  stiffness: 400,
 };
 
 type SwipeableCardProps = {

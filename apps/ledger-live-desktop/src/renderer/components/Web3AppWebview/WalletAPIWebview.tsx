@@ -57,7 +57,9 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const { isModularDrawerVisible } = useModularDrawerVisibility();
+  const { isModularDrawerVisible } = useModularDrawerVisibility({
+    modularDrawerFeatureFlagKey: "lldModularDrawer",
+  });
 
   const modularDrawerVisible = isModularDrawerVisible(ModularDrawerLocation.LIVE_APP);
 
@@ -398,6 +400,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       onStateChange,
       hideLoader,
       webviewStyle: customWebviewStyle,
+      Loader = DefaultLoader,
     },
     ref,
   ) => {
@@ -484,14 +487,20 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           {...webviewProps}
           {...webviewPartition}
         />
-        {!widgetLoaded && !hideLoader ? (
-          <Loader>
-            <BigSpinner size={50} />
-          </Loader>
-        ) : null}
+        {!hideLoader ? <Loader manifest={manifest} isLoading={!widgetLoaded} /> : null}
       </>
     );
   },
 );
+
+function DefaultLoader({ isLoading }: { isLoading: boolean }) {
+  if (!isLoading) return null;
+
+  return (
+    <Loader>
+      <BigSpinner size={50} />
+    </Loader>
+  );
+}
 
 WalletAPIWebview.displayName = "WalletAPIWebview";

@@ -3369,7 +3369,8 @@
       "description" : "Vende criptomonedas de forma segura a cambio de dinero en efectivo."
     },
     "exchange" : {
-      "title" : "Comprar / Vender"
+      "title" : "Comprar / Vender",
+      "connectingTo" : "Conectándote a {{provider}}"
     },
     "stake" : {
       "title" : "Poner en participación",
@@ -7430,7 +7431,12 @@
     "performance" : "Rendimiento",
     "low" : "Baja",
     "high" : "Alta",
-    "title" : "Movimientos del mercado"
+    "title" : "Movimientos del mercado",
+    "overlay" : {
+      "title" : "Muévete de un activo a otro",
+      "action" : "Desliza a la izquierda o a la derecha",
+      "button" : "¡Entendido!"
+    }
   },
   "nftEntryPoint" : {
     "title" : "Tus NFTs",
@@ -7438,5 +7444,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Ubicación no disponible",
+    "description" : "Las billeteras Ledger no están disponibles en esta ubicación.",
+    "learnMore" : "Más información"
   }
 }

@@ -52,7 +52,7 @@ function Earn({ route }: Props) {
   const countryLocale = getCountryLocale();
 
   const stakePrograms = useFeature("stakePrograms");
-  const stakeProgramsParam = useMemo(
+  const { stakeProgramsParam } = useMemo(
     () => stakeProgramsToEarnParam(stakePrograms),
     [stakePrograms],
   );

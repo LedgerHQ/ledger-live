@@ -1,5 +1,5 @@
 import type {
-  AlpacaApi,
+  Api,
   FeeEstimation,
   Operation,
   Pagination,
@@ -16,11 +16,11 @@ import {
   listOperations,
 } from "../logic";
 import { ListOperationsOptions } from "../logic/listOperations";
-import { StellarAsset, StellarMemo } from "../types";
+import { StellarAsset } from "../types";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { xdr } from "@stellar/stellar-sdk";
-export function createApi(config: StellarConfig): AlpacaApi<StellarAsset, StellarMemo> {
+export function createApi(config: StellarConfig): Api<StellarAsset> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -34,19 +34,17 @@ export function createApi(config: StellarConfig): AlpacaApi<StellarAsset, Stella
   };
 }
 
+type TransactionIntentExtra = {
+  memoType?: string | null | undefined;
+  memoValue?: string | null | undefined;
+};
+
 async function craft(
-  transactionIntent: TransactionIntent<StellarAsset, StellarMemo>,
+  transactionIntent: TransactionIntent<StellarAsset>,
   customFees?: bigint,
 ): Promise<string> {
   const fees = customFees !== undefined ? customFees : await estimateFees();
-
-  // NOTE: check how many memos, throw if more than one?
-  // if (transactionIntent.memos && transactionIntent.memos.length > 1) {
-  //   throw new Error("Stellar only supports one memo per transaction.");
-  // }
-  const memo = "memo" in transactionIntent ? transactionIntent.memo : undefined;
-  const hasMemoValue = memo && memo.type !== "NO_MEMO";
-
+  const extra = transactionIntent as TransactionIntentExtra;
   const tx = await craftTransaction(
     { address: transactionIntent.sender },
     {
@@ -60,12 +58,11 @@ async function craft(
             assetIssuer: transactionIntent.asset.assetIssuer,
           }
         : {}),
-      memoType: memo?.type,
-      ...(hasMemoValue ? { memoValue: (memo as { value: string }).value } : {}),
+      memoType: extra.memoType,
+      memoValue: extra.memoValue,
     },
   );
-
-  // Note: the API returns the signature base, not the full XDR, see BACK-8727 for more context
+  // note: API does not return the  transaction envelope but the signature payload instead, see BACK-8727 for more context
   return tx.signatureBase;
 }
 

@@ -90,7 +90,7 @@ export default function SelectFeesStrategy({
   const navigation = useNavigation();
 
   const errors = status?.errors;
-  const insufficuentError = Object.values(errors || {})[0] || null;
+  const insufficientError = Object.values(errors || {})[0] || null;
 
   const closeNetworkFeeHelpModal = () => setNetworkFeeHelpOpened(false);
 
@@ -158,7 +158,7 @@ export default function SelectFeesStrategy({
           styles.feeButton,
           {
             borderColor: isSelected
-              ? insufficuentError
+              ? insufficientError
                 ? colors.warning.c70
                 : colors.primary.c80
               : "transparent",
@@ -235,12 +235,12 @@ export default function SelectFeesStrategy({
         >
           {null}
         </SummaryRow>
-        {insufficuentError && (
+        {insufficientError && (
           <TouchableOpacity onPress={() => onBuy(mainAccount)}>
             <Alert type="warning">
               <Flex width={"90%"}>
                 <Text testID="insufficient-fee-error">
-                  <TranslatedError error={insufficuentError} />
+                  <TranslatedError error={insufficientError} />
                 </Text>
               </Flex>
             </Alert>

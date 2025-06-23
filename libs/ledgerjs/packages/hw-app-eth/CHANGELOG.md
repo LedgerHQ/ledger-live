@@ -1,5 +1,49 @@
 # @ledgerhq/hw-app-eth
 
+## 6.45.8
+
+### Patch Changes
+
+- Updated dependencies [[`9ceee03`](https://github.com/LedgerHQ/ledger-live/commit/9ceee03c33c41bb035fe64f9303acd36872536b6), [`98eb2eb`](https://github.com/LedgerHQ/ledger-live/commit/98eb2ebce8e12742a68b8f54ba625d63c4958087), [`b5e3217`](https://github.com/LedgerHQ/ledger-live/commit/b5e321789d3a6f9cb1916067790590640db0876f), [`e9739d1`](https://github.com/LedgerHQ/ledger-live/commit/e9739d19946376dd7a8a5f10471594f267f3a95f)]:
+  - @ledgerhq/types-live@6.74.0
+  - @ledgerhq/errors@6.22.0
+  - @ledgerhq/domain-service@1.2.33
+  - @ledgerhq/evm-tools@1.6.4
+  - @ledgerhq/hw-transport@6.31.7
+  - @ledgerhq/hw-transport-mocker@6.29.7
+
+## 6.45.8-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`9ceee03`](https://github.com/LedgerHQ/ledger-live/commit/9ceee03c33c41bb035fe64f9303acd36872536b6), [`98eb2eb`](https://github.com/LedgerHQ/ledger-live/commit/98eb2ebce8e12742a68b8f54ba625d63c4958087), [`b5e3217`](https://github.com/LedgerHQ/ledger-live/commit/b5e321789d3a6f9cb1916067790590640db0876f), [`e9739d1`](https://github.com/LedgerHQ/ledger-live/commit/e9739d19946376dd7a8a5f10471594f267f3a95f)]:
+  - @ledgerhq/types-live@6.74.0-next.0
+  - @ledgerhq/errors@6.22.0-next.0
+  - @ledgerhq/domain-service@1.2.33-next.0
+  - @ledgerhq/evm-tools@1.6.4
+  - @ledgerhq/hw-transport@6.31.7-next.0
+  - @ledgerhq/hw-transport-mocker@6.29.7-next.0
+
+## 6.45.7
+
+### Patch Changes
+
+- Updated dependencies [[`b7d3d59`](https://github.com/LedgerHQ/ledger-live/commit/b7d3d59d299c3d3541d598536651b9047fda4526)]:
+  - @ledgerhq/types-live@6.73.0
+  - @ledgerhq/evm-tools@1.6.4
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.8
+  - @ledgerhq/domain-service@1.2.32
+
+## 6.45.7-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`b7d3d59`](https://github.com/LedgerHQ/ledger-live/commit/b7d3d59d299c3d3541d598536651b9047fda4526)]:
+  - @ledgerhq/types-live@6.73.0-next.0
+  - @ledgerhq/evm-tools@1.6.4-next.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.8-next.0
+  - @ledgerhq/domain-service@1.2.32-next.0
+
 ## 6.45.6
 
 ### Patch Changes

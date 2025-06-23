@@ -9,6 +9,7 @@ import {
   SOLANA_CWIF,
   SOLANA_USDC,
   WITHDRAWABLE_AMOUNT,
+  SOLANA_VIRTUAL,
   initMSW,
   makeAccount,
 } from "../fixtures";
@@ -30,6 +31,7 @@ import {
 } from "../connection";
 import { Config, getChainAPI } from "@ledgerhq/coin-solana/network/index";
 import { makeBridges } from "@ledgerhq/coin-solana/bridge/bridge";
+import { addTokens } from "@ledgerhq/cryptoassets/tokens";
 
 global.console = require("console");
 jest.setTimeout(100_000);
@@ -38,7 +40,7 @@ type SolanaScenarioTransaction = ScenarioTransaction<SolanaTransaction, SolanaAc
 
 // Note this config runs with NanoX
 // https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-tester/docker-compose.yml
-export const defaultNanoApp = { firmware: "2.4.2", version: "1.9.1" } as const;
+export const defaultNanoApp = { firmware: "2.4.2", version: "1.9.2" } as const;
 
 function makeScenarioTransactions(address: string): SolanaScenarioTransaction[] {
   if (!VOTE_ACCOUNT) {
@@ -189,6 +191,67 @@ function makeScenarioTransactions(address: string): SolanaScenarioTransaction[] 
     },
   };
 
+  const virtualAssociatedTokenAccountAddress = getAssociatedTokenAddressSync(
+    new PublicKey(SOLANA_VIRTUAL.contractAddress),
+    new PublicKey(address),
+  );
+  const virtualSubAccountId = encodeAccountIdWithTokenAccountAddress(
+    `js:2:solana:${address}:solanaSub`,
+    virtualAssociatedTokenAccountAddress.toBase58(),
+  );
+
+  const scenarioSendVirtualTransaction: SolanaScenarioTransaction = {
+    name: "Send 1 VIRTUAL",
+    amount: new BigNumber(1e9),
+    recipient: RECIPIENT,
+    subAccountId: virtualSubAccountId,
+    expect: (previousAccount, currentAccount) => {
+      expect(currentAccount.operations.length - previousAccount.operations.length).toEqual(1);
+
+      const currentAssociatedTokenAccount = currentAccount.subAccounts?.find(
+        sa => sa.id === virtualSubAccountId,
+      );
+      const previousAssociatedTokenAccount = previousAccount.subAccounts?.find(
+        sa => sa.id === virtualSubAccountId,
+      );
+      const [latestAssociatedTokenAccountOperation] =
+        currentAssociatedTokenAccount?.operations ?? [];
+      expect(latestAssociatedTokenAccountOperation.type).toEqual("OUT");
+      expect(latestAssociatedTokenAccountOperation.value).toStrictEqual(new BigNumber(1e9));
+      expect(latestAssociatedTokenAccountOperation.senders).toStrictEqual([address]);
+      expect(latestAssociatedTokenAccountOperation.recipients).toStrictEqual([RECIPIENT]);
+      expect(currentAssociatedTokenAccount?.balance).toStrictEqual(
+        previousAssociatedTokenAccount?.balance.minus(latestAssociatedTokenAccountOperation.value),
+      );
+    },
+  };
+
+  const scenarioSendAllVirtualTransaction: SolanaScenarioTransaction = {
+    name: "Send All VIRTUAL",
+    useAllAmount: true,
+    recipient: RECIPIENT,
+    subAccountId: virtualSubAccountId,
+    expect: (previousAccount, currentAccount) => {
+      expect(currentAccount.operations.length - previousAccount.operations.length).toEqual(1);
+
+      const currentAssociatedTokenAccount = currentAccount.subAccounts?.find(
+        sa => sa.id === virtualSubAccountId,
+      );
+      const previousAssociatedTokenAccount = previousAccount.subAccounts?.find(
+        sa => sa.id === virtualSubAccountId,
+      );
+      const [latestAssociatedTokenAccountOperation] =
+        currentAssociatedTokenAccount?.operations ?? [];
+      expect(latestAssociatedTokenAccountOperation.type).toEqual("OUT");
+      expect(latestAssociatedTokenAccountOperation.senders).toStrictEqual([address]);
+      expect(latestAssociatedTokenAccountOperation.recipients).toStrictEqual([RECIPIENT]);
+      expect(currentAssociatedTokenAccount?.balance).toStrictEqual(
+        previousAssociatedTokenAccount?.balance.minus(latestAssociatedTokenAccountOperation.value),
+      );
+      expect(currentAssociatedTokenAccount?.spendableBalance).toStrictEqual(new BigNumber(0));
+    },
+  };
+
   const scenarioCreateSolStakeAccountTransaction: SolanaScenarioTransaction = {
     name: "Create Stake Account 1 Sol",
     amount: new BigNumber(1e9),
@@ -336,6 +399,8 @@ function makeScenarioTransactions(address: string): SolanaScenarioTransaction[] 
     scenarioSendAllUsdcTransaction,
     scenarioSendCwifTransaction,
     scenarioSendAllCwifTransaction,
+    scenarioSendVirtualTransaction,
+    scenarioSendAllVirtualTransaction,
     scenarioCreateSolStakeAccountTransaction,
     scenarioActivateStakeAccount,
     scenarioDeactivateStakeAccount,
@@ -388,6 +453,9 @@ export const scenarioSolana: Scenario<SolanaTransaction, SolanaAccount> = {
     await airdrop(PAYER.publicKey.toBase58(), 5);
     await createSplAccount(account.freshAddress, SOLANA_USDC, 5, "spl-token");
     await createSplAccount(account.freshAddress, SOLANA_CWIF, 5, "spl-token-2022");
+    // Token not supported on LL as of 09/06/2025
+    addTokens([SOLANA_VIRTUAL]);
+    await createSplAccount(account.freshAddress, SOLANA_VIRTUAL, 5, "spl-token");
     await initVoteAccount();
     await initStakeAccount(account.freshAddress, WITHDRAWABLE_AMOUNT);
 

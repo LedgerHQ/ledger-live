@@ -157,17 +157,22 @@ export function epochInfo({ epoch }: { epoch: number }) {
   };
 }
 
-export function transaction(raw?: string): Transaction {
+export function transaction(options?: {
+  kind?: Transaction["model"]["kind"];
+  subAccountId?: string;
+  raw?: string;
+}): Transaction {
+  const kind = options?.kind ?? "transfer";
   return {
     family: "solana",
     amount: new BigNumber(0),
     recipient: "",
     model: {
-      kind: "transfer",
-      uiState: {},
+      kind,
+      uiState: { subAccountId: options?.subAccountId },
       commandDescriptor: {
         command: {
-          kind: "transfer", // any kind can work, just needed a value for the test
+          kind,
           sender: "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp",
           recipient: "DwRL6XkPAtM1bfuySJKZGn2t9WeG25RC39isAu2nwak4",
           amount: 0,
@@ -177,6 +182,6 @@ export function transaction(raw?: string): Transaction {
         errors: {},
       },
     },
-    raw: raw ?? "",
-  };
+    raw: options?.raw ?? "",
+  } as unknown as Transaction;
 }

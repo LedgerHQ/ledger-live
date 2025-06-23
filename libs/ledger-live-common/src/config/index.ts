@@ -1,19 +1,10 @@
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { ConfigInfo, LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { CurrencyConfig, SharedConfig } from "@ledgerhq/coin-framework/config";
+import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
 export type CurrencyLiveConfigDefinition = Partial<
   Record<`config_currency_${CryptoCurrencyId}`, ConfigInfo>
 >;
-
-const getSharedConfiguration = (): SharedConfig => {
-  const config = LiveConfig.getValueByKey("config_currency");
-  if (!config) {
-    throw new Error("Configuration config_currency not found, please check Firebase Remote Config");
-  }
-
-  return config;
-};
 
 const getCurrencyConfiguration = <T extends CurrencyConfig>(
   currency: CryptoCurrency,
@@ -26,4 +17,4 @@ const getCurrencyConfiguration = <T extends CurrencyConfig>(
   return currencyData;
 };
 
-export { getCurrencyConfiguration, getSharedConfiguration };
+export { getCurrencyConfiguration };

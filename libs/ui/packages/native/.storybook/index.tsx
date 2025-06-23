@@ -1,6 +1,11 @@
-import { getStorybookUI } from "@storybook/react-native";
-import "./doctools";
-import "./storybook.requires";
+import { view } from "./storybook.requires";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const StorybookUIRoot = getStorybookUI({});
+const StorybookUIRoot = view.getStorybookUI({
+  storage: {
+    getItem: AsyncStorage.getItem,
+    setItem: AsyncStorage.setItem,
+  },
+});
+
 export default StorybookUIRoot;

@@ -1,6 +1,6 @@
 import React from "react";
 import { View } from "react-native";
-import { ComponentStory } from "@storybook/react-native";
+import { StoryFn } from "@storybook/react";
 import { CryptoIcons } from "../../../src/assets";
 import { BTC, ETH, DOT } from "../../../src/assets/cryptoIcons";
 import { useTheme } from "styled-components/native";
@@ -28,9 +28,7 @@ export const IconSample = () => (
 );
 IconSample.storyName = "Crypto Icons";
 
-export const SingleCryptoIcon: ComponentStory<typeof CryptoIcon> = (
-  args: typeof SingleCryptoIconArgs,
-) => {
+export const SingleCryptoIcon: StoryFn<typeof CryptoIcon> = (args: typeof SingleCryptoIconArgs) => {
   const theme = useTheme();
   const name = args.name;
   const size = args.size;

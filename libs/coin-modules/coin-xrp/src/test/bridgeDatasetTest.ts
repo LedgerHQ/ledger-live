@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { DatasetTest } from "@ledgerhq/types-live";
 import { InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
-import { fromTransactionRaw } from "../transaction";
+import { fromTransactionRaw } from "../bridge/transaction";
 import { Transaction } from "../types";
 
 export const newAddress1 = "rZvBc5e2YR1A9otS3r9DyGh3NDP8XLLp4";
@@ -97,19 +97,18 @@ export const dataset: DatasetTest<Transaction> = {
                 recipient: "rageXHB6Q4VbvvWdTzKANwjeCT4HXFCKX7",
                 amount: "10000000",
                 tag: null,
-                fee: "10", // NOTE: fee is not customizable, this field is ignored
+                fee: "1",
                 feeCustomUnit: null,
                 networkInfo: null,
               }),
               expectedStatus: {
                 amount: new BigNumber("10000000"),
-                estimatedFees: new BigNumber("10"), // NOTE: hardcoded fee
-
+                estimatedFees: new BigNumber("1"),
                 errors: {
                   recipient: new InvalidAddressBecauseDestinationIsAlsoSource(),
                 },
                 warnings: {},
-                totalSpent: new BigNumber("10000010"), // NOTE: amount + hardcoded fee
+                totalSpent: new BigNumber("10000001"),
               },
             },
             {
@@ -119,16 +118,16 @@ export const dataset: DatasetTest<Transaction> = {
                 recipient: "rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi",
                 amount: "10000000",
                 tag: 12345,
-                fee: "10", // NOTE: fee is not customizable, this field is ignored
+                fee: "1",
                 feeCustomUnit: null,
                 networkInfo: null,
               }),
               expectedStatus: {
                 amount: new BigNumber("10000000"),
-                estimatedFees: new BigNumber("10"), // NOTE: hardcoded fee
+                estimatedFees: new BigNumber("1"),
                 errors: {},
                 warnings: {},
-                totalSpent: new BigNumber("10000010"), // NOTE: amount + hardcoded fee
+                totalSpent: new BigNumber("10000001"),
               },
             },
           ],

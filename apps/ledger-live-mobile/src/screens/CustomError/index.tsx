@@ -25,7 +25,7 @@ export default function CustomError({ route }: CustomErrorPropsProps) {
           {t("errors.CustomError.title")}
           {"\n"}
         </Text>
-        <Text variant="body" textAlign={"center"}>
+        <Text variant="body" textAlign={"center"} testID="error-description-deviceAction">
           {t("errors.CustomError.description")}
 
           {error && "cause" in error && error.cause?.swapCode && (

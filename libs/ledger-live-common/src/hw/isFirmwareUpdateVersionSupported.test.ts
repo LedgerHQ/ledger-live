@@ -1,4 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/devices";
+import { DeviceInfo } from "@ledgerhq/types-live";
 import isFirmwareUpdateVersionSupported from "./isFirmwareUpdateVersionSupported";
 import { setEnv } from "@ledgerhq/live-env";
 
@@ -17,7 +18,7 @@ const badDataset: { [key in DeviceModelId]?: string[] } = {
 };
 
 describe("Firmware update version availability checks", () => {
-  const getDeviceInfo = version => ({
+  const getDeviceInfo = (version): DeviceInfo => ({
     version,
     mcuVersion: "0.0",
     majMin: "0.0",
@@ -27,6 +28,7 @@ describe("Firmware update version availability checks", () => {
     isBootloader: false,
     managerAllowed: false,
     pinValidated: false,
+    seFlags: Buffer.alloc(0),
   });
 
   describe("Fails with bad values", () => {

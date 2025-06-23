@@ -1,5 +1,5 @@
 import React from "react";
-import { ComponentStory } from "@storybook/react-native";
+import { StoryFn } from "@storybook/react";
 import Tooltip from "../../../../src/components/Layout/Modals/Tooltip";
 import Text from "../../../../src/components/Text";
 import { IconsLegacy } from "../../../../src/assets";
@@ -9,7 +9,7 @@ export default {
   component: Tooltip,
 };
 
-export const Default: ComponentStory<typeof Tooltip> = (args: typeof DefaultArgs) => {
+export const Default: StoryFn<typeof Tooltip> = (args: typeof DefaultArgs) => {
   return (
     <Tooltip
       title={args.title}

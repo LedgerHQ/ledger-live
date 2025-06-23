@@ -1,6 +1,10 @@
 import { dirname, join } from "path";
 module.exports = {
-  stories: ["../storybook/stories/**/*.mdx", "../storybook/stories/**/*.stories.@(js|jsx|ts|tsx)"],
+  stories: [
+    "../src/pre-ldls/**/*.stories.@(js|jsx|ts|tsx)",
+    "../storybook/stories/**/*.mdx",
+    "../storybook/stories/**/*.stories.@(js|jsx|ts|tsx)",
+  ],
 
   addons: [
     getAbsolutePath("@storybook/addon-links"),
@@ -8,6 +12,7 @@ module.exports = {
     getAbsolutePath("@storybook/addon-react-native-web"),
     getAbsolutePath("@storybook/blocks"),
     getAbsolutePath("storybook-dark-mode"),
+    getAbsolutePath("@storybook/addon-interactions"),
     {
       name: "@storybook/addon-react-native-web",
       options: {

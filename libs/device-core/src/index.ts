@@ -37,6 +37,7 @@ export {
 export { isEditDeviceNameSupported } from "./capabilities/isEditDeviceNameSupported";
 export { isSyncOnboardingSupported } from "./capabilities/isSyncOnboardingSupported";
 export { supportedDeviceModelIds } from "./capabilities/isCustomLockScreenSupported";
+export { isCharonSupported } from "./commands/use-cases/isCharonSupported";
 // src/customLockScreen/
 export * from "./customLockScreen/screenSpecs";
 // src/firmwareUpdate/
