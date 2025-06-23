@@ -10,7 +10,7 @@ import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Button, Divider, Flex } from "@ledgerhq/react-ui";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import LowGasAlertBuyMore from "~/renderer/families/evm/SendAmountFields/LowGasAlertBuyMore";
+import LowGasAlertBuyMore from "~/renderer/components/LowGasAlertBuyMore";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import Alert from "~/renderer/components/Alert";
 import { useTrack } from "~/renderer/analytics/segment";

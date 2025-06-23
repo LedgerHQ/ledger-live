@@ -75,6 +75,7 @@ declare global {
   var getWebElementByTestId: typeof WebElementHelpers.getWebElementByTestId;
   var getWebElementText: typeof WebElementHelpers.getWebElementText;
   var getWebElementsByIdAndText: typeof WebElementHelpers.getWebElementsByIdAndText;
+  var getWebElementsByCssSelector: typeof WebElementHelpers.getWebElementsByCssSelector;
   var getWebElementsText: typeof WebElementHelpers.getWebElementsText;
   var waitWebElementByTestId: typeof WebElementHelpers.waitWebElementByTestId;
   var tapWebElementByTestId: typeof WebElementHelpers.tapWebElementByTestId;

@@ -56,11 +56,15 @@ libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/coin-integrat
 libs/ledgerjs/packages/types-cryptoassets/               @ledgerhq/coin-integration
 libs/live-config/                                        @ledgerhq/coin-integration
 libs/live-network/                                       @ledgerhq/coin-integration
+tools/actions/composites/run-coin-tester/                @ledgerhq/coin-integration
+tools/actions/composites/setup-coin-tester-env/          @ledgerhq/coin-integration
 
 # Shared with partners
 ## Blockchain support
 libs/coin-modules/coin-aptos/                                            @ledgerhq/coin-integration @ledgerhq/blockchain-support
 libs/coin-modules/coin-near/                                             @ledgerhq/coin-integration @ledgerhq/blockchain-support
+libs/coin-modules/coin-cardano/                                          @ledgerhq/coin-integration @ledgerhq/blockchain-support
+libs/coin-modules/coin-tezos/                                            @ledgerhq/coin-integration @ledgerhq/blockchain-support
 
 ## Zondax
 libs/coin-modules/coin-casper/                                           @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-zondax

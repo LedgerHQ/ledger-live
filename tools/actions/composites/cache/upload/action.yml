@@ -1,0 +1,50 @@
+name: "Cache upload"
+description: "Compress and upload cache files to S3"
+inputs:
+  endpoint:
+    description: true if you want the runner to be paused, preserving state for investigation
+    type: string
+    required: false
+    default: 's3.amazonaws.com'
+  key:
+    type: string
+    required: true
+  path:
+    type: string
+    required: true
+  accessKey:
+    type: string
+    required: true
+  secretKey:
+    type: string
+    required: true
+  sessionToken:
+    type: string
+    required: true
+  bucket:
+    type: string
+    required: true
+  region:
+    type: string
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Compressing files
+      shell: bash
+      run: |
+        echo "Compressing files in ${{ inputs.path }}"
+        gtar --posix --delay-directory-restore --use-compress-program zstdmt -P -C ${{ github.workspace }} -cf /tmp/cache.tzst ${{ inputs.path }}
+
+    - name: Uploading to S3
+      shell: bash
+      run: |
+        echo "Uploading files to S3 bucket ${{ inputs.bucket }}"
+        aws configure set default.s3.max_concurrent_requests 240
+        aws configure set default.s3.multipart_chunksize 2MB
+        aws s3 cp /tmp/cache.tzst s3://${{ inputs.bucket }}/${{ inputs.key }}/cache.tzst --endpoint-url https://${{ inputs.endpoint }} --region ${{ inputs.region }}
+      env:
+        AWS_ACCESS_KEY_ID: ${{ inputs.accessKey }}
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.secretKey }}
+        AWS_SESSION_TOKEN: ${{ inputs.sessionToken }}

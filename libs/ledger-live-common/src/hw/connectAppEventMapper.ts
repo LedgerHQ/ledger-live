@@ -11,9 +11,9 @@ import type {
 } from "@ledgerhq/device-management-kit";
 import {
   DeviceActionStatus,
+  DeviceDisconnectedWhileSendingError,
   DeviceLockedError,
   DeviceSessionStateType,
-  DeviceStatus,
   UserInteractionRequired,
   OutOfMemoryDAError,
   SecureChannelError,
@@ -96,9 +96,7 @@ export class ConnectAppEventMapper {
       return;
     }
 
-    if (deviceState.deviceStatus === DeviceStatus.NOT_CONNECTED) {
-      this.eventSubject.next({ type: "disconnected", expected: false });
-    } else if (
+    if (
       deviceState.firmwareVersion?.metadata &&
       deviceState.firmwareUpdateContext &&
       !this.lastSeenDeviceSent
@@ -205,7 +203,9 @@ export class ConnectAppEventMapper {
         type: "install",
         name: installPlan.installPlan[installPlan.currentIndex]!.versionName,
       },
-      installQueue: installPlan.installPlan.map(app => app.versionName),
+      installQueue: installPlan.installPlan
+        .map(app => app.versionName)
+        .slice(installPlan.currentIndex),
     });
     this.installPlan = installPlan;
   }
@@ -259,6 +259,8 @@ export class ConnectAppEventMapper {
       this.eventSubject.complete();
     } else if (error instanceof SecureChannelError) {
       this.eventSubject.error(new UserRefusedAllowManager());
+    } else if (error instanceof DeviceDisconnectedWhileSendingError) {
+      this.eventSubject.next({ type: "disconnected", expected: false });
     } else if ("_tag" in error && error._tag === "WebHidSendReportError") {
       this.eventSubject.next({ type: "disconnected", expected: false });
       this.eventSubject.complete();

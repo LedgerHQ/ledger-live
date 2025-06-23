@@ -33,6 +33,7 @@ import { useStorylyContext } from "~/components/StorylyStories/StorylyProvider";
 import { navigationIntegration } from "../sentry";
 import { OptionMetadata } from "~/reducers/types";
 const TRACKING_EVENT = "deeplink_clicked";
+import { DdRumReactNavigationTracking } from "@datadog/mobile-react-navigation";
 
 const themes: {
   [key: string]: Theme;
@@ -699,6 +700,7 @@ export const DeeplinksProvider = ({
         (isReadyRef as Writeable<typeof isReadyRef>).current = true;
         setTimeout(() => SplashScreen.hide(), 300);
         navigationIntegration.registerNavigationContainer(navigationRef);
+        DdRumReactNavigationTracking.startTrackingViews(navigationRef.current);
       }}
     >
       {children}

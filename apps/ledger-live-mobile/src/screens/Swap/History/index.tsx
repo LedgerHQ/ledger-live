@@ -3,7 +3,8 @@ import getCompleteSwapHistory from "@ledgerhq/live-common/exchange/swap/getCompl
 import { isSwapOperationPending } from "@ledgerhq/live-common/exchange/swap/index";
 import { MappedSwapOperation, SwapHistorySection } from "@ledgerhq/live-common/exchange/swap/types";
 import updateAccountSwapStatus from "@ledgerhq/live-common/exchange/swap/updateAccountSwapStatus";
-import type { Account } from "@ledgerhq/types-live";
+import { getParentAccount } from "@ledgerhq/live-common/account/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
@@ -35,19 +36,38 @@ const AnimatedSectionList: typeof SectionList = Animated.createAnimatedComponent
   SectionList,
 ) as unknown as typeof SectionList;
 
+// Helper function to ensure parent account is set for token accounts
+const ensureParentAccount = (
+  item: MappedSwapOperation,
+  accounts: AccountLike[],
+): MappedSwapOperation => {
+  if (item.toAccount.type === "TokenAccount" && !item.toParentAccount) {
+    return {
+      ...item,
+      toParentAccount: getParentAccount(item.toAccount, accounts),
+    };
+  }
+  return item;
+};
+
 const History = () => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const accounts = useSelector(flattenAccountsSelector);
   const dispatch = useDispatch();
-  const [sections, setSections] = useState<SwapHistorySection[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const ref = useRef(null);
   const syncAccounts = useSyncAllAccounts();
 
-  useEffect(() => {
-    setSections(getCompleteSwapHistory(accounts));
-  }, [accounts, setSections]);
+  // fix token account parent
+  const sections = useMemo(() => {
+    const history = getCompleteSwapHistory(accounts);
+
+    return history.map(section => ({
+      ...section,
+      data: section.data.map(item => ensureParentAccount(item, accounts)),
+    }));
+  }, [accounts]);
 
   const refreshSwapHistory = useCallback(() => {
     syncAccounts();
@@ -109,19 +129,20 @@ const History = () => {
   );
 
   const exportSwapHistory = async () => {
-    const mapped = await mappedSwapOperationsToCSV(sections);
-    const base64 = Buffer.from(mapped).toString("base64");
-    const options = {
-      title: t("transfer.swap.history.exportButton"),
-      message: t("transfer.swap.history.exportButton"),
-      failOnCancel: false,
-      saveToFiles: true,
-      type: "text/csv",
-      filename: t("transfer.swap.history.exportFilename"),
-      url: `data:text/csv;base64,${base64}`,
-    };
-
     try {
+      const mapped = mappedSwapOperationsToCSV(sections);
+
+      const base64 = Buffer.from(mapped).toString("base64");
+      const options = {
+        title: t("transfer.swap.history.exportButton"),
+        message: t("transfer.swap.history.exportButton"),
+        failOnCancel: false,
+        saveToFiles: true,
+        type: "text/csv",
+        filename: t("transfer.swap.history.exportFilename"),
+        url: `data:text/csv;base64,${base64}`,
+      };
+
       await Share.open(options);
     } catch (err) {
       // `failOnCancel: false` is not enough to prevent throwing on cancel apparently ¯\_(ツ)_/¯

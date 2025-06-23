@@ -41,6 +41,7 @@ import {
   counterValueCurrencySelector,
   developerModeSelector,
   enablePlatformDevToolsSelector,
+  hasSeenAnalyticsOptInPromptSelector,
   languageSelector,
   lastSeenDeviceSelector,
   shareAnalyticsSelector,
@@ -54,6 +55,7 @@ import {
 } from "../utils/index";
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
+import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -126,7 +128,10 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(languageSelector);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
+
   const shareAnalytics = useSelector(shareAnalyticsSelector);
+  const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector).toString();
+
   const currentVersion = __APP_VERSION__;
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const devMode = useSelector(developerModeSelector);
@@ -506,6 +511,7 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
         <Web3AppWebview
           manifest={manifestWithHash}
           inputs={{
+            source: currentRouteNameRef.current || "",
             theme: themeType,
             lang: locale,
             currencyTicker: fiatCurrency.ticker,
@@ -516,6 +522,7 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
             currentVersion,
             platform: "LLD",
             shareAnalytics,
+            hasSeenAnalyticsOptInPrompt,
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}

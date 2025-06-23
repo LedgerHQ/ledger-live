@@ -7,7 +7,7 @@ import { getBTCValues } from "@ledgerhq/live-countervalues/mock";
 import { DeviceModelId, identifyTargetId } from "@ledgerhq/devices";
 import { App, AppType, ApplicationV2, DeviceInfo, FinalFirmware } from "@ledgerhq/types-live";
 
-export const deviceInfo155 = {
+export const deviceInfo155: DeviceInfo = {
   version: "1.5.5",
   isBootloader: false,
   isOSU: false,
@@ -17,6 +17,7 @@ export const deviceInfo155 = {
   providerName: null,
   majMin: "1.5",
   targetId: 823132164,
+  seFlags: Buffer.alloc(0),
 };
 
 export const deviceInfo210lo5: DeviceInfo = {
@@ -36,9 +37,10 @@ export const deviceInfo210lo5: DeviceInfo = {
   seVersion: "2.1.0-lo5",
   targetId: 855638020,
   version: "2.1.0-lo5",
+  seFlags: Buffer.alloc(0),
 };
 
-export const deviceInfo222 = {
+export const deviceInfo222: DeviceInfo = {
   version: "2.2.2",
   mcuVersion: "2.30",
   seVersion: "2.1.0",
@@ -58,6 +60,7 @@ export const deviceInfo222 = {
   bootloaderVersion: "1.16",
   hardwareVersion: 0,
   languageId: 0,
+  seFlags: Buffer.alloc(0),
 };
 
 const firmware155: FinalFirmware = {
