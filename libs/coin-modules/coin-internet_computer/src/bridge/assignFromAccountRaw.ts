@@ -17,6 +17,10 @@ export const assignFromAccountRaw: AccountBridge<
   ICPAccountRaw
 >["assignFromAccountRaw"] = (accountRaw, account) => {
   log("debug", `[ICP](assignFromAccountRaw) deserializing neurons`);
+  if (!accountRaw.neuronsData) {
+    return;
+  }
+
   const { fullNeurons, neuronInfos, lastUpdated } = accountRaw.neuronsData;
   account.neurons = NeuronsData.deserialize(fullNeurons, neuronInfos, lastUpdated);
 };

@@ -56,6 +56,9 @@ export const getTransactionStatus: AccountBridge<
     neuron => neuron.id[0]?.id.toString() === neuronId,
   );
 
+  console.log("neuron", neuron);
+  console.log("type", type);
+  console.log("dissolveDelayStr", dissolveDelayStr);
   // If the transaction is a set dissolve delay, we need to validate the dissolve delay
   if (type === "set_dissolve_delay" && !!dissolveDelayStr) {
     const dissolveDelay = new BigNumber(dissolveDelayStr);
@@ -111,7 +114,7 @@ export const getTransactionStatus: AccountBridge<
   // If the recipient is invalid, add an error
   if (!recipient) {
     errors.recipient = new RecipientRequired();
-  } else if (!(await validateAddress(recipient)).isValid) {
+  } else if (!validateAddress(recipient).isValid) {
     // If the recipient is invalid, add an error
     errors.recipient = new InvalidAddress("", {
       currencyName: account.currency.name,
@@ -119,13 +122,6 @@ export const getTransactionStatus: AccountBridge<
   } else if (recipient.toLowerCase() === address.toLowerCase()) {
     // If the recipient is the same as the sender, add an error
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
-  }
-
-  // If the sender address is invalid, add an error
-  if (!(await validateAddress(address)).isValid) {
-    errors.sender = new InvalidAddress("", {
-      currencyName: account.currency.name,
-    });
   }
 
   // If the memo is invalid, add an error

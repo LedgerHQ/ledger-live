@@ -13,7 +13,7 @@ import invariant from "invariant";
 import { NeuronsData } from "@zondax/ledger-live-icp/neurons";
 import { hashTransaction, deriveAddressFromPubkey } from "@zondax/ledger-live-icp/utils";
 
-export const getAccountShape: GetAccountShape<ICPAccount> = async info => {
+export const getAccountShape: GetAccountShape<ICPAccount> = async (info, _syncConfig) => {
   const { currency, derivationMode, rest = {}, initialAccount } = info;
   const publicKey = reconciliatePublicKey(rest.publicKey, initialAccount);
   invariant(publicKey, "publicKey is required");
@@ -40,7 +40,9 @@ export const getAccountShape: GetAccountShape<ICPAccount> = async info => {
     BigInt(blockHeight.toString()),
     initialAccount ? BigInt(initialAccount.blockHeight) : undefined,
   );
-  const neurons = initialAccount ? initialAccount.neurons : NeuronsData.empty();
+  const neurons =
+    initialAccount && initialAccount.neurons ? initialAccount.neurons : NeuronsData.empty();
+
   const result: Partial<ICPAccount> = {
     id: accountId,
     balance,
@@ -80,6 +82,10 @@ const mapTxToOps = (
   return (txInfo: TransactionWithId): InternetComputerOperation[] => {
     const { transaction: txn } = txInfo;
     const ops: InternetComputerOperation[] = [];
+
+    if (txn.operation === undefined) {
+      return [];
+    }
 
     if ("Transfer" in txn.operation === undefined) {
       return [];

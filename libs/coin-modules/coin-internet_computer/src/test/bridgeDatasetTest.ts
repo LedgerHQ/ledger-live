@@ -2,9 +2,23 @@ import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
 import { fromTransactionRaw } from "../bridge/transaction";
 import BigNumber from "bignumber.js";
-import { AmountRequired, InvalidAddress, NotEnoughBalance } from "@ledgerhq/errors";
+import {
+  AmountRequired,
+  InvalidAddress,
+  NotEnoughBalance,
+  RecipientRequired,
+} from "@ledgerhq/errors";
 import { getEstimatedFees } from "../bridge/bridgeHelpers/fee";
-import { InvalidMemoICP } from "../errors";
+import {
+  InvalidMemoICP,
+  ICPNeuronNotFound,
+  ICPDissolveDelayLTMin,
+  ICPDissolveDelayGTMax,
+  NotEnoughTransferAmount,
+  ICPInvalidHotKey,
+  ICPCreateNeuronWarning,
+  ICPIncreaseStakeWarning,
+} from "../errors";
 
 const SEED_IDENTIFIER =
   "046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf";
@@ -131,6 +145,161 @@ const internet_computer: CurrenciesData<Transaction> = {
           expectedStatus: {
             amount: new BigNumber("1000"),
             errors: {},
+            warnings: {},
+          },
+        },
+        {
+          name: "Recipient Required",
+          transaction: fromTransactionRaw({
+            family: "internet_computer",
+            type: "send",
+            recipient: "",
+            fees: getEstimatedFees().toString(),
+            amount: "1000",
+          }),
+          expectedStatus: {
+            errors: {
+              recipient: new RecipientRequired(),
+            },
+            warnings: {},
+          },
+        },
+        {
+          name: "Create Neuron Warning",
+          transaction: fromTransactionRaw({
+            family: "internet_computer",
+            type: "create_neuron",
+            recipient: ACCOUNT_2,
+            fees: getEstimatedFees().toString(),
+            amount: "100000000",
+          }),
+          expectedStatus: {
+            warnings: {
+              staking: new ICPCreateNeuronWarning(),
+            },
+            errors: {},
+          },
+        },
+        {
+          name: "Create Neuron - Not Enough Transfer Amount",
+          transaction: fromTransactionRaw({
+            family: "internet_computer",
+            type: "create_neuron",
+            recipient: ACCOUNT_2,
+            fees: getEstimatedFees().toString(),
+            amount: "1000", // Less than ICP_MIN_STAKING_AMOUNT
+          }),
+          expectedStatus: {
+            errors: {
+              amount: new NotEnoughTransferAmount(),
+            },
+            warnings: {
+              staking: new ICPCreateNeuronWarning(),
+            },
+          },
+        },
+        {
+          name: "Increase Stake Warning",
+          transaction: fromTransactionRaw({
+            family: "internet_computer",
+            type: "increase_stake",
+            recipient: ACCOUNT_2,
+            fees: getEstimatedFees().toString(),
+            amount: "100000000",
+          }),
+          expectedStatus: {
+            warnings: {
+              staking: new ICPIncreaseStakeWarning(),
+            },
+            errors: {},
+          },
+        },
+        {
+          name: "Set Dissolve Delay - Neuron Not Found",
+          transaction: fromTransactionRaw({
+            family: "internet_computer",
+            type: "set_dissolve_delay",
+            recipient: ACCOUNT_2,
+            fees: getEstimatedFees().toString(),
+            amount: "1000",
+            neuronId: "nonexistent_neuron_id",
+            dissolveDelay: "15552000", // 180 days in seconds
+          }),
+          expectedStatus: {
+            errors: {
+              neuron: new ICPNeuronNotFound(),
+            },
+            warnings: {},
+          },
+        },
+        {
+          name: "Set Dissolve Delay - Less Than Minimum",
+          transaction: fromTransactionRaw({
+            family: "internet_computer",
+            type: "set_dissolve_delay",
+            recipient: ACCOUNT_2,
+            fees: getEstimatedFees().toString(),
+            amount: "1000",
+            neuronId: "some_neuron_id",
+            dissolveDelay: "1000", // Way less than MIN_DISSOLVE_DELAY
+          }),
+          expectedStatus: {
+            errors: {
+              dissolveDelay: new ICPDissolveDelayLTMin(),
+            },
+            warnings: {},
+          },
+        },
+        {
+          name: "Set Dissolve Delay - Greater Than Maximum",
+          transaction: fromTransactionRaw({
+            family: "internet_computer",
+            type: "set_dissolve_delay",
+            recipient: ACCOUNT_2,
+            fees: getEstimatedFees().toString(),
+            amount: "1000",
+            neuronId: "some_neuron_id",
+            dissolveDelay: "300000000", // Way more than MAX_DISSOLVE_DELAY (8 years)
+          }),
+          expectedStatus: {
+            errors: {
+              dissolveDelay: new ICPDissolveDelayGTMax(),
+            },
+            warnings: {},
+          },
+        },
+        {
+          name: "Split Neuron - Neuron Not Found",
+          transaction: fromTransactionRaw({
+            family: "internet_computer",
+            type: "split_neuron",
+            recipient: ACCOUNT_2,
+            fees: getEstimatedFees().toString(),
+            amount: "100000000",
+            neuronId: "nonexistent_neuron_id",
+          }),
+          expectedStatus: {
+            errors: {
+              neuron: new ICPNeuronNotFound(),
+            },
+            warnings: {},
+          },
+        },
+        {
+          name: "Add Hot Key - Invalid Hot Key",
+          transaction: fromTransactionRaw({
+            family: "internet_computer",
+            type: "add_hot_key",
+            recipient: ACCOUNT_2,
+            fees: getEstimatedFees().toString(),
+            amount: "1000",
+            neuronId: "some_neuron_id",
+            hotKeyToAdd: "invalid_principal_id",
+          }),
+          expectedStatus: {
+            errors: {
+              addHotKey: new ICPInvalidHotKey(),
+            },
             warnings: {},
           },
         },

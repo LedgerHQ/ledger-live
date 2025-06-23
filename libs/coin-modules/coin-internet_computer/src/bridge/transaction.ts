@@ -37,6 +37,17 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     fees: new BigNumber(tr.fees),
     amount: new BigNumber(tr.amount),
     memo: tr.memo,
+    neuronAccountIdentifier: tr.neuronAccountIdentifier,
+    neuronId: tr.neuronId,
+    percentageToStake: tr.percentageToStake,
+    percentageToSpawn: tr.percentageToSpawn,
+    dissolveDelay: tr.dissolveDelay,
+    additionalDissolveDelay: tr.additionalDissolveDelay,
+    autoStakeMaturity: tr.autoStakeMaturity,
+    hotKeyToRemove: tr.hotKeyToRemove,
+    hotKeyToAdd: tr.hotKeyToAdd,
+    followTopic: tr.followTopic,
+    followeesIds: tr.followeesIds,
   };
 };
 
@@ -50,6 +61,17 @@ const toTransactionRaw = (t: Transaction): TransactionRaw => {
     amount: t.amount.toFixed(),
     fees: t.fees.toString(),
     memo: t.memo,
+    neuronAccountIdentifier: t.neuronAccountIdentifier,
+    neuronId: t.neuronId,
+    percentageToStake: t.percentageToStake,
+    percentageToSpawn: t.percentageToSpawn,
+    dissolveDelay: t.dissolveDelay,
+    additionalDissolveDelay: t.additionalDissolveDelay,
+    autoStakeMaturity: t.autoStakeMaturity,
+    hotKeyToRemove: t.hotKeyToRemove,
+    hotKeyToAdd: t.hotKeyToAdd,
+    followTopic: t.followTopic,
+    followeesIds: t.followeesIds,
   };
 };
 

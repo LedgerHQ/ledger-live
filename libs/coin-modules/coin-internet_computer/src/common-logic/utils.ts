@@ -5,18 +5,16 @@ import { InternetComputerOperation, Transaction } from "../types";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { OperationType } from "@ledgerhq/types-live";
 
-const validHexRegExp = new RegExp(/[0-9A-Fa-f]{6}/g);
-const validBase64RegExp = new RegExp(
-  /^(?:[A-Za-z\d+/]{4})*(?:[A-Za-z\d+/]{3}=|[A-Za-z\d+/]{2}==)?$/,
-);
+const validHexRegExp = /^[0-9a-fA-F]+$/;
+const validBase64RegExp = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
 
 export const isNoErrorReturnCode = (code: number): boolean => code === 0x9000;
 
 export const getPath = (path: string): string =>
-  path && path.substr(0, 2) !== "m/" ? `m/${path}` : path;
+  path && path.substring(0, 2) !== "m/" ? `m/${path}` : path;
 
-export const isValidHex = (msg: string): boolean => validHexRegExp.test(msg);
-export const isValidBase64 = (msg: string): boolean => validBase64RegExp.test(msg);
+export const isValidHex = (msg: string): boolean => validHexRegExp.test(msg.toLowerCase());
+export const isValidBase64 = (msg: string): boolean => validBase64RegExp.test(msg.toLowerCase());
 
 export const isError = (r: { returnCode: number; errorMessage?: string }): void => {
   if (!isNoErrorReturnCode(r.returnCode)) throw new Error(`${r.returnCode} - ${r.errorMessage}`);
