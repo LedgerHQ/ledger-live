@@ -10,6 +10,18 @@ const {
 const { DOTENV_FILE } = require("../utils");
 const common = require("./common.esbuild");
 
+const nodeBuiltinsPlugin = {
+  name: "node-builtins",
+  setup(build) {
+    build.onResolve({ filter: /^node:/ }, args => {
+      return {
+        path: args.path.replace(/^node:/, ""),
+        external: true,
+      };
+    });
+  },
+};
+
 module.exports = {
   ...common,
   entryPoints: ["src/renderer/index.ts"],
@@ -26,6 +38,7 @@ module.exports = {
     : [".tsx", ".ts", ".v3.tsx", ".v3.ts", ".js", ".jsx", ".json"],
   plugins: [
     ...common.plugins,
+    nodeBuiltinsPlugin,
     AliasPlugin({
       // Alias react to prevent esbuild trying to resolve them wrongly.
       react: [require.resolve("react"), path.dirname(require.resolve("react"))],
