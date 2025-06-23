@@ -139,7 +139,7 @@ const Earn = (props: NavigationProps) => {
       />
       <EarnProtocolInfoDrawer />
       <EarnInfoDrawer />
-      <EarnMenuDrawer />
+      <EarnMenuDrawer navigation={props.navigation} />
     </>
   );
 };
