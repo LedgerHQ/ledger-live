@@ -32,7 +32,7 @@ const Wrapper = styled(Box).attrs(() => ({
 `;
 
 const Staking = ({ account }: { account: AptosAccount }) => {
-  if (!getEnv("APTOS_ENABLE_STAKING")) return null;
+  if (getEnv("APTOS_ENABLE_STAKING") === false) return null;
 
   const dispatch = useDispatch();
 
