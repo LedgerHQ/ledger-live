@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { TransportReplayer } from "@ledgerhq/hw-transport-mocker/lib/openTransportReplayer";
-import ecc from "tiny-secp256k1";
+import * as ecc from "@bitcoinerlab/secp256k1";
 import { getXpubComponents, pathArrayToString } from "../../src/bip32";
 import BtcNew from "../../src/BtcNew";
 import { DefaultDescriptorTemplate, WalletPolicy } from "../../src/newops/policy";

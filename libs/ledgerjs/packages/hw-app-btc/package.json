@@ -60,6 +60,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "@bitcoinerlab/secp256k1": "1.2.0",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "bip32-path": "^0.4.2",
@@ -70,7 +71,6 @@
     "ripemd160": "2",
     "semver": "^7.3.5",
     "sha.js": "2",
-    "tiny-secp256k1": "1.1.7",
     "varuint-bitcoin": "1.1.2"
   },
   "devDependencies": {

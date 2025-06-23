@@ -1,10 +1,10 @@
 import * as secp256k1 from "secp256k1";
-import * as ecc from "tiny-secp256k1";
+import * as ecc from "@bitcoinerlab/secp256k1";
 import { BIP32Factory } from "bip32";
 import hmac from "create-hmac";
-import * as crypto from "crypto";
+import * as crypto from "node:crypto";
 
-import { Crypto, KeyPair, KeyPairWithChainCode } from "./Crypto";
+import type { Crypto, KeyPair, KeyPairWithChainCode } from "./Crypto";
 
 const bip32 = BIP32Factory(ecc);
 const AES_BLOCK_SIZE = 16;
@@ -237,7 +237,7 @@ variable : Encrypted data
   from_hex(hex: string): Uint8Array {
     const bytes = new Uint8Array(hex.length / 2);
     for (let i = 0; i < hex.length; i += 2) {
-      bytes[i / 2] = parseInt(hex[i] + hex[i + 1], 16);
+      bytes[i / 2] = Number.parseInt(hex[i] + hex[i + 1], 16);
     }
     return bytes;
   }
