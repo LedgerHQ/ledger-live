@@ -2,7 +2,7 @@
 "ledger-live-desktop": minor
 ---
 
-Upgrade Electron & ecosystem packages from v32 to v36
+Upgrade Electron from v32 to v36
 
 Also:
 - Upgrades relevant Electron ecosystem packages
