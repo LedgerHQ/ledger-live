@@ -1,4 +1,4 @@
-import { Account, TransactionCommon } from "@ledgerhq/types-live";
+import { Account, TokenAccount, TransactionCommon } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 
@@ -35,7 +35,7 @@ export type NetworkInfo = {
 //   };
 // }
 
-export function createTransaction(account: Account): TransactionCommon & {
+export function createTransaction(account: Account | TokenAccount): TransactionCommon & {
   family: string;
   fee?: BigNumber | null | undefined;
   fees?: BigNumber | null;
@@ -49,10 +49,15 @@ export function createTransaction(account: Account): TransactionCommon & {
   assetCode?: string;
   assetIssuer?: string;
 } {
-  switch (account.currency.family) {
+  const currency =
+    account.type === "TokenAccount" ? account.token.parentCurrency : account.currency;
+  if (account.type === "TokenAccount") {
+    debugger;
+  }
+  switch (currency.family) {
     case "xrp":
       return {
-        family: account.currency.family,
+        family: currency.family,
         amount: BigNumber(0),
         recipient: "",
         fee: null,
@@ -62,7 +67,7 @@ export function createTransaction(account: Account): TransactionCommon & {
       };
     case "stellar":
       return {
-        family: account.currency.family,
+        family: currency.family,
         amount: new BigNumber(0),
         baseReserve: null,
         networkInfo: null,
@@ -78,6 +83,6 @@ export function createTransaction(account: Account): TransactionCommon & {
         feeCustomUnit: null,
       };
     default:
-      throw new Error(`Unsupported currency family: ${account.currency.family}`);
+      throw new Error(`Unsupported currency family: ${currency.family}`);
   }
 }
