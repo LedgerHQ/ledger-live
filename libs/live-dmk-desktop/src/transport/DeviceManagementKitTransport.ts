@@ -162,7 +162,6 @@ export class DeviceManagementKitTransport extends Transport {
       this.sessionId = connectedSessionId;
     }
 
-    tracer.trace(`=> ${apdu.toString("hex")}`);
     return await this.dmk
       .sendApdu({
         sessionId: this.sessionId,
@@ -171,7 +170,8 @@ export class DeviceManagementKitTransport extends Transport {
       .then((apduResponse: { data: Uint8Array; statusCode: Uint8Array }): Buffer => {
         const response = Buffer.from([...apduResponse.data, ...apduResponse.statusCode]);
         //Log the exchange for debugging purposes
-        tracer.trace(`<= ${response.toString("hex")}`);
+        tracer.trace(`[exchange] => ${apdu.toString("hex")}`);
+        tracer.trace(`[exchange] <= ${response.toString("hex")}`);
 
         return response;
       })
