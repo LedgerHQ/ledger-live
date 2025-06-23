@@ -15,6 +15,7 @@ import AnimatedScreenWrapper from "./components/AnimatedScreenWrapper";
 import { BackButtonArrow } from "./components/BackButton";
 import { Account } from "@ledgerhq/types-live";
 import AccountsAdded from "./screens/AccountsAdded";
+import HeaderGradient from "./components/HeaderGradient";
 
 const ANALYTICS_PROPERTY_FLOW = "Modular Add Account Flow";
 
@@ -93,6 +94,7 @@ const ModularDrawerAddAccountFlowManager = ({ currency, onConnect }: Props) => {
 
   return (
     <AnimatePresence initial={false} mode="sync" data-test-id="add-account-animated">
+      <HeaderGradient currentStep={currentStep} data-test-id="header-gradient" />
       {handleBack && <BackButtonArrow onBackClick={handleBack} />}
       <AnimatedScreenWrapper
         key={currentStep}
