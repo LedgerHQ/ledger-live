@@ -75,11 +75,21 @@ export const buildOptimisticOperation = (
   transaction: TransactionCommon,
   sequenceNumber?: number,
 ): Operation => {
+  const type = transaction["mode"] === "changeTrust" ? "OPT_IN" : "OUT";
+  const fees = transaction["fees"] ?? BigNumber(0);
+
+  // const { subAccountId } = transaction;
+  // const { subAccounts } = account;
+
+  const { subAccountId } = transaction;
+  const { subAccounts } = account;
+
   const operation: Operation = {
     id: encodeOperationId(account.id, "", "OUT"),
     hash: "",
     type: "OUT",
-    value: transaction.amount,
+    // value: transaction.amount,
+    value: subAccountId ? fees : transaction.amount, // match old behavior
     fee: transaction["fees"] ?? BigNumber(0),
     blockHash: null,
     blockHeight: null,
@@ -88,11 +98,12 @@ export const buildOptimisticOperation = (
     transactionSequenceNumber: sequenceNumber ?? 0,
     accountId: account.id,
     date: new Date(),
-    extra: {},
+    extra: {
+      ledgerOpType: type,
+      blockTime: new Date(),
+      index: "0",
+    },
   };
-
-  const { subAccountId } = transaction;
-  const { subAccounts } = account;
 
   const tokenAccount = !subAccountId
     ? null
@@ -112,7 +123,9 @@ export const buildOptimisticOperation = (
         recipients: [transaction.recipient],
         accountId: subAccountId,
         date: new Date(),
-        extra: {},
+        extra: {
+          ledgerOpType: type,
+        },
       },
     ];
   }

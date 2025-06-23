@@ -30,6 +30,7 @@ export const genericSignOperation =
   }): Observable<SignOperationEvent> =>
     new Observable(o => {
       async function main() {
+        // NOTE: checking field that's not inside TransactionCommon, improve
         if (!transaction["fees"]) throw new FeeNotLoaded();
 
         const signedInfo = await signerContext(deviceId, async signer => {
