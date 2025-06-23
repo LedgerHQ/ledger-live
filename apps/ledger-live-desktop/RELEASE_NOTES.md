@@ -1,3 +1,18 @@
+# 2.118.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.117.0
+
+### 🌷 Improvements
+
+Solana accounts created with Phantom are now visible in Ledger Live.
+With this update, we now support Casper Network v2.
+
+### 🐛 Fixes
+
+Fixed a bug that prevented SUI funded wallets from being added to Ledger Live.
+
 # 2.115.0
 
 ### 🐛 Fixes

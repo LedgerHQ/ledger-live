@@ -28,6 +28,7 @@ import EnableAnalyticsConsole from "./EnableAnalyticsConsole";
 import BrazeTools from "./BrazeTools";
 import { RecoverUpsellRow } from "./RecoverUpsellRow";
 import NftsTools from "./NftsTools";
+import CustomCALRefInput from "./CustomCALRefInput";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -63,6 +64,13 @@ const Default = () => {
 
       <Row title={t("settings.developer.catalogUrl")} desc={t("settings.developer.catalogUrlDesc")}>
         <CatalogProviderInput />
+      </Row>
+
+      <Row
+        title={t("settings.developer.customCALRef")}
+        desc={t("settings.developer.customCALRefDesc")}
+      >
+        <CustomCALRefInput />
       </Row>
 
       <Row

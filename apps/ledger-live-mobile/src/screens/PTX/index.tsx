@@ -8,6 +8,7 @@ import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { useTheme } from "styled-components/native";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
@@ -24,6 +25,8 @@ import { walletSelector } from "~/reducers/wallet";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { useSettings } from "~/hooks";
+import { ProviderInterstitial } from "./BuySell/ProviderInterstitial";
+import { useProviderInterstitalEnabled } from "@ledgerhq/live-common/hooks/useShowProviderLoadingTransition";
 
 export type Props = StackNavigatorProps<
   PtxNavigatorParamList,
@@ -61,6 +64,10 @@ export function PtxScreen({ route, config }: Props) {
   const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
   const walletState = useSelector(walletSelector);
   const discreetMode = useSelector(discreetModeSelector);
+
+  const providerInterstitialEnabled = useProviderInterstitalEnabled({
+    manifest,
+  });
 
   /**
    * Pass correct account ID
@@ -129,6 +136,7 @@ export function PtxScreen({ route, config }: Props) {
         }}
         config={config}
         softExit={softExit === "true"}
+        Interstitial={providerInterstitialEnabled ? ProviderInterstitial : undefined}
       />
     </>
   ) : (

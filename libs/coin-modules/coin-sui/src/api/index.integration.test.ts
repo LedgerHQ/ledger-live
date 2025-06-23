@@ -1,10 +1,10 @@
-import type { AlpacaApi, FeeEstimation, Operation } from "@ledgerhq/coin-framework/api/index";
+import type { Api, FeeEstimation, Operation } from "@ledgerhq/coin-framework/api/index";
 import { createApi } from ".";
 import { SuiAsset } from "./types";
 import { getEnv } from "@ledgerhq/live-env";
 
 describe("Sui Api", () => {
-  let module: AlpacaApi<SuiAsset>;
+  let module: Api<SuiAsset>;
   const RECIPIENT = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
   const SENDER = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
   // https://suiscan.xyz/mainnet/account/0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164/activity

@@ -7,10 +7,12 @@ import React, {
   useRef,
   useLayoutEffect,
 } from "react";
-import { Flex, VerticalTimeline, Text, ContinueOnDevice, Divider } from "@ledgerhq/native-ui";
+import { Image } from "react-native";
+import { Flex, VerticalTimeline, Text, ContinueOnDevice, Link } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import {
+  CharonStatus,
   OnboardingStep as DeviceOnboardingStep,
   fromSeedPhraseTypeToNbOfSeedWords,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
@@ -21,7 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk-mobile";
 
-import { SeedPhraseType, StorylyInstanceID } from "@ledgerhq/types-live";
+import { SeedOriginType, SeedPhraseType, StorylyInstanceID } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { addKnownDevice } from "~/actions/ble";
 import { NavigatorName, ScreenName } from "~/const";
@@ -37,7 +39,7 @@ import {
 } from "~/actions/settings";
 import InstallSetOfApps from "~/components/DeviceAction/InstallSetOfApps";
 import Stories from "~/components/StorylyStories";
-import { TrackScreen, screen } from "~/analytics";
+import { TrackScreen, screen, useTrack } from "~/analytics";
 import ContinueOnStax from "./assets/ContinueOnStax";
 import ContinueOnEuropa from "./assets/ContinueOnEuropa";
 import type { SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
@@ -46,6 +48,11 @@ import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
+import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
+import SecretRecoveryPhraseImage from "./assets/srp.png";
+import CharonImage from "./assets/charon.png";
+import BackgroundBlue from "./assets/BackgroundBlue";
+import BackgroundRed from "./assets/BackgroundRed";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 
@@ -65,7 +72,9 @@ export type SeedPathStatus =
   | "new_seed"
   | "choice_restore_direct_or_recover"
   | "restore_seed"
-  | "recover_seed";
+  | "recover_seed"
+  | "backup_charon"
+  | "restore_charon";
 
 export type SyncOnboardingCompanionProps = {
   /**
@@ -163,7 +172,6 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
   const deviceInitialApps = useFeature("deviceInitialApps");
 
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
-  const deviceName = device.deviceName || productName;
 
   const initialAppsToInstall = deviceInitialApps?.params?.apps || fallbackDefaultAppsToInstall;
 
@@ -339,7 +347,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     }
   }, [deviceOnboardingState]);
 
-  const analyticsSeedConfiguration = useRef<"new_seed" | "restore_seed" | "recover_seed">();
+  const analyticsSeedConfiguration = useRef<SeedOriginType>();
 
   const analyticsSeedingTracked = useRef(false);
   /**
@@ -437,6 +445,15 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
         setCompanionStepKey(CompanionStepKey.Seed);
         setSeedPathStatus("recover_seed");
         analyticsSeedConfiguration.current = "recover_seed";
+        break;
+      case DeviceOnboardingStep.RestoreCharon:
+        setCompanionStepKey(CompanionStepKey.Seed);
+        setSeedPathStatus("restore_charon");
+        analyticsSeedConfiguration.current = "restore_charon";
+        break;
+      case DeviceOnboardingStep.BackupCharon:
+        setCompanionStepKey(CompanionStepKey.Seed);
+        setSeedPathStatus("backup_charon");
         break;
       default:
         break;
@@ -541,6 +558,15 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     servicesConfig?.params?.protectId,
   ]);
 
+  const track = useTrack();
+  const handleLearnMoreClick = useCallback(() => {
+    // TODO: Add link
+    track("button_clicked", {
+      button: "Learn More",
+      page: "Charon Start",
+    });
+  }, [track]);
+
   const companionSteps: Step[] = useMemo(
     () =>
       [
@@ -560,7 +586,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                 text={t("syncOnboarding.earlySecurityCheckCompletedStep.description", {
                   productName,
                 })}
-                withTopDivider={false}
+                withTopDivider={true}
               />
             </>
           ),
@@ -586,16 +612,30 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
           key: CompanionStepKey.Seed,
           title: t("syncOnboarding.seedStep.title"),
           doneTitle: t("syncOnboarding.seedStep.doneTitle"),
+          background:
+            seedPathStatus === "new_seed" ? (
+              <BackgroundBlue />
+            ) : seedPathStatus === "backup_charon" ? (
+              <BackgroundRed />
+            ) : null,
           renderBody: () => (
             <Flex>
               <TrackScreen category={"Set up device: Step 3 Seed Intro"} />
               {seedPathStatus === "new_seed" ? (
                 <Flex pb={1}>
-                  <BodyText mb={6}>
-                    {t("syncOnboarding.seedStep.newSeedDescription", {
-                      productName,
-                    })}
-                  </BodyText>
+                  <Flex alignItems="center" justifyContent="center">
+                    <Flex style={{ overflow: "visible", height: 150 }}>
+                      <Image source={SecretRecoveryPhraseImage} height={200} />
+                    </Flex>
+                    <Text variant="h5" fontWeight="semiBold" mb={6}>
+                      {t("syncOnboarding.seedStep.newSeedTitle")}
+                    </Text>
+                    <BodyText mb={8} textAlign="center">
+                      {t("syncOnboarding.seedStep.newSeedDescription", {
+                        productName,
+                      })}
+                    </BodyText>
+                  </Flex>
                   <Stories instanceID={StorylyInstanceID.recoverySeed} vertical keepOriginalOrder />
                   <ContinueOnDeviceWithAnim
                     deviceModelId={device.modelId}
@@ -606,26 +646,107 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                 </Flex>
               ) : seedPathStatus === "choice_restore_direct_or_recover" ? (
                 <Flex>
-                  <SubtitleText>{t("syncOnboarding.seedStep.restoreChoiceSRPTitle")}</SubtitleText>
-                  <BodyText>{t("syncOnboarding.seedStep.restoreChoiceSRPDescription")}</BodyText>
-                  <Divider text={t("common.or")} my={6} />
                   <SubtitleText>
-                    {t("syncOnboarding.seedStep.restoreChoiceRecoverTitle")}
+                    {t("syncOnboarding.seedStep.selectionRestoreChoice.secretRecoveryPhrase.title")}
                   </SubtitleText>
                   <BodyText>
-                    {t("syncOnboarding.seedStep.restoreChoiceRecoverDescription")}
+                    {t(
+                      "syncOnboarding.seedStep.selectionRestoreChoice.secretRecoveryPhrase.description",
+                    )}
+                  </BodyText>
+
+                  {deviceOnboardingState?.charonSupported && (
+                    <>
+                      <SubtitleText mt={6}>
+                        {t("syncOnboarding.seedStep.selectionRestoreChoice.ledgerCharon.title")}
+                      </SubtitleText>
+                      <BodyText>
+                        {t(
+                          "syncOnboarding.seedStep.selectionRestoreChoice.ledgerCharon.description",
+                        )}
+                      </BodyText>
+                    </>
+                  )}
+
+                  <SubtitleText mt={6}>
+                    {t("syncOnboarding.seedStep.selectionRestoreChoice.ledgerRecover.title")}
+                  </SubtitleText>
+                  <BodyText>
+                    {t("syncOnboarding.seedStep.selectionRestoreChoice.ledgerRecover.description")}
                   </BodyText>
                   <ContinueOnDeviceWithAnim
                     deviceModelId={device.modelId}
-                    text={t("syncOnboarding.seedStep.restoreChoiceContinueOnDevice", {
+                    text={t("syncOnboarding.seedStep.selectionRestoreChoice.continueOnDevice", {
                       productName,
                     })}
                   />
                 </Flex>
               ) : seedPathStatus === "restore_seed" ? (
-                <BodyText>{t("syncOnboarding.seedStep.restoreSeed", { productName })}</BodyText>
+                <Flex>
+                  <SubtitleText>{t("syncOnboarding.seedStep.restoreSeed.title")}</SubtitleText>
+                  <BodyText>{t("syncOnboarding.seedStep.restoreSeed.description")}</BodyText>
+                  <ContinueOnDeviceWithAnim
+                    deviceModelId={device.modelId}
+                    text={t("syncOnboarding.seedStep.restoreSeed.continueOnDevice", {
+                      productName,
+                    })}
+                  />
+                </Flex>
               ) : seedPathStatus === "recover_seed" ? (
                 <BodyText>{t("syncOnboarding.seedStep.recoverSeed")}</BodyText>
+              ) : seedPathStatus === "backup_charon" ? (
+                <Flex>
+                  {deviceOnboardingState?.charonStatus === CharonStatus.Choice ? (
+                    <TrackScreen category="Set up device: Step 3 Charon Start" />
+                  ) : null}
+                  {deviceOnboardingState?.charonStatus === CharonStatus.Rejected ? (
+                    <TrackScreen category="Set up device: Step 3 Charon Backup Rejected" />
+                  ) : null}
+                  {deviceOnboardingState?.charonStatus === CharonStatus.Ready ? (
+                    <TrackScreen category="Set up device: Step 3 Charon Backup Success" />
+                  ) : null}
+                  <Flex alignItems="center" justifyContent="center">
+                    <Flex style={{ overflow: "visible", height: 100 }} mt={3}>
+                      <Image resizeMode="contain" source={CharonImage} style={{ height: 170 }} />
+                    </Flex>
+                    <Text variant="h5" fontWeight="semiBold" mb={6}>
+                      {t("syncOnboarding.seedStep.backupCharon.title")}
+                    </Text>
+                    <BodyText mb={6} textAlign="center">
+                      {t("syncOnboarding.seedStep.backupCharon.desc")}
+                    </BodyText>
+                  </Flex>
+                  <Flex mb={6} width="100%" justifyContent="center" alignItems="center">
+                    <Link
+                      Icon={ExternalLinkMedium}
+                      onPress={handleLearnMoreClick}
+                      style={{ justifyContent: "flex-start" }}
+                    >
+                      {t("syncOnboarding.seedStep.backupCharon.cta")}
+                    </Link>
+                  </Flex>
+                  <ContinueOnDeviceWithAnim
+                    deviceModelId={device.modelId}
+                    text={t("syncOnboarding.seedStep.backupCharon.continueOnDevice", {
+                      productName,
+                    })}
+                  />
+                </Flex>
+              ) : seedPathStatus === "restore_charon" ? (
+                <Flex>
+                  <SubtitleText>
+                    {t("syncOnboarding.seedStep.restoreLedgerCharon.title")}
+                  </SubtitleText>
+                  <BodyText>
+                    {t("syncOnboarding.seedStep.restoreLedgerCharon.description")}
+                  </BodyText>
+                  <ContinueOnDeviceWithAnim
+                    deviceModelId={device.modelId}
+                    text={t("syncOnboarding.seedStep.restoreLedgerCharon.continueOnDevice", {
+                      productName,
+                    })}
+                  />
+                </Flex>
               ) : (
                 <Flex>
                   <BodyText color="neutral.c80">
@@ -647,7 +768,9 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                       {t("syncOnboarding.seedStep.selectionRestore.title")}
                     </Text>
                     <Text color="neutral.c80">
-                      {t("syncOnboarding.seedStep.selectionRestore.desc")}
+                      {deviceOnboardingState?.charonSupported
+                        ? t("syncOnboarding.seedStep.selectionRestore.descWithCharon")
+                        : t("syncOnboarding.seedStep.selectionRestore.desc")}
                     </Text>
                   </Flex>
                   <ContinueOnDeviceWithAnim
@@ -694,9 +817,12 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     [
       t,
       productName,
+      seedPathStatus,
       deviceInitialApps?.enabled,
       device,
-      seedPathStatus,
+      deviceOnboardingState?.charonSupported,
+      deviceOnboardingState?.charonStatus,
+      handleLearnMoreClick,
       shouldRestoreApps,
       handleInstallAppsComplete,
       initialAppsToInstall,
@@ -723,7 +849,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
             header={
               <Flex mb={8} flexDirection="row" alignItems="center">
                 <Text variant="h4" fontWeight="semiBold">
-                  {t("syncOnboarding.title", { deviceName })}
+                  {t("syncOnboarding.title", { productName })}
                 </Text>
                 {/* TODO: disabled for now but will be used in the future */}
                 {/* <Button

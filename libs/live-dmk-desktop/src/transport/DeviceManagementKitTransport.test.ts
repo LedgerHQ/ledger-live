@@ -1,5 +1,6 @@
-import { of, Subject } from "rxjs";
+import { of, Subject, Observable } from "rxjs";
 import {
+  ConnectedDevice,
   DeviceModelId,
   DeviceStatus,
   DiscoveredDevice,
@@ -12,7 +13,27 @@ import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
 let obs: Subject<DeviceSessionState> = new Subject<DeviceSessionState>();
 let transport: DeviceManagementKitTransport;
 let deviceManagementKit: DeviceManagementKit;
+
 describe("DeviceManagementKitTransport", () => {
+  const mockObserver = {
+    next: vi.fn(),
+    error: vi.fn(),
+    complete: vi.fn(),
+  };
+
+  const testDevice1 = {
+    id: "dev1",
+    deviceModel: { model: "model1" },
+  } as unknown as DiscoveredDevice;
+  const testDevice2 = {
+    id: "dev2",
+    deviceModel: { model: "model1" },
+  } as unknown as DiscoveredDevice;
+  const connectedDevice1 = {
+    id: "dev1",
+    sessionId: "session1",
+  } as unknown as ConnectedDevice;
+
   beforeAll(async () => {
     deviceManagementKit = getDeviceManagementKit();
     vi.spyOn(deviceManagementKit, "listenToAvailableDevices").mockImplementation(() => {
@@ -63,5 +84,178 @@ describe("DeviceManagementKitTransport", () => {
     const response = await transport.exchange(apdu);
 
     expect(response).toEqual(expected);
+  });
+
+  it("should listen to available disconnected devices", async () => {
+    const mockAvailableDevices = new Observable<DiscoveredDevice[]>(subscriber => {
+      subscriber.next([testDevice1]);
+      subscriber.next([testDevice1, testDevice2]);
+      subscriber.next([testDevice2]);
+      subscriber.complete();
+    });
+
+    vi.spyOn(deviceManagementKit, "listenToAvailableDevices").mockReturnValue(mockAvailableDevices);
+    vi.spyOn(deviceManagementKit, "listenToConnectedDevice").mockReturnValue(
+      new Observable<ConnectedDevice>(),
+    );
+    vi.spyOn(deviceManagementKit, "getDeviceSessionState").mockReturnValue(new Observable());
+
+    DeviceManagementKitTransport.listen(mockObserver);
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    expect(mockObserver.next).toHaveBeenCalledTimes(3);
+    expect(mockObserver.next.mock.calls[0][0]).toEqual(
+      expect.objectContaining({
+        type: "add",
+        device: testDevice1,
+      }),
+    );
+    expect(mockObserver.next.mock.calls[1][0]).toEqual(
+      expect.objectContaining({
+        type: "add",
+        device: testDevice2,
+      }),
+    );
+    expect(mockObserver.next.mock.calls[2][0]).toEqual(
+      expect.objectContaining({
+        type: "remove",
+        device: testDevice1,
+      }),
+    );
+  });
+
+  it("should not remove device if connected", async () => {
+    const mockAvailableDevices = new Observable<DiscoveredDevice[]>(subscriber => {
+      subscriber.next([testDevice1, testDevice2]);
+      subscriber.next([]);
+      subscriber.complete();
+    });
+    const mockConnectedDevices = new Observable<ConnectedDevice>(subscriber => {
+      subscriber.next(connectedDevice1);
+      subscriber.complete();
+    });
+
+    vi.spyOn(deviceManagementKit, "listenToAvailableDevices").mockReturnValue(mockAvailableDevices);
+    vi.spyOn(deviceManagementKit, "listenToConnectedDevice").mockReturnValue(mockConnectedDevices);
+    vi.spyOn(deviceManagementKit, "getDeviceSessionState").mockReturnValue(new Observable());
+
+    DeviceManagementKitTransport.listen(mockObserver);
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    expect(mockObserver.next).toHaveBeenCalledTimes(3);
+    expect(mockObserver.next.mock.calls[0][0]).toEqual(
+      expect.objectContaining({
+        type: "add",
+        device: testDevice1,
+      }),
+    );
+    expect(mockObserver.next.mock.calls[1][0]).toEqual(
+      expect.objectContaining({
+        type: "add",
+        device: testDevice2,
+      }),
+    );
+    expect(mockObserver.next.mock.calls[2][0]).toEqual(
+      expect.objectContaining({
+        type: "remove",
+        device: testDevice2,
+      }),
+    );
+  });
+
+  it("should not remove connected device if disconnected but available", async () => {
+    const mockAvailableDevices = new Observable<DiscoveredDevice[]>(subscriber => {
+      subscriber.next([testDevice1, testDevice2]);
+      subscriber.next([testDevice1]);
+      subscriber.complete();
+    });
+    const mockConnectedDevices = new Observable<ConnectedDevice>(subscriber => {
+      subscriber.next(connectedDevice1);
+      subscriber.complete();
+    });
+    const mockSessionState = new Observable<DeviceSessionState>(subscriber => {
+      subscriber.next({ deviceStatus: DeviceStatus.CONNECTED } as DeviceSessionState);
+      subscriber.next({ deviceStatus: DeviceStatus.CONNECTED } as DeviceSessionState);
+      subscriber.next({ deviceStatus: DeviceStatus.NOT_CONNECTED } as DeviceSessionState);
+      subscriber.complete();
+    });
+
+    vi.spyOn(deviceManagementKit, "listenToAvailableDevices").mockReturnValue(mockAvailableDevices);
+    vi.spyOn(deviceManagementKit, "listenToConnectedDevice").mockReturnValue(mockConnectedDevices);
+    vi.spyOn(deviceManagementKit, "getDeviceSessionState").mockReturnValue(mockSessionState);
+
+    DeviceManagementKitTransport.listen(mockObserver);
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    expect(mockObserver.next).toHaveBeenCalledTimes(3);
+    expect(mockObserver.next.mock.calls[0][0]).toEqual(
+      expect.objectContaining({
+        type: "add",
+        device: testDevice1,
+      }),
+    );
+    expect(mockObserver.next.mock.calls[1][0]).toEqual(
+      expect.objectContaining({
+        type: "add",
+        device: testDevice2,
+      }),
+    );
+    expect(mockObserver.next.mock.calls[2][0]).toEqual(
+      expect.objectContaining({
+        type: "remove",
+        device: testDevice2,
+      }),
+    );
+  });
+
+  it("should remove connected device if disconnected and not available", async () => {
+    const mockAvailableDevices = new Observable<DiscoveredDevice[]>(subscriber => {
+      subscriber.next([testDevice1, testDevice2]);
+      subscriber.next([]);
+      subscriber.complete();
+    });
+    const mockConnectedDevices = new Observable<ConnectedDevice>(subscriber => {
+      subscriber.next(connectedDevice1);
+      subscriber.complete();
+    });
+    const mockSessionState = new Observable<DeviceSessionState>(subscriber => {
+      subscriber.next({ deviceStatus: DeviceStatus.CONNECTED } as DeviceSessionState);
+      subscriber.next({ deviceStatus: DeviceStatus.CONNECTED } as DeviceSessionState);
+      subscriber.next({ deviceStatus: DeviceStatus.NOT_CONNECTED } as DeviceSessionState);
+      subscriber.complete();
+    });
+
+    vi.spyOn(deviceManagementKit, "listenToAvailableDevices").mockReturnValue(mockAvailableDevices);
+    vi.spyOn(deviceManagementKit, "listenToConnectedDevice").mockReturnValue(mockConnectedDevices);
+    vi.spyOn(deviceManagementKit, "getDeviceSessionState").mockReturnValue(mockSessionState);
+
+    DeviceManagementKitTransport.listen(mockObserver);
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    expect(mockObserver.next).toHaveBeenCalledTimes(4);
+    expect(mockObserver.next.mock.calls[0][0]).toEqual(
+      expect.objectContaining({
+        type: "add",
+        device: testDevice1,
+      }),
+    );
+    expect(mockObserver.next.mock.calls[1][0]).toEqual(
+      expect.objectContaining({
+        type: "add",
+        device: testDevice2,
+      }),
+    );
+    expect(mockObserver.next.mock.calls[2][0]).toEqual(
+      expect.objectContaining({
+        type: "remove",
+        device: testDevice1,
+      }),
+    );
+    expect(mockObserver.next.mock.calls[3][0]).toEqual(
+      expect.objectContaining({
+        type: "remove",
+        device: testDevice2,
+      }),
+    );
   });
 });
