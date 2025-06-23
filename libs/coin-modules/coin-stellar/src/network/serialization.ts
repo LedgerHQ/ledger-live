@@ -101,6 +101,7 @@ async function formatOperation(
     accountId,
     fee: new BigNumber(transaction.fee_charged),
     value: rawOperation?.asset_code ? new BigNumber(transaction.fee_charged) : value,
+    // TODO: doc
     // Using type NONE to hide asset operations from the main account (show them
     // only on sub-account)
     type: rawOperation?.asset_code && !["OPT_IN", "OPT_OUT"].includes(type) ? "NONE" : type,
@@ -118,6 +119,7 @@ async function formatOperation(
       index: rawOperation.id,
     },
   };
+  console.log({ FORMAT_OPERATION: operation });
 
   if (rawOperation.paging_token) {
     operation.extra.pagingToken = rawOperation.paging_token;

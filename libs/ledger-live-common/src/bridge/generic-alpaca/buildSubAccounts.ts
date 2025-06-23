@@ -1,15 +1,43 @@
 import BigNumber from "bignumber.js";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
+import type { Operation, OperationType, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+
 import { findTokenById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
-import type { BalanceAsset, StellarOperation } from "../types";
+
+type BalanceAsset = {
+  balance: string;
+  limit: string;
+  buying_liabilities: string;
+  selling_liabilities: string;
+  last_modified_ledger: number;
+  is_authorized: boolean;
+  is_authorized_to_maintain_liabilities: boolean;
+  asset_type: string;
+  asset_code: string;
+  asset_issuer: string;
+  liquidity_pool_id?: string;
+};
+
+export type StellarOperation = Operation<StellarOperationExtra>;
+
+export type StellarOperationExtra = {
+  pagingToken?: string;
+  assetCode?: string;
+  assetIssuer?: string;
+  assetAmount?: string | undefined;
+  ledgerOpType: OperationType;
+  memo?: string;
+  blockTime: Date;
+  index: string;
+};
 
 export const getAssetIdFromTokenId = (tokenId: string): string => tokenId.split("/")[2];
 
-const getAssetIdFromAsset = (asset: BalanceAsset) => `${asset.asset_code}:${asset.asset_issuer}`;
+export const getAssetIdFromAsset = (asset: BalanceAsset) =>
+  `${asset.asset_code}:${asset.asset_issuer}`;
 
 function buildStellarTokenAccount({
   parentAccountId,
@@ -31,19 +59,22 @@ function buildStellarTokenAccount({
   );
   const spendableBalance = parseCurrencyUnit(token.units[0], reservedBalance.toString());
 
+  const tokenOperations = operations.map(op => ({
+    ...op,
+    id: encodeOperationId(id, op.hash, op.extra.ledgerOpType),
+    accountId: id,
+    type: op.extra.ledgerOpType,
+    value: op.extra.assetAmount ? new BigNumber(op.extra.assetAmount) : op.value,
+  }));
+  console.log({ operations, tokenOperations });
+
   return {
     type: "TokenAccount",
     id,
     parentId: parentAccountId,
     token,
     operationsCount: operations.length,
-    operations: operations.map(op => ({
-      ...op,
-      id: encodeOperationId(id, op.hash, op.extra.ledgerOpType),
-      accountId: id,
-      type: op.extra.ledgerOpType,
-      value: op.extra.assetAmount ? new BigNumber(op.extra.assetAmount) : op.value,
-    })),
+    operations: tokenOperations,
     pendingOperations: [],
     balance,
     spendableBalance,
@@ -74,11 +105,14 @@ export function buildSubAccounts({
   }
 
   const tokenAccounts: TokenAccount[] = [];
+  console.log({ operations });
+  debugger;
 
   assets.map(asset => {
     const token = findTokenById(`stellar/asset/${getAssetIdFromAsset(asset)}`);
 
     if (token && !blacklistedTokenIds.includes(token.id)) {
+      debugger;
       tokenAccounts.push(
         buildStellarTokenAccount({
           parentAccountId: accountId,

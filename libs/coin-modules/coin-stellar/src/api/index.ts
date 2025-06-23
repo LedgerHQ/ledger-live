@@ -1,10 +1,11 @@
 import type {
-  AlpacaApi,
+  Api,
   FeeEstimation,
   Operation,
   Pagination,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
+import { fetchAccount } from "../network";
 import coinConfig, { type StellarConfig } from "../config";
 import {
   broadcast,
@@ -12,6 +13,7 @@ import {
   craftTransaction,
   estimateFees,
   getBalance,
+  getTransactionStatus,
   lastBlock,
   listOperations,
 } from "../logic";
@@ -20,7 +22,8 @@ import { StellarAsset, StellarMemo } from "../types";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { xdr } from "@stellar/stellar-sdk";
-export function createApi(config: StellarConfig): AlpacaApi<StellarAsset, StellarMemo> {
+import { fetchSequence } from "../network";
+export function createApi(config: StellarConfig): Api<StellarAsset, StellarMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -31,8 +34,29 @@ export function createApi(config: StellarConfig): AlpacaApi<StellarAsset, Stella
     getBalance,
     lastBlock,
     listOperations: operations,
+    validateIntent: getTransactionStatus,
+    getAccountInfo: async (address: string) => {
+      const balance = await getBalance(address);
+      const sequence = await fetchSequence(address);
+      const res = await fetchAccount(address);
+      return {
+        isNewAccount: false,
+        balance: balance.map(b => b.value).join(","),
+        ownerCount: 0, // TODO: check
+        sequence: sequence.plus(1).toNumber(),
+        assets: res.assets,
+        // Add other account details as needed
+      };
+    },
   };
 }
+
+// export async function fetchAccount(addr: string): Promise<{
+//   blockHeight: number;
+//   balance: BigNumber;
+//   spendableBalance: BigNumber;
+//   assets: BalanceAsset[];
+// }> {
 
 async function craft(
   transactionIntent: TransactionIntent<StellarAsset, StellarMemo>,

@@ -1,4 +1,5 @@
-import { Unit } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 
 export type BlockInfo = {
   height: number;
@@ -9,8 +10,27 @@ export type BlockInfo = {
   time?: Date;
 };
 
-type TokenInfoCommon = Record<string, unknown>;
-// TODO add a `token: string` field to the pagination if we really need to support pagination (which is not the case for now)
+export type TokenInfoCommon = {
+  id?: string;
+  contractAddress?: string;
+  assetCode?: string;
+  assetIssuer?: string;
+  tokenType?: string;
+  // Stellar specific
+  blockTime?: Date;
+  index?: string;
+  ledgerOpType?: string;
+  pagingToken?: string | undefined;
+
+  // Token-account-like metadata
+  creationDate?: Date;
+  operations?: Operation[];
+  operationsCount?: number;
+  pendingOperations?: Operation[];
+  // balanceHistoryCache?: BalanceHistoryCache;
+  // swapHistory?: SwapOperation[];
+};
+
 export type Asset<TokenInfo extends TokenInfoCommon = never> =
   | { type: "native" }
   | (TokenInfo extends never ? TokenInfo : { type: "token" } & TokenInfo);
@@ -49,11 +69,28 @@ export type Operation<
   };
 };
 
+/*
+ * export type NetworkInfo = {
+  family: "stellar";
+  fees: BigNumber;
+  baseFee: BigNumber;
+  baseReserve: BigNumber;
+  networkCongestionLevel?: NetworkCongestionLevel | undefined;
+};
+
+*/
+
 export type Transaction = {
   type: string;
   recipient: string;
   amount: bigint;
   fee: bigint;
+  baseReserve?: bigint; // NOTE: used for changeTrust mode in stellar
+  // asset: Asset<TokenInfoCommon>; // NOTE: used for changeTrust mode in stellar
+  networkInfo?: {
+    baseFee?: bigint;
+    fees?: bigint;
+  };
 } & Record<string, unknown>; // Field containing dedicated value for each blockchain
 
 // Other coins take differents parameters What do we want to do ?
@@ -62,7 +99,45 @@ export type Account = {
   address: string;
   balance: bigint;
   currencyUnit: Unit;
+  pendingOperations: number; // NOTE: can get away with only the number of pending operations?
+  spendableBalance: bigint; // NOTE:: check if we can get rid of this one
 };
+
+/*
+ * export type TokenCurrency = CurrencyCommon & {
+  type: "TokenCurrency";
+  id: string;
+  ledgerSignature?: string;
+  contractAddress: string;
+  // the currency it belongs to. e.g. 'ethereum'
+  parentCurrency: CryptoCurrency;
+  // the type of token in the blockchain it belongs. e.g. 'erc20'
+  tokenType: string;
+};
+
+*/
+
+/*
+export type TokenAccount = {
+  type: "TokenAccount";
+  id: string;
+  // id of the parent account this token account belongs to
+  parentId: string;
+  // token: TokenCurrency;
+  balance: bigint;
+  spendableBalance: bigint;
+  creationDate: Date;
+  operationsCount: number;
+  operations: Operation[];
+  pendingOperations: Operation[];
+  // Cache of balance history that allows a performant portfolio calculation.
+  // currently there are no "raw" version of it because no need to at this stage.
+  // could be in future when pagination is needed.
+  // balanceHistoryCache: BalanceHistoryCache;
+  // Swap operations linked to this account
+  // swapHistory: SwapOperation[];
+};
+*/
 
 export type Balance<AssetInfo extends Asset<TokenInfoCommon>> = {
   value: bigint;
@@ -137,13 +212,15 @@ export type FeeEstimation = {
 //       for now start is used as a minHeight from which we want to fetch ALL operations
 //       limit is unused for now
 //       see design document at https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/5446205788/coin-modules+lama-adapter+APIs+refinements
-export type Pagination = { minHeight: number };
+export type Pagination = { minHeight: number } & { pagingToken?: string; limit?: number }; // For evm, XRP, etc. // NOTE: For Stellar
+// NOTE: future proof export type Pagination = Record<string, unknown>;
 
 export type AccountInfo = {
   isNewAccount: boolean;
   balance: string;
   ownerCount: number;
   sequence: number;
+  assets?: BalanceAsset[]; // Optional, depending on the API
 };
 
 export type AlpacaApi<
@@ -166,11 +243,48 @@ export type AlpacaApi<
     pagination: Pagination,
   ) => Promise<[Operation<AssetInfo>[], string]>;
 };
+/*
+ * export function buildSubAccounts({
+  currency,
+  accountId,
+  assets,
+  syncConfig,
+  operations,
+}: {
+  currency: CryptoCurrency;
+  accountId: string;
+  assets: BalanceAsset[];
+  syncConfig: SyncConfig;
+  operations: StellarOperation[];
+}): TokenAccount[] | undefined {
+  */
+
+// NOTE: taken from coin-stellar/bridge/types
+export type BalanceAsset = {
+  balance: string;
+  limit: string;
+  buying_liabilities: string;
+  selling_liabilities: string;
+  last_modified_ledger: number;
+  is_authorized: boolean;
+  is_authorized_to_maintain_liabilities: boolean;
+  asset_type: string;
+  asset_code: string;
+  asset_issuer: string;
+  liquidity_pool_id?: string;
+};
 
 export type BridgeApi = {
   validateIntent: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;
   // TODO: make it available on alpacaApi
   getAccountInfo: (address: string) => Promise<AccountInfo>;
+  // buildSubAccounts: (
+  //   currency: CryptoCurrency,
+  //   accountId: string,
+  //   assets: BalanceAsset[],
+  //   syncConfig: SyncConfig,
+  //   operations: Operation,
+  // ) => TokenAccount[] | undefined;
 };
 
 export type Api<
