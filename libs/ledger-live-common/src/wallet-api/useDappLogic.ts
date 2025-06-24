@@ -16,7 +16,7 @@ import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/logic";
 import { SmartWebsocket } from "./SmartWebsocket";
 import { stripHexPrefix } from "./helpers";
 import { getTxType } from "./utils/txTrackingHelper";
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/lib/types/transaction";
+import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 
 type MessageId = number | string | null;
 

@@ -1,6 +1,6 @@
 import { getTxType } from "./txTrackingHelper";
 import { ERC20_CLEAR_SIGNED_SELECTORS, DAPP_SELECTORS } from "@ledgerhq/hw-app-eth";
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/lib/types/transaction";
+import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 
 const createMockTransaction = (selector: string): EvmTransaction =>
   ({
@@ -14,13 +14,13 @@ const createMockTransaction = (selector: string): EvmTransaction =>
 
 describe("getTxType", () => {
   describe("ERC20 transactions", () => {
-    it("should return 'transfer' for ERC20 transfer", () => {
+    it("should return 'transfer' for ERC20 transfer selector", () => {
       const tx = createMockTransaction(ERC20_CLEAR_SIGNED_SELECTORS.TRANSFER);
       const result = getTxType(tx);
       expect(result).toBe("transfer");
     });
 
-    it("should return 'approve' for ERC20 approve", () => {
+    it("should return 'approve' for ERC20 approve selector", () => {
       const tx = createMockTransaction(ERC20_CLEAR_SIGNED_SELECTORS.APPROVE);
       const result = getTxType(tx);
       expect(result).toBe("approve");
