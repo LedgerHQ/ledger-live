@@ -312,7 +312,6 @@ export class DeviceManagementKitTransport extends Transport {
     if (!activeSessionId) {
       throw new Error("No active session found");
     }
-    tracer.trace(`=> ${apdu.toString("hex")}`);
 
     return await this.dmk
       .sendApdu({
@@ -322,7 +321,8 @@ export class DeviceManagementKitTransport extends Transport {
       })
       .then((apduResponse: { data: Uint8Array; statusCode: Uint8Array }): Buffer => {
         const response = Buffer.from([...apduResponse.data, ...apduResponse.statusCode]);
-        tracer.trace(`<= ${response.toString("hex")}`);
+        tracer.trace(`[exchange] => ${apdu.toString("hex")}`);
+        tracer.trace(`[exchange] <= ${response.toString("hex")}`);
         return response;
       })
       .catch(error => {

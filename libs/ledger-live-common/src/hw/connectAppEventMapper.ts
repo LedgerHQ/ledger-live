@@ -203,7 +203,9 @@ export class ConnectAppEventMapper {
         type: "install",
         name: installPlan.installPlan[installPlan.currentIndex]!.versionName,
       },
-      installQueue: installPlan.installPlan.map(app => app.versionName),
+      installQueue: installPlan.installPlan
+        .map(app => app.versionName)
+        .slice(installPlan.currentIndex),
     });
     this.installPlan = installPlan;
   }

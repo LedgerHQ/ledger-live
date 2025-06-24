@@ -3229,6 +3229,12 @@
         "placeholder": "Exchange provider's info in CAL format",
         "currentSetting": "Current Setting",
         "error": "Invalid CAL value"
+      },
+      "customCALRef": {
+        "title": "Custom CAL reference",
+        "description": "Specify a custom branch, commit or tag to use for all CAL requests",
+        "enable": "Enable custom CAL reference",
+        "disable": "Disable custom CAL reference"
       }
     },
     "debug": {
@@ -3600,6 +3606,15 @@
         "providers": {
           "noProviders": "No results found. There are no quotes available with the current preferences."
         }
+      },
+      "quotesList": {
+        "title": "Select quote"
+      },
+      "twoStepApproval": {
+        "title": "Complete steps"
+      },
+      "history": {
+        "title": "Swap history"
       },
       "incompatibility": {
         "explore_compatible_devices": "Explore compatible devices",
@@ -7491,5 +7506,10 @@
     "title": "Location unavailable",
     "description": "Ledger wallet is not available in this location.",
     "learnMore": "Learn more"
+  },
+  "versionBlocking": {
+    "title": "Ledger Live Update Required",
+    "description": "This version of Ledger Live is not compatible with the latest device operating system. Update now to enjoy improved connectivity.",
+    "openStore": "Update"
   }
 }

@@ -4437,6 +4437,8 @@
       "mockAppUpdateDesc": "Display available app update in My Ledger, it will reinstall the same app version",
       "catalogUrl": "Set the catalog apps provider",
       "catalogUrlDesc": "Enter your custom catalog provider URL",
+      "customCALRef": "Custom CAL reference",
+      "customCALRefDesc": "Specify a custom branch, commit or tag to use for all CAL requests",
       "enablePlatformDevTools": "Enable platform dev tools",
       "enablePlatformDevToolsDesc": "Enable opening platform apps dev tools window",
       "customLockScreen": "Custom lock-screen assets",
@@ -7125,7 +7127,15 @@
     "selectNetwork": "Select network",
     "selectAccount": "Select account",
     "accountCount_one": "{{count}} account",
-    "accountCount_other": "{{count}} accounts"
+    "accountCount_other": "{{count}} accounts",
+    "accountsAdded": {
+      "title": "Account added to your portfolio",
+      "title_other": "{{count}} Accounts added to your portfolio",
+      "cta": {
+        "addFunds": "Add funds to my account",
+        "close": "Close"
+      }
+    }
   },
   "nftEntryPoint": {
     "title": "NFT (Non Fungible Tokens)",

@@ -63,13 +63,6 @@ jobs:
     secrets: inherit
 
   # LLM
-  build-mobile:
-    name: "Build Mobile"
-    needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/build-mobile-reusable.yml@develop
-    secrets: inherit
-
   test-mobile:
     name: "Test Mobile"
     needs: determine-affected
@@ -77,11 +70,19 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@develop
     secrets: inherit
 
-  test-mobile-e2e:
-    name: "Test Mobile E2E"
+  # LLM
+  build-mobile:
+    name: "Build Mobile (Native)"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/build-mobile-reusable.yml@develop
+    secrets: inherit
+
+  test-mobile-e2e:
+    name: "Build & Test Mobile (Mocked)"
+    needs: determine-affected
+    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@develop
     secrets: inherit
     with:
       macos-specificity-runner-label: "performance-pool"

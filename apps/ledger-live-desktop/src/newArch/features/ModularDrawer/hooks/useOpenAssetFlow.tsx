@@ -1,17 +1,16 @@
+import { useCallback } from "react";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useCallback } from "react";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { ModularDrawerLocation } from "../enums";
 import ModularDrawerAddAccountFlowManager from "../ModularDrawerAddAccountFlowManager";
 import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
-import { useModularDrawerVisibility } from "./useModularDrawerVisibility";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import { CloseButton } from "../components/CloseButton";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { ModularDrawerLocation, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
 
 function selectCurrency(
   onAssetSelected: (currency: CryptoOrTokenCurrency) => void,
@@ -45,9 +44,11 @@ function selectCurrency(
 }
 
 export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, source: string) {
-  const { isModularDrawerVisible } = useModularDrawerVisibility();
-  const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const dispatch = useDispatch();
+  const { isModularDrawerVisible } = useModularDrawerVisibility({
+    modularDrawerFeatureFlagKey: "lldModularDrawer",
+  });
+  const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const featureNetworkBasedAddAccount = useFeature("lldNetworkBasedAddAccount");
 
   const handleClose = useCallback(() => {
@@ -60,7 +61,7 @@ export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, s
   }, [modularDrawerLocation, trackModularDrawerEvent]);
 
   const openAddAccountFlow = useCallback(
-    (currency: CryptoOrTokenCurrency) => {
+    (currency: CryptoOrTokenCurrency, autoCloseDrawer: boolean = true) => {
       if (featureNetworkBasedAddAccount?.enabled) {
         setDrawer(
           ModularDrawerAddAccountFlowManager,
@@ -72,7 +73,7 @@ export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, s
       } else {
         const cryptoCurrency =
           currency.type === "CryptoCurrency" ? currency : currency.parentCurrency;
-        setDrawer();
+        autoCloseDrawer && setDrawer();
         dispatch(openModal("MODAL_ADD_ACCOUNTS", { currency: cryptoCurrency }));
       }
     },

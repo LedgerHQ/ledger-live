@@ -1,4 +1,4 @@
-name: "[Mobile] - Build - Called"
+name: "[Mobile] - Build Native - Called"
 
 on:
   workflow_call:
@@ -80,70 +80,3 @@ jobs:
         with:
           name: ${{ steps.post-version.outputs.version }}-release
           path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/stagingRelease
-
-  build-mobile-app-ios:
-    runs-on: [ledger-live-4xlarge]
-    name: "iOS Build"
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.ref || github.sha }}
-      - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
-      - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
-        id: setup-caches
-        with:
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          skip-pod-cache: "true"
-          skip-turbo-cache: "false"
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - uses: nick-fields/retry@v3
-        name: install dependencies
-        with:
-          max_attempts: 2
-          timeout_minutes: 15
-          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
-          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
-      - name: bundle ios and android js
-        run: |
-          pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
-          pnpm mobile bundle:ios:prod
-          pnpm mobile bundle:android:prod
-          pnpm mobile gen-metafile
-      - name: Upload mobile metafile
-        uses: actions/upload-artifact@v4
-        with:
-          name: mobile.metafile.json
-          path: ${{ github.workspace }}/apps/ledger-live-mobile/mobile.metafile.json
-
-  report:
-    name: "Build Mobile > Report"
-    runs-on: ubuntu-22.04
-    needs: [build-mobile-app-android, build-mobile-app-ios]
-    if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request' ) && needs.build-mobile-app-android.result == 'success' && needs.build-mobile-app-ios.result == 'success' }}
-    steps:
-      - name: generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.ref || github.sha }}
-      - name: download mobile metafile
-        uses: actions/download-artifact@v4
-        with:
-          name: mobile.metafile.json
-      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@develop
-        if: github.event.number != ''
-        with:
-          token: ${{ steps.generate-token.outputs.token }}
-          baseBranch: ${{ inputs.base_ref || 'develop' }}
-          prNumber: ${{ github.event.number}}
-          mode: mobile

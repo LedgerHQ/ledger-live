@@ -1,4 +1,4 @@
-import { delay, isIos, isSpeculosRemote, openDeeplink } from "../../helpers/commonHelpers";
+import { addDelayBeforeInteractingWithDevice, openDeeplink } from "../../helpers/commonHelpers";
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 
 export default class SwapPage {
@@ -30,7 +30,7 @@ export default class SwapPage {
   async verifyAmountsAndAcceptSwap(swap: SwapType, amount: string) {
     await waitForElementById(this.confirmSwapOnDeviceDrawerId);
     await app.speculos.verifyAmountsAndAcceptSwap(swap, amount);
-    await this.delayDeviceActionLoadingCheck();
+    await addDelayBeforeInteractingWithDevice();
     await waitForElementNotVisible(this.deviceActionLoading);
   }
 
@@ -38,7 +38,7 @@ export default class SwapPage {
   async verifyAmountsAndRejectSwap(swap: SwapType, amount: string) {
     await waitForElementById(this.confirmSwapOnDeviceDrawerId);
     await app.speculos.verifyAmountsAndRejectSwap(swap, amount);
-    await this.delayDeviceActionLoadingCheck();
+    await addDelayBeforeInteractingWithDevice();
     await waitForElementNotVisible(this.deviceActionLoading);
   }
 
@@ -46,10 +46,6 @@ export default class SwapPage {
   async waitForSuccessAndContinue() {
     await waitForElementById(this.swapSuccessTitleId);
     await tapById(app.common.proceedButtonId);
-  }
-  async delayDeviceActionLoadingCheck() {
-    //ISSUE: LIVE-19300
-    await delay(isSpeculosRemote() && isIos() ? 45_000 : 20_000);
   }
 
   @Step("Get amount to receive")

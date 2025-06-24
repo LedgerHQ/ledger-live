@@ -57,7 +57,9 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const { isModularDrawerVisible } = useModularDrawerVisibility();
+  const { isModularDrawerVisible } = useModularDrawerVisibility({
+    modularDrawerFeatureFlagKey: "lldModularDrawer",
+  });
 
   const modularDrawerVisible = isModularDrawerVisible(ModularDrawerLocation.LIVE_APP);
 
