@@ -79,7 +79,7 @@ export type RecentlyUsedIdDb = {
 export type CurrentAccountHistIDb = Record<string, string>;
 
 export type DAppTrackingData = {
-  type: "approve" | "transfer";
+  type: string;
   currency: string;
   network: CryptoCurrency["id"];
 };
