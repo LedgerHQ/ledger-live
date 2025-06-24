@@ -1,24 +1,14 @@
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
-import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
-import { Account as AccountItem } from "@ledgerhq/react-ui/pre-ldls/components/AccountItem/AccountItem";
 import { Account } from "@ledgerhq/types-live";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { formatAddress } from "LLD/utils/formatAddress";
-import {
-  blacklistedTokenIdsSelector,
-  counterValueCurrencySelector,
-  discreetModeSelector,
-} from "~/renderer/reducers/settings";
-import { useMaybeAccountName, walletSelector } from "~/renderer/reducers/wallet";
+import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
+import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { addAccountsAction, groupAddAccounts } from "@ledgerhq/live-wallet/addAccounts";
 import { Subscription } from "rxjs";
-import { getBalanceAndFiatValue } from "LLD/utils/getBalanceAndFiatValue";
-import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
-import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { WARNING_REASON, WarningReason } from "../types";
 import { getLLDCoinFamily } from "~/renderer/families";
 
@@ -48,10 +38,6 @@ export function useScanAccounts({
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [hasImportedAccounts, setHasImportedAccounts] = useState(false);
   const scanSubscription = useRef<Subscription | null>(null);
-
-  const walletState = useSelector(walletSelector);
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const discreet = useSelector(discreetModeSelector);
 
   const newAccountSchemes = useMemo(() => {
     const accountSchemes = scannedAccounts
@@ -91,14 +77,7 @@ export function useScanAccounts({
         },
       });
   }, [blacklistedTokenIds, currency, deviceId]);
-  const restartSubscription = useCallback(() => {
-    setScanning(true);
-    setScannedAccounts([]);
-    setSelectedIds([]);
-    setError(null);
-    setHasImportedAccounts(false);
-    startSubscription();
-  }, [startSubscription]);
+
   const stopSubscription = useCallback((syncUI = true) => {
     if (scanSubscription.current) {
       scanSubscription.current.unsubscribe();
@@ -109,30 +88,6 @@ export function useScanAccounts({
       }
     }
   }, []);
-  const state = useCountervaluesState();
-
-  const formatAccount = useCallback(
-    (account: Account): AccountItem => {
-      const { fiatValue } = getBalanceAndFiatValue(account, state, counterValueCurrency, discreet);
-      const protocol =
-        account.type === "Account" &&
-        account?.derivationMode !== undefined &&
-        account?.derivationMode !== null &&
-        currency.type === "CryptoCurrency" &&
-        getTagDerivationMode(currency, account.derivationMode);
-
-      return {
-        address: formatAddress(account.freshAddress),
-        cryptoId: account.currency.id,
-        fiatValue,
-        protocol: protocol || "",
-        id: account.id,
-        name: accountNameWithDefaultSelector(walletState, account),
-        ticker: account.currency.ticker,
-      };
-    },
-    [counterValueCurrency, currency, discreet, state, walletState],
-  );
 
   const handleConfirm = useCallback(() => {
     const accountsToImport = scannedAccounts.filter(a => selectedIds.includes(a.id));
@@ -149,10 +104,6 @@ export function useScanAccounts({
     );
     onComplete(scannedAccounts.filter(a => selectedIds.includes(a.id)));
   }, [dispatch, existingAccounts, scannedAccounts, selectedIds, onComplete]);
-
-  const onCancel = useCallback(() => {
-    setError(null);
-  }, []);
 
   const toggleShowAllCreatedAccounts = useCallback(
     () => setShowAllCreatedAccounts(prevState => !prevState),
@@ -192,9 +143,6 @@ export function useScanAccounts({
     [sections],
   );
 
-  const cantCreateAccount = creatableAccounts.length === 0;
-  const hasImportableAccounts = importableAccounts.length > 0;
-  const noImportableAccounts = cantCreateAccount && !hasImportableAccounts;
   const allImportableAccountsSelected = useMemo(
     () =>
       importableAccounts.length > 0 &&
@@ -263,7 +211,7 @@ export function useScanAccounts({
     if (
       !scanning &&
       alreadyEmptyAccount &&
-      !hasImportableAccounts &&
+      !importableAccounts.length &&
       !hasImportedAccounts &&
       selectedIds.length === 0
     ) {
@@ -277,8 +225,6 @@ export function useScanAccounts({
       navigateToWarningScreen(WARNING_REASON.NO_ASSOCIATED_ACCOUNTS);
     }
   }, [
-    hasImportableAccounts,
-    cantCreateAccount,
     alreadyEmptyAccount,
     alreadyEmptyAccountName,
     scanning,
@@ -293,18 +239,10 @@ export function useScanAccounts({
   ]);
 
   return {
-    formatAccount,
-    alreadyEmptyAccount,
-    alreadyEmptyAccountName,
-    cantCreateAccount,
     error,
     newAccountSchemes,
     allImportableAccountsSelected,
-    noImportableAccounts,
-    onCancel,
-    restartSubscription,
     stopSubscription,
-    scannedAccounts,
     scanning,
     importableAccounts,
     creatableAccounts,

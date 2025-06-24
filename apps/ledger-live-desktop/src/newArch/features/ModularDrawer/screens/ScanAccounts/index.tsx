@@ -14,6 +14,7 @@ import { ImportableAccountsList } from "./components/ImportableAccountsList";
 import { CreatableAccountsList } from "./components/CreatableAccountsList";
 import { useTranslation } from "react-i18next";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
+import { useFormatAccount } from "../../hooks/useFormatAccount";
 
 interface Props extends UseScanAccountsProps {
   analyticsPropertyFlow?: string;
@@ -39,13 +40,14 @@ const ScanAccounts = ({ currency, deviceId, onComplete, navigateToWarningScreen 
     handleConfirm,
     toggleShowAllCreatedAccounts,
     allImportableAccountsSelected,
-    formatAccount,
   } = useScanAccounts({
     navigateToWarningScreen,
     currency,
     deviceId,
     onComplete,
   });
+
+  const { formatAccount } = useFormatAccount({ currency });
 
   const renderAccount = (account: Account) => {
     const accountFormatted = formatAccount(account);
