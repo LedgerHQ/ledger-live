@@ -15,6 +15,7 @@ import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/conv
 import { NavigatorName, ScreenName } from "~/const";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { deriveAccountIdForManifest } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
+import { useVersionedStakePrograms } from "./useVersionedStakePrograms";
 
 import { EarnLiveAppNavigatorParamList } from "~/components/RootNavigator/types/EarnLiveAppNavigator";
 
@@ -32,7 +33,7 @@ const getRemoteLiveAppManifestById = (
 };
 
 export function useStake() {
-  const featureFlag = useFeature("stakePrograms");
+  const featureFlag = useVersionedStakePrograms();
   const enabledCurrencies = useMemo(
     () => featureFlag?.params?.list || [],
     [featureFlag?.params?.list],
