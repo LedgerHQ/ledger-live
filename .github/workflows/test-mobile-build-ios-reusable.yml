@@ -243,3 +243,10 @@ jobs:
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
+
+  skip-ios-js:
+    name: "iOS Build JS - Skip"
+    if: ${{ inputs.build-ios-js != true }}
+    runs-on: [ ledger-live-4xlarge ]
+    steps:
+      - run: echo "Skipping"

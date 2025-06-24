@@ -4,6 +4,7 @@ import {
   ERC20_CLEAR_SIGNED_SELECTORS,
   ERC721_CLEAR_SIGNED_SELECTORS,
   ERC1155_CLEAR_SIGNED_SELECTORS,
+  DAPP_SELECTORS,
 } from "@ledgerhq/evm-tools/selectors/index";
 import type { Transaction } from "@ethersproject/transactions";
 import { LedgerEthTransactionResolution } from "./services/types";
@@ -12,6 +13,7 @@ export {
   ERC20_CLEAR_SIGNED_SELECTORS,
   ERC721_CLEAR_SIGNED_SELECTORS,
   ERC1155_CLEAR_SIGNED_SELECTORS,
+  DAPP_SELECTORS,
 };
 
 export const padHexString = (str: string) => {

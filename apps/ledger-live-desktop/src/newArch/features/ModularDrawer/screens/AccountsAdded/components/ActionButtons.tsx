@@ -6,9 +6,12 @@ import styled from "styled-components";
 const GradientFlex = styled(Flex)`
   background: linear-gradient(
     180deg,
-    rgba(29, 28, 31, 0) 0.93%,
-    rgba(29, 28, 31, 0.86) 9.74%,
-    #1d1c1f 22.51%
+    ${p => (p.theme.colors.type === "light" ? "rgba(255, 255, 255, 0)" : "rgba(29, 28, 31, 0)")}
+      0.93%,
+    ${p =>
+        p.theme.colors.type === "light" ? "rgba(255, 255, 255, 0.86)" : "rgba(29, 28, 31, 0.86)"}
+      9.74%,
+    ${p => (p.theme.colors.type === "light" ? "#fff" : "#1d1c1f")} 22.51%
   );
 `;
 
