@@ -1,5 +1,11 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#10641](https://github.com/LedgerHQ/ledger-live/pull/10641) [`8bd0b4e`](https://github.com/LedgerHQ/ledger-live/commit/8bd0b4e0672227d2bf9d1ff12145b98608cc28b3) Thanks [@mbertin-ledger](https://github.com/mbertin-ledger)! - Update logs for logviewer compatibility
+
 ## 0.6.0
 
 ### Minor Changes
