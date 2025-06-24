@@ -233,8 +233,9 @@ export const getOperations = async (
 export const getListOperations = async (
   addr: string,
   cursor: QueryTransactionBlocksParams["cursor"] = null,
+  withApiImpl: typeof withApi = withApi,
 ): Promise<Op<SuiAsset>[]> =>
-  withApi(async api => {
+  withApiImpl(async api => {
     const opsOut = await loadOperations({
       api,
       addr,
