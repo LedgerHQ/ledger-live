@@ -1,12 +1,12 @@
 import type { Feature_StakePrograms } from "@ledgerhq/types-live";
 
 export const stakeProgramsToEarnParam = (stakePrograms: Feature_StakePrograms | null) => {
-  const list = stakePrograms?.params?.list ?? undefined;
+  const list = stakePrograms?.params?.list ?? [];
   const redirects = stakePrograms?.params?.redirects ?? {};
   const result: Record<string, string> = {};
   const keys = Object.keys(redirects);
   if (keys.length === 0) {
-    return { stakeProgramsParam: undefined, stakeCurrenciesParam: list };
+    return { stakeProgramsParam: undefined, stakeCurrenciesParam: [] };
   }
   keys.forEach(key => {
     result[key] = redirects[key].platform;

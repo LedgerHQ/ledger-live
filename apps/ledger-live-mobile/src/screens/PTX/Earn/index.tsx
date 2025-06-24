@@ -57,10 +57,11 @@ function Earn({ route }: Props) {
   const countryLocale = getCountryLocale();
 
   const stakePrograms = useFeature("stakePrograms");
-  const { stakeProgramsParam, stakeCurrenciesParam } = useMemo(
+  const { stakeProgramsParam } = useMemo(
     () => stakeProgramsToEarnParam(stakePrograms),
     [stakePrograms],
   );
+  const stakeCurrenciesParam = useMemo(() => stakePrograms?.params?.list, [stakePrograms]);
 
   if (!remoteLiveAppState.isLoading && !manifest) {
     // We want to track occurrences of this error in Sentry
@@ -81,7 +82,9 @@ function Earn({ route }: Props) {
           countryLocale,
           currencyTicker,
           discreetMode: discreet ? "true" : "false",
-          stakeProgramsParam: stakeProgramsParam ? JSON.stringify(stakeProgramsParam) : undefined,
+          stakeProgramsParam: stakeProgramsParam?.length
+            ? JSON.stringify(stakeProgramsParam)
+            : undefined,
           stakeCurrenciesParam: stakeCurrenciesParam
             ? JSON.stringify(stakeCurrenciesParam)
             : undefined,
