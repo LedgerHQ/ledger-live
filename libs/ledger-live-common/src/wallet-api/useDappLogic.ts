@@ -15,8 +15,8 @@ import BigNumber from "bignumber.js";
 import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/logic";
 import { SmartWebsocket } from "./SmartWebsocket";
 import { stripHexPrefix } from "./helpers";
-import { DeviceTransactionField, getDeviceTransactionConfig } from "../transaction";
-import type { Transaction } from "../generated/types";
+import { getTxType } from "./utils/txTrackingHelper";
+import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/lib/types/transaction";
 
 type MessageId = number | string | null;
 
@@ -203,16 +203,6 @@ function isParentAccountPresent(
   }
 
   return true;
-}
-
-function getTransactionType(fields: Array<DeviceTransactionField>): string {
-  for (let i = 0; i < fields.length; i++) {
-    const field = fields[i];
-    if (field.type === "text" && field.label === "Type") {
-      return field.value;
-    }
-  }
-  return "";
 }
 
 export function useDappLogic({
@@ -490,20 +480,7 @@ export function useDappLogic({
                 account: currentAccount,
               });
 
-              const fields = getDeviceTransactionConfig({
-                account: currentAccount,
-                parentAccount: currentParentAccount,
-                transaction: signFlowInfos.liveTx as Transaction,
-                status: {
-                  errors: {},
-                  warnings: {},
-                  estimatedFees: new BigNumber(0),
-                  amount: new BigNumber(0),
-                  totalSpent: new BigNumber(0),
-                },
-              });
-
-              const transactionType = getTransactionType(fields);
+              const transactionType = getTxType(signFlowInfos.liveTx as EvmTransaction);
 
               const token = findTokenByAddress(tx.recipient);
 
@@ -518,7 +495,7 @@ export function useDappLogic({
                   : currentAccount.currency.id;
 
               trackingData = {
-                type: transactionType || "Transfer",
+                type: transactionType,
                 currency: token ? token.name : accountCurrencyName,
                 network: token ? token.parentCurrency.id : accountNetwork,
               };
