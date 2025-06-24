@@ -41,6 +41,7 @@ interface RenderReturn {
   store: ReturnType<typeof createStore>;
   user: ReturnType<typeof userEvent.setup>;
   container: HTMLElement;
+  i18n: typeof i18n;
 }
 type DeepPartial<T> = T extends Function
   ? T
@@ -130,6 +131,7 @@ function renderWithMockedCounterValuesProvider(
 
   return {
     store,
+    i18n,
     user: userEvent.setup(userEventOptions),
     ...rtlRender(ui, {
       wrapper: ({ children }) => (
@@ -162,6 +164,7 @@ function render(ui: JSX.Element, options: ExtraOptions = {}): RenderReturn {
 
   return {
     store,
+    i18n,
     user: userEvent.setup(userEventOptions),
     ...rtlRender(ui, {
       wrapper: ({ children }) => <Providers store={store}>{children}</Providers>,
