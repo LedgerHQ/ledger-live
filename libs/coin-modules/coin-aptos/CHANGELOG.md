@@ -1,5 +1,11 @@
 # @ledgerhq/coin-aptos
 
+## 2.3.1
+
+### Patch Changes
+
+- [#10657](https://github.com/LedgerHQ/ledger-live/pull/10657) [`04c1694`](https://github.com/LedgerHQ/ledger-live/commit/04c16942a5755bf3af470807dd484b71a09788eb) Thanks [@semeano](https://github.com/semeano)! - fixing value parser
+
 ## 2.3.1-hotfix.0
 
 ### Patch Changes
