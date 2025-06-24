@@ -1,9 +1,9 @@
 import { Box, Flex, Text } from "@ledgerhq/react-ui";
 import { AccountItem } from "@ledgerhq/react-ui/pre-ldls/components/AccountItem/AccountItem";
 import { Account } from "@ledgerhq/types-live";
-import { default as React } from "react";
+import { default as React, useEffect } from "react";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { MODULAR_DRAWER_ADD_ACCOUNT_CATEGORY, WarningReason } from "../../types";
+import { MODULAR_DRAWER_ADD_ACCOUNT_CATEGORY, WARNING_REASON, WarningReason } from "../../types";
 import { useTheme } from "styled-components";
 import { LoadingOverlay } from "LLD/components/LoadingOverlay";
 import { useScanAccounts } from "../../hooks/useScanAccounts";
@@ -17,6 +17,7 @@ import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { useFormatAccount } from "../../hooks/useFormatAccount";
 import { useSubscription } from "../../hooks/useSubscription";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getLLDCoinFamily } from "~/renderer/families";
 
 interface Props {
   analyticsPropertyFlow?: string;
@@ -53,13 +54,47 @@ const ScanAccounts = ({
     handleConfirm,
     toggleShowAllCreatedAccounts,
     allImportableAccountsSelected,
+    alreadyEmptyAccount,
+    hasImportedAccounts,
   } = useScanAccounts({
-    navigateToWarningScreen,
-    currency,
     onComplete,
     latestScannedAccount,
     scanning,
   });
+
+  const CustomNoAssociatedAccounts =
+    currency.type === "CryptoCurrency"
+      ? getLLDCoinFamily(currency.family).NoAssociatedAccounts
+      : null;
+
+  useEffect(() => {
+    if (
+      !scanning &&
+      alreadyEmptyAccount &&
+      !importableAccounts.length &&
+      !hasImportedAccounts &&
+      selectedIds.length === 0
+    ) {
+      navigateToWarningScreen(WARNING_REASON.ALREADY_EMPTY_ACCOUNT, alreadyEmptyAccount);
+    } else if (
+      !scanning &&
+      (!creatableAccounts.length || !importableAccounts.length) &&
+      CustomNoAssociatedAccounts &&
+      !hasImportedAccounts
+    ) {
+      navigateToWarningScreen(WARNING_REASON.NO_ASSOCIATED_ACCOUNTS);
+    }
+  }, [
+    alreadyEmptyAccount,
+    scanning,
+    currency,
+    CustomNoAssociatedAccounts,
+    creatableAccounts.length,
+    importableAccounts.length,
+    navigateToWarningScreen,
+    hasImportedAccounts,
+    selectedIds.length,
+  ]);
 
   const { formatAccount } = useFormatAccount({ currency });
 

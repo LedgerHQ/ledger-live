@@ -1,26 +1,18 @@
 import { Account } from "@ledgerhq/types-live";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useMaybeAccountName } from "~/renderer/reducers/wallet";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { addAccountsAction, groupAddAccounts } from "@ledgerhq/live-wallet/addAccounts";
-import { WARNING_REASON, WarningReason } from "../types";
-import { getLLDCoinFamily } from "~/renderer/families";
 
 type UseScanAccountsProps = {
-  currency: CryptoCurrency;
   scanning: boolean;
   onComplete: (accounts: Account[]) => void;
   latestScannedAccount: Account | null;
-  navigateToWarningScreen: (reason: WarningReason, account?: Account) => void;
 };
 
 export function useScanAccounts({
-  currency,
   onComplete,
-  navigateToWarningScreen,
   scanning,
   latestScannedAccount,
 }: UseScanAccountsProps) {
@@ -83,13 +75,6 @@ export function useScanAccounts({
       preferredNewAccountScheme,
     ],
   );
-
-  const alreadyEmptyAccountName = useMaybeAccountName(alreadyEmptyAccount);
-
-  const CustomNoAssociatedAccounts =
-    currency.type === "CryptoCurrency"
-      ? getLLDCoinFamily(currency.family).NoAssociatedAccounts
-      : null;
 
   const importableAccounts = useMemo(
     () => sections.find(section => section.id === "importable")?.data || [],
@@ -159,41 +144,11 @@ export function useScanAccounts({
     }
   }, [existingAccounts, latestScannedAccount, onlyNewAccounts, scannedAccounts, selectedIds]);
 
-  useEffect(() => {
-    if (
-      !scanning &&
-      alreadyEmptyAccount &&
-      !importableAccounts.length &&
-      !hasImportedAccounts &&
-      selectedIds.length === 0
-    ) {
-      navigateToWarningScreen(WARNING_REASON.ALREADY_EMPTY_ACCOUNT, alreadyEmptyAccount);
-    } else if (
-      !scanning &&
-      (!creatableAccounts.length || !importableAccounts.length) &&
-      CustomNoAssociatedAccounts &&
-      !hasImportedAccounts
-    ) {
-      navigateToWarningScreen(WARNING_REASON.NO_ASSOCIATED_ACCOUNTS);
-    }
-  }, [
-    alreadyEmptyAccount,
-    alreadyEmptyAccountName,
-    scanning,
-    currency,
-    CustomNoAssociatedAccounts,
-    scannedAccounts,
-    creatableAccounts.length,
-    importableAccounts.length,
-    navigateToWarningScreen,
-    hasImportedAccounts,
-    selectedIds.length,
-  ]);
-
   return {
+    alreadyEmptyAccount,
+    hasImportedAccounts,
     newAccountSchemes,
     allImportableAccountsSelected,
-    scanning,
     importableAccounts,
     creatableAccounts,
     handleToggle,
