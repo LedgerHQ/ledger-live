@@ -10,7 +10,7 @@ import TranslatedError from "~/renderer/components/TranslatedError";
 import AccountFooter from "../AccountFooter";
 import SendAmountFields from "../SendAmountFields";
 import { StepProps } from "../types";
-import LowGasAlertBuyMore from "~/renderer/families/evm/SendAmountFields/LowGasAlertBuyMore";
+import LowGasAlertBuyMore from "~/renderer/components/LowGasAlertBuyMore";
 import { closeAllModal } from "~/renderer/actions/modals";
 const StepAmount = ({
   account,

@@ -8,7 +8,9 @@ type Props = SearchProps;
 
 const SearchInputContainer = ({
   setItemsToDisplay,
+  assetsToDisplay,
   setSearchedValue,
+  originalAssets,
   defaultValue = "",
   source,
   flow,
@@ -23,6 +25,8 @@ const SearchInputContainer = ({
     items,
     source,
     flow,
+    assetsToDisplay,
+    originalAssets,
   });
 
   return (
