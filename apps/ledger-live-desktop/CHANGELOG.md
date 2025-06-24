@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.119.0-nightly.2
+
+### Minor Changes
+
+- [#10652](https://github.com/LedgerHQ/ledger-live/pull/10652) [`9fa2ad7`](https://github.com/LedgerHQ/ledger-live/commit/9fa2ad7c7f08a0d82dc77bfc4b16f435cc93357a) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - Add account - Warning screens and special currencies screen
+
 ## 2.119.0-nightly.1
 
 ### Minor Changes

@@ -1,5 +1,13 @@
 # live-mobile
 
+## 3.84.0-nightly.2
+
+### Minor Changes
+
+- [#10567](https://github.com/LedgerHQ/ledger-live/pull/10567) [`0504c82`](https://github.com/LedgerHQ/ledger-live/commit/0504c82ece356862cde1ca813f8da87726b10613) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Earn live app now includes multi-screen flows. Handle back navigation within live app via webview back press, revert to the native navigation back press when on the initial screen - when view query param is set to 'amount'.
+
+  Extract the Earn live app from the WebPTXPlayer and into an independent, minimal Web3AppWebview wrapper that includes only earn-specific handlers.
+
 ## 3.84.0-nightly.1
 
 ### Minor Changes
