@@ -1,0 +1,19 @@
+name: "Setup jFrog"
+description: "Setup auth and configuration for jFrog"
+
+runs:
+  using: composite
+  steps:
+    - name: Login to internal JFrog registry
+      id: jfrog-login
+      uses: LedgerHQ/actions-security/actions/jfrog-login@actions/jfrog-login-1
+
+    - name: Setup npm config for JFrog
+      env:
+        NPM_REGISTRY_TOKEN: ${{ steps.jfrog-login.outputs.oidc-token }}
+      shell: bash
+      run: |
+        cat << EOF | tee .npmrc
+        registry=https://${NPM_REGISTRY}/
+        //${NPM_REGISTRY}/:_authToken=${NPM_REGISTRY_TOKEN}
+        EOF
