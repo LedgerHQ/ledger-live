@@ -9,7 +9,15 @@ import { checkAccountSupported } from "../account/index";
 import jsBridges from "../generated/bridge/js";
 import mockBridges from "../generated/bridge/mock";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account, AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountBridge,
+  AccountLike,
+  CurrencyBridge,
+  TransactionCommon,
+  TransactionStatusCommon,
+} from "@ledgerhq/types-live";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 
 export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   if (getEnv("MOCK")) {
@@ -107,13 +115,17 @@ async function commonGetTransactionStatus(
   if (transaction.recipient && transaction.recipient !== "") {
     isRecipientSanctioned = await isAddressSanctioned(account.currency, transaction.recipient);
     if (isRecipientSanctioned) {
-      errors.recipient = new AddressesSanctionedError(transaction.recipient);
+      errors.recipient = new AddressesSanctionedError("AddressesSanctionedError", {
+        addresses: [transaction.recipient],
+      });
     }
   }
 
   const isSenderSanctioned = await isAddressSanctioned(account.currency, account.freshAddress);
   if (isSenderSanctioned) {
-    errors.sender = new AddressesSanctionedError(account.freshAddress);
+    errors.sender = new AddressesSanctionedError("AddressesSanctionedError", {
+      addresses: [account.freshAddress],
+    });
   }
 
   return { errors, warnings };

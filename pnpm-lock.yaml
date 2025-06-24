@@ -1825,8 +1825,8 @@ importers:
         specifier: workspace:^
         version: link:../../apps/cli/dist
       '@ledgerhq/live-common':
-        specifier: file:../../libs/ledger-live-common
-        version: file:libs/ledger-live-common(@types/node@22.10.10)(eslint@8.57.0)(prettier@3.2.5)(typescript@5.4.3)
+        specifier: workspace:^
+        version: link:../../libs/ledger-live-common
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env
@@ -1910,9 +1910,6 @@ importers:
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
-      '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../../libs/live-config
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env
@@ -13792,30 +13789,6 @@ packages:
   '@ledgerhq/live-app-sdk@0.8.2':
     resolution: {integrity: sha512-yD+L02pAwTfjeSyixWkfqlh6Xg3yAGFnFitrcHk2WWUtKg1TVmNpWNHLS22LKYYWJ7Lflj/pLLQ0nKm1OsJB9g==}
 
-  '@ledgerhq/live-common@file:libs/ledger-live-common':
-    resolution: {directory: libs/ledger-live-common, type: directory}
-    peerDependencies:
-      '@tanstack/react-query': '>=5'
-      react: '>=16'
-      react-dom: '>=16'
-      react-native: '>=0.65.1'
-      react-native-svg: '>=12.1.1'
-      react-redux: ^7.2.9
-      redux-actions: 2.6.5
-    peerDependenciesMeta:
-      react:
-        optional: true
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
-      react-native-svg:
-        optional: true
-      react-redux:
-        optional: true
-      redux-actions:
-        optional: true
-
   '@ledgerhq/live-env@2.4.1':
     resolution: {integrity: sha512-ZiVUfN1F5rnj6g3IUqOsHvitiKd7rtGy7FY7VBOXbG9qN7XLeLfmJhnzh/5yjX14dXhVOeAlPd1UzmmpxkRU6A==}
 
@@ -23047,13 +23020,10 @@ packages:
     resolution: {integrity: sha512-TL60LmMBGVzs3NQcO8ylWqBumMh4sx0lmeJsn7+9C88fylGDhyyVnKZ1PyTXo9CVDBkndutZx2JUEQWM9BaiXw==}
     peerDependencies:
       expo: '*'
-      expo-constants: '*'
       expo-modules-core: '*'
       react: '*'
       react-native: '*'
     peerDependenciesMeta:
-      expo-constants:
-        optional: true
       expo-modules-core:
         optional: true
 
@@ -23356,6 +23326,7 @@ packages:
     peerDependencies:
       '@expo/dom-webview': '*'
       '@expo/metro-runtime': '*'
+      expo-modules-autolinking: '*'
       expo-modules-core: '*'
       react: '*'
       react-native: '*'
@@ -23364,6 +23335,8 @@ packages:
       '@expo/dom-webview':
         optional: true
       '@expo/metro-runtime':
+        optional: true
+      expo-modules-autolinking:
         optional: true
       expo-modules-core:
         optional: true
@@ -37767,17 +37740,6 @@ snapshots:
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       simple-cbor: 0.4.1
 
-  '@dfinity/agent@0.21.4(@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(@types/node@22.10.10)(typescript@5.4.3)))(@dfinity/principal@0.15.7(@types/node@22.10.10)(typescript@5.4.3))':
-    dependencies:
-      '@dfinity/candid': 0.21.4(@dfinity/principal@0.15.7(@types/node@22.10.10)(typescript@5.4.3))
-      '@dfinity/principal': 0.15.7(@types/node@22.10.10)(typescript@5.4.3)
-      '@noble/curves': 1.6.0
-      '@noble/hashes': 1.7.0
-      base64-arraybuffer: 0.2.0
-      borc: 2.1.2
-      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
-      simple-cbor: 0.4.1
-
   '@dfinity/agent@0.21.4(@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(typescript@5.4.3)))(@dfinity/principal@0.15.7(typescript@5.4.3))':
     dependencies:
       '@dfinity/candid': 0.21.4(@dfinity/principal@0.15.7(typescript@5.4.3))
@@ -37793,10 +37755,6 @@ snapshots:
     dependencies:
       '@dfinity/principal': 0.15.7(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3)
 
-  '@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(@types/node@22.10.10)(typescript@5.4.3))':
-    dependencies:
-      '@dfinity/principal': 0.15.7(@types/node@22.10.10)(typescript@5.4.3)
-
   '@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(typescript@5.4.3))':
     dependencies:
       '@dfinity/principal': 0.15.7(typescript@5.4.3)
@@ -37805,17 +37763,6 @@ snapshots:
     dependencies:
       js-sha256: 0.9.0
       ts-node: 10.9.2(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3)
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-      - source-map-support
-      - typescript
-
-  '@dfinity/principal@0.15.7(@types/node@22.10.10)(typescript@5.4.3)':
-    dependencies:
-      js-sha256: 0.9.0
-      ts-node: 10.9.2(@types/node@22.10.10)(typescript@5.4.3)
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'
@@ -39132,7 +39079,7 @@ snapshots:
       '@expo/json-file': 9.1.4
       '@expo/spawn-async': 1.7.2
       chalk: 4.1.2
-      debug: 4.4.0
+      debug: 4.3.4
       dotenv: 16.4.7
       dotenv-expand: 11.0.6
       getenv: 1.0.0
@@ -39179,7 +39126,7 @@ snapshots:
       '@expo/image-utils': 0.6.5
       '@expo/json-file': 9.1.4
       '@react-native/normalize-colors': 0.76.9
-      debug: 4.4.0
+      debug: 4.3.4
       fs-extra: 9.1.0
       resolve-from: 5.0.0
       semver: 7.7.1
@@ -39195,7 +39142,7 @@ snapshots:
       '@expo/image-utils': 0.7.4
       '@expo/json-file': 9.1.4
       '@react-native/normalize-colors': 0.79.2
-      debug: 4.4.0
+      debug: 4.3.4
       resolve-from: 5.0.0
       semver: 7.7.1
       xml2js: 0.6.0
@@ -41193,7 +41140,7 @@ snapshots:
 
   '@kwsites/file-exists@1.1.1':
     dependencies:
-      debug: 4.4.0
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -41373,220 +41320,6 @@ snapshots:
       bignumber.js: 9.1.2
       json-rpc-2.0: 1.7.0
 
-  '@ledgerhq/live-common@file:libs/ledger-live-common(@types/node@22.10.10)(eslint@8.57.0)(prettier@3.2.5)(typescript@5.4.3)':
-    dependencies:
-      '@blooo/hw-app-acre': 1.1.1
-      '@cardano-foundation/ledgerjs-hw-app-cardano': 7.1.2
-      '@dfinity/agent': 0.21.4(@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(@types/node@22.10.10)(typescript@5.4.3)))(@dfinity/principal@0.15.7(@types/node@22.10.10)(typescript@5.4.3))
-      '@dfinity/candid': 0.21.4(@dfinity/principal@0.15.7(@types/node@22.10.10)(typescript@5.4.3))
-      '@dfinity/principal': 0.15.7(@types/node@22.10.10)(typescript@5.4.3)
-      '@ledgerhq/coin-algorand': link:libs/coin-modules/coin-algorand
-      '@ledgerhq/coin-aptos': link:libs/coin-modules/coin-aptos
-      '@ledgerhq/coin-bitcoin': link:libs/coin-modules/coin-bitcoin
-      '@ledgerhq/coin-cardano': link:libs/coin-modules/coin-cardano
-      '@ledgerhq/coin-casper': link:libs/coin-modules/coin-casper
-      '@ledgerhq/coin-celo': link:libs/coin-modules/coin-celo
-      '@ledgerhq/coin-cosmos': link:libs/coin-modules/coin-cosmos
-      '@ledgerhq/coin-evm': link:libs/coin-modules/coin-evm
-      '@ledgerhq/coin-filecoin': link:libs/coin-modules/coin-filecoin
-      '@ledgerhq/coin-framework': link:libs/coin-framework
-      '@ledgerhq/coin-hedera': link:libs/coin-modules/coin-hedera
-      '@ledgerhq/coin-icon': link:libs/coin-modules/coin-icon
-      '@ledgerhq/coin-internet_computer': link:libs/coin-modules/coin-internet_computer
-      '@ledgerhq/coin-mina': link:libs/coin-modules/coin-mina
-      '@ledgerhq/coin-multiversx': link:libs/coin-modules/coin-multiversx
-      '@ledgerhq/coin-near': link:libs/coin-modules/coin-near
-      '@ledgerhq/coin-polkadot': link:libs/coin-modules/coin-polkadot
-      '@ledgerhq/coin-solana': link:libs/coin-modules/coin-solana
-      '@ledgerhq/coin-stacks': link:libs/coin-modules/coin-stacks
-      '@ledgerhq/coin-stellar': link:libs/coin-modules/coin-stellar
-      '@ledgerhq/coin-sui': link:libs/coin-modules/coin-sui
-      '@ledgerhq/coin-tezos': link:libs/coin-modules/coin-tezos
-      '@ledgerhq/coin-ton': link:libs/coin-modules/coin-ton
-      '@ledgerhq/coin-tron': link:libs/coin-modules/coin-tron
-      '@ledgerhq/coin-vechain': link:libs/coin-modules/coin-vechain
-      '@ledgerhq/coin-xrp': link:libs/coin-modules/coin-xrp
-      '@ledgerhq/crypto-icons-ui': link:libs/ui/packages/crypto-icons
-      '@ledgerhq/cryptoassets': link:libs/ledgerjs/packages/cryptoassets
-      '@ledgerhq/device-core': link:libs/device-core
-      '@ledgerhq/device-management-kit': 0.0.0-connect-app-20250527074701(rxjs@7.8.1)
-      '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
-      '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
-      '@ledgerhq/hw-app-algorand': link:libs/ledgerjs/packages/hw-app-algorand
-      '@ledgerhq/hw-app-aptos': link:libs/ledgerjs/packages/hw-app-aptos
-      '@ledgerhq/hw-app-btc': link:libs/ledgerjs/packages/hw-app-btc
-      '@ledgerhq/hw-app-celo': link:libs/ledgerjs/packages/hw-app-celo
-      '@ledgerhq/hw-app-cosmos': link:libs/ledgerjs/packages/hw-app-cosmos
-      '@ledgerhq/hw-app-eth': link:libs/ledgerjs/packages/hw-app-eth
-      '@ledgerhq/hw-app-exchange': link:libs/ledgerjs/packages/hw-app-exchange
-      '@ledgerhq/hw-app-hedera': link:libs/ledgerjs/packages/hw-app-hedera
-      '@ledgerhq/hw-app-icon': link:libs/ledgerjs/packages/hw-app-icon
-      '@ledgerhq/hw-app-multiversx': link:libs/ledgerjs/packages/hw-app-multiversx
-      '@ledgerhq/hw-app-near': link:libs/ledgerjs/packages/hw-app-near
-      '@ledgerhq/hw-app-polkadot': link:libs/ledgerjs/packages/hw-app-polkadot
-      '@ledgerhq/hw-app-str': link:libs/ledgerjs/packages/hw-app-str
-      '@ledgerhq/hw-app-sui': link:libs/ledgerjs/packages/hw-app-sui
-      '@ledgerhq/hw-app-tezos': link:libs/ledgerjs/packages/hw-app-tezos
-      '@ledgerhq/hw-app-trx': link:libs/ledgerjs/packages/hw-app-trx
-      '@ledgerhq/hw-app-vet': link:libs/ledgerjs/packages/hw-app-vet
-      '@ledgerhq/hw-app-xrp': link:libs/ledgerjs/packages/hw-app-xrp
-      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
-      '@ledgerhq/hw-transport-mocker': link:libs/ledgerjs/packages/hw-transport-mocker
-      '@ledgerhq/ledger-cal-service': link:libs/ledger-services/cal
-      '@ledgerhq/live-app-sdk': 0.8.2
-      '@ledgerhq/live-config': link:libs/live-config
-      '@ledgerhq/live-countervalues': link:libs/live-countervalues
-      '@ledgerhq/live-countervalues-react': link:libs/live-countervalues-react
-      '@ledgerhq/live-dmk-shared': link:libs/live-dmk-shared
-      '@ledgerhq/live-env': link:libs/env
-      '@ledgerhq/live-hooks': link:libs/live-hooks
-      '@ledgerhq/live-network': link:libs/live-network
-      '@ledgerhq/live-nft': link:libs/live-nft
-      '@ledgerhq/live-promise': link:libs/promise
-      '@ledgerhq/live-signer-evm': link:libs/live-signer-evm
-      '@ledgerhq/live-signer-solana': link:libs/live-signer-solana
-      '@ledgerhq/live-wallet': link:libs/live-wallet
-      '@ledgerhq/logs': link:libs/ledgerjs/packages/logs
-      '@ledgerhq/speculos-transport': link:libs/speculos-transport
-      '@ledgerhq/wallet-api-acre-module': link:libs/wallet-api-acre-module
-      '@ledgerhq/wallet-api-client': 1.9.0(@ton/crypto@3.3.0)
-      '@ledgerhq/wallet-api-core': 1.21.0(@ton/crypto@3.3.0)
-      '@ledgerhq/wallet-api-exchange-module': link:libs/exchange-module
-      '@ledgerhq/wallet-api-server': 1.10.0(@ton/crypto@3.3.0)(rxjs@7.8.1)
-      '@stricahq/typhonjs': 3.0.0
-      '@taquito/ledger-signer': 22.0.0
-      '@ton-community/ton-ledger': 7.2.0(@ton/core@0.60.1(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0))
-      '@ton/core': 0.60.1(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0)
-      '@ton/crypto': 3.3.0
-      '@types/bchaddrjs': 0.4.3
-      '@types/pako': 2.0.3
-      '@types/qs': 6.9.14
-      '@types/redux-actions': 2.6.5
-      '@xstate/react': 5.0.3(xstate@5.19.2)
-      '@zondax/ledger-casper': 2.6.1
-      '@zondax/ledger-cosmos-js': 3.0.3(@types/node@22.10.10)(eslint@8.57.0)(lodash@4.17.21)(prettier@3.2.5)(typescript@5.4.3)
-      '@zondax/ledger-filecoin': 2.0.2
-      '@zondax/ledger-icp': 0.7.0
-      '@zondax/ledger-mina-js': 0.0.2
-      '@zondax/ledger-stacks': 1.0.4
-      async: 3.2.5
-      axios: 1.7.7
-      bech32: 1.1.4
-      bignumber.js: 9.1.2
-      bip32: 2.0.6
-      bip39: 3.1.0
-      bs58: 4.0.1
-      date-fns: 2.30.0
-      expect: 27.5.1
-      fuse.js: 6.6.2
-      i18next: 23.10.1
-      invariant: 2.2.4
-      isomorphic-ws: 4.0.1
-      jotai: 2.12.4
-      json-rpc-2.0: 0.2.19
-      lodash: 4.17.21
-      minimatch: 5.1.6
-      numeral: 2.0.6
-      pako: 2.1.0
-      performance-now: 2.1.0
-      prando: 6.0.1
-      qs: 6.13.0
-      reselect: 4.1.8
-      rlp: 3.0.0
-      rxjs: 7.8.1
-      secp256k1: 4.0.3
-      semver: 7.7.1
-      sha.js: 2.4.11
-      triple-beam: 1.4.1
-      tsx: 4.10.3
-      usehooks-ts: 2.16.0
-      utility-types: 3.11.0
-      winston: 3.13.0
-      xstate: 5.19.2
-      yargs: 17.7.2
-      zod: 3.24.2
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@parcel/css'
-      - '@rspack/core'
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-      - '@types/react'
-      - '@vue/compiler-sfc'
-      - arc-templates
-      - atpl
-      - babel-core
-      - bracket-template
-      - bufferutil
-      - cache-loader
-      - clean-css
-      - coffee-script
-      - csso
-      - dot
-      - dust
-      - dustjs-helpers
-      - dustjs-linkedin
-      - eco
-      - ect
-      - ejs
-      - encoding
-      - esbuild
-      - eslint
-      - haml-coffee
-      - hamlet
-      - hamljs
-      - handlebars
-      - hogan.js
-      - htmling
-      - jade
-      - jazz
-      - jqtpl
-      - just
-      - less-loader
-      - liquid-node
-      - liquor
-      - marko
-      - metro
-      - mote
-      - mustache
-      - nunjucks
-      - plates
-      - prettier
-      - pug
-      - pug-plain-loader
-      - qejs
-      - ractive
-      - raw-loader
-      - razor-tmpl
-      - sass-loader
-      - slm
-      - source-map-support
-      - squirrelly
-      - stylus-loader
-      - supports-color
-      - swig
-      - swig-templates
-      - teacup
-      - templayed
-      - then-jade
-      - then-pug
-      - tinyliquid
-      - toffee
-      - twig
-      - twing
-      - typescript
-      - uglify-js
-      - underscore
-      - utf-8-validate
-      - vash
-      - velocityjs
-      - walrus
-      - webpack-cli
-      - webpack-sources
-      - whiskers
-      - ws
-
   '@ledgerhq/live-env@2.4.1':
     dependencies:
       rxjs: 7.8.1
@@ -41645,16 +41378,6 @@ snapshots:
       rxjs: 7.8.1
     optionalDependencies:
       react: 18.3.1
-    transitivePeerDependencies:
-      - '@ton/crypto'
-      - encoding
-
-  '@ledgerhq/wallet-api-server@1.10.0(@ton/crypto@3.3.0)(rxjs@7.8.1)':
-    dependencies:
-      '@ledgerhq/wallet-api-core': 1.21.0(@ton/crypto@3.3.0)
-      bignumber.js: 9.1.2
-      picomatch: 4.0.2
-      rxjs: 7.8.1
     transitivePeerDependencies:
       - '@ton/crypto'
       - encoding
@@ -45403,14 +45126,6 @@ snapshots:
       string-width: 4.2.3
       strip-ansi: 6.0.1
       webpack: 5.94.0(@swc/core@1.4.11)
-
-  '@soda/friendly-errors-webpack-plugin@1.8.1(webpack@5.94.0)':
-    dependencies:
-      chalk: 3.0.0
-      error-stack-parser: 2.1.4
-      string-width: 4.2.3
-      strip-ansi: 6.0.1
-      webpack: 5.94.0
 
   '@soda/get-current-script@1.0.2': {}
 
@@ -49300,7 +49015,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 8.30.1
       '@typescript-eslint/visitor-keys': 8.30.1
-      debug: 4.4.0
+      debug: 4.3.4
       fast-glob: 3.3.2
       is-glob: 4.0.3
       minimatch: 9.0.4
@@ -49620,13 +49335,6 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@vue/cli-plugin-router@5.0.8(@vue/cli-service@5.0.8(lodash@4.17.21)(prettier@3.2.5)(vue-template-compiler@2.7.16)(vue@2.7.16))':
-    dependencies:
-      '@vue/cli-service': 5.0.8(lodash@4.17.21)(prettier@3.2.5)(vue-template-compiler@2.7.16)(vue@2.7.16)
-      '@vue/cli-shared-utils': 5.0.8
-    transitivePeerDependencies:
-      - encoding
-
   '@vue/cli-plugin-typescript@5.0.8(@swc/core@1.4.11)(@vue/cli-service@5.0.8(@swc/core@1.4.11)(lodash@4.17.21)(prettier@3.2.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vue-template-compiler@2.7.16)(vue@2.7.16))(eslint@8.57.0)(typescript@5.1.3)(vue-template-compiler@2.7.16)(vue@2.7.16)':
     dependencies:
       '@babel/core': 7.27.1
@@ -49653,39 +49361,9 @@ snapshots:
       - uglify-js
       - webpack-cli
 
-  '@vue/cli-plugin-typescript@5.0.8(@vue/cli-service@5.0.8(lodash@4.17.21)(prettier@3.2.5)(vue-template-compiler@2.7.16)(vue@2.7.16))(eslint@8.57.0)(typescript@5.4.3)(vue-template-compiler@2.7.16)(vue@2.7.16)':
-    dependencies:
-      '@babel/core': 7.27.1
-      '@types/webpack-env': 1.18.4
-      '@vue/cli-service': 5.0.8(lodash@4.17.21)(prettier@3.2.5)(vue-template-compiler@2.7.16)(vue@2.7.16)
-      '@vue/cli-shared-utils': 5.0.8
-      babel-loader: 8.3.0(@babel/core@7.27.1)(webpack@5.94.0)
-      fork-ts-checker-webpack-plugin: 6.5.3(eslint@8.57.0)(typescript@5.4.3)(vue-template-compiler@2.7.16)(webpack@5.94.0)
-      globby: 11.1.0
-      thread-loader: 3.0.4(webpack@5.94.0)
-      ts-loader: 9.5.1(typescript@5.4.3)(webpack@5.94.0)
-      typescript: 5.4.3
-      vue: 2.7.16
-      webpack: 5.94.0
-    optionalDependencies:
-      vue-template-compiler: 2.7.16
-    transitivePeerDependencies:
-      - '@swc/core'
-      - encoding
-      - esbuild
-      - eslint
-      - metro
-      - supports-color
-      - uglify-js
-      - webpack-cli
-
   '@vue/cli-plugin-vuex@5.0.8(@vue/cli-service@5.0.8(@swc/core@1.4.11)(lodash@4.17.21)(prettier@3.2.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vue-template-compiler@2.7.16)(vue@2.7.16))':
     dependencies:
       '@vue/cli-service': 5.0.8(@swc/core@1.4.11)(lodash@4.17.21)(prettier@3.2.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vue-template-compiler@2.7.16)(vue@2.7.16)
-
-  '@vue/cli-plugin-vuex@5.0.8(@vue/cli-service@5.0.8(lodash@4.17.21)(prettier@3.2.5)(vue-template-compiler@2.7.16)(vue@2.7.16))':
-    dependencies:
-      '@vue/cli-service': 5.0.8(lodash@4.17.21)(prettier@3.2.5)(vue-template-compiler@2.7.16)(vue@2.7.16)
 
   '@vue/cli-service@5.0.8(@swc/core@1.4.11)(lodash@4.17.21)(prettier@3.2.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vue-template-compiler@2.7.16)(vue@2.7.16)':
     dependencies:
@@ -49741,136 +49419,6 @@ snapshots:
       webpack-bundle-analyzer: 4.10.2
       webpack-chain: 6.5.1
       webpack-dev-server: 4.15.2(webpack@5.94.0(@swc/core@1.4.11))
-      webpack-merge: 5.10.0
-      webpack-virtual-modules: 0.4.6
-      whatwg-fetch: 3.6.20
-    optionalDependencies:
-      vue-template-compiler: 2.7.16
-    transitivePeerDependencies:
-      - '@parcel/css'
-      - '@rspack/core'
-      - '@swc/core'
-      - '@vue/compiler-sfc'
-      - arc-templates
-      - atpl
-      - babel-core
-      - bracket-template
-      - bufferutil
-      - clean-css
-      - coffee-script
-      - csso
-      - dot
-      - dust
-      - dustjs-helpers
-      - dustjs-linkedin
-      - eco
-      - ect
-      - ejs
-      - encoding
-      - esbuild
-      - haml-coffee
-      - hamlet
-      - hamljs
-      - handlebars
-      - hogan.js
-      - htmling
-      - jade
-      - jazz
-      - jqtpl
-      - just
-      - liquid-node
-      - liquor
-      - lodash
-      - marko
-      - metro
-      - mote
-      - mustache
-      - nunjucks
-      - plates
-      - prettier
-      - pug
-      - qejs
-      - ractive
-      - razor-tmpl
-      - react
-      - react-dom
-      - slm
-      - squirrelly
-      - supports-color
-      - swig
-      - swig-templates
-      - teacup
-      - templayed
-      - then-jade
-      - then-pug
-      - tinyliquid
-      - toffee
-      - twig
-      - twing
-      - uglify-js
-      - underscore
-      - utf-8-validate
-      - vash
-      - velocityjs
-      - vue
-      - walrus
-      - webpack-cli
-      - whiskers
-
-  '@vue/cli-service@5.0.8(lodash@4.17.21)(prettier@3.2.5)(vue-template-compiler@2.7.16)(vue@2.7.16)':
-    dependencies:
-      '@babel/helper-compilation-targets': 7.26.5
-      '@soda/friendly-errors-webpack-plugin': 1.8.1(webpack@5.94.0)
-      '@soda/get-current-script': 1.0.2
-      '@types/minimist': 1.2.5
-      '@vue/cli-overlay': 5.0.8
-      '@vue/cli-plugin-router': 5.0.8(@vue/cli-service@5.0.8(lodash@4.17.21)(prettier@3.2.5)(vue-template-compiler@2.7.16)(vue@2.7.16))
-      '@vue/cli-plugin-vuex': 5.0.8(@vue/cli-service@5.0.8(lodash@4.17.21)(prettier@3.2.5)(vue-template-compiler@2.7.16)(vue@2.7.16))
-      '@vue/cli-shared-utils': 5.0.8
-      '@vue/component-compiler-utils': 3.3.0(lodash@4.17.21)
-      '@vue/vue-loader-v15': vue-loader@15.11.1(css-loader@6.10.0(webpack@5.94.0))(lodash@4.17.21)(prettier@3.2.5)(vue-template-compiler@2.7.16)(webpack@5.94.0)
-      '@vue/web-component-wrapper': 1.3.0
-      acorn: 8.13.0
-      acorn-walk: 8.3.2
-      address: 1.2.2
-      autoprefixer: 10.4.19(postcss@8.5.1)
-      browserslist: 4.24.2
-      case-sensitive-paths-webpack-plugin: 2.4.0
-      cli-highlight: 2.1.11
-      clipboardy: 2.3.0
-      cliui: 7.0.4
-      copy-webpack-plugin: 9.1.0(webpack@5.94.0)
-      css-loader: 6.10.0(webpack@5.94.0)
-      css-minimizer-webpack-plugin: 3.4.1(webpack@5.94.0)
-      cssnano: 5.1.15(postcss@8.5.1)
-      debug: 4.3.4
-      default-gateway: 6.0.3
-      dotenv: 10.0.0
-      dotenv-expand: 5.1.0
-      fs-extra: 9.1.0
-      globby: 11.1.0
-      hash-sum: 2.0.0
-      html-webpack-plugin: 5.6.0(webpack@5.94.0)
-      is-file-esm: 1.0.0
-      launch-editor-middleware: 2.8.0
-      lodash.defaultsdeep: 4.6.1
-      lodash.mapvalues: 4.6.0
-      mini-css-extract-plugin: 2.8.1(webpack@5.94.0)
-      minimist: 1.2.8
-      module-alias: 2.2.3
-      portfinder: 1.0.32
-      postcss: 8.5.1
-      postcss-loader: 6.2.1(browserslist@4.24.2)(postcss@8.5.1)(webpack@5.94.0)
-      progress-webpack-plugin: 1.0.16(webpack@5.94.0)
-      ssri: 8.0.1
-      terser-webpack-plugin: 5.3.10(webpack@5.94.0)
-      thread-loader: 3.0.4(webpack@5.94.0)
-      vue-loader: 17.4.2(vue@2.7.16)(webpack@5.94.0)
-      vue-style-loader: 4.1.3
-      webpack: 5.94.0
-      webpack-bundle-analyzer: 4.10.2
-      webpack-chain: 6.5.1
-      webpack-dev-server: 4.15.2(webpack@5.94.0)
       webpack-merge: 5.10.0
       webpack-virtual-modules: 0.4.6
       whatwg-fetch: 3.6.20
@@ -50005,73 +49553,6 @@ snapshots:
       '@vue/compiler-dom': 3.4.21
       '@vue/shared': 3.4.21
     optional: true
-
-  '@vue/component-compiler-utils@3.3.0(lodash@4.17.21)':
-    dependencies:
-      consolidate: 0.15.1(lodash@4.17.21)
-      hash-sum: 1.0.2
-      lru-cache: 4.1.5
-      merge-source-map: 1.1.0
-      postcss: 7.0.39
-      postcss-selector-parser: 6.0.16
-      source-map: 0.6.1
-      vue-template-es2015-compiler: 1.9.1
-    optionalDependencies:
-      prettier: 2.8.8
-    transitivePeerDependencies:
-      - arc-templates
-      - atpl
-      - babel-core
-      - bracket-template
-      - coffee-script
-      - dot
-      - dust
-      - dustjs-helpers
-      - dustjs-linkedin
-      - eco
-      - ect
-      - ejs
-      - haml-coffee
-      - hamlet
-      - hamljs
-      - handlebars
-      - hogan.js
-      - htmling
-      - jade
-      - jazz
-      - jqtpl
-      - just
-      - liquid-node
-      - liquor
-      - lodash
-      - marko
-      - mote
-      - mustache
-      - nunjucks
-      - plates
-      - pug
-      - qejs
-      - ractive
-      - razor-tmpl
-      - react
-      - react-dom
-      - slm
-      - squirrelly
-      - swig
-      - swig-templates
-      - teacup
-      - templayed
-      - then-jade
-      - then-pug
-      - tinyliquid
-      - toffee
-      - twig
-      - twing
-      - underscore
-      - vash
-      - velocityjs
-      - walrus
-      - whiskers
 
   '@vue/component-compiler-utils@3.3.0(lodash@4.17.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
@@ -50296,15 +49777,6 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
 
-  '@xstate/react@5.0.3(xstate@5.19.2)':
-    dependencies:
-      use-isomorphic-layout-effect: 1.1.2
-      use-sync-external-store: 1.2.0
-    optionalDependencies:
-      xstate: 5.19.2
-    transitivePeerDependencies:
-      - '@types/react'
-
   '@xtuc/ieee754@1.2.0': {}
 
   '@xtuc/long@4.2.2': {}
@@ -50343,100 +49815,6 @@ snapshots:
       '@types/node': 22.10.10
       '@vue/cli-plugin-typescript': 5.0.8(@swc/core@1.4.11)(@vue/cli-service@5.0.8(@swc/core@1.4.11)(lodash@4.17.21)(prettier@3.2.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vue-template-compiler@2.7.16)(vue@2.7.16))(eslint@8.57.0)(typescript@5.1.3)(vue-template-compiler@2.7.16)(vue@2.7.16)
       '@vue/cli-service': 5.0.8(@swc/core@1.4.11)(lodash@4.17.21)(prettier@3.2.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vue-template-compiler@2.7.16)(vue@2.7.16)
-      bech32: 1.1.4
-      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
-      crypto-browserify: 3.12.0
-      ripemd160: 2.0.2
-      stream-browserify: 3.0.0
-      vue: 2.7.16
-      vue-template-compiler: 2.7.16
-    transitivePeerDependencies:
-      - '@parcel/css'
-      - '@rspack/core'
-      - '@swc/core'
-      - '@vue/compiler-sfc'
-      - arc-templates
-      - atpl
-      - babel-core
-      - bracket-template
-      - bufferutil
-      - cache-loader
-      - clean-css
-      - coffee-script
-      - csso
-      - dot
-      - dust
-      - dustjs-helpers
-      - dustjs-linkedin
-      - eco
-      - ect
-      - ejs
-      - encoding
-      - esbuild
-      - eslint
-      - haml-coffee
-      - hamlet
-      - hamljs
-      - handlebars
-      - hogan.js
-      - htmling
-      - jade
-      - jazz
-      - jqtpl
-      - just
-      - less-loader
-      - liquid-node
-      - liquor
-      - lodash
-      - marko
-      - metro
-      - mote
-      - mustache
-      - nunjucks
-      - plates
-      - prettier
-      - pug
-      - pug-plain-loader
-      - qejs
-      - ractive
-      - raw-loader
-      - razor-tmpl
-      - react
-      - react-dom
-      - sass-loader
-      - slm
-      - squirrelly
-      - stylus-loader
-      - supports-color
-      - swig
-      - swig-templates
-      - teacup
-      - templayed
-      - then-jade
-      - then-pug
-      - tinyliquid
-      - toffee
-      - twig
-      - twing
-      - typescript
-      - uglify-js
-      - underscore
-      - utf-8-validate
-      - vash
-      - velocityjs
-      - walrus
-      - webpack-cli
-      - webpack-sources
-      - whiskers
-
-  '@zondax/ledger-cosmos-js@3.0.3(@types/node@22.10.10)(eslint@8.57.0)(lodash@4.17.21)(prettier@3.2.5)(typescript@5.4.3)':
-    dependencies:
-      '@babel/runtime': 7.27.1
-      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
-      '@ledgerhq/hw-transport-u2f': 5.36.0-deprecated
-      '@types/node': 22.10.10
-      '@vue/cli-plugin-typescript': 5.0.8(@vue/cli-service@5.0.8(lodash@4.17.21)(prettier@3.2.5)(vue-template-compiler@2.7.16)(vue@2.7.16))(eslint@8.57.0)(typescript@5.4.3)(vue-template-compiler@2.7.16)(vue@2.7.16)
-      '@vue/cli-service': 5.0.8(lodash@4.17.21)(prettier@3.2.5)(vue-template-compiler@2.7.16)(vue@2.7.16)
       bech32: 1.1.4
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       crypto-browserify: 3.12.0
@@ -52919,12 +52297,6 @@ snapshots:
 
   console-browserify@1.2.0: {}
 
-  consolidate@0.15.1(lodash@4.17.21):
-    dependencies:
-      bluebird: 3.7.2
-    optionalDependencies:
-      lodash: 4.17.21
-
   consolidate@0.15.1(lodash@4.17.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       bluebird: 3.7.2
@@ -53006,16 +52378,6 @@ snapshots:
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2
       webpack: 5.94.0(@swc/core@1.4.11)
-
-  copy-webpack-plugin@9.1.0(webpack@5.94.0):
-    dependencies:
-      fast-glob: 3.3.2
-      glob-parent: 6.0.2
-      globby: 11.1.0
-      normalize-path: 3.0.0
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.2
-      webpack: 5.94.0
 
   core-js-compat@3.39.0:
     dependencies:
@@ -53974,7 +53336,7 @@ snapshots:
   detect-port@1.5.1:
     dependencies:
       address: 1.2.2
-      debug: 4.4.0
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -55752,18 +55114,6 @@ snapshots:
       jest-message-util: 29.7.0
       jest-util: 29.7.0
 
-  expo-asset@11.0.5(expo-constants@17.0.8(expo-modules-core@2.2.3)(expo@52.0.46)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1))(expo-modules-core@2.2.3)(expo@52.0.46)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1):
-    dependencies:
-      '@expo/image-utils': 0.6.5
-      expo: 52.0.46(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(expo-modules-core@2.2.3)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1)
-      invariant: 2.2.4
-      md5-file: 3.2.3
-      react: 18.3.1
-      react-native: 0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1)
-    optionalDependencies:
-      expo-constants: 17.0.8(expo-modules-core@2.2.3)(expo@52.0.46)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1)
-      expo-modules-core: 2.2.3(expo-constants@17.1.6)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1)
-
   expo-asset@11.0.5(expo-modules-core@2.2.3(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(expo@52.0.46(cco7moedcz4q7tdej7fmgu5jaq))(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1):
     dependencies:
       '@expo/image-utils': 0.6.5
@@ -55775,6 +55125,20 @@ snapshots:
       react-native: 0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
     optionalDependencies:
       expo-modules-core: 2.2.3(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
+    transitivePeerDependencies:
+      - supports-color
+
+  expo-asset@11.0.5(expo-modules-core@2.2.3)(expo@52.0.46)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1):
+    dependencies:
+      '@expo/image-utils': 0.6.5
+      expo: 52.0.46(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(expo-modules-core@2.2.3)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1)
+      expo-constants: 17.0.8(expo-modules-core@2.2.3)(expo@52.0.46)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1)
+      invariant: 2.2.4
+      md5-file: 3.2.3
+      react: 18.3.1
+      react-native: 0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1)
+    optionalDependencies:
+      expo-modules-core: 2.2.3(expo-constants@17.1.6)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -55964,22 +55328,6 @@ snapshots:
       expo-modules-core: 2.2.3(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       react-native: 0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
 
-  expo-modules-autolinking@2.0.8(expo-constants@17.0.8(expo-modules-core@2.2.3)(expo@52.0.46)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1))(expo-modules-core@2.2.3)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1):
-    dependencies:
-      '@expo/spawn-async': 1.7.2
-      chalk: 4.1.2
-      commander: 7.2.0
-      fast-glob: 3.3.2
-      find-up: 5.0.0
-      fs-extra: 9.1.0
-      require-from-string: 2.0.2
-      resolve-from: 5.0.0
-    optionalDependencies:
-      expo-constants: 17.0.8(expo-modules-core@2.2.3)(expo@52.0.46)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1)
-      expo-modules-core: 2.2.3(expo-constants@17.1.6)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-native: 0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1)
-
   expo-modules-autolinking@2.0.8(expo-modules-core@2.2.3(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1):
     dependencies:
       '@expo/spawn-async': 1.7.2
@@ -56043,12 +55391,11 @@ snapshots:
       '@expo/metro-config': 0.19.12
       '@expo/vector-icons': 14.0.4
       babel-preset-expo: 12.0.11(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))
-      expo-asset: 11.0.5(expo-constants@17.0.8(expo-modules-core@2.2.3)(expo@52.0.46)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1))(expo-modules-core@2.2.3)(expo@52.0.46)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1)
+      expo-asset: 11.0.5(expo-modules-core@2.2.3)(expo@52.0.46)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1)
       expo-constants: 17.0.8(expo-modules-core@2.2.3)(expo@52.0.46)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1)
       expo-file-system: 18.0.12(expo-constants@17.0.8(expo-modules-core@2.2.3)(expo@52.0.46)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1))(expo-modules-core@2.2.3)(expo@52.0.46)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1)
       expo-font: 13.0.4(expo-constants@17.0.8(expo-modules-core@2.2.3)(expo@52.0.46)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1))(expo-modules-core@2.2.3)(expo@52.0.46)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1)
       expo-keep-awake: 14.0.3(expo-constants@17.0.8(expo-modules-core@2.2.3)(expo@52.0.46)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1))(expo-modules-core@2.2.3)(expo@52.0.46)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1)
-      expo-modules-autolinking: 2.0.8(expo-constants@17.0.8(expo-modules-core@2.2.3)(expo@52.0.46)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1))(expo-modules-core@2.2.3)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1)
       fbemitter: 3.0.0
       react: 18.3.1
       react-native: 0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1)
@@ -56561,27 +55908,6 @@ snapshots:
       tapable: 1.1.3
       typescript: 5.1.3
       webpack: 5.94.0(@swc/core@1.4.11)
-    optionalDependencies:
-      eslint: 8.57.0
-      vue-template-compiler: 2.7.16
-
-  fork-ts-checker-webpack-plugin@6.5.3(eslint@8.57.0)(typescript@5.4.3)(vue-template-compiler@2.7.16)(webpack@5.94.0):
-    dependencies:
-      '@babel/code-frame': 7.27.1
-      '@types/json-schema': 7.0.15
-      chalk: 4.1.2
-      chokidar: 3.6.0
-      cosmiconfig: 6.0.0
-      deepmerge: 4.3.1
-      fs-extra: 9.1.0
-      glob: 7.2.3
-      memfs: 3.5.3
-      minimatch: 3.1.2
-      schema-utils: 2.7.0
-      semver: 7.7.1
-      tapable: 1.1.3
-      typescript: 5.4.3
-      webpack: 5.94.0
     optionalDependencies:
       eslint: 8.57.0
       vue-template-compiler: 2.7.16
@@ -57605,7 +56931,7 @@ snapshots:
   https-proxy-agent@4.0.0:
     dependencies:
       agent-base: 5.1.1
-      debug: 4.4.0
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -58175,8 +57501,6 @@ snapshots:
       whatwg-fetch: 3.6.20
     transitivePeerDependencies:
       - encoding
-
-  isomorphic-ws@4.0.1: {}
 
   isomorphic-ws@4.0.1(ws@7.5.10):
     dependencies:
@@ -60397,8 +59721,6 @@ snapshots:
   jotai-scope@0.7.3(jotai@2.12.4(@types/react@18.2.73)(react@18.3.1)):
     dependencies:
       jotai: 2.12.4(@types/react@18.2.73)(react@18.3.1)
-
-  jotai@2.12.4: {}
 
   jotai@2.12.4(@types/react@18.2.73)(react@18.3.1):
     optionalDependencies:
@@ -64251,19 +63573,6 @@ snapshots:
     transitivePeerDependencies:
       - browserslist
 
-  postcss-loader@6.2.1(browserslist@4.24.2)(postcss@8.5.1)(webpack@5.94.0):
-    dependencies:
-      cosmiconfig: 7.1.0
-      klona: 2.0.6
-      postcss: 8.5.1
-      postcss-flexbugs-fixes: 5.0.2(postcss@8.5.1)
-      postcss-normalize: 10.0.1(browserslist@4.24.2)(postcss@8.5.1)
-      postcss-preset-env: 7.8.3(postcss@8.5.1)
-      semver: 7.7.1
-      webpack: 5.94.0
-    transitivePeerDependencies:
-      - browserslist
-
   postcss-logical@5.0.4(postcss@8.4.38):
     dependencies:
       postcss: 8.4.38
@@ -64799,13 +64108,6 @@ snapshots:
       log-update: 2.3.0
       webpack: 5.94.0(@swc/core@1.4.11)
 
-  progress-webpack-plugin@1.0.16(webpack@5.94.0):
-    dependencies:
-      chalk: 2.4.2
-      figures: 2.0.0
-      log-update: 2.3.0
-      webpack: 5.94.0
-
   progress@2.0.3: {}
 
   promise-retry@2.0.1:
@@ -64997,7 +64299,7 @@ snapshots:
   puppeteer-core@2.1.1:
     dependencies:
       '@types/mime-types': 2.1.4
-      debug: 4.4.0
+      debug: 4.3.4
       extract-zip: 1.7.0
       https-proxy-agent: 4.0.0
       mime: 2.6.0
@@ -67491,7 +66793,7 @@ snapshots:
 
   spdy-transport@3.0.0:
     dependencies:
-      debug: 4.4.0
+      debug: 4.3.4
       detect-node: 2.1.0
       hpack.js: 2.1.6
       obuf: 1.1.2
@@ -68522,15 +67824,6 @@ snapshots:
       schema-utils: 3.3.0
       webpack: 5.94.0(@swc/core@1.4.11)
 
-  thread-loader@3.0.4(webpack@5.94.0):
-    dependencies:
-      json-parse-better-errors: 1.0.2
-      loader-runner: 4.3.0
-      loader-utils: 2.0.4
-      neo-async: 2.6.2
-      schema-utils: 3.3.0
-      webpack: 5.94.0
-
   thread-stream@3.0.0:
     dependencies:
       real-require: 0.2.0
@@ -69105,16 +68398,6 @@ snapshots:
       source-map: 0.7.4
       typescript: 5.1.3
       webpack: 5.94.0(@swc/core@1.4.11)
-
-  ts-loader@9.5.1(typescript@5.4.3)(webpack@5.94.0):
-    dependencies:
-      chalk: 4.1.2
-      enhanced-resolve: 5.17.1
-      micromatch: 4.0.7
-      semver: 7.7.1
-      source-map: 0.7.4
-      typescript: 5.4.3
-      webpack: 5.94.0
 
   ts-node@10.9.2(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3):
     dependencies:
@@ -69864,8 +69147,6 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.2.73
 
-  use-isomorphic-layout-effect@1.1.2: {}
-
   use-isomorphic-layout-effect@1.1.2(@types/react@18.2.73)(react@18.3.1):
     dependencies:
       react: 18.3.1
@@ -69896,15 +69177,9 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.2.73
 
-  use-sync-external-store@1.2.0: {}
-
   use-sync-external-store@1.2.0(react@18.3.1):
     dependencies:
       react: 18.3.1
-
-  usehooks-ts@2.16.0:
-    dependencies:
-      lodash.debounce: 4.0.8
 
   usehooks-ts@2.16.0(react@18.3.1):
     dependencies:
@@ -70269,88 +69544,12 @@ snapshots:
       - walrus
       - whiskers
 
-  vue-loader@15.11.1(css-loader@6.10.0(webpack@5.94.0))(lodash@4.17.21)(prettier@3.2.5)(vue-template-compiler@2.7.16)(webpack@5.94.0):
-    dependencies:
-      '@vue/component-compiler-utils': 3.3.0(lodash@4.17.21)
-      css-loader: 6.10.0(webpack@5.94.0)
-      hash-sum: 1.0.2
-      loader-utils: 1.4.2
-      vue-hot-reload-api: 2.3.4
-      vue-style-loader: 4.1.3
-      webpack: 5.94.0
-    optionalDependencies:
-      prettier: 3.2.5
-      vue-template-compiler: 2.7.16
-    transitivePeerDependencies:
-      - arc-templates
-      - atpl
-      - babel-core
-      - bracket-template
-      - coffee-script
-      - dot
-      - dust
-      - dustjs-helpers
-      - dustjs-linkedin
-      - eco
-      - ect
-      - ejs
-      - haml-coffee
-      - hamlet
-      - hamljs
-      - handlebars
-      - hogan.js
-      - htmling
-      - jade
-      - jazz
-      - jqtpl
-      - just
-      - liquid-node
-      - liquor
-      - lodash
-      - marko
-      - mote
-      - mustache
-      - nunjucks
-      - plates
-      - pug
-      - qejs
-      - ractive
-      - razor-tmpl
-      - react
-      - react-dom
-      - slm
-      - squirrelly
-      - swig
-      - swig-templates
-      - teacup
-      - templayed
-      - then-jade
-      - then-pug
-      - tinyliquid
-      - toffee
-      - twig
-      - twing
-      - underscore
-      - vash
-      - velocityjs
-      - walrus
-      - whiskers
-
   vue-loader@17.4.2(vue@2.7.16)(webpack@5.94.0(@swc/core@1.4.11)):
     dependencies:
       chalk: 4.1.2
       hash-sum: 2.0.0
       watchpack: 2.4.2
       webpack: 5.94.0(@swc/core@1.4.11)
-    optionalDependencies:
-      vue: 2.7.16
-
-  vue-loader@17.4.2(vue@2.7.16)(webpack@5.94.0):
-    dependencies:
-      chalk: 4.1.2
-      hash-sum: 2.0.0
-      watchpack: 2.4.2
-      webpack: 5.94.0
     optionalDependencies:
       vue: 2.7.16
 
