@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-aptos": minor
+"@ledgerhq/coin-aptos": patch
 "ledger-live-desktop": patch
 ---
 
