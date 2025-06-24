@@ -10,7 +10,7 @@ type UseImportedAccountsProps = {
   scannedAccounts: Account[];
 };
 
-export function useImportedAccounts({
+export function useImportAccounts({
   onComplete,
   selectedIds,
   scannedAccounts,

@@ -1,13 +1,12 @@
 import { Account } from "@ledgerhq/types-live";
 import { useCallback, useEffect, useState } from "react";
 import { WARNING_REASON, WarningReason } from "../../../types";
-import { useImportedAccounts } from "./useImportedAccounts";
+import { useImportAccounts } from "./useImportAccounts";
+import { useAccounts } from "./useAccounts";
 import { useSelector } from "react-redux";
 import { useSubscription } from "./useSubscription";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getLLDCoinFamily } from "~/renderer/families";
-import { useAccountGrouping } from "./useAccountGrouping";
-import { useAccounts } from "./useAccounts";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { isAccountEmpty } from "@ledgerhq/coin-framework/lib-es/account/helpers";
 
@@ -65,14 +64,16 @@ export const useScanAccounts = ({
     [],
   );
 
-  const { sections, alreadyEmptyAccount, newAccountSchemes } = useAccountGrouping({
+  const {
+    alreadyEmptyAccount,
+    newAccountSchemes,
+    allImportableAccountsSelected,
+    importableAccounts,
+    creatableAccounts,
+  } = useAccounts({
     scannedAccounts,
     scanning,
     showAllCreatedAccounts,
-  });
-
-  const { allImportableAccountsSelected, importableAccounts, creatableAccounts } = useAccounts({
-    sections,
     selectedIds,
   });
 
@@ -96,7 +97,7 @@ export const useScanAccounts = ({
     });
   }, [importableAccounts]);
 
-  const { hasImportedAccounts, handleConfirm } = useImportedAccounts({
+  const { hasImportedAccounts, handleConfirm } = useImportAccounts({
     onComplete,
     selectedIds,
     scannedAccounts,
