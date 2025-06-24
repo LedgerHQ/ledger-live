@@ -1,6 +1,10 @@
 import Config from "react-native-config";
 import { TrackingConsent, DatadogProvider } from "@datadog/mobile-react-native";
 import { PartialInitializationConfiguration } from "@datadog/mobile-react-native/lib/typescript/DdSdkReactNativeConfiguration";
+import { ScreenName } from "./const";
+import { Route } from "@react-navigation/core";
+
+export const PORTFOLIO_VIEW_ID = "Portfolio";
 
 const clientTokenVar = Config.DATADOG_CLIENT_TOKEN_VAR;
 const applicationIdVar = Config.DATADOG_APPLICATION_ID_VAR;
@@ -41,4 +45,16 @@ export const initializeDatadogProvider = async (
     ...remoteConfig,
     trackingConsent,
   });
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const viewNamePredicate = (route: Route<string, any>, trackedName: string) => {
+  // If the route is the Portfolio screen, we stop the native navigation tracking as we will manually track the view
+  if (ScreenName.Portfolio === route.name) {
+    return null;
+  }
+  if ([ScreenName.Asset].includes(route.name as ScreenName) && route.params?.currency?.id) {
+    return `${trackedName}/${route.params?.currency?.id}`;
+  }
+  return trackedName;
 };
