@@ -5,9 +5,15 @@ import { ActionButtons, IconContainer } from "./components";
 import { useWarningConfig } from "./useWarningConfig";
 import { AccountsWarningProps } from "./types";
 
-const AccountsWarning = ({ warningReason, currency, emptyAccount }: AccountsWarningProps) => {
+const AccountsWarning = ({
+  warningReason,
+  currency,
+  emptyAccount,
+  navigateToFundAccount,
+}: AccountsWarningProps) => {
   const { emptyAccountWarning, noAssociatedAccountsWarning } = useWarningConfig(
     currency,
+    navigateToFundAccount,
     emptyAccount,
   );
 
