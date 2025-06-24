@@ -414,7 +414,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=$(command -v node)\n\nset -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\n\nif [[ \"$SKIP_JS_BUNDLING\" == \"true\" ]]; then\n    REACT_NATIVE_XCODE=\"\"\n    echo \"Skipping JS bundle\"\nelse\n    echo \"Not skipping JS bundle\"\n    REACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\nfi\n\nSENTRY_XCODE=\"../node_modules/@sentry/react-native/scripts/sentry-xcode.sh\"\nBUNDLE_REACT_NATIVE=\"/bin/sh $REACT_NATIVE_XCODE $SENTRY_XCODE\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT \\\"$BUNDLE_REACT_NATIVE\\\"\"\n";
+			shellScript = "export NODE_BINARY=$(command -v node)\n\nset -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\n\nif [[ \"$SKIP_JS_BUNDLING\" == \"true\" ]]; then\n    REACT_NATIVE_XCODE=\"\"\n    echo \"Skipping JS bundle\"\nelse\n    echo \"Not skipping JS bundle\"\n    REACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\nfi\n\nSENTRY_XCODE=\"../node_modules/@sentry/react-native/scripts/sentry-xcode.sh\"\nBUNDLE_REACT_NATIVE=\"/bin/sh $SENTRY_XCODE $REACT_NATIVE_XCODE\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT \\\"$BUNDLE_REACT_NATIVE\\\"\"\n";
 		};
 		3B8A85D90BB941F538378AA1 /* [CP-User] [RNFB] Core Configuration */ = {
 			isa = PBXShellScriptBuildPhase;

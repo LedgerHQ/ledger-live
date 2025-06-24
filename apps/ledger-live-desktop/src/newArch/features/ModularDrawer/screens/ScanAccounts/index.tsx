@@ -1,28 +1,25 @@
 import { Box, Flex, Text } from "@ledgerhq/react-ui";
 import { AccountItem } from "@ledgerhq/react-ui/pre-ldls/components/AccountItem/AccountItem";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import { default as React } from "react";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { MODULAR_DRAWER_ADD_ACCOUNT_CATEGORY } from "../../types";
 import { useTheme } from "styled-components";
 import { LoadingOverlay } from "LLD/components/LoadingOverlay";
-import { useScanAccounts } from "../../hooks/useScanAccounts";
+import { useScanAccounts, type UseScanAccountsProps } from "../../hooks/useScanAccounts";
 import { userThemeSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "react-redux";
 import { Footer } from "./components/Footer";
 import { ImportableAccountsList } from "./components/ImportableAccountsList";
 import { CreatableAccountsList } from "./components/CreatableAccountsList";
 import { useTranslation } from "react-i18next";
+import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 
-interface Props {
-  currency: CryptoCurrency;
-  deviceId: string;
-  onComplete: (_: Account[]) => void;
+interface Props extends UseScanAccountsProps {
   analyticsPropertyFlow?: string;
 }
 
-const ScanAccounts = ({ currency, deviceId, onComplete }: Props) => {
+const ScanAccounts = ({ currency, deviceId, onComplete, navigateToWarningScreen }: Props) => {
   const { colors } = useTheme();
   const currentTheme = useSelector(userThemeSelector);
   const { t } = useTranslation();
@@ -30,6 +27,7 @@ const ScanAccounts = ({ currency, deviceId, onComplete }: Props) => {
   const {
     newAccountSchemes,
     scanning,
+    error,
     importableAccounts,
     creatableAccounts,
     selectedIds,
@@ -43,6 +41,7 @@ const ScanAccounts = ({ currency, deviceId, onComplete }: Props) => {
     allImportableAccountsSelected,
     formatAccount,
   } = useScanAccounts({
+    navigateToWarningScreen,
     currency,
     deviceId,
     onComplete,
@@ -68,6 +67,10 @@ const ScanAccounts = ({ currency, deviceId, onComplete }: Props) => {
       </Box>
     );
   };
+
+  if (error) {
+    return <ErrorDisplay error={error} withExportLogs />;
+  }
 
   return (
     <>

@@ -7112,6 +7112,17 @@
       "cta": {
         "stopScanning": "Stop scanning"
       },
+      "warning": {
+        "title": "We couldn't add a new {{currency}} account",
+        "description": "A new account cannot be added before you receive assets on your {{account}} account",
+        "cta": "Add funds to my account",
+        "close": "Close",
+        "noAssociatedAccounts": {
+          "description": "In the {{currency}} ecosystem, only a select number of services can create new accounts. While Ledger does not currently offer this onboarding service, alternatives are available. You will be able to add your {{currency}} account on Ledger Live once it's created.",
+          "cta": "How to create a {{currency}} account?",
+          "close": "Close"
+        }
+      },
       "status": {
         "foundAccounts_zero": "No account was found",
         "foundAccounts": "We found {{count}} account",

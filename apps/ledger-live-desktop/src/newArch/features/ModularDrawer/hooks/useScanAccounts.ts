@@ -19,14 +19,22 @@ import { Subscription } from "rxjs";
 import { getBalanceAndFiatValue } from "LLD/utils/getBalanceAndFiatValue";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { WARNING_REASON, WarningReason } from "../types";
+import { getLLDCoinFamily } from "~/renderer/families";
 
 export type UseScanAccountsProps = {
   currency: CryptoCurrency;
   deviceId: string;
   onComplete: (accounts: Account[]) => void;
+  navigateToWarningScreen: (reason: WarningReason, account?: Account) => void;
 };
 
-export function useScanAccounts({ currency, deviceId, onComplete }: UseScanAccountsProps) {
+export function useScanAccounts({
+  currency,
+  deviceId,
+  onComplete,
+  navigateToWarningScreen,
+}: UseScanAccountsProps) {
   const existingAccounts = useSelector(accountsSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const [scanning, setScanning] = useState(true);
@@ -38,6 +46,7 @@ export function useScanAccounts({ currency, deviceId, onComplete }: UseScanAccou
   const [onlyNewAccounts, setOnlyNewAccounts] = useState(true);
   const [showAllCreatedAccounts, setShowAllCreatedAccounts] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [hasImportedAccounts, setHasImportedAccounts] = useState(false);
   const scanSubscription = useRef<Subscription | null>(null);
 
   const walletState = useSelector(walletSelector);
@@ -87,6 +96,7 @@ export function useScanAccounts({ currency, deviceId, onComplete }: UseScanAccou
     setScannedAccounts([]);
     setSelectedIds([]);
     setError(null);
+    setHasImportedAccounts(false);
     startSubscription();
   }, [startSubscription]);
   const stopSubscription = useCallback((syncUI = true) => {
@@ -125,6 +135,10 @@ export function useScanAccounts({ currency, deviceId, onComplete }: UseScanAccou
   );
 
   const handleConfirm = useCallback(() => {
+    const accountsToImport = scannedAccounts.filter(a => selectedIds.includes(a.id));
+    if (accountsToImport.length > 0) {
+      setHasImportedAccounts(true);
+    }
     dispatch(
       addAccountsAction({
         existingAccounts,
@@ -166,7 +180,7 @@ export function useScanAccounts({ currency, deviceId, onComplete }: UseScanAccou
 
   const CustomNoAssociatedAccounts =
     currency.type === "CryptoCurrency"
-      ? null // noAssociatedAccountsByFamily[currency.family as keyof typeof noAssociatedAccountsByFamily]
+      ? getLLDCoinFamily(currency.family).NoAssociatedAccounts
       : null;
 
   const importableAccounts = useMemo(
@@ -246,17 +260,21 @@ export function useScanAccounts({ currency, deviceId, onComplete }: UseScanAccou
   }, [existingAccounts, latestScannedAccount, onlyNewAccounts, scannedAccounts, selectedIds]);
 
   useEffect(() => {
-    if (!scanning && alreadyEmptyAccount && !hasImportableAccounts) {
-      console.log(
-        "Redirect to Warning Screen (to handle already empty account)",
-        alreadyEmptyAccountName,
-      );
+    if (
+      !scanning &&
+      alreadyEmptyAccount &&
+      !hasImportableAccounts &&
+      !hasImportedAccounts &&
+      selectedIds.length === 0
+    ) {
+      navigateToWarningScreen(WARNING_REASON.ALREADY_EMPTY_ACCOUNT, alreadyEmptyAccount);
     } else if (
       !scanning &&
       (!creatableAccounts.length || !importableAccounts.length) &&
-      CustomNoAssociatedAccounts
+      CustomNoAssociatedAccounts &&
+      !hasImportedAccounts
     ) {
-      console.log("Redirect to Warning Screen (to handle hedera error for example)");
+      navigateToWarningScreen(WARNING_REASON.NO_ASSOCIATED_ACCOUNTS);
     }
   }, [
     hasImportableAccounts,
@@ -269,6 +287,9 @@ export function useScanAccounts({ currency, deviceId, onComplete }: UseScanAccou
     scannedAccounts,
     creatableAccounts.length,
     importableAccounts.length,
+    navigateToWarningScreen,
+    hasImportedAccounts,
+    selectedIds.length,
   ]);
 
   return {
