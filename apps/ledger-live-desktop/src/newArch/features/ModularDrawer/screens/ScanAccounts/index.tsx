@@ -3,10 +3,10 @@ import { AccountItem } from "@ledgerhq/react-ui/pre-ldls/components/AccountItem/
 import { Account } from "@ledgerhq/types-live";
 import { default as React } from "react";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { MODULAR_DRAWER_ADD_ACCOUNT_CATEGORY } from "../../types";
+import { MODULAR_DRAWER_ADD_ACCOUNT_CATEGORY, WarningReason } from "../../types";
 import { useTheme } from "styled-components";
 import { LoadingOverlay } from "LLD/components/LoadingOverlay";
-import { useScanAccounts, type UseScanAccountsProps } from "../../hooks/useScanAccounts";
+import { useScanAccounts } from "../../hooks/useScanAccounts";
 import { userThemeSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "react-redux";
 import { Footer } from "./components/Footer";
@@ -15,25 +15,38 @@ import { CreatableAccountsList } from "./components/CreatableAccountsList";
 import { useTranslation } from "react-i18next";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { useFormatAccount } from "../../hooks/useFormatAccount";
+import { useSubscription } from "../../hooks/useSubscription";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
-interface Props extends UseScanAccountsProps {
+interface Props {
   analyticsPropertyFlow?: string;
+  currency: CryptoCurrency;
+  onComplete: (accounts: Account[]) => void;
+  deviceId: string;
+  navigateToWarningScreen: (reason: WarningReason, account?: Account) => void;
 }
 
-const ScanAccounts = ({ currency, deviceId, onComplete, navigateToWarningScreen }: Props) => {
+const ScanAccounts = ({
+  currency,
+  deviceId,
+  onComplete,
+  navigateToWarningScreen,
+}: Props & { deviceId: string }) => {
   const { colors } = useTheme();
   const currentTheme = useSelector(userThemeSelector);
   const { t } = useTranslation();
 
+  const { error, stopSubscription, scanning, latestScannedAccount } = useSubscription({
+    currency,
+    deviceId,
+  });
+
   const {
     newAccountSchemes,
-    scanning,
-    error,
     importableAccounts,
     creatableAccounts,
     selectedIds,
     showAllCreatedAccounts,
-    stopSubscription,
     handleToggle,
     handleSelectAll,
     handleDeselectAll,
@@ -43,8 +56,9 @@ const ScanAccounts = ({ currency, deviceId, onComplete, navigateToWarningScreen 
   } = useScanAccounts({
     navigateToWarningScreen,
     currency,
-    deviceId,
     onComplete,
+    latestScannedAccount,
+    scanning,
   });
 
   const { formatAccount } = useFormatAccount({ currency });
