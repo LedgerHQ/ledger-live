@@ -20,7 +20,7 @@ function getVersionedRedirects(
     };
   }
 
-  const versionKey = "desktop_version";
+  const versionKey = "mobile_version";
 
   const sortedVersions = [...versions].sort((a, b) => {
     const aMin = semver.minVersion(a[versionKey] || "0.0.0");
