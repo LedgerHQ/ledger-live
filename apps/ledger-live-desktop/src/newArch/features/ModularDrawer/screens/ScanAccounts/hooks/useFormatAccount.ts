@@ -11,11 +11,11 @@ import { getBalanceAndFiatValue } from "LLD/utils/getBalanceAndFiatValue";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 
-export type UseScanAccountsProps = {
+export type UseFormatAccountProps = {
   currency: CryptoCurrency;
 };
 
-export function useFormatAccount({ currency }: UseScanAccountsProps) {
+export function useFormatAccount({ currency }: UseFormatAccountProps) {
   const walletState = useSelector(walletSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
@@ -45,7 +45,5 @@ export function useFormatAccount({ currency }: UseScanAccountsProps) {
     [counterValueCurrency, currency, discreet, state, walletState],
   );
 
-  return {
-    formatAccount,
-  };
+  return { formatAccount };
 }

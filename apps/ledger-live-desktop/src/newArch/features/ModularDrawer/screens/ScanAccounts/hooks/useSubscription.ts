@@ -6,12 +6,12 @@ import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Subscription } from "rxjs";
 
-export type UseScanAccountsProps = {
+export type UseSubscriptionProps = {
   currency: CryptoCurrency;
   deviceId: string;
 };
 
-export function useSubscription({ currency, deviceId }: UseScanAccountsProps) {
+export function useSubscription({ currency, deviceId }: UseSubscriptionProps) {
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const [scanning, setScanning] = useState(true);
   const [error, setError] = useState(null);
