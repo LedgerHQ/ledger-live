@@ -54,7 +54,7 @@ function getVersionedRedirects(
  * @returns Feature_StakePrograms object with the appropriate redirects for the current app version
  */
 export const useVersionedStakePrograms = (): Feature_StakePrograms | null => {
-  const rawStakePrograms = useFeature("stakePrograms") as unknown as VersionedStakePrograms | null;
+  const rawStakePrograms = useFeature("stakePrograms");
 
   const appVersion = LiveConfig.instance.appVersion || "0.0.0";
   return useMemo(() => {
