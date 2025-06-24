@@ -1,5 +1,27 @@
 # ledger-live-desktop
 
+## 2.118.1
+
+### Patch Changes
+
+- [#10657](https://github.com/LedgerHQ/ledger-live/pull/10657) [`04c1694`](https://github.com/LedgerHQ/ledger-live/commit/04c16942a5755bf3af470807dd484b71a09788eb) Thanks [@semeano](https://github.com/semeano)! - fixing value parser
+
+- Updated dependencies [[`04c1694`](https://github.com/LedgerHQ/ledger-live/commit/04c16942a5755bf3af470807dd484b71a09788eb)]:
+  - @ledgerhq/coin-aptos@2.3.1
+  - @ledgerhq/live-common@34.38.1
+  - @ledgerhq/live-dmk-desktop@0.5.1
+
+## 2.118.1-hotfix.0
+
+### Patch Changes
+
+- [#10657](https://github.com/LedgerHQ/ledger-live/pull/10657) [`04c1694`](https://github.com/LedgerHQ/ledger-live/commit/04c16942a5755bf3af470807dd484b71a09788eb) Thanks [@semeano](https://github.com/semeano)! - fixing value parser
+
+- Updated dependencies [[`04c1694`](https://github.com/LedgerHQ/ledger-live/commit/04c16942a5755bf3af470807dd484b71a09788eb)]:
+  - @ledgerhq/coin-aptos@2.3.1-hotfix.0
+  - @ledgerhq/live-common@34.38.1-hotfix.0
+  - @ledgerhq/live-dmk-desktop@0.5.1-hotfix.0
+
 ## 2.118.0
 
 ### Minor Changes

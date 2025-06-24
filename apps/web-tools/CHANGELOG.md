@@ -1,5 +1,19 @@
 # web-tools
 
+## 0.20.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.38.1
+
+## 0.20.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.38.1-hotfix.0
+
 ## 0.20.0
 
 ### Minor Changes
