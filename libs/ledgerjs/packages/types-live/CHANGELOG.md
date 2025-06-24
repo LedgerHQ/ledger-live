@@ -1,5 +1,13 @@
 # @ledgerhq/types-live
 
+## 6.75.0-nightly.1
+
+### Minor Changes
+
+- [#10630](https://github.com/LedgerHQ/ledger-live/pull/10630) [`2274597`](https://github.com/LedgerHQ/ledger-live/commit/227459709ec157b7e49db4e75c52525e15acd8d2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Feature Flag for the new Asset Network Account selection
+
+- [#10507](https://github.com/LedgerHQ/ledger-live/pull/10507) [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(lld, llm): target a custom reference of the CAL
+
 ## 6.75.0-nightly.0
 
 ### Minor Changes

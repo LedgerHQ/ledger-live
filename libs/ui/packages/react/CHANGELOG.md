@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.31.0-nightly.1
+
+### Minor Changes
+
+- [#10484](https://github.com/LedgerHQ/ledger-live/pull/10484) [`da942ca`](https://github.com/LedgerHQ/ledger-live/commit/da942caa12eec5de9fd5c90d7e00262291c49543) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Add Account Success Screen
+
 ## 0.30.1-nightly.0
 
 ### Patch Changes

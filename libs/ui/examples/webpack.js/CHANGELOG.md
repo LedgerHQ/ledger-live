@@ -1,5 +1,12 @@
 # webpack.js-example
 
+## 0.2.1-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`da942ca`](https://github.com/LedgerHQ/ledger-live/commit/da942caa12eec5de9fd5c90d7e00262291c49543)]:
+  - @ledgerhq/react-ui@0.31.0-nightly.1
+
 ## 0.2.1-nightly.0
 
 ### Patch Changes

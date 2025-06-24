@@ -1,5 +1,19 @@
 # @ledgerhq/coin-tezos
 
+## 5.4.0-nightly.1
+
+### Minor Changes
+
+- [#10318](https://github.com/LedgerHQ/ledger-live/pull/10318) [`013db08`](https://github.com/LedgerHQ/ledger-live/commit/013db0821557db55b83757df54d00f33eb86f9eb) Thanks [@dmirgaleev](https://github.com/dmirgaleev)! - Upgrade Baking Bad API to the latest version
+
+### Patch Changes
+
+- Updated dependencies [[`2274597`](https://github.com/LedgerHQ/ledger-live/commit/227459709ec157b7e49db4e75c52525e15acd8d2), [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/types-live@6.75.0-nightly.1
+  - @ledgerhq/cryptoassets@13.20.0-nightly.0
+  - @ledgerhq/coin-framework@5.4.1-nightly.1
+  - @ledgerhq/live-network@2.0.12-nightly.0
+
 ## 5.3.2-nightly.0
 
 ### Patch Changes

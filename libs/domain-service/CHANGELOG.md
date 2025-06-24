@@ -1,5 +1,12 @@
 # @ledgerhq/domain-service
 
+## 1.2.34-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`2274597`](https://github.com/LedgerHQ/ledger-live/commit/227459709ec157b7e49db4e75c52525e15acd8d2), [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/types-live@6.75.0-nightly.1
+
 ## 1.2.34-nightly.0
 
 ### Patch Changes

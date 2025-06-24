@@ -1,5 +1,37 @@
 # live-mobile
 
+## 3.84.0-nightly.1
+
+### Minor Changes
+
+- [#10625](https://github.com/LedgerHQ/ledger-live/pull/10625) [`27bba71`](https://github.com/LedgerHQ/ledger-live/commit/27bba718e39cb737a15803bc5146146fe3581f0b) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Block app if version is outdated
+
+- [#10418](https://github.com/LedgerHQ/ledger-live/pull/10418) [`12e7f47`](https://github.com/LedgerHQ/ledger-live/commit/12e7f4705de41ea37435fa7a99621e58b07f97a4) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - use react native screen header to back navigate in swap live app webview
+
+- [#10507](https://github.com/LedgerHQ/ledger-live/pull/10507) [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(lld, llm): target a custom reference of the CAL
+
+### Patch Changes
+
+- Updated dependencies [[`2274597`](https://github.com/LedgerHQ/ledger-live/commit/227459709ec157b7e49db4e75c52525e15acd8d2), [`8bd0b4e`](https://github.com/LedgerHQ/ledger-live/commit/8bd0b4e0672227d2bf9d1ff12145b98608cc28b3), [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/types-live@6.75.0-nightly.1
+  - @ledgerhq/live-dmk-mobile@0.7.0-nightly.0
+  - @ledgerhq/live-env@2.11.0-nightly.0
+  - @ledgerhq/coin-framework@5.4.1-nightly.1
+  - @ledgerhq/coin-cosmos@0.15.3-nightly.1
+  - @ledgerhq/coin-evm@2.22.5-nightly.1
+  - @ledgerhq/coin-filecoin@1.9.11-nightly.1
+  - @ledgerhq/coin-multiversx@0.4.11-nightly.1
+  - @ledgerhq/coin-stacks@0.8.11-nightly.1
+  - @ledgerhq/domain-service@1.2.34-nightly.1
+  - @ledgerhq/live-countervalues@0.5.11-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.40-nightly.1
+  - @ledgerhq/live-nft@0.8.11-nightly.1
+  - @ledgerhq/live-nft-react@0.9.11-nightly.1
+  - @ledgerhq/live-wallet@0.11.2-nightly.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.9-nightly.0
+  - @ledgerhq/ledger-key-ring-protocol@0.5.11-nightly.0
+  - @ledgerhq/live-network@2.0.12-nightly.0
+
 ## 3.84.0-nightly.0
 
 ### Minor Changes

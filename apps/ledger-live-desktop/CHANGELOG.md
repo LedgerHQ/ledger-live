@@ -1,5 +1,46 @@
 # ledger-live-desktop
 
+## 2.119.0-nightly.1
+
+### Minor Changes
+
+- [#10612](https://github.com/LedgerHQ/ledger-live/pull/10612) [`fa63ade`](https://github.com/LedgerHQ/ledger-live/commit/fa63ade5ee822789775f2c854249c2d1ec60fb45) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Don't remove devices while a connection is active
+
+- [#10484](https://github.com/LedgerHQ/ledger-live/pull/10484) [`da942ca`](https://github.com/LedgerHQ/ledger-live/commit/da942caa12eec5de9fd5c90d7e00262291c49543) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Add Account Success Screen
+
+- [#10616](https://github.com/LedgerHQ/ledger-live/pull/10616) [`cecfbdc`](https://github.com/LedgerHQ/ledger-live/commit/cecfbdcdd1e37b84e5907c41938447dc0af9aad3) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Display checkmark during onboarding install apps step
+
+- [#10640](https://github.com/LedgerHQ/ledger-live/pull/10640) [`1260479`](https://github.com/LedgerHQ/ledger-live/commit/12604794456a5c3e3ac55bfb6187d108e7ad01c0) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - Add testnets on developer mode
+
+- [#10639](https://github.com/LedgerHQ/ledger-live/pull/10639) [`63ce672`](https://github.com/LedgerHQ/ledger-live/commit/63ce672f4baee2fe93ca2fe485540e69f358c69d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - Keep the drawer open during add account
+
+- [#10507](https://github.com/LedgerHQ/ledger-live/pull/10507) [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(lld, llm): target a custom reference of the CAL
+
+### Patch Changes
+
+- Updated dependencies [[`27bba71`](https://github.com/LedgerHQ/ledger-live/commit/27bba718e39cb737a15803bc5146146fe3581f0b), [`2274597`](https://github.com/LedgerHQ/ledger-live/commit/227459709ec157b7e49db4e75c52525e15acd8d2), [`fa63ade`](https://github.com/LedgerHQ/ledger-live/commit/fa63ade5ee822789775f2c854249c2d1ec60fb45), [`da942ca`](https://github.com/LedgerHQ/ledger-live/commit/da942caa12eec5de9fd5c90d7e00262291c49543), [`8bd0b4e`](https://github.com/LedgerHQ/ledger-live/commit/8bd0b4e0672227d2bf9d1ff12145b98608cc28b3), [`8c9270b`](https://github.com/LedgerHQ/ledger-live/commit/8c9270bad99ec6b6d4e92aaf105d25ef96ff8734), [`cecfbdc`](https://github.com/LedgerHQ/ledger-live/commit/cecfbdcdd1e37b84e5907c41938447dc0af9aad3), [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/live-common@34.39.0-nightly.1
+  - @ledgerhq/types-live@6.75.0-nightly.1
+  - @ledgerhq/live-dmk-desktop@0.6.0-nightly.1
+  - @ledgerhq/react-ui@0.31.0-nightly.1
+  - @ledgerhq/coin-aptos@2.4.0-nightly.1
+  - @ledgerhq/cryptoassets@13.20.0-nightly.0
+  - @ledgerhq/live-env@2.11.0-nightly.0
+  - @ledgerhq/coin-framework@5.4.1-nightly.1
+  - @ledgerhq/coin-bitcoin@0.16.2-nightly.1
+  - @ledgerhq/coin-cosmos@0.15.3-nightly.1
+  - @ledgerhq/coin-evm@2.22.5-nightly.1
+  - @ledgerhq/coin-filecoin@1.9.11-nightly.1
+  - @ledgerhq/domain-service@1.2.34-nightly.1
+  - @ledgerhq/live-countervalues@0.5.11-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.40-nightly.1
+  - @ledgerhq/live-nft@0.8.11-nightly.1
+  - @ledgerhq/live-nft-react@0.9.11-nightly.1
+  - @ledgerhq/live-wallet@0.11.2-nightly.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.9-nightly.0
+  - @ledgerhq/ledger-key-ring-protocol@0.5.11-nightly.0
+  - @ledgerhq/live-network@2.0.12-nightly.0
+
 ## 2.119.0-nightly.0
 
 ### Minor Changes
