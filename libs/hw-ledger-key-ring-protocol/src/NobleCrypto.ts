@@ -2,7 +2,7 @@ import * as secp256k1 from "secp256k1";
 import * as ecc from "@bitcoinerlab/secp256k1";
 import { BIP32Factory } from "bip32";
 import hmac from "create-hmac";
-import * as crypto from "node:crypto";
+import * as crypto from "crypto";
 
 import type { Crypto, KeyPair, KeyPairWithChainCode } from "./Crypto";
 

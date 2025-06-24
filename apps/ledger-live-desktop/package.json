@@ -103,7 +103,7 @@
     "color": "4.2.3",
     "dotenv": "16.4.5",
     "electron-context-menu": "4.1.0",
-    "electron-store": "10.0.1",
+    "electron-store": "8.2.0",
     "electron-updater": "6.6.2",
     "firebase": "9.23.0",
     "focus-trap": "6.9.4",
