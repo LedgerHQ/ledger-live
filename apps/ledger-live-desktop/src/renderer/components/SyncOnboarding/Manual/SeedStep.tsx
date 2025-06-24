@@ -162,15 +162,23 @@ const SeedStep = ({ seedPathStatus, deviceModelId, charonSupported, charonStatus
       ) : seedPathStatus === "backup_charon" ? (
         <Flex flexDirection="column">
           <Flex alignItems="center" justifyContent="center" flexDirection="column">
-            <Flex style={{ width: 220, height: 170, overflow: "visible" }}>
-              <img src={CharonPng} alt="Charon" style={{ width: 220, height: 220 }} />
+            <Flex
+              style={{
+                width: 220,
+                height: 150,
+                overflow: "visible",
+                justifyContent: "center",
+                paddingTop: 20,
+              }}
+            >
+              <img src={CharonPng} alt="Charon" style={{ height: 220, objectFit: "contain" }} />
             </Flex>
             {/* @ts-expect-error weird props issue with React 18 */}
             <StepText mb={6} fontWeight="semiBold" variant="largeLineHeight" color="neutral.c100">
               {t("syncOnboarding.manual.seedContent.backupCharonTitle")}
             </StepText>
             {/* @ts-expect-error weird props issue with React 18 */}
-            <StepText mb={6}>
+            <StepText mb={6} textAlign="center">
               {t("syncOnboarding.manual.seedContent.backupCharonDescription")}
             </StepText>
 
