@@ -11,8 +11,8 @@ const androidDir = path.join(rootDir, "apps/ledger-live-mobile/android");
 const ENV_FILE_MOCK = path.join("apps", "ledger-live-mobile", ".env.mock");
 const ENV_FILE_MOCK_PRERELEASE = path.join("apps", "ledger-live-mobile", ".env.mock.prerelease");
 
-const getIosBinary = config =>
-  path.join(iosBuildDir, `Build/Products/${config}-iphonesimulator/${SCHEME}.app`);
+const getIosBinary = () =>
+  path.join(iosBuildDir, `Build/Products/Release-iphonesimulator/${SCHEME}.app`);
 const getAndroidBinary = type =>
   path.join(androidDir, `app/build/outputs/apk/${type}/app-${androidArch}-${type}.apk`);
 const getAndroidTestBinary = type =>
