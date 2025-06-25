@@ -41,7 +41,6 @@ export function useScanAccounts({
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
 
-  const [latestScannedAccount, setLatestScannedAccount] = useState<Account | null>(null);
   const [scannedAccounts, setScannedAccounts] = useState<Account[]>([]);
   const [onlyNewAccounts, setOnlyNewAccounts] = useState(true);
   const [showAllCreatedAccounts, setShowAllCreatedAccounts] = useState(false);
@@ -66,6 +65,33 @@ export function useScanAccounts({
     [newAccountSchemes],
   );
 
+  const accountFound = useCallback(
+    (accountFound: Account) => {
+      const hasAlreadyBeenScanned = scannedAccounts.some(a => accountFound.id === a.id);
+      const hasAlreadyBeenImported = existingAccounts.some(a => accountFound.id === a.id);
+      const isNewAccount = isAccountEmpty(accountFound);
+
+      if (!isNewAccount) {
+        setOnlyNewAccounts(false);
+      }
+
+      if (!hasAlreadyBeenScanned) {
+        setScannedAccounts([...scannedAccounts, accountFound]);
+        if (!hasAlreadyBeenImported) {
+          const newAccountsSelected = selectedIds.length > 0 ? selectedIds : [accountFound.id];
+          const existingAccountsSelected = !isNewAccount
+            ? Array.from(new Set([...selectedIds, accountFound.id]))
+            : selectedIds;
+          const selectedAccountIds = onlyNewAccounts
+            ? newAccountsSelected
+            : existingAccountsSelected;
+          setSelectedIds(selectedAccountIds);
+        }
+      }
+    },
+    [existingAccounts, onlyNewAccounts, scannedAccounts, selectedIds],
+  );
+
   const startSubscription = useCallback(() => {
     const bridge = getCurrencyBridge(currency);
     const syncConfig = {
@@ -83,14 +109,15 @@ export function useScanAccounts({
       })
       .subscribe({
         next: ({ account }) => {
-          setLatestScannedAccount(account);
+          accountFound(account);
         },
         complete: () => setScanning(false),
         error: error => {
           setError(error);
         },
       });
-  }, [blacklistedTokenIds, currency, deviceId]);
+  }, [blacklistedTokenIds, currency, deviceId, accountFound]);
+
   const restartSubscription = useCallback(() => {
     setScanning(true);
     setScannedAccounts([]);
@@ -231,33 +258,6 @@ export function useScanAccounts({
     startSubscription();
     return () => stopSubscription(false);
   }, [startSubscription, stopSubscription]);
-
-  useEffect(() => {
-    if (latestScannedAccount) {
-      const hasAlreadyBeenScanned = scannedAccounts.some(a => latestScannedAccount.id === a.id);
-      const hasAlreadyBeenImported = existingAccounts.some(a => latestScannedAccount.id === a.id);
-      const isNewAccount = isAccountEmpty(latestScannedAccount);
-
-      if (!isNewAccount) {
-        setOnlyNewAccounts(false);
-      }
-
-      if (!hasAlreadyBeenScanned) {
-        setScannedAccounts([...scannedAccounts, latestScannedAccount]);
-        if (!hasAlreadyBeenImported) {
-          const newAccountsSelected =
-            selectedIds.length > 0 ? selectedIds : [latestScannedAccount.id];
-          const existingAccountsSelected = !isNewAccount
-            ? Array.from(new Set([...selectedIds, latestScannedAccount.id]))
-            : selectedIds;
-          const selectedAccountIds = onlyNewAccounts
-            ? newAccountsSelected
-            : existingAccountsSelected;
-          setSelectedIds(selectedAccountIds);
-        }
-      }
-    }
-  }, [existingAccounts, latestScannedAccount, onlyNewAccounts, scannedAccounts, selectedIds]);
 
   useEffect(() => {
     if (
