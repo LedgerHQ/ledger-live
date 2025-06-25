@@ -107,7 +107,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       PORTFOLIO_VIEW_ID,
       ScreenName.Portfolio,
       {
-        topChains: [...allAccounts.map(account => getAccountCurrency(account).name)],
+        topChains: allAccounts.map(account => getAccountCurrency(account).name),
       },
       Date.now(),
     );

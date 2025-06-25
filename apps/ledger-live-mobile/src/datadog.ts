@@ -58,13 +58,13 @@ export const initializeDatadogProvider = async (
  * @param trackedName - The base name to be tracked.
  * @returns The modified view name or null if tracking should be stopped.
  */
-export const viewNamePredicate: ViewNamePredicate = (route, trackedName) => {
+export const viewNamePredicate: ViewNamePredicate = ({ name, params }, trackedName) => {
   // If the route is the Portfolio screen, we stop the native navigation tracking as we will manually track the view
-  if (ScreenName.Portfolio === route.name) {
+  if (ScreenName.Portfolio === name) {
     return null;
   }
-  if ([ScreenName.Asset].includes(route.name as ScreenName) && route.params?.currency?.id) {
-    return `${trackedName}/${route.params?.currency?.id}`;
+  if ([ScreenName.Asset].includes(name as ScreenName) && params?.currency?.id) {
+    return `${trackedName}/${params?.currency?.id}`;
   }
   return trackedName;
 };
