@@ -77,6 +77,16 @@ export async function getTrustedInput(
   // NOTE: this isn't necessary as consensusBranchId is only set when the transaction is a zcash tx
   // but better safe than sorry
   const zCashConsensusBranchId = transaction.consensusBranchId || Buffer.alloc(0);
+
+  console.log("rabl: getTrustedInput HERE 1", {
+    version: transaction.version,
+    timestamp: transaction.timestamp,
+    nVersionGroupId: transaction.nVersionGroupId,
+    isZcash,
+    zCashConsensusBranchId,
+    inputsLength: inputs.length,
+  });
+
   await getTrustedInputRaw(
     transport,
     Buffer.concat([
@@ -100,7 +110,6 @@ export async function getTrustedInput(
       ? processWholeScriptBlock(Buffer.concat([input.script, input.sequence]))
       : processScriptBlocks(input.script, input.sequence));
   }
-
   await getTrustedInputRaw(transport, createVarint(outputs.length));
 
   for (const output of outputs) {
@@ -110,7 +119,53 @@ export async function getTrustedInput(
       createVarint(output.script.length),
       output.script,
     ]);
+    console.log("rabl: getTrustedInput HERE 6", { data });
     await getTrustedInputRaw(transport, data);
+  }
+
+  if (isZcash && transaction.sapling) {
+    const data = Buffer.concat([
+      locktime,
+      Buffer.from([0x01, 0x00, 0x00, 0x00]),
+      transaction.sapling.valueBalanceSapling,
+      transaction.sapling.anchorSapling,
+      createVarint(transaction.sapling.vSpendsSapling.length),
+      createVarint(transaction.sapling.vOutputSapling.length),
+    ]);
+
+    console.log("rabl: start EXTRA DATA", { data });
+    // send this is sapling data
+    await getTrustedInputRaw(transport, data);
+    // // send spends
+    for (const spend of transaction.sapling.vSpendsSapling) {
+      const spendData = Buffer.concat([
+        spend.cv,
+        spend.anchor,
+        spend.nullifier,
+        spend.rk,
+        createVarint(spend.zkproof.length),
+        spend.zkproof,
+      ]);
+      console.log("rabl: getTrustedInput HERE 6.1", { spendData });
+      await getTrustedInputRaw(transport, spendData);
+    }
+    // await getTrustedInputRaw(transport, data);
+    // // send outputs
+    for (const output of transaction.sapling.vOutputSapling) {
+      const outputData = Buffer.concat([
+        output.cv,
+        output.cmu,
+        output.ephemeralKey,
+        output.encCiphertext,
+        createVarint(output.zkproof.length),
+        output.zkproof,
+      ]);
+      console.log("rabl: getTrustedInput HERE 6.2", { outputData });
+      await getTrustedInputRaw(transport, outputData);
+    }
+    // await getTrustedInputRaw(transport, data);
+    // // send other
+    // await getTrustedInputRaw(transport, data);
   }
 
   const endData: Buffer[] = [];
