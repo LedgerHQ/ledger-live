@@ -4,6 +4,7 @@ import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
 import { base64ToUrlSafeBase64, patchOperationWithExtra } from "./utils";
 import { HederaOperationExtra, Transaction } from "../types";
 import { broadcastTransaction } from "../api/network";
+import { isValidExtra } from "../logic";
 
 export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({ signedOperation }) => {
   const { signature, operation } = signedOperation;
@@ -16,6 +17,7 @@ export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({ signe
   const base64Hash = Buffer.from(response.transactionHash).toString("base64");
   const base64HashUrlSafe = base64ToUrlSafeBase64(base64Hash);
   const extra: HederaOperationExtra = {
+    ...(isValidExtra(operation.extra) ? operation.extra : {}),
     transactionId: response.transactionId.toString(),
   };
 

@@ -49,7 +49,7 @@ describe("js-estimateMaxSpendable", () => {
   beforeAll(async () => {
     const signer = jest.fn();
     bridge = createBridges(signer);
-    estimatedFees = await getEstimatedFees(account);
+    estimatedFees = await getEstimatedFees(account, "CryptoTransfer");
   });
 
   test("estimateMaxSpendable", async () => {
