@@ -1260,7 +1260,7 @@
         "titleCompleted": "Secret Recovery Phrase confirmed",
         "recoverSeed": "Placeholder: Recover",
         "restoreSeed": "To restore, follow instructions appearing on your Ledger Secure Screen.",
-        "restoreCharonTitle": "Restore using Ledger Recovery Key",
+        "restoreCharonTitle": "Restore using Recovery Key",
         "restoreCharonDescription": "To restore, follow instructions appearing on your Ledger Secure Screen.",
         "restoreCharonContinueOnDevice": "Follow the instructions on your {{productName}}",
         "selection": "Choose the setup option that best suits you:",

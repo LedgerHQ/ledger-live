@@ -2371,7 +2371,7 @@
         "continueOnDevice": "Choose the relevant option on your {{productName}}."
       },
       "restoreLedgerCharon": {
-        "title": "Restore using Ledger Recovery Key",
+        "title": "Restore using Recovery Key",
         "description": "To restore, follow instructions appearing on your Ledger Secure Screen.",
         "continueOnDevice": "Follow the instructions on your {{productName}}."
       },
