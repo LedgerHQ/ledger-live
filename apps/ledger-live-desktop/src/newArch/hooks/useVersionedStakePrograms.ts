@@ -9,7 +9,6 @@ function getVersionedRedirects(
   appVersion: string,
 ): Feature_StakePrograms {
   const { list, redirects, versions } = stakeProgramsFeature.params ?? {};
-
   if (!versions || versions.length === 0) {
     return {
       enabled: stakeProgramsFeature.enabled,
@@ -34,7 +33,7 @@ function getVersionedRedirects(
   const applicableVersion = sortedVersions.find(versionEntry => {
     const entryVersion = versionEntry[versionKey];
     if (!entryVersion) return false;
-    return semver.satisfies(appVersion, entryVersion);
+    return semver.satisfies(appVersion, entryVersion, { includePrerelease: true });
   });
 
   const versionSpecificRedirects = applicableVersion ? applicableVersion.redirects : {};

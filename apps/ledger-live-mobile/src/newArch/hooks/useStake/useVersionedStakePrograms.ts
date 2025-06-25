@@ -34,7 +34,7 @@ function getVersionedRedirects(
   const applicableVersion = sortedVersions.find(versionEntry => {
     const entryVersion = versionEntry[versionKey];
     if (!entryVersion) return false;
-    return semver.satisfies(appVersion, entryVersion);
+    return semver.satisfies(appVersion, entryVersion, { includePrerelease: true });
   });
 
   const versionSpecificRedirects = applicableVersion ? applicableVersion.redirects : {};
