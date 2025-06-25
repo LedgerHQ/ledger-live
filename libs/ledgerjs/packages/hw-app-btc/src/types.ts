@@ -40,10 +40,41 @@ export interface Transaction {
   extraData?: Buffer;
   // zCash specific
   consensusBranchId?: Buffer;
+  sapling?: SaplingData;
 }
 
 export interface TrustedInput {
   trustedInput: boolean;
   value: Buffer;
   sequence: Buffer;
+}
+
+// zCash specific
+/**
+ */
+export interface SaplingData {
+  //nSpendsSapling: Buffer;
+  vSpendsSapling: SpendDescriptionV5[];
+  //nOutputsSapling: Buffer;
+  vOutputSapling: OutputDescriptionV5[];
+  valueBalanceSapling: Buffer;
+  anchorSapling: Buffer;
+  vSpendProofsSapling: Buffer;
+  vSpendAuthSigsSapling: Buffer;
+  vOutputProofsSapling: Buffer;
+  bindingSigSapling: Buffer;
+}
+
+export interface SpendDescriptionV5 {
+  cv: Buffer;
+  nullifier: Buffer;
+  rk: Buffer;
+}
+
+export interface OutputDescriptionV5 {
+  cv: Buffer;
+  cmu: Buffer;
+  ephemeralKey: Buffer;
+  encCiphertext: Buffer;
+  outCiphertext: Buffer;
 }
