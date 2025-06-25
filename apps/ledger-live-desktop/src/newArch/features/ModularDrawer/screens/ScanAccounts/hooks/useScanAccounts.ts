@@ -23,39 +23,41 @@ export const useScanAccounts = ({
 }) => {
   const existingAccounts = useSelector(accountsSelector);
 
-  const { error, stopSubscription, scanning, latestScannedAccount } = useSubscription({
-    currency,
-    deviceId,
-  });
-
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [scannedAccounts, setScannedAccounts] = useState<Account[]>([]);
   const [onlyNewAccounts, setOnlyNewAccounts] = useState(true);
 
-  useEffect(() => {
-    if (!latestScannedAccount) return;
+  const accountScanned = useCallback(
+    (account: Account) => {
+      const isNewAccount = isAccountEmpty(account);
 
-    const isNewAccount = isAccountEmpty(latestScannedAccount);
+      if (!isNewAccount) {
+        setOnlyNewAccounts(false);
+      }
 
-    if (!isNewAccount) {
-      setOnlyNewAccounts(false);
-    }
+      const hasAlreadyBeenScanned = scannedAccounts.some(a => account.id === a.id);
 
-    const hasAlreadyBeenScanned = scannedAccounts.some(a => latestScannedAccount.id === a.id);
+      if (!hasAlreadyBeenScanned) {
+        setScannedAccounts(prev => [...prev, account]);
 
-    if (!hasAlreadyBeenScanned) {
-      setScannedAccounts(prev => [...prev, latestScannedAccount]);
+        const hasAlreadyBeenImported = existingAccounts.some(a => account.id === a.id);
+        if (hasAlreadyBeenImported) return;
 
-      const hasAlreadyBeenImported = existingAccounts.some(a => latestScannedAccount.id === a.id);
-      if (hasAlreadyBeenImported) return;
+        setSelectedIds(prev => {
+          if (onlyNewAccounts) return prev.length ? prev : [account.id];
+          if (isNewAccount) return prev;
+          return Array.from(new Set([...prev, account.id]));
+        });
+      }
+    },
+    [existingAccounts, onlyNewAccounts, scannedAccounts],
+  );
 
-      setSelectedIds(prev => {
-        if (onlyNewAccounts) return prev.length ? prev : [latestScannedAccount.id];
-        if (isNewAccount) return prev;
-        return Array.from(new Set([...prev, latestScannedAccount.id]));
-      });
-    }
-  }, [existingAccounts, latestScannedAccount, onlyNewAccounts, scannedAccounts]);
+  const { error, stopSubscription, scanning } = useSubscription({
+    currency,
+    deviceId,
+    accountScanned,
+  });
 
   const [showAllCreatedAccounts, setShowAllCreatedAccounts] = useState(false);
 

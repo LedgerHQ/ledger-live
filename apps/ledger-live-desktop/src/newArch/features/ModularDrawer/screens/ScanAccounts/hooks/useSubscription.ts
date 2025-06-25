@@ -9,14 +9,14 @@ import { Subscription } from "rxjs";
 export type UseSubscriptionProps = {
   currency: CryptoCurrency;
   deviceId: string;
+  accountScanned: (account: Account) => void;
 };
 
-export function useSubscription({ currency, deviceId }: UseSubscriptionProps) {
+export function useSubscription({ currency, deviceId, accountScanned }: UseSubscriptionProps) {
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const [scanning, setScanning] = useState(true);
   const [error, setError] = useState(null);
 
-  const [latestScannedAccount, setLatestScannedAccount] = useState<Account | null>(null);
   const scanSubscription = useRef<Subscription | null>(null);
 
   const startSubscription = useCallback(() => {
@@ -36,14 +36,14 @@ export function useSubscription({ currency, deviceId }: UseSubscriptionProps) {
       })
       .subscribe({
         next: ({ account }) => {
-          setLatestScannedAccount(account);
+          accountScanned(account);
         },
         complete: () => setScanning(false),
         error: error => {
           setError(error);
         },
       });
-  }, [blacklistedTokenIds, currency, deviceId]);
+  }, [blacklistedTokenIds, currency, deviceId, accountScanned]);
 
   const stopSubscription = useCallback((syncUI = true) => {
     if (scanSubscription.current) {
@@ -65,6 +65,5 @@ export function useSubscription({ currency, deviceId }: UseSubscriptionProps) {
     error,
     stopSubscription,
     scanning,
-    latestScannedAccount,
   };
 }
