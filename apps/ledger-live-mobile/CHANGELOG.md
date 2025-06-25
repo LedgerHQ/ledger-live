@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.84.0-nightly.3
+
+### Patch Changes
+
+- [#10675](https://github.com/LedgerHQ/ledger-live/pull/10675) [`f68ed43`](https://github.com/LedgerHQ/ledger-live/commit/f68ed438c22f3a1f503a08db30996f2bf0b57322) Thanks [@beths-ledger](https://github.com/beths-ledger)! - fix param passed to earn live app
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@2.22.5-nightly.2
+
 ## 3.84.0-nightly.2
 
 ### Minor Changes

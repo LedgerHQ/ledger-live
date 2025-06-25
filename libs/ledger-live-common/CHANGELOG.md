@@ -1,5 +1,16 @@
 # @ledgerhq/live-common
 
+## 34.39.0-nightly.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@2.22.5-nightly.2
+  - @ledgerhq/hw-app-eth@6.45.9-nightly.2
+  - @ledgerhq/coin-celo@1.1.9-nightly.2
+  - @ledgerhq/live-signer-evm@0.5.4-nightly.2
+  - @ledgerhq/hw-app-celo@6.33.7-nightly.2
+
 ## 34.39.0-nightly.1
 
 ### Minor Changes

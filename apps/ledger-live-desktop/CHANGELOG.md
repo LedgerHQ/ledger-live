@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.119.0-nightly.3
+
+### Minor Changes
+
+- [#10658](https://github.com/LedgerHQ/ledger-live/pull/10658) [`dbf03ac`](https://github.com/LedgerHQ/ledger-live/commit/dbf03ac5317ed320f4b430d997f6b78fc625d8be) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix banner not displaying correct language when switching from one to another
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@2.22.5-nightly.2
+  - @ledgerhq/live-common@34.39.0-nightly.2
+  - @ledgerhq/live-dmk-desktop@0.6.0-nightly.2
+
 ## 2.119.0-nightly.2
 
 ### Minor Changes

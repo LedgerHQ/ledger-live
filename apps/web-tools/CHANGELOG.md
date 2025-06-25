@@ -1,5 +1,13 @@
 # web-tools
 
+## 0.20.1-nightly.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.45.9-nightly.2
+  - @ledgerhq/live-common@34.39.0-nightly.2
+
 ## 0.20.1-nightly.1
 
 ### Patch Changes

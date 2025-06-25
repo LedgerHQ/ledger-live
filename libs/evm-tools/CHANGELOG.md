@@ -1,5 +1,11 @@
 # @ledgerhq/evm-tools
 
+## 1.7.0-nightly.1
+
+### Minor Changes
+
+- [#10543](https://github.com/LedgerHQ/ledger-live/pull/10543) [`881dc73`](https://github.com/LedgerHQ/ledger-live/commit/881dc73e98bba95567fc2a4a6c54659d44f22957) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - added dapp selectors to be able to track more types of transactions on evm contracts
+
 ## 1.6.5-nightly.0
 
 ### Patch Changes
