@@ -118,14 +118,6 @@ export function useScanAccounts({
       });
   }, [blacklistedTokenIds, currency, deviceId, accountFound]);
 
-  const restartSubscription = useCallback(() => {
-    setScanning(true);
-    setScannedAccounts([]);
-    setSelectedIds([]);
-    setError(null);
-    setHasImportedAccounts(false);
-    startSubscription();
-  }, [startSubscription]);
   const stopSubscription = useCallback((syncUI = true) => {
     if (scanSubscription.current) {
       scanSubscription.current.unsubscribe();
@@ -177,10 +169,6 @@ export function useScanAccounts({
     onComplete(scannedAccounts.filter(a => selectedIds.includes(a.id)));
   }, [dispatch, existingAccounts, scannedAccounts, selectedIds, onComplete]);
 
-  const onCancel = useCallback(() => {
-    setError(null);
-  }, []);
-
   const toggleShowAllCreatedAccounts = useCallback(
     () => setShowAllCreatedAccounts(prevState => !prevState),
     [],
@@ -219,9 +207,6 @@ export function useScanAccounts({
     [sections],
   );
 
-  const cantCreateAccount = creatableAccounts.length === 0;
-  const hasImportableAccounts = importableAccounts.length > 0;
-  const noImportableAccounts = cantCreateAccount && !hasImportableAccounts;
   const allImportableAccountsSelected = useMemo(
     () =>
       importableAccounts.length > 0 &&
@@ -260,6 +245,9 @@ export function useScanAccounts({
   }, [startSubscription, stopSubscription]);
 
   useEffect(() => {
+    const cantCreateAccount = creatableAccounts.length === 0;
+    const hasImportableAccounts = importableAccounts.length > 0;
+
     if (
       !scanning &&
       alreadyEmptyAccount &&
@@ -270,15 +258,13 @@ export function useScanAccounts({
       navigateToWarningScreen(WARNING_REASON.ALREADY_EMPTY_ACCOUNT, alreadyEmptyAccount);
     } else if (
       !scanning &&
-      (!creatableAccounts.length || !importableAccounts.length) &&
+      (cantCreateAccount || !importableAccounts.length) &&
       CustomNoAssociatedAccounts &&
       !hasImportedAccounts
     ) {
       navigateToWarningScreen(WARNING_REASON.NO_ASSOCIATED_ACCOUNTS);
     }
   }, [
-    hasImportableAccounts,
-    cantCreateAccount,
     alreadyEmptyAccount,
     alreadyEmptyAccountName,
     scanning,
@@ -294,17 +280,10 @@ export function useScanAccounts({
 
   return {
     formatAccount,
-    alreadyEmptyAccount,
-    alreadyEmptyAccountName,
-    cantCreateAccount,
     error,
     newAccountSchemes,
     allImportableAccountsSelected,
-    noImportableAccounts,
-    onCancel,
-    restartSubscription,
     stopSubscription,
-    scannedAccounts,
     scanning,
     importableAccounts,
     creatableAccounts,
