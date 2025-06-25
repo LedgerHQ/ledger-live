@@ -271,8 +271,11 @@ jobs:
         with:
           max_attempts: 2
           timeout_minutes: 15
-          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="@ledgerhq/dummy-*-app..."  --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm
-          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="@ledgerhq/dummy-*-app..." --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm
+          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="@ledgerhq/dummy-*-app..."  --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
+          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="@ledgerhq/dummy-*-app..." --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
+
+      - name: Detox Post Install
+        run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
 
       - name: Download Native Build
         uses: tespkg/actions-cache/restore@v1
@@ -371,17 +374,6 @@ jobs:
           PRODUCTION: ${{ inputs.production_firebase }}
           INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
 
-      - name: Test iOS app Mock
-        if: ${{ env.E2E_RUN != 'true' }}
-        id: detox-mock
-        timeout-minutes: 75
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
-        with:
-          command: pnpm test:llm:ios:e2e -- -p ios -t
-          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          turbo_port: ${{ steps.setup-caches.outputs.port }}
-          disable_cache: ${{ inputs.disable-turbo-cache || false }}
-
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
@@ -389,7 +381,9 @@ jobs:
         with:
           name: "ios-test-artifacts-${{ matrix.shardIndex }}"
           path: ${{ env.E2E_RUN == 'true' && 'e2e/mobile/artifacts/' || 'apps/ledger-live-mobile/artifacts/' }}
+
       - run: echo "${{ steps.test-artifacts.outputs.artifact-id }}"
+
       - name: Set job output based on detox result
         id: set-output
         if: always()
@@ -547,6 +541,7 @@ jobs:
         with:
           install-proto: true
           skip-turbo-cache: "false"
+          skip-pnpm-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -567,7 +562,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..."  --filter="ledger-live-mobile-e2e-tests" --no-frozen-lockfile --unsafe-perm
+          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..."  --filter="ledger-live-mobile-e2e-tests" --no-frozen-lockfile --unsafe-perm --ignore-scripts
+
+      - name: Detox Post Install
+        run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
 
       - name: Build dependencies
         uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
