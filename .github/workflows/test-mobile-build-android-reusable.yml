@@ -147,6 +147,7 @@ jobs:
           pnpm mobile e2e:ci -p android -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
         env:
           PRODUCTION: ${{ inputs.production_firebase }}
+          SKIP_JS_BUNDLING: true
 
       - name: Upload Detox Native Build
         uses: tespkg/actions-cache/save@v1
@@ -231,3 +232,9 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
+  skip-android-js:
+    name: "Android Build JS - Skip"
+    if: ${{ inputs.build-android-js != true }}
+    runs-on: [ ledger-live-4xlarge ]
+    steps:
+      - run: echo "Skipping"

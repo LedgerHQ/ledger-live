@@ -82,10 +82,8 @@ function Earn({ route }: Props) {
           countryLocale,
           currencyTicker,
           discreetMode: discreet ? "true" : "false",
-          stakeProgramsParam: stakeProgramsParam?.length
-            ? JSON.stringify(stakeProgramsParam)
-            : undefined,
-          stakeCurrenciesParam: stakeCurrenciesParam
+          stakeProgramsParam: stakeProgramsParam ? JSON.stringify(stakeProgramsParam) : undefined,
+          stakeCurrenciesParam: stakeCurrenciesParam?.length
             ? JSON.stringify(stakeCurrenciesParam)
             : undefined,
           OS: Platform.OS,

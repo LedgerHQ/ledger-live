@@ -12,6 +12,7 @@ const statusToDebug: UpdateStatus[] = [
   "check-success",
   "update-available",
   "download-progress",
+  "downloading-update",
   "error",
 ];
 const ExposeUpdaterWhenInMock = () => {
