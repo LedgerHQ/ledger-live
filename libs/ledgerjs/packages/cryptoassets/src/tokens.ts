@@ -576,12 +576,9 @@ export function convertJettonToken([address, name, ticker, magnitude, delisted]:
   };
 }
 
-export function convertCeloToken([
-  ticker,
-  decimals,
-  contractAddress,
-  name,
-]: CeloToken): TokenCurrency {
+export function convertCeloToken([ticker, decimals, contractAddress, name]: CeloToken):
+  | TokenCurrency
+  | undefined {
   const parentCurrency = getCryptoCurrencyById("celo");
 
   if (!parentCurrency) {
