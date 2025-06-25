@@ -63,7 +63,6 @@ jobs:
     needs:
       - build-desktop
       - test-desktop
-      - build-mobile
       - test-mobile
       - build-test-mobile
       - test-libraries
