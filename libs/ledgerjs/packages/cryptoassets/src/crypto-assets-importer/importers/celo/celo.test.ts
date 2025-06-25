@@ -57,7 +57,19 @@ export default tokens as CeloTokens[];
     expect(mockedFs).toHaveBeenNthCalledWith(
       1,
       "celo.json",
-      JSON.stringify([["cUSD", 8, "0x765DE816845861e75A25fCA122bb6898B8B1282a", "Celo Dollar"]]),
+      JSON.stringify([
+        [
+          "celo",
+          "Celo Dollar",
+          "cUSD",
+          18,
+          "Celo Dollar",
+          "TODO: ADD SIGNATURE",
+          "0x765de816845861e75a25fca122bb6898b8b1282a",
+          false,
+          false,
+        ],
+      ]),
     );
     expect(mockedFs).toHaveBeenNthCalledWith(2, "celo-hash.json", JSON.stringify("etagHash"));
     expect(mockedFs).toHaveBeenNthCalledWith(3, "celo.ts", expectedFile);
