@@ -4,7 +4,7 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { useMemo } from "react";
 import semver from "semver";
 
-function getVersionedRedirects(
+export function getVersionedRedirects(
   stakeProgramsFeature: Feature_StakePrograms,
   appVersion: string,
 ): Feature_StakePrograms {

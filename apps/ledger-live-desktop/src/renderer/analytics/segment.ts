@@ -35,6 +35,8 @@ import { analyticsDrawerContext } from "../drawers/Provider";
 import { accountsSelector } from "../reducers/accounts";
 import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
 import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
+import { LiveConfig } from "@ledgerhq/live-config/lib-es/LiveConfig";
+import { getVersionedRedirects } from "~/newArch/hooks/useVersionedStakePrograms";
 
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -120,7 +122,7 @@ const getPtxAttributes = () => {
   if (!analyticsFeatureFlagMethod) return {};
   const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
   const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
-  const stakePrograms = analyticsFeatureFlagMethod("stakePrograms");
+  const rawStakePrograms = analyticsFeatureFlagMethod("stakePrograms");
   const ptxCard = analyticsFeatureFlagMethod("ptxCard");
 
   const isBatch1Enabled: boolean =
@@ -131,10 +133,14 @@ const getPtxAttributes = () => {
     !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 3;
   const stakingProvidersEnabled: number | string =
     !!stakingProviders?.enabled &&
-    stakingProviders?.params &&
-    stakingProviders?.params?.listProvider?.length > 0
+      stakingProviders?.params &&
+      stakingProviders?.params?.listProvider?.length > 0
       ? stakingProviders?.params?.listProvider.length
       : "flag not loaded";
+
+  // Apply versioned redirects logic to the stakePrograms feature flag
+  const appVersion = LiveConfig.instance.appVersion || "0.0.0";
+  const stakePrograms = rawStakePrograms ? getVersionedRedirects(rawStakePrograms, appVersion) : null;
 
   const stakingCurrenciesEnabled: string[] | string =
     stakePrograms?.enabled && stakePrograms?.params?.list?.length
@@ -197,32 +203,32 @@ const extraProperties = (store: ReduxStore) => {
 
   const deviceInfo = device
     ? {
-        modelId: device.modelId,
-        deviceVersion: device.deviceInfo.version,
-        deviceLanguage:
-          device.deviceInfo?.languageId !== undefined
-            ? idsToLanguage[device.deviceInfo.languageId]
-            : undefined,
-        appLength: device.apps?.length,
-      }
+      modelId: device.modelId,
+      deviceVersion: device.deviceInfo.version,
+      deviceLanguage:
+        device.deviceInfo?.languageId !== undefined
+          ? idsToLanguage[device.deviceInfo.languageId]
+          : undefined,
+      appLength: device.apps?.length,
+    }
     : {};
   const sidebarCollapsed = sidebarCollapsedSelector(state);
 
   const accountsWithFunds = accounts
     ? [
-        ...new Set(
-          accounts
-            .filter(account => account?.balance.isGreaterThan(0))
-            .map(account => account?.currency?.ticker),
-        ),
-      ]
+      ...new Set(
+        accounts
+          .filter(account => account?.balance.isGreaterThan(0))
+          .map(account => account?.currency?.ticker),
+      ),
+    ]
     : [];
   const blockchainsWithNftsOwned = accounts
     ? [
-        ...new Set(
-          accounts.filter(account => account.nfts?.length).map(account => account.currency.ticker),
-        ),
-      ]
+      ...new Set(
+        accounts.filter(account => account.nfts?.length).map(account => account.currency.ticker),
+      ),
+    ]
     : [];
   const hasGenesisPass = hasNftInAccounts(GENESIS_PASS_COLLECTION_CONTRACT, accounts);
   const hasInfinityPass = hasNftInAccounts(INFINITY_PASS_COLLECTION_CONTRACT, accounts);
@@ -309,17 +315,17 @@ const confidentialityFilter = (properties?: Record<string, unknown> | null) => {
   const { account, parentAccount } = properties || {};
   const filterAccount = account
     ? {
-        account:
-          typeof account === "object" ? getDefaultAccountName(account as AccountLike) : account,
-      }
+      account:
+        typeof account === "object" ? getDefaultAccountName(account as AccountLike) : account,
+    }
     : {};
   const filterParentAccount = parentAccount
     ? {
-        parentAccount:
-          typeof parentAccount === "object"
-            ? getDefaultAccountName(parentAccount as AccountLike)
-            : parentAccount,
-      }
+      parentAccount:
+        typeof parentAccount === "object"
+          ? getDefaultAccountName(parentAccount as AccountLike)
+          : parentAccount,
+    }
     : {};
   return {
     ...properties,
