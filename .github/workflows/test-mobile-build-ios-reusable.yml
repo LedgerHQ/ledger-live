@@ -247,6 +247,6 @@ jobs:
   skip-ios-js:
     name: "iOS Build JS - Skip"
     if: ${{ inputs.build-ios-js != true }}
-    runs-on: [ ledger-live-4xlarge ]
+    runs-on: [ ledger-live-medium ]
     steps:
       - run: echo "Skipping"
