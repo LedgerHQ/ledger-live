@@ -17,7 +17,7 @@ import filecoinTokens from "./data/filecoin-erc20";
 import spltokens, { SPLToken } from "./data/spl";
 import aptCoinTokens, { AptosToken as AptosCoinToken } from "./data/apt_coin";
 import aptFATokens, { AptosToken as AptosFAToken } from "./data/apt_fungible_asset";
-import celoTokens, { CeloToken } from "./data/celo";
+import celoTokens from "./data/celo";
 import { ERC20Token } from "./types";
 import { getEnv } from "@ledgerhq/live-env";
 
@@ -70,7 +70,7 @@ if (getEnv("APTOS_ENABLE_TOKENS")) {
 }
 
 // Celo tokens
-addTokens(celoTokens.map(convertCeloToken));
+addTokens(celoTokens.map(convertERC20));
 
 type TokensListOptions = {
   withDelisted: boolean;
@@ -571,34 +571,6 @@ export function convertJettonToken([address, name, ticker, magnitude, delisted]:
         name,
         code: ticker,
         magnitude,
-      },
-    ],
-  };
-}
-
-export function convertCeloToken([ticker, decimals, contractAddress, name]: CeloToken):
-  | TokenCurrency
-  | undefined {
-  const parentCurrency = getCryptoCurrencyById("celo");
-
-  if (!parentCurrency) {
-    return;
-  }
-
-  return {
-    type: "TokenCurrency",
-    id: `celo/erc20/${ticker}`,
-    contractAddress,
-    parentCurrency,
-    tokenType: "erc20",
-    name,
-    ticker,
-    disableCountervalue: false,
-    units: [
-      {
-        name,
-        code: ticker,
-        magnitude: decimals,
       },
     ],
   };
