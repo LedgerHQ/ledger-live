@@ -1,7 +1,7 @@
 ---
-"ledger-live-desktop": patch
-"@ledgerhq/icons-ui": patch
-"@ledgerhq/react-ui": patch
+"ledger-live-desktop": minor
+"@ledgerhq/icons-ui": minor
+"@ledgerhq/react-ui": minor
 ---
 
 MAD arch rework of add account
