@@ -34,6 +34,7 @@ import StepWarning, { StepWarningFooter } from "./steps/StepWarning";
 import { St, StepId } from "./types";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
+import StepWarningDepecration from "./steps/StepWarningDepecration";
 
 export type Data = {
   account?: AccountLike | undefined | null;
@@ -116,6 +117,11 @@ const createSteps = (disableBacks: string[] = [], shouldSkipAmount = false): St[
       component: StepConfirmation,
       footer: StepConfirmationFooter,
       onBack: null,
+    },
+    {
+      id: "deprecation",
+      excludeFromBreadcrumb: true,
+      component: StepWarningDepecration,
     },
   ];
 
@@ -211,11 +217,12 @@ const Body = ({
   });
 
   invariant(account, "account required");
-
+  onChangeStepId("deprecation");
   // make sure step id is in sync
   useEffect(() => {
-    const stepId = params?.startWithWarning ? "warning" : null;
-    if (stepId) onChangeStepId(stepId);
+    onChangeStepId("deprecation");
+    //  const stepId = params?.startWithWarning ? "warning" : null;
+    //  if (stepId) onChangeStepId(stepId);
   }, [onChangeStepId, params]);
   const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
   const [transactionError, setTransactionError] = useState<Error | null>(null);
@@ -311,9 +318,11 @@ const Body = ({
     title:
       stepId === "warning"
         ? t("common.information")
-        : isNFTSend
-          ? t("send.titleNft")
-          : t("send.title"),
+        : stepId === "deprecation"
+          ? ""
+          : isNFTSend
+            ? t("send.titleNft")
+            : t("send.title"),
     stepId,
     steps,
     errorSteps,
@@ -324,7 +333,10 @@ const Body = ({
     transaction,
     signed,
     currencyName,
-    hideBreadcrumb: (!!error && ["recipient", "amount"].includes(stepId)) || stepId === "warning",
+    hideBreadcrumb:
+      (!!error && ["recipient", "amount"].includes(stepId)) ||
+      stepId === "warning" ||
+      stepId === "deprecation",
     error,
     status,
     bridgePending,

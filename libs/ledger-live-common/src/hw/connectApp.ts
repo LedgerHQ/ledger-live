@@ -305,7 +305,6 @@ const cmd = (transport: Transport, { request }: Input): Observable<ConnectAppEve
       defer(() => from(getAppAndVersion(transport))).pipe(
         concatMap((appAndVersion): Observable<ConnectAppEvent> => {
           timeoutSub.unsubscribe();
-
           if (isDashboardName(appAndVersion.name)) {
             // check if we meet minimum fw
             if (requireLatestFirmware || outdatedApp) {
@@ -315,7 +314,6 @@ const cmd = (transport: Transport, { request }: Input): Observable<ConnectAppEve
                     mergeMap((latest: FirmwareUpdateContext | undefined | null) => {
                       const isLatest =
                         !latest || semver.eq(deviceInfo.version, latest.final.version);
-
                       if (
                         (!requireLatestFirmware || (requireLatestFirmware && isLatest)) &&
                         outdatedApp

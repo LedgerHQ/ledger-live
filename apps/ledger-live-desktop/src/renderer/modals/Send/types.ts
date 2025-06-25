@@ -4,7 +4,14 @@ import { Account, AccountLike, NFT, Operation, ProtoNFT } from "@ledgerhq/types-
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
-export type StepId = "warning" | "recipient" | "amount" | "summary" | "device" | "confirmation";
+export type StepId =
+  | "warning"
+  | "recipient"
+  | "amount"
+  | "summary"
+  | "device"
+  | "confirmation"
+  | "deprecation";
 export type StepProps = {
   t: TFunction;
   transitionTo: (a: string) => void;
