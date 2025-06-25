@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { languageSelector, localeSelector } from "~/renderer/reducers/settings";
+import { localeSelector } from "~/renderer/reducers/settings";
 
 export const hourFormat: Intl.DateTimeFormatOptions = {
   hour: "numeric",
@@ -65,16 +65,6 @@ export type useDateFormatterOptions = {
 export const useDateFormatter = (intlOpts?: Intl.DateTimeFormatOptions) => {
   const locale = useSelector(localeSelector);
   const format = useMemo(() => new Intl.DateTimeFormat(locale, intlOpts), [locale, intlOpts]);
-  const f = useCallback((date: Date) => format.format(date), [format]);
-  return f;
-};
-
-/**
- * @returns a function that format a date into a string based on the current language
- */
-export const useLangDateFormatter = (intlOpts?: Intl.DateTimeFormatOptions) => {
-  const language = useSelector(languageSelector);
-  const format = useMemo(() => new Intl.DateTimeFormat(language, intlOpts), [language, intlOpts]);
   const f = useCallback((date: Date) => format.format(date), [format]);
   return f;
 };

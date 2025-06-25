@@ -7,7 +7,7 @@ import { Linking } from "react-native";
 import { View } from "react-native-animatable";
 import styled from "styled-components/native";
 import Alert from "~/components/Alert";
-import { useLangDateFormatter } from "~/hooks/useDateFormatter";
+import { useFormatDate } from "~/hooks/useDateFormatter";
 import { urls } from "~/utils/urls";
 
 const UnderlinedText = styled(Text)`
@@ -20,7 +20,7 @@ type Props = {
 };
 
 const WarningBannerStatus = ({ currencyConfig, currency }: Props) => {
-  const formatDate = useLangDateFormatter();
+  const formatDate = useFormatDate();
   const supportLink =
     currencyConfig?.status?.type === "feature_unavailable" ||
     currencyConfig?.status?.type === "migration"

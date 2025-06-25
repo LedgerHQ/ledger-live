@@ -6,7 +6,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { urls } from "~/config/urls";
 import TopBanner from "~/renderer/components/TopBanner";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
-import { dayFormat, useLangDateFormatter } from "~/renderer/hooks/useDateFormatter";
+import { dayFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import { openURL } from "~/renderer/linking";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
@@ -16,7 +16,7 @@ type Props = {
 
 const AccountWarningBanner = ({ currency }: Props) => {
   const { t } = useTranslation();
-  const formatDate = useLangDateFormatter(dayFormat);
+  const formatDate = useDateFormatter(dayFormat);
   const localizedContactSupportURL = useLocalizedUrl(urls.contactSupportWebview);
 
   let currencyConfig: CurrencyConfig | undefined = undefined;

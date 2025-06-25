@@ -1,29 +1,24 @@
-import { useCallback, useMemo } from "react";
-import { useSettings } from "~/hooks";
+import { useCallback } from "react";
+import { useSelector } from "react-redux";
+import {
+  ddmmyyyyFormatter,
+  Format,
+  genericFormatter,
+  mmddyyyyFormatter,
+} from "~/components/DateFormat/formatter.util";
+import { dateFormatSelector, languageSelector } from "~/reducers/settings";
 
-export const hourFormat: Intl.DateTimeFormatOptions = {
-  hour: "numeric",
-  minute: "numeric",
-};
+export function useFormatDate() {
+  const language = useSelector(languageSelector);
+  const dateFormat = useSelector(dateFormatSelector);
 
-export const dayFormat: Intl.DateTimeFormatOptions = {
-  day: "numeric",
-  month: "numeric",
-  year: "numeric",
-};
+  const intlOpts =
+    dateFormat === Format.default
+      ? genericFormatter(language)
+      : dateFormat === Format.ddmmyyyy
+        ? ddmmyyyyFormatter
+        : mmddyyyyFormatter;
 
-export const dayAndHourFormat: Intl.DateTimeFormatOptions = {
-  ...dayFormat,
-  ...hourFormat,
-};
-
-/**
- * @returns a function that format a date into a string based on the current language
- */
-export function useLangDateFormatter(intlOpts?: Intl.DateTimeFormatOptions) {
-  const { language } = useSettings();
-
-  const format = useMemo(() => new Intl.DateTimeFormat(language, intlOpts), [language, intlOpts]);
-  const f = useCallback((date: Date) => format.format(date), [format]);
+  const f = useCallback((date: Date) => intlOpts.format(date), [intlOpts]);
   return f;
 }
