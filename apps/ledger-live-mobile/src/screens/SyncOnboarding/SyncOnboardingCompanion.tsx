@@ -648,7 +648,11 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                 </Flex>
               ) : seedPathStatus === "choice_restore_direct_or_recover" ? (
                 <Flex>
-                  <SubtitleText>
+                  <BodyText color="neutral.c80">
+                    {t("syncOnboarding.seedStep.selectionRestoreChoice.description")}
+                  </BodyText>
+                  {/* Secret Recovery Phrase */}
+                  <SubtitleText mt={6}>
                     {t("syncOnboarding.seedStep.selectionRestoreChoice.secretRecoveryPhrase.title")}
                   </SubtitleText>
                   <BodyText>
@@ -656,7 +660,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                       "syncOnboarding.seedStep.selectionRestoreChoice.secretRecoveryPhrase.description",
                     )}
                   </BodyText>
-
+                  {/* Recovery Key */}
                   {deviceOnboardingState?.charonSupported && (
                     <>
                       <SubtitleText mt={6}>
@@ -669,7 +673,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                       </BodyText>
                     </>
                   )}
-
+                  {/* Recover subscription */}
                   <SubtitleText mt={6}>
                     {t("syncOnboarding.seedStep.selectionRestoreChoice.ledgerRecover.title")}
                   </SubtitleText>
