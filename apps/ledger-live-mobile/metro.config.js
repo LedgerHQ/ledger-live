@@ -17,6 +17,7 @@ const forcedDependencies = [
   "styled-components",
   "react-native-reanimated",
   "@tanstack/react-query",
+  "react-native-linear-gradient",
 ];
 
 const { getDefaultConfig, mergeConfig } = require("@react-native/metro-config");
