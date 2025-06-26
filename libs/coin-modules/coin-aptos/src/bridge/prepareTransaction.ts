@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 
 import { AptosAPI } from "../network";
 import { getEstimatedGas } from "./getFeesForTransaction";
-import type { AptosAccount, AptosStakingPosition, Transaction } from "../types";
+import type { AptosAccount, Transaction } from "../types";
 import { getMaxSendBalance } from "./logic";
 import {
   APTOS_DELEGATION_RESERVE_IN_OCTAS,
