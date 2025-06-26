@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.84.0-next.1
+
+### Minor Changes
+
+- [#10700](https://github.com/LedgerHQ/ledger-live/pull/10700) [`aff1593`](https://github.com/LedgerHQ/ledger-live/commit/aff1593ee8ab34f84c28c13c27edbe5d2ff983b4) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - memorize tracking source so updates of the ref do not trigger webview reloads
+
 ## 3.84.0-next.0
 
 ### Minor Changes
