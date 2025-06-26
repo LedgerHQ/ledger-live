@@ -88,7 +88,7 @@ const envDefinitions = {
     desc: "Enable tokens on Aptos",
   },
   APTOS_ENABLE_STAKING: {
-    def: false,
+    def: true,
     parser: boolParser,
     desc: "Enable staking for Aptos",
   },
