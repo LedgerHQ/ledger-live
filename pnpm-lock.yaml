@@ -8502,6 +8502,9 @@ importers:
 
   libs/ui/packages/native:
     dependencies:
+      '@ledgerhq/crypto-icons':
+        specifier: 1.1.1
+        version: 1.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(@babel/core@7.27.1)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1))
       '@ledgerhq/crypto-icons-ui':
         specifier: workspace:^
         version: link:../crypto-icons
@@ -43128,6 +43131,13 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       styled-components: 5.3.11(@babel/core@7.27.1)(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1)
+
+  '@ledgerhq/crypto-icons@1.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(@babel/core@7.27.1)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1))':
+    dependencies:
+      '@ledgerhq/ui-shared': 0.2.2
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      styled-components: 5.3.11(@babel/core@7.27.1)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)
 
   '@ledgerhq/cryptoassets-evm-signatures@13.5.2':
     dependencies:
