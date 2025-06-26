@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.119.0-next.1
+
+### Minor Changes
+
+- [#10700](https://github.com/LedgerHQ/ledger-live/pull/10700) [`b1395fb`](https://github.com/LedgerHQ/ledger-live/commit/b1395fb057257a119bd1f4a961b3e7e800ea90d4) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - make sure we only keep the initial source for tracking for desktop swap webview
+
 ## 2.119.0-next.0
 
 ### Minor Changes
