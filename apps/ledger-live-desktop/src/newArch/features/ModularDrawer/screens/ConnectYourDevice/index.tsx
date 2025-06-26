@@ -24,7 +24,6 @@ export const ConnectYourDevice = ({
   }, [currency]);
 
   const action = useConnectAppAction();
-
   return (
     <>
       <TrackPage
@@ -43,4 +42,9 @@ export const ConnectYourDevice = ({
   );
 };
 
-export default ConnectYourDevice;
+export default React.memo(ConnectYourDevice, (prevProps, nextProps) => {
+  return (
+    prevProps.currency.id === nextProps.currency.id &&
+    prevProps.analyticsPropertyFlow === nextProps.analyticsPropertyFlow
+  );
+});

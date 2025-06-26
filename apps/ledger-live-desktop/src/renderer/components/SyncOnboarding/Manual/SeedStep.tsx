@@ -10,6 +10,7 @@ import CharonPng from "./assets/charon.png";
 import SecretRecoveryPhrasePng from "./assets/secret-recovery-phrase.png";
 import { trackPage, useTrack } from "~/renderer/analytics/segment";
 import { CharonStatus } from "@ledgerhq/live-common/hw/extractOnboardingState";
+import { openURL } from "~/renderer/linking";
 
 export type SeedPathStatus =
   | "choice_new_or_restore"
@@ -27,17 +28,19 @@ export type Props = {
   charonStatus: CharonStatus | null;
 };
 
+const CHARON_LEARN_MORE_URL = "https://shop.ledger.com/products/ledger-recovery-key";
+
 const SeedStep = ({ seedPathStatus, deviceModelId, charonSupported, charonStatus }: Props) => {
   const { t } = useTranslation();
   const track = useTrack();
   const productName = getDeviceModel(deviceModelId).productName;
 
   const handleLearnMoreClick = useCallback(() => {
-    // TODO: Add link
     track("button_clicked", {
       button: "Learn More",
       page: "Charon Start",
     });
+    openURL(CHARON_LEARN_MORE_URL);
   }, [track]);
 
   useEffect(() => {
@@ -162,15 +165,23 @@ const SeedStep = ({ seedPathStatus, deviceModelId, charonSupported, charonStatus
       ) : seedPathStatus === "backup_charon" ? (
         <Flex flexDirection="column">
           <Flex alignItems="center" justifyContent="center" flexDirection="column">
-            <Flex style={{ width: 220, height: 170, overflow: "visible" }}>
-              <img src={CharonPng} alt="Charon" style={{ width: 220, height: 220 }} />
+            <Flex
+              style={{
+                width: 220,
+                height: 150,
+                overflow: "visible",
+                justifyContent: "center",
+                paddingTop: 20,
+              }}
+            >
+              <img src={CharonPng} alt="Charon" style={{ height: 220, objectFit: "contain" }} />
             </Flex>
             {/* @ts-expect-error weird props issue with React 18 */}
             <StepText mb={6} fontWeight="semiBold" variant="largeLineHeight" color="neutral.c100">
               {t("syncOnboarding.manual.seedContent.backupCharonTitle")}
             </StepText>
             {/* @ts-expect-error weird props issue with React 18 */}
-            <StepText mb={6}>
+            <StepText mb={6} textAlign="center">
               {t("syncOnboarding.manual.seedContent.backupCharonDescription")}
             </StepText>
 

@@ -497,6 +497,10 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
     [manifest, hashString],
   );
 
+  const initialSource = useMemo(() => {
+    return currentRouteNameRef.current || "";
+  }, []);
+
   return (
     <>
       {enablePlatformDevTools && (
@@ -511,7 +515,7 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
         <Web3AppWebview
           manifest={manifestWithHash}
           inputs={{
-            source: currentRouteNameRef.current || "",
+            source: initialSource,
             theme: themeType,
             lang: locale,
             currencyTicker: fiatCurrency.ticker,

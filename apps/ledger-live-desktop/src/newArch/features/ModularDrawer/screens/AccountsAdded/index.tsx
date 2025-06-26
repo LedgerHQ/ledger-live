@@ -7,12 +7,21 @@ import { SuccessIcon, ActionButtons, AccountList, Title } from "./components";
 import { useAccountFormatter } from "./hooks";
 import { AccountsAddedProps } from "./types";
 
-export const AccountsAdded = ({ accounts }: Readonly<AccountsAddedProps>) => {
+export const AccountsAdded = ({
+  accounts,
+  onFundAccount,
+  navigateToSelectAccount,
+  isAccountSelectionFlow,
+}: Readonly<AccountsAddedProps>) => {
   const formatAccount = useAccountFormatter();
 
   const handleAddFunds = useCallback(() => {
-    // TODO: Implement redirection to next step
-  }, []);
+    if (accounts.length === 1) {
+      onFundAccount(accounts[0]);
+    } else {
+      navigateToSelectAccount();
+    }
+  }, [accounts, navigateToSelectAccount, onFundAccount]);
 
   const handleClose = () => setDrawer();
 
@@ -27,7 +36,11 @@ export const AccountsAdded = ({ accounts }: Readonly<AccountsAddedProps>) => {
         <AccountList accounts={accounts} formatAccount={formatAccount} />
       </Flex>
 
-      <ActionButtons onAddFunds={handleAddFunds} onClose={handleClose} />
+      <ActionButtons
+        onAddFunds={handleAddFunds}
+        onClose={handleClose}
+        isAccountSelectionFlow={isAccountSelectionFlow}
+      />
     </Flex>
   );
 };
