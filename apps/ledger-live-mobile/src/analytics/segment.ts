@@ -102,7 +102,9 @@ const getFeatureFlagProperties = () => {
 
     // Apply versioned redirects logic to the stakePrograms feature flag
     const appVersion = LiveConfig.instance.appVersion || "0.0.0";
-    const stakePrograms = rawStakePrograms ? getVersionedRedirects(rawStakePrograms, appVersion) : null;
+    const stakePrograms = rawStakePrograms
+      ? getVersionedRedirects(rawStakePrograms, appVersion)
+      : null;
 
     const stakingCurrenciesEnabled: string[] | string =
       stakePrograms?.enabled && stakePrograms?.params?.list?.length
