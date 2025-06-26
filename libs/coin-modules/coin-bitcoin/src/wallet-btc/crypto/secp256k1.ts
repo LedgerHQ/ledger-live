@@ -8,7 +8,6 @@ export type Secp256k1Instance = {
   publicKeyTweakAdd(publicKey: Uint8Array, tweak: Uint8Array): Promise<Uint8Array>;
 };
 
-// default uses node.js's secp256k1
 let impl: Secp256k1Instance = {
   publicKeyTweakAdd: (publicKey, tweak) => Promise.resolve(ecc.pointAddScalar(publicKey, tweak)!),
 };
