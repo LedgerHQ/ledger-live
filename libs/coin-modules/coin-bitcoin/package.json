@@ -54,7 +54,6 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@noble/secp256k1": "2.3.0",
     "bchaddrjs": "^0.5.2",
     "bech32": "^1.1.3",
     "bignumber.js": "^9.1.2",

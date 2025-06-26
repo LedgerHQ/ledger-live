@@ -4,31 +4,6 @@ import * as ecc from "@bitcoinerlab/secp256k1";
  * Implement the subset of secp256k1 that wallet-btc needs to work.
  * The interface is made asynchronous to be more efficient to run in a renderer thread and defer the cryptography
  */
-async function publicKeyTweakAdd(
-  publicKey: Uint8Array,
-  tweak: Uint8Array,
-  compressed: boolean = true,
-): Promise<Uint8Array | null> {
-  try {
-    if (!ecc.isPoint(publicKey)) {
-      return null;
-    }
-
-    if (!ecc.isPrivate(tweak)) {
-      return null;
-    }
-
-    const { Point } = await import("@noble/secp256k1");
-
-    const pubPoint = Point.fromHex(publicKey);
-    const tweakPoint = Point.fromPrivateKey(tweak);
-    const resultPoint = pubPoint.add(tweakPoint);
-
-    return resultPoint.toRawBytes(compressed);
-  } catch {
-    return null;
-  }
-}
 export type Secp256k1Instance = {
   publicKeyTweakAdd(publicKey: Uint8Array, tweak: Uint8Array): Promise<Uint8Array>;
 };
@@ -36,7 +11,7 @@ export type Secp256k1Instance = {
 // default uses node.js's secp256k1
 let impl: Secp256k1Instance = {
   publicKeyTweakAdd: async (publicKey, tweak) => {
-    const result = await publicKeyTweakAdd(publicKey, tweak);
+    const result = ecc.pointAddScalar(publicKey, tweak);
     if (!result) throw new Error("Failed to tweak public key");
     return result;
   },
