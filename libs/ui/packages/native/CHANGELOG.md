@@ -1,5 +1,29 @@
 # @ledgerhq/native-ui
 
+## 0.36.0
+
+### Minor Changes
+
+- [#10229](https://github.com/LedgerHQ/ledger-live/pull/10229) [`bf4b791`](https://github.com/LedgerHQ/ledger-live/commit/bf4b7919e5e66605ea3e77562626db5d26898246) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Upgrade React Native from 0.75 to 0.77
+
+### Patch Changes
+
+- Updated dependencies [[`bf4b791`](https://github.com/LedgerHQ/ledger-live/commit/bf4b7919e5e66605ea3e77562626db5d26898246)]:
+  - @ledgerhq/crypto-icons-ui@1.15.0
+  - @ledgerhq/icons-ui@0.11.0
+
+## 0.36.0-next.0
+
+### Minor Changes
+
+- [#10229](https://github.com/LedgerHQ/ledger-live/pull/10229) [`bf4b791`](https://github.com/LedgerHQ/ledger-live/commit/bf4b7919e5e66605ea3e77562626db5d26898246) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Upgrade React Native from 0.75 to 0.77
+
+### Patch Changes
+
+- Updated dependencies [[`bf4b791`](https://github.com/LedgerHQ/ledger-live/commit/bf4b7919e5e66605ea3e77562626db5d26898246)]:
+  - @ledgerhq/crypto-icons-ui@1.15.0-next.0
+  - @ledgerhq/icons-ui@0.11.0-next.0
+
 ## 0.35.0
 
 ### Minor Changes

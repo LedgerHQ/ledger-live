@@ -619,6 +619,17 @@ export const DEFAULT_FEATURES: Features = {
       enableModularization: false,
     },
   },
+  llmModularDrawer: {
+    ...DEFAULT_FEATURE,
+    params: {
+      add_account: true,
+      earn_flow: true,
+      live_app: true,
+      receive_flow: true,
+      send_flow: true,
+      enableModularization: false,
+    },
+  },
   llNftSupport: DEFAULT_FEATURE,
   llNftEntryPoint: {
     ...DEFAULT_FEATURE,

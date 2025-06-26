@@ -95,7 +95,8 @@ import { registerTransports } from "~/services/registerTransports";
 import { useDeviceManagementKitEnabled } from "@ledgerhq/live-dmk-mobile";
 import { StoragePerformanceOverlay } from "./newArch/storage/screens/PerformanceMonitor";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
-import AppGeoBlocker from "LLM/features/AppGeoblocker";
+import AppVersionBlocker from "LLM/features/AppBlockers/components/AppVersionBlocker";
+import AppGeoBlocker from "LLM/features/AppBlockers/components/AppGeoBlocker";
 import { exportLargeMoverSelector } from "./reducers/largeMover";
 import {
   TrackingConsent,
@@ -415,7 +416,9 @@ export default class Root extends Component {
                                     <AuthPass>
                                       <AppProviders initialCountervalues={initialCountervalues}>
                                         <AppGeoBlocker>
-                                          <App />
+                                          <AppVersionBlocker>
+                                            <App />
+                                          </AppVersionBlocker>
                                         </AppGeoBlocker>
                                       </AppProviders>
                                     </AuthPass>

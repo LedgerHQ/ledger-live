@@ -1,5 +1,69 @@
 # web-tools
 
+## 0.20.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.38.1
+
+## 0.20.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.38.1-hotfix.0
+
+## 0.20.0
+
+### Minor Changes
+
+- [#10459](https://github.com/LedgerHQ/ledger-live/pull/10459) [`e72e65d`](https://github.com/LedgerHQ/ledger-live/commit/e72e65d6794b960b3f4abf78205a8c82cc4c22e5) Thanks [@mbertin-ledger](https://github.com/mbertin-ledger)! - Fix exchange logs to export apdus
+
+### Patch Changes
+
+- Updated dependencies [[`3f02d18`](https://github.com/LedgerHQ/ledger-live/commit/3f02d1856cb30eee4c79e3b9f83df2ff3a56775d), [`b380c65`](https://github.com/LedgerHQ/ledger-live/commit/b380c654babdeb515957407d57ab4dbf90a355e2), [`9081767`](https://github.com/LedgerHQ/ledger-live/commit/90817673567a2d7df7ec2503951b4331e54e1476), [`3bef817`](https://github.com/LedgerHQ/ledger-live/commit/3bef817da07c47d40b9357711f5022118c899f26), [`9ceee03`](https://github.com/LedgerHQ/ledger-live/commit/9ceee03c33c41bb035fe64f9303acd36872536b6), [`98eb2eb`](https://github.com/LedgerHQ/ledger-live/commit/98eb2ebce8e12742a68b8f54ba625d63c4958087), [`ed51f4d`](https://github.com/LedgerHQ/ledger-live/commit/ed51f4df898fbb357f18f8466ad63327cb0b51b6), [`b5e3217`](https://github.com/LedgerHQ/ledger-live/commit/b5e321789d3a6f9cb1916067790590640db0876f), [`4d9aaf5`](https://github.com/LedgerHQ/ledger-live/commit/4d9aaf583060a22cd1343b23d9b5c1ee3c02abb4), [`5739a67`](https://github.com/LedgerHQ/ledger-live/commit/5739a67975dfc2509d5abd4ff13ea36af010f93e), [`e9739d1`](https://github.com/LedgerHQ/ledger-live/commit/e9739d19946376dd7a8a5f10471594f267f3a95f), [`bf4b791`](https://github.com/LedgerHQ/ledger-live/commit/bf4b7919e5e66605ea3e77562626db5d26898246)]:
+  - @ledgerhq/live-common@34.38.0
+  - @ledgerhq/types-live@6.74.0
+  - @ledgerhq/errors@6.22.0
+  - @ledgerhq/coin-framework@5.4.0
+  - @ledgerhq/cryptoassets@13.19.0
+  - @ledgerhq/domain-service@1.2.33
+  - @ledgerhq/hw-app-eth@6.45.8
+  - @ledgerhq/live-wallet@0.11.1
+  - @ledgerhq/ledger-key-ring-protocol@0.5.10
+  - @ledgerhq/hw-transport@6.31.7
+  - @ledgerhq/hw-transport-http@6.30.7
+  - @ledgerhq/hw-transport-web-ble@6.29.7
+  - @ledgerhq/hw-transport-webhid@6.30.3
+  - @ledgerhq/hw-transport-webusb@6.29.7
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.8
+
+## 0.20.0-next.0
+
+### Minor Changes
+
+- [#10459](https://github.com/LedgerHQ/ledger-live/pull/10459) [`e72e65d`](https://github.com/LedgerHQ/ledger-live/commit/e72e65d6794b960b3f4abf78205a8c82cc4c22e5) Thanks [@mbertin-ledger](https://github.com/mbertin-ledger)! - Fix exchange logs to export apdus
+
+### Patch Changes
+
+- Updated dependencies [[`3f02d18`](https://github.com/LedgerHQ/ledger-live/commit/3f02d1856cb30eee4c79e3b9f83df2ff3a56775d), [`b380c65`](https://github.com/LedgerHQ/ledger-live/commit/b380c654babdeb515957407d57ab4dbf90a355e2), [`9081767`](https://github.com/LedgerHQ/ledger-live/commit/90817673567a2d7df7ec2503951b4331e54e1476), [`3bef817`](https://github.com/LedgerHQ/ledger-live/commit/3bef817da07c47d40b9357711f5022118c899f26), [`9ceee03`](https://github.com/LedgerHQ/ledger-live/commit/9ceee03c33c41bb035fe64f9303acd36872536b6), [`98eb2eb`](https://github.com/LedgerHQ/ledger-live/commit/98eb2ebce8e12742a68b8f54ba625d63c4958087), [`ed51f4d`](https://github.com/LedgerHQ/ledger-live/commit/ed51f4df898fbb357f18f8466ad63327cb0b51b6), [`b5e3217`](https://github.com/LedgerHQ/ledger-live/commit/b5e321789d3a6f9cb1916067790590640db0876f), [`4d9aaf5`](https://github.com/LedgerHQ/ledger-live/commit/4d9aaf583060a22cd1343b23d9b5c1ee3c02abb4), [`5739a67`](https://github.com/LedgerHQ/ledger-live/commit/5739a67975dfc2509d5abd4ff13ea36af010f93e), [`e9739d1`](https://github.com/LedgerHQ/ledger-live/commit/e9739d19946376dd7a8a5f10471594f267f3a95f), [`bf4b791`](https://github.com/LedgerHQ/ledger-live/commit/bf4b7919e5e66605ea3e77562626db5d26898246)]:
+  - @ledgerhq/live-common@34.38.0-next.0
+  - @ledgerhq/types-live@6.74.0-next.0
+  - @ledgerhq/errors@6.22.0-next.0
+  - @ledgerhq/coin-framework@5.4.0-next.0
+  - @ledgerhq/cryptoassets@13.19.0-next.0
+  - @ledgerhq/domain-service@1.2.33-next.0
+  - @ledgerhq/hw-app-eth@6.45.8-next.0
+  - @ledgerhq/live-wallet@0.11.1-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.5.10-next.0
+  - @ledgerhq/hw-transport@6.31.7-next.0
+  - @ledgerhq/hw-transport-http@6.30.7-next.0
+  - @ledgerhq/hw-transport-web-ble@6.29.7-next.0
+  - @ledgerhq/hw-transport-webhid@6.30.3-next.0
+  - @ledgerhq/hw-transport-webusb@6.29.7-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.8-next.0
+
 ## 0.19.3
 
 ### Patch Changes

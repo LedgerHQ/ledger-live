@@ -6,18 +6,18 @@ import {
   ethereumCurrency,
   mockNetworksConfiguration,
 } from "../../__mocks__/useSelectAssetFlow.mock";
-import { fn } from "@storybook/test";
 import { legacy_createStore as createStore } from "redux";
 import { Provider } from "react-redux";
+import { fn } from "@storybook/test";
 import { res } from "../../__mocks__/useGroupedCurrenciesByProvider.mock";
-import { Mocked_ETH_Account, MOCKED_ARB_ACCOUNT } from "../../__mocks__/accounts.mock";
+import { ETH_ACCOUNT, ARB_ACCOUNT } from "../../__mocks__/accounts.mock";
 
 const networks = [ethereumCurrency, arbitrumCurrency];
 
 const onNetworkSelected = fn();
 
 const store = createStore(() => ({
-  accounts: [...Mocked_ETH_Account, MOCKED_ARB_ACCOUNT],
+  accounts: [ETH_ACCOUNT, ARB_ACCOUNT],
   currency: {
     type: "FiatCurrency",
     ticker: "USD",

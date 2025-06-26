@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "34.37.0",
+  "version": "34.38.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -183,8 +183,8 @@
     "@ledgerhq/live-app-sdk": "^0.8.1",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",
-    "@ledgerhq/live-dmk-shared": "workspace:^",
     "@ledgerhq/live-countervalues-react": "workspace:^",
+    "@ledgerhq/live-dmk-shared": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-hooks": "workspace:*",
     "@ledgerhq/live-network": "workspace:^",

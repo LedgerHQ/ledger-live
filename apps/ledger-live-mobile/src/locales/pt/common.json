@@ -3369,7 +3369,8 @@
       "description" : "Venda cripto por fiat em segurança."
     },
     "exchange" : {
-      "title" : "Comprar / Vender"
+      "title" : "Comprar / Vender",
+      "connectingTo" : "Conectando você a {{provider}}"
     },
     "stake" : {
       "title" : "Aplicar",
@@ -7430,7 +7431,12 @@
     "performance" : "Desempenho",
     "low" : "Baixo",
     "high" : "Alto",
-    "title" : "Movimentações de Mercado"
+    "title" : "Movimentações de Mercado",
+    "overlay" : {
+      "title" : "Passe de um ativo para o outro",
+      "action" : "Deslize para a esquerda ou direita",
+      "button" : "Entendi!"
+    }
   },
   "nftEntryPoint" : {
     "title" : "Seus NFTs",

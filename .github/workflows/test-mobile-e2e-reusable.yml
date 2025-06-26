@@ -204,6 +204,8 @@ jobs:
       - name: Build iOS app for Detox test run
         if: steps.detox-build.outputs.cache-hit != 'true' || inputs.production_firebase == 'true'
         run: pnpm mobile e2e:ci -p ios -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
+        env:
+          PRODUCTION: ${{ inputs.production_firebase }}
 
       - name: Build JS Bundle app for Detox test run
         if: steps.detox-build.outputs.cache-hit == 'true' && inputs.production_firebase != 'true'
@@ -375,7 +377,7 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
         # https://github.blog/changelog/2023-02-23-hardware-accelerated-android-virtualization-on-actions-windows-and-linux-larger-hosted-runners/
-      - name: Enable KVM group perms
+      - name: Enable Hardware Acceleration
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules

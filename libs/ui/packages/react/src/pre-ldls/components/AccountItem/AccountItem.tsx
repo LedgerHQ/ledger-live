@@ -1,44 +1,61 @@
 import React from "react";
 import styled from "styled-components";
+import type { CheckboxProps } from "../../../components/form/Checkbox/Checkbox";
+import { Checkbox, Icon, Text, Box } from "../../../components";
 import { withTokens } from "../../libs";
-import { Text } from "../../../components";
-import { Tag } from "../Tag/Tag";
 import { Address } from "../Address/Address";
+import { Tag } from "../Tag/Tag";
 
 export type Account = {
-  name: string;
-  id: string;
-  balance: string;
-  fiatValue: string;
   address: string;
-  protocol?: string;
+  balance?: string;
   cryptoId?: string;
-  ticker?: string;
+  fiatValue: string;
+  id: string;
+  name: string;
   parentId?: string;
+  protocol?: string;
+  ticker?: string;
 };
 
-type AccountItemProps = {
-  onClick: () => void;
-  showIcon?: boolean;
+export type RightElementCheckbox = {
+  type: "checkbox";
+  checkbox: CheckboxProps;
+};
+
+export type RightElementArrow = {
+  type: "arrow";
+};
+
+export type RightElement = RightElementCheckbox | RightElementArrow;
+
+export type AccountItemProps = {
+  onClick?: () => void;
   account: Account;
+  rightElement?: RightElement;
+  showIcon?: boolean;
+  backgroundColor?: string;
 };
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ backgroundColor?: string }>`
   ${withTokens(
     "spacing-xxxs",
     "spacing-xxs",
     "spacing-xs",
+    "margin-s",
     "radius-s",
+    "radius-m",
     "colors-content-default-default",
     "colors-surface-transparent-hover",
     "colors-surface-transparent-pressed",
     "colors-content-subdued-default-default",
+    "colors-surface-transparent-subdued-default",
   )}
 
   display: flex;
-  padding: var(--spacing-xs) var(--spacing-xxs);
+  padding: var(--margin-s);
   cursor: pointer;
-  border-radius: var(--radius-s, 8px);
+  border-radius: var(--radius-m);
   justify-content: space-between;
   align-items: center;
   width: 100%;
@@ -46,6 +63,8 @@ const Wrapper = styled.div`
   max-width: 100%;
   min-width: 200px;
   overflow: hidden;
+
+  background-color: ${p => (p.backgroundColor ? p.backgroundColor : "transparent")};
 
   :hover {
     background-color: var(--colors-surface-transparent-hover);
@@ -57,13 +76,14 @@ const Wrapper = styled.div`
 `;
 
 const ContentContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  min-width: 0;
+  display: flex;
   flex: 1;
-  width: 100%;
+  gap: var(--spacing-xs);
+  justify-content: space-between;
+  min-width: 0;
   overflow: hidden;
+  width: 100%;
 `;
 
 const AccountInfoContainer = styled.div`
@@ -105,16 +125,21 @@ const TagWrapper = styled.div`
 const BalanceContainer = styled.div`
   display: flex;
   flex-direction: column;
-  text-align: right;
   flex-shrink: 0;
-  margin-left: var(--spacing-xs);
+  text-align: right;
 `;
 
-export const AccountItem = ({ onClick, account, showIcon = true }: AccountItemProps) => {
+export const AccountItem = ({
+  onClick,
+  account,
+  rightElement,
+  showIcon = true,
+  backgroundColor,
+}: AccountItemProps) => {
   const { name, balance, fiatValue, protocol, address, ticker, cryptoId, parentId } = account;
 
   return (
-    <Wrapper onClick={onClick}>
+    <Wrapper onClick={onClick} backgroundColor={backgroundColor}>
       <ContentContainer>
         <AccountInfoContainer>
           <NameRow>
@@ -152,10 +177,22 @@ export const AccountItem = ({ onClick, account, showIcon = true }: AccountItemPr
         </AccountInfoContainer>
         <BalanceContainer>
           <Text fontSize="14px">{fiatValue}</Text>
-          <Text fontSize="12px" color="var(--colors-content-subdued-default-default)">
-            {balance}
-          </Text>
+          {balance && (
+            <Text fontSize="12px" color="var(--colors-content-subdued-default-default)">
+              {balance}
+            </Text>
+          )}
         </BalanceContainer>
+        {rightElement && rightElement.type === "checkbox" && (
+          <Box data-testid="right-element-checkbox">
+            <Checkbox {...rightElement.checkbox} size={20} />
+          </Box>
+        )}
+        {rightElement && rightElement.type === "arrow" && (
+          <Box data-testid="right-element-arrow-icon">
+            <Icon name="ChevronRight" size={24} />
+          </Box>
+        )}
       </ContentContainer>
     </Wrapper>
   );
