@@ -297,6 +297,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "(dev feature) defines the folder for speculos mode that contains Nano apps binaries (.elf) in a specific structure: <device>/<firmware>/<appName>/app_<appVersion>.elf",
   },
+  CAL_REF: {
+    def: "",
+    parser: stringParser,
+    desc: "(dev feature) allows to target a different reference of the CAL for testing purposes",
+  },
   CRYPTO_ORG_INDEXER: {
     def: "https://cryptoorg-rpc-indexer.coin.ledger.com",
     parser: stringParser,

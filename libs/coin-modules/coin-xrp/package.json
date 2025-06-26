@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-xrp",
-  "version": "6.1.3",
+  "version": "6.2.1",
   "description": "Ledger XRP Coin integration",
   "keywords": [
     "Ledger",
@@ -41,7 +41,7 @@
         "lib/test/bot-specs"
       ],
       "transaction": [
-        "lib/transaction"
+        "lib/bridge/transaction"
       ],
       "types": [
         "lib/types/index"
@@ -80,8 +80,8 @@
       "default": "./lib-es/test/bot-specs.js"
     },
     "./transaction": {
-      "require": "./lib/transaction.js",
-      "default": "./lib-es/transaction.js"
+      "require": "./lib/bridge/transaction.js",
+      "default": "./lib-es/bridge/transaction.js"
     },
     "./types": {
       "require": "./lib/types/index.js",

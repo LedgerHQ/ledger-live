@@ -14,7 +14,7 @@ import {
 import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import { AptosAPI } from "../../network";
-import { AptosAsset } from "../../types/assets";
+import { AptosAsset, AptosExtra, AptosSender } from "../../types/assets";
 import { Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { APTOS_ASSET_ID } from "../../constants";
 import { AptosBalance, AptosTransaction } from "../../types";
@@ -293,6 +293,62 @@ describe("Aptos API", () => {
       expect(accountInfo.blockHeight).toEqual(999);
     });
 
+    it("returns transaction with amount equals to zero when no account found", async () => {
+      mockedAptos.mockImplementation(() => ({
+        view: jest.fn().mockReturnValue(["123"]),
+        getTransactionByVersion: jest.fn().mockReturnValue({
+          type: "user_transaction",
+          version: "v1",
+        }),
+        getBlockByVersion: jest.fn().mockReturnValue({
+          block_height: "1",
+          block_hash: "83ca6d",
+        }),
+        getCurrentFungibleAssetBalances: jest.fn().mockResolvedValue([]),
+      }));
+
+      mockedNetwork.mockResolvedValue(
+        Promise.resolve({
+          data: {
+            account: {
+              account_number: 1,
+              sequence: 0,
+              pub_key: { key: "k", "@type": "type" },
+              base_account: {
+                account_number: 2,
+                sequence: 42,
+                pub_key: { key: "k2", "@type": "type2" },
+              },
+            },
+            block_height: "999",
+          },
+          status: 200,
+          headers: {} as any,
+          statusText: "",
+          config: {
+            headers: {} as any,
+          },
+        }),
+      );
+
+      mockedApolloClient.mockImplementation(() => ({
+        query: async () => ({
+          data: {
+            account_transactions: [{ transaction_version: 1 }],
+          },
+          loading: false,
+          networkStatus: 7,
+        }),
+      }));
+
+      const api = new AptosAPI("aptos");
+      const accountInfo = await api.getAccountInfo("", "1");
+
+      expect(accountInfo.balance).toEqual(new BigNumber(0));
+      expect(accountInfo.transactions).toEqual([]);
+      expect(accountInfo.blockHeight).toEqual(999);
+    });
+
     it("returns a null transaction if it fails to getTransactionByVersion", async () => {
       mockedAptos.mockImplementation(() => ({
         view: jest.fn().mockReturnValue(["123"]),
@@ -559,20 +615,19 @@ describe("Aptos API", () => {
       }));
 
       const amount = BigInt(100);
-      const sender = {
+      const sender: AptosSender = {
         xpub: "xpub",
         freshAddress: "address1",
       };
       const recipient = "address2";
 
       const api = new AptosAPI("aptos");
-      const transactionIntent: TransactionIntent<AptosAsset> = {
+      const transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender> = {
         asset: {
           type: "native",
         },
         type: "send",
-        sender: sender.freshAddress,
-        senderPublicKey: sender.xpub,
+        sender,
         amount,
         recipient,
       };
@@ -624,22 +679,21 @@ describe("Aptos API", () => {
       }));
 
       const amount = BigInt(100);
-      const sender = {
+      const sender: AptosSender = {
         xpub: "xpub",
         freshAddress: "address1",
       };
       const recipient = "address2";
 
       const api = new AptosAPI("aptos");
-      const transactionIntent: TransactionIntent<AptosAsset> = {
+      const transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender> = {
         asset: {
           type: "token",
           standard: "coin",
           contractAddress: "0x111",
         },
         type: "send",
-        sender: sender.freshAddress,
-        senderPublicKey: sender.xpub,
+        sender,
         amount,
         recipient,
       };
@@ -690,22 +744,21 @@ describe("Aptos API", () => {
       }));
 
       const amount = BigInt(100);
-      const sender = {
+      const sender: AptosSender = {
         xpub: "xpub",
         freshAddress: "address1",
       };
       const recipient = "address2";
 
       const api = new AptosAPI("aptos");
-      const transactionIntent: TransactionIntent<AptosAsset> = {
+      const transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender> = {
         asset: {
           type: "token",
           standard: "fungible_asset",
           contractAddress: "0x111",
         },
         type: "send",
-        sender: sender.freshAddress,
-        senderPublicKey: sender.xpub,
+        sender,
         amount,
         recipient,
       };

@@ -61,10 +61,11 @@ export default async function (transport: Transport): Promise<DeviceInfo> {
     mcuBlVersion,
     mcuVersion,
     mcuTargetId,
-    flags,
     bootloaderVersion,
     hardwareVersion,
     languageId,
+    charonState,
+    flags,
   } = res;
   const isOSU = rawVersion.includes("-osu");
   const version = rawVersion.replace("-osu", "");
@@ -114,5 +115,7 @@ export default async function (transport: Transport): Promise<DeviceInfo> {
     bootloaderVersion,
     hardwareVersion,
     languageId,
+    charonState,
+    seFlags: flags,
   };
 }

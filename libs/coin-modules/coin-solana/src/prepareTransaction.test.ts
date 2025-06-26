@@ -15,6 +15,7 @@ import { prepareTransaction } from "./prepareTransaction";
 import { SolanaAccount, Transaction, TransferCommand } from "./types";
 import BigNumber from "bignumber.js";
 import { transaction } from "./__tests__/fixtures/helpers.fixture";
+import { NotEnoughGas } from "@ledgerhq/errors";
 
 jest.mock("./estimateMaxSpendable", () => {
   const originalModule = jest.requireActual("./estimateMaxSpendable");
@@ -30,6 +31,43 @@ jest.mock("./estimateMaxSpendable", () => {
 });
 
 describe("testing prepareTransaction", () => {
+  it("packs a 'NotEnoughGas' error if the sender can not afford the fees during a token transfer", async () => {
+    const preparedTransaction = await prepareTransaction(
+      {
+        currency: { units: [{ magnitude: 2 }] },
+        subAccounts: [
+          {
+            id: "subAccountId",
+            type: "TokenAccount",
+            token: { contractAddress: "mintAddress", units: [{ magnitude: 2 }] },
+          },
+        ],
+      } as unknown as SolanaAccount,
+      transaction({ kind: "token.transfer", subAccountId: "subAccountId" }),
+      {
+        getAccountInfo: () => ({
+          data: {
+            parsed: {
+              type: "mint",
+              info: {
+                mintAuthority: null,
+                supply: "",
+                decimals: 2,
+                isInitialized: true,
+                freezeAuthority: null,
+              },
+            },
+            program: "spl-token",
+          },
+        }),
+      } as unknown as ChainAPI,
+    );
+
+    expect(preparedTransaction.model.commandDescriptor?.errors.gasPrice).toBeInstanceOf(
+      NotEnoughGas,
+    );
+  });
+
   it("should return a new transaction from the raw transaction when user provide it", async () => {
     // Given
     const solanaTransaction = {
@@ -64,7 +102,7 @@ describe("testing prepareTransaction", () => {
     );
 
     const estimatedFees = 0.00005;
-    const rawTransaction = transaction("any random value");
+    const rawTransaction = transaction({ raw: "any random value" });
     const chainAPI = api(estimatedFees);
     const getFeeForMessageSpy = jest.spyOn(chainAPI, "getFeeForMessage");
 

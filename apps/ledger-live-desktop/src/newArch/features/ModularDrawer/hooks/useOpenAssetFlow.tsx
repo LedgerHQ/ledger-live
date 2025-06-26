@@ -1,15 +1,17 @@
-import { useModularDrawerVisibility } from "./useModularDrawerVisibility";
-import { openModal } from "~/renderer/actions/modals";
-import { useDispatch } from "react-redux";
 import { useCallback } from "react";
-import { ModularDrawerLocation } from "../enums";
-import { setDrawer } from "~/renderer/drawers/Provider";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import ModularDrawerAddAccountFlowManager from "../ModularDrawerAddAccountFlowManager";
 import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { useDispatch } from "react-redux";
+import { openModal } from "~/renderer/actions/modals";
 import { CloseButton } from "../components/CloseButton";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { ModularDrawerLocation, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
+import { Account } from "@ledgerhq/types-live";
 
 function selectCurrency(
   onAssetSelected: (currency: CryptoOrTokenCurrency) => void,
@@ -30,6 +32,10 @@ function selectCurrency(
       onAssetSelected,
       source,
       flow,
+      drawerConfiguration: {
+        assets: { leftElement: "undefined", rightElement: "undefined" },
+        networks: { leftElement: "undefined", rightElement: "undefined" },
+      },
     },
     {
       onRequestClose: onClose,
@@ -40,8 +46,11 @@ function selectCurrency(
 
 export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, source: string) {
   const dispatch = useDispatch();
-  const { isModularDrawerVisible } = useModularDrawerVisibility();
+  const { isModularDrawerVisible } = useModularDrawerVisibility({
+    modularDrawerFeatureFlagKey: "lldModularDrawer",
+  });
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+  const featureNetworkBasedAddAccount = useFeature("lldNetworkBasedAddAccount");
 
   const handleClose = useCallback(() => {
     setDrawer();
@@ -53,13 +62,28 @@ export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, s
   }, [modularDrawerLocation, trackModularDrawerEvent]);
 
   const openAddAccountFlow = useCallback(
-    (currency?: CryptoOrTokenCurrency) => {
-      dispatch(openModal("MODAL_ADD_ACCOUNTS", currency ? { currency } : undefined));
-      if (currency) {
-        setDrawer();
+    (
+      currency: CryptoOrTokenCurrency,
+      autoCloseDrawer: boolean = true,
+      onAccountSelected?: (account: Account) => void,
+    ) => {
+      if (featureNetworkBasedAddAccount?.enabled) {
+        setDrawer(
+          ModularDrawerAddAccountFlowManager,
+          {
+            currency,
+            onAccountSelected,
+          },
+          { closeButtonComponent: CloseButton },
+        );
+      } else {
+        const cryptoCurrency =
+          currency.type === "CryptoCurrency" ? currency : currency.parentCurrency;
+        autoCloseDrawer && setDrawer();
+        dispatch(openModal("MODAL_ADD_ACCOUNTS", { currency: cryptoCurrency }));
       }
     },
-    [dispatch],
+    [dispatch, featureNetworkBasedAddAccount?.enabled],
   );
 
   const openAssetFlow = useCallback(
@@ -75,13 +99,21 @@ export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, s
           handleClose,
         );
       } else {
-        openAddAccountFlow();
+        dispatch(openModal("MODAL_ADD_ACCOUNTS", undefined));
       }
     },
-    [handleClose, isModularDrawerVisible, modularDrawerLocation, openAddAccountFlow, source],
+    [
+      dispatch,
+      handleClose,
+      isModularDrawerVisible,
+      modularDrawerLocation,
+      openAddAccountFlow,
+      source,
+    ],
   );
 
   return {
     openAssetFlow,
+    openAddAccountFlow,
   };
 }

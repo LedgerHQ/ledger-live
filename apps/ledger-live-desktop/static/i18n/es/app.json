@@ -893,6 +893,7 @@
     "title" : "Comprar y vender cripto",
     "reset" : "Reiniciar flujo",
     "verifyAddress" : "Confirma que la dirección que se muestra coincide exactamente con la que aparece en tu dispositivo",
+    "connectingTo" : "Conectándote a {{provider}}",
     "buy" : {
       "header" : "Compra cripto a través de nuestros socios",
       "title" : "Elige un proveedor para comprar cripto",
@@ -1925,7 +1926,8 @@
       "payoutNetworkFees" : "Tarifas de pago",
       "payoutNetworkFeesTooltip" : "Este importe no se mostrará en el dispositivo",
       "acceptTerms" : "Al validar esta transacción, acepto\nlos <0>términos de uso de {{provider}}</0>",
-      "exodusAcceptTerms" : "Exodus depende de terceros para realizar las permutas.\nAl validar esta transacción, acepto los <0>términos de uso de Exodus</0>"
+      "exodusAcceptTerms" : "Exodus depende de terceros para realizar las permutas.\nAl validar esta transacción, acepto los <0>términos de uso de Exodus</0>",
+      "changellyAcceptTerms" : "Al hacer clic en “Permutar con Changelly”, aceptas los <0>Términos de uso</0> de Changelly y\nsu <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que,\nen determinados casos, pueden afectar a la finalización de tu transacción. En caso\nde darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly."
     },
     "swap2" : {
       "amountSent" : "Importe a enviar",
@@ -6041,6 +6043,10 @@
       "title" : "Algo ha salido mal",
       "description" : "Esta cuenta receptora no pertenece al dispositivo que has conectado. Cámbiala e inténtalo de nuevo."
     },
+    "MissingSwapPayloadParamaters" : {
+      "title" : "Algo ha salido mal",
+      "description" : "Falta el parámetro de permuta del proveedor seleccionado. Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
     "WrongDeviceForAccountRefund" : {
       "title" : "Algo ha salido mal",
       "description" : "Esta cuenta de envío no pertenece al dispositivo que has conectado. Cámbiala e inténtalo de nuevo."
@@ -7057,12 +7063,11 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "Buscar",
-    "assetFlow" : {
-      "selectTemplate" : "Selecciona {{dynamic}}",
-      "asset" : "activo",
-      "network" : "red",
-      "account" : "Cuenta"
-    }
+    "selectAsset" : "Seleccionar activo",
+    "selectNetwork" : "Seleccionar red",
+    "selectAccount" : "Seleccionar cuenta",
+    "accountCount_one" : "Cuenta {{count}}",
+    "accountCount_other" : "Cuentas de {{count}}"
   },
   "nftEntryPoint" : {
     "title" : "NFT (Tokens no fungibles)",
@@ -7070,5 +7075,10 @@
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
     }
+  },
+  "geoBlocking" : {
+    "title" : "Ubicación no disponible",
+    "description" : "Las billeteras Ledger no están disponibles en esta ubicación.",
+    "learnMore" : "Más información"
   }
 }

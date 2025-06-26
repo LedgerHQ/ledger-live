@@ -11,16 +11,16 @@ const Icon = () =>
   });
 const CheckMarkIcon = encodeURIComponent(renderToStaticMarkup(<Icon />));
 
-const Input = styled.input`
+const Input = styled.input<{ size?: number }>`
   background-color: transparent;
 
   border-radius: ${p => `${p.theme.radii[1]}px`};
   position: relative;
 
-  min-width: ${p => p.theme.space[7]}px;
-  height: ${p => p.theme.space[7]}px;
+  min-width: ${p => (p.size ? `${p.size}px` : `${p.theme.space[7]}px`)};
+  height: ${p => (p.size ? `${p.size}px` : `${p.theme.space[7]}px`)};
   appearance: none;
-  border: 1px solid ${props => props.theme.colors.neutral.c90};
+  border: 1px solid ${props => props.theme.colors.opacityDefault.c30};
   box-shadow: none;
 
   &:checked {
@@ -30,8 +30,8 @@ const Input = styled.input`
 
   &:checked::after {
     content: " ";
-    width: ${p => p.theme.space[7]}px;
-    height: ${p => p.theme.space[7]}px;
+    width: ${p => (p.size ? `${p.size}px` : `${p.theme.space[7]}px`)};
+    height: ${p => (p.size ? `${p.size}px` : `${p.theme.space[7]}px`)};
     display: inline-block;
     color: ${props => props.theme.colors.neutral.c00};
 
@@ -93,6 +93,7 @@ export type CheckboxProps = {
   label?: React.ReactNode;
   name: string;
   onChange: (value: boolean) => void;
+  size?: number;
 };
 
 const Checkbox = ({
@@ -102,6 +103,7 @@ const Checkbox = ({
   isChecked,
   name,
   onChange,
+  size,
 }: CheckboxProps): JSX.Element => (
   <Container data-variant={variant} data-disabled={isDisabled}>
     <Input
@@ -111,6 +113,7 @@ const Checkbox = ({
       checked={isChecked}
       disabled={isDisabled}
       onChange={() => onChange(!isChecked)}
+      size={size}
     />
     {label ? (
       <Label as="label" htmlFor={name}>

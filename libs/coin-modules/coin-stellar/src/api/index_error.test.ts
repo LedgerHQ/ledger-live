@@ -1,9 +1,9 @@
-import type { AlpacaApi } from "@ledgerhq/coin-framework/api/index";
+import type { Api } from "@ledgerhq/coin-framework/api/index";
 import { createApi } from ".";
-import { StellarAsset, StellarMemo } from "../types";
+import { StellarAsset } from "../types";
 import nock from "nock";
 describe("Stellar Api", () => {
-  let module: AlpacaApi<StellarAsset, StellarMemo>;
+  let module: Api<StellarAsset>;
   const ADDRESS = "GBAUZBDXMVV7HII4JWBGFMLVKVJ6OLQAKOCGXM5E2FM4TAZB6C7JO2L7";
 
   beforeAll(() => {
