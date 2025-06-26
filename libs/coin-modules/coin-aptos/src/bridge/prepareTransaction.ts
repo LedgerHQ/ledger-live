@@ -6,9 +6,55 @@ import type { AptosAccount, Transaction } from "../types";
 import { getMaxSendBalance } from "./logic";
 import {
   APTOS_DELEGATION_RESERVE_IN_OCTAS,
+  APTOS_MINIMUM_RESTAKE_IN_OCTAS,
   MIN_COINS_ON_SHARES_POOL_IN_OCTAS,
 } from "./../constants";
 import { getDelegationOpMaxAmount } from "../logic/staking";
+
+const checkSendConditions = (transaction: Transaction, account: AptosAccount) =>
+  transaction.mode === "send" && transaction.amount.gt(account.spendableBalance);
+
+const checkStakeConditions = (transaction: Transaction, account: AptosAccount) => {
+  const txAmount = transaction.useAllAmount ? account.spendableBalance : transaction.amount;
+  const stakingPosition = account.aptosResources.stakingPositions
+    .find(stakingPosition => stakingPosition.validatorId === transaction.recipient)
+    ?.active.gt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS);
+  const minimumToStake = stakingPosition
+    ? APTOS_MINIMUM_RESTAKE_IN_OCTAS
+    : MIN_COINS_ON_SHARES_POOL_IN_OCTAS;
+
+  return (
+    transaction.mode === "stake" &&
+    (txAmount.gt(account.spendableBalance) || txAmount.lt(minimumToStake))
+  );
+};
+
+const checkRestakeConditions = (transaction: Transaction, account: AptosAccount) => {
+  const stakingPosition =
+    account.aptosResources.stakingPositions.find(
+      stakingPosition => stakingPosition.validatorId === transaction.recipient,
+    )?.pendingInactive || 0;
+
+  return transaction.mode === "restake" && transaction.amount.gt(stakingPosition);
+};
+
+const checkUnstakeConditions = (transaction: Transaction, account: AptosAccount) => {
+  const stakingPosition =
+    account.aptosResources.stakingPositions.find(
+      stakingPosition => stakingPosition.validatorId === transaction.recipient,
+    )?.active || 0;
+
+  return transaction.mode === "unstake" && transaction.amount.gt(stakingPosition);
+};
+
+const checkWithdrawConditions = (transaction: Transaction, account: AptosAccount) => {
+  const stakingPosition =
+    account.aptosResources.stakingPositions.find(
+      stakingPosition => stakingPosition.validatorId === transaction.recipient,
+    )?.inactive || 0;
+
+  return transaction.mode === "withdraw" && transaction.amount.gt(stakingPosition);
+};
 
 const prepareTransaction = async (
   account: AptosAccount,
@@ -16,22 +62,11 @@ const prepareTransaction = async (
 ): Promise<Transaction> => {
   if (
     !transaction.recipient ||
-    (transaction.mode === "send" && transaction.amount.gt(account.spendableBalance)) ||
-    (transaction.mode === "stake" &&
-      ((!transaction.useAllAmount &&
-        (transaction.amount.gt(account.spendableBalance) ||
-          transaction.amount.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS))) ||
-        (transaction.useAllAmount &&
-          account.spendableBalance.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS)))) ||
-    (transaction.mode === "restake" &&
-      account.aptosResources &&
-      transaction.amount.gt(account.aptosResources.pendingInactiveBalance)) ||
-    (transaction.mode === "unstake" &&
-      account.aptosResources &&
-      transaction.amount.gt(account.aptosResources.activeBalance)) ||
-    (transaction.mode === "withdraw" &&
-      account.aptosResources &&
-      transaction.amount.gt(account.aptosResources.inactiveBalance))
+    checkSendConditions(transaction, account) ||
+    checkStakeConditions(transaction, account) ||
+    checkRestakeConditions(transaction, account) ||
+    checkUnstakeConditions(transaction, account) ||
+    checkWithdrawConditions(transaction, account)
   )
     return transaction;
 
