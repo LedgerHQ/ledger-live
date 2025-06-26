@@ -4,7 +4,7 @@ import { AccountList, Account as DetailedAccount } from "@ledgerhq/react-ui/pre-
 import { AccountTuple } from "../../../utils/getAccountTuplesForCurrency";
 import { ListWrapper } from "../../../components/ListWrapper";
 import { useModularDrawerAnalytics } from "../../../analytics/useModularDrawerAnalytics";
-import { MODULAR_DRAWER_PAGE_NAME } from "../../../analytics/types";
+import { MODULAR_DRAWER_PAGE_NAME } from "../../../analytics/modularDrawer.types";
 
 type SelectAccountProps = {
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;

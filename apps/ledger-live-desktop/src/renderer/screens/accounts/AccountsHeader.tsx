@@ -8,7 +8,7 @@ import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
-import { MAD_SOURCE_PAGES } from "LLD/features/ModularDrawer/analytics/types";
+import { MAD_SOURCE_PAGES } from "LLD/features/ModularDrawer/analytics/modularDrawer.types";
 
 const AccountsHeader = () => {
   const { t } = useTranslation();

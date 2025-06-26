@@ -15,7 +15,7 @@ import { formatDetailedAccount } from "../utils/formatDetailedAccount";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
-import { MODULAR_DRAWER_PAGE_NAME } from "../analytics/types";
+import { MODULAR_DRAWER_PAGE_NAME } from "../analytics/modularDrawer.types";
 import { useOpenAssetFlow } from "./useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { Account } from "@ledgerhq/types-live";

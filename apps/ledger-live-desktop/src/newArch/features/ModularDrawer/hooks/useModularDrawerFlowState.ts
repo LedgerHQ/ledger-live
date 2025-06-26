@@ -6,7 +6,7 @@ import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { ModularDrawerStep } from "../types";
 import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
-import { MODULAR_DRAWER_PAGE_NAME } from "../analytics/types";
+import { MODULAR_DRAWER_PAGE_NAME } from "../analytics/modularDrawer.types";
 import { getTokenOrCryptoCurrencyById } from "@ledgerhq/live-common/deposit/helper";
 import uniqWith from "lodash/uniqWith";
 
