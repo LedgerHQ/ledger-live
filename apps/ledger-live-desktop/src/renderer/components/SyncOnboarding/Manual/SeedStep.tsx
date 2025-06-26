@@ -1,16 +1,16 @@
 import React, { useCallback, useEffect } from "react";
-import { Flex, VerticalTimeline, Text } from "@ledgerhq/react-ui";
+import { Flex, VerticalTimeline, Link, Icons } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { StepText } from "./shared";
 import ContinueOnDeviceWithAnim from "./ContinueOnDeviceWithAnim";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getDeviceModel } from "@ledgerhq/devices";
-import ExternalLink from "~/renderer/components/ExternalLink";
-import CharonPng from "./assets/charon.png";
 import SecretRecoveryPhrasePng from "./assets/secret-recovery-phrase.png";
 import { trackPage, useTrack } from "~/renderer/analytics/segment";
 import { CharonStatus } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { openURL } from "~/renderer/linking";
+import Animation from "~/renderer/animations";
+import CHARON from "~/renderer/animations/charon/charon.json";
 
 export type SeedPathStatus =
   | "choice_new_or_restore"
@@ -78,11 +78,18 @@ const SeedStep = ({ seedPathStatus, deviceModelId, charonSupported, charonStatus
       {seedPathStatus === "new_seed" ? (
         <Flex flexDirection="column">
           <Flex alignItems="center" justifyContent="center" flexDirection="column">
-            <Flex style={{ width: 220, height: 170, overflow: "visible" }}>
+            <Flex
+              style={{
+                width: 220,
+                height: 150,
+                overflow: "visible",
+                justifyContent: "center",
+              }}
+            >
               <img
                 src={SecretRecoveryPhrasePng}
                 alt="Secret Recovery Phrase"
-                style={{ width: 220, height: 220 }}
+                style={{ height: 220, objectFit: "contain" }}
               />
             </Flex>
             {/* @ts-expect-error weird props issue with React 18 */}
@@ -174,7 +181,7 @@ const SeedStep = ({ seedPathStatus, deviceModelId, charonSupported, charonStatus
                 paddingTop: 20,
               }}
             >
-              <img src={CharonPng} alt="Charon" style={{ height: 220, objectFit: "contain" }} />
+              <Animation animation={CHARON as object} />
             </Flex>
             {/* @ts-expect-error weird props issue with React 18 */}
             <StepText mb={6} fontWeight="semiBold" variant="largeLineHeight" color="neutral.c100">
@@ -184,17 +191,16 @@ const SeedStep = ({ seedPathStatus, deviceModelId, charonSupported, charonStatus
             <StepText mb={6} textAlign="center">
               {t("syncOnboarding.manual.seedContent.backupCharonDescription")}
             </StepText>
-
             <Flex flexDirection="column" color="neutral.c100" mb={6}>
-              <ExternalLink
-                label={
-                  <Text fontWeight="bold" variant="body" color="neutral.c80">
-                    {t("syncOnboarding.manual.seedContent.backupCharonCta")}
-                  </Text>
-                }
+              <Link
+                alwaysUnderline
+                Icon={() => <Icons.ExternalLink size="S" />}
                 onClick={handleLearnMoreClick}
-                isInternal={false}
-              />
+                style={{ justifyContent: "flex-start" }}
+                textProps={{ fontSize: 14 }}
+              >
+                {t("syncOnboarding.manual.seedContent.backupCharonCta")}
+              </Link>
             </Flex>
           </Flex>
 
