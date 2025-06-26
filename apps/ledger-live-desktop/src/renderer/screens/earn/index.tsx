@@ -17,7 +17,7 @@ import {
 } from "~/renderer/reducers/settings";
 import { useDeepLinkListener } from "~/renderer/screens/earn/useDeepLinkListener";
 import { useHistory } from "react-router";
-import { useVersionedStakePrograms } from "~/newArch/hooks/useVersionedStakePrograms";
+import { useVersionedStakePrograms } from "LLD/hooks/useVersionedStakePrograms";
 
 const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_EARN_MANIFEST_ID || DEFAULT_FEATURES.ptxEarnLiveApp.params?.manifest_id;

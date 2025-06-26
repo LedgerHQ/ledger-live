@@ -61,7 +61,7 @@ import { appStartupTime } from "../StartupTimeMarker";
 import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
 import { getMigrationUserProps } from "LLM/storage/utils/migrations/analytics";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { getVersionedRedirects } from "../newArch/hooks/useStake/useVersionedStakePrograms";
+import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakePrograms";
 
 let sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;

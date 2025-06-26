@@ -36,7 +36,7 @@ import { accountsSelector } from "../reducers/accounts";
 import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
 import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import { LiveConfig } from "@ledgerhq/live-config/lib-es/LiveConfig";
-import { getVersionedRedirects } from "~/newArch/hooks/useVersionedStakePrograms";
+import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 // eslint-disable-next-line @typescript-eslint/no-var-requires

@@ -22,7 +22,7 @@ import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 import { useSettings } from "~/hooks";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { EarnWebview } from "./EarnWebview";
-import { useVersionedStakePrograms } from "~/newArch/hooks/useStake/useVersionedStakePrograms";
+import { useVersionedStakePrograms } from "LLM/hooks/useStake/useVersionedStakePrograms";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
 
