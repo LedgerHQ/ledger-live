@@ -13,7 +13,7 @@ runs:
         NPM_REGISTRY_TOKEN: ${{ steps.jfrog-login.outputs.oidc-token }}
       shell: bash
       run: |
-        cat << EOF | tee .npmrc
+        cat << EOF | tee -a .npmrc
         registry=https://${NPM_REGISTRY}/
         //${NPM_REGISTRY}/:_authToken=${NPM_REGISTRY_TOKEN}
         EOF
