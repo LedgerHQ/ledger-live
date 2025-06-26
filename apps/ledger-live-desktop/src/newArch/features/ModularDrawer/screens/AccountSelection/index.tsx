@@ -8,7 +8,7 @@ import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { useDetailedAccounts } from "../../hooks/useDetailedAccounts";
 import { Observable } from "rxjs";
 import TrackDrawerScreen from "../../analytics/TrackDrawerScreen";
-import { MODULAR_DRAWER_PAGE_NAME } from "../../analytics/types";
+import { MODULAR_DRAWER_PAGE_NAME } from "../../analytics/modularDrawer.types";
 
 type Props = {
   asset: CryptoOrTokenCurrency;
