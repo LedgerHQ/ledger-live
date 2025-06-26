@@ -175,20 +175,22 @@ export function Row({
         </Ellipsis>
       </Column>
       <Column>
-        <DropDown items={dropDownItems} renderItem={ManageDropDownItem} onChange={onSelect}>
-          {() => (
-            <Box horizontal alignItems="center">
-              <Trans i18nKey="common.manage" />
-              <div
-                style={{
-                  transform: "rotate(90deg)",
-                }}
-              >
-                <ChevronRight size={16} />
-              </div>
-            </Box>
-          )}
-        </DropDown>
+        {dropDownItems.length ? (
+          <DropDown items={dropDownItems} renderItem={ManageDropDownItem} onChange={onSelect}>
+            {() => (
+              <Box horizontal alignItems="center">
+                <Trans i18nKey="common.manage" />
+                <div
+                  style={{
+                    transform: "rotate(90deg)",
+                  }}
+                >
+                  <ChevronRight size={16} />
+                </div>
+              </Box>
+            )}
+          </DropDown>
+        ) : null}
       </Column>
     </Wrapper>
   );
