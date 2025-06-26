@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { Flex, Icons, Text } from "@ledgerhq/react-ui";
+import { Flex, Icons, InfiniteLoader, Text } from "@ledgerhq/react-ui";
 import { Trans } from "react-i18next";
 import { useAppVersionBlockCheck } from "@ledgerhq/live-common/hooks/useAppVersionBlockCheck";
 import { AppBlocker } from "../AppBlocker/index";
@@ -12,7 +12,7 @@ import { openURL } from "~/renderer/linking";
 import styled from "styled-components";
 import { useFirebaseRemoteConfig } from "~/renderer/components/FirebaseRemoteConfig";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import Button from "~/renderer/components/ButtonV3";
+import ButtonV3 from "~/renderer/components/ButtonV3";
 
 const platformsNames: Record<string, "windows" | "linux" | "macOS"> = {
   win32: "windows",
@@ -30,6 +30,10 @@ const Circle = styled.div`
   flex-direction: column;
   display: inline-flex;
   background-color: ${p => p.theme.colors.error.c60};
+`;
+
+const Spacer = styled.div`
+  width: 8px;
 `;
 
 export function AppVersionBlocker({ children }: { children: React.ReactNode }) {
@@ -62,12 +66,22 @@ export function AppVersionBlocker({ children }: { children: React.ReactNode }) {
       blocked={shouldUpdate}
       IconComponent={() => (
         <Circle>
-          <Icons.CloudDownload size="S" color="primary" data-testID="cloud-download-icon" />
+          {updaterContext?.status === "error" ? (
+            <Icons.Close size="S" color="primary" data-testID="error-icon" />
+          ) : (
+            <Icons.CloudDownload size="S" color="primary" data-testID="cloud-download-icon" />
+          )}
         </Circle>
       )}
       TitleComponent={() => (
         <Text variant="bodyLineHeight" color="neutral.c100" fontSize={24} marginTop={24}>
-          <Trans i18nKey="versionBlocking.title" />
+          <Trans
+            i18nKey={
+              updaterContext?.status === "error"
+                ? "versionBlocking.errorTitle"
+                : "versionBlocking.title"
+            }
+          />
         </Text>
       )}
       DescriptionComponent={() => (
@@ -79,42 +93,45 @@ export function AppVersionBlocker({ children }: { children: React.ReactNode }) {
           maxWidth={365}
           textAlign="center"
         >
-          <Trans i18nKey="versionBlocking.description" />
+          <Trans
+            i18nKey={
+              updaterContext?.status === "error"
+                ? "versionBlocking.errorDescription"
+                : "versionBlocking.description"
+            }
+          />
         </Text>
       )}
       CTAComponent={() => (
-        <Flex flexDirection="column">
-          {updaterContext?.status === "download-progress" ? (
-            <Text
-              variant="body"
-              fontSize={14}
-              color="neutral.c70"
-              marginTop={16}
-              textAlign="justify"
-            >
-              <Trans i18nKey="update.downloadInProgress" />{" "}
+        <ButtonV3
+          size="medium"
+          variant="main"
+          fontSize={24}
+          onClick={onPressDownload}
+          isLoading={["downloading-update", "download-progress"].includes(
+            updaterContext?.status || "",
+          )}
+          alignSelf="center"
+          minWidth={105}
+          marginTop={12}
+        >
+          {["download-progress", "downloading-update"].includes(updaterContext?.status || "") ? (
+            <Flex flexDirection="row" alignItems="center">
+              <InfiniteLoader size={16} color="neutral.c30" />
+              <Spacer />
               <Trans
-                i18nKey="update.downloadProgress"
+                i18nKey="versionBlocking.downloadProgress"
                 values={{
                   progress: updaterContext?.downloadProgress,
                 }}
               />
-            </Text>
-          ) : null}
-          <Button
-            size="medium"
-            variant="main"
-            onClick={onPressDownload}
-            disabled={["downloading-update", "download-progress"].includes(
-              updaterContext?.status || "",
-            )}
-            alignSelf="center"
-            width={105}
-            marginTop={12}
-          >
-            <Trans i18nKey="versionBlocking.update" />
-          </Button>
-        </Flex>
+            </Flex>
+          ) : updaterContext?.status === "error" ? (
+            <Trans i18nKey="versionBlocking.downloadOnLedger" />
+          ) : (
+            <Trans i18nKey="versionBlocking.restart" />
+          )}
+        </ButtonV3>
       )}
     >
       {children}

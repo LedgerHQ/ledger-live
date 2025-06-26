@@ -35,8 +35,6 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { AppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
 import { allowDebugReactQuerySelector } from "./reducers/settings";
-import { AppGeoBlocker } from "LLD/features/AppBlockers/components/AppGeoBlocker";
-import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersionBlocker";
 
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
@@ -94,12 +92,8 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
                                   <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
                                     <StorylyProvider>
                                       <QueryClientProvider client={queryClient}>
-                                        <AppGeoBlocker>
-                                          <AppVersionBlocker>
-                                            <Default />
-                                            <ReactQueryDevtoolsProvider />
-                                          </AppVersionBlocker>
-                                        </AppGeoBlocker>
+                                        <Default />
+                                        <ReactQueryDevtoolsProvider />
                                       </QueryClientProvider>
                                     </StorylyProvider>
                                   </NftMetadataProvider>
