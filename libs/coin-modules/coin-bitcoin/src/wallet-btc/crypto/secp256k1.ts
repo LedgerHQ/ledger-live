@@ -10,11 +10,7 @@ export type Secp256k1Instance = {
 
 // default uses node.js's secp256k1
 let impl: Secp256k1Instance = {
-  publicKeyTweakAdd: async (publicKey, tweak) => {
-    const result = ecc.pointAddScalar(publicKey, tweak);
-    if (!result) throw new Error("Failed to tweak public key");
-    return result;
-  },
+  publicKeyTweakAdd: (publicKey, tweak) => Promise.resolve(ecc.pointAddScalar(publicKey, tweak)!),
 };
 
 /**
