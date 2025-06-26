@@ -1,4 +1,3 @@
-import * as secp256k1 from "secp256k1";
 import * as ecc from "@bitcoinerlab/secp256k1";
 import { BIP32Factory } from "bip32";
 import hmac from "create-hmac";
@@ -15,7 +14,7 @@ export class NobleCryptoSecp256k1 implements Crypto {
     let pk: Uint8Array;
     do {
       pk = crypto.randomBytes(PRIVATE_KEY_SIZE);
-    } while (!secp256k1.privateKeyVerify(pk));
+    } while (!ecc.isPrivate(pk));
     return this.keypairFromSecretKey(pk);
   }
 
@@ -34,8 +33,10 @@ export class NobleCryptoSecp256k1 implements Crypto {
   }
 
   keypairFromSecretKey(secretKey: Uint8Array): KeyPair {
+    const publicKey = ecc.pointFromScalar(secretKey);
+    if (!publicKey) throw new Error("Public Key from Secret Key is null!");
     return {
-      publicKey: secp256k1.publicKeyCreate(secretKey),
+      publicKey: publicKey,
       privateKey: secretKey,
     };
   }
@@ -66,7 +67,7 @@ export class NobleCryptoSecp256k1 implements Crypto {
   }
 
   sign(message: Uint8Array, keyPair: KeyPair): Uint8Array {
-    const signature = secp256k1.ecdsaSign(message, keyPair.privateKey).signature;
+    const signature = ecc.sign(message, keyPair.privateKey);
     // DER encoding
     return this.derEncode(signature.slice(0, 32), signature.slice(32, 64));
   }
@@ -74,7 +75,7 @@ export class NobleCryptoSecp256k1 implements Crypto {
   verify(message: Uint8Array, signature: Uint8Array, publicKey: Uint8Array): boolean {
     // DER decoding
     const { R, S } = this.derDecode(signature);
-    return secp256k1.ecdsaVerify(this.concat(R, S), message, publicKey);
+    return ecc.verify(this.concat(R, S), message, publicKey);
   }
 
   private to_array(buffer: Buffer): Uint8Array {

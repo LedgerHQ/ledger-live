@@ -53,6 +53,7 @@
     "knip-check": "pnpm knip --directory ../.. -W apps/ledger-live-desktop"
   },
   "dependencies": {
+    "@bitcoinerlab/secp256k1": "1.2.0",
     "@braze/web-sdk": "4.10.2",
     "@ledgerhq/coin-aptos": "workspace:^",
     "@ledgerhq/coin-bitcoin": "workspace:^",
@@ -98,6 +99,7 @@
     "@types/semver": "7.5.8",
     "@xstate/react": "^5.0.2",
     "allure-commandline": "2.28.0",
+    "asn1.js": "5.4.1",
     "bignumber.js": "9.1.2",
     "chart.js": "2.9.4",
     "color": "4.2.3",
@@ -144,7 +146,6 @@
     "reselect": "4.1.8",
     "rimraf": "4.4.1",
     "rxjs": "7.8.1",
-    "secp256k1": "4.0.3",
     "semver": "7.5.4",
     "storyly-web": "4.5.4",
     "styled-components": "5.3.11",

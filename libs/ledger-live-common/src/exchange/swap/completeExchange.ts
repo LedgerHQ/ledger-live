@@ -14,7 +14,6 @@ import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
-import secp256k1 from "secp256k1";
 import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
@@ -25,6 +24,7 @@ import { CompleteExchangeStep, convertTransportError } from "../error";
 import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "../platform/types";
 import { convertToAppExchangePartnerKey, getSwapProvider } from "../providers";
 import { CEXProviderConfig } from "../providers/swap";
+import { signatureExport } from "../../der";
 
 const COMPLETE_EXCHANGE_LOG = "SWAP-CompleteExchange";
 
@@ -257,7 +257,7 @@ const completeExchange = (
 function convertSignature(signature: string, exchangeType: ExchangeTypes): Buffer {
   return exchangeType === ExchangeTypes.SwapNg
     ? base64UrlDecode(signature)
-    : <Buffer>secp256k1.signatureExport(Buffer.from(signature, "hex"));
+    : signatureExport(Buffer.from(signature, "hex"));
 }
 
 function base64UrlDecode(base64Url: string): Buffer {
