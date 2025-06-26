@@ -1,5 +1,23 @@
 # ledger-live-desktop
 
+## 2.119.0-nightly.0
+
+### Minor Changes
+
+- [#10624](https://github.com/LedgerHQ/ledger-live/pull/10624) [`ccbe1dc`](https://github.com/LedgerHQ/ledger-live/commit/ccbe1dce27a4b259dc95ff7fae62b404fd6de6b2) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - MAD storybook story for modularisation parameter
+
+- [#10666](https://github.com/LedgerHQ/ledger-live/pull/10666) [`558c438`](https://github.com/LedgerHQ/ledger-live/commit/558c438cd306fd714c2d784125d6b4231b512fe1) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add links for CTA
+
+- [#10669](https://github.com/LedgerHQ/ledger-live/pull/10669) [`75bf2ef`](https://github.com/LedgerHQ/ledger-live/commit/75bf2ef259b7dfa7aab74e1e6ffa3db331282af8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Prevent Excessive Re-renders and Language Sync Issues on Language/Region Select in Settings Page
+
+- [#10667](https://github.com/LedgerHQ/ledger-live/pull/10667) [`105f564`](https://github.com/LedgerHQ/ledger-live/commit/105f5640a8c4e0edf501b88d4ad266c8507dde48) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Update wordings
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.38.2-nightly.0
+  - @ledgerhq/live-dmk-desktop@0.5.2-nightly.0
+
 ## 2.118.1
 
 ### Patch Changes

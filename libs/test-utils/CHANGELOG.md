@@ -1,5 +1,12 @@
 # @ledgerhq/test-utils
 
+## 0.3.19-nightly.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.38.2-nightly.0
+
 ## 0.3.18
 
 ### Patch Changes

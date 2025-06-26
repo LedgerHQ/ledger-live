@@ -1,5 +1,11 @@
 # @ledgerhq/coin-hedera
 
+## 1.8.0-nightly.2
+
+### Minor Changes
+
+- [#10535](https://github.com/LedgerHQ/ledger-live/pull/10535) [`070169d`](https://github.com/LedgerHQ/ledger-live/commit/070169d2e53bda8a47399d4e9017c2e7947958a5) Thanks [@md-blockydevs](https://github.com/md-blockydevs)! - prevent breaking loop when mirror node returns empty transactions with links.next
+
 ## 1.7.3-nightly.1
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @ledgerhq/live-common
 
+## 34.38.2-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`070169d`](https://github.com/LedgerHQ/ledger-live/commit/070169d2e53bda8a47399d4e9017c2e7947958a5)]:
+  - @ledgerhq/coin-hedera@1.8.0-nightly.2
+
 ## 34.38.1
 
 ### Patch Changes
