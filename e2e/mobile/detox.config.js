@@ -11,8 +11,8 @@ const androidDir = path.join(rootDir, "apps/ledger-live-mobile/android");
 const ENV_FILE_MOCK = path.join("apps", "ledger-live-mobile", ".env.mock");
 const ENV_FILE_MOCK_PRERELEASE = path.join("apps", "ledger-live-mobile", ".env.mock.prerelease");
 
-const getIosBinary = () =>
-  path.join(iosBuildDir, `Build/Products/Release-iphonesimulator/${SCHEME}.app`);
+const getIosBinary = config =>
+  path.join(iosBuildDir, `Build/Products/${config}-iphonesimulator/${SCHEME}.app`);
 const getAndroidBinary = type =>
   path.join(androidDir, `app/build/outputs/apk/${type}/app-${androidArch}-${type}.apk`);
 const getAndroidTestBinary = type =>
@@ -53,17 +53,17 @@ module.exports = {
     "ios.staging": {
       type: "ios.app",
       build: `export ENVFILE=${ENV_FILE_MOCK} && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=YES -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Staging -sdk iphonesimulator -derivedDataPath ios/build`,
-      binaryPath: getIosBinary("staging"),
+      binaryPath: getIosBinary("Staging"),
     },
     "ios.release": {
       type: "ios.app",
       build: `export ENVFILE=${ENV_FILE_MOCK} && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=YES -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Release -sdk iphonesimulator -derivedDataPath ios/build`,
-      binaryPath: getIosBinary("release"),
+      binaryPath: getIosBinary("Release"),
     },
     "ios.prerelease": {
       type: "ios.app",
       build: `export ENVFILE=${ENV_FILE_MOCK_PRERELEASE} && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=YES -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Release -sdk iphonesimulator -derivedDataPath ios/build`,
-      binaryPath: getIosBinary("prerelease"),
+      binaryPath: getIosBinary("Release"),
     },
     "android.debug": {
       type: "android.apk",
