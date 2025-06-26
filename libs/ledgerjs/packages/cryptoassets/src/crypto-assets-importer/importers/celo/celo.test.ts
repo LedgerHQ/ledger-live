@@ -64,7 +64,7 @@ export default tokens as CeloTokens[];
           "cUSD",
           18,
           "Celo Dollar",
-          "TODO: ADD SIGNATURE",
+          "3045022100bb27cb9143070f0414e9519f1f06a83a3fee31a9fb5ecf17a30575056c4991850220265e8843bcd6e02eddcb9b6f3f6ca29e2bd6dcf2e73ca3d18856938d2dd30d09",
           "0x765de816845861e75a25fca122bb6898b8b1282a",
           false,
           false,
