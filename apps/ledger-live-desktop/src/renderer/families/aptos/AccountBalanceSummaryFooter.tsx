@@ -54,13 +54,11 @@ const AmountValue = styled(Text).attrs(() => ({
 `;
 
 const AccountBalanceSummaryFooter: AptosFamily["AccountBalanceSummaryFooter"] = ({ account }) => {
-  if (getEnv("APTOS_ENABLE_STAKING") === false) return null;
-
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
 
-  if (account.type !== "Account") return null;
+  if (account.type !== "Account" || getEnv("APTOS_ENABLE_STAKING") === false) return null;
 
   const { spendableBalance: _spendableBalance, aptosResources } = account;
 

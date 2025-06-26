@@ -32,8 +32,6 @@ const Wrapper = styled(Box).attrs(() => ({
 `;
 
 const Staking = ({ account }: { account: AptosAccount }) => {
-  if (getEnv("APTOS_ENABLE_STAKING") === false) return null;
-
   const dispatch = useDispatch();
 
   const stakingPositions = account.aptosResources?.stakingPositions || [];
@@ -69,6 +67,8 @@ const Staking = ({ account }: { account: AptosAccount }) => {
     },
     [explorerView],
   );
+
+  if (getEnv("APTOS_ENABLE_STAKING") === false) return null;
 
   const hasStakingPositions = stakingPositions.length > 0;
 
