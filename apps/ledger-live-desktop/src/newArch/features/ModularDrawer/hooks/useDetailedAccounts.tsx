@@ -6,7 +6,7 @@ import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
-import { getAccountTuplesForCurrency } from "../utils/getAccountTuplesForCurrency";
+import { AccountTuple, getAccountTuplesForCurrency } from "../utils/getAccountTuplesForCurrency";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { sortAccountsByFiatValue } from "../utils/sortAccountsByFiatValue";
@@ -19,6 +19,10 @@ import { MODULAR_DRAWER_PAGE_NAME } from "../analytics/types";
 import { useOpenAssetFlow } from "./useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { Account } from "@ledgerhq/types-live";
+import { useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
+import orderBy from "lodash/orderBy";
+import keyBy from "lodash/keyBy";
+
 export const sortAccountsByBalance = (
   a: { balance: BigNumber } | undefined,
   b: { balance: BigNumber } | undefined,
@@ -39,10 +43,7 @@ export const useDetailedAccounts = (
   const discreet = useDiscreetMode();
   const state = useCountervaluesState();
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
-  const { openAddAccountFlow } = useOpenAssetFlow(
-    ModularDrawerLocation.ADD_ACCOUNT,
-    "modular_drawer_asset_selection",
-  );
+  const { openAddAccountFlow } = useOpenAssetFlow(ModularDrawerLocation.ADD_ACCOUNT, source);
 
   const accountIds = useGetAccountIds(accounts$);
   const nestedAccounts = useSelector(accountsSelector);
@@ -52,11 +53,23 @@ export const useDetailedAccounts = (
 
   const accounts = useMemo(() => {
     const accountTuples = getAccountTuplesForCurrency(asset, nestedAccounts, accountIds);
-    return accountTuples.sort((a, b) => sortAccountsByBalance(a.account, b.account));
+    return orderBy(accountTuples, [(tuple: AccountTuple) => tuple.account.balance], ["desc"]);
   }, [asset, nestedAccounts, accountIds]);
 
+  const overridedAccountName = useBatchMaybeAccountName(accounts.map(({ account }) => account));
+
   const detailedAccounts = useMemo(() => {
-    const formattedAccounts = accounts.flatMap(tuple => {
+    const accountNameMap = keyBy(
+      accounts
+        .map(({ account }, index) => ({
+          id: account.id,
+          name: overridedAccountName[index],
+        }))
+        .filter(item => item.name),
+      "id",
+    );
+
+    const formattedAccounts = accounts.map(tuple => {
       const account = tuple.account;
       const protocol = getTagDerivationMode(account.currency, account.derivationMode) ?? "";
       const currencyAccount = formatDetailedAccount(
@@ -68,22 +81,30 @@ export const useDetailedAccounts = (
       );
 
       if (isATokenCurrency && tuple.subAccount) {
-        return [
-          formatDetailedAccount(
-            tuple.subAccount,
-            account.freshAddress,
-            state,
-            counterValueCurrency,
-            discreet,
-          ),
-        ];
+        const formattedSubAccount = formatDetailedAccount(
+          tuple.subAccount,
+          account.freshAddress,
+          state,
+          counterValueCurrency,
+          discreet,
+        );
+        const parentAccountName = accountNameMap[account.id]?.name;
+        return {
+          ...formattedSubAccount,
+          name: parentAccountName ?? formattedSubAccount.name,
+        };
       } else {
-        return [{ ...currencyAccount, protocol }];
+        const accountName = accountNameMap[account.id]?.name;
+        return {
+          ...currencyAccount,
+          protocol,
+          name: accountName ?? currencyAccount.name,
+        };
       }
     });
 
     return sortAccountsByFiatValue(formattedAccounts);
-  }, [accounts, state, counterValueCurrency, discreet, isATokenCurrency]);
+  }, [accounts, state, counterValueCurrency, discreet, isATokenCurrency, overridedAccountName]);
 
   const onAddAccountClick = useCallback(() => {
     trackModularDrawerEvent("button_clicked", {
