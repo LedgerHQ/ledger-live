@@ -15,15 +15,24 @@ type Props = {
   source: string;
   flow: string;
   accounts$?: Observable<WalletAPIAccount[]>;
+  hideAddAccountButton?: boolean;
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
 };
 
-export const AccountSelection = ({ asset, source, flow, accounts$, onAccountSelected }: Props) => {
+export const AccountSelection = ({
+  asset,
+  source,
+  flow,
+  accounts$,
+  onAccountSelected,
+  hideAddAccountButton,
+}: Props) => {
   const { detailedAccounts, accounts, onAddAccountClick } = useDetailedAccounts(
     asset,
     flow,
     source,
     accounts$,
+    onAccountSelected,
   );
 
   const BottomComponent = (
@@ -45,7 +54,7 @@ export const AccountSelection = ({ asset, source, flow, accounts$, onAccountSele
         accounts={accounts}
         detailedAccounts={detailedAccounts}
         onAccountSelected={onAccountSelected}
-        bottomComponent={BottomComponent}
+        bottomComponent={!hideAddAccountButton && BottomComponent}
       />
     </>
   );

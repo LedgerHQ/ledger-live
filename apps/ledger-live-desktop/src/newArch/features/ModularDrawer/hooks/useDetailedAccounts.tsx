@@ -18,6 +18,7 @@ import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytic
 import { MODULAR_DRAWER_PAGE_NAME } from "../analytics/types";
 import { useOpenAssetFlow } from "./useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { Account } from "@ledgerhq/types-live";
 export const sortAccountsByBalance = (
   a: { balance: BigNumber } | undefined,
   b: { balance: BigNumber } | undefined,
@@ -33,6 +34,7 @@ export const useDetailedAccounts = (
   flow: string,
   source: string,
   accounts$?: Observable<WalletAPIAccount[]>,
+  onAccountSelected?: (account: Account) => void,
 ) => {
   const discreet = useDiscreetMode();
   const state = useCountervaluesState();
@@ -90,8 +92,8 @@ export const useDetailedAccounts = (
       flow,
       source,
     });
-    openAddAccountFlow(asset, false);
-  }, [asset, flow, openAddAccountFlow, source, trackModularDrawerEvent]);
+    openAddAccountFlow(asset, false, onAccountSelected);
+  }, [asset, flow, openAddAccountFlow, source, trackModularDrawerEvent, onAccountSelected]);
 
   return { detailedAccounts, accounts, onAddAccountClick };
 };

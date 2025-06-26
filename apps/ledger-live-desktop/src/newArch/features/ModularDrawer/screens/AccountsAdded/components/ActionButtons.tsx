@@ -18,9 +18,10 @@ const GradientFlex = styled(Flex)`
 interface Props {
   onAddFunds: () => void;
   onClose: () => void;
+  isAccountSelectionFlow: boolean;
 }
 
-export const ActionButtons = ({ onAddFunds, onClose }: Props) => {
+export const ActionButtons = ({ onAddFunds, onClose, isAccountSelectionFlow }: Props) => {
   const { t } = useTranslation();
 
   return (
@@ -30,18 +31,22 @@ export const ActionButtons = ({ onAddFunds, onClose }: Props) => {
       left={0}
       right={0}
       bottom={0}
-      paddingLeft="40px"
-      paddingRight="40px"
+      paddingLeft="24px"
+      paddingRight="24px"
       paddingBottom="40px"
       width="100%"
     >
-      <Flex flexDirection="column" width="100%">
-        <Button onClick={onAddFunds} size="large" variant="main" mb="3">
-          {t("modularAssetDrawer.accountsAdded.cta.addFunds")}
+      <Flex flexDirection="column" width="100%" rowGap="3">
+        <Button onClick={onAddFunds} size="large" variant="main">
+          {isAccountSelectionFlow
+            ? t("modularAssetDrawer.accountsAdded.cta.selectAccount")
+            : t("modularAssetDrawer.accountsAdded.cta.addFunds")}
         </Button>
-        <Button onClick={onClose} size="large" variant="main" outline>
-          {t("modularAssetDrawer.accountsAdded.cta.close")}
-        </Button>
+        {!isAccountSelectionFlow && (
+          <Button onClick={onClose} size="large" variant="main" outline>
+            {t("modularAssetDrawer.accountsAdded.cta.close")}
+          </Button>
+        )}
       </Flex>
     </GradientFlex>
   );
