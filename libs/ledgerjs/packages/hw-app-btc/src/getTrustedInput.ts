@@ -136,33 +136,30 @@ export async function getTrustedInput(
     console.log("rabl: start EXTRA DATA", { data });
     // send this is sapling data
     await getTrustedInputRaw(transport, data);
-    // // send spends
+    // send spends
     for (const spend of transaction.sapling.vSpendsSapling) {
       const spendData = Buffer.concat([
-        spend.cv,
-        spend.anchor,
-        spend.nullifier,
-        spend.rk,
-        createVarint(spend.zkproof.length),
-        spend.zkproof,
+        spend.cv, //32
+        spend.nullifier, //32
+        spend.rk, //32
       ]);
       console.log("rabl: getTrustedInput HERE 6.1", { spendData });
       await getTrustedInputRaw(transport, spendData);
     }
-    // await getTrustedInputRaw(transport, data);
+    await getTrustedInputRaw(transport, data);
     // // send outputs
-    for (const output of transaction.sapling.vOutputSapling) {
-      const outputData = Buffer.concat([
-        output.cv,
-        output.cmu,
-        output.ephemeralKey,
-        output.encCiphertext,
-        createVarint(output.zkproof.length),
-        output.zkproof,
-      ]);
-      console.log("rabl: getTrustedInput HERE 6.2", { outputData });
-      await getTrustedInputRaw(transport, outputData);
-    }
+    // for (const output of transaction.sapling.vOutputSapling) {
+    //   const outputData = Buffer.concat([
+    //     output.cv,
+    //     output.cmu,
+    //     output.ephemeralKey,
+    //     output.encCiphertext,
+    //     createVarint(output.zkproof.length),
+    //     output.zkproof,
+    //   ]);
+    //   console.log("rabl: getTrustedInput HERE 6.2", { outputData });
+    //   await getTrustedInputRaw(transport, outputData);
+    // }
     // await getTrustedInputRaw(transport, data);
     // // send other
     // await getTrustedInputRaw(transport, data);
