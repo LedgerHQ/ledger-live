@@ -162,12 +162,12 @@ export interface StringMemo<Kind extends string = "text"> extends Memo {
 }
 
 export interface MapMemo<Kind extends string, Value> extends Memo {
-  type: "map";
+  type: string;
   memos: Map<Kind, Value>;
 }
 
 export interface TypedMapMemo<KindToValueMap extends Record<string, unknown>> extends Memo {
-  type: "map";
+  type: string;
   memos: Map<keyof KindToValueMap, KindToValueMap[keyof KindToValueMap]>;
 }
 
@@ -221,6 +221,7 @@ export type AccountInfo = {
   ownerCount: number;
   sequence: number;
   assets?: BalanceAsset[]; // Optional, depending on the API
+  spendableBalance?: string; // Optional, depending on the API
 };
 
 export type AlpacaApi<

@@ -106,13 +106,13 @@ export function buildSubAccounts({
 
   const tokenAccounts: TokenAccount[] = [];
   console.log({ operations });
-  debugger;
+  // debugger;
 
   assets.map(asset => {
     const token = findTokenById(`stellar/asset/${getAssetIdFromAsset(asset)}`);
 
     if (token && !blacklistedTokenIds.includes(token.id)) {
-      debugger;
+      // debugger;
       tokenAccounts.push(
         buildStellarTokenAccount({
           parentAccountId: accountId,

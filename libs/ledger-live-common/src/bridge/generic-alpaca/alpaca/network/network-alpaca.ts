@@ -11,10 +11,12 @@ import type {
   TransactionValidation,
   AccountInfo,
   Api,
+  Asset,
+  TokenInfoCommon,
 } from "@ledgerhq/coin-framework/api/index";
 import network from "@ledgerhq/live-network";
 
-function adaptOp(backendOp: any): Operation<any> {
+function adaptOp<T extends Asset<TokenInfoCommon>>(backendOp: Operation<T>): Operation<T> {
   const { date } = backendOp.tx;
   const newDate = new Date(date);
 

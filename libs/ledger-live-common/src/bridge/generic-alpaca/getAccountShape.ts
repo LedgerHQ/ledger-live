@@ -60,7 +60,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const nativeAsset = balanceRes.find(b => b.asset.type === "native");
     const nativeBalance = BigInt(nativeAsset?.value ?? "0");
     const lockedBalance = BigInt(nativeAsset?.locked ?? "0");
-    const spendableBalance = nativeBalance > lockedBalance ? nativeBalance - lockedBalance : 0n;
+    let spendableBalance = nativeBalance > lockedBalance ? nativeBalance - lockedBalance : 0n;
 
     const oldOps = (initialAccount?.operations || []) as StellarOperation[];
     console.log("oldOps", oldOps);
@@ -112,6 +112,10 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
 
     const accountInfo = await getAlpacaApi(network, kind).getAccountInfo(address);
     console.log({ accountInfo });
+    // TODO: make this more generic this looks to be only for stellar
+    if (accountInfo?.spendableBalance) {
+      spendableBalance = BigInt(accountInfo.spendableBalance);
+    }
     const subAccounts =
       buildSubAccounts({
         currency,
@@ -171,7 +175,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       };
     });
 
-    debugger;
+    // debugger;
     console.log("operationsWithSubs", operationsWithSubs);
     const res = {
       id: accountId,

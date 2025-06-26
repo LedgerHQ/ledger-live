@@ -56,7 +56,7 @@ export const getTransactionStatus = async (
   //   errors.fees = new FeeNotLoaded();
   // }
 
-  const estimatedFees = !transaction.fees ? 0n : transaction.fee;
+  const estimatedFees = !transaction.fee ? 0n : transaction.fee;
   const baseReserve = !transaction.baseReserve ? 0n : transaction.baseReserve;
   const isAssetPayment =
     transaction.subAccountId && transaction.assetCode && transaction.assetIssuer;

@@ -45,6 +45,7 @@ export function createApi(config: StellarConfig): Api<StellarAsset, StellarMemo>
         ownerCount: 0, // TODO: check
         sequence: sequence.plus(1).toNumber(),
         assets: res.assets,
+        spendableBalance: res.spendableBalance.toString(),
         // Add other account details as needed
       };
     },
@@ -70,7 +71,7 @@ async function craft(
   // }
   const memo = "memo" in transactionIntent ? transactionIntent.memo : undefined;
   const hasMemoValue = memo && memo.type !== "NO_MEMO";
-
+  console.log("craftTransaction MEMO: ", memo);
   const tx = await craftTransaction(
     { address: transactionIntent.sender },
     {
@@ -89,6 +90,7 @@ async function craft(
     },
   );
 
+  console.log("craftTransaction result:", tx.transaction);
   // Note: the API returns the signature base, not the full XDR, see BACK-8727 for more context
   return tx.signatureBase;
 }

@@ -52,7 +52,7 @@ export function adaptCoreOperationToLiveOperation(
 
   if (op.tx.hash === "82a5f702a19b22d645b0d306e13d6854be16ce1c4f2e271f5c35561d0a5e5015") {
     console.log({ adaptCoreOperationCore: op, res });
-    debugger;
+    // debugger;
   }
   return res;
 }
@@ -66,7 +66,7 @@ export function transactionToIntent(
     sender: _account.freshAddress,
     recipient: transaction.recipient,
     amount: fromBigNumberToBigInt(transaction.amount, BigInt(0)),
-    asset: null,
+    asset: {},
   };
 }
 
