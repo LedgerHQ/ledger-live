@@ -5,7 +5,13 @@ import BigNumber from "bignumber.js";
 import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
 import { AptosAPI } from "../network";
 import { getTokenAccount } from "./logic";
-import { DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "../constants";
+import {
+  DEFAULT_GAS,
+  DEFAULT_GAS_PRICE,
+  ESTIMATE_GAS_MUL,
+  ESTIMATE_GAS_MUL_FOR_STAKING,
+  STAKING_TX_MODES,
+} from "../constants";
 import type { Transaction, TransactionErrors } from "../types";
 import buildTransaction from "../logic/buildTransaction";
 
@@ -45,7 +51,10 @@ export const getFee = async (
       const tx = await buildTransaction(account, transaction, aptosClient);
       const [completedTx] = await aptosClient.simulateTransaction(publicKeyEd, tx);
 
-      gasLimit = new BigNumber(completedTx.gas_used).multipliedBy(ESTIMATE_GAS_MUL).integerValue();
+      const gasMultiplier = STAKING_TX_MODES.includes(transaction.mode)
+        ? ESTIMATE_GAS_MUL_FOR_STAKING
+        : ESTIMATE_GAS_MUL;
+      gasLimit = new BigNumber(completedTx.gas_used).multipliedBy(gasMultiplier).integerValue();
       gasPrice = new BigNumber(completedTx.gas_unit_price);
 
       const expectedGas = gasPrice.multipliedBy(gasLimit);

@@ -2,6 +2,7 @@ import type { MoveStructId } from "@aptos-labs/ts-sdk";
 import BigNumber from "bignumber.js";
 
 export const ESTIMATE_GAS_MUL = new BigNumber(1.1); // define buffer for gas estimation change here, if needed
+export const ESTIMATE_GAS_MUL_FOR_STAKING = new BigNumber(3); // gas multiplier for staking operations
 
 export const LOAD_LIMIT = 10;
 
@@ -89,6 +90,8 @@ export enum OP_TYPE {
 }
 
 export const SUPPORTED_TOKEN_TYPES = ["coin", "fungible_asset"];
+
+export const STAKING_TX_MODES = ["stake", "unstake", "restake", "withdraw"];
 
 export const APTOS_PRECISION = 8;
 export const APTOS_MINIMUM_RESTAKE = BigNumber(1);
