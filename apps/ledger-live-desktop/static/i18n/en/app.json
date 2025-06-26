@@ -3892,7 +3892,7 @@
       "nextUnlockIn": "Next unlock in",
       "unstake": "Unstake",
       "withdraw": "Withdraw",
-      "restake": "Restake",
+      "restake": "Reactivate",
       "activeTooltip": "Staked amounts generate rewards",
       "inactiveTooltip": "Unstaked amounts do not generate rewards",
       "commission": "Commission",
@@ -3907,7 +3907,7 @@
             "bullet": [
               "You keep ownership of staked assets",
               "Stake using your Ledger device",
-              "Assets will be available 52 - 65 hours after unstaking"
+              "Assets will be available 0-14 days after unstaking"
             ],
             "warning": {
               "description": "Choose your validator wisely: Part of your staked assets may be irrevocably lost if the validator does not behave appropriately."
@@ -6068,7 +6068,7 @@
       "description": "Fee estimation failed on the network. Check inputs, transaction most likely to fail"
     },
     "NotEnoughToStake": {
-      "title": "Minimum amount to stake: {{minStake}} {{currency}}",
+      "title": "You can't stake less than {{minStake}} {{currency}}",
       "description": "A minimum amount of {{minStake}} {{currency}} is necessary to stake."
     },
     "NotEnoughBalance": {
