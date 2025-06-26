@@ -235,6 +235,6 @@ jobs:
   skip-android-js:
     name: "Android Build JS - Skip"
     if: ${{ inputs.build-android-js != true }}
-    runs-on: [ ledger-live-4xlarge ]
+    runs-on: [ ledger-live-medium ]
     steps:
       - run: echo "Skipping"
