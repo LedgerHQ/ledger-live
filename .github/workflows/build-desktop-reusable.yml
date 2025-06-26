@@ -77,6 +77,8 @@ jobs:
 
       - name: Setup jFrog
         uses: ./tools/actions/composites/setup-jfrog
+        env:
+          NPM_REGISTRY: jfrog.ledgerlabs.net/artifactory/api/npm/ledgerlive-npm-sandbox-green
 
       - name: Build desktop
         id: build-desktop
