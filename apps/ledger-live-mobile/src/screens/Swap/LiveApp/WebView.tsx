@@ -2,7 +2,7 @@ import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { currentAccountAtom } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { Flex } from "@ledgerhq/native-ui";
-import React, { useRef, forwardRef } from "react";
+import React, { useRef, forwardRef, useMemo } from "react";
 import { Platform } from "react-native";
 import { useSelector } from "react-redux";
 import { useTheme } from "styled-components/native";
@@ -56,6 +56,10 @@ export const WebView = forwardRef<WebviewAPI, Props>(
     const stableCurrentAccounts = useRef(currentAccounts).current; // only consider accounts available upon initial WebView load
     const swapParams = useTranslateToSwapAccount(params, stableCurrentAccounts);
 
+    // Capture the initial source to prevent webview refreshes.
+    // currentRouteNameRef.current updates when going back and forth inside the navigation stack and returning to the webview
+    const initialSource = useMemo(() => currentRouteNameRef.current || "", []);
+
     // ScopeProvider required to prevent conflicts between Swap's Webview instance and deeplink instances
     return (
       <ScopeProvider atoms={[currentAccountAtom]}>
@@ -66,7 +70,7 @@ export const WebView = forwardRef<WebviewAPI, Props>(
             customHandlers={customHandlers}
             onStateChange={setWebviewState}
             inputs={{
-              source: currentRouteNameRef.current || "",
+              source: initialSource,
               swapApiBase: SWAP_API_BASE,
               swapUserIp: SWAP_USER_IP,
               devMode,

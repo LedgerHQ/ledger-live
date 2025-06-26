@@ -63,6 +63,8 @@ export const ethereumAssetType: AssetType = {
 
 export const findCryptoCurrencyById = (id: string) =>
   [bitcoinCurrency, ethereumCurrency, arbitrumCurrency].find(a => a.id === id);
+export const getTokenOrCryptoCurrencyById = (id: string) =>
+  [bitcoinCurrency, ethereumCurrency, arbitrumCurrency, arbitrumToken].find(a => a.id === id);
 
 export const mockAssetsConfiguration: EnhancedModularDrawerConfiguration["assets"] = {
   filter: "topNetworks",

@@ -54,11 +54,14 @@ const config: StorybookConfig = {
           "~/renderer/reducers/settings": resolve(detailedAccountsMockDir),
 
           "@ledgerhq/live-common/deposit/index": resolve(selectAssetFlowHookMockDir),
+          "@ledgerhq/live-common/deposit/helper": resolve(selectAssetFlowHookMockDir),
           "@ledgerhq/live-common/currencies/index": resolve(selectAssetFlowHookMockDir),
 
           "@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook": resolve(
             useGroupedCurrenciesByProvider,
           ),
+
+          "../ModularDrawerAddAccountFlowManager": resolve(".storybook/stub.ts"), // TODO: This is a temporary patch to get storybook to work. This should be replaced by appropriate mocks of ModularDrawerAddAccountFlowManager's dependencies. Ticket LIVE-19799
 
           "~": resolve("./src"),
           https: false,

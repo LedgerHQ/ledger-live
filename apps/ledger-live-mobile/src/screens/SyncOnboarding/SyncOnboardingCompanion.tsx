@@ -7,7 +7,7 @@ import React, {
   useRef,
   useLayoutEffect,
 } from "react";
-import { Image } from "react-native";
+import { Image, Linking } from "react-native";
 import { Flex, VerticalTimeline, Text, ContinueOnDevice, Link } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
@@ -124,6 +124,8 @@ const fromSeedPhraseTypeToAnalyticsPropertyString = new Map<SeedPhraseType, stri
   [SeedPhraseType.Eighteen, "Eighteen"],
   [SeedPhraseType.Twelve, "Twelve"],
 ]);
+
+const CHARON_LEARN_MORE_URL = "https://shop.ledger.com/products/ledger-recovery-key";
 
 // Because of https://github.com/typescript-eslint/typescript-eslint/issues/1197
 enum CompanionStepKey {
@@ -560,11 +562,11 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
 
   const track = useTrack();
   const handleLearnMoreClick = useCallback(() => {
-    // TODO: Add link
     track("button_clicked", {
       button: "Learn More",
       page: "Charon Start",
     });
+    Linking.openURL(CHARON_LEARN_MORE_URL);
   }, [track]);
 
   const companionSteps: Step[] = useMemo(
@@ -646,7 +648,11 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                 </Flex>
               ) : seedPathStatus === "choice_restore_direct_or_recover" ? (
                 <Flex>
-                  <SubtitleText>
+                  <BodyText color="neutral.c80">
+                    {t("syncOnboarding.seedStep.selectionRestoreChoice.description")}
+                  </BodyText>
+                  {/* Secret Recovery Phrase */}
+                  <SubtitleText mt={6}>
                     {t("syncOnboarding.seedStep.selectionRestoreChoice.secretRecoveryPhrase.title")}
                   </SubtitleText>
                   <BodyText>
@@ -654,7 +660,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                       "syncOnboarding.seedStep.selectionRestoreChoice.secretRecoveryPhrase.description",
                     )}
                   </BodyText>
-
+                  {/* Recovery Key */}
                   {deviceOnboardingState?.charonSupported && (
                     <>
                       <SubtitleText mt={6}>
@@ -667,7 +673,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                       </BodyText>
                     </>
                   )}
-
+                  {/* Recover subscription */}
                   <SubtitleText mt={6}>
                     {t("syncOnboarding.seedStep.selectionRestoreChoice.ledgerRecover.title")}
                   </SubtitleText>

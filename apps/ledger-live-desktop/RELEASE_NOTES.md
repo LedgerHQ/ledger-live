@@ -1,3 +1,9 @@
+# 2.118.1
+
+### 🐛 Fix
+
+Fixed a bug that prevented a new Aptos account from being added to Ledger Live.
+
 # 2.118.0
 
 This release includes small security improvements, UI tweaks, and minor bug fixes.
@@ -29,6 +35,7 @@ This release includes small security improvements, UI tweaks, and minor bug fixe
 
 We have resolved an issue that was affecting several Ledger Live services for Ledger Nano S users.
 The following functionalities are now fully restored
+
 - Swapping EVM tokens
 - Topping up the CL Card with EVM
 - Selling EVM tokens

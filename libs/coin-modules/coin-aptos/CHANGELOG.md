@@ -1,27 +1,16 @@
 # @ledgerhq/coin-aptos
 
-## 2.4.0-nightly.1
-
-### Minor Changes
-
-- [#10651](https://github.com/LedgerHQ/ledger-live/pull/10651) [`8c9270b`](https://github.com/LedgerHQ/ledger-live/commit/8c9270bad99ec6b6d4e92aaf105d25ef96ff8734) Thanks [@scavassa-yld](https://github.com/scavassa-yld)! - fixing value parser
+## 2.3.1
 
 ### Patch Changes
 
-- Updated dependencies [[`2274597`](https://github.com/LedgerHQ/ledger-live/commit/227459709ec157b7e49db4e75c52525e15acd8d2), [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
-  - @ledgerhq/types-live@6.75.0-nightly.1
-  - @ledgerhq/cryptoassets@13.20.0-nightly.0
-  - @ledgerhq/live-env@2.11.0-nightly.0
-  - @ledgerhq/coin-framework@5.4.1-nightly.1
-  - @ledgerhq/live-network@2.0.12-nightly.0
+- [#10657](https://github.com/LedgerHQ/ledger-live/pull/10657) [`04c1694`](https://github.com/LedgerHQ/ledger-live/commit/04c16942a5755bf3af470807dd484b71a09788eb) Thanks [@semeano](https://github.com/semeano)! - fixing value parser
 
-## 2.3.1-nightly.0
+## 2.3.1-hotfix.0
 
 ### Patch Changes
 
-- Updated dependencies [[`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc)]:
-  - @ledgerhq/types-live@6.75.0-nightly.0
-  - @ledgerhq/coin-framework@5.4.1-nightly.0
+- [#10657](https://github.com/LedgerHQ/ledger-live/pull/10657) [`04c1694`](https://github.com/LedgerHQ/ledger-live/commit/04c16942a5755bf3af470807dd484b71a09788eb) Thanks [@semeano](https://github.com/semeano)! - fixing value parser
 
 ## 2.3.0
 

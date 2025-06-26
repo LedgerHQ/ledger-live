@@ -1,4 +1,4 @@
-name: "[Mobile] - Mock Test - Called"
+name: "[Mobile] - Test Build Android - Called"
 
 on:
   workflow_call:

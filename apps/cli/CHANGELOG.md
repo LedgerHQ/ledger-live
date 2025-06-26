@@ -1,40 +1,18 @@
 # @ledgerhq/live-cli
 
-## 24.19.1-nightly.2
+## 24.19.1
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/live-common@34.39.0-nightly.2
+  - @ledgerhq/live-common@34.38.1
 
-## 24.19.1-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`27bba71`](https://github.com/LedgerHQ/ledger-live/commit/27bba718e39cb737a15803bc5146146fe3581f0b), [`2274597`](https://github.com/LedgerHQ/ledger-live/commit/227459709ec157b7e49db4e75c52525e15acd8d2), [`cecfbdc`](https://github.com/LedgerHQ/ledger-live/commit/cecfbdcdd1e37b84e5907c41938447dc0af9aad3), [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
-  - @ledgerhq/live-common@34.39.0-nightly.1
-  - @ledgerhq/cryptoassets@13.20.0-nightly.0
-  - @ledgerhq/live-env@2.11.0-nightly.0
-  - @ledgerhq/coin-framework@5.4.1-nightly.1
-  - @ledgerhq/coin-bitcoin@0.16.2-nightly.1
-  - @ledgerhq/device-core@0.5.0-nightly.1
-  - @ledgerhq/live-countervalues@0.5.11-nightly.1
-  - @ledgerhq/live-wallet@0.11.2-nightly.1
-  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.9-nightly.0
-  - @ledgerhq/ledger-key-ring-protocol@0.5.11-nightly.0
-  - @ledgerhq/live-network@2.0.12-nightly.0
-
-## 24.19.1-nightly.0
+## 24.19.1-hotfix.0
 
 ### Patch Changes
 
-- Updated dependencies [[`90c1393`](https://github.com/LedgerHQ/ledger-live/commit/90c1393713a6164264c615586493fa1eb260a2de), [`b31657b`](https://github.com/LedgerHQ/ledger-live/commit/b31657bde1253628d1f99785288442b5f5d9d605), [`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc)]:
-  - @ledgerhq/live-common@34.39.0-nightly.0
-  - @ledgerhq/device-core@0.5.0-nightly.0
-  - @ledgerhq/coin-framework@5.4.1-nightly.0
-  - @ledgerhq/coin-bitcoin@0.16.2-nightly.0
-  - @ledgerhq/live-countervalues@0.5.11-nightly.0
-  - @ledgerhq/live-wallet@0.11.2-nightly.0
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.38.1-hotfix.0
 
 ## 24.19.0
 

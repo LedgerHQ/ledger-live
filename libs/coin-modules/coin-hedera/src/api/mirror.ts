@@ -75,10 +75,12 @@ export async function getAccountTransactions(
 
   let nextUrl = `/api/v1/transactions?${params.toString()}`;
 
+  // WARNING: don't break the loop when `transactions` array is empty but `links.next` is present
+  // the mirror node API enforces a 60-day max time range per query, even if `timestamp` param is set
+  // see: https://hedera.com/blog/changes-to-the-hedera-operated-mirror-node
   while (nextUrl) {
     const res = await fetch(nextUrl);
     const newTransactions = res.data.transactions as HederaMirrorTransaction[];
-    if (newTransactions.length === 0) break;
     transactions.push(...newTransactions);
     nextUrl = res.data.links.next;
   }
