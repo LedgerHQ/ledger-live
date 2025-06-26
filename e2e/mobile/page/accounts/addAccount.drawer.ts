@@ -11,6 +11,7 @@ export default class AddAccountDrawer extends CommonPage {
   closeAddAccountButtonId = "button-close-add-account";
   addFundsButtonId = "button-add-funds";
   actionDrawerReceiveButtonId = "action-drawer-receive-button";
+  addNewOrExistingAccount = "add-new-account-button";
 
   accountIdAccountDrawer = (currency: string) => `js:2:${currency}:.*`;
 
@@ -97,5 +98,11 @@ export default class AddAccountDrawer extends CommonPage {
   @Step("Click on 'Receive' in action drawer")
   async tapReceiveActionDrawer() {
     await tapById(this.actionDrawerReceiveButtonId);
+  }
+
+  @Step("Tap on (Add new or existing account) button")
+  async tapAddNewOrExistingAccountButton() {
+    await scrollToId(this.addNewOrExistingAccount);
+    await tapById(this.addNewOrExistingAccount);
   }
 }
