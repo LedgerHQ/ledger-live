@@ -59,7 +59,7 @@ const prepareTransaction = async (
         account,
         transaction.recipient,
         transaction.mode,
-      ).minus(APTOS_DELEGATION_RESERVE_IN_OCTAS);
+      );
     } else if (transaction.mode === "stake") {
       // Reserve a certain amount to cover future network fees to deactivate and withdraw
       transaction.amount = getMaxSendBalance(account, transaction).minus(
