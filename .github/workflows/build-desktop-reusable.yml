@@ -75,8 +75,8 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
-      # - name: Setup jFrog
-      #   uses: ./tools/actions/composites/setup-jfrog
+      - name: Setup jFrog
+        uses: ./tools/actions/composites/setup-jfrog
 
       - name: Build desktop
         id: build-desktop
