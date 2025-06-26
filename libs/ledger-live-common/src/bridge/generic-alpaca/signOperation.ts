@@ -36,8 +36,12 @@ export const genericSignOperation =
         // NOTE: checking field that's not inside TransactionCommon, improve
         if (!transaction["fees"]) throw new FeeNotLoaded();
 
+        debugger;
         if (transaction["useAllAmount"]) {
           const { freshAddress, balance, currency, pendingOperations, spendableBalance } = account;
+          // FIXME: fix this one also (hardcoded type)
+
+          debugger;
           const { amount } = await getAlpacaApi(network, kind).validateIntent(
             {
               currencyName: currency.name,

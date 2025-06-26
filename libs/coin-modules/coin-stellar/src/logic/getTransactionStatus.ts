@@ -27,6 +27,7 @@ import {
   // type Transaction,
 } from "../types";
 import BigNumber from "bignumber.js";
+import { findSubAccountById } from "@ledgerhq/coin-framework/lib/account/helpers";
 
 // export const getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"] = async (
 //   account,
@@ -80,8 +81,16 @@ export const getTransactionStatus = async (
     warnings.transaction = new StellarFeeSmallerThanRecommended();
   }
 
+  /*
+  * amount: 0n
+    fee: 100n
+    recipient: ""
+    type: "PAYMENT"
+    useAllAmount: false
+    */
+  debugger;
   // Operation specific checks
-  if (transaction.mode === "changeTrust") {
+  if (transaction.type === "changeTrust") {
     // Check asset provided
     if (!transaction.assetCode || !transaction.assetIssuer) {
       // This is unlikely
@@ -89,7 +98,12 @@ export const getTransactionStatus = async (
     }
 
     // Has enough native balance to add new trustline
-    if (nativeAmountAvailable - BigInt(BASE_RESERVE) < 0n) {
+    // NOTE: need to do this as BASE_RESERVE is 0.5
+    const SCALE = 10n;
+    const scaledNative = nativeAmountAvailable * SCALE;
+    const scaledBaseReserve = BigInt(BASE_RESERVE * 10); // = 5n
+
+    if (scaledNative - scaledBaseReserve < 0n) {
       errors.amount = new StellarNotEnoughNativeBalanceToAddTrustline();
     }
   } else {

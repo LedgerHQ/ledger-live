@@ -50,24 +50,37 @@ export function adaptCoreOperationToLiveOperation(
     extra,
   };
 
-  if (op.tx.hash === "82a5f702a19b22d645b0d306e13d6854be16ce1c4f2e271f5c35561d0a5e5015") {
-    console.log({ adaptCoreOperationCore: op, res });
-    // debugger;
-  }
   return res;
 }
 
 export function transactionToIntent(
   _account: Account,
-  transaction: TransactionCommon,
+  transaction: TransactionCommon & {
+    // fees?: BigNumber;
+    assetIssuer?: string;
+    assetCode?: string;
+    mode?: string;
+  },
 ): TransactionIntent<any> {
-  return {
-    type: "Payment",
+  // NOTE: why Payment here and not PAYMENT like in getTransactionStatus
+  let transactionType = "Payment"; // NOTE: assuming payment by default here, can be changed based on transaction.mode
+  if (transaction.mode) {
+    transactionType = "changeTrust"; // TODO: handle other transaction modes if needed
+  }
+  let res = {
+    type: transactionType,
     sender: _account.freshAddress,
     recipient: transaction.recipient,
     amount: fromBigNumberToBigInt(transaction.amount, BigInt(0)),
     asset: {},
   };
+  if (transaction.assetCode && transaction.assetIssuer) {
+    res.asset = {
+      assetCode: transaction.assetCode,
+      assetIssuer: transaction.assetIssuer,
+    };
+  }
+  return res;
 }
 
 export const buildOptimisticOperation = (
@@ -75,6 +88,7 @@ export const buildOptimisticOperation = (
   transaction: TransactionCommon,
   sequenceNumber?: number,
 ): Operation => {
+  debugger;
   const type = transaction["mode"] === "changeTrust" ? "OPT_IN" : "OUT";
   const fees = transaction["fees"] ?? BigNumber(0);
 

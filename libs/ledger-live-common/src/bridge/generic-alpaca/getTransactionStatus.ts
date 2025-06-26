@@ -7,10 +7,35 @@ export function genericGetTransactionStatus(
   network,
   kind,
 ): AccountBridge<any>["getTransactionStatus"] {
-  return async (account, transaction: TransactionCommon & { fees: BigNumber }) => {
+  return async (
+    account,
+    transaction: TransactionCommon & {
+      fees: BigNumber;
+      assetIssuer?: string;
+      assetCode?: string;
+      mode?: string;
+    },
+  ) => {
     const { freshAddress, balance, currency, pendingOperations, spendableBalance } = account;
     console.log("getTransactionStatus account", spendableBalance.toString());
     const alpacaApi = getAlpacaApi(network, kind);
+    let transactionType = "PAYMENT"; // NOTE: assuming payment by default here, can be changed based on transaction.mode
+    if (transaction.mode) {
+      transactionType = "changeTrust"; // TODO: handle other transaction modes if needed
+    }
+      /*
+        * NOTE: stellar 
+        *   const supportedOperationTypes = [
+    "create_account",
+    "payment",
+    "path_payment_strict_send",
+    "path_payment_strict_receive",
+    "change_trust",
+  ];
+      */
+
+
+    debugger;
     const { errors, warnings, estimatedFees, amount, totalSpent } = await alpacaApi.validateIntent(
       {
         currencyName: currency.name,
@@ -21,11 +46,13 @@ export function genericGetTransactionStatus(
         spendableBalance: BigInt(spendableBalance.toString()),
       },
       {
-        type: "PAYMENT", // NOTE: assuming payment by default here
+        type: transactionType,
         recipient: transaction.recipient,
         amount: BigInt(transaction.amount?.toString() ?? "0"),
         fee: BigInt(transaction.fees?.toString() ?? "0"),
         useAllAmount: !!transaction.useAllAmount,
+        assetCode: transaction.assetCode || "",
+        assetIssuer: transaction.assetIssuer || "",
       },
     );
 

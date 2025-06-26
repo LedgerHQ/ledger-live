@@ -28,6 +28,8 @@ export function genericEstimateMaxSpendable(
       transactionToIntent(mainAccount, draftTransaction),
     );
     const { freshAddress, balance, currency, pendingOperations, spendableBalance } = account;
+    // FIXME: hardcoding type here
+    debugger
     const { amount } = await getAlpacaApi(network, kind).validateIntent(
       {
         currencyName: currency.name,

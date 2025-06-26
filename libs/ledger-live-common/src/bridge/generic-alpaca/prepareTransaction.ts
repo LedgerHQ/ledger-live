@@ -14,23 +14,26 @@ export function genericPrepareTransaction(
 ): AccountBridge<TransactionCommon, Account, any, any>["prepareTransaction"] {
   return async (
     _account,
-    transaction: TransactionCommon & { fees: BigNumber; assetCode?: string; assetIssuer?: string },
+    transaction: TransactionCommon & {
+      fees: BigNumber;
+      assetCode?: string;
+      assetIssuer?: string;
+      subAccountId?: string;
+    },
   ) => {
+    const [assetCode, assetIssuer] = getAssetCodeIssuer(transaction);
+    console.log({ assetCode, assetIssuer });
     const fees = await getAlpacaApi(network, kind).estimateFees(
       transactionToIntent(_account, transaction),
     );
     const bnFee = BigNumber(fees.value.toString());
-    if (transaction?.subAccountId) {
-      const [assetCode, assetIssuer] = getAssetCodeIssuer(transaction);
-      return updateTransaction(transaction, {
-        fees: bnFee,
-        assetCode,
-        assetIssuer,
-      });
-    }
 
+    // NOTE: this is problematic, we should maybe have a method / object that lists what field warrant an update per chain
+    // for reference, stellar checked this:
+    // transaction.networkInfo !== networkInfo ||
+    // transaction.baseReserve !== baseReserve
     if (!bnEq(transaction.fees, bnFee)) {
-      return { ...transaction, fees: bnFee };
+      return { ...transaction, fees: bnFee, assetCode, assetIssuer };
     }
 
     return transaction;
