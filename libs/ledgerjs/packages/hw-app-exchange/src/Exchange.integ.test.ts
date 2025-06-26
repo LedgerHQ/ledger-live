@@ -497,7 +497,7 @@ async function appExchangeDatasetTest(signFormat: PartnerSignFormat) {
   const partnerInfo = {
     name: "SWAP_TEST",
     curve: "secp256k1",
-    publicKey: pubKey,
+    publicKey: Buffer.from(pubKey!),
   };
   const msg = signFormat(partnerInfo);
 
