@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 
 import { AptosAPI } from "../network";
 import { getEstimatedGas } from "./getFeesForTransaction";
-import type { AptosAccount, Transaction } from "../types";
+import type { AptosAccount, AptosStakingPosition, Transaction } from "../types";
 import { getMaxSendBalance } from "./logic";
 import {
   APTOS_DELEGATION_RESERVE_IN_OCTAS,
@@ -16,8 +16,8 @@ const checkSendConditions = (transaction: Transaction, account: AptosAccount) =>
 
 const checkStakeConditions = (transaction: Transaction, account: AptosAccount) => {
   const txAmount = transaction.useAllAmount ? account.spendableBalance : transaction.amount;
-  const stakingPosition = account.aptosResources.stakingPositions
-    .find(stakingPosition => stakingPosition.validatorId === transaction.recipient)
+  const stakingPosition = account.aptosResources?.stakingPositions
+    ?.find(stakingPosition => stakingPosition.validatorId === transaction.recipient)
     ?.active.gt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS);
   const minimumToStake = stakingPosition
     ? APTOS_MINIMUM_RESTAKE_IN_OCTAS
@@ -31,7 +31,7 @@ const checkStakeConditions = (transaction: Transaction, account: AptosAccount) =
 
 const checkRestakeConditions = (transaction: Transaction, account: AptosAccount) => {
   const stakingPosition =
-    account.aptosResources.stakingPositions.find(
+    account.aptosResources?.stakingPositions?.find(
       stakingPosition => stakingPosition.validatorId === transaction.recipient,
     )?.pendingInactive || 0;
 
@@ -40,7 +40,7 @@ const checkRestakeConditions = (transaction: Transaction, account: AptosAccount)
 
 const checkUnstakeConditions = (transaction: Transaction, account: AptosAccount) => {
   const stakingPosition =
-    account.aptosResources.stakingPositions.find(
+    account.aptosResources?.stakingPositions?.find(
       stakingPosition => stakingPosition.validatorId === transaction.recipient,
     )?.active || 0;
 
@@ -49,7 +49,7 @@ const checkUnstakeConditions = (transaction: Transaction, account: AptosAccount)
 
 const checkWithdrawConditions = (transaction: Transaction, account: AptosAccount) => {
   const stakingPosition =
-    account.aptosResources.stakingPositions.find(
+    account.aptosResources?.stakingPositions?.find(
       stakingPosition => stakingPosition.validatorId === transaction.recipient,
     )?.inactive || 0;
 
