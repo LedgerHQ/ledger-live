@@ -843,8 +843,8 @@ importers:
         specifier: 26.0.1
         version: 26.0.1(lodash@4.17.21)
       electron:
-        specifier: 36.4.0
-        version: 36.4.0
+        specifier: 36.6.0
+        version: 36.6.0
       electron-builder:
         specifier: 26.0.1
         version: 26.0.1(lodash@4.17.21)
@@ -22377,8 +22377,8 @@ packages:
     engines: {node: '>= 12.20.55'}
     hasBin: true
 
-  electron@36.4.0:
-    resolution: {integrity: sha512-LLOOZEuW5oqvnjC7HBQhIqjIIJAZCIFjQxltQGLfEC7XFsBoZgQ3u3iFj+Kzw68Xj97u1n57Jdt7P98qLvUibQ==}
+  electron@36.6.0:
+    resolution: {integrity: sha512-Tkkw4udDADEWKdbhzckt2CS0gwDTXwZUb2JWxX01HJXAeb8SBlTdQUtxUiAwIIWe0suGuot+uBs1bDPz931A6w==}
     engines: {node: '>= 12.20.55'}
     hasBin: true
 
@@ -37953,7 +37953,7 @@ snapshots:
       make-fetch-happen: 10.2.1
       nopt: 6.0.0
       proc-log: 2.0.1
-      semver: 7.7.1
+      semver: 7.5.4
       tar: 6.2.1
       which: 2.0.2
     transitivePeerDependencies:
@@ -42009,7 +42009,7 @@ snapshots:
   '@npmcli/fs@2.1.2':
     dependencies:
       '@gar/promisify': 1.1.3
-      semver: 7.7.1
+      semver: 7.5.4
 
   '@npmcli/fs@3.1.1':
     dependencies:
@@ -48922,7 +48922,7 @@ snapshots:
 
   '@types/yauzl@2.10.3':
     dependencies:
-      '@types/node': 22.10.10
+      '@types/node': 24.0.3
     optional: true
 
   '@typescript-eslint/eslint-plugin@5.62.0(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3)':
@@ -54091,7 +54091,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  electron@36.4.0:
+  electron@36.6.0:
     dependencies:
       '@electron/get': 2.0.3
       '@types/node': 22.10.10
@@ -56581,7 +56581,7 @@ snapshots:
       es6-error: 4.1.1
       matcher: 3.0.0
       roarr: 2.15.4
-      semver: 7.7.1
+      semver: 7.5.4
       serialize-error: 7.0.1
     optional: true
 
