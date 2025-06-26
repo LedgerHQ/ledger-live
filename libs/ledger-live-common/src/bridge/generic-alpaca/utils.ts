@@ -65,7 +65,17 @@ export function transactionToIntent(
   // NOTE: why Payment here and not PAYMENT like in getTransactionStatus
   let transactionType = "Payment"; // NOTE: assuming payment by default here, can be changed based on transaction.mode
   if (transaction.mode) {
-    transactionType = "changeTrust"; // TODO: handle other transaction modes if needed
+    switch (transaction.mode) {
+      case "changetrust":
+        transactionType = "changeTrust";
+        break;
+      case "send":
+        transactionType = "send";
+        break;
+
+      default:
+        throw new Error(`Unsupported transaction mode: ${transaction.mode}`);
+    }
   }
   let res = {
     type: transactionType,
