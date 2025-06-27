@@ -294,6 +294,14 @@
       "title" : "الجهاز غير متصل",
       "description" : "Ledger Live غير قادر على الاتصال بجهازك. يُرجى إعادة المحاولة."
     },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "الجهاز غير متصل",
+      "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى إعادة المحاولة."
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "الجهاز غير متصل",
+      "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى إعادة المحاولة."
+    },
     "CasperInvalidTransferId" : {
       "title" : "مُعرّف التحويل يجب أن يكون رقماً موجباً أصغر من {{maxTransferId}}"
     },
@@ -3369,7 +3377,8 @@
       "description" : "بيع الأصول المشفرة بأمان مقابل العملات النقدية."
     },
     "exchange" : {
-      "title" : "شراء / بيع"
+      "title" : "شراء / بيع",
+      "connectingTo" : "جارٍ توصيلك بـ {{provider}}"
     },
     "stake" : {
       "title" : "تكديس",
@@ -7430,7 +7439,12 @@
     "performance" : "الأداء",
     "low" : "منخفض",
     "high" : "مرتفع",
-    "title" : "تحركات السوق"
+    "title" : "تحركات السوق",
+    "overlay" : {
+      "title" : "تحرك بين الأصول",
+      "action" : "مرّر لليسار أو اليمين",
+      "button" : "فهمت ذلك!"
+    }
   },
   "nftEntryPoint" : {
     "title" : "رموزك غير القابلة للاستبدال (NFTs)",
