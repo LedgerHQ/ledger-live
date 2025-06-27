@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
-import { track } from "~/analytics";
 import { Linking } from "react-native";
 import { urls } from "~/utils/urls";
 import { useLocalizedUrl } from "~/newArch/hooks/useLocalizedUrls";
@@ -14,7 +13,7 @@ type Props = {
 const Message = ({ userAddress, onClose }: Props) => {
   const { t } = useTranslation();
   const goBackToAccount = useCallback(() => onClose(), [onClose]);
-  const learnMoreUrl = useLocalizedUrl(urls.errors["UserAddressSanctionedError"]);
+  const learnMoreUrl = useLocalizedUrl(urls.errors["AddressesSanctionedError"]);
   return (
     <Flex flex={1} justifyContent="center" mt={3}>
       <Text
