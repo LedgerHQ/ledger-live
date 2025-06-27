@@ -28,7 +28,7 @@ export default function StepAsset({
     (token?: TokenCurrency | null) => {
       if (!token) return;
       const { id: assetId } = token;
-      debugger;
+      // debugger;
       onUpdateTransaction(transaction =>
         bridge.updateTransaction(transaction, getAssetObject(assetId)),
       );

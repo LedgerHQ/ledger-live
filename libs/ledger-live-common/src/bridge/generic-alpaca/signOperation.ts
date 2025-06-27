@@ -38,14 +38,21 @@ export const genericSignOperation =
 
         // debugger;
         if (transaction["useAllAmount"]) {
-          const { freshAddress, balance, currency, pendingOperations, subAccounts } = account;
-          let { spendableBalance } = account;
+          const {
+            freshAddress,
+            balance,
+            currency,
+            pendingOperations,
+            subAccounts,
+            spendableBalance,
+          } = account;
+          // let { spendableBalance } = account;
 
-          if (subAccounts && transaction?.subAccountId) {
-            spendableBalance =
-              subAccounts.find(t => t.id === transaction.subAccountId)?.spendableBalance ||
-              new BigNumber(0);
-          }
+          // if (subAccounts && transaction?.subAccountId) {
+          //   spendableBalance =
+          //     subAccounts.find(t => t.id === transaction.subAccountId)?.spendableBalance ||
+          //     new BigNumber(0);
+          // }
           // FIXME: fix this one also (hardcoded type)
 
           // debugger;
@@ -67,10 +74,14 @@ export const genericSignOperation =
               amount: BigInt(transaction.amount?.toString() ?? "0"),
               fee: BigInt(transaction["fees"]?.toString() ?? "0"),
               useAllAmount: !!transaction.useAllAmount,
+              assetCode: transaction?.["assetCode"] || "",
+              assetIssuer: transaction?.["assetIssuer"] || "",
+              subAccountId: transaction.subAccountId || "",
             },
           );
           transaction.amount = new BigNumber(amount.toString());
         }
+        console.log("THE AMOUTN: ", transaction.amount.toString());
         const signedInfo = await signerContext(deviceId, async signer => {
           const derivationPath = account.freshAddressPath;
 
@@ -147,7 +158,7 @@ export const genericSignOperation =
           signedInfo.txnSig,
           signedInfo.publicKey,
         );
-        console.log("SHVSFHGSFCGHS");
+        console.log("SHVSFHGSFCGHS: ", transaction);
 
         const operation = buildOptimisticOperation(account, transaction, signedInfo.sequence);
         console.log("END");

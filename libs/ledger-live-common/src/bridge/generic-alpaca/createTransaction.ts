@@ -54,7 +54,7 @@ export function createTransaction(account: Account | TokenAccount): TransactionC
   // if (account.type === "TokenAccount") {
   //   debugger;
   // }
-  debugger;
+  // debugger;
   switch (currency.family) {
     case "xrp":
       return {

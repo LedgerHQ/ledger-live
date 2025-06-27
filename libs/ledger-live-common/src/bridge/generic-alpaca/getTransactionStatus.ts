@@ -17,14 +17,15 @@ export function genericGetTransactionStatus(
       subAccountId?: string;
     },
   ) => {
-    const { freshAddress, balance, currency, pendingOperations, subAccounts } = account;
-    let { spendableBalance } = account;
+    const { freshAddress, balance, currency, pendingOperations, subAccounts, spendableBalance } =
+      account;
+    // let { spendableBalance } = account;
 
-    if (subAccounts && transaction?.subAccountId) {
-      spendableBalance =
-        subAccounts.find(t => t.id === transaction.subAccountId)?.spendableBalance ||
-        new BigNumber(0);
-    }
+    // if (subAccounts && transaction?.subAccountId) {
+    //   spendableBalance =
+    //     subAccounts.find(t => t.id === transaction.subAccountId)?.spendableBalance ||
+    //     new BigNumber(0);
+    // }
     const alpacaApi = getAlpacaApi(network, kind);
     let transactionType = "PAYMENT"; // NOTE: assuming payment by default here, can be changed based on transaction.mode
     if (transaction.mode) {

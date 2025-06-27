@@ -98,12 +98,9 @@ export const buildOptimisticOperation = (
   transaction: TransactionCommon,
   sequenceNumber?: number,
 ): Operation => {
-  debugger;
+  // debugger;
   const type = transaction["mode"] === "changeTrust" ? "OPT_IN" : "OUT";
   const fees = transaction["fees"] ?? BigNumber(0);
-
-  // const { subAccountId } = transaction;
-  // const { subAccounts } = account;
 
   const { subAccountId } = transaction;
   const { subAccounts } = account;
@@ -132,7 +129,9 @@ export const buildOptimisticOperation = (
   const tokenAccount = !subAccountId
     ? null
     : subAccounts && subAccounts.find(ta => ta.id === subAccountId);
-
+  console.log("UTILS operation: ", operation.value.toString());
+  console.log("UTILS tokenAccount: ", tokenAccount);
+  console.log("UTILS transaction: ", transaction.amount.toString());
   if (tokenAccount && subAccountId) {
     operation.subOperations = [
       {
