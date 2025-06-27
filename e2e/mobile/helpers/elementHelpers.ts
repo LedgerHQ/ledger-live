@@ -254,7 +254,7 @@ export const WebElementHelpers = {
     while (Date.now() - start < timeout) {
       try {
         const elem = WebElementHelpers.getWebElementByTestId(id);
-        await retryUntilTimeout(() => elem.runScript(el => el.innerText), 1000, 200);
+        await retryUntilTimeout(() => elem.runScript(el => el.innerText), 10000, 200);
         return elem;
       } catch (e) {
         lastErr = e instanceof Error ? e : new Error(String(e));

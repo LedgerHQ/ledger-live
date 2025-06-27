@@ -1,6 +1,8 @@
-import { openDeeplink } from "../../helpers/commonHelpers";
+import { delay, isRemoteIos, openDeeplink } from "../../helpers/commonHelpers";
 import CommonPage from "../common.page";
 import { retryUntilTimeout } from "../../utils/retry";
+import { checkForErrorModals } from "../../modals/errorModal";
+import { waitForSpeculosReady } from "@ledgerhq/live-common/lib/e2e/speculosCI";
 
 export default class AddAccountDrawer extends CommonPage {
   baseLink = "add-account";
@@ -26,7 +28,36 @@ export default class AddAccountDrawer extends CommonPage {
 
   @Step("Wait for accounts discovery")
   async waitAccountsDiscovery() {
-    await waitForElementById(this.continueButtonId, 240000);
+    if (isRemoteIos()) {
+      await waitForSpeculosReady(
+        process.env.SPECULOS_ADDRESS!,
+        `Unable to reach remote Speculos at ${process.env.SPECULOS_ADDRESS!}`,
+      );
+    }
+    const DISCOVERY_TIMEOUT = 240000;
+    const ERROR_CHECK_INTERVAL = 2000;
+    const startTime = Date.now();
+
+    while (Date.now() - startTime < DISCOVERY_TIMEOUT) {
+      if (await this.isContinueButtonVisible()) {
+        await waitForElementById(this.continueButtonId, 5000);
+        return;
+      }
+      await checkForErrorModals(1000, "Account discovery failed");
+      await delay(ERROR_CHECK_INTERVAL);
+    }
+
+    this.throwDiscoveryTimeoutError(DISCOVERY_TIMEOUT);
+  }
+
+  private async isContinueButtonVisible(): Promise<boolean> {
+    return await IsIdVisible(this.continueButtonId, 1000);
+  }
+
+  private throwDiscoveryTimeoutError(timeoutMs: number): never {
+    throw new Error(
+      `Account discovery timed out after ${timeoutMs / 1000} seconds. Expected button "${this.continueButtonId}" not found.`,
+    );
   }
 
   @Step("Finish account discovery")
