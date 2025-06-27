@@ -294,6 +294,14 @@
       "title" : "Cihaz bağlantısı kesildi",
       "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin."
     },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "Cihaz bağlantısı kesildi",
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin."
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "Cihaz bağlantısı kesildi",
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin."
+    },
     "CasperInvalidTransferId" : {
       "title" : "Transfer Kimliği, {{maxTransferId}} sayısından küçük pozitif bir sayı olmalıdır"
     },
@@ -3369,7 +3377,8 @@
       "description" : "Güvenli bir şekilde nakit karşılığında kripto satın."
     },
     "exchange" : {
-      "title" : "Satın Al / Sat"
+      "title" : "Satın Al / Sat",
+      "connectingTo" : "{{provider}} sağlayıcısına bağlanıyorsunuz"
     },
     "stake" : {
       "title" : "Stake et",
@@ -7430,7 +7439,12 @@
     "performance" : "Performans",
     "low" : "Düşük",
     "high" : "Yüksek",
-    "title" : "Piyasa Hareketleri"
+    "title" : "Piyasa Hareketleri",
+    "overlay" : {
+      "title" : "Varlıklar arasında geçiş yapın",
+      "action" : "Sola veya sağa kaydırın",
+      "button" : "Anladım!"
+    }
   },
   "nftEntryPoint" : {
     "title" : "NFT'leriniz",
