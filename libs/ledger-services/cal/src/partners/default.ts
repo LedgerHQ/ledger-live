@@ -118,7 +118,7 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
   },
   velora: {
     type: "DEX",
-    useInExchangeApp: true,
+    useInExchangeApp: false,
     displayName: "Velora",
     termsOfUseUrl: "https://files.paraswap.io/tos_v4.pdf",
     supportUrl: "https://help.paraswap.io/en/",
