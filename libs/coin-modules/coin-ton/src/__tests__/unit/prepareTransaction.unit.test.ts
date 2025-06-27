@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import { estimateFee, fetchAccountInfo } from "../../bridge/bridgeHelpers/api";
 import { setCoinConfig } from "../../config";
 import prepareTransaction from "../../prepareTransaction";
@@ -74,7 +75,7 @@ describe("prepareTransaction", () => {
 
       expect(transaction).toEqual({
         ...jettonTransaction,
-        fees: totalFees,
+        fees: BigNumber("100000000"),
       });
     });
 
@@ -94,7 +95,7 @@ describe("prepareTransaction", () => {
       expect(transaction).toEqual({
         ...jettonTransaction,
         useAllAmount: true,
-        fees: totalFees,
+        fees: BigNumber("100000000"),
         amount: account.subAccounts?.[0].spendableBalance,
       });
     });

@@ -11,4 +11,6 @@ export type FirmwareInfoEntity = {
   bootloaderVersion?: string;
   hardwareVersion?: number;
   languageId?: number;
+  recoverState?: Buffer;
+  charonState?: Buffer;
 };

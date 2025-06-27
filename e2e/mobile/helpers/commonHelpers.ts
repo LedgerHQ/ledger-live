@@ -44,6 +44,14 @@ export function isSpeculosRemote() {
   return process.env.REMOTE_SPECULOS === "true";
 }
 
+export async function addDelayBeforeInteractingWithDevice(
+  // TODO: QAA-683
+  delayIos: number = 10_000,
+  ms: number = 0,
+) {
+  await delay(isSpeculosRemote() && isIos() ? delayIos : ms);
+}
+
 export async function launchApp() {
   const port = await findFreePort();
   closeBridge();

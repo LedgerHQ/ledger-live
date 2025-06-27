@@ -226,13 +226,38 @@ export type Features = CurrencyFeatures & {
   llmSolanaNfts: DefaultFeature;
   largemoverLandingpage: DefaultFeature;
   llmMmkvMigration: Feature_LlmMmkvMigration;
-  lldModularDrawer: Feature_LldModularDrawer;
+  lldModularDrawer: Feature_ModularDrawer;
+  llmModularDrawer: Feature_ModularDrawer;
   llNftSupport: DefaultFeature;
   llNftEntryPoint: Feature_LlNftEntryPoint;
   ldmkConnectApp: DefaultFeature;
   lldNetworkBasedAddAccount: DefaultFeature;
   llmOfacGeoBlocking: DefaultFeature;
   lldOfacGeoBlocking: DefaultFeature;
+  llmDatadog: {
+    enabled: boolean;
+    params: Partial<{
+      batchProcessingLevel: "MEDIUM" | "HIGH" | "LOW";
+      batchSize: "LARGE" | "MEDIUM" | "SMALL";
+      bundleLogsWithRum: boolean;
+      bundleLogsWithTraces: boolean;
+      longTaskThresholdMs: number | false;
+      nativeInteractionTracking: boolean;
+      nativeLongTaskThresholdMs: number | false;
+      nativeViewTracking: boolean;
+      resourceTracingSamplingRate: number;
+      serviceName: string;
+      sessionSamplingRate: number;
+      trackBackgroundEvents: boolean;
+      trackFrustrations: boolean;
+      trackErrors: boolean;
+      trackResources: boolean;
+      trackInteractions: boolean;
+      trackWatchdogTerminations: boolean;
+      uploadFrequency: "AVERAGE" | "FREQUENT" | "RARE";
+      vitalsUpdateFrequency: "AVERAGE" | "FREQUENT" | "RARE" | "NEVER";
+    }>;
+  };
 };
 
 /**
@@ -614,7 +639,7 @@ export type Feature_LlmMmkvMigration = Feature<{
   shouldRollback: boolean | null;
 }>;
 
-export type Feature_LldModularDrawer = Feature<{
+type Feature_ModularDrawer = Feature<{
   add_account: boolean;
   earn_flow: boolean;
   live_app: boolean;

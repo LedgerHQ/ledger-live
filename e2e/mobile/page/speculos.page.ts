@@ -6,11 +6,13 @@ import {
   signDelegationTransaction,
   signSendTransaction,
   verifyAmountsAndAcceptSwap,
+  verifyAmountsAndRejectSwap,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { DelegateType } from "@ledgerhq/live-common/e2e/models/Delegate";
 import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export default class SpeculosPage {
   @Step("Verify receive address correctness on device")
@@ -43,9 +45,21 @@ export default class SpeculosPage {
     await verifyAmountsAndAcceptSwap(swap, amount);
   }
 
-  async setExchangeDependencies(swap: SwapType) {
+  @Step("Verify amounts and reject swap")
+  async verifyAmountsAndRejectSwap(swap: SwapType, amount: string) {
+    await verifyAmountsAndRejectSwap(swap, amount);
+  }
+
+  async setExchangeDependencies(swapOrFromAccount: SwapType | Account, toAccount?: Account) {
+    let accounts: Account[];
+    if (toAccount) {
+      accounts = [swapOrFromAccount as Account, toAccount];
+    } else {
+      const swap = swapOrFromAccount as SwapType;
+      accounts = [swap.accountToDebit, swap.accountToCredit];
+    }
     setExchangeDependencies(
-      [swap.accountToDebit, swap.accountToCredit].map(acc => ({
+      accounts.map(acc => ({
         name: acc.currency.speculosApp.name.replace(/ /g, "_"),
       })),
     );
