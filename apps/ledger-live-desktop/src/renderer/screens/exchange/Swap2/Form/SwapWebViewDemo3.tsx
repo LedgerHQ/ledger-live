@@ -366,6 +366,7 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
         params: { swap: SwapProps; transaction_id: string };
       }) => {
         const { swap, transaction_id } = params;
+
         if (
           !swap ||
           !transaction_id ||
@@ -467,7 +468,6 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
   );
 
   const onSwapWebviewError = (error?: SwapLiveError) => {
-    console.error("onSwapWebviewError", error);
     logger.critical(error);
     setDrawer(WebviewErrorDrawer, error);
   };
