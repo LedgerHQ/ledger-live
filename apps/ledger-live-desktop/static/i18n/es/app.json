@@ -259,11 +259,11 @@
   },
   "time" : {
     "minute" : "Minuto",
-    "minute_plural" : "Minutos",
+    "minute_other" : "Minutos",
     "minute_short" : "min",
     "second_short" : "s",
     "hour" : "Hora",
-    "hour_plural" : "Horas",
+    "hour_other" : "Horas",
     "range" : {
       "day" : "1D",
       "week" : "1S",
@@ -575,7 +575,7 @@
       "date" : "Fecha",
       "from" : "De",
       "fromAddress" : "Dirección de origen",
-      "fromAddress_plural" : "Direcciones de origen",
+      "fromAddress_other" : "Direcciones de origen",
       "to" : "A",
       "toProvider" : "Dirección del proveedor",
       "initialAmount" : "Importe inicial",
@@ -893,6 +893,7 @@
     "title" : "Comprar y vender cripto",
     "reset" : "Reiniciar flujo",
     "verifyAddress" : "Confirma que la dirección que se muestra coincide exactamente con la que aparece en tu dispositivo",
+    "connectingTo" : "Conectándote a {{provider}}",
     "buy" : {
       "header" : "Compra cripto a través de nuestros socios",
       "title" : "Elige un proveedor para comprar cripto",
@@ -1782,14 +1783,14 @@
     "fullNodeReadyInfo" : "Se agregarán las cuentas utilizando tu nodo completo de Bitcoin.",
     "fullNodeConfigure" : "Configurar nodo",
     "tokensTip" : "{{token}} ({{ticker}}) es un token {{tokenType}}. Puedes recibir tokens directamente en una cuenta de {{currency}}.",
-    "accountToImportSubtitle_plural" : "Agregar cuentas existentes",
+    "accountToImportSubtitle_other" : "Agregar cuentas existentes",
     "selectAll" : "Seleccionar todas ({{count}})",
     "unselectAll" : "Desmarcar todas ({{count}})",
     "noAccountToImport" : "No existen cuentas de {{currencyName}} para agregar.",
     "success" : "Cuenta agregada con éxito",
-    "success_plural" : "Cuentas agregadas correctamente",
+    "success_other" : "Cuentas agregadas correctamente",
     "successDescription" : "Agrega otra cuenta o vuelve al Portfolio",
-    "successDescription_plural" : "Agrega otra cuenta o vuelve al Portfolio",
+    "successDescription_other" : "Agregar otra cuenta o volver al Portfolio",
     "createNewAccount" : {
       "noOperationOnLastAccount" : "No es posible agregar una cuenta nueva antes de haber recibido activos en tu cuenta de <1><0>{{accountName}}</0></1>",
       "noAccountToCreate" : "No fue creada ninguna cuenta de <1><0>{{currencyName}}</0></1>",
@@ -1802,7 +1803,7 @@
     "cta" : {
       "addMore" : "Agregar más",
       "add" : "Agregar cuenta",
-      "add_plural" : "Agregar cuentas",
+      "add_other" : "Agregar cuentas",
       "addAccountName" : "Agregar cuenta {{currencyName}}",
       "receive" : "Recibir"
     },
@@ -1900,9 +1901,9 @@
     "unlockDeviceAfterFirmwareUpdateStep2" : "Desbloquea {{productName}} con tu PIN para terminar de completar la actualización.",
     "quitApp" : "Cierra la aplicación en tu dispositivo",
     "appNotInstalledTitle" : "Falta una aplicación necesaria",
-    "appNotInstalledTitle_plural" : "Faltan aplicaciones necesarias",
+    "appNotInstalledTitle_other" : "Faltan aplicaciones necesarias",
     "appNotInstalled" : "Para completar esta acción es necesaria la aplicación {{appName}}. Ve a Mi Ledger e instálala en tu dispositivo",
-    "appNotInstalled_plural" : "Para completar esta acción son necesarias las aplicaciones {{appName}}. Ve a Mi Ledger e instálalas en tu dispositivo",
+    "appNotInstalled_other" : "Para completar esta acción son necesarias las aplicaciones {{appName}}. Ve a Mi Ledger e instálalas en tu dispositivo",
     "openManager" : "Abrir Mi Ledger",
     "openOnboarding" : "Configurar dispositivo",
     "outdated" : "Versión de aplicación obsoleta",
@@ -1925,7 +1926,8 @@
       "payoutNetworkFees" : "Tarifas de pago",
       "payoutNetworkFeesTooltip" : "Este importe no se mostrará en el dispositivo",
       "acceptTerms" : "Al validar esta transacción, acepto\nlos <0>términos de uso de {{provider}}</0>",
-      "exodusAcceptTerms" : "Exodus depende de terceros para realizar las permutas.\nAl validar esta transacción, acepto los <0>términos de uso de Exodus</0>"
+      "exodusAcceptTerms" : "Exodus depende de terceros para realizar las permutas.\nAl validar esta transacción, acepto los <0>términos de uso de Exodus</0>",
+      "changellyAcceptTerms" : "Al hacer clic en “Permutar con Changelly”, aceptas los <0>Términos de uso</0> de Changelly y\nsu <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que,\nen determinados casos, pueden afectar a la finalización de tu transacción. En caso\nde darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly."
     },
     "swap2" : {
       "amountSent" : "Importe a enviar",
@@ -1988,14 +1990,14 @@
       },
       "installSuccess" : {
         "title" : "Aplicación instalada con éxito. Ahora puedes agregar tus cuentas de {{app}}",
-        "title_plural" : "Aplicaciones instaladas con éxito. Ahora puedes agregar tus cuentas",
+        "title_other" : "Aplicaciones instaladas con éxito. Ahora puedes agregar tus cuentas",
         "manageAccount" : "Administrar mis cuentas"
       },
       "updatable" : {
         "title" : "Actualización disponible",
-        "title_plural" : "Actualizaciones disponibles",
+        "title_other" : "Actualizaciones disponibles",
         "progressTitle" : "Actualización de {{number}} aplicación",
-        "progressTitle_plural" : "{{number}} actualizaciones de aplicación",
+        "progressTitle_other" : "{{number}} actualizaciones de aplicación",
         "progressWarning" : "No cierres Mi Ledger durante la actualización.",
         "progress" : "Actualizando todo..."
       },
@@ -4085,7 +4087,7 @@
     "duration" : "Duración",
     "durationJustStarted" : "Recién iniciado",
     "durationDays" : "{{count}} día",
-    "durationDays_plural" : "{{count}} días",
+    "durationDays_other" : "{{count}} días",
     "howItWorks" : "Cómo funciona la delegación",
     "delegationEarn" : "Ahora puedes recibir recompensas de participación {{name}} delegando tu cuenta.",
     "earnRewards" : "Recibir recompensas",
@@ -4709,7 +4711,7 @@
     "ctaSuccess" : "Listo",
     "noAccounts" : "No hay cuentas que exportar",
     "selectedAccounts" : "Cuentas a incluir",
-    "selectedAccounts_plural" : "Cuentas a incluir ({{count}})",
+    "selectedAccounts_other" : "Cuentas a incluir ({{count}})",
     "disclaimer" : "Los contravalores de la exportación se ofrecen únicamente a título informativo. No se debe confiar en estos datos para fines contables, fiscales, regulatorios o legales, ya que solo representan una estimación del precio de los activos en el momento de las transacciones y la exportación, según los métodos de reseña proporcionados por nuestro proveedor de servicios, Kaiko."
   },
   "language" : {
@@ -4747,7 +4749,7 @@
   "informationCenter" : {
     "tooltip" : "Centro de información",
     "ongoingIncidentsTooltip" : "Hay {{count}} incidente en curso",
-    "ongoingIncidentsTooltip_plural" : "Hay {{count}} incidentes en curso",
+    "ongoingIncidentsTooltip_other" : "Hay {{count}} incidentes en curso",
     "tabs" : {
       "announcements" : "Noticias",
       "announcementsUnseen" : "Noticias ({{unseenCount}})",
@@ -6041,6 +6043,10 @@
       "title" : "Algo ha salido mal",
       "description" : "Esta cuenta receptora no pertenece al dispositivo que has conectado. Cámbiala e inténtalo de nuevo."
     },
+    "MissingSwapPayloadParamaters" : {
+      "title" : "Algo ha salido mal",
+      "description" : "Falta el parámetro de permuta del proveedor seleccionado. Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
     "WrongDeviceForAccountRefund" : {
       "title" : "Algo ha salido mal",
       "description" : "Esta cuenta de envío no pertenece al dispositivo que has conectado. Cámbiala e inténtalo de nuevo."
@@ -7056,10 +7062,38 @@
     }
   },
   "modularAssetDrawer" : {
+    "addAccounts" : {
+      "title" : "Selecciona las cuentas que quieres agregar",
+      "controls" : {
+        "selectAll" : "Seleccionar todo",
+        "deselectAll" : "Desmarcar todo"
+      },
+      "cta" : {
+        "confirm" : "Confirmar"
+      },
+      "newAccount" : "Nueva cuenta"
+    },
+    "scanAccounts" : {
+      "cta" : {
+        "stopScanning" : "Detener escaneo"
+      },
+      "status" : {
+        "foundAccounts_zero" : "No se encontró ninguna cuenta",
+        "foundAccounts" : "Hemos encontrado {{count}} cuenta",
+        "foundAccounts_other" : "Hemos encontrado {{count}} cuentas",
+        "scanning" : "Buscando cuentas..."
+      },
+      "title" : "Buscando cuentas existentes en la cadena de bloques..."
+    },
+    "connectYourDevice" : {
+      "title" : "Conecta y desbloquea tu dispositivo"
+    },
     "searchPlaceholder" : "Buscar",
     "selectAsset" : "Seleccionar activo",
     "selectNetwork" : "Seleccionar red",
-    "selectAccount" : "Seleccionar cuenta"
+    "selectAccount" : "Seleccionar cuenta",
+    "accountCount_one" : "Cuenta {{count}}",
+    "accountCount_other" : "Cuentas de {{count}}"
   },
   "nftEntryPoint" : {
     "title" : "NFT (Tokens no fungibles)",
