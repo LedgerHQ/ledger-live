@@ -19,7 +19,7 @@ export const prepareTransaction: AccountBridge<
 >["prepareTransaction"] = async (account, transaction) => {
   let amount = transaction.amount;
   const spendable = await estimateMaxSpendable({ account, transaction });
-  if (transaction.useAllAmount) {
+  if (transaction.useAllAmount && transaction.mode !== "undelegate") {
     amount = spendable;
   }
 
