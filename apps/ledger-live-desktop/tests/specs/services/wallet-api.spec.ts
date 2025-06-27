@@ -83,23 +83,24 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
   // Reset the webview after each test to ensure a clean state
   // We have to call it manually because playwright doesn't support afterEach hook for steps
   async function resetWebview() {
-    const webview = await liveAppWebview.getWebView();
-    await webview.getByTestId("clear-states").click();
+    await liveAppWebview.clearStates();
   }
 
-  await test.step("account.request", async () => {
+  await test.step("open live-app", async () => {
     await layout.goToDiscover();
     await discoverPage.openTestApp();
     await drawer.continue();
     await drawer.waitForDrawerToDisappear();
+  });
 
-    const webview = await liveAppWebview.getWebView();
+  await test.step("account.request", async () => {
+    await liveAppWebview.setCurrencyIds([
+      "bitcoin",
+      "ethereum",
+      "ethereum/erc20/usd_tether__erc20_",
+    ]);
 
-    await webview
-      .getByTestId("currency-ids-input")
-      .fill(["bitcoin", "ethereum", "ethereum/erc20/usd_tether__erc20_"].join(","));
-
-    await webview.getByTestId("account-request").click();
+    await liveAppWebview.accountRequest();
 
     await drawer.waitForDrawerToBeVisible();
 
@@ -115,11 +116,8 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
 
     await drawer.waitForDrawerToDisappear();
 
-    const res = await webview.getByTestId("res-output").textContent();
-    if (!res) {
-      throw new Error("Response output is not present.");
-    }
-    expect(JSON.parse(res)).toMatchObject({
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toMatchObject({
       id: "2d23ca2a-069e-579f-b13d-05bc706c7583",
       address: "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
       balance: "35688397",
@@ -133,75 +131,51 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
   });
 
   await test.step("account.receive", async () => {
-    const webview = await liveAppWebview.getWebView();
+    await liveAppWebview.setAccountId("2d23ca2a-069e-579f-b13d-05bc706c7583");
 
-    await webview.getByTestId("account-id-input").fill("2d23ca2a-069e-579f-b13d-05bc706c7583");
-
-    await webview.getByTestId("account-receive").click();
+    await liveAppWebview.accountReceive();
 
     await deviceAction.openApp();
     await deviceAction.complete();
     await modal.waitForModalToDisappear();
 
-    const res = await webview.getByTestId("res-output").textContent();
-    if (!res) {
-      throw new Error("Response output is not present.");
-    }
-    expect(JSON.parse(res)).toBe("1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ");
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toBe("1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ");
 
     await resetWebview();
   });
 
   await test.step("account.list", async () => {
-    const webview = await liveAppWebview.getWebView();
-    await webview.getByTestId("account-list").click();
+    await liveAppWebview.accountList();
 
-    const res = await webview.getByTestId("res-output").textContent();
-    if (!res) {
-      throw new Error("Response output is not present.");
-    }
-    expect(JSON.parse(res)).toMatchObject(mockedAccountList);
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toMatchObject(mockedAccountList);
 
     await resetWebview();
   });
 
   await test.step("bitcoin.getXPub", async () => {
-    const webview = await liveAppWebview.getWebView();
+    await liveAppWebview.setAccountId("3463fc5b-deb9-5b19-a27e-4554624f2090");
+    await liveAppWebview.bitcoinGetXPub();
 
-    await webview.getByTestId("account-id-input").fill("3463fc5b-deb9-5b19-a27e-4554624f2090");
-
-    await webview.getByTestId("bitcoin-getXPub").click();
-
-    const res = await webview.getByTestId("res-output").textContent();
-    if (!res) {
-      throw new Error("Response output is not present.");
-    }
-    expect(JSON.parse(res)).toBe(
-      "D2C2B76D346B6EA64EB4F8C6E9995F81C39E0A2449CA1B3D87AF9D720ABD35C2",
-    );
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toBe("D2C2B76D346B6EA64EB4F8C6E9995F81C39E0A2449CA1B3D87AF9D720ABD35C2");
 
     await resetWebview();
   });
 
   await test.step("currency.list", async () => {
-    const webview = await liveAppWebview.getWebView();
+    await liveAppWebview.setCurrencyIds([
+      "bitcoin",
+      "ethereum",
+      "ethereum/erc20/usd_tether__erc20_",
+      // "arbitrum/erc20/arbitrum", // Still not able to get the test fetching tokens with an account present
+    ]);
 
-    await webview.getByTestId("currency-ids-input").fill(
-      [
-        "bitcoin",
-        "ethereum",
-        "ethereum/erc20/usd_tether__erc20_",
-        // "arbitrum/erc20/arbitrum", // Still not able to get the test fetching tokens with an account present
-      ].join(","),
-    );
+    await liveAppWebview.currencyList();
 
-    await webview.getByTestId("currency-list").click();
-
-    const res = await webview.getByTestId("res-output").textContent();
-    if (!res) {
-      throw new Error("Response output is not present.");
-    }
-    expect(JSON.parse(res)).toMatchObject([
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toMatchObject([
       {
         type: "CryptoCurrency",
         id: "bitcoin",
@@ -248,15 +222,11 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
   });
 
   await test.step("currency.list should stay stable for CryptoCurrency", async () => {
-    const webview = await liveAppWebview.getWebView();
-    await webview.getByTestId("currency-list").click();
+    await liveAppWebview.currencyList();
 
-    const res = await webview.getByTestId("res-output").textContent();
-    if (!res) {
-      throw new Error("Response output is not present.");
-    }
+    const res = await liveAppWebview.getResOutput();
     // We remove TokenCurrency because they might change a lot more frequently and we really care if a family disappear
-    const currencies = JSON.parse(res).filter(
+    const currencies = res.filter(
       (currency: { type: string }) => currency.type === "CryptoCurrency",
     );
     expect(currencies).toMatchObject(expectedCurrencyList);
@@ -265,27 +235,20 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
   });
 
   await test.step("storage", async () => {
-    const webview = await liveAppWebview.getWebView();
-    await webview.getByTestId("storage").click();
+    await liveAppWebview.storage();
 
-    const res = await webview.getByTestId("res-output").textContent();
-    if (!res) {
-      throw new Error("Response output is not present.");
-    }
-    expect(JSON.parse(res)).toBe("test-value");
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toBe("test-value");
 
     await resetWebview();
   });
 
   await test.step("transaction.sign", async () => {
-    const webview = await liveAppWebview.getWebView();
-
     const recipient = "0x046615F0862392BC5E6FB43C92AAD73DE158D235";
 
-    await webview.getByTestId("recipient-input").fill(recipient);
-    await webview.getByTestId("account-id-input").fill("e86e3bc1-49e1-53fd-a329-96ba6f1b06d3");
-
-    await webview.getByTestId("transaction-sign").click();
+    await liveAppWebview.setAccountId("e86e3bc1-49e1-53fd-a329-96ba6f1b06d3");
+    await liveAppWebview.setRecipient(recipient);
+    await liveAppWebview.transactionSign();
 
     // Step Fees
     await expect(page.getByText(/learn more about fees/i)).toBeVisible();
@@ -298,26 +261,18 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     // Step Device
     await deviceAction.silentSign();
 
-    const res = await webview.getByTestId("res-output").textContent();
-    if (!res) {
-      throw new Error("Response output is not present.");
-    }
-    expect(JSON.parse(res)).toBe(
-      "fakeSignatureTlaowosfpqwkpofqkpqwpoesHQv6xHyYwDsrPJvqcSKRJGBLrbEc",
-    );
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toBe("fakeSignatureTlaowosfpqwkpofqkpqwpoesHQv6xHyYwDsrPJvqcSKRJGBLrbEc");
 
     await resetWebview();
   });
 
   await test.step("transaction.sign solana", async () => {
-    const webview = await liveAppWebview.getWebView();
-
     const recipient = "63M7kPJvLsG46jbR2ZriEU8xwPqkMNKNoBBQ46pobbvo";
 
-    await webview.getByTestId("recipient-input").fill(recipient);
-    await webview.getByTestId("account-id-input").fill("2fa370fd-2210-5487-b9c9-bc36971ebc72");
-
-    await webview.getByTestId("transaction-sign-solana").click();
+    await liveAppWebview.setAccountId("2fa370fd-2210-5487-b9c9-bc36971ebc72");
+    await liveAppWebview.setRecipient(recipient);
+    await liveAppWebview.transactionSignSolana();
 
     // Step Recipient
     await expect(page.getByText(recipient)).toBeVisible();
@@ -326,11 +281,8 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     // Step Device
     await deviceAction.silentSign();
 
-    const res = await webview.getByTestId("res-output").textContent();
-    if (!res) {
-      throw new Error("Response output is not present.");
-    }
-    expect(JSON.parse(res)).toMatchObject({
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toMatchObject({
       message: {
         accountKeys: [
           "4iWtrn54zi89sHQv6xHyYwDsrPJvqcSKRJGBLrbErCsx",
@@ -356,14 +308,11 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
   });
 
   await test.step("transaction.signAndBroadcast", async () => {
-    const webview = await liveAppWebview.getWebView();
-
     const recipient = "0x046615F0862392BC5E6FB43C92AAD73DE158D235";
 
-    await webview.getByTestId("recipient-input").fill(recipient);
-    await webview.getByTestId("account-id-input").fill("e86e3bc1-49e1-53fd-a329-96ba6f1b06d3");
-
-    await webview.getByTestId("transaction-signAndBroadcast").click();
+    await liveAppWebview.setAccountId("e86e3bc1-49e1-53fd-a329-96ba6f1b06d3");
+    await liveAppWebview.setRecipient(recipient);
+    await liveAppWebview.transactionSignAndBroadcast();
 
     // Step Fees
     await expect(page.getByText(/learn more about fees/i)).toBeVisible();
@@ -391,52 +340,35 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     await expect(drawer.getByText("View in explorer")).toBeVisible();
     await expect(drawer.getByText("Confirmed")).toBeVisible();
 
-    const res = await webview.getByTestId("res-output").textContent();
-    if (!res) {
-      throw new Error("Response output is not present.");
-    }
-    expect(JSON.parse(res)).toBe(
-      "32BEBB4660C4C328F7E130D0E1F45D5B2AFD9129B903E0F3B6EA52756329CD25",
-    );
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toBe("32BEBB4660C4C328F7E130D0E1F45D5B2AFD9129B903E0F3B6EA52756329CD25");
 
     await resetWebview();
   });
 
   await test.step("wallet.capabilities", async () => {
-    const webview = await liveAppWebview.getWebView();
-    await webview.getByTestId("wallet-capabilities").click();
+    await liveAppWebview.walletCapabilities();
 
-    const res = await webview.getByTestId("res-output").textContent();
-    if (!res) {
-      throw new Error("Response output is not present.");
-    }
-    expect(JSON.parse(res)).toEqual(methods);
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toEqual(methods);
 
     await resetWebview();
   });
 
   await test.step("wallet.userId", async () => {
-    const webview = await liveAppWebview.getWebView();
-    await webview.getByTestId("wallet-userId").click();
+    await liveAppWebview.walletUserId();
 
-    const res = await webview.getByTestId("res-output").textContent();
-    if (!res) {
-      throw new Error("Response output is not present.");
-    }
-    expect(JSON.parse(res)).toBe("08cf3393-c5eb-4ea7-92de-0deea22e3971");
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toBe("08cf3393-c5eb-4ea7-92de-0deea22e3971");
 
     await resetWebview();
   });
 
   await test.step("wallet.info", async () => {
-    const webview = await liveAppWebview.getWebView();
-    await webview.getByTestId("wallet-info").click();
+    await liveAppWebview.walletInfo();
 
-    const res = await webview.getByTestId("res-output").textContent();
-    if (!res) {
-      throw new Error("Response output is not present.");
-    }
-    expect(JSON.parse(res)).toMatchObject({
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toMatchObject({
       tracking: true,
       wallet: { name: "ledger-live-desktop", version: LLD_VERSION },
     });
