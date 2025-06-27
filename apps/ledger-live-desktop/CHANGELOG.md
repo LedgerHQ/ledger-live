@@ -1,5 +1,21 @@
 # ledger-live-desktop
 
+## 2.119.0-nightly.1
+
+### Minor Changes
+
+- [#10701](https://github.com/LedgerHQ/ledger-live/pull/10701) [`11b8b93`](https://github.com/LedgerHQ/ledger-live/commit/11b8b935707a3b52009db6119d0fbf92fcbcf4b9) Thanks [@LucasWerey](https://github.com/LucasWerey)! - LLD - MAD - Add account - create strictly typed hook and component for add account tracking
+
+- [#10674](https://github.com/LedgerHQ/ledger-live/pull/10674) [`fcc3e25`](https://github.com/LedgerHQ/ledger-live/commit/fcc3e25d5f8f36784eaad5859f2e6faecc0ba85d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - Add Account - quick actions to redirect to swap or buy
+
+- [#10694](https://github.com/LedgerHQ/ledger-live/pull/10694) [`b19c062`](https://github.com/LedgerHQ/ledger-live/commit/b19c062e0366a8aa17acba1731aba8b9d07fc866) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - fix account name issue
+
+- [#10696](https://github.com/LedgerHQ/ledger-live/pull/10696) [`08527a0`](https://github.com/LedgerHQ/ledger-live/commit/08527a0e3e7a7af3ff7444679d2bda1d55166c60) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MYLedger pluralization issue
+
+### Patch Changes
+
+- [#10692](https://github.com/LedgerHQ/ledger-live/pull/10692) [`25252eb`](https://github.com/LedgerHQ/ledger-live/commit/25252eb13a34faae4a9d8c7541328c6c67644a60) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - make sure we only keep the initial source for tracking for desktop swap webview
+
 ## 2.119.0-nightly.0
 
 ### Minor Changes
