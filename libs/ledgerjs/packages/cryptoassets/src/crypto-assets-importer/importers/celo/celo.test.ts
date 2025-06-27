@@ -5,17 +5,19 @@ import fs from "fs";
 const celoTokens = [
   {
     blockchain_name: "celo",
-    contract_address: "0x765DE816845861e75A25fCA122bb6898B8B1282a",
-    decimals: 8,
-    delisted: false,
     name: "Celo Dollar",
     ticker: "cUSD",
+    decimals: 18,
+    live_signature:
+      "3045022100bb27cb9143070f0414e9519f1f06a83a3fee31a9fb5ecf17a30575056c4991850220265e8843bcd6e02eddcb9b6f3f6ca29e2bd6dcf2e73ca3d18856938d2dd30d09",
+    contract_address: "0x765de816845861e75a25fca122bb6898b8b1282a",
+    delisted: false,
   },
 ];
 
 const mockedAxios = jest.spyOn(axios, "get");
 
-describe("import Celo tokens", () => {
+describe("import Celo ERC20 tokens", () => {
   beforeEach(() => {
     mockedAxios.mockImplementation(() =>
       Promise.resolve({ data: celoTokens, headers: { etag: "etagHash" } }),
@@ -27,18 +29,13 @@ describe("import Celo tokens", () => {
   });
 
   it("should output the file in the correct format", async () => {
-    const expectedFile = `export type CeloTokens = [
-  string, // ticker
-  number, // decimals
-  string, // contractAddress
-  string, // name
-];
+    const expectedFile = `import { ERC20Token } from "../types";
 
 import tokens from "./celo.json";
 
 export { default as hash } from "./celo-hash.json";
 
-export default tokens as CeloTokens[];
+export default tokens as ERC20Token[];
 `;
 
     const mockedFs = (fs.writeFileSync = jest.fn());
