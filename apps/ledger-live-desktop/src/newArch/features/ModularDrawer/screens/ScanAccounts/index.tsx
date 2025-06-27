@@ -128,10 +128,11 @@ const ScanAccounts = ({
         ) : null}
       </Flex>
       <Footer
+        handleConfirm={handleConfirm}
+        importableAccounts={importableAccounts}
         scanning={scanning}
         selectedIds={selectedIds}
         stopSubscription={stopSubscription}
-        handleConfirm={handleConfirm}
       />
     </>
   );
