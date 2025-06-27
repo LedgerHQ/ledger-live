@@ -1,4 +1,4 @@
-import secp256k1 from "secp256k1";
+import * as ecc from "@bitcoinerlab/secp256k1";
 
 /**
  * Implement the subset of secp256k1 that wallet-btc needs to work.
@@ -8,10 +8,8 @@ export type Secp256k1Instance = {
   publicKeyTweakAdd(publicKey: Uint8Array, tweak: Uint8Array): Promise<Uint8Array>;
 };
 
-// default uses node.js's secp256k1
 let impl: Secp256k1Instance = {
-  publicKeyTweakAdd: (publicKey, tweak) =>
-    Promise.resolve(secp256k1.publicKeyTweakAdd(publicKey, tweak)),
+  publicKeyTweakAdd: (publicKey, tweak) => Promise.resolve(ecc.pointAddScalar(publicKey, tweak)!),
 };
 
 /**
