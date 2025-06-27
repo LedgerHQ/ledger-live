@@ -40,6 +40,6 @@ export class Modal extends Component {
 
   @step("Continue to sign transaction")
   async continueToSignTransaction() {
-    await this.continueButton.click({ force: true });
+    await this.continueButton.click();
   }
 }
