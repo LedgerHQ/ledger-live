@@ -36,12 +36,19 @@ export const genericSignOperation =
         // NOTE: checking field that's not inside TransactionCommon, improve
         if (!transaction["fees"]) throw new FeeNotLoaded();
 
-        debugger;
+        // debugger;
         if (transaction["useAllAmount"]) {
-          const { freshAddress, balance, currency, pendingOperations, spendableBalance } = account;
+          const { freshAddress, balance, currency, pendingOperations, subAccounts } = account;
+          let { spendableBalance } = account;
+
+          if (subAccounts && transaction?.subAccountId) {
+            spendableBalance =
+              subAccounts.find(t => t.id === transaction.subAccountId)?.spendableBalance ||
+              new BigNumber(0);
+          }
           // FIXME: fix this one also (hardcoded type)
 
-          debugger;
+          // debugger;
           const { amount } = await getAlpacaApi(network, kind).validateIntent(
             {
               currencyName: currency.name,
@@ -50,6 +57,9 @@ export const genericSignOperation =
               currencyUnit: currency.units[0],
               pendingOperations: pendingOperations.length,
               spendableBalance: BigInt(spendableBalance.toString()),
+              subAccount: subAccounts
+                ? subAccounts.find(t => t.id === transaction.subAccountId)
+                : undefined,
             },
             {
               type: "PAYMENT",

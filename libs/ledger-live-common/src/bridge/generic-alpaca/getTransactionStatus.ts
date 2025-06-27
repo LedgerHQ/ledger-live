@@ -14,10 +14,17 @@ export function genericGetTransactionStatus(
       assetIssuer?: string;
       assetCode?: string;
       mode?: string;
+      subAccountId?: string;
     },
   ) => {
-    const { freshAddress, balance, currency, pendingOperations, spendableBalance } = account;
-    console.log("getTransactionStatus account", spendableBalance.toString());
+    const { freshAddress, balance, currency, pendingOperations, subAccounts } = account;
+    let { spendableBalance } = account;
+
+    if (subAccounts && transaction?.subAccountId) {
+      spendableBalance =
+        subAccounts.find(t => t.id === transaction.subAccountId)?.spendableBalance ||
+        new BigNumber(0);
+    }
     const alpacaApi = getAlpacaApi(network, kind);
     let transactionType = "PAYMENT"; // NOTE: assuming payment by default here, can be changed based on transaction.mode
     if (transaction.mode) {
@@ -44,7 +51,7 @@ export function genericGetTransactionStatus(
   ];
       */
 
-    debugger;
+    // debugger;
     const { errors, warnings, estimatedFees, amount, totalSpent } = await alpacaApi.validateIntent(
       {
         currencyName: currency.name,
@@ -53,6 +60,9 @@ export function genericGetTransactionStatus(
         currencyUnit: currency.units[0],
         pendingOperations: pendingOperations.length,
         spendableBalance: BigInt(spendableBalance.toString()),
+        subAccount: subAccounts
+          ? subAccounts.find(t => t.id === transaction.subAccountId)
+          : undefined,
       },
       {
         type: transactionType,
@@ -62,6 +72,7 @@ export function genericGetTransactionStatus(
         useAllAmount: !!transaction.useAllAmount,
         assetCode: transaction.assetCode || "",
         assetIssuer: transaction.assetIssuer || "",
+        subAccountId: transaction.subAccountId || "",
       },
     );
 

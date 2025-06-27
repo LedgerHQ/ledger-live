@@ -38,7 +38,7 @@ export const getTransactionStatus = async (
   account: Account,
   transaction: Transaction,
 ): Promise<TransactionValidation> => {
-  const asset = account; // FIXME:
+  // const asset = account; // FIXME:
   console.log("getTransactionStatus account", account);
   console.log("getTransactionStatus transaction", transaction);
   const errors: Record<string, Error> = {};
@@ -60,7 +60,10 @@ export const getTransactionStatus = async (
   const estimatedFees = !transaction.fee ? 0n : transaction.fee;
   const baseReserve = !transaction.baseReserve ? 0n : transaction.baseReserve;
   const isAssetPayment =
-    transaction.subAccountId && transaction.assetCode && transaction.assetIssuer;
+    transaction.subAccountId &&
+    transaction.assetCode &&
+    transaction.assetIssuer &&
+    account?.subAccount;
   const nativeBalance = account.balance;
   const nativeAmountAvailable = account.spendableBalance - estimatedFees;
 
@@ -88,7 +91,7 @@ export const getTransactionStatus = async (
     type: "PAYMENT"
     useAllAmount: false
     */
-  debugger;
+  // debugger;
   // Operation specific checks
   if (transaction.type === "changeTrust") {
     // Check asset provided
@@ -137,9 +140,10 @@ export const getTransactionStatus = async (
     }
 
     // Asset payment
-    if (isAssetPayment) {
+    if (isAssetPayment && account.subAccount) {
       // NOTE: previously, fetched with coin-framework's findSubAccountById, move logic in generic-bridge
       // const asset = findSubAccountById(account, transaction.subAccountId || "");
+      const asset = account.subAccount;
 
       if (!asset === null) {
         // This is unlikely
@@ -158,9 +162,9 @@ export const getTransactionStatus = async (
         });
       }
 
-      const assetBalance = asset?.balance || 0n;
+      const assetBalance = BigInt(asset?.balance.toString()) || 0n;
 
-      maxAmount = asset?.spendableBalance || assetBalance;
+      maxAmount = BigInt(asset?.spendableBalance.toString()) || assetBalance;
       amount = useAllAmount ? maxAmount : transaction.amount;
       totalSpent = amount;
 

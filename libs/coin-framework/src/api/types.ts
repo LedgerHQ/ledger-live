@@ -101,6 +101,7 @@ export type Account = {
   currencyUnit: Unit;
   pendingOperations: number; // NOTE: can get away with only the number of pending operations?
   spendableBalance: bigint; // NOTE:: check if we can get rid of this one
+  subAccount?: TokenAccount;
 };
 
 /*
