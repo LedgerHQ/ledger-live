@@ -1,5 +1,12 @@
 import { log } from "@ledgerhq/logs";
-import type { Transaction, TransactionInput, TransactionOutput } from "./types";
+import type {
+  Transaction,
+  TransactionInput,
+  TransactionOutput,
+  SaplingData,
+  SpendDescriptionV5,
+  OutputDescriptionV5,
+} from "./types";
 import { getVarint } from "./varint";
 import { formatTransactionDebug } from "./debug";
 
@@ -101,6 +108,101 @@ export function splitTransaction(
     });
   }
 
+  let sapling: SaplingData | undefined;
+  if (hasExtraData) {
+    if (isZcashv5) {
+      varint = getVarint(transaction, offset);
+      const nSpendsSapling = varint[0];
+      offset += varint[1];
+
+      const vSpendsSapling: SpendDescriptionV5[] = [];
+      for (let i = 0; i < nSpendsSapling; i++) {
+        const cv = transaction.slice(offset, offset + 32);
+
+        offset += 32;
+        const nullifier = transaction.slice(offset, offset + 32);
+
+        offset += 32;
+        const rk = transaction.slice(offset, offset + 32);
+        offset += 32;
+
+        vSpendsSapling.push({
+          cv,
+          nullifier,
+          rk,
+        } as SpendDescriptionV5);
+      }
+
+      varint = getVarint(transaction, offset);
+      const nOutputsSapling = varint[0];
+      offset += varint[1];
+      const vOutputSapling: OutputDescriptionV5[] = [];
+
+      for (let i = 0; i < nOutputsSapling; i++) {
+        const cv = transaction.slice(offset, offset + 32);
+
+        offset += 32;
+        const cmu = transaction.slice(offset, offset + 32);
+
+        offset += 32;
+        const ephemeralKey = transaction.slice(offset, offset + 32);
+        offset += 32;
+
+        const encCiphertext = transaction.slice(offset, offset + 580);
+        offset += 580;
+
+        const outCiphertext = transaction.slice(offset, offset + 80);
+        offset += 80;
+
+        vOutputSapling.push({
+          cv,
+          cmu,
+          ephemeralKey,
+          encCiphertext,
+          outCiphertext,
+        } as OutputDescriptionV5);
+      }
+
+      const valueBalanceSapling = transaction.slice(offset, offset + 8);
+      offset += 8;
+
+      console.log(
+        "RABL WE WERE HERE splitTransaction: valueBalanceSapling",
+        valueBalanceSapling.toString("hex"),
+      );
+
+      const anchorSapling = transaction.slice(offset, offset + 32);
+      offset += 32;
+
+      const vSpendProofsSapling = transaction.slice(offset, offset + 192 * nSpendsSapling);
+      offset += 192 * nSpendsSapling;
+
+      const vSpendAuthSigsSapling = transaction.slice(offset, offset + 64 * nSpendsSapling);
+      offset += 64 * nSpendsSapling;
+
+      const vOutputProofsSapling = transaction.slice(offset, offset + 192 * nOutputsSapling);
+      offset += 192 * nSpendsSapling;
+
+      const bindingSigSapling = transaction.slice(offset, offset + 64);
+      offset += 64;
+
+      sapling = {
+        nSpendsSapling,
+        vSpendsSapling: [], // This will be filled later if needed
+        nOutputsSapling,
+        vOutputSapling: [], // This will be filled later if needed
+        valueBalanceSapling,
+        anchorSapling,
+        vSpendProofsSapling,
+        vSpendAuthSigsSapling,
+        vOutputProofsSapling,
+        bindingSigSapling,
+      } as SaplingData;
+
+      extraData = transaction.slice(offset);
+    }
+  }
+
   if (witness) {
     witnessScript = transaction.slice(offset, -4);
     locktime = transaction.slice(transaction.length - 4);
@@ -116,7 +218,9 @@ export function splitTransaction(
   }
 
   if (hasExtraData) {
-    extraData = transaction.slice(offset);
+    if (!isZcashv5) {
+      extraData = transaction.slice(offset);
+    }
   }
 
   //Get witnesses for Decred
@@ -154,6 +258,7 @@ export function splitTransaction(
     nVersionGroupId,
     nExpiryHeight,
     extraData,
+    sapling,
   };
   log("btc", `splitTransaction ${transactionHex}:\n${formatTransactionDebug(t)}`);
   return t;
