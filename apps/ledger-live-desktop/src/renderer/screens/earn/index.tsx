@@ -17,6 +17,7 @@ import {
 } from "~/renderer/reducers/settings";
 import { useDeepLinkListener } from "~/renderer/screens/earn/useDeepLinkListener";
 import { useHistory } from "react-router";
+import { useVersionedStakePrograms } from "LLD/hooks/useVersionedStakePrograms";
 
 const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_EARN_MANIFEST_ID || DEFAULT_FEATURES.ptxEarnLiveApp.params?.manifest_id;
@@ -36,7 +37,7 @@ const Earn = () => {
   const countryLocale = getParsedSystemDeviceLocale().region;
   useDeepLinkListener();
 
-  const stakePrograms = useFeature("stakePrograms");
+  const stakePrograms = useVersionedStakePrograms();
   const { stakeProgramsParam, stakeCurrenciesParam } = useMemo(
     () => stakeProgramsToEarnParam(stakePrograms),
     [stakePrograms],
