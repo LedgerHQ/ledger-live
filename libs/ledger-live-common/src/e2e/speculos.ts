@@ -325,6 +325,14 @@ export const specs: Specs = {
     },
     dependency: "",
   },
+  Hedera: {
+    currency: getCryptoCurrencyById("hedera"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Hedera",
+    },
+    dependency: "",
+  },
 };
 
 export async function startSpeculos(
@@ -680,6 +688,9 @@ export async function signSendTransaction(tx: Transaction) {
       break;
     case Currency.APT:
       await sendAptos();
+      break;
+    case Currency.HBAR:
+      await sendHedera();
       break;
     default:
       throw new Error(`Unsupported currency: ${currencyName.ticker}`);
