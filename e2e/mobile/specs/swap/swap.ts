@@ -62,8 +62,13 @@ export function runSwapTest(swap: SwapType, tmsLinks: string[], tags: string[]) 
         swap.accountToDebit,
         swap.accountToCredit,
       );
-      await performSwapUntilQuoteSelectionStep(swap, minAmount);
-      await app.swapLiveApp.selectExchange();
+      await performSwapUntilQuoteSelectionStep(
+        swap.accountToDebit,
+        swap.accountToCredit,
+        minAmount,
+      );
+      const selectedProvider: string = await app.swapLiveApp.selectExchange();
+      await app.swapLiveApp.checkExchangeButtonHasProviderName(selectedProvider);
       await app.swapLiveApp.tapExecuteSwap();
       await app.common.selectKnownDevice();
 
