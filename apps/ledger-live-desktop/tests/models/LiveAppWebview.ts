@@ -1,18 +1,21 @@
-import { Locator, Page } from "@playwright/test";
 import { WebviewTag } from "~/renderer/components/Web3AppWebview/types";
-import { waitFor } from "../utils/waitFor";
+import { ElectronApplication, Locator, Page } from "@playwright/test";
 import { getLiveAppManifest, startDummyServer, stopDummyServer } from "@ledgerhq/test-utils";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 
 export class LiveAppWebview {
+  webviewPage?: Page;
   readonly page: Page;
+  readonly electronApp: ElectronApplication;
   readonly liveAppTitle: Locator;
   readonly liveAppLoadingSpinner: Locator;
   readonly webview: Locator;
   readonly selectAssetSearchBar: Locator;
+  defaultWebViewTimeout = 60_000;
 
-  constructor(page: Page) {
+  constructor(page: Page, electronApp: ElectronApplication) {
     this.page = page;
+    this.electronApp = electronApp;
     this.webview = page.locator("webview");
     this.liveAppTitle = page.getByTestId("live-app-title");
     this.liveAppLoadingSpinner = page.getByTestId("live-app-loading-spinner");
@@ -69,58 +72,63 @@ export class LiveAppWebview {
   }
 
   async getAccountsList() {
-    await this.clickWebviewElement("[data-testid=get-all-accounts-button]");
+    const webviewPage = await this.getWebView();
+    await webviewPage.getByTestId("get-all-accounts-button").click();
   }
 
   async requestAsset() {
-    await this.clickWebviewElement("[data-testid=request-single-account-button]");
+    const webviewPage = await this.getWebView();
+    await webviewPage.getByTestId("request-single-account-button").click();
   }
 
   async verifyAddress() {
-    await this.clickWebviewElement("[data-testid=verify-address-button]");
+    const webviewPage = await this.getWebView();
+    await webviewPage.getByTestId("verify-address-button").click();
   }
 
   async listCurrencies() {
-    await this.clickWebviewElement("[data-testid=list-currencies-button]");
+    const webviewPage = await this.getWebView();
+    await webviewPage.getByTestId("list-currencies-button").click();
   }
 
   async signBitcoinTransaction() {
-    await this.clickWebviewElement("[data-testid=sign-bitcoin-transaction-button]");
+    const webviewPage = await this.getWebView();
+    await webviewPage.getByTestId("sign-bitcoin-transaction-button").click();
   }
 
   async signEthereumTransaction() {
-    await this.clickWebviewElement("[data-testid=sign-ethereum-transaction-button]");
+    const webviewPage = await this.getWebView();
+    await webviewPage.getByTestId("sign-ethereum-transaction-button").click();
   }
 
-  async clickWebviewElement(elementName: string) {
-    await this.page.evaluate(elementName => {
-      const webview = document.querySelector("webview");
-      (webview as WebviewTag).executeJavaScript(
-        `(function() {
-        const element = document.querySelector('${elementName}');
-        element.click();
-      })();
-    `,
-      );
-    }, elementName);
-  }
+  async getWebView(): Promise<Page> {
+    if (this.webviewPage) {
+      return this.webviewPage;
+    }
+    if (!this.electronApp) {
+      throw new Error("No ElectronApplication instance available");
+    }
 
-  async waitForCorrectTextInWebview(textToCheck: string) {
-    return waitFor(() => this.textIsPresent(textToCheck));
+    const all = this.electronApp.windows();
+    let webview: Page;
+    if (all.length > 1) {
+      webview = all[1];
+    } else {
+      webview = await this.electronApp.waitForEvent("window", {
+        timeout: this.defaultWebViewTimeout,
+      });
+    }
+
+    await webview.waitForLoadState("domcontentloaded", {
+      timeout: this.defaultWebViewTimeout,
+    });
+    webview.setDefaultTimeout(this.defaultWebViewTimeout);
+    this.webviewPage = webview;
+    return webview;
   }
 
   async waitForLoaded() {
     return this.page.waitForLoadState("domcontentloaded");
-  }
-
-  async textIsPresent(textToCheck: string) {
-    const result: boolean = await this.page.evaluate(async textToCheck => {
-      const webview = document.querySelector("webview");
-      const text = await (webview as WebviewTag).executeJavaScript("document.body.innerHTML");
-      return text.includes(textToCheck);
-    }, textToCheck);
-
-    return result;
   }
 
   send(request: Record<string, unknown>) {
