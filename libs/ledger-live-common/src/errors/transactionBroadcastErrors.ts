@@ -1,11 +1,12 @@
 import { createCustomErrorClass } from "@ledgerhq/errors";
 
-export const TransactionBroadcastError = createCustomErrorClass<{ url?: string } & TxData>(
-  "TransactionBroadcastError",
-);
+export const TransactionBroadcastError = createCustomErrorClass<
+  { url?: string; thrownFrom?: Error } & TxData
+>("TransactionBroadcastError");
 
 export interface TransactionBroadcastError extends Error, TxData {
   url?: string;
+  thrownFrom?: Error;
 }
 
 export const createTransactionBroadcastError = (
@@ -15,6 +16,7 @@ export const createTransactionBroadcastError = (
 ): TransactionBroadcastError => {
   return new TransactionBroadcastError(error.message, {
     url: url(error.message, urls.txBroadcastErrors) ?? urls.faq,
+    thrownFrom: error,
     ...data,
   });
 };

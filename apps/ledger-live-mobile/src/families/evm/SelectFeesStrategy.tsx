@@ -36,6 +36,7 @@ import { Alert, Flex, Text } from "@ledgerhq/native-ui";
 import TranslatedError from "~/components/TranslatedError";
 import { useNavigation } from "@react-navigation/core";
 import { NavigatorName, ScreenName } from "~/const";
+import { UserAddressSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 
 type Props = {
   gasOptions: GasOptions;
@@ -237,7 +238,9 @@ export default function SelectFeesStrategy({
         </SummaryRow>
         {insufficientError && (
           <TouchableOpacity onPress={() => onBuy(mainAccount)}>
-            <Alert type="warning">
+            <Alert
+              type={insufficuentError instanceof UserAddressSanctionedError ? "error" : "warning"}
+            >
               <Flex width={"90%"}>
                 <Text testID="insufficient-fee-error">
                   <TranslatedError error={insufficientError} />

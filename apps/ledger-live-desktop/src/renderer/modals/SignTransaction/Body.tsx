@@ -15,7 +15,7 @@ import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import StepConnectDevice from "./steps/StepConnectDevice";
 import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
-import { St, StepId } from "./types";
+import { St, StepId, StepProps } from "./types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import logger from "~/renderer/logger";
 import Text from "~/renderer/components/Text";
@@ -221,6 +221,7 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
 
   const error = transactionError || bridgeError || getStatusError(status, "errors");
   const warning = getStatusError(status, "warnings");
+
   const stepperProps = {
     title,
     stepId,
