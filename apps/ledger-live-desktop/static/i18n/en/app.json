@@ -463,6 +463,8 @@
       "apt_description": "To swap Aptos, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "cosmos_title": "Ledger Nano S™ does not support swapping Cosmos",
       "cosmos_description": "To swap Cosmos, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "hedera_title": "Ledger Nano S™ does not support swapping Hedera",
+      "hedera_description": "To swap Hedera, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "osmo_title": "Ledger Nano S™ does not support swapping Osmosis",
       "osmo_description": "To swap Osmosis, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "dydx_title": "Ledger Nano S™ does not support swapping dYdX",
