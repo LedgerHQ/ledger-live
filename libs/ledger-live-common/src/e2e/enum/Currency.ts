@@ -27,6 +27,8 @@ export class Currency {
 
   static readonly KAS = new Currency("Kaspa", "KAS", "kaspa", AppInfos.KASPA, [Network.KASPA]);
 
+  static readonly HBAR = new Currency("Hedera", "HBAR", "hedera", AppInfos.HEDERA);
+
   static readonly tBTC = new Currency(
     "Bitcoin Testnet",
     "𝚝BTC",
