@@ -12,6 +12,7 @@ export type State<
   props: ExtractProps<C> & {
     onRequestBack?: (a: React.MouseEvent<Element, MouseEvent> | KeyboardEvent) => void;
   };
+  id: string;
   open: boolean;
   options: Omit<SideDrawerProps, "children" | "isOpen" | "onRequestBack">;
 }; // actions
@@ -32,6 +33,7 @@ const reducer = (state: State, update: Partial<State>) => {
 };
 const initialState: State = {
   Component: undefined,
+  id: "",
   props: null,
   open: false,
   options: {},
@@ -60,8 +62,10 @@ const DrawerProvider = ({ children }: { children: React.ReactNode }) => {
   const _setDrawer: typeof setDrawer = useCallback(
     (Component, props, options = {}) => {
       setAnalyticsDrawerName(undefined);
+      const id = Date.now() + "-" + Math.random();
       dispatch({
         Component,
+        id,
         props,
         open: !!Component,
         options,
