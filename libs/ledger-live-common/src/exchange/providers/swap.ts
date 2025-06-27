@@ -194,6 +194,14 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
       "hex",
     ),
   },
+  velora: {
+    type: "DEX",
+    needsKYC: false,
+    needsBearerToken: false,
+    termsOfUseUrl: "https://files.paraswap.io/tos_v4.pdf",
+    supportUrl: "https://help.paraswap.io/en/",
+    mainUrl: "https://www.velora.xyz/",
+  },
 };
 
 export const dexProvidersContractAddress: { [key: string]: string } = {
