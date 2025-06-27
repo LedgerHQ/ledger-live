@@ -259,11 +259,11 @@
   },
   "time" : {
     "minute" : "นาที",
-    "minute_plural" : "นาที",
+    "minute_other" : "นาที",
     "minute_short" : "นาที",
     "second_short" : "วินาที",
     "hour" : "ชั่วโมง",
-    "hour_plural" : "ชั่วโมง",
+    "hour_other" : "ชั่วโมง",
     "range" : {
       "day" : "1D",
       "week" : "1W",
@@ -575,7 +575,7 @@
       "date" : "วันที่",
       "from" : "จาก",
       "fromAddress" : "Address ต้นทาง",
-      "fromAddress_plural" : "Address ต้นทาง",
+      "fromAddress_other" : "Address ต้นทาง",
       "to" : "ถึง",
       "toProvider" : "Address ผู้ให้บริการ",
       "initialAmount" : "จำนวนเริ่มต้น",
@@ -893,6 +893,7 @@
     "title" : "ซื้อและขายคริปโต",
     "reset" : "รีเซ็ตโฟลว์",
     "verifyAddress" : "โปรดยืนยัน Address ที่ปรากฏว่าตรงกับที่แสดงบนอุปกรณ์ของคุณหรือไม่",
+    "connectingTo" : "กำลังเชื่อมต่อคุณกับ {{provider}}",
     "buy" : {
       "header" : "ซื้อคริปโตกับพาร์ทเนอร์ของเรา",
       "title" : "เลือกผู้ให้บริการเพื่อซื้อคริปโต",
@@ -1782,14 +1783,14 @@
     "fullNodeReadyInfo" : "จะมีการเพิ่มบัญชีโดยใช้ Bitcoin แบบ Full Node",
     "fullNodeConfigure" : "กำหนดค่าโหนด",
     "tokensTip" : "{{token}} ({{ticker}}) เป็นโทเคน {{tokenType}} คุณสามารถรับโทเคนในบัญชี {{currency}} ได้โดยตรง",
-    "accountToImportSubtitle_plural" : "เพิ่มบัญชีที่มีอยู่",
+    "accountToImportSubtitle_other" : "เพิ่มบัญชีที่มีอยู่",
     "selectAll" : "เลือกทั้งหมด ({{count}})",
     "unselectAll" : "ยกเลิกการเลือกทั้งหมด ({{count}})",
     "noAccountToImport" : "ไม่มีบัญชีที่มี {{currencyName}} อยู่ให้เพิ่ม",
     "success" : "เพิ่มบัญชีเรียบร้อยแล้ว",
-    "success_plural" : "เพิ่มบัญชีเรียบร้อยแล้ว",
+    "success_other" : "เพิ่มบัญชีเรียบร้อยแล้ว",
     "successDescription" : "เพิ่มบัญชีอื่น ๆ หรือกลับไปยังพอร์ตโฟลิโอ",
-    "successDescription_plural" : "เพิ่มบัญชีอื่น ๆ หรือกลับไปยังพอร์ตโฟลิโอ",
+    "successDescription_other" : "เพิ่มบัญชีอื่น ๆ หรือกลับไปยังพอร์ตโฟลิโอ",
     "createNewAccount" : {
       "noOperationOnLastAccount" : "ไม่สามารถเพิ่มบัญชีใหม่ก่อนที่คุณจะได้รับสินทรัพย์ในบัญชี <1><0>{{accountName}}</0></1> ของคุณ",
       "noAccountToCreate" : "ไม่พบบัญชี <1><0>{{currencyName}}</0></1> ที่จะสร้าง",
@@ -1802,7 +1803,7 @@
     "cta" : {
       "addMore" : "เพิ่มอีก",
       "add" : "เพิ่มบัญชี",
-      "add_plural" : "เพิ่มบัญชี",
+      "add_other" : "เพิ่มบัญชี",
       "addAccountName" : "เพิ่มบัญชี {{currencyName}}",
       "receive" : "รับ"
     },
@@ -1900,9 +1901,9 @@
     "unlockDeviceAfterFirmwareUpdateStep2" : "ปลดล็อก {{productName}} ด้วย PIN ของคุณเพื่อทำการอัปเดตให้เสร็จสมบูรณ์",
     "quitApp" : "ออกจากแอปพลิเคชันบนอุปกรณ์ของคุณ",
     "appNotInstalledTitle" : "ไม่มีแอปที่จำเป็น",
-    "appNotInstalledTitle_plural" : "ไม่มีแอปที่จำเป็น",
+    "appNotInstalledTitle_other" : "ไม่มีแอปที่จำเป็น",
     "appNotInstalled" : "ต้องใช้แอป {{appName}} เพื่อดำเนินการนี้ให้เสร็จสิ้น โปรดไปที่ My Ledger และติดตั้งลงในอุปกรณ์ของคุณ",
-    "appNotInstalled_plural" : "ต้องใช้แอป {{appName}} เพื่อดำเนินการนี้ให้เสร็จสิ้น โปรดไปที่ My Ledger และติดตั้งลงในอุปกรณ์ของคุณ",
+    "appNotInstalled_other" : "ต้องใช้แอป {{appName}} เพื่อดำเนินการนี้ให้เสร็จสิ้น โปรดไปที่ My Ledger และติดตั้งลงในอุปกรณ์ของคุณ",
     "openManager" : "เปิด My Ledger",
     "openOnboarding" : "ตั้งค่าอุปกรณ์",
     "outdated" : "เวอร์ชันแอปล้าสมัย",
@@ -1925,7 +1926,8 @@
       "payoutNetworkFees" : "Payout Fees",
       "payoutNetworkFeesTooltip" : "จำนวนนี้จะไม่ปรากฏบนอุปกรณ์ของคุณ",
       "acceptTerms" : "ในการตรวจสอบธุรกรรมนี้ ฉันยอมรับ\n<0>เงื่อนไขการใช้งานของ {{provider}}</0>",
-      "exodusAcceptTerms" : "Exodus อาศัยบุคคลที่สามในการดำเนินการ Swap\nในการตรวจสอบธุรกรรมนี้ ฉันยอมรับ\n<0>เงื่อนไขการใช้งานของ Exodus</0>"
+      "exodusAcceptTerms" : "Exodus อาศัยบุคคลที่สามในการดำเนินการ Swap\nในการตรวจสอบธุรกรรมนี้ ฉันยอมรับ\n<0>เงื่อนไขการใช้งานของ Exodus</0>",
+      "changellyAcceptTerms" : "การคลิก “สวอปด้วย Changelly” จะถือว่าคุณยอมรับ<0>ข้อกำหนดการใช้งาน</0>ของ Changelly และ\n<1>นโยบาย AML/KYC</1> โดย Changelly อาจบังคับใช้มาตรการ AML/KYC ซึ่งสามารถ\nส่งผลกระทบต่อการทำธุรกรรมของคุณให้เสร็จสมบูรณ์ได้ในบางกรณี หาก\nเกิดเหตุการณ์ดังกล่าวขึ้น คุณต้องติดต่อ<2>ฝ่ายสนับสนุนลูกค้า</2>ของ Changelly"
     },
     "swap2" : {
       "amountSent" : "จำนวนที่จะส่ง",
@@ -1988,14 +1990,14 @@
       },
       "installSuccess" : {
         "title" : "ติดตั้งแอปเรียบร้อยแล้ว ตอนนี้คุณสามารถเพิ่มบัญชี {{app}} ของคุณได้แล้ว",
-        "title_plural" : "ติดตั้งแอปเรียบร้อยแล้ว ตอนนี้คุณสามารถเพิ่มบัญชีของคุณได้แล้ว",
+        "title_other" : "ติดตั้งแอปเรียบร้อยแล้ว ตอนนี้คุณสามารถเพิ่มบัญชีของคุณได้แล้ว",
         "manageAccount" : "จัดการบัญชีของฉัน"
       },
       "updatable" : {
         "title" : "มีการอัปเดตพร้อมใช้งาน",
-        "title_plural" : "มีการอัปเดตพร้อมใช้งาน",
+        "title_other" : "มีการอัปเดตพร้อมใช้งาน",
         "progressTitle" : "มีการอัปเดตแอป {{number}} รายการ",
-        "progressTitle_plural" : "มีการอัปเดตแอป {{number}} รายการ",
+        "progressTitle_other" : "มีการอัปเดตแอป {{number}} รายการ",
         "progressWarning" : "อย่าออกจาก My Ledger ในระหว่างการอัปเดต",
         "progress" : "กำลังอัปเดตทั้งหมด..."
       },
@@ -4085,7 +4087,7 @@
     "duration" : "ระยะเวลา",
     "durationJustStarted" : "เพิ่งเริ่มต้น",
     "durationDays" : "{{count}} วัน",
-    "durationDays_plural" : "{{count}} วัน",
+    "durationDays_other" : "{{count}} วัน",
     "howItWorks" : "วิธีใช้งานการ Delegate",
     "delegationEarn" : "คุณสามารถรับ Reward จากการ Staking {{name}} ได้แล้วในตอนนี้ด้วยการ Delegate บัญชีของคุณ",
     "earnRewards" : "รับ Reward",
@@ -4709,7 +4711,7 @@
     "ctaSuccess" : "เสร็จสิ้น",
     "noAccounts" : "ไม่มีบัญชีที่จะส่งออก",
     "selectedAccounts" : "บัญชีที่จะรวม",
-    "selectedAccounts_plural" : "({{count}}) บัญชีที่จะรวมกัน",
+    "selectedAccounts_other" : "({{count}}) บัญชีที่จะรวมกัน",
     "disclaimer" : "มูลค่าเทียบเท่าในข้อมูลส่งออกมีไว้เพื่อให้บริการข้อมูลเท่านั้น อย่าใช้ข้อมูลนี้เพื่อวัตถุประสงค์ด้านการบัญชี ภาษี กฎระเบียบ หรือวัตถุประสงค์ทางกฎหมาย เนื่องจากข้อมูลดังกล่าวเป็นเพียงการประมาณราคาสินทรัพย์ในเวลาทำธุรกรรมและส่งออกภายใต้วิธีการประเมินมูลค่าที่ผู้ให้บริการของเรา Kaiko จัดเตรียมไว้"
   },
   "language" : {
@@ -4747,7 +4749,7 @@
   "informationCenter" : {
     "tooltip" : "ศูนย์ข้อมูล",
     "ongoingIncidentsTooltip" : "มีเหตุการณ์เกิดขึ้น {{count}} ครั้ง",
-    "ongoingIncidentsTooltip_plural" : "มีเหตุการณ์เกิดขึ้น {{count}} ครั้ง",
+    "ongoingIncidentsTooltip_other" : "มีเหตุการณ์เกิดขึ้น {{count}} ครั้ง",
     "tabs" : {
       "announcements" : "ข่าว",
       "announcementsUnseen" : "({{unseenCount}}) ข่าว",
@@ -6041,6 +6043,10 @@
       "title" : "มีบางอย่างผิดปกติ",
       "description" : "บัญชีผู้รับนี้ไม่ได้อยู่ในอุปกรณ์ที่คุณเชื่อมต่อ โปรดเปลี่ยนบัญชีผู้รับและลองใหม่"
     },
+    "MissingSwapPayloadParamaters" : {
+      "title" : "มีบางอย่างผิดปกติ",
+      "description" : "พารามิเตอร์สวอป (Swap) หายไปจากผู้ให้บริการที่เลือก โปรดลองอีกครั้งหรือติดต่อ Ledger Support หากมีข้อสงสัย"
+    },
     "WrongDeviceForAccountRefund" : {
       "title" : "มีบางอย่างผิดปกติ",
       "description" : "บัญชีผู้รับนี้ไม่ได้อยู่ในอุปกรณ์ที่คุณเชื่อมต่อ โปรดเปลี่ยนบัญชีผู้รับและลองใหม่"
@@ -7056,10 +7062,38 @@
     }
   },
   "modularAssetDrawer" : {
+    "addAccounts" : {
+      "title" : "เลือกบัญชีที่คุณต้องการเพิ่ม",
+      "controls" : {
+        "selectAll" : "เลือกทั้งหมด",
+        "deselectAll" : "ยกเลิกการเลือกทั้งหมด"
+      },
+      "cta" : {
+        "confirm" : "ยืนยัน"
+      },
+      "newAccount" : "บัญชีใหม่"
+    },
+    "scanAccounts" : {
+      "cta" : {
+        "stopScanning" : "หยุดการสแกน"
+      },
+      "status" : {
+        "foundAccounts_zero" : "ไม่พบบัญชี",
+        "foundAccounts" : "เราพบ {{count}} บัญชี",
+        "foundAccounts_other" : "เราพบ {{count}} บัญชี",
+        "scanning" : "กำลังสแกนบัญชี..."
+      },
+      "title" : "กำลังมองหาบัญชีที่มีอยู่บนบล็อกเชน..."
+    },
+    "connectYourDevice" : {
+      "title" : "เชื่อมต่อและปลดล็อกอุปกรณ์ของคุณ"
+    },
     "searchPlaceholder" : "ค้นหา",
     "selectAsset" : "เลือกสินทรัพย์",
     "selectNetwork" : "เลือกเครือข่าย",
-    "selectAccount" : "เลือกบัญชี"
+    "selectAccount" : "เลือกบัญชี",
+    "accountCount_one" : "{{count}} บัญชี",
+    "accountCount_other" : "บัญชี {{count}}"
   },
   "nftEntryPoint" : {
     "title" : "NFT (โทเคนที่ไม่สามารถแลกเปลี่ยนหรือแทนที่กันได้)",
