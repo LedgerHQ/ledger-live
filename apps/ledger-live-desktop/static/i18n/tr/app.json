@@ -259,11 +259,11 @@
   },
   "time" : {
     "minute" : "Dakika",
-    "minute_plural" : "Dakika",
+    "minute_other" : "Dakika",
     "minute_short" : "dk.",
     "second_short" : "sn.",
     "hour" : "Saat",
-    "hour_plural" : "Saat",
+    "hour_other" : "Saat",
     "range" : {
       "day" : "1G",
       "week" : "1H",
@@ -575,7 +575,7 @@
       "date" : "Tarih",
       "from" : "Gönderici",
       "fromAddress" : "Kaynak adresi",
-      "fromAddress_plural" : "Kaynak adresleri",
+      "fromAddress_other" : "Kaynak adresleri",
       "to" : "Alıcı",
       "toProvider" : "Sağlayıcı adresi",
       "initialAmount" : "Başlangıç tutarı",
@@ -893,6 +893,7 @@
     "title" : "Kripto satın al ve sat",
     "reset" : "Başa dön",
     "verifyAddress" : "Görüntülenen adres ile cihazınızda gösterilen adresin tam olarak eşleştiğinden lütfen emin olun",
+    "connectingTo" : "{{provider}} sağlayıcısına bağlanıyorsunuz",
     "buy" : {
       "header" : "Ortaklarımız üzerinden kripto satın alın",
       "title" : "Kripto satın almak için bir sağlayıcı seçin",
@@ -1782,14 +1783,14 @@
     "fullNodeReadyInfo" : "Hesaplar Bitcoin tam düğümünüz ile eklenecektir.",
     "fullNodeConfigure" : "Düğümü yapılandır",
     "tokensTip" : "{{token}} ({{ticker}}) bir {{tokenType}} token'ıdır. Token'ları doğrudan bir {{currency}} hesabına alabilirsiniz.",
-    "accountToImportSubtitle_plural" : "Mevcut hesapları ekle",
+    "accountToImportSubtitle_other" : "Mevcut hesapları ekle",
     "selectAll" : "Tümünü seç ({{count}})",
     "unselectAll" : "Tüm seçimleri kaldır ({{count}})",
     "noAccountToImport" : "Eklenecek mevcut {{currencyName}} hesabı bulunmuyor",
     "success" : "Hesap başarıyla eklendi",
-    "success_plural" : "Hesaplar başarıyla eklendi",
+    "success_other" : "Hesaplar başarıyla eklendi",
     "successDescription" : "Başka hesap ekleyin veya Portföye geri dönün",
-    "successDescription_plural" : "Başka hesap ekleyin veya Portföye geri dönün",
+    "successDescription_other" : "Başka hesap ekleyin veya Portföye geri dönün",
     "createNewAccount" : {
       "noOperationOnLastAccount" : "<1><0>{{accountName}}</0></1> hesabınıza varlık gelmeden önce yeni bir hesap ekleyemezsiniz",
       "noAccountToCreate" : "Oluşturulabilecek bir <1><0>{{currencyName}}</0></1> hesabı bulunamadı",
@@ -1802,7 +1803,7 @@
     "cta" : {
       "addMore" : "Daha fazla ekle",
       "add" : "Hesap ekle",
-      "add_plural" : "Hesap ekle",
+      "add_other" : "Hesap ekle",
       "addAccountName" : "{{currencyName}} hesabı ekle",
       "receive" : "Al"
     },
@@ -1900,9 +1901,9 @@
     "unlockDeviceAfterFirmwareUpdateStep2" : "Güncellemeyi tamamlamak için PIN Kodunuzla {{productName}} cihazınızın kilidini açın.",
     "quitApp" : "Cihazınızdaki uygulamadan çıkın",
     "appNotInstalledTitle" : "Gerekli uygulama eksik",
-    "appNotInstalledTitle_plural" : "Gerekli uygulamalar eksik",
+    "appNotInstalledTitle_other" : "Gerekli uygulamalar eksik",
     "appNotInstalled" : "Bu eylemi tamamlamak için {{appName}} uygulaması gerekli. Lütfen My Ledger'a gidin ve uygulamayı cihazınıza yükleyin",
-    "appNotInstalled_plural" : "Bu eylemi tamamlamak için {{appName}} uygulamaları gerekli. Lütfen My Ledger'a gidin ve uygulamaları cihazınıza yükleyin",
+    "appNotInstalled_other" : "Bu eylemi tamamlamak için {{appName}} uygulamaları gerekli. Lütfen My Ledger'a gidin ve uygulamaları cihazınıza yükleyin",
     "openManager" : "My Ledger'ı Aç",
     "openOnboarding" : "Cihaz kurulumu",
     "outdated" : "Uygulama sürümü eski",
@@ -1925,7 +1926,8 @@
       "payoutNetworkFees" : "Ödeme ücretleri",
       "payoutNetworkFeesTooltip" : "Bu tutar cihazınızda gösterilmeyecektir",
       "acceptTerms" : "Bu işlemi onaylayarak,\n<0>{{provider}} kullanım koşullarını</0> kabul ediyorum.",
-      "exodusAcceptTerms" : "Exodus, takas işlemlerini gerçekleştirmek için üçüncü tarafları kullanır.\nBu işlemi onaylayarak, <0>Exodus'un kullanım koşullarını</0> kabul ediyorum."
+      "exodusAcceptTerms" : "Exodus, takas işlemlerini gerçekleştirmek için üçüncü tarafları kullanır.\nBu işlemi onaylayarak, <0>Exodus'un kullanım koşullarını</0> kabul ediyorum.",
+      "changellyAcceptTerms" : "“Changelly ile Takas Edin” seçeneğine tıkladığınızda Changelly'nin <0>Kullanım Koşulları</0>'nı\nve <1>Kara Paranın Aklanmasının Önlenmesi/KYC politikasını</1> kabul etmiş olursunuz. Changelly, işleminizin tamamlanmasını\nbazı durumlarda etkileyebilecek olan, Kara Paranın Aklanmasının Önlenmesi/KYC prosedürleri uygulayabilir. \nBöyle bir durumda Changelly'nin <2>müşteri destek</2> ekibi ile iletişime geçmeniz gerekir."
     },
     "swap2" : {
       "amountSent" : "Gönderilecek tutar",
@@ -1988,14 +1990,14 @@
       },
       "installSuccess" : {
         "title" : "Uygulama başarıyla yüklendi. {{app}} hesaplarınızı artık ekleyebilirsiniz",
-        "title_plural" : "Uygulamalar başarıyla yüklendi. Hesaplarınızı artık ekleyebilirsiniz",
+        "title_other" : "Uygulamalar başarıyla yüklendi. Hesaplarınızı artık ekleyebilirsiniz",
         "manageAccount" : "Hesaplarımı yönet"
       },
       "updatable" : {
         "title" : "Güncelleme mevcut",
-        "title_plural" : "Güncellemeler mevcut",
+        "title_other" : "Güncellemeler mevcut",
         "progressTitle" : "{{number}} uygulama güncellemesi",
-        "progressTitle_plural" : "{{number}} uygulama güncellemesi",
+        "progressTitle_other" : "{{number}} uygulama güncellemesi",
         "progressWarning" : "Güncelleme sırasında My Ledger'dan çıkmayın.",
         "progress" : "Hepsi güncelleniyor..."
       },
@@ -4085,7 +4087,7 @@
     "duration" : "Süre",
     "durationJustStarted" : "Yeni başladı",
     "durationDays" : "{{count}} gün",
-    "durationDays_plural" : "{{count}} gün",
+    "durationDays_other" : "{{count}} gün",
     "howItWorks" : "Yetki devri nasıl çalışır?",
     "delegationEarn" : "Artık hesabınızla yetki devrederek {{name}} staking ödülleri kazanabilirsiniz.",
     "earnRewards" : "Ödüller kazanın",
@@ -4709,7 +4711,7 @@
     "ctaSuccess" : "Tamam",
     "noAccounts" : "Dışa aktarılacak hesap yok",
     "selectedAccounts" : "Dahil edilecek hesaplar",
-    "selectedAccounts_plural" : "Dahil edilecek hesaplar ({{count}})",
+    "selectedAccounts_other" : "Dahil edilecek hesaplar ({{count}})",
     "disclaimer" : "Dışa aktarımdaki karşı değerler yalnızca bilgi amaçlıdır. Muhasebe, vergi, yönetmelik veya yasal amaçlar için bu tür verileri kullanmayınız; bu veriler, sadece, hizmet sağlayıcımız Kaiko tarafından sağlanan değerleme yöntemleri kullanılarak, varlıkların işlem ve dışa aktarım sırasındaki tahmini fiyatlarını temsil eder"
   },
   "language" : {
@@ -4747,7 +4749,7 @@
   "informationCenter" : {
     "tooltip" : "Bilgi Merkezi",
     "ongoingIncidentsTooltip" : "{{count}} devam eden olay var",
-    "ongoingIncidentsTooltip_plural" : "{{count}} devam eden olay var",
+    "ongoingIncidentsTooltip_other" : "{{count}} devam eden olay var",
     "tabs" : {
       "announcements" : "Haberler",
       "announcementsUnseen" : "Haberler ({{unseenCount}})",
@@ -6041,6 +6043,10 @@
       "title" : "Bir hata oluştu",
       "description" : "Bu alıcı hesabı, bağladığınız cihaza ait değil. Lütfen değiştirin ve tekrar deneyin."
     },
+    "MissingSwapPayloadParamaters" : {
+      "title" : "Bir hata oluştu",
+      "description" : "Seçili sağlayıcının takas parametresi eksik. Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
     "WrongDeviceForAccountRefund" : {
       "title" : "Bir hata oluştu",
       "description" : "Bu gönderici hesabı, bağladığınız cihaza ait değil. Lütfen değiştirin ve tekrar deneyin."
@@ -7056,10 +7062,38 @@
     }
   },
   "modularAssetDrawer" : {
+    "addAccounts" : {
+      "title" : "Eklemek istediğiniz hesapları seçin",
+      "controls" : {
+        "selectAll" : "Tümünü seç",
+        "deselectAll" : "Tüm seçimi kaldır"
+      },
+      "cta" : {
+        "confirm" : "Onayla"
+      },
+      "newAccount" : "Yeni hesap"
+    },
+    "scanAccounts" : {
+      "cta" : {
+        "stopScanning" : "Taramayı durdur"
+      },
+      "status" : {
+        "foundAccounts_zero" : "Hiçbir hesap bulunamadı",
+        "foundAccounts" : "{{count}} hesap bulundu",
+        "foundAccounts_other" : "{{count}} hesap bulundu",
+        "scanning" : "Hesaplar taranıyor..."
+      },
+      "title" : "Blok zincirindeki mevcut tüm hesaplar aranıyor..."
+    },
+    "connectYourDevice" : {
+      "title" : "Cihazınızı bağlayın ve kilidini açın"
+    },
     "searchPlaceholder" : "Ara",
     "selectAsset" : "Varlık seçin",
     "selectNetwork" : "Ağ seçin",
-    "selectAccount" : "Hesap seçin"
+    "selectAccount" : "Hesap seçin",
+    "accountCount_one" : "{{count}} hesap",
+    "accountCount_other" : "{{count}} hesap"
   },
   "nftEntryPoint" : {
     "title" : "NFT (Non Fungible Token)",
