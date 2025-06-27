@@ -3,15 +3,12 @@ import { Observable } from "rxjs";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { Ed25519PublicKey } from "@mysten/sui/keypairs/ed25519";
-import { verifyTransactionSignature } from "@mysten/sui/verify";
 import { LedgerSigner } from "@mysten/signers/ledger";
 import type { SuiClient } from "@mysten/sui/client";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { buildTransaction } from "./buildTransaction";
 import { calculateAmount } from "./utils";
 import type { SuiAccount, SuiSigner, Transaction } from "../types";
-import { ensureAddressFormat } from "../utils";
 import { withApi } from "../network/sdk";
 
 /**
@@ -52,19 +49,6 @@ export const buildSignOperation = (
             return ledgerSigner.signTransaction(unsigned);
           }),
         );
-
-        if (!transaction.skipVerify) {
-          const publicKeyResult = await signerContext(deviceId, signer =>
-            signer.getPublicKey(account.freshAddressPath),
-          );
-          const publicKey = new Ed25519PublicKey(publicKeyResult.publicKey);
-          const verify = await verifyTransactionSignature(unsigned, signed.signature, {
-            address: ensureAddressFormat(account.freshAddress),
-          });
-          if (!verify.equals(publicKey)) {
-            throw new Error("verifyTransactionSignature failed");
-          }
-        }
 
         subscriber.next({
           type: "device-signature-granted",
