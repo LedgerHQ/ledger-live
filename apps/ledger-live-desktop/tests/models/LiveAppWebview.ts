@@ -101,6 +101,95 @@ export class LiveAppWebview {
     await webviewPage.getByTestId("sign-ethereum-transaction-button").click();
   }
 
+  async setCurrencyIds(currencies: string[]) {
+    const webview = await this.getWebView();
+    return webview.getByTestId("currency-ids-input").fill(currencies.join(","));
+  }
+
+  async setAccountId(accountId: string) {
+    const webview = await this.getWebView();
+    return webview.getByTestId("account-id-input").fill(accountId);
+  }
+
+  async setRecipient(recipient: string) {
+    const webview = await this.getWebView();
+    return webview.getByTestId("recipient-input").fill(recipient);
+  }
+
+  async accountRequest() {
+    const webview = await this.getWebView();
+    return webview.getByTestId("account-request").click();
+  }
+
+  async accountReceive() {
+    const webview = await this.getWebView();
+    return webview.getByTestId("account-receive").click();
+  }
+
+  async accountList() {
+    const webview = await this.getWebView();
+    return webview.getByTestId("account-list").click();
+  }
+
+  async bitcoinGetXPub() {
+    const webview = await this.getWebView();
+    return webview.getByTestId("bitcoin-getXPub").click();
+  }
+
+  async currencyList() {
+    const webview = await this.getWebView();
+    return webview.getByTestId("currency-list").click();
+  }
+
+  async storage() {
+    const webview = await this.getWebView();
+    return webview.getByTestId("storage").click();
+  }
+
+  async transactionSign() {
+    const webview = await this.getWebView();
+    return webview.getByTestId("transaction-sign").click();
+  }
+
+  async transactionSignSolana() {
+    const webview = await this.getWebView();
+    return webview.getByTestId("transaction-sign-solana").click();
+  }
+
+  async transactionSignAndBroadcast() {
+    const webview = await this.getWebView();
+    return webview.getByTestId("transaction-signAndBroadcast").click();
+  }
+
+  async walletCapabilities() {
+    const webview = await this.getWebView();
+    return webview.getByTestId("wallet-capabilities").click();
+  }
+
+  async walletUserId() {
+    const webview = await this.getWebView();
+    return webview.getByTestId("wallet-userId").click();
+  }
+
+  async walletInfo() {
+    const webview = await this.getWebView();
+    return webview.getByTestId("wallet-info").click();
+  }
+
+  async clearStates() {
+    const webview = await this.getWebView();
+    return webview.getByTestId("clear-states").click();
+  }
+
+  async getResOutput() {
+    const webview = await this.getWebView();
+    const res = await webview.getByTestId("res-output").textContent();
+    if (!res) {
+      throw new Error("Response output is not present.");
+    }
+    return JSON.parse(res);
+  }
+
   async getWebView(): Promise<Page> {
     if (this.webviewPage) {
       return this.webviewPage;
