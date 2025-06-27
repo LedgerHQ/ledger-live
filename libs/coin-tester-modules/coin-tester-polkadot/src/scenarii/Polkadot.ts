@@ -228,6 +228,9 @@ const coinConfig: PolkadotCoinConfig = {
   node: {
     url: LOCAL_TESTNODE_WS_URL,
   },
+  indexer: {
+    url: "https://polkadot.coin.ledger.com",
+  },
   sidecar: {
     url: SIDECAR_BASE_URL,
   },

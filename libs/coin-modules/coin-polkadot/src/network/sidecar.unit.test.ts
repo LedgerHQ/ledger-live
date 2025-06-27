@@ -3,6 +3,7 @@ import { HttpResponse, http } from "msw";
 import coinConfig from "../config";
 import { getAccount, getRegistry } from "./sidecar";
 import mockServer, { SIDECAR_BASE_URL_TEST } from "./sidecar.mock";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 jest.mock("./node", () => ({
   fetchConstants: jest.fn(),
@@ -10,6 +11,8 @@ jest.mock("./node", () => ({
   fetchValidators: jest.fn(),
   fetchNominations: jest.fn(),
 }));
+
+const currency = getCryptoCurrencyById("polkadot");
 
 describe("getAccount", () => {
   let balanceResponseStub = {};
@@ -24,6 +27,9 @@ describe("getAccount", () => {
       },
       sidecar: {
         url: SIDECAR_BASE_URL_TEST,
+      },
+      indexer: {
+        url: "https://polkadot.coin.ledger.com",
       },
       metadataShortener: {
         url: "",
@@ -63,7 +69,7 @@ describe("getAccount", () => {
       targets: [],
     };
 
-    const { lockedBalance } = await getAccount("addr");
+    const { lockedBalance } = await getAccount("addr", currency);
     expect(lockedBalance).toEqual(new BigNumber("60000000000"));
   });
 
@@ -88,7 +94,7 @@ describe("getAccount", () => {
       ],
       targets: [],
     };
-    const { lockedBalance } = await getAccount("addr");
+    const { lockedBalance } = await getAccount("addr", currency);
     expect(lockedBalance).toEqual(new BigNumber("5"));
   });
 });
@@ -101,6 +107,9 @@ describe("getRegistry", () => {
       },
       node: {
         url: "https://httpbin.org/",
+      },
+      indexer: {
+        url: "https://polkadot.coin.ledger.com",
       },
       sidecar: {
         url: SIDECAR_BASE_URL_TEST,
@@ -125,7 +134,7 @@ describe("getRegistry", () => {
   });
 
   it("works", async () => {
-    const { registry, extrinsics } = await getRegistry();
+    const { registry, extrinsics } = await getRegistry(currency);
     expect(registry).not.toBeNull();
     expect(extrinsics).not.toBeNull();
   });
