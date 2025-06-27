@@ -11,6 +11,7 @@ import { openModal } from "~/renderer/actions/modals";
 import { CloseButton } from "../components/CloseButton";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { ModularDrawerLocation, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
+import { Account } from "@ledgerhq/types-live";
 
 function selectCurrency(
   onAssetSelected: (currency: CryptoOrTokenCurrency) => void,
@@ -61,12 +62,17 @@ export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, s
   }, [modularDrawerLocation, trackModularDrawerEvent]);
 
   const openAddAccountFlow = useCallback(
-    (currency: CryptoOrTokenCurrency, autoCloseDrawer: boolean = true) => {
+    (
+      currency: CryptoOrTokenCurrency,
+      autoCloseDrawer: boolean = true,
+      onAccountSelected?: (account: Account) => void,
+    ) => {
       if (featureNetworkBasedAddAccount?.enabled) {
         setDrawer(
           ModularDrawerAddAccountFlowManager,
           {
             currency,
+            onAccountSelected,
           },
           { closeButtonComponent: CloseButton },
         );

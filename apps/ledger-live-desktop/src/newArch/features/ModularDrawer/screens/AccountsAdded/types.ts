@@ -17,4 +17,7 @@ export interface AccountListProps {
 
 export interface AccountsAddedProps {
   accounts: Account[];
+  onFundAccount: (account: Account) => void;
+  navigateToSelectAccount: () => void;
+  isAccountSelectionFlow: boolean;
 }

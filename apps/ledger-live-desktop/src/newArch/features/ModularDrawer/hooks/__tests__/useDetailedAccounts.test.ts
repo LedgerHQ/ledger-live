@@ -22,7 +22,7 @@ describe("useDetailedAccounts", () => {
     expect(result.current.detailedAccounts).toEqual([
       {
         id: ETH_ACCOUNT.id,
-        name: "Ethereum",
+        name: "Ethereum 2",
         address: "0x42D...339ED",
         balance: "12.7161 ETH",
         cryptoId: "ethereum",

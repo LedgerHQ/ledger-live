@@ -17,9 +17,16 @@ import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 
 interface Props extends UseScanAccountsProps {
   analyticsPropertyFlow?: string;
+  onRetry?: () => void;
 }
 
-const ScanAccounts = ({ currency, deviceId, onComplete, navigateToWarningScreen }: Props) => {
+const ScanAccounts = ({
+  currency,
+  deviceId,
+  onComplete,
+  navigateToWarningScreen,
+  onRetry,
+}: Props) => {
   const { colors } = useTheme();
   const currentTheme = useSelector(userThemeSelector);
   const { t } = useTranslation();
@@ -69,7 +76,7 @@ const ScanAccounts = ({ currency, deviceId, onComplete, navigateToWarningScreen 
   };
 
   if (error) {
-    return <ErrorDisplay error={error} withExportLogs />;
+    return <ErrorDisplay error={error} withExportLogs onRetry={onRetry} />;
   }
 
   return (

@@ -127,6 +127,15 @@ export default function Features() {
         iconLeft={<Icons.CreditCard />}
         onPress={() => navigation.navigate(ScreenName.DebugSwipe)}
       />
+
+      <FeatureToggle featureId="llmModularDrawer">
+        <SettingsRow
+          title="MAD"
+          desc="Open & Debug Modular Asset Drawer"
+          iconLeft={<Icons.CoinsCrypto />}
+          onPress={() => navigation.navigate(ScreenName.DebugModularAssetDrawer)}
+        />
+      </FeatureToggle>
     </SettingsNavigationScrollView>
   );
 }

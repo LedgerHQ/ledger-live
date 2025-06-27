@@ -5,7 +5,7 @@ import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
 import Box from "~/renderer/components/Box";
 import IconPlus from "~/renderer/icons/Plus";
-import { MAD_SOURCE_PAGES } from "LLD/features/ModularDrawer/analytics/types";
+import { MAD_SOURCE_PAGES } from "LLD/features/ModularDrawer/analytics/modularDrawer.types";
 
 const AddAccountButton = styled(Box)`
   border: 1px dashed rgba(153, 153, 153, 0.3);
