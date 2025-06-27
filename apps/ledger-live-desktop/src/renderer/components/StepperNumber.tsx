@@ -3,6 +3,8 @@ import styled from "styled-components";
 import debounce from "lodash/debounce";
 import noop from "lodash/noop";
 import Box from "~/renderer/components/Box";
+import Input from "~/renderer/components/Input";
+
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
   flow: 1,
@@ -12,11 +14,12 @@ const Container = styled(Box).attrs(() => ({
   ff: "Inter",
   color: "palette.text.shade80",
 }))`
-  background-color: rgba(138, 128, 219, 0.1);
   border-radius: 12px;
   display: inline-flex;
   height: 24px;
-  padding: 0 3px;
+`;
+const Num = styled(Input)`
+  max-width: 50px;
 `;
 const Btn = styled(Box).attrs<{ disabled?: boolean }>(p => ({
   bg: p.disabled ? "rgba(138, 128, 219, 0.5)" : "wallet",
@@ -28,12 +31,6 @@ const Btn = styled(Box).attrs<{ disabled?: boolean }>(p => ({
   cursor: ${p => (p.disabled ? "default" : "pointer")};
   height: 18px;
   width: 18px;
-`;
-const Num = styled(Box).attrs(() => ({
-  alignItems: "center",
-  justifyContent: "center",
-}))`
-  min-width: 20px;
 `;
 const DELAY_CLICK = 150;
 const DEBOUNCE_ON_CHANGE = 250;
@@ -122,6 +119,16 @@ class StepperNumber extends PureComponent<Props, State> {
     document.removeEventListener("mouseup", this.handleMouseUp);
   };
 
+  onChange = (input: string) => {
+    const newValue = parseInt(input) || 0;
+    const v = this.isMax(newValue)
+      ? this.props.max
+      : this.isMin(newValue)
+        ? this.props.min
+        : newValue;
+    this.emitChange(v);
+  };
+
   render() {
     const { value } = this.state;
     const isMin = this.isMin(value);
@@ -131,7 +138,7 @@ class StepperNumber extends PureComponent<Props, State> {
         <Btn onMouseDown={!isMin ? this.handleMouseDown("decrement") : undefined} disabled={isMin}>
           {"-"}
         </Btn>
-        <Num>{value}</Num>
+        <Num value={value.toString()} onChange={this.onChange} />
         <Btn onMouseDown={!isMax ? this.handleMouseDown("increment") : undefined} disabled={isMax}>
           {"+"}
         </Btn>
