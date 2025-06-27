@@ -1,31 +1,36 @@
 import { useState, useMemo } from "react";
 import { ModularDrawerStep } from "../types";
 
-const steps: ModularDrawerStep[] = [
+const fullSteps: ModularDrawerStep[] = [
   ModularDrawerStep.Asset,
   ModularDrawerStep.Network,
   ModularDrawerStep.Account,
 ];
 
 export interface UseModularDrawerFlowStepManagerProps {
-  selectedStep?: ModularDrawerStep;
+  selectedStep: ModularDrawerStep;
 }
 
 export function useModularDrawerFlowStepManager({
   selectedStep,
-}: UseModularDrawerFlowStepManagerProps = {}) {
-  const initialIndex =
-    selectedStep && steps.includes(selectedStep) ? steps.indexOf(selectedStep) : 0;
+}: UseModularDrawerFlowStepManagerProps) {
+  const steps = useMemo(() => {
+    const startIndex = fullSteps.indexOf(selectedStep);
+    return fullSteps.slice(startIndex);
+  }, [selectedStep]);
 
-  const [stepIndex, setStepIndex] = useState<number>(initialIndex);
+  const [stepIndex, setStepIndex] = useState(0);
   const currentStep = steps[stepIndex];
 
   const nextStep = () => setStepIndex(prev => Math.min(prev + 1, steps.length - 1));
   const prevStep = () => setStepIndex(prev => Math.max(prev - 1, 0));
+
   const reset = () => setStepIndex(0);
 
-  const isFirstStep = useMemo(() => stepIndex === 0, [stepIndex]);
-  const isLastStep = useMemo(() => stepIndex === steps.length - 1, [stepIndex]);
+  const isFirstStep = stepIndex === 0;
+  const isLastStep = stepIndex === steps.length - 1;
+
+  const hasBackButton = selectedStep !== currentStep;
 
   return {
     currentStep,
@@ -35,5 +40,6 @@ export function useModularDrawerFlowStepManager({
     reset,
     isFirstStep,
     isLastStep,
+    hasBackButton,
   };
 }

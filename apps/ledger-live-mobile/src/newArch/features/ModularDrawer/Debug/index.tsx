@@ -8,10 +8,13 @@ const steps = [ModularDrawerStep.Asset, ModularDrawerStep.Network, ModularDrawer
 
 function ModularDrawerScreenDebug() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [selectedStep, setSelectedStep] = useState<ModularDrawerStep | undefined>();
+  const [selectedStep, setSelectedStep] = useState<ModularDrawerStep>(ModularDrawerStep.Asset);
 
   const handleToggleDrawer = () => setIsDrawerOpen(open => !open);
-  const handleDrawerClose = () => setIsDrawerOpen(false);
+  const handleDrawerClose = () => {
+    setIsDrawerOpen(false);
+    setSelectedStep(ModularDrawerStep.Asset);
+  };
   const handleStepSelect = (step: ModularDrawerStep) => setSelectedStep(step);
 
   return (
