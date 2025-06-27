@@ -8,11 +8,22 @@ import type {
   OperationRaw,
 } from "@ledgerhq/types-live";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
+import { DelegatedStake, StakeObject, SuiValidatorSummary } from "@mysten/sui/client";
+
+export type MappedStake = StakeObject & {
+  rank: number;
+  validator: SuiValidator;
+  stakedSuiId: string;
+  formattedAmount: string;
+};
 
 /**
  * Sui account resources
  */
-export type SuiResources = object;
+export type SuiResources = {
+  stakes?: DelegatedStake[];
+  cachedOps?: Record<string, Record<string, string>>;
+};
 
 /**
  * Sui account resources from raw JSON
@@ -27,8 +38,9 @@ export type Transaction = TransactionCommon & {
   family: "sui";
   amount: BigNumber | null;
   fees?: BigNumber | null;
-  errors: Record<string, Error>;
+  errors?: Record<string, Error>;
   skipVerify?: boolean;
+  stakedSuiId?: string;
   // add here all transaction-specific fields when implement other modes than "send"
 };
 
@@ -43,11 +55,16 @@ export type TransactionRaw = TransactionCommonRaw & {
 };
 
 /**
+ * Sui validator metadata
+ */
+export type SuiValidator = SuiValidatorSummary & { apy: number };
+
+/**
  * Sui currency data that will be preloaded.
  * You can for instance add a list of validators for Proof-of-Stake blockchains,
  * or any volatile data that could not be set as constants in the code (staking progress, fee estimation variables, etc.)
  */
-export type SuiPreloadData = object;
+export type SuiPreloadData = { validators: SuiValidator[] };
 
 export type SuiAccount = Account & {
   // On some blockchain, an account can have resources (gained, delegated, ...)
@@ -79,7 +96,7 @@ export type SuiSignedOperation = {
 };
 
 export type TransferCommand = {
-  kind: "transfer";
+  kind: string;
   sender: string;
   recipient: string;
   amount: number;
