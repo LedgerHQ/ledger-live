@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import Button from "~/components/Button";
 import { ModularDrawer } from "../ModularDrawer";
@@ -10,9 +10,9 @@ function ModularDrawerScreenDebug() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedStep, setSelectedStep] = useState<ModularDrawerStep | undefined>();
 
-  const handleToggleDrawer = useCallback(() => setIsDrawerOpen(open => !open), []);
-  const handleDrawerClose = useCallback(() => setIsDrawerOpen(false), []);
-  const handleStepSelect = useCallback((step: ModularDrawerStep) => setSelectedStep(step), []);
+  const handleToggleDrawer = () => setIsDrawerOpen(open => !open);
+  const handleDrawerClose = () => setIsDrawerOpen(false);
+  const handleStepSelect = (step: ModularDrawerStep) => setSelectedStep(step);
 
   return (
     <Flex flexDirection="column" rowGap={4} px={6}>
