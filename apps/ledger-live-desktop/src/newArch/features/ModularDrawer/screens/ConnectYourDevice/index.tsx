@@ -48,9 +48,4 @@ export const ConnectYourDevice = ({
   );
 };
 
-export default React.memo(ConnectYourDevice, (prevProps, nextProps) => {
-  return (
-    prevProps.currency.id === nextProps.currency.id &&
-    prevProps.analyticsPropertyFlow === nextProps.analyticsPropertyFlow
-  );
-});
+export default React.memo(ConnectYourDevice);
