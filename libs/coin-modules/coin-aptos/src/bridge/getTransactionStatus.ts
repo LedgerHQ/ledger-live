@@ -21,6 +21,8 @@ import {
   APTOS_MINIMUM_RESTAKE,
   APTOS_MINIMUM_RESTAKE_IN_OCTAS,
   APTOS_PRECISION,
+  MIN_AMOUNT_TO_UNSTAKE,
+  MIN_AMOUNT_TO_UNSTAKE_IN_OCTAS,
   MIN_COINS_ON_SHARES_POOL,
   MIN_COINS_ON_SHARES_POOL_IN_OCTAS,
 } from "../constants";
@@ -150,18 +152,18 @@ const checkUnstakeTransaction = (
     if (t.amount.gt(stakingPosition.active) && !newErrors.amount) {
       newErrors.amount = new NotEnoughBalance();
     }
-    if (!t.useAllAmount && t.amount.lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS) && !newErrors.amount) {
+    if (!t.useAllAmount && t.amount.lt(MIN_AMOUNT_TO_UNSTAKE_IN_OCTAS) && !newErrors.amount) {
       newErrors.amount = new NotEnoughToUnstake("", {
-        minAmount: `${MIN_COINS_ON_SHARES_POOL.toNumber().toString()} APT`,
+        minAmount: `${MIN_AMOUNT_TO_UNSTAKE.toNumber().toString()} APT`,
       });
     }
     if (
       !t.useAllAmount &&
-      stakingPosition.active.minus(t.amount).lt(MIN_COINS_ON_SHARES_POOL_IN_OCTAS) &&
+      stakingPosition.active.minus(t.amount).lt(MIN_AMOUNT_TO_UNSTAKE_IN_OCTAS) &&
       !newErrors.amount
     ) {
       newErrors.amount = new UnstakeNotEnoughStakedBalanceLeft("", {
-        maxAmount: `${stakingPosition.active.minus(MIN_COINS_ON_SHARES_POOL_IN_OCTAS).shiftedBy(-APTOS_PRECISION).toNumber().toString()} APT`,
+        maxAmount: `${stakingPosition.active.minus(MIN_AMOUNT_TO_UNSTAKE_IN_OCTAS).shiftedBy(-APTOS_PRECISION).toNumber().toString()} APT`,
         totalAmount: `${stakingPosition.active.shiftedBy(-APTOS_PRECISION).toNumber().toString()} APT`,
       });
     }

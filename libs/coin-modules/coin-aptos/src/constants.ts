@@ -102,6 +102,8 @@ export const APTOS_DELEGATION_RESERVE_IN_OCTAS =
 export const MIN_COINS_ON_SHARES_POOL = BigNumber(11);
 export const MIN_COINS_ON_SHARES_POOL_IN_OCTAS =
   MIN_COINS_ON_SHARES_POOL.shiftedBy(APTOS_PRECISION);
+export const MIN_AMOUNT_TO_UNSTAKE = BigNumber(10);
+export const MIN_AMOUNT_TO_UNSTAKE_IN_OCTAS = MIN_AMOUNT_TO_UNSTAKE.shiftedBy(APTOS_PRECISION);
 
 export const APTOS_EXPLORER_ACCOUNT_URL = "https://explorer.aptoslabs.com/account";
 
