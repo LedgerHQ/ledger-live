@@ -5139,6 +5139,9 @@ importers:
       '@ledgerhq/hw-app-xrp':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-xrp
+      '@ledgerhq/hw-bolos':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-bolos
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -5148,6 +5151,9 @@ importers:
       '@ledgerhq/ledger-cal-service':
         specifier: workspace:^
         version: link:../ledger-services/cal
+      '@ledgerhq/ledger-trust-service':
+        specifier: workspace:^
+        version: link:../ledger-services/trust
       '@ledgerhq/live-app-sdk':
         specifier: ^0.8.1
         version: 0.8.2
