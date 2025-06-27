@@ -35,6 +35,7 @@ jobs:
     secrets: inherit
     with:
       macos-specificity-runner-label: "performance-pool"
+      skip-bundle-size-reporting: true
 
   # Tests
   test-libraries:
