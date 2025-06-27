@@ -294,6 +294,14 @@
       "title" : "ตัดการเชื่อมต่ออุปกรณ์แล้ว",
       "description" : "Ledger Live ไม่สามารถเชื่อมต่อกับอุปกรณ์ของคุณได้ โปรดลองอีกครั้ง"
     },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "ตัดการเชื่อมต่ออุปกรณ์แล้ว",
+      "description" : "Ledger Live ไม่สามารถเชื่อมต่อกับอุปกรณ์ของคุณได้ โปรดลองอีกครั้ง"
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "ตัดการเชื่อมต่ออุปกรณ์แล้ว",
+      "description" : "Ledger Live ไม่สามารถเชื่อมต่อกับอุปกรณ์ของคุณได้ โปรดลองอีกครั้ง"
+    },
     "CasperInvalidTransferId" : {
       "title" : "ID การโอนควรเป็นจำนวนบวกที่น้อยกว่า {{maxTransferId}}"
     },
@@ -3369,7 +3377,8 @@
       "description" : "ขายคริปโตเป็นเงินสดได้อย่างปลอดภัย"
     },
     "exchange" : {
-      "title" : "ซื้อ / ขาย"
+      "title" : "ซื้อ / ขาย",
+      "connectingTo" : "กำลังเชื่อมต่อคุณกับ {{provider}}"
     },
     "stake" : {
       "title" : "Stake",
@@ -7430,7 +7439,12 @@
     "performance" : "ประสิทธิภาพ",
     "low" : "ต่ำ",
     "high" : "สูง",
-    "title" : "การเคลื่อนไหวของตลาด"
+    "title" : "การเคลื่อนไหวของตลาด",
+    "overlay" : {
+      "title" : "สลับสินทรัพย์",
+      "action" : "ปัดซ้ายหรือขวา",
+      "button" : "เข้าใจแล้ว!"
+    }
   },
   "nftEntryPoint" : {
     "title" : "NFT ของคุณ",
