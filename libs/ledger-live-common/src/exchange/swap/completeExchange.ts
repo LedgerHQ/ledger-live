@@ -13,12 +13,14 @@ import {
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
+import invariant from "invariant";
 import { Observable } from "rxjs";
 import secp256k1 from "secp256k1";
 import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
 import { TransactionRefusedOnDevice } from "../../errors";
+import { handleHederaTrustedFlow } from "../../families/hedera/exchange";
 import { withDevicePromise } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
 import { CompleteExchangeStep, convertTransportError } from "../error";
@@ -34,8 +36,16 @@ const completeExchange = (
   input: CompleteExchangeInputSwap,
 ): Observable<CompleteExchangeRequestEvent> => {
   let { transaction } = input; // TODO build a tx from the data
-
-  const { deviceId, exchange, provider, binaryPayload, signature, rateType, exchangeType } = input;
+  const {
+    deviceId,
+    deviceModelId,
+    exchange,
+    provider,
+    binaryPayload,
+    signature,
+    rateType,
+    exchangeType,
+  } = input;
 
   const { fromAccount, fromParentAccount } = exchange;
   const { toAccount, toParentAccount } = exchange;
@@ -151,6 +161,22 @@ const completeExchange = (
         currentStep = "CHECK_TRANSACTION_SIGNATURE";
         await exchange.checkTransactionSignature(goodSign);
         if (unsubscribed) return;
+
+        // Hedera swap payload is filled with user account address,
+        // but the device app requires the related public key for verification.
+        // Since this key is stored on-chain, we use the TrustedService
+        // to fetch a signed descriptor linking the address to its public key.
+        const hederaAccount = (() => {
+          if (payoutAccount.currency.family === "hedera") return payoutAccount;
+          if (refundAccount.currency.family === "hedera") return refundAccount;
+          return null;
+        })();
+
+        if (hederaAccount) {
+          invariant(deviceModelId, "hedera: deviceModelId is not available");
+          await handleHederaTrustedFlow({ exchange, hederaAccount, deviceModelId });
+          if (unsubscribed) return;
+        }
 
         const payoutAddressParameters = payoutAccountBridge.getSerializedAddressParameters(
           payoutAccount,
