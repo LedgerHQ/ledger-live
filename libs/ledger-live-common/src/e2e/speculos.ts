@@ -33,6 +33,7 @@ import { delegateCosmos, sendCosmos } from "./families/cosmos";
 import { delegateSolana, sendSolana } from "./families/solana";
 import { delegateTezos } from "./families/tezos";
 import { delegateCelo } from "./families/celo";
+import { delegateAptos } from "./families/aptos";
 import { delegateMultiversX } from "./families/multiversX";
 import { NFTTransaction, Transaction } from "./models/Transaction";
 import { Delegate } from "./models/Delegate";
@@ -665,6 +666,9 @@ export async function signDelegationTransaction(delegatingAccount: Delegate) {
       break;
     case Account.CELO_1.currency.name:
       await delegateCelo(delegatingAccount);
+      break;
+    case Account.APTOS_1.currency.name:
+      await delegateAptos(delegatingAccount);
       break;
     default:
       throw new Error(`Unsupported currency: ${currencyName}`);
