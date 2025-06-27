@@ -560,8 +560,6 @@ export const handlers = ({
             resolve({ operationHash, swapId });
           },
           onCancel: error => {
-            console.log("Error onCancel swap:", error);
-
             postSwapCancelled({
               provider: provider,
               swapId: swapId,
@@ -732,7 +730,6 @@ async function getStrategy(
     currency.type === "TokenCurrency"
       ? (currency.parentCurrency?.family as Transaction["family"])
       : (currency.family as Transaction["family"]);
-  console.log("getStrategy familyKey customFeeConfig", family, customFeeConfig);
 
   if (!family) {
     throw new Error(`TokenCurrency missing parentCurrency family: ${currency.id}`);
