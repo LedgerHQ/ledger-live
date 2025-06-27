@@ -5,10 +5,9 @@ import { Layout } from "../../component/layout.component";
 import { Drawer } from "../../component/drawer.component";
 import { Modal } from "../../component/modal.component";
 import { DeviceAction } from "../../models/DeviceAction";
-import { randomUUID } from "crypto";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
-import BigNumber from "bignumber.js";
 import { version as LLD_VERSION } from "../../../package.json";
+import { expectedCurrencyList, mockedAccountList } from "tests/fixtures/wallet-api";
 
 const methods = [
   "account.request",
@@ -34,144 +33,6 @@ const methods = [
   "wallet.info",
   "wallet.userId",
 ];
-
-const account_list_mock = {
-  rawAccounts: [
-    {
-      address: "0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707",
-      balance: "10135465432293584185",
-      blockHeight: 122403,
-      currency: "arbitrum",
-      id: "1612c97a-e3bd-5c33-9618-215fc05f1853",
-      name: "Arbitrum 1",
-      spendableBalance: "10135465432293584185",
-    },
-    {
-      id: "2d23ca2a-069e-579f-b13d-05bc706c7583",
-      name: "Bitcoin 1 (legacy)",
-      address: "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
-      currency: "bitcoin",
-      balance: "35688397",
-      spendableBalance: "35688397",
-      blockHeight: 194870,
-    },
-    {
-      id: "3463fc5b-deb9-5b19-a27e-4554624f2090",
-      name: "Bitcoin 2 (legacy)",
-      address: "19qAJ5F2eH7CRPFfj5c94x22zFcXpa8rZ77",
-      currency: "bitcoin",
-      balance: "128092473",
-      spendableBalance: "128092473",
-      blockHeight: 124828,
-    },
-    {
-      id: "b60265f4-e52d-5800-9203-1609b9461654",
-      name: "Bitcoin 3 (legacy)",
-      address: "13x7TUzymwejUWQmoWusnYcdmC8RNMGG17f",
-      currency: "bitcoin",
-      balance: "0",
-      spendableBalance: "0",
-      blockHeight: 136277,
-    },
-    {
-      id: "e86e3bc1-49e1-53fd-a329-96ba6f1b06d3",
-      name: "Ethereum 1",
-      address: "0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707",
-      currency: "ethereum",
-      balance: "10135465432293584185",
-      spendableBalance: "10135465432293584185",
-      blockHeight: 122403,
-    },
-    {
-      id: "7c99915b-f186-5b44-82cc-fb21fa084292",
-      parentAccountId: "e86e3bc1-49e1-53fd-a329-96ba6f1b06d3",
-      name: "Ethereum 1 (DAI)",
-      address: "0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707",
-      currency: "ethereum/erc20/dai_stablecoin_v2_0",
-      balance: "82865885",
-      spendableBalance: "82865885",
-      blockHeight: 122403,
-    },
-    {
-      id: "d9d1d396-2081-53e1-9c67-f0623e0c4d3a",
-      name: "Ethereum 2",
-      address: "0x046615F0862392BC5E6FB43C92AAD73DE158D235",
-      currency: "ethereum",
-      balance: "11310048568372696785",
-      spendableBalance: "11310048568372696785",
-      blockHeight: 168357,
-    },
-    {
-      id: "f5a525d7-1ec6-57ca-a26a-d34fc5158e84",
-      parentAccountId: "d9d1d396-2081-53e1-9c67-f0623e0c4d3a",
-      name: "Ethereum 2 (DAI)",
-      address: "0x046615F0862392BC5E6FB43C92AAD73DE158D235",
-      currency: "ethereum/erc20/dai_stablecoin_v2_0",
-      balance: "81381327",
-      spendableBalance: "81381327",
-      blockHeight: 168357,
-    },
-    {
-      id: "54b2563c-bd90-52c1-aca0-6099c701221f",
-      parentAccountId: "d9d1d396-2081-53e1-9c67-f0623e0c4d3a",
-      name: "Ethereum 2 (USDT)",
-      address: "0x046615F0862392BC5E6FB43C92AAD73DE158D235",
-      currency: "ethereum/erc20/usd_tether__erc20_",
-      balance: "84437760",
-      spendableBalance: "84437760",
-      blockHeight: 168357,
-    },
-    {
-      id: "80828eb7-49ca-54e8-8454-79c0e5557aec",
-      parentAccountId: "d9d1d396-2081-53e1-9c67-f0623e0c4d3a",
-      name: "Ethereum 2 (USDC)",
-      address: "0x046615F0862392BC5E6FB43C92AAD73DE158D235",
-      currency: "ethereum/erc20/usd__coin",
-      balance: "102966480",
-      spendableBalance: "102966480",
-      blockHeight: 168357,
-    },
-    {
-      id: "2f374bf7-948a-56b8-b967-fd6acd9e1f3d",
-      name: "Ethereum 3",
-      address: "0xE9CAF97C863A92EBB4D76FF37EE71C84D7E09723",
-      currency: "ethereum",
-      balance: "0",
-      spendableBalance: "0",
-      blockHeight: 181116,
-    },
-    {
-      id: "e9ee57d1-f29c-55ed-ad85-de9b6426ce45",
-      parentAccountId: "2f374bf7-948a-56b8-b967-fd6acd9e1f3d",
-      name: "Ethereum 3 (DAI)",
-      address: "0xE9CAF97C863A92EBB4D76FF37EE71C84D7E09723",
-      currency: "ethereum/erc20/dai_stablecoin_v2_0",
-      balance: "45480062",
-      spendableBalance: "45480062",
-      blockHeight: 181116,
-    },
-    {
-      id: "753b0907-3616-5350-bccb-2484cefb2bec",
-      parentAccountId: "2f374bf7-948a-56b8-b967-fd6acd9e1f3d",
-      name: "Ethereum 3 (USDT)",
-      address: "0xE9CAF97C863A92EBB4D76FF37EE71C84D7E09723",
-      currency: "ethereum/erc20/usd_tether__erc20_",
-      balance: "71817412",
-      spendableBalance: "71817412",
-      blockHeight: 181116,
-    },
-    {
-      id: "d53ce93d-61d1-5ae1-8258-85a03e47f096",
-      parentAccountId: "2f374bf7-948a-56b8-b967-fd6acd9e1f3d",
-      name: "Ethereum 3 (USDC)",
-      address: "0xE9CAF97C863A92EBB4D76FF37EE71C84D7E09723",
-      currency: "ethereum/erc20/usd__coin",
-      balance: "106621194",
-      spendableBalance: "106621194",
-      blockHeight: 181116,
-    },
-  ],
-};
 
 test.use({ userdata: "1AccountBTC1AccountETH1AccountARB" });
 
@@ -206,18 +67,25 @@ test.afterAll(async () => {
   }
 });
 
-test("Wallet API methods @smoke", async ({ page }) => {
+test("Wallet API methods @smoke", async ({ page, electronApp }) => {
   if (!testServerIsRunning) {
     console.warn("Test server not running - Cancelling Wallet API E2E test");
     return;
   }
 
   const discoverPage = new DiscoverPage(page);
-  const liveAppWebview = new LiveAppWebview(page);
+  const liveAppWebview = new LiveAppWebview(page, electronApp);
   const drawer = new Drawer(page);
   const modal = new Modal(page);
   const layout = new Layout(page);
   const deviceAction = new DeviceAction(page);
+
+  // Reset the webview after each test to ensure a clean state
+  // We have to call it manually because playwright doesn't support afterEach hook for steps
+  async function resetWebview() {
+    const webview = await liveAppWebview.getWebView();
+    await webview.getByTestId("clear-states").click();
+  }
 
   await test.step("account.request", async () => {
     await layout.goToDiscover();
@@ -225,15 +93,13 @@ test("Wallet API methods @smoke", async ({ page }) => {
     await drawer.continue();
     await drawer.waitForDrawerToDisappear();
 
-    const id = randomUUID();
-    const response = liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "account.request",
-      params: {
-        currencyIds: ["ethereum", "bitcoin", "ethereum/erc20/usd_tether__erc20_"],
-      },
-    });
+    const webview = await liveAppWebview.getWebView();
+
+    await webview
+      .getByTestId("currency-ids-input")
+      .fill(["bitcoin", "ethereum", "ethereum/erc20/usd_tether__erc20_"].join(","));
+
+    await webview.getByTestId("account-request").click();
 
     await drawer.waitForDrawerToBeVisible();
 
@@ -249,220 +115,177 @@ test("Wallet API methods @smoke", async ({ page }) => {
 
     await drawer.waitForDrawerToDisappear();
 
-    await expect(response).resolves.toMatchObject({
-      id,
-      jsonrpc: "2.0",
-      result: {
-        rawAccount: {
-          id: "2d23ca2a-069e-579f-b13d-05bc706c7583",
-          address: "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
-          balance: "35688397",
-          blockHeight: 194870,
-          currency: "bitcoin",
-          name: "Bitcoin 1 (legacy)",
-          spendableBalance: "35688397",
-        },
-      },
+    const res = await webview.getByTestId("res-output").textContent();
+    if (!res) {
+      throw new Error("Response output is not present.");
+    }
+    expect(JSON.parse(res)).toMatchObject({
+      id: "2d23ca2a-069e-579f-b13d-05bc706c7583",
+      address: "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
+      balance: "35688397",
+      blockHeight: 194870,
+      currency: "bitcoin",
+      name: "Bitcoin 1 (legacy)",
+      spendableBalance: "35688397",
     });
+
+    await resetWebview();
   });
 
   await test.step("account.receive", async () => {
-    const id = randomUUID();
-    const response = liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "account.receive",
-      params: {
-        accountId: "2d23ca2a-069e-579f-b13d-05bc706c7583",
-      },
-    });
+    const webview = await liveAppWebview.getWebView();
+
+    await webview.getByTestId("account-id-input").fill("2d23ca2a-069e-579f-b13d-05bc706c7583");
+
+    await webview.getByTestId("account-receive").click();
 
     await deviceAction.openApp();
     await deviceAction.complete();
     await modal.waitForModalToDisappear();
-    await expect(response).resolves.toStrictEqual({
-      id,
-      jsonrpc: "2.0",
-      result: {
-        address: "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
-      },
-    });
+
+    const res = await webview.getByTestId("res-output").textContent();
+    if (!res) {
+      throw new Error("Response output is not present.");
+    }
+    expect(JSON.parse(res)).toBe("1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ");
+
+    await resetWebview();
   });
 
   await test.step("account.list", async () => {
-    const id = randomUUID();
-    const response = await liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "account.list",
-    });
+    const webview = await liveAppWebview.getWebView();
+    await webview.getByTestId("account-list").click();
 
-    const responseFiltred = {
-      id,
-      rawAccounts: response.result.rawAccounts.map(
-        ({ lastSyncDate, ...rest }: { lastSyncDate: Date; rest: unknown }) => rest,
-      ),
-    };
+    const res = await webview.getByTestId("res-output").textContent();
+    if (!res) {
+      throw new Error("Response output is not present.");
+    }
+    expect(JSON.parse(res)).toMatchObject(mockedAccountList);
 
-    expect(responseFiltred).toStrictEqual({
-      id,
-      ...account_list_mock,
-    });
+    await resetWebview();
   });
 
   await test.step("bitcoin.getXPub", async () => {
-    const id = randomUUID();
-    const response = liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "bitcoin.getXPub",
-      params: {
-        accountId: "3463fc5b-deb9-5b19-a27e-4554624f2090",
-      },
-    });
+    const webview = await liveAppWebview.getWebView();
 
-    await expect(response).resolves.toStrictEqual({
-      id,
-      jsonrpc: "2.0",
-      result: {
-        xPub: "D2C2B76D346B6EA64EB4F8C6E9995F81C39E0A2449CA1B3D87AF9D720ABD35C2",
-      },
-    });
+    await webview.getByTestId("account-id-input").fill("3463fc5b-deb9-5b19-a27e-4554624f2090");
+
+    await webview.getByTestId("bitcoin-getXPub").click();
+
+    const res = await webview.getByTestId("res-output").textContent();
+    if (!res) {
+      throw new Error("Response output is not present.");
+    }
+    expect(JSON.parse(res)).toBe(
+      "D2C2B76D346B6EA64EB4F8C6E9995F81C39E0A2449CA1B3D87AF9D720ABD35C2",
+    );
+
+    await resetWebview();
   });
 
   await test.step("currency.list", async () => {
-    const id = randomUUID();
-    const response = await liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "currency.list",
-      params: {
-        currencyIds: [
-          "bitcoin",
-          "ethereum",
-          "ethereum/erc20/usd_tether__erc20_",
-          // "arbitrum/erc20/arbitrum", // Still not able to get the test fetching tokens with an account present
-        ],
-      },
-    });
+    const webview = await liveAppWebview.getWebView();
 
-    expect(response).toMatchObject({
-      id,
-      result: {
-        currencies: [
-          {
-            type: "CryptoCurrency",
-            id: "bitcoin",
-            ticker: "BTC",
-            name: "Bitcoin",
-            family: "bitcoin",
-            color: "#ffae35",
-            decimals: 8,
-          },
-          {
-            type: "CryptoCurrency",
-            id: "ethereum",
-            ticker: "ETH",
-            name: "Ethereum",
-            family: "ethereum",
-            color: "#0ebdcd",
-            decimals: 18,
-          },
-          {
-            type: "TokenCurrency",
-            standard: "ERC20",
-            id: "ethereum/erc20/usd_tether__erc20_",
-            ticker: "USDT",
-            contract: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-            name: "Tether USD",
-            parent: "ethereum",
-            color: "#0ebdcd",
-            decimals: 6,
-          },
-          // {
-          //   type: "TokenCurrency",
-          //   standard: "ERC20",
-          //   id: "arbitrum/erc20/arbitrum",
-          //   ticker: "ARB",
-          //   contract: "0x912CE59144191C1204E64559FE8253a0e49E6548",
-          //   name: "Arbitrum",
-          //   parent: "arbitrum",
-          //   color: "#28a0f0",
-          //   decimals: 18,
-          // },
-        ],
+    await webview.getByTestId("currency-ids-input").fill(
+      [
+        "bitcoin",
+        "ethereum",
+        "ethereum/erc20/usd_tether__erc20_",
+        // "arbitrum/erc20/arbitrum", // Still not able to get the test fetching tokens with an account present
+      ].join(","),
+    );
+
+    await webview.getByTestId("currency-list").click();
+
+    const res = await webview.getByTestId("res-output").textContent();
+    if (!res) {
+      throw new Error("Response output is not present.");
+    }
+    expect(JSON.parse(res)).toMatchObject([
+      {
+        type: "CryptoCurrency",
+        id: "bitcoin",
+        ticker: "BTC",
+        name: "Bitcoin",
+        family: "bitcoin",
+        color: "#ffae35",
+        decimals: 8,
       },
-    });
+      {
+        type: "CryptoCurrency",
+        id: "ethereum",
+        ticker: "ETH",
+        name: "Ethereum",
+        family: "ethereum",
+        color: "#0ebdcd",
+        decimals: 18,
+      },
+      {
+        type: "TokenCurrency",
+        standard: "ERC20",
+        id: "ethereum/erc20/usd_tether__erc20_",
+        ticker: "USDT",
+        contract: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        name: "Tether USD",
+        parent: "ethereum",
+        color: "#0ebdcd",
+        decimals: 6,
+      },
+      // {
+      //   type: "TokenCurrency",
+      //   standard: "ERC20",
+      //   id: "arbitrum/erc20/arbitrum",
+      //   ticker: "ARB",
+      //   contract: "0x912CE59144191C1204E64559FE8253a0e49E6548",
+      //   name: "Arbitrum",
+      //   parent: "arbitrum",
+      //   color: "#28a0f0",
+      //   decimals: 18,
+      // },
+    ]);
+
+    await resetWebview();
   });
 
   await test.step("currency.list should stay stable for CryptoCurrency", async () => {
-    const id = randomUUID();
-    const response = await liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "currency.list",
-    });
+    const webview = await liveAppWebview.getWebView();
+    await webview.getByTestId("currency-list").click();
 
+    const res = await webview.getByTestId("res-output").textContent();
+    if (!res) {
+      throw new Error("Response output is not present.");
+    }
     // We remove TokenCurrency because they might change a lot more frequently and we really care if a family disappear
-    const currencies = response.result.currencies.filter(
+    const currencies = JSON.parse(res).filter(
       (currency: { type: string }) => currency.type === "CryptoCurrency",
     );
+    expect(currencies).toMatchObject(expectedCurrencyList);
 
-    expect(JSON.stringify(currencies, null, 2)).toMatchSnapshot("wallet-api-currencies.json");
+    await resetWebview();
   });
 
   await test.step("storage", async () => {
-    const id = randomUUID();
-    const value = randomUUID();
+    const webview = await liveAppWebview.getWebView();
+    await webview.getByTestId("storage").click();
 
-    const responseSet = liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "storage.set",
-      params: {
-        key: "testKey",
-        value,
-      },
-    });
+    const res = await webview.getByTestId("res-output").textContent();
+    if (!res) {
+      throw new Error("Response output is not present.");
+    }
+    expect(JSON.parse(res)).toBe("test-value");
 
-    await expect(responseSet).resolves.toStrictEqual({ jsonrpc: "2.0", id });
-
-    const responseGet = liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "storage.get",
-      params: {
-        key: "testKey",
-      },
-    });
-
-    await expect(responseGet).resolves.toStrictEqual({
-      jsonrpc: "2.0",
-      id,
-      result: { value },
-    });
+    await resetWebview();
   });
 
   await test.step("transaction.sign", async () => {
-    const id = randomUUID();
+    const webview = await liveAppWebview.getWebView();
 
     const recipient = "0x046615F0862392BC5E6FB43C92AAD73DE158D235";
 
-    const response = liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "transaction.sign",
-      params: {
-        //ETH Account
-        accountId: "e86e3bc1-49e1-53fd-a329-96ba6f1b06d3",
-        rawTransaction: {
-          family: "ethereum",
-          amount: new BigNumber(100000000000000),
-          recipient,
-          data: Buffer.from("SomeDataInHex").toString("hex"),
-        },
-      },
-    });
+    await webview.getByTestId("recipient-input").fill(recipient);
+    await webview.getByTestId("account-id-input").fill("e86e3bc1-49e1-53fd-a329-96ba6f1b06d3");
+
+    await webview.getByTestId("transaction-sign").click();
 
     // Step Fees
     await expect(page.getByText(/learn more about fees/i)).toBeVisible();
@@ -475,33 +298,72 @@ test("Wallet API methods @smoke", async ({ page }) => {
     // Step Device
     await deviceAction.silentSign();
 
-    await expect(response).resolves.toStrictEqual({
-      id,
-      jsonrpc: "2.0",
-      result: { signedTransactionHex: "" },
+    const res = await webview.getByTestId("res-output").textContent();
+    if (!res) {
+      throw new Error("Response output is not present.");
+    }
+    expect(JSON.parse(res)).toBe(
+      "fakeSignatureTlaowosfpqwkpofqkpqwpoesHQv6xHyYwDsrPJvqcSKRJGBLrbEc",
+    );
+
+    await resetWebview();
+  });
+
+  await test.step("transaction.sign solana", async () => {
+    const webview = await liveAppWebview.getWebView();
+
+    const recipient = "63M7kPJvLsG46jbR2ZriEU8xwPqkMNKNoBBQ46pobbvo";
+
+    await webview.getByTestId("recipient-input").fill(recipient);
+    await webview.getByTestId("account-id-input").fill("2fa370fd-2210-5487-b9c9-bc36971ebc72");
+
+    await webview.getByTestId("transaction-sign-solana").click();
+
+    // Step Recipient
+    await expect(page.getByText(recipient)).toBeVisible();
+    await modal.continueToSignTransaction();
+
+    // Step Device
+    await deviceAction.silentSign();
+
+    const res = await webview.getByTestId("res-output").textContent();
+    if (!res) {
+      throw new Error("Response output is not present.");
+    }
+    expect(JSON.parse(res)).toMatchObject({
+      message: {
+        accountKeys: [
+          "4iWtrn54zi89sHQv6xHyYwDsrPJvqcSKRJGBLrbErCsx",
+          "63M7kPJvLsG46jbR2ZriEU8xwPqkMNKNoBBQ46pobbvo",
+          "ComputeBudget111111111111111111111111111111",
+          "11111111111111111111111111111111",
+        ],
+        header: {
+          numReadonlySignedAccounts: 0,
+          numReadonlyUnsignedAccounts: 2,
+          numRequiredSignatures: 1,
+        },
+        indexToProgramIds: {},
+        instructions: [
+          { accounts: [], data: "Fyn5d1", programIdIndex: 2 },
+          { accounts: [0, 1], data: "3Bxs4Bc3VYuGVB19", programIdIndex: 3 },
+        ],
+        recentBlockhash: "EEbZs6DmDyDjucyYbo3LwVJU7pQYuVopYcYTSEZXskW3",
+      },
     });
+
+    await resetWebview();
   });
 
   await test.step("transaction.signAndBroadcast", async () => {
-    const id = randomUUID();
+    const webview = await liveAppWebview.getWebView();
 
     const recipient = "0x046615F0862392BC5E6FB43C92AAD73DE158D235";
 
-    const response = liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "transaction.signAndBroadcast",
-      params: {
-        //ETH Account
-        accountId: "e86e3bc1-49e1-53fd-a329-96ba6f1b06d3",
-        rawTransaction: {
-          family: "ethereum",
-          amount: new BigNumber(100000000000000),
-          recipient,
-          data: Buffer.from("SomeDataInHex").toString("hex"),
-        },
-      },
-    });
+    await webview.getByTestId("recipient-input").fill(recipient);
+    await webview.getByTestId("account-id-input").fill("e86e3bc1-49e1-53fd-a329-96ba6f1b06d3");
+
+    await webview.getByTestId("transaction-signAndBroadcast").click();
 
     // Step Fees
     await expect(page.getByText(/learn more about fees/i)).toBeVisible();
@@ -529,66 +391,56 @@ test("Wallet API methods @smoke", async ({ page }) => {
     await expect(drawer.getByText("View in explorer")).toBeVisible();
     await expect(drawer.getByText("Confirmed")).toBeVisible();
 
-    await expect(response).resolves.toStrictEqual({
-      id,
-      jsonrpc: "2.0",
-      result: {
-        transactionHash: "32BEBB4660C4C328F7E130D0E1F45D5B2AFD9129B903E0F3B6EA52756329CD25",
-      },
-    });
+    const res = await webview.getByTestId("res-output").textContent();
+    if (!res) {
+      throw new Error("Response output is not present.");
+    }
+    expect(JSON.parse(res)).toBe(
+      "32BEBB4660C4C328F7E130D0E1F45D5B2AFD9129B903E0F3B6EA52756329CD25",
+    );
+
+    await resetWebview();
   });
 
   await test.step("wallet.capabilities", async () => {
-    const id = randomUUID();
+    const webview = await liveAppWebview.getWebView();
+    await webview.getByTestId("wallet-capabilities").click();
 
-    const response = liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "wallet.capabilities",
-    });
+    const res = await webview.getByTestId("res-output").textContent();
+    if (!res) {
+      throw new Error("Response output is not present.");
+    }
+    expect(JSON.parse(res)).toEqual(methods);
 
-    await expect(response).resolves.toStrictEqual({
-      id,
-      jsonrpc: "2.0",
-
-      result: {
-        methodIds: methods,
-      },
-    });
+    await resetWebview();
   });
 
   await test.step("wallet.userId", async () => {
-    const id = randomUUID();
+    const webview = await liveAppWebview.getWebView();
+    await webview.getByTestId("wallet-userId").click();
 
-    const response = liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "wallet.userId",
-    });
+    const res = await webview.getByTestId("res-output").textContent();
+    if (!res) {
+      throw new Error("Response output is not present.");
+    }
+    expect(JSON.parse(res)).toBe("08cf3393-c5eb-4ea7-92de-0deea22e3971");
 
-    await expect(response).resolves.toStrictEqual({
-      id,
-      jsonrpc: "2.0",
-      result: { userId: "08cf3393-c5eb-4ea7-92de-0deea22e3971" },
-    });
+    await resetWebview();
   });
 
   await test.step("wallet.info", async () => {
-    const id = randomUUID();
+    const webview = await liveAppWebview.getWebView();
+    await webview.getByTestId("wallet-info").click();
 
-    const response = liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "wallet.info",
+    const res = await webview.getByTestId("res-output").textContent();
+    if (!res) {
+      throw new Error("Response output is not present.");
+    }
+    expect(JSON.parse(res)).toMatchObject({
+      tracking: true,
+      wallet: { name: "ledger-live-desktop", version: LLD_VERSION },
     });
 
-    await expect(response).resolves.toStrictEqual({
-      id,
-      jsonrpc: "2.0",
-      result: {
-        tracking: true,
-        wallet: { name: "ledger-live-desktop", version: LLD_VERSION },
-      },
-    });
+    await resetWebview();
   });
 });

@@ -66,7 +66,7 @@ test.afterAll(async () => {
   }
 });
 
-test("Confirm Transaction modals @smoke", async ({ page }) => {
+test("Confirm Transaction modals @smoke", async ({ page, electronApp }) => {
   const discoverPage = new DiscoverPage(page);
   const drawer = new Drawer(page);
   const layout = new Layout(page);
@@ -76,7 +76,7 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
     return;
   }
 
-  const liveAppWebview = new LiveAppWebview(page);
+  const liveAppWebview = new LiveAppWebview(page, electronApp);
   await liveAppWebview.waitForLoaded();
   const modal = new Modal(page);
   const deviceAction = new DeviceAction(page);
