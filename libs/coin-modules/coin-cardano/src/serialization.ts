@@ -169,6 +169,7 @@ function fromProtocolParamsRaw({
 
 function toDelegationRaw({
   status,
+  deposit,
   poolId,
   ticker,
   name,
@@ -177,6 +178,7 @@ function toDelegationRaw({
 }: CardanoDelegation): CardanoDelegationRaw {
   return {
     status,
+    deposit,
     poolId,
     ticker,
     name,
@@ -187,6 +189,7 @@ function toDelegationRaw({
 
 function fromDelegationRaw({
   status,
+  deposit,
   poolId,
   ticker,
   name,
@@ -195,6 +198,7 @@ function fromDelegationRaw({
 }: CardanoDelegationRaw): CardanoDelegation {
   return {
     status,
+    deposit,
     poolId,
     ticker,
     name,
