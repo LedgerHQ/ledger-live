@@ -7,6 +7,8 @@ import {
   TransactionStatus,
 } from "@ledgerhq/live-common/families/internet_computer/types";
 import MemoTagField from "LLD/features/MemoTag/components/MemoTagField";
+import WarnBox from "~/renderer/components/WarnBox";
+import { useTranslation } from "react-i18next";
 
 const MemoField = ({
   onChange,
@@ -21,6 +23,7 @@ const MemoField = ({
   status: TransactionStatus;
   autoFocus?: boolean;
 }) => {
+  const { t } = useTranslation();
   invariant(transaction.family === "internet_computer", "Memo: Internet Computer family expected");
 
   const bridge = getAccountBridge(account);
@@ -33,8 +36,14 @@ const MemoField = ({
     [onChange, transaction, bridge],
   );
 
-  // We use transaction as an error here.
-  // on the ledger-live mobile
+  if (transaction.type === "increase_stake") {
+    return <WarnBox>{t("internetComputer.memoField.increaseStake")}</WarnBox>;
+  }
+
+  if (transaction.type === "create_neuron") {
+    return <WarnBox>{t("internetComputer.memoField.createNeuron")}</WarnBox>;
+  }
+
   return (
     <MemoTagField
       warning={status.warnings.transaction}
@@ -43,6 +52,7 @@ const MemoField = ({
       onChange={onMemoFieldChange}
       spellCheck="false"
       autoFocus={autoFocus}
+      tooltipText={t("internetComputer.memoField.tooltip")}
     />
   );
 };

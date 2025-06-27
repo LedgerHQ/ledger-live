@@ -18,7 +18,7 @@ function resolver(signerContext: SignerContext<ICPSigner>): GetAddressFn {
     });
 
     if (!r.address || !r.publicKey) {
-      console.error("Failed to get address from device");
+      log("error", "Failed to get address from device");
       throw Error("Failed to get address from device");
     }
 
