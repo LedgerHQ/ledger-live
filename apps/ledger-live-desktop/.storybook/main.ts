@@ -29,9 +29,18 @@ const config: StorybookConfig = {
     return mergeConfig(config, {
       define: {
         __DEV__: true,
+        global: "globalThis",
+        require: `(function(id) {
+          if (id === 'https') {
+            return { Agent: function() { return {}; } };
+          }
+          throw new Error('Module not found: ' + id);
+        })`,
       },
       resolve: {
+        ...config.resolve,
         alias: {
+          ...config.resolve?.alias,
           [`~/renderer/analytics/segment`]: resolve(
             "./src/renderer/analytics/__mocks__/segment.ts",
           ),
@@ -41,21 +50,28 @@ const config: StorybookConfig = {
           "@ledgerhq/live-common/wallet-api/react": resolve(detailedAccountsMockDir),
           "@ledgerhq/live-countervalues/portfolio": resolve(detailedAccountsMockDir),
           "@ledgerhq/live-countervalues-react": resolve(detailedAccountsMockDir),
-          "~/renderer/components/PerCurrencySelectAccount/state": resolve(detailedAccountsMockDir),
           "~/renderer/reducers/accounts": resolve(detailedAccountsMockDir),
           "~/renderer/reducers/settings": resolve(detailedAccountsMockDir),
 
           "@ledgerhq/live-common/deposit/index": resolve(selectAssetFlowHookMockDir),
+          "@ledgerhq/live-common/deposit/helper": resolve(selectAssetFlowHookMockDir),
           "@ledgerhq/live-common/currencies/index": resolve(selectAssetFlowHookMockDir),
 
           "@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook": resolve(
             useGroupedCurrenciesByProvider,
           ),
 
+          "../ModularDrawerAddAccountFlowManager": resolve(".storybook/stub.ts"), // TODO: This is a temporary patch to get storybook to work. This should be replaced by appropriate mocks of ModularDrawerAddAccountFlowManager's dependencies. Ticket LIVE-19799
+
           "~": resolve("./src"),
+          https: false,
         },
       },
       server: { port: 4400 },
+      optimizeDeps: {
+        include: ["buffer"],
+        exclude: ["@ledgerhq/live-network"],
+      },
     });
   },
 };

@@ -151,8 +151,8 @@ export default class AccountPage {
     await waitForElementById(this.accountGraphId(this.subAccountId(subAccount)));
   }
 
-  @Step("Click on selected last operation")
-  async selectAndClickOnLastOperation(operationType: string) {
+  @Step("Scroll to history and click on last operation")
+  async scrollToHistoryAndClickOnLastOperation(operationType: string) {
     await this.scrollToTransactions();
     await tapByElement(this.getSpecificOperation(operationType));
   }

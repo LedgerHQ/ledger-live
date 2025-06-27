@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { AccountItem } from "./AccountItem";
+import { AccountItem, AccountItemProps } from "./AccountItem";
 import { expect, within } from "@storybook/test";
 
 const meta: Meta<typeof AccountItem> = {
@@ -16,7 +16,7 @@ const meta: Meta<typeof AccountItem> = {
       address: "n4A9...Zgty",
       ticker: "btc",
     },
-  },
+  } satisfies AccountItemProps,
 };
 export default meta;
 
@@ -36,7 +36,7 @@ export const TestAccount: Story = {
       address: "n4A9...Zgty",
       ticker: "btc",
     },
-  },
+  } satisfies AccountItemProps,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -68,7 +68,7 @@ export const TestWithoutProtocol: Story = {
       address: "n4A9...Zgty",
       ticker: "btc",
     },
-  },
+  } satisfies AccountItemProps,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -88,12 +88,64 @@ export const TestWithoutAddressIcon: Story = {
       address: "n4A9...Zgty",
     },
     showIcon: false,
-  },
+  } satisfies AccountItemProps,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     const addressIcon = canvas.queryByRole("img");
 
     await expect(addressIcon).not.toBeInTheDocument();
+  },
+};
+
+export const TestWithCheckbox: Story = {
+  args: {
+    account: {
+      address: "n4A9...Zgty",
+      balance: "0.118",
+      cryptoId: "bitcoin",
+      fiatValue: "$5,969.83",
+      id: "12345",
+      name: "Main BTC",
+      ticker: "btc",
+    },
+    rightElement: {
+      type: "checkbox",
+      checkbox: {
+        isChecked: false,
+        onChange: () => {},
+        name: "checkbox",
+      },
+    },
+  } satisfies AccountItemProps,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const arrowIcon = canvas.getByTestId("right-element-checkbox");
+
+    await expect(arrowIcon).toBeInTheDocument();
+  },
+};
+
+export const TestWithArrow: Story = {
+  args: {
+    account: {
+      address: "n4A9...Zgty",
+      cryptoId: "bitcoin",
+      fiatValue: "$5,969.83",
+      id: "12345",
+      name: "Main BTC",
+      ticker: "btc",
+    },
+    rightElement: {
+      type: "arrow",
+    },
+  } satisfies AccountItemProps,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const arrowIcon = canvas.getByTestId("right-element-arrow-icon");
+
+    await expect(arrowIcon).toBeInTheDocument();
   },
 };

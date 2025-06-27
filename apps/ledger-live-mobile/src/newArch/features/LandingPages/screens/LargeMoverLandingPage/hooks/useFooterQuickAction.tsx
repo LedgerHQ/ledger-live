@@ -8,6 +8,8 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import useQuickActions, { QuickActionProps } from "~/hooks/useQuickActions";
 import { PAGE_NAME } from "../const";
+import { useFlattenSortAccounts } from "~/actions/general";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 
 const QUICK_ACTIONS = {
   BUY: {
@@ -26,8 +28,13 @@ const QUICK_ACTIONS = {
 
 export const useFooterQuickActions = (quickActionsProps: QuickActionProps) => {
   const { t } = useTranslation();
+
+  const accounts = useFlattenSortAccounts().filter(
+    a => getAccountCurrency(a).id === quickActionsProps.currency?.id,
+  );
+
   const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
-  const { quickActionsList } = useQuickActions(quickActionsProps);
+  const { quickActionsList } = useQuickActions({ ...quickActionsProps, accounts });
   function trackQuickAction(
     prop: (typeof QUICK_ACTIONS)[keyof typeof QUICK_ACTIONS],
     quickActionsProps: QuickActionProps,
@@ -38,6 +45,7 @@ export const useFooterQuickActions = (quickActionsProps: QuickActionProps) => {
       coin: quickActionsProps.currency?.name,
     });
   }
+
   const quickActionsData: QuickActionButtonProps[] = useMemo(
     () =>
       (Object.entries(QUICK_ACTIONS) as EntryOf<typeof QUICK_ACTIONS>[]).flatMap(([key, prop]) => {

@@ -102,6 +102,9 @@ export type DrawerProps = {
   forceDisableFocusTrap?: boolean;
   style?: React.CSSProperties;
   withPaddingTop?: boolean;
+  closeButtonComponent?: React.ComponentType<{
+    onRequestClose: (mouseEvent: React.MouseEvent<Element, MouseEvent>) => void;
+  }>;
 };
 
 export function SideDrawer({
@@ -113,6 +116,7 @@ export function SideDrawer({
   title,
   preventBackdropClick = false,
   forceDisableFocusTrap = false,
+  closeButtonComponent,
   ...props
 }: DrawerProps) {
   const domNode = document.getElementById("modals");
@@ -196,6 +200,7 @@ export function SideDrawer({
                   onRequestClose={onRequestClose}
                   onRequestBack={onRequestBack}
                   title={title}
+                  closeButtonComponent={closeButtonComponent}
                 />
                 {children}
               </DrawerContent>

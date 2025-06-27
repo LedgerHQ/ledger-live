@@ -40,13 +40,6 @@ export const StellarMemoType = [
   "MEMO_RETURN",
 ] as const;
 
-// typesafe enum
-type StellarMemoKind = (typeof StellarMemoType)[number];
-
-export type StellarMemo =
-  | { type: "NO_MEMO" }
-  | { type: Exclude<StellarMemoKind, "NO_MEMO">; value: string };
-
 export type StellarTransactionMode = "send" | "changeTrust";
 
 export type Transaction = TransactionCommon & {

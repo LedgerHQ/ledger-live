@@ -1,33 +1,37 @@
 import React, { useEffect, useState } from "react";
-import { AssetType } from "@ledgerhq/react-ui/pre-ldls/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SelectAssetList as AssetsList } from "./components/List";
 import SearchInputContainer from "./components/SearchInputContainer";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { MODULAR_DRAWER_PAGE_NAME } from "../../analytics/types";
+import { MODULAR_DRAWER_PAGE_NAME } from "../../analytics/modularDrawer.types";
 import TrackDrawerScreen from "../../analytics/TrackDrawerScreen";
+import { CurrenciesByProviderId, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 
 export type AssetSelectionStepProps = {
-  assetTypes: AssetType[];
   assetsToDisplay: CryptoOrTokenCurrency[];
+  originalAssetsToDisplay: CryptoOrTokenCurrency[];
   sortedCryptoCurrencies: CryptoOrTokenCurrency[];
+  providersLoadingStatus: LoadingStatus;
   defaultSearchValue?: string;
   assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
   flow: string;
   source: string;
+  currenciesByProvider: CurrenciesByProviderId[];
   setAssetsToDisplay: (assets: CryptoOrTokenCurrency[]) => void;
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
   setSearchedValue: (value: string | undefined) => void;
 };
 
 const AssetSelection = ({
-  assetTypes,
   assetsToDisplay,
+  originalAssetsToDisplay,
   sortedCryptoCurrencies,
   defaultSearchValue,
+  providersLoadingStatus,
   flow,
   source,
   assetsConfiguration,
+  currenciesByProvider,
   setAssetsToDisplay,
   onAssetSelected,
   setSearchedValue,
@@ -59,12 +63,16 @@ const AssetSelection = ({
         source={source}
         flow={flow}
         items={sortedCryptoCurrencies}
+        assetsToDisplay={assetsToDisplay}
+        originalAssets={originalAssetsToDisplay}
       />
       <AssetsList
-        assetTypes={assetTypes}
         assetsToDisplay={assetsToDisplay}
+        providersLoadingStatus={providersLoadingStatus}
         source={source}
         flow={flow}
+        assetsConfiguration={assetsConfiguration}
+        currenciesByProvider={currenciesByProvider}
         scrollToTop={shouldScrollToTop}
         onAssetSelected={onAssetSelected}
         onScrolledToTop={() => setShouldScrollToTop(false)}

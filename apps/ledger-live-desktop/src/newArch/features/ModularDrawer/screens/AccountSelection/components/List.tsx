@@ -1,11 +1,10 @@
 import React from "react";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { AccountList, Account as DetailedAccount } from "@ledgerhq/react-ui/pre-ldls/index";
-import { AccountTuple } from "~/renderer/components/PerCurrencySelectAccount/state";
-import { useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
+import { AccountTuple } from "../../../utils/getAccountTuplesForCurrency";
 import { ListWrapper } from "../../../components/ListWrapper";
 import { useModularDrawerAnalytics } from "../../../analytics/useModularDrawerAnalytics";
-import { MODULAR_DRAWER_PAGE_NAME } from "../../../analytics/types";
+import { MODULAR_DRAWER_PAGE_NAME } from "../../../analytics/modularDrawer.types";
 
 type SelectAccountProps = {
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
@@ -13,10 +12,11 @@ type SelectAccountProps = {
   source: string;
   flow: string;
   detailedAccounts: DetailedAccount[];
+  bottomComponent: React.ReactNode;
 };
 
-const BUTTON_HEIGHT = 66;
-const LIST_HEIGHT = `calc(100% - ${BUTTON_HEIGHT}px)`;
+const TITLE_HEIGHT = 52;
+const LIST_HEIGHT = `calc(100% - ${TITLE_HEIGHT}px)`;
 
 export const SelectAccountList = ({
   detailedAccounts,
@@ -24,6 +24,7 @@ export const SelectAccountList = ({
   source,
   flow,
   onAccountSelected,
+  bottomComponent,
 }: SelectAccountProps) => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
@@ -53,19 +54,13 @@ export const SelectAccountList = ({
     }
   };
 
-  const overridedAccountName = useBatchMaybeAccountName(accounts.map(({ account }) => account));
-
-  const detailedAccountsWithName = detailedAccounts.map((account, index) => {
-    const accountName = overridedAccountName[index];
-    return {
-      ...account,
-      name: accountName ?? account.name,
-    };
-  });
-
   return (
     <ListWrapper customHeight={LIST_HEIGHT}>
-      <AccountList accounts={detailedAccountsWithName} onClick={onAccountClick} />
+      <AccountList
+        bottomComponent={bottomComponent}
+        accounts={detailedAccounts}
+        onClick={onAccountClick}
+      />
     </ListWrapper>
   );
 };

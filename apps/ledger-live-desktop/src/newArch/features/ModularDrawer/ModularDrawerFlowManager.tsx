@@ -10,20 +10,25 @@ import { MODULAR_DRAWER_STEP, ModularDrawerStep } from "./types";
 import AssetSelection from "./screens/AssetSelection";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook";
 import { NetworkSelection } from "./screens/NetworkSelection";
-import { Header } from "./components/Header";
+import { Title } from "./components/Title";
 import { AccountSelection } from "./screens/AccountSelection";
-import {
-  CurrenciesByProviderId,
-  LoadingBasedGroupedCurrencies,
-  LoadingStatus,
-} from "@ledgerhq/live-common/deposit/type";
+import { LoadingBasedGroupedCurrencies, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { useModularDrawerNavigation } from "./hooks/useModularDrawerNavigation";
 import { useAssetSelection } from "./hooks/useAssetSelection";
 import { useModularDrawerFlowState } from "./hooks/useModularDrawerFlowState";
 import SkeletonList from "./components/SkeletonList";
 import { haveOneCommonProvider } from "./utils/haveOneCommonProvider";
+import { BackButtonArrow } from "./components/BackButton";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import {
+  buildProviderCoverageMap,
+  filterProvidersByIds,
+  extractProviderCurrencies,
+} from "./utils/currencyUtils";
+import { addTestnetCurrencies } from "LLD/utils/testnetCurrencies";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 
-type Props = {
+export type ModularDrawerFlowManagerProps = {
   currencies: CryptoOrTokenCurrency[];
   drawerConfiguration?: EnhancedModularDrawerConfiguration;
   accounts$?: Observable<WalletAPIAccount[]>;
@@ -31,6 +36,17 @@ type Props = {
   flow: string;
   onAssetSelected?: (currency: CryptoOrTokenCurrency) => void;
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
+};
+
+const assetConfigurationDisabled: EnhancedModularDrawerConfiguration["assets"] = {
+  rightElement: "undefined",
+  leftElement: "undefined",
+  filter: "undefined",
+};
+
+const networkConfigurationDisabled: EnhancedModularDrawerConfiguration["networks"] = {
+  rightElement: "undefined",
+  leftElement: "undefined",
 };
 
 const ModularDrawerFlowManager = ({
@@ -41,13 +57,27 @@ const ModularDrawerFlowManager = ({
   source,
   onAssetSelected,
   onAccountSelected,
-}: Props) => {
-  const { assets: assetConfiguration, networks: networkConfiguration } = drawerConfiguration ?? {};
+}: ModularDrawerFlowManagerProps) => {
+  const devMode = useEnv("MANAGER_DEV_MODE");
+  const featureModularDrawer = useFeature("lldModularDrawer");
+  const modularizationEnabled = featureModularDrawer?.params?.enableModularization ?? false;
+  const assetConfiguration = modularizationEnabled
+    ? drawerConfiguration?.assets
+    : assetConfigurationDisabled;
+  const networkConfiguration = modularizationEnabled
+    ? drawerConfiguration?.networks
+    : networkConfigurationDisabled;
 
   const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(
     true,
   ) as LoadingBasedGroupedCurrencies;
-  const { currenciesByProvider, sortedCryptoCurrencies } = result;
+
+  const { currenciesByProvider, sortedCryptoCurrencies } = useMemo(() => {
+    return {
+      currenciesByProvider: result.currenciesByProvider ?? [],
+      sortedCryptoCurrencies: result.sortedCryptoCurrencies ?? [],
+    };
+  }, [result]);
 
   const isReadyToBeDisplayed = [LoadingStatus.Success].includes(providersLoadingStatus);
 
@@ -55,10 +85,14 @@ const ModularDrawerFlowManager = ({
     assetsToDisplay,
     filteredSortedCryptoCurrencies,
     currenciesIdsArray,
+    currencyIdsSet,
     setAssetsToDisplay,
   } = useAssetSelection(currencies, sortedCryptoCurrencies);
 
   const [networksToDisplay, setNetworksToDisplay] = useState<CryptoOrTokenCurrency[]>();
+  const [originalAssetsToDisplay, setOriginalAssetsToDisplay] = useState<CryptoOrTokenCurrency[]>(
+    [],
+  );
 
   const { currentStep, navigationDirection, goToStep } = useModularDrawerNavigation();
   const isSelectAccountFlow = !!onAccountSelected;
@@ -80,7 +114,7 @@ const ModularDrawerFlowManager = ({
     goBackToNetworkSelection,
   } = useModularDrawerFlowState({
     currenciesByProvider,
-    assetsToDisplay,
+    sortedCryptoCurrencies,
     currenciesIdsArray,
     isSelectAccountFlow,
     setNetworksToDisplay,
@@ -90,16 +124,6 @@ const ModularDrawerFlowManager = ({
     flow,
     hasOneCurrency,
   });
-
-  const assetTypes = useMemo(
-    () =>
-      currenciesByProvider.map((provider: CurrenciesByProviderId) => ({
-        id: provider.providerId,
-        name: provider.providerId,
-        ticker: provider.providerId,
-      })),
-    [currenciesByProvider],
-  );
 
   const handleBack = useMemo(() => {
     const canGoBackToAsset = !hasOneCurrency;
@@ -133,6 +157,28 @@ const ModularDrawerFlowManager = ({
     networksToDisplay,
   ]);
 
+  const filteredCurrenciesByProvider = useMemo(() => {
+    if (currencyIdsSet.size === 0) {
+      return currenciesByProvider;
+    }
+
+    const providerCoverageMap = buildProviderCoverageMap(currenciesByProvider);
+    const filtered = filterProvidersByIds(
+      currenciesByProvider,
+      currencyIdsSet,
+      providerCoverageMap,
+    );
+    const allProviderCurrencies = extractProviderCurrencies(filtered);
+    const currenciesEnhanced = devMode
+      ? addTestnetCurrencies(allProviderCurrencies)
+      : allProviderCurrencies;
+
+    setAssetsToDisplay(currenciesEnhanced);
+    setOriginalAssetsToDisplay(currenciesEnhanced);
+
+    return filtered;
+  }, [currenciesByProvider, currencyIdsSet, setAssetsToDisplay, devMode]);
+
   const renderStepContent = (step: ModularDrawerStep) => {
     // TODO: We should find a better way to handle that. THe issue is that we always display AssetSelection screen
     // but in some cases we don't want to trigger analytics events as it may have been dismissed automatically depending on the flow.
@@ -143,16 +189,18 @@ const ModularDrawerFlowManager = ({
         if (!hasOneCurrency) {
           return (
             <AssetSelection
-              assetTypes={assetTypes}
               assetsToDisplay={assetsToDisplay}
+              providersLoadingStatus={providersLoadingStatus}
+              originalAssetsToDisplay={originalAssetsToDisplay}
               sortedCryptoCurrencies={filteredSortedCryptoCurrencies}
               defaultSearchValue={searchedValue}
               assetsConfiguration={assetConfiguration}
-              flow={flow}
-              source={source}
+              currenciesByProvider={filteredCurrenciesByProvider}
               setAssetsToDisplay={setAssetsToDisplay}
               setSearchedValue={setSearchedValue}
               onAssetSelected={handleAssetSelected}
+              flow={flow}
+              source={source}
             />
           );
         }
@@ -162,9 +210,12 @@ const ModularDrawerFlowManager = ({
           <NetworkSelection
             networks={networksToDisplay}
             networksConfiguration={networkConfiguration}
+            currenciesByProvider={filteredCurrenciesByProvider}
             flow={flow}
             source={source}
             onNetworkSelected={handleNetworkSelected}
+            selectedAssetId={selectedAsset?.id}
+            accounts$={accounts$}
           />
         );
       case MODULAR_DRAWER_STEP.ACCOUNT_SELECTION:
@@ -187,14 +238,21 @@ const ModularDrawerFlowManager = ({
 
   return (
     <>
-      <Header step={currentStep} onBackClick={handleBack} />
-      <AnimatePresence mode="sync">
+      {handleBack && <BackButtonArrow onBackClick={handleBack} />}
+      <AnimatePresence initial={false} custom={navigationDirection} mode="sync">
         <AnimatedScreenWrapper
           key={currentStep}
           screenKey={currentStep}
           direction={navigationDirection}
         >
-          {isReadyToBeDisplayed ? renderStepContent(currentStep) : <SkeletonList />}
+          {isReadyToBeDisplayed ? (
+            <>
+              <Title step={currentStep} />
+              {renderStepContent(currentStep)}
+            </>
+          ) : (
+            <SkeletonList />
+          )}
         </AnimatedScreenWrapper>
       </AnimatePresence>
     </>

@@ -8,22 +8,37 @@ import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { useDetailedAccounts } from "../../hooks/useDetailedAccounts";
 import { Observable } from "rxjs";
 import TrackDrawerScreen from "../../analytics/TrackDrawerScreen";
-import { MODULAR_DRAWER_PAGE_NAME } from "../../analytics/types";
+import { MODULAR_DRAWER_PAGE_NAME } from "../../analytics/modularDrawer.types";
 
 type Props = {
   asset: CryptoOrTokenCurrency;
   source: string;
   flow: string;
   accounts$?: Observable<WalletAPIAccount[]>;
+  hideAddAccountButton?: boolean;
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
 };
 
-export const AccountSelection = ({ asset, source, flow, accounts$, onAccountSelected }: Props) => {
+export const AccountSelection = ({
+  asset,
+  source,
+  flow,
+  accounts$,
+  onAccountSelected,
+  hideAddAccountButton,
+}: Props) => {
   const { detailedAccounts, accounts, onAddAccountClick } = useDetailedAccounts(
     asset,
     flow,
     source,
     accounts$,
+    onAccountSelected,
+  );
+
+  const BottomComponent = (
+    <AddAccountContainer>
+      <AddAccountButton onAddAccountClick={onAddAccountClick} />
+    </AddAccountContainer>
   );
 
   return (
@@ -33,15 +48,13 @@ export const AccountSelection = ({ asset, source, flow, accounts$, onAccountSele
         source={source}
         flow={flow}
       />
-      <AddAccountContainer>
-        <AddAccountButton onAddAccountClick={onAddAccountClick} />
-      </AddAccountContainer>
       <SelectAccountList
         source={source}
         flow={flow}
         accounts={accounts}
         detailedAccounts={detailedAccounts}
         onAccountSelected={onAccountSelected}
+        bottomComponent={!hideAddAccountButton && BottomComponent}
       />
     </>
   );
@@ -49,8 +62,8 @@ export const AccountSelection = ({ asset, source, flow, accounts$, onAccountSele
 
 export const AddAccountContainer = styled.div`
   display: flex;
-  padding: 0 0 16px 0;
+  padding: 0 8px;
   flex: 0 1 auto;
-  margin-left: 8px;
-  margin-right: 8px;
+  margin-bottom: 16px;
+  margin-top: 16px;
 `;

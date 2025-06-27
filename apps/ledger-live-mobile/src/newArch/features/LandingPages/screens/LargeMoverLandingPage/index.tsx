@@ -7,7 +7,7 @@ import { LandingPagesNavigatorParamList } from "~/components/RootNavigator/types
 import { NavigatorName, ScreenName } from "~/const";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { StickyHeader } from "./components/StickyHeader";
-import { Platform, SafeAreaView } from "react-native";
+import { SafeAreaView } from "react-native";
 import { useTheme } from "styled-components/native";
 import { getCurrencyIdsFromTickers, rangeMap } from "./utils";
 import { SwiperComponent } from "~/newArch/components/Swiper/components/Swiper";
@@ -15,13 +15,15 @@ import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
 import { LoadingIndicator } from "./components/Loading";
 import { CardType } from "./types";
-import { TrackScreen } from "~/analytics";
+import { track, TrackScreen } from "~/analytics";
 import { PAGE_NAME } from "./const";
-
-import { useSelector } from "react-redux";
 import { useLargeMoverChartData } from "@ledgerhq/live-common/market/hooks/useLargeMoverChartData";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
+import { OverlayTutorial } from "./components/OverlayTutorial";
+import { useSelector } from "react-redux";
+import { tutorialSelector } from "~/reducers/largeMover";
+
 type LargeMoverLandingPageProps = StackNavigatorProps<
   LandingPagesNavigatorParamList,
   ScreenName.LargeMoverLandingPage
@@ -47,10 +49,22 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
   const navigation = useNavigation<NavigationProp<WalletTabNavigatorStackParamList>>();
 
   const { colors } = useTheme();
-  const constHeight = Platform.OS === "ios" ? 0.75 : 0.8;
-  const height = getWindowDimensions().height * constHeight;
+  const height = getWindowDimensions().height * 0.78;
   const [currentIndex, setCurrentIndex] = useState(0);
+  const showOverlay = useSelector(tutorialSelector);
+  const handleSwipe = (newIndex: number) => {
+    const from = currenciesWithId[currentIndex].data?.name;
+    const to = currenciesWithId[newIndex].data?.name;
 
+    track("large_mover_swipe", {
+      page: PAGE_NAME,
+      button: "Swipe",
+      from,
+      to,
+    });
+
+    setCurrentIndex(newIndex);
+  };
   const currenciesWithId = useMemo(
     () =>
       currencies.map((currency, index) => {
@@ -91,26 +105,28 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
       params: { top100: true },
     });
   }
-
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.neutral.c00, paddingTop: 10 }}>
-      <TrackScreen name={PAGE_NAME} initialRange={initialRange} currencyIds={currencyIds} />
-      <StickyHeader />
-      <Flex paddingTop={40}>
-        {loading && loadingChart ? (
-          <LoadingIndicator height={height} />
-        ) : (
-          <Flex>
-            <SwiperComponent
-              cardContainerStyle={{ justifyContent: "flex-start" }}
-              currentIndex={currentIndex}
-              onIndexChange={setCurrentIndex}
-              initialCards={currenciesWithId}
-              renderCard={renderCard}
-            />
-          </Flex>
-        )}
-      </Flex>
-    </SafeAreaView>
+    <>
+      {showOverlay && !loading && <OverlayTutorial />}
+      <SafeAreaView style={{ flex: 1, backgroundColor: colors.neutral.c00, paddingTop: 40 }}>
+        <TrackScreen name={PAGE_NAME} initialRange={initialRange} currencyIds={currencyIds} />
+        <StickyHeader />
+        <Flex paddingTop={25}>
+          {loading && loadingChart ? (
+            <LoadingIndicator height={height} />
+          ) : (
+            <Flex>
+              <SwiperComponent
+                cardContainerStyle={{ justifyContent: "flex-start" }}
+                currentIndex={currentIndex}
+                onIndexChange={handleSwipe}
+                initialCards={currenciesWithId}
+                renderCard={renderCard}
+              />
+            </Flex>
+          )}
+        </Flex>
+      </SafeAreaView>
+    </>
   );
 };

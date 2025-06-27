@@ -2,7 +2,7 @@ import { renderHook } from "tests/testSetup";
 import { useModularDrawerAnalytics } from "../useModularDrawerAnalytics";
 import { track } from "~/renderer/analytics/segment";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { EVENTS_NAME } from "../types";
+import { EVENTS_NAME } from "../modularDrawer.types";
 
 describe("useModularDrawerAnalytics", () => {
   it("tracks event with default params", () => {
@@ -31,7 +31,10 @@ describe("useModularDrawerAnalytics", () => {
       filter: "topNetworks",
     };
 
-    result.current.trackModularDrawerEvent(eventName, params, false, true, assetsConfig);
+    result.current.trackModularDrawerEvent(eventName, params, {
+      formatAssetConfig: true,
+      assetsConfig,
+    });
 
     expect(track).toHaveBeenCalledWith(eventName, {
       ...params,
@@ -58,14 +61,10 @@ describe("useModularDrawerAnalytics", () => {
       leftElement: "numberOfAccounts",
     };
 
-    result.current.trackModularDrawerEvent(
-      eventName,
-      params,
-      true,
-      false,
-      undefined,
+    result.current.trackModularDrawerEvent(eventName, params, {
+      formatNetworkConfig: true,
       networksConfig,
-    );
+    });
 
     expect(track).toHaveBeenCalledWith(eventName, {
       ...params,

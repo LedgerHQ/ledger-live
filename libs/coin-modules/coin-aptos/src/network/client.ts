@@ -36,7 +36,6 @@ import type {
   GetAccountTransactionsDataQuery,
   GetAccountTransactionsDataGtQueryVariables,
 } from "./graphql/types";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   BlockInfo,
   FeeEstimation,
@@ -44,7 +43,7 @@ import {
   Pagination,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
-import { AptosAsset } from "../types/assets";
+import { AptosAsset, AptosExtra, AptosFeeParameters, AptosSender } from "../types/assets";
 import { log } from "@ledgerhq/logs";
 import { transactionsToOperations } from "../logic/transactionsToOperations";
 import { isTestnet } from "../logic/isTestnet";
@@ -88,13 +87,12 @@ export class AptosAPI {
 
   async getAccountInfo(address: string, startAt?: string) {
     const [balance, transactions, blockHeight] = await Promise.all([
-      this.getCoinBalance(address, APTOS_ASSET_ID),
+      this.getBalances(address, APTOS_ASSET_ID),
       this.fetchTransactions(address, startAt),
       this.getHeight(),
     ]);
-
     return {
-      balance,
+      balance: balance[0]?.amount ?? BigNumber(0),
       transactions,
       blockHeight,
     };
@@ -167,14 +165,6 @@ export class AptosAPI {
     return pendingTx.data.hash;
   }
 
-  async getBalance(address: string, token: TokenCurrency): Promise<BigNumber> {
-    if (token.tokenType === "coin") {
-      return await this.getCoinBalance(address, token.contractAddress);
-    }
-
-    return await this.getFABalance(address, token.contractAddress);
-  }
-
   async getLastBlock(): Promise<BlockInfo> {
     const { block_height } = await this.aptosClient.getLedgerInfo();
     const block = await this.aptosClient.getBlockByHeight({ blockHeight: Number(block_height) });
@@ -185,46 +175,10 @@ export class AptosAPI {
     };
   }
 
-  async getCoinBalance(address: string, contract_address: string): Promise<BigNumber> {
-    try {
-      const [balanceStr] = await this.aptosClient.view<[string]>({
-        payload: {
-          function: "0x1::coin::balance",
-          typeArguments: [contract_address],
-          functionArguments: [address],
-        },
-      });
-      const balance = parseInt(balanceStr, 10);
-      return new BigNumber(balance);
-    } catch (error) {
-      log("error", "getCoinBalance", {
-        error,
-      });
-      return new BigNumber(0);
-    }
-  }
-
-  async getFABalance(address: string, contract_address: string): Promise<BigNumber> {
-    try {
-      const [balanceStr] = await this.aptosClient.view<[string]>({
-        payload: {
-          function: "0x1::primary_fungible_store::balance",
-          typeArguments: ["0x1::object::ObjectCore"],
-          functionArguments: [address, contract_address],
-        },
-      });
-      const balance = parseInt(balanceStr, 10);
-      return new BigNumber(balance);
-    } catch (error) {
-      log("error", "getFABalance", {
-        error,
-      });
-      return new BigNumber(0);
-    }
-  }
-
-  async estimateFees(transactionIntent: TransactionIntent<AptosAsset>): Promise<FeeEstimation> {
-    const publicKeyEd = new Ed25519PublicKey(transactionIntent?.senderPublicKey ?? "");
+  async estimateFees(
+    transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender>,
+  ): Promise<FeeEstimation<AptosFeeParameters>> {
+    const publicKeyEd = new Ed25519PublicKey(transactionIntent.sender.xpub);
 
     const txPayload: InputEntryFunctionData = {
       function: "0x1::aptos_account::transfer_coins",
@@ -254,7 +208,11 @@ export class AptosAPI {
       gasUnitPrice: DEFAULT_GAS_PRICE.toString(),
     };
 
-    const tx = await this.generateTransaction(transactionIntent.sender, txPayload, txOptions);
+    const tx = await this.generateTransaction(
+      transactionIntent.sender.freshAddress,
+      txPayload,
+      txOptions,
+    );
 
     const simulation = await this.simulateTransaction(publicKeyEd, tx);
     const completedTx = simulation[0];
@@ -267,7 +225,6 @@ export class AptosAPI {
     return {
       value: BigInt(expectedGas.toString()),
       parameters: {
-        storageLimit: BigInt(0),
         gasLimit: BigInt(gasLimit.toString()),
         gasPrice: BigInt(gasPrice.toString()),
       },
@@ -349,21 +306,31 @@ export class AptosAPI {
     };
   }
 
-  async getBalances(address: string): Promise<AptosBalance[]> {
-    const response = await this.aptosClient.getCurrentFungibleAssetBalances({
-      options: {
-        offset: 0,
-        limit: 1000,
-        where: {
-          asset_type: { _eq: APTOS_ASSET_ID }, // to return all asset balances (native / token) we should remove this filter
-          owner_address: { _eq: address },
-        },
-      },
-    });
+  async getBalances(address: string, contractAddress?: string): Promise<AptosBalance[]> {
+    try {
+      const whereCondition: any = {
+        owner_address: { _eq: address },
+      };
 
-    return response.map(x => ({
-      contractAddress: x.asset_type ?? "-",
-      amount: BigNumber(x.amount),
-    }));
+      if (contractAddress !== undefined && contractAddress !== "") {
+        whereCondition.asset_type = { _eq: contractAddress };
+      }
+
+      const response = await this.aptosClient.getCurrentFungibleAssetBalances({
+        options: {
+          where: whereCondition,
+        },
+      });
+
+      return response.map(x => ({
+        contractAddress: x.asset_type ?? "",
+        amount: BigNumber(x.amount),
+      }));
+    } catch (error) {
+      log("error", "getCoinBalance", {
+        error,
+      });
+      return [{ amount: BigNumber(0), contractAddress: "" }];
+    }
   }
 }

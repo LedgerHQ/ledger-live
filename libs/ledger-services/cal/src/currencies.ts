@@ -1,5 +1,6 @@
 import network from "@ledgerhq/live-network";
 import { DEFAULT_OPTION, getCALDomain, type ServiceOption } from "./common";
+import { getEnv } from "@ledgerhq/live-env";
 
 // https://github.com/LedgerHQ/crypto-assets-service/blob/master/modules/api/src/main/scala/co/ledger/cal/api/assets/v1/model/asset/Currency.scala#L95
 const OUTPUT_FILTER =
@@ -51,7 +52,11 @@ export type CurrencyData = {
 
 export async function findCurrencyData(
   id: string,
-  { env = "prod", signatureKind = "prod", ref = undefined }: ServiceOption = DEFAULT_OPTION,
+  {
+    env = "prod",
+    signatureKind = "prod",
+    ref = getEnv("CAL_REF") || undefined,
+  }: ServiceOption = DEFAULT_OPTION,
 ): Promise<CurrencyData> {
   // https://github.com/LedgerHQ/crypto-assets-service/blob/master/modules/service/src/main/scala/co/ledger/cal/service/api/ApiCALService.scala#L237
   const { data: currencyData } = await network<CurrencyDataResponse[]>({

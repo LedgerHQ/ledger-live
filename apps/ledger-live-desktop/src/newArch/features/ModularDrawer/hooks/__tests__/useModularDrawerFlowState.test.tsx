@@ -11,6 +11,7 @@ const mockOnAccountSelected = jest.fn();
 const defaultProps = {
   currenciesByProvider: [],
   assetsToDisplay: [ethereumCurrency, bitcoinCurrency],
+  sortedCryptoCurrencies: [bitcoinCurrency, ethereumCurrency],
   setNetworksToDisplay: mockSetNetworksToDisplay,
   currenciesIdsArray: ["bitcoin", "ethereum"],
   goToStep: mockGoToStep,
@@ -57,7 +58,7 @@ describe("useModularDrawerFlowState", () => {
     const { result } = renderHook(() => useModularDrawerFlowState(defaultProps));
     const filtered = [bitcoinCurrency];
     act(() => {
-      result.current.goToNetworkSelection(filtered);
+      result.current.goToNetworkSelection(bitcoinCurrency, filtered);
     });
     expect(mockSetNetworksToDisplay).toHaveBeenCalledWith(filtered);
     expect(mockGoToStep).toHaveBeenCalledWith("NETWORK_SELECTION");

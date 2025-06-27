@@ -27,6 +27,7 @@ describe("useTrackTransactionChecksFlow", () => {
     isOSU: false,
     managerAllowed: false,
     pinValidated: false,
+    seFlags: Buffer.alloc(0),
   };
 
   const appAndVersionMock: AppAndVersion = {

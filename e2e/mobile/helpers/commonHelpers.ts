@@ -3,6 +3,7 @@ import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { exec } from "child_process";
 import { device, log } from "detox";
 import { allure } from "jest-allure2-reporter/api";
+import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
 
 const BASE_DEEPLINK = "ledgerlive://";
 
@@ -26,6 +27,11 @@ export async function openDeeplink(path?: string) {
   await device.openURL({ url: BASE_DEEPLINK + path });
 }
 
+export const describeIfNotNanoS = (...args: Parameters<typeof describe>) =>
+  process.env.SPECULOS_DEVICE !== Device.LNS
+    ? describe(...args)
+    : describe.skip("[not avilable on LNS] " + args[0], args[1]);
+
 export function isAndroid() {
   return device.getPlatform() === "android";
 }
@@ -36,6 +42,14 @@ export function isIos() {
 
 export function isSpeculosRemote() {
   return process.env.REMOTE_SPECULOS === "true";
+}
+
+export async function addDelayBeforeInteractingWithDevice(
+  // TODO: QAA-683
+  delayIos: number = 10_000,
+  ms: number = 0,
+) {
+  await delay(isSpeculosRemote() && isIos() ? delayIos : ms);
 }
 
 export async function launchApp() {
@@ -67,6 +81,7 @@ export function setupEnvironment() {
   setEnv("MOCK", "");
   process.env.MOCK = "";
   setEnv("DETOX", "1");
+  process.env.SPECULOS_DEVICE = process.env.SPECULOS_DEVICE || Device.LNSP;
 
   const disableBroadcastEnv = process.env.DISABLE_TRANSACTION_BROADCAST;
   const shouldBroadcast = disableBroadcastEnv === "0";

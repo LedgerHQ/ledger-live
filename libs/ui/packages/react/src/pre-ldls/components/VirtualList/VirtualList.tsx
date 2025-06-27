@@ -16,6 +16,10 @@ interface VirtualItem {
  */
 type VirtualListProps<T> = {
   /**
+   * Gap between items in the list.
+   */
+  gap?: number;
+  /**
    * Height of each item in the list.
    * This is used to calculate the total height of the list and the position of each item.
    */
@@ -61,6 +65,10 @@ type VirtualListProps<T> = {
    * When set to true, the list will scroll to the top
    */
   scrollToTop?: boolean;
+  /**
+   * React component or node to display at the bottom of the list, after all items.
+   */
+  bottomComponent?: React.ReactNode;
 };
 
 const DefaultLoadingComponent = () => (
@@ -74,16 +82,18 @@ function easeInOutCubic(t: number) {
 }
 
 export const VirtualList = <T,>({
-  itemHeight,
-  overscan = 5,
-  LoadingComponent,
-  isLoading,
+  gap,
   hasNextPage = false,
-  threshold = 5,
+  isLoading,
+  itemHeight,
   items,
+  LoadingComponent,
   onVisibleItemsScrollEnd,
+  overscan = 5,
   renderItem,
   scrollToTop = false,
+  bottomComponent,
+  threshold = 5,
 }: VirtualListProps<T>) => {
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -126,6 +136,7 @@ export const VirtualList = <T,>({
   );
 
   const rowVirtualizer = useVirtualizer({
+    gap,
     count: hasNextPage ? items.length + 1 : items.length,
     overscan,
     getScrollElement: () => parentRef.current,
@@ -166,6 +177,8 @@ export const VirtualList = <T,>({
         style={{
           height: `${rowVirtualizer.getTotalSize()}px`,
           width: "100%",
+          display: "flex",
+          flexDirection: "column",
           position: "relative",
         }}
       >
@@ -186,6 +199,18 @@ export const VirtualList = <T,>({
             {renderItem(items[virtualRow.index])}
           </div>
         ))}
+        {bottomComponent && (
+          <div
+            style={{
+              position: "absolute",
+              top: `${rowVirtualizer.getTotalSize()}px`,
+              left: 0,
+              width: "100%",
+            }}
+          >
+            {bottomComponent}
+          </div>
+        )}
       </div>
       {isLoading && (showCustomLoadingComponent ? LoadingComponent : <DefaultLoadingComponent />)}
     </div>
