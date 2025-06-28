@@ -1,5 +1,36 @@
 # ledger-live-desktop
 
+## 2.119.0-nightly.2
+
+### Minor Changes
+
+- [#10676](https://github.com/LedgerHQ/ledger-live/pull/10676) [`c441874`](https://github.com/LedgerHQ/ledger-live/commit/c4418745b64aa62aa43d32e2dc45c39a353b94fd) Thanks [@Canestin](https://github.com/Canestin)! - format the deprecate banner date according to the language
+
+- [#10668](https://github.com/LedgerHQ/ledger-live/pull/10668) [`c3c2069`](https://github.com/LedgerHQ/ledger-live/commit/c3c2069976c43ebca2bce7896036efd071a22814) Thanks [@sergiubreban](https://github.com/sergiubreban)! - handle min require version for native stablecoinyield
+
+- [#10703](https://github.com/LedgerHQ/ledger-live/pull/10703) [`10b8c8e`](https://github.com/LedgerHQ/ledger-live/commit/10b8c8e2d3557df966d19b6436eac6354fa371bf) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Adjust UI changes
+
+- [#10708](https://github.com/LedgerHQ/ledger-live/pull/10708) [`de6d94f`](https://github.com/LedgerHQ/ledger-live/commit/de6d94f560768a27c4fce4efd1252727a0e956ef) Thanks [@LucasWerey](https://github.com/LucasWerey)! - ADD account force cvs update with the wanted currency + handle no cvs available + display balance
+
+### Patch Changes
+
+- Updated dependencies [[`c3c2069`](https://github.com/LedgerHQ/ledger-live/commit/c3c2069976c43ebca2bce7896036efd071a22814), [`10f6435`](https://github.com/LedgerHQ/ledger-live/commit/10f6435555b718e51ba050009b95400e43f47498)]:
+  - @ledgerhq/types-live@6.75.0-nightly.2
+  - @ledgerhq/live-common@34.39.0-nightly.1
+  - @ledgerhq/coin-framework@5.4.1-nightly.2
+  - @ledgerhq/coin-aptos@2.3.2-nightly.0
+  - @ledgerhq/coin-bitcoin@0.16.2-nightly.2
+  - @ledgerhq/coin-cosmos@0.15.3-nightly.2
+  - @ledgerhq/coin-evm@2.22.5-nightly.3
+  - @ledgerhq/coin-filecoin@1.9.11-nightly.2
+  - @ledgerhq/domain-service@1.2.34-nightly.2
+  - @ledgerhq/live-countervalues@0.5.11-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.40-nightly.2
+  - @ledgerhq/live-nft@0.8.11-nightly.2
+  - @ledgerhq/live-nft-react@0.9.11-nightly.2
+  - @ledgerhq/live-wallet@0.11.2-nightly.2
+  - @ledgerhq/live-dmk-desktop@0.5.2-nightly.1
+
 ## 2.119.0-nightly.1
 
 ### Minor Changes

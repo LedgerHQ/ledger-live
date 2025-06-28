@@ -1,5 +1,34 @@
 # live-mobile
 
+## 3.84.0-nightly.6
+
+### Minor Changes
+
+- [#10676](https://github.com/LedgerHQ/ledger-live/pull/10676) [`c441874`](https://github.com/LedgerHQ/ledger-live/commit/c4418745b64aa62aa43d32e2dc45c39a353b94fd) Thanks [@Canestin](https://github.com/Canestin)! - format the deprecate banner date according to the language
+
+- [#10687](https://github.com/LedgerHQ/ledger-live/pull/10687) [`de329a3`](https://github.com/LedgerHQ/ledger-live/commit/de329a37f29c511e82ad1d7fa8064e3328d5d664) Thanks [@themooneer](https://github.com/themooneer)! - Error and description exclusion from Datadog RUM
+
+- [#10668](https://github.com/LedgerHQ/ledger-live/pull/10668) [`c3c2069`](https://github.com/LedgerHQ/ledger-live/commit/c3c2069976c43ebca2bce7896036efd071a22814) Thanks [@sergiubreban](https://github.com/sergiubreban)! - handle min require version for native stablecoinyield
+
+- [#10704](https://github.com/LedgerHQ/ledger-live/pull/10704) [`4a2ca05`](https://github.com/LedgerHQ/ledger-live/commit/4a2ca054d2863ba0491371cb8ecca711c6f29cd8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - MAD -Base drawer + simple navigation
+
+### Patch Changes
+
+- Updated dependencies [[`c3c2069`](https://github.com/LedgerHQ/ledger-live/commit/c3c2069976c43ebca2bce7896036efd071a22814)]:
+  - @ledgerhq/types-live@6.75.0-nightly.2
+  - @ledgerhq/coin-framework@5.4.1-nightly.2
+  - @ledgerhq/coin-cosmos@0.15.3-nightly.2
+  - @ledgerhq/coin-evm@2.22.5-nightly.3
+  - @ledgerhq/coin-filecoin@1.9.11-nightly.2
+  - @ledgerhq/coin-multiversx@0.4.11-nightly.2
+  - @ledgerhq/coin-stacks@0.8.11-nightly.2
+  - @ledgerhq/domain-service@1.2.34-nightly.2
+  - @ledgerhq/live-countervalues@0.5.11-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.40-nightly.2
+  - @ledgerhq/live-nft@0.8.11-nightly.2
+  - @ledgerhq/live-nft-react@0.9.11-nightly.2
+  - @ledgerhq/live-wallet@0.11.2-nightly.2
+
 ## 3.84.0-nightly.5
 
 ### Minor Changes

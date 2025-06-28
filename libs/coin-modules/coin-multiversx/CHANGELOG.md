@@ -1,5 +1,13 @@
 # @ledgerhq/coin-elrond
 
+## 0.4.11-nightly.2
+
+### Patch Changes
+
+- Updated dependencies [[`c3c2069`](https://github.com/LedgerHQ/ledger-live/commit/c3c2069976c43ebca2bce7896036efd071a22814)]:
+  - @ledgerhq/types-live@6.75.0-nightly.2
+  - @ledgerhq/coin-framework@5.4.1-nightly.2
+
 ## 0.4.11-nightly.1
 
 ### Patch Changes

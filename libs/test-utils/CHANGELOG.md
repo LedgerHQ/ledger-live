@@ -1,5 +1,12 @@
 # @ledgerhq/test-utils
 
+## 0.3.19-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`10f6435`](https://github.com/LedgerHQ/ledger-live/commit/10f6435555b718e51ba050009b95400e43f47498)]:
+  - @ledgerhq/live-common@34.39.0-nightly.1
+
 ## 0.3.19-nightly.0
 
 ### Patch Changes
