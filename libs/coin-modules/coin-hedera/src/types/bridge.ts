@@ -1,9 +1,12 @@
 import type {
+  Account,
+  AccountRaw,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 
 export type NetworkInfo = {
   family: "hedera";
@@ -26,6 +29,24 @@ export type TransactionRaw = TransactionCommonRaw & {
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export interface HederaResources {
+  stakingNodeId: number | null;
+  stakingPendingReward: BigNumber;
+}
+
+export interface HederaResourcesRaw {
+  stakingNodeId: number | null;
+  stakingPendingReward: string;
+}
+
+export type HederaAccount = Account & {
+  hederaResources?: HederaResources;
+};
+
+export type HederaAccountRaw = AccountRaw & {
+  hederaResources?: HederaResourcesRaw;
+};
 
 export type HederaOperationExtra = {
   consensusTimestamp?: string;

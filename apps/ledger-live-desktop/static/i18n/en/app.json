@@ -6651,6 +6651,15 @@
     "currentAddress": {
       "messageIfVirtual": "Your {{name}} address cannot be confirmed on your Ledger device. Use at your own risk."
     },
+    "account": {
+      "delegated": {
+        "title": "Delegated assets",
+        "tooltip": "FIXME:"
+      },
+      "claimable": {
+        "title": "Claimable rewards"
+      }
+    },
     "send": {
       "memo": {
         "label": "Memo (optional)",

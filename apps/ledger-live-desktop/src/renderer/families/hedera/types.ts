@@ -1,9 +1,13 @@
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/hedera/types";
+import type {
+  HederaAccount,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/hedera/types";
 
-import { Account, Operation } from "@ledgerhq/types-live";
-import { LLDCoinFamily } from "../types";
+import type { Account, Operation } from "@ledgerhq/types-live";
+import type { LLDCoinFamily } from "../types";
 
-export type HederaFamily = LLDCoinFamily<Account, Transaction, TransactionStatus, Operation>;
+export type HederaFamily = LLDCoinFamily<HederaAccount, Transaction, TransactionStatus, Operation>;
 
 export type SendAmountProps = {
   account: Account;

@@ -6,18 +6,18 @@ import {
 } from "@ledgerhq/coin-framework/derivation";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import { getAccountsForPublicKey, getOperationsForAccount } from "../api/mirror";
+import { getAccount, getAccountsForPublicKey, getOperationsForAccount } from "../api/mirror";
 import {
   GetAccountShape,
   IterateResultBuilder,
   mergeOps,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account";
-import { getAccountBalance } from "../api/network";
+import { HederaAccount } from "../types";
 
 export const getAccountShape: GetAccountShape<Account> = async (
   info: any,
-): Promise<Partial<Account>> => {
+): Promise<Partial<HederaAccount>> => {
   const { currency, derivationMode, address, initialAccount } = info;
 
   invariant(address, "an hedera address is expected");
@@ -31,7 +31,8 @@ export const getAccountShape: GetAccountShape<Account> = async (
   });
 
   // get current account balance
-  const accountBalance = await getAccountBalance(address);
+  const mirrorAccount = await getAccount(address);
+  const accountBalance = new BigNumber(mirrorAccount.balance.balance);
 
   // grab latest operation's consensus timestamp for incremental sync
   const oldOperations = initialAccount?.operations ?? [];
@@ -50,18 +51,22 @@ export const getAccountShape: GetAccountShape<Account> = async (
   return {
     id: liveAccountId,
     freshAddress: address,
-    balance: accountBalance.balance,
-    spendableBalance: accountBalance.balance,
+    balance: accountBalance,
+    spendableBalance: accountBalance,
     operations,
     // NOTE: there are no "blocks" in hedera
     // Set a value just so that operations are considered confirmed according to isConfirmedOperation
     blockHeight: 10,
+    hederaResources: {
+      stakingNodeId: mirrorAccount.staked_node_id,
+      stakingPendingReward: new BigNumber(mirrorAccount.pending_reward),
+    },
   };
 };
 
 export const buildIterateResult: IterateResultBuilder = async ({ result: rootResult }) => {
   const accounts = await getAccountsForPublicKey(rootResult.publicKey);
-  const addresses = accounts.map(a => a.accountId.toString());
+  const addresses = accounts.map(a => a.account);
 
   return async ({ currency, derivationMode, index }) => {
     const derivationScheme = getDerivationScheme({
