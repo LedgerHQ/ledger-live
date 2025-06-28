@@ -29,7 +29,7 @@ export const useAccountFormatter = () => {
 
   return useCallback(
     (account: Account): FormattedAccount => {
-      const { fiatValue } = getBalanceAndFiatValue(
+      const { fiatValue, balance } = getBalanceAndFiatValue(
         account,
         countervaluesState,
         counterValueCurrency,
@@ -43,6 +43,7 @@ export const useAccountFormatter = () => {
         address: formatAddress(account.freshAddress),
         cryptoId: account.currency.id,
         fiatValue,
+        balance,
         protocol: protocol || "",
         id: account.id,
         name: accountName,

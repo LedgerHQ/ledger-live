@@ -22,6 +22,7 @@ import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 import { useSettings } from "~/hooks";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { EarnWebview } from "./EarnWebview";
+import { useVersionedStakePrograms } from "LLM/hooks/useStake/useVersionedStakePrograms";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
 
@@ -56,7 +57,7 @@ function Earn({ route }: Props) {
   const manifest: LiveAppManifest | undefined = !localManifest ? remoteManifest : localManifest;
   const countryLocale = getCountryLocale();
 
-  const stakePrograms = useFeature("stakePrograms");
+  const stakePrograms = useVersionedStakePrograms();
   const { stakeProgramsParam } = useMemo(
     () => stakeProgramsToEarnParam(stakePrograms),
     [stakePrograms],

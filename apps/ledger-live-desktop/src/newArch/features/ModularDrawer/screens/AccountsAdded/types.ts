@@ -3,7 +3,8 @@ import { Account } from "@ledgerhq/types-live";
 export interface FormattedAccount {
   address: string;
   cryptoId: string;
-  fiatValue: string;
+  fiatValue?: string;
+  balance: string;
   protocol: string;
   id: string;
   name: string;

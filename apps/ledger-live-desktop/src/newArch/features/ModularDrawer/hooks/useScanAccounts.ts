@@ -113,7 +113,12 @@ export function useScanAccounts({
 
   const formatAccount = useCallback(
     (account: Account): AccountItem => {
-      const { fiatValue } = getBalanceAndFiatValue(account, state, counterValueCurrency, discreet);
+      const { fiatValue, balance } = getBalanceAndFiatValue(
+        account,
+        state,
+        counterValueCurrency,
+        discreet,
+      );
       const protocol =
         account.type === "Account" &&
         account?.derivationMode !== undefined &&
@@ -125,6 +130,7 @@ export function useScanAccounts({
         address: formatAddress(account.freshAddress),
         cryptoId: account.currency.id,
         fiatValue,
+        balance,
         protocol: protocol || "",
         id: account.id,
         name: accountNameWithDefaultSelector(walletState, account),

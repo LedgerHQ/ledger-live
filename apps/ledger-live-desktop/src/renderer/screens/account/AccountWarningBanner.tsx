@@ -6,6 +6,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { urls } from "~/config/urls";
 import TopBanner from "~/renderer/components/TopBanner";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { dayFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import { openURL } from "~/renderer/linking";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
@@ -15,6 +16,7 @@ type Props = {
 
 const AccountWarningBanner = ({ currency }: Props) => {
   const { t } = useTranslation();
+  const formatDate = useDateFormatter(dayFormat);
   const localizedContactSupportURL = useLocalizedUrl(urls.contactSupportWebview);
 
   let currencyConfig: CurrencyConfig | undefined = undefined;
@@ -91,7 +93,7 @@ const AccountWarningBanner = ({ currency }: Props) => {
           content={{
             message: t("account.willBeDeprecatedBanner.title", {
               currencyName: currency.name,
-              deprecatedDate: currencyConfig.status.deprecated_date,
+              deprecatedDate: formatDate(new Date(currencyConfig.status.deprecated_date)),
             }),
           }}
           link={{

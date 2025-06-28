@@ -17,6 +17,11 @@ on:
         description: Ref to checkout
         required: false
         type: string
+      skip-bundle-size-reporting:
+        description: Whether to skip the bundle size reporting
+        required: false
+        type: boolean
+        default: false
 
   workflow_dispatch:
     inputs:
@@ -546,7 +551,7 @@ jobs:
   report-bundle-sizes:
     name: "Build Mobile > Report Bundle Sizes"
     runs-on: ledger-live-medium
-    if: needs.build-ios.outputs.js-bundle-size != '' && needs.build-android.outputs.js-bundle-size != ''
+    if: needs.build-ios.outputs.js-bundle-size != '' && needs.build-android.outputs.js-bundle-size != '' && !inputs.skip-bundle-size-reporting
     needs: [ build-ios, build-android ]
     steps:
       - name: generate token

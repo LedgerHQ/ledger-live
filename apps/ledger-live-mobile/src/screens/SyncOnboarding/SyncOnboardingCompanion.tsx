@@ -50,9 +50,10 @@ import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
 import SecretRecoveryPhraseImage from "./assets/srp.png";
-import CharonImage from "./assets/charon.png";
 import BackgroundBlue from "./assets/BackgroundBlue";
 import BackgroundRed from "./assets/BackgroundRed";
+import Animation from "~/components/Animation";
+import CHARON from "~/animations/device/charon/charon.json";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 
@@ -712,8 +713,8 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                     <TrackScreen category="Set up device: Step 3 Charon Backup Success" />
                   ) : null}
                   <Flex alignItems="center" justifyContent="center">
-                    <Flex style={{ overflow: "visible", height: 100 }} mt={3}>
-                      <Image resizeMode="contain" source={CharonImage} style={{ height: 170 }} />
+                    <Flex style={{ overflow: "visible", height: 100 }} mt={3} mb={6}>
+                      <Animation style={{ height: 100 }} source={CHARON} />
                     </Flex>
                     <Text variant="h5" fontWeight="semiBold" mb={6}>
                       {t("syncOnboarding.seedStep.backupCharon.title")}

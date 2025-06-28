@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import type { CheckboxProps } from "../../../components/form/Checkbox/Checkbox";
-import { Checkbox, Icon, Text, Box } from "../../../components";
+import { Checkbox, Icon, Text, Flex } from "../../../components";
 import { withTokens } from "../../libs";
 import { Address } from "../Address/Address";
 import { Tag } from "../Tag/Tag";
@@ -10,7 +10,7 @@ export type Account = {
   address: string;
   balance?: string;
   cryptoId?: string;
-  fiatValue: string;
+  fiatValue?: string;
   id: string;
   name: string;
   parentId?: string;
@@ -176,7 +176,7 @@ export const AccountItem = ({
           />
         </AccountInfoContainer>
         <BalanceContainer>
-          <Text fontSize="14px">{fiatValue}</Text>
+          {fiatValue && <Text fontSize="14px">{fiatValue}</Text>}
           {balance && (
             <Text fontSize="12px" color="var(--colors-content-subdued-default-default)">
               {balance}
@@ -184,14 +184,14 @@ export const AccountItem = ({
           )}
         </BalanceContainer>
         {rightElement && rightElement.type === "checkbox" && (
-          <Box data-testid="right-element-checkbox">
+          <Flex data-testid="right-element-checkbox">
             <Checkbox {...rightElement.checkbox} size={20} />
-          </Box>
+          </Flex>
         )}
         {rightElement && rightElement.type === "arrow" && (
-          <Box data-testid="right-element-arrow-icon">
+          <Flex data-testid="right-element-arrow-icon">
             <Icon name="ChevronRight" size={24} />
-          </Box>
+          </Flex>
         )}
       </ContentContainer>
     </Wrapper>
