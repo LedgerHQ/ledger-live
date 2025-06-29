@@ -1,9 +1,6 @@
-import React, { useCallback, useEffect } from "react";
 import { Flex } from "@ledgerhq/react-ui";
+import { default as React, useCallback, useEffect } from "react";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { SuccessIcon, ActionButtons, AccountList, Title } from "./components";
-import { useAccountFormatter } from "./hooks";
-import { AccountsAddedProps } from "./types";
 import {
   ADD_ACCOUNT_EVENTS_NAME,
   ADD_ACCOUNT_FLOW_NAME,
@@ -11,6 +8,10 @@ import {
 } from "../../analytics/addAccount.types";
 import { TrackAddAccountScreen } from "../../analytics/TrackAddAccountScreen";
 import useAddAccountAnalytics from "../../analytics/useAddAccountAnalytics";
+import { ScrollContainer } from "../../components/ScrollContainer";
+import { AccountList, ActionButtons, SuccessIcon, Title } from "./components";
+import { useAccountFormatter } from "./hooks";
+import { AccountsAddedProps } from "./types";
 
 export const AccountsAdded = ({
   accounts,
@@ -52,9 +53,9 @@ export const AccountsAdded = ({
         <SuccessIcon />
         <Title accountsCount={accounts.length} />
       </Flex>
-      <Flex flex={1} minHeight={0}>
+      <ScrollContainer>
         <AccountList accounts={accounts} formatAccount={formatAccount} />
-      </Flex>
+      </ScrollContainer>
 
       <ActionButtons
         onAddFunds={handleAddFunds}
