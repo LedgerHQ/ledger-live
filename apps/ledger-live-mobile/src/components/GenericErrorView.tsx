@@ -72,7 +72,7 @@ const GenericErrorView = ({
       alignItems={"center"}
       alignSelf="stretch"
       mt={7}
-      testID="generic-error-view"
+      testID="generic-error-modal"
     >
       <GenericInformationBody
         Icon={Icon}

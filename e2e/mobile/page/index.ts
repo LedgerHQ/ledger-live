@@ -31,6 +31,7 @@ import path from "path";
 import fs from "fs";
 import { setupEnvironment } from "../helpers/commonHelpers";
 import { InitializationManager, InitOptions } from "../utils/initUtil";
+import { randomUUID } from "crypto";
 
 setupEnvironment();
 
@@ -79,7 +80,7 @@ export class Application {
 
   @Step("Account initialization")
   public async init(options: ApplicationOptions) {
-    const key = `temp-userdata-${Date.now()}`;
+    const key = `temp-userdata-${randomUUID()}`;
     const userdataPath = getUserdataPath(key);
     fs.copyFileSync(getUserdataPath(options.userdata || "skip-onboarding"), userdataPath);
     try {

@@ -1,8 +1,7 @@
-import { delay, isRemoteIos, openDeeplink } from "../../helpers/commonHelpers";
+import { delay, openDeeplink } from "../../helpers/commonHelpers";
 import CommonPage from "../common.page";
 import { retryUntilTimeout } from "../../utils/retry";
-import { checkForErrorModals } from "../../modals/errorModal";
-import { waitForSpeculosReady } from "@ledgerhq/live-common/lib/e2e/speculosCI";
+import { checkForErrorModals } from "../../helpers/errorHelpers";
 
 export default class AddAccountDrawer extends CommonPage {
   baseLink = "add-account";
@@ -28,12 +27,6 @@ export default class AddAccountDrawer extends CommonPage {
 
   @Step("Wait for accounts discovery")
   async waitAccountsDiscovery() {
-    if (isRemoteIos()) {
-      await waitForSpeculosReady(
-        process.env.SPECULOS_ADDRESS!,
-        `Unable to reach remote Speculos at ${process.env.SPECULOS_ADDRESS!}`,
-      );
-    }
     const DISCOVERY_TIMEOUT = 240000;
     const ERROR_CHECK_INTERVAL = 2000;
     const startTime = Date.now();

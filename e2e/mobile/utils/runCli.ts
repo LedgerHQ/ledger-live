@@ -12,21 +12,12 @@ function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-/**
- * Extracts flag values from a CLI-style `+`-separated string.
- */
 function extractFlagValue(command: string, flag: string): string | undefined {
   const parts = command.split("+");
   const idx = parts.findIndex(p => p === `--${flag}`);
   return idx !== -1 && idx + 1 < parts.length ? parts[idx + 1] : undefined;
 }
 
-/**
- * Executes a command in the CLI with given arguments.
- * @param command - The command and its arguments as a single string.
- * @param speculosAddress - The Speculos address for this command (optional).
- * @returns Resolves with the output of the command or rejects on failure.
- */
 export function runCliCommand(command: string, speculosAddress?: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const args = command.split("+");
@@ -71,14 +62,6 @@ export function runCliCommand(command: string, speculosAddress?: string): Promis
   });
 }
 
-/**
- * Executes a CLI command with retries on failure.
- *
- * @param command The CLI command string (args joined by '+').
- * @param speculosAddress
- * @param retries How many times to retry on failure (default 3).
- * @param delayMs How long to wait between retries in ms (default 1000).
- */
 export async function runCliCommandWithRetry(
   command: string,
   speculosAddress?: string,
