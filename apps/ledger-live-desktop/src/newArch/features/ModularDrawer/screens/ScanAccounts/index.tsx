@@ -1,19 +1,20 @@
 import { Box, Flex, Text } from "@ledgerhq/react-ui";
 import { AccountItem } from "@ledgerhq/react-ui/pre-ldls/components/AccountItem/AccountItem";
 import { Account } from "@ledgerhq/types-live";
-import { default as React } from "react";
-import TrackPage from "~/renderer/analytics/TrackPage";
-import { MODULAR_DRAWER_ADD_ACCOUNT_CATEGORY } from "../../types";
-import { useTheme } from "styled-components";
 import { LoadingOverlay } from "LLD/components/LoadingOverlay";
-import { useScanAccounts, type UseScanAccountsProps } from "../../hooks/useScanAccounts";
-import { userThemeSelector } from "~/renderer/reducers/settings";
+import { default as React } from "react";
+import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
+import { useTheme } from "styled-components";
+import TrackPage from "~/renderer/analytics/TrackPage";
+import ErrorDisplay from "~/renderer/components/ErrorDisplay";
+import { userThemeSelector } from "~/renderer/reducers/settings";
+import { ScrollContainer } from "../../components/ScrollContainer";
+import { useScanAccounts, type UseScanAccountsProps } from "../../hooks/useScanAccounts";
+import { MODULAR_DRAWER_ADD_ACCOUNT_CATEGORY } from "../../types";
+import { CreatableAccountsList } from "./components/CreatableAccountsList";
 import { Footer } from "./components/Footer";
 import { ImportableAccountsList } from "./components/ImportableAccountsList";
-import { CreatableAccountsList } from "./components/CreatableAccountsList";
-import { useTranslation } from "react-i18next";
-import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 
 interface Props extends UseScanAccountsProps {
   analyticsPropertyFlow?: string;
@@ -87,7 +88,7 @@ const ScanAccounts = ({
         currencyName={currency.name}
       />
       {scanning ? <LoadingOverlay theme={currentTheme || "dark"} /> : null}
-      <Flex width="100%" alignItems="center">
+      <Flex marginBottom={24}>
         <Text
           fontSize={24}
           flex={1}
@@ -103,7 +104,7 @@ const ScanAccounts = ({
         </Text>
       </Flex>
 
-      <Flex flex={1} flexDirection="column" overflow="auto">
+      <ScrollContainer>
         {importableAccounts.length > 0 ? (
           <ImportableAccountsList
             scanning={scanning}
@@ -124,12 +125,13 @@ const ScanAccounts = ({
             renderAccount={renderAccount}
           />
         ) : null}
-      </Flex>
+      </ScrollContainer>
       <Footer
+        handleConfirm={handleConfirm}
+        importableAccounts={importableAccounts}
         scanning={scanning}
         selectedIds={selectedIds}
         stopSubscription={stopSubscription}
-        handleConfirm={handleConfirm}
       />
     </>
   );
