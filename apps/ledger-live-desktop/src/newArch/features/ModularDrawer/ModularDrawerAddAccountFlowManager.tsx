@@ -158,7 +158,6 @@ const ModularDrawerAddAccountFlowManager = ({ currency, source, onAccountSelecte
           width="100%"
           paddingBottom={40}
           paddingX="8px"
-          rowGap={24}
         >
           {renderStepContent(currentStep)}
         </Flex>

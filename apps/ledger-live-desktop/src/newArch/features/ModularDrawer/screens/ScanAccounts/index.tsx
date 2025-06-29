@@ -10,6 +10,7 @@ import { useTheme } from "styled-components";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { userThemeSelector } from "~/renderer/reducers/settings";
 import { ADD_ACCOUNT_FLOW_NAME, ADD_ACCOUNT_PAGE_NAME } from "../../analytics/addAccount.types";
+import { ScrollContainer } from "../../components/ScrollContainer";
 import { useScanAccounts, type UseScanAccountsProps } from "../../hooks/useScanAccounts";
 import { CreatableAccountsList } from "./components/CreatableAccountsList";
 import { Footer } from "./components/Footer";
@@ -89,7 +90,7 @@ const ScanAccounts = ({
         flow={ADD_ACCOUNT_FLOW_NAME}
       />
       {scanning ? <LoadingOverlay theme={currentTheme || "dark"} /> : null}
-      <Flex width="100%" alignItems="center">
+      <Flex marginBottom={24}>
         <Text
           fontSize={24}
           flex={1}
@@ -105,15 +106,7 @@ const ScanAccounts = ({
         </Text>
       </Flex>
 
-      <Flex
-        flex={1}
-        flexDirection="column"
-        overflow="auto"
-        position="relative"
-        style={{
-          scrollbarWidth: "none",
-        }}
-      >
+      <ScrollContainer>
         {importableAccounts.length > 0 ? (
           <ImportableAccountsList
             scanning={scanning}
@@ -134,7 +127,7 @@ const ScanAccounts = ({
             renderAccount={renderAccount}
           />
         ) : null}
-      </Flex>
+      </ScrollContainer>
       <Footer
         handleConfirm={handleConfirm}
         importableAccounts={importableAccounts}
