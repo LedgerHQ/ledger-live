@@ -15,6 +15,7 @@
     "src/assets/images/images.d.ts",
     "src/components/Table/stories.helper.tsx",
     "src/components/helpers.ts",
+    "src/helpers.types.ts",
     "src/components/navigation/Aside/stories.helper.tsx",
     "src/pre-ldls/components/sharedStoryBook.tsx",
     "src/pre-ldls/types.ts"
