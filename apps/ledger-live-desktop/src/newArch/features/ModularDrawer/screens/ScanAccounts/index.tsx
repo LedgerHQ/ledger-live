@@ -4,7 +4,7 @@ import { Account } from "@ledgerhq/types-live";
 import { default as React } from "react";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { MODULAR_DRAWER_ADD_ACCOUNT_CATEGORY } from "../../types";
-import { useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { LoadingOverlay } from "LLD/components/LoadingOverlay";
 import { useScanAccounts, type UseScanAccountsProps } from "../../hooks/useScanAccounts";
 import { userThemeSelector } from "~/renderer/reducers/settings";
@@ -103,7 +103,15 @@ const ScanAccounts = ({
         </Text>
       </Flex>
 
-      <Flex flex={1} flexDirection="column" overflow="auto">
+      <Flex
+        flex={1}
+        flexDirection="column"
+        overflow="auto"
+        position="relative"
+        style={{
+          scrollbarWidth: "none",
+        }}
+      >
         {importableAccounts.length > 0 ? (
           <ImportableAccountsList
             scanning={scanning}
