@@ -7,6 +7,7 @@ import detox from "detox/internals";
 import path from "path";
 import { glob } from "glob";
 import { log } from "detox";
+import { detoxSync } from "./utils/detoxSyncManager";
 
 const ARTIFACT_ENV_PATH = path.resolve("artifacts/environment.properties");
 const USERDATA_DIR = path.resolve(__dirname, "userdata");
@@ -15,6 +16,14 @@ const USERDATA_GLOB = path.join(USERDATA_DIR, "temp-userdata-*.json");
 const shouldManageDetox = detox.getStatus() === "inactive";
 
 export default async () => {
+  // Cleanup DetoxSync state before teardown
+  try {
+    await detoxSync.forceEnableSync();
+    log.info("✅ DetoxSync cleanup completed");
+  } catch (error) {
+    log.warn("⚠️ DetoxSync cleanup failed:", error);
+  }
+
   if (process.env.CI) {
     try {
       await initDetox();
@@ -65,11 +74,9 @@ async function cleanupDetox() {
 async function cleanupUserdata() {
   try {
     const files = await glob(USERDATA_GLOB);
-    for (const f of files) {
-      await fs.unlink(f);
-      log.info(`🧹 removed temp‑userdata file: ${path.basename(f)}`);
-    }
-  } catch (err) {
-    log.warn("🧹 failed to cleanup temp‑userdata files:", err);
+    await Promise.all(files.map(file => fs.unlink(file)));
+    log.info(`Cleaned up ${files.length} userdata files`);
+  } catch (error) {
+    log.warn("Failed to cleanup userdata files:", error);
   }
 }

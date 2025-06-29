@@ -4,6 +4,7 @@ import { exec } from "child_process";
 import { device, log } from "detox";
 import { allure } from "jest-allure2-reporter/api";
 import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
+import { detoxSync } from "../utils/detoxSyncManager";
 
 const BASE_DEEPLINK = "ledgerlive://";
 
@@ -30,18 +31,30 @@ export async function openDeeplink(path?: string) {
 export const describeIfNotNanoS = (...args: Parameters<typeof describe>) =>
   process.env.SPECULOS_DEVICE !== Device.LNS
     ? describe(...args)
-    : describe.skip("[not avilable on LNS] " + args[0], args[1]);
+    : describe.skip("[not available on LNS] " + args[0], args[1]);
 
 export function isAndroid() {
   return device.getPlatform() === "android";
 }
 
-export function isIos() {
+export function isIos(): boolean {
   return device.getPlatform() === "ios";
 }
 
-export function isSpeculosRemote() {
+export function isSpeculosRemote(): boolean {
   return process.env.REMOTE_SPECULOS === "true";
+}
+
+export function isRemoteIos(): boolean {
+  return isSpeculosRemote() && isIos();
+}
+
+export function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
 export async function addDelayBeforeInteractingWithDevice(
@@ -105,3 +118,179 @@ export const logMemoryUsage = async (): Promise<void> => {
     },
   );
 };
+
+export async function waitForAppResponsiveness(
+  maxAttempts: number = 10,
+  intervalMs: number = 2000,
+): Promise<void> {
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const testElement = element(by.id("NavigationHeaderCloseButton")).atIndex(0);
+
+      await waitFor(testElement).toBeVisible().withTimeout(1000);
+      log.info(`✅ App is responsive (attempt ${attempt}/${maxAttempts})`);
+      return;
+    } catch (error) {
+      if (attempt === maxAttempts) {
+        log.warn(`⚠️ App still unresponsive after ${maxAttempts} attempts`);
+        await delay(5000);
+        return;
+      }
+
+      log.info(`🔄 App unresponsive, waiting ${intervalMs}ms (attempt ${attempt}/${maxAttempts})`);
+      await delay(intervalMs);
+    }
+  }
+}
+
+export async function waitForDeviceActionCompletion(
+  loadingElementId: string,
+  maxWaitMs: number = 60000,
+): Promise<void> {
+  const startTime = Date.now();
+
+  try {
+    await detoxSync.setState("busy");
+
+    await waitFor(element(by.id(loadingElementId)))
+      .not.toBeVisible()
+      .withTimeout(maxWaitMs);
+
+    log.info("✅ Device action loading completed");
+
+    await waitForAppResponsiveness();
+  } catch (error) {
+    const elapsed = Date.now() - startTime;
+    log.warn(`⚠️ Device action completion timeout after ${elapsed}ms`);
+
+    await waitForAppResponsiveness(5, 1000);
+  } finally {
+    await detoxSync.setState("idle");
+  }
+}
+
+export async function waitForDeviceStreamingCompletion(
+  maxWaitMs: number = 120000, // 2 minutes for streaming
+  progressCheckInterval: number = 3000,
+): Promise<void> {
+  const startTime = Date.now();
+  log.info("🔄 Waiting for device streaming to complete...");
+
+  try {
+    await detoxSync.setState("streaming");
+
+    while (Date.now() - startTime < maxWaitMs) {
+      try {
+        const progressElement = element(by.text(/Loading\.\.\.\s*\(\d+%\)/));
+        const isProgressVisible = await progressElement.getAttributes().then(
+          () => true,
+          () => false,
+        );
+
+        if (!isProgressVisible) {
+          log.info("✅ Device streaming completed");
+          await waitForAppResponsiveness();
+          return;
+        }
+
+        try {
+          const progressText = await element(by.text(/Loading\.\.\.\s*\(\d+%\)/)).getAttributes();
+          log.info(`📊 Device streaming in progress: ${progressText}`);
+        } catch {
+          // Progress text might have changed, continue checking
+        }
+
+        await delay(progressCheckInterval);
+      } catch (error) {
+        log.info("✅ Device streaming element not found - likely completed");
+        await waitForAppResponsiveness();
+        return;
+      }
+    }
+
+    const elapsed = Date.now() - startTime;
+    log.warn(`⚠️ Device streaming timeout after ${elapsed}ms`);
+    await waitForAppResponsiveness(3, 2000);
+  } finally {
+    await detoxSync.setState("idle");
+  }
+}
+
+export async function waitForCompleteDeviceAction(
+  loadingElementId: string,
+  maxWaitMs: number = 120000,
+): Promise<void> {
+  const startTime = Date.now();
+  log.info("🔄 Waiting for complete device action (loading + streaming)...");
+
+  try {
+    await detoxSync.setState("busy");
+
+    await waitForDeviceActionCompletion(loadingElementId, Math.min(maxWaitMs, 60000));
+
+    const remainingTime = maxWaitMs - (Date.now() - startTime);
+    if (remainingTime > 5000) {
+      await waitForDeviceStreamingCompletion(remainingTime);
+    }
+
+    log.info("✅ Complete device action finished");
+  } catch (error) {
+    const elapsed = Date.now() - startTime;
+    log.warn(`⚠️ Complete device action timeout after ${elapsed}ms`);
+
+    await waitForAppResponsiveness(3, 1000);
+  } finally {
+    await detoxSync.reset();
+  }
+}
+
+export async function waitForSwapDeviceAction(
+  options: {
+    loadingElementId?: string;
+    maxWaitMs?: number;
+    expectStreaming?: boolean;
+    streamingTimeout?: number;
+  } = {},
+): Promise<void> {
+  const {
+    loadingElementId = "device-action-loading",
+    maxWaitMs = 120000,
+    expectStreaming = true,
+    streamingTimeout = 90000,
+  } = options;
+
+  const startTime = Date.now();
+  log.info("🔄 Starting swap device action with DetoxSync management");
+
+  try {
+    await detoxSync.setState("busy");
+    log.info(`📊 DetoxSync state: ${detoxSync.getState()}`);
+
+    await waitFor(element(by.id(loadingElementId)))
+      .not.toBeVisible()
+      .withTimeout(Math.min(maxWaitMs, 30000));
+
+    if (expectStreaming) {
+      log.info("📋 Phase 2: Checking for device streaming...");
+      await detoxSync.setState("streaming");
+
+      const remainingTime = Math.min(streamingTimeout, maxWaitMs - (Date.now() - startTime));
+      await waitForDeviceStreamingCompletion(remainingTime);
+    }
+
+    log.info("📋 Phase 3: Verifying app responsiveness...");
+    await waitForAppResponsiveness();
+
+    const elapsed = Date.now() - startTime;
+    log.info(`✅ Swap device action completed in ${elapsed}ms`);
+  } catch (error) {
+    const elapsed = Date.now() - startTime;
+    log.warn(`⚠️ Swap device action failed after ${elapsed}ms:`, error);
+
+    await waitForAppResponsiveness(3, 1000);
+    throw error;
+  } finally {
+    await detoxSync.reset();
+    log.info(`📊 DetoxSync final state: ${detoxSync.getState()}`);
+  }
+}

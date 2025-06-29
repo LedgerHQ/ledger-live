@@ -1,7 +1,8 @@
-import { addDelayBeforeInteractingWithDevice, openDeeplink } from "../../helpers/commonHelpers";
-import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
+import { openDeeplink, waitForCompleteDeviceAction } from "../../helpers/commonHelpers";
+import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
+import CommonPage from "../common.page";
 
-export default class SwapPage {
+export default class SwapPage extends CommonPage {
   baseLink = "swap";
   confirmSwapOnDeviceDrawerId = "confirm-swap-on-device";
   swapSuccessTitleId = "swap-success-title";
@@ -27,19 +28,17 @@ export default class SwapPage {
   }
 
   @Step("Verify the amounts and accept swap")
-  async verifyAmountsAndAcceptSwap(swap: SwapType, amount: string) {
+  async verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
     await waitForElementById(this.confirmSwapOnDeviceDrawerId);
     await app.speculos.verifyAmountsAndAcceptSwap(swap, amount);
-    await addDelayBeforeInteractingWithDevice();
-    await waitForElementNotVisible(this.deviceActionLoading);
+    await waitForCompleteDeviceAction(this.deviceActionLoading);
   }
 
   @Step("Verify the amounts and reject swap")
-  async verifyAmountsAndRejectSwap(swap: SwapType, amount: string) {
+  async verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
     await waitForElementById(this.confirmSwapOnDeviceDrawerId);
     await app.speculos.verifyAmountsAndRejectSwap(swap, amount);
-    await addDelayBeforeInteractingWithDevice();
-    await waitForElementNotVisible(this.deviceActionLoading);
+    await waitForCompleteDeviceAction(this.deviceActionLoading);
   }
 
   @Step("Wait for swap success and continue")
