@@ -1,9 +1,10 @@
-import React, { useCallback } from "react";
 import { Flex } from "@ledgerhq/react-ui";
+import React, { useCallback } from "react";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import { ScrollContainer } from "../../components/ScrollContainer";
 import { MODULAR_DRAWER_ADD_ACCOUNT_CATEGORY } from "../../types";
-import { SuccessIcon, ActionButtons, AccountList, Title } from "./components";
+import { AccountList, ActionButtons, SuccessIcon, Title } from "./components";
 import { useAccountFormatter } from "./hooks";
 import { AccountsAddedProps } from "./types";
 
@@ -32,9 +33,9 @@ export const AccountsAdded = ({
         <SuccessIcon />
         <Title accountsCount={accounts.length} />
       </Flex>
-      <Flex flex={1} minHeight={0}>
+      <ScrollContainer>
         <AccountList accounts={accounts} formatAccount={formatAccount} />
-      </Flex>
+      </ScrollContainer>
 
       <ActionButtons
         onAddFunds={handleAddFunds}

@@ -6,5 +6,10 @@ export const ScrollContainer: typeof Flex = styled(Flex)`
   flex-direction: column;
   overflow: auto;
   scrollbar-width: none;
-  mask-image: linear-gradient(to bottom, black calc(100% - 20px), transparent 100%);
+  mask-image: linear-gradient(
+    to bottom,
+    black calc(100% - 25px),
+    transparent calc(100% - 5px),
+    transparent 100%
+  );
 `;
