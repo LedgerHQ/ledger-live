@@ -29,17 +29,6 @@ export async function listOperations(
 }
 
 const convertToCoreOperation = (operation: StellarOperation): Operation<StellarAsset> => {
-  /*
-   * extra: 
-      assetAmount: "100"
-      assetCode: "USDC"
-      assetIssuer: "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN"
-      blockTime: Mon Apr 28 2025 16:48:14 GMT+0200 (Central European Summer Time) {}
-      index: "244062994064625665"
-      ledgerOpType: "IN"
-      pagingToken: "244062994064625665"
-*/
-
   return {
     id: `${operation.hash}-${operation.extra.index}`,
     asset:

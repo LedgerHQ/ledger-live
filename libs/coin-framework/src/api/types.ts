@@ -69,24 +69,12 @@ export type Operation<
   };
 };
 
-/*
- * export type NetworkInfo = {
-  family: "stellar";
-  fees: BigNumber;
-  baseFee: BigNumber;
-  baseReserve: BigNumber;
-  networkCongestionLevel?: NetworkCongestionLevel | undefined;
-};
-
-*/
-
 export type Transaction = {
   type: string;
   recipient: string;
   amount: bigint;
   fee: bigint;
   baseReserve?: bigint; // NOTE: used for changeTrust mode in stellar
-  // asset: Asset<TokenInfoCommon>; // NOTE: used for changeTrust mode in stellar
   networkInfo?: {
     baseFee?: bigint;
     fees?: bigint;

@@ -39,7 +39,6 @@ export async function craftTransaction(
   const transactionBuilder = buildTransactionBuilder(source, fee);
   let operation: xdr.Operation<StellarSdkOperation.ChangeTrust> | null = null;
 
-  // debugger;
   if (type === "changeTrust") {
     if (!assetCode || !assetIssuer) {
       throw new StellarAssetRequired("");
@@ -52,7 +51,6 @@ export async function craftTransaction(
       recipient,
     });
 
-    // debugger;
     if (recipientAccount?.id) {
       operation = buildPaymentOperation({
         destination: recipient,

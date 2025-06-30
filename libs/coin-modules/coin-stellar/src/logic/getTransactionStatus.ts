@@ -24,15 +24,8 @@ import {
   StellarNotEnoughNativeBalanceToAddTrustline,
   StellarMuxedAccountNotExist,
   StellarSourceHasMultiSign,
-  // type Transaction,
 } from "../types";
 import BigNumber from "bignumber.js";
-// import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
-
-// export const getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"] = async (
-//   account,
-//   transaction,
-// ) => {
 
 export const getTransactionStatus = async (
   account: Account,
@@ -53,6 +46,7 @@ export const getTransactionStatus = async (
     throw new AccountAwaitingSendPendingOperations();
   }
 
+  // NOTE: recheck this
   // if (!transaction.fee || !transaction.baseReserve) {
   //   errors.fees = new FeeNotLoaded();
   // }
@@ -84,14 +78,6 @@ export const getTransactionStatus = async (
     warnings.transaction = new StellarFeeSmallerThanRecommended();
   }
 
-  /*
-  * amount: 0n
-    fee: 100n
-    recipient: ""
-    type: "PAYMENT"
-    useAllAmount: false
-    */
-  // debugger;
   // Operation specific checks
   if (transaction.type === "changeTrust") {
     // Check asset provided
@@ -146,7 +132,6 @@ export const getTransactionStatus = async (
       const asset = account.subAccount;
       console.log("THE ASSET: ", asset);
 
-
       if (!asset === null) {
         // This is unlikely
         throw new StellarAssetNotFound();
@@ -178,7 +163,7 @@ export const getTransactionStatus = async (
       }
     } else {
       // Native payment
-      console.log("IN HERE")
+      console.log("IN HERE");
       maxAmount = nativeAmountAvailable;
       amount = useAllAmount ? maxAmount : transaction.amount ?? 0n;
 
