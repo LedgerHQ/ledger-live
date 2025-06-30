@@ -294,6 +294,14 @@
       "title" : "الجهاز غير متصل",
       "description" : "Ledger Live غير قادر على الاتصال بجهازك. يُرجى إعادة المحاولة."
     },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "الجهاز غير متصل",
+      "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى إعادة المحاولة."
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "الجهاز غير متصل",
+      "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى إعادة المحاولة."
+    },
     "CasperInvalidTransferId" : {
       "title" : "مُعرّف التحويل يجب أن يكون رقماً موجباً أصغر من {{maxTransferId}}"
     },
@@ -2164,7 +2172,7 @@
     }
   },
   "earlySecurityCheck" : {
-    "title" : "اختبار الأصالة والتحقق من تحديث نظام التشغيل",
+    "title" : "اختبار أصالة Ledger",
     "idle" : {
       "learnMore" : "تعرّف على المزيد حول اختبار الأصالة",
       "checkCta" : "تحقق من {{ productName }}"
@@ -2200,11 +2208,11 @@
     "genuineCheckStep" : {
       "learnMore" : "تعرّف على المزيد حول اختبار الأصالة",
       "inactive" : {
-        "title" : "اختبار الأصالة",
+        "title" : "اختبار أصالة Ledger",
         "description" : "هذا يتأكد من أن جهازك {{productName}} هو جهاز Ledger أصلي."
       },
       "active" : {
-        "title" : "اختبار الأصالة",
+        "title" : "اختبار أصالة Ledger",
         "description" : "هذا يتأكد من أن جهازك {{productName}} هو جهاز Ledger أصلي."
       },
       "completed" : {
@@ -2212,23 +2220,23 @@
         "description" : ""
       },
       "refused" : {
-        "title" : "اختبار الأصالة تم رفضه",
+        "title" : "اختبار أصالة Ledger تم رفضه",
         "description" : "اختبار الأصالة إلزامي لمتابعة إعداد جهازك {{productName}} باستخدام تطبيق Ledger Live.",
         "cta" : "استئناف الفحص"
       },
       "error" : {
-        "title" : "اختبار الأصالة",
+        "title" : "اختبار أصالة Ledger",
         "description" : "اختبار الأصالة يتأكد من أن {{productName}} الخاص بك هو جهاز Ledger أصلي."
       }
     },
     "firmwareUpdateCheckStep" : {
       "active" : {
-        "title" : "التحقق من تحديث نظام التشغيل",
-        "description" : "يتحقق هذا مما إذا كان نظام تشغيل جهازك {{productName}} مُحدَّث إلى آخر إصدار أم لا. "
+        "title" : "التحقق من نظام تشغيل Ledger OS",
+        "description" : "هذا يتحقق مما إذا كان نظام تشغيل جهازك {{productName}} مُحدَّث إلى آخر إصدار. "
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "نظام تشغيل {{productName}} مُحدَّث إلى آخر إصدار"
+          "title" : "نظام تشغيل Ledger OS مُحدَّث إلى آخر إصدار"
         }
       },
       "error" : {
@@ -2242,8 +2250,8 @@
         "skipCta" : "تخطي التحديث"
       },
       "inactive" : {
-        "title" : "التحقق من تحديث نظام التشغيل",
-        "description" : "يتحقق هذا مما إذا كان نظام تشغيل جهازك {{productName}} مُحدَّث إلى آخر إصدار أم لا. "
+        "title" : "التحقق من نظام تشغيل Ledger OS",
+        "description" : "هذا يتحقق مما إذا كان نظام تشغيل جهازك {{productName}} مُحدَّث إلى آخر إصدار. "
       }
     },
     "firmwareUpdateAvailableDrawer" : {
@@ -2255,7 +2263,7 @@
     }
   },
   "syncOnboarding" : {
-    "title" : "إعداد {{deviceName}}",
+    "title" : "جهّز {{productName}} الخاص بك",
     "estimatedTimeFormat" : "{{estimatedTime}} دقيقة",
     "deviceSelection" : {
       "title" : "اختر جهاز Ledger الذي تريد إعداده:",
@@ -2310,7 +2318,7 @@
     },
     "earlySecurityCheckCompletedStep" : {
       "title" : "{{productName}} أصلي",
-      "subtitle" : "من الآمن استخدام جهاز {{productName}} هذا. يمكنك المتابعة إلى إعداده.",
+      "subtitle" : "جهازك {{productName}} آمن للاستخدام. أنت مستعدٌ للبدء في الإعداد.",
       "description" : "انقر على {{productName}} لبدء الإعداد."
     },
     "pinStep" : {
@@ -2320,30 +2328,58 @@
       "continueOnDevice" : "قم بإعداد كود PIN الخاص بك على جهازك {{productName}}."
     },
     "seedStep" : {
-      "title" : "عبارة الاسترداد السرية",
+      "title" : "الإعداد والنسخ الاحتياطي",
       "doneTitle" : "تم تأكيد عبارة الاسترداد السرية",
       "description" : "عبارة الاسترداد الخاصة بك هي قائمة سرية من 24 كلمة تقوم بنسخ مفاتيحك الخاصة أحتيطياً. {{productName}} خاصتك تنتج عبارة استرداد فريدة. Ledger لا تحتفظ بنسخة منها",
       "choiceRestoreDirectOrRecover" : "Placeholder - اختيار استعادة مباشرة أو استخدم استرداد",
       "recoverSeed" : "Placeholder: استرداد",
-      "restoreSeed" : "تأكد من استخدام عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأقصى درجات الأمان لأصولك. \n\nليس لديك عبارة استرداد؟ استخدم جهازك {{productName}} لإنشاء واحدة جديدة.",
       "selection" : "اختر خيار الإعداد الأكثر ملائمة لك:",
       "selectionNewLedger" : {
         "title" : "الإعداد كجهاز Ledger جديد",
-        "desc" : "يتيح لك إنشاء محفظة جديدة. هذا يُنشئ عبارة استرداد سرية جديدة."
+        "desc" : "هذا يُنشئ عبارة الاسترداد السرية الجديدة الخاصة بك."
       },
       "selectionRestore" : {
-        "title" : "الاستعادة",
-        "desc" : "يتيح لك استعادة الوصول إلى أصولك الحالية بعبارة الاسترداد السرية الخاصة بك، أو باستخدام Ledger Recover."
+        "title" : "استعادة الوصول إلى أصولك",
+        "desc" : "هذا يتيح لك الاستعادة باستخدام نسخك الاحتياطي — عبارة الاسترداد السرية أو Ledger Recover.",
+        "descWithCharon" : "هذا يتيح لك الاستعادة باستخدام نسخك الاحتياطي — عبارة الاسترداد السرية أو Ledger Recover أو Ledger Recovery Key."
+      },
+      "backupCharon" : {
+        "title" : "Ledger Recovery Key",
+        "desc" : "قم بإنشاء نسخ احتياطي جديد على بطاقة محمية بكود PIN مع شريحة عنصر آمن مدمجة — حتى تتمكن من استعادة الوصول إلى أصولك ببضع نقرات فقط.",
+        "cta" : "معرفة المزيد أو الشراء",
+        "continueOnDevice" : "اتبع التعليمات على جهازك {{productName}}"
+      },
+      "selectionRestoreChoice" : {
+        "description" : "قم باختيار نسخ احتياطي ترغب في الاستعادة منه:",
+        "continueOnDevice" : "حدد الخيار ذي الصلة على جهازك {{productName}}.",
+        "secretRecoveryPhrase" : {
+          "title" : "عبارة الاسترداد السرية",
+          "description" : "استخدم عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأقصى درجات الأمان."
+        },
+        "ledgerCharon" : {
+          "title" : "Ledger Recovery Key",
+          "description" : "استخدم Recovery Key الخاص بك لاستعادة الوصول إلى أصولك."
+        },
+        "ledgerRecover" : {
+          "title" : "اشتراك Ledger Recover",
+          "description" : "استخدم اشتراكك لاستعادة الوصول إلى أصولك بواسطة هويّتك."
+        }
+      },
+      "restoreSeed" : {
+        "title" : "الاستعادة باستخدام عبارة الاسترداد السرية",
+        "description" : "للاستعادة، اتبع التعليمات التي تظهر على شاشة Ledger الآمنة خاصتك.",
+        "continueOnDevice" : "حدد الخيار ذي الصلة على جهازك {{productName}}."
+      },
+      "restoreLedgerCharon" : {
+        "title" : "الاستعادة باستخدام Recovery Key",
+        "description" : "للاستعادة، اتبع التعليمات التي تظهر على شاشة Ledger الآمنة لديك.",
+        "continueOnDevice" : "اتبع التعليمات على جهازك {{productName}}."
       },
       "selectionContinueOnDevice" : "اختر الخيار ذي الصلة على جهازك {{productName}}.",
-      "newSeedDescription" : "تريد معرفة المزيد عن عبارة الاسترداد السرية؟ شاهد مقاطع الفيديو هذه:",
-      "newSeedContinueOnDevice" : "قم بهذا على {{productName}} خاصتك",
-      "recovery" : "تأكد من استخدام عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأقصى درجات الأمان لأصولك. \n\nليس لديك عبارة استرداد؟ استخدم جهازك {{productName}} لإنشاء واحدة جديدة.",
-      "restoreChoiceContinueOnDevice" : "اختر الخيار ذي الصلة على جهازك {{productName}}.",
-      "restoreChoiceSRPTitle" : "الاستعادة باستخدام عبارة الاسترداد السرية",
-      "restoreChoiceSRPDescription" : "استخدم عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأقصى درجات الأمان. ",
-      "restoreChoiceRecoverTitle" : "استعادة باستخدام Ledger Recover",
-      "restoreChoiceRecoverDescription" : "إذا كنت مشتركاً في Ledger Recover، قم بتسجيل الدخول إلى اشتراكك لبدء عملية الاستعادة للنسخة الاحتياطية لعبارة الاسترداد السرية الخاصة بك."
+      "newSeedTitle" : "عبارة الاسترداد السرية",
+      "newSeedDescription" : "شاهد مقاطع الفيديو هذه لمعرفة المزيد عن عبارة الاسترداد السرية:",
+      "newSeedContinueOnDevice" : "اتبع التعليمات على جهازك {{productName}}",
+      "recovery" : "تأكد من استخدام عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأقصى درجات الأمان لأصولك. \n\nليس لديك عبارة استرداد؟ استخدم جهازك {{productName}} لإنشاء واحدة جديدة."
     },
     "backup" : {
       "title" : "نسخة احتياطية لعبارة الاسترداد السرية الخاصة بك",
@@ -3193,6 +3229,12 @@
         "placeholder" : "معلومات مُزوّد التداول بصيغة CAL",
         "currentSetting" : "الإعداد الحالي",
         "error" : "قيمة CAL غير صالحة"
+      },
+      "customCALRef" : {
+        "title" : "مرجع CAL مخصص",
+        "description" : "حدّد فرع مخصص أو تضمين أو علامة للاستخدام gكل طلبات CAL",
+        "enable" : "تمكين مرجع CAL مخصص",
+        "disable" : "تعطيل مرجع CAL مخصص"
       }
     },
     "debug" : {
@@ -3564,6 +3606,15 @@
         "providers" : {
           "noProviders" : "لم يتم العثور على نتائج. ليس متاح عروض أسعار بالتفضيلات الحالية."
         }
+      },
+      "quotesList" : {
+        "title" : "اختر عرض سعر"
+      },
+      "twoStepApproval" : {
+        "title" : "أكمل الخطوات"
+      },
+      "history" : {
+        "title" : "سجلّ المبادلة"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "استكشف الأجهزة المتوافقة",
@@ -7449,5 +7500,10 @@
     "title" : "الموقع غير متاح",
     "description" : "محفظة Ledger غير متاحة في هذا الموقع.",
     "learnMore" : "تعرّف على المزيد"
+  },
+  "versionBlocking" : {
+    "title" : "تحديث Ledger Live مطلوب",
+    "description" : "هذا الإصدار من Ledger Live غير متوافق مع أحدث أنظمة تشغيل الجهاز. قم بالتحديث الآن للاستمتاع باتصال مُحسّن.",
+    "openStore" : "تحديث"
   }
 }
