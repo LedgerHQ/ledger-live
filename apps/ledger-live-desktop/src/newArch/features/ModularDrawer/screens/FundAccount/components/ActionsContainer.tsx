@@ -13,9 +13,9 @@ import { IconContainer } from "./IconContainer";
 const ActionItem = styled(Flex)`
   cursor: pointer;
   padding: 12px;
+
   border-radius: 8px;
   transition: background-color 0.2s ease;
-
   &:hover {
     background-color: ${p => p.theme.colors.opacityDefault.c05};
   }
@@ -26,9 +26,9 @@ const ActionItem = styled(Flex)`
 `;
 
 const Container = styled(Flex)`
-  width: calc(100% + 48px);
-  margin-left: -24px;
-  margin-right: -24px;
+  width: calc(100% + 72px);
+  margin-left: -36px;
+  margin-right: -36px;
 `;
 
 interface Props {
@@ -97,7 +97,7 @@ const ActionsContainer = ({ account, currencyId }: Props) => {
             columnGap={16}
           >
             <IconContainer icon={action.icon} />
-            <Flex flexDirection="column">
+            <Flex flexDirection="column" flex={1}>
               <Text fontSize={16} fontWeight="600">
                 {action.label}
               </Text>
