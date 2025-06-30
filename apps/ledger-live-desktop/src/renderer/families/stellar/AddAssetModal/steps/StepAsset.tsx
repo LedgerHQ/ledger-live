@@ -28,7 +28,6 @@ export default function StepAsset({
     (token?: TokenCurrency | null) => {
       if (!token) return;
       const { id: assetId } = token;
-      // debugger;
       onUpdateTransaction(transaction =>
         bridge.updateTransaction(transaction, getAssetObject(assetId)),
       );
@@ -64,7 +63,6 @@ export function StepAssetFooter({
   const { errors } = status;
   const hasErrors = Object.keys(errors).length;
   const canNext = !bridgePending && !hasErrors;
-  console.log({ hasErrors, bridgePending, errors });
   return (
     <>
       <AccountFooter parentAccount={parentAccount} account={account} status={status} />

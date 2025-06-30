@@ -87,7 +87,6 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     invariant(account, "stellar: account required");
     const bridge = getAccountBridge(account, undefined);
     const t = bridge.createTransaction(account);
-    // debugger;
     const transaction = bridge.updateTransaction(t, {
       mode: "changeTrust",
     });
