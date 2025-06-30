@@ -447,8 +447,6 @@
     "incompatibility" : {
       "ton_title" : "™Ledger Nano S لا تدعم مبادلة Ton",
       "ton_description" : "لمبادلة Ton، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
-      "ton_tokens_title" : "™Ledger Nano S لا تدعم مبادلة رموز Ton",
-      "ton_tokens_description" : "لمبادلة رموز Ton، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "spl_tokens_title" : "™Ledger Nano S لا تدعم مبادلة رموز سولانا (Solana)",
       "spl_tokens_description" : "لمبادلة رموز سولانا (Solana)، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "sui_tokens_title" : "™Ledger Nano S لا تدعم مبادلة رموز Sui",
@@ -893,7 +891,6 @@
     "title" : "شراء وبيع الأصول المشفرة",
     "reset" : "إعادة تعيين التدفق",
     "verifyAddress" : "يُرجى تأكيد أن العنوان المعروض يتطابق تماماً مع العنوان المعروض على جهازك",
-    "connectingTo" : "جارٍ توصيلك بـ {{provider}}",
     "buy" : {
       "header" : "شراء الأصول المشفرة عن طريق شريكنا",
       "title" : "اختر مزود لشراء الأصول المشفرة",
@@ -1926,8 +1923,7 @@
       "payoutNetworkFees" : "رسوم الدفع",
       "payoutNetworkFeesTooltip" : "هذا المبلغ لن يظهر على جهازك",
       "acceptTerms" : "بتأكيد صحة هذه المعاملة، أنا أقبل\n<0>شروط استخدام {{provider}}</0>",
-      "exodusAcceptTerms" : "Exodus تعتمد على أطراف ثالثة لإجراء المبادلات.\nبتأكيد صحة هذه المعاملة، أنا أقبل <0>شروط استخدام Exodus</0>",
-      "changellyAcceptTerms" : "بالنقر على ”Swap with Changelly (المبادلة بواسطة Changelly)“ أنت تقبل <0>شروط استخدام</0> Changelly و\n<1>سياسة مكافحة غسل الأموال/KYC (اعرف عميلك)</1> الخاصة بها. Changelly قد تطبق إجراءات مكافحة غسل الأموال/KYC (اعرف عميلك) والتي\nيمكن، في حالات محدودة، أن تؤثر على إتمام معاملتك. إذا\nحدث هذا، يجب عليك التواصل مع <2>دعم عملاء</2> Changelly."
+      "exodusAcceptTerms" : "Exodus تعتمد على أطراف ثالثة لإجراء المبادلات.\nبتأكيد صحة هذه المعاملة، أنا أقبل <0>شروط استخدام Exodus</0>"
     },
     "swap2" : {
       "amountSent" : "المبلغ المطلوب إرساله",
@@ -2074,8 +2070,7 @@
       "latest" : "الإصدار {{version}} من البرنامج الثابت متاح",
       "contactSupport" : "تواصل مع الدعم",
       "deprecated" : "إصدار البرنامج الثابت للجهاز قديم للغاية ليتم تحديثه. تواصل مع دعم Ledger للحصول على بديل.",
-      "prepareSeed" : "تأكد من كتابة عبارة الاسترداد السرية الخاصة بك المكونة من 24 كلمة على ورقة الاسترداد وأنها متاحة، على سبيل الاحتياط.",
-      "prepareSeedRecover" : "فكّر في استخدام Ledger Recover لعمل نسخ احتياطي للوصول إلى محفظتك وضمان أنها دائماً في المتناول.",
+      "prepareSeed" : "تأكد من كتابة عبارة الاسترداد الخاصة بك المكونة من 24 كلمة على ورقة الاسترداد وأنها متاحة، على سبيل الاحتياط.",
       "disclaimerTitle" : "أنت على وشك تثبيت <1>إصدار البرنامج الثابت {{version}}</1>.",
       "cancelUpdate" : "إلغاء تحديث نظام التشغيل",
       "continueUpdate" : "متابعة تحديث نظام التشغيل",
@@ -2398,8 +2393,7 @@
         "suggested" : "مُقترح",
         "unitVByte" : "{{unit}}/بايت افتراضي (vbyte)",
         "nft" : "NFT",
-        "nftQuantity" : "الكمية",
-        "splExtensionsWarning" : "أنت تتفاعل مع رمز توكن يشكل جزءاً من برنامج Token-2022، المعروف أيضاً باسم Token Extensions (ملحقات رموز التوكن). رمز التوكن هذا يأتي مع مخاطر محددة. <0>انقر هنا</0> لمعرفة المزيد."
+        "nftQuantity" : "الكمية"
       },
       "verification" : {
         "streaming" : {
@@ -3774,7 +3768,7 @@
       "frozenStateWarning" : "تمّ تجميد أصول الحساب!",
       "transferWarning" : "للتحقق من عنوان المستلم لرموز سولانا (Solana) باستخدام ™Ledger Nano S، <0>يرجى اتباع هذه التعليمات.</0>",
       "transferFees" : {
-        "feesHint" : "رسوم تحويل رمز التوكن: {{transferFee}}",
+        "feesPercentHint" : "رمز التوكن له %{{feePercent}} ({{feeBps}} نقطة أساس (bps) ) رسوم تحويل. {{maxFee}} بحد أقصى",
         "notice" : "رسوم التحويل %{{fee}}",
         "tooltipHint" : "النسبة المئوية من التحويل المحتجزة من أجل منشئ رمز التوكن",
         "transferFeesLabel" : "رسوم التحويل"
@@ -5426,9 +5420,7 @@
     "stringHash" : "دالة تجزئة الرسالة",
     "domainHash" : "دالة تجزئة المجال",
     "messageHash" : "دالة تجزئة الرسالة",
-    "message" : "رسالة",
-    "title" : "تابع على جهازك Ledger {{wording}}",
-    "description" : "اتبع التعليمات المعروضة على شاشتك الآمنة التي تعمل باللمس."
+    "message" : "رسالة"
   },
   "TransactionConfirm" : {
     "title" : "يرجى تأكيد العملية على جهازك لإنهائها",
@@ -5876,10 +5868,6 @@
       "title" : "عفواً، الأموال المتوفرة غير كافية",
       "description" : "يرجى التأكد من أن الحساب به أموال كافية."
     },
-    "NotEnoughBalanceFees" : {
-      "title" : "عذراً، الأموال غير كافية لتغطية الرسوم",
-      "description" : "يرجى التأكد من أن الحساب به أموال كافية."
-    },
     "NotEnoughBalanceSwap" : {
       "title" : "عذراً، الرصيد غير كافٍ شاملاً رسوم الشبكة. قم بتعديل المبلغ أو تحقق من الرصيد.",
       "description" : "يرجى التأكد من أن الحساب به أموال كافية."
@@ -6042,10 +6030,6 @@
     "WrongDeviceForAccountPayout" : {
       "title" : "حدث خطأ ما",
       "description" : "حساب التلقي هذا لا ينتمي إلى الجهاز الذي قمت بتوصيله. يُرجى تغييره وإعادة المحاولة"
-    },
-    "MissingSwapPayloadParamaters" : {
-      "title" : "حدث خطأ ما",
-      "description" : "مُعلّمة المبادلة مفقودة من المزود المختار. يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "حدث خطأ ما",
@@ -6628,8 +6612,7 @@
       "title" : "اختر أصل"
     },
     "selectAccount" : {
-      "title" : "اختر حساب",
-      "addAccount" : "إضافة حساب جديد أو قائم"
+      "title" : "اختر حساب"
     }
   },
   "customImage" : {
@@ -7060,25 +7043,5 @@
       "description" : "الذاكرة المحدودة في ledger Nano S الخاصة بك تُقيد وصولك إلى أحدث الميزات، ومتغيّرات سلاسل الكتل، وتحسينات الأمان. من أجل الاستخدام على المدى الطويل، قم بالترقية إلى جهاز Ledger أحدث.",
       "cta" : "تعرّف على المزيد"
     }
-  },
-  "modularAssetDrawer" : {
-    "searchPlaceholder" : "بحث",
-    "selectAsset" : "اختر أصل",
-    "selectNetwork" : "اختر الشبكة",
-    "selectAccount" : "اختر حساب",
-    "accountCount_one" : "{{count}} حساب",
-    "accountCount_other" : "{{count}} حساب"
-  },
-  "nftEntryPoint" : {
-    "title" : "الرموز غير القابلة للاستبدال (NFT)",
-    "entry" : {
-      "magiceden" : "Magic Eden",
-      "opensea" : "OpenSea"
-    }
-  },
-  "geoBlocking" : {
-    "title" : "الموقع غير متاح",
-    "description" : "محفظة Ledger غير متاحة في هذا الموقع.",
-    "learnMore" : "تعرّف على المزيد"
   }
 }
