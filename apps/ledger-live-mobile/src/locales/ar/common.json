@@ -513,10 +513,6 @@
       "title" : "عفواً، الأموال المتوفرة غير كافية",
       "description" : "يرجى التأكد من أن الحساب به أموال كافية."
     },
-    "NotEnoughBalanceFees" : {
-      "title" : "عذراً، الأموال غير كافية لتغطية الرسوم",
-      "description" : "يرجى التأكد من أن الحساب به أموال كافية."
-    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "رصيدك المتاح (غير المُكدّس) هو حالياً {{currentBalance}} وهو غير كافٍ لدفع رسوم الشبكة لإلغاء تكديس {{assetName}} خاصتك. ",
       "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} في حسابك.",
@@ -3369,8 +3365,7 @@
       "description" : "بيع الأصول المشفرة بأمان مقابل العملات النقدية."
     },
     "exchange" : {
-      "title" : "شراء / بيع",
-      "connectingTo" : "جارٍ توصيلك بـ {{provider}}"
+      "title" : "شراء / بيع"
     },
     "stake" : {
       "title" : "تكديس",
@@ -3570,8 +3565,6 @@
         "contact_support" : "تواصل مع دعم العملاء",
         "ton_title" : "™Ledger Nano S لا تدعم مبادلة Ton",
         "ton_description" : "لمبادلة Ton، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
-        "ton_tokens_title" : "™Ledger Nano S لا تدعم مبادلة رموز Ton",
-        "ton_tokens_description" : "لمبادلة رموز Ton، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "spl_tokens_title" : "™Ledger Nano S لا تدعم مبادلة رموز سولانا (Solana)",
         "spl_tokens_description" : "لمبادلة رموز سولانا (Solana)، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "near_title" : "™Ledger Nano S لا تدعم مبادلة Near",
@@ -3851,9 +3844,6 @@
           "title" : "لم يتم العثور على عنوان لهذا النطاق"
         }
       }
-    },
-    "spl2022" : {
-      "splExtensionsWarning" : "أنت تتفاعل مع رمز توكن يشكل جزءاً من برنامج Token-2022، المعروف أيضاً باسم Token Extensions (ملحقات رموز التوكن). رمز التوكن هذا يأتي مع مخاطر محددة. <0>انقر هنا</0> لمعرفة المزيد."
     },
     "amount" : {
       "available" : "إجمالي المتاح",
@@ -4707,7 +4697,7 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "قم بتحديث {{deviceName}} إلى الإصدار {{version}}",
-    "recoveryPhraseBackupInstructions" : "تأكد من كتابة عبارة الاسترداد السرية الخاصة بك المكونة من 24 كلمة على ورقة الاسترداد وأنها متاحة، على سبيل الاحتياط.\n\nفكّر في استخدام Ledger Recover لعمل نسخ احتياطي للوصول إلى محفظتك وضمان أنها دائماً في المتناول.",
+    "recoveryPhraseBackupInstructions" : "تأكد من كتابة عبارة الاسترداد الخاصة بك المكونة من 24 كلمة على ورقة الاسترداد وأنها متوفرة، على سبيل الاحتياط.",
     "confirmRecoveryPhrase" : "لدي عبارة الاسترداد الخاصة بي",
     "introDescription1" : "يرجى ملاحظة أنه سيتم حذف جميع التطبيقات الموجودة على جهازك. يمكنك إعادة تثبيت تطبيقاتك بعد تحديث البرنامج الثابت.",
     "introDescription2" : "ليس لذلك أي تأثير على أصولك المشفرة.",
@@ -6092,7 +6082,6 @@
       "transferFees" : {
         "title" : "رسوم التحويل",
         "feesPercentHint" : "رمز التوكن عليه رسوم تحويل %{{feePercent}} ({{feeBps}} نقطة أساس) ({{maxFee}} بحد أقصى)",
-        "feesHint" : "رسوم تحويل رمز التوكن: {{transferFee}}",
         "notice" : "رسوم التحويل %{{fee}}",
         "tooltipHint" : "النسبة المئوية من التحويل المحتجزة من أجل منشئ رمز التوكن"
       },
@@ -6480,9 +6469,7 @@
     },
     "stepVerification" : {
       "action" : "يرجى تأكيد العملية على جهازك",
-      "accountName" : "اسم الحساب",
-      "title" : "تابع على جهازك Ledger {{wording}}",
-      "description" : "اتبع التعليمات المعروضة على شاشتك الآمنة التي تعمل باللمس."
+      "accountName" : "اسم الحساب"
     }
   },
   "notificationCenter" : {
@@ -7427,27 +7414,6 @@
       "minutes_plural" : "(منذ {{count}} دقيقة)",
       "seconds" : "(منذ {{count}} ثانية)",
       "seconds_plural" : "(منذ {{count}} ثانية)"
-    },
-    "performance" : "الأداء",
-    "low" : "منخفض",
-    "high" : "مرتفع",
-    "title" : "تحركات السوق",
-    "overlay" : {
-      "title" : "تحرك بين الأصول",
-      "action" : "مرّر لليسار أو اليمين",
-      "button" : "فهمت ذلك!"
     }
-  },
-  "nftEntryPoint" : {
-    "title" : "رموزك غير القابلة للاستبدال (NFTs)",
-    "entry" : {
-      "magiceden" : "Magic Eden",
-      "opensea" : "OpenSea"
-    }
-  },
-  "geoBlocking" : {
-    "title" : "الموقع غير متاح",
-    "description" : "محفظة Ledger غير متاحة في هذا الموقع.",
-    "learnMore" : "تعرّف على المزيد"
   }
 }
