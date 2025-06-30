@@ -6,15 +6,12 @@ import { StellarSigner } from "../types/signer";
 
 function getAddress(signerContext: SignerContext<StellarSigner>): GetAddressFn {
   return async (deviceId: string, { path, verify }: GetAddressOptions) => {
-    console.log("getAddress called with deviceId:");
     const rawPublicKey = await signerContext(deviceId, async signer => {
       const { rawPublicKey } = await signer.getPublicKey(path, verify);
       return rawPublicKey;
     });
 
     const publicKey = StrKey.encodeEd25519PublicKey(rawPublicKey);
-    console.log("getAddress publicKey:", publicKey);
-    console.log("getAddress rawPublicKey:", rawPublicKey.toString("hex"));
     return {
       path,
       address: publicKey,

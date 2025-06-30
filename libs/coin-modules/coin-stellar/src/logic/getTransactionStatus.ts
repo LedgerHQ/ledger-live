@@ -31,8 +31,6 @@ export const getTransactionStatus = async (
   transaction: Transaction,
 ): Promise<TransactionValidation> => {
   // const asset = account; // FIXME:
-  console.log("getTransactionStatus account", account);
-  console.log("getTransactionStatus transaction", transaction);
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
   const useAllAmount = !!transaction.useAllAmount;
@@ -129,7 +127,6 @@ export const getTransactionStatus = async (
       // NOTE: previously, fetched with coin-framework's findSubAccountById, move logic in generic-bridge
       // const asset = findSubAccountById(account, transaction.subAccountId || "");
       const asset = account.subAccount;
-      console.log("THE ASSET: ", asset);
 
       if (!asset === null) {
         // This is unlikely
@@ -151,9 +148,6 @@ export const getTransactionStatus = async (
       const assetBalance = BigInt(asset?.balance.toString()) || 0n;
 
       maxAmount = BigInt(asset?.spendableBalance.toString()) || assetBalance;
-      console.log("THE maxAmount ASSET: ", maxAmount);
-      console.log("THE transaction.amount ASSET: ", transaction.amount);
-
       amount = useAllAmount ? maxAmount : transaction.amount;
       totalSpent = amount;
 
@@ -162,7 +156,6 @@ export const getTransactionStatus = async (
       }
     } else {
       // Native payment
-      console.log("IN HERE");
       maxAmount = nativeAmountAvailable;
       amount = useAllAmount ? maxAmount : transaction.amount ?? 0n;
 
@@ -213,7 +206,6 @@ export const getTransactionStatus = async (
   ) {
     errors.transaction = new StellarWrongMemoFormat();
   }
-  console.log("THE FINAL ASSET AMOUNT: ", amount);
 
   return {
     errors,

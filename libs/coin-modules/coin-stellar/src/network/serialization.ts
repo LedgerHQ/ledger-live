@@ -119,7 +119,6 @@ async function formatOperation(
       index: rawOperation.id,
     },
   };
-  console.log({ FORMAT_OPERATION: operation });
 
   if (rawOperation.paging_token) {
     operation.extra.pagingToken = rawOperation.paging_token;

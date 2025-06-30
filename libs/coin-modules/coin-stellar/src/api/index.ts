@@ -64,7 +64,6 @@ async function craft(
   // }
   const memo = "memo" in transactionIntent ? transactionIntent.memo : undefined;
   const hasMemoValue = memo && memo.type !== "NO_MEMO";
-  console.log("craftTransaction MEMO: ", memo);
   const tx = await craftTransaction(
     { address: transactionIntent.sender },
     {
@@ -83,7 +82,6 @@ async function craft(
     },
   );
 
-  console.log("craftTransaction result:", tx.transaction);
   // Note: the API returns the signature base, not the full XDR, see BACK-8727 for more context
   return tx.signatureBase;
 }
