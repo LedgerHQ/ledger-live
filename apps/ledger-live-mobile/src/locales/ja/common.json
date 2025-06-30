@@ -513,10 +513,6 @@
       "title" : "資金が不足しています。",
       "description" : "アカウントに十分な資金があることを確認してください。"
     },
-    "NotEnoughBalanceFees" : {
-      "title" : "申し訳ございませんが、手数料のための資金が不足しています",
-      "description" : "アカウントに十分な資金があることを確認してください。"
-    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "現在利用可能な（ステーキングされていない）残高は{{currentBalance}}ですが、これは{{assetName}}のステーキングを解除するためのネットワーク手数料を支払うには不十分です。 ",
       "oneCta" : "アカウントに{{assetName}}を<cta1>{{cta1Label}}</cta1>してください。",
@@ -3369,8 +3365,7 @@
       "description" : "暗号資産を安全に売却する。"
     },
     "exchange" : {
-      "title" : "購入/売却",
-      "connectingTo" : "{{provider}}に接続中"
+      "title" : "購入/売却"
     },
     "stake" : {
       "title" : "ステーキング",
@@ -3570,8 +3565,6 @@
         "contact_support" : "カスタマーサポートに問い合わせる",
         "ton_title" : "Ledger Nano S™はTonのスワップに対応していません",
         "ton_description" : "Tonをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
-        "ton_tokens_title" : "Ledger Nano S™は、Tonトークンのスワップに対応していません",
-        "ton_tokens_description" : "Tonトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
         "spl_tokens_title" : "Ledger Nano S™はSolanaトークンのスワップに対応していません",
         "spl_tokens_description" : "Solanaトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
         "near_title" : "Ledger Nano S™はNearのスワップに対応していません",
@@ -3851,9 +3844,6 @@
           "title" : "このドメインのアドレスが見つかりません"
         }
       }
-    },
-    "spl2022" : {
-      "splExtensionsWarning" : "お客様は、トークン拡張としても知られる、Token-2022プログラムの一部であるトークンを扱おうとしています。このトークンには特定のリスクが伴います。詳しくは<0>こちら</0>。"
     },
     "amount" : {
       "available" : "合計利用可能額",
@@ -4707,7 +4697,7 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "{{deviceName}}をバージョン{{version}}にアップデートします",
-    "recoveryPhraseBackupInstructions" : "念のため、24単語のシークレットリカバリーフレーズがリカバリーシートに書き留められており、利用可能であることをご確認ください。\n\nまた、Ledger Recoverをご使用いただくと、ウォレットへのアクセスをバックアップし、常に確実にアクセスできるようになります。",
+    "recoveryPhraseBackupInstructions" : "万が一に備えて、書き留めた24単語のリカバリーフレーズを用意してください。",
     "confirmRecoveryPhrase" : "リカバリーフレーズを持っています",
     "introDescription1" : "デバイス上のアプリは、すべて削除されますのでご注意ください。ファームウェアのアップデート後に、アプリを再インストールできます。",
     "introDescription2" : "この操作は、所有する暗号資産には影響を及ぼしません。",
@@ -6092,7 +6082,6 @@
       "transferFees" : {
         "title" : "転送手数料",
         "feesPercentHint" : "トークンには{{feePercent}}%（{{feeBps}}bps）の転送手数料がかかります（最大{{maxFee}}）",
-        "feesHint" : "トークン転送手数料：{{transferFee}}",
         "notice" : "転送手数料{{fee}}%",
         "tooltipHint" : "トークン作成者のために保留された転送の割合"
       },
@@ -6480,9 +6469,7 @@
     },
     "stepVerification" : {
       "action" : "デバイス上で処理を確定してください。",
-      "accountName" : "アカウント名",
-      "title" : "Ledger {{wording}}で続ける",
-      "description" : "セキュアタッチスクリーンに表示される指示に従ってください。"
+      "accountName" : "アカウント名"
     }
   },
   "notificationCenter" : {
@@ -7427,27 +7414,6 @@
       "minutes_plural" : "（{{count}}分前）",
       "seconds" : "（{{count}}秒前）",
       "seconds_plural" : "（{{count}}秒前）"
-    },
-    "performance" : "パフォーマンス",
-    "low" : "低速",
-    "high" : "高速",
-    "title" : "市場の動向",
-    "overlay" : {
-      "title" : "資産間の移動",
-      "action" : "左右にスワイプ",
-      "button" : "了解！"
     }
-  },
-  "nftEntryPoint" : {
-    "title" : "所有するNFT",
-    "entry" : {
-      "magiceden" : "Magic Eden",
-      "opensea" : "OpenSea"
-    }
-  },
-  "geoBlocking" : {
-    "title" : "利用不可のロケーション",
-    "description" : "このロケーションでは、Ledgerウォレットをご利用いただけません。",
-    "learnMore" : "詳細はこちら"
   }
 }
