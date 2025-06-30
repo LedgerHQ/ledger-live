@@ -32,11 +32,9 @@ export const genericSignOperation =
   }): Observable<SignOperationEvent> =>
     new Observable(o => {
       async function main() {
-        console.log("genericSignOperation transaction ", transaction);
         // NOTE: checking field that's not inside TransactionCommon, improve
         if (!transaction["fees"]) throw new FeeNotLoaded();
 
-        // debugger;
         if (transaction["useAllAmount"]) {
           const {
             freshAddress,
@@ -55,7 +53,6 @@ export const genericSignOperation =
           // }
           // FIXME: fix this one also (hardcoded type)
 
-          // debugger;
           const { amount } = await getAlpacaApi(network, kind).validateIntent(
             {
               currencyName: currency.name,
@@ -81,7 +78,6 @@ export const genericSignOperation =
           );
           transaction.amount = new BigNumber(amount.toString());
         }
-        console.log("THE AMOUTN: ", transaction.amount.toString());
         const signedInfo = await signerContext(deviceId, async signer => {
           const derivationPath = account.freshAddressPath;
 
@@ -111,7 +107,6 @@ export const genericSignOperation =
               value: txMemoValue,
             };
           }
-          console.log("111111111111: ", transactionIntent);
           const txWithAsset = transactionIntent as TransactionIntent<any>;
           if (transaction["assetCode"] && transaction["assetIssuer"]) {
             txWithAsset.asset = {
@@ -125,8 +120,6 @@ export const genericSignOperation =
               type: "native",
             };
           }
-          console.log("2222222222222: ", transactionIntent);
-
           /* Craft unsigned blob via Alpaca */
           const unsigned: string = await getAlpacaApi(network, kind).craftTransaction(
             transactionIntent,
@@ -137,9 +130,6 @@ export const genericSignOperation =
             transactionIntent.sender,
           );
           const sequenceNumber = accountInfo.sequence;
-          console.log("33333333333333");
-          console.log("transaction:", transaction);
-          // console.log("unsigned:", unsigned);
           /* Notify UI that the device is now showing the tx */
           o.next({ type: "device-signature-requested" });
           /* Sign on Ledger device */
@@ -150,7 +140,6 @@ export const genericSignOperation =
         /* If the user cancelled inside signerContext */
         if (!signedInfo) return;
         o.next({ type: "device-signature-granted" });
-        console.log("444444444444");
 
         /* Combine payload + signature for broadcast */
         const combined = await getAlpacaApi(network, kind).combine(
@@ -158,10 +147,7 @@ export const genericSignOperation =
           signedInfo.txnSig,
           signedInfo.publicKey,
         );
-        console.log("SHVSFHGSFCGHS: ", transaction);
-
         const operation = buildOptimisticOperation(account, transaction, signedInfo.sequence);
-        console.log("END");
 
         // NOTE: we set the transactionSequenceNumber before on the operation
         // now that we create it in craftTransaction, we might need to return it back from craftTransaction also

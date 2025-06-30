@@ -34,8 +34,6 @@ function buildPaginationParams(
 
 export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
   return async (info, syncConfig) => {
-    console.log("genericGetAccountShape info ", info);
-    console.log("genericGetAccountShape syncConfig ", syncConfig);
     const { address, initialAccount, currency, derivationMode } = info;
 
     if (address === STELLAR_BURN_ADDRESS) {
@@ -51,28 +49,23 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     });
 
     const blockInfo = await getAlpacaApi(network, kind).lastBlock();
-    console.log("blockInfo", blockInfo);
     const balanceRes = await getAlpacaApi(network, kind).getBalance(address);
-    console.log("balanceRes", balanceRes);
     const nativeAsset = balanceRes.find(b => b.asset.type === "native");
     const nativeBalance = BigInt(nativeAsset?.value ?? "0");
     const lockedBalance = BigInt(nativeAsset?.locked ?? "0");
     let spendableBalance = nativeBalance > lockedBalance ? nativeBalance - lockedBalance : 0n;
 
     const oldOps = (initialAccount?.operations || []) as StellarOperation[];
-    console.log("oldOps", oldOps);
     const lastPagingToken = oldOps[0]?.extra?.pagingToken || "";
     const isInitSync = lastPagingToken === "";
 
     const pagination = buildPaginationParams(network, isInitSync, lastPagingToken);
     const [newCoreOps] = await getAlpacaApi(network, kind).listOperations(address, pagination);
-    console.log("newCoreOps", newCoreOps);
     // FIXME: adaptCoreOperationToLiveOperation should not be StellarOperation but generic
     const newOps = newCoreOps.map(op =>
       adaptCoreOperationToLiveOperation(accountId, op),
     ) as StellarOperation[];
     const mergedOps = mergeOps(oldOps, newOps) as StellarOperation[];
-    console.log("mergedOps", mergedOps);
 
     // NOTE: was it really what was done before, also, what's the use of this
     // const assetOps = mergedOps.filter(op => op.type === "NONE");
@@ -90,7 +83,6 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         assetOperations.push(operation);
       }
     });
-    console.log({ assetOperations });
     // Instead of building TokenAccounts, we use enriched AssetInfo objects
     const tokenAssets: BaseTokenLikeAsset[] = balanceRes
       .filter(b => b.asset?.type === "token")
@@ -108,7 +100,6 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       }));
 
     const accountInfo = await getAlpacaApi(network, kind).getAccountInfo(address);
-    console.log({ accountInfo });
     // TODO: make this more generic this looks to be only for stellar
     if (accountInfo?.spendableBalance) {
       spendableBalance = BigInt(accountInfo.spendableBalance);
@@ -122,10 +113,8 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         operations: assetOperations,
       }) || [];
 
-    console.log("tokenAssets", tokenAssets);
     const operationsWithSubs = mergedOps.map(op => {
       const subOperations = inferSubOperations(op.hash, subAccounts);
-      console.log({ subAccounts, subOperations });
 
       return {
         ...op,
@@ -133,7 +122,6 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       };
     });
 
-    console.log("operationsWithSubs", operationsWithSubs);
     const res = {
       id: accountId,
       xpub: address,
@@ -144,7 +132,6 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       subAccounts,
       operationsCount: operationsWithSubs.length,
     };
-    console.log({ ACCOUNTSHAPERESULT: res });
     return res;
   };
 }

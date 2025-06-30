@@ -23,7 +23,6 @@ export function adaptCoreOperationToLiveOperation(
   if (op.details?.ledgerOpType !== undefined) {
     extra.ledgerOpType = op.details.ledgerOpType as string;
   }
-  console.log("OP: ", op);
 
   if (op.details?.assetAmount !== undefined) {
     extra.assetAmount = op.details.assetAmount as string;
@@ -128,9 +127,6 @@ export const buildOptimisticOperation = (
   const tokenAccount = !subAccountId
     ? null
     : subAccounts && subAccounts.find(ta => ta.id === subAccountId);
-  console.log("UTILS operation: ", operation.value.toString());
-  console.log("UTILS tokenAccount: ", tokenAccount);
-  console.log("UTILS transaction: ", transaction.amount.toString());
   if (tokenAccount && subAccountId) {
     operation.subOperations = [
       {
@@ -151,6 +147,5 @@ export const buildOptimisticOperation = (
       },
     ];
   }
-  console.log("FINAL OPERATION: ", operation);
   return operation;
 };

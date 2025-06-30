@@ -21,7 +21,6 @@ export function genericPrepareTransaction(
     },
   ) => {
     const [assetCode, assetIssuer] = getAssetCodeIssuer(transaction);
-    console.log({ assetCode, assetIssuer });
     const fees = await getAlpacaApi(network, kind).estimateFees(
       transactionToIntent(account, transaction),
     );

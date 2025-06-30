@@ -17,24 +17,6 @@ export type NetworkInfo = {
   networkCongestionLevel?: NetworkCongestionLevel | undefined;
 };
 
-// export function createTransaction(account: Account): TransactionCommon & {
-//   family: string;
-//   fee: BigNumber | null | undefined;
-//   networkInfo: NetworkInfo | null | undefined;
-//   tag: number | null | undefined;
-//   feeCustomUnit: Unit | null | undefined;
-// } {
-//   return {
-//     family: account.currency.family,
-//     amount: BigNumber(0),
-//     recipient: "",
-//     fee: null,
-//     tag: undefined,
-//     networkInfo: null,
-//     feeCustomUnit: null,
-//   };
-// }
-
 export function createTransaction(account: Account | TokenAccount): TransactionCommon & {
   family: string;
   fee?: BigNumber | null | undefined;
@@ -51,10 +33,6 @@ export function createTransaction(account: Account | TokenAccount): TransactionC
 } {
   const currency =
     account.type === "TokenAccount" ? account.token.parentCurrency : account.currency;
-  // if (account.type === "TokenAccount") {
-  //   debugger;
-  // }
-  // debugger;
   switch (currency.family) {
     case "xrp":
     case "ripple":
