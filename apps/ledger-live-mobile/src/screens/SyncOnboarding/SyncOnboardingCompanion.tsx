@@ -713,13 +713,13 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                     <TrackScreen category="Set up device: Step 3 Charon Backup Success" />
                   ) : null}
                   <Flex alignItems="center" justifyContent="center">
-                    <Flex style={{ overflow: "visible", height: 100 }} mt={3} mb={6}>
+                    <Flex style={{ overflow: "visible", height: 100 }} mt={16} mb={24}>
                       <Animation style={{ height: 100 }} source={CHARON} />
                     </Flex>
-                    <Text variant="h5" fontWeight="semiBold" mb={6}>
+                    <Text variant="h5" fontWeight="semiBold" mb={24}>
                       {t("syncOnboarding.seedStep.backupCharon.title")}
                     </Text>
-                    <BodyText mb={6} textAlign="center">
+                    <BodyText mb={24} textAlign="center">
                       {t("syncOnboarding.seedStep.backupCharon.desc")}
                     </BodyText>
                   </Flex>

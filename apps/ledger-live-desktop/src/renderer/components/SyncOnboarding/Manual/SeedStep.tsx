@@ -11,6 +11,7 @@ import { CharonStatus } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { openURL } from "~/renderer/linking";
 import Animation from "~/renderer/animations";
 import CHARON from "~/renderer/animations/charon/charon.json";
+import styled from "styled-components";
 
 export type SeedPathStatus =
   | "choice_new_or_restore"
@@ -42,6 +43,17 @@ const SeedStep = ({ seedPathStatus, deviceModelId, charonSupported, charonStatus
     });
     openURL(CHARON_LEARN_MORE_URL);
   }, [track]);
+
+  const StyledAnimation = styled(Animation)`
+    border-radius: 6.4px;
+    box-shadow:
+      0px 63.291px 50.633px 0px rgba(0, 0, 0, 0.19),
+      0px 26.442px 21.153px 0px rgba(0, 0, 0, 0.14),
+      0px 14.137px 11.31px 0px rgba(0, 0, 0, 0.11),
+      0px 7.925px 6.34px 0px rgba(0, 0, 0, 0.09),
+      0px 4.209px 3.367px 0px rgba(0, 0, 0, 0.08),
+      0px 1.751px 1.401px 0px rgba(0, 0, 0, 0.05);
+  `;
 
   useEffect(() => {
     if (seedPathStatus == "backup_charon" && charonSupported) {
@@ -174,24 +186,24 @@ const SeedStep = ({ seedPathStatus, deviceModelId, charonSupported, charonStatus
           <Flex alignItems="center" justifyContent="center" flexDirection="column">
             <Flex
               style={{
-                width: 220,
-                height: 150,
+                height: 108,
                 overflow: "visible",
                 justifyContent: "center",
-                paddingTop: 20,
+                paddingTop: 8,
+                marginBottom: 24,
               }}
             >
-              <Animation animation={CHARON as object} />
+              <StyledAnimation animation={CHARON as object} />
             </Flex>
             {/* @ts-expect-error weird props issue with React 18 */}
-            <StepText mb={6} fontWeight="semiBold" variant="largeLineHeight" color="neutral.c100">
+            <StepText mb={24} fontWeight="semiBold" variant="largeLineHeight" color="neutral.c100">
               {t("syncOnboarding.manual.seedContent.backupCharonTitle")}
             </StepText>
             {/* @ts-expect-error weird props issue with React 18 */}
-            <StepText mb={6} textAlign="center">
+            <StepText mb={24} textAlign="center">
               {t("syncOnboarding.manual.seedContent.backupCharonDescription")}
             </StepText>
-            <Flex flexDirection="column" color="neutral.c100" mb={6}>
+            <Flex flexDirection="column" color="neutral.c100" mb={24}>
               <Link
                 alwaysUnderline
                 Icon={() => <Icons.ExternalLink size="S" />}
