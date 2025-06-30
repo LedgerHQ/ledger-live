@@ -893,6 +893,7 @@
     "title" : "شراء وبيع الأصول المشفرة",
     "reset" : "إعادة تعيين التدفق",
     "verifyAddress" : "يُرجى تأكيد أن العنوان المعروض يتطابق تماماً مع العنوان المعروض على جهازك",
+    "connectingTo" : "جارٍ توصيلك بـ {{provider}}",
     "buy" : {
       "header" : "شراء الأصول المشفرة عن طريق شريكنا",
       "title" : "اختر مزود لشراء الأصول المشفرة",
@@ -1241,11 +1242,11 @@
       }
     },
     "manual" : {
-      "title" : "إعداد جهازك {{deviceName}}",
+      "title" : "جهّز {{deviceName}} الخاص بك",
       "continueOnDevice" : "قم بهذا الإجراء على جهازك {{productName}}",
       "pairedContent" : {
-        "title" : "جهاز {{deviceName}} هذا أصلي",
-        "description" : "من الآمن استخدام جهاز {{productName}} هذا. يمكنك المتابعة إلى إعداده.",
+        "title" : "{{deviceName}} أصلي",
+        "description" : "جهازك {{productName}} آمن للاستخدام. أنت مستعدٌ للبدء في الإعداد.",
         "continueOnDevice" : "انقر على جهازك {{productName}} لبدء الإعداد"
       },
       "pinContent" : {
@@ -1255,26 +1256,37 @@
         "continueOnDevice" : "إعداد كود PIN الخاص بك على جهازك {{productName}}"
       },
       "seedContent" : {
-        "title" : "عبارة الاسترداد السرية",
+        "title" : "الإعداد والنسخ الاحتياطي",
         "titleCompleted" : "تم تأكيد عبارة الاسترداد السرية",
         "recoverSeed" : "Placeholder: استرداد",
-        "restoreSeed" : "تأكد من استخدام عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأقصى درجات الأمان لأصولك..\n\nليس لديك واحد؟ استخدم جهازك {{productName}} لإنشاء عبارة جديدة.",
+        "restoreSeed" : "للاستعادة، اتبع التعليمات التي تظهر على شاشة Ledger الآمنة خاصتك.",
+        "restoreCharonTitle" : "الاستعادة باستخدام Ledger Charon",
+        "restoreCharonDescription" : "للاستعادة، اتبع التعليمات التي تظهر على شاشة Ledger الآمنة لديك.",
+        "restoreCharonContinueOnDevice" : "اتبع التعليمات على جهازك {{productName}}",
         "selection" : "اختر خيار الإعداد الأكثر ملائمة لك:",
-        "selectionNewLedger" : "<0>”Set up as a new Ledger (الإعداد كجهاز Ledger جديد)“</0> يتيح لك إنشاء محفظة جديدة. هذا يُنشئ عبارة استرداد سرية جديدة.",
-        "selectionRestore" : "<0>”Restore (استعادة)“</0> يتيح لك استعادة الوصول إلى أصولك الموجودة عن طريق عبارة الاسترداد السرية الخاصة بك، أو باستخدام Ledger Recover.",
+        "selectionNewLedgerTitle" : "الإعداد كجهاز Ledger جديد",
+        "selectionNewLedgerDescription" : "هذا يُنشئ عبارة استرداد سرية جديدة.",
+        "selectionRestoreTitle" : "استعادة الوصول إلى الأصول",
+        "selectionRestoreDescription" : "هذا يتيح لك الاستعادة باستخدام نسخك الاحتياطي — عبارة الاسترداد السرية أو Ledger Recover.",
+        "selectionRestoreDescriptionWithCharon" : "هذا يتيح لك الاستعادة باستخدام نسخك الاحتياطي — عبارة الاسترداد السرية أو Ledger Recover أو Ledger Charon.",
         "selectionContinueOnDevice" : "اختر الخيار ذي الصلة على جهازك {{productName}}",
-        "newSeedDescription1" : "جهاز {{productName}} سيقوم بإنشاء عبارة الاسترداد السرية—قائمة فريدة من 24 كلمة. إنها الطريقة الوحيدة لاستعادة أصولك في حالة سرقة أو فقد جهازك Ledger أو إذا نسيت كود PIN الخاص بك.",
-        "newSeedDescription2" : "<0>احفظها بأمان وخصوصية:\n</0>عبارة الاسترداد السرية الخاصة بك تتحكم في كل أصولك وغير قابلة للاستبدال. أي شخص لديه عبارتك يتحكم في أصولك أيضاً ويمكنه سرقتها. إذا فقدت عبارتك، ليس بوسع Ledger مساعدتك.",
-        "newSeedDescription3" : "احذر من أي شخص أو أي برنامج يطلب عبارة الاسترداد السرية الخاصة بك. إنه احتيال. ",
-        "newSeedDescription4" : "المكان الوحيد الذي يجب عليك إدخال عبارة الاسترداد السرية الخاصة بك فيه هو جهازك Ledger.",
-        "newSeedDescription5" : "لا تشاركها. لا تفقدها.",
-        "newSeedContinueOnDevice" : "اعرض واكتب عبارة الاسترداد السرية التي تم إنشاؤها على جهازك {{productName}}",
+        "selectionNewSeedTitle" : "عبارة الاسترداد السرية",
+        "selectionNewSeedSubtitle" : "احفظها بأمان وخصوصية",
+        "selectionNewSeedDescription" : "عبارة الاسترداد السرية الخاصة بك تتحكم في أصولك وهي غير قابلة للاستبدال. أي شخص لديه عبارتك يمكنه سرقة كل أصولك. إذا فقدتها، Ledger لا يمكنها استرجاعها من أجلك.",
+        "selectionNewSeedContinueOnDevice" : "اتبع التعليمات على جهازك {{productName}}",
+        "restoreDescription" : "قم باختيار نسخ احتياطي ترغب في الاستعادة منه:",
         "restoreChoiceContinueOnDevice" : "اختر الخيار ذي الصلة على جهازك {{productName}}",
-        "restoreChoiceSRPTitle" : "الاستعادة باستخدام عبارة الاسترداد السرية",
+        "restoreChoiceSRPTitle" : "عبارة الاسترداد السرية",
         "restoreChoiceSRPDescription" : "استخدم عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأقصى درجات الأمان.",
-        "restoreChoiceRecoverTitle" : "الاستعادة باستخدام Ledger Recover",
-        "restoreChoiceRecoverDescription" : "إذا كنت مشتركاً في Ledger Recover، قم بتسجيل الدخول إلى اشتراكك لاستعادة النسخة الاحتياطية لعبارة الاسترداد السرية الخاصة بك.",
-        "followInstructions" : "اتبع التعليمات التي تظهر على جهازك {{productName}}."
+        "restoreChoiceCharonTitle" : "Ledger Charon",
+        "restoreChoiceCharonDescription" : "الوصف الوصف الوصف الوصف الوصف الوصف.",
+        "restoreChoiceRecoverTitle" : "اشتراك Ledger Recover",
+        "restoreChoiceRecoverDescription" : "استخدم اشتراكك لاستعادة الوصول إلى أصولك بواسطة هويّتك.",
+        "followInstructions" : "اتبع التعليمات التي تظهر على جهازك {{productName}}.",
+        "backupCharonTitle" : "Ledger Charon",
+        "backupCharonDescription" : "الوصف الوصف الوصف الوصف الوصف الوصف الوصف الوصف الوصف الوصف.",
+        "backupCharonCta" : "معرفة المزيد أو الشراء",
+        "backupCharonContinueOnDevice" : "اتبع التعليمات على جهازك {{productName}}"
       },
       "backup" : {
         "title" : "نسخة احتياطية لعبارة الاسترداد السرية الخاصة بك",
@@ -1296,8 +1308,8 @@
       },
       "softwareCheckContent" : {
         "title" : {
-          "active" : "اختبار الأصالة\nوالتحقق من تحديث نظام التشغيل",
-          "completed" : "جهازك {{modelName}} أصلي ومُحدَّث إلى آخر إصدار"
+          "active" : "اختبار أصالة Ledger",
+          "completed" : "اختبار أصالة Ledger"
         },
         "exitWarningDrawer" : {
           "title" : "إلغاء اختبار الأصالة والتحقق من تحديث نظام التشغيل؟",
@@ -1320,12 +1332,12 @@
           }
         },
         "whyPerformChecksLink" : "تعرّف على المزيد حول اختبار الأصالة",
-        "startChecksCTA" : "التحقق من جهازي {{modelName}}",
+        "startChecksCTA" : "تحقق من {{modelName}}",
         "continueCTA" : "المتابعة إلى الإعداد",
         "genuineCheck" : {
           "title" : {
-            "active" : "اختبار الأصالة",
-            "completed" : "جهازك {{modelName}} أصلي",
+            "active" : "اختبار أصالة Ledger",
+            "completed" : "{{modelName}} أصلي",
             "cancelled" : "اختبار الأصالة تم رفضه"
           },
           "subtitle" : {
@@ -1336,13 +1348,12 @@
         },
         "firmwareUpdate" : {
           "title" : {
-            "active" : "التحقق من تحديث نظام التشغيل",
-            "completed" : "نظام تشغيل جهازك {{modelName}} مُحدَّث إلى آخر إصدار.",
+            "active" : "التحقق من نظام تشغيل Ledger OS",
+            "completed" : "نظام تشغيل Ledger OS مُحدَّث إلى آخر إصدار",
             "updateAvailable" : "تحديث نظام التشغيل {{firmwareVersion}} متاح"
           },
           "subtitle" : {
-            "active" : "يتحقق هذا مما إذا كان نظام تشغيل جهازك {{modelName}} مُحدَّث إلى آخر إصدار أم لا.",
-            "completed" : "لبدء استعادة التطبيق على جهازك {{modelName}}، اختر زر ”Restore apps (استعادة التطبيقات)“ أدناه.",
+            "active" : "هذا يتحقق مما إذا كان نظام تشغيل جهازك {{modelName}} مُحدَّث إلى آخر إصدار.",
             "updateAvailable" : "قم بالتحديث من أجل الأمان الأمثل والوصول إلى أحدث الميزات."
           },
           "viewUpdateCTA" : "تحديث نظام تشغيل {{modelName}}",
@@ -1925,7 +1936,8 @@
       "payoutNetworkFees" : "رسوم الدفع",
       "payoutNetworkFeesTooltip" : "هذا المبلغ لن يظهر على جهازك",
       "acceptTerms" : "بتأكيد صحة هذه المعاملة، أنا أقبل\n<0>شروط استخدام {{provider}}</0>",
-      "exodusAcceptTerms" : "Exodus تعتمد على أطراف ثالثة لإجراء المبادلات.\nبتأكيد صحة هذه المعاملة، أنا أقبل <0>شروط استخدام Exodus</0>"
+      "exodusAcceptTerms" : "Exodus تعتمد على أطراف ثالثة لإجراء المبادلات.\nبتأكيد صحة هذه المعاملة، أنا أقبل <0>شروط استخدام Exodus</0>",
+      "changellyAcceptTerms" : "بالنقر على ”Swap with Changelly (المبادلة بواسطة Changelly)“ أنت تقبل <0>شروط استخدام</0> Changelly و\n<1>سياسة مكافحة غسل الأموال/KYC (اعرف عميلك)</1> الخاصة بها. Changelly قد تطبق إجراءات مكافحة غسل الأموال/KYC (اعرف عميلك) والتي\nيمكن، في حالات محدودة، أن تؤثر على إتمام معاملتك. إذا\nحدث هذا، يجب عليك التواصل مع <2>دعم عملاء</2> Changelly."
     },
     "swap2" : {
       "amountSent" : "المبلغ المطلوب إرساله",
@@ -6041,6 +6053,10 @@
       "title" : "حدث خطأ ما",
       "description" : "حساب التلقي هذا لا ينتمي إلى الجهاز الذي قمت بتوصيله. يُرجى تغييره وإعادة المحاولة"
     },
+    "MissingSwapPayloadParamaters" : {
+      "title" : "حدث خطأ ما",
+      "description" : "مُعلّمة المبادلة مفقودة من المزود المختار. يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    },
     "WrongDeviceForAccountRefund" : {
       "title" : "حدث خطأ ما",
       "description" : "حساب الإرسال هذا لا ينتمي إلى الجهاز الذي قمت بتوصيله. يُرجى تغييره وإعادة المحاولة"
@@ -7059,7 +7075,9 @@
     "searchPlaceholder" : "بحث",
     "selectAsset" : "اختر أصل",
     "selectNetwork" : "اختر الشبكة",
-    "selectAccount" : "اختر حساب"
+    "selectAccount" : "اختر حساب",
+    "accountCount_one" : "{{count}} حساب",
+    "accountCount_other" : "{{count}} حساب"
   },
   "nftEntryPoint" : {
     "title" : "الرموز غير القابلة للاستبدال (NFT)",
