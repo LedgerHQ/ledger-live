@@ -447,8 +447,6 @@
     "incompatibility" : {
       "ton_title" : "Ledger Nano S™, Ton takasını desteklemez",
       "ton_description" : "Ton takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
-      "ton_tokens_title" : "Ledger Nano S™, Ton token takasını desteklemez",
-      "ton_tokens_description" : "Ton Token’larını takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
       "spl_tokens_title" : "Ledger Nano S™, Solana token takasını desteklemez",
       "spl_tokens_description" : "Solana token'larını takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
       "sui_tokens_title" : "Ledger Nano S™, Sui token takasını desteklemez",
@@ -893,7 +891,6 @@
     "title" : "Kripto satın al ve sat",
     "reset" : "Başa dön",
     "verifyAddress" : "Görüntülenen adres ile cihazınızda gösterilen adresin tam olarak eşleştiğinden lütfen emin olun",
-    "connectingTo" : "{{provider}} sağlayıcısına bağlanıyorsunuz",
     "buy" : {
       "header" : "Ortaklarımız üzerinden kripto satın alın",
       "title" : "Kripto satın almak için bir sağlayıcı seçin",
@@ -1926,8 +1923,7 @@
       "payoutNetworkFees" : "Ödeme ücretleri",
       "payoutNetworkFeesTooltip" : "Bu tutar cihazınızda gösterilmeyecektir",
       "acceptTerms" : "Bu işlemi onaylayarak,\n<0>{{provider}} kullanım koşullarını</0> kabul ediyorum.",
-      "exodusAcceptTerms" : "Exodus, takas işlemlerini gerçekleştirmek için üçüncü tarafları kullanır.\nBu işlemi onaylayarak, <0>Exodus'un kullanım koşullarını</0> kabul ediyorum.",
-      "changellyAcceptTerms" : "“Changelly ile Takas Edin” seçeneğine tıkladığınızda Changelly'nin <0>Kullanım Koşulları</0>'nı\nve <1>Kara Paranın Aklanmasının Önlenmesi/KYC politikasını</1> kabul etmiş olursunuz. Changelly, işleminizin tamamlanmasını\nbazı durumlarda etkileyebilecek olan, Kara Paranın Aklanmasının Önlenmesi/KYC prosedürleri uygulayabilir. \nBöyle bir durumda Changelly'nin <2>müşteri destek</2> ekibi ile iletişime geçmeniz gerekir."
+      "exodusAcceptTerms" : "Exodus, takas işlemlerini gerçekleştirmek için üçüncü tarafları kullanır.\nBu işlemi onaylayarak, <0>Exodus'un kullanım koşullarını</0> kabul ediyorum."
     },
     "swap2" : {
       "amountSent" : "Gönderilecek tutar",
@@ -2074,8 +2070,7 @@
       "latest" : "Donanım yazılımının {{version}} sürümü mevcut",
       "contactSupport" : "Destek al",
       "deprecated" : "Cihazın yazılım sürümü güncellenemeyecek kadar eski. Değiştirmek için Ledger Destek ekibiyle iletişime geçin.",
-      "prepareSeed" : "Önlem olarak, 24 kelimelik Gizli Kurtarma İfadenizi kurtarma Kâğıdına yazdığınızdan ve bu kâğıda kolayca erişebileceğinizden emin olun.",
-      "prepareSeedRecover" : "Cüzdan erişiminizi yedekleyip cüzdanınıza erişimi asla kaybetmeyeceğinizden emin olmak için Ledger Recover’ı kullanmayı düşünün.",
+      "prepareSeed" : "Önlem olarak, 24 kelimelik kurtarma ifadenizi Kurtarma Kağıdına yazdığınızdan ve bu kağıda kolayca ulaşabileceğinizden emin olun.",
       "disclaimerTitle" : "<1>Donanım yazılımının {{version}} sürümünü</1> yüklemek üzeresiniz.",
       "cancelUpdate" : "Güncellemeyi iptal et",
       "continueUpdate" : "Güncellemeye devam et",
@@ -2398,8 +2393,7 @@
         "suggested" : "Önerilen",
         "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
-        "nftQuantity" : "Miktar",
-        "splExtensionsWarning" : "Token Uzantıları (Token Extensions) olarak da bilinen Token-2022 programı kapsamındaki bir token’la etkileşime geçiyorsunuz. Bu token’ın belirli riskleri bulunmaktadır. Daha fazla bilgi edinmek için <0>buraya tıklayın</0>."
+        "nftQuantity" : "Miktar"
       },
       "verification" : {
         "streaming" : {
@@ -3774,7 +3768,7 @@
       "frozenStateWarning" : "Hesap varlıkları donduruldu!",
       "transferWarning" : "Ledger Nano S™ kullanarak Solana token'ları için alıcı adresini doğrulamak üzere <0>bu yönergeleri uygulayın.</0>",
       "transferFees" : {
-        "feesHint" : "Token transfer ücreti: {{transferFee}}",
+        "feesPercentHint" : "Bu token için %{{feePercent}} ({{feeBps}} bps) transfer ücreti alınır. Maks. {{maxFee}}",
         "notice" : "Transfer ücreti: %{{fee}}",
         "tooltipHint" : "Token oluşturucu için alıkoyulan transfer yüzdesi",
         "transferFeesLabel" : "Transfer ücretleri"
@@ -5426,9 +5420,7 @@
     "stringHash" : "Mesaj Hash'i",
     "domainHash" : "Alan Adı Hash'i",
     "messageHash" : "Mesaj Hash'i",
-    "message" : "Mesaj",
-    "title" : "Ledger {{wording}} üzerinde devam edin",
-    "description" : "Güvenli Dokunmatik Ekranınızda gösterilen yönergeleri izleyin."
+    "message" : "Mesaj"
   },
   "TransactionConfirm" : {
     "title" : "Sonlandırmak için lütfen cihazınızdaki işlemi onaylayın",
@@ -5876,10 +5868,6 @@
       "title" : "Üzgünüz, fon miktarı yetersiz",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
     },
-    "NotEnoughBalanceFees" : {
-      "title" : "Üzgünüz, fon miktarı işlem ücretlerini karşılamıyor",
-      "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
-    },
     "NotEnoughBalanceSwap" : {
       "title" : "Ne yazık ki bakiye, ağ ücretlerini karşılamaya yetmiyor. Tutarı değiştirin veya bakiyeyi doğrulayın.",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
@@ -6042,10 +6030,6 @@
     "WrongDeviceForAccountPayout" : {
       "title" : "Bir hata oluştu",
       "description" : "Bu alıcı hesabı, bağladığınız cihaza ait değil. Lütfen değiştirin ve tekrar deneyin."
-    },
-    "MissingSwapPayloadParamaters" : {
-      "title" : "Bir hata oluştu",
-      "description" : "Seçili sağlayıcının takas parametresi eksik. Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "Bir hata oluştu",
@@ -6628,8 +6612,7 @@
       "title" : "varlık seçin"
     },
     "selectAccount" : {
-      "title" : "hesap seçin",
-      "addAccount" : "Yeni veya mevcut bir hesabı ekle"
+      "title" : "hesap seçin"
     }
   },
   "customImage" : {
@@ -7060,25 +7043,5 @@
       "description" : "Ledger Nano S cihazınızdaki sınırlı bellek en yeni özelliklere, blok zinciri değişikliklerine ve güvenlik güncellemelerine erişiminizi kısıtlar. Uzun vadeli kullanım için daha yeni bir Ledger cihazına model yükseltin.",
       "cta" : "Daha fazla bilgi"
     }
-  },
-  "modularAssetDrawer" : {
-    "searchPlaceholder" : "Ara",
-    "selectAsset" : "Varlık seçin",
-    "selectNetwork" : "Ağ seçin",
-    "selectAccount" : "Hesap seçin",
-    "accountCount_one" : "{{count}} hesap",
-    "accountCount_other" : "{{count}} hesap"
-  },
-  "nftEntryPoint" : {
-    "title" : "NFT (Non Fungible Token)",
-    "entry" : {
-      "magiceden" : "Magic Eden",
-      "opensea" : "OpenSea"
-    }
-  },
-  "geoBlocking" : {
-    "title" : "Konum kullanılamıyor",
-    "description" : "Ledger cüzdan bu konumda kullanılamıyor.",
-    "learnMore" : "Daha fazla bilgi"
   }
 }
