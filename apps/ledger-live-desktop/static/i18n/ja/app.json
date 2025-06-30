@@ -893,6 +893,7 @@
     "title" : "暗号資産を購入・売却する",
     "reset" : "フローをリセット",
     "verifyAddress" : "デバイスに表示されているアドレスと、完全に一致しているか確認してください。",
+    "connectingTo" : "{{provider}}に接続中",
     "buy" : {
       "header" : "パートナーから暗号資産を購入する",
       "title" : "暗号資産を購入するプロバイダーを選択する",
@@ -1241,11 +1242,11 @@
       }
     },
     "manual" : {
-      "title" : "{{deviceName}}をセットアップする",
+      "title" : "{{deviceName}}を準備",
       "continueOnDevice" : "{{productName}}でこのアクションを実行する",
       "pairedContent" : {
-        "title" : "この{{deviceName}}は正規品です",
-        "description" : "{{productName}}は安全にご使用いただけます。初期設定に進むことができます。",
+        "title" : "{{deviceName}}は正規品です",
+        "description" : "お持ちの{{productName}}は安全にご利用いただけます。セットアップの準備に進めます。",
         "continueOnDevice" : "{{productName}}をタップしてセットアップを開始"
       },
       "pinContent" : {
@@ -1255,26 +1256,37 @@
         "continueOnDevice" : "{{productName}}にPINを設定"
       },
       "seedContent" : {
-        "title" : "シークレットリカバリーフレーズ",
+        "title" : "セットアップとバックアップ",
         "titleCompleted" : "シークレットリカバリーフレーズ確認済み",
         "recoverSeed" : "Placeholder：Recover",
-        "restoreSeed" : "資産のセキュリティを最大限に高めるため、必ずLedgerデバイスで生成したシークレットリカバリーフレーズを使用してください。\n\nシークレットリカバリーフレーズを持っていませんか？{{productName}}を使用して、新しいフレーズを生成してください。",
+        "restoreSeed" : "復元するには、Ledgerのセキュアスクリーンに表示される指示に従ってください。",
+        "restoreCharonTitle" : "Ledger Charonを使用して復元",
+        "restoreCharonDescription" : "復元するには、Ledgerのセキュアスクリーンに表示される指示に従ってください。",
+        "restoreCharonContinueOnDevice" : "{{productName}}の指示に従う",
         "selection" : "最適な設定オプションを選択してください：",
-        "selectionNewLedger" : "<0>「Set up as a new Ledger（新しいLedgerとして設定）」</0>で新しいウォレットを作成できます。これにより、新しいシークレットリカバリーフレーズが生成されます。",
-        "selectionRestore" : "<0>「Restore（復元）」</0>で、シークレットリカバリーフレーズまたはLedger Recoverを使用して既存の資産へのアクセスを復元できます。",
+        "selectionNewLedgerTitle" : "新しいLedgerとしてセットアップ",
+        "selectionNewLedgerDescription" : "新たにシークレットリカバリーフレーズが生成されます。",
+        "selectionRestoreTitle" : "資産へのアクセスを復元",
+        "selectionRestoreDescription" : "これにより、バックアップ（シークレットリカバリーフレーズまたはLedger Recover）を使用して復元できます。",
+        "selectionRestoreDescriptionWithCharon" : "これにより、バックアップ（シークレットリカバリーフレーズ、Ledger Recover、またはLedger Charon）を使用して復元できます。",
         "selectionContinueOnDevice" : "{{productName}}で関連するオプションを選択",
-        "newSeedDescription1" : "{{productName}}は、24単語からなる一意のリストであるシークレットリカバリーフレーズを生成します。これは、Ledgerが盗難や紛失に遭ったり、PINを忘れた場合に資産を復元する唯一の方法です。",
-        "newSeedDescription2" : "<0>安全かつプライベートに保管：</0>\nシークレットリカバリーフレーズにより全資産を管理できます。シークレットリカバリーフレーズは代替不可能です。フレーズを知っている人は誰でも資産を管理し、盗むこともできます。フレーズを紛失された場合、Ledgerはサポートを提供することができません。",
-        "newSeedDescription3" : "シークレットリカバリーフレーズを尋ねる人物やソフトウェアには、注意してください。それらは、詐欺です。 ",
-        "newSeedDescription4" : "シークレットリカバリーフレーズを入力する必要がある唯一の場所は、Ledgerデバイス上のみです。",
-        "newSeedDescription5" : "第三者と共有しないでください。紛失しないでください。",
-        "newSeedContinueOnDevice" : "{{productName}}で生成されたシークレットリカバリーフレーズを表示して書き留める",
+        "selectionNewSeedTitle" : "シークレットリカバリーフレーズ",
+        "selectionNewSeedSubtitle" : "安全かつプライベートに保管",
+        "selectionNewSeedDescription" : "お客様のシークレットリカバリーフレーズは、お客様の資産を管理するものであり、代替不可能です。お客様のフレーズを知っている人は誰でも、お客様の資産をすべて盗むことができます。紛失された場合、Ledgerでも、それを取り戻すことはできません。",
+        "selectionNewSeedContinueOnDevice" : "{{productName}}の指示に従う",
+        "restoreDescription" : "復元で使用するバックアップを選択：",
         "restoreChoiceContinueOnDevice" : "{{productName}}で関連するオプションを選択",
-        "restoreChoiceSRPTitle" : "シークレットリカバリーフレーズを使用して復元する",
+        "restoreChoiceSRPTitle" : "シークレットリカバリーフレーズ",
         "restoreChoiceSRPDescription" : "セキュリティを最大限に高めるには、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを使用してください。",
-        "restoreChoiceRecoverTitle" : "Ledger Recoverを使用して復元する",
-        "restoreChoiceRecoverDescription" : "Ledger Recoverのサブスクリプション契約をしている場合は、サブスクリプションにログインし、シークレットリカバリーフレーズのバックアップを復元します。",
-        "followInstructions" : "{{productName}}に表示される指示に従ってください。"
+        "restoreChoiceCharonTitle" : "Ledger Charon",
+        "restoreChoiceCharonDescription" : "Description description description description description description.",
+        "restoreChoiceRecoverTitle" : "Ledger Recoverサブスクリプション",
+        "restoreChoiceRecoverDescription" : "サブスクリプションを使用して、お客様のIDで資産へのアクセスを復元します。",
+        "followInstructions" : "{{productName}}に表示される指示に従ってください。",
+        "backupCharonTitle" : "Ledger Charon",
+        "backupCharonDescription" : "Description description description description description description description description description description.",
+        "backupCharonCta" : "詳細の確認または購入",
+        "backupCharonContinueOnDevice" : "{{productName}}の指示に従う"
       },
       "backup" : {
         "title" : "シークレットリカバリーフレーズのバックアップ",
@@ -1296,8 +1308,8 @@
       },
       "softwareCheckContent" : {
         "title" : {
-          "active" : "正規品チェックと\nOSアップデートチェック",
-          "completed" : "お客様の{{modelName}}は正規品で最新のものです"
+          "active" : "Ledger正規品チェック",
+          "completed" : "Ledger正規品チェック"
         },
         "exitWarningDrawer" : {
           "title" : "正規品チェックとOSアップデートチェックをキャンセルしますか？",
@@ -1320,12 +1332,12 @@
           }
         },
         "whyPerformChecksLink" : "正規品チェックについて詳しく見る",
-        "startChecksCTA" : "私の{{modelName}}をチェック",
+        "startChecksCTA" : "{{modelName}}をチェック",
         "continueCTA" : "セットアップを続行する",
         "genuineCheck" : {
           "title" : {
-            "active" : "正規品チェック",
-            "completed" : "お客様の{{modelName}}は正規品です",
+            "active" : "Ledger正規品チェック",
+            "completed" : "{{modelName}}は正規品です",
             "cancelled" : "正規品チェックが拒否されました"
           },
           "subtitle" : {
@@ -1336,13 +1348,12 @@
         },
         "firmwareUpdate" : {
           "title" : {
-            "active" : "OSアップデートチェック",
-            "completed" : "{{modelName}} OSは最新の状態です。",
+            "active" : "Ledger OSチェック",
+            "completed" : "Ledger OSは最新です",
             "updateAvailable" : "OSアップデート{{firmwareVersion}}をご利用いただけます"
           },
           "subtitle" : {
-            "active" : "これにより、{{modelName}}のオペレーティングシステムが最新かどうかがチェックされます。",
-            "completed" : "「Restore apps（アプリを復元）」ボタンを選択して{{modelName}}でアプリの復元を開始します。",
+            "active" : "これは、お持ちの{{modelName}}のオペレーティングシステムが最新かどうかを確認します。",
             "updateAvailable" : "最適なセキュリティを確保し、最新機能へアクセスするためにアップデートしてください。"
           },
           "viewUpdateCTA" : "{{modelName}} OSをアップデートする",
@@ -1925,7 +1936,8 @@
       "payoutNetworkFees" : "ペイアウト手数料",
       "payoutNetworkFeesTooltip" : "これはデバイスには表示されません。",
       "acceptTerms" : "このトランザクションを検証することにより、私は\n<0>{{provider}}の利用規約</0>に同意します",
-      "exodusAcceptTerms" : "Exodusは、スワップの実行をサードパーティに依存しています。\nこのトランザクションを承認することにより、私は<0>Exodusの利用規約</0>に同意します"
+      "exodusAcceptTerms" : "Exodusは、スワップの実行をサードパーティに依存しています。\nこのトランザクションを承認することにより、私は<0>Exodusの利用規約</0>に同意します",
+      "changellyAcceptTerms" : "「Swap with Changelly（Changellyでスワップ）」をクリックすると、Changellyの<0>利用規約</0>およびその\n<1>AML/KYC</1>ポリシーに同意したことになります。ChangellyはAML/KYC（本人確認手続き）を適用する場合があり、\n稀にトランザクションの完了に影響する可能性があります。そのような場合は、\nChangellyの<2>カスタマーサポート</2>に連絡する必要があります。"
     },
     "swap2" : {
       "amountSent" : "送付額",
@@ -6041,6 +6053,10 @@
       "title" : "問題が発生しました。",
       "description" : "この受取アカウントは、お客様が接続したデバイスに属していません。変更して再試行してください。"
     },
+    "MissingSwapPayloadParamaters" : {
+      "title" : "問題が発生しました。",
+      "description" : "選択されたパートナーからのスワップパラメータがありません。再試行するか、ご不明な点がありましたら、Ledgerサポートにお問い合わせください。"
+    },
     "WrongDeviceForAccountRefund" : {
       "title" : "問題が発生しました。",
       "description" : "この送付アカウントは、お客様が接続したデバイスに属していません。変更して再試行してください。"
@@ -7059,7 +7075,9 @@
     "searchPlaceholder" : "検索",
     "selectAsset" : "暗号資産を選択",
     "selectNetwork" : "ネットワークを選択",
-    "selectAccount" : "アカウントを選択"
+    "selectAccount" : "アカウントを選択",
+    "accountCount_one" : "{{count}}アカウント",
+    "accountCount_other" : "{{count}}アカウント"
   },
   "nftEntryPoint" : {
     "title" : "NFT（非代替性トークン）",
