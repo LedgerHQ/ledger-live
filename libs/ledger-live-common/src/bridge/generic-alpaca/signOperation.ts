@@ -44,8 +44,6 @@ export const genericSignOperation =
             subAccounts,
             spendableBalance,
           } = account;
-          // let { spendableBalance } = account;
-
           // if (subAccounts && transaction?.subAccountId) {
           //   spendableBalance =
           //     subAccounts.find(t => t.id === transaction.subAccountId)?.spendableBalance ||
