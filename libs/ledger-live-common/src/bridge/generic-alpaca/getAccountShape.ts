@@ -3,7 +3,6 @@ import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHel
 import BigNumber from "bignumber.js";
 import { getAlpacaApi } from "./alpaca";
 import { adaptCoreOperationToLiveOperation } from "./utils";
-import { BaseTokenLikeAsset } from "./types";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
 import { StellarBurnAddressError, StellarOperation } from "@ledgerhq/coin-stellar/types";
 import { STELLAR_BURN_ADDRESS } from "@ledgerhq/coin-stellar/logic";
@@ -20,7 +19,6 @@ function buildPaginationParams(
 ): Pagination {
   switch (network) {
     case "stellar":
-      console.log("Get Account Stellar");
       return isInitSync
         ? { limit: getEnv("API_STELLAR_HORIZON_INITIAL_FETCH_MAX_OPERATIONS"), minHeight: 0 }
         : { pagingToken: lastPagingToken, minHeight: 0 };
@@ -85,21 +83,6 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         assetOperations.push(operation);
       }
     });
-    // Instead of building TokenAccounts, we use enriched AssetInfo objects
-    const tokenAssets: BaseTokenLikeAsset[] = balanceRes
-      .filter(b => b.asset?.type === "token")
-      .map(b => ({
-        asset_code: b.asset.assetCode,
-        asset_issuer: b.asset.assetIssuer,
-        balance: b.value.toString(),
-        decimals: 7, // Default Stellar token decimals
-        creationDate: new Date(), // Optional: replace if available
-        operations: newCoreOps.filter(
-          op =>
-            op.asset?.assetCode === b.asset.assetCode &&
-            op.asset?.assetIssuer === b.asset.assetIssuer,
-        ),
-      }));
 
     const accountInfo = await getAlpacaApi(network, kind).getAccountInfo(address);
     // TODO: make this more generic this looks to be only for stellar

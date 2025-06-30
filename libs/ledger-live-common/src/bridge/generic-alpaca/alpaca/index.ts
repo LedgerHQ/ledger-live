@@ -8,8 +8,6 @@ import { XrpCoinConfig } from "@ledgerhq/coin-xrp/config";
 import { StellarCoinConfig } from "@ledgerhq/coin-stellar/config";
 
 export function getAlpacaApi(network, kind): Api<any, any> {
-  console.log("Using local Stellar API: ", network);
-
   if (kind === "local") {
     switch (network) {
       case "ripple":
@@ -19,7 +17,6 @@ export function getAlpacaApi(network, kind): Api<any, any> {
         ) as Api<any, any>;
       // as unknown as Api<any>; // FIXME: createXrpApi returns a strongly typed Api<XrpSender>, fix Api<any> to allow it
       case "stellar":
-        console.log("Using local Stellar API");
         return createStellarApi(
           getCurrencyConfiguration<StellarCoinConfig>(getCryptoCurrencyById("stellar")),
         ) as Api<any, any>;
