@@ -32,9 +32,7 @@ const BLOCK_HEIGHT = 5; // sui has no block height metainfo, we use it simulate 
  */
 async function withApi<T>(execute: AsyncApiFunction<T>) {
   const url = coinConfig.getCoinConfig().node.url;
-  if (!apiMap[url]) {
-    apiMap[url] = new SuiClient({ url });
-  }
+  apiMap[url] ??= new SuiClient({ url });
 
   const result = await execute(apiMap[url]);
   return result;
@@ -204,22 +202,56 @@ export const getLastBlock = () =>
 export const getOperations = async (
   accountId: string,
   addr: string,
-  cursor?: string | null | undefined,
+  cursor?: QueryTransactionBlocksParams["cursor"],
 ): Promise<Operation[]> =>
   withApi(async api => {
-    const sentOps = await loadOperations({ api, addr, type: "OUT", cursor });
-    const receivedOps = await loadOperations({ api, addr, type: "IN", cursor });
+    const sentOps = await loadOperations({
+      api,
+      addr,
+      type: "OUT",
+      cursor,
+      order: cursor ? "ascending" : "descending",
+      operations: [],
+    });
+    const receivedOps = await loadOperations({
+      api,
+      addr,
+      type: "IN",
+      cursor,
+      order: cursor ? "ascending" : "descending",
+      operations: [],
+    });
     const rawTransactions = [...sentOps, ...receivedOps].sort(
       (a, b) => Number(b.timestampMs) - Number(a.timestampMs),
     );
 
     return rawTransactions.map(transaction => transactionToOperation(accountId, addr, transaction));
   });
-
-export const getListOperations = async (addr: string, cursor = ""): Promise<Op<SuiAsset>[]> =>
-  withApi(async api => {
-    const opsOut = await loadOperations({ api, addr, type: "OUT", cursor });
-    const opsIn = await loadOperations({ api, addr, type: "IN", cursor });
+/**
+ * Fetch operations for Alpaca
+ */
+export const getListOperations = async (
+  addr: string,
+  cursor: QueryTransactionBlocksParams["cursor"] = null,
+  withApiImpl: typeof withApi = withApi,
+): Promise<Op<SuiAsset>[]> =>
+  withApiImpl(async api => {
+    const opsOut = await loadOperations({
+      api,
+      addr,
+      type: "OUT",
+      cursor,
+      order: cursor ? "ascending" : "descending",
+      operations: [],
+    });
+    const opsIn = await loadOperations({
+      api,
+      addr,
+      type: "IN",
+      cursor,
+      order: cursor ? "ascending" : "descending",
+      operations: [],
+    });
 
     const rawTransactions = [...opsIn, ...opsOut].sort(
       (a, b) => Number(b.timestampMs) - Number(a.timestampMs),
@@ -276,45 +308,44 @@ export const executeTransactionBlock = async (params: ExecuteTransactionBlockPar
 /**
  * Fetch operations for a specific address and type until the limit is reached
  */
-export const loadOperations = async (params: {
+export const loadOperations = async ({
+  cursor,
+  operations,
+  order,
+  ...params
+}: {
   api: SuiClient;
   addr: string;
   type: OperationType;
-  cursor?: string | null | undefined;
+  operations: PaginatedTransactionResponse["data"];
+  order: "ascending" | "descending";
+  cursor?: QueryTransactionBlocksParams["cursor"];
 }): Promise<PaginatedTransactionResponse["data"]> => {
-  const operations: PaginatedTransactionResponse["data"] = [];
-  let currentCursor = params.cursor;
+  try {
+    if (order === "descending" && operations.length >= TRANSACTIONS_LIMIT) {
+      return operations;
+    }
 
-  while (operations.length < TRANSACTIONS_LIMIT) {
-    try {
-      const { data, nextCursor, hasNextPage } = await queryTransactions({
-        ...params,
-        cursor: currentCursor,
+    const { data, nextCursor, hasNextPage } = await queryTransactions({
+      ...params,
+      order,
+      cursor,
+    });
+
+    operations.push(...data);
+    if (!hasNextPage) {
+      return operations;
+    }
+
+    await loadOperations({ ...params, cursor: nextCursor, operations, order });
+  } catch (error: any) {
+    if (error.type === "InvalidParams") {
+      log("coin:sui", "(network/sdk): loadOperations failed with cursor, retrying without it", {
+        error,
+        params,
       });
-
-      operations.push(...data);
-
-      // If we got fewer results than the query limit or no more data, we've reached the end
-      if (data.length < TRANSACTIONS_LIMIT_PER_QUERY || !hasNextPage) {
-        break;
-      }
-
-      currentCursor = nextCursor;
-    } catch (error: any) {
-      if (error.type === "InvalidParams") {
-        log("coin:sui", "(network/sdk): loadOperations failed with cursor, retrying without it", {
-          error,
-          params,
-        });
-
-        currentCursor = null;
-
-        continue;
-      } else {
-        log("coin:sui", "(network/sdk): loadOperations error", { error, params });
-
-        break;
-      }
+    } else {
+      log("coin:sui", "(network/sdk): loadOperations error", { error, params });
     }
   }
 
@@ -328,16 +359,17 @@ export const queryTransactions = async (params: {
   api: SuiClient;
   addr: string;
   type: OperationType;
-  cursor?: string | null | undefined;
+  order: "ascending" | "descending";
+  cursor?: QueryTransactionBlocksParams["cursor"];
 }): Promise<PaginatedTransactionResponse> => {
-  const { api, addr, type, cursor } = params;
+  const { api, addr, type, cursor, order } = params;
   const filter: QueryTransactionBlocksParams["filter"] =
     type === "IN" ? { ToAddress: addr } : { FromAddress: addr };
 
   return await api.queryTransactionBlocks({
     filter,
     cursor,
-    order: "descending",
+    order,
     options: {
       showInput: true,
       showBalanceChanges: true,
