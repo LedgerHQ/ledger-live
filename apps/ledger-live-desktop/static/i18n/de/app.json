@@ -893,6 +893,7 @@
     "title" : "Kryptowährungen kaufen und verkaufen",
     "reset" : "Zurücksetzen",
     "verifyAddress" : "Bitte bestätige, dass die angezeigte Adresse exakt mit der auf deinem Gerät angezeigten Adresse übereinstimmt",
+    "connectingTo" : "Du wirst mit {{provider}} verbunden",
     "buy" : {
       "header" : "Krypto kaufen über unsere Partner",
       "title" : "Wähle einen Anbieter aus, um Krypto zu kaufen",
@@ -1241,11 +1242,11 @@
       }
     },
     "manual" : {
-      "title" : "Richte dein {{deviceName}}-Gerät ein",
+      "title" : "{{deviceName}} bereithalten",
       "continueOnDevice" : "Diese Aktion für {{productName}} durchführen",
       "pairedContent" : {
-        "title" : "Dieses {{deviceName}}-Gerät ist echt",
-        "description" : "Die Verwendung dieses {{productName}} ist sicher. Du kannst mit dem Einrichten beginnen.",
+        "title" : "{{deviceName}} ist echt",
+        "description" : "Die Nutzung deiner {{productName}} ist sicher. Du kannst nun mit der Einrichtung beginnen.",
         "continueOnDevice" : "Tippe auf dein {{productName}}-Gerät, um mit dem Einrichten zu beginnen"
       },
       "pinContent" : {
@@ -1255,26 +1256,37 @@
         "continueOnDevice" : "Lege die PIN für dein {{productName}}-Gerät fest"
       },
       "seedContent" : {
-        "title" : "Geheime Wiederherstellungsphrase",
+        "title" : "Einrichtung und Backup",
         "titleCompleted" : "Geheime Wiederherstellungsphrase bestätigt",
         "recoverSeed" : "Platzhalter: „Recover“ (Wiederherstellung)",
-        "restoreSeed" : "Schütze deine Vermögenswerte optimal mithilfe einer von einem Ledger-Gerät generierten geheimen Wiederherstellungsphrase.\n\nDu hast keine solche Phrase? Dann kannst du mit deinem {{productName}}-Gerät eine neue Phrase generieren.",
+        "restoreSeed" : "Zum Wiederherstellen befolge die Anweisungen auf deinem Ledger Secure Screen.",
+        "restoreCharonTitle" : "Wiederherstellen mit Ledger Charon",
+        "restoreCharonDescription" : "Zum Wiederherstellen befolge die Anweisungen auf deinem Ledger Secure Screen.",
+        "restoreCharonContinueOnDevice" : "Befolge die Anweisungen auf deiner {{productName}}",
         "selection" : "Wähle die zu deinen Anforderungen passende Einrichtungsoption aus:",
-        "selectionNewLedger" : "<0>Set up as a new Ledger</0> (Als neues Ledger-Gerät einrichten) ermöglicht dir die Erstellung einer neuen Wallet. Hierbei wird eine neue geheime Wiederherstellungsphrase generiert.",
-        "selectionRestore" : "<0>Restore</0> (Wiederherstellen) erlaubt dir den Zugriff auf deine bestehenden Vermögenswerte mittels deiner geheimen Wiederherstellungsphrase oder durch Nutzung von Ledger Recover.",
+        "selectionNewLedgerTitle" : "Als neues Ledger-Gerät einrichten",
+        "selectionNewLedgerDescription" : "Hierbei wird eine neue geheime Wiederherstellungsphrase generiert.",
+        "selectionRestoreTitle" : "Zugriff auf Assets wiederherstellen",
+        "selectionRestoreDescription" : "Mit deinem Backup – geheime Wiederherstellungsphrase oder Ledger Recover – kannst du eine Wiederherstellung durchführen.",
+        "selectionRestoreDescriptionWithCharon" : "Mit deinem Backup – geheime Wiederherstellungsphrase, Ledger Recover oder Ledger Charon – kannst du eine Wiederherstellung durchführen.",
         "selectionContinueOnDevice" : "Wähle die entsprechende Option auf deinem {{productName}}-Gerät aus",
-        "newSeedDescription1" : "Dein {{productName}}-Gerät generiert für dich eine individuelle 24-Wort-Wiederherstellungsphrase. Sie bildet die einzige Möglichkeit, deine Vermögenswerte wiederherzustellen, falls dein Ledger-Gerät gestohlen wird, verloren geht oder du deine PIN vergisst.",
-        "newSeedDescription2" : "<0>Sicher aufbewahren:</0>\nDeine geheime Wiederherstellungsphrase erlaubt den Zugang zu deinen Vermögenswerten und ist unersetzlich. Wer immer diese Phrase kennt, hat die Kontrolle über dein Vermögen und kann es stehlen. Solltest du die Wiederherstellungsphrase verlieren, kann Ledger dir nicht helfen.",
-        "newSeedDescription3" : "Sei vorsichtig, wenn eine Person oder Software nach deiner geheimen Wiederherstellungsphrase fragt. Dies ist in jedem Fall ein Betrugsversuch („Scam“). ",
-        "newSeedDescription4" : "Der einzige Ort, an dem du deine geheime Wiederherstellungsphrase eingeben darfst, ist dein Ledger-Gerät.",
-        "newSeedDescription5" : "Gib sie nicht weiter. Verliere sie nicht.",
-        "newSeedContinueOnDevice" : "Sieh dir die auf deinem {{productName}}-Gerät generierte geheime Wiederherstellungsphrase an und schreibe sie auf",
+        "selectionNewSeedTitle" : "Geheime Wiederherstellungsphrase",
+        "selectionNewSeedSubtitle" : "Bewahre sie sicher auf:",
+        "selectionNewSeedDescription" : "Deine geheime Wiederherstellungsphrase ermöglicht den Zugriff auf deine Assets und ist unersetzlich. Wer auch immer in Besitz dieser Phrase ist, kann dein gesamtes Guthaben stehlen. Und wenn du sie verlierst, kann auch Ledger sie nicht mehr für dich abrufen.",
+        "selectionNewSeedContinueOnDevice" : "Befolge die Anweisungen auf deiner {{productName}}",
+        "restoreDescription" : "Wähle ein Backup aus, das du wiederherstellen möchtest:",
         "restoreChoiceContinueOnDevice" : "Wähle die entsprechende Option auf deinem {{productName}}-Gerät aus",
-        "restoreChoiceSRPTitle" : "Wiederherstellung mit geheimer Wiederherstellungsphrase",
+        "restoreChoiceSRPTitle" : "Geheime Wiederherstellungsphrase",
         "restoreChoiceSRPDescription" : "Für maximale Sicherheit verwende eine von einem Ledger-Gerät generierte geheime Wiederherstellungsphrase.",
-        "restoreChoiceRecoverTitle" : "Wiederherstellen mit Ledger Recover",
-        "restoreChoiceRecoverDescription" : "Wenn du Ledger Recover abonniert hast, melde sich bei deinem Abonnement an, um die Sicherheitskopie deiner geheimen Wiederherstellungsphrase wiederherzustellen.",
-        "followInstructions" : "Folge den Anweisungen auf deinem {{productName}}-Gerät."
+        "restoreChoiceCharonTitle" : "Ledger Charon",
+        "restoreChoiceCharonDescription" : "Beschreibung Beschreibung Beschreibung Beschreibung Beschreibung Beschreibung.",
+        "restoreChoiceRecoverTitle" : "Ledger Recover-Abonnement",
+        "restoreChoiceRecoverDescription" : "Dank deines Abonnements kannst du mit deiner Identität wieder auf deine Assets zugreifen.",
+        "followInstructions" : "Folge den Anweisungen auf deinem {{productName}}-Gerät.",
+        "backupCharonTitle" : "Ledger Charon",
+        "backupCharonDescription" : "Beschreibung Beschreibung Beschreibung Beschreibung Beschreibung Beschreibung Beschreibung Beschreibung Beschreibung Beschreibung.",
+        "backupCharonCta" : "Mehr erfahren oder kaufen",
+        "backupCharonContinueOnDevice" : "Befolge die Anweisungen auf deiner {{productName}}"
       },
       "backup" : {
         "title" : "Sicherheitskopie für deine geheime Wiederherstellungsphrase",
@@ -1296,8 +1308,8 @@
       },
       "softwareCheckContent" : {
         "title" : {
-          "active" : "Echtheitsprüfung und \nPrüfung auf Betriebssystem-Update",
-          "completed" : "Dein {{modelName}}-Gerät ist echt und auf dem neusten Stand"
+          "active" : "Ledger-Echtheitsprüfung",
+          "completed" : "Ledger-Echtheitsprüfung"
         },
         "exitWarningDrawer" : {
           "title" : "Echtheitsprüfung und Prüfung auf Betriebssystem-Update abbrechen?",
@@ -1320,12 +1332,12 @@
           }
         },
         "whyPerformChecksLink" : "Weitere Informationen zur Echtheitsprüfung",
-        "startChecksCTA" : "Mein {{modelName}}-Gerät überprüfen",
+        "startChecksCTA" : "{{modelName}} überprüfen",
         "continueCTA" : "Weiter zur Einrichtung",
         "genuineCheck" : {
           "title" : {
-            "active" : "Echtheitsprüfung",
-            "completed" : "Dein {{modelName}}-Gerät ist echt",
+            "active" : "Ledger-Echtheitsprüfung",
+            "completed" : "{{modelName}} ist echt",
             "cancelled" : "Echtheitsprüfung abgelehnt"
           },
           "subtitle" : {
@@ -1336,13 +1348,12 @@
         },
         "firmwareUpdate" : {
           "title" : {
-            "active" : "Prüfung auf Betriebssystem-Update",
-            "completed" : "Das Betriebssystem deines {{modelName}}-Geräts ist auf dem neuesten Stand.",
+            "active" : "Ledger-Betriebssystemprüfung",
+            "completed" : "Ledger OS ist auf dem neusten Stand",
             "updateAvailable" : "Betriebssystem-Update {{firmwareVersion}} verfügbar"
           },
           "subtitle" : {
-            "active" : "Hiermit wird geprüft, ob das Betriebssystem deines {{modelName}}-Geräts auf dem neuesten Stand ist.",
-            "completed" : "Um die App-Wiederherstellung auf deinem {{modelName}}-Gerät zu starten, wähle unten den Button „Restore apps“ (Apps wiederherstellen) aus.",
+            "active" : "Hiermit wird geprüft, ob das Betriebssystem deiner {{modelName}} auf dem neuesten Stand ist.",
             "updateAvailable" : "Für optimale Sicherheit und Zugriff auf die neuesten Funktionen führe bitte ein Update durch."
           },
           "viewUpdateCTA" : "Betriebssystem-Update für {{modelName}}",
@@ -1925,7 +1936,8 @@
       "payoutNetworkFees" : "Auszahlungsgebühren",
       "payoutNetworkFeesTooltip" : "Dieser Betrag wird nicht auf Ihrem Gerät angezeigt",
       "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von {{provider}}</0> zu.",
-      "exodusAcceptTerms" : "Exodus greift bei der Abwicklung von Swaps auf Drittanbieter zurück.\nDurch Validieren dieser Transaktion stimme ich den <0>Nutzungsbedingungen von Exodus</0> zu."
+      "exodusAcceptTerms" : "Exodus greift bei der Abwicklung von Swaps auf Drittanbieter zurück.\nDurch Validieren dieser Transaktion stimme ich den <0>Nutzungsbedingungen von Exodus</0> zu.",
+      "changellyAcceptTerms" : "Durch Klicken auf „Mit Changelly swappen“ stimmst du den <0>Nutzungsbedingungen</0> von Changelly sowie \nder <1>AML-/KYC-Richtlinie</1> zu. Changelly ist zur Anwendung von AML-/KYC-Verfahren berechtigt, \ndie in seltenen Fällen den Abschluss deiner Transaktion beeinträchtigen können. In einem solchen Fall\n musst du dich mit dem <2>Kundenservice</2> von Changelly in Verbindung setzen."
     },
     "swap2" : {
       "amountSent" : "Zu sendender Betrag",
@@ -6041,6 +6053,10 @@
       "title" : "Etwas ist schief gelaufen",
       "description" : "Das empfangende Konto gehört nicht zum verbundenen Gerät. Bitte wechsle es und versuche es dann noch einmal."
     },
+    "MissingSwapPayloadParamaters" : {
+      "title" : "Etwas ist schief gelaufen",
+      "description" : "Swap-Parameter beim ausgewählten Anbieter fehlt. Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    },
     "WrongDeviceForAccountRefund" : {
       "title" : "Etwas ist schief gelaufen",
       "description" : "Das versendende Konto gehört nicht zum verbundenen Gerät. Bitte wechsle es und versuche es dann noch einmal."
@@ -7057,9 +7073,12 @@
   },
   "modularAssetDrawer" : {
     "searchPlaceholder" : "Suche",
+    "emptyAssetList" : "Keine Assets gefunden",
     "selectAsset" : "Vermögenswert auswählen",
     "selectNetwork" : "Netzwerk auswählen",
-    "selectAccount" : "Konto auswählen"
+    "selectAccount" : "Konto auswählen",
+    "accountCount_one" : "{{count}} Konto",
+    "accountCount_other" : "{{count}} Konten"
   },
   "nftEntryPoint" : {
     "title" : "NFT (Non Fungible Token)",
