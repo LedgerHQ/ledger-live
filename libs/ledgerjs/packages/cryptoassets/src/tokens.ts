@@ -17,6 +17,7 @@ import filecoinTokens from "./data/filecoin-erc20";
 import spltokens, { SPLToken } from "./data/spl";
 import aptCoinTokens, { AptosToken as AptosCoinToken } from "./data/apt_coin";
 import aptFATokens, { AptosToken as AptosFAToken } from "./data/apt_fungible_asset";
+import celoTokens from "./data/celo";
 import { ERC20Token } from "./types";
 import { getEnv } from "@ledgerhq/live-env";
 
@@ -67,6 +68,9 @@ if (getEnv("APTOS_ENABLE_TOKENS")) {
   // Aptos fungible assets tokens
   addTokens(aptFATokens.map(convertAptFaTokens));
 }
+
+// Celo tokens
+addTokens(celoTokens.map(convertERC20));
 
 type TokensListOptions = {
   withDelisted: boolean;
