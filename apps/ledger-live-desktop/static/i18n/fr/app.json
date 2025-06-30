@@ -258,12 +258,12 @@
     "mbUnit" : "{{size}} Mo"
   },
   "time" : {
-    "minute" : "Minute",
-    "minute_plural" : "Minutes",
+    "minute" : "minute",
+    "minute_plural" : "minutes",
     "minute_short" : "min",
     "second_short" : "s",
-    "hour" : "Heure",
-    "hour_plural" : "Heures",
+    "hour" : "heure",
+    "hour_plural" : "heures",
     "range" : {
       "day" : "1J",
       "week" : "1S",
@@ -417,7 +417,7 @@
       "history" : "Historique"
     },
     "history" : {
-      "disclaimer" : "Vos échanges sur Ledger Live pour l’ordinateur ne sont pas synchronisés avec votre application Ledger Live pour le mobile.",
+      "disclaimer" : "Vos échanges via Ledger Live pour l’ordinateur ne sont pas synchronisés avec votre application Ledger Live pour le mobile.",
       "empty" : {
         "title" : "Les échanges que vous avez réalisés apparaîtront ici.",
         "description" : "Vous n’avez pas encore effectué d’échanges, ou Ledger Live a été réinitialisé depuis votre dernier échange."
@@ -893,6 +893,7 @@
     "title" : "Acheter et vendre des cryptos",
     "reset" : "Réinitialiser",
     "verifyAddress" : "Merci de confirmer que l’adresse affichée est identique à celle sur votre appareil",
+    "connectingTo" : "Connexion à {{provider}}",
     "buy" : {
       "header" : "Acheter des cryptos avec nos prestataires tiers",
       "title" : "Choisir un prestataire pour acheter des cryptos",
@@ -1241,11 +1242,11 @@
       }
     },
     "manual" : {
-      "title" : "Configurez votre {{deviceName}}",
+      "title" : "Prenez votre {{deviceName}} en main",
       "continueOnDevice" : "Effectuez cette action sur votre {{productName}}.",
       "pairedContent" : {
-        "title" : "Ce {{deviceName}} est authentique",
-        "description" : "Vous pouvez utiliser ce {{productName}} en toute sécurité. Poursuivez pour le configurer.",
+        "title" : "{{deviceName}} authentique",
+        "description" : "Votre {{productName}} peut être utilisé en toute sécurité. Vous pouvez procéder à la configuration.",
         "continueOnDevice" : "Touchez votre {{productName}} pour commencer la configuration"
       },
       "pinContent" : {
@@ -1255,26 +1256,37 @@
         "continueOnDevice" : "Définissez votre code PIN sur votre {{productName}}"
       },
       "seedContent" : {
-        "title" : "Phrase de récupération secrète",
+        "title" : "Configuration et sauvegarde",
         "titleCompleted" : "Phrase de récupération secrète confirmée",
         "recoverSeed" : "Placeholder : Ledger Recover",
-        "restoreSeed" : "Pour une sécurité optimale, utilisez une phrase de récupération secrète générée par un appareil Ledger.\n\nVous n’en n’avez pas ? Générez une nouvelle phrase avec votre {{productName}}.",
+        "restoreSeed" : "Pour restaurer, suivez les instructions affichées sur l’écran sécurisé de votre appareil Ledger.",
+        "restoreCharonTitle" : "Restaurer avec Ledger Charon",
+        "restoreCharonDescription" : "Pour restaurer, suivez les instructions affichées sur l’écran sécurisé de votre appareil Ledger.",
+        "restoreCharonContinueOnDevice" : "Suivez les instructions sur votre {{productName}}",
         "selection" : "Choisissez votre option de configuration :",
-        "selectionNewLedger" : "<0>Configurer comme un nouveau wallet :</0> vous créez un nouveau wallet. Cela va générer une nouvelle phrase de récupération secrète.",
-        "selectionRestore" : "<0>Restaurer :</0> vous restaurez l’accès à votre wallet, à l’aide de votre phrase de récupération secrète ou via Ledger Recover.",
+        "selectionNewLedgerTitle" : "Configurer comme un nouveau wallet",
+        "selectionNewLedgerDescription" : "Pour générer une nouvelle phrase de récupération secrète.",
+        "selectionRestoreTitle" : "Récupérer l’accès à vos actifs",
+        "selectionRestoreDescription" : "Pour restaurer avec votre sauvegarde : phrase de récupération secrète ou Ledger Recover.",
+        "selectionRestoreDescriptionWithCharon" : "Pour restaurer avec votre sauvegarde : phrase de récupération secrète, Ledger Recover ou Ledger Charon.",
         "selectionContinueOnDevice" : "Choisissez l’option qui vous convient sur votre {{productName}}",
-        "newSeedDescription1" : "Votre {{productName}} va générer une phrase de récupération secrète : une liste unique de 24 mots. Elle constitue le seul moyen de récupérer vos actifs si votre Ledger est volé, perdu ou si vous oubliez votre code PIN.",
-        "newSeedDescription2" : "<0>Conservez-la en lieu sûr et gardez-la confidentielle :</0>\nVotre phrase de récupération secrète contrôle tous vos actifs et est irremplaçable. Toute personne en ayant connaissance contrôle vos actifs et pourrait les voler. Si vous la perdez, Ledger ne peut pas vous aider.",
-        "newSeedDescription3" : "Méfiez-vous de toute personne ou tout logiciel qui vous demande votre phrase de récupération secrète. C’est une arnaque. ",
-        "newSeedDescription4" : "Ne saisissez votre phrase de récupération secrète que sur votre appareil Ledger, et nulle part ailleurs.",
-        "newSeedDescription5" : "Ne la partagez pas. Et ne la perdez surtout pas.",
-        "newSeedContinueOnDevice" : "Affichez la phrase de récupération secrète générée sur votre {{productName}} et notez-la par écrit",
+        "selectionNewSeedTitle" : "Phrase de récupération secrète",
+        "selectionNewSeedSubtitle" : "Conservez-la en lieu sûr et gardez-la confidentielle",
+        "selectionNewSeedDescription" : "Votre phrase de récupération secrète contrôle vos actifs et est irremplaçable. Toute personne en ayant connaissance peut voler tous vos actifs. Si vous la perdez, Ledger ne peut pas vous aider.",
+        "selectionNewSeedContinueOnDevice" : "Suivez les instructions sur votre {{productName}}",
+        "restoreDescription" : "Choisissez la sauvegarde à utiliser :",
         "restoreChoiceContinueOnDevice" : "Choisissez l’option qui vous convient sur votre {{productName}}",
-        "restoreChoiceSRPTitle" : "Restaurer avec une phrase de récupération secrète",
+        "restoreChoiceSRPTitle" : "Phrase de récupération secrète",
         "restoreChoiceSRPDescription" : "Pour une sécurité optimale, utilisez une phrase de récupération secrète générée par un appareil Ledger.",
-        "restoreChoiceRecoverTitle" : "Restaurer avec Ledger Recover",
-        "restoreChoiceRecoverDescription" : "Si vous êtes abonné(e) à Ledger Recover, connectez-vous pour restaurer la sauvegarde pour votre phrase de récupération secrète.",
-        "followInstructions" : "Suivez les instructions affichées sur votre {{productName}}."
+        "restoreChoiceCharonTitle" : "Ledger Charon",
+        "restoreChoiceCharonDescription" : "Description description description description description description.",
+        "restoreChoiceRecoverTitle" : "Abonnement Ledger Recover",
+        "restoreChoiceRecoverDescription" : "Utilisez ce service pour restaurer l’accès à vos actifs à l’aide de votre identité.",
+        "followInstructions" : "Suivez les instructions affichées sur votre {{productName}}.",
+        "backupCharonTitle" : "Ledger Charon",
+        "backupCharonDescription" : "Description description description description description description description description description description.",
+        "backupCharonCta" : "En savoir plus ou acheter",
+        "backupCharonContinueOnDevice" : "Suivez les instructions sur votre {{productName}}"
       },
       "backup" : {
         "title" : "Sauvegarde pour votre phrase de récupération",
@@ -1296,8 +1308,8 @@
       },
       "softwareCheckContent" : {
         "title" : {
-          "active" : "Vérification de l’authenticité et\ndu système d’exploitation",
-          "completed" : "Votre {{modelName}} est authentique et à jour"
+          "active" : "Vérification de l’authenticité Ledger",
+          "completed" : "Vérification de l’authenticité Ledger"
         },
         "exitWarningDrawer" : {
           "title" : "Annuler la vérification de l’authenticité et du système d’exploitation ?",
@@ -1320,29 +1332,28 @@
           }
         },
         "whyPerformChecksLink" : "En savoir plus sur la vérification de l’authenticité",
-        "startChecksCTA" : "Vérifier mon {{modelName}}",
+        "startChecksCTA" : "Vérifier le {{modelName}}",
         "continueCTA" : "Poursuivre la configuration",
         "genuineCheck" : {
           "title" : {
-            "active" : "Vérification de l’authenticité",
-            "completed" : "Votre {{modelName}} est authentique",
+            "active" : "Vérification de l’authenticité Ledger",
+            "completed" : "{{modelName}} authentique",
             "cancelled" : "Vérification de l’authenticité refusée"
           },
           "subtitle" : {
-            "active" : "Ceci permet de confirmer que votre {{modelName}} est officiel.",
+            "active" : "Cela permet de confirmer que votre {{modelName}} est officiel.",
             "cancelled" : "Cette vérification est obligatoire pour continuer à configurer votre {{modelName}} via Ledger Live."
           },
           "resumeCTA" : "Reprendre la vérification"
         },
         "firmwareUpdate" : {
           "title" : {
-            "active" : "Vérification du système d’exploitation",
-            "completed" : "Le système d’exploitation de votre {{modelName}} est à jour",
+            "active" : "Vérification de Ledger OS",
+            "completed" : "Ledger OS à jour",
             "updateAvailable" : "Mise à jour {{firmwareVersion}} disponible"
           },
           "subtitle" : {
-            "active" : "Ceci permet de vérifier que le système d’exploitation de votre {{modelName}} est à jour.",
-            "completed" : "Pour lancer la restauration des apps sur votre {{modelName}}, cliquez sur Restaurer les apps.",
+            "active" : "Cela vérifie si le système d’exploitation de votre {{modelName}} est à jour.",
             "updateAvailable" : "Mettez à jour le système d’exploitation pour une sécurité optimale et pour accéder aux fonctionnalités les plus récentes."
           },
           "viewUpdateCTA" : "Mettre à jour votre {{modelName}}",
@@ -1925,7 +1936,8 @@
       "payoutNetworkFees" : "Frais de réception",
       "payoutNetworkFeesTooltip" : "Ce montant n’apparaîtra pas sur votre appareil.",
       "acceptTerms" : "En validant cette transaction, j’accepte\n<0>les Conditions d’utilisation de {{provider}}</0>.",
-      "exodusAcceptTerms" : "Pour traiter les échanges, Exodus fait appel à des tiers.\nEn validant cette transaction, j’accepte <0>les Conditions d’utilisation d’Exodus</0>."
+      "exodusAcceptTerms" : "Pour traiter les échanges, Exodus fait appel à des tiers.\nEn validant cette transaction, j’accepte <0>les Conditions d’utilisation d’Exodus</0>.",
+      "changellyAcceptTerms" : "En cliquant sur Échanger avec Changelly, vous acceptez les <0>Conditions d’utilisation</0>\nde Changelly et sa <1>Politique LCB-FT/KYC</1>. Changelly peut mettre en place\ndes procédures LCB-FT/KYC qui, dans certains cas,\npeuvent avoir un impact sur l’aboutissement de votre transaction. Le cas échéant, vous devez contacter l’<2>assistance clientèle</2> de Changelly."
     },
     "swap2" : {
       "amountSent" : "Montant à envoyer",
@@ -3957,7 +3969,7 @@
     },
     "operationDetails" : {
       "extra" : {
-        "stakedAmount" : "Montant en staking"
+        "stakedAmount" : "Montant staké"
       }
     },
     "stake" : {
@@ -4888,7 +4900,7 @@
             "description" : "Utilisez une phrase de récupération existante pour restaurer vos clés privées sur votre nouveau Ledger Nano."
           },
           "4" : {
-            "title" : "Restaurer avec Ledger Recover",
+            "title" : "Restaurer avec Ledger Recover",
             "description" : "Vous devez avoir un abonnement Ledger Recover."
           }
         }
@@ -6041,6 +6053,10 @@
       "title" : "Une erreur est survenue",
       "description" : "Ce compte bénéficiaire n’appartient pas à l’appareil Ledger que vous avez connecté. Veuillez le changer et réessayer."
     },
+    "MissingSwapPayloadParamaters" : {
+      "title" : "Une erreur est survenue",
+      "description" : "Paramètre d’échange manquant chez le prestataire sélectionné. Veuillez réessayer ou contacter l’Assistance Ledger."
+    },
     "WrongDeviceForAccountRefund" : {
       "title" : "Une erreur est survenue",
       "description" : "Ce compte émetteur n’appartient pas à l’appareil Ledger que vous avez connecté. Veuillez le changer et réessayer."
@@ -7059,7 +7075,9 @@
     "searchPlaceholder" : "Rechercher",
     "selectAsset" : "Sélectionner un actif",
     "selectNetwork" : "Sélectionner un réseau",
-    "selectAccount" : "Sélectionner un compte"
+    "selectAccount" : "Sélectionner un compte",
+    "accountCount_one" : "{{count}} compte",
+    "accountCount_other" : "{{count}} comptes"
   },
   "nftEntryPoint" : {
     "title" : "NFT (tokens non fongibles)",
