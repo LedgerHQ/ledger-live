@@ -57,6 +57,7 @@ export function createTransaction(account: Account | TokenAccount): TransactionC
   // debugger;
   switch (currency.family) {
     case "xrp":
+    case "ripple":
       return {
         family: currency.family,
         amount: BigNumber(0),
