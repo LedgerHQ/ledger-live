@@ -2341,11 +2341,11 @@
       "selectionRestore" : {
         "title" : "資産へのアクセスを復元",
         "desc" : "これにより、バックアップ（シークレットリカバリーフレーズまたはLedger Recover）を使用して復元できます。",
-        "descWithCharon" : "これにより、バックアップ（シークレットリカバリーフレーズ、Ledger Recover、またはLedger Charon）を使用して復元できます。"
+        "descWithCharon" : "これにより、バックアップ（シークレットリカバリーフレーズ、Ledger Recover、またはLedger Recovery Key）を使用して復元できます。"
       },
       "backupCharon" : {
-        "title" : "Ledger Charon",
-        "desc" : "description description description description description description description description description description description description",
+        "title" : "Ledger Recovery Key",
+        "desc" : "セキュアエレメントチップを内蔵した、PINコードで保護されたカードに新しいバックアップを作成すると、数回タップするだけで資産へのアクセスを復元できます。",
         "cta" : "詳細の確認または購入",
         "continueOnDevice" : "{{productName}}の指示に従う"
       },
@@ -2357,8 +2357,8 @@
           "description" : "セキュリティを最大限に高めるには、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを使用してください。"
         },
         "ledgerCharon" : {
-          "title" : "Ledger Charon",
-          "description" : "description description description description description."
+          "title" : "Ledger Recovery Key",
+          "description" : "Recovery Keyを使用して、資産へのアクセスを復元します。"
         },
         "ledgerRecover" : {
           "title" : "Ledger Recoverサブスクリプション",
@@ -2371,7 +2371,7 @@
         "continueOnDevice" : "{{productName}}で関連するオプションを選択します。"
       },
       "restoreLedgerCharon" : {
-        "title" : "Ledger Charonを使用して復元",
+        "title" : "Recovery Keyを使用して復元",
         "description" : "復元するには、Ledgerのセキュアスクリーンに表示される指示に従ってください。",
         "continueOnDevice" : "{{productName}}の指示に従う"
       },
