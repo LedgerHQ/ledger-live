@@ -11,6 +11,8 @@ import { getEnv } from "@ledgerhq/live-env";
 import { Pagination } from "@ledgerhq/coin-framework/lib-es/api/types";
 import { buildSubAccounts } from "./buildSubAccounts";
 
+// NOTE: we should recheck this whole thing
+// making sure we're covered by tests on this also
 function buildPaginationParams(
   network: string,
   isInitSync: boolean,
@@ -18,7 +20,7 @@ function buildPaginationParams(
 ): Pagination {
   switch (network) {
     case "stellar":
-      console.log("Get ACCount Stellar");
+      console.log("Get Account Stellar");
       return isInitSync
         ? { limit: getEnv("API_STELLAR_HORIZON_INITIAL_FETCH_MAX_OPERATIONS"), minHeight: 0 }
         : { pagingToken: lastPagingToken, minHeight: 0 };

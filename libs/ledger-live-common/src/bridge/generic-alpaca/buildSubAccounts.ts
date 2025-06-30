@@ -66,7 +66,6 @@ function buildStellarTokenAccount({
     type: op.extra.ledgerOpType,
     value: op.extra.assetAmount ? new BigNumber(op.extra.assetAmount) : op.value,
   }));
-  console.log({ operations, tokenOperations });
 
   return {
     type: "TokenAccount",
@@ -105,14 +104,11 @@ export function buildSubAccounts({
   }
 
   const tokenAccounts: TokenAccount[] = [];
-  console.log({ operations });
-  // debugger;
 
   assets.map(asset => {
     const token = findTokenById(`stellar/asset/${getAssetIdFromAsset(asset)}`);
 
     if (token && !blacklistedTokenIds.includes(token.id)) {
-      // debugger;
       tokenAccounts.push(
         buildStellarTokenAccount({
           parentAccountId: accountId,
