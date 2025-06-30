@@ -9,9 +9,13 @@ import {
   craftTransaction,
 } from "../logic";
 import type { SuiAsset } from "./types";
-import type { Api, FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import type {
+  AlpacaApi,
+  FeeEstimation,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/index";
 
-export function createApi(config: SuiCoinConfig): Api<SuiAsset> {
+export function createApi(config: SuiCoinConfig): AlpacaApi<SuiAsset> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
