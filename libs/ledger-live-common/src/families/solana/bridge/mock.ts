@@ -6,6 +6,7 @@ import {
   logged,
   queued,
 } from "@ledgerhq/coin-solana/network/index";
+import { getEnv } from "@ledgerhq/live-env";
 import { Functions } from "@ledgerhq/coin-solana/utils";
 import { makeBridges } from "@ledgerhq/coin-solana/bridge/bridge";
 import { PubKeyDisplayMode, SolanaSigner } from "@ledgerhq/coin-solana/signer";
@@ -152,15 +153,17 @@ function getMockedAPIs() {
 // const bridges = makeBridges(createMockDataForAPI());
 const bridges = makeBridges(getMockedAPIs());
 
-export default {
-  accountBridge: {
-    ...bridges.accountBridge,
-    sync,
-  },
-  currencyBridge: {
-    ...bridges.currencyBridge,
-    preload: () => Promise.resolve({}),
-    hydrate: () => {},
-    scanAccounts,
-  },
-};
+export default getEnv("PLAYWRIGHT_RUN") || getEnv("DETOX")
+  ? {
+      accountBridge: {
+        ...bridges.accountBridge,
+        sync,
+      },
+      currencyBridge: {
+        ...bridges.currencyBridge,
+        preload: () => Promise.resolve({}),
+        hydrate: () => {},
+        scanAccounts,
+      },
+    }
+  : bridges;

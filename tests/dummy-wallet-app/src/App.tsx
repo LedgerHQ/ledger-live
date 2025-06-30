@@ -14,6 +14,8 @@ export default function App() {
   const [currencyIds, setCurrencyIds] = useState("");
   const [accountId, setAccountId] = useState("");
   const [recipient, setRecipient] = useState("");
+  const [amount, setAmount] = useState("");
+  const [data, setData] = useState("");
 
   const params = useMemo(
     () => Array.from(new URLSearchParams(window.location.search).entries()),
@@ -107,9 +109,9 @@ export default function App() {
     try {
       const transaction = {
         family: "ethereum" as const,
-        amount: new BigNumber(100000000000000),
+        amount: new BigNumber(amount),
         recipient,
-        data: Buffer.from("SomeDataInHex"),
+        data: Buffer.from(data, "hex"),
       };
       const result = await client?.transaction.sign(accountId, transaction);
       setRes(result?.toString() || "empty response");
@@ -122,7 +124,7 @@ export default function App() {
     try {
       const transaction = {
         family: "solana" as const,
-        amount: new BigNumber(1000000),
+        amount: new BigNumber(amount),
         recipient,
         model: { kind: "transfer" as const, uiState: {} },
       };
@@ -142,9 +144,9 @@ export default function App() {
     try {
       const transaction = {
         family: "ethereum" as const,
-        amount: new BigNumber(100000000000000),
+        amount: new BigNumber(amount),
         recipient,
-        data: Buffer.from("SomeDataInHex"),
+        data: Buffer.from(data, "hex"),
       };
       const result = await client?.transaction.signAndBroadcast(accountId, transaction);
       setRes(result);
@@ -185,6 +187,8 @@ export default function App() {
     setCurrencyIds("");
     setAccountId("");
     setRecipient("");
+    setAmount("");
+    setData("");
   };
 
   return (
@@ -240,6 +244,30 @@ export default function App() {
             onChange={e => setRecipient(e.target.value)}
             placeholder="e.g. 0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707"
             className="recipient-input"
+          />
+        </div>
+        <div>
+          <label htmlFor="amount-input">Amount (in smallest unit): </label>
+          <input
+            id="amount-input"
+            data-testid="amount-input"
+            type="text"
+            value={amount}
+            onChange={e => setAmount(e.target.value)}
+            placeholder="e.g. 100000000000000 (0.0001 ETH in wei)"
+            className="amount-input"
+          />
+        </div>
+        <div>
+          <label htmlFor="data-input">Data (for Ethereum): </label>
+          <input
+            id="data-input"
+            data-testid="data-input"
+            type="text"
+            value={data}
+            onChange={e => setData(e.target.value)}
+            placeholder="e.g. SomeDataInHex"
+            className="data-input"
           />
         </div>
         <div>

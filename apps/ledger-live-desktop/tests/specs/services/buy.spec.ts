@@ -57,11 +57,10 @@ test("Buy / Sell @smoke", async ({ page, electronApp }) => {
   await test.step("Navigate to Buy app from portfolio banner", async () => {
     await portfolioPage.startBuyFlow();
     await liveAppWebview.waitForLoaded();
-    const webviewPage = await liveAppWebview.getWebView();
-    await expect(webviewPage.getByText("theme: dark")).toBeVisible();
-    await expect(webviewPage.getByText("lang: en")).toBeVisible();
-    await expect(webviewPage.getByText("locale: en-US")).toBeVisible();
-    await expect(webviewPage.getByText("currencyTicker: USD")).toBeVisible();
+    await liveAppWebview.waitForText("theme: dark");
+    await liveAppWebview.waitForText("lang: en");
+    await liveAppWebview.waitForText("locale: en-US");
+    await liveAppWebview.waitForText("currencyTicker: USD");
     await expect
       .soft(page)
       .toHaveScreenshot("buy-app-opened.png", { mask: [page.locator("webview")] });
@@ -70,56 +69,50 @@ test("Buy / Sell @smoke", async ({ page, electronApp }) => {
   await test.step("Navigate to Buy app from market", async () => {
     await layout.goToMarket();
     await marketPage.openBuyPage("usdt");
-    const webviewPage = await liveAppWebview.getWebView();
-    await expect(webviewPage.getByText("theme: dark")).toBeVisible();
-    await expect(
-      webviewPage.getByText("currency: ethereum/erc20/usd_tether__erc20_"),
-    ).toBeVisible();
-    await expect(webviewPage.getByText("mode: buy")).toBeVisible();
-    await expect(webviewPage.getByText("lang: en")).toBeVisible();
-    await expect(webviewPage.getByText("locale: en-US")).toBeVisible();
-    await expect(webviewPage.getByText("currencyTicker: USD")).toBeVisible();
+    await liveAppWebview.waitForText("theme: dark");
+    await liveAppWebview.waitForText("currency: ethereum/erc20/usd_tether__erc20_");
+    await liveAppWebview.waitForText("mode: buy");
+    await liveAppWebview.waitForText("lang: en");
+    await liveAppWebview.waitForText("locale: en-US");
+    await liveAppWebview.waitForText("currencyTicker: USD");
   });
 
   await test.step("Navigate to Buy app from asset", async () => {
     await layout.goToPortfolio();
     await portfolioPage.navigateToAsset("ethereum");
     await assetPage.startBuyFlow();
-    const webviewPage = await liveAppWebview.getWebView();
-    await expect(webviewPage.getByText("theme: dark")).toBeVisible();
-    await expect(webviewPage.getByText("lang: en")).toBeVisible();
-    await expect(webviewPage.getByText("locale: en-US")).toBeVisible();
-    await expect(webviewPage.getByText("currencyTicker: USD")).toBeVisible();
-    await expect(webviewPage.getByText("currency: ethereum")).toBeVisible();
-    await expect(webviewPage.getByText("mode: buy")).toBeVisible();
+    await liveAppWebview.waitForText("theme: dark");
+    await liveAppWebview.waitForText("lang: en");
+    await liveAppWebview.waitForText("locale: en-US");
+    await liveAppWebview.waitForText("currencyTicker: USD");
+    await liveAppWebview.waitForText("currency: ethereum");
+    await liveAppWebview.waitForText("mode: buy");
   });
 
   await test.step("Navigate to Buy app from account", async () => {
     await layout.goToAccounts();
     await accountsPage.navigateToAccountByName("Bitcoin 1 (legacy)");
     await accountPage.navigateToBuy();
-    const webviewPage = await liveAppWebview.getWebView();
-    await expect(webviewPage.getByText("theme: dark")).toBeVisible();
-    await expect(webviewPage.getByText("currency: bitcoin")).toBeVisible();
-    await expect(webviewPage.getByText("account: mock:1:bitcoin:true_bitcoin_0:")).toBeVisible();
-    await expect(webviewPage.getByText("lang: en")).toBeVisible();
-    await expect(webviewPage.getByText("locale: en-US")).toBeVisible();
-    await expect(webviewPage.getByText("currencyTicker: USD")).toBeVisible();
-    await expect(webviewPage.getByText("mode: buy")).toBeVisible();
+    await liveAppWebview.waitForText("theme: dark");
+    await liveAppWebview.waitForText("currency: bitcoin");
+    await liveAppWebview.waitForText("account: mock:1:bitcoin:true_bitcoin_0:");
+    await liveAppWebview.waitForText("lang: en");
+    await liveAppWebview.waitForText("locale: en-US");
+    await liveAppWebview.waitForText("currencyTicker: USD");
+    await liveAppWebview.waitForText("mode: buy");
   });
 
   await test.step("Navigate to Buy app from account", async () => {
     await layout.goToAccounts();
     await accountsPage.navigateToAccountByName("Bitcoin 1 (legacy)");
     await accountPage.navigateToSell();
-    const webviewPage = await liveAppWebview.getWebView();
-    await expect(webviewPage.getByText("theme: dark")).toBeVisible();
-    await expect(webviewPage.getByText("currency: bitcoin")).toBeVisible();
-    await expect(webviewPage.getByText("account: mock:1:bitcoin:true_bitcoin_0:")).toBeVisible();
-    await expect(webviewPage.getByText("lang: en")).toBeVisible();
-    await expect(webviewPage.getByText("locale: en-US")).toBeVisible();
-    await expect(webviewPage.getByText("currencyTicker: USD")).toBeVisible();
-    await expect(webviewPage.getByText("mode: sell")).toBeVisible();
+    await liveAppWebview.waitForText("theme: dark");
+    await liveAppWebview.waitForText("currency: bitcoin");
+    await liveAppWebview.waitForText("account: mock:1:bitcoin:true_bitcoin_0:");
+    await liveAppWebview.waitForText("lang: en");
+    await liveAppWebview.waitForText("locale: en-US");
+    await liveAppWebview.waitForText("currencyTicker: USD");
+    await liveAppWebview.waitForText("mode: sell");
   });
 
   await test.step("Navigate to Buy app from sidebar with light theme and French Language", async () => {
@@ -127,10 +120,9 @@ test("Buy / Sell @smoke", async ({ page, electronApp }) => {
     await settingsPage.changeLanguage("English", "Français");
     await settingsPage.changeTheme();
     await layout.goToBuySellCrypto();
-    const webviewPage = await liveAppWebview.getWebView();
-    await expect(webviewPage.getByText("theme: light")).toBeVisible();
-    await expect(webviewPage.getByText("lang: fr")).toBeVisible();
-    await expect(webviewPage.getByText("locale: en-US")).toBeVisible();
-    await expect(webviewPage.getByText("currencyTicker: USD")).toBeVisible();
+    await liveAppWebview.waitForText("theme: light");
+    await liveAppWebview.waitForText("lang: fr");
+    await liveAppWebview.waitForText("locale: en-US");
+    await liveAppWebview.waitForText("currencyTicker: USD");
   });
 });

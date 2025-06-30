@@ -34,7 +34,7 @@ const methods = [
   "wallet.userId",
 ];
 
-test.use({ userdata: "1AccountBTC1AccountETH1AccountARB" });
+test.use({ userdata: "1AccountBTC1AccountETH1AccountARB1AccountSOL" });
 
 let testServerIsRunning = false;
 
@@ -245,9 +245,13 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
 
   await test.step("transaction.sign", async () => {
     const recipient = "0x046615F0862392BC5E6FB43C92AAD73DE158D235";
+    const amount = "500000000000000"; // 0.0005 ETH in wei
+    const data = "TestDataForEthereumTransaction";
 
     await liveAppWebview.setAccountId("e86e3bc1-49e1-53fd-a329-96ba6f1b06d3");
     await liveAppWebview.setRecipient(recipient);
+    await liveAppWebview.setAmount(amount);
+    await liveAppWebview.setData(data);
     await liveAppWebview.transactionSign();
 
     // Step Fees
@@ -269,9 +273,11 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
 
   await test.step("transaction.sign solana", async () => {
     const recipient = "63M7kPJvLsG46jbR2ZriEU8xwPqkMNKNoBBQ46pobbvo";
+    const amount = "1000000"; // 0.001 SOL in lamports
 
     await liveAppWebview.setAccountId("2fa370fd-2210-5487-b9c9-bc36971ebc72");
     await liveAppWebview.setRecipient(recipient);
+    await liveAppWebview.setAmount(amount);
     await liveAppWebview.transactionSignSolana();
 
     // Step Recipient
@@ -309,9 +315,13 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
 
   await test.step("transaction.signAndBroadcast", async () => {
     const recipient = "0x046615F0862392BC5E6FB43C92AAD73DE158D235";
+    const amount = "750000000000000"; // 0.00075 ETH in wei
+    const data = "SignAndBroadcastTestData";
 
     await liveAppWebview.setAccountId("e86e3bc1-49e1-53fd-a329-96ba6f1b06d3");
     await liveAppWebview.setRecipient(recipient);
+    await liveAppWebview.setAmount(amount);
+    await liveAppWebview.setData(data);
     await liveAppWebview.transactionSignAndBroadcast();
 
     // Step Fees
