@@ -1,12 +1,13 @@
 import { Button, Flex, Icons } from "@ledgerhq/react-ui";
 import { Account } from "@ledgerhq/types-live";
-import React from "react";
-import { useTranslation } from "react-i18next";
-import useAddAccountAnalytics from "LLD/features/ModularDrawer/analytics/useAddAccountAnalytics";
 import {
   ADD_ACCOUNT_EVENTS_NAME,
   ADD_ACCOUNT_FLOW_NAME,
 } from "LLD/features/ModularDrawer/analytics/addAccount.types";
+import useAddAccountAnalytics from "LLD/features/ModularDrawer/analytics/useAddAccountAnalytics";
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { FOOTER_PADDING_BOTTOM_PX, FOOTER_PADDING_TOP_PX } from "../../../styles";
 
 export type FooterProps = {
   handleConfirm: () => void;
@@ -37,7 +38,12 @@ export const Footer = ({
   };
 
   return (
-    <Flex justifyContent="flex-end">
+    <Flex
+      justifyContent="flex-end"
+      paddingBottom={FOOTER_PADDING_BOTTOM_PX}
+      paddingTop={FOOTER_PADDING_TOP_PX}
+      zIndex={1}
+    >
       {scanning ? (
         importableAccounts.length === 0 ? null : (
           <Button

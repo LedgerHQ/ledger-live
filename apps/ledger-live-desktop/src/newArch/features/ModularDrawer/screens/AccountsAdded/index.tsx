@@ -47,7 +47,7 @@ export const AccountsAdded = ({
   }, [accounts, trackAddAccountEvent]);
 
   return (
-    <Flex flexDirection="column" height="100%">
+    <>
       <TrackAddAccountScreen page={ADD_ACCOUNT_PAGE_NAME.ADD_ACCOUNTS_SUCCESS} source={source} />
       <Flex flexDirection="column" width="100%" alignItems="center" flexShrink={0}>
         <SuccessIcon />
@@ -56,13 +56,12 @@ export const AccountsAdded = ({
       <ScrollContainer>
         <AccountList accounts={accounts} formatAccount={formatAccount} />
       </ScrollContainer>
-
       <ActionButtons
         onAddFunds={handleAddFunds}
         onClose={handleClose}
         isAccountSelectionFlow={isAccountSelectionFlow}
       />
-    </Flex>
+    </>
   );
 };
 
