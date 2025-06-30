@@ -513,10 +513,6 @@
       "title" : "Üzgünüz, fon miktarı yetersiz",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
     },
-    "NotEnoughBalanceFees" : {
-      "title" : "Üzgünüz, fon miktarı işlem ücretlerini karşılamıyor",
-      "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
-    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Kullanılabilir (stake edilmemiş) bakiyeniz şu anda {{currentBalance}} ve {{assetName}} varlığınızın stake'ini durdurmak için gereken ağ ücretini karşılamıyor. ",
       "oneCta" : "Hesabınıza {{assetName}} <cta1>{{cta1Label}}</cta1>.",
@@ -3369,8 +3365,7 @@
       "description" : "Güvenli bir şekilde nakit karşılığında kripto satın."
     },
     "exchange" : {
-      "title" : "Satın Al / Sat",
-      "connectingTo" : "{{provider}} sağlayıcısına bağlanıyorsunuz"
+      "title" : "Satın Al / Sat"
     },
     "stake" : {
       "title" : "Stake et",
@@ -3570,8 +3565,6 @@
         "contact_support" : "Müşteri destek ekibiyle iletişime geç",
         "ton_title" : "Ledger Nano S™, Ton takasını desteklemez",
         "ton_description" : "Ton takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
-        "ton_tokens_title" : "Ledger Nano S™, Ton token takasını desteklemez",
-        "ton_tokens_description" : "Ton token’larını takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
         "spl_tokens_title" : "Ledger Nano S™, Solana token takasını desteklemez",
         "spl_tokens_description" : "Solana token'larını takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
         "near_title" : "Ledger Nano S™, Near takasını desteklemez",
@@ -3851,9 +3844,6 @@
           "title" : "Bu alan için adres bulunamadı"
         }
       }
-    },
-    "spl2022" : {
-      "splExtensionsWarning" : "Token Uzantıları (Token Extensions) olarak da bilinen Token-2022 programı kapsamındaki bir token’la etkileşime geçiyorsunuz. Bu token’ın belirli riskleri bulunmaktadır. Daha fazla bilgi edinmek için <0>buraya tıklayın</0>."
     },
     "amount" : {
       "available" : "Toplam mevcut",
@@ -4707,7 +4697,7 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "{{deviceName}} cihazınızı {{version}} sürümüne güncelleyin",
-    "recoveryPhraseBackupInstructions" : "Önlem olarak, 24 kelimelik Gizli Kurtarma İfadenizi kurtarma Kâğıdına yazdığınızdan ve bu kâğıda kolayca erişebileceğinizden emin olun.\n\nCüzdan erişiminizi yedekleyip cüzdanınıza erişimi asla kaybetmeyeceğinizden emin olmak için Ledger Recover’ı kullanmayı düşünün.",
+    "recoveryPhraseBackupInstructions" : "Önlem olarak, 24 kelimelik kurtarma ifadenizi bir Kurtarma Kağıdına yazdığınızdan ve ona kolayca ulaşabileceğinizden emin olun.",
     "confirmRecoveryPhrase" : "Kurtarma ifadem var",
     "introDescription1" : "Cihazınızdaki tüm uygulamaların silineceğini lütfen unutmayın. Yazılım güncellemesinden sonra uygulamalarınızı yeniden yükleyebilirsiniz.",
     "introDescription2" : "Bunun kripto varlıklarınız üzerinde hiçbir etkisi yoktur.",
@@ -6092,7 +6082,6 @@
       "transferFees" : {
         "title" : "Transfer ücretleri",
         "feesPercentHint" : "Bu token için %{{feePercent}} ({{feeBps}} bps) transfer ücreti alınır (maks. {{maxFee}})",
-        "feesHint" : "Token transfer ücreti: {{transferFee}}",
         "notice" : "Transfer ücreti: %{{fee}}",
         "tooltipHint" : "Token oluşturucu için alıkoyulan transfer yüzdesi"
       },
@@ -6480,9 +6469,7 @@
     },
     "stepVerification" : {
       "action" : "Lütfen işlemi cihazınızdan onaylayın",
-      "accountName" : "Hesap adı",
-      "title" : "Ledger {{wording}} üzerinde devam edin",
-      "description" : "Güvenli Dokunmatik Ekranınızda gösterilen yönergeleri izleyin."
+      "accountName" : "Hesap adı"
     }
   },
   "notificationCenter" : {
@@ -7427,27 +7414,6 @@
       "minutes_plural" : "({{count}} dakika önce)",
       "seconds" : "({{count}} saniye önce)",
       "seconds_plural" : "({{count}} saniye önce)"
-    },
-    "performance" : "Performans",
-    "low" : "Düşük",
-    "high" : "Yüksek",
-    "title" : "Piyasa Hareketleri",
-    "overlay" : {
-      "title" : "Varlıklar arasında geçiş yapın",
-      "action" : "Sola veya sağa kaydırın",
-      "button" : "Anladım!"
     }
-  },
-  "nftEntryPoint" : {
-    "title" : "NFT'leriniz",
-    "entry" : {
-      "magiceden" : "Magic Eden",
-      "opensea" : "OpenSea"
-    }
-  },
-  "geoBlocking" : {
-    "title" : "Konum kullanılamıyor",
-    "description" : "Ledger cüzdan bu konumda kullanılamıyor.",
-    "learnMore" : "Daha fazla bilgi"
   }
 }
