@@ -1,5 +1,5 @@
-import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
-import { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
+import { Unit } from "@ledgerhq/types-cryptoassets";
+import { TokenAccount } from "@ledgerhq/types-live";
 
 export type BlockInfo = {
   height: number;

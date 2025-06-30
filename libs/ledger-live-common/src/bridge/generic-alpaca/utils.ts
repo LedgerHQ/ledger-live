@@ -13,16 +13,6 @@ export function adaptCoreOperationToLiveOperation(
   accountId: string,
   op: CoreOperation<Asset<TokenInfoCommon>>,
 ): Operation {
-  // NOTE: missing extra.
-  // extra.assetCode
-  // extra.assetIssue
-  // NOTE: should use this, but typescript fights against it
-  // if (op.asset?.type === "token") {
-  //   res.extra.assetCode = op.asset.assetCode;
-  // // if (op.asset && op.asset.assetCode) {
-  //
-  // }
-
   const extra: {
     assetCode?: string;
     assetIssuer?: string;
@@ -68,7 +58,6 @@ export function adaptCoreOperationToLiveOperation(
 export function transactionToIntent(
   account: Account,
   transaction: TransactionCommon & {
-    // fees?: BigNumber;
     assetIssuer?: string;
     assetCode?: string;
     mode?: string;
@@ -89,7 +78,7 @@ export function transactionToIntent(
         throw new Error(`Unsupported transaction mode: ${transaction.mode}`);
     }
   }
-  let res = {
+  const res = {
     type: transactionType,
     sender: account.freshAddress,
     recipient: transaction.recipient,
@@ -110,7 +99,6 @@ export const buildOptimisticOperation = (
   transaction: TransactionCommon,
   sequenceNumber?: number,
 ): Operation => {
-  // debugger;
   const type = transaction["mode"] === "changeTrust" ? "OPT_IN" : "OUT";
   const fees = transaction["fees"] ?? BigNumber(0);
 
@@ -121,7 +109,6 @@ export const buildOptimisticOperation = (
     id: encodeOperationId(account.id, "", type),
     hash: "",
     type: type,
-    // value: transaction.amount,
     value: subAccountId ? fees : transaction.amount, // match old behavior
     fee: transaction["fees"] ?? BigNumber(0),
     blockHash: null,

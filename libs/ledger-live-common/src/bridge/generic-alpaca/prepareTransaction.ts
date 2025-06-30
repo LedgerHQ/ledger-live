@@ -2,7 +2,6 @@ import { Account, AccountBridge, TransactionCommon } from "@ledgerhq/types-live"
 import { getAlpacaApi } from "./alpaca";
 import { transactionToIntent } from "./utils";
 import BigNumber from "bignumber.js";
-import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 
 function bnEq(a: BigNumber | null | undefined, b: BigNumber | null | undefined): boolean {
   return !a && !b ? true : !a || !b ? false : a.eq(b);

@@ -2,7 +2,6 @@ import {
   AccountAwaitingSendPendingOperations,
   AmountRequired,
   NotEnoughBalance,
-  FeeNotLoaded,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughSpendableBalance,
   NotEnoughBalanceBecauseDestinationNotCreated,

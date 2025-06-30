@@ -9,7 +9,6 @@ import { StellarBurnAddressError, StellarOperation } from "@ledgerhq/coin-stella
 import { STELLAR_BURN_ADDRESS } from "@ledgerhq/coin-stellar/logic";
 import { getEnv } from "@ledgerhq/live-env";
 import { Pagination } from "@ledgerhq/coin-framework/lib-es/api/types";
-import { Operation } from "@ledgerhq/types-live";
 import { buildSubAccounts } from "./buildSubAccounts";
 
 function buildPaginationParams(
