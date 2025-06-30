@@ -73,7 +73,7 @@ function preprocessArgs(method: keyof ChainAPI, args: any) {
       const payer = args[1];
 
       // Serialize the payer PublicKey to string
-      const serializedPayer = (payer as { toString?: () => string })?.toString?.() || payer;
+      const serializedPayer = (payer as { toString?: () => string })?.toString?.() ?? payer;
 
       // Serialize PublicKey objects in instruction keys to strings
       const serializedInstructions =
@@ -86,11 +86,11 @@ function preprocessArgs(method: keyof ChainAPI, args: any) {
                 const k = key as Record<string, unknown>;
                 return {
                   ...k,
-                  pubkey: (k.pubkey as { toString?: () => string })?.toString?.() || k.pubkey,
+                  pubkey: (k.pubkey as { toString?: () => string })?.toString?.() ?? k.pubkey,
                 };
               }) || inst.keys,
             programId:
-              (inst.programId as { toString?: () => string })?.toString?.() || inst.programId,
+              (inst.programId as { toString?: () => string })?.toString?.() ?? inst.programId,
           };
         }) || instructions;
 
