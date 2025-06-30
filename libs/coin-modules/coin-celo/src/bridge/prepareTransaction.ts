@@ -1,10 +1,9 @@
-import BigNumber from "bignumber.js";
 import { AccountBridge } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { isValidAddress } from "@celo/utils/lib/address";
 import getFeesForTransaction from "./getFeesForTransaction";
 import { CeloAccount, Transaction } from "../types";
-
-const sameFees = (a: BigNumber | null | undefined, b: BigNumber) => (!a || !b ? a === b : a.eq(b));
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 
 export const prepareTransaction: AccountBridge<
   Transaction,
@@ -23,11 +22,15 @@ export const prepareTransaction: AccountBridge<
 
   const fees = await getFeesForTransaction({ account, transaction });
 
-  if (!sameFees(transaction.fees, fees)) {
-    return { ...transaction, fees };
-  }
+  const tokenAccount = findSubAccountById(account, transaction.subAccountId || "");
+  const isTokenTransaction = tokenAccount?.type === "TokenAccount";
 
-  return transaction;
+  return {
+    ...transaction,
+    fees,
+    amount:
+      transaction.useAllAmount && isTokenTransaction ? tokenAccount.balance : transaction.amount,
+  };
 };
 
 export default prepareTransaction;
