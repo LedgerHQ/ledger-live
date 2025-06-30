@@ -447,8 +447,6 @@
     "incompatibility" : {
       "ton_title" : "Ledger Nano S™는 Ton 스왑을 지원하지 않습니다",
       "ton_description" : "Ton을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
-      "ton_tokens_title" : "Ledger Nano S™는 Ton 토큰 스왑을 지원하지 않습니다.",
-      "ton_tokens_description" : "Ton 토큰을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
       "spl_tokens_title" : "Ledger Nano S™는 솔라나 토큰 스왑을 지원하지 않습니다.",
       "spl_tokens_description" : "솔라노 토큰을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
       "sui_tokens_title" : "Ledger Nano S™는 Sui 토큰 스왑을 지원하지 않습니다.",
@@ -893,7 +891,6 @@
     "title" : "암호화폐 매수 및 매도",
     "reset" : "플로우 리셋",
     "verifyAddress" : "장치에 표시된 주소와 정확히 일치하는지 확인하세요",
-    "connectingTo" : "{{provider}}에 연결",
     "buy" : {
       "header" : "당사 파트너와 함께 암호화폐 구매",
       "title" : "암호화폐를 구매할 공급자를 선택하세요",
@@ -1926,8 +1923,7 @@
       "payoutNetworkFees" : "지불금 비용",
       "payoutNetworkFeesTooltip" : "이 금액은 장치에 표시되지 않습니다",
       "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0>{{provider}}의 이용약관</0>을 수락합니다.",
-      "exodusAcceptTerms" : "Exodus는 제 3자를 통해 스왑 서비스를 제공합니다.\n본인은 이 트랜잭션을 확인함으로써 <0>Exodus 이용 약관</0>을 수락합니다.",
-      "changellyAcceptTerms" : "\"Changelly로 스왑\"을 클릭하면 Changelly의<0>이용 약관</0> 및\n<1>AML/KYC 정책</1>에 동의하는 것으로 간주됩니다. Changelly는 AML/KYC 절차를 적용할 수 있으며,\n이는 제한적으로 트랜잭션 완료에 영향을 미칠 수 있습니다. 이 경우\n, Changelly <2>고객 지원</2>으로 문의해 주세요."
+      "exodusAcceptTerms" : "Exodus는 제 3자를 통해 스왑 서비스를 제공합니다.\n본인은 이 트랜잭션을 확인함으로써 <0>Exodus 이용 약관</0>을 수락합니다."
     },
     "swap2" : {
       "amountSent" : "전송 금액",
@@ -2074,8 +2070,7 @@
       "latest" : "펌웨어 버전 {{version}}을 사용할 수 있습니다.",
       "contactSupport" : "지원 부서 연락",
       "deprecated" : "장치 펌웨어가 오래되어 업데이트가 불가능합니다. Leger 지원에 연락하여 교체를 요청하세요.",
-      "prepareSeed" : "만약을 대비하여 24개의 단어 복구 문구를 복구 시트에 기록해 두고 언제든 사용할 수 있도록 안전하게 보관하세요.",
-      "prepareSeedRecover" : "안전한 액세스 백업 수단인 Ledger Recover를 통해 필요할 때 언제든 지갑 액세스를 복구하세요.",
+      "prepareSeed" : "만약을 대비하여 24개의 단어 복구 문구를 복구 시트에 반드시 기록해 두고 언제든 사용할 수 있도록 준비해 두세요.",
       "disclaimerTitle" : "곧 <1>펌웨어 버전 {{version}}</1> 설치가 시작됩니다.",
       "cancelUpdate" : "OS 업데이트 취소",
       "continueUpdate" : "OS 업데이트 계속",
@@ -2398,8 +2393,7 @@
         "suggested" : "추천",
         "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
-        "nftQuantity" : "수량",
-        "splExtensionsWarning" : "현재 사용 중인 토큰은 토큰 확장 프로그램(Token Extensions)으로도 알려진 토큰-2022 프로그램의 일부입니다. 이 토큰은 몇 가지 리스크가 수반됩니다. <0>여기</0>를 클릭하여 자세히 알아보세요."
+        "nftQuantity" : "수량"
       },
       "verification" : {
         "streaming" : {
@@ -3774,7 +3768,7 @@
       "frozenStateWarning" : "계정 자산이 동결되었습니다!",
       "transferWarning" : "Ledger Nano S™를 사용해 솔라나 토큰의 수령인 주소를 확인하려면 <0>다음 지침을 따르세요.</0>",
       "transferFees" : {
-        "feesHint" : "토큰 이체 수수료: {{transferFee}}",
+        "feesPercentHint" : "토큰에는 {{feePercent}}%({{feeBps}}bps)의 전송 수수료가 부과됩니다. 최대 {{maxFee}}",
         "notice" : "전송 수수료 {{fee}}%",
         "tooltipHint" : "토큰 생성자의 전송 보류 비율",
         "transferFeesLabel" : "전송 수수료"
@@ -5426,9 +5420,7 @@
     "stringHash" : "메시지 해시",
     "domainHash" : "도메인 해시",
     "messageHash" : "메시지 해시",
-    "message" : "메시지",
-    "title" : "Ledger {{wording}}에서 계속하세요",
-    "description" : "보안 터치스크린에 표시된 안내를 따라주세요."
+    "message" : "메시지"
   },
   "TransactionConfirm" : {
     "title" : "거래를 장치에서 확인하고 완료하세요",
@@ -5876,10 +5868,6 @@
       "title" : "죄송하지만 자금이 부족합니다",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
     },
-    "NotEnoughBalanceFees" : {
-      "title" : "죄송하지만, 수수료를 충당할 자금이 부족합니다",
-      "description" : "계정에 자금이 충분한지 확인해 주세요."
-    },
     "NotEnoughBalanceSwap" : {
       "title" : "죄송합니다. 네트워크 수수료를 포함한 잔액이 부족합니다. 금액을 조정하거나 잔액을 확인하세요",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
@@ -6042,10 +6030,6 @@
     "WrongDeviceForAccountPayout" : {
       "title" : "문제가 발생했습니다",
       "description" : "이 수령 계정은 귀하가 연결한 장치의 계정이 아닙니다. 변경 후 다시 시도하세요."
-    },
-    "MissingSwapPayloadParamaters" : {
-      "title" : "문제가 발생했습니다",
-      "description" : "선택한 파트너의 스왑 파라미터가 누락되었습니다. 재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "문제가 발생했습니다",
@@ -6628,8 +6612,7 @@
       "title" : "자산 선택"
     },
     "selectAccount" : {
-      "title" : "계정 선택",
-      "addAccount" : "기존 계정이나 신규 계정 추가"
+      "title" : "계정 선택"
     }
   },
   "customImage" : {
@@ -7060,25 +7043,5 @@
       "description" : "Ledger Nano S의 제한된 메모리로 인해 최신 기능, 블록체인 변경 사항 및 보안 업데이트에 대한 액세스가 제한됩니다. 장기적으로 사용하려면 최신 Ledger 장치로 업그레이드하세요.",
       "cta" : "자세히 알아보기"
     }
-  },
-  "modularAssetDrawer" : {
-    "searchPlaceholder" : "검색",
-    "selectAsset" : "자산 선택",
-    "selectNetwork" : "네트워크 선택",
-    "selectAccount" : "계정 선택",
-    "accountCount_one" : "{{count}}개 계정",
-    "accountCount_other" : "{{count}} 계정"
-  },
-  "nftEntryPoint" : {
-    "title" : "NFT(대체 불가능 토큰)",
-    "entry" : {
-      "magiceden" : "Magic Eden",
-      "opensea" : "OpenSea"
-    }
-  },
-  "geoBlocking" : {
-    "title" : "이용 불가능한 지역",
-    "description" : "Ledger 지갑을 사용할 수 없는 지역입니다.",
-    "learnMore" : "자세히 알아보기"
   }
 }
