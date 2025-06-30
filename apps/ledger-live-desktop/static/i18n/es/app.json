@@ -893,6 +893,7 @@
     "title" : "Comprar y vender cripto",
     "reset" : "Reiniciar flujo",
     "verifyAddress" : "Confirma que la dirección que se muestra coincide exactamente con la que aparece en tu dispositivo",
+    "connectingTo" : "Conectándote a {{provider}}",
     "buy" : {
       "header" : "Compra cripto a través de nuestros socios",
       "title" : "Elige un proveedor para comprar cripto",
@@ -1241,11 +1242,11 @@
       }
     },
     "manual" : {
-      "title" : "Configura tu {{deviceName}}",
+      "title" : "Prepara tu {{deviceName}}",
       "continueOnDevice" : "Realiza esta acción en tu {{productName}}",
       "pairedContent" : {
-        "title" : "Este {{deviceName}} es auténtico",
-        "description" : "Es seguro usar este {{productName}}.  Puedes proceder a configurarlo.",
+        "title" : "Tu {{deviceName}} es auténtico",
+        "description" : "Es seguro usar tu {{productName}}. Puedes continuar con el proceso de configuración.",
         "continueOnDevice" : "Toca tu {{productName}} para comenzar la configuración"
       },
       "pinContent" : {
@@ -1255,26 +1256,37 @@
         "continueOnDevice" : "Configura tu PIN en tu {{productName}}"
       },
       "seedContent" : {
-        "title" : "Frase de Recuperación Secreta",
+        "title" : "Configuración y copia de respaldo",
         "titleCompleted" : "Frase de Recuperación Secreta confirmada",
         "recoverSeed" : "Marcador de posición: Recover",
-        "restoreSeed" : "Para que tus activos estén lo más seguros posible, utiliza una Frase de Recuperación Secreta generada por un dispositivo Ledger.\n\n¿No tienes uno? Usa tu {{productName}} para generar una Frase nueva.",
+        "restoreSeed" : "Para restaurar, sigue las instrucciones que aparecen en la pantalla segura de tu Ledger.",
+        "restoreCharonTitle" : "Restaurar con Ledger Charon",
+        "restoreCharonDescription" : "Para restaurar, sigue las instrucciones que aparecen en la pantalla segura de tu Ledger.",
+        "restoreCharonContinueOnDevice" : "Sigue las instrucciones que se muestran en tu {{productName}}",
         "selection" : "Elige la opción de configuración que mejor se ajuste a tus necesidades:",
-        "selectionNewLedger" : "<0>“Configura tu dispositivo como un nuevo Ledger”</0> te permitirá crear una nueva billetera. Esta acción generará una Frase de Recuperación Secreta nueva.",
-        "selectionRestore" : "<0>“Restaurar”</0> te permitirá restaurar el acceso a activos que ya tengas con tu Frase de Recuperación Secreta o mediante Ledger Recover.",
+        "selectionNewLedgerTitle" : "Configurar como nuevo Ledger",
+        "selectionNewLedgerDescription" : "Esta acción generará una Frase de Recuperación Secreta nueva.",
+        "selectionRestoreTitle" : "Restaurar acceso a los activos",
+        "selectionRestoreDescription" : "Este proceso te permite restaurar con tu copia de respaldo: Frase de Recuperación Secreta o Ledger Recover.",
+        "selectionRestoreDescriptionWithCharon" : "Este proceso te permite restaurar con tu copia de respaldo: Frase de Recuperación Secreta, Ledger Recover o Ledger Charon.",
         "selectionContinueOnDevice" : "Elige la opción que prefieras en tu {{productName}}",
-        "newSeedDescription1" : "Tu {{productName}} generará la Frase de Recuperación Secreta, una lista única de 24 Palabras. Es la única forma de recuperar tus activos si te roban el Ledger, lo pierdes u olvidas tu PIN.",
-        "newSeedDescription2" : "<0>Guárdala en un lugar seguro y no la compartas con nadie:</0>\nTu Frase de Recuperación Secreta controla todos tus activos y es irreemplazable. Cualquiera que tenga tu Frase también controlará tus activos y podrá robarlos. Si pierdes tu Frase, Ledger no podrá ayudarte.",
-        "newSeedDescription3" : "Desconfía de cualquier persona o programa que te pida tu Frase de Recuperación Secreta. Se trata de una estafa. ",
-        "newSeedDescription4" : "El único lugar en el que debes ingresar tu Frase de Recuperación Secreta es tu dispositivo Ledger.",
-        "newSeedDescription5" : "No la compartas. No la pierdas.",
-        "newSeedContinueOnDevice" : "Visualiza y anota la Frase de Recuperación Secreta generada en tu {{productName}}",
+        "selectionNewSeedTitle" : "Frase de Recuperación Secreta",
+        "selectionNewSeedSubtitle" : "Guárdala en un lugar seguro y no la compartas con nadie",
+        "selectionNewSeedDescription" : "Tu Frase de Recuperación Secreta controla tus activos y es irreemplazable. Quien tenga tu Frase puede apoderarse de tus activos. Si la pierdes, Ledger no podrá ayudarte a recuperarla.",
+        "selectionNewSeedContinueOnDevice" : "Sigue las instrucciones que se muestran en tu {{productName}}",
+        "restoreDescription" : "Elige la copia de respaldo desde la que quieres restaurar:",
         "restoreChoiceContinueOnDevice" : "Selecciona la opción que prefieras en tu {{productName}}",
-        "restoreChoiceSRPTitle" : "Restauración con la Frase de Recuperación Secreta",
+        "restoreChoiceSRPTitle" : "Frase de Recuperación Secreta",
         "restoreChoiceSRPDescription" : "Para garantizar la máxima seguridad, utiliza una Frase de Recuperación Secreta generada por un dispositivo Ledger.",
-        "restoreChoiceRecoverTitle" : "Restaurar con Ledger Recover",
-        "restoreChoiceRecoverDescription" : "Si te has suscrito a Ledger Recover, inicia sesión en tu suscripción para restaurar la copia de respaldo de tu Frase de Recuperación Secreta.",
-        "followInstructions" : "Sigue las instrucciones que aparecen en tu {{productName}}."
+        "restoreChoiceCharonTitle" : "Ledger Charon",
+        "restoreChoiceCharonDescription" : "Description description description description description description.",
+        "restoreChoiceRecoverTitle" : "Suscripción a Ledger Recover",
+        "restoreChoiceRecoverDescription" : "Usa tu suscripción para restaurar el acceso a tus activos con tu identidad.",
+        "followInstructions" : "Sigue las instrucciones que aparecen en tu {{productName}}.",
+        "backupCharonTitle" : "Ledger Charon",
+        "backupCharonDescription" : "Description description description description description description description description description description.",
+        "backupCharonCta" : "Más información o comprar",
+        "backupCharonContinueOnDevice" : "Sigue las instrucciones que se muestran en tu {{productName}}"
       },
       "backup" : {
         "title" : "Copia de respaldo para tu Frase de Recuperación Secreta",
@@ -1296,8 +1308,8 @@
       },
       "softwareCheckContent" : {
         "title" : {
-          "active" : "Verificación de \tAutenticidad y\n de actualización del SO",
-          "completed" : "Tu {{modelName}} es auténtico y está actualizado"
+          "active" : "Verificación de autenticidad de Ledger",
+          "completed" : "Verificación de autenticidad de Ledger"
         },
         "exitWarningDrawer" : {
           "title" : "¿Cancelar la Verificación de Autenticidad y la verificación de actualización del SO?",
@@ -1320,11 +1332,11 @@
           }
         },
         "whyPerformChecksLink" : "Más información sobre la Verificación de Autenticidad",
-        "startChecksCTA" : "Verificar mi {{modelName}}",
+        "startChecksCTA" : "Verificar {{modelName}}",
         "continueCTA" : "Continuar a la configuración",
         "genuineCheck" : {
           "title" : {
-            "active" : "Verificación de autenticidad",
+            "active" : "Verificación de autenticidad de Ledger",
             "completed" : "Tu {{modelName}} es auténtico",
             "cancelled" : "Verificación de Autenticidad rechazada"
           },
@@ -1336,13 +1348,12 @@
         },
         "firmwareUpdate" : {
           "title" : {
-            "active" : "Verificación de actualización del SO",
-            "completed" : "El SO de tu {{modelName}} está actualizado.",
+            "active" : "Verificación de Ledger OS",
+            "completed" : "Ledger OS está actualizado",
             "updateAvailable" : "Actualización del SO {{firmwareVersion}} disponible"
           },
           "subtitle" : {
-            "active" : "Se verificará si el sistema operativo de tu {{modelName}} está actualizado o no.",
-            "completed" : "Para iniciar la restauración de la aplicación en tu {{modelName}}, selecciona el botón “Restaurar aplicaciones” a continuación.",
+            "active" : "Este proceso comprueba si el sistema operativo de tu {{modelName}} está actualizado.",
             "updateAvailable" : "Actualízalo para disfrutar de una seguridad óptima y acceder a las funciones más recientes."
           },
           "viewUpdateCTA" : "Actualizar SO del {{modelName}}",
@@ -1925,7 +1936,8 @@
       "payoutNetworkFees" : "Tarifas de pago",
       "payoutNetworkFeesTooltip" : "Este importe no se mostrará en el dispositivo",
       "acceptTerms" : "Al validar esta transacción, acepto\nlos <0>términos de uso de {{provider}}</0>",
-      "exodusAcceptTerms" : "Exodus depende de terceros para realizar las permutas.\nAl validar esta transacción, acepto los <0>términos de uso de Exodus</0>"
+      "exodusAcceptTerms" : "Exodus depende de terceros para realizar las permutas.\nAl validar esta transacción, acepto los <0>términos de uso de Exodus</0>",
+      "changellyAcceptTerms" : "Al hacer clic en “Permutar con Changelly”, aceptas los <0>Términos de uso</0> de Changelly y\nsu <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que,\nen determinados casos, pueden afectar a la finalización de tu transacción. En caso\nde darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly."
     },
     "swap2" : {
       "amountSent" : "Importe a enviar",
@@ -6041,6 +6053,10 @@
       "title" : "Algo ha salido mal",
       "description" : "Esta cuenta receptora no pertenece al dispositivo que has conectado. Cámbiala e inténtalo de nuevo."
     },
+    "MissingSwapPayloadParamaters" : {
+      "title" : "Algo ha salido mal",
+      "description" : "Falta el parámetro de permuta del proveedor seleccionado. Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
     "WrongDeviceForAccountRefund" : {
       "title" : "Algo ha salido mal",
       "description" : "Esta cuenta de envío no pertenece al dispositivo que has conectado. Cámbiala e inténtalo de nuevo."
@@ -7059,7 +7075,9 @@
     "searchPlaceholder" : "Buscar",
     "selectAsset" : "Seleccionar activo",
     "selectNetwork" : "Seleccionar red",
-    "selectAccount" : "Seleccionar cuenta"
+    "selectAccount" : "Seleccionar cuenta",
+    "accountCount_one" : "Cuenta {{count}}",
+    "accountCount_other" : "Cuentas de {{count}}"
   },
   "nftEntryPoint" : {
     "title" : "NFT (Tokens no fungibles)",
