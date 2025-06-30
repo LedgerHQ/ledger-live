@@ -1,5 +1,4 @@
 import { useCallback, useContext, useMemo } from "react";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { liveAppContext as remoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LiveAppRegistry } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/types";
 import { liveAppContext as localLiveAppProviderContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
@@ -15,6 +14,9 @@ import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/conv
 import { NavigatorName, ScreenName } from "~/const";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { deriveAccountIdForManifest } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
+import { useVersionedStakePrograms } from "./useVersionedStakePrograms";
+
+import { EarnLiveAppNavigatorParamList } from "~/components/RootNavigator/types/EarnLiveAppNavigator";
 
 const getRemoteLiveAppManifestById = (
   appId: string,
@@ -30,7 +32,7 @@ const getRemoteLiveAppManifestById = (
 };
 
 export function useStake() {
-  const featureFlag = useFeature("stakePrograms");
+  const featureFlag = useVersionedStakePrograms();
   const enabledCurrencies = useMemo(
     () => featureFlag?.params?.list || [],
     [featureFlag?.params?.list],
@@ -80,12 +82,21 @@ export function useStake() {
     [getCanStakeUsingLedgerLive, getCanStakeUsingPlatformApp],
   );
 
-  /** @returns Base navigator route params to third party platform app. Returns null if not available for provided account or currency.*/
+  /** @returns Base navigator route params to third party platform app, or to Earn dashboard deposit flow.
+   * Returns null if not available for provided account or currency.*/
   const getRouteParamsForPlatformApp: (
     account: Account | TokenAccount | AccountLike,
     walletState: WalletState,
     parentAccount?: Account,
   ) =>
+    | {
+        screen: NavigatorName.Earn;
+        params: {
+          screen: ScreenName.Earn;
+          platform: "earn";
+          params: EarnLiveAppNavigatorParamList | Record<string, unknown>;
+        };
+      }
     | {
         navigator: NavigatorName.NoFundsFlow;
         screen: ScreenName.PlatformApp | ScreenName.NoFunds;
@@ -102,6 +113,9 @@ export function useStake() {
       parentAccount?: Account,
     ) => {
       const walletApiAccount = accountToWalletAPIAccount(walletState, account, parentAccount);
+      const parentWalletApiAccountId = parentAccount
+        ? accountToWalletAPIAccount(walletState, parentAccount)?.id
+        : null;
 
       if (getAccountSpendableBalance(account).isZero()) {
         return {
@@ -155,6 +169,27 @@ export function useStake() {
         ...(asset_id ? { asset_id } : {}),
         accountId: accountIdForManifestVersion,
       })?.toString();
+
+      if (manifest.id === "earn" || manifest.id === "earn-stg") {
+        // Earn live app uses a different navigator
+        return {
+          screen: NavigatorName.Earn,
+          params: {
+            screen: ScreenName.Earn,
+            platform: "earn",
+            params: {
+              ...customPartnerParams,
+              platform: manifest.id,
+              name: manifest.name,
+              accountId: accountIdForManifestVersion,
+              parentAccountId: parentWalletApiAccountId,
+              ledgerAccountId: account.id,
+              walletAccountId: walletApiAccount.id,
+              customDappURL: customDappURL ?? undefined,
+            },
+          },
+        };
+      }
 
       return {
         screen: ScreenName.PlatformApp,

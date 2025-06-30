@@ -2899,7 +2899,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "tron",
     color: "#D9012C",
     family: "tron",
-    blockAvgTime: 3,
+    blockAvgTime: 9,
     units: [
       {
         name: "TRX",

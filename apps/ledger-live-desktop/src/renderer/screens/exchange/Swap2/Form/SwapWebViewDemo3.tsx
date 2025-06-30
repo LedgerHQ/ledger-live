@@ -55,6 +55,7 @@ import {
 } from "../utils/index";
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
+import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -496,6 +497,10 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
     [manifest, hashString],
   );
 
+  const initialSource = useMemo(() => {
+    return currentRouteNameRef.current || "";
+  }, []);
+
   return (
     <>
       {enablePlatformDevTools && (
@@ -510,6 +515,7 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
         <Web3AppWebview
           manifest={manifestWithHash}
           inputs={{
+            source: initialSource,
             theme: themeType,
             lang: locale,
             currencyTicker: fiatCurrency.ticker,

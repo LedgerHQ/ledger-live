@@ -122,9 +122,7 @@ const SoftwareCheckContent = ({
         }
         subtitle={
           firmwareUpdateStatus === SoftwareCheckStatus.completed
-            ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.subtitle.completed", {
-                modelName,
-              })
+            ? undefined
             : firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable
               ? t(
                   "syncOnboarding.manual.softwareCheckContent.firmwareUpdate.subtitle.updateAvailable",

@@ -226,7 +226,8 @@ export type Features = CurrencyFeatures & {
   llmSolanaNfts: DefaultFeature;
   largemoverLandingpage: DefaultFeature;
   llmMmkvMigration: Feature_LlmMmkvMigration;
-  lldModularDrawer: Feature_LldModularDrawer;
+  lldModularDrawer: Feature_ModularDrawer;
+  llmModularDrawer: Feature_ModularDrawer;
   llNftSupport: DefaultFeature;
   llNftEntryPoint: Feature_LlNftEntryPoint;
   ldmkConnectApp: DefaultFeature;
@@ -328,10 +329,17 @@ export type Redirect<M extends PlatformManifestId> = {
   queryParams?: Record<string, string> & RedirectQueryParam<M>;
 };
 
+export type VersionedRedirect = {
+  desktop_version?: string;
+  mobile_version?: string;
+  redirects: Record<string, Redirect<PlatformManifestId>>;
+};
+
 export type Feature_StakePrograms = Feature<{
   list: string[];
   /** redirects is a dictionary of crypto asset ids to partner app params for overriding flows for specific tokens. */
   redirects: Record<string, Redirect<PlatformManifestId>>;
+  versions?: VersionedRedirect[];
 }>;
 
 export type Feature_StakeAccountBanner = Feature<{ [blockchainName: string]: any }>;
@@ -638,7 +646,7 @@ export type Feature_LlmMmkvMigration = Feature<{
   shouldRollback: boolean | null;
 }>;
 
-export type Feature_LldModularDrawer = Feature<{
+type Feature_ModularDrawer = Feature<{
   add_account: boolean;
   earn_flow: boolean;
   live_app: boolean;
