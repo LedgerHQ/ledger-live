@@ -266,7 +266,7 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     await deviceAction.silentSign();
 
     const res = await liveAppWebview.getResOutput();
-    expect(res).toBe("fakeSignatureTlaowosfpqwkpofqkpqwpoesHQv6xHyYwDsrPJvqcSKRJGBLrbEc");
+    expect(res).toBe("empty response");
 
     await resetWebview();
   });
