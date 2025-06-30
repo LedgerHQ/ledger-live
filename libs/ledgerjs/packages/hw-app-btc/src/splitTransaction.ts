@@ -113,6 +113,7 @@ export function splitTransaction(
     if (isZcashv5) {
       varint = getVarint(transaction, offset);
       const nSpendsSapling = varint[0];
+      console.log("RABL WE WERE HERE splitTransaction: nSpendsSapling", nSpendsSapling);
       offset += varint[1];
 
       const vSpendsSapling: SpendDescriptionV5[] = [];
@@ -135,6 +136,7 @@ export function splitTransaction(
 
       varint = getVarint(transaction, offset);
       const nOutputsSapling = varint[0];
+      console.log("RABL WE WERE HERE splitTransaction: nOutputsSapling", nOutputsSapling);
       offset += varint[1];
       const vOutputSapling: OutputDescriptionV5[] = [];
 
@@ -188,9 +190,9 @@ export function splitTransaction(
 
       sapling = {
         nSpendsSapling,
-        vSpendsSapling: [], // This will be filled later if needed
+        vSpendsSapling,
         nOutputsSapling,
-        vOutputSapling: [], // This will be filled later if needed
+        vOutputSapling,
         valueBalanceSapling,
         anchorSapling,
         vSpendProofsSapling,
