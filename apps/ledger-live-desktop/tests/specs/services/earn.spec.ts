@@ -41,12 +41,11 @@ test("Earn @smoke", async ({ page, electronApp }) => {
 
   await test.step("Navigate to Buy app from portfolio banner", async () => {
     await layout.goToEarn();
-    const webviewPage = await liveAppWebview.getWebView();
-    await expect(webviewPage.getByText("theme: dark")).toBeVisible();
-    await expect(webviewPage.getByText("lang: en")).toBeVisible();
-    await expect(webviewPage.getByText("locale: en-US")).toBeVisible();
-    await expect(webviewPage.getByText("discreetMode: false")).toBeVisible();
-    await expect(webviewPage.getByText("currencyTicker: USD")).toBeVisible();
+    await liveAppWebview.waitForText("theme: dark");
+    await liveAppWebview.waitForText("lang: en");
+    await liveAppWebview.waitForText("locale: en-US");
+    await liveAppWebview.waitForText("discreetMode: false");
+    await liveAppWebview.waitForText("currencyTicker: USD");
     await expect
       .soft(page)
       .toHaveScreenshot("earn-app-opened.png", { mask: [page.locator("webview")] });

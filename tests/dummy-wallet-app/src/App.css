@@ -50,7 +50,9 @@ pre {
 
 .account-id-input,
 .recipient-input,
-.currency-ids-input {
+.currency-ids-input,
+.amount-input,
+.data-input {
   margin-bottom: 12px;
   width: 320px;
 }

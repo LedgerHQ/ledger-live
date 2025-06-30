@@ -1,5 +1,5 @@
 import { WebviewTag } from "~/renderer/components/Web3AppWebview/types";
-import { ElectronApplication, Locator, Page } from "@playwright/test";
+import { ElectronApplication, Locator, Page, expect } from "@playwright/test";
 import { getLiveAppManifest, startDummyServer, stopDummyServer } from "@ledgerhq/test-utils";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 
@@ -116,6 +116,16 @@ export class LiveAppWebview {
     return webview.getByTestId("recipient-input").fill(recipient);
   }
 
+  async setAmount(amount: string) {
+    const webview = await this.getWebView();
+    return webview.getByTestId("amount-input").fill(amount);
+  }
+
+  async setData(data: string) {
+    const webview = await this.getWebView();
+    return webview.getByTestId("data-input").fill(data);
+  }
+
   async accountRequest() {
     const webview = await this.getWebView();
     return webview.getByTestId("account-request").click();
@@ -191,7 +201,7 @@ export class LiveAppWebview {
   }
 
   async getWebView(): Promise<Page> {
-    if (this.webviewPage) {
+    if (this.webviewPage && !this.webviewPage.isClosed()) {
       return this.webviewPage;
     }
     if (!this.electronApp) {
@@ -218,6 +228,11 @@ export class LiveAppWebview {
 
   async waitForLoaded() {
     return this.page.waitForLoadState("domcontentloaded");
+  }
+
+  async waitForText(text: string) {
+    const webviewPage = await this.getWebView();
+    return expect(webviewPage.getByText(text).first()).toBeVisible();
   }
 
   send(request: Record<string, unknown>) {

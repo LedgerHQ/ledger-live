@@ -140,8 +140,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   });
 
   await test.step("wait for Kiln dapp to load", async () => {
-    const webviewPage = await liveAppWebview.getWebView();
-    await expect(webviewPage.getByText("Ethereum 1")).toBeVisible();
+    await liveAppWebview.waitForText("Ethereum 1");
     const dappURL = await liveAppWebview.getLiveAppDappURL();
     expect(await liveAppWebview.getLiveAppTitle()).toBe("Kiln");
     expect(dappURL).toContain("?focus=dedicated");
@@ -213,8 +212,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
     });
     await delegate.chooseStakeProvider("kiln_pooling");
     const dappURL = await liveAppWebview.getLiveAppDappURL();
-    const webviewPage = await liveAppWebview.getWebView();
-    await expect(webviewPage.getByText("Ethereum 2")).toBeVisible();
+    await liveAppWebview.waitForText("Ethereum 2");
     expect(dappURL).toContain("?focus=pooled");
     expect(await liveAppWebview.getLiveAppTitle()).toBe("Kiln");
 

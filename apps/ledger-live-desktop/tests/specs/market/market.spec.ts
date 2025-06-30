@@ -187,11 +187,10 @@ test("Market", async ({ page, electronApp }) => {
     await expect
       .soft(page)
       .toHaveScreenshot("market-btc-buy-page.png", { mask: [page.locator("webview")] });
-    const webviewPage = await liveAppWebview.getWebView();
-    await expect(webviewPage.getByText("theme: dark")).toBeVisible();
-    await expect(webviewPage.getByText("currency: bitcoin")).toBeVisible();
-    await expect(webviewPage.getByText("mode: buy")).toBeVisible();
-    await expect(webviewPage.getByText("lang: en")).toBeVisible();
+    await liveAppWebview.waitForText("theme: dark");
+    await liveAppWebview.waitForText("currency: bitcoin");
+    await liveAppWebview.waitForText("mode: buy");
+    await liveAppWebview.waitForText("lang: en");
 
     await layout.goToMarket();
   });
@@ -216,10 +215,9 @@ test("Market", async ({ page, electronApp }) => {
     await expect
       .soft(page)
       .toHaveScreenshot("market-btc-buy-page.png", { mask: [page.locator("webview")] });
-    const webviewPage = await liveAppWebview.getWebView();
-    await expect(webviewPage.getByText("theme: dark")).toBeVisible();
-    await expect(webviewPage.getByText("currency: bitcoin")).toBeVisible();
-    await expect(webviewPage.getByText("mode: buy")).toBeVisible();
-    await expect(webviewPage.getByText("lang: en")).toBeVisible();
+    await liveAppWebview.waitForText("theme: dark");
+    await liveAppWebview.waitForText("currency: bitcoin");
+    await liveAppWebview.waitForText("mode: buy");
+    await liveAppWebview.waitForText("lang: en");
   });
 });
