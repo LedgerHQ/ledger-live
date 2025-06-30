@@ -447,8 +447,6 @@
     "incompatibility" : {
       "ton_title" : "No es posible utilizar el Ledger Nano S™ para permutar Ton",
       "ton_description" : "Para permutar Ton, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
-      "ton_tokens_title" : "No es posible utilizar el Ledger Nano S™ para permutar tokens de Ton",
-      "ton_tokens_description" : "Para permutar tokens de Ton, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "spl_tokens_title" : "No es posible utilizar el Ledger Nano S™ para permutar tokens de Solana",
       "spl_tokens_description" : "Para permutar tokens de Solana, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "sui_tokens_title" : "No es posible utilizar el Ledger Nano S™ para permutar tokens de Sui",
@@ -893,7 +891,6 @@
     "title" : "Comprar y vender cripto",
     "reset" : "Reiniciar flujo",
     "verifyAddress" : "Confirma que la dirección que se muestra coincide exactamente con la que aparece en tu dispositivo",
-    "connectingTo" : "Conectándote a {{provider}}",
     "buy" : {
       "header" : "Compra cripto a través de nuestros socios",
       "title" : "Elige un proveedor para comprar cripto",
@@ -1926,8 +1923,7 @@
       "payoutNetworkFees" : "Tarifas de pago",
       "payoutNetworkFeesTooltip" : "Este importe no se mostrará en el dispositivo",
       "acceptTerms" : "Al validar esta transacción, acepto\nlos <0>términos de uso de {{provider}}</0>",
-      "exodusAcceptTerms" : "Exodus depende de terceros para realizar las permutas.\nAl validar esta transacción, acepto los <0>términos de uso de Exodus</0>",
-      "changellyAcceptTerms" : "Al hacer clic en “Permutar con Changelly”, aceptas los <0>Términos de uso</0> de Changelly y\nsu <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que,\nen determinados casos, pueden afectar a la finalización de tu transacción. En caso\nde darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly."
+      "exodusAcceptTerms" : "Exodus depende de terceros para realizar las permutas.\nAl validar esta transacción, acepto los <0>términos de uso de Exodus</0>"
     },
     "swap2" : {
       "amountSent" : "Importe a enviar",
@@ -2074,8 +2070,7 @@
       "latest" : "La versión {{version}} del firmware está disponible",
       "contactSupport" : "Ponte en contacto con Soporte",
       "deprecated" : "La versión de firmware del dispositivo es demasiado antigua para poder actualizarla. Contacta al Soporte de Ledger para obtener un reemplazo.",
-      "prepareSeed" : "Como precaución, asegúrate de que la Frase de Recuperación Secreta de 24 palabras esté escrita en la Hoja de Recuperación y de tener fácil acceso a ella.",
-      "prepareSeedRecover" : "Considera la opción de usar Ledger Recover para realizar una copia de respaldo del acceso a tu billetera y asegurarte de que siempre esté a mano.",
+      "prepareSeed" : "Como precaución, asegúrate de que la Frase de Recuperación de 24 palabras esté escrita en la Hoja de Recuperación y de tener fácil acceso a ella.",
       "disclaimerTitle" : "Estás a punto de instalar <1>la versión de firmware {{version}}</1>.",
       "cancelUpdate" : "Cancelar actualización del SO",
       "continueUpdate" : "Continuar con actualización del SO",
@@ -2398,8 +2393,7 @@
         "suggested" : "Sugerida",
         "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
-        "nftQuantity" : "Cantidad",
-        "splExtensionsWarning" : "Estás interactuando con un token incluido en el programa Token-2022, también conocido como Token Extensions. Este token conlleva riesgos concretos. <0>Haz clic aquí</0> para obtener más información."
+        "nftQuantity" : "Cantidad"
       },
       "verification" : {
         "streaming" : {
@@ -3774,7 +3768,7 @@
       "frozenStateWarning" : "Los activos de la cuenta están inmovilizados.",
       "transferWarning" : "Para verificar la dirección del receptor de los tokens de Solana con un Ledger Nano S™, <0>sigue estas instrucciones</0>.",
       "transferFees" : {
-        "feesHint" : "Tarifa de transferencia del token: {{transferFee}}",
+        "feesPercentHint" : "El token tiene una tarifa de transferencia del {{feePercent}}% ({{feeBps}} bps). {{maxFee}} máx.",
         "notice" : "Tarifa de transferencia del {{fee}}%",
         "tooltipHint" : "Porcentaje de transferencia retenido para el creador del token",
         "transferFeesLabel" : "Tarifas de transferencia"
@@ -5426,9 +5420,7 @@
     "stringHash" : "Hash de mensaje",
     "domainHash" : "Hash de dominio",
     "messageHash" : "Hash de mensaje",
-    "message" : "Mensaje",
-    "title" : "Continúa en tu Ledger {{wording}}",
-    "description" : "Sigue las instrucciones que aparecen en tu pantalla táctil segura."
+    "message" : "Mensaje"
   },
   "TransactionConfirm" : {
     "title" : "Confirma la operación en tu dispositivo para finalizarla",
@@ -5876,10 +5868,6 @@
       "title" : "Fondos insuficientes",
       "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
     },
-    "NotEnoughBalanceFees" : {
-      "title" : "Fondos insuficientes para cubrir las tarifas",
-      "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
-    },
     "NotEnoughBalanceSwap" : {
       "title" : "Lo sentimos, el saldo es insuficiente con las tarifas de red incluidas. Modifica el importe o verifica el saldo.",
       "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
@@ -6042,10 +6030,6 @@
     "WrongDeviceForAccountPayout" : {
       "title" : "Algo ha salido mal",
       "description" : "Esta cuenta receptora no pertenece al dispositivo que has conectado. Cámbiala e inténtalo de nuevo."
-    },
-    "MissingSwapPayloadParamaters" : {
-      "title" : "Algo ha salido mal",
-      "description" : "Falta el parámetro de permuta del proveedor seleccionado. Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "Algo ha salido mal",
@@ -6628,8 +6612,7 @@
       "title" : "elige un activo"
     },
     "selectAccount" : {
-      "title" : "elige una cuenta",
-      "addAccount" : "Agregar cuenta nueva o existente"
+      "title" : "elige una cuenta"
     }
   },
   "customImage" : {
@@ -7060,25 +7043,5 @@
       "description" : "La memoria limitada de tu Ledger Nano S restringe tu acceso a las opciones más recientes, a cambios en la blockchain y a mejoras de seguridad. Cambia a un dispositivo Ledger más moderno para garantizar un uso prolongado.",
       "cta" : "Más información"
     }
-  },
-  "modularAssetDrawer" : {
-    "searchPlaceholder" : "Buscar",
-    "selectAsset" : "Seleccionar activo",
-    "selectNetwork" : "Seleccionar red",
-    "selectAccount" : "Seleccionar cuenta",
-    "accountCount_one" : "Cuenta {{count}}",
-    "accountCount_other" : "Cuentas de {{count}}"
-  },
-  "nftEntryPoint" : {
-    "title" : "NFT (Tokens no fungibles)",
-    "entry" : {
-      "magiceden" : "Magic Eden",
-      "opensea" : "OpenSea"
-    }
-  },
-  "geoBlocking" : {
-    "title" : "Ubicación no disponible",
-    "description" : "Las billeteras Ledger no están disponibles en esta ubicación.",
-    "learnMore" : "Más información"
   }
 }
