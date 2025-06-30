@@ -1,13 +1,6 @@
 import React from "react";
-import { useModularDrawerFlowStepManager } from "../hooks/useModularDrawerFlowStepManager";
-import { ModularDrawerFlowView } from "./ModularDrawerFlowView";
-import { ModularDrawerStep } from "../types";
+import { ModularDrawerFlowView, ModularDrawerFlowViewModel } from "./ModularDrawerFlowView";
 
-export interface ModularDrawerFlowProps {
-  selectedStep?: ModularDrawerStep;
-}
-
-export default function ModularDrawerFlow(props: ModularDrawerFlowProps) {
-  const viewModel = useModularDrawerFlowStepManager(props);
-  return <ModularDrawerFlowView viewModel={viewModel} />;
+export default function ModularDrawerFlow(props: ModularDrawerFlowViewModel) {
+  return <ModularDrawerFlowView viewModel={props} />;
 }

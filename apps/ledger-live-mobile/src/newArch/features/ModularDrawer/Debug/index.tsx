@@ -8,10 +8,13 @@ const steps = [ModularDrawerStep.Asset, ModularDrawerStep.Network, ModularDrawer
 
 function ModularDrawerScreenDebug() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [selectedStep, setSelectedStep] = useState<ModularDrawerStep | undefined>();
+  const [selectedStep, setSelectedStep] = useState<ModularDrawerStep>(ModularDrawerStep.Asset);
 
   const handleToggleDrawer = () => setIsDrawerOpen(open => !open);
-  const handleDrawerClose = () => setIsDrawerOpen(false);
+  const handleDrawerClose = () => {
+    setIsDrawerOpen(false);
+    setSelectedStep(ModularDrawerStep.Asset);
+  };
   const handleStepSelect = (step: ModularDrawerStep) => setSelectedStep(step);
 
   return (
@@ -29,9 +32,7 @@ function ModularDrawerScreenDebug() {
         ))}
       </Flex>
       <Flex alignItems="center" mt={2}>
-        <Text
-          style={{ fontSize: 14, marginTop: 8 }}
-        >{`Selected step: ${selectedStep ?? "None"}`}</Text>
+        <Text style={{ fontSize: 14, marginTop: 8 }}>{`Selected step: ${selectedStep}`}</Text>
       </Flex>
       <ModularDrawer
         isOpen={isDrawerOpen}
