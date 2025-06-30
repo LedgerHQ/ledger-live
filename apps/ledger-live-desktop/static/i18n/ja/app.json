@@ -447,8 +447,6 @@
     "incompatibility" : {
       "ton_title" : "Ledger Nano S™はTonのスワップに対応していません",
       "ton_description" : "Tonをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
-      "ton_tokens_title" : "Ledger Nano S™は、Tonトークンのスワップに対応していません",
-      "ton_tokens_description" : "Tonトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
       "spl_tokens_title" : "Ledger Nano S™はSolanaトークンのスワップに対応していません",
       "spl_tokens_description" : "Solanaトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
       "sui_tokens_title" : "Ledger Nano S™は、Suiトークンのスワップに対応していません",
@@ -893,7 +891,6 @@
     "title" : "暗号資産を購入・売却する",
     "reset" : "フローをリセット",
     "verifyAddress" : "デバイスに表示されているアドレスと、完全に一致しているか確認してください。",
-    "connectingTo" : "{{provider}}に接続中",
     "buy" : {
       "header" : "パートナーから暗号資産を購入する",
       "title" : "暗号資産を購入するプロバイダーを選択する",
@@ -1926,8 +1923,7 @@
       "payoutNetworkFees" : "ペイアウト手数料",
       "payoutNetworkFeesTooltip" : "これはデバイスには表示されません。",
       "acceptTerms" : "このトランザクションを検証することにより、私は\n<0>{{provider}}の利用規約</0>に同意します",
-      "exodusAcceptTerms" : "Exodusは、スワップの実行をサードパーティに依存しています。\nこのトランザクションを承認することにより、私は<0>Exodusの利用規約</0>に同意します",
-      "changellyAcceptTerms" : "「Swap with Changelly（Changellyでスワップ）」をクリックすると、Changellyの<0>利用規約</0>およびその\n<1>AML/KYC</1>ポリシーに同意したことになります。ChangellyはAML/KYC（本人確認手続き）を適用する場合があり、\n稀にトランザクションの完了に影響する可能性があります。そのような場合は、\nChangellyの<2>カスタマーサポート</2>に連絡する必要があります。"
+      "exodusAcceptTerms" : "Exodusは、スワップの実行をサードパーティに依存しています。\nこのトランザクションを承認することにより、私は<0>Exodusの利用規約</0>に同意します"
     },
     "swap2" : {
       "amountSent" : "送付額",
@@ -2074,8 +2070,7 @@
       "latest" : "ファームウェアバージョン{{version}}が利用可能です",
       "contactSupport" : "サポートへお問い合わせ",
       "deprecated" : "デバイスのファームウェアのバージョンが古いため、アップデートできません。Ledgerサポートに連絡して、デバイスを交換してください。",
-      "prepareSeed" : "念のため、24単語のシークレットリカバリーフレーズがリカバリーシートに書き留められており、利用可能であることをご確認ください。",
-      "prepareSeedRecover" : "また、Ledger Recoverをご使用いただくと、ウォレットへのアクセスをバックアップし、常に確実にアクセスできるようになります。",
+      "prepareSeed" : "念のために、24単語のリカバリーフレーズがリカバリーシートに書き留められており、利用可能であることを確認してください。",
       "disclaimerTitle" : "<1>ファームウェアバージョン{{version}}</1>をインストールします。",
       "cancelUpdate" : "OSアップデートをキャンセル",
       "continueUpdate" : "OSアップデートを続行",
@@ -2398,8 +2393,7 @@
         "suggested" : "提案済み",
         "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
-        "nftQuantity" : "数量",
-        "splExtensionsWarning" : "お客様は、トークン拡張としても知られる、Token-2022プログラムの一部であるトークンを扱おうとしています。このトークンには特定のリスクが伴います。詳しくは<0>こちら</0>。"
+        "nftQuantity" : "数量"
       },
       "verification" : {
         "streaming" : {
@@ -3774,7 +3768,7 @@
       "frozenStateWarning" : "アカウント資産が凍結されています！",
       "transferWarning" : "Ledger Nano S™を使用してSolanaトークンの受取人アドレスを認証するには、<0>こちらの手順に従ってください。</0>",
       "transferFees" : {
-        "feesHint" : "トークン転送手数料：{{transferFee}}",
+        "feesPercentHint" : "トークンには{{feePercent}}%（{{feeBps}}bps）の転送手数料がかかります。最大{{maxFee}}",
         "notice" : "転送手数料{{fee}}%",
         "tooltipHint" : "トークン作成者のために保留された転送の割合",
         "transferFeesLabel" : "転送手数料"
@@ -4168,7 +4162,7 @@
   },
   "settings" : {
     "title" : "設定",
-    "discreet" : "ダークモードに切り替える",
+    "discreet" : "非表示モードに切り替える",
     "helpButton" : "ヘルプ",
     "tabs" : {
       "display" : "一般",
@@ -5426,9 +5420,7 @@
     "stringHash" : "メッセージのハッシュ",
     "domainHash" : "ドメインのハッシュ",
     "messageHash" : "メッセージのハッシュ",
-    "message" : "メッセージ",
-    "title" : "Ledger {{wording}}で続ける",
-    "description" : "セキュアタッチスクリーンに表示される指示に従ってください。"
+    "message" : "メッセージ"
   },
   "TransactionConfirm" : {
     "title" : "デバイス上で処理を確定してください。",
@@ -5876,10 +5868,6 @@
       "title" : "資金が不足しています。",
       "description" : "アカウントに十分な資金があることを確認してください。"
     },
-    "NotEnoughBalanceFees" : {
-      "title" : "申し訳ございませんが、手数料のための資金が不足しています",
-      "description" : "アカウントに十分な資金があることを確認してください。"
-    },
     "NotEnoughBalanceSwap" : {
       "title" : "申し訳ありません。ネットワーク手数料を含む残高が不足しています。数量を調整するか、残高を確認してください。",
       "description" : "アカウントに十分な資金があることを確認してください。"
@@ -6042,10 +6030,6 @@
     "WrongDeviceForAccountPayout" : {
       "title" : "問題が発生しました。",
       "description" : "この受取アカウントは、お客様が接続したデバイスに属していません。変更して再試行してください。"
-    },
-    "MissingSwapPayloadParamaters" : {
-      "title" : "問題が発生しました。",
-      "description" : "選択されたパートナーからのスワップパラメータがありません。再試行するか、ご不明な点がありましたら、Ledgerサポートにお問い合わせください。"
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "問題が発生しました。",
@@ -6628,8 +6612,7 @@
       "title" : "資産を選択"
     },
     "selectAccount" : {
-      "title" : "アカウントを選択",
-      "addAccount" : "新規または既存のアカウントを追加する"
+      "title" : "アカウントを選択"
     }
   },
   "customImage" : {
@@ -7060,25 +7043,5 @@
       "description" : "Ledger Nano Sの限られたメモリでは、複数の最新機能、ブロックチェーンの変更、セキュリティ強化も制限されます。ぜひ、新しいLedgerデバイスへのアップグレードをご検討ください。",
       "cta" : "詳細はこちら"
     }
-  },
-  "modularAssetDrawer" : {
-    "searchPlaceholder" : "検索",
-    "selectAsset" : "暗号資産を選択",
-    "selectNetwork" : "ネットワークを選択",
-    "selectAccount" : "アカウントを選択",
-    "accountCount_one" : "{{count}}アカウント",
-    "accountCount_other" : "{{count}}アカウント"
-  },
-  "nftEntryPoint" : {
-    "title" : "NFT（非代替性トークン）",
-    "entry" : {
-      "magiceden" : "Magic Eden",
-      "opensea" : "OpenSea"
-    }
-  },
-  "geoBlocking" : {
-    "title" : "利用不可のロケーション",
-    "description" : "このロケーションでは、Ledgerウォレットをご利用いただけません。",
-    "learnMore" : "詳細はこちら"
   }
 }
