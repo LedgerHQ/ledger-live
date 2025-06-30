@@ -4168,7 +4168,7 @@
   },
   "settings" : {
     "title" : "設定",
-    "discreet" : "ダークモードに切り替える",
+    "discreet" : "非表示モードに切り替える",
     "helpButton" : "ヘルプ",
     "tabs" : {
       "display" : "一般",
