@@ -43,6 +43,9 @@ describe("estimatedFees", () => {
       sidecar: {
         url: "https://polkadot-sidecar.coin.ledger.com",
       },
+      indexer: {
+        url: "https://polkadot.coin.ledger.com",
+      },
       staking: {
         electionStatusThreshold: 25,
       },
