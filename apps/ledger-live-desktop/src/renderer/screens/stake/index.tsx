@@ -27,6 +27,7 @@ const useStakeFlow = () => {
   const dispatch = useDispatch();
   const walletState = useSelector(walletSelector);
   const { enabledCurrencies, partnerSupportedAssets, getRouteToPlatformApp } = useStake();
+  enabledCurrencies.push("internet_computer");
   const list = enabledCurrencies.concat(partnerSupportedAssets);
 
   const handleAccountSelected = useCallback(
