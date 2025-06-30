@@ -513,10 +513,6 @@
       "title" : "Fondos insuficientes",
       "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
     },
-    "NotEnoughBalanceFees" : {
-      "title" : "Fondos insuficientes para cubrir las tarifas",
-      "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
-    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Tu saldo disponible (no puesto en participación) es de {{currentBalance}}. Esta cantidad no es suficiente para pagar las tarifas de red necesarias para retirar tu {{assetName}} de la puesta en participación. ",
       "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} en tu cuenta.",
@@ -3369,8 +3365,7 @@
       "description" : "Vende criptomonedas de forma segura a cambio de dinero en efectivo."
     },
     "exchange" : {
-      "title" : "Comprar / Vender",
-      "connectingTo" : "Conectándote a {{provider}}"
+      "title" : "Comprar / Vender"
     },
     "stake" : {
       "title" : "Poner en participación",
@@ -3570,8 +3565,6 @@
         "contact_support" : "Ponte en contacto con Soporte",
         "ton_title" : "No es posible utilizar el Ledger Nano S™ para permutar Ton",
         "ton_description" : "Para permutar Ton, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
-        "ton_tokens_title" : "No es posible utilizar el Ledger Nano S™ para permutar tokens de Ton",
-        "ton_tokens_description" : "Para permutar tokens de Ton, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
         "spl_tokens_title" : "No es posible utilizar el Ledger Nano S™ para permutar tokens de Solana",
         "spl_tokens_description" : "Para permutar tokens de Solana, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
         "near_title" : "No es posible usar el Ledger Nano S™ para permutar Near",
@@ -3851,9 +3844,6 @@
           "title" : "No se ha encontrado la dirección para este dominio"
         }
       }
-    },
-    "spl2022" : {
-      "splExtensionsWarning" : "Estás interactuando con un token incluido en el programa Token-2022, también conocido como Token Extensions. Este token conlleva riesgos concretos. <0>Haz clic aquí</0> para obtener más información."
     },
     "amount" : {
       "available" : "Total disponible",
@@ -4707,7 +4697,7 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "Actualiza {{deviceName}} a la versión {{version}}",
-    "recoveryPhraseBackupInstructions" : "Como precaución, asegúrate de que la Frase de Recuperación Secreta de 24 palabras esté escrita en la Hoja de Recuperación y de tener fácil acceso a ella.\n\nConsidera la opción de usar Ledger Recover para realizar una copia de respaldo del acceso a tu billetera y asegurarte de que siempre esté a mano.",
+    "recoveryPhraseBackupInstructions" : "Como precaución, asegúrate de que la Frase de Recuperación de 24 Palabras esté escrita en la Hoja de Recuperación y de tener fácil acceso a ella.",
     "confirmRecoveryPhrase" : "Tengo mi Frase de Recuperación",
     "introDescription1" : "Ten en cuenta que se eliminarán todas las aplicaciones de tu dispositivo. Puedes volver a instalar las aplicaciones después de actualizar el firmware.",
     "introDescription2" : "Esto no afecta de ninguna manera tus activos cripto.",
@@ -6092,7 +6082,6 @@
       "transferFees" : {
         "title" : "Tarifas de transferencia",
         "feesPercentHint" : "El token tiene una tarifa de transferencia del {{feePercent}}% ({{feeBps}} bps) ({{maxFee}} máx.)",
-        "feesHint" : "Tarifa de transferencia del token: {{transferFee}}",
         "notice" : "Tarifa de transferencia del {{fee}}%",
         "tooltipHint" : "Porcentaje de transferencia retenido para el creador del token"
       },
@@ -6480,9 +6469,7 @@
     },
     "stepVerification" : {
       "action" : "Confirma la operación en tu dispositivo",
-      "accountName" : "Nombre de la cuenta",
-      "title" : "Continúa en tu Ledger {{wording}}",
-      "description" : "Sigue las instrucciones que aparecen en tu pantalla táctil segura."
+      "accountName" : "Nombre de la cuenta"
     }
   },
   "notificationCenter" : {
@@ -7427,27 +7414,6 @@
       "minutes_plural" : "(hace {{count}} minutos)",
       "seconds" : "(hace {{count}} segundo)",
       "seconds_plural" : "(hace {{count}} segundos)"
-    },
-    "performance" : "Rendimiento",
-    "low" : "Baja",
-    "high" : "Alta",
-    "title" : "Movimientos del mercado",
-    "overlay" : {
-      "title" : "Muévete de un activo a otro",
-      "action" : "Desliza a la izquierda o a la derecha",
-      "button" : "¡Entendido!"
     }
-  },
-  "nftEntryPoint" : {
-    "title" : "Tus NFTs",
-    "entry" : {
-      "magiceden" : "Magic Eden",
-      "opensea" : "OpenSea"
-    }
-  },
-  "geoBlocking" : {
-    "title" : "Ubicación no disponible",
-    "description" : "Las billeteras Ledger no están disponibles en esta ubicación.",
-    "learnMore" : "Más información"
   }
 }
