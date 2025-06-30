@@ -497,6 +497,25 @@ export enum ScreenName {
   NearWithdrawingValidationError = "NearWithdrawingValidationError",
   NearWithdrawingValidationSuccess = "NearWithdrawingValidationSuccess",
 
+  // sui
+  SuiStakingValidator = "SuiStakingValidator",
+  SuiStakingValidatorSelect = "SuiStakingValidatorSelect",
+  SuiStakingAmount = "SuiStakingAmount",
+  SuiUnstakingAmount = "SuiUnstakingAmount",
+  SuiWithdrawingAmount = "SuiWithdrawingAmount",
+  SuiStakingSelectDevice = "SuiStakingSelectDevice",
+  SuiStakingConnectDevice = "SuiStakingConnectDevice",
+  SuiStakingValidationError = "SuiStakingValidationError",
+  SuiStakingValidationSuccess = "SuiStakingValidationSuccess",
+  SuiUnstakingSelectDevice = "SuiUnstakingSelectDevice",
+  SuiUnstakingConnectDevice = "SuiUnstakingConnectDevice",
+  SuiUnstakingValidationError = "SuiUnstakingValidationError",
+  SuiUnstakingValidationSuccess = "SuiUnstakingValidationSuccess",
+  SuiWithdrawingSelectDevice = "SuiWithdrawingSelectDevice",
+  SuiWithdrawingConnectDevice = "SuiWithdrawingConnectDevice",
+  SuiWithdrawingValidationError = "SuiWithdrawingValidationError",
+  SuiWithdrawingValidationSuccess = "SuiWithdrawingValidationSuccess",
+
   Newsfeed = "Newsfeed",
 
   CustomImageStep0Welcome = "CustomImageStep0Welcome",
@@ -644,6 +663,9 @@ export enum NavigatorName {
   NearStakingFlow = "NearStakingFlow",
   NearUnstakingFlow = "NearUnstakingFlow",
   NearWithdrawingFlow = "NearWithdrawingFlow",
+  // SUI
+  SuiDelegateFlow = "SuiDelegationFlow",
+  SuiUndelegateFlow = "SuiUndelegateFlow",
 
   // Tab
   Main = "Main",
