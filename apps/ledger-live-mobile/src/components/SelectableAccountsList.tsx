@@ -20,7 +20,7 @@ import Swipeable from "react-native-gesture-handler/Swipeable";
 import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
 import CheckBox from "./CheckBox";
-import swipedAccountSubject from "~/screens/AddAccounts/swipedAccountSubject";
+import swipedAccountSubject from "~/types/subject";
 import Button from "./Button";
 import TouchHintCircle from "./TouchHintCircle";
 import Touchable from "./Touchable";
