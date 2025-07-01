@@ -33,6 +33,16 @@ const Title = styled(Text)`
   font-size: 24px;
   font-weight: 600;
   color: var(--palette-text-shade100);
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-bottom: 16px;
+`;
+
+const StepContainer = styled(Flex)`
+  flex: 1;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
 `;
 
 const ModularDrawerAddAccountFlowManager = ({ currency, source, onAccountSelected }: Props) => {
@@ -74,62 +84,74 @@ const ModularDrawerAddAccountFlowManager = ({ currency, source, onAccountSelecte
     switch (step) {
       case MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE:
         return (
-          <ConnectYourDevice
-            currency={cryptoCurrency}
-            onConnect={handleConnect}
-            analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW}
-            source={source}
-          />
+          <StepContainer paddingX="8px" data-test-id="content">
+            <ConnectYourDevice
+              currency={cryptoCurrency}
+              onConnect={handleConnect}
+              analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW}
+              source={source}
+            />
+          </StepContainer>
         );
       case MODULAR_DRAWER_ADD_ACCOUNT_STEP.SCAN_ACCOUNTS:
         if (!connectAppResult) {
           throw new Error("Missing connectAppResult");
         }
         return (
-          <ScanAccounts
-            currency={cryptoCurrency}
-            deviceId={connectAppResult.device.deviceId}
-            onRetry={navigateToConnectDevice}
-            source={source}
-            onComplete={accounts => {
-              setSelectedAccounts(accounts);
-              navigateToAccountsAdded();
-            }}
-            analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW}
-            navigateToWarningScreen={navigateToWarningScreen}
-          />
+          <StepContainer paddingX="8px" data-test-id="content">
+            <ScanAccounts
+              currency={cryptoCurrency}
+              deviceId={connectAppResult.device.deviceId}
+              onRetry={navigateToConnectDevice}
+              source={source}
+              onComplete={accounts => {
+                setSelectedAccounts(accounts);
+                navigateToAccountsAdded();
+              }}
+              analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW}
+              navigateToWarningScreen={navigateToWarningScreen}
+            />
+          </StepContainer>
         );
       case MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ADDED:
         return (
-          <AccountsAdded
-            accounts={selectedAccounts}
-            onFundAccount={navigateToFundAccount}
-            navigateToSelectAccount={navigateToSelectAccount}
-            isAccountSelectionFlow={isAccountSelectionFlow}
-            source={source}
-          />
+          <StepContainer paddingX="8px" data-test-id="content">
+            <AccountsAdded
+              accounts={selectedAccounts}
+              onFundAccount={navigateToFundAccount}
+              navigateToSelectAccount={navigateToSelectAccount}
+              isAccountSelectionFlow={isAccountSelectionFlow}
+              source={source}
+            />
+          </StepContainer>
         );
       case MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_WARNING:
         if (!warningReason) {
           throw new Error("Missing warningReason");
         }
         return (
-          <AccountsWarning
-            warningReason={warningReason}
-            currency={cryptoCurrency}
-            emptyAccount={emptyAccount}
-            navigateToFundAccount={navigateToFundAccount}
-            source={source}
-          />
+          <StepContainer paddingX="8px" data-test-id="content">
+            <AccountsWarning
+              warningReason={warningReason}
+              currency={cryptoCurrency}
+              emptyAccount={emptyAccount}
+              navigateToFundAccount={navigateToFundAccount}
+              source={source}
+            />
+          </StepContainer>
         );
       case MODULAR_DRAWER_ADD_ACCOUNT_STEP.FUND_ACCOUNT:
         if (!accountToFund) {
           throw new Error("Missing accountToFund");
         }
-        return <FundAccount account={accountToFund} currency={cryptoCurrency} source={source} />;
+        return (
+          <StepContainer paddingX="8px" data-test-id="content">
+            <FundAccount account={accountToFund} currency={cryptoCurrency} source={source} />
+          </StepContainer>
+        );
       case MODULAR_DRAWER_ADD_ACCOUNT_STEP.SELECT_ACCOUNT:
         return (
-          <>
+          <StepContainer data-test-id="content">
             <Title>
               {onAccountSelected
                 ? t("modularAssetDrawer.addAccounts.addAccountSelectionPtxFlow")
@@ -143,7 +165,7 @@ const ModularDrawerAddAccountFlowManager = ({ currency, source, onAccountSelecte
               onAccountSelected={accountToFund => navigateToFundAccount(accountToFund as Account)}
               hideAddAccountButton
             />
-          </>
+          </StepContainer>
         );
       default:
         return null;
@@ -168,16 +190,7 @@ const ModularDrawerAddAccountFlowManager = ({ currency, source, onAccountSelecte
         screenKey={currentStep}
         direction={navigationDirection}
       >
-        <Flex
-          data-test-id="content"
-          flex={1}
-          flexDirection="column"
-          height="100%"
-          width="100%"
-          paddingX="8px"
-        >
-          {renderStepContent(currentStep)}
-        </Flex>
+        {renderStepContent(currentStep)}
       </AnimatedScreenWrapper>
     </AnimatePresence>
   );
