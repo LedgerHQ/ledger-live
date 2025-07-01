@@ -38,8 +38,8 @@ import { LockedDeviceError } from "@ledgerhq/errors";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
 import { useTrackOnboardingFlow } from "~/renderer/analytics/hooks/useTrackOnboardingFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-import BackgroundRedSvg from "./assets/BackgroundRed";
-import BackgroundBlueSvg from "./assets/BackgroundBlue";
+import BackupBackground from "./assets/BackupBackground";
+import SetupBackground from "./assets/SetupBackground";
 
 const READY_REDIRECT_DELAY_MS = 2000;
 const POLLING_PERIOD_MS = 1000;
@@ -213,9 +213,9 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         titleCompleted: t("syncOnboarding.manual.seedContent.titleCompleted"),
         background:
           seedPathStatus === "new_seed" ? (
-            <BackgroundBlueSvg />
+            <SetupBackground />
           ) : seedPathStatus === "backup_charon" ? (
-            <BackgroundRedSvg />
+            <BackupBackground />
           ) : null,
         renderBody: () => (
           <>
