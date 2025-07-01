@@ -39,6 +39,44 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { ConnectAppDeviceAction } from "@ledgerhq/live-dmk-shared";
 import { ConnectAppEventMapper } from "./connectAppEventMapper";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { DeviceModelId as LLDeviceModelId } from "@ledgerhq/types-devices";
+
+/**
+ * Represents the deprecation status of a device.
+ *
+ * @property warningScreenVisible - Whether the generic deprecation warning screen should be shown.
+ * @property clearSigningScreenVisible - Whether the clear signing deprecation warning screen should be shown.
+ * @property errorScreenVisible - Whether the deprecation error screen should be shown (blocking usage).
+ * @property productName - The name of the affected product (e.g., "Nano S").
+ * @property date - The date when the deprecation becomes effective.
+ * @property warningScreenConfig - Optional configuration for the warning screen.
+ * @property clearSigningScreenConfig - Optional configuration for the clear signing screen.
+ * @property errorScreenConfig - Optional configuration for the error screen.
+ * @property onThrowError - Callback function triggered when an error should be thrown.
+ */
+export type DeviceDeprecation = {
+  warningScreenVisible: boolean;
+  clearSigningScreenVisible: boolean;
+  errorScreenVisible: boolean;
+  modelId: LLDeviceModelId;
+  date: Date;
+  warningScreenConfig?: DeviceDeprecationConfig;
+  clearSigningScreenConfig?: DeviceDeprecationConfig;
+  errorScreenConfig?: DeviceDeprecationConfig;
+  onContinue: (value?: string) => void;
+};
+
+/**
+ * Configuration defining exceptions to device deprecation restrictions.
+ *
+ * @property tokenExceptions - List of token identifiers exempt from the restriction.
+ * @property deprecatedFlowExceptions - List of flow identifiers (e.g., send, receive) to restrict.
+ */
+export type DeviceDeprecationConfig = {
+  tokenExceptions?: string[];
+  deprecatedFlow?: string[];
+};
 
 export type RequiresDerivation = {
   currencyId: string;
@@ -94,6 +132,10 @@ export type ConnectAppEvent =
       itemProgress: number;
       currentAppOp: AppOp;
       installQueue: string[];
+    }
+  | {
+      type: "deprecation";
+      deprecate: DeviceDeprecation;
     }
   | {
       type: "some-apps-skipped";
@@ -540,6 +582,12 @@ export default function connectAppFactory(
         return cmd(transport, { deviceId, request });
       }
       const { dmk, sessionId } = transport;
+      const config =
+        appName === "Exchange" && dependencies && dependencies.length > 0
+          ? LiveConfig.getValueByKey(
+              `config_nanoapp_${dependencies[0].toLowerCase().replace(/ /g, "_")}`,
+            )
+          : LiveConfig.getValueByKey(`config_nanoapp_${appName.toLowerCase().replace(/ /g, "_")}`);
       const deviceAction = new ConnectAppDeviceAction({
         input: {
           application: appNameToDependency(appName),
@@ -557,6 +605,7 @@ export default function connectAppFactory(
                 return derivation.address;
               }
             : undefined,
+          appConfig: config,
         },
       });
       const observable = dmk.executeDeviceAction({

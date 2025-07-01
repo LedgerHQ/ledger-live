@@ -132,7 +132,7 @@ export class ConnectAppEventMapper {
   }
 
   private handlePendingEvent(intermediateValue: ConnectAppDAIntermediateValue): void {
-    switch (intermediateValue.requiredUserInteraction) {
+    switch (intermediateValue.requiredUserInteraction.toString()) {
       case UserInteractionRequired.ConfirmOpenApp:
         if (!this.openAppRequested) {
           this.openAppRequested = true;
@@ -164,6 +164,15 @@ export class ConnectAppEventMapper {
           this.handleInstallPlan(intermediateValue.installPlan);
         }
         break;
+      case "device-deprecation":
+        if (intermediateValue.deviceDeprecation) {
+          this.eventSubject.next({
+            type: "deprecation",
+            deprecate: {
+              ...intermediateValue.deviceDeprecation,
+            },
+          });
+        }
     }
   }
 
