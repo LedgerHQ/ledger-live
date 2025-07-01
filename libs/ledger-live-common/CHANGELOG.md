@@ -1,5 +1,56 @@
 # @ledgerhq/live-common
 
+## 34.40.0-nightly.0
+
+### Minor Changes
+
+- [#10726](https://github.com/LedgerHQ/ledger-live/pull/10726) [`ad0edaf`](https://github.com/LedgerHQ/ledger-live/commit/ad0edafb6910122f0facbcef2736a179088dc2e0) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - config(llc): update Fantom config
+
+- [#10593](https://github.com/LedgerHQ/ledger-live/pull/10593) [`9d646eb`](https://github.com/LedgerHQ/ledger-live/commit/9d646eb6ca28b41af950b264c7d799a7ad536207) Thanks [@Wozacosta](https://github.com/Wozacosta)! - feat: update transactionintent generic types + remove xrp bridge and introduce the generic alpaca bridge in LLC
+
+- [#10706](https://github.com/LedgerHQ/ledger-live/pull/10706) [`09c8dad`](https://github.com/LedgerHQ/ledger-live/commit/09c8dad54f7169f92cf1816c90200d750e0d8802) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): Solana signature decoding for transaction.sign
+
+### Patch Changes
+
+- [#10707](https://github.com/LedgerHQ/ledger-live/pull/10707) [`5299c33`](https://github.com/LedgerHQ/ledger-live/commit/5299c3345335b42ec29d090c7bba6dff85fa237e) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add velora data
+
+- Updated dependencies [[`c6005ce`](https://github.com/LedgerHQ/ledger-live/commit/c6005ce8545acb596c2ff7770a0df848378ee83b), [`14f840d`](https://github.com/LedgerHQ/ledger-live/commit/14f840d9c6228a786dfacb975b3aed1bd59f18a2), [`5299c33`](https://github.com/LedgerHQ/ledger-live/commit/5299c3345335b42ec29d090c7bba6dff85fa237e), [`9d646eb`](https://github.com/LedgerHQ/ledger-live/commit/9d646eb6ca28b41af950b264c7d799a7ad536207)]:
+  - @ledgerhq/cryptoassets@13.21.0-nightly.0
+  - @ledgerhq/live-signer-solana@0.4.0-nightly.0
+  - @ledgerhq/ledger-cal-service@1.1.1-nightly.0
+  - @ledgerhq/coin-polkadot@6.3.0-nightly.0
+  - @ledgerhq/coin-stellar@5.3.0-nightly.0
+  - @ledgerhq/coin-aptos@2.5.0-nightly.0
+  - @ledgerhq/coin-tezos@5.5.0-nightly.0
+  - @ledgerhq/coin-tron@4.4.0-nightly.0
+  - @ledgerhq/coin-sui@0.6.0-nightly.0
+  - @ledgerhq/coin-xrp@6.3.0-nightly.0
+  - @ledgerhq/coin-framework@5.5.0-nightly.0
+  - @ledgerhq/coin-algorand@0.9.12-nightly.0
+  - @ledgerhq/coin-bitcoin@0.16.3-nightly.0
+  - @ledgerhq/coin-cardano@0.8.12-nightly.0
+  - @ledgerhq/coin-casper@2.0.3-nightly.0
+  - @ledgerhq/coin-celo@1.1.10-nightly.0
+  - @ledgerhq/coin-cosmos@0.16.1-nightly.0
+  - @ledgerhq/coin-evm@2.22.6-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.12-nightly.0
+  - @ledgerhq/coin-hedera@1.8.1-nightly.0
+  - @ledgerhq/coin-icon@0.10.12-nightly.0
+  - @ledgerhq/coin-internet_computer@1.7.12-nightly.0
+  - @ledgerhq/coin-mina@1.1.11-nightly.0
+  - @ledgerhq/coin-multiversx@0.4.12-nightly.0
+  - @ledgerhq/coin-near@0.11.12-nightly.0
+  - @ledgerhq/coin-solana@0.27.1-nightly.0
+  - @ledgerhq/coin-stacks@0.8.12-nightly.0
+  - @ledgerhq/coin-ton@0.13.1-nightly.0
+  - @ledgerhq/coin-vechain@2.7.12-nightly.0
+  - @ledgerhq/hw-app-vet@0.5.9-nightly.0
+  - @ledgerhq/live-countervalues@0.5.12-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.41-nightly.0
+  - @ledgerhq/live-nft@0.8.12-nightly.0
+  - @ledgerhq/live-wallet@0.11.3-nightly.0
+  - @ledgerhq/live-signer-evm@0.5.5-nightly.0
+
 ## 34.39.0
 
 ### Minor Changes

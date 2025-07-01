@@ -1,5 +1,29 @@
 # live-mobile
 
+## 3.85.0-nightly.0
+
+### Minor Changes
+
+- [#10709](https://github.com/LedgerHQ/ledger-live/pull/10709) [`4bd0027`](https://github.com/LedgerHQ/ledger-live/commit/4bd002799fd6ff910a46791db1a720aae687e3de) Thanks [@themooneer](https://github.com/themooneer)! - Dismiss keyboard on swipe back (ios)
+
+- [#10722](https://github.com/LedgerHQ/ledger-live/pull/10722) [`7291131`](https://github.com/LedgerHQ/ledger-live/commit/7291131523cc620aa81553260430d890b02bf3bd) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - MAD - Navigation header
+
+### Patch Changes
+
+- Updated dependencies [[`9d646eb`](https://github.com/LedgerHQ/ledger-live/commit/9d646eb6ca28b41af950b264c7d799a7ad536207), [`7291131`](https://github.com/LedgerHQ/ledger-live/commit/7291131523cc620aa81553260430d890b02bf3bd)]:
+  - @ledgerhq/coin-framework@5.5.0-nightly.0
+  - @ledgerhq/native-ui@0.38.0-nightly.0
+  - @ledgerhq/coin-cosmos@0.16.1-nightly.0
+  - @ledgerhq/coin-evm@2.22.6-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.12-nightly.0
+  - @ledgerhq/coin-multiversx@0.4.12-nightly.0
+  - @ledgerhq/coin-stacks@0.8.12-nightly.0
+  - @ledgerhq/live-countervalues@0.5.12-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.41-nightly.0
+  - @ledgerhq/live-nft@0.8.12-nightly.0
+  - @ledgerhq/live-nft-react@0.9.12-nightly.0
+  - @ledgerhq/live-wallet@0.11.3-nightly.0
+
 ## 3.84.0
 
 ### Minor Changes
