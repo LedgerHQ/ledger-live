@@ -21,7 +21,7 @@ const currencies = [
   { currency: Currency.ATOM, xrayTicket: "B2CQA-2501, B2CQA-2654, B2CQA-2682" },
   { currency: Currency.XTZ, xrayTicket: "B2CQA-2507, B2CQA-2655, B2CQA-2683" },
   { currency: Currency.SOL, xrayTicket: "B2CQA-2642, B2CQA-2656, B2CQA-2684" },
-  { currency: Currency.TON, xrayTicket: "B2CQA-2643, B2CQA-2657, B2CQA-2685" },
+  { currency: Currency.TON, xrayTicket: "B2CQA-2643, B2CQA-2657, B2CQA-2685" }, // Currency.TON network is not supported in speculos
   { currency: Currency.APT, xrayTicket: "B2CQA-3644, B2CQA-3645, B2CQA-3646" },
 ];
 
@@ -48,7 +48,7 @@ for (const currency of currencies) {
         await app.portfolio.openAddAccountModal();
         const isModularDrawer = await app.modularAssetDrawer.isModularDrawerVisible();
         if (isModularDrawer) {
-          await app.modularAssetDrawer.validateDrawerItems();
+          await app.modularAssetDrawer.validateDrawer();
           await app.modularAssetDrawer.selectAssetByTicker(currency.currency);
           await app.modularNetworkDrawer.selectNetwork(currency.currency);
           await app.addAccount.expectAccountModalToBeVisible();

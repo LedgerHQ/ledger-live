@@ -59,7 +59,7 @@ for (const token of subAccounts) {
 
         const isModularDrawer = await app.modularAssetDrawer.isModularDrawerVisible();
         if (isModularDrawer) {
-          await app.modularAssetDrawer.validateDrawerItems();
+          await app.modularAssetDrawer.validateDrawer();
           await app.modularAssetDrawer.selectAssetByTicker(token.account.currency);
           await app.modularNetworkDrawer.selectNetwork(token.account.currency);
           await app.addAccount.expectAccountModalToBeVisible();
