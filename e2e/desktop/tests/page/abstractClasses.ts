@@ -1,4 +1,4 @@
-import { Page, ElectronApplication } from "@playwright/test";
+import { Page, expect, ElectronApplication } from "@playwright/test";
 import { step } from "../misc/reporters/step";
 
 export abstract class PageHolder {
@@ -25,6 +25,17 @@ export abstract class Component extends PageHolder {
   @step("Waiting for app to fully load")
   async waitForPageDomContentLoadedState() {
     return await this.page.waitForLoadState("domcontentloaded");
+  }
+
+  @step("Check URL contains all values")
+  async expectUrlToContainAll(url: string, values: string[]) {
+    if (!url) {
+      throw new Error("URL is null or undefined");
+    }
+    const normalizedUrl = url.toLowerCase();
+    for (const value of values) {
+      expect(normalizedUrl).toContain(value.toLowerCase());
+    }
   }
 }
 
