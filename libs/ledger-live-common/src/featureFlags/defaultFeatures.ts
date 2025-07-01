@@ -123,6 +123,7 @@ export const DEFAULT_FEATURES: Features = {
   receiveStakingFlowConfigDesktop: initFeature(),
   brazePushNotifications: initFeature(),
   stakeAccountBanner: initFeature(),
+  llmNanoSDeprecation: DEFAULT_FEATURE,
 
   buyDeviceFromLive: {
     enabled: false,

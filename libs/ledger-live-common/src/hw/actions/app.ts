@@ -13,6 +13,7 @@ import type {
   ConnectAppEvent,
   ConnectAppRequest,
   Input as ConnectAppInput,
+  DeviceDeprecationRules,
 } from "../connectApp";
 import { useReplaySubject } from "../../observable";
 import type { Device, Action } from "./types";
@@ -64,6 +65,7 @@ export type State = {
   isLocked: boolean;
   skippedAppOps: SkippedAppOp[];
   listedApps?: boolean;
+  deviceDeprecationRules?: DeviceDeprecationRules;
 };
 
 export type AppState = State & {
@@ -164,6 +166,8 @@ const getInitialState = (device?: Device | null | undefined, request?: AppReques
 
 const reducer = (state: State, e: Event): State => {
   switch (e.type) {
+    case "deprecation":
+      return { ...state, deviceDeprecationRules: e.deprecate };
     case "unresponsiveDevice":
       return { ...state, unresponsive: true };
 
@@ -453,6 +457,7 @@ export const createAction = (
 ): AppAction => {
   const useHook = (device: Device | null | undefined, appRequest: AppRequest): AppState => {
     const dependenciesResolvedRef = useRef(false);
+
     const firmwareResolvedRef = useRef(false);
     const outdatedAppRef = useRef<AppAndVersion>();
 
