@@ -1,5 +1,5 @@
 import { Left, Right } from "purify-ts";
-import { assign, setup, fromPromise, and, not } from "xstate";
+import { assign, setup, fromPromise, and } from "xstate";
 import { gte } from "semver";
 
 import type {
@@ -21,13 +21,18 @@ import {
   XStateDeviceAction,
 } from "@ledgerhq/device-management-kit";
 
-import type {
-  ConnectAppDerivation,
-  ConnectAppDAOutput,
-  ConnectAppDAInput,
-  ConnectAppDAError,
-  ConnectAppDAIntermediateValue,
+import {
+  type ConnectAppDerivation,
+  type ConnectAppDAOutput,
+  type ConnectAppDAInput,
+  type ConnectAppDAError,
+  type ConnectAppDAIntermediateValue,
+  type DeviceDeprecationPayload,
+  UserInteractionRequiredLL,
+  DeviceDeprecated,
+  DeviceDeprecatedEntry,
 } from "./types";
+import { computeDeviceDeprecation } from "./deprecation";
 
 type ConnectAppMachineInternalState = {
   readonly error: ConnectAppDAError | null;
@@ -36,6 +41,8 @@ type ConnectAppMachineInternalState = {
   readonly deviceMetadata: GetDeviceMetadataDAOutput | undefined;
   readonly installResult: InstallOrUpdateAppsDAOutput | undefined;
   readonly derivation: ConnectAppDerivation | undefined;
+  readonly deviceDeprecation: DeviceDeprecationPayload | undefined;
+  readonly deprecationShown: boolean;
 };
 
 export class ConnectAppDeviceAction extends XStateDeviceAction<
@@ -115,6 +122,16 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
           }
           return await this.input.requiredDerivation();
         }),
+        computeDeprecation: fromPromise(async ({ input }) => {
+          const { deprecationConfig, modelId } = input as {
+            deprecationConfig: DeviceDeprecated;
+            modelId: DeviceModelId;
+          };
+
+          const payload = computeDeviceDeprecation(deprecationConfig, modelId);
+
+          return payload;
+        }),
       },
       guards: {
         fromDashboard: ({ context }) => context.input.application.name === "BOLOS",
@@ -128,6 +145,31 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
         }) => ConnectAppDeviceAction.isAppOpened(application, deviceStatus!, deviceModel!),
         requiresDerivation: ({ context }) => context.input.requiredDerivation !== undefined,
         hasError: ({ context }) => context._internalState.error !== null,
+        isDeprecation: ({ context }) => {
+          const deviceDeprecated = context.input.deprecationConfig;
+          const today = new Date();
+          const modelId = context._internalState.deviceModel;
+          if (!modelId || !deviceDeprecated) return false;
+          if (deviceDeprecated.length === 0) return false;
+          return deviceDeprecated.some((dd: DeviceDeprecatedEntry) => {
+            if (dd.deviceModelId !== modelId) return false;
+            if (dd.errorScreen) {
+              const errorDate = dd.errorScreen.date ? new Date(dd.errorScreen.date) : null;
+              if (errorDate && errorDate < today) return !context._internalState.deprecationShown;
+            }
+            if (dd.infoScreen) {
+              const infoDate = dd.infoScreen.date ? new Date(dd.infoScreen.date) : null;
+              if (infoDate && infoDate < today) return !context._internalState.deprecationShown;
+            }
+            if (dd.warningClearSigningScreen) {
+              const clearDate = dd.warningClearSigningScreen?.date
+                ? new Date(dd.warningClearSigningScreen.date)
+                : null;
+              if (clearDate && clearDate < today) return !context._internalState.deprecationShown;
+            }
+            return false;
+          });
+        },
       },
       actions: {
         assignErrorFromEvent: assign({
@@ -149,10 +191,12 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
             unlockTimeout: _.input.unlockTimeout,
             allowMissingApplication: _.input.allowMissingApplication,
             requiredDerivation: _.input.requiredDerivation,
+            deprecationConfig: _.input.deprecationConfig,
           },
           intermediateValue: {
             requiredUserInteraction: UserInteractionRequired.None,
             installPlan: null,
+            deviceDeprecation: undefined,
           },
           _internalState: {
             error: null,
@@ -161,6 +205,8 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
             deviceMetadata: undefined,
             installResult: undefined,
             derivation: undefined,
+            deviceDeprecation: undefined,
+            deprecationShown: false,
           },
         };
       },
@@ -168,11 +214,7 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
         DeviceReady: {
           always: [
             {
-              guard: not("shouldCheckDependencies"),
               target: "GetDeviceStatus",
-            },
-            {
-              target: "GetDeviceMetadata",
             },
           ],
         },
@@ -192,7 +234,7 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
               }),
             },
             onDone: {
-              target: "GetDeviceStatusCheck",
+              target: "DeprecationCheck",
               actions: assign({
                 _internalState: _ => {
                   const state = internalApi.getDeviceSessionState();
@@ -216,11 +258,30 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
             },
           },
         },
+        DeprecationCheck: {
+          always: [
+            {
+              guard: "isDeprecation",
+              target: "DeviceDeprecation",
+            },
+            {
+              guard: "hasError",
+              target: "Error",
+            },
+            {
+              target: "GetDeviceStatusCheck",
+            },
+          ],
+        },
         GetDeviceStatusCheck: {
           always: [
             {
               guard: "hasError",
               target: "Error",
+            },
+            {
+              guard: "shouldCheckDependencies",
+              target: "GetDeviceMetadata",
             },
             {
               guard: and(["isAppOpened", "requiresDerivation"]),
@@ -234,6 +295,69 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
               target: "GetDeviceMetadata",
             },
           ],
+        },
+        DeviceDeprecation: {
+          invoke: {
+            src: "computeDeprecation",
+            input: ({ context }) => ({
+              deprecationConfig: context.input.deprecationConfig,
+              modelId: context._internalState.deviceModel,
+            }),
+            onDone: {
+              target: "waitForUiAnswer",
+              actions: assign({
+                intermediateValue: _ => ({
+                  ..._.context.intermediateValue,
+                  requiredUserInteraction: UserInteractionRequiredLL.DeviceDeprecation,
+                  installPlan: null,
+                  deviceDeprecation: _.event.output as DeviceDeprecationPayload,
+                }),
+                _internalState: _ => ({
+                  ..._.context._internalState,
+                  deprecationShown: true,
+                }),
+              }),
+            },
+            onError: {
+              target: "Error",
+              actions: "assignErrorFromEvent",
+            },
+          },
+        },
+        waitForUiAnswer: {
+          invoke: {
+            src: fromPromise(async ({ input }) => {
+              return new Promise<void>((resolve, reject) => {
+                const payload = input.deviceDeprecation;
+                if (!payload) {
+                  resolve();
+                  return;
+                }
+                payload.onContinue = (isError: boolean) => {
+                  const error: ConnectAppDAError = {
+                    _tag: "DeviceDeprecationError",
+                    message: "device-deprecation",
+                  };
+                  if (isError) {
+                    reject(error);
+                    return;
+                  }
+                  resolve();
+                };
+              });
+            }),
+            input: ({ context }) => ({
+              ...context.input,
+              deviceDeprecation: context.intermediateValue.deviceDeprecation,
+            }),
+            onDone: {
+              target: "GetDeviceStatusCheck",
+            },
+            onError: {
+              target: "Error",
+              actions: "assignErrorFromEvent",
+            },
+          },
         },
         GetDeviceMetadata: {
           exit: assign({
