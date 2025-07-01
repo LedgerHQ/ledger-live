@@ -13,6 +13,7 @@ import type {
   ConnectAppEvent,
   ConnectAppRequest,
   Input as ConnectAppInput,
+  DeviceDeprecation,
 } from "../connectApp";
 import { useReplaySubject } from "../../observable";
 import type { Device, Action } from "./types";
@@ -64,6 +65,9 @@ export type State = {
   isLocked: boolean;
   skippedAppOps: SkippedAppOp[];
   listedApps?: boolean;
+  deprecateData?: DeviceDeprecation;
+  onContinue?: () => void;
+  displayDeprecateWarning: boolean;
 };
 
 export type AppState = State & {
@@ -160,10 +164,13 @@ const getInitialState = (device?: Device | null | undefined, request?: AppReques
   skippedAppOps: [],
   itemProgress: 0,
   progress: undefined,
+  displayDeprecateWarning: true,
 });
 
 const reducer = (state: State, e: Event): State => {
   switch (e.type) {
+    case "deprecation":
+      return { ...state, deprecateData: e.deprecate, onContinue: e.onContinue };
     case "unresponsiveDevice":
       return { ...state, unresponsive: true };
 
@@ -404,6 +411,7 @@ function inferCommandParams(appRequest: AppRequest): ConnectAppRequest {
       dependencies,
       requireLatestFirmware,
       allowPartialDependencies,
+      passDeprecation: false,
     };
   }
 
@@ -439,6 +447,7 @@ function inferCommandParams(appRequest: AppRequest): ConnectAppRequest {
       currencyId: currency.id,
       ...extra,
     },
+    passDeprecation: false,
     allowPartialDependencies,
   };
 }
@@ -453,6 +462,8 @@ export const createAction = (
 ): AppAction => {
   const useHook = (device: Device | null | undefined, appRequest: AppRequest): AppState => {
     const dependenciesResolvedRef = useRef(false);
+    const deprecationSend = useRef(false);
+
     const firmwareResolvedRef = useRef(false);
     const outdatedAppRef = useRef<AppAndVersion>();
 
@@ -479,6 +490,7 @@ export const createAction = (
             dependencies: dependenciesResolvedRef.current ? undefined : dependencies,
             requireLatestFirmware: firmwareResolvedRef.current ? undefined : requireLatestFirmware,
             outdatedApp: outdatedAppRef.current,
+            passDeprecation: deprecationSend.current,
           },
         }).pipe(
           tap(e => {
@@ -489,6 +501,8 @@ export const createAction = (
               firmwareResolvedRef.current = true;
             } else if (e.type === "has-outdated-app") {
               outdatedAppRef.current = e.outdatedApp as AppAndVersion;
+            } else if (e.type === "deprecation") {
+              dependenciesResolvedRef.current = true;
             }
           }),
         );
@@ -541,6 +555,19 @@ export const createAction = (
       }));
     }, []);
 
+    const onContinue = useCallback(() => {
+      setState(currState => {
+        currState.onContinue?.();
+        return {
+          ...currState,
+          displayDeprecateWarning: false,
+          deprecate: false,
+          onContinue: undefined,
+          deprecateData: undefined,
+        };
+      });
+    }, []);
+
     return {
       ...state,
       inWrongDeviceForAccount:
@@ -554,6 +581,7 @@ export const createAction = (
           : null,
       onRetry,
       passWarning,
+      onContinue,
     };
   };
 

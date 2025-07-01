@@ -167,6 +167,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -175,6 +176,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -218,6 +220,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -225,6 +228,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -233,16 +237,17 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: INSTALL_INTERMEDIATE_VALUE,
+            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
             status: DeviceActionStatus.Pending,
           },
           // GetDerivation
           {
-            intermediateValue: INSTALL_INTERMEDIATE_VALUE,
+            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
             status: DeviceActionStatus.Pending,
           },
           // Success
