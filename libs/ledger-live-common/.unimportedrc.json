@@ -377,7 +377,14 @@
     "src/notifications/AnnouncementProvider/helpers.ts",
     "src/reactNativeSvg.d.ts",
     "src/rxjs/operators/throwIf.ts",
-    "src/walletSync/getEnvironmentParams.ts"
+    "src/walletSync/getEnvironmentParams.ts",
+    "src/families/aptos/config.ts",
+    "src/families/aptos/constants.ts",
+    "src/families/aptos/logic.ts",
+    "src/families/aptos/react.ts",
+    "src/families/aptos/staking.ts",
+    "src/families/aptos/types.ts",
+    "src/families/aptos/utils.ts"
   ],
   "ignoreUnused": [
     "@dfinity/agent",
