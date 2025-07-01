@@ -13,13 +13,13 @@ import {
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import type { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
-import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
+import { AppAndVersion, DeviceDeprecation } from "@ledgerhq/live-common/hw/connectApp";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { AccountLike, AnyMessage, DeviceInfo } from "@ledgerhq/types-live";
+import type { Account, AccountLike, AnyMessage, DeviceInfo } from "@ledgerhq/types-live";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useTheme as useThemeFromStyledComponents } from "styled-components/native";
@@ -66,6 +66,11 @@ import { SettingsState } from "~/reducers/types";
 import { Theme } from "~/colors";
 import { useTrackTransactionChecksFlow } from "~/analytics/hooks/useTrackTransactionChecksFlow";
 import { useTrackDmkErrorsEvents } from "~/analytics/hooks/useTrackDmkErrorsEvents";
+import {
+  DeviceDeprecationScreen,
+  DeviceDeprecationScreens,
+} from "./Screen/DeviceDeprecationScreen";
+import { getDeviceModel } from "@ledgerhq/devices/index";
 
 type Status = PartialNullable<{
   appAndVersion: AppAndVersion;
@@ -119,6 +124,8 @@ type Status = PartialNullable<{
   imageCommitRequested: boolean;
   transactionChecksOptInTriggered: boolean;
   transactionChecksOptIn: boolean;
+  deprecateData?: DeviceDeprecation;
+  displayDeprecateWarning: boolean;
 }>;
 
 type Props<H extends Status, P> = {
@@ -222,7 +229,10 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     listingApps,
     transactionChecksOptInTriggered,
     transactionChecksOptIn,
+    deprecateData,
   } = status;
+
+  const [hasDisplayDeprecateWarning, setDeprecated] = useState(false);
 
   useTrackMyLedgerSectionEvents({
     location: location === HOOKS_TRACKING_LOCATIONS.myLedgerDashboard ? location : undefined,
@@ -287,7 +297,6 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   });
 
   useTrackDmkErrorsEvents({ error });
-
   useEffect(() => {
     if (deviceInfo && device) {
       dispatch(
@@ -308,6 +317,90 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
 
   const walletState = useSelector(walletSelector);
   const settingsState = useSelector(settingsStoreSelector);
+  interface Request {
+    account?: Account | null;
+    tokenCurrency?: TokenCurrency | null;
+  }
+
+  function extractCoin(request?: Request): string {
+    if (!request) return "";
+    const { account, tokenCurrency } = request;
+    if (tokenCurrency) return tokenCurrency.name;
+    if (account) return account.currency.name;
+    return "";
+  }
+  const currencyName: string = extractCoin(request as Request);
+  if (deprecateData && request) {
+    const { clearSigningScreenConfig, warningScreenConfig, errorScreenConfig, date, modelId } =
+      deprecateData;
+    const flowMapping: Partial<Record<HOOKS_TRACKING_LOCATIONS, string>> = {
+      [HOOKS_TRACKING_LOCATIONS.sendFlow]: "send",
+      [HOOKS_TRACKING_LOCATIONS.receiveFlow]: "receive",
+      [HOOKS_TRACKING_LOCATIONS.swapFlow]: "swap",
+    };
+
+    const currentFlow = (location && flowMapping[location]) || "other";
+    const skippedDeprecations = settingsState.deprecationDoNotRemind;
+    const doSkipDeprecation = (tokenExceptions: string[], deprecatedFlowExceptions: string[]) => {
+      return (
+        tokenExceptions.includes(currencyName) ||
+        !deprecatedFlowExceptions.includes(currentFlow) ||
+        currentFlow === "other"
+      );
+    };
+    const alreadyDismissed = skippedDeprecations.includes(currencyName);
+    const skipWarningScreen =
+      doSkipDeprecation(
+        warningScreenConfig?.tokenExceptions || [],
+        warningScreenConfig?.deprecatedFlow || [],
+      ) && alreadyDismissed;
+    const skipClearSigningScreen = doSkipDeprecation(
+      clearSigningScreenConfig?.tokenExceptions || [],
+      clearSigningScreenConfig?.deprecatedFlow || [],
+    );
+    const skipErrorScreen = doSkipDeprecation(
+      errorScreenConfig?.tokenExceptions || [],
+      errorScreenConfig?.deprecatedFlow || [],
+    );
+
+    const handleContinue = () => {
+      setDeprecated(true);
+      deprecateData.onContinue();
+    };
+    if (deprecateData.errorScreenVisible) {
+      if (skipErrorScreen) {
+        deprecateData.onContinue();
+      } else {
+        deprecateData.onContinue("error");
+      }
+    } else if (!hasDisplayDeprecateWarning) {
+      if (deprecateData.warningScreenVisible && !skipWarningScreen) {
+        return (
+          <DeviceDeprecationScreen
+            onContinue={handleContinue}
+            productName={getDeviceModel(modelId).productName}
+            screenName={DeviceDeprecationScreens.warningScreen}
+            displayClearSigningWarning={
+              deprecateData.clearSigningScreenVisible && !skipClearSigningScreen
+            }
+            coinName={currencyName}
+            date={date}
+          />
+        );
+      } else if (deprecateData.clearSigningScreenVisible && !skipClearSigningScreen) {
+        return (
+          <DeviceDeprecationScreen
+            coinName={currencyName}
+            date={date}
+            onContinue={handleContinue}
+            productName={getDeviceModel(modelId).productName}
+            screenName={DeviceDeprecationScreens.clearSigningScreen}
+          />
+        );
+      }
+    }
+    deprecateData.onContinue();
+  }
 
   if (displayUpgradeWarning && appAndVersion) {
     return renderWarningOutdated({
@@ -551,6 +644,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       colors,
       theme,
       device: device ?? undefined,
+      currencyName: currencyName,
     });
   }
 
