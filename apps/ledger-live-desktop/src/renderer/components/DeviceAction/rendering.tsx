@@ -52,8 +52,10 @@ import { DrawerFooter } from "~/renderer/screens/exchange/Swap2/Form/DrawerFoote
 import {
   Button as ButtonV3,
   Flex,
+  Icons,
   IconsLegacy,
   InfiniteLoader,
+  Link,
   ProgressLoader,
   Text,
   Theme,
@@ -74,6 +76,8 @@ import NoSuchAppOnProviderErrorComponent from "./NoSuchAppOnProviderErrorCompone
 import Image from "~/renderer/components/Image";
 import Nano from "~/renderer/images/nanoS.v4.svg";
 import { isWebHidSendReportError } from "@ledgerhq/live-dmk-desktop";
+import { DeviceNotSupportedError } from "@ledgerhq/live-common/hw/connectApp";
+import { rgba } from "~/renderer/styles/helpers";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -275,6 +279,19 @@ const EllipsesTextStyled = styled(Text)`
 const ButtonFooter = styled(Footer)`
   width: 100%;
   margin-top: 46px;
+`;
+
+const CircleIcon = styled.div`
+  padding: 16px;
+  border-radius: 100px;
+  background-color: ${p => rgba(p.theme.colors.palette.primary.c80, 0.1)};
+  align-items: center;
+  gap: 10px;
+  display: flex;
+  align-self: center;
+  justify-content: center;
+  width: fit-content;
+  height: fit-content;
 `;
 
 // these are not components because we want reconciliation to not remount the sub elements
@@ -805,6 +822,7 @@ export const renderError = ({
   inlineRetry?: boolean;
   withDescription?: boolean;
   stretch?: boolean;
+  passWarning?: (() => void) | null | undefined;
   Icon?: (props: { color?: string | undefined; size?: number | undefined }) => JSX.Element;
 }) => {
   let tmpError = error;
@@ -820,6 +838,8 @@ export const renderError = ({
     if (tmpError.title === "userRefused") {
       tmpError = new TransactionRefusedOnDevice();
     }
+  } else if (tmpError instanceof DeviceNotSupportedError) {
+    return <DeprecationDeviceError />;
   } else if (tmpError instanceof NoSuchAppOnProvider) {
     return (
       <NoSuchAppOnProviderErrorComponent
@@ -912,15 +932,18 @@ export const renderError = ({
 export const renderInWrongAppForAccount = ({
   t,
   onRetry,
+  passWarning,
 }: {
   t: TFunction;
   onRetry?: (() => void) | null | undefined;
+  passWarning?: (() => void) | null | undefined;
 }) =>
   renderError({
     t,
     error: new WrongDeviceForAccount(""),
     withExportLogs: true,
     onRetry,
+    passWarning,
     stretch: true,
   });
 
@@ -958,6 +981,146 @@ export const renderConnectYourDevice = ({
     </Footer>
   </Wrapper>
 );
+
+export const DeprecationClearSigningWarning = ({ onContinue }: { onContinue: () => void }) => {
+  return (
+    <Box flow={4} mx={40}>
+      <CircleIcon>
+        <Icons.WarningFill size="L" color="palette.warning.c70" />
+      </CircleIcon>
+      <Text fontWeight="600" textAlign="center" fontSize={24}>
+        <Trans i18nKey={`lnsDeprecation.warning.title`} />
+      </Text>
+      <Text color="palette.text.shade60" textAlign="center" fontWeight="500" fontSize={14}>
+        <Trans i18nKey={`lnsDeprecation.warning.subtitle`} />
+      </Text>
+      <ButtonV3
+        variant="main"
+        size="large"
+        onClick={(e: { preventDefault: () => void }) => {
+          e.preventDefault();
+          openURL("https://shop.ledger.com/pages/ledger-nano-s-upgrade-program");
+        }}
+      >
+        <Trans i18nKey={`lnsDeprecation.update`} />
+      </ButtonV3>
+      <ButtonV3
+        size="large"
+        variant="shade"
+        onClick={() => {
+          onContinue();
+        }}
+      >
+        <Trans i18nKey={`lnsDeprecation.warning.continue`} />
+      </ButtonV3>
+      <Link
+        href="https://support.ledger.com/article/Ledger-Nano-S-Limitations"
+        color="palette.text.shade60"
+        onClick={e => {
+          e.preventDefault();
+          openURL("https://support.ledger.com/article/Ledger-Nano-S-Limitations");
+        }}
+      >
+        <Trans i18nKey={`lnsDeprecation.learnMore`} />
+      </Link>
+    </Box>
+  );
+};
+
+export const DeprecationWarning = ({
+  coinName,
+  date,
+  onContinue,
+}: {
+  coinName: string;
+  date: string;
+  onContinue: () => void;
+}) => {
+  return (
+    <Box flow={4} mx={40}>
+      <CircleIcon>
+        <Icons.InformationFill size="L" color="primary.c80" />
+      </CircleIcon>
+      <Text fontWeight="600" textAlign="center" fontSize={24}>
+        <Trans
+          i18nKey={`lnsDeprecation.info.title`}
+          values={{
+            date,
+            coinName,
+          }}
+        />
+      </Text>
+      <Text color="palette.text.shade60" textAlign="center" fontWeight="500" fontSize={14}>
+        <Trans i18nKey={`lnsDeprecation.info.subtitle`} />
+      </Text>
+      <ButtonV3
+        variant="main"
+        size="large"
+        onClick={(e: { preventDefault: () => void }) => {
+          e.preventDefault();
+          openURL("https://shop.ledger.com/pages/ledger-nano-s-upgrade-program");
+        }}
+      >
+        <Trans i18nKey={`lnsDeprecation.update`} />
+      </ButtonV3>
+      <ButtonV3
+        size="large"
+        variant="shade"
+        onClick={() => {
+          onContinue();
+        }}
+      >
+        <Trans i18nKey={`lnsDeprecation.continue`} />
+      </ButtonV3>
+      <Link
+        href="https://support.ledger.com/article/Ledger-Nano-S-Limitations"
+        color="palette.text.shade60"
+        onClick={e => {
+          e.preventDefault();
+          openURL("https://support.ledger.com/article/Ledger-Nano-S-Limitations");
+        }}
+      >
+        <Trans i18nKey={`lnsDeprecation.learnMore`} />
+      </Link>
+    </Box>
+  );
+};
+
+export const DeprecationDeviceError = () => {
+  return (
+    <Box flow={4} mx={40}>
+      <CircleIcon>
+        <IconsLegacy.CircledCrossSolidMedium size={40} color="error.c60" />
+      </CircleIcon>
+      <Text fontWeight="600" textAlign="center" fontSize={24}>
+        <Trans i18nKey={`lnsDeprecation.error.title`} />
+      </Text>
+      <Text color="palette.text.shade60" textAlign="center" fontWeight="500" fontSize={14}>
+        <Trans i18nKey={`lnsDeprecation.error.subtitle`} />
+      </Text>
+      <ButtonV3
+        variant="main"
+        size="large"
+        onClick={e => {
+          e.preventDefault();
+          openURL("https://shop.ledger.com/pages/ledger-nano-s-upgrade-program");
+        }}
+      >
+        <Trans i18nKey={`lnsDeprecation.update`} />
+      </ButtonV3>
+      <Link
+        href="https://support.ledger.com/article/Ledger-Nano-S-Limitations"
+        color="palette.text.shade60"
+        onClick={e => {
+          e.preventDefault();
+          openURL("https://support.ledger.com/article/Ledger-Nano-S-Limitations");
+        }}
+      >
+        <Trans i18nKey={`lnsDeprecation.learnMore`} />
+      </Link>
+    </Box>
+  );
+};
 
 const OpenSwapBtn = () => {
   const { setDrawer } = useContext(context);

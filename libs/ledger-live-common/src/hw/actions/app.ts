@@ -13,6 +13,7 @@ import type {
   ConnectAppEvent,
   ConnectAppRequest,
   Input as ConnectAppInput,
+  DeviceDeprecation,
 } from "../connectApp";
 import { useReplaySubject } from "../../observable";
 import type { Device, Action } from "./types";
@@ -64,6 +65,10 @@ export type State = {
   isLocked: boolean;
   skippedAppOps: SkippedAppOp[];
   listedApps?: boolean;
+  deprecate?: boolean;
+  deprecateData?: DeviceDeprecation;
+  onContinue?: () => void;
+  displayDeprecateWarning: boolean;
 };
 
 export type AppState = State & {
@@ -160,10 +165,15 @@ const getInitialState = (device?: Device | null | undefined, request?: AppReques
   skippedAppOps: [],
   itemProgress: 0,
   progress: undefined,
+  displayDeprecateWarning: true,
+  deprecate: false,
 });
 
 const reducer = (state: State, e: Event): State => {
   switch (e.type) {
+    case "deprecation":
+      console.log(state.displayDeprecateWarning);
+      return { ...state, deprecate: true, deprecateData: e.deprecate, onContinue: e.onContinue };
     case "unresponsiveDevice":
       return { ...state, unresponsive: true };
 
@@ -541,6 +551,19 @@ export const createAction = (
       }));
     }, []);
 
+    const onContinue = useCallback(() => {
+      setState(currState => {
+        currState.onContinue?.(); // ✅ appelle la fonction transmise par l'observable
+        return {
+          ...currState,
+          displayDeprecateWarning: false,
+          deprecate: false,
+          onContinue: undefined,
+          deprecateData: undefined,
+        };
+      });
+    }, []);
+
     return {
       ...state,
       inWrongDeviceForAccount:
@@ -554,6 +577,7 @@ export const createAction = (
           : null,
       onRetry,
       passWarning,
+      onContinue,
     };
   };
 

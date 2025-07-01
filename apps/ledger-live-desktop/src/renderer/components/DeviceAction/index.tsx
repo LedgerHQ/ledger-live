@@ -39,6 +39,8 @@ import {
   UserRefusedOnDevice,
 } from "@ledgerhq/errors";
 import {
+  DeprecationClearSigningWarning,
+  DeprecationWarning,
   DeviceNotOnboardedErrorComponent,
   InstallingApp,
   renderAllowLanguageInstallation,
@@ -73,7 +75,7 @@ import {
   InitSwapResult,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
+import { AppAndVersion, DeviceDeprecation } from "@ledgerhq/live-common/hw/connectApp";
 import { Device } from "@ledgerhq/types-devices";
 import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -89,6 +91,7 @@ import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { useTrackSyncFlow } from "~/renderer/analytics/hooks/useTrackSyncFlow";
 import { useTrackGenericDAppTransactionSend } from "~/renderer/analytics/hooks/useTrackGenericDAppTransactionSend";
 import { useTrackTransactionChecksFlow } from "~/renderer/analytics/hooks/useTrackTransactionChecksFlow";
+import { DeviceNotSupportedError } from "@ledgerhq/live-common/hw/connectApp";
 
 export type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
@@ -156,6 +159,10 @@ type States = PartialNullable<{
   manifestId: string;
   transactionChecksOptInTriggered: boolean;
   transactionChecksOptIn: boolean;
+  deprecate?: boolean;
+  deprecateData?: DeviceDeprecation;
+  onContinue?: () => void;
+  displayDeprecateWarning: boolean;
 }>;
 
 type InnerProps<P> = {
@@ -243,6 +250,10 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     signMessageRequested,
     manifestId,
     manifestName,
+    deprecate,
+    deprecateData,
+    onContinue,
+    displayDeprecateWarning,
   } = hookState;
 
   const dispatch = useDispatch();
@@ -335,7 +346,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   });
 
   const type = useTheme().colors.palette.type;
-
   const modelId = device ? device.modelId : overridesPreferredDeviceModel || preferredDeviceModel;
 
   useEffect(() => {
@@ -364,7 +374,20 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     }
   }, [dispatch, device, deviceInfo, latestFirmware]);
 
-  if (displayUpgradeWarning && appAndVersion && passWarning) {
+  if (deprecate && deprecateData && onContinue) {
+    if (deprecateData.warningClearSigning)
+      return <DeprecationClearSigningWarning onContinue={onContinue} />;
+    else
+      return (
+        <DeprecationWarning
+          coinName={deprecateData.coin}
+          date={deprecateData.date}
+          onContinue={onContinue}
+        />
+      );
+  }
+
+  if (displayDeprecateWarning && displayUpgradeWarning && appAndVersion && passWarning) {
     return renderWarningOutdated({ appName: appAndVersion.name, passWarning });
   }
 
@@ -422,6 +445,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
           inlineRetry,
           error,
           onRetry: refused ? onRetry : undefined,
+          passWarning,
           info: true,
         });
       }
@@ -579,6 +603,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
         t,
         error: new EConnResetError(),
         onRetry,
+        passWarning,
         withExportLogs: true,
       });
     }
@@ -595,7 +620,8 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       (error as unknown) instanceof UserRefusedOnDevice ||
       (error as unknown) instanceof UserRefusedAddress ||
       (error as unknown) instanceof UserRefusedDeviceNameChange ||
-      (error as unknown) instanceof LanguageInstallRefusedOnDevice
+      (error as unknown) instanceof LanguageInstallRefusedOnDevice ||
+      (error as unknown) instanceof DeviceNotSupportedError
     ) {
       withExportLogs = false;
       warning = true;
@@ -604,12 +630,14 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     if ((error as unknown) instanceof UserRefusedDeviceNameChange) {
       withDescription = false;
     }
-
+    console.log("test");
+    console.log(passWarning);
     return renderError({
       t,
       error,
       warning,
       onRetry,
+      passWarning,
       withExportLogs,
       device: device ?? undefined,
       inlineRetry,
