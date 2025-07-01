@@ -88,6 +88,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
       new Promise<void>((resolve, reject) => {
         setupGetDeviceMetadataMock(DEVICE_METADATA);
         setupInstallOrUpdateAppsMock(INSTALL_RESULT, INSTALL_INTERMEDIATE_VALUE);
+        setupGetDeviceStatusMock(DEVICE_STATUS);
         const deviceAction = new ConnectAppDeviceAction({
           input: {
             application: { name: "BOLOS" },
@@ -103,6 +104,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -110,6 +112,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -118,11 +121,12 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: INSTALL_INTERMEDIATE_VALUE,
+            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
             status: DeviceActionStatus.Pending,
           },
           // Success
@@ -145,6 +149,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
       new Promise<void>((resolve, reject) => {
         setupGetDeviceMetadataMock(DEVICE_METADATA);
         setupOpenAppWithDependenciesMock(OPEN_APP_RESULT, INSTALL_INTERMEDIATE_VALUE);
+        setupGetDeviceStatusMock(DEVICE_STATUS);
         const deviceAction = new ConnectAppDeviceAction({
           input: {
             application: { name: "Ethereum" },
@@ -160,6 +165,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -167,6 +173,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -175,11 +182,12 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: INSTALL_INTERMEDIATE_VALUE,
+            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
             status: DeviceActionStatus.Pending,
           },
           // Success
@@ -202,6 +210,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
       new Promise<void>((resolve, reject) => {
         setupGetDeviceMetadataMock(DEVICE_METADATA);
         setupOpenAppWithDependenciesMock(OPEN_APP_RESULT, INSTALL_INTERMEDIATE_VALUE);
+        setupGetDeviceStatusMock(DEVICE_STATUS);
         const deviceAction = new ConnectAppDeviceAction({
           input: {
             application: { name: "Ethereum" },
@@ -218,6 +227,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -225,6 +235,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -233,16 +244,17 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: INSTALL_INTERMEDIATE_VALUE,
+            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
             status: DeviceActionStatus.Pending,
           },
           // GetDerivation
           {
-            intermediateValue: INSTALL_INTERMEDIATE_VALUE,
+            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
             status: DeviceActionStatus.Pending,
           },
           // Success
@@ -280,6 +292,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -287,6 +300,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -322,6 +336,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -329,6 +344,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -337,6 +353,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -375,6 +392,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -382,6 +400,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -390,6 +409,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -397,6 +417,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -405,11 +426,12 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: INSTALL_INTERMEDIATE_VALUE,
+            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
             status: DeviceActionStatus.Pending,
           },
           // Success
@@ -449,6 +471,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -456,6 +479,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -475,7 +499,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
     it("Get device metadata error", () =>
       new Promise<void>((resolve, reject) => {
         setupGetDeviceMetadataMock(DEVICE_METADATA, true);
-
+        setupGetDeviceStatusMock(DEVICE_STATUS);
         const deviceAction = new ConnectAppDeviceAction({
           input: {
             application: { name: "BOLOS" },
@@ -491,6 +515,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -498,6 +523,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -517,6 +543,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
     it("Install apps error", () =>
       new Promise<void>((resolve, reject) => {
         setupGetDeviceMetadataMock(DEVICE_METADATA);
+        setupGetDeviceStatusMock(DEVICE_STATUS);
         setupInstallOrUpdateAppsMock(INSTALL_RESULT, INSTALL_INTERMEDIATE_VALUE, true);
 
         const deviceAction = new ConnectAppDeviceAction({
@@ -534,6 +561,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -541,6 +569,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -549,11 +578,12 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: INSTALL_INTERMEDIATE_VALUE,
+            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
             status: DeviceActionStatus.Pending,
           },
           // Error
@@ -573,6 +603,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
       new Promise<void>((resolve, reject) => {
         setupGetDeviceMetadataMock(DEVICE_METADATA);
         setupOpenAppWithDependenciesMock(OPEN_APP_RESULT, INSTALL_INTERMEDIATE_VALUE, true);
+        setupGetDeviceStatusMock(DEVICE_STATUS);
 
         const deviceAction = new ConnectAppDeviceAction({
           input: {
@@ -589,6 +620,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -596,6 +628,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -604,11 +637,12 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: INSTALL_INTERMEDIATE_VALUE,
+            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
             status: DeviceActionStatus.Pending,
           },
           // Error
@@ -628,6 +662,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
       new Promise<void>((resolve, reject) => {
         setupGetDeviceMetadataMock(DEVICE_METADATA);
         setupOpenAppWithDependenciesMock(OPEN_APP_RESULT, INSTALL_INTERMEDIATE_VALUE);
+        setupGetDeviceStatusMock(DEVICE_STATUS);
 
         const deviceAction = new ConnectAppDeviceAction({
           input: {
@@ -647,6 +682,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -654,6 +690,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
@@ -662,16 +699,17 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
               installPlan: null,
+              deviceDeprecation: undefined,
             },
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: INSTALL_INTERMEDIATE_VALUE,
+            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
             status: DeviceActionStatus.Pending,
           },
           // GetDerivation
           {
-            intermediateValue: INSTALL_INTERMEDIATE_VALUE,
+            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
             status: DeviceActionStatus.Pending,
           },
           // Error
