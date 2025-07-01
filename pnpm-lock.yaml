@@ -5860,8 +5860,8 @@ importers:
         specifier: '2'
         version: 2.4.11
       tiny-secp256k1:
-        specifier: 1.1.6
-        version: 1.1.6
+        specifier: 1.1.7
+        version: 1.1.7
       varuint-bitcoin:
         specifier: 1.1.2
         version: 1.1.2
@@ -8126,7 +8126,7 @@ importers:
         version: link:../coin-framework
       '@ledgerhq/compressjs':
         specifier: github:LedgerHQ/compressjs#d9e8e4d994923e0ea76a32b97289bcccfe71b82e
-        version: https://codeload.github.com/LedgerHQ/compressjs/tar.gz/d9e8e4d994923e0ea76a32b97289bcccfe71b82e
+        version: git+https://git@github.com:LedgerHQ/compressjs.git#d9e8e4d994923e0ea76a32b97289bcccfe71b82e
       '@ledgerhq/cryptoassets':
         specifier: workspace:*
         version: link:../ledgerjs/packages/cryptoassets
@@ -10265,6 +10265,11 @@ packages:
     engines: {node: '>=6.0.0'}
     hasBin: true
 
+  '@babel/parser@7.27.7':
+    resolution: {integrity: sha512-qnzXzDXdr/po3bOTbTIQZ7+TxNKxpkN5IifVLXS+r7qwynkZfPyjZfE7hCXbo7IoO9TNcSyibgONsf2HauUd3Q==}
+    engines: {node: '>=6.0.0'}
+    hasBin: true
+
   '@babel/plugin-bugfix-firefox-class-in-computed-class-key@7.27.1':
     resolution: {integrity: sha512-QPG3C9cCVRQLxAVwmefEmwdTanECuUBMQZ/ym5kiw3XKCGA7qkuQLcjWWHcrD/GKbn/WmJwaezfuuAOcyKlRPA==}
     engines: {node: '>=6.9.0'}
@@ -11159,6 +11164,10 @@ packages:
     resolution: {integrity: sha512-oNcu2QbHqts9BtOWJosOVJapWjBDSxGCpFvikNR5TGDYDQf3JwpIoMzIKrvfoti93cLfPJEG4tH9SPVeyCGgdA==}
     engines: {node: '>=6.9.0'}
 
+  '@babel/traverse@7.27.7':
+    resolution: {integrity: sha512-X6ZlfR/O/s5EQ/SnUSLzr+6kGnkg8HXGMzpgsMsrJVcfDtH1vIp6ctCN4eZ1LS5c0+te5Cb6Y514fASjMRJ1nw==}
+    engines: {node: '>=6.9.0'}
+
   '@babel/types@7.24.0':
     resolution: {integrity: sha512-+j7a5c253RfKh8iABBhywc8NSfP5LURe7Uh4qpsh6jc+aLJguvmIUBdjSdEMQv2bENrCR5MfRdjGo7vzS/ob7w==}
     engines: {node: '>=6.9.0'}
@@ -11173,6 +11182,10 @@ packages:
 
   '@babel/types@7.27.6':
     resolution: {integrity: sha512-ETyHEk2VHHvl9b9jZP5IHPavHYk57EhanlRRuae9XCpb/j5bDCbPPMOBfCWhnl/7EDJz0jEMCi/RhccCE8r1+Q==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/types@7.27.7':
+    resolution: {integrity: sha512-8OLQgDScAOHXnAz2cV+RfzzNMipuLVBz2biuAJFMV9bfkNf393je3VM8CLkjQodW5+iWsSJdSgSWT6rsZoXHPw==}
     engines: {node: '>=6.9.0'}
 
   '@base2/pretty-print-object@1.0.1':
@@ -13680,8 +13693,8 @@ packages:
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
-  '@ledgerhq/compressjs@https://codeload.github.com/LedgerHQ/compressjs/tar.gz/d9e8e4d994923e0ea76a32b97289bcccfe71b82e':
-    resolution: {tarball: https://codeload.github.com/LedgerHQ/compressjs/tar.gz/d9e8e4d994923e0ea76a32b97289bcccfe71b82e}
+  '@ledgerhq/compressjs@git+https://git@github.com:LedgerHQ/compressjs.git#d9e8e4d994923e0ea76a32b97289bcccfe71b82e':
+    resolution: {commit: d9e8e4d994923e0ea76a32b97289bcccfe71b82e, repo: git@github.com:LedgerHQ/compressjs.git, type: git}
     version: 1.3.1
     hasBin: true
 
@@ -17157,7 +17170,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      webpack: '*'
+      webpack: '5'
     peerDependenciesMeta:
       react:
         optional: true
@@ -17920,6 +17933,7 @@ packages:
     deprecated: |-
       DEPRECATED: This package is no longer maintained.
       Please use the built-in Jest matchers available in @testing-library/react-native v12.4+.
+
       See migration guide: https://callstack.github.io/react-native-testing-library/docs/migration/jest-matchers
     peerDependencies:
       react: '>=16.0.0'
@@ -19574,7 +19588,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -20255,8 +20269,14 @@ packages:
   bn.js@4.12.0:
     resolution: {integrity: sha512-c98Bf3tPniI+scsdk237ku1Dc3ujXQTSgyiPUDEOe7tRkhrqridvh8klBv0HCEso1OLOYcHuCv/cS6DNxKH+ZA==}
 
+  bn.js@4.12.2:
+    resolution: {integrity: sha512-n4DSx829VRTRByMRGdjQ9iqsN0Bh4OolPsFnaZBLcbi8iXcB+kJ9s7EnRt4wILZNV3kPLHkRVfOc/HvhC3ovDw==}
+
   bn.js@5.2.1:
     resolution: {integrity: sha512-eXRvHzWyYPBuB4NBy0cmYQjGitUrtqwbvlzP3G6VFnNRbsZQIxQ10PbKKHt8gZ/HW/D/747aDl+QkDqg3KQLMQ==}
+
+  bn.js@5.2.2:
+    resolution: {integrity: sha512-v2YAxEmKaBLahNwE1mjp4WON6huMNeuDvagFZW+ASCuA/ku0bXR9hSMw0XpiqMoA3+rmnyck/tPRSFQkoC9Cuw==}
 
   body-parser@1.20.2:
     resolution: {integrity: sha512-ml9pReCu3M61kGlqoTm2umSXTlRTuGTx0bfYj+uIUKKYycG5NtSbeetV3faSU6R7ajOPw0g/J1PvK4qNy7s5bA==}
@@ -21822,6 +21842,15 @@ packages:
       supports-color:
         optional: true
 
+  debug@4.4.1:
+    resolution: {integrity: sha512-KcKCqiftBJcZr++7ykoDIEwSa3XWowTfNPo92BYxjXiyYEVrUQh2aLyhxBCwww+heortUFxEJYcRzosstTEBYQ==}
+    engines: {node: '>=6.0'}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
+
   decamelize-keys@1.1.1:
     resolution: {integrity: sha512-WiPxgEirIV0/eIOMcnFBA3/IJZAZqKnwAwWyvvdi4lsr1WCN22nhdf/3db3DoZcUjTV2SqfzIwNyp6y2xs3nmg==}
     engines: {node: '>=0.10.0'}
@@ -22730,7 +22759,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: '*'
+      jest: ^27.0.0
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
@@ -27394,6 +27423,9 @@ packages:
   nan@2.20.0:
     resolution: {integrity: sha512-bk3gXBZDGILuuo/6sKtr0DQmSThYHLtNCdSdXk9YkxD/jK6X2vmCyyXBBxyqZ4XcnzTyYEAThfX3DCEnLf6igw==}
 
+  nan@2.22.2:
+    resolution: {integrity: sha512-DANghxFkS1plDdRsX0X9pm0Z6SJNN6gBdtXfanwoZ8hooC5gosGFSBGRYHUVPz1asKA/kMRqDRdHrluZ61SpBQ==}
+
   nano-json-stream-parser@0.1.2:
     resolution: {integrity: sha512-9MqxMH/BSJC7dnLsEMPyfN5Dvoo49IsPFYMcHw3Bcfc2kN0lpHRBSzlMSVx4HGyJ7s9B31CyBTVehWJoQ8Ctew==}
 
@@ -29035,6 +29067,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -29263,7 +29296,7 @@ packages:
     resolution: {integrity: sha512-kBGxI+MIZGBf4wZhNCWwHkMcVP+kbpmrLWH/SkO0qCKc7D7eSPcxQbfpsmsCo8v2KCBYjuGSou+xTqK44D/jMg==}
     engines: {npm: ^3.0.0}
     peerDependencies:
-      prop-types: '*'
+      prop-types: ^15.6.1
       react: '>=15.0.0'
     peerDependenciesMeta:
       prop-types:
@@ -29287,8 +29320,8 @@ packages:
   react-native-animatable@1.4.0:
     resolution: {integrity: sha512-DZwaDVWm2NBvBxf7I0wXKXLKb/TxDnkV53sWhCvei1pRyTX3MVFpkvdYBknNBqPrxYuAIlPxEp7gJOidIauUkw==}
     peerDependencies:
-      react: '*'
-      react-native: '*'
+      react: 18.2.0
+      react-native: 0.72.6
     peerDependenciesMeta:
       react:
         optional: true
@@ -29489,6 +29522,7 @@ packages:
 
   react-native-randombytes@3.6.1:
     resolution: {integrity: sha512-qxkwMbOZ0Hff1V7VqpaWrR6ItkA+oF6bnI79Qp9F3Tk8WBsdKDi6m1mi3dEdFWePoRLrhJ2L03rU0yabst1tVw==}
+    deprecated: use react-native-get-random-values instead
 
   react-native-reanimated@3.16.7:
     resolution: {integrity: sha512-qoUUQOwE1pHlmQ9cXTJ2MX9FQ9eHllopCLiWOkDkp6CER95ZWeXhJCP4cSm6AD4jigL5jHcZf/SkWrg8ttZUsw==}
@@ -35133,7 +35167,7 @@ snapshots:
   '@babel/helper-member-expression-to-functions@7.25.9':
     dependencies:
       '@babel/traverse': 7.27.0
-      '@babel/types': 7.27.6
+      '@babel/types': 7.27.7
     transitivePeerDependencies:
       - supports-color
 
@@ -35201,7 +35235,7 @@ snapshots:
 
   '@babel/helper-optimise-call-expression@7.25.9':
     dependencies:
-      '@babel/types': 7.27.6
+      '@babel/types': 7.27.7
 
   '@babel/helper-optimise-call-expression@7.27.1':
     dependencies:
@@ -35316,7 +35350,7 @@ snapshots:
     dependencies:
       '@babel/template': 7.27.2
       '@babel/traverse': 7.27.0
-      '@babel/types': 7.27.6
+      '@babel/types': 7.27.7
     transitivePeerDependencies:
       - supports-color
 
@@ -35324,7 +35358,7 @@ snapshots:
     dependencies:
       '@babel/template': 7.27.2
       '@babel/traverse': 7.27.4
-      '@babel/types': 7.27.6
+      '@babel/types': 7.27.7
     transitivePeerDependencies:
       - supports-color
 
@@ -35363,6 +35397,10 @@ snapshots:
   '@babel/parser@7.27.5':
     dependencies:
       '@babel/types': 7.27.6
+
+  '@babel/parser@7.27.7':
+    dependencies:
+      '@babel/types': 7.27.7
 
   '@babel/plugin-bugfix-firefox-class-in-computed-class-key@7.27.1(@babel/core@7.27.1)':
     dependencies:
@@ -36751,6 +36789,18 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@babel/traverse@7.27.7':
+    dependencies:
+      '@babel/code-frame': 7.27.1
+      '@babel/generator': 7.27.5
+      '@babel/parser': 7.27.7
+      '@babel/template': 7.27.2
+      '@babel/types': 7.27.7
+      debug: 4.3.4
+      globals: 11.12.0
+    transitivePeerDependencies:
+      - supports-color
+
   '@babel/types@7.24.0':
     dependencies:
       '@babel/helper-string-parser': 7.24.1
@@ -36768,6 +36818,11 @@ snapshots:
       '@babel/helper-validator-identifier': 7.25.9
 
   '@babel/types@7.27.6':
+    dependencies:
+      '@babel/helper-string-parser': 7.27.1
+      '@babel/helper-validator-identifier': 7.27.1
+
+  '@babel/types@7.27.7':
     dependencies:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.27.1
@@ -37382,7 +37437,7 @@ snapshots:
       '@cosmjs/math': 0.24.1
       '@cosmjs/utils': 0.24.1
       bip39: 3.1.0
-      bn.js: 4.12.0
+      bn.js: 4.12.2
       elliptic: 6.6.1
       js-sha3: 0.8.0
       libsodium-wrappers: 0.7.13
@@ -37397,7 +37452,7 @@ snapshots:
       '@cosmjs/math': 0.26.8
       '@cosmjs/utils': 0.26.8
       '@noble/hashes': 1.7.0
-      bn.js: 5.2.1
+      bn.js: 5.2.2
       elliptic: 6.6.1
       libsodium-wrappers: 0.7.13
 
@@ -37445,7 +37500,7 @@ snapshots:
 
   '@cosmjs/math@0.24.1':
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 4.12.2
 
   '@cosmjs/math@0.26.8':
     dependencies:
@@ -38862,7 +38917,7 @@ snapshots:
       '@expo/plist': 0.2.2
       '@expo/sdk-runtime-versions': 1.0.0
       chalk: 4.1.2
-      debug: 4.4.0
+      debug: 4.4.1
       getenv: 1.0.0
       glob: 10.4.5
       resolve-from: 5.0.0
@@ -40172,7 +40227,7 @@ snapshots:
     dependencies:
       '@iov/encoding': 2.1.0
       bip39: 3.1.0
-      bn.js: 4.12.0
+      bn.js: 4.12.2
       elliptic: 6.6.1
       js-sha3: 0.8.0
       libsodium-wrappers: 0.7.13
@@ -40186,7 +40241,7 @@ snapshots:
     dependencies:
       base64-js: 1.5.1
       bech32: 1.1.4
-      bn.js: 4.12.0
+      bn.js: 4.12.2
       readonly-date: 1.0.0
 
   '@iov/utils@2.0.2': {}
@@ -41164,7 +41219,7 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@ledgerhq/compressjs@https://codeload.github.com/LedgerHQ/compressjs/tar.gz/d9e8e4d994923e0ea76a32b97289bcccfe71b82e':
+  '@ledgerhq/compressjs@git+https://git@github.com:LedgerHQ/compressjs.git#d9e8e4d994923e0ea76a32b97289bcccfe71b82e':
     dependencies:
       commander: 2.20.3
 
@@ -43542,7 +43597,7 @@ snapshots:
 
   '@react-native/codegen@0.76.9(@babel/preset-env@7.27.1(@babel/core@7.27.1))':
     dependencies:
-      '@babel/parser': 7.27.5
+      '@babel/parser': 7.27.7
       '@babel/preset-env': 7.27.1(@babel/core@7.27.1)
       glob: 7.2.3
       hermes-parser: 0.23.1
@@ -46641,7 +46696,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.27.1
       '@babel/preset-env': 7.27.1(@babel/core@7.27.1)
-      '@babel/types': 7.27.6
+      '@babel/types': 7.27.7
       '@storybook/csf': 0.1.3
       '@storybook/csf-tools': 7.6.20
       '@storybook/node-logger': 7.6.20
@@ -49176,7 +49231,7 @@ snapshots:
     dependencies:
       '@types/node': 10.17.60
       aes-js: 3.0.0
-      bn.js: 4.12.0
+      bn.js: 4.12.2
       elliptic: 6.6.1
       hash.js: 1.1.3
       js-sha3: 0.5.7
@@ -50402,7 +50457,7 @@ snapshots:
 
   asn1.js@4.10.1:
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 4.12.2
       inherits: 2.0.4
       minimalistic-assert: 1.0.1
 
@@ -50729,14 +50784,14 @@ snapshots:
   babel-plugin-jest-hoist@27.5.1:
     dependencies:
       '@babel/template': 7.27.2
-      '@babel/types': 7.27.6
+      '@babel/types': 7.27.7
       '@types/babel__core': 7.20.5
       '@types/babel__traverse': 7.20.5
 
   babel-plugin-jest-hoist@28.1.3:
     dependencies:
       '@babel/template': 7.27.2
-      '@babel/types': 7.27.6
+      '@babel/types': 7.27.7
       '@types/babel__core': 7.20.5
       '@types/babel__traverse': 7.20.5
 
@@ -51278,7 +51333,11 @@ snapshots:
 
   bn.js@4.12.0: {}
 
+  bn.js@4.12.2: {}
+
   bn.js@5.2.1: {}
+
+  bn.js@5.2.2: {}
 
   body-parser@1.20.2:
     dependencies:
@@ -51413,12 +51472,12 @@ snapshots:
 
   browserify-rsa@4.1.0:
     dependencies:
-      bn.js: 5.2.1
+      bn.js: 5.2.2
       randombytes: 2.1.0
 
   browserify-sign@4.2.3:
     dependencies:
-      bn.js: 5.2.1
+      bn.js: 5.2.2
       browserify-rsa: 4.1.0
       create-hash: 1.2.0
       create-hmac: 1.1.7
@@ -52507,7 +52566,7 @@ snapshots:
 
   create-ecdh@4.0.4:
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 4.12.2
       elliptic: 6.6.1
 
   create-hash@1.2.0:
@@ -53180,6 +53239,10 @@ snapshots:
     dependencies:
       ms: 2.1.3
 
+  debug@4.4.1:
+    dependencies:
+      ms: 2.1.3
+
   decamelize-keys@1.1.1:
     dependencies:
       decamelize: 1.2.0
@@ -53530,7 +53593,7 @@ snapshots:
 
   diffie-hellman@5.0.3:
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 4.12.2
       miller-rabin: 4.0.1
       randombytes: 2.1.0
 
@@ -53756,7 +53819,7 @@ snapshots:
 
   dtrace-provider@0.8.8:
     dependencies:
-      nan: 2.20.0
+      nan: 2.22.2
     optional: true
 
   dunder-proto@1.0.1:
@@ -54917,7 +54980,7 @@ snapshots:
 
   eth-lib@0.1.29:
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 4.12.2
       elliptic: 6.6.1
       nano-json-stream-parser: 0.1.2
       servify: 0.1.12
@@ -54930,7 +54993,7 @@ snapshots:
 
   eth-lib@0.2.8:
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 4.12.2
       elliptic: 6.6.1
       xhr-request-promise: 0.1.3
 
@@ -54973,7 +55036,7 @@ snapshots:
   ethereumjs-util@7.1.5:
     dependencies:
       '@types/bn.js': 5.1.5
-      bn.js: 5.2.1
+      bn.js: 5.2.2
       create-hash: 1.2.0
       ethereum-cryptography: 0.1.3
       rlp: 2.2.7
@@ -59350,7 +59413,7 @@ snapshots:
       '@babel/generator': 7.27.1
       '@babel/plugin-syntax-typescript': 7.25.9(@babel/core@7.27.1)
       '@babel/traverse': 7.27.0
-      '@babel/types': 7.27.6
+      '@babel/types': 7.27.7
       '@jest/transform': 27.5.1
       '@jest/types': 27.5.1
       '@types/babel__traverse': 7.20.5
@@ -59840,7 +59903,7 @@ snapshots:
   jscodeshift@0.14.0(@babel/preset-env@7.27.1(@babel/core@7.27.1)):
     dependencies:
       '@babel/core': 7.27.1
-      '@babel/parser': 7.27.5
+      '@babel/parser': 7.27.7
       '@babel/plugin-proposal-class-properties': 7.18.6(@babel/core@7.27.1)
       '@babel/plugin-proposal-nullish-coalescing-operator': 7.18.6(@babel/core@7.27.1)
       '@babel/plugin-proposal-optional-chaining': 7.21.0(@babel/core@7.27.1)
@@ -59865,7 +59928,7 @@ snapshots:
   jscodeshift@0.15.2(@babel/preset-env@7.27.1(@babel/core@7.27.1)):
     dependencies:
       '@babel/core': 7.27.1
-      '@babel/parser': 7.27.5
+      '@babel/parser': 7.27.7
       '@babel/plugin-transform-class-properties': 7.27.1(@babel/core@7.27.1)
       '@babel/plugin-transform-modules-commonjs': 7.25.9(@babel/core@7.27.1)
       '@babel/plugin-transform-nullish-coalescing-operator': 7.27.1(@babel/core@7.27.1)
@@ -61457,7 +61520,7 @@ snapshots:
   metro-source-map@0.81.5:
     dependencies:
       '@babel/traverse': 7.27.0
-      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.27.4'
+      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.27.7'
       '@babel/types': 7.27.0
       flow-enums-runtime: 0.0.6
       invariant: 2.2.4
@@ -61889,7 +61952,7 @@ snapshots:
 
   miller-rabin@4.0.1:
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 4.12.2
       brorand: 1.1.0
 
   mime-db@1.33.0: {}
@@ -62309,6 +62372,8 @@ snapshots:
       thenify-all: 1.6.0
 
   nan@2.20.0: {}
+
+  nan@2.22.2: {}
 
   nano-json-stream-parser@0.1.2: {}
 
@@ -64332,7 +64397,7 @@ snapshots:
 
   public-encrypt@4.0.3:
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 4.12.2
       browserify-rsa: 4.1.0
       create-hash: 1.2.0
       parse-asn1: 5.1.7
@@ -66159,7 +66224,7 @@ snapshots:
 
   rlp@2.2.7:
     dependencies:
-      bn.js: 5.2.1
+      bn.js: 5.2.2
 
   rlp@3.0.0: {}
 
@@ -67953,10 +68018,10 @@ snapshots:
   tiny-secp256k1@1.1.7:
     dependencies:
       bindings: 1.5.0
-      bn.js: 4.12.0
+      bn.js: 4.12.2
       create-hmac: 1.1.7
       elliptic: 6.6.1
-      nan: 2.20.0
+      nan: 2.22.2
 
   tiny-typed-emitter@2.1.0: {}
 
@@ -69812,7 +69877,7 @@ snapshots:
 
   web3-eth-iban@1.10.4:
     dependencies:
-      bn.js: 5.2.1
+      bn.js: 5.2.2
       web3-utils: 1.10.4
 
   web3-eth-personal@1.10.4:
