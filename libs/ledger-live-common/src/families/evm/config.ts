@@ -612,6 +612,57 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       showNfts: false,
     },
   },
+  config_currency_sei_network_evm: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+      },
+      node: {
+        type: "external",
+        uri: "https://sei-evm-rpc.publicnode.com",
+      },
+      explorer: {
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1329",
+      },
+      showNfts: false,
+    },
+  },
+  config_currency_berachain: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+      },
+      node: {
+        type: "external",
+        uri: "https://rpc.berachain.com",
+      },
+      explorer: {
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/80094",
+      },
+      showNfts: false,
+    },
+  },
+  config_currency_hyperevm: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+      },
+      node: {
+        type: "external",
+        uri: "https://rpc.hypurrscan.io",
+      },
+      explorer: {
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/999",
+      },
+      showNfts: false,
+    },
+  },
   config_currency_polygon_zk_evm: {
     type: "object",
     default: {
