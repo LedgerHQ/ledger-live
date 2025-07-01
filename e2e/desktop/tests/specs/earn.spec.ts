@@ -1,7 +1,7 @@
 import { test } from "../fixtures/common";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { CLI } from "../utils/cliUtils";
-import { addTmsLink } from "tests/utils/allureUtils";
+import { addTmsLink, addBugLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 
@@ -63,14 +63,14 @@ for (const { account, provider, xrayTicket } of ethEarn) {
           description: xrayTicket,
         },
       },
-      async ({ app, electronApp }) => {
+      async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
-        await app.earnDashboard.goToEarnMoreTab(electronApp);
-        await app.earnDashboard.clickStakeCurrencyButton(electronApp, account.accountName);
+        await app.earnDashboard.goToEarnMoreTab();
+        await app.earnDashboard.clickStakeCurrencyButton(account.accountName);
         await app.delegate.goToProviderLiveApp(provider.uiName);
-        await app.earnDashboard.verifyProviderURL(electronApp, provider.uiName, account);
+        await app.earnDashboard.verifyProviderURL(provider.uiName, account);
       },
     );
   });
@@ -88,21 +88,28 @@ test.describe("Inline Add Account", () => {
     "Inline Add Account",
     {
       tag: ["@NanoSP", "@LNS", "@NanoX"],
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-3001",
-      },
+      annotation: [
+        {
+          type: "TMS",
+          description: "B2CQA-3001",
+        },
+        {
+          type: "BUG",
+          description: "LIVE-20002",
+        },
+      ],
     },
-    async ({ app, electronApp }) => {
+    async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await addBugLink(getDescription(test.info().annotations, "BUG").split(", "));
       await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
-      await app.earnDashboard.clickLeanrMoreButton(electronApp, account.currency.id);
+      await app.earnDashboard.clickLearnMoreButton(account.currency.id);
       await app.delegateDrawer.clickOnAddAccountButton();
       await app.addAccount.addAccounts();
       await app.addAccount.done();
       await app.delegateDrawer.selectAccountByName(account);
       await app.addAccount.close();
-      await app.earnDashboard.expectLiveAppToBeVisible(electronApp);
+      await app.earnDashboard.expectLiveAppToBeVisible();
     },
   );
 });
@@ -172,19 +179,19 @@ for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
           description: xrayTicket,
         },
       },
-      async ({ app, electronApp }) => {
+      async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
         if (staking === false) {
-          await app.earnDashboard.verifyRewardsPotentials(electronApp);
-          await app.earnDashboard.verifyYourEligibleAssets(electronApp, account.accountName);
-          await app.earnDashboard.verifyEligibleAssets(electronApp, account);
-          await app.earnDashboard.verifyEarnByStackingButton(electronApp);
+          await app.earnDashboard.verifyRewardsPotentials();
+          await app.earnDashboard.verifyYourEligibleAssets(account.accountName);
+          await app.earnDashboard.verifyEligibleAssets(account);
+          await app.earnDashboard.verifyEarnByStackingButton();
         } else {
-          await app.earnDashboard.goToAssetsTab(electronApp);
-          await app.earnDashboard.verifyTotalRewardsEarned(electronApp);
-          await app.earnDashboard.verifyAssetsEarningRewards(electronApp, account.currency.id);
-          await app.earnDashboard.goToEarnMoreTab(electronApp);
+          await app.earnDashboard.goToAssetsTab();
+          await app.earnDashboard.verifyTotalRewardsEarned();
+          await app.earnDashboard.verifyAssetsEarningRewards(account.currency.id);
+          await app.earnDashboard.goToEarnMoreTab();
         }
       },
     );
