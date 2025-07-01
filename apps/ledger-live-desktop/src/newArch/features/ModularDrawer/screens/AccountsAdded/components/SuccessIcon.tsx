@@ -15,6 +15,6 @@ const Container = styled(Box)`
 
 export const SuccessIcon = () => (
   <Container>
-    <Icons.CheckmarkCircleFill size="L" color="success.c60" />
+    <Icons.CheckmarkCircleFill size="L" />
   </Container>
 );
