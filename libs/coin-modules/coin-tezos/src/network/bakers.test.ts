@@ -188,7 +188,7 @@ describe("Tezos Baker", () => {
 
     it("Ledger Baker should be first in the list", async () => {
       const bakers = await cache();
-      expect(bakers[0].name).toBe("Ledger Live by Kiln");
+      expect(bakers[0].name).toBe("Ledger by Kiln");
     });
   });
 
