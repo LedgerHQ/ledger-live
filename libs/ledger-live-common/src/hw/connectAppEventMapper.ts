@@ -164,6 +164,15 @@ export class ConnectAppEventMapper {
           this.handleInstallPlan(intermediateValue.installPlan);
         }
         break;
+      case "device-deprecation":
+        if (intermediateValue.deviceDeprecation) {
+          this.eventSubject.next({
+            type: "deprecation",
+            deprecate: {
+              ...intermediateValue.deviceDeprecation,
+            },
+          });
+        }
     }
   }
 
