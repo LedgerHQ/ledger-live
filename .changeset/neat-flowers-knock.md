@@ -1,7 +1,7 @@
 ---
-"ledger-live-desktop": patch
-"@ledgerhq/ledger-cal-service": patch
-"@ledgerhq/live-common": patch
+"ledger-live-desktop": minor
+"@ledgerhq/ledger-cal-service": minor
+"@ledgerhq/live-common": minor
 ---
 
 add velora data
