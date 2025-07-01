@@ -48,9 +48,8 @@ import {
 } from "./error";
 import { TrackingAPI } from "./tracking";
 import { getSwapStepFromError } from "../../exchange/error";
-import { postSwapAccepted, postSwapCancelled } from "../../exchange/swap";
-import { Device, DeviceModelId } from "@ledgerhq/types-devices";
-import { DeviceModel } from "@ledgerhq/device-management-kit";
+import { postSwapCancelled } from "../../exchange/swap";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setBroadcastTransaction } from "../../exchange/swap/setBroadcastTransaction";
 
 export { ExchangeType };
