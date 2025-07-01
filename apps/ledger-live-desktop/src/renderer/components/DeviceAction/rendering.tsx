@@ -74,6 +74,7 @@ import NoSuchAppOnProviderErrorComponent from "./NoSuchAppOnProviderErrorCompone
 import Image from "~/renderer/components/Image";
 import Nano from "~/renderer/images/nanoS.v4.svg";
 import { isWebHidSendReportError } from "@ledgerhq/live-dmk-desktop";
+import { AnimatedGradientLoader } from "~/renderer/components/AnimatedGradientLoader";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -1268,17 +1269,37 @@ export const renderSecureTransferDeviceConfirmation = ({
   </>
 );
 
-export const renderLoading = ({ children }: { children?: React.ReactNode } = {}) => (
-  <Wrapper data-testid="device-action-loader">
-    <Header />
-    <Flex alignItems="center" justifyContent="center" borderRadius={9999} size={60} mb={5}>
-      <InfiniteLoader size={58} />
-    </Flex>
-    <Footer>
-      <Title>{children || <Trans i18nKey="DeviceAction.loading" />}</Title>
-    </Footer>
-  </Wrapper>
-);
+export const renderLoading = ({
+  children,
+  options = "minimal",
+}: {
+  children?: React.ReactNode;
+  options?: "minimal" | "target";
+} = {}) => {
+  if (options === "target") {
+    return (
+      <Wrapper data-testid="device-action-loader">
+        <Header />
+        <AnimatedGradientLoader>
+          {children || <Trans i18nKey="DeviceAction.loading" />}
+        </AnimatedGradientLoader>
+      </Wrapper>
+    );
+  }
+
+  // Default minimal mode
+  return (
+    <Wrapper data-testid="device-action-loader">
+      <Header />
+      <Flex alignItems="center" justifyContent="center" borderRadius={9999} size={60} mb={5}>
+        <InfiniteLoader size={58} />
+      </Flex>
+      <Footer>
+        <Title>{children || <Trans i18nKey="DeviceAction.loading" />}</Title>
+      </Footer>
+    </Wrapper>
+  );
+};
 
 export const renderBootloaderStep = ({ onAutoRepair }: { onAutoRepair: () => void }) => (
   <Wrapper>
