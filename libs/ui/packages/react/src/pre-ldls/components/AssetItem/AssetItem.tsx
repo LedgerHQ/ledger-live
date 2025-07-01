@@ -87,6 +87,7 @@ export const AssetItem = ({
         </Text>
         <LeftElementWrapper>
           <Text
+            data-testid={`asset-item-ticker-${ticker}`}
             fontSize="12px"
             lineHeight="16px"
             variant="bodyLineHeight"
