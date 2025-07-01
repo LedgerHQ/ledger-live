@@ -3,6 +3,8 @@ import type { CeloAccount, Transaction } from "../types";
 import { celoKit } from "../network/sdk";
 import { getPendingStakingOperationAmounts, getVote } from "../logic";
 
+const CELO_STABLE_COINS = ["cUSD", "cEUR", "USDT"];
+
 const getFeesForTransaction = async ({
   account,
   transaction,
@@ -96,6 +98,16 @@ const getFeesForTransaction = async ({
     const accounts = await kit.contracts.getAccounts();
 
     gas = await accounts.createAccount().txo.estimateGas({ from: account.freshAddress });
+  } else if (CELO_STABLE_COINS.includes(account.currency.id)) {
+    const stableToken = await kit.contracts.getStableToken();
+
+    const celoTransaction = {
+      from: account.freshAddress,
+      to: stableToken.address,
+      data: stableToken.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
+    };
+
+    gas = await kit.connection.estimateGasWithInflationFactor(celoTransaction);
   } else {
     const celoToken = await kit.contracts.getGoldToken();
 
