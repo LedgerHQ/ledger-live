@@ -15,15 +15,18 @@ import AccountsWarning from "./screens/AccountsWarning";
 import FundAccount from "./screens/FundAccount";
 import { AccountSelection } from "./screens/AccountSelection";
 import { useAddAccountFlowNavigation } from "./hooks/useAddAccountFlowNavigation";
+import { ADD_ACCOUNT_FLOW_NAME } from "./analytics/addAccount.types";
+import { MODULAR_DRAWER_PAGE_NAME } from "./analytics/modularDrawer.types";
 
 const ANALYTICS_PROPERTY_FLOW = "Modular Add Account Flow";
 
 type Props = {
   currency: CryptoOrTokenCurrency;
+  source: string;
   onAccountSelected?: (account: Account) => void;
 };
 
-const ModularDrawerAddAccountFlowManager = ({ currency, onAccountSelected }: Props) => {
+const ModularDrawerAddAccountFlowManager = ({ currency, source, onAccountSelected }: Props) => {
   const [connectAppResult, setConnectAppResult] = useState<AppResult>();
   const [selectedAccounts, setSelectedAccounts] = useState<Account[]>([]);
 
@@ -64,6 +67,7 @@ const ModularDrawerAddAccountFlowManager = ({ currency, onAccountSelected }: Pro
             currency={cryptoCurrency}
             onConnect={handleConnect}
             analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW}
+            source={source}
           />
         );
       case MODULAR_DRAWER_ADD_ACCOUNT_STEP.SCAN_ACCOUNTS:
@@ -75,6 +79,7 @@ const ModularDrawerAddAccountFlowManager = ({ currency, onAccountSelected }: Pro
             currency={cryptoCurrency}
             deviceId={connectAppResult.device.deviceId}
             onRetry={navigateToConnectDevice}
+            source={source}
             onComplete={accounts => {
               setSelectedAccounts(accounts);
               navigateToAccountsAdded();
@@ -90,6 +95,7 @@ const ModularDrawerAddAccountFlowManager = ({ currency, onAccountSelected }: Pro
             onFundAccount={navigateToFundAccount}
             navigateToSelectAccount={navigateToSelectAccount}
             isAccountSelectionFlow={isAccountSelectionFlow}
+            source={source}
           />
         );
       case MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_WARNING:
@@ -102,19 +108,21 @@ const ModularDrawerAddAccountFlowManager = ({ currency, onAccountSelected }: Pro
             currency={cryptoCurrency}
             emptyAccount={emptyAccount}
             navigateToFundAccount={navigateToFundAccount}
+            source={source}
           />
         );
       case MODULAR_DRAWER_ADD_ACCOUNT_STEP.FUND_ACCOUNT:
         if (!accountToFund) {
           throw new Error("Missing accountToFund");
         }
-        return <FundAccount account={accountToFund} currency={cryptoCurrency} />;
+        return <FundAccount account={accountToFund} currency={cryptoCurrency} source={source} />;
       case MODULAR_DRAWER_ADD_ACCOUNT_STEP.SELECT_ACCOUNT:
         return (
           <AccountSelection
             asset={cryptoCurrency}
-            source={ANALYTICS_PROPERTY_FLOW}
-            flow={ANALYTICS_PROPERTY_FLOW}
+            overridePageName={MODULAR_DRAWER_PAGE_NAME.FUND_ACCOUNT_LIST}
+            source={source}
+            flow={ADD_ACCOUNT_FLOW_NAME}
             onAccountSelected={accountToFund => navigateToFundAccount(accountToFund as Account)}
             hideAddAccountButton
           />

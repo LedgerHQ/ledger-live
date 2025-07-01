@@ -1,5 +1,4 @@
 import { useCallback, useContext, useMemo } from "react";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { liveAppContext as remoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LiveAppRegistry } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/types";
 import { liveAppContext as localLiveAppProviderContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
@@ -14,6 +13,7 @@ import {
 } from "@ledgerhq/coin-framework/account/index";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { WalletState } from "@ledgerhq/live-wallet/store";
+import { useVersionedStakePrograms } from "./useVersionedStakePrograms";
 
 const getRemoteLiveAppManifestById = (
   appId: string,
@@ -29,7 +29,8 @@ const getRemoteLiveAppManifestById = (
 };
 
 export function useStake() {
-  const { params } = useFeature("stakePrograms") || {};
+  const stakePrograms = useVersionedStakePrograms();
+  const { params } = stakePrograms || {};
   /** Natively enabled staking currencies, excluding assets & tokens supported by third parties */
   const enabledCurrencies = useMemo(() => params?.list ?? [], [params?.list]);
 

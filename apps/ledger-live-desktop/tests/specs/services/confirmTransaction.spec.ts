@@ -5,9 +5,7 @@ import { DiscoverPage } from "../../page/discover.page";
 import { Layout } from "../../component/layout.component";
 import { Drawer } from "../../component/drawer.component";
 import { DeviceAction } from "../../models/DeviceAction";
-import { randomUUID } from "crypto";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
-import BigNumber from "bignumber.js";
 
 const methods = [
   "account.request",
@@ -66,7 +64,7 @@ test.afterAll(async () => {
   }
 });
 
-test("Confirm Transaction modals @smoke", async ({ page }) => {
+test("Confirm Transaction modals @smoke", async ({ page, electronApp }) => {
   const discoverPage = new DiscoverPage(page);
   const drawer = new Drawer(page);
   const layout = new Layout(page);
@@ -76,7 +74,7 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
     return;
   }
 
-  const liveAppWebview = new LiveAppWebview(page);
+  const liveAppWebview = new LiveAppWebview(page, electronApp);
   await liveAppWebview.waitForLoaded();
   const modal = new Modal(page);
   const deviceAction = new DeviceAction(page);
@@ -87,25 +85,18 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
   await drawer.waitForDrawerToDisappear();
 
   await test.step("transaction.signAndBroadcast", async () => {
-    const id = randomUUID();
+    // We need to click on a button to have the fill work correctly
+    await liveAppWebview.clearStates();
 
     const recipient = "0x046615F0862392BC5E6FB43C92AAD73DE158D235";
+    const amount = "100000000000000"; // 0.0001 ETH in wei
+    const data = "SomeDataInHex";
 
-    const response = liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "transaction.signAndBroadcast",
-      params: {
-        //ETH Account
-        accountId: "e86e3bc1-49e1-53fd-a329-96ba6f1b06d3",
-        rawTransaction: {
-          family: "ethereum",
-          amount: new BigNumber(100000000000000),
-          recipient,
-          data: Buffer.from("SomeDataInHex").toString("hex"),
-        },
-      },
-    });
+    await liveAppWebview.setAccountId("e86e3bc1-49e1-53fd-a329-96ba6f1b06d3");
+    await liveAppWebview.setRecipient(recipient);
+    await liveAppWebview.setAmount(amount);
+    await liveAppWebview.setData(data);
+    await liveAppWebview.transactionSignAndBroadcast();
 
     // Step Fees
     await expect(page.getByText(/learn more about fees/i)).toBeVisible();
@@ -129,40 +120,28 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
     await operationList.scrollIntoViewIfNeeded();
     await expect(page.getByText(`${MANIFEST_NAME}'s terms of use.`)).toBeVisible();
 
-    await expect(response).resolves.toStrictEqual({
-      id,
-      jsonrpc: "2.0",
-      result: {
-        transactionHash: "32BEBB4660C4C328F7E130D0E1F45D5B2AFD9129B903E0F3B6EA52756329CD25",
-      },
-    });
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toBe("32BEBB4660C4C328F7E130D0E1F45D5B2AFD9129B903E0F3B6EA52756329CD25");
+
+    await liveAppWebview.clearStates();
   });
 
   await test.step("transaction.signAndBroadcast approval screen, unlimited", async () => {
-    const id = randomUUID();
-
     const recipient = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
+    const amount = "0"; // Approve unlimited amount
+    const data =
+      // approve(address spender, uint256 wad)
+      "095ea7b3" +
+      // spender (address)
+      "0000000000000000000000000444444ba9f3e719726886d34a177484278bfcae" +
+      // wad (unlimited)
+      "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
 
-    const response = liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "transaction.signAndBroadcast",
-      params: {
-        accountId: "e86e3bc1-49e1-53fd-a329-96ba6f1b06d3",
-        rawTransaction: {
-          family: "ethereum",
-          amount: "0",
-          recipient: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-          data:
-            // approve(address spender, uint256 wad)
-            "095ea7b3" +
-            // spender (address)
-            "0000000000000000000000000444444ba9f3e719726886d34a177484278bfcae" +
-            // wad (unlimited)
-            "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-        },
-      },
-    });
+    await liveAppWebview.setAccountId("e86e3bc1-49e1-53fd-a329-96ba6f1b06d3");
+    await liveAppWebview.setRecipient(recipient);
+    await liveAppWebview.setAmount(amount);
+    await liveAppWebview.setData(data);
+    await liveAppWebview.transactionSignAndBroadcast();
 
     // Step Fees
     await expect(page.getByText(/learn more about fees/i)).toBeVisible();
@@ -189,40 +168,28 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
     await operationList.scrollIntoViewIfNeeded();
     await expect(page.getByText(`${MANIFEST_NAME}'s terms of use.`)).toBeVisible();
 
-    await expect(response).resolves.toStrictEqual({
-      id,
-      jsonrpc: "2.0",
-      result: {
-        transactionHash: "32BEBB4660C4C328F7E130D0E1F45D5B2AFD9129B903E0F3B6EA52756329CD25",
-      },
-    });
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toBe("32BEBB4660C4C328F7E130D0E1F45D5B2AFD9129B903E0F3B6EA52756329CD25");
+
+    await liveAppWebview.clearStates();
   });
 
   await test.step("transaction.signAndBroadcast approval screen, limited", async () => {
-    const id = randomUUID();
-
     const recipient = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
+    const amount = "0"; // Approve limited amount
+    const data =
+      // approve(address spender, uint256 wad)
+      "095ea7b3" +
+      // spender (address)
+      "0000000000000000000000000444444ba9f3e719726886d34a177484278bfcae" +
+      // wad, limited (uint256 = 6000000000000000)
+      "000000000000000000000000000000000000000000000000001550f7dca70000";
 
-    const response = liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "transaction.signAndBroadcast",
-      params: {
-        accountId: "e86e3bc1-49e1-53fd-a329-96ba6f1b06d3",
-        rawTransaction: {
-          family: "ethereum",
-          amount: "0",
-          recipient: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-          data:
-            // approve(address spender, uint256 wad)
-            "095ea7b3" +
-            // spender (address)
-            "0000000000000000000000000444444ba9f3e719726886d34a177484278bfcae" +
-            // wad, limited (uint256 = 6000000000000000)
-            "000000000000000000000000000000000000000000000000001550f7dca70000",
-        },
-      },
-    });
+    await liveAppWebview.setAccountId("e86e3bc1-49e1-53fd-a329-96ba6f1b06d3");
+    await liveAppWebview.setRecipient(recipient);
+    await liveAppWebview.setAmount(amount);
+    await liveAppWebview.setData(data);
+    await liveAppWebview.transactionSignAndBroadcast();
 
     // Step Fees
     await expect(page.getByText(/learn more about fees/i)).toBeVisible();
@@ -244,12 +211,9 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
       ),
     ).toBeVisible();
 
-    await expect(response).resolves.toStrictEqual({
-      id,
-      jsonrpc: "2.0",
-      result: {
-        transactionHash: "32BEBB4660C4C328F7E130D0E1F45D5B2AFD9129B903E0F3B6EA52756329CD25",
-      },
-    });
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toBe("32BEBB4660C4C328F7E130D0E1F45D5B2AFD9129B903E0F3B6EA52756329CD25");
+
+    await liveAppWebview.clearStates();
   });
 });

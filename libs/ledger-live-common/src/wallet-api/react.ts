@@ -525,7 +525,9 @@ export function useWalletAPIServer({
           tokenCurrency,
         );
 
-        return Buffer.from(signedOperation.signature);
+        return account.currency === "solana"
+          ? Buffer.from(signedOperation.signature, "hex")
+          : Buffer.from(signedOperation.signature);
       },
     );
   }, [accounts, manifest, server, tracking, uiTxSign]);

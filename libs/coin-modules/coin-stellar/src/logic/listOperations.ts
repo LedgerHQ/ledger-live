@@ -46,5 +46,6 @@ const convertToCoreOperation = (operation: StellarOperation): Operation<StellarA
     value: BigInt(operation.value.toString()),
     senders: operation.senders,
     recipients: operation.recipients,
+    details: operation.extra.memo === undefined ? {} : { memo: operation.extra.memo },
   };
 };

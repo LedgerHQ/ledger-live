@@ -35,6 +35,8 @@ import { analyticsDrawerContext } from "../drawers/Provider";
 import { accountsSelector } from "../reducers/accounts";
 import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
 import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
+import { LiveConfig } from "@ledgerhq/live-config/lib-es/LiveConfig";
+import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -130,7 +132,7 @@ const getPtxAttributes = () => {
   if (!analyticsFeatureFlagMethod) return {};
   const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
   const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
-  const stakePrograms = analyticsFeatureFlagMethod("stakePrograms");
+  const rawStakePrograms = analyticsFeatureFlagMethod("stakePrograms");
   const ptxCard = analyticsFeatureFlagMethod("ptxCard");
 
   const isBatch1Enabled: boolean =
@@ -145,6 +147,12 @@ const getPtxAttributes = () => {
     stakingProviders?.params?.listProvider?.length > 0
       ? stakingProviders?.params?.listProvider.length
       : "flag not loaded";
+
+  // Apply versioned redirects logic to the stakePrograms feature flag
+  const appVersion = LiveConfig.instance.appVersion || "0.0.0";
+  const stakePrograms = rawStakePrograms
+    ? getVersionedRedirects(rawStakePrograms, appVersion)
+    : null;
 
   const stakingCurrenciesEnabled: string[] | string =
     stakePrograms?.enabled && stakePrograms?.params?.list?.length

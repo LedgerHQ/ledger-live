@@ -21,6 +21,12 @@ import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { WARNING_REASON, WarningReason } from "../types";
 import { getLLDCoinFamily } from "~/renderer/families";
+import useAddAccountAnalytics from "../analytics/useAddAccountAnalytics";
+import {
+  ADD_ACCOUNT_EVENTS_NAME,
+  ADD_ACCOUNT_FLOW_NAME,
+  ADD_ACCOUNT_PAGE_NAME,
+} from "../analytics/addAccount.types";
 
 export type UseScanAccountsProps = {
   currency: CryptoCurrency;
@@ -35,6 +41,7 @@ export function useScanAccounts({
   onComplete,
   navigateToWarningScreen,
 }: UseScanAccountsProps) {
+  const { trackAddAccountEvent } = useAddAccountAnalytics();
   const existingAccounts = useSelector(accountsSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const [scanning, setScanning] = useState(true);
@@ -113,7 +120,12 @@ export function useScanAccounts({
 
   const formatAccount = useCallback(
     (account: Account): AccountItem => {
-      const { fiatValue } = getBalanceAndFiatValue(account, state, counterValueCurrency, discreet);
+      const { fiatValue, balance } = getBalanceAndFiatValue(
+        account,
+        state,
+        counterValueCurrency,
+        discreet,
+      );
       const protocol =
         account.type === "Account" &&
         account?.derivationMode !== undefined &&
@@ -125,6 +137,7 @@ export function useScanAccounts({
         address: formatAddress(account.freshAddress),
         cryptoId: account.currency.id,
         fiatValue,
+        balance,
         protocol: protocol || "",
         id: account.id,
         name: accountNameWithDefaultSelector(walletState, account),
@@ -135,6 +148,11 @@ export function useScanAccounts({
   );
 
   const handleConfirm = useCallback(() => {
+    trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {
+      button: "Confirm",
+      page: ADD_ACCOUNT_PAGE_NAME.LOOKING_FOR_ACCOUNTS,
+      flow: ADD_ACCOUNT_FLOW_NAME,
+    });
     const accountsToImport = scannedAccounts.filter(a => selectedIds.includes(a.id));
     if (accountsToImport.length > 0) {
       setHasImportedAccounts(true);
@@ -148,7 +166,7 @@ export function useScanAccounts({
       }),
     );
     onComplete(scannedAccounts.filter(a => selectedIds.includes(a.id)));
-  }, [dispatch, existingAccounts, scannedAccounts, selectedIds, onComplete]);
+  }, [dispatch, existingAccounts, scannedAccounts, selectedIds, onComplete, trackAddAccountEvent]);
 
   const onCancel = useCallback(() => {
     setError(null);
@@ -214,18 +232,28 @@ export function useScanAccounts({
   );
 
   const handleSelectAll = useCallback(() => {
+    trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {
+      button: "Select all",
+      page: ADD_ACCOUNT_PAGE_NAME.LOOKING_FOR_ACCOUNTS,
+      flow: ADD_ACCOUNT_FLOW_NAME,
+    });
     const importableAccountIds = importableAccounts.map(a => a.id);
     setSelectedIds(prevSelectedIds => {
       return [...new Set([...prevSelectedIds, ...importableAccountIds])];
     });
-  }, [importableAccounts]);
+  }, [importableAccounts, trackAddAccountEvent]);
 
   const handleDeselectAll = useCallback(() => {
+    trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {
+      button: "Deselect all",
+      page: ADD_ACCOUNT_PAGE_NAME.LOOKING_FOR_ACCOUNTS,
+      flow: ADD_ACCOUNT_FLOW_NAME,
+    });
     const importableAccountIds = importableAccounts.map(a => a.id);
     setSelectedIds(prevSelectedIds => {
       return prevSelectedIds.filter(id => !importableAccountIds.includes(id));
     });
-  }, [importableAccounts]);
+  }, [importableAccounts, trackAddAccountEvent]);
 
   useEffect(() => {
     startSubscription();
