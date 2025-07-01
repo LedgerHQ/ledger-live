@@ -1,12 +1,20 @@
 # @ledgerhq/ledger-trust-service
 
-## 0.3.7-nightly.0
+## 0.3.7
 
 ### Patch Changes
 
 - Updated dependencies [[`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
-  - @ledgerhq/live-env@2.11.0-nightly.0
-  - @ledgerhq/live-network@2.0.12-nightly.0
+  - @ledgerhq/live-env@2.11.0
+  - @ledgerhq/live-network@2.0.12
+
+## 0.3.7-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/live-env@2.11.0-next.0
+  - @ledgerhq/live-network@2.0.12-next.0
 
 ## 0.3.6
 

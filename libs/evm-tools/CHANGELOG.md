@@ -1,18 +1,28 @@
 # @ledgerhq/evm-tools
 
-## 1.7.0-nightly.1
+## 1.7.0
 
 ### Minor Changes
 
 - [#10543](https://github.com/LedgerHQ/ledger-live/pull/10543) [`881dc73`](https://github.com/LedgerHQ/ledger-live/commit/881dc73e98bba95567fc2a4a6c54659d44f22957) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - added dapp selectors to be able to track more types of transactions on evm contracts
 
-## 1.6.5-nightly.0
+### Patch Changes
+
+- Updated dependencies [[`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/live-env@2.11.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.9
+
+## 1.7.0-next.0
+
+### Minor Changes
+
+- [#10543](https://github.com/LedgerHQ/ledger-live/pull/10543) [`881dc73`](https://github.com/LedgerHQ/ledger-live/commit/881dc73e98bba95567fc2a4a6c54659d44f22957) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - added dapp selectors to be able to track more types of transactions on evm contracts
 
 ### Patch Changes
 
 - Updated dependencies [[`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
-  - @ledgerhq/live-env@2.11.0-nightly.0
-  - @ledgerhq/cryptoassets-evm-signatures@13.5.9-nightly.0
+  - @ledgerhq/live-env@2.11.0-next.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.9-next.0
 
 ## 1.6.4
 

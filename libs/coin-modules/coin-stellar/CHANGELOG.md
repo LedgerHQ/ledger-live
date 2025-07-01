@@ -1,31 +1,26 @@
 # @ledgerhq/coin-stellar
 
-## 5.2.2-nightly.2
+## 5.2.2
 
 ### Patch Changes
 
-- Updated dependencies [[`c3c2069`](https://github.com/LedgerHQ/ledger-live/commit/c3c2069976c43ebca2bce7896036efd071a22814)]:
-  - @ledgerhq/types-live@6.75.0-nightly.2
-  - @ledgerhq/coin-framework@5.4.1-nightly.2
+- Updated dependencies [[`2274597`](https://github.com/LedgerHQ/ledger-live/commit/227459709ec157b7e49db4e75c52525e15acd8d2), [`7a1b8c8`](https://github.com/LedgerHQ/ledger-live/commit/7a1b8c8e59383efb02676cfe647c5889a31372bc), [`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc), [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/types-live@6.75.0
+  - @ledgerhq/cryptoassets@13.20.0
+  - @ledgerhq/live-env@2.11.0
+  - @ledgerhq/coin-framework@5.4.1
+  - @ledgerhq/live-network@2.0.12
 
-## 5.2.2-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`2274597`](https://github.com/LedgerHQ/ledger-live/commit/227459709ec157b7e49db4e75c52525e15acd8d2), [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
-  - @ledgerhq/types-live@6.75.0-nightly.1
-  - @ledgerhq/cryptoassets@13.20.0-nightly.0
-  - @ledgerhq/live-env@2.11.0-nightly.0
-  - @ledgerhq/coin-framework@5.4.1-nightly.1
-  - @ledgerhq/live-network@2.0.12-nightly.0
-
-## 5.2.2-nightly.0
+## 5.2.2-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc)]:
-  - @ledgerhq/types-live@6.75.0-nightly.0
-  - @ledgerhq/coin-framework@5.4.1-nightly.0
+- Updated dependencies [[`2274597`](https://github.com/LedgerHQ/ledger-live/commit/227459709ec157b7e49db4e75c52525e15acd8d2), [`7a1b8c8`](https://github.com/LedgerHQ/ledger-live/commit/7a1b8c8e59383efb02676cfe647c5889a31372bc), [`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc), [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/types-live@6.75.0-next.0
+  - @ledgerhq/cryptoassets@13.20.0-next.0
+  - @ledgerhq/live-env@2.11.0-next.0
+  - @ledgerhq/coin-framework@5.4.1-next.0
+  - @ledgerhq/live-network@2.0.12-next.0
 
 ## 5.2.1
 

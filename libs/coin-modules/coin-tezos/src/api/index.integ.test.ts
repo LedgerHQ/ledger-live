@@ -41,7 +41,7 @@ describe("Tezos Api", () => {
       const result = await module.estimateFees({
         asset: { type: "native" },
         type: "send",
-        sender: { address },
+        sender: address,
         recipient: "tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ",
         amount,
       });
@@ -117,7 +117,7 @@ describe("Tezos Api", () => {
       const encodedTransaction = await module.craftTransaction({
         asset: { type: "native" },
         type,
-        sender: { address },
+        sender: address,
         recipient: recipient,
         amount: amount,
       });
@@ -141,7 +141,7 @@ describe("Tezos Api", () => {
       const encodedTransaction = await module.craftTransaction({
         asset: { type: "native" },
         type: "send",
-        sender: { address },
+        sender: address,
         recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
         amount: BigInt(10),
       });
@@ -158,7 +158,7 @@ describe("Tezos Api", () => {
           {
             asset: { type: "native" },
             type: "send",
-            sender: { address },
+            sender: address,
             recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
             amount: BigInt(10),
           },

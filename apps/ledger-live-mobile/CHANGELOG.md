@@ -1,72 +1,6 @@
 # live-mobile
 
-## 3.84.0-nightly.6
-
-### Minor Changes
-
-- [#10676](https://github.com/LedgerHQ/ledger-live/pull/10676) [`c441874`](https://github.com/LedgerHQ/ledger-live/commit/c4418745b64aa62aa43d32e2dc45c39a353b94fd) Thanks [@Canestin](https://github.com/Canestin)! - format the deprecate banner date according to the language
-
-- [#10687](https://github.com/LedgerHQ/ledger-live/pull/10687) [`de329a3`](https://github.com/LedgerHQ/ledger-live/commit/de329a37f29c511e82ad1d7fa8064e3328d5d664) Thanks [@themooneer](https://github.com/themooneer)! - Error and description exclusion from Datadog RUM
-
-- [#10668](https://github.com/LedgerHQ/ledger-live/pull/10668) [`c3c2069`](https://github.com/LedgerHQ/ledger-live/commit/c3c2069976c43ebca2bce7896036efd071a22814) Thanks [@sergiubreban](https://github.com/sergiubreban)! - handle min require version for native stablecoinyield
-
-- [#10704](https://github.com/LedgerHQ/ledger-live/pull/10704) [`4a2ca05`](https://github.com/LedgerHQ/ledger-live/commit/4a2ca054d2863ba0491371cb8ecca711c6f29cd8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - MAD -Base drawer + simple navigation
-
-### Patch Changes
-
-- Updated dependencies [[`c3c2069`](https://github.com/LedgerHQ/ledger-live/commit/c3c2069976c43ebca2bce7896036efd071a22814)]:
-  - @ledgerhq/types-live@6.75.0-nightly.2
-  - @ledgerhq/coin-framework@5.4.1-nightly.2
-  - @ledgerhq/coin-cosmos@0.15.3-nightly.2
-  - @ledgerhq/coin-evm@2.22.5-nightly.3
-  - @ledgerhq/coin-filecoin@1.9.11-nightly.2
-  - @ledgerhq/coin-multiversx@0.4.11-nightly.2
-  - @ledgerhq/coin-stacks@0.8.11-nightly.2
-  - @ledgerhq/domain-service@1.2.34-nightly.2
-  - @ledgerhq/live-countervalues@0.5.11-nightly.2
-  - @ledgerhq/live-countervalues-react@0.2.40-nightly.2
-  - @ledgerhq/live-nft@0.8.11-nightly.2
-  - @ledgerhq/live-nft-react@0.9.11-nightly.2
-  - @ledgerhq/live-wallet@0.11.2-nightly.2
-
-## 3.84.0-nightly.5
-
-### Minor Changes
-
-- [#10702](https://github.com/LedgerHQ/ledger-live/pull/10702) [`5de3cc6`](https://github.com/LedgerHQ/ledger-live/commit/5de3cc6351ffbc3b7462b8de757349d254ed6f00) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - LLM - Modular Drawer - Add a debug entrypoint
-
-- [#10673](https://github.com/LedgerHQ/ledger-live/pull/10673) [`f0cf81c`](https://github.com/LedgerHQ/ledger-live/commit/f0cf81c138fba038572a95469d9d6ccec467c3d0) Thanks [@themooneer](https://github.com/themooneer)! - custom wallet view with loading time and accounts currencies
-
-## 3.84.0-nightly.4
-
-### Minor Changes
-
-- [#10666](https://github.com/LedgerHQ/ledger-live/pull/10666) [`558c438`](https://github.com/LedgerHQ/ledger-live/commit/558c438cd306fd714c2d784125d6b4231b512fe1) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add links for CTA
-
-- [#10667](https://github.com/LedgerHQ/ledger-live/pull/10667) [`105f564`](https://github.com/LedgerHQ/ledger-live/commit/105f5640a8c4e0edf501b88d4ad266c8507dde48) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Update wordings
-
-### Patch Changes
-
-- [#10683](https://github.com/LedgerHQ/ledger-live/pull/10683) [`1566010`](https://github.com/LedgerHQ/ledger-live/commit/156601030590d43c3833fff808c8d3db00e47da8) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - memorize tracking source so updates of the ref do not trigger webview reloads
-
-## 3.84.0-nightly.3
-
-### Patch Changes
-
-- [#10675](https://github.com/LedgerHQ/ledger-live/pull/10675) [`f68ed43`](https://github.com/LedgerHQ/ledger-live/commit/f68ed438c22f3a1f503a08db30996f2bf0b57322) Thanks [@beths-ledger](https://github.com/beths-ledger)! - fix param passed to earn live app
-
-- Updated dependencies []:
-  - @ledgerhq/coin-evm@2.22.5-nightly.2
-
-## 3.84.0-nightly.2
-
-### Minor Changes
-
-- [#10567](https://github.com/LedgerHQ/ledger-live/pull/10567) [`0504c82`](https://github.com/LedgerHQ/ledger-live/commit/0504c82ece356862cde1ca813f8da87726b10613) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Earn live app now includes multi-screen flows. Handle back navigation within live app via webview back press, revert to the native navigation back press when on the initial screen - when view query param is set to 'amount'.
-
-  Extract the Earn live app from the WebPTXPlayer and into an independent, minimal Web3AppWebview wrapper that includes only earn-specific handlers.
-
-## 3.84.0-nightly.1
+## 3.84.0
 
 ### Minor Changes
 
@@ -74,68 +8,157 @@
 
 - [#10418](https://github.com/LedgerHQ/ledger-live/pull/10418) [`12e7f47`](https://github.com/LedgerHQ/ledger-live/commit/12e7f4705de41ea37435fa7a99621e58b07f97a4) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - use react native screen header to back navigate in swap live app webview
 
-- [#10507](https://github.com/LedgerHQ/ledger-live/pull/10507) [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(lld, llm): target a custom reference of the CAL
+- [#10565](https://github.com/LedgerHQ/ledger-live/pull/10565) [`313e6a8`](https://github.com/LedgerHQ/ledger-live/commit/313e6a8032563550d99c5290e29795279adf28a0) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix gradient in graph
 
-### Patch Changes
+- [#10547](https://github.com/LedgerHQ/ledger-live/pull/10547) [`e051077`](https://github.com/LedgerHQ/ledger-live/commit/e051077309c02bf06a2aa0fa9b25a117d20959aa) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: QA fixes large mover
 
-- Updated dependencies [[`2274597`](https://github.com/LedgerHQ/ledger-live/commit/227459709ec157b7e49db4e75c52525e15acd8d2), [`8bd0b4e`](https://github.com/LedgerHQ/ledger-live/commit/8bd0b4e0672227d2bf9d1ff12145b98608cc28b3), [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
-  - @ledgerhq/types-live@6.75.0-nightly.1
-  - @ledgerhq/live-dmk-mobile@0.7.0-nightly.0
-  - @ledgerhq/live-env@2.11.0-nightly.0
-  - @ledgerhq/coin-framework@5.4.1-nightly.1
-  - @ledgerhq/coin-cosmos@0.15.3-nightly.1
-  - @ledgerhq/coin-evm@2.22.5-nightly.1
-  - @ledgerhq/coin-filecoin@1.9.11-nightly.1
-  - @ledgerhq/coin-multiversx@0.4.11-nightly.1
-  - @ledgerhq/coin-stacks@0.8.11-nightly.1
-  - @ledgerhq/domain-service@1.2.34-nightly.1
-  - @ledgerhq/live-countervalues@0.5.11-nightly.1
-  - @ledgerhq/live-countervalues-react@0.2.40-nightly.1
-  - @ledgerhq/live-nft@0.8.11-nightly.1
-  - @ledgerhq/live-nft-react@0.9.11-nightly.1
-  - @ledgerhq/live-wallet@0.11.2-nightly.1
-  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.9-nightly.0
-  - @ledgerhq/ledger-key-ring-protocol@0.5.11-nightly.0
-  - @ledgerhq/live-network@2.0.12-nightly.0
+- [#10567](https://github.com/LedgerHQ/ledger-live/pull/10567) [`0504c82`](https://github.com/LedgerHQ/ledger-live/commit/0504c82ece356862cde1ca813f8da87726b10613) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Earn live app now includes multi-screen flows. Handle back navigation within live app via webview back press, revert to the native navigation back press when on the initial screen - when view query param is set to 'amount'.
 
-## 3.84.0-nightly.0
-
-### Minor Changes
+  Extract the Earn live app from the WebPTXPlayer and into an independent, minimal Web3AppWebview wrapper that includes only earn-specific handlers.
 
 - [#10549](https://github.com/LedgerHQ/ledger-live/pull/10549) [`90f84a4`](https://github.com/LedgerHQ/ledger-live/commit/90f84a4169cd518a9db4794447e84ee823a01518) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add new tracking code
 
 - [#10626](https://github.com/LedgerHQ/ledger-live/pull/10626) [`5567fd2`](https://github.com/LedgerHQ/ledger-live/commit/5567fd28322fae56ff6a6d46d58a373253ec44de) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add where user clicked swap from
 
+- [#10700](https://github.com/LedgerHQ/ledger-live/pull/10700) [`aff1593`](https://github.com/LedgerHQ/ledger-live/commit/aff1593ee8ab34f84c28c13c27edbe5d2ff983b4) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - memorize tracking source so updates of the ref do not trigger webview reloads
+
+- [#10529](https://github.com/LedgerHQ/ledger-live/pull/10529) [`7a1b8c8`](https://github.com/LedgerHQ/ledger-live/commit/7a1b8c8e59383efb02676cfe647c5889a31372bc) Thanks [@themooneer](https://github.com/themooneer)! - chore: setup Datadog SDK for LLM
+
 - [#10628](https://github.com/LedgerHQ/ledger-live/pull/10628) [`368772e`](https://github.com/LedgerHQ/ledger-live/commit/368772e84e8281e896bf838479f909227e095135) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add new tracking event
+
+- [#10608](https://github.com/LedgerHQ/ledger-live/pull/10608) [`fad60b7`](https://github.com/LedgerHQ/ledger-live/commit/fad60b718e46f5249772c121b146c991a96604ad) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - fix wrong analytics data selector for swap webviews
+
+- [#10594](https://github.com/LedgerHQ/ledger-live/pull/10594) [`c2f275c`](https://github.com/LedgerHQ/ledger-live/commit/c2f275c9c90cf9775d6b7807ec9cbfc2e5dc2f62) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - add analytics opt in data to swap web views desktop and mobile
+
+- [#10581](https://github.com/LedgerHQ/ledger-live/pull/10581) [`9b08bac`](https://github.com/LedgerHQ/ledger-live/commit/9b08bace9a81b0180e36a6431194bf18e1c16e67) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add redirect to swap history
+
+- [#10442](https://github.com/LedgerHQ/ledger-live/pull/10442) [`4bb8f40`](https://github.com/LedgerHQ/ledger-live/commit/4bb8f4045a6858b09dd9a7917a6672208ac5b2fe) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Removed LL navigation for Buy/Sell
+
+- [#10666](https://github.com/LedgerHQ/ledger-live/pull/10666) [`558c438`](https://github.com/LedgerHQ/ledger-live/commit/558c438cd306fd714c2d784125d6b4231b512fe1) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add links for CTA
+
+- [#10675](https://github.com/LedgerHQ/ledger-live/pull/10675) [`f68ed43`](https://github.com/LedgerHQ/ledger-live/commit/f68ed438c22f3a1f503a08db30996f2bf0b57322) Thanks [@beths-ledger](https://github.com/beths-ledger)! - fix param passed to earn live app
 
 - [#10402](https://github.com/LedgerHQ/ledger-live/pull/10402) [`7b4329c`](https://github.com/LedgerHQ/ledger-live/commit/7b4329c0fa65a6c96cf011ffd712ad6bbbcf6f1a) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Fix disconnect device while adding account or change custom lock screen errors
 
 - [#10621](https://github.com/LedgerHQ/ledger-live/pull/10621) [`16328d4`](https://github.com/LedgerHQ/ledger-live/commit/16328d444dc5563cca3aee7e58292e03ca28b973) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Fix memo focus on mobile close
 
+- [#10578](https://github.com/LedgerHQ/ledger-live/pull/10578) [`8353fcf`](https://github.com/LedgerHQ/ledger-live/commit/8353fcfaaa9de5a43a2cc40d748194398c774912) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: dark blur for Large Mover overlay tutorial in light mode
+
 - [#10591](https://github.com/LedgerHQ/ledger-live/pull/10591) [`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add ledger charon support
+
+- [#10596](https://github.com/LedgerHQ/ledger-live/pull/10596) [`98cac41`](https://github.com/LedgerHQ/ledger-live/commit/98cac41e846ce1057c63e19c9a49880733389905) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix display of Learn More on Ledger Sync
 
 - [#10619](https://github.com/LedgerHQ/ledger-live/pull/10619) [`f0042c0`](https://github.com/LedgerHQ/ledger-live/commit/f0042c0611c860ad44528b2a2b2775a0a3db5453) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - swap llm csv history export fix
 
+- [#10315](https://github.com/LedgerHQ/ledger-live/pull/10315) [`0c5070b`](https://github.com/LedgerHQ/ledger-live/commit/0c5070ba6effeacbcb6a009d86738c39a9a831d2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-solana): warn correctly on not enough gas
+
+- [#10507](https://github.com/LedgerHQ/ledger-live/pull/10507) [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(lld, llm): target a custom reference of the CAL
+
 ### Patch Changes
+
+- Updated dependencies [[`2274597`](https://github.com/LedgerHQ/ledger-live/commit/227459709ec157b7e49db4e75c52525e15acd8d2), [`752fc6b`](https://github.com/LedgerHQ/ledger-live/commit/752fc6b72fac537563bc6d21b45ce412875f6b7b), [`7a1b8c8`](https://github.com/LedgerHQ/ledger-live/commit/7a1b8c8e59383efb02676cfe647c5889a31372bc), [`8bd0b4e`](https://github.com/LedgerHQ/ledger-live/commit/8bd0b4e0672227d2bf9d1ff12145b98608cc28b3), [`d6ca34f`](https://github.com/LedgerHQ/ledger-live/commit/d6ca34f5b11087c8755adc79eb6a4ee28bfdb164), [`efdcdc1`](https://github.com/LedgerHQ/ledger-live/commit/efdcdc14d395a31670d94bd32f301e10794a70d8), [`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc), [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/types-live@6.75.0
+  - @ledgerhq/native-ui@0.37.0
+  - @ledgerhq/live-dmk-mobile@0.7.0
+  - @ledgerhq/coin-cosmos@0.16.0
+  - @ledgerhq/icons-ui@0.12.0
+  - @ledgerhq/live-env@2.11.0
+  - @ledgerhq/coin-framework@5.4.1
+  - @ledgerhq/coin-evm@2.22.5
+  - @ledgerhq/coin-filecoin@1.9.11
+  - @ledgerhq/coin-multiversx@0.4.11
+  - @ledgerhq/coin-stacks@0.8.11
+  - @ledgerhq/domain-service@1.2.34
+  - @ledgerhq/live-countervalues@0.5.11
+  - @ledgerhq/live-countervalues-react@0.2.40
+  - @ledgerhq/live-nft@0.8.11
+  - @ledgerhq/live-nft-react@0.9.11
+  - @ledgerhq/live-wallet@0.11.2
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.9
+  - @ledgerhq/ledger-key-ring-protocol@0.5.11
+  - @ledgerhq/live-network@2.0.12
+
+## 3.84.0-next.1
+
+### Minor Changes
+
+- [#10700](https://github.com/LedgerHQ/ledger-live/pull/10700) [`aff1593`](https://github.com/LedgerHQ/ledger-live/commit/aff1593ee8ab34f84c28c13c27edbe5d2ff983b4) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - memorize tracking source so updates of the ref do not trigger webview reloads
+
+## 3.84.0-next.0
+
+### Minor Changes
+
+- [#10625](https://github.com/LedgerHQ/ledger-live/pull/10625) [`27bba71`](https://github.com/LedgerHQ/ledger-live/commit/27bba718e39cb737a15803bc5146146fe3581f0b) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Block app if version is outdated
+
+- [#10418](https://github.com/LedgerHQ/ledger-live/pull/10418) [`12e7f47`](https://github.com/LedgerHQ/ledger-live/commit/12e7f4705de41ea37435fa7a99621e58b07f97a4) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - use react native screen header to back navigate in swap live app webview
+
+- [#10565](https://github.com/LedgerHQ/ledger-live/pull/10565) [`313e6a8`](https://github.com/LedgerHQ/ledger-live/commit/313e6a8032563550d99c5290e29795279adf28a0) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix gradient in graph
+
+- [#10547](https://github.com/LedgerHQ/ledger-live/pull/10547) [`e051077`](https://github.com/LedgerHQ/ledger-live/commit/e051077309c02bf06a2aa0fa9b25a117d20959aa) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: QA fixes large mover
+
+- [#10567](https://github.com/LedgerHQ/ledger-live/pull/10567) [`0504c82`](https://github.com/LedgerHQ/ledger-live/commit/0504c82ece356862cde1ca813f8da87726b10613) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Earn live app now includes multi-screen flows. Handle back navigation within live app via webview back press, revert to the native navigation back press when on the initial screen - when view query param is set to 'amount'.
+
+  Extract the Earn live app from the WebPTXPlayer and into an independent, minimal Web3AppWebview wrapper that includes only earn-specific handlers.
+
+- [#10549](https://github.com/LedgerHQ/ledger-live/pull/10549) [`90f84a4`](https://github.com/LedgerHQ/ledger-live/commit/90f84a4169cd518a9db4794447e84ee823a01518) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add new tracking code
+
+- [#10626](https://github.com/LedgerHQ/ledger-live/pull/10626) [`5567fd2`](https://github.com/LedgerHQ/ledger-live/commit/5567fd28322fae56ff6a6d46d58a373253ec44de) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add where user clicked swap from
+
+- [#10529](https://github.com/LedgerHQ/ledger-live/pull/10529) [`7a1b8c8`](https://github.com/LedgerHQ/ledger-live/commit/7a1b8c8e59383efb02676cfe647c5889a31372bc) Thanks [@themooneer](https://github.com/themooneer)! - chore: setup Datadog SDK for LLM
+
+- [#10628](https://github.com/LedgerHQ/ledger-live/pull/10628) [`368772e`](https://github.com/LedgerHQ/ledger-live/commit/368772e84e8281e896bf838479f909227e095135) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add new tracking event
+
+- [#10608](https://github.com/LedgerHQ/ledger-live/pull/10608) [`fad60b7`](https://github.com/LedgerHQ/ledger-live/commit/fad60b718e46f5249772c121b146c991a96604ad) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - fix wrong analytics data selector for swap webviews
+
+- [#10594](https://github.com/LedgerHQ/ledger-live/pull/10594) [`c2f275c`](https://github.com/LedgerHQ/ledger-live/commit/c2f275c9c90cf9775d6b7807ec9cbfc2e5dc2f62) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - add analytics opt in data to swap web views desktop and mobile
 
 - [#10581](https://github.com/LedgerHQ/ledger-live/pull/10581) [`9b08bac`](https://github.com/LedgerHQ/ledger-live/commit/9b08bace9a81b0180e36a6431194bf18e1c16e67) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add redirect to swap history
 
-- Updated dependencies [[`efdcdc1`](https://github.com/LedgerHQ/ledger-live/commit/efdcdc14d395a31670d94bd32f301e10794a70d8), [`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc)]:
-  - @ledgerhq/icons-ui@0.11.1-nightly.0
-  - @ledgerhq/types-live@6.75.0-nightly.0
-  - @ledgerhq/native-ui@0.37.0-nightly.0
-  - @ledgerhq/coin-framework@5.4.1-nightly.0
-  - @ledgerhq/coin-cosmos@0.15.3-nightly.0
-  - @ledgerhq/coin-evm@2.22.5-nightly.0
-  - @ledgerhq/coin-filecoin@1.9.11-nightly.0
-  - @ledgerhq/coin-multiversx@0.4.11-nightly.0
-  - @ledgerhq/coin-stacks@0.8.11-nightly.0
-  - @ledgerhq/domain-service@1.2.34-nightly.0
-  - @ledgerhq/live-countervalues@0.5.11-nightly.0
-  - @ledgerhq/live-countervalues-react@0.2.40-nightly.0
-  - @ledgerhq/live-nft@0.8.11-nightly.0
-  - @ledgerhq/live-nft-react@0.9.11-nightly.0
-  - @ledgerhq/live-wallet@0.11.2-nightly.0
+- [#10442](https://github.com/LedgerHQ/ledger-live/pull/10442) [`4bb8f40`](https://github.com/LedgerHQ/ledger-live/commit/4bb8f4045a6858b09dd9a7917a6672208ac5b2fe) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Removed LL navigation for Buy/Sell
+
+- [#10666](https://github.com/LedgerHQ/ledger-live/pull/10666) [`558c438`](https://github.com/LedgerHQ/ledger-live/commit/558c438cd306fd714c2d784125d6b4231b512fe1) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add links for CTA
+
+- [#10675](https://github.com/LedgerHQ/ledger-live/pull/10675) [`f68ed43`](https://github.com/LedgerHQ/ledger-live/commit/f68ed438c22f3a1f503a08db30996f2bf0b57322) Thanks [@beths-ledger](https://github.com/beths-ledger)! - fix param passed to earn live app
+
+- [#10402](https://github.com/LedgerHQ/ledger-live/pull/10402) [`7b4329c`](https://github.com/LedgerHQ/ledger-live/commit/7b4329c0fa65a6c96cf011ffd712ad6bbbcf6f1a) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Fix disconnect device while adding account or change custom lock screen errors
+
+- [#10621](https://github.com/LedgerHQ/ledger-live/pull/10621) [`16328d4`](https://github.com/LedgerHQ/ledger-live/commit/16328d444dc5563cca3aee7e58292e03ca28b973) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Fix memo focus on mobile close
+
+- [#10578](https://github.com/LedgerHQ/ledger-live/pull/10578) [`8353fcf`](https://github.com/LedgerHQ/ledger-live/commit/8353fcfaaa9de5a43a2cc40d748194398c774912) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: dark blur for Large Mover overlay tutorial in light mode
+
+- [#10591](https://github.com/LedgerHQ/ledger-live/pull/10591) [`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add ledger charon support
+
+- [#10596](https://github.com/LedgerHQ/ledger-live/pull/10596) [`98cac41`](https://github.com/LedgerHQ/ledger-live/commit/98cac41e846ce1057c63e19c9a49880733389905) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix display of Learn More on Ledger Sync
+
+- [#10619](https://github.com/LedgerHQ/ledger-live/pull/10619) [`f0042c0`](https://github.com/LedgerHQ/ledger-live/commit/f0042c0611c860ad44528b2a2b2775a0a3db5453) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - swap llm csv history export fix
+
+- [#10315](https://github.com/LedgerHQ/ledger-live/pull/10315) [`0c5070b`](https://github.com/LedgerHQ/ledger-live/commit/0c5070ba6effeacbcb6a009d86738c39a9a831d2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-solana): warn correctly on not enough gas
+
+- [#10507](https://github.com/LedgerHQ/ledger-live/pull/10507) [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(lld, llm): target a custom reference of the CAL
+
+### Patch Changes
+
+- Updated dependencies [[`2274597`](https://github.com/LedgerHQ/ledger-live/commit/227459709ec157b7e49db4e75c52525e15acd8d2), [`752fc6b`](https://github.com/LedgerHQ/ledger-live/commit/752fc6b72fac537563bc6d21b45ce412875f6b7b), [`7a1b8c8`](https://github.com/LedgerHQ/ledger-live/commit/7a1b8c8e59383efb02676cfe647c5889a31372bc), [`8bd0b4e`](https://github.com/LedgerHQ/ledger-live/commit/8bd0b4e0672227d2bf9d1ff12145b98608cc28b3), [`d6ca34f`](https://github.com/LedgerHQ/ledger-live/commit/d6ca34f5b11087c8755adc79eb6a4ee28bfdb164), [`efdcdc1`](https://github.com/LedgerHQ/ledger-live/commit/efdcdc14d395a31670d94bd32f301e10794a70d8), [`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc), [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/types-live@6.75.0-next.0
+  - @ledgerhq/native-ui@0.37.0-next.0
+  - @ledgerhq/live-dmk-mobile@0.7.0-next.0
+  - @ledgerhq/coin-cosmos@0.16.0-next.0
+  - @ledgerhq/icons-ui@0.12.0-next.0
+  - @ledgerhq/live-env@2.11.0-next.0
+  - @ledgerhq/coin-framework@5.4.1-next.0
+  - @ledgerhq/coin-evm@2.22.5-next.0
+  - @ledgerhq/coin-filecoin@1.9.11-next.0
+  - @ledgerhq/coin-multiversx@0.4.11-next.0
+  - @ledgerhq/coin-stacks@0.8.11-next.0
+  - @ledgerhq/domain-service@1.2.34-next.0
+  - @ledgerhq/live-countervalues@0.5.11-next.0
+  - @ledgerhq/live-countervalues-react@0.2.40-next.0
+  - @ledgerhq/live-nft@0.8.11-next.0
+  - @ledgerhq/live-nft-react@0.9.11-next.0
+  - @ledgerhq/live-wallet@0.11.2-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.9-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.5.11-next.0
+  - @ledgerhq/live-network@2.0.12-next.0
 
 ## 3.83.0
 

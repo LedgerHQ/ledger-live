@@ -1,40 +1,36 @@
 # @ledgerhq/coin-hedera
 
-## 1.8.0-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`c3c2069`](https://github.com/LedgerHQ/ledger-live/commit/c3c2069976c43ebca2bce7896036efd071a22814)]:
-  - @ledgerhq/types-live@6.75.0-nightly.2
-  - @ledgerhq/coin-framework@5.4.1-nightly.2
-  - @ledgerhq/live-countervalues@0.5.11-nightly.2
-
-## 1.8.0-nightly.2
+## 1.8.0
 
 ### Minor Changes
 
 - [#10535](https://github.com/LedgerHQ/ledger-live/pull/10535) [`070169d`](https://github.com/LedgerHQ/ledger-live/commit/070169d2e53bda8a47399d4e9017c2e7947958a5) Thanks [@md-blockydevs](https://github.com/md-blockydevs)! - prevent breaking loop when mirror node returns empty transactions with links.next
 
-## 1.7.3-nightly.1
+### Patch Changes
+
+- Updated dependencies [[`2274597`](https://github.com/LedgerHQ/ledger-live/commit/227459709ec157b7e49db4e75c52525e15acd8d2), [`7a1b8c8`](https://github.com/LedgerHQ/ledger-live/commit/7a1b8c8e59383efb02676cfe647c5889a31372bc), [`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc), [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/types-live@6.75.0
+  - @ledgerhq/cryptoassets@13.20.0
+  - @ledgerhq/live-env@2.11.0
+  - @ledgerhq/coin-framework@5.4.1
+  - @ledgerhq/live-countervalues@0.5.11
+  - @ledgerhq/live-network@2.0.12
+
+## 1.8.0-next.0
+
+### Minor Changes
+
+- [#10535](https://github.com/LedgerHQ/ledger-live/pull/10535) [`070169d`](https://github.com/LedgerHQ/ledger-live/commit/070169d2e53bda8a47399d4e9017c2e7947958a5) Thanks [@md-blockydevs](https://github.com/md-blockydevs)! - prevent breaking loop when mirror node returns empty transactions with links.next
 
 ### Patch Changes
 
-- Updated dependencies [[`2274597`](https://github.com/LedgerHQ/ledger-live/commit/227459709ec157b7e49db4e75c52525e15acd8d2), [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
-  - @ledgerhq/types-live@6.75.0-nightly.1
-  - @ledgerhq/cryptoassets@13.20.0-nightly.0
-  - @ledgerhq/live-env@2.11.0-nightly.0
-  - @ledgerhq/coin-framework@5.4.1-nightly.1
-  - @ledgerhq/live-countervalues@0.5.11-nightly.1
-  - @ledgerhq/live-network@2.0.12-nightly.0
-
-## 1.7.3-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc)]:
-  - @ledgerhq/types-live@6.75.0-nightly.0
-  - @ledgerhq/coin-framework@5.4.1-nightly.0
-  - @ledgerhq/live-countervalues@0.5.11-nightly.0
+- Updated dependencies [[`2274597`](https://github.com/LedgerHQ/ledger-live/commit/227459709ec157b7e49db4e75c52525e15acd8d2), [`7a1b8c8`](https://github.com/LedgerHQ/ledger-live/commit/7a1b8c8e59383efb02676cfe647c5889a31372bc), [`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc), [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/types-live@6.75.0-next.0
+  - @ledgerhq/cryptoassets@13.20.0-next.0
+  - @ledgerhq/live-env@2.11.0-next.0
+  - @ledgerhq/coin-framework@5.4.1-next.0
+  - @ledgerhq/live-countervalues@0.5.11-next.0
+  - @ledgerhq/live-network@2.0.12-next.0
 
 ## 1.7.2
 
