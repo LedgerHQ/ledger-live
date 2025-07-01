@@ -1,5 +1,7 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 
 import { Web3AppWebview } from "../Web3AppWebview";
 import Box from "../Box";
@@ -36,6 +38,15 @@ const recoverIdsShowTopBar = [
 export default function WebRecoverPlayer({ manifest, inputs, onClose }: RecoverWebviewProps) {
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
+  const recoverServices = useFeature("protectServicesDesktop");
+  const openWithDevTools = recoverServices?.params?.openWithDevTools;
+
+  useEffect(() => {
+    if (!openWithDevTools || !webviewAPIRef) return;
+
+    const webview = safeGetRefValue(webviewAPIRef);
+    webview.openDevTools();
+  }, [openWithDevTools, webviewAPIRef])
 
   return (
     <Container>
