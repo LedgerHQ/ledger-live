@@ -45456,7 +45456,7 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.27.1
       '@noble/curves': 1.9.0
-      '@noble/hashes': 1.8.0
+      '@noble/hashes': 1.7.0
       '@solana/buffer-layout': 4.0.1
       agentkeepalive: 4.5.0
       bigint-buffer: 1.1.5
@@ -51778,7 +51778,7 @@ snapshots:
 
   c32check@2.0.0:
     dependencies:
-      '@noble/hashes': 1.8.0
+      '@noble/hashes': 1.7.0
       base-x: 4.0.0
 
   cac@6.7.14: {}
