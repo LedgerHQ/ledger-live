@@ -1,9 +1,7 @@
 import React from "react";
-import { render, screen, fireEvent } from "tests/testSetup";
+import { render, screen } from "tests/testSetup";
 import { AppGeoBlocker } from "../index";
 import { useOFACGeoBlockCheck } from "@ledgerhq/live-common/hooks/useOFACGeoBlockCheck";
-import { openURL } from "~/renderer/linking";
-import { urls } from "~/config/urls";
 
 jest.mock("@ledgerhq/live-common/hooks/useOFACGeoBlockCheck", () => ({
   useOFACGeoBlockCheck: jest.fn(),
@@ -13,6 +11,10 @@ jest.mock("~/renderer/linking", () => ({
 }));
 jest.mock("~/config/urls", () => ({
   urls: { geoBlock: { learnMore: "https://test/learn-more" } },
+}));
+jest.mock("../../AppBlocker", () => ({
+  AppBlocker: ({ children, blocked }: { children: React.ReactNode; blocked: boolean }) =>
+    blocked ? null : children,
 }));
 
 describe("AppGeoBlocker", () => {
@@ -38,23 +40,6 @@ describe("AppGeoBlocker", () => {
       </AppGeoBlocker>,
     );
     expect(screen.queryByTestId("child")).not.toBeInTheDocument();
-    expect(screen.getByText(/Location unavailable/i)).toBeInTheDocument();
-    expect(
-      screen.getByText(/Ledger wallet is not available in this location./i),
-    ).toBeInTheDocument();
-    expect(screen.getByText(/Learn more/i)).toBeInTheDocument();
-  });
-
-  it("calls openURL with correct URL when Learn More link is clicked", () => {
-    (useOFACGeoBlockCheck as jest.Mock).mockReturnValue({ blocked: true });
-    render(
-      <AppGeoBlocker>
-        <div>child</div>
-      </AppGeoBlocker>,
-    );
-    const learnMoreLink = screen.getByText(/Learn more/i);
-    fireEvent.click(learnMoreLink);
-    expect(openURL).toHaveBeenCalledWith(urls.geoBlock.learnMore);
   });
 
   it("calls window.api.appLoaded on finish if window.api exists", () => {

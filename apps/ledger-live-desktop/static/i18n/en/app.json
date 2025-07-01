@@ -7166,5 +7166,14 @@
     "title": "Location unavailable",
     "description": "Ledger wallet is not available in this location.",
     "learnMore": "Learn more"
+  },
+  "versionBlocking": {
+    "title": "Ledger Live Update Required",
+    "errorTitle": "Update failed",
+    "errorDescription": "The update failed. Please follow the link below to download the newest version of Ledger Live. ",
+    "description": "This version of Ledger Live is not compatible with the latest device operating system. Update now to enjoy improved connectivity.",
+    "restart": "Restart",
+    "downloadOnLedger": "Download on Ledger.com",
+    "downloadProgress": "Downloading... {{ progress }}%"
   }
 }
