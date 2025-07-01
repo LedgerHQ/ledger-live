@@ -44,7 +44,7 @@ export function genericEstimateMaxSpendable(
         amount: BigInt(draftTransaction.amount?.toString() ?? "0"),
         fee: BigInt(draftTransaction["fees"]?.toString() ?? "0"),
         useAllAmount: !!draftTransaction.useAllAmount,
-        subAccountId: transaction.subAccountId || "",
+        subAccountId: transaction?.subAccountId || "",
       },
     );
     if (network === "stellar") {

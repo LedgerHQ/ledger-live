@@ -15,6 +15,8 @@ export function genericGetTransactionStatus(
       assetCode?: string;
       mode?: string;
       subAccountId?: string;
+      memoType?: string;
+      memoValue?: string;
     },
   ) => {
     const { freshAddress, balance, currency, pendingOperations, subAccounts, spendableBalance } =
@@ -66,19 +68,25 @@ export function genericGetTransactionStatus(
         assetCode: transaction.assetCode || "",
         assetIssuer: transaction.assetIssuer || "",
         subAccountId: transaction.subAccountId || "",
+        memoType: transaction.memoType || "",
+        memoValue: transaction.memoValue || "",
       },
     );
+
+    // console.log("getTransactionStatus: ", transaction);
+    // console.log("getTransactionStatus estimatedFees: ", amount.toString());
 
     return Promise.resolve({
       errors,
       warnings,
-      estimatedFees: transaction.fees.eq(0)
-        ? new BigNumber(estimatedFees.toString())
-        : transaction.fees,
+      estimatedFees:
+        !transaction.fees || transaction.fees.eq(0)
+          ? new BigNumber(estimatedFees.toString())
+          : transaction.fees,
       amount: transaction.amount.eq(0) ? new BigNumber(amount.toString()) : transaction.amount,
       totalSpent: transaction.amount.eq(0)
         ? new BigNumber(totalSpent.toString())
-        : transaction.amount.plus(transaction.fees),
+        : transaction.amount.plus(transaction.fees || new BigNumber(0)),
     });
   };
 }

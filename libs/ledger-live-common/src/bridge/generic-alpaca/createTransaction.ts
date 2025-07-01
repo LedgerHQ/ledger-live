@@ -22,8 +22,8 @@ export function createTransaction(account: Account | TokenAccount): TransactionC
   fee?: BigNumber | null | undefined;
   fees?: BigNumber | null;
   networkInfo: NetworkInfo | null | undefined;
-  tag: number | null | undefined;
-  feeCustomUnit: Unit | null | undefined;
+  tag?: number | null | undefined;
+  feeCustomUnit?: Unit | null | undefined;
   baseReserve?: BigNumber | null;
   memoType?: string | null;
   memoValue?: string | null;
@@ -59,8 +59,6 @@ export function createTransaction(account: Account | TokenAccount): TransactionC
         mode: "send",
         assetCode: "",
         assetIssuer: "",
-        tag: undefined,
-        feeCustomUnit: null,
       };
     default:
       throw new Error(`Unsupported currency family: ${currency.family}`);
