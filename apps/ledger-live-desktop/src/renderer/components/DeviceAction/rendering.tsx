@@ -76,6 +76,10 @@ import Nano from "~/renderer/images/nanoS.v4.svg";
 import { DmkError } from "@ledgerhq/live-dmk-desktop";
 import { isDmkError } from "@ledgerhq/live-common/deviceSDK/tasks/core";
 import { isDisconnectedWhileSendingApduError } from "@ledgerhq/live-dmk-desktop";
+import {
+  DeviceDeprecationScreen,
+  DeviceDeprecationScreens,
+} from "./Screen/DeviceDeprecationScreen";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -787,6 +791,8 @@ export const renderError = ({
   learnMoreTextKey,
   Icon,
   stretch,
+  currencyName = "",
+  isSwap,
 }: {
   error: Error | ErrorConstructor | DmkError;
   t: TFunction;
@@ -807,7 +813,10 @@ export const renderError = ({
   inlineRetry?: boolean;
   withDescription?: boolean;
   stretch?: boolean;
+  passWarning?: (() => void) | null | undefined;
   Icon?: (props: { color?: string | undefined; size?: number | undefined }) => JSX.Element;
+  currencyName?: string;
+  isSwap?: boolean;
 }) => {
   let tmpError = error;
   // Redirects from renderError and not from DeviceActionDefaultRendering because renderError
@@ -822,6 +831,17 @@ export const renderError = ({
     if (tmpError.title === "userRefused") {
       tmpError = new TransactionRefusedOnDevice();
     }
+  } else if ((tmpError as Error).message === "device-deprecation") {
+    return (
+      <DeviceDeprecationScreen
+        isSwap={isSwap}
+        productName={getDeviceModel(device?.modelId as DeviceModelId)?.productName}
+        onContinue={() => {}}
+        screenName={DeviceDeprecationScreens.errorScreen}
+        coinName={currencyName}
+        date={new Date()}
+      />
+    );
   } else if (tmpError instanceof NoSuchAppOnProvider) {
     return (
       <NoSuchAppOnProviderErrorComponent
@@ -914,15 +934,18 @@ export const renderError = ({
 export const renderInWrongAppForAccount = ({
   t,
   onRetry,
+  passWarning,
 }: {
   t: TFunction;
   onRetry?: (() => void) | null | undefined;
+  passWarning?: () => void;
 }) =>
   renderError({
     t,
     error: new WrongDeviceForAccount(""),
     withExportLogs: true,
     onRetry,
+    passWarning,
     stretch: true,
   });
 
