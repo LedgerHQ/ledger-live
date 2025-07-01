@@ -1,5 +1,48 @@
 # live-mobile
 
+## 3.85.0-next.0
+
+### Minor Changes
+
+- [#10676](https://github.com/LedgerHQ/ledger-live/pull/10676) [`c441874`](https://github.com/LedgerHQ/ledger-live/commit/c4418745b64aa62aa43d32e2dc45c39a353b94fd) Thanks [@Canestin](https://github.com/Canestin)! - format the deprecate banner date according to the language
+
+- [#10683](https://github.com/LedgerHQ/ledger-live/pull/10683) [`1566010`](https://github.com/LedgerHQ/ledger-live/commit/156601030590d43c3833fff808c8d3db00e47da8) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - memorize tracking source so updates of the ref do not trigger webview reloads
+
+- [#10687](https://github.com/LedgerHQ/ledger-live/pull/10687) [`de329a3`](https://github.com/LedgerHQ/ledger-live/commit/de329a37f29c511e82ad1d7fa8064e3328d5d664) Thanks [@themooneer](https://github.com/themooneer)! - Error and description exclusion from Datadog RUM
+
+- [#10668](https://github.com/LedgerHQ/ledger-live/pull/10668) [`c3c2069`](https://github.com/LedgerHQ/ledger-live/commit/c3c2069976c43ebca2bce7896036efd071a22814) Thanks [@sergiubreban](https://github.com/sergiubreban)! - handle min require version for native stablecoinyield
+
+- [#10702](https://github.com/LedgerHQ/ledger-live/pull/10702) [`5de3cc6`](https://github.com/LedgerHQ/ledger-live/commit/5de3cc6351ffbc3b7462b8de757349d254ed6f00) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - LLM - Modular Drawer - Add a debug entrypoint
+
+- [#10673](https://github.com/LedgerHQ/ledger-live/pull/10673) [`f0cf81c`](https://github.com/LedgerHQ/ledger-live/commit/f0cf81c138fba038572a95469d9d6ccec467c3d0) Thanks [@themooneer](https://github.com/themooneer)! - custom wallet view with loading time and accounts currencies
+
+- [#10709](https://github.com/LedgerHQ/ledger-live/pull/10709) [`4bd0027`](https://github.com/LedgerHQ/ledger-live/commit/4bd002799fd6ff910a46791db1a720aae687e3de) Thanks [@themooneer](https://github.com/themooneer)! - Dismiss keyboard on swipe back (ios)
+
+- [#10704](https://github.com/LedgerHQ/ledger-live/pull/10704) [`4a2ca05`](https://github.com/LedgerHQ/ledger-live/commit/4a2ca054d2863ba0491371cb8ecca711c6f29cd8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - MAD -Base drawer + simple navigation
+
+- [#10722](https://github.com/LedgerHQ/ledger-live/pull/10722) [`7291131`](https://github.com/LedgerHQ/ledger-live/commit/7291131523cc620aa81553260430d890b02bf3bd) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - MAD - Navigation header
+
+- [#10667](https://github.com/LedgerHQ/ledger-live/pull/10667) [`105f564`](https://github.com/LedgerHQ/ledger-live/commit/105f5640a8c4e0edf501b88d4ad266c8507dde48) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Update wordings
+
+### Patch Changes
+
+- Updated dependencies [[`1e1e00b`](https://github.com/LedgerHQ/ledger-live/commit/1e1e00bee94a931970cb4250b895a6211b5d3cf7), [`c3c2069`](https://github.com/LedgerHQ/ledger-live/commit/c3c2069976c43ebca2bce7896036efd071a22814), [`9d646eb`](https://github.com/LedgerHQ/ledger-live/commit/9d646eb6ca28b41af950b264c7d799a7ad536207), [`7291131`](https://github.com/LedgerHQ/ledger-live/commit/7291131523cc620aa81553260430d890b02bf3bd)]:
+  - @ledgerhq/live-dmk-mobile@0.8.0-next.0
+  - @ledgerhq/types-live@6.76.0-next.0
+  - @ledgerhq/coin-framework@5.5.0-next.0
+  - @ledgerhq/native-ui@0.38.0-next.0
+  - @ledgerhq/coin-cosmos@0.16.1-next.0
+  - @ledgerhq/coin-evm@2.22.6-next.0
+  - @ledgerhq/coin-filecoin@1.9.12-next.0
+  - @ledgerhq/coin-multiversx@0.4.12-next.0
+  - @ledgerhq/coin-stacks@0.8.12-next.0
+  - @ledgerhq/live-countervalues@0.5.12-next.0
+  - @ledgerhq/live-countervalues-react@0.2.41-next.0
+  - @ledgerhq/live-nft@0.8.12-next.0
+  - @ledgerhq/live-nft-react@0.9.12-next.0
+  - @ledgerhq/live-wallet@0.11.3-next.0
+  - @ledgerhq/domain-service@1.2.35-next.0
+
 ## 3.84.0
 
 ### Minor Changes

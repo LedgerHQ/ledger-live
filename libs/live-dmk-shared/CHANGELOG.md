@@ -1,5 +1,11 @@
 # @ledgerhq/live-dmk
 
+## 0.10.0-next.0
+
+### Minor Changes
+
+- [#10585](https://github.com/LedgerHQ/ledger-live/pull/10585) [`1e1e00b`](https://github.com/LedgerHQ/ledger-live/commit/1e1e00bee94a931970cb4250b895a6211b5d3cf7) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Add support for firmware IO revamp
+
 ## 0.9.1
 
 ### Patch Changes
