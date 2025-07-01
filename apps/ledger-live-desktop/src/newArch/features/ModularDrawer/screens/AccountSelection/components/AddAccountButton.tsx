@@ -5,9 +5,9 @@ import { useTranslation } from "react-i18next";
 
 type Props = {
   onAddAccountClick: () => void;
-};
+} & React.ComponentProps<typeof CardButton>;
 
-export const AddAccountButton = ({ onAddAccountClick }: Props) => {
+export const AddAccountButton = ({ onAddAccountClick, ...rest }: Props) => {
   const { t } = useTranslation();
 
   return (
@@ -16,6 +16,7 @@ export const AddAccountButton = ({ onAddAccountClick }: Props) => {
       title={t("drawers.selectAccount.addAccount")}
       iconRight={<Icons.Plus size="S" />}
       variant="dashed"
+      {...rest}
     />
   );
 };
