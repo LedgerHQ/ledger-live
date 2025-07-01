@@ -80,6 +80,11 @@ describe("listOperations", () => {
         {
           id: "transaction_hash1-operation_id1",
           asset: { type: "native" },
+          details: {
+            assetAmount: "460600000",
+            ledgerOpType: "OUT",
+            sequence: undefined,
+          },
           senders: ["address"],
           recipients: ["receiver1"],
           tx: {
@@ -94,6 +99,11 @@ describe("listOperations", () => {
         {
           id: "transaction_hash1-operation_id2",
           asset: { type: "native" },
+          details: {
+            assetAmount: "11100",
+            ledgerOpType: "OUT",
+            sequence: undefined,
+          },
           senders: ["address"],
           recipients: ["receiver2"],
           tx: {
@@ -108,6 +118,11 @@ describe("listOperations", () => {
         {
           id: "transaction_hash2-operation_id3",
           asset: { type: "native" },
+          details: {
+            assetAmount: "505000000",
+            ledgerOpType: "IN",
+            sequence: undefined,
+          },
           senders: ["sender"],
           recipients: ["address"],
           tx: {
@@ -195,6 +210,11 @@ describe("listOperations", () => {
         {
           id: "transaction_hash1-operation_id1",
           asset: { type: "native" },
+          details: {
+            assetAmount: "460600000",
+            ledgerOpType: "OUT",
+            sequence: undefined,
+          },
           senders: ["address"],
           recipients: ["receiver1"],
           tx: {
@@ -209,6 +229,11 @@ describe("listOperations", () => {
         {
           id: "transaction_hash1-operation_id2",
           asset: { type: "native" },
+          details: {
+            assetAmount: "11100",
+            ledgerOpType: "OUT",
+            sequence: undefined,
+          },
           senders: ["address"],
           recipients: ["receiver2"],
           tx: {

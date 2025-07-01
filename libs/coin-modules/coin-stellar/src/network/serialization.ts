@@ -110,7 +110,7 @@ async function formatOperation(
     date: new Date(rawOperation.created_at),
     senders: [rawOperation.source_account],
     recipients,
-    transactionSequenceNumber: Number(transaction.source_account_sequence),
+    transactionSequenceNumber: Number(transaction.source_account_sequence) || undefined,
     hasFailed: !rawOperation.transaction_successful,
     blockHash: blockHash,
     extra: {
