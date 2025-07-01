@@ -324,7 +324,7 @@ function AddAccountsAccounts({
         </Trans>
       </LText>
     ) : CustomNoAssociatedAccounts ? (
-      <CustomNoAssociatedAccounts style={styles} />
+      <CustomNoAssociatedAccounts />
     ) : (
       <LText style={styles.paddingHorizontal}>
         <Trans i18nKey="addAccounts.noAccountToCreate">
