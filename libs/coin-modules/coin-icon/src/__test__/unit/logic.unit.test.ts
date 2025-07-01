@@ -4,7 +4,6 @@ import {
   convertLoopToIcx,
   convertICXtoLoop,
   EXISTENTIAL_DEPOSIT,
-  MAX_AMOUNT_INPUT,
   isValidAddress,
   isSelfTransaction,
   getNonce,
@@ -121,15 +120,15 @@ describe("Icon Utils", () => {
       expect(result.isEqualTo(new BigNumber(990))).toBe(true);
     });
 
-    it("should limit amount to MAX_AMOUNT_INPUT", () => {
+    it("calculates the correct amount if useAllAmount is false", () => {
       const account = {} as IconAccount;
       const transaction = {
         useAllAmount: false,
-        amount: new BigNumber(10000000000000000000000000000000000),
+        amount: new BigNumber("10000000000000000000000000000000000"),
       } as Transaction;
 
       const result = calculateAmount({ account, transaction });
-      expect(result.isEqualTo(new BigNumber(MAX_AMOUNT_INPUT))).toBe(true);
+      expect(result).toStrictEqual(new BigNumber("10000000000000000000000000000000000"));
     });
 
     it("should calculate minimum balance correctly", () => {
