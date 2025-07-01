@@ -2658,6 +2658,9 @@ importers:
       eip55:
         specifier: ^2.1.1
         version: 2.1.1
+      ethers:
+        specifier: 5.7.2
+        version: 5.7.2
       invariant:
         specifier: ^2.2.4
         version: 2.2.4
