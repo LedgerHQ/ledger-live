@@ -1,5 +1,5 @@
 import { crypto } from "bitcoinjs-lib";
-import { pointCompress } from "tiny-secp256k1";
+import { pointCompress } from "@bitcoinerlab/secp256k1";
 import {
   getXpubComponents,
   hardenedPathOf,

@@ -1,4 +1,4 @@
-import secp256k1 from "secp256k1";
+import { signatureExport } from "../../../der";
 import { firstValueFrom, from, Observable } from "rxjs";
 import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
 
@@ -7,7 +7,7 @@ import {
   createExchange,
   ExchangeTypes,
   isExchangeTypeNg,
-  PayloadSignatureComputedFormat,
+  type PayloadSignatureComputedFormat,
 } from "@ledgerhq/hw-app-exchange";
 import { getAccountCurrency, getMainAccount } from "../../../account";
 import { getAccountBridge } from "../../../bridge";
@@ -21,7 +21,7 @@ import type {
   CompleteExchangeInputSell,
   CompleteExchangeRequestEvent,
 } from "../types";
-import { CompleteExchangeStep, convertTransportError } from "../../error";
+import { type CompleteExchangeStep, convertTransportError } from "../../error";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
@@ -187,7 +187,7 @@ function convertSignature(signature: string, exchangeType: ExchangeTypes): Buffe
     return Buffer.from(base64Signature, "base64");
   }
   if (exchangeType === ExchangeTypes.Sell) return Buffer.from(signature, "hex");
-  return <Buffer>secp256k1.signatureExport(Buffer.from(signature, "hex"));
+  return signatureExport(Buffer.from(signature, "hex"));
 }
 
 export default completeExchange;

@@ -14,7 +14,6 @@ import { log } from "@ledgerhq/logs";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { firstValueFrom, from, Observable } from "rxjs";
-import secp256k1 from "secp256k1";
 import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
@@ -32,6 +31,7 @@ import type { InitSwapInput, SwapRequestEvent } from "./types";
 import { convertToAppExchangePartnerKey, getSwapProvider } from "../providers";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { CEXProviderConfig } from "../providers/swap";
+import { signatureExport } from "../../der";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
@@ -185,7 +185,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         await swap.processTransaction(Buffer.from(swapResult.binaryPayload, "hex"), estimatedFees);
         if (unsubscribed) return;
         const goodSign = <Buffer>(
-          secp256k1.signatureExport(Buffer.from(swapResult.signature, "hex"))
+          signatureExport(Buffer.from(swapResult.signature, "hex"))
         );
         await swap.checkTransactionSignature(goodSign);
         if (unsubscribed) return;
