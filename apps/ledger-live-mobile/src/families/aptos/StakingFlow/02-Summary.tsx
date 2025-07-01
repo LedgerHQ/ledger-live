@@ -92,6 +92,10 @@ export default function StakingSummary({ navigation, route }: Props) {
         }),
       );
     }
+    // NOTE: Dependencies should be exhaustive in the vast majority of cases.
+    //       In this case we can't add `transaction` as a dependency inside this
+    //       useEffect because it is updating the transaction. This will create an
+    //       endless loop, freezing the app.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     route.params,
