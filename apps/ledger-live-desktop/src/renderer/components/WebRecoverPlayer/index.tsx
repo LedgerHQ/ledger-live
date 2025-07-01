@@ -40,13 +40,15 @@ export default function WebRecoverPlayer({ manifest, inputs, onClose }: RecoverW
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const recoverServices = useFeature("protectServicesDesktop");
   const openWithDevTools = recoverServices?.params?.openWithDevTools;
+  const [hasOpenedDevTools, setHasOpenedDevTools] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!openWithDevTools || !webviewAPIRef) return;
+    if (!openWithDevTools || !webviewAPIRef || hasOpenedDevTools || !webviewState.url) return;
 
     const webview = safeGetRefValue(webviewAPIRef);
     webview.openDevTools();
-  }, [openWithDevTools, webviewAPIRef])
+    setHasOpenedDevTools(true);
+  }, [openWithDevTools, webviewAPIRef, webviewState, hasOpenedDevTools, setHasOpenedDevTools]);
 
   return (
     <Container>
