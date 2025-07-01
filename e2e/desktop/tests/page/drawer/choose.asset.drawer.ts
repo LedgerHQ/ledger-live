@@ -9,8 +9,8 @@ export class ChooseAssetDrawer extends Drawer {
 
   @step("Choose asset to swap from: $0")
   async chooseFromAsset(currency: string) {
-    await expect(this.searchInput).toBeVisible();
-    await this.searchInput.fill(currency);
+    await expect(this.searchInput.first()).toBeVisible();
+    await this.searchInput.first().fill(currency);
     await this.currencyRow(currency).first().click();
   }
 
