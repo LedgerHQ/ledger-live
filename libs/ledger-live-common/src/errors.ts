@@ -1,4 +1,5 @@
 import { createCustomErrorClass } from "@ledgerhq/errors";
+import { DeviceDeprecationErrorType } from "./hw/connectApp";
 // TODO we need to migrate in all errors that are in @ledgerhq/errors
 // but only make sense to live-common to not pollute ledgerjs
 export const ConnectAppTimeout = createCustomErrorClass("ConnectAppTimeout");
@@ -108,7 +109,8 @@ export const UnexpectedError = createCustomErrorClass("UnexpectedError");
 export const NotImplementedError = createCustomErrorClass("NotImplementedError");
 export const ValidationError = createCustomErrorClass("ValidationError");
 export const AccessDeniedError = createCustomErrorClass("AccessDeniedError");
-
+export const DeviceDeprecationError =
+  createCustomErrorClass<DeviceDeprecationErrorType>("DeviceDeprecationError");
 export const OutdatedApp = createCustomErrorClass("OutdatedApp");
 
 export const BluetoothNotSupportedError = createCustomErrorClass("FwUpdateBluetoothNotSupported");
