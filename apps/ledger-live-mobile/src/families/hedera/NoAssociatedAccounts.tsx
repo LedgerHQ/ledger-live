@@ -1,30 +1,17 @@
 import React, { useCallback } from "react";
-import i18next from "i18next";
 import { StyleSheet, Linking } from "react-native";
 import { urls } from "~/utils/urls";
-import Touchable, { Props as TouchableProps } from "~/components/Touchable";
-import LText from "~/components/LText";
-import ExternalLink from "~/icons/ExternalLink";
 import { Flex, Icons, Text, Button } from "@ledgerhq/native-ui";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 
-type Props = {
-  style?: {
-    paddingHorizontal?: TouchableProps["style"];
-  };
-};
-
 // "no associated accounts" text when adding/importing accounts
-function NoAssociatedAccounts({ style }: Props) {
+function NoAssociatedAccounts() {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const mainColor = colors.primary.c100;
-  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
-  const fontSize = 13;
+
   const onPress = useCallback(() => Linking.openURL(urls.hedera.supportArticleLink), []);
-  return llmNetworkBasedAddAccountFlow?.enabled ? (
+  return (
     <>
       <Flex flex={1} alignSelf="stretch" alignItems="center">
         <Text style={styles.title}> {t("hedera.createHederaAccountHelp.title")}</Text>
@@ -43,21 +30,6 @@ function NoAssociatedAccounts({ style }: Props) {
         {t("hedera.createHederaAccountHelp.link")}
       </Button>
     </>
-  ) : (
-    <Touchable onPress={onPress} style={[style?.paddingHorizontal, styles.root]}>
-      <Text>{i18next.t("hedera.createHederaAccountHelp.text") as React.ReactNode}</Text>
-      <LText
-        style={[
-          {
-            fontSize,
-            color: mainColor,
-          },
-        ]}
-      >
-        {t("hedera.createHederaAccountHelp.link") as React.ReactNode}
-      </LText>
-      <ExternalLink size={fontSize + 2} color={mainColor} />
-    </Touchable>
   );
 }
 

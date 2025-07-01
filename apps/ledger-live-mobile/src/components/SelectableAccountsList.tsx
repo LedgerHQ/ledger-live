@@ -12,7 +12,6 @@ import {
   TextStyle,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { Account } from "@ledgerhq/types-live";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
@@ -20,7 +19,6 @@ import Swipeable from "react-native-gesture-handler/Swipeable";
 
 import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
-import AccountCard from "./AccountCard";
 import CheckBox from "./CheckBox";
 import swipedAccountSubject from "~/screens/AddAccounts/swipedAccountSubject";
 import Button from "./Button";
@@ -28,12 +26,11 @@ import TouchHintCircle from "./TouchHintCircle";
 import Touchable from "./Touchable";
 import { AccountSettingsNavigatorParamList } from "./RootNavigator/types/AccountSettingsNavigator";
 import AccountItem from "LLM/features/Accounts/components/AccountsListView/components/AccountItem";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { BaseComposite, StackNavigatorProps } from "./RootNavigator/types/helpers";
 import Animated from "react-native-reanimated";
 import { useTheme } from "styled-components/native";
-import { TextVariants } from "@ledgerhq/native-ui/lib/styles/theme";
 import useItemAnimation from "LLM/features/Accounts/components/AccountsListView/components/AnimatedAccountItem/useItemAnimation";
+import { TextVariants } from "@ledgerhq/native-ui/styles/theme";
 
 const selectAllHitSlop = {
   top: 16,
@@ -63,33 +60,26 @@ type NavigationProps = BaseComposite<
   StackNavigatorProps<AccountSettingsNavigatorParamList, ScreenName.EditAccountName>
 >["navigation"];
 
-// This will need to be removed once isNetworkBasedAddAccountFlowEnabled is removed
-type SelectAllTextColorFn = (areAllSelected: boolean) => string;
-
-const getConditionalStyles = (isNetworkBasedAddAccountFlowEnabled?: boolean, space?: number[]) => ({
+const getStyles = (space?: number[]) => ({
   selectableAccount: {
-    marginTop: isNetworkBasedAddAccountFlowEnabled ? space?.[6] : 3,
+    marginTop: space?.[6],
     marginX: 6,
-    paddingX: isNetworkBasedAddAccountFlowEnabled ? space?.[6] : 6,
-    paddingY: isNetworkBasedAddAccountFlowEnabled ? space?.[6] : 3,
-    columnGap: isNetworkBasedAddAccountFlowEnabled ? space?.[4] : 4,
-    borderRadius: isNetworkBasedAddAccountFlowEnabled ? space?.[4] : 4,
-    backgroundColor: isNetworkBasedAddAccountFlowEnabled ? "opacityDefault.c05" : "neutral.c30",
+    paddingX: space?.[6],
+    paddingY: space?.[6],
+    columnGap: space?.[4],
+    borderRadius: space?.[4],
+    backgroundColor: "opacityDefault.c05",
   },
   header: {
-    paddingX: isNetworkBasedAddAccountFlowEnabled ? 16 : 22,
-    paddingBottom: isNetworkBasedAddAccountFlowEnabled ? 0 : 8,
+    paddingX: 16,
+    paddingBottom: 0,
   },
   headerText: {
-    variant: isNetworkBasedAddAccountFlowEnabled ? "paragraph" : ("small" as TextVariants),
-    textTransform: (!isNetworkBasedAddAccountFlowEnabled
-      ? "uppercase"
-      : undefined) as TextStyle["textTransform"],
+    variant: "paragraph" as TextVariants,
+    textTransform: undefined as TextStyle["textTransform"],
   },
   selectAllText: {
-    getColor: (isNetworkBasedAddAccountFlowEnabled
-      ? (areAllSelected: boolean) => (areAllSelected ? "neutral.c80" : "constant.purple")
-      : () => "neutral.c70") as SelectAllTextColorFn,
+    getColor: (areAllSelected: boolean) => (areAllSelected ? "neutral.c80" : "constant.purple"),
   },
 });
 
@@ -122,37 +112,22 @@ const SelectableAccountsList = ({
   }, [accounts, onUnselectAllProp]);
 
   const areAllSelected = accounts.every(a => selectedIds.indexOf(a.id) > -1);
-  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
 
   const renderSelectableAccount = useCallback(
-    ({ item, index }: { index: number; item: Account }) =>
-      llmNetworkBasedAddAccountFlow?.enabled ? (
-        <SelectableAccount
-          navigation={navigation}
-          showHint={!index && showHint}
-          rowIndex={index}
-          listIndex={listIndex}
-          account={item}
-          onAccountNameChange={onAccountNameChange}
-          isSelected={forceSelected || selectedIds.indexOf(item.id) > -1}
-          isDisabled={isDisabled}
-          onPress={onPressAccount}
-          useFullBalance={useFullBalance}
-        />
-      ) : (
-        <SelectableAccount
-          navigation={navigation}
-          showHint={!index && showHint}
-          rowIndex={index}
-          listIndex={listIndex}
-          account={item}
-          onAccountNameChange={onAccountNameChange}
-          isSelected={forceSelected || selectedIds.indexOf(item.id) > -1}
-          isDisabled={isDisabled}
-          onPress={onPressAccount}
-          useFullBalance={useFullBalance}
-        />
-      ),
+    ({ item, index }: { index: number; item: Account }) => (
+      <SelectableAccount
+        navigation={navigation}
+        showHint={!index && showHint}
+        rowIndex={index}
+        listIndex={listIndex}
+        account={item}
+        onAccountNameChange={onAccountNameChange}
+        isSelected={forceSelected || selectedIds.indexOf(item.id) > -1}
+        isDisabled={isDisabled}
+        onPress={onPressAccount}
+        useFullBalance={useFullBalance}
+      />
+    ),
     [
       navigation,
       showHint,
@@ -163,7 +138,6 @@ const SelectableAccountsList = ({
       onAccountNameChange,
       onPressAccount,
       useFullBalance,
-      llmNetworkBasedAddAccountFlow?.enabled,
     ],
   );
 
@@ -217,7 +191,6 @@ const SelectableAccount = ({
   useFullBalance,
 }: SelectableAccountProps) => {
   const [stopAnimation, setStopAnimation] = useState<boolean>(false);
-  const isNetworkBasedAddAccountFlowEnabled = useFeature("llmNetworkBasedAddAccountFlow")?.enabled;
   const { space } = useTheme();
 
   const swipeableRow = useRef<Swipeable>(null);
@@ -278,21 +251,15 @@ const SelectableAccount = ({
     if (!onAccountNameChange) return;
 
     swipedAccountSubject.next({ row: -1, list: -1 });
-    if (isNetworkBasedAddAccountFlowEnabled) {
-      navigation.navigate(NavigatorName.AccountSettings, {
-        screen: ScreenName.EditAccountName,
-        params: {
-          onAccountNameChange,
-          account,
-        },
-      });
-    } else {
-      navigation.navigate(ScreenName.EditAccountName, {
+
+    navigation.navigate(NavigatorName.AccountSettings, {
+      screen: ScreenName.EditAccountName,
+      params: {
         onAccountNameChange,
         account,
-      });
-    }
-  }, [account, navigation, onAccountNameChange, isNetworkBasedAddAccountFlowEnabled]);
+      },
+    });
+  }, [account, navigation, onAccountNameChange]);
 
   const renderLeftActions = useCallback(
     (
@@ -322,10 +289,8 @@ const SelectableAccount = ({
     [editNameButtonWidth, setLayout, editAccountName],
   );
 
-  const subAccountCount = account.subAccounts && account.subAccounts.length;
-  const isToken = listTokenTypesForCryptoCurrency(account.currency).length > 0;
   const { animatedStyle, startAnimation } = useItemAnimation();
-  const styles = getConditionalStyles(isNetworkBasedAddAccountFlowEnabled, space);
+  const styles = getStyles(space);
 
   useEffect(() => {
     startAnimation();
@@ -339,37 +304,15 @@ const SelectableAccount = ({
         alignItems="center"
         opacity={isDisabled ? 0.4 : 1}
       >
-        {isNetworkBasedAddAccountFlowEnabled ? (
-          <Flex flex={1} flexDirection="row" alignItems="center">
-            <AccountItem
-              account={account as Account}
-              balance={useFullBalance ? account.balance : account.spendableBalance}
-            />
-          </Flex>
-        ) : (
-          <Flex flex={1}>
-            <AccountCard
-              useFullBalance={useFullBalance}
-              account={account}
-              AccountSubTitle={
-                subAccountCount && !isDisabled ? (
-                  <Flex marginTop={2}>
-                    <Text fontWeight="semiBold" variant="small" color="pillActiveForeground">
-                      <Trans
-                        i18nKey={`selectableAccountsList.${isToken ? "tokenCount" : "subaccountCount"}`}
-                        count={subAccountCount}
-                        values={{ count: subAccountCount }}
-                      />
-                    </Text>
-                  </Flex>
-                ) : null
-              }
-            />
-          </Flex>
-        )}
+        <Flex flex={1} flexDirection="row" alignItems="center">
+          <AccountItem
+            account={account as Account}
+            balance={useFullBalance ? account.balance : account.spendableBalance}
+          />
+        </Flex>
 
         {!isDisabled && (
-          <Flex marginLeft={isNetworkBasedAddAccountFlowEnabled ? 0 : 4}>
+          <Flex marginLeft={0}>
             <CheckBox onChange={handlePress} isChecked={!!isSelected} />
           </Flex>
         )}
@@ -408,8 +351,7 @@ type HeaderProps = {
 
 const Header = ({ text, areAllSelected, onSelectAll, onUnselectAll }: HeaderProps) => {
   const shouldDisplaySelectAll = !!onSelectAll && !!onUnselectAll;
-  const llmNetworkBasedAddAccountFlowEnabled = useFeature("llmNetworkBasedAddAccountFlow")?.enabled;
-  const styles = getConditionalStyles(llmNetworkBasedAddAccountFlowEnabled);
+  const styles = getStyles();
 
   return (
     <Flex {...styles.header} flexDirection="row" alignItems="center">

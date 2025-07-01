@@ -28,7 +28,6 @@ import SignTransactionNavigator from "./SignTransactionNavigator";
 import FreezeNavigator from "./FreezeNavigator";
 import UnfreezeNavigator from "./UnfreezeNavigator";
 import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
-import AddAccountsNavigator from "./AddAccountsNavigator";
 import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
 import CardLiveAppNavigator from "./CardLiveAppNavigator";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
@@ -115,7 +114,6 @@ export default function BaseNavigator() {
   const isAccountsEmpty = useSelector(hasNoAccountsSelector);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
   const web3hub = useFeature("web3hub");
-  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
   const llmAccountListUI = useFeature("llmAccountListUI");
 
   return (
@@ -597,25 +595,22 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.AddAccounts}
-          component={
-            llmNetworkBasedAddAccountFlow?.enabled ? AddAccountsV2Navigator : AddAccountsNavigator
-          }
+          component={AddAccountsV2Navigator}
           options={{ headerShown: false }}
         />
-        {llmNetworkBasedAddAccountFlow?.enabled && (
-          <Stack.Screen
-            name={NavigatorName.DeviceSelection}
-            component={DeviceSelectionNavigator}
-            options={{ headerShown: false }}
-          />
-        )}
-        {llmNetworkBasedAddAccountFlow?.enabled && (
-          <Stack.Screen
-            name={NavigatorName.AssetSelection}
-            component={AssetSelectionNavigator}
-            options={{ headerShown: false }}
-          />
-        )}
+
+        <Stack.Screen
+          name={NavigatorName.DeviceSelection}
+          component={DeviceSelectionNavigator}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name={NavigatorName.AssetSelection}
+          component={AssetSelectionNavigator}
+          options={{ headerShown: false }}
+        />
+
         {llmAccountListUI?.enabled && (
           <Stack.Screen
             name={NavigatorName.Assets}

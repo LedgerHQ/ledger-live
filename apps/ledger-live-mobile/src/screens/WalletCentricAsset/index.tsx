@@ -24,7 +24,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import EmptyAccountCard from "../Account/EmptyAccountCard";
 import CurrencyBackgroundGradient from "~/components/CurrencyBackgroundGradient";
 import Header from "./Header";
-import { track, TrackScreen } from "~/analytics";
+import { TrackScreen } from "~/analytics";
 import { FabAssetActions } from "~/components/FabActions/actionsList/asset";
 import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -33,7 +33,6 @@ import AssetMarketSection from "./AssetMarketSection";
 import AssetGraph from "./AssetGraph";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
 import { LoadingBasedGroupedCurrencies, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -51,7 +50,6 @@ type NavigationProps = BaseComposite<
 const AssetScreen = ({ route }: NavigationProps) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const { currency } = route?.params;
   const cryptoAccounts = useSelector(
@@ -108,38 +106,28 @@ const AssetScreen = ({ route }: NavigationProps) => {
   );
 
   const onAddAccount = useCallback(() => {
-    if (llmNetworkBasedAddAccountFlow?.enabled && currency) {
-      if (provider && provider?.currenciesByNetwork.length > 1) {
-        navigation.navigate(NavigatorName.AssetSelection, {
-          screen: ScreenName.SelectNetwork,
-          params: {
-            currency: currency.id,
-            context: AddAccountContexts.AddAccounts,
-            sourceScreenName: ScreenName.Asset,
-          },
-        });
-      } else {
-        navigation.navigate(NavigatorName.DeviceSelection, {
-          screen: ScreenName.SelectDevice,
-          params: {
-            currency:
-              currency.type === "TokenCurrency"
-                ? currency.parentCurrency
-                : (currency as CryptoCurrency),
-            context: AddAccountContexts.AddAccounts,
-          },
-        });
-      }
-    } else {
-      track("button_clicked", {
-        button: "Add new",
+    if (provider && provider?.currenciesByNetwork.length > 1) {
+      navigation.navigate(NavigatorName.AssetSelection, {
+        screen: ScreenName.SelectNetwork,
+        params: {
+          currency: currency.id,
+          context: AddAccountContexts.AddAccounts,
+          sourceScreenName: ScreenName.Asset,
+        },
       });
-      navigation.navigate(NavigatorName.AddAccounts, {
-        screen: undefined,
-        currency,
+    } else {
+      navigation.navigate(NavigatorName.DeviceSelection, {
+        screen: ScreenName.SelectDevice,
+        params: {
+          currency:
+            currency.type === "TokenCurrency"
+              ? currency.parentCurrency
+              : (currency as CryptoCurrency),
+          context: AddAccountContexts.AddAccounts,
+        },
       });
     }
-  }, [llmNetworkBasedAddAccountFlow?.enabled, currency, provider, navigation]);
+  }, [currency, provider, navigation]);
 
   let currencyConfig: CurrencyConfig | undefined = undefined;
   if (isCryptoCurrency(currency)) {

@@ -349,12 +349,10 @@ export const DeeplinksProvider = ({
   const userAcceptedTerms = useGeneralTermsAccepted();
   const storylyContext = useStorylyContext();
   const buySellUiFlag = useFeature("buySellUi");
-  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
   const llmAccountListUI = useFeature("llmAccountListUI");
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
-  const AddAccountNavigatorEntryPoint = llmNetworkBasedAddAccountFlow?.enabled
-    ? NavigatorName.AssetSelection
-    : NavigatorName.AddAccounts; // both navigators share the same ScreenName.AddAccountsSelectCrypto screen
+  const AddAccountNavigatorEntryPoint = NavigatorName.AssetSelection;
+
   const AccountsListScreenName = llmAccountListUI?.enabled
     ? ScreenName.AccountsList
     : ScreenName.Accounts;

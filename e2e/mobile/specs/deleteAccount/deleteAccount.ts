@@ -11,7 +11,6 @@ export function runDeleteAccountTest(
         speculosApp: account.currency.speculosApp,
         featureFlags: {
           llmAccountListUI: { enabled: true },
-          llmNetworkBasedAddAccountFlow: { enabled: true },
         },
         cliCommands: [
           async (userdataPath?: string) =>

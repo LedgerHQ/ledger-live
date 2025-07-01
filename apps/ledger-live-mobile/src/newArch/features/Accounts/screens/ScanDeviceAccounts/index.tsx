@@ -6,7 +6,6 @@ import Config from "react-native-config";
 import styled, { useTheme } from "styled-components/native";
 
 import type { DerivationMode } from "@ledgerhq/types-live";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 import { accountsSelector } from "~/reducers/accounts";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
@@ -46,8 +45,6 @@ function ScanDeviceAccounts() {
 
   const existingAccounts = useSelector(accountsSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
-
-  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
   const { t } = useTranslation();
   const route = useRoute<ScanDeviceAccountsNavigationProps["route"]>();
   const { context, sourceScreenName } = route.params || {};
@@ -145,11 +142,7 @@ function ScanDeviceAccounts() {
                       values={{
                         count: data.length,
                       }}
-                      i18nKey={
-                        llmNetworkBasedAddAccountFlow?.enabled
-                          ? `addAccounts.scanDeviceAccounts.sections.${id}.title`
-                          : `addAccounts.sections.${id}.title`
-                      }
+                      i18nKey={`addAccounts.scanDeviceAccounts.sections.${id}.title`}
                     />
                   ) : null
                 }
