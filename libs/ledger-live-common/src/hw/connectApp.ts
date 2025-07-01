@@ -1,6 +1,6 @@
 import semver from "semver";
-import { Observable, concat, from, of, throwError, defer, merge } from "rxjs";
-import { mergeMap, concatMap, map, catchError, delay } from "rxjs/operators";
+import { Observable, concat, from, of, throwError, defer, merge, Subject } from "rxjs";
+import { mergeMap, concatMap, map, catchError, delay, switchMap } from "rxjs/operators";
 import {
   TransportStatusError,
   FirmwareOrAppUpdateRequired,
@@ -35,9 +35,12 @@ import {
   type ApplicationConstraint,
   type ApplicationVersionConstraint,
   type DeviceManagementKit,
+  DeviceModelId,
+  DeviceSessionId,
 } from "@ledgerhq/device-management-kit";
 import { ConnectAppDeviceAction } from "@ledgerhq/live-dmk-shared";
 import { ConnectAppEventMapper } from "./connectAppEventMapper";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
 export type RequiresDerivation = {
   currencyId: string;
@@ -56,6 +59,13 @@ export type ConnectAppRequest = {
   requireLatestFirmware?: boolean;
   outdatedApp?: AppAndVersion;
   allowPartialDependencies: boolean;
+};
+
+export type DeviceDeprecation = {
+  warningClearSigning: boolean;
+  modelId: DeviceModelId;
+  date: string;
+  coin: CryptoCurrencyId;
 };
 
 export type AppAndVersion = {
@@ -93,6 +103,11 @@ export type ConnectAppEvent =
       itemProgress: number;
       currentAppOp: AppOp;
       installQueue: string[];
+    }
+  | {
+      type: "deprecation";
+      deprecate: DeviceDeprecation;
+      onContinue: () => void;
     }
   | {
       type: "some-apps-skipped";
@@ -507,6 +522,28 @@ const appNameToDependency = (appName: string): ApplicationDependency => {
   };
 };
 
+export class DeviceNotSupportedError extends Error {
+  constructor(modelId: string) {
+    super(modelId);
+    this.name = "DeviceNotSupportedError";
+  }
+}
+
+const throwErrorWhenLns = (dmk: DeviceManagementKit, sessionId: DeviceSessionId): void => {
+  const deadline = new Date("2025-08-01");
+  const today = new Date();
+  const isPast = today > deadline;
+  const canClearSign = false;
+  const { modelId } = dmk.getConnectedDevice({ sessionId });
+  if (modelId === DeviceModelId.NANO_S && isPast && !canClearSign) {
+    throw new DeviceNotSupportedError(modelId);
+  } else if (modelId === DeviceModelId.NANO_S && isPast && canClearSign) {
+    throw new DeviceNotSupportedError("warning");
+  } else if (modelId === DeviceModelId.NANO_S && !isPast) {
+    throw new DeviceNotSupportedError("info");
+  }
+};
+
 export default function connectAppFactory(
   {
     isLdmkConnectAppEnabled,
@@ -531,30 +568,86 @@ export default function connectAppFactory(
         return cmd(transport, { deviceId, request });
       }
       const { dmk, sessionId } = transport;
-      const deviceAction = new ConnectAppDeviceAction({
-        input: {
-          application: appNameToDependency(appName),
-          dependencies: dependencies ? dependencies.map(name => ({ name })) : [],
-          requireLatestFirmware,
-          allowMissingApplication: allowPartialDependencies,
-          unlockTimeout: 0, // Expect to fail immediately when device is locked
-          requiredDerivation: requiresDerivation
-            ? async () => {
-                const { currencyId, ...derivationRest } = requiresDerivation;
-                const derivation = await getAddress(transport, {
-                  currency: getCryptoCurrencyById(currencyId),
-                  ...derivationRest,
-                });
-                return derivation.address;
-              }
-            : undefined,
-        },
-      });
-      const observable = dmk.executeDeviceAction({
-        sessionId,
-        deviceAction,
-      });
-      return new ConnectAppEventMapper(dmk, sessionId, appName, observable).map();
+
+      const connectApp = (): Observable<ConnectAppEvent> => {
+        console.log("next");
+        const deviceAction = new ConnectAppDeviceAction({
+          input: {
+            application: appNameToDependency(appName),
+            dependencies: dependencies ? dependencies.map(name => ({ name })) : [],
+            requireLatestFirmware,
+            allowMissingApplication: allowPartialDependencies,
+            unlockTimeout: 0,
+            requiredDerivation: requiresDerivation
+              ? async () => {
+                  const { currencyId, ...derivationRest } = requiresDerivation;
+                  const derivation = await getAddress(transport, {
+                    currency: getCryptoCurrencyById(currencyId),
+                    ...derivationRest,
+                  });
+                  return derivation.address;
+                }
+              : undefined,
+          },
+        });
+
+        const observable = dmk.executeDeviceAction({
+          sessionId,
+          deviceAction,
+        });
+
+        return new ConnectAppEventMapper(dmk, sessionId, appName, observable).map();
+      };
+      console.log("in");
+      try {
+        throwErrorWhenLns(dmk, sessionId);
+      } catch (error) {
+        if (error instanceof DeviceNotSupportedError) {
+          if (error.message === "warning") {
+            const continuation$ = new Subject<void>();
+            const deprecationEvent: ConnectAppEvent = {
+              type: "deprecation",
+              deprecate: {
+                warningClearSigning: true,
+                date: "06.01.2002",
+                modelId: DeviceModelId.NANO_S,
+                coin: "polkadot",
+              },
+              onContinue: () => {
+                continuation$.next();
+              },
+            };
+
+            return new Observable<ConnectAppEvent>(subscriber => {
+              subscriber.next(deprecationEvent);
+              const sub = continuation$.pipe(switchMap(() => connectApp())).subscribe(subscriber);
+              return () => sub.unsubscribe();
+            });
+          } else if (error.message === "info") {
+            const continuation$ = new Subject<void>();
+            const deprecationEvent: ConnectAppEvent = {
+              type: "deprecation",
+              deprecate: {
+                warningClearSigning: false,
+                date: "06.01.2002",
+                modelId: DeviceModelId.NANO_S,
+                coin: "polkadot",
+              },
+              onContinue: () => {
+                continuation$.next();
+              },
+            };
+            return new Observable<ConnectAppEvent>(subscriber => {
+              subscriber.next(deprecationEvent);
+              const sub = continuation$.pipe(switchMap(() => connectApp())).subscribe(subscriber);
+              return () => sub.unsubscribe();
+            });
+          } else {
+            return throwError(error);
+          }
+        }
+      }
+      return connectApp();
     });
   };
 }
