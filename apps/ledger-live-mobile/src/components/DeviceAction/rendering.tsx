@@ -64,6 +64,11 @@ import ModalLock from "../ModalLock";
 import ProviderIcon from "../ProviderIcon";
 import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
+import { DeviceDeprecationError } from "@ledgerhq/live-common/errors";
+import {
+  DeviceDeprecationScreen,
+  DeviceDeprecationScreens,
+} from "./Screen/DeviceDeprecationScreen";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -624,6 +629,7 @@ export function renderError({
   Icon,
   iconColor,
   device,
+  coinName = "",
   hasExportLogButton,
 }: RawProps & {
   navigation?: StackNavigationProp<RootStackParamList>;
@@ -633,6 +639,7 @@ export function renderError({
   Icon?: React.ComponentProps<typeof GenericErrorView>["Icon"];
   iconColor?: string;
   device?: Device;
+  coinName?: string;
   hasExportLogButton?: boolean;
 }) {
   const onPress = () => {
@@ -661,12 +668,22 @@ export function renderError({
   if (error instanceof LockedDeviceError) {
     return renderLockedDeviceError({ t, onRetry, device });
   }
-
   // TODO Once we have the aligned Error renderings, the CTA list should be determined
   // by the error class, not patched like here.
   let showRetryIfAvailable = true;
   if (error instanceof PeerRemovedPairing) {
     showRetryIfAvailable = false;
+  }
+  if ((tmpError as Error).message === "device-deprecation") {
+    return (
+      <DeviceDeprecationScreen
+        coinName={coinName}
+        date={error.date}
+        onContinue={() => {}}
+        productName={getDeviceModel(device!.modelId)?.productName}
+        screenName={DeviceDeprecationScreens.errorScreen}
+      />
+    );
   }
 
   return (
