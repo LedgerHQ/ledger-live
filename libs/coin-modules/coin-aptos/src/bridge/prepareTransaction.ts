@@ -9,7 +9,7 @@ import {
   APTOS_MINIMUM_RESTAKE_IN_OCTAS,
   MIN_COINS_ON_SHARES_POOL_IN_OCTAS,
 } from "./../constants";
-import { getDelegationOpMaxAmount } from "../logic/staking";
+import { getDelegationOpMaxAmount, getStakingPosition } from "../logic/staking";
 
 const checkSendConditions = (transaction: Transaction, account: AptosAccount) =>
   transaction.mode === "send" && transaction.amount.gt(account.spendableBalance);
@@ -30,28 +30,19 @@ const checkStakeConditions = (transaction: Transaction, account: AptosAccount) =
 };
 
 const checkRestakeConditions = (transaction: Transaction, account: AptosAccount) => {
-  const stakingPosition =
-    account.aptosResources?.stakingPositions?.find(
-      stakingPosition => stakingPosition.validatorId === transaction.recipient,
-    )?.pendingInactive || 0;
+  const stakingPosition = getStakingPosition(account, transaction.recipient)?.pendingInactive || 0;
 
   return transaction.mode === "restake" && transaction.amount.gt(stakingPosition);
 };
 
 const checkUnstakeConditions = (transaction: Transaction, account: AptosAccount) => {
-  const stakingPosition =
-    account.aptosResources?.stakingPositions?.find(
-      stakingPosition => stakingPosition.validatorId === transaction.recipient,
-    )?.active || 0;
+  const stakingPosition = getStakingPosition(account, transaction.recipient)?.active || 0;
 
   return transaction.mode === "unstake" && transaction.amount.gt(stakingPosition);
 };
 
 const checkWithdrawConditions = (transaction: Transaction, account: AptosAccount) => {
-  const stakingPosition =
-    account.aptosResources?.stakingPositions?.find(
-      stakingPosition => stakingPosition.validatorId === transaction.recipient,
-    )?.inactive || 0;
+  const stakingPosition = getStakingPosition(account, transaction.recipient)?.inactive || 0;
 
   return transaction.mode === "withdraw" && transaction.amount.gt(stakingPosition);
 };

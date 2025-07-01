@@ -57,6 +57,11 @@ export const canRestake = (
   return stakingPosition.pendingInactive.gt(0);
 };
 
+export const getStakingPosition = (account: AptosAccount, validatorAddress: string) =>
+  (account.aptosResources?.stakingPositions ?? []).find(
+    stakingPosition => stakingPosition.validatorId === validatorAddress,
+  );
+
 export const getDelegationOpMaxAmount = (
   account: AptosAccount,
   validatorAddress: string,
@@ -64,9 +69,7 @@ export const getDelegationOpMaxAmount = (
 ): BigNumber => {
   let maxAmount: BigNumber | undefined;
 
-  const stakingPosition = (account.aptosResources?.stakingPositions ?? []).find(
-    ({ validatorId }) => validatorId === validatorAddress,
-  );
+  const stakingPosition = getStakingPosition(account, validatorAddress);
 
   switch (mode) {
     case "unstake":

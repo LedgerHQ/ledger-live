@@ -27,6 +27,7 @@ import {
   MIN_COINS_ON_SHARES_POOL_IN_OCTAS,
 } from "../constants";
 import { TokenAccount } from "@ledgerhq/types-live";
+import { getStakingPosition } from "../logic/staking";
 
 const checkSendTransaction = (
   t: Transaction,
@@ -198,9 +199,7 @@ const getTransactionStatus = async (
   const estimatedFees = t.fees || BigNumber(0);
   const tokenAccount = getTokenAccount(a, t);
 
-  const stakingPosition = (a.aptosResources?.stakingPositions ?? []).find(
-    stakingPosition => stakingPosition.validatorId === t.recipient,
-  );
+  const stakingPosition = getStakingPosition(a, t.recipient);
 
   if (!t.useAllAmount && t.amount.lte(0)) {
     errors.amount = new AmountRequired();
