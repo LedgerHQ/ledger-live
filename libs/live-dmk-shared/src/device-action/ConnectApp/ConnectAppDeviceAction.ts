@@ -21,13 +21,16 @@ import {
   XStateDeviceAction,
 } from "@ledgerhq/device-management-kit";
 
-import type {
-  ConnectAppDerivation,
-  ConnectAppDAOutput,
-  ConnectAppDAInput,
-  ConnectAppDAError,
-  ConnectAppDAIntermediateValue,
+import {
+  type ConnectAppDerivation,
+  type ConnectAppDAOutput,
+  type ConnectAppDAInput,
+  type ConnectAppDAError,
+  type ConnectAppDAIntermediateValue,
+  type DeviceDeprecationPayload,
+  UserInteractionRequiredLL,
 } from "./types";
+import { dmkToLedgerDeviceIdMap } from "../../config/dmkToLedgerDeviceIdMap";
 
 type ConnectAppMachineInternalState = {
   readonly error: ConnectAppDAError | null;
@@ -36,6 +39,8 @@ type ConnectAppMachineInternalState = {
   readonly deviceMetadata: GetDeviceMetadataDAOutput | undefined;
   readonly installResult: InstallOrUpdateAppsDAOutput | undefined;
   readonly derivation: ConnectAppDerivation | undefined;
+  readonly deviceDeprecation: DeviceDeprecationPayload | undefined;
+  readonly deprecationShown: boolean;
 };
 
 export class ConnectAppDeviceAction extends XStateDeviceAction<
@@ -95,6 +100,67 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
       },
     }).makeStateMachine(internalApi);
 
+    function computeDeviceDeprecation(
+      apconfig: any,
+      modelId: DeviceModelId,
+    ): DeviceDeprecationPayload {
+      const now = new Date();
+      const fallbackDate = now;
+      const base = {
+        warningScreenVisible: false,
+        clearSigningScreenVisible: false,
+        errorScreenVisible: false,
+        modelId: dmkToLedgerDeviceIdMap[modelId],
+        date: fallbackDate,
+        warningScreenConfig: { exception: [], deprecatedFlow: [] as string[] },
+        clearSigningScreenConfig: { exception: [], deprecatedFlow: [] as string[] },
+        errorScreenConfig: { exception: [], deprecatedFlow: [] as string[] },
+        onThrowError: () => {},
+        onContinue: () => {},
+      };
+      const dd = apconfig.deviceDeprecated.find((d: any) => d.deviceModelId === modelId);
+      const errorDate = dd.errorScreen?.date ? new Date(dd.errorScreen.date) : null;
+      const infoDate = dd.infoScreen?.date ? new Date(dd.infoScreen.date) : null;
+      const clearDate = dd.warningClearSigningScreen?.date
+        ? new Date(dd.warningClearSigningScreen.date)
+        : null;
+
+      const data: DeviceDeprecationPayload = {
+        ...base,
+      };
+      data.date = errorDate || fallbackDate;
+
+      if (dd.errorScreen) {
+        data.errorScreenConfig = {
+          exception: dd.errorScreen.exception ?? [],
+          deprecatedFlow: dd.errorScreen.deprecatedFlow ?? [],
+        };
+        if (errorDate && errorDate < now) {
+          data.errorScreenVisible = true;
+        }
+      }
+      if (dd.infoScreen) {
+        data.warningScreenConfig = {
+          exception: dd.infoScreen.exception ?? [],
+          deprecatedFlow: dd.infoScreen.deprecatedFlow ?? [],
+        };
+        if (infoDate && infoDate < now) {
+          data.warningScreenVisible = true;
+        }
+      }
+
+      if (dd.warningClearSigningScreen) {
+        data.clearSigningScreenConfig = {
+          exception: dd.warningClearSigningScreen.exception ?? [],
+          deprecatedFlow: dd.warningClearSigningScreen.deprecatedFlow ?? [],
+        };
+        if (clearDate && clearDate < now) {
+          data.clearSigningScreenVisible = true;
+        }
+      }
+      return data;
+    }
+
     return setup({
       types: {
         input: {
@@ -128,6 +194,30 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
         }) => ConnectAppDeviceAction.isAppOpened(application, deviceStatus!, deviceModel!),
         requiresDerivation: ({ context }) => context.input.requiredDerivation !== undefined,
         hasError: ({ context }) => context._internalState.error !== null,
+        isDeprecation: ({ context }) => {
+          const cfg = context.input.appConfig;
+          const today = new Date();
+          const modelId = context._internalState.deviceModel;
+          if (!cfg?.deviceDeprecated?.length) return false;
+          return cfg.deviceDeprecated.some((dd: any) => {
+            if (dd.deviceModelId !== modelId) return false;
+            if (dd.errorScreen) {
+              const errorDate = dd.errorScreen?.date ? new Date(dd.errorScreen.date) : null;
+              if (errorDate && errorDate < today) return true;
+            }
+            if (dd.infoScreen) {
+              const infoDate = dd.infoScreen?.date ? new Date(dd.infoScreen.date) : null;
+              if (infoDate && infoDate < today) return true;
+            }
+            if (dd.warningClearSigningScreen) {
+              const clearDate = dd.warningClearSigningScreen?.date
+                ? new Date(dd.warningClearSigningScreen.date)
+                : null;
+              if (clearDate && clearDate < today) return true;
+            }
+            return false;
+          });
+        },
       },
       actions: {
         assignErrorFromEvent: assign({
@@ -149,10 +239,12 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
             unlockTimeout: _.input.unlockTimeout,
             allowMissingApplication: _.input.allowMissingApplication,
             requiredDerivation: _.input.requiredDerivation,
+            appConfig: _.input.appConfig,
           },
           intermediateValue: {
             requiredUserInteraction: UserInteractionRequired.None,
             installPlan: null,
+            deviceDeprecation: undefined,
           },
           _internalState: {
             error: null,
@@ -161,6 +253,8 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
             deviceMetadata: undefined,
             installResult: undefined,
             derivation: undefined,
+            deviceDeprecation: undefined,
+            deprecationShown: false,
           },
         };
       },
@@ -168,11 +262,15 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
         DeviceReady: {
           always: [
             {
+              guard: "isDeprecation",
+              target: "DeviceDeprecation",
+            },
+            {
               guard: not("shouldCheckDependencies"),
               target: "GetDeviceStatus",
             },
             {
-              target: "GetDeviceMetadata",
+              target: "DeprecationCheck",
             },
           ],
         },
@@ -192,7 +290,7 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
               }),
             },
             onDone: {
-              target: "GetDeviceStatusCheck",
+              target: "DeprecationCheck",
               actions: assign({
                 _internalState: _ => {
                   const state = internalApi.getDeviceSessionState();
@@ -216,6 +314,21 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
             },
           },
         },
+        DeprecationCheck: {
+          always: [
+            {
+              guard: "isDeprecation",
+              target: "DeviceDeprecation",
+            },
+            {
+              guard: "hasError",
+              target: "Error",
+            },
+            {
+              target: "GetDeviceStatusCheck",
+            },
+          ],
+        },
         GetDeviceStatusCheck: {
           always: [
             {
@@ -235,6 +348,58 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
             },
           ],
         },
+        DeviceDeprecation: {
+          entry: assign(({ context }) => {
+            const cfg = context.input.appConfig;
+            const modelId = context._internalState?.deviceModel;
+
+            if (!modelId) {
+              throw new Error("Device model ID is undefined");
+            }
+            const deviceDeprecation = computeDeviceDeprecation(cfg, modelId);
+            return {
+              intermediateValue: {
+                ...context.intermediateValue,
+                requiredUserInteraction: UserInteractionRequiredLL.DeviceDeprecation,
+                installPlan: null,
+                deviceDeprecation: deviceDeprecation,
+              },
+            };
+          }),
+          always: "waitForUiAnswer",
+        },
+
+        waitForUiAnswer: {
+          invoke: {
+            src: fromPromise(async ({ input }) => {
+              return new Promise<void>((resolve, reject) => {
+                const payload = input.deviceDeprecation;
+                if (!payload) {
+                  resolve();
+                  return;
+                }
+                payload.onContinue = (value?: string) => {
+                  if (value === "error") {
+                    reject(new Error("device-deprecation"));
+                    return;
+                  }
+                  resolve();
+                };
+              });
+            }),
+            input: ({ context }) => ({
+              deviceDeprecation: context.intermediateValue.deviceDeprecation,
+            }),
+            onDone: {
+              target: "GetDeviceStatusCheck",
+            },
+            onError: {
+              target: "Error",
+              actions: "assignErrorFromEvent",
+            },
+          },
+        },
+
         GetDeviceMetadata: {
           exit: assign({
             intermediateValue: _ => ({
