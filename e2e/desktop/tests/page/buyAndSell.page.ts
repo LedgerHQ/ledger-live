@@ -9,6 +9,9 @@ import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
 import { doubleDecodeGoToURL } from "../utils/urlUtils";
 import { getAccountAddressesFromAppJson } from "../utils/getAccountAddressesUtils";
 import { waitFor } from "../utils/waitFor";
+import { ModularAssetDrawer } from "./drawer/modular.asset.drawer";
+import { ModularNetworkDrawer } from "./drawer/modular.network.drawer";
+import { ModularAccountDrawer } from "./drawer/modular.account.drawer";
 
 interface ProviderConfig {
   buyParams: Record<string, (buySell: BuySell) => string | number>;
@@ -38,6 +41,9 @@ export class BuyAndSellPage extends WebViewAppPage {
   private saveRegionFiatOptionsSelector = "save-region-and-fiat-options";
 
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
+  private modularAssetDrawer = new ModularAssetDrawer(this.page);
+  private modularNetworkDrawer = new ModularNetworkDrawer(this.page);
+  private modularAccountDrawer = new ModularAccountDrawer(this.page);
 
   private providerConfigs: Record<string, ProviderConfig> = {
     [Provider.MOONPAY.uiName]: {
@@ -96,17 +102,44 @@ export class BuyAndSellPage extends WebViewAppPage {
 
   @step("Choose crypto asset if not selected")
   async chooseAssetIfNotSelected(account: AccountType) {
-    const isCryptoAssetSelected = await this.getWebViewElementByTestId(
-      this.cryptoCurrencySelector,
-    ).then(element => {
-      return element.getByText(account.currency.ticker).isVisible();
-    });
-
-    if (!isCryptoAssetSelected) {
-      await this.clickElement(this.cryptoCurrencySelector);
-      await this.chooseAssetDrawer.chooseFromAsset(account.currency.name);
-      await this.chooseAssetDrawer.selectAccountByName(account);
+    if (await this.isCorrectAssetAlreadySelected(account)) {
+      return;
     }
+
+    await this.clickElement(this.cryptoCurrencySelector);
+    await this.selectAssetInDrawer(account);
+  }
+
+  private async isCorrectAssetAlreadySelected(account: AccountType): Promise<boolean> {
+    const selectedTicker = await this.getWebViewElementByTestId(this.cryptoCurrencySelector);
+    const selectedTickerText = (await selectedTicker.textContent()) || "";
+
+    return (
+      selectedTickerText.includes(account.currency.ticker) ||
+      selectedTickerText.includes(account.currency.name)
+    );
+  }
+
+  private async selectAssetInDrawer(account: AccountType) {
+    const isModularDrawer = await this.modularAssetDrawer.isModularDrawerVisible();
+
+    if (isModularDrawer) {
+      await this.selectAssetInModularDrawer(account);
+    } else {
+      await this.selectAssetInLegacyDrawer(account);
+    }
+  }
+
+  private async selectAssetInModularDrawer(account: AccountType) {
+    await this.modularAssetDrawer.validateDrawer();
+    await this.modularAssetDrawer.selectAssetByTicker(account.currency);
+    await this.modularNetworkDrawer.selectNetwork(account.currency);
+    await this.modularAccountDrawer.selectAccountByName(account);
+  }
+
+  private async selectAssetInLegacyDrawer(account: AccountType) {
+    await this.chooseAssetDrawer.chooseFromAsset(account.currency.name);
+    await this.chooseAssetDrawer.selectAccountByName(account);
   }
 
   @step("Change region and currency")
