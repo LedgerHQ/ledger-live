@@ -54,6 +54,7 @@ import BackgroundBlue from "./assets/BackgroundBlue";
 import BackgroundRed from "./assets/BackgroundRed";
 import Animation from "~/components/Animation";
 import CHARON from "~/animations/device/charon/charon.json";
+import { ShadowedView } from "react-native-fast-shadow";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 
@@ -714,7 +715,73 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                   ) : null}
                   <Flex alignItems="center" justifyContent="center">
                     <Flex style={{ overflow: "visible", height: 100 }} mt={16} mb={24}>
-                      <Animation style={{ height: 100 }} source={CHARON} />
+                      <ShadowedView
+                        style={{
+                          shadowOpacity: 0.19,
+                          shadowRadius: 51,
+                          shadowOffset: {
+                            width: 0,
+                            height: 64,
+                          },
+                        }}
+                      >
+                        <ShadowedView
+                          style={{
+                            shadowOpacity: 0.14,
+                            shadowRadius: 21,
+                            shadowOffset: {
+                              width: 0,
+                              height: 26,
+                            },
+                          }}
+                        >
+                          <ShadowedView
+                            style={{
+                              shadowOpacity: 0.11,
+                              shadowRadius: 11,
+                              shadowOffset: {
+                                width: 0,
+                                height: 14,
+                              },
+                            }}
+                          >
+                            <ShadowedView
+                              style={{
+                                shadowOpacity: 0.09,
+                                shadowRadius: 6,
+                                shadowOffset: {
+                                  width: 0,
+                                  height: 8,
+                                },
+                              }}
+                            >
+                              <ShadowedView
+                                style={{
+                                  shadowOpacity: 0.08,
+                                  shadowRadius: 3,
+                                  shadowOffset: {
+                                    width: 0,
+                                    height: 4,
+                                  },
+                                }}
+                              >
+                                <ShadowedView
+                                  style={{
+                                    shadowOpacity: 0.05,
+                                    shadowRadius: 1,
+                                    shadowOffset: {
+                                      width: 0,
+                                      height: 2,
+                                    },
+                                  }}
+                                >
+                                  <Animation style={{ height: 100 }} source={CHARON} />
+                                </ShadowedView>
+                              </ShadowedView>
+                            </ShadowedView>
+                          </ShadowedView>
+                        </ShadowedView>
+                      </ShadowedView>
                     </Flex>
                     <Text variant="h5" fontWeight="semiBold" mb={24}>
                       {t("syncOnboarding.seedStep.backupCharon.title")}
