@@ -3,6 +3,7 @@ import { shouldUseTrustedInputForSegwit } from "@ledgerhq/hw-app-btc/shouldUseTr
 import { getDependencies } from "./polyfill";
 import { getEnv } from "@ledgerhq/live-env";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { DeviceModelId } from "@ledgerhq/device-management-kit";
 
 export function shouldUpgrade(appName: string, appVersion: string): boolean {
   if (getEnv("DISABLE_APP_VERSION_REQUIREMENTS")) return false;
@@ -42,13 +43,14 @@ export function mustUpgrade(appName: string, appVersion: string): boolean {
   return false;
 }
 
-export function getMinVersion(appName: string): string | undefined {
+export function getMinVersion(appName: string, model?: DeviceModelId): string | undefined {
   if (getEnv("DISABLE_APP_VERSION_REQUIREMENTS")) {
     return undefined;
   }
   // we should convert the app name to camel case and replace spaces with underscores to match the config convention in firebase
-  const minVersion = LiveConfig.getValueByKey(
+  const config = LiveConfig.getValueByKey(
     `config_nanoapp_${appName.toLowerCase().replace(/ /g, "_")}`,
-  )?.minVersion;
+  );
+  const minVersion = config?.[`${model?.toLowerCase()}MinVersion`] ?? config?.minVersion;
   return minVersion ? semver.coerce(minVersion)?.version : undefined;
 }

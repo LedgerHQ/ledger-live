@@ -76,7 +76,7 @@ describe("AccountWarningBanner", () => {
     render(<AccountWarningBanner currency={mockCurrency} />);
 
     expect(screen.getByTestId("deprecated-banner")).toBeInTheDocument();
-    expect(screen.getByText(/2025-12-31/i)).toBeInTheDocument();
+    expect(screen.getByText(/12\/31\/2025/i)).toBeInTheDocument();
   });
 
   test("does not render banner if currencyConfig is undefined", () => {

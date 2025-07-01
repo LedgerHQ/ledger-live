@@ -247,6 +247,15 @@ describe("fetchAndMergeProviderData", () => {
         ),
         version: 1,
       },
+      velora: {
+        type: "DEX",
+        useInExchangeApp: false,
+        displayName: "Velora",
+        termsOfUseUrl: "https://files.paraswap.io/tos_v4.pdf",
+        supportUrl: "https://help.paraswap.io/en/",
+        mainUrl: "https://www.velora.xyz/",
+        needsKYC: false,
+      },
     });
   });
 });
