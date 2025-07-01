@@ -1,10 +1,10 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { step } from "../misc/reporters/step";
-import { AppPage } from "./abstractClasses";
-import { ElectronApplication, expect } from "@playwright/test";
+import { WebViewAppPage } from "./webViewApp.page";
+import { expect } from "@playwright/test";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
 
-export class EarnPage extends AppPage {
+export class EarnPage extends WebViewAppPage {
   private earnMoreRewardTabButton = "tab-earn-more";
   private earnAppContainer = this.page.getByTestId("earn-app-container");
   private stakeCryptoAssetsButton = "stake-crypto-assets-button";
@@ -37,15 +37,15 @@ export class EarnPage extends AppPage {
   }
 
   @step("Go to assets tab")
-  async goToAssetsTab(electronApp: ElectronApplication) {
-    const [, webview] = electronApp.windows();
+  async goToAssetsTab() {
+    const webview = await this.getWebView();
     const buttonLocator = webview.locator(`[data-test-id="${this.tabAssetsButton}"]`);
     await buttonLocator.click();
   }
 
   @step("Go to earn more tab")
-  async goToEarnMoreTab(electronApp: ElectronApplication) {
-    const [, webview] = electronApp.windows();
+  async goToEarnMoreTab() {
+    const webview = await this.getWebView();
     const buttonLocator = webview.locator(`[data-test-id="${this.earnMoreRewardTabButton}"]`);
     if (await buttonLocator.isVisible()) {
       await buttonLocator.click();
@@ -53,38 +53,37 @@ export class EarnPage extends AppPage {
   }
 
   @step("Click on stake button for $1")
-  async clickStakeCurrencyButton(electronApp: ElectronApplication, account: string) {
-    const [, webview] = electronApp.windows();
+  async clickStakeCurrencyButton(account: string) {
+    const webview = await this.getWebView();
     const row = webview.locator("tr", { hasText: `${account}` });
     await row.getByRole("button", { name: "Earn" }).first().click();
   }
 
   @step("Expect live App to be visible")
-  async expectLiveAppToBeVisible(electronApp: ElectronApplication) {
-    const [, webview] = electronApp.windows();
+  async expectLiveAppToBeVisible() {
+    const webview = await this.getWebView();
     await expect(this.earnAppContainer).toBeVisible();
     await expect(webview.locator(`[data-test-id="${this.stakeCryptoAssetsButton}"]`)).toBeVisible();
   }
 
   @step("Verify rewards potential is visible")
-  async verifyRewardsPotentials(electronApp: ElectronApplication) {
-    const [, webview] = electronApp.windows();
-    await this.expectTextToBeVisible(electronApp, this.rewardsPotentialText);
+  async verifyRewardsPotentials() {
+    const webview = await this.getWebView();
+    await this.expectTextToBeVisible(this.rewardsPotentialText);
     await expect(webview.getByTestId(this.holdingsBalanceCard)).toBeVisible();
     await expect(webview.getByTestId(this.rewardsBalanceCard)).toBeVisible();
   }
 
   @step("Verify total rewards earned is visible")
-  async verifyTotalRewardsEarned(electronApp: ElectronApplication) {
-    const [, webview] = electronApp.windows();
-    await this.expectTextToBeVisible(electronApp, this.totalRewardsEarnedText);
-    await expect(webview.getByTestId(this.totalAssetsEarningRewardsCard)).toBeVisible();
-    await expect(webview.getByTestId(this.totalRewardsBalanceCard)).toBeVisible();
+  async verifyTotalRewardsEarned() {
+    await this.expectTextToBeVisible(this.totalRewardsEarnedText);
+    await this.verifyElementIsVisible(this.totalAssetsEarningRewardsCard);
+    await this.verifyElementIsVisible(this.totalRewardsBalanceCard);
   }
 
   @step("Verify Assets earning rewards is visible")
-  async verifyAssetsEarningRewards(electronApp: ElectronApplication, account: string) {
-    const [, webview] = electronApp.windows();
+  async verifyAssetsEarningRewards(account: string) {
+    const webview = await this.getWebView();
     await expect(
       webview.getByRole("heading", { name: this.assetsEarningRewardsText, exact: true }),
     ).toBeVisible();
@@ -92,23 +91,23 @@ export class EarnPage extends AppPage {
   }
 
   @step("Verify 'your eligible assets' is visible")
-  async verifyYourEligibleAssets(electronApp: ElectronApplication, account: string) {
-    const [, webview] = electronApp.windows();
-    await this.expectTextToBeVisible(electronApp, this.yourEligibleAssetsText);
+  async verifyYourEligibleAssets(account: string) {
+    const webview = await this.getWebView();
+    await this.expectTextToBeVisible(this.yourEligibleAssetsText);
     const row = webview.locator("tr", { hasText: `${account}` });
     await expect(row.getByRole("button", { name: "Earn" }).first()).toBeEnabled();
   }
 
   @step("Verify eligible assets are visible")
-  async verifyEligibleAssets(electronApp: ElectronApplication, account: Account) {
-    const [, webview] = electronApp.windows();
-    await this.expectTextToBeVisible(electronApp, this.eligibleAssetsText);
+  async verifyEligibleAssets(account: Account) {
+    const webview = await this.getWebView();
+    await this.expectTextToBeVisible(this.eligibleAssetsText);
     await expect(webview.getByTestId(this.learnMoreButton(account.currency.id))).toBeEnabled();
   }
 
   @step("Verify earn by stacking button is visible")
-  async verifyEarnByStackingButton(electronApp: ElectronApplication) {
-    const [, webview] = electronApp.windows();
+  async verifyEarnByStackingButton() {
+    const webview = await this.getWebView();
     const earnButton = webview.locator(`[data-test-id="${this.stakeCryptoAssetsButton}"]`);
     await expect(earnButton).toBeVisible();
     await expect(earnButton).toBeEnabled();
@@ -117,15 +116,8 @@ export class EarnPage extends AppPage {
   }
 
   @step("Verify provider URL")
-  async verifyProviderURL(
-    electronApp: ElectronApplication,
-    selectedProvider: string,
-    account: Account,
-  ) {
-    const newWindow = await electronApp.waitForEvent("window");
-
-    await newWindow.waitForLoadState();
-
+  async verifyProviderURL(selectedProvider: string, account: Account) {
+    const newWindow = await this.waitForNewWindow();
     const url = newWindow.url();
 
     switch (selectedProvider) {
@@ -151,15 +143,7 @@ export class EarnPage extends AppPage {
   }
 
   @step("Click on learn more button for $1")
-  async clickLeanrMoreButton(electronApp: ElectronApplication, currency: string) {
-    const [, webview] = electronApp.windows();
-    const buttonLocator = webview.getByTestId(this.learnMoreButton(currency));
-    await buttonLocator.click();
-  }
-
-  @step("Expect text to be visible")
-  async expectTextToBeVisible(electronApp: ElectronApplication, text: string) {
-    const [, webview] = electronApp.windows();
-    await expect(webview.getByText(text, { exact: true })).toBeVisible();
+  async clickLearnMoreButton(currency: string) {
+    await this.clickElement(this.learnMoreButton(currency));
   }
 }

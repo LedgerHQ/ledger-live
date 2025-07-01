@@ -47,7 +47,7 @@ export class Application extends PageHolder {
   public settings = new SettingsPage(this.page);
   public ledgerSync = new LedgerSyncDrawer(this.page);
   public swap = new SwapPage(this.page);
-  public earnDashboard = new EarnPage(this.page);
+  public earnDashboard = new EarnPage(this.page, this.electronApp);
   public swapDrawer = new SwapConfirmationDrawer(this.page);
   public delegateDrawer = new DelegateDrawer(this.page);
   public sendDrawer = new SendDrawer(this.page);
