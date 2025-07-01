@@ -64,6 +64,10 @@ import ModalLock from "../ModalLock";
 import ProviderIcon from "../ProviderIcon";
 import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
+import {
+  DeviceDeprecationScreen,
+  DeviceDeprecationScreens,
+} from "./Screen/DeviceDeprecationScreen";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -624,6 +628,7 @@ export function renderError({
   Icon,
   iconColor,
   device,
+  currencyName = "",
   hasExportLogButton,
 }: RawProps & {
   navigation?: StackNavigationProp<RootStackParamList>;
@@ -633,6 +638,7 @@ export function renderError({
   Icon?: React.ComponentProps<typeof GenericErrorView>["Icon"];
   iconColor?: string;
   device?: Device;
+  currencyName?: string;
   hasExportLogButton?: boolean;
 }) {
   const onPress = () => {
@@ -667,6 +673,17 @@ export function renderError({
   let showRetryIfAvailable = true;
   if (error instanceof PeerRemovedPairing) {
     showRetryIfAvailable = false;
+  }
+  if (error.message === "device-deprecation") {
+    return (
+      <DeviceDeprecationScreen
+        coinName={currencyName}
+        date={new Date()}
+        onContinue={() => {}}
+        productName={getDeviceModel(device!.modelId)?.productName}
+        screenName={DeviceDeprecationScreens.errorScreen}
+      />
+    );
   }
 
   return (
