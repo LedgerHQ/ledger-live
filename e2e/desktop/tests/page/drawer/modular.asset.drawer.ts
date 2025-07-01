@@ -3,7 +3,9 @@ import { Component } from "../abstractClasses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
 export class ModularAssetDrawer extends Component {
-  private drawerContent = this.page.getByTestId("modular-asset-selection-container");
+  private modularAssetSelectorContainer = this.page.getByTestId(
+    "modular-asset-selection-container",
+  );
   private searchInput = this.page.getByTestId("modular-asset-drawer-search-input");
   private closeButton = this.page.getByTestId("mad-close-button");
   private assetListContainer = this.page.getByTestId("asset-selector-list-container");
@@ -12,12 +14,12 @@ export class ModularAssetDrawer extends Component {
 
   @step("Validate modular asset drawer is visible")
   async isModularDrawerVisible(): Promise<boolean> {
-    return await this.drawerContent.isVisible();
+    return await this.modularAssetSelectorContainer.isVisible();
   }
 
   @step("Validate asset drawer elements")
   async validateDrawer() {
-    await this.drawerContent.waitFor();
+    await this.modularAssetSelectorContainer.waitFor();
     await this.searchInput.waitFor();
     await this.closeButton.waitFor();
     await this.assetListContainer.waitFor();
