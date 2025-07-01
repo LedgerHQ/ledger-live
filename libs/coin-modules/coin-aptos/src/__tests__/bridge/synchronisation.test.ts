@@ -15,6 +15,7 @@ import { createFixtureAccount } from "../../bridge/bridge.fixture";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { txsToOps } from "../../bridge/logic";
 import { AptosAccount } from "../../types";
+import { getEnv } from "@ledgerhq/live-env";
 
 jest.mock("@ledgerhq/coin-framework/account", () => {
   const originalModule = jest.requireActual("@ledgerhq/coin-framework/account");
@@ -2325,20 +2326,24 @@ describe("getStake", () => {
     const result = await getAccountShape(info, {} as SyncConfig);
 
     expect(result.aptosResources).toBeDefined();
-    expect(result.aptosResources?.stakingPositions).toHaveLength(1);
 
-    const position = result.aptosResources?.stakingPositions?.[0];
-    expect(position).toEqual({
-      active: BigNumber(mockDelegatorBalance[0]),
-      inactive: BigNumber(mockDelegatorBalance[1]),
-      pendingInactive: BigNumber(mockDelegatorBalance[2]),
-      validatorId: stakingOperations[0].recipients[0],
-    });
+    const stakingEnabled = getEnv("APTOS_ENABLE_STAKING") === true;
+    if (stakingEnabled) {
+      expect(result.aptosResources?.stakingPositions).toHaveLength(1);
 
-    expect(result.aptosResources?.activeBalance).toEqual(BigNumber(mockDelegatorBalance[0]));
-    expect(result.aptosResources?.inactiveBalance).toEqual(BigNumber(mockDelegatorBalance[1]));
-    expect(result.aptosResources?.pendingInactiveBalance).toEqual(
-      BigNumber(mockDelegatorBalance[2]),
-    );
+      const position = result.aptosResources?.stakingPositions?.[0];
+      expect(position).toEqual({
+        active: BigNumber(mockDelegatorBalance[0]),
+        inactive: BigNumber(mockDelegatorBalance[1]),
+        pendingInactive: BigNumber(mockDelegatorBalance[2]),
+        validatorId: stakingOperations[0].recipients[0],
+      });
+
+      expect(result.aptosResources?.activeBalance).toEqual(BigNumber(mockDelegatorBalance[0]));
+      expect(result.aptosResources?.inactiveBalance).toEqual(BigNumber(mockDelegatorBalance[1]));
+      expect(result.aptosResources?.pendingInactiveBalance).toEqual(
+        BigNumber(mockDelegatorBalance[2]),
+      );
+    }
   });
 });
