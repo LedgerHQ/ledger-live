@@ -13,13 +13,13 @@ import {
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import type { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
-import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
+import { AppAndVersion, DeviceDeprecationRules } from "@ledgerhq/live-common/hw/connectApp";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountLike, AnyMessage, DeviceInfo } from "@ledgerhq/types-live";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useTheme as useThemeFromStyledComponents } from "styled-components/native";
@@ -66,6 +66,14 @@ import { SettingsState } from "~/reducers/types";
 import { Theme } from "~/colors";
 import { useTrackTransactionChecksFlow } from "~/analytics/hooks/useTrackTransactionChecksFlow";
 import { useTrackDmkErrorsEvents } from "~/analytics/hooks/useTrackDmkErrorsEvents";
+import {
+  DeviceDeprecationScreen,
+  DeviceDeprecationScreens,
+} from "./Screen/DeviceDeprecationScreen";
+import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices/index";
+import { getCurrencyName, getFlowName } from "./utils";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { isDmkError } from "@ledgerhq/live-dmk-mobile";
 
 type Status = PartialNullable<{
   appAndVersion: AppAndVersion;
@@ -119,6 +127,7 @@ type Status = PartialNullable<{
   imageCommitRequested: boolean;
   transactionChecksOptInTriggered: boolean;
   transactionChecksOptIn: boolean;
+  deviceDeprecationRules?: DeviceDeprecationRules;
 }>;
 
 type Props<H extends Status, P> = {
@@ -182,6 +191,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     colors: { palette },
   } = useThemeFromStyledComponents();
 
+  const llmNanoSDeprecation = useFeature("llmNanoSDeprecation");
   const dispatch = useDispatch();
   const theme: "dark" | "light" = dark ? "dark" : "light";
   const { t } = useTranslation();
@@ -222,7 +232,10 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     listingApps,
     transactionChecksOptInTriggered,
     transactionChecksOptIn,
+    deviceDeprecationRules,
   } = status;
+
+  const [hasDisplayDeprecateWarning, setHasDisplayDeprecateWarning] = useState(false);
 
   useTrackMyLedgerSectionEvents({
     location: location === HOOKS_TRACKING_LOCATIONS.myLedgerDashboard ? location : undefined,
@@ -287,7 +300,6 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   });
 
   useTrackDmkErrorsEvents({ error });
-
   useEffect(() => {
     if (deviceInfo && device) {
       dispatch(
@@ -308,6 +320,93 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
 
   const walletState = useSelector(walletSelector);
   const settingsState = useSelector(settingsStoreSelector);
+
+  const currencyName: string = getCurrencyName(request);
+  if (deviceDeprecationRules && request) {
+    const { clearSigningScreenRules, warningScreenRules, errorScreenRules, date, modelId } =
+      deviceDeprecationRules;
+    const currentFlow = getFlowName(location, request);
+    const skippedDeprecations = settingsState.deprecationDoNotRemind;
+    const doSkipDeprecation = (exception: string[], deprecatedFlowExceptions: string[]) => {
+      return (
+        exception.includes(currencyName) ||
+        !deprecatedFlowExceptions.includes(currentFlow) ||
+        currentFlow === "other"
+      );
+    };
+    const alreadyDismissed = skippedDeprecations.includes(currencyName);
+    const skipWarningScreen =
+      doSkipDeprecation(
+        warningScreenRules?.exception || [],
+        warningScreenRules?.deprecatedFlow || [],
+      ) && alreadyDismissed;
+    const skipClearSigningScreen = doSkipDeprecation(
+      clearSigningScreenRules?.exception || [],
+      clearSigningScreenRules?.deprecatedFlow || [],
+    );
+    const skipErrorScreen = doSkipDeprecation(
+      errorScreenRules?.exception || [],
+      errorScreenRules?.deprecatedFlow || [],
+    );
+
+    const handleContinue = () => {
+      setHasDisplayDeprecateWarning(true);
+      deviceDeprecationRules.onContinue(false);
+    };
+    if (deviceDeprecationRules.errorScreenVisible) {
+      if (skipErrorScreen) {
+        deviceDeprecationRules.onContinue(false);
+      } else {
+        deviceDeprecationRules.onContinue(true);
+      }
+    } else if (!hasDisplayDeprecateWarning) {
+      if (deviceDeprecationRules.warningScreenVisible && !skipWarningScreen) {
+        return (
+          <DeviceDeprecationScreen
+            onContinue={handleContinue}
+            productName={getDeviceModel(modelId).productName}
+            screenName={DeviceDeprecationScreens.warningScreen}
+            displayClearSigningWarning={
+              deviceDeprecationRules.clearSigningScreenVisible && !skipClearSigningScreen
+            }
+            coinName={currencyName}
+            date={date}
+          />
+        );
+      } else if (deviceDeprecationRules.clearSigningScreenVisible && !skipClearSigningScreen) {
+        return (
+          <DeviceDeprecationScreen
+            coinName={currencyName}
+            date={date}
+            onContinue={handleContinue}
+            productName={getDeviceModel(modelId).productName}
+            screenName={DeviceDeprecationScreens.clearSigningScreen}
+          />
+        );
+      }
+    }
+    deviceDeprecationRules.onContinue(false);
+  }
+
+  // Temporary hardcoded rule for Nano S and Aptos / Hedera
+  // to remove once dmk is supported on Android with cable
+  if (llmNanoSDeprecation?.enabled) {
+    const flowName = getFlowName(location, request);
+    const isToDeprecate = ["send", "receive", "stake"].includes(flowName);
+    if (currencyName == "Aptos" || currencyName == "Hedera") {
+      if (device?.modelId === DeviceModelId.nanoX && isToDeprecate) {
+        return (
+          <DeviceDeprecationScreen
+            onContinue={() => {}}
+            productName={getDeviceModel(device.modelId).productName}
+            screenName={DeviceDeprecationScreens.errorScreen}
+            coinName={currencyName}
+            date={new Date()}
+          />
+        );
+      }
+    }
+  }
 
   if (displayUpgradeWarning && appAndVersion) {
     return renderWarningOutdated({
@@ -551,6 +650,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       colors,
       theme,
       device: device ?? undefined,
+      currencyName: currencyName,
     });
   }
 
