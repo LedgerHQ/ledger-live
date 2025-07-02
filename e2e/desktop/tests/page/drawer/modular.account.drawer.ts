@@ -12,7 +12,7 @@ export class ModularAccountDrawer extends Component {
     return await this.drawerContent.isVisible();
   }
 
-  @step("Select account by name: $0")
+  @step("Select account by name")
   async selectAccountByName(account: AccountType) {
     const isAccountDrawerVisible = await this.isModularAccountDrawerVisible();
     if (isAccountDrawerVisible) {

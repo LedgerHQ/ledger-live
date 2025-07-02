@@ -9,7 +9,7 @@ export class ModularNetworkDrawer extends Component {
   private networkItemByName = (name: string) => this.page.getByTestId(`network-item-name-${name}`);
   private firstNetworkItem = this.page.locator("[data-testid^='network-item-name-']").first();
 
-  @step("Select a network by name $0")
+  @step("Select a network by name")
   async selectNetwork(currency?: Currency) {
     const isNetworkDrawerVisible = await this.isNetworkDrawerVisible();
     if (isNetworkDrawerVisible) {

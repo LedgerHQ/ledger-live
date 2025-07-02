@@ -73,14 +73,14 @@ export class Currency {
   static readonly ETH_USDT = new Currency(
     "Tether USD",
     "USDT",
-    "ethereum/erc20/usd_tether__erc20_",
+    "ethereum",
     AppInfos.ETHEREUM,
     "0xdac17f958d2ee523a2206206994597c13d831ec7",
   );
   static readonly ETH_USDC = new Currency(
     "USD Coin",
     "USDC",
-    "ethereum/erc20/usd__coin",
+    "ethereum",
     AppInfos.ETHEREUM,
     "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
   );
