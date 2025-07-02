@@ -8,25 +8,31 @@ export const postSwapAccepted: PostSwapAccepted = async ({
   provider,
   swapId = "",
   transactionId,
+  swapAppVersion,
   ...rest
 }) => {
   if (isIntegrationTestEnv())
     return mockPostSwapAccepted({ provider, swapId, transactionId, ...rest });
 
   /**
-   * Since swapId is requiered by the endpoit, don't call it if we don't have
+   * Since swapId is required by the endpoint, don't call it if we don't have
    * this info
    */
   if (!swapId) {
     return null;
   }
   try {
-    const headers = getSwapUserIP();
+    const ipHeader = getSwapUserIP();
+    const headers = {
+      ...(ipHeader || {}),
+      ...(swapAppVersion ? { "x-swap-app-version": swapAppVersion } : {}),
+    };
+
     await network({
       method: "POST",
       url: `${getSwapAPIBaseURL()}/swap/accepted`,
       data: { provider, swapId, transactionId, ...rest },
-      ...(headers !== undefined ? { headers } : {}),
+      ...(Object.keys(headers).length > 0 ? { headers } : {}),
     });
   } catch (error) {
     console.error(error);
@@ -35,11 +41,16 @@ export const postSwapAccepted: PostSwapAccepted = async ({
   return null;
 };
 
-export const postSwapCancelled: PostSwapCancelled = async ({ provider, swapId = "", ...rest }) => {
+export const postSwapCancelled: PostSwapCancelled = async ({
+  provider,
+  swapId = "",
+  swapAppVersion,
+  ...rest
+}) => {
   if (isIntegrationTestEnv()) return mockPostSwapCancelled({ provider, swapId, ...rest });
 
   /**
-   * Since swapId is requiered by the endpoit, don't call it if we don't have
+   * Since swapId is required by the endpoint, don't call it if we don't have
    * this info
    */
   if (!swapId) {
@@ -47,10 +58,17 @@ export const postSwapCancelled: PostSwapCancelled = async ({ provider, swapId = 
   }
 
   try {
+    const ipHeader = getSwapUserIP();
+    const headers = {
+      ...(ipHeader || {}),
+      ...(swapAppVersion ? { "x-swap-app-version": swapAppVersion } : {}),
+    };
+
     await network({
       method: "POST",
       url: `${getSwapAPIBaseURL()}/swap/cancelled`,
       data: { provider, swapId, ...rest },
+      ...(Object.keys(headers).length > 0 ? { headers } : {}),
     });
   } catch (error) {
     console.error(error);

@@ -199,6 +199,7 @@ type SwapStateRequest = {
   targetCurrencyId: string;
   hardwareWalletType: DeviceModelId;
   swapType: TradeMethod;
+  swapAppVersion?: string;
 }>;
 
 export type SwapStateAcceptedRequest = SwapStateRequest & {
