@@ -1,5 +1,13 @@
 # @ledgerhq/cryptoassets
 
+## 13.21.0-nightly.1
+
+### Minor Changes
+
+- [#10598](https://github.com/LedgerHQ/ledger-live/pull/10598) [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - update sui cal data
+
+- [#10598](https://github.com/LedgerHQ/ledger-live/pull/10598) [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - Add SUI tokens send and receive support
+
 ## 13.21.0-nightly.0
 
 ### Minor Changes

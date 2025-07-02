@@ -1,5 +1,17 @@
 # @ledgerhq/live-dmk-desktop
 
+## 0.7.0-nightly.1
+
+### Minor Changes
+
+- [#10585](https://github.com/LedgerHQ/ledger-live/pull/10585) [`1e1e00b`](https://github.com/LedgerHQ/ledger-live/commit/1e1e00bee94a931970cb4250b895a6211b5d3cf7) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Add support for firmware IO revamp
+
+### Patch Changes
+
+- Updated dependencies [[`1e1e00b`](https://github.com/LedgerHQ/ledger-live/commit/1e1e00bee94a931970cb4250b895a6211b5d3cf7), [`f0865fc`](https://github.com/LedgerHQ/ledger-live/commit/f0865fcc46f712ba8730b175fa4f4b3897bb8cbf)]:
+  - @ledgerhq/live-common@34.40.0-nightly.1
+  - @ledgerhq/live-dmk-shared@0.10.0-nightly.0
+
 ## 0.6.1-nightly.0
 
 ### Patch Changes

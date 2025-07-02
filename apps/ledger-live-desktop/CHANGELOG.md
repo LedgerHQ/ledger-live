@@ -1,5 +1,45 @@
 # ledger-live-desktop
 
+## 2.120.0-nightly.1
+
+### Minor Changes
+
+- [#10759](https://github.com/LedgerHQ/ledger-live/pull/10759) [`35a6d83`](https://github.com/LedgerHQ/ledger-live/commit/35a6d83b8ae2fad7bf6408c127fc0b9d75f2194f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - ui quick wins mad add account
+
+- [#10729](https://github.com/LedgerHQ/ledger-live/pull/10729) [`6e35501`](https://github.com/LedgerHQ/ledger-live/commit/6e355018e501a5bc6d898dba6e7c6d6b1f6ecc57) Thanks [@LucasWerey](https://github.com/LucasWerey)! - ADD account - MAD - add analytics
+
+- [#10732](https://github.com/LedgerHQ/ledger-live/pull/10732) [`3e3633c`](https://github.com/LedgerHQ/ledger-live/commit/3e3633cf49821ecd9893f6107b315036694c8175) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove hover effect if there is no onclick params + fix layout issues in the FundScreen
+
+- [#10749](https://github.com/LedgerHQ/ledger-live/pull/10749) [`c5170c0`](https://github.com/LedgerHQ/ledger-live/commit/c5170c0d42ecbd143a108991cbdb849594b1ae74) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix “Install now and relaunch” link not clickable after switching language
+
+- [#10753](https://github.com/LedgerHQ/ledger-live/pull/10753) [`f0865fc`](https://github.com/LedgerHQ/ledger-live/commit/f0865fcc46f712ba8730b175fa4f4b3897bb8cbf) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - App version blocker
+
+### Patch Changes
+
+- [#10716](https://github.com/LedgerHQ/ledger-live/pull/10716) [`8708a87`](https://github.com/LedgerHQ/ledger-live/commit/8708a8706a6b2db08d3e57a193417e9d08323897) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - UI fixes for the ScanAccount screen in the new Add Account flow:
+
+  - Add a blur effect above the bottom button.
+  - Set the scrollbar width to none.
+  - Remove "src/helpers.types.ts" from libs/ui/packages/react/.unimportedrc.json.
+  - Hide the “stop scan” button if no account has been scanned yet.
+
+- Updated dependencies [[`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95), [`1e1e00b`](https://github.com/LedgerHQ/ledger-live/commit/1e1e00bee94a931970cb4250b895a6211b5d3cf7), [`35a6d83`](https://github.com/LedgerHQ/ledger-live/commit/35a6d83b8ae2fad7bf6408c127fc0b9d75f2194f), [`3e3633c`](https://github.com/LedgerHQ/ledger-live/commit/3e3633cf49821ecd9893f6107b315036694c8175), [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95), [`f0865fc`](https://github.com/LedgerHQ/ledger-live/commit/f0865fcc46f712ba8730b175fa4f4b3897bb8cbf)]:
+  - @ledgerhq/cryptoassets@13.21.0-nightly.1
+  - @ledgerhq/live-common@34.40.0-nightly.1
+  - @ledgerhq/live-dmk-desktop@0.7.0-nightly.1
+  - @ledgerhq/react-ui@0.32.0-nightly.0
+  - @ledgerhq/coin-framework@5.5.0-nightly.1
+  - @ledgerhq/coin-aptos@2.5.0-nightly.1
+  - @ledgerhq/coin-bitcoin@0.16.3-nightly.1
+  - @ledgerhq/coin-cosmos@0.16.1-nightly.1
+  - @ledgerhq/coin-evm@2.22.6-nightly.1
+  - @ledgerhq/coin-filecoin@1.9.12-nightly.1
+  - @ledgerhq/live-countervalues@0.5.12-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.41-nightly.1
+  - @ledgerhq/live-nft@0.8.12-nightly.1
+  - @ledgerhq/live-nft-react@0.9.12-nightly.1
+  - @ledgerhq/live-wallet@0.11.3-nightly.1
+
 ## 2.120.0-nightly.0
 
 ### Minor Changes

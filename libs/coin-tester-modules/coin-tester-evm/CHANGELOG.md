@@ -1,5 +1,19 @@
 # @ledgerhq/coin-tester-evm
 
+## 1.2.0-nightly.1
+
+### Minor Changes
+
+- [#10743](https://github.com/LedgerHQ/ledger-live/pull/10743) [`539ac89`](https://github.com/LedgerHQ/ledger-live/commit/539ac893ff233a7d90dfcd205c39e1403680a837) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-tester-evm): update Sonic url in coin tester
+
+### Patch Changes
+
+- Updated dependencies [[`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95), [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95)]:
+  - @ledgerhq/cryptoassets@13.21.0-nightly.1
+  - @ledgerhq/coin-framework@5.5.0-nightly.1
+  - @ledgerhq/coin-evm@2.22.6-nightly.1
+  - @ledgerhq/live-signer-evm@0.5.5-nightly.1
+
 ## 1.1.12-nightly.0
 
 ### Patch Changes
