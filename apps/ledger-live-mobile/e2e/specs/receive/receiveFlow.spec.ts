@@ -87,4 +87,15 @@ describe("Receive Flow", () => {
     await app.receive.doNotVerifyAddress();
     await app.receive.expectReceivePageIsDisplayed("XRP", "XRP 2");
   });
+
+  $TmsLink("B2CQA-3538");
+  it("Receive assets on a blacklisted address", async () => {
+    await openReceive();
+    await app.receive.selectAsset("ETH");
+    await app.receive.selectNetwork("ethereum");
+    await app.receive.selectAccount("Sanctioned Ethereum");
+    await app.receive.verifySanctionedModal();
+    await app.receive.closeSanctionedModal();
+    await app.receive.expectSecoundStepAccounts();
+  });
 });
