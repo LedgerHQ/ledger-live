@@ -3,7 +3,7 @@ import type { SuiAccount, Transaction } from "../types";
 import { craftTransaction, type CreateExtrinsicArg } from "../logic";
 
 export const extractExtrinsicArg = (transaction: Transaction): CreateExtrinsicArg =>
-  pick(transaction, ["mode", "amount", "recipient", "useAllAmount"]);
+  pick(transaction, ["mode", "amount", "recipient", "useAllAmount", "coinType"]);
 
 /**
  * @param {Account} account

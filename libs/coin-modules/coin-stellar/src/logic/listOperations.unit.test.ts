@@ -90,6 +90,7 @@ describe("listOperations", () => {
           },
           type: "OUT",
           value: 460600000n,
+          details: {},
         },
         {
           id: "transaction_hash1-operation_id2",
@@ -104,6 +105,7 @@ describe("listOperations", () => {
           },
           type: "OUT",
           value: 11100n,
+          details: {},
         },
         {
           id: "transaction_hash2-operation_id3",
@@ -118,6 +120,7 @@ describe("listOperations", () => {
           },
           type: "IN",
           value: 505000000n,
+          details: {},
         },
       ],
       "token3",
@@ -205,6 +208,7 @@ describe("listOperations", () => {
           },
           type: "OUT",
           value: 460600000n,
+          details: {},
         },
         {
           id: "transaction_hash1-operation_id2",
@@ -219,9 +223,61 @@ describe("listOperations", () => {
           },
           type: "OUT",
           value: 11100n,
+          details: {},
         },
       ],
       "",
+    ]);
+  });
+
+  it("should return memo if set", async () => {
+    jest.spyOn(OperationCallBuilder.prototype, "call").mockResolvedValue({
+      records: [
+        {
+          id: "operation_id1",
+          transaction_hash: "transaction_hash1",
+          paging_token: "token1",
+          source_account: "address",
+          from: "address",
+          to: "receiver1",
+          amount: "46.0600000",
+          type: HorizonApi.OperationResponseType.payment,
+          transaction_successful: true,
+          created_at: "2025-01-01",
+          transaction: () => ({
+            fee_charged: "111900",
+            ledger_attr: 42,
+            memo: "momo",
+            ledger: () => ({
+              hash: "block_hash1",
+              closed_at: "2025-01-01",
+            }),
+          }),
+        },
+      ],
+    } as any);
+
+    expect(await listOperations("address", { order: "asc", minHeight: 0 })).toEqual([
+      [
+        {
+          id: "transaction_hash1-operation_id1",
+          asset: { type: "native" },
+          senders: ["address"],
+          recipients: ["receiver1"],
+          tx: {
+            block: { hash: "block_hash1", height: 42, time: new Date("2025-01-01") },
+            date: new Date("2025-01-01"),
+            fees: 111900n,
+            hash: "transaction_hash1",
+          },
+          type: "OUT",
+          value: 460600000n,
+          details: {
+            memo: "momo",
+          },
+        },
+      ],
+      "token1",
     ]);
   });
 });

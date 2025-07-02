@@ -1,12 +1,15 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { AccountItem, AccountItemProps } from "./AccountItem";
-import { expect, within } from "@storybook/test";
+import { expect, fn, within } from "@storybook/test";
+
+const onClick = fn();
 
 const meta: Meta<typeof AccountItem> = {
   component: AccountItem,
   title: "PreLdls/Components/AccountItem",
   tags: ["autodocs"],
   args: {
+    onClick: onClick,
     account: {
       id: "12345",
       cryptoId: "bitcoin",
@@ -26,6 +29,7 @@ export const Default: Story = {};
 
 export const TestAccount: Story = {
   args: {
+    onClick: onClick,
     account: {
       id: "12345",
       cryptoId: "bitcoin",
@@ -59,6 +63,7 @@ export const TestAccount: Story = {
 
 export const TestWithoutProtocol: Story = {
   args: {
+    onClick: onClick,
     account: {
       id: "21345",
       cryptoId: "bitcoin",
@@ -80,6 +85,7 @@ export const TestWithoutProtocol: Story = {
 
 export const TestWithoutAddressIcon: Story = {
   args: {
+    onClick: onClick,
     account: {
       id: "bitcoin",
       name: "Main BTC",
@@ -100,6 +106,7 @@ export const TestWithoutAddressIcon: Story = {
 
 export const TestWithCheckbox: Story = {
   args: {
+    onClick: onClick,
     account: {
       address: "n4A9...Zgty",
       balance: "0.118",
@@ -129,6 +136,7 @@ export const TestWithCheckbox: Story = {
 
 export const TestWithArrow: Story = {
   args: {
+    onClick: onClick,
     account: {
       address: "n4A9...Zgty",
       cryptoId: "bitcoin",

@@ -37,7 +37,7 @@ export type AccountItemProps = {
   backgroundColor?: string;
 };
 
-const Wrapper = styled.div<{ backgroundColor?: string }>`
+const Wrapper = styled.div<{ backgroundColor?: string; isClickable: boolean }>`
   ${withTokens(
     "spacing-xxxs",
     "spacing-xxs",
@@ -53,8 +53,7 @@ const Wrapper = styled.div<{ backgroundColor?: string }>`
   )}
 
   display: flex;
-  padding: var(--margin-s);
-  cursor: pointer;
+  cursor: ${p => (p.isClickable ? "pointer" : "default")};
   border-radius: var(--radius-m);
   justify-content: space-between;
   align-items: center;
@@ -66,13 +65,19 @@ const Wrapper = styled.div<{ backgroundColor?: string }>`
 
   background-color: ${p => (p.backgroundColor ? p.backgroundColor : "transparent")};
 
-  :hover {
-    background-color: var(--colors-surface-transparent-hover);
-  }
+  ${p =>
+    p.isClickable
+      ? `
+    padding: var(--margin-s);
+    :hover {
+      background-color: var(--colors-surface-transparent-hover);
+    }
 
-  :active {
-    background-color: var(--colors-surface-transparent-pressed);
-  }
+    :active {
+      background-color: var(--colors-surface-transparent-pressed);
+    }
+  `
+      : ""}
 `;
 
 const ContentContainer = styled.div`
@@ -139,7 +144,7 @@ export const AccountItem = ({
   const { name, balance, fiatValue, protocol, address, ticker, cryptoId, parentId } = account;
 
   return (
-    <Wrapper onClick={onClick} backgroundColor={backgroundColor}>
+    <Wrapper onClick={onClick} backgroundColor={backgroundColor} isClickable={!!onClick}>
       <ContentContainer>
         <AccountInfoContainer>
           <NameRow>
