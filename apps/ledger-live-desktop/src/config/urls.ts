@@ -163,6 +163,7 @@ export const urls = {
   },
   hedera: {
     supportArticleLink: "https://support.ledger.com/article/4494505217565-zd",
+    staking: "https://support.ledger.com/article/Staking-Hedera-HBAR-through-Ledger-Live",
   },
   celo: {
     ledgerByFigmentTC:

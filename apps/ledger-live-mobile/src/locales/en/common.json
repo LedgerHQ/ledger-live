@@ -6810,7 +6810,7 @@
       },
       "delegated": {
         "title": "Delegated assets",
-        "description": "FIXME:"
+        "description": "When staking on Hedera, your full balance is delegated and remains liquid"
       },
       "claimable": {
         "title": "Claimable rewards"

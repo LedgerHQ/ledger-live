@@ -8,7 +8,7 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { base64ToUrlSafeBase64 } from "../bridge/utils";
 import { HederaOperationExtra } from "../types";
 import { HederaAddAccountError } from "../errors";
-import { HederaMirrorAccount } from "./types";
+import { HederaMirrorAccount, HederaMirrorNode } from "./types";
 
 const getMirrorApiUrl = (): string => getEnv("API_HEDERA_MIRROR");
 
@@ -87,6 +87,25 @@ export async function getAccountTransactions(
   }
 
   return transactions;
+}
+
+export async function getNodes(): Promise<HederaMirrorNode[]> {
+  const nodes: HederaMirrorNode[] = [];
+  const params = new URLSearchParams({
+    order: "desc",
+    limit: "100",
+  });
+
+  let nextUrl = `/api/v1/network/nodes?${params.toString()}`;
+
+  while (nextUrl) {
+    const res = await fetch(nextUrl);
+    const newNodes = res.data.nodes as HederaMirrorNode[];
+    nodes.push(...newNodes);
+    nextUrl = res.data.links.next;
+  }
+
+  return nodes;
 }
 
 export async function getOperationsForAccount(

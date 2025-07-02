@@ -16,14 +16,21 @@ export type NetworkInfoRaw = {
   family: "hedera";
 };
 
+export type UpdateAccountProperties = {
+  name: "updateAccount";
+  stakedNodeId?: number | null;
+};
+
 export type Transaction = TransactionCommon & {
   family: "hedera";
   memo?: string | undefined;
+  properties?: UpdateAccountProperties;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: "hedera";
   memo?: string | undefined;
+  properties?: UpdateAccountProperties;
 };
 
 export type TransactionStatus = TransactionStatusCommon;

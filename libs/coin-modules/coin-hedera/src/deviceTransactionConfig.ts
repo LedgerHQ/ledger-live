@@ -1,6 +1,8 @@
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "./types";
 import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
+import { isUpdateAccountTransaction } from "./logic";
+import BigNumber from "bignumber.js";
 
 function getDeviceTransactionConfig({
   transaction,
@@ -12,6 +14,34 @@ function getDeviceTransactionConfig({
   status: TransactionStatus;
 }): Array<DeviceTransactionField> {
   const fields: Array<DeviceTransactionField> = [];
+
+  if (isUpdateAccountTransaction(transaction)) {
+    fields.push({
+      type: "text",
+      label: "Method",
+      value: "Update Account",
+    });
+
+    if (transaction.properties.stakedNodeId !== undefined) {
+      const { stakedNodeId } = transaction.properties;
+
+      fields.push({
+        type: "text",
+        label: "Staked Node ID",
+        value: typeof stakedNodeId === "number" ? `${stakedNodeId + 1}` : "-",
+      });
+    }
+
+    if (transaction.memo) {
+      fields.push({
+        type: "text",
+        label: "Memo",
+        value: transaction.memo,
+      });
+    }
+
+    return fields;
+  }
 
   if (transaction.useAllAmount) {
     fields.push({

@@ -1,8 +1,8 @@
 diff --git a/package.json b/package.json
-index af44c5f5b98e37b06817c31523b6d0c080a8bf89..c20cbb9ba2bf6c27c2c719715e162e99aa4a950e 100644
+index 9d3d408efcbe95fbce8fb0ed700d6747918b00a4..ea6b1fd6b7ceccbb4126c6198928094552339c18 100644
 --- a/package.json
 +++ b/package.json
-@@ -21,7 +21,9 @@
+@@ -23,7 +23,9 @@
    "exports": {
      "./package.json": "./package.json",
      ".": {

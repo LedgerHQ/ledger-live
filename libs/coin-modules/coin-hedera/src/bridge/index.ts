@@ -17,6 +17,7 @@ import { getAccountShape, buildIterateResult } from "./synchronisation";
 import { buildSignOperation } from "./signOperation";
 import { broadcast } from "./broadcast";
 import { receive } from "./receive";
+import { getPreloadStrategy, hydrate, preload } from "../preload";
 
 function buildCurrencyBridge(signerContext: SignerContext<HederaSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -28,8 +29,9 @@ function buildCurrencyBridge(signerContext: SignerContext<HederaSigner>): Curren
   });
 
   return {
-    preload: () => Promise.resolve({}),
-    hydrate: () => {},
+    preload,
+    hydrate,
+    getPreloadStrategy,
     scanAccounts,
   };
 }
