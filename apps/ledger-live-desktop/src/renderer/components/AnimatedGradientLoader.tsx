@@ -1,43 +1,40 @@
-import React, { Fragment } from "react";
+import React from "react";
 import styled, { keyframes } from "styled-components";
 
-const waveAnimation = keyframes`
-  0% {
-    transform: translateX(-100%);
+const pulseAnimation = keyframes`
+  0%, 100% {
+    opacity: 0.3;
   }
-  100% {
-    transform: translateX(100%);
+  50% {
+    opacity: 0.6;
   }
 `;
 
 const LoaderContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 200px;
-  overflow: hidden;
+  height: 100%;
+  min-height: 250px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 `;
 
-const GradientWave = styled.div`
+const GradientBackground = styled.div`
   position: absolute;
-  width: 200%;
-  height: 100%;
-  left: -50%;
-  top: 0;
+  width: 100%;
+  height: 50%;
+  bottom: 0;
+  left: 0;
   background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(187, 176, 255, 0.1) 20%,
-    rgba(187, 176, 255, 0.3) 50%,
-    rgba(187, 176, 255, 0.1) 80%,
+    to top,
+    rgba(139, 128, 219, 0.4) 0%,
+    rgba(139, 128, 219, 0.2) 40%,
+    rgba(139, 128, 219, 0.05) 70%,
     transparent 100%
   );
-  animation: ${waveAnimation} 3s linear infinite;
-  mask-image: radial-gradient(ellipse 50% 50% at center, black 0%, transparent 70%);
-  mask-size: 100% 100%;
-  mask-repeat: no-repeat;
+  animation: ${pulseAnimation} 2.5s ease-in-out infinite;
 `;
 
 const LoaderText = styled.div`
@@ -59,11 +56,9 @@ export const AnimatedGradientLoader: React.FC<{ children: React.ReactNode }> = (
   children: React.ReactNode;
 }) => {
   return (
-    <Fragment>
-      <LoaderContainer>
-        <GradientWave />
-      </LoaderContainer>
+    <LoaderContainer>
       <LoaderText>{children}</LoaderText>
-    </Fragment>
+      <GradientBackground />
+    </LoaderContainer>
   );
 };
