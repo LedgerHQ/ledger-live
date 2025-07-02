@@ -5,7 +5,7 @@ import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enu
 export class ModularAccountDrawer extends Component {
   private drawerContent = this.page.getByTestId("modular-account-selection-container");
   private accountRowByName = (accountName: string) =>
-    this.page.getByTestId(`account-row-${accountName}`);
+    this.page.locator("[data-testid^='account-row-']").filter({ hasText: accountName });
 
   @step("Validate modular account drawer is visible")
   async isModularAccountDrawerVisible(): Promise<boolean> {

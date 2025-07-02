@@ -28,14 +28,13 @@ export class ModularAssetDrawer extends Component {
 
   @step("Select asset by ticker")
   async selectAssetByTicker(currency: Currency) {
-    await this.page.waitForFunction((tid: string) => {
-      const searchInputs = document.querySelectorAll(`[data-testid='${tid}']`);
-      return searchInputs.length === 1;
-    }, this.searchInputTestId);
+    await this.page.waitForSelector(`[data-testid="${this.searchInputTestId}"]`, {
+      state: "visible",
+    });
 
     const ticker = this.assetItemByTicker(currency.ticker).first();
     if (!(await ticker.isVisible())) {
-      await this.searchInput.fill(currency.ticker);
+      await this.searchInput.first().fill(currency.ticker);
       await ticker.isVisible();
     }
     await ticker.click();
