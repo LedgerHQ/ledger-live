@@ -18,25 +18,6 @@ type LLMinVersionConfig = {
   };
 };
 
-const checkLLmVersion = (
-  appVersion: string,
-  osVersion: string,
-  platform: "ios" | "android",
-  llmMinVersionConfig: LLMinVersionConfig["llm"],
-) => {
-  if (!llmMinVersionConfig[platform]) {
-    return false;
-  }
-
-  return llmMinVersionConfig[platform]
-    .filter(minVersionConfig =>
-      semver.satisfies(semver.coerce(osVersion), `>=${minVersionConfig.minOsVersion}`),
-    )
-    .reduce((acc, curr) => {
-      return acc || semver.satisfies(appVersion, `<${curr.version}`);
-    }, false);
-};
-
 export const useAppVersionBlockCheck = ({
   appVersion: uncoercedAppVersion,
   appKey,
@@ -50,16 +31,29 @@ export const useAppVersionBlockCheck = ({
   platform: "ios" | "android" | "macOS" | "windows" | "linux";
   getConfigValue?: typeof LiveConfig.getValueByKey;
 }) => {
-  const llMinVersionConfig = getConfigValue("config_ll_min_version");
+  const llMinVersionConfig: LLMinVersionConfig = getConfigValue("config_ll_min_version");
   const appVersion = semver.coerce(uncoercedAppVersion)?.version || "";
   let shouldUpdate = false;
 
-  if (!llMinVersionConfig) {
+  if (!llMinVersionConfig || !llMinVersionConfig[appKey][platform]) {
     return { shouldUpdate };
   }
-
   if (appKey === "llm" && (platform === "android" || platform === "ios") && osVersion) {
-    shouldUpdate = checkLLmVersion(appVersion, osVersion, platform, llMinVersionConfig[appKey]);
+    shouldUpdate = llMinVersionConfig[appKey][platform]
+      .filter(minVersionConfig =>
+        semver.satisfies(semver.coerce(osVersion), `>=${minVersionConfig.minOsVersion}`),
+      )
+      .reduce((acc, curr) => {
+        return acc || semver.satisfies(appVersion, `<${semver.coerce(curr.version)}`);
+      }, false);
+  } else if (
+    appKey === "lld" &&
+    (platform === "windows" || platform === "macOS" || platform === "linux")
+  ) {
+    shouldUpdate = semver.satisfies(
+      appVersion,
+      `<${semver.coerce(llMinVersionConfig[appKey][platform])}`,
+    );
   }
   return { shouldUpdate };
 };

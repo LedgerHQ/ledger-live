@@ -18,4 +18,5 @@ export interface AccountsWarningProps {
   currency: CryptoCurrency;
   navigateToFundAccount: (account: Account) => void;
   emptyAccount?: Account;
+  source: string;
 }

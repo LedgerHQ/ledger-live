@@ -67,14 +67,23 @@ export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, s
       autoCloseDrawer: boolean = true,
       onAccountSelected?: (account: Account) => void,
     ) => {
+      const onClose = () => {
+        setDrawer();
+        trackModularDrawerEvent("button_clicked", {
+          button: "Close",
+          flow: "add account",
+          page: currentRouteNameRef.current ?? "Unknown",
+        });
+      };
       if (featureNetworkBasedAddAccount?.enabled) {
         setDrawer(
           ModularDrawerAddAccountFlowManager,
           {
             currency,
+            source,
             onAccountSelected,
           },
-          { closeButtonComponent: CloseButton },
+          { closeButtonComponent: CloseButton, onRequestClose: onClose },
         );
       } else {
         const cryptoCurrency =
@@ -83,7 +92,7 @@ export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, s
         dispatch(openModal("MODAL_ADD_ACCOUNTS", { currency: cryptoCurrency }));
       }
     },
-    [dispatch, featureNetworkBasedAddAccount?.enabled],
+    [dispatch, featureNetworkBasedAddAccount?.enabled, source, trackModularDrawerEvent],
   );
 
   const openAssetFlow = useCallback(
