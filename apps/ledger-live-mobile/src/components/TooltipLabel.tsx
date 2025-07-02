@@ -10,9 +10,10 @@ type Props = {
   tooltip: React.ReactNode;
   color?: string;
   style?: LTextProps["style"];
+  testID?: string;
 };
 
-const TooltipLabel = ({ label, tooltip, color = "grey", style }: Props) => {
+const TooltipLabel = ({ label, tooltip, color = "grey", style, testID }: Props) => {
   const { colors } = useTheme();
   const [isOpened, setIsOpened] = useState<boolean>(false);
   const open = useCallback(() => setIsOpened(true), []);
@@ -20,7 +21,7 @@ const TooltipLabel = ({ label, tooltip, color = "grey", style }: Props) => {
   return (
     <>
       <TouchableOpacity style={styles.root} onPress={open}>
-        <LText style={[styles.label, style]} color={color}>
+        <LText style={[styles.label, style]} color={color} testID={testID}>
           {label}
         </LText>
         <Icon size={13} color={colors[color as keyof typeof colors]} name={"info-circle"} />

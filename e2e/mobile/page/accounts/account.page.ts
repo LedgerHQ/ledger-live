@@ -17,6 +17,7 @@ export default class AccountPage {
   accountSettingsButtonId = "account-settings-button";
   receiveButtonId = "account-quick-action-button-receive";
   sendButtonId = "account-quick-action-button-send";
+  swapButtonId = "account-quick-action-button-swap";
 
   accountGraph = (accountId: string) => getElementById(this.accountGraphId(accountId));
   accountBalance = (accountId: string) => getElementById(`account-balance-${accountId}`);
@@ -140,6 +141,12 @@ export default class AccountPage {
   async tapEarn() {
     await scrollToId(this.earnButtonId, this.accountScreenScrollView);
     await tapById(this.earnButtonId);
+  }
+
+  @Step("Tap on swap button")
+  async tapSwap() {
+    await scrollToId(this.swapButtonId, this.accountScreenScrollView);
+    await tapById(this.swapButtonId);
   }
 
   @Step("Navigate to token in account")
