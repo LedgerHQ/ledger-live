@@ -1,5 +1,5 @@
 import { addDelayBeforeInteractingWithDevice, openDeeplink } from "../../helpers/commonHelpers";
-import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
+import { Swap, SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { normalizeText } from "../../helpers/commonHelpers";
 import fs from "fs/promises";
@@ -143,7 +143,7 @@ export default class SwapPage {
   }
 
   @Step("Verify the amounts and accept swap")
-  async verifyAmountsAndAcceptSwap(swap: SwapType, amount: string) {
+  async verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
     await waitForElementById(this.confirmSwapOnDeviceDrawerId);
     await app.speculos.verifyAmountsAndAcceptSwap(swap, amount);
     await addDelayBeforeInteractingWithDevice();
@@ -151,7 +151,7 @@ export default class SwapPage {
   }
 
   @Step("Verify the amounts and reject swap")
-  async verifyAmountsAndRejectSwap(swap: SwapType, amount: string) {
+  async verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
     await waitForElementById(this.confirmSwapOnDeviceDrawerId);
     await app.speculos.verifyAmountsAndRejectSwap(swap, amount);
     await addDelayBeforeInteractingWithDevice();
