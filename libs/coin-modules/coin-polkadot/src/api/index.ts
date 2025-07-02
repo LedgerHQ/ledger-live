@@ -55,8 +55,9 @@ async function estimate(
 
 async function operations(
   address: string,
-  { minHeight }: Pagination,
+  pagination?: Pagination,
 ): Promise<[Operation<PolkadotAsset>[], string]> {
+  const minHeight = pagination?.minHeight ?? 0;
   const [ops, nextHeight] = await listOperations(address, { limit: 0, startAt: minHeight });
   return [ops, JSON.stringify(nextHeight)];
 }

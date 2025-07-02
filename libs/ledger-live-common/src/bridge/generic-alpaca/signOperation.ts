@@ -12,7 +12,7 @@ import { buildOptimisticOperation, transactionToIntent } from "./utils";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { Result } from "@ledgerhq/coin-framework/derivation";
 import { MapMemo, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
-import { StellarMemo } from "@ledgerhq/coin-stellar/lib/types/bridge";
+// import { StellarMemo } from "@ledgerhq/coin-stellar/lib/types/bridge";
 import BigNumber from "bignumber.js";
 
 /**
@@ -96,14 +96,15 @@ export const genericSignOperation =
             };
             txWithMemoTag.memo.memos.set("destinationTag", txMemo);
           }
-          const txWithMemo = transactionIntent as TransactionIntent<any, StellarMemo>;
+          const txWithMemo = transactionIntent as TransactionIntent<any, MapMemo<string, string>>;
           if (transaction["memoType"] && transaction["memoValue"]) {
             const txMemoType = String(transaction["memoType"]);
             const txMemoValue = String(transaction["memoValue"]);
             txWithMemo.memo = {
-              type: txMemoType as "NO_MEMO" | "MEMO_TEXT" | "MEMO_ID" | "MEMO_HASH" | "MEMO_RETURN",
-              value: txMemoValue,
+              type: "map",
+              memos: new Map(),
             };
+            txWithMemo.memo.memos.set(txMemoType, txMemoValue);
           }
           const txWithAsset = transactionIntent as TransactionIntent<any>;
           if (transaction["assetCode"] && transaction["assetIssuer"]) {

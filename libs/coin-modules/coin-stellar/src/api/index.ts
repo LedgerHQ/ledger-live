@@ -23,6 +23,7 @@ import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { xdr } from "@stellar/stellar-sdk";
 import { fetchSequence } from "../network";
+import { getEnv } from "@ledgerhq/live-env";
 export function createApi(config: StellarConfig): Api<StellarAsset, StellarMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
@@ -105,9 +106,17 @@ async function estimate(
 
 async function operations(
   address: string,
-  { minHeight }: Pagination,
+  pagination: Pagination | undefined,
+  lastPagingToken?: string,
 ): Promise<[Operation<StellarAsset>[], string]> {
-  return operationsFromHeight(address, minHeight);
+  if (pagination?.minHeight) {
+    return operationsFromHeight(address, pagination?.minHeight);
+  }
+  const isInitSync = lastPagingToken === "";
+  const newPagination = isInitSync
+    ? { limit: getEnv("API_STELLAR_HORIZON_INITIAL_FETCH_MAX_OPERATIONS"), minHeight: 0 }
+    : { pagingToken: lastPagingToken, minHeight: 0 };
+  return operationsFromHeight(address, newPagination.minHeight);
 }
 
 type PaginationState = {

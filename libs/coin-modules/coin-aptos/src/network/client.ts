@@ -228,10 +228,11 @@ export class AptosAPI {
 
   async listOperations(
     rawAddress: string,
-    pagination: Pagination,
+    pagination?: Pagination,
   ): Promise<[Operation<AptosAsset>[], string]> {
+    const minHeight = pagination?.minHeight ?? 0;
     const address = normalizeAddress(rawAddress);
-    const transactions = await this.getAccountInfo(address, pagination.minHeight.toString());
+    const transactions = await this.getAccountInfo(address, minHeight.toString());
     const newOperations = transactionsToOperations(address, transactions.transactions);
 
     return [newOperations, ""];

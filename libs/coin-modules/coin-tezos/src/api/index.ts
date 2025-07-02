@@ -170,7 +170,8 @@ async function operationsFromHeight(
 
 async function operations(
   address: string,
-  { minHeight }: Pagination,
+  pagination?: Pagination,
 ): Promise<[Operation<TezosAsset>[], string]> {
+  const minHeight = pagination?.minHeight ?? 0;
   return operationsFromHeight(address, minHeight);
 }

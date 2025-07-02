@@ -13,9 +13,10 @@ import { BoilerplateAsset } from "../../types";
  */
 export async function listOperations(
   address: string,
-  page: Pagination,
+  page?: Pagination,
 ): Promise<[Operation<BoilerplateAsset>[], string]> {
-  const transactions = await getTransactions(address, { from: page.minHeight });
+  const minHeight = page?.minHeight ?? 0;
+  const transactions = await getTransactions(address, { from: minHeight });
   return [transactions.map(convertToCoreOperation(address)), ""];
 }
 

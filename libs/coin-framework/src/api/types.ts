@@ -196,7 +196,8 @@ export type AlpacaApi<
   lastBlock: () => Promise<BlockInfo>;
   listOperations: (
     address: string,
-    pagination: Pagination,
+    pagination?: Pagination,
+    lastPagingToken?: string,
   ) => Promise<[Operation<AssetInfo>[], string]>;
 };
 

@@ -41,9 +41,9 @@ async function estimate(
 
 async function listOperations(
   address: string,
-  pagination: Pagination,
+  pagination?: Pagination,
 ): Promise<[Operation<TronAsset>[], string]> {
-  const { minHeight } = pagination;
+  const minHeight = pagination?.minHeight ?? 0;
   const options: Options = {
     softLimit: 200,
     minHeight: minHeight,

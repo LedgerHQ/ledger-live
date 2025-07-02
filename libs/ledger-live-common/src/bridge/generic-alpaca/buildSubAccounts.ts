@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Operation, OperationType, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
+import type { Operation, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
@@ -21,18 +21,22 @@ type BalanceAsset = {
   liquidity_pool_id?: string;
 };
 
-export type StellarOperation = Operation<StellarOperationExtra>;
+// export type StellarOperation = Operation<StellarOperationExtra>;
 
-export type StellarOperationExtra = {
-  pagingToken?: string;
-  assetCode?: string;
-  assetIssuer?: string;
-  assetAmount?: string | undefined;
-  ledgerOpType: OperationType;
-  memo?: string;
-  blockTime: Date;
-  index: string;
-};
+// export type StellarOperationExtra = {
+//   pagingToken?: string;
+//   assetCode?: string;
+//   assetIssuer?: string;
+//   assetAmount?: string | undefined;
+//   ledgerOpType: OperationType;
+//   memo?: string;
+//   blockTime: Date;
+//   index: string;
+// };
+
+export interface OperationCommon extends Operation {
+  extra: Record<string, any>;
+}
 
 export const getAssetIdFromTokenId = (tokenId: string): string => tokenId.split("/")[2];
 
@@ -48,7 +52,7 @@ function buildStellarTokenAccount({
   parentAccountId: string;
   stellarAsset: BalanceAsset;
   token: TokenCurrency;
-  operations: StellarOperation[];
+  operations: OperationCommon[];
 }): TokenAccount {
   const assetId = getAssetIdFromTokenId(token.id);
   const id = `${parentAccountId}+${assetId}`;
@@ -61,10 +65,10 @@ function buildStellarTokenAccount({
 
   const tokenOperations = operations.map(op => ({
     ...op,
-    id: encodeOperationId(id, op.hash, op.extra.ledgerOpType),
+    id: encodeOperationId(id, op.hash, op.extra?.ledgerOpType),
     accountId: id,
-    type: op.extra.ledgerOpType,
-    value: op.extra.assetAmount ? new BigNumber(op.extra.assetAmount) : op.value,
+    type: op.extra?.ledgerOpType,
+    value: op.extra?.assetAmount ? new BigNumber(op.extra?.assetAmount) : op.value,
   }));
 
   return {
@@ -94,7 +98,7 @@ export function buildSubAccounts({
   accountId: string;
   assets: BalanceAsset[];
   syncConfig: SyncConfig;
-  operations: StellarOperation[];
+  operations: OperationCommon[];
 }): TokenAccount[] | undefined {
   const { blacklistedTokenIds = [] } = syncConfig;
   const allTokens = listTokensForCryptoCurrency(currency);

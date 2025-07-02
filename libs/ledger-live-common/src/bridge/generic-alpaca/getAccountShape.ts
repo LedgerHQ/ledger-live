@@ -4,33 +4,33 @@ import BigNumber from "bignumber.js";
 import { getAlpacaApi } from "./alpaca";
 import { adaptCoreOperationToLiveOperation } from "./utils";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
-import { StellarBurnAddressError, StellarOperation } from "@ledgerhq/coin-stellar/types";
+import { StellarBurnAddressError } from "@ledgerhq/coin-stellar/types";
 import { STELLAR_BURN_ADDRESS } from "@ledgerhq/coin-stellar/logic";
-import { getEnv } from "@ledgerhq/live-env";
-import { Pagination } from "@ledgerhq/coin-framework/lib-es/api/types";
-import { buildSubAccounts } from "./buildSubAccounts";
+// import { getEnv } from "@ledgerhq/live-env";
+// import { Pagination } from "@ledgerhq/coin-framework/lib-es/api/types";
+import { buildSubAccounts, OperationCommon } from "./buildSubAccounts";
 
 // NOTE: we should recheck this whole thing
 // making sure we're covered by tests on this also
-function buildPaginationParams(
-  network: string,
-  isInitSync: boolean,
-  lastPagingToken: string,
-): Pagination {
-  switch (network) {
-    case "stellar":
-      return isInitSync
-        ? { limit: getEnv("API_STELLAR_HORIZON_INITIAL_FETCH_MAX_OPERATIONS"), minHeight: 0 }
-        : { pagingToken: lastPagingToken, minHeight: 0 };
+// function buildPaginationParams(
+//   network: string,
+//   isInitSync: boolean,
+//   lastPagingToken: string,
+// ): Pagination {
+//   switch (network) {
+//     case "stellar":
+//       return isInitSync
+//         ? { limit: getEnv("API_STELLAR_HORIZON_INITIAL_FETCH_MAX_OPERATIONS"), minHeight: 0 }
+//         : { pagingToken: lastPagingToken, minHeight: 0 };
 
-    case "xrp":
-    default:
-      // fallback to minHeight if pagingToken is not available
-      return {
-        minHeight: isInitSync ? 0 : parseInt(lastPagingToken || "0", 10),
-      };
-  }
-}
+//     case "xrp":
+//     default:
+//       // fallback to minHeight if pagingToken is not available
+//       return {
+//         minHeight: isInitSync ? 0 : parseInt(lastPagingToken || "0", 10),
+//       };
+//   }
+// }
 
 export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
   return async (info, syncConfig) => {
@@ -55,23 +55,23 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const lockedBalance = BigInt(nativeAsset?.locked ?? "0");
     let spendableBalance = nativeBalance > lockedBalance ? nativeBalance - lockedBalance : 0n;
 
-    const oldOps = (initialAccount?.operations || []) as StellarOperation[];
+    const oldOps = (initialAccount?.operations || []) as OperationCommon[];
     const lastPagingToken = oldOps[0]?.extra?.pagingToken || "";
-    const isInitSync = lastPagingToken === "";
+    // const isInitSync = lastPagingToken === "";
 
-    const pagination = buildPaginationParams(network, isInitSync, lastPagingToken);
-    const [newCoreOps] = await getAlpacaApi(network, kind).listOperations(address, pagination);
+    // const pagination = buildPaginationParams(network, isInitSync, lastPagingToken);
+    const [newCoreOps] = await getAlpacaApi(network, kind).listOperations(address, lastPagingToken);
     // FIXME: adaptCoreOperationToLiveOperation should not be StellarOperation but generic
     const newOps = newCoreOps.map(op =>
       adaptCoreOperationToLiveOperation(accountId, op),
-    ) as StellarOperation[];
-    const mergedOps = mergeOps(oldOps, newOps) as StellarOperation[];
+    ) as OperationCommon[];
+    const mergedOps = mergeOps(oldOps, newOps) as OperationCommon[];
 
     // NOTE: was it really what was done before, also, what's the use of this
     // const assetOps = mergedOps.filter(op => op.type === "NONE");
     // const assetOps = mergedOps.filter(op => op.type === "NONE");
     // NOTE: trying out original way
-    const assetOperations: StellarOperation[] = [];
+    const assetOperations: OperationCommon[] = [];
 
     // NOTE: why this old logic doesn't work
     mergedOps.forEach(operation => {
