@@ -6,11 +6,15 @@ import { CeloAccount, Transaction } from "../types";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { ethers } from "ethers";
 import { ERC20_ABI } from "../abis";
+import { CELO_STABLE_COINS } from "../constants";
+import { celoKit } from "../network/sdk";
 
 export const prepareTransaction: AccountBridge<
   Transaction,
   CeloAccount
 >["prepareTransaction"] = async (account, transaction) => {
+  const kit = celoKit();
+
   if (transaction.recipient && !isValidAddress(transaction.recipient)) return transaction;
 
   if (["send", "vote"].includes(transaction.mode) && !transaction.recipient) return transaction;
@@ -30,14 +34,26 @@ export const prepareTransaction: AccountBridge<
   const amount =
     transaction.useAllAmount && isTokenTransaction ? tokenAccount.balance : transaction.amount;
 
-  const contract = new ethers.utils.Interface(ERC20_ABI);
-  const data = contract.encodeFunctionData("transfer", [transaction.recipient, amount.toFixed()]);
+  let data;
+
+  if (isTokenTransaction) {
+    if (CELO_STABLE_COINS.includes(account.currency.id)) {
+      const stableToken = await kit.contracts.getStableToken();
+      data = stableToken.transfer(transaction.recipient, amount.toFixed()).txo.encodeABI();
+    } else {
+      const token = await kit.contracts.getErc20(transaction.recipient);
+      data = token.transfer(transaction.recipient, amount.toFixed()).txo.encodeABI();
+    }
+  } else {
+    const celoToken = await kit.contracts.getGoldToken();
+    data = celoToken.transfer(transaction.recipient, amount.toFixed()).txo.encodeABI();
+  }
 
   return {
     ...transaction,
     fees,
     amount,
-    ...(isTokenTransaction && { data: Buffer.from(data.slice(2), "hex") }),
+    ...(isTokenTransaction && data !== undefined && { data: Buffer.from(data.slice(2), "hex") }),
   };
 };
 

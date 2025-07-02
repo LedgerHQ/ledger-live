@@ -2,8 +2,8 @@ import { BigNumber } from "bignumber.js";
 import type { CeloAccount, Transaction } from "../types";
 import { celoKit } from "../network/sdk";
 import { getPendingStakingOperationAmounts, getVote } from "../logic";
-
-const CELO_STABLE_COINS = ["cUSD", "cEUR", "USDT"];
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+import { CELO_STABLE_COINS } from "../constants";
 
 const getFeesForTransaction = async ({
   account,
@@ -29,6 +29,10 @@ const getFeesForTransaction = async ({
   );
   // Deduct pending lock operations from the spendable balance
   const totalSpendableBalance = account.spendableBalance.minus(pendingOperationAmounts.lock);
+
+  // Check if it's a token transaction
+  const tokenAccount = findSubAccountById(account, transaction.subAccountId || "");
+  const isTokenTransaction = tokenAccount?.type === "TokenAccount";
 
   if ((transaction.mode === "unlock" || transaction.mode === "vote") && account.celoResources) {
     value = transaction.useAllAmount
@@ -98,16 +102,28 @@ const getFeesForTransaction = async ({
     const accounts = await kit.contracts.getAccounts();
 
     gas = await accounts.createAccount().txo.estimateGas({ from: account.freshAddress });
-  } else if (CELO_STABLE_COINS.includes(account.currency.id)) {
-    const stableToken = await kit.contracts.getStableToken();
+  } else if (isTokenTransaction) {
+    if (CELO_STABLE_COINS.includes(account.currency.id)) {
+      const stableToken = await kit.contracts.getStableToken();
 
-    const celoTransaction = {
-      from: account.freshAddress,
-      to: stableToken.address,
-      data: stableToken.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
-    };
+      const celoTransaction = {
+        from: account.freshAddress,
+        to: stableToken.address,
+        data: stableToken.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
+      };
 
-    gas = await kit.connection.estimateGasWithInflationFactor(celoTransaction);
+      gas = await kit.connection.estimateGasWithInflationFactor(celoTransaction);
+    } else {
+      const token = await kit.contracts.getErc20(transaction.recipient);
+
+      const celoTransaction = {
+        from: account.freshAddress,
+        to: token.address,
+        data: token.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
+      };
+
+      gas = await kit.connection.estimateGasWithInflationFactor(celoTransaction);
+    }
   } else {
     const celoToken = await kit.contracts.getGoldToken();
 
