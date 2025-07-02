@@ -10,14 +10,18 @@ export class ModularNetworkDrawer extends Component {
   private firstNetworkItem = this.page.locator("[data-testid^='network-item-name-']").first();
 
   @step("Select a network by name")
-  async selectNetwork(currency?: Currency) {
+  async selectNetwork(currency?: Currency, networkIndex: number = 0) {
     const isNetworkDrawerVisible = await this.isNetworkDrawerVisible();
-    if (isNetworkDrawerVisible) {
-      if (currency?.id) {
-        await this.networkItemByName(this.toSentenceCase(currency.id)).first().click();
+    if (isNetworkDrawerVisible && currency) {
+      const networks = currency.networks;
+      if (networks && networks.length > 0) {
+        const selectedNetwork = networks[networkIndex] || networks[0];
+        await this.networkItemByName(selectedNetwork).first().click();
       } else {
-        await this.selectFirstNetwork();
+        await this.networkItemByName(currency.speculosApp.name).first().click();
       }
+    } else if (isNetworkDrawerVisible) {
+      await this.selectFirstNetwork();
     }
   }
 
@@ -29,9 +33,5 @@ export class ModularNetworkDrawer extends Component {
   @step("Check if network drawer is visible")
   async isNetworkDrawerVisible() {
     return await this.networkSelectorListContainer.isVisible();
-  }
-
-  toSentenceCase(str: string): string {
-    return str.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase());
   }
 }
