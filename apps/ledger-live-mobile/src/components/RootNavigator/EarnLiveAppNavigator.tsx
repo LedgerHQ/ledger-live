@@ -1,9 +1,11 @@
 import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/lib/account/helpers";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { useRoute } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import { updateMainNavigatorVisibility } from "~/actions/appstate";
 import { createStackNavigator } from "@react-navigation/stack";
-import React, { useEffect, useMemo } from "react";
+import { BackHandler } from "react-native";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "~/const";
@@ -35,6 +37,37 @@ const Earn = (props: NavigationProps) => {
     parentRoute: route,
     alwaysShowNoFunds: false,
   });
+  const onBackPress = useCallback(() => {
+    // Same logic as "go-back" case
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else if (navigation.getParent()?.canGoBack()) {
+      navigation.getParent()?.goBack();
+    } else {
+      // Fallback to main earn screen
+      navigation.navigate(NavigatorName.Earn, {
+        screen: ScreenName.Earn,
+        params: props.route.params,
+      });
+    }
+    dispatch(updateMainNavigatorVisibility(true));
+  }, [dispatch, navigation, props.route.params]);
+
+  // Handle Android hardware back button press
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPressHandler = () => {
+        onBackPress();
+        return true; // Prevent default behavior
+      };
+
+      // Add event listener for back button press
+      const backHandler = BackHandler.addEventListener("hardwareBackPress", onBackPressHandler);
+
+      // Return cleanup function
+      return () => backHandler.remove();
+    }, [onBackPress]),
+  );
 
   useEffect(() => {
     if (!paramAction) {
@@ -101,19 +134,7 @@ const Earn = (props: NavigationProps) => {
           break;
         }
         case "go-back": {
-          if (navigation.canGoBack()) {
-            navigation.goBack();
-          } else if (navigation.getParent()?.canGoBack()) {
-            navigation.getParent()?.goBack();
-          } else {
-            // Fallback to main earn screen
-            navigation.navigate(NavigatorName.Earn, {
-              screen: ScreenName.Earn,
-              params: props.route.params,
-            });
-          }
-          dispatch(updateMainNavigatorVisibility(true));
-
+          onBackPress();
           break;
         }
         default: {
@@ -125,7 +146,16 @@ const Earn = (props: NavigationProps) => {
     deeplinkRouting();
 
     return () => clearDeepLink();
-  }, [paramAction, props.route.params, accounts, navigation, route, openStakingDrawer, dispatch]);
+  }, [
+    paramAction,
+    props.route.params,
+    accounts,
+    navigation,
+    route,
+    openStakingDrawer,
+    dispatch,
+    onBackPress,
+  ]);
 
   return (
     <>
