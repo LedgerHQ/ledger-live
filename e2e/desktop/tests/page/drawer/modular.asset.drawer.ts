@@ -25,7 +25,7 @@ export class ModularAssetDrawer extends Component {
     await this.assetListContainer.waitFor();
   }
 
-  @step("Select asset by ticker $0")
+  @step("Select asset by ticker")
   async selectAssetByTicker(currency: Currency) {
     const ticker = this.assetItemByTicker(currency.ticker).first();
     if (!(await ticker.isVisible())) {
