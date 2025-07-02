@@ -5,7 +5,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { setEnv } from "@ledgerhq/live-env";
 
 const VALID_SACTIONED_ADDRESS_URL =
-  "https://ofac-compliance.pages.dev/all_sanctioned_addresses.json";
+  "https://infraprj-9150.ofac-compliance.pages.dev/all_sanctioned_addresses_without_ticker.json";
 
 LiveConfig.setConfig({
   config_currency: {

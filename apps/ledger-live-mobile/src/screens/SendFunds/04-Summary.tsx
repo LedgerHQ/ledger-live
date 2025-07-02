@@ -38,6 +38,9 @@ import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigato
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import { Alert as NativeUiAlert, Flex, Text } from "@ledgerhq/native-ui";
+import SupportLinkError from "~/components/SupportLinkError";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/lib/sanction/errors";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
@@ -140,6 +143,35 @@ function SendSummary({ navigation, route }: Props) {
     account.type === "Account" &&
     (account.subAccounts || []).some(subAccount => subAccount.balance.gt(0));
 
+  const mergeErrors = useCallback(() => {
+    const senderError = status?.errors.sender ?? undefined;
+    const recipientError = status?.errors.recipient ?? undefined;
+
+    if (
+      senderError?.name === recipientError?.name &&
+      senderError instanceof AddressesSanctionedError
+    ) {
+      return new AddressesSanctionedError("AddressesSanctionedError", {
+        addresses: [
+          ...(senderError as unknown as { addresses: string[] }).addresses,
+          ...(recipientError as unknown as { addresses: string[] }).addresses,
+        ],
+      });
+    }
+
+    if (senderError) {
+      return senderError;
+    }
+
+    if (recipientError) {
+      return recipientError;
+    }
+
+    return undefined;
+  }, [status?.errors.sender, status?.errors.recipient]);
+
+  const displayedError = mergeErrors();
+
   // FIXME: why is recipient sometimes empty?
   if (!account || !transaction || !transaction.recipient || !currencyOrToken) {
     return null;
@@ -210,6 +242,20 @@ function SendSummary({ navigation, route }: Props) {
             overrideAmountLabel={overrideAmountLabel}
           />
         )}
+        {displayedError ? (
+          <NativeUiAlert type="error">
+            <Flex width={"90%"}>
+              <Text testID="send-summary-error-title">
+                <TranslatedError error={displayedError} />
+              </Text>
+              <Text testID="send-summary-error-description">
+                <TranslatedError error={displayedError} field="description" />
+              </Text>
+              <SupportLinkError error={displayedError} type="alert" />
+            </Flex>
+          </NativeUiAlert>
+        ) : null}
+
         <SendRowsFee
           setTransaction={setTransaction}
           status={status}
@@ -243,7 +289,10 @@ function SendSummary({ navigation, route }: Props) {
           containerStyle={styles.continueButton}
           onPress={() => setContinuing(true)}
           disabled={
-            bridgePending || !!transactionError || (!!error && error instanceof NotEnoughGas)
+            bridgePending ||
+            !!transactionError ||
+            (!!error && error instanceof NotEnoughGas) ||
+            displayedError
           }
           pending={bridgePending}
         />

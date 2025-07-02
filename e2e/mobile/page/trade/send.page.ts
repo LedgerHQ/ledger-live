@@ -72,11 +72,6 @@ export default class SendPage {
     await this.expectRecipientMessage(errorMessage);
   }
 
-  @Step("Expect recipient error message description")
-  async expectSendRecipientErrorDescription(errorMessageDescription: string) {
-    await this.expectRecipientMessageDescription(errorMessageDescription);
-  }
-
   @Step("Expect recipient warning message")
   async expectSendRecipientWarning(expectedWarningMessage: string | null) {
     await this.expectRecipientMessage(expectedWarningMessage, true);
@@ -98,8 +93,6 @@ export default class SendPage {
   }
 
   private async expectRecipientMessage(message: string | null, continueButtonVisible = false) {
-    const text = await getTextOfElement(this.recipientErrorId);
-    console.log("text", text);
     const errElem = getElementById(this.recipientErrorId);
     if (message) {
       await detoxExpect(errElem).toHaveText(message);
@@ -113,11 +106,6 @@ export default class SendPage {
     } else {
       await detoxExpect(contBtn).not.toBeVisible();
     }
-  }
-
-  private async expectRecipientMessageDescription(message: string) {
-    const errElem = getElementById(this.recipientErrorDescriptionId);
-    await detoxExpect(errElem).toHaveText(message);
   }
 
   private async expectSenderMessageError(title: string, description: string) {

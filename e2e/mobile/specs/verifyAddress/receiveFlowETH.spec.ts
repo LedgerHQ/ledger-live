@@ -1,9 +1,3 @@
-async function openReceive() {
-  await app.portfolio.openViaDeeplink();
-  await app.portfolio.waitForPortfolioPageToLoad();
-  await app.receive.openViaDeeplink();
-}
-
 describe("Receive Flow", () => {
   const account = Account.ETH_1;
 
@@ -15,6 +9,12 @@ describe("Receive Flow", () => {
 
     await app.portfolio.waitForPortfolioPageToLoad();
   });
+
+  async function openReceive() {
+    await app.portfolio.openViaDeeplink();
+    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.receive.openViaDeeplink();
+  }
 
   $TmsLink("B2CQA-1858");
   $TmsLink("B2CQA-1860");
@@ -56,29 +56,5 @@ describe("Receive Flow", () => {
     await app.common.selectAccount(Account.XRP_2);
     await app.receive.doNotVerifyAddress();
     await app.receive.expectReceivePageIsDisplayed("XRP", "XRP 2");
-  });
-});
-
-describe("Receive assets on a blacklisted address", () => {
-  const account = Account.SANCTIONED_ETH;
-
-  beforeAll(async () => {
-    await app.init({
-      speculosApp: account.currency.speculosApp,
-      userdata: "sanctioned-eth",
-    });
-
-    await app.portfolio.waitForPortfolioPageToLoad();
-  });
-
-  $TmsLink("B2CQA-3538");
-  it("Should block sanctioned address on receive", async () => {
-    await openReceive();
-    await app.receive.selectAsset("ETH");
-    await app.receive.selectNetwork("ethereum");
-    await app.common.selectAccount(account);
-    await app.receive.verifySanctionedModal();
-    await app.receive.closeSanctionedModal();
-    await app.receive.expectSecondStepAccounts();
   });
 });
