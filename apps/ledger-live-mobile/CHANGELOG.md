@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.85.0-next.2
+
+### Minor Changes
+
+- [#10779](https://github.com/LedgerHQ/ledger-live/pull/10779) [`9aa64b3`](https://github.com/LedgerHQ/ledger-live/commit/9aa64b33df9e8be58e755291fc8e0bbbd160c3c4) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Fix device disconnection during sync onboarding
+
 ## 3.85.0-next.1
 
 ### Minor Changes
