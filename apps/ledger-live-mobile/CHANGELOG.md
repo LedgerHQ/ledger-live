@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.85.0-next.1
+
+### Minor Changes
+
+- [#10757](https://github.com/LedgerHQ/ledger-live/pull/10757) [`d48df1d`](https://github.com/LedgerHQ/ledger-live/commit/d48df1dfba3e87011efd2a6148b688dc7f8e7bce) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Adjust styles for Recovery Key onboarding.
+
 ## 3.85.0-next.0
 
 ### Minor Changes
