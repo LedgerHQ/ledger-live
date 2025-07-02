@@ -13,6 +13,7 @@ import { retry } from "@ledgerhq/live-common/promise";
 import SpeculosHttpTransport, {
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/hw-transport-node-speculos-http";
+import { isRemoteIos } from "../helpers/commonHelpers";
 
 type LiveDataOpts = {
   currency?: string;
@@ -205,7 +206,12 @@ export const CLI = {
       cliOpts.push("--add");
     }
 
-    return runCliCommandWithRetry(cliOpts.join("+"), 3, 2_000);
+    return runCliCommandWithRetry(
+      cliOpts.join("+"),
+      process.env.SPECULOS_ADDRESS,
+      5,
+      isRemoteIos() ? 5_000 : 2_000,
+    );
   },
   registerSpeculosTransport: function (apiPort: string, speculosAddress = "http://localhost") {
     unregisterAllTransportModules();
