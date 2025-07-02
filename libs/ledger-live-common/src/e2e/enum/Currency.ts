@@ -90,20 +90,20 @@ export class Currency {
     "ethereum",
     AppInfos.ETHEREUM,
   );
-  static readonly XLM_USCD = new Currency("USDC", "usdc", "stellar", AppInfos.STELLAR);
+  static readonly XLM_USCD = new Currency("USDC", "USDC", "stellar", AppInfos.STELLAR);
   static readonly ALGO_USDT = new Currency("Tether USDt", "USDT", "algorand", AppInfos.ALGORAND);
   static readonly TRX_USDT = new Currency("Tether USD", "USDT", "tron", AppInfos.TRON);
   static readonly TRX_BTT = new Currency("BitTorrent", "BTT", "tron", AppInfos.TRON);
   static readonly BSC_BUSD = new Currency(
     "Binance-Peg BUSD Token",
     "BUSD",
-    "bsc",
+    "binance smart chain",
     AppInfos.BINANCE_SMART_CHAIN,
   );
   static readonly BSC_SHIBA = new Currency(
     "Shiba Inu",
     "SHIB",
-    "bsc",
+    "binance smart chain",
     AppInfos.BINANCE_SMART_CHAIN,
   );
   static readonly POL_DAI = new Currency(
