@@ -40,6 +40,7 @@ on:
           - Mocked
           - E2E - Android Only
           - E2E - iOS & Android
+          - E2E - iOS Only
         default: Mocked
         type: choice
       enable_broadcast:
@@ -90,7 +91,7 @@ permissions:
 env:
   SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:master
   COINAPPS: ${{ github.workspace }}/coin-apps
-  E2E_RUN: ${{ inputs.tests_type == 'E2E - Android Only' || inputs.tests_type == 'E2E - iOS & Android' || github.event_name == 'schedule' }}
+  E2E_RUN: ${{ inputs.tests_type == 'E2E - Android Only' || inputs.tests_type == 'E2E - iOS Only' || inputs.tests_type == 'E2E - iOS & Android' || github.event_name == 'schedule' }}
   SHOULD_UPLOAD: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || (github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) }}
   SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoX' }}
 
@@ -135,6 +136,18 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - name: Boot iOS Simulator in Background
+        run: |
+          (
+            UDID=$(xcrun simctl list devices available | grep -B1 "iOS Simulator" | head -n1 | awk -F '[()]' '{print $2}')
+            echo "🛫 Booting simulator with UDID: $UDID"
+            xcrun simctl boot "$UDID" || true
+            xcrun simctl bootstatus "$UDID"
+            echo "✅ Simulator $UDID is now fully booted"
+          ) &
+        shell: bash
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         id: aws
@@ -321,6 +334,7 @@ jobs:
   detox-tests-android:
     name: "Android Detox"
     runs-on: [ledger-live-linux-8CPU-32RAM]
+    if: ${{ !cancelled() && inputs.tests_type != 'E2E - iOS Only' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
