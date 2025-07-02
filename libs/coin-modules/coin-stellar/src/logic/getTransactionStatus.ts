@@ -11,7 +11,12 @@ import {
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { Transaction, TransactionValidation, Account } from "@ledgerhq/coin-framework/api/types";
 import { isAddressValid, isAccountMultiSign, isMemoValid } from "./utils";
-import { BASE_RESERVE, MIN_BALANCE, getRecipientAccount } from "../network";
+import {
+  BASE_RESERVE,
+  MIN_BALANCE,
+  fetchAccountNetworkInfo,
+  getRecipientAccount,
+} from "../network";
 import {
   StellarWrongMemoFormat,
   StellarAssetRequired,
@@ -47,9 +52,14 @@ export const getTransactionStatus = async (
   // if (!transaction.fee || !transaction.baseReserve) {
   //   errors.fees = new FeeNotLoaded();
   // }
+  const networkInfo = await fetchAccountNetworkInfo(account.address);
 
   const estimatedFees = !transaction.fee ? 0n : transaction.fee;
-  const baseReserve = !transaction.baseReserve ? 0n : transaction.baseReserve;
+  const baseReserve = transaction.baseReserve
+    ? transaction.baseReserve
+    : networkInfo.baseReserve
+      ? BigInt(Math.round(networkInfo.baseReserve.toNumber() * 10)) / 10n
+      : 0n;
   const isAssetPayment =
     transaction.subAccountId &&
     transaction.assetCode &&

@@ -60,6 +60,7 @@ export function transactionToIntent(
     assetIssuer?: string;
     assetCode?: string;
     mode?: string;
+    fees?: BigNumber | null | undefined;
   },
 ): TransactionIntent<any> {
   // NOTE: why Payment here and not PAYMENT like in getTransactionStatus
@@ -78,6 +79,7 @@ export function transactionToIntent(
     }
   }
   const res = {
+    fees: transaction?.fees ? transaction.fees : null,
     type: transactionType,
     sender: account.freshAddress,
     recipient: transaction.recipient,

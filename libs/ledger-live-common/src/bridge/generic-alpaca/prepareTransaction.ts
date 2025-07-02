@@ -14,7 +14,7 @@ export function genericPrepareTransaction(
   return async (
     account,
     transaction: TransactionCommon & {
-      fees: BigNumber;
+      fees: BigNumber | null | undefined;
       assetCode?: string;
       assetIssuer?: string;
       subAccountId?: string;

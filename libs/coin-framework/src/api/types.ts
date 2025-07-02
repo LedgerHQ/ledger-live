@@ -1,5 +1,6 @@
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import { TokenAccount } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 
 export type BlockInfo = {
   height: number;
@@ -138,6 +139,7 @@ export type TransactionIntent<
   expiration?: number;
   recipient: string;
   amount: bigint;
+  fees?: BigNumber | null | undefined; // Optional, depending on the API
   asset: AssetInfo;
 } & MaybeMemo<MemoType>;
 

@@ -56,7 +56,7 @@ async function craft(
   transactionIntent: TransactionIntent<StellarAsset, StellarMemo>,
   customFees?: bigint,
 ): Promise<string> {
-  const fees = customFees !== undefined ? customFees : await estimateFees();
+  const fees = customFees !== undefined ? customFees : await estimateFees(transactionIntent.sender);
 
   // NOTE: check how many memos, throw if more than one?
   // if (transactionIntent.memos && transactionIntent.memos.length > 1) {
@@ -94,8 +94,12 @@ function compose(tx: string, signature: string, pubkey?: string): string {
   return combine(envelopeFromAnyXDR(tx, "base64"), signature, pubkey);
 }
 
-async function estimate(): Promise<FeeEstimation> {
-  const value = await estimateFees();
+async function estimate(
+  transactionIntent: TransactionIntent<StellarAsset>,
+): Promise<FeeEstimation> {
+  const value = transactionIntent?.fees
+    ? BigInt(transactionIntent?.fees.toString())
+    : await estimateFees(transactionIntent.sender);
   return { value };
 }
 
