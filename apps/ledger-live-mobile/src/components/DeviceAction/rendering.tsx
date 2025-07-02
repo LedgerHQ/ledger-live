@@ -65,6 +65,7 @@ import ProviderIcon from "../ProviderIcon";
 import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
 import { isDmkError, isiOSPeerRemovedPairingError } from "@ledgerhq/live-dmk-mobile";
+import { AnimatedGradientLoader } from "../AnimatedGradientLoader";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -887,10 +888,22 @@ export function renderLoading({
   t,
   description,
   lockModal = false,
+  options = "minimal",
 }: RawProps & {
   description?: string;
   lockModal?: boolean;
+  options?: "minimal" | "target";
 }) {
+  if (options === "target") {
+    return (
+      <Wrapper>
+        <AnimatedGradientLoader>{description ?? t("DeviceAction.loading")}</AnimatedGradientLoader>
+        {lockModal ? <ModalLock /> : null}
+      </Wrapper>
+    );
+  }
+
+  // Default minimal mode
   return (
     <Wrapper>
       <SpinnerContainer>
