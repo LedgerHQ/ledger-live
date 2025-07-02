@@ -133,6 +133,14 @@ export const mockedAccountList = [
     blockHeight: 181116,
   },
   {
+    id: "a758d3a7-e057-5fcc-8b6e-23169bc4d577",
+    name: "Sanctioned Ethereum",
+    address: "0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf",
+    currency: "ethereum",
+    balance: "494006503578097",
+    spendableBalance: "494006503578097",
+  },
+  {
     id: "2fa370fd-2210-5487-b9c9-bc36971ebc72",
     name: "Solana 1",
     address: "4iWtrn54zi89sHQv6xHyYwDsrPJvqcSKRJGBLrbErCsx",
