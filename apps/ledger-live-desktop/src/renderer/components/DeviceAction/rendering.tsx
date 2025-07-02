@@ -1271,12 +1271,12 @@ export const renderSecureTransferDeviceConfirmation = ({
 
 export const renderLoading = ({
   children,
-  options = "minimal",
+  type = "target",
 }: {
   children?: React.ReactNode;
-  options?: "minimal" | "target";
+  type?: "minimal" | "target";
 } = {}) => {
-  if (options === "target") {
+  if (type === "target") {
     return (
       <Wrapper data-testid="device-action-loader">
         <Header />

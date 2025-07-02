@@ -4,6 +4,6 @@ type Props = {
   children?: React.ReactNode;
 };
 
-const StepProgress = ({ children }: Props) => renderLoading({ children }, "target");
+const StepProgress = ({ children }: Props) => renderLoading({ children, type: "target" });
 
 export default StepProgress;

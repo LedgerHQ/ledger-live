@@ -11,7 +11,7 @@ interface AnimatedGradientLoaderProps {
 }
 
 export const AnimatedGradientLoader: React.FC<AnimatedGradientLoaderProps> = ({ children }) => {
-  const { colors, dark } = useTheme();
+  const { dark } = useTheme();
   const animatedValue = useRef(new Animated.Value(0)).current;
   const screenWidth = Dimensions.get("window").width;
 

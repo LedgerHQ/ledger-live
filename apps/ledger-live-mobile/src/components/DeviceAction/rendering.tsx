@@ -888,13 +888,13 @@ export function renderLoading({
   t,
   description,
   lockModal = false,
-  options = "minimal",
+  type = "minimal",
 }: RawProps & {
   description?: string;
   lockModal?: boolean;
-  options?: "minimal" | "target";
+  type?: "minimal" | "target";
 }) {
-  if (options === "target") {
+  if (type === "target") {
     return (
       <Wrapper>
         <AnimatedGradientLoader>{description ?? t("DeviceAction.loading")}</AnimatedGradientLoader>

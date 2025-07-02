@@ -35,11 +35,7 @@ const GradientWave = styled.div`
     transparent 100%
   );
   animation: ${waveAnimation} 3s linear infinite;
-  mask-image: radial-gradient(
-    ellipse 50% 50% at center,
-    black 0%,
-    transparent 70%
-  );
+  mask-image: radial-gradient(ellipse 50% 50% at center, black 0%, transparent 70%);
   mask-size: 100% 100%;
   mask-repeat: no-repeat;
 `;
@@ -57,7 +53,11 @@ const LoaderText = styled.div`
   max-width: 100%;
 `;
 
-export const AnimatedGradientLoader: React.FC<{ children: React.ReactNode }> = ({ children }: { children: React.ReactNode }) => {
+export const AnimatedGradientLoader: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   return (
     <Fragment>
       <LoaderContainer>

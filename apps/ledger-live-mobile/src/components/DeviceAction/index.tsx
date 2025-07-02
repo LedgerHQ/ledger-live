@@ -568,7 +568,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       t,
       colors,
       theme,
-      options: "target",
+      type: "target",
     });
   }
 
