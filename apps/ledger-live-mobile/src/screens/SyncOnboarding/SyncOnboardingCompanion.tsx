@@ -717,61 +717,61 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                     <Flex style={{ overflow: "visible", height: 100 }} mt={16} mb={24}>
                       <ShadowedView
                         style={{
-                          shadowOpacity: 0.19,
-                          shadowRadius: 51,
+                          shadowOpacity: 0.15,
+                          shadowRadius: 35.633,
                           shadowOffset: {
                             width: 0,
-                            height: 64,
+                            height: 53.291,
                           },
                         }}
                       >
                         <ShadowedView
                           style={{
                             shadowOpacity: 0.14,
-                            shadowRadius: 21,
+                            shadowRadius: 21.153,
                             shadowOffset: {
                               width: 0,
-                              height: 26,
+                              height: 26.442,
                             },
                           }}
                         >
                           <ShadowedView
                             style={{
                               shadowOpacity: 0.11,
-                              shadowRadius: 11,
+                              shadowRadius: 11.31,
                               shadowOffset: {
                                 width: 0,
-                                height: 14,
+                                height: 14.137,
                               },
                             }}
                           >
                             <ShadowedView
                               style={{
                                 shadowOpacity: 0.09,
-                                shadowRadius: 6,
+                                shadowRadius: 6.34,
                                 shadowOffset: {
                                   width: 0,
-                                  height: 8,
+                                  height: 7.925,
                                 },
                               }}
                             >
                               <ShadowedView
                                 style={{
                                   shadowOpacity: 0.08,
-                                  shadowRadius: 3,
+                                  shadowRadius: 3.367,
                                   shadowOffset: {
                                     width: 0,
-                                    height: 4,
+                                    height: 4.209,
                                   },
                                 }}
                               >
                                 <ShadowedView
                                   style={{
                                     shadowOpacity: 0.05,
-                                    shadowRadius: 1,
+                                    shadowRadius: 1.401,
                                     shadowOffset: {
                                       width: 0,
-                                      height: 2,
+                                      height: 1.751,
                                     },
                                   }}
                                 >
