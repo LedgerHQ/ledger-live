@@ -131,7 +131,7 @@ export class BuyAndSellPage extends WebViewAppPage {
   }
 
   private async selectAssetInModularDrawer(account: AccountType) {
-    await this.modularAssetDrawer.validateDrawer();
+    await this.modularAssetDrawer.validateDrawerItems();
     await this.modularAssetDrawer.selectAssetByTicker(account.currency);
     await this.modularNetworkDrawer.selectNetwork(account.currency);
     await this.modularAccountDrawer.selectAccountByName(account);

@@ -10,11 +10,11 @@ export class ChooseAssetDrawer extends Drawer {
 
   @step("Choose asset to swap from: $0")
   async chooseFromAsset(currency: string) {
-    await this.page.waitForSelector(`[data-testid="${this.searchInputTestId}"]`, {
-      state: "visible",
-    });
-
-    await expect(this.searchInput.first()).toBeVisible();
+    await this.page.waitForFunction((tid: string) => {
+      const searchInputs = document.querySelectorAll(`[data-testid='${tid}']`);
+      return searchInputs.length === 1;
+    }, this.searchInputTestId);
+    await expect(this.searchInput).toBeVisible();
     await this.searchInput.fill(currency);
     await this.currencyRow(currency).first().click();
   }
