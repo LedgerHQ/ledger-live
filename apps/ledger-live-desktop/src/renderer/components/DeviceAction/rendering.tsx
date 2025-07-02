@@ -1271,7 +1271,7 @@ export const renderSecureTransferDeviceConfirmation = ({
 
 export const renderLoading = ({
   children,
-  type = "target",
+  type = "minimal",
 }: {
   children?: React.ReactNode;
   type?: "minimal" | "target";
