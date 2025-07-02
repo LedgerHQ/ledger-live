@@ -3,10 +3,11 @@ import { Component } from "../abstractClasses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
 export class ModularAssetDrawer extends Component {
+  private searchInputTestId = "modular-asset-drawer-search-input";
   private modularAssetSelectorContainer = this.page.getByTestId(
     "modular-asset-selection-container",
   );
-  private searchInput = this.page.getByTestId("modular-asset-drawer-search-input");
+  private searchInput = this.page.getByTestId(this.searchInputTestId);
   private closeButton = this.page.getByTestId("mad-close-button");
   private assetListContainer = this.page.getByTestId("asset-selector-list-container");
   private assetItemByTicker = (ticker: string) =>
@@ -18,7 +19,7 @@ export class ModularAssetDrawer extends Component {
   }
 
   @step("Validate asset drawer elements")
-  async validateDrawer() {
+  async validateDrawerItems() {
     await this.modularAssetSelectorContainer.waitFor();
     await this.searchInput.waitFor();
     await this.closeButton.waitFor();
@@ -27,6 +28,11 @@ export class ModularAssetDrawer extends Component {
 
   @step("Select asset by ticker")
   async selectAssetByTicker(currency: Currency) {
+    await this.page.waitForFunction((tid: string) => {
+      const searchInputs = document.querySelectorAll(`[data-testid='${tid}']`);
+      return searchInputs.length === 1;
+    }, this.searchInputTestId);
+
     const ticker = this.assetItemByTicker(currency.ticker).first();
     if (!(await ticker.isVisible())) {
       await this.searchInput.fill(currency.ticker);

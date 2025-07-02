@@ -32,6 +32,6 @@ export class ModularNetworkDrawer extends Component {
   }
 
   toSentenceCase(str: string): string {
-    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    return str.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase());
   }
 }
