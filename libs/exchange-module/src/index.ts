@@ -6,6 +6,8 @@ import {
   ExchangeStartResult,
   ExchangeStartSellParams,
   ExchangeStartSwapParams,
+  ExchangeSwapParams,
+  SwapResult,
   SwapLiveError,
 } from "./types";
 
@@ -133,6 +135,36 @@ export class ExchangeModule extends CustomModule {
     );
 
     return result.transactionHash;
+  }
+
+  async swap({
+    provider,
+    fromAccountId,
+    toAccountId,
+    tokenCurrency,
+    fromAmount,
+    fromAmountAtomic,
+    quoteId,
+    toNewTokenId,
+    feeStrategy,
+  }: ExchangeSwapParams) {
+    const { operationHash, swapId } = await this.request<ExchangeSwapParams, SwapResult>(
+      "custom.exchange.swap",
+      {
+        exchangeType: "SWAP",
+        provider,
+        fromAccountId,
+        toAccountId,
+        tokenCurrency,
+        fromAmount,
+        fromAmountAtomic,
+        quoteId,
+        toNewTokenId,
+        feeStrategy,
+      },
+    );
+
+    return { operationHash, swapId };
   }
 
   /**
