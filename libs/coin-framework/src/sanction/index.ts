@@ -32,7 +32,7 @@ export async function isAddressSanctioned(
   );
 
   const data: Record<string, string[]> = await cache();
-  const addresses = data[currency.ticker] || [];
+  const addresses = data["bannedAddresses"] || [];
 
   if (temporarySanctionedAddress) {
     return addresses.concat(temporarySanctionedAddress).includes(address);
