@@ -953,3 +953,60 @@ test.describe("Swap history", () => {
     },
   );
 });
+
+test.describe.only("Swap - Block blacklisted addresses", () => {
+  setupEnv(true);
+
+  const fromAccount = Account.BTC_NATIVE_SEGWIT_1;
+  const toAccount = Account.SANCTIONED_ETH;
+
+  const accPair: string[] = [fromAccount, toAccount].map(acc =>
+    acc.currency.speculosApp.name.replace(/ /g, "_"),
+  );
+
+  test.beforeEach(async () => {
+    setExchangeDependencies(
+      accPair.map(appName => ({
+        name: appName,
+      })),
+    );
+  });
+
+  test.use({
+    userdata: "speculos-sanctioned-eth",
+    speculosApp: app,
+    cliCommandsOnApp: [
+      [
+        {
+          app: fromAccount.currency.speculosApp,
+          cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+        },
+      ],
+      { scope: "test" },
+    ],
+  });
+
+  test(
+    `Swap ${fromAccount.currency.name} to ${toAccount.currency.name}`,
+    {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-3539",
+      },
+    },
+    async ({ app, electronApp }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
+      const swap = new Swap(fromAccount, toAccount, minAmount);
+
+      await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
+      const selectedProvider = await app.swap.selectExchangeWithoutKyc(electronApp);
+      await app.swap.clickExchangeButton(electronApp, selectedProvider);
+      await app.swapDrawer.checkErrorMessage(
+        `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${toAccount.address} Learn more`,
+      );
+    },
+  );
+});
