@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { StyleSheet, SafeAreaView, BackHandler, Platform } from "react-native";
-import { useSelector } from "react-redux";
+import { StyleSheet, View, BackHandler, Platform } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
+import { updateMainNavigatorVisibility } from "~/actions/appstate";
 
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
@@ -29,9 +30,23 @@ type Props = {
 export const EarnWebview = ({ manifest, inputs }: Props) => {
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
+  const dispatch = useDispatch();
 
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
+
+  // Monitor URL changes to show/hide navigation bar based on route
+  useEffect(() => {
+    const url = safeUrl(webviewState.url);
+    const path = url?.pathname || "";
+
+    // Hide navbar for deposit routes
+    if (path.includes("/deposit") || path.includes("/withdraw")) {
+      dispatch(updateMainNavigatorVisibility(false));
+    } else {
+      dispatch(updateMainNavigatorVisibility(true));
+    }
+  }, [webviewState.url, dispatch]);
 
   const handleHardwareBackPress = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
@@ -92,7 +107,7 @@ export const EarnWebview = ({ manifest, inputs }: Props) => {
   const customHandlers = useEarnCustomHandlers(manifest, accounts);
 
   return (
-    <SafeAreaView style={[styles.root]}>
+    <View style={[styles.root]}>
       <Web3AppWebview
         ref={webviewAPIRef}
         manifest={manifest}
@@ -101,7 +116,7 @@ export const EarnWebview = ({ manifest, inputs }: Props) => {
         customHandlers={customHandlers}
       />
       {webviewState.loading ? <Loading /> : null}
-    </SafeAreaView>
+    </View>
   );
 };
 

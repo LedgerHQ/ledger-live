@@ -1,6 +1,7 @@
 import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/lib/account/helpers";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { useRoute } from "@react-navigation/native";
+import { updateMainNavigatorVisibility } from "~/actions/appstate";
 import { createStackNavigator } from "@react-navigation/stack";
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -111,6 +112,8 @@ const Earn = (props: NavigationProps) => {
               params: props.route.params,
             });
           }
+          dispatch(updateMainNavigatorVisibility(true));
+
           break;
         }
         default: {
