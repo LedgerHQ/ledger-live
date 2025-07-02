@@ -39,12 +39,15 @@ const AssetSelection = ({
   const [shouldScrollToTop, setShouldScrollToTop] = useState(false);
 
   useEffect(() => {
-    if (defaultSearchValue !== undefined && defaultSearchValue.length >= 2) {
-      const timeout = setTimeout(() => {
-        setShouldScrollToTop(true);
-      }, 100);
-      return () => clearTimeout(timeout);
+    if (defaultSearchValue === undefined) {
+      return;
     }
+
+    const timeout = setTimeout(() => {
+      setShouldScrollToTop(true);
+    }, 100);
+
+    return () => clearTimeout(timeout);
   }, [defaultSearchValue]);
 
   return (
