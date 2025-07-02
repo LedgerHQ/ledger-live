@@ -1094,8 +1094,8 @@ importers:
         specifier: 2.0.1
         version: 2.0.1(react-redux@7.2.9(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       '@segment/analytics-react-native':
-        specifier: 2.20.4
-        version: 2.20.4(regyl6r5djhlttboyfgv55mviy)
+        specifier: 2.20.5
+        version: 2.20.5(regyl6r5djhlttboyfgv55mviy)
       '@segment/sovran-react-native':
         specifier: 1.1.3
         version: 1.1.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)))(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
@@ -15661,8 +15661,8 @@ packages:
   '@sec-ant/readable-stream@0.4.1':
     resolution: {integrity: sha512-831qok9r2t8AlxLko40y2ebgSDhenenCatLVeW/uBtnHPyhHOvG0C7TvfgecV+wHzIm5KUICgzmVpWS+IMEAeg==}
 
-  '@segment/analytics-react-native@2.20.4':
-    resolution: {integrity: sha512-h4qZ8zI2Sh9hDTkt3ohSHWLJcfZZ9E9H3Yb48dZD9Ic3+J8Y2yYuYwCFqu+UczNWiSgDNViZTAbsz6NVR953Jw==}
+  '@segment/analytics-react-native@2.20.5':
+    resolution: {integrity: sha512-k2EUnYsQBSk03wFjLLqrHtuZRnRYpu3jXMSotUiORhA27JP9IxpRkOzEl9aGbMiIB/IltQgmnR+ON/tkWI7rMg==}
     engines: {node: '>=12'}
     peerDependencies:
       '@react-native-async-storage/async-storage': 2.x
@@ -44191,7 +44191,7 @@ snapshots:
 
   '@sec-ant/readable-stream@0.4.1': {}
 
-  '@segment/analytics-react-native@2.20.4(regyl6r5djhlttboyfgv55mviy)':
+  '@segment/analytics-react-native@2.20.5(regyl6r5djhlttboyfgv55mviy)':
     dependencies:
       '@segment/sovran-react-native': 1.1.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)))(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       '@segment/tsub': 2.0.0
