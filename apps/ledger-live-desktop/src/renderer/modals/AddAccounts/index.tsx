@@ -111,6 +111,7 @@ const createSteps = (skipChooseCurrencyStep?: boolean | null): St[] => {
   if (skipChooseCurrencyStep) {
     steps.shift();
   }
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   return steps as St[];
 };
 type State = {

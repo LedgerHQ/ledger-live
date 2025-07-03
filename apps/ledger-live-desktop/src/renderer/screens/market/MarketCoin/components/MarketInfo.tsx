@@ -126,6 +126,7 @@ function MarketInfo({
   const athText = useDateFormatted(athDateD, dayAndHourFormat);
   const atlText = useDateFormatted(atlDateD, dayAndHourFormat);
 
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const currentPriceChangePercentage = priceChangePercentage?.[range as KeysPriceChange];
 
   return (

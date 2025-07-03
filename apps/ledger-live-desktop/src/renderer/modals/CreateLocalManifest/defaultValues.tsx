@@ -23,7 +23,7 @@ export const DEFAULT_VALUES = {
   currencies: [""],
 };
 
-export const DEFAULT_FORM: LiveAppManifest = {
+export const DEFAULT_FORM = {
   id: "ReplaceAppName",
   author: "",
   private: false,
@@ -60,7 +60,7 @@ export const DEFAULT_FORM: LiveAppManifest = {
       },
     ],
   },
-};
+} as const satisfies LiveAppManifest;
 
 export const DESCRIPTIONS: Record<string, string> = {
   name: "Live App name as it will appear in the Discover section.",
