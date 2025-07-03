@@ -1,18 +1,18 @@
+import React, { useCallback } from "react";
+import { Trans, useTranslation } from "react-i18next";
+import BigNumber from "bignumber.js";
+import styled from "styled-components";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { HederaValidator } from "@ledgerhq/live-common/families/hedera/types";
 import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { Flex, Icons } from "@ledgerhq/react-ui";
-import BigNumber from "bignumber.js";
-import React, { useCallback } from "react";
-import { Trans, useTranslation } from "react-i18next";
-import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import ValidatorRow from "~/renderer/components/Delegation/ValidatorRow";
 import Text from "~/renderer/components/Text";
-import ValidatorIcon from "./ValidatorIcon";
 import Check from "~/renderer/icons/Check";
 import { openURL } from "~/renderer/linking";
+import ValidatorIcon from "./ValidatorIcon";
 
 type Props = {
   currency: CryptoCurrency;

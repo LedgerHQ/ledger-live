@@ -6652,12 +6652,30 @@
       "messageIfVirtual": "Your {{name}} address cannot be confirmed on your Ledger device. Use at your own risk."
     },
     "account": {
-      "delegated": {
-        "title": "Delegated assets",
-        "tooltip": "When staking on Hedera, your full balance is delegated and remains liquid"
+      "balanceFooter": {
+        "delegated": {
+          "title": "Delegated assets",
+          "tooltip": "When staking on Hedera, your full balance is delegated and remains liquid"
+        },
+        "claimable": {
+          "title": "Claimable rewards"
+        }
       },
-      "claimable": {
-        "title": "Claimable rewards"
+      "bodyHeader": {
+        "delegatedPositions": {
+          "header": "Delegation",
+          "button": "Claim rewards",
+          "columns": {
+            "statusTooltip": "Delegated amounts generate rewards",
+            "delegated": "Delegated",
+            "rewards": "Rewards"
+          },
+          "actions": {
+            "redelegate": "Redelegate",
+            "undelegate": "Undelegate",
+            "claimRewards": "Claim rewards"
+          }
+        }
       }
     },
     "stake": {

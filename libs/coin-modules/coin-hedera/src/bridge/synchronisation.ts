@@ -48,6 +48,15 @@ export const getAccountShape: GetAccountShape<Account> = async (
   );
   const operations = mergeOps(oldOperations, newOperations);
 
+  const delegation =
+    typeof mirrorAccount.staked_node_id === "number"
+      ? {
+          nodeId: mirrorAccount.staked_node_id,
+          delegated: accountBalance,
+          pendingReward: new BigNumber(mirrorAccount.pending_reward),
+        }
+      : null;
+
   return {
     id: liveAccountId,
     freshAddress: address,
@@ -58,8 +67,7 @@ export const getAccountShape: GetAccountShape<Account> = async (
     // Set a value just so that operations are considered confirmed according to isConfirmedOperation
     blockHeight: 10,
     hederaResources: {
-      stakingNodeId: mirrorAccount.staked_node_id,
-      stakingPendingReward: new BigNumber(mirrorAccount.pending_reward),
+      delegation,
     },
   };
 };

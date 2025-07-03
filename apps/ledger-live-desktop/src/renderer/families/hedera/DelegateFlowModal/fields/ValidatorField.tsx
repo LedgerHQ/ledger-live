@@ -1,18 +1,18 @@
 import React, { useState, useCallback } from "react";
-import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
+import { Trans } from "react-i18next";
 import styled from "styled-components";
+import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
+import { Account } from "@ledgerhq/types-live";
+import { HederaValidator } from "@ledgerhq/live-common/families/hedera/types";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import ValidatorSearchInput, {
   NoResultPlaceholder,
 } from "~/renderer/components/Delegation/ValidatorSearchInput";
-import { Trans } from "react-i18next";
 import IconAngleDown from "~/renderer/icons/AngleDown";
-import ValidatorRow from "../../shared/components/ValidatorRow";
-import { Account } from "@ledgerhq/types-live";
-import { HederaValidator } from "@ledgerhq/live-common/families/hedera/types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import ValidatorRow from "../../shared/staking/ValidatorRow";
 
 type Props = {
   account: Account;
@@ -26,8 +26,6 @@ const ValidatorField = ({ account, selectedValidatorAddress, onChangeValidator }
   const [showAll, setShowAll] = useState(false);
   const unit = useAccountUnit(account);
   const validators = useHederaValidators(account.currency, search);
-
-  console.log("validators", validators);
 
   const renderItem = (validator: HederaValidator) => {
     return (

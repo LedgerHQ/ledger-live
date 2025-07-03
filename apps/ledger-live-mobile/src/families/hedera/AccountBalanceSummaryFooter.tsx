@@ -1,11 +1,11 @@
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { HederaAccount } from "@ledgerhq/live-common/families/hedera/types";
-import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
-import BigNumber from "bignumber.js";
-import invariant from "invariant";
 import React, { useCallback, useMemo, useState } from "react";
 import { TFunction, useTranslation } from "react-i18next";
 import { ScrollView } from "react-native";
+import BigNumber from "bignumber.js";
+import invariant from "invariant";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { HederaAccount } from "@ledgerhq/live-common/families/hedera/types";
+import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import InfoItem from "~/components/BalanceSummaryInfoItem";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
@@ -30,10 +30,10 @@ function AccountBalanceSummaryFooter({ account }: Props) {
 
   if (!account.hederaResources) return null;
 
-  const { stakingNodeId, stakingPendingReward } = account.hederaResources;
+  const { delegation } = account.hederaResources;
   const spendableBalance = account.spendableBalance;
-  const delegatedAssets = typeof stakingNodeId === "number" ? spendableBalance : new BigNumber(0);
-  const claimableRewards = stakingPendingReward ?? new BigNumber(0);
+  const delegatedAssets = delegation ? spendableBalance : new BigNumber(0);
+  const claimableRewards = delegation?.pendingReward ?? new BigNumber(0);
 
   return (
     <ScrollView

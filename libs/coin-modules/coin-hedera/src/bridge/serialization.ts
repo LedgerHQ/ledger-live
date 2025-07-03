@@ -8,16 +8,30 @@ import type {
 import BigNumber from "bignumber.js";
 
 export function toHederaResourcesRaw(resources: HederaResources): HederaResourcesRaw {
+  const delegation = resources.delegation
+    ? {
+        nodeId: resources.delegation.nodeId,
+        delegated: resources.delegation.delegated.toString(),
+        pendingReward: resources.delegation.pendingReward.toString(),
+      }
+    : null;
+
   return {
-    stakingNodeId: resources.stakingNodeId,
-    stakingPendingReward: resources.stakingPendingReward.toString(),
+    delegation,
   };
 }
 
 export function fromHederaResourcesRaw(rawResources: HederaResourcesRaw): HederaResources {
+  const delegation = rawResources.delegation
+    ? {
+        nodeId: rawResources.delegation.nodeId,
+        delegated: new BigNumber(rawResources.delegation.delegated),
+        pendingReward: new BigNumber(rawResources.delegation.pendingReward),
+      }
+    : null;
+
   return {
-    stakingNodeId: rawResources.stakingNodeId,
-    stakingPendingReward: new BigNumber(rawResources.stakingPendingReward),
+    delegation,
   };
 }
 

@@ -37,14 +37,24 @@ export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
+export interface HederaDelegation {
+  nodeId: number;
+  delegated: BigNumber;
+  pendingReward: BigNumber;
+}
+
+interface HederaDelegationRaw {
+  nodeId: number;
+  delegated: string;
+  pendingReward: string;
+}
+
 export interface HederaResources {
-  stakingNodeId: number | null;
-  stakingPendingReward: BigNumber;
+  delegation: HederaDelegation | null;
 }
 
 export interface HederaResourcesRaw {
-  stakingNodeId: number | null;
-  stakingPendingReward: string;
+  delegation: HederaDelegationRaw | null;
 }
 
 export type HederaAccount = Account & {

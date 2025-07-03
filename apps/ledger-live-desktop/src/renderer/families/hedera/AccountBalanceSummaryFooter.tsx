@@ -10,8 +10,8 @@ import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
-import { HederaFamily } from "./types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import type { HederaFamily } from "./types";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -66,10 +66,10 @@ const AccountBalanceSummaryFooter: HederaFamily["AccountBalanceSummaryFooter"] =
     locale,
   };
 
-  const { stakingNodeId, stakingPendingReward } = account.hederaResources;
+  const { delegation } = account.hederaResources;
   const spendableBalance = account.spendableBalance;
-  const delegatedAssets = typeof stakingNodeId === "number" ? spendableBalance : new BigNumber(0);
-  const claimableRewards = stakingPendingReward ?? new BigNumber(0);
+  const delegatedAssets = delegation ? spendableBalance : new BigNumber(0);
+  const claimableRewards = delegation?.pendingReward ?? new BigNumber(0);
 
   const formattedAvailableBalance = formatCurrencyUnit(unit, spendableBalance, formatConfig);
   const formattedDelegatedAssets = formatCurrencyUnit(unit, delegatedAssets, formatConfig);
@@ -92,10 +92,10 @@ const AccountBalanceSummaryFooter: HederaFamily["AccountBalanceSummaryFooter"] =
       </BalanceDetail>
       {delegatedAssets.gt(0) && (
         <BalanceDetail>
-          <ToolTip content={<Trans i18nKey="hedera.account.delegated.tooltip" />}>
+          <ToolTip content={<Trans i18nKey="hedera.account.balanceFooter.delegated.tooltip" />}>
             <TitleWrapper>
               <Title>
-                <Trans i18nKey="hedera.account.delegated.title" />
+                <Trans i18nKey="hedera.account.balanceFooter.delegated.title" />
               </Title>
               <InfoCircle size={13} />
             </TitleWrapper>
@@ -109,7 +109,7 @@ const AccountBalanceSummaryFooter: HederaFamily["AccountBalanceSummaryFooter"] =
         <BalanceDetail>
           <TitleWrapper>
             <Title>
-              <Trans i18nKey="hedera.account.claimable.title" />
+              <Trans i18nKey="hedera.account.balanceFooter.claimable.title" />
             </Title>
           </TitleWrapper>
           <AmountValue>

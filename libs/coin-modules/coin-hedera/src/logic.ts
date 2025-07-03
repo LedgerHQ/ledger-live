@@ -1,7 +1,14 @@
 import { ExplorerView } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
-
-import { HederaAccount, HederaOperationExtra, Transaction, UpdateAccountProperties } from "./types";
+import {
+  HederaAccount,
+  HederaDelegation,
+  HederaOperationExtra,
+  HederaValidator,
+  Transaction,
+  UpdateAccountProperties,
+} from "./types";
+import { getCurrentHederaPreloadData } from "./preload-data";
 
 const getTransactionExplorer = (
   explorerView: ExplorerView | null | undefined,
@@ -18,11 +25,26 @@ const isUpdateAccountTransaction = (
   return tx.properties?.name === "updateAccount";
 };
 
-const extractCompanyFromNodeDescription = (description: string) => {
+const extractCompanyFromNodeDescription = (description: string): string => {
   return description
     .split("|")[0]
     .replace(/hosted by/i, "")
     .trim();
 };
 
-export { getTransactionExplorer, isUpdateAccountTransaction, extractCompanyFromNodeDescription };
+const getValidatorFromDelegation = (
+  account: HederaAccount,
+  delegation: HederaDelegation,
+): HederaValidator | null => {
+  const validators = getCurrentHederaPreloadData(account.currency);
+  const validator = validators.validators.find(v => v.nodeId === delegation.nodeId);
+
+  return validator ?? null;
+};
+
+export {
+  getTransactionExplorer,
+  isUpdateAccountTransaction,
+  extractCompanyFromNodeDescription,
+  getValidatorFromDelegation,
+};

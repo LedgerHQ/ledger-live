@@ -1,10 +1,9 @@
-import IconCoins from "~/renderer/icons/Coins";
+import { useDispatch } from "react-redux";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { openModal } from "~/renderer/actions/modals";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
-import { useCallback } from "react";
-import { useDispatch } from "react-redux";
-import { HederaFamily } from "~/renderer/families/hedera/types";
+import IconCoins from "~/renderer/icons/Coins";
+import type { HederaFamily } from "~/renderer/families/hedera/types";
 
 const AccountHeaderActions: HederaFamily["accountHeaderManageActions"] = ({ account }) => {
   const label = useGetStakeLabelLocaleBased();
@@ -14,8 +13,8 @@ const AccountHeaderActions: HederaFamily["accountHeaderManageActions"] = ({ acco
     return [];
   }
 
-  const onClick = useCallback(() => {
-    const isAlreadyStaked = typeof account.hederaResources?.stakingNodeId === "number";
+  const onClick = () => {
+    const isAlreadyStaked = !!account.hederaResources?.delegation;
 
     if (isAccountEmpty(account)) {
       dispatch(openModal("MODAL_NO_FUNDS_STAKE", { account }));
@@ -24,7 +23,7 @@ const AccountHeaderActions: HederaFamily["accountHeaderManageActions"] = ({ acco
     } else {
       dispatch(openModal("MODAL_HEDERA_DELEGATE", { account }));
     }
-  }, [account, dispatch]);
+  };
 
   return [
     {

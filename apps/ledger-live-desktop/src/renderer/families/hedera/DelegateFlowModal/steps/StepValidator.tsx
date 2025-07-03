@@ -1,15 +1,15 @@
 import invariant from "invariant";
 import React from "react";
 import { Trans } from "react-i18next";
-import { StepProps } from "../types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { HederaValidator, Transaction } from "@ledgerhq/live-common/families/hedera/types";
+import { AccountBridge } from "@ledgerhq/types-live";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
-import { AccountBridge } from "@ledgerhq/types-live";
-import ValidatorField from "../fields/ValidatorField";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
-import { HederaValidator, Transaction } from "@ledgerhq/live-common/families/hedera/types";
+import ValidatorField from "../fields/ValidatorField";
+import { StepProps } from "../types";
 
 export default function StepValidator({
   account,

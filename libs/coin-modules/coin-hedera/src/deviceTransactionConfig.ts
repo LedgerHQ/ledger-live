@@ -2,7 +2,6 @@ import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "./types";
 import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import { isUpdateAccountTransaction } from "./logic";
-import BigNumber from "bignumber.js";
 
 function getDeviceTransactionConfig({
   transaction,

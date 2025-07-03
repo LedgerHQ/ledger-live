@@ -1,16 +1,16 @@
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import React, { Fragment, PureComponent } from "react";
 import { Trans } from "react-i18next";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
-import { StepProps } from "../types";
-import AmountField from "../../shared/components/AmountField";
 import Alert from "~/renderer/components/Alert";
 import { urls } from "~/config/urls";
+import { StepProps } from "../types";
+import AmountField from "../../shared/staking/AmountField";
 
 const StepAmount = ({ t, account, parentAccount, transaction, error, status }: StepProps) => {
   if (!status) return null;
