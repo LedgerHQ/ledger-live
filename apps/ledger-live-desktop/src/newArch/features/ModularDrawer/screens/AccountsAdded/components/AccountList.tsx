@@ -40,11 +40,8 @@ export const AccountList = ({ accounts, formatAccount }: AccountListProps) => {
 
   return (
     <Flex
-      flex={1}
       flexDirection="column"
-      width="100%"
       mt={5}
-      pb="124px"
       style={{
         overflowY: "auto",
         minHeight: 0,

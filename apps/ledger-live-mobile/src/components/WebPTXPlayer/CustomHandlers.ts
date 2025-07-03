@@ -1,5 +1,6 @@
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
+  CompleteExchangeUiRequest,
   handlers as exchangeHandlers,
   ExchangeType,
 } from "@ledgerhq/live-common/wallet-api/Exchange/server";
@@ -16,10 +17,24 @@ import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { WebviewProps } from "../Web3AppWebview/types";
 import Config from "react-native-config";
 import { sendEarnLiveAppReady } from "../../../e2e/bridge/client";
+import { useSyncAccountById } from "~/screens/Swap/LiveApp/hooks/useSyncAccountById";
 
-export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
+type CustomExchangeHandlersHookType = {
+  manifest: WebviewProps["manifest"];
+  accounts: AccountLike[];
+  sendAppReady: () => void;
+  onCompleteResult?: (exchangeParams: CompleteExchangeUiRequest, operationHash: string) => void;
+};
+
+export function useCustomExchangeHandlers({
+  manifest,
+  accounts,
+  onCompleteResult,
+  sendAppReady,
+}: CustomExchangeHandlersHookType) {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const [device, setDevice] = useState<Device>();
+  const syncAccountById = useSyncAccountById();
 
   const tracking = useMemo(
     () =>
@@ -36,12 +51,6 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
   );
 
   return useMemo<WalletAPICustomHandlers>(() => {
-    const ptxCustomHandlers = {
-      "custom.close": () => {
-        navigation.popToTop();
-      },
-    };
-
     return {
       ...exchangeHandlers({
         accounts,
@@ -93,9 +102,10 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
                 },
                 device,
                 onResult: result => {
+                  navigation.pop();
                   if (result.error) {
                     onCancel(result.error);
-                    navigation.pop();
+
                     navigation.navigate(NavigatorName.CustomError, {
                       screen: ScreenName.CustomErrorScreen,
                       params: {
@@ -103,11 +113,13 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
                       },
                     });
                   }
+
                   if (result.operation) {
+                    const operationHash = result.operation.hash;
+                    onCompleteResult?.(exchangeParams, operationHash);
                     onSuccess(result.operation.hash);
                   }
                   setDevice(undefined);
-                  !result.error && navigation.pop();
                 },
               },
             });
@@ -122,12 +134,64 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
           },
           "custom.isReady": async () => {
             if (Config.DETOX) {
-              sendEarnLiveAppReady();
+              sendAppReady();
             }
+          },
+          "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
+            navigation.navigate(NavigatorName.PlatformExchange, {
+              screen: ScreenName.PlatformCompleteExchange,
+              params: {
+                request: {
+                  exchangeType: exchangeParams.exchangeType,
+                  provider: exchangeParams.provider,
+                  exchange: exchangeParams.exchange,
+                  transaction: exchangeParams.transaction,
+                  binaryPayload: exchangeParams.binaryPayload,
+                  signature: exchangeParams.signature,
+                  feesStrategy: exchangeParams.feesStrategy,
+                  amountExpectedTo: exchangeParams.amountExpectedTo,
+                },
+                device,
+                onResult: result => {
+                  if (result.error) {
+                    onCancel(result.error);
+                    navigation.pop();
+                    navigation.navigate(NavigatorName.CustomError, {
+                      screen: ScreenName.CustomErrorScreen,
+                      params: {
+                        error: result.error,
+                      },
+                    });
+                  }
+                  if (result.operation && exchangeParams.swapId) {
+                    syncAccountById(exchangeParams.exchange.fromAccount.id);
+                    const operationHash = result.operation.hash;
+
+                    onCompleteResult?.(exchangeParams, operationHash);
+
+                    // return success to swap live app
+                    onSuccess({ operationHash, swapId: exchangeParams.swapId });
+                  }
+                  setDevice(undefined);
+                },
+              },
+            });
           },
         },
       }),
-      ...ptxCustomHandlers,
     };
-  }, [accounts, device, manifest, navigation, tracking]);
+  }, [
+    accounts,
+    device,
+    manifest,
+    navigation,
+    onCompleteResult,
+    sendAppReady,
+    syncAccountById,
+    tracking,
+  ]);
+}
+
+export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
+  return useCustomExchangeHandlers({ manifest, accounts, sendAppReady: sendEarnLiveAppReady });
 }

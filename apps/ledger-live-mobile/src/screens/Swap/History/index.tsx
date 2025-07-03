@@ -30,6 +30,8 @@ import logger from "../../../logger";
 import { useSyncAllAccounts } from "../LiveApp/hooks/useSyncAllAccounts";
 import EmptyState from "./EmptyState";
 import OperationRow from "./OperationRow";
+import { getEnv } from "@ledgerhq/live-env";
+import { sendFile } from "../../../../e2e/bridge/client";
 
 // const SList : SectionList<MappedSwapOperation, SwapHistorySection> = SectionList;
 const AnimatedSectionList: typeof SectionList = Animated.createAnimatedComponent(
@@ -129,24 +131,31 @@ const History = () => {
   );
 
   const exportSwapHistory = async () => {
-    try {
-      const mapped = mappedSwapOperationsToCSV(sections);
+    const mapped = mappedSwapOperationsToCSV(sections);
+    if (!getEnv("DETOX")) {
+      try {
+        const base64 = Buffer.from(mapped).toString("base64");
+        const options = {
+          title: t("transfer.swap.history.exportButton"),
+          message: t("transfer.swap.history.exportButton"),
+          failOnCancel: false,
+          saveToFiles: true,
+          type: "text/csv",
+          filename: t("transfer.swap.history.exportFilename"),
+          url: `data:text/csv;base64,${base64}`,
+        };
 
-      const base64 = Buffer.from(mapped).toString("base64");
-      const options = {
-        title: t("transfer.swap.history.exportButton"),
-        message: t("transfer.swap.history.exportButton"),
-        failOnCancel: false,
-        saveToFiles: true,
-        type: "text/csv",
-        filename: t("transfer.swap.history.exportFilename"),
-        url: `data:text/csv;base64,${base64}`,
-      };
-
-      await Share.open(options);
-    } catch (err) {
-      // `failOnCancel: false` is not enough to prevent throwing on cancel apparently ¯\_(ツ)_/¯
-      if ((err as { error?: { code?: string } })?.error?.code !== "ECANCELLED500") {
+        await Share.open(options);
+      } catch (err) {
+        // `failOnCancel: false` is not enough to prevent throwing on cancel apparently ¯\_(ツ)_/¯
+        if ((err as { error?: { code?: string } })?.error?.code !== "ECANCELLED500") {
+          logger.critical(err as Error);
+        }
+      }
+    } else {
+      try {
+        sendFile({ fileName: "ledgerlive-swap-history.csv", fileContent: mapped });
+      } catch (err) {
         logger.critical(err as Error);
       }
     }
@@ -177,6 +186,7 @@ const History = () => {
               containerStyle={styles.button}
               IconLeft={DownloadFileIcon}
               onPress={exportSwapHistory}
+              testID="export-swap-operations-link"
             />
           ) : null
         }

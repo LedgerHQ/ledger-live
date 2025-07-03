@@ -74,6 +74,11 @@ describe("LegacySignerSolana", () => {
     });
 
     it("fails to sign a transaction with a resolution and unsupported PKI", async () => {
+      jest.spyOn(Solana.prototype, "getAppConfiguration").mockResolvedValue({
+        blindSigningEnabled: false,
+        pubKeyDisplayMode: PubKeyDisplayMode.SHORT,
+        version: "1.9.2",
+      });
       jest.spyOn(calService, "getCertificate").mockResolvedValue({ descriptor: "", signature: "" });
       jest.spyOn(loadPKIModule, "loadPKI").mockRejectedValue(new TransportStatusError(0x6a81));
 
@@ -90,7 +95,7 @@ describe("LegacySignerSolana", () => {
       jest.spyOn(Solana.prototype, "getAppConfiguration").mockResolvedValue({
         blindSigningEnabled: false,
         pubKeyDisplayMode: PubKeyDisplayMode.SHORT,
-        version: "1.7.1",
+        version: "1.8.1",
       });
 
       await expect(
@@ -118,7 +123,7 @@ describe("LegacySignerSolana", () => {
         jest.spyOn(Solana.prototype, "getAppConfiguration").mockResolvedValue({
           blindSigningEnabled: false,
           pubKeyDisplayMode: PubKeyDisplayMode.SHORT,
-          version: "1.8.2",
+          version: "1.9.2",
         });
         jest.spyOn(Solana.prototype, "getChallenge").mockResolvedValue("challenge");
         const getOwnerAddress = jest.spyOn(trustService, "getOwnerAddress").mockResolvedValue({
@@ -174,7 +179,7 @@ describe("LegacySignerSolana", () => {
         jest.spyOn(Solana.prototype, "getAppConfiguration").mockResolvedValue({
           blindSigningEnabled: false,
           pubKeyDisplayMode: PubKeyDisplayMode.SHORT,
-          version: "1.8.2",
+          version: "1.9.2",
         });
         jest.spyOn(Solana.prototype, "getChallenge").mockResolvedValue("challenge");
         const computedTokenAddress = jest
@@ -224,43 +229,13 @@ describe("LegacySignerSolana", () => {
       },
     );
 
-    it("does not try to register SPL info dynamically with app version prior to 1.9.0", async () => {
-      jest.spyOn(Solana.prototype, "getAppConfiguration").mockResolvedValue({
-        blindSigningEnabled: false,
-        pubKeyDisplayMode: PubKeyDisplayMode.SHORT,
-        version: "1.8.2",
-      });
-      jest.spyOn(calService, "getCertificate").mockResolvedValue({
-        descriptor: "certificateDescriptor",
-        signature: "certificateSignature",
-      });
-      const provideTrustedDynamicDescriptor = jest.spyOn(
-        Solana.prototype,
-        "provideTrustedDynamicDescriptor",
-      );
-      const signTransaction = jest.spyOn(Solana.prototype, "signTransaction").mockResolvedValue({
-        signature: Buffer.from("0102", "hex"),
-      });
-
-      expect(
-        await signer.signTransaction("path", Buffer.from("transaction"), {
-          deviceModelId: DeviceModelId.europa,
-          tokenInternalId: "tokenInternalId",
-        }),
-      ).toEqual({
-        signature: Buffer.from("0102", "hex"),
-      });
-      expect(provideTrustedDynamicDescriptor).not.toHaveBeenCalled();
-      expect(signTransaction).toHaveBeenCalledWith("path", Buffer.from("transaction"));
-    });
-
     it.each([["prod"], ["test"]] as const)(
       "signs a transaction with a resolution and a 'tokenInternalId' property, using the '%s' PKI",
       async expectedSignatureKind => {
         jest.spyOn(Solana.prototype, "getAppConfiguration").mockResolvedValue({
           blindSigningEnabled: false,
           pubKeyDisplayMode: PubKeyDisplayMode.SHORT,
-          version: "1.9.0",
+          version: "1.9.2",
         });
         const getCertificate = jest.spyOn(calService, "getCertificate").mockResolvedValue({
           descriptor: "certificateDescriptor",

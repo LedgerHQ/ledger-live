@@ -50,9 +50,10 @@ import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
 import SecretRecoveryPhraseImage from "./assets/srp.png";
-import CharonImage from "./assets/charon.png";
 import BackgroundBlue from "./assets/BackgroundBlue";
 import BackgroundRed from "./assets/BackgroundRed";
+import Animation from "~/components/Animation";
+import CHARON from "~/animations/device/charon/charon.json";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 
@@ -648,7 +649,11 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                 </Flex>
               ) : seedPathStatus === "choice_restore_direct_or_recover" ? (
                 <Flex>
-                  <SubtitleText>
+                  <BodyText color="neutral.c80">
+                    {t("syncOnboarding.seedStep.selectionRestoreChoice.description")}
+                  </BodyText>
+                  {/* Secret Recovery Phrase */}
+                  <SubtitleText mt={6}>
                     {t("syncOnboarding.seedStep.selectionRestoreChoice.secretRecoveryPhrase.title")}
                   </SubtitleText>
                   <BodyText>
@@ -656,7 +661,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                       "syncOnboarding.seedStep.selectionRestoreChoice.secretRecoveryPhrase.description",
                     )}
                   </BodyText>
-
+                  {/* Recovery Key */}
                   {deviceOnboardingState?.charonSupported && (
                     <>
                       <SubtitleText mt={6}>
@@ -669,7 +674,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                       </BodyText>
                     </>
                   )}
-
+                  {/* Recover subscription */}
                   <SubtitleText mt={6}>
                     {t("syncOnboarding.seedStep.selectionRestoreChoice.ledgerRecover.title")}
                   </SubtitleText>
@@ -708,8 +713,8 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                     <TrackScreen category="Set up device: Step 3 Charon Backup Success" />
                   ) : null}
                   <Flex alignItems="center" justifyContent="center">
-                    <Flex style={{ overflow: "visible", height: 100 }} mt={3}>
-                      <Image resizeMode="contain" source={CharonImage} style={{ height: 170 }} />
+                    <Flex style={{ overflow: "visible", height: 100 }} mt={3} mb={6}>
+                      <Animation style={{ height: 100 }} source={CHARON} />
                     </Flex>
                     <Text variant="h5" fontWeight="semiBold" mb={6}>
                       {t("syncOnboarding.seedStep.backupCharon.title")}

@@ -80,4 +80,6 @@ declare global {
   var waitWebElementByTestId: typeof WebElementHelpers.waitWebElementByTestId;
   var tapWebElementByTestId: typeof WebElementHelpers.tapWebElementByTestId;
   var typeTextByWebTestId: typeof WebElementHelpers.typeTextByWebTestId;
+  var getValueByWebTestId: typeof WebElementHelpers.getValueByWebTestId;
+  var tapWebElementByElement: typeof WebElementHelpers.tapWebElementByElement;
 }
