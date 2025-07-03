@@ -1,0 +1,347 @@
+diff --git a/libs/coin-framework/src/api/types.ts b/libs/coin-framework/src/api/types.ts
+index 6d1a47a4096..5c4c00d834b 100644
+--- a/libs/coin-framework/src/api/types.ts
++++ b/libs/coin-framework/src/api/types.ts
+@@ -7,6 +7,7 @@ export type BlockInfo = {
+   // transaction could be created at a particular moment, but depending on network conditions
+   // mining time, and block intervals, it might not get included in the blockchain until later
+   time?: Date;
++  parent?: BlockInfo;
+ };
+ 
+ type TokenInfoCommon = Record<string, unknown>;
+@@ -56,7 +57,15 @@ export type Transaction = {
+   fee: bigint;
+ } & Record<string, unknown>; // Field containing dedicated value for each blockchain
+ 
+-// Other coins take differents parameters What do we want to do ?
++export type Block<
++  AssetInfo extends Asset<TokenInfoCommon> = Asset<TokenInfoCommon>,
++  MemoType extends Memo = MemoNotSupported,
++> = {
++  info: BlockInfo;
++  operations: Operation<AssetInfo, MemoType>[];
++};
++
++// Other coins take different parameters What do we want to do ?
+ export type Account = {
+   currencyName: string;
+   address: string;
+@@ -161,6 +170,8 @@ export type AlpacaApi<
+   ) => Promise<string>;
+   getBalance: (address: string) => Promise<Balance<AssetInfo>[]>;
+   lastBlock: () => Promise<BlockInfo>;
++  getBlockInfo: (height: number) => Promise<BlockInfo>;
++  getBlock: (height: number) => Promise<Block>;
+   listOperations: (
+     address: string,
+     pagination: Pagination,
+diff --git a/libs/coin-modules/coin-sui/src/network/sdk.integration.test.ts b/libs/coin-modules/coin-sui/src/network/sdk.integration.test.ts
+index 9a4e9045dba..0f2f99c055a 100644
+--- a/libs/coin-modules/coin-sui/src/network/sdk.integration.test.ts
++++ b/libs/coin-modules/coin-sui/src/network/sdk.integration.test.ts
+@@ -6,6 +6,8 @@ import {
+   createTransaction,
+   DEFAULT_COIN_TYPE,
+   getAccountBalances,
++  getCheckpoint,
++  getCheckpointWithTransactions,
+   getOperations,
+   paymentInfo,
+ } from "./sdk";
+@@ -173,4 +175,37 @@ describe("SUI SDK Integration tests", () => {
+       expect(info).toHaveProperty("fees");
+     });
+   });
++
++  describe("getCheckpoint", () => {
++    test("getCheckpoint", async () => {
++      const checkpointById = await getCheckpoint("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
++      const checkpointBySequenceNumber = await getCheckpoint("164167623");
++      expect(checkpointById.epoch).toEqual("814");
++      expect(checkpointById.sequenceNumber).toEqual("164167623");
++      expect(checkpointById.timestampMs).toEqual("1751696298663");
++      expect(checkpointById.digest).toEqual("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
++      expect(checkpointById.previousDigest).toEqual("6VKtVnpxstb968SzSrgYJ7zy5LXgFB6PnNHSJsT8Wr4E");
++      expect(checkpointById.transactions.length).toEqual(19);
++      expect(checkpointById).toEqual(checkpointBySequenceNumber);
++    });
++
++    test("getCheckpointWithTransactions", async () => {
++      const { checkpoint: checkpointById, transactions: checkpointByIdTransactions } =
++        await getCheckpointWithTransactions("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
++      const {
++        checkpoint: checkpointBySequenceNumber,
++        transactions: checkpointBySequenceNumberTransactions,
++      } = await getCheckpointWithTransactions("164167623");
++      expect(checkpointById.epoch).toEqual("814");
++      expect(checkpointById.sequenceNumber).toEqual("164167623");
++      expect(checkpointById.timestampMs).toEqual("1751696298663");
++      expect(checkpointById.digest).toEqual("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
++      expect(checkpointById.previousDigest).toEqual("6VKtVnpxstb968SzSrgYJ7zy5LXgFB6PnNHSJsT8Wr4E");
++      expect(checkpointById.transactions.length).toEqual(19);
++      expect(checkpointById).toEqual(checkpointBySequenceNumber);
++      expect(checkpointByIdTransactions.length).toEqual(19);
++      expect(checkpointBySequenceNumberTransactions.length).toEqual(19);
++      expect(checkpointByIdTransactions).toEqual(checkpointBySequenceNumberTransactions);
++    });
++  });
+ });
+diff --git a/libs/coin-modules/coin-sui/src/network/sdk.test.ts b/libs/coin-modules/coin-sui/src/network/sdk.test.ts
+index 3e0ccb13a40..f8e86ab520b 100644
+--- a/libs/coin-modules/coin-sui/src/network/sdk.test.ts
++++ b/libs/coin-modules/coin-sui/src/network/sdk.test.ts
+@@ -9,8 +9,8 @@ import {
+   getOperationDate,
+   getOperationCoinType,
+   transactionToOperation,
+-  loadOperations,
+-  queryTransactions,
++  loadTransactionsByAddress,
++  queryTransactionsByAddress,
+   TRANSACTIONS_LIMIT_PER_QUERY,
+   TRANSACTIONS_LIMIT,
+   getOperations,
+@@ -497,7 +497,7 @@ describe("queryTransactions", () => {
+       hasNextPage: false,
+     });
+ 
+-    const result = await queryTransactions({
++    const result = await queryTransactionsByAddress({
+       api: mockApi,
+       addr: "0xabc",
+       type: "IN",
+@@ -517,7 +517,7 @@ describe("queryTransactions", () => {
+       hasNextPage: false,
+     });
+ 
+-    const result = await queryTransactions({
++    const result = await queryTransactionsByAddress({
+       api: mockApi,
+       addr: "0xdef",
+       type: "OUT",
+@@ -548,7 +548,7 @@ describe("loadOperations", () => {
+         hasNextPage: false,
+       });
+ 
+-    const result = await loadOperations({
++    const result = await loadTransactionsByAddress({
+       api: mockApi,
+       addr: "0xabc",
+       type: "IN",
+@@ -573,7 +573,7 @@ describe("loadOperations", () => {
+       hasNextPage: true,
+     });
+ 
+-    const result = await loadOperations({
++    const result = await loadTransactionsByAddress({
+       api: mockApi,
+       addr: "0xabc",
+       type: "OUT",
+@@ -597,7 +597,7 @@ describe("loadOperations", () => {
+       }),
+     );
+ 
+-    const result = await loadOperations({
++    const result = await loadTransactionsByAddress({
+       api: mockApi,
+       addr: "0xabc",
+       type: "IN",
+@@ -617,7 +617,7 @@ describe("loadOperations", () => {
+       hasNextPage: false,
+     });
+ 
+-    const result = await loadOperations({
++    const result = await loadTransactionsByAddress({
+       api: mockApi,
+       addr: "0xabc",
+       type: "IN",
+@@ -651,7 +651,7 @@ describe("loadOperations", () => {
+   it("should should not retry after unexpected errors and return empty data", async () => {
+     mockApi.queryTransactionBlocks.mockRejectedValueOnce(new Error("unexpected"));
+ 
+-    const result = await loadOperations({
++    const result = await loadTransactionsByAddress({
+       api: mockApi,
+       addr: "0xerr",
+       type: "IN",
+diff --git a/libs/coin-modules/coin-sui/src/network/sdk.ts b/libs/coin-modules/coin-sui/src/network/sdk.ts
+index 412c086dec1..85f2b5248c6 100644
+--- a/libs/coin-modules/coin-sui/src/network/sdk.ts
++++ b/libs/coin-modules/coin-sui/src/network/sdk.ts
+@@ -1,11 +1,14 @@
+ import {
++  Checkpoint,
++  ExecuteTransactionBlockParams,
+   PaginatedTransactionResponse,
++  QueryTransactionBlocksParams,
++  SuiCallArg,
+   SuiClient,
+-  ExecuteTransactionBlockParams,
++  SuiTransactionBlockResponse,
++  TransactionBlockData,
+   TransactionEffects,
+-  QueryTransactionBlocksParams,
+ } from "@mysten/sui/client";
+-import { TransactionBlockData, SuiTransactionBlockResponse, SuiCallArg } from "@mysten/sui/client";
+ import { Transaction } from "@mysten/sui/transactions";
+ import { BigNumber } from "bignumber.js";
+ import type { Operation as Op } from "@ledgerhq/coin-framework/api/index";
+@@ -40,8 +43,7 @@ export async function withApi<T>(execute: AsyncApiFunction<T>) {
+     apiMap[url] = new SuiClient({ url });
+   }
+ 
+-  const result = await execute(apiMap[url]);
+-  return result;
++  return await execute(apiMap[url]);
+ }
+ 
+ export const getBalanceCached = makeLRUCache(
+@@ -256,8 +258,8 @@ export const getOperations = async (
+   cursor?: string | null | undefined,
+ ): Promise<Operation[]> =>
+   withApi(async api => {
+-    const sentOps = await loadOperations({ api, addr, type: "OUT", cursor });
+-    const receivedOps = await loadOperations({ api, addr, type: "IN", cursor });
++    const sentOps = await loadTransactionsByAddress({ api, addr, type: "OUT", cursor });
++    const receivedOps = await loadTransactionsByAddress({ api, addr, type: "IN", cursor });
+     const rawTransactions = [...sentOps, ...receivedOps].sort(
+       (a, b) => Number(b.timestampMs) - Number(a.timestampMs),
+     );
+@@ -267,8 +269,8 @@ export const getOperations = async (
+ 
+ export const getListOperations = async (addr: string, cursor = ""): Promise<Op<SuiAsset>[]> =>
+   withApi(async api => {
+-    const opsOut = await loadOperations({ api, addr, type: "OUT", cursor });
+-    const opsIn = await loadOperations({ api, addr, type: "IN", cursor });
++    const opsOut = await loadTransactionsByAddress({ api, addr, type: "OUT", cursor });
++    const opsIn = await loadTransactionsByAddress({ api, addr, type: "IN", cursor });
+ 
+     const rawTransactions = [...opsIn, ...opsOut].sort(
+       (a, b) => Number(b.timestampMs) - Number(a.timestampMs),
+@@ -277,6 +279,34 @@ export const getListOperations = async (addr: string, cursor = ""): Promise<Op<S
+     return list.map(t => transactionToOp(addr, t));
+   });
+ 
++/**
++ * Get a checkpoint (a.k.a, a block) metadata.
++ *
++ * @param id the checkpoint digest or sequence number (as a string)
++ */
++export const getCheckpoint = async (id: string): Promise<Checkpoint> =>
++  withApi(async api => api.getCheckpoint({ id }));
++
++/**
++ * Get a checkpoint (a.k.a, a block) metadata with all transactions.
++ *
++ * @param id the checkpoint digest or sequence number (as a string)
++ */
++export const getCheckpointWithTransactions = async (
++  id: string,
++): Promise<{ checkpoint: Checkpoint; transactions: Operation[] }> => // FIXME type
++  withApi(async api => {
++    const checkpoint = await api.getCheckpoint({ id });
++    const rawTransactions = await queryTransactionsByDigest({
++      api,
++      digests: checkpoint.transactions,
++    });
++    const transactions = rawTransactions.map(
++      transaction => transactionToOperation("accountId", "addr", transaction), // FIXME
++    );
++    return { checkpoint, transactions };
++  });
++
+ const getTotalGasUsed = (effects?: TransactionEffects | null): bigint => {
+   const gasSummary = effects?.gasUsed;
+   if (!gasSummary) return BigInt(0);
+@@ -362,7 +392,7 @@ export const executeTransactionBlock = async (params: ExecuteTransactionBlockPar
+ /**
+  * Fetch operations for a specific address and type until the limit is reached
+  */
+-export const loadOperations = async (params: {
++export const loadTransactionsByAddress = async (params: {
+   api: SuiClient;
+   addr: string;
+   type: OperationType;
+@@ -373,7 +403,7 @@ export const loadOperations = async (params: {
+ 
+   while (operations.length < TRANSACTIONS_LIMIT) {
+     try {
+-      const { data, nextCursor, hasNextPage } = await queryTransactions({
++      const { data, nextCursor, hasNextPage } = await queryTransactionsByAddress({
+         ...params,
+         cursor: currentCursor,
+       });
+@@ -394,8 +424,6 @@ export const loadOperations = async (params: {
+         });
+ 
+         currentCursor = null;
+-
+-        continue;
+       } else {
+         log("coin:sui", "(network/sdk): loadOperations error", { error, params });
+ 
+@@ -410,7 +438,7 @@ export const loadOperations = async (params: {
+ /**
+  * Query transactions for given address from RPC
+  */
+-export const queryTransactions = async (params: {
++export const queryTransactionsByAddress = async (params: {
+   api: SuiClient;
+   addr: string;
+   type: OperationType;
+@@ -432,3 +460,22 @@ export const queryTransactions = async (params: {
+     limit: TRANSACTIONS_LIMIT_PER_QUERY,
+   });
+ };
++
++/**
++ * Query transactions by digest.
++ */
++export const queryTransactionsByDigest = async (params: {
++  api: SuiClient;
++  digests: string[];
++}): Promise<SuiTransactionBlockResponse[]> => {
++  const { api, digests } = params;
++
++  return await api.multiGetTransactionBlocks({
++    digests,
++    options: {
++      showInput: true,
++      showBalanceChanges: true,
++      showEffects: true, // To get transaction status and gas fee details
++    },
++  });
++};
+diff --git a/libs/ledgerjs/packages/types-live/src/tx.ts b/libs/ledgerjs/packages/types-live/src/tx.ts
+new file mode 100644
+index 00000000000..921da363c61
+--- /dev/null
++++ b/libs/ledgerjs/packages/types-live/src/tx.ts
+@@ -0,0 +1,26 @@
++export type Transaction<
++  AssetType extends Record<string, unknown>,
++  OperationType extends Operation<AssetType>,
++  DetailsType extends Record<string, unknown>,
++> = {
++  hash: string;
++  value: bigint;
++  failed: boolean;
++  operations: OperationType[];
++  details?: DetailsType;
++};
++
++export type Operation<AssetType> = Transfer<AssetType> | Fee<AssetType>;
++
++export type Transfer<AssetType> = {
++  type: "transfer";
++  from: string;
++  to: string;
++  asset: AssetType;
++};
++
++export type Fee<AssetType> = {
++  type: "fee";
++  amount: bigint;
++  asset: AssetType;
++};
