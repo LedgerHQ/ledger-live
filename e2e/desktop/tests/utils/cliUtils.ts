@@ -5,11 +5,12 @@ import { DistantState as LiveData, liveSlug } from "@ledgerhq/live-wallet/lib/wa
 import walletsync from "@ledgerhq/live-wallet/lib/walletsync/root";
 import { getEnv } from "@ledgerhq/live-env";
 import { runCliCommand } from "./runCli";
-import SpeculosHttpTransport, {
-  SpeculosHttpTransportOpts,
-} from "@ledgerhq/hw-transport-node-speculos-http";
 import { retry } from "@ledgerhq/live-common/promise";
 import { registerTransportModule, unregisterAllTransportModules } from "@ledgerhq/live-common/hw";
+import {
+  DeviceManagementKitTransportSpeculos,
+  SpeculosHttpTransportOpts,
+} from "@ledgerhq/live-dmk-speculos";
 
 type LiveDataOpts = {
   currency?: string;
@@ -210,7 +211,7 @@ export const CLI = {
 
     registerTransportModule({
       id: "speculos-http",
-      open: () => retry(() => SpeculosHttpTransport.open(req)),
+      open: () => retry(() => DeviceManagementKitTransportSpeculos.open(req)),
       disconnect: () => Promise.resolve(),
     });
   },

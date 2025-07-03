@@ -1,0 +1,1115 @@
+[
+  {
+    "logIndex": 0,
+    "timestamp": "2025-07-03T14:01:44.714Z",
+    "pname": "electron-renderer",
+    "type": "action",
+    "level": "debug",
+    "message": "⚛️  FETCH_SETTINGS"
+  },
+  {
+    "logIndex": 1,
+    "timestamp": "2025-07-03T14:01:44.732Z",
+    "pname": "electron-renderer",
+    "type": "action",
+    "level": "debug",
+    "message": "⚛️  INIT_ACCOUNTS"
+  },
+  {
+    "logIndex": 2,
+    "timestamp": "2025-07-03T14:01:44.759Z",
+    "pname": "electron-renderer",
+    "type": "action",
+    "level": "debug",
+    "message": "⚛️  CLEAR_DISMISSED_CONTENT_CARDS"
+  },
+  {
+    "logIndex": 3,
+    "timestamp": "2025-07-03T14:01:44.759Z",
+    "pname": "electron-renderer",
+    "type": "action",
+    "level": "debug",
+    "message": "⚛️  SET_ANONYMOUS_BRAZE_ID"
+  },
+  {
+    "logIndex": 4,
+    "timestamp": "2025-07-03T14:01:44.762Z",
+    "pname": "electron-renderer",
+    "type": "action",
+    "level": "debug",
+    "message": "⚛️  IMPORT_WALLET_SYNC"
+  },
+  {
+    "logIndex": 5,
+    "timestamp": "2025-07-03T14:01:45.271Z",
+    "pname": "electron-internal",
+    "type": "internal",
+    "id": "1",
+    "message": "Internal process is up!"
+  },
+  {
+    "logIndex": 6,
+    "timestamp": "2025-07-03T14:01:45.578Z",
+    "pname": "electron-renderer",
+    "type": "action",
+    "level": "debug",
+    "message": "⚛️  DB:REORDER_ACCOUNTS"
+  },
+  {
+    "logIndex": 7,
+    "timestamp": "2025-07-03T14:01:45.578Z",
+    "pname": "electron-renderer",
+    "type": "action",
+    "level": "debug",
+    "message": "⚛️  REORDER_ACCOUNTS"
+  },
+  {
+    "logIndex": 8,
+    "timestamp": "2025-07-03T14:01:45.579Z",
+    "pname": "electron-renderer",
+    "type": "countervalues",
+    "level": "debug",
+    "message": "0 historical value to fetch (0 pairs)"
+  },
+  {
+    "logIndex": 9,
+    "timestamp": "2025-07-03T14:01:45.608Z",
+    "pname": "electron-renderer",
+    "type": "countervalues",
+    "level": "debug",
+    "message": "0 updates to apply"
+  },
+  {
+    "logIndex": 10,
+    "timestamp": "2025-07-03T14:01:46.560Z",
+    "pname": "electron-renderer",
+    "type": "live-dmk-logger",
+    "level": "debug",
+    "message": "startListeningToConnectionEvents",
+    "data": {
+      "timestamp": 1751551306560,
+      "level": 4,
+      "tag": "WebWebHidTransport"
+    }
+  },
+  {
+    "logIndex": 11,
+    "timestamp": "2025-07-03T14:01:46.560Z",
+    "pname": "electron-renderer",
+    "type": "live-dmk-logger",
+    "level": "debug",
+    "message": "isSupported: true",
+    "data": {
+      "timestamp": 1751551306560,
+      "level": 4,
+      "tag": "WebWebHidTransport"
+    }
+  },
+  {
+    "logIndex": 12,
+    "timestamp": "2025-07-03T14:01:46.561Z",
+    "pname": "electron-renderer",
+    "type": "live-dmk-logger",
+    "level": "debug",
+    "message": "Listening to available devices",
+    "data": {
+      "timestamp": 1751551306561,
+      "level": 3,
+      "tag": "ListenToAvailableDevicesUseCase"
+    }
+  },
+  {
+    "logIndex": 13,
+    "timestamp": "2025-07-03T14:01:46.561Z",
+    "pname": "electron-renderer",
+    "type": "live-dmk-logger",
+    "level": "debug",
+    "message": "Discovering all available transports",
+    "data": {
+      "timestamp": 1751551306561,
+      "level": 3,
+      "tag": "ListenToAvailableDevicesUseCase"
+    }
+  },
+  {
+    "logIndex": 14,
+    "timestamp": "2025-07-03T14:01:46.561Z",
+    "pname": "electron-renderer",
+    "type": "live-dmk-logger",
+    "level": "debug",
+    "message": "isSupported: true",
+    "data": {
+      "timestamp": 1751551306561,
+      "level": 4,
+      "tag": "WebWebHidTransport"
+    }
+  },
+  {
+    "logIndex": 15,
+    "timestamp": "2025-07-03T14:01:46.760Z",
+    "pname": "electron-renderer",
+    "type": "countervalues",
+    "level": "debug",
+    "message": "100 historical value to fetch (50 pairs)"
+  },
+  {
+    "logIndex": 16,
+    "timestamp": "2025-07-03T14:01:47.128Z",
+    "pname": "electron-renderer",
+    "type": "countervalues",
+    "level": "debug",
+    "message": "101 updates to apply"
+  },
+  {
+    "logIndex": 17,
+    "timestamp": "2025-07-03T14:01:47.556Z",
+    "pname": "electron-renderer",
+    "type": "bridge",
+    "level": "debug",
+    "message": "action BACKGROUND_TICK",
+    "data": {
+      "type": "syncQueue",
+      "action": {
+        "type": "BACKGROUND_TICK",
+        "reason": "initial"
+      }
+    }
+  },
+  {
+    "logIndex": 18,
+    "timestamp": "2025-07-03T14:01:47.556Z",
+    "pname": "electron-renderer",
+    "type": "bridge",
+    "level": "debug",
+    "message": "schedule "
+  },
+  {
+    "logIndex": 19,
+    "timestamp": "2025-07-03T14:01:48.563Z",
+    "pname": "electron-renderer",
+    "type": "countervalues",
+    "level": "debug",
+    "message": "49 historical value to fetch (50 pairs)"
+  },
+  {
+    "logIndex": 20,
+    "timestamp": "2025-07-03T14:01:48.737Z",
+    "pname": "electron-renderer",
+    "type": "countervalues",
+    "level": "debug",
+    "message": "49 updates to apply"
+  },
+  {
+    "logIndex": 21,
+    "timestamp": "2025-07-03T14:02:41.178Z",
+    "pname": "electron-renderer",
+    "type": "action",
+    "level": "debug",
+    "message": "⚛️  MODAL_OPEN"
+  },
+  {
+    "logIndex": 22,
+    "timestamp": "2025-07-03T14:02:41.229Z",
+    "pname": "electron-renderer",
+    "type": "bridge",
+    "level": "debug",
+    "message": "action SET_SKIP_UNDER_PRIORITY",
+    "data": {
+      "type": "syncQueue",
+      "action": {
+        "type": "SET_SKIP_UNDER_PRIORITY",
+        "priority": 100
+      }
+    }
+  },
+  {
+    "logIndex": 23,
+    "timestamp": "2025-07-03T14:02:41.744Z",
+    "pname": "electron-renderer",
+    "type": "hw",
+    "level": "debug",
+    "message": "New job for device: USB",
+    "context": {
+      "jobId": 0,
+      "deviceId": "",
+      "origin": "hw:withDevice"
+    }
+  },
+  {
+    "logIndex": 24,
+    "timestamp": "2025-07-03T14:02:41.745Z",
+    "pname": "electron-renderer",
+    "type": "hw",
+    "level": "debug",
+    "message": "Waiting for the previous job in the queue to complete",
+    "data": {
+      "previousJobId": -1
+    },
+    "context": {
+      "jobId": 0,
+      "deviceId": "",
+      "origin": "hw:withDevice"
+    }
+  },
+  {
+    "logIndex": 25,
+    "timestamp": "2025-07-03T14:02:41.745Z",
+    "pname": "electron-renderer",
+    "type": "hw",
+    "level": "debug",
+    "message": "Previous queued job resolved, now trying to get a Transport instance",
+    "data": {
+      "previousJobId": -1,
+      "currentJobId": 0
+    },
+    "context": {
+      "jobId": 0,
+      "deviceId": "",
+      "origin": "hw:withDevice"
+    }
+  },
+  {
+    "logIndex": 26,
+    "timestamp": "2025-07-03T14:02:41.745Z",
+    "pname": "electron-renderer",
+    "type": "renderer-setup",
+    "level": "debug",
+    "message": "Open called on registered module",
+    "data": {
+      "transport": "IPCTransport"
+    },
+    "context": {
+      "openContext": {
+        "jobId": 0,
+        "deviceId": "",
+        "origin": "hw:withDevice"
+      }
+    }
+  },
+  {
+    "logIndex": 27,
+    "timestamp": "2025-07-03T14:02:41.745Z",
+    "pname": "electron-renderer",
+    "type": "ipc-transport",
+    "level": "debug",
+    "message": "Sending IPC request",
+    "data": {
+      "data": {
+        "context": {
+          "jobId": 0,
+          "deviceId": "",
+          "origin": "hw:withDevice"
+        },
+        "descriptor": ""
+      }
+    },
+    "context": {
+      "requestId": "da921e46-0b1b-4049-9b0d-250286d8b505",
+      "replyChannel": "transport:open_RESPONSE_da921e46-0b1b-4049-9b0d-250286d8b505"
+    }
+  },
+  {
+    "logIndex": 28,
+    "timestamp": "2025-07-03T14:02:41.745Z",
+    "pname": "electron-renderer",
+    "type": "hw",
+    "level": "debug",
+    "message": "Found a matching Transport: ipc",
+    "data": {},
+    "context": {
+      "jobId": 0,
+      "deviceId": "",
+      "origin": "hw:withDevice"
+    }
+  },
+  {
+    "logIndex": 29,
+    "timestamp": "2025-07-03T14:02:41.746Z",
+    "pname": "electron-renderer",
+    "type": "actions-app-event",
+    "level": "debug",
+    "message": "deviceChange",
+    "data": {
+      "type": "deviceChange",
+      "device": {
+        "deviceId": "",
+        "wired": true,
+        "modelId": "nanoSP"
+      }
+    }
+  },
+  {
+    "logIndex": 30,
+    "timestamp": "2025-07-03T14:02:41.746Z",
+    "pname": "electron-internal",
+    "type": "internal",
+    "id": "2",
+    "message": "Received open transport request",
+    "data": {},
+    "context": {
+      "ipcContext": {
+        "jobId": 0,
+        "deviceId": "",
+        "origin": "hw:withDevice"
+      },
+      "descriptor": "",
+      "requestId": "da921e46-0b1b-4049-9b0d-250286d8b505",
+      "function": "transportOpen"
+    }
+  },
+  {
+    "logIndex": 31,
+    "timestamp": "2025-07-03T14:02:41.748Z",
+    "pname": "electron-internal",
+    "type": "hw",
+    "id": "3",
+    "message": "Found a matching Transport: speculos-http",
+    "data": {},
+    "context": {
+      "descriptor": ""
+    }
+  },
+  {
+    "logIndex": 32,
+    "timestamp": "2025-07-03T14:02:41.752Z",
+    "pname": "electron-internal",
+    "type": "internal",
+    "id": "4",
+    "message": "Error while opening transport: SyntaxError: Unexpected token 'export'",
+    "data": {
+      "error": {}
+    },
+    "context": {
+      "ipcContext": {
+        "jobId": 0,
+        "deviceId": "",
+        "origin": "hw:withDevice"
+      },
+      "descriptor": "",
+      "requestId": "da921e46-0b1b-4049-9b0d-250286d8b505",
+      "function": "transportOpen"
+    }
+  },
+  {
+    "logIndex": 33,
+    "timestamp": "2025-07-03T14:02:41.753Z",
+    "pname": "electron-renderer",
+    "type": "ipc-transport",
+    "level": "debug",
+    "message": "Error while trying to open a transport",
+    "data": {
+      "error": {
+        "message": "Unexpected token 'export'",
+        "name": "SyntaxError",
+        "stack": "/Users/francesco.anselmi/projects/ledger-live/libs/live-dmk-speculos/lib-es/index.js:1\nexport { default as DeviceManagementKitTransportSpeculos } from \"./transport/DeviceManagementKitTransportSpeculos\";\n^^^^^^\n\nSyntaxError: Unexpected token 'export'\n    at wrapSafe (node:internal/modules/cjs/loader:1288:20)\n    at Module._compile (node:internal/modules/cjs/loader:1328:27)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1432:10)\n    at Module.load (node:internal/modules/cjs/loader:1215:32)\n    at Module._load (node:internal/modules/cjs/loader:1031:12)\n    at c._load (node:electron/js2c/node_init:2:17025)\n    at cjsLoader (node:internal/modules/esm/translators:352:17)\n    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:297:7)\n    at ModuleJob.run (node:internal/modules/esm/module_job:222:25)\n    at async ModuleLoader.import (node:internal/modules/esm/loader:316:24)"
+      }
+    },
+    "context": {
+      "jobId": 0,
+      "deviceId": "",
+      "origin": "hw:withDevice"
+    }
+  },
+  {
+    "logIndex": 34,
+    "timestamp": "2025-07-03T14:02:41.753Z",
+    "pname": "electron-renderer",
+    "type": "promise-retry",
+    "level": "debug",
+    "message": " failed. 4 retry remain. SyntaxError: Unexpected token 'export'"
+  },
+  {
+    "logIndex": 35,
+    "timestamp": "2025-07-03T14:02:42.260Z",
+    "pname": "electron-renderer",
+    "type": "ipc-transport",
+    "level": "debug",
+    "message": "Sending IPC request",
+    "data": {
+      "data": {
+        "context": {
+          "jobId": 0,
+          "deviceId": "",
+          "origin": "hw:withDevice"
+        },
+        "descriptor": ""
+      }
+    },
+    "context": {
+      "requestId": "1e8f4079-2247-43f4-8279-8a32871f335e",
+      "replyChannel": "transport:open_RESPONSE_1e8f4079-2247-43f4-8279-8a32871f335e"
+    }
+  },
+  {
+    "logIndex": 36,
+    "timestamp": "2025-07-03T14:02:42.261Z",
+    "pname": "electron-renderer",
+    "type": "ipc-transport",
+    "level": "debug",
+    "message": "Error while trying to open a transport",
+    "data": {
+      "error": {
+        "message": "Unexpected token 'export'",
+        "name": "SyntaxError",
+        "stack": "/Users/francesco.anselmi/projects/ledger-live/libs/live-dmk-speculos/lib-es/index.js:1\nexport { default as DeviceManagementKitTransportSpeculos } from \"./transport/DeviceManagementKitTransportSpeculos\";\n^^^^^^\n\nSyntaxError: Unexpected token 'export'\n    at wrapSafe (node:internal/modules/cjs/loader:1288:20)\n    at Module._compile (node:internal/modules/cjs/loader:1328:27)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1432:10)\n    at Module.load (node:internal/modules/cjs/loader:1215:32)\n    at Module._load (node:internal/modules/cjs/loader:1031:12)\n    at c._load (node:electron/js2c/node_init:2:17025)\n    at cjsLoader (node:internal/modules/esm/translators:352:17)\n    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:297:7)\n    at ModuleJob.run (node:internal/modules/esm/module_job:222:25)\n    at async ModuleLoader.import (node:internal/modules/esm/loader:316:24)"
+      }
+    },
+    "context": {
+      "jobId": 0,
+      "deviceId": "",
+      "origin": "hw:withDevice"
+    }
+  },
+  {
+    "logIndex": 37,
+    "timestamp": "2025-07-03T14:02:42.261Z",
+    "pname": "electron-renderer",
+    "type": "promise-retry",
+    "level": "debug",
+    "message": " failed. 3 retry remain. SyntaxError: Unexpected token 'export'"
+  },
+  {
+    "logIndex": 38,
+    "timestamp": "2025-07-03T14:02:42.261Z",
+    "pname": "electron-internal",
+    "type": "internal",
+    "id": "5",
+    "message": "Received open transport request",
+    "data": {},
+    "context": {
+      "ipcContext": {
+        "jobId": 0,
+        "deviceId": "",
+        "origin": "hw:withDevice"
+      },
+      "descriptor": "",
+      "requestId": "1e8f4079-2247-43f4-8279-8a32871f335e",
+      "function": "transportOpen"
+    }
+  },
+  {
+    "logIndex": 39,
+    "timestamp": "2025-07-03T14:02:42.261Z",
+    "pname": "electron-internal",
+    "type": "hw",
+    "id": "6",
+    "message": "Found a matching Transport: speculos-http",
+    "data": {},
+    "context": {
+      "descriptor": ""
+    }
+  },
+  {
+    "logIndex": 40,
+    "timestamp": "2025-07-03T14:02:42.261Z",
+    "pname": "electron-internal",
+    "type": "internal",
+    "id": "7",
+    "message": "Error while opening transport: SyntaxError: Unexpected token 'export'",
+    "data": {
+      "error": {}
+    },
+    "context": {
+      "ipcContext": {
+        "jobId": 0,
+        "deviceId": "",
+        "origin": "hw:withDevice"
+      },
+      "descriptor": "",
+      "requestId": "1e8f4079-2247-43f4-8279-8a32871f335e",
+      "function": "transportOpen"
+    }
+  },
+  {
+    "logIndex": 41,
+    "timestamp": "2025-07-03T14:02:43.020Z",
+    "pname": "electron-renderer",
+    "type": "ipc-transport",
+    "level": "debug",
+    "message": "Sending IPC request",
+    "data": {
+      "data": {
+        "context": {
+          "jobId": 0,
+          "deviceId": "",
+          "origin": "hw:withDevice"
+        },
+        "descriptor": ""
+      }
+    },
+    "context": {
+      "requestId": "c28fe0cc-a25d-47bb-91b6-80410bcce01b",
+      "replyChannel": "transport:open_RESPONSE_c28fe0cc-a25d-47bb-91b6-80410bcce01b"
+    }
+  },
+  {
+    "logIndex": 42,
+    "timestamp": "2025-07-03T14:02:43.020Z",
+    "pname": "electron-internal",
+    "type": "internal",
+    "id": "8",
+    "message": "Received open transport request",
+    "data": {},
+    "context": {
+      "ipcContext": {
+        "jobId": 0,
+        "deviceId": "",
+        "origin": "hw:withDevice"
+      },
+      "descriptor": "",
+      "requestId": "c28fe0cc-a25d-47bb-91b6-80410bcce01b",
+      "function": "transportOpen"
+    }
+  },
+  {
+    "logIndex": 43,
+    "timestamp": "2025-07-03T14:02:43.020Z",
+    "pname": "electron-internal",
+    "type": "hw",
+    "id": "9",
+    "message": "Found a matching Transport: speculos-http",
+    "data": {},
+    "context": {
+      "descriptor": ""
+    }
+  },
+  {
+    "logIndex": 44,
+    "timestamp": "2025-07-03T14:02:43.020Z",
+    "pname": "electron-internal",
+    "type": "internal",
+    "id": "10",
+    "message": "Error while opening transport: SyntaxError: Unexpected token 'export'",
+    "data": {
+      "error": {}
+    },
+    "context": {
+      "ipcContext": {
+        "jobId": 0,
+        "deviceId": "",
+        "origin": "hw:withDevice"
+      },
+      "descriptor": "",
+      "requestId": "c28fe0cc-a25d-47bb-91b6-80410bcce01b",
+      "function": "transportOpen"
+    }
+  },
+  {
+    "logIndex": 45,
+    "timestamp": "2025-07-03T14:02:43.021Z",
+    "pname": "electron-renderer",
+    "type": "ipc-transport",
+    "level": "debug",
+    "message": "Error while trying to open a transport",
+    "data": {
+      "error": {
+        "message": "Unexpected token 'export'",
+        "name": "SyntaxError",
+        "stack": "/Users/francesco.anselmi/projects/ledger-live/libs/live-dmk-speculos/lib-es/index.js:1\nexport { default as DeviceManagementKitTransportSpeculos } from \"./transport/DeviceManagementKitTransportSpeculos\";\n^^^^^^\n\nSyntaxError: Unexpected token 'export'\n    at wrapSafe (node:internal/modules/cjs/loader:1288:20)\n    at Module._compile (node:internal/modules/cjs/loader:1328:27)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1432:10)\n    at Module.load (node:internal/modules/cjs/loader:1215:32)\n    at Module._load (node:internal/modules/cjs/loader:1031:12)\n    at c._load (node:electron/js2c/node_init:2:17025)\n    at cjsLoader (node:internal/modules/esm/translators:352:17)\n    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:297:7)\n    at ModuleJob.run (node:internal/modules/esm/module_job:222:25)\n    at async ModuleLoader.import (node:internal/modules/esm/loader:316:24)"
+      }
+    },
+    "context": {
+      "jobId": 0,
+      "deviceId": "",
+      "origin": "hw:withDevice"
+    }
+  },
+  {
+    "logIndex": 46,
+    "timestamp": "2025-07-03T14:02:43.021Z",
+    "pname": "electron-renderer",
+    "type": "promise-retry",
+    "level": "debug",
+    "message": " failed. 2 retry remain. SyntaxError: Unexpected token 'export'"
+  },
+  {
+    "logIndex": 47,
+    "timestamp": "2025-07-03T14:02:44.146Z",
+    "pname": "electron-renderer",
+    "type": "ipc-transport",
+    "level": "debug",
+    "message": "Sending IPC request",
+    "data": {
+      "data": {
+        "context": {
+          "jobId": 0,
+          "deviceId": "",
+          "origin": "hw:withDevice"
+        },
+        "descriptor": ""
+      }
+    },
+    "context": {
+      "requestId": "c6167763-d3f9-4ffb-bf2d-477fd5fbff22",
+      "replyChannel": "transport:open_RESPONSE_c6167763-d3f9-4ffb-bf2d-477fd5fbff22"
+    }
+  },
+  {
+    "logIndex": 48,
+    "timestamp": "2025-07-03T14:02:44.147Z",
+    "pname": "electron-renderer",
+    "type": "ipc-transport",
+    "level": "debug",
+    "message": "Error while trying to open a transport",
+    "data": {
+      "error": {
+        "message": "Unexpected token 'export'",
+        "name": "SyntaxError",
+        "stack": "/Users/francesco.anselmi/projects/ledger-live/libs/live-dmk-speculos/lib-es/index.js:1\nexport { default as DeviceManagementKitTransportSpeculos } from \"./transport/DeviceManagementKitTransportSpeculos\";\n^^^^^^\n\nSyntaxError: Unexpected token 'export'\n    at wrapSafe (node:internal/modules/cjs/loader:1288:20)\n    at Module._compile (node:internal/modules/cjs/loader:1328:27)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1432:10)\n    at Module.load (node:internal/modules/cjs/loader:1215:32)\n    at Module._load (node:internal/modules/cjs/loader:1031:12)\n    at c._load (node:electron/js2c/node_init:2:17025)\n    at cjsLoader (node:internal/modules/esm/translators:352:17)\n    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:297:7)\n    at ModuleJob.run (node:internal/modules/esm/module_job:222:25)\n    at async ModuleLoader.import (node:internal/modules/esm/loader:316:24)"
+      }
+    },
+    "context": {
+      "jobId": 0,
+      "deviceId": "",
+      "origin": "hw:withDevice"
+    }
+  },
+  {
+    "logIndex": 49,
+    "timestamp": "2025-07-03T14:02:44.147Z",
+    "pname": "electron-renderer",
+    "type": "promise-retry",
+    "level": "debug",
+    "message": " failed. 1 retry remain. SyntaxError: Unexpected token 'export'"
+  },
+  {
+    "logIndex": 50,
+    "timestamp": "2025-07-03T14:02:44.147Z",
+    "pname": "electron-internal",
+    "type": "internal",
+    "id": "11",
+    "message": "Received open transport request",
+    "data": {},
+    "context": {
+      "ipcContext": {
+        "jobId": 0,
+        "deviceId": "",
+        "origin": "hw:withDevice"
+      },
+      "descriptor": "",
+      "requestId": "c6167763-d3f9-4ffb-bf2d-477fd5fbff22",
+      "function": "transportOpen"
+    }
+  },
+  {
+    "logIndex": 51,
+    "timestamp": "2025-07-03T14:02:44.147Z",
+    "pname": "electron-internal",
+    "type": "hw",
+    "id": "12",
+    "message": "Found a matching Transport: speculos-http",
+    "data": {},
+    "context": {
+      "descriptor": ""
+    }
+  },
+  {
+    "logIndex": 52,
+    "timestamp": "2025-07-03T14:02:44.147Z",
+    "pname": "electron-internal",
+    "type": "internal",
+    "id": "13",
+    "message": "Error while opening transport: SyntaxError: Unexpected token 'export'",
+    "data": {
+      "error": {}
+    },
+    "context": {
+      "ipcContext": {
+        "jobId": 0,
+        "deviceId": "",
+        "origin": "hw:withDevice"
+      },
+      "descriptor": "",
+      "requestId": "c6167763-d3f9-4ffb-bf2d-477fd5fbff22",
+      "function": "transportOpen"
+    }
+  },
+  {
+    "logIndex": 53,
+    "timestamp": "2025-07-03T14:02:45.844Z",
+    "pname": "electron-renderer",
+    "type": "ipc-transport",
+    "level": "debug",
+    "message": "Sending IPC request",
+    "data": {
+      "data": {
+        "context": {
+          "jobId": 0,
+          "deviceId": "",
+          "origin": "hw:withDevice"
+        },
+        "descriptor": ""
+      }
+    },
+    "context": {
+      "requestId": "4ea973a9-f3c9-44e9-84ef-2d87f97c1d79",
+      "replyChannel": "transport:open_RESPONSE_4ea973a9-f3c9-44e9-84ef-2d87f97c1d79"
+    }
+  },
+  {
+    "logIndex": 54,
+    "timestamp": "2025-07-03T14:02:45.844Z",
+    "pname": "electron-internal",
+    "type": "internal",
+    "id": "14",
+    "message": "Received open transport request",
+    "data": {},
+    "context": {
+      "ipcContext": {
+        "jobId": 0,
+        "deviceId": "",
+        "origin": "hw:withDevice"
+      },
+      "descriptor": "",
+      "requestId": "4ea973a9-f3c9-44e9-84ef-2d87f97c1d79",
+      "function": "transportOpen"
+    }
+  },
+  {
+    "logIndex": 55,
+    "timestamp": "2025-07-03T14:02:45.844Z",
+    "pname": "electron-internal",
+    "type": "hw",
+    "id": "15",
+    "message": "Found a matching Transport: speculos-http",
+    "data": {},
+    "context": {
+      "descriptor": ""
+    }
+  },
+  {
+    "logIndex": 56,
+    "timestamp": "2025-07-03T14:02:45.844Z",
+    "pname": "electron-internal",
+    "type": "internal",
+    "id": "16",
+    "message": "Error while opening transport: SyntaxError: Unexpected token 'export'",
+    "data": {
+      "error": {}
+    },
+    "context": {
+      "ipcContext": {
+        "jobId": 0,
+        "deviceId": "",
+        "origin": "hw:withDevice"
+      },
+      "descriptor": "",
+      "requestId": "4ea973a9-f3c9-44e9-84ef-2d87f97c1d79",
+      "function": "transportOpen"
+    }
+  },
+  {
+    "logIndex": 57,
+    "timestamp": "2025-07-03T14:02:45.845Z",
+    "pname": "electron-renderer",
+    "type": "ipc-transport",
+    "level": "debug",
+    "message": "Error while trying to open a transport",
+    "data": {
+      "error": {
+        "message": "Unexpected token 'export'",
+        "name": "SyntaxError",
+        "stack": "/Users/francesco.anselmi/projects/ledger-live/libs/live-dmk-speculos/lib-es/index.js:1\nexport { default as DeviceManagementKitTransportSpeculos } from \"./transport/DeviceManagementKitTransportSpeculos\";\n^^^^^^\n\nSyntaxError: Unexpected token 'export'\n    at wrapSafe (node:internal/modules/cjs/loader:1288:20)\n    at Module._compile (node:internal/modules/cjs/loader:1328:27)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1432:10)\n    at Module.load (node:internal/modules/cjs/loader:1215:32)\n    at Module._load (node:internal/modules/cjs/loader:1031:12)\n    at c._load (node:electron/js2c/node_init:2:17025)\n    at cjsLoader (node:internal/modules/esm/translators:352:17)\n    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:297:7)\n    at ModuleJob.run (node:internal/modules/esm/module_job:222:25)\n    at async ModuleLoader.import (node:internal/modules/esm/loader:316:24)"
+      }
+    },
+    "context": {
+      "jobId": 0,
+      "deviceId": "",
+      "origin": "hw:withDevice"
+    }
+  },
+  {
+    "logIndex": 58,
+    "timestamp": "2025-07-03T14:02:45.845Z",
+    "pname": "electron-renderer",
+    "type": "hw",
+    "level": "debug",
+    "message": "Error while opening Transport: SyntaxError: Unexpected token 'export'",
+    "data": {
+      "error": {
+        "message": "Unexpected token 'export'",
+        "name": "SyntaxError",
+        "stack": "/Users/francesco.anselmi/projects/ledger-live/libs/live-dmk-speculos/lib-es/index.js:1\nexport { default as DeviceManagementKitTransportSpeculos } from \"./transport/DeviceManagementKitTransportSpeculos\";\n^^^^^^\n\nSyntaxError: Unexpected token 'export'\n    at wrapSafe (node:internal/modules/cjs/loader:1288:20)\n    at Module._compile (node:internal/modules/cjs/loader:1328:27)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1432:10)\n    at Module.load (node:internal/modules/cjs/loader:1215:32)\n    at Module._load (node:internal/modules/cjs/loader:1031:12)\n    at c._load (node:electron/js2c/node_init:2:17025)\n    at cjsLoader (node:internal/modules/esm/translators:352:17)\n    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:297:7)\n    at ModuleJob.run (node:internal/modules/esm/module_job:222:25)\n    at async ModuleLoader.import (node:internal/modules/esm/loader:316:24)"
+      }
+    },
+    "context": {
+      "jobId": 0,
+      "deviceId": "",
+      "origin": "hw:withDevice"
+    }
+  },
+  {
+    "logIndex": 59,
+    "timestamp": "2025-07-03T14:02:45.845Z",
+    "pname": "electron-renderer",
+    "type": "hw",
+    "level": "debug",
+    "message": "Caught error on job execution step: CantOpenDevice: Unexpected token 'export'",
+    "data": {
+      "error": {
+        "name": "CantOpenDevice"
+      }
+    },
+    "context": {
+      "jobId": 0,
+      "deviceId": "",
+      "origin": "hw:withDevice"
+    }
+  },
+  {
+    "logIndex": 60,
+    "timestamp": "2025-07-03T14:02:45.845Z",
+    "pname": "electron-renderer",
+    "type": "hw",
+    "level": "debug",
+    "message": "Unsubscribing withDevice flow. Ongoing job to unsubscribe from ? false",
+    "context": {
+      "jobId": 0,
+      "deviceId": "",
+      "origin": "hw:withDevice"
+    }
+  },
+  {
+    "logIndex": 61,
+    "timestamp": "2025-07-03T14:02:46.647Z",
+    "pname": "electron-renderer",
+    "type": "actions-app-event",
+    "level": "debug",
+    "message": "error",
+    "data": {
+      "type": "error",
+      "error": {
+        "name": "CantOpenDevice"
+      }
+    }
+  },
+  {
+    "logIndex": 62,
+    "timestamp": "2025-07-03T14:03:01.174Z",
+    "pname": "electron-renderer",
+    "level": "info",
+    "message": "exportLogsMeta",
+    "resourceUsage": {
+      "images": {
+        "count": 1,
+        "size": 90996,
+        "liveSize": 80560
+      },
+      "scripts": {
+        "count": 2,
+        "size": 141614692,
+        "liveSize": 94302445
+      },
+      "cssStyleSheets": {
+        "count": 1,
+        "size": 18726,
+        "liveSize": 9873
+      },
+      "xslStyleSheets": {
+        "count": 0,
+        "size": 0,
+        "liveSize": 0
+      },
+      "fonts": {
+        "count": 7,
+        "size": 505720,
+        "liveSize": 0
+      },
+      "other": {
+        "count": 0,
+        "size": 0,
+        "liveSize": 0
+      }
+    },
+    "release": "2.117.0",
+    "git_commit": "3f99c60865",
+    "environment": "production",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.6613.84 Electron/32.0.2 Safari/537.36",
+    "userAnonymousId": "08cf3393-c5eb-4ea7-92de-0deea22e3971",
+    "env": {
+      "ADDRESS_POISONING_FAMILIES": "evm,tron",
+      "ANALYTICS_CONSOLE": false,
+      "DEBUG_THEME": false,
+      "API_ICP_ENDPOINT": "https://icp.coin.ledger.com/",
+      "APTOS_API_ENDPOINT": "https://apt.coin.ledger.com/node/v1",
+      "APTOS_TESTNET_API_ENDPOINT": "https://apt.coin.ledger-stg.com/node/v1",
+      "APTOS_INDEXER_ENDPOINT": "https://apt.coin.ledger.com/node/v1/graphql",
+      "APTOS_TESTNET_INDEXER_ENDPOINT": "https://apt.coin.ledger-stg.com/node/v1/graphql",
+      "APTOS_ENABLE_TOKENS": false,
+      "API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT": "https://algorand.coin.ledger.com",
+      "API_CELO_INDEXER": "https://celo.coin.ledger.com/indexer/",
+      "API_CELO_NODE": "https://celo.coin.ledger.com/archive/",
+      "COSMOS_GAS_AMPLIFIER": 1.3,
+      "API_FILECOIN_ENDPOINT": "https://filecoin.coin.ledger.com",
+      "API_STACKS_ENDPOINT": "https://stacks.coin.ledger.com",
+      "API_POLKADOT_INDEXER": "https://polkadot.coin.ledger.com",
+      "API_POLKADOT_SIDECAR": "https://polkadot-sidecar.coin.ledger.com",
+      "API_POLKADOT_SIDECAR_CREDENTIALS": "",
+      "API_POLKADOT_NODE": "https://polkadot-fullnodes.api.live.ledger.com",
+      "MULTIVERSX_API_ENDPOINT": "https://elrond.coin.ledger.com",
+      "MULTIVERSX_DELEGATION_API_ENDPOINT": "https://delegations-elrond.coin.ledger.com",
+      "API_STELLAR_HORIZON": "https://stellar.coin.ledger.com",
+      "API_STELLAR_HORIZON_FETCH_LIMIT": 100,
+      "API_STELLAR_HORIZON_INITIAL_FETCH_MAX_OPERATIONS": 1000,
+      "API_STELLAR_HORIZON_STATIC_FEE": false,
+      "API_TEZOS_BAKER": "https://tezos-bakers.api.live.ledger.com",
+      "API_TEZOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT": "https://xtz-explorer.api.live.ledger.com/explorer",
+      "API_TEZOS_TZKT_API": "https://xtz-tzkt-explorer.api.live.ledger.com",
+      "API_TEZOS_NODE": "https://xtz-node.api.live.ledger.com",
+      "API_TRONGRID_PROXY": "https://tron.coin.ledger.com",
+      "API_SOLANA_PROXY": "https://solana.coin.ledger.com",
+      "API_SUI_NODE_PROXY": "https://sui.coin.ledger.com",
+      "SOLANA_VALIDATORS_APP_BASE_URL": "https://earn.api.live.ledger.com/v0/network/solana/validator-details",
+      "SOLANA_TESTNET_VALIDATORS_APP_BASE_URL": "https://validators-solana.coin.ledger.com/api/v1/validators",
+      "SOLANA_TX_CONFIRMATION_TIMEOUT": 100000,
+      "API_HEDERA_MIRROR": "https://hedera.coin.ledger.com",
+      "API_VECHAIN_THOREST": "https://vechain.coin.ledger.com",
+      "BASE_SOCKET_URL": "wss://scriptrunner.api.live.ledger.com/update",
+      "BOT_TIMEOUT_SCAN_ACCOUNTS": 600000,
+      "BOT_SPEC_DEFAULT_TIMEOUT": 1800000,
+      "BUY_API_BASE": "https://buy.api.live.ledger.com/buy/v1",
+      "CARDANO_API_ENDPOINT": "https://cardano.coin.ledger.com/api",
+      "CARDANO_TESTNET_API_ENDPOINT": "https://testnet-ledger.cardanoscan.io/api",
+      "ICON_NODE_ENDPOINT": "https://icon.coin.ledger.com/api/v3",
+      "ICON_DEBUG_ENDPOINT": "https://icon.coin.ledger.com/api/v3d",
+      "ICON_INDEXER_ENDPOINT": "https://icon.coin.ledger.com/api/v1",
+      "ICON_TESTNET_NODE_ENDPOINT": "https://berlin.net.solidwallet.io/api/v3",
+      "ICON_TESTNET_DEBUG_ENDPOINT": "https://berlin.net.solidwallet.io/api/v3d",
+      "ICON_TESTNET_INDEXER_ENDPOINT": "https://tracker.berlin.icon.community/api/v1",
+      "COINAPPS": "/Users/francesco.anselmi/projects/coin-apps",
+      "CRYPTO_ORG_INDEXER": "https://cryptoorg-rpc-indexer.coin.ledger.com",
+      "CRYPTO_ORG_TESTNET_INDEXER": "https://cronos-pos.org/explorer/croeseid4",
+      "CRYPTO_ORG_RPC_URL": "https://cryptoorg-rpc-node.coin.ledger.com",
+      "CRYPTO_ORG_TESTNET_RPC_URL": "https://rpc-testnet-croeseid-4.crypto.org",
+      "DEBUG_UTXO_DISPLAY": 4,
+      "DEBUG_HTTP_RESPONSE": false,
+      "DEVICE_CANCEL_APDU_FLUSH_MECHANISM": true,
+      "DEVICE_PROXY_URL": "",
+      "DEVICE_PROXY_MODEL": "nanoS",
+      "DISABLE_TRANSACTION_BROADCAST": false,
+      "DISABLE_SYNC_TOKEN": true,
+      "DISABLE_FW_UPDATE_VERSION_CHECK": false,
+      "DETOX": "",
+      "EIP1559_MINIMUM_FEES_GATE": true,
+      "EIP1559_PRIORITY_FEE_LOWER_GATE": 0.85,
+      "EIP1559_BASE_FEE_MULTIPLIER": 1.27,
+      "EXPERIMENTAL_BLE": false,
+      "EXPERIMENTAL_CURRENCIES": "",
+      "EXPERIMENTAL_EXPLORERS": false,
+      "EXPERIMENTAL_LANGUAGES": false,
+      "EXPERIMENTAL_MANAGER": false,
+      "EXPERIMENTAL_ROI_CALCULATION": false,
+      "EXPERIMENTAL_SEND_MAX": false,
+      "EXPERIMENTAL_USB": false,
+      "EXPERIMENTAL_SWAP": false,
+      "EXPLORER": "https://explorers.api.live.ledger.com",
+      "EXPLORER_STAGING": "https://explorers.api-01.live.ledger-stg.com",
+      "EXPLORER_BETA": "https://explorers.api.live.ledger.com",
+      "EXPLORER_SATSTACK": "http://localhost:20000",
+      "EXPORT_EXCLUDED_LOG_TYPES": "ble-frame",
+      "EXPORT_MAX_LOGS": 5000,
+      "DISABLE_APP_VERSION_REQUIREMENTS": false,
+      "FORCE_PROVIDER": 1,
+      "FILTER_ZERO_AMOUNT_ERC20_EVENTS": true,
+      "GET_CALLS_RETRY": 2,
+      "GET_CALLS_TIMEOUT": 60000,
+      "HIDE_EMPTY_TOKEN_ACCOUNTS": false,
+      "KEYCHAIN_OBSERVABLE_RANGE": 0,
+      "LEDGER_CLIENT_VERSION": "lld/2.117.0",
+      "LEDGER_COUNTERVALUES_API": "https://countervalues.live.ledger.com",
+      "LEDGER_REST_API_BASE": "https://explorers.api.live.ledger.com",
+      "LEGACY_KT_SUPPORT_TO_YOUR_OWN_RISK": false,
+      "MANAGER_API_BASE": "https://manager.api.live.ledger.com/api",
+      "MANAGER_DEV_MODE": true,
+      "MANAGER_INSTALL_DELAY": 1000,
+      "MAPPING_SERVICE": "https://mapping-service.api.ledger.com",
+      "MAX_ACCOUNT_NAME_SIZE": 50,
+      "MOCK": "",
+      "MOCK_COUNTERVALUES": "",
+      "MOCK_APP_UPDATE": false,
+      "MOCK_EXCHANGE_TEST_CONFIG": false,
+      "MOCK_EXCHANGE_TEST_PARTNER": false,
+      "MOCK_REMOTE_LIVE_MANIFEST": "",
+      "MOCK_OS_VERSION": "",
+      "MOCK_NO_BYPASS": false,
+      "NFT_CURRENCIES": [
+        "avalanche_c_chain",
+        "bsc",
+        "ethereum",
+        "polygon",
+        "solana"
+      ],
+      "NFT_METADATA_SERVICE": "https://nft.api.live.ledger.com",
+      "OPERATION_ADDRESSES_LIMIT": 100,
+      "OPERATION_OPTIMISTIC_RETENTION": 1800000,
+      "OPERATION_PAGE_SIZE_INITIAL": 100,
+      "POLKADOT_ELECTION_STATUS_THRESHOLD": 25,
+      "SATSTACK": false,
+      "SCAN_FOR_INVALID_PATHS": false,
+      "SEED": "hospital coral gym antique gas purchase detail hazard require picnic omit pet trash pear keen cigar flight treat box smooth panic height know clerk",
+      "SHOW_LEGACY_NEW_ACCOUNT": false,
+      "SIMPLE_HASH_API_BASE": "https://simplehash.api.live.ledger.com/api/v0",
+      "SKIP_ONBOARDING": false,
+      "SPECULOS_API_PORT": 30001,
+      "SPECULOS_PID_OFFSET": 0,
+      "SPECULOS_USE_WEBSOCKET": false,
+      "SWAP_API_BASE": "https://swap.ledger.com/v5",
+      "SWAP_USER_IP": "",
+      "SWAP_DISABLE_APPS_INSTALL": false,
+      "SYNC_ALL_INTERVAL": 480000,
+      "SYNC_BOOT_DELAY": 2000,
+      "SYNC_PENDING_INTERVAL": 10000,
+      "SYNC_OUTDATED_CONSIDERED_DELAY": 600000,
+      "SYNC_MAX_CONCURRENT": 4,
+      "BOT_MAX_CONCURRENT": 10,
+      "USER_ID": "754005e7-8659-4005-ac21-e6e3b459f898",
+      "WALLETCONNECT": false,
+      "CLOUD_SYNC_API_STAGING": "https://cloud-sync-backend.api.aws.stg.ldg-tech.com",
+      "CLOUD_SYNC_API_PROD": "https://cloud-sync.api.live.ledger.com",
+      "WITH_DEVICE_POLLING_DELAY": 500,
+      "ANNOUNCEMENTS_API_URL": "https://cdn.live.ledger.com/announcements",
+      "ANNOUNCEMENTS_API_VERSION": 1,
+      "STATUS_API_URL": "https://ledger.statuspage.io/api",
+      "STATUS_API_VERSION": 2,
+      "TEZOS_MAX_TX_QUERIES": 100,
+      "TRUSTCHAIN_API_STAGING": "https://trustchain-backend.api.aws.stg.ldg-tech.com",
+      "TRUSTCHAIN_API_PROD": "https://trustchain.api.live.ledger.com",
+      "PLATFORM_DEBUG": false,
+      "PLATFORM_EXPERIMENTAL_APPS": false,
+      "PLATFORM_MANIFEST_API_URL": "https://live-app-catalog.ledger.com/api/v1/apps",
+      "PLATFORM_LOCAL_MANIFEST_JSON": "",
+      "PLATFORM_GLOBAL_CATALOG_API_URL": "https://cdn.live.ledger.com/platform/catalog/v1/data.json",
+      "PLATFORM_GLOBAL_CATALOG_STAGING_API_URL": "https://cdn.live.ledger-stg.com/platform/catalog/v1/data.json",
+      "PLATFORM_RAMP_CATALOG_API_URL": "https://cdn.live.ledger.com/platform/trade/v1/data.json",
+      "PLATFORM_RAMP_CATALOG_STAGING_API_URL": "https://cdn.live.ledger-stg.com/platform/trade/v1/data.json",
+      "PLATFORM_API_URL": "",
+      "PLATFORM_API_VERSION": 1,
+      "PLAYWRIGHT_RUN": true,
+      "MARKET_API_URL": "https://proxycg.api.live.ledger.com/api/v3",
+      "USE_LEARN_STAGING_URL": false,
+      "DYNAMIC_CAL_BASE_URL": "https://cdn.live.ledger.com/cryptoassets",
+      "CAL_SERVICE_URL": "https://crypto-assets-service.api.ledger.com",
+      "FEATURE_FLAGS": "{}",
+      "PERFORMANCE_CONSOLE": false,
+      "STORAGE_PERFORMANCE_OVERLAY": false,
+      "ETHEREUM_STUCK_TRANSACTION_TIMEOUT": 300000,
+      "EVM_REPLACE_TX_LEGACY_GASPRICE_FACTOR": 1.3,
+      "EVM_REPLACE_TX_EIP1559_MAXFEE_FACTOR": 1.3,
+      "EVM_REPLACE_TX_EIP1559_MAXPRIORITYFEE_FACTOR": 1.1,
+      "EVM_FORCE_LEGACY_TRANSACTIONS": false,
+      "ENABLE_NETWORK_LOGS": false,
+      "CRYPTO_ASSET_SEARCH_KEYS": [
+        "ticker",
+        "name",
+        "keywords"
+      ],
+      "VERBOSE": [
+        "true"
+      ],
+      "DEFAULT_TRANSACTION_POLLING_INTERVAL": 30000,
+      "LOW_BATTERY_PERCENTAGE": 20,
+      "LOG_DRAWERS": false
+    },
+    "accountsIds": []
+  }
+]

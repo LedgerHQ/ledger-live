@@ -76,6 +76,7 @@
     "@ledgerhq/live-countervalues": "workspace:^",
     "@ledgerhq/live-countervalues-react": "workspace:^",
     "@ledgerhq/live-dmk-desktop": "workspace:^",
+    "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-nft": "workspace:^",
