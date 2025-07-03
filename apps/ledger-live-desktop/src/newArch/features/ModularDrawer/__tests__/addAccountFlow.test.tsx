@@ -154,6 +154,21 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     expect(screen.getByText(/account added to your portfolio/i)).toBeInTheDocument();
   });
 
+  it("should navigate to fund an account", async () => {
+    const { user } = render(
+      <Provider store={createStore({ state: undefined })}>
+        <ModularDrawerAddAccountFlowManager currency={arbitrumCurrency} source="MADSource" />
+      </Provider>,
+    );
+
+    mockScanAccountsSubscription([NEW_ARB_ACCOUNT]);
+
+    await user.click(screen.getByRole("button", { name: "Confirm" }));
+    await user.click(screen.getByRole("button", { name: "Add funds to my account" }));
+
+    expect(screen.getByText(/receive crypto from another wallet/i)).toBeInTheDocument();
+  });
+
   it("should hide previously added accounts and show new account", async () => {
     const { user } = render(
       <Provider store={createStore({ state: { accounts: [ARB_ACCOUNT] } as State })}>
