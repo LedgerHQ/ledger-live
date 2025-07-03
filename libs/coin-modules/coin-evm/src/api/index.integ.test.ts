@@ -1,13 +1,12 @@
 import { AlpacaApi } from "@ledgerhq/coin-framework/lib/api/types";
 import { EvmConfig } from "../config";
-import { EvmAsset } from "../types";
 import { createApi } from "./index";
 
 describe.each([
   ["external node", { type: "external", uri: "https://ethereum-rpc.publicnode.com" }],
   ["ledger node", { type: "ledger", explorerId: "eth" }],
 ])("EVM Api (%s)", (_, node) => {
-  let module: AlpacaApi<EvmAsset>;
+  let module: AlpacaApi;
 
   beforeAll(() => {
     module = createApi({ node } as EvmConfig, "ethereum");
