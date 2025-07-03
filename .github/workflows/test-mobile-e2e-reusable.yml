@@ -1,5 +1,6 @@
 name: "[Mobile] E2E Only"
-run-name: "@Mobile • E2E • ${{ github.event_name }} • ${{ inputs.tests_type || 'All' }} • ${{ github.ref_name }} • ${{ github.actor }}"
+run-name: >
+  @Mobile E2E • ${{ github.event_name == 'workflow_dispatch' && 'Manual' || github.event_name == 'Schedule' && 'scheduled' || github.event_name }} • ${{ inputs.tests_type || 'All' }} • ${{ github.ref_name }} • ${{ github.actor }}
 
 on:
   # push:
@@ -9,6 +10,16 @@ on:
     - cron: "0 3 * * 1-5"
   workflow_dispatch:
     inputs:
+      # --- Branch/Ref Selection ---
+      ref:
+        description: "Git ref (branch, tag, or SHA, e.g. 'develop' or 'release' or 'refs/pull/123/merge')"
+        required: false
+        type: string
+      base_ref:
+        description: "Base branch to merge into for PR (optional)"
+        required: false
+        type: string
+
       # --- Test Selection ---
       tests_type:
         description: "Which tests to run"
@@ -21,16 +32,6 @@ on:
           - "iOS & Android"
       test_filter:
         description: "Test name filter (space-separated, optional)"
-        required: false
-        type: string
-
-      # --- Branch/Ref Selection ---
-      ref:
-        description: "Git ref (branch, tag, or SHA, e.g. 'develop' or 'refs/pull/123/merge')"
-        required: false
-        type: string
-      base_ref:
-        description: "Base branch to merge into for PR (optional)"
         required: false
         type: string
 
@@ -96,10 +97,10 @@ env:
 ################################################################################
 jobs:
   print-inputs:
-    name: Print workflow_dispatch inputs
+    name: Workflow trigger inputs
     runs-on: ubuntu-latest
     steps:
-      - name: Print workflow_dispatch inputs
+      - name: Wrkflow trigger inputs
         run: |
           echo "tests_type: ${{ inputs.tests_type }}"
           echo "test_filter: ${{ inputs.test_filter }}"
@@ -199,9 +200,9 @@ jobs:
           use-fallback: false
           lookup-only: true
 
-################################################################################
-# 2) Build iOS & Android in parallel (from mock workflow)
-################################################################################
+  ################################################################################
+  # 2) Build iOS & Android in parallel (from mock workflow)
+  ################################################################################
   build-ios:
     name: "iOS Build"
     needs: [ determine-builds ]
@@ -229,28 +230,28 @@ jobs:
       android-js-cache-key: ${{ needs.determine-builds.outputs.android_js_key }}
     secrets: inherit
 
-################################################################################
-# 3) Sharded iOS Detox (preserve E2E sharding logic)
-################################################################################
+  ################################################################################
+  # 3) Sharded iOS Detox (preserve E2E sharding logic)
+  ################################################################################
   ios-e2e:
     name: iOS E2E Tests
     needs: [ build-ios, determine-builds ]
     if: ${{ inputs.tests_type != 'Android Only' }}
-    runs-on: macos-latest
+    runs-on: [macOS, ARM64]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
-      SEED: ${{ vars.SEED_QAA_B2C }}   
+      SEED: ${{ vars.SEED_QAA_B2C }}
     outputs:
       status: ${{ steps.detox.outcome }}
-      artifact: ${{ steps.test-artifacts.outputs.artifact-id }}   
+      artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
     strategy:
       fail-fast: false
       matrix:
         shard: [ 1,2,3 ]
-        total: [ 3 ]  
+        total: [ 3 ]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -335,7 +336,7 @@ jobs:
 
       - name: Run iOS Detox shard ${{ matrix.shard }}/3
         id: run-ios
-        run: pnpm mobile e2e:ci -p ios --shard ${{ matrix.shard }}/3 ${ inputs.test_filter && `--filter "${{inputs.test_filter}}"` || "" }
+        run: pnpm mobile e2e:ci -p ios --shard ${{ matrix.shard }}/3 ${{ inputs.test_filter && format('--filter "{0}"', inputs.test_filter) || '' }}
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           REMOTE_SPECULOS: "true"
@@ -352,9 +353,9 @@ jobs:
           name: ios-test-artifacts-${{ matrix.shard }}
           path: e2e/mobile/artifacts
 
-################################################################################
-# 4) Sharded Android Detox (preserve E2E sharding logic)
-################################################################################
+  ################################################################################
+  # 4) Sharded Android Detox (preserve E2E sharding logic)
+  ################################################################################
   android-e2e:
     name: Android E2E Tests
     needs: [ build-android, determine-builds ]
@@ -525,13 +526,13 @@ jobs:
 
       - name: Run Android Detox shard ${{ matrix.shard }}/3
         id: run-android
-        run: pnpm mobile e2e:ci -p android --shard ${{ matrix.shard }}/3 ${ inputs.test_filter && `--filter "${{inputs.test_filter}}"` || "" }
+        run: pnpm mobile e2e:ci -p android --shard ${{ matrix.shard }}/3 ${{ inputs.test_filter && format('--filter "{0}"', inputs.test_filter) || '' }}
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           INPUT_E2E: ${{ env.E2E_RUN }}
           PRODUCTION: ${{ inputs.production_firebase }}
           INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
-      
+
       - name: Upload Android artifacts
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
