@@ -47,6 +47,7 @@ export type Operation<
    * This can include things like status, error messages, swap info, etc.
    */
   details?: Record<string, unknown>;
+  assetInfo?: AssetInfo; // TODO: recheck with jnicouleau
 
   tx: {
     hash: string; // transaction hash
@@ -161,7 +162,7 @@ export type AccountInfo = {
   balance: string;
   ownerCount: number;
   sequence: number;
-  assets?: BalanceAsset[]; // Optional, depending on the API
+  assets?: AssetInfo[]; // BalanceAsset[]; // Optional, depending on the API
   spendableBalance?: string; // Optional, depending on the API
 };
 
@@ -182,23 +183,23 @@ export type AlpacaApi<
     address: string,
     pagination?: Pagination,
     lastPagingToken?: string,
-  ) => Promise<[Operation<AssetInfo>[], string]>;
+  ) => Promise<[Operation[], string]>;
 };
 
 // NOTE: taken from coin-stellar/bridge/types
-export type BalanceAsset = {
-  balance: string;
-  limit: string;
-  buying_liabilities: string;
-  selling_liabilities: string;
-  last_modified_ledger: number;
-  is_authorized: boolean;
-  is_authorized_to_maintain_liabilities: boolean;
-  asset_type: string;
-  asset_code: string;
-  asset_issuer: string;
-  liquidity_pool_id?: string;
-};
+// export type BalanceAsset = {
+//   balance: string;
+//   limit: string;
+//   buying_liabilities: string;
+//   selling_liabilities: string;
+//   last_modified_ledger: number;
+//   is_authorized: boolean;
+//   is_authorized_to_maintain_liabilities: boolean;
+//   asset_type: string;
+//   asset_code: string;
+//   asset_issuer: string;
+//   liquidity_pool_id?: string;
+// };
 
 export type BridgeApi = {
   validateIntent: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;
@@ -206,7 +207,4 @@ export type BridgeApi = {
   getAccountInfo: (address: string) => Promise<AccountInfo>;
 };
 
-export type Api<
-  AssetInfo extends Asset<TokenInfoCommon>,
-  MemoType extends Memo = MemoNotSupported,
-> = AlpacaApi<AssetInfo, MemoType> & BridgeApi;
+export type Api<MemoType extends Memo = MemoNotSupported> = AlpacaApi<MemoType> & BridgeApi;
