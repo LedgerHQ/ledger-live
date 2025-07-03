@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useCallback } from "react";
+import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
@@ -61,15 +61,13 @@ const UpdaterTopBanner: React.FC = () => {
   const urlLive = useLocalizedUrl(urls.liveHome);
   const { t } = useTranslation();
 
-  const reDownload = useCallback(() => {
-    openURL(urlLive);
-  }, [urlLive]);
+  const reDownload = () => openURL(urlLive);
 
-  const content = useMemo(() => {
-    if (!context?.version || !VISIBLE_STATUS.includes(context.status)) return null;
-    const { status, quitAndInstall, downloadProgress, version } = context;
-    return getContentByStatus(quitAndInstall, reDownload, downloadProgress, version, t)[status];
-  }, [context, reDownload, t]);
+  if (!context?.version || !VISIBLE_STATUS.includes(context.status)) return null;
+  const { status, quitAndInstall, downloadProgress, version } = context;
+  const content = getContentByStatus(quitAndInstall, reDownload, downloadProgress, version, t)[
+    status
+  ];
 
   if (!content) return null;
 

@@ -1,7 +1,4 @@
-import { randomUUID } from "crypto";
-import { first, filter, map } from "rxjs/operators";
 import { startDummyServer, stopDummyServer as stopDummyServer } from "@ledgerhq/test-utils";
-import { firstValueFrom } from "rxjs";
 
 export async function startLiveApp(liveAppDirectory: string, liveAppPort = 3000) {
   try {
@@ -27,31 +24,4 @@ export async function startLiveApp(liveAppDirectory: string, liveAppPort = 3000)
 
 export async function stopServer() {
   await stopDummyServer();
-}
-
-export async function send(params: Record<string, unknown>) {
-  const webview = getWebElementById("root");
-  const id = randomUUID();
-  const json = JSON.stringify({
-    id,
-    jsonrpc: "2.0",
-    ...params,
-  });
-
-  await webview.runScript(`function sendWalletAPIRequestFromLiveApp(webviewElement) {
-      window.ledger.e2e.walletApi.send('${json}');
-    }`);
-
-  const response = firstValueFrom(
-    webSocket.e2eBridgeServer.pipe(
-      filter(
-        (msg): msg is { type: "walletAPIResponse"; id: string; payload: Record<string, unknown> } =>
-          msg.type === "walletAPIResponse",
-      ),
-      first(),
-      map(msg => msg.payload),
-    ),
-  );
-
-  return { id, response };
 }

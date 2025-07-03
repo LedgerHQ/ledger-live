@@ -31,7 +31,7 @@
     "invariant": "^2.2.2",
     "protobufjs": "7.2.5",
     "protobufjs-cli": "1.1.2",
-    "@ledgerhq/device-management-kit": "0.0.0-connect-app-20250609094118"
+    "@ledgerhq/device-management-kit": "0.0.0-io-revamp-20250630141416"
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",
