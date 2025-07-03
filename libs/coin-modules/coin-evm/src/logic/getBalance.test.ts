@@ -19,7 +19,7 @@ describe("getBalance", () => {
       }, // operations
       { "0x123": "1000000", "0x456": "2000000" }, // token balances
       [
-        { value: BigInt("10000000000000000000000"), asset: { type: "native" } },
+        { value: BigInt("10000000000000000000000"), asset: { type: "native" } }, // native balance
         {
           value: BigInt("1000000"),
           asset: { type: "erc20", assetReference: "0x123", assetOwner: "address" },
