@@ -1,5 +1,5 @@
 name: "[Mobile] E2E Only"
-run-name: "@Mobile • E2E • Triggered by ${{ github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
+run-name: "@Mobile • E2E • ${{ github.event_name }} • ${{ inputs.tests_type || 'All' }} • ${{ github.ref_name }} • ${{ github.actor }}"
 
 on:
   # push:
@@ -9,14 +9,9 @@ on:
     - cron: "0 3 * * 1-5"
   workflow_dispatch:
     inputs:
-      ref:
-        description: Git ref (branch, tag, or SHA)
-        required: false
-      base_ref:
-        description: Base branch to merge into for PR
-        required: false
+      # --- Test Selection ---
       tests_type:
-        description: Tests type
+        description: "Which tests to run"
         required: true
         type: choice
         default: "iOS & Android"
@@ -24,32 +19,24 @@ on:
           - "Android Only"
           - "iOS Only"
           - "iOS & Android"
-      enable_broadcast:
-        description: Enable transaction broadcast
-        required: false
-        type: boolean
-        default: false
-      production_firebase:
-        description: Target Firebase Production env
-        required: false
-        type: boolean
-        default: false
       test_filter:
-        description: Test name filter (space-separated)
+        description: "Test name filter (space-separated, optional)"
         required: false
-      export_to_xray:
-        description: Send results to Xray
+        type: string
+
+      # --- Branch/Ref Selection ---
+      ref:
+        description: "Git ref (branch, tag, or SHA, e.g. 'develop' or 'refs/pull/123/merge')"
         required: false
-        type: boolean
-        default: false
-      test_execution_android:
-        description: Xray execution key for Android
+        type: string
+      base_ref:
+        description: "Base branch to merge into for PR (optional)"
         required: false
-      test_execution_ios:
-        description: Xray execution key for iOS
-        required: false
+        type: string
+
+      # --- Environment/Device Selection ---
       speculos_device:
-        description: Speculos device to use
+        description: "Speculos device to use"
         required: true
         type: choice
         default: nanoSP
@@ -57,6 +44,31 @@ on:
           - nanoS
           - nanoSP
           - nanoX
+      production_firebase:
+        description: "Target Firebase Production env"
+        required: false
+        type: boolean
+        default: false
+
+      # --- Advanced/Optional ---
+      enable_broadcast:
+        description: "Enable transaction broadcast"
+        required: false
+        type: boolean
+        default: false
+      export_to_xray:
+        description: "Send results to Xray"
+        required: false
+        type: boolean
+        default: false
+      test_execution_android:
+        description: "Xray execution key for Android (optional)"
+        required: false
+        type: string
+      test_execution_ios:
+        description: "Xray execution key for iOS (optional)"
+        required: false
+        type: string
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
@@ -83,6 +95,23 @@ env:
 # 1) Determine Builds (from mock workflow)
 ################################################################################
 jobs:
+  print-inputs:
+    name: Print workflow_dispatch inputs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print workflow_dispatch inputs
+        run: |
+          echo "tests_type: ${{ inputs.tests_type }}"
+          echo "test_filter: ${{ inputs.test_filter }}"
+          echo "ref: ${{ inputs.ref }}"
+          echo "base_ref: ${{ inputs.base_ref }}"
+          echo "speculos_device: ${{ inputs.speculos_device }}"
+          echo "production_firebase: ${{ inputs.production_firebase }}"
+          echo "enable_broadcast: ${{ inputs.enable_broadcast }}"
+          echo "export_to_xray: ${{ inputs.export_to_xray }}"
+          echo "test_execution_android: ${{ inputs.test_execution_android }}"
+          echo "test_execution_ios: ${{ inputs.test_execution_ios }}"
+
   determine-builds:
     name: "Determine Builds"
     runs-on: ledger-live-medium
@@ -207,12 +236,7 @@ jobs:
     name: iOS E2E Tests
     needs: [ build-ios, determine-builds ]
     if: ${{ inputs.tests_type != 'Android Only' }}
-    runs-on: ["${{ inputs.macos-specificity-runner-label }}", macOS, ARM64]
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [ 1,2,3 ]
-        total: [ 3 ]
+    runs-on: macos-latest
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
@@ -222,6 +246,11 @@ jobs:
     outputs:
       status: ${{ steps.detox.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}   
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [ 1,2,3 ]
+        total: [ 3 ]  
     steps:
       - uses: actions/checkout@v4
         with:
@@ -315,29 +344,13 @@ jobs:
           PRODUCTION: ${{ inputs.production_firebase }}
           INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
 
-      - name: Upload test artifacts
+      - name: Upload iOS artifacts
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         id: "test-artifacts"
         with:
           name: ios-test-artifacts-${{ matrix.shard }}
           path: e2e/mobile/artifacts
-
-      # - name: Run iOS Detox shard ${{ matrix.shard }}/3
-      #   id: run-ios
-      #   run: pnpm mobile e2e:ci -p ios --shard ${{ matrix.shard }}/3 ${ inputs.test_filter && `--filter "${{inputs.test_filter}}"` || "" }
-      #   env:
-      #     SEED: ${{ secrets.SEED_QAA_B2C }}
-      #     REMOTE_SPECULOS: "true"
-      #     GITHUB_TOKEN: ${{ secrets.LL_SPECULOS_CI }}
-      #     INPUT_E2E: ${{ env.E2E_RUN }}
-      #     PRODUCTION: ${{ inputs.production_firebase }}
-      #     INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
-      # - name: Upload iOS artifacts
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: ios-test-artifacts-${{ matrix.shard }}
-      #     path: e2e/mobile/artifacts
 
 ################################################################################
 # 4) Sharded Android Detox (preserve E2E sharding logic)
@@ -526,12 +539,6 @@ jobs:
         with:
           name: "android-test-artifacts-${{ matrix.shard }}"
           path: e2e/mobile/artifacts
-
-      # - name: Upload Android artifacts
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: android-test-artifacts-${{ matrix.shard }}
-      #     path: e2e/mobile/artifacts
 
 ################################################################################
 # 5) Allure Reports (optional, can uncomment and adapt as needed)
