@@ -1,5 +1,18 @@
 # live-mobile
 
+
+## 3.84.1
+
+### Patch Changes
+
+- [#10788](https://github.com/LedgerHQ/ledger-live/pull/10788) [`040e3b4`](https://github.com/LedgerHQ/ledger-live/commit/040e3b4451ed5a9b4c9185b8042eaf8c5ce66511) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump segment sdk to fix url issue
+
+## 3.84.1-hotfix.0
+
+### Patch Changes
+
+- [#10788](https://github.com/LedgerHQ/ledger-live/pull/10788) [`040e3b4`](https://github.com/LedgerHQ/ledger-live/commit/040e3b4451ed5a9b4c9185b8042eaf8c5ce66511) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump segment sdk to fix url issue
+
 ## 3.85.0-next.2
 
 ### Minor Changes
@@ -54,6 +67,7 @@
   - @ledgerhq/live-nft-react@0.9.12-next.0
   - @ledgerhq/live-wallet@0.11.3-next.0
   - @ledgerhq/domain-service@1.2.35-next.0
+
 
 ## 3.84.0
 
