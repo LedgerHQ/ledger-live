@@ -1,4 +1,4 @@
-import { getGasLimit } from "@ledgerhq/coin-evm/logic";
+import { getGasLimit } from "@ledgerhq/coin-evm/utils";
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { Account } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";

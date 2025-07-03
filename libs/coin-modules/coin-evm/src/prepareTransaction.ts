@@ -4,11 +4,11 @@ import BigNumber from "bignumber.js";
 import isEqual from "lodash/isEqual";
 import { getNftCollectionMetadata } from "./api/nft";
 import { getNodeApi } from "./api/node/index";
-import { DEFAULT_NONCE } from "./createTransaction";
 import { validateRecipient } from "./getTransactionStatus";
-import { getAdditionalLayer2Fees, getEstimatedFees, isNftTransaction } from "./logic";
+import { getAdditionalLayer2Fees, isNftTransaction } from "./logic";
 import { getTransactionData, getTypedTransaction } from "./transaction";
 import { EvmNftTransaction, Transaction as EvmTransaction, FeeData, Strategy } from "./types";
+import { DEFAULT_NONCE, getEstimatedFees } from "./utils";
 
 /**
  * Prepare basic coin transactions or smart contract interactions (other than live ERC20 transfers)
