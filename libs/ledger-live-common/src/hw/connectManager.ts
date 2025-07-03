@@ -64,6 +64,20 @@ const cmd = (transport: Transport, { request }: Input): Observable<ConnectManage
             throw new DeviceNotOnboarded();
           }
 
+          if (deviceInfo.isBootloader) {
+            return of({
+              type: "bootloader",
+              deviceInfo,
+            } as ConnectManagerEvent);
+          }
+
+          if (deviceInfo.isOSU) {
+            return of({
+              type: "osu",
+              deviceInfo,
+            } as ConnectManagerEvent);
+          }
+
           if (
             isCharonSupported(
               deviceInfo.seVersion ?? "",
@@ -77,20 +91,6 @@ const cmd = (transport: Transport, { request }: Input): Observable<ConnectManage
             if (onboardingState.currentOnboardingStep === OnboardingStep.BackupCharon) {
               throw new DeviceNotOnboarded();
             }
-          }
-
-          if (deviceInfo.isBootloader) {
-            return of({
-              type: "bootloader",
-              deviceInfo,
-            } as ConnectManagerEvent);
-          }
-
-          if (deviceInfo.isOSU) {
-            return of({
-              type: "osu",
-              deviceInfo,
-            } as ConnectManagerEvent);
           }
 
           return concat(
