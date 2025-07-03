@@ -11,26 +11,7 @@ export type BlockInfo = {
   time?: Date;
 };
 
-export type TokenInfoCommon = {
-  id?: string;
-  contractAddress?: string;
-  assetCode?: string;
-  assetIssuer?: string;
-  tokenType?: string;
-  // Stellar specific
-  blockTime?: Date;
-  index?: string;
-  ledgerOpType?: string;
-  pagingToken?: string | undefined;
-
-  // Token-account-like metadata
-  creationDate?: Date;
-  operations?: Operation[];
-  operationsCount?: number;
-  pendingOperations?: Operation[];
-  // balanceHistoryCache?: BalanceHistoryCache;
-  // swapHistory?: SwapOperation[];
-};
+export type TokenInfoCommon = Record<string, unknown>;
 
 export type Asset<TokenInfo extends TokenInfoCommon = never> =
   | { type: "native" }

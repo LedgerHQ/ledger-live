@@ -29,8 +29,8 @@ export function adaptCoreOperationToLiveOperation(
   }
 
   if (op.asset?.type === "token") {
-    extra.assetCode = op.asset.assetCode;
-    extra.assetIssuer = op.asset.assetIssuer;
+    extra.assetCode = op.asset.assetCode as string;
+    extra.assetIssuer = op.asset.assetIssuer as string;
   }
 
   const res = {

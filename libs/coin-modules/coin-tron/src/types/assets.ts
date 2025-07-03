@@ -1,4 +1,4 @@
-import { Asset, StringMemo, TokenInfoCommon } from "@ledgerhq/coin-framework/api/types";
+import { Asset, StringMemo } from "@ledgerhq/coin-framework/api/types";
 import { MemoNotSupported } from "@ledgerhq/coin-framework/lib-es/api/types";
 
 export type TronToken = Trc10Token | Trc20Token;
@@ -16,7 +16,7 @@ export type TronAsset = Asset<TronToken>;
     tokenId: "1002000",
   }
 */
-export type Trc10Token = TokenInfoCommon & {
+export type Trc10Token = {
   standard: "trc10";
   tokenId: string;
 };
@@ -30,7 +30,7 @@ export type Trc10Token = TokenInfoCommon & {
     contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
   }
 */
-export type Trc20Token = TokenInfoCommon & {
+export type Trc20Token = {
   standard: "trc20";
   contractAddress: string;
 };
