@@ -13,7 +13,7 @@ import { getSerializedTransaction } from "../../transaction";
 import { LedgerExplorerOperation } from "../../types";
 import { getCoinConfig } from "../../config";
 import { getGasOptions } from "../gasTracker/ledger";
-import { padHexString } from "../../logic";
+import { padHexString } from "../../utils";
 import { NodeApi, isLedgerNodeConfig } from "./types";
 
 export const LEDGER_TIMEOUT = 10_000; // 10_000ms (10s) for network call timeout

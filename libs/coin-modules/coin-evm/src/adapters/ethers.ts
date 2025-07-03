@@ -1,7 +1,6 @@
 import { ethers } from "ethers";
 import { Transaction as EvmTransaction } from "../types";
-import { getGasLimit } from "../logic";
-import { DEFAULT_NONCE } from "../createTransaction";
+import { DEFAULT_NONCE, getGasLimit } from "../utils";
 
 /**
  * Adapter to convert a Ledger Live transaction to an Ethers transaction

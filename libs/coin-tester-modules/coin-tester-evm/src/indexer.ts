@@ -4,7 +4,7 @@ import BlueBirdPromise from "bluebird";
 import { http, HttpResponse, bypass } from "msw";
 import { utils, providers, ethers } from "ethers";
 import { ERC20_ABI, ERC721_ABI, ERC1155_ABI } from "@ledgerhq/coin-evm/abis/index";
-import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/logic";
+import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/utils";
 import { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import type {
   EtherscanERC1155Event,

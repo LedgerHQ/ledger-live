@@ -14,7 +14,6 @@ import * as API from "../../api/node/rpc.common";
 import LEDGER_API from "../../api/node/ledger";
 import broadcast from "../../broadcast";
 import buildOptimisticOperation from "../../buildOptimisticOperation";
-import { getEstimatedFees } from "../../logic";
 import { Transaction as EvmTransaction } from "../../types";
 import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import {
@@ -23,6 +22,7 @@ import {
   erc721TokenTransactionRaw,
 } from "../fixtures/transaction.fixtures";
 import { getCoinConfig } from "../../config";
+import { getEstimatedFees } from "../../utils";
 
 jest.useFakeTimers();
 

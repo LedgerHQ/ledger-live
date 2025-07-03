@@ -7,11 +7,10 @@ import { concat, of } from "rxjs";
 import { Transaction as EvmTransaction } from "../../types";
 import { makeAccount } from "../fixtures/common.fixtures";
 import { buildSignOperation } from "../../signOperation";
-import { DEFAULT_NONCE } from "../../createTransaction";
 import * as nodeApi from "../../api/node/rpc.common";
 import type { EvmSigner } from "../../types/signer";
-import { getEstimatedFees } from "../../logic";
 import { getCoinConfig } from "../../config";
+import { DEFAULT_NONCE, getEstimatedFees } from "../../utils";
 
 jest.mock("../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
