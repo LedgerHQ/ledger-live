@@ -10,8 +10,9 @@ import type { Account } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 import { getAssetCodeIssuer } from "./logic";
-import type { Transaction, TransactionRaw } from "../types";
+import type { Transaction, TransactionRaw } from "./types";
 
+// FIXME: recheck fields here (mode -> type?)
 export function formatTransaction(
   { amount, recipient, fees, memoValue, useAllAmount, subAccountId }: Transaction,
   mainAccount: Account,
@@ -43,13 +44,11 @@ export function formatTransaction(
 function fromTransactionRaw(tr: TransactionRaw): Transaction {
   const common = fromTransactionCommonRaw(tr);
   const { networkInfo } = tr;
-  const [assetCode, assetIssuer] = getAssetCodeIssuer(tr);
-
+  const [assetReference, assetOwner] = getAssetCodeIssuer(tr);
   return {
     ...common,
     family: tr.family,
     fees: tr.fees ? new BigNumber(tr.fees) : null,
-    baseReserve: tr.baseReserve ? new BigNumber(tr.baseReserve) : null,
     memoValue: tr.memoValue ? tr.memoValue : null,
     memoType: tr.memoType ? tr.memoType : null,
     networkInfo: networkInfo && {
@@ -60,15 +59,15 @@ function fromTransactionRaw(tr: TransactionRaw): Transaction {
       networkCongestionLevel: networkInfo.networkCongestionLevel,
     },
     mode: tr.mode,
-    assetCode,
-    assetIssuer,
+    assetReference,
+    assetOwner,
   };
 }
 
 function toTransactionRaw(transaction: Transaction): TransactionRaw {
   const common = toTransactionCommonRaw(transaction);
   const { networkInfo } = transaction;
-  const [assetCode, assetIssuer] = getAssetCodeIssuer(transaction);
+  const [assetReference, assetOwner] = getAssetCodeIssuer(transaction);
   return {
     ...common,
     family: transaction.family,
@@ -84,8 +83,8 @@ function toTransactionRaw(transaction: Transaction): TransactionRaw {
       networkCongestionLevel: networkInfo.networkCongestionLevel,
     },
     mode: transaction.mode,
-    assetCode,
-    assetIssuer,
+    assetReference,
+    assetOwner,
   };
 }
 
