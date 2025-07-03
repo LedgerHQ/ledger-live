@@ -14,9 +14,10 @@ import { retry } from "@ledgerhq/live-common/promise";
 import { closeAllSpeculosDevices } from "@ledgerhq/live-common/load/speculos";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
-import SpeculosHttpTransport, {
+import {
+  DeviceManagementKitTransportSpeculos,
   SpeculosHttpTransportOpts,
-} from "@ledgerhq/hw-transport-node-speculos-http";
+} from "@ledgerhq/live-dmk-speculos";
 
 let idCounter = 0;
 const mockTransports: Record<string, any> = {};
@@ -133,7 +134,8 @@ export function registerSpeculosTransport(apiPort: number) {
 
   registerTransportModule({
     id: "speculos-http",
-    open: () => retry(() => SpeculosHttpTransport.open(req as SpeculosHttpTransportOpts)),
+    open: () =>
+      retry(() => DeviceManagementKitTransportSpeculos.open(req as SpeculosHttpTransportOpts)),
     disconnect: () => Promise.resolve(),
   });
 }
