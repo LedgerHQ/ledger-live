@@ -107,14 +107,9 @@ const buildValidateIntent = (networkFamily: string) =>
     return data;
   };
 
-// FIXME: shouldn't hardcode
-type AssetInfo = {
-  type: "native"; // or "token" if applicable
-};
-
 const buildGetBalance = (networkFamily: string) =>
-  async function getBalance(address: string): Promise<Balance<AssetInfo>[]> {
-    const { data } = await network<Balance<AssetInfo>, unknown>({
+  async function getBalance(address: string): Promise<Balance[]> {
+    const { data } = await network<Balance, unknown>({
       method: "GET",
       url: `${ALPACA_URL}/${networkFamily}/account/${address}/balance`,
     });
@@ -191,7 +186,7 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     listOperations: buildListOperations(networkFamily),
     lastBlock: buildLastBlock(networkFamily),
     craftTransaction: buildCraftTransaction(networkFamily),
-    getBlock(_height): Promise<Block<any>> {
+    getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
     getBlockInfo(_height: number): Promise<BlockInfo> {
