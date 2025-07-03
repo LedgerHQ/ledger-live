@@ -4,7 +4,7 @@ import { isSwapOperationPending } from "@ledgerhq/live-common/exchange/swap/inde
 import { MappedSwapOperation, SwapHistorySection } from "@ledgerhq/live-common/exchange/swap/types";
 import updateAccountSwapStatus from "@ledgerhq/live-common/exchange/swap/updateAccountSwapStatus";
 import { getParentAccount } from "@ledgerhq/live-common/account/index";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
@@ -30,36 +30,46 @@ import logger from "../../../logger";
 import { useSyncAllAccounts } from "../LiveApp/hooks/useSyncAllAccounts";
 import EmptyState from "./EmptyState";
 import OperationRow from "./OperationRow";
+import { getEnv } from "@ledgerhq/live-env";
+import { sendFile } from "../../../../e2e/bridge/client";
 
 // const SList : SectionList<MappedSwapOperation, SwapHistorySection> = SectionList;
 const AnimatedSectionList: typeof SectionList = Animated.createAnimatedComponent(
   SectionList,
 ) as unknown as typeof SectionList;
 
+// Helper function to ensure parent account is set for token accounts
+const ensureParentAccount = (
+  item: MappedSwapOperation,
+  accounts: AccountLike[],
+): MappedSwapOperation => {
+  if (item.toAccount.type === "TokenAccount" && !item.toParentAccount) {
+    return {
+      ...item,
+      toParentAccount: getParentAccount(item.toAccount, accounts),
+    };
+  }
+  return item;
+};
+
 const History = () => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const accounts = useSelector(flattenAccountsSelector);
   const dispatch = useDispatch();
-  const [sections, setSections] = useState<SwapHistorySection[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const ref = useRef(null);
   const syncAccounts = useSyncAllAccounts();
 
-  useEffect(() => {
+  // fix token account parent
+  const sections = useMemo(() => {
     const history = getCompleteSwapHistory(accounts);
 
-    // fix token account parent
-    history.forEach(section => {
-      section.data.forEach(item => {
-        if (item.toAccount.type === "TokenAccount" && !!item.toParentAccount) {
-          item.toParentAccount = getParentAccount(item.toAccount, accounts);
-        }
-      });
-    });
-
-    setSections(history);
-  }, [accounts, setSections]);
+    return history.map(section => ({
+      ...section,
+      data: section.data.map(item => ensureParentAccount(item, accounts)),
+    }));
+  }, [accounts]);
 
   const refreshSwapHistory = useCallback(() => {
     syncAccounts();
@@ -121,24 +131,31 @@ const History = () => {
   );
 
   const exportSwapHistory = async () => {
-    try {
-      const mapped = mappedSwapOperationsToCSV(sections);
+    const mapped = mappedSwapOperationsToCSV(sections);
+    if (!getEnv("DETOX")) {
+      try {
+        const base64 = Buffer.from(mapped).toString("base64");
+        const options = {
+          title: t("transfer.swap.history.exportButton"),
+          message: t("transfer.swap.history.exportButton"),
+          failOnCancel: false,
+          saveToFiles: true,
+          type: "text/csv",
+          filename: t("transfer.swap.history.exportFilename"),
+          url: `data:text/csv;base64,${base64}`,
+        };
 
-      const base64 = Buffer.from(mapped).toString("base64");
-      const options = {
-        title: t("transfer.swap.history.exportButton"),
-        message: t("transfer.swap.history.exportButton"),
-        failOnCancel: false,
-        saveToFiles: true,
-        type: "text/csv",
-        filename: t("transfer.swap.history.exportFilename"),
-        url: `data:text/csv;base64,${base64}`,
-      };
-
-      await Share.open(options);
-    } catch (err) {
-      // `failOnCancel: false` is not enough to prevent throwing on cancel apparently ¯\_(ツ)_/¯
-      if ((err as { error?: { code?: string } })?.error?.code !== "ECANCELLED500") {
+        await Share.open(options);
+      } catch (err) {
+        // `failOnCancel: false` is not enough to prevent throwing on cancel apparently ¯\_(ツ)_/¯
+        if ((err as { error?: { code?: string } })?.error?.code !== "ECANCELLED500") {
+          logger.critical(err as Error);
+        }
+      }
+    } else {
+      try {
+        sendFile({ fileName: "ledgerlive-swap-history.csv", fileContent: mapped });
+      } catch (err) {
         logger.critical(err as Error);
       }
     }
@@ -169,6 +186,7 @@ const History = () => {
               containerStyle={styles.button}
               IconLeft={DownloadFileIcon}
               onPress={exportSwapHistory}
+              testID="export-swap-operations-link"
             />
           ) : null
         }

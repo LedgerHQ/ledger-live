@@ -222,9 +222,10 @@ export const WebElementHelpers = {
   },
 
   getWebElementsByIdAndText(id: string, text: string, index = 0): WebElement {
-    const base = web.element(
-      by.web.xpath(`//span[@data-testid="${id}" and text()="${text}"]`),
-    ) as IndexedWebElement;
+    const xpath = id
+      ? `//span[@data-testid="${id}" and text()="${text}"]`
+      : `//span[text()="${text}"]`;
+    const base = web.element(by.web.xpath(xpath)) as IndexedWebElement;
     return index > 0 ? base.atIndex(index) : base;
   },
 
@@ -267,6 +268,10 @@ export const WebElementHelpers = {
     await retryUntilTimeout(async () => WebElementHelpers.getWebElementByTestId(id, index).tap());
   },
 
+  async tapWebElementByElement(element: WebElement): Promise<void> {
+    await retryUntilTimeout(async () => element.tap());
+  },
+
   async typeTextByWebTestId(id: string, text: string): Promise<void> {
     await retryUntilTimeout(async () =>
       WebElementHelpers.getWebElementByTestId(id).runScript(
@@ -281,6 +286,12 @@ export const WebElementHelpers = {
         },
         [text],
       ),
+    );
+  },
+
+  async getValueByWebTestId(id: string): Promise<string> {
+    return await retryUntilTimeout(async () =>
+      WebElementHelpers.getWebElementByTestId(id).runScript((el: HTMLInputElement) => el.value),
     );
   },
 };

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ComponentStory } from "@storybook/react-native";
+import { StoryFn } from "@storybook/react";
 import StoriesIndicator from "../../../../src/components/Navigation/StoriesIndicator";
 import { Box, Button, Text } from "../../../../src/components";
 
@@ -8,7 +8,7 @@ export default {
   component: StoriesIndicator,
 };
 
-export const StoriesIndicatorSample: ComponentStory<typeof StoriesIndicator> = (
+export const StoriesIndicatorSample: StoryFn<typeof StoriesIndicator> = (
   args: typeof StoriesIndicatorSampleArgs,
 ) => {
   const [activeIndex, setActiveIndex] = useState<number>(1);

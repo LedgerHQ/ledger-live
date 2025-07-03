@@ -1,29 +1,59 @@
 import { useCallback, useRef, useState } from "react";
-import { ModularDrawerStep, NavigationDirection } from "../types";
+import {
+  MODULAR_DRAWER_ADD_ACCOUNT_STEP,
+  MODULAR_DRAWER_STEP,
+  ModularDrawerAddAccountStep,
+  ModularDrawerStep,
+  NAVIGATION_DIRECTION,
+  NavigationDirection,
+} from "../types";
 
-export function useModularDrawerNavigation(initialStep: ModularDrawerStep = "ASSET_SELECTION") {
-  const [currentStep, setCurrentStep] = useState<ModularDrawerStep>(initialStep);
-  const [navigationDirection, setNavigationDirection] = useState<NavigationDirection>("FORWARD");
-  const prevStepRef = useRef<ModularDrawerStep>(initialStep);
+const ACCOUNT_SELECTION_STEP_ORDER: ModularDrawerStep[] = [
+  "ASSET_SELECTION",
+  "NETWORK_SELECTION",
+  "ACCOUNT_SELECTION",
+];
+
+const ADD_ACCOUNT_STEP_ORDER: ModularDrawerAddAccountStep[] = [
+  MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE,
+  MODULAR_DRAWER_ADD_ACCOUNT_STEP.SCAN_ACCOUNTS,
+  MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ADDED,
+  MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_WARNING,
+  MODULAR_DRAWER_ADD_ACCOUNT_STEP.SELECT_ACCOUNT,
+  MODULAR_DRAWER_ADD_ACCOUNT_STEP.FUND_ACCOUNT,
+];
+
+interface UseGenericNavigationProps<T> {
+  stepOrder: T[];
+  initialStep: T;
+  forwardDirection: NavigationDirection;
+  backwardDirection: NavigationDirection;
+}
+
+function useGenericNavigation<T>({
+  stepOrder,
+  initialStep,
+  forwardDirection,
+  backwardDirection,
+}: UseGenericNavigationProps<T>) {
+  const [currentStep, setCurrentStep] = useState<T>(initialStep);
+  const [navigationDirection, setNavigationDirection] =
+    useState<NavigationDirection>(forwardDirection);
+  const prevStepRef = useRef<T>(initialStep);
 
   const goToStep = useCallback(
-    (nextStep: ModularDrawerStep) => {
-      const stepOrder: ModularDrawerStep[] = [
-        "ASSET_SELECTION",
-        "NETWORK_SELECTION",
-        "ACCOUNT_SELECTION",
-      ];
+    (nextStep: T) => {
       const prevIdx = stepOrder.indexOf(currentStep);
       const nextIdx = stepOrder.indexOf(nextStep);
       if (nextIdx > prevIdx) {
-        setNavigationDirection("FORWARD");
+        setNavigationDirection(forwardDirection);
       } else if (nextIdx < prevIdx) {
-        setNavigationDirection("BACKWARD");
+        setNavigationDirection(backwardDirection);
       }
       setCurrentStep(nextStep);
       prevStepRef.current = nextStep;
     },
-    [currentStep],
+    [currentStep, stepOrder, forwardDirection, backwardDirection],
   );
 
   return {
@@ -32,4 +62,24 @@ export function useModularDrawerNavigation(initialStep: ModularDrawerStep = "ASS
     goToStep,
     setCurrentStep,
   };
+}
+
+export function useModularDrawerNavigation(
+  initialStep: ModularDrawerStep = MODULAR_DRAWER_STEP.ASSET_SELECTION,
+) {
+  return useGenericNavigation({
+    stepOrder: ACCOUNT_SELECTION_STEP_ORDER,
+    initialStep,
+    forwardDirection: NAVIGATION_DIRECTION.FORWARD,
+    backwardDirection: NAVIGATION_DIRECTION.BACKWARD,
+  });
+}
+
+export function useAddAccountNavigation() {
+  return useGenericNavigation({
+    stepOrder: ADD_ACCOUNT_STEP_ORDER,
+    initialStep: MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE,
+    forwardDirection: NAVIGATION_DIRECTION.FORWARD,
+    backwardDirection: NAVIGATION_DIRECTION.BACKWARD,
+  });
 }

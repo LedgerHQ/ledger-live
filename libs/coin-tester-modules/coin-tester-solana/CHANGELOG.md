@@ -1,5 +1,71 @@
 # @ledgerhq/coin-tester-solana
 
+## 1.4.0
+
+### Minor Changes
+
+- [#10638](https://github.com/LedgerHQ/ledger-live/pull/10638) [`d93d101`](https://github.com/LedgerHQ/ledger-live/commit/d93d101bbb314164058811ddfb30a6210ba0bb73) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - test(coin-tester-solana): use app Solana 1.9.2
+
+### Patch Changes
+
+- Updated dependencies [[`2274597`](https://github.com/LedgerHQ/ledger-live/commit/227459709ec157b7e49db4e75c52525e15acd8d2), [`7a1b8c8`](https://github.com/LedgerHQ/ledger-live/commit/7a1b8c8e59383efb02676cfe647c5889a31372bc), [`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc), [`0c5070b`](https://github.com/LedgerHQ/ledger-live/commit/0c5070ba6effeacbcb6a009d86738c39a9a831d2), [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/types-live@6.75.0
+  - @ledgerhq/coin-solana@0.27.0
+  - @ledgerhq/cryptoassets@13.20.0
+  - @ledgerhq/live-env@2.11.0
+  - @ledgerhq/coin-framework@5.4.1
+  - @ledgerhq/coin-tester@0.7.0
+  - @ledgerhq/live-signer-solana@0.3.1
+
+## 1.4.0-next.0
+
+### Minor Changes
+
+- [#10638](https://github.com/LedgerHQ/ledger-live/pull/10638) [`d93d101`](https://github.com/LedgerHQ/ledger-live/commit/d93d101bbb314164058811ddfb30a6210ba0bb73) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - test(coin-tester-solana): use app Solana 1.9.2
+
+### Patch Changes
+
+- Updated dependencies [[`2274597`](https://github.com/LedgerHQ/ledger-live/commit/227459709ec157b7e49db4e75c52525e15acd8d2), [`7a1b8c8`](https://github.com/LedgerHQ/ledger-live/commit/7a1b8c8e59383efb02676cfe647c5889a31372bc), [`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc), [`0c5070b`](https://github.com/LedgerHQ/ledger-live/commit/0c5070ba6effeacbcb6a009d86738c39a9a831d2), [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/types-live@6.75.0-next.0
+  - @ledgerhq/coin-solana@0.27.0-next.0
+  - @ledgerhq/cryptoassets@13.20.0-next.0
+  - @ledgerhq/live-env@2.11.0-next.0
+  - @ledgerhq/coin-framework@5.4.1-next.0
+  - @ledgerhq/coin-tester@0.7.0
+  - @ledgerhq/live-signer-solana@0.3.1-next.0
+
+## 1.3.0
+
+### Minor Changes
+
+- [#10225](https://github.com/LedgerHQ/ledger-live/pull/10225) [`e65c386`](https://github.com/LedgerHQ/ledger-live/commit/e65c386cfb3e53e3ee9f501dc08971a93eb5cf81) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - core(coin-solana,hw-app-solana): support SPL tokens dynamically
+
+### Patch Changes
+
+- Updated dependencies [[`e65c386`](https://github.com/LedgerHQ/ledger-live/commit/e65c386cfb3e53e3ee9f501dc08971a93eb5cf81), [`9ceee03`](https://github.com/LedgerHQ/ledger-live/commit/9ceee03c33c41bb035fe64f9303acd36872536b6), [`98eb2eb`](https://github.com/LedgerHQ/ledger-live/commit/98eb2ebce8e12742a68b8f54ba625d63c4958087), [`4d9aaf5`](https://github.com/LedgerHQ/ledger-live/commit/4d9aaf583060a22cd1343b23d9b5c1ee3c02abb4), [`5739a67`](https://github.com/LedgerHQ/ledger-live/commit/5739a67975dfc2509d5abd4ff13ea36af010f93e), [`e9739d1`](https://github.com/LedgerHQ/ledger-live/commit/e9739d19946376dd7a8a5f10471594f267f3a95f), [`fa8e7c5`](https://github.com/LedgerHQ/ledger-live/commit/fa8e7c547d5c996fbcbe8a0351b250d13074a4d2)]:
+  - @ledgerhq/coin-solana@0.26.0
+  - @ledgerhq/coin-tester@0.7.0
+  - @ledgerhq/live-signer-solana@0.3.0
+  - @ledgerhq/types-live@6.74.0
+  - @ledgerhq/coin-framework@5.4.0
+  - @ledgerhq/cryptoassets@13.19.0
+
+## 1.3.0-next.0
+
+### Minor Changes
+
+- [#10225](https://github.com/LedgerHQ/ledger-live/pull/10225) [`e65c386`](https://github.com/LedgerHQ/ledger-live/commit/e65c386cfb3e53e3ee9f501dc08971a93eb5cf81) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - core(coin-solana,hw-app-solana): support SPL tokens dynamically
+
+### Patch Changes
+
+- Updated dependencies [[`e65c386`](https://github.com/LedgerHQ/ledger-live/commit/e65c386cfb3e53e3ee9f501dc08971a93eb5cf81), [`9ceee03`](https://github.com/LedgerHQ/ledger-live/commit/9ceee03c33c41bb035fe64f9303acd36872536b6), [`98eb2eb`](https://github.com/LedgerHQ/ledger-live/commit/98eb2ebce8e12742a68b8f54ba625d63c4958087), [`4d9aaf5`](https://github.com/LedgerHQ/ledger-live/commit/4d9aaf583060a22cd1343b23d9b5c1ee3c02abb4), [`5739a67`](https://github.com/LedgerHQ/ledger-live/commit/5739a67975dfc2509d5abd4ff13ea36af010f93e), [`e9739d1`](https://github.com/LedgerHQ/ledger-live/commit/e9739d19946376dd7a8a5f10471594f267f3a95f), [`fa8e7c5`](https://github.com/LedgerHQ/ledger-live/commit/fa8e7c547d5c996fbcbe8a0351b250d13074a4d2)]:
+  - @ledgerhq/coin-solana@0.26.0-next.0
+  - @ledgerhq/coin-tester@0.7.0-next.0
+  - @ledgerhq/live-signer-solana@0.3.0-next.0
+  - @ledgerhq/types-live@6.74.0-next.0
+  - @ledgerhq/coin-framework@5.4.0-next.0
+  - @ledgerhq/cryptoassets@13.19.0-next.0
+
 ## 1.2.0
 
 ### Minor Changes

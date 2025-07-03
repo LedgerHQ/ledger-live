@@ -95,7 +95,8 @@ import { registerTransports } from "~/services/registerTransports";
 import { useDeviceManagementKitEnabled } from "@ledgerhq/live-dmk-mobile";
 import { StoragePerformanceOverlay } from "./newArch/storage/screens/PerformanceMonitor";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
-import AppGeoBlocker from "LLM/features/AppGeoblocker";
+import AppVersionBlocker from "LLM/features/AppBlockers/components/AppVersionBlocker";
+import AppGeoBlocker from "LLM/features/AppBlockers/components/AppGeoBlocker";
 import { exportLargeMoverSelector } from "./reducers/largeMover";
 import {
   TrackingConsent,
@@ -103,7 +104,7 @@ import {
   AutoInstrumentationConfiguration,
 } from "@datadog/mobile-react-native";
 import { PartialInitializationConfiguration } from "@datadog/mobile-react-native/lib/typescript/DdSdkReactNativeConfiguration";
-import { initializeDatadogProvider } from "./datadog";
+import { customErrorEventMapper, initializeDatadogProvider } from "./datadog";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -147,6 +148,7 @@ function App() {
       trackErrors: datadogFF?.params?.trackErrors ?? false,
       trackInteractions: datadogFF?.params?.trackInteractions ?? false,
       trackResources: datadogFF?.params?.trackResources ?? false,
+      errorEventMapper: customErrorEventMapper,
     }),
     [datadogFF?.params],
   );
@@ -414,7 +416,9 @@ export default class Root extends Component {
                                     <AuthPass>
                                       <AppProviders initialCountervalues={initialCountervalues}>
                                         <AppGeoBlocker>
-                                          <App />
+                                          <AppVersionBlocker>
+                                            <App />
+                                          </AppVersionBlocker>
                                         </AppGeoBlocker>
                                       </AppProviders>
                                     </AuthPass>

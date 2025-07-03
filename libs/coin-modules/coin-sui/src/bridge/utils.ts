@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import type { SuiAccount, Transaction } from "../types";
 
 // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
@@ -56,6 +57,10 @@ export const calculateAmount = ({
       case "send":
         amount = calculateMaxSend(account, transaction);
         break;
+      case "token.send":
+        amount =
+          findSubAccountById(account, transaction.subAccountId!)?.spendableBalance ??
+          new BigNumber(0);
     }
   } else if (transaction.amount.gt(MAX_AMOUNT_INPUT)) {
     return new BigNumber(MAX_AMOUNT_INPUT);

@@ -1,5 +1,71 @@
 # @ledgerhq/react-ui
 
+## 0.31.0
+
+### Minor Changes
+
+- [#10484](https://github.com/LedgerHQ/ledger-live/pull/10484) [`da942ca`](https://github.com/LedgerHQ/ledger-live/commit/da942caa12eec5de9fd5c90d7e00262291c49543) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Add Account Success Screen
+
+- [#10433](https://github.com/LedgerHQ/ledger-live/pull/10433) [`efdcdc1`](https://github.com/LedgerHQ/ledger-live/commit/efdcdc14d395a31670d94bd32f301e10794a70d8) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - MAD arch rework of add account
+
+### Patch Changes
+
+- Updated dependencies [[`efdcdc1`](https://github.com/LedgerHQ/ledger-live/commit/efdcdc14d395a31670d94bd32f301e10794a70d8)]:
+  - @ledgerhq/icons-ui@0.12.0
+
+## 0.31.0-next.0
+
+### Minor Changes
+
+- [#10484](https://github.com/LedgerHQ/ledger-live/pull/10484) [`da942ca`](https://github.com/LedgerHQ/ledger-live/commit/da942caa12eec5de9fd5c90d7e00262291c49543) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Add Account Success Screen
+
+- [#10433](https://github.com/LedgerHQ/ledger-live/pull/10433) [`efdcdc1`](https://github.com/LedgerHQ/ledger-live/commit/efdcdc14d395a31670d94bd32f301e10794a70d8) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - MAD arch rework of add account
+
+### Patch Changes
+
+- Updated dependencies [[`efdcdc1`](https://github.com/LedgerHQ/ledger-live/commit/efdcdc14d395a31670d94bd32f301e10794a70d8)]:
+  - @ledgerhq/icons-ui@0.12.0-next.0
+
+## 0.30.0
+
+### Minor Changes
+
+- [#10406](https://github.com/LedgerHQ/ledger-live/pull/10406) [`3f02d18`](https://github.com/LedgerHQ/ledger-live/commit/3f02d1856cb30eee4c79e3b9f83df2ff3a56775d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - Add balance for each asset on asset selection list
+
+- [#10452](https://github.com/LedgerHQ/ledger-live/pull/10452) [`9ceee03`](https://github.com/LedgerHQ/ledger-live/commit/9ceee03c33c41bb035fe64f9303acd36872536b6) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add kyc warning for changelly on the drawer footer
+
+- [#10528](https://github.com/LedgerHQ/ledger-live/pull/10528) [`f2beeb0`](https://github.com/LedgerHQ/ledger-live/commit/f2beeb041debcc36ca828e2a52a77170e20f108b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - Add custom last row component to the virtual list. Move add account button at the bottom of the select account lit
+
+- [#10513](https://github.com/LedgerHQ/ledger-live/pull/10513) [`23c0b8a`](https://github.com/LedgerHQ/ledger-live/commit/23c0b8ac0932e762123cbb6b6243ca4f7e5a01e0) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - LLD MAD account count for network list
+
+- [#10229](https://github.com/LedgerHQ/ledger-live/pull/10229) [`bf4b791`](https://github.com/LedgerHQ/ledger-live/commit/bf4b7919e5e66605ea3e77562626db5d26898246) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Upgrade React Native from 0.75 to 0.77
+
+### Patch Changes
+
+- Updated dependencies [[`bf4b791`](https://github.com/LedgerHQ/ledger-live/commit/bf4b7919e5e66605ea3e77562626db5d26898246)]:
+  - @ledgerhq/crypto-icons-ui@1.15.0
+  - @ledgerhq/icons-ui@0.11.0
+
+## 0.30.0-next.0
+
+### Minor Changes
+
+- [#10406](https://github.com/LedgerHQ/ledger-live/pull/10406) [`3f02d18`](https://github.com/LedgerHQ/ledger-live/commit/3f02d1856cb30eee4c79e3b9f83df2ff3a56775d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - Add balance for each asset on asset selection list
+
+- [#10452](https://github.com/LedgerHQ/ledger-live/pull/10452) [`9ceee03`](https://github.com/LedgerHQ/ledger-live/commit/9ceee03c33c41bb035fe64f9303acd36872536b6) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add kyc warning for changelly on the drawer footer
+
+- [#10528](https://github.com/LedgerHQ/ledger-live/pull/10528) [`f2beeb0`](https://github.com/LedgerHQ/ledger-live/commit/f2beeb041debcc36ca828e2a52a77170e20f108b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - Add custom last row component to the virtual list. Move add account button at the bottom of the select account lit
+
+- [#10513](https://github.com/LedgerHQ/ledger-live/pull/10513) [`23c0b8a`](https://github.com/LedgerHQ/ledger-live/commit/23c0b8ac0932e762123cbb6b6243ca4f7e5a01e0) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - LLD MAD account count for network list
+
+- [#10229](https://github.com/LedgerHQ/ledger-live/pull/10229) [`bf4b791`](https://github.com/LedgerHQ/ledger-live/commit/bf4b7919e5e66605ea3e77562626db5d26898246) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Upgrade React Native from 0.75 to 0.77
+
+### Patch Changes
+
+- Updated dependencies [[`bf4b791`](https://github.com/LedgerHQ/ledger-live/commit/bf4b7919e5e66605ea3e77562626db5d26898246)]:
+  - @ledgerhq/crypto-icons-ui@1.15.0-next.0
+  - @ledgerhq/icons-ui@0.11.0-next.0
+
 ## 0.29.0
 
 ### Minor Changes

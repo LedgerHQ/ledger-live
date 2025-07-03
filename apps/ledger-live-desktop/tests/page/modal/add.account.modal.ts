@@ -11,7 +11,7 @@ export class AddAccountModal extends Modal {
   private accountsList = this.page.getByTestId("add-accounts-step-import-accounts-list");
   private stopButton = this.page.getByTestId("add-accounts-import-stop-button");
   private doneButton = this.page.getByTestId("add-accounts-finish-close-button");
-  private successAddLabel = this.page.locator("text=Account added successfully");
+  private successAddLabel = this.page.locator("text=/Account(s)? added successfully/");
 
   @step("Select currency $0")
   async select(currency: string) {

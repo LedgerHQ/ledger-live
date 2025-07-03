@@ -1,5 +1,5 @@
 import React from "react";
-import { ComponentStory } from "@storybook/react-native";
+import { StoryFn } from "@storybook/react";
 import { NumberedList } from "../../../../src/components";
 
 export default {
@@ -13,7 +13,7 @@ export default {
   },
 };
 
-export const Default: ComponentStory<typeof NumberedList> = (args: typeof DefaultArgs) => {
+export const Default: StoryFn<typeof NumberedList> = (args: typeof DefaultArgs) => {
   return (
     <NumberedList
       items={[

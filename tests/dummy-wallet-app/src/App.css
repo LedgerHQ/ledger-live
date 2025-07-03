@@ -1,5 +1,8 @@
 .App {
   text-align: center;
+  color: white;
+  background-color: #282c34;
+  min-height: 100vh;
 }
 
 .App-logo {
@@ -7,13 +10,16 @@
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   font-size: calc(5px + 2vmin);
-  color: white;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 #image-container {
@@ -38,4 +44,15 @@
 
 pre {
   text-align: initial;
+  max-width: 100%;
+  overflow: auto;
+}
+
+.account-id-input,
+.recipient-input,
+.currency-ids-input,
+.amount-input,
+.data-input {
+  margin-bottom: 12px;
+  width: 320px;
 }

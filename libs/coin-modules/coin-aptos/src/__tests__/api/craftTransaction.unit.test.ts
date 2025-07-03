@@ -1,7 +1,7 @@
 import { Hex, RawTransaction, Deserializer } from "@aptos-labs/ts-sdk";
 import type { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { createApi } from "../../api";
-import type { AptosAsset, AptosExtra, AptosSender } from "../../types/assets";
+import type { AptosAsset } from "../../types/assets";
 import { AptosAPI } from "../../network";
 import { APTOS_ASSET_ID } from "../../constants";
 
@@ -41,20 +41,17 @@ describe("craftTransaction", () => {
       getBalances: mockGetBalances,
     }));
 
-    const SENDER: AptosSender = {
-      xpub: "public-key",
-      freshAddress: SENDER_ADDR,
-    };
     const api = createApi({
       aptosSettings: {},
     });
 
-    const txArg: TransactionIntent<AptosAsset, AptosExtra, AptosSender> = {
+    const txArg: TransactionIntent<AptosAsset> = {
       type: "send",
-      sender: SENDER,
+      sender: SENDER_ADDR,
+      senderPublicKey: "public-key",
       recipient: RECIPIENT_ADDR,
       amount: 10n,
-      asset: { type: "native" },
+      asset: { type: "token", standard: "coin", contractAddress: "0x42::token::Token" },
     };
 
     const tx = await api.craftTransaction(txArg);
@@ -65,10 +62,10 @@ describe("craftTransaction", () => {
     expect(mockGenerateTransaction).toHaveBeenCalledTimes(1);
 
     expect(mockGenerateTransaction).toHaveBeenCalledWith(
-      SENDER.freshAddress,
+      SENDER_ADDR,
       expect.objectContaining({
         function: "0x1::aptos_account::transfer_coins",
-        typeArguments: [APTOS_ASSET_ID],
+        typeArguments: ["0x42::token::Token"],
         functionArguments: [RECIPIENT_ADDR, txArg.amount.toString()],
       }),
       expect.anything(),
@@ -85,17 +82,14 @@ describe("craftTransaction", () => {
       getBalances: mockGetBalances,
     }));
 
-    const SENDER: AptosSender = {
-      xpub: "public-key",
-      freshAddress: SENDER_ADDR,
-    };
     const api = createApi({
       aptosSettings: {},
     });
 
-    const txArg: TransactionIntent<AptosAsset, AptosExtra, AptosSender> = {
+    const txArg: TransactionIntent<AptosAsset> = {
       type: "send",
-      sender: SENDER,
+      sender: SENDER_ADDR,
+      senderPublicKey: "public-key",
       recipient: RECIPIENT_ADDR,
       amount: 0n,
       asset: { type: "native" },
@@ -109,7 +103,7 @@ describe("craftTransaction", () => {
     expect(mockGenerateTransaction).toHaveBeenCalledTimes(1);
 
     expect(mockGenerateTransaction).toHaveBeenCalledWith(
-      SENDER.freshAddress,
+      SENDER_ADDR,
       expect.objectContaining({
         function: "0x1::aptos_account::transfer_coins",
         typeArguments: [APTOS_ASSET_ID],
@@ -129,17 +123,14 @@ describe("craftTransaction", () => {
       getBalances: mockGetBalances,
     }));
 
-    const SENDER: AptosSender = {
-      xpub: "public-key",
-      freshAddress: SENDER_ADDR,
-    };
     const api = createApi({
       aptosSettings: {},
     });
 
-    const txArg: TransactionIntent<AptosAsset, AptosExtra, AptosSender> = {
+    const txArg: TransactionIntent<AptosAsset> = {
       type: "send",
-      sender: SENDER,
+      sender: SENDER_ADDR,
+      senderPublicKey: "public-key",
       recipient: RECIPIENT_ADDR,
       amount: 10n,
       asset: { type: "token", standard: "coin", contractAddress: "0x42::token::Token" },
@@ -153,7 +144,7 @@ describe("craftTransaction", () => {
     expect(mockGenerateTransaction).toHaveBeenCalledTimes(1);
 
     expect(mockGenerateTransaction).toHaveBeenCalledWith(
-      SENDER.freshAddress,
+      SENDER_ADDR,
       expect.objectContaining({
         function: "0x1::aptos_account::transfer_coins",
         typeArguments: ["0x42::token::Token"],
@@ -173,17 +164,14 @@ describe("craftTransaction", () => {
       getBalances: mockGetBalances,
     }));
 
-    const SENDER: AptosSender = {
-      xpub: "public-key",
-      freshAddress: SENDER_ADDR,
-    };
     const api = createApi({
       aptosSettings: {},
     });
 
-    const txArg: TransactionIntent<AptosAsset, AptosExtra, AptosSender> = {
+    const txArg: TransactionIntent<AptosAsset> = {
       type: "send",
-      sender: SENDER,
+      sender: SENDER_ADDR,
+      senderPublicKey: "public-key",
       recipient: RECIPIENT_ADDR,
       amount: 0n,
       asset: { type: "token", standard: "fungible_asset", contractAddress: "0x42" },
@@ -197,7 +185,7 @@ describe("craftTransaction", () => {
     expect(mockGenerateTransaction).toHaveBeenCalledTimes(1);
 
     expect(mockGenerateTransaction).toHaveBeenCalledWith(
-      SENDER.freshAddress,
+      SENDER_ADDR,
       expect.objectContaining({
         function: "0x1::primary_fungible_store::transfer",
         typeArguments: ["0x1::fungible_asset::Metadata"],
@@ -217,17 +205,14 @@ describe("craftTransaction", () => {
       getBalances: mockGetBalances,
     }));
 
-    const SENDER: AptosSender = {
-      xpub: "public-key",
-      freshAddress: SENDER_ADDR,
-    };
     const api = createApi({
       aptosSettings: {},
     });
 
-    const txArg: TransactionIntent<AptosAsset, AptosExtra, AptosSender> = {
+    const txArg: TransactionIntent<AptosAsset> = {
       type: "send",
-      sender: SENDER,
+      sender: SENDER_ADDR,
+      senderPublicKey: "public-key",
       recipient: RECIPIENT_ADDR,
       amount: 10n,
       asset: { type: "token", standard: "asset", contractAddress: "0x42::token::Token" },

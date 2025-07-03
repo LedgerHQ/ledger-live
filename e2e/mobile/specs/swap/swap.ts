@@ -6,17 +6,9 @@ import { performSwapUntilQuoteSelectionStep } from "../../utils/swapUtils";
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
 const beforeAllFunction = async (swap: SwapType) => {
-  app.speculos.setExchangeDependencies(swap);
+  await app.speculos.setExchangeDependencies(swap);
   await app.init({
     speculosApp: AppInfos.EXCHANGE,
-    featureFlags: {
-      ptxSwapLiveAppMobile: {
-        enabled: true,
-        params: {
-          manifest_id: "swap-live-app-demo-3-stg",
-        },
-      },
-    },
     cliCommandsOnApp: [
       {
         app: swap.accountToDebit.currency.speculosApp,
@@ -58,9 +50,17 @@ export function runSwapTest(swap: SwapType, tmsLinks: string[], tags: string[]) 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`Swap ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`, async () => {
-      const minAmount = await app.swapLiveApp.getMinimumAmount(swap);
-      await performSwapUntilQuoteSelectionStep(swap, minAmount);
-      await app.swapLiveApp.selectExchange();
+      const minAmount = await app.swapLiveApp.getMinimumAmount(
+        swap.accountToDebit,
+        swap.accountToCredit,
+      );
+      await performSwapUntilQuoteSelectionStep(
+        swap.accountToDebit,
+        swap.accountToCredit,
+        minAmount,
+      );
+      const selectedProvider: string = await app.swapLiveApp.selectExchange();
+      await app.swapLiveApp.checkExchangeButtonHasProviderName(selectedProvider);
       await app.swapLiveApp.tapExecuteSwap();
       await app.common.selectKnownDevice();
 

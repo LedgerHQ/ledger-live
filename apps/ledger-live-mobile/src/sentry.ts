@@ -6,77 +6,7 @@ import { getAllDivergedFlags } from "./components/FirebaseFeatureFlags";
 import { enabledExperimentalFeatures } from "./experimental";
 import { languageSelector } from "./reducers/settings";
 import { store } from "./context/store";
-// we exclude errors related to user's environment, not fixable by us
-const excludedErrorName = [
-  // networking conditions
-  "DisconnectedError",
-  "Network Error",
-  "NetworkDown",
-  "NotConnectedError",
-  // timeouts
-  "TimeoutError",
-  "WebsocketConnectionError",
-  "TronTransactionExpired", // user waits too long on device, possibly network slowness too
-  "SolanaTxConfirmationTimeout",
-  // bad usage of device
-  "BleError",
-  "EthAppPleaseEnableContractData",
-  "VechainAppPleaseEnableContractDataAndMultiClause",
-  "CantOpenDevice",
-  "DeviceOnDashboardExpected",
-  "PairingFailed",
-  "GetAppAndVersionUnsupportedFormat",
-  "BluetoothRequired",
-  "ManagerDeviceLocked",
-  "LockedDeviceError",
-  "UnresponsiveDeviceError",
-  // wrong My Ledger provider selected for the firmware of the connected device
-  "FirmwareNotRecognized",
-  // errors coming from the usage of a Transport implementation
-  "HwTransportError",
-  // other
-  "InvalidAddressError",
-  "SwapNoAvailableProviders",
-  "AccountNeedResync",
-  "DeviceAppVerifyNotSupported",
-  "AccountAwaitingSendPendingOperations",
-  "HederaAddAccountError",
-  // API issues
-  "LedgerAPI4xx",
-  "LedgerAPI5xx",
-];
-
-const excludedErrorDescription = [
-  // networking
-  /timeout of .* exceeded/,
-  "timeout exceeded",
-  "Network Error",
-  "Network request failed",
-  "INVALID_STATE_ERR",
-  "API HTTP",
-  "Unexpected ''",
-  "Unexpected '<'",
-  "Service Unvailable",
-  // base usage of device
-  "Invalid channel",
-  /Ledger Device is busy/,
-  "Ledger device: UNKNOWN_ERROR",
-  // others
-  "Transaction signing request was rejected by the user",
-  "Transaction approval request was rejected",
-  /Please reimport your .* accounts/,
-  "database or disk is full",
-  "Unable to open URL",
-  "Received an invalid JSON-RPC message",
-  // LIVE-3506 workaround, solana throws tons of cryptic errors
-  "failed to find a healthy working node",
-  "was reached for request with last error",
-  "Transaction simulation failed",
-  "530 undefined",
-  "524 undefined",
-  "Missing or invalid topic field", // wallet connect issue
-  "Bad status on response: 503", // cryptoorg node
-];
+import { EXCLUDED_ERROR_DESCRIPTION, EXCLUDED_LOGS_ERROR_NAME } from "./utils/constants";
 
 const sentryEnabled =
   Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !(Config.MOCK || Config.DETOX);
@@ -126,9 +56,9 @@ if (sentryEnabled) {
               const { type, value } = item;
               return (
                 (typeof type === "string" &&
-                  excludedErrorName.some(pattern => type.match(pattern))) ||
+                  EXCLUDED_LOGS_ERROR_NAME.some(pattern => type.match(pattern))) ||
                 (typeof value === "string" &&
-                  excludedErrorDescription.some(pattern => value.match(pattern)))
+                  EXCLUDED_ERROR_DESCRIPTION.some(pattern => value.match(pattern)))
               );
             }
             return false;

@@ -12,14 +12,15 @@ type Props = {
   open: boolean;
   onClose: () => void;
   onNext: () => void;
+  onModalHide: () => void;
 };
 
-export const MemoTagDrawer = memo(({ open, onClose, onNext }: Props) => {
+export const MemoTagDrawer = memo(({ open, onClose, onNext, onModalHide }: Props) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
   return (
-    <QueuedDrawer isRequestingToBeOpened={open} onClose={onClose}>
+    <QueuedDrawer isRequestingToBeOpened={open} onClose={onClose} onModalHide={onModalHide}>
       <Flex alignItems="center" mb={7}>
         <Circle size={72} bg={colors.opacityDefault.c05}>
           <Icons.InformationFill size="L" color="primary.c80" />

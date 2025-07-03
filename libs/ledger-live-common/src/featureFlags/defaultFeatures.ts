@@ -153,6 +153,7 @@ export const DEFAULT_FEATURES: Features = {
   protectServicesDesktop: {
     enabled: false,
     params: {
+      openWithDevTools: false,
       availableOnDesktop: false,
       isNew: false,
       ledgerliveStorageState: false,
@@ -609,6 +610,17 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   lldModularDrawer: {
+    ...DEFAULT_FEATURE,
+    params: {
+      add_account: true,
+      earn_flow: true,
+      live_app: true,
+      receive_flow: true,
+      send_flow: true,
+      enableModularization: false,
+    },
+  },
+  llmModularDrawer: {
     ...DEFAULT_FEATURE,
     params: {
       add_account: true,

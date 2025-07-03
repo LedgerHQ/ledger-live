@@ -33,7 +33,16 @@ export const getBalanceAndFiatValue = (
   });
 
   const count = getPortfolioCount([account], "day");
-  const { history } = getBalanceHistoryWithCountervalue(account, "day", count, state, toCurrency);
+  const { history, countervalueAvailable } = getBalanceHistoryWithCountervalue(
+    account,
+    "day",
+    count,
+    state,
+    toCurrency,
+  );
+
+  if (!countervalueAvailable) return { balance, fiatValue: undefined };
+
   const { countervalue } = history[history.length - 1] ?? {};
   const fiatValue = formatCurrencyUnit(toCurrency.units[0], BigNumber(countervalue ?? 0), {
     showCode,

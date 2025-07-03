@@ -3,11 +3,13 @@ import Fuse from "fuse.js";
 import { getEnv } from "@ledgerhq/live-env";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useModularDrawerAnalytics } from "LLD/features/ModularDrawer/analytics/useModularDrawerAnalytics";
-import { MODULAR_DRAWER_PAGE_NAME } from "LLD/features/ModularDrawer/analytics/types";
+import { MODULAR_DRAWER_PAGE_NAME } from "LLD/features/ModularDrawer/analytics/modularDrawer.types";
 
 export type SearchProps = {
   setItemsToDisplay: (assets: CryptoOrTokenCurrency[]) => void;
   setSearchedValue?: (value: string) => void;
+  assetsToDisplay: CryptoOrTokenCurrency[];
+  originalAssets: CryptoOrTokenCurrency[];
   defaultValue?: string;
   source: string;
   flow: string;
@@ -30,31 +32,30 @@ const FUSE_OPTIONS = {
 export const useSearch = ({
   setItemsToDisplay,
   setSearchedValue,
+  assetsToDisplay: _assetsToDisplay,
+  originalAssets,
   defaultValue,
-  items,
+  items: _items,
   source,
   flow,
 }: SearchProps): SearchResult => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const [displayedValue, setDisplayedValue] = useState(defaultValue);
 
-  const fuse = useMemo(() => new Fuse(items, FUSE_OPTIONS), [items]);
+  const fuse = useMemo(() => new Fuse(originalAssets, FUSE_OPTIONS), [originalAssets]);
 
   const handleDebouncedChange = useCallback(
     (current: string, previous: string) => {
       const query = current;
       const prevQuery = previous;
+      setSearchedValue?.(query);
 
       if (query === prevQuery) {
         return;
       }
 
       if (query.trim() === "" && prevQuery !== "") {
-        setItemsToDisplay(items);
-        return;
-      }
-
-      if (query.length < 2 && prevQuery.length < 2) {
+        setItemsToDisplay(originalAssets);
         return;
       }
 
@@ -71,15 +72,21 @@ export const useSearch = ({
         },
       );
 
-      const results =
-        query.trim().length < 2
-          ? items
-          : fuse.search(query).map((result: Fuse.FuseResult<CryptoOrTokenCurrency>) => result.item);
+      const results = fuse
+        .search(query)
+        .map((result: Fuse.FuseResult<CryptoOrTokenCurrency>) => result.item);
 
       setItemsToDisplay(results);
-      setSearchedValue?.(query);
     },
-    [trackModularDrawerEvent, flow, source, items, fuse, setItemsToDisplay, setSearchedValue],
+    [
+      trackModularDrawerEvent,
+      flow,
+      source,
+      originalAssets,
+      fuse,
+      setItemsToDisplay,
+      setSearchedValue,
+    ],
   );
 
   const handleSearch = useCallback((queryOrEvent: string | ChangeEvent<HTMLInputElement>) => {

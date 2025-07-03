@@ -1,5 +1,67 @@
 # @ledgerhq/coin-solana
 
+## 0.27.0
+
+### Minor Changes
+
+- [#10315](https://github.com/LedgerHQ/ledger-live/pull/10315) [`0c5070b`](https://github.com/LedgerHQ/ledger-live/commit/0c5070ba6effeacbcb6a009d86738c39a9a831d2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-solana): warn correctly on not enough gas
+
+### Patch Changes
+
+- Updated dependencies [[`2274597`](https://github.com/LedgerHQ/ledger-live/commit/227459709ec157b7e49db4e75c52525e15acd8d2), [`7a1b8c8`](https://github.com/LedgerHQ/ledger-live/commit/7a1b8c8e59383efb02676cfe647c5889a31372bc), [`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc), [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/types-live@6.75.0
+  - @ledgerhq/cryptoassets@13.20.0
+  - @ledgerhq/live-env@2.11.0
+  - @ledgerhq/coin-framework@5.4.1
+  - @ledgerhq/live-network@2.0.12
+
+## 0.27.0-next.0
+
+### Minor Changes
+
+- [#10315](https://github.com/LedgerHQ/ledger-live/pull/10315) [`0c5070b`](https://github.com/LedgerHQ/ledger-live/commit/0c5070ba6effeacbcb6a009d86738c39a9a831d2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-solana): warn correctly on not enough gas
+
+### Patch Changes
+
+- Updated dependencies [[`2274597`](https://github.com/LedgerHQ/ledger-live/commit/227459709ec157b7e49db4e75c52525e15acd8d2), [`7a1b8c8`](https://github.com/LedgerHQ/ledger-live/commit/7a1b8c8e59383efb02676cfe647c5889a31372bc), [`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc), [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/types-live@6.75.0-next.0
+  - @ledgerhq/cryptoassets@13.20.0-next.0
+  - @ledgerhq/live-env@2.11.0-next.0
+  - @ledgerhq/coin-framework@5.4.1-next.0
+  - @ledgerhq/live-network@2.0.12-next.0
+
+## 0.26.0
+
+### Minor Changes
+
+- [#10225](https://github.com/LedgerHQ/ledger-live/pull/10225) [`e65c386`](https://github.com/LedgerHQ/ledger-live/commit/e65c386cfb3e53e3ee9f501dc08971a93eb5cf81) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - core(coin-solana,hw-app-solana): support SPL tokens dynamically
+
+### Patch Changes
+
+- Updated dependencies [[`9ceee03`](https://github.com/LedgerHQ/ledger-live/commit/9ceee03c33c41bb035fe64f9303acd36872536b6), [`98eb2eb`](https://github.com/LedgerHQ/ledger-live/commit/98eb2ebce8e12742a68b8f54ba625d63c4958087), [`b5e3217`](https://github.com/LedgerHQ/ledger-live/commit/b5e321789d3a6f9cb1916067790590640db0876f), [`4d9aaf5`](https://github.com/LedgerHQ/ledger-live/commit/4d9aaf583060a22cd1343b23d9b5c1ee3c02abb4), [`5739a67`](https://github.com/LedgerHQ/ledger-live/commit/5739a67975dfc2509d5abd4ff13ea36af010f93e), [`e9739d1`](https://github.com/LedgerHQ/ledger-live/commit/e9739d19946376dd7a8a5f10471594f267f3a95f)]:
+  - @ledgerhq/types-live@6.74.0
+  - @ledgerhq/errors@6.22.0
+  - @ledgerhq/coin-framework@5.4.0
+  - @ledgerhq/cryptoassets@13.19.0
+  - @ledgerhq/devices@8.4.7
+  - @ledgerhq/live-network@2.0.11
+
+## 0.26.0-next.0
+
+### Minor Changes
+
+- [#10225](https://github.com/LedgerHQ/ledger-live/pull/10225) [`e65c386`](https://github.com/LedgerHQ/ledger-live/commit/e65c386cfb3e53e3ee9f501dc08971a93eb5cf81) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - core(coin-solana,hw-app-solana): support SPL tokens dynamically
+
+### Patch Changes
+
+- Updated dependencies [[`9ceee03`](https://github.com/LedgerHQ/ledger-live/commit/9ceee03c33c41bb035fe64f9303acd36872536b6), [`98eb2eb`](https://github.com/LedgerHQ/ledger-live/commit/98eb2ebce8e12742a68b8f54ba625d63c4958087), [`b5e3217`](https://github.com/LedgerHQ/ledger-live/commit/b5e321789d3a6f9cb1916067790590640db0876f), [`4d9aaf5`](https://github.com/LedgerHQ/ledger-live/commit/4d9aaf583060a22cd1343b23d9b5c1ee3c02abb4), [`5739a67`](https://github.com/LedgerHQ/ledger-live/commit/5739a67975dfc2509d5abd4ff13ea36af010f93e), [`e9739d1`](https://github.com/LedgerHQ/ledger-live/commit/e9739d19946376dd7a8a5f10471594f267f3a95f)]:
+  - @ledgerhq/types-live@6.74.0-next.0
+  - @ledgerhq/errors@6.22.0-next.0
+  - @ledgerhq/coin-framework@5.4.0-next.0
+  - @ledgerhq/cryptoassets@13.19.0-next.0
+  - @ledgerhq/devices@8.4.7-next.0
+  - @ledgerhq/live-network@2.0.11-next.0
+
 ## 0.25.1
 
 ### Patch Changes

@@ -33,10 +33,26 @@ export abstract class WebViewAppPage extends AppPage {
     return webview;
   }
 
+  @step("Wait for newWebView to be available")
+  protected async waitForNewWindow() {
+    if (!this.electronApp) {
+      throw new Error("No electronApp instance");
+    }
+    const newWindow = await this.electronApp.waitForEvent("window");
+    await newWindow.waitForLoadState();
+    return newWindow;
+  }
+
   @step("Verify element is visible in WebView")
   protected async verifyElementIsVisible(testId: string) {
     const webview = await this.getWebView();
     await expect(webview.getByTestId(testId)).toBeVisible();
+  }
+
+  @step("Verify locator is visible in WebView")
+  protected async verifyLocatorIsVisible(selector: string) {
+    const webview = await this.getWebView();
+    await expect(webview.locator(selector)).toBeVisible();
   }
 
   @step("Verify element is not visible in WebView")
@@ -77,10 +93,22 @@ export abstract class WebViewAppPage extends AppPage {
     await expect(webview.getByTestId(testId)).toBeEnabled();
   }
 
+  @step("Verify locator is enabled in WebView")
+  protected async verifyLocatorIsEnabled(selector: string) {
+    const webview = await this.getWebView();
+    await expect(webview.locator(selector)).toBeEnabled();
+  }
+
   @step("Click element in WebView")
   protected async clickElement(testId: string) {
     const webview = await this.getWebView();
     await webview.getByTestId(testId).click();
+  }
+
+  @step("Click locator in WebView")
+  protected async clickLocator(selector: string) {
+    const webview = await this.getWebView();
+    await webview.locator(selector).click();
   }
 
   @step("Get WebView URL")
@@ -93,5 +121,11 @@ export abstract class WebViewAppPage extends AppPage {
   protected async getWebViewElementByTestId(testId: string) {
     const webview = await this.getWebView();
     return webview.getByTestId(testId);
+  }
+
+  @step("Expect text to be visible in WebView")
+  protected async expectTextToBeVisible(text: string) {
+    const webview = await this.getWebView();
+    await expect(webview.getByText(text, { exact: true })).toBeVisible();
   }
 }

@@ -1,0 +1,67 @@
+name: "Merge Branch"
+description: "Merge a branch using the GitHub API."
+inputs:
+  base-branch:
+    type: string
+    required: true
+  head-branch:
+    type: string
+    required: true
+  commit-message:
+    type: string
+    required: true
+  github-token:
+    type: string
+    required: true
+outputs:
+    status:
+      description: "HTTP status code of the merge operation"
+      value: ${{ steps.merge.outputs.status }}
+    message:
+      description: "Message returned from the merge operation (if avail)"
+      value: ${{ steps.merge.outputs.message }}
+    sha:
+      description: "SHA of the commit created by the merge (if avail)"
+      value: ${{ steps.merge.outputs.sha }}
+runs:
+  using: "composite"
+  steps:
+    - name: "Merge ${{ inputs.head-branch }} into ${{ inputs.base-branch }}"
+      uses: actions/github-script@v7
+      id: merge
+      with:
+        github-token: ${{ inputs.github-token }}
+        script: |
+          try {
+          
+            const output = await github.rest.repos.merge({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              base: "${{ inputs.base-branch }}",
+              head: "${{ inputs.head-branch }}",
+              commit_message: "${{ inputs.commit-message }}"
+            });
+          
+            return {
+                status: output.status
+            };
+          
+          } catch (error) {
+          
+            // Handle octokit errors
+            if (error.status) {
+          
+              core.setFailed('Merge failure: ' + error.response.data.message);
+              core.setOutput('status', error.status);
+              core.setOutput('message', error.response.data.message);
+          
+              return {
+                  status: error.status,
+                  message: error.response.data.message,
+              };
+          
+            }else{
+                throw error;
+            }
+          
+          }

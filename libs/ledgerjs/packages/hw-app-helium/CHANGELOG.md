@@ -1,5 +1,21 @@
 # @ledgerhq/hw-app-helium
 
+## 6.33.3
+
+### Patch Changes
+
+- Updated dependencies [[`b5e3217`](https://github.com/LedgerHQ/ledger-live/commit/b5e321789d3a6f9cb1916067790590640db0876f)]:
+  - @ledgerhq/errors@6.22.0
+  - @ledgerhq/hw-transport@6.31.7
+
+## 6.33.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`b5e3217`](https://github.com/LedgerHQ/ledger-live/commit/b5e321789d3a6f9cb1916067790590640db0876f)]:
+  - @ledgerhq/errors@6.22.0-next.0
+  - @ledgerhq/hw-transport@6.31.7-next.0
+
 ## 6.33.2
 
 ### Patch Changes

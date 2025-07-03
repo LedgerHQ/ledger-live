@@ -1,5 +1,45 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.7.0
+
+### Minor Changes
+
+- [#10641](https://github.com/LedgerHQ/ledger-live/pull/10641) [`8bd0b4e`](https://github.com/LedgerHQ/ledger-live/commit/8bd0b4e0672227d2bf9d1ff12145b98608cc28b3) Thanks [@mbertin-ledger](https://github.com/mbertin-ledger)! - Update logs for logviewer compatibility
+
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#10641](https://github.com/LedgerHQ/ledger-live/pull/10641) [`8bd0b4e`](https://github.com/LedgerHQ/ledger-live/commit/8bd0b4e0672227d2bf9d1ff12145b98608cc28b3) Thanks [@mbertin-ledger](https://github.com/mbertin-ledger)! - Update logs for logviewer compatibility
+
+## 0.6.0
+
+### Minor Changes
+
+- [#10459](https://github.com/LedgerHQ/ledger-live/pull/10459) [`e72e65d`](https://github.com/LedgerHQ/ledger-live/commit/e72e65d6794b960b3f4abf78205a8c82cc4c22e5) Thanks [@mbertin-ledger](https://github.com/mbertin-ledger)! - Fix exchange logs to export apdus
+
+### Patch Changes
+
+- Updated dependencies [[`b5e3217`](https://github.com/LedgerHQ/ledger-live/commit/b5e321789d3a6f9cb1916067790590640db0876f)]:
+  - @ledgerhq/errors@6.22.0
+  - @ledgerhq/devices@8.4.7
+  - @ledgerhq/hw-transport@6.31.7
+  - @ledgerhq/live-dmk-shared@0.9.1
+
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#10459](https://github.com/LedgerHQ/ledger-live/pull/10459) [`e72e65d`](https://github.com/LedgerHQ/ledger-live/commit/e72e65d6794b960b3f4abf78205a8c82cc4c22e5) Thanks [@mbertin-ledger](https://github.com/mbertin-ledger)! - Fix exchange logs to export apdus
+
+### Patch Changes
+
+- Updated dependencies [[`b5e3217`](https://github.com/LedgerHQ/ledger-live/commit/b5e321789d3a6f9cb1916067790590640db0876f)]:
+  - @ledgerhq/errors@6.22.0-next.0
+  - @ledgerhq/devices@8.4.7-next.0
+  - @ledgerhq/hw-transport@6.31.7-next.0
+  - @ledgerhq/live-dmk-shared@0.9.1-next.0
+
 ## 0.5.0
 
 ### Minor Changes

@@ -30,22 +30,22 @@ test.afterAll(async () => {
   }
 });
 
-test("Earn @smoke", async ({ page }) => {
+test("Earn @smoke", async ({ page, electronApp }) => {
   if (!testServerIsRunning) {
     console.warn("Test server not running - Cancelling Earn E2E test");
     return;
   }
 
   const layout = new Layout(page);
-  const liveAppWebview = new LiveAppWebview(page);
+  const liveAppWebview = new LiveAppWebview(page, electronApp);
 
   await test.step("Navigate to Buy app from portfolio banner", async () => {
     await layout.goToEarn();
-    expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
-    expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
-    expect(await liveAppWebview.waitForCorrectTextInWebview("locale: en-US")).toBe(true);
-    expect(await liveAppWebview.waitForCorrectTextInWebview("discreetMode: false")).toBe(true);
-    expect(await liveAppWebview.waitForCorrectTextInWebview("currencyTicker: USD")).toBe(true);
+    await liveAppWebview.waitForText("theme: dark");
+    await liveAppWebview.waitForText("lang: en");
+    await liveAppWebview.waitForText("locale: en-US");
+    await liveAppWebview.waitForText("discreetMode: false");
+    await liveAppWebview.waitForText("currencyTicker: USD");
     await expect
       .soft(page)
       .toHaveScreenshot("earn-app-opened.png", { mask: [page.locator("webview")] });

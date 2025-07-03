@@ -44,6 +44,14 @@ export function isSpeculosRemote() {
   return process.env.REMOTE_SPECULOS === "true";
 }
 
+export async function addDelayBeforeInteractingWithDevice(
+  // TODO: QAA-683
+  delayIos: number = 10_000,
+  ms: number = 0,
+) {
+  await delay(isSpeculosRemote() && isIos() ? delayIos : ms);
+}
+
 export async function launchApp() {
   const port = await findFreePort();
   closeBridge();
@@ -97,3 +105,9 @@ export const logMemoryUsage = async (): Promise<void> => {
     },
   );
 };
+
+export const normalizeText = (text: string) =>
+  text
+    .replace(/\s+/g, " ")
+    .replace(/\u202F/g, " ")
+    .trim();

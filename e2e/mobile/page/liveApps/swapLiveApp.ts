@@ -1,19 +1,28 @@
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { allure } from "jest-allure2-reporter/api";
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
-import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { addDelayBeforeInteractingWithDevice } from "../../helpers/commonHelpers";
 
 export default class SwapLiveAppPage {
   fromSelector = "from-account-coin-selector";
   fromAmount = "from-account";
   fromAmountInput = "from-account-amount-input";
   toSelector = "to-account-coin-selector";
+  toAmountInput = "to-account-amount-input";
   getQuotesButton = "mobile-get-quotes-button";
   numberOfQuotes = "number-of-quotes";
   quotesCountDown = "quotes-countdown";
   quoteProviderName = "quote-card-provider-name";
   executeSwapButton = "execute-button";
   deviceActionErrorDescriptionId = "error-description-deviceAction";
+  fromAccountErrorId = "from-account-error";
+  showDetailslink = "show-details-link";
+  quotesContainerErrorIcon = "quotes-container-error-icon";
+  insufficientFundsBuyButton = "insufficient-funds-buy-button";
+  swapMaxToggle = "from-account-max-toggle";
+  switchButton = "to-account-switch-accounts";
+  liveAppTitle = "live-app-title";
 
   @Step("Wait for swap live app")
   async waitForSwapLiveApp() {
@@ -52,6 +61,11 @@ export default class SwapLiveAppPage {
     await waitWebElementByTestId(this.numberOfQuotes);
   }
 
+  @Step("verify quotes are displayed")
+  async checkQuotes() {
+    await detoxExpect(getWebElementByTestId(this.numberOfQuotes)).toExist();
+  }
+
   @Step("Select available provider")
   async selectExchange() {
     let index = 0;
@@ -82,10 +96,8 @@ export default class SwapLiveAppPage {
   }
 
   @Step("Get minimum amount for swap")
-  async getMinimumAmount(swap: SwapType) {
-    return (
-      (await getMinimumSwapAmount(swap.accountToDebit, swap.accountToCredit))?.toString() ?? ""
-    );
+  async getMinimumAmount(fromAccount: Account, toAccount: Account) {
+    return (await getMinimumSwapAmount(fromAccount, toAccount))?.toString() ?? "";
   }
 
   @Step("Get provider list")
@@ -100,6 +112,7 @@ export default class SwapLiveAppPage {
 
   @Step("Check error message: $0")
   async checkErrorMessage(errorMessage: string) {
+    await addDelayBeforeInteractingWithDevice();
     const error = await getTextOfElement(this.deviceActionErrorDescriptionId);
     jestExpect(error).toContain(errorMessage);
   }
@@ -136,7 +149,7 @@ export default class SwapLiveAppPage {
     await this.checkExchangeButtonHasProviderName(providerList[0]);
   }
 
-  @Step("Check exchange button has provider name")
+  @Step("Check exchange button has provider name: $0")
   async checkExchangeButtonHasProviderName(provider: string) {
     const expectedButtonText = [
       Provider.ONE_INCH.uiName,
@@ -191,5 +204,92 @@ export default class SwapLiveAppPage {
       throw new Error("No quotes found");
     }
     return quotes;
+  }
+
+  @Step("Verify swap amount error message match: $0")
+  async verifySwapAmountErrorMessageIsCorrect(expectedMessage: string | RegExp) {
+    await waitWebElementByTestId(this.fromAccountErrorId);
+    const errorText: string = await getWebElementText(this.fromAccountErrorId);
+    if (typeof expectedMessage === "string") {
+      jestExpect(errorText).toContain(expectedMessage);
+    } else if (expectedMessage instanceof RegExp) {
+      jestExpect(errorText).toMatch(expectedMessage);
+    }
+  }
+
+  @Step("Verify swap CTA banner displayed")
+  async checkCtaBanner() {
+    await waitWebElementByTestId(this.showDetailslink);
+    const showDetailsLink = getWebElementByTestId(this.showDetailslink);
+    await showDetailsLink.runScript("(el) => el.click()");
+    await detoxExpect(getWebElementByTestId(this.quotesContainerErrorIcon)).toExist();
+    await detoxExpect(getWebElementByTestId(this.insufficientFundsBuyButton)).toExist();
+  }
+
+  @Step("Click on swap max")
+  async clickSwapMax() {
+    await tapWebElementByTestId(this.swapMaxToggle);
+  }
+
+  @Step("Retrieve send currency amount value")
+  async getAmountToSend() {
+    return await getValueByWebTestId(this.fromAmountInput);
+  }
+
+  @Step("Retrieve receive currency amount value")
+  async getAmountToReceive() {
+    return await getValueByWebTestId(this.toAmountInput);
+  }
+
+  @Step("Tap on Switch currencies button")
+  async switchYouSendAndYouReceive() {
+    await tapWebElementByTestId(this.switchButton);
+  }
+
+  @Step("Check currency to swap from is $0")
+  async checkAssetFrom(currency: string, amount: string) {
+    const fromAccount: string = await getWebElementText(this.fromSelector);
+    const amountToSend = await app.swapLiveApp.getAmountToSend();
+    jestExpect(fromAccount).toContain(currency);
+    jestExpect(amountToSend).toEqual(amount);
+  }
+
+  @Step("Check currency to swap to is $0 with amount $1")
+  async checkAssetTo(currency: string, amount: string) {
+    const assetTo: string = await getWebElementText(this.toSelector);
+    if (currency === "") {
+      jestExpect(assetTo).toContain("Choose asset");
+    } else {
+      jestExpect(assetTo).toContain(currency);
+    }
+    const amountToReceive = await app.swapLiveApp.getAmountToReceive();
+    jestExpect(amountToReceive).toEqual(amount);
+  }
+
+  @Step("Select specific provider $0")
+  async selectSpecificProvider(provider: string) {
+    const providersList = await this.getProviderList();
+
+    if (!providersList.includes(provider)) {
+      throw new Error(`Provider "${provider}" not found in the list`);
+    }
+
+    await waitWebElementByTestId(this.quoteProviderName);
+    const selectedProvider = getWebElementsByIdAndText(this.quoteProviderName, provider);
+    await tapWebElementByElement(selectedProvider);
+  }
+
+  @Step("Go to $0 live app")
+  async goToProviderLiveApp(provider: string) {
+    const continueButton = getWebElementByTestId(this.executeSwapButton, 1);
+    await detoxExpect(continueButton).toExist();
+    await this.checkExchangeButtonHasProviderName(provider);
+    await this.tapExecuteSwap();
+  }
+
+  @Step("Verify live app title contains $0")
+  async verifyLiveAppTitle(provider: string) {
+    const liveApp = await getTextOfElement(this.liveAppTitle);
+    jestExpect(liveApp?.toLowerCase()).toContain(provider);
   }
 }

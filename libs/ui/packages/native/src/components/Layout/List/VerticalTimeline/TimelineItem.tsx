@@ -46,6 +46,7 @@ const Container = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
   background: ${(p) => getContainerBackground(p.theme, p.status)};
   border: 1px solid ${(p) => getContainerBorder(p.theme, p.status, p.isLastItem)};
   padding: 20px 16px;
+  overflow: hidden;
 `;
 
 export default function TimelineItem({
@@ -109,6 +110,7 @@ export default function TimelineItem({
           mt={withExtraMarginOnActiveStep && !isFirstItem && item.status === "active" ? 4 : 0}
           mb={withExtraMarginOnActiveStep && !isLastItem && item.status === "active" ? 4 : 0}
         >
+          {item.status === "active" ? item.background : null}
           <Flex flexDirection="row" justifyContent="space-between">
             <Text
               variant="body"

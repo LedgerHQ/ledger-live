@@ -5,11 +5,14 @@ import { composeHooks } from "LLD/utils/composeHooks";
 import { useLeftAccountsModule } from "./useLeftAccountsModule";
 import { useRightBalanceModule } from "./useRightBalanceModule";
 import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
+import { Observable } from "rxjs";
+import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 
 type Props = {
   networksConfig: EnhancedModularDrawerConfiguration["networks"];
   currenciesByProvider: CurrenciesByProviderId[];
   selectedAssetId: string;
+  accounts$?: Observable<WalletAPIAccount[]>;
 };
 
 const getLeftElement = (leftElement: string) => {
@@ -37,6 +40,7 @@ const createNetworkConfigurationHook = ({
   networksConfig,
   selectedAssetId,
   currenciesByProvider,
+  accounts$,
 }: Props): ((assets: CryptoOrTokenCurrency[]) => (CryptoOrTokenCurrency & Network)[]) => {
   const { leftElement = "undefined", rightElement = "undefined" } = networksConfig ?? {};
 
@@ -44,18 +48,19 @@ const createNetworkConfigurationHook = ({
   const rightHook = getRightElement(rightElement);
 
   const hooks = [rightHook, leftHook].filter(Boolean) as Array<
-    (
-      assets: CryptoOrTokenCurrency[],
-      selectedAssetId?: string,
-      currenciesByProvider?: CurrenciesByProviderId[],
-    ) => Network[]
+    (params: {
+      assets: CryptoOrTokenCurrency[];
+      selectedAssetId?: string;
+      currenciesByProvider?: CurrenciesByProviderId[];
+      accounts$?: Observable<WalletAPIAccount[]>;
+    }) => Network[]
   >;
 
   return (assets: CryptoOrTokenCurrency[]) => {
     const composedHook = composeHooks<CryptoOrTokenCurrency, Network>(
       ...hooks.map(
         hook => (assets: CryptoOrTokenCurrency[]) =>
-          hook(assets, selectedAssetId, currenciesByProvider),
+          hook({ assets, selectedAssetId, currenciesByProvider, accounts$ }),
       ),
     );
     return composedHook(assets);

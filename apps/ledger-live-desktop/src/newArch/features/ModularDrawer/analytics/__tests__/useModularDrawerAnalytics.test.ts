@@ -2,7 +2,7 @@ import { renderHook } from "tests/testSetup";
 import { useModularDrawerAnalytics } from "../useModularDrawerAnalytics";
 import { track } from "~/renderer/analytics/segment";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { EVENTS_NAME } from "../types";
+import { EVENTS_NAME } from "../modularDrawer.types";
 
 describe("useModularDrawerAnalytics", () => {
   it("tracks event with default params", () => {

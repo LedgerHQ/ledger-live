@@ -202,6 +202,11 @@ const envDefinitions = {
     def: "https://sui.coin.ledger.com",
     desc: "reverse proxy url for sui node",
   },
+  SUI_ENABLE_TOKENS: {
+    parser: boolParser,
+    def: true,
+    desc: "Enable tokens on Sui",
+  },
   SOLANA_VALIDATORS_APP_BASE_URL: {
     parser: stringParser,
     def: "https://earn.api.live.ledger.com/v0/network/solana/validator-details",
@@ -291,6 +296,11 @@ const envDefinitions = {
     def: "",
     parser: stringParser,
     desc: "(dev feature) defines the folder for speculos mode that contains Nano apps binaries (.elf) in a specific structure: <device>/<firmware>/<appName>/app_<appVersion>.elf",
+  },
+  CAL_REF: {
+    def: "",
+    parser: stringParser,
+    desc: "(dev feature) allows to target a different reference of the CAL for testing purposes",
   },
   CRYPTO_ORG_INDEXER: {
     def: "https://cryptoorg-rpc-indexer.coin.ledger.com",

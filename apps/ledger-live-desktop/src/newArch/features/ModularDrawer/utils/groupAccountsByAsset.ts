@@ -39,7 +39,7 @@ export const groupAccountsByAsset = (
     );
     const balance = account.balance;
 
-    const parsedFiatValue = parseToBigNumber(fiatValue);
+    const parsedFiatValue = parseToBigNumber(fiatValue ?? "0");
 
     groupedAccounts[assetId].totalBalance = groupedAccounts[assetId].totalBalance.plus(balance);
     groupedAccounts[assetId].totalFiatValue =
