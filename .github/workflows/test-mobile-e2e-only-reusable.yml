@@ -63,42 +63,45 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: read
   id-token: write
+  contents: read
 
 env:
+  SHOULD_UPLOAD: ${{ (github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) }}
+  cache-bucket: ll-gha-s3-cache
+  ANDROID_APK_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-x86_64-detox.apk
+  ANDROID_JSBUNDLE_PATH: apps/ledger-live-mobile/main.jsbundle
+  ANDROID_TESTBINARY_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/detox/app-detox-androidTest.apk
+  IOS_JSBUNDLE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
+  IOS_NATIVE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
   SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:master
   COINAPPS: ${{ github.workspace }}/coin-apps
   E2E_RUN: ${{ inputs.tests_type != 'Mocked' }}
-  SHOULD_UPLOAD: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || (github.event_name == 'push' && contains(fromJson('["develop","main"]'), github.ref_name)) }}
   SPECULOS_DEVICE: ${{ inputs.speculos_device }}
 
 ################################################################################
-# 1) Install & cache deps
+# 1) Determine Builds (from mock workflow)
 ################################################################################
 jobs:
-  setup:
-    name: Setup & Cache
-    runs-on: [ledger-live-linux-8CPU-32RAM]
+  determine-builds:
+    name: "Determine Builds"
+    runs-on: ledger-live-medium
     outputs:
-      cache-key: ${{ steps.cache-deps.outputs.cache-key }}
+      ios_native_exists: ${{ steps.check-ios-native.outputs.cache-hit }}
+      ios_js_exists: ${{ steps.check-ios-js.outputs.cache-hit }}
+      android_native_exists: ${{ steps.check-android-native.outputs.cache-hit }}
+      android_js_exists: ${{ steps.check-android-js.outputs.cache-hit }}
+      ios_native_key: ${{ steps.cache-keys.outputs.ios_native_key }}
+      ios_js_key: ${{ steps.cache-keys.outputs.ios_js_key }}
+      android_native_key: ${{ steps.cache-keys.outputs.android_native_key }}
+      android_js_key: ${{ steps.cache-keys.outputs.android_js_key }}
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
-
-      - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
-        id: setup-caches
-        with:
-          skip-pod-cache: "true"
-          install-proto: true
-          skip-turbo-cache: "false"
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          persist-credentials: false
+          sparse-checkout: apps/ledger-live-mobile
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -107,146 +110,102 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - uses: nick-fields/retry@v3
-        name: Install dependencies
-        id: install-dependencies
-        with:
-          max_attempts: 2
-          timeout_minutes: 15
-          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="@ledgerhq/dummy-*-app..." --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm
-          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="@ledgerhq/dummy-*-app..." --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm
-
-      - name: Log pnpm cache key
+      - name: Determine cache keys
+        id: cache-keys
         run: |
-          echo "Computed cache key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}"
-          echo "Cache key hash: ${{ hashFiles('pnpm-lock.yaml') }}"
+          echo "ios_native_key=${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios" >> $GITHUB_OUTPUT
+          echo "android_native_key=${{ hashFiles('apps/ledger-live-mobile/android') }}-detox-native-android" >> $GITHUB_OUTPUT
+          echo "ios_js_key=${{ inputs.ref || github.sha }}-detox-js-ios" >> $GITHUB_OUTPUT
+          echo "android_js_key=${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
 
-      - name: Save pnpm cache
-        if: steps.install-dependencies.outcome == 'success'
-        uses: tespkg/actions-cache@v1
+      - name: Check if iOS Native Build exists already
+        id: check-ios-native
+        uses: tespkg/actions-cache/restore@v1.9.0
         with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
+          key: ${{ steps.cache-keys.outputs.ios_native_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
-          bucket: ll-gha-s3-cache
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
+          lookup-only: true
 
-      - name: Flake alert - ArgumentError
-        uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@develop
-        if: failure() && steps.install-dependencies.outputs.error == 'ArgumentError - pathname contains null byte'
+      - name: Check if Android Native Build exists already
+        id: check-android-native
+        uses: tespkg/actions-cache/restore@v1.9.0
         with:
-          live_bot_token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
-          halt_runner: true
-
-      - name: Flake alert - Reruns
-        uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@develop
-        if: success() && steps.install-dependencies.outputs.total_attempts == 2
-        with:
-          live_bot_token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
-          custom_message: "${{ steps.install-dependencies.outputs.total_attempts }} attempts happened on install dependencies and it was eventually successful :face_with_raised_eyebrow:"
-
-      - name: cache detox build
-        uses: tespkg/actions-cache@v1
-        if: steps.aws.conclusion == 'success'
-        id: detox-build
-        with:
-          path: ${{ github.workspace }}/apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
-          key: ${{ runner.os }}-detox-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js', 'apps/ledger-live-mobile/.env.mock', 'apps/ledger-live-mobile/ios/ledgerlivemobile/AppDelegate.mm') }}
+          key: ${{ steps.cache-keys.outputs.android_native_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
-          bucket: ll-gha-s3-cache
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
+          lookup-only: true
 
-      - name: Build dependencies
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+      - name: Check if iOS JS Build exists already
+        id: check-ios-js
+        uses: tespkg/actions-cache/restore@v1.9.0
         with:
-          command: pnpm build:llm:deps
-          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          turbo_port: ${{ steps.setup-caches.outputs.port }}
-          disable_cache: ${{ inputs.disable-turbo-cache || false }}
-
-      - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
-        run: |
-          pnpm build:dummy-apps
-        shell: bash
-
-      - name: Build CLI
-        if: ${{ env.E2E_RUN == 'true' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
-        with:
-          command: pnpm build:cli
-          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          turbo_port: ${{ steps.setup-caches.outputs.port }}
-          disable_cache: ${{ inputs.disable-turbo-cache || false }}
-
-      - name: Set cache-key output
-        run: echo "cache-key=${{ steps.cache-deps.outputs.cache-key }}" >> $GITHUB_OUTPUT
-
-  ################################################################################
-  # 2) Build iOS & Android in parallel
-  ################################################################################
-  build:
-    name: Build Apps
-    needs: setup
-    runs-on: [ledger-live-linux-8CPU-32RAM]
-    strategy:
-      matrix:
-        platform: [ ios, android ]
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.ref || github.sha }}
-          repository: LedgerHQ/ledger-live
-
-      - name: Restore pnpm cache
-        uses: tespkg/actions-cache@v1
-        with:
-          path: ~/.pnpm-store
-          key: ${{ needs.setup.outputs.cache-key || runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}-
-            ${{ runner.os }}-pnpm-
+          key: ${{ steps.cache-keys.outputs.ios_js_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
-          bucket: ll-gha-s3-cache
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
+          lookup-only: true
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build ${{ matrix.platform }}
-        run: |
-          if [ "${{ matrix.platform }}" = "ios" ]; then
-            pnpm mobile e2e:ci -p ios -b $([[ "${{ inputs.production_firebase }}" == "true" ]] && printf %s '--production')
-          else
-            pnpm mobile e2e:ci -p android -b $([[ "${{ inputs.production_firebase }}" == "true" ]] && printf %s '--production')
-          fi
-        env:
-          PRODUCTION: ${{ inputs.production_firebase }}
-
-      - name: Upload ${{ matrix.platform }} build
-        uses: actions/upload-artifact@v4
+      - name: Check if Android JS Build exists already
+        id: check-android-js
+        uses: tespkg/actions-cache/restore@v1.9.0
         with:
-          name: ${{ matrix.platform }}-build
-          path: |
-            ${{ matrix.platform == 'ios' && 'apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator' || 
-               'apps/ledger-live-mobile/android/app/build/outputs/apk/release' }}
+          key: ${{ steps.cache-keys.outputs.android_js_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+          lookup-only: true
 
-  ################################################################################
-  # 3) Sharded iOS Detox
-  ################################################################################
+################################################################################
+# 2) Build iOS & Android in parallel (from mock workflow)
+################################################################################
+  build-ios:
+    name: "iOS Build"
+    needs: [ determine-builds ]
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
+    with:
+      ref: ${{ inputs.ref || github.sha }}
+      macos-specificity-runner-label: ${{ inputs.macos-specificity-runner-label || 'general-pool' }}
+      disable-turbo-cache: ${{ inputs.disable-turbo-cache || false }}
+      build-ios-js: ${{ needs.determine-builds.outputs.ios_js_exists == 'false' }}
+      build-ios-native: ${{ needs.determine-builds.outputs.ios_native_exists == 'false' }}
+      ios-native-cache-key: ${{ needs.determine-builds.outputs.ios_native_key }}
+      ios-js-cache-key: ${{ needs.determine-builds.outputs.ios_js_key }}
+    secrets: inherit
+
+  build-android:
+    name: "Android Build"
+    needs: [ determine-builds ]
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
+    with:
+      ref: ${{ inputs.ref || github.sha }}
+      disable-turbo-cache: ${{ inputs.disable-turbo-cache || false }}
+      build-android-js: ${{ needs.determine-builds.outputs.android_js_exists == 'false' }}
+      build-android-native: ${{ needs.determine-builds.outputs.android_native_exists == 'false' }}
+      android-native-cache-key: ${{ needs.determine-builds.outputs.android_native_key }}
+      android-js-cache-key: ${{ needs.determine-builds.outputs.android_js_key }}
+    secrets: inherit
+
+################################################################################
+# 3) Sharded iOS Detox (preserve E2E sharding logic)
+################################################################################
   ios-e2e:
     name: iOS E2E Tests
-    needs: build
+    needs: [ build-ios, determine-builds ]
     if: ${{ inputs.tests_type != 'Android Only' }}
     runs-on: macOS-latest
     strategy:
@@ -279,12 +238,12 @@ jobs:
           name: ios-test-artifacts-${{ matrix.shard }}
           path: e2e/mobile/artifacts
 
-  ################################################################################
-  # 4) Sharded Android Detox
-  ################################################################################
+################################################################################
+# 4) Sharded Android Detox (preserve E2E sharding logic)
+################################################################################
   android-e2e:
     name: Android E2E Tests
-    needs: build
+    needs: [ build-android, determine-builds ]
     if: ${{ inputs.tests_type != 'iOS Only' }}
     runs-on: ubuntu-latest
     strategy:
@@ -315,87 +274,87 @@ jobs:
           name: android-test-artifacts-${{ matrix.shard }}
           path: e2e/mobile/artifacts
 
-  ################################################################################
-  # 5) Allure Reports
-  ################################################################################
-  #  allure-ios:
-  #    name: Allure Report iOS
-  #    needs: ios-e2e
-  #    runs-on: ubuntu-latest
-  #    steps:
-  #      - name: Download iOS artifacts
-  #        uses: actions/download-artifact@v4
-  #        with:
-  #          name: ios-test-artifacts-*
-  #      - name: Generate & upload Allure iOS
-  #        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
-  #        if: ${{ env.SHOULD_UPLOAD }}
-  #        with:
-  #          platform: ios
-  #          login: ${{ vars.ALLURE_USERNAME }}
-  #          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
-  #          path: e2e/mobile/artifacts
-  #
-  #  allure-android:
-  #    name: Allure Report Android
-  #    needs: android-e2e
-  #    runs-on: ubuntu-latest
-  #    steps:
-  #      - name: Download Android artifacts
-  #        uses: actions/download-artifact@v4
-  #        with:
-  #          name: android-test-artifacts-*
-  #      - name: Generate & upload Allure Android
-  #        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
-  #        if: ${{ env.SHOULD_UPLOAD }}
-  #        with:
-  #          platform: android
-  #          login: ${{ vars.ALLURE_USERNAME }}
-  #          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
-  #          path: e2e/mobile/artifacts
+################################################################################
+# 5) Allure Reports (optional, can uncomment and adapt as needed)
+################################################################################
+#  allure-ios:
+#    name: Allure Report iOS
+#    needs: ios-e2e
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Download iOS artifacts
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: ios-test-artifacts-*
+#      - name: Generate & upload Allure iOS
+#        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+#        if: ${{ env.SHOULD_UPLOAD }}
+#        with:
+#          platform: ios
+#          login: ${{ vars.ALLURE_USERNAME }}
+#          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+#          path: e2e/mobile/artifacts
+#
+#  allure-android:
+#    name: Allure Report Android
+#    needs: android-e2e
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Download Android artifacts
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: android-test-artifacts-*
+#      - name: Generate & upload Allure Android
+#        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+#        if: ${{ env.SHOULD_UPLOAD }}
+#        with:
+#          platform: android
+#          login: ${{ vars.ALLURE_USERNAME }}
+#          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+#          path: e2e/mobile/artifacts
 
-  ################################################################################
-  # 6) Xray Import
-  ################################################################################
-  #  xray:
-  #    name: Import to Xray
-  #    runs-on: ubuntu-latest
-  #    needs: [ allure-ios, allure-android ]
-  #    if: ${{ inputs.export_to_xray }}
-  #    strategy:
-  #      matrix:
-  #        platform: [ ios, android ]
-  #    steps:
-  #      - name: Download Allure results
-  #        uses: actions/download-artifact@v4
-  #        with:
-  #          path: artifacts-${{ matrix.platform }}
-  #          pattern: "*-test-artifacts-*"
-  #          merge-multiple: true
-  #      - name: Format Xray payload
-  #        run: e2e/mobile/xray.formater.sh artifacts-${{ matrix.platform }} ${{ matrix.platform }} ${{ matrix.platform == 'ios' && inputs.test_execution_ios || inputs.test_execution_android }}
-  #      - name: Upload Xray JSON
-  #        uses: actions/upload-artifact@v4
-  #        with:
-  #          name: xray-${{ matrix.platform }}
-  #          path: artifacts-${{ matrix.platform }}/xray_report.json
-  #      - name: Authenticate to Xray
-  #        id: auth
-  #        run: |
-  #          token=$(curl -s -X POST "$XRAY_API_URL/authenticate" \
-  #            -H "Content-Type: application/json" \
-  #            -d "{\"client_id\":\"${{ secrets.XRAY_CLIENT_ID }}\",\"client_secret\":\"${{ secrets.XRAY_CLIENT_SECRET }}\"}")
-  #          echo "xray_token=$token" >> $GITHUB_OUTPUT
-  #      - name: Publish to Xray
-  #        run: |
-  #          curl -s -X POST "$XRAY_API_URL/import/execution" \
-  #            -H "Content-Type: application/json" \
-  #            -H "Authorization: Bearer ${{ steps.auth.outputs.xray_token }}" \
-  #            --data @artifacts-${{ matrix.platform }}/xray_report.json
+################################################################################
+# 6) Xray Import (optional, can uncomment and adapt as needed)
+################################################################################
+#  xray:
+#    name: Import to Xray
+#    runs-on: ubuntu-latest
+#    needs: [ allure-ios, allure-android ]
+#    if: ${{ inputs.export_to_xray }}
+#    strategy:
+#      matrix:
+#        platform: [ ios, android ]
+#    steps:
+#      - name: Download Allure results
+#        uses: actions/download-artifact@v4
+#        with:
+#          path: artifacts-${{ matrix.platform }}
+#          pattern: "*-test-artifacts-*"
+#          merge-multiple: true
+#      - name: Format Xray payload
+#        run: e2e/mobile/xray.formater.sh artifacts-${{ matrix.platform }} ${{ matrix.platform }} ${{ matrix.platform == 'ios' && inputs.test_execution_ios || inputs.test_execution_android }}
+#      - name: Upload Xray JSON
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: xray-${{ matrix.platform }}
+#          path: artifacts-${{ matrix.platform }}/xray_report.json
+#      - name: Authenticate to Xray
+#        id: auth
+#        run: |
+#          token=$(curl -s -X POST "$XRAY_API_URL/authenticate" \
+#            -H "Content-Type: application/json" \
+#            -d "{\"client_id\":\"${{ secrets.XRAY_CLIENT_ID }}\",\"client_secret\":\"${{ secrets.XRAY_CLIENT_SECRET }}\"}")
+#          echo "xray_token=$token" >> $GITHUB_OUTPUT
+#      - name: Publish to Xray
+#        run: |
+#          curl -s -X POST "$XRAY_API_URL/import/execution" \
+#            -H "Content-Type: application/json" \
+#            -H "Authorization: Bearer ${{ steps.auth.outputs.xray_token }}" \
+#            --data @artifacts-${{ matrix.platform }}/xray_report.json
 
-  ################################################################################
-  # 7) Slack Notification
-  ################################################################################
+################################################################################
+# 7) Slack Notification (optional, can uncomment and adapt as needed)
+################################################################################
 #  slack:
 #    name: Notify Slack
 #    needs: [ allure-ios, allure-android ]
