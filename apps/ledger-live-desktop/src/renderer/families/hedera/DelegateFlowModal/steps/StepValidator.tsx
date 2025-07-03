@@ -18,7 +18,7 @@ export default function StepValidator({
   transaction,
   error,
 }: Readonly<StepProps>) {
-  invariant(account && transaction, "account and transaction required");
+  invariant(account && transaction, "hedera: account and transaction required");
 
   const updateValidator = (validator: HederaValidator) => {
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);

@@ -4,7 +4,11 @@ import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
-import type { HederaAccount, HederaDelegation } from "@ledgerhq/live-common/families/hedera/types";
+import type {
+  HederaAccount,
+  HederaDelegation,
+  HederaValidator,
+} from "@ledgerhq/live-common/families/hedera/types";
 import DropDown, { DropDownItem } from "~/renderer/components/DropDownSelector";
 import Box from "~/renderer/components/Box/Box";
 import ChevronRight from "~/renderer/icons/ChevronRight";
@@ -88,8 +92,8 @@ const ManageDropDownItem = ({
 type Props = {
   account: HederaAccount;
   delegatedPosition: HederaDelegation;
-  onManageAction: (delegation: HederaDelegation, action: DelegateModalName) => void;
-  onExternalLink: (delegation: HederaDelegation) => void;
+  onManageAction: (action: DelegateModalName) => void;
+  onExternalLink: (validator: HederaValidator) => void;
 };
 
 export function Row({ account, delegatedPosition, onManageAction, onExternalLink }: Props) {
@@ -130,14 +134,9 @@ export function Row({ account, delegatedPosition, onManageAction, onExternalLink
 
   const onSelect = useCallback(
     (action: (typeof dropDownItems)[0]) => {
-      onManageAction(delegatedPosition, action.key);
+      onManageAction(action.key);
     },
-    [onManageAction, delegatedPosition],
-  );
-
-  const onExternalLinkClick = useCallback(
-    () => onExternalLink(delegatedPosition),
-    [onExternalLink, delegatedPosition],
+    [onManageAction],
   );
 
   if (!validator) {
@@ -146,7 +145,13 @@ export function Row({ account, delegatedPosition, onManageAction, onExternalLink
 
   return (
     <Wrapper>
-      <Column strong clickable onClick={onExternalLinkClick}>
+      <Column
+        strong
+        clickable
+        onClick={() => {
+          onExternalLink(validator);
+        }}
+      >
         <Box mr={2}>
           <ValidatorIcon validatorName={validator.name} />
         </Box>

@@ -15,7 +15,7 @@ export const buildOptimisticOperation = async ({
     hash: "",
     type: "OUT",
     value: transaction.amount,
-    fee: await getEstimatedFees(account),
+    fee: await getEstimatedFees(account, "CryptoTransfer"),
     blockHash: null,
     blockHeight: null,
     senders: [account.freshAddress.toString()],

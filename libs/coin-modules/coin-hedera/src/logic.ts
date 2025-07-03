@@ -2,7 +2,6 @@ import { ExplorerView } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
 import {
   HederaAccount,
-  HederaDelegation,
   HederaOperationExtra,
   HederaValidator,
   Transaction,
@@ -32,10 +31,13 @@ const extractCompanyFromNodeDescription = (description: string): string => {
     .trim();
 };
 
-const getValidatorFromDelegation = (
-  account: HederaAccount,
-  delegation: HederaDelegation,
-): HederaValidator | null => {
+const getValidatorFromAccount = (account: HederaAccount): HederaValidator | null => {
+  const { delegation } = account.hederaResources || {};
+
+  if (!delegation) {
+    return null;
+  }
+
   const validators = getCurrentHederaPreloadData(account.currency);
   const validator = validators.validators.find(v => v.nodeId === delegation.nodeId);
 
@@ -46,5 +48,5 @@ export {
   getTransactionExplorer,
   isUpdateAccountTransaction,
   extractCompanyFromNodeDescription,
-  getValidatorFromDelegation,
+  getValidatorFromAccount,
 };

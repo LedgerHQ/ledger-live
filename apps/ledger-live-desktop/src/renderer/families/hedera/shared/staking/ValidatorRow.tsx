@@ -8,7 +8,7 @@ import { HederaValidator } from "@ledgerhq/live-common/families/hedera/types";
 import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { Flex, Icons } from "@ledgerhq/react-ui";
 import Box from "~/renderer/components/Box";
-import ValidatorRow from "~/renderer/components/Delegation/ValidatorRow";
+import DefaultValidatorRow from "~/renderer/components/Delegation/ValidatorRow";
 import Text from "~/renderer/components/Text";
 import Check from "~/renderer/icons/Check";
 import { openURL } from "~/renderer/linking";
@@ -17,12 +17,12 @@ import ValidatorIcon from "./ValidatorIcon";
 type Props = {
   currency: CryptoCurrency;
   validator: HederaValidator;
+  unit: Unit;
   active?: boolean;
   onClick: (validator: HederaValidator) => void;
-  unit: Unit;
 };
 
-function HederaValidatorRow({ validator, active, onClick, unit, currency }: Readonly<Props>) {
+function ValidatorRow({ validator, active, unit, currency, onClick }: Readonly<Props>) {
   const { t } = useTranslation();
   const explorerView = getDefaultExplorerView(currency);
 
@@ -36,42 +36,32 @@ function HederaValidatorRow({ validator, active, onClick, unit, currency }: Read
 
   return (
     <StyledValidatorRow
-      onClick={() => onClick(validator)}
       key={validator.address}
-      validator={{
-        address: validator.address,
-      }}
+      onClick={() => onClick(validator)}
+      validator={{ address: validator.address }}
       icon={<ValidatorIcon validatorName={validator.name} />}
-      title={t("hedera.stake.flow.steps.validator.rowTitle", {
+      title={t("hedera.delegate.flow.steps.validator.rowTitle", {
         name: validator.name,
         index: validator.nodeId + 1,
       })}
       onExternalLink={onExternalLink}
       unit={unit}
       sideInfo={
-        <Box
-          style={{
-            flexDirection: "row",
-          }}
-        >
-          <Box
-            style={{
-              flexDirection: "column",
-            }}
-          >
+        <Flex flexDirection="row">
+          <Flex flexDirection="column">
             <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={4}>
               {formatCurrencyUnit(unit, new BigNumber(validator.activeStake.toString()), {
                 showCode: true,
               })}
             </Text>
             <Text fontSize={2} textAlign="right">
-              <Trans color="palette.text.shade50" i18nKey="hedera.stake.totalStake" />
+              <Trans color="palette.text.shade50" i18nKey="hedera.delegate.totalStake" />
             </Text>
-          </Box>
+          </Flex>
           <Box ml={2} justifyContent="center" alignContent="center">
             <ChosenMark active={active ?? false} size={14} />
           </Box>
-        </Box>
+        </Flex>
       }
       subtitle={
         <Box>
@@ -80,12 +70,12 @@ function HederaValidatorRow({ validator, active, onClick, unit, currency }: Read
               <Flex alignItems="center" columnGap={1}>
                 <Icons.Warning color="palette.warning.c70" size="XS" style={{ width: "10px" }} />
                 <Text fontSize={2} color="palette.warning.c70">
-                  {t("hedera.stake.flow.steps.validator.rowSubtitleOverstaked")}
+                  {t("hedera.delegate.flow.steps.validator.rowSubtitleOverstaked")}
                 </Text>
               </Flex>
             ) : (
               <Text fontSize={2}>
-                {t("hedera.stake.flow.steps.validator.rowSubtitlePercentage", {
+                {t("hedera.delegate.flow.steps.validator.rowSubtitlePercentage", {
                   percentage: validator.activeStakePercentage,
                 })}
               </Text>
@@ -97,7 +87,7 @@ function HederaValidatorRow({ validator, active, onClick, unit, currency }: Read
   );
 }
 
-const StyledValidatorRow = styled(ValidatorRow)`
+const StyledValidatorRow = styled(DefaultValidatorRow)`
   border-color: transparent;
   margin-bottom: 0;
 `;
@@ -111,4 +101,4 @@ const ChosenMark = styled(Check).attrs<{
   active?: boolean;
 }>``;
 
-export default HederaValidatorRow;
+export default ValidatorRow;

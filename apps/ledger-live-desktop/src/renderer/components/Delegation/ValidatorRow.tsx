@@ -24,12 +24,12 @@ export const IconContainer = styled.div<{
     p.isSR ? p.theme.colors.palette.primary.main : p.theme.colors.palette.text.shade60};
 `;
 
-const InfoContainer = styled(Box).attrs(() => ({
+export const InfoContainer = styled(Box).attrs(() => ({
   ml: 2,
   flex: 1,
 }))``;
 
-const Title = styled(Box).attrs(() => ({
+export const Title = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
 }))`
@@ -58,14 +58,14 @@ const Title = styled(Box).attrs(() => ({
     white-space: nowrap;
   }
 `;
-const SubTitle = styled(Box).attrs(() => ({
+export const SubTitle = styled(Box).attrs(() => ({
   horizontal: true,
 }))`
   font-size: 11px;
   font-weight: 500;
   color: ${p => p.theme.colors.palette.text.shade60};
 `;
-const SideInfo = styled(Box)``;
+export const SideInfo = styled(Box)``;
 const InputRight = styled(Box).attrs(() => ({
   ff: "Inter|Medium",
   color: "palette.text.shade60",
@@ -116,7 +116,7 @@ const MaxButton = styled.button`
   }
 `;
 
-const Row = styled(Box).attrs(() => ({
+export const Row = styled(Box).attrs(() => ({
   horizontal: true,
   flex: "0 0 56px",
   mb: 2,

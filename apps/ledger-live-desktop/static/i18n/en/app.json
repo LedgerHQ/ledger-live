@@ -6678,11 +6678,11 @@
         }
       }
     },
-    "stake": {
+    "delegate": {
       "commission": "Commission",
       "totalStake": "Total stake",
       "flow": {
-        "title": "Stake",
+        "title": "Delegate",
         "steps": {
           "validator": {
             "title": "Validators",
@@ -6702,6 +6702,31 @@
             "title": "Confirmation",
             "success": {
               "title": "You have successfully delegated your assets",
+              "text": "Your account balance will be updated when the blockchain confirms the transaction.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "undelegate": {
+      "flow": {
+        "title": "Undelegate assets",
+        "steps": {
+          "summary": {
+            "title": "Amount",
+            "validatorLabel": "Validator",
+            "amountLabel": "Amount to undelegate",
+            "alert": "Once undelegated your balance & pending rewards will be immediately cashed in. It is not possible to partially undelegate your stake."
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully unstaked your assets",
               "text": "Your account balance will be updated when the blockchain confirms the transaction.",
               "cta": "View details"
             },

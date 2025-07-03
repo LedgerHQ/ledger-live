@@ -11,7 +11,7 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
   const balance = account.balance;
 
   const mainAccount = getMainAccount(account, parentAccount);
-  const estimatedFees = await getEstimatedFees(mainAccount);
+  const estimatedFees = await getEstimatedFees(mainAccount, "CryptoTransfer");
 
   let maxSpendable = balance.minus(estimatedFees);
 

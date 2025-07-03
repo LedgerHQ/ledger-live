@@ -3,33 +3,61 @@ import type { Account, Operation } from "@ledgerhq/types-live";
 import cvsApi from "@ledgerhq/live-countervalues/api/index";
 import { getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
-import type { HederaOperationExtra, Transaction } from "../types";
+import type { HederaOperationExtra, HederaOperationType, Transaction } from "../types";
+import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
+import { Currency } from "@ledgerhq/types-cryptoassets";
+import invariant from "invariant";
 
-export const estimatedFeeSafetyRate = 2;
+const ESTIMATED_FEE_SAFETY_RATE = 2;
+const TINYBAR_SCALE = 8;
+const BASE_USD_FEE_BY_OPERATION_TYPE: Record<HederaOperationType, number> = {
+  CryptoTransfer: 0.0001 * 10 ** TINYBAR_SCALE,
+  CryptoUpdate: 0.00022 * 10 ** TINYBAR_SCALE,
+} as const;
 
-export async function getEstimatedFees(account: Account): Promise<BigNumber> {
+// note: this is currently called frequently by getTransactionStatus; LRU cache prevents duplicated requests
+export const getCurrencyToUSDRate = makeLRUCache(
+  async (currency: Currency) => {
+    try {
+      const [rate] = await cvsApi.fetchLatest([
+        {
+          from: currency,
+          to: getFiatCurrencyByTicker("USD"),
+          startDate: new Date(),
+        },
+      ]);
+
+      invariant(rate, "no value returned from cvs api");
+
+      return new BigNumber(rate);
+    } catch {
+      return null;
+    }
+  },
+  currency => currency.ticker,
+  seconds(3),
+);
+
+export const getEstimatedFees = async (
+  account: Account,
+  operationType: HederaOperationType,
+): Promise<BigNumber> => {
   try {
-    const data = await cvsApi.fetchLatest([
-      {
-        from: account.currency,
-        to: getFiatCurrencyByTicker("USD"),
-        startDate: new Date(),
-      },
-    ]);
+    const usdRate = await getCurrencyToUSDRate(account.currency);
 
-    if (data[0]) {
-      return new BigNumber(10000)
-        .dividedBy(new BigNumber(data[0]))
+    if (usdRate) {
+      return new BigNumber(BASE_USD_FEE_BY_OPERATION_TYPE[operationType])
+        .dividedBy(new BigNumber(usdRate))
         .integerValue(BigNumber.ROUND_CEIL)
-        .multipliedBy(estimatedFeeSafetyRate);
+        .multipliedBy(ESTIMATED_FEE_SAFETY_RATE);
     }
     // eslint-disable-next-line no-empty
   } catch {}
 
   // as fees are based on a currency conversion, we stay
   // on the safe side here and double the estimate for "max spendable"
-  return new BigNumber("150200").multipliedBy(estimatedFeeSafetyRate); // 0.001502 ℏ (as of 2023-03-14)
-}
+  return new BigNumber("150200").multipliedBy(ESTIMATED_FEE_SAFETY_RATE); // 0.001502 ℏ (as of 2023-03-14)
+};
 
 export async function calculateAmount({
   account,
@@ -47,7 +75,7 @@ export async function calculateAmount({
 
   return {
     amount,
-    totalSpent: amount.plus(await getEstimatedFees(account)),
+    totalSpent: amount.plus(await getEstimatedFees(account, "CryptoTransfer")),
   };
 }
 

@@ -1,4 +1,4 @@
-import React, { Fragment, PureComponent } from "react";
+import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -29,16 +29,16 @@ const StepAmount = ({ t, account, parentAccount, transaction, error, status }: S
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
       {error ? <ErrorBanner error={error} /> : null}
       {account && transaction && mainAccount && (
-        <Fragment key={account.id}>
+        <>
           <AmountField status={status} account={account} transaction={transaction} />
           <Alert
             type="primary"
             learnMoreUrl={urls.hedera.staking}
-            learnMoreLabel={<Trans i18nKey="hedera.stake.flow.steps.validator.learnMore" />}
+            learnMoreLabel={<Trans i18nKey="hedera.delegate.flow.steps.validator.learnMore" />}
           >
-            {t("hedera.stake.flow.steps.validator.alert")}
+            {t("hedera.delegate.flow.steps.validator.alert")}
           </Alert>
-        </Fragment>
+        </>
       )}
     </Box>
   );

@@ -21,13 +21,13 @@ function getDeviceTransactionConfig({
       value: "Update Account",
     });
 
-    if (transaction.properties.stakedNodeId !== undefined) {
+    if (typeof transaction.properties.stakedNodeId === "number") {
       const { stakedNodeId } = transaction.properties;
 
       fields.push({
         type: "text",
         label: "Staked Node ID",
-        value: typeof stakedNodeId === "number" ? `${stakedNodeId + 1}` : "-",
+        value: `${stakedNodeId}`,
       });
     }
 

@@ -1,15 +1,14 @@
 import { TFunction } from "i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { Step } from "~/renderer/components/Stepper";
-import { Operation } from "@ledgerhq/types-live";
 import {
   HederaAccount,
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/hedera/types";
-import { OpenModal } from "~/renderer/actions/modals";
+import { Operation } from "@ledgerhq/types-live";
+import { Step } from "~/renderer/components/Stepper";
 
-export type StepId = "validator" | "amount" | "connectDevice" | "confirmation";
+export type StepId = "summary" | "connectDevice" | "confirmation";
 
 export type StepProps = {
   t: TFunction;
@@ -19,9 +18,9 @@ export type StepProps = {
   parentAccount: HederaAccount | undefined | null;
   onRetry: (a: void) => void;
   onClose: () => void;
-  openModal: OpenModal;
-  optimisticOperation: Operation | undefined;
-  error: Error | undefined;
+  openModal: (key: string, config?: unknown) => void;
+  optimisticOperation: Operation;
+  error: Error;
   signed: boolean;
   transaction: Transaction | undefined | null;
   status: TransactionStatus;

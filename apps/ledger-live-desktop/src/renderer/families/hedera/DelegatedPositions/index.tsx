@@ -3,8 +3,7 @@ import { useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
-import { getValidatorFromDelegation } from "@ledgerhq/live-common/families/hedera/logic";
-import type { HederaAccount, HederaDelegation } from "@ledgerhq/live-common/families/hedera/types";
+import type { HederaAccount, HederaValidator } from "@ledgerhq/live-common/families/hedera/types";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
@@ -28,7 +27,7 @@ const Delegations = ({ account }: { account: HederaAccount }) => {
   }, []);
 
   const onRedirect = useCallback(
-    (delegation: HederaDelegation, modalName: DelegateModalName) => {
+    (modalName: DelegateModalName) => {
       dispatch(openModal(modalName, { account }));
     },
     [account, dispatch],
@@ -37,14 +36,11 @@ const Delegations = ({ account }: { account: HederaAccount }) => {
   const explorerView = getDefaultExplorerView(account.currency);
 
   const onExternalLink = useCallback(
-    (delegation: HederaDelegation) => {
-      const validator = getValidatorFromDelegation(account, delegation);
-      if (!validator) return;
-
+    (validator: HederaValidator) => {
       const srURL = explorerView && getAddressExplorer(explorerView, validator.address);
       if (srURL) openURL(srURL);
     },
-    [account, explorerView],
+    [explorerView],
   );
 
   if (!account.hederaResources?.delegation) {

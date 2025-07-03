@@ -55,8 +55,12 @@ async function buildUpdateAccountTransaction({
     .setTransactionMemo(transaction.memo ?? "")
     .setAccountId(accountId);
 
-  if (transaction.properties.stakedNodeId !== undefined) {
-    tx.setStakedNodeId(transaction.properties.stakedNodeId ?? 0); // 0 disables staking
+  if (typeof transaction.properties.stakedNodeId === "number") {
+    tx.setStakedNodeId(transaction.properties.stakedNodeId);
+  }
+
+  if (transaction.properties.stakedNodeId === null) {
+    tx.clearStakedNodeId();
   }
 
   tx.freeze();

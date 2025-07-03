@@ -1,11 +1,12 @@
 import noop from "lodash/noop";
 import React from "react";
 import styled from "styled-components";
+import type { HederaAccount, TransactionStatus } from "@ledgerhq/live-common/families/hedera/types";
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import type { HederaAccount, TransactionStatus } from "@ledgerhq/live-common/families/hedera/types";
+import useTheme from "~/renderer/hooks/useTheme";
 
 interface Props {
   account: HederaAccount;
@@ -15,12 +16,13 @@ interface Props {
 
 const AmountField = ({ account, status }: Props) => {
   const unit = useAccountUnit(account);
+  const theme = useTheme();
 
   const error = status.errors[Object.keys(status.errors)[0]];
   const warning = status.warnings[Object.keys(status.warnings)[0]];
 
   return (
-    <Box>
+    <Container>
       <InputCurrency
         disabled
         autoFocus={false}
@@ -28,6 +30,9 @@ const AmountField = ({ account, status }: Props) => {
         hideErrorMessage={true}
         containerProps={{
           grow: true,
+          style: {
+            backgroundColor: theme.colors.palette.background.paper,
+          },
         }}
         unit={unit}
         value={account.spendableBalance}
@@ -52,9 +57,14 @@ const AmountField = ({ account, status }: Props) => {
           </WarningDisplay>
         ) : null}
       </ErrorContainer>
-    </Box>
+    </Container>
   );
 };
+
+const Container = styled(Box)`
+  margin-top: 4px;
+  margin-bottom: 0;
+`;
 
 const InputLeft = styled(Box).attrs(() => ({
   ff: "Inter|Medium",
