@@ -1,6 +1,6 @@
 import semver from "semver";
-import { Observable, concat, from, of, throwError, defer, merge, Subject } from "rxjs";
-import { mergeMap, concatMap, map, catchError, delay, switchMap } from "rxjs/operators";
+import { Observable, concat, from, of, throwError, defer, merge } from "rxjs";
+import { mergeMap, concatMap, map, catchError, delay } from "rxjs/operators";
 import {
   TransportStatusError,
   FirmwareOrAppUpdateRequired,
@@ -58,6 +58,7 @@ export type ConnectAppRequest = {
   requireLatestFirmware?: boolean;
   outdatedApp?: AppAndVersion;
   allowPartialDependencies: boolean;
+  passDeprecation: boolean;
 };
 
 export type DeviceDeprecation = {
@@ -315,6 +316,7 @@ const cmd = (transport: Transport, { request }: Input): Observable<ConnectAppEve
       appName,
       dependencies,
       requireLatestFirmware,
+      passDeprecation,
     }: ConnectAppRequest): Observable<ConnectAppEvent> =>
       defer(() => from(getAppAndVersion(transport))).pipe(
         concatMap((appAndVersion): Observable<ConnectAppEvent> => {
@@ -363,6 +365,7 @@ const cmd = (transport: Transport, { request }: Input): Observable<ConnectAppEve
                           appName,
                           dependencies,
                           allowPartialDependencies,
+                          passDeprecation,
                           // requireLatestFirmware // Resolved!.
                         });
                       } else {
@@ -392,6 +395,7 @@ const cmd = (transport: Transport, { request }: Input): Observable<ConnectAppEve
                   return innerSub({
                     appName,
                     allowPartialDependencies,
+                    passDeprecation,
                     // dependencies // Resolved!
                   });
                 },
@@ -489,6 +493,7 @@ const cmd = (transport: Transport, { request }: Input): Observable<ConnectAppEve
       dependencies,
       requireLatestFirmware,
       allowPartialDependencies,
+      passDeprecation: false,
     }).subscribe(o);
 
     return () => {
@@ -536,8 +541,16 @@ export class DeviceNotSupportedError extends Error {
   }
 }
 
-const throwErrorWhenLns = (dmk: DeviceManagementKit, sessionId: DeviceSessionId): void => {
+const throwErrorWhenLns = (
+  dmk: DeviceManagementKit,
+  sessionId: DeviceSessionId,
+  passDeprecation: boolean,
+): void => {
+  if (passDeprecation) {
+    return;
+  }
   const deadline = new Date("2025-08-01");
+  // If the device is a Nano S, and
   const today = new Date();
   const isPast = today > deadline;
   const canClearSign = false;
@@ -558,6 +571,7 @@ export default function connectAppFactory(
     isLdmkConnectAppEnabled: boolean;
   } = { isLdmkConnectAppEnabled: false },
 ) {
+  // console.log("connectAppFactory");
   if (!isLdmkConnectAppEnabled) {
     return ({ deviceId, request }: Input): Observable<ConnectAppEvent> =>
       withDevice(deviceId)(transport => cmd(transport, { deviceId, request }));
@@ -569,15 +583,15 @@ export default function connectAppFactory(
       dependencies,
       requireLatestFirmware,
       allowPartialDependencies = false,
+      passDeprecation = false,
     } = request;
     return withDevice(deviceId)(transport => {
       if (!isDmkTransport(transport)) {
         return cmd(transport, { deviceId, request });
       }
       const { dmk, sessionId } = transport;
-
-      const connectApp = (): Observable<ConnectAppEvent> => {
-        console.log("next");
+      let hasContinued = false;
+      const connectAppFlow = (): Observable<ConnectAppEvent> => {
         const deviceAction = new ConnectAppDeviceAction({
           input: {
             application: appNameToDependency(appName),
@@ -605,56 +619,60 @@ export default function connectAppFactory(
 
         return new ConnectAppEventMapper(dmk, sessionId, appName, observable).map();
       };
-      console.log("in");
       try {
-        throwErrorWhenLns(dmk, sessionId);
+        throwErrorWhenLns(dmk, sessionId, passDeprecation);
       } catch (error) {
         if (error instanceof DeviceNotSupportedError) {
           if (error.message === "warning") {
-            const continuation$ = new Subject<void>();
-            const deprecationEvent: ConnectAppEvent = {
-              type: "deprecation",
-              deprecate: {
-                warningClearSigning: true,
-                date: "06.01.2002",
-                modelId: DeviceModelId.NANO_S,
-                coin: "polkadot",
-              },
-              onContinue: () => {
-                continuation$.next();
-              },
-            };
-
             return new Observable<ConnectAppEvent>(subscriber => {
+              const continueOnce = () => {
+                if (hasContinued) return;
+                hasContinued = true;
+
+                connectAppFlow().subscribe(subscriber);
+              };
+
+              const deprecationEvent: ConnectAppEvent = {
+                type: "deprecation",
+                deprecate: {
+                  warningClearSigning: true,
+                  date: "06.01.2002",
+                  modelId: DeviceModelId.NANO_S,
+                  coin: "polkadot",
+                },
+                onContinue: continueOnce, // Injecté ici
+              };
+
               subscriber.next(deprecationEvent);
-              const sub = continuation$.pipe(switchMap(() => connectApp())).subscribe(subscriber);
-              return () => sub.unsubscribe();
             });
           } else if (error.message === "info") {
-            const continuation$ = new Subject<void>();
-            const deprecationEvent: ConnectAppEvent = {
-              type: "deprecation",
-              deprecate: {
-                warningClearSigning: false,
-                date: "06.01.2002",
-                modelId: DeviceModelId.NANO_S,
-                coin: "polkadot",
-              },
-              onContinue: () => {
-                continuation$.next();
-              },
-            };
             return new Observable<ConnectAppEvent>(subscriber => {
+              const continueOnce = () => {
+                if (hasContinued) return;
+                hasContinued = true;
+
+                connectAppFlow().subscribe(subscriber);
+              };
+
+              const deprecationEvent: ConnectAppEvent = {
+                type: "deprecation",
+                deprecate: {
+                  warningClearSigning: false,
+                  date: "06.01.2002",
+                  modelId: DeviceModelId.NANO_S,
+                  coin: "polkadot",
+                },
+                onContinue: continueOnce, // Injecté ici
+              };
+
               subscriber.next(deprecationEvent);
-              const sub = continuation$.pipe(switchMap(() => connectApp())).subscribe(subscriber);
-              return () => sub.unsubscribe();
             });
           } else {
             return throwError(error);
           }
         }
       }
-      return connectApp();
+      return connectAppFlow();
     });
   };
 }

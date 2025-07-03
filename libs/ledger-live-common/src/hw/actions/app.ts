@@ -172,7 +172,6 @@ const getInitialState = (device?: Device | null | undefined, request?: AppReques
 const reducer = (state: State, e: Event): State => {
   switch (e.type) {
     case "deprecation":
-      console.log(state.displayDeprecateWarning);
       return { ...state, deprecate: true, deprecateData: e.deprecate, onContinue: e.onContinue };
     case "unresponsiveDevice":
       return { ...state, unresponsive: true };
@@ -414,6 +413,7 @@ function inferCommandParams(appRequest: AppRequest): ConnectAppRequest {
       dependencies,
       requireLatestFirmware,
       allowPartialDependencies,
+      passDeprecation: false,
     };
   }
 
@@ -449,6 +449,7 @@ function inferCommandParams(appRequest: AppRequest): ConnectAppRequest {
       currencyId: currency.id,
       ...extra,
     },
+    passDeprecation: false,
     allowPartialDependencies,
   };
 }
@@ -463,6 +464,8 @@ export const createAction = (
 ): AppAction => {
   const useHook = (device: Device | null | undefined, appRequest: AppRequest): AppState => {
     const dependenciesResolvedRef = useRef(false);
+    const deprecationSend = useRef(false);
+
     const firmwareResolvedRef = useRef(false);
     const outdatedAppRef = useRef<AppAndVersion>();
 
@@ -489,6 +492,7 @@ export const createAction = (
             dependencies: dependenciesResolvedRef.current ? undefined : dependencies,
             requireLatestFirmware: firmwareResolvedRef.current ? undefined : requireLatestFirmware,
             outdatedApp: outdatedAppRef.current,
+            passDeprecation: deprecationSend.current,
           },
         }).pipe(
           tap(e => {
@@ -499,6 +503,12 @@ export const createAction = (
               firmwareResolvedRef.current = true;
             } else if (e.type === "has-outdated-app") {
               outdatedAppRef.current = e.outdatedApp as AppAndVersion;
+            } else if (
+              e.type === "deprecation" &&
+              "onContinue" in e &&
+              typeof e.onContinue === "function"
+            ) {
+              dependenciesResolvedRef.current = true;
             }
           }),
         );

@@ -1,4 +1,4 @@
-import React, { Component, useEffect } from "react";
+import React, { Component, useEffect, useState } from "react";
 import BigNumber from "bignumber.js";
 import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -262,6 +262,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   const stateSettings = useSelector(settingsSelector);
   const walletState = useSelector(walletSelector);
   const isTrackingEnabled = useSelector(trackingEnabledSelector);
+  const [hasDisplayDeprecateWarning, setDeprecated] = useState(false);
 
   useTrackManagerSectionEvents({
     location: location === HOOKS_TRACKING_LOCATIONS.managerDashboard ? location : undefined,
@@ -375,16 +376,24 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }, [dispatch, device, deviceInfo, latestFirmware]);
 
   if (deprecate && deprecateData && onContinue) {
-    if (deprecateData.warningClearSigning)
-      return <DeprecationClearSigningWarning onContinue={onContinue} />;
-    else
-      return (
-        <DeprecationWarning
-          coinName={deprecateData.coin}
-          date={deprecateData.date}
-          onContinue={onContinue}
-        />
-      );
+    if (!hasDisplayDeprecateWarning) {
+      const handleContinue = () => {
+        setDeprecated(true);
+        onContinue();
+      };
+      if (deprecateData.warningClearSigning)
+        return <DeprecationClearSigningWarning onContinue={handleContinue} />;
+      else
+        return (
+          <DeprecationWarning
+            coinName={deprecateData.coin}
+            date={deprecateData.date}
+            onContinue={handleContinue}
+          />
+        );
+    } else {
+      onContinue();
+    }
   }
 
   if (displayDeprecateWarning && displayUpgradeWarning && appAndVersion && passWarning) {
@@ -752,6 +761,7 @@ export default function DeviceAction<R, H extends States, P>({
   action: Action<R, H, P>;
   request: R;
 }): JSX.Element {
+  console.log(action, request);
   const device = useSelector(getCurrentDevice);
   const hookState = action.useHook(device, request);
   const payload = action.mapResult(hookState);
