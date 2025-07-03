@@ -10,6 +10,8 @@ export const baseCurrency = getCryptoCurrencyById("base");
 export const scrollCurrency = getCryptoCurrencyById("scroll");
 export const injectiveCurrency = getCryptoCurrencyById("injective");
 
+export const hederaCurrency = getCryptoCurrencyById("hedera");
+
 export const arbitrumToken: TokenCurrency = {
   type: "TokenCurrency",
   id: "arbitrum/erc20/arbitrum",
