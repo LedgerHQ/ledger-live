@@ -1,5 +1,11 @@
 # @ledgerhq/live-dmk
 
+## 0.10.0-next.1
+
+### Minor Changes
+
+- [#10802](https://github.com/LedgerHQ/ledger-live/pull/10802) [`f92d1e2`](https://github.com/LedgerHQ/ledger-live/commit/f92d1e270237a23ba50ad386a22b12aac6898628) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Support bootloader mode in PrepareManager device action
+
 ## 0.10.0-next.0
 
 ### Minor Changes

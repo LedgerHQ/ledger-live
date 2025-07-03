@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 2.120.0-next.3
+
+### Minor Changes
+
+- [#10802](https://github.com/LedgerHQ/ledger-live/pull/10802) [`f92d1e2`](https://github.com/LedgerHQ/ledger-live/commit/f92d1e270237a23ba50ad386a22b12aac6898628) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Support bootloader mode in PrepareManager device action
+
+- [#10802](https://github.com/LedgerHQ/ledger-live/pull/10802) [`164791b`](https://github.com/LedgerHQ/ledger-live/commit/164791b7ec316d8aeeaddcd69b7a9d5603272ca0) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Charon onboarding flags are not available in bootloader mode
+
+### Patch Changes
+
+- Updated dependencies [[`164791b`](https://github.com/LedgerHQ/ledger-live/commit/164791b7ec316d8aeeaddcd69b7a9d5603272ca0)]:
+  - @ledgerhq/live-common@34.40.0-next.2
+  - @ledgerhq/live-dmk-desktop@0.7.0-next.2
+
 ## 2.120.0-next.2
 
 ### Minor Changes
