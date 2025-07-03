@@ -90,6 +90,7 @@ const StepFlow = ({
             onQrCodeScanned={handleQrCodeScanned}
             currentOption={currentOption}
             setSelectedOption={setCurrentOption}
+            qrCodeValue={qrProcess.url}
           />
         );
 
