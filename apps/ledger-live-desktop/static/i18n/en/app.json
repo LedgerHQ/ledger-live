@@ -1595,6 +1595,26 @@
       }
     }
   },
+  "lnsDeprecation": {
+      "warning": {
+        "title": "Ledger Nano S™ can’t clearsign this operation",
+        "subtitle": "Use any other Ledger device to verify this transaction’s details before signing. Without Clear Signing, you risk losing all your assets.",
+        "continue": "Accept risk & continue"
+  
+      },
+      "info": {
+        "title": "From {{date}}, {{coinName}} support on Ledger Nano S™ via Ledger Live will end",
+        "subtitle": "Upgrade to a newer device for continued access or explore alternative options through Ledger support.",
+        "reminder": "Do not remind me again"
+      },
+      "error": {
+        "title": "This feature is not supported on Ledger Nano S™",
+        "subtitle": "For continued access, upgrade to one of our compatible Ledger devices or explore alternative options through Ledger support."
+      },
+      "update": "Visit our update programe",
+      "learnMore": "Learn more",
+      "continue": "Continue"
+    },
   "currentAddress": {
     "title": "Current address",
     "for": "Address for <1><0>{{name}}</0></1>",
