@@ -261,7 +261,7 @@ describe("listOperations", () => {
             asset: {
               type: "token",
               standard: "trc20",
-              contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+              assetReference: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
             },
           });
         });
@@ -279,7 +279,7 @@ describe("listOperations", () => {
             asset: {
               type: "token",
               standard: "trc20",
-              contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+              assetReference: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
             },
           });
         });

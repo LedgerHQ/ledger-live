@@ -183,8 +183,7 @@ export class AptosAPI {
       functionArguments: [transactionIntent.recipient, transactionIntent.amount],
     };
 
-    // TODO: this should be looked over again, might be more precise in terms of types..
-    if (transactionIntent.asset.type !== "native") {
+    if (transactionIntent.asset.type === "token") {
       const { standard } = transactionIntent.asset;
 
       if (standard === TOKEN_TYPE.FUNGIBLE_ASSET) {
@@ -228,7 +227,7 @@ export class AptosAPI {
 
   async listOperations(rawAddress: string, pagination: Pagination): Promise<[Operation[], string]> {
     const address = normalizeAddress(rawAddress);
-    const transactions = await this.getAccountInfo(address, pagination.minHeight.toString());
+    const transactions = await this.getAccountInfo(address, minHeight.toString());
     const newOperations = transactionsToOperations(address, transactions.transactions);
 
     return [newOperations, ""];

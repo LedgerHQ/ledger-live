@@ -38,7 +38,7 @@ export async function craftTransaction(
     }
   }
 
-  if (transactionIntent.asset.type !== "native") {
+  if (transactionIntent.asset.type === "token") {
     tokenType = transactionIntent.asset.standard as TOKEN_TYPE;
   }
 
@@ -54,7 +54,7 @@ export async function craftTransaction(
 }
 
 function getContractAddress(txIntent: TransactionIntent): string {
-  if (txIntent.asset.type !== "native" && isTokenType(txIntent.asset.standard as string)) {
+  if (txIntent.asset.type === "token" && isTokenType(txIntent.asset.standard as string)) {
     return txIntent.asset.assetReference as string;
   }
 
