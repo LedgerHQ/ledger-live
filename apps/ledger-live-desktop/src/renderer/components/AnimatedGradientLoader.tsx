@@ -24,7 +24,7 @@ const LoaderContainer = styled.div`
 const GradientBackground = styled.div`
   position: absolute;
   width: 100%;
-  height: 50%;
+  height: 60%;
   bottom: 0;
   left: 0;
   background: linear-gradient(
@@ -34,6 +34,7 @@ const GradientBackground = styled.div`
     rgba(139, 128, 219, 0.05) 70%,
     transparent 100%
   );
+  border-radius: ${p => p.theme.radii[2]}px;
   animation: ${pulseAnimation} 2.5s ease-in-out infinite;
 `;
 
@@ -45,8 +46,6 @@ const LoaderText = styled.div`
   font-size: 22px;
   color: #ffffff;
   text-align: center;
-  letter-spacing: -0.44px;
-  padding: 0 20px;
   max-width: 100%;
 `;
 

@@ -633,7 +633,19 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (isLoading || (allowOpeningGranted && !appAndVersion)) {
-    return renderLoading();
+    // Check if we're in a transaction context (signing or checking)
+    const isTransactionContext =
+      deviceSignatureRequested ||
+      transactionChecksOptInTriggered ||
+      transactionChecksOptIn ||
+      (request && typeof request === "object" && "transaction" in request);
+
+    return renderLoading({
+      type: isTransactionContext ? "target" : "minimal",
+      children: isTransactionContext ? (
+        <Trans i18nKey="send.steps.verification.gettingTransactionCheckResults" />
+      ) : undefined,
+    });
   }
 
   if (deviceInfo && deviceInfo.isBootloader && onAutoRepair) {
@@ -678,19 +690,28 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (typeof deviceStreamingProgress === "number") {
-    return renderLoading({
-      children:
-        deviceStreamingProgress > 0 ? (
-          // with streaming event, we have accurate version of the wording
-          <Trans
-            i18nKey="send.steps.verification.streaming.accurate"
-            values={{ percentage: (deviceStreamingProgress * 100).toFixed(0) + "%" }}
-          />
-        ) : (
-          // otherwise, we're not accurate (usually because we don't need to, it's fast case)
+    // Check if we're in a transaction context (signing or checking)
+    const isTransactionContext =
+      deviceSignatureRequested ||
+      transactionChecksOptInTriggered ||
+      transactionChecksOptIn ||
+      (request && typeof request === "object" && "transaction" in request);
 
-          <Trans i18nKey="send.steps.verification.streaming.inaccurate" />
-        ),
+    return renderLoading({
+      type: isTransactionContext ? "target" : "minimal",
+      children: isTransactionContext ? (
+        <Trans i18nKey="send.steps.verification.gettingTransactionCheckResults" />
+      ) : deviceStreamingProgress > 0 ? (
+        // with streaming event, we have accurate version of the wording
+        <Trans
+          i18nKey="send.steps.verification.streaming.accurate"
+          values={{ percentage: (deviceStreamingProgress * 100).toFixed(0) + "%" }}
+        />
+      ) : (
+        // otherwise, we're not accurate (usually because we don't need to, it's fast case)
+
+        <Trans i18nKey="send.steps.verification.streaming.inaccurate" />
+      ),
     });
   }
 
