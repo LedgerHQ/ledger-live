@@ -40,6 +40,7 @@ const extractNftBase64 = (metadata: NFTMetadata) => {
     : null;
   const customImageUri =
     (mediaSizeForCustomImage &&
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       metadata?.medias?.[mediaSizeForCustomImage as keyof NFTMedias]?.uri) ||
     null;
   return customImageUri;
@@ -98,7 +99,7 @@ const StepChooseImage: React.FC<Props> = props => {
             setTimeout(
               () => {
                 if (!isMounted()) return;
-                setSelectedNftBase64({ imageBase64DataUri: res as string });
+                setSelectedNftBase64({ imageBase64DataUri: res });
               },
               Math.max(0, 400 - (Date.now() - t1)),
             );

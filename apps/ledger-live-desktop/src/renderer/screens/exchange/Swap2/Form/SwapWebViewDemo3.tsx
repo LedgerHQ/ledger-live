@@ -530,6 +530,7 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           customHandlers={customHandlers as never}
         />
       </SwapWebAppWrapper>

@@ -75,13 +75,10 @@ const Illustration = styled.div<{
   modelId: DeviceModelId;
 }>`
   // prettier-ignore
-  background: url('${p =>
-    illustrations[p.modelId as keyof typeof illustrations][
-      p.theme.colors.palette.type || "light"
-    ]}')
+  background: url('${p => illustrations[p.modelId][p.theme.colors.palette.type || "light"]}')
     no-repeat top right;
-  width: ${p => illustrations[p.modelId as keyof typeof illustrations].width}px;
-  height: ${p => illustrations[p.modelId as keyof typeof illustrations].height}px;
+  width: ${p => illustrations[p.modelId].width}px;
+  height: ${p => illustrations[p.modelId].height}px;
   background-size: contain;
 `;
 const Disconnected = ({ onTryAgain }: { onTryAgain: (a: boolean) => void }) => {

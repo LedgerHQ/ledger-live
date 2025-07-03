@@ -23,7 +23,8 @@ export function step<This, Args extends any[], Return>(message?: string) {
     function replacementMethod(this: any, ...args: Args) {
       const name = message
         ? message.replace(/\$(\d+)/g, (_, index) => args[Number(index)].toString())
-        : `${this.constructor.name}.${context.name as string}`;
+        : // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+          `${this.constructor.name}.${context.name as string}`;
 
       return test.step(name, async () => target.call(this, ...args), { box: true });
     }

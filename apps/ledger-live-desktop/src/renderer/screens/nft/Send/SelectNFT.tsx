@@ -22,7 +22,8 @@ const SelectNFT = ({
   const filteredNFTs = useMemo(
     () =>
       maybeNFTCollection
-        ? (nftsByCollections(account.nfts, maybeNFTCollection) as (ProtoNFT | NFT)[])
+        ? // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+          (nftsByCollections(account.nfts, maybeNFTCollection) as (ProtoNFT | NFT)[])
         : account.nfts?.filter(
             nft => !hiddenNftCollections.includes(`${account.id}|${nft.contract}`),
           ) || [],

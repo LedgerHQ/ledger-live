@@ -64,6 +64,7 @@ const options = {
 };
 
 export default handleActions<SwapStateType, HandlersPayloads[keyof HandlersPayloads]>(
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   handlers as unknown as SwapHandlers<false>,
   initialState,
   options,

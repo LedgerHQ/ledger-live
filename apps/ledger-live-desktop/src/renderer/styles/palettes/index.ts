@@ -47,11 +47,13 @@ const enrichPalette = (rawPalette: RawPalette): Theme => {
     ...rawPalette,
     text: shades.reduce(
       (acc, value) => {
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         acc[`shade${value}` as keyof Theme["text"]] = Color(rawPalette.secondary.main)
           .alpha(value / 100)
           .toString();
         return acc;
       },
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       {} as Theme["text"],
     ),
   };
@@ -64,10 +66,13 @@ const palettes: {
   dark,
 }).reduce(
   (acc, [name, value]) => {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const rawPalette: RawPalette = value as RawPalette;
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     acc[name as "dark" | "light"] = enrichPalette(rawPalette);
     return acc;
   },
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   {} as {
     dark: Theme;
     light: Theme;

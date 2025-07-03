@@ -56,6 +56,7 @@ const Collection = () => {
   );
   const history = useHistory();
   const nfts = useMemo<(ProtoNFT | NFT)[]>(
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     () => (nftsByCollections(account?.nfts, collectionAddress) as (ProtoNFT | NFT)[]) || [],
     [account?.nfts, collectionAddress],
   );
@@ -105,6 +106,7 @@ const Collection = () => {
         <Skeleton width={40} minHeight={40} show={show}>
           <Media
             size={40}
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             metadata={metadata as NFTMetadata}
             tokenId={nft?.tokenId}
             mediaFormat="preview"

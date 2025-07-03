@@ -2,8 +2,8 @@ import { Reporter, TestCase, TestResult } from "@playwright/test/reporter";
 import * as fs from "fs";
 import * as path from "path";
 
-export function getDescription(annotations: any, type: "TMS" | "BUG") {
-  const annotation = annotations.find((ann: any) => ann.type === type);
+export function getDescription(annotations: TestCase["annotations"], type: "TMS" | "BUG") {
+  const annotation = annotations.find(ann => ann.type === type);
   return annotation ? annotation.description : "Type not found";
 }
 
@@ -31,7 +31,7 @@ class JsonReporter implements Reporter {
   }
 
   onTestEnd(test: TestCase, result: TestResult): void {
-    const testKeys = getDescription(test.annotations, "TMS").split(", ");
+    const testKeys = getDescription(test.annotations, "TMS")?.split(", ") ?? [];
     const status = result.status.toUpperCase();
 
     for (const testKey of testKeys) {

@@ -8,6 +8,7 @@ import {
 import { StakePool } from "@ledgerhq/live-common/families/cardano/staking";
 
 function stackPool(id: string): StakePool {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   return { poolId: id } as StakePool;
 }
 

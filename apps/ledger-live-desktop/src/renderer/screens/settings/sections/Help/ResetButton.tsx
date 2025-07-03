@@ -11,11 +11,14 @@ import Button from "~/renderer/components/Button";
 import Alert from "~/renderer/components/Alert";
 import IconTriangleWarning from "~/renderer/icons/TriangleWarning";
 import { ActionModalReducer, ActionModalState, useActionModal } from "./logic";
+
 export default function ResetButton() {
   const { t } = useTranslation();
   const hardReset = useHardReset();
   const [state, actions] = useActionModal();
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const { opened, pending, fallbackOpened } = state as ActionModalState;
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const { open, close, closeFallback, handleConfirm, handleError } = actions as ActionModalReducer;
   const onConfirm = useCallback(async () => {
     if (pending) return;

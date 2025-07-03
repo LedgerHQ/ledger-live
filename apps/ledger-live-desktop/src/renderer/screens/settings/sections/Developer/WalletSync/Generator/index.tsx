@@ -38,6 +38,7 @@ export function GeneratorLedgerSync() {
 
   const flowsOptions = Object.keys(FlowOptions).map(flow => ({
     label: flow,
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     value: flow as Flow,
   }));
 
@@ -75,12 +76,11 @@ export function GeneratorLedgerSync() {
     }
     const instances = Array.from(
       { length: Math.floor(Math.random() * 5) },
-      (_, index) =>
-        ({
-          id: String(index),
-          name: index % 2 === 0 ? `Iphone ${index + 1}` : "macOS",
-          permissions: index % 2 === 0 ? 1 : 2,
-        }) as TrustchainMember,
+      (_, index): TrustchainMember => ({
+        id: String(index),
+        name: index % 2 === 0 ? `Iphone ${index + 1}` : "macOS",
+        permissions: index % 2 === 0 ? 1 : 2,
+      }),
     );
 
     setState({ ...state, instances });
@@ -95,6 +95,7 @@ export function GeneratorLedgerSync() {
           isSearchable={false}
           onChange={option => {
             if (option) {
+              // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
               setState({ ...state, flow: option.value as Flow, step: null });
             }
           }}
@@ -110,6 +111,7 @@ export function GeneratorLedgerSync() {
           isSearchable={false}
           onChange={option => {
             if (option) {
+              // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
               setState({ ...state, step: option.value as Step });
             }
           }}

@@ -21,10 +21,12 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const label = useGetStakeLabelLocaleBased();
 
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const { cardanoResources } = mainAccount as CardanoAccount;
   invariant(cardanoResources, "cardano account expected");
 
   const disableStakeButton =
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     !canStake(account as CardanoAccount) || isAlreadyStaking(account as CardanoAccount);
 
   const disabledLabel =
@@ -37,6 +39,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const onClick = useCallback(() => {
     dispatch(
       openModal("MODAL_CARDANO_REWARDS_INFO", {
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         account: account as CardanoAccount,
       }),
     );

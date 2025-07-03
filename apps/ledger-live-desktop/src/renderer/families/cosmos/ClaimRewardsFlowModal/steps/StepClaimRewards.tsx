@@ -44,6 +44,7 @@ export default function StepClaimRewards({
     (mode: string) => {
       updateClaimRewards({
         ...transaction,
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         mode: mode as CosmosLikeTransaction["mode"],
       });
     },

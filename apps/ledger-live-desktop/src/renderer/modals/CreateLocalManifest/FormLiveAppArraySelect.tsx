@@ -86,6 +86,7 @@ function FormLiveAppArraySelect({
         <Select
           blurInputOnSelect={true}
           onKeyDown={e => {
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             const target = e.target as HTMLTextAreaElement;
             if (e.keyCode === 13 && target.value !== "") {
               e.preventDefault();
@@ -95,6 +96,7 @@ function FormLiveAppArraySelect({
           }}
           error={parseCheck ? null : new Error()}
           onChange={(option: unknown) => {
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             handleOnChange(option as Option);
           }}
           value={null}

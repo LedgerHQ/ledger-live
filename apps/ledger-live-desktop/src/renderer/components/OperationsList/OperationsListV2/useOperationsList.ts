@@ -60,6 +60,7 @@ export function useOperationsList({
   const spamOpsCache = useRef<string[]>([]);
 
   const all = flattenAccounts(accounts || []).concat(
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     [account as AccountLike, parentAccount as AccountLike].filter(Boolean),
   );
   const accountsMap = keyBy(all, "id");
@@ -95,6 +96,7 @@ export function useOperationsList({
 
   previousFilteredNftData.current = {
     ...previousFilteredNftData.current,
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     ...keyBy(filteredNftData as OrderedOperation[], "id"),
   };
 
@@ -119,6 +121,7 @@ export function useOperationsList({
 
   useEffect(() => {
     spamOps.forEach(op => {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       markNftAsSpam(op.collectionId, op.currencyId as SupportedBlockchain, op.spamScore);
     });
   }, [spamOps, markNftAsSpam, nftCollectionsStatusByNetwork]);

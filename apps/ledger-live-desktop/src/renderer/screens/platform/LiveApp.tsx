@@ -36,6 +36,7 @@ export function LiveApp({ match, appId: propsAppId, location }: LiveAppProps) {
   const track = useTrack();
   const swapTrackingProperties = useGetSwapTrackingProperties();
   const { params: internalParams, search } = location;
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const { state: urlParams, customDappUrl } = useLocation() as ReturnType<typeof useLocation> &
     LiveAppProps["location"] & {
       state: {

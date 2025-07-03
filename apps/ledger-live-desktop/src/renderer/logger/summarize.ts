@@ -21,8 +21,11 @@ function summarizeAccount(argument: Account | TokenAccount) {
     index,
     freshAddress,
     freshAddressPath,
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     opsL: undefined as number | undefined,
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     pendingOpsL: undefined as number | undefined,
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     subA: undefined as unknown[] | undefined,
   };
   if (operations && typeof operations === "object" && Array.isArray(operations)) {
@@ -58,10 +61,12 @@ const recSummarize = (
         return obj.map(o => recSummarize(o, undefined, references));
       }
       if (
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         (obj as { type: string }).type === "Account" ||
         // AccountRaw
         ("seedIdentifier" in obj && "freshAddressPath" in obj && "operations" in obj)
       ) {
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         return summarizeAccount(obj as Account);
       }
       const copy = {};

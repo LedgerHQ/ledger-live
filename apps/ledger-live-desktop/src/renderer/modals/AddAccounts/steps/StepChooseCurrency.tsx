@@ -221,9 +221,9 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   );
 
   const currencies = useMemo(() => {
-    const supportedCurrenciesAndTokens = (
-      listSupportedCurrencies() as CryptoOrTokenCurrency[]
-    ).concat(listSupportedTokens());
+    const supportedCurrenciesAndTokens =
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens());
 
     const deactivatedCurrencyIds = new Set(
       mock
@@ -242,7 +242,8 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
 
   const url =
     currency && currency.type === "TokenCurrency"
-      ? supportLinkByTokenType[currency.tokenType as keyof typeof supportLinkByTokenType]
+      ? // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        supportLinkByTokenType[currency.tokenType as keyof typeof supportLinkByTokenType]
       : null;
 
   return (

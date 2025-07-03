@@ -50,6 +50,7 @@ const StepTransfer: React.FC<Props> = props => {
 
   const isRefusedOnStaxError =
     error instanceof ImageLoadRefusedOnDevice ||
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     (error as unknown) instanceof ImageCommitRefusedOnDevice;
 
   return (

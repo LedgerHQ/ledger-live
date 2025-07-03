@@ -10,6 +10,7 @@ const analyticsMiddleware: Middleware<{}, State> = store => next => action => {
   next(action);
   if (!isAnalyticsStarted) {
     isAnalyticsStarted = true;
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     start(store as ReduxStore);
   }
 };

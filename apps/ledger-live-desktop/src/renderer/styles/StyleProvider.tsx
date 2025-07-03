@@ -45,7 +45,7 @@ const StyleProvider = ({ children, selectedPalette }: Props) => {
 };
 export const withV2StyleProvider = <T,>(Component: React.ComponentType<T>) => {
   const WrappedComponent = (props: T & { children?: React.ReactNode }) => {
-    const selectedPalette = (useSelector(themeSelector) || "light") as "light" | "dark";
+    const selectedPalette = useSelector(themeSelector) || "light";
     return (
       <StyleProvider selectedPalette={selectedPalette}>
         <Component {...props} />

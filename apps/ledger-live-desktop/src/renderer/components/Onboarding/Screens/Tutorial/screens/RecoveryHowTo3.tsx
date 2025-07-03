@@ -41,9 +41,7 @@ const RecoveryHowTo3Animation = () => {
 
   return (
     <AnimationContainer>
-      <Animation
-        animation={getDeviceAnimation(deviceModelId!, theme, "plugAndPinCode") as object}
-      />
+      <Animation animation={getDeviceAnimation(deviceModelId!, theme, "plugAndPinCode")} />
     </AnimationContainer>
   );
 };

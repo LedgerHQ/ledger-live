@@ -57,7 +57,7 @@ const LiveAppCard = ({ appId }: { appId: string }) => {
           manifest={manifest}
           inputs={{
             theme: themeType,
-            ...(urlParams as Record<string, string>),
+            ...urlParams,
             lang: language,
             locale: locale,
             devMode,

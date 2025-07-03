@@ -40,6 +40,7 @@ export function useHook(): HookResult {
   const handleChainIdChange = (option: SelectOption) => setChainId(option.value);
   const handleTokenIdChange = (value: string) => setTokenId(value);
   const handleRefreshTypeChange = (option: SelectOption) =>
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     setRefreshType(option.value as RefreshOption);
 
   const onClick = () => {
@@ -92,6 +93,7 @@ export default function RefreshMetadata(props: HookResult) {
       if (error instanceof LedgerAPI4xx) {
         return t("settings.developer.debugSimpleHash.debugRefreshMetadata.error");
       }
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       return (error as Error).message;
     };
 

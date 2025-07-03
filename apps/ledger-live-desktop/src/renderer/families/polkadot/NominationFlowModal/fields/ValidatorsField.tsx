@@ -86,7 +86,9 @@ const SimpleList = styled.ul`
 
 // returns the first error
 function getStatusError(status: TransactionStatus, type = "errors"): Error | undefined | null {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   if (!status || !status[type as keyof TransactionStatus]) return null;
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const firstKey = Object.keys(status[type as keyof TransactionStatus]!)[0];
   // @ts-expect-error This is complicated to prove that type / firstKey are the right keys
   return firstKey ? status[type][firstKey] : null;

@@ -27,23 +27,21 @@ const ThemeSelect = () => {
     },
     [dispatch],
   );
-  const options = useMemo(
-    () =>
-      (
-        [
-          {
-            value: null,
-            label: t("theme.system"),
-          },
-        ] as ThemeSelectOption[]
-      ).concat(
-        Object.keys(themeLabels).map(key => ({
-          value: key,
-          label: t(themeLabels[key as keyof typeof themeLabels]),
-        })),
-      ),
-    [t],
-  );
+  const options = useMemo(() => {
+    const xs: ThemeSelectOption[] = [
+      {
+        value: null,
+        label: t("theme.system"),
+      },
+    ];
+    return xs.concat(
+      Object.keys(themeLabels).map(key => ({
+        value: key,
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        label: t(themeLabels[key as keyof typeof themeLabels]),
+      })),
+    );
+  }, [t]);
   const currentTheme = options.find(option => option.value === theme);
   return (
     <>

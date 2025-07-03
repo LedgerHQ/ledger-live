@@ -7,6 +7,7 @@ import { useShowProviderLoadingTransition } from "@ledgerhq/live-common/hooks/us
 import { render, screen } from "tests/testSetup";
 import { ProviderInterstitial } from "./ProviderInterstitial";
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const mockManifest = {
   id: BUY_SELL_UI_APP_ID,
   name: "Moonpay",
@@ -18,12 +19,14 @@ jest.mock("@ledgerhq/live-common/hooks/useShowProviderLoadingTransition", () => 
 
 describe("ProviderInterstitial", () => {
   it("renders nothing if transition hook returns false", () => {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     (useShowProviderLoadingTransition as jest.Mock).mockReturnValue(false);
     render(<ProviderInterstitial manifest={mockManifest} isLoading={false} />);
     expect(screen.queryByTestId("custom-buy-sell-loader")).toBeNull();
   });
 
   it("renders loader when transition hook returns true", () => {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     (useShowProviderLoadingTransition as jest.Mock).mockReturnValue(true);
     render(<ProviderInterstitial manifest={mockManifest} isLoading={true} />);
 

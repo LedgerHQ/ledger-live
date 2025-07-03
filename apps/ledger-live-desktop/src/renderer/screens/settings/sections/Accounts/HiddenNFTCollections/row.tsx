@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { useNftMetadata, useNftCollectionMetadata } from "@ledgerhq/live-nft-react";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import { State } from "~/renderer/reducers";
-import { NFTMetadata } from "@ledgerhq/types-live";
 import { clipboard } from "electron";
 
 import Text from "~/renderer/components/Text";
@@ -64,11 +63,7 @@ export const HiddenNftCollectionRow = ({
       <Flex>
         <Skeleton width={32} minHeight={32} show={loading}>
           {nftMetadata && firstNft && (
-            <Media
-              metadata={nftMetadata as NFTMetadata}
-              tokenId={firstNft?.tokenId}
-              mediaFormat="preview"
-            />
+            <Media metadata={nftMetadata} tokenId={firstNft?.tokenId} mediaFormat="preview" />
           )}
         </Skeleton>
 

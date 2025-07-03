@@ -311,12 +311,14 @@ export const RawSelectAccount = ({
         );
         if (display) {
           result.push({
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             matched: match && !isDisabledOption(option as { disabled?: boolean }),
             account: option,
             accountName,
           });
         }
         return result;
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       }, [] as Option[]),
     [searchInputValue, all, withSubAccounts, enforceHideEmptySubAccounts, walletState],
   );

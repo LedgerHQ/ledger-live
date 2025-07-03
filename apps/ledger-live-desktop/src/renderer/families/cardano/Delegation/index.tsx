@@ -34,6 +34,7 @@ const Delegation = ({ account }: Props) => {
   const { t } = useTranslation();
 
   if (account.type !== "Account") return null;
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const { cardanoResources } = account as CardanoAccount;
   invariant(cardanoResources, "cardano account expected");
   const delegation = cardanoResources.delegation;
@@ -48,7 +49,13 @@ const Delegation = ({ account }: Props) => {
       {delegation && delegation.poolId ? (
         <>
           <Header />
-          <Row delegation={delegation} account={account as CardanoAccount} />
+          <Row
+            delegation={delegation}
+            account={
+              // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+              account as CardanoAccount
+            }
+          />
         </>
       ) : (
         <Wrapper horizontal>
@@ -76,6 +83,7 @@ const Delegation = ({ account }: Props) => {
               onClick={() => {
                 dispatch(
                   openModal("MODAL_CARDANO_REWARDS_INFO", {
+                    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
                     account: account as CardanoAccount,
                   }),
                 );

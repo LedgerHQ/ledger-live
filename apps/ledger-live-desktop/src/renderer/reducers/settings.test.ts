@@ -23,6 +23,7 @@ describe("lastSeenDeviceSelector", () => {
         apps: [],
       };
       const state = {
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         ...({} as State),
         settings: {
           ...SETTINGS_INITIAL_STATE,
@@ -36,11 +37,13 @@ describe("lastSeenDeviceSelector", () => {
   it("should return null if the deviceModelId is invalid", () => {
     invalidDeviceModelIds.forEach(deviceModelId => {
       const lastSeenDevice: State["settings"]["lastSeenDevice"] = {
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         modelId: deviceModelId as DeviceModelId, // We might have invalid values in the store
         deviceInfo: aDeviceInfoBuilder(),
         apps: [],
       };
       const state = {
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         ...({} as State),
         settings: {
           ...SETTINGS_INITIAL_STATE,
@@ -54,6 +57,7 @@ describe("lastSeenDeviceSelector", () => {
 
   it("should return en-US when the locale is not set", () => {
     const state = {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       ...({} as State),
       settings: {
         ...SETTINGS_INITIAL_STATE,
@@ -64,6 +68,7 @@ describe("lastSeenDeviceSelector", () => {
 
   it("should return fr-FR when the locale is set", () => {
     const state = {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       ...({} as State),
       settings: {
         ...SETTINGS_INITIAL_STATE,
@@ -75,6 +80,7 @@ describe("lastSeenDeviceSelector", () => {
 
   it("should return en-US when the locale is set to OFAC locale", () => {
     const state = {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       ...({} as State),
       settings: {
         ...SETTINGS_INITIAL_STATE,

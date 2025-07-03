@@ -60,6 +60,7 @@ const Interactions = ({
   const props = {
     error: !!error,
     screen: error ? "fail" : screen,
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     usb: wire && (usbMap[wire] as React.ComponentProps<typeof Device>["usb"]),
     leftHint: action === "left" || (type === "nanoX" && action === "accept"),
     rightHint: action === "accept",

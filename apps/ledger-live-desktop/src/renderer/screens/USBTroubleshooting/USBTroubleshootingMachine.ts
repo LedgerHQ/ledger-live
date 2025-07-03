@@ -12,6 +12,7 @@ import UpdateUSBDeviceDrivers from "./solutions/UpdateUSBDeviceDrivers";
 import EnableFullDiskAccess from "./solutions/EnableFullDiskAccess";
 import ResetNVRAM from "./solutions/ResetNVRAM";
 import RepairFunnel from "./solutions/RepairFunnel";
+
 const commonSolutions = [
   DifferentPort,
   ChangeUSBCable,
@@ -19,10 +20,12 @@ const commonSolutions = [
   TurnOffAntivirus,
   TryAnotherComputer,
 ];
+
 const detectedPlatform =
   process.platform === "darwin" ? "mac" : process.platform === "win32" ? "windows" : "linux";
 export default setup({
   types: {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     input: {} as {
       currentIndex: number | undefined;
     },
@@ -33,12 +36,15 @@ export default setup({
   actions: {
     load: assign(({ context }) => {
       const { platform, currentIndex, solutions } = context;
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       if (!solutions[platform as keyof typeof solutions])
         throw new Error(`Unknown platform ${platform}`);
       const index =
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         !currentIndex || currentIndex >= solutions[platform as keyof typeof solutions].length
           ? 0
           : currentIndex;
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       const SolutionComponent = solutions[platform as keyof typeof solutions][index];
       return {
         currentIndex: index,
@@ -53,6 +59,7 @@ export default setup({
     next: assign(({ context }) => {
       const { platform, currentIndex: i, solutions } = context;
       const currentIndex =
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         solutions[platform as keyof typeof solutions].length > i! + 1 ? i! + 1 : i;
       return {
         currentIndex,
@@ -61,6 +68,7 @@ export default setup({
     // Move back to a previous solution.
     previous: assign(({ context }) => {
       const { platform, currentIndex: i, solutions } = context;
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       const currentIndex = solutions[platform as keyof typeof solutions].length <= 0 ? 0 : i! - 1;
       return {
         currentIndex,
@@ -81,6 +89,7 @@ export default setup({
   context: ({ input }) => ({
     opened: true,
     done: false,
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     SolutionComponent: (() => null) as React.ComponentType<{
       number: number;
       sendEvent: (event: AnyEventObject) => unknown;
