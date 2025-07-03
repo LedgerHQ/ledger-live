@@ -1,5 +1,5 @@
 name: "[Mobile] E2E Only"
-run-name: "@Mobile • E2E • Test App triggered by ${{ github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
+run-name: "@Mobile • E2E • Triggered by ${{ github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
   # push:
@@ -215,12 +215,26 @@ jobs:
         total: [ 3 ]
     steps:
       - uses: actions/checkout@v4
-      - name: Download iOS build
-        uses: actions/download-artifact@v4
+      - name: Restore iOS Native Build from S3 cache
+        uses: tespkg/actions-cache/restore@v1.9.0
         with:
-          name: ios-build
-          path: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
-
+          key: ${{ needs.determine-builds.outputs.ios_native_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+      - name: Restore iOS JS Build from S3 cache
+        uses: tespkg/actions-cache/restore@v1.9.0
+        with:
+          key: ${{ needs.determine-builds.outputs.ios_js_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
       - name: Run iOS Detox shard ${{ matrix.shard }}/3
         id: run-ios
         run: pnpm mobile e2e:ci -p ios --shard ${{ matrix.shard }}/3 ${ inputs.test_filter && `--filter "${{inputs.test_filter}}"` || "" }
@@ -231,7 +245,6 @@ jobs:
           INPUT_E2E: ${{ env.E2E_RUN }}
           PRODUCTION: ${{ inputs.production_firebase }}
           INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
-
       - name: Upload iOS artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -253,12 +266,26 @@ jobs:
         total: [ 3 ]
     steps:
       - uses: actions/checkout@v4
-      - name: Download Android build
-        uses: actions/download-artifact@v4
+      - name: Restore Android Native Build from S3 cache
+        uses: tespkg/actions-cache/restore@v1.9.0
         with:
-          name: android-build
-          path: apps/ledger-live-mobile/android/app/build/outputs/apk/release
-
+          key: ${{ needs.determine-builds.outputs.android_native_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+      - name: Restore Android JS Build from S3 cache
+        uses: tespkg/actions-cache/restore@v1.9.0
+        with:
+          key: ${{ needs.determine-builds.outputs.android_js_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
       - name: Run Android Detox shard ${{ matrix.shard }}/3
         id: run-android
         run: pnpm mobile e2e:ci -p android --shard ${{ matrix.shard }}/3 ${ inputs.test_filter && `--filter "${{inputs.test_filter}}"` || "" }
@@ -267,7 +294,6 @@ jobs:
           INPUT_E2E: ${{ env.E2E_RUN }}
           PRODUCTION: ${{ inputs.production_firebase }}
           INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
-
       - name: Upload Android artifacts
         uses: actions/upload-artifact@v4
         with:
