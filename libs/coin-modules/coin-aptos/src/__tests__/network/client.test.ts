@@ -14,7 +14,7 @@ import {
 import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import { AptosAPI } from "../../network";
-import { AptosAsset } from "../../types/assets";
+// import { AptosAsset } from "../../types/assets";
 import { Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { APTOS_ASSET_ID } from "../../constants";
 import { AptosBalance, AptosTransaction } from "../../types";
@@ -622,9 +622,9 @@ describe("Aptos API", () => {
       const recipient = "address2";
 
       const api = new AptosAPI("aptos");
-      const transactionIntent: TransactionIntent<AptosAsset> = {
+      const transactionIntent: TransactionIntent = {
         asset: {
-          type: "native",
+          assetType: "native",
         },
         type: "send",
         sender: sender.freshAddress,
@@ -687,11 +687,11 @@ describe("Aptos API", () => {
       const recipient = "address2";
 
       const api = new AptosAPI("aptos");
-      const transactionIntent: TransactionIntent<AptosAsset> = {
+      const transactionIntent: TransactionIntent = {
         asset: {
-          type: "token",
-          standard: "coin",
-          contractAddress: "0x111",
+          assetType: "token",
+          assetOwner: "coin",
+          assetReference: "0x111",
         },
         type: "send",
         sender: sender.freshAddress,
@@ -753,11 +753,11 @@ describe("Aptos API", () => {
       const recipient = "address2";
 
       const api = new AptosAPI("aptos");
-      const transactionIntent: TransactionIntent<AptosAsset> = {
+      const transactionIntent: TransactionIntent = {
         asset: {
-          type: "token",
-          standard: "fungible_asset",
-          contractAddress: "0x111",
+          assetType: "token",
+          assetOwner: "fungible_asset",
+          assetReference: "0x111",
         },
         type: "send",
         sender: sender.freshAddress,

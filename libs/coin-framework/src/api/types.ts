@@ -9,14 +9,21 @@ export type BlockInfo = {
   time?: Date;
 };
 
-type TokenInfoCommon = Record<string, unknown>;
-// TODO add a `token: string` field to the pagination if we really need to support pagination (which is not the case for now)
-export type Asset<TokenInfo extends TokenInfoCommon = never> =
+export type AssetInfo = {
+  assetType: string;
+  assetReference?: string; // TODO: recheck with jnicouleau
+  assetOwner?: string; // TODO: do we need i ?
+  selling_liabilities?: string; //FIXME: used for stellar need to be remove from here
+  balance?: string; //FIXME: used for stellar need to be remove from here
+};
+
+export type Asset<TokenInfo extends AssetInfo = never> =
   | { type: "native" }
   | (TokenInfo extends never ? TokenInfo : { type: "token" } & TokenInfo);
 
+// NOTE: CoreOperation
 export type Operation<
-  AssetInfo extends Asset<TokenInfoCommon> = Asset<TokenInfoCommon>,
+  // AssetInfo extends Asset<TokenInfoCommon> = Asset<TokenInfoCommon>,
   MemoType extends Memo = MemoNotSupported,
 > = {
   id: string;
@@ -40,6 +47,7 @@ export type Operation<
    * This can include things like status, error messages, swap info, etc.
    */
   details?: Record<string, unknown>;
+  assetInfo?: AssetInfo; // TODO: recheck with jnicouleau
 
   tx: {
     hash: string; // transaction hash
@@ -64,7 +72,7 @@ export type Account = {
   currencyUnit: Unit;
 };
 
-export type Balance<AssetInfo extends Asset<TokenInfoCommon>> = {
+export type Balance = {
   value: bigint;
   locked?: bigint;
   asset: AssetInfo;
@@ -101,7 +109,7 @@ export interface TypedMapMemo<KindToValueMap extends Record<string, unknown>> ex
 type MaybeMemo<MemoType extends Memo> = MemoType extends MemoNotSupported ? {} : { memo: MemoType };
 
 export type TransactionIntent<
-  AssetInfo extends Asset<TokenInfoCommon>,
+  // AssetInfo extends Asset<TokenInfoCommon>,
   MemoType extends Memo = MemoNotSupported,
 > = {
   type: string;
@@ -144,28 +152,44 @@ export type AccountInfo = {
   balance: string;
   ownerCount: number;
   sequence: number;
+  assets?: AssetInfo[]; // BalanceAsset[]; // Optional, depending on the API
+  spendableBalance?: string; // Optional, depending on the API
 };
 
 export type AlpacaApi<
-  AssetInfo extends Asset<TokenInfoCommon>,
+  // AssetInfo extends Asset<TokenInfoCommon>,
   MemoType extends Memo = MemoNotSupported,
 > = {
   broadcast: (tx: string) => Promise<string>;
   combine: (tx: string, signature: string, pubkey?: string) => string | Promise<string>;
-  estimateFees: (
-    transactionIntent: TransactionIntent<AssetInfo, MemoType>,
-  ) => Promise<FeeEstimation>;
+  estimateFees: (transactionIntent: TransactionIntent<MemoType>) => Promise<FeeEstimation>;
   craftTransaction: (
-    transactionIntent: TransactionIntent<AssetInfo, MemoType>,
+    transactionIntent: TransactionIntent<MemoType>,
     customFees?: bigint,
   ) => Promise<string>;
-  getBalance: (address: string) => Promise<Balance<AssetInfo>[]>;
+  getBalance: (address: string) => Promise<Balance[]>;
   lastBlock: () => Promise<BlockInfo>;
   listOperations: (
     address: string,
-    pagination: Pagination,
-  ) => Promise<[Operation<AssetInfo>[], string]>;
+    pagination?: Pagination,
+    lastPagingToken?: string,
+  ) => Promise<[Operation[], string]>;
 };
+
+// NOTE: taken from coin-stellar/bridge/types
+// export type BalanceAsset = {
+//   balance: string;
+//   limit: string;
+//   buying_liabilities: string;
+//   selling_liabilities: string;
+//   last_modified_ledger: number;
+//   is_authorized: boolean;
+//   is_authorized_to_maintain_liabilities: boolean;
+//   asset_type: string;
+//   asset_code: string;
+//   asset_issuer: string;
+//   liquidity_pool_id?: string;
+// };
 
 export type BridgeApi = {
   validateIntent: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;
@@ -173,7 +197,4 @@ export type BridgeApi = {
   getAccountInfo: (address: string) => Promise<AccountInfo>;
 };
 
-export type Api<
-  AssetInfo extends Asset<TokenInfoCommon>,
-  MemoType extends Memo = MemoNotSupported,
-> = AlpacaApi<AssetInfo, MemoType> & BridgeApi;
+export type Api<MemoType extends Memo = MemoNotSupported> = AlpacaApi<MemoType> & BridgeApi;

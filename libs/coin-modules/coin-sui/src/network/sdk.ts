@@ -18,7 +18,7 @@ import type { Transaction as TransactionType } from "../types";
 import type { CreateExtrinsicArg } from "../logic/craftTransaction";
 import { ensureAddressFormat } from "../utils";
 import coinConfig from "../config";
-import { SuiAsset } from "../api/types";
+// import { SuiAsset } from "../api/types";
 
 type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
 
@@ -216,7 +216,7 @@ export function transactionToOperation(
   };
 }
 
-function transactionToOp(address: string, transaction: SuiTransactionBlockResponse): Op<SuiAsset> {
+function transactionToOp(address: string, transaction: SuiTransactionBlockResponse): Op {
   const type = getOperationType(address, transaction.transaction?.data);
   const coinType = getOperationCoinType(transaction);
   const hash = transaction.digest;
@@ -231,7 +231,7 @@ function transactionToOp(address: string, transaction: SuiTransactionBlockRespon
         height: BigInt(transaction.checkpoint || "") as unknown as number,
       },
     },
-    asset: { type: "native" },
+    asset: { assetType: "native" },
     recipients: getOperationRecipients(transaction.transaction?.data),
     senders: getOperationSenders(transaction.transaction?.data),
     type,
@@ -265,7 +265,7 @@ export const getOperations = async (
     return rawTransactions.map(transaction => transactionToOperation(accountId, addr, transaction));
   });
 
-export const getListOperations = async (addr: string, cursor = ""): Promise<Op<SuiAsset>[]> =>
+export const getListOperations = async (addr: string, cursor = ""): Promise<Op[]> =>
   withApi(async api => {
     const opsOut = await loadOperations({ api, addr, type: "OUT", cursor });
     const opsIn = await loadOperations({ api, addr, type: "IN", cursor });

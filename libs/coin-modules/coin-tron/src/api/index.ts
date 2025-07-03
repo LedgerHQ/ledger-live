@@ -16,9 +16,9 @@ import {
   lastBlock,
   Options,
 } from "../logic";
-import type { TronAsset, TronMemo } from "../types";
+import type { TronMemo } from "../types";
 
-export function createApi(config: TronConfig): AlpacaApi<TronAsset, TronMemo> {
+export function createApi(config: TronConfig): AlpacaApi<TronMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -32,18 +32,16 @@ export function createApi(config: TronConfig): AlpacaApi<TronAsset, TronMemo> {
   };
 }
 
-async function estimate(
-  transactionIntent: TransactionIntent<TronAsset, TronMemo>,
-): Promise<FeeEstimation> {
+async function estimate(transactionIntent: TransactionIntent<TronMemo>): Promise<FeeEstimation> {
   const fees = await estimateFees(transactionIntent);
   return { value: fees };
 }
 
 async function listOperations(
   address: string,
-  pagination: Pagination,
-): Promise<[Operation<TronAsset>[], string]> {
-  const { minHeight } = pagination;
+  pagination?: Pagination,
+): Promise<[Operation[], string]> {
+  const minHeight = pagination?.minHeight ?? 0;
   const options: Options = {
     softLimit: 200,
     minHeight: minHeight,

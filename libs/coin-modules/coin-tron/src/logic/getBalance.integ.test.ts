@@ -16,8 +16,10 @@ describe("getBalance", () => {
   it("fetches native and token balances for TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9", async () => {
     const balances = await getBalance("TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9");
 
-    expect(balances[0].asset).toEqual({ type: "native" });
-    balances.slice(1).forEach(balance => expect(balance.asset).toMatchObject({ type: "token" }));
+    expect(balances[0].asset).toEqual({ assetType: "native" });
+    balances
+      .slice(1)
+      .forEach(balance => expect(balance.asset).toMatchObject({ assetType: "token" }));
     balances.forEach(balance => expect(balance.value).toBeGreaterThanOrEqual(0));
   });
 });

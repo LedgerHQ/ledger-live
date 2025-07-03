@@ -4,4 +4,4 @@ export type StellarToken = {
   assetIssuer: string;
   assetCode: string;
 };
-export type StellarAsset = Asset<StellarToken>;
+export type StellarAsset = Asset;

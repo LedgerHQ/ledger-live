@@ -16,11 +16,13 @@ import {
   listOperations,
 } from "../logic";
 import { ListOperationsOptions } from "../logic/listOperations";
-import { StellarAsset, StellarMemo } from "../types";
+import { StellarMemo } from "../types";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { xdr } from "@stellar/stellar-sdk";
-export function createApi(config: StellarConfig): AlpacaApi<StellarAsset, StellarMemo> {
+import { fetchSequence } from "../network";
+import { getEnv } from "@ledgerhq/live-env";
+export function createApi(config: StellarConfig): Api<StellarMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -35,7 +37,7 @@ export function createApi(config: StellarConfig): AlpacaApi<StellarAsset, Stella
 }
 
 async function craft(
-  transactionIntent: TransactionIntent<StellarAsset, StellarMemo>,
+  transactionIntent: TransactionIntent<StellarMemo>,
   customFees?: bigint,
 ): Promise<string> {
   const fees = customFees !== undefined ? customFees : await estimateFees();
@@ -54,10 +56,10 @@ async function craft(
       recipient: transactionIntent.recipient,
       amount: transactionIntent.amount,
       fee: fees,
-      ...(transactionIntent.asset.type === "token"
+      ...(transactionIntent.asset.assetType === "token"
         ? {
-            assetCode: transactionIntent.asset.assetCode,
-            assetIssuer: transactionIntent.asset.assetIssuer,
+            assetCode: transactionIntent.asset.assetReference,
+            assetIssuer: transactionIntent.asset.assetOwner,
           }
         : {}),
       memoType: memo?.type,
@@ -94,13 +96,13 @@ type PaginationState = {
   readonly heightLimit: number;
   continueIterations: boolean;
   apiNextCursor?: string;
-  accumulator: Operation<StellarAsset>[];
+  accumulator: Operation[];
 };
 
 async function operationsFromHeight(
   address: string,
   minHeight: number,
-): Promise<[Operation<StellarAsset>[], string]> {
+): Promise<[Operation[], string]> {
   const state: PaginationState = {
     pageSize: 200,
     heightLimit: minHeight,

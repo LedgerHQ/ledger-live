@@ -1,9 +1,9 @@
 import type { AlpacaApi } from "@ledgerhq/coin-framework/api/index";
 import { createApi } from ".";
-import { PolkadotAsset } from "../types";
+// import { PolkadotAsset } from "../types";
 
 describe("Polkadot Api", () => {
-  let module: AlpacaApi<PolkadotAsset>;
+  let module: AlpacaApi;
   const address = "144HGaYrSdK3543bi26vT6Rd8Bg7pLPMipJNr2WLc3NuHgD2";
 
   beforeAll(() => {
@@ -33,7 +33,7 @@ describe("Polkadot Api", () => {
 
       // When
       const { value } = await module.estimateFees({
-        asset: { type: "native" },
+        asset: { assetType: "native" },
         type: "send",
         sender: address,
         recipient: "address",
@@ -88,7 +88,7 @@ describe("Polkadot Api", () => {
       const result = await module.getBalance(address);
 
       // Then
-      expect(result[0].asset).toEqual({ type: "native" });
+      expect(result[0].asset).toEqual({ assetType: "native" });
       expect(result[0].value).toBeGreaterThan(0);
     }, 10000);
   });
@@ -97,7 +97,7 @@ describe("Polkadot Api", () => {
     it("returns a raw transaction", async () => {
       // When
       const result = await module.craftTransaction({
-        asset: { type: "native" },
+        asset: { assetType: "native" },
         type: "send",
         sender: address,
         recipient: "16YreVmGhM8mNMqnsvK7rn7b1e4SKYsTfFUn4UfCZ65BgDjh",

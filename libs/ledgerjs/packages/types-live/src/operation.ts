@@ -57,6 +57,12 @@ export type OperationType =
   // SOLANA
   | "BURN";
 
+type AssetInfo = {
+  assetType: string;
+  assetReference?: string; // TODO: recheck with jnicouleau
+  assetOwner?: string; // TODO: do we need i ?
+};
+
 export type OperationExtra = unknown;
 /**
  * An Operation is the Ledger Live abstraction of a transaction for any blockchain
@@ -111,6 +117,7 @@ export type Operation<Extra = OperationExtra> = {
   // Operations related to ERC721 | ERC1155 tokens
   nftOperations?: Operation[];
   transactionRaw?: TransactionCommonRaw;
+  asset?: AssetInfo;
   // Extra crypto specific fields
   extra: Extra;
 };
@@ -143,6 +150,7 @@ export type OperationRaw<ExtraRaw = OperationExtraRaw> = {
   // Operations related to ERC721 | ERC1155 tokens
   nftOperations?: OperationRaw[];
   transactionRaw?: TransactionCommonRaw;
+  asset?: AssetInfo;
   // would be a serializable version of the extra
   extra: ExtraRaw;
 };

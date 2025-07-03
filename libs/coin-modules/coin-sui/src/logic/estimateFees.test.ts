@@ -27,7 +27,7 @@ describe("estimateFees", () => {
       recipient: "0x456",
       amount: BigInt("1000000000"),
       type: "send",
-      asset: { type: "native" as const },
+      asset: { assetType: "native" as const },
     };
 
     const result = await estimateFees(transactionIntent);
@@ -54,7 +54,7 @@ describe("estimateFees", () => {
       recipient: "0x456",
       amount: BigInt("0"),
       type: "send",
-      asset: { type: "native" as const },
+      asset: { assetType: "native" as const },
     };
 
     const result = await estimateFees(transactionIntent);

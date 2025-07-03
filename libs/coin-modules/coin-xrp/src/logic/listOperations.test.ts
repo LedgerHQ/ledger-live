@@ -3,7 +3,7 @@ import { listOperations } from "./listOperations";
 import { RIPPLE_EPOCH } from "./utils";
 import { Marker } from "../network/types";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
-import { XrpAsset } from "../types";
+// import { XrpAsset } from "../types";
 
 const maxHeight = 2;
 const minHeight = 1;
@@ -222,7 +222,7 @@ describe("listOperations", () => {
       expect(results).toEqual([
         {
           id: "HASH_VALUE",
-          asset: { type: "native" },
+          asset: { assetType: "native" },
           tx: {
             fees: BigInt(10),
             hash: "HASH_VALUE",
@@ -251,7 +251,7 @@ describe("listOperations", () => {
         },
         {
           id: "HASH_VALUE",
-          asset: { type: "native" },
+          asset: { assetType: "native" },
           tx: {
             hash: "HASH_VALUE",
             fees: BigInt(10),
@@ -275,7 +275,7 @@ describe("listOperations", () => {
         },
         {
           id: "HASH_VALUE",
-          asset: { type: "native" },
+          asset: { assetType: "native" },
           tx: {
             hash: "HASH_VALUE",
             fees: BigInt(10),
@@ -296,7 +296,7 @@ describe("listOperations", () => {
           senders: [opSender],
           recipients: [opDestination],
         },
-      ] satisfies Operation<XrpAsset>[]);
+      ] satisfies Operation[]);
     },
   );
 });

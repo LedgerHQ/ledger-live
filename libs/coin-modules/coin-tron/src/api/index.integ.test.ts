@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import TronWeb from "tronweb";
 import { createApi } from ".";
 import { createTronWeb } from "../logic/utils";
-import { TronAsset } from "../types";
+// import { TronAsset } from "../types";
 
 const TRONGRID_URL = "https://api.shasta.trongrid.io";
 dotenv.config();
@@ -25,7 +25,7 @@ const wallet = {
  * Testnet faucet: https://shasta.tronex.io/
  */
 describe("API", () => {
-  let module: AlpacaApi<TronAsset>;
+  let module: AlpacaApi;
   let tronWeb: TronWeb;
 
   beforeAll(() => {

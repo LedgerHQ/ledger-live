@@ -18,6 +18,6 @@ export const buildTransaction = async (
     recipient,
     type: mode,
     amount: BigInt(amount.toString()),
-    asset: { type: "native" },
+    asset: { assetType: "native" },
   });
 };

@@ -56,7 +56,7 @@ describe("listOperations", () => {
       [
         {
           id: "10-1",
-          asset: { type: "native" },
+          asset: { assetType: "native" },
           tx: {
             hash: "hash1",
             fees: BigInt(1),
@@ -73,7 +73,7 @@ describe("listOperations", () => {
         },
         {
           id: "11-1",
-          asset: { type: "native" },
+          asset: { assetType: "native" },
           tx: {
             hash: "hash2",
             fees: BigInt(5),
@@ -133,7 +133,7 @@ describe("listOperations", () => {
       [
         {
           id: "0-1",
-          asset: { type: "native" },
+          asset: { assetType: "native" },
           tx: {
             hash: "hash1",
             fees: BigInt(1),
@@ -181,7 +181,7 @@ describe("listOperations", () => {
       [
         {
           id: "10-1",
-          asset: { type: "native" },
+          asset: { assetType: "native" },
           tx: {
             hash: "hash1",
             fees: BigInt(1),

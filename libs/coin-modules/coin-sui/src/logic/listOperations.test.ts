@@ -21,7 +21,7 @@ const mockOperations: Operation<SuiAsset>[] = [
     type: "OUT",
     value: BigInt("1000000000"),
     asset: {
-      type: "native",
+      assetType: "native",
     },
   },
   {
@@ -39,7 +39,7 @@ const mockOperations: Operation<SuiAsset>[] = [
     type: "IN",
     value: BigInt("2000000000"),
     asset: {
-      type: "native",
+      assetType: "native",
     },
   },
 ];
