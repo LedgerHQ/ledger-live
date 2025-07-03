@@ -224,33 +224,73 @@ describe("getBalance", () => {
     const balance = await getBalance("41ae18eb0a9e067f8884058470ed187f44135d816d");
     expect(balance).toEqual([
       { asset: { type: "native" }, value: 27781772n },
-      { asset: { standard: "trc10", tokenId: "1002897", type: "token" }, value: 10000000n },
-      { asset: { standard: "trc10", tokenId: "1002775", type: "token" }, value: 5000000n },
-      { asset: { standard: "trc10", tokenId: "1002830", type: "token" }, value: 10000000n },
-      { asset: { standard: "trc10", tokenId: "1002962", type: "token" }, value: 10000000n },
-      { asset: { standard: "trc10", tokenId: "1002876", type: "token" }, value: 10000000n },
-      { asset: { standard: "trc10", tokenId: "1002398", type: "token" }, value: 5000000n },
-      { asset: { standard: "trc10", tokenId: "1002573", type: "token" }, value: 5000000n },
-      { asset: { standard: "trc10", tokenId: "1002881", type: "token" }, value: 10000000n },
-      { asset: { standard: "trc10", tokenId: "1002927", type: "token" }, value: 10000000n },
-      { asset: { standard: "trc10", tokenId: "1002736", type: "token" }, value: 5000000n },
-      { asset: { standard: "trc10", tokenId: "1002814", type: "token" }, value: 10000000n },
-      { asset: { standard: "trc10", tokenId: "1002858", type: "token" }, value: 10000000n },
-      { asset: { standard: "trc10", tokenId: "1002000", type: "token" }, value: 26888000n },
-      { asset: { standard: "trc10", tokenId: "1004031", type: "token" }, value: 9856699n },
+      {
+        asset: { type: "trc10", assetReference: "1002897" },
+        value: 10000000n,
+      },
+      {
+        asset: { type: "trc10", assetReference: "1002775" },
+        value: 5000000n,
+      },
+      {
+        asset: { type: "trc10", assetReference: "1002830" },
+        value: 10000000n,
+      },
+      {
+        asset: { type: "trc10", assetReference: "1002962" },
+        value: 10000000n,
+      },
+      {
+        asset: { type: "trc10", assetReference: "1002876" },
+        value: 10000000n,
+      },
+      {
+        asset: { type: "trc10", assetReference: "1002398" },
+        value: 5000000n,
+      },
+      {
+        asset: { type: "trc10", assetReference: "1002573" },
+        value: 5000000n,
+      },
+      {
+        asset: { type: "trc10", assetReference: "1002881" },
+        value: 10000000n,
+      },
+      {
+        asset: { type: "trc10", assetReference: "1002927" },
+        value: 10000000n,
+      },
+      {
+        asset: { type: "trc10", assetReference: "1002736" },
+        value: 5000000n,
+      },
+      {
+        asset: { type: "trc10", assetReference: "1002814" },
+        value: 10000000n,
+      },
+      {
+        asset: { type: "trc10", assetReference: "1002858" },
+        value: 10000000n,
+      },
+      {
+        asset: { type: "trc10", assetReference: "1002000" },
+        value: 26888000n,
+      },
+      {
+        asset: { type: "trc10", assetReference: "1004031" },
+        value: 9856699n,
+      },
       {
         asset: {
-          contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
-          standard: "trc20",
-          type: "token",
+          type: "trc20",
+          assetReference: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
         },
         value: 46825830n,
       },
       {
         asset: {
-          contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-          standard: "trc20",
-          type: "token",
+          type: "trc20",
+          assetReference: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
         },
         value: 376n,
       },

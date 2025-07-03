@@ -16,7 +16,7 @@ import { broadcast, combine, lastBlock } from "../logic/";
 import { EvmAsset } from "../types";
 import { craftTransaction } from "../logic/craftTransaction";
 
-export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): AlpacaApi<EvmAsset> {
+export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): AlpacaApi {
   setCoinConfig(() => ({ info: { ...config, status: { type: "active" } } }));
   const currency = getCryptoCurrencyById(currencyId);
 
@@ -28,18 +28,18 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Alpa
       transactionIntent: TransactionIntent<EvmAsset, MemoNotSupported>,
     ): Promise<string> => craftTransaction(currency, { transactionIntent }),
     estimateFees: (
-      _transactionIntent: TransactionIntent<EvmAsset, MemoNotSupported>,
+      _transactionIntent: TransactionIntent<MemoNotSupported>,
     ): Promise<FeeEstimation> => {
       throw new Error("UnsupportedMethod");
     },
-    getBalance: (_address: string): Promise<Balance<EvmAsset>[]> => {
+    getBalance: (_address: string): Promise<Balance[]> => {
       throw new Error("UnsupportedMethod");
     },
     lastBlock: (): Promise<BlockInfo> => lastBlock(currency),
     listOperations: (
       _address: string,
       _pagination: Pagination,
-    ): Promise<[Operation<EvmAsset, MemoNotSupported>[], string]> => {
+    ): Promise<[Operation<MemoNotSupported>[], string]> => {
       throw new Error("UnsupportedMethod");
     },
   };

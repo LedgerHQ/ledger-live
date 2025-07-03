@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { defaultFetchParams, fetchTronAccountTxs, getBlock } from "../network";
 import { fromTrongridTxInfoToOperation } from "../network/trongrid/trongrid-adapters";
-import { TrongridTxInfo, TronAsset } from "../types";
+import { TrongridTxInfo } from "../types";
 import { defaultOptions, listOperations } from "./listOperations";
 import type { Operation } from "@ledgerhq/coin-framework/api/index";
 
@@ -40,9 +40,9 @@ describe("listOperations", () => {
       { txID: "tx2", value: new BigNumber(42) },
     ];
 
-    const expectedOperations: Partial<Operation<TronAsset>>[] = [
-      { tx: { hash: "tx1" } as Partial<Operation<TronAsset>>["tx"], value: BigInt(0) },
-      { tx: { hash: "tx2" } as Partial<Operation<TronAsset>>["tx"], value: BigInt(42) },
+    const expectedOperations: Partial<Operation>[] = [
+      { tx: { hash: "tx1" } as Partial<Operation>["tx"], value: BigInt(0) },
+      { tx: { hash: "tx2" } as Partial<Operation>["tx"], value: BigInt(42) },
     ];
 
     (fetchTronAccountTxs as jest.Mock).mockResolvedValue(mockTxs);
@@ -68,7 +68,7 @@ describe("listOperations", () => {
 
   it("should handle empty transactions", async () => {
     const mockTxs: Partial<TrongridTxInfo>[] = [];
-    const expectedOperations: Partial<Operation<TronAsset>>[] = [];
+    const expectedOperations: Partial<Operation>[] = [];
 
     (fetchTronAccountTxs as jest.Mock).mockResolvedValue(mockTxs);
     (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation(() => null);
