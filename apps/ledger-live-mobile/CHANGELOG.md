@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.84.1
+
+### Patch Changes
+
+- [#10788](https://github.com/LedgerHQ/ledger-live/pull/10788) [`040e3b4`](https://github.com/LedgerHQ/ledger-live/commit/040e3b4451ed5a9b4c9185b8042eaf8c5ce66511) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump segment sdk to fix url issue
+
 ## 3.84.1-hotfix.0
 
 ### Patch Changes
