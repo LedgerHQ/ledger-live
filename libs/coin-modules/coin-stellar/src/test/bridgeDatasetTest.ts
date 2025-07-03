@@ -6,7 +6,7 @@ import {
   NotEnoughBalanceBecauseDestinationNotCreated,
 } from "@ledgerhq/errors";
 import type { Transaction } from "../types/index";
-import transactionTransformer from "../bridge/transaction";
+import transactionTransformer from "../transaction";
 import { StellarWrongMemoFormat } from "../types";
 
 export const dataset: DatasetTest<Transaction> = {
@@ -354,7 +354,7 @@ export const dataset: DatasetTest<Transaction> = {
               expectedStatus: {
                 // You can get the spendable balance here
                 // https://stellar.expert/explorer/public/account/GAS5NQ2VU6LA3QPDSCVBH66IHP2RE52VFCLFQKSGRF7VKMZA2KTLGI3M
-                amount: new BigNumber(12486674),
+                amount: new BigNumber(12486574),
                 errors: {},
                 warnings: {},
               },

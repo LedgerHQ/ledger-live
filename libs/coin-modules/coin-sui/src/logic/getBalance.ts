@@ -7,6 +7,7 @@ export async function getBalance(address: string): Promise<Balance[]> {
     {
       value: BigInt(balance.toString()),
       asset: { type: "native" },
+      spendableBalance: BigInt(balance.toString()),
     },
   ];
 }

@@ -9,18 +9,42 @@ function bnEq(a: BigNumber | null | undefined, b: BigNumber | null | undefined):
 
 export function genericPrepareTransaction(
   network: string,
-  kind: "local" | "remote",
+  kind,
 ): AccountBridge<TransactionCommon, Account, any, any>["prepareTransaction"] {
-  return async (account, transaction: TransactionCommon & { fees: BigNumber }) => {
+  return async (
+    account,
+    transaction: TransactionCommon & {
+      fees: BigNumber | null | undefined;
+      assetCode?: string;
+      assetIssuer?: string;
+      subAccountId?: string;
+    },
+  ) => {
+    const [assetCode, assetIssuer] = getAssetCodeIssuer(transaction);
     const fees = await getAlpacaApi(network, kind).estimateFees(
-      transactionToIntent(account, transaction),
+      transactionToIntent(account, {
+        ...transaction,
+        fees: transaction.fees ? BigInt(transaction.fees.toString()) : 0n,
+      }),
     );
-    const bnFee = BigNumber(fees.value.toString());
-
-    if (!bnEq(transaction.fees, bnFee)) {
-      return { ...transaction, fees: bnFee };
+    // NOTE: this is problematic, we should maybe have a method / object that lists what field warrant an update per chain
+    // for reference, stellar checked this:
+    // transaction.networkInfo !== networkInfo ||
+    // transaction.baseReserve !== baseReserve
+    if (!bnEq(transaction.fees, new BigNumber(fees.value.toString()))) {
+      return { ...transaction, fees: new BigNumber(fees.value.toString()), assetCode, assetIssuer };
     }
 
     return transaction;
   };
+}
+
+export function getAssetCodeIssuer(
+  tr: TransactionCommon & { assetCode?: string; assetIssuer?: string },
+): string[] {
+  if (tr.subAccountId) {
+    const assetString = tr.subAccountId.split("+")[1];
+    return assetString.split(":");
+  }
+  return [tr.assetCode || "", tr.assetIssuer || ""];
 }

@@ -53,6 +53,7 @@ async function balance(address: string): Promise<Balance[]> {
     {
       value,
       asset: { type: "native" },
+      spendableBalance: value,
     },
   ];
 }
@@ -176,7 +177,7 @@ async function operationsFromHeight(
 
 async function operations(
   address: string,
-  { minHeight }: Pagination,
+  pagination: Pagination = { minHeight: 0 },
 ): Promise<[Operation[], string]> {
-  return operationsFromHeight(address, minHeight);
+  return operationsFromHeight(address, pagination.minHeight);
 }

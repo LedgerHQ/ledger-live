@@ -10,7 +10,13 @@ describe("getBalance", () => {
       "native balance only", // test description
       { lastTokenOperations: [] }, // operation
       {}, // token balances (empty)
-      [{ value: BigInt("10000000000000000000000"), asset: { type: "native" } }], // expected
+      [
+        {
+          value: BigInt("1000000000000000000"),
+          asset: { type: "native" },
+          spendableBalance: BigInt("1000000000000000000"),
+        },
+      ], // expected
     ],
     [
       "native and token balances", // test description
@@ -19,14 +25,20 @@ describe("getBalance", () => {
       }, // operations
       { "0x123": "1000000", "0x456": "2000000" }, // token balances
       [
-        { value: BigInt("10000000000000000000000"), asset: { type: "native" } },
+        {
+          value: BigInt("1000000000000000000"),
+          asset: { type: "native" },
+          spendableBalance: BigInt("1000000000000000000"),
+        }, // native balance
         {
           value: BigInt("1000000"),
           asset: { type: "erc20", assetReference: "0x123" },
+          spendableBalance: BigInt("1000000"),
         },
         {
           value: BigInt("2000000"),
           asset: { type: "erc20", assetReference: "0x456" },
+          spendableBalance: BigInt("2000000"),
         },
       ], // expected
     ],

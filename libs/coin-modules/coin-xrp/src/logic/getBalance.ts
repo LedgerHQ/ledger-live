@@ -13,11 +13,13 @@ export async function getBalance(address: string): Promise<Balance[]> {
   const trustlines = accountInfo.ownerCount;
 
   const locked = reserveMinXRP.plus(reservePerTrustline.times(trustlines));
+  const spendableBalance = BigInt(accountInfo.balance) - BigInt(locked.toString());
   return [
     {
       value: BigInt(accountInfo.balance),
       asset: { type: "native" },
       locked: BigInt(locked.toString()),
+      spendableBalance: spendableBalance > 0 ? spendableBalance : BigInt(0),
     },
   ];
 }
