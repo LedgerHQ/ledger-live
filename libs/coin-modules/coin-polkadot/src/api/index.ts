@@ -18,9 +18,8 @@ import {
   lastBlock,
   listOperations,
 } from "../logic";
-import { PolkadotAsset } from "../types";
 
-export function createApi(config: PolkadotConfig): AlpacaApi<PolkadotAsset> {
+export function createApi(config: PolkadotConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -33,7 +32,7 @@ export function createApi(config: PolkadotConfig): AlpacaApi<PolkadotAsset> {
     getBalance,
     lastBlock,
     listOperations: operations,
-    getBlock(_height): Promise<Block<PolkadotAsset>> {
+    getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
     getBlockInfo(_height: number): Promise<BlockInfo> {
@@ -42,7 +41,7 @@ export function createApi(config: PolkadotConfig): AlpacaApi<PolkadotAsset> {
   };
 }
 
-async function craft(transactionIntent: TransactionIntent<PolkadotAsset>): Promise<string> {
+async function craft(transactionIntent: TransactionIntent): Promise<string> {
   const extrinsicArg = defaultExtrinsicArg(transactionIntent.amount, transactionIntent.recipient);
   //TODO: Retrieve correctly the nonce via a call to the node `await api.rpc.system.accountNextIndex(address)`
   const nonce = 0;
@@ -53,9 +52,7 @@ async function craft(transactionIntent: TransactionIntent<PolkadotAsset>): Promi
   return extrinsic.toHex();
 }
 
-async function estimate(
-  transactionIntent: TransactionIntent<PolkadotAsset>,
-): Promise<FeeEstimation> {
+async function estimate(transactionIntent: TransactionIntent): Promise<FeeEstimation> {
   const tx = await craftEstimationTransaction(transactionIntent.sender, transactionIntent.amount);
   const value = await estimateFees(tx);
   return { value };
@@ -64,7 +61,7 @@ async function estimate(
 async function operations(
   address: string,
   { minHeight }: Pagination,
-): Promise<[Operation<PolkadotAsset>[], string]> {
+): Promise<[Operation[], string]> {
   const [ops, nextHeight] = await listOperations(address, { limit: 0, startAt: minHeight });
   return [ops, JSON.stringify(nextHeight)];
 }

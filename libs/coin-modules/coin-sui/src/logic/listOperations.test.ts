@@ -1,11 +1,10 @@
 import { listOperations } from "./listOperations";
 import { getListOperations } from "../network/sdk";
 import { Operation, Pagination } from "@ledgerhq/coin-framework/lib/api/types";
-import { SuiAsset } from "../api/types";
 
 jest.mock("../network/sdk");
 
-const mockOperations: Operation<SuiAsset>[] = [
+const mockOperations: Operation[] = [
   {
     tx: {
       date: new Date("2024-03-20T10:00:00.000Z"),

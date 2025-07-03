@@ -48,7 +48,6 @@ import {
   Pagination,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
-import { AptosAsset } from "../types/assets";
 import { log } from "@ledgerhq/logs";
 import { transactionsToOperations } from "../logic/transactionsToOperations";
 import { isTestnet } from "../logic/isTestnet";
@@ -181,7 +180,7 @@ export class AptosAPI {
     };
   }
 
-  async estimateFees(transactionIntent: TransactionIntent<AptosAsset>): Promise<FeeEstimation> {
+  async estimateFees(transactionIntent: TransactionIntent): Promise<FeeEstimation> {
     const publicKeyEd = new Ed25519PublicKey(transactionIntent?.senderPublicKey ?? "");
 
     const txPayload: InputEntryFunctionData = {
@@ -190,20 +189,21 @@ export class AptosAPI {
       functionArguments: [transactionIntent.recipient, transactionIntent.amount],
     };
 
-    if (transactionIntent.asset.type === "token") {
-      const { standard } = transactionIntent.asset;
+    // TODO: this should be looked over again, might be more precise in terms of types..
+    if (transactionIntent.asset.type !== "native") {
+      const { type } = transactionIntent.asset;
 
-      if (standard === TOKEN_TYPE.FUNGIBLE_ASSET) {
+      if (type === TOKEN_TYPE.FUNGIBLE_ASSET) {
         txPayload.function = "0x1::primary_fungible_store::transfer";
         txPayload.typeArguments = ["0x1::fungible_asset::Metadata"];
         txPayload.functionArguments = [
-          transactionIntent.asset.contractAddress,
+          transactionIntent.asset.assetReference,
           transactionIntent.recipient,
           transactionIntent.amount,
         ];
-      } else if (standard === TOKEN_TYPE.COIN) {
+      } else if (type === TOKEN_TYPE.COIN) {
         txPayload.function = "0x1::aptos_account::transfer_coins";
-        txPayload.typeArguments = [transactionIntent.asset.contractAddress];
+        txPayload.typeArguments = [transactionIntent.asset.assetReference as string];
       }
     }
 
@@ -266,10 +266,7 @@ export class AptosAPI {
     }
   }
 
-  async listOperations(
-    rawAddress: string,
-    pagination: Pagination,
-  ): Promise<[Operation<AptosAsset>[], string]> {
+  async listOperations(rawAddress: string, pagination: Pagination): Promise<[Operation[], string]> {
     const address = normalizeAddress(rawAddress);
     const transactions = await this.getAccountInfo(address, pagination.minHeight.toString());
     const newOperations = transactionsToOperations(address, transactions.transactions);

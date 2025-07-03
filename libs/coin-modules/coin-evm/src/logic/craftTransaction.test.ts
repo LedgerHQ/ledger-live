@@ -5,7 +5,6 @@ import { ethers } from "ethers";
 import * as externalNode from "../network/node/rpc.common";
 import ledgerNode from "../network/node/ledger";
 import { EvmCoinConfig, setCoinConfig } from "../config";
-import { EvmAsset } from "../types";
 import { craftTransaction } from "./craftTransaction";
 
 describe("craftTransaction", () => {
@@ -62,7 +61,7 @@ describe("craftTransaction", () => {
             recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
             amount: 10n,
             asset: { type: "native" },
-          } as TransactionIntent<EvmAsset>,
+          } as TransactionIntent,
         }),
       ).toEqual(
         ethers.utils.serializeTransaction({
@@ -93,8 +92,8 @@ describe("craftTransaction", () => {
             type: `send-${transactionType}`,
             recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
             amount: 10n,
-            asset: { type: "token", contractAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" },
-          } as TransactionIntent<EvmAsset>,
+            asset: { type: "erc20", assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" },
+          } as TransactionIntent,
         }),
       ).toEqual(
         ethers.utils.serializeTransaction({
