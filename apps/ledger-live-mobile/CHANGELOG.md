@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.85.0-nightly.2
+
+### Minor Changes
+
+- [#10119](https://github.com/LedgerHQ/ledger-live/pull/10119) [`f5105d2`](https://github.com/LedgerHQ/ledger-live/commit/f5105d216264b2fd59fc66cf2b9b71f9ef6eb818) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Swap - Create custom method "custom.exchange.swap"
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/native-ui@0.38.0-nightly.1
+
 ## 3.85.0-nightly.1
 
 ### Patch Changes

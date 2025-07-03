@@ -1,5 +1,11 @@
 # @ledgerhq/coin-algorand
 
+## 0.11.0-nightly.2
+
+### Minor Changes
+
+- [#10747](https://github.com/LedgerHQ/ledger-live/pull/10747) [`288b552`](https://github.com/LedgerHQ/ledger-live/commit/288b552eb72b9e85c52c842f067df2952ea60bbd) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fox(coin-icon): remove max amount limit
+
 ## 0.10.12-nightly.1
 
 ### Patch Changes

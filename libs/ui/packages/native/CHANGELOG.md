@@ -1,5 +1,12 @@
 # @ledgerhq/native-ui
 
+## 0.38.0-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`061f626`](https://github.com/LedgerHQ/ledger-live/commit/061f6268cbbf0f56d90cd2d117b714fe8559d271)]:
+  - @ledgerhq/crypto-icons-ui@1.16.0-nightly.0
+
 ## 0.38.0-nightly.0
 
 ### Minor Changes

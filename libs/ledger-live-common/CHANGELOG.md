@@ -1,5 +1,18 @@
 # @ledgerhq/live-common
 
+## 34.40.0-nightly.2
+
+### Minor Changes
+
+- [#10119](https://github.com/LedgerHQ/ledger-live/pull/10119) [`f5105d2`](https://github.com/LedgerHQ/ledger-live/commit/f5105d216264b2fd59fc66cf2b9b71f9ef6eb818) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Swap - Create custom method "custom.exchange.swap"
+
+### Patch Changes
+
+- Updated dependencies [[`061f626`](https://github.com/LedgerHQ/ledger-live/commit/061f6268cbbf0f56d90cd2d117b714fe8559d271), [`f5105d2`](https://github.com/LedgerHQ/ledger-live/commit/f5105d216264b2fd59fc66cf2b9b71f9ef6eb818), [`288b552`](https://github.com/LedgerHQ/ledger-live/commit/288b552eb72b9e85c52c842f067df2952ea60bbd)]:
+  - @ledgerhq/crypto-icons-ui@1.16.0-nightly.0
+  - @ledgerhq/wallet-api-exchange-module@0.14.0-nightly.0
+  - @ledgerhq/coin-icon@0.11.0-nightly.2
+
 ## 34.40.0-nightly.1
 
 ### Minor Changes

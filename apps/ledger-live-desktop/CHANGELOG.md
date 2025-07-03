@@ -1,5 +1,20 @@
 # ledger-live-desktop
 
+## 2.120.0-nightly.2
+
+### Minor Changes
+
+- [#10119](https://github.com/LedgerHQ/ledger-live/pull/10119) [`f5105d2`](https://github.com/LedgerHQ/ledger-live/commit/f5105d216264b2fd59fc66cf2b9b71f9ef6eb818) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Swap - Create custom method "custom.exchange.swap"
+
+- [#10777](https://github.com/LedgerHQ/ledger-live/pull/10777) [`dac52a2`](https://github.com/LedgerHQ/ledger-live/commit/dac52a294282045751ca722747108435303085b8) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD & AA quick wins
+
+### Patch Changes
+
+- Updated dependencies [[`758e37c`](https://github.com/LedgerHQ/ledger-live/commit/758e37ccfb0bd44541b2aeca57fb4a902882c375), [`f5105d2`](https://github.com/LedgerHQ/ledger-live/commit/f5105d216264b2fd59fc66cf2b9b71f9ef6eb818)]:
+  - @ledgerhq/react-ui@0.32.0-nightly.1
+  - @ledgerhq/live-common@34.40.0-nightly.2
+  - @ledgerhq/live-dmk-desktop@0.7.0-nightly.2
+
 ## 2.120.0-nightly.1
 
 ### Minor Changes
