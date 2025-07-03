@@ -1,6 +1,5 @@
 import { AlpacaApi, FeeEstimation } from "@ledgerhq/coin-framework/lib/api/types";
 import { EvmConfig } from "../config";
-import { EvmAsset } from "../types";
 import { createApi } from "./index";
 
 describe.each([

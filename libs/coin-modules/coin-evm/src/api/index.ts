@@ -23,7 +23,7 @@ import {
 } from "../logic/";
 import { EvmAsset } from "../types";
 
-export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): AlpacaApi<EvmAsset> {
+export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): AlpacaApi {
   setCoinConfig(() => ({ info: { ...config, status: { type: "active" } } }));
   const currency = getCryptoCurrencyById(currencyId);
 

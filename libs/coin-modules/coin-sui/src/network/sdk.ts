@@ -237,7 +237,7 @@ export function transactionToOperation(
   };
 }
 
-function transactionToOp(address: string, transaction: SuiTransactionBlockResponse): Op<SuiAsset> {
+function transactionToOp(address: string, transaction: SuiTransactionBlockResponse): Op {
   const type = getOperationType(address, transaction.transaction?.data);
   const coinType = getOperationCoinType(transaction);
   const hash = transaction.digest;
@@ -286,7 +286,7 @@ export const getOperations = async (
     return rawTransactions.map(transaction => transactionToOperation(accountId, addr, transaction));
   });
 
-export const getListOperations = async (addr: string, cursor = ""): Promise<Op<SuiAsset>[]> =>
+export const getListOperations = async (addr: string, cursor = ""): Promise<Op[]> =>
   withApi(async api => {
     const opsOut = await loadOperations({ api, addr, type: "OUT", cursor });
     const opsIn = await loadOperations({ api, addr, type: "IN", cursor });
