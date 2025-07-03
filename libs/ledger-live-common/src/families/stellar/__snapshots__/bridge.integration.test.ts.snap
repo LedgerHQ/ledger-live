@@ -118,8 +118,8 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
   [
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "ef457e3171c63398ecc9935759502cc1f41f472ee0b188553515bfa45b9404b0",
-      "blockHeight": 56002611,
+      "blockHash": "a49467d7feb75bcb4b287cfa9d38a00258005e81f462ad5fbb76c73c2ff7b6a6",
+      "blockHeight": 54142073,
       "extra": {
         "assetAmount": "1",
         "ledgerOpType": "IN",
@@ -135,16 +135,16 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "senders": [
-        "GCVTUT4QMMCZFKOQTXFRHWFGBT6B4V3GUECDE6OVNC6HFKSPOBHHTBHI",
+        "GAJSV2O545Z6ZK7FTPW2GOYNKMYJMP2REUJV4AW6DSYTYUHVI3N2DA6B",
       ],
-      "transactionSequenceNumber": 240200272276634700,
+      "transactionSequenceNumber": 224182342070057570,
       "type": "IN",
       "value": "1",
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "a7769b7f7c72338772933bd009182489c81e44b2e7b73c8395b73726318fc139",
-      "blockHeight": 53991651,
+      "blockHash": "45d6a185a2879f85c29ed8c16997ff759c9042441f625029c9da9ec41b96f7b4",
+      "blockHeight": 57890209,
       "extra": {
         "assetAmount": "1",
         "ledgerOpType": "IN",
@@ -235,9 +235,9 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "senders": [
-        "GAJSV2O545Z6ZK7FTPW2GOYNKMYJMP2REUJV4AW6DSYTYUHVI3N2DA6B",
+        "GB7T62LJPM7RAQOILVX6DDPVNJQLMIBKGV6SJGXUWOB7IAFGR5US6WS3",
       ],
-      "transactionSequenceNumber": 224182342070057570,
+      "transactionSequenceNumber": 247017862844123260,
       "type": "IN",
       "value": "1",
     },
@@ -335,9 +335,9 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "senders": [
-        "GBDBVQPLYTGE746IPBUZ2WVZIQ7ITEQI7WTAIRHOWDOJKFCZPUOFLLMC",
+        "GBLYYM2TF6MTXS52QXGZAEDKB6WGQWBH3Y6WJANED4O7KBYU7SCGZGCA",
       ],
-      "transactionSequenceNumber": 224182496688895580,
+      "transactionSequenceNumber": 243671000988784640,
       "type": "IN",
       "value": "1",
     },
@@ -1168,8 +1168,8 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "5191797a97efb0522da6d96fef96790251fa5b9e7caf9803c3105bc1b10378b4",
-      "blockHeight": 55322359,
+      "blockHash": "77e7aa328a0e0ee36ffa181024d15108b04a44378e9fd072e26c6fa2ab135276",
+      "blockHeight": 57842434,
       "extra": {
         "assetAmount": "1",
         "ledgerOpType": "IN",
@@ -1560,16 +1560,16 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "senders": [
-        "GAJSV2O545Z6ZK7FTPW2GOYNKMYJMP2REUJV4AW6DSYTYUHVI3N2DA6B",
+        "GDVDHOAN7AFU2ZVJHUHSC7MCF756FINXPHKMXVXLUO2BLRVCBCHPYVIA",
       ],
-      "transactionSequenceNumber": 224182342070058530,
+      "transactionSequenceNumber": 242646183137257900,
       "type": "IN",
       "value": "1",
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "e04e717c77b1c8483b71759b0fc4c0a56b4fe14442e2ef902c058e1c1d07cb82",
-      "blockHeight": 54119932,
+      "blockHash": "8279d9992095515d69a8bc6d598f2d23757ad9e28b3a1546e12d211a21a98b0f",
+      "blockHeight": 57882240,
       "extra": {
         "assetAmount": "1",
         "ledgerOpType": "IN",
@@ -1585,9 +1585,9 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "senders": [
-        "GAJSV2O545Z6ZK7FTPW2GOYNKMYJMP2REUJV4AW6DSYTYUHVI3N2DA6B",
+        "GDWRQJE5LV6BJ4YPQEXPNEMPESBS2YEN4AD75HQJWS67LQ3USWFPXYJT",
       ],
-      "transactionSequenceNumber": 224182342070056600,
+      "transactionSequenceNumber": 248584795762721280,
       "type": "IN",
       "value": "1",
     },

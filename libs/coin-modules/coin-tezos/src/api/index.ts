@@ -63,6 +63,7 @@ async function balance(address: string): Promise<Balance[]> {
     {
       value,
       asset: { type: "native" },
+      spendableBalance: value,
     },
   ];
 }
