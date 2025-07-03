@@ -101,7 +101,7 @@ const ActionsContainer = ({ account, currencyId }: Props) => {
       height="100%"
       flex={1}
     >
-      <Flex flexDirection="column" width="100%" paddingX={24} paddingTop={24} rowGap={12}>
+      <Flex flexDirection="column" width="100%" paddingX={24} paddingTop={24}>
         {actions.map((action, index) => (
           <ActionItem
             key={index}

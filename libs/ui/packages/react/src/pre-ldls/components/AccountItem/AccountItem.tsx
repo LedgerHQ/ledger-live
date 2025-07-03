@@ -54,7 +54,6 @@ const Wrapper = styled.div<{ backgroundColor?: string; isClickable: boolean }>`
 
   display: flex;
   cursor: ${p => (p.isClickable ? "pointer" : "default")};
-  border-radius: var(--radius-m);
   justify-content: space-between;
   align-items: center;
   width: 100%;
@@ -68,6 +67,7 @@ const Wrapper = styled.div<{ backgroundColor?: string; isClickable: boolean }>`
   ${p =>
     p.isClickable
       ? `
+    border-radius: var(--radius-m);
     padding: var(--margin-s);
     :hover {
       background-color: var(--colors-surface-transparent-hover);

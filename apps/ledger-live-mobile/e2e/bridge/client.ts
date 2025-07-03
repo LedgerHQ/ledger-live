@@ -187,6 +187,13 @@ export function sendWalletAPIResponse(payload: Record<string, unknown>) {
   });
 }
 
+export function sendFile(payload: { fileName: string; fileContent: string }) {
+  postMessage({
+    type: "appFile",
+    payload: JSON.stringify(payload),
+  });
+}
+
 export function sendSwapLiveAppReady() {
   postMessage({
     type: "swapLiveAppReady",
