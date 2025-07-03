@@ -1,5 +1,10 @@
 # live-mobile
 
+## 3.85.0-next.3
+
+### Minor Changes
+
+- [#10801](https://github.com/LedgerHQ/ledger-live/pull/10801) [`223473f`](https://github.com/LedgerHQ/ledger-live/commit/223473ffc5285af94c302878cab9d0d6445596cf) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Downgrade expo-camera
 
 ## 3.84.1
 
@@ -67,7 +72,6 @@
   - @ledgerhq/live-nft-react@0.9.12-next.0
   - @ledgerhq/live-wallet@0.11.3-next.0
   - @ledgerhq/domain-service@1.2.35-next.0
-
 
 ## 3.84.0
 
