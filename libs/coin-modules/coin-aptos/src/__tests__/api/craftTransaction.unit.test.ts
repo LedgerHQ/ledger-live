@@ -1,7 +1,6 @@
 import { Hex, RawTransaction, Deserializer } from "@aptos-labs/ts-sdk";
 import type { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { createApi } from "../../api";
-import type { AptosAsset } from "../../types/assets";
 import { AptosAPI } from "../../network";
 import { APTOS_ASSET_ID } from "../../constants";
 
@@ -45,13 +44,13 @@ describe("craftTransaction", () => {
       aptosSettings: {},
     });
 
-    const txArg: TransactionIntent<AptosAsset> = {
+    const txArg: TransactionIntent = {
       type: "send",
       sender: SENDER_ADDR,
       senderPublicKey: "public-key",
       recipient: RECIPIENT_ADDR,
       amount: 10n,
-      asset: { type: "token", standard: "coin", contractAddress: "0x42::token::Token" },
+      asset: { type: "token", standard: "coin", assetReference: "0x42::token::Token" },
     };
 
     const tx = await api.craftTransaction(txArg);
@@ -86,7 +85,7 @@ describe("craftTransaction", () => {
       aptosSettings: {},
     });
 
-    const txArg: TransactionIntent<AptosAsset> = {
+    const txArg: TransactionIntent = {
       type: "send",
       sender: SENDER_ADDR,
       senderPublicKey: "public-key",
@@ -127,13 +126,13 @@ describe("craftTransaction", () => {
       aptosSettings: {},
     });
 
-    const txArg: TransactionIntent<AptosAsset> = {
+    const txArg: TransactionIntent = {
       type: "send",
       sender: SENDER_ADDR,
       senderPublicKey: "public-key",
       recipient: RECIPIENT_ADDR,
       amount: 10n,
-      asset: { type: "token", standard: "coin", contractAddress: "0x42::token::Token" },
+      asset: { type: "token", standard: "coin", assetReference: "0x42::token::Token" },
     };
 
     const tx = await api.craftTransaction(txArg);
@@ -168,13 +167,13 @@ describe("craftTransaction", () => {
       aptosSettings: {},
     });
 
-    const txArg: TransactionIntent<AptosAsset> = {
+    const txArg: TransactionIntent = {
       type: "send",
       sender: SENDER_ADDR,
       senderPublicKey: "public-key",
       recipient: RECIPIENT_ADDR,
       amount: 0n,
-      asset: { type: "token", standard: "fungible_asset", contractAddress: "0x42" },
+      asset: { type: "token", standard: "fungible_asset", assetReference: "0x42" },
     };
 
     const tx = await api.craftTransaction(txArg);
@@ -209,13 +208,14 @@ describe("craftTransaction", () => {
       aptosSettings: {},
     });
 
-    const txArg: TransactionIntent<AptosAsset> = {
+    const txArg: TransactionIntent = {
       type: "send",
       sender: SENDER_ADDR,
       senderPublicKey: "public-key",
       recipient: RECIPIENT_ADDR,
       amount: 10n,
-      asset: { type: "token", standard: "asset", contractAddress: "0x42::token::Token" },
+      // @ts-expect-error intentionally assigning invalid standard
+      asset: { type: "token", standard: "asset", assetReference: "0x42::token::Token" },
     };
 
     expect(async () => await api.craftTransaction(txArg)).rejects.toThrow(

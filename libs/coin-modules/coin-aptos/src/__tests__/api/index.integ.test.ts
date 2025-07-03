@@ -73,7 +73,7 @@ describe("createApi", () => {
         asset: {
           type: "token",
           standard: "coin",
-          contractAddress:
+          assetReference:
             "0x50788befc1107c0cc4473848a92e5c783c635866ce3c98de71d2eeb7d2a34f85::usdc_coin::USDCoin",
         },
         type: "send",
@@ -93,7 +93,7 @@ describe("createApi", () => {
         asset: {
           type: "token",
           standard: "fungible_asset",
-          contractAddress: "0x357b0b74bc833e95a115ad22604854d6b0fca151cecd94111770e5d6ffc9dc2b",
+          assetReference: "0x357b0b74bc833e95a115ad22604854d6b0fca151cecd94111770e5d6ffc9dc2b",
         },
         type: "send",
         sender: sender.freshAddress,
@@ -140,7 +140,7 @@ describe("createApi", () => {
           asset: {
             type: "token",
             standard: "coin",
-            contractAddress:
+            assetReference:
               "0x50788befc1107c0cc4473848a92e5c783c635866ce3c98de71d2eeb7d2a34f85::aptos_coin::AptosCoin",
           },
         },
@@ -167,7 +167,7 @@ describe("createApi", () => {
           asset: {
             type: "token",
             standard: "coin",
-            contractAddress:
+            assetReference:
               "0x50788befc1107c0cc4473848a92e5c783c635866ce3c98de71d2eeb7d2a34f85::aptos_coin::AptosCoin",
           },
         },
@@ -196,7 +196,7 @@ describe("createApi", () => {
           asset: {
             type: "token",
             standard: "fungible_asset",
-            contractAddress: "0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
+            assetReference: "0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
           },
         },
         0n,
@@ -225,7 +225,7 @@ describe("createApi", () => {
       const tokenBalances = balances.filter(
         b =>
           b.asset.type === assetTypeToken &&
-          b.asset.contractAddress ===
+          b.asset.assetReference ===
             "0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
       );
       expect(tokenBalances.length).toBeGreaterThan(0);
@@ -347,7 +347,7 @@ describe("createApi", () => {
         asset: {
           type: "token",
           standard: "coin",
-          contractAddress:
+          assetReference:
             "0xd11107bdf0d6d7040c6c0bfbdecb6545191fdf13e8d8d259952f53e1713f61b5::staked_coin::StakedAptos",
         },
         tx: {
@@ -366,7 +366,7 @@ describe("createApi", () => {
         asset: {
           type: "token",
           standard: "coin",
-          contractAddress:
+          assetReference:
             "0xd11107bdf0d6d7040c6c0bfbdecb6545191fdf13e8d8d259952f53e1713f61b5::staked_coin::StakedAptos",
         },
         tx: {
@@ -390,7 +390,7 @@ describe("createApi", () => {
         asset: {
           type: "token",
           standard: "fungible_asset",
-          contractAddress: "0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
+          assetReference: "0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
         },
         tx: {
           hash: "0x88856968603dee4f08579036bc30322b9a5f329561656888e3467ce27cc11ea7",
@@ -408,7 +408,7 @@ describe("createApi", () => {
         asset: {
           type: "token",
           standard: "fungible_asset",
-          contractAddress: "0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
+          assetReference: "0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
         },
         tx: {
           hash: "0x8aa9e980760fe8aeb6804f387350b3019a2471aa61a5506a260c32cd5d6db32c",

@@ -44,7 +44,7 @@ describe("fromTrongridTxInfoToOperation", () => {
       value: BigInt(5000),
       senders: ["from"],
       recipients: ["to"],
-      asset: { standard: "trc20", contractAddress: "boo", type: "token" },
+      asset: { type: "token", standard: "trc20", assetReference: "boo" },
     });
   });
 

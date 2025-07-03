@@ -40,7 +40,7 @@ export const genericSignOperation =
           const transactionIntent = transactionToIntent(account, transaction);
           transactionIntent.senderPublicKey = publicKey;
           // NOTE: is setting the memo here instead of transactionToIntent sensible?
-          const txWithMemo = transactionIntent as TransactionIntent<any, MapMemo<string, string>>;
+          const txWithMemo = transactionIntent as TransactionIntent<MapMemo<string, string>>;
           if (transaction["tag"]) {
             const txMemo = String(transaction["tag"]);
             txWithMemo.memo = {

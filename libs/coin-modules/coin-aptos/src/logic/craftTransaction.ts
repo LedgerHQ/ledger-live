@@ -1,5 +1,4 @@
 import type { TransactionIntent } from "@ledgerhq/coin-framework/lib/api/types";
-import type { AptosAsset } from "../types/assets";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { AptosAPI } from "../network";
 import buildTransaction, { isTokenType } from "./buildTransaction";
@@ -10,7 +9,7 @@ import type { AptosBalance } from "../types";
 
 export async function craftTransaction(
   aptosClient: AptosAPI,
-  transactionIntent: TransactionIntent<AptosAsset>,
+  transactionIntent: TransactionIntent,
 ): Promise<string> {
   const newTx = createTransaction();
   newTx.amount = BigNumber(transactionIntent.amount.toString());
@@ -39,7 +38,7 @@ export async function craftTransaction(
     }
   }
 
-  if (transactionIntent.asset.type === "token") {
+  if (transactionIntent.asset.type !== "native") {
     tokenType = transactionIntent.asset.standard as TOKEN_TYPE;
   }
 
@@ -54,9 +53,9 @@ export async function craftTransaction(
   return aptosTx.bcsToHex().toString();
 }
 
-function getContractAddress(txIntent: TransactionIntent<AptosAsset>): string {
-  if (txIntent.asset.type === "token" && isTokenType(txIntent.asset.standard)) {
-    return txIntent.asset.contractAddress;
+function getContractAddress(txIntent: TransactionIntent): string {
+  if (txIntent.asset.type !== "native" && isTokenType(txIntent.asset.standard as string)) {
+    return txIntent.asset.assetReference as string;
   }
 
   return APTOS_ASSET_ID;

@@ -1,6 +1,5 @@
 export * from "./bridge";
 export * from "./signer";
-export * from "./assets";
 
 export type BoilerplateNativeTransaction = {
   TransactionType: "Payment";

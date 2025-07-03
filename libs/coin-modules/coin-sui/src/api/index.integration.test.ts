@@ -1,10 +1,9 @@
 import type { AlpacaApi, FeeEstimation, Operation } from "@ledgerhq/coin-framework/api/types";
 import { getEnv } from "@ledgerhq/live-env";
-import { SuiAsset } from "./types";
 import { createApi } from ".";
 
 describe("Sui Api", () => {
-  let module: AlpacaApi<SuiAsset>;
+  let module: AlpacaApi;
   const SENDER = "0x67b511de2697e4567e41a4477a3abccd4c7c00f4c59b45ab8c72d1544f58ceb8";
   const RECIPIENT = "0xba7080172a6d957b9ed2e3eb643529860be963cf4af896fb84f1cde00f46b561";
 
@@ -39,7 +38,7 @@ describe("Sui Api", () => {
   });
 
   describe("listOperations", () => {
-    let txs: Operation<SuiAsset>[];
+    let txs: Operation[];
 
     beforeAll(async () => {
       [txs] = await module.listOperations(SENDER, { minHeight: 0 });

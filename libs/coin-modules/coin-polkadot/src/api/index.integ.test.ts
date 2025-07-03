@@ -1,9 +1,8 @@
 import type { AlpacaApi } from "@ledgerhq/coin-framework/api/index";
 import { createApi } from ".";
-import { PolkadotAsset } from "../types";
 
 describe("Polkadot Api", () => {
-  let module: AlpacaApi<PolkadotAsset>;
+  let module: AlpacaApi;
   const address = "144HGaYrSdK3543bi26vT6Rd8Bg7pLPMipJNr2WLc3NuHgD2";
 
   beforeAll(() => {

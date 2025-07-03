@@ -1,14 +1,13 @@
 import BigNumber from "bignumber.js";
 import type { AccountTronAPI } from "../network/types";
 import { getTronResources } from "./utils";
-import { Asset, Balance } from "@ledgerhq/coin-framework/api/index";
+import { Balance } from "@ledgerhq/coin-framework/api/index";
 import { fetchTronAccount } from "../network";
-import { Trc10Token, Trc20Token, TronAsset } from "../types";
 
 const bigIntOrZero = (val: number | BigNumber | undefined | null): bigint =>
   BigInt(val?.toString() ?? 0);
 
-export async function getBalance(address: string): Promise<Balance<TronAsset>[]> {
+export async function getBalance(address: string): Promise<Balance[]> {
   const accounts = await fetchTronAccount(address);
 
   // if account is not activated, an empty array is returned
@@ -16,14 +15,14 @@ export async function getBalance(address: string): Promise<Balance<TronAsset>[]>
 
   const account = accounts[0];
 
-  const nativeBalance: Balance<TronAsset> = computeBalance(account);
-  const trc10Balance: Balance<TronAsset>[] = extractTrc10Balance(account);
-  const trc20Balance: Balance<TronAsset>[] = extractTrc20Balance(account);
+  const nativeBalance: Balance = computeBalance(account);
+  const trc10Balance: Balance[] = extractTrc10Balance(account);
+  const trc20Balance: Balance[] = extractTrc20Balance(account);
 
   return [nativeBalance].concat(trc10Balance).concat(trc20Balance);
 }
 
-function extractTrc10Balance(account: AccountTronAPI): Balance<Asset<Trc10Token>>[] {
+function extractTrc10Balance(account: AccountTronAPI): Balance[] {
   return (
     account.assetV2?.map(trc => {
       return {
@@ -31,14 +30,14 @@ function extractTrc10Balance(account: AccountTronAPI): Balance<Asset<Trc10Token>
         asset: {
           type: "token",
           standard: "trc10",
-          tokenId: trc.key,
+          assetReference: trc.key,
         },
       };
     }) ?? []
   );
 }
 
-function extractTrc20Balance(account: AccountTronAPI): Balance<Asset<Trc20Token>>[] {
+function extractTrc20Balance(account: AccountTronAPI): Balance[] {
   return account.trc20.map(trc => {
     const [[contractAddress, balance]] = Object.entries(trc);
     return {
@@ -46,13 +45,13 @@ function extractTrc20Balance(account: AccountTronAPI): Balance<Asset<Trc20Token>
       asset: {
         type: "token",
         standard: "trc20",
-        contractAddress,
+        assetReference: contractAddress,
       },
     };
   });
 }
 
-export function computeBalance(account: AccountTronAPI): Balance<Asset> {
+export function computeBalance(account: AccountTronAPI): Balance {
   const tronResources = getTronResources(account);
 
   let balance = bigIntOrZero(account.balance ?? 0);

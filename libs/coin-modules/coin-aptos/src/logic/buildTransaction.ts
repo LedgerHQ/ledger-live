@@ -63,6 +63,7 @@ const getPayload = (args: {
   };
 };
 
+// FIXME: terminology overlop, using tokentype here when AssetInfo refers to `standard`
 export const isTokenType = (value: string): boolean => {
   return Object.values(TOKEN_TYPE).includes(value as TOKEN_TYPE);
 };

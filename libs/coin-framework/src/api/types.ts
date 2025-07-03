@@ -9,16 +9,24 @@ export type BlockInfo = {
   time?: Date;
 };
 
-type TokenInfoCommon = Record<string, unknown>;
-// TODO add a `token: string` field to the pagination if we really need to support pagination (which is not the case for now)
-export type Asset<TokenInfo extends TokenInfoCommon = never> =
-  | { type: "native" }
-  | (TokenInfo extends never ? TokenInfo : { type: "token" } & TokenInfo);
+export type TokenStandard =
+  | "coin" // Aptos native token type
+  | "fungible_asset" // Aptos FA standard
+  | "trc10"
+  | "trc20";
+// | string;              // for future extension (e.g., sui, custom, etc.)
 
-export type Operation<
-  AssetInfo extends Asset<TokenInfoCommon> = Asset<TokenInfoCommon>,
-  MemoType extends Memo = MemoNotSupported,
-> = {
+export type AssetInfo =
+  | { type: "native" }
+  | {
+      type: "token";
+      standard?: TokenStandard;
+      assetReference?: string; // contract address (trc20), tokenId (trc10),, etc
+      assetOwner?: string;
+    };
+
+// NOTE: CoreOperation
+export type Operation<MemoType extends Memo = MemoNotSupported> = {
   id: string;
   type: string;
 
@@ -40,6 +48,7 @@ export type Operation<
    * This can include things like status, error messages, swap info, etc.
    */
   details?: Record<string, unknown>;
+  assetInfo?: AssetInfo;
 
   tx: {
     hash: string; // transaction hash
@@ -64,7 +73,7 @@ export type Account = {
   currencyUnit: Unit;
 };
 
-export type Balance<AssetInfo extends Asset<TokenInfoCommon>> = {
+export type Balance = {
   value: bigint;
   locked?: bigint;
   asset: AssetInfo;
@@ -100,10 +109,7 @@ export interface TypedMapMemo<KindToValueMap extends Record<string, unknown>> ex
 // eslint-disable-next-line @typescript-eslint/ban-types
 type MaybeMemo<MemoType extends Memo> = MemoType extends MemoNotSupported ? {} : { memo: MemoType };
 
-export type TransactionIntent<
-  AssetInfo extends Asset<TokenInfoCommon>,
-  MemoType extends Memo = MemoNotSupported,
-> = {
+export type TransactionIntent<MemoType extends Memo = MemoNotSupported> = {
   type: string;
   sender: string;
   senderPublicKey?: string;
@@ -146,25 +152,17 @@ export type AccountInfo = {
   sequence: number;
 };
 
-export type AlpacaApi<
-  AssetInfo extends Asset<TokenInfoCommon>,
-  MemoType extends Memo = MemoNotSupported,
-> = {
+export type AlpacaApi<MemoType extends Memo = MemoNotSupported> = {
   broadcast: (tx: string) => Promise<string>;
   combine: (tx: string, signature: string, pubkey?: string) => string | Promise<string>;
-  estimateFees: (
-    transactionIntent: TransactionIntent<AssetInfo, MemoType>,
-  ) => Promise<FeeEstimation>;
+  estimateFees: (transactionIntent: TransactionIntent<MemoType>) => Promise<FeeEstimation>;
   craftTransaction: (
-    transactionIntent: TransactionIntent<AssetInfo, MemoType>,
+    transactionIntent: TransactionIntent<MemoType>,
     customFees?: bigint,
   ) => Promise<string>;
-  getBalance: (address: string) => Promise<Balance<AssetInfo>[]>;
+  getBalance: (address: string) => Promise<Balance[]>;
   lastBlock: () => Promise<BlockInfo>;
-  listOperations: (
-    address: string,
-    pagination: Pagination,
-  ) => Promise<[Operation<AssetInfo>[], string]>;
+  listOperations: (address: string, pagination: Pagination) => Promise<[Operation[], string]>;
 };
 
 export type BridgeApi = {
@@ -173,7 +171,4 @@ export type BridgeApi = {
   getAccountInfo: (address: string) => Promise<AccountInfo>;
 };
 
-export type Api<
-  AssetInfo extends Asset<TokenInfoCommon>,
-  MemoType extends Memo = MemoNotSupported,
-> = AlpacaApi<AssetInfo, MemoType> & BridgeApi;
+export type Api<MemoType extends Memo = MemoNotSupported> = AlpacaApi<MemoType> & BridgeApi;

@@ -19,9 +19,9 @@ import {
   listOperations,
   getTransactionStatus,
 } from "../logic";
-import { ListOperationsOptions, XrpAsset, XrpMapMemo } from "../types";
+import { ListOperationsOptions, XrpMapMemo } from "../types";
 
-export function createApi(config: XrpConfig): Api<XrpAsset, XrpMapMemo> {
+export function createApi(config: XrpConfig): Api<XrpMapMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -38,7 +38,7 @@ export function createApi(config: XrpConfig): Api<XrpAsset, XrpMapMemo> {
 }
 
 async function craft(
-  transactionIntent: TransactionIntent<XrpAsset, XrpMapMemo>,
+  transactionIntent: TransactionIntent<XrpMapMemo>,
   customFees?: bigint,
 ): Promise<string> {
   const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
@@ -87,13 +87,13 @@ type PaginationState = {
   readonly minHeight: number;
   continueIterations: boolean;
   apiNextCursor?: string;
-  accumulator: Operation<XrpAsset>[];
+  accumulator: Operation[];
 };
 
 async function operationsFromHeight(
   address: string,
   minHeight: number,
-): Promise<[Operation<XrpAsset>[], string]> {
+): Promise<[Operation[], string]> {
   async function fetchNextPage(state: PaginationState): Promise<PaginationState> {
     const options: ListOperationsOptions = {
       limit: state.pageSize,
@@ -141,7 +141,6 @@ async function operationsFromHeight(
 async function operations(
   address: string,
   { minHeight }: Pagination,
-): Promise<[Operation<XrpAsset>[], string]> {
-  // TODO token must be implemented properly (waiting ack from the design document)
+): Promise<[Operation[], string]> {
   return await operationsFromHeight(address, minHeight);
 }

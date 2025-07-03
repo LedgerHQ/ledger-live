@@ -27,7 +27,7 @@ describe("Testing craftTransaction function", () => {
       asset: {
         type: "token",
         standard: "trc10",
-        tokenId: "1002000",
+        assetReference: "1002000",
       },
       sender,
       recipient,
@@ -69,7 +69,7 @@ describe("Testing craftTransaction function", () => {
       asset: {
         type: "token",
         standard: "trc20",
-        contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+        assetReference: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
       },
       sender,
       recipient,
@@ -109,7 +109,7 @@ describe("Testing craftTransaction function", () => {
       asset: {
         type: "token",
         standard: "trc20",
-        contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+        assetReference: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
       },
       sender,
       recipient,
@@ -138,7 +138,7 @@ describe("Testing craftTransaction function", () => {
         asset: {
           type: "token",
           standard: "trc20",
-          contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+          assetReference: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
         },
         sender,
         recipient,
@@ -235,7 +235,7 @@ describe("Testing craftTransaction function", () => {
         asset: {
           type: "token",
           standard: "trc20",
-          contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+          assetReference: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
         },
         sender,
         recipient,
