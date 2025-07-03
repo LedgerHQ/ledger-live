@@ -18,7 +18,7 @@ export async function craftTransaction({
   recipient,
   coinType,
   type,
-}: TransactionIntent & { coinType?: string }): Promise<CoreTransaction> {
+}: TransactionIntent): Promise<CoreTransaction> {
   const unsigned = await suiAPI.createTransaction(sender, {
     amount: BigNumber(amount.toString()),
     recipient,

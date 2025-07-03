@@ -16,7 +16,7 @@ import type {
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
 
-export function createApi(config: SuiConfig): AlpacaApi {
+export function createApi(config: SuiCoinConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
