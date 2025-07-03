@@ -1260,15 +1260,15 @@
         "titleCompleted" : "秘密恢复短语已确认",
         "recoverSeed" : "Placeholder: Recover",
         "restoreSeed" : "按照 Ledger 安全屏幕上的说明进行恢复操作。",
-        "restoreCharonTitle" : "Restore using Ledger Charon",
+        "restoreCharonTitle" : "使用 Recovery Key 进行恢复",
         "restoreCharonDescription" : "按照 Ledger 安全屏幕上的说明进行恢复操作。",
         "restoreCharonContinueOnDevice" : "按照 {{productName}} 上的说明进行操作",
         "selection" : "选择最适合您的设置选项：",
         "selectionNewLedgerTitle" : "设置为新 Ledger 设备",
         "selectionNewLedgerDescription" : "这会生成新的秘密恢复短语。",
         "selectionRestoreTitle" : "恢复对资产的访问权限",
-        "selectionRestoreDescription" : "This lets you restore using your backup — Secret Recovery Phrase or Ledger Recover.",
-        "selectionRestoreDescriptionWithCharon" : "This lets you restore using your backup — Secret Recovery Phrase, Ledger Recover, or Ledger Charon.",
+        "selectionRestoreDescription" : "您可以使用备份进行恢复：秘密恢复短语或 Ledger Recover。",
+        "selectionRestoreDescriptionWithCharon" : "您可以使用备份进行恢复：秘密恢复短语、Ledger Recover 或 Ledger Recovery Key 恢复钥匙。",
         "selectionContinueOnDevice" : "在 {{productName}} 上选择相应选项",
         "selectionNewSeedTitle" : "秘密恢复短语",
         "selectionNewSeedSubtitle" : "请妥善保管并确保私密性",
@@ -1278,13 +1278,13 @@
         "restoreChoiceContinueOnDevice" : "在 {{productName}} 上选择相应选项",
         "restoreChoiceSRPTitle" : "秘密恢复短语",
         "restoreChoiceSRPDescription" : "使用 Ledger 设备生成的秘密恢复短语，最大限度地提高安全性。",
-        "restoreChoiceCharonTitle" : "Ledger Charon",
-        "restoreChoiceCharonDescription" : "Description description description description description description.",
+        "restoreChoiceCharonTitle" : "Ledger Recovery Key 恢复钥匙",
+        "restoreChoiceCharonDescription" : "使用您的 Recovery Key 恢复钥匙恢复对资产的访问权限。",
         "restoreChoiceRecoverTitle" : "Ledger Recover 订阅",
         "restoreChoiceRecoverDescription" : "使用您的订阅服务，通过身份验证恢复对资产的访问权限。",
         "followInstructions" : "按照 {{productName}} 上的说明进行操作。",
-        "backupCharonTitle" : "Ledger Charon",
-        "backupCharonDescription" : "Description description description description description description description description description description.",
+        "backupCharonTitle" : "Ledger Recovery Key 恢复钥匙",
+        "backupCharonDescription" : "在内置安全元件芯片且受 PIN 识别码保护的卡上创建新备份，轻按几下即可恢复对您资产的访问权限。",
         "backupCharonCta" : "了解详情或购买",
         "backupCharonContinueOnDevice" : "按照 {{productName}} 上的说明进行操作"
       },
@@ -7085,18 +7085,24 @@
       },
       "newAccount" : "新账户"
     },
+    "fundAccount" : {
+      "receive" : "接收",
+      "receiveDescription" : "从另一个钱包接收加密货币",
+      "buy" : "买入",
+      "buyDescription" : "用现金安全购买加密货币"
+    },
     "scanAccounts" : {
       "cta" : {
         "stopScanning" : "停止扫描"
       },
       "warning" : {
-        "title" : "We couldn't add a new {{currency}} account",
-        "description" : "A new account cannot be added before you receive assets on your {{account}} account",
+        "title" : "我们无法添加新的 {{currency}} 账户",
+        "description" : "首先需要用您的 {{account}} 账户接收资产，然后才能添加新账户",
         "cta" : "向我的账户添加资金",
         "close" : "关闭",
         "noAssociatedAccounts" : {
-          "description" : "In the {{currency}} ecosystem, only a select number of services can create new accounts. While Ledger does not currently offer this onboarding service, alternatives are available. You will be able to add your {{currency}} account on Ledger Live once it's created.",
-          "cta" : "How to create a {{currency}} account?",
+          "description" : "在 {{currency}} 生态系统中，仅有限数量的服务可以创建新账户。目前，Ledger 不提供入驻服务，但有其他的可用服务可选。创建 {{currency}} 账户后，就可以将其添加到 Ledger Live 中。",
+          "cta" : "如何创建 {{currency}} 账户？",
           "close" : "关闭"
         }
       },
@@ -7112,7 +7118,7 @@
       "title" : "连接并解锁您的设备"
     },
     "searchPlaceholder" : "搜索",
-    "emptyAssetList" : "No assets found",
+    "emptyAssetList" : "未找到资产",
     "selectAsset" : "选择资产",
     "selectNetwork" : "选择网络",
     "selectAccount" : "选择账户",
@@ -7123,6 +7129,7 @@
       "title_other" : "{{count}} 个账户已添加到您的资产组合",
       "cta" : {
         "addFunds" : "向我的账户添加资金",
+        "selectAccount" : "继续",
         "close" : "关闭"
       }
     }
@@ -7138,5 +7145,14 @@
     "title" : "所在地区不可用",
     "description" : "此地区无法使用 Ledger 钱包。",
     "learnMore" : "了解更多"
+  },
+  "versionBlocking" : {
+    "title" : "需要更新 Ledger Live",
+    "errorTitle" : "更新失败",
+    "errorDescription" : "更新失败。请点击下方链接下载最新版 Ledger Live。 ",
+    "description" : "此版本的 Ledger Live 与最新的设备操作系统不兼容。要使用改进的连接功能，请立即更新。",
+    "restart" : "重新启动",
+    "downloadOnLedger" : "前往 Ledger.com 下载",
+    "downloadProgress" : "正在下载... {{ progress }}%"
   }
 }
