@@ -9,6 +9,9 @@ const beforeAllFunction = async (swap: SwapType) => {
   await app.speculos.setExchangeDependencies(swap);
   await app.init({
     speculosApp: AppInfos.EXCHANGE,
+    featureFlags: {
+      ptxSwapLiveAppMobile: { enabled: true },
+    },
     cliCommandsOnApp: [
       {
         app: swap.accountToDebit.currency.speculosApp,

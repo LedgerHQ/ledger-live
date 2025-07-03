@@ -22,6 +22,9 @@ async function beforeAllFunction(options: ApplicationOptions) {
   await app.init({
     userdata: options.userdata,
     speculosApp: options.speculosApp,
+    featureFlags: {
+      ptxSwapLiveAppMobile: { enabled: true },
+    },
     cliCommandsOnApp: options.cliCommandsOnApp,
   });
   await app.portfolio.waitForPortfolioPageToLoad();
