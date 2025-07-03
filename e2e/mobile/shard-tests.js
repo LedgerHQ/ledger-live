@@ -37,4 +37,4 @@ for (const test of sorted) {
 }
 
 // eslint-disable-next-line no-console
-console.log(shards[shardIndex].files.join(" ")); 
+console.log(shards[shardIndex].files.join(" "));

@@ -7,14 +7,17 @@ let cache = true;
 let shard = "";
 let target = "release";
 let filter = "";
+let testFilesArg = [];
 
 $.verbose = true; // everything works like in v7
 
 if (os.platform() === "win32") {
+  // eslint-disable-next-line
   usePowerShell();
 }
 
 const usage = (exitCode = 1) => {
+  // eslint-disable-next-line no-console
   console.log(
     `Usage: ${basename(
       __filename,
@@ -44,7 +47,7 @@ const bundle_ios_with_cache = async () => {
   await $`pnpm mobile exec detox build-framework-cache`;
   within(async () => {
     cd("apps/ledger-live-mobile");
-    await $`mkdir -p ios/build/Build/Products/Release-iphonesimulator`
+    await $`mkdir -p ios/build/Build/Products/Release-iphonesimulator`;
     await $`cp main.jsbundle ios/build/Build/Products/Release-iphonesimulator/main.jsbundle`;
   });
 };
@@ -62,7 +65,8 @@ const test_ios = async () => {
     --runInBand \
     --cleanup \
     --shard ${shard} \
-    ${filter.split(" ")}`;
+    ${filter.split(" ")} \
+    ${testFilesArg}`;
 };
 
 const build_android = async () => {
@@ -70,18 +74,19 @@ const build_android = async () => {
 };
 
 const test_android = async () => {
-  await $`pnpm mobile ${testType}:test \\
-    -c android.emu.${target} \\
-    --loglevel error \\
-    --record-logs failing \\
-    --take-screenshots failing \\
-    --forceExit \\
-    --headless \\
-    --retries 1 \\
-    --runInBand \\
-    --cleanup \\
-    --shard ${shard} \\
-    ${filter.split(" ")}`;
+  await $`pnpm mobile ${testType}:test \
+    -c android.emu.${target} \
+    --loglevel error \
+    --record-logs failing \
+    --take-screenshots failing \
+    --forceExit \
+    --headless \
+    --retries 1 \
+    --runInBand \
+    --cleanup \
+    --shard ${shard} \
+    ${filter.split(" ")} \
+    ${testFilesArg}`;
 };
 
 const getTasksFrom = {
@@ -92,7 +97,7 @@ const getTasksFrom = {
   },
   android: {
     build: build_android,
-    bundle: async () =>  await bundle_android(),
+    bundle: async () => await bundle_android(),
     test: test_android,
   },
 };
@@ -143,6 +148,12 @@ for (const argName in argv) {
       usage(42);
       break;
   }
+}
+
+// Parse additional arguments as test files
+const extraArgs = process.argv.slice(2).filter(arg => !arg.startsWith("-"));
+if (extraArgs.length > 0) {
+  testFilesArg = extraArgs;
 }
 
 within(async () => {
