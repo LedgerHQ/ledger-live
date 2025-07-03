@@ -21,6 +21,7 @@ export type Asset<TokenInfo extends AssetInfo = never> =
   | { type: "native" }
   | (TokenInfo extends never ? TokenInfo : { type: "token" } & TokenInfo);
 
+// NOTE: CoreOperation
 export type Operation<
   // AssetInfo extends Asset<TokenInfoCommon> = Asset<TokenInfoCommon>,
   MemoType extends Memo = MemoNotSupported,
@@ -165,19 +166,17 @@ export type AccountInfo = {
 };
 
 export type AlpacaApi<
-  AssetInfo extends Asset<TokenInfoCommon>,
+  // AssetInfo extends Asset<TokenInfoCommon>,
   MemoType extends Memo = MemoNotSupported,
 > = {
   broadcast: (tx: string) => Promise<string>;
   combine: (tx: string, signature: string, pubkey?: string) => string | Promise<string>;
-  estimateFees: (
-    transactionIntent: TransactionIntent<AssetInfo, MemoType>,
-  ) => Promise<FeeEstimation>;
+  estimateFees: (transactionIntent: TransactionIntent<MemoType>) => Promise<FeeEstimation>;
   craftTransaction: (
-    transactionIntent: TransactionIntent<AssetInfo, MemoType>,
+    transactionIntent: TransactionIntent<MemoType>,
     customFees?: bigint,
   ) => Promise<string>;
-  getBalance: (address: string) => Promise<Balance<AssetInfo>[]>;
+  getBalance: (address: string) => Promise<Balance[]>;
   lastBlock: () => Promise<BlockInfo>;
   listOperations: (
     address: string,
