@@ -23,13 +23,15 @@ import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/erro
 
 const alpacaized = {
   xrp: true,
+  stellar: true,
 };
 
 // let accountBridgeInstance: AccountBridge<any> | null = null;
 const bridgeCache: Record<string, AccountBridge<any>> = {};
-let currencyBridgeInstance: CurrencyBridge | null = null;
+const currencyBridgeCache: Record<string, CurrencyBridge> = {};
 
 export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
+  // console.log("getCurrencyBridge", currency.id, currency.family);
   if (getEnv("MOCK")) {
     const mockBridge = mockBridges[currency.family];
     if (mockBridge) return mockBridge.currencyBridge;
@@ -39,10 +41,10 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   }
 
   if (alpacaized[currency.family]) {
-    if (!currencyBridgeInstance) {
-      currencyBridgeInstance = getAlpacaCurrencyBridge(currency.family, "local");
+    if (!currencyBridgeCache[currency.family]) {
+      currencyBridgeCache[currency.family] = getAlpacaCurrencyBridge(currency.family, "local");
     }
-    return currencyBridgeInstance;
+    return currencyBridgeCache[currency.family];
   }
 
   const jsBridge = jsBridges[currency.family];

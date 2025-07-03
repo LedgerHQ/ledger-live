@@ -1,5 +1,7 @@
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import { BroadcastConfig } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 
 export type BlockInfo = {
   height: number;
@@ -27,6 +29,8 @@ export type AssetInfo =
       type: TokenStandard;
       assetReference?: string; // contract address (trc20), tokenId (trc10),, etc
       assetOwner?: string;
+      //   selling_liabilities?: string; //FIXME: used for stellar need to be remove from here
+      // balance?: string; //FIXME: used for stellar need to be remove from here
     };
 
 // NOTE: CoreOperation
@@ -53,7 +57,6 @@ export type Operation<MemoType extends Memo = MemoNotSupported> = {
    */
   details?: Record<string, unknown>;
   assetInfo?: AssetInfo;
-
   tx: {
     hash: string; // transaction hash
     block: BlockInfo; // block metadata
@@ -67,6 +70,11 @@ export type Transaction = {
   recipient: string;
   amount: bigint;
   fee: bigint;
+  baseReserve?: bigint; // NOTE: used for changeTrust mode in stellar
+  networkInfo?: {
+    baseFee?: bigint;
+    fees?: bigint;
+  };
 } & Record<string, unknown>; // Field containing dedicated value for each blockchain
 
 // Other coins take differents parameters What do we want to do ?
@@ -75,6 +83,9 @@ export type Account = {
   address: string;
   balance: bigint;
   currencyUnit: Unit;
+  pendingOperations: number; // NOTE: can get away with only the number of pending operations?
+  spendableBalance: bigint; // NOTE:: check if we can get rid of this one
+  subAccount?: TokenAccount;
 };
 
 export type Balance = {
@@ -100,12 +111,12 @@ export interface StringMemo<Kind extends string = "text"> extends Memo {
 }
 
 export interface MapMemo<Kind extends string, Value> extends Memo {
-  type: "map";
+  type: string;
   memos: Map<Kind, Value>;
 }
 
 export interface TypedMapMemo<KindToValueMap extends Record<string, unknown>> extends Memo {
-  type: "map";
+  type: string;
   memos: Map<keyof KindToValueMap, KindToValueMap[keyof KindToValueMap]>;
 }
 
@@ -120,6 +131,7 @@ export type TransactionIntent<MemoType extends Memo = MemoNotSupported> = {
   expiration?: number;
   recipient: string;
   amount: bigint;
+  fees?: BigNumber | null | undefined; // Optional, depending on the API
   asset: AssetInfo;
   sequence?: number;
 } & MaybeMemo<MemoType>;
@@ -148,13 +160,16 @@ export type FeeEstimation = {
 //       for now start is used as a minHeight from which we want to fetch ALL operations
 //       limit is unused for now
 //       see design document at https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/5446205788/coin-modules+lama-adapter+APIs+refinements
-export type Pagination = { minHeight: number };
+export type Pagination = { minHeight: number } & { pagingToken?: string; limit?: number }; // For evm, XRP, etc. // NOTE: For Stellar
+// NOTE: future proof export type Pagination = Record<string, unknown>;
 
 export type AccountInfo = {
   isNewAccount: boolean;
   balance: string;
   ownerCount: number;
   sequence: number;
+  assets?: AssetInfo[]; // BalanceAsset[]; // Optional, depending on the API
+  spendableBalance?: string; // Optional, depending on the API
 };
 
 export type AlpacaApi<MemoType extends Memo = MemoNotSupported> = {
@@ -167,6 +182,7 @@ export type AlpacaApi<MemoType extends Memo = MemoNotSupported> = {
   ) => Promise<string>;
   getBalance: (address: string) => Promise<Balance[]>;
   lastBlock: () => Promise<BlockInfo>;
+  // NOTE: listPagingToken missing in Pagination?
   listOperations: (address: string, pagination: Pagination) => Promise<[Operation[], string]>;
 };
 

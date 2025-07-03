@@ -4,7 +4,9 @@ import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets
 import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+
 import { findTokenById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
+import { AssetInfo } from "@ledgerhq/coin-framework/lib/api/types";
 import { BalanceAsset, StellarOperation } from "../types";
 
 export const getAssetIdFromTokenId = (tokenId: string): string => tokenId.split("/")[2];
@@ -63,7 +65,7 @@ export function buildSubAccounts({
 }: {
   currency: CryptoCurrency;
   accountId: string;
-  assets: BalanceAsset[];
+  assets: BalanceAsset[]; // NOTE:double check (was AssetInfo before resolving conflicts)
   syncConfig: SyncConfig;
   operations: StellarOperation[];
 }): TokenAccount[] | undefined {
@@ -90,6 +92,8 @@ export function buildSubAccounts({
             op =>
               op.extra.assetCode === asset.asset_code &&
               op.extra.assetIssuer === asset.asset_issuer,
+            // op.extra.assetCode === asset.assetReference &&
+            // op.extra.assetIssuer === asset.assetOwner,
           ),
         }),
       );
