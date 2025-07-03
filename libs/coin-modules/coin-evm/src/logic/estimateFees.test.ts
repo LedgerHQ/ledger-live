@@ -1,8 +1,12 @@
 import BigNumber from "bignumber.js";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { MemoNotSupported, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import type {
+  AssetInfo,
+  MemoNotSupported,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/index";
 import { getNodeApi } from "../network/node";
-import { EvmAsset, FeeData, Transaction } from "../types";
+import { FeeData, Transaction } from "../types";
 import { estimateFees } from "./estimateFees";
 
 jest.mock("../network/node", () => ({ getNodeApi: jest.fn() }));
@@ -13,9 +17,9 @@ describe("estimateFees", () => {
     family: "evm",
     ethereumLikeInfo: { chainId: 1 },
   } as CryptoCurrency;
-  const mockNativeAsset: EvmAsset = { type: "native" };
-  const mockTokenAsset: EvmAsset = { type: "token", standard: "erc", contractAddress: "0x1234" };
-  const mockIntent: TransactionIntent<EvmAsset, MemoNotSupported> = {
+  const mockNativeAsset: AssetInfo = { type: "native" };
+  const mockTokenAsset: AssetInfo = { type: "erc20", assetReference: "0x1234" };
+  const mockIntent: TransactionIntent<MemoNotSupported> = {
     type: "intent",
     amount: BigInt("1000000000000000000"),
     asset: mockNativeAsset,
@@ -69,7 +73,7 @@ describe("estimateFees", () => {
 
     expect(mockNodeApi.getFeeData).toHaveBeenCalledWith(
       mockCurrency,
-      expectedTx(mockTokenAsset.contractAddress),
+      expectedTx(mockTokenAsset.assetReference),
     );
     expect(result).toBe(BigInt(mockGasLimit.multipliedBy(mockFeeData.gasPrice!).toFixed()));
   });

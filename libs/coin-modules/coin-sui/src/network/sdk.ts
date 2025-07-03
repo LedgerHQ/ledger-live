@@ -30,7 +30,6 @@ import type { Transaction as TransactionType } from "../types";
 import type { CreateExtrinsicArg } from "../logic/craftTransaction";
 import { ensureAddressFormat } from "../utils";
 import coinConfig from "../config";
-import { SuiAsset } from "../api/types";
 import { getEnv } from "@ledgerhq/live-env";
 
 type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
@@ -253,7 +252,7 @@ export function transactionToOperation(
   };
 }
 
-function transactionToOp(address: string, transaction: SuiTransactionBlockResponse): Op<SuiAsset> {
+function transactionToOp(address: string, transaction: SuiTransactionBlockResponse): Op {
   const type = getOperationType(address, transaction.transaction?.data);
   const coinType = getOperationCoinType(transaction);
   const hash = transaction.digest;
@@ -426,7 +425,7 @@ export const getListOperations = async (
   addr: string,
   cursor: QueryTransactionBlocksParams["cursor"] = null,
   withApiImpl: typeof withApi = withApi,
-): Promise<Op<SuiAsset>[]> =>
+): Promise<Op[]> =>
   withApiImpl(async api => {
     const opsOut = await loadOperations({
       api,

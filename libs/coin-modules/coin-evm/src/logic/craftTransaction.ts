@@ -18,7 +18,7 @@ export async function craftTransaction(
   {
     transactionIntent,
   }: {
-    transactionIntent: TransactionIntent<EvmAsset>;
+    transactionIntent: TransactionIntent;
   },
 ): Promise<string> {
   const { amount, asset, recipient, sender, type } = transactionIntent;
@@ -28,7 +28,7 @@ export async function craftTransaction(
   }
 
   const node = getNodeApi(currency);
-  const to = isNative(asset) ? recipient : asset.contractAddress;
+  const to = isNative(asset) ? recipient : (asset?.assetReference as string);
   const nonce = await node.getTransactionCount(currency, sender);
   const data = isNative(asset) ? Buffer.from([]) : getErc20Data(recipient, amount);
   const value = isNative(asset) ? amount : 0n;
