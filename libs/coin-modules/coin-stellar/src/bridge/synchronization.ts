@@ -62,6 +62,8 @@ export const getAccountShape: GetAccountShape<Account> = async (info, syncConfig
       currency,
       accountId,
       assets: assets,
+      // assets: assetInfos,
+      // assets: accountInfo.assets ?? [],
       syncConfig,
       operations: assetOperations,
     }) || [];
