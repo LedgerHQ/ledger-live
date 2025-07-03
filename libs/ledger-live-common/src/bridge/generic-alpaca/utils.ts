@@ -9,38 +9,61 @@ import {
 import BigNumber from "bignumber.js";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
 
+/*
+ *   assetType: string;
+  assetReference?: string; // TODO: recheck with jnicouleau
+  assetOwner?: string; // TODO: do we need i ?
+*/
 export function adaptCoreOperationToLiveOperation(
   accountId: string,
   op: CoreOperation<Asset<TokenInfoCommon>>,
 ): Operation {
-  const extra: {
+  const asset: {
     assetCode?: string;
     assetIssuer?: string;
     assetAmount?: string | undefined;
     ledgerOpType?: string | undefined;
   } = {};
 
+  let ledgerOpType = "";
+  // NOTE: recheck two op.details
   if (op.details?.ledgerOpType !== undefined) {
-    extra.ledgerOpType = op.details.ledgerOpType as string;
+    // asset.ledgerOpType = op.details.ledgerOpType as string;
+    ledgerOpType = op.details.ledgerOpType as string;
   }
 
-  if (op.details?.assetAmount !== undefined) {
-    extra.assetAmount = op.details.assetAmount as string;
+  // TODO:
+  debugger;
+  let value = new BigNumber(op.value.toString());
+  console.log({
+    valuePreviously: new BigNumber(op.value.toString()),
+  });
+
+  // NOTE: op.details recheck
+  if (op.details?.assetAmount && typeof op.details.assetAmount === "string") {
+    value = new BigNumber(op.details.assetAmount);
   }
 
+  // if (op.details?.assetAmount !== undefined) {
+  //   extra.assetAmount = op.details.assetAmount as string;
+  // }
+
+  // NOTE: we have op.asset.assetType
   if (op.asset?.type === "token") {
-    extra.assetCode = op.asset.assetCode as string;
-    extra.assetIssuer = op.asset.assetIssuer as string;
+    // assetId
+    asset.assetReference = op.asset.assetCode as string;
+    // NOTE: check if used downstream
+    asset.assetOwner = op.asset.assetIssuer as string;
   }
 
   const res = {
-    id: extra.ledgerOpType
-      ? encodeOperationId(accountId, op.tx.hash, extra.ledgerOpType)
+    id: ledgerOpType
+      ? encodeOperationId(accountId, op.tx.hash, ledgerOpType)
       : encodeOperationId(accountId, op.tx.hash, op.type),
     hash: op.tx.hash,
     accountId,
     type: op.type as OperationType,
-    value: new BigNumber(op.value.toString()),
+    value,
     fee: new BigNumber(op.tx.fees.toString()),
     blockHash: op.tx.block.hash,
     blockHeight: op.tx.block.height,
@@ -48,7 +71,7 @@ export function adaptCoreOperationToLiveOperation(
     recipients: op.recipients,
     date: op.tx.date,
     transactionSequenceNumber: op.details?.sequence as number,
-    extra,
+    asset,
   };
 
   return res;

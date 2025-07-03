@@ -11,14 +11,18 @@ export type BlockInfo = {
   time?: Date;
 };
 
-export type TokenInfoCommon = Record<string, unknown>;
+type AssetInfo = {
+  assetType: string;
+  assetReference?: string; // TODO: recheck with jnicouleau
+  assetOwner?: string; // TODO: do we need i ?
+};
 
-export type Asset<TokenInfo extends TokenInfoCommon = never> =
+export type Asset<TokenInfo extends AssetInfo = never> =
   | { type: "native" }
   | (TokenInfo extends never ? TokenInfo : { type: "token" } & TokenInfo);
 
 export type Operation<
-  AssetInfo extends Asset<TokenInfoCommon> = Asset<TokenInfoCommon>,
+  // AssetInfo extends Asset<TokenInfoCommon> = Asset<TokenInfoCommon>,
   MemoType extends Memo = MemoNotSupported,
 > = {
   id: string;
@@ -74,7 +78,7 @@ export type Account = {
   subAccount?: TokenAccount;
 };
 
-export type Balance<AssetInfo extends Asset<TokenInfoCommon>> = {
+export type Balance = {
   value: bigint;
   locked?: bigint;
   asset: AssetInfo;
@@ -111,7 +115,7 @@ export interface TypedMapMemo<KindToValueMap extends Record<string, unknown>> ex
 type MaybeMemo<MemoType extends Memo> = MemoType extends MemoNotSupported ? {} : { memo: MemoType };
 
 export type TransactionIntent<
-  AssetInfo extends Asset<TokenInfoCommon>,
+  // AssetInfo extends Asset<TokenInfoCommon>,
   MemoType extends Memo = MemoNotSupported,
 > = {
   type: string;
