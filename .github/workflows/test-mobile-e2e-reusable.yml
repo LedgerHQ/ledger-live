@@ -100,7 +100,7 @@ jobs:
     name: Workflow trigger inputs
     runs-on: ubuntu-latest
     steps:
-      - name: Wrkflow trigger inputs
+      - name: Workflow trigger inputs
         run: |
           echo "tests_type: ${{ inputs.tests_type }}"
           echo "test_filter: ${{ inputs.test_filter }}"
@@ -336,7 +336,7 @@ jobs:
 
       - name: Run iOS Detox shard ${{ matrix.shard }}/3
         id: run-ios
-        run: pnpm mobile e2e:ci -p ios --shard ${{ matrix.shard }}/3 ${{ inputs.test_filter && format('--filter "{0}"', inputs.test_filter) || '' }}
+        run: pnpm mobile e2e:ci -p ios -t --shard ${{ matrix.shard }}/3 ${{ inputs.test_filter && format('--filter "{0}"', inputs.test_filter) || '' }}
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           REMOTE_SPECULOS: "true"
@@ -526,7 +526,7 @@ jobs:
 
       - name: Run Android Detox shard ${{ matrix.shard }}/3
         id: run-android
-        run: pnpm mobile e2e:ci -p android --shard ${{ matrix.shard }}/3 ${{ inputs.test_filter && format('--filter "{0}"', inputs.test_filter) || '' }}
+        run: pnpm mobile e2e:ci -p android -t --shard ${{ matrix.shard }}/3 ${{ inputs.test_filter && format('--filter "{0}"', inputs.test_filter) || '' }}
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           INPUT_E2E: ${{ env.E2E_RUN }}
