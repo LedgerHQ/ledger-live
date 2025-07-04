@@ -465,11 +465,6 @@ const MainSideBar = () => {
                   onClick={handleClickEarn}
                   isActive={location.pathname === "/earn"}
                   collapsed={secondAnim}
-                  NotifComponent={
-                    <CustomTag active type="plain" size="small">
-                      {t("common.new")}
-                    </CustomTag>
-                  }
                 />
                 <SideBarListItem
                   id={"exchange"}
