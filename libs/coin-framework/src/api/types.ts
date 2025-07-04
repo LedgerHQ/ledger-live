@@ -64,8 +64,6 @@ export type Account = {
   currencyUnit: Unit;
 };
 
-// initial intent is defined in feature
-
 export type Balance<AssetInfo extends Asset<TokenInfoCommon>> = {
   value: bigint;
   reserve: bigint;
@@ -78,9 +76,9 @@ export type Balance<AssetInfo extends Asset<TokenInfoCommon>> = {
     };
     releaseDate?: Date;
     active: boolean;
-    // allows us to navigate through the flow
-    possibleIntents: string[];
   };
+  // allows us to navigate through the flow
+  possibleIntents: string[];
 };
 
 export interface Memo {
