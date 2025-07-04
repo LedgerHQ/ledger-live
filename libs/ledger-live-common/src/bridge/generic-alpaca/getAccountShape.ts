@@ -3,6 +3,7 @@ import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHel
 import BigNumber from "bignumber.js";
 import { getAlpacaApi } from "./alpaca";
 import { adaptCoreOperationToLiveOperation } from "./utils";
+import { Account } from "@ledgerhq/types-live";
 
 export function genericGetAccountShape(network: string, kind: "local" | "remote"): GetAccountShape {
   return async info => {
@@ -18,15 +19,27 @@ export function genericGetAccountShape(network: string, kind: "local" | "remote"
 
       const blockInfo = await getAlpacaApi(network, kind).lastBlock();
 
-      const balanceRes = await getAlpacaApi(network, kind).getBalance(address);
-      // FIXME: fix type Balance -> check "native" balance
-      // is balance[0] always the native ?
-      const balance = BigNumber(balanceRes[0].value.toString());
+      const balances = await getAlpacaApi(network, kind).getBalance(address);
+
+      const nativeBalance = balances.find(b => b.asset.type === "native");
+
+      const staked: Account["staked"] = balances
+        .filter(b => b.staking !== undefined)
+        .map(b => {
+          return {
+            amount: BigNumber(b.value.toString()),
+            validator: b.staking?.validator,
+            rewards: b.staking?.rewards,
+          };
+        });
+
+      const balance = BigNumber(nativeBalance ? nativeBalance.value.toString() : "0");
 
       let spendableBalance: BigNumber;
-      if (balanceRes[0]?.locked) {
+
+      if (nativeBalance?.locked) {
         spendableBalance = BigNumber.max(
-          balance.minus(BigNumber(balanceRes[0].locked.toString())),
+          balance.minus(BigNumber(nativeBalance.locked.toString())),
           BigNumber(0),
         );
       } else {
@@ -53,6 +66,7 @@ export function genericGetAccountShape(network: string, kind: "local" | "remote"
         spendableBalance,
         operations,
         operationsCount: operations.length,
+        staking: staked,
       };
     } catch (e) {
       console.error("Error in getAccountShape", e);
