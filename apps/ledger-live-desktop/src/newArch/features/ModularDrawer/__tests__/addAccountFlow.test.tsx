@@ -2,16 +2,21 @@ import React from "react";
 import { mockDomMeasurements } from "./shared";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { arbitrumCurrency, hederaCurrency } from "../__mocks__/useSelectAssetFlow.mock";
-import { ARB_ACCOUNT } from "../__mocks__/accounts.mock";
+import {
+  arbitrumCurrency,
+  bitcoinCurrency,
+  hederaCurrency,
+} from "../__mocks__/useSelectAssetFlow.mock";
+import { ARB_ACCOUNT, BTC_ACCOUNT } from "../__mocks__/accounts.mock";
 import BigNumber from "bignumber.js";
 import ModularDrawerAddAccountFlowManager from "../ModularDrawerAddAccountFlowManager";
 import { Provider } from "react-redux";
 import createStore from "~/renderer/createStore";
-import { render, screen } from "tests/testSetup";
+import { fireEvent, render, screen } from "tests/testSetup";
 import { Account } from "@ledgerhq/types-live";
 import { act } from "react-dom/test-utils";
 import { State } from "~/renderer/reducers";
+import { openModal } from "~/renderer/actions/modals";
 
 beforeEach(async () => {
   mockDomMeasurements();
@@ -119,6 +124,26 @@ const NEW_ARB_ACCOUNT: Account = {
   nfts: [],
 };
 
+jest.mock("@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog", () => ({
+  __esModule: true,
+  useRampCatalog: () => ({
+    isCurrencyAvailable: (currencyId: string) => currencyId === "arbitrum",
+  }),
+}));
+
+const push = jest.fn();
+
+jest.mock("react-router-dom", () => ({
+  __esModule: true,
+  ...jest.requireActual("react-router-dom"),
+  useHistory: () => ({ push }),
+}));
+
+jest.mock("~/renderer/actions/modals", () => ({
+  ...jest.requireActual("~/renderer/actions/modals"),
+  openModal: jest.fn().mockReturnValue({ type: "" }),
+}));
+
 describe("ModularDrawerAddAccountFlowManager", () => {
   it("should find and add an account", async () => {
     const { user } = render(
@@ -154,7 +179,7 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     expect(screen.getByText(/account added to your portfolio/i)).toBeInTheDocument();
   });
 
-  it("should navigate to fund an account", async () => {
+  it("should navigate to fund an account for on-ramp currency", async () => {
     const { user } = render(
       <Provider store={createStore({ state: undefined })}>
         <ModularDrawerAddAccountFlowManager currency={arbitrumCurrency} source="MADSource" />
@@ -166,7 +191,31 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     await user.click(screen.getByRole("button", { name: "Confirm" }));
     await user.click(screen.getByRole("button", { name: "Add funds to my account" }));
 
+    const buy = screen.getByText(/buy crypto securely with cash/i);
+    fireEvent.click(buy);
+    expect(push).toHaveBeenCalledWith(
+      expect.objectContaining({ state: expect.objectContaining({ mode: "buy" }) }),
+    );
+
+    const receive = screen.getByText(/receive crypto from another wallet/i);
+    fireEvent.click(receive);
+    expect(openModal).toHaveBeenCalledWith("MODAL_RECEIVE", expect.objectContaining({}));
+  });
+
+  it("should navigate to fund an account for non-on-ramp currency", async () => {
+    const { user } = render(
+      <Provider store={createStore({ state: undefined })}>
+        <ModularDrawerAddAccountFlowManager currency={bitcoinCurrency} source="MADSource" />
+      </Provider>,
+    );
+
+    mockScanAccountsSubscription([BTC_ACCOUNT]);
+
+    await user.click(screen.getByRole("button", { name: "Confirm" }));
+    await user.click(screen.getByRole("button", { name: "Add funds to my account" }));
+
     expect(screen.getByText(/receive crypto from another wallet/i)).toBeInTheDocument();
+    expect(screen.queryByText(/buy crypto securely with cash/i)).not.toBeInTheDocument();
   });
 
   it("should hide previously added accounts and show new account", async () => {
