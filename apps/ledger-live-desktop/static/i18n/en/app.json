@@ -2415,7 +2415,8 @@
         "streaming": {
           "accurate": "Loading... ({{percentage}})",
           "inaccurate": "Loading..."
-        }
+        },
+        "gettingTransactionCheckResults": "Getting transaction check results..."
       },
       "confirmation": {
         "title": "Confirmation",
