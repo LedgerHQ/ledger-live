@@ -46,14 +46,9 @@ if (timings && timings.testResults) {
   console.log(shards[shardIndex].files.join(" "));
 } else {
   // Fallback: simple round-robin sharding by test file name
-  // Find all test files in the repo (assume .test.js or .spec.js in e2e/mobile or apps/ledger-live-mobile)
+  // Find all test files in e2e/mobile/ (assume .test.js or .spec.js)
   const glob = () =>
-    Array.from(
-      new Set([
-        ...fs.readdirSync(path.resolve(baseDir, "..")),
-        ...fs.readdirSync(path.resolve(baseDir, "../../apps/ledger-live-mobile/e2e")),
-      ]),
-    ).filter(f => f.endsWith(".test.js") || f.endsWith(".spec.js"));
+    fs.readdirSync(baseDir).filter(f => f.endsWith(".test.js") || f.endsWith(".spec.js"));
   let allFiles = [];
   try {
     allFiles = glob();
