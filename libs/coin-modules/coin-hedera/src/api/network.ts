@@ -39,7 +39,7 @@ async function buildUnsignedCoinTransaction({
     .freeze();
 }
 
-async function buildUpdateAccountTransaction({
+async function buildUnsignedUpdateAccountTransaction({
   account,
   transaction,
 }: {
@@ -76,7 +76,7 @@ export async function buildUnsignedTransaction({
   transaction: Transaction;
 }): Promise<TransferTransaction | AccountUpdateTransaction> {
   if (isUpdateAccountTransaction(transaction)) {
-    return buildUpdateAccountTransaction({ account, transaction });
+    return buildUnsignedUpdateAccountTransaction({ account, transaction });
   } else {
     return buildUnsignedCoinTransaction({ account, transaction });
   }

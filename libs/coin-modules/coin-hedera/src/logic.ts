@@ -28,6 +28,7 @@ const extractCompanyFromNodeDescription = (description: string): string => {
   return description
     .split("|")[0]
     .replace(/hosted by/i, "")
+    .replace(/hosted for/i, "")
     .trim();
 };
 

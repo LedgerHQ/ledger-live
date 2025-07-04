@@ -48,7 +48,7 @@ export default function ValidatorsSelect({
         value={value}
         error={error}
         options={options}
-        getOptionValue={option => option.address}
+        getOptionValue={option => option.name}
         renderValue={renderItem}
         renderOption={renderItem}
         onInputChange={setQuery}
