@@ -141,6 +141,7 @@ export function useDeepLinkHandler() {
           const { address, currency } = query;
 
           if (!currency || typeof currency !== "string") return;
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           const c = findCryptoCurrencyByKeyword(currency.toUpperCase()) as Currency;
           if (!c || c.type === "FiatCurrency") return;
           const foundAccounts = getAccountsOrSubAccountsByCurrency(c, accounts || []);
@@ -172,6 +173,7 @@ export function useDeepLinkHandler() {
         case "add-account": {
           const { currency } = query;
 
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           const foundCurrency = findCryptoCurrencyByKeyword(
             typeof currency === "string" ? currency?.toUpperCase() : "",
           ) as Currency;
@@ -246,6 +248,7 @@ export function useDeepLinkHandler() {
 
           if (url === "delegate" && currency !== "tezos") return;
 
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           const foundCurrency = findCryptoCurrencyByKeyword(
             typeof currency === "string" ? currency.toUpperCase() : "",
           ) as Currency;

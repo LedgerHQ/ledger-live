@@ -33,6 +33,7 @@ const USBTroubleshooting = ({ onboarding = false }: { onboarding?: boolean }) =>
   const fallBackUSBTroubleshootingIndex = useSelector(USBTroubleshootingIndexSelector);
 
   // Maybe extract an index from the state, fallback to selector
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   let { USBTroubleshootingIndex } = (locationState || {}) as { USBTroubleshootingIndex?: number };
   USBTroubleshootingIndex = USBTroubleshootingIndex ?? fallBackUSBTroubleshootingIndex;
 
@@ -45,6 +46,7 @@ const USBTroubleshooting = ({ onboarding = false }: { onboarding?: boolean }) =>
   });
   const { context } = state || {};
   const { currentIndex, solutions, SolutionComponent, platform, done } = context;
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const platformSolutions = solutions[platform as keyof typeof solutions];
   const isLastStep = useMemo(() => SolutionComponent === RepairFunnel, [SolutionComponent]);
   useEffect(() => {
