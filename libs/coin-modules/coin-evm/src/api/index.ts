@@ -14,6 +14,7 @@ import { BroadcastConfig } from "@ledgerhq/types-live";
 import { setCoinConfig, type EvmConfig } from "../config";
 import { broadcast, combine, lastBlock } from "../logic/";
 import { EvmAsset } from "../types";
+import { craftTransaction } from "../logic/craftTransaction";
 
 export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): AlpacaApi<EvmAsset> {
   setCoinConfig(() => ({ info: { ...config, status: { type: "active" } } }));
@@ -24,11 +25,8 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Alpa
       broadcast(currency, { signature: tx, broadcastConfig }),
     combine,
     craftTransaction: (
-      _transactionIntent: TransactionIntent<EvmAsset, MemoNotSupported>,
-      _customFees?: bigint,
-    ): Promise<string> => {
-      throw new Error("UnsupportedMethod");
-    },
+      transactionIntent: TransactionIntent<EvmAsset, MemoNotSupported>,
+    ): Promise<string> => craftTransaction(currency, { transactionIntent }),
     estimateFees: (
       _transactionIntent: TransactionIntent<EvmAsset, MemoNotSupported>,
     ): Promise<FeeEstimation> => {
